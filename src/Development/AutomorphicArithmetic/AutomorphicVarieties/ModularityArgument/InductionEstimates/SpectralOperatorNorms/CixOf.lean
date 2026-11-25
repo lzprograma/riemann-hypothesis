@@ -590,7 +590,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.fixRep :
     refine (hΦ.ae_eq_iff_eq μ hc).1 ?_
     exact Filter.EventuallyEq.trans (Filter.EventuallyEq.symm hrep) hae
   rw [hEq]
-  set_option synthInstance.maxHeartbeats 200000 in
   exact rconv_fix (Gam K n) μ D.ν (typeFin D).1 D.supp D.cont a (fun g => (hH g).1) y g
 end -- clump:auto
 end -- clump:auto
@@ -795,31 +794,15 @@ private theorem bV_mem {r : ℕ} (b : Blo S r) :
     ((cuspToL2 (mu1 E r) ⟨b.f.1, b.cusp⟩ : cuspidalL2 (mu1 E r)) : LL (mu1 E r)) ∈ bV b :=
   b.summand.choose_spec.2
 
-private theorem sum_blo {n : ℕ} (d : Dat S n) : ∑ i, (d.blo i).1 = n := by
-  induction d with
-  | nil =>
-    change ∑ i : Fin 0, _ = 0
-    simp
-  | @cons r s b d ih =>
-    change ∑ i : Fin (d.len + 1), _ = r + s
-    rw [Fin.sum_univ_succ]
-    exact congrArg (r + ·) ih
-
 private noncomputable def datOf {n : ℕ} (d : Dat S n) (h : 2 ≤ d.len) : Datum E n where
   r := d.len
   two := h
   d := fun i => (d.blo i).1
   pos := fun i => (d.blo i).2.pos
-  sum := sum_blo d
+  sum := _root_.UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.blo_sum d
   μ := fun i => mu1 E (d.blo i).1
   V := fun i => bV (d.blo i).2
   summand := fun i => bV_summand _
-
-private theorem map_split {r s : ℕ} (f : Fin (r + s) → ℂ) :
-    (Finset.univ.val.map f) = (Finset.univ.val.map fun i : Fin r => f (Fin.castAdd s i)) +
-      (Finset.univ.val.map fun i : Fin s => f (Fin.natAdd r i)) := by
-  simp only [Fin.univ_val_map, List.ofFn_add, Multiset.coe_add]
-  rfl
 
 private theorem lam_ms {n : ℕ} (d : Dat S n) (τ : E →+* ℂ) : ∀ z : Fin d.len → ℂ,
     (Finset.univ.val.map fun i : Fin n => d.lam τ i + z (d.idx i)) =
@@ -832,7 +815,7 @@ private theorem lam_ms {n : ℕ} (d : Dat S n) (τ : E →+* ℂ) : ∀ z : Fin 
   | @cons r s b d ih =>
     intro (z : Fin (d.len + 1) → ℂ)
     change _ = ∑ j : Fin (d.len + 1), (Finset.univ.val.map (((Dat.cons b d).blo j).2.Λ τ)).map (· + z j)
-    rw [map_split, Fin.sum_univ_succ]
+    rw [UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.map_addCases, Fin.sum_univ_succ]
     have h1 : (fun i : Fin r => (Dat.cons b d).lam τ (Fin.castAdd s i) + z ((Dat.cons b d).idx (Fin.castAdd s i))) =
         fun i => b.Λ τ i + z 0 := by
       funext i
@@ -846,17 +829,6 @@ private theorem lam_ms {n : ℕ} (d : Dat S n) (τ : E →+* ℂ) : ∀ z : Fin 
     rw [h1, h2, ih fun j => z j.succ, Multiset.map_map]
     rfl
 
-private theorem sat_blo {n : ℕ} (d : Dat S n) (j : Fin d.len) : d.sat j = (d.blo j).2.sat := by
-  induction d with
-  | nil => exact (j : Fin 0).elim0
-  | @cons r s b d ih =>
-    revert j
-    change ∀ j : Fin (d.len + 1), _
-    intro j
-    refine Fin.cases ?_ (fun i => ?_) j
-    · rfl
-    · exact ih i
-
 private theorem pt_on {n : ℕ} (d : Dat S n) (h : 2 ≤ d.len) {Λ : (E →+* ℂ) → Multiset ℂ} {t : BW.Pl E → Multiset ℂ}
     (ho : d.On Λ t) : (datOf d h).Pt S Λ t := by
   obtain ⟨z, hΛ, ht⟩ := ho
@@ -867,7 +839,7 @@ private theorem pt_on {n : ℕ} (d : Dat S n) (h : 2 ≤ d.len) {Λ : (E →+* �
   · rw [ht w hw]
     unfold Dat.ptS
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [sat_blo, Multiset.map_map]
+    rw [_root_.UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.blo_sat, Multiset.map_map]
     rfl
 
 private theorem two_blocks {n : ℕ} (d : Dat S n) (h : d.len = 2) (hs : ∀ i, (d.blo i).1 = 2) :
@@ -893,7 +865,6 @@ private theorem form_mem {m : (E →+* ℂ) → Multiset ℂ} {B : BW.Pl E → M
   exact bV_mem b
 
 private theorem fin_two_ne : ∀ i j : Fin 2, i ≠ j → (i = 0 ∧ j = 1) ∨ (i = 1 ∧ j = 0) := by decide
-
 
 private theorem exempt_core (τ₁ τ₂ : Submodule ℂ (LL (mu1 E 2))) (m₁ m₂ : (E →+* ℂ) → Multiset ℂ) (B₁ B₂ : BW.Pl E → Multiset ℂ)
     (smo₁ : ∀ V, IsSummand (mu1 E 2) V → At (mu1 E 2) S V m₁ B₁ → V = τ₁)
@@ -960,7 +931,6 @@ private def step (S : Set (BW.Pl E)) (r : ℕ) (p : ((E →+* ℂ) → Fin r →
     (∀ τ, Λ τ = (Finset.univ.val.map fun i => p.1 τ i + c) + Λ' τ) ∧
     ∀ w ∉ S, t w = ((p.2 w).map fun x : ℂˣ => (x : ℂ) * ((Formalism.UG.qV E w : ℕ) : ℂ) ^ (-c)) + t' w)
 
-
 open Classical in
 private noncomputable def par {r : ℕ} (b : Blo S r) : ((E →+* ℂ) → Fin r → ℂ) × (BW.Pl E → Multiset ℂˣ) :=
   (b.Λ, fun w => if w ∈ S then 0 else b.sat w)
@@ -1006,7 +976,7 @@ private theorem step_key {r s : ℕ} (b : Blo S r) (d : Dat S s) :
       simpa [par] using hΛ τ
     · rw [ptS_cons]
       have := ht w hw
-      simp only [par, if_neg hw] at this
+      simp only [par, ite_eq_right hw] at this
       rw [this, ht' w hw]
       simp
   · rintro ⟨(z : Fin (d.len + 1) → ℂ), rfl, ht⟩
@@ -1015,7 +985,7 @@ private theorem step_key {r s : ℕ} (b : Blo S r) (d : Dat S s) :
     · rw [msOf_cons]
       rfl
     · rw [ht w hw, ptS_cons]
-      simp [par, if_neg hw]
+      simp [par, ite_eq_right hw]
 
 private def Fin' (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (S : Set (BW.Pl E)) (n : ℕ) : Prop :=
   ∀ (ρ : Typ E n) (B : ℝ),
@@ -1369,7 +1339,6 @@ private theorem integ₂ {F : G1 K n × G1 K n → ℂ} (hF : Continuous F) : In
 
 private theorem cont_int {Φ : G1 K n → G1 K n → ℂ} (hΦ : Continuous (Function.uncurry Φ)) :
     Continuous fun x => ∫ k, Φ x k ∂D.ν := by
-  set_option synthInstance.maxHeartbeats 400000 in
     haveI := D.prob
     have := continuous_parametric_integral_of_continuous (μ := D.ν) hΦ (typeFin D).1
     rwa [Measure.restrict_eq_self_of_ae_mem D.supp] at this
@@ -1386,7 +1355,6 @@ private theorem fin_comap : IsFiniteMeasure (Measure.comap (Subtype.val : ↥(D.
 
 private theorem idem_int {Φ : G1 K n → ℂ} (hΦ : Continuous Φ) :
     ∫ h, D.e h * ∫ k, D.e k * Φ (h * k) ∂D.ν ∂D.ν = ∫ k, D.e k * Φ k ∂D.ν := by
-  set_option synthInstance.maxHeartbeats 400000 in
     haveI := D.prob
     have h1 : ∀ᵐ h ∂D.ν, D.e h * ∫ k, D.e k * Φ (h * k) ∂D.ν = ∫ k, D.e h * (D.e (h⁻¹ * k) * Φ k) ∂D.ν :=
       D.supp.mono fun h hh => by
@@ -1445,7 +1413,6 @@ variable (D : TypeDat K n)
 
 private theorem exR (f : CC K n) : ∃ b : CC K n, (∀ g, b g = ∫ k, f (g * k⁻¹) * D.e k ∂D.ν) ∧
     (UpperTheory.ConvolutionTheory.C.IsLeftSmooth f → UpperTheory.ConvolutionTheory.C.IsLeftSmooth b) := by
-  set_option synthInstance.maxHeartbeats 400000 in
     have hU := (typeFin D).1
     have hc : Continuous fun g => ∫ k, f (g * k⁻¹) * D.e k ∂D.ν :=
       cont_int D (Φ := fun g k => f (g * k⁻¹) * D.e k)
@@ -1474,7 +1441,6 @@ private theorem exR (f : CC K n) : ∃ b : CC K n, (∀ g, b g = ∫ k, f (g * k
 
 private theorem exL (f : CC K n) : ∃ c : CC K n, (∀ g, c g = ∫ k, D.e k * f (k⁻¹ * g) ∂D.ν) ∧
     (UpperTheory.ConvolutionTheory.C.IsLeftSmooth f → UpperTheory.ConvolutionTheory.C.IsLeftSmooth c) := by
-  set_option synthInstance.maxHeartbeats 400000 in
     have hU := (typeFin D).1
     have hc : Continuous fun g => ∫ k, D.e k * f (k⁻¹ * g) ∂D.ν :=
       cont_int D (Φ := fun g k => D.e k * f (k⁻¹ * g))
@@ -1516,7 +1482,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.heckify :
     ∀ {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n)) [μ.IsHaarMeasure] (D : TypeDat K n) (a₀ : CC K n), CuspidalProjection.ccStar a₀ = a₀ → UpperTheory.ConvolutionTheory.C.IsLeftSmooth a₀ →
       ∃ a : CC K n, D.Hecke a ∧ CuspidalProjection.ccStar a = a ∧ UpperTheory.ConvolutionTheory.C.IsLeftSmooth a ∧
         ∀ g, a g = ∫ k, ∫ k', D.e k * a₀ (k⁻¹ * g * k'⁻¹) * D.e k' ∂D.ν ∂D.ν := by
-  set_option synthInstance.maxHeartbeats 400000 in
     intro K _ _ n μ _ D a₀ hst hsm
     haveI := D.prob
     obtain ⟨b, hb, hbs⟩ := exR D a₀
@@ -1784,7 +1749,7 @@ private theorem exists_positive_period_line {K : Type} [Field K] [NumberField K]
     rw [e3, zero_sub, norm_neg] at e2
     exact absurd e2 (not_le.2 h2)
   have hinj : Function.Injective T := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro v hv
     by_contra hne
     have hn : ‖v‖ ≠ 0 := norm_ne_zero_iff.2 hne
@@ -1813,7 +1778,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.CixOf", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.FamEx\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.FinsumSum\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.KillEx2\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.KillExempt\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.OneSideX\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ExistsPositivePeriodLine\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PairFacts\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ImportsAlt\npublic import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.CprsMulRight\npublic import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.EvalPowE\nimport Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.ExpForm\npublic import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.FixFAnti\npublic import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.HomogMonomial\npublic import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.OneSide\npublic import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.SepPoly\npublic import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpecAlt\npublic import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.Imports\nimport Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CuspidalMultiplicityOneTotallyComplex\nimport Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ParEx\nimport Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.EvExSub\npublic import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.TwInt\nimport Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspTrBand\nimport Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClass\nimport Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.PolyBdAll\nimport Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SmoothDecay\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
-
 
 open UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.Ci UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cix_of (hK : KernX) (hT : ForAllC fun _ _ _ μ _ _ _ _ _ _ _ _ A A' => TruncCpt μ A A') : CIx :=

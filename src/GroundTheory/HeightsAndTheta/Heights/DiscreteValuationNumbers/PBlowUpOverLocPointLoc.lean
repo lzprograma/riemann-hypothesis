@@ -38,6 +38,62 @@ theorem div_mul_div_mul_cancel_of_ne_zero {F : Type*} [Field F] (a b c w : F) (h
     a / b * (b / c * w) = a / c * w := by
   rw [← mul_assoc, div_mul_div_comm, mul_comm a b, mul_div_mul_left _ _ hb]
 
+theorem isMaximal_comap_blowUpOverLoc_maximalIdeal {O : Type u} [CommRing O] [IsDomain O]
+    {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)]
+    {J : Type} [Fintype J] {P : Ideal (MRing ι O)} [P.IsPrime] {u : J → MRing ι O}
+    [(blowUpOf P u).IsPrime]
+    {W : Ideal (MRing ι O)} (hWp : W.IsPrime) (hPW : P ≤ W)
+    {W' : Ideal (MRing (extIdx ι J) O)} (hW'p : W'.IsPrime) (hbl : blowUpOf P u ≤ W')
+    (hW'W : W'.comap (liftForm (ι := ι) (J := J) (R := O)) = W)
+    (hBR : blowUpOverLoc P W u ≤ blowUpLocRing P u W')
+    (φ : homLocRing (blowUpOf P u) W' ≃+* blowUpLocRing P u W')
+    (hφ : ∀ (d : Option K → ℕ) (F G : MRing (extIdx ι J) O) (hF : IsMultiHomog F d)
+      (hG : IsMultiHomog G d) (hGW : G ∉ W'),
+      (φ ⟨_, Subring.subset_closure ⟨d, F, G, hF, hG, hGW, rfl⟩⟩ : FractionRing (MRing ι O ⧸ P)) =
+        algebraMap (MRing ι O ⧸ P) (FractionRing (MRing ι O ⧸ P)) (blowUpEval P u F) /
+          algebraMap (MRing ι O ⧸ P) (FractionRing (MRing ι O ⧸ P)) (blowUpEval P u G))
+    [IsLocalRing (blowUpLocRing P u W')] :
+    (((IsLocalRing.maximalIdeal (blowUpLocRing P u W')).comap (Subring.inclusion hBR)).comap
+      (algebraMap (homLocRing P W) (blowUpOverLoc P W u))).IsMaximal := by
+  have : (blowUpOf P u).IsPrime := RingHom.ker_isPrime _
+  obtain ⟨hlocT, hunitT⟩ :=
+    HomLocRingIsLocal.proof HomLocRingMem.proof O (Option K) (extIdx ι J) (blowUpOf P u) W' hW'p hbl
+  obtain ⟨hlocA, hunitA⟩ := HomLocRingIsLocal.proof HomLocRingMem.proof O K ι P W hWp hPW
+  let 𝔫 : Ideal (blowUpOverLoc P W u) :=
+    (IsLocalRing.maximalIdeal (blowUpLocRing P u W')).comap (Subring.inclusion hBR)
+  have hle : IsLocalRing.maximalIdeal (homLocRing P W) ≤
+      𝔫.comap (algebraMap (homLocRing P W) (blowUpOverLoc P W u)) := by
+    rintro ⟨z, hz⟩ ha
+    rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff] at ha
+    obtain ⟨b, f, g, hf, hg, hgW, rfl⟩ := (HomLocRingMem.proof O K ι P W hWp hPW z).mp hz
+    have hfW : f ∈ W := by
+      by_contra hfW
+      exact ha ((hunitA b f g hf hg hgW hz).mpr hfW)
+    have hgW' : liftForm (J := J) g ∉ W' := fun h => hgW (by rw [← hW'W]; exact h)
+    have hfW' : liftForm (J := J) f ∈ W' := by rw [← hW'W] at hfW; exact hfW
+    have hlf := isMultiHomog_liftForm (J := J) hf
+    have hlg := isMultiHomog_liftForm (J := J) hg
+    have hz' : algebraMap (MRing (extIdx ι J) O ⧸ blowUpOf P u)
+          (FractionRing (MRing (extIdx ι J) O ⧸ blowUpOf P u)) (Ideal.Quotient.mk _ (liftForm f)) /
+        algebraMap (MRing (extIdx ι J) O ⧸ blowUpOf P u)
+          (FractionRing (MRing (extIdx ι J) O ⧸ blowUpOf P u)) (Ideal.Quotient.mk _ (liftForm g)) ∈
+        homLocRing (blowUpOf P u) W' :=
+      Subring.subset_closure ⟨liftMDeg b, _, _, hlf, hlg, hgW', rfl⟩
+    have hnu : ¬ IsUnit (⟨_, hz'⟩ : homLocRing (blowUpOf P u) W') :=
+      fun h => (hunitT _ _ _ hlf hlg hgW' hz').mp h hfW'
+    have hφz : Subring.inclusion hBR (algebraMap (homLocRing P W) (blowUpOverLoc P W u) ⟨_, hz⟩) =
+        φ ⟨_, hz'⟩ := by
+      apply Subtype.ext
+      rw [hφ _ _ _ hlf hlg hgW', blowUpEval_liftForm, blowUpEval_liftForm]
+      rfl
+    rw [Ideal.mem_comap, Ideal.mem_comap, hφz, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff,
+      isUnit_map_iff]
+    exact hnu
+  have hne : 𝔫.comap (algebraMap (homLocRing P W) (blowUpOverLoc P W u)) ≠ ⊤ :=
+    Ideal.comap_ne_top _ (Ideal.comap_ne_top _ (IsLocalRing.maximalIdeal.isMaximal _).ne_top)
+  rw [le_antisymm (IsLocalRing.le_maximalIdeal hne) hle]
+  infer_instance
+
 theorem BlowUpOverLocPointLoc.proof (hfin : BlowUpOverLocFinite.Statement.{u})
     (hcen : BlowUpOverLocMaxCentre.Statement.{u}) (hinj : BlowUpLocRingInj.Statement.{u}) :
     BlowUpOverLocPointLoc.Statement.{u} := by
@@ -48,48 +104,15 @@ theorem BlowUpOverLocPointLoc.proof (hfin : BlowUpOverLocFinite.Statement.{u})
     iInf₂_le W' ⟨hW'p, hmh, hW'rel, hbl, hW'W.le⟩
   have : (blowUpOf P u).IsPrime := RingHom.ker_isPrime _
   obtain ⟨φ, hφ⟩ := BlowUpLocRingIso.proof O K ι J P u W' hbl
-  obtain ⟨hlocT, hunitT⟩ :=
+  obtain ⟨hlocT, -⟩ :=
     HomLocRingIsLocal.proof HomLocRingMem.proof O (Option K) (extIdx ι J) (blowUpOf P u) W' hW'p hbl
   have : IsLocalRing (blowUpLocRing P u W') := φ.isLocalRing
   have hPW : P ≤ W := le_sup_left.trans hWmin.1.2
   have hWp : W.IsPrime := hWmin.1.1
-  obtain ⟨hlocA, hunitA⟩ := HomLocRingIsLocal.proof HomLocRingMem.proof O K ι P W hWp hPW
   let 𝔫 : Ideal (blowUpOverLoc P W u) :=
     (IsLocalRing.maximalIdeal (blowUpLocRing P u W')).comap (Subring.inclusion hBR)
-
-  have hcomapA : (𝔫.comap (algebraMap (homLocRing P W) (blowUpOverLoc P W u))).IsMaximal := by
-    have hle : IsLocalRing.maximalIdeal (homLocRing P W) ≤
-        𝔫.comap (algebraMap (homLocRing P W) (blowUpOverLoc P W u)) := by
-      rintro ⟨z, hz⟩ ha
-      rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff] at ha
-      obtain ⟨b, f, g, hf, hg, hgW, rfl⟩ := (HomLocRingMem.proof O K ι P W hWp hPW z).mp hz
-      have hfW : f ∈ W := by
-        by_contra hfW
-        exact ha ((hunitA b f g hf hg hgW hz).mpr hfW)
-      have hgW' : liftForm (J := J) g ∉ W' := fun h => hgW (by rw [← hW'W]; exact h)
-      have hfW' : liftForm (J := J) f ∈ W' := by rw [← hW'W] at hfW; exact hfW
-      have hlf := isMultiHomog_liftForm (J := J) hf
-      have hlg := isMultiHomog_liftForm (J := J) hg
-      have hz' : algebraMap (MRing (extIdx ι J) O ⧸ blowUpOf P u)
-            (FractionRing (MRing (extIdx ι J) O ⧸ blowUpOf P u)) (Ideal.Quotient.mk _ (liftForm f)) /
-          algebraMap (MRing (extIdx ι J) O ⧸ blowUpOf P u)
-            (FractionRing (MRing (extIdx ι J) O ⧸ blowUpOf P u)) (Ideal.Quotient.mk _ (liftForm g)) ∈
-          homLocRing (blowUpOf P u) W' :=
-        Subring.subset_closure ⟨liftMDeg b, _, _, hlf, hlg, hgW', rfl⟩
-      have hnu : ¬ IsUnit (⟨_, hz'⟩ : homLocRing (blowUpOf P u) W') :=
-        fun h => (hunitT _ _ _ hlf hlg hgW' hz').mp h hfW'
-      have hφz : Subring.inclusion hBR (algebraMap (homLocRing P W) (blowUpOverLoc P W u) ⟨_, hz⟩) =
-          φ ⟨_, hz'⟩ := by
-        apply Subtype.ext
-        rw [hφ _ _ _ hlf hlg hgW', blowUpEval_liftForm, blowUpEval_liftForm]
-        rfl
-      rw [Ideal.mem_comap, Ideal.mem_comap, hφz, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff,
-        isUnit_map_iff]
-      exact hnu
-    have hne : 𝔫.comap (algebraMap (homLocRing P W) (blowUpOverLoc P W u)) ≠ ⊤ :=
-      Ideal.comap_ne_top _ (Ideal.comap_ne_top _ (IsLocalRing.maximalIdeal.isMaximal _).ne_top)
-    rw [le_antisymm (IsLocalRing.le_maximalIdeal hne) hle]
-    infer_instance
+  have hcomapA : (𝔫.comap (algebraMap (homLocRing P W) (blowUpOverLoc P W u))).IsMaximal :=
+    isMaximal_comap_blowUpOverLoc_maximalIdeal hWp hPW hW'p hbl hW'W hBR φ hφ
   obtain ⟨hfinite, -⟩ := hfin O K ι J P n hP N u hu hu' c x hx hxP W hWmin hWrel
   have h𝔫 : 𝔫.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap _ (Algebra.IsIntegral.isIntegral) 𝔫 hcomapA
   refine ⟨hBR, 𝔫, h𝔫, ?_⟩

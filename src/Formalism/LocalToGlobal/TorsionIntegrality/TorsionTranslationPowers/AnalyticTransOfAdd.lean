@@ -86,7 +86,7 @@ namespace Formalism.L2.Th1.E
 alias ptOfZero := _root_.Formalism.L2.Th1.E.PtOfZero_of
 alias wpBridge := _root_.Formalism.L2.Th1.E.AnaSys.wpBridge
 alias transWpBridge := _root_.Formalism.L2.Th1.E.AnaSys.transWpBridge
-theorem analyticSys : AnalyticSys := AnalyticSys_of transWpBridge
+theorem analyticSys : AnalyticSys := AnalyticSys_of
 theorem ptOfInt_of_add (hA : PtOfAdd) : PtOfInt := PtOfInt_of hA ptOfZero _root_.Formalism.L2.Th1.E.torsion_integral
 theorem kernelPtInt_of_add (hA : PtOfAdd) : KernelPtInt := KernelPtInt_of (ptOfInt_of_add hA)
 theorem cm4Int_of_add (hA : PtOfAdd) : CMIntegrality := cm_integrality_of_torsion_points (ptOfInt_of_add hA)

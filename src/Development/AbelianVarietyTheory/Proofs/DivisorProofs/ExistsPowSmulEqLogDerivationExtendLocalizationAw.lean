@@ -44,8 +44,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 open GlobalTheory.LogDerProj
 
-set_option autoImplicit false
-
 namespace GlobalTheory.LogDerProj
 
 theorem exists_pow_smul_eq_res : ∀ {k R S : Type} [Field k] [CommRing R] [CommRing S] [Algebra R S] (f : R)

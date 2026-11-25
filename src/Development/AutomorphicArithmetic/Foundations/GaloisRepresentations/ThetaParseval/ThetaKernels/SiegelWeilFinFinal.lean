@@ -1,1658 +1,854 @@
 module
 
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousCjK
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnipotentFirstMatrix
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.IsFirstChernFamily
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LiftedSchrodingerDatum
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzLeftInvK
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.MemStabiliserIffFrameLowerBlock
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilActCut
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadMatrixLowerBlockZero
-public import Mathlib.Analysis.CStarAlgebra.Classes
-public import Mathlib.Analysis.InnerProductSpace.Basic
-public import Mathlib.MeasureTheory.Group.FundamentalDomain
-public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarMeasureSplitExactSequence
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PadZeroMemNilradical
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.AbsConvK
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzEqFlatK
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.FrameDil
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopMChar
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKsplitSplitP
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.IncMTranspose
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilAtopMainLe
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.CBDM
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContSingle
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecondOrbitSectionIntegral
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecondOrbitBijection
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.ContinuousChr
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinSecondTerm
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.BlockDiagonalPreservesFormIff
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinTermLeftInvariant
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalCoordinates.RationalCoordinateCountability.ContinuousFrameUM
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContinuousCA
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LamMapK
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalCoordinates.RationalCoordinateCountability.CountableProdSub
-public import Mathlib.Analysis.Matrix.MeasurableSpace
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.MeasurableSh
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousPhzK
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.UnitsBorelSpace.BorelSpaceDoubledGroup
-public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.Exch
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.BaseKnownTheoremsS
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinLt
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.AdelicHomeomorphisms.IsTopologicalGroupG2
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame
-import Formalism.LocalToGlobal.IndefiniteReal.PHeisFC
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EpsEqK
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKunfSec
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled
-import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopRelPf
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopStepMA
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopStepMVal
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdPlace
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.DZTranspose
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepMA
-import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactOfUnits
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ExistsSigmaNe
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PiMapConst
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.WMUnitary
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKawayDecG
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnipotentNilpotentMulEqZero
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalCoordinates.RationalCoordinateCountability.VaddInvBotProd
-import Mathlib.Topology.Separation.CompletelyRegular
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKfourNA
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKfourW
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicFourierRealisesWeylElement
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilThetadictAssemble
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianCovolumeFormula
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.MeasProps
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TupleSpaceCovolumeFormula
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSchwartzSums.SchwartzPolyGauss
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSplitting.SplitP
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnipotentBorelTuples.TranslationInvariantFunctionalHaar
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.VacuumIwasawa.FrameLin
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylIntegralCovariance.IntegralCovGen
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylIntegralCovariance.RpSmulLeft
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.CovolUnique
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.DictAsm
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.Height
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.HolValueAtConstMulCpow
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.PureGenSubFock
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.RelAlg
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.SdEx
+public import GroundTheory.AutomorphicForms.FourierWhittaker.IsAddFundamentalDomainImageOfMapVecLattice
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixCoord
+public import GroundTheory.HeightsAndTheta.Theta.AdelicFourier
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRealisedOnAdelicSchwartzWeylFourier
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DetSqNormEqHermitianBlockFormula
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import Development.AutomorphicSpectrum.Proofs.TwistedProofs.ExistsAdelePiInf
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.FinIndex
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HolomorphicTheta.HolomorphicAverageUniform
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilStandard.SiegelWeilStdOf
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.VacuumGeneratesPolynomials
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.HolLeadB
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.SplitB
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SiegelSetUnitary
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.VolImageMulVec
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
 
--- The statements used here (`CoefData`, `fc`, `latHaar`, ...) are phrased with `instMeasMat`;
--- prefer it over `GJMatrix.measurableSpace_matrix`.
-attribute [local instance high] Formalism.DoubleCosetMeasures.instMeasMat
-
--- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LocCompactNAK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzJLeftInvK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.IndepDomK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadZeroMemUnipotent, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiTContPerK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.FrameDilK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PtExK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CLawExK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousThK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.HandsCoordkTau, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRatVK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CoordsCK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousABK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRationalVectors, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinSecondTermExpand, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnfK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecUnfOfCLawK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilActTop, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinFinal
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LocCompactNAK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LocCompactNAK", "h": "module\n\nimport Mathlib\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousCjK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnipotentFirstMatrix\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.AdelicHomeomorphisms.IsTopologicalGroupG2\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.IsFirstChernFamily\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Formalism.LocalToGlobal.IndefiniteReal.PHeisFC\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
+/-! # SiegelWeilFinFinal: Standard Siegel-Weil formula (`Fin.siegelWeilStd_k`) across split and non-split places. -/
 @[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C1
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-theorem isClosed_nA_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) : IsClosed (nA σ d.Y d.b : Set (Matrix (Fin d.n) (Fin d.n) (AE F E))) := by
-  obtain ⟨ε, hε⟩ := d.ok.frame.1
-  have hc : Continuous (cA σ : AE F E → AE F E) := IsModuleTopology.continuous_of_linearMap (cA σ).toLinearMap
-  have e : (nA σ d.Y d.b : Set (Matrix (Fin d.n) (Fin d.n) (AE F E))) =
-      {β | βᵀ = -((((ε : ℤ) : AE F E)) • β.map (cA σ))} := Set.ext fun β => kunf.mem_nA_iff hε β
-  rw [e]
-  exact isClosed_eq continuous_id.matrix_transpose (((continuous_id.matrix_map hc).const_smul (((ε : ℤ) : AE F E))).neg)
-instance locCompact_nA_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) : LocallyCompactSpace (nA σ d.Y d.b) :=
-  haveI : LocallyCompactSpace (Matrix (Fin d.n) (Fin d.n) (AE F E)) :=
-    inferInstanceAs (LocallyCompactSpace (Fin d.n → Fin d.n → AE F E))
-  (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.isClosed_nA_k d).isClosedEmbedding_subtypeVal.locallyCompactSpace
-theorem coef_periodic_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) {nb : nA σ d.Y d.b → d.G} (hN : IsNMap d.b nb) (φ : d.G → ℂ)
-    (hφ : ∀ γ ∈ rat2 σ d.Y, ∀ g, φ (γ * g) = φ g) (T : nF σ d.Y d.b) (g : d.G) (β₀ : nF σ d.Y d.b)
-    (β : nA σ d.Y d.b) :
-    φ (nb (β₀ +ᵥ β) * g) * d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T.1.1 * (β₀ +ᵥ β).1)))) =
-      φ (nb β * g) * d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T.1.1 * β.1)))) := by
-  have e1 : (β₀ +ᵥ β : nA σ d.Y d.b) = β₀.1 + β := rfl
-  have e2 : ((β₀.1 + β : nA σ d.Y d.b) : Matrix (Fin d.n) (Fin d.n) (AE F E)) = β₀.1.1 + β.1 := rfl
-  rw [e1, kunf.nb_add hN, mul_assoc, hφ _ (kunf.nb_rat hN β₀.2), e2, Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add,
-    AddChar.map_add_eq_mul, AddChar.map_neg_eq_inv, kunf.psi_rat d.ok.good.std T β₀, inv_one, one_mul]
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} {L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d}
-theorem cj_mp_k {nb : nA σ d.Y d.b → d.G} {lam : Measure (nA σ d.Y d.b)} {𝓖 : Set (nA σ d.Y d.b)}
-    (h : CoefData (σ := σ) (Y := d.Y) d.b nb lam 𝓖) {uM : (Fin L.n → AE F E) → d.G} {ν : Measure (Fin L.n → AE F E)}
-    {𝓤 : Set (Fin L.n → AE F E)} (hU : L.UData uM ν 𝓤) {v : Fin L.n → AE F E} (hv : v ∈ L.ratV) :
-    MeasurePreserving (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 v) lam lam := by
-  have := h.2.1
-  refine ⟨(_root_.PositivityTheory.SiegelWeilFormula.Act.C1.continuous_cj_k hU h.1 v).measurable, ?_⟩
-  have hl := latHaar (nA σ d.Y d.b) lam (nF σ d.Y d.b) (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cjE_k hU h.1 v) (fun x => ⟨fun hx => ?_, fun hx => _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_rat_k hU h.1 hv hx⟩)
-    𝓖 h.2.2.1 (by rw [h.2.2.2]; exact one_ne_zero) (by rw [h.2.2.2]; exact ENNReal.one_ne_top)
-  · exact hl
-  · have := _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_rat_k hU h.1 (neg_mem hv) hx
-    rwa [show _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 (-v) (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cjE_k hU h.1 v x) = x from _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_inv_k hU h.1 v x] at this
-theorem fc_conj_k {nb : nA σ d.Y d.b → d.G} {lam : Measure (nA σ d.Y d.b)} {𝓖 : Set (nA σ d.Y d.b)}
-    (h : CoefData (σ := σ) (Y := d.Y) d.b nb lam 𝓖) {uM : (Fin L.n → AE F E) → d.G} {ν : Measure (Fin L.n → AE F E)}
-    {𝓤 : Set (Fin L.n → AE F E)} (hU : L.UData uM ν 𝓤) (φ : d.G → ℂ) (hφ : ∀ γ ∈ rat2 σ d.Y, ∀ g, φ (γ * g) = φ g)
-    {T : nF σ d.Y d.b} {T' : nF σ L.Y L.b} (hT : L.IsSub T T') {u : Fin L.n → AE F E} (hu : u ∈ L.ratV) (g : d.G) :
-    fc d.B.ψ d.b nb lam 𝓖 φ T (uM u * g) = fc d.B.ψ d.b nb lam 𝓖 φ T g := by
-  have := h.2.1
-  have : VAddInvariantMeasure (nF σ d.Y d.b) (nA σ d.Y d.b) lam := ⟨fun c s _ => measure_preimage_add lam c.1 s⟩
-  let H : nA σ d.Y d.b → ℂ := fun β =>
-    φ (nb β * g) * d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T.1.1 * β.1))))
-  have e1 : ∀ β, φ (nb β * (uM u * g)) * d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T.1.1 * β.1)))) =
-      H (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 u β) := by
-    intro β
-    have e : nb β * (uM u * g) = uM u * (nb (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 u β) * g) := by rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C1.nb_cj_k hU h.1 u β]; group
-    simp only [H]
-    rw [e, hφ _ (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.uM_rat_k hU hu), _root_.PositivityTheory.SiegelWeilFormula.Act.C1.trace_cj_k hU h.1 hT]
-  have hme : MeasurableEmbedding (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 u) := (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cjE_k hU h.1 u).toHomeomorph.measurableEmbedding
-  have himg : (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 u) '' 𝓖 = (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 (-u)) ⁻¹' 𝓖 := by
-    ext y
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      show _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 (-u) (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 u x) ∈ 𝓖
-      rwa [_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_inv_k]
-    · intro hy
-      refine ⟨_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 (-u) y, hy, ?_⟩
-      simpa using _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_inv_k hU h.1 (-u) y
-  have hfd : IsAddFundamentalDomain (nF σ d.Y d.b) ((_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 (-u)) ⁻¹' 𝓖) lam := by
-    refine h.2.2.1.preimage_of_equiv (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_mp_k h hU (neg_mem hu)).quasiMeasurePreserving
-      (e := fun γ => ⟨_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 u γ.1, _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_rat_k hU h.1 hu γ.2⟩) ⟨fun γ γ' hγ => ?_, fun γ => ?_⟩ fun γ x => ?_
-    · have := congrArg (fun y : nF σ d.Y d.b => _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 (-u) y.1) hγ
-      simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_inv_k] at this
-      exact Subtype.ext this
-    · refine ⟨⟨_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 (-u) γ.1, _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_rat_k hU h.1 (neg_mem hu) γ.2⟩, Subtype.ext ?_⟩
-      simpa using _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_inv_k hU h.1 (-u) γ.1
-    · show _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 (-u) ((_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 u γ.1) + x) = γ.1 + _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_k hU h.1 (-u) x
-      rw [map_add (f := _), _root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_inv_k]
-  unfold fc
-  simp_rw [e1]
-  rw [← (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.cj_mp_k h hU hu).setIntegral_image_emb hme H 𝓖, himg,
-    hfd.setIntegral_eq h.2.2.1 (fun β₀ β => _root_.PositivityTheory.SiegelWeilFormula.Act.C1.coef_periodic_k d h.1 φ hφ T g β₀ β)]
-end PositivityTheory.SiegelWeilFormula.Act.C1
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LocCompactNAK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzJLeftInvK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzJLeftInvK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LiftedSchrodingerDatum\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzLeftInvK\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.MemStabiliserIffFrameLowerBlock\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C1
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ}
-theorem range_or_k (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) (u : Fin d.n ⊕ Fin d.n) :
-    (∃ u', Sum.map L.em L.em u' = u) ∨ u ∈ ({Sum.inl L.i₀, Sum.inr L.i₀} : Set (Fin d.n ⊕ Fin d.n)) := by
-  rcases u with a | a <;>
-  · by_cases ha : a = L.i₀
-    · right; simp [ha]
-    · obtain ⟨a', rfl⟩ := (L.rng a).1 ha
-      left; first | exact ⟨Sum.inl a', rfl⟩ | exact ⟨Sum.inr a', rfl⟩
-theorem j_par_k (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) {p : G2 σ L.Y} (hp : p ∈ par2 σ L.Y) : L.j p ∈ par2 σ d.Y := by
-  rw [ComplexParameterFamilyContinuity.mem_stabiliser_iff_frame_lower_block d.ok.frame]
-  rw [ComplexParameterFamilyContinuity.mem_stabiliser_iff_frame_lower_block L.sd.ok.frame] at hp
-  ext a c
-  simp only [Matrix.toBlocks₂₁, Matrix.of_apply, Matrix.zero_apply]
-  rcases _root_.PositivityTheory.SiegelWeilFormula.Act.C1.range_or_k L (Sum.inr a) with ⟨u', hu'⟩ | hu
-  · rcases _root_.PositivityTheory.SiegelWeilFormula.Act.C1.range_or_k L (Sum.inl c) with ⟨v', hv'⟩ | hv
-    · rcases u' with a' | a'
-      · simp at hu'
-      rcases v' with c' | c'
-      · have h1 := congrFun (congrFun (L.j_in p) (Sum.inr a')) (Sum.inl c')
-        simp only [Matrix.submatrix_apply, Sum.map_inr, Sum.map_inl] at h1
-        simp only [Sum.map_inr, Sum.inr.injEq] at hu'
-        simp only [Sum.map_inl, Sum.inl.injEq] at hv'
-        rw [← hu', ← hv', h1]
-        exact congrFun (congrFun hp a') c'
-      · simp at hv'
-    · rw [(L.j_out p _ hv (Sum.inr a)).2]
-      simp
-  · rw [(L.j_out p _ hu (Sum.inl c)).1]
-    simp
-theorem j_rat_k (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) {p : G2 σ L.Y} (hp : p ∈ rat2 σ L.Y) : L.j p ∈ rat2 σ d.Y := by
-  obtain ⟨g, hg⟩ := hp
-  have hm : mat2 p = incM F g.1 := (congrArg Units.val hg).symm
-  have hL : inFrame L.b p = incM F ((L.b⁻¹).1 * g.1 * L.b.1) := by
-    rw [kunf.incM_mul', kunf.incM_mul', ← hm]; rfl
-  let M' := (L.b⁻¹).1 * g.1 * L.b.1
-  let M : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) E := fun u v =>
-    if hu : ∃ u', Sum.map L.em L.em u' = u then
-      if hv : ∃ v', Sum.map L.em L.em v' = v then M' hu.choose hv.choose else (1 : Matrix _ _ E) u v
-    else (1 : Matrix _ _ E) u v
-  refine kunf.rat_of_inFrame (b := d.b) (M := M) ?_
-  ext u v
-  show inFrame d.b (L.j p) u v = inclR (F := F) (AF F) (M u v)
-  dsimp only [M]
-  by_cases hu : ∃ u', Sum.map L.em L.em u' = u
-  · by_cases hv : ∃ v', Sum.map L.em L.em v' = v
-    · rw [dite_eq_left hu, dite_eq_left hv]
-      have h1 := congrFun (congrFun (L.j_in p) hu.choose) hv.choose
-      simp only [Matrix.submatrix_apply, hu.choose_spec, hv.choose_spec] at h1
-      rw [h1, hL]
-      rfl
-    · rw [dite_eq_left hu, dite_eq_right hv]
-      have hv' := (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.range_or_k L v).resolve_left hv
-      rw [(L.j_out p _ hv' u).2]
-      simp [Matrix.one_apply, apply_ite]
-  · rw [dite_eq_right hu]
-    have hu' := (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.range_or_k L u).resolve_left hu
-    rw [(L.j_out p _ hu' v).1]
-    simp [Matrix.one_apply, apply_ite]
-theorem phz_j_leftInv_k (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) {s₁ : ℂ} {f : d.G → ℂ} (hf : IsSec d.K d.χ s₁ f) (z : ℂ) (x : d.G) :
-    GlobalTheory.AutomorphicL2Unitary.LeftInv (par2 σ L.Y ⊓ rat2 σ L.Y)
-      (fun g : G2 σ L.Y => ((d.Ht (L.j g * x) : ℝ) : ℂ) ^ (z - s₁) * f (L.j g * x)) := by
-  intro p hp g
-  show _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (L.j (p * g) * x) = _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (L.j g * x)
-  rw [map_mul, mul_assoc]
-  exact _root_.PositivityTheory.SiegelWeilFormula.Act.C1.phz_leftInv_k d hf z (L.j p) ⟨_root_.PositivityTheory.SiegelWeilFormula.Act.C1.j_par_k L hp.1, _root_.PositivityTheory.SiegelWeilFormula.Act.C1.j_rat_k L hp.2⟩ _
-end PositivityTheory.SiegelWeilFormula.Act.C1
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzJLeftInvK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.IndepDomK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.IndepDomK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilActCut\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LocCompactNAK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzJLeftInvK\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzLeftInvK\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnipotentFirstMatrix\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousCjK\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-namespace PositivityTheory.SiegelWeilFormula.Act
-theorem indepDom_k : _root_.PositivityTheory.SiegelWeilFormula.Act.IndepDom_k := by
-  intro F E _ _ _ _ _ σ d L s₁ f hf z
-  have hE := _root_.PositivityTheory.SiegelWeilFormula.Act.C1.eis_leftInv_k d hf z
-  refine ⟨fun nb lam 𝓖 𝓖₀ h h₀ uM ν 𝓤 𝓤₀ hU hU₀ T T' hT x => ?_, fun nb' lam' 𝓖' 𝓖'₀ h' h'₀ T' x => ?_⟩
-  · have step1 : ∀ g, fc d.B.ψ d.b nb lam 𝓖 (d.eis f s₁ z) T g = fc d.B.ψ d.b nb lam 𝓖₀ (d.eis f s₁ z) T g :=
-      fun g => _root_.PositivityTheory.SiegelWeilFormula.Act.C1.fc_dom_k d h h₀ _ hE T g
-    simp_rw [step1]
-    have := hU.2.1
-    have : VAddInvariantMeasure L.ratV (Fin L.n → AE F E) ν := ⟨fun c s _ => measure_preimage_add ν c.1 s⟩
-    have : Countable L.ratV := by
-      have : Countable E := (Module.finBasis ℚ E).equivFun.injective.countable
-      refine Function.Surjective.countable (f := fun v : Fin L.n → E =>
-        (⟨GlobalTheory.ThK.incV F v, AddSubgroup.subset_closure ⟨v, rfl⟩⟩ : L.ratV)) fun u => ?_
-      obtain ⟨v, hv⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C1.ratV_inc_k u.2
-      exact ⟨v, Subtype.ext hv.symm⟩
-    refine hU.2.2.1.setIntegral_eq hU₀.2.2.1 fun u₀ u => ?_
-    show fc d.B.ψ d.b nb lam 𝓖₀ (d.eis f s₁ z) T (uM (u₀.1 + u) * x) = fc d.B.ψ d.b nb lam 𝓖₀ (d.eis f s₁ z) T (uM u * x)
-    rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C1.uM_add_k hU, mul_assoc, _root_.PositivityTheory.SiegelWeilFormula.Act.C1.fc_conj_k h₀ hU _ hE hT u₀.2]
-  · exact _root_.PositivityTheory.SiegelWeilFormula.Act.C1.fc_dom_k L.sd h' h'₀ _ (GlobalTheory.Eis.leftInv_cosetSum (_root_.PositivityTheory.SiegelWeilFormula.Act.C1.phz_j_leftInv_k L hf z x)) T' 1
-end PositivityTheory.SiegelWeilFormula.Act
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.IndepDomK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadZeroMemUnipotent =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadZeroMemUnipotent", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadMatrixLowerBlockZero\npublic import Mathlib.Analysis.CStarAlgebra.Classes\npublic import Mathlib.Analysis.InnerProductSpace.Basic\npublic import Mathlib.MeasureTheory.Group.FundamentalDomain\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarMeasureSplitExactSequence\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PadZeroMemNilradical\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EpsEqK\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C4
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d)
-def padZeroAlt (β : Matrix (Fin L.n) (Fin L.n) (AE F E)) : Matrix (Fin d.n) (Fin d.n) (AE F E) :=
-  fun i k => if h : (∃ a, L.em a = i) ∧ ∃ c, L.em c = k then β h.1.choose h.2.choose else 0
-theorem pad_zero_embedding (β : Matrix (Fin L.n) (Fin L.n) (AE F E)) (a c : Fin L.n) : _root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt L β (L.em a) (L.em c) = β a c := by
-  have h : (∃ a', L.em a' = L.em a) ∧ ∃ c', L.em c' = L.em c := ⟨⟨a, rfl⟩, ⟨c, rfl⟩⟩
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt, dif_pos h]
-  rw [L.inj h.1.choose_spec, L.inj h.2.choose_spec]
-theorem pad_zero_outside (β : Matrix (Fin L.n) (Fin L.n) (AE F E)) (i k : Fin d.n)
-    (h : ¬ ((∃ a, L.em a = i) ∧ ∃ c, L.em c = k)) : _root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt L β i k = 0 := by
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt, dif_neg h]
-theorem pad_zero_cases (β : Matrix (Fin L.n) (Fin L.n) (AE F E)) (P : AE F E → AE F E → Prop) (h0 : P 0 0)
-    (h1 : ∀ a c, P (β a c) (β c a)) (i k : Fin d.n) : P (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt L β i k) (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt L β k i) := by
-  by_cases h : (∃ a, L.em a = i) ∧ ∃ c, L.em c = k
-  · obtain ⟨⟨a, rfl⟩, ⟨c, rfl⟩⟩ := h
-    rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_embedding, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_embedding]
-    exact h1 a c
-  · rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_outside L β i k h, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_outside L β k i (fun h' => h ⟨h'.2, h'.1⟩)]
-    exact h0
-theorem eps_common_k : ∃ ε : ℤˣ, d.b.1ᵀ * dbl d.Y.J * d.b.1.map σ = Matrix.fromBlocks 0 1 (((ε : ℤ) : E) • 1) 0 ∧
-    L.b.1ᵀ * dbl L.Y.J * L.b.1.map σ = Matrix.fromBlocks 0 1 (((ε : ℤ) : E) • 1) 0 := by
-  obtain ⟨⟨ε, hε⟩, -⟩ := d.ok.frame
-  obtain ⟨⟨ε', hε'⟩, -⟩ := L.ok.frame
-  have hee : ε = ε' := _root_.PositivityTheory.SiegelWeilFormula.Afc.eps_eq_k L hε hε'
-  subst hee
-  exact ⟨ε, hε, hε'⟩
-theorem pad_zero_mem_unipotent (β : nA σ L.Y L.b) : _root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt L β.1 ∈ nA σ d.Y d.b := by
-  obtain ⟨ε, hε, hε'⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C4.eps_common_k L
-  rw [kunf.mem_nA_iff hε]
-  have hβ := (kunf.mem_nA_iff hε' β.1).1 β.2
-  ext i k
-  simp only [Matrix.transpose_apply, Matrix.neg_apply, Matrix.smul_apply, Matrix.map_apply]
-  refine _root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_cases L β.1 (fun u v => v = -((((ε : ℤ) : AE F E)) • cA σ u)) (by simp) (fun a c => ?_) i k
-  have := congrFun (congrFun hβ a) c
-  simpa only [Matrix.transpose_apply, Matrix.neg_apply, Matrix.smul_apply, Matrix.map_apply] using this
-def padN_k : nA σ L.Y L.b →+ nA σ d.Y d.b where
-  toFun β := ⟨_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt L β.1, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_mem_unipotent L β⟩
-  map_zero' := by
-    apply Subtype.ext
-    ext i k
-    refine _root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_cases L (0 : nA σ L.Y L.b).1 (fun u _ => u = (0 : Matrix (Fin d.n) (Fin d.n) (AE F E)) i k) rfl
-      (fun a c => rfl) i k
-  map_add' β β' := by
-    apply Subtype.ext
-    ext i k
-    by_cases h : (∃ a, L.em a = i) ∧ ∃ c, L.em c = k
-    · obtain ⟨⟨a, rfl⟩, ⟨c, rfl⟩⟩ := h
-      simp only [AddSubgroup.coe_add, Matrix.add_apply, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_embedding]
-    · simp only [AddSubgroup.coe_add, Matrix.add_apply, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_outside L _ i k h, add_zero]
-theorem prj_padN_k (β : nA σ L.Y L.b) : _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padN_k L β) = β := by
-  apply Subtype.ext
-  ext a c
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_val_k, Matrix.submatrix_apply]
-  exact _root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_embedding L β.1 a c
-theorem continuous_padN_k : Continuous (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padN_k L) := by
-  refine Continuous.subtype_mk ?_ _
-  refine continuous_pi fun i => continuous_pi fun k => ?_
-  by_cases h : (∃ a, L.em a = i) ∧ ∃ c, L.em c = k
-  · obtain ⟨⟨a, rfl⟩, ⟨c, rfl⟩⟩ := h
-    simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_embedding]
-    exact (continuous_apply c).comp ((continuous_apply a).comp continuous_subtype_val)
-  · simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.pad_zero_outside L _ i k h]
-    exact continuous_const
-theorem prj_nF_k {β : nA σ d.Y d.b} (h : β ∈ nF σ d.Y d.b) : _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β ∈ nF σ L.Y L.b := by
-  obtain ⟨T, hT⟩ := kunf.mem_nF_iff.1 h
-  refine kunf.mem_nF_iff.2 ⟨T.submatrix L.em L.em, ?_⟩
-  rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_val_k, hT]
-  rfl
-theorem padN_nF_k {β : nA σ L.Y L.b} (h : β ∈ nF σ L.Y L.b) : _root_.PositivityTheory.SiegelWeilFormula.Act.C4.padN_k L β ∈ nF σ d.Y d.b := by
-  obtain ⟨T, hT⟩ := kunf.mem_nF_iff.1 h
-  refine kunf.mem_nF_iff.2 ⟨Matrix.of fun i k => if h : (∃ a, L.em a = i) ∧ ∃ c, L.em c = k then
-    T h.1.choose h.2.choose else 0, ?_⟩
-  ext i k
-  show _root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt L β.1 i k = _
-  by_cases h : (∃ a, L.em a = i) ∧ ∃ c, L.em c = k
-  · rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt, dif_pos h, hT]
-    simp only [incM, Matrix.map_apply, Matrix.of_apply, dif_pos h]
-  · rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padZeroAlt, dif_neg h]
-    simp only [incM, Matrix.map_apply, Matrix.of_apply, dif_neg h, map_zero]
-theorem fiber_k {nb : nA σ d.Y d.b → d.G} {lam : Measure (nA σ d.Y d.b)} {𝓖 : Set (nA σ d.Y d.b)}
-    (hc : CoefData (σ := σ) (Y := d.Y) d.b nb lam 𝓖) {nb' : nA σ L.Y L.b → G2 σ L.Y} {lam' : Measure (nA σ L.Y L.b)}
-    {𝓖' : Set (nA σ L.Y L.b)} (hc' : CoefData (σ := σ) (Y := L.Y) L.b nb' lam' 𝓖')
-    (G : nA σ L.Y L.b → ℂ) (hG : Continuous G) (hper : ∀ β₀ ∈ nF σ L.Y L.b, ∀ β', G (β₀ + β') = G β') :
-    ∫ β in 𝓖, G (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β) ∂lam = ∫ β' in 𝓖', G β' ∂lam' := by
-  obtain ⟨ε, hε, hε'⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C4.eps_common_k L
-  obtain ⟨h1, h2⟩ := nA_inst d.n d.Y d.b ε hε
-  obtain ⟨h3, h4⟩ := nA_inst L.n L.Y L.b ε hε'
-  exact _root_.GlobalTheory.CompanionTheory.FiberInt.integral_comp_eq (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L) (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.padN_k L) (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.continuous_prj_k L) (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.continuous_padN_k L) (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_padN_k L)
-    (nF σ d.Y d.b) (nF σ L.Y L.b) (countable_nF _ _ _) (countable_nF _ _ _) (fun γ hγ => _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_nF_k L hγ)
-    (fun γ hγ => _root_.PositivityTheory.SiegelWeilFormula.Act.C4.padN_nF_k L hγ) lam lam' hc.2.1 hc'.2.1 𝓖 𝓖' hc.2.2.1 hc.2.2.2 hc'.2.2.1 hc'.2.2.2 G hG
-    (fun γ hγ x => hper γ hγ x)
-end PositivityTheory.SiegelWeilFormula.Act.C4
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadZeroMemUnipotent =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiTContPerK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiTContPerK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilActCut\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.AbsConvK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadZeroMemUnipotent\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzEqFlatK\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKunfSec\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.AdelicHomeomorphisms.IsTopologicalGroupG2\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadMatrixLowerBlockZero\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C4
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d)
-instance countableCs_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) : Countable (_root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d) := by
-  have : Countable (rat2 σ d.Y) := GlobalTheory.EisBL.DoubledGroupTopology.countable_rational_points_doubled σ d.Y
-  infer_instance
-theorem cont_E_k {s₁ z : ℂ} {f : d.G → ℂ} (hf : IsSec d.K d.χ s₁ f)
-    (hmaj : ∀ C : Set d.G, IsCompact C → ∃ u : GlobalTheory.Eis.Cosets (par2 σ d.Y) (rat2 σ d.Y) → ℝ, Summable u ∧ ∀ g ∈ C, ∀ q,
-      ‖GlobalTheory.Eis.term (par2 σ d.Y) (rat2 σ d.Y) (fun x => ((d.Ht x : ℝ) : ℂ) ^ (z - s₁) * f x) g q‖ ≤ u q)
-    {nb' : nA σ L.Y L.b → G2 σ L.Y} (hnb' : IsNMap L.b nb') (x : d.G) :
-    Continuous fun β' : nA σ L.Y L.b => ∑' q' : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' * nb' β') * x) := by
-  obtain ⟨e, he⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C4.cos_bij_pf_k L
-  have hphz : Continuous (_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z) := by
-    rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.phz_eq_flat_k]
-    exact continuous_flat hf.cont (_root_.PositivityTheory.SiegelWeilFormula.kunf.continuous_a_k d) (_root_.PositivityTheory.SiegelWeilFormula.kunf.a_pos_k d) z
-  have hg : Continuous fun β' : nA σ L.Y L.b => L.j (nb' β') * x :=
-    (L.cont.comp (kunf.continuous_nb hnb')).mul continuous_const
-  have hterm : ∀ q' β', _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' * nb' β') * x) =
-      _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k (e q').1 * (L.j (nb' β') * x)) := by
-    intro q' β'
-    obtain ⟨p₀, hp₀, hr₀, hrep⟩ := he q'
-    rw [hrep, mul_assoc, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.phz_rat_k hf z hp₀ hr₀, map_mul, mul_assoc]
-  refine continuous_iff_continuousAt.2 fun β₀ => ?_
-  obtain ⟨C, hCc, hC⟩ := exists_compact_mem_nhds (L.j (nb' β₀) * x)
-  obtain ⟨u, hu, hbd⟩ := hmaj C hCc
-  have hN : (fun β' : nA σ L.Y L.b => L.j (nb' β') * x) ⁻¹' C ∈ 𝓝 β₀ := hg.continuousAt.preimage_mem_nhds hC
-  refine (continuousOn_tsum (u := u ∘ Subtype.val ∘ e) (fun q' => ?_) (hu.comp_injective
-    (Subtype.val_injective.comp e.injective)) (fun q' β' hβ' => ?_)).continuousAt hN
-  · exact (hphz.comp ((L.cont.comp (continuous_const.mul (kunf.continuous_nb hnb'))).mul continuous_const)).continuousOn
-  · rw [hterm]
-    exact hbd _ hβ' _
-theorem per_E_k {s₁ z : ℂ} {f : d.G → ℂ} (hf : IsSec d.K d.χ s₁ f) {nb' : nA σ L.Y L.b → G2 σ L.Y} (hnb' : IsNMap L.b nb')
-    (x : d.G) (β₀ : nA σ L.Y L.b) (h₀ : β₀ ∈ nF σ L.Y L.b) (β' : nA σ L.Y L.b) :
-    ∑' q' : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' * nb' (β₀ + β')) * x) =
-      ∑' q' : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' * nb' β') * x) := by
-  have hinv : GlobalTheory.AutomorphicL2Unitary.LeftInv (par2 σ L.Y ⊓ rat2 σ L.Y) (fun y : G2 σ L.Y => _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (L.j y * x)) := by
-    intro γ hγ g
-    simp only [map_mul, mul_assoc]
-    exact _root_.PositivityTheory.SiegelWeilFormula.Act.C4.phz_rat_k hf z (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.j_par_k L (Subgroup.mem_inf.1 hγ).1) (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.j_rat_k L (Subgroup.mem_inf.1 hγ).2) _
-  have h := GlobalTheory.Eis.leftInv_cosetSum hinv (nb' β₀) (kunf.nb_rat hnb' h₀) (nb' β')
-  simp only [GlobalTheory.Eis.cosetSum, GlobalTheory.Eis.term] at h
-  rw [kunf.nb_add hnb']
-  exact h
-theorem psiT_cont_per_k (T' : nF σ L.Y L.b) :
-    Continuous (fun β' : nA σ L.Y L.b => d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T'.1.1 * β'.1))))) ∧
-    ∀ β₀ ∈ nF σ L.Y L.b, ∀ β' : nA σ L.Y L.b,
-      d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T'.1.1 * (β₀ + β').1)))) =
-        d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T'.1.1 * β'.1)))) := by
-  have hstd := d.ok.good.std
-  refine ⟨?_, fun β₀ h₀ β' => ?_⟩
-  · have : IsModuleTopology (AF F) (AE F E) := ⟨rfl⟩
-    have htr : Continuous (Algebra.trace (AF F) (AE F E)) :=
-      IsModuleTopology.continuous_of_linearMap (Algebra.trace (AF F) (AE F E))
-    exact hstd.1.comp (htr.comp ((continuous_const.matrix_mul continuous_subtype_val).matrix_trace)).neg
-  · have h1 := kunf.psi_rat hstd T' ⟨β₀, h₀⟩
-    rw [AddSubgroup.coe_add, Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add, AddChar.map_add_eq_mul,
-      AddChar.map_neg_eq_inv, h1, inv_one, one_mul]
-theorem firstEq_of_k : _root_.PositivityTheory.SiegelWeilFormula.Act.AbsConv_k → _root_.PositivityTheory.SiegelWeilFormula.Act.FirstEq_k := by
-  intro hA F E _ _ _ _ _ σ d L s₁ f hf he
-  obtain ⟨t₁, ht₁⟩ := hA F E σ d L s₁ f hf he
-  obtain ⟨U, p, Ê, t₂, -, -, -, -, -, -, -, hmaj⟩ := he 0
-  refine ⟨max t₁ t₂, fun z hz nb lam 𝓖 hc hGc nb' lam' 𝓖' hc' hGc' uM ν 𝓤 hU hUc T T' hT x => ?_⟩
-  have hz₁ : t₁ < z.re := lt_of_le_of_lt (le_max_left _ _) hz
-  have hz₂ : t₂ < z.re := lt_of_le_of_lt (le_max_right _ _) hz
-  obtain ⟨hint, hsum⟩ := ht₁ z hz₁ nb lam 𝓖 hc hGc uM ν 𝓤 hU hUc T x
-  obtain ⟨e, he'⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C4.cos_bij_pf_k L
-  haveI : IsFiniteMeasure (lam.restrict 𝓖) := ⟨by rw [Measure.restrict_apply_univ, hc.2.2.2]; exact ENNReal.one_lt_top⟩
-  haveI : IsFiniteMeasure (ν.restrict 𝓤) := ⟨by rw [Measure.restrict_apply_univ, hU.2.2.2]; exact ENNReal.one_lt_top⟩
-  set ψT : nA σ L.Y L.b → ℂ := fun β' => d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T'.1.1 * β'.1))))
-    with hψT
-  set H : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd → nA σ L.Y L.b → ℂ := fun q' β' => _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' * nb' β') * x) * ψT β' with hH
-  have hpt : ∀ q' (pr : (Fin L.n → AE F E) × nA σ d.Y d.b),
-      _root_.PositivityTheory.SiegelWeilFormula.Act.kq_k L f s₁ z nb T uM (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k (e q').1) x pr = H q' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L pr.2) := by
-    rintro q' ⟨u, β⟩
-    obtain ⟨p₀, hp₀, hr₀, hrep⟩ := he' q'
-    obtain ⟨p₁, t, hp₁, hdet, hid⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C4.key_id_pf_k L hc.1 hc'.1 hU (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q') β u x
-    simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.kq_k, hH, hψT]
-    rw [hrep, mul_assoc, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.phz_rat_k hf z hp₀ hr₀, hid, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.phz_par_k hf z hp₁ hdet, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.tr_sub_k L hT β]
-  have hν1 : (ν.restrict 𝓤).real Set.univ = 1 := by
-    simp [Measure.real, hU.2.2.2]
-  have hkq : ∀ q', _root_.PositivityTheory.SiegelWeilFormula.Act.kq_k L f s₁ z nb T uM (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k (e q').1) x = fun pr => H q' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L pr.2) := fun q' => funext (hpt q')
-  have htm : ∀ q', _root_.PositivityTheory.SiegelWeilFormula.Act.tm_k L f s₁ z nb lam 𝓖 T uM ν 𝓤 (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k (e q').1) x = ∫ β in 𝓖, H q' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β) ∂lam := by
-    intro q'
-    have h1 : ∀ u, fc d.B.ψ d.b nb lam 𝓖 (fun g => _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k (e q').1 * g)) T (uM u * x) =
-        ∫ β in 𝓖, H q' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β) ∂lam := by
-      intro u
-      refine integral_congr_ae (Filter.Eventually.of_forall fun β => ?_)
-      exact hpt q' (u, β)
-    simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.tm_k, h1]
-    rw [setIntegral_const]
-    simp [Measure.real, hU.2.2.2]
-  have hint' : ∀ q', Integrable (fun β => H q' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)) (lam.restrict 𝓖) := by
-    intro q'
-    have h1 := (hint (e q').1).integral_prod_right
-    rw [hkq] at h1
-    simpa only [integral_const, hν1, one_smul] using h1
-  have hnorm : ∀ q', ∫ pr, ‖_root_.PositivityTheory.SiegelWeilFormula.Act.kq_k L f s₁ z nb T uM (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k (e q').1) x pr‖ ∂((ν.restrict 𝓤).prod (lam.restrict 𝓖)) =
-      ∫ β in 𝓖, ‖H q' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)‖ ∂lam := by
-    intro q'
-    have hI := (hint (e q').1).norm
-    rw [integral_prod _ hI]
-    simp only [hkq, integral_const, hν1, one_smul]
-  have hsum' : Summable fun q' => ∫ β in 𝓖, ‖H q' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)‖ ∂lam := by
-    have h2 := hsum.comp_injective (Subtype.val_injective.comp e.injective)
-    exact h2.congr fun q' => hnorm q'
-  set G : nA σ L.Y L.b → ℂ := fun β' => (∑' q' : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' * nb' β') * x)) * ψT β' with hG
-  have hHG : ∀ β', ∑' q', H q' β' = G β' := fun β' => tsum_mul_right
-  have hGc : Continuous G := by
-    refine (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.cont_E_k L hf (hmaj z hz₂).1 hc'.1 x).mul (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.psiT_cont_per_k L T').1
-  have hGp : ∀ β₀ ∈ nF σ L.Y L.b, ∀ β', G (β₀ + β') = G β' := by
-    intro β₀ h₀ β'
-    simp only [hG, hψT]
-    rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.per_E_k L hf hc'.1 x β₀ h₀ β', (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.psiT_cont_per_k L T').2 β₀ h₀ β']
-  calc ∑' q : {q : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d // _root_.PositivityTheory.SiegelWeilFormula.Act.FirstOrbit L (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q)}, _root_.PositivityTheory.SiegelWeilFormula.Act.tm_k L f s₁ z nb lam 𝓖 T uM ν 𝓤 (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q.1) x
-      = ∑' q', _root_.PositivityTheory.SiegelWeilFormula.Act.tm_k L f s₁ z nb lam 𝓖 T uM ν 𝓤 (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k (e q').1) x :=
-        (e.tsum_eq (fun q => _root_.PositivityTheory.SiegelWeilFormula.Act.tm_k L f s₁ z nb lam 𝓖 T uM ν 𝓤 (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q.1) x)).symm
-    _ = ∑' q', ∫ β in 𝓖, H q' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β) ∂lam := tsum_congr htm
-    _ = ∫ β in 𝓖, ∑' q', H q' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β) ∂lam := by
-        haveI : Countable (_root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd) := _root_.PositivityTheory.SiegelWeilFormula.Act.C4.countableCs_k L.sd
-        exact integral_tsum_of_summable_integral_norm hint' hsum'
-    _ = ∫ β in 𝓖, G (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β) ∂lam := by simp only [hHG]
-    _ = ∫ β' in 𝓖', G β' ∂lam' := _root_.PositivityTheory.SiegelWeilFormula.Act.C4.fiber_k L hc hc' G hGc hGp
-    _ = _root_.PositivityTheory.SiegelWeilFormula.Act.first_k L f s₁ z nb' lam' 𝓖' T' x := by
-        simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.first_k, fc, GlobalTheory.Eis.cosetSum, GlobalTheory.Eis.term, mul_one, hG, hψT]
-        rfl
-end PositivityTheory.SiegelWeilFormula.Act.C4
-namespace PositivityTheory.SiegelWeilFormula.Act
-theorem firstEq_k : _root_.PositivityTheory.SiegelWeilFormula.Act.FirstEq_k := _root_.PositivityTheory.SiegelWeilFormula.Act.C4.firstEq_of_k _root_.PositivityTheory.SiegelWeilFormula.Act.absConv_k
-end PositivityTheory.SiegelWeilFormula.Act
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiTContPerK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.FrameDilK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.FrameDilK", "h": "module\n\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.FrameDil\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopMChar\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopRelPf\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopStepMA\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopStepMVal\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdPlace\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKsplitSplitP\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.DZTranspose\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepMA\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.IncMTranspose\nimport Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactOfUnits\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.CL
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-theorem rEx_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (w : InfinitePlace F) : ∃ r : ℝ → GroundTheory.Global.IdeleGroup F,
-    (∀ τ τ', r (τ + τ') = r τ * r τ') ∧ r 0 = 1 ∧
-    (∀ τ, (GroundTheory.Global.IdeleGroup.ideleModule F (r τ) : ℝ) = Real.exp τ) ∧
-    (∀ τ, piInf (d.B.emb w) ((r τ : AF F) • (1 : AE F E)) = (Real.exp τ : ℂ)) ∧
-    (∀ τ w', w' ≠ w → piInf (d.B.emb w') ((r τ : AF F) • (1 : AE F E)) = 1) ∧
-    (∀ τ, finOne F * (r τ : AF F) = finOne F) := by
-  have := d.cm.1
-  have hw : w.IsReal := IsTotallyReal.isReal w
-  let e := InfinitePlace.Completion.ringEquivRealOfIsReal hw
-  let u : ℝ → ℝˣ := fun τ => ⟨Real.exp τ, Real.exp (-τ), by rw [← Real.exp_add, add_neg_cancel, Real.exp_zero],
-    by rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]⟩
-  let r : ℝ → GroundTheory.Global.IdeleGroup F := fun τ => GroundTheory.Global.IdeleGroup.infiniteEmbedding w (Units.map e.symm.toMonoidHom (u τ))
-  have hu : ∀ τ τ', u (τ + τ') = u τ * u τ' := fun τ τ' => Units.ext (Real.exp_add τ τ')
-  have hu0 : u 0 = 1 := Units.ext Real.exp_zero
-  have hr1 : ∀ τ, ((r τ : AF F)).1 = GroundTheory.Global.IdeleGroup.infiniteAdeleSingle w (e.symm (Real.exp τ)) := fun τ => rfl
-  have hr2 : ∀ τ, ((r τ : AF F)).2 = 1 := fun τ => rfl
-  have hee : ∀ x : ℝ, InfinitePlace.Completion.extensionEmbeddingOfIsReal hw (e.symm x) = x := fun x => e.apply_symm_apply x
-  have hext : ∀ τ, InfinitePlace.Completion.extensionEmbedding w (e.symm (Real.exp τ)) = (Real.exp τ : ℂ) := by
-    intro τ
-    rw [← InfinitePlace.Completion.extensionEmbeddingOfIsReal_apply hw, hee]
-  refine ⟨r, fun τ τ' => by simp only [r, hu, map_mul], by simp only [r, hu0, map_one], fun τ => ?_, fun τ => ?_,
-    fun τ w' hw' => ?_, fun τ => ?_⟩
-  · rw [GroundTheory.Global.IdeleGroup.ideleModule_infiniteEmbedding, hw.mult_eq_one, pow_one]
-    show ‖e.symm (Real.exp τ)‖ = _
-    rw [← (InfinitePlace.Completion.isometry_extensionEmbeddingOfIsReal hw).norm_map_of_map_zero (map_zero _), hee,
-      Real.norm_of_nonneg (Real.exp_pos τ).le]
-  · rw [St.piInf_smul, map_one, mul_one, hr1, GroundTheory.Global.IdeleGroup.infiniteAdeleSingle_apply, Pi.mulSingle_eq_same]
-    exact hext τ
-  · rw [St.piInf_smul, map_one, mul_one, hr1, GroundTheory.Global.IdeleGroup.infiniteAdeleSingle_apply, Pi.mulSingle_eq_of_ne hw', map_one]
-  · refine Prod.ext ?_ ?_
-    · show (0 : Ainf F) * _ = 0
-      rw [zero_mul]
-    · show (1 : Af F) * (r τ : AF F).2 = 1
-      rw [hr2, mul_one]
-theorem frame_dil_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d) (w : InfinitePlace F) (r : ℝ → GroundTheory.Global.IdeleGroup F)
-    (hw : ∀ τ, piInf (d.B.emb w) ((r τ : AF F) • (1 : AE F E)) = (Real.exp τ : ℂ))
-    (ho : ∀ τ w', w' ≠ w → piInf (d.B.emb w') ((r τ : AF F) • (1 : AE F E)) = 1)
-    (hf : ∀ τ, finOne F * (r τ : AF F) = finOne F) (i₀ : Fin d.n) {τ : ℝ} {y : GR d.n}
-    (hy : IsDil (Pi.single i₀ 1) τ y) :
-    inFrame d.b (R.ι w y) = dM i₀ ((r τ : AF F) • (1 : AE F E)) ((r (-τ) : AF F) • (1 : AE F E)) := by
-  have hζ0 : R.ζ ≠ 0 := Krd.zeta_ne R.hζ
-  have hC : Matrix.fromBlocks (Matrix.diagonal fun j => (Real.exp (τ * (Pi.single i₀ 1 : Fin d.n → ℝ) j) : ℂ)) 0 0
-      (Matrix.diagonal fun j => (Real.exp (-(τ * (Pi.single i₀ 1 : Fin d.n → ℝ) j)) : ℂ)) = dM i₀ (Real.exp τ : ℂ) (Real.exp (-τ) : ℂ) := by
-    ext u v
-    rw [dM_apply]
-    rcases u with u | u <;> rcases v with v | v <;>
-      simp only [Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂,
-        Matrix.diagonal_apply, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, if_false, Matrix.zero_apply] <;>
-      by_cases h : u = v <;> by_cases h' : u = i₀ <;> subst_vars <;> simp_all
-  refine _root_.PositivityTheory.SiegelWeilFormula.Place.cw_ext_k d (fun w' => ?_) ?_
-  · by_cases hw' : w' = w
-    · subst hw'
-      rw [R.cw_iota_pf w' y, hy, dZ_conj_diag hζ0, hC, _root_.PositivityTheory.SiegelWeilFormula.SD_k.cw, dM_map, hw, hw]
-    · rw [R.off_w w w' y hw', _root_.PositivityTheory.SiegelWeilFormula.SD_k.cw, dM_map, ho τ w' hw', ho (-τ) w' hw']
-      ext u v
-      rw [dM_apply, Matrix.one_apply]
-      split_ifs <;> rfl
-  · rw [R.off_f w y]
-    ext u v
-    rw [Matrix.smul_apply, Matrix.smul_apply, dM_apply, Matrix.one_apply]
-    have e : ∀ t, finOne F • ((r t : AF F) • (1 : AE F E)) = finOne F • (1 : AE F E) := fun t => by
-      rw [smul_smul, hf]
-    split_ifs <;> simp [e]
-theorem par_dil_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d) (w : InfinitePlace F) (i₀ : Fin d.n) {τ : ℝ} {y : GR d.n}
-    (hy : IsDil (Pi.single i₀ 1) τ y) :
-    ∃ t, IsPar (R.ι w y) t ∧ (absE F E (Matrix.GeneralLinearGroup.det t) : ℝ) = Real.exp (2 * τ) ∧
-      (d.χ (Matrix.GeneralLinearGroup.det t) : ℂ) = 1 := by
-  obtain ⟨t0, ht0⟩ := d.ok.frame.2
-  set A : Matrix (Fin d.n) (Fin d.n) ℂ := Matrix.diagonal fun j => (Real.exp (τ * (Pi.single i₀ 1 : Fin d.n → ℝ) j) : ℂ) with hAdef
-  set D : Matrix (Fin d.n) (Fin d.n) ℂ := Matrix.diagonal fun j => (Real.exp (-(τ * (Pi.single i₀ 1 : Fin d.n → ℝ) j)) : ℂ)
-  have hy' : mR y = Matrix.fromBlocks A 0 0 D := hy
-  obtain ⟨-, hA, -, hoA, hfA, -⟩ := R.frame_diag w y A D hy'
-  have h21 : (mR y).toBlocks₂₁ = 0 := by rw [hy', Matrix.toBlocks_fromBlocks₂₁]
-  obtain ⟨t, ht, habs⟩ := _root_.PositivityTheory.SiegelWeilFormula.KSplitP.iota_isPar_k d R w y h21
-  have hdetA : A.det = (Real.exp τ : ℂ) := by
-    rw [hAdef, Matrix.det_diagonal, Finset.prod_eq_single i₀ (fun j _ hj => by simp [Pi.single_eq_of_ne hj])
-      (fun h => absurd (Finset.mem_univ _) h)]
-    simp
-  refine ⟨t, ht, ?_, ?_⟩
-  · rw [habs, hy', Matrix.toBlocks_fromBlocks₁₁, hdetA, Complex.norm_real, Real.norm_of_nonneg (Real.exp_pos τ).le,
-      ← Real.exp_nat_mul]
-    norm_num
-  · have ht1 := ((kunf.isPar_frame ht0 (R.ι w y) t).1 ht).2
-    set P := (inFrame d.b (R.ι w y)).toBlocks₁₁ with hP
-    have hcw : ∀ w', d.cw w' t.1 = d.cw w' (incM F t0.1) * d.cw w' P * d.cw w' (incM F (t0⁻¹).1) := by
-      intro w'; rw [ht1]; simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.cw, Matrix.map_mul]
-    have hI : incM F t0.1 * incM F (t0⁻¹).1 = 1 := by
-      rw [← kunf.incM_mul', Units.mul_inv]; ext i j; simp [incM, Matrix.one_apply]
-    have hT : ∀ w', d.cw w' (incM F t0.1) * d.cw w' (incM F (t0⁻¹).1) = 1 := by
-      intro w'; rw [_root_.PositivityTheory.SiegelWeilFormula.SD_k.cw, _root_.PositivityTheory.SiegelWeilFormula.SD_k.cw, ← Matrix.map_mul, hI, Matrix.map_one _ (map_zero _) (map_one _)]
-    have ho : ∀ w', w' ≠ w → d.cw w' t.1 = 1 := fun w' h => by rw [hcw, (hoA w' h).1, Matrix.mul_one, hT]
-    have hf : finOne F • t.1 = finOne F • (1 : Matrix (Fin d.n) (Fin d.n) (AE F E)) := by
-      rw [ht1, ← Matrix.smul_mul, ← Matrix.mul_smul, hfA, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_one, hI]
-    have hdet : (d.cw w t.1).det = (Real.exp τ : ℂ) := by
-      have hXY := congrArg Matrix.det (hT w)
-      rw [Matrix.det_mul, Matrix.det_one] at hXY
-      rw [hcw, Matrix.det_mul, Matrix.det_mul, hA, hdetA]
-      linear_combination ((Real.exp τ : ℝ) : ℂ) * hXY
-    rw [_root_.PositivityTheory.SiegelWeilFormula.RD_k.chi_det (d := d) w t _ rfl ho hf, hdet]
-    exact d.chiW_pos w _ (Real.exp_pos τ)
-end PositivityTheory.SiegelWeilFormula.Act.CL
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.FrameDilK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PtExK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PtExK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.IncMTranspose\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
 noncomputable section
 open scoped TensorProduct NNReal Matrix Classical
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-namespace PositivityTheory.SiegelWeilFormula.Act.CL
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-theorem ptEx'_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) {ε : ℤˣ} (hε : d.b.1ᵀ * dbl d.Y.J * d.b.1.map σ = Matrix.fromBlocks 0 1 (((ε : ℤ) : E) • 1) 0)
-    {X : Type} [TopologicalSpace X] (M M' : X → Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E))
-    (hM : Continuous M) (hM' : Continuous M') (h : ∀ c, M c * M' c = 1)
-    (hu : ∀ c, (M c)ᵀ * kunf.jw d.n (((ε : ℤ) : AE F E)) * (M c).map (cA σ) = kunf.jw d.n (((ε : ℤ) : AE F E))) :
-    ∃ f : X → d.G, Continuous f ∧ ∀ c, inFrame d.b (f c) = M c := by
-  set B0 := incM F d.b.1 with hB0
-  set Bi := incM F (d.b⁻¹).1 with hBi
-  have e1 : B0 * Bi = 1 := GlobalTheory.EisBL.DoubledParabolic.incM_mul_inv d.b
-  have e2 : Bi * B0 = 1 := GlobalTheory.EisBL.DoubledParabolic.incM_inv_mul d.b
-  have h' : ∀ c, M' c * M c = 1 := fun c => mul_eq_one_comm.1 (h c)
-  let U : X → GL (Fin d.n ⊕ Fin d.n) (AE F E) := fun c => ⟨B0 * M c * Bi, B0 * M' c * Bi, by
-      calc B0 * M c * Bi * (B0 * M' c * Bi) = B0 * (M c * (Bi * B0) * M' c) * Bi := by simp only [Matrix.mul_assoc]
-        _ = 1 := by rw [e2, Matrix.mul_one, h, Matrix.mul_one, e1], by
-      calc B0 * M' c * Bi * (B0 * M c * Bi) = B0 * (M' c * (Bi * B0) * M c) * Bi := by simp only [Matrix.mul_assoc]
-        _ = 1 := by rw [e2, Matrix.mul_one, h', Matrix.mul_one, e1]⟩
-  have hU : ∀ c, U c ∈ UG (cA σ) (dbl (incM F d.Y.J)) := by
-    intro c
-    obtain ⟨x, hx⟩ := kunf.exists_of_frame (Y := d.Y) hε (M c) (M' c) (h c) (hu c)
-    have hx1 : x.1 = U c := by
-      apply Units.ext
-      show mat2 x = B0 * M c * Bi
-      rw [← hx]
-      show mat2 x = B0 * (Bi * mat2 x * B0) * Bi
-      calc mat2 x = (B0 * Bi) * mat2 x * (B0 * Bi) := by rw [e1, Matrix.one_mul, Matrix.mul_one]
-        _ = _ := by simp only [Matrix.mul_assoc]
-    exact hx1 ▸ x.2
-  refine ⟨fun c => ⟨U c, hU c⟩, ?_, fun c => ?_⟩
-  · refine continuous_induced_rng.2 ?_
-    refine Units.continuous_iff.2 ⟨?_, ?_⟩
-    · exact (continuous_const.matrix_mul hM).matrix_mul continuous_const
-    · exact (continuous_const.matrix_mul hM').matrix_mul continuous_const
-  · show Bi * (B0 * M c * Bi) * B0 = M c
-    calc Bi * (B0 * M c * Bi) * B0 = (Bi * B0) * M c * (Bi * B0) := by simp only [Matrix.mul_assoc]
-      _ = M c := by rw [e2, Matrix.one_mul, Matrix.mul_one]
-end PositivityTheory.SiegelWeilFormula.Act.CL
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PtExK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CLawExK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CLawExK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilActCut\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.FrameDilK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PtExK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilAtopMainLe\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdPlace\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.CBDM\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContSingle\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ExistsSigmaNe\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PiMapConst\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.WMUnitary\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-namespace PositivityTheory.SiegelWeilFormula.Act
-def CLawEx_k : Prop := ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d) (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d),
-  ∃ (w₁ : d.G) (cM : (Fin L.n → AE F E) × AF F → d.G) (κ : Measure ((Fin L.n → AE F E) × AF F)),
-    _root_.PositivityTheory.SiegelWeilFormula.Act.CLaw_k R L w₁ cM κ ∧ w₁ ∈ rat2 σ d.Y ∧
-    (∃ a b : E, a ≠ 0 ∧ b ≠ 0 ∧ inFrame d.b w₁ = 1 - Matrix.single (Sum.inl L.i₀) (Sum.inl L.i₀) 1 -
-      Matrix.single (Sum.inr L.i₀) (Sum.inr L.i₀) 1 + Matrix.single (Sum.inl L.i₀) (Sum.inr L.i₀) (inclR (F := F) (AF F) a) +
-      Matrix.single (Sum.inr L.i₀) (Sum.inl L.i₀) (inclR (F := F) (AF F) b)) ∧
-    Continuous cM ∧ κ.IsAddHaarMeasure ∧
-    ∃ δ : E, δ ≠ 0 ∧ ∀ c, ∃ A', inFrame d.b (cM c) = Matrix.fromBlocks (1 + ∑ j, Matrix.single L.i₀ (L.em j) (c.1 j))
-      (Matrix.single L.i₀ L.i₀ (c.2 • inclR (F := F) (AF F) δ)) 0 A'
-theorem cLawEx_k : _root_.PositivityTheory.SiegelWeilFormula.Act.CLawEx_k := by
-  intro F E _ _ _ _ _ σ d R L
-  have hε := R.hε
-  have hem : ∀ j, L.em j ≠ L.i₀ := fun j => (L.rng (L.em j)).2 ⟨j, rfl⟩
-  set e : AE F E := ((R.ε : ℤ) : AE F E) with he_def
-  have hee : e * e = 1 := by
-    rw [he_def, ← Int.cast_mul, ← Units.val_mul, Int.units_mul_self, Units.val_one, Int.cast_one]
-  obtain ⟨δ, hδ0, hδ⟩ := CL.deltaEx' d.cm R.ε
-  obtain ⟨κ, hκ, hsc⟩ := CL.measEx' (F := F) (E := E) L.n d.bs
-  let M₀ : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) E := CL.wM L.i₀ (1 : E) ((R.ε : ℤ) : E)
-  let M₀' : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) E := CL.wM L.i₀ ((R.ε : ℤ) : E) (1 : E)
-  have hW : incM F M₀ = CL.wM L.i₀ (1 : AE F E) e := by
-    show M₀.map _ = _
-    rw [CL.wM_map, map_one, map_intCast]
-  have hW' : incM F M₀' = CL.wM L.i₀ e (1 : AE F E) := by
-    show M₀'.map _ = _
-    rw [CL.wM_map, map_one, map_intCast]
-  have hWW : incM F M₀ * incM F M₀' = 1 := by
-    rw [hW, hW']; exact CL.wM_mul L.i₀ _ _ _ _ (one_mul 1) hee
-  have hWu : (incM F M₀)ᵀ * kunf.jw d.n e * (incM F M₀).map (cA σ) = kunf.jw d.n e := by
-    rw [hW]
-    refine CL.wM_unitary L.i₀ (cA σ).toRingHom 1 e e ?_ ?_
-    · simp only [AlgHom.toRingHom_eq_coe, map_one, mul_one, hee]
-    · simp only [AlgHom.toRingHom_eq_coe, he_def, map_intCast, one_mul]
-  obtain ⟨w₁, hw₁⟩ := kunf.exists_of_frame hε (incM F M₀) (incM F M₀') hWW hWu
-  have hw₁' : inFrame d.b w₁ = CL.wM L.i₀ (1 : AE F E) e := hw₁.trans hW
-  set δ' : AE F E := inclR (F := F) (AF F) δ with hδ'
-  let Mc : (Fin L.n → AE F E) × AF F → Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E) := fun c =>
-    CL.cB L.i₀ L.em c.1 (fun j => cA σ (c.1 j)) (c.2 • δ')
-  let Mc' : (Fin L.n → AE F E) × AF F → Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E) := fun c =>
-    CL.cB L.i₀ L.em (-c.1) (-fun j => cA σ (c.1 j)) (-(c.2 • δ'))
-  have hcont : ∀ s : AF F → AF F, Continuous s → ∀ t : (Fin L.n → AE F E) → (Fin L.n → AE F E), Continuous t →
-      Continuous fun c : (Fin L.n → AE F E) × AF F =>
-        CL.cB L.i₀ L.em (t c.1) (fun j => cA σ (t c.1 j)) (s c.2 • δ') := by
-    intro s hs t ht
-    refine Continuous.matrix_fromBlocks ?_ ?_ continuous_const ?_
-    · exact continuous_const.add (continuous_finsetSum _ fun j _ =>
-        cont_single _ _ ((continuous_apply j).comp (ht.comp continuous_fst)))
-    · exact cont_single _ _ (Continuous.smul (f := fun c : (Fin L.n → AE F E) × AF F => s c.2) (g := fun _ => δ')
-        (hs.comp continuous_snd) continuous_const)
-    · exact continuous_const.sub (continuous_finsetSum _ fun j _ => cont_single _ _
-        ((GlobalTheory.EisBL.DoubledGroupTopology.continuous_cA σ).comp ((continuous_apply j).comp (ht.comp continuous_fst))))
-  have hMc : Continuous Mc := hcont id continuous_id id continuous_id
-  have hMc' : Continuous Mc' := by
-    have := hcont (fun a => -a) continuous_neg (fun u => -u) continuous_neg
-    convert this using 2 with c
-    simp only [Mc', neg_smul, Pi.neg_apply, map_neg]
-    rfl
-  have cA_inclR (x : E) : cA σ (inclR (F := F) (AF F) x) = inclR (F := F) (AF F) (σ x) := by
-    show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ ((1 : AF F) ⊗ₜ[F] x) = (1 : AF F) ⊗ₜ[F] σ x
-    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
-  have cA_invol (z : AE F E) : cA σ (cA σ z) = z := by
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a x =>
-      show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ
-        (Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ (a ⊗ₜ[F] x)) = a ⊗ₜ[F] x
-      rw [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgHom.id_apply, _root_.GlobalTheory.AdelicU.cm_conj_conj d.cm]
-    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
-  have hcA_z : ∀ a : AF F, cA σ (a • δ') = -(e * (a • δ')) := by
-    intro a
-    rw [map_smul, hδ', cA_inclR δ, hδ, map_neg, map_mul, map_intCast, smul_neg, mul_smul_comm]
-  obtain ⟨cM, hcMc, hcM⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.CL.ptEx'_k d hε Mc Mc' hMc hMc'
-    (fun c => CL.cB_mul hem c.1 _ _) (fun c => CL.cB_unitary hem (cA σ).toRingHom
-      cA_invol e hee c.1 (c.2 • δ') (hcA_z c.2))
-  have hfr := fun x y => GlobalTheory.EisBL.DoubledParabolic.inFrame_mul (σ := σ) (Y := d.Y) d.b x y
-  refine ⟨w₁, cM, κ, ⟨?_, ?_, ?_⟩, kunf.rat_of_inFrame hw₁, ⟨1, (R.ε : ℤ), one_ne_zero, ?_, ?_⟩, hcMc, hκ,
-    ⟨δ, hδ0, fun c => ⟨_, hcM c⟩⟩⟩
-  ·
-    intro w τ y g hy
-    obtain ⟨r, hr0, hr1, -, hrw, hro, hrf⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.CL.rEx_k d w
-    apply kunf.inFrame_injective d.b
-    rw [hfr, hfr, _root_.PositivityTheory.SiegelWeilFormula.Act.CL.frame_dil_k d R w r hrw hro hrf L.i₀ hy]
-    exact CL.comm_dM L.i₀ _ (L.j_out g) _ _
-  ·
-    intro w τ y hy
-    obtain ⟨r, hr0, hr1, -, hrw, hro, hrf⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.CL.rEx_k d w
-    have hy' := CL.isDil_inv hy
-    obtain ⟨t, ht, ha, hχ⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.CL.par_dil_k d R w L.i₀ hy'
-    refine ⟨R.ι w y⁻¹, t, ht, by rw [ha]; ring_nf, hχ, ?_⟩
-    apply kunf.inFrame_injective d.b
-    rw [hfr, hfr, hw₁', _root_.PositivityTheory.SiegelWeilFormula.Act.CL.frame_dil_k d R w r hrw hro hrf L.i₀ hy, _root_.PositivityTheory.SiegelWeilFormula.Act.CL.frame_dil_k d R w r hrw hro hrf L.i₀ hy', neg_neg]
-    exact CL.wM_dM L.i₀ _ _ _ _
-  ·
-    intro w τ y hy
-    obtain ⟨r, hr0, hr1, hrm, hrw, hro, hrf⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.CL.rEx_k d w
-    obtain ⟨sc, hsc1, hsc2⟩ := hsc (r (-τ))
-    refine ⟨sc, fun c => ?_, ?_⟩
-    · apply kunf.inFrame_injective d.b
-      rw [hfr, hfr, hcM, hcM, _root_.PositivityTheory.SiegelWeilFormula.Act.CL.frame_dil_k d R w r hrw hro hrf L.i₀ hy]
-      have hxy : ((r τ : AF F) • (1 : AE F E)) * ((r (-τ) : AF F) • (1 : AE F E)) = 1 := by
-        rw [smul_mul_smul_comm, one_mul, ← Units.val_mul, ← hr0, add_neg_cancel, hr1]; simp
-      rw [CL.cB_dM hem _ _ _ _ _ hxy, hsc1]
-      congr 1
-      simp only [Mc]
-      congr 1
-      · funext j; exact smul_one_mul _ _
-      · funext j; rw [map_smul, smul_one_mul]
-      · rw [mul_assoc, smul_one_mul, smul_one_mul, smul_assoc, mul_smul]
-    · rw [hsc2, hrm, ← Real.exp_neg, neg_neg, ← Real.exp_nat_mul, ← _root_.PositivityTheory.SiegelWeilFormula.Atop.LD.n_succ_k L]
-      congr 2
-      push_cast; ring_nf
-  · simp
-  · rw [hw₁']; simp [CL.wM, map_intCast, map_one, he_def]
-end PositivityTheory.SiegelWeilFormula.Act
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CLawExK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousThK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousThK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecondOrbitSectionIntegral\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecondOrbitBijection\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnipotentFirstMatrix\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.ContinuousChr\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal ENNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
+open NumberField IsDedekindDomain MeasureTheory Filter Topology
+  Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
+  GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont
+  PositivityTheory.Rg.Sw PositivityTheory.SiegelWeilFormula
 open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C5
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} (R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d) (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d)
-variable {R L}
-theorem continuous_th'_k (T' : nF σ L.Y L.b) : Continuous fun β : nA σ L.Y L.b => _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' β :=
-  kfour.continuous_chr (σ := σ) (Y := L.Y) (b := L.b) d.ok.good.std.1 T'.1.1
-theorem countable_crat_k : Countable (_root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L) := by
-  have : Countable L.ratV := by
-    have : Countable E := (Module.finBasis ℚ E).equivFun.injective.countable
-    refine Function.Surjective.countable (f := fun v : Fin L.n → E =>
-      (⟨GlobalTheory.ThK.incV F v, AddSubgroup.subset_closure ⟨v, rfl⟩⟩ : L.ratV)) fun u => ?_
-    obtain ⟨v, hv⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C1.ratV_inc_k u.2
-    exact ⟨v, Subtype.ext hv.symm⟩
-  have : Countable F := (Module.finBasis ℚ F).equivFun.injective.countable
-  have : Countable (Set.range (algebraMap F (AF F))) := (Set.countable_range _).to_subtype
-  refine Function.Injective.countable (f := fun c : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L =>
-    ((⟨c.1.1, c.2.1⟩ : L.ratV), (⟨c.1.2, c.2.2⟩ : Set.range (algebraMap F (AF F)))))
-    fun c c' hcc => ?_
-  simp only [Prod.mk.injEq, Subtype.mk.injEq] at hcc
-  exact Subtype.ext (Prod.ext hcc.1 (congrArg Subtype.val hcc.2))
-end PositivityTheory.SiegelWeilFormula.Act.C5
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousThK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.HandsCoordkTau =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.HandsCoordkTau", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinSecondTerm\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.BlockDiagonalPreservesFormIff\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinTermLeftInvariant\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKawayDecG\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnipotentNilpotentMulEqZero\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalCoordinates.RationalCoordinateCountability.ContinuousFrameUM\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal ENNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C5.CoordK
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} {R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d} {L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d}
-variable {nb : nA σ d.Y d.b → d.G} {uM : (Fin L.n → AE F E) → d.G} {nb' : nA σ L.Y L.b → G2 σ L.Y} {w₁ : d.G}
-  {cM : (Fin L.n → AE F E) × AF F → d.G} {δ : E}
-variable (L) in
-def kom_k (uM : (Fin L.n → AE F E) → d.G) (nb' : nA σ L.Y L.b → G2 σ L.Y) (p : (Fin L.n → AE F E) × nA σ L.Y L.b) : d.G :=
-  L.j (nb' p.2) * uM p.1 * (L.j (nb' p.2))⁻¹ * (uM p.1)⁻¹
-variable (L) in
-def tau_k (uM : (Fin L.n → AE F E) → d.G) (nb' : nA σ L.Y L.b → G2 σ L.Y) (δ : E) (p : (Fin L.n → AE F E) × nA σ L.Y L.b) :
-    (Fin L.n → AE F E) × AF F :=
-  (fun k => inFrame d.b (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.kom_k L uM nb' p) (Sum.inl L.i₀) (Sum.inr (L.em k)),
-    ellA δ (inFrame d.b (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.kom_k L uM nb' p) (Sum.inl L.i₀) (Sum.inr L.i₀)))
-variable (L) in
-def Du_k (u : Fin L.n → AE F E) : Matrix (Fin d.n) (Fin d.n) (AE F E) := (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L (-u))ᵀ.map (cA σ)
-theorem frame_uM_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (u : Fin L.n → AE F E) :
-    inFrame d.b (uM u) = Matrix.fromBlocks (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L u) 0 0 (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k L u) := by
-  obtain ⟨a', ha⟩ := h.uM u
-  rw [ha, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.lr_of_k ha (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_mul_neg_k L u)]
-  rfl
-theorem Du_mul_k (u : Fin L.n → AE F E) : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k (σ := σ) L u * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k L (-u) = 1 := by
-  unfold _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k
-  rw [← Matrix.map_mul, ← Matrix.transpose_mul, neg_neg, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_mul_neg_k L u]
-  ext i j
-  simp [Matrix.one_apply, Matrix.map_apply]
-theorem uM_neg'_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (u : Fin L.n → AE F E) : uM (-u) = (uM u)⁻¹ := by
-  refine eq_inv_of_mul_eq_one_right (_root_.PositivityTheory.SiegelWeilFormula.KAway.inFrame_inj_k d ?_)
-  rw [GlobalTheory.EisBL.DoubledParabolic.inFrame_mul, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.frame_uM_k h, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.frame_uM_k h, GlobalTheory.EisBL.DoubledParabolic.inFrame_one, Matrix.fromBlocks_multiply]
-  simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_mul_neg_k, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_mul_k, Matrix.fromBlocks_one]
-theorem continuous_uA_k : Continuous (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k (σ := σ) L) := by
-  unfold _root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k
-  refine continuous_const.add (continuous_finsetSum _ fun j _ => ?_)
-  have e : (fun b : Fin L.n → AE F E => Matrix.single L.i₀ (L.em j) (b j)) =
-      fun b => b j • Matrix.single L.i₀ (L.em j) (1 : AE F E) := by
-    funext b; rw [Matrix.smul_single, smul_eq_mul, mul_one]
-  rw [e]; exact (continuous_apply j).smul continuous_const
-theorem continuous_frame_uM_k : Continuous fun u : Fin L.n → AE F E =>
-    (Matrix.fromBlocks (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L u) 0 0 (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k (σ := σ) L u) : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E)) := by
-  refine Continuous.matrix_fromBlocks _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.continuous_uA_k continuous_const continuous_const ?_
-  unfold _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k
-  exact ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.continuous_uA_k.comp continuous_neg).matrix_transpose).matrix_map (GlobalTheory.EisBL.DoubledGroupTopology.continuous_cA σ)
-theorem frame_kom_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (p : (Fin L.n → AE F E) × nA σ L.Y L.b) :
-    inFrame d.b (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.kom_k L uM nb' p) = inFrame d.b (L.j (nb' p.2)) * Matrix.fromBlocks (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L p.1) 0 0 (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k L p.1) *
-      inFrame d.b (L.j (nb' (-p.2))) * Matrix.fromBlocks (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L (-p.1)) 0 0 (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k L (-p.1)) := by
-  unfold _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.kom_k
-  rw [← _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.uM_neg'_k h, ← map_inv, ← kunf.nb_neg h.nb', GlobalTheory.EisBL.DoubledParabolic.inFrame_mul, GlobalTheory.EisBL.DoubledParabolic.inFrame_mul,
-    GlobalTheory.EisBL.DoubledParabolic.inFrame_mul, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.frame_uM_k h, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.frame_uM_k h]
-theorem continuous_kom_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) : Continuous fun p => inFrame d.b (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.kom_k L uM nb' p) := by
-  have hj : Continuous fun β : nA σ L.Y L.b => inFrame d.b (L.j (nb' β)) :=
-    (GlobalTheory.EisBL.DoubledParabolic.continuous_inFrame d.b).comp (L.cont.comp (kunf.continuous_nb h.nb'))
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.frame_kom_k h]
-  exact (((hj.comp continuous_snd).matrix_mul (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.continuous_frame_uM_k.comp continuous_fst)).matrix_mul
-    ((hj.comp continuous_neg).comp continuous_snd)).matrix_mul ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.continuous_frame_uM_k.comp continuous_neg).comp continuous_fst)
-theorem continuous_tau_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) : Continuous (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ) := by
-  have hk := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.continuous_kom_k h
-  refine Continuous.prodMk (continuous_pi fun k => hk.matrix_elem _ _) ?_
-  exact (IsModuleTopology.continuous_of_linearMap (R := AF F) (ellA δ)).comp (hk.matrix_elem _ _)
-theorem Du_neg_row_k (u : Fin L.n → AE F E) (k : Fin d.n) :
-    _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k (σ := σ) L (-u) L.i₀ k = if k = L.i₀ then 1 else 0 := by
-  unfold _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k
-  rw [neg_neg, Matrix.map_apply, Matrix.transpose_apply]
-  by_cases hk : k = L.i₀
-  · subst hk
-    simp [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k, Matrix.add_apply, Matrix.sum_apply, fun j => _root_.PositivityTheory.SiegelWeilFormula.Act.ComplexParameterFamilyContinuity.em_ne_k L j]
-  · simp [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k, Matrix.add_apply, Matrix.sum_apply, hk, Ne.symm hk]
-theorem sM_zero'_k : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L 0 = 1 := by
-  apply _root_.PositivityTheory.SiegelWeilFormula.KAway.inFrame_inj_k d
-  rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.inFrame_sM'_k, GlobalTheory.EisBL.DoubledParabolic.inFrame_one]
-  have : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sB_k R L 0 = 0 := by simp [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sB_k]
-  rw [this, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.bMat_k, Matrix.fromBlocks_one]
-theorem cM_zero'_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (u : Fin L.n → AE F E) : cM (u, 0) = uM u := by
-  apply _root_.PositivityTheory.SiegelWeilFormula.KAway.inFrame_inj_k d
-  rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.inFrame_cM_k h, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.frame_uM_k h]
-  simp [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k]
-theorem move_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (u : Fin L.n → AE F E) (β'' : nA σ L.Y L.b) (b : Fin L.n → AE F E) (a : AF F) :
-    L.j (nb' β'') * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b * cM (u, a)) =
-      _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (b + (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ (u, β'')).1) * cM (u, a + (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ (u, β'')).2) * L.j (nb' β'') := by
-  obtain ⟨B, A, hBA⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.j_move'_k (R := R) h u β''
-  suffices hτ : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ (u, β'') = (B, A) by rw [hτ]; exact hBA b a
-  have e0 := hBA 0 0
-  rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.sM_zero'_k, one_mul, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.cM_zero'_k h, zero_add, zero_add] at e0
-  have hk : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.kom_k L uM nb' (u, β'') = _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L B * cM (u, A) * (uM u)⁻¹ := by
-    show L.j (nb' β'') * uM u * (L.j (nb' β''))⁻¹ * (uM u)⁻¹ = _
-    rw [e0, mul_inv_cancel_right]
-  have hf : inFrame d.b (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.kom_k L uM nb' (u, β'')) =
-      Matrix.fromBlocks 1 (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k L δ A * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k L (-u) + _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sB_k R L B) 0 1 := by
-    rw [hk, ← _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.uM_neg'_k h, GlobalTheory.EisBL.DoubledParabolic.inFrame_mul, GlobalTheory.EisBL.DoubledParabolic.inFrame_mul, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.inFrame_sM'_k, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.inFrame_cM_k h, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.frame_uM_k h, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.bMat_k]
-    rw [show (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L (-u))ᵀ.map (cA σ) = _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k L u from rfl]
-    simp only [Matrix.fromBlocks_multiply, Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, Matrix.one_mul,
-      _root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_mul_neg_k, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_mul_k]
-    rw [Matrix.add_mul, Matrix.mul_assoc, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_mul_k, Matrix.mul_one]
-  have hrow : ∀ k, (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k L δ A * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_k (σ := σ) L (-u)) L.i₀ k = if k = L.i₀ then A • inclR (F := F) (AF F) δ else 0 := by
-    intro k
-    rw [Matrix.mul_apply, Finset.sum_eq_single L.i₀]
-    · rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.Du_neg_row_k]; simp [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k]
-    · intro m _ hm; simp [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k, Ne.symm hm]
-    · simp
-  refine Prod.ext (funext fun k => ?_) ?_
-  · show inFrame d.b (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.kom_k L uM nb' (u, β'')) (Sum.inl L.i₀) (Sum.inr (L.em k)) = B k
-    rw [hf, Matrix.fromBlocks_apply₁₂, Matrix.add_apply, hrow, if_neg (_root_.PositivityTheory.SiegelWeilFormula.Act.ComplexParameterFamilyContinuity.em_ne_k L k), zero_add, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sB_i0em_k]
-  · show ellA δ (inFrame d.b (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.kom_k L uM nb' (u, β'')) (Sum.inl L.i₀) (Sum.inr L.i₀)) = A
-    rw [hf, Matrix.fromBlocks_apply₁₂, Matrix.add_apply, hrow, if_pos rfl, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sB_i0i0_k, add_zero, map_smul, ellA_self h.δ0,
-      smul_eq_mul, mul_one]
-end PositivityTheory.SiegelWeilFormula.Act.C5.CoordK
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.HandsCoordkTau =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRatVK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRatVK", "h": "module\n\nimport Mathlib\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.HandsCoordkTau\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadMatrixLowerBlockZero\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecondOrbitSectionIntegral\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContinuousCA\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinTermLeftInvariant\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LamMapK\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzEqFlatK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnipotentFirstMatrix\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalCoordinates.RationalCoordinateCountability.CountableProdSub\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalCoordinates.RationalCoordinateCountability.VaddInvBotProd\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Formalism.LocalToGlobal.IndefiniteReal.PHeisFC\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-set_option linter.unusedSectionVars false
-noncomputable section
-open scoped TensorProduct NNReal ENNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C5.CoordK
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} {R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d} {L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d}
-variable {nb : nA σ d.Y d.b → d.G} {uM : (Fin L.n → AE F E) → d.G} {nb' : nA σ L.Y L.b → G2 σ L.Y} {w₁ : d.G}
-  {cM : (Fin L.n → AE F E) × AF F → d.G} {δ : E}
-theorem fix_mul_k {x y : d.G}
-    (hx : ∀ k, inFrame d.b x k (Sum.inl L.i₀) = (1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E)) k (Sum.inl L.i₀))
-    (hy : ∀ k, inFrame d.b y k (Sum.inl L.i₀) = (1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E)) k (Sum.inl L.i₀))
-    (k) : inFrame d.b (x * y) k (Sum.inl L.i₀) =
-      (1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E)) k (Sum.inl L.i₀) := by
-  rw [GlobalTheory.EisBL.DoubledParabolic.inFrame_mul, Matrix.mul_apply]
-  simp only [hy]
-  rw [← Matrix.mul_apply, Matrix.mul_one, hx]
-theorem perF_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (Ψ : d.G → ℂ) (hΨ : ∀ r ∈ rat2 σ d.Y, (∀ k, inFrame d.b r k (Sum.inl L.i₀) =
-      (1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E)) k (Sum.inl L.i₀)) → ∀ g, Ψ (r * g) = Ψ g)
-    (T : nF σ d.Y d.b) (x : d.G) (γ : nA σ d.Y d.b) (hγ : γ ∈ nF σ d.Y d.b) (u : Fin L.n → AE F E) (β : nA σ d.Y d.b) :
-    Ψ (nb (γ + β) * (uM u * x)) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T (γ + β) = Ψ (nb β * (uM u * x)) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T β := by
-  have e2 : ((γ + β : nA σ d.Y d.b) : Matrix (Fin d.n) (Fin d.n) (AE F E)) = γ.1 + β.1 := rfl
-  rw [kunf.nb_add h.nb, mul_assoc, hΨ _ (kunf.nb_rat h.nb hγ) (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.fix_nb_k h γ)]
-  congr 1
-  unfold _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k
-  rw [e2, Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add, AddChar.map_add_eq_mul, AddChar.map_neg_eq_inv,
-    kunf.psi_rat d.ok.good.std T ⟨γ, hγ⟩, inv_one, one_mul]
-theorem perFE_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (Ψ : d.G → ℝ≥0∞) (hΨ : ∀ r ∈ rat2 σ d.Y, (∀ k, inFrame d.b r k (Sum.inl L.i₀) =
-      (1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E)) k (Sum.inl L.i₀)) → ∀ g, Ψ (r * g) = Ψ g)
-    (T : nF σ d.Y d.b) (x : d.G) (γ : nA σ d.Y d.b) (hγ : γ ∈ nF σ d.Y d.b) (u : Fin L.n → AE F E) (β : nA σ d.Y d.b) :
-    Ψ (nb (γ + β) * (uM u * x)) * ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T (γ + β)‖ₑ = Ψ (nb β * (uM u * x)) * ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T β‖ₑ := by
-  have e2 : ((γ + β : nA σ d.Y d.b) : Matrix (Fin d.n) (Fin d.n) (AE F E)) = γ.1 + β.1 := rfl
-  rw [kunf.nb_add h.nb, mul_assoc, hΨ _ (kunf.nb_rat h.nb hγ) (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.fix_nb_k h γ)]
-  congr 2
-  unfold _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k
-  rw [e2, Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add, AddChar.map_add_eq_mul, AddChar.map_neg_eq_inv,
-    kunf.psi_rat d.ok.good.std T ⟨γ, hγ⟩, inv_one, one_mul]
-theorem shift_eq_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (r b u : Fin L.n → AE F E) (s a : AF F) :
-    _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (r + b) * cM (u, s + a) = (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L r * cM (0, s)) * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b * cM (u, a)) := by
-  have e1 : cM (u, s + a) = cM (0, s) * cM (u, a) := by
-    rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.cM_split_k h, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.centre_additive h, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cM_split_k h u a, ← mul_assoc, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cM_comm_k h, mul_assoc]
-  rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_add_k, e1]
-  simp only [mul_assoc]
-  rw [← mul_assoc (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b) (cM (0, s)), _root_.PositivityTheory.SiegelWeilFormula.Act.C5.unipotent_commutes_centre h, mul_assoc]
-theorem rr_rat_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) {r : Fin L.n → AE F E} (hr : r ∈ L.ratV) {s : AF F}
-    (hs : s ∈ (algebraMap F (AF F)).range) : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L r * cM (0, s) ∈ rat2 σ d.Y :=
-  mul_mem (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_rat_k hr) (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.cM_rat_k h (c := (0, s)) (zero_mem _) hs)
-theorem rr_fix_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (r : Fin L.n → AE F E) (s : AF F) (k) :
-    inFrame d.b (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L r * cM (0, s)) k (Sum.inl L.i₀) =
-      (1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E)) k (Sum.inl L.i₀) :=
-  _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.fix_mul_k (L := L) (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.fix_sM_k r) (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.fix_cM_k h (0, s)) k
-theorem pt_eq_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (x : d.G) (u : Fin L.n → AE F E) (β : nA σ d.Y d.b) :
-    nb β * (uM u * x) = _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.pb_k L β + (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)).1) *
-      (cM (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pa_k L δ β + (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)).2) * (L.j (nb' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)) * x)) := by
-  calc nb β * (uM u * x) = (L.j (nb' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)) * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.pb_k L β) * cM (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pa_k L δ β))) * x := by
-        rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.nb_split_k (R := R) h β]
-        simp only [mul_assoc]
-        rw [← mul_assoc (cM (0, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pa_k L δ β)) (uM u), ← _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cM_comm_k h, ← _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cM_split_k h]
-    _ = _ := by rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.move_k h]; simp only [mul_assoc]
-instance countable_ratV_k (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) : Countable L.ratV := by
-  haveI : Countable E := (Module.finBasis ℚ E).equivFun.injective.countable
-  have h : ((L.ratV : AddSubgroup (Fin L.n → AE F E)) : Set (Fin L.n → AE F E)).Countable := by
-    refine (Set.countable_range (GlobalTheory.ThK.incV F : (Fin L.n → E) → _)).mono fun u hu => ?_
-    obtain ⟨v, rfl⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C1.ratV_inc_k hu
-    exact ⟨v, rfl⟩
-  exact h.to_subtype
-theorem coordsC_ck_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) {lam : Measure (nA σ d.Y d.b)} {𝓖 : Set (nA σ d.Y d.b)}
-    (hc : CoefData (σ := σ) (Y := d.Y) d.b nb lam 𝓖) {ν : Measure (Fin L.n → AE F E)} {𝓤 : Set (Fin L.n → AE F E)}
-    (hU : L.UData uM ν 𝓤) {lam' : Measure (nA σ L.Y L.b)} {𝓖' : Set (nA σ L.Y L.b)}
-    (hc' : CoefData (σ := σ) (Y := L.Y) L.b nb' lam' 𝓖') {T : nF σ d.Y d.b} {T' : nF σ L.Y L.b} (hT : L.IsSub T T')
-    {𝓐 : Set (AF F)} (h𝓐 : IsAddFundamentalDomain (fA F) 𝓐 (lamA F))
-    {P : (nA σ d.Y d.b) ≃ₜ+ (((Fin L.n → AE F E) × AF F) × nA σ L.Y L.b)} (hP : ∀ β, P β = ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.pb_k L β, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pa_k L δ β), _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β))
-    {c : ℝ≥0∞} (hPc : lam.map P = c • ((ν.prod (lamA F)).prod lam'))
-    (Ψ : d.G → ℂ) (hΨ : ∀ r ∈ rat2 σ d.Y, (∀ k, inFrame d.b r k (Sum.inl L.i₀) =
-      (1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E)) k (Sum.inl L.i₀)) → ∀ g, Ψ (r * g) = Ψ g) (x : d.G) :
-    ∫ p, Ψ (nb p.2 * (uM p.1 * x)) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T p.2 ∂((ν.restrict 𝓤).prod (lam.restrict 𝓖)) =
-      c.toReal • ∫ p, Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L p.2.2.1 * (cM (p.2.1, p.2.2.2) * (L.j (nb' p.1) * x))) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k T' p.1
-        ∂((lam'.restrict 𝓖').prod ((ν.restrict 𝓤).prod ((ν.restrict 𝓤).prod ((lamA F).restrict 𝓐)))) := by
-  haveI : Fact (IsFrame2 σ d.Y d.b) := ⟨d.ok.frame⟩
-  haveI : Fact (IsFrame2 σ L.Y L.b) := ⟨L.ok.frame⟩
-  haveI := hc.2.1
-  haveI := hc'.2.1
-  haveI := hU.2.1
-  obtain ⟨-, -, hiff⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pEquiv_k h
-  let PM : (nA σ d.Y d.b) ≃ᵐ (((Fin L.n → AE F E) × AF F) × nA σ L.Y L.b) := P.toHomeomorph.toMeasurableEquiv
-  have hPM : ∀ β, PM β = ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.pb_k L β, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pa_k L δ β), _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β) := hP
-  have hPc' : lam.map PM = c • ((ν.prod (lamA F)).prod lam') := hPc
-  have hZ : IsAddFundamentalDomain (L.ratV.prod (fA F)) (𝓤 ×ˢ 𝓐) (ν.prod (lamA F)) := fd_prod' hU.2.2.1 h𝓐
-  have key := chainC (νu := ν.restrict 𝓤) (ΓN := nF σ d.Y d.b) (ΓZ := L.ratV.prod (fA F)) (ΓN' := nF σ L.Y L.b)
-    hPc' (fun a b => map_add P a b) (fun β => by rw [hPM, hiff, AddSubgroup.mem_prod]) hc.2.2.1 hZ hc'.2.2.1
-    (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.continuous_tau_k h).measurable
-    (fun p => Ψ (nb p.2 * (uM p.1 * x)) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T p.2)
-    (fun q => Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L q.2.2.1 * (cM (q.2.1, q.2.2.2) * (L.j (nb' q.1) * x))) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k T' q.1)
-    (fun γ hγ u β => _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.perF_k h Ψ hΨ T x γ hγ u β)
-    (fun g hg w => by
-      obtain ⟨hg1, hg2⟩ := AddSubgroup.mem_prod.1 hg
-      obtain ⟨β'', u, b, a⟩ := w
-      show Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (g.1 + b) * (cM (u, g.2 + a) * _)) * _ = Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b * (cM (u, a) * _)) * _
-      rw [← mul_assoc, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.shift_eq_k h, mul_assoc (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L g.1 * cM (0, g.2)), hΨ _ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.rr_rat_k h hg1 hg2) (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.rr_fix_k h g.1 g.2)]
-      simp only [mul_assoc])
-    (fun u β => by
-      rw [hPM]
-      show Ψ (nb β * (uM u * x)) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T β = Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.pb_k L β + (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)).1) *
-        (cM (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pa_k L δ β + (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)).2) * (L.j (nb' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)) * x))) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k T' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)
-      rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.pt_eq_k (R := R) h x u β]
-      congr 1
-      unfold _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k
-      rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.tr_sub_k L hT β])
-  rw [key, ← Measure.prod_restrict]
-theorem coordsE_ck_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) {lam : Measure (nA σ d.Y d.b)} {𝓖 : Set (nA σ d.Y d.b)}
-    (hc : CoefData (σ := σ) (Y := d.Y) d.b nb lam 𝓖) {ν : Measure (Fin L.n → AE F E)} {𝓤 : Set (Fin L.n → AE F E)}
-    (hU : L.UData uM ν 𝓤) {lam' : Measure (nA σ L.Y L.b)} {𝓖' : Set (nA σ L.Y L.b)}
-    (hc' : CoefData (σ := σ) (Y := L.Y) L.b nb' lam' 𝓖') {T : nF σ d.Y d.b} {T' : nF σ L.Y L.b} (hT : L.IsSub T T')
-    {𝓐 : Set (AF F)} (h𝓐 : IsAddFundamentalDomain (fA F) 𝓐 (lamA F))
-    {P : (nA σ d.Y d.b) ≃ₜ+ (((Fin L.n → AE F E) × AF F) × nA σ L.Y L.b)} (hP : ∀ β, P β = ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.pb_k L β, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pa_k L δ β), _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β))
-    {c : ℝ≥0∞} (hPc : lam.map P = c • ((ν.prod (lamA F)).prod lam'))
-    (Ψ : d.G → ℝ≥0∞) (hΨm : Measurable Ψ) (hΨ : ∀ r ∈ rat2 σ d.Y, (∀ k, inFrame d.b r k (Sum.inl L.i₀) =
-      (1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E)) k (Sum.inl L.i₀)) → ∀ g, Ψ (r * g) = Ψ g) (x : d.G) :
-    ∫⁻ p, Ψ (nb p.2 * (uM p.1 * x)) * ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T p.2‖ₑ ∂((ν.restrict 𝓤).prod (lam.restrict 𝓖)) =
-      c * ∫⁻ p, Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L p.2.2.1 * (cM (p.2.1, p.2.2.2) * (L.j (nb' p.1) * x))) * ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k T' p.1‖ₑ
-        ∂((lam'.restrict 𝓖').prod ((ν.restrict 𝓤).prod ((ν.restrict 𝓤).prod ((lamA F).restrict 𝓐)))) := by
-  haveI : Fact (IsFrame2 σ d.Y d.b) := ⟨d.ok.frame⟩
-  haveI : Fact (IsFrame2 σ L.Y L.b) := ⟨L.ok.frame⟩
-  haveI := hc.2.1
-  haveI := hc'.2.1
-  haveI := hU.2.1
-  obtain ⟨-, -, hiff⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pEquiv_k h
-  let PM : (nA σ d.Y d.b) ≃ᵐ (((Fin L.n → AE F E) × AF F) × nA σ L.Y L.b) := P.toHomeomorph.toMeasurableEquiv
-  have hPM : ∀ β, PM β = ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.pb_k L β, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pa_k L δ β), _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β) := hP
-  have hPc' : lam.map PM = c • ((ν.prod (lamA F)).prod lam') := hPc
-  have hZ : IsAddFundamentalDomain (L.ratV.prod (fA F)) (𝓤 ×ˢ 𝓐) (ν.prod (lamA F)) := fd_prod' hU.2.2.1 h𝓐
-  have key := chainE (νu := ν.restrict 𝓤) (ΓN := nF σ d.Y d.b) (ΓZ := L.ratV.prod (fA F)) (ΓN' := nF σ L.Y L.b)
-    hPc' (fun a b => map_add P a b) (fun β => by rw [hPM, hiff, AddSubgroup.mem_prod]) hc.2.2.1 hZ hc'.2.2.1
-    (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.continuous_tau_k h).measurable
-    (fun p => Ψ (nb p.2 * (uM p.1 * x)) * ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T p.2‖ₑ)
-    (fun q => Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L q.2.2.1 * (cM (q.2.1, q.2.2.2) * (L.j (nb' q.1) * x))) * ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k T' q.1‖ₑ)
-    (fun γ hγ u β => _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.perFE_k h Ψ hΨ T x γ hγ u β)
-    (fun g hg w => by
-      obtain ⟨hg1, hg2⟩ := AddSubgroup.mem_prod.1 hg
-      obtain ⟨β'', u, b, a⟩ := w
-      show Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (g.1 + b) * (cM (u, g.2 + a) * _)) * _ = Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b * (cM (u, a) * _)) * _
-      rw [← mul_assoc, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.shift_eq_k h, mul_assoc (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L g.1 * cM (0, g.2)), hΨ _ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.rr_rat_k h hg1 hg2) (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.rr_fix_k h g.1 g.2)]
-      simp only [mul_assoc])
-    (fun u β => by
-      rw [hPM]
-      show Ψ (nb β * (uM u * x)) * ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T β‖ₑ = Ψ (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.pb_k L β + (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)).1) *
-        (cM (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pa_k L δ β + (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.tau_k L uM nb' δ (u, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)).2) * (L.j (nb' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)) * x))) * ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k T' (_root_.PositivityTheory.SiegelWeilFormula.Act.C4.prj_k L β)‖ₑ
-      rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.pt_eq_k (R := R) h x u β]
-      congr 2
-      unfold _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k
-      rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C4.tr_sub_k L hT β])
-  rw [key, ← Measure.prod_restrict]
-end PositivityTheory.SiegelWeilFormula.Act.C5.CoordK
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRatVK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CoordsCK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CoordsCK", "h": "module\n\npublic import Mathlib.Analysis.Matrix.MeasurableSpace\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PadMatrixLowerBlockZero\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecondOrbitSectionIntegral\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContinuousCA\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRatVK\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-namespace PositivityTheory.SiegelWeilFormula.Act.C5
-end PositivityTheory.SiegelWeilFormula.Act.C5
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CoordsCK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousABK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousABK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinSecondTerm\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.BlockDiagonalPreservesFormIff\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnipotentNilpotentMulEqZero\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C5
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} (R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d) (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d)
-variable {R L}
-variable {nb : nA σ d.Y d.b → d.G} {uM : (Fin L.n → AE F E) → d.G} {nb' : nA σ L.Y L.b → G2 σ L.Y} {w₁ : d.G}
-  {cM : (Fin L.n → AE F E) × AF F → d.G} {δ : E}
-def cMF_k (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) (δ : E) (c : (Fin L.n → AE F E) × AF F) :
-    Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E) :=
-  Matrix.fromBlocks (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L c.1) (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k L δ c.2) 0 ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L (-c.1))ᵀ.map (cA σ))
-def cMF'_k (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) (δ : E) (c : (Fin L.n → AE F E) × AF F) :
-    Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E) :=
-  Matrix.fromBlocks (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L (-c.1)) (-(_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L (-c.1) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k L δ c.2 * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L c.1)ᵀ.map (cA σ))) 0 ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L c.1)ᵀ.map (cA σ))
-theorem cMF_mul_k (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) (δ : E) (c : (Fin L.n → AE F E) × AF F) : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF_k (σ := σ) L δ c * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF'_k L δ c = 1 := by
-  have e1 := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_mul_neg_k L c.1
-  have e2 : (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L (-c.1))ᵀ.map (cA σ) * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L c.1)ᵀ.map (cA σ) = 1 := by
-    rw [← kunf.map_cA_mul, ← Matrix.transpose_mul, e1, Matrix.transpose_one,
-      Matrix.map_one _ (map_zero _) (map_one _)]
-  have e3 : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L c.1 * -(_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L (-c.1) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k L δ c.2 * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L c.1)ᵀ.map (cA σ)) +
-      _root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k L δ c.2 * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L c.1)ᵀ.map (cA σ) = 0 := by
-    rw [Matrix.mul_neg, ← Matrix.mul_assoc, ← Matrix.mul_assoc, e1, Matrix.one_mul, neg_add_cancel]
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF_k, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF'_k, Matrix.fromBlocks_multiply, Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add]
-  rw [e1, e2, e3, Matrix.fromBlocks_one]
-theorem continuous_aB_k (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) (δ : E) :
-    Continuous fun c : (Fin L.n → AE F E) × AF F => _root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k (σ := σ) L δ c.2 := by
-  refine continuous_pi fun i => continuous_pi fun j => ?_
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.aB_k, Matrix.single_apply]
-  split_ifs
-  · exact Continuous.smul (continuous_snd (X := Fin L.n → AE F E) (Y := AF F))
-      (continuous_const (y := inclR (F := F) (E := E) (AF F) δ))
-  · exact continuous_const
-theorem continuous_cM_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) : Continuous cM := by
-  have hF : ∀ c, inFrame d.b (cM c) = _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF_k L δ c := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.inFrame_cM_k h
-  have hN := _root_.PositivityTheory.SiegelWeilFormula.Act.ComplexParameterFamilyContinuity.continuous_unipotent_nilpotent L
-  have hU : Continuous fun c : (Fin L.n → AE F E) × AF F => _root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L c.1 :=
-    continuous_const.add (hN.comp continuous_fst)
-  have hUn : Continuous fun c : (Fin L.n → AE F E) × AF F => _root_.PositivityTheory.SiegelWeilFormula.Act.C5.uA_k L (-c.1) :=
-    continuous_const.add (hN.comp continuous_fst.neg)
-  have hcA : Continuous fun M : Matrix (Fin d.n) (Fin d.n) (AE F E) => M.map (cA σ) :=
-    continuous_id.matrix_map (GlobalTheory.EisBL.DoubledGroupTopology.continuous_cA σ)
-  have hA := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.continuous_aB_k (σ := σ) L δ
-  have hc : Continuous (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF_k (σ := σ) L δ) :=
-    Continuous.matrix_fromBlocks hU hA continuous_const (hcA.comp hUn.matrix_transpose)
-  have hc' : Continuous (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF'_k (σ := σ) L δ) :=
-    Continuous.matrix_fromBlocks hUn ((hUn.matrix_mul hA).matrix_mul (hcA.comp hU.matrix_transpose)).neg
-      continuous_const (hcA.comp hU.matrix_transpose)
-  have h1 : Continuous fun c => incM F d.b.1 * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF_k L δ c * incM F (d.b⁻¹).1 :=
-    (continuous_const.matrix_mul hc).matrix_mul continuous_const
-  have h2 : Continuous fun c => incM F d.b.1 * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF'_k L δ c * incM F (d.b⁻¹).1 :=
-    (continuous_const.matrix_mul hc').matrix_mul continuous_const
-  refine continuous_induced_rng.2 (Units.continuous_iff.2 ⟨?_, ?_⟩)
-  · refine h1.congr fun c => ?_
-    show _ = mat2 (cM c)
-    rw [kunf.matrix_eq_inFrame_conj d.b, hF c]
-  · refine h2.congr fun c => ?_
-    show _ = mat2 (cM c)⁻¹
-    rw [kunf.matrix_eq_inFrame_conj d.b, GlobalTheory.EisBL.DoubledParabolic.inFrame_inv, hF c, Matrix.inv_eq_right_inv (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.cMF_mul_k L δ c)]
-end PositivityTheory.SiegelWeilFormula.Act.C5
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousABK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRationalVectors =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRationalVectors", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecondOrbitBijection\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContinuousCA\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.MeasurableSh\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousABK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousPhzK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinTermLeftInvariant\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnipotentFirstMatrix\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.AdelicHomeomorphisms.IsTopologicalGroupG2\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Formalism.LocalToGlobal.IndefiniteReal.PHeisFC\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal ENNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C5
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} (R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d) (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d)
-variable {R L}
-variable {nb : nA σ d.Y d.b → d.G} {uM : (Fin L.n → AE F E) → d.G} {nb' : nA σ L.Y L.b → G2 σ L.Y} {w₁ : d.G}
-  {cM : (Fin L.n → AE F E) × AF F → d.G} {δ : E}
 set_option linter.style.haveILetI false
-def rationalCosetEquiv (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L ≃ L.ratV × fA F where
-  toFun c := (⟨c.1.1, c.2.1⟩, ⟨c.1.2, c.2.2⟩)
-  invFun c := ⟨((c.1 : Fin L.n → AE F E), (c.2 : AF F)), c.1.2, c.2.2⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-theorem countable_rational_vectors (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d) : Countable L.ratV := by
-  have : Countable E := (Module.finBasis ℚ E).equivFun.injective.countable
-  refine Function.Surjective.countable (f := fun v : Fin L.n → E =>
-    (⟨GlobalTheory.ThK.incV F v, AddSubgroup.subset_closure ⟨v, rfl⟩⟩ : L.ratV)) fun u => ?_
-  obtain ⟨v, hv⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C1.ratV_inc_k u.2
-  exact ⟨v, Subtype.ext hv.symm⟩
-theorem coset_point_decomposition (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) {s₁ : ℂ} {f : d.G → ℂ} (hf : IsSec d.K d.χ s₁ f) (z : ℂ) {γ' : G2 σ L.Y}
-    {Λ : ((Fin L.n → AE F E) × (Fin L.n → AE F E)) ≃ₜ+ ((Fin L.n → AE F E) × (Fin L.n → AE F E))}
-    {Q : (Fin L.n → AE F E) × (Fin L.n → AE F E) → AF F}
-    (hΛ : ∀ b u a, L.j γ' * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b * cM (u, a)) = _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (Λ (b, u)).1 * cM ((Λ (b, u)).2, a + Q (b, u)) * L.j γ')
-    {Z : (Fin L.n → AE F E) → (Fin L.n → AE F E) → AF F}
-    (hZ : ∀ u₀ a₀ b u a, cM (u₀, a₀) * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b * cM (u, a)) = _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b * cM (u₀ + u, a₀ + a + Z u₀ b))
-    (Y : d.G) (c₀ : (Fin L.n → AE F E) × AF F) (p : (Fin L.n → AE F E) × ((Fin L.n → AE F E) × AF F)) :
-    _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c₀ * (L.j γ' * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L p.2.1 * (cM (p.1, p.2.2) * Y))))) =
-      _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM (UnfoldingIntegralSum.sh Λ Q Z c₀ p) * (L.j γ' * Y))) := by
-  obtain ⟨u₀, a₀⟩ := c₀
-  obtain ⟨u, b, a⟩ := p
-  have e1 : L.j γ' * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b * (cM (u, a) * Y)) = (L.j γ' * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L b * cM (u, a))) * Y := by simp only [mul_assoc]
-  have e2 : ∀ c', cM (u₀, a₀) * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (Λ (b, u)).1 * cM c' * L.j γ' * Y) =
-      (cM (u₀, a₀) * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L (Λ (b, u)).1 * cM c')) * (L.j γ' * Y) := by intro c'; simp only [mul_assoc]
-  rw [e1, hΛ, e2, hZ, mul_assoc, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.section_unipotent_invariant_weyl h hf z]
-  simp only [UnfoldingIntegralSum.sh, add_assoc]
-theorem unfqE_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) {s₁ : ℂ} {f : d.G → ℂ} (hf : IsSec d.K d.χ s₁ f) (z : ℂ)
-    {ν : Measure (Fin L.n → AE F E)} {𝓤 : Set (Fin L.n → AE F E)} (hU : L.UData uM ν 𝓤)
-    {𝓐 : Set (AF F)} (h𝓐 : IsAddFundamentalDomain (fA F) 𝓐 (lamA F)) {γ' : G2 σ L.Y} (hγ : γ' ∈ rat2 σ L.Y) (Y : d.G) :
-    ∫⁻ p, ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c₀.1 * (L.j γ' * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L p.2.1 * (cM (p.1, p.2.2) * Y)))))‖ₑ
-        ∂((ν.restrict 𝓤).prod ((ν.restrict 𝓤).prod ((lamA F).restrict 𝓐))) =
-      ∫⁻ c, ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c * (L.j γ' * Y)))‖ₑ ∂(ν.prod (lamA F)) := by
-  obtain ⟨-, hν, hU0, hU1⟩ := hU
-  haveI := hν
-  haveI := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.countable_rational_vectors L
-  obtain ⟨Λ, Q, hQ, hΛeq, hΛrat⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.j_conj'_k (R := R) h γ'
-  obtain ⟨Z, hZ, -, hheis⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.heis'_k (R := R) h
-  have hg : Continuous fun c => _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c * (L.j γ' * Y))) :=
-    (_root_.PositivityTheory.SiegelWeilFormula.Act.ComplexParameterFamilyContinuity.continuous_phz_k d hf.cont s₁ z).comp (continuous_const.mul ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.continuous_cM_k h).mul continuous_const))
-  rw [← UnfoldingIntegralSum.unf_lint hU0 hU1 (fd_prod hU0 hU0) h𝓐 Λ (hΛrat hγ) hQ.measurable hZ.measurable hg.measurable.enorm]
-  refine lintegral_congr fun p => ?_
-  rw [← (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.rationalCosetEquiv L).symm.tsum_eq]
-  exact tsum_congr fun c => by rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.coset_point_decomposition h hf z hΛeq hheis]; rfl
-theorem unfqC_k (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) {s₁ : ℂ} {f : d.G → ℂ} (hf : IsSec d.K d.χ s₁ f) (z : ℂ)
-    {ν : Measure (Fin L.n → AE F E)} {𝓤 : Set (Fin L.n → AE F E)} (hU : L.UData uM ν 𝓤)
-    {𝓐 : Set (AF F)} (h𝓐 : IsAddFundamentalDomain (fA F) 𝓐 (lamA F)) {γ' : G2 σ L.Y} (hγ : γ' ∈ rat2 σ L.Y) (Y : d.G)
-    (hfin : ∫⁻ c, ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c * (L.j γ' * Y)))‖ₑ ∂(ν.prod (lamA F)) < ⊤) :
-    ∫ p, ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c₀.1 * (L.j γ' * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L p.2.1 * (cM (p.1, p.2.2) * Y)))))
-        ∂((ν.restrict 𝓤).prod ((ν.restrict 𝓤).prod ((lamA F).restrict 𝓐))) =
-      ∫ c, _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c * (L.j γ' * Y))) ∂(ν.prod (lamA F)) := by
-  obtain ⟨-, hν, hU0, hU1⟩ := hU
-  haveI := hν
-  haveI := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.countable_rational_vectors L
-  obtain ⟨Λ, Q, hQ, hΛeq, hΛrat⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.j_conj'_k (R := R) h γ'
-  obtain ⟨Z, hZ, -, hheis⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.heis'_k (R := R) h
-  have hg : Continuous fun c => _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c * (L.j γ' * Y))) :=
-    (_root_.PositivityTheory.SiegelWeilFormula.Act.ComplexParameterFamilyContinuity.continuous_phz_k d hf.cont s₁ z).comp (continuous_const.mul ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.continuous_cM_k h).mul continuous_const))
-  rw [← UnfoldingIntegralSum.unf_int hU0 hU1 (fd_prod hU0 hU0) h𝓐 Λ (hΛrat hγ) hQ.measurable hZ.measurable hg.measurable hfin]
-  refine integral_congr_ae (Filter.Eventually.of_forall fun p => ?_)
-  beta_reduce
-  rw [← (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.rationalCosetEquiv L).symm.tsum_eq]
-  exact tsum_congr fun c => by rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.coset_point_decomposition h hf z hΛeq hheis]; rfl
-end PositivityTheory.SiegelWeilFormula.Act.C5
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRationalVectors =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinSecondTermExpand =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinSecondTermExpand", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecondOrbitBijection\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PhzEqFlatK\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal ENNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C5
+namespace PositivityTheory.SiegelWeilFormula
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} (R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d) (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d)
-variable {R L}
-variable {nb : nA σ d.Y d.b → d.G} {uM : (Fin L.n → AE F E) → d.G} {nb' : nA σ L.Y L.b → G2 σ L.Y} {w₁ : d.G}
-  {cM : (Fin L.n → AE F E) × AF F → d.G} {δ : E}
-theorem eisenstein_second_term_expand (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) {s₁ : ℂ} {f : d.G → ℂ} (hf : IsSec d.K d.χ s₁ f) (z : ℂ)
-    {e : (Σ _ : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L) ≃ {q : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d // ¬ _root_.PositivityTheory.SiegelWeilFormula.Act.FirstOrbit L (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q)}}
-    (he : ∀ x, ∃ p ∈ par2 σ d.Y, p ∈ rat2 σ d.Y ∧ _root_.PositivityTheory.SiegelWeilFormula.Act.rep_k (e x).1 = p * (w₁ * (cM x.2.1 * L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k x.1)))) (g : d.G) :
-    _root_.PositivityTheory.SiegelWeilFormula.Act.C5.eisensteinSecondTerm L (_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z) g = ∑' x : (Σ _ : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L), _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM x.2.1 * (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k x.1) * g))) ∧
-      ∑' q : {q : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d // ¬ _root_.PositivityTheory.SiegelWeilFormula.Act.FirstOrbit L (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q)}, ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q.1 * g)‖ₑ =
-        ∑' x : (Σ _ : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L), ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM x.2.1 * (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k x.1) * g)))‖ₑ := by
-  have key : ∀ x : (Σ _ : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L), _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k (e x).1 * g) =
-      _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM x.2.1 * (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k x.1) * g))) := fun x => by
-    obtain ⟨p, hp, hr, hx⟩ := he x
-    rw [hx, mul_assoc, _root_.PositivityTheory.SiegelWeilFormula.Act.C4.phz_rat_k hf z hp hr, mul_assoc, mul_assoc]
-  constructor
-  · rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.eisensteinSecondTerm, ← e.tsum_eq]
-    exact tsum_congr key
-  · rw [← e.tsum_eq]
-    exact tsum_congr fun x => by rw [key]
-end PositivityTheory.SiegelWeilFormula.Act.C5
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinSecondTermExpand =====
 
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnfK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnfK", "h": "module\n\npublic import Mathlib.Analysis.Matrix.MeasurableSpace\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecondOrbitSectionIntegral\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.BlockDiagonalPreservesFormIff\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousPhzK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousThK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CoordsCK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CountableRationalVectors\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinSecondTermExpand\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinTermLeftInvariant\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LamMapK\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.UnitsBorelSpace.BorelSpaceDoubledGroup\npublic import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.Exch\nimport Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame\nimport Formalism.LocalToGlobal.IndefiniteReal.PHeisFC\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Separation.CompletelyRegular\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
+namespace KWhit
+open PositivityTheory.PfSWUS.Loc (trPair jtR)
+open HeckeCharacterZeroLocus
+private theorem meas_herm_top_loc (d : SD_k σ) : IsTopologicalAddGroup (SiegelWeilU.HermR (AF F) σ d.n) ∧
+    LocallyCompactSpace (SiegelWeilU.HermR (AF F) σ d.n) ∧ SecondCountableTopology (SiegelWeilU.HermR (AF F) σ d.n) ∧
+    BorelSpace (SiegelWeilU.HermR (AF F) σ d.n) ∧ Countable (MeasP.ratHerm F E σ d.n) := by
+  obtain ⟨⟨_, _, _⟩, -⟩ := GlobalTheory.CompanionTheory.AdeleTop.adele_top F
+  obtain ⟨_, _, _, _, -, -, -, -, hcl, -⟩ :=
+    GlobalTheory.CompanionTheory.SW.TopK.topTens_props F E σ d.ok.good.cm (AF F)
+  have : LocallyCompactSpace d.Mn := inferInstanceAs (LocallyCompactSpace (Fin d.n → Fin d.n → AE F E))
+  have : SecondCountableTopology d.Mn := inferInstanceAs (SecondCountableTopology (Fin d.n → Fin d.n → AE F E))
+  have : Countable E := _root_.Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.countableE
+  have : Countable (Matrix (Fin d.n) (Fin d.n) E) := inferInstanceAs (Countable (Fin d.n → Fin d.n → E))
+  refine ⟨inferInstance, (hcl d.n).locallyCompactSpace,
+    inferInstanceAs (SecondCountableTopology ((SiegelWeilU.HermR (AF F) σ d.n : Set d.Mn))), ⟨rfl⟩, ?_⟩
+  have := (Set.countable_range (AddMonoidHom.mapMatrix (SiegelWeilU.inclR (F := F) (E := E) (AF F)).toAddMonoidHom :
+    Matrix (Fin d.n) (Fin d.n) E → d.Mn)).to_subtype
+  exact Function.Injective.countable (f := fun x : MeasP.ratHerm F E σ d.n =>
+    (⟨x.1.1, AddMonoidHom.mem_range.mp (AddSubgroup.mem_comap.mp x.2)⟩ : Set.range _)) fun _ _ h =>
+    Subtype.ext (Subtype.ext (Subtype.mk.inj h))
+private theorem meas_mx_top'_loc (d : SD_k σ) : IsTopologicalAddGroup d.MxE ∧ LocallyCompactSpace d.MxE ∧
+    SecondCountableTopology d.MxE ∧ BorelSpace d.MxE ∧ Countable d.ratM := by
+  obtain ⟨_, _, _, _⟩ := KFock.mxTop_k d
+  have : Countable E := _root_.Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.countableE; have : Countable d.ME := inferInstanceAs (Countable (Fin d.m → Fin d.n → E))
+  refine ⟨inferInstance, inferInstance, inferInstance, inferInstance, ?_⟩
+  have hle : d.ratM ≤ (AddMonoidHom.mapMatrix (inclR (F := F) (E := E) (AF F)).toAddMonoidHom).range :=
+    (AddSubgroup.closure_le _).mpr <| by rintro _ ⟨X, rfl⟩; exact ⟨X, rfl⟩
+  have := (Set.countable_range (AddMonoidHom.mapMatrix (inclR (F := F) (E := E) (AF F)).toAddMonoidHom :
+    d.ME → d.MxE)).to_subtype
+  exact Function.Injective.countable (f := fun x : d.ratM =>
+    (⟨x.1, AddMonoidHom.mem_range.mp (hle x.2)⟩ : Set.range _)) fun _ _ h => Subtype.ext (Subtype.mk.inj h)
+private theorem T_finset_sum_loc (d : SD_k σ) {ι : Type} (s : Finset ι) (c : ι → ℂ) (Φs : ι → d.Fn) (X : d.MxE) :
+    d.T (∑ i ∈ s, c i • Φs i) X = ∑ i ∈ s, c i * d.T (Φs i) X := by
+  induction s using Finset.cons_induction with
+  | empty => simp [d.T_zero]
+  | cons _ _ _ ih => rw [Finset.sum_cons, Finset.sum_cons, KK.W.T_add, KK.W.T_smul, ih]
+namespace W
+open PositivityTheory.SiegelWeilFormula.KWhit PositivityTheory.SiegelWeilFormula.KWhit.Ht
+private theorem cellFormula : CellFormula_k := fun hT F E _ _ _ _ _ σ d ν hν ε w hw Φ hΦ g x β hg => by
+  have hx := d.om_sch x Φ hΦ
+  rw [show d.sec0 Φ (w * g * x) = d.l (d.om w (d.om g (d.om x Φ))) by simp [SD_k.sec0, map_mul, mul_apply_eq_comp],
+    ← KSplitP.T_zero_k d _, hT.2.2.1 F E σ d ν hν ε w hw _ (d.om_sch g _ hx) 0]
+  refine integral_congr_ae (Eventually.of_forall fun Z => ?_)
+  simp only [show d.gram 0 Z = 0 by simp [SD_k.gram], SD_k.tt, Matrix.trace_zero, map_zero, mul_zero,
+    AddChar.map_zero_eq_one, one_mul]
+  exact (hT.2.1 F E σ d _ hx).1 g β hg Z
+private theorem coreX : CoreX_k :=
+  fun ok vac c hT hA hS hU hW hD F E _ _ _ _ _ σ d R hok hE Φ hΦ P gf hpg hv x hx nb lam 𝓖 hcd ε w hw T hTnd =>
+    match hD hT hA F E σ d R Φ hΦ P gf hpg x hx nb lam 𝓖 hcd ε w hw T hTnd with
+    | ⟨dd, J, T', bs, ψ, θ, l, εs, fr, g, lv, L₁, L₂, Φg, Φf, Φv, μ, ν, c', C, hDat, hAn, ⟨e, he⟩, hC, ⟨t, ht⟩,
+        μH, 𝓕, hH, hF, horb⟩ =>
+      match hU F E σ d d.s₀ (d.sec0 Φ) (hS F E σ d Φ hΦ) (hE Φ hΦ) with
+      | ⟨t', ht'⟩ => by
+        have hG := hW F E σ d.m d.n dd J T' bs ψ (InfinitePlace F) θ l εs fr g P lv L₁ L₂ Φg Φf Φv μ ν hDat hok
+          (Or.inr hAn) (fun h => ⟨fun i => congrFun (hv h) i, e, he⟩)
+          ⟨max t t', fun z hz => (ht z (lt_of_le_of_lt (le_max_left _ _) hz)).1
+            ((ht' z (lt_of_le_of_lt (le_max_right _ _) hz) nb lam 𝓖 hcd ε w hw x).1)⟩ μH 𝓕 hH hF
+        rw [horb, mul_left_comm]
+        exact ((holValueAt_const_mul_cpow c' hC d.s₀).mul hG).congr ⟨t, fun z hz => ((ht z hz).2).symm⟩
+section RelS
+variable {d : SD_k σ} {R : RD_k d} {x : d.G} {t u : d.Gn} {T : d.nF_} {η : E} {T₀ : Matrix (Fin d.n) (Fin d.n) E}
+  {hOf : d.nA_ → SiegelWeilU.HermR (AF F) σ d.n} {θ : InfinitePlace F → (InfiniteAdeleRing F ⊗[F] E →+* ℂ)}
+  {fr : InfinitePlace F → d.Gmc} {g : InfinitePlace F → d.Gnc} (hR : Rel_k d R x t u T η T₀ hOf θ fr g)
+include hR
+private theorem real_at (ε : ℤˣ) (β : d.nA_) (D : d.Gn) {k : d.G} (hk : k ∈ d.K)
+    (h1 : ((ε : ℤ) : AE F E) • t.1 = D.1 * (inFrame d.b k).toBlocks₂₁)
+    (h2 : ((ε : ℤ) : AE F E) • (β.1 * u.1) = D.1 * (inFrame d.b k).toBlocks₂₂) (w : InfinitePlace F) :
+    ‖piInf (d.B.emb w) D.1.det‖ ^ 2 = ‖piInf (d.B.emb w) t.1.det‖ ^ 2 *
+      (1 + (((g w)⁻¹).1 * (Gen.matInf (hOf β).1).map (θ w) * (((g w)⁻¹).1)ᴴ) *
+        (((g w)⁻¹).1 * (Gen.matInf (hOf β).1).map (θ w) * (((g w)⁻¹).1)ᴴ)).det.re := by
+  set pw := piInf (d.B.emb w)
+  have hcA (z : AE F E) : pw (cA σ z) = star (pw z) := by
+    simp only [pw, piInf, RingHom.comp_apply, compInf_cA]; exact (infEmb_sigR d.ok.good.cm (d.B.emb w) _).symm
+  have hK : ((inFrame d.b k).map pw).toBlocks₂₁ * (((inFrame d.b k).map pw).toBlocks₂₁)ᴴ +
+      ((inFrame d.b k).map pw).toBlocks₂₂ * (((inFrame d.b k).map pw).toBlocks₂₂)ᴴ = 1 := Matrix.ext fun i j => by
+    have := congrFun₂ (((d.ok.stdK k).1 hk).1 w) (Sum.inr i) (Sum.inr j)
+    simp only [Matrix.mul_apply, Fintype.sum_sum_type, Matrix.conjTranspose_apply, Matrix.one_apply,
+      Sum.inr.injEq] at this
+    simpa [Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.one_apply, Matrix.toBlocks₂₁, Matrix.toBlocks₂₂,
+      Matrix.add_apply] using this
+  have hmap {a b c : Type} [Fintype b] (X : Matrix a b (AE F E)) (Y : Matrix b c (AE F E)) :
+      (X * Y).map pw = X.map pw * Y.map pw := Matrix.map_mul
+  have hsm {a b : Type} (c : AE F E) (X : Matrix a b (AE F E)) : (c • X).map pw = pw c • X.map pw := by ext _ _; simp
+  have h1' := congrArg (fun M => M.map pw) h1; have h2' := congrArg (fun M => M.map pw) h2
+  simp only [hsm, hmap, map_intCast] at h1' h2'
+  have htu : (t.1.map pw)ᴴ * u.1.map pw = 1 := by
+    have h0 := congrArg (fun M => M.map pw) (levi_tu_k d x t u hR.levi)
+    simp only [hmap, Matrix.map_one _ (map_zero pw) (map_one pw)] at h0
+    have h3 : ((t.1ᵀ.map pw) * ((u.1.map (cA σ)).map pw)).map (starRingEnd ℂ) =
+        (1 : d.Mnc).map (starRingEnd ℂ) := by rw [h0]
+    rw [Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _),
+      show ((u.1.map (cA σ)).map pw).map (starRingEnd ℂ) = u.1.map pw from by ext _ _; simp [hcA]] at h3
+    rw [← h3]; rfl
+  have hh : ((hOf β).1.map pw)ᴴ = (hOf β).1.map pw := Matrix.ext fun a b => by
+    simp only [Matrix.conjTranspose_apply, Matrix.map_apply]; rw [← (hOf β).2 a b, sigR_eq_cA', hcA]
+  have hβ : β.1.map pw = -(((d.B.emb w).1 η) • ((hOf β).1.map pw)ᵀ) := by
+    rw [hR.hof β]; ext _ _
+    simp [Matrix.map_apply, Matrix.mul_apply, Matrix.scalar_apply, incM, Matrix.diagonal_apply, pw, piInf, compInf,
+      inclR, Algebra.TensorProduct.map_tmul, infEmb_tmul]
+  have key := _root_.GlobalTheory.CompanionTheory.KWhit.norm_det_bottom_block_sq (t.1.map pw) (u.1.map pw) (D.1.map pw)
+    ((inFrame d.b k).map pw).toBlocks₂₁ ((inFrame d.b k).map pw).toBlocks₂₂ (β.1.map pw) ((hOf β).1.map pw) (g w).1
+    ((ε : ℤ) : ℂ) ((d.B.emb w).1 η) (by rcases Int.units_eq_one_or ε with h | h <;> simp [h])
+    ((map_ne_zero _).2 hR.ne) hK h1' h2' htu hh hβ (hR.gc w) ((Matrix.isUnit_iff_isUnit_det _).1 (g w).isUnit)
+  rw [det_map, det_map] at key
+  rw [show (Gen.matInf (hOf β).1).map (θ w) = ((hOf β).1.map pw).map star from by ext _ _; exact hR.th w _,
+    Matrix.coe_units_inv]; exact key
+private theorem fin_at (ε : ℤˣ) (β : d.nA_) (D : d.Gn) {k : d.G} (hk : k ∈ d.K)
+    (h1 : ((ε : ℤ) : AE F E) • t.1 = D.1 * (inFrame d.b k).toBlocks₂₁)
+    (h2 : ((ε : ℤ) : AE F E) • (β.1 * u.1) = D.1 * (inFrame d.b k).toBlocks₂₂) (v : HeightOneSpectrum (𝓞 F))
+    (lam : Measure (Fin d.n → v.adicCompletion F ⊗[F] E)) [lam.IsAddHaarMeasure] :
+    ‖Algebra.norm (v.adicCompletion F) (compFin F E v D.1.det)‖ =
+      ‖Algebra.norm (v.adicCompletion F) (compFin F E v t.1.det)‖ *
+        Gen.nu2 lam (L1 σ t v) (L2 σ u η v) (Gen.matV v (hOf β).1) := by
+  set cf := compFin F E v
+  have hmap {a b c : Type} [Fintype b] (X : Matrix a b (AE F E)) (Y : Matrix b c (AE F E)) :
+      (X * Y).map cf = X.map cf * Y.map cf := Matrix.map_mul
+  have hsm {a b : Type} (c : AE F E) (X : Matrix a b (AE F E)) : (c • X).map cf = cf c • X.map cf := by ext _ _; simp
+  have htu : (t.1.map cf)ᵀ * (u.1.map cf).map (SiegelWeilU.sigR (v.adicCompletion F) σ) = 1 := by
+    have h0 := congrArg (fun M => M.map cf) (levi_tu_k d x t u hR.levi)
+    simp only [hmap, Matrix.map_one _ (map_zero cf) (map_one cf)] at h0
+    rw [← h0, Matrix.transpose_map]; congr 1; ext _ _; exact (compFin_cA v _).symm
+  have he1 : ‖Algebra.norm (v.adicCompletion F) (((ε : ℤ) : v.adicCompletion F ⊗[F] E))‖ = 1 := by
+    rcases Int.units_eq_one_or ε with h | h; · simp [h]
+    · rw [show (((ε : ℤ) : v.adicCompletion F ⊗[F] E)) = algebraMap (v.adicCompletion F) _ (-1) by
+        rw [h]; simp only [Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one, map_neg, map_one],
+        Algebra.norm_algebraMap, norm_pow, norm_neg, norm_one, one_pow]
+  have hβ : β.1.map cf = -((inclR (F := F) (v.adicCompletion F) η) • ((hOf β).1.map cf)ᵀ) := by
+    rw [hR.hof β]; ext _ _
+    simp [Matrix.map_apply, Matrix.mul_apply, Matrix.scalar_apply, incM, Matrix.diagonal_apply, cf, compFin_inclR]
+  have hkk : (inFrame d.b k).map cf * (inFrame d.b k⁻¹).map cf = 1 := by
+    rw [← hmap, ← d.inFrame_mul, mul_inv_cancel, d.inFrame_one, Matrix.map_one _ (map_zero cf) (map_one cf)]
+  have hki (i j) : cf (inFrame d.b k i j) ∈ OE E v ∧ cf (inFrame d.b k⁻¹ i j) ∈ OE E v := by
+    have h := ((d.ok.stdK k).1 hk).2
+    have e (z : AE F E) : cf (finOne F • z) = cf z := by rw [compFin_smul, evFin_finOne, one_smul]
+    exact ⟨e _ ▸ compFin_intHat v (h k (by simp) i j), e _ ▸ compFin_intHat v (h k⁻¹ (by simp) i j)⟩
+  have h1' := congrArg (fun M => M.map cf) h1; have h2' := congrArg (fun M => M.map cf) h2
+  simp only [hsm, hmap, map_intCast] at h1' h2'
+  have key := HeightDict.fin_index d.ok.good.cm v d.n (t.1.map cf) (u.1.map cf) (D.1.map cf) (β.1.map cf)
+    ((hOf β).1.map cf) (inclR (F := F) (v.adicCompletion F) η) (((ε : ℤ) : v.adicCompletion F ⊗[F] E))
+    ((inFrame d.b k).map cf) ((inFrame d.b k⁻¹).map cf)
+    (by rw [det_map]; exact t.det.isUnit.map cf) (by rw [det_map]; exact D.det.isUnit.map cf) htu
+    ((Ne.isUnit hR.ne).map _) (ε.isUnit.map (Int.castRingHom _)) he1 hβ
+    (fun a b => by simp only [Matrix.map_apply]; rw [← (hOf β).2 a b]; exact (compFin_sigR v _).symm)
+    hkk (fun i j => (hki i j).1) (fun i j => (hki i j).2) h1' h2' lam
+  rw [det_map, det_map] at key; exact key
+private theorem asm_phase_cell (β : d.nA_) (Y : Fin d.n → Fin d.m → AF F ⊗[F] E) :
+    -(⅟(2 : AF F) * d.tt (β.1 * d.gram (toMx Y) (toMx Y))) =
+      trPair (AF F) ((hOf β).1) (SiegelWeilU.gramR (AF F) σ (Jd_k d η) Y) := by
+  have hg : SiegelWeilU.gramR (AF F) σ (Jd_k d η) Y =
+      (SiegelWeilU.inclR (F := F) (AF F) η) • (d.gram (toMx Y) (toMx Y))ᵀ := Matrix.ext fun _ _ => by
+    simp only [SiegelWeilU.gramR, SiegelWeilU.hR, SiegelWeilU.hform, SiegelWeilU.JR, Jd_k, Matrix.map_apply,
+      Matrix.transpose_apply, Matrix.smul_apply, smul_eq_mul, SD_k.gram, Matrix.mul_apply, toMx,
+      Matrix.of_apply, incM, map_mul, Finset.mul_sum, Finset.sum_mul]
+    exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by rw [asm_incl, asm_cA]; ring
+  rw [trPair, hg, hR.hof β, SD_k.tt, asm_half, Matrix.neg_mul, asm_scalar_mul, Matrix.smul_mul, Matrix.trace_neg,
+    Matrix.trace_smul, smul_eq_mul, map_neg, mul_neg, neg_neg]
+  congr 2; simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, Matrix.transpose_apply, Matrix.smul_apply,
+    smul_eq_mul, Finset.mul_sum]
+  rw [Finset.sum_comm]
+  exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
+private theorem asm_phase_whit (β : d.nA_) :
+    -d.tt (T.1.1 * β.1) = -trPair (AF F) ((Td η T₀).map (SiegelWeilU.inclR (AF F))) ((hOf β).1) := by
+  rw [neg_inj, trPair, hR.hof β, hR.rat, SD_k.tt, asm_scalar_mul, Matrix.mul_neg, Matrix.mul_smul, Matrix.trace_neg,
+    Matrix.trace_smul, smul_eq_mul, map_neg]
+  have h2 : ∑ a, ∑ c, ((Td η T₀).map (SiegelWeilU.inclR (AF F))) a c * ((hOf β).1 : d.Mn) c a =
+      algebraMap (AF F) (AE F E) (-2) * (SiegelWeilU.inclR (F := F) (AF F) η *
+        (incM F T₀ * ((hOf β).1 : d.Mn)ᵀ).trace) := by
+    simp only [Td, Matrix.map_apply, Matrix.transpose_apply, Matrix.smul_apply, smul_eq_mul, map_mul, map_neg,
+      map_ofNat, Matrix.trace, Matrix.diag, Matrix.mul_apply, incM, Finset.mul_sum]
+    rw [Finset.sum_comm]
+    exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by
+      rw [asm_incl, mul_assoc, mul_assoc, mul_left_comm (SiegelWeilU.inclR (AF F) η)]
+  rw [h2, ← Algebra.smul_def (-2 : AF F) _, LinearMap.map_smul, smul_eq_mul, ← mul_assoc,
+    show algebraMap F (AF F) (1 / 2) * (-2 : AF F) = -1 by
+      rw [show (-2 : AF F) = algebraMap F (AF F) (-2) by rw [map_neg, map_ofNat], ← map_mul]; norm_num]; ring
+end RelS
+private theorem absE_split (d : SD_k σ) (x : (AE F E)ˣ) : ((absE F E x : ℝ≥0) : ℝ) =
+    (∏ w, ‖piInf (d.B.emb w) x.1‖ ^ 2) * ∏ᶠ v, ‖Algebra.norm (v.adicCompletion F) (compFin F E v x.1)‖ := by
+  rw [GlobalTheory.Doubling.absE_apply, NNReal.coe_mul, NNReal.coe_prod]; congr 1
+  · exact Finset.prod_congr rfl fun w _ => by
+      rw [GlobalTheory.Doubling.absEw_eq_sq d.ok.good.cm (d.B.emb w), NNReal.coe_pow, coe_nnNorm]; rfl
+  · set s := (GlobalTheory.Doubling.finite_mulSupport_absEv x).toFinset
+    rw [finprod_eq_prod_of_mulSupport_subset _ (s := s) (by simp [s]), NNReal.coe_prod,
+      finprod_eq_prod_of_mulSupport_subset _ (s := s) fun v hv => by
+        simp only [Set.Finite.coe_toFinset, s, Function.mem_mulSupport] at hv ⊢
+        rw [normV_eq] at hv; exact fun h => hv (by rw [h, NNReal.coe_one])]
+    exact Finset.prod_congr rfl fun v _ => (normV_eq x v).symm
+private theorem heightDict : HeightDict_k := by
+  intro F E _ _ _ _ _ σ d R x t u T η T₀ hOf θ fr g hR nb lam 𝓖 hc ε w hw
+  choose lv hlv using fun v : HeightOneSpectrum (𝓞 F) => _root_.PositivityTheory.SiegelWeilFormula.HeightDict.exists_haar_tup (E := E) v d.n
+  obtain ⟨hCO, hstd⟩ := HeightDict.fin_std_k (σ := σ) d d.n t u η hR.ne
+  have hat : (0 : ℝ) < ((absE F E t.det : ℝ≥0) : ℝ) := Ht.absE_pos _
+  refine ⟨lv, Ht.L1 σ t, Ht.L2 σ u η, ((absE F E t.det : ℝ≥0) : ℝ)⁻¹, inv_pos.2 hat, hlv, hCO, hstd, fun β => ?_⟩
+  obtain ⟨D, k, hk, ha, hb1, hb2⟩ := Ht.frame_iwa_k d (w * nb β * x)
+  obtain ⟨hr1, hr2⟩ := Ht.bottom_rows_k d x t u hR.levi nb hc.1 ε w hw β
+  have h1 := hr1.symm.trans hb1; have h2 := hr2.symm.trans hb2
+  have hre := fun w' => real_at hR ε β D hk h1 h2 w'; have hfi := fun v => fin_at hR ε β D hk h1 h2 v (lv v)
+  set N : HeightOneSpectrum (𝓞 F) → ℝ := fun v => Gen.nu2 (lv v) (Ht.L1 σ t v) (Ht.L2 σ u η v) (Gen.matV v (hOf β).1)
+  have hsD := absE_split d D.det; have hsT := absE_split d t.det
+  have hfT := Ht.fin_supp t.det; have hfD := Ht.fin_supp D.det; have hT0 := Ht.normV_ne t.det
+  simp only [Matrix.GeneralLinearGroup.val_det_apply] at hsD hsT hfT hfD hT0
+  have hNs : (Function.mulSupport N).Finite := (hfD.union hfT).subset fun v hv => by
+    by_contra hc'; simp only [Set.mem_union, Function.mem_mulSupport, not_or, not_not] at hc'
+    exact hv (by rw [show N v = ‖Algebra.norm (v.adicCompletion F) (compFin F E v D.1.det)‖ /
+      ‖Algebra.norm (v.adicCompletion F) (compFin F E v t.1.det)‖ from by
+        rw [hfi v, mul_div_cancel_left₀ _ (hT0 v)], hc'.1, hc'.2, div_one])
+  have hA : ((absE F E D.det : ℝ≥0) : ℝ) =
+      ((absE F E t.det : ℝ≥0) : ℝ) * Gen.nuA θ g lv (Ht.L1 σ t) (Ht.L2 σ u η) (hOf β).1 := by
+    rw [hsD, hsT, show Gen.nuA θ g lv (Ht.L1 σ t) (Ht.L2 σ u η) (hOf β).1 =
+      (∏ w', (1 + (((g w')⁻¹).1 * (Gen.matInf (hOf β).1).map (θ w') * (((g w')⁻¹).1)ᴴ) *
+        (((g w')⁻¹).1 * (Gen.matInf (hOf β).1).map (θ w') * (((g w')⁻¹).1)ᴴ)).det.re) * ∏ᶠ v, N v from rfl,
+      Finset.prod_congr rfl fun w' _ => hre w', Finset.prod_mul_distrib,
+      finprod_congr fun v => hfi v, finprod_mul_distrib hfT hNs]; ring
+  have hDpos := Ht.absE_pos D.det; rw [hA] at hDpos
+  exact ⟨pos_of_mul_pos_right hDpos hat.le, by rw [ha, hA, mul_inv]⟩
+private theorem measDict : MeasDict_k := by
+  intro F E _ _ _ _ _ σ d R x t u T η T₀ hOf θ fr g hR
+  have hchar := GlobalTheory.StdCharFromIsStd.isCharAF d.ok.good.std
+  refine ⟨fun nb lam 𝓖 hc ν hν => ?_, fun μ νc hμ hνc => ?_⟩
+  · obtain ⟨_, _, _, _, _⟩ := meas_herm_top_loc d
+    obtain ⟨hemb, hH', hfd, h1⟩ := MeasD.meas_hOf_k hR hc; have := hν.1
+    obtain ⟨𝓕, hF, hF1⟩ := _root_.GlobalTheory.CompanionTheory.SW.HermCov.hermCovol F E σ d.ok.good.cm d.B.ψ hchar d.n ν hν
+    exact ⟨hemb, hemb.measurable,
+      @MeasG.covol_unique _ _ _ _ _ _ _ _ (MeasP.ratHerm F E σ d.n) _ _ _ hν.1 hH' _ _ hF hfd hF1 h1⟩
+  · obtain ⟨_, _, _, _, _⟩ := meas_mx_top'_loc d
+    have hND : HeckeCharacterZeroLocus.SiegelWeilU.IsHermND σ (Jd_k d η) :=
+      ⟨fun i j => hR.herm j i, by rw [Jd_k, Matrix.det_transpose, Matrix.det_smul]
+                                  exact mul_ne_zero (pow_ne_zero _ hR.ne) (meas_detA_k d)⟩
+    obtain ⟨𝓕, hF, hF1⟩ := _root_.GlobalTheory.CompanionTheory.SiegelND.TupCovolume.tupCovol F E σ d.ok.good.cm d.m (Jd_k d η) hND
+      d.B.ψ hchar d.n μ hμ
+    obtain ⟨hemb, hH', hfd, h1⟩ := MeasD.meas_toMx_k d μ 𝓕 hμ.1 hF hF1
+    obtain ⟨hνH, 𝓖, hG, hG1⟩ := hνc
+    exact ⟨hemb, hemb.measurable, @MeasG.covol_unique _ _ _ _ _ _ _ _ d.ratM _ _ _ hνH hH' _ _ hG hfd hG1 h1⟩
+private def genF {d : SD_k σ} (R : RD_k d) (P : InfinitePlace F → PX d.m d.n) (g : d.Af3 → ℂ) (X : d.MxE) : ℂ :=
+  (∏ w, fP (P w) (R.loc w X)) * g fun k => (d.crd X k).2
+private theorem span_lift {d : SD_k σ} (R : RD_k d)
+    (hB : (∀ Φ ∈ d.sch, d.T Φ ∈ d.schM) ∧ (∀ f ∈ d.schM, ∃ Φ ∈ d.sch, d.T Φ = f) ∧ (∀ Φ ∈ d.sch, d.T Φ = 0 → Φ = 0))
+    (hF : R.fock ≤ d.schM) (S : Submodule ℂ d.MF) (p : (InfinitePlace F → PX d.m d.n) → Prop)
+    (hS : S ≤ Submodule.span ℂ {f | ∃ P g, p P ∧ g ∈ SB _ ∧ f = genF R P g})
+    (hgen : ∀ P φ, p P → Dense.Good φ → genF R P (Dense.pf φ) ∈ R.fock) {Φ : d.Fn} (hΦ : Φ ∈ d.sch) (hTΦ : d.T Φ ∈ S) :
+    ∃ (k : ℕ) (c : Fin k → ℂ) (Φs : Fin k → d.Fn),
+      (∀ i, Φs i ∈ d.sch ∧ ∃ P φ, p P ∧ Dense.Good φ ∧ d.T (Φs i) = genF R P (Dense.pf φ)) ∧ Φ = ∑ i, c i • Φs i := by
+  set G : Set d.MF := {f | ∃ P φ, p P ∧ Dense.Good φ ∧ f = genF R P (Dense.pf φ)}
+  let genL (P : InfinitePlace F → PX d.m d.n) : (d.Af3 → ℂ) →ₗ[ℂ] d.MF :=
+    ⟨⟨genF R P, fun _ _ => funext fun _ => by simp only [genF, Pi.add_apply]; ring⟩,
+     fun _ _ => funext fun _ => by simp only [genF, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]; ring⟩
+  have hle : S ≤ Submodule.span ℂ G := hS.trans <| Submodule.span_le.2 fun _ ⟨P, g, hp, hg, hEq⟩ => by
+    subst hEq; change genL P g ∈ Submodule.span ℂ G
+    exact Submodule.span_induction (fun _ ⟨φ, hφ, e⟩ => e ▸ Submodule.subset_span ⟨P, φ, hp, hφ, rfl⟩)
+      (by rw [map_zero]; exact zero_mem _) (fun _ _ _ _ hx hy => by rw [map_add]; exact add_mem hx hy)
+      (fun _ _ _ hx => by rw [map_smul]; exact Submodule.smul_mem _ _ hx) (Dense.mem_span_pf hg)
+  obtain ⟨k, c, gs, hsum⟩ := Submodule.mem_span_set'.1 (hle hTΦ)
+  choose Φs hΦs hTs using fun i : Fin k => let ⟨P, φ, hp, hφ, e⟩ := (gs i).2; hB.2.1 _ (hF (e ▸ hgen P φ hp hφ))
+  refine ⟨k, c, Φs, fun i => ⟨hΦs i, let ⟨P, φ, hp, hφ, e⟩ := (gs i).2; ⟨P, φ, hp, hφ, (hTs i).trans e⟩⟩, ?_⟩
+  refine sub_eq_zero.1 (hB.2.2 _ (sub_mem hΦ (Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (hΦs i)))
+    (funext fun X => ?_))
+  change (d.l ∘ₗ schrL d.B.ψ (d.dd.e (X * (incM F d.b.1.toCols₂)ᵀ))) (Φ - ∑ i, c i • Φs i) = 0
+  rw [map_sub]; change d.T Φ X - d.T (∑ i, c i • Φs i) X = 0; rw [T_finset_sum_loc]
+  have hsumX := congrFun hsum X
+  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hTs] at hsumX ⊢; rw [hsumX, sub_self]
+private theorem pureSpan : PureSpan_k := fun hT hF hPK F E _ _ _ _ _ σ d R Φ hΦ hTΦ => by
+  obtain ⟨k, c, Φs, hi, heq⟩ := span_lift R (hT.1 F E σ d) (hF F E σ d R).1 R.fock (fun _ => True)
+    (Submodule.span_le.2 fun _ ⟨P, g, hg, e⟩ => Submodule.subset_span ⟨P, g, trivial, hg, e⟩)
+    (fun P φ _ hφ => Submodule.subset_span ⟨P, Dense.pf φ, Dense.pf_mem hφ, rfl⟩) hΦ.1 hTΦ
+  refine ⟨k, c, Φs, fun i => ?_, heq⟩; obtain ⟨hsch, P, φ, -, hφ, hTi⟩ := hi i
+  exact ⟨hPK F E σ d R (Φs i) hsch (hTi ▸ Submodule.subset_span ⟨P, Dense.pf φ, Dense.pf_mem hφ, rfl⟩),
+    P, φ, fun v => hφ.1 v, hφ.2.mono fun _ hv => hv, by rw [hTi]; rfl⟩
+private theorem vacSpan : VacSpan_k := fun hT hF hPK hVK F E _ _ _ _ _ σ d R Φ hΦ hTΦ => by
+  have hvf : R.vac ≤ R.fock := (hVK F E σ d R).2.1
+  obtain ⟨k, c, Φs, hi, heq⟩ := span_lift R (hT.1 F E σ d) (hF F E σ d R).1 R.vac (· = fun _ => 1)
+    (Submodule.span_le.2 fun _ ⟨g, hg, e⟩ => Submodule.subset_span ⟨fun _ => 1, g, rfl, hg, e⟩)
+    (fun P φ hp hφ => hvf (hp ▸ Submodule.subset_span ⟨Dense.pf φ, Dense.pf_mem hφ, rfl⟩)) hΦ hTΦ
+  refine ⟨k, c, Φs, fun i => ?_, heq⟩; obtain ⟨hsch, P, φ, rfl, hφ, hTi⟩ := hi i
+  have hmem : d.T (Φs i) ∈ R.vac := hTi ▸ Submodule.subset_span ⟨Dense.pf φ, Dense.pf_mem hφ, rfl⟩
+  exact ⟨hPK F E σ d R (Φs i) hsch (hvf hmem), hmem, φ, fun v => hφ.1 v, hφ.2.mono fun _ hv => hv, by rw [hTi]; rfl⟩
+private theorem genDictX : GenDictX_k :=
+  fun hT hA F E _ _ _ _ _ σ d R Φ hΦ P gf hpg x ⟨t, u, hxtu⟩ nb lam 𝓖 hcd ε w hw T hTnd =>
+    let ⟨η, hOf, hη, hherm, hof, hani, hcm, hJ, hTT⟩ := relAlg_pf_k F E σ d
+    let ⟨T₀, hrat, hTdh, hTdd⟩ := hTT T hTnd
+    let ⟨θ, fr, g, l, εs, Φg, Φf, Φv, hth, hfr, hg, hΦg, hεs, hchr, hpl, hfrm, hpf, hpr⟩ :=
+      ThetaDictR.relReal_k F E σ d R Φ P gf hpg x t u hxtu η hη hherm
+    let ⟨⟨μ, hsdW⟩, ⟨ν, hsdH⟩⟩ := sdEx F E σ hcm d.m (Jd_k d η) hJ d.B.ψ hchr d.n
+    let hr : Rel_k d R x t u T η T₀ hOf θ fr g := ⟨hxtu, hrat, hη, hherm, hof, hth, hfr, hg⟩
+    let ⟨lv, L₁, L₂, C, hC, hlv, hco, hstd, hht⟩ := heightDict F E σ d R x t u T η T₀ hOf θ fr g hr nb lam 𝓖 hcd ε w hw
+    let ⟨hMβ, hMZ⟩ := measDict F E σ d R x t u T η T₀ hOf θ fr g hr
+    let ⟨hembβ, hpresβ⟩ := hMβ nb lam 𝓖 hcd ν hsdH
+    let ⟨νc, hνc⟩ := (hA F E σ d).1
+    let ⟨hembZ, hpresZ⟩ := hMZ μ νc hsdW hνc
+    let ⟨μH, 𝓕, hμH, h𝓕, horb⟩ := thetaDict_k F E σ d η hr.ne hr.herm
+    by
+      set c : ℂ := (d.χ t.det : ℂ) * (((absE F E t.det : ℝ) ^ ((d.m : ℝ) / 2) : ℝ) : ℂ)
+      have hc0 : c ≠ 0 := mul_ne_zero (Circle.coe_ne_zero _) (Complex.ofReal_ne_zero.2
+        (Real.rpow_pos_of_pos (Ht.absE_pos t.det) _).ne')
+      have hTx (Y) : d.T (d.om x Φ) (toMx Y) = c * Φg Y := by
+        rw [hΦg Y]; exact (hT.2.1 F E σ d Φ hΦ.1).2.1 x t u hxtu (toMx Y)
+      have hint (z : ℂ) (β : d.nA_) :
+          GlobalTheory.ThK.Dbl.flat d.a (d.sec0 Φ) (s0 d.m d.n) z (w * nb β * x) * d.B.ψ (-d.tt (T.1.1 * β.1)) =
+          c * (C : ℂ) ^ (z - s0 d.m d.n) * Gen.whI (AF F) σ (Jd_k d η) d.B.ψ μ Φg (Gen.nuA θ g lv L₁ L₂)
+            ((Td η T₀).map (SiegelWeilU.inclR (AF F))) z (hOf β) := by
+        obtain ⟨hνpos, ha⟩ := hht β
+        have hZ : ∫ Z, d.B.ψ (-(⅟(2 : AF F) * d.tt (β.1 * d.gram Z Z))) * d.T (d.om x Φ) Z ∂νc =
+            c * jtR (AF F) σ (Jd_k d η) d.B.ψ μ Φg (hOf β) := by
+          rw [← hpresZ.integral_comp hembZ]; simp only [jtR, hTx, asm_phase_cell hr β]
+          rw [← integral_const_mul]; congr 1; funext Y; ring
+        simp only [GlobalTheory.ThK.Dbl.flat]
+        rw [cellFormula hT F E σ d νc hνc ε w hw Φ hΦ.1 (nb β) x β.1 (hcd.1 β), hZ, ha, asm_phase_whit hr β,
+          asm_cpow_split hC hνpos]; simp only [Gen.whI, s0]; ring
+      refine ⟨2, Jd_k d η, Td η T₀, d.bs, d.B.ψ, θ, l, εs, fr, g, lv, L₁, L₂, Φg, Φf, Φv, μ, ν, c, C,
+        ⟨hcm, hJ, hTdh, hTdd, hchr, hpl, hfrm, hlv, hco, hstd, hpf, hpr, hsdW, hsdH⟩, hani, hεs, hC,
+        ⟨0, fun z _ => ⟨fun hI => ?_, ?_⟩⟩, μH, 𝓕, hμH, h𝓕, ?_⟩
+      · have hk : c * (C : ℂ) ^ (z - s0 d.m d.n) ≠ 0 :=
+          mul_ne_zero hc0 (Complex.cpow_ne_zero_iff.2 (Or.inl (Complex.ofReal_ne_zero.2 hC.ne')))
+        have h1 := hI.mul_bdd (lin_psi_meas_k d T.1.1).aestronglyMeasurable
+          (Eventually.of_forall fun _ => (GlobalTheory.StdCharFromIsStd.norm_psi d.ok.good.std _).le)
+        refine (hpresβ.integrable_comp_emb hembβ).1 ((h1.const_mul (c * (C : ℂ) ^ (z - s0 d.m d.n))⁻¹).congr
+          (Eventually.of_forall fun β => by simp only [hint z β]; exact inv_mul_cancel_left₀ hk _))
+      · simp_rw [hint z]; rw [integral_const_mul, hpresβ.integral_comp hembβ]
+      · rw [horb T T₀ hr.rat (d.om x Φ) (d.om_sch x Φ hΦ.1),
+          show (fun Y => d.T (d.om x Φ) (toMx Y)) = fun Y => c * Φg Y from funext hTx, asm_meanC_smul]
+private theorem linRedC : LinRedC_k := by
+  intro hT hTC hLB hU hS c F E _ _ _ _ _ σ d hE k cs Φs hK x hW nb lam 𝓖 hcd ε w hw T hND
+  have hTT := hT.2.2.2.1; have hTA := hT.2.2.2.2
+  have hsum : ∑ i, cs i • Φs i ∈ d.sch := Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (hK i).1
+  have hIfun : d.I (∑ i, cs i • Φs i) = ∑ i, cs i • d.I (Φs i) := by
+    rw [Atop.I_sum d hTT hTA Finset.univ _ fun i _ => Submodule.smul_mem _ _ (hK i).1]
+    exact Finset.sum_congr rfl fun i _ => Atop.I_smul d hTT (cs i) (hK i).1
+  have hfc (s : Finset (Fin k)) : fc d.B.ψ d.b nb lam 𝓖 (∑ i ∈ s, cs i • d.I (Φs i)) T x =
+      ∑ i ∈ s, cs i * fc d.B.ψ d.b nb lam 𝓖 (d.I (Φs i)) T x := by
+    obtain ⟨hlin, -⟩ := hLB F E σ d (fun f => fc d.B.ψ d.b nb lam 𝓖 f T x) ⟨nb, lam, 𝓖, T, x, hcd, hND, rfl⟩
+    have hc (s : Finset (Fin k)) : Continuous (∑ i ∈ s, cs i • d.I (Φs i)) := by
+      rw [show (∑ i ∈ s, cs i • d.I (Φs i)) = fun a => ∑ i ∈ s, cs i * d.I (Φs i) a from
+        funext fun _ => by simp [Finset.sum_apply]]
+      exact continuous_finsetSum s fun i _ => continuous_const.mul ((hTA F E σ d).2.2 _ (hK i).1).2.1
+    have hi (s : Finset (Fin k)) (γ) (hγ : γ ∈ d.r2) (g) :
+        (∑ i ∈ s, cs i • d.I (Φs i)) (γ * g) = (∑ i ∈ s, cs i • d.I (Φs i)) g := by
+      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+      exact Finset.sum_congr rfl fun i _ => by rw [((hTA F E σ d).2.2 _ (hK i).1).2.2 γ hγ g]
+    induction s using Finset.induction_on with
+    | empty =>
+      have h0 := hlin 1 0 0 continuous_const continuous_const (fun _ _ _ => rfl) (fun _ _ _ => rfl)
+      simp only [one_smul, add_zero, one_mul] at h0; simpa using h0
+    | insert j s hj ih =>
+      rw [Finset.sum_insert hj, Finset.sum_insert hj,
+        hlin (cs j) (d.I (Φs j)) _ ((hTA F E σ d).2.2 _ (hK j).1).2.1 (hc s)
+          ((hTA F E σ d).2.2 _ (hK j).1).2.2 (hi s), ih]
+  have horbc : c * d.orb T (d.om x (∑ i, cs i • Φs i)) = ∑ i, cs i * (c * d.orb T (d.om x (Φs i))) := by
+    rw [← hTC F E σ d _ hsum nb lam 𝓖 hcd T x, hIfun, hfc Finset.univ, Finset.mul_sum]
+    exact Finset.sum_congr rfl fun i _ => by rw [hTC F E σ d _ (hK i).1 nb lam 𝓖 hcd T x]; ring
+  choose t ht using fun i => hU F E σ d d.s₀ (d.sec0 (Φs i)) (hS F E σ d (Φs i) (hK i)) (hE (Φs i) (hK i))
+  have hval := lin_holValueAt_sum Finset.univ cs
+    (fun i z => ∫ β, GlobalTheory.ThK.Dbl.flat d.a (d.sec0 (Φs i)) d.s₀ z (w * nb β * x) *
+      d.B.ψ (-d.tt (T.1.1 * β.1)) ∂lam)
+    (fun i => c * d.orb T (d.om x (Φs i))) d.s₀ (fun i _ => hW i nb lam 𝓖 hcd ε w hw T hND)
+  rw [horbc]; refine hval.congr ⟨∑ i, |t i|, fun z hz => ?_⟩
+  have hint (i) : Integrable (fun β => GlobalTheory.ThK.Dbl.flat d.a (d.sec0 (Φs i)) d.s₀ z (w * nb β * x) *
+      d.B.ψ (-d.tt (T.1.1 * β.1))) lam :=
+    ((ht i z (lt_of_le_of_lt ((le_abs_self _).trans (Finset.single_le_sum (fun j _ => abs_nonneg (t j))
+      (Finset.mem_univ i))) hz) nb lam 𝓖 hcd ε w hw x).1).mul_bdd (lin_psi_meas_k d T.1.1).aestronglyMeasurable
+      (Eventually.of_forall fun _ => (GlobalTheory.StdCharFromIsStd.norm_psi d.ok.good.std _).le)
+  refine (Finset.sum_congr rfl fun i _ => (integral_const_mul _ _).symm).trans <|
+    (integral_finsetSum Finset.univ fun i _ => (hint i).const_mul (cs i)).symm.trans ?_
+  congr 1; funext β
+  simp only [GlobalTheory.ThK.Dbl.flat, SD_k.sec0, map_sum, map_smul, smul_eq_mul, Finset.mul_sum, Finset.sum_mul]
+  exact Finset.sum_congr rfl fun _ _ => by ring
+end W
+end KWhit
 
 section
-noncomputable section
-open scoped TensorProduct NNReal ENNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-open GlobalTheory.Doubling (absE)
-namespace PositivityTheory.SiegelWeilFormula.Act.C5
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} (R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d) (L : _root_.PositivityTheory.SiegelWeilFormula.LD_k d)
-variable {R L}
-theorem unf_k (R : _root_.PositivityTheory.SiegelWeilFormula.RD_k d) {f : d.G → ℂ} {s₁ : ℂ} (hf : IsSec d.K d.χ s₁ f) (z : ℂ)
-    {nb : nA σ d.Y d.b → d.G} {lam : Measure (nA σ d.Y d.b)} {𝓖 : Set (nA σ d.Y d.b)}
-    (hc : CoefData (σ := σ) (Y := d.Y) d.b nb lam 𝓖)
-    {uM : (Fin L.n → AE F E) → d.G} {ν : Measure (Fin L.n → AE F E)} {𝓤 : Set (Fin L.n → AE F E)} (hU : L.UData uM ν 𝓤)
-    {T : nF σ d.Y d.b} {T' : nF σ L.Y L.b} (hT : L.IsSub T T')
-    {nb' : nA σ L.Y L.b → G2 σ L.Y} {lam' : Measure (nA σ L.Y L.b)} {𝓖' : Set (nA σ L.Y L.b)}
-    (hc' : CoefData (σ := σ) (Y := L.Y) L.b nb' lam' 𝓖')
-    (habs : ∀ x, (∀ q : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d, Integrable (_root_.PositivityTheory.SiegelWeilFormula.Act.kq_k L f s₁ z nb T uM (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q) x) ((ν.restrict 𝓤).prod (lam.restrict 𝓖))) ∧
-      Summable fun q : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d => ∫ p, ‖_root_.PositivityTheory.SiegelWeilFormula.Act.kq_k L f s₁ z nb T uM (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q) x p‖ ∂((ν.restrict 𝓤).prod (lam.restrict 𝓖)))
-    {w₁ : d.G} {cM : (Fin L.n → AE F E) × AF F → d.G} {κ : Measure ((Fin L.n → AE F E) × AF F)} {δ : E}
-    (h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ) (hcM : Continuous cM) (hκ : κ.IsAddHaarMeasure) :
-    ∃ K : ℂ, ∀ x, _root_.PositivityTheory.SiegelWeilFormula.Act.secondOrbitSection L f s₁ z nb lam 𝓖 T uM ν 𝓤 x = K * ∑' q' : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, ∫ β in 𝓖',
-      (∫ c, _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c * (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' * nb' β) * x))) ∂κ) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' β ∂lam' := by
-  classical
-  have : Countable (rat2 σ d.Y) := GlobalTheory.EisBL.DoubledGroupTopology.countable_rational_points_doubled σ d.Y
-  have : Countable (_root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d) := Quotient.countable
-  have : Countable (rat2 σ L.Y) := GlobalTheory.EisBL.DoubledGroupTopology.countable_rational_points_doubled σ L.Y
-  have : Countable (_root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd) := Quotient.countable
-  have : Countable (_root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L) := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.countable_crat_k
-  have : ν.IsAddHaarMeasure := hU.2.1
-  have : lam.IsAddHaarMeasure := hc.2.1
-  have : lam'.IsAddHaarMeasure := hc'.2.1
-  have hψc : Continuous d.B.ψ := d.ok.good.std.1
-  obtain ⟨P, hP, -⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.pEquiv_k h
-  obtain ⟨cP, hcP0, hcPt, hPc⟩ :=
-    @_root_.PositivityTheory.SiegelWeilFormula.Act.C5.lam_map_k F E _ _ _ _ _ σ d L lam hc.2.1 ν hU.2.1 lam' hc'.2.1 P
-  obtain ⟨cK, hcK0, hcKt, hκeq⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.kap_eq_k (ν := ν) (κ := κ)
-  obtain ⟨𝓐, h𝓐, h𝓐0, h𝓐t⟩ := exists_fd_fA (F := F)
-  have : IsFiniteMeasure (ν.restrict 𝓤) := isFiniteMeasure_restrict.2 (by simp [hU.2.2.2])
-  have : IsFiniteMeasure (lam'.restrict 𝓖') := isFiniteMeasure_restrict.2 (by simp [hc'.2.2.2])
-  have : IsFiniteMeasure ((lamA F).restrict 𝓐) := isFiniteMeasure_restrict.2 h𝓐t
-  obtain ⟨e, he⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.second_orbit_bijection h
-  refine ⟨(cP.toReal : ℂ) * ((cK.toReal : ℂ))⁻¹, fun x => ?_⟩
-  have hΦc : Continuous (_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z) := _root_.PositivityTheory.SiegelWeilFormula.Act.ComplexParameterFamilyContinuity.continuous_phz_k d hf.cont s₁ z
-  obtain ⟨hi, hs⟩ := habs x
-  obtain ⟨e1, fin1⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.second_orbit_section_integral (L := L) (nb := nb) (uM := uM) hU.2.2.2 hc.2.2.2 x hi hs
-  have e2 := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.coordsC_ck_k (R := R) h hc hU hc' hT h𝓐 hP hPc (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.eisensteinSecondTerm L (_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z)) (fun r hr hx g => _root_.PositivityTheory.SiegelWeilFormula.Act.C5.eisenstein_term_right_invariant hf z hr hx g) x
-  set μO := (ν.restrict 𝓤).prod (lam.restrict 𝓖) with hμO
-  set μI := (ν.restrict 𝓤).prod ((ν.restrict 𝓤).prod ((lamA F).restrict 𝓐)) with hμI
-  set μN := (lam'.restrict 𝓖').prod μI with hμN
-  have hnb' : Continuous nb' := kunf.continuous_nb hc'.1
-  have hnew : Continuous fun p : nA σ L.Y L.b × ((Fin L.n → AE F E) × ((Fin L.n → AE F E) × AF F)) =>
-      _root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L p.2.2.1 * (cM (p.2.1, p.2.2.2) * (L.j (nb' p.1) * x)) := by
-    refine ((_root_.PositivityTheory.SiegelWeilFormula.Act.C5.continuous_sM'_k (R := R) (L := L)).comp (continuous_fst.comp (continuous_snd.comp continuous_snd))).mul
-      ((hcM.comp ((continuous_fst.comp continuous_snd).prodMk (continuous_snd.comp (continuous_snd.comp continuous_snd)))).mul
-        (((L.cont.comp (hnb'.comp continuous_fst))).mul continuous_const))
-  have hth' : Continuous fun β : nA σ L.Y L.b => _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' β := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.continuous_th'_k T'
-  let G : (Σ _ : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L) → nA σ L.Y L.b × ((Fin L.n → AE F E) × ((Fin L.n → AE F E) × AF F)) → ℂ :=
-    fun y p => _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM y.2.1 * (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k y.1) * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L p.2.2.1 * (cM (p.2.1, p.2.2.2) * (L.j (nb' p.1) * x)))))) *
-      _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' p.1
-  have hGc : ∀ y, Continuous (G y) := fun y =>
-    (hΦc.comp (continuous_const.mul (continuous_const.mul (continuous_const.mul hnew)))).mul (hth'.comp continuous_fst)
-  have fin2 : ∫⁻ p, ∑' y, ‖G y p‖ₑ ∂μN < ⊤ := by
-    have hE := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.CoordK.coordsE_ck_k (R := R) h hc hU hc' hT h𝓐 hP hPc
-      (fun g => ∑' q : {q : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d // ¬ _root_.PositivityTheory.SiegelWeilFormula.Act.FirstOrbit L (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q)}, ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q.1 * g)‖ₑ)
-      (Measurable.tsum fun q => (hΦc.comp (continuous_const.mul continuous_id)).enorm.measurable)
-      (fun r hr hx g => _root_.PositivityTheory.SiegelWeilFormula.Act.C5.eisenstein_norm_sum_invariant_right hf z hr hx g) x
-    have l1 : ∫⁻ p, (∑' q : {q : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d // ¬ _root_.PositivityTheory.SiegelWeilFormula.Act.FirstOrbit L (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q)}, ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q.1 * (nb p.2 * (uM p.1 * x)))‖ₑ) *
-        ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th_k T p.2‖ₑ ∂μO < ⊤ := by
-      refine lt_of_eq_of_lt ?_ fin1
-      refine lintegral_congr fun p => ?_
-      rw [← ENNReal.tsum_mul_right]
-      exact tsum_congr fun q => (enorm_mul _ _).symm
-    rw [hE] at l1
-    have l2 : ∫⁻ p, (∑' q : {q : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k d // ¬ _root_.PositivityTheory.SiegelWeilFormula.Act.FirstOrbit L (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q)},
-        ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q.1 * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L p.2.2.1 * (cM (p.2.1, p.2.2.2) * (L.j (nb' p.1) * x))))‖ₑ) * ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' p.1‖ₑ
-        ∂μN < ⊤ := by
-      by_contra hcon
-      rw [not_lt, top_le_iff] at hcon
-      rw [hcon, ENNReal.mul_top hcP0] at l1
-      exact lt_irrefl _ l1
-    refine lt_of_eq_of_lt (lintegral_congr fun p => ?_) l2
-    rw [(_root_.PositivityTheory.SiegelWeilFormula.Act.C5.eisenstein_second_term_expand h hf z he _).2, ← ENNReal.tsum_mul_right]
-    exact tsum_congr fun y => enorm_mul _ _
-  have hGm : ∀ y, AEMeasurable (fun p => ‖G y p‖ₑ) μN := fun y => (hGc y).enorm.measurable.aemeasurable
-  have hGlt : ∀ y, ∫⁻ p, ‖G y p‖ₑ ∂μN < ⊤ := fun y =>
-    lt_of_le_of_lt (lintegral_mono fun p => ENNReal.le_tsum (f := fun y => ‖G y p‖ₑ) y) fin2
-  have hGi : ∀ y, Integrable (G y) μN := fun y => ⟨(hGc y).aestronglyMeasurable, hGlt y⟩
-  have hGs : Summable fun y => ∫ p, ‖G y p‖ ∂μN := by
-    have h1 : ∀ y, ∫ p, ‖G y p‖ ∂μN = (∫⁻ p, ‖G y p‖ₑ ∂μN).toReal := fun y =>
-      integral_norm_eq_lintegral_enorm (hGi y).aestronglyMeasurable
-    simp_rw [h1]
-    refine ENNReal.summable_toReal ?_
-    rw [← lintegral_tsum hGm]
-    exact fin2.ne
-  have e3 : ∫ p, _root_.PositivityTheory.SiegelWeilFormula.Act.C5.eisensteinSecondTerm L (_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z) (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L p.2.2.1 * (cM (p.2.1, p.2.2.2) * (L.j (nb' p.1) * x))) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' p.1 ∂μN =
-      ∑' y, ∫ p, G y p ∂μN := by
-    rw [(hasSum_integral_of_summable_integral_norm hGi hGs).tsum_eq]
-    refine integral_congr_ae (ae_of_all _ fun p => ?_)
-    simp only [G]
-    rw [(_root_.PositivityTheory.SiegelWeilFormula.Act.C5.eisenstein_second_term_expand h hf z he _).1, tsum_mul_right]
-  have hsI : Summable fun y => ∫ p, G y p ∂μN := hGs.of_norm_bounded (fun y => norm_integral_le_integral_norm _)
-  rw [hsI.tsum_sigma] at e3
-  have hκ' : ∀ g : (Fin L.n → AE F E) × AF F → ℂ, ∫ c, g c ∂(ν.prod (lamA F)) = ((cK.toReal : ℂ))⁻¹ * ∫ c, g c ∂κ := by
-    intro g
-    rw [hκeq, integral_smul_measure, Complex.real_smul, ← mul_assoc, inv_mul_cancel₀, one_mul]
-    exact Complex.ofReal_ne_zero.2 (ENNReal.toReal_ne_zero.2 ⟨hcK0, hcKt⟩)
-  have e4 : ∀ q' : _root_.PositivityTheory.SiegelWeilFormula.Act.Cs_k L.sd, ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, ∫ p, G ⟨q', c₀⟩ p ∂μN = ((cK.toReal : ℂ))⁻¹ *
-      ∫ β in 𝓖', (∫ c, _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c * (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' * nb' β) * x))) ∂κ) * _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' β ∂lam' := by
-    intro q'
-    have hi' : ∀ c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, Integrable (G ⟨q', c₀⟩) μN := fun c₀ => hGi _
-    have hs' : Summable fun c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L => ∫ p, ‖G ⟨q', c₀⟩ p‖ ∂μN := hGs.sigma_factor q'
-    obtain ⟨-, hex⟩ := PositivityTheory.SiegelWeilFormula.Act.exch (μ := lam'.restrict 𝓖') (m := μI) (fun c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L => G ⟨q', c₀⟩) hi' hs'
-    have hpr : ∀ c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, ∫ p, G ⟨q', c₀⟩ p ∂μN = ∫ β, ∫ v, G ⟨q', c₀⟩ (β, v) ∂μI ∂(lam'.restrict 𝓖') :=
-      fun c₀ => integral_prod _ (hi' c₀)
-    simp_rw [hpr]
-    rw [← hex, ← integral_const_mul]
-    refine integral_congr_ae ?_
-    have hmq : Measurable fun p : nA σ L.Y L.b × ((Fin L.n → AE F E) × ((Fin L.n → AE F E) × AF F)) =>
-        ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, ‖G ⟨q', c₀⟩ p‖ₑ := Measurable.tsum fun c₀ => (hGc _).enorm.measurable
-    have hfinq : ∫⁻ p, ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, ‖G ⟨q', c₀⟩ p‖ₑ ∂μN < ⊤ := by
-      refine lt_of_le_of_lt (lintegral_mono fun p => ?_) fin2
-      exact (ENNReal.le_tsum (f := fun q'' => ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, ‖G ⟨q'', c₀⟩ p‖ₑ) q').trans
-        (ENNReal.tsum_sigma' (fun y => ‖G y p‖ₑ)).symm.le
-    rw [hμN, lintegral_prod _ hmq.aemeasurable] at hfinq
-    have hae := ae_lt_top (hmq.lintegral_prod_right') hfinq.ne
-    filter_upwards [hae] with β hβ
-    have hG' : ∀ v, ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, G ⟨q', c₀⟩ (β, v) = (∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L,
-        _root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c₀.1 * (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q') * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L v.2.1 * (cM (v.1, v.2.2) * (L.j (nb' β) * x))))))) *
-          _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' β := fun v => by simp only [G]; rw [tsum_mul_right]
-    simp_rw [hG']
-    rw [integral_mul_const]
-    have hjj : L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q') * (L.j (nb' β) * x) = L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' * nb' β) * x := by rw [map_mul, mul_assoc]
-    by_cases hθ : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' β = 0
-    · rw [hθ, mul_zero, mul_zero, mul_zero]
-    · have hθe : ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' β‖ₑ ≠ 0 := enorm_ne_zero.2 hθ
-      have hl : ∫⁻ v, ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L,
-          ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c₀.1 * (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q') * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L v.2.1 * (cM (v.1, v.2.2) * (L.j (nb' β) * x))))))‖ₑ ∂μI < ⊤ := by
-        have e5 : ∫⁻ v, ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L, ‖G ⟨q', c₀⟩ (β, v)‖ₑ ∂μI = (∫⁻ v, ∑' c₀ : _root_.PositivityTheory.SiegelWeilFormula.Act.C6.Cr_k L,
-            ‖_root_.PositivityTheory.SiegelWeilFormula.Act.phz_k d f s₁ z (w₁ * (cM c₀.1 * (L.j (_root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q') * (_root_.PositivityTheory.SiegelWeilFormula.Act.C5.sM_k R L v.2.1 * (cM (v.1, v.2.2) * (L.j (nb' β) * x))))))‖ₑ ∂μI) *
-              ‖_root_.PositivityTheory.SiegelWeilFormula.Act.C5.th'_k (d := d) T' β‖ₑ := by
-          rw [← lintegral_mul_const' _ _ enorm_ne_top]
-          refine lintegral_congr fun v => ?_
-          rw [← ENNReal.tsum_mul_right]
-          exact tsum_congr fun c₀ => enorm_mul _ _
-        rw [e5] at hβ
-        by_contra hcon
-        rw [not_lt, top_le_iff] at hcon
-        rw [hcon, ENNReal.top_mul hθe] at hβ
-        exact lt_irrefl _ hβ
-      have hγ : _root_.PositivityTheory.SiegelWeilFormula.Act.rep_k q' ∈ rat2 σ L.Y := (Quot.out q').2
-      rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.unfqE_k h hf z hU h𝓐 hγ (L.j (nb' β) * x)] at hl
-      rw [_root_.PositivityTheory.SiegelWeilFormula.Act.C5.unfqC_k h hf z hU h𝓐 hγ (L.j (nb' β) * x) hl, hκ']
-      simp_rw [hjj]
-      ring
-  rw [e1, e2, e3]
-  simp_rw [e4]
-  rw [tsum_mul_left, Complex.real_smul]
-  ring
-end PositivityTheory.SiegelWeilFormula.Act.C5
+attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
+open TBij.Adp KTunit GlobalTheory.TowU
+private def rp_loc (d : SD_k σ) (Y W : d.ME) : F := Algebra.trace F E (Yᵀ * d.A.J * W.map σ).trace
+private def eqm_loc (d : SD_k σ) (q : d.I3) : d.ME :=
+  Matrix.of fun i j => if (i, j) = (q.1, q.2.1) then d.bs q.2.2 else 0
+private def rc_loc (d : SD_k σ) : d.ME ≃ₗ[F] (d.I3 → F) :=
+  { toFun := fun Y k => d.bs.repr (Y k.1 k.2.1) k.2.2
+    invFun := fun a => Matrix.of fun i j => ∑ k, a (i, j, k) • d.bs k
+    left_inv := fun Y => by ext i j; exact d.bs.sum_repr (Y i j)
+    right_inv := fun a => funext fun ⟨i, j, k⟩ => congrFun (d.bs.repr_sum_self fun k' => a (i, j, k')) k
+    map_add' := fun _ _ => funext fun _ => by simp, map_smul' := fun _ _ => funext fun _ => by simp }
+private def Lm_loc (d : SD_k σ) (ε : ℤˣ) : (d.I3 → F) →ₗ[F] (d.I3 → F) where
+  toFun a q := ((ε : ℤ) : F) * rp_loc d ((rc_loc d).symm a) (eqm_loc d q)
+  map_add' a b := funext fun q => by
+    simp only [map_add (f := _), rp_loc, Matrix.transpose_add, Matrix.add_mul, Matrix.trace_add, Pi.add_apply]; ring
+  map_smul' c a := funext fun q => by
+    simp only [map_smul, rp_loc, Matrix.transpose_smul, Matrix.smul_mul, Matrix.trace_smul, Pi.smul_apply, smul_eq_mul,
+      RingHom.id_apply]; ring
+private theorem Lm_inj_loc (d : SD_k σ) (ε : ℤˣ) : Function.Injective (Lm_loc d ε) := by
+  rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']; intro a ha
+  have hε : ((ε : ℤ) : F) ≠ 0 := by rcases Int.units_eq_one_or ε with rfl | rfl <;> simp
+  set Y := (rc_loc d).symm a
+  have hq (q) : rp_loc d Y (eqm_loc d q) = 0 := (mul_eq_zero.1 (by simpa [Lm_loc] using congrFun ha q)).resolve_left hε
+  have h0 : Yᵀ * d.A.J = 0 := Matrix.ext fun j i => (traceForm_nondegenerate F E).1 _ fun z => by
+    obtain ⟨e, rfl⟩ := (AlgHom.bijective σ).2 z
+    rw [Algebra.traceForm_apply, ← d.bs.sum_repr e, map_sum, Finset.mul_sum, map_sum]
+    refine Finset.sum_eq_zero fun k _ => ?_
+    have htr : rp_loc d Y (eqm_loc d (i, j, k)) = Algebra.trace F E ((Yᵀ * d.A.J) j i * σ (d.bs k)) := by
+      unfold rp_loc; congr 1
+      rw [Matrix.trace, Finset.sum_eq_single j (fun b _ hb => by
+        rw [Matrix.diag_apply, Matrix.mul_apply]; exact Finset.sum_eq_zero fun _ _ => by simp [eqm_loc, hb]) (by simp),
+        Matrix.diag_apply, Matrix.mul_apply, Finset.sum_eq_single i (fun b _ hb => by simp [eqm_loc, hb]) (by simp)]
+      simp [eqm_loc]
+    rw [AlgHom.map_smul_of_tower, mul_smul_comm, map_smul, ← htr, hq, smul_zero]
+  have h1 : Yᵀ = 0 := by
+    simpa [Matrix.mul_assoc, Matrix.mul_nonsing_inv _ (isUnit_iff_ne_zero.2 (KWhit.meas_detA_k d))] using
+      congrArg (· * d.A.J⁻¹) h0
+  simpa [Y] using congrArg (rc_loc d) (show Y = 0 by rw [← Matrix.transpose_transpose Y, h1, Matrix.transpose_zero])
+private theorem poisson_loc : TW.Poisson_k := by
+  intro F E _ _ _ _ _ σ d ν hν ε f hf
+  have hrat (X : d.MxE) : X ∈ d.ratM ↔ d.crd X ∈ GroundTheory.Automorphic.FourierWhittaker.vecLattice F d.I3 := by
+    let c : d.MxE →+ (d.I3 → AF F) := ⟨⟨d.crd, funext fun _ => by simp [SD_k.crd]⟩,
+      fun _ _ => funext fun _ => KFock.crd_add_k d _ _ _⟩
+    refine ⟨fun hX => ((AddSubgroup.closure_le
+        ((GroundTheory.Automorphic.FourierWhittaker.vecLattice F d.I3).comap c)).mpr <| by
+      rintro _ ⟨M, rfl⟩
+      exact ⟨fun k => d.bs.repr (M k.1 k.2.1) k.2.2, funext fun k => (TBij_k.Adp.crd_incM d M k).symm⟩) hX, ?_⟩
+    rintro ⟨ξ, hξ⟩; let M : d.ME := Matrix.of fun i j => ∑ k, ξ (i, j, k) • d.bs k
+    have e1 : d.crd (incM F M) = d.crd X := funext fun k => by
+      rw [TBij_k.Adp.crd_incM d _ k]; have h2 := congrFun hξ k
+      simp only [AddMonoidHom.compLeft, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Function.comp_apply] at h2
+      rw [← h2]; show _ = algebraMap F (AF F) (ξ k)
+      congr 1; exact congrFun (d.bs.repr_sum_self fun k' => ξ (k.1, k.2.1, k')) k.2.2
+    rw [show X = incM F M by rw [← KFock.cmb_crd_k d (incM F M), e1, KFock.cmb_crd_k]]
+    exact AddSubgroup.subset_closure ⟨_, rfl⟩
+  have hcov (h : d.MF) :
+      ∫ Z, h Z ∂ν = ∫ c, h (d.cmb c) ∂(GroundTheory.Automorphic.GJMatrix.adeleMeasurePi F (ι := d.I3)) := by
+    obtain ⟨_, _, _, hB, _⟩ := KWhit.meas_mx_top'_loc d; obtain ⟨hH, 𝓕, h𝓕, h1⟩ := hν
+    exact TW.Twp.integral_cov_gen (hBor := hB) (hνH := hH) d.ratM (cEquiv_k d (Equiv.refl _)) hrat ν 𝓕 h𝓕 h1 h
+  have hpair (Y : d.ME) (Z : d.MxE) : ((ε : ℤ) : AF F) * d.tt (d.gram (incM F Y) Z) =
+      ∑ q, d.crd Z q * algebraMap F (AF F) (Lm_loc d ε (rc_loc d Y) q) := by
+    have hek (q : d.I3) : TBij_k.Adp.ek d q = incM F (eqm_loc d q) := by
+      rcases q with ⟨i0, j0, k0⟩; ext i j
+      simp only [TBij_k.Adp.ek, SD_k.cmb, incM, Matrix.map_apply, eqm_loc, Matrix.of_apply]
+      show _ = (1 : AF F) ⊗ₜ[F] _; by_cases h : (i, j) = (i0, j0)
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+        rw [ite_eq_left rfl, Finset.sum_eq_single k0 (fun b _ hb => by simp [Ne.symm hb]) (by simp)]; simp
+      · rw [ite_eq_right h, TensorProduct.tmul_zero]
+        exact Finset.sum_eq_zero fun k _ => by
+          simp [show (i0, j0, k0) ≠ (i, j, k) from fun e =>
+            h (by simp only [Prod.mk.injEq] at e; exact Prod.ext e.1.symm e.2.1.symm)]
+    let ttL : d.MxE →ₗ[AF F] AF F :=
+      ⟨⟨fun W => d.tt (d.gram (incM F Y) W), fun W W' => by
+          have e : (W + W').map (cA σ) = W.map (cA σ) + W'.map (cA σ) := Matrix.map_add _ (map_add _) _ _
+          simp only [SD_k.tt, SD_k.gram, e, Matrix.mul_add, Matrix.trace_add, map_add (f := _)]⟩,
+       fun a W => by
+          have e : (a • W).map (cA σ) = a • W.map (cA σ) := Matrix.map_smul _ a (fun x => map_smul (cA σ) a x) _
+          simp only [SD_k.tt, SD_k.gram, e, Matrix.mul_smul, Matrix.trace_smul, map_smul, RingHom.id_apply]⟩
+    have hs : d.tt (d.gram (incM F Y) Z) = ∑ q, d.crd Z q * d.tt (d.gram (incM F Y) (incM F (eqm_loc d q))) := by
+      change ttL Z = _
+      conv_lhs => rw [← KFock.cmb_crd_k d Z, TBij_k.Adp.cmb_sum]
+      simp only [hek, map_sum, map_smul, smul_eq_mul]; rfl
+    rw [hs, Finset.mul_sum]; refine Finset.sum_congr rfl fun q _ => ?_
+    have hgi : d.tt (d.gram (incM F Y) (incM F (eqm_loc d q))) = algebraMap F (AF F) (rp_loc d Y (eqm_loc d q)) := by
+      rw [SD_k.gram, TBij.cA_incM, ← TBij.incM_transpose, ← TBij.incM_mul, ← TBij.incM_mul, SD_k.tt, rp_loc]
+      rw [show (incM F (Yᵀ * d.A.J * (eqm_loc d q).map σ)).trace =
+          (1 : AF F) ⊗ₜ[F] (Yᵀ * d.A.J * (eqm_loc d q).map σ).trace by
+        simp only [Matrix.trace, incM, Matrix.diag_apply, Matrix.map_apply, TensorProduct.tmul_sum]; rfl,
+        TW.Twp.trace_tmul', one_mul]
+    rw [hgi]
+    simp only [Lm_loc, LinearMap.coe_mk, AddHom.coe_mk, LinearEquiv.symm_apply_apply, map_mul, map_intCast]; ring
+  have hfour (Y : d.ME) : ∫ Z, d.B.ψ (((ε : ℤ) : AF F) * d.tt (d.gram (incM F Y) Z)) * f Z ∂ν =
+      GroundTheory.Automorphic.GJMatrix.adelicFourierPi F (fun c => f (d.cmb c))
+        (fun q => algebraMap F (AF F) (Lm_loc d ε (rc_loc d Y) q)) := by
+    rw [hcov, GroundTheory.Automorphic.GJMatrix.adelicFourierPi]; congr 1; funext c
+    rw [hpair Y (d.cmb c), KFock.crd_cmb_k, GlobalTheory.AdelicSvN.Weyl.isStd_eq d.ok.good.std, mul_comm]
+  refine (tsum_congr hfour).trans <| ((rc_loc d).toEquiv.tsum_eq _).trans <|
+    ((LinearEquiv.ofInjectiveEndo (Lm_loc d ε) (Lm_inj_loc d ε)).toEquiv.tsum_eq _).trans <|
+    (FourWeyl.theta_four (Submodule.mem_comap.1 hf : (fun c => f (d.cmb c)) ∈ schA F d.I3)).trans ?_
+  show ∑' ξ : d.I3 → F, f (d.cmb fun q => algebraMap F (AF F) (ξ q)) = _
+  have e (X : d.ME) : f (incM F X) = f (d.cmb fun q => algebraMap F (AF F) (rc_loc d X q)) :=
+    congrArg f ((KFock.cmb_crd_k d (incM F X)).symm.trans (congrArg d.cmb (funext fun q => TBij_k.Adp.crd_incM d X q)))
+  simp_rw [e]; exact ((rc_loc d).toEquiv.tsum_eq fun a => f (d.cmb fun q => algebraMap F (AF F) (a q))).symm
+private theorem uniq_loc : TW.Uniq_k := by
+  intro F E _ _ _ _ _ σ d ν hν Λ hΛ hinv; have hψ : IsStd d.B.ψ := d.ok.good.std
+  obtain ⟨τ, S0, S0', C, hop, hT⟩ := Tunit.T_chart_k d
+  by_cases hC : C = 0
+  · refine ⟨0, fun Φ hΦ => ?_⟩
+    rw [(TBij_k.tBij F E σ d).2.2 Φ hΦ (funext fun X => by rw [hT Φ hΦ X, hC, zero_mul]; rfl), map_zero, zero_mul]
+  have rhoS' (w φ) (hφ : φ ∈ schA F d.κ) : S0' (schr d.B.ψ (TBij_k.Adp.c0 d τ w) φ) = d.dd.rho d.B.ψ w (S0' φ) := by
+    have h1 : S0 (d.dd.rho d.B.ψ w (S0' φ)) = schr d.B.ψ (TBij_k.Adp.c0 d τ w) φ := by
+      simp only [Darboux.rho]; rw [hop.Heisenberg₂ _ _ (hop.pres' φ hφ), LinearEquiv.symm_apply_apply, hop.right φ hφ]
+    rw [← h1, hop.left _ (show d.dd.rho d.B.ψ w (S0' φ) ∈ d.sch from
+      GlobalTheory.HeisSchA.schr_mem_schA d.B.ψ hψ _ _ (hop.pres' φ hφ))]
+  let : MeasurableSpace (d.κ → AF F) := borel _; obtain ⟨hμ, hint⟩ := map_haar_k d τ ν hν
+  obtain ⟨c, hc⟩ := TW.Twu.translation_invariant_functional_haar d.B.ψ hψ d.κ (ν.map (cmap_k d τ)) hμ (Λ ∘ₗ S0')
+      (hop.adm' Λ hΛ) (fun a φ hφ => by
+    have e0 := TBij_k.Adp.coordinates_frame d τ (cinv_k d τ a)
+    rw [show (fun k => d.crd (cinv_k d τ a) (τ k)) = a from cmap_cinv_k d τ a] at e0
+    rw [← TW.Twu.schr_zero_right, ← e0, LinearMap.comp_apply, LinearMap.comp_apply, rhoS' _ φ hφ]
+    exact hinv _ _ (hop.pres' φ hφ))
+  refine ⟨c / C, fun Φ hΦ => ?_⟩
+  have h1 := hc (S0 Φ) (hop.pres Φ hΦ); rw [LinearMap.comp_apply, hop.left Φ hΦ] at h1
+  have e2 : ∫ Z, d.T Φ Z ∂ν = C * ∫ Z, S0 Φ (cmap_k d τ Z) ∂ν := by
+    rw [← integral_const_mul]; exact integral_congr_ae (Filter.Eventually.of_forall fun Z => hT Φ hΦ Z)
+  rw [h1, ← hint, e2]; field_simp
 end
+private theorem iwaQ_loc (hT : TAll_k) : IwaQ_k := by
+  intro F E _ _ _ _ _ σ d L x; obtain ⟨p, k, lam, hk, rfl, hp⟩ := Avac.line_fix'_k L.i₀ x
+  obtain ⟨ε, hd, hL⟩ := Avac.eps_eq_k L; obtain ⟨g, hq⟩ := Avac.q_split'_k L ε hd hL p lam hp
+  set q := p * (L.j g)⁻¹ with hqdef; obtain ⟨c, hc⟩ := Avac.q_T'_k hT L.i₀ hq
+  refine ⟨q, g, k, (absE F E lam : ℝ), c, hk, by simp [hqdef, mul_assoc], _root_.PositivityTheory.SiegelWeilFormula.KSplitP.absE_pos lam, fun g' => ?_,
+      fun Φ hΦ g' X hX => ?_⟩
+  · have e : L.j g' * (p * k) = (L.j g' * q * (L.j g')⁻¹) * L.j (g' * g) * k := by
+      simp only [hqdef, map_mul, mul_assoc, inv_mul_cancel_left]
+    rw [e, KWhit.a_mul_K_k d _ k hk, Avac.q_ht'_k L (Avac.q_conj'_k L hq g') (g' * g)]
+  · set Ψ := d.om q Φ - c • Φ with hΨ
+    have hΨs : Ψ ∈ d.sch := sub_mem (d.om_sch q Φ hΦ) (Submodule.smul_mem _ c hΦ)
+    have hTΨ (X : d.MxE) (hX : ∀ a, X a L.i₀ = 0) : d.T Ψ X = 0 := by
+      rw [hΨ, congrFun (KFock.T_sub_k d _ _) X, Pi.sub_apply, congrFun (KFock.T_smul_k d c Φ) X,
+        Pi.smul_apply, smul_eq_mul, hc Φ hΦ X hX, sub_self]
+    have key := L.res Ψ hΨs 0 (zero_mem _) (fun X hX => by rw [L.sd.T_zero, hTΨ X hX]; rfl) g' X hX
+    rw [map_zero, L.sd.T_zero] at key; have h0 := key.symm
+    rw [map_mul, mul_apply_eq_comp]
+    rw [show d.om (L.j g') Ψ = d.om (L.j g') (d.om q Φ) - c • d.om (L.j g') Φ by rw [hΨ, map_sub, map_smul],
+      congrFun (KFock.T_sub_k d _ _) X, Pi.sub_apply,
+      congrFun (KFock.T_smul_k d c _) X, Pi.smul_apply, smul_eq_mul] at h0
+    exact sub_eq_zero.1 h0
+
+private def vg_loc {d : SD_k σ} (R : RD_k d) (g : d.Af3 → ℂ) (X : d.MxE) : ℂ :=
+  (∏ w, fP 1 (R.loc w X)) * g fun k => (d.crd X k).2
+private theorem vacK_loc (hT : TAll_k) (hF : FockMem_k) (hO : LocOpEx_k) (hI : LocInst_k) (hA : FinAct_k) : VacK_k := by
+  intro F E _ _ _ _ _ σ d R
+  have hleF {d' : SD_k σ} (R'' : RD_k d') : R''.vac ≤ R''.fock :=
+    Submodule.span_le.2 fun _ ⟨g, hg, h⟩ => h ▸ Submodule.subset_span ⟨fun _ => 1, g, hg, rfl⟩
+  have hlocAdd (w : InfinitePlace F) {Z : d.MxE} (hZ : d.cw w Z = 0) (X) : R.loc w (X + Z) = R.loc w X := by
+    unfold RD_k.loc; rw [show d.cw w (X + Z) = d.cw w X by
+      simp only [SD_k.cw] at hZ ⊢; rw [Matrix.map_add _ (map_add _), hZ, add_zero]]
+  refine ⟨?_, hleF R, fun L R' Φ hΦ hv => ?_⟩
+  · let S' : Submodule ℂ d.Fn :=
+      { carrier := {Φ | Φ ∈ d.sch ∧ ∀ k ∈ d.K, d.T (d.om k Φ) ∈ R.vac}
+        zero_mem' := ⟨zero_mem _, fun _ _ => by rw [map_zero, d.T_zero]; exact zero_mem _⟩
+        add_mem' := fun ha hb => ⟨add_mem ha.1 hb.1, fun k hk => by
+          rw [map_add (f := _), KFock.T_add_k]; exact add_mem (ha.2 k hk) (hb.2 k hk)⟩
+        smul_mem' := fun c _ ha => ⟨Submodule.smul_mem _ c ha.1, fun k hk => by
+          rw [map_smul, KFock.T_smul_k]; exact Submodule.smul_mem _ c (ha.2 k hk)⟩ }
+    have hpeel : ∀ (S : Finset (InfinitePlace F)) (k : d.G),
+        (∀ w ∈ S, d.cw w (inFrame d.b k) * (d.cw w (inFrame d.b k))ᴴ = 1) →
+        (∀ w ∉ S, d.cw w (inFrame d.b k) = 1) → ∀ g ∈ SB d.Af3, ∀ Φ ∈ d.sch,
+          d.T Φ = vg_loc R g → ∃ g' ∈ SB d.Af3, d.T (d.om k Φ) = vg_loc R g' := fun S => by
+      induction S using Finset.induction_on with
+      | empty =>
+        intro k _ h1 g hg Φ hΦ hTΦ
+        obtain ⟨g', hg', H⟩ := hA F E σ d k (fun w => h1 w (Finset.notMem_empty w)) g hg
+        exact ⟨g', hg', H _ (fun X Z h => Finset.prod_congr rfl fun w _ => by rw [hlocAdd w (h w)]) Φ hΦ hTΦ⟩
+      | insert w S hw ih =>
+        intro k h0 h1 g hg Φ hΦ hTΦ
+        have hζ0 := Krd.zeta_ne R.hζ; set M := d.cw w (inFrame d.b k) with hM
+        have hY := Krd.inG_conj R.hζ M (hM ▸ KSing.UnitaryGroupBasics.form_w_k d R w k)
+        have hMM : Mᴴ * M = 1 :=
+          (Matrix.mul_eq_one_comm_of_equiv (Equiv.refl _)).1 (hM ▸ h0 w (Finset.mem_insert_self w S))
+        set y : GR d.n := KSing.UnitaryGroupBasics.mkGR _ hY
+        have hy : InK (mR y) := ⟨hY, by
+          show (dZ d.n R.ζ * M * dZ d.n R.ζ⁻¹)ᴴ * (dZ d.n R.ζ * M * dZ d.n R.ζ⁻¹) = 1
+          have hsz : star R.ζ = R.ζ⁻¹ := by rcases R.hζ with ⟨-, h⟩ | ⟨-, h⟩ <;> rw [h] <;> simp
+          have hdZ (a b : ℂ) (hab : star a = b) : (dZ d.n a)ᴴ = dZ d.n b := by
+            simp [dZ, Matrix.fromBlocks_conjTranspose, Matrix.conjTranspose_smul, hab]
+          rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hdZ _ _ hsz, hdZ _ _ (by rw [← hsz, star_star])]
+          calc dZ d.n R.ζ * (Mᴴ * dZ d.n R.ζ⁻¹) * (dZ d.n R.ζ * M * dZ d.n R.ζ⁻¹)
+              = dZ d.n R.ζ * (Mᴴ * (dZ d.n R.ζ⁻¹ * dZ d.n R.ζ) * M) * dZ d.n R.ζ⁻¹ := by simp only [Matrix.mul_assoc]
+            _ = 1 := by rw [Krd.dZ_inv_mul hζ0, Matrix.mul_one, hMM, Matrix.mul_one, Krd.dZ_mul_inv hζ0]⟩
+        have hyw : d.cw w (inFrame d.b (R.ι w y)) = M := by
+          have h := congrArg (dZ d.n R.ζ⁻¹ * ·) (R.at_w w y)
+          simp only [← Matrix.mul_assoc, Krd.dZ_inv_mul hζ0, Matrix.one_mul] at h
+          rw [h]; show dZ d.n R.ζ⁻¹ * (dZ d.n R.ζ * M * dZ d.n R.ζ⁻¹) * dZ d.n R.ζ = M
+          simp only [← Matrix.mul_assoc, Krd.dZ_inv_mul hζ0, Matrix.one_mul]
+          rw [Matrix.mul_assoc, Krd.dZ_inv_mul hζ0, Matrix.mul_one]
+        have hcwI (w') : d.cw w' (inFrame d.b ((R.ι w y)⁻¹ * k)) =
+            d.cw w' (inFrame d.b (R.ι w y)⁻¹) * d.cw w' (inFrame d.b k) := by rw [d.inFrame_mul, Krd.cw_mul_k]
+        have hkw : d.cw w (inFrame d.b ((R.ι w y)⁻¹ * k)) = 1 := by
+          rw [hcwI, ← hM, ← hyw, ← Krd.cw_mul_k, ← d.inFrame_mul, inv_mul_cancel, d.inFrame_one, Krd.cw_one_k]
+        have hkw' (w') (he : w' ≠ w) : d.cw w' (inFrame d.b ((R.ι w y)⁻¹ * k)) = d.cw w' (inFrame d.b k) := by
+          rw [hcwI, show d.cw w' (inFrame d.b (R.ι w y)⁻¹) = 1 from by rw [← map_inv]; exact R.off_w w w' y⁻¹ he,
+            Matrix.one_mul]
+        obtain ⟨g₁, hg₁, e₁⟩ := ih ((R.ι w y)⁻¹ * k)
+          (fun w' h => by rw [hkw' w' (fun e => hw (e ▸ h))]; exact h0 w' (Finset.mem_insert_of_mem h))
+          (fun w' h => by by_cases e : w' = w; · rw [e, hkw]
+                          · rw [hkw' w' e]; exact h1 w' fun h' => (Finset.mem_insert.1 h').elim e h) g hg Φ hΦ hTΦ
+        obtain ⟨Lop, hLop⟩ := hO F E σ d R w; obtain ⟨sL, ρ, p, q, e, -, hld, -, hkL⟩ := hI F E σ d R w Lop hLop
+        let psiW (g' : d.Af3 → ℂ) (X : d.MxE) : ℂ :=
+          (∏ w' ∈ Finset.univ.erase w, fP 1 (R.loc w' X)) * g' fun k => (d.crd X k).2
+        have hvt (g' : d.Af3 → ℂ) : vg_loc R g' = R.tens w (fP 1) (psiW g') := funext fun X => by
+          simp only [vg_loc, RD_k.tens, psiW]; rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ w)]; ring
+        have hpi : d.Indep w (psiW g₁) := fun X Z hZ1 hZ2 => by
+          have e2 : (fun k => (d.crd (X + Z) k).2) = fun k => (d.crd X k).2 := funext fun k => by
+            rw [KFock.crd_add_k]; change (d.crd X k).2 + (d.crd Z k).2 = _; rw [KFock.crd_fin_k d Z hZ2 k, add_zero]
+          dsimp only [psiW]
+          rw [Finset.prod_congr rfl fun w' hw' => by rw [hlocAdd w' (hZ1 w' (Finset.ne_of_mem_erase hw'))], e2]
+        have hL1 := (hLop y _ (KFock.isSw_fP 1)).2 (psiW g₁) hpi _ (d.om_sch _ Φ hΦ) (e₁.trans (hvt g₁))
+        refine ⟨F0 p q e y • g₁, Submodule.smul_mem _ _ hg₁, ?_⟩
+        rw [show k = R.ι w y * ((R.ι w y)⁻¹ * k) from (mul_inv_cancel_left _ _).symm, map_mul, mul_apply_eq_comp,
+          hL1, hkL y 1 hy, hld.kvac y hy, hvt]
+        funext X; simp only [RD_k.tens, psiW, Pi.smul_apply, smul_eq_mul, fP, evX, MvPolynomial.smul_eq_C_mul, mul_one,
+          MvPolynomial.eval_C, map_one, one_mul]; ring
+    have hle : R.vac ≤ S'.map (KK.W.Tl d) := Submodule.span_le.2 fun _ ⟨g, hg, hEq⟩ => by
+      subst hEq
+      obtain ⟨Φ, hΦ, e⟩ := (hT.1 F E σ d).2.1 _ ((hF F E σ d R).1 (hleF R (Submodule.subset_span ⟨g, hg, rfl⟩)))
+      refine ⟨Φ, ⟨hΦ, fun k hk => ?_⟩, e⟩
+      obtain ⟨g', hg', e'⟩ := hpeel Finset.univ k (fun w _ => ((d.ok.stdK k).1 hk).1 w)
+        (fun w h => absurd (Finset.mem_univ w) h) g hg Φ hΦ e
+      rw [e']; exact Submodule.subset_span ⟨g', hg', rfl⟩
+    intro Φ hΦ hv k hk; obtain ⟨Φ', hΦ', e⟩ := hle hv; rw [← KFock.T_inj_k hT.1 d hΦ'.1 hΦ e]; exact hΦ'.2 k hk
+  · let ins (z : Fin d.m × Fin L.n × Fin 2 → Af F) : d.I3 → Af F :=
+      fun k => if h : ∃ j, L.em j = k.2.1 then z (k.1, h.choose, k.2.2) else 0
+    let extM (X' : Mx F E d.m L.n) : d.MxE := fun a i => if h : ∃ j, L.em j = i then X' a h.choose else 0
+    let resL : d.MF →ₗ[ℂ] (Mx F E d.m L.n → ℂ) := LinearMap.funLeft ℂ ℂ extM
+    have hci : Continuous ins := continuous_pi fun k => by
+      by_cases h : ∃ j, L.em j = k.2.1 <;> simp only [ins, h, ↓reduceDIte]
+      · exact continuous_apply _
+      · exact continuous_const
+    have hle1 : R.vac ≤ R'.vac.comap resL := Submodule.span_le.2 fun _ ⟨g, hg, hEq⟩ => by
+      subst hEq
+      have hge (w X') : fP 1 (R.loc w (extM X')) = fP 1 (R'.loc w X') := by
+        suffices key : ∑ a, ∑ i, ‖R'.loc w X' a i‖ ^ 2 = ∑ a, ∑ i, ‖R.loc w (extM X') a i‖ ^ 2 by
+          simp only [fP, gs, key, evX, map_one]
+        have hsl {d' : SD_k σ} (R'' : RD_k d') (X : d'.MxE) :
+            ∑ a, ∑ i, ‖R''.loc w X a i‖ ^ 2 = ∑ i, ∑ a, ‖(((R''.fr w)⁻¹).1 *ᵥ fun b => d'.cw w X b i) a‖ ^ 2 := by
+          rw [Finset.sum_comm]; exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by
+            simp only [RD_k.loc, Matrix.map_apply, norm_star]; rfl
+        rw [hsl R', hsl R]; refine Fintype.sum_of_injective L.em L.inj _ _ (fun i hi => ?_) (fun j => ?_)
+        · have h : ¬ ∃ j, L.em j = i := fun ⟨j, hj⟩ => hi ⟨j, hj⟩
+          have : (fun b => d.cw w (extM X') b i) = 0 := funext fun b => by
+            change (piInf (d.B.emb w)) (extM X' b i) = 0; simp only [extM, dite_eq_right h, map_zero]
+          simp [this]
+        · have h : ∃ j', L.em j' = L.em j := ⟨_, rfl⟩
+          have e : (fun b => d.cw w (extM X') b (L.em j)) = fun b => L.sd.cw w X' b j := funext fun b => by
+            change (piInf (d.B.emb w)) (extM X' b (L.em j)) = (piInf (d.B.emb w)) (X' b j)
+            simp only [extM, dite_eq_left h, L.inj h.choose_spec]
+          rw [e]; exact Avac.norm_frame_eq d.ok.hm (d.A.J.map (d.B.emb w).1) (R'.fr w) (R.fr w) R'.ζ R.ζ (R'.sg w)
+            (R.sg w) (R'.hζ.elim (fun h => Or.inl h.2) (fun h => Or.inr h.2))
+            (R.hζ.elim (fun h => Or.inl h.2) (fun h => Or.inr h.2)) (R'.hfr w) (R.hfr w) _
+      have hrv : resL (vg_loc R g) = vg_loc R' (fun z => g (ins z)) := funext fun X' => by
+        show vg_loc R g (extM X') = _; simp only [vg_loc]; congr 1
+        · exact Finset.prod_congr rfl fun w _ => hge w X'
+        · congr 1; funext k; by_cases h : ∃ j, L.em j = k.2.1
+          · simp only [SD_k.crd, extM, ins, dite_eq_left h]
+          · simp only [SD_k.crd, extM, ins, dite_eq_right h, map_zero, Finsupp.coe_zero, Pi.zero_apply]; rfl
+      show resL (vg_loc R g) ∈ R'.vac; rw [hrv]
+      refine Submodule.subset_span ⟨fun z => g (ins z), ⟨hg.1.comp_continuous hci, ?_⟩, rfl⟩
+      let prj (z : d.I3 → Af F) : Fin d.m × Fin L.n × Fin 2 → Af F := fun k => z (k.1, L.em k.2.1, k.2.2)
+      have hc : IsCompact (prj '' tsupport g) := hg.2.isCompact.image (continuous_pi fun _ => continuous_apply _)
+      exact hc.of_isClosed_subset (isClosed_tsupport _) ((tsupport_comp_subset_preimage g hci).trans fun z hz =>
+        ⟨ins z, hz, funext fun k => by
+          have h : ∃ j, L.em j = L.em k.2.1 := ⟨_, rfl⟩
+          simp only [prj, ins, dite_eq_left h, L.inj h.choose_spec]⟩)
+    have h1 : resL (d.T Φ) ∈ R'.vac := hle1 hv
+    obtain ⟨Φ', hΦ', e⟩ := (hT.1 F E σ L.sd).2.1 _ ((hF F E σ L.sd R').1 (hleF R' h1))
+    refine ⟨Φ', ⟨hΦ', fun X hX => ?_⟩, e ▸ h1⟩
+    rw [e]; show d.T Φ (extM (X.submatrix id L.em)) = d.T Φ X
+    congr 1; funext a i; by_cases h : ∃ j, L.em j = i
+    · simp only [extM, dite_eq_left h, Matrix.submatrix_apply, id, h.choose_spec]
+    · simp only [extM, dite_eq_right h]; rw [by_contra fun hi => h ((L.rng i).1 hi), hX]
+section PolyKFin
+open KK KK.W
+private theorem var_span' {d : SD_k σ} (R : RD_k d) (w : InfinitePlace F) (k : Fin d.m × Fin d.n × Bool) :
+    ∃ (Z₁ Z₂ : M1 d) (c₁ c₂ : ℂ), At (evI F) Z₁ ∧ At (evI F) Z₂ ∧
+      ∀ X, evX (MvPolynomial.X k) (R.loc w X) = c₁ * (mZ d Z₁ X : ℂ) + c₂ * (mZ d Z₂ X : ℂ) := by
+  obtain ⟨tA, htA⟩ := c1_eq_dg_mul (d := d)
+  set fr := (R.fr w).1; set fi := ((R.fr w)⁻¹).1; set A := d.A.J.map (d.B.emb w).1; set e : ℂ := ((R.ε : ℤ) : ℂ)
+  have he : e * e = 1 := by rcases Int.units_eq_one_or R.ε with h | h <;> simp [e, h]
+  have hz : star R.ζ * R.ζ = 1 := by rcases R.hζ with ⟨-, h⟩ | ⟨-, h⟩ <;> rw [h] <;> simp
+  have hfi : fr * fi = 1 := by simp only [fr, fi]; rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
+  have hif : fi * fr = 1 := by simp only [fr, fi]; rw [← Units.val_mul, inv_mul_cancel, Units.val_one]
+  set P := (((R.sg w : ℤ) : ℂ) * R.ζ) • (fr.map star * frᵀ)
+  have hAP : A * P = 1 := by
+    rw [show A = d.A.J.map (d.B.emb w).1 from rfl, A_eq hfi hz (R.hfr w)]
+    simp only [P, Matrix.smul_mul, Matrix.mul_smul, smul_smul]
+    have t1 : fiᵀ * fi.map star * (fr.map star * frᵀ) = 1 := by
+      rw [Matrix.mul_assoc, ← Matrix.mul_assoc (fi.map star), ← mapStar_mul, hif,
+        show (1 : Matrix (Fin d.m) (Fin d.m) ℂ).map star = 1 from Matrix.map_one star (star_zero _) (star_one _),
+        Matrix.one_mul, ← Matrix.transpose_mul, hfi, Matrix.transpose_one]
+    have hs2 : ((R.sg w : ℤ) : ℂ) * R.ζ * (((R.sg w : ℤ) : ℂ) * star R.ζ) = 1 := by
+      calc _ = (((R.sg w : ℤ) : ℂ) * ((R.sg w : ℤ) : ℂ)) * (star R.ζ * R.ζ) := by ring
+        _ = 1 := by rw [hz, mul_one]; rcases Int.units_eq_one_or (R.sg w) with h | h <;> simp [h]
+    rw [t1, hs2, one_smul]
+  have mapI {p q : Type} (w' : InfinitePlace F) (M : Matrix p q E) :
+      (incM F M).map (piInf (d.B.emb w')) = M.map (d.B.emb w').1 := Krd.cw_incM_k d w' M
+  have key (M : Matrix (Fin d.m) (Fin d.n) ℂ) : ∃ Z : M1 d, At (evI F) Z ∧
+      ∀ X, (mZ d Z X : ℂ) = -(2 * e) * ((Matrix.trace ((d.cw w X)ᵀ * M)).re : ℂ) := by
+    choose x hx hz' using fun i j => GlobalTheory.CompanionTheory.RealPlaceAdele.exists_adele_piInf σ d.ok.good.cm
+      d.B.emb fun w' => if w' = w then ((P * M).map star) i j else 0
+    refine ⟨Matrix.of x * tAᵀ, at_mul' (fun c hc => Matrix.ext fun i j => hx i j c hc) _, fun X => ?_⟩
+    have hV (w') : d.cw w' (Matrix.of x) = if w' = w then (P * M).map star else 0 := Matrix.ext fun i j => by
+      show piInf (d.B.emb w') (x i j) = _; rw [hz' i j w']; split_ifs <;> rfl
+    have e1 : Matrix.of x * tAᵀ * (dg d)ᵀ = Matrix.of x * (c1 d)ᵀ := by rw [htA, Matrix.transpose_mul, Matrix.mul_assoc]
+    have hmZ : mZ d (Matrix.of x * tAᵀ) X =
+        -(2 * (e * Matrix.trace ((d.cw w X)ᵀ * A * ((P * M).map star).map star)).re) := by
+      rw [mZ, e1, trace_sp, Finset.sum_eq_single w (fun w' _ hw' => by
+        rw [show (Matrix.of x * (c1 d)ᵀ).map (piInf (d.B.emb w')) = 0 from by
+          rw [Matrix.map_mul, Matrix.transpose_map, mapI, show (Matrix.of x).map (piInf (d.B.emb w')) =
+            d.cw w' (Matrix.of x) from rfl, hV w', ite_eq_right hw', Matrix.zero_mul]]; simp) (by simp)]
+      congr 3
+      rw [show (X * (c2 d)ᵀ).map (piInf (d.B.emb w)) = d.cw w X * ((d.b.1.map (d.B.emb w).1).toCols₂)ᵀ from by
+          rw [Matrix.map_mul, Matrix.transpose_map, mapI]; rfl,
+        show (Matrix.of x * (c1 d)ᵀ).map (piInf (d.B.emb w)) =
+          (P * M).map star * ((d.b.1.map (d.B.emb w).1).toCols₁)ᵀ from by
+          rw [Matrix.map_mul, Matrix.transpose_map, mapI, show (Matrix.of x).map (piInf (d.B.emb w)) =
+            d.cw w (Matrix.of x) from rfl, hV w, ite_eq_left rfl]; rfl]
+      exact trace_form_sign_eq (frame_form R w) (d.cw w X) ((P * M).map star)
+    have hPM : (d.cw w X)ᵀ * A * ((P * M).map star).map star = (d.cw w X)ᵀ * M := by
+      rw [show ((P * M).map star).map star = P * M from
+          Matrix.ext fun _ _ => by simp only [Matrix.map_apply, star_star],
+        ← Matrix.mul_assoc, Matrix.mul_assoc _ A, hAP, Matrix.mul_one]
+    rw [hmZ, hPM]; rcases Int.units_eq_one_or R.ε with h | h <;> simp [e, h]
+  have hM (c : ℂ) (x : Matrix (Fin d.m) (Fin d.n) ℂ) :
+      Matrix.trace (xᵀ * Matrix.of fun b j => if j = k.2.1 then c * fi k.1 b else 0) = c * (fi * x) k.1 k.2.1 := by
+    simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply, mul_ite,
+      mul_zero]
+    rw [Finset.sum_eq_single k.2.1 (fun j _ hj => by simp [hj]) (by simp), Finset.mul_sum]
+    exact Finset.sum_congr rfl fun _ _ => by simp only [ite_true]; ring
+  obtain ⟨Z₁, h1, e1⟩ := key (Matrix.of fun b j => if j = k.2.1 then 1 * fi k.1 b else 0)
+  obtain ⟨Z₂, h2, e2⟩ := key (Matrix.of fun b j => if j = k.2.1 then (-Complex.I) * fi k.1 b else 0)
+  have hl (X) : evX (MvPolynomial.X k) (R.loc w X) =
+      if k.2.2 then (fi * d.cw w X) k.1 k.2.1 else star ((fi * d.cw w X) k.1 k.2.1) := by
+    simp only [evX, MvPolynomial.eval_X, RD_k.loc, Matrix.map_apply]; split_ifs <;> (try simp only [star_star]) <;> rfl
+  refine ⟨Z₁, Z₂, -(e / 2), -(e / 2) * (if k.2.2 then Complex.I else -Complex.I), h1, h2, fun X => ?_⟩
+  rw [hl X, e1 X, e2 X, hM, hM, one_mul]; have hinv : -(e / 2) * (-(2 * e)) = 1 := by linear_combination he
+  set z := (fi * d.cw w X) k.1 k.2.1
+  split_ifs
+  · conv_lhs => rw [show z = (z.re : ℂ) + Complex.I * ((-Complex.I * z).re : ℂ) from Complex.ext (by simp) (by simp)]
+    linear_combination (-(z.re : ℂ) - Complex.I * ((-Complex.I * z).re : ℂ)) * hinv
+  · rw [show star z = (z.re : ℂ) - Complex.I * ((-Complex.I * z).re : ℂ) from Complex.ext (by simp) (by simp)]
+    linear_combination (-(z.re : ℂ) + Complex.I * ((-Complex.I * z).re : ℂ)) * hinv
+private def TK (d : SD_k σ) : Submodule ℂ (M1 d → ℂ) := (kfS d).map (Tl d)
+private theorem mul_pol {d : SD_k σ} (R : RD_k d) (w : InfinitePlace F) (Q : PX d.m d.n) {f : M1 d → ℂ}
+    (hf : f ∈ TK d) : (fun X => evX Q (R.loc w X) * f X) ∈ TK d := by
+  induction Q using MvPolynomial.induction_on generalizing f with
+  | C a => convert Submodule.smul_mem _ a hf using 1; funext _; simp [evX]
+  | add p q hp hq => convert add_mem (hp hf) (hq hf) using 1; funext _; simp [evX, add_mul]
+  | mul_X p k hp =>
+    rw [show (fun X => evX (p * MvPolynomial.X k) (R.loc w X) * f X) =
+      fun X => evX (MvPolynomial.X k) (R.loc w X) * (evX p (R.loc w X) * f X) from funext fun _ => by
+        simp only [evX, map_mul]; ring]
+    obtain ⟨Φ, hΦ, hΦe⟩ := hp hf; obtain ⟨Z₁, Z₂, c₁, c₂, h1, h2, e⟩ := var_span' R w k
+    have hΦs : Φ ∈ d.sch := let ⟨_, _, h0, h1, _⟩ := hΦ; h0 h1
+    have hc : cI ≠ 0 := by simp [cI, Real.pi_ne_zero, Complex.I_ne_zero]
+    refine ⟨(c₁ / cI) • Box.D (d.dd.e (Z₁ * (dg d)ᵀ)) Φ + (c₂ / cI) • Box.D (d.dd.e (Z₂ * (dg d)ᵀ)) Φ,
+      add_mem (Submodule.smul_mem _ _ (D_kfS (at_mul' h1 _) hΦ)) (Submodule.smul_mem _ _ (D_kfS (at_mul' h2 _) hΦ)),
+      funext fun X => ?_⟩
+    change d.T _ X = _ * (fun X => evX p (R.loc w X) * f X) X
+    rw [← hΦe]; change d.T _ X = _ * d.T Φ X
+    rw [T_add, T_smul, T_smul, T_D_dg hΦs h1, T_D_dg hΦs h2, e X]; field_simp
+private theorem vac_mem {d : SD_k σ} (hT : TAll_k) (hF : FockMem_k) (R : RD_k d) {g : FinFn d} (hg : g ∈ SB _) :
+    vacF R g ∈ TK d := by
+  have hgen : vacF R g ∈ R.fock := Submodule.subset_span ⟨fun _ => 1, g, hg, funext fun _ => by simp [vacF, fP, evX]⟩
+  obtain ⟨Φ, hΦ, e⟩ := (hT.1 F E σ d).2.1 _ ((hF F E σ d R).1 hgen)
+  refine ⟨Φ, vac_kfS (thA R) (thB d R.ε) (fun _ hk w => commute_thB R hk w) (fun _ => 1) hΦ fun u u' hu hu' hr => ?_, e⟩
+  refine sub_eq_zero.1 ((hT.1 F E σ d).2.2 _ (sub_mem (Box.DP_mem hΦ _ _) (Submodule.smul_mem _ _ (Box.DP_mem hΦ _ _)))
+    (funext fun X => ?_))
+  have t := congrFun ((Tl d).map_sub (Box.D (d.dd.e u') Φ) (Complex.I • Box.D (d.dd.e u) Φ)) X
+  simp only [map_smul, Pi.sub_apply, Pi.smul_apply, smul_eq_mul] at t
+  change d.T _ X = d.T _ X - Complex.I * d.T _ X at t; rw [t, vac_rel R g hΦ e hu hu' hr X, sub_self]; rfl
+private theorem polyKFin_loc : TAll_k → FockMem_k → PolyKFin_k := fun hT hF F E _ _ _ _ _ σ d R Φ hΦ hf => by
+  have hle : R.fock ≤ TK d := Submodule.span_le.2 fun _ ⟨P, g, hg, hEq⟩ => by
+    rw [SetLike.mem_coe, hEq, show (fun X => (∏ w ∈ Finset.univ, fP (P w) (R.loc w X)) * g fun k => (d.crd X k).2) =
+      fun X => (∏ w ∈ Finset.univ, evX (P w) (R.loc w X)) * vacF R g X from funext fun _ => by
+        simp only [fP, vacF, Finset.prod_mul_distrib]; ring]
+    have hprod : ∀ s : Finset (InfinitePlace F), {f : M1 d → ℂ} → f ∈ TK d →
+        (fun X => (∏ w ∈ s, evX (P w) (R.loc w X)) * f X) ∈ TK d := fun s => by
+      induction s using Finset.induction_on with
+      | empty => intro _ h; simpa using h
+      | insert w s hw ih =>
+        intro f hf; rw [show (fun X => (∏ w' ∈ insert w s, evX (P w') (R.loc w' X)) * f X) =
+          fun X => evX (P w) (R.loc w X) * ((∏ w' ∈ s, evX (P w') (R.loc w' X)) * f X) from funext fun _ => by
+            rw [Finset.prod_insert hw, mul_assoc]]; exact mul_pol R w (P w) (ih hf)
+    exact hprod Finset.univ (vac_mem hT hF R hg)
+  obtain ⟨Φ', ⟨N, _, h0, h1, h2⟩, e⟩ := hle hf
+  rw [KFock.T_inj_k hT.1 d hΦ (h0 h1) e.symm]
+  exact ⟨h0 h1, Submodule.finiteDimensional_of_le (S₂ := N)
+    (Submodule.span_le.2 fun _ ⟨k, hk⟩ => hk ▸ h2 k.1 k.2 Φ' h1)⟩
+end PolyKFin
+
+theorem Fin.siegelWeilStd_k : SiegelWeilStd_k := by
+  have hTT : TTheta_k := Tpar.tTheta_of_k (tweyl.tthetaComm_k TBij_k.tBij)
+  have hW : TWeyl_k := TW.tWeyl_of_k TBij_k.tBij hTT (TW.UpToPf.upTo_of_k uniq_loc) poisson_loc TW.ThetaWPf.thetaW_k
+  have hT : TAll_k := ⟨TBij_k.tBij, Tpar.tPar_k, hW, hTT,
+    Tauto.thetaAuto_k _root_.GlobalTheory.CompanionTheory.SiegelRed.siegelSetUnitary Tpar.tPar_k hTT⟩
+  have hTC : ThetaCoef_k := Tauto.thetaCoef_k _root_.GlobalTheory.CompanionTheory.SiegelRed.siegelSetUnitary TBij_k.tBij Tpar.tPar_k hTT
+  have hA := kfour.auxiliaryExistence_holds; have hF := KFock.fockMem_k; have hLo := locOpEx_of_tAll_k hT
+  have hLI : LocInst_k := KLI.locInst_of_k hT hA hF (KFock.liftEx_k hT.1)
+  have hGS := KSplit.gSplit_of_k hF (KAway.awayAct_of_tAll_k hT)
+  have hVK := vacK_loc hT hF hLo hLI (KAway.finAct_of_tAll_k hT)
+  have hKP := KFP.kFinPoly_of_k hT Tunit.tUnit_k Tunit.tHeis_k hA hF hLo hLI
+  have hPK := polyKFin_loc hT hF
+  have hCT : CTSplit_k := Act.ctSplit_of_parts_k Act.indepDom_k Act.cptDom_k Act.absConv_k Act.firstEq_k
+    (Act.secLaw_of_k (Act.secUnf_of_k Act.absConv_k))
+  have hWk := KWhit.whitK_of_X_k KWhit.iwaRedC_k KWhit.W.pureSpan KWhit.W.linRedC KWhit.W.coreX KWhit.W.genDictX
+    (fun _ _ _ _ _ _ _ _ d _ hΦ _ hk => KWhit.kfin_om_k d hΦ hk) hT hA Krd.rdEx_k hF hKP Khead.secK_k kunf.unfold_k
+    whitGenLt hTC kfour.lamBd_k hPK
+  have hWE := KWhit.whitEq_of_X_k KWhit.iwaRedC_k KWhit.W.pureSpan KWhit.W.linRedC KWhit.W.coreX KWhit.W.genDictX
+    (fun _ _ _ _ _ _ _ _ d _ hΦ _ hk => KWhit.kfin_om_k d hΦ hk) hT hA Krd.rdEx_k hF hKP Khead.secK_k kunf.unfold_k
+    Aeis.eisWk_k whitGenEq hTC kfour.lamBd_k hPK
+  have hWL := KWhit.whitLow_of_X_k KWhit.iwaRedC_k KWhit.W.vacSpan KWhit.W.linRedC KWhit.W.coreX KWhit.W.genDictX
+    hVK hT hA hF Khead.secK_k kunf.unfold_k Aeis.eisWk_k whitGenLow hTC kfour.lamBd_k hPK
+  have hSt := AStep.stepOf_k HSt.holLeadB Holtb.holT hT hTC hA kfour.coefEx_k hF (KFock.liftEx_k hT.1) hLo hLI hGS
+    hPK Khead.secK_k Aeis.eisWk_k kfour.lamBd_k (KSing.lamSing_of_k kfour.coefEx_k kfour.fourierZero_k Krd.denseW_k hA)
+    kfour.fourierZero_k kunf.unfold_k hWL hVK (iwaQ_loc hT) hCT Afc.uEx_k (Afc.fcConj_of_k hA) Afc.orbRes_k
+  exact Atop.siegelWeilStd_of_k AbsSt.absThm hT hTC hLo hLI hGS (KSplit.gIinv_of_k hT hF)
+    (Kdil.gIdil_full_k hT hA hLo (KAway.awayAct_of_tAll_k hT) hLI) hKP hPK kunf.unfold_k hWk hWE
+    AbsSt.vacuum_generates_polynomials (Ald.ldEx_of_k hT hA) hVK hSt
+end PositivityTheory.SiegelWeilFormula
 end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnfK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecUnfOfCLawK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecUnfOfCLawK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.CLawExK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.UnfK\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EisensteinSecondTerm\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-open scoped TensorProduct NNReal ENNReal Matrix Classical ComplexOrder
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl GlobalTheory.Cont PositivityTheory.Rg.Sw
-namespace PositivityTheory.SiegelWeilFormula.Act
-theorem secUnf_of_cLaw_k : _root_.PositivityTheory.SiegelWeilFormula.Act.AbsConv_k → _root_.PositivityTheory.SiegelWeilFormula.Act.CLawEx_k → _root_.PositivityTheory.SiegelWeilFormula.Act.SecUnf_k := by
-  intro hA hL F E _ _ _ _ _ σ d R L s₁ f hf he
-  obtain ⟨t, ht⟩ := hA F E σ d L s₁ f hf he
-  refine ⟨t, fun z hz nb lam 𝓖 hc hk uM ν 𝓤 hU hkU T T' hT nb' lam' 𝓖' hc' hk' => ?_⟩
-  obtain ⟨w₁, cM, κ, hlaw, hw, hwf, hcM, hκ, δ, hδ, hcf⟩ := hL F E σ d R L
-  have h : _root_.PositivityTheory.SiegelWeilFormula.Act.C5.Hyp_k L nb uM nb' w₁ cM δ :=
-    { nb := hc.1, uM := hU.1, nb' := hc'.1, wr := hw, wf := hwf, cf := hcf, δ0 := hδ }
-  obtain ⟨K, hK⟩ := _root_.PositivityTheory.SiegelWeilFormula.Act.C5.unf_k R hf z hc hU hT hc' (fun x => ht z hz nb lam 𝓖 hc hk uM ν 𝓤 hU hkU T x) h hcM hκ
-  exact ⟨w₁, cM, κ, hlaw, K, fun x => hK x⟩
-theorem secUnf_of_k : _root_.PositivityTheory.SiegelWeilFormula.Act.AbsConv_k → _root_.PositivityTheory.SiegelWeilFormula.Act.SecUnf_k := fun hA => _root_.PositivityTheory.SiegelWeilFormula.Act.secUnf_of_cLaw_k hA _root_.PositivityTheory.SiegelWeilFormula.Act.cLawEx_k
-end PositivityTheory.SiegelWeilFormula.Act
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecUnfOfCLawK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilActTop =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilActTop", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LiftedSchrodingerDatum\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.AbsConvK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.IndepDomK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiTContPerK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SecUnfOfCLawK\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-namespace PositivityTheory.SiegelWeilFormula.Act
-theorem ctSplit_of_k : _root_.PositivityTheory.SiegelWeilFormula.SiegelWeilDatumProperties → _root_.PositivityTheory.SiegelWeilFormula.CoefEx_k → _root_.PositivityTheory.SiegelWeilFormula.CTSplit_k := fun _ _ =>
-  _root_.PositivityTheory.SiegelWeilFormula.Act.ctSplit_of_parts_k _root_.PositivityTheory.SiegelWeilFormula.Act.indepDom_k _root_.PositivityTheory.SiegelWeilFormula.Act.cptDom_k _root_.PositivityTheory.SiegelWeilFormula.Act.absConv_k _root_.PositivityTheory.SiegelWeilFormula.Act.firstEq_k (_root_.PositivityTheory.SiegelWeilFormula.Act.secLaw_of_k (_root_.PositivityTheory.SiegelWeilFormula.Act.secUnf_of_k _root_.PositivityTheory.SiegelWeilFormula.Act.absConv_k))
-end PositivityTheory.SiegelWeilFormula.Act
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilActTop =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinFinal =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinFinal", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.BaseKnownTheoremsS\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilActTop\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinLt\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKfourNA\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKfourW\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-open GlobalTheory.ThK.Dbl
-namespace PositivityTheory.SiegelWeilFormula.Fin
-theorem siegelWeilStd_k : _root_.GlobalTheory.ThK.Dbl.SiegelWeilStd_k := _root_.PositivityTheory.SiegelWeilFormula.Fin.siegelWeilStd_of_ct_k (_root_.PositivityTheory.SiegelWeilFormula.Act.ctSplit_of_k _root_.PositivityTheory.SiegelWeilFormula.kfour.auxiliaryExistence_holds _root_.PositivityTheory.SiegelWeilFormula.kfour.coefEx_k)
-end PositivityTheory.SiegelWeilFormula.Fin
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinFinal =====

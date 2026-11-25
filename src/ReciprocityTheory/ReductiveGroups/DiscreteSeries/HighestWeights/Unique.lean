@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowerKTypesPTensorStableUnderK
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HasDerivAtRealOfComplex
 import Mathlib.Tactic.Lemma
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OneParam
@@ -21,15 +22,7 @@ variable {n : ℕ}
 
 lemma uq_offdiag_zero {ε : Fin n → Bool} {X : Matrix (Fin n) (Fin n) ℂ} (hX : X * Jm ε = Jm ε * X)
     {a b : Fin n} (hab : ε a ≠ ε b) : X a b = 0 := by
-  have hd : (if ε a then (1 : ℂ) else -1) ≠ (if ε b then (1 : ℂ) else -1) := by
-    cases ha : ε a <;> cases hb : ε b <;> simp [ha, hb] at hab ⊢ <;> norm_num
-  have h := congrFun (congrFun hX a) b
-  simp only [Jm, Matrix.mul_diagonal, Matrix.diagonal_mul] at h
-  have h2 : X a b * ((if ε b then (1 : ℂ) else -1) - (if ε a then (1 : ℂ) else -1)) = 0 := by
-    rw [mul_sub, h]; ring
-  rcases mul_eq_zero.mp h2 with h3 | h3
-  · exact h3
-  · exact absurd (sub_eq_zero.mp h3).symm hd
+  apply _root_.GlobalTheory.SphJet.vmstab_entry_zero <;> assumption
 
 theorem kType_unique {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T T' : KType ε Λ) :
     ∃ φ : T.V ≃ₗᵢ[ℂ] T'.V, (∀ (k : KG ε) (v : T.V), φ (T.op k v) = T'.op k (φ v)) ∧

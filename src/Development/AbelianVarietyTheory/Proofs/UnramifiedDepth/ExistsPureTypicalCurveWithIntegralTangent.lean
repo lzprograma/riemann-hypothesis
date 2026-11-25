@@ -73,8 +73,6 @@ section -- clump:auto
 open scoped BigOperators
 open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
 
-theorem _root_.GlobalTheory.T.adjointEndPair_mem_gaugedCurveLogarithms : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d] (I : Fin 2 → Type) [∀ g, Fintype (I g)] (κ : Type) [Fintype κ] (X : RawChart C d I κ), RLaw X V → ∀ g (M M' : Matrix κ κ C) (s : JJ I g → C), IsEnd X V M M' → (∀ q, V.Ge 0 (s q)) → (∀ q, M'.mulVec (X.u (1 - g) q) = s q • X.u (1 - g) q) → ∀ a ∈ Cv X V g, ((fun i => ∑ j, M i j • a.1 j, fun q => s q • a.2 q) : ((κ → PowerSeries C) × (JJ I g → PowerSeries C))) ∈ Cv X V g := by
-  first | exact @GlobalTheory.RowLaw.CvEnd.end_mem_Cv
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AdjointEndPairMemGaugedCurveLogarithmsStatement =====
@@ -144,7 +142,6 @@ theorem sum_pow_root {ζ : C} {p : ℕ} (hζ : IsPrimitiveRoot ζ p) (m : ℕ) :
     rw [← pow_mul, mul_comm m p, pow_mul, hζ.pow_eq_one, one_pow, sub_self] at this
     exact (mul_eq_zero.1 this).resolve_right hne
 
-
 open Classical in
 def filt (P : ℕ → Prop) (f : PowerSeries C) : PowerSeries C :=
   PowerSeries.mk fun m => if P m then PowerSeries.coeff m f else 0
@@ -178,7 +175,7 @@ theorem filt_congr {P Q : ℕ → Prop} (h : ∀ m, P m ↔ Q m) (f : PowerSerie
 
 theorem filt_true {P : ℕ → Prop} (h : ∀ m, P m) (f : PowerSeries C) : filt P f = f := by
   ext m
-  rw [coeff_filt, if_pos (h m)]
+  rw [coeff_filt, ite_eq_left (h m)]
 
 def Good (l n m : ℕ) : Prop := ∀ p < n, p.Prime → p ≠ l → ¬ p ∣ m
 
@@ -188,10 +185,10 @@ theorem coeff_filt_good {l : ℕ} (hl : l.Prime) (hl2 : l ≠ 2) (f : PowerSerie
   unfold typ
   by_cases hm : ∃ s, l ^ s = m
   · obtain ⟨s, rfl⟩ := hm
-    rw [coeff_tyS_pow hl.two_le, if_pos]
+    rw [coeff_tyS_pow hl.two_le, ite_eq_left]
     intro p _ hp hpl hd
     exact hpl ((Nat.prime_dvd_prime_iff_eq hp hl).1 (hp.dvd_of_dvd_pow hd))
-  · rw [coeff_tyS_of_ne _ m (fun s hs => hm ⟨s, hs⟩), if_neg]
+  · rw [coeff_tyS_of_ne _ m (fun s hs => hm ⟨s, hs⟩), ite_eq_right]
     intro hg
     rcases Nat.eq_zero_or_pos m with rfl | hpos
     · exact hg 2 (by omega) Nat.prime_two (Ne.symm hl2) (dvd_zero 2)
@@ -270,7 +267,6 @@ theorem filt_good_mem (hX : RLaw X V) (g : Fin 2)
       exact ih
 
 end GlobalTheory.RowLaw.TypPart
-
 
 open GlobalTheory.RowLaw.TypPart in
 theorem GlobalTheory.RowLaw.typ_mem_Cv : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d] (I : Fin 2 → Type) [∀ g, Fintype (I g)] (κ : Type) [Fintype κ] (X : RawChart C d I κ), RLaw X V → ∀ g, ∀ a ∈ Cv X V g, ((fun i => typ V.l (a.1 i), fun q => typ V.l (a.2 q)) : ((κ → PowerSeries C) × (JJ I g → PowerSeries C))) ∈ Cv X V g := by
@@ -426,15 +422,15 @@ theorem exists_start (hR : RLaw X V) (hP : HasProj X V) (g : Fin 2) (w : I g →
   have hlg1 : ∀ i j, MvPowerSeries.coeff (Finsupp.single j 1) (X.lg i) = if j = i then 1 else 0 := fun i j => by
     rw [hR.lin i _ (by rw [Finsupp.degree_single]), MvPowerSeries.coeff_X]
     by_cases hji : j = i
-    · rw [hji, if_pos rfl, if_pos rfl]
-    · rw [if_neg hji, if_neg]
+    · rw [hji, ite_eq_left rfl, ite_eq_left rfl]
+    · rw [ite_eq_right hji, ite_eq_right]
       intro h
       exact hji (Finsupp.single_left_injective one_ne_zero h)
   have h0 : ((fun i => alongCv γ (X.lg i), fun q => 0 - alongCv γ (X.sg (X.u (1 - g) q))) :
       (κ → PowerSeries C) × (JJ I g → PowerSeries C)) ∈ Cv X V g :=
     ⟨γ, fun _ => 0, hγcv, fun _ => ⟨map_zero _, fun n => by rw [map_zero]; exact VF.Ge.zero 0⟩,
       fun _ => rfl, fun _ => rfl⟩
-  have h1 := GlobalTheory.T.adjointEndPair_mem_gaugedCurveLogarithms C V d I κ X hR g (M g) (M (1 - g)) (fun _ => 1) hEnd (fun _ => VF.Ge.one)
+  have h1 := GlobalTheory.RowLaw.CvEnd.end_mem_Cv C V d I κ X hR g (M g) (M (1 - g)) (fun _ => 1) hEnd (fun _ => VF.Ge.one)
     (fun q => by rw [one_smul]; exact hfix (1 - g) q) _ h0
   have h2 := _root_.GlobalTheory.RowLaw.typ_mem_Cv C V d I κ X hR g _ h1
   have hA1 : ∀ i, PowerSeries.coeff 1 (alongCv γ (X.lg i)) = v i := by
@@ -497,7 +493,7 @@ theorem pure_mem (hR : RLaw X V) {g : Fin 2} (hT : HasTeich X V g) (a : ZMod d) 
         (fun s q => (ζ (X.ty (1 - g) q) * (ζ (a + s))⁻¹) * e s q) ∈ Cv X V g := by
     intro b e h
     have h1 := hres (ζ a)⁻¹ (ge_of_pow_eq_one V hN0 (by rw [inv_pow, hζN, inv_one])) _ h
-    have h2 := GlobalTheory.T.adjointEndPair_mem_gaugedCurveLogarithms C V d I κ X hR g M M' (fun q => ζ (X.ty (1 - g) q)) hEnd
+    have h2 := GlobalTheory.RowLaw.CvEnd.end_mem_Cv C V d I κ X hR g M M' (fun q => ζ (X.ty (1 - g) q)) hEnd
       (fun q => ge_of_pow_eq_one V hN0 (hζN _)) hM' _ h1
     convert h2 using 1
     refine Prod.ext (funext fun i => ?_) (funext fun q => ?_)
@@ -546,7 +542,6 @@ end Main
 end GlobalTheory.RowLaw.PureTypical
 
 namespace GlobalTheory.RowLaw
-
 
 open PureTypical in
 theorem exists_pure_typical : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d] (I : Fin 2 → Type) [∀ g, Fintype (I g)] (κ : Type) [Fintype κ] (X : RawChart C d I κ), RLaw X V → HasProj X V → ∀ g, HasTeich X V g → ∀ (a : ZMod d) (w : I g → C), (∀ c, V.Ge 0 (w c)) → (∀ c, X.tyC g (Sum.inl c) ≠ a → w c = 0) → ∃ x ∈ X.TySet V g, x 0 = Sum.elim w 0 ∧ ∀ (i : ℕ) n, X.tyC g n ≠ a + i → x i n = 0 := by
@@ -598,13 +593,13 @@ theorem exists_pure_typical : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZ
     cases n with
     | inl c =>
       have hn' : X.ty g c ≠ a + i := hn
-      simp only [Sum.elim_inl, hb', if_neg hn']
+      simp only [Sum.elim_inl, hb', ite_eq_right hn']
     | inr q =>
       have hn' : X.ty (1 - g) q ≠ a + i := hn
-      simp only [Sum.elim_inr, he', if_neg hn', zero_add]
+      simp only [Sum.elim_inr, he', ite_eq_right hn', zero_add]
       refine Finset.sum_eq_zero fun c _ => ?_
       split_ifs with hc
-      · simp only [hb', hc, if_neg hn', mul_zero]
+      · simp only [hb', hc, ite_eq_right hn', mul_zero]
       · rfl
 
 end GlobalTheory.RowLaw

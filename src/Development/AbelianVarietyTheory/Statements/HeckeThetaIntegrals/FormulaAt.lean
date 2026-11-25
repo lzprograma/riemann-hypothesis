@@ -48,8 +48,6 @@ open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj Globa
 
 namespace GlobalTheory.RowClaim
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section
 
 variable {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : FamIn D.what₂.LL Γ Pl0 T D.R.m}

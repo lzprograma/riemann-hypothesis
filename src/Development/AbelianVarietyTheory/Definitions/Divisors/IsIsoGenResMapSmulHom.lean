@@ -6,45 +6,6 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsEffA
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsQuasicoherentEigenQuot
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsVBAndClsDetOfShortExact
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFrameOfBijectiveStalk, Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoGenResMapSmulHom
@@ -53,8 +14,6 @@ import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFrameOfBijectiveStalk", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsFrameOfForallExists\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ToBidualNaturalityDualSheafTranspose\nimport Mathlib.Algebra.Module.StablyFree.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -241,7 +200,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -255,12 +213,6 @@ open GlobalTheory.VB (IsVB IsFrame IsSubbundle Chart det)
 open GlobalTheory.Twist (resM resM_resM resM_smul app_resM)
 
 namespace GlobalTheory.Vert
-
-section Dim
-
-attribute [local instance low] specializationOrder
-
-end Dim
 
 variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
 
@@ -277,14 +229,6 @@ def relDim (_ : Hom Z₁ Z) : ℕ := Z₁.relDim - Z.relDim
 abbrev fnField (_ : Hom Z₁ Z) : Type := Z.X.residueField (genericPoint Z.X)
 
 def genFibre : Scheme.{0} := f.f.fiber (genericPoint Z.X)
-
-def genFibreι : f.genFibre ⟶ Z₁.X := f.f.fiberι _
-
-def genFibreStr : f.genFibre ⟶ Sp f.fnField := f.f.fiberToSpecResidueField _
-
-theorem isPullback_genFibre :
-    IsPullback f.genFibreι f.genFibreStr f.f (Z.X.fromSpecResidueField (genericPoint Z.X)) :=
-  .of_hasPullback _ _
 
 instance : Nonempty f.genFibre :=
   have ⟨x, hx⟩ := f.f.surjective (genericPoint Z.X)
@@ -308,10 +252,6 @@ def genEquiv {V : Z.X.Opens} (h : V ≤ Z.gen) : Γ(Z.X, V) ≃+* Γ(Z.gen.toSch
 theorem genEquiv_apply {V : Z.X.Opens} (h : V ≤ Z.gen) (a : Γ(Z.X, V)) :
     genEquiv h a = (Z.gen.ι.app V).hom a := rfl
 
-theorem genEquiv_resG {U V : Z.X.Opens} (h : V ≤ Z.gen) (h' : V ≤ U) (a : Γ(Z.X, U)) :
-    genEquiv h (resG Z.X h' a) = (Z.gen.ι.appLE U _ (Z.gen.ι.preimage_mono h')).hom a :=
-  Cartier.app_resG Z.gen.ι h' a
-
 theorem isIso_genRes_map_smulHom (E : Z.X.Modules) {g : O} (hg : g ≠ 0) :
     IsIso (Z.genRes.map (smulHom E (Z.const g))) := by
   rw [VB.pullback_map_smulHom]
@@ -329,9 +269,6 @@ variable (E) in
 def smul (g : O) (hg : g ≠ 0) : Z.GenIso E E :=
   haveI := isIso_genRes_map_smulHom E hg
   ofHom (smulHom E (Z.const g))
-
-theorem smul_inv (g : O) (hg : g ≠ 0) :
-    (smul E g hg).inv = Z.genRes.map (smulHom E (Z.const g)) := rfl
 
 section Pull
 
@@ -355,10 +292,6 @@ theorem pull_inv {φ : Z.GenIso E E'} {ψ : E' ⟶ E} (h : φ.inv = Z.genRes.map
   simp only [pull, Iso.trans_inv, Iso.symm_inv, Iso.app_hom, Iso.app_inv, Functor.mapIso_inv, h,
     Category.assoc]
   exact NatIso.naturality_2 (genPullIso hf) ψ
-
-theorem pull_smul (g : O) (hg : g ≠ 0) : (smul E g hg).pull hf = smul _ g hg :=
-  Iso.ext (Iso.inv_eq_inv _ _ |>.1 (by
-    rw [pull_inv hf (smul_inv g hg), VB.pullback_map_smulHom f, appTop_const hf, smul_inv]))
 
 end Pull
 
@@ -414,52 +347,7 @@ def div (hE : IsVB E r) (hE' : IsVB E' r) : VertDiv Z :=
 
 variable (hE : IsVB E r) (hE' : IsVB E' r) (hE'' : IsVB E'' r)
 
-theorem genEquiv_eqn_div (c : Chart E r) (c' : Chart E' r) {W : Z.X.Opens}
-    (h : W ≤ Z.gen ⊓ (c.U ⊓ c'.U)) :
-    haveI := hE.isQuasicoherent
-    haveI := hE'.isQuasicoherent
-    genEquiv (h.trans inf_le_left) ((φ.div hE hE').eqn (c, c') h) =
-      (φ.detUnit c c' (Z.gen.ι.preimage_mono (h.trans inf_le_right))).val := by
-  change genEquiv _ (resG Z.X h ((genEquiv inf_le_left).symm _)) = _
-  rw [genEquiv_apply, Cartier.app_resG, ← genEquiv_apply inf_le_left, RingEquiv.apply_symm_apply]
-  exact congrArg Units.val (IsFrame.res_detUnit _ _ _ _ _)
-
-theorem vCls_div : Z.vCls (φ.div hE hE').cls = cls _ hE.isLB_det - cls _ hE'.isLB_det :=
-  (VertDiv.vCls_cls _).trans (cls_div _ _ _)
-
 variable {φ} {ψ : E' ⟶ E}
-
-theorem eqn_div_of_hom (hψ : φ.inv = Z.genRes.map ψ) (c : Chart E r) (c' : Chart E' r)
-    {W V : Z.X.Opens} (h : W ≤ Z.gen ⊓ V) (hV : V ≤ c.U ⊓ c'.U) :
-    (φ.div hE hE').eqn (c, c') (h.trans (inf_le_inf_left _ hV)) =
-      resG Z.X (h.trans inf_le_right) ((c.isFrame.basis (hV.trans inf_le_left)).det
-        fun i => ψ.app V (resM E' (hV.trans inf_le_right) (c'.e i))) := by
-  have := hE.isQuasicoherent
-  have := hE'.isQuasicoherent
-  refine (genEquiv (h.trans inf_le_left)).injective ?_
-  rw [genEquiv_eqn_div, genEquiv_resG, detUnit, IsFrame.val_detUnit, Module.Basis.det_apply,
-    Module.Basis.det_apply, RingHom.map_det]
-  refine congrArg _ (Matrix.ext fun i j => ?_)
-  rw [RingHom.mapMatrix_apply, Matrix.map_apply, Module.Basis.toMatrix_apply,
-    Module.Basis.toMatrix_apply, ← c.isFrame.pullback_basis_repr, hψ,
-    pullback_map_app_pullbackSections, app_resM]
-  congr 2
-  exact (res_pullbackSections _ _ _ _ _).trans (pullbackSections_res _ _ _ _ _).symm
-
-theorem cls_div_of_smul {φ : Z.GenIso E E} {g : O} (hg : g ≠ 0)
-    (hφ : φ.inv = Z.genRes.map (smulHom E (Z.const g))) :
-    (φ.div hE hE).cls = r • Z.div g hg := by
-  rw [← Z.div_pow hg r (pow_ne_zero r hg), ← VertDiv.cls_const, ← add_zero (VertDiv.const Z _ _).cls,
-    ← VertDiv.cls_zero Z]
-  refine VertDiv.IsSum.cls_eq fun i j k => ?_
-  obtain ⟨c, c'⟩ := k
-  refine ⟨c.isFrame.detUnit c'.isFrame (inf_le_right.trans inf_le_left)
-    (inf_le_right.trans inf_le_right), (eqn_div_of_hom hE hE hφ c c' le_rfl inf_le_right).trans ?_⟩
-  change _ = _ * (resG _ _ (resG _ _ _) * resG _ _ 1)
-  simp only [smulHom_app_apply, IsFrame.val_detUnit]
-  rw [AlternatingMap.map_smul_univ, map_one, mul_one, smul_eq_mul, map_mul, mul_comm, resG_resG]
-  simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin, Model.const, map_pow]
-  exact congrArg (_ * · ^ r) (resG_resG _ _ _)
 
 end GenIso
 
@@ -519,8 +407,6 @@ theorem isVB_gr (i : Fin N) : IsVB (fl.gr i) 1 := by
 
 def root (i : Fin N) : LB X := det (fl.gr i) 1
 
-theorem isLB_root (i : Fin N) : (fl.root i).IsLB := (fl.isVB_gr i).isLB_det
-
 def ofIso {E' : X.Modules} (e : E ≅ E') : Flag E' N where
   F := fl.F
   ι i := fl.ι i ≫ e.hom
@@ -531,34 +417,6 @@ def ofIso {E' : X.Modules} (e : E ≅ E') : Flag E' N where
   isIso_last := inferInstance
 
 
-open ZeroObject in
-def ofRankOne {L : X.Modules} (h : IsVB L 1) : Flag L 1 where
-  F := ![0, L]
-  ι := Fin.cons 0 (Fin.cons (𝟙 L) finZeroElim)
-  isSubbundle := Fin.cons ⟨(isZero_zero _).mono _, 1, h.of_iso cokernelZeroIsoTarget.symm⟩
-    (Fin.cons (VB.isSubbundle_of_isIso (𝟙 L)) finZeroElim)
-  isVB := Fin.cons (VB.isVB_zero_iff.2 (isZero_zero _)) (Fin.cons h finZeroElim)
-  step := Fin.cons 0 finZeroElim
-  step_ι := Fin.cons zero_comp finZeroElim
-  isIso_last := IsIso.id L
-
-
-open ZeroObject in
-def ofBiprod {L M : X.Modules} (hL : IsVB L 1) (hM : IsVB M 1) : Flag (L ⊞ M) 2 where
-  F := ![0, L, L ⊞ M]
-  ι := Fin.cons 0 (Fin.cons biprod.inl (Fin.cons (𝟙 _) finZeroElim))
-  isSubbundle := Fin.cons
-    ⟨(isZero_zero _).mono _, 2, (hL.biprod hM).of_iso cokernelZeroIsoTarget.symm⟩
-    (Fin.cons (VB.isSubbundle_inl hM) (Fin.cons (VB.isSubbundle_of_isIso (𝟙 _)) finZeroElim))
-  isVB := Fin.cons (VB.isVB_zero_iff.2 (isZero_zero _))
-    (Fin.cons hL (Fin.cons (hL.biprod hM) finZeroElim))
-  step := Fin.cons 0 (Fin.cons biprod.inl finZeroElim)
-  step_ι := Fin.cons zero_comp (Fin.cons (Category.comp_id _) finZeroElim)
-  isIso_last := IsIso.id _
-
-theorem nonempty_gr_ofBiprod {L M : X.Modules} (hL : IsVB L 1) (hM : IsVB M 1) :
-    Nonempty ((ofBiprod hL hM).gr 0 ≅ L) ∧ Nonempty ((ofBiprod hL hM).gr 1 ≅ M) :=
-  ⟨⟨cokernelZeroIsoTarget⟩, ⟨cokernelBiprodInlIso⟩⟩
 
 end Flag
 
@@ -595,41 +453,7 @@ def grIso (i : Fin N) : Z.GenIso (P.fl.gr i) (P.fl'.gr i) :=
     cokernel.mapIso _ _ (P.gen i.castSucc) (P.gen i.succ) (P.gen_step i) ≪≫
       (PreservesCokernel.iso Z.genRes (P.fl'.step i)).symm
 
-theorem π_grIso_hom (i : Fin N) : Z.genRes.map (P.fl.π i) ≫ (P.grIso i).hom =
-    (P.gen i.succ).hom ≫ Z.genRes.map (P.fl'.π i) := by
-  simp [grIso, Flag.π, Flag.gr]
-
 def div (i : Fin N) : VertDiv Z := (P.grIso i).div (P.fl.isVB_gr i) (P.fl'.isVB_gr i)
-
-theorem cls_root' (i : Fin N) :
-    cls _ (P.fl'.isLB_root i) = cls _ (P.fl.isLB_root i) - Z.vCls (P.div i).cls := by
-  rw [div, GenIso.vCls_div]
-  exact (sub_sub_cancel _ _).symm
-
-def ofRankOne (φ : Z.GenIso E E') (h : IsVB E 1) (h' : IsVB E' 1) : FlagPair φ 1 where
-  fl := .ofRankOne h
-  fl' := .ofRankOne h'
-  gen := Fin.cons (Iso.refl _) (Fin.cons φ finZeroElim)
-  gen_ι := Fin.cons ((Z.genRes.map_isZero (isZero_zero _)).eq_of_src _ _)
-    (Fin.cons (by
-      change φ.hom ≫ Z.genRes.map (𝟙 _) = Z.genRes.map (𝟙 _) ≫ φ.hom
-      simp) finZeroElim)
-
-def ofSMul (fl : Flag E N) (g : O) (hg : g ≠ 0) : FlagPair (GenIso.smul E g hg) N where
-  fl := fl
-  fl' := fl
-  gen i := GenIso.smul _ g hg
-  gen_ι i := by
-    rw [← Iso.eq_inv_comp, ← Category.assoc, ← Iso.comp_inv_eq, GenIso.smul_inv, GenIso.smul_inv,
-      ← Functor.map_comp, ← Functor.map_comp, smulHom_comp]
-
-theorem cls_div_ofSMul (fl : Flag E N) (g : O) (hg : g ≠ 0) (i : Fin N) :
-    ((ofSMul fl g hg).div i).cls = Z.div g hg := by
-  refine (GenIso.cls_div_of_smul (fl.isVB_gr i) hg ?_).trans (one_nsmul _)
-  have h := (ofSMul fl g hg).π_grIso_hom i
-  rw [← Iso.inv_comp_eq, ← Category.assoc, ← Iso.eq_comp_inv] at h
-  rw [← cancel_epi (Z.genRes.map (fl.π i)), ← Functor.map_comp, ← smulHom_comp, Functor.map_comp]
-  exact h.symm
 
 end FlagPair
 
@@ -642,23 +466,6 @@ structure FlagModel (φ : Z.GenIso E E') (N : ℕ) where
   pair : FlagPair (φ.pull π.comp_str) N
 
 def FlagModel.relDim {φ : Z.GenIso E E'} (M : FlagModel φ N) : ℕ := M.π.relDim
-
-def FlagModel.ofRankOne (φ : Z.GenIso E E') (h : IsVB E 1) (h' : IsVB E' 1) {B : Model O}
-    (π : Hom B Z) : FlagModel φ 1 :=
-  ⟨B, π, .ofRankOne _ (h.pullback _) (h'.pullback _)⟩
-
-def FlagModel.ofSMul {B : Model O} (π : Hom B Z)
-    (fl : Flag ((Scheme.Modules.pullback π.f).obj E) N) (g : O) (hg : g ≠ 0) :
-    FlagModel (GenIso.smul E g hg) N :=
-  ⟨B, π, fl, fl, (FlagPair.ofSMul fl g hg).gen, fun i => by
-    rw [GenIso.pull_smul]; exact (FlagPair.ofSMul fl g hg).gen_ι i⟩
-
-def FlagModel.ofBiprod {L M : Z.X.Modules} (hL : IsVB L 1) (hM : IsVB M 1) {B : Model O}
-    (π : Hom B Z) (g : O) (hg : g ≠ 0) : FlagModel (GenIso.smul (L ⊞ M) g hg) 2 :=
-  haveI := preservesBinaryBiproduct_of_preservesBinaryCoproduct (Scheme.Modules.pullback π.f)
-    (X := L) (Y := M)
-  .ofSMul π ((Flag.ofBiprod (hL.pullback π.f) (hM.pullback π.f)).ofIso
-    ((Scheme.Modules.pullback π.f).mapBiprod L M).symm) g hg
 
 end Model
 

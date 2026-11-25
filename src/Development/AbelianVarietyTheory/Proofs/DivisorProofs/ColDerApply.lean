@@ -75,7 +75,7 @@ theorem colDer_X {d a : ℕ} (τ : ι) (S : Matrix (Fin a) (Fin a) ℂ) (v : Var
   simp only [pderiv_X, Pi.single_apply, Prod.ext_iff]
   by_cases h : σ = τ
   · subst h
-    simp only [if_true]
+    simp only [ite_true]
     rw [Finset.sum_eq_single i₀, Finset.sum_eq_single j₀]
     · simp
     · intro j _ hj

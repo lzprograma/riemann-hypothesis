@@ -12,47 +12,6 @@ import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OmegaOperatorEq
 import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableConv
 import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
 import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStructure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -75,37 +34,20 @@ theorem exists_monic_aeval_add_of_kill {M : Type*} [AddCommGroup M] [Module ℂ 
   let N : Submodule ℂ M :=
     LinearMap.ker (Polynomial.aeval A q) ⊓ LinearMap.ker (Polynomial.aeval B r)
   have hcAB : ∀ m, A (B m) = B (A m) := fun m => LinearMap.congr_fun hc.eq m
-  have hA : ∀ m ∈ N, A m ∈ N := by
-    intro m hm
+  have hmem : ∀ (T : Module.End ℂ M),
+      (∀ m, T (A m) = A (T m)) → (∀ m, T (B m) = B (T m)) → ∀ m ∈ N, T m ∈ N := by
+    intro T hTA hTB m hm
     refine ⟨?_, ?_⟩
-    · have := AutomorphicForm.map_aeval_apply_of_intertwine A (A := A) (B := A) (fun _ => rfl) q m
+    · have := AutomorphicForm.map_aeval_apply_of_intertwine T hTA q m
       rw [LinearMap.mem_ker.1 hm.1, map_zero] at this
       exact LinearMap.mem_ker.2 this.symm
-    · have := AutomorphicForm.map_aeval_apply_of_intertwine A (A := B) (B := B) hcAB r m
+    · have := AutomorphicForm.map_aeval_apply_of_intertwine T hTB r m
       rw [LinearMap.mem_ker.1 hm.2, map_zero] at this
       exact LinearMap.mem_ker.2 this.symm
-  have hB : ∀ m ∈ N, B m ∈ N := by
-    intro m hm
-    refine ⟨?_, ?_⟩
-    · have := AutomorphicForm.map_aeval_apply_of_intertwine B (A := A) (B := A)
-        (fun m => (hcAB m).symm) q m
-      rw [LinearMap.mem_ker.1 hm.1, map_zero] at this
-      exact LinearMap.mem_ker.2 this.symm
-    · have := AutomorphicForm.map_aeval_apply_of_intertwine B (A := B) (B := B) (fun _ => rfl) r m
-      rw [LinearMap.mem_ker.1 hm.2, map_zero] at this
-      exact LinearMap.mem_ker.2 this.symm
+  have hA : ∀ m ∈ N, A m ∈ N := hmem A (fun _ => rfl) hcAB
+  have hB : ∀ m ∈ N, B m ∈ N := hmem B (fun m => (hcAB m).symm) (fun _ => rfl)
   let A' : Module.End ℂ N := A.restrict hA
   let B' : Module.End ℂ N := B.restrict hB
-  have hq0 : Polynomial.aeval A' q = 0 := by
-    refine LinearMap.ext fun x => Subtype.ext ?_
-    have := AutomorphicForm.map_aeval_apply_of_intertwine N.subtype (A := A') (B := A)
-      (fun _ => rfl) q x
-    exact this.trans (LinearMap.mem_ker.1 x.2.1)
-  have hr0 : Polynomial.aeval B' r = 0 := by
-    refine LinearMap.ext fun x => Subtype.ext ?_
-    have := AutomorphicForm.map_aeval_apply_of_intertwine N.subtype (A := B') (B := B)
-      (fun _ => rfl) r x
-    exact this.trans (LinearMap.mem_ker.1 x.2.2)
   have hc' : A' * B' = B' * A' := LinearMap.ext fun x => Subtype.ext (hcAB x.1)
   have hcomm : ∀ x ∈ ({A', B'} : Set (Module.End ℂ N)), ∀ y ∈ ({A', B'} : Set (Module.End ℂ N)),
       x * y = y * x := by
@@ -122,16 +64,26 @@ theorem exists_monic_aeval_add_of_kill {M : Type*} [AddCommGroup M] [Module ℂ 
     ⟨A', Algebra.subset_adjoin (Set.mem_insert _ _)⟩
   let b' : Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N)) :=
     ⟨B', Algebra.subset_adjoin (Set.mem_insert_of_mem _ rfl)⟩
-  have ha : IsIntegral ℂ a' := ⟨q, hq, by
+  have hint : ∀ (T : Module.End ℂ N) (T₀ : Module.End ℂ M) (p : Polynomial ℂ) (hp : p.Monic)
+      (hres : ∀ x : N, N.subtype (T x) = T₀ (N.subtype x))
+      (hk : ∀ x : N, Polynomial.aeval T₀ p x.1 = 0)
+      (t : Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N))),
+      (t : Module.End ℂ N) = T → IsIntegral ℂ t := by
+    intro T T₀ p hp hres hk t ht
+    refine ⟨p, hp, ?_⟩
     rw [← Polynomial.aeval_def]
     apply Subtype.ext
-    have := Polynomial.aeval_algHom_apply (Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N))).val a' q
-    exact this.symm.trans hq0⟩
-  have hb : IsIntegral ℂ b' := ⟨r, hr, by
-    rw [← Polynomial.aeval_def]
-    apply Subtype.ext
-    have := Polynomial.aeval_algHom_apply (Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N))).val b' r
-    exact this.symm.trans hr0⟩
+    have h1 := Polynomial.aeval_algHom_apply
+      (Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N))).val t p
+    refine h1.symm.trans ?_
+    change Polynomial.aeval (t : Module.End ℂ N) p = 0
+    rw [ht]
+    exact LinearMap.ext fun x => Subtype.ext
+      ((AutomorphicForm.map_aeval_apply_of_intertwine N.subtype hres p x).trans (hk x))
+  have ha : IsIntegral ℂ a' :=
+    hint A' A q hq (fun _ => rfl) (fun x => LinearMap.mem_ker.1 x.2.1) a' rfl
+  have hb : IsIntegral ℂ b' :=
+    hint B' B r hr (fun _ => rfl) (fun x => LinearMap.mem_ker.1 x.2.2) b' rfl
   obtain ⟨P, hPm, hP⟩ := ha.add hb
   have hP0 : Polynomial.aeval (A' + B') P = 0 := by
     rw [← Polynomial.aeval_def] at hP

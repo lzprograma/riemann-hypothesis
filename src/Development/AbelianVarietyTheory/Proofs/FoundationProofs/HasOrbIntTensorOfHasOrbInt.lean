@@ -232,8 +232,8 @@ theorem hasQuotInt_tensor (hX : IsRestrGroup pa pf K) (hμ : IsHaarProd pa pf K 
   choose fa a1 a2 a3 using fun w => (ha w).exists_lift (hTa w) (ia w)
   choose g b1 b2 b3 using fun v => (hf v).exists_lift (hTf v) (jf v)
   let ff : ∀ v, Yf v → ℂ := fun v => if v ∈ S then g v else (K v : Set (Yf v)).indicator 1
-  have e1 : ∀ v ∈ S, ff v = g v := fun v hv => if_pos hv
-  have e2 : ∀ v ∉ S, ff v = (K v : Set (Yf v)).indicator 1 := fun v hv => if_neg hv
+  have e1 : ∀ v ∈ S, ff v = g v := fun v hv => ite_eq_left hv
+  have e2 : ∀ v ∉ S, ff v = (K v : Set (Yf v)).indicator 1 := fun v hv => ite_eq_right hv
   obtain ⟨hI, hI'⟩ := hμ.integral_tensor_indicator (fun w => (hX.continuous_pa w).measurable)
     (fun v => (hX.continuous_pf v).measurable) (fun v => (hX.isOpen_K v).measurableSet) hX.eventually_mem
     (fun v hv => (hS v hv).2.1) e2 a1 fun v hv => e1 v hv ▸ b1 v

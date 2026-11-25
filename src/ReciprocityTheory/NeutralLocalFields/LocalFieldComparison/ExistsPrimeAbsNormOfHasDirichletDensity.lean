@@ -28,15 +28,9 @@ private theorem under_int_isMaximal (𝔭 : HeightOneSpectrum (𝓞 K)) : (𝔭.
 private theorem under_int_ne_bot' (𝔭 : HeightOneSpectrum (𝓞 K)) : 𝔭.asIdeal.under ℤ ≠ ⊥ :=
   Ring.ne_bot_of_isMaximal_of_not_isField (under_int_isMaximal 𝔭) Int.not_isField
 
-private theorem int_ideal_eq_span_absNorm (J : Ideal ℤ) : J = Ideal.span {((Ideal.absNorm J : ℕ) : ℤ)} := by
-  obtain ⟨a, rfl⟩ : ∃ a, J = Ideal.span {a} :=
-    ⟨_, (Submodule.IsPrincipal.span_singleton_generator J).symm⟩
-  rw [Ideal.absNorm_span_singleton]
-  simp [Algebra.norm_self]
-
 private theorem under_eq_span_ratPrimeBelow (𝔭 : HeightOneSpectrum (𝓞 K)) :
     𝔭.asIdeal.under ℤ = Ideal.span {((ratPrimeBelow 𝔭 : ℕ) : ℤ)} :=
-  int_ideal_eq_span_absNorm _
+  (Int.ideal_span_absNorm_eq_self _).symm
 
 theorem ratPrimeBelow_prime (𝔭 : HeightOneSpectrum (𝓞 K)) : (ratPrimeBelow 𝔭).Prime := by
   have hprime : (Ideal.span {((ratPrimeBelow 𝔭 : ℕ) : ℤ)}).IsPrime := by
@@ -189,8 +183,7 @@ theorem exists_prime_absNorm_of_hasDirichletDensity {S : Set (HeightOneSpectrum 
     (h : NumberField.Set.HasDirichletDensity S δ) (hδ : 0 < δ) {T : Set (HeightOneSpectrum (𝓞 K))} (hT : T.Finite) :
     ∃ 𝔭 ∈ S, 𝔭 ∉ T ∧ (Ideal.absNorm 𝔭.asIdeal).Prime := by
   classical
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨B, hB0, hbound⟩ : ∃ B : ℝ, 0 ≤ B ∧
       ∀ s : ℝ, 1 < s → NumberField.Set.primeIdealZetaSum S s ≤ B := by
     refine ⟨(hT.toFinset.card : ℝ) + (Module.finrank ℚ K : ℝ) * ∑' m : ℕ, 1 / (m : ℝ) ^ 2,

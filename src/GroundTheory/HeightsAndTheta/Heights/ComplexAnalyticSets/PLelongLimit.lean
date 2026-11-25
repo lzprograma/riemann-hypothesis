@@ -33,26 +33,26 @@ namespace GroundTheory.Heights₂.Heights
 open Filter Topology Set Function
 open scoped ContDiff Manifold
 
-theorem tendsto_of_forall_local {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+theorem tendsto_of_forall_local_on_tsupport {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E] {ι : Type*} {l : Filter ι} (T : ι → (E → ℝ) → ℝ) (L : (E → ℝ) → ℝ)
     (hT : ∀ f g : E → ℝ, ContDiff ℝ ∞ f → HasCompactSupport f → ContDiff ℝ ∞ g →
       HasCompactSupport g → ∀ᶠ ε in l, T ε (f + g) = T ε f + T ε g)
     (hL : ∀ f g : E → ℝ, ContDiff ℝ ∞ f → HasCompactSupport f → ContDiff ℝ ∞ g →
       HasCompactSupport g → L (f + g) = L f + L g)
-    (hloc : ∀ p : E, ∃ N ∈ 𝓝 p, ∀ f : E → ℝ, ContDiff ℝ ∞ f → HasCompactSupport f →
-      tsupport f ⊆ N → Tendsto (fun ε => T ε f) l (𝓝 (L f)))
-    (f : E → ℝ) (hf : ContDiff ℝ ∞ f) (hfc : HasCompactSupport f) :
+    (f : E → ℝ) (hf : ContDiff ℝ ∞ f) (hfc : HasCompactSupport f)
+    (hloc : ∀ p ∈ tsupport f, ∃ N ∈ 𝓝 p, ∀ g : E → ℝ, ContDiff ℝ ∞ g → HasCompactSupport g →
+      tsupport g ⊆ N → Tendsto (fun ε => T ε g) l (𝓝 (L g))) :
     Tendsto (fun ε => T ε f) l (𝓝 (L f)) := by
   choose N hN hNf using hloc
   obtain ⟨ρ, hρ⟩ := SmoothPartitionOfUnity.exists_isSubordinate 𝓘(ℝ, E) (isClosed_tsupport f)
-    (fun p => interior (N p)) (fun _ => isOpen_interior)
-    (fun x _ => mem_iUnion.2 ⟨x, mem_interior_iff_mem_nhds.2 (hN x)⟩)
-  obtain ⟨g, hg⟩ : ∃ g : E → E → ℝ, g = fun i x => ρ i x * f x := ⟨_, rfl⟩
+    (fun p : tsupport f => interior (N p.1 p.2)) (fun _ => isOpen_interior)
+    (fun x hx => mem_iUnion.2 ⟨⟨x, hx⟩, mem_interior_iff_mem_nhds.2 (hN x hx)⟩)
+  obtain ⟨g, hg⟩ : ∃ g : tsupport f → E → ℝ, g = fun i x => ρ i x * f x := ⟨_, rfl⟩
   have hgs : ∀ i, ContDiff ℝ ∞ (g i) := fun i => by
     rw [hg]; exact (ρ i).contMDiff.contDiff.mul hf
   have hgc : ∀ i, HasCompactSupport (g i) := fun i => by
     rw [hg]; exact hfc.mul_left
-  have hgN : ∀ i, tsupport (g i) ⊆ N i := fun i => by
+  have hgN : ∀ i, tsupport (g i) ⊆ N i.1 i.2 := fun i => by
     rw [hg]; exact tsupport_mul_subset_left.trans ((hρ i).trans interior_subset)
   have hfin : {i | (support (ρ i) ∩ tsupport f).Nonempty}.Finite :=
     ρ.locallyFinite.finite_nonempty_inter_compact hfc
@@ -72,7 +72,8 @@ theorem tendsto_of_forall_local {E : Type*} [NormedAddCommGroup E] [NormedSpace 
     simpa using h
   have hL0 : L 0 = 0 := by
     simpa using hL 0 0 contDiff_const HasCompactSupport.zero contDiff_const HasCompactSupport.zero
-  have key : ∀ s : Finset E, ContDiff ℝ ∞ (∑ i ∈ s, g i) ∧ HasCompactSupport (∑ i ∈ s, g i) ∧
+  have key : ∀ s : Finset (tsupport f), ContDiff ℝ ∞ (∑ i ∈ s, g i) ∧
+      HasCompactSupport (∑ i ∈ s, g i) ∧
       (∀ᶠ ε in l, T ε (∑ i ∈ s, g i) = ∑ i ∈ s, T ε (g i)) ∧
       L (∑ i ∈ s, g i) = ∑ i ∈ s, L (g i) := by
     classical
@@ -90,7 +91,7 @@ theorem tendsto_of_forall_local {E : Type*} [NormedAddCommGroup E] [NormedSpace 
       · rw [hL (g a) _ (hgs a) (hgc a) h1 h2, h4]
   obtain ⟨-, -, hTs, hLs⟩ := key hfin.toFinset
   rw [hsum, hLs]
-  exact (tendsto_finsetSum _ fun i _ => hNf i (g i) (hgs i) (hgc i) (hgN i)).congr'
+  exact (tendsto_finsetSum _ fun i _ => hNf i.1 i.2 (g i) (hgs i) (hgc i) (hgN i)).congr'
     (hTs.mono fun ε h => h.symm)
 
 end GroundTheory.Heights₂.Heights
@@ -131,21 +132,58 @@ theorem varInt_eq_zero_of_vanish {n k : ℕ} (W : Ideal (MvPolynomial (Fin n) �
     simp [chartInt, h0]
   · rfl
 
-theorem LelongLimit.proof (hOff : LelongLimitOffZero.Statement) (hOn : LelongLimitOnZero.Statement)
-    (hAdd : VarIntAdd.Statement) : LelongLimit.Statement := by
+theorem mem_minimalPrimes_sup_linForm {n : ℕ} {J W : Ideal (MvPolynomial (Fin n) ℂ)}
+    {u : Fin n → ℂ} (hWm : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes) :
+    W.IsPrime ∧ zeroSet W ⊆ zeroSet J ∧ ∀ x ∈ zeroSet W, linEval u x = 0 := by
+  have hle : J ⊔ Ideal.span {linForm u} ≤ W := hWm.1.2
+  refine ⟨hWm.1.1, fun x hx q hq => hx q (hle (Ideal.mem_sup_left hq)), fun x hx => ?_⟩
+  have := hx _ (hle (Ideal.mem_sup_right (Ideal.subset_span rfl)))
+  simpa [linForm, linEval] using this
+
+theorem lelongSides_add (hAdd : VarIntAdd.Statement) {n d : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)}
+    {u : Fin n → ℂ} {φ : Fin d → (Fin n → ℂ) → ℝ} (hJ : J.IsPrime)
+    (hφ : ∀ i, SmoothNear (zeroSet J) (φ i)) (g₁ g₂ : (Fin n → ℂ) → ℝ) (h1 : ContDiff ℝ ∞ g₁)
+    (h1c : HasCompactSupport g₁) (h2 : ContDiff ℝ ∞ g₂) (h2c : HasCompactSupport g₂) :
+    (∀ᶠ ε in 𝓝[>] (0 : ℝ), varInt J (d + 1) (g₁ + g₂) (vecCons (logReg u ε) φ) =
+      varInt J (d + 1) g₁ (vecCons (logReg u ε) φ) + varInt J (d + 1) g₂ (vecCons (logReg u ε) φ)) ∧
+    (∑ᶠ (W : Ideal (MvPolynomial (Fin n) ℂ)) (_ : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes),
+        (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d (g₁ + g₂) φ) =
+      (∑ᶠ (W : Ideal (MvPolynomial (Fin n) ℂ)) (_ : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes),
+        (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d g₁ φ) +
+      ∑ᶠ (W : Ideal (MvPolynomial (Fin n) ℂ)) (_ : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes),
+        (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d g₂ φ := by
   classical
-  intro n d J u f φ hJ hdim hu hf hfc hφ
-  set S := (J ⊔ Ideal.span {linForm u}).minimalPrimes with hS
-  have hW : ∀ W ∈ S, W.IsPrime ∧ zeroSet W ⊆ zeroSet J ∧ ∀ x ∈ zeroSet W, linEval u x = 0 := by
-    intro W hWm
-    have hle : J ⊔ Ideal.span {linForm u} ≤ W := hWm.1.2
-    refine ⟨hWm.1.1,
-      fun x hx q hq => hx q (hle (Ideal.mem_sup_left hq)), fun x hx => ?_⟩
-    have := hx _ (hle (Ideal.mem_sup_right (Ideal.subset_span rfl)))
-    simpa [linForm, linEval] using this
-  have hφW : ∀ W ∈ S, ∀ i, SmoothNear (zeroSet W) (φ i) := fun W hWm i => by
-    obtain ⟨U, hU, hSU, hC⟩ := hφ i
-    exact ⟨U, hU, (hW W hWm).2.1.trans hSU, hC⟩
+  refine ⟨?_, ?_⟩
+  · filter_upwards [self_mem_nhdsWithin] with ε (hε : 0 < ε)
+    refine hAdd n (d + 1) J g₁ g₂ _ hJ h1.continuous h1c h2.continuous h2c fun i => ?_
+    refine Fin.cases ?_ (fun j => ?_) i
+    · simpa using smoothNear_of_contDiff (S := zeroSet J) (contDiff_logReg u hε)
+    · simpa using hφ j
+  · rw [← finsum_mem_add_distrib (Ideal.finite_minimalPrimes_of_isNoetherianRing _ _)]
+    refine finsum_mem_congr rfl fun W hWm => ?_
+    obtain ⟨hWp, hWJ, -⟩ := mem_minimalPrimes_sup_linForm hWm
+    have hφW : ∀ i, SmoothNear (zeroSet W) (φ i) := fun i => by
+      obtain ⟨U, hU, hSU, hC⟩ := hφ i
+      exact ⟨U, hU, hWJ.trans hSU, hC⟩
+    rw [hAdd n d W g₁ g₂ φ hWp h1.continuous h1c h2.continuous h2c hφW, mul_add]
+
+theorem lelongLimit_of_local_on_tsupport (hOff : LelongLimitOffZero.Statement)
+    (hAdd : VarIntAdd.Statement) {n d : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)} {u : Fin n → ℂ}
+    {φ : Fin d → (Fin n → ℂ) → ℝ} (hJ : J.IsPrime)
+    (hdim : ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = (d + 1 : ℕ)) (hu : linForm u ∉ J)
+    (hφ : ∀ i, SmoothNear (zeroSet J) (φ i)) (g : (Fin n → ℂ) → ℝ) (hg : ContDiff ℝ ∞ g)
+    (hgc : HasCompactSupport g)
+    (hloc : ∀ q ∈ tsupport g, q ∈ zeroSet J → linEval u q = 0 →
+      ∃ N ∈ 𝓝 q, ∀ f : (Fin n → ℂ) → ℝ, ContDiff ℝ ∞ f → HasCompactSupport f → tsupport f ⊆ N →
+        Tendsto (fun ε => varInt J (d + 1) f (vecCons (logReg u ε) φ)) (𝓝[>] 0)
+          (𝓝 (∑ᶠ (W : Ideal (MvPolynomial (Fin n) ℂ))
+              (_ : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes),
+            (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d f φ))) :
+    Tendsto (fun ε => varInt J (d + 1) g (vecCons (logReg u ε) φ)) (𝓝[>] 0)
+      (𝓝 (∑ᶠ (W : Ideal (MvPolynomial (Fin n) ℂ))
+          (_ : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes),
+        (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d g φ)) := by
+  classical
   have hclosed : IsClosed (zeroSet J ∩ {x | linEval u x = 0}) := by
     refine IsClosed.inter ?_ (isClosed_eq ?_ continuous_const)
     · have : zeroSet J = ⋂ q ∈ J, {x : Fin n → ℂ | MvPolynomial.eval x q = 0} := by
@@ -153,34 +191,36 @@ theorem LelongLimit.proof (hOff : LelongLimitOffZero.Statement) (hOn : LelongLim
       rw [this]
       exact isClosed_biInter fun q _ => isClosed_eq (MvPolynomial.continuous_eval q) continuous_const
     · exact continuous_finsetSum _ fun j _ => continuous_const.mul (continuous_apply j)
-  refine tendsto_of_forall_local (fun ε g => varInt J (d + 1) g (vecCons (logReg u ε) φ))
-    (fun g => ∑ᶠ (W : Ideal (MvPolynomial (Fin n) ℂ)) (_ : W ∈ S),
-      (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d g φ) ?_ ?_ ?_ f hf hfc
-  · intro g₁ g₂ h1 h1c h2 h2c
-    filter_upwards [self_mem_nhdsWithin] with ε (hε : 0 < ε)
-    refine hAdd n (d + 1) J g₁ g₂ _ hJ h1.continuous h1c h2.continuous h2c fun i => ?_
-    refine Fin.cases ?_ (fun j => ?_) i
-    · simpa using smoothNear_of_contDiff (S := zeroSet J) (contDiff_logReg u hε)
-    · simpa using hφ j
-  · intro g₁ g₂ h1 h1c h2 h2c
-    rw [← finsum_mem_add_distrib (Ideal.finite_minimalPrimes_of_isNoetherianRing _ _)]
-    refine finsum_mem_congr rfl fun W hWm => ?_
-    rw [hAdd n d W g₁ g₂ φ (hW W hWm).1 h1.continuous h1c h2.continuous h2c (hφW W hWm), mul_add]
-  · intro p
-    by_cases hp : p ∈ zeroSet J ∩ {x | linEval u x = 0}
-    · exact hOn n d J u φ p hJ hdim hu hφ hp.1 hp.2
-    · refine ⟨_, hclosed.isOpen_compl.mem_nhds hp, fun g hg hgc hgN => ?_⟩
-      have h0 : (∑ᶠ (W : Ideal (MvPolynomial (Fin n) ℂ)) (_ : W ∈ S),
-          (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d g φ) = 0 := by
-        refine finsum_eq_zero_of_forall_eq_zero fun W => ?_
-        rw [finsum_eq_dif]
-        by_cases hWm : W ∈ S
-        · rw [dite_eq_left hWm, varInt_eq_zero_of_vanish W g φ fun x hx =>
-            image_eq_zero_of_notMem_tsupport fun hxs =>
-              hgN hxs ⟨(hW W hWm).2.1 hx, (hW W hWm).2.2 x hx⟩, mul_zero]
-        · rw [dite_eq_right hWm]
-      simp only [h0]
-      exact hOff n d J u g φ hJ hdim hu hg hgc hφ (Set.disjoint_left.2 fun x hx hx' => hgN hx hx')
+  refine tendsto_of_forall_local_on_tsupport
+    (fun ε g => varInt J (d + 1) g (vecCons (logReg u ε) φ))
+    (fun g => ∑ᶠ (W : Ideal (MvPolynomial (Fin n) ℂ))
+      (_ : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes),
+      (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d g φ)
+    (fun g₁ g₂ h1 h1c h2 h2c => (lelongSides_add hAdd hJ hφ g₁ g₂ h1 h1c h2 h2c).1)
+    (fun g₁ g₂ h1 h1c h2 h2c => (lelongSides_add hAdd (u := u) hJ hφ g₁ g₂ h1 h1c h2 h2c).2)
+    g hg hgc fun q hq => ?_
+  by_cases hq0 : q ∈ zeroSet J ∩ {x | linEval u x = 0}
+  · exact hloc q hq hq0.1 hq0.2
+  · refine ⟨_, hclosed.isOpen_compl.mem_nhds hq0, fun g' hg' hg'c hg'N => ?_⟩
+    have h0 : (∑ᶠ (W : Ideal (MvPolynomial (Fin n) ℂ))
+        (_ : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes),
+        (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d g' φ) = 0 := by
+      refine finsum_eq_zero_of_forall_eq_zero fun W => ?_
+      rw [finsum_eq_dif]
+      by_cases hWm : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes
+      · obtain ⟨-, hWJ, hWu⟩ := mem_minimalPrimes_sup_linForm hWm
+        rw [dite_eq_left hWm, varInt_eq_zero_of_vanish W g' φ fun x hx =>
+          image_eq_zero_of_notMem_tsupport fun hxs => hg'N hxs ⟨hWJ hx, hWu x hx⟩, mul_zero]
+      · rw [dite_eq_right hWm]
+    simp only [h0]
+    exact hOff n d J u g' φ hJ hdim hu hg' hg'c hφ
+      (Set.disjoint_left.2 fun x hx hx' => hg'N hx hx')
+
+theorem LelongLimit.proof (hOff : LelongLimitOffZero.Statement) (hOn : LelongLimitOnZero.Statement)
+    (hAdd : VarIntAdd.Statement) : LelongLimit.Statement :=
+  fun n d J u f φ hJ hdim hu hf hfc hφ =>
+    lelongLimit_of_local_on_tsupport hOff hAdd hJ hdim hu hφ f hf hfc fun p _ hp1 hp2 =>
+      hOn n d J u φ p hJ hdim hu hφ hp1 hp2
 
 end GroundTheory.Heights₂.Heights
 end -- clump:auto

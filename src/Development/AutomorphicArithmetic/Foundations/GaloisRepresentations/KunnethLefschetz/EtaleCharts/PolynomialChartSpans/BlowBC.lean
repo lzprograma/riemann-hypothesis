@@ -2,46 +2,7 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.BlowOfBl
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.PresBC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.CoordBC, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BlowBC
@@ -131,7 +92,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -168,18 +128,12 @@ private def secPb (D : E.LineData Y) (c : Y' ⟶ Y) (C : Y.Opens) (σ : (C : Sch
     ((c ⁻¹ᵁ C : Y'.Opens) : Scheme.{0}) ⟶ (D.pb c).Y :=
   pullback.lift (f := D.f) (g := c) ((c ∣_ C) ≫ σ) (c ⁻¹ᵁ C).ι (by rw [Category.assoc, hσ, morphismRestrict_ι])
 
-private lemma secPb_f (D : E.LineData Y) (c : Y' ⟶ Y) (C : Y.Opens) (σ : (C : Scheme.{0}) ⟶ D.Y) (hσ : σ ≫ D.f = C.ι) :
-    secPb D c C σ hσ ≫ (D.pb c).f = (c ⁻¹ᵁ C).ι := pullback.lift_snd _ _ _
-
-private lemma secPb_fst (D : E.LineData Y) (c : Y' ⟶ Y) (C : Y.Opens) (σ : (C : Scheme.{0}) ⟶ D.Y) (hσ : σ ≫ D.f = C.ι) :
-    (show _ ⟶ pullback D.f c from secPb D c C σ hσ) ≫ pullback.fst D.f c = (c ∣_ C) ≫ σ := pullback.lift_fst _ _ _
-
 private lemma loc_pb (D : E.LineData Y) (c : Y' ⟶ Y) (h : sSup (Pb.𝒱D D) = ⊤) : sSup (Pb.𝒱D (D.pb c)) = ⊤ := by
   rw [eq_top_iff]
   intro y _
   have hy : c y ∈ sSup (Pb.𝒱D D) := by rw [h]; trivial
   obtain ⟨C, ⟨σ, hσ⟩, hC⟩ := Opens.mem_sSup.1 hy
-  exact Opens.mem_sSup.2 ⟨c ⁻¹ᵁ C, ⟨secPb D c C σ hσ, secPb_f D c C σ hσ⟩, hC⟩
+  exact Opens.mem_sSup.2 ⟨c ⁻¹ᵁ C, ⟨secPb D c C σ hσ, pullback.lift_snd _ _ _⟩, hC⟩
 
 private lemma topIso_nat (c : Y' ⟶ Y) (C : Y.Opens) :
     c.app C ≫ (c ⁻¹ᵁ C).topIso.inv = C.topIso.inv ≫ (c ∣_ C).appTop := by
@@ -343,9 +297,9 @@ theorem blowBC : BlowBC := by
       exact h2
     c := fun α => chartPb φ hq hb hc hcl (B.c α)
     σ := fun α k => secPb D c ((B.c α).C k) (B.σ α k) (B.σ_f α k)
-    σ_f := fun α k => secPb_f D c _ _ _
+    σ_f := fun α k => pullback.lift_snd _ _ _
     f_σ := fun α k => by
-      refine (congrArg B.f (secPb_fst D c _ _ _)).trans ?_
+      refine (congrArg B.f (pullback.lift_fst _ _ _)).trans ?_
       rw [B.f_nat, B.f_σ]
       exact eqn_pb hc _ _ _ _ _ }⟩
 

@@ -66,8 +66,6 @@ open IsDedekindDomain NumberField MeasureTheory Matrix
 open scoped TensorProduct
 open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.RouteSeesaw
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.SeesawSmall
 
 open GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger GlobalTheory.MixModel
@@ -110,27 +108,27 @@ theorem attChr_inv_mul (μ η : C) (n : ℕ) :
     (Formalism.IndefR.Lift.attChr μ η n)⁻¹ * (μ * η ^ (n % 2)) = η ^ (2 * (n % 2)) := by
   unfold Formalism.IndefR.Lift.attChr
   rcases Nat.even_or_odd n with h | h
-  · rw [if_neg (Nat.not_odd_iff_even.2 h), Nat.even_iff.1 h]
+  · rw [ite_eq_right (Nat.not_odd_iff_even.2 h), Nat.even_iff.1 h]
     simp
-  · rw [if_pos h, Nat.odd_iff.1 h, pow_one, _root_.mul_inv_rev, inv_inv, mul_assoc, inv_mul_cancel_left,
+  · rw [ite_eq_left h, Nat.odd_iff.1 h, pow_one, _root_.mul_inv_rev, inv_inv, mul_assoc, inv_mul_cancel_left,
       show 2 * 1 = 2 from rfl, pow_two]
 
 theorem attChr_mul (μ χ η : C) (n : ℕ) :
     Formalism.IndefR.Lift.attChr χ η n * (μ * η ^ (n % 2)) = μ * χ := by
   unfold Formalism.IndefR.Lift.attChr
   rcases Nat.even_or_odd n with h | h
-  · rw [if_neg (Nat.not_odd_iff_even.2 h), Nat.even_iff.1 h]
+  · rw [ite_eq_right (Nat.not_odd_iff_even.2 h), Nat.even_iff.1 h]
     simp [mul_comm]
-  · rw [if_pos h, Nat.odd_iff.1 h, pow_one, mul_comm μ η, ← mul_assoc, mul_assoc χ, inv_mul_cancel, mul_one, mul_comm]
+  · rw [ite_eq_left h, Nat.odd_iff.1 h, pow_one, mul_comm μ η, ← mul_assoc, mul_assoc χ, inv_mul_cancel, mul_one, mul_comm]
 
 theorem attChr_div (μ χ η : C) {a b : ℕ} (hab : Odd a ↔ Odd b) (k : ℕ) :
     Formalism.IndefR.Lift.attChr μ η a * (Formalism.IndefR.Lift.attChr χ η b)⁻¹ = μ * η ^ k / (χ * η ^ k) := by
   unfold Formalism.IndefR.Lift.attChr
   rw [mul_div_mul_right_eq_div]
   by_cases h : Odd a
-  · rw [if_pos h, if_pos (hab.1 h), _root_.mul_inv_rev, inv_inv, div_eq_mul_inv, mul_assoc, ← mul_assoc η⁻¹, inv_mul_cancel,
+  · rw [ite_eq_left h, ite_eq_left (hab.1 h), _root_.mul_inv_rev, inv_inv, div_eq_mul_inv, mul_assoc, ← mul_assoc η⁻¹, inv_mul_cancel,
       one_mul]
-  · rw [if_neg h, if_neg (fun h' => h (hab.2 h')), div_eq_mul_inv]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (hab.2 h')), div_eq_mul_inv]
 
 end Chars
 

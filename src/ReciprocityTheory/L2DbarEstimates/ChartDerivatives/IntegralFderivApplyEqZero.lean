@@ -35,19 +35,6 @@ theorem integral_fderiv_apply_eq_zero (n : ℕ) (H : V n → ℂ) (hH : ContDiff
     (fun x _ => differentiableAt_const _) (fun x _ => hH.differentiable one_ne_zero x)
   simpa using this
 
-theorem integral_wd_eq_zero (n : ℕ) (j : Fin n) (H : V n → ℂ) (hH : ContDiff ℝ 1 H)
-    (hc : HasCompactSupport H) : ∫ y, wd n j H y = 0 := by
-  unfold wd
-  have i1 : Integrable (fun y => fderiv ℝ H y (bas n j)) :=
-    ((hH.continuous_fderiv one_ne_zero).clm_apply continuous_const).integrable_of_hasCompactSupport
-      (hc.fderiv_apply (𝕜 := ℝ) _)
-  have i2 : Integrable (fun y => fderiv ℝ H y (Complex.I • bas n j)) :=
-    ((hH.continuous_fderiv one_ne_zero).clm_apply continuous_const).integrable_of_hasCompactSupport
-      (hc.fderiv_apply (𝕜 := ℝ) _)
-  rw [integral_div, integral_sub i1 (i2.const_mul Complex.I), integral_const_mul,
-    integral_fderiv_apply_eq_zero n H hH hc, integral_fderiv_apply_eq_zero n H hH hc]
-  simp
-
 theorem integral_wdb_eq_zero (n : ℕ) (j : Fin n) (H : V n → ℂ) (hH : ContDiff ℝ 1 H)
     (hc : HasCompactSupport H) : ∫ y, wdb n j H y = 0 := by
   unfold wdb

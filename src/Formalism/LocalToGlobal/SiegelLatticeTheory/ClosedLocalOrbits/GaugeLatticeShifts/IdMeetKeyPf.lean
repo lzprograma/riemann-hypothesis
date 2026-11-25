@@ -18,8 +18,6 @@ open Matrix
 
 namespace Formalism.L2.SG.Pf.IdMeet
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.Pf.Vanish2 Formalism.L2.SG.Pf.SlabCoverPf Formalism.L2.SG.Pf.Level
 
 variable {D : D7} (X : HidaSetting D)
@@ -180,8 +178,6 @@ theorem lin_eq_of_fst {x y : X.B.I.GA} {m n : (VS D).V ≃ₗ[D.host.E] (VS D).V
 end Formalism.L2.SG.Pf.IdMeet
 
 namespace Formalism.L2.SG.Pf.IdMeet
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.Pf.Vanish2 Formalism.L2.SG.Pf.SlabCoverPf Formalism.L2.SG.Pf.Level
 

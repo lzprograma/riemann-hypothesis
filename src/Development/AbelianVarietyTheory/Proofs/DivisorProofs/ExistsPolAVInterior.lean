@@ -125,84 +125,6 @@ private theorem false_of_pullback_point_mem_preimage_of_not_univ_le {S X A T : S
   rw [Scheme.Hom.mem_preimage, h3, ← h2]
   exact h1
 
-theorem existsUnique_coeff_alg [Smooth G.hom] {v : Fin n → (epsR K ⟶ G)} (hv : IsLieBasis v)
-    {dd : Fin n → ∀ O : G.left.Opens, Γ(G.left, O) → Γ(G.left, O)} (hd : ∀ i, IsInvDer (v i) (dd i))
-    {S : Scheme.{0}} (x₀ : Sp K ⟶ S) {X : Scheme.{0}} (p : X ⟶ S) (m : G.left ⟶ X)
-    (H : IsPullback m G.hom p x₀) {U : S.Opens} (hU : IsAffineOpen U) (y : sp (R₀ := K) C ⟶ G) {W : X.Opens} (hW : IsAffineOpen W) (hWU : W ≤ p ⁻¹ᵁ U)
-    (h : ⊤ ≤ y.left ⁻¹ᵁ (m ⁻¹ᵁ W)) (δ : Γ(X, W) → C) (hadd : ∀ f f', δ (f + f') = δ f + δ f')
-    (hmul : ∀ f f', δ (f * f') = evalPt y.left _ h ((m.app W).hom f) * δ f' +
-      evalPt y.left _ h ((m.app W).hom f') * δ f)
-    (hbase : ∀ r : Γ(S, U), δ (pbT p r W) = 0) :
-    ∃! c : Fin n → C, ∀ f, δ f = ∑ a, c a * evalPt y.left _ h (dd a _ ((m.app W).hom f)) := by
-  by_cases hx : ⊤ ≤ x₀ ⁻¹ᵁ U
-  · obtain ⟨X', p', q, hq, m', x₀', rfl, H', hr, hb⟩ := exists_openImmersion_restrict_pullback_constFn x₀ p G.hom m H hU hx
-    have hWq : W ≤ q.opensRange := hr ▸ hWU
-    have : IsIso (q.app W) := q.isIso_app W hWq
-    let e : Γ(X, W) ≃+* Γ(X', q ⁻¹ᵁ W) := (asIso (q.app W)).commRingCatIsoToRingEquiv
-    have he : ∀ f, e f = (q.app W).hom f := fun _ => rfl
-    have key : ∀ f, ((m' ≫ q).app W).hom f = (m'.app (q ⁻¹ᵁ W)).hom (e f) := fun _ => rfl
-    obtain ⟨c, hc, hu⟩ := GlobalTheory.InvFieldBasis.existsUnique_coeff_alg hv hd x₀' p' m' H' y
-      (hW.preimage_of_isOpenImmersion q hWq) h (fun f' => δ (e.symm f'))
-      (fun f f' => by rw [map_add (f := _), hadd])
-      (fun f f' => by
-        obtain ⟨f, rfl⟩ := e.surjective f
-        obtain ⟨f', rfl⟩ := e.surjective f'
-        rw [← map_mul, e.symm_apply_apply, e.symm_apply_apply, e.symm_apply_apply, hmul, key, key]
-        rfl)
-      (fun r => by rw [← hb W hWU r, ← he, e.symm_apply_apply, hbase])
-    refine ⟨c, fun f => ?_, fun c' hc' => hu c' fun f' => ?_⟩
-    · have := hc (e f)
-      rw [e.symm_apply_apply] at this
-      rw [this]
-      rfl
-    · obtain ⟨f, rfl⟩ := e.surjective f'
-      rw [e.symm_apply_apply, hc' f]
-      rfl
-  · have : Subsingleton C := by
-      by_contra hC
-      rw [not_subsingleton_iff_nontrivial] at hC
-      obtain ⟨P⟩ : Nonempty (PrimeSpectrum C) := inferInstance
-      exact false_of_pullback_point_mem_preimage_of_not_univ_le x₀ p G.hom m H hx y.left hWU P (@h P trivial)
-    exact ⟨0, fun _ => Subsingleton.elim _ _, fun _ _ => Subsingleton.elim _ _⟩
-
-theorem existsUnique_coeff_affine [Smooth G.hom] {v : Fin n → (epsR K ⟶ G)} (hv : IsLieBasis v)
-    {dd : Fin n → ∀ O : G.left.Opens, Γ(G.left, O) → Γ(G.left, O)} (hd : ∀ i, IsInvDer (v i) (dd i))
-    {S : Scheme.{0}} (x₀ : Sp K ⟶ S) {X : Scheme.{0}} (p : X ⟶ S) (m : G.left ⟶ X)
-    (H : IsPullback m G.hom p x₀) {U : S.Opens} (hU : IsAffineOpen U) {T : Scheme.{0}} (y : T ⟶ G.left) {W : X.Opens} (hW : IsAffineOpen W) (hWU : W ≤ p ⁻¹ᵁ U)
-    {V : T.Opens} (hV : IsAffineOpen V) (h : V ≤ y ⁻¹ᵁ (m ⁻¹ᵁ W)) (δ : Γ(X, W) → Γ(T, V))
-    (hadd : ∀ f f', δ (f + f') = δ f + δ f')
-    (hmul : ∀ f f', δ (f * f') = pbT y ((m.app W).hom f) V * δ f' + pbT y ((m.app W).hom f') V * δ f)
-    (hbase : ∀ r : Γ(S, U), δ (pbT p r W) = 0) :
-    ∃! c : Fin n → Γ(T, V), ∀ f, δ f = ∑ a, c a * pbT y (dd a _ ((m.app W).hom f)) V := by
-  by_cases hx : ⊤ ≤ x₀ ⁻¹ᵁ U
-  · obtain ⟨X', p', q, hq, m', x₀', rfl, H', hr, hb⟩ := exists_openImmersion_restrict_pullback_constFn x₀ p G.hom m H hU hx
-    have hWq : W ≤ q.opensRange := hr ▸ hWU
-    have : IsIso (q.app W) := q.isIso_app W hWq
-    let e : Γ(X, W) ≃+* Γ(X', q ⁻¹ᵁ W) := (asIso (q.app W)).commRingCatIsoToRingEquiv
-    have he : ∀ f, e f = (q.app W).hom f := fun _ => rfl
-    have key : ∀ f, ((m' ≫ q).app W).hom f = (m'.app (q ⁻¹ᵁ W)).hom (e f) := fun _ => rfl
-    obtain ⟨c, hc, hu⟩ := GlobalTheory.InvFieldBasis.existsUnique_coeff_affine hv hd x₀' p' m' H' y
-      (hW.preimage_of_isOpenImmersion q hWq) hV h (fun f' => δ (e.symm f'))
-      (fun f f' => by rw [map_add (f := _), hadd])
-      (fun f f' => by
-        obtain ⟨f, rfl⟩ := e.surjective f
-        obtain ⟨f', rfl⟩ := e.surjective f'
-        rw [← map_mul, e.symm_apply_apply, e.symm_apply_apply, e.symm_apply_apply, hmul, key, key]
-        rfl)
-      (fun r => by rw [← hb W hWU r, ← he, e.symm_apply_apply, hbase])
-    refine ⟨c, fun f => ?_, fun c' hc' => hu c' fun f' => ?_⟩
-    · have := hc (e f)
-      rw [e.symm_apply_apply] at this
-      rw [this]
-      rfl
-    · obtain ⟨f, rfl⟩ := e.surjective f'
-      rw [e.symm_apply_apply, hc' f]
-      rfl
-  · have hV0 : V = ⊥ := eq_bot_iff.2 fun t ht => (false_of_pullback_point_mem_preimage_of_not_univ_le x₀ p G.hom m H hx y hWU t (@h t ht)).elim
-    have : Subsingleton Γ(T, V) :=
-      CommRingCat.subsingleton_of_isTerminal (T.sheaf.isTerminalOfEqEmpty hV0)
-    exact ⟨0, fun _ => Subsingleton.elim _ _, fun _ _ => Subsingleton.elim _ _⟩
-
 private theorem resG_resG_divisor {Y : Scheme.{0}} {O O₁ O₂ : Y.Opens} (h₁ : O₁ ≤ O) (h₂ : O₂ ≤ O₁)
     (s : Γ(Y, O)) : resG Y h₂ (resG Y h₁ s) = resG Y (h₂.trans h₁) s := by
   rw [resG, resG, resG, ← CommRingCat.comp_apply, ← Functor.map_comp]
@@ -361,10 +283,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open scoped CategoryTheory.Obj
 open GlobalTheory.KS
 open TrivSqZeroExt (inl inr)
-
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 

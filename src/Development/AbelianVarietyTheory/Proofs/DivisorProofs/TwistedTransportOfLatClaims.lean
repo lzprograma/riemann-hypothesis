@@ -111,8 +111,6 @@ theorem exists_isLatOf (d : ℕ) (δ : K) (ι : K →+* ℂ) (h2 : Module.finran
       rw [this, h1, h3]
       linear_combination (q * p' - p * q' : ℂ) * h)
     have k1' : (s : ℂ) * q - t * p = 0 := by exact_mod_cast k1
-    have hb0 : ι (B 0) ≠ 0 := by simpa using B.ne_zero 0
-    have hb1 : ι (B 1) ≠ 0 := by simpa using B.ne_zero 1
     have hs : (s : ℂ) = 0 := by linear_combination (s : ℂ) * h1 + (p : ℂ) * h + ι (B 1) * k1'
     have ht : (t : ℂ) = 0 := by linear_combination (t : ℂ) * h1 + (q : ℂ) * h - ι (B 0) * k1'
     exact ⟨by exact_mod_cast hs, by exact_mod_cast ht⟩

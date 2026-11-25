@@ -129,7 +129,7 @@ theorem exists_norm_rconv_le_decay {β : ArchMatrix K n → ℝ}
     have h1 := Finset.single_le_sum (f := fun r : Fin n =>
       if h : 0 < (r : ℕ) then max (Cf r h r.2) 0 else 0)
       (fun r _ => by split_ifs <;> simp) (Finset.mem_univ ⟨r, hrn⟩)
-    simp only [hr, dif_pos] at h1
+    simp only [hr, dite_eq_left] at h1
     exact (le_max_left _ _).trans (h1.trans (le_add_of_nonneg_left (le_max_right _ _)))
   have hC₀_le : C₀ ≤ Cmax := (le_max_left _ _).trans (le_add_of_nonneg_right hsum0)
   have hCmax0 : 0 ≤ Cmax := (le_max_right _ _).trans (le_add_of_nonneg_right hsum0)

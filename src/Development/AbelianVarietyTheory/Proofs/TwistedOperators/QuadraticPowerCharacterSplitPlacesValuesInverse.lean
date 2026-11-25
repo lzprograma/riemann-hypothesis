@@ -120,13 +120,6 @@ theorem single_apply_ne (x : (w.adicCompletion E)ˣ) {u : HeightOneSpectrum (�
         (x : w.adicCompletion E)) u = 1
      exact RestrictedProduct.mulSingle_eq_of_ne _ _ hu)
 
-private lemma cmval_single_apply_self (x : (w.adicCompletion E)ˣ) :
-    (GlobalTheory.CMVal.single w x : FiniteAdeleRing (𝓞 E) E) w = x := by
-  classical
-  first
-  | (change (Pi.mulSingle w (x : w.adicCompletion E) : ∀ u : HeightOneSpectrum (𝓞 E), u.adicCompletion E) w = x
-     exact Pi.mulSingle_eq_same _ _)
-
 theorem sigR_single (hE : IsCMExt F E σ) (h : w.under (𝓞 F) = v) (h' : w'.under (𝓞 F) = v) (hne : w ≠ w')
     (a : (Fv F v)ˣ) :
     Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Af F) σ ((finAdEquiv F E).symm
@@ -142,7 +135,7 @@ theorem sigR_single (hE : IsCMExt F E σ) (h : w.under (𝓞 F) = v) (h' : w'.un
       ((finAdEquiv F E).symm (GlobalTheory.CMVal.single w (Units.map (complMap h).toMonoidHom a) : FiniteAdeleRing (𝓞 E) E)))
       = (a : Fv F v) := by
     apply (complMap h).injective
-    rw [← GlobalTheory.LFun.ConjPlace.toCompl_eq hE h hτ, ← finAdEquiv_apply h, RingEquiv.apply_symm_apply, cmval_single_apply_self]
+    rw [← GlobalTheory.LFun.ConjPlace.toCompl_eq hE h hτ, ← finAdEquiv_apply h, RingEquiv.apply_symm_apply, GlobalTheory.CMVal.single_self]
     rfl
   have hz2 : GlobalTheory.AdelicU.splitProj (τ.comp σ) (Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v) (AlgHom.id F E)
       ((finAdEquiv F E).symm (GlobalTheory.CMVal.single w (Units.map (complMap h).toMonoidHom a) : FiniteAdeleRing (𝓞 E) E)))
@@ -167,7 +160,7 @@ theorem sigR_single (hE : IsCMExt F E σ) (h : w.under (𝓞 F) = v) (h' : w'.un
         hz2, map_one]
       exact (single_apply_ne _ hne).symm
     · rw [huw, finAdEquiv_apply h', evalV_sigR, GlobalTheory.LFun.ConjPlace.toCompl_eq hE h' hτ',
-        GlobalTheory.AdelicU.splitProj_comp_sigR hE τ, hz1, cmval_single_apply_self]
+        GlobalTheory.AdelicU.splitProj_comp_sigR hE τ, hz1, GlobalTheory.CMVal.single_self]
       rfl
   · have h1 := map_evalV_eq_of_finAdEquiv_eq (v' := u.under (𝓞 F))
       (y₁ := (finAdEquiv F E).symm (GlobalTheory.CMVal.single w (Units.map (complMap h).toMonoidHom a) : FiniteAdeleRing (𝓞 E) E))

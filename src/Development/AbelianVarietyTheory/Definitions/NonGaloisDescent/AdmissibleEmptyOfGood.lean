@@ -13,46 +13,7 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSelfDu
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaFunNeZero
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.VacuumOrientedExists
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -68,8 +29,6 @@ open scoped TensorProduct
 
 
 namespace GlobalTheory.ExportSeries
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {S T : HSp D}
 
@@ -224,9 +183,6 @@ def coefLat (h : Bridge.Gf S) : Submodule O (PolF D T.rank S.rank) :=
 
 def theta (ω : PairRep S T) (h : GA D S) : PolF D T.rank S.rank →ₗ[ℂ] (GA D T → ℂ) := series B.F ω B.vecBase h
 
-def thetaLat (ω : PairRep S T) {I : Type} (h : I → GA D S) : Submodule O (GA D T → ℂ) :=
-  Submodule.span O {s | ∃ i, ∃ P ∈ B.coefLat σ emb O (finPt S (h i)), s = B.theta ω (h i) P}
-
 def gen (ω : PairRep S T) (ψ : Twist D Circle) (h : GA D S) : PolF D T.rank S.rank →ₗ[ℂ] (GA D T → ℂ) :=
   twistBy T ψ.chi ∘ₗ series B.F ω (B.vecFlat ψ) h
 
@@ -261,7 +217,7 @@ theorem xiCoef_apply (ω : PairRep S T) (u : UnivTwist D C) (Q : Finset (Pl D.ho
     Finset.sum_eq_single (a - Multiplicative.toAdd (detChar T (u.delQ Q) g))]
   · rw [AddMonoidAlgebra.single_mul_single, add_sub_cancel, one_mul, AddMonoidAlgebra.coeff_single, Finsupp.single_eq_same]
   · intro b _ hb
-    rw [AddMonoidAlgebra.single_mul_single, AddMonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg]
+    rw [AddMonoidAlgebra.single_mul_single, AddMonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right]
     exact fun e => hb (by rw [← e, add_sub_cancel_left])
   · exact fun hb => absurd (Finset.mem_univ _) hb
 
@@ -410,82 +366,6 @@ theorem xiCoef_empty {C : Type} [AddCommGroup C] [Fintype C] (ω : PairRep S T) 
   rfl
 
 end Base
-
-theorem exists_onb_posDef {n : ℕ} {G : Matrix (Fin n) (Fin n) ℂ} (hG : G.IsHermitian) (hd : IsUnit G.det)
-    (hs : Formalism.UG.HasSignature G n 0) : ∃ B : GL (Fin n) ℂ, IsONBasis G 1 B.val n := by
-  obtain ⟨s, hs'⟩ := GlobalTheory.Mem.ThetaNonzero.exists_isCartanInv hG hd
-  obtain ⟨B, ε, h1, h2, -⟩ := GlobalTheory.GalLift.Vec.exists_isONBasis hs' hs
-  have hε : (Matrix.diagonal fun a => (ε a : ℂ)) = 1 := by
-    rw [← Matrix.diagonal_one]
-    congr 1
-    funext a
-    rcases h1 a with h | h
-    · simp [h.1]
-    · exact absurd a.2 (not_lt.2 h.2)
-  have hu : IsUnit B := IsUnit.of_mul_eq_one_right _ (h2.trans hε)
-  exact ⟨hu.unit, ε, h1, h2, by rw [hε, Matrix.one_mul, Matrix.mul_one]⟩
-
-theorem exists_frame_good (S T : HSp D) (hS : S.SigOK) (hpos : S.IsPosDef) (hT : T.SigOK) (hr : T.rank ≤ S.rank) :
-    ∃ F : Frame S T, F.Good := by
-  obtain ⟨ψ, hψ⟩ := GlobalTheory.StdAdelicChar.exists_isStdChar D
-  obtain ⟨θ, hθ⟩ := hψ.2.1
-  have h1 : ∀ τ, ∃ B : GL (Fin S.rank) ℂ, IsONBasis (gramAt D S τ) 1 B.val S.rank := fun τ =>
-    exists_onb_posDef (GlobalTheory.SmoothForms.RealPts.gramAt_herm S τ) (GlobalTheory.SmoothForms.RealPts.gramAt_unit S τ) (by
-      have := hS (tauE D τ)
-      rwa [hpos] at this)
-  choose BS hBS using h1
-  have h2 : ∀ τ, ∃ s, IsCartanInv (gramAt D T τ) s := fun τ =>
-    GlobalTheory.Mem.ThetaNonzero.exists_isCartanInv (GlobalTheory.SmoothForms.RealPts.gramAt_herm T τ) (GlobalTheory.SmoothForms.RealPts.gramAt_unit T τ)
-  choose sT hsT using h2
-  choose BT hBT using fun τ => GlobalTheory.GalLift.Vec.exists_isONBasis (hsT τ) (hT (tauE D τ))
-  have dS := GlobalTheory.PlaceModel.isSelfDualC_latFrame S
-  have dT := GlobalTheory.PlaceModel.isSelfDualC_latFrame T
-  have hsp (V : HSp D) (hd : IsSelfDualC V (GlobalTheory.PlaceModel.latFrame V)) :
-      Submodule.span D.host.E (GlobalTheory.PlaceModel.latFrame V : Set (Fin V.rank → D.host.E)) = ⊤ := by
-    let M := GlobalTheory.PlaceModel.latFrame V
-    apply top_unique
-    intro y _
-    let pairing (x z : Fin V.rank → D.host.E) :=
-      ∑ a, ∑ b, star (x a) * V.gram a b * z b
-    obtain ⟨s, hgen⟩ := hd.1.fg
-    obtain ⟨d, hdint⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s (pairing · y)
-    have hd0 : (d : 𝓞 D.host.E) ≠ 0 := mem_nonZeroDivisors_iff_ne_zero.mp d.property
-    have hdE : (d : 𝓞 D.host.E) • y ∈ M := by
-      apply (hd.2 _).2
-      intro x hx
-      show IsLocalization.IsInteger (𝓞 D.host.E) (pairing x ((d : 𝓞 D.host.E) • y))
-      have hscale (z : Fin V.rank → D.host.E) :
-          pairing z ((d : 𝓞 D.host.E) • y) = (d : 𝓞 D.host.E) • pairing z y := by
-        simp only [pairing, Pi.smul_apply, Algebra.smul_def, Finset.sum_mul,
-          mul_assoc, mul_left_comm, mul_comm]
-      rw [hscale]
-      refine Submodule.span_induction
-        (p := fun z _ => IsLocalization.IsInteger (𝓞 D.host.E) ((d : 𝓞 D.host.E) • pairing z y))
-        ?_ ?_ ?_ ?_ (hgen.symm ▸ hx)
-      · intro z hz
-        exact hdint z hz
-      · simp [pairing, IsLocalization.isInteger_zero]
-      · intro z z' _ _ hz hz'
-        convert IsLocalization.isInteger_add hz hz' using 1
-        simp only [pairing, Pi.add_apply, star_add, add_mul, Finset.sum_add_distrib, smul_add]
-      · intro a z _ hz
-        have ha : IsLocalization.IsInteger (𝓞 D.host.E) (star (a : D.host.E)) := by
-          refine ⟨⟨star (a : D.host.E), ?_⟩, rfl⟩
-          exact a.2.map (starRingEnd D.host.E).toIntAlgHom
-        convert IsLocalization.isInteger_mul ha hz using 1
-        simp only [pairing, Pi.smul_apply, Algebra.smul_def, star_mul', Finset.mul_sum, Finset.sum_mul,
-          mul_assoc, mul_left_comm, mul_comm]
-    have hspan := Submodule.subset_span (R := D.host.E) hdE
-    have hn : ((d : 𝓞 D.host.E) : D.host.E) ≠ 0 := by exact_mod_cast hd0
-    have hy := (Submodule.span D.host.E (M : Set (Fin V.rank → D.host.E))).smul_mem
-      (((d : 𝓞 D.host.E) : D.host.E)⁻¹) hspan
-    rwa [← IsScalarTower.algebraMap_smul D.host.E (d : 𝓞 D.host.E) y,
-      smul_smul, inv_mul_cancel₀ hn, one_smul] at hy
-  obtain ⟨βS, hβS⟩ := GlobalTheory.AdelicFrame.exists_isFrame (F := D.host.F) _ dS.1.fg (hsp S dS)
-  obtain ⟨βT, hβT⟩ := GlobalTheory.AdelicFrame.exists_isFrame (F := D.host.F) _ dT.1.fg (hsp T dT)
-  obtain ⟨f₀, hf₀⟩ := _root_.GlobalTheory.VacuumO.vacExists D ψ θ hψ hθ S T (fun _ => 1) sT hS hT
-    (fun τ => GlobalTheory.GalLift.Vec.isCartanInv_one (hBS τ)) hsT _ _ dS dT
-  exact ⟨⟨ψ, θ, sT, BS, BT, _, _, βS, βT, f₀⟩, hr, hBS, hsT, hBT, dS, dT, hβS, hβT, hf₀⟩
 
 end GlobalTheory.ExportSeries
 

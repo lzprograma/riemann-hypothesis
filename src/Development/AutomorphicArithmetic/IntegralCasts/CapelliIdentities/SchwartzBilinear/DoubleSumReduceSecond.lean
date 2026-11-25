@@ -74,7 +74,7 @@ theorem commutator_casimir_term {V : Type} [AddCommGroup V] [_root_.Module ℂ V
         + ((if ε a = ε b then (if d = b then E a b * E c a else 0) else 0)
           - (if ε a = ε b then (if b = c then E a d * E b a else 0) else 0)) := by
   by_cases h : ε a = ε b
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     have h1 : E a b * E c d - E c d * E a b = (if b = c then E a d else 0) - (if d = a then E c b else 0) :=
       hK a b c d h hcd
     have h2 : E b a * E c d - E c d * E b a = (if a = c then E b d else 0) - (if d = b then E c a else 0) :=
@@ -85,7 +85,7 @@ theorem commutator_casimir_term {V : Type} [AddCommGroup V] [_root_.Module ℂ V
     rw [key, h1, h2]
     simp only [sub_mul, mul_sub, ite_mul, mul_ite, zero_mul, mul_zero]
     abel
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
     simp
 
 theorem double_sum_reduce_first {V : Type} [AddCommGroup V] [_root_.Module ℂ V] {n : ℕ} (ε : Fin n → Bool)

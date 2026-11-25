@@ -117,8 +117,6 @@ theorem not_dvd_absNorm_different (K : Type) [Field K] [NumberField K] (p : ℕ)
       · exact ih (dvd_of_mul_left_dvd hdvd) h
   exact key _ dvd_rfl
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem coprime_gi (i : Fin 2) : Nat.Coprime (Ideal.absNorm (differentIdeal ℤ (𝓞 D.host.F))) (D.host.g i) := by

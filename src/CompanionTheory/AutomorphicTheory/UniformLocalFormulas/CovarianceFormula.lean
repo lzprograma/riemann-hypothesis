@@ -141,7 +141,7 @@ theorem aDil_e (t : ℝ) (a : Fin r) :
   unfold B.aDil bvec
   rw [Matrix.diagonal_mulVec_single, ← Pi.single_smul']
   have : (eI k r a).val < r := a.isLt
-  rw [if_pos this]
+  rw [ite_eq_left this]
   simp [eI]
 
 theorem aDil_f (t : ℝ) (a : Fin r) :
@@ -152,7 +152,7 @@ theorem aDil_f (t : ℝ) (a : Fin r) :
   have h1 : ¬ (esI k r a).val < r := by simp only [esI]; omega
   have h2 : ¬ (esI k r a).val ≤ r + k := by simp only [esI]; omega
   have h3 : (esI k r a).val - (r + k) = r - a.val := by simp only [esI]; omega
-  rw [if_neg h1, if_neg h2, h3]
+  rw [ite_eq_right h1, ite_eq_right h2, h3]
   simp
 
 theorem conj_levi {d : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hd : d ∈ UH (Hpk k r)) {t : ℝ} (ht : 0 < t)
@@ -196,8 +196,6 @@ open scoped ENNReal NNReal
 noncomputable section
 
 namespace Formalism.MainStatements.RowRest
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem place_eq {n r k : ℕ} (hn : n = 2 * r + k + 1) (ε : Fin n → Bool) (e f : Fin r → Fin n → ℂ)
     (wf : Fin k → Fin n → ℂ) (z : Fin n → ℂ) {T : ℝ} (hT : 0 < T)

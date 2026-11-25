@@ -49,8 +49,6 @@ open scoped TensorProduct ContDiff ComplexOrder
 
 namespace GlobalTheory.FockCompare.RealAction
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Generic
 
 variable {A B : Type} [CommRing A] [CommRing B] {m n : Type} [Fintype m] [Fintype n]

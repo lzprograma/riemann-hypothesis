@@ -89,8 +89,6 @@ open GlobalTheory.Chain.IoLift
 
 namespace GlobalTheory.Chain.IoLift.Factor
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem kerLe_finset {A B Z₁ Z₂ σ : Type} [AddCommMonoid Z₁] [AddCommMonoid Z₂] {q₁ : A → B → Z₁} {q₂ : A → B → Z₂}
     (h : KerLe q₁ q₂) (s : Finset σ) (a : σ → A) (b : σ → B) (h0 : ∑ r ∈ s, q₁ (a r) (b r) = 0) :
     ∑ r ∈ s, q₂ (a r) (b r) = 0 := by
@@ -221,8 +219,6 @@ open scoped TensorProduct InnerProductSpace Classical
 
 namespace GlobalTheory.Chain.IoLift
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Algebra
 
 variable {ι : Type} {P Y K : ι → Type} [∀ i, AddCommGroup (P i)] [∀ i, Module ℂ (P i)] [∀ i, AddCommGroup (Y i)]
@@ -243,11 +239,11 @@ variable [Fintype ι]
 theorem eq_zero_of_isContr (i : ι) {x : ⨂[ℂ] j, K j} (h : ∀ L, IsContr i L → L x = 0) : x = 0 := by
   obtain ⟨z, rfl⟩ := _root_.GlobalTheory.TensorContraction.mem_range_map ι K (fun j => if j = i then ⊥ else ⊤) x fun j L hL => by
     by_cases e : j = i
-    · subst e; rw [if_pos rfl, h L hL]; exact zero_mem _
-    · rw [if_neg e]; trivial
+    · subst e; rw [ite_eq_left rfl, h L hL]; exact zero_mem _
+    · rw [ite_eq_right e]; trivial
   refine LinearMap.congr_fun (g := 0) (PiTensorProduct.ext (MultilinearMap.ext fun v => ?_)) z
   have := (v i).2
-  simp only [if_true, Submodule.mem_bot] at this
+  simp only [ite_true, Submodule.mem_bot] at this
   simp only [LinearMap.compMultilinearMap_apply, PiTensorProduct.map_tprod, LinearMap.zero_apply]
   exact MultilinearMap.map_coord_zero _ i this
 
@@ -448,7 +444,8 @@ theorem inclK_update (h : KSm M) (u : KVec M) (τ : D.what₂.Tau) (w : kFin M �
   · subst e; simp
   · simp [e]
 
-theorem exists_factor_kFin (hdec : GlobalTheory.Published.CuspDecaySobolev) {θ : InfFam D} (hθ : IsInfFam θ)
+theorem exists_factor_kFin {θ : InfFam D} (hθ : IsInfFam θ)
+    (hbdd : ∀ φ, IsCuspGrow θ V φ → ∃ B : ℝ, ∀ g, ‖φ g‖ ≤ B)
     {aS aT : D.what₂.Tau → ℚ} {a : ∀ τ, Matrix (Fin V.rank) (Fin V.rank) ℂ → Module.End ℂ (kFin M τ)}
     {a' : ∀ τ, Matrix (Fin W.rank) (Fin W.rank) ℂ → Module.End ℂ (kFin M' τ)} (ha : ∀ τ, IsKAct M τ (a τ))
     (hirr : ∀ τ, AbsIrr fun X : lieAt V τ => a τ X) (hker : ∀ τ, LocKer M M' τ (aS τ) (aT τ) (a' τ))
@@ -461,7 +458,7 @@ theorem exists_factor_kFin (hdec : GlobalTheory.Published.CuspDecaySobolev) {θ 
       B φ (intersection_update_fsHerm_neg_one τ (a' τ Y) (PiTensorProduct.tprod ℂ y)) = 0) :
     (∃ T : KT M →ₗ[ℂ] (GA D V → ℂ), ∀ φ y, T (I φ y) = B φ y) ∧ Submodule.span ℂ {x | ∃ φ y, I φ y = x} = ⊤ := by
   obtain ⟨μ, 𝓕, hμ, h𝓕⟩ := GlobalTheory.Ker.HypModel.exists_haar_fundDom D V
-  obtain ⟨E, hE0, hE⟩ := GlobalTheory.Chain.CuspL2.exists_embedding_skew hdec D θ V μ 𝓕 hθ hμ h𝓕
+  obtain ⟨E, hE0, hE⟩ := GlobalTheory.Chain.CuspL2.exists_embedding_skew D θ V μ 𝓕 hθ hμ h𝓕 hbdd
   have s1 : ∀ τ X (p : D.what₂.Tau → LPol W.rank V.rank) x, glue (Function.update p τ (sOp M M' τ (aT τ) X x)) =
       srcOp M M' τ (aT τ) X (glue (Function.update p τ x)) := fun τ X p x => by
     rw [srcOp_glue, Function.update_idem, Function.update_self]
@@ -501,8 +498,8 @@ theorem exists_factor_kFin (hdec : GlobalTheory.Published.CuspDecaySobolev) {θ 
   · rintro _ ⟨p, y, rfl⟩
     exact ⟨_, _, rfl⟩
 
-theorem exists_mult (hG : GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension.ExtExists D) (hdec : GlobalTheory.Published.CuspDecaySobolev) {θ : InfFam D}
-    (hθ : IsInfFam θ) (h : KSm M) (h' : KSm M')
+theorem exists_mult (hG : GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension.ExtExists D) {θ : InfFam D}
+    (hθ : IsInfFam θ) (hbdd : ∀ φ, IsCuspGrow θ V φ → ∃ B : ℝ, ∀ g, ‖φ g‖ ≤ B) (h : KSm M) (h' : KSm M')
     {aS aT : D.what₂.Tau → ℚ} {a : ∀ τ, Matrix (Fin V.rank) (Fin V.rank) ℂ → Module.End ℂ (kFin M τ)}
     {a' : ∀ τ, Matrix (Fin W.rank) (Fin W.rank) ℂ → Module.End ℂ (kFin M' τ)} (ha : ∀ τ, IsKAct M τ (a τ))
     (ha' : ∀ τ, IsKAct M' τ (a' τ))
@@ -536,7 +533,7 @@ theorem exists_mult (hG : GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension
     fun τ X hX φ y => inj (by
       rw [hI]
       exact derT_unique (hIs τ X hX φ _) (hI φ y ▸ (GlobalTheory.Chain.IoLift.FinTensor.kFinTensor D V S M τ h).2.1 _ (ha τ) X hX _))
-  obtain ⟨⟨T, hT⟩, hs⟩ := exists_factor_kFin hdec hθ ha hirr hker I (B.compl₂ (inclK h'))
+  obtain ⟨⟨T, hT⟩, hs⟩ := exists_factor_kFin hθ hbdd ha hirr hker I (B.compl₂ (inclK h'))
     (fun e => by
       obtain ⟨φ, y, h0⟩ := h0
       exact h0 (by rw [← hI, e]; simp)) hIs'
@@ -559,7 +556,7 @@ theorem exists_mult (hG : GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension
   have hg : ∀ x, IsCuspGrow θ V (T x) := fun x => GlobalTheory.Chain.CuspGrowSpace.isCuspGrow_of_mem_span D θ V _ (hind (fun x => T x ∈ _)
     (fun φ y => Submodule.subset_span (hT φ y ▸ hBg _ _)) (fun x y a b => by rw [T.map_add]; exact add_mem a b) x)
   obtain ⟨μ, 𝓕, hμ, h𝓕⟩ := GlobalTheory.Ker.HypModel.exists_haar_fundDom D V
-  obtain ⟨E, hE0, -⟩ := GlobalTheory.Chain.CuspL2.exists_embedding_skew hdec D θ V μ 𝓕 hθ hμ h𝓕
+  obtain ⟨E, hE0, -⟩ := GlobalTheory.Chain.CuspL2.exists_embedding_skew D θ V μ 𝓕 hθ hμ h𝓕 hbdd
   obtain ⟨U, ⟨hU, hUe⟩, -⟩ := hG θ hθ V S M J χ μ 𝓕 hμ h𝓕 (T.compMultilinearMap (PiTensorProduct.tprod ℂ))
     ⟨fun u => (hg _).1, fun u => (hg _).2.1, fun u => (hg _).2.2.1, fun u => (hE0 _ (hg _)).1, fun u => (hg _).2.2.2,
       fun u => hind (fun x => ∀ k ∈ J, ∀ g, T x (g * k) = χ k * T x g) (fun φ y => hT φ y ▸ hlev _ _)

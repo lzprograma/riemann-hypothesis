@@ -98,7 +98,6 @@ theorem esec_hom_mem {N : ℕ} {wL : WeightFamilies.Wt D j} (x : Fin N → T.R j
     (P : MvPolynomial (Fin N) T.Q.c.F) {k : ℕ} (hP : P.IsHomogeneous (k + 1)) :
     MvPolynomial.aeval x P ∈ cutR T.C j (addL (wt0 D j) wL (k + 1)) := by
   classical
-  set_option synthInstance.maxHeartbeats 100000 in
     rw [P.as_sum, map_sum]
   refine Submodule.sum_mem _ fun α hα => ?_
   rw [MvPolynomial.aeval_monomial, ← Algebra.smul_def]

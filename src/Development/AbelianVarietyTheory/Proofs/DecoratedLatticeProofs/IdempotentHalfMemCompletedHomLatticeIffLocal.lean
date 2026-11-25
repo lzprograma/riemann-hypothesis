@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntAEMulMem
 public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
 public import Formalism.LocalToGlobal.KernelLattices.XiIndCClass
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsDualFamilySelfDualHermitianSpace
@@ -53,7 +54,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FiniteDimensio
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.L2.Ker Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.Core.Rk GlobalTheory.AdForm
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.AdForm.HalfLat
 open GlobalTheory.LatVac
@@ -86,7 +86,7 @@ theorem exists_den {e : AE D} {P : HeightOneSpectrum (𝓞 D.host.E)} (he : Form
     by_contra h
     exact hdP ((he.2 _ hd0).2 h)
   refine absurd ?_ ((he.2 _ hn0).1 hnP)
-  have h2 := GlobalTheory.HeckeConj.mul_mem_intAE D hr h1
+  have h2 := GlobalTheory.IntegralAdeleProducts.intAE_mul_mem (F := D.host.F) (E := D.host.E) hr h1
   rwa [← RingHom.map_mul, mul_mul_mul_comm, he.1.1, ← RingHom.map_mul, ← inv_inv r, ← mul_inv, hd'] at h2
 
 noncomputable def form (S : HSp D) (s : Fin S.rank → D.host.E) : (Fin S.rank → D.host.E) →ₗ[D.host.E] D.host.E :=
@@ -204,7 +204,7 @@ theorem mem_localization_of_component (hc : D.host.ccK = ⊤) (hN : IsSelfDualC 
   refine sum_mem fun k _ => ?_
   rw [Finset.smul_sum]
   refine sum_mem fun i _ => ?_
-  have h2 := GlobalTheory.HeckeConj.mul_mem_intAE D hi (coefA_int hN hN' hb' (hs k).1 (ht i).2 hx)
+  have h2 := GlobalTheory.IntegralAdeleProducts.intAE_mul_mem (F := D.host.F) (E := D.host.E) hi (coefA_int hN hN' hb' (hs k).1 (ht i).2 hx)
   rw [coefA_rat, ← RingHom.map_mul, ← mul_assoc, hee] at h2
   obtain ⟨d, hd, o, ho⟩ := exists_den he h2
   refine ⟨d, hd, ?_⟩

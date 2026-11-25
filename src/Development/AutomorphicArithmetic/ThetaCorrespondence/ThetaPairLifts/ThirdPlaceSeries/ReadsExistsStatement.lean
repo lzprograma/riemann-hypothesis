@@ -95,7 +95,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Form
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData ValuativeRel
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.PenChart
 
@@ -289,7 +288,7 @@ theorem lev_of_orbAt (hI : I.Ok) (hA : A.Is)
   have H := sameOrb_equiv (E.le (G.s + 1) 0 rfl) (G.ϖ ^ E.M)
   obtain ⟨κ, hκ, h1⟩ := (orb_iff hI tw hM b hQ he _ _).1 (H.trans (H.symm (h rfl e he)) (h' rfl e he))
   refine ⟨κ, hκ, _, repY_mem hI hA hj β hk P, mem_of_sub (repY_mem hI hA hj β' hk' P) ?_⟩
-  rw [if_neg tw.nmem]
+  rw [ite_eq_right tw.nmem]
   exact h1
 
 
@@ -320,7 +319,7 @@ theorem exists_vec (hI : I.Ok) (hA : A.Is)
   rintro hQ β hk ⟨κ, hκ, h3⟩ _ e' he'
   obtain rfl : e' = e := Equiv.ext fun r => Fin.ext ((he' r).trans (he r).symm)
   have h4 := sub_of_mem hj (repY_mem hI hA hj β hk P) h3
-  rw [if_neg tw.nmem] at h4
+  rw [ite_eq_right tw.nmem] at h4
   have h5 := (orb_iff hI tw hM b hQ he _ _).2 ⟨κ, hκ, h4⟩
   have h6 : Submodule.Quotient.mk (locV G e' fun r => f (w (e'.symm r))) = E.cos y := ((Submodule.Quotient.eq _).2 h1).trans hc.symm
   exact (congrArg (fun x => Orb E x _) h6).mp h5
@@ -339,7 +338,7 @@ theorem couplingCoset_sub_basePoint_integral_typePrime (hI : I.Ok) (hA : A.Is) {
     ι (Formalism.L2.Col.repY (A.p0 (s + 1) β).1.2 (e r)) - S.y0 (Fin B.R.t) r ∈ 𝒪[k] := by
   letI := GlobalTheory.Mem.Col2.starE B
   have h1 := sub_of_mem hs (hβ P hP) (repY_mem hI hA hs β hk P)
-  rw [if_pos hP, pow_zero, inv_one, one_smul] at h1
+  rw [ite_eq_left hP, pow_zero, inv_one, one_smul] at h1
   have h2 := (hint _).2 (GlobalTheory.TopStep.mem_stdAt.1 h1 (e r))
   rw [Pi.sub_apply, map_sub, Pi.smul_apply, smul_eq_mul, map_mul, map_inv₀, map_natCast] at h2
   have h3 : ((Formalism.L2.Col.qOf P.1 : ℕ) : k)⁻¹ * ι (Formalism.L2.Col.Loc.eN B.fields.E (B.R.N (s + 1)) B.R.k (e r)) - S.y0 (Fin B.R.t) r ∈ 𝒪[k] := by
@@ -347,9 +346,9 @@ theorem couplingCoset_sub_basePoint_integral_typePrime (hI : I.Ok) (hA : A.Is) {
     unfold Formalism.L2.Col.Loc.eN GlobalTheory.SymChain.SymData.y0
     by_cases hr : r = Sum.inl (Sum.inr 0)
     · subst hr
-      rw [if_pos h0, map_one, mul_one, Pi.single_eq_same]
+      rw [ite_eq_left h0, map_one, mul_one, Pi.single_eq_same]
       exact inv_sub_inv_int S.unif hu
-    · rw [if_neg fun h => hr (e.injective (Fin.ext (h.trans h0.symm))), map_zero, mul_zero, Pi.single_eq_of_ne hr, sub_zero]
+    · rw [ite_eq_right fun h => hr (e.injective (Fin.ext (h.trans h0.symm))), map_zero, mul_zero, Pi.single_eq_of_ne hr, sub_zero]
       exact zero_mem _
   have := add_mem h2 h3
   rwa [sub_add_sub_cancel] at this
@@ -389,26 +388,7 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Form
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData ValuativeRel
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.PenChart
-section Orbits
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-  {n : Type} [Fintype n] [DecidableEq n]
-end Orbits
-section Restr
-variable {D : D7} {c : Comm D} {v : VCom c} {Bs : GlobalTheory.Fam.Base c} {PP : Pl D.host.E} {G : QGeo v Bs PP} {χ : ℕ → (AE D)ˣ →* Circle}
-end Restr
-section Place
-variable {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {u : B.Word} {a : I.ι}
-  {Ch₀ : ℕ → Type} (A : TwDat I l Z u a Ch₀)
-  {c : Comm (I.rec7 l Z)} {v : VCom c} {Bs : GlobalTheory.Fam.Base c} {PP : Pl (I.rec7 l Z).host.E} {G : QGeo v Bs PP}
-  {χ : ℕ → (AE (I.rec7 l Z))ˣ →* Circle} (E : QExt G χ)
-variable {A E} {P : BadPr I a} {hψ : Continuous G.ψk} {sg : ℂ}
-end Place
-section Level
-variable {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {u : B.Word} {a : I.ι}
-  {Ch₀ : ℕ → Type} {A : TwDat I l Z u a Ch₀} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-end Level
 
 theorem exists_readsStd_alt : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {L : SizeData₂ (I.rec7 l Z)} {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX} (W : _root_.GlobalTheory.MiS.RealPackAlt ex), _root_.GlobalTheory.Fam.AllFamilyConditions W → ∀ (u : B.Word) (a : _root_.GlobalTheory.Fam.GeometricFamily W u), a.Is → a.True → (commOf (_root_.GlobalTheory.Fam.pk_z W) u a.g).Is → ∀ t (J : _root_.GlobalTheory.Fam.QuadraticExtensionData a t), J.ReadsLow → ∃ J' : _root_.GlobalTheory.Fam.QuadraticExtensionData a t, J'.ReadsStd := by
   intro B X I l Z L hT Gi Gl Kc Yd cX ex W hW u a ha ha' hc t J h
@@ -649,8 +629,8 @@ theorem full_stdLat (n : ℕ) : Full (stdLat E n) := by
   rw [pi_eq_sum_univ x]
   refine Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span fun j _ => ?_)
   by_cases h : i = j
-  · simp only [if_pos h]; exact Submodule.mem_one.2 ⟨1, map_one _⟩
-  · simp only [if_neg h]; exact Submodule.zero_mem _
+  · simp only [ite_eq_left h]; exact Submodule.mem_one.2 ⟨1, map_one _⟩
+  · simp only [ite_eq_right h]; exact Submodule.zero_mem _
 
 theorem intAt_of_mem_stdAt {n : ℕ} {P : HeightOneSpectrum (𝓞 E)} {x : Sp E n} (hx : x ∈ stdAt E n P) (i : Fin n) :
     IntAt P (x i) := by
@@ -766,18 +746,18 @@ theorem exists_transport (K : Type) [Field K] {ST SG SG' SB : Finset (HeightOneS
       else homInto (S₀ : Set (Sp E a)) (((qOf P : E))⁻¹ • LinearMap.id) d'.N)
     (fun P => by
       by_cases h : P ∈ SB
-      · simp only [dif_pos h]; exact full_homInto _ _ (full_stdLat b)
-      · simp only [dif_neg h]; exact full_homInto _ _ hfull)
+      · simp only [dite_eq_left h]; exact full_homInto _ _ (full_stdLat b)
+      · simp only [dite_eq_right h]; exact full_homInto _ _ hfull)
     (fun P => if h : P ∈ SB then (f ⟨P, h⟩).toLinearMap ∘ₗ (f' ⟨P, h⟩).symm.toLinearMap ∘ₗ x else x)
   refine ⟨t, ?_, fun P s l => ?_⟩
   · rw [← add_sub_cancel x t]
     refine phiT_add K d hd' x _ fun P y hy => ?_
     have h : P.1 ∉ SB := Finset.disjoint_left.1 hdis P.2
     have h1 := ht P.1 (Finset.mem_union_left _ P.2)
-    simp only [dif_neg h] at h1
+    simp only [dite_eq_right h] at h1
     exact apply_mem_of_mem_locP h1 (by rw [hS₀]; exact hy)
   · have h1 := ht P.1 (Finset.mem_union_right _ P.2)
-    simp only [dif_pos P.2] at h1
+    simp only [dite_eq_left P.2] at h1
     have h2 := apply_mem_of_mem_locP h1 (y := f₀ P (Pi.single s 1))
       (mem_localization_of_mem _ (Submodule.subset_span (by simp)))
     have h3 := intAt_of_mem_stdAt h2 l
@@ -815,7 +795,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -927,12 +906,12 @@ theorem dead_moved (hI : I.Ok) {b : I.ι} {Ch₀ Ch : ℕ → Type} {A A' : TwDa
   · unfold TwDat.xi
     rw [hb, hne j h1]
     unfold xiAt
-    rw [dif_neg (by omega), dite_eq_left h2]
+    rw [dite_eq_right (by omega), dite_eq_left h2]
     exact (congrArg B.embLL (key _)).trans (map_zero _)
   · obtain ⟨z', hz'⟩ := toHom_surj _ _ (rankN (I.rec7 l Z) j (Nat.le_of_succ_le hj)) (rankN (I.rec7 l Z) (j + 1) hj) x
     have h := hl.dead j hj γ hγ α z'
     unfold TwDat.xi xiAt at h
-    rw [dif_neg (by omega), dite_eq_left h2] at h
+    rw [dite_eq_right (by omega), dite_eq_left h2] at h
     subst hz'
     exact (map_eq_zero_iff _ B.embLL.injective).1 h
 
@@ -961,7 +940,6 @@ section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.StepData ValuativeRel
 
 noncomputable section
@@ -999,7 +977,6 @@ section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
 namespace GlobalTheory.Fam.Rebase
 open ValuativeRel
@@ -1085,8 +1062,8 @@ theorem cos_pi_eq_mk_pr_repY (hW : _root_.GlobalTheory.Fam.AllFamilyConditions W
   have h1 := GlobalTheory.AdForm.Rebase.repY_cong hs (J.A.p0 ((J.G i).s + 1) β) p' hc (J.P i)
   have h2 : frsF I.sel (I.tup (W.P.I.tup t)) p'.1.1 (J.P i) = p'.1.1.fr ⟨(J.P i).1, _root_.GlobalTheory.Fam.Rebase.P_mem_Q_of_readsStd hJ i⟩ := by
     unfold frsF
-    exact dif_neg hPn
-  rw [_root_.GlobalTheory.Fam.Rebase.frsF_p0_eq_one_of_readsStd hW hJ i _ (by omega) β, h2, if_neg hPn] at h1
+    exact dite_eq_right hPn
+  rw [_root_.GlobalTheory.Fam.Rebase.frsF_p0_eq_one_of_readsStd hW hJ i _ (by omega) β, h2, ite_eq_right hPn] at h1
   rw [hJ.M i]
   exact h1
 
@@ -1102,7 +1079,7 @@ theorem pr_repY_sub_mem_integers (hW : _root_.GlobalTheory.Fam.AllFamilyConditio
   have h2 : frsF I.sel (I.tup b) p'.1.1 P = frsF I.sel (I.tup b) p.1.1 P := by
     unfold frsF
     rw [dite_eq_left hP', dite_eq_left hP', hd]
-  rw [h2, if_pos hP', pow_zero, inv_one, one_smul, ← map_sub] at h1
+  rw [h2, ite_eq_left hP', pow_zero, inv_one, one_smul, ← map_sub] at h1
   have h3 := (isFr_ptFr p.1.1 P.1 _).2 h1
   rw [← frsF_eq_ptFr, LinearEquiv.apply_symm_apply, hN] at h3
   have h4 := (mem_localization_standardLattice P.1 _).1 h3 x
@@ -1222,7 +1199,6 @@ section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.Fam
 theorem readsExists_alt : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {L : SizeData₂ (I.rec7 l Z)} {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX} (W : _root_.GlobalTheory.MiS.RealPackAlt ex), _root_.GlobalTheory.Fam.AllFamilyConditions W → ∀ (u : B.Word) (a : _root_.GlobalTheory.Fam.GeometricFamily W u), a.Is → a.True → (commOf (_root_.GlobalTheory.Fam.pk_z W) u a.g).Is → ∀ t, ∃ J : _root_.GlobalTheory.Fam.QuadraticExtensionData a t, J.Reads := by
   intro B X I l Z L hT Gi Gl Kc Yd cX ex W hW u a ha haT hc t

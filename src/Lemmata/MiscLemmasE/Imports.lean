@@ -12,7 +12,7 @@ universe u_1
 namespace Bl.SecondBlockLemmaF
 
 theorem goal1 :
-  ∀ {M : Type u_1} [inst : AddCommMonoid.{u_1} M] (r : Nat) (S : Fin (HAdd.hAdd.{0, 0, 0} r 1) → Finset.{0} Nat)
+  ∀ {M : Type u_1} [AddCommMonoid.{u_1} M] (r : Nat) (S : Fin (HAdd.hAdd.{0, 0, 0} r 1) → Finset.{0} Nat)
   (F : (Fin (HAdd.hAdd.{0, 0, 0} r 1) → Nat) → M),
   Eq.{u_1 + 1} (Finset.sum.{0, u_1} (Fintype.piFinset.{0, 0} S) fun (μ : Fin (HAdd.hAdd.{0, 0, 0} r 1) → Nat) ↦ F μ)
     (Finset.sum.{0, u_1} (S 0) fun (a : Nat) ↦

@@ -2,49 +2,6 @@ module
 
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormPos
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -232,14 +189,17 @@ theorem nnS_app (S : C.HidaSetting E Wp Wq) (j : ℕ) (hj : j ≤ S.G.r) (H : C.
   have hG : D.ptGG (S.T * S.T') (H ++ [(1, c)]) = Complex.normSq c - S.T * S.T' := by simp [D.ptGG, D.ptLast]
   rw [hG, weight_product_indep_of_real_parameter _ _ _ (D.ptGG (S.T * S.T') H) _ H 1 le_rfl (by omega)]
 
-theorem gN_setC_app {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl (D.parOf S v) (Wp (S.pl v)) (Wq (S.pl v))}
+theorem nnS_app_rr_mul {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl (D.parOf S v) (Wp (S.pl v)) (Wq (S.pl v))}
     {f : ∀ v : Fin S.f, B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v))} {χ : ℝ → ℝ} {A₀ : ℝ}
     (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀)
     (F : ∀ v : Fin S.f, ℝ → B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v)))
     (v : Fin S.f) (ε : ℝ) (j : ℕ) (hj : j ≤ S.G.r) (w : List C.Letter) (h h' : C.LPt)
     (hsz : D.ptSize h = j) (hsz' : D.ptSize h' = j) (c : ℂ) (hc : c ≠ 0) :
-    KB.gN (setC S p F) v ε (j + 1) w (h ++ [(1, c)]) (h' ++ [(1, c)]) =
-      ((Kc S v j w h h' : ℝ) : ℂ) * ((KB.levW (D.parOf S v) (j + 1) ((lamS S j : ℂ) * c) : ℝ) : ℂ) *
+    ((√(nnS S (h ++ [(1, c)])) * √(nnS S (h' ++ [(1, c)])) : ℝ) : ℂ) *
+      (p v).RR (F v ε) (j + 1) w (stdS S h ++ [(1, (lamS S j : ℂ) * c)])
+        (stdS S h' ++ [(1, (lamS S j : ℂ) * c)]) =
+      ((√(nnS S h) * √(nnS S h') * rhoS S j : ℝ) : ℂ) *
+        ((KB.levW (D.parOf S v) (j + 1) ((lamS S j : ℂ) * c) : ℝ) : ℂ) *
         (p v).RR (F v ε) (j + 1) w (stdS S h ++ [(1, (lamS S j : ℂ) * c)])
           (stdS S h' ++ [(1, (lamS S j : ℂ) * c)]) := by
   have hgpos := g_pos_of_built hB
@@ -275,16 +235,16 @@ theorem gN_setC_app {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl 
       have hρ1 : rhoS S j = 1 := by rw [rhoS, ← hlam, hlam1, hfr1]; simp
       have hx : xw c = (Complex.normSq c - S.T * S.T') ^ (S.G.k - 1) := by
         simp only [hxw, C.nAux]
-        rw [if_pos (by constructor <;> first | trivial | omega), mul_one]
+        rw [ite_eq_left (by constructor <;> first | trivial | omega), mul_one]
       have hlev : KB.levW (D.parOf S v) (j + 1) ((lam : ℂ) * c) = B2.zWeight S.G.k S.T S.T' c := by
         rw [hlam1, Complex.ofReal_one, one_mul]
         unfold KB.levW
-        rw [if_pos (by simp [hjt])]
+        rw [ite_eq_left (by simp [hjt])]
       rw [hρ1, hlev, one_mul, hx]
       by_cases hc2 : S.T * S.T' ≤ Complex.normSq c
       · rw [Real.mul_self_sqrt (pow_nonneg (by linarith) _)]
         unfold B2.zWeight
-        rw [if_pos hc2]
+        rw [ite_eq_left hc2]
       · have h0 : RRs (j + 1) (H ++ [(1, (lam : ℂ) * c)]) (H' ++ [(1, (lam : ℂ) * c)]) = 0 := by
           have := rrTop_zero (D.parOf S v) (p v).l0 (p v).T (p v).ν' (p v).m₀ (p v).Θ (p v).TP
             (M.sgn (D.parOf S v) (p v).l0) (F v ε) w H (H' ++ [(1, (lam : ℂ) * c)])
@@ -297,7 +257,7 @@ theorem gN_setC_app {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl 
         rw [h0, mul_zero, mul_zero]
     · have hx : xw c = (S.fr (j + 1) 1 * ‖c‖) ^ (2 * (Mj - 2)) := by
         simp only [hxw, C.nAux]
-        rw [if_neg (by omega), mul_one, hMj]
+        rw [ite_eq_right (by omega), mul_one, hMj]
         congr 1
         simp only [Nat.add_sub_cancel, Nat.cast_one]
         ring
@@ -306,26 +266,35 @@ theorem gN_setC_app {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl 
       congr 2
       rw [hx, rhoS, ← hlam, ← hMj]
       unfold KB.levW
-      rw [if_neg (by show ¬ (j + 1 = S.G.r + 1); omega)]
+      rw [ite_eq_right (by show ¬ (j + 1 = S.G.r + 1); omega)]
       have hnorm : ‖(lam : ℂ) * c‖ = lam * ‖c‖ := by
         rw [norm_mul, Complex.norm_real, Real.norm_of_nonneg hlam_pos.le]
       rw [hnorm, ← mul_zpow]
       congr 1
       field_simp
-  rw [gN_setC hB, stdS_app S j h c hsz, stdS_app S j h' c hsz']
   have hWc := hW (stdS S h) (stdS S h') (by rw [stdS_size]; exact hsz)
+  rw [hsq]
+  simp only [hRRs] at hWc
+  push_cast at hWc ⊢
+  linear_combination ((√(nnS S h) : ℂ) * (√(nnS S h') : ℂ)) * hWc
+
+theorem gN_setC_app {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl (D.parOf S v) (Wp (S.pl v)) (Wq (S.pl v))}
+    {f : ∀ v : Fin S.f, B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v))} {χ : ℝ → ℝ} {A₀ : ℝ}
+    (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀)
+    (F : ∀ v : Fin S.f, ℝ → B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v)))
+    (v : Fin S.f) (ε : ℝ) (j : ℕ) (hj : j ≤ S.G.r) (w : List C.Letter) (h h' : C.LPt)
+    (hsz : D.ptSize h = j) (hsz' : D.ptSize h' = j) (c : ℂ) (hc : c ≠ 0) :
+    KB.gN (setC S p F) v ε (j + 1) w (h ++ [(1, c)]) (h' ++ [(1, c)]) =
+      ((Kc S v j w h h' : ℝ) : ℂ) * ((KB.levW (D.parOf S v) (j + 1) ((lamS S j : ℂ) * c) : ℝ) : ℂ) *
+        (p v).RR (F v ε) (j + 1) w (stdS S h ++ [(1, (lamS S j : ℂ) * c)])
+          (stdS S h' ++ [(1, (lamS S j : ℂ) * c)]) := by
+  have hmul := nnS_app_rr_mul hB F v ε j hj w h h' hsz hsz' c hc
   have hb1 : bS S (h ++ [(1, c)]) = bS S h := bSt_append_one _ _ _
   have hb2 : bS S (h' ++ [(1, c)]) = bS S h' := bSt_append_one _ _ _
-  rw [hb1, hb2]
-  rw [show √(nnS S (h ++ [(1, c)])) * √(nnS S (h' ++ [(1, c)])) /
-      (bS S h * bS S h' * ΓS S (j + 1)) / S.sizeAt v w =
-      (√(nnS S h) * √(nnS S h') / (bS S h * bS S h' * ΓS S (j + 1)) / S.sizeAt v w) * (√(xw c) * √(xw c)) by
-    rw [hsq]; ring]
-  simp only [hRRs] at hWc
+  rw [gN_setC hB, stdS_app S j h c hsz, stdS_app S j h' c hsz', hb1, hb2]
   unfold Kc
-  push_cast at hWc ⊢
-  linear_combination ((√(nnS S h) : ℂ) * (√(nnS S h') : ℂ) / ((bS S h : ℂ) * (bS S h' : ℂ) * (ΓS S (j + 1) : ℂ)) /
-    (S.sizeAt v w : ℂ)) * hWc
+  push_cast at hmul ⊢
+  linear_combination (1 / ((bS S h : ℂ) * (bS S h' : ℂ) * (ΓS S (j + 1) : ℂ)) / (S.sizeAt v w : ℂ)) * hmul
 
 end main2
 

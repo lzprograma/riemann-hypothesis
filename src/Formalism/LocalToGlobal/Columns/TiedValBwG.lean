@@ -87,83 +87,58 @@ theorem vl_coordF (J : Matrix (Fin n) (Fin n) E) (lam : ι → DomWeight n) (B :
 
 include hval
 
-theorem mem_localization_iff_forall_localBasis (w : Pl.Pl) (J : Matrix (Fin n) (Fin n) E) (lam lam' : ι → DomWeight n)
-    (hn : ∀ τ, (lam τ).natW = (lam' τ).natW) (M : ι → Submodule (𝓞 E) (Fin n → E)) (hM : ∀ τ, Submodule.IsFullLattice E (M τ))
-    (F : VV K lam) :
+private theorem mem_loc_iff_of_basis (w : Pl.Pl) (J : Matrix (Fin n) (Fin n) E)
+    (lam lam' : ι → DomWeight n) (hn : ∀ τ, (lam τ).natW = (lam' τ).natW)
+    (M : ι → Submodule (𝓞 E) (Fin n → E)) (hM : ∀ τ, Submodule.IsFullLattice E (M τ))
+    (F : VV K lam) (B : ι → GL (Fin n) E)
+    (hB : ∀ τ, IsLocBasis (Pl.resChar w) (M τ : Set (Fin n → E)) (B τ)) :
     F ∈ localization₂ (pw w).asIdeal (delK lam fun τ => dualFr (tauLat emb τ (M τ))) ↔
-      ∀ B : ι → GL (Fin n) E, (∀ τ, IsLocBasis (Pl.resChar w) (M τ : Set (Fin n → E)) (B τ)) →
-        ∃ P ∈ vlIntSpan s Pl w lam', evV emb J lam s F = fnOf _ (shiftOf lam)
-          (fun τ => atInf (embAt s emb) (((B τ)⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) τ) P := by
-  have hbas : ∀ B : ι → GL (Fin n) E, (∀ τ, IsLocBasis (Pl.resChar w) (M τ : Set (Fin n → E)) (B τ)) →
-      ∀ τ, IsBasisAt (pw w) (dualFr (tauLat emb τ (M τ))) (vlBdF emb B τ) := fun B hB τ =>
+      ∃ P ∈ vlIntSpan s Pl w lam', evV emb J lam s F = fnOf _ (shiftOf lam)
+        (fun τ => atInf (embAt s emb)
+          (((B τ)⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) τ) P := by
+  have hbas : ∀ τ, IsBasisAt (pw w) (dualFr (tauLat emb τ (M τ))) (vlBdF emb B τ) := fun τ =>
     pb_isBasisAt_dualFr (pw w) _ (tauLatticeLattice_holds E K ι n emb τ (M τ) (hM τ)).fg _
       (vl_isBasisAt_tauLat Pl pw hval emb τ w (M τ) (B τ) (hB τ))
   have hlat : ∀ τ, Submodule.IsFullLattice K (dualFr (tauLat emb τ (M τ))) := fun τ =>
-    du_dualFr_lattice latticeBasisExists_holds _ (tauLatticeLattice_holds E K ι n emb τ (M τ) (hM τ))
-  have hmem : ∀ B : ι → GL (Fin n) E, (∀ τ, IsLocBasis (Pl.resChar w) (M τ : Set (Fin n → E)) (B τ)) →
-      (F ∈ localization₂ (pw w).asIdeal (delK lam fun τ => dualFr (tauLat emb τ (M τ))) ↔
-        actP lam (vlBdF emb B)⁻¹ F.1 ∈ localization₂ (pw w).asIdeal (delStd K lam)) := by
-    intro B hB
-    have h1 : F ∈ localization₂ (pw w).asIdeal (delK lam fun τ => dualFr (tauLat emb τ (M τ))) ↔
-        F.1 ∈ localization₂ (pw w).asIdeal (delP lam fun τ => dualFr (tauLat emb τ (M τ))) := Iff.rfl
-    rw [h1, (nablaDeltaLocal_holds K ι n lam _ hlat (pw w) _ (hbas B hB)).2]
+    du_dualFr_lattice latticeBasisExists_holds _
+      (tauLatticeLattice_holds E K ι n emb τ (M τ) (hM τ))
+  have hmem :
+      F ∈ localization₂ (pw w).asIdeal (delK lam fun τ => dualFr (tauLat emb τ (M τ))) ↔
+        actP lam (vlBdF emb B)⁻¹ F.1 ∈ localization₂ (pw w).asIdeal (delStd K lam) := by
+    show F.1 ∈ localization₂ (pw w).asIdeal (delP lam fun τ => dualFr (tauLat emb τ (M τ))) ↔ _
+    rw [(nablaDeltaLocal_holds K ι n lam _ hlat (pw w) _ hbas).2]
     constructor
     · rintro ⟨G, hG, hGF⟩
       have e : actP lam (vlBdF emb B)⁻¹ F.1 = G := by
         rw [← hGF]
         show actP lam (vlBdF emb B)⁻¹ (actP lam (vlBdF emb B) G) = G
         rw [← polyAction_mul, inv_mul_cancel, polyAction_one₂]
-      rw [e]
-      exact hG
+      exact e ▸ hG
     · intro h
       refine ⟨_, h, ?_⟩
       show actP lam (vlBdF emb B) (actP lam (vlBdF emb B)⁻¹ F.1) = F.1
       rw [← polyAction_mul, mul_inv_cancel, polyAction_one₂]
   constructor
-  · intro h B hB
-    exact ⟨_, vl_map_mem_intSpan Pl pw hval s w lam lam' hn ((hmem B hB).1 h), vl_coordF emb s J lam B F⟩
   · intro h
-    have : Fact (Pl.resChar w).Prime := ⟨Pl.resChar_prime w⟩
-    choose B hB using fun τ => by
-      letI : Submodule.IsFullLattice E (M τ) := hM τ
-      exact Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.exists_isLocBasis (Pl.resChar w) E (M τ) (hM τ).fg Submodule.IsFullLattice.span_eq_top
-    obtain ⟨P, hP, hPe⟩ := h B hB
+    exact ⟨_, vl_map_mem_intSpan Pl pw hval s w lam lam' hn (hmem.1 h), vl_coordF emb s J lam B F⟩
+  · rintro ⟨P, hP, hPe⟩
     obtain ⟨G, hG, rfl⟩ := vl_exists_of_mem_intSpan Pl pw hval s w lam lam' hn hP
     rw [vl_coordF emb s J lam B F] at hPe
     have hinj := fnOf_injective (gramC J (embAt s emb)) (shiftOf lam)
       (fun τ => atInf (embAt s emb) (((B τ)⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) τ)
-      (fun τ => Matrix.isUnits_det_units (Matrix.GeneralLinearGroup.map (embAt s emb τ) (B τ)⁻¹)) ⟨fun _ => 1, fun _ => by simp⟩ hPe
+      (fun τ => Matrix.isUnits_det_units
+        (Matrix.GeneralLinearGroup.map (embAt s emb τ) (B τ)⁻¹))
+      ⟨fun _ => 1, fun _ => by simp⟩ hPe
     have hG' : actP lam (vlBdF emb B)⁻¹ F.1 = G := MvPolynomial.map_injective s s.injective hinj
-    rw [hmem B hB, hG']
-    exact hG
+    exact hmem.2 (hG' ▸ hG)
 
 theorem mem_localization_iff_forall_localBasis_of_valuation (w : Pl.Pl) (J : Matrix (Fin n) (Fin n) E) (lam lam' : ι → DomWeight n)
     (hn : ∀ τ, (lam τ).natW = (lam' τ).natW) (M : ι → Submodule (𝓞 E) (Fin n → E)) (hM : ∀ τ, Submodule.IsFullLattice E (M τ))
     (F : VV K lam) (B : ι → GL (Fin n) E) (hB : ∀ τ, IsLocBasis (Pl.resChar w) (M τ : Set (Fin n → E)) (B τ)) :
     F ∈ localization₂ (pw w).asIdeal (delK lam fun τ => dualFr (tauLat emb τ (M τ))) ↔
       ∃ P ∈ vlIntSpan s Pl w lam', evV emb J lam s F = fnOf _ (shiftOf lam)
-        (fun τ => atInf (embAt s emb) (((B τ)⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) τ) P := by
-  constructor
-  · intro h
-    exact (mem_localization_iff_forall_localBasis Pl pw hval emb s w J lam lam' hn M hM F).1 h B hB
-  · rintro ⟨P, hP, hPe⟩
-    have hbas : ∀ τ, IsBasisAt (pw w) (dualFr (tauLat emb τ (M τ))) (vlBdF emb B τ) := fun τ =>
-      pb_isBasisAt_dualFr (pw w) _ (tauLatticeLattice_holds E K ι n emb τ (M τ) (hM τ)).fg _
-        (vl_isBasisAt_tauLat Pl pw hval emb τ w (M τ) (B τ) (hB τ))
-    have hlat : ∀ τ, Submodule.IsFullLattice K (dualFr (tauLat emb τ (M τ))) := fun τ =>
-      du_dualFr_lattice latticeBasisExists_holds _ (tauLatticeLattice_holds E K ι n emb τ (M τ) (hM τ))
-    obtain ⟨G, hG, rfl⟩ := vl_exists_of_mem_intSpan Pl pw hval s w lam lam' hn hP
-    rw [vl_coordF emb s J lam B F] at hPe
-    have hinj := fnOf_injective (gramC J (embAt s emb)) (shiftOf lam)
-      (fun τ => atInf (embAt s emb) (((B τ)⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) τ)
-      (fun τ => Matrix.isUnits_det_units (Matrix.GeneralLinearGroup.map (embAt s emb τ) (B τ)⁻¹)) ⟨fun _ => 1, fun _ => by simp⟩ hPe
-    have hG' : actP lam (vlBdF emb B)⁻¹ F.1 = G := MvPolynomial.map_injective s s.injective hinj
-    have h1 : F ∈ localization₂ (pw w).asIdeal (delK lam fun τ => dualFr (tauLat emb τ (M τ))) ↔
-        F.1 ∈ localization₂ (pw w).asIdeal (delP lam fun τ => dualFr (tauLat emb τ (M τ))) := Iff.rfl
-    rw [h1, (nablaDeltaLocal_holds K ι n lam _ hlat (pw w) _ hbas).2]
-    refine ⟨G, hG, ?_⟩
-    show actP lam (vlBdF emb B) G = F.1
-    rw [← hG', ← polyAction_mul, mul_inv_cancel, polyAction_one₂]
+        (fun τ => atInf (embAt s emb) (((B τ)⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) τ) P :=
+  mem_loc_iff_of_basis Pl pw hval emb s w J lam lam' hn M hM F B hB
 
 end DictF
 

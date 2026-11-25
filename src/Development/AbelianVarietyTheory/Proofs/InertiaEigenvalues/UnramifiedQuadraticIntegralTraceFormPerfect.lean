@@ -170,8 +170,7 @@ theorem exists_sq_close [ProperSpace K] (h2 : ‖(2 : K)‖ < 1) (n : K) (hn : �
     have h' : ‖(a : K) ^ 2 - (b : K) ^ 2‖ < 1 := Quotient.exact h
     apply Quotient.sound
     show ‖(a : K) - b‖ < 1
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have hle : ‖(a : K) - b‖ ≤ 1 := (um_sub _ _).trans (max_le (mem_ball1 a.2) (mem_ball1 b.2))
     have h1 : ‖(a : K) - b‖ = 1 := le_antisymm hle hc
     have h2b : ‖2 * (b : K)‖ < 1 := by
@@ -217,8 +216,7 @@ theorem exists_diff_one (h2 : ‖(2 : F)‖ < 1) : ∃ w : E, ‖w‖ ≤ 1 ∧ 
   obtain ⟨w, hw, hfar⟩ := exists_far (F := F) (E := E)
   refine ⟨w, hw.le, le_antisymm ?_ ?_⟩
   · exact (um_sub _ _).trans (by rw [hU.norm_star, hw, max_self])
-  · by_contra hlt
-    push_neg at hlt
+  · by_contra! hlt
     set N := w * star w with hN
     have hNs : star N = N := by rw [hN, star_mul, star_star, mul_comm]
     set n := Algebra.trace F E N / 2
@@ -273,8 +271,7 @@ theorem exists_half (F : Type) {E : Type} [NontriviallyNormedField F] [Nontrivia
 
 theorem small_of_trace_small (y : E) (h : ∀ e : E, ‖e‖ ≤ 1 → ‖Algebra.trace F E (e * y)‖ < 1) : ‖y‖ < 1 := by
   haveI := hU.charZero
-  by_contra hy
-  push_neg at hy
+  by_contra! hy
   have hy0 : y ≠ 0 := by intro h0; rw [h0, norm_zero] at hy; linarith
   obtain ⟨x, hx⟩ := hU.unram y
   obtain ⟨e0, he0, hs⟩ := exists_half F (E := E)
@@ -290,7 +287,7 @@ theorem small_of_trace_small (y : E) (h : ∀ e : E, ‖e‖ ≤ 1 → ‖Algebr
   linarith
 
 theorem traceForm_perfect : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedField E] [NormedAlgebra F E] [StarRing E] [Unram F E], (∀ y : E, algebraMap F E (Algebra.trace F E y) = y + star y) ∧ (∃ e : E, ‖e‖ ≤ 1 ∧ e + star e = 1) ∧ ∀ y : E, (∀ e : E, ‖e‖ ≤ 1 → ‖Algebra.trace F E (e * y)‖ < 1) → ‖y‖ < 1 :=
-  fun F E _ _ _ _ _ => ⟨trace_eq, exists_half F, small_of_trace_small⟩
+  fun F _ _ _ _ _ _ => ⟨trace_eq, exists_half F, small_of_trace_small⟩
 
 end Main
 

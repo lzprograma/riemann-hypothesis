@@ -49,8 +49,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (incM)
 
 namespace GlobalTheory.WeilSchrodinger
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {R E : Type} [CommRing R] [CommRing E] [Algebra R E] (c : E →ₐ[R] E)

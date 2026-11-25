@@ -18,8 +18,6 @@ namespace PI.SchurPlaces
 
 open Formalism.L2.SG.KappaOffDiagonal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem nfRat : NFRat := by
   intro D X u u' Λ Λ' q hrel hG
   obtain ⟨σ⟩ : Nonempty (D.host.E →+* ℂ) := inferInstance

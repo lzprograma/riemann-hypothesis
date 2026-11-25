@@ -65,8 +65,8 @@ theorem _root_.GlobalTheory.exists_contDiff_extension_of_isClosed {E : Type*} [N
   have ht : ∀ y, Convex ℝ (t y) := by
     intro y
     by_cases hy : y ∈ S
-    · simp only [t, if_pos hy]; exact convex_singleton _
-    · simp only [t, if_neg hy]; exact convex_univ
+    · simp only [t, ite_eq_left hy]; exact convex_singleton _
+    · simp only [t, ite_eq_right hy]; exact convex_univ
   have hloc : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ g : E → ℂ,
       ContMDiffOn 𝓘(ℝ, E) 𝓘(ℝ, ℂ) ((⊤ : ℕ∞) : WithTop ℕ∞) g U ∧ ∀ y ∈ U, g y ∈ t y := by
     intro x
@@ -74,14 +74,14 @@ theorem _root_.GlobalTheory.exists_contDiff_extension_of_isClosed {E : Type*} [N
     · obtain ⟨U, F, hU, hxU, hF, hfF⟩ := hf x hx
       refine ⟨U, hU.mem_nhds hxU, F, hF.contMDiffOn, fun y hy => ?_⟩
       by_cases hyS : y ∈ S
-      · simp only [t, if_pos hyS, Set.mem_singleton_iff]; exact (hfF y hy hyS).symm
-      · simp only [t, if_neg hyS, Set.mem_univ]
+      · simp only [t, ite_eq_left hyS, Set.mem_singleton_iff]; exact (hfF y hy hyS).symm
+      · simp only [t, ite_eq_right hyS, Set.mem_univ]
     · refine ⟨Sᶜ, hS.isOpen_compl.mem_nhds hx, fun _ => 0, contMDiffOn_const, fun y hy => ?_⟩
-      simp only [t, if_neg (show y ∉ S from hy), Set.mem_univ]
+      simp only [t, ite_eq_right (show y ∉ S from hy), Set.mem_univ]
   obtain ⟨g, hg⟩ := exists_contMDiffMap_forall_mem_convex_of_local 𝓘(ℝ, E) (n := ⊤) ht hloc
   refine ⟨g, g.contMDiff.contDiff, fun y hy => ?_⟩
   have hgy := hg y
-  simpa only [t, if_pos hy, Set.mem_singleton_iff] using hgy
+  simpa only [t, ite_eq_left hy, Set.mem_singleton_iff] using hgy
 
 
 open scoped ContDiff Manifold Topology in

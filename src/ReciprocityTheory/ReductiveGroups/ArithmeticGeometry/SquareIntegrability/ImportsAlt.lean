@@ -354,7 +354,7 @@ theorem rkQP_apply (τ : E →+* ℂ) (v : Vsp dim) (i : Idx dim) :
     rw [Finset.sum_eq_single b]
     · simp
     · intro x _ hx
-      rw [Pi.single_apply, if_neg]
+      rw [Pi.single_apply, ite_eq_right]
       · simp
       · intro h
         apply hx
@@ -1514,7 +1514,7 @@ theorem split_bot (X : PT E) {DF : ℕ} (P : Par X DF) (h : ¬ X.la1 < P.th) : I
   have h' : ¬ X.la1 < th (E := E) P.q P.R0 := h
   have hph : P.ph = 0 := by
     unfold Par.ph PT.ph
-    rw [if_neg h']
+    rw [ite_eq_right h']
   refine
     { le := bot_le
       sat := ?_
@@ -1631,7 +1631,7 @@ theorem split_pos (X : PT E) {DF : ℕ} (P : Par X DF) (h : X.la1 < P.th) : ∃ 
   have hne := L_ne_zero X hr τ
   have hla := first_minimum_pos X hne
   have h' : X.la1 < th (E := E) P.q P.R0 := h
-  have hph : P.ph = 2 * PT.f E / (PT.rd E ^ 2 * X.la1 ^ 2) := by rw [Par.ph, PT.ph, if_pos h']
+  have hph : P.ph = 2 * PT.f E / (PT.rd E ^ 2 * X.la1 ^ 2) := by rw [Par.ph, PT.ph, ite_eq_left h']
   obtain ⟨ρ, hρ, hfr⟩ := rank_iso X I hI.le hI.stable hI.iso
   have hin : ∀ x ∈ X.L, ‖x‖ < P.th → x ∈ I := by
     intro x hx hxs

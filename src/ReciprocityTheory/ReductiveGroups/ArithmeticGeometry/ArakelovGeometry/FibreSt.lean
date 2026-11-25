@@ -258,12 +258,12 @@ theorem exists_proj_ne_zero {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} (hfr 
   simp only [h3, hX, Polynomial.finsetSum_coeff, Polynomial.coeff_zero] at h2
   rw [Finset.sum_eq_single n] at h2
   · rw [mul_pow, ← Polynomial.C_pow, ← mul_assoc, ← Polynomial.C_mul, Polynomial.coeff_C_mul_X_pow,
-      if_pos rfl, hcn] at h2
+      ite_eq_left rfl, hcn] at h2
     simp at h2
     exact hi h2.1
   · intro j _ hj
     rw [mul_pow, ← Polynomial.C_pow, ← mul_assoc, ← Polynomial.C_mul, Polynomial.coeff_C_mul_X_pow,
-      if_neg (Ne.symm hj)]
+      ite_eq_right (Ne.symm hj)]
   · intro h; simp at h
 
 def IsDiscr (x : Ix κ → Ω) (e : Fin (D + 1) → Ix κ) (Δ : MvPolynomial (Fin (D + 1)) ℂ) : Prop :=

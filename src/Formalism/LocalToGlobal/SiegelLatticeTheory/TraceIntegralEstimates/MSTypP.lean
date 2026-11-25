@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyKM
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyMS
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcValDiffProd
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcValVolOrdFull
@@ -28,16 +29,8 @@ namespace Formalism.L2.S.Pv.MSOrdP
 
 open Formalism.L2.SG.LocVol Formalism.L2.SG.Pf.Carrier.EnergyConst Formalism.L2.SG.Pf.Carrier.EnergyMS
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem three_dvd (r : ℕ) : 3 ∣ (r + 1) * (8 * r ^ 2 + 10 * r + 3) := by
-  obtain ⟨k, hk | hk | hk⟩ : ∃ k, r = 3 * k ∨ r = 3 * k + 1 ∨ r = 3 * k + 2 := ⟨r / 3, by omega⟩
-  · subst hk
-    exact ⟨(3 * k + 1) * (24 * k ^ 2 + 10 * k + 1), by ring⟩
-  · subst hk
-    exact ⟨(3 * k + 2) * (24 * k ^ 2 + 26 * k + 7), by ring⟩
-  · subst hk
-    exact ⟨(k + 1) * (8 * (3 * k + 2) ^ 2 + 10 * (3 * k + 2) + 3), by ring⟩
+  apply _root_.Formalism.L2.SG.Pf.Carrier.EnergyKM.three_dvd <;> assumption
 
 theorem dimension_exponent_real (D : D7) : ((e1 D : ℕ) : ℝ) =
     ((D.R.rS : ℝ) + 1) * (8 * (D.R.rS : ℝ) ^ 2 + 10 * D.R.rS + 3) / 3 := by
@@ -90,8 +83,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Is
 namespace Formalism.L2.S.Pv.MSTypP
 
 open Formalism.L2.SG.LocVol Formalism.L2.SG.TypedSets Formalism.L2.SG.Pf.Carrier.EnergyConst Formalism.L2.SG.Pf.Carrier.EnergyMS
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem T_cong {D : D7} (u u' : D.what₂.Word) :
     (D.mem u).A.T ≡ (D.mem u').A.T [MOD (Formalism.MainNotions.S.Lat.gS D) ^ 2] := by

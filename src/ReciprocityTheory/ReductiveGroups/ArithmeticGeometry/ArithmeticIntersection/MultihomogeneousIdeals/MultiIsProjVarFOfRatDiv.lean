@@ -34,30 +34,18 @@ def secDen (F : Type*) [Field F] (ι : K → Type*) [∀ k, Fintype (ι k)] (V :
   if h : IsRelevant V then ∏ k, (X ⟨k, (h k).choose⟩ : MRingOver F ι) ^ (-a k).toNat else 1
 
 
-open Classical in
-def ptDeg0 (F : Type*) [Field F] (ι : K → Type*) [∀ k, Fintype (ι k)] (V : Ideal (MRingOver F ι)) : ℕ :=
-  if h : IsRelevant V then ptDeg V (fun k => (h k).choose) else 0
-
-def inumRec (F : Type*) [Field F] (ι : K → Type*) [∀ k, Fintype (ι k)] : (n : ℕ) → Ideal (MRingOver F ι) → (Fin n → K → ℤ) → ℤ
-  | 0, V, _ => ptDeg0 F ι V
-  | n + 1, V, L => cycEval (fun W => inumRec F ι n W (Fin.init L))
-      (ratDiv V (secNum F ι V (L (Fin.last n))) (secDen F ι V (L (Fin.last n))))
-
-def inum (F : Type*) [Field F] (ι : K → Type*) [∀ k, Fintype (ι k)] : IFamily F ι :=
-  fun V n L => inumRec F ι n V L
-
 theorem isRatSection_sec {V : Ideal (MRingOver F ι)} (hV : IsMultiProjPrime V) (a : K → ℤ) :
     IsRatSection V a (secNum F ι V a) (secDen F ι V a) := by
   classical
   have hr := hV.2.2
   refine ⟨fun k => (a k).toNat, fun k => (-a k).toNat, ?_, ?_, ?_, ?_, ?_⟩
-  · simp only [secNum, dif_pos hr]
+  · simp only [secNum, dite_eq_left hr]
     exact isMultiHomog_coordProd _ _
-  · simp only [secDen, dif_pos hr]
+  · simp only [secDen, dite_eq_left hr]
     exact isMultiHomog_coordProd _ _
-  · simp only [secNum, dif_pos hr]
+  · simp only [secNum, dite_eq_left hr]
     exact coordProd_not_mem hV.1 _ (fun k => (hr k).choose_spec) _
-  · simp only [secDen, dif_pos hr]
+  · simp only [secDen, dite_eq_left hr]
     exact coordProd_not_mem hV.1 _ (fun k => (hr k).choose_spec) _
   · intro k
     simp

@@ -29,16 +29,16 @@ theorem quad_diag_int (B : Matrix ι ι ℤ) (hB : B.IsSymm) (l : ι → ℤ) :
         rw [hf p.2 p.1]
         by_cases hp : p.1 = p.2
         · simp [hp]
-        · simp only [if_neg hp, if_neg (Ne.symm hp), sub_zero]
+        · simp only [ite_eq_right hp, ite_eq_right (Ne.symm hp), sub_zero]
           exact htwo _
       · intro p _ hne heq
         apply hne
         have h12 : p.1 = p.2 := by
           have := congrArg Prod.fst heq
           simpa using this.symm
-        simp only [if_pos h12, sub_self]
+        simp only [ite_eq_left h12, sub_self]
     rw [Fintype.sum_prod_type] at h
-    simp only [Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true] at h
+    simp only [Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h
     exact sub_eq_zero.mp h
   suffices h2 : ((l ⬝ᵥ (B *ᵥ l) - l ⬝ᵥ (fun i => B i i) : ℤ) : ZMod 2) = 0 by
     obtain ⟨k, hk⟩ := (ZMod.intCast_zmod_eq_zero_iff_dvd _ 2).mp h2

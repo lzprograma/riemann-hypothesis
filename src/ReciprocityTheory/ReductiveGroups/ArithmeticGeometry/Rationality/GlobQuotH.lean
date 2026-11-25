@@ -16,12 +16,6 @@ open NumberField IsDedekindDomain
 
 variable {K : Type} [Field K] [NumberField K]
 
-lemma unzero_toAdd_eq_log (y : WithZero (Multiplicative ℤ)) (hy : y ≠ 0) :
-    (WithZero.unzero hy).toAdd = WithZero.log y := by
-  induction y using WithZero.recZeroCoe with
-  | zero => exact absurd rfl hy
-  | coe a => rfl
-
 lemma norm_emb_eq (v : HeightOneSpectrum (𝓞 K)) {x : K} (hx : x ≠ 0) :
     ‖FinitePlace.embedding v x‖ = (Ideal.absNorm v.asIdeal : ℝ) ^ (-(ordAt v x)) := by
   have hv : v.valuation K x ≠ 0 := (Valuation.ne_zero_iff _).2 hx

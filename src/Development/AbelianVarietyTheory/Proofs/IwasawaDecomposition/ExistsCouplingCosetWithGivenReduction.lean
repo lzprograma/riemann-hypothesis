@@ -159,14 +159,14 @@ theorem exists_ptAt_bar_eq {X : Fields} {Pr : Primes X} {R : Ranks} {sel : Heigh
       (fun P => if P.1 ∈ Pr.vGs then 0 else (cst.M : ℤ))}), ?_⟩, rfl, ?_⟩
     · rw [ysAt_ys_of_eq sel mu cst h]
       refine ⟨y', (Formalism.L2.Col.mem_locLat _ _ _ _).2 fun P => ?_, by congr!⟩
-      rw [if_pos (hG' P), _root_.zpow_neg_one, inv_inv]
+      rw [ite_eq_left (hG' P), _root_.zpow_neg_one, inv_inv]
       exact (hy' ⟨P.1, hG' P⟩).1
     · funext w
       have h1 := (Formalism.L2.Col.mem_locLat _ _ _ _).1 hy ⟨w.1, hG w⟩
-      rw [if_pos w.2, _root_.zpow_neg_one, inv_inv] at h1
-      refine (coset_be d _ w (hG w) _ (if_pos w.2) (hy' w).1).trans ?_
+      rw [ite_eq_left w.2, _root_.zpow_neg_one, inv_inv] at h1
+      refine (coset_be d _ w (hG w) _ (ite_eq_left w.2) (hy' w).1).trans ?_
       rw [(hy' w).2, MemChart.bar, hY]
-      exact (coset_be q.1.1.deco _ w (hG w) _ (if_pos w.2) h1).symm
+      exact (coset_be q.1.1.deco _ w (hG w) _ (ite_eq_left w.2) h1).symm
   · have hY : q.1.2 = ∅ := by
       have := q.2
       rwa [ysAt_ys_of_ne sel mu cst h] at this

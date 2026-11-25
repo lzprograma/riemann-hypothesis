@@ -6,51 +6,8 @@ import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitar
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.AdmissibleLeHolds
 import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.SquareIntegrableCovers.SetLIntegralLeOfCover
 import GroundTheory.AutomorphicForms.Reduction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
-import Mathlib.RingTheory.PicardGroup
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormCVPosIdele
 
 @[expose] public section
 
@@ -179,10 +136,7 @@ theorem continuous_pA : Continuous (pA E) := by
   exact ((continuous_infEq E).comp (continuous_pi fun _ => Complex.continuous_ofReal)).prodMk continuous_const
 
 theorem card_places : (2 : ℝ) * Fintype.card (InfinitePlace E) = Module.finrank ℚ E := by
-  rw [IsTotallyComplex.finrank, InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces,
-    IsTotallyComplex.nrRealPlaces_eq_zero]
-  push_cast
-  ring
+  exact GlobalTheory.CompanionTheory.TorNorm.two_card
 
 theorem logAbs_pA (t : ℝ) : logAbs (pA E (Real.exp t)) = Module.finrank ℚ E * t := by
   simp only [logAbs, cV_pA, cW_pA, norm_one, Real.log_one, finsum_zero, add_zero, Complex.norm_real, Real.norm_eq_abs,
@@ -197,30 +151,8 @@ theorem tor_inv {n : ℕ} (x : Fin n → ℝ) : (An.tor E x : GA E n)⁻¹ = An.
     exact left_eq_mul.1 this
   rw [inv_eq_iff_mul_eq_one, ← JSqIntGlue.tor_add, add_neg_cancel, h0]
 
-theorem logSizeM_tor {n : ℕ} (x : Fin n → ℝ) : logSizeM (An.tor E x : GA E n).val ≤ Module.finrank ℚ E * ‖x‖ := by
-  have a1 : ∀ v, Real.posLog (⨆ p : Fin n × Fin n, ‖cV v ((An.tor E x : GA E n).val p.1 p.2)‖ ^ 2) ≤ 2 * ‖x‖ := fun v => by
-    have : (⨆ p : Fin n × Fin n, ‖cV v ((An.tor E x : GA E n).val p.1 p.2)‖ ^ 2) ≤ Real.exp (2 * ‖x‖) := by
-      refine Real.iSup_le (fun p => ?_) (Real.exp_pos _).le
-      rw [tor_val, diagonal_apply]
-      split_ifs
-      · rw [posIdele_val, cV_pA, Complex.norm_real, Real.norm_eq_abs, Real.abs_exp, ← Real.exp_nat_mul]
-        have := (le_abs_self _).trans (norm_le_pi_norm x p.1)
-        exact Real.exp_le_exp.2 (by push_cast; linarith)
-      · simp [(Real.exp_pos _).le]
-    refine (Real.posLog_le_posLog (le_trans (by norm_num : (-1 : ℝ) ≤ 0) (Real.iSup_nonneg fun _ => sq_nonneg _)) this).trans ?_
-    rw [Real.posLog_def]
-    exact max_le (by positivity) (Real.log_exp _).le
-  have a2 : ∀ w, Real.posLog (⨆ p : Fin n × Fin n, ‖cW w ((An.tor E x : GA E n).val p.1 p.2)‖) = 0 := fun w => by
-    rw [Real.posLog_eq_zero_iff, abs_of_nonneg (Real.iSup_nonneg fun _ => norm_nonneg _)]
-    refine Real.iSup_le (fun p => ?_) zero_le_one
-    rw [tor_val, diagonal_apply]
-    split_ifs
-    · rw [posIdele_val, cW_pA, norm_one]
-    · simp
-  simp only [logSizeM, a2, finsum_zero, add_zero]
-  refine (Finset.sum_le_sum fun v _ => a1 v).trans (le_of_eq ?_)
-  rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, ← card_places]
-  ring
+theorem logSizeM_tor {n : ℕ} (x : Fin n → ℝ) : logSizeM (An.tor E x : GA E n).val ≤ Module.finrank ℚ E * ‖x‖ :=
+  _root_.GlobalTheory.CompanionTheory.TorNorm.logSizeM_tor x
 
 end Tor
 

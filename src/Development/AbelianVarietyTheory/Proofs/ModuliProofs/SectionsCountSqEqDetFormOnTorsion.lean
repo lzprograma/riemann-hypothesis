@@ -1240,7 +1240,7 @@ theorem PolyHom.sq {n : ℕ} {D : ℤ[X] → ℚ} (h : PolyHom n D) : PolyHom (2
     rw [Finset.sum_eq_single (⟨i + j, by omega⟩ : Fin (2 * r))]
     · simp [monomial_mul_monomial]
     · intro k _ hk
-      rw [if_neg, map_zero]
+      rw [ite_eq_right, map_zero]
       intro h'
       exact hk (Fin.ext h'.symm)
     · simp
@@ -1273,7 +1273,7 @@ theorem PolyHom.exists_shift {n : ℕ} {D : ℤ[X] → ℚ} (h : PolyHom n D) (F
     · rw [Finset.sum_eq_single 0]
       · simp
       · intro k _ hk
-        rw [if_neg hk, map_zero]
+        rw [ite_eq_right hk, map_zero]
       · simp
   rw [e, hD, ← Polynomial.coe_evalRingHom, MvPolynomial.aeval_def, MvPolynomial.eval₂_comp_left,
     MvPolynomial.eval₂_eq_eval_map]

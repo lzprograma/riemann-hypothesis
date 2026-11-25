@@ -108,7 +108,7 @@ theorem GlobalTheory.PolCell.exists_common_den : ∀ (X : Type) [AddCommGroup X]
     exact Nat.lt_succ_of_le this
   let k : K := ⟨⟨m, hm⟩, fun i => ⟨_, he i⟩⟩
   have hk : IsCone (id : ℤ → ℤ) φ (fun i => ((k.2 i : S) : LinearMap.BilinForm ℤ X)) := hγ'
-  have hDk : D k = Classical.choose hk.strict := dif_pos hk
+  have hDk : D k = Classical.choose hk.strict := dite_eq_left hk
   obtain ⟨ℓ, -, hℓ⟩ := Classical.choose_spec hk.strict
   obtain ⟨t, ht⟩ : D k ∣ ∏ k, D k := Finset.dvd_prod_of_mem D (Finset.mem_univ k)
   have ht0 : 0 < t := by

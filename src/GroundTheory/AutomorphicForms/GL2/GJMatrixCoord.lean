@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Analysis.Matrix.MeasurableSpace
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.Topology.Instances.Matrix
 public import GroundTheory.AutomorphicForms.GL2.GJMatrixInfinite
@@ -13,9 +14,9 @@ open MeasureTheory Matrix
 
 noncomputable section
 
-instance measurableSpace_matrix {m n X : Type*} [MeasurableSpace X] :
+@[reducible] instance measurableSpace_matrix {m n X : Type*} [MeasurableSpace X] :
     MeasurableSpace (Matrix m n X) :=
-  inferInstanceAs (MeasurableSpace (m → n → X))
+  Matrix.instMeasurableSpace
 
 instance borelSpace_matrix {m n X : Type*} [Countable m] [Countable n] [TopologicalSpace X]
     [MeasurableSpace X] [BorelSpace X] [SecondCountableTopology X] :

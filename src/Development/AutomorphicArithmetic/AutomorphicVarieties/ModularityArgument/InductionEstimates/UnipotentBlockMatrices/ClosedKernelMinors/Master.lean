@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BochnerOfLintegral
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
@@ -54,21 +55,10 @@ open scoped ENNReal NumberField.AdeleRing InnerProductSpace ComplexConjugate
 open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial
 
 private theorem cont_pt {K : Type} [Field K] [NumberField K] : Continuous (pt (K := K)) := by
-  obtain ⟨-, -, -, hc, -⟩ := blkLaws (K := K)
-  have hL : Continuous fun p : Par K => lv p.1 p.2.1 p.2.2.1 := by
-    have : Continuous fun p : Par K => (p.1, p.2.1, p.2.2.1) := by fun_prop
-    simpa only [Function.comp_def] using hc.comp this
-  have hN : Continuous fun p : Par K => (nn p.2.2.2.2 : G1 K (2 + 2)) := (continuous_unipOne 2).comp (by fun_prop)
-  exact (hN.mul hL).mul (continuous_subtype_val.comp (by fun_prop))
+  apply _root_.pt_cont <;> assumption
 
-set_option synthInstance.maxHeartbeats 200000 in
 private theorem meas_pt {K : Type} [Field K] [NumberField K] : Measurable (pt (K := K)) := by
-  haveI : BorelSpace (KG K (2 + 2) × (UPos (2 + 2) 2 → 𝔸[K])) := Prod.borelSpace
-  haveI : BorelSpace (ℝ × KG K (2 + 2) × (UPos (2 + 2) 2 → 𝔸[K])) := Prod.borelSpace
-  haveI : SecondCountableTopology (G1 K 2) := inferInstance
-  haveI : BorelSpace (G1 K 2 × ℝ × KG K (2 + 2) × (UPos (2 + 2) 2 → 𝔸[K])) := Prod.borelSpace
-  haveI : BorelSpace (Par K) := Prod.borelSpace
-  exact cont_pt.measurable
+  apply _root_.pt_meas <;> assumption
 
 private theorem core {K : Type} [Field K] [NumberField K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure]
     (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (κ : Measure (KG K (2 + 2))) [κ.IsHaarMeasure] (c : ℝ) (hU : Unf μ μ₂ κ c)

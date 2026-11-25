@@ -14,7 +14,7 @@ open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS
 
 variable {n : ℕ}
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 
 abbrev Wd (n m : ℕ) : Type := Σ l : Fin (m + 1), (Fin l → Fin n × Fin n)

@@ -757,21 +757,6 @@ open GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.
 noncomputable section
 namespace GlobalTheory.CompanionTheory.WeilSiegel.Free.Aniso
 
-theorem free_inf {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {M : ℕ} (J : Matrix (Fin M) (Fin M) E) (hJ : IsHermND σ J)
-    {d : ℕ} (b : Module.Basis (Fin d) F E) (lam : Measure (Ainf F)) (hlam : lam.IsAddHaarMeasure) (n : ℕ) :
-    ∃ m, IsGramFibFree (Ainf F) σ J n (coordW (Ainf F) b lam n M) (coordHerm (Ainf F) σ b lam n) m := by
-  have hB : BorelSpace (Ainf F) := ⟨rfl⟩
-  obtain ⟨-, hW, hH⟩ := _root_.GlobalTheory.CompanionTheory.SW.coord_measures_haar F E σ hCM (Ainf F) _ b lam hlam
-  exact _root_.GlobalTheory.ArchGramFibre.exists_fibreFamily F E σ hCM M n J hJ _ _ (hW n M) (hH n)
-
-theorem free_v {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {M : ℕ} (J : Matrix (Fin M) (Fin M) E) (hJ : IsHermND σ J)
-    {d : ℕ} (b : Module.Basis (Fin d) F E) (v : HeightOneSpectrum (𝓞 F)) (lam : Measure (Fv F v))
-    (hlam : lam.IsAddHaarMeasure) (n : ℕ) :
-    ∃ m, IsGramFibFree (Fv F v) σ J n (coordW (Fv F v) b lam n M) (coordHerm (Fv F v) σ b lam n) m :=
-  GlobalTheory.CompanionTheory.WeilSiegel.HypStep.fam_fin σ hCM J hJ b v lam hlam n
-
 theorem good_mass_free : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (M : ℕ) (J : Matrix (Fin M) (Fin M) E), IsHermND σ J → ∀ t : F, t ≠ 0 → ∀ (n : ℕ) (T : Matrix (Fin n) (Fin n) E) (hT : ∀ a b, σ (T b a) = T a b) (hT' : ∀ a b, σ (blockOne (algebraMap F E t) T b a) = blockOne (algebraMap F E t) T a b) (d : ℕ) (b : Module.Basis (Fin d) F E), ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite, ∀ lam : Measure (Fv F v), lam.IsAddHaarMeasure → ∀ m m₁ m', IsGramFibFree (Fv F v) σ (blockOne (algebraMap F E t) J) (n + 1) (coordW (Fv F v) b lam (n + 1) (M + 1)) (coordHerm (Fv F v) σ b lam (n + 1)) m → IsGramFib (Fv F v) σ (blockOne (algebraMap F E t) J) 1 (coordW (Fv F v) b lam 1 (M + 1)) (coordHerm (Fv F v) σ b lam 1) m₁ → IsGramFibFree (Fv F v) σ J n (coordW (Fv F v) b lam n M) (coordHerm (Fv F v) σ b lam n) m' → ∀ c : ℝ≥0, (coordK (Fv F v) b lam).map (fun y => inclR (Fv F v) (algebraMap F E t) * y) = c • coordK (Fv F v) b lam → m (hermOf (Fv F v) σ _ hT') (latV b v) = (c : ℝ≥0∞) ^ n * (m' (hermOf (Fv F v) σ T hT) (latV b v) * m₁ (hermScal (Fv F v) σ (algebraMap F (Fv F v) t)) (latV b v)) := by
   intro F E _ _ _ _ _ σ hCM M J hJ t ht n T hT hT' d b
   obtain ⟨hdet, hherm, -, -⟩ := BlockAlg.block_alg F E σ hCM M J t
@@ -847,9 +832,9 @@ theorem aniso_step : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
     ⟨hhermb hJ.1, by rw [hdetb]; exact mul_ne_zero hta hJ.2⟩
 
   obtain ⟨m₁inf, hm₁inf⟩ := Step.loc_families σ hCM _ hJ' (Ainf F) hLi b laminf hinf.1 1
-  obtain ⟨m'inf, hm'inf⟩ := free_inf σ hCM J hJ b laminf hinf.1 n
+  obtain ⟨m'inf, hm'inf⟩ := GlobalTheory.CompanionTheory.WeilSiegel.HypStep.fam_inf σ hCM J hJ b laminf hinf.1 n
   choose m₁ hm₁ using fun v => Step.loc_families σ hCM _ hJ' (Fv F v) (hLv v) b (lam v) (hlam v).1 1
-  choose m' hm' using fun v => free_v σ hCM J hJ b v (lam v) (hlam v).1 n
+  choose m' hm' using fun v => GlobalTheory.CompanionTheory.WeilSiegel.HypStep.fam_fin σ hCM J hJ b v (lam v) (hlam v).1 n
   obtain ⟨⟨μ₁, hμ₁⟩, hFV⟩ := _root_.GlobalTheory.CompanionTheory.SW.finVol_unitaryGroup F E σ hCM M J hJ
   obtain ⟨⟨𝓕₁, h𝓕₁⟩, -⟩ := hFV μ₁ hμ₁
 
@@ -1018,31 +1003,6 @@ theorem fibre_transport {μ : Measure V} {ν : Measure X} {f f' : V → Y} {ι :
       rw [e2]
       exact h2.const_smul (a : ℝ)
 
-omit [BorelSpace V] in
-theorem fibre_scale {μ : Measure V} {ν : Measure X} {f : V → Y} {ι : X → Y} {U : Set V}
-    {B : Set X} {fib : X → Measure V} (a k r : ℝ≥0) (hr : r * k = a)
-    (hfib : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsFibreFamily μ f ι U ν B fib) :
-    Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsFibreFamily (a • μ) f ι U (k • ν) B (fun b => r • fib b) := by
-  refine ⟨fun b => ?_, fun φ hφ => ?_, fun φ hc hcs hts => ?_⟩
-  · rw [Measure.smul_apply, hfib.1 b, smul_zero]
-  · have e1 : ∀ b, ∫⁻ x, φ x ∂(r • fib b) = (r : ℝ≥0∞) * ∫⁻ x, φ x ∂(fib b) := by
-      intro b
-      rw [lintegral_smul_measure, ENNReal.smul_def, smul_eq_mul]
-    simp only [e1]
-    rw [Measure.restrict_smul, lintegral_smul_measure, lintegral_smul_measure,
-      lintegral_const_mul' _ _ ENNReal.coe_ne_top, ← hfib.2.1 φ hφ, ENNReal.smul_def,
-      ENNReal.smul_def, smul_eq_mul, smul_eq_mul, ← mul_assoc, ← hr]
-    push_cast
-    ring_nf
-  · obtain ⟨h1, h2⟩ := hfib.2.2 φ hc hcs hts
-    refine ⟨fun b hb => (h1 b hb).smul_measure ENNReal.coe_ne_top, ?_⟩
-    have e2 : (fun b => ∫ x, φ x ∂(r • fib b)) = fun b => (r : ℝ) • ∫ x, φ x ∂(fib b) := by
-      funext b
-      rw [integral_smul_nnreal_measure]
-      rfl
-    rw [e2]
-    exact h2.const_smul (r : ℝ)
-
 end Gen
 
 section Loc
@@ -1066,7 +1026,7 @@ theorem li_mulVec {A : Type} [CommRing A] {M n : ℕ} (G : GL (Fin M) A) {X : Fi
     intro x y hxy
     have h := congrArg (((G⁻¹ : GL (Fin M) A) : Matrix (Fin M) (Fin M) A).mulVec) hxy
     simpa [Matrix.mulVec_mulVec] using h
-  exact hX.map' _ (LinearMap.ker_eq_bot.2 hinj)
+  exact hX.map' (Matrix.mulVecLin (G : Matrix (Fin M) (Fin M) A)) (LinearMap.ker_eq_bot.2 hinj)
 
 omit [Field F] [NumberField F] [NumberField E] [Algebra F E] in
 theorem li_mulVec_iff {A : Type} [CommRing A] {M n : ℕ} (G : GL (Fin M) A) (X : Fin n → Fin M → A) :
@@ -1125,16 +1085,6 @@ theorem local_transport (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {M : ℕ} (J
       rw [← hee, e.apply_symm_apply]
     rw [h1]
     rfl
-
-theorem local_rescale (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {M : ℕ} (J : Matrix (Fin M) (Fin M) E)
-    (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R] [MeasurableSpace R] [BorelSpace R]
-    (hR : IsLocR R) {d : ℕ} (b b' : Module.Basis (Fin d) F E) (lam : Measure R)
-    (hlam : lam.IsAddHaarMeasure) (n : ℕ)
-    (m : HermR R σ n → Measure (Fin n → Fin M → R ⊗[F] E))
-    (hm : IsGramFibFree R σ J n (coordW R b lam n M) (coordHerm R σ b lam n) m) :
-    ∃ r : ℝ≥0, r ≠ 0 ∧
-      IsGramFibFree R σ J n (coordW R b' lam n M) (coordHerm R σ b' lam n) (fun S => r • m S) :=
-  GlobalTheory.CompanionTheory.WeilSiegel.Free.Scale.coord_rescale σ hCM J R hR b b' lam hlam n m hm
 
 end Loc
 
@@ -1327,9 +1277,9 @@ theorem swFree_of_isometry : ∀ (F E : Type) [Field F] [NumberField F] [Field E
   have hfin : ∀ v, m v (hermOf (Fv F v) σ T hT) (latV b v) < ⊤ := by
     intro v
     obtain ⟨b', hb'⟩ := exists_scaled_basis (n := n) b v g
-    obtain ⟨ri, -, hri⟩ := local_rescale σ hCM _ (Ainf F) hLi b b' laminf hinf.1 n minf' hminf'
+    obtain ⟨ri, -, hri⟩ := GlobalTheory.CompanionTheory.WeilSiegel.Free.Scale.coord_rescale σ hCM _ (Ainf F) hLi b b' laminf hinf.1 n minf' hminf'
     choose r hr0 hrw using fun w =>
-      local_rescale σ hCM _ (Fv F w) (hLv w) b b' (lam w) (hlam w).1 n (m' w) (hm' w)
+      GlobalTheory.CompanionTheory.WeilSiegel.Free.Scale.coord_rescale σ hCM _ (Fv F w) (hLv w) b b' (lam w) (hlam w).1 n (m' w) (hm' w)
     have h1 := (hSW d b' laminf lam hinf hlam (μ.map He.symm) (He ⁻¹' 𝓕) hμ' h𝓕' _ _ hri hrw).1 v
     have hc0 : c v ≠ 0 := by
       intro h0
@@ -1495,8 +1445,7 @@ theorem exists_value (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {n : ℕ}
   obtain ⟨hσ, δ, hδ, hδs⟩ := HaarCoord.conj_facts hCM
   have hherm := _root_.GlobalTheory.CompanionTheory.WeilSiegel.HypStep.WittOne.hE_herm σ hσ T hT
   have hne : ∃ x, hE σ T x x ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     have key : ∀ x y, hE σ T x y + hE σ T y x = 0 := by
       intro x y
       have h := hall (x + y)
@@ -1551,8 +1500,7 @@ theorem split_hyp (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {M : ℕ}
   have hherm := _root_.GlobalTheory.CompanionTheory.WeilSiegel.HypStep.WittOne.hE_herm σ hσ J hJ.1
 
   have hex : ∃ y₀, hE σ J x y₀ ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     have hv : Matrix.vecMul (fun i => σ (x i)) J = 0 := by
       funext j
       have := hall (Pi.single j 1)
@@ -1906,10 +1854,7 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.CompanionTheory.WeilSiegel.Frame
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.siegelWeil_free_of_block_nonempty_frames : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), HeckeCharacterZeroLocus.SiegelWeilU.IsCMExt F E σ → ∀ (M : ℕ) (J : Matrix (Fin M) (Fin M) E), HeckeCharacterZeroLocus.SiegelWeilU.IsHermND σ J → ∀ (n t : ℕ) (T : Matrix (Fin n) (Fin n) E) (hT : ∀ a b, σ (T b a) = T a b), IsBlockM t T → 2 * n < M → (framesE σ J T).Nonempty → SWFree σ J T hT := by
-  first | exact @GlobalTheory.CompanionTheory.WeilSiegel.Free.swFree_block
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.WeilBound.RepresentationTheoryGL.SiegelWeil.ArchimedeanSiegelWeil.PlaceIntegrals.SiegelWeilFreeOfBlockNonemptyFramesStatement =====

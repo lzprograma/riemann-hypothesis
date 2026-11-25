@@ -50,8 +50,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.VdmRec.CutSec
@@ -108,37 +106,7 @@ theorem dim_closure_of_coheight_field {K : Type} [Field K] {X : Scheme.{0}} [IsI
       have : n + 1 ≤ 1 + u := by exact_mod_cast hdimX
       exact_mod_cast (by omega : n ≤ u)
 
-theorem dim_closure_of_coheight {k : Type} [CommRing k] {X Z : Scheme.{0}} {p : X ⟶ Sp k} {D : ℕ} (hX : IsArithVar p D)
-    (i : Z ⟶ X) [IsClosedImmersion i] [IsIntegral Z] {n : ℕ} (hZ : topologicalKrullDim Z = (n + 1 : ℕ)) {w : Z}
-    (hw : Order.coheight w = 1) : topologicalKrullDim (closure ({w} : Set Z)) = n := by
-  obtain ⟨l, hl⟩ := CharP.exists Γ(Z, ⊤)
-  rcases CharP.char_is_prime_or_zero Γ(Z, ⊤) l with hp | rfl
-  · have : Fact l.Prime := ⟨hp⟩
-    let := ZMod.algebra Γ(Z, ⊤) l
-    obtain ⟨N, jN, _, hjN⟩ := hX.isProjOver
-    have := isProper_str k N
-    have : IsProper p := hjN ▸ inferInstance
-    have : IsFinite (spMap (Int.castRingHom k)) :=
-      (IsFinite.SpecMap_iff _).2 (RingHom.finite_algebraMap.2 hX.finite)
-    have e : strHom (ZMod l) Z ≫ spMap (Int.castRingHom (ZMod l)) = i ≫ p ≫ spMap (Int.castRingHom k) :=
-      specZIsTerminal.hom_ext _ _
-    have : LocallyOfFiniteType (strHom (ZMod l) Z ≫ spMap (Int.castRingHom (ZMod l))) := e ▸ inferInstance
-    have : LocallyOfFiniteType (strHom (ZMod l) (X := Z)) := locallyOfFiniteType_of_comp _ (spMap (Int.castRingHom (ZMod l)))
-    exact dim_closure_of_coheight_field (strHom (ZMod l) Z) hZ hw
-  · have := CharP.charP_to_charZero Γ(Z, ⊤)
-    have h := GlobalTheory.PrimeDivDim.dim_eq_of_coheight_eq_one k Z (i ≫ p) n (hX.of_isClosedImmersion i this hZ) _
-      (redι (clo w)) (by rw [GlobalTheory.PullVanish.redι_genericPoint]; exact hw)
-    exact (topologicalKrullDim_eq_of_isEmbedding (redι (clo w)).isClosedEmbedding.isEmbedding
-      (range_redι _)).trans h
-
 end General
-
-section Cut
-
-open CategoryTheory AlgebraicGeometry TopologicalSpace Topology
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ArInt GlobalTheory.Cartier
-
-end Cut
 
 open NumberField MvPolynomial Filter Topology Formalism.BasicNotions Formalism.MainNotions Formalism.DegreeFormula GlobalTheory.FlagPoly GlobalTheory.Mean4 GlobalTheory.Mean4O GlobalTheory.CovTop GlobalTheory.CovHt GlobalTheory.CovTest GlobalTheory.Published
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.ArInt

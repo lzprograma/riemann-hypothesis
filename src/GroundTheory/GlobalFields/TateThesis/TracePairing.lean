@@ -2,18 +2,13 @@ module
 
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
-import Mathlib.Analysis.Fourier.Notation
 
 @[expose] public section
 
 namespace GroundTheory.Global
 
-open NumberField NumberField.InfinitePlace NumberField.mixedEmbedding Module MeasureTheory
-open scoped Classical ComplexConjugate RealInnerProductSpace FourierTransform Real
+open NumberField NumberField.InfinitePlace NumberField.mixedEmbedding
+open scoped Classical ComplexConjugate Real
 
 noncomputable section
 
@@ -85,17 +80,14 @@ theorem mixedTraceForm_separatingLeft : (mixedTraceForm K).SeparatingLeft := by
   have h := hx (x.1, fun w => conj (x.2 w))
   rw [mixedTraceForm_apply'] at h
   simp only [Complex.mul_conj, Complex.ofReal_re] at h
-  have h1 : 0 ≤ ∑ w, x.1 w * x.1 w := Finset.sum_nonneg fun w _ => mul_self_nonneg _
-  have h2 : 0 ≤ ∑ w, 2 * Complex.normSq (x.2 w) :=
-    Finset.sum_nonneg fun w _ => mul_nonneg zero_le_two (Complex.normSq_nonneg _)
-  have e1 : ∑ w, x.1 w * x.1 w = 0 := by linarith
-  have e2 : ∑ w, 2 * Complex.normSq (x.2 w) = 0 := by linarith
-  rw [Finset.sum_eq_zero_iff_of_nonneg (fun w _ => mul_self_nonneg _)] at e1
+  obtain ⟨e1, e2⟩ := (add_eq_zero_iff_of_nonneg
+    (Finset.sum_nonneg fun w _ => mul_self_nonneg _)
+    (Finset.sum_nonneg fun w _ => mul_nonneg zero_le_two (Complex.normSq_nonneg _))).1 h
+  rw [Finset.sum_mul_self_eq_zero_iff] at e1
   rw [Finset.sum_eq_zero_iff_of_nonneg
     (fun w _ => mul_nonneg zero_le_two (Complex.normSq_nonneg _))] at e2
-  refine Prod.ext (funext fun w => ?_) (funext fun w => ?_)
-  · simpa using e1 w (Finset.mem_univ _)
-  · simpa using e2 w (Finset.mem_univ _)
+  refine Prod.ext (funext fun w => e1 w (Finset.mem_univ _)) (funext fun w => ?_)
+  simpa using e2 w (Finset.mem_univ _)
 
 theorem mixedTraceForm_nondegenerate : (mixedTraceForm K).Nondegenerate :=
   ⟨mixedTraceForm_separatingLeft K, fun y hy =>

@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap
 public import Formalism.LocalToGlobal.KernelLattices.KerStd
 public import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm
 public import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
@@ -213,19 +214,7 @@ variable {D : D7} {X : Fields} (s : Seam D X) {a b : ℕ}
 
 theorem form_flat (A : ℝ) (x y : DVar X.Tau a b → ℂ) :
     matH (hSc X.Tau a b A⁻¹) x y = formV A D.what₂.Tau a b (s.flatV a b x) (s.flatV a b y) := by
-  rw [formV_apply]
-  show (∑ i, ∑ j, x i * hSc X.Tau a b A⁻¹ i j * conj (y j)) = _
-  simp only [hSc, Matrix.diagonal_apply, mul_ite, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
-  rw [Fintype.sum_prod_type, ← Equiv.sum_comp s.iT.symm, Finset.sum_div]
-  refine Finset.sum_congr rfl fun τ _ => ?_
-  rw [Fintype.sum_prod_type, Finset.sum_div]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [Finset.sum_div]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  show x (s.iT.symm τ, i, j) * ((A⁻¹ : ℝ) : ℂ) * conj (y (s.iT.symm τ, i, j)) =
-    x (s.iT.symm τ, i, j) * conj (y (s.iT.symm τ, i, j)) / (A : ℂ)
-  rw [Complex.ofReal_inv, div_eq_mul_inv]
-  ring
+  apply _root_.Formalism.L2.Ker.KS.Lat.form_flat <;> assumption
 
 theorem alpha_flat (c A : ℝ) (x : DVar X.Tau a b → ℂ) :
     alphaQ c (matH (hSc X.Tau a b A⁻¹)) x = alphaQ c (formV A D.what₂.Tau a b) (s.flatV a b x) := by
@@ -238,7 +227,7 @@ theorem hPow_hOne (L : PeriodPair) :
   by_cases h1 : w = w'
   · subst h1
     simp
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     by_cases h2 : w.2 = w'.2
     · have h3 : w.1 ≠ w'.1 := fun h => h1 (Prod.ext h h2)
       simp [h2, h3]

@@ -8,6 +8,7 @@ public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -28,21 +29,8 @@ section Scale
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
 
 theorem aeval_scale (y : (Σ k, ι k) → Ω) (c : K → Ω) {u : MRing ι} {a : K → ℕ} (hu : IsMultiHomog u a) :
-    aeval (fun p => y p * c p.1) u = aeval y u * ∏ k, c k ^ a k := by
-  conv_lhs => rw [u.as_sum]
-  conv_rhs => rw [u.as_sum]
-
-  rw [map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  rw [aeval_monomial, aeval_monomial, mul_assoc]
-  congr 1
-  simp only [mul_pow]
-  rw [Finsupp.prod_mul]
-  congr 1
-  rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Fintype.prod_sigma]
-  refine Finset.prod_congr rfl fun k _ => ?_
-  show ∏ i, c k ^ m ⟨k, i⟩ = _
-  rw [Finset.prod_pow_eq_pow_sum, hu m hm k]
+    aeval (fun p => y p * c p.1) u = aeval y u * ∏ k, c k ^ a k :=
+  BlockScaling.eval₂_mul_block_right (algebraMap ℤ Ω) y c hu
 
 theorem aeval_scale_div (y : (Σ k, ι k) → Ω) {c : K → Ω} (hc : ∀ k, c k ≠ 0) {u w : MRing ι} {a : K → ℕ}
     (hu : IsMultiHomog u a) (hw : IsMultiHomog w a) :

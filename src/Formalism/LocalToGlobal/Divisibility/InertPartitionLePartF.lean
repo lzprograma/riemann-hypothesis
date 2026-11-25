@@ -137,7 +137,7 @@ theorem resSet3_finite (hc : Col.PairComm D.opAll) (X : Finset (G → K)) : (D.r
     if h : p ∈ D.resSet3 X then (hex p h).choose else 0
   have hf : ∀ p (h : p ∈ D.resSet3 X), D.HasRes3 p (f p) ∧ Col.Occurs D.opAll (f p) := by
     intro p h
-    simp only [f, dif_pos h]
+    simp only [f, dite_eq_left h]
     exact (hex p h).choose_spec
   refine Set.Finite.of_injOn (f := f) (t := (F : Set (D.OpIx → K))) ?_ ?_ F.finite_toSet
   · intro p h
@@ -160,7 +160,7 @@ theorem resSet3_finite (hc : Col.PairComm D.opAll) (X : Finset (G → K)) : (D.r
 theorem mem_ixFin3 (hc : Col.PairComm D.opAll) (X : Finset (G → K)) (p : Typ3 K Pl0 I0 Ty) :
     p ∈ D.ixFin3 X ↔ p ∈ D.resSet3 X := by
   unfold InertDat3.ixFin3
-  rw [dif_pos (D.resSet3_finite hc X), Set.Finite.mem_toFinset]
+  rw [dite_eq_left (D.resSet3_finite hc X), Set.Finite.mem_toFinset]
 
 theorem mem_resSet3_of_mem_ixFin3 {X : Finset (G → K)} {p : Typ3 K Pl0 I0 Ty} (h : p ∈ D.ixFin3 X) :
     p ∈ D.resSet3 X := by
@@ -320,13 +320,13 @@ theorem sameTypes_self3 {v0 : InfinitePlace K} (hv0 : IsConjAt v0) {s : ℕ} (h 
   have hSg : ∀ P, Sg (B.pl P) = c P := by
     intro P
     have hP : ∃ P', B.pl P' = B.pl P := ⟨P, rfl⟩
-    simp only [Sg, dif_pos hP]
+    simp only [Sg, dite_eq_left hP]
     rw [h.pl_inj hP.choose_spec]
   let e : I0 × Ty → K := fun k0 => if hP : ∃ P, D.plI P = k0.1 then i.1 (Sum.inr (hP.choose, k0.2)) else 0
   have he : ∀ (P : D.PlI) (y : Ty), e (D.plI P, y) = i.1 (Sum.inr (P, y)) := by
     intro P y
     have hP : ∃ P', D.plI P' = D.plI P := ⟨P, rfl⟩
-    simp only [e, dif_pos hP]
+    simp only [e, dite_eq_left hP]
     rw [hD.plI_inj hP.choose_spec]
   have hres : D.HasRes3 (Sg, e) i.1 := by
     refine ⟨fun P => ?_, fun k => (he k.1 k.2).symm⟩
@@ -338,10 +338,10 @@ theorem sameTypes_self3 {v0 : InfinitePlace K} (hv0 : IsConjAt v0) {s : ℕ} (h 
   refine ⟨fun P0 hP0 => ?_, fun P0 hP0 y => ?_, ?_⟩
   · have hP : ¬ ∃ P, B.pl P = P0 := fun ⟨P, hP⟩ => hP0 ⟨P, hP⟩
     show Sg P0 = 1
-    simp only [Sg, dif_neg hP]
+    simp only [Sg, dite_eq_right hP]
   · have hP : ¬ ∃ P, D.plI P = P0 := fun ⟨P, hP⟩ => hP0 ⟨P, hP⟩
     show e (P0, y) = 0
-    simp only [e, dif_neg hP]
+    simp only [e, dite_eq_right hP]
   · obtain ⟨u0, hu0⟩ := B.exists_vE_of_fix (Lvl.full ℓ.X) hψA
     intro hbot
     have hu0mem : u0 ∈ B.inV0 (Lvl.full ℓ.X) (D.inertTypeEigenspaceSum (Sg, e)) := by
@@ -436,9 +436,3 @@ theorem typesSep3_of (hc : Col.PairComm (F3.F.R F3.F.μ0).op) (hsep2 : F3.F.Type
 end DefFam3
 
 end Formalism.L2.DIV
-
-namespace Formalism.L2.DIV.Test3
-
-open Formalism.DivisionValues Formalism.L2.Indef Formalism.L2.Col Formalism.L2.NCov Formalism.L2.DIV Formalism.L2.DIV.Test
-
-end Formalism.L2.DIV.Test3

@@ -3,51 +3,7 @@ module
 public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementA
 public import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -129,7 +85,7 @@ private theorem coeff_ev0_eq_coeff_single_zero (h : MvPowerSeries (Fin 2) K) (k 
   unfold ev0
   rw [MvPowerSeries.coeff_subst hasSubst_eval_second_zero, finsum_eq_single _ (Finsupp.single 0 k)]
   · rw [Finsupp.prod_single_index (by simp)]
-    simp only [Matrix.cons_val_zero, hc, if_true, smul_eq_mul, mul_one]
+    simp only [Matrix.cons_val_zero, hc, ite_true, smul_eq_mul, mul_one]
   · intro d hd
     rw [Finsupp.prod_fintype _ _ (by simp), Fin.prod_univ_two]
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
@@ -139,7 +95,7 @@ private theorem coeff_ev0_eq_coeff_single_zero (h : MvPowerSeries (Fin 2) K) (k 
         apply hd
         ext a
         fin_cases a <;> simp [h1, hk]
-      rw [h1, pow_zero, mul_one, hc, if_neg hd0, smul_zero]
+      rw [h1, pow_zero, mul_one, hc, ite_eq_right hd0, smul_zero]
     · rw [zero_pow h1, mul_zero, map_zero, smul_zero]
 
 theorem restrictSecondZero_inVar_one (f : PowerSeries K) :
@@ -149,7 +105,7 @@ theorem restrictSecondZero_inVar_one (f : PowerSeries K) :
   by_cases hk : k = 0
   · subst hk
     simp [PowerSeries.coeff_zero_eq_constantCoeff_apply]
-  · rw [if_neg hk, if_neg]
+  · rw [ite_eq_right hk, ite_eq_right]
     intro h
     have := congrArg (fun n : Fin 2 →₀ ℕ => n 0) h
     simp at this
@@ -319,34 +275,34 @@ theorem difference_quotient_rule_holds : DqRule := by
         else 0) := by
     intro i j
     rcases Nat.eq_zero_or_pos j with rfl | hj
-    · rw [if_pos rfl, if_neg (by omega : ¬ 2 ≤ 0), sub_zero]
+    · rw [ite_eq_left rfl, ite_eq_right (by omega : ¬ 2 ≤ 0), sub_zero]
       rcases Nat.lt_or_ge i 2 with hi | hi
-      · rw [if_neg (by omega : ¬ 2 ≤ i)]
+      · rw [ite_eq_right (by omega : ¬ 2 ≤ i)]
         interval_cases i
         · simp
         · simp [hc 1 (by decide)]
-      · rw [if_pos hi, if_neg (by omega : i ≠ 0), sub_zero, show i - 2 + 0 + 2 = i by omega]
+      · rw [ite_eq_left hi, ite_eq_right (by omega : i ≠ 0), sub_zero, show i - 2 + 0 + 2 = i by omega]
         simp only [hev i hi]
         by_cases he : Even i
         · simp [he]
         · simp [he, hc i he]
-    · rw [if_neg (by omega : j ≠ 0)]
+    · rw [ite_eq_right (by omega : j ≠ 0)]
       rcases Nat.eq_zero_or_pos i with rfl | hi
-      · rw [if_pos rfl, if_neg (by omega : ¬ 2 ≤ 0), zero_sub, zero_sub]
+      · rw [ite_eq_left rfl, ite_eq_right (by omega : ¬ 2 ≤ 0), zero_sub, zero_sub]
         rcases Nat.lt_or_ge j 2 with hj2 | hj2
         · have : j = 1 := by omega
           subst this
           simp [hc 1 (by decide)]
-        · rw [if_pos hj2, show 0 + (j - 2) + 2 = j by omega]
+        · rw [ite_eq_left hj2, show 0 + (j - 2) + 2 = j by omega]
           simp only [hev j hj2]
           by_cases he : Even j
           · simp [he]
           · simp [he, hc j he]
-      · rw [if_neg (by omega : i ≠ 0)]
+      · rw [ite_eq_right (by omega : i ≠ 0)]
         have t1 : (if 2 ≤ i then (if Even (i - 2) ∧ Even j then PowerSeries.coeff (i - 2 + j + 2) P
             else 0) else 0) = if Even i ∧ Even j then PowerSeries.coeff (i + j) P else 0 := by
           by_cases hi2 : 2 ≤ i
-          · rw [if_pos hi2, show i - 2 + j + 2 = i + j by omega]
+          · rw [ite_eq_left hi2, show i - 2 + j + 2 = i + j by omega]
             simp only [hev i hi2]
           · have : i = 1 := by omega
             subst this
@@ -354,7 +310,7 @@ theorem difference_quotient_rule_holds : DqRule := by
         have t2 : (if 2 ≤ j then (if Even i ∧ Even (j - 2) then PowerSeries.coeff (i + (j - 2) + 2) P
             else 0) else 0) = if Even i ∧ Even j then PowerSeries.coeff (i + j) P else 0 := by
           by_cases hj2 : 2 ≤ j
-          · rw [if_pos hj2, show i + (j - 2) + 2 = i + j by omega]
+          · rw [ite_eq_left hj2, show i + (j - 2) + 2 = i + j by omega]
             simp only [hev j hj2]
           · have : j = 1 := by omega
             subst this

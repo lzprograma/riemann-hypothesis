@@ -101,7 +101,7 @@ theorem zIdem_pair_ne_zero {G : Type} [Group G] [Fintype G] (τ W : FDRep ℂ G)
   haveI := invertibleOfNonzero hcard
   have ho := FDRep.char_orthonormal W τ
   by_contra hn
-  rw [if_neg hn] at ho
+  rw [ite_eq_right hn] at ho
   apply h
   have hs : ∑ g, W.character g * τ.character g⁻¹ = 0 := by
     rcases mul_eq_zero.mp ho with h0 | h0
@@ -124,8 +124,7 @@ theorem GlobalTheory.SeriesIdem.exists_simple_of_eSerO_pair : ∀ (g : ℕ) [Fac
   classical
   obtain ⟨W, hWs, rfl⟩ := (PI.SerBridgeGLW.irrCharIff_of PI.SerBridgeGLW.conjugate_character_formula _ ψ).1 hψ
   haveI := hWs
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   have hnt : Nontrivial W := by
     by_contra hn
     rw [not_nontrivial_iff_subsingleton] at hn
@@ -161,9 +160,9 @@ theorem GlobalTheory.SeriesIdem.exists_simple_of_eSerO_pair : ∀ (g : ℕ) [Fac
     rw [hsplit]
     refine Finset.sum_eq_zero fun z _ => ?_
     by_cases hP : ∃ τ : FDRep ℂ (GL (Fin r) (ZMod g)), Simple τ ∧ zIdem τ = z ∧ HasLabelO O τ f
-    · simp only [hF, finsum_eq_if, if_pos hP]
+    · simp only [hF, finsum_eq_if, ite_eq_left hP]
       exact hz z hP
-    · simp only [hF, finsum_eq_if, if_neg hP]
+    · simp only [hF, finsum_eq_if, ite_eq_right hP]
       simp
   · rw [finsum_of_infinite_support hfin]
     simp
@@ -333,11 +332,11 @@ variable {K : Type} [Field K] [Fintype K] [DecidableEq K] {ι : Type} [Fintype �
 theorem unip_diag_mul (b : ι → Fin s) {g h : GL ι K} (hg : g ∈ unip K b) (hh : h ∈ unip K b)
     (i j : ι) (hij : b i = b j) : ((g * h : GL ι K) : Matrix ι ι K) i j = if i = j then 1 else 0 := by
   rw [Units.val_mul, Matrix.mul_apply, Finset.sum_eq_single i]
-  · rw [hg.2 i i rfl, if_pos rfl, one_mul, hh.2 i j hij]
+  · rw [hg.2 i i rfl, ite_eq_left rfl, one_mul, hh.2 i j hij]
   · intro k _ hki
     rcases lt_trichotomy (b k) (b i) with hlt | heq | hgt
     · rw [hg.1.1 i k hlt, zero_mul]
-    · rw [hg.2 i k heq.symm, if_neg (Ne.symm hki), zero_mul]
+    · rw [hg.2 i k heq.symm, ite_eq_right (Ne.symm hki), zero_mul]
     · rw [hh.1.1 k j (by rw [← hij]; exact hgt), mul_zero]
   · intro h; exact absurd (Finset.mem_univ i) h
 
@@ -346,11 +345,11 @@ theorem unip_diag_inv (b : ι → Fin s) {g : GL ι K} (hg : g ∈ unip K b)
   have h1 : ((g⁻¹ * g : GL ι K) : Matrix ι ι K) i j = if i = j then 1 else 0 := by
     rw [inv_mul_cancel, Units.val_one, Matrix.one_apply]
   rw [Units.val_mul, Matrix.mul_apply, Finset.sum_eq_single j] at h1
-  · rwa [hg.2 j j rfl, if_pos rfl, mul_one] at h1
+  · rwa [hg.2 j j rfl, ite_eq_left rfl, mul_one] at h1
   · intro k _ hkj
     rcases lt_trichotomy (b k) (b i) with hlt | heq | hgt
     · rw [hg.1.2 i k hlt, zero_mul]
-    · rw [hg.2 k j (heq.trans hij), if_neg hkj, mul_zero]
+    · rw [hg.2 k j (heq.trans hij), ite_eq_right hkj, mul_zero]
     · rw [hg.1.1 k j (by rw [← hij]; exact hgt), mul_zero]
   · intro h; exact absurd (Finset.mem_univ j) h
 
@@ -467,8 +466,7 @@ theorem tprod_update_injective (v : ∀ i, M i) (hv : ∀ i, v i ≠ 0) (i : ι)
     · rw [Function.update_of_ne hj]; exact hv j
   have hφ : ∀ j, ∃ φ : Module.Dual ℂ (M j), φ (Function.update v i x j) ≠ 0 := by
     intro j
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hw j ((Module.forall_dual_apply_eq_zero_iff ℂ _).1 hc)
   choose φ hφ using hφ
   have h1 := congrArg (PiTensorProduct.lift ((MultilinearMap.mkPiAlgebra ℂ ι ℂ).compLinearMap φ)) hx
@@ -655,8 +653,7 @@ theorem eq_bot_or_top_of_map_stable [∀ i, FiniteDimensional ℂ (V i)]
   let e := fun c => Module.finBasis ℂ (V c)
   let B := Basis.piTensorProduct e
   obtain ⟨I, hI⟩ : ∃ I, B.repr x I ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hx0 (B.repr.map_eq_zero_iff.1 (Finsupp.ext hc))
   have hJ : ∀ J, B J ∈ W := by
     intro J
@@ -802,12 +799,6 @@ theorem exists_sorted {C : LabelConv K} (O : LabelMap K C) (b : Fin r → Fin s)
       show Matrix.reindex e e ((q.1⁻¹ : GL (Fin r) K) : Matrix (Fin r) (Fin r) K) i j = 0
       simp only [Matrix.reindex_apply, Matrix.submatrix_apply]
       exact h2 _ _ hij
-  have hlevi : ∀ (p : parab K b') (c : Fin s),
-      levi K b c ⟨A p.1, hpar p⟩ = (glEquiv K (ec c)).symm (levi K b' c p) := by
-    intro p c
-    apply Units.ext
-    ext i j
-    rfl
   have hinfl : ∀ p : parab K b', infl K b lam ⟨A p.1, hpar p⟩ = infl K b' lam' p := by
     intro p
     unfold infl
@@ -1017,9 +1008,9 @@ theorem isChar_prod [DecidableEq ι] {ψ : ∀ i, G i → ℂ} (h : ∀ i, IsCha
     simp only [Mf, Matrix.of_apply, Pi.one_apply, map_one, Units.val_one, Matrix.one_apply]
     by_cases hpq : p = q
     · subst hpq; simp
-    · rw [if_neg hpq]
+    · rw [ite_eq_right hpq]
       obtain ⟨i, hi⟩ := Function.ne_iff.1 hpq
-      exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
+      exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)
   have hMm : ∀ g h, Mf (g * h) = Mf g * Mf h := by
     intro g h
     ext p q
@@ -1089,7 +1080,7 @@ theorem eq_of_sum_ne_zero {χ ψ : H → ℂ} (hχ : IsIrrChar χ) (hψ : IsIrrC
   by_cases hi : Nonempty (V ≅ W)
   · obtain ⟨i⟩ := hi
     exact FDRep.char_iso i
-  · rw [if_neg hi] at ho
+  · rw [ite_eq_right hi] at ho
     exact absurd ((mul_eq_zero.mp ho).resolve_left (inv_ne_zero hc)) h
 
 theorem sum_single (e : MonoidAlgebra ℂ H) : ∑ g : H, MonoidAlgebra.single g (e.coeff g) = e := by
@@ -1158,24 +1149,23 @@ theorem exists_factor [DecidableEq ι] {χ : (∀ i, G i) → ℂ} (hχ : IsIrrC
       MonoidAlgebra.coeff_single, Finsupp.single_apply] at h
     rw [h]
     by_cases ht : t = 1
-    · rw [if_pos ht.symm, if_pos ht]
-    · rw [if_neg (Ne.symm ht), if_neg ht]
+    · rw [ite_eq_left ht.symm, ite_eq_left ht]
+    · rw [ite_eq_right (Ne.symm ht), ite_eq_right ht]
   have hdelta : ∀ x : (∀ i, G i), ∑ p ∈ Fintype.piFinset Z, ∏ i, (p i).coeff (x i) = if x = 1 then 1 else 0 := by
     intro x
     rw [← Finset.prod_univ_sum Z (fun i z => z.coeff (x i))]
     simp only [hone]
     by_cases hx : x = 1
     · subst hx; simp
-    · rw [if_neg hx]
+    · rw [ite_eq_right hx]
       obtain ⟨i, hi⟩ := Function.ne_iff.1 hx
-      exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
+      exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)
   have hkey : χ 1 = ∑ p ∈ Fintype.piFinset Z, ∑ x, χ x * ∏ i, (p i).coeff (x i) := by
     rw [Finset.sum_comm]
     simp only [← Finset.mul_sum, hdelta]
     simp
   obtain ⟨p, hp, hne⟩ : ∃ p ∈ Fintype.piFinset Z, ∑ x, χ x * ∏ i, (p i).coeff (x i) ≠ 0 := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     exact irr_one_ne_zero hχ (hkey.trans (Finset.sum_eq_zero hno))
   have hτ : ∀ i, ∃ τ : FDRep ℂ (G i), Simple τ ∧ zIdem τ = p i := fun i => by
     have := Fintype.mem_piFinset.1 hp i

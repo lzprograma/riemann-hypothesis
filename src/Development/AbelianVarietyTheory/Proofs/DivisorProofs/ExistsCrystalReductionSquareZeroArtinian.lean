@@ -8,52 +8,11 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeUnobst
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrothendieckDeformationOfLifting
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSmulTopOfForallMem
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceSpecOfIsLocalRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
 import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.GoodClass
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -62,9 +21,7 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
 open scoped TensorProduct
 open GlobalTheory.ZM GlobalTheory.SiegelTor
-attribute [local instance] Over.cartesianMonoidalCategory
 
-set_option autoImplicit false
 noncomputable section
 open IsLocalRing
 open GlobalTheory.AbDual GlobalTheory.AbLaw GlobalTheory.CechPic
@@ -84,28 +41,27 @@ theorem exists_crysRed : ∀ (C C₀ : Type) [CommRing C] [IsLocalRing C] [IsArt
     rw [hI2] at h2
     exact one_ne_zero ((Submodule.mem_bot C).1 h2)
   haveI : IsLocalRing C₀ := IsLocalRing.of_surjective' π hπ
-  let κ := divided₂ hsq
-  have hκ : IsNilDP κ := isDPNilpotent_squareZero hsq
+  have hκ : IsNilDP (divided₂ hsq) := isDPNilpotent_squareZero hsq
   have ADR : GlobalTheory.Published.AbelianDeRham := GlobalTheory.abelianDeRham
   have GD : GlobalTheory.Published.GrothendieckDeformation :=
     GlobalTheory.Published.grothendieckDeformation_of_lifting GlobalTheory.abelianDeRham GlobalTheory.abelianScheme_hom_lifting_nilpotent_dividedPowers
   obtain ⟨A', _, i', h', hA'⟩ := GlobalTheory.UnobTop.abelianUnobstructed C (RingHom.ker π) hsq C₀ π hπ rfl A₀ hA₀
   obtain ⟨g, hg⟩ := GlobalTheory.AbelianDim.exists_relDim C A' hA'
-  have HC := (GD C (RingHom.ker π) κ hκ C₀ π hπ rfl).1
+  have HC := (GD C (RingHom.ker π) (divided₂ hsq) hκ C₀ π hπ rfl).1
   obtain ⟨bij, ⟨N0, hN0⟩, hAdm⟩ := HC g A₀ A' i' h' hA' hg
-  let e := LinearEquiv.ofBijective (crysToDR κ h') (HC.crysToDR_bijective h' hA' hg)
-  have ee : ∀ xA, crysToDR κ h' (e.symm xA) = xA := e.apply_symm_apply
+  let e := LinearEquiv.ofBijective (crysToDR (divided₂ hsq) h') (HC.crysToDR_bijective h' hA' hg)
+  have ee : ∀ xA, crysToDR (divided₂ hsq) h' (e.symm xA) = xA := e.apply_symm_apply
   letI : Algebra C C₀ := π.toAlgebra
   have hBC := (ADR.2.2.1 C A' g hA' hg C₀ A₀ i' h').1
   obtain ⟨hfinA, hprojA, -⟩ := ADR.1.prim hA' hg
   haveI := hfinA
   haveI := hprojA
-  have hfin : Module.Finite C (Crys κ (spMap π) A₀) := Module.Finite.equiv e.symm
-  have hproj : Module.Projective C (Crys κ (spMap π) A₀) := Module.Projective.of_equiv e.symm
-  let red : Crys κ (spMap π) A₀ →ₛₗ[π] HdR A₀ := hBC.bcMap.comp (crysToDR κ h')
-  have hm : ∀ x, (crysRedMor κ rfl A₀).Corr x (red x) := fun x ↦
+  have hfin : Module.Finite C (Crys (divided₂ hsq) (spMap π) A₀) := Module.Finite.equiv e.symm
+  have hproj : Module.Projective C (Crys (divided₂ hsq) (spMap π) A₀) := Module.Projective.of_equiv e.symm
+  let red : Crys (divided₂ hsq) (spMap π) A₀ →ₛₗ[π] HdR A₀ := hBC.bcMap.comp (crysToDR (divided₂ hsq) h')
+  have hm : ∀ x, (crysRedMor (divided₂ hsq) rfl A₀).Corr x (red x) := fun x ↦
     (corr_crysToDR_iff rfl h' bij.2 x (red x)).1 (by exact hBC.corr_iff.2 rfl)
-  have hcorr : ∀ d y, (crysRedMor κ rfl A₀).Corr d y ↔ red d = y := fun d y ↦
+  have hcorr : ∀ d y, (crysRedMor (divided₂ hsq) rfl A₀).Corr d y ↔ red d = y := fun d y ↦
     ⟨fun H ↦ by exact hBC.corr_iff.1 ((corr_crysToDR_iff rfl h' bij.2 d y).2 H), fun H ↦ H ▸ hm d⟩
   have hred : Function.Surjective red := by
     intro y
@@ -115,37 +71,37 @@ theorem exists_crysRed : ∀ (C C₀ : Type) [CommRing C] [IsLocalRing C] [IsArt
         map_smul' r c := by rw [LinearMap.map_smulₛₗ, map_smul]; rfl }
     obtain ⟨xA, hx⟩ := Module.projective_lifting_property (Algebra.linearMap C C₀) l hπ
     refine ⟨e.symm xA, ?_⟩
-    show hBC.bcMap (crysToDR κ h' (e.symm xA)) = y
+    show hBC.bcMap (crysToDR (divided₂ hsq) h' (e.symm xA)) = y
     rw [ee]
     exact hBC.corr_iff.1 fun c ↦ (LinearMap.congr_fun hx c).symm
-  have hker : ∀ x, red x = 0 → x ∈ (RingHom.ker π) • (⊤ : Submodule C (Crys κ (spMap π) A₀)) := by
+  have hker : ∀ x, red x = 0 → x ∈ (RingHom.ker π) • (⊤ : Submodule C (Crys (divided₂ hsq) (spMap π) A₀)) := by
     intro x hx
     have hc := hBC.corr_iff.2 hx
-    have hmem := GlobalTheory.BirigLift.mem_smul_top_of_forall_mem (RingHom.ker π) (crysToDR κ h' x) fun c ↦
+    have hmem := GlobalTheory.BirigLift.mem_smul_top_of_forall_mem (RingHom.ker π) (crysToDR (divided₂ hsq) h' x) fun c ↦
       RingHom.mem_ker.2 ((hc c).symm.trans (LinearMap.zero_apply _))
     have := Submodule.mem_map_of_mem (f := e.symm.toLinearMap) hmem
     rw [Submodule.map_smul''] at this
-    have ex : e.symm.toLinearMap (crysToDR κ h' x) = x := e.symm_apply_apply x
+    have ex : e.symm.toLinearMap (crysToDR (divided₂ hsq) h' x) = x := e.symm_apply_apply x
     rw [ex] at this
     exact Submodule.smul_mono le_rfl le_top this
-  have hact : ∀ (c : O) d, red (GlobalTheory.HTSummand.crysAct κ (spMap π) a c d) =
+  have hact : ∀ (c : O) d, red (GlobalTheory.HTSummand.crysAct (divided₂ hsq) (spMap π) a c d) =
       GlobalTheory.HTSummand.crysAct (dp0 C₀) (𝟙 _) a c (red d) := by
     intro c d
     haveI := a.hom c
     refine (hcorr _ _).1 ?_
     rw [GlobalTheory.HTSummand.crysAct_apply, GlobalTheory.HTSummand.crysAct_apply]
-    exact GrpMor.Corr.push (m := crysRedMor κ rfl A₀) (crysRedMor κ rfl A₀) (a.act c) (a.act c) (by simp) (hm d)
-  have hFN : IsCompl (liftFil κ h') (N0.comap (crysToDR κ h')) :=
+    exact GrpMor.Corr.push (m := crysRedMor (divided₂ hsq) rfl A₀) (crysRedMor (divided₂ hsq) rfl A₀) (a.act c) (a.act c) (by simp) (hm d)
+  have hFN : IsCompl (liftFil (divided₂ hsq) h') (N0.comap (crysToDR (divided₂ hsq) h')) :=
     (Submodule.orderIsoMapComap e).symm.isCompl hN0
-  refine ⟨red, hfin, hproj, hred, hker, hcorr, hact, liftFil κ h', N0.comap (crysToDR κ h'), hFN, fun y ↦ ⟨?_, ?_⟩⟩
+  refine ⟨red, hfin, hproj, hred, hker, hcorr, hact, liftFil (divided₂ hsq) h', N0.comap (crysToDR (divided₂ hsq) h'), hFN, fun y ↦ ⟨?_, ?_⟩⟩
   · intro hy
     obtain ⟨xA, hxA, hc⟩ := (hAdm y).1 hy
     refine ⟨e.symm xA, ?_, ?_⟩
-    · show crysToDR κ h' (e.symm xA) ∈ Fil A'
+    · show crysToDR (divided₂ hsq) h' (e.symm xA) ∈ Fil A'
       rw [ee]; exact hxA
-    · show hBC.bcMap (crysToDR κ h' (e.symm xA)) = y
+    · show hBC.bcMap (crysToDR (divided₂ hsq) h' (e.symm xA)) = y
       rw [ee]; exact hBC.corr_iff.1 hc
   · rintro ⟨d, hd, rfl⟩
-    exact (hAdm (red d)).2 ⟨crysToDR κ h' d, hd, by exact hBC.corr_iff.2 rfl⟩
+    exact (hAdm (red d)).2 ⟨crysToDR (divided₂ hsq) h' d, hd, by exact hBC.corr_iff.2 rfl⟩
 
 end GlobalTheory.CrysRed

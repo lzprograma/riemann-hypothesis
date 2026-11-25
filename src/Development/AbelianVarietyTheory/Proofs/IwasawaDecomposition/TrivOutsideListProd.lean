@@ -56,7 +56,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.RecTie
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2 Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.RecTie GlobalTheory.Mem GlobalTheory.Mem.R3 GlobalTheory.HeightCounting GlobalTheory.CenFrame
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -115,8 +114,7 @@ theorem val_intCast_eq_one (s : SplitPlace L) {p : ℕ} [Fact p.Prime]
     rw [e]
     exact Valuation.map_one_add_of_lt _ h2
   apply le_antisymm (val_intCast_le_one s m)
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have h4 := mul_lt_one_of_lt_of_le hlt (val_intCast_le_one s u)
   rw [← map_mul, h3] at h4
   exact lt_irrefl _ h4
@@ -183,10 +181,10 @@ theorem exists_local (s : SplitPlace L) (r t p : ℕ) [Fact p.Prime]
   · intro a b
     rw [hx2, hval, hM]
     by_cases hab : a.val < r ∧ b.val < r
-    · rw [dif_pos hab, Matrix.map_apply]
-      simp [bz, dif_pos hab]
-    · rw [dif_neg hab, Matrix.map_apply]
-      simp only [bz, dif_neg hab]
+    · rw [dite_eq_left hab, Matrix.map_apply]
+      simp [bz, dite_eq_left hab]
+    · rw [dite_eq_right hab, Matrix.map_apply]
+      simp only [bz, dite_eq_right hab]
       split_ifs <;> simp
 
 end Local2

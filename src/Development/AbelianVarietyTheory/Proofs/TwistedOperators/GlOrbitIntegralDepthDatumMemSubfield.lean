@@ -57,7 +57,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Form
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest Formalism.IndefR.WeilFull GlobalTheory.RowClaim
 open MeasureTheory GlobalTheory.SplitFlip GlobalTheory.SplitWeil
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open ValuativeRel Formalism.L2.Host
 
 namespace GlobalTheory.SmallFInF
@@ -104,7 +103,7 @@ end Helpers
 theorem smallF_mem : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] {A A' D : Type} [Fintype A] [DecidableEq A] [Fintype A'] [DecidableEq A'] [Fintype D] [DecidableEq D] (F : Subfield ℂ) {J : Subgroup (GL A' k)}, IsOpen (J : Set (GL A' k)) → J ≤ KO k A' → ∀ (σ : A ⊕ A' ≃ D) (ν : kˣ →* ℂˣ) {ϖ : kˣ} {e : ℕ}, IsUnif ϖ → 1 ≤ e → CondLE ϖ e ν → ¬ IsUnram ν → (∀ u, (ν u : ℂ) ∈ F) → (∀ u : kˣ, apow u (1 / 2) ∈ F) → ∀ (c : D → kˣ) {Ψ : Matrix A' D k → ℂ}, HasDepth ϖ e (diagLat c) Ψ → (∀ X, Ψ X ∈ F) → ∀ h : GL D k, smallF (haarVol J) ν Ψ (Y0 k σ * h.val) ∈ F := by
   intro k _ _ _ _ _ _ A A' D _ _ _ _ _ _ F J hJo hJK σ ν ϖ e hϖ he hcond hram hνF hapF c Ψ hΨ hΨF h
   haveI := isHaarMeasure_haarVol hJo hJK
-  obtain ⟨R, N, hbd, hper⟩ := GlobalTheory.T.exists_valuation_bound_and_periodic_frameBlock σ hϖ c hΨ h
+  obtain ⟨R, N, hbd, hper⟩ := _root_.GlobalTheory.DepthBound.latticeDepth_comp_frameBlock_bounded_periodic σ hϖ c hΨ h
   set Y := Y0 k σ * h.val with hY
   set cN : kˣ := ϖ ^ N with hcN
   set z : ℂ := (Fintype.card D : ℂ) / 2 with hz
@@ -134,10 +133,10 @@ theorem smallF_mem : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace
     by_cases hs : ∃ y : Matrix A' A' k, (∀ i j, valuation k (y i j - x i j) ≤ valuation k (cN : k)) ∧ y.det = 0
     · obtain ⟨y, hy, hy0⟩ := hs
       rw [hCs_eq x y hy]
-      rw [GlobalTheory.T.integral_ramifiedChar_det_singularMatrixCoset_eq_zero (haarVol J) ν z hram cN y hy0]
+      rw [GlobalTheory.CosetVanish.integral_coset_singular_eq_zero (haarVol J) ν z hram cN y hy0]
       exact F.zero_mem
-    · push_neg at hs
-      exact GlobalTheory.T.integral_detChar_invertibleMatrixBall_mem_subfield F hJo hJK ν z hϖ hcond hνF hzF cN x hs
+    · push Not at hs
+      exact GlobalTheory.GLBallInt.integral_glBall_mem F hJo hJK ν z hϖ hcond hνF hzF cN x hs
 
   let L : AddSubgroup (Matrix A' A' k) :=
     { carrier := {Z | ∀ i j, valuation k (Z i j) ≤ valuation k (cN : k)}

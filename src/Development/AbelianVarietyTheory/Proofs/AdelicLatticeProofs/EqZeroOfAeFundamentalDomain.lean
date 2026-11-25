@@ -53,8 +53,6 @@ open scoped TensorProduct ContDiff Topology ENNReal
 
 namespace GlobalTheory.WeilVacMove
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Filter
 
 section Abstract

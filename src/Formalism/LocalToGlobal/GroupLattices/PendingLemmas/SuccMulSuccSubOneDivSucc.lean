@@ -31,7 +31,7 @@ theorem facS_add_single (n : σ →₀ ℕ) (y : σ) :
   have h1 : ∏ x ∈ univ.erase y, ((((n + Finsupp.single y 1 : σ →₀ ℕ)) x).factorial : S) = ∏ x ∈ univ.erase y, ((n x).factorial : S) := by
     refine Finset.prod_congr rfl fun x hx => ?_
     have : x ≠ y := (Finset.mem_erase.1 hx).1
-    rw [Finsupp.add_apply, Finsupp.single_apply, if_neg this.symm, add_zero]
+    rw [Finsupp.add_apply, Finsupp.single_apply, ite_eq_right this.symm, add_zero]
   rw [h1, Finsupp.add_apply, Finsupp.single_eq_same, Nat.factorial_succ]
   push_cast
   ring
@@ -86,7 +86,7 @@ theorem ap_C (a : S) (F : MvPolynomial σ S) : ap (C a) F = AddMonoidAlgebra.coe
     intro n hn
     rw [mem_support_iff, coeff_C] at hn
     by_contra h
-    exact hn (if_neg fun h0 => h (Finset.mem_singleton.2 h0.symm))), Finset.sum_singleton, coeff_C, if_pos rfl]
+    exact hn (ite_eq_right fun h0 => h (Finset.mem_singleton.2 h0.symm))), Finset.sum_singleton, coeff_C, ite_eq_left rfl]
   simp [facS]
 
 variable (L : σ → σ → S)
@@ -168,14 +168,14 @@ theorem ap_monomial (R : MvPolynomial σ S) (m : σ →₀ ℕ) : ap R (monomial
   unfold ap
   by_cases hm : m ∈ R.support
   · rw [Finset.sum_eq_single m]
-    · rw [coeff_monomial, if_pos rfl, mul_one]
+    · rw [coeff_monomial, ite_eq_left rfl, mul_one]
     · intro n _ hn
-      rw [coeff_monomial, if_neg (Ne.symm hn), mul_zero, zero_mul]
+      rw [coeff_monomial, ite_eq_right (Ne.symm hn), mul_zero, zero_mul]
     · intro h
       exact absurd hm h
   · rw [notMem_support_iff.1 hm, mul_zero]
     refine Finset.sum_eq_zero fun n hn => ?_
-    rw [coeff_monomial, if_neg (fun h : m = n => hm (h ▸ hn)), mul_zero, zero_mul]
+    rw [coeff_monomial, ite_eq_right (fun h : m = n => hm (h ▸ hn)), mul_zero, zero_mul]
 
 variable (Lk : σ → σ → K)
 
@@ -247,16 +247,16 @@ theorem pr_sub (Gd : (σ →₀ ℕ) → Prop) [DecidablePred Gd]
     have h0 := ap_sub L Q (monomial m 1)
     rw [ap_monomial] at h0
     by_cases hg : Gd m
-    · rw [if_pos hg, ← h0]
+    · rw [ite_eq_left hg, ← h0]
       refine Finset.sum_congr rfl fun n _ => ?_
       by_cases hz : AddMonoidAlgebra.coeff (aeval (linP L) (monomial m (1 : S))) n = 0
       · rw [hz]; simp
-      · rw [if_pos ((hGd m n hz).2 hg)]
-    · rw [if_neg hg, zero_mul]
+      · rw [ite_eq_left ((hGd m n hz).2 hg)]
+    · rw [ite_eq_right hg, zero_mul]
       refine Finset.sum_eq_zero fun n _ => ?_
       by_cases hz : AddMonoidAlgebra.coeff (aeval (linP L) (monomial m (1 : S))) n = 0
       · rw [hz]; simp
-      · rw [if_neg (fun h => hg ((hGd m n hz).1 h)), zero_mul]
+      · rw [ite_eq_right (fun h => hg ((hGd m n hz).1 h)), zero_mul]
   have h2 : pr Gd (aeval (linT L) Q) f =
       ∑ m ∈ T, (if Gd m then facS K m * MvPowerSeries.coeff m f else 0) • AddMonoidAlgebra.coeff (aeval (linT L) Q) m :=
     Finset.sum_subset Finset.subset_union_right fun m _ hm' => by rw [notMem_support_iff.1 hm', smul_zero]
@@ -268,13 +268,13 @@ theorem pr_sub (Gd : (σ →₀ ℕ) → Prop) [DecidablePred Gd]
         refine Finset.sum_congr rfl fun n hn => ?_
         rw [hc n hn, Algebra.smul_def]
         by_cases hg : Gd n
-        · simp only [if_pos hg]
+        · simp only [ite_eq_left hg]
 
           rw [map_mul, map_sum, algebraMap_facS, Finset.mul_sum, Finset.sum_mul]
           refine Finset.sum_congr rfl fun m _ => ?_
           rw [map_mul, coeff_prod_linS]
           ring
-        · simp only [if_neg hg]
+        · simp only [ite_eq_right hg]
           simp
     _ = ∑ m ∈ T, algebraMap K S (MvPowerSeries.coeff m f) *
           ((if Gd m then facS S m else 0) * AddMonoidAlgebra.coeff (aeval (linT L) Q) m) := by
@@ -285,10 +285,10 @@ theorem pr_sub (Gd : (σ →₀ ℕ) → Prop) [DecidablePred Gd]
         refine Finset.sum_congr rfl fun m _ => ?_
         rw [Algebra.smul_def]
         by_cases hg : Gd m
-        · simp only [if_pos hg]
+        · simp only [ite_eq_left hg]
           rw [map_mul, algebraMap_facS]
           ring
-        · simp only [if_neg hg]
+        · simp only [ite_eq_right hg]
           simp
 
 end Series
@@ -307,8 +307,8 @@ theorem actS_eq (z : X.ZA j) : actS X Kc j B z =
   unfold actS cf
   refine Finset.sum_congr rfl fun a' _ => ?_
   by_cases h : IsOddPos s
-  · simp only [if_pos h]
-  · simp only [if_neg h, Matrix.transpose_apply]
+  · simp only [ite_eq_left h]
+  · simp only [ite_eq_right h, Matrix.transpose_apply]
 
 def LkB (z z' : X.ZA j) : Kc :=
   ∑ a', if z' = (⟨z.1, (z.2.1, a', z.2.2.2)⟩ : X.ZA j) then cf X Kc j B z.1 z.2.1 z.2.2.1 a' else 0
@@ -321,9 +321,9 @@ theorem linS_LkB (z : X.ZA j) : linS (LkB X Kc j B) z = actS X Kc j B z := by
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a' _ => ?_
   rw [Finset.sum_eq_single (⟨z.1, (z.2.1, a', z.2.2.2)⟩ : X.ZA j)]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
   · intro b _ hb
-    rw [if_neg hb, map_zero, zero_mul]
+    rw [ite_eq_right hb, map_zero, zero_mul]
   · intro h
     exact absurd (mem_univ _) h
 
@@ -336,9 +336,9 @@ theorem LkB_same (y : X.ZA j) (a : Fin (NN X.G.P.m X.t j)) :
   obtain ⟨v, s, a'', b⟩ := y
   unfold LkB
   rw [Finset.sum_eq_single a'']
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
   · intro a' _ ha'
-    refine if_neg fun h => ha' ?_
+    refine ite_eq_right fun h => ha' ?_
     simp only [Sigma.mk.injEq, heq_eq_eq, Prod.mk.injEq, true_and, and_true] at h
     exact h.symm
   · intro h
@@ -358,7 +358,7 @@ theorem linT_LkB (y : X.ZA j) :
     rw [LkB_same]
   · intro x _ hx
     have h0 : LkB X Kc j B x y = 0 := by
-      refine Finset.sum_eq_zero fun a' _ => if_neg fun h => hx ?_
+      refine Finset.sum_eq_zero fun a' _ => ite_eq_right fun h => hx ?_
       subst h
       exact Finset.mem_image.2 ⟨x.2.2.1, mem_univ _, rfl⟩
     beta_reduce
@@ -402,14 +402,14 @@ def wB (v : X.Pl) (s : Fin (X.G.P.n' v)) (z : X.ZA j) : ℕ :=
 theorem wt_eq (v : X.Pl) (s : Fin (X.G.P.n' v)) (n : X.ZA j →₀ ℕ) :
     Finsupp.weight (wB X j v s) n = ∑ a, ∑ b, n ⟨v, (s, a, b)⟩ := by
   rw [Finsupp.weight_eq_sum, sum_block X j (fun z => n z • wB X j v s z) v s (fun z hz => by
-    simp only [wB, if_neg hz, smul_zero])]
+    simp only [wB, ite_eq_right hz, smul_zero])]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   simp [wB]
 
 theorem LkB_ne (x y : X.ZA j) (h : LkB X Kc j B x y ≠ 0) :
     (⟨y.1, y.2.1⟩ : Σ v : X.Pl, Fin (X.G.P.n' v)) = ⟨x.1, x.2.1⟩ := by
   by_contra hne
-  refine h (Finset.sum_eq_zero fun a' _ => if_neg fun hy => hne ?_)
+  refine h (Finset.sum_eq_zero fun a' _ => ite_eq_right fun hy => hne ?_)
   subst hy
   rfl
 
@@ -539,9 +539,9 @@ theorem cf_mul_cf_inv (v : X.Pl) (s : Fin (X.G.P.n' v)) :
   rw [cf_inv]
   unfold cf
   by_cases h : IsOddPos s
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     exact hM_mul_gM X Kc j B v s
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
     rw [← Matrix.transpose_mul, hM_mul_gM, Matrix.transpose_one]
 
 theorem lamB_cD (c : Kc) : lamB X Kc j B (cD X Kc j c) = cD X Kc j c := by
@@ -603,10 +603,10 @@ theorem tau_numD : lamB X Kc j (fun v => (B v)⁻¹) (numD X Kc j) = cD X Kc j (
   rw [← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun s _ => ?_
   by_cases h : IsOddPos s
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     rw [map_mul, map_pow, map_pow, tau_det_y, tau_det_Yt, map_pow, mul_pow]
     ring
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
     rw [map_pow, tau_det_dy, map_pow, mul_pow]
 
 theorem tau_denD : lamB X Kc j (fun v => (B v)⁻¹) (denD X Kc j) = cD X Kc j (d1 X Kc j B) * denD X Kc j := by
@@ -617,10 +617,10 @@ theorem tau_denD : lamB X Kc j (fun v => (B v)⁻¹) (denD X Kc j) = cD X Kc j (
   rw [← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun s _ => ?_
   by_cases h : IsOddPos s
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     rw [map_mul, map_pow, map_pow, tau_det_y, tau_det_Yt, map_pow, mul_pow]
     ring
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
     rw [map_one, map_one, one_mul]
 
 end Tau
@@ -688,11 +688,11 @@ theorem ySub_tau (v : X.Pl) (s : Fin (X.G.P.n' v)) :
       cD X Kc j (if IsOddPos s then (ec X Kc j B v s)⁻¹ else 1) •
         (ySub X Kc j v s).map (lamB X Kc j fun v => (B v)⁻¹) := by
   by_cases h : IsOddPos s
-  · rw [if_pos h, ySub_odd X Kc j v s h]
+  · rw [ite_eq_left h, ySub_odd X Kc j v s h]
     have h1 : (YtMat X Kc j v s).adjugate.map (lamB X Kc j fun v => (B v)⁻¹) =
         ((YtMat X Kc j v s).map (lamB X Kc j fun v => (B v)⁻¹)).adjugate :=
       RingHom.map_adjugate (lamB X Kc j (fun v => (B v)⁻¹) : DA X Kc j →+* DA X Kc j) (YtMat X Kc j v s)
-    have hcf : cf X Kc j (fun v => (B v)⁻¹) v s = mAt X Kc j v s (B v) := by rw [cf_inv, if_pos h]
+    have hcf : cf X Kc j (fun v => (B v)⁻¹) v s = mAt X Kc j v s (B v) := by rw [cf_inv, ite_eq_left h]
     have h2 : ((mAt X Kc j v s (B v)).map (cD X Kc j)).adjugate =
         cD X Kc j (ec X Kc j B v s) • (mAt X Kc j v s ((B v)⁻¹ : GL _ _)).map (cD X Kc j) := by
       have h3 : (mAt X Kc j v s (B v)).map (cD X Kc j) * (mAt X Kc j v s ((B v)⁻¹ : GL _ _)).map (cD X Kc j) = 1 := by
@@ -706,9 +706,9 @@ theorem ySub_tau (v : X.Pl) (s : Fin (X.G.P.n' v)) :
             rw [hcf]
     rw [h1, lamB_YtMat, hcf, Matrix.adjugate_mul_distrib, h2, Matrix.smul_mul, smul_smul, ← map_mul,
       inv_mul_cancel₀ (ec_ne X Kc j B v s), map_one, one_smul]
-  · rw [if_neg h, map_one, one_smul]
-    have h0 : ySub X Kc j v s = dyMat X Kc j v s := by unfold ySub; rw [if_neg h]
-    rw [h0, lamB_dyMat, cf_inv, if_neg h, Matrix.transpose_transpose]
+  · rw [ite_eq_right h, map_one, one_smul]
+    have h0 : ySub X Kc j v s = dyMat X Kc j v s := by unfold ySub; rw [ite_eq_right h]
+    rw [h0, lamB_dyMat, cf_inv, ite_eq_right h, Matrix.transpose_transpose]
 
 end Core
 
@@ -815,8 +815,8 @@ theorem subD_natAct (j : ℕ) (A : ∀ v : Fin (X.Pj j).nV, GL (Fin ((X.Pj j).m 
       rw [(Finset.mem_filter.1 hx).2]
     rw [h2]
     by_cases hb : IsOddPos b.2
-    · rw [if_pos hb, if_pos hb, ← hO m hm b hb, zpow_neg, zpow_natCast, inv_pow]
-    · rw [if_neg hb, if_neg hb, one_pow]
+    · rw [ite_eq_left hb, ite_eq_left hb, ← hO m hm b hb, zpow_neg, zpow_natCast, inv_pow]
+    · rw [ite_eq_right hb, ite_eq_right hb, one_pow]
 
 def cB (j : ℕ) (A : ∀ v : Fin (X.Pj j).nV, GL (Fin ((X.Pj j).m + 1)) ((X.Pj j).Qq v)) : Kc :=
   algebraMap X.G.Kf Kc (s0 X j A) * s1 X Kc j (glAt X j A) * d1 X Kc j (glAt X j A) * (n1 X Kc j (glAt X j A))⁻¹
@@ -866,8 +866,8 @@ theorem ec_eq (j : ℕ) (B : ∀ v : X.Pl, GL (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v
   unfold ec
   rw [cf_inv]
   by_cases h : IsOddPos s
-  · rw [if_pos h, if_pos h, det_mAt]
-  · rw [if_neg h, if_neg h, Matrix.det_transpose]
+  · rw [ite_eq_left h, ite_eq_left h, det_mAt]
+  · rw [ite_eq_right h, ite_eq_right h, Matrix.det_transpose]
     have h1 := congrArg Matrix.det (hM_mul_gM X Kc j B v s)
     rw [Matrix.det_mul, Matrix.det_one, det_mAt X Kc j v s (B v)] at h1
     exact eq_inv_of_mul_eq_one_left h1
@@ -888,14 +888,14 @@ theorem cB_eq (hE : NumE X) (hO : NumO X) (j : ℕ)
   have hD := tw_det_ne X Kc j (glAt X j A) v s
   rw [ec_eq]
   by_cases h : IsOddPos s
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     rw [← zpow_natCast, ← zpow_natCast, ← zpow_neg, ← zpow_add₀ hD, ← zpow_add₀ hD, ← zpow_add₀ hD]
     congr 1
     have h1 := Int.toNat_sub_toNat_neg (exT X j v s)
     have h2 := hO j v s h
     have h3 : exT X j v s = cMu X j v s - (NN X.G.P.m X.t j : ℤ) * cMu X j v s + szMu X j v s := rfl
     linarith
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
     obtain ⟨h0, h1⟩ := hE j v s h
     rw [mul_one, mul_one, inv_pow, inv_inv, ← zpow_natCast, Int.toNat_of_nonneg h0, ← zpow_add₀ hD]
     congr 1
@@ -924,18 +924,18 @@ theorem numO : NumO X := by
     exact h
   have h1 : cMu X j v s = X.G.P.lam0 v s 0 + X.w v (j + 1) s := by
     unfold cMu Sys.nuv nu lamI
-    rw [if_pos ⟨le_refl 1, by omega⟩, dite_eq_left ⟨le_refl 1, by omega⟩]
+    rw [ite_eq_left ⟨le_refl 1, by omega⟩, dite_eq_left ⟨le_refl 1, by omega⟩]
     rfl
   have h2 : eJ X j v s = -X.G.P.lam0 v s 0 := by
     cases j with
     | zero =>
       show lamAt _ s _ = _
       unfold lamAt
-      rw [if_neg hne, Fin.rev_last]
+      rw [ite_eq_right hne, Fin.rev_last]
     | succ j =>
       show lamAt _ s _ = _
       unfold lamAt
-      rw [if_neg hne, Fin.rev_last]
+      rw [ite_eq_right hne, Fin.rev_last]
       show -liftWt X.Fl.t X.G.P.m (X.G.P.lam0 v s) (fun i => X.Fl.w v i s) (j + 1) 0 = _
       unfold liftWt
       rw [dite_eq_left (by simp)]
@@ -957,12 +957,12 @@ theorem numE : NumE X := by
       have hN : NN X.G.P.m X.t 0 = X.G.P.m + 1 := by unfold NN; omega
       rw [hN]
       unfold Sys.nuv nu lamI
-      rw [if_pos ⟨by omega, le_refl _⟩, dite_eq_left ⟨by omega, le_refl _⟩]
+      rw [ite_eq_left ⟨by omega, le_refl _⟩, dite_eq_left ⟨by omega, le_refl _⟩]
       rfl
     have h2 : eJ X 0 v s = X.G.P.lam0 v s (Fin.last _) := by
       show lamAt _ s _ = _
       unfold lamAt
-      rw [if_pos hev]
+      rw [ite_eq_left hev]
     have h3 := X.Fl.w_ge v s
     have h4 : -(X.G.P.lam0 v s (Fin.last X.G.P.m)) ≤ X.Fl.w v 1 s := le_trans (le_max_right _ _) h3
     rw [h1, h2]
@@ -974,14 +974,14 @@ theorem numE : NumE X := by
     have hN : NN X.G.P.m X.t (j + 1) = X.G.P.m + 1 + (j + 1) * (X.t + 1) := rfl
     have h1 : X.nuv v (j + 1 + 1) s (NN X.G.P.m X.t (j + 1)) = -X.w v (j + 1) s + X.w v (j + 1 + 1) s := by
       unfold Sys.nuv nu
-      rw [if_neg (by intro hh; have := hh.2; rw [hN] at this; omega),
-        if_pos ⟨by rw [hN]; omega, NN_le X (j + 1)⟩]
+      rw [ite_eq_right (by intro hh; have := hh.2; rw [hN] at this; omega),
+        ite_eq_left ⟨by rw [hN]; omega, NN_le X (j + 1)⟩]
       rw [hN, show X.G.P.m + 1 + (j + 1) * (X.t + 1) - (X.G.P.m + 2) = (j + 1) * (X.t + 1) - 1 by omega, succ_mul_succ_sub_one_div_succ]
     have h2 : eJ X (j + 1) v s = -X.w v (j + 1) s := by
       have hpos' : 0 < (j + 1) * (X.Fl.t + 1) := by positivity
       show lamAt _ s _ = _
       unfold lamAt
-      rw [if_pos hev]
+      rw [ite_eq_left hev]
       show liftWt X.Fl.t X.G.P.m (X.G.P.lam0 v s) (fun i => X.Fl.w v i s) (j + 1) (Fin.last _) = _
       unfold liftWt
       rw [dite_eq_right (by simp only [Fin.val_last]; omega)]

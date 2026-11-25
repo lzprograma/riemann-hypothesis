@@ -267,7 +267,7 @@ theorem pair_int (g : Fin (r + 1) → S.V) (gs : Fin r → S.V)
       refine h_span_zero S _ {gs j} ?_ _ h1 _ (Submodule.subset_span rfl)
       rintro _ ⟨a, ha, rfl⟩ _ rfl
       have ha' : (a : ℕ) < i := ha
-      rw [hd, if_neg]
+      rw [hd, ite_eq_right]
       rintro rfl
       simp at ha'; omega
     have h3 : n (g i) = (n (g i) - g i) + g i := by abel
@@ -671,7 +671,7 @@ theorem main : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [I
     refine finite_image_mk B G (hidx G inf_le_left fun w hw => hw.2) _ fun w hw => ?_
     have hw' : S.Mv (j + 1) d Λ w := by
       by_contra h
-      exact hw (if_neg h)
+      exact hw (ite_eq_right h)
     refine ⟨Mv_lin S hw', hbd w (Mv_lin S hw') hw'.2.2.1 hw'.2.2.2.2.1 ?_⟩
     obtain ⟨-, -, -, -, hu, -, ⟨c, hc, e⟩, -⟩ := hw'
     have : algebraMap F E S.ϖ ^ v * w.2.2 = algebraMap F E S.ϖ ^ v * (algebraMap F E S.ϖ ^ A * c) -

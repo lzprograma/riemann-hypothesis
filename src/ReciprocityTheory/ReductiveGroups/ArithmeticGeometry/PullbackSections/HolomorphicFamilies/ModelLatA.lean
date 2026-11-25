@@ -5,6 +5,7 @@ public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsInte
 public import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.TotallySplit
+import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
 
 @[expose] public section
 
@@ -74,16 +75,6 @@ theorem herm_add_left {D : D7} (G : Matrix (Fin r) (Fin r) D.host.E) (x x' y : F
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun b _ => ?_
   simp only [Pi.add_apply]
-  ring
-
-theorem herm_add_right {D : D7} (G : Matrix (Fin r) (Fin r) D.host.E) (x y y' : Fin r → D.host.E) :
-    herm G x (y + y') = herm G x y + herm G x y' := by
-  unfold herm
-  rw [← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  rw [← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun b _ => ?_
-  simp only [Pi.add_apply, cc, map_add (f := _)]
   ring
 
 theorem AA_mul_inv (hP : FactPrincipalDatum) (D : D7) : D.host.AA * D.host.AA⁻¹ = 1 :=
@@ -232,19 +223,7 @@ theorem lat_eq_span (hP : FactPrincipalDatum) {D : D7} (Λ : Submodule (𝓞 D.h
     exact mem_latP.1 hu a ha
 
 theorem normCc_mem_AA (D : D7) : ((Ideal.absNorm D.host.ccK : ℕ) : D.host.E) ∈ D.host.AA := by
-  obtain ⟨hB, -⟩ := bB_ne D
-  have h1 : (1 : D.host.E) ∈ D.host.AA0 := by
-    show (1 : D.host.E) ∈ ((D.host.𝔟 : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E))⁻¹
-    rw [mem_inv_iff hB]
-    intro y hy
-    rw [one_mul]
-    exact coeIdeal_le_one hy
-  have h2 : ((Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∈ D.host.ccE := by
-    have := Ideal.mem_map_of_mem (algebraMap (𝓞 D.host.K) (𝓞 D.host.E)) (Ideal.absNorm_mem D.host.ccK)
-    rwa [map_natCast] at this
-  have h3 := mul_mem_mul (mem_coeIdeal_of_mem (S := nonZeroDivisors (𝓞 D.host.E)) (P := D.host.E) h2) h1
-  rw [map_natCast, mul_one] at h3
-  exact h3
+  apply _root_.Formalism.L2.Pj.normK_mem_AA <;> assumption
 
 theorem int_of_mem_b (D : D7) {n : ℕ} (hn : (n : 𝓞 D.host.E) ∈ D.host.𝔟) {a : D.host.E} (ha : a ∈ D.host.AA) :
     ∃ c : 𝓞 D.host.E, algebraMap _ _ c = a * n := by

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmInverseHalfDifferentMulRelativeDifferent
 public import Formalism.PeriodIntegrals.KerLat
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Formalism.LocalToGlobal.KernelLattices.ColumnData
@@ -161,22 +162,7 @@ theorem b_mem_K : H.sqd ∈ H.K := mem_adjoin_simple_self ℚ _
 def bK : H.K := ⟨H.sqd, b_mem_K H⟩
 
 theorem finrank_K : Module.finrank ℚ H.K = 2 := by
-  have hint : IsIntegral ℚ H.sqd := .of_finite ℚ _
-  have hp : minpoly ℚ H.sqd = Polynomial.X ^ 2 + Polynomial.C (H.d : ℚ) := by
-    symm
-    apply minpoly.eq_of_irreducible_of_monic
-    · apply Polynomial.irreducible_of_degree_le_three_of_not_isRoot
-      · rw [Polynomial.natDegree_X_pow_add_C]
-        simp
-      · intro x hx
-        simp only [Polynomial.IsRoot, Polynomial.eval_add, Polynomial.eval_pow, Polynomial.eval_X,
-          Polynomial.eval_C] at hx
-        have hd : (0 : ℚ) < H.d := by exact_mod_cast d_pos H
-        nlinarith [sq_nonneg x]
-    · simp [_root_.Formalism.BasicNotions.Examples₂.bE_sq H]
-    · exact Polynomial.monic_X_pow_add_C _ (by norm_num)
-  show Module.finrank ℚ ℚ⟮H.sqd⟯ = 2
-  rw [IntermediateField.adjoin.finrank hint, hp, Polynomial.natDegree_X_pow_add_C]
+  apply +allowSynthFailures _root_.GlobalTheory.Mem.PerField.finrank_K <;> assumption
 
 theorem K_induction {p : H.E → Prop} (hb : p (H.sqd)) (hq : ∀ r : ℚ, p (algebraMap ℚ H.E r))
     (hadd : ∀ x y, p x → p y → p (x + y)) (hinv : ∀ x, p x → p x⁻¹) (hmul : ∀ x y, p x → p y → p (x * y))

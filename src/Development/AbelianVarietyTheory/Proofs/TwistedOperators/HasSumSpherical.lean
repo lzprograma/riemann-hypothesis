@@ -181,12 +181,6 @@ private lemma isSphericalU_apply_mul_of_mem_KU {n m : ℕ} {α : Fin m → ℂ} 
   have h := hφ 1 g k _root_.Formalism.UG.P.fSatake_borel_one hk
   rwa [one_mul, chiDeltaU_one', one_mul] at h
 
-private lemma exists_mem_KU_out_mk_eq_mul {n : ℕ} (g : GU σ n) :
-    ∃ k ∈ KU σ n, (QuotientGroup.mk g : GU σ n ⧸ KU σ n).out = g * k := by
-  refine ⟨g⁻¹ * (QuotientGroup.mk g : GU σ n ⧸ KU σ n).out, ?_, (mul_inv_cancel_left _ _).symm⟩
-  have h := QuotientGroup.eq.mp (QuotientGroup.out_eq' (QuotientGroup.mk g : GU σ n ⧸ KU σ n))
-  simpa [_root_.mul_inv_rev] using inv_mem h
-
 theorem hasSum_spherical [CompleteSpace L] (hF : FracExists) (hP : Pointwise) (hC : Count) (hS : SmallCorner)
     (hG : GenFun) (hSu : CosetSurj) (hI : CosetInj) (hL : LeviExists) (hT : SphTrans) (hR : SmallRank) (hSt : Step)
     (hU : IsUnramInv ϖ σ q) (r : ℕ) : ∀ (n : ℕ), 2 * r ≤ n → n ≤ 2 * r + 1 → ∀ (α : Fin r → ℂ) (X y : ℂ)
@@ -239,7 +233,7 @@ theorem hasSum_spherical [CompleteSpace L] (hF : FracExists) (hP : Pointwise) (h
     funext p
     obtain ⟨⟨a, b⟩, c⟩ := p
     simp only [Function.comp_apply, Equiv.ofBijective_apply]
-    obtain ⟨k, hk, hout⟩ := exists_mem_KU_out_mk_eq_mul (m a b * (c.out : radQ σ N).1)
+    obtain ⟨⟨k, hk⟩, hout⟩ := QuotientGroup.mk_out_eq_mul (KU σ (N + 2)) (m a b * (c.out : radQ σ N).1)
     have hlen := len_mat_mul (KU σ (N + 2)).one_mem hk (m a b * (c.out : radQ σ N).1)
     rw [one_mul] at hlen
     rw [hout, isSphericalU_apply_mul_of_mem_KU hφ _ _ hk, hlen,

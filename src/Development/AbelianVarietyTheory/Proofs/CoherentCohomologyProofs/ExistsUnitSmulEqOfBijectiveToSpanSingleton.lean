@@ -188,19 +188,6 @@ theorem faithfulSMul_of_isBaseChange [Module.Flat R S] [FaithfulSMul R A]
 
 end
 
-section
-variable (R S A : Type*) [CommRing R] [CommRing S] [CommRing A] [Algebra R S] [Algebra R A]
-  [MulSemiringAction G A] [SMulCommClass G R A]
-
-end
-
-section
-variable {A : Type*} [CommRing A] [MulSemiringAction G A]
-
-variable {B : Type*} [CommRing B] [Algebra B A] [SMulCommClass G B A]
-
-end
-
 end FlatRing
 
 section Generator
@@ -214,12 +201,6 @@ theorem dual_apply_smul_comm [Module.Invertible A M] (f : Module.Dual A M) (x y 
   have := congrArg (fun z ↦ TensorProduct.lid A M (f.rTensor M z))
     (Module.Invertible.tmul_comm (R := A) (m₁ := x) (m₂ := y))
   simpa using this
-
-theorem exists_sum_dual_apply_eq_one (A M : Type*) [CommRing A] [AddCommGroup M] [Module A M]
-    [Module.Invertible A M] : ∃ s : Finset (Module.Dual A M × M), ∑ p ∈ s, p.1 p.2 = 1 := by
-  obtain ⟨s, hs⟩ := ((Module.Invertible.linearEquiv A M).symm 1).exists_finset
-  refine ⟨s, Eq.symm ?_⟩
-  simpa [LinearEquiv.symm_apply_eq, Module.Invertible.linearEquiv] using hs
 
 theorem free_of_invertible_of_finite_maximalSpectrum (A M : Type*) [CommRing A] [AddCommGroup M]
     [Module A M] [Finite (MaximalSpectrum A)] [Module.Invertible A M] : Module.Free A M :=
@@ -279,24 +260,6 @@ variable {A M}
 
 variable (B : Type*) [CommRing B] [Algebra B A] [FaithfulSMul B A] [SMulCommClass G B A]
   [Algebra.IsInvariant B A G] [Module B M] [IsScalarTower B A M] [SMulCommClass G B M]
-
-end
-
-section
-variable (G) {ι : Type*} (M : ι → Type*) [∀ i, AddCommGroup (M i)] [∀ i, Module A (M i)]
-  [∀ i, DistribMulAction G (M i)] [∀ i, SMulDistribClass G A (M i)]
-
-end
-
-section
-variable {M : Type*} [AddCommGroup M] [Module A M] [DistribMulAction G M] {ι : Type*}
-
-
-
-
-variable [SMulDistribClass G A M]
-
-variable {A}
 
 end
 

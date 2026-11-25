@@ -53,7 +53,7 @@ theorem re_inner_casimir_eq (ε : Fin n → Bool) {E : Fin n → Fin n → Modul
     rw [sum_inner, map_sum, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun b hb => ?_
     have hab : ε a ≠ ε b := (Finset.mem_filter.1 hb).2
-    rw [hU a b (E b a x) x, adjSign, if_neg hab, inner_self_eq_norm_sq_to_K]
+    rw [hU a b (E b a x) x, adjSign, ite_eq_right hab, inner_self_eq_norm_sq_to_K]
     simp [← Complex.ofReal_pow]
   simp only [key, Finset.sum_neg_distrib]
   rw [sum_nc_swap ε (fun a b => ‖E a b x‖ ^ 2)]

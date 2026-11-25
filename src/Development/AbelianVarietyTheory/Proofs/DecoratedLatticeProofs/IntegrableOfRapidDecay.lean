@@ -53,22 +53,6 @@ open NumberField IsDedekindDomain MeasureTheory Filter Formalism.MainNotions.Glo
 open NumberField.mixedEmbedding
 open scoped Classical
 
-section Mixed
-
-variable (F : Type) [Field F] [NumberField F]
-
-theorem continuous_toMixed : Continuous (InfiniteAdeleRing.ringEquiv_mixedSpace F) := by
-  first
-  | exact _root_.PositivityTheory.ThKF0.Split.continuous_toMixed
-  | (apply _root_.PositivityTheory.ThKF0.Split.continuous_toMixed <;> assumption)
-
-theorem continuous_ofMixed : Continuous (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm := by
-  first
-  | exact _root_.PositivityTheory.ThKF0.Split.continuous_ofMixed
-  | (apply _root_.PositivityTheory.ThKF0.Split.continuous_ofMixed <;> assumption)
-
-end Mixed
-
 section Tup
 
 variable (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {d : ℕ}
@@ -90,11 +74,11 @@ theorem continuous_crdTup_symm : Continuous (crdTup F E b M n).symm :=
 
 theorem continuous_mixTup : Continuous (mixTup F M n (d := d)) :=
   continuous_pi fun a => continuous_pi fun i => continuous_pi fun k =>
-    (continuous_toMixed F).comp ((continuous_apply k).comp ((continuous_apply i).comp (continuous_apply a)))
+    (PositivityTheory.ThKF0.Split.continuous_toMixed F).comp ((continuous_apply k).comp ((continuous_apply i).comp (continuous_apply a)))
 
 theorem continuous_mixTup_symm : Continuous (mixTup F M n (d := d)).symm :=
   continuous_pi fun a => continuous_pi fun i => continuous_pi fun k =>
-    (continuous_ofMixed F).comp ((continuous_apply k).comp ((continuous_apply i).comp (continuous_apply a)))
+    (PositivityTheory.ThKF0.Split.continuous_ofMixed F).comp ((continuous_apply k).comp ((continuous_apply i).comp (continuous_apply a)))
 
 def tupEquiv : (Fin n → Fin M → Ainf F ⊗[F] E) ≃ₜ+ (Fin n → Fin M → Fin d → mixedSpace F) where
   toAddEquiv := (crdTup F E b M n).toAddEquiv.trans (mixTup F M n)

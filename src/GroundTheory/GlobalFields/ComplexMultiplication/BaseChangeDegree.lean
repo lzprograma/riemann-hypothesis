@@ -22,10 +22,7 @@ section Neg
 variable {F : Type u} [Field F] (E : WeierstrassCurve F)
 
 theorem xOf_neg {K : Type*} [Field K] {W : WeierstrassCurve K} (P : W.toAffine.Point) :
-    xOf W (-P) = xOf W P := by
-  cases P with
-  | zero => rfl
-  | some x y h => rfl
+    xOf W (-P) = xOf W P := GroundTheory.Arith.Abelian.xOf_neg W P
 
 theorem xOf_map {K L : Type*} [Field K] [Field L] [Algebra F K] [Algebra F L] [DecidableEq K]
     [DecidableEq L] (f : K →ₐ[F] L) (P : (E.baseChange K).toAffine.Point) :

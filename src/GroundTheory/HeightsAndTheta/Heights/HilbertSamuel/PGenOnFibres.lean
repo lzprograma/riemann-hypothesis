@@ -1,51 +1,9 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturb
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
+import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -69,60 +27,55 @@ section Homog
 
 variable {R : Type} [CommRing R]
 
+private def wtGF (p : Σ k, ι k) : K → ℕ :=
+  letI := Classical.decEq K; fun k => if p.1 = k then 1 else 0
+
+private theorem weight_wtGF (m : (Σ k, ι k) →₀ ℕ) : Finsupp.weight (wtGF (ι := ι)) m = fun k => ∑ i, m ⟨k, i⟩ := by
+  classical
+  funext k
+  rw [Finsupp.weight_apply, Finsupp.sum_fintype m (fun i c => c • wtGF i) (fun _ => zero_smul _ _)]
+  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, wtGF]
+  rw [Fintype.sum_sigma, Finset.sum_eq_single k (fun b _ hb => by simp [hb]) (by simp)]; simp
+
+private theorem isMultiHomog_iff_weighted {f : MRingOver R ι} {a : K → ℕ} :
+    IsMultiHomog f a ↔ IsWeightedHomogeneous (wtGF (ι := ι)) f a :=
+  ⟨fun h m hm => (weight_wtGF m).trans (funext (h m (mem_support_iff.mpr hm))),
+   fun h m hm k => congrFun ((weight_wtGF m).symm.trans (h (mem_support_iff.mp hm))) k⟩
+
 theorem homog_monomial (m : (Σ k, ι k) →₀ ℕ) (r : R) (a : K → ℕ) (h : ∀ k, ∑ i, m ⟨k, i⟩ = a k) :
-    IsMultiHomog (monomial m r : MRingOver R ι) a := by
-  intro m' hm k
-  rw [Finset.mem_singleton.mp (support_monomial_subset hm)]
-  exact h k
+    IsMultiHomog (monomial m r : MRingOver R ι) a :=
+  isMultiHomog_iff_weighted.mpr (isWeightedHomogeneous_monomial (wtGF (ι := ι)) m r ((weight_wtGF m).trans (funext h)))
 
 theorem homog_one : IsMultiHomog (1 : MRingOver R ι) 0 :=
-  homog_monomial 0 1 0 fun k => by simp
+  isMultiHomog_iff_weighted.mpr (isWeightedHomogeneous_one R _)
 
 theorem homog_C (r : R) : IsMultiHomog (C r : MRingOver R ι) 0 :=
-  homog_monomial 0 r 0 fun k => by simp
+  isMultiHomog_iff_weighted.mpr (isWeightedHomogeneous_C (wtGF (ι := ι)) r)
 
-theorem homog_zero (a : K → ℕ) : IsMultiHomog (0 : MRingOver R ι) a := by
-  intro m hm
-  simp at hm
+theorem homog_zero (a : K → ℕ) : IsMultiHomog (0 : MRingOver R ι) a :=
+  isMultiHomog_iff_weighted.mpr (isWeightedHomogeneous_zero R _ a)
 
 theorem homog_mul {f g : MRingOver R ι} {a b : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g b) :
-    IsMultiHomog (f * g) (a + b) := by
-  classical
-  intro m hm k
-  obtain ⟨m1, hm1, m2, hm2, rfl⟩ := Finset.mem_add.mp (MvPolynomial.support_mul f g hm)
-  simp only [Finsupp.add_apply, Finset.sum_add_distrib, Pi.add_apply, hf m1 hm1 k, hg m2 hm2 k]
+    IsMultiHomog (f * g) (a + b) :=
+  isMultiHomog_iff_weighted.mpr ((isMultiHomog_iff_weighted.mp hf).mul (isMultiHomog_iff_weighted.mp hg))
 
 theorem homog_add {f g : MRingOver R ι} {a : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g a) :
-    IsMultiHomog (f + g) a := by
-  classical
-  intro m hm k
-  rcases Finset.mem_union.mp (MvPolynomial.support_add hm) with h | h
-  · exact hf m h k
-  · exact hg m h k
+    IsMultiHomog (f + g) a :=
+  isMultiHomog_iff_weighted.mpr ((isMultiHomog_iff_weighted.mp hf).add (isMultiHomog_iff_weighted.mp hg))
 
 theorem homog_sub {f g : MRingOver R ι} {a : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g a) :
-    IsMultiHomog (f - g) a := by
-  rw [sub_eq_add_neg]
-  refine homog_add hf fun m hm k => hg m ?_ k
-  rwa [MvPolynomial.support_neg] at hm
+    IsMultiHomog (f - g) a :=
+  isMultiHomog_iff_weighted.mpr ((isMultiHomog_iff_weighted.mp hf).sub (isMultiHomog_iff_weighted.mp hg))
 
 open Classical in
 theorem homog_X (k : K) (i : ι k) : IsMultiHomog (X ⟨k, i⟩ : MRingOver R ι) (Pi.single k 1) := by
-  classical
-  refine homog_monomial _ _ _ fun k' => ?_
-  by_cases h : k' = k
-  · subst h
-    simp [Finsupp.single_apply]
-  · have : ∀ j : ι k', (⟨k, i⟩ : Σ k, ι k) ≠ ⟨k', j⟩ := fun j e => h (congrArg Sigma.fst e).symm
-    simp [Finsupp.single_apply, this, h, Pi.single_apply]
+  have heq : wtGF (ι := ι) ⟨k, i⟩ = Pi.single k 1 := funext fun k' => by
+    simp only [wtGF, Pi.single_apply]; split_ifs <;> simp_all
+  exact isMultiHomog_iff_weighted.mpr (heq ▸ isWeightedHomogeneous_X R (wtGF (ι := ι)) ⟨k, i⟩)
 
 theorem homog_pow {f : MRingOver R ι} {a : K → ℕ} (hf : IsMultiHomog f a) (n : ℕ) :
-    IsMultiHomog (f ^ n) (n • a) := by
-  induction n with
-  | zero => simpa using (homog_one (R := R) (ι := ι))
-  | succ n ih =>
-    rw [pow_succ, succ_nsmul]
-    exact homog_mul ih hf
+    IsMultiHomog (f ^ n) (n • a) :=
+  isMultiHomog_iff_weighted.mpr ((isMultiHomog_iff_weighted.mp hf).pow n)
 
 theorem homog_map {S : Type} [CommRing S] (φ : R →+* S) {f : MRingOver R ι} {a : K → ℕ}
     (hf : IsMultiHomog f a) : IsMultiHomog (MvPolynomial.map φ f) a :=
@@ -135,19 +88,11 @@ def cmon (c : ∀ k, ι k) (e : K → ℕ) : MRing ι :=
 
 theorem homog_cmon (c : ∀ k, ι k) (e : K → ℕ) : IsMultiHomog (cmon c e) e := by
   classical
-  have key : ∀ s : Finset K, IsMultiHomog (∏ k ∈ s, (X ⟨k, c k⟩ : MRing ι) ^ e k)
-      (∑ k ∈ s, e k • Pi.single k 1) := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => simpa using (homog_one (R := ℤ) (ι := ι))
-    | insert k s hk ih =>
-      rw [Finset.prod_insert hk, Finset.sum_insert hk]
-      exact homog_mul (homog_pow (homog_X k (c k)) _) ih
-  have h : (∑ k, e k • (Pi.single k 1 : K → ℕ)) = e := by
-    ext k
-    simp [Finset.sum_apply, Pi.single_apply]
-  have := key Finset.univ
-  rwa [h] at this
+  have h : (∑ k, e k • (Pi.single k 1 : K → ℕ)) = e := by ext k; simp [Finset.sum_apply, Pi.single_apply]
+  have hp := isMultiHomog_iff_weighted.mpr (IsWeightedHomogeneous.prod Finset.univ
+    (fun k => (X ⟨k, c k⟩ : MRing ι) ^ e k) (fun k => e k • Pi.single k 1)
+    fun k _ => isMultiHomog_iff_weighted.mp (homog_pow (homog_X k (c k)) _))
+  rwa [h] at hp
 
 theorem cmon_add (c : ∀ k, ι k) (e f : K → ℕ) : cmon c (e + f) = cmon c e * cmon c f := by
   simp only [cmon, Pi.add_apply, pow_add, Finset.prod_mul_distrib]
@@ -458,8 +403,7 @@ theorem cechD_zero_eq_zero {M : Type} [AddCommGroup M] [Module (MRingOver S ι) 
   have hne : ∀ k, (I.1 k).Nonempty := I.2.1
   have hsum : ∑ k, ((I.1 k).card - 1) = 1 := I.2.2
   obtain ⟨k0, hk0ne⟩ : ∃ k0, (I.1 k0).card - 1 ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     rw [Finset.sum_eq_zero fun k _ => hc k] at hsum
     exact absurd hsum (by norm_num)
   have hsplit := Finset.add_sum_erase Finset.univ (fun k => (I.1 k).card - 1) (Finset.mem_univ k0)
@@ -589,7 +533,7 @@ theorem secCoch_mem {s : Ω} {a : K → ℤ} (hs : s ∈ chartLat y a 1) :
     · obtain ⟨k, i, hi, h0⟩ := hz
       haveI := subsingleton_loc (S := S) hi h0
       exact Subsingleton.elim _ _
-    · push_neg at hz
+    · push Not at hz
       have hJc : ∀ k, y ⟨k, cellChart J k⟩ ≠ 0 := fun k => hz k _ (hJ k (cellChart_mem J k))
       have hJc' : ∀ k, y ⟨k, cellChart J' k⟩ ≠ 0 := fun k => hz k _ (hJ' k (cellChart_mem J' k))
       rw [cellRes_of_le (cellMon_mono hJ), cellRes_of_le (cellMon_mono hJ')]
@@ -604,7 +548,7 @@ theorem generatedV_idealOver {a : K → ℤ} {n : ℕ} {w : Fin n → Ω} (hw : 
   · obtain ⟨k, h0⟩ := hz
     haveI := subsingleton_loc (S := S) (cellChart_mem I k) h0
     exact ⟨0, Fin.elim0, Fin.elim0, fun j => j.elim0, fun j => j.elim0, Subsingleton.elim _ _⟩
-  · push_neg at hz
+  · push Not at hz
     obtain ⟨u, hu, hsum⟩ := hg (cellChart I) hz
     have hU : ∀ j, ∃ x, IsRep y S (KH.cellMon S I.1) x (cellChart I)
         (u j * ∏ k, y ⟨k, cellChart I k⟩ ^ (-a k)) (-a) := by

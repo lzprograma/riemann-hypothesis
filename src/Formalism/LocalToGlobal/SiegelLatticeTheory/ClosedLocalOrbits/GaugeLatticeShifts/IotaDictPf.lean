@@ -18,8 +18,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf.IotaDictPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (TR : TypedRed X)
 
 theorem levi_one_iff {δ : X.B.I.Gf} (gδ : Good X δ) :
@@ -65,9 +63,9 @@ theorem levi_one_iff {δ : X.B.I.Gf} (gδ : Good X δ) :
       by_cases h : j = i
       · subst h
         have : (⟨_, hIt⟩ : IntAf X.B.I.F X.B.I.E) = 1 := by apply Subtype.ext; simp
-        rw [if_pos rfl, this, map_one, sub_self]
+        rw [ite_eq_left rfl, this, map_one, sub_self]
       · have : (⟨_, hIt⟩ : IntAf X.B.I.F X.B.I.E) = 0 := by apply Subtype.ext; simp [h]
-        rw [if_neg h, this, map_zero, sub_self]
+        rw [ite_eq_right h, this, map_zero, sub_self]
     have hZ := (TR.res_ker ⟨_, sub_mem hI hIt⟩).1 hres
     have e : X.ew * (hA X.B.I (X.bwd j) w - if j = i then 1 else 0) =
         hA X.B.I (X.bwd j) w - if j = i then X.ew else 0 := by
@@ -79,7 +77,7 @@ theorem levi_one_iff {δ : X.B.I.Gf} (gδ : Good X δ) :
         (∑ j, (hA X.B.I (X.bwd j) w - if j = i then X.ew else 0) • X.bw j) +
         (∑ j, hA X.B.I (X.bw j) w • X.bwd j)) := by
     have hbi : (∑ j, (if j = i then X.ew else 0) • X.bw j) = X.bw i := by
-      simp only [ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      simp only [ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       exact (X.bw_w i).symm
     rw [Matrix.sub_mulVec, Matrix.one_mulVec, ← hwdef]
     unfold repr0
@@ -133,8 +131,6 @@ end Formalism.L2.SG.Pf.IotaDictPf
 namespace Formalism.L2.SG.Pf
 
 open Formalism.L2.SG.Pf.IotaDictPf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def AdTriv {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (δ : X.B.I.Gf) : Prop :=
   ∀ j, (X.B.I.fmat δ - 1) *ᵥ X.bw j ∈ Mo X.B.I X.B.g (Set.range X.e0)

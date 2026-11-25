@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
 public import Formalism.LocalToGlobal.KernelLattices.ThDistC
 
 @[expose] public section
@@ -50,17 +51,7 @@ theorem map_frDet {L : Type} [Field L] (σ : K →+* L) (τ : ι) :
 
 theorem map_subD {L : Type} [Field L] (σ : K →+* L) (P : Pol K ι a) :
     MvPolynomial.map σ (subD K ι a b P) = subD L ι a b (MvPolynomial.map σ P) := by
-  have h : (MvPolynomial.map σ).comp (subD K ι a b).toRingHom =
-      (subD L ι a b).toRingHom.comp (MvPolynomial.map σ) := by
-    apply MvPolynomial.ringHom_ext
-    · intro r
-      simp [subD]
-    · intro v
-      show MvPolynomial.map σ (subD K ι a b (MvPolynomial.X v)) = subD L ι a b (MvPolynomial.map σ (MvPolynomial.X v))
-      rw [MvPolynomial.map_X]
-      simp only [subD, MvPolynomial.aeval_X]
-      split_ifs <;> simp
-  exact RingHom.congr_fun h P
+  apply _root_.Formalism.L2.Ker.map_subD <;> assumption
 
 theorem map_jetMap {L : Type} [Field L] (σ : K →+* L) (J : (DVar ι a b →₀ ℕ) → K) (n : ι → ℕ) (P : Pol K ι a) :
     MvPolynomial.map σ (jetMap J n P) =
@@ -70,25 +61,5 @@ theorem map_jetMap {L : Type} [Field L] (σ : K →+* L) (J : (DVar ι a b →�
   simp only [map_pow, map_frDet]
 
 end Alg
-
-section Scale
-
-variable {ι : Type} [Fintype ι] {a b : ℕ}
-
-end Scale
-
-section Lift
-
-end Lift
-
-section Base
-
-variable {X : Fields} (A : Amb X) {a b : ℕ} (Sall SB : Finset (HeightOneSpectrum (𝓞 X.E))) (D : ℕ)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (mU : HeightOneSpectrum (𝓞 X.E) → X.Kˣ) (mI : SB → X.E → X.K)
-  (lam : X.Tau → DomWeight a) (lam' : X.Tau → DomWeight b) (n : X.Tau → ℕ)
-  (N : Submodule (𝓞 X.E) (Sp X.E a)) (fr : Frs X.E a SB) (N' : Submodule (𝓞 X.E) (Sp X.E b)) (fr' : Frs X.E b SB)
-  (c : ℕ) (x : HomE X.E a b)
-
-end Base
 
 end Formalism.L2.Ker.Shape

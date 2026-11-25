@@ -1,18 +1,8 @@
 module
 
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Algebra.Order.Group.Unbundled.Abs
-public import Mathlib.Data.Fintype.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.Group.Unbundled.Int
+import Mathlib.Algebra.Order.Ring.Int
 
 @[expose] public section
 
@@ -33,9 +23,9 @@ theorem goal1 :
     rw [Fin.sum_univ_succ] at hs
     have h2 : ∑ i : Fin n, c i.succ * B ^ (i.succ).val = B * ∑ i : Fin n, c i.succ * B ^ i.val := by
       rw [Finset.mul_sum]
-      exact Finset.sum_congr rfl fun i _ => by rw [Fin.val_succ, pow_succ]; ring
+      exact Finset.sum_congr rfl fun i _ => by rw [Fin.val_succ, pow_succ]; ac_rfl
     rw [h2, Fin.val_zero, pow_zero, mul_one] at hs
-    have hd : B ∣ c 0 := ⟨-(∑ i : Fin n, c i.succ * B ^ i.val), by rw [mul_neg]; linarith⟩
+    have hd : B ∣ c 0 := ⟨-(∑ i : Fin n, c i.succ * B ^ i.val), by rw [mul_neg]; lia⟩
     have h0 : c 0 = 0 := Int.eq_zero_of_abs_lt_dvd hd (hc 0)
     rw [h0, zero_add] at hs
     have hT : ∑ i : Fin n, c i.succ * B ^ i.val = 0 :=

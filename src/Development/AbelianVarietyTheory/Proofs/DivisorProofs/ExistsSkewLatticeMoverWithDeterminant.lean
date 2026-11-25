@@ -383,8 +383,6 @@ theorem exists_central_skew_move : ∀ (D : D7) (𝔪 : Ideal (𝓞 D.host.E)), 
   let g : GL (Fin d) (AE D) :=
     Units.map (Matrix.scalar (Fin d) : AE D →+* Matrix (Fin d) (Fin d) (AE D)).toMonoidHom s
   have hgv : (g : Matrix (Fin d) (Fin d) (AE D)) = Matrix.scalar (Fin d) (s : AE D) := rfl
-  have hgi : ((g⁻¹ : GL (Fin d) (AE D)) : Matrix (Fin d) (Fin d) (AE D)) =
-      Matrix.scalar (Fin d) ((s⁻¹ : (AE D)ˣ) : AE D) := rfl
   have hsg : sgA D (s : AE D) * s = 1 := by
     have := congrArg Units.val hss
     rw [Units.val_mul, Units.val_one, mul_comm] at this

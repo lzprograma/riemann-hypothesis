@@ -18,8 +18,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.G
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem mono_from_one (w : ℕ → ℤ) (hm : ∀ j, 1 ≤ j → w j ≤ w (j + 1)) {i j : ℕ} (hi : 1 ≤ i) (hij : i ≤ j) : w i ≤ w j := by
   induction j, hij using Nat.le_induction with
   | base => exact le_rfl
@@ -125,8 +123,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.G
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure CloudBound (D : D7) (u : D.what₂.Word) (c : ℕ) : Prop where
   top : ∀ g : D.R.Psi, (g : D.R.GG) ∈ D.host.topPlaces → ∀ i : Fin (D.R.k - 1 + 1), 0 < i.val → i.val < D.R.k - 1 →
     |lamRec D u g i| ≤ c
@@ -150,8 +146,8 @@ def fillsRec (D : D7) (u : D.what₂.Word) (h : D.R.MA)
     (fun v s => if ((posG (zPsi D.R.toFrame h) ⟨v, s⟩ : D.R.Psi) : D.R.GG) ∈ D.host.topPlaces then
       -lamRec D u (posG (zPsi D.R.toFrame h) ⟨v, s⟩) (Fin.last (D.R.k - 1)) else 0)
     c
-    (fun v s => ⟨fun hs => ⟨(if_pos (Finset.mem_filter.1 hs).2).symm,
-        ((congrArg Neg.neg (if_pos (Finset.mem_filter.1 hs).2)).trans (neg_neg _)).symm, fun i h0 h1 =>
+    (fun v s => ⟨fun hs => ⟨(ite_eq_left (Finset.mem_filter.1 hs).2).symm,
+        ((congrArg Neg.neg (ite_eq_left (Finset.mem_filter.1 hs).2)).trans (neg_neg _)).symm, fun i h0 h1 =>
         hc.top _ (Finset.mem_filter.1 hs).2 i h0 h1⟩,
       fun hs i => hc.off _ (fun ht => hs (Finset.mem_filter.2 ⟨Finset.mem_univ _, ht⟩)) i⟩)
     D.R.t D.R.m

@@ -21,8 +21,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 
 namespace Formalism.IndefR.AutomorphicFormsHyp
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 section General
@@ -57,8 +55,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
   Formalism.IndefR.Fock.Sk MeasureTheory IsDedekindDomain NumberField Matrix
 
 namespace Formalism.IndefR.WeilFull
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 

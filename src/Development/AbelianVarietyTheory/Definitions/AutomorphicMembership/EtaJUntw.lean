@@ -5,40 +5,6 @@ public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
 public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
 public import Formalism.LocalRingCardinality.DataRRMetric
 public import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -47,8 +13,6 @@ noncomputable section
 namespace GlobalTheory.Mem.Top
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Host Formalism.L2.DIV Formalism.L2.Pj Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT GlobalTheory.Mem NumberField IsDedekindDomain
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Sub
 
@@ -163,19 +127,6 @@ def extSub (R : RealDat D A Ks) (F : Face D A) (Zs : DefSub (useFam R).fam.amb) 
   Z t := if h : InUse R t then Zs.Z ⟨t, h⟩ else (R.toCx F).zs.Z t
   Zl i t := if h : InUse R t then Zs.Zl i ⟨t, h⟩ else (R.toCx F).zs.Zl i t
 
-def useFace (R : RealDat D A Ks) (F : Face D A) : Face D (useFam R) where
-  P0 := F.P0
-  ψ0 := F.ψ0
-  P1 := F.P1
-  ψ1 := F.ψ1
-  Dc Zs := ⟨(F.Dc (extSub R F Zs)).Mem, (F.Dc (extSub R F Zs)).a, (F.Dc (extSub R F Zs)).Xc,
-    fun u t => (F.Dc (extSub R F Zs)).Pt u t.1⟩
-  Sp Zs := ⟨(F.Sp (extSub R F Zs)).HH, (F.Sp (extSub R F Zs)).nHH, (F.Sp (extSub R F Zs)).iHH, (F.Sp (extSub R F Zs)).Pu,
-    (F.Sp (extSub R F Zs)).Rw⟩
-  Zsc Zs :=
-    let Z := F.Zsc (extSub R F Zs)
-    ⟨Z.F0, fun t => Z.J0 t.1, Z.E1u, Z.l3m, Z.l3u, Z.l6m, Z.l6u, Z.x, Z.b, Z.la, Z.de⟩
-
 structure IsTupAll (R : RealDat D A Ks) (F : Face D A) : Prop where
   tw : R.tup_tw F
   mu_off : R.tup_mu_off
@@ -199,48 +150,6 @@ variable {R : RealDat D A Ks} {F : Face D A}
 
 
 
-
-
-def useSide {tup : T → D.what₂.Tup} {b : Bool} {EE : Type} [NormedAddCommGroup EE] [InnerProductSpace ℂ EE]
-    [FiniteDimensional ℂ EE] {S : RowSide D EE} (Y : SideTie R F tup b S) :
-    SideTie (useReal R) (useFace R F) (fun t => tup t.1) b S where
-  eE := Y.eE
-  eE_range := Y.eE_range
-  eE_norm := Y.eE_norm
-  eA t := Y.eA t.1
-  eA_range t := Y.eA_range t.1
-  eA_norm t := Y.eA_norm t.1
-  eOp_tie t := Y.eOp_tie t.1
-  iota_tie t := Y.iota_tie t.1
-  lat_tie t := Y.lat_tie t.1
-
-
-
-def useTie {X0 : BaseLevelRowSide D} (Y : RowsTie R F X0) : RowsTie (useReal R) (useFace R F) X0 where
-  tup t := Y.tup t.1
-  tup_inj _ _ e := Subtype.ext (Y.tup_inj e)
-  tup_zero := Y.tup_zero
-  muAt_tie := Y.muAt_tie
-  sharp := useSide Y.sharp
-  base := useSide Y.base
-  ty := Y.ty
-  ty_inj := Y.ty_inj
-  ft_tie := Y.ft_tie
-  framedRowBaseTie := Y.framedRowBaseTie
-  eV i t := Y.eV i t.1
-  eV_range i t := Y.eV_range i t.1
-  eV_norm i t := Y.eV_norm i t.1
-  eV_rat i t := Y.eV_rat i t.1
-  eV_lat i t := Y.eV_lat i t.1
-  eMt_tie i t := Y.eMt_tie i t.1
-  eW := Y.eW
-  eW_range := Y.eW_range
-  eW_norm := Y.eW_norm
-  eW_lat := Y.eW_lat
-  theta_tie i t := Y.theta_tie i t.1
-  isot_tie := Y.isot_tie
-  lam_tie i t := Y.lam_tie i t.1
-  etaJ_tie := Y.etaJ_tie
 
 
 end Sub
@@ -376,19 +285,10 @@ structure RowT (D : D7) (fr : CharFrame D) (xi : D.what₂.Tup → HChar D.host.
 
   qv_eq : ∀ t v, X.qv (tie.tup t) v = Nat.card (kP (eQ t v).1)
 
-  nu_eq : ∀ t v (i : Fin D.R.m), X.nu (tie.tup t) v ((i : ℕ) + 1) = (((fr.mu0 i * xi (tie.tup t)).val (eQ t v).1 : ℂˣ) : ℂ)
-
   vdd_eq : ∀ (p : ℕ) τ (P : HeightOneSpectrum (𝓞 D.host.E)), p.Prime → (p : 𝓞 D.host.E) ∈ P.asIdeal →
     X.vdd p τ = (multiplicity P.asIdeal (differentIdeal ℤ (𝓞 D.host.E)) : ℝ) / (eWL D.host.E P : ℝ)
 
 attribute [instance] RowT.grp RowT.fin RowT.alg
-
-namespace RowT
-
-variable {D : D7} {fr : CharFrame D} {xi : D.what₂.Tup → HChar D.host.E} (r : RowT D fr xi)
-
-
-end RowT
 
 end GlobalTheory.Mem.Top
 

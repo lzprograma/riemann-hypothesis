@@ -47,6 +47,7 @@ import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.Analysis.Matrix.Order
 import Mathlib.Tactic.ReduceModChar
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LinearIndependentSemilinearOfBasis
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoordMapBasisFun, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeEmbeddingMemUnitGroup
@@ -102,19 +103,6 @@ theorem normAt_one (e : K →+* ℂ) {W : Type} [NormedAddCommGroup W] [InnerPro
 
 end Std
 
-section WithRRDef
-
-variable {D : D7} {EE : Type} [NormedAddCommGroup EE] [InnerProductSpace ℂ EE] [FiniteDimensional ℂ EE]
-
-end WithRRDef
-
-section Small
-
-variable (D : D7) {EE : Type} [NormedAddCommGroup EE] [InnerProductSpace ℂ EE] [FiniteDimensional ℂ EE]
-  {n : ℕ} (c : OrthonormalBasis (Fin n) ℂ EE)
-
-end Small
-
 end GlobalTheory.ProvRowSide
 
 end
@@ -161,81 +149,13 @@ theorem exists_extension (h : LinearIndependent ℂ (fun i => e (b i))) {N : Typ
 
 theorem linearIndependent_map (h : LinearIndependent ℂ (fun i => e (b i))) {κ : Type} [Fintype κ] {z : κ → V}
     (hz : LinearIndependent K z) : LinearIndependent ℂ (fun j => e (z j)) := by
-  classical
-  obtain ⟨f, hf⟩ := LinearMap.exists_extend hz.repr
-  have hfz : ∀ j, f (z j) = Finsupp.single j 1 := by
-    intro j
-    have h1 := LinearMap.congr_fun hf ⟨z j, Submodule.subset_span ⟨j, rfl⟩⟩
-    simp only [LinearMap.comp_apply, Submodule.subtype_apply] at h1
-    rw [h1, hz.repr_eq_single j _ rfl]
-  let g : V →ₛₗ[σ] (κ → ℂ) :=
-    { toFun := fun x j => σ (f x j)
-      map_add' := fun x y => by funext j; simp
-      map_smul' := fun a x => by funext j; simp }
-  obtain ⟨F, hF⟩ := exists_extension e b h g
-  refine LinearIndependent.of_comp F ?_
-  have : (F ∘ fun j => e (z j)) = Pi.basisFun ℂ κ := by
-    funext j k
-    simp only [Function.comp, hF, g, LinearMap.coe_mk, AddHom.coe_mk, hfz, Pi.basisFun_apply]
-    by_cases hjk : j = k
-    · subst hjk; simp
-    · simp [Ne.symm hjk]
-  rw [this]
-  exact (Pi.basisFun ℂ κ).linearIndependent
+  intros
+  apply _root_.GlobalTheory.Mem.linearIndependent_semilinear_of_basis <;> assumption
 
 theorem mem_span_ker (h : LinearIndependent ℂ (fun i => e (b i))) {S : Type} [Fintype S] (T : S → M →ₗ[ℂ] M)
     (hT : ∀ v x, ∃ y, e y = T v (e x)) {φ : M} (hφ : φ ∈ Submodule.span ℂ (Set.range fun i => e (b i)))
     (h0 : ∀ v, T v φ = 0) : φ ∈ Submodule.span ℂ (e '' {x | ∀ v, T v (e x) = 0}) := by
-  classical
-  have hinj := inj_of_li σ e b h
-  let N : S → V →ₗ[K] V := fun v => descend e e hinj (T v) (hT v)
-  have hN : ∀ v x, e (N v x) = T v (e x) := fun v x => descend_spec e e hinj (T v) (hT v) x
-  let N' : V →ₗ[K] (S → V) := LinearMap.pi N
-  obtain ⟨r, hr⟩ := N'.rangeRestrict.exists_rightInverse_of_surjective N'.range_rangeRestrict
-  obtain ⟨s, hs⟩ := LinearMap.exists_extend r
-  have hsN : ∀ x, N' (s (N' x)) = N' x := by
-    intro x
-    have h1 := LinearMap.congr_fun hs ⟨N' x, ⟨x, rfl⟩⟩
-    have h2 := congrArg Subtype.val (LinearMap.congr_fun hr ⟨N' x, ⟨x, rfl⟩⟩)
-    simp only [LinearMap.comp_apply, Submodule.subtype_apply] at h1
-    rw [h1]
-    exact h2
-  let p : V →ₗ[K] V := LinearMap.id - s ∘ₗ N'
-  have hp : ∀ x v, T v (e (p x)) = 0 := by
-    intro x v
-    have h1 : N' (p x) = 0 := by simp [p, hsN]
-    have h2 : N v (p x) = 0 := congrFun h1 v
-    rw [← hN, h2, map_zero]
-  obtain ⟨P, hP⟩ := exists_extension e b h (e.comp p)
-  choose Sx hSx using fun v => exists_extension e b h (e.comp (s ∘ₗ LinearMap.single K (fun _ : S => V) v))
-  have key : ∀ ψ ∈ Submodule.span ℂ (Set.range fun i => e (b i)),
-      ψ = P ψ + ∑ v, Sx v (T v ψ) ∧ P ψ ∈ Submodule.span ℂ (e '' {x | ∀ v, T v (e x) = 0}) := by
-    intro ψ hψ
-    induction hψ using Submodule.span_induction with
-    | mem ψ hψ =>
-      obtain ⟨i, rfl⟩ := hψ
-      refine ⟨?_, ?_⟩
-      · simp only [← hN, hSx, hP, LinearMap.comp_apply]
-
-        rw [← map_sum e, ← map_sum s, ← map_add (f := _)]
-        congr 1
-        have : ∑ v, LinearMap.single K (fun _ : S => V) v (N v (b i)) = N' (b i) := by
-          funext w; simp [N', Finset.sum_apply, Pi.single_apply]
-        rw [this]; simp [p]
-      · rw [hP]; exact Submodule.subset_span ⟨p (b i), hp _, rfl⟩
-    | zero => simp
-    | add x y _ _ hx hy =>
-      refine ⟨?_, by rw [map_add (f := _)]; exact Submodule.add_mem _ hx.2 hy.2⟩
-      simp only [map_add (f := _), Finset.sum_add_distrib]
-      conv_lhs => rw [hx.1, hy.1]
-      abel
-    | smul a x _ hx =>
-      refine ⟨?_, by rw [map_smul]; exact Submodule.smul_mem _ _ hx.2⟩
-      simp only [map_smul]
-      rw [← Finset.smul_sum, ← smul_add, ← hx.1]
-  obtain ⟨h1, h2⟩ := key φ hφ
-  rw [h1]
-  simpa [h0] using h2
+  exact _root_.GlobalTheory.RamRational.mem_span_of_kernel e b h T hT φ hφ h0
 
 end Semilinear
 

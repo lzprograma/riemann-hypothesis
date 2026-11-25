@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MeasurableSetSatFrames
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KaUnfoldPfA
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.TypeStar
@@ -66,18 +67,7 @@ theorem cont_lact (X : Data E r) (γ : GL (Fin r) E) : Continuous (lact (Ψ := X
   exact continuous_const.matrix_mul (cont_mat X τ)
 
 theorem meas_Bor (X : Data E r) : MeasurableSet (Bor X.Ψ r) := by
-  have h : Bor X.Ψ r = ⋂ τ, ({b : Frame X.Ψ r | (mat b τ).det ≠ 0} ∩
-      ⋂ a, ⋂ c, {b : Frame X.Ψ r | c < a → b τ a c = 0}) := by
-    ext b
-    simp [Bor]
-  rw [h]
-  refine MeasurableSet.iInter fun τ => ?_
-  refine MeasurableSet.inter ?_ (MeasurableSet.iInter fun a => MeasurableSet.iInter fun c => ?_)
-  · exact (isOpen_ne_fun (cont_mat X τ).matrix_det continuous_const).measurableSet
-  · by_cases hca : c < a
-    · simp only [hca, true_implies]
-      exact (isClosed_eq (by fun_prop) continuous_const).measurableSet
-    · simp [hca]
+  apply GlobalTheory.Unfold.measurableSet_Bor <;> assumption
 
 def Sset (X : Data E r) (x0 : Frame X.Ψ r) (FF : Set (V (nd X))) : Set (Frame X.Ψ r) :=
   (fun pr : V (nd X) × Frame X.Ψ r => rmul (cpt X x0 pr.1) pr.2) '' (FF ×ˢ Bor X.Ψ r)

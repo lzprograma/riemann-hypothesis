@@ -104,10 +104,10 @@ theorem supBdd_and_supR_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField
   have hr : ∀ σ : c.F →+* ℂ, Set.range (N σ) = Set.range (N (Formalism.L2.PjFree.goodOf c σ)) := by
     intro σ
     by_cases hσ : Formalism.L2.PjFree.GoodEmb c σ
-    · have e : Formalism.L2.PjFree.goodOf c σ = σ := if_pos hσ
+    · have e : Formalism.L2.PjFree.goodOf c σ = σ := ite_eq_left hσ
       exact (hsub _ _ rfl).trans (hsub _ _ (by rw [e]; ext x; simp)) |>.antisymm
         ((hsub _ _ rfl).trans (hsub _ _ (by rw [e]; ext x; simp)))
-    · have e : Formalism.L2.PjFree.goodOf c σ = (starRingEnd ℂ).comp σ := if_neg hσ
+    · have e : Formalism.L2.PjFree.goodOf c σ = (starRingEnd ℂ).comp σ := ite_eq_right hσ
       exact (hsub _ _ e).antisymm (hsub _ _ (by rw [e]; ext x; simp))
   refine ⟨fun σ => ?_, fun σ => ?_⟩
   · show BddAbove (Set.range (N σ))

@@ -79,8 +79,4 @@ theorem settingStd (h5 : 5 ≤ p) (h2 : 2 ≤ n) (he : Even n) :
       w_sq := wU_sq p n }
   · exact (Quad.card_res _).trans (card_quotient_extRing p n)
 
-theorem setting (h5 : 5 ≤ p) (h2 : 2 ≤ n) (he : Even n) :
-    HidaSetting p n (WQ p n) (QQ p n) (OO p n) (KO p n) (iota p n) (sig p n) (jO p n) (wU p n) :=
-  (settingStd p n h5 h2 he).1
-
 end Formalism.L2.G

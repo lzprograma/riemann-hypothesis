@@ -296,12 +296,4 @@ end
 
 end
 
-section
-
-noncomputable section
-
-end
-
-end
-
 end ReciprocityTheory.ChartRestriction.G.I2

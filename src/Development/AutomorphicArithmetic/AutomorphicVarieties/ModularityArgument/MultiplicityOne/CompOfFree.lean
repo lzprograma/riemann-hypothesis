@@ -357,34 +357,21 @@ open GlobalTheory.PRep GlobalTheory.BCT
 
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm
 
-private theorem out_mem_iff {G : Type} [Group G] (K : Subgroup G) (q : G ⧸ K) :
-    q.out ∈ K ↔ q = (QuotientGroup.mk 1 : G ⧸ K) := by
-  constructor
-  · intro h
-    rw [← QuotientGroup.out_eq' q]
-    refine QuotientGroup.eq.2 ?_
-    simpa using h
-  · intro h
-    have h1 : (QuotientGroup.mk q.out : G ⧸ K) = QuotientGroup.mk 1 := by
-      rw [QuotientGroup.out_eq' q, h]
-    have h2 := QuotientGroup.eq.1 h1
-    simpa using h2
-
 private theorem levOp_unit_eq {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V]
     (ρ : Representation ℂ G V) (K : Subgroup G) :
     levOp ρ K K ((K : Set G).indicator 1) LinearMap.id = ρ (QuotientGroup.mk 1 : G ⧸ K).out := by
-  have hone : (QuotientGroup.mk 1 : G ⧸ K).out ∈ K := (out_mem_iff K _).2 rfl
+  have hone : (QuotientGroup.mk 1 : G ⧸ K).out ∈ K := (QuotientGroup.out_mem_iff (s := K)).2 rfl
   unfold levOp
   rw [finsum_eq_single _ (QuotientGroup.mk 1 : G ⧸ K)]
   · rw [Set.indicator_of_mem (by exact hone)]
     simp
   · intro q hq
-    rw [Set.indicator_of_notMem (fun h => hq ((out_mem_iff K q).1 h)), zero_smul]
+    rw [Set.indicator_of_notMem (fun h => hq ((QuotientGroup.out_mem_iff (s := K) (a := q)).1 h)), zero_smul]
 
 private theorem levOp_unit_fixed {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V]
     (ρ : Representation ℂ G V) (K : Subgroup G) (v : V) (hv : v ∈ fixed ρ K) :
     levOp ρ K K ((K : Set G).indicator 1) LinearMap.id v = v := by
-  have hone : (QuotientGroup.mk 1 : G ⧸ K).out ∈ K := (out_mem_iff K _).2 rfl
+  have hone : (QuotientGroup.mk 1 : G ⧸ K).out ∈ K := (QuotientGroup.out_mem_iff (s := K)).2 rfl
   rw [levOp_unit_eq]
   simpa using hv ⟨_, hone⟩
 
@@ -433,7 +420,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.unramOf :
   have hmem : cLoc w x ∈ UL n w := by
     by_cases hs : IsSplitAt w
     · unfold UL
-      rw [if_pos hs]
+      rw [ite_eq_left hs]
       trivial
     · exact GlobalTheory.LocInj.cLoc_mem_UL hs x
   refine ⟨⟨cLoc w x, hmem⟩, ?_, rfl⟩
@@ -525,7 +512,7 @@ private theorem dite_tr (A B : V →ₗ[ℂ] V) (P Q : Submodule ℂ V) (hPQ : P
   subst hPQ
   by_cases h : ∀ v ∈ P, A v ∈ P
   · have h' : ∀ v ∈ P, B v ∈ P := fun v hv => hop v hv ▸ h v hv
-    rw [dif_pos h, dif_pos h']
+    rw [dite_eq_left h, dite_eq_left h']
     congr 1
     ext x
     exact hop x.1 x.2
@@ -670,11 +657,11 @@ theorem evalD : EvalD := by
   have hB₀ : ∀ i, ∀ w ∈ S, w ∉ Z → ∀ hs : IsSplitAt w, HasSatGL w (toGL hs (σ₀ i w)).ρ (B₀ i w) := fun i w hw hz =>
     Classical.epsilon_spec (p := fun B => ∀ hs : IsSplitAt w, HasSatGL w (toGL hs (σ₀ i w)).ρ B) (hline i w hw hz).2
   let B : ι → Pl E → Multiset ℂˣ := fun i w => if w ∈ S then B₀ i w else inv (B₀ i (cPl w))
-  have hBS : ∀ i, ∀ w ∈ S, B i w = B₀ i w := fun i w hw => if_pos hw
-  have hBN : ∀ i w, w ∉ S → B i w = inv (B₀ i (cPl w)) := fun i w hw => if_neg hw
+  have hBS : ∀ i, ∀ w ∈ S, B i w = B₀ i w := fun i w hw => ite_eq_left hw
+  have hBN : ∀ i w, w ∉ S → B i w = inv (B₀ i (cPl w)) := fun i w hw => ite_eq_right hw
   let t : ι → ∀ w : Pl E, SmIrr (GLw n w) := fun i w =>
     if h : IsSplitAt w then toGL h (σ₀ i w) else Classical.choice smIrr_nonempty
-  have ht : ∀ i w (h : IsSplitAt w), t i w = toGL h (σ₀ i w) := fun i w h => dif_pos h
+  have ht : ∀ i w (h : IsSplitAt w), t i w = toGL h (σ₀ i w) := fun i w h => dite_eq_left h
   refine ⟨t, B, fun i => ⟨fun w hns => ?_, fun w hw => ?_, fun w hoff hs => ?_⟩, fun f hf T hT hd e₁ e₂ k => ?_⟩
   ·
     have hw : w ∈ S := by
@@ -840,27 +827,23 @@ section Split
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {w : Pl E}
 
-private theorem mem_UL_split (hw : IsSplitAt w) (g : GLw n w) : g ∈ UL n w := by
-  rw [UL, if_pos hw]
-  trivial
-
 private noncomputable def toUL (hw : IsSplitAt w) (τ : SmIrr (GLw n w)) : SmIrr (UL n w) where
   V := τ.V
   ρ := τ.ρ.comp (UL n w).subtype
   smooth v := (τ.smooth v).preimage continuous_subtype_val
   irred := by
     obtain ⟨h0, h⟩ := (GlobalTheory.CuspRep.isIrreducible_iff _).1 τ.irred
-    exact (GlobalTheory.CuspRep.isIrreducible_iff _).2 ⟨h0, fun W hW => h W fun g x hx => hW ⟨g, mem_UL_split hw g⟩ x hx⟩
+    exact (GlobalTheory.CuspRep.isIrreducible_iff _).2 ⟨h0, fun W hW => h W fun g x hx => hW ⟨g, GlobalTheory.BCT.CtLevel.mem_UL_of_split hw g⟩ x hx⟩
 
 private theorem isCompU_toUL (hw : IsSplitAt w) {σ : Submodule ℂ (UA E n → ℂ)} {τ : SmIrr (GLw n w)} (h : Cp σ w τ) :
     IsCompU σ w (toUL hw τ) := by
   obtain ⟨-, F, hF0, hFσ, hF⟩ := h
-  refine ⟨{ toFun := fun x => ⟨cLoc w x.1, mem_UL_split hw _⟩
+  refine ⟨{ toFun := fun x => ⟨cLoc w x.1, GlobalTheory.BCT.CtLevel.mem_UL_of_split hw _⟩
             map_one' := Subtype.ext (by simp)
             map_mul' := fun a b => Subtype.ext (by simp) }, fun _ => rfl, (toUL hw τ).irred, F, hF0, hFσ, fun x v => hF x v⟩
 
 private noncomputable def equivOfUL (hw : IsSplitAt w) {τ τ' : SmIrr (GLw n w)} (e : (toUL hw τ).ρ.Equiv (toUL hw τ').ρ) : τ.ρ.Equiv τ'.ρ :=
-  Representation.Equiv.mk e.toLinearEquiv fun g => e.isIntertwining' ⟨g, mem_UL_split hw g⟩
+  Representation.Equiv.mk e.toLinearEquiv fun g => e.isIntertwining' ⟨g, GlobalTheory.BCT.CtLevel.mem_UL_of_split hw g⟩
 
 end Split
 
@@ -961,7 +944,7 @@ theorem UpperTheory.V.Z.Mult.rMult :
     have hKLo : ∀ w, IsOpen (KL n w : Set (UL n w)) := fun w => (GlobalTheory.BCT.LocCompU.isOpen_isCompact_KL hU n w).1
     obtain ⟨K₀, hK₀o, hK₀le, hK₀⟩ := hLc E n w₀ (hZ w₀ hw₀).2 f₀ hf₀
     obtain ⟨K₁, hK₁Z, hK₁o⟩ : ∃ K₁ : ∀ w : Pl E, Subgroup (UL n w), (∀ w ∈ Z, K₁ w = K' w) ∧ ∀ w, w ∉ Z → K₁ w = KL n w :=
-      ⟨fun w => if w ∈ Z then K' w else KL n w, fun w h => if_pos h, fun w h => if_neg h⟩
+      ⟨fun w => if w ∈ Z then K' w else KL n w, fun w h => ite_eq_left h, fun w h => ite_eq_right h⟩
     have hK₁ : IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K₁ := by
       refine ⟨fun w => ?_, ?_⟩
       · by_cases h : w ∈ Z
@@ -1072,7 +1055,7 @@ theorem UpperTheory.V.Z.Mult.lcLev :
     UpperTheory.V.Z.Mult.LcLev := by
   intro E _ _ _ n w hw f hf
   obtain ⟨K', hKo, hKle, hK⟩ := hf
-  have hU : UL n w = ⊤ := if_pos hw
+  have hU : UL n w = ⊤ := ite_eq_left hw
   have hcl : IsClosed ((UL n w : Subgroup (GLw n w)) : Set (GLw n w)) := by
     rw [hU]
     exact isClosed_univ
@@ -1211,7 +1194,7 @@ theorem UpperTheory.V.Z.Mult.levInd :
     UpperTheory.V.Z.Mult.LevInd := by
   intro E _ _ _ n w hw K hKo hKle
   obtain ⟨ho, hc⟩ := GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL (E := E) w n
-  have hU : UL n w = ⊤ := if_pos hw
+  have hU : UL n w = ⊤ := ite_eq_left hw
   let H : Subgroup (GLw n w) := K.map (UL n w).subtype
   have hHo : IsOpen (H : Set (GLw n w)) := map_top_open _ hU K hKo
   have hle : H ≤ GlobalTheory.LFun.KGL w (n := n) := by
@@ -1315,11 +1298,11 @@ theorem UpperTheory.V.Z.Mult.rCountAt :
     have hterm : ∀ i, (∏ w ∈ Z, trc (t i w).ρ (KGL w (n := n)) (f w)) * val1 T e₁ e₂ (Bi i) ^ k =
         (if At π (σ i) then 1 else 0) * ∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) (f w) := fun i => by
       by_cases h : At π (σ i)
-      · rw [if_pos h, hval i h, one_pow, mul_one, one_mul]
+      · rw [ite_eq_left h, hval i h, one_pow, mul_one, one_mul]
         refine Finset.prod_congr rfl fun w hw => ?_
         exact ((hCp E hU n hn1 (σ i) (hdec.1 i).1 w (hZ w hw).2 (τ w) (t i w)
           (hCo i h w (hZ w hw).2 _ (hτ w hw)) ((hi i).2.1 w hw)).2 (f w)).symm
-      · rw [if_neg h, h0 ⟨i, h⟩, zero_pow (by omega), mul_zero, zero_mul]
+      · rw [ite_eq_right h, h0 ⟨i, h⟩, zero_pow (by omega), mul_zero, zero_mul]
     rw [htr, Finset.sum_congr rfl fun i _ => hterm i, ← Finset.sum_mul, Finset.sum_boole, Nat.card_eq_fintype_card,
       Fintype.card_subtype]
 end -- clump:auto
@@ -1435,12 +1418,12 @@ theorem UpperTheory.V.Z.Mult.rIdent :
     have h1 := hid S hS' K' (famU Z T f e₁ e₂ k) (fun a' => if h : a' + (n - a') = n then Φ a' (n - a') h k else 0) hK
       (hU k).1 fun a' ha' => by
         have h := Nat.add_sub_cancel' ha'
-        simp only [dif_pos h]
+        simp only [dite_eq_left h]
         exact ⟨((ht _ _ h T hT hTZ e₁ e₂).2 k).1, fun w hw => (((ht _ _ h T hT hTZ e₁ e₂).2 k).2 w hw).1⟩
-    simp only [dif_pos (hab _)] at h1
+    simp only [dite_eq_left (hab _)] at h1
     rw [← h1]
     refine mul_left_cancel₀ hdim ?_
-    rw [← (hU k).2 hk, hgt _ (hU k).1 ⟨w₀, (hZ w₀ hw₀).1, fun y hy => hr₀ _ (by simpa only [famU, if_pos hw₀] using hy)⟩]
+    rw [← (hU k).2 hk, hgt _ (hU k).1 ⟨w₀, (hZ w₀ hw₀).1, fun y hy => hr₀ _ (by simpa only [famU, ite_eq_left hw₀] using hy)⟩]
   have hlim := tendsto_nhds_unique hsum (tendsto_const_nhds.congr' ((eventually_ge_atTop 1).mono fun k hk => (hzero k hk).symm))
   rw [Finset.sum_ite, Finset.sum_const_zero, zero_add, Finset.sum_const, nsmul_eq_mul] at hlim
   haveI := Classical.decEq κ
@@ -1739,8 +1722,6 @@ open UpperTheory.V.Z.Tf.GlobalTraceComparison
 open UpperTheory.V.Af.Bc (cPl)
 open scoped Classical
 
-
-
 namespace UpperTheory.Zero.ConvolutionTheory.EB
 
 attribute [local instance] borelG borelF borelA borelH
@@ -1779,7 +1760,6 @@ end UpperTheory.Zero.ConvolutionTheory.EB
 open UpperTheory.Zero.ConvolutionTheory.EB
 
 attribute [local instance] borelG borelF borelA borelH
-
 
 theorem UpperTheory.V.Z.Mult.stableGA :
     PiFin → PiAdm → GrowthPiJ → CmbPiA → CuspReadI → UpperTheory.V.Z.Mult.StableBlockGA := by

@@ -322,7 +322,7 @@ lemma mem_of_unit_pivot {s : Finset ι} {k : ι}
         simp [hv, hx, hD]
         rw [mul_comm]; exact hui
       · have : A i i * ui = 1 := hui
-        simp only [hv, hx, if_true, hj, if_false, hD, Function.update_self,
+        simp only [hv, hx, ite_true, hj, ite_false, hD, Function.update_self,
           Matrix.one_apply, Ne.symm hj]
         linear_combination (-(ui * A i j)) * this
     · by_cases hj : j = k
@@ -333,7 +333,7 @@ lemma mem_of_unit_pivot {s : Finset ι} {k : ι}
       · have hDi : D i = 1 := by simp [hD, Function.update_of_ne hi]
         have hvx : (A i k + v i * A k k) = 0 := by
           have : A k k * ui = 1 := hui
-          simp only [hv, hi, if_false]
+          simp only [hv, hi, ite_false]
           linear_combination (-A i k) * this
         rw [hDi, hvx, zero_mul, add_zero, one_mul]
         rcases hij with h | h
@@ -394,13 +394,13 @@ lemma exists_unit_pivot (hR : ∀ a b : R, IsCoprime a b → ∃ t, IsUnit (a + 
         rcases hij with h | h
         · exact absurd (Finset.mem_insert_self _ _) h
         · exact h
-      rw [if_pos rfl, hwsum, hF i j (Or.inr hj), Finset.sum_eq_zero, mul_zero, add_zero]
+      rw [ite_eq_left rfl, hwsum, hF i j (Or.inr hj), Finset.sum_eq_zero, mul_zero, add_zero]
       intro l hl
       have hlj : l ≠ j := fun h => hj (h ▸ Finset.mem_insert_of_mem hl)
       rw [hF l j (Or.inr hj), Matrix.one_apply_ne hlj, mul_zero]
-    · rw [if_neg hi, add_zero]
+    · rw [ite_eq_right hi, add_zero]
       exact hF i j hij
-  · rw [rowOp_mul_apply, if_pos rfl, hwsum]
+  · rw [rowOp_mul_apply, ite_eq_left rfl, hwsum]
     exact ht
 
 lemma mem_of_fixed (hR : ∀ a b : R, IsCoprime a b → ∃ t, IsUnit (a + t * b))

@@ -10,20 +10,8 @@ public import Formalism.LocalToGlobal.Columns.HeckeSp
 public import Formalism.LocalToGlobal.Columns.HeckeSpCount
 public import Lemmata.GeneralBFactRightMore.Imports
 public import Formalism.LocalToGlobal.Divisibility.Tuples
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 import Formalism.FlagUnipotentLattices.MemOfOrthogonalAnisotropic
 import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.TotallySplit
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ColonCountWeighted, Formalism.FlagUnipotentLattices.IdealCountLeWAsm, Formalism.LocalToGlobal.Columns.WmpNatCardQuotEqPowFinrank
@@ -38,22 +26,6 @@ open scoped BigOperators
 open NumberField
 
 namespace Formalism.HermitianLatticeCounting.P
-
-namespace DualLatticeIndexBis
-
-end DualLatticeIndexBis
-
-namespace DualLatticeIndexBis
-
-end DualLatticeIndexBis
-
-namespace DualLatticeIndexBis
-
-end DualLatticeIndexBis
-
-namespace DualLatticeIndexBis
-
-end DualLatticeIndexBis
 
 namespace DualLatticeIndexBis
 
@@ -226,7 +198,7 @@ lemma zdual_relIndex {V : Type*} [AddCommGroup V] [Module ℚ V] [FiniteDimensio
     intro x i
     rw [hS2, Module.Basis.repr_sum_self]
   have hinj : Function.Injective S := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     apply hnd
     have h0 : t x = 0 := by
@@ -552,7 +524,7 @@ theorem wmp_hStd_nondeg (x : Sp E n) (h : ∀ y, (hStd E n).flip x y = 0) : x = 
   have := h (Pi.single i 1)
   rw [LinearMap.flip_apply, hStd_apply] at this
   simp only [Pi.single_apply, apply_ite (star : E → E), star_one, star_zero, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true] at this
   exact this
 
 theorem wmp_relIndex_dual {L M : Submodule (𝓞 E) (Sp E n)} (hLM : L ≤ M) (hM : M.FG)
@@ -567,44 +539,12 @@ theorem wmp_card_quot (B N : Submodule (𝓞 E) (Sp E n)) :
   rw [AddSubgroup.relIndex, AddSubgroup.index_eq_card]
   rfl
 
-private theorem isFullLattice_of_unimodular {L : Submodule (𝓞 E) (Sp E n)}
-    (hL : Submodule.IsLattice E L) (hu : IsUnimodular (hStd E n) L) :
-    Submodule.IsFullLattice E L := by
-  let := hL
-  refine { span_eq_top := ?_ }
-  let W := Submodule.span E (L : Set (Sp E n))
-  change W = ⊤
-  by_contra h
-  let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
-  let g : Sp E n →ₗ[E] Module.Dual E W :=
-    (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
-  have hdim : finrank E (Module.Dual E W) < finrank E (Sp E n) := by
-    rw [Subspace.dual_finrank_eq]
-    exact Submodule.finrank_lt h
-  obtain ⟨x, hx, hx₀⟩ :=
-    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
-  -- Every multiple of the orthogonal vector lies in the self-dual lattice.
-  have hsmul (a : E) : a • e x ∈ L := by
-    rw [← hu, dualBasic_mem_dual]
-    intro y hy
-    apply hStd_mem_one_symm
-    have hxy : hStd E n (e x) y = 0 :=
-      congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
-    simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
-  let i : E →ₗ[𝓞 E] L :=
-    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
-  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.fg
-  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
-    smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
-  exact RingOfIntegers.not_isField E
-    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
-
 theorem wmp_relIndex_inf_eq {N N₁ : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsLattice E N)
     (hN₁ : Submodule.IsLattice E N₁) (hu : IsUnimodular (hStd E n) N) (hu₁ : IsUnimodular (hStd E n) N₁)
     (hB : Submodule.IsLattice E (N ⊓ N₁)) :
     (N ⊓ N₁).toAddSubgroup.relIndex N.toAddSubgroup = (N ⊓ N₁).toAddSubgroup.relIndex N₁.toAddSubgroup := by
-  let := isFullLattice_of_unimodular hN hu
-  let := isFullLattice_of_unimodular hN₁ hu₁
+  let := hcnt_isFullLattice_of_unimodular hN hu
+  let := hcnt_isFullLattice_of_unimodular hN₁ hu₁
   let := hB
   have hBspan := Submodule.IsFullLattice.span_eq_top (A := E) (M := N ⊓ N₁)
   have key : ∀ M : Submodule (𝓞 E) (Sp E n), Submodule.IsLattice E M → IsUnimodular (hStd E n) M → N ⊓ N₁ ≤ M →
@@ -664,20 +604,10 @@ theorem wmp_isHeckeNbr_symm {P : HeightOneSpectrum (𝓞 E)} {i : ℕ} {N N₁ :
   · rw [wmp_card_quot, ← wmp_relIndex_inf_eq hN hN₁ hu hu₁ hB, ← wmp_card_quot, inf_comm,
       Nat.card_congr e.toEquiv, Nat.card_fun, Nat.card_eq_fintype_card (α := Fin i), Fintype.card_fin, card_quot_conjP]
 
-theorem wmp_hStd_osmul_right (u z : Sp E n) (s : 𝓞 E) :
-    hStd E n u (s • z) = algebraMap (𝓞 E) E s * hStd E n u z := by
-  rw [← algebraMap_smul E s z, map_smul, smul_eq_mul]
-
-theorem wmp_hStd_osmul_left (u z : Sp E n) (s : 𝓞 E) :
-    hStd E n (s • u) z = algebraMap (𝓞 E) E (cO E s) * hStd E n u z := by
-  rw [← algebraMap_smul E s u, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, algebraMap_cO]
-  rfl
-
 end WmPSym
 
 open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Module Pointwise
 
-open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Module Pointwise
 
 section WmPK
 variable {E : Type} [Field E] [NumberField E] [StarRing E]
@@ -700,11 +630,8 @@ theorem card_wmpToK (p : Submodule (𝓞 E) V) : Nat.card (wmpToK P p) = Nat.car
 
 end WmPK
 
-open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Module Pointwise
 
-open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Module Pointwise
 
-open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Module
 
 end Formalism.L2.Col
 end -- clump:auto

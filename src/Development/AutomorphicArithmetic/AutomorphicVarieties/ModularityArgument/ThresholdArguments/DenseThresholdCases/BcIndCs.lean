@@ -236,16 +236,16 @@ private theorem alg_closure_of (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosur
   ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) k₀⟩
 private theorem conj_el_ex (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (k₀ : IntermediateField ℚ Ω) [NumberField k₀]
     [IsTotallyReal k₀] : ∃ c : G k₀ Ω, IsConjEl c := by
-  haveI : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
-  haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
-  haveI : Normal ℚ Ω := IsAlgClosure.normal ℚ Ω
+  have : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
+  have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
+  have : Normal ℚ Ω := IsAlgClosure.normal ℚ Ω
   let j : Ω →ₐ[ℚ] ℂ := (by
     refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
     solve_by_elim* (maxDepth := 2) only [*,
       @_root_.DivisionSemiring.to_moduleIsTorsionFree,
       @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
-  letI : Algebra Ω ℂ := j.toRingHom.toAlgebra
-  haveI : IsScalarTower ℚ Ω ℂ := IsScalarTower.of_algebraMap_eq fun x => (j.commutes x).symm
+  let : Algebra Ω ℂ := j.toRingHom.toAlgebra
+  have : IsScalarTower ℚ Ω ℂ := IsScalarTower.of_algebraMap_eq fun x => (j.commutes x).symm
   let τ : ℂ ≃ₐ[ℚ] ℂ := AlgEquiv.ofRingEquiv (f := starRingAut) fun x => by simp
   let c : Ω ≃ₐ[ℚ] Ω := τ.restrictNormal Ω
   have hc : ∀ x, algebraMap Ω ℂ (c x) = starRingEnd ℂ (algebraMap Ω ℂ x) := fun x => AlgEquiv.restrictNormal_commutes τ Ω x
@@ -276,7 +276,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.polMix_alt :
     _root_.UpperTheory.V.Af.HypothesesH' → UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.PolMix := by
   intro H Ω _ _ _ l _ k₀ _ _ ι x k t r hd hm
   obtain ⟨m, hm0, hm⟩ := hm
-  haveI : IsAlgClosure k₀ Ω := alg_closure_of Ω k₀
+  have : IsAlgClosure k₀ Ω := alg_closure_of Ω k₀
   have hdet : ∀ s, Matrix.GeneralLinearGroup.det (r s) = cycBar k₀ Ω l s ^ k * x (resQ k₀ s) := fun s =>
     DFunLike.congr_fun hd.det s
   have hcont : Continuous (Matrix.GeneralLinearGroup.det.comp r) :=
@@ -319,8 +319,8 @@ private theorem deg_two {Ω : Type} [Field Ω] [CharZero Ω] (A B M : Intermedia
     [FiniteDimensional ℚ B] (hM : M = A ⊔ B) (hA : Module.finrank ℚ A = 2) (hn : ¬ A ≤ B) [Algebra B M] [IsScalarTower ℚ B M] :
     Module.finrank B M = 2 := by
   have h1 : Module.finrank ℚ M ≤ Module.finrank ℚ A * Module.finrank ℚ B := hM ▸ IntermediateField.finrank_sup_le A B
-  haveI : FiniteDimensional ℚ M := hM ▸ IntermediateField.finiteDimensional_sup A B
-  haveI : Module.Free B M := Module.Free.of_divisionRing B M
+  have : FiniteDimensional ℚ M := hM ▸ IntermediateField.finiteDimensional_sup A B
+  have : Module.Free B M := Module.Free.of_divisionRing B M
   have h2 := Module.finrank_mul_finrank ℚ B M
   have h3 : 0 < Module.finrank ℚ B := Module.finrank_pos
   have h4 : 0 < Module.finrank ℚ M := Module.finrank_pos
@@ -343,8 +343,8 @@ private theorem two_places {k : Type} [Field k] [NumberField k] [IsTotallyReal k
   omega
 private theorem two_emb {L M : Type} [Field L] [Field M] [CharZero L] [Algebra L M] (h : Module.finrank L M = 2) (φ : L →+* ℂ) :
     ∃ τ τ' : M →+* ℂ, τ ≠ τ' ∧ τ.comp (algebraMap L M) = φ ∧ τ'.comp (algebraMap L M) = φ := by
-  letI : Algebra L ℂ := φ.toAlgebra
-  haveI : FiniteDimensional L M := Module.finite_of_finrank_pos (by omega)
+  let : Algebra L ℂ := φ.toAlgebra
+  have : FiniteDimensional L M := Module.finite_of_finrank_pos (by omega)
   have hc := AlgHom.card L M ℂ
   obtain ⟨a, b, hab⟩ := Fintype.exists_pair_of_one_lt_card (α := M →ₐ[L] ℂ) (by omega)
   exact ⟨a, b, fun e => hab (AlgHom.coe_ringHom_injective e), a.comp_algebraMap, b.comp_algebraMap⟩
@@ -390,49 +390,49 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.indAutLP_of_upQuad_u
     obtain ⟨g, hg, hne⟩ := UpperTheory.residual_characters_psi_ne Ω l c D T h.hyp.good h.hyp.ok h.hyp.two
     exact hne ((h.hyp.ps g).2 (IntermediateField.fixingSubgroup_le hle (hfix g hg.1)))
   have hKk : ¬ T.K ≤ k₀ := fun hle => by
-    letI : Algebra T.K k₀ := (IntermediateField.inclusion hle).toRingHom.toAlgebra
-    haveI : IsTotallyComplex k₀ := isTotallyComplex_of_algebra T.K k₀
+    let : Algebra T.K k₀ := (IntermediateField.inclusion hle).toRingHom.toAlgebra
+    have : IsTotallyComplex k₀ := isTotallyComplex_of_algebra T.K k₀
     obtain ⟨w⟩ : Nonempty (InfinitePlace k₀) := inferInstance
     exact InfinitePlace.not_isReal_iff_isComplex.2 (IsTotallyComplex.isComplex w) (IsTotallyReal.isReal w)
-  haveI := T.nK.to_finiteDimensional
-  haveI := T.nL.to_finiteDimensional
-  haveI : FiniteDimensional ℚ k₀ := NumberField.to_finiteDimensional
+  have := T.nK.to_finiteDimensional
+  have := T.nL.to_finiteDimensional
+  have : FiniteDimensional ℚ k₀ := NumberField.to_finiteDimensional
   obtain ⟨E, hE⟩ : ∃ E : IntermediateField ℚ Ω, E = k₀ ⊔ T.K := ⟨_, rfl⟩
   obtain ⟨M, hM⟩ : ∃ M : IntermediateField ℚ Ω, M = k₀ ⊔ T.L := ⟨_, rfl⟩
-  haveI : FiniteDimensional ℚ E := hE ▸ IntermediateField.finiteDimensional_sup k₀ T.K
-  haveI : FiniteDimensional ℚ M := hM ▸ IntermediateField.finiteDimensional_sup k₀ T.L
-  haveI : NumberField E := {}
-  haveI : NumberField M := {}
+  have : FiniteDimensional ℚ E := hE ▸ IntermediateField.finiteDimensional_sup k₀ T.K
+  have : FiniteDimensional ℚ M := hM ▸ IntermediateField.finiteDimensional_sup k₀ T.L
+  have : NumberField E := {}
+  have : NumberField M := {}
   have hEM : E ≤ M := hE ▸ hM ▸ sup_le_sup_left hKL _
   have hKE : T.K ≤ E := hE ▸ le_sup_right
   have hkE : k₀ ≤ E := hE ▸ le_sup_left
   have hLM : T.L ≤ M := hM ▸ le_sup_right
-  letI : Algebra T.K E := (IntermediateField.inclusion hKE).toRingHom.toAlgebra
-  letI : Algebra k₀ E := (IntermediateField.inclusion hkE).toRingHom.toAlgebra
-  letI : Algebra T.L M := (IntermediateField.inclusion hLM).toRingHom.toAlgebra
-  letI : Algebra E M := (IntermediateField.inclusion hEM).toRingHom.toAlgebra
-  haveI : IsScalarTower k₀ E Ω := IsScalarTower.of_algebraMap_eq fun _ => rfl
-  haveI : IsScalarTower T.L M Ω := IsScalarTower.of_algebraMap_eq fun _ => rfl
-  haveI : IsScalarTower E M Ω := IsScalarTower.of_algebraMap_eq fun _ => rfl
-  haveI : IsScalarTower ℚ k₀ E := IsScalarTower.of_algebraMap_eq fun _ => by simp
-  haveI : IsScalarTower ℚ T.L M := IsScalarTower.of_algebraMap_eq fun _ => by simp
-  haveI : IsScalarTower ℚ E M := IsScalarTower.of_algebraMap_eq fun _ => by simp
-  haveI : IsTotallyComplex E := isTotallyComplex_of_algebra T.K _
-  haveI : IsTotallyComplex M := isTotallyComplex_of_algebra T.L _
-  haveI : IsAlgClosure E Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) _⟩
-  haveI : IsAlgClosure M Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) _⟩
-  haveI : Algebra.IsQuadraticExtension ℚ T.K := { finrank_eq_two' := T.degK }
-  haveI hK : IsAbelianGalois ℚ T.K := IsAbelianGalois.of_isCyclic ℚ T.K
-  haveI : Algebra.IsQuadraticExtension ℚ k₀ := { finrank_eq_two' := h.hyp.deg }
-  haveI hk₀ : IsAbelianGalois ℚ k₀ := IsAbelianGalois.of_isCyclic ℚ k₀
-  haveI hLa : IsAbelianGalois ℚ T.L := by
+  let : Algebra T.K E := (IntermediateField.inclusion hKE).toRingHom.toAlgebra
+  let : Algebra k₀ E := (IntermediateField.inclusion hkE).toRingHom.toAlgebra
+  let : Algebra T.L M := (IntermediateField.inclusion hLM).toRingHom.toAlgebra
+  let : Algebra E M := (IntermediateField.inclusion hEM).toRingHom.toAlgebra
+  have : IsScalarTower k₀ E Ω := IsScalarTower.of_algebraMap_eq fun _ => rfl
+  have : IsScalarTower T.L M Ω := IsScalarTower.of_algebraMap_eq fun _ => rfl
+  have : IsScalarTower E M Ω := IsScalarTower.of_algebraMap_eq fun _ => rfl
+  have : IsScalarTower ℚ k₀ E := IsScalarTower.of_algebraMap_eq fun _ => by simp
+  have : IsScalarTower ℚ T.L M := IsScalarTower.of_algebraMap_eq fun _ => by simp
+  have : IsScalarTower ℚ E M := IsScalarTower.of_algebraMap_eq fun _ => by simp
+  have : IsTotallyComplex E := isTotallyComplex_of_algebra T.K _
+  have : IsTotallyComplex M := isTotallyComplex_of_algebra T.L _
+  have : IsAlgClosure E Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) _⟩
+  have : IsAlgClosure M Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) _⟩
+  have : Algebra.IsQuadraticExtension ℚ T.K := { finrank_eq_two' := T.degK }
+  have hK : IsAbelianGalois ℚ T.K := IsAbelianGalois.of_isCyclic ℚ T.K
+  have : Algebra.IsQuadraticExtension ℚ k₀ := { finrank_eq_two' := h.hyp.deg }
+  have hk₀ : IsAbelianGalois ℚ k₀ := IsAbelianGalois.of_isCyclic ℚ k₀
+  have hLa : IsAbelianGalois ℚ T.L := by
     have h := @GroundTheory.Global.isAbelianGalois_sup ℚ Ω _ _ _ _ T.F T.K
       T.nF.to_finiteDimensional T.nK.to_finiteDimensional T.abF hK
     rw [← T.hL] at h
     exact h
-  haveI : IsAbelianGalois ℚ M := hM ▸ @GroundTheory.Global.isAbelianGalois_sup ℚ Ω _ _ _ _ k₀ T.L ‹_› ‹_› hk₀ hLa
-  haveI : IsAbelianGalois E M := IsAbelianGalois.tower_top ℚ _ _
-  haveI : Group.IsSolvable (M ≃ₐ[E] M) := Group.isSolvable_of_comm fun a b => mul_comm' a b
+  have : IsAbelianGalois ℚ M := hM ▸ @GroundTheory.Global.isAbelianGalois_sup ℚ Ω _ _ _ _ k₀ T.L ‹_› ‹_› hk₀ hLa
+  have : IsAbelianGalois E M := IsAbelianGalois.tower_top ℚ _ _
+  have : Group.IsSolvable (M ≃ₐ[E] M) := Group.isSolvable_of_comm fun a b => mul_comm' a b
   have dE : Module.finrank k₀ E = 2 := deg_two T.K k₀ _ (hE.trans (sup_comm _ _)) T.degK hKk
   have dM : Module.finrank T.L M = 2 := deg_two k₀ T.L _ hM h.hyp.deg hkL
   obtain ⟨π, hatt, v, v', hv, hi, hi'⟩ := h.dat.att
@@ -447,8 +447,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.indAutLP_of_upQuad_u
   obtain ⟨P₁, reg₁, att₁, inf₁⟩ := hQ k₀ E Ω l ι dE r π h.dat.cont hreg hatt (RE.2.2.2.1.1 (h.dat.irr _ RE.2.1))
   obtain ⟨P, reg, att, inf⟩ := hS E M Ω l ι _ P₁ (h.dat.cont.comp RE.1) reg₁ att₁
     (RM.2.2.2.1.1 (RE.2.2.2.2.1 h.dat.irr _ RM.2.1))
-  haveI : IsCMField M := IsCMField.of_isAbelianGalois M
-  haveI : IsAbelianGalois T.L M := IsAbelianGalois.tower_top ℚ _ _
+  have : IsCMField M := IsCMField.of_isAbelianGalois M
+  have : IsAbelianGalois T.L M := IsAbelianGalois.tower_top ℚ _ _
   have hMfix : ∀ s : G T.L Ω, resQ T.L s ∈ k₀.fixingSubgroup → ∀ x : M, s (algebraMap M Ω x) = algebraMap M Ω x := fun s hs x => by
     have : resQ T.L s ∈ M.fixingSubgroup := by
       rw [hM, IntermediateField.fixingSubgroup_sup]
@@ -462,10 +462,10 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.indAutLP_of_upQuad_u
     refine MonoidHom.ext fun g => ?_
     rw [MonoidHom.pow_apply, S2.up, MonoidHom.comp_apply, ← map_pow, ← MonoidHom.pow_apply, hm, MonoidHom.one_apply, map_one,
       MonoidHom.one_apply]
-  haveI : IsAbelianGalois ℚ E := IsAbelianGalois.tower_bot ℚ E M
-  haveI : IsCMField E := IsCMField.of_isAbelianGalois E
+  have : IsAbelianGalois ℚ E := IsAbelianGalois.tower_bot ℚ E M
+  have : IsCMField E := IsCMField.of_isAbelianGalois E
   have hW : AllW ι ((r.comp (galEmb k₀ E Ω)).comp (galEmb E M Ω)) := by
-    haveI : IsAlgClosure k₀ Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) _⟩
+    have : IsAlgClosure k₀ Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) _⟩
     have h1 : Sd.IsAlgChar ι (1 : G E Ω →* (Qbar l)ˣ) := by simpa using (_root_.UpperTheory.V.Sd.alg_cyclotomic_of_printed_results H.toClassicalTheorems E Ω l ι).1 0 1 (by rw [MonoidHom.ker_one]; exact isOpen_univ)
     have h2 := _root_.UpperTheory.V.Z.Win.Birth.awChain_of_printsH H k₀ E M Ω dE l ι r 1 h.dat.cont hrw h1 (RM.2.2.2.1.1 (RE.2.2.2.2.1 h.dat.irr _ RM.2.1))
     have e : tw (r.comp (galEmb k₀ E Ω)) 1 = r.comp (galEmb k₀ E Ω) := MonoidHom.ext fun g => Units.ext (by rw [tw_val]; simp)
@@ -479,7 +479,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.indAutLP_of_upQuad_u
         change algebraMap (𝓞 T.L) (𝓞 M) p ∈ w.asIdeal
         rwa [map_natCast]))
       obtain ⟨A, hA⟩ := exists_isPlaceOver Ω w
-      haveI : IsAlgClosure k₀ Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) _⟩
+      have : IsAlgClosure k₀ Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) _⟩
       refine _root_.UpperTheory.V.Z.Win.Birth.sphOfUnrW_alt H M Ω l ι 2 one_le_two _ P ((h.dat.cont.comp RE.1).comp RM.1) hpol reg att
         hW w (hn l h.hyp.spl) A hA fun s hs => ?_
       obtain ⟨g, hg⟩ := h.dat.away A (mt (val_of_mem hA l).1 (hn l h.hyp.spl))
@@ -731,10 +731,10 @@ private theorem only_two {K : Type} [Field K] [NumberField K] {I : Ideal (𝓞 K
 theorem UpperTheory.quadratic_field_split_prime_two_places :
     UpperTheory.V.Sd.S2.QuadSplit := by
   intro Ω _ _ _ k₀ _ h2 p hp hs
-  haveI : Fact p.Prime := ⟨hp⟩
-  haveI : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
-  haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
-  haveI : IsAlgClosure k₀ Ω := ⟨inferInstance, inferInstance⟩
+  have : Fact p.Prime := ⟨hp⟩
+  have : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
+  have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
+  have : IsAlgClosure k₀ Ω := ⟨inferInstance, inferInstance⟩
   have key : ∀ A A' : ValuationSubring Ω, A.valuation (p : Ω) < 1 → ∀ g : G ℚ Ω, g ∉ k₀.fixingSubgroup →
       (∀ y, g y ∈ A ↔ y ∈ A') → ∃ w w' : Pl k₀, w ≠ w' ∧ ((p : ℕ) : 𝓞 k₀) ∈ w.asIdeal ∧ ((p : ℕ) : 𝓞 k₀) ∈ w'.asIdeal ∧
         IsPlaceOver A w ∧ IsPlaceOver A' w' := by
@@ -763,7 +763,7 @@ theorem UpperTheory.quadratic_field_split_prime_two_places :
   obtain ⟨g, hg⟩ : ∃ g : G ℚ Ω, g ∉ k₀.fixingSubgroup := by
     by_contra hc
     push Not at hc
-    haveI : IsGalois ℚ Ω := {}
+    have : IsGalois ℚ Ω := {}
     have e : k₀ = ⊥ := by
       rw [← InfiniteGalois.fixedField_fixingSubgroup k₀, (Subgroup.eq_top_iff' _).2 hc, InfiniteGalois.fixedField_bot]
     rw [IntermediateField.finrank_eq_one_iff.2 e] at h2
@@ -815,7 +815,7 @@ open UpperTheory.V UpperTheory.V.Af UpperTheory.V.Base UpperTheory.V.GradeZeroIn
 
 private theorem cont_res {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (F : IntermediateField ℚ Ω)
     [NumberField F] : Continuous (resQ F) := by
-  haveI : IsAlgClosure F Ω := ⟨IsAlgClosure.isAlgClosed ℚ, inferInstance⟩
+  have : IsAlgClosure F Ω := ⟨IsAlgClosure.isAlgClosed ℚ, inferInstance⟩
   exact (galEmbTop ℚ F Ω).1.continuous
 
 private theorem not_both {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {p q : ℕ} (h : p.Coprime q)
@@ -836,7 +836,7 @@ theorem UpperTheory.V.Z.Win.Birth.mixOfP :
   have hl2 : l ≠ 2 := H.good.l_odd
   obtain ⟨hsp, w, w', hne, hw, hw', hpl⟩ := UpperTheory.quadratic_field_split_prime_two_places Ω k₀ H.deg l hl.out H.spl
   obtain ⟨hsp2, u, -, -, hu, -, -⟩ := UpperTheory.quadratic_field_split_prime_two_places Ω k₀ H.deg 2 Nat.prime_two H.sp2
-  haveI : IsAlgClosure k₀ Ω := ⟨IsAlgClosure.isAlgClosed ℚ, inferInstance⟩
+  have : IsAlgClosure k₀ Ω := ⟨IsAlgClosure.isAlgClosed ℚ, inferInstance⟩
   have hker : ∀ g : G ℚ Ω, D.ξ g = 1 → up D.ξ g = 1 := fun g hg => by
     change Units.map _ (D.ξ g) = 1
     rw [hg, map_one]
@@ -1330,17 +1330,6 @@ theorem exists_sat_alt (P : _root_.UpperTheory.V.Af.Hypotheses') (π : TR.CuspSu
     (GlobalTheory.LFun.KGL w (n := a) : Set _) x hx0 hx (hi.2 ▸ Submodule.mem_top))
   exact ⟨B, (h4 _ _ hi B).2 hB⟩
 end Proj
-section Loc
-open GlobalTheory.LFun Formalism.UG
-variable {F : Type} [Field F] [NumberField F] (w : HeightOneSpectrum (𝓞 F))
-end Loc
-section Inf
-variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
-open GlobalTheory.HeckeGal.Model GlobalTheory.Mem.Chr.CharModel
-end Inf
-section Sign
-variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
-end Sign
 theorem _root_.UpperTheory.Esk.pf_HRep_alt : _root_.UpperTheory.V.Af.HypothesesH' → UpperTheory.Esk.HCap → UpperTheory.Esk.HRep := by
   intro P hC
   unfold UpperTheory.Esk.HCap at hC
@@ -1823,8 +1812,8 @@ theorem UpperTheory.Esk.pf_PropMV_sv_alt : _root_.UpperTheory.V.Af.HypothesesH' 
     exact ⟨hw, fun h' => h (dec_cong ha hc hL ((hc0 w).1 (hcl w hw)) h' hA hσ)⟩
   obtain ⟨k, hkB, hk, φ, lam, hφ, hcu, hlam⟩ := hMH F l hl2 ι ω c hfo hsg hcond hex hcl P
     (hP1.imp fun w h => ⟨h.1, hnc w h.2⟩) (hP2.imp fun w h => ⟨h.1, hnc w h.2⟩) 3
-  have hlev : ∀ w : Pl F, ((l : ℕ) : 𝓞 F) ∉ w.asIdeal → levL l c w = c w := fun w hw => if_neg hw
-  have hlev1 : ∀ w : Pl F, ((l : ℕ) : 𝓞 F) ∈ w.asIdeal → levL l c w = 1 := fun w hw => if_pos hw
+  have hlev : ∀ w : Pl F, ((l : ℕ) : 𝓞 F) ∉ w.asIdeal → levL l c w = c w := fun w hw => ite_eq_right hw
+  have hlev1 : ∀ w : Pl F, ((l : ℕ) : 𝓞 F) ∈ w.asIdeal → levL l c w = 1 := fun w hw => ite_eq_left hw
   have hfinL : {w | levL l c w ≠ 0}.Finite := by
     refine (hfin.union (fin_l (l := l))).subset fun w hw => ?_
     by_contra h
@@ -1833,7 +1822,7 @@ theorem UpperTheory.Esk.pf_PropMV_sv_alt : _root_.UpperTheory.V.Af.HypothesesH' 
   have heu : ∀ w : Pl F, ((l : ℕ) : 𝓞 F) ∈ w.asIdeal → ‖ι.symm (eisT l ω c P w)‖ = 1 := fun w hw => by
     obtain ⟨A, hA⟩ := exists_isPlaceOver Ω w
     obtain ⟨σ, hσ⟩ := exists_isFrob hA
-    rw [eisT, if_pos hw]
+    rw [eisT, ite_eq_left hw]
     split_ifs
     · rw [hfr w (hcl w hw) A hA σ hσ, hn]
     · simp
@@ -1870,7 +1859,7 @@ theorem UpperTheory.Esk.pf_PropMV_sv_alt : _root_.UpperTheory.V.Af.HypothesesH' 
       obtain rfl := hB₁.unique hB₂
       obtain ⟨h2, h3⟩ := tr_det ι _ _ _ (((hF A hA).2 σ hσ).trans e)
       have h4 := haway w hl
-      rw [eisT, if_neg hl, if_pos h0, map_sub, map_add (f := _), map_one, hfr w h0 A hA σ hσ] at h4
+      rw [eisT, ite_eq_right hl, ite_eq_left h0, map_sub, map_add (f := _), map_one, hfr w h0 A hA σ hσ] at h4
       rw [h2, h3, map_mul, hfr w h0 A hA σ hσ, map_pow, map_natCast, cyc_frob hl hA hσ]
       exact ⟨h4, rfl⟩
   refine ⟨k, t, by omega, htB, hk, ht, levL l c, fun w => ι.symm (eisT l ω c P w), π, r,
@@ -1885,7 +1874,7 @@ theorem UpperTheory.Esk.pf_PropMV_sv_alt : _root_.UpperTheory.V.Af.HypothesesH' 
     exact ⟨v, h1, h2⟩
   · refine ⟨lam' w, hU w, norm_one_of ?_⟩
     have h4 := haway w hl
-    rwa [eisT, if_neg hl, if_neg (hlev w hl ▸ hw), map_sub, map_one] at h4
+    rwa [eisT, ite_eq_right hl, ite_eq_right (hlev w hl ▸ hw), map_sub, map_one] at h4
   · obtain ⟨v₀, hv₀⟩ := D.surj w hw
     have hnorm : normV w = l := hv₀ ▸ D.norm v₀
     have hc' := hlam' w
@@ -1896,12 +1885,12 @@ theorem UpperTheory.Esk.pf_PropMV_sv_alt : _root_.UpperTheory.V.Af.HypothesesH' 
     · rw [hnorm]
       by_cases h : w ∈ P
       · have hv : v₀ ∈ {v | D.pl v ∈ P} := by simpa [hv₀] using h
-        rw [if_pos hv, map_sub, map_mul, map_pow, map_natCast, mul_comm] at hc'
-        rw [if_pos h]
+        rw [ite_eq_left hv, map_sub, map_mul, map_pow, map_natCast, mul_comm] at hc'
+        rw [ite_eq_left h]
         simpa using hc'
       · have hv : v₀ ∉ {v | D.pl v ∈ P} := by simpa [hv₀] using h
-        rw [if_neg hv, one_mul, map_sub] at hc'
-        rw [if_neg h]
+        rw [ite_eq_right hv, one_mul, map_sub] at hc'
+        rw [ite_eq_right h]
         simpa using hc'
     · obtain ⟨v, hvd⟩ : ∃ v, InfinitePlace.mk (ι.toRingHom.comp τ) = v := ⟨_, rfl⟩
       have hv : D.pl v = w := hvd ▸ (D.embAt τ w).1 hτ
@@ -1912,9 +1901,9 @@ theorem UpperTheory.Esk.pf_PropMV_sv_alt : _root_.UpperTheory.V.Af.HypothesesH' 
         ext i; fin_cases i <;> simp [h, hS]
       · have hS : v ∉ {v | D.pl v ∈ P} := by simpa [hv] using h
         ext i; fin_cases i <;> simp [h, hS]
-  · simp only [eisT, if_pos hw, if_pos h]
+  · simp only [eisT, ite_eq_left hw, ite_eq_left h]
     exact hfr w (hcl w hw) A hA σ hσ
-  · simp only [eisT, if_pos hw, if_neg h, map_one]
+  · simp only [eisT, ite_eq_left hw, ite_eq_right h, map_one]
 end
 end -- clump:auto
 end -- clump:auto

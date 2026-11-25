@@ -101,7 +101,7 @@ theorem blocks_one (a : Set.range β) : blocks β F (1 : Matrix (Fin n) (Fin n) 
   by_cases h : i = j
   · subst h
     simp
-  · rw [if_neg (fun e => h (Subtype.ext e)), if_neg h]
+  · rw [ite_eq_right (fun e => h (Subtype.ext e)), ite_eq_right h]
 
 theorem blocks_mul_apply {X Y : Matrix (Fin n) (Fin n) F} (hX : ∀ i j, β i ≠ β j → X i j = 0)
     (hY : ∀ i j, β i ≠ β j → Y i j = 0) (a : Set.range β) :

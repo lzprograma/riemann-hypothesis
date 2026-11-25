@@ -80,8 +80,8 @@ theorem firstCoeff_firstIdempotent : c1 g (eps1 g) = 1 := Subtype.ext (by simp [
 theorem secondCoeff_firstIdempotent : c2 g (eps1 g) = 0 := Subtype.ext (by simp [c2, eps1])
 theorem firstCoeff_secondIdempotent : c1 g (eps2 g) = 0 := Subtype.ext (by simp [c1, eps2])
 theorem secondCoeff_secondIdempotent : c2 g (eps2 g) = 1 := Subtype.ext (by simp [c2, eps2])
-theorem firstCoeff_diagonal (c : 𝒪[F]) : c1 g (dgO g c) = c := Subtype.ext (by simp [c1, dgO, Formalism.L2.SG.LocalCountModules.UnitaryGroupMassFormula.LocCntUG.e_alg])
-theorem secondCoeff_diagonal (c : 𝒪[F]) : c2 g (dgO g c) = c := Subtype.ext (by simp [c2, dgO, Formalism.L2.SG.LocalCountModules.UnitaryGroupMassFormula.LocCntUG.e_alg])
+theorem firstCoeff_diagonal (c : 𝒪[F]) : c1 g (dgO g c) = c := Subtype.ext (by simp [c1, dgO])
+theorem secondCoeff_diagonal (c : 𝒪[F]) : c2 g (dgO g c) = c := Subtype.ext (by simp [c2, dgO])
 
 variable (hs : M.split = some g)
 variable {T T' : F} {TT : M.R} {Zh Zh₁ Zh₂ : Matrix (Fin (r + 1)) (Fin (r + 1)) E}

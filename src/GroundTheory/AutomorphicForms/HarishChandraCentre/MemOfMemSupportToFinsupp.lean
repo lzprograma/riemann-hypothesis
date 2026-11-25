@@ -164,7 +164,7 @@ theorem count_expand (m : Fin n × Fin n →₀ ℕ) (a : Fin n × Fin n) :
       by_cases hb : b = a
       · subst hb; simp [(List.nodup_cons.1 hl).1]
       · simp [hb, Ne.symm hb]
-  rw [expand, key _ nodup_letters, if_pos (mem_letters a)]
+  rw [expand, key _ nodup_letters, ite_eq_left (mem_letters a)]
 
 theorem toFinsupp_expand (m : Fin n × Fin n →₀ ℕ) :
     Multiset.toFinsupp ((expand m : List _) : Multiset _) = m := by

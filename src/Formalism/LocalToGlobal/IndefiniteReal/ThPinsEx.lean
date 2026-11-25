@@ -11,22 +11,8 @@ namespace Formalism.IndefR.FWT
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct nonZeroDivisors
 
-section Gen
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-end Gen
-
-section Map
-
-open MvPolynomial
-
-end Map
-
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult
   Formalism.IndefR.Datum
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -40,20 +26,6 @@ theorem Q_base_empty (R : RealDat D A Ks) (hL : R.toLevCh.Is A.μ0) : R.Q A.μ0 
   have h := (hL.Q_ram A.μ0 PP).2 (Or.inl hPP)
   rw [hL.xi_base] at h
   exact h fun x _ => rfl
-
-section Phi
-
-variable (R : RealDat D A Ks) (i : Fin D.R.m) {K' : Type} [Field K'] (σ' : K' →+* ℂ) (t : T0)
-  {La : Type} [AddCommGroup La] [Module (𝓞 D.host.E) La] (ι : La →ₗ[𝓞 D.host.E] (Fin (Wc D i).rank → D.host.E))
-  (N : Submodule (𝓞 D.host.E) La)
-
-end Phi
-
-section Reps
-
-variable (R : RealDat D A Ks) (i : Fin D.R.m) (t : T0)
-
-end Reps
 
 section Place
 
@@ -102,10 +74,6 @@ theorem hχ_of (hchi : ∀ PP ∈ R.Pg, ∀ u, ∃ a, ((R.chi ((i : ℕ) + 1) PP
   exact ⟨a, ha.symm⟩
 
 end Place
-
-section Assemble
-
-end Assemble
 
 end Formalism.IndefR.FWT
 

@@ -37,64 +37,11 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriU
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeA
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FiniteCosetsInDoset
 import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Lemma
-import Mathlib.Geometry.Manifold.StructureGroupoid
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.TypeStar
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeComb
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Algebra.Module.StablyFree.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FormHeckeVecDosetInd, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NilpotentOfProjectionZero, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IwahoriEntryBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BruhatWeightDecreases, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetRepsOfFactorization, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DominantConjugateUnipotentMem, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalZeroOfInjectivePower, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AOpRightInvariant, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckePowerCosetFormula, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryIwahoriIndexFinite, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SatakePowerNonvanishing, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StabFiniteIndexOfSmooth, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryJacquetNonzero
@@ -305,7 +252,7 @@ private lemma entry_bound {L : Type} [Field L] [Valued L (WithZero (Multiplicati
     · exact hi
     · exact hi.le
   · intro hlt
-    rw [if_neg (by omega)] at hi
+    rw [ite_eq_right (by omega)] at hi
     exact hi
 
 end UpperTheory.Reformulated.B.IwahoriEntryBound.Helpers
@@ -447,7 +394,7 @@ theorem iwEnt_of_mem {g : GL (Fin n) L} (hg : g ∈ IwGL L n) : IwEnt (g : Matri
   have hm := Set.smul_mem_smul_set (a := Matrix.GeneralLinearGroup.toLin g) he
   rw [hs] at hm
   have hi := hm i
-  rw [if_neg (lt_irrefl _)] at hi
+  rw [ite_eq_right (lt_irrefl _)] at hi
   have e : ((Matrix.GeneralLinearGroup.toLin g) • (Pi.single j (1 : L) : Fin n → L)) i =
       (g : Matrix (Fin n) (Fin n) L) i j := by
     show (Matrix.mulVec (g : Matrix (Fin n) (Fin n) L) (Pi.single j (1 : L) : Fin n → L)) i = _
@@ -489,7 +436,7 @@ theorem minor_diag {M : Matrix (Fin n) (Fin n) L} (hM : IwEnt M) (hd : ∀ i, Va
     · obtain ⟨x, hx⟩ := hex
       exact term_lt hM f f s hx
     · exfalso
-      push_neg at hex
+      push Not at hex
       apply hs1
       ext x
       have := perm_sum_eq s (fun x => ((f x).val : ℤ)) (fun x => by exact_mod_cast hex x) x
@@ -499,8 +446,7 @@ theorem minor_diag {M : Matrix (Fin n) (Fin n) L} (hM : IwEnt M) (hd : ∀ i, Va
 
 theorem minor_perm {M : Matrix (Fin n) (Fin n) L} (hM : IwEnt M) (f h : ι → Fin n)
     (h1 : Valued.v (M.submatrix f h).det = 1) : ∃ s : Equiv.Perm ι, ∀ x, f (s x) ≤ h x := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have : Valued.v (M.submatrix f h).det < 1 := by
     rw [Matrix.det_apply]
     refine Valuation.map_sum_lt _ one_ne_zero fun s _ => ?_
@@ -751,14 +697,6 @@ open GlobalTheory.PRep Formalism.UG GlobalTheory.LFun PositivityTheory.Spherical
 
 namespace GlobalTheory.CompanionTheory.SatPow.RepsGen
 
-private theorem mem_map_conj_iff_inv_mul_mul_mem {G : Type*} [Group G] (I : Subgroup G) (t y : G) :
-    y ∈ I.map (MulAut.conj t).toMonoidHom ↔ t⁻¹ * y * t ∈ I := by
-  constructor
-  · rintro ⟨x, hx, rfl⟩
-    simpa [MulAut.conj_apply, mul_assoc] using hx
-  · intro h
-    exact ⟨t⁻¹ * y * t, h, by simp [MulAut.conj_apply, mul_assoc]⟩
-
 theorem reps_of_quotient_with_property (G : Type) [Group G] (I : Subgroup G) (t : G) (P : G → Prop)
     (hP1 : P 1)
     (hfin : Finite (I ⧸ (I ⊓ I.map (MulAut.conj t).toMonoidHom).subgroupOf I))
@@ -772,7 +710,7 @@ theorem reps_of_quotient_with_property (G : Type) [Group G] (I : Subgroup G) (t 
       t⁻¹ * ((a : G)⁻¹ * b) * t ∈ I := by
     intro a b
     rw [QuotientGroup.eq, hH, Subgroup.mem_subgroupOf, Subgroup.mem_inf,
-      and_iff_right (a⁻¹ * b).2, mem_map_conj_iff_inv_mul_mul_mem]
+      and_iff_right (a⁻¹ * b).2, Subgroup.mem_map_equiv, MulAut.conj_symm_apply]
     simp only [Subgroup.coe_mul, Subgroup.coe_inv]
   have key : ∀ c : I ⧸ H, ∃ r : I, P r ∧ (QuotientGroup.mk r : I ⧸ H) = c ∧
       (c = QuotientGroup.mk 1 → r = 1) := by
@@ -1396,8 +1334,7 @@ theorem abs_main {G : Type} [Group G] (K I : Subgroup G) (hIK : I ≤ K) (hfin :
     (φ₀ : G → ℂ) (hφ₀ : φ₀ ∈ Wsp) (hK : ∀ g, ∀ k ∈ K, φ₀ (g * k) = φ₀ g) (h1 : φ₀ 1 = 1)
     (lam : ℕ → ℂ) (hlam : ∀ j, hAct K (dosetInd ℂ K (t ^ j)) φ₀ 1 = lam j) (j₀ : ℕ) : ∃ j ≥ j₀, lam j ≠ 0 := by
   classical
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   haveI := Fintype.ofFinite (K ⧸ I.subgroupOf K)
   let A : Wsp →ₗ[ℂ] Wsp :=
     { toFun := fun φ => ⟨aOp R t φ, hWA φ φ.2⟩
@@ -1418,7 +1355,7 @@ theorem abs_main {G : Type} [Group G] (K I : Subgroup G) (hIK : I ≤ K) (hfin :
       show aOp R t (((A ^ j) v : Wsp) : G → ℂ) = _
       rw [ih]
   have hAinj : Function.Injective A := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro a ha
     exact Subtype.ext (hinj a a.2 (congrArg Subtype.val ha))
   have hl0 : l v = 0 := by
@@ -1486,8 +1423,7 @@ theorem aOp_inj (q : ℕ) (hq : (q : ℂ) ≠ 0) {m : ℕ} (α : Fin m → ℂ) 
   classical
   by_contra hne
   obtain ⟨g, hg⟩ : ∃ g, φ g ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne (funext h)
   have hdec : ∀ b w i : GU σ n, IsBorelU b → i ∈ IwU σ n → φ (b * w * i) = chiDeltaU q α b * φ w :=
     fun b w i hb hi => by rw [hI _ _ hi, hB _ _ hb]
@@ -1536,14 +1472,14 @@ theorem finiteDimensional_iwFix (hσ : ∀ x, σ (σ x) = x) (hσv : ∀ x, Valu
   let wOf : Equiv.Perm (Fin n) → GU σ n := fun π => if h : ∃ w : GU σ n, IsPermW w π then h.choose else 1
   have hwOf : ∀ (w : GU σ n) π, IsPermW w π → wOf π = w := fun w π hw => by
     have h : ∃ w : GU σ n, IsPermW w π := ⟨w, hw⟩
-    simp only [wOf, dif_pos h]
+    simp only [wOf, dite_eq_left h]
     exact isPermW_unique h.choose_spec hw
   let F : iwFix σ n q α →ₗ[ℂ] (Equiv.Perm (Fin n) → ℂ) :=
     { toFun := fun φ π => (φ : GU σ n → ℂ) (wOf π)
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
   refine FiniteDimensional.of_injective F ?_
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro φ hφ
   refine Subtype.ext (funext fun g => ?_)
   obtain ⟨b, w, i, π, hb, hw, hi, rfl⟩ := _root_.GlobalTheory.CompanionTheory.BruhatIw.bruhat_iwasawa L σ n hσ hσv g
@@ -1671,8 +1607,7 @@ theorem GlobalTheory.CompanionTheory.KAvg.kInvForm : PositivityTheory.SphericalP
       map_add' := fun x y => avg_add ρ K (hfi x) (hfi y)
       map_smul' := fun c x => avg_smul ρ K (hfi x) c }
   obtain ⟨f, hf⟩ : ∃ f : Module.Dual ℂ V, f v₀ ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne ((Module.forall_dual_apply_eq_zero_iff ℂ v₀).mp h)
   have hfix : ∀ l ∈ K, ρ l v₀ = v₀ := by
     intro l hl

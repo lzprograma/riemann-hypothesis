@@ -34,11 +34,11 @@ theorem perm_append {h : C.LPt} {n : ℕ} {t : ℂ}
   have hspec' := (Formalism.FourierDecayAlt.P.ptPerm_spec _ _ hlocH).1
   rw [hspec q, partner_append (n + 1) t h q.val (by have := q.isLt; omega)]
   by_cases h1 : q.val < D.ptSize h
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     have e : Fin.cast hP q = Fin.castAdd (n + 1) ⟨q.val, h1⟩ := Fin.ext rfl
     rw [e, blockPerm_castAdd]
     exact hspec' ⟨q.val, h1⟩
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     have e : Fin.cast hP q = Fin.natAdd (D.ptSize h) ⟨q.val - D.ptSize h, by have := q.isLt; omega⟩ :=
       Fin.ext (by simp; omega)
     rw [e, blockPerm_natAdd]
@@ -53,10 +53,10 @@ theorem diag_append (h : C.LPt) (n : ℕ) (t : ℂ)
   simp only [D.ptDiag]
   rw [scal_append (n + 1) t h q.val (by have := q.isLt; omega)]
   by_cases h1 : q.val < D.ptSize h
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     have e : Fin.cast hP q = Fin.castAdd (n + 1) ⟨q.val, h1⟩ := Fin.ext rfl
     rw [e, dP, Fin.addCases_left]; rfl
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     have e : Fin.cast hP q = Fin.natAdd (D.ptSize h) ⟨q.val - D.ptSize h, by have := q.isLt; omega⟩ :=
       Fin.ext (by simp; omega)
     rw [e, dP, Fin.addCases_right]

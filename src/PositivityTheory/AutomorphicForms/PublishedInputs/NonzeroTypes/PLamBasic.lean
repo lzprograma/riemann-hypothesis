@@ -77,13 +77,8 @@ theorem minor_unit {n r : ℕ} (hr : 1 ≤ r) {g : GL (Fin n) k} (hg : g ∈ KC 
   have hD : M.det - 1 ∈ I := by
     rw [← Ideal.Quotient.eq, RingHom.map_det, RingHom.mapMatrix_apply, hmk, Matrix.det_one, map_one]
   have hDm : M.det - 1 ∈ IsLocalRing.maximalIdeal 𝒪[k] := Ideal.pow_le_self (by omega) hD
-  have hunit : IsUnit M.det := by
-    by_contra hn
-    have h1 : M.det ∈ IsLocalRing.maximalIdeal 𝒪[k] := (IsLocalRing.mem_maximalIdeal _).mpr hn
-    have : (1 : 𝒪[k]) ∈ IsLocalRing.maximalIdeal 𝒪[k] := by
-      have := Ideal.sub_mem _ h1 hDm
-      simpa using this
-    exact (IsLocalRing.maximalIdeal.isMaximal 𝒪[k]).ne_top ((Ideal.eq_top_iff_one _).mpr this)
+  have hunit : IsUnit M.det :=
+    Ideal.isUnit_of_sub_one_mem_jacobson _ (by rwa [IsLocalRing.ringJacobson_eq_maximalIdeal])
   refine ⟨hunit.unit, ?_, ?_⟩
   · rw [IsUnit.unit_spec, RingHom.map_det]
     rfl

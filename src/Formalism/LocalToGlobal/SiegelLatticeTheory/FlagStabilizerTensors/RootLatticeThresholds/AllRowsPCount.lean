@@ -75,7 +75,7 @@ def proj : (∀ i, G i) →* (∀ i, G i) where
 theorem proj_apply (γ : ∀ i, G i) (i : ι) : proj p γ i = if p i then γ i else 1 := rfl
 
 theorem proj_mem (γ : ∀ i, G i) : proj p γ ∈ Sub p :=
-  fun i hi => by rw [proj_apply, if_neg hi]
+  fun i hi => by rw [proj_apply, ite_eq_right hi]
 
 theorem proj_of_mem {γ : ∀ i, G i} (h : γ ∈ Sub p) : proj p γ = γ := by
   funext i
@@ -166,79 +166,25 @@ theorem part_iff_j (k : Fin 2) (x y : KSub X.B.I) :
   constructor
   · intro h v
     have hv := congrFun h ⟨1 - k, v⟩
-    rw [proj_apply, proj_apply, if_pos ((hfin _).2 rfl), if_pos ((hfin _).2 rfl)] at hv
+    rw [proj_apply, proj_apply, ite_eq_left ((hfin _).2 rfl), ite_eq_left ((hfin _).2 rfl)] at hv
     rw [map_mul, map_inv, Pi.mul_apply, Pi.inv_apply, hv, inv_mul_cancel]
   · intro h
     funext ⟨k', v⟩
     simp only [proj_apply]
     by_cases hk : k' = k
-    · rw [if_neg (not_not.2 hk), if_neg (not_not.2 hk)]
+    · rw [ite_eq_right (not_not.2 hk), ite_eq_right (not_not.2 hk)]
     · obtain rfl : k' = 1 - k := (hfin k').1 hk
-      rw [if_pos hk, if_pos hk]
+      rw [ite_eq_left hk, ite_eq_left hk]
       have hv := h v
       rw [map_mul, map_inv, Pi.mul_apply, Pi.inv_apply, inv_mul_eq_one] at hv
       exact hv
-
-theorem part_iff_k (k : Fin 2) (x y : KSub X.B.I) :
-    proj (fun kv : (Σ k', D.nd.PlG k') => kv.1 = k) (rhoX X x) =
-      proj (fun kv : (Σ k', D.nd.PlG k') => kv.1 = k) (rhoX X y) ↔
-      ((x⁻¹ * y : KSub X.B.I) : X.B.I.Gf) ∈ X.B.I.Kg (D.host.g k) := by
-  rw [← ker_part X k (x⁻¹ * y)]
-  constructor
-  · intro h v
-    have hv := congrFun h ⟨k, v⟩
-    rw [proj_apply, proj_apply, if_pos rfl, if_pos rfl] at hv
-    rw [map_mul, map_inv, Pi.mul_apply, Pi.inv_apply, hv, inv_mul_cancel]
-  · intro h
-    funext ⟨k', v⟩
-    simp only [proj_apply]
-    by_cases hk : k' = k
-    · subst hk
-      rw [if_pos rfl, if_pos rfl]
-      have hv := h v
-      rw [map_mul, map_inv, Pi.mul_apply, Pi.inv_apply, inv_mul_eq_one] at hv
-      exact hv
-    · rw [if_neg hk, if_neg hk]
-
 
 open Classical in
-def redD (k : Fin 2) : X.B.I.RedDatum (D.host.g (1 - k) ^ 1) (D.host.g k ^ 1) where
+def redD (k : Fin 2) : X.B.I.RedDatum where
   G₁ := ↥(Sub (fun kv : (Σ k', D.nd.PlG k') => ¬ kv.1 = k))
   G₂ := ↥(Sub (fun kv : (Σ k', D.nd.PlG k') => kv.1 = k))
-  fin₁ := Fintype.ofFinite _
-  fin₂ := Fintype.ofFinite _
   red := fun x => if hx : x ∈ X.B.I.Kset then
     (⟨proj _ (rhoX X ⟨x, hx⟩), proj_mem _ _⟩, ⟨proj _ (rhoX X ⟨x, hx⟩), proj_mem _ _⟩) else 1
-  red_mul := fun x hx y hy => by
-    have hxy : x * y ∈ X.B.I.Kset := Formalism.L2.SG.Pf.unitaryCongruence.K_mul X.B.I hx hy
-    simp only [dif_pos hx, dif_pos hy, dif_pos hxy]
-    have e : (⟨x * y, hxy⟩ : KSub X.B.I) = ⟨x, hx⟩ * ⟨y, hy⟩ := rfl
-    rw [e]
-    ext <;> simp [map_mul]
-  red_surj := fun ab => by
-    obtain ⟨a, b⟩ := ab
-    have hS := Formalism.L2.SG.Pf.AllRowsAdd.hS_X X
-    have hm : ((sec hS ((a : G0g D.nd) * (b : G0g D.nd)) : KSub X.B.I) : X.B.I.Gf) ∈ X.B.I.Kset := (sec hS _).2
-    refine ⟨(sec hS ((a : G0g D.nd) * (b : G0g D.nd)) : X.B.I.Gf), hm, ?_⟩
-    rw [dif_pos hm]
-    have e : (⟨(sec hS ((a : G0g D.nd) * (b : G0g D.nd)) : X.B.I.Gf), (sec hS _).2⟩ : KSub X.B.I) =
-        sec hS ((a : G0g D.nd) * (b : G0g D.nd)) := rfl
-    rw [e, rho_sec]
-    refine Prod.ext (Subtype.ext ?_) (Subtype.ext ?_)
-    · show proj _ ((a : G0g D.nd) * (b : G0g D.nd)) = (a : G0g D.nd)
-      rw [map_mul, proj_of_mem _ a.2,
-        proj_eq_one_of _ b.2 (fun (i : Σ k' : Fin 2, D.nd.PlG k') (hi : ¬ i.1 = k) h => hi h), mul_one]
-    · show proj _ ((a : G0g D.nd) * (b : G0g D.nd)) = (b : G0g D.nd)
-      rw [map_mul, proj_of_mem _ b.2,
-        proj_eq_one_of _ a.2 (fun (i : Σ k' : Fin 2, D.nd.PlG k') (hi : i.1 = k) h => h hi), one_mul]
-  red_fib₁ := fun x hx y hy => by
-    simp only [dif_pos hx, dif_pos hy, pow_one]
-    rw [Subtype.ext_iff]
-    exact part_iff_j X k ⟨x, hx⟩ ⟨y, hy⟩
-  red_fib₂ := fun x hx y hy => by
-    simp only [dif_pos hx, dif_pos hy, pow_one]
-    rw [Subtype.ext_iff]
-    exact part_iff_k X k ⟨x, hx⟩ ⟨y, hy⟩
 
 end Dlev
 
@@ -261,14 +207,14 @@ theorem sumW_single (k : Fin 2) (f : Polynomial (ZMod (D.host.g k))) (g : GL (Fi
   by_cases hf : f.Monic ∧ f.natDegree = D.R.r
   · have hc0 := Formalism.L2.SG.Pf.RowDictPf.monicOf_coeff hf.1 hf.2
     rw [Finset.sum_eq_single (fun i : Fin D.R.r => f.coeff i)]
-    · rw [if_pos hc0, hc0]
+    · rw [ite_eq_left hc0, hc0]
     · intro c _ hc
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hc
       exact monicOf_inj (h.trans hc0.symm)
     · intro h; exact absurd (Finset.mem_univ _) h
-  · rw [Finset.sum_eq_zero fun c _ => if_neg fun (h : Formalism.CyclotomicNorms.monicOf c = f) =>
+  · rw [Finset.sum_eq_zero fun c _ => ite_eq_right fun (h : Formalism.CyclotomicNorms.monicOf c = f) =>
       hf (h ▸ Formalism.L2.SG.Pf.RowDictPf.monicOf_monic c)]
     rw [D.ntypes.eSer_zero k f (fun h => hf ⟨h.1, h.2.1⟩)]
     rfl
@@ -307,8 +253,8 @@ theorem ES_cyl_pA (k : Fin 2) (S : Finset (Tup D k)) : ES (cyl D k (S : Set (Tup
           (D.ntypes.eSer kv.1 (Formalism.CyclotomicNorms.monicOf (a kv))).coeff (γ kv) else 0 := by
       intro kv
       by_cases hk : kv.1 = k
-      · simp only [hG, hk, if_true, true_implies]
-      · simp only [hG, hk, if_false, false_implies, if_true]
+      · simp only [hG, hk, ite_true, true_implies]
+      · simp only [hG, hk, ite_false, false_implies, ite_true]
     rw [Finset.prod_congr rfl fun kv _ => hG' kv, Finset.prod_ite_zero]
     congr 1
     apply propext
@@ -329,9 +275,9 @@ theorem ES_cyl_pA (k : Fin 2) (S : Finset (Tup D k)) : ES (cyl D k (S : Set (Tup
   refine Finset.prod_congr rfl fun kv _ => ?_
   unfold Gt
   by_cases hk : kv.1 = k
-  · simp only [hG, hk, if_true]
+  · simp only [hG, hk, ite_true]
     exact sumW_single kv.1 _ _
-  · simp only [hG, hk, if_false]
+  · simp only [hG, hk, ite_false]
     exact sumW_all kv.1 _
 
 end Cyl
@@ -376,7 +322,7 @@ theorem Ep_supp (γ : G0g D.nd) (h : (Ep P ψ p).coeff γ ≠ 0) : γ ∈ Sub p 
   intro i hi
   rw [Ep, pA_coeff] at h
   have hi' := Finset.prod_ne_zero_iff.1 h i (Finset.mem_univ _)
-  rw [if_neg hi] at hi'
+  rw [ite_eq_right hi] at hi'
   exact one_coeff_ne hi'
 
 theorem Ep_idem : Ep P ψ p * Ep P ψ p = Ep P ψ p := by
@@ -460,13 +406,13 @@ theorem res_Ep_coeff (a : Sub p) :
     rw [chij, cjc, ← Finset.prod_inv_distrib, ← Finset.prod_mul_distrib]
     refine Finset.prod_congr rfl fun kv _ => ?_
     by_cases hp : p kv
-    · rw [if_pos hp, if_pos hp, if_pos hp, Fv_coeff, if_pos (hU' kv hp), div_eq_mul_inv]
-    · rw [if_neg hp, if_neg hp, if_neg hp, a.2 kv hp, MonoidAlgebra.coeff_one_one, inv_one, one_mul]
+    · rw [ite_eq_left hp, ite_eq_left hp, ite_eq_left hp, Fv_coeff, ite_eq_left (hU' kv hp), div_eq_mul_inv]
+    · rw [ite_eq_right hp, ite_eq_right hp, ite_eq_right hp, a.2 kv hp, MonoidAlgebra.coeff_one_one, inv_one, one_mul]
   · have hU' : ¬ ∀ kv, p kv → PJ D.R.k (D.R.m / 2 - 1) (_root_.Formalism.L2.SG.Pf.AllRowsKpp.cjM P (a : G0g D.nd) kv) := hU
-    push_neg at hU'
+    push Not at hU'
     obtain ⟨kv, hp, hJ⟩ := hU'
     refine Finset.prod_eq_zero (Finset.mem_univ kv) ?_
-    rw [if_pos hp, Fv_coeff, if_neg hJ]
+    rw [ite_eq_left hp, Fv_coeff, ite_eq_right hJ]
 
 end CharIdem
 
@@ -504,12 +450,12 @@ theorem charIdem_Ep : Formalism.MainNotions.S.IsCharIdemFin (res (Sub p) (Ep P �
     intro x
     rw [mul_one, hcoef, hcoef]
     by_cases hx : x ∈ Uj P p
-    · rw [if_pos hx, if_pos ((Uj P p).inv_mem hx), if_pos hx]
+    · rw [ite_eq_left hx, ite_eq_left ((Uj P p).inv_mem hx), ite_eq_left hx]
       calc (chij P ψ p ((x : Sub p) : G0g D.nd))⁻¹ * cjc p * ((chij P ψ p ((x⁻¹ : Sub p) : G0g D.nd))⁻¹ * cjc p)
           = ((chij P ψ p ((x : Sub p) : G0g D.nd))⁻¹ * (chij P ψ p ((x⁻¹ : Sub p) : G0g D.nd))⁻¹) *
             (cjc p * cjc p) := by ring
         _ = cjc p * cjc p := by rw [hχinv x hx, one_mul]
-    · rw [if_neg hx, if_neg hx, zero_mul]
+    · rw [ite_eq_right hx, ite_eq_right hx, zero_mul]
 
   have hsum : (res (Sub p) (Ep P ψ p) * res (Sub p) (Ep P ψ p)).coeff 1 =
       cjc p * cjc p * (Nat.card (Uj P p) : ℂ) := by
@@ -517,7 +463,7 @@ theorem charIdem_Ep : Formalism.MainNotions.S.IsCharIdemFin (res (Sub p) (Ep P �
       Finset.sum_congr rfl (fun x _ => hterm x), Finset.sum_ite, Finset.sum_const_zero, add_zero, Finset.sum_const,
       nsmul_eq_mul, mul_comm, Nat.card_eq_fintype_card, Fintype.card_subtype]
   have h1 : (res (Sub p) (Ep P ψ p)).coeff 1 = cjc p := by
-    rw [hcoef, if_pos (Uj P p).one_mem, Subgroup.coe_one, chij_one, inv_one, one_mul]
+    rw [hcoef, ite_eq_left (Uj P p).one_mem, Subgroup.coe_one, chij_one, inv_one, one_mul]
   have hc : cjc p * (Nat.card (Uj P p) : ℂ) = 1 := by
     have h := congrArg (fun f => MonoidAlgebra.coeff f 1) (res_Ep_idem P ψ p)
     rw [hsum, h1] at h
@@ -546,8 +492,8 @@ theorem mul_coeff_compl' {p q : ι → Prop} [DecidablePred p] [DecidablePred q]
     funext i
     rw [Pi.mul_apply, proj_apply, proj_apply]
     by_cases h : p i
-    · rw [if_pos h, if_neg (fun hq => (hpq i).1 hq h), mul_one]
-    · rw [if_neg h, if_pos ((hpq i).2 h), one_mul]
+    · rw [ite_eq_left h, ite_eq_right (fun hq => (hpq i).1 hq h), mul_one]
+    · rw [ite_eq_right h, ite_eq_left ((hpq i).2 h), one_mul]
   have e : (proj p γ)⁻¹ * γ = proj q γ := by
     rw [inv_mul_eq_iff_eq_mul, hpq']
   rw [MonoidAlgebra.coeff_mul_apply_left, Finsupp.sum_eq_single (proj p γ), e]
@@ -604,7 +550,7 @@ theorem Gt_supp (k : Fin 2) (t : Tup D k) (γ : G0g D.nd) (h : (pA (Gt k t)).coe
   intro i hi
   rw [pA_coeff] at h
   have hi' := Finset.prod_ne_zero_iff.1 h i (Finset.mem_univ _)
-  rw [Gt, if_neg hi] at hi'
+  rw [Gt, ite_eq_right hi] at hi'
   exact one_coeff_ne hi'
 
 theorem ES_supp (k : Fin 2) (S : Set (Tup D k)) (γ : G0g D.nd) (h : (ES (cyl D k S)).coeff γ ≠ 0) :
@@ -667,8 +613,8 @@ theorem isCountIdem_cyl (k : Fin 2) (S : Set (Tup D k)) :
     congr 1
     funext kv
     by_cases hk : kv.1 = k
-    · simp only [pj, pk, hk, not_true_eq_false, if_false, if_true, one_mul]; rfl
-    · simp only [pj, pk, hk, not_false_eq_true, if_true, if_false, mul_one]; rfl
+    · simp only [pj, pk, hk, not_true_eq_false, ite_false, ite_true, one_mul]; rfl
+    · simp only [pj, pk, hk, not_false_eq_true, ite_true, ite_false, mul_one]; rfl
   have hz2 : res (Sub pk) (ES (cyl D k S)) * res (Sub pk) (ES (cyl D k S)) = res (Sub pk) (ES (cyl D k S)) := by
     apply MonoidAlgebra.ext; ext a
     rw [← res_mul _ _ (ES_supp k S) a, ES_idem, res_coeff]
@@ -685,7 +631,7 @@ theorem isCountIdem_cyl (k : Fin 2) (S : Set (Tup D k)) :
   · intro x hx hf
     have hred : (redD X k).red x = (⟨proj pj (rhoX X ⟨x, hx⟩), proj_mem _ _⟩, ⟨proj pk (rhoX X ⟨x, hx⟩), proj_mem _ _⟩) := by
       show (if hx : x ∈ X.B.I.Kset then _ else 1) = _
-      exact dif_pos hx
+      exact dite_eq_left hx
     have hf' : (res (Sub pj) (Ep P ψ pj)).coeff (⟨proj pj (rhoX X ⟨x, hx⟩), proj_mem _ _⟩ : Sub pj) ≠ 0 := by
       rw [hred] at hf; exact hf
     rw [res_Ep_coeff] at hf'
@@ -711,10 +657,10 @@ theorem isCountIdem_cyl (k : Fin 2) (S : Set (Tup D k)) :
     · exact absurd rfl hf'
   · intro x
     by_cases hx : x ∈ X.B.I.Kset
-    · rw [if_pos hx]
+    · rw [ite_eq_left hx]
       have hred : (redD X k).red x = (⟨proj pj (rhoX X ⟨x, hx⟩), proj_mem _ _⟩, ⟨proj pk (rhoX X ⟨x, hx⟩), proj_mem _ _⟩) := by
         show (if hx : x ∈ X.B.I.Kset then _ else 1) = _
-        exact dif_pos hx
+        exact dite_eq_left hx
       rw [hred]
       have h1 := val_hat hS (biInv_eT X (cyl D k S)) ⟨x, hx⟩
       have hV : V X = (X.B.μf (X.B.I.Kg (D.host.g (1 - k) ^ 1) ∩ X.B.I.Kg (D.host.g k ^ 1))).toReal := by
@@ -732,7 +678,7 @@ theorem isCountIdem_cyl (k : Fin 2) (S : Set (Tup D k)) :
         (res (Sub pk) (ES (cyl D k S)) * res (Sub pk) (Ep P ψ pk)).coeff
           (⟨proj pk (rhoX X ⟨x, hx⟩), proj_mem _ _⟩ : Sub pk) / (V X : ℂ)
       simp only [a1, a2]
-    · rw [if_neg hx]; exact eT_of_not_mem X _ hx
+    · rw [ite_eq_right hx]; exact eT_of_not_mem X _ hx
 
 end Main
 

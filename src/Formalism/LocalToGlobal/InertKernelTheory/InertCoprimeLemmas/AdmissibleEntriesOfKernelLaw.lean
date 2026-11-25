@@ -33,8 +33,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.KerInert.AdmLoc2
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.PairingIndexBounds.F
 open Formalism.L2.KerInert.AdmLoc (pendG CurveIn XiIn)
 
@@ -303,9 +301,9 @@ theorem hecke_coupled_entry : HeckeCEntry := by
       intro c γ L L1
       simp only [φ]
       by_cases h : (X.Pj j).IsLatTup L1
-      · rw [if_pos h, if_pos ((latTup_smul _ _ γ L1).2 h), (Eqv_of_FQ X hF).2 c γ L,
+      · rw [ite_eq_left h, ite_eq_left ((latTup_smul _ _ γ L1).2 h), (Eqv_of_FQ X hF).2 c γ L,
           h5b j hj c L1 La' γ (F c L) (vt_FQ X hF c L) h hLa']
-      · rw [if_neg h, if_neg (fun h' => h ((latTup_smul _ _ γ L1).1 h'))]
+      · rw [ite_eq_right h, ite_eq_right (fun h' => h ((latTup_smul _ _ γ L1).1 h'))]
     have key := h6 j hj.le (X.vJ j v) k φ hφ
     have hs : ∀ (La : X.Lt j) (z : Y.Kc), ((X.stab j La : X.G.Kf))⁻¹ • z = ((X.stab j La : Y.Kc))⁻¹ * z := by
       intro La z
@@ -320,7 +318,7 @@ theorem hecke_coupled_entry : HeckeCEntry := by
       refine Finset.sum_congr rfl fun A1 hA1 => ?_
       have hE := (mem_UP _).1 hA1
       simp only [φ]
-      rw [if_pos (hk_latTup_update _ hlat _ A1 hE.2.1)]
+      rw [ite_eq_left (hk_latTup_update _ hlat _ A1 hE.2.1)]
     · refine Finset.sum_congr rfl fun La hLa => ?_
       have hlat := Y.Rep_lat j La hLa
       rw [MvPolynomial.coeff_smul, hs]
@@ -331,7 +329,7 @@ theorem hecke_coupled_entry : HeckeCEntry := by
       rw [e, ker_sum, MvPolynomial.coeff_sum]
       refine Finset.sum_congr rfl fun L0 _ => ?_
       simp only [φ]
-      rw [if_pos hlat]
+      rw [ite_eq_left hlat]
   have hk := hk0 (D.R.m - 1) hj v i F hF La' hLa'
   have hs : ∀ (n : ℕ) (z : XspC (X.Pj (D.R.m - 1 + 1)) Y.Kc), ((n : X.G.Kf))⁻¹ • z = ((n : Y.Kc))⁻¹ • z := by
     intro n z
@@ -421,16 +419,16 @@ theorem admissible_stabilizer_of_law (D : Formalism.BasicNotions.D7) (ThR : ∀ 
   have hS' : StabLaw X ℂ_[p] hfin ThR' := by
     intro j c L0 La' ε h0 hε
     by_cases hj : j < X.mm ∧ (X.Pj (j + 1)).IsLatTup La'.2
-    · simp only [ThR', if_pos hj]
+    · simp only [ThR', ite_eq_left hj]
       exact hS j hj.1 c L0 La' ε h0 hj.2 hε
-    · simp only [ThR', if_neg hj]
+    · simp only [ThR', ite_eq_right hj]
       unfold SA
       rw [← MvPowerSeries.coe_substAlgHom (hasSubst_actS X ℂ_[p] j _), map_zero, mul_zero]
   have hK := kapLaw_of_stabLaw X ℂ_[p] hfin ThR' pC_ne_zero hS'
   intro j hj c L La' γ G hGv hL hLa'
   have hEq : ∀ La, thFN X ℂ_[p] hfin (thGeo X ℂ_[p] hfin ThR') j La La' = thFN X ℂ_[p] hfin (thGeo X ℂ_[p] hfin ThR) j La La' := by
     intro La
-    simp only [thFN, thGeo, ThR', if_pos (And.intro hj hLa')]
+    simp only [thFN, thGeo, ThR', ite_eq_left (And.intro hj hLa')]
   have key : ∀ t : X.G.Kf,
       (eSX X j (c, (X.Lv.lev j c).smul γ L) * t) •
           delF X ℂ_[p] j ((((X.Lv.lev j c).χ γ : X.G.Oˣ) : X.G.O) • (X.Lv.lev j c).actX γ G)
@@ -449,8 +447,6 @@ open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions.G
 open scoped TensorProduct
 
 namespace Formalism.L2.KerInert.AdmLoc2
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.PairingIndexBounds.F
 open Formalism.L2.KerInert.AdmLoc (pendG CurveIn XiIn)

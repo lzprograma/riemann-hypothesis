@@ -41,54 +41,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCH
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnReal
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddDone
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GTSS
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeB
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Algebra.Order.Star.Real
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferKAsm
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferKPt
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
@@ -97,11 +51,8 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProductIntervalFram
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SingleMulVecOne
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
-import Mathlib.RingTheory.PiTensorProduct
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Development
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLocal
@@ -558,7 +509,7 @@ theorem exists_br {ζ : ℂ} (hζ : ζ ≠ 0) : ∃ s, ζ ∈ brD s := by
   · refine ⟨false, ?_⟩
     simp only [brD, Bool.false_eq_true, ↓reduceIte, Set.mem_setOf_eq]
     rw [Complex.mem_slitPlane_iff] at h ⊢
-    push_neg at h
+    push Not at h
     left
     rcases h with ⟨h1, h2⟩
     have h3 : ζ.re ≠ 0 := fun h0 => hζ (Complex.ext (by simpa using h0) (by simpa using h2))
@@ -801,23 +752,6 @@ private theorem hsVec_injective_apply {Wp Wq : Type} [NormedAddCommGroup Wp] [In
   apply ContinuousLinearMap.coe_injective
   exact (stdOrthonormalBasis ℂ Wq).toBasis.ext (fun i => by simpa using h' i)
 
-private theorem toSm_smul_hermitian_curvature (P : M.Par) (c : ℂ) (u : MA.Qp P.r P.TT → ℂ) :
-    MA.toSm P (c • u) = c • MA.toSm P u := by
-  unfold MA.toSm
-  by_cases hu : u ∈ MA.smSub P.r P.TT
-  · rw [dite_eq_left hu, dite_eq_left (Subalgebra.smul_mem _ hu c)]
-    rfl
-  · rw [dite_eq_right hu]
-    by_cases hc : c = 0
-    · subst hc
-      rw [zero_smul, smul_zero, dite_eq_left (Subalgebra.zero_mem _)]
-      rfl
-    · rw [smul_zero, dite_eq_right]
-      intro hm
-      apply hu
-      have := Subalgebra.smul_mem _ hm c⁻¹
-      rwa [smul_smul, inv_mul_cancel₀ hc, one_smul] at this
-
 theorem radial_constant_of_point_and_line (hPt : GTKPt) (hLine : GTKLine) : GTRConst := by
   intro Wp Wq _ _ _ _ _ _ P Bs X d h
   obtain ⟨Qr, hQ⟩ := hPt Wp Wq P Bs X d h
@@ -897,16 +831,16 @@ theorem radial_constant_of_point_and_line (hPt : GTKPt) (hLine : GTKLine) : GTRC
     funext q
     simp only [rawR, Pi.smul_apply, smul_eq_mul]
     rw [hQ.2.2.2 f Φ q, GTK.hs_comp_sum]
-    simp only [hinQ, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hinQ, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     ring
   symm
   refine (Finset.sum_eq_single ρ ?_ ?_).trans ?_
   · intro b _ hb
-    rw [if_neg (Ne.symm hb)]
+    rw [ite_eq_right (Ne.symm hb)]
     rfl
   · intro hρ
     exact absurd (Finset.mem_univ ρ) hρ
-  · rw [if_pos rfl, hR, toSm_smul_hermitian_curvature]
+  · rw [ite_eq_left rfl, hR, Formalism.FourierDecayAlt.P.CutMP.toSm_smul]
     rfl
 
 end
@@ -935,8 +869,6 @@ namespace Formalism.FourierDecayAlt.P.Qx8
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem frameG_exists {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < Tz k r z) :
     ∃ g : Mx k r, g ∈ UH (Hpk k r) ∧
       (∀ a : Fin r, g *ᵥ bvec (eI k r a) = bvec (eI k r a) ∧ g *ᵥ bvec (esI k r a) = bvec (esI k r a)) ∧
@@ -949,7 +881,7 @@ theorem frameG_exists {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k
     intro i hi
     rw [ha, Pi.smul_apply, inWb_bvec_wI _ i hi, smul_zero]
   have haa : herm (Hpk k r) a a = ((-(Tz k r z) : ℝ) : ℂ) := by
-    rw [ha, herm_smul_left', herm_smul_right', herm_wI, if_pos rfl, if_pos rfl]
+    rw [ha, herm_smul_left', herm_smul_right', herm_wI, ite_eq_left rfl, ite_eq_left rfl]
     have : star (s : ℂ) = s := Complex.conj_ofReal s
     rw [this]
     push_cast
@@ -971,8 +903,6 @@ end Formalism.FourierDecayAlt.P.Qx8
 namespace Formalism.FourierDecayAlt.P.CutMP.Gauge.GC
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr Formalism.FourierDecayAlt.P.QrD Formalism.FourierDecayAlt.P
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace GTRIntPf
 
@@ -1466,7 +1396,7 @@ theorem coeff_all : ∀ {m : ℕ} (B : Fin m → A),
     specialize ih (fun l => B l.succ)
     have hdeg : (List.ofFn fun l : Fin m => (X + C (B l.succ) : A[X])).prod.natDegree ≤ m := by
       have := natDegree_prodP (fun _ : Fin m => True) (fun l => B l.succ)
-      simp only [if_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one] at this
+      simp only [ite_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one] at this
       simpa [prodP, fac] using this
     rw [List.ofFn_succ, List.prod_cons]
     set Q := (List.ofFn fun l : Fin m => (X + C (B l.succ) : A[X])).prod with hQ
@@ -1534,9 +1464,9 @@ theorem quadratic_top_algebra_holds : QTopAlg := by
         congr 1
         congr 1
         funext l
-        rw [if_pos (show lin 1 l from rfl)]
+        rw [ite_eq_left (show lin 1 l from rfl)]
       rw [e1, (coeff_all (B 1)).2 hn]
-      simp only [B, Equiv.Perm.one_apply, if_true]
+      simp only [B, Equiv.Perm.one_apply, ite_true]
 
       rw [Finset.sum_add_distrib, add_comm, ← map_sum]
       congr 1
@@ -1689,7 +1619,7 @@ theorem gTRTopAct_of_cut (hQ : QTop) : GTRTopAct := by
       ∀ j ∈ Finset.range (P.k + 2), ((c j Φ : RadSp P.k P.r z z' π π') : Fn P.k P.r (Wq →L[ℂ] Wp)) x.1 x.2 = a j := by
     intro Φ x hx a ha j hj
     have hj' : j < P.k + 2 := Finset.mem_range.1 hj
-    have e1 : c j = ∑ i : Fin (P.k + 2), W ⟨j, hj'⟩ i • X.t ((i : ℕ) : ℂ) 0 0 := dif_pos hj'
+    have e1 : c j = ∑ i : Fin (P.k + 2), W ⟨j, hj'⟩ i • X.t ((i : ℕ) : ℂ) 0 0 := dite_eq_left hj'
     rw [e1, LinearMap.sum_apply, Submodule.coe_sum, Finset.sum_apply, Finset.sum_apply]
     simp only [LinearMap.smul_apply, Submodule.coe_smul, Pi.smul_apply]
     exact interp (P.k + 2) W hW (fun Y => ((X.t Y 0 0 Φ : RadSp P.k P.r z z' π π') : Fn P.k P.r (Wq →L[ℂ] Wp)) x.1 x.2)

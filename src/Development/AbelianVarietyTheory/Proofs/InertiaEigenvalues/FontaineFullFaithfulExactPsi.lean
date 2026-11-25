@@ -205,8 +205,8 @@ theorem phi_basis : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (
   intro D HW F l _ K s LL h W T
   haveI : Nontrivial W.EE := W.EE_inj.nontrivial
   exact phi_basis_of_tie ((F l).E K s LL h).tie (φRW_onto LL)
-    (GlobalTheory.IoInj.ioE_injective_saturated_inter l (D.loc l) (D.locA l) K s LL h _ _ _
-      (GlobalTheory.NL.ioW (HW l) (F l) h (GlobalTheory.NL.Holds.laws (HW l) (F l) h))).2.1
+    (GlobalTheory.IoInj.ioE_injective_saturated_inter l (D.loc l) (D.locA l) K s LL _ _
+      (GlobalTheory.NL.IoL (HW l) (F l) h (GlobalTheory.NL.Holds.laws (HW l) (F l) h))).2.1
     T T.L.free (Module.Finite.iff_fg.mpr T.L.fg)
 
 end GlobalTheory.EtaleFrob

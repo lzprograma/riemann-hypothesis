@@ -2,47 +2,7 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
 import GroundTheory.PAdicHodge.LocalBridge
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
@@ -138,15 +98,12 @@ private theorem le_one_of_mem (hA : IsPlaceOver A w) {x : E} (hx : algebraMap E 
 
 end Place
 
-private theorem mem_OK_iff {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)} (x : ↥K) :
-    x ∈ OK l K ↔ ‖(x : PadicAlgCl l)‖ ≤ 1 :=
-  GroundTheory.PAdicHodge.mem_normInteger
-
 private theorem isUnit_OK_iff {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)} (y : ↥(OK l K)) :
     IsUnit y ↔ ‖((y : ↥K) : PadicAlgCl l)‖ = 1 := by
   have hmul : ∀ a b : ↥(OK l K), ‖(((a * b : ↥(OK l K)) : ↥K) : PadicAlgCl l)‖ =
       ‖((a : ↥K) : PadicAlgCl l)‖ * ‖((b : ↥K) : PadicAlgCl l)‖ := fun a b => norm_mul _ _
-  have hle : ∀ a : ↥(OK l K), ‖((a : ↥K) : PadicAlgCl l)‖ ≤ 1 := fun a => (mem_OK_iff _).1 a.2
+  have hle : ∀ a : ↥(OK l K), ‖((a : ↥K) : PadicAlgCl l)‖ ≤ 1 :=
+    fun a => GroundTheory.PAdicHodge.mem_normInteger.1 a.2
   constructor
   · rintro ⟨u, rfl⟩
     have h := hmul u (↑u⁻¹ : ↥(OK l K))
@@ -156,13 +113,12 @@ private theorem isUnit_OK_iff {l : ℕ} [Fact l.Prime] {K : IntermediateField �
     have h2 := hle u
     have h3 := hle (↑u⁻¹ : ↥(OK l K))
     have h4 := norm_nonneg (((u : ↥(OK l K)) : ↥K) : PadicAlgCl l)
-    nlinarith
+    nlinarith only [h, h2, h3, h4]
   · intro h
     have hy0 : (y : ↥K) ≠ 0 := fun h0 => by
       rw [h0] at h
       simp at h
-    have hinv : (y : ↥K)⁻¹ ∈ OK l K := by
-      rw [mem_OK_iff]
+    have hinv : (y : ↥K)⁻¹ ∈ OK l K := GroundTheory.PAdicHodge.mem_normInteger.2 <| by
       change ‖((y : ↥K) : PadicAlgCl l)⁻¹‖ ≤ 1
       rw [norm_inv, h, inv_one]
     exact IsUnit.of_mul_eq_one ⟨_, hinv⟩ (Subtype.ext (mul_inv_cancel₀ hy0))
@@ -173,7 +129,7 @@ theorem intMap : IntMap := by
   have hmem : ∀ x : Ow w, algebraMap E Ω (algebraMap (Ow w) E x) ∈ A := fun x =>
     mem_of_le_one hA ((Valuation.mem_valuationSubring_iff _ _).1 x.2)
   have hφ : ∀ x : Ow w, ((kOf Bw).comp (algebraMap (Ow w) E)) x ∈ OK l Bw.Kw.1 := fun x =>
-    (mem_OK_iff _).2 ((hj _).1 (hmem x))
+    GroundTheory.PAdicHodge.mem_normInteger.2 ((hj _).1 (hmem x))
   refine ⟨((kOf Bw).comp (algebraMap (Ow w) E)).codRestrict (OK l Bw.Kw.1) hφ, fun x => rfl, fun ϖ hϖ => ?_⟩
   let ν : Ow w → ℝ := fun x => ‖Bw.j (algebraMap E Ω (algebraMap (Ow w) E x))‖
   let M : ↥(OK l Bw.Kw.1) → ℝ := fun y => ‖((y : ↥Bw.Kw.1) : PadicAlgCl l)‖
@@ -216,7 +172,7 @@ theorem intMap : IntMap := by
       rw [h4] at h3
       have h5 := hν1 (↑u⁻¹ : Ow w)
       have h6 := norm_nonneg t
-      nlinarith
+      nlinarith only [hpos, hy, h1, h2, h3, h5]
     have hmax : ξ ∈ Ideal.span {ϖ} := by
       rw [← (IsDiscreteValuationRing.irreducible_iff_uniformizer ϖ).1 hϖ]
       exact (IsLocalRing.mem_maximalIdeal ξ).2 hnu
@@ -225,12 +181,12 @@ theorem intMap : IntMap := by
     have h4 := hν1 c
     have h5 : ‖t‖ ≤ ν ϖ := by
       rw [← hξ, h3]
-      nlinarith
+      nlinarith only [hϖp, h4]
     exact h2.trans h5
   set φ := ((kOf Bw).comp (algebraMap (Ow w) E)).codRestrict (OK l Bw.Kw.1) hφ with hφdef
   have hMϖ : M (φ ϖ) = ν ϖ := rfl
   have hMmul : ∀ a b, M (a * b) = M a * M b := fun a b => norm_mul _ _
-  have hMle : ∀ a, M a ≤ 1 := fun a => (mem_OK_iff _).1 a.2
+  have hMle : ∀ a, M a ≤ 1 := fun a => GroundTheory.PAdicHodge.mem_normInteger.1 a.2
   rw [irreducible_iff]
   refine ⟨fun h => ?_, fun a b hab => ?_⟩
   · have := (isUnit_OK_iff _).1 h
@@ -253,6 +209,6 @@ theorem intMap : IntMap := by
     have h1 := hbound a ha1 hap
     have h2 := hbound b hb1 hbp
     have h3 : M a * M b ≤ ν ϖ * ν ϖ := mul_le_mul h1 h2 hb0 hϖp.le
-    nlinarith
+    nlinarith only [hϖ1, hϖp, hprod, h3]
 
 end UpperTheory.Gal.Seam

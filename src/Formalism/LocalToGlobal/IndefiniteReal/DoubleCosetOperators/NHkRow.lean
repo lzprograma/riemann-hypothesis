@@ -13,8 +13,6 @@ namespace Formalism.IndefR.NX
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type}
   {A3 : Formalism.L2.DIV.FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def goodProjW {tw : NTw D.R D.host D.what₂ D.LL0 D.nd} (S : RatDat tw) (j : ℕ) (eC : G0g D.nd → ↥D.LL0) :
     Module.End D.what₂.LL (S.WL j) :=
   ∑ᶠ g : G0g D.nd, (((eC g : ↥D.LL0) : D.what₂.LL) *

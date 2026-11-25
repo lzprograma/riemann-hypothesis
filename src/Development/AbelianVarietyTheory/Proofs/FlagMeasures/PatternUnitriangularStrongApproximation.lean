@@ -148,10 +148,10 @@ theorem GlobalTheory.HL.pattern_strong_approx : ∀ {F E : Type} [Field F] [Numb
       rw [← he]
       show (A.loc p).ιE (t k l) - s p k l = (A.loc p).ιE (x k l) - s p k l
       rw [ht]
-      simp only [hkl, if_true]
+      simp only [hkl, ite_true]
     · refine ⟨0, (A.L p).O.zero_mem, ?_⟩
       rw [Matrix.sub_apply, Matrix.map_apply, hs p k l hkl, mul_zero]
-      simp only [ht, hkl, if_false]
+      simp only [ht, hkl, ite_false]
       split_ifs <;> simp
   choose o ho hoeq using hD
   have hunit : (s p)⁻¹ * s p = 1 :=

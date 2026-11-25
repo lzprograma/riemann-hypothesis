@@ -1,46 +1,8 @@
 module
 
 public import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.CategoryTheory.Limits.Types.Pushouts
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -231,7 +193,7 @@ theorem cls_surj {X : Scheme.{0}} (U : X.Opens) : Function.Surjective (cls hD hE
   intro x
   obtain ⟨m, hm, hmx⟩ := clD_surj hD q n i (Qp U) (pull _ (eD hB U).hom (tw q i) n x.1)
   have h0 : clD hD q n i (yoneda.obj X) ((free _).map (pushout.inr _ _) ≫ m) = 0 := by
-    erw [← pull_cl hD q n i (yoneda.obj X) (Qp U) (pushout.inr _ _) m hm]
+    rw [← pull_cl hD q n i (yoneda.obj X) (Qp U) (pushout.inr _ _) m hm]
     rw [hmx, ← pull_comp, eD_r]
     exact x.2
   have hc' : ((free _).map (pushout.inr _ _) ≫ m) ≫ (KK q i).d n (n + 1) = 0 := by
@@ -297,7 +259,7 @@ theorem cls_nat {X' X : Scheme.{0}} (f : X' ⟶ X) (U' : X'.Opens) (U : X.Opens)
   have e1 : dbl.map (opnMap f U' U h) ≫ (eD hB U).inv = (eD hB U').inv ≫ disc.map (Qmap f U' U h) := by
     rw [Iso.comp_inv_eq, Category.assoc, eD_n, Iso.inv_hom_id_assoc]
   rw [e1, pull_comp]
-  erw [pull_cl hD q n i _ _ (Qmap f U' U h) _ (Mz_coc hE hP q n i a)]
+  rw [pull_cl hD q n i _ _ (Qmap f U' U h) _ (Mz_coc hE hP q n i a)]
   have il : pushout.inl _ _ ≫ Qmap f U' U h = yoneda.map f ≫ pushout.inl _ _ := pushout.inl_desc _ _ _
   have ir : pushout.inr _ _ ≫ Qmap f U' U h = yoneda.map f ≫ pushout.inr _ _ := pushout.inr_desc _ _ _
   have hm : (free _).map (Qmap f U' U h) ≫ Mz hP q n i U a = Mz hP q n i U' a' := by

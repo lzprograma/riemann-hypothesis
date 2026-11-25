@@ -111,15 +111,11 @@ def gaussLogC (a : ℝ) : ℝ := ∫ z : ℂ, log (a * ‖z‖) * exp (-‖z‖ 
 
 def gaussOneC : ℝ := ∫ z : ℂ, exp (-‖z‖ ^ 2)
 
-private theorem integrableOn_rpow_mul_exp_neg_sq_Ioi (s : ℝ) (hs : -1 < s) :
-    IntegrableOn (fun y : ℝ ↦ y ^ s * exp (-1 * y ^ 2)) (Ioi 0) :=
-  integrableOn_rpow_mul_exp_neg_mul_sq one_pos hs
-
 theorem integrable_gaussOneC : Integrable (fun z : ℂ ↦ exp (-‖z‖ ^ 2)) := by
   refine (integrable_fun_norm_addHaar volume (f := fun y : ℝ ↦ exp (-y ^ 2))).mpr ?_
   have hd : Module.finrank ℝ ℂ - 1 = 1 := by simp [Complex.finrank_real_complex]
   simp only [hd, pow_one, smul_eq_mul]
-  refine (integrableOn_rpow_mul_exp_neg_sq_Ioi 1 (by norm_num)).congr_fun
+  refine (integrableOn_rpow_mul_exp_neg_mul_sq one_pos (s := 1) (by norm_num)).congr_fun
     (fun y _ ↦ by simp [Real.rpow_one]) measurableSet_Ioi
 
 private theorem mul_abs_log_mul_le {a : ℝ} (ha : 0 < a) (y : ℝ) (hy : 0 < y) :
@@ -156,9 +152,10 @@ theorem integrable_gaussLogC {a : ℝ} (ha : 0 < a) :
   simp only [hd, pow_one, smul_eq_mul]
   have hg : IntegrableOn (fun y : ℝ ↦ (|log a| * y ^ (1 : ℝ) + 2 * y ^ (3 / 2 : ℝ) +
       2 * y ^ (1 / 2 : ℝ)) * exp (-1 * y ^ 2)) (Ioi 0) := by
-    have := (((integrableOn_rpow_mul_exp_neg_sq_Ioi 1 (by norm_num)).const_mul |log a|).add
-      ((integrableOn_rpow_mul_exp_neg_sq_Ioi (3 / 2) (by norm_num)).const_mul 2)).add
-      ((integrableOn_rpow_mul_exp_neg_sq_Ioi (1 / 2) (by norm_num)).const_mul 2)
+    have := (((integrableOn_rpow_mul_exp_neg_mul_sq one_pos (s := 1) (by norm_num)).const_mul
+      |log a|).add ((integrableOn_rpow_mul_exp_neg_mul_sq one_pos (s := 3 / 2)
+      (by norm_num)).const_mul 2)).add ((integrableOn_rpow_mul_exp_neg_mul_sq one_pos
+      (s := 1 / 2) (by norm_num)).const_mul 2)
     refine this.congr (ae_restrict_of_forall_mem measurableSet_Ioi fun y _ ↦ ?_)
     simp only [Pi.add_apply]
     ring

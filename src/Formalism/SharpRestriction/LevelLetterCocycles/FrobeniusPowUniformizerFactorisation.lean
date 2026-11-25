@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LemGBInImgIff
 public import Formalism.GaussValuationBounds.Statement
 public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingBounds
 public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatementLetters
@@ -13,57 +14,10 @@ public import Formalism.WeaklyAdmissibleFiltrations.CrystallineStableLifts.ExLat
 public import Formalism.WeaklyAdmissibleFiltrations.CrystallineStableLifts.TrivCrys
 public import Formalism.WeaklyAdmissibleFiltrations.PhtGalois
 import Formalism.WindowSums.PowerSeriesRelationList
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
 public import Mathlib.Data.Nat.Choose.Dvd
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
 public import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.RingTheory.PowerSeries.Inverse
 
@@ -1652,10 +1606,10 @@ theorem coreH_sol_bound (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZM
       have hy : ∀ j < s + 1 + 1, ∀ m, algebraMap O LL (y j m) = (PD.p : LL) ^ K * c j m := by
         intro j hj m
         by_cases hj' : j < s + 1
-        · simp only [y, if_pos hj', map_mul, map_pow, map_natCast, hy' j m hj']
+        · simp only [y, ite_eq_left hj', map_mul, map_pow, map_natCast, hy' j m hj']
           rw [← mul_assoc, ← pow_add, Nat.sub_add_cancel haK]
         · obtain rfl : j = s + 1 := by omega
-          simp only [y, if_neg hj']
+          simp only [y, ite_eq_right hj']
           exact hyt m
       obtain ⟨x₁, hx₁, e₁⟩ := hc (s + 1 + 1) K y hy
       obtain ⟨x₀, hx₀, e₀⟩ := hc (s + 1) a y' (fun j hj m => hy' j m hj)
@@ -1666,11 +1620,11 @@ theorem coreH_sol_bound (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZM
         refine Finset.sum_congr rfl fun j hj => ?_
         have hyj : y j = fun m => ((PD.p : ℕ) : O) ^ (K - a) * y' j m := by
           funext m
-          simp only [y, if_pos (Finset.mem_range.1 hj)]
+          simp only [y, ite_eq_left (Finset.mem_range.1 hj)]
         rw [hyj, frame_vecB_smul, smul_comm]
       have hyt' : y (s + 1) = yt := by
         funext m
-        simp only [y, if_neg (lt_irrefl _)]
+        simp only [y, ite_eq_right (lt_irrefl _)]
       rw [Finset.sum_range_succ, hS, hyt'] at e₁
       obtain ⟨x₂, hx₂, e₂⟩ := h1 (s + 1) (vecB W T b yt) (frame_vecB_mem W T i b hb yt)
       have hKa : ((PD.p : ℕ) : O) ^ K = ((PD.p : ℕ) : O) ^ (K - a) * ((PD.p : ℕ) : O) ^ a := by
@@ -3108,20 +3062,8 @@ theorem liftb_q (W : LocWach PD LL O v n) :
   exact hw
 
 theorem liftb_q_unit (W : LocWach PD LL O v n) : IsUnit (algebraMap (LetA O n) W.EE W.q) := by
-  obtain ⟨w, hw⟩ := liftb_q W
-  have := W.EE_complete
-  have hj : ((PD.p : ℕ) : W.EE) ∈ (⊥ : Ideal W.EE).jacobson :=
-    IsAdicComplete.le_jacobson_bot (Ideal.span {((PD.p : ℕ) : W.EE)})
-      (Ideal.subset_span (Set.mem_singleton _))
-  obtain ⟨u, hu⟩ := (W.EE_π.pow (PD.p - 1))
-  have h1 := (Ideal.mem_jacobson_bot.1 hj) (algebraMap (LetA O n) W.EE w * ((u⁻¹ : W.EEˣ) : W.EE))
-  have h2 : algebraMap (LetA O n) W.EE W.q =
-      (u : W.EE) * (((PD.p : ℕ) : W.EE) * (algebraMap (LetA O n) W.EE w * ((u⁻¹ : W.EEˣ) : W.EE)) + 1) := by
-    rw [hw, map_add (f := _), map_mul, map_pow, map_natCast, ← hu]
-    have : (u : W.EE) * ((u⁻¹ : W.EEˣ) : W.EE) = 1 := u.mul_inv
-    linear_combination (-(((PD.p : ℕ) : W.EE) * algebraMap (LetA O n) W.EE w)) * this
-  rw [h2]
-  exact u.isUnit.mul h1
+  intros
+  apply _root_.Formalism.MainNotions.N.FrobeniusPowerSeries.lemGB_q_unit <;> assumption
 
 theorem liftb_Q_unit (W : LocWach PD LL O v n) : IsUnit (algebraMap (LetA O n) W.EE W.Q) := by
   rw [LocWach.Q, liftb_φE_pow]
@@ -3210,12 +3152,6 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
     {PD : PeriodData G Qp K₀ K B BdR} {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL]
     [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
-
-theorem wmap_φpow_γA (W : LocWach PD LL O v n) (g : W.Gam) (k : ℕ) (a : LetA O n) :
-    W.γA g ((W.φA ^ k) a) = (W.φA ^ k) (W.γA g a) := by
-  induction k generalizing a with
-  | zero => simp
-  | succ k ih => rw [pow_succ, AlgHom.mul_apply, AlgHom.mul_apply, ih, W.φA_γA]
 
 theorem wmap_unit (W : LocWach PD LL O v n) (k : ℕ) :
     IsUnit (algebraMap (LetA O n) W.EE ((W.φA ^ k) letπ)) := by
@@ -4101,7 +4037,7 @@ theorem phib_dist [Nontrivial O] (p : ℕ) (hp : p.Prime) :
   by_cases h0 : k = 0
   · subst h0
     simp
-  · rw [if_neg h0, sub_zero]
+  · rw [ite_eq_right h0, sub_zero]
     exact Ideal.mem_span_singleton.2 (Nat.cast_dvd_cast (hp.dvd_choose_self h0 hk))
 
 theorem phib_div (p : ℕ) (hp : p.Prime) [IsAdicComplete (Ideal.span {((p : ℕ) : O)}) O]
@@ -4612,9 +4548,5 @@ theorem opnPhiLinInj_holds (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW
 
 theorem wach_second_and_result_of_admitted (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (h : admitted D HW F Cm) (hJ : opnJumpsQuot D HW F) : WachExponentRecursionAll D HW F ∧ WachResultConstant D HW F 10 :=
   wach_clauses_of_admitted_inj D HW F Cm h hJ (opnPhiLinInj_holds D HW F)
-
-end Formalism.MainNotions.LiftingTheory
-
-namespace Formalism.MainNotions.LiftingTheory
 
 end Formalism.MainNotions.LiftingTheory

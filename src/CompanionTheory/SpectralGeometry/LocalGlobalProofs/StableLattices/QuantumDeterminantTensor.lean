@@ -64,10 +64,10 @@ theorem qdetTens : QdetTens := by
       by_cases hca : c = a
       · subst hca
         simp [Finset.sum_add_distrib, LinearMap.sub_apply, apply_ite, Finset.sum_sub_distrib]
-        simp only [ite_apply, LinearMap.zero_apply, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        simp only [ite_apply, LinearMap.zero_apply, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
         abel
       · simp [Finset.sum_add_distrib, apply_ite, hca]
-        simp only [ite_apply, LinearMap.zero_apply, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        simp only [ite_apply, LinearMap.zero_apply, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
         abel
     have hC : Commute (qdet (tensE X) u) (u • (1 : Module.End ℂ (Fin (m + 1) → X.V)) + om X) :=
       Commute.add_right ((Commute.one_right _).smul_right u) (commute_qdet_of _ _ hT u)

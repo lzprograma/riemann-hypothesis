@@ -51,8 +51,6 @@ open NumberField IsDedekindDomain ValuativeRel Filter Topology GlobalTheory.GLp 
 
 namespace DiscreteGroups.sglob.DzIso
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 variable {E : Type} [Field E] [NumberField E] {w : HeightOneSpectrum (𝓞 E)}
 
 theorem val_lt_iff (y : w.adicCompletion E) : valuation (w.adicCompletion E) y < 1 ↔ ‖y‖ < 1 := by

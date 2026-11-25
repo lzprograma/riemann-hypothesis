@@ -692,7 +692,7 @@ theorem abstract_count {G H L : Type} [NormedAddCommGroup H] [InnerProductSpace 
       rintro ⟨y, hy⟩
       obtain ⟨z, rfl⟩ := LinearMap.mem_range.1 hy
       obtain ⟨A, ⟨hA, hAw⟩, -⟩ := hex _ (by
-        simp only [ContinuousLinearMap.coe_coe, ContinuousLinearMap.comp_apply]
+        simp only [ContinuousLinearMap.comp_apply]
         exact hQQ z)
       exact ⟨⟨A, hA⟩, Subtype.ext hAw⟩
     exact ⟨LinearEquiv.ofBijective f ⟨hinj, hsurj⟩⟩

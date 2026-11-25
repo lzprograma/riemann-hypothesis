@@ -58,14 +58,12 @@ import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeComb
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix
 open Formalism.DegreeFormula Formalism.MJ Formalism.UG Formalism.L2.Geo Formalism.L2.PjFree
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.PullbackSections
 open GlobalTheory GlobalTheory.HodgeDomain GlobalTheory.LieMet GlobalTheory.CxPts GlobalTheory.TrueCx
 open GlobalTheory.AllWt (Psi)
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.TrueCx.TorFrHolo
 
@@ -111,15 +109,5 @@ theorem isHolTo_lift {G' G X' X : Scheme.{0}} {φ : G' ⟶ G} {h' : G' ⟶ X'} {
     L.symm.differentiableOn fun q hq => by simpa using hq) fun q _ => ?_
   refine Eq.trans ?_ (key (L.symm q)).symm
   simp only [L.apply_symm_apply]
-
-section Family
-
-open GlobalTheory.TrueCx.TorHolo
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r j : ℕ} {Tau : Type}
-  {H : Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
-  (Y : Model Xo c (RingHom.id c.F)) {σ : c.F →+* ℂ} {U : Unf Xo c σ r}
-
-end Family
 
 end GlobalTheory.TrueCx.TorFrHolo

@@ -271,13 +271,8 @@ theorem cay_unitary {J : Matrix ι ι K} {N : ℕ} {Z : Matrix ι ι K} (hZ : Z�
     exact (half_add_half Z).symm
   have hY : Yᴴ * J = -(J * Y) := by
     rw [hYdef, conjTranspose_smul, star_half, smul_mul_assoc, hZ, mul_smul_comm, smul_neg]
-  have hpow : ∀ j : ℕ, Yᴴ ^ j * J = J * (-Y) ^ j := by
-    intro j
-    induction j with
-    | zero => simp
-    | succ j ih =>
-      rw [pow_succ', Matrix.mul_assoc, ih, ← Matrix.mul_assoc, hY, pow_succ', ← Matrix.mul_assoc,
-        Matrix.mul_neg, Matrix.neg_mul]
+  have hpow : ∀ j : ℕ, Yᴴ ^ j * J = J * (-Y) ^ j := fun j =>
+    ((SemiconjBy.pow_right (a := J) ((Matrix.mul_neg J Y).trans hY.symm) j).eq).symm
   have hS : (geo N Y)ᴴ * J = J * geo N (-Y) := by
     unfold geo
     rw [conjTranspose_sum, Finset.sum_mul, Finset.mul_sum]

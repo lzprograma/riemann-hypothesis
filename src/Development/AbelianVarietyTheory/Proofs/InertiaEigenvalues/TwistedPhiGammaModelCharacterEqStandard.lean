@@ -13,54 +13,9 @@ public import Mathlib.RepresentationTheory.Irreducible
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleLetterDataWindowArithmetic
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HomToCharacterLineEqZero
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SenWeightSubquotientModelMemResidues
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.Tactic.Basify
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharacterModelExponentsSignsSenWeight, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EquivariantOfLinear, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSimplePieces, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsJordanHolderThroughLine, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedPhiGammaModelCharacterEqStandard
@@ -593,19 +548,6 @@ namespace GlobalTheory.Models.ThroughLine
 
 variable {k G : Type} [Field k] [Group G]
 
-alias exists_ker := _root_.GlobalTheory.Models.SubModel.exists_ker
-
-alias exists_coker := _root_.GlobalTheory.Models.SubModel.exists_coker
-
-theorem simple_chr (χ : G →* kˣ) : IsSimpleModule (MonoidAlgebra k G) (chr χ).ρ.asModule := by
-  rw [← Representation.irreducible_iff_isSimpleModule_asModule]
-  have h : IsSimpleModule k (Fin 1 → k) := isSimpleModule_iff_finrank_eq_one.mpr (by simp)
-  refine { exists_pair_ne := ⟨⊥, ⊤, fun h' => ?_⟩, eq_bot_or_eq_top := fun S => ?_ }
-  · exact bot_ne_top (α := Submodule k (Fin 1 → k)) (congrArg Subrepresentation.toSubmodule h')
-  · rcases eq_bot_or_eq_top S.toSubmodule with h' | h'
-    · exact Or.inl (Subrepresentation.toSubmodule_injective h')
-    · exact Or.inr (Subrepresentation.toSubmodule_injective h')
-
 theorem sameSS_three {s t u : ℕ} {M : Type} [AddCommGroup M] [Module k M] {π : Representation k G M}
     (C : (Fin s ⊕ Unit) ⊕ Fin t → Ob k G) (e : Fin u ≃ (Fin s ⊕ Unit) ⊕ Fin t)
     (h : SameSS π (((piRep fun a => (C (.inl (.inl a))).ρ).prod (C (.inl (.inr ()))).ρ).prod
@@ -625,12 +567,11 @@ theorem sameSS_three {s t u : ℕ} {M : Type} [AddCommGroup M] [Module k M] {π 
 
 end GlobalTheory.Models.ThroughLine
 
-
 open GlobalTheory.Models.ThroughLine in
 theorem GlobalTheory.Models.ModTh.exists_jordanHolder_through_line : ∀ {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Prime] [CharP k l] [NeZero n] {R : RingPG k l} (F : DFun R n G) {r : ℕ} {Dt : TopData n r} (M : ModTh F Dt) (B A₁ : Ob k G) (χ : G →* kˣ) (j : (Fin A₁.m → k) →ₗ[k] (Fin B.m → k)) (p : (Fin A₁.m → k) →ₗ[k] (Fin 1 → k)) (N : Lats k n B.m), M.Model B N → IsHom A₁ B j → Function.Injective j → IsHom A₁ (chr χ) p → Function.Surjective p → ∃ (s : ℕ) (C : Fin s → Ob k G) (L : ∀ a, Lats k n (C a).m) (a₀ : Fin s), (∀ a, M.Model (C a) (L a)) ∧ (∀ a, IsSimpleModule (MonoidAlgebra k G) (C a).ρ.asModule) ∧ SameSS B.ρ (piRep fun a => (C a).ρ) ∧ (∀ i x, sen ((F.D B).γ i) (N i) x = ∑ a, sen ((F.D (C a)).γ i) (L a i) x) ∧ (⟨C a₀, L a₀⟩ : Σ A : Ob k G, Lats k n A.m) = ⟨chr χ, F.push A₁ (chr χ) p (F.pre A₁ B j N)⟩ := by
   intro k G _ _ l n _ _ _ R F r Dt M B A₁ χ j p N hN hj hji hp hps
-  obtain ⟨K, f, hf, hfi, hfe⟩ := exists_ker A₁ (chr χ) p hp
-  obtain ⟨Q, q, hq, hqs, hqe⟩ := exists_coker A₁ B j hj
+  obtain ⟨K, f, hf, hfi, hfe⟩ := GlobalTheory.Models.SubModel.exists_ker A₁ (chr χ) p hp
+  obtain ⟨Q, q, hq, hqs, hqe⟩ := GlobalTheory.Models.SubModel.exists_coker A₁ B j hj
   have hA := _root_.GlobalTheory.Models.SubModel.model_pre F M A₁ B j N hj hji hN
   have hK := _root_.GlobalTheory.Models.SubModel.model_pre F M K A₁ f _ hf hfi hA
   have hL := GlobalTheory.Models.ModTh.model_push_of_surjective F M A₁ (chr χ) p _ hp hps hA
@@ -652,7 +593,7 @@ theorem GlobalTheory.Models.ModTh.exists_jordanHolder_through_line : ∀ {k G : 
     exacts [c1 b, hL, d1 b]
   · show IsSimpleModule (MonoidAlgebra k G) (S (e a)).1.ρ.asModule
     rcases e a with (b | b) | b
-    exacts [c2 b, simple_chr χ, d2 b]
+    exacts [c2 b, GlobalTheory.JHMatch.chr_simple χ, d2 b]
   · refine sameSS_three (fun a => (S a).1) e ?_
     exact (SameSS.of_exact hj hq hji hqs hqe (hfl _)).trans
       (((SameSS.of_exact hf hp hfi hps hfe (hfl _)).trans (c3.prod (SameSS.refl _ (hfl _)))).prod d3)
@@ -750,7 +691,7 @@ theorem sum_eq_of_counts {k ι : Type} [Field k] [DecidableEq k] {l : ℕ} [Char
     · intro y hy hne
       rw [Finset.mem_Icc] at hy
       have := hc i hi'
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro h'
       exact hne (eq_of_cast_eq (l := l) h' (by rw [abs_lt]; omega)).symm
     · intro h'
@@ -840,14 +781,14 @@ theorem model_chr_eq : ∀ {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.
           refine Finset.sum_congr rfl fun a _ => ?_
           cases hc : c a with
           | none =>
-            simp only [ne_eq, not_true_eq_false, if_false]
+            simp only [ne_eq, not_true_eq_false, ite_false]
             by_contra hne
             obtain ⟨A', j', p', q1, q2, q3, q4⟩ := hnone a hc
             obtain ⟨u, hu, hux⟩ := _root_.GlobalTheory.Models.ModTh.sen_model_subquot_mem_U F M h1 h2 h3 A' (C a) j' p' (L a) q1 q2 q3 q4 (hmod a) i y
               (Ne.symm hne)
             exact hU u hu hux
           | some e' =>
-            rw [(hκ a e' hc i).2.2.2, resCount_single, if_pos (by simp)]
+            rw [(hκ a e' hc i).2.2.2, resCount_single, ite_eq_left (by simp)]
             simp [cc, hc]
         have e2 : resCount (Dt.Ut i) (Dt.w i) (y : k) = resCount (block (Dt.w i) Dt.t) (Dt.w i) (y : k) := by
           unfold resCount
@@ -901,7 +842,7 @@ theorem model_chr_eq : ∀ {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.
     sen ((F.D P.1).γ i) (P.2 i) ((e : ℤ) : k)) ha₀
   simp only at hsen0
   rw [(hκ a₀ e' he' i).2.2.2, (hκ₀ i).2.2.2.2, hzero i a₀ haS, resCount_single, resCount_single, ← hee,
-    if_pos (by simp)] at hsen0
+    ite_eq_left (by simp)] at hsen0
   have h0 : κ₀ i = 0 := by
     split_ifs at hsen0 with h
     have hT := h1 i

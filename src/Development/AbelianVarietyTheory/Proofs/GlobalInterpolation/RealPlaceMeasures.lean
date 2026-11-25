@@ -701,9 +701,6 @@ theorem Jpq_eq (P Q : ℕ) : Formalism.UG.Jpq P Q = Matrix.diagonal fun i => (sg
 theorem sg_mul_self (i : Fin P ⊕ Fin Q) : (sg i : ℂ) * sg i = 1 := by
   rcases sg_eq i with h | h <;> rw [h] <;> simp
 
-theorem norm_sg (i : Fin P ⊕ Fin Q) : ‖(sg i : ℂ)‖ = 1 := by
-  rcases sg_eq i with h | h <;> rw [h] <;> simp
-
 theorem mem_lieU_iff (X : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ) :
     X ∈ lieU P Q ↔ ∀ a b, X a b = -((sg a : ℂ) * sg b) * (starRingEnd ℂ) (X b a) := by
   change Xᴴ * Formalism.UG.Jpq P Q + Formalism.UG.Jpq P Q * X = 0 ↔ _
@@ -750,7 +747,7 @@ theorem row_eq (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q)) (X : lieU 
 
 theorem coord_injective (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q)) (he : SignCompat e) :
     Function.Injective (coord e he) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro X h
   have h1 : (X.val (e none) (e none)).im = 0 := congrArg (fun t => t.1.1) h
   have h2 : ∀ a, X.val (e (some a)) (e none) = 0 := fun a => congrArg (fun t => t.1.2 a) h
@@ -801,7 +798,7 @@ theorem matrixEntryAbsSum_unitaryLie_coordinates_split (e : Option (Fin P' ⊕ F
     simp
   have h2 : ∀ b, ‖X.val (e none) (e (some b))‖ = ‖X.val (e (some b)) (e none)‖ := by
     intro b
-    rw [row_eq, norm_mul, norm_neg, norm_mul, norm_sg, norm_sg]; simp
+    rw [row_eq, norm_mul, norm_neg, norm_mul, GlobalTheory.TangentSection.norm_sg, GlobalTheory.TangentSection.norm_sg]; simp
   change ∑ i, ∑ j, ‖X.val i j‖ = |(X.val (e none) (e none)).im| +
     2 * ∑ a, ‖X.val (e (some a)) (e none)‖ + ∑ a, ∑ b, ‖X.val (e (some a)) (e (some b))‖
   have h3 : ∀ i, ∑ j, ‖X.val i j‖ = ‖X.val i (e none)‖ + ∑ b, ‖X.val i (e (some b))‖ := by
@@ -849,7 +846,7 @@ theorem omega_split : ∀ (P Q P' Q' : ℕ) (e : Option (Fin P' ⊕ Fin Q') ≃ 
     have m1 := mp_interchange ((volume : Measure ℝ).prod μ) lam' ((volume : Measure ℝ).prod μ) lam'
     have m2 := mp_interchange (volume : Measure ℝ) μ (volume : Measure ℝ) μ
     have m3 := mp_colrow (fun b => -((sg (e none) : ℂ) * sg (e (some b))))
-      (fun b => by rw [norm_neg, norm_mul, norm_sg, norm_sg, mul_one])
+      (fun b => by rw [norm_neg, norm_mul, GlobalTheory.TangentSection.norm_sg, GlobalTheory.TangentSection.norm_sg, mul_one])
     have m4 : MeasurePreserving _ (lam'.prod lam') volume := ⟨(hc P' Q').measurable, h2⟩
     have m5 := hf.comp ((((mp_diag.prod m3).comp m2).prod m4).comp m1)
     rw [Measure.map_prod_map _ _ hm hm, Measure.map_map (hc P Q).measurable (hm.prodMap hm),
@@ -1032,8 +1029,8 @@ theorem ptGauge_act_le (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q)) (g
     Finset.sum_le_sum fun i _ => Finset.single_le_sum (f := fun j => ‖(UpqT.mat g - 1) i j‖)
       (fun _ _ => norm_nonneg _) (Finset.mem_univ _)
   rw [← e.sum_comp, Fintype.sum_option] at h2
-  simp only [Matrix.sub_apply, Matrix.one_apply, e.injective.eq_iff, if_true, reduceCtorEq,
-    if_false, sub_zero] at h2
+  simp only [Matrix.sub_apply, Matrix.one_apply, e.injective.eq_iff, ite_true, reduceCtorEq,
+    ite_false, sub_zero] at h2
   simp only [ptGauge, h1]
   linarith [norm_nonneg (UpqT.mat g (e none) (e none) - 1)]
 

@@ -130,8 +130,8 @@ theorem exists_cyclic (r : ℕ) (x : Fin (2 * r + 1) → ℝ) (hx : StrictAnti x
   rw [Finset.sum_congr rfl fun s _ => hterm s, Finset.sum_neg_distrib,
     sum_pow_mul_inv_prod_sub_eq_ite x hx.injective (i + j) (by omega)]
   by_cases h : i + j = 2 * r
-  · rw [if_pos h, if_pos (by omega)]
-  · rw [if_neg h, if_neg (by omega), neg_zero]
+  · rw [ite_eq_left h, ite_eq_left (by omega)]
+  · rw [ite_eq_right h, ite_eq_right (by omega), neg_zero]
 
 theorem exists_dual {m : ℕ} (x c : Fin m → ℝ) (hx : Function.Injective x) (hc : ∀ s, c s ≠ 0)
     (y : Fin m → ℝ) : ∃ v : Fin m → ℝ, ∀ i : Fin m, formV v (fun s => x s ^ i.val * c s) = y i := by
@@ -181,15 +181,15 @@ theorem frame (r : ℕ) (x : Fin (2 * r + 1) → ℝ) (hx : StrictAnti x) :
     have := a.isLt
     have := b.isLt
     change formV (g a.val) (g b.val) = 0
-    rw [hG _ _ (by omega), if_neg (by omega)]
+    rw [hG _ _ (by omega), ite_eq_right (by omega)]
   have hez : ∀ a : Fin r, formV (e a) z = 0 := by
     intro a
     have := a.isLt
     change formV (g a.val) (g r) = 0
-    rw [hG _ _ (by omega), if_neg (by omega)]
+    rw [hG _ _ (by omega), ite_eq_right (by omega)]
   have hzz : formV z z = -1 := by
     change formV (g r) (g r) = -1
-    rw [hG _ _ (by omega), if_pos (by omega)]
+    rw [hG _ _ (by omega), ite_eq_left (by omega)]
   have hf'e : ∀ a b : Fin r, formV (f' a) (e b) = if a = b then 1 else 0 := by
     intro a b
     have h := hf' a ⟨b.val, by omega⟩
@@ -198,13 +198,13 @@ theorem frame (r : ℕ) (x : Fin (2 * r + 1) → ℝ) (hx : StrictAnti x) :
     by_cases hab : a = b
     · subst hab
       simp
-    · rw [if_neg (fun h' => hab (Fin.ext h'.symm)), if_neg hab]
+    · rw [ite_eq_right (fun h' => hab (Fin.ext h'.symm)), ite_eq_right hab]
   have hf'z : ∀ a : Fin r, formV (f' a) z = 0 := by
     intro a
     have := a.isLt
     have h := hf' a ⟨r, by omega⟩
     change formV (f' a) (g r) = 0
-    rw [show formV (f' a) (g r) = if r = a.val then 1 else 0 from h, if_neg (by omega)]
+    rw [show formV (f' a) (g r) = if r = a.val then 1 else 0 from h, ite_eq_right (by omega)]
   have hfe : ∀ a b : Fin r, formV (f a) (e b) = if a = b then 1 else 0 := by
     intro a b
     have h1 : formV (f a) (e b) = formV (f' a) (e b) - ∑ c, (1 / 2 * Q a c) * formV (e c) (e b) :=
@@ -229,7 +229,7 @@ theorem frame (r : ℕ) (x : Fin (2 * r + 1) → ℝ) (hx : StrictAnti x) :
     have h4 : ∀ d, formV (e d) (f' a) = if a = d then 1 else 0 := fun d => by
       rw [formV_symm, hf'e]
     rw [h1, h2]
-    simp only [h3, h4, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [h3, h4, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     have hQ : Q b a = Q a b := formV_symm _ _
     rw [hQ]
     ring
@@ -294,15 +294,15 @@ theorem trace_shift (Ξ Y : Mat k r) (hsa : Hpk k r * Ξᴴ * Hpk k r = Ξ)
     rw [hA, Finset.sum_eq_single a]
     · simp [eq_comm]
     · intro b _ hb
-      rw [if_neg]; rintro ⟨_, h⟩; exact hb (Fin.ext (by have := congrArg Fin.val h; exact this))
+      rw [ite_eq_right]; rintro ⟨_, h⟩; exact hb (Fin.ext (by have := congrArg Fin.val h; exact this))
     · simp
   have hA0 : ∀ i j : Fin (2 * r + k + 1), r ≤ j.val → A i j = 0 := by
     intro i j hj
-    rw [hA]; refine Finset.sum_eq_zero fun a _ => if_neg ?_
+    rw [hA]; refine Finset.sum_eq_zero fun a _ => ite_eq_right ?_
     rintro ⟨_, rfl⟩; have := a.isLt; simp [eI] at hj; omega
   have hA1 : ∀ i j : Fin (2 * r + k + 1), r ≤ i.val → i.val ≠ r + k → A i j = 0 := by
     intro i j h1 h2
-    rw [hA]; refine Finset.sum_eq_zero fun a _ => if_neg ?_
+    rw [hA]; refine Finset.sum_eq_zero fun a _ => ite_eq_right ?_
     rintro ⟨rfl, _⟩
     unfold nxt at h1 h2; split_ifs at h1 h2 <;> simp at h1 h2; omega
   set R : Mat k r := Ξ - A - Hpk k r * Aᴴ * Hpk k r with hR
@@ -382,12 +382,12 @@ theorem formJ_emb (hk : 1 ≤ k) (u v : Fin (2 * r + 1) → ℝ) :
     refine Finset.sum_congr rfl fun s _ => ?_
     have e : (if parEps k r ⟨k + s.val, by omega⟩ then (1 : ℂ) else -1) = (-1) ^ (s.val + 1) := by
       have e1 : k + s.val - (k - 1) = s.val + 1 := by omega
-      simp only [parEps, show ¬ (k + s.val < k - 1) by omega, if_false, e1, decide_eq_true_eq]
+      simp only [parEps, show ¬ (k + s.val < k - 1) by omega, ite_false, e1, decide_eq_true_eq]
       split_ifs with h
       · rw [Even.neg_one_pow (Nat.even_iff.mpr h)]
       · rw [Odd.neg_one_pow (Nat.odd_iff.mpr (by omega))]
     rw [e]
-    simp only [emb, show k ≤ k + s.val by omega, dif_pos, Nat.add_sub_cancel_left, Fin.eta,
+    simp only [emb, show k ≤ k + s.val by omega, dite_eq_left, Nat.add_sub_cancel_left, Fin.eta,
       Complex.star_def, Complex.conj_ofReal]
     ring
   · intro j _
@@ -461,7 +461,7 @@ theorem exists_frame (hk : 1 ≤ k) : ∃ P : Mat k r, Formalism.MainNotions.S.I
     funext i
     simp only [bvec, Matrix.mulVec_single_one, Matrix.col_apply, P, Matrix.of_apply, col, wI,
       Fin.val_castSucc, show ¬ (r + j.val < r) by omega, show r + j.val < r + k by omega,
-      dif_pos, dif_neg, not_false_eq_true, Nat.add_sub_cancel_left]
+      dite_eq_left, dite_eq_right, not_false_eq_true, Nat.add_sub_cancel_left]
   · set D := dMat (dNode k r) with hD
     have hDP : ∀ i j, (D * P) i j = (dNode k r i : ℂ) * col j i := fun i j => by
       simp [hD, dMat, Matrix.diagonal_mul, P]

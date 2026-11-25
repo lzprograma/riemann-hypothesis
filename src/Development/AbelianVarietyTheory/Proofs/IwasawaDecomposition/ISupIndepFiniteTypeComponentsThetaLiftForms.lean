@@ -50,7 +50,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasLab
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open Formalism.IndefR.RecTie Formalism.IndefR.Lev Formalism.L2.Rows GlobalTheory.Mem GlobalTheory.Mem.R3
 open Classical
 open GlobalTheory.Mem.R3.HasLabelling
@@ -73,26 +72,26 @@ theorem gaL_finSum {D : D7} {G : Type} [Group G] [Fintype G] (V : HSp D) (β : G
     intro F
     funext h
     by_cases hx : ∃ κ, IsLevelLift V β L (eG g) κ
-    · have e1 : a g = c0 g * (levChi V β (flagL L) hx.choose)⁻¹ := dif_pos hx
-      have e2 : k g = hx.choose := dif_pos hx
+    · have e1 : a g = c0 g * (levChi V β (flagL L) hx.choose)⁻¹ := dite_eq_left hx
+      have e2 : k g = hx.choose := dite_eq_left hx
       rw [e1, e2]
       show c0 g * actG0 V β L (eG g) F h = c0 g * (levChi V β (flagL L) hx.choose)⁻¹ * F (h * hx.choose)
       unfold actG0
-      rw [dif_pos hx, mul_assoc]
-    · have e1 : a g = 0 := dif_neg hx
+      rw [dite_eq_left hx, mul_assoc]
+    · have e1 : a g = 0 := dite_eq_right hx
       rw [e1, zero_smul]
       show c0 g * actG0 V β L (eG g) F h = 0
       unfold actG0
-      rw [dif_neg hx]
+      rw [dite_eq_right hx]
       simp
   refine ⟨Finset.univ.image k, fun x => ∑ g ∈ Finset.univ.filter (fun g => k g = x), a g, ?_, ?_⟩
   · intro x hx
     obtain ⟨g, -, rfl⟩ := Finset.mem_image.1 hx
     by_cases h : ∃ κ, IsLevelLift V β L (eG g) κ
-    · have e2 : k g = h.choose := dif_pos h
+    · have e2 : k g = h.choose := dite_eq_left h
       rw [e2]
       exact h.choose_spec.1
-    · have e2 : k g = 1 := dif_neg h
+    · have e2 : k g = 1 := dite_eq_right h
       rw [e2]
       exact one_mem _
   · have e0 : gaL V β L eG c0 = ∑ g, a g • principalLevelFrame.rtA (k g) := by
@@ -109,8 +108,6 @@ theorem gaL_finSum {D : D7} {G : Type} [Group G] [Fintype G] (V : HSp D) (β : G
       _ = ∑ g, a g • principalLevelFrame.rtA (k g) :=
           Finset.sum_fiberwise_of_maps_to (fun g _ => Finset.mem_image_of_mem k (Finset.mem_univ g)) _
 
-
-
 theorem isot_iSupIndep : GlobalTheory.Published.WeilRepresentationUnitaryPair → GlobalTheory.Published.DiscreteSeriesExists → GlobalTheory.Published.HarishChandraFinite → GlobalTheory.Published.CuspRapidDecay → ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 I0 T : Type) (A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat3 D A3 Ks) (F : Face3 D A3) (cG : G0 R.Pg D.R.r ≃* G0g D.nd) (X0 : BaseLevelRowSide D) (Y : Read (A3 := A3) R.toRealDat F.lv2 X0) (Z : ReadL R F X0 Y), Pins R F cG → Holds R F → HostHyp D → ∀ i : Fin D.R.m, iSupIndep (fun σ : D.what₂.FT => D.what₂.isot ((i : ℕ) + 1) σ) := by
   intro hW hDS hHC hCR D G _ _ Pl0 I0 T A3 Ks _ _ _ R F cG X0 Y Z hP hH hHost i
   have hI : Inputs D := GlobalTheory.T.linksAnalyticHypotheses_of_weilRep_harishChandra hW hDS hHC hCR D
@@ -118,7 +115,7 @@ theorem isot_iSupIndep : GlobalTheory.Published.WeilRepresentationUnitaryPair �
   have hT := Y.tied.lift
   have h0 := hB.models.νW i
   have hs := GlobalTheory.HilbertLevels.scaled (inv_pos.2 (GlobalTheory.HilbertLevels.nP_pos F.lv2 false)) h0.1.1 h0.2
-  have hO := (GlobalTheory.T.rowFiniteTypes_isotypicParts_span_orthogonal D (Wc D i) _ R.θ (R.MW i (sg0 D A3.A)) (Y.PW i) Y.hF (R.βW i)
+  have hO := (GlobalTheory.FinTypesRows.isotL_span_orth D (Wc D i) _ R.θ (R.MW i (sg0 D A3.A)) (Y.PW i) Y.hF (R.βW i)
     (R.datWp i (R.levL F.lv2 false (sg0 D A3.A))) (R.eWf i (sg0 D A3.A)) _ (R.fdW i) hI (D.sp.W_sig _)
     hB.models.inf (Y.stdPsi.2 i) hs.1 hs.2 (gaL_finSum _ _ _ _ _)).2
   apply OrthogonalFamily.independent

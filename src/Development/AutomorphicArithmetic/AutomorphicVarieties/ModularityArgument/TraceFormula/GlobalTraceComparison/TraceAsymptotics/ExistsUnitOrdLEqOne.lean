@@ -513,8 +513,6 @@ section -- clump:auto
 
 open ValuativeRel Matrix
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private theorem UpperTheory.Reformulated.B.DoubleCosetSeparation.mem_iw {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] {n : ℕ} (g : GL (Fin n) k) :
     g ∈ GlobalTheory.SmGL.iwahori k (Fin n) ↔
@@ -641,10 +639,7 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix Polynomial GlobalTheory.BCT GlobalTheory.UnitaryBC Formalism.UG
 open scoped Classical
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm
-
 
 end UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm
 
@@ -660,30 +655,6 @@ section -- clump:auto
 
 open scoped Classical
 
-theorem UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.aux1 :
-    ∀ {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
-      (ρ : Representation k G V) (H : Subgroup G) (χ : ↥H →* kˣ) {a b : V},
-      a ∈ {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v} →
-        b ∈ {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v} →
-          ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) (a + b) = (↑((χ : ↥H → kˣ) h) : k) • (a + b) := by
-  intro k G V _ _ _ _ ρ H χ a b ha hb h
-  rw [map_add (f := _), ha h, hb h, smul_add]
-
-theorem UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.aux2 :
-    ∀ {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
-      (ρ : Representation k G V) (H : Subgroup G) (χ : ↥H →* kˣ) (h : ↥H),
-      ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) (0 : V) = (↑((χ : ↥H → kˣ) h) : k) • (0 : V) := by
-  intro k G V _ _ _ _ ρ H χ h
-  rw [map_zero, smul_zero]
-
-theorem UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.aux3 :
-    ∀ {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
-      (ρ : Representation k G V) (H : Subgroup G) (χ : ↥H →* kˣ) (c : k) {v : V},
-      v ∈ {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v} →
-        ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) (c • v) = (↑((χ : ↥H → kˣ) h) : k) • c • v := by
-  intro k G V _ _ _ _ ρ H χ c v hv h
-  rw [map_smul, hv h, smul_comm]
-
 noncomputable def UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.eig :
     {k G V : Type} →
       [inst : Field k] →
@@ -693,8 +664,8 @@ noncomputable def UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.eig
     fun {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
         (ρ : Representation k G V) (H : Subgroup G) (χ : ↥H →* kˣ) ↦
       { carrier := {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v},
-        add_mem' := @UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.aux1 k G V inst inst_1 inst_2 inst_3 ρ H χ, zero_mem' := UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.aux2 ρ H χ,
-        smul_mem' := UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.aux3 ρ H χ : Submodule k V }
+        add_mem' := @UpperTheory.Reformulated.B.TwistedKernelFixed.aux2 k G V inst inst_1 inst_2 inst_3 ρ H χ, zero_mem' := UpperTheory.Reformulated.B.TwistedKernelFixed.aux3 ρ H χ,
+        smul_mem' := UpperTheory.Reformulated.B.TwistedKernelFixed.aux4 ρ H χ : Submodule k V }
 
 noncomputable def UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.fixed :
     {k G V : Type} →
@@ -964,7 +935,6 @@ noncomputable section
 open GlobalTheory.PRep GlobalTheory.BCT UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 open NumberField IsDedekindDomain Formalism.UG
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm
 
@@ -1071,12 +1041,12 @@ private theorem levOp_eq (ρ : Representation ℂ G V) (K I : Subgroup G) (x : G
   have h2 : (∑ᶠ q : G ⧸ I, f q.out • (ρ q.out ∘ₗ LinearMap.id)) = ∑ q ∈ hx'.toFinset, ρ q.out := by
     rw [finsum_eq_sum_of_support_subset (s := hx'.toFinset)]
     · refine Finset.sum_congr rfl fun q hq => ?_
-      rw [hf, if_pos ((hmem q).1 (hx'.mem_toFinset.1 hq)), one_smul]
+      rw [hf, ite_eq_left ((hmem q).1 (hx'.mem_toFinset.1 hq)), one_smul]
       rfl
     · intro q hq
       rw [Finset.mem_coe, hx'.mem_toFinset, hmem]
       by_contra hn
-      exact hq (by show f q.out • _ = 0; rw [hf, if_neg hn, zero_smul])
+      exact hq (by show f q.out • _ = 0; rw [hf, ite_eq_right hn, zero_smul])
   unfold levOp
   rw [h2, h1, LinearMap.smul_apply, LinearMap.sum_apply]
 

@@ -22,39 +22,17 @@ variable {C : Type} [Field C] {V : VF C}
 
 def Tends (V : VF C) (s : ℕ → C) (x : C) : Prop := ∀ w : ℝ, ∃ n0 : ℕ, ∀ n ≥ n0, V.Ge w (x - s n)
 
-private theorem ge_zero_lemma (w : ℝ) : V.Ge w (0 : C) := by
-  show (w : WithTop ℝ) ≤ V.v 0
-  rw [AddValuation.map_zero]
-  exact le_top
-
-private theorem ge_add_lemma_2 {w : ℝ} {a b : C} (ha : V.Ge w a) (hb : V.Ge w b) : V.Ge w (a + b) := by
-  show (w : WithTop ℝ) ≤ V.v (a + b)
-  exact le_trans (le_min ha hb) (AddValuation.map_add V.v a b)
-
-private theorem ge_neg_lemma_3 {w : ℝ} {a : C} (ha : V.Ge w a) : V.Ge w (-a) := by
-  show (w : WithTop ℝ) ≤ V.v (-a)
-  rw [AddValuation.map_neg]
-  exact ha
-
-private theorem ge_sub_lemma_4 {w : ℝ} {a b : C} (ha : V.Ge w a) (hb : V.Ge w b) : V.Ge w (a - b) := by
-  rw [sub_eq_add_neg]
-  exact ge_add_lemma_2 ha (ge_neg_lemma_3 hb)
-
-private theorem ge_mono_lemma_5 {w w' : ℝ} {a : C} (h : w' ≤ w) (ha : V.Ge w a) : V.Ge w' a := by
-  show (w' : WithTop ℝ) ≤ V.v a
-  exact le_trans (WithTop.coe_le_coe.mpr h) ha
-
 private theorem ge_tele_lemma_7 {s : ℕ → C} {w : ℝ} {a : ℕ} (h : ∀ m ≥ a, V.Ge w (s (m + 1) - s m)) :
     ∀ b ≥ a, V.Ge w (s b - s a) := by
   intro b (hb : a ≤ b)
   induction b, hb using Nat.le_induction with
   | base =>
     rw [sub_self]
-    exact ge_zero_lemma w
+    exact VF.Ge.zero w
   | succ b hab ih =>
     have e : s (b + 1) - s a = (s (b + 1) - s b) + (s b - s a) := by ring
     rw [e]
-    exact ge_add_lemma_2 (h b hab) ih
+    exact VF.Ge.add (h b hab) ih
 
 theorem exists_ge (x : C) : ∃ K : ℝ, V.Ge K x := by
   show ∃ K : ℝ, ((K : WithTop ℝ) ≤ V.v x)
@@ -71,7 +49,7 @@ theorem tends_const (x : C) : Tends V (fun _ => x) x := by
   refine ⟨0, fun n _ => ?_⟩
   show V.Ge w (x - x)
   rw [sub_self]
-  exact ge_zero_lemma w
+  exact VF.Ge.zero w
 
 theorem Tends.unique {s : ℕ → C} {x y : C} (hx : Tends V s x) (hy : Tends V s y) : x = y := by
   have hxy : x - y = 0 := by
@@ -81,7 +59,7 @@ theorem Tends.unique {s : ℕ → C} {x y : C} (hx : Tends V s x) (hy : Tends V 
     obtain ⟨n2, h2⟩ := hy w
     have e : x - y = (x - s (max n1 n2)) - (y - s (max n1 n2)) := by ring
     rw [e]
-    exact ge_sub_lemma_4 (h1 _ (le_max_left _ _)) (h2 _ (le_max_right _ _))
+    exact VF.Ge.sub (h1 _ (le_max_left _ _)) (h2 _ (le_max_right _ _))
   exact sub_eq_zero.mp hxy
 
 theorem Tends.add {s t : ℕ → C} {x y : C} (hs : Tends V s x) (ht : Tends V t y) :
@@ -93,7 +71,7 @@ theorem Tends.add {s t : ℕ → C} {x y : C} (hs : Tends V s x) (ht : Tends V t
   have e : x + y - (s n + t n) = (x - s n) + (y - t n) := by ring
   show V.Ge w (x + y - (s n + t n))
   rw [e]
-  exact ge_add_lemma_2 (h1 n (le_of_max_le_left hn)) (h2 n (le_of_max_le_right hn))
+  exact VF.Ge.add (h1 n (le_of_max_le_left hn)) (h2 n (le_of_max_le_right hn))
 
 theorem Tends.sub {s t : ℕ → C} {x y : C} (hs : Tends V s x) (ht : Tends V t y) :
     Tends V (fun n => s n - t n) (x - y) := by
@@ -104,7 +82,7 @@ theorem Tends.sub {s t : ℕ → C} {x y : C} (hs : Tends V s x) (ht : Tends V t
   have e : x - y - (s n - t n) = (x - s n) - (y - t n) := by ring
   show V.Ge w (x - y - (s n - t n))
   rw [e]
-  exact ge_sub_lemma_4 (h1 n (le_of_max_le_left hn)) (h2 n (le_of_max_le_right hn))
+  exact VF.Ge.sub (h1 n (le_of_max_le_left hn)) (h2 n (le_of_max_le_right hn))
 
 theorem Tends.mul {s t : ℕ → C} {x y : C} (hs : Tends V s x) (ht : Tends V t y) :
     Tends V (fun n => s n * t n) (x * y) := by
@@ -125,10 +103,10 @@ theorem Tends.mul {s t : ℕ → C} {x y : C} (hs : Tends V s x) (ht : Tends V t
   have k4 := abs_nonneg Kx
   have k5 := abs_nonneg Ky
   have k6 := abs_nonneg w
-  refine ge_sub_lemma_4 (ge_add_lemma_2 ?_ ?_) ?_
-  · exact ge_mono_lemma_5 (by linarith) (Formalism.L2.FormalSeriesBounds.VF.Ge.mul hKx a2)
-  · exact ge_mono_lemma_5 (by linarith) (Formalism.L2.FormalSeriesBounds.VF.Ge.mul a1 hKy)
-  · exact ge_mono_lemma_5 (by linarith) (Formalism.L2.FormalSeriesBounds.VF.Ge.mul a1 a2)
+  refine VF.Ge.sub (VF.Ge.add ?_ ?_) ?_
+  · exact (Formalism.L2.FormalSeriesBounds.VF.Ge.mul hKx a2).mono (by linarith)
+  · exact (Formalism.L2.FormalSeriesBounds.VF.Ge.mul a1 hKy).mono (by linarith)
+  · exact (Formalism.L2.FormalSeriesBounds.VF.Ge.mul a1 a2).mono (by linarith)
 
 theorem Tends.sum {ι : Type} (S : Finset ι) {s : ι → ℕ → C} {x : ι → C}
     (h : ∀ i ∈ S, Tends V (s i) (x i)) : Tends V (fun n => ∑ i ∈ S, s i n) (∑ i ∈ S, x i) := by
@@ -144,7 +122,7 @@ theorem Tends.sum {ι : Type} (S : Finset ι) {s : ι → ℕ → C} {x : ι →
 
 theorem Tends.ge0 {s : ℕ → C} {x : C} (h : Tends V s x) (hs : ∀ n, V.Ge 0 (s n)) : V.Ge 0 x := by
   obtain ⟨n0, hn⟩ := h 0
-  have h1 := ge_add_lemma_2 (hn n0 le_rfl) (hs n0)
+  have h1 := VF.Ge.add (hn n0 le_rfl) (hs n0)
   rwa [sub_add_cancel] at h1
 
 theorem exists_tends
@@ -167,7 +145,7 @@ theorem exists_tends
   have B := tail ⌈w⌉₊ n hn
   have e : x - s n = (x - s (ψ ⌈w⌉₊)) - (s n - s (ψ ⌈w⌉₊)) := by ring
   rw [e]
-  exact ge_mono_lemma_5 (Nat.le_ceil w) (ge_sub_lemma_4 A B)
+  exact (VF.Ge.sub A B).mono (Nat.le_ceil w)
 
 end Seq
 
@@ -228,11 +206,6 @@ theorem TendsS.fprod {ι : Type} (d : ι →₀ ℕ) {a : ℕ → ι → MvPower
   simp only [Finsupp.prod]
   exact TendsS.prod d.support (f := fun i n => a n i ^ d i) (F := fun i => A i ^ d i)
     (fun i _ => (ha i).pow (d i))
-
-theorem TendsS.intS {f : ℕ → MvPowerSeries σ C} {F : MvPowerSeries σ C} (hf : TendsS V f F)
-    (hi : ∀ n, IntS V (f n)) : IntS V F := by
-  intro μ
-  exact (hf μ).ge0 (fun n => hi n μ)
 
 def Ord (k : ℕ) (f : MvPowerSeries σ C) : Prop := ∀ μ : σ →₀ ℕ, Finsupp.degree μ < k → coeff μ f = 0
 

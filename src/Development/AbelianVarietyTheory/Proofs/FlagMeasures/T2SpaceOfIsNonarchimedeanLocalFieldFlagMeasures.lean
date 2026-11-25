@@ -57,6 +57,7 @@ import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Separation.CompletelyRegular
 import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.IsOpenAddSubgroup
 
 @[expose] public section
 
@@ -94,15 +95,11 @@ end Field
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 
-theorem locE_nontrivial (L : LocE F E) : Nontrivial E := by
-  have := L.free
-  exact Module.nontrivial_of_finrank_pos (R := F) (by rw [L.rank]; norm_num)
-
 theorem locE_exists_pure [CharZero F] (L : LocE F E) :
     ∃ (d : E) (D : F), D ≠ 0 ∧ D ∈ 𝒪[F] ∧ L.cj d = -d ∧ d * d = algebraMap F E D := by
   have := L.free
   have := L.reduced
-  have hnt := locE_nontrivial L
+  have hnt := Formalism.MainNotions.LocalModelPeriodLattices.nontrivial_E L
   obtain ⟨x, hx⟩ : ∃ x : E, ∀ a : F, algebraMap F E a ≠ x := by
     by_contra! h
     have e := LinearEquiv.ofBijective (Algebra.linearMap F E) ⟨(algebraMap F E).injective, fun y => h y⟩
@@ -139,7 +136,7 @@ theorem locE_exists_coords [CharZero F] (L : LocE F E) :
       (∀ p : F × F, ψ p ∈ L.O → 2 * p.1 ∈ 𝒪[F] ∧ 2 * D * p.2 ∈ 𝒪[F]) := by
   obtain ⟨d, D, hD0, hDO, hcj, hdd⟩ := locE_exists_pure L
   have := L.free
-  have hnt := locE_nontrivial L
+  have hnt := Formalism.MainNotions.LocalModelPeriodLattices.nontrivial_E L
   have hfin : FiniteDimensional F E := Module.finite_of_finrank_pos (by rw [L.rank]; norm_num)
   let φ : (F × F) →ₗ[F] E := (LinearMap.fst F F F).smulRight (1 : E) + (LinearMap.snd F F F).smulRight d
   have hφ : ∀ p : F × F, φ p = algebraMap F E p.1 + algebraMap F E p.2 * d := by
@@ -288,33 +285,7 @@ theorem R_le_O (M : Model F E) : M.R ≤ M.L.O := by
 
 theorem isOpen_R [IsNonarchimedeanLocalField F] [CharZero F] (M : Model F E) :
     IsOpen (M.R : Set E) := by
-  have := locE_topRing M.L
-  cases hs : M.split with
-  | none =>
-    have hR : (M.R : Set E) = M.L.O := by simp only [Model.R, hs]
-    rw [hR]
-    exact (locE_integers M.L).2
-  | some g =>
-    have := M.L.top
-    have := IsModuleTopology.toContinuousAdd F E
-    have hec : Continuous (g.e : E → F × F) :=
-      IsModuleTopology.continuous_of_linearMap g.e.toLinearEquiv.toLinearMap
-    have hq : (g.q : F) ≠ 0 := fun h => g.q_irr.ne_zero (Subtype.ext h)
-    have hU : IsOpen (((fun x => (g.q : F) * x) '' (𝒪[F] : Set F)) ×ˢ ((fun x => (g.q : F) * x) '' (𝒪[F] : Set F))) :=
-      (isOpen_mul_integer hq).prod (isOpen_mul_integer hq)
-    have hsub : (g.e : E → F × F) ⁻¹' (((fun x => (g.q : F) * x) '' (𝒪[F] : Set F)) ×ˢ
-        ((fun x => (g.q : F) * x) '' (𝒪[F] : Set F))) ⊆ (M.R : Set E) := by
-      rintro x ⟨⟨a, ha, h1⟩, ⟨b, hb, h2⟩⟩
-      rw [SetLike.mem_coe, mem_R_split M g hs]
-      refine ⟨⟨g.q * a, mul_mem g.q.2 ha⟩, ⟨g.q * b, mul_mem g.q.2 hb⟩, ⟨⟨a, ha⟩ - ⟨b, hb⟩, ?_⟩, ?_⟩
-      · exact Subtype.ext (by simp [mul_sub])
-      · exact Prod.ext h1.symm h2.symm
-    have h0 : (0 : E) ∈ (g.e : E → F × F) ⁻¹' (((fun x => (g.q : F) * x) '' (𝒪[F] : Set F)) ×ˢ
-        ((fun x => (g.q : F) * x) '' (𝒪[F] : Set F))) := by
-      rw [Set.mem_preimage, map_zero]
-      exact ⟨⟨0, zero_mem _, mul_zero _⟩, ⟨0, zero_mem _, mul_zero _⟩⟩
-    exact AddSubgroup.isOpen_of_mem_nhds M.R.toAddSubgroup (g := 0)
-      (Filter.mem_of_superset ((hU.preimage hec).mem_nhds h0) hsub)
+  apply _root_.PI.ProdFormulaE.ROpen.isOpen_R <;> assumption
 
 theorem model_topology : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] {E : Type}
     [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E] (M : Model F E), M.OK →

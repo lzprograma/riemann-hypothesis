@@ -3,56 +3,9 @@ module
 public import ReciprocityTheory.ThetaQuasiPeriods.PeriodLattice
 public import Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
 public import Mathlib.Topology.Algebra.InfiniteSum.UniformOn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Calculus.SmoothSeries
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -101,17 +54,6 @@ theorem IsSiegel.smul {Ω : Matrix ι ι ℂ} (h : IsSiegel Ω) {q : ℝ} (hq : 
 theorem IsSiegel.natCast_smul {Ω : Matrix ι ι ℂ} (h : IsSiegel Ω) {q : ℕ} (hq : 0 < q) :
     IsSiegel ((q : ℂ) • Ω) := by
   simpa using h.smul (q := q) (by exact_mod_cast hq)
-
-theorem isSiegel_example : IsSiegel !![1 + 2 * I, 1 / 2 + I; 1 / 2 + I, 2 * I] := by
-  refine IsSiegel.of_dotProduct_pos ?_ fun x hx => ?_
-  · ext i j
-    fin_cases i <;> fin_cases j <;> simp
-  · have : x 0 ≠ 0 ∨ x 1 ≠ 0 := by
-      by_contra h
-      push Not at h
-      exact hx (by funext i; fin_cases i <;> simp [h.1, h.2])
-    simp [dotProduct, mulVec, Fin.sum_univ_two]
-    rcases this with h | h <;> nlinarith [sq_pos_of_ne_zero h, sq_nonneg (x 0 + x 1), sq_nonneg (x 0), sq_nonneg (x 1)]
 
 variable [Fintype ι] [Fintype κ]
 
@@ -417,12 +359,6 @@ theorem IsSiegel.differentiable_riemannTheta {Ω : Matrix ι ι ℂ} (h : IsSieg
     (a b : ι → ℝ) : Differentiable ℂ (riemannTheta a b Ω) :=
   fun v => (h.hasFDerivAt_riemannTheta a b v).differentiableAt
 
-theorem cexp_two_pi_I_dotProduct_intCast (n m : ι → ℤ) :
-    cexp (2 * π * I * ((fun i => (n i : ℂ)) ⬝ᵥ fun i => (m i : ℂ))) = 1 := by
-  have : ((fun i => (n i : ℂ)) ⬝ᵥ fun i => (m i : ℂ)) = ((n ⬝ᵥ m : ℤ) : ℂ) := by
-    simp [dotProduct]
-  rw [this, mul_comm, Complex.exp_int_mul_two_pi_mul_I]
-
 theorem dotProduct_mulVec_comm_of_isSymm {Ω : Matrix ι ι ℂ} (h : Ω.IsSymm) (u w : ι → ℂ) :
     u ⬝ᵥ (Ω *ᵥ w) = w ⬝ᵥ (Ω *ᵥ u) := by
   rw [dotProduct_mulVec, ← mulVec_transpose, h.eq, dotProduct_comm]
@@ -447,19 +383,6 @@ theorem riemannThetaTerm_add (a b : ι → ℝ) (Ω : Matrix ι ι ℂ) (v w : �
   rw [this, dotProduct_add]
   ring
 
-theorem riemannThetaTerm_add_intCast (a b : ι → ℝ) (Ω : Matrix ι ι ℂ) (v : ι → ℂ) (m n : ι → ℤ) :
-    riemannThetaTerm a b Ω (v + fun i => (m i : ℂ)) n =
-      cexp (2 * π * I * ((fun i => (a i : ℂ)) ⬝ᵥ fun i => (m i : ℂ))) *
-        riemannThetaTerm a b Ω v n := by
-  have : (fun i => (n i : ℂ) + a i) = (fun i => (n i : ℂ)) + fun i => (a i : ℂ) := rfl
-  rw [riemannThetaTerm_add, this, add_dotProduct, mul_add, Complex.exp_add,
-    cexp_two_pi_I_dotProduct_intCast, one_mul, mul_comm]
-
-theorem riemannTheta_add_intCast (a b : ι → ℝ) (Ω : Matrix ι ι ℂ) (v : ι → ℂ) (m : ι → ℤ) :
-    riemannTheta a b Ω (v + fun i => (m i : ℂ)) =
-      cexp (2 * π * I * ((fun i => (a i : ℂ)) ⬝ᵥ fun i => (m i : ℂ))) * riemannTheta a b Ω v := by
-  simp only [riemannTheta_def, riemannThetaTerm_add_intCast, tsum_mul_left]
-
 theorem riemannThetaTerm_add_mulVec_ofReal {Ω : Matrix ι ι ℂ} (h : Ω.IsSymm) (a b y : ι → ℝ)
     (v : ι → ℂ) (n : ι → ℤ) :
     riemannThetaTerm a b Ω (v + Ω *ᵥ fun i => (y i : ℂ)) n =
@@ -482,37 +405,6 @@ theorem riemannTheta_add_mulVec_ofReal {Ω : Matrix ι ι ℂ} (h : Ω.IsSymm) (
         (fun i => (y i : ℂ)) ⬝ᵥ fun i => v i + b i)) * riemannTheta (a + y) b Ω v := by
   simp only [riemannTheta_def, riemannThetaTerm_add_mulVec_ofReal h, tsum_mul_left]
 
-theorem riemannThetaTerm_char_add_intCast (a b : ι → ℝ) (Ω : Matrix ι ι ℂ) (v : ι → ℂ)
-    (k n : ι → ℤ) :
-    riemannThetaTerm (a + fun i => (k i : ℝ)) b Ω v n = riemannThetaTerm a b Ω v (n + k) := by
-  have : (fun i => (n i : ℂ) + ((a + fun i => (k i : ℝ)) i : ℝ)) =
-      fun i => ((n + k) i : ℂ) + a i := by
-    funext i
-    simp only [Pi.add_apply]
-    push_cast
-    ring
-  rw [riemannThetaTerm_def, riemannThetaTerm_def, this]
-
-theorem riemannTheta_char_add_intCast_left (a b : ι → ℝ) (Ω : Matrix ι ι ℂ) (v : ι → ℂ)
-    (k : ι → ℤ) : riemannTheta (a + fun i => (k i : ℝ)) b Ω v = riemannTheta a b Ω v := by
-  simp only [riemannTheta_def, riemannThetaTerm_char_add_intCast]
-  exact (Equiv.addRight k).tsum_eq (riemannThetaTerm a b Ω v)
-
-theorem riemannTheta_char_add_intCast_right (a b : ι → ℝ) (Ω : Matrix ι ι ℂ) (v : ι → ℂ)
-    (m : ι → ℤ) : riemannTheta a (b + fun i => (m i : ℝ)) Ω v =
-      cexp (2 * π * I * ((fun i => (a i : ℂ)) ⬝ᵥ fun i => (m i : ℂ))) * riemannTheta a b Ω v := by
-  rw [← riemannTheta_add_ofReal, ← riemannTheta_add_intCast]
-  simp
-
-theorem riemannTheta_add_mulVec_intCast {Ω : Matrix ι ι ℂ} (h : Ω.IsSymm) (a b : ι → ℝ)
-    (v : ι → ℂ) (k : ι → ℤ) :
-    riemannTheta a b Ω (v + Ω *ᵥ fun i => (k i : ℂ)) =
-      cexp (-(2 * π * I) * (((fun i => (k i : ℂ)) ⬝ᵥ (Ω *ᵥ fun i => (k i : ℂ))) / 2 +
-        (fun i => (k i : ℂ)) ⬝ᵥ fun i => v i + b i)) * riemannTheta a b Ω v := by
-  have := riemannTheta_add_mulVec_ofReal h a b (fun i => (k i : ℝ)) v
-  rw [riemannTheta_char_add_intCast_left] at this
-  simpa only [ofReal_intCast] using this
-
 theorem riemannThetaTerm_neg (a b : ι → ℝ) (Ω : Matrix ι ι ℂ) (v : ι → ℂ) (n : ι → ℤ) :
     riemannThetaTerm a b Ω (-v) (-n) = riemannThetaTerm (-a) (-b) Ω v n := by
   have e₁ : (fun i => ((-n) i : ℂ) + a i) = -fun i => (n i : ℂ) + ((-a) i : ℝ) := by
@@ -528,28 +420,6 @@ theorem riemannTheta_neg (a b : ι → ℝ) (Ω : Matrix ι ι ℂ) (v : ι → 
     riemannTheta a b Ω (-v) = riemannTheta (-a) (-b) Ω v := by
   simp only [riemannTheta_def, ← riemannThetaTerm_neg]
   exact ((Equiv.neg (ι → ℤ)).tsum_eq (riemannThetaTerm a b Ω (-v))).symm
-
-theorem riemannTheta_half_neg (α β : ι → ℤ) (Ω : Matrix ι ι ℂ) (v : ι → ℂ) :
-    riemannTheta (fun i => (α i : ℝ) / 2) (fun i => (β i : ℝ) / 2) Ω (-v) =
-      (-1) ^ (α ⬝ᵥ β) * riemannTheta (fun i => (α i : ℝ) / 2) (fun i => (β i : ℝ) / 2) Ω v := by
-  have e (γ : ι → ℤ) : (-fun i => (γ i : ℝ) / 2) =
-      (fun i => (γ i : ℝ) / 2) + fun i => (((-γ) i : ℤ) : ℝ) := by
-    funext i
-    simp only [Pi.add_apply, Pi.neg_apply]
-    push_cast
-    ring
-  rw [riemannTheta_neg, e, e, riemannTheta_char_add_intCast_left,
-    riemannTheta_char_add_intCast_right]
-  congr 1
-  have : ((-1 : ℂ)) ^ (α ⬝ᵥ β) = cexp (((α ⬝ᵥ β : ℤ) : ℂ) * -(π * I)) := by
-    rw [Complex.exp_int_mul, Complex.exp_neg, Complex.exp_pi_mul_I]
-    simp
-  rw [this]
-  congr 1
-  simp only [dotProduct, Finset.mul_sum, Pi.neg_apply]
-  push_cast
-  rw [Finset.sum_mul]
-  exact Finset.sum_congr rfl fun i _ => by ring
 
 theorem integral_Icc_cexp_dotProduct [DecidableEq ι] (m : ι → ℤ) :
     ∫ x in Set.Icc (0 : ι → ℝ) 1,
@@ -635,34 +505,5 @@ theorem IsSiegel.riemannTheta_ne_zero {Ω : Matrix ι ι ℂ} (h : IsSiegel Ω) 
     riemannTheta a b Ω ≠ 0 := by
   obtain ⟨x, -, hx⟩ := h.exists_riemannTheta_add_ofReal_ne_zero a b 0
   exact fun H => hx (congrFun H _)
-
-theorem riemannTheta_unique_eq_tsum [Unique ι] (a b : ι → ℝ) (Ω : Matrix ι ι ℂ) (v : ι → ℂ) :
-    riemannTheta a b Ω v = ∑' n : ℤ, cexp (π * I * (n + a default) ^ 2 * Ω default default +
-      2 * π * I * (n + a default) * (v default + b default)) := by
-  rw [riemannTheta_def, ← (Equiv.funUnique ι ℤ).symm.tsum_eq]
-  refine tsum_congr fun n => ?_
-  simp only [riemannThetaTerm_eq_sum, Fintype.sum_unique, Equiv.funUnique_symm_apply,
-    uniqueElim_const]
-  congr 1
-  ring
-
-theorem riemannTheta_unique_zero_zero [Unique ι] (Ω : Matrix ι ι ℂ) (v : ι → ℂ) :
-    riemannTheta 0 0 Ω v = jacobiTheta₂ (v default) (Ω default default) := by
-  rw [riemannTheta_unique_eq_tsum, jacobiTheta₂]
-  refine tsum_congr fun n => ?_
-  rw [jacobiTheta₂_term]
-  congr 1
-  simp only [Pi.zero_apply, ofReal_zero]
-  ring
-
-theorem riemannTheta_fin_one (z τ : ℂ) : riemannTheta 0 0 !![τ] ![z] = jacobiTheta₂ z τ := by
-  rw [riemannTheta_unique_zero_zero]
-  simp
-
-section Theta
-
-open ReciprocityTheory.PTheta
-
-end Theta
 
 end GlobalTheory

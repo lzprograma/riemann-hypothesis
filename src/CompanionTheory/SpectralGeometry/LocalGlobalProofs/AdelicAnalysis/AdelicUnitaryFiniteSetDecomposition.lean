@@ -82,8 +82,8 @@ theorem prod_union_split {ι : Type} [DecidableEq ι] (S Sh : Finset ι) (A B : 
     ∏ v ∈ S ∪ Sh, (if P v then A v else B v) = (∏ v ∈ S, A v) * ∏ v ∈ Sh \ S, B v := by
   rw [← Finset.union_sdiff_self_eq_union, Finset.prod_union Finset.disjoint_sdiff]
   congr 1
-  · exact Finset.prod_congr rfl fun v hv => if_pos ((hS v).2 hv)
-  · exact Finset.prod_congr rfl fun v hv => if_neg fun h => (Finset.mem_sdiff.1 hv).2 ((hS v).1 h)
+  · exact Finset.prod_congr rfl fun v hv => ite_eq_left ((hS v).2 hv)
+  · exact Finset.prod_congr rfl fun v hv => ite_eq_right fun h => (Finset.mem_sdiff.1 hv).2 ((hS v).1 h)
 
 variable {d M : ℕ} (b : Module.Basis (Fin d) F E) (σ : E →ₐ[F] E)
   (Jp : Matrix (Fin (M + 1)) (Fin (M + 1)) E) (h : HA (AF F) σ Jp) (ginf : HA (Ainf F) σ Jp)

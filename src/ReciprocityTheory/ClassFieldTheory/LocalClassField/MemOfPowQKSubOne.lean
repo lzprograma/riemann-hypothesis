@@ -15,9 +15,9 @@ variable {p : ℕ} [Fact p.Prime]
 noncomputable def red (x : PadicAlgCl p) : kbar p :=
   open Classical in if h : ‖x‖ ≤ 1 then res ⟨x, mem_Obar_iff.2 h⟩ else 0
 
-theorem red_coe (x : Obar p) : red (x : PadicAlgCl p) = res x := dif_pos (norm_le_one x)
+theorem red_coe (x : Obar p) : red (x : PadicAlgCl p) = res x := dite_eq_left (norm_le_one x)
 
-theorem red_of_le {x : PadicAlgCl p} (h : ‖x‖ ≤ 1) : red x = res ⟨x, mem_Obar_iff.2 h⟩ := dif_pos h
+theorem red_of_le {x : PadicAlgCl p} (h : ‖x‖ ≤ 1) : red x = res ⟨x, mem_Obar_iff.2 h⟩ := dite_eq_left h
 
 theorem red_eq_iff {x y : PadicAlgCl p} (hx : ‖x‖ ≤ 1) (hy : ‖y‖ ≤ 1) : red x = red y ↔ ‖x - y‖ < 1 := by
   rw [red_of_le hx, red_of_le hy, res_eq_iff]

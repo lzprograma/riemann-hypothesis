@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.EvenOfNorm
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.NormOneIsCoboundaryUnramifiedQuadratic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.LatCls
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IrreducibleParity.Fv
@@ -511,17 +512,8 @@ theorem even_or (L : IsLoc O Δ) {x p : K} (hx : x ≠ 0) (hp : p ≠ 0) (h : ¬
   field_simp
 
 theorem not_even_irr (L : IsLoc O Δ) {π : O} (hπ : Irreducible π) : ¬ EvenVal O (algebraMap O K π) := by
-  haveI := L.frac
-  rintro ⟨u, s, -, h⟩
-  have h1 : IsIntegral O (s ^ 2) := by
-    have : s ^ 2 = algebraMap O K ((u⁻¹ : Oˣ) * π) := by
-      rw [map_mul, h, ← mul_assoc, ← map_mul, Units.inv_mul, map_one, one_mul]
-    rw [this]; exact isIntegral_algebraMap
-  obtain ⟨r, rfl⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral (IsIntegral.of_pow two_pos h1)
-  rw [← map_pow, ← map_mul] at h
-  have h2 : π = (u * r) * r := by rw [IsFractionRing.injective O K h]; ring
-  have hr : IsUnit r := (hπ.isUnit_or_isUnit h2).elim isUnit_of_mul_isUnit_right id
-  exact hπ.not_isUnit (h2 ▸ (u.isUnit.mul hr).mul hr)
+  intros
+  apply _root_.UpperTheory.V.Z.Sym.Loc.IsLoc.not_even <;> assumption
 
 theorem unit_of_sq (L : IsLoc O Δ) {s : Kˣ} {ε : Oˣ} (h : 1 = algebraMap O K ε * (s : K) ^ 2) :
     ∃ u : Oˣ, algebraMap O K u = s := by

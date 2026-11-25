@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchu
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset
@@ -18,13 +16,13 @@ theorem SchSchurEvalMatrix.aeval_completeSymmetric (h1 : SchCompleteAtRootsOfUni
       if 0 ≤ d ∧ (k : ℤ) ∣ d then 1 else 0 := by
   unfold completeSymmetric
   by_cases h0 : 0 ≤ d
-  · rw [if_pos h0, h1 N k d.toNat hk hkN]
+  · rw [ite_eq_left h0, h1 N k d.toNat hk hkN]
     have hdiv : (k ∣ d.toNat) ↔ ((k : ℤ) ∣ d) := by
       rw [← Int.natCast_dvd_natCast, Int.toNat_of_nonneg h0]
     by_cases hd : (k : ℤ) ∣ d
-    · rw [if_pos (hdiv.mpr hd), if_pos ⟨h0, hd⟩]
-    · rw [if_neg (fun h => hd (hdiv.mp h)), if_neg (fun h => hd h.2)]
-  · rw [if_neg h0, map_zero, if_neg (fun h => h0 h.1)]
+    · rw [ite_eq_left (hdiv.mpr hd), ite_eq_left ⟨h0, hd⟩]
+    · rw [ite_eq_right (fun h => hd (hdiv.mp h)), ite_eq_right (fun h => hd h.2)]
+  · rw [ite_eq_right h0, map_zero, ite_eq_right (fun h => h0 h.1)]
 
 theorem SchSchurEvalMatrix.proof (h1 : SchCompleteAtRootsOfUnity.Statement) :
     SchSchurEvalMatrix.Statement := by

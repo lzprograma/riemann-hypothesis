@@ -59,7 +59,7 @@ theorem rootCoord_one (e f : Fin r → Fin n → ℂ) (z : Fin n → ℂ)
   unfold rootCoord nxt
   rw [Matrix.one_mulVec]
   split_ifs with hlt
-  · rw [hfe, if_neg]
+  · rw [hfe, ite_eq_right]
     intro h'
     have := congrArg Fin.val h'
     simp at this
@@ -119,8 +119,6 @@ end LocRel
 
 section Glob
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem famSc_one {n r : ℕ} (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) : famSc 1 e z = fam e z := by
@@ -179,9 +177,9 @@ theorem stRel_holds (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.wh
     intro c b
     rw [hZe]
     by_cases h : c.val = ptPar w.1 b.val
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       refine ⟨fun _ => Fin.ext h, fun _ => mul_ne_zero (pow_ne_zero _ (by norm_num)) (hne b.val b.2)⟩
-    · rw [if_neg h, map_zero, map_zero, mul_zero]
+    · rw [ite_eq_right h, map_zero, map_zero, mul_zero]
       exact ⟨fun h' => absurd rfl h', fun h' => absurd (congrArg Fin.val h') h⟩
   have hP2 : ∀ k : Fin D.R.rS, ((π k.succ).val + 1 = (π k.castSucc).val ∧
       RealObj.Zhat ε (fam e z) (fam e z') (uMat (γ v)) (π k.succ) k.succ =
@@ -192,7 +190,7 @@ theorem stRel_holds (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.wh
     rcases ptPar_consec w.1 hsz k.val (by rw [hsum]; omega) with h3 | h3
     · left
       refine ⟨h3.1, ?_⟩
-      rw [hZe, hZe, if_pos rfl, if_pos rfl]
+      rw [hZe, hZe, ite_eq_left rfl, ite_eq_left rfl]
       simp only [Fin.val_succ, Fin.val_castSucc]
       rw [h3.2]
       have hk : D.R.rS - k.val = (D.R.rS - (k.val + 1)) + 1 := by omega

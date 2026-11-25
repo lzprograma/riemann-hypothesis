@@ -2,45 +2,7 @@ module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.SequencePrefix
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -368,73 +330,6 @@ theorem monomialBlowupSeq_schemeAt (hinv : ComapIsoInvariance.{u}) (p : X ⟶ Sp
   exact (monomialBlowupIterate_length_le_and_schemeAt_eq hinv
     (MarkedBlowupSequenceData.monomialBlowupIterate hinv (emptyMarkedBlowupSequenceData p I m E) n)
     (monomialStallIndex hinv p I m E - n)).2 n (le_of_eq hlen.symm)
-
-private theorem comap_eqToHom_comap_eqToHom_symm {V W : Scheme.{u}} (h : V = W)
-    (J : W.IdealSheafData) :
-    (J.comap (eqToHom h)).comap (eqToHom h.symm) = J := by
-  subst h
-  simp
-
-private theorem isPrefix_monomialBlowupIterate_succ {p : X ⟶ Spec (CommRingCat.of k)}
-    {I : X.IdealSheafData} {m : ℕ} {E : List X.IdealSheafData}
-    (hinv : ComapIsoInvariance.{u}) (s : MarkedBlowupSequenceData p I m E) (j : ℕ) :
-    (MarkedBlowupSequenceData.monomialBlowupIterate hinv s j).IsPrefix
-      (MarkedBlowupSequenceData.monomialBlowupIterate hinv s (j + 1)) := by
-  by_cases h : MarkedBlowupSequenceData.IsAdmissibleCenter (MarkedBlowupSequenceData.monomialBlowupIterate hinv s j)
-  · rw [MarkedBlowupSequenceData.monomialBlowupIterate_succ,
-      MarkedBlowupSequenceData.blowupAtCenter_eq_append hinv _ h]
-    exact MarkedBlowupSequenceData.isPrefix_append _ _ hinv
-  · have hs : MarkedBlowupSequenceData.blowupAtCenter hinv (MarkedBlowupSequenceData.monomialBlowupIterate hinv s j)
-        = MarkedBlowupSequenceData.monomialBlowupIterate hinv s j := by
-      unfold MarkedBlowupSequenceData.blowupAtCenter
-      rw [dite_eq_right h]
-    rw [MarkedBlowupSequenceData.monomialBlowupIterate_succ, hs]
-    exact MarkedBlowupSequenceData.IsPrefix.refl _
-
-private theorem isPrefix_monomialBlowupIterate_of_le {p : X ⟶ Spec (CommRingCat.of k)}
-    {I : X.IdealSheafData} {m : ℕ} {E : List X.IdealSheafData}
-    (hinv : ComapIsoInvariance.{u}) (s : MarkedBlowupSequenceData p I m E) {i j : ℕ} (hij : i ≤ j) :
-    (MarkedBlowupSequenceData.monomialBlowupIterate hinv s i).IsPrefix
-      (MarkedBlowupSequenceData.monomialBlowupIterate hinv s j) := by
-  induction j with
-  | zero =>
-      obtain rfl : i = 0 := Nat.le_zero.mp hij
-      exact MarkedBlowupSequenceData.IsPrefix.refl _
-  | succ n ih =>
-      rcases Nat.eq_or_lt_of_le hij with h | h
-      · subst h
-        exact MarkedBlowupSequenceData.IsPrefix.refl _
-      · exact (ih (Nat.lt_succ_iff.mp h)).trans (isPrefix_monomialBlowupIterate_succ hinv s n)
-
-private theorem ideal_eq_comap_of_isPrefix {p : X ⟶ Spec (CommRingCat.of k)}
-    {I : X.IdealSheafData} {m : ℕ} {E : List X.IdealSheafData}
-    (A B : MarkedBlowupSequenceData p I m E) (n : ℕ) (hlen : A.length = n)
-    (hpre : A.IsPrefix B) (hobj : B.obj n = A.obj A.length) :
-    B.ideal n = (A.ideal A.length).comap (eqToHom hobj) := by
-  subst hlen
-  rw [hpre.ideal_eq A.length le_rfl]
-  exact (comap_eqToHom_comap_eqToHom_symm (hpre.obj_eq A.length le_rfl) (B.ideal A.length)).symm
-
-theorem monomialBlowupSeq_ideal (hinv : ComapIsoInvariance.{u}) (p : X ⟶ Spec (CommRingCat.of k))
-    (I : X.IdealSheafData) (m : ℕ) (E : List X.IdealSheafData) (n : ℕ)
-    (hn : n ≤ monomialStallIndex hinv p I m E) :
-    (monomialBlowupSeq hinv p I m E).ideal n =
-      ((MarkedBlowupSequenceData.monomialBlowupIterate hinv (emptyMarkedBlowupSequenceData p I m E) n).ideal
-          (MarkedBlowupSequenceData.monomialBlowupIterate hinv (emptyMarkedBlowupSequenceData p I m E) n).length).comap
-        (eqToHom (monomialBlowupSeq_schemeAt hinv p I m E n hn)) := by
-  have hstep : ∀ j < n, MarkedBlowupSequenceData.IsAdmissibleCenter
-      (MarkedBlowupSequenceData.monomialBlowupIterate hinv (emptyMarkedBlowupSequenceData p I m E) j) :=
-    fun j hj => isAdmissibleCenter_of_lt_monomialStallIndex hinv p I m E j (lt_of_lt_of_le hj hn)
-  have hlen : (MarkedBlowupSequenceData.monomialBlowupIterate hinv (emptyMarkedBlowupSequenceData p I m E) n).length = n := by
-    rw [monomialBlowupIterate_length hinv (emptyMarkedBlowupSequenceData p I m E) n hstep,
-      emptyMarkedBlowupSequenceData_length, Nat.zero_add]
-  have hpre : (MarkedBlowupSequenceData.monomialBlowupIterate hinv (emptyMarkedBlowupSequenceData p I m E) n).IsPrefix
-      (monomialBlowupSeq hinv p I m E) := by
-    rw [monomialBlowupSeq_eq_monomialBlowupIterate]
-    exact isPrefix_monomialBlowupIterate_of_le hinv (emptyMarkedBlowupSequenceData p I m E) hn
-  exact ideal_eq_comap_of_isPrefix
-    (MarkedBlowupSequenceData.monomialBlowupIterate hinv (emptyMarkedBlowupSequenceData p I m E) n)
-    (monomialBlowupSeq hinv p I m E) n hlen hpre (monomialBlowupSeq_schemeAt hinv p I m E n hn)
 
 private theorem comap_eqToHom_self {Y : Scheme.{u}} (q : Y = Y) (Z : Y.IdealSheafData) :
     Z.comap (eqToHom q) = Z := by

@@ -167,13 +167,13 @@ theorem sum_shift (k : ℕ) (g : Newform k) (p : ℕ) (hp : p.Prime) (z : ℍ) :
   have hz : ∀ x ∉ Set.range (fun n : ℕ => p * n), (if p ∣ x then
       (p : ℂ) * g.a x * Complex.exp (2 * Real.pi * Complex.I * z / p) ^ x else 0) = 0 := by
     intro x hx
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨n, rfl⟩
     exact hx ⟨n, rfl⟩
   have := (hinj.hasSum_iff hz).mpr hs'
   convert this using 1
   funext n
-  simp only [Function.comp_apply, dvd_mul_right, if_true]
+  simp only [Function.comp_apply, dvd_mul_right, ite_true]
   rw [pow_mul, ← Complex.exp_nat_mul, Function.Periodic.qParam]
   congr 2
   have : (p : ℂ) ≠ 0 := by exact_mod_cast hp.ne_zero
@@ -198,13 +198,13 @@ theorem scale (k : ℕ) (g : Newform k) (p : ℕ) (hp : p.Prime) (z : ℍ) :
   have hz : ∀ x ∉ Set.range (fun n : ℕ => p * n),
       (if p ∣ x then g.a (x / p) else 0) * Function.Periodic.qParam 1 z ^ x = 0 := by
     intro x hx
-    rw [if_neg, zero_mul]
+    rw [ite_eq_right, zero_mul]
     rintro ⟨n, rfl⟩
     exact hx ⟨n, rfl⟩
   refine (hinj.hasSum_iff hz).mp ?_
   convert h0 using 1
   funext n
-  simp only [Function.comp_apply, dvd_mul_right, if_true, Nat.mul_div_cancel_left _ hp.pos]
+  simp only [Function.comp_apply, dvd_mul_right, ite_true, Nat.mul_div_cancel_left _ hp.pos]
   rw [pow_mul, Function.Periodic.qParam, Function.Periodic.qParam, ← Complex.exp_nat_mul]
   congr 2
   push_cast
@@ -317,15 +317,14 @@ theorem norm_a_le : ∀ (k : ℕ) (g : Newform k) (p : ℕ), p.Prime → ¬ p �
         rw [e1, Real.div_rpow hy.le hp0.le, Real.mul_rpow hp0.le hy.le]
         field_simp
   have hne : ∃ τ, 0 < φ τ := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have h0 : (g.f : ℍ → ℂ) = 0 := by
       funext τ
       have h1 := hcon τ
       have hpos : 0 < τ.im ^ r := Real.rpow_pos_of_pos τ.im_pos r
       have h2 : ‖g.f τ‖ ≤ 0 := by
         by_contra h'
-        push_neg at h'
+        push Not at h'
         exact absurd (mul_pos h' hpos) (not_lt.mpr h1)
       simpa using norm_le_zero_iff.mp h2
     have h1 := g.one

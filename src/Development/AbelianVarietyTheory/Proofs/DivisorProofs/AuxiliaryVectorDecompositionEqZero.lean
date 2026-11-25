@@ -15,47 +15,7 @@ import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
 import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
 import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
 import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ModelLatIn
 
 @[expose] public section
@@ -69,8 +29,6 @@ open scoped TensorProduct nonZeroDivisors Pointwise
 namespace GlobalTheory.FunObj
 
 open GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.StdFrames Formalism.L2.Host Formalism.L2.DIV ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 variable {D : D7}
 
@@ -269,20 +227,20 @@ theorem exists_gen {I : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E} (hI : I ≠
       ((t⁻¹ : (FiniteAdeleRing (𝓞 D.host.E) D.host.E)ˣ) : FiniteAdeleRing (𝓞 D.host.E) D.host.E) Q)
     (fun Q => by
       by_cases hQ : Q ∈ S
-      · simp only [if_pos hQ]
+      · simp only [ite_eq_left hQ]
         exact mul_inv_cancel₀ (hu0 Q hQ)
-      · simp only [if_neg hQ]
+      · simp only [ite_eq_right hQ]
         exact GlobalTheory.Idele.idele_apply_mul_inv t Q)
     (by
       filter_upwards [hS.compl_mem_cofinite, (t : FiniteAdeleRing (𝓞 D.host.E) D.host.E).2] with Q h1 h2
-      rw [if_neg h1]
+      rw [ite_eq_right h1]
       exact h2)
     (by
       filter_upwards [hS.compl_mem_cofinite,
         ((t⁻¹ : (FiniteAdeleRing (𝓞 D.host.E) D.host.E)ˣ) : FiniteAdeleRing (𝓞 D.host.E) D.host.E).2] with Q h1 h2
-      rw [if_neg h1]
+      rw [ite_eq_right h1]
       exact h2)
-  refine ⟨y, fun Q => ?_, fun Q hQ => by rw [hy, if_pos hQ]⟩
+  refine ⟨y, fun Q => ?_, fun Q hQ => by rw [hy, ite_eq_left hQ]⟩
   rw [hy]
   split_ifs with hQ
   · exact hu Q hQ
@@ -356,9 +314,9 @@ theorem count_modul (G : GridData L sc) (w : Pl D.host.E) :
   rw [cosExp]
   split_ifs with hw
   · obtain ⟨v, hv, rfl⟩ : ∃ v ∈ G.pl.S0, G.pl.w v = w := by simpa [Places.W0] using hw
-    rw [Finset.sum_eq_single_of_mem v hv fun v' hv' hne' => if_neg fun h => hne' ?_, if_pos rfl, G.pl.under_w hv]
+    rw [Finset.sum_eq_single_of_mem v hv fun v' hv' hne' => ite_eq_right fun h => hne' ?_, ite_eq_left rfl, G.pl.under_w hv]
     rw [← G.pl.under_w hv, ← G.pl.under_w hv', h]
-  · refine Finset.sum_eq_zero fun v hv => if_neg fun h => hw ?_
+  · refine Finset.sum_eq_zero fun v hv => ite_eq_right fun h => hw ?_
     rw [← h]
     simpa [Places.W0] using ⟨v, hv, rfl⟩
 
@@ -389,7 +347,7 @@ theorem count_modulBar (G : GridData L sc) {t : T} {w : Pl D.host.E} (hw : w ∈
       rwa [Formalism.L2.Pj.conj_conj] at h2
   have h2 := Formalism.DivisionValues.ValuationRepresentative.count_map (Formalism.DivisionValues.conjPl w) (G.pl.modul sc) (G.pl.modul_ne_bot sc)
   rw [Formalism.DivisionValues.ValuationRepresentative.conjPl_conjPl] at h2
-  rw [e1, h2, count_modul, conjPl_eq_cP, cosExp, if_neg, Nat.cast_zero]
+  rw [e1, h2, count_modul, conjPl_eq_cP, cosExp, ite_eq_right, Nat.cast_zero]
   intro hc
   obtain ⟨v, hv, hvw⟩ : ∃ v ∈ G.pl.S0, G.pl.w v = GlobalTheory.IdemSupport.cP w := by simpa [Places.W0] using hc
   have hu : v = w.under (𝓞 D.host.F) := by
@@ -437,7 +395,7 @@ theorem count_rowId (G : GridData L sc) {t : T} {w : Pl D.host.E} (hw : w ∈ lo
     exact h4 rfl
   cases j with
   | zero =>
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     change FractionalIdeal.count D.host.E w (stairId (G.pl.stA sc) (G.pl.stAbar sc) (D.R.m - 1) p) = _
     rw [count_stairId h2.1 (ne_zero_of_conj h2.1 h2.2), Places.stA, Places.stAbar,
       FractionalIdeal.count_mul _ _ h1.1 (inv_ne_zero hmb), FractionalIdeal.count_mul _ _ (ne_zero_of_conj h1.1 h1.2)
@@ -445,7 +403,7 @@ theorem count_rowId (G : GridData L sc) {t : T} {w : Pl D.host.E} (hw : w ∈ lo
     push_cast
     ring
   | succ j =>
-    rw [if_neg (Nat.succ_ne_zero j)]
+    rw [ite_eq_right (Nat.succ_ne_zero j)]
     change FractionalIdeal.count D.host.E w (stairId D.host.AA D.host.AAbar _ p) = _
     rw [count_stairId h1.1 (ne_zero_of_conj h1.1 h1.2), hA.1, hA.2]
     simp
@@ -710,8 +668,6 @@ end GlobalTheory.FunObj
 namespace GlobalTheory.FunObj
 
 open GlobalTheory.ChiGrid Formalism.L2.DIV
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem wtOf_entries_eq {N n : ℕ} (h : N = n) {lam : DomWeight N} {S : Formalism.BasicNotions.TH.SPar}
     (hS : Formalism.IndefR.Bridge.IsWtOfPar lam S) (a : Fin N) :

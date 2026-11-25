@@ -31,7 +31,7 @@ variable {M : Type*} [AddCommGroup M] [Module ℂ M] {ε : Fin n → Bool}
 lemma lie_relation_raise_lower (hF : Formalism.REAL.KRel ε F) {a b : Fin n} (he : ε a = ε b) (y : M) :
     F a b (F b a y) = F b a (F a b y) + F a a y - F b b y := by
   have h := hF a b b a he he.symm
-  rw [if_pos rfl, if_pos rfl] at h
+  rw [ite_eq_left rfl, ite_eq_left rfl] at h
   have h2 := congrArg (fun T : Module.End ℂ M => T y) h
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at h2
   rw [sub_eq_iff_eq_add] at h2
@@ -41,7 +41,7 @@ lemma lie_relation_raise_lower (hF : Formalism.REAL.KRel ε F) {a b : Fin n} (he
 lemma lie_relation_diag_a_lower (hF : Formalism.REAL.KRel ε F) {a b : Fin n} (hab : a ≠ b) (he : ε a = ε b) (y : M) :
     F a a (F b a y) = F b a (F a a y) - F b a y := by
   have h := hF a a b a rfl he.symm
-  rw [if_neg hab, if_pos rfl, zero_sub] at h
+  rw [ite_eq_right hab, ite_eq_left rfl, zero_sub] at h
   have h2 := congrArg (fun T : Module.End ℂ M => T y) h
   simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.neg_apply] at h2
   rw [sub_eq_iff_eq_add] at h2
@@ -51,7 +51,7 @@ lemma lie_relation_diag_a_lower (hF : Formalism.REAL.KRel ε F) {a b : Fin n} (h
 lemma lie_relation_diag_b_lower (hF : Formalism.REAL.KRel ε F) {a b : Fin n} (hab : a ≠ b) (he : ε a = ε b) (y : M) :
     F b b (F b a y) = F b a (F b b y) + F b a y := by
   have h := hF b b b a rfl he.symm
-  rw [if_pos rfl, if_neg hab, sub_zero] at h
+  rw [ite_eq_left rfl, ite_eq_right hab, sub_zero] at h
   have h2 := congrArg (fun T : Module.End ℂ M => T y) h
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at h2
   rw [sub_eq_iff_eq_add] at h2
@@ -100,8 +100,7 @@ theorem exists_nat_weight_sub_eq_of_highest_vector_in_stable (hF : Formalism.REA
       push_cast
       module
   have hex : ∃ k, vk k = 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hli : LinearIndependent ℂ vk :=
       Module.End.eigenvectors_linearIndependent' (F a a) (fun k : ℕ => la - k)
         (by

@@ -92,7 +92,6 @@ lemma isLocallyFraction_twistFrac {u : A} (hu : u ∈ 𝒜 1) (k : ℤ)
   ⟨W, x.2, 𝟙 W, (-k).toNat, k.toNat, by omega, u ^ k.toNat, u ^ (-k).toNat,
     pow_mem_of_mem_one hu _, pow_mem_of_mem_one hu _, fun y => pow_nmem (hW y) _, fun _ => rfl⟩
 
-set_option backward.isDefEq.respectTransparency.types false in
 lemma isLocallyFraction_val_section {W : Opens (ProjectiveSpectrum.top 𝒜)}
     (t : (ProjectiveSpectrum.Proj.structureSheaf 𝒜).obj.obj (op W)) :
     (isLocallyFraction 𝒜 0).pred (fun x : W => (t.1 x).val) := fun x => by
@@ -237,13 +236,6 @@ namespace ProjSpace
 attribute [local instance] MvPolynomial.gradedAlgebra
 
 variable {A : Type u} [CommRing A] {n : ℕ}
-
-theorem nonempty_cechH_equiv_H (k : ℤ) (p : ℕ)
-    [HasExt.{w'} (Sheaf (Opens.grothendieckTopology (projectiveSpace A n).toTopCat)
-      AddCommGrpCat.{u})] :
-    Nonempty (cechH (twistAb (A := A) (n := n) k) (cover (A := A) (n := n)) p ≃+
-      Sheaf.H.{w'} (modulesAb (twistingSheaf (grading A n) k)) p) :=
-  nonempty_cechH_equiv_H_twist (fun j => MvPolynomial.X j) (fun j => X_mem j) iSup_stdOpen k p
 
 end ProjSpace
 

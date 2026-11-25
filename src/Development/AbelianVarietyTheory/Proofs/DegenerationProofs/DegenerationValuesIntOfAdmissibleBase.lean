@@ -55,7 +55,6 @@ public import Mathlib.Analysis.Normed.Group.Ultra
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.Ex
 noncomputable section
 namespace GlobalTheory.Ex.IntVal
@@ -75,7 +74,7 @@ theorem evR_comp {S S' : Type} [CommRing S] [CommRing S'] (f : S →+* S') {Y : 
   exact this
 
 theorem valF_eq {F : Type} [Field F] {Y : Scheme.{0}} (r : Sp F ⟶ Y) (U : Y.Opens) (h : ⊤ ≤ r ⁻¹ᵁ U) (a : Γ(Y, U)) :
-    valF r U a = evR r U h a := dif_pos h
+    valF r U a = evR r U h a := dite_eq_left h
 
 theorem le_comp {S S' : Type} [CommRing S] [CommRing S'] (f : S →+* S') {Y : Scheme.{0}} (r : Sp S ⟶ Y) (U : Y.Opens)
     (h : ⊤ ≤ r ⁻¹ᵁ U) : ⊤ ≤ (spMap f ≫ r) ⁻¹ᵁ U := fun x _ => h (Set.mem_univ ((spMap f) x))

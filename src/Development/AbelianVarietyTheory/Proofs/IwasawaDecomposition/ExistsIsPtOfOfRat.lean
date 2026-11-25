@@ -46,7 +46,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.AdT Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 open scoped TensorProduct
 
 noncomputable section
@@ -158,14 +157,14 @@ theorem exists_isPtOf_of_rat : ∀ {F E : Type} [Field F] [NumberField F] [Field
     rw [← hN] at hv
     rw [← hd]
     simp only [decoRaw]
-    rw [if_pos (le_locP _ _ hv), e]
+    rw [ite_eq_left (le_locP _ _ hv), e]
     exact hasRes_redA _ ((mem_globLat g v).1 hv i)
   · change v ∈ p₀.deco.1.N at hv
     change HasRes P.1 _ (p₀.deco.1.be P v i)
     rw [← hN] at hv
     rw [← hd]
     simp only [decoRaw]
-    rw [if_pos (le_locP _ _ hv)]
+    rw [ite_eq_left (le_locP _ _ hv)]
     exact hasRes_redA _ ((mem_globLat g v).1 hv i)
   · show _ = algebraMap E _ (glEquiv (γ P.1) (Pi.single j 1) i)
     rw [glEquiv_single]

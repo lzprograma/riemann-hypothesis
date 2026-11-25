@@ -8,47 +8,6 @@ public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
 public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
 public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.ContinuousExpG
 import Formalism.LocalToGlobal.IndefiniteReal.PHeisFC
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.InertDef
@@ -73,8 +32,8 @@ open Classical in
 def ind (S : Finset (Pl F)) : Af F :=
   ⟨fun u => if u ∈ S then 1 else 0, Eventually.of_forall fun u => by
     by_cases h : u ∈ S
-    · simp only [h, if_true]; exact one_mem _
-    · simp only [h, if_false]; exact zero_mem _⟩
+    · simp only [h, ite_true]; exact one_mem _
+    · simp only [h, ite_false]; exact zero_mem _⟩
 
 open Classical in
 theorem ev_ind (S : Finset (Pl F)) (u : Pl F) : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F u (ind S) = if u ∈ S then 1 else 0 := rfl
@@ -87,8 +46,8 @@ theorem tendsto_ind_mul (α : Af F) : Tendsto (fun S : Finset (Pl F) => ind S * 
       (fun u => (u.adicCompletionIntegers F : Set (u.adicCompletion F))) (𝓟 T) :=
     fun S => ⟨fun u => if u ∈ S then α u else 0, fun u hu => by
       by_cases h : u ∈ S
-      · simp only [Set.mem_setOf_eq, h, if_true]; exact hu
-      · simp only [Set.mem_setOf_eq, h, if_false]; exact zero_mem _⟩
+      · simp only [Set.mem_setOf_eq, h, ite_true]; exact hu
+      · simp only [Set.mem_setOf_eq, h, ite_false]; exact zero_mem _⟩
   let a : RestrictedProduct (fun u : Pl F => u.adicCompletion F)
       (fun u => (u.adicCompletionIntegers F : Set (u.adicCompletion F))) (𝓟 T) := ⟨fun u => α u, fun u hu => hu⟩
   have hf : Tendsto f atTop (𝓝 a) := by
@@ -96,7 +55,7 @@ theorem tendsto_ind_mul (α : Af F) : Tendsto (fun S : Finset (Pl F) => ind S * 
     intro u
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [eventually_ge_atTop ({u} : Finset _)] with S hS
-    exact (if_pos (hS (Finset.mem_singleton_self u))).symm
+    exact (ite_eq_left (hS (Finset.mem_singleton_self u))).symm
   have h2 := ((RestrictedProduct.continuous_inclusion hT).tendsto a).comp hf
   refine Tendsto.congr (fun S => _root_.GlobalTheory.AdelicU.af_ext fun u => ?_) h2
   rw [map_mul, ev_ind]
@@ -123,8 +82,8 @@ theorem eps_cons (S : Finset (Pl F)) (v : Pl F) (hv : v ∉ S) : eps (S.cons v h
     · simp [h, hv]
     · have hm : u ∈ S.cons v hv ↔ u ∈ S := Finset.mem_cons.trans (or_iff_right h)
       by_cases h' : u ∈ S
-      · rw [if_pos (hm.2 h'), if_pos h', if_neg (by simpa using h), add_zero]
-      · rw [if_neg (fun x => h' (hm.1 x)), if_neg h', if_neg (by simpa using h), add_zero]
+      · rw [ite_eq_left (hm.2 h'), ite_eq_left h', ite_eq_right (by simpa using h), add_zero]
+      · rw [ite_eq_right (fun x => h' (hm.1 x)), ite_eq_right h', ite_eq_right (by simpa using h), add_zero]
   · change Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F u (ind S * ind {v}) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F u 0
     rw [map_mul, ev_ind, ev_ind, map_zero]
     by_cases h : u = v
@@ -218,7 +177,7 @@ theorem piece_prod {W : Spc F E d} (g : UA σ W.J) (S : Finset (Pl F)) : ∃ l :
 theorem piece_inf {W : Spc F E d} (g : UA σ W.J) : piece (eps ∅) (eps_sq ∅) g ∈ UAt σ W (evI F) := fun u hu => by
   have : u * eps ∅ = 0 := Prod.ext ((mul_one u.1).trans ((map_eq_zero_iff _ (RingEquiv.injective _)).1 hu)) (_root_.GlobalTheory.AdelicU.af_ext fun x => by
     change Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F x (u.2 * ind ∅) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F x 0
-    rw [map_mul, ev_ind, map_zero, if_neg (Finset.notMem_empty x), mul_zero])
+    rw [map_mul, ev_ind, map_zero, ite_eq_right (Finset.notMem_empty x), mul_zero])
   rw [mat_piece, add_sub_cancel_left, smul_smul, this, zero_smul]
 
 theorem level_sch (hL : PositivityTheory.ThKEst.Level) {n : ℕ} {X : Spc F E n} {W : Spc F E d} {B : Base F E} {M : Model σ X W} {χX χW om r s r' s'}
@@ -235,26 +194,12 @@ theorem level_sch (hL : PositivityTheory.ThKEst.Level) {n : ℕ} {X : Spc F E n}
 
 theorem decomp_of (hL : PositivityTheory.ThKEst.Level) : Decomp := by
   intro F E _ _ _ _ _ σ B a a' G X om om' t k hk Φ hΦ Φ' hΦ'
-  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
-    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
-  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {m n k : ℕ} (h : ResEtaPow K χ m)
-      (h' : ResEtaPow K χ' n) (e : k = m + n) : ResEtaPow K (χ / χ') k := fun x => by
-    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
-    split_ifs
-    · simp
-    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
-  have pairV {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
-      IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
-    ⟨h.base, h.geo.hV, h.geo.hW, h.geo.hM, h.chars.heckeβ, hecke_div h.chars.heckeβ h.chars.heckeα, h.chars.resβ,
-      res_div h.chars.resβ h.chars.resα rfl, h.weil⟩
-  have pairV' {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
-      IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
-    ⟨h.base, h.geo.hV', h.geo.hW, h.geo.hM', h.chars.heckeα, hecke_div h.chars.heckeα h.chars.heckeβ, h.chars.resα,
-      res_div h.chars.resα h.chars.resβ (add_comm _ _), h.weil'⟩
   have h1 : Tendsto (fun S : Finset (Pl F) => (piece (eps S) (eps_sq S) k)⁻¹ * k) atTop (𝓝 1) := by
     rw [← inv_mul_cancel k]
     exact (tendsto_piece k).inv.mul_const k
-  obtain ⟨S, h2, h3⟩ := (h1.eventually ((level_sch hL (pairV t) hΦ).and (level_sch hL (pairV' t) hΦ'))).exists
+  obtain ⟨S, h2, h3⟩ := (h1.eventually
+    ((level_sch hL (PositivityTheory.ThKG.pairV t) hΦ).and
+      (level_sch hL (PositivityTheory.ThKG.pairV' t) hΦ'))).exists
   have h4 : ∀ w, (mat ((piece (eps S) (eps_sq S) k)⁻¹ * k)).map (piInf (B.emb w)) = 1 := fun w => by
     rw [mat_mul, Matrix.map_mul, ← piInf_piece S k, ← Matrix.map_mul, mat_inv_mul, Matrix.map_one _ (map_zero _) (map_one _)]
   obtain ⟨l, l1, l2⟩ := piece_prod k S
@@ -277,9 +222,9 @@ theorem exists_ins {ι : Type} [DecidableEq ι] {Y : ι → Type} [∀ i, AddCom
     · rw [Function.update_of_ne hv]
       by_cases h : (u : ι) ∈ T
       · have hne : (⟨u, h⟩ : T) ≠ i := fun e => hv (Subtype.ext (show (u : ι) = i.1 by rw [← e]))
-        simp only [ext, dif_pos h]
+        simp only [ext, dite_eq_left h]
         rw [Function.update_of_ne hne]
-      · simp only [ext, dif_neg h]
+      · simp only [ext, dite_eq_right h]
   let m : MultilinearMap (RingHom.id ℂ) (fun u : T => Y u) (PiTensorProduct ℂ fun u : (insert v T : Finset ι) => Y u) :=
     { toFun := fun w => PiTensorProduct.tprod ℂ (ext w)
       map_update_add' := fun {inst} w i x y => by
@@ -323,27 +268,13 @@ variable {a a' : ℕ} {B : Base F E} {G : Geo σ a a'} {X : Chars F E} {om : Rep
 theorem match_inf (hA : PositivityTheory.ThKF.ArchOp) (hm : IsMatched B G X om om' R Rf) {k : UA σ G.W.J} (hk : k ∈ KInf σ G.W B.emb) {Φ Φ'}
     (H : PolMatch B G X R Rf Φ Φ') : PolMatch B G X R Rf (om (1, k) Φ) (om' (1, k) Φ') := by
   have t := hm.triple
-  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
-    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
-  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {m n k : ℕ} (h : ResEtaPow K χ m)
-      (h' : ResEtaPow K χ' n) (e : k = m + n) : ResEtaPow K (χ / χ') k := fun x => by
-    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
-    split_ifs
-    · simp
-    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
-  have pairV {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
-      IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
-    ⟨h.base, h.geo.hV, h.geo.hW, h.geo.hM, h.chars.heckeβ, hecke_div h.chars.heckeβ h.chars.heckeα, h.chars.resβ,
-      res_div h.chars.resβ h.chars.resα rfl, h.weil⟩
-  have pairV' {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
-      IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
-    ⟨h.base, h.geo.hV', h.geo.hW, h.geo.hM', h.chars.heckeα, hecke_div h.chars.heckeα h.chars.heckeβ, h.chars.resα,
-      res_div h.chars.resα h.chars.resβ (add_comm _ _), h.weil'⟩
   have one : ∀ {n : ℕ} (Y : Spc F E n), (1 : UA σ Y.J) ∈ KInf σ Y B.emb := fun Y =>
     ⟨fun u _ => by rw [mat_one, sub_self, smul_zero], fun w => by
       rw [mat_one, Matrix.map_one _ (map_zero _) (map_one _)]; exact Commute.one_left _⟩
-  obtain ⟨A, a1, a2⟩ := hA F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (pairV t) 1 (one _).1 k hk.1
-  obtain ⟨A', b1, b2⟩ := hA F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (pairV' t) 1 (one _).1 k hk.1
+  obtain ⟨A, a1, a2⟩ :=
+    hA F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (PositivityTheory.ThKG.pairV t) 1 (one _).1 k hk.1
+  obtain ⟨A', b1, b2⟩ :=
+    hA F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (PositivityTheory.ThKG.pairV' t) 1 (one _).1 k hk.1
   obtain ⟨Op, o1, o2⟩ := common_op (S' := G.M'.Pol B.ψ B.emb) hm.real.quot.onto (A : _ →ₗ[ℂ] _) (A' : _ →ₗ[ℂ] _) fun x hx x' hx' e =>
     hm.real.cpt k hk _ hx _ hx' _ _ (a1.2 _) (b1.2 _) e
   obtain ⟨T, hT, m, m', f, φ, f', φ', h1, h2, rfl, rfl, e⟩ := H
@@ -420,23 +351,7 @@ theorem match_fin (hP : PositivityTheory.ThKF.PureAct) (hm : IsMatched B G X om 
 theorem matchStab_of (hA : PositivityTheory.ThKF.ArchOp) (hPA : PositivityTheory.ThKF.PureAct) (hL : PositivityTheory.ThKEst.Level) (hS : PositivityTheory.ThKCT.SoStab) : MatchStab := by
   intro F E _ _ _ _ _ σ B a a' G X om om' R Rf hm k hk Φ Φ' hΦ' hP
   have t := hm.triple
-  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
-    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
-  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {m n k : ℕ} (h : ResEtaPow K χ m)
-      (h' : ResEtaPow K χ' n) (e : k = m + n) : ResEtaPow K (χ / χ') k := fun x => by
-    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
-    split_ifs
-    · simp
-    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
-  have pairV {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
-      IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
-    ⟨h.base, h.geo.hV, h.geo.hW, h.geo.hM, h.chars.heckeβ, hecke_div h.chars.heckeβ h.chars.heckeα, h.chars.resβ,
-      res_div h.chars.resβ h.chars.resα rfl, h.weil⟩
-  have pairV' {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
-      IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
-    ⟨h.base, h.geo.hV', h.geo.hW, h.geo.hM', h.chars.heckeα, hecke_div h.chars.heckeα h.chars.heckeβ, h.chars.resα,
-      res_div h.chars.resα h.chars.resβ (add_comm _ _), h.weil'⟩
-  refine ⟨hS F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (pairV' t) _ _ hΦ', ?_⟩
+  refine ⟨hS F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (PositivityTheory.ThKG.pairV' t) _ _ hΦ', ?_⟩
   have hp : Φ ∈ PolData B G.M ∧ Φ' ∈ PolData B G.M' := PositivityTheory.ThKG.polMatch_mem hP
   obtain ⟨p1, p2⟩ := hp
   obtain ⟨k₀, h0, l, r, h1, rfl, h2, h3⟩ := decomp_of hL F E σ B a a' G X om om' t k hk Φ (PositivityTheory.ThKG.polData_le t.geo.hM p1) Φ'

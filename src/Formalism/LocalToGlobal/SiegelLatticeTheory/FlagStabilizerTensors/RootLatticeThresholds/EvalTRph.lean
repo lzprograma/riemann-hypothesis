@@ -13,8 +13,6 @@ open scoped InnerProductSpace
 
 namespace Formalism.L2.SG.EvalTRph
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem isFdeg_dv (v : InfinitePlace X.B.I.F) :

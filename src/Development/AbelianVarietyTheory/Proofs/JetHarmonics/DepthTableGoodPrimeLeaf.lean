@@ -546,9 +546,9 @@ theorem zero_of_pkg (hM : RF.MONSupply) (P : RF.Par) (l : ℕ) (Pk : RF.PkgZero 
             · simp
         _ = Pk.ga o g a k := by
             by_cases hk : 1 ≤ k ∧ k ≤ min Pk.K ((Pk.R.X o).rkF g a)
-            · simp only [if_pos hk]
+            · simp only [ite_eq_left hk]
               exact hpc2 o g a ho k
-            · simp only [if_neg hk, Finset.sum_const_zero]
+            · simp only [ite_eq_right hk, Finset.sum_const_zero]
               symm
               by_contra hne
               have hs := Pk.supp o ho g a k hne
@@ -637,9 +637,9 @@ theorem zero_of_pkgC (hM : RF.MONSupply) (P : RF.Par) (l : ℕ) (Pk : RF.PkgZero
             · simp
         _ = Pk.gaC o σ k := by
             by_cases hk : 1 ≤ k ∧ k ≤ min Pk.K ((Pk.R.X o).rkF 0 σ)
-            · simp only [if_pos hk]
+            · simp only [ite_eq_left hk]
               exact hpc2 o σ k
-            · simp only [if_neg hk, Finset.sum_const_zero]
+            · simp only [ite_eq_right hk, Finset.sum_const_zero]
               symm
               by_contra hne
               have hs := Pk.supp o σ k hne
@@ -856,7 +856,7 @@ theorem nu_le (hC : RF.CHSupply) (hM : RF.MONSupply) (P : RF.Par) (l : ℕ) (C1 
     have hs := hW.supp z hz g a k
     have hmain := hW.main z hz a
     fin_cases g
-    · simp only [Fin.zero_eta, true_and, zero_ne_one, false_and, if_false, zero_add] at hs hmain ⊢
+    · simp only [Fin.zero_eta, true_and, zero_ne_one, false_and, ite_false, zero_add] at hs hmain ⊢
       by_cases hkn : k = P.k - 1
       · subst hkn
         rw [hmain]
@@ -865,14 +865,14 @@ theorem nu_le (hC : RF.CHSupply) (hM : RF.MONSupply) (P : RF.Par) (l : ℕ) (C1 
         by_cases hz0 : ga z 0 a k = 0
         · simp [e0, hkn, this, hz0]
         · have h2 := hs hz0
-          rw [if_pos (by omega)]
+          rw [ite_eq_left (by omega)]
           simp [e0, hkn, this]
-    · simp only [Fin.mk_one, true_and, one_ne_zero, false_and, if_false, zero_add,
+    · simp only [Fin.mk_one, true_and, one_ne_zero, false_and, ite_false, zero_add,
         Finset.sum_const_zero, add_zero] at hs ⊢
       by_cases hz0 : ga z 1 a k = 0
       · simp [hz0]
       · have h2 := hs hz0
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
 
 theorem splitBd_of_supplies (hC : RF.CHSupply) (hM : RF.MONSupply) : SplitBd := by
   intro C1 hC1
@@ -926,45 +926,12 @@ section -- clump:auto
 
 open Formalism.L2.FormalSeriesBounds
 
-private lemma UpperTheory.least_level_le_log_bound (k l : ℕ) (hk : 1 ≤ k) (hl : 5 ≤ l) :
-    ((RF.i0 k l : ℕ) : ℝ) ≤ 3 + 2 * Real.log k := by
-  have hk0 : (0:ℝ) < k := by exact_mod_cast hk
-  have hk1 : (1:ℝ) ≤ k := by exact_mod_cast hk
-  have hlog : 0 ≤ Real.log k := Real.log_nonneg hk1
-  have hj1 : Real.log k < (⌊Real.log k⌋₊ : ℝ) + 1 := Nat.lt_floor_add_one _
-  have hj2 : (⌊Real.log k⌋₊ : ℝ) ≤ Real.log k := Nat.floor_le hlog
-  have hmem : 2 * ⌊Real.log k⌋₊ + 3 ∈
-      {i : ℕ | Odd i ∧ 3 ≤ i ∧ (k:ℝ) ^ ((3:ℝ) / 2) < (l:ℝ) ^ i} := by
-    refine ⟨⟨⌊Real.log k⌋₊ + 1, by ring⟩, by omega, ?_⟩
-    have e1 : (k:ℝ) ^ ((3:ℝ) / 2) ≤ (k:ℝ) ^ (2:ℝ) :=
-      Real.rpow_le_rpow_of_exponent_le hk1 (by norm_num)
-    have e2 : (k:ℝ) ^ (2:ℝ) = Real.exp (2 * Real.log k) := by
-      rw [Real.rpow_def_of_pos hk0, mul_comm]
-    have e3 : Real.exp (2 * Real.log k) < Real.exp ((2 * ⌊Real.log k⌋₊ + 3 : ℕ) : ℝ) := by
-      apply Real.exp_lt_exp.2
-      push_cast
-      linarith
-    have e4 : Real.exp ((2 * ⌊Real.log k⌋₊ + 3 : ℕ) : ℝ) ≤ (5:ℝ) ^ (2 * ⌊Real.log k⌋₊ + 3) := by
-      rw [show ((2 * ⌊Real.log k⌋₊ + 3 : ℕ) : ℝ) = ((2 * ⌊Real.log k⌋₊ + 3 : ℕ) : ℝ) * 1 by ring,
-        Real.exp_nat_mul]
-      apply pow_le_pow_left₀ (Real.exp_pos 1).le
-      have := Real.exp_one_lt_d9
-      linarith
-    have e5 : (5:ℝ) ^ (2 * ⌊Real.log k⌋₊ + 3) ≤ (l:ℝ) ^ (2 * ⌊Real.log k⌋₊ + 3) := by
-      apply pow_le_pow_left₀ (by norm_num)
-      exact_mod_cast hl
-    linarith
-  have hle : RF.i0 k l ≤ 2 * ⌊Real.log k⌋₊ + 3 := Nat.sInf_le hmem
-  have hc : ((RF.i0 k l : ℕ) : ℝ) ≤ ((2 * ⌊Real.log k⌋₊ + 3 : ℕ) : ℝ) := by exact_mod_cast hle
-  push_cast at hc
-  linarith
-
 theorem UpperTheory.f_mul_leastAdmissibleLevel_rows_le :
     ∀ (r f n m nW l k : ℕ) (L : ℝ), 1 ≤ m → m ≤ n → n ≤ r → 2 ≤ f → n + 1 = k → 3 ≤ L → Real.log k ≤ L →
     10 * (r : ℝ) * (f + (f : ℝ) ^ 2 * (n : ℝ) ^ 3 * L ^ 2 / m) ≤ nW → 5 ≤ l → f * ((RF.i0 k l + 1) * n + 4 * r) ≤ nW := by
   intro r f n m nW l k L hm hmn hnr hf hk hL hlogL hW hl
   have hk1 : 1 ≤ k := by omega
-  have hi := UpperTheory.least_level_le_log_bound k l hk1 hl
+  have hi := GlobalTheory.RowBudgets.level_le k l hk1 hl
   have hmR : (1:ℝ) ≤ m := by exact_mod_cast hm
   have hmnR : (m:ℝ) ≤ n := by exact_mod_cast hmn
   have hnrR : (n:ℝ) ≤ r := by exact_mod_cast hnr
@@ -1008,39 +975,12 @@ section -- clump:auto
 
 open Formalism.L2.FormalSeriesBounds UpperTheory.G2
 
-
-open Formalism.IncomingBounds in
-private theorem cut (K s B : ℕ) (e : ℕ → ℕ) : ∃ pc : Fin s → ℕ → ℕ,
-    (∀ u, ∑ k ∈ Finset.Icc 1 K, pc u k ≤ B) ∧
-    (∑ k ∈ Finset.Icc 1 K, e k ≤ s * B → (∀ k, e k ≠ 0 → 1 ≤ k ∧ k ≤ K) → ∀ k, ∑ u, pc u k = e k) := by
-  by_cases h : ∑ k ∈ Finset.Icc 1 K, e k ≤ s * B
-  · obtain ⟨pc, h1, h2, h3⟩ := GlobalTheory.exists_cut_columns_bounded_width K s B e h
-    refine ⟨pc, h2, fun _ hs k => ?_⟩
-    by_cases hk : k ∈ Finset.Icc 1 K
-    · exact h1 k hk
-    · have : e k = 0 := by
-        by_contra h0
-        exact hk (Finset.mem_Icc.2 (hs k h0))
-      rw [this]
-      exact Finset.sum_eq_zero fun u _ => h3 u k hk
-  · exact ⟨fun _ _ => 0, by simp, fun h' => absurd h' h⟩
-
-
-open Formalism.IncomingBounds in
-private theorem monAl_le_first (K rk : ℕ) (e : ℕ → ℕ) (ρ : ℕ) :
-    monAl K rk e ρ ≤ ∑ k ∈ Finset.Icc 1 K, e k := by
-  unfold monAl
-  apply Finset.sum_le_sum_of_subset
-  intro k hk
-  rw [Finset.mem_Icc] at hk ⊢
-  exact ⟨le_trans (Nat.le_add_left 1 ρ) hk.1, le_trans hk.2 (min_le_left _ _)⟩
-
 theorem UpperTheory.pkgZeroCs_nu_nonpos_of_monSupply :
     RF.MONSupply → ∀ (P : RF.Par) (l : ℕ) (Pk : PkgZeroCs P l), Pk.ν ≤ 0 := by
   intro hM P l Pk
   have hl : Pk.R.V.l = l := Pk.R.hVl
   have hl2 : 2 ≤ l := hl ▸ Pk.R.V.l_prime.two_le
-  have hc := fun (o : ↥Pk.Z) (σ : ZMod (2 * P.d)) => cut Pk.K Pk.s (l - 1) (Pk.ga o σ)
+  have hc := fun (o : ↥Pk.Z) (σ : ZMod (2 * P.d)) => GlobalTheory.GoodDepth.Zero.cut Pk.K Pk.s (l - 1) (Pk.ga o σ)
   choose pc hpcB hpcE using hc
   have hE : ∀ o σ k, ∑ u, pc o σ u k = Pk.ga o σ k := fun o σ =>
     hpcE o σ (Pk.first o σ) (fun k hk => ⟨(Pk.supp o σ k hk).1, (Pk.supp o σ k hk).2.2⟩)
@@ -1064,17 +1004,17 @@ theorem UpperTheory.pkgZeroCs_nu_nonpos_of_monSupply :
     intro a ρ
     rw [hl]
     calc monAl Pk.K ((Pk.R.X o).rkF 0 a) (fun k => if a = σ then pc o σ u k else 0) ρ
-        ≤ ∑ k ∈ Finset.Icc 1 Pk.K, (fun k => if a = σ then pc o σ u k else 0) k := monAl_le_first _ _ _ _
+        ≤ ∑ k ∈ Finset.Icc 1 Pk.K, (fun k => if a = σ then pc o σ u k else 0) k := GlobalTheory.GoodDepth.Zero.monAl_le_first _ _ _ _
       _ ≤ l - 1 := by
         by_cases ha : a = σ
-        · simp only [ha, if_true]
+        · simp only [ha, ite_true]
           exact hpcB o σ u
         · simp [ha]
       _ < l := by omega
   · intro o q hq g e N hqe
     obtain ⟨σ, u, rfl⟩ := hmem o q hq
     obtain ⟨-, rfl, -⟩ := RF.GlobalTheory.mon.inj hqe
-    exact ⟨σ, fun a k ha => if_neg ha⟩
+    exact ⟨σ, fun a k ha => ite_eq_right ha⟩
   · have hrow : ∀ o, (List.map (fun q => RF.GlobalTheory.what₂ (Pk.R.X o).n q.1) (L o)).sum = 2 * P.d * Pk.s * Pk.K := by
       intro o
       simp [L, blk, RF.GlobalTheory.what₂]
@@ -1105,8 +1045,6 @@ section -- clump:auto
 
 open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds Formalism.UnitaryBoundIntegral Formalism.L2.DIV Formalism.L2.Pj Formalism.BasicNotions GlobalTheory.GoodDepth NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
-set_option autoImplicit false
-
 namespace GlobalTheory.GoodDepth
 
 theorem le_DF_of_mult_pos {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
@@ -1133,7 +1071,7 @@ theorem degHyp2_parOf {N : NumDatum} {j : ℕ} {W : RPl N.R → ℕ} {T θ0 rest
 
 private theorem odd_ordP_of_conjIn {N : NumDatum} {l : ℕ} (h : ConjIn N l) : Odd (N.ordP l) := by
   unfold NumDatum.ordP
-  rw [if_neg (by rw [h.1]; simp)]
+  rw [ite_eq_right (by rw [h.1]; simp)]
   exact h.2
 
 theorem nuGood : NuGoodSt := by
@@ -1306,8 +1244,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 namespace GlobalTheory.GoodDepth
 
 open Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.EigenvalueLevelCeiling NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -1409,7 +1345,7 @@ theorem normalizedLattice_exponent_eq_roundedDepth_goodPlace : ∀ (E : Type) [F
     rw [hE v j, hσ v j, hs, DepthTie.ramw_eq_below (F := c.F) v]
     unfold EAt expE DepPage.eLam nuStarAt DepPage.nuN DepPage.cP
     simp only []
-    rw [DepthTie.resChar_below (F := c.F) v, if_neg hg1, if_neg hg2, if_neg hram, if_neg hbad]
+    rw [DepthTie.resChar_below (F := c.F) v, ite_eq_right hg1, ite_eq_right hg2, ite_eq_right hram, ite_eq_right hbad]
     simp only [Nat.cast_zero, add_zero, Int.cast_zero, sub_zero, Nat.cast_mul, Int.cast_mul, Int.cast_natCast]
     rw [mul_div_mul_left _ _ (by linarith)]
     congr 1
@@ -1566,8 +1502,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.DepthTableGoodPrimeLeaf", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Jets.DepthNumbersThresholdEq\npublic import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ForcedContentBoundsProgrammeValueGoodPrime\npublic import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GoodPlaceDepthBoundProof\npublic import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ExampleSatisfiesConditionsAtFive\npublic import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow\npublic import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormalizedLatticeExponentEqRoundedDepthGoodPlace\npublic import Formalism.DropLevelBounds.ThBounds\npublic import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumLevelTailMulLogPrimesLe\nimport Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthTie\nimport Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 namespace GlobalTheory.GoodDepth
 

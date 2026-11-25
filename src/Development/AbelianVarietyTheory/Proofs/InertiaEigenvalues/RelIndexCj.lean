@@ -2,46 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClassSumSmallerLevel
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelIndexNeZeroOfCover
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -233,10 +194,10 @@ theorem mass_refine (Δ : Subgroup G) {H H' : Subgroup G} (hle : H' ≤ H) (hne 
     simp_rw [mul_one, mul_assoc, ind_left hδ]
     rw [e, ← one_mul κ, ind_right hκ]
     simp only [ind]
-    rw [if_pos ⟨1, Δ.one_mem, 1, H.one_mem, by simp⟩, Finset.sum_boole, mul_one]
+    rw [ite_eq_left ⟨1, Δ.one_mem, 1, H.one_mem, by simp⟩, Finset.sum_boole, mul_one]
     simp only [mul_one]
-  · rw [ind, if_neg hg, mul_zero]
-    refine Finset.sum_eq_zero fun u hu => if_neg fun ⟨δ, hδ, κ, hκ, e⟩ => hg ⟨δ, hδ, κ * u⁻¹, H.mul_mem (hle hκ) (H.inv_mem (h1 u hu)), ?_⟩
+  · rw [ind, ite_eq_right hg, mul_zero]
+    refine Finset.sum_eq_zero fun u hu => ite_eq_right fun ⟨δ, hδ, κ, hκ, e⟩ => hg ⟨δ, hδ, κ * u⁻¹, H.mul_mem (hle hκ) (H.inv_mem (h1 u hu)), ?_⟩
     rw [← mul_assoc, ← e]; group
 
 theorem mass_pos {Δ Γ H : Subgroup G} (hΓ : Γ ≤ Δ) (hc : Cover Γ H) (hf : ∀ t, Finite (stabQ Γ H t)) :
@@ -246,7 +207,7 @@ theorem mass_pos {Δ Γ H : Subgroup G} (hΓ : Γ ≤ Δ) (hc : Cover Γ H) (hf 
   · obtain ⟨t, ⟨ht, γ, κ, hκ, e⟩, -⟩ := hT 1
     refine Finset.sum_pos' (fun s _ => by positivity) ⟨t, ht, ?_⟩
     have e' : t = (γ : G)⁻¹ * 1 * κ⁻¹ := by rw [e]; group
-    rw [if_pos ⟨(γ : G)⁻¹, Δ.inv_mem (hΓ γ.2), κ⁻¹, H.inv_mem hκ, e'⟩, mul_one]
+    rw [ite_eq_left ⟨(γ : G)⁻¹, Δ.inv_mem (hΓ γ.2), κ⁻¹, H.inv_mem hκ, e'⟩, mul_one]
     haveI := hf t
     exact inv_pos.2 (Nat.cast_pos.2 Nat.card_pos)
   · rw [dsum_eq hT (fun γ => ind_left (hΓ γ.2)) (fun κ hκ => ind_right hκ), wsum]
@@ -288,8 +249,8 @@ theorem dsum_prop {Δ Γ Γ' K : Subgroup G} (hK : ∀ x, (cj K x).relIndex K �
     funext g
     obtain ⟨x, ⟨hx, δ, κ, hκ, e⟩, hu⟩ := hX g
     rw [Finset.sum_eq_single_of_mem x hx fun y hy hne => ?_]
-    · rw [ind, if_pos ⟨δ, δ.2, κ, hκ, e⟩, mul_one, e, hr κ hκ, hl _ δ.2]
-    · rw [ind, if_neg fun ⟨a, ha, k, hk, e'⟩ => hne (hu y ⟨hy, ⟨a, ha⟩, k, hk, e'⟩), mul_zero]
+    · rw [ind, ite_eq_left ⟨δ, δ.2, κ, hκ, e⟩, mul_one, e, hr κ hκ, hl _ δ.2]
+    · rw [ind, ite_eq_right fun ⟨a, ha, k, hk, e'⟩ => hne (hu y ⟨hy, ⟨a, ha⟩, k, hk, e'⟩), mul_zero]
   have hm'' : (m' : ℂ) ≠ 0 := Complex.ofReal_ne_zero.2 hm'.ne'
   rw [hΦ, dsum_sum, dsum_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun x _ => ?_

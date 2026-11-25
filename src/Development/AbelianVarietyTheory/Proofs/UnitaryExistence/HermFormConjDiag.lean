@@ -197,21 +197,21 @@ lemma exists_loc (τ : E →+* ℂ) (Gm : Matrix (Fin r) (Fin r) E) (hG : ∀ a 
       have h2 := hyu a u
       rw [h1, FD.hermC_sum_left] at h2
       rw [← mul_right_inj' (hd0 a), ← h2]
-      simp only [mulVec, dotProduct, S, of_apply, if_pos ha, Finset.mul_sum]
+      simp only [mulVec, dotProduct, S, of_apply, ite_eq_left ha, Finset.mul_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [FD.hermC_smul_left, locPer_apply]
       by_cases hb : (b : ℕ) < q
-      · rw [if_pos hb]; field_simp [hd0 a]
+      · rw [ite_eq_left hb]; field_simp [hd0 a]
       · have : U b a = 0 := hU (show a < b by rw [Fin.lt_def]; omega)
         simp [this]
     · simp only [c]
       rw [mulVec, mulVec, dotProduct, dotProduct]
       refine Finset.sum_congr rfl fun b _ => ?_
-      simp only [S, of_apply, if_neg ha, locPer_apply]
+      simp only [S, of_apply, ite_eq_right ha, locPer_apply]
       by_cases hb : (b : ℕ) < q
       · have : U⁻¹ a b = 0 := hV (show b < a by rw [Fin.lt_def]; omega)
         simp [this]
-      · rw [if_neg hb]
+      · rw [ite_eq_right hb]
   have hS0 : ∀ u, S *ᵥ locPer τ Gm q M u = 0 → u = 0 := by
     intro u hu
     have : c u = 0 := by
@@ -351,7 +351,7 @@ lemma hermForm_block {ι : Type} [Fintype ι] [DecidableEq ι] {g : ℕ} (idx : 
   refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun a _ => ?_
   rw [← idx.symm.sum_comp, Fintype.sum_prod_type, Finset.sum_eq_single τ]
   · refine Finset.sum_congr rfl fun b _ => ?_
-    simp only [Equiv.apply_symm_apply, if_true, Pi.star_apply]
+    simp only [Equiv.apply_symm_apply, ite_true, Pi.star_apply]
     ring
   · intro σ _ hσ
     simp [hσ.symm]
@@ -416,10 +416,10 @@ theorem isPeriod_frame : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
     · ext k l
       simp only [conjTranspose_apply, of_apply]
       by_cases h : (idx k).1 = (idx l).1
-      · rw [if_pos h, if_pos h.symm, star_mul', ← h, (hH _).apply]
+      · rw [ite_eq_left h, ite_eq_left h.symm, star_mul', ← h, (hH _).apply]
         congr 1
         exact Complex.conj_ofReal _
-      · rw [if_neg h, if_neg (Ne.symm h), star_zero]
+      · rw [ite_eq_right h, ite_eq_right (Ne.symm h), star_zero]
     · intro z hz
       rw [hermForm_block idx (fun τ : Ψ => 2 * (τ.1 ξ).im) Hl, Complex.re_sum]
       simp only [Complex.re_ofReal_mul]

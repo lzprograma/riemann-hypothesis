@@ -2,51 +2,6 @@ module
 
 public import Formalism.HermitianCurvature.PositionExpansionTopCoefficients
 public import Lemmata.HermitianSesquilinear.ConjEqOfNonnegReal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Analysis.Matrix.Order
 
@@ -123,12 +78,12 @@ theorem qProduct : QProduct := by
     rw [← ih']
     cases hp : l.plus
     · simp only [hp] at hl ⊢
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       have h2 : l.pt - Y - 1 ≠ 0 := hl
       field_simp
       try ring
     · simp only [hp] at hl ⊢
-      simp only [if_true]
+      simp only [ite_true]
       have h2 : Y - l.pt ≠ 0 := hl
       field_simp
 
@@ -142,23 +97,23 @@ theorem lemmaQ : LemmaQ := by
     intro l hl
     have h := hpts l hl
     cases hp : l.plus
-    · simp only [hp, Bool.false_eq_true, if_false] at h
-      simp only [hg, hp, Bool.false_eq_true, if_false, add_sub_cancel_left, abs_div, abs_one]
+    · simp only [hp, Bool.false_eq_true, ite_false] at h
+      simp only [hg, hp, Bool.false_eq_true, ite_false, add_sub_cancel_left, abs_div, abs_one]
       have : |l.pt - Y - 1| = |Y - (l.pt - 1)| := by rw [← abs_neg]; ring_nf
       rw [this]
       exact one_div_le_one_div_of_le hdlpos h.2
-    · simp only [hp, if_true] at h
-      simp only [hg, hp, if_true, add_sub_cancel_left, abs_div, abs_one]
+    · simp only [hp, ite_true] at h
+      simp only [hg, hp, ite_true, add_sub_cancel_left, abs_div, abs_one]
       exact one_div_le_one_div_of_le hdlpos h
   have hreg : ∀ l ∈ w, if l.plus then Y - l.pt ≠ 0 else l.pt - Y - 1 ≠ 0 := by
     intro l hl
     have h := hpts l hl
     cases hp : l.plus
-    · simp only [hp, Bool.false_eq_true, if_false] at h ⊢
+    · simp only [hp, Bool.false_eq_true, ite_false] at h ⊢
       intro h0
       have : |Y - (l.pt - 1)| = 0 := by rw [abs_eq_zero]; linarith
       linarith [h.2]
-    · simp only [hp, if_true] at h ⊢
+    · simp only [hp, ite_true] at h ⊢
       intro h0
       rw [h0, abs_zero] at h
       linarith
@@ -192,7 +147,7 @@ theorem dkStep4 : DKStep4 := by
       simp [hl, hL' l' hl']
     simp only [kapF, List.map_cons, List.prod_cons]
     rw [h1, ih hL']
-    simp only [ypt, hl, if_true]
+    simp only [ypt, hl, ite_true]
     ring
 
 end Formalism.FourierDecayAlt.P.GramProductIdentities

@@ -292,14 +292,14 @@ private lemma transpose_mul_self (e : G ≃ AddChar G K) :
   by_cases hgh : e g * e h = 1
   · have h1 : invPerm e g = h := by
       rw [invPerm_apply, inv_eq_of_mul_eq_one_right hgh, Equiv.symm_apply_apply]
-    rw [if_pos h1, hgh]
+    rw [ite_eq_left h1, hgh]
     simp
   · have h1 : ¬ invPerm e g = h := by
       intro h1
       apply hgh
       rw [invPerm_apply] at h1
       rw [← h1, Equiv.apply_symm_apply, mul_inv_cancel]
-    rw [if_neg h1, AddChar.sum_eq_zero_of_ne_one hgh, mul_zero]
+    rw [ite_eq_right h1, AddChar.sum_eq_zero_of_ne_one hgh, mul_zero]
 
 private lemma det_sq (e : G ≃ AddChar G K) :
     (Matrix.of fun g h : G => e h g).det ^ 2 =

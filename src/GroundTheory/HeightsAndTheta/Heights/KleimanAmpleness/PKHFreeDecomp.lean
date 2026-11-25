@@ -89,7 +89,7 @@ theorem locPart_le (I : ∀ k, Finset (ι k)) (c d : K → ℤ) :
   have hub : ∀ k, ∑ i, u ⟨k, i⟩ = b k := by
     intro k
     refine htb u ?_ k
-    rw [support_monomial, if_neg one_ne_zero]
+    rw [support_monomial, ite_eq_right one_ne_zero]
     exact Finset.mem_singleton_self u
   have hle : KH.quotPart S (⊥ : Ideal (MRingOver S ι)) ((c + fun k => (b k : ℤ)) + d) ≤
       (Submodule.span S (monoFrac S I '' {a | blockSum a = c + d})).comap

@@ -12,7 +12,7 @@ namespace Formalism.L2.SG.LitS.PfNVG
 open Formalism.MainNotions.S Formalism.MainNotions.CayleySignature MeasureTheory
 open scoped InnerProductSpace
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 def BesselNVG : Prop :=
   ∀ (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (c : Fin r → ℂ) (u : Fin k → ℝ) (v : Fin (k - 1) → ℝ)

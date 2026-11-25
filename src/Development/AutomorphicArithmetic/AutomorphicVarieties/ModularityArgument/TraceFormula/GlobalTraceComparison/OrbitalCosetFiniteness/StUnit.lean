@@ -621,7 +621,7 @@ theorem genTw : GenTw := by
   have hsv : (s : w.adicCompletion E) = unif w := rfl
   have hgen : ∀ (q : Fin (a + 1) × Fin (b + 1)) (y : GLw a w × GLw b w), gen2 a b w q y =
       Tj ℂ a (Ov E w) (unif w) q.1 y.1 * Tj ℂ b (Ov E w) (unif w) q.2 y.2 := fun _ _ => rfl
-  have hth : ∀ n, thL n w = thetaGL n (cj w) := fun n => by rw [thL, if_neg hs]
+  have hth : ∀ n, thL n w = thetaGL n (cj w) := fun n => by rw [thL, ite_eq_right hs]
   have hKa : ∀ n {k : GLw n w}, k ∈ KGL w (n := n) → thetaGL n (cj w) k ∈ KGL w (n := n) := fun n _ hk =>
     GlobalTheory.CompanionTheory.IwFacts.thetaGL_mem_KGL w n hk
   set z : GLw a w × GLw b w := (sc a w s, sc b w s) with hz
@@ -657,15 +657,15 @@ theorem genTw : GenTw := by
     rw [hf, hgen, Fin.val_last, Fin.val_last, Tj_top a w _ s hsv, Tj_top b w _ s hsv]
     by_cases h : ∃ k ∈ K2 a b w, x = z * k
     · obtain ⟨k, hk, rfl⟩ := h
-      rw [if_pos ⟨k.1, hk.1, rfl⟩, if_pos ⟨k.2, hk.2, rfl⟩, if_pos ⟨k, hk, rfl⟩, one_mul]
-    · rw [if_neg h]
+      rw [ite_eq_left ⟨k.1, hk.1, rfl⟩, ite_eq_left ⟨k.2, hk.2, rfl⟩, ite_eq_left ⟨k, hk, rfl⟩, one_mul]
+    · rw [ite_eq_right h]
       by_cases h1 : ∃ k ∈ KGL w (n := a), x.1 = sc a w s * k
       · by_cases h2 : ∃ k ∈ KGL w (n := b), x.2 = sc b w s * k
         · obtain ⟨k1, hk1, e1⟩ := h1
           obtain ⟨k2, hk2, e2⟩ := h2
           exact absurd ⟨(k1, k2), ⟨hk1, hk2⟩, Prod.ext e1 e2⟩ h
-        · rw [if_neg h2, mul_zero]
-      · rw [if_neg h1, zero_mul]
+        · rw [ite_eq_right h2, mul_zero]
+      · rw [ite_eq_right h1, zero_mul]
   funext y
   have hinv : ∀ k ∈ K2 a b w, ∀ x, (fun x => f x * g (x⁻¹ * y)) (x * k) = (fun x => f x * g (x⁻¹ * y)) x := by
     intro k hk x
@@ -677,7 +677,7 @@ theorem genTw : GenTw := by
   · obtain ⟨k, e⟩ := QuotientGroup.mk_out_eq_mul (K2 a b w) z
     have e2 := hinv k k.2 z
     simp only at e2
-    rw [e, e2, hfz z, if_pos ⟨1, one_mem _, (mul_one _).symm⟩, one_mul, hg, Function.comp_apply, hgen, hgen]
+    rw [e, e2, hfz z, ite_eq_left ⟨1, one_mem _, (mul_one _).symm⟩, one_mul, hg, Function.comp_apply, hgen, hgen]
     have hp1 : ((p.1.rev : Fin (a + 1)) : ℕ) = a - p.1 := by rw [Fin.val_rev]; omega
     have hp2 : ((p.2.rev : Fin (b + 1)) : ℕ) = b - p.2 := by rw [Fin.val_rev]; omega
     rw [hp1, hp2, ← Tj_twist w a p.1 (by omega) _ hu s hsv, ← Tj_twist w b p.2 (by omega) _ hu s hsv]
@@ -686,7 +686,7 @@ theorem genTw : GenTw := by
     rfl
   · intro q hq
     have : f q.out = 0 := by
-      rw [hfz, if_neg]
+      rw [hfz, ite_eq_right]
       rintro ⟨k, hk, e⟩
       apply hq
       rw [← QuotientGroup.out_eq' q, e]
@@ -789,14 +789,14 @@ theorem stUnit_of :
   unfold stTw2 clSum
   refine finsum_congr fun q => ?_
   by_cases hS : q.rep ∈ {y : GLw a w × GLw b w | (nrmL a w y.1).val.charpoly = Q₁ ∧ (nrmL b w y.2).val.charpoly = Q₂}
-  · rw [if_pos hS, if_pos hS]
+  · rw [ite_eq_left hS, ite_eq_left hS]
     have h1 : (nrmL a w q.rep.1).val.charpoly = Q₁ := hS.1
     have h2 : (nrmL b w q.rep.2).val.charpoly = Q₂ := hS.2
     have hy := hfin q.rep (h1 ▸ s₁) (h2 ▸ s₂)
     have key := orbit_unitary_compact_open hTw hLin hRing hComm hGen hUnr w hw a b hc hi hk hO hC q.rep hy he _ H1
     rw [((hRing _ (K2 a b w) hO hC) _ _ _ HE HE HE).2.2.1] at key
     exact congrArg _ key
-  · rw [if_neg hS, if_neg hS]
+  · rw [ite_eq_right hS, ite_eq_right hS]
 
 end UpperTheory.V.Z.Tf.GlobalTraceComparison.Th
 end -- clump:auto
@@ -931,8 +931,7 @@ private lemma one_side {X Y : Type} [MulAction T X] [MulAction T Y] (C : Subgrou
       simp only [Function.mem_support] at hq
       have hs := right_ne_zero_of_mul hq
       have : ∃ y, F (Quotient.out q) y ≠ 0 := by
-        by_contra hno
-        push_neg at hno
+        by_contra! hno
         exact hs (by simp [hno])
       obtain ⟨y, hy⟩ := this
       simp only [Finset.coe_image, Set.mem_image, Finset.mem_coe, Set.Finite.mem_toFinset, Set.mem_setOf_eq]
@@ -1144,8 +1143,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix
 open GlobalTheory.BCT GlobalTheory.LFun GroundTheory.Automorphic PositivityTheory.Rg.BcB.G8
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Th
 

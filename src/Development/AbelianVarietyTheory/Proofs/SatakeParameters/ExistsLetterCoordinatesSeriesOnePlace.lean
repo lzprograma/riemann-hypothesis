@@ -57,14 +57,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNoti
 
 namespace GlobalTheory.CompareInert
 
-section Letters
-
-variable (D : D7) (p : ℕ) [Fact p.Prime]
-
-variable {D p}
-
-end Letters
-
 section Rings
 
 open Formalism.MainNotions.GL3Theta
@@ -114,60 +106,6 @@ theorem norm_l_lt : ‖(l : ℂ_[l])‖ < 1 := by
   exact Padic.norm_p_lt_one
 
 end Rings
-
-section Props
-
-open Formalism.MainNotions.GL3Theta MvPowerSeries
-
-variable {l d : ℕ} [Fact l.Prime] [NeZero d]
-
-end Props
-
-section Sign
-
-open Formalism.MainNotions.GL3Theta MvPowerSeries
-
-variable {l d : ℕ} [Fact l.Prime] [NeZero d]
-
-end Sign
-
-section Reps
-
-variable (D : D7) (p : ℕ)
-
-end Reps
-
-section Hyp
-
-end Hyp
-
-section Statements
-
-variable {D : D7} {Dx : DivX D} {Tw : TwForms D}
-
-end Statements
-
-section Units
-
-open MvPowerSeries
-
-variable {D : D7} {p : ℕ} [Fact p.Prime]
-
-end Units
-
-section Direction
-
-open GlobalTheory.InertCompare GlobalTheory.Proof.IdempotentLatticeSequence
-
-variable (D : D7) {l : ℕ} [Fact l.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_[l])
-
-end Direction
-
-section Main
-
-variable (D : D7) {Dx : DivX D} {Tw : TwForms D}
-
-end Main
 
 end GlobalTheory.CompareInert
 end -- clump:auto
@@ -391,7 +329,7 @@ theorem sum_even {M : Type} [AddCommMonoid M] (d : ℕ) [NeZero d] (hd : Even d)
   | zero => simp
   | succ m ih =>
     have e : m + 1 + (m + 1) = m + m + 1 + 1 := by omega
-    rw [e, Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ, if_pos (by omega), if_neg (by omega),
+    rw [e, Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ, ite_eq_left (by omega), ite_eq_right (by omega),
       add_zero, two_mul, ih]
 
 theorem map_iterate {σ : ℂ_[l] →+* ℂ_[l]} {τ : MaximalUnramifiedExtension l →+* MaximalUnramifiedExtension l}
@@ -465,13 +403,11 @@ theorem exists_coords_and_series (h5 : 5 ≤ l) {σ : ℂ_[l] →+* ℂ_[l]} (h�
       zOm σ (fun r => (MaximalUnramifiedExtension l).subtype (o r)) (fun r => (MaximalUnramifiedExtension l).subtype (o' r)) s := fun s => by
     unfold zXY zOm
     by_cases hs : s.val % 2 = 0
-    · set_option synthInstance.maxHeartbeats 100000 in
-        rw [if_pos hs, if_pos (Nat.even_iff.2 hs), subst_sum hRs, map_sum]
+    · rw [ite_eq_left hs, ite_eq_left (Nat.even_iff.2 hs), subst_sum hRs, map_sum]
       refine Finset.sum_congr rfl fun r _ => ?_
       rw [subst_mul hRs, subst_C, hRat, map_mul, map_C, map_lg, map_iterate hτ]
       rfl
-    · set_option synthInstance.maxHeartbeats 100000 in
-        rw [if_neg hs, if_neg (fun h => hs (Nat.even_iff.1 h)), subst_sum hRs, map_sum]
+    · rw [ite_eq_right hs, ite_eq_right (fun h => hs (Nat.even_iff.1 h)), subst_sum hRs, map_sum]
       refine Finset.sum_congr rfl fun r _ => ?_
       rw [subst_mul hRs, subst_C, hRat, map_mul, map_C, map_lg, map_iterate hτ]
       rfl
@@ -837,10 +773,6 @@ theorem constantCoeff_psubst {K κ : Type} [CommRing K] {a : MvPowerSeries κ K}
   have h := GlobalTheory.BeProps.coeff_subst_range ha f 0
   simpa [hf] using h
 
-theorem constantCoeff_logF_C : PowerSeries.constantCoeff (Formalism.MainNotions.GL3Theta.logF p) = 0 := by
-  rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply]
-  simp [Formalism.MainNotions.GL3Theta.logF]
-
 theorem map_expS {ι : Type} {f : MvPowerSeries ι (FormalGroupSystem.K0 p)} (hf : constantCoeff f = 0) :
     MvPowerSeries.map (Formalism.L2.G.Pend.k0ToC p) (FormalGroupSystem.expS p f) =
       product_zeroth_first_parts.expS ℂ_[p] (MvPowerSeries.map (Formalism.L2.G.Pend.k0ToC p) f) := by
@@ -900,7 +832,7 @@ theorem read_thOne {n' r0 r1 : ℕ} {κ : Type} (B : OmBasis p n') (be : MvPower
       (coordZ B (FormalGroupSystem.K0 p) 1 i : MvPowerSeries (Zidx n' r0 r1) (FormalGroupSystem.K0 p))) :=
     hasSubst_of_constantCoeff_zero fun i => by simp [ha0 i]
   have hη0 : ∀ i, constantCoeff (PowerSeries.subst (ξ i) (Formalism.MainNotions.GL3Theta.logF p)) = 0 :=
-    fun i => constantCoeff_psubst (hξ i) constantCoeff_logF_C
+    fun i => constantCoeff_psubst (hξ i) Formalism.L2.G.Pend.cc_logF
   have hηs : HasSubst (fun i => PowerSeries.subst (ξ i) (Formalism.MainNotions.GL3Theta.logF p)) :=
     hasSubst_of_constantCoeff_zero hη0
 
@@ -951,7 +883,7 @@ theorem read_thOne {n' r0 r1 : ℕ} {κ : Type} (B : OmBasis p n') (be : MvPower
       Formalism.L2.G.Pend.logF_map]
   have hLc : ∀ i : Eidx n' r0 r1 ⊕ Eidx n' r0 r1, constantCoeff (PowerSeries.subst
       (MvPowerSeries.X i : MvPowerSeries (Eidx n' r0 r1 ⊕ Eidx n' r0 r1) ℂ_[p]) (Formalism.MainNotions.GL3Theta.logF p)) = 0 :=
-    fun i => constantCoeff_psubst (by simp) constantCoeff_logF_C
+    fun i => constantCoeff_psubst (by simp) Formalism.L2.G.Pend.cc_logF
   have hcof : MvPowerSeries.subst ξ (MvPowerSeries.map (Formalism.L2.G.Pend.k0ToC p) (inParam p U)) =
       MvPowerSeries.subst (fun i => PowerSeries.subst (ξ i) (Formalism.MainNotions.GL3Theta.logF p))
         (MvPowerSeries.map (Formalism.L2.G.Pend.k0ToC p) U) := by
@@ -1167,7 +1099,7 @@ theorem coeff_logF_cases (n : ℕ) : (PowerSeries.coeff n (logF l) = 0 ∧ ∀ j
   · push Not at h
     refine Or.inl ⟨?_, h⟩
     rw [logF, PowerSeries.coeff_mk]
-    exact Finset.sum_eq_zero fun j _ => if_neg (h j)
+    exact Finset.sum_eq_zero fun j _ => ite_eq_right (h j)
 
 theorem coeff_zero_logF : PowerSeries.coeff 0 (logF l) = 0 := by
   rcases coeff_logF_cases (l := l) 0 with h | ⟨j, h⟩
@@ -1196,12 +1128,6 @@ theorem subst_psubst {κ' : Type} {a : κ → MvPowerSeries κ' ℂ_[l]} (ha : H
 
 theorem cc_lg (k : κ) : constantCoeff (lg k : MvPowerSeries κ ℂ_[l]) = 0 :=
   PowerSeries.constantCoeff_subst_eq_zero (constantCoeff_X k) _ cc_logF
-
-section Frob
-
-variable {σ : ℂ_[l] →+* ℂ_[l]}
-
-end Frob
 
 end GlobalTheory.ThBe0.Inhab
 end -- clump:auto
@@ -1301,7 +1227,7 @@ theorem cc_logK : PowerSeries.constantCoeff (FormalGroupSystem.logF p) = 0 := by
   unfold FormalGroupSystem.logF
   rw [PowerSeries.coeff_mk]
   refine Finset.sum_eq_zero fun j _ => ?_
-  rw [if_neg]
+  rw [ite_eq_right]
   exact (pow_pos hp.out.pos _).ne
 
 theorem cc_lK {ι : Type} (i : ι) : constantCoeff (lK (ι := ι) p i) = 0 :=
@@ -1452,7 +1378,7 @@ theorem constantCoeff_jetLogG (p : ℕ) [Fact p.Prime] (n' : ℕ) {β : Type} (v
   show jetLogG p n' v 0 = 0
   unfold jetLogG
   refine Finset.sum_eq_zero fun e _ => ?_
-  rw [if_neg]
+  rw [ite_eq_right]
   intro h
   have h2 := congrArg (fun m : ZMod n' × β →₀ ℕ => m (v.1 - 2 * (e : ZMod n'), v.2)) h
   simp only [Finsupp.coe_zero, Pi.zero_apply, Finsupp.single_eq_same] at h2
@@ -1621,7 +1547,7 @@ theorem zOm_even (p : ℕ) [Fact p.Prime] (σ : ℂ_[p] →+* ℂ_[p]) {n' : ℕ
       ∑ r, C ((σ ^ k) (om r)) * GlobalTheory.ThBe0.lg (l := p) (Sum.inl r : ρ ⊕ ρ) := by
   have hv : ((k : ℕ) : ZMod n').val = k := by
     rw [ZMod.val_natCast, Nat.mod_eq_of_lt hk]
-  rw [GlobalTheory.ThBe0.zOm, hv, if_pos he]
+  rw [GlobalTheory.ThBe0.zOm, hv, ite_eq_left he]
 
 theorem zOm_odd (p : ℕ) [Fact p.Prime] (σ : ℂ_[p] →+* ℂ_[p]) {n' : ℕ} {ρ : Type} [Fintype ρ] (om om' : ρ → ℂ_[p])
     (k : ℕ) (hk : k < n') (he : ¬ Even k) :
@@ -1629,7 +1555,7 @@ theorem zOm_odd (p : ℕ) [Fact p.Prime] (σ : ℂ_[p] →+* ℂ_[p]) {n' : ℕ}
       ∑ r, C ((σ ^ k) (om' r)) * GlobalTheory.ThBe0.lg (l := p) (Sum.inr r : ρ ⊕ ρ) := by
   have hv : ((k : ℕ) : ZMod n').val = k := by
     rw [ZMod.val_natCast, Nat.mod_eq_of_lt hk]
-  rw [GlobalTheory.ThBe0.zOm, hv, if_neg he]
+  rw [GlobalTheory.ThBe0.zOm, hv, ite_eq_right he]
 
 theorem coordZ_jetZ : ∀ {p : ℕ} [Fact p.Prime] (σ : ℂ_[p] →+* ℂ_[p]), (∀ w : FormalGroupSystem.WW p, σ (Formalism.L2.G.Pend.wToC p w) = Formalism.L2.G.Pend.wToC p (sigW p w)) → ∀ {n' : ℕ} [NeZero n'], Even n' → ∀ (B : OmBasis p n'), GlobalTheory.ThBe0.DualOm σ n' (fun r => Formalism.L2.G.Pend.wToC p (B.om r)) (fun r => Formalism.L2.G.Pend.wToC p (B.omS r)) → ∀ (t : ZMod n' → MvPowerSeries (Fin (n' / 2) ⊕ Fin (n' / 2)) ℂ_[p]) (x : Fin (n' / 2) ⊕ Fin (n' / 2) → MvPowerSeries (ZMod n') ℂ_[p]), (∀ s, MvPowerSeries.constantCoeff (t s) = 0) → (∀ r, MvPowerSeries.constantCoeff (x r) = 0) → (∀ s, MvPowerSeries.subst t (GlobalTheory.ThStr.laS p n' s) = GlobalTheory.ThBe0.zOm σ (fun r => Formalism.L2.G.Pend.wToC p (B.om r)) (fun r => Formalism.L2.G.Pend.wToC p (B.omS r)) s) → (∀ s, MvPowerSeries.subst x (t s) = MvPowerSeries.X s) → ∀ (r0 r1 : ℕ) (i : Eidx n' r0 r1 ⊕ Eidx n' r0 r1), MvPowerSeries.subst (jetZ p n' r0 r1) (MvPowerSeries.map (Formalism.L2.G.Pend.k0ToC p) (coordZ B (FormalGroupSystem.K0 p) 1 i)) = PowerSeries.subst (xiE x i) (Formalism.MainNotions.GL3Theta.logF p) := by
   intro p _ σ hσ n' _ he B hD t x ht0 hx0 ht hxt r0 r1 i

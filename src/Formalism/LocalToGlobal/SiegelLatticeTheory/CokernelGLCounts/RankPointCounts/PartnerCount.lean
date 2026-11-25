@@ -21,8 +21,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 open Classical ValuativeRel
 open Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc Formalism.MainNotions.S.Lat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Defs
 
 variable {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
@@ -240,11 +238,11 @@ theorem tupZ_eq_x0L_at (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) {w : P
     ext a b
     rw [modMat_apply', Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply']
     by_cases hb : b = sgF w a
-    · rw [if_pos hb, if_pos hb, modMat_blk Zd]
+    · rw [ite_eq_left hb, ite_eq_left hb, modMat_blk Zd]
       simp only [twist, qE, tau0, hR, Ring.inverse_one, mul_one, ite_self, sub_zero, map_mul, fr]
       subst hb
       ring
-    · rw [if_neg hb, if_neg hb, map_zero, mul_zero, zero_mul]
+    · rw [ite_eq_right hb, ite_eq_right hb, map_zero, mul_zero, zero_mul]
   have hY : CntLocal.ZZP (M := M) δ u u' p Z * LsDatumB.sgnP p =
       Matrix.diagonal fr * (Z * Sg D.host.E D.R.rS).map ι * Matrix.diagonal fr :=
     zzp_sgn_ord Zd u u' p hM Z
@@ -303,7 +301,7 @@ theorem atMat_zT (hN : PairVal.NormRepExists D u u' F0 what₂) (hrows : IsRowRe
   obtain ⟨y, hy⟩ := hN γ w hat hrel hgen
   have hex : ∃ x : Point D.host.E (D.R.rS + 1) × LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) × PairVal.MatR D ×
       PairVal.MatR D, PairVal.NormRep γ x.1 x.2.1 x.2.2.1 x.2.2.2 := ⟨(w, y), hy⟩
-  have hn : nrep γ = some hex.choose := dif_pos hex
+  have hn : nrep γ = some hex.choose := dite_eq_left hex
   obtain ⟨hRep, -, hL, hU, e⟩ := hex.choose_spec
   have hz : zT γ = ZhatL (lf D F0) hex.choose.2.1 := by unfold zT; rw [hn]
   obtain ⟨F₁, hR₁, -, hc₁⟩ := hat
@@ -378,8 +376,8 @@ def isoLR (Y : M.Mat (m + 1)) (l ρ : Matrix (Fin (m + 1)) (Fin (m + 1)) M.R) (h
       rw [hm, Matrix.mul_inv_rev, Matrix.mul_inv_rev, Matrix.mulVec_mulVec, Matrix.mul_assoc, Matrix.mul_assoc,
         Matrix.nonsing_inv_mul _ (unit_map M hl), Matrix.mul_one, ← Matrix.mulVec_mulVec]
       rw [Matrix.mulVec, dotProduct, Finset.sum_eq_single (Fin.last m)]
-      · rw [hρe, if_pos rfl, one_mul]
-      · intro b _ hb; rw [hρe, if_neg hb, zero_mul]
+      · rw [hρe, ite_eq_left rfl, one_mul]
+      · intro b _ hb; rw [hρe, ite_eq_right hb, zero_mul]
       · intro h; exact absurd (Finset.mem_univ _) h⟩
 
 theorem nIso_congr {Y₁ Y₁' Y₂ Y₂' : M.Mat (m + 1)} (h₁ : M.Iso Y₁ Y₁') (h₂ : M.Iso Y₂ Y₂') :
@@ -604,7 +602,7 @@ theorem cornerSh_eq_of_kind (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D
     (h : kind w = kind w') : cornerSh δ T T' p w = cornerSh δ T T' p w' := by
   unfold kind at h
   unfold cornerSh
-  by_cases h0 : Dmin w D.R.rS = 0 <;> by_cases h0' : Dmin w' D.R.rS = 0 <;> simp only [h0, h0', if_true, if_false] at h ⊢
+  by_cases h0 : Dmin w D.R.rS = 0 <;> by_cases h0' : Dmin w' D.R.rS = 0 <;> simp only [h0, h0', ite_true, ite_false] at h ⊢
   · exact absurd h (by simp)
   · exact absurd h (by simp)
   · rw [Option.some_inj.1 h]
@@ -659,7 +657,7 @@ theorem clsOf_orb {p : PlF D} {Y Y' l ρ l' ρ' : MatP D p} (hl : TieN.IntLow (M
   unfold clsOf
   by_cases hc : (∀ a b, (Y + cornE p s) a b ∈ (M p).R) ∧ IsUnit (Y + cornE p s).det
   · have hc' : (∀ a b, (Y' + cornE p s) a b ∈ (M p).R) ∧ IsUnit (Y' + cornE p s).det := ⟨hint.2 hc.1, hdet ▸ hc.2⟩
-    rw [dif_pos hc, dif_pos hc']
+    rw [dite_eq_left hc, dite_eq_left hc']
     congr 1
     apply Eq.symm
     apply Quotient.sound
@@ -680,8 +678,8 @@ theorem clsOf_orb {p : PlF D} {Y Y' l ρ l' ρ' : MatP D p} (hl : TieN.IntLow (M
       rw [toR_map]
       have hi := isUp_inv hU
       by_cases hb : b = Fin.last D.R.rS
-      · subst hb; rw [if_pos rfl]; exact hi.1 _
-      · rw [if_neg hb]; exact hi.2 b _ (lt_of_le_of_ne (Fin.le_last b) hb)
+      · subst hb; rw [ite_eq_left rfl]; exact hi.1 _
+      · rw [ite_eq_right hb]; exact hi.2 b _ (lt_of_le_of_ne (Fin.le_last b) hb)
     refine ⟨?_⟩
     have key := isoLR (M p) ⟨Matrix.of fun a b => ⟨(Y + cornE p s) a b, hc.1 a b⟩, by
         have : (Matrix.of fun a b => (⟨(Y + cornE p s) a b, hc.1 a b⟩ : (M p).R)).map (M p).R.subtype = Y + cornE p s := rfl
@@ -759,14 +757,14 @@ theorem inOrbP_shape {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : PlF 
 theorem repL_spec {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     {T T' : ℕ} {p : PlF D} {w : Point D.host.E (D.R.rS + 1)} {O : Set (MatP D p)} (h : IsLCls M δ T T' p w O) :
     IntP M p (repL M δ T T' p w O) ∧ O = kkOrb M p (repL M δ T T' p w O) := by
-  unfold repL; rw [dif_pos h]; exact ⟨h.choose_spec.1, h.choose_spec.2.2⟩
+  unfold repL; rw [dite_eq_left h]; exact ⟨h.choose_spec.1, h.choose_spec.2.2⟩
 
 theorem kL_of_orb {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     {T T' : ℕ} {p : PlF D} {w : Point D.host.E (D.R.rS + 1)} {P₂ : MatP D p}
     (hcls : IsLCls M δ T T' p w (kkOrb M p P₂)) (τ : Option ((M p).Cls D.R.rS)) :
     kL M δ T T' p w τ (kkOrb M p P₂) = (nIsoO M p τ (clsOf (M p) (P₂ + cornE p (cornerSh δ T T' p w))) : ℂ) := by
   unfold kL
-  rw [if_pos hcls]
+  rw [ite_eq_left hcls]
   obtain ⟨-, hO⟩ := repL_spec hcls
   generalize repL M δ T T' p w (kkOrb M p P₂) = Y at hO ⊢
   have hm1 : Y ∈ kkOrb M p P₂ := by rw [hO]; exact mem_kkOrb_self p Y
@@ -783,7 +781,7 @@ theorem repF_cell (hN : PairVal.NormRepExists D u u' F0 what₂) (hrows : IsRowR
   obtain ⟨y, hy⟩ := hN γ w hat (eligRel_holds γ w ⟨⟨hgen, hG⟩, hat⟩) hgen
   have hex : ∃ x : Point D.host.E (D.R.rS + 1) × LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) × PairVal.MatR D ×
       PairVal.MatR D, PairVal.NormRep γ x.1 x.2.1 x.2.2.1 x.2.2.2 := ⟨(w, y), hy⟩
-  have hn : nrep γ = some hex.choose := dif_pos hex
+  have hn : nrep γ = some hex.choose := dite_eq_left hex
   have hz : zT γ = ZhatL (lf D F0) (repF γ) := by unfold zT repF; rw [hn]; rfl
   have hA := atMat_zT hN hrows ⟨⟨hgen, hG⟩, hat⟩ (eligRel_holds γ w ⟨⟨hgen, hG⟩, hat⟩)
   rw [hz] at hA
@@ -906,8 +904,6 @@ end Formalism.L2.SG.Pf.PCount
 namespace Formalism.L2.SG.Pf
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem pcount_restr {D : Formalism.BasicNotions.D7} {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
     {δ : ∀ p : PlF D, (D.s.atP p).Fp} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}

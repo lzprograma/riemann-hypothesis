@@ -40,7 +40,7 @@ theorem shear_mp (i : ι) (ε : ℂ) (hε : MeasurePreserving (fun x : ℂ => ε
       rw [he2]
       by_cases hx : x = i
       · subst hx; simp [p]
-      · rw [dif_pos hx, Function.update_of_ne hx]; rfl
+      · rw [dite_eq_left hx, Function.update_of_ne hx]; rfl
     simp only [h', this, hi]
   let g : ({j // p j} → ℂ) → ({j // ¬ p j} → ℂ) → ({j // ¬ p j} → ℂ) := fun y x j => ε * x j + h' y
   have hS : MeasurePreserving (fun q : ({j // p j} → ℂ) × ({j // ¬ p j} → ℂ) => (id q.1, g q.1 q.2))
@@ -58,9 +58,9 @@ theorem shear_mp (i : ι) (ε : ℂ) (hε : MeasurePreserving (fun x : ℂ => ε
     rw [he2]
     by_cases hx : x = i
     · subst hx
-      rw [dif_neg (by simp [p]), Function.update_self]
+      rw [dite_eq_right (by simp [p]), Function.update_self]
       simp only [g]; rw [hh c]; rfl
-    · rw [dif_pos hx, Function.update_of_ne hx]
+    · rw [dite_eq_left hx, Function.update_of_ne hx]
       rfl
   rw [heq]
   exact he.symm.comp (hS.comp he)
@@ -86,12 +86,12 @@ theorem tri_mp (ρ : ι → ℕ) (ε : ι → ℂ) (hε : ∀ p, MeasurePreservi
         · subst hp; simp [has]
         · rw [Function.update_of_ne hp]
           by_cases hs : p ∈ s
-          · rw [if_pos (Or.inr hs), if_pos hs]
+          · rw [ite_eq_left (Or.inr hs), ite_eq_left hs]
             congr 1
             refine hg p _ _ fun q hq => ?_
             rw [Function.update_of_ne]
             intro hqa; rw [hqa] at hq; exact absurd (hmax p hs) (not_le.2 hq)
-          · rw [if_neg (by simp [hp, hs]), if_neg hs]
+          · rw [ite_eq_right (by simp [hp, hs]), ite_eq_right hs]
       rw [this]; exact ih.comp hT
   have : (fun c p => ε p * c p + g p c) = F Finset.univ := by funext c p; simp [F]
   rw [this]; exact key _
@@ -124,8 +124,6 @@ end Tri
 
 variable {D : D7}
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def extC (w : Point D.host.E (D.R.rS + 1)) (c : FreeE w → ℂ) (a b : Fin (D.R.rS + 1)) : ℂ :=
   if h : a < b ∧ blkOf w.1 a.1 = blkOf w.1 b.1 then c ⟨(a, b), h⟩ else 0
 
@@ -138,15 +136,15 @@ theorem extC_measurable (w : Point D.host.E (D.R.rS + 1)) (a b : Fin (D.R.rS + 1
     Measurable fun c : FreeE w → ℂ => extC w c a b := by
   unfold extC
   by_cases h : a < b ∧ blkOf w.1 a.1 = blkOf w.1 b.1
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     exact measurable_pi_apply _
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     exact measurable_const
 
 theorem extC_of_not_lt (w : Point D.host.E (D.R.rS + 1)) (c : FreeE w → ℂ) (a b : Fin (D.R.rS + 1)) (h : ¬ a < b) :
     extC w c a b = 0 := by
   unfold extC
-  rw [dif_neg (fun h' => h h'.1)]
+  rw [dite_eq_right (fun h' => h h'.1)]
 
 theorem extC_congr (w : Point D.host.E (D.R.rS + 1)) (c c' : FreeE w → ℂ) (a b : Fin (D.R.rS + 1)) (L : ℕ)
     (hL : b.val - a.val < L) (hc : ∀ q, gapE w q < L → c q = c' q) : extC w c a b = extC w c' a b := by
@@ -216,7 +214,7 @@ theorem stCoordV_one (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u' : D.wha
   | last =>
     rw [fam_last, Formalism.L2.SG.Pf.Level.hJ_rv, Formalism.L2.SG.Pf.Vanish2.hermitian_f_z_zero, map_zero]
   | cast b' =>
-    rw [fam_castSucc, Formalism.L2.SG.Pf.Level.hJ_rv, Formalism.L2.SG.Pf.Vanish2.hE_f_e, if_neg, map_zero]
+    rw [fam_castSucc, Formalism.L2.SG.Pf.Level.hJ_rv, Formalism.L2.SG.Pf.Vanish2.hE_f_e, ite_eq_right, map_zero]
     intro h
     have h2 := congrArg Fin.val h
     simp only at h2
@@ -245,9 +243,9 @@ theorem hJ_T_e (e f : Fin r → Fin n → ℂ) (z' : Fin n → ℂ)
   have h2 := congrArg (Formalism.L2.SG.HidaSetting.hJ ε (f a)) h
   rw [hJ_add_r', hJ_sum_r', hfe] at h2
   rw [Finset.sum_eq_single a] at h2
-  · rw [hfe, if_pos rfl, mul_one] at h2
+  · rw [hfe, ite_eq_left rfl, mul_one] at h2
     exact h2
-  · intro d _ hda; rw [hfe, if_neg hda, mul_zero]
+  · intro d _ hda; rw [hfe, ite_eq_right hda, mul_zero]
   · intro h; exact absurd (Finset.mem_univ a) h
 
 theorem flag_mul_coef (e f : Fin r → Fin n → ℂ) (z' : Fin n → ℂ)
@@ -273,17 +271,17 @@ theorem flag_mul_coef (e f : Fin r → Fin n → ℂ) (z' : Fin n → ℂ)
     have hc := hJ_T_e ε e f z' hfe hfz' T hT a c
     by_cases hca : c = a
     · subst hca
-      rw [if_neg (lt_irrefl _), add_zero, if_pos rfl] at hc
-      rw [if_pos hab, hc, if_pos rfl, if_neg (fun h => lt_irrefl _ h.1)]; ring
-    · rw [if_neg hca, zero_add] at hc
-      rw [if_neg hca, zero_add]
+      rw [ite_eq_right (lt_irrefl _), add_zero, ite_eq_left rfl] at hc
+      rw [ite_eq_left hab, hc, ite_eq_left rfl, ite_eq_right (fun h => lt_irrefl _ h.1)]; ring
+    · rw [ite_eq_right hca, zero_add] at hc
+      rw [ite_eq_right hca, zero_add]
       by_cases hac : a.castSucc < c.castSucc
       · by_cases hcb : c.castSucc < b
-        · rw [if_pos hcb, if_pos ⟨hac, hcb⟩]; ring
-        · rw [if_neg hcb, if_neg (fun h => hcb h.2), zero_mul]
-      · rw [if_neg hac] at hc
-        rw [hc, mul_zero, if_neg (fun h => hac h.1)]
-  simp only [hterm, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        · rw [ite_eq_left hcb, ite_eq_left ⟨hac, hcb⟩]; ring
+        · rw [ite_eq_right hcb, ite_eq_right (fun h => hcb h.2), zero_mul]
+      · rw [ite_eq_right hac] at hc
+        rw [hc, mul_zero, ite_eq_right (fun h => hac h.1)]
+  simp only [hterm, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 end LawLoc
 
@@ -351,7 +349,7 @@ theorem stVLaw_holds (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.w
   congr 1
   refine Finset.sum_congr rfl fun c _ => ?_
   by_cases hc : p.1.1 < c.castSucc ∧ c.castSucc < p.1.2
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     have hb1 : blkOf w.1 p.1.1.1 = blkOf w.1 c.castSucc.1 := by
       have h1 := blkOf_mono w.1 p.1.1.1 c.castSucc.1 (le_of_lt hc.1)
       have h2 := blkOf_mono w.1 c.castSucc.1 p.1.2.1 (le_of_lt hc.2)
@@ -360,7 +358,7 @@ theorem stVLaw_holds (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.w
     have hfc : (⟨c.castSucc.val, by have h : c.castSucc.val < p.1.2.val := hc.2; have := p.1.2.2; omega⟩ : Fin D.R.rS) = c :=
       Fin.ext rfl
     unfold extC
-    rw [dif_pos ⟨hc.1, hb1⟩, dif_pos ⟨hc.2, hb2⟩]
+    rw [dite_eq_left ⟨hc.1, hb1⟩, dite_eq_left ⟨hc.2, hb2⟩]
     refine Eq.trans ?_ (congrArg₂ (· * ·) (stCoordV_apply X u' w γ v y _).symm (stCoordV_apply X u' w γ v y' _).symm)
     dsimp only
     simp only [hfa, hfc, fam_castSucc]
@@ -369,7 +367,7 @@ theorem stVLaw_holds (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.w
     rw [← h3]
     simp only [e, f, z']
     ring
-  · rw [if_neg hc, mul_zero]
+  · rw [ite_eq_right hc, mul_zero]
     by_cases hac : p.1.1 < c.castSucc
     · have hcb : ¬ c.castSucc < p.1.2 := fun h => hc ⟨hac, h⟩
       rw [extC_of_not_lt w _ _ _ hcb, mul_zero]

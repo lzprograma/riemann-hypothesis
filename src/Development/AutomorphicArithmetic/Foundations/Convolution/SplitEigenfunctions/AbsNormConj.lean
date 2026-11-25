@@ -45,58 +45,13 @@ public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.Slic
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
-import Mathlib.Dynamics.Ergodic.Action.Regular
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Compactness.Paracompact
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Topology.Algebra.ProperAction.Basic
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CycCOfCyclic
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
 import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
-import Mathlib.RingTheory.AdicCompletion.Noetherian
 import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -229,9 +184,6 @@ open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.GJMat
 open scoped Classical ENNReal NNReal Pointwise
 open UpperTheory.ConvolutionTheory.R2
 
-private theorem diag_val (F : Type) [Field F] [NumberField F] (t : Fˣ) :
-    ((IdeleGroup.diagonal F t : (A F)ˣ) : A F) = rt (t : F) := rfl
-
 private theorem diag_inv_val (F : Type) [Field F] [NumberField F] (t : Fˣ) :
     (((IdeleGroup.diagonal F t : (A F)ˣ)⁻¹ : (A F)ˣ) : A F) = rt ((t : F)⁻¹) := by
   rw [← map_inv, ← Units.val_inv_eq_inv_val]
@@ -265,7 +217,7 @@ private theorem cD_mem {F : Type} [Field F] [NumberField F] (t : Fˣ) {x : G1 F}
 theorem UpperTheory.ConvolutionTheory.R2.M.dConj :
     ∀ (F : Type) [Field F] [NumberField F] (M₀ : Meas F) (u : G1 F → ℂ), (∀ γ g, u (ratS F γ * g) = u g) → ∀ t : Fˣ, (IntegrableOn (fun g => u (cD (IdeleGroup.diagonal F t) g)) M₀.D M₀.μ ↔ IntegrableOn u M₀.D M₀.μ) ∧ ∫ g in M₀.D, u (cD (IdeleGroup.diagonal F t) g) ∂M₀.μ = ∫ g in M₀.D, u g ∂M₀.μ := by
   intro F _ _ M₀ u hu t
-  haveI := M₀.haar
+  have := M₀.haar
   set T : (A F)ˣ := IdeleGroup.diagonal F t with hT
   have hTi : T⁻¹ = IdeleGroup.diagonal F t⁻¹ := by rw [hT, map_inv]
   let e : G1 F ≃ₜ G1 F :=
@@ -471,7 +423,7 @@ private theorem Bt_cont (M : Meas ℚ) {Φ : GL (Fin 2) (A E) → ℂ} (hc : Con
   refine continuous_of_dominated (bound := fun _ => C) (fun t => ?_) (fun t => ?_) ?_ ?_
   · exact (hcc.comp (continuous_const.prodMk continuous_id)).aestronglyMeasurable
   · exact ae_of_all _ fun g => hb _
-  · haveI : IsFiniteMeasure (M.μ.restrict M.D) := ⟨by simpa using hv⟩
+  · have : IsFiniteMeasure (M.μ.restrict M.D) := ⟨by simpa using hv⟩
     exact integrable_const _
   · exact ae_of_all _ fun g => hc.comp (continuous_em.comp (continuous_const.mul continuous_dM))
 
@@ -534,7 +486,7 @@ private theorem per_zero (D : Dat ℚ E) (M : Meas ℚ) (U : UMeas) {ω ε : HCh
     (hA : admitted D ω Φ) (hω : Unit1 ω) (hε : Unit1 ε) (hεN : ∀ z, ε.1 (ideleNorm ℚ E z) = 1)
     (hU : ∀ t, UPer D M (fun x => Φ (x * em E (dM t))) = 0) : Per M U (ω⁻¹ * ε) Φ = 0 := by
   obtain ⟨C, hC⟩ := hA.bdd
-  haveI := U.prob
+  have := U.prob
   have hBc := Bt_cont M hA.cont hC
   have hBb := Bt_bdd M hC
   have hdiag : ∀ (χ : HChar ℚ) (r : ℚˣ), χ.1 (IdeleGroup.diagonal ℚ r) = 1 := fun χ r => χ.2.2 r
@@ -550,7 +502,7 @@ private theorem per_zero (D : Dat ℚ E) (M : Meas ℚ) (U : UMeas) {ω ε : HCh
   have hec : Continuous e := Units.continuous_val.comp (ω.2.1.comp hN)
   let f : IdeleGroup ℚ → IdeleGroup.normOneSubgroup E → ℂ := fun t z => c t * (e z * Bt M Φ ((N z)⁻¹ * t))
   let ν := (normOneMeasure E).restrict (normOneFundamentalDomain E)
-  haveI : IsFiniteMeasure ν := ⟨by simpa [ν] using normOneMeasure_normOneFundamentalDomain_lt_top E⟩
+  have : IsFiniteMeasure ν := ⟨by simpa [ν] using normOneMeasure_normOneFundamentalDomain_lt_top E⟩
   have hfc : Continuous (Function.uncurry f) :=
     (hcc.comp continuous_fst).mul ((hec.comp continuous_snd).mul
       (hBc.comp ((hN.comp continuous_snd).inv.mul continuous_fst)))
@@ -737,10 +689,9 @@ private theorem char_integral_ne (μ : Measure G) [μ.IsHaarMeasure] (N : Subgro
     (b : G → ℂ) (hb : Continuous b) (hi : ∀ k ∈ N, ∀ x, b (x * k) = b x) (x₀ : G) (h0 : b x₀ ≠ 0) :
     ∃ χ : G →ₜ* Circle, (∀ k ∈ N, χ k = 1) ∧ ∫ x in F, (χ x : ℂ) * b x ∂μ ≠ 0 := by
   classical
-  by_contra hcon
-  push_neg at hcon
-  haveI hcl : IsClosed (N : Set G) := Subgroup.isClosed_of_discrete
-  haveI : CompactSpace (G ⧸ N) := ⟨by
+  by_contra! hcon
+  have hcl : IsClosed (N : Set G) := Subgroup.isClosed_of_discrete
+  have : CompactSpace (G ⧸ N) := ⟨by
     have : (Set.univ : Set (G ⧸ N)) = QuotientGroup.mk '' closure F := by
       symm
       refine Set.eq_univ_of_forall fun q => ?_
@@ -858,7 +809,7 @@ private theorem char_sel (μ : Measure G) [μ.IsHaarMeasure] (N : Subgroup G) [C
     have := hB _ (subset_closure hx)
     rwa [hβi k hk] at this
   have hfin : μ F < ⊤ := (measure_mono subset_closure).trans_lt hc.measure_lt_top
-  haveI : IsFiniteMeasure (μ.restrict F) := ⟨by simpa using hfin⟩
+  have : IsFiniteMeasure (μ.restrict F) := ⟨by simpa using hfin⟩
   let b : G → ℂ := fun t => ∫ z in F, β (t * c z) ∂μ
   have hbc : Continuous b := by
     refine continuous_of_dominated (bound := fun _ => B) (fun t => ?_)
@@ -1234,8 +1185,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.downN :
   obtain ⟨ω, hω⟩ := cenEx_of E hfr P hC
   have hnv := asaiNV E D M U P ω W.η hC hω (unit_of_normalised hfr hN hω) W.quad
   have hper : ∃ φ ∈ P.V, ∃ h : G1 E, (UPer D M fun x => φ.1 (x * gl h)) ≠ 0 := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     exact hnv (perU_of E D W M N P U ω hN hω hno)
   obtain ⟨π, hπ, hJ⟩ := rev_holds E D W M N P hper
   obtain ⟨π', hπ', hI⟩ := toII E D W M N P hN π hπ hJ
@@ -1276,8 +1226,8 @@ open scoped Pointwise in
 private theorem absNorm_conj {M : Type} [Field M] [NumberField M] (h2 : Module.finrank ℚ M = 2)
     {w w' : HeightOneSpectrum (𝓞 M)} (h : w'.under (𝓞 ℚ) = w.under (𝓞 ℚ)) :
     Ideal.absNorm w'.asIdeal = Ideal.absNorm w.asIdeal := by
-  haveI : Algebra.IsQuadraticExtension ℚ M := { finrank_eq_two' := h2 }
-  haveI : IsGalois ℚ M := inferInstance
+  have : Algebra.IsQuadraticExtension ℚ M := { finrank_eq_two' := h2 }
+  have : IsGalois ℚ M := inferInstance
   obtain ⟨g, hg⟩ := Algebra.IsInvariant.exists_smul_of_under_eq (𝓞 ℚ) (𝓞 M) (M ≃ₐ[ℚ] M) w.asIdeal w'.asIdeal
     (congrArg HeightOneSpectrum.asIdeal h.symm)
   rw [hg, Ideal.absNorm_apply, Ideal.absNorm_apply, Submodule.cardQuot_apply, Submodule.cardQuot_apply]
@@ -1286,7 +1236,7 @@ private theorem absNorm_conj {M : Type} [Field M] [NumberField M] (h2 : Module.f
 theorem UpperTheory.ConvolutionTheory.RankTwoDescent.descS :
     UpperTheory.V.Z.Bc.DescS := by
   intro M _ _ h2 hM sat' inf' hc _ _ hi
-  haveI := hM
+  have := hM
   rcases hc with ⟨_, P, rfl, rfl⟩ | ⟨hR, -⟩
   swap
   · exfalso

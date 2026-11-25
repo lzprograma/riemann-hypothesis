@@ -24,8 +24,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.StabIntLat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (w : Point D.host.E (D.R.rS + 1))
 
 theorem E_strict {X : MatR D} (hU : UpU X) (hB : IsBlockDiagonalMatrix w X) (i j : Fin (D.R.rS + 1)) (hji : j ≤ i) :
@@ -121,8 +119,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.StabIntLat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem twistC : TwistC D := by
@@ -139,11 +135,11 @@ theorem twistC : TwistC D := by
   have hτl : ∀ q, ¬ selfP w q → ¬ upperM w q → τA w q y = 0 := fun q h1 h2 => by simp [τA, h1, h2]
   have hΛs : ∀ q, selfP w q → ∀ z, z ∈ Λq w q ↔
       z ∈ ddPow D (hgt w q) ∧ z + sgq w q * D.conjF z ∈ qdPow D (hgt w q) := fun q h z => by
-    simp only [Λq, h, if_true]; rfl
+    simp only [Λq, h, ite_true]; rfl
   have hΛu : ∀ q, ¬ selfP w q → upperM w q → ∀ z, z ∈ Λq w q ↔ z ∈ qdPow D (hgt w q) := fun q h1 h2 z => by
-    simp only [Λq, Iq, h1, h2, if_false, not_true_eq_false, or_self]; rfl
+    simp only [Λq, Iq, h1, h2, ite_false, not_true_eq_false, or_self]; rfl
   have hΛl : ∀ q, ¬ selfP w q → ¬ upperM w q → ∀ z, z ∈ Λq w q ↔ z ∈ ddPow D (hgt w q) := fun q h1 h2 z => by
-    simp only [Λq, Iq, h1, h2, if_false, not_false_eq_true, or_true, if_true]; rfl
+    simp only [Λq, Iq, h1, h2, ite_false, not_false_eq_true, or_true, ite_true]; rfl
   have hup : ∀ q, ¬ selfP w q → upperM w q →
       y q - τA w q y = (Xmat w y - Psi w (Xmat w y)⁻¹) q.1.1 q.1.2 := by
     intro q h1 h2
@@ -285,8 +281,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.StabIntLat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (w : Point D.host.E (D.R.rS + 1))
 
 def coordX (X : MatR D) : FreeE w → D.host.E := fun q => X q.1.1 q.1.2
@@ -295,7 +289,7 @@ theorem Xmat_coordX {X : MatR D} (hU : UpU X) (hB : IsBlockDiagonalMatrix w X) :
   funext a c
   by_cases h : a = c
   · subst h; simp [Xmat, (hU a a).2 rfl]
-  · simp only [Xmat, h, if_false]
+  · simp only [Xmat, h, ite_false]
     by_cases h2 : a < c ∧ blkOf w.1 a.val = blkOf w.1 c.val
     · rw [dite_eq_left h2]; rfl
     · rw [dite_eq_right h2]
@@ -345,16 +339,16 @@ theorem τA_lowdep (q : FreeE w) {y y' : FreeE w → D.host.E} (h : ∀ p, hpr w
     τA w q y = τA w q y' := by
   unfold τA
   by_cases h1 : selfP w q
-  · simp only [h1, if_true, cf, trunc_eq w q h]
+  · simp only [h1, ite_true, cf, trunc_eq w q h]
   · by_cases h2 : upperM w q
     · obtain ⟨hp1, hp2⟩ := upper_qbar w h2
       have hlt : hpr w (qbar w q) < hpr w q := by
-        unfold hpr; rw [hgt_qbar]; simp only [h2, hp2, if_true, if_false]; omega
+        unfold hpr; rw [hgt_qbar]; simp only [h2, hp2, ite_true, ite_false]; omega
       have hc : cf w y (qbar w q) = cf w y' (qbar w q) := by
         unfold cf
         rw [trunc_eq w (qbar w q) (fun p hp => h p (lt_trans hp hlt))]
-      simp only [h1, h2, if_false, if_true, h _ hlt, hc]
-    · simp only [h1, h2, if_false]
+      simp only [h1, h2, ite_false, ite_true, h _ hlt, hc]
+    · simp only [h1, h2, ite_false]
 
 end Formalism.L2.SG.Pf.StabIntLat
 end -- clump:auto

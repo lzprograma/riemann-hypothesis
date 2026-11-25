@@ -86,7 +86,7 @@ private theorem pTop_mulVec_eq_of_vanishing {k r j : ℕ} (q : PTop k r j) (w : 
     · simp [hw m hm]
     · have hz : pTop k r j q i m = 0 := by
         unfold pTop pOf pEl
-        rw [if_neg (Ne.symm hmi), dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega)]
+        rw [ite_eq_right (Ne.symm hmi), dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega)]
       simp [hz]
   · simp
 
@@ -97,7 +97,7 @@ private theorem pTop_wI_esI_eq {k r j : ℕ} (q : PTop k r j) (b : Fin r) (hb : 
   have := l.isLt
   have := b.isLt
   unfold pTop pOf pEl
-  rw [if_neg (_root_.GlobalTheory.Amp.Rad.wI_ne_esI l b), dite_eq_right (by omega), dif_pos (by omega)]
+  rw [ite_eq_right (_root_.GlobalTheory.Amp.Rad.wI_ne_esI l b), dite_eq_right (by omega), dite_eq_left (by omega)]
   have e1 : (⟨2 * r + k - (esI k r b).val, by omega⟩ : Fin r) = b := by
     apply Fin.ext
     show 2 * r + k - (2 * r + k - b.val) = b.val
@@ -107,7 +107,7 @@ private theorem pTop_wI_esI_eq {k r j : ℕ} (q : PTop k r j) (b : Fin r) (hb : 
     show r + l.val - r = l.val
     omega
   have hb' : j ≤ 2 * r + k - (esI k r b).val := by omega
-  simp only [e1, e2, dif_pos hb']
+  simp only [e1, e2, dite_eq_left hb']
 
 private theorem crd_mulVec_bvec_eI_eq_upperIn {k r j : ℕ} (β : Fin r → ℕ) (q : (UTin β → ℂ) × PTop k r j) (a b : Fin r) :
     (crd k r j β q *ᵥ bvec (eI k r b)) (eI k r a) = upperIn β q.1 a b := by
@@ -117,7 +117,7 @@ private theorem crd_mulVec_bvec_eI_eq_upperIn {k r j : ℕ} (β : Fin r → ℕ)
   have := b.isLt
   rw [crd, ← Matrix.mulVec_mulVec, pTop_mulVec_eq_of_vanishing, mulVec_bvec_lemma_2]
   · unfold uEmb
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     rfl
   · intro m hm
     rw [mulVec_bvec_lemma_2]
@@ -126,7 +126,7 @@ private theorem crd_mulVec_bvec_eI_eq_upperIn {k r j : ℕ} (β : Fin r → ℕ)
       intro h
       have := congrArg Fin.val h
       omega
-    rw [dite_eq_right (by omega), dite_eq_right (by omega), if_neg hne]
+    rw [dite_eq_right (by omega), dite_eq_right (by omega), ite_eq_right hne]
 
 theorem coords_top : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (H : HermSpace K V) (r : ℕ) (N : NF H r) (k : ℕ) (σ : K →+* ℂ) (ρ : ℝ) (β : Fin r → ℕ) (Φ : V → Fin (2 * r + k + 1) → ℂ) (z z' : Fin (2 * r + k + 1) → ℂ) (g : Mat k r), 0 < ρ → IsFrameOf N k σ ρ β Φ z z' g → ∀ (s : V ≃ₗ[K] V) (q : (UTin β → ℂ) × PTop k r N.j), (∀ x, crd k r N.j β q *ᵥ Φ x = Φ (s x)) → (∀ (i : UTin β) (u : Fin r → K), s (N.F.e i.1.1.2.castSucc) = N.F.e i.1.1.2.castSucc + ∑ c, u c • N.F.e c.castSucc → q.1 i = ((ρ ^ (i.1.1.2.val - i.1.1.1.val) : ℝ) : ℂ) * σ (u i.1.1.1)) ∧ (q.1 = 0 → ∀ a : Fin r, s (N.F.e a.castSucc) = N.F.e a.castSucc) ∧ (q.1 = 0 → ∀ (b : {a : Fin r // N.j ≤ a.val}) (y : V), s (N.ist b.1) - N.ist b.1 - y ∈ II N.F N.F' → q.2.1 b = ((ρ ^ (r - b.1.val) : ℝ) : ℂ) • fun l => Φ y (wI k r l)) := by
   intro K V _ _ _ _ _ _ _ _ H r N k σ ρ β Φ z z' g hρ hF s q hq
@@ -144,7 +144,7 @@ theorem coords_top : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [Ad
     have key := congrFun (hq (N.F.e b.castSucc)) (eI k r a)
     rw [hsu, hadd, RealMat.phi_sum hR, hv b, Matrix.mulVec_smul, Pi.smul_apply, crd_mulVec_bvec_eI_eq_upperIn, hcol] at key
     simp only [hsmul, hv, Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, bvec, Pi.single_apply,
-      _root_.GlobalTheory.Amp.Rad.eI_inj, hab.ne, if_false, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true,
+      _root_.GlobalTheory.Amp.Rad.eI_inj, hab.ne, ite_false, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true,
       zero_add, Complex.ofReal_pow] at key
     have hne : (ρ : ℂ) ^ (r - b.val) ≠ 0 := pow_ne_zero _ hρc
     have hpow : (ρ : ℂ) ^ (r - a.val) = (ρ : ℂ) ^ (r - b.val) * (ρ : ℂ) ^ (b.val - a.val) := by
@@ -160,7 +160,7 @@ theorem coords_top : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [Ad
     rw [← hq, crd_of_zero β q h0, hv a, Matrix.mulVec_smul, pTop_mulVec_eq_of_vanishing]
     intro m hm
     simp only [bvec, Pi.single_apply]
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     have h1 := congrArg Fin.val h
     have h2 : (eI k r a).val = a.val := rfl
@@ -176,7 +176,7 @@ theorem coords_top : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [Ad
     have hsplit : s (N.ist b) = N.ist b + y + (s (N.ist b) - N.ist b - y) := by abel
     rw [hsplit, hadd, hadd, hI b hb, crd_of_zero β q h0, Matrix.mulVec_smul, Pi.smul_apply, mulVec_bvec_lemma_2,
       pTop_wI_esI_eq q.2 b hb l] at key
-    simp only [Pi.add_apply, hz, add_zero, Pi.smul_apply, bvec, Pi.single_apply, _root_.GlobalTheory.Amp.Rad.wI_ne_esI l b, if_false,
+    simp only [Pi.add_apply, hz, add_zero, Pi.smul_apply, bvec, Pi.single_apply, _root_.GlobalTheory.Amp.Rad.wI_ne_esI l b, ite_false,
       smul_eq_mul, mul_zero, zero_add, Complex.ofReal_inv, Complex.ofReal_pow] at key
     simp only [Pi.smul_apply, smul_eq_mul, Complex.ofReal_pow]
     have hne : (ρ : ℂ) ^ (r - b.val) ≠ 0 := pow_ne_zero _ hρc

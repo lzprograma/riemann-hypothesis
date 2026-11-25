@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsExtendMulSimplePoleOfVanishing
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimplePoleAlong
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsoOverOfIsOpenImmersion
 import Mathlib.Algebra.Order.Floor.Extended
@@ -61,7 +62,6 @@ open GlobalTheory.FlagMod (FlagCover)
 open GlobalTheory.FlagTan (dimFlag)
 open GlobalTheory.HSApp
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.LogCanonicalReflexive
 
@@ -69,15 +69,8 @@ variable {k : Type} [CommRing k] {Y : Scheme.{0}} {p : Y ⟶ Sp k}
 
 theorem fun_eq_of_dense [IsReduced Y] {O : Y.Opens} (hd : Dense (O : Set Y)) {W : Y.Opens} {a b : Γ(Y, W)}
     (h : ∀ z (hz : z ∈ W), z ∈ O → ger z hz a = ger z hz b) : a = b := by
-  rw [← sub_eq_zero]
-  refine eq_zero_of_basicOpen_eq_bot (a - b) ?_
-  by_contra hne
-  obtain ⟨z, hz', hz⟩ := hd.inter_open_nonempty _ (Y.basicOpen (a - b)).isOpen
-    (Set.nonempty_iff_ne_empty.2 fun e => hne (Opens.ext e))
-  have hm := Y.basicOpen_le _ hz'
-  have hu : IsUnit (ger z hm (a - b)) := (Y.mem_basicOpen _ z hm).1 hz'
-  rw [map_sub, h z hm hz, sub_self] at hu
-  exact not_isUnit_zero hu
+  intros
+  apply _root_.GlobalTheory.LogCanonicalReflexive.fun_ext_ger_of_dense <;> assumption
 
 theorem glue_of_dense [IsReduced Y] {O : Y.Opens} (hd : Dense (O : Set Y)) {B : LB Y} (hB : B.IsLB)
     {ι : Type} (V : ι → Y.Opens) (c : ι → B.ι) (hc : ∀ s, V s ≤ B.U (c s)) (cover : ∀ y, ∃ s, y ∈ V s)

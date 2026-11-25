@@ -118,11 +118,11 @@ theorem adjB_E (dual : Bool) (hU : IsInfUnitary ε E) {M : Submodule ℂ D} (hME
     by_cases hca : c = a
     · subst hca
       have e2 := adjSg_mul_self ε b
-      simp only [Pi.single_eq_same, if_true]
+      simp only [Pi.single_eq_same, ite_true]
       linear_combination (-(adjSg ε c * adjSg ε b * inner ℂ (u c) (E b c y)) -
         inner ℂ (u b) y * adjSg ε b * adjSg ε b) * e1 + (-inner ℂ (u b) y) * e2
     · have hac : a ≠ c := Ne.symm hca
-      simp only [hca, if_false, inner_zero_left, inner_zero_right, add_zero, mul_zero, Pi.single_apply, hac]
+      simp only [hca, ite_false, inner_zero_left, inner_zero_right, add_zero, mul_zero, Pi.single_apply, hac]
       linear_combination (-(adjSg ε a * adjSg ε b * inner ℂ (u c) (E b a y))) * e1
   · have hT : tensF true E b a (Pi.single c y) =
         Pi.single c (E b a y) - Pi.single a ((Pi.single c y : Fin n → D) b) := by
@@ -134,11 +134,11 @@ theorem adjB_E (dual : Bool) (hU : IsInfUnitary ε E) {M : Submodule ℂ D} (hME
     by_cases hcb : c = b
     · subst hcb
       have e2 := adjSg_mul_self ε a
-      simp only [Pi.single_eq_same, if_true]
+      simp only [Pi.single_eq_same, ite_true]
       linear_combination (-(adjSg ε a * adjSg ε c * inner ℂ (u c) (E c a y)) +
         inner ℂ (u a) y * adjSg ε a * adjSg ε a) * e1 + (inner ℂ (u a) y) * e2
     · have hbc : b ≠ c := Ne.symm hcb
-      simp only [hcb, if_false, inner_zero_left, inner_zero_right, sub_zero, mul_zero, Pi.single_apply, hbc]
+      simp only [hcb, ite_false, inner_zero_left, inner_zero_right, sub_zero, mul_zero, Pi.single_apply, hbc]
       linear_combination (-(adjSg ε a * adjSg ε b * inner ℂ (u c) (E b a y))) * e1
 
 theorem adjB_block {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) {c d : Fin n} (h : ε c ≠ ε d) :

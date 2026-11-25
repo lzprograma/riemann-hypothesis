@@ -8,42 +8,6 @@ public import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.NormalisedAd
 public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.NormalFrame0
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsAuxiliaryHyperbolicVectors
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IndefRRealPins
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDecompChainSpaceDefiniteAddNormalFrame
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -55,7 +19,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mi Formalism.IndefR.Seed.Frm IsDedekindDomain NumberField
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -79,12 +42,12 @@ theorem normalFr_repr' (E Ev : ∀ j, ℕ → (D.sp.Y j).V) (z : ∀ j, (D.sp.Y 
   unfold normalFr adaptedVector nAux
   by_cases h1 : i < (D.R.m - 1 - j) / 2
   · have hb' : ¬ bI D j ≤ i := by unfold bI; omega
-    simp only [if_pos h1, if_neg hb', one_mul]
+    simp only [ite_eq_left h1, ite_eq_right hb', one_mul]
     rfl
   · by_cases h2 : Even j ∧ i = (D.R.m - 1 - j) / 2
     · have hc : (D.R.m - 1 - j) % 2 = 1 ∧ i = (D.R.m - 1 - j) / 2 := ⟨hpar.1 h2.1, h2.2⟩
       have hb' : ¬ bI D j ≤ i := by unfold bI; omega
-      simp only [if_neg h1, if_pos h2, if_pos hc, if_neg hb', one_mul]
+      simp only [ite_eq_right h1, ite_eq_left h2, ite_eq_left hc, ite_eq_right hb', one_mul]
       rfl
     · have h3 : ¬ ((D.R.m - 1 - j) % 2 = 1 ∧ i = (D.R.m - 1 - j) / 2) := fun h => h2 ⟨hpar.2 h.1, h.2⟩
       have hb' : bI D j ≤ i := by
@@ -93,7 +56,7 @@ theorem normalFr_repr' (E Ev : ∀ j, ℕ → (D.sp.Y j).V) (z : ∀ j, (D.sp.Y 
         · have : i ≠ (D.R.m - 1 - j) / 2 := fun h => h3 ⟨hc, h⟩
           omega
         · omega
-      simp only [if_neg h1, if_neg h2, if_neg h3, if_pos hb', map_smul, Finsupp.smul_apply, smul_eq_mul]
+      simp only [ite_eq_right h1, ite_eq_right h2, ite_eq_right h3, ite_eq_left hb', map_smul, Finsupp.smul_apply, smul_eq_mul]
       rfl
 
 theorem normalFr_zero_repr' (E Ev : ∀ j, ℕ → (D.sp.Y j).V) (z : ∀ j, (D.sp.Y j).V)
@@ -106,11 +69,11 @@ theorem normalFr_zero_repr' (E Ev : ∀ j, ℕ → (D.sp.Y j).V) (z : ∀ j, (D.
   unfold normalFr frame0
   rw [hρ]
   by_cases h1 : i < D.R.rS
-  · rw [if_pos h1, dite_eq_left h1, (hE0 i h1).1]
-  · rw [if_neg h1, dite_eq_right h1]
+  · rw [ite_eq_left h1, dite_eq_left h1, (hE0 i h1).1]
+  · rw [ite_eq_right h1, dite_eq_right h1]
     by_cases h3 : i = D.R.rS
-    · rw [if_pos ⟨(Nat.even_iff.2 rfl : Even 0), h3⟩, if_pos h3, hz0]
-    · rw [if_neg (fun h => h3 h.2), if_neg h3, if_pos (Nat.even_iff.2 rfl : Even 0)]
+    · rw [ite_eq_left ⟨(Nat.even_iff.2 rfl : Even 0), h3⟩, ite_eq_left h3, hz0]
+    · rw [ite_eq_right (fun h => h3 h.2), ite_eq_right h3, ite_eq_left (Nat.even_iff.2 rfl : Even 0)]
       have h5 : 2 * D.R.rS - i < D.R.rS := by unfold Ranks.rS at *; omega
       have h6 : nAux D 0 - 1 - i = 2 * D.R.rS - i := by unfold nAux Ranks.rS at *; omega
       rw [dite_eq_left h5, h6, (hE0 _ h5).2]
@@ -163,19 +126,19 @@ theorem colsAt' (γ : ∀ j, GL (Fin (D.sp.X j).rank) (Ef D)) (E Ev : ∀ j, ℕ
   refine ⟨fun i hi col hcol r => ?_, fun col l' hcl r => ?_⟩
   · rw [agree_all hA hei r col]
     simp only [chainMat]
-    rw [if_neg (by omega), if_pos (by unfold nAux; omega), absNorm_of_div P hl,
+    rw [ite_eq_right (by omega), ite_eq_left (by unfold nAux; omega), absNorm_of_div P hl,
       show (col : ℕ) - D.R.k = i by omega, normalFr_repr' E Ev z hj hi r]
   · rw [agree_all hA hei r col]
     simp only [chainMat]
     rcases hcl with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · have hl' : l' = ⟨col, (idx_lt hj col).1 h1⟩ := Fin.ext h2
       subst hl'
-      rw [if_pos h1, colX_eq j _ col ((idx_lt hj col).1 h1)]
+      rw [ite_eq_left h1, colX_eq j _ col ((idx_lt hj col).1 h1)]
     · have h3 : ¬ (col : ℕ) < D.R.k := by omega
       have h4 : ¬ (col : ℕ) < D.R.k + nAux D j := by unfold nAux; omega
       have hl' : l' = ⟨(col : ℕ) - nAux D j, (idx_lt hj col).2 h4⟩ := Fin.ext (by simp only [nAux]; omega)
       subst hl'
-      rw [if_neg h3, if_neg h4, colX_eq j _ _ ((idx_lt hj col).2 h4)]
+      rw [ite_eq_right h3, ite_eq_right h4, colX_eq j _ _ ((idx_lt hj col).2 h4)]
 
 theorem normalFrames_of_stdShape : ∀ {D : D7} {T : Type} (L : LevCh D T), (∀ PP, PP ∈ L.Pg ↔ ∃ l, L.C.P.Div l PP) → ∀ (γ : ∀ j, GL (Fin (D.sp.X j).rank) (Formalism.IndefR.Lev.EAf D)) (E Ev : ∀ j, ℕ → (D.sp.Y j).V) (z : ∀ j, (D.sp.Y j).V), (∀ j, j < D.R.m → IsFrame (γ j) (Formalism.L2.Herm.crdLat (D.sp.X j) (D.sp.X j).L0)) → (∀ j, j < D.R.m → GlobalTheory.IndefiniteRowSideFullHecke.ChainMatrices.IsAuxiliaryHeckeCharacter D j (E j) (Ev j) (z j)) → (∀ i (hi : i < D.R.rS), E 0 i = D.sp.hypE ⟨i, hi⟩ ∧ Ev 0 i = D.sp.hypF ⟨i, hi⟩) → z 0 = D.sp.zm → GlobalTheory.IndefiniteRowSideFullHecke.ChainMatrices.StdShape L γ E Ev z → (∃ (e ev : ∀ j : ℕ, ℕ → Fin (D.sp.Y j).rank → D.host.E) (z' : ∀ j : ℕ, Fin (D.sp.Y j).rank → D.host.E) (κ : ℕ → ℕ → D.host.E) (s : ℕ → D.host.E), NormalFrames (betaYOf L.βY) e ev z' κ s L.Pg L.Pg ∧ NormalFrame0 (betaYOf L.βY 0) L.Pg L.Pg) ∧ XBasesG L.Pg L.βY := by
   intro D T L hPg γ E Ev z hγ hAux hE0 hz0 hSh
@@ -215,14 +178,14 @@ theorem normalFrames_of_stdShape : ∀ {D : D7} {T : Type} (L : LevCh D T), (∀
     · exact map_one _
   · intro PP hPP ei hei j hj
     refine ⟨fun i hi col hcol r => ?_, hxspan j hj PP hPP ei hei⟩
-    rw [if_pos hPP]
+    rw [ite_eq_left hPP]
     exact (hcols j hj PP hPP ei hei).1 i hi col hcol r
   · intro PP hPP ei hei
     have hc := (hcols 0 h0m PP hPP ei hei).1
     refine ⟨fun i hi col hcol r => ?_, fun col hcol => hxspan 0 h0m PP hPP ei hei col
       (Or.inl (by rw [← Formalism.IndefR.Seed.FrmC.N_zero D]; exact hcol))⟩
     have hi' : i < D.R.m - 1 - 0 := by omega
-    rw [if_pos hPP, hc i hi' col (by rw [hcol, Formalism.IndefR.Seed.FrmC.N_zero]) r, ← normalFr_repr' E Ev z h0m hi' r,
+    rw [ite_eq_left hPP, hc i hi' col (by rw [hcol, Formalism.IndefR.Seed.FrmC.N_zero]) r, ← normalFr_repr' E Ev z h0m hi' r,
       normalFr_zero_repr' E Ev z hE0 hz0 hi]
   · intro j hj
     refine ⟨γ j, by rw [← crdLat_eq_l0X]; exact hγ j hj, fun PP hPP ei hei col l' hcl r => ?_⟩
@@ -241,7 +204,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mi Formalism.IndefR.Seed.Frm IsDedekindDomain NumberField
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.VertexFromTransport
 
@@ -268,7 +230,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mi Formalism.IndefR.Seed.Frm IsDedekindDomain NumberField
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -311,7 +272,7 @@ theorem selfDual_frames_normal_at_level_places_of_charFrame : ∀ (D : D7) (C : 
     | zero => exact isAuxiliaryHyperbolicPart_initialChainSpace
     | succ j => exact hA₁ (j + 1) hj
   have hE0 : ∀ i (hi : i < D.R.rS), E 0 i = D.sp.hypE ⟨i, hi⟩ ∧ Ev 0 i = D.sp.hypF ⟨i, hi⟩ := fun i hi =>
-    ⟨dif_pos hi, dif_pos hi⟩
+    ⟨dite_eq_left hi, dite_eq_left hi⟩
   have hz0 : z 0 = D.sp.zm := rfl
   obtain ⟨L', hS, hF, hSh⟩ := GlobalTheory.StdFrames.framesStdExist D Empty L hP hQ γ E Ev z hγ'
   have hPg' : L'.Pg = Pg := hS.2.2.2.2.2.1
@@ -342,7 +303,6 @@ section -- clump:auto
 
 section
 open Formalism.BasicNotions Formalism.MainNotions NumberField IsDedekindDomain Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Rows Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Cx Formalism.L2.Pj Formalism.IndefR.FWT
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.FramesAtReal
 theorem framesEx_of_realisation_alt : ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (Gi : Formalism.MainNotions.G.Inst D L) (Gl : Formalism.MainNotions.G.LatInst D) (K : Formalism.MainNotions.G.Consts) (Y : DivX D) (cX : ExtraC) (ex : Extra D L hT Gi Gl K Y cX) (Rc : _root_.Formalism.L2.RecTAlt ex) (P : RowSideFamily ex) (Dcf : ∀ Zs : DefSub P.A3.fam3.amb3, DefCols (P.A3.side3 P.Ps P.ψs Zs)) (Spf : ∀ Zs : DefSub P.A3.fam3.amb3, SPer (Dcf Zs)) (Zscf : DefSub P.A3.fam3.amb3 → IndefScale P.A3.fam3.base3) (S : _root_.Formalism.L2.SG.SpectralTiesReal.STiesRAlt Rc) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (Q : _root_.Formalism.IndefR.IndefiniteRealisation Rc P Dcf Spf Zscf S Ks), _root_.Formalism.IndefR.IndefiniteRealisationNormalisation Q → Q.FramesEx := by
   intro D L hT Gi Gl K Y cX ex Rc P Dcf Spf Zscf S Ks _ _ _ Q _

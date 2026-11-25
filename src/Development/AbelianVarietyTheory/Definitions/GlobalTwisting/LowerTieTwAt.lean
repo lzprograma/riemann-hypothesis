@@ -102,8 +102,6 @@ section Rows
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC
 
-attribute [local instance] GlobalTheory.Mem.Col2.starE
-
 variable {B : Base} {X : PreX B.toPre} (I : TC B X) (l : I.Laws)
 
 def RowVal (u : B.Word) (a : I.ι) (G : (I.per l u a).Mt) : Prop :=

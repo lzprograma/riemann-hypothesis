@@ -55,7 +55,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.MiStarOfMid
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ChartQuot
 
@@ -182,10 +181,10 @@ theorem isDetRoot_prod {ι : Type} [Fintype ι] {k : ι → Type} [∀ i, Field 
     by_cases hw : ∃ i, (p i).v = w
     · obtain ⟨i, rfl⟩ := hw
       refine on (compAt D (p i).v) i (fun j hj => ?_) ?_
-      · rw [(sum_parts (p j)).2, if_neg fun e => hj (hp e).symm]
-      · rw [(sum_parts (p i)).2, if_pos rfl]
+      · rw [(sum_parts (p j)).2, ite_eq_right fun e => hj (hp e).symm]
+      · rw [(sum_parts (p i)).2, ite_eq_left rfl]
     · refine off (compAt D w) (fun i => ?_) (compAt_of_idAt hδ hw)
-      rw [(sum_parts (p i)).2, if_neg fun e => hw ⟨i, e.symm⟩]
+      rw [(sum_parts (p i)).2, ite_eq_right fun e => hw ⟨i, e.symm⟩]
 
 theorem exists_unit_det {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     {Y : Type} [Fintype Y] [DecidableEq Y] {N : ℕ} (F : GlobalTheory.LocMod.Frame k N Y) (g : GL (Y ⊕ Fin 0) k)

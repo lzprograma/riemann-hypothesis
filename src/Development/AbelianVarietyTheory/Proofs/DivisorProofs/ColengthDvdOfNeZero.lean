@@ -301,7 +301,7 @@ theorem colength_dvd : ∀ (E F T : Type) [Field E] [NumberField E] [Field F] [C
       Finset.prod_congr rfl fun i _ => by
         by_cases h0 : δ i = 0
         · rw [hz i h0, pow_zero, pow_zero]
-        · simp only [δ', if_neg h0]
+        · simp only [δ', ite_eq_right h0]
     rw [hp]
     exact h
 

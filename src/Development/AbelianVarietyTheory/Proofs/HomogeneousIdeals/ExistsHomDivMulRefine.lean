@@ -54,15 +54,6 @@ namespace GlobalTheory
 
 namespace QuadRefinement
 
-section Additive
-
-variable {O Y M : Type*} [CommRing O] [StarRing O] [AddCommGroup Y] [Module O Y]
-  [AddCommGroup M]
-
-variable {τ : Y →+ Y →+ M} {w : O}
-
-end Additive
-
 section Multiplicative
 
 variable {O Y A : Type*} [CommRing O] [StarRing O] [AddCommGroup Y] [Module O Y] [CommGroup A]
@@ -72,19 +63,6 @@ def mulRefine (τ : Y →+ Y →+ Additive A) (w : O) (y : Y) : A := (τ y (w �
 variable {τ : Y →+ Y →+ Additive A} {w : O}
 
 end Multiplicative
-
-section HalfElement
-
-variable {K : Type*} [Field K] [CharZero K] [StarRing K] {d : ℤ} {s : K}
-
-
-end HalfElement
-
-section Example
-
-open QuadraticAlgebra
-
-end Example
 
 end QuadRefinement
 

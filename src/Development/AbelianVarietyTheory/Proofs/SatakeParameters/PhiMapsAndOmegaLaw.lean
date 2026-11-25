@@ -3,52 +3,7 @@ module
 public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LambdaCharSymMulInvEqOne
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsRowFrame
 
 @[expose] public section
@@ -216,7 +171,7 @@ theorem matrixExtendByZero_mul (χ : κˣ →* Kˣ) (a b : κ) : ext0 χ (a * b)
   unfold ext0
   by_cases ha : IsUnit a
   · by_cases hb : IsUnit b
-    · rw [dif_pos ha, dif_pos hb, dif_pos (ha.mul hb), ← Units.val_mul, ← map_mul]
+    · rw [dite_eq_left ha, dite_eq_left hb, dite_eq_left (ha.mul hb), ← Units.val_mul, ← map_mul]
       congr 2
       exact Units.ext (by simp)
     · rw [dite_eq_right hb, dite_eq_right fun h => hb (isUnit_of_mul_isUnit_right h), mul_zero]
@@ -224,7 +179,7 @@ theorem matrixExtendByZero_mul (χ : κˣ →* Kˣ) (a b : κ) : ext0 χ (a * b)
 
 theorem unitCharacterExtendByZero_ne_zero_of_isUnit (χ : κˣ →* Kˣ) {a : κ} (h : IsUnit a) : ext0 χ a ≠ 0 := by
   unfold ext0
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Units.ne_zero _
 
 theorem extendByZeroOffSubset_mul_left_of_mem_lattice (χ : κˣ →* Kˣ) (a : κ) : ext0 χ⁻¹ a = (ext0 χ a)⁻¹ := by
@@ -485,7 +440,7 @@ theorem entB_comp {N'' N k₀ c'' n'' c' n' c n : ℕ} (hk : k₀ ≤ n') (ex'' 
     · simp
   rw [h3, Finset.sum_mul]
   refine Finset.sum_congr rfl fun l _ => ?_
-  have h4 : atN v (fIdx k₀ c' n' l.1) = v (fPerm c' hk l) := dif_pos (fIdx_lt hk l.2).1
+  have h4 : atN v (fIdx k₀ c' n' l.1) = v (fPerm c' hk l) := dite_eq_left (fIdx_lt hk l.2).1
   rw [h4]
   show _ * atN (x (eN E (n' + c') (fIdx k₀ c' n' l.1))) _ * _ = _
   rw [zpow_sub₀ hq, zpow_sub₀ hq, zpow_sub₀ hq]
@@ -503,7 +458,7 @@ theorem entB_det {k₀ c n : ℕ} (hk : k₀ ≤ n) (ex : ℕ → ℕ) (g : Sp E
     ext l l'
     simp only [Matrix.of_apply, Matrix.submatrix_apply, LinearMap.toMatrix'_apply]
     unfold entB atN
-    rw [dif_pos (fIdx_lt hk l.2).1, LastSteps.eN_eq (fIdx_lt hk l'.2).1, zpow_sub₀ hq]
+    rw [dite_eq_left (fIdx_lt hk l.2).1, LastSteps.eN_eq (fIdx_lt hk l'.2).1, zpow_sub₀ hq]
     show _ = _ * (_ * g.toLinearMap (Pi.single ⟨_, (fIdx_lt hk l'.2).1⟩ 1) ⟨_, (fIdx_lt hk l.2).1⟩)
     ring
   unfold dT
@@ -550,11 +505,11 @@ theorem co_bv (hk : k₀ ≤ n) {p p' : ℕ} (hp : p < n + c) (hp' : p' < n + c)
     co (qOf P) k₀ n c ex (bv E (qOf P) k₀ n c ex p') p = if p = p' then 1 else 0 := by
   have hq : (qOf P : E) ≠ 0 := q_ne
   unfold co bv atN eN
-  rw [dif_pos (fIdx_lt hk hp).1, Pi.smul_apply, smul_eq_mul]
+  rw [dite_eq_left (fIdx_lt hk hp).1, Pi.smul_apply, smul_eq_mul]
   by_cases h : p = p'
   · subst h
     simp [inv_mul_cancel₀ (zpow_ne_zero _ hq)]
-  · rw [if_neg h, if_neg, mul_zero, mul_zero]
+  · rw [ite_eq_right h, ite_eq_right, mul_zero, mul_zero]
     intro h1
     apply h
     rw [← (fIdx_lt hk hp).2, ← (fIdx_lt hk hp').2]
@@ -564,9 +519,9 @@ theorem co_mid (hk : k₀ ≤ n) {D : ℕ → Prop} [DecidablePred D] {v : Sp E 
     (hp : p < n + c) (hD : D p) : IntAt P (co (qOf P) k₀ n c ex v p / (qOf P : E)) := by
   have hq : (qOf P : E) ≠ 0 := q_ne
   have h := LastSteps.mem_sclLat.1 hv ⟨_, (fIdx_lt hk hp).1⟩
-  simp only [(fIdx_lt hk hp).2, if_pos hD] at h
+  simp only [(fIdx_lt hk hp).2, ite_eq_left hD] at h
   unfold co atN
-  rw [dif_pos (fIdx_lt hk hp).1]
+  rw [dite_eq_left (fIdx_lt hk hp).1]
   convert h using 1
   rw [zpow_add₀ hq, zpow_one]
   have := zpow_ne_zero (scE n ex (fIdx k₀ c n p)) hq
@@ -579,10 +534,10 @@ theorem bv_mid (hk : k₀ ≤ n) {D : ℕ → Prop} [DecidablePred D] {p : ℕ} 
   unfold bv eN
   rw [Pi.smul_apply, smul_eq_mul]
   by_cases h : l.1 = fIdx k₀ c n p
-  · simp only [h, (fIdx_lt hk hp).2, if_neg hD, add_zero, if_true, mul_one]
+  · simp only [h, (fIdx_lt hk hp).2, ite_eq_right hD, add_zero, ite_true, mul_one]
     rw [inv_mul_cancel₀ (zpow_ne_zero _ hq)]
     exact SymLevelInv.intAt_one P
-  · rw [if_neg h, mul_zero, mul_zero]
+  · rw [ite_eq_right h, mul_zero, mul_zero]
     exact SymLevelInv.intAt_zero P
 
 theorem ent_div (hk : k₀ ≤ n) {D : ℕ → Prop} [DecidablePred D] {g : Sp E (n + c) ≃ₗ[E] Sp E (n + c)}
@@ -613,7 +568,7 @@ theorem levG_of_JG {r t : ℕ} (hk : k₀ ≤ n) (hr : r ≤ n + c) {g : Sp E (n
     LevG P r 0 r t (n + c) (entB (qOf P) k₀ c n c n (fun i => i + 1) (fun i => i + 1) g.toLinearMap) := by
   refine ⟨ent_int hg.1, fun p' hp' => ?_, fun i p p' h1 h2 h3 => ?_⟩
   · have h := fun p hp hD => ent_col (p := p) (D := fun l => p' ≤ l) hk (hg.2.2 p' hp').2 hp (by omega) hD
-    refine ⟨(h p' (by omega) le_rfl).trans (if_pos rfl), fun p hp hne hz => (h p hp ?_).trans (if_neg hne)⟩
+    refine ⟨(h p' (by omega) le_rfl).trans (ite_eq_left rfl), fun p hp hne hz => (h p hp ?_).trans (ite_eq_right hne)⟩
     have e1 := SymLevelInv.symIdx_cases r 0 p
     have e2 := SymLevelInv.symIdx_cases r 0 p'
     unfold Zs at hz
@@ -630,7 +585,7 @@ theorem levG_of_JGsym {rS r t : ℕ} (hk : k₀ ≤ n) (hS : k₀ + rS < r) (hr 
     have h := fun p hp hD => ent_col (p := p) (D := fun l => bd5 k₀ rS (symIdx k₀ rS p') ≤ symIdx k₀ rS l) hk h0 hp (by omega) hD
     have e2 := SymLevelInv.symIdx_cases k₀ rS p'
     have e3 := SymLevelInv.symmetricBlockBoundary_cases k₀ rS (symIdx k₀ rS p')
-    refine ⟨(h p' (by omega) (by omega)).trans (if_pos rfl), fun p hp hne hz => (h p hp ?_).trans (if_neg hne)⟩
+    refine ⟨(h p' (by omega) (by omega)).trans (ite_eq_left rfl), fun p hp hne hz => (h p hp ?_).trans (ite_eq_right hne)⟩
     have e1 := SymLevelInv.symIdx_cases k₀ rS p
     unfold Zs at hz
     omega
@@ -685,8 +640,8 @@ theorem ite_law {G Y K : Type} [Group G] [Field K] (J : Subgroup G) (act : G →
     (h : ∀ g ∈ J, ∀ x, S x → S (act g x) ∧ val (act g x) * μ g = lam g * val x) {g : G} (hg : g ∈ J) (x : Y) :
     (if S (act g x) then val (act g x) else 0) * μ g = lam g * if S x then val x else 0 := by
   by_cases hx : S x
-  · rw [if_pos hx, if_pos (h g hg x hx).1, (h g hg x hx).2]
-  · rw [if_neg hx, if_neg fun h' => hx (hact g x ▸ (h g⁻¹ (inv_mem hg) _ h').1), zero_mul, mul_zero]
+  · rw [ite_eq_left hx, ite_eq_left (h g hg x hx).1, (h g hg x hx).2]
+  · rw [ite_eq_right hx, ite_eq_right fun h' => hx (hact g x ▸ (h g⁻¹ (inv_mem hg) _ h').1), zero_mul, mul_zero]
 
 variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : HeightOneSpectrum (𝓞 E)}
 

@@ -63,8 +63,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.SecDivision
@@ -172,7 +170,7 @@ theorem toC_evR_frBor {e : Ix Dw → ℤ} {f : Rul Xo c} (hf : f ∈ secZ Xo c e
   rfl
 
 theorem rdU_apply (U : Unf Xo c σ r) (f : Rul Xo c) (k : U.Comp) (x : (U.X k).dom) :
-    rdU U f k x.1 = toC (evR Xo c f (U.un k x)) := dif_pos x.2
+    rdU U f k x.1 = toC (evR Xo c f (U.un k x)) := dite_eq_left x.2
 
 attribute [local instance 1100] Subalgebra.algebra in
 attribute [local instance 100] IntermediateField.instAlgebraSubtypeMem in
@@ -190,7 +188,7 @@ theorem chart_dvd (U : Unf Xo c σ r) (hσ : GoodEmb c σ) (hU : IsUnf U) {h : G
   let φ' : (Fin m → ℂ) → (C.R →ₐ[c.F] CAt σ) := fun z => if hz : z ∈ B then mk z hz else mk z₀ hz₀
   have hφ' : ∀ z ∈ B, ∀ u, toC (φ' z u) = φ z u := by
     intro z hz u
-    simp only [φ', dif_pos hz]
+    simp only [φ', dite_eq_left hz]
     rfl
   choose y hy using fun z => exists_frMap (φ' z) C.y
   obtain ⟨k, x₀, ⟨t₀, ht₀⟩, hnear⟩ := exists_near_frames U hσ hU C.y φ' y hB

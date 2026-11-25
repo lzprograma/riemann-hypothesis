@@ -40,8 +40,6 @@ namespace Formalism.L2.SG.Pf
 
 open Formalism.L2.SG.Pf.FormRel Formalism.L2.SG.Pf.FormRelPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem formRelC_of (hRD : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word),
       Formalism.L2.SG.Pf.RowForm.RealDecompC X Y u u')
     (hRC : Formalism.L2.SG.Pf.RelCharC) : FormRelC := by

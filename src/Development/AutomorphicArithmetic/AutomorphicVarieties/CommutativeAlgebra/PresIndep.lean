@@ -85,7 +85,7 @@ private theorem UpperTheory.Reformulated.B.AdicDensityOfPresentationSubalgebra.m
       · rfl
     have h2 : (X i : MvPowerSeries σ O) ∣ f - h := by
       refine X_dvd_iff.2 fun n hn => ?_
-      rw [map_sub, hh, if_pos hn, sub_self]
+      rw [map_sub, hh, ite_eq_left hn, sub_self]
     have h3 : f - h ∈ Ideal.span (Set.range (X : σ → MvPowerSeries σ O)) :=
       Ideal.mem_of_dvd _ h2 (Ideal.subset_span ⟨i, rfl⟩)
     simpa using Ideal.add_mem _ h3 h1
@@ -159,8 +159,8 @@ private theorem pi_wcomp_mul {O σ X : Type} [CommRing O] [AddCommGroup X] (wt :
         rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 hp, map_add (f := _), h2]
       rw [coeff_wcomp, hn]
       by_cases h1 : Finsupp.weight wt p.1 = j - c
-      · rw [if_pos h1, if_pos (by rw [h1]; abel)]
-      · rw [if_neg h1, if_neg (fun h => h1 (by rw [← h]; abel)), zero_mul]
+      · rw [ite_eq_left h1, ite_eq_left (by rw [h1]; abel)]
+      · rw [ite_eq_right h1, ite_eq_right (fun h => h1 (by rw [← h]; abel)), zero_mul]
     · rw [hh _ h2]; simp
   rw [Finset.sum_congr rfl key]
   split_ifs <;> simp

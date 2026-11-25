@@ -297,9 +297,6 @@ end Path
 
 section Global
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField GlobalTheory.FunObj.borelKw
-  GlobalTheory.FunObj.borelSpaceKw
-
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {μ₀ : T}
 
 theorem isEquiv_val (w : Pl D.host.E) :
@@ -375,11 +372,11 @@ theorem muBase_unr (hL : L.Is μ₀) (hw : w ∈ locPl G t) (hP : w ∉ L.Pg) (j
 theorem chi_condLE (hw : w ∈ locPl G t) {i : ℕ} (h1 : 1 ≤ i) (h2 : i ≤ D.R.m) :
     CondLE (unifAt w) (cosExp G w) ((G.ch.chiH i).loc w) := by
   by_cases h : w ∈ G.pl.W0
-  · rw [cosExp, if_pos h]
+  · rw [cosExp, ite_eq_left h]
     by_cases h0 : w.under (𝓞 D.host.F) = G.pl.v0
     · exact condLE_loc (G.ch.lev0 i h1 h2 w h0).1 (G.pl.depth_pos sc _)
     · refine condLE_loc (G.ch.lev1 i h1 h2 w ((G.pl.mem_S0_of_sum_eq.1 (under_mem_and_place_above_eq_of_mem h).1).resolve_left h0)).1 ?_
-      rw [Places.depth, if_neg h0]
+      rw [Places.depth, ite_eq_right h0]
   · refine condLE_of_isUnram _ _ (isUnram_loc (G.ch.unr i h1 h2 w fun h' => h ?_))
     classical
     rw [eq_of_mem_Q ((mem_locPl.1 hw).resolve_left h) h']
@@ -534,7 +531,7 @@ theorem column_law (hL : L.Is μ₀) (hw : w ∈ locPl G t) (g : (locGrid G t w)
     · by_cases h : w ∈ G.pl.W0
       · refine ((P 0).reindex (ixFin G t w 0)).KOne_le (mem_KOne.2 fun a b => ?_)
         refine ((mem_glLatCong.1 (hg (0, 0))).2 a b).trans_lt ?_
-        rw [Units.val_pow_eq_pow_val, map_pow, isUnif_unifAt w, cosExp, if_pos h]
+        rw [Units.val_pow_eq_pow_val, map_pow, isUnif_unifAt w, cosExp, ite_eq_left h]
         exact pow_lt_one₀ zero_le uniformizer_lt_one (G.pl.depth_pos sc _).ne'
       · refine hK h (mem_KO.2 ⟨fun a b => intM_of_mem_KO (hKO (0, 0)) _ _, fun a b => ?_⟩)
         rw [← map_inv]

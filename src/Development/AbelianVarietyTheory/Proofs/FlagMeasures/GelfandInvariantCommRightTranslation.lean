@@ -183,13 +183,6 @@ lemma Ec_right {ε : Fin n → Bool} {k : Matrix (Fin n) (Fin n) ℂ} (hk : inUJ
   simp only [Ec]
   rw [Rd_right _ _ _ hu f, Rd_right _ _ _ hu f, cpart1_conj_of_inUJ hk, cpart2_conj_of_inUJ hk]
 
-private lemma inUJ_mul_flag_measures' {ε : Fin n → Bool} {g k : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g)
-    (hk : inUJ ε k) : inUJ ε (g * k) := by
-  unfold inUJ at *
-  rw [Matrix.conjTranspose_mul]
-  calc kᴴ * gᴴ * Jm ε * (g * k) = kᴴ * (gᴴ * Jm ε * g) * k := by simp only [Matrix.mul_assoc]
-    _ = Jm ε := by rw [hg, hk]
-
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 lemma smooth_right {ε : Fin n → Bool} {k : Matrix (Fin n) (Fin n) ℂ} (hk : inUJ ε k)
     {f : Matrix (Fin n) (Fin n) ℂ → ℂ} (hf : SmoothOnG ε f) : SmoothOnG ε (fun x => f (x * k)) := by
@@ -197,9 +190,9 @@ lemma smooth_right {ε : Fin n → Bool} {k : Matrix (Fin n) (Fin n) ℂ} (hk : 
     (LinearMap.mulRight ℝ k).toContinuousLinearMap.contDiff
   unfold SmoothOnG at hf ⊢
   intro g₀ hg₀
-  obtain ⟨U, F, hU, hmem, hF, hfF⟩ := hf (g₀ * k) (inUJ_mul_flag_measures' hg₀ hk)
+  obtain ⟨U, F, hU, hmem, hF, hfF⟩ := hf (g₀ * k) (indefinite_unitary_mul_mem _ hg₀ hk)
   exact ⟨(fun x => x * k) ⁻¹' U, fun x => F (x * k), hU.preimage hc.continuous, hmem,
-    hF.comp hc.contDiffOn (fun _ hx => hx), fun g hg hgJ => hfF (g * k) hg (inUJ_mul_flag_measures' hgJ hk)⟩
+    hF.comp hc.contDiffOn (fun _ hx => hx), fun g hg hgJ => hfF (g * k) hg (indefinite_unitary_mul_mem _ hgJ hk)⟩
 
 
 open GlobalTheory.CapelliCentral in
@@ -241,7 +234,7 @@ lemma eabEnd_rightEnd {ε : Fin n → Bool} {k : Matrix (Fin n) (Fin n) ℂ} (hk
   intro F
   apply ext_on
   intro g hg
-  have hgk : inUJ ε (g * k) := inUJ_mul_flag_measures' hg hk
+  have hgk : inUJ ε (g * k) := indefinite_unitary_mul_mem _ hg hk
   rw [Module.End.mul_apply, Module.End.mul_apply, rightEnd_apply hk _ hg,
     eabEnd_apply (f := fun x => F.1 (x * k)) a b (rightEnd hk F) (fun x hx => rightEnd_apply hk F hx) hg,
     eabV_eq, Eab, Ec_right hk _ g F.1, Ec_eq_EcV, ecSumV n ε ℂ F.1 _ (g * k) F.2.1 hgk]
@@ -266,9 +259,9 @@ theorem gelf_right : ∀ (n : ℕ) (ε : Fin n → Bool) (m : ℕ) (f : Matrix (
   have h1 := congrArg (fun T : Module.End ℂ (GlobalTheory.CapelliCentral.smoothSpace ε ℂ) => (T F).1 g) hcomm
   simp only [Module.End.mul_apply] at h1
   rw [GlobalTheory.Dec.FormF.gelf_apply (f := fun x => f (x * k)) m (rightEnd hkU F)
-      (fun x hx => (rightEnd_apply hkU F hx).trans (hFf _ (inUJ_mul_flag_measures' hx hkU))) hgU,
+      (fun x hx => (rightEnd_apply hkU F hx).trans (hFf _ (indefinite_unitary_mul_mem _ hx hkU))) hgU,
     rightEnd_apply hkU _ hgU,
-    GlobalTheory.Dec.FormF.gelf_apply m F hFf (inUJ_mul_flag_measures' hgU hkU)] at h1
+    GlobalTheory.Dec.FormF.gelf_apply m F hFf (indefinite_unitary_mul_mem _ hgU hkU)] at h1
   exact h1
 
 end GlobalTheory.Dec.GelfAd

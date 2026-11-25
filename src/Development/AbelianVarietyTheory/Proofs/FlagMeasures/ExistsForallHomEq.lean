@@ -175,7 +175,7 @@ private theorem card_solutions_mul_involution_eq_pow {H K : Type} [Finite H] [Fi
           · simp [ha]
           · have : ¬ ι a < ι (ι a) := hnlt a ha
             dsimp only [Sum.elim_inr]
-            rw [dif_neg this]
+            rw [dite_eq_right this]
             exact congrArg Sum.inr (Subtype.ext (hι a)) }
     rw [Nat.card_congr e, Nat.card_sum]; ring
   · let e : {f : H → K // ∀ h, f h * f (ι h) = c h} ≃ ({h : H // h < ι h} → {x : K // x ≠ 0}) :=
@@ -184,14 +184,14 @@ private theorem card_solutions_mul_involution_eq_pow {H K : Type} [Finite H] [Fi
             else c h / (g ⟨ι h, hlt h hh⟩).1, fun h => by
           by_cases hh : h < ι h
           · dsimp only
-            rw [dite_eq_left hh, dif_neg (hnlt h hh)]
+            rw [dite_eq_left hh, dite_eq_right (hnlt h hh)]
             have hg := (g ⟨h, hh⟩).2
             have hs : (⟨ι (ι h), hlt (ι h) (hnlt h hh)⟩ : {h : H // h < ι h}) = ⟨h, hh⟩ :=
               Subtype.ext (hι h)
             rw [hs, hcι]
             field_simp
           · dsimp only
-            rw [dif_neg hh, dite_eq_left (hlt h hh)]
+            rw [dite_eq_right hh, dite_eq_left (hlt h hh)]
             have hg := (g ⟨ι h, hlt h hh⟩).2
             field_simp⟩
         left_inv := fun f => by
@@ -199,7 +199,7 @@ private theorem card_solutions_mul_involution_eq_pow {H K : Type} [Finite H] [Fi
           funext h
           by_cases hh : h < ι h
           · simp [hh]
-          · simp only [dif_neg hh]
+          · simp only [dite_eq_right hh]
             have hf := f.2 h
             have hne : f.1 (ι h) ≠ 0 := fun h0 => hc0 h (by rw [← hf, h0, mul_zero])
             rw [div_eq_iff hne, hf]

@@ -4,43 +4,6 @@ public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.EdgeInde
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.GradedWeylDivisibility.FinalD
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.BlockActTensor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -53,12 +16,6 @@ open Formalism.MainNotions.G Formalism.MainNotions.flipOneThree Formalism.MainNo
 section Pos
 
 variable {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf] {m : ℕ}
-
-theorem fu_colSpan_map {k : ℕ} (γ : GL (Fin k) Kf) (h : Matrix (Fin k) (Fin k) Kf) :
-    (colSpan O h).map (nt_phi O γ) = colSpan O ((γ : Matrix (Fin k) (Fin k) Kf) * h) := by
-  unfold colSpan
-  rw [Submodule.map_span, ← Set.range_comp]
-  congr 1
 
 def fuT (γ : GL (Fin (m + 1)) Kf) (lam : Fin (m + 1) → ℤ) (F : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) :
     MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf :=
@@ -87,7 +44,7 @@ theorem invariant_sections_transport_GL (γ : GL (Fin (m + 1)) Kf) (lam : Fin (m
     (Λ : Submodule O (Fin (m + 1) → Kf)) (F : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf)
     (hF : F ∈ H0 O m lam Λ) : fuT γ lam F ∈ H0 O m lam (Λ.map (nt_phi O γ)) := by
   unfold H0 at hF ⊢
-  rw [if_pos hlam] at hF ⊢
+  rw [ite_eq_left hlam] at hF ⊢
   simp only [Submodule.mem_iInf] at hF ⊢
   intro g hg
   have hid : (nt_phi O ((γ⁻¹ : GL (Fin (m + 1)) Kf))).comp (nt_phi O γ) = LinearMap.id := by
@@ -98,7 +55,7 @@ theorem invariant_sections_transport_GL (γ : GL (Fin (m + 1)) Kf) (lam : Fin (m
   have hback : (Λ.map (nt_phi O γ)).map (nt_phi O ((γ⁻¹ : GL (Fin (m + 1)) Kf))) = Λ := by
     rw [← Submodule.map_comp, hid, Submodule.map_id]
   have hΛ' : Λ = colSpan O (((γ⁻¹ : GL (Fin (m + 1)) Kf) : Matrix (Fin (m + 1)) (Fin (m + 1)) Kf) * g) :=
-    hback.symm.trans (by rw [hg.2, fu_colSpan_map])
+    hback.symm.trans (by rw [hg.2, Formalism.MainNotions.flipOneThree.Pf.map_colSpan])
   have hdet : IsUnit (((γ⁻¹ : GL (Fin (m + 1)) Kf) : Matrix (Fin (m + 1)) (Fin (m + 1)) Kf) * g).det := by
     rw [Matrix.det_mul]
     exact ((Matrix.isUnit_iff_isUnit_det _).mp (Units.isUnit _)).mul hg.1
@@ -235,7 +192,7 @@ theorem restFunct : RestFunct := by
   have hV : ∀ (γ : Fin n' → GL (Fin (m + 1)) R.Kf), ∀ P ∈ Vsp R.Kf lam0, fuTT lam0 γ P ∈ Vsp R.Kf lam0 := by
     intro γ P hP
     refine fu_tensor lam0 γ _ _ (fun s F hF => ?_) P hP
-    rw [if_pos (hanti s)] at hF ⊢
+    rw [ite_eq_left (hanti s)] at hF ⊢
     exact Submodule.smul_mem _ _ (dualWeylRowStable R.Kf _ _ _ _ F hF)
   let γ : Fin n' → GL (Fin (m + 1)) R.Kf := fun s => fuG R.ι R.σ s.val g
   let T : Vsp R.Kf lam0 ≃ₗ[R.Kf] Vsp R.Kf lam0 :=

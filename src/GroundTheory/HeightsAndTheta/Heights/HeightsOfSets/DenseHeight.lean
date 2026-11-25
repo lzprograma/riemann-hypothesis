@@ -30,22 +30,14 @@ theorem finitePlace_le_one_of_isIntegral {K : Type*} [Field K] [NumberField K] (
 theorem finsum_log_finitePlace_natCast {K : Type*} [Field K] [NumberField K] {δ : ℕ} (hδ : 0 < δ) :
     ∑ᶠ v : FinitePlace K, Real.log (v (δ : K)) = -(Module.finrank ℚ K * Real.log δ) := by
   have hne : ((δ : ℕ) : K) ≠ 0 := by exact_mod_cast hδ.ne'
-  have hfin : (Function.mulSupport fun w : FinitePlace K ↦ w (δ : K)).Finite :=
-    FinitePlace.hasFiniteMulSupport hne
-  have hprod := FinitePlace.prod_eq_inv_abs_norm hne
-  rw [finprod_eq_prod_of_mulSupport_subset (s := hfin.toFinset) _
-    (fun x hx ↦ Finset.mem_coe.mpr (hfin.mem_toFinset.mpr hx))] at hprod
-  rw [finsum_eq_sum_of_support_subset (s := hfin.toFinset)]
-  · rw [← Real.log_prod (fun v _ ↦ (map_ne_zero _).mpr hne), hprod]
-    have : Algebra.norm ℚ ((δ : ℕ) : K) = (δ : ℚ) ^ (Module.finrank ℚ K) := by
-      have := Algebra.norm_algebraMap (S := K) (δ : ℚ)
-      simpa using this
-    rw [this]
-    push_cast
-    rw [abs_pow, Nat.abs_cast, Real.log_inv, Real.log_pow]
-  · intro v hv
-    have h1' : v (δ : K) ≠ 1 := fun h ↦ hv (by show Real.log (v (δ : K)) = 0; rw [h, Real.log_one])
-    exact Finset.mem_coe.mpr (hfin.mem_toFinset.mpr h1')
+  rw [← Real.log_finprod (f := fun v : FinitePlace K ↦ v (δ : K))
+    fun _ ↦ FinitePlace.pos_iff.mpr hne, FinitePlace.prod_eq_inv_abs_norm hne]
+  have : Algebra.norm ℚ ((δ : ℕ) : K) = (δ : ℚ) ^ (Module.finrank ℚ K) := by
+    have := Algebra.norm_algebraMap (S := K) (δ : ℚ)
+    simpa using this
+  rw [this]
+  push_cast
+  rw [abs_pow, Nat.abs_cast, Real.log_inv, Real.log_pow]
 
 theorem vectorL2Norm_le_sqrt_card_mul {m : ℕ} (w : Fin m → ℂ) {R : ℝ} (hR : 0 ≤ R) (hw : ∀ i, ‖w i‖ ≤ R) :
     l2Norm w ≤ Real.sqrt m * R := by

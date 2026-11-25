@@ -6,53 +6,8 @@ public import Mathlib.Algebra.Ring.GeomSum
 public import Mathlib.Data.Nat.Prime.Basic
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CvZeroTerm
 public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Topology.Sheaves.Init
+import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CgeZeroIffIntegral
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.VSumPowNonneg, Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CrystallineToDeRhamInjective
@@ -71,30 +26,13 @@ open Finset
 variable {LL : Type} [Field LL] (v : AddValuation LL (WithTop ℚ))
 
 theorem v_nat_nonneg (k : ℕ) : (0 : WithTop ℚ) ≤ v (k : LL) := by
-  induction k with
-  | zero => simp
-  | succ n ih =>
-    push_cast
-    exact le_trans (le_min ih (by simp)) (AddValuation.map_add v (n : LL) 1)
+  apply _root_.Formalism.MainNotions.PlaneGram.v_natCast_nonneg <;> assumption
 
 theorem v_int_nonneg (a : ℤ) : (0 : WithTop ℚ) ≤ v (a : LL) := by
-  cases a with
-  | ofNat n => simpa using v_nat_nonneg v n
-  | negSucc n =>
-    first
-    | (rw [Int.cast_negSucc, AddValuation.map_neg]; exact v_nat_nonneg v (n + 1))
+  apply _root_.Formalism.MainNotions.PlaneGram.v_intCast_nonneg <;> assumption
 
 private theorem withTop_rat_add_pos_of_nonneg_of_pos {a b : WithTop ℚ} (ha : 0 ≤ a) (hb : 0 < b) : 0 < a + b :=
   lt_of_lt_of_le hb (le_add_of_nonneg_left ha)
-
-private theorem exists_int_bezout_of_coprime (p m : ℕ) (h : Nat.Coprime p m) :
-    ∃ a b : ℤ, a * (p : ℤ) + b * (m : ℤ) = 1 := by
-  refine ⟨Nat.gcdA p m, Nat.gcdB p m, ?_⟩
-  have h2 := Nat.gcd_eq_gcd_ab p m
-  rw [Nat.Coprime.gcd_eq_one h] at h2
-  push_cast at h2
-  first
-  | linear_combination -h2
 
 theorem v_nat_eq_zero (p : ℕ) (hp : p.Prime) (hvp : 0 < v (p : LL)) (m : ℕ) (hm : ¬ p ∣ m) :
     v (m : LL) = 0 := by
@@ -106,8 +44,7 @@ theorem v_nat_eq_zero (p : ℕ) (hp : p.Prime) (hvp : 0 < v (p : LL)) (m : ℕ) 
     first
     | exact_mod_cast congrArg (Int.cast : ℤ → LL) hab
   refine le_antisymm ?_ (v_nat_nonneg v m)
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hA : 0 < v ((a : LL) * (p : LL)) := by
     rw [AddValuation.map_mul]; exact withTop_rat_add_pos_of_nonneg_of_pos (v_int_nonneg v a) hvp
   have hB : 0 < v ((b : LL) * (m : LL)) := by
@@ -189,10 +126,6 @@ private theorem withTop_rat_zero_lt_one : (0 : WithTop ℚ) < 1 := by
   first
   | exact WithTop.coe_lt_coe.mpr zero_lt_one
 
-private theorem withTop_rat_one_lt_one_add_one : (1 : WithTop ℚ) < 1 + 1 := by
-  first
-  | exact WithTop.coe_lt_coe.mpr (by norm_num : (1 : ℚ) < 1 + 1)
-
 private theorem exists_eq_two_mul_add_one_of_prime_ne_two (p : ℕ) (hp : p.Prime) (hodd : p ≠ 2) : ∃ k, p = 2 * k + 1 := by
   rcases hp.eq_two_or_odd with h | h
   · exact absurd h hodd
@@ -236,7 +169,7 @@ theorem v_pow_prime (p : ℕ) (hp : p.Prime) (hodd : p ≠ 2) (hvp : v (p : LL) 
     le_trans (le_min hvA (le_trans hw hvE)) (AddValuation.map_add v _ _)
   have hlt : v (p : LL) < v ((∑ j ∈ Finset.range p, w ^ j) - (p : LL)) := by
     rw [geom_sum_sub_card_eq_sub_one_mul w p, AddValuation.map_mul, hvp]
-    exact lt_of_lt_of_le withTop_rat_one_lt_one_add_one (add_le_add hw hvAE)
+    exact lt_of_lt_of_le (by norm_num : (1 : WithTop ℚ) < 1 + 1) (add_le_add hw hvAE)
   have hS : v (∑ j ∈ Finset.range p, w ^ j) = 1 := (val_eq_of_val_lt_val_sub v _ _ hlt).trans hvp
   rw [pow_sub_one_eq_sub_one_mul_geom_sum w p, AddValuation.map_mul, hS]
 
@@ -261,26 +194,9 @@ theorem v_pow_prime_pow (p : ℕ) (hp : p.Prime) (hodd : p ≠ 2) (hvp : v (p : 
     first
     | rfl
 
-private theorem exists_eq_prime_pow_mul_not_dvd' (p : ℕ) (hp : p.Prime) (k : ℕ) (hk : 0 < k) :
-    ∃ a m : ℕ, ¬ p ∣ m ∧ k = p ^ a * m := by
-  induction k using Nat.strong_induction_on with
-  | _ k ih =>
-    by_cases hdvd : p ∣ k
-    · obtain ⟨j, hj⟩ := hdvd
-      have hjpos : 0 < j := by
-        rcases Nat.eq_zero_or_pos j with h0 | h0
-        · rw [h0, mul_zero] at hj; omega
-        · exact h0
-      have hjlt : j < k := by
-        have h2 := hp.two_le
-        rw [hj]; nlinarith
-      obtain ⟨a, m, hm, hjm⟩ := ih j hjlt hjpos
-      exact ⟨a + 1, m, hm, by rw [hj, hjm]; ring⟩
-    · exact ⟨0, k, hdvd, by simp⟩
-
 theorem pow_ne_one (p : ℕ) (hp : p.Prime) (hodd : p ≠ 2) (hvp : v (p : LL) = 1) (u : LL)
     (hu : v (u - 1) = 1) (k : ℕ) (hk : 0 < k) : u ^ k ≠ 1 := by
-  obtain ⟨a, m, hm, hkm⟩ := exists_eq_prime_pow_mul_not_dvd' p hp k hk
+  obtain ⟨a, m, hm, hkm⟩ := Nat.exists_eq_pow_mul_and_not_dvd hk.ne' p hp.ne_one
   have hvp' : 0 < v (p : LL) := by rw [hvp]; exact withTop_rat_zero_lt_one
   have hu' : v (u - 1) = ((1 : ℚ) : WithTop ℚ) := by
     first

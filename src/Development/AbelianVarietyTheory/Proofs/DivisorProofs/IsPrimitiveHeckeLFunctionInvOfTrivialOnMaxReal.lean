@@ -196,8 +196,8 @@ theorem eulerFactor_inv (χ : HChar E) (hχ : TrivOnF χ) (s : ℂ) (P : HeightO
     eulerFactor χ⁻¹ s P = eulerFactor χ s (plMap conjE P) := by
   unfold eulerFactor
   by_cases h : χ.UnrAt (plMap conjE P)
-  · rw [if_pos ((unrAt_inv_iff χ hχ P).2 h), if_pos h, val_inv_eq χ hχ P h, absNorm_plMap]
-  · rw [if_neg (fun h' => h ((unrAt_inv_iff χ hχ P).1 h')), if_neg h]
+  · rw [ite_eq_left ((unrAt_inv_iff χ hχ P).2 h), ite_eq_left h, val_inv_eq χ hχ P h, absNorm_plMap]
+  · rw [ite_eq_right (fun h' => h ((unrAt_inv_iff χ hχ P).1 h')), ite_eq_right h]
 
 end GlobalTheory.CMVal.InvConj
 

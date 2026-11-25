@@ -38,7 +38,7 @@ theorem toL_coeff_nat (f : R⟦X⟧) (n : ℕ) : (toL f).coeff (n : ℤ) = coeff
 
 theorem toL_coeff_neg (f : R⟦X⟧) {n : ℤ} (hn : n < 0) : (toL f).coeff n = 0 := by
   first
-    | (rw [PowerSeries.coeff_coe, if_pos hn])
+    | (rw [PowerSeries.coeff_coe, ite_eq_left hn])
 
 theorem uPow_zero : (uPow 0 : LaurentSeries R) = 1 := rfl
 
@@ -53,11 +53,6 @@ theorem uPow_add (m n : ℤ) : (uPow (m + n) : LaurentSeries R) = uPow m * uPow 
 theorem uPow_neg_mul (n : ℤ) : (uPow (-n) : LaurentSeries R) * uPow n = 1 := by
   rw [← uPow_add]
   first | rw [neg_add_cancel]
-  exact uPow_zero
-
-theorem uPow_mul_neg (n : ℤ) : (uPow n : LaurentSeries R) * uPow (-n) = 1 := by
-  rw [← uPow_add]
-  first | rw [add_neg_cancel]
   exact uPow_zero
 
 theorem uPow_natCast (n : ℕ) : (uPow (n : ℤ) : LaurentSeries R) = toL (X ^ n) := by

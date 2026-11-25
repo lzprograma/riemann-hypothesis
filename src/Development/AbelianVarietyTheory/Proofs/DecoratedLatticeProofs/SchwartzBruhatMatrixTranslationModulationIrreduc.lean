@@ -76,8 +76,8 @@ def ind (K : AddSubgroup G) (t : G) : ℂ := by
 theorem ind_add (K : AddSubgroup G) (t : G) {u : G} (hu : u ∈ K) : ind K (t + u) = ind K t := by
   unfold ind
   by_cases ht : t ∈ K
-  · rw [if_pos ht, if_pos (add_mem ht hu)]
-  · rw [if_neg ht, if_neg fun h => ht ((add_mem_cancel_right hu).1 h)]
+  · rw [ite_eq_left ht, ite_eq_left (add_mem ht hu)]
+  · rw [ite_eq_right ht, ite_eq_right fun h => ht ((add_mem_cancel_right hu).1 h)]
 
 theorem ind_mem {B : Type} (e : B → G → ℂ) (he : ∀ b t u, e b (t + u) = e b t * e b u)
     (W : Submodule ℂ (G → ℂ)) (hM : ∀ Φ ∈ W, ∀ b, (fun t => e b t * Φ t) ∈ W) (K : AddSubgroup G)
@@ -113,7 +113,7 @@ theorem ind_mem {B : Type} (e : B → G → ℂ) (he : ∀ b t u, e b (t + u) = 
   funext t
   by_cases ht : t ∈ K
   · simp [ind, ht, k1 t ht]
-  · rw [ind, if_neg ht]
+  · rw [ind, ite_eq_right ht]
     by_cases hft : f t = 0
     · exact (k2 t hft).symm
     · obtain ⟨p, hp, u, hu, rfl⟩ := hP t hft
@@ -342,10 +342,10 @@ theorem sb_irreducible : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalS
       have : nsmulAddMonoidHom (n * m) u ∈ lat k Y Y' n := by
         rw [lat, AddSubgroup.mem_map]
         exact ⟨m • u, nsmul_mem hu m, (mul_smul n m u).symm⟩
-      rw [ind, if_pos this]
+      rw [ind, ite_eq_left this]
     · have : t ∈ lat k Y Y' n := by
         by_contra h
-        exact ht (by rw [ind, if_neg h])
+        exact ht (by rw [ind, ite_eq_right h])
       rw [lat, AddSubgroup.mem_map] at this
       obtain ⟨u, hu, rfl⟩ := this
       rw [one_smul]

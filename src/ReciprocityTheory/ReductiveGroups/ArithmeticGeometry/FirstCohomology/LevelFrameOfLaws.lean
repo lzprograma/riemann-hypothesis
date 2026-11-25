@@ -3,52 +3,6 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCHyp
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenCalc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullGenPf
@@ -66,7 +20,7 @@ open ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction
 
 private lemma gs_eq_stalkMap_germ {X Y : Scheme.{0}} (f : Y ⟶ X) (y : Y) (U : X.Opens) (hy : f y ∈ U) (a : Γ(X, U)) :
     gs f y U a = (f.stalkMap y).hom (X.presheaf.germ U (f y) hy a) := by
-  rw [gs, dif_pos hy]
+  rw [gs, dite_eq_left hy]
   first
     | exact (Scheme.Hom.germ_stalkMap_apply f U y hy a).symm
 
@@ -146,7 +100,7 @@ theorem cst_stalkMap {V : Type} [CommRing V] {X Z : Scheme.{0}} (r : Z ⟶ X) (p
     (r.stalkMap z).hom (cst p (r z) a) = cst (r ≫ p) z a := by
   have hp : p (r z) ∈ (⊤ : (Sp V).Opens) := trivial
   have hrp : (r ≫ p) z ∈ (⊤ : (Sp V).Opens) := trivial
-  simp only [cst, gs, dif_pos hp, dif_pos hrp]
+  simp only [cst, gs, dite_eq_left hp, dite_eq_left hrp]
   all_goals first
     | (rw [Scheme.Hom.germ_stalkMap_apply]; rfl)
     | (erw [Scheme.Hom.germ_stalkMap_apply]; rfl)
@@ -162,7 +116,7 @@ theorem gs_spec {A C : Type} [CommRing A] [CommRing C] (φ : A →+* C) (z : Sp 
       | exact this.symm
   have h1 : (spMap φ) z ∈ (⊤ : (Sp A).Opens) := trivial
   have h2 : (𝟙 (Sp C) : Sp C ⟶ Sp C) z ∈ (⊤ : (Sp C).Opens) := trivial
-  simp only [cst, gs, dif_pos h1, dif_pos h2]
+  simp only [cst, gs, dite_eq_left h1, dite_eq_left h2]
   rw [e]
   rfl
 
@@ -172,7 +126,7 @@ theorem cst_ext {C : Type} [CommRing C] {a b : C} (h : ∀ z : Sp C, cst (𝟙 _
     intro x hx
     have hx' : (𝟙 (Sp C) : Sp C ⟶ Sp C) x ∈ (⊤ : (Sp C).Opens) := trivial
     have := h x
-    simp only [cst, gs, dif_pos hx'] at this
+    simp only [cst, gs, dite_eq_left hx'] at this
     exact this
   have := congrArg (fun t => (Scheme.ΓSpecIso (CommRingCat.of C)).hom.hom t) key
   simpa using this
@@ -184,7 +138,7 @@ theorem gs_fromSpec {X Z : Scheme.{0}} {U W : X.Opens} (hU : IsAffineOpen U) (le
     rwa [hU.range_fromSpec] at h1
   have hz : (r ≫ hU.fromSpec) z ∈ W := le h0
   have hz' : r z ∈ (⊤ : (Sp Γ(X, U)).Opens) := trivial
-  simp only [cst, gs, dif_pos hz, dif_pos hz']
+  simp only [cst, gs, dite_eq_left hz, dite_eq_left hz']
   erw [← Scheme.Hom.germ_stalkMap_apply, ← Scheme.Hom.germ_stalkMap_apply]
   first
     | rw [Scheme.Hom.stalkMap_comp]

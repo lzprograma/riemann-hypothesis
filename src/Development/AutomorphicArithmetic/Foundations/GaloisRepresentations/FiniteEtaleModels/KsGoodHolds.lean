@@ -84,8 +84,6 @@ import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.Integ
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
@@ -191,7 +189,7 @@ theorem forget_of (hSc : Sc D G) (hNum : NumEx) (hCls : ClsEx) (hInv : PiInv) (h
     exact hQ p D G L hSc E gb w q r 𝔴 _ X₁.site k T K₁ hK₁ M _ _ n₁ C₁
   have fl : Flat (X₀.ps k) := by
     obtain ⟨n, hn⟩ := X₀.dim k
-    haveI : Smooth (X₀.ps k) := hn.smooth
+    have : Smooth (X₀.ps k) := hn.smooth
     infer_instance
   exact ⟨d.pw k, ok, q0, q1, hE (Ow w) E _ _ _ _ _ fl fs ets (hD E _ T.X (Ow w) K₀ K₁ _ _ _ _ _ _ (lev_le hK₀ hK₁ hle) q0 q1)⟩
 
@@ -224,7 +222,7 @@ end
 theorem ksGood_of (hSite : SiteEx) (hNum : NumEx) (hCls : ClsEx) (hCov : KSCover) (hInv : PiInv) (hP : PowCart) (hExt : ExtEx)
     (hQ : QuotOf) (hA : StepA) (hB : StepB) (hF : StepF) (hD : DegGen) (hE : FEtExt) (hL : LiesAbs) : KSGood := by
   intro p _ D G L hSc E _ _ e gb hstd k T N J A _ g θ w 𝔴 hpl ⟨q, r, N₀, 𝔞, K₀, hat, hlev, hK₀, hNK, hNm, hdeck, hall⟩
-  haveI : Fact q.Prime := ⟨hat.prime⟩
+  have : Fact q.Prime := ⟨hat.prime⟩
   obtain ⟨S⟩ := hSite p D G hSc E e gb hstd w q r 𝔴 _ hpl hat ⟨N₀, 𝔞, hlev.1, hlev.2.1, hlev.2.2.1, hlev.2.2.2.1, hlev.2.2.2.2, rfl⟩
   have pos : ∀ M : Lv p, 0 < M.1 := fun M => lt_of_lt_of_le (by norm_num) M.2.1
   obtain ⟨X₀⟩ := hExt p D G hSc E gb w q r 𝔴 _ S N₀ 𝔞 hlev
@@ -266,18 +264,6 @@ open UpperTheory.Gal.crystallineComparison.Mod (Std TjD KerAt)
 open scoped TensorProduct
 open UpperTheory.Gal.FiniteEtaleModels
 
-private theorem ev_nsmul {G : GDatum} {k : Type} [Field k] {Q : Type} [Group Q] {act : G.O → Q → Q}
-    {e : ℕ → Q → Q → kˣ → Prop} (I : GTateIso G k Q act e) (n c : ℕ) (x : G.La) :
-    I.ev n (c • x) = I.ev n x ^ c := by
-  induction c with
-  | zero =>
-    rw [zero_nsmul, pow_zero]
-    have h := I.add n 0 0
-    rw [add_zero] at h
-    exact mul_eq_left.mp h.symm
-  | succ c ih =>
-    rw [succ_nsmul, I.add, ih, pow_succ]
-
 theorem UpperTheory.Gal.FiniteEtaleModels.etaPtB_holds :
     EtaPtB := by
   unfold UpperTheory.Gal.FiniteEtaleModels.EtaPtB
@@ -297,11 +283,11 @@ theorem UpperTheory.Gal.FiniteEtaleModels.etaPtB_holds :
     ((N : ℕ) • x) ((N' : ℕ) • y)).2 hv
   have ex : I'.ev ((N' : ℕ) * N) ((N : ℕ) • x) = I'.ev N' x := by
     have t1 := I'.tower (N' : ℕ) N hN' hN x
-    have t2 := ev_nsmul I' ((N' : ℕ) * N) N x
+    have t2 := GlobalTheory.W2.gTateIso_ev_nsmul I' ((N' : ℕ) * N) N x
     exact t2.trans t1
   have ey : I''.ev ((N' : ℕ) * N) ((N' : ℕ) • y) = I''.ev N y := by
     have t1 := I''.tower (N : ℕ) N' hN hN' y
-    have t2 := ev_nsmul I'' ((N' : ℕ) * N) N' y
+    have t2 := GlobalTheory.W2.gTateIso_ev_nsmul I'' ((N' : ℕ) * N) N' y
     rw [mul_comm] at t1
     exact t2.trans t1
   have key2 := (ex ▸ ey ▸ key : I'.ev N' x ≫ ψ = I''.ev N y)
@@ -503,10 +489,6 @@ private theorem exists_iso_of_cart {A B : Over X} [GrpObj A] [GrpObj B] {φ : A.
     exact key.symm.trans (Category.id_comp _)
   exact ⟨Over.isoMk (asIso φ) hw, rfl, he, inferInstance⟩
 
-private theorem comp_pow_id {A B : Over X} [GrpObj A] [GrpObj B] (e : A ⟶ B) [IsMonHom e] (n : ℕ) :
-    ((𝟙 A) ^ n) ≫ e = e ≫ ((𝟙 B) ^ n) := by
-  rw [MonObj.pow_comp, MonObj.comp_pow, Category.id_comp, Category.comp_id]
-
 private theorem comp_iso_eq_one {A B T : Over X} [GrpObj A] [GrpObj B] (e : A ≅ B) [IsMonHom e.hom] [IsMonHom e.inv] (a : T ⟶ A) :
     a ≫ e.hom = 1 ↔ a = 1 := by
   constructor
@@ -545,13 +527,6 @@ private theorem lbIso_move {Y Y₁ Z Z₁ : Scheme.{0}} {P : LB Y} {P₁ : LB Y�
     intro z
     rw [← GlobalTheory.CechPic.pull_comp, IsIso.inv_hom_id, GlobalTheory.CechPic.pull_id]
   rw [← inj (c • _), h, inj]
-
-private theorem isIntAf_mul {p : ℕ} [Fact p.Prime] {a b : AfP p} (ha : IsIntAf a) (hb : IsIntAf b) : IsIntAf (a * b) := fun v => by
-  rw [map_mul]
-  exact mul_mem (ha v) (hb v)
-
-private theorem inAf_mem {p : ℕ} [Fact p.Prime] (D : Datum p) (x : D.La) : inAf D x ∈ LaHat D :=
-  AddSubgroup.subset_closure ⟨1, x, fun v => by rw [map_one]; exact one_mem _, rfl⟩
 
 end UpperTheory.Gal.FiniteEtaleModels
 
@@ -599,7 +574,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.isogG_of :
   · intro x
     have hE : o'.eta (c' • x) ≫ ψ = o.eta (c • x) := by
       refine hTE p D G L R' gb (h * u) X s N' N o' o ψ hψ N₀ c' c hN' hN x x ?_
-      exact Link.CongOne.mul L (hTj.away N₀ hN₀) hu.1 (inAf D x) (inAf_mem D x)
+      exact Link.CongOne.mul L (hTj.away N₀ hN₀) hu.1 (inAf D x) (GlobalTheory.LKGeo.MultScale.inAf_mem D x)
     have a1 : o₁.eta x = o'.eta (c' • x) ≫ e₁.hom := (heta₁ x).symm
     have a2 : o₂.eta x = o.eta (c • x) ≫ e₂.hom := (heta₂ x).symm
     rw [a1, a2]
@@ -611,7 +586,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.isogG_of :
     simp only [Subgroup.coe_mul, Prod.snd_mul, Units.val_mul] at hht
     have hc : c₀ = q ^ e := by
       refine (hMU p D G L).2 c₀ (q ^ e) (t₁ * _ * t') (t * t₂' * t₁') hc₀ hcop
-        (isIntAf_mul (isIntAf_mul ht₁ hu₂) ht') (isIntAf_mul (isIntAf_mul ht ht₂') ht₁') ?_ ?_
+        (GlobalTheory.HeckeApprox.isInt_mul (GlobalTheory.HeckeApprox.isInt_mul ht₁ hu₂) ht') (GlobalTheory.HeckeApprox.isInt_mul (GlobalTheory.HeckeApprox.isInt_mul ht ht₂') ht₁') ?_ ?_
       · rw [show ∀ a b c d f g : AfP p, a * b * c * (d * f * g) = (a * g) * (b * f) * (d * c) from
           fun _ _ _ _ _ _ => by ring, htt₁, htt₂, htt, _root_.one_mul, _root_.one_mul]
       · rw [← _root_.mul_one (c₀ : AfP p), ← htt, ← _root_.mul_assoc, ← hht, hh₁, hnorm]
@@ -634,9 +609,9 @@ theorem UpperTheory.Gal.FiniteEtaleModels.isogG_of :
     obtain ⟨ψ', mψ', h1, h2⟩ := hTB p D G L R' gb (h * u) X s N' N o' o ψ hψ (q ^ e) hcop hback
     refine ⟨e₂.inv ≫ ψ' ≫ e₁.hom, inferInstance, ?_, ?_⟩
     · simp only [Category.assoc, Iso.hom_inv_id_assoc]
-      rw [reassoc_of% h1, comp_pow_id, Iso.inv_hom_id_assoc]
+      rw [reassoc_of% h1, GlobalTheory.UPel.HT.SiegFactor.id_pow_comp, Iso.inv_hom_id_assoc]
     · simp only [Category.assoc, Iso.hom_inv_id_assoc]
-      rw [reassoc_of% h2, comp_pow_id, Iso.inv_hom_id_assoc]
+      rw [reassoc_of% h2, GlobalTheory.UPel.HT.SiegFactor.id_pow_comp, Iso.inv_hom_id_assoc]
   · intro k _ _ _ x
     obtain ⟨hT1, hT2⟩ := hTT p D G L R' gb (h * u) X s N' N o' o ψ hψ q r 𝔴 i h u atP hTj hInt hu1 rfl k x
     have hk : ∀ {T : Over X} (g : T ⟶ o₁.A) (a : D.O),
@@ -690,31 +665,8 @@ private theorem exists_geomPoint (P : Scheme.{0}) (p : P) :
 
 private theorem eq_of_geomPoints {P Y B : Scheme.{0}} [IsReduced P] (a b : P ⟶ Y) (g : Y ⟶ B) [IsSeparated g]
     (hab : a ≫ g = b ≫ g)
-    (h : ∀ (Ω : Type) [Field Ω] [IsAlgClosed Ω] (t : Sp Ω ⟶ P), t ≫ a = t ≫ b) : a = b := by
-  let d : P ⟶ pullback g g := pullback.lift a b hab
-  let k₀ : pullback d (pullback.diagonal g) ⟶ P := pullback.fst d (pullback.diagonal g)
-  have hd₁ : d ≫ pullback.fst g g = a := pullback.lift_fst _ _ _
-  have hd₂ : d ≫ pullback.snd g g = b := pullback.lift_snd _ _ _
-  have hc : k₀ ≫ d = pullback.snd d (pullback.diagonal g) ≫ pullback.diagonal g := pullback.condition
-  have hk : k₀ ≫ a = k₀ ≫ b := by
-    have h1 : k₀ ≫ a = pullback.snd d (pullback.diagonal g) := by
-      calc k₀ ≫ a = (k₀ ≫ d) ≫ pullback.fst g g := by rw [Category.assoc, hd₁]
-        _ = _ := by rw [hc]; simp
-    have h2 : k₀ ≫ b = pullback.snd d (pullback.diagonal g) := by
-      calc k₀ ≫ b = (k₀ ≫ d) ≫ pullback.snd g g := by rw [Category.assoc, hd₂]
-        _ = _ := by rw [hc]; simp
-    rw [h1, h2]
-  have hsur : Surjective k₀ := ⟨fun p => by
-    obtain ⟨Ω, _, _, t, q, rfl⟩ := exists_geomPoint P p
-    have hd : t ≫ d = (t ≫ a) ≫ pullback.diagonal g := by
-      apply pullback.hom_ext
-      · rw [Category.assoc, hd₁]; simp
-      · rw [Category.assoc, hd₂, ← h Ω t]; simp
-    refine ⟨(pullback.lift t (t ≫ a) hd : Sp Ω ⟶ _) q, ?_⟩
-    rw [← Scheme.Hom.comp_apply]
-    exact congrArg (fun m : Sp Ω ⟶ P => m q) (pullback.lift_fst _ _ _)⟩
-  have : IsDominant k₀ := inferInstance
-  exact ext_of_isDominant_of_isSeparated g hab k₀ hk
+    (h : ∀ (Ω : Type) [Field Ω] [IsAlgClosed Ω] (t : Sp Ω ⟶ P), t ≫ a = t ≫ b) : a = b :=
+  (GlobalTheory.hom_eq_iff_forall_isAlgClosed g hab).mpr h
 
 theorem UpperTheory.Gal.FiniteEtaleModels.descExt_of :
     NormExt → DescExt := by
@@ -745,7 +697,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.descExt_of :
   have stalk_normal (T : Scheme.{0}) (t : T ⟶ Sp O) [Smooth t] (x : T) :
       IsDomain (T.presheaf.stalk x) ∧ IsIntegrallyClosed (T.presheaf.stalk x) := by
     refine GlobalTheory.forall_isDomain_and_isIntegrallyClosed_stalk_of_smooth t (fun q => ?_) x
-    haveI : q.asIdeal.IsPrime := PrimeSpectrum.isPrime q
+    have : q.asIdeal.IsPrime := PrimeSpectrum.isPrime q
     let _ : Algebra O ((Sp O).presheaf.stalk q) := StructureSheaf.stalkAlgebra O q
     have h : IsLocalization.AtPrime ((Sp O).presheaf.stalk q) q.asIdeal :=
       StructureSheaf.IsLocalization.to_stalk O q
@@ -755,7 +707,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.descExt_of :
   have hsm : Smooth (pullback.fst j' j' ≫ j' ≫ u ≫ s) := inferInstance
   have hred : IsReduced (pullback j' j') := by
     have : ∀ x : (pullback j' j' : Scheme.{0}), _root_.IsReduced ((pullback j' j' : Scheme.{0}).presheaf.stalk x) := fun x => by
-      letI : IsDomain ((pullback j' j' : Scheme.{0}).presheaf.stalk x) :=
+      let : IsDomain ((pullback j' j' : Scheme.{0}).presheaf.stalk x) :=
         (stalk_normal _ (pullback.fst j' j' ≫ j' ≫ u ≫ s) x).1
       infer_instance
     exact isReduced_of_isReduced_stalk _
@@ -910,8 +862,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
@@ -1031,8 +981,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
@@ -1122,8 +1070,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.PDegGen", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IsQuotTriv\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1307,7 +1253,7 @@ private theorem card_of_pb {K : Type} [Field K] [IsAlgClosed K] {Y Y' : Scheme.{
       rw [hgg, hg0, ht1]
   rw [← Nat.card_congr (Equiv.ofBijective F hF)]
   obtain ⟨hfin, hsp⟩ := UpperTheory.Gal.crystallineComparison.splitsField_of K B K inferInstance
-  haveI := Fintype.ofFinite (B →ₐ[K] K)
+  have := Fintype.ofFinite (B →ₐ[K] K)
   let e : (TensorProduct K K B) ≃ₗ[K] ((B →ₐ[K] K) → K) :=
     LinearEquiv.ofBijective (UpperTheory.Gal.crystallineComparison.splitMap (fun z : B →ₐ[K] K => z)).toLinearMap hsp
   have e1 := e.finrank_eq
@@ -1317,16 +1263,16 @@ private theorem card_of_pb {K : Type} [Field K] [IsAlgClosed K] {Y Y' : Scheme.{
 private theorem card_lifts {K : Type} [Field K] [IsAlgClosed K] {Y Y' : Scheme.{0}} (s : Y' ⟶ Y) [IsFinite s] [Etale s]
     (x : Spec (CommRingCat.of K) ⟶ Y) (z : Spec (CommRingCat.of K)) :
     Nat.card {y : Spec (CommRingCat.of K) ⟶ Y' // y ≫ s = x} = Scheme.Hom.finrank s (x z) := by
-  haveI : Etale (pullback.snd s x) := inferInstance
-  haveI : IsAffine (pullback s x) := isAffine_of_isAffineHom (pullback.snd s x)
+  have : Etale (pullback.snd s x) := inferInstance
+  have : IsAffine (pullback s x) := isAffine_of_isAffineHom (pullback.snd s x)
   let e := (pullback s x).isoSpec
   let φ : CommRingCat.of K ⟶ Γ(pullback s x, ⊤) := Spec.preimage (e.inv ≫ pullback.snd s x)
   have hφ : Spec.map φ = e.inv ≫ pullback.snd s x := Spec.map_preimage _
   have hfinφ : IsFinite (Spec.map φ) := by rw [hφ]; infer_instance
   have hetφ : Etale (Spec.map φ) := by rw [hφ]; infer_instance
-  letI : Algebra K Γ(pullback s x, ⊤) := φ.hom.toAlgebra
-  haveI : Module.Finite K Γ(pullback s x, ⊤) := ((IsFinite.SpecMap_iff φ).mp hfinφ : φ.hom.Finite)
-  haveI : Algebra.Etale K Γ(pullback s x, ⊤) :=
+  let : Algebra K Γ(pullback s x, ⊤) := φ.hom.toAlgebra
+  have : Module.Finite K Γ(pullback s x, ⊤) := ((IsFinite.SpecMap_iff φ).mp hfinφ : φ.hom.Finite)
+  have : Algebra.Etale K Γ(pullback s x, ⊤) :=
     RingHom.etale_algebraMap.mp (HasRingHomProperty.Spec_iff.mp hetφ : φ.hom.Etale)
   have hpb : IsPullback (e.inv ≫ pullback.fst s x) (Spec.map φ) s x := by
     rw [hφ]
@@ -1357,7 +1303,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.fEtExt_holds :
     have hpt : (Spec.map f) pt = (⊥ : PrimeSpectrum O) := by
       rw [hf, Scheme.Hom.comp_apply, ha1, h2]
     have hinj : Function.Injective f.hom := by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro r hr
       have h3 : r ∈ (PrimeSpectrum.comap f.hom (⊥ : PrimeSpectrum k)).asIdeal := by
         simpa [PrimeSpectrum.comap_asIdeal] using hr
@@ -1398,13 +1344,13 @@ private theorem exists_affine_irreducible_open_nhd (S : Scheme) [IsLocallyNoethe
     ∃ V : S.Opens, IsAffineOpen V ∧ x ∈ V ∧ IsIrreducible (V : Set S) := by
   have hG : IsIrreducible {y : S | y ⤳ x} := by
     rw [← Scheme.range_fromSpecStalk]
-    haveI := hd x
+    have := hd x
     simpa [Set.image_univ] using
       (IrreducibleSpace.isIrreducible_univ _).image _ (S.fromSpecStalk x).continuous.continuousOn
   obtain ⟨N, hN, hxN, -⟩ := (TopologicalSpace.Opens.isBasis_iff_nbhd.mp S.isBasis_affineOpens)
     (show x ∈ (⊤ : S.Opens) from trivial)
-  haveI : IsNoetherianRing Γ(S, N) := IsLocallyNoetherian.component_noetherian ⟨N, hN⟩
-  haveI : TopologicalSpace.NoetherianSpace N := noetherianSpace_of_isAffineOpen N hN
+  have : IsNoetherianRing Γ(S, N) := IsLocallyNoetherian.component_noetherian ⟨N, hN⟩
+  have : TopologicalSpace.NoetherianSpace N := noetherianSpace_of_isAffineOpen N hN
   let x' : N := ⟨x, hxN⟩
   let C : Set (Set N) := {Z | Z ∈ irreducibleComponents N ∧ x' ∉ Z}
   have hCfin : C.Finite :=
@@ -1439,7 +1385,7 @@ private theorem exists_affine_irreducible_open_nhd (S : Scheme) [IsLocallyNoethe
 
 private theorem injective_germ_of_generic_in_open (X : Scheme) [IsReduced X] (W : X.Opens) (x : X) (hx : x ∈ W)
     (hgen : ∀ y ∈ W, x ⤳ y) : Function.Injective (X.presheaf.germ W x hx).hom := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro s hs
   rw [← basicOpen_eq_bot_iff]
   refine eq_bot_iff.mpr (fun y hy => ?_)
@@ -1455,12 +1401,12 @@ private theorem normalization_affine_open_irreducible_of_normal {U S : Scheme} (
     (V : S.Opens) (hV : IsAffineOpen V) (hirr : IsIrreducible (V : Set S)) :
     letI := (i.app V).hom.toAlgebra
     Function.Bijective (algebraMap Γ(S, V) (integralClosure Γ(S, V) Γ(U, i ⁻¹ᵁ V))) := by
-  letI := (i.app V).hom.toAlgebra
-  haveI : ∀ x : S, _root_.IsReduced (S.presheaf.stalk x) := fun x => by
-    haveI := hd x
+  let := (i.app V).hom.toAlgebra
+  have : ∀ x : S, _root_.IsReduced (S.presheaf.stalk x) := fun x => by
+    have := hd x
     infer_instance
-  haveI : IsReduced S := isReduced_of_isReduced_stalk S
-  haveI : IsReduced U := isReduced_of_isOpenImmersion i
+  have : IsReduced S := isReduced_of_isReduced_stalk S
+  have : IsReduced U := isReduced_of_isOpenImmersion i
   have hgen := hirr.isGenericPoint_genericPoint_closure
   have hηV : hirr.genericPoint ∈ V := (hgen.mem_open_set_iff V.isOpen).mpr
     ⟨hirr.1.some, subset_closure hirr.1.some_mem, hirr.1.some_mem⟩
@@ -1488,9 +1434,9 @@ private theorem normalization_affine_open_irreducible_of_normal {U S : Scheme} (
       ((ConcreteCategory.isIso_iff_bijective _).mp inferInstance).1
     rw [CommRingCat.hom_comp, RingHom.coe_comp]
     exact h2.comp h1
-  haveI : IsDomain (S.presheaf.stalk (i u)) := hd _
-  haveI : IsDomain Γ(S, V) := Function.Injective.isDomain _ hg0inj
-  letI : Algebra Γ(S, V) (S.presheaf.stalk (i u)) :=
+  have : IsDomain (S.presheaf.stalk (i u)) := hd _
+  have : IsDomain Γ(S, V) := Function.Injective.isDomain _ hg0inj
+  let : Algebra Γ(S, V) (S.presheaf.stalk (i u)) :=
     TopCat.Presheaf.algebra_section_stalk S.presheaf (⟨i u, hiuV⟩ : V)
   have hloc := hV.isLocalization_stalk ⟨i u, hiuV⟩
   have hP : (hV.primeIdealOf ⟨i u, hiuV⟩).asIdeal = ⊥ := by
@@ -1504,14 +1450,14 @@ private theorem normalization_affine_open_irreducible_of_normal {U S : Scheme} (
     rw [Submodule.mem_bot, ← basicOpen_eq_bot_iff]
     exact eq_bot_iff.mpr (fun y hy =>
       hnot ((hspS y (S.basicOpen_le a hy)).mem_open (S.basicOpen a).isOpen hy))
-  haveI hfr : IsFractionRing Γ(S, V) (S.presheaf.stalk (i u)) := by
+  have hfr : IsFractionRing Γ(S, V) (S.presheaf.stalk (i u)) := by
     have e : (hV.primeIdealOf ⟨i u, hiuV⟩).asIdeal.primeCompl = nonZeroDivisors Γ(S, V) := by
       ext a
       simp [Ideal.primeCompl, hP, mem_nonZeroDivisors_iff_ne_zero]
     unfold IsLocalization.AtPrime at hloc
     rw [e] at hloc
     exact hloc
-  haveI : IsIntegrallyClosed Γ(S, V) := by
+  have : IsIntegrallyClosed Γ(S, V) := by
     refine IsIntegrallyClosed.of_localization_maximal ?_
     intro p _ hpm
     let q : PrimeSpectrum Γ(S, V) := ⟨p, hpm.isPrime⟩
@@ -1519,11 +1465,11 @@ private theorem normalization_affine_open_irreducible_of_normal {U S : Scheme} (
       show hV.fromSpec q ∈ (V : Set S)
       rw [← hV.range_fromSpec]
       exact ⟨q, rfl⟩
-    letI : Algebra Γ(S, V) (S.presheaf.stalk (hV.fromSpec q)) :=
+    let : Algebra Γ(S, V) (S.presheaf.stalk (hV.fromSpec q)) :=
       TopCat.Presheaf.algebra_section_stalk S.presheaf (⟨hV.fromSpec q, hq⟩ : V)
-    haveI : IsLocalization p.primeCompl (S.presheaf.stalk (hV.fromSpec q)) :=
+    have : IsLocalization p.primeCompl (S.presheaf.stalk (hV.fromSpec q)) :=
       hV.isLocalization_stalk' q hq
-    haveI := hc (hV.fromSpec q)
+    have := hc (hV.fromSpec q)
     exact IsIntegrallyClosed.of_equiv (IsLocalization.algEquiv p.primeCompl
       (S.presheaf.stalk (hV.fromSpec q)) (Localization.AtPrime p)).toRingEquiv
   constructor
@@ -1555,7 +1501,7 @@ private theorem isIso_fromNormalization_of_normal_noetherian {U S : Scheme} (i :
     IsZariskiLocalAtTarget.iff_of_iSup_eq_top (P := MorphismProperty.isomorphisms Scheme) _ hcov]
   rintro ⟨V, hV, hirr⟩
   let W : S.AffineZariskiSite := ⟨V, hV⟩
-  haveI : IsOpenImmersion (i.normalizationOpenCover.f W) := i.normalizationOpenCover.map_prop W
+  have : IsOpenImmersion (i.normalizationOpenCover.f W) := i.normalizationOpenCover.map_prop W
   let e := IsOpenImmersion.isoOfRangeEq (i.fromNormalization ⁻¹ᵁ V).ι
     (i.normalizationOpenCover.f W)
     (by
@@ -1565,7 +1511,7 @@ private theorem isIso_fromNormalization_of_normal_noetherian {U S : Scheme} (i :
     ← MorphismProperty.cancel_right_of_respectsIso (MorphismProperty.isomorphisms Scheme) _
       hV.isoSpec.hom]
   have hb := normalization_affine_open_irreducible_of_normal i hd hc V hV hirr
-  haveI : IsIso (i.normalizationDiagramMap.app (.op V)) := by
+  have : IsIso (i.normalizationDiagramMap.app (.op V)) := by
     rw [ConcreteCategory.isIso_iff_bijective]
     exact hb
   rw [MorphismProperty.isomorphisms.iff]
@@ -1583,11 +1529,11 @@ theorem UpperTheory.Gal.FiniteEtaleModels.normExt_holds :
     NormExt := by
   unfold UpperTheory.Gal.FiniteEtaleModels.NormExt
   intro U S Y B i f g y hi hdom hnoeth hdst hic hfin hcomm
-  haveI := hi
-  haveI := hdom
-  haveI := hnoeth
-  haveI := hfin
-  haveI : IsIso i.fromNormalization := isIso_fromNormalization_of_normal_noetherian i hdst hic
+  have := hi
+  have := hdom
+  have := hnoeth
+  have := hfin
+  have : IsIso i.fromNormalization := isIso_fromNormalization_of_normal_noetherian i hdst hic
   have H : i = pullback.lift y i hcomm ≫ pullback.snd g f := (pullback.lift_snd _ _ _).symm
   refine ⟨inv i.fromNormalization ≫
     i.normalizationDesc (pullback.lift y i hcomm) (pullback.snd g f) H ≫ pullback.fst g f, ?_, ?_⟩
@@ -1628,9 +1574,6 @@ private theorem conj_congOne {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup
       rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
     rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, e2, map_add (f := _), map_nsmul, key]
 
-private theorem inAf_mem' {p : ℕ} [Fact p.Prime] (D : Datum p) (x : D.La) : inAf D x ∈ LaHat D :=
-  AddSubgroup.subset_closure ⟨1, x, fun v => by rw [map_one]; exact one_mem _, rfl⟩
-
 private theorem cl_cast {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup p} {L : Link D G} {E : Type} [Field E] [NumberField E]
     {gb : GBase D.toG E} {w : HeightOneSpectrum (𝓞 E)} {q : ℕ} [Fact q.Prime] {r : ℤ} {𝔴 𝔫 : Ideal (𝓞 D.F)}
     (S : Site gb w q r 𝔴 𝔫) {k : ℕ} (T : KS L gb k) (M : Lv p) {c c' : ℕ} {a a' : 𝓞 D.F} (hc : c' = c) (ha : a' = a)
@@ -1660,7 +1603,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.quotOf_holds :
     have h1 : g ∈ L.KN 1 := KN_anti (one_dvd _) hg
     have hcrt := hCRT p D G L q r S.N₀ S.𝔞 hcop hup g (integ_of_mem h1)
     have h2 : L.CongOne S.N₀ g := (KN_anti hdvd hg).1
-    have h3 : CongId L S.𝔞 g := (hcrt.2 a M.1 hMpos M.2.2 hGen).2 fun y => hg.1 _ (inAf_mem' D _)
+    have h3 : CongId L S.𝔞 g := (hcrt.2 a M.1 hMpos M.2.2 hGen).2 fun y => hg.1 _ (GlobalTheory.LKGeo.MultScale.inAf_mem D _)
     exact (hK g).2 ⟨h1, by rw [S.lev]; exact hcrt.1.2 ⟨h2, h3⟩⟩
   have hX : T.X.K (T.lev M) = L.KN M.1 := T.K_eq M
   have hX0 : T.X.K (T.lev N0) = L.KN S.N₀ := T.K_eq N0
@@ -1734,9 +1677,9 @@ theorem UpperTheory.Gal.FiniteEtaleModels.stepB_of :
   obtain ⟨hfin, het⟩ := hFet p D G L sc E gb w q r 𝔴 _ X₁.site k T M₁ c₁ a₁ n₁ C₁
   have honto := hOnto p D G L sc E gb w q r 𝔴 _ X₁.site k T M₁ c₁ a₁ n₁ C₁
   have hsm : Smooth X₁.Y.s := by
-    haveI := X₁.M.smooth
-    haveI : Smooth X₁.M.s := SmoothOfRelativeDimension.smooth (D.a * (D.n - 1)) X₁.M.s
-    haveI := X₁.et
+    have := X₁.M.smooth
+    have : Smooth X₁.M.s := SmoothOfRelativeDimension.smooth (D.a * (D.n - 1)) X₁.M.s
+    have := X₁.et
     rw [← X₁.ov]
     infer_instance
   obtain ⟨y', hy, hys⟩ := hDesc (Ow w) E _ _ _ _ X₁.Y.s _ C₁.j C₁.ov hsm hfin het honto f Tj.s B.y Tj.fin B.ys k1
@@ -1871,9 +1814,9 @@ theorem stepA : StepA := stepA_holds (multUnit_of mIn) (latGen_of mIn) (clsEx_of
 theorem baseFet : BaseFet := baseFet_holds (powCart_of mIn) (piFet_of mIn)
 
 theorem stepB : StepB :=
-  stepB_of (tjExG_of esNorm_link esGen_link objTri_holds pullIsog_holds pullKer_holds)
-    (bRead_of (isogG_of (trEta_of mIn) (trBack_of mIn) (multUnit_of mIn) (trTj_of mIn)) (qObj_of mIn) (qComp_of mIn) objTri_holds)
-    (bKer_of (secInjG_of pulledEx_holds pulledRead_holds pullKer_holds kerFromU_holds isoOfKer_holds) (trEtaPt_of mIn))
+  stepB_of (tjExG_of esNorm_link esGen_link _root_.UpperTheory.Gal.crystallineComparison.Mod.objTri_of pullIsog_holds _root_.UpperTheory.Gal.crystallineComparison.Mod.pullKer_of)
+    (bRead_of (isogG_of (trEta_of mIn) (trBack_of mIn) (multUnit_of mIn) (trTj_of mIn)) (qObj_of mIn) (qComp_of mIn) _root_.UpperTheory.Gal.crystallineComparison.Mod.objTri_of)
+    (bKer_of (secInjG_of pulledEx_holds pulledRead_holds _root_.UpperTheory.Gal.crystallineComparison.Mod.pullKer_of kerFromU_holds isoOfKer_holds) (trEtaPt_of mIn))
     (bLev_of latB_holds etaPtB_holds etInj_holds) (descExt_of normExt_holds) baseFet O.baseOnto pulledEx_holds
 
 theorem quotOf : QuotOf := quotOf_holds (powCart_of mIn) (piInv_of mIn) (piFet_of mIn) (piSep_of mIn) (congCRT_of mIn) O.baseOnto

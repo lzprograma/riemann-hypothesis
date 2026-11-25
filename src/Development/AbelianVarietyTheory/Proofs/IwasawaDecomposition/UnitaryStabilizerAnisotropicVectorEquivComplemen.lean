@@ -219,7 +219,7 @@ theorem exists_dual (hσ : ∀ y, σ (σ y) = y) {M : ℕ} {J : Matrix (Fin (M +
     ext i j
     refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j
     · exact (congrFun (congrFun h11 0) 0).trans (by simp)
-    · exact (congrFun (congrFun h12 0) j).trans (by simp [Matrix.one_apply, (Fin.succ_ne_zero j).symm])
+    · exact (congrFun (congrFun h12 0) j).trans (by simp [(Fin.succ_ne_zero j).symm])
     · exact (congrFun (congrFun h21 i) 0).trans (by simp [Matrix.one_apply])
     · exact (congrFun (congrFun h22 i) j).trans (by simp [Matrix.one_apply])
   have hPQ : consCol x B * Q = 1 := mul_eq_one_comm.1 hQP

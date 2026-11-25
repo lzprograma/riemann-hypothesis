@@ -5,49 +5,8 @@ public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.Densit
 public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCNumDef
 public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCore
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DvrFractionFieldCharZeroPrime
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Std.Tactic.BVDecide.Normalize.Prop
 import Std.Tactic.BVDecide.Normalize.BitVec
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -161,7 +120,7 @@ theorem nb_ord :
   have e1 := nb_sum_mod_div (fun c : Fin X.m => A ((topOdd X j i, true), c.succ)) ((X.seg C0 CE1 CE2 j).P X.p i)
   have e2 := Nat.mod_add_div (A ((topOdd X j i, false), 0)) ((X.seg C0 CE1 CE2 j).P X.p i)
   simp only [segmentBlockOfMonomial, y0A, ezA] at e1 e2 ⊢
-  simp only [Fin.val_zero, Fin.val_succ, Nat.add_one_ne_zero, if_true, if_false, zero_add]
+  simp only [Fin.val_zero, Fin.val_succ, Nat.add_one_ne_zero, ite_true, ite_false, zero_add]
   linarith
 
 theorem nb_ez_le (hp : 0 < X.p) (b : SegBlock (segS X.TT j) X.m)
@@ -283,8 +242,8 @@ theorem mEps_pol (K : Type) [CommRing K] [Nontrivial K] (ez ey : Fin s → Fin r
 theorem dEps_chW_eq_sum (ez ey : Fin s → Fin r → ℕ) (ax : Fin r → ℕ) (i : Fin s) : dEps ez ey ax (chW i) = ∑ c, ez i c := by
   have hWW : ∀ c, chW i = chW c ↔ i = c := fun c => ⟨chW_inj, fun h => h ▸ rfl⟩
   simp only [dEps, eCh, Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hWW, chW_ne_chE i,
-    chW_ne_chU i, if_false, mul_zero, add_zero, Finset.sum_const_zero, mul_ite, mul_one]
-  rw [Finset.sum_eq_single i (fun b _ hb => Finset.sum_eq_zero fun c _ => if_neg (fun h => hb h.symm))
+    chW_ne_chU i, ite_false, mul_zero, add_zero, Finset.sum_const_zero, mul_ite, mul_one]
+  rw [Finset.sum_eq_single i (fun b _ hb => Finset.sum_eq_zero fun c _ => ite_eq_right (fun h => hb h.symm))
     (fun h => absurd (Finset.mem_univ i) h)]
   simp
 
@@ -292,8 +251,8 @@ theorem dEps_E (ez ey : Fin s → Fin r → ℕ) (ax : Fin r → ℕ) (i : Fin s
   have hEE : ∀ c, chE i = chE c ↔ i = c := fun c => ⟨chE_inj, fun h => h ▸ rfl⟩
   have hEW : ∀ c, chE i = chW c ↔ False := fun c => ⟨fun h => chW_ne_chE c i h.symm, False.elim⟩
   simp only [dEps, eCh, Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hEE, hEW,
-    chE_ne_chU i, if_false, mul_zero, add_zero, zero_add, Finset.sum_const_zero, mul_ite, mul_one]
-  rw [Finset.sum_eq_single i (fun b _ hb => Finset.sum_eq_zero fun c _ => if_neg (fun h => hb h.symm))
+    chE_ne_chU i, ite_false, mul_zero, add_zero, zero_add, Finset.sum_const_zero, mul_ite, mul_one]
+  rw [Finset.sum_eq_single i (fun b _ hb => Finset.sum_eq_zero fun c _ => ite_eq_right (fun h => hb h.symm))
     (fun h => absurd (Finset.mem_univ i) h)]
   simp
 
@@ -320,7 +279,7 @@ theorem ycond_mEps (LL : ChainLetters (2 * s + 1)) (J : ℕ) (hE : ∀ i : Fin s
       (fun c => X (chW i, c) ^ ez i c * X (chE i, c) ^ ey i c) (fun c _ => by
         have a1 := ycond_pow LL J _ (ycond_X (K := K) LL J (chW i) c) (ez i c)
         have a2 := ycond_pow LL J _ (ycond_X (K := K) LL J (chE i) c) (ey i c)
-        have hv : vWt LL J (chE i) = 0 := by unfold vWt; rw [if_neg]; rw [hE i]; simp
+        have hv : vWt LL J (chE i) = 0 := by unfold vWt; rw [ite_eq_right]; rw [hE i]; simp
         rw [hv] at a2
         have := ycond_mul LL J _ _ a1 a2
         rw [← WithTop.coe_add] at this
@@ -349,11 +308,11 @@ theorem pWt_sum_le (S : SegData s) (LL : ChainLetters (2 * s + 1)) (J : ℕ) :
     have hsum : ∑ l, pWt J (chW (uTop S l)) (chE (uTop S l)) = 1 := by
       rw [Finset.sum_eq_single l0]
       · simp only [pWt, chW, chE, hu]
-        rw [if_pos]
+        rw [ite_eq_left]
         constructor <;> omega
       · intro l _ hl
         simp only [pWt, chW, chE, hu]
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨h1, h2⟩
         apply hl
         exact Fin.ext (by omega)
@@ -369,7 +328,7 @@ theorem pWt_sum_le (S : SegData s) (LL : ChainLetters (2 * s + 1)) (J : ℕ) :
   · have hsum : ∑ l, pWt J (chW (uTop S l)) (chE (uTop S l)) = 0 := by
       refine Finset.sum_eq_zero fun l _ => ?_
       simp only [pWt, chW, chE, hu]
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, h2⟩
       exact hJ ⟨l, by omega⟩
     have hv : vWt LL J (chU s) ≤ 1 := by
@@ -390,7 +349,6 @@ theorem rowInc_le (S : SegData s) (LL : ChainLetters (2 * s + 1)) (J : ℕ) (ez 
             have e1 : ((∑ c, ez i c : ℕ) : ℤ) ≤ Qe := by exact_mod_cast h1 i
             have e2 := hv (chW i)
             have e3 : (0 : ℤ) ≤ ((∑ c, ez i c : ℕ) : ℤ) := Nat.cast_nonneg _
-            have e4 : (0 : ℤ) ≤ (vWt LL J (chW i) : ℤ) := Nat.cast_nonneg _
             nlinarith
       _ = (s : ℤ) * Qe := by simp
   have hpw := pWt_sum_le S LL J
@@ -497,27 +455,27 @@ theorem segCoreAt_of_num {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hN : NumCoreAt 
     have h1 := hdu (chU _)
     have h2 := lev_deg X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) (segAPlus X.TT X.aT j) (mm + (n : ℝ) * ka1 X) (β j) (L.lv j) (L.jp j) (chU _)
     have h3 := chain_deg_U X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) (β j) (chU _) rfl
-    rw [h3, if_pos (show (chU (segS X.TT j)).val = 2 * segS X.TT j from rfl)] at h2
+    rw [h3, ite_eq_left (show (chU (segS X.TT j)).val = 2 * segS X.TT j from rfl)] at h2
     have h1' : du (chU _) ≤ ((blockData X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) (segAPlus X.TT X.aT j) (mm + (n : ℝ) * ka1 X) (β j)).lettersAt (L.lv j) (L.jp j)).deg (chU _) := h1
     omega
 
   have hy0U : ∀ i : Fin (segS X.TT j), (X.seg C0 CE1 CE2 j).sigma ≤ i.val → y0A C0 CE1 CE2 X j A i ≤ X.p ^ X.G' * e := by
     intro i hi
     have h := hcy i
-    rw [if_neg (by omega)] at h
+    rw [ite_eq_right (by omega)] at h
     have := block_y_zero_le_of_bound C0 CE1 CE2 X j A hp (β j) hdig _ hQ1 i 0 h
     omega
   have hy0S : ∀ i : Fin (segS X.TT j), i.val < (X.seg C0 CE1 CE2 j).sigma → y0A C0 CE1 CE2 X j A i ≤ (β j).sg i + X.p ^ X.G' * e := by
     intro i hi
     have h := hcy i
-    rw [if_pos hi] at h
+    rw [ite_eq_left hi] at h
     exact block_y_zero_le_of_bound C0 CE1 CE2 X j A hp (β j) hdig _ hQ1 i _ h
   have hyz : ∀ i : Fin (segS X.TT j), (X.seg C0 CE1 CE2 j).sigma ≤ i.val → y0A C0 CE1 CE2 X j A i ≤ z0A C0 CE1 CE2 X j A i := by
     intro i hi
     have h1 := hcz i
-    rw [if_neg (by omega)] at h1
+    rw [ite_eq_right (by omega)] at h1
     have h2 := hcy i
-    rw [if_neg (by omega), mul_zero, add_zero] at h2
+    rw [ite_eq_right (by omega), mul_zero, add_zero] at h2
     have h3 := hroom i hi
     exact block_y_zero_le_z_zero C0 CE1 CE2 X j A hp (β j) hdig _ hQ1 i _ (by omega) h1 h2
 
@@ -525,15 +483,15 @@ theorem segCoreAt_of_num {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hN : NumCoreAt 
       jE (X.seg C0 CE1 CE2 j) ju i.val + du (chW i) + y0A C0 CE1 CE2 X j A i + ∑ c, ezA C0 CE1 CE2 X j A i c := by
     intro i hi
     show (if (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma then 0 else _) = _
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   have wS : ∀ i : Fin (segS X.TT j), i.val < (X.seg C0 CE1 CE2 j).sigma → (segmentBlockOfMonomial C0 CE1 CE2 X j ju (L.jp j) du A).w i = du (chW i) + ∑ c, ezA C0 CE1 CE2 X j A i c := by
     intro i hi
     show (if (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma then _ else 0) = _
-    rw [if_pos hi]
+    rw [ite_eq_left hi]
   have sgS : ∀ i : Fin (segS X.TT j), i.val < (X.seg C0 CE1 CE2 j).sigma → (segmentBlockOfMonomial C0 CE1 CE2 X j ju (L.jp j) du A).sg i = y0A C0 CE1 CE2 X j A i := by
     intro i hi
     show (if (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma then _ else 0) = _
-    rw [if_pos hi]
+    rw [ite_eq_left hi]
   have oP : (segmentBlockOfMonomial C0 CE1 CE2 X j ju (L.jp j) du A).oPlus = L.jp j + du (chU _) + ∑ c, axA X j A c := rfl
   have dx' : L.jp j + du (chU _) + (A ((topEnd X j, true), 0) + ∑ c, axA X j A c) = (segAPlus X.TT X.aT j) := by
     rw [← dx, Fin.sum_univ_succ]
@@ -548,14 +506,14 @@ theorem segCoreAt_of_num {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hN : NumCoreAt 
       have a4 := hy0U i hi
       have a5 := hez i
       have a6 := hduW i
-      rw [if_neg (by omega)] at a6
+      rw [ite_eq_right (by omega)] at a6
       have a7 := hjE i.val
       have a8 := (hlb.1 i hi).1
       refine ⟨by omega, by omega, ?_, ?_⟩
       · show (if (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma then _ else 0) = 0
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
       · show (if (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma then _ else 0) = 0
-        rw [if_neg (by omega)])
+        rw [ite_eq_right (by omega)])
     (by
       intro i hi
       have a1 := hA' i
@@ -564,11 +522,11 @@ theorem segCoreAt_of_num {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hN : NumCoreAt 
       have a4 := hy0S i hi
       have a5 := hez i
       have a6 := hduW i
-      rw [if_pos hi] at a6
+      rw [ite_eq_left hi] at a6
       have a7 := hC' i
       refine ⟨?_, by omega, by omega, by omega, by omega⟩
       show (if (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma then 0 else _) = 0
-      rw [if_pos hi])
+      rw [ite_eq_left hi])
     (by omega) (by have := hlb.2; omega)
   refine ⟨(segmentBlockOfMonomial C0 CE1 CE2 X j ju (L.jp j) du A), hBL', nb_ord C0 CE1 CE2 X j ju (L.jp j) du A,
     uTot O X.m (X.seg C0 CE1 CE2 j) ju (L.jp j) (Gu * (mEps (KK O) (ezA C0 CE1 CE2 X j A) (eyA C0 CE1 CE2 X j A) (axA X j A)))
@@ -587,25 +545,25 @@ theorem segCoreAt_of_num {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hN : NumCoreAt 
       simp only [Pi.add_apply]
       rcases ch_cases a with rfl | ⟨i, rfl⟩ | ⟨i, rfl⟩
       · rw [chain_deg_U X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) _ (chU _) rfl, dEps_U,
-          if_pos (show (chU (segS X.TT j)).val = 2 * segS X.TT j from rfl)]
+          ite_eq_left (show (chU (segS X.TT j)).val = 2 * segS X.TT j from rfl)]
         have q : (chU (segS X.TT j)).val / 2 = segS X.TT j := by show 2 * segS X.TT j / 2 = _; omega
         rw [q, jE_top, jE_top, oP]
         omega
       · have q : (chW i).val / 2 = i.val := by show 2 * i.val / 2 = _; omega
         have hne : ¬ (chW i).val = 2 * segS X.TT j := by have := i.2; show ¬ 2 * i.val = _; omega
-        rw [segment_chain_degree_even X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) _ (chW i) i rfl, dEps_chW_eq_sum, q, if_neg hne]
+        rw [segment_chain_degree_even X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) _ (chW i) i rfl, dEps_chW_eq_sum, q, ite_eq_right hne]
         by_cases hi : i.val < (X.seg C0 CE1 CE2 j).sigma
-        · rw [if_pos hi, wS i hi, jE_S _ _ hi, jE_S _ _ hi]
+        · rw [ite_eq_left hi, wS i hi, jE_S _ _ hi, jE_S _ _ hi]
           omega
-        · rw [if_neg hi, oU i (by omega), jE_uTop (X.seg C0 CE1 CE2 j) (y0A C0 CE1 CE2 X j A) i (by omega)]
+        · rw [ite_eq_right hi, oU i (by omega), jE_uTop (X.seg C0 CE1 CE2 j) (y0A C0 CE1 CE2 X j A) i (by omega)]
           omega
       · have q : (chE i).val / 2 = i.val := by show (2 * i.val + 1) / 2 = _; omega
         have hne : ¬ (chE i).val = 2 * segS X.TT j := by show ¬ 2 * i.val + 1 = _; omega
-        rw [chain_deg_E X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) _ (chE i) i rfl, dEps_E, q, if_neg hne, hC' i]
+        rw [chain_deg_E X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) _ (chE i) i rfl, dEps_E, q, ite_eq_right hne, hC' i]
         by_cases hi : i.val < (X.seg C0 CE1 CE2 j).sigma
-        · rw [if_pos hi, sgS i hi, jE_S _ _ hi, jE_S _ _ hi]
+        · rw [ite_eq_left hi, sgS i hi, jE_S _ _ hi, jE_S _ _ hi]
           omega
-        · rw [if_neg hi, jE_uTop (X.seg C0 CE1 CE2 j) (y0A C0 CE1 CE2 X j A) i (by omega)]
+        · rw [ite_eq_right hi, jE_uTop (X.seg C0 CE1 CE2 j) (y0A C0 CE1 CE2 X j A) i (by omega)]
           omega
     · have h1 := L.hγ j
       have h2 : L.jp j ≤ (X.seg C0 CE1 CE2 j).bPlus := le_trans (L.ok j).2 (min_le_right _ _)
@@ -643,11 +601,7 @@ theorem segCoreAt_of_num {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hN : NumCoreAt 
             (pWt ((blockData X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) (segAPlus X.TT X.aT j) (mm + (n : ℝ) * ka1 X) (β j)).T.J k) (chW (uTop (X.seg C0 CE1 CE2 j) l)) (chE (uTop (X.seg C0 CE1 CE2 j) l)) : ℤ) ≤
           ((X.N1 : ℤ) + 1) * (((X.m : ℤ) + 1) + (X.p : ℤ) ^ X.G' * e) := by
         refine le_trans hinc ?_
-        have b1 : ((segS X.TT j : ℕ) : ℤ) ≤ X.N1 := by exact_mod_cast hsN
-        have b2 : (0 : ℤ) ≤ ((X.p ^ X.G' * e : ℕ) : ℤ) := Int.natCast_nonneg _
         have b3 : ((X.p ^ X.G' * e : ℕ) : ℤ) = (X.p : ℤ) ^ X.G' * e := by push_cast; ring
-        have b4 : (0 : ℤ) ≤ (X.m : ℤ) := Int.natCast_nonneg _
-        have b5 : (0 : ℤ) ≤ (X.N1 : ℤ) := Int.natCast_nonneg _
         rw [← b3]
         nlinarith
       have hfin := hthr (capIdx (X.seg C0 CE1 CE2 j) k) _ hV

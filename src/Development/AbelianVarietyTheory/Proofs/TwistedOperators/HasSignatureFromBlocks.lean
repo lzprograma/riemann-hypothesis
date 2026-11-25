@@ -53,7 +53,6 @@ import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Upqcpt
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FrameComplement
 

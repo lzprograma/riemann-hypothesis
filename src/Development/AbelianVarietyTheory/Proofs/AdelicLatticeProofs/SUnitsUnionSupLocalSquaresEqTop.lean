@@ -80,7 +80,7 @@ theorem sUnits_union_sup_finSq_eq_top :
   have hy : ∀ v ∈ T, v.valuation F ((a * x : Fˣ) : F) = 1 := by
     intro v hv
     have hx0 : v.valuation F (x : F) ≠ 0 := by simp
-    rw [Units.val_mul, map_mul, ha v (hTS v hv), if_pos hv, WithZero.exp_neg,
+    rw [Units.val_mul, map_mul, ha v (hTS v hv), ite_eq_left hv, WithZero.exp_neg,
       WithZero.exp_log hx0, inv_mul_cancel₀ hx0]
   obtain ⟨u, hu, huA⟩ := hA (T.filter fun v =>
     ¬ IsSquare (algebraMap F (v.adicCompletion F) ((a * x : Fˣ) : F)))

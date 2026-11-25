@@ -22,7 +22,7 @@ set_option linter.unusedSectionVars false
 variable {N : ℕ} (k : ℤ)
 
 theorem σ_of_det_pos {h : GL (Fin 2) ℝ} (hpos : 0 < h.det.val) (z : ℂ) : σ h z = z := by
-  rw [σ, if_pos hpos]
+  rw [σ, ite_eq_left hpos]
   rfl
 
 theorem denom_mul_of_det_pos (g : GL (Fin 2) ℝ) {h : GL (Fin 2) ℝ} (hpos : 0 < h.det.val) (z : ℍ) :

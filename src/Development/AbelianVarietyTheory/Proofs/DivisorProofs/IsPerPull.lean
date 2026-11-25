@@ -47,13 +47,10 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetra
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.CechDR GlobalTheory.CechPer
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CechPer.Nat
 
@@ -107,7 +104,7 @@ theorem isPer_pull : ∀ (A : Over (Sp ℂ)) [GrpObj A] (g : ℕ) (L : LB A.left
         val u.ex l.1.2.1 (c.1.1 _ _ a') (M z) := hv _
     have e2 := hc p.1.2 l.1.2 a' (M z) hz'
     linear_combination e2 - e1 - e3 - e4
-  refine GlobalTheory.T.hasCechDeRhamPeriods_of_affine_basis A' g' L' u' c' (Pair φ.left) (fun p => p.1.1)
+  refine _root_.GlobalTheory.CechPer.isPer_of_basis A' g' L' u' c' (Pair φ.left) (fun p => p.1.1)
     (fun p z => h₀ p.1.2 (M z) - val u'.ex p.1.1.1 (b (Opposite.op p)) z) _ ?_ ?_ ?_ ?_ ?_
   · intro p r z hzp hzr
     have h1 : M z ∈ pre u.ex (p.1.2.1 ⊓ r.1.2.1) := by

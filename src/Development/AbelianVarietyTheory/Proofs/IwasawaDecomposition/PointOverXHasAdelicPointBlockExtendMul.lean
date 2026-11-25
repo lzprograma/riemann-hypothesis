@@ -51,7 +51,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.TopCh GlobalTheory.Mem.ColAd Matrix
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -226,15 +225,15 @@ theorem pt_tilF_gen : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → P
           rw [map_mul, hkP, Matrix.one_apply_ne hl, mul_zero]
         · simp
       · intro l _ hl
-        rw [map_mul, htP P l j, if_neg hl, map_zero, mul_zero]
+        rw [map_mul, htP P l j, ite_eq_right hl, map_zero, mul_zero]
       · simp
-    rw [e1, htP P j j, if_pos rfl, tilF_fr I.sel (I.tup a) hPr u hQ d P]
+    rw [e1, htP P j j, ite_eq_left rfl, tilF_fr I.sel (I.tup a) hPr u hQ d P]
     rcases GlobalTheory.TopStep.idx_cases hN i with ⟨i', rfl⟩ | rfl <;> rcases GlobalTheory.TopStep.idx_cases hN j with ⟨j', rfl⟩ | rfl
     · have h1 : ¬ ((Br.iC hN j').1 + 1 = B.R.N B.R.m) := by
         show ¬ (j'.1 + 1 = B.R.N B.R.m)
         have := j'.2
         omega
-      rw [if_neg h1, map_one, mul_one, extM_iC_iC, hg'.fr P i' j']
+      rw [ite_eq_right h1, map_one, mul_one, extM_iC_iC, hg'.fr P i' j']
       congr 1
       exact ((congrFun (GlobalTheory.TopStep.prH_sumE hN (d.fr P) _ (Pi.single (Br.iC hN j') 1)) i').trans
         (by rw [prH_single_iC])).symm
@@ -250,7 +249,7 @@ theorem pt_tilF_gen : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → P
     · have h1 : (Br.iL hN).1 + 1 = B.R.N B.R.m := by
         show (B.R.N B.R.m - 1) + 1 = B.R.N B.R.m
         omega
-      rw [if_pos h1, extM_iL_iL, map_one, one_mul, GlobalTheory.TopStep.sumE_last, Pi.single_eq_same, mul_one,
+      rw [ite_eq_left h1, extM_iL_iL, map_one, one_mul, GlobalTheory.TopStep.sumE_last, Pi.single_eq_same, mul_one,
         unitOf_val (hQ P)]
 
 end GlobalTheory.Mem.Col2.TilQ

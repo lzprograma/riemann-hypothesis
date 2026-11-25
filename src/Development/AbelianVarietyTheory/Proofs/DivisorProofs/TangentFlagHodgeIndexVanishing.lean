@@ -51,16 +51,12 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.Lie
 
 @[expose] public section
 
-set_option autoImplicit false
-
 
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Frames GlobalTheory.AllWt
 open scoped Classical
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.DeRham
 
@@ -168,7 +164,7 @@ theorem exists_isFilLift_dir (P : AbelianDeRham) {ι : Type} [Fintype ι] {C : O
     rw [GrpMor.pull_pull (liftMor κ h₀) μ n (fun _ => rfl) rfl c,
       ← GrpMor.pull_pull (bcMor hφ) (liftMor (epsDP R) hj) n (fun _ => rfl) (by simpa using sq) c]
     exact ex c
-  refine ⟨d', mem_Fil_of_corr (hφ := hφ) hF ex hd, fun c => ?_⟩
+  refine ⟨d', (mem_Fil_of_corr (hφ := hφ) hF ex hd :), fun c => ?_⟩
   rw [← GrpMor.pull_pull cst μ (constMor A) (fun r => (TrivSqZeroExt.map _).commutes r) (by simp) c, em]
   refine TrivSqZeroExt.ext ?_ ?_
   · exact (TrivSqZeroExt.fst_map _ _).trans ((ef c).trans (by simp))
@@ -394,7 +390,7 @@ theorem isKS_dir_sum : GlobalTheory.CovTop.Hypotheses₂ → ∀ (E : Type) [Fie
       (by rw [← Category.assoc, sq, Category.assoc, eφ, hiπ]) hpol hu hl τ a hf hd
     obtain ⟨v', hv', -⟩ := hL.1 (gs k)
     have fl := hgs (Pi.single k 1) B χ _ hj hχ sq
-    simp only [Pi.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at fl
+    simp only [Pi.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at fl
     obtain rfl := IsKSValue.unique P (PolPull.isAbelianScheme_of_isGrpPullback aC hχ)
       ((smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback hχ.1 gC) hv ⟨_, fl, hv'⟩
     exact ⟨_, hc, hv'⟩

@@ -85,9 +85,9 @@ theorem elementary_product_of_column_reduction (hL : bwD_Loc O) (N M : Matrix (F
     rw [hN''def, Matrix.mul_diagonal, hN']
     by_cases hb : b = j
     · subst hb
-      rw [if_neg (fun h => (Finset.mem_erase.1 h).1 rfl), sub_zero, Function.update_self]
+      rw [ite_eq_right (fun h => (Finset.mem_erase.1 h).1 rfl), sub_zero, Function.update_self]
       exact hpN a b
-    · rw [if_pos (Finset.mem_erase.2 ⟨hb, Finset.mem_univ _⟩), Function.update_of_ne hb, Pi.one_apply, mul_one]
+    · rw [ite_eq_left (Finset.mem_erase.2 ⟨hb, Finset.mem_univ _⟩), Function.update_of_ne hb, Pi.one_apply, mul_one]
       exact hcol b hb a
   have hN''det : N''.det = 1 := by
     rw [hN''def, Matrix.det_mul, Matrix.det_diagonal, Finset.prod_update_of_mem (Finset.mem_univ j), hN'det]
@@ -251,10 +251,10 @@ theorem pow_smul_mem_weight_lattice (Tt : Forms0 D u) (w : D.what₂.places.Pl) 
       simp only [atInf, hMv]
       rw [← Matrix.map_mul, ← Units.val_mul, mul_assoc, mul_inv_cancel, mul_one]
     · rw [one_mul]
-  have ho : ∀ τ, τ ≠ τv → Nτ τ = 1 := fun τ hτ => by simp only [hNτ]; rw [if_neg hτ]
+  have ho : ∀ τ, τ ≠ τv → Nτ τ = 1 := fun τ hτ => by simp only [hNτ]; rw [ite_eq_right hτ]
   have hprod : (∏ τ, (Nτ τ).det ^ shiftOf (lamT u i) τ) = Mv.det ^ shiftOf (lamT u i) τv := by
     rw [Finset.prod_eq_single τv]
-    · simp only [hNτ, if_pos rfl]
+    · simp only [hNτ, ite_eq_left rfl]
     · intro τ _ hτ; rw [ho τ hτ, Matrix.det_one, one_zpow]
     · simp
   have hc : tpow D u n * Mv.det ^ shiftOf (lamT u i) τv ∈ bwA_Ow D w := by
@@ -267,7 +267,7 @@ theorem pow_smul_mem_weight_lattice (Tt : Forms0 D u) (w : D.what₂.places.Pl) 
     have h1 := bwA_span_closure (bwA_Ow D w) le_rfl _ Mv hME _ hg'
     have e : (tpow D u n * Mv.det ^ shiftOf (lamT u i) τv) • Formalism.GradedWeylDivisibility.rowAct ℂ (Nτ τv) (MvPolynomial.map (Int.castRingHom ℂ) g) =
         (⟨_, hc⟩ : bwA_Ow D w) • Formalism.GradedWeylDivisibility.rowAct ℂ Mv (MvPolynomial.map (Int.castRingHom ℂ) g) := by
-      simp only [hNτ, if_pos rfl]; rfl
+      simp only [hNτ, ite_eq_left rfl]; rfl
     rw [e]
     exact Submodule.smul_mem _ _ h1
   · have hval : fnOf (gramC (gramN D i hi) (embT D)) (shiftOf (lamT u i))

@@ -116,8 +116,6 @@ structure RecLaws (rc : ∀ n, Irr k n → WD h) : Prop where
 
 end Local
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} {N : NData R H what₂} {A : NAut N}
 
 structure ReadAt (T : WDTie N A) (i : N.Loc) (w : PlE H) : Type 1 where

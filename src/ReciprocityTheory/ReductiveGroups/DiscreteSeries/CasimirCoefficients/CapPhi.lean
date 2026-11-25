@@ -43,12 +43,12 @@ lemma capelliC_negT {𝒰 : Type*} [Ring 𝒰] [Algebra ℂ 𝒰] (E : Fin n →
     funext j
     simp only [capEntry, id, Function.comp]
     by_cases h : σ j = j
-    · simp only [h, if_true]
+    · simp only [h, ite_true]
       rw [neg_add, ← map_neg]
       congr 2
       ring
     · have h' : ¬ j = σ j := fun e => h e.symm
-      simp only [if_neg h, if_neg h', add_zero]
+      simp only [ite_eq_right h, ite_eq_right h', add_zero]
   rw [hf, ← List.map_ofFn, List.prod_map_neg, List.length_ofFn]
 
 def negE : Fin n → Fin n → Module.End ℂ (smoothS n) := fun a b => eOp (-(Matrix.single a b (1 : ℂ)))

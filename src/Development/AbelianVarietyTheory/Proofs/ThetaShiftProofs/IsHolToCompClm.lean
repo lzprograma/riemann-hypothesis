@@ -274,8 +274,8 @@ theorem eq_FSum {f : A.V → ℂ⸨X⸩} (hf : ArcPts.IsComb A 1 Set.univ f) (θ
       _ = if A.q μ = n then A.term 1 0 θ μ v else 0 := by
           rw [hkey, hK μ θ]
           by_cases hμ : A.q μ = n
-          · rw [if_pos (by omega), if_pos hμ]
-          · rw [if_neg (by omega), if_neg hμ, mul_zero]
+          · rw [ite_eq_left (by omega), ite_eq_left hμ]
+          · rw [ite_eq_right (by omega), ite_eq_right hμ, mul_zero]
   rw [hG v, AnArc.coeff_FSum]
   simp only [hterm]
   rw [← Finset.sum_filter]
@@ -317,7 +317,7 @@ theorem valR_pullGen_spMap {A A' : Type} [CommRing A] [CommRing A'] [IsLocalRing
     have hz : f z ∈ U := ht trivial
     have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of R)).hom.hom c) = c :=
       fun c => congrArg (fun f => CommRingCat.Hom.hom f c) (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of R)))
-    rw [valR, dif_pos ht, gm, dif_pos hz]
+    rw [valR, dite_eq_left ht, gm, dite_eq_left hz]
     show ((Sp R).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
         ((Scheme.ΓSpecIso (CommRingCat.of R)).hom.hom ((f.appLE U ⊤ ht).hom a.val))) =
       ((Sp R).presheaf.germ (f ⁻¹ᵁ U) z hz).hom ((f.app U).hom a.val)
@@ -327,10 +327,10 @@ theorem valR_pullGen_spMap {A A' : Type} [CommRing A] [CommRing A'] [IsLocalRing
       (a : Γ(S, U)ˣ) : gm r z (h ⁻¹ᵁ U) (pullU h U a) = gm (r ≫ h) z U a := by
     by_cases hz : r z ∈ h ⁻¹ᵁ U
     · have hz' : (r ≫ h) z ∈ U := hz
-      simp only [gm, dif_pos hz, dif_pos hz']
+      simp only [gm, dite_eq_left hz, dite_eq_left hz']
       all_goals first | rfl
     · have hz' : (r ≫ h) z ∉ U := hz
-      simp only [gm, dif_neg hz, dif_neg hz', MonoidHom.one_apply]
+      simp only [gm, dite_eq_right hz, dite_eq_right hz', MonoidHom.one_apply]
   have gm_pullGen' {X Y Z Z' : Scheme.{0}} (L : LB X) {K : Type} [Fintype K]
       (φ : K → (Y ⟶ X)) (ε : K → ℤ) (t : LB.Gen (LB.LinComb L φ ε))
       (h : Z ⟶ Y) (r : Z' ⟶ Z) (z : Z') (j : K → L.ι) :
@@ -339,7 +339,7 @@ theorem valR_pullGen_spMap {A A' : Type} [CommRing A] [CommRing A'] [IsLocalRing
     by_cases hz : r z ∈ LB.wchart L (fun k => h ≫ φ k) j
     · exact (gm_res r z _ hz (pullU h _ (t.s j))).trans (gm_pullU_eq_gm_comp h r z _ _)
     · have hz' : (r ≫ h) z ∉ LB.wchart L φ j := fun H => hz (Set.mem_iInter.2 fun k => Set.mem_iInter.1 H k)
-      simp only [gm, dif_neg hz, dif_neg hz']
+      simp only [gm, dite_eq_right hz, dite_eq_right hz']
       rfl
   apply toStkA_injective
   refine (toStkA_valR _ _ _ h₁ _).trans ((congrArg Units.val (gm_pullGen' L φ ε t (spMap f) (𝟙 _) _ j)).trans ?_)

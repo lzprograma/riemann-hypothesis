@@ -627,28 +627,7 @@ theorem bc_local_descent {σ : Type} {T : Submodule (𝓞 K) (MvPolynomial σ K)
 variable {ι : Type} [Fintype ι] {n : ℕ}
 
 theorem bc_nabStd_fg (K : Type) [Field K] [NumberField K] (lam : ι → DomWeight n) : (nabStd K lam).FG := by
-  classical
-  let S : ι → Set (MvPolynomial (Fin n × Fin n) K) := fun τ =>
-    Set.range fun m => toK K _ ((Formalism.GradedWeylDivisibility.sSBasis (𝓞 K) n n (lam τ).natW).choose m)
-  have h : (fun τ => (nablaSq (𝓞 K) n (lam τ)).map (toK K _)) = fun τ => Submodule.span (𝓞 K) (S τ) := by
-    funext τ
-    unfold nablaSq
-    rw [← (Formalism.GradedWeylDivisibility.sSBasis (𝓞 K) n n (lam τ).natW).choose_spec.1.2.1, Submodule.map_span, ← Set.range_comp]
-    rfl
-  rw [nabStd, h, nb_tensorLat_span]
-  apply Submodule.fg_span
-  have hS : ∀ τ, (S τ).Finite := fun τ =>
-    haveI : Finite (Formalism.GradedWeylDivisibility.ssIdx n n (lam τ).natW) := (Formalism.GradedWeylDivisibility.sSIdxFinite n n _).to_subtype
-    Set.finite_range _
-  have : nbGen S = (fun f => ten f) '' Set.pi Set.univ S := by
-    ext P
-    constructor
-    · rintro ⟨f, hf, rfl⟩
-      exact ⟨f, fun τ _ => hf τ, rfl⟩
-    · rintro ⟨f, hf, rfl⟩
-      exact ⟨f, fun τ => hf τ (Set.mem_univ τ), rfl⟩
-  rw [this]
-  exact (Set.Finite.pi fun τ => hS τ).image _
+  apply _root_.Formalism.L2.DIV.nb_nabStd_fg <;> assumption
 
 theorem bc_delStd_fg (K : Type) [Field K] [NumberField K] (lam : ι → DomWeight n) : (delStd K lam).FG :=
   Submodule.FG.of_le (bc_nabStd_fg K lam) (delStd_le_nabStd K lam)

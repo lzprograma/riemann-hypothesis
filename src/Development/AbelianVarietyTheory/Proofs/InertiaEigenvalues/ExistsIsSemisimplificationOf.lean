@@ -1,45 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.SemisimplificationConstituents
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -235,19 +197,19 @@ theorem partial_step (ρ : Representation k Γ V) (U U' : Submodule k V) (hU : S
         exact sub_mem (Submodule.mem_sup_left hw) hpw
   · intro j hj
     by_cases hjm : j < m
-    · simp only [if_pos hjm]
+    · simp only [ite_eq_left hjm]
       intro g x hx
       rw [hA g x (hWsle j hjm hx)]
       exact hWst j hjm g x hx
-    · simp only [if_neg hjm]
+    · simp only [ite_eq_right hjm]
       exact hWmst
   · intro t ht i hi hit
     have hle' : t.sup (fun j => if j < m then Ws j else Wm) ≤ (t.erase m).sup Ws ⊔ Wm := by
       refine Finset.sup_le fun j hj => ?_
       by_cases hjm : j < m
-      · simp only [if_pos hjm]
+      · simp only [ite_eq_left hjm]
         exact le_sup_of_le_left (Finset.le_sup (Finset.mem_erase.mpr ⟨hjm.ne, hj⟩))
-      · simp only [if_neg hjm]
+      · simp only [ite_eq_right hjm]
         exact le_sup_right
     have hT0 : t.erase m ⊆ Finset.range m := by
       intro j hj
@@ -255,13 +217,13 @@ theorem partial_step (ρ : Representation k Γ V) (U U' : Submodule k V) (hU : S
       have := Finset.mem_range.mp (ht hjt)
       exact Finset.mem_range.mpr (by omega)
     by_cases him : i < m
-    · simp only [if_pos him]
+    · simp only [ite_eq_left him]
       have h1 : Disjoint (Ws i) ((t.erase m).sup Ws) :=
         hind hT0 (Finset.mem_range.mpr him) (fun h => hit (Finset.mem_of_mem_erase h))
       have h2 : Disjoint (Ws i ⊔ (t.erase m).sup Ws) Wm :=
         hdisj.mono_left (sup_le (hWsle i him) (hsuple _ hT0))
       exact (h1.disjoint_sup_right_of_disjoint_sup_left h2).mono_right hle'
-    · simp only [if_neg him]
+    · simp only [ite_eq_right him]
       have him' : i = m := by
         have := Finset.mem_range.mp hi
         omega
@@ -271,19 +233,19 @@ theorem partial_step (ρ : Representation k Γ V) (U U' : Submodule k V) (hU : S
         have h1 := Finset.mem_range.mp (ht hj)
         have h2 : j ≠ i := fun h => hit (h ▸ hj)
         omega
-      simp only [if_pos hjm]
+      simp only [ite_eq_left hjm]
       exact hWsle j hjm
-  · rw [Finset.range_add_one, Finset.sup_insert, if_neg (lt_irrefl m),
-      Finset.sup_congr rfl (fun j hj => if_pos (Finset.mem_range.mp hj)), hsup, sup_comm, hsupU]
+  · rw [Finset.range_add_one, Finset.sup_insert, ite_eq_right (lt_irrefl m),
+      Finset.sup_congr rfl (fun j hj => ite_eq_left (Finset.mem_range.mp hj)), hsup, sup_comm, hsupU]
   · intro j hj g v hv
     have hsame : (Finset.range j).sup (fun j => if j < m then Ws j else Wm) = (Finset.range j).sup Ws :=
-      Finset.sup_congr rfl (fun i hi => if_pos (lt_of_lt_of_le (Finset.mem_range.mp hi) (Nat.lt_succ_iff.mp hj)))
+      Finset.sup_congr rfl (fun i hi => ite_eq_left (lt_of_lt_of_le (Finset.mem_range.mp hi) (Nat.lt_succ_iff.mp hj)))
     rw [hsame]
     by_cases hjm : j < m
-    · simp only [if_pos hjm] at hv
+    · simp only [ite_eq_left hjm] at hv
       rw [hA g v (hWsle j hjm hv)]
       exact htri j hjm g v hv
-    · simp only [if_neg hjm] at hv
+    · simp only [ite_eq_right hjm] at hv
       have hjm' : j = m := by omega
       subst hjm'
       rw [hB g v hv.2, sub_sub_cancel, hsup]

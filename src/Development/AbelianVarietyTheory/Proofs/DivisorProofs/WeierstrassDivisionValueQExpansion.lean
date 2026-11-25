@@ -188,12 +188,12 @@ theorem main : ∀ (N : ℕ) [NeZero N] (x : Fin 2 → ZMod N), x ≠ 0 → HasQ
       have hch : Complex.exp ((2 * (Real.pi : ℂ) * Complex.I) * (((x 1).val : ℂ) / N)) = ch N (x 1) := by
         rw [ch, mul_div_assoc]
       rw [hch] at hr
-      rw [if_pos h0, if_pos h0]
+      rw [ite_eq_left h0, ite_eq_left h0]
       have e2 : (1 + 1 : ℕ) = 2 := rfl
       rw [e2, hr]
       simp only [Nat.factorial_one, Nat.cast_one]
       ring
-    · rw [if_neg h0, if_neg h0]
+    · rw [ite_eq_right h0, ite_eq_right h0]
       simp only [Nat.factorial_one, Nat.cast_one]
       ring
   rw [hval]

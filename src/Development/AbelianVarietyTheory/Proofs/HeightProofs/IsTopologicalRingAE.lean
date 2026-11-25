@@ -52,8 +52,6 @@ open scoped TensorProduct ContDiff ComplexOrder
 
 namespace GlobalTheory.FockCompare
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Abstract
 
 variable {G R : Type} [AddCommGroup G] [NormedAddCommGroup R] [NormedSpace ℝ R]

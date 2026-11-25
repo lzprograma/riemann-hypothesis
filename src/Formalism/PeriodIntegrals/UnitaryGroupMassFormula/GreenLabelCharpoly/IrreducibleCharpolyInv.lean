@@ -1,51 +1,6 @@
 module
 
 public import Formalism.PadicSubsetSums.CentralIdempotents.IsConstituent
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -91,41 +46,6 @@ theorem greenLab_eq (Cv : LabelConv K) (hC : CuspParam K Cv) {d : ℕ} (hd : 1 �
     {τ : FDRep ℂ (GL (Fin d) K)} (hs : Simple τ) (hc : IsCuspidal K τ) {P : K[X]}
     (hP : HasCuspLabel Cv τ P) : greenLab Cv d τ = P := by
   exact ((hC d hd).1 τ hs hc).1.unique (greenLab_spec Cv hC hd hs hc) hP
-
-theorem isCuspidal_fin_one (τ : FDRep ℂ (GL (Fin 1) K)) : IsCuspidal K τ := by
-  intro s b hb hs
-  exfalso
-  have h := Fintype.card_le_of_surjective b hb
-  simp only [Fintype.card_fin] at h
-  omega
-
-theorem charpoly_fin_one (A : Matrix (Fin 1) (Fin 1) K) :
-    A.charpoly = X - Polynomial.C (A 0 0) := by
-  rw [Matrix.charpoly, Matrix.det_unique, Fin.default_eq_zero, Matrix.charmatrix_apply_eq]
-
-theorem greenLab_one (Cv : LabelConv K) (hC : CuspParam K Cv) (τ : FDRep ℂ (GL (Fin 1) K))
-    (x : K) (hs : Simple τ) (hx : x ≠ 0)
-    (htr : ∀ (γ : GL (Fin 1) K) (m : ℕ),
-      Cv.gen 1 ^ m = algebraMap K (AlgebraicClosure K) (Matrix.det (γ : Matrix (Fin 1) (Fin 1) K)) →
-      LinearMap.trace ℂ τ (τ.ρ γ) = Cv.ι (algebraMap K (AlgebraicClosure K) x) ^ m) :
-    greenLab Cv 1 τ = X - Polynomial.C x := by
-  apply greenLab_eq Cv hC le_rfl hs (isCuspidal_fin_one τ)
-  have hxX : X - Polynomial.C x ≠ X := by
-    intro h
-    apply hx
-    have h' := congrArg (fun P : K[X] => P.coeff 0) h
-    simpa using h'
-  refine ⟨monic_X_sub_C x, irreducible_X_sub_C x, hxX, by simp, ?_⟩
-  intro x' hx' γ _ z hz m hm
-  have hx'' : x' = algebraMap K (AlgebraicClosure K) x := by
-    simpa [sub_eq_zero] using hx'
-  have hz' : z = algebraMap K (AlgebraicClosure K) (Matrix.det (γ : Matrix (Fin 1) (Fin 1) K)) := by
-    rw [charpoly_fin_one] at hz
-    have hz2 : z = algebraMap K (AlgebraicClosure K) ((γ : Matrix (Fin 1) (Fin 1) K) 0 0) := by
-      simpa [sub_eq_zero] using hz
-    rw [hz2, Matrix.det_unique, Fin.default_eq_zero]
-  simp only [Fintype.card_fin, Nat.sub_self, pow_zero, one_mul, Finset.sum_range_one, mul_one]
-  rw [hx'', htr γ m (hm.trans hz')]
 
 theorem gen_pow (Cv : LabelConv K) {d : ℕ} (hd : 1 ≤ d) :
     Cv.gen d ^ (Fintype.card K ^ d - 1) = 1 := by

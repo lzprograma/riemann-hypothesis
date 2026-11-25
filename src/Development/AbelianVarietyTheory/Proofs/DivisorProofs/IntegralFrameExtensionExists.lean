@@ -50,7 +50,6 @@ noncomputable section
 
 namespace GlobalTheory.FactorDepth.Extension
 
-attribute [local instance] Over.cartesianMonoidalCategory
 open MonObj
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}

@@ -37,7 +37,7 @@ theorem gsQuotientEquiv_symm_mk (σ : K.1.fixingSubgroup) :
   rw [MulEquiv.symm_apply_eq, gsQuotientEquiv_gsRestrict]
 
 theorem isQuotientMap_gsRestrict : Topology.IsQuotientMap (gsRestrict K S) := by
-  have : T2Space (galUnramifiedOutside K.1 ℚ̄ S) := galois_t2Space K.1 (maxUnramifiedOutside K.1 ℚ̄ S)
+  have : T2Space (galUnramifiedOutside K.1 ℚ̄ S) := krullTopology_t2 (K := K.1) (L := maxUnramifiedOutside K.1 ℚ̄ S)
   exact ((continuous_gsRestrict K S).isClosedMap).isQuotientMap (continuous_gsRestrict K S)
     (gsRestrict_surjective K S)
 
@@ -159,34 +159,6 @@ theorem cohomologyMapAlong_invariantsGsKernelMor_comp_gsBrauerInfl (n : ℕ) :
   exact coe_invariantsGsKernelFun K S a
 
 
-
-theorem eq_zero_of_h3_gsUnits (ℓ : ℕ) (hℓ : ℓ.Prime)
-    (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
-    (x : cohomology (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 3) (k : ℕ) (hx : ℓ ^ k • x = 0) :
-    x = 0 := by
-  have hsurj : Function.Surjective (cohomologyMapAlong (gsQuotientEquiv K S).toMonoidHom
-      (continuous_gsQuotientEquiv K S) (invariantsGsKernelMor K S) 3).hom :=
-    (ModuleCat.epi_iff_surjective _).1 inferInstance
-  have hinj : Function.Injective (cohomologyMapAlong (gsQuotientEquiv K S).toMonoidHom
-      (continuous_gsQuotientEquiv K S) (invariantsGsKernelMor K S) 3).hom :=
-    (ModuleCat.mono_iff_injective _).1 inferInstance
-  obtain ⟨x0, hx0⟩ := hsurj (cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 3 x)
-  have hk0 : ℓ ^ k • x0 = 0 := by
-    apply hinj
-    refine (map_nsmul _ (ℓ ^ k) x0).trans ?_
-    refine (congrArg (fun z => ℓ ^ k • z) hx0).trans ?_
-    refine (map_nsmul (cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 3)
-      (ℓ ^ k) x).symm.trans ?_
-    refine (congrArg _ hx).trans ?_
-    exact (map_zero _).trans (map_zero _).symm
-  have hinf : (cohomologyInfl (unitsLimitRep K) (gsKernel K S) 3).hom x0 = 0 := by
-    have : Subsingleton (cohomology (unitsLimitRep K) 3) := subsingleton_cohomology_three_unitsLimitRep K
-    exact Subsingleton.elim _ _
-  have h0 := eq_zero_of_cohomologyInfl_three_eq_zero (unitsLimitRep K) (gsKernel K S)
-    (isClosed_gsKernel K S) (isZero_cohomology_one_gsKernel K S) ℓ
-    (exists_coprime_smul_cohomology_two_gsKernel K S hℓ hS) x0 hinf k hk0
-  apply (cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 3).injective
-  rw [← hx0, h0, map_zero, map_zero]
 
 end
 

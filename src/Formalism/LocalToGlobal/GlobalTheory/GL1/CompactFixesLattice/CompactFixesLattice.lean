@@ -11,12 +11,6 @@ open Matrix TensorProduct NumberField IsDedekindDomain
 
 namespace Formalism.L2.GlobalTheoryTheory.FiltrationBoundaryCriterion.CompactFixesLatticeTheory
 
-section Group
-
-variable {A : Type} [CommRing A] {n : Type} [Fintype n] [DecidableEq n]
-
-end Group
-
 section Points
 
 variable {F E : Type} [Field F] [CommRing E] [Algebra F E] {n : Type} [Fintype n] [DecidableEq n]

@@ -1,5 +1,6 @@
 module
 
+import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.HolomorphicZerosNotIsolated
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridgeFlat
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeD
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
@@ -53,32 +54,7 @@ theorem not_flat (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) →
 theorem analyticAt_det_fderiv {Q : (Fin e → ℂ) → (Fin e → ℂ)} {u : Fin e → ℂ}
     (hQ : AnalyticAt ℂ Q u) :
     AnalyticAt ℂ (fun v => LinearMap.det (fderiv ℂ Q v : (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ))) u := by
-  have hF : AnalyticAt ℂ (fderiv ℂ Q) u := hQ.fderiv
-
-  have hentry : ∀ i j : Fin e, AnalyticAt ℂ
-      (fun v => LinearMap.toMatrix' (fderiv ℂ Q v : (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ)) i j) u := by
-    intro i j
-    have hL : AnalyticAt ℂ (fun L : (Fin e → ℂ) →L[ℂ] (Fin e → ℂ) => L (Pi.single j 1) i)
-        (fderiv ℂ Q u) := by
-      have h := ContinuousLinearMap.analyticAt
-        ((ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin e => ℂ) i).comp
-          (ContinuousLinearMap.apply ℂ (Fin e → ℂ) (Pi.single j (1 : ℂ)))) (fderiv ℂ Q u)
-      exact h
-    have heq : (fun v => LinearMap.toMatrix' (fderiv ℂ Q v : (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ)) i j) =
-        fun v => fderiv ℂ Q v (Pi.single j 1) i := by
-      funext v
-      rw [LinearMap.toMatrix'_apply, ContinuousLinearMap.coe_coe]
-    rw [heq]
-    exact hL.comp hF
-
-  have hdet : (fun v => LinearMap.det (fderiv ℂ Q v : (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ))) =
-      fun v => (LinearMap.toMatrix' (fderiv ℂ Q v : (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ))).det := by
-    funext v
-    rw [LinearMap.det_toMatrix']
-  rw [hdet]
-  simp only [Matrix.det_apply, Units.smul_def, zsmul_eq_mul]
-  refine Finset.analyticAt_fun_sum _ fun σ _ => ?_
-  exact analyticAt_const.mul (Finset.analyticAt_fun_prod _ fun i _ => hentry _ _)
+  apply GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets.analyticAt_det_fderiv <;> assumption
 
 theorem det_eq_zero_of_coord {L : (Fin e → ℂ) →L[ℂ] (Fin e → ℂ)} (m : Fin e)
     (h : ∀ v, L v m = 0) : LinearMap.det (L : (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ)) = 0 := by

@@ -710,7 +710,7 @@ private theorem exists_periodic_mod_ideal_eq_character_div_infinity_type {K : Ty
     by_cases ha : a = 0
     · simp [ψ, ha, hm]
     · have h1 : Ideal.span {a} ⊔ m = ⊤ := by rw [hm, sup_top_eq]
-      simp only [ψ, h1, ne_eq, ha, not_false_eq_true, and_self, if_true]
+      simp only [ψ, h1, ne_eq, ha, not_false_eq_true, and_self, ite_true]
       rw [hXφ a ha (by rw [hm]; exact Submodule.mem_top)]
       exact mul_inv_cancel₀ (hφne a ha)
   refine ⟨ψ, ?_, ?_⟩
@@ -755,7 +755,7 @@ private theorem exists_periodic_mod_ideal_eq_character_div_infinity_type {K : Ty
         rw [h0, zero_mul] at eA
         exact mul_ne_zero (hφne r (fun h => by simp [h] at hr; exact hm ((Ideal.eq_top_iff_one _).2
           (by simpa using m.neg_mem hr)))) (hφne a ha0) eA.symm
-      simp only [ψ, ha, hb, ne_eq, ha0, hb0, not_false_eq_true, and_self, if_true]
+      simp only [ψ, ha, hb, ne_eq, ha0, hb0, not_false_eq_true, and_self, ite_true]
       have hφa := hφne a ha0
       have hφb := hφne b hb0
       rw [← div_eq_mul_inv, ← div_eq_mul_inv, div_eq_div_iff hφa hφb]
@@ -765,7 +765,7 @@ private theorem exists_periodic_mod_ideal_eq_character_div_infinity_type {K : Ty
       simp [ψ, ha, hb, hm]
   · intro β hβ
     by_cases hc : Ideal.span {β} ⊔ m = ⊤
-    · simp only [ψ, hc, ne_eq, hβ, not_false_eq_true, and_self, if_true]
+    · simp only [ψ, hc, ne_eq, hβ, not_false_eq_true, and_self, ite_true]
       rw [mul_assoc, inv_mul_cancel₀ (hφne β hβ), mul_one]
     · have hm : m ≠ ⊤ := fun hm => hc (by rw [hm, sup_top_eq])
       simp [ψ, hc, hm, hXcop _ hc]

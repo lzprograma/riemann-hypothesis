@@ -40,6 +40,7 @@ import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasChr
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContragredientThetaParamsRemoveBlockArrow
 
 @[expose] public section
 
@@ -48,7 +49,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open MeasureTheory Matrix GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.Grid
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.PairLift
 
 namespace GlobalTheory.GridParD
@@ -275,11 +275,7 @@ theorem gapOver_flip {S : SPar} {g : ℚ} (H : GapOver S g) : GapOver (flip S) g
   exact H (x.1, !x.2) (mem_flip.1 hx) (y.1, !y.2) (mem_flip.1 hy) fun e => hs (Bool.not_inj e)
 
 theorem GapOver.isRegular {S : SPar} {g : ℚ} (hg : 0 ≤ g) (H : GapOver S g) : IsRegular S := by
-  intro x hx y hy e
-  by_contra hne
-  have := H x hx y hy hne
-  rw [e, sub_self, abs_zero] at this
-  linarith
+  exact GlobalTheory.RemoveBlock.isRegular_of_gapOver hg H
 
 theorem flip_dualPar (S : SPar) : flip (dualPar S) = dualPar (flip S) := by
   simp only [GlobalTheory.SignedHC.flip, dualPar, Finset.image_image]
@@ -343,21 +339,7 @@ theorem odd_sLen : Odd (sLen D) := by
   exact ⟨a + 3, by unfold sLen; omega⟩
 
 theorem odd_rkV_iff (i j : ℕ) : Odd (rkV D i j) ↔ ¬ Odd (i + j) := by
-  have hr := _root_.Formalism.L2.Theta.r_odd D
-  have ht := D.R.t_odd
-  have hs := odd_sLen D
-  obtain ⟨a, ha⟩ := hr
-  obtain ⟨b, hb⟩ := ht
-  obtain ⟨c, hc⟩ := hs
-  unfold rkV
-  rw [hc, hb, ha]
-  have e1 : j * (2 * b + 1) = 2 * (j * b) + j := by ring
-  have e2 : i * (2 * c + 1) = 2 * (i * c) + i := by ring
-  rw [e1, e2]
-  generalize j * b = A
-  generalize i * c = B
-  simp only [Nat.odd_iff]
-  omega
+  apply _root_.GlobalTheory.RemoveBlock.odd_rkV <;> assumption
 
 end GlobalTheory.GridParD
 

@@ -20,13 +20,6 @@ attribute [local instance] MvPolynomial.algebraMvPolynomial
 
 noncomputable section
 
-section Field
-
-variable {R L : Type} [Field R] [CommRing L] [IsDomain L] [Algebra R L]
-
-
-end Field
-
 section Dimension
 
 variable {σ : Type} [Fintype σ] {L : Type} [CommRing L] [IsDomain L] [Algebra ℚ L]
@@ -67,13 +60,6 @@ theorem ringKrullDim_quotient_ker (φ : MvPolynomial σ ℤ →+* L) :
     rw [← hdim, hs1]
 
 end Dimension
-
-section Constants
-
-variable {M : Type} [CommRing M] [IsDomain M] [Algebra ℚ M]
-
-
-end Constants
 
 end
 

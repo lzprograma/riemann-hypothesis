@@ -61,17 +61,7 @@ open scoped UpperHalfPlane nonZeroDivisors Real
 
 theorem eisG_eq_G (L : PeriodPair) (Λ : AddSubgroup ℂ) (h : ∀ z, z ∈ Λ ↔ z ∈ L.lattice)
     {k : ℕ} (hk : k ≠ 0) : eisG Λ k = L.G (2 * k) := by
-  have h1 : eisG Λ k = ∑' z : ℂ, ({w : ℂ | w ∈ Λ ∧ w ≠ 0}).indicator (fun w => (w ^ (2 * k))⁻¹) z := by
-    rw [← tsum_subtype, eisG]
-    exact tsum_congr fun w => one_div _
-  have h2 : L.G (2 * k) = ∑' z : ℂ, (L.lattice : Set ℂ).indicator (fun w => (w ^ (2 * k))⁻¹) z := by
-    rw [← tsum_subtype, PeriodPair.G]
-    rfl
-  rw [h1, h2]
-  refine tsum_congr fun z => ?_
-  rcases eq_or_ne z 0 with rfl | hz
-  · simp [Set.indicator, hk]
-  · simp [Set.indicator, hz, h]
+  exact GlobalTheory.LatticeAreaBound.eisG_eq_G L Λ h hk
 
 section
 

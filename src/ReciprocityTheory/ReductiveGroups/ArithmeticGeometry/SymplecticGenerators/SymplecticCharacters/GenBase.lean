@@ -123,12 +123,12 @@ theorem row_inr_of_col_inl {M : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ}
     intro r
     rcases r with r | r <;> by_cases hri : r = i <;> simp [Matrix.J, hri]
   simp_rw [hJ, Matrix.transpose_apply] at h2
-  simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h2
+  simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h2
   rw [h2, Matrix.one_apply]
   by_cases hq : q = Sum.inr i
   · subst hq
     simp
-  · rw [if_neg hq, if_neg (Ne.symm hq)]
+  · rw [ite_eq_right hq, ite_eq_right (Ne.symm hq)]
 
 theorem row_inl_of_col_inr {M : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ}
     (hM : M ∈ symplecticGroup (Fin g) ℤ) {i : Fin g}
@@ -143,15 +143,15 @@ theorem row_inl_of_col_inr {M : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ}
     intro r
     rcases r with r | r <;> by_cases hri : r = i <;> simp [Matrix.J, hri]
   simp_rw [hJ, Matrix.transpose_apply] at h2
-  simp only [mul_ite, mul_neg, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h2
+  simp only [mul_ite, mul_neg, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h2
   rw [Matrix.one_apply]
   by_cases hq : q = Sum.inl i
   · subst hq
-    rw [if_pos rfl] at h2
-    simp only [if_true]
+    rw [ite_eq_left rfl] at h2
+    simp only [ite_true]
     linarith
-  · rw [if_neg hq] at h2
-    rw [if_neg (Ne.symm hq)]
+  · rw [ite_eq_right hq] at h2
+    rw [ite_eq_right (Ne.symm hq)]
     linarith
 
 end ReciprocityTheory.ChartRestriction.G.Key.Chi

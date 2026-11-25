@@ -2,48 +2,9 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGSDvr
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LinQRawRange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGFC
 
 @[expose] public section
 
@@ -73,25 +34,7 @@ theorem pi_smulF (e : E ≃ₐ[F] F × F) {n : ℕ} (π : V ≃+ (Fin n → F) �
 
 theorem mem_smulLat_iff' (H : Loc.HermSp M V) (Λ : Submodule M.L.O V) (c : E) (x : V) :
     x ∈ H.smulLat c Λ ↔ ∃ y ∈ Λ, x = c • y := by
-  unfold Loc.HermSp.smulLat
-  constructor
-  · intro hx
-    induction hx using Submodule.span_induction with
-    | mem z hz =>
-      obtain ⟨y, hy, rfl⟩ := hz
-      exact ⟨y, hy, rfl⟩
-    | zero => exact ⟨0, Λ.zero_mem, (smul_zero c).symm⟩
-    | add z w _ _ hz hw =>
-      obtain ⟨y, hy, rfl⟩ := hz
-      obtain ⟨y', hy', rfl⟩ := hw
-      exact ⟨y + y', Λ.add_mem hy hy', (smul_add c y y').symm⟩
-    | smul a z _ hz =>
-      obtain ⟨y, hy, rfl⟩ := hz
-      refine ⟨a • y, Λ.smul_mem a hy, ?_⟩
-      first
-      | exact smul_comm a c y
-  · rintro ⟨y, hy, rfl⟩
-    exact Submodule.subset_span ⟨y, hy, rfl⟩
+  apply _root_.PI.UnitaryGroupMassFormula.CntFormula.FC.smulLat_mem <;> assumption
 
 theorem mem_smulLat_coord (e : E ≃ₐ[F] F × F) (H : Loc.HermSp M V) (Λ : Submodule M.L.O V) {n : ℕ}
     (π : V ≃+ (Fin n → F) × (Fin n → F))

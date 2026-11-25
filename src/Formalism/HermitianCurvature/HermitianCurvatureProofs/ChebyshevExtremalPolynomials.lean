@@ -3,52 +3,7 @@ module
 public import Formalism.HermitianCurvature.LevelRecursionCondNeeded
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Extremal
 public import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -132,13 +87,13 @@ lemma node_mul_U (m : ℕ) (j : Fin (m + 2)) :
       if (j:ℕ) = 0 ∨ (j:ℕ) = m + 1 then (-1) ^ (j:ℕ) * ((m:ℝ) + 1) else 0 := by
   by_cases h0 : (j:ℕ) = 0
   · have : nd (m + 1) j = 1 := by unfold nd; rw [h0]; exact Chebyshev.node_eq_one
-    rw [this, if_pos (Or.inl h0), h0, Chebyshev.U_eval_one]; simp
+    rw [this, ite_eq_left (Or.inl h0), h0, Chebyshev.U_eval_one]; simp
   by_cases h1 : (j:ℕ) = m + 1
   · have : nd (m + 1) j = -1 := by unfold nd; rw [h1]; exact Chebyshev.node_eq_neg_one (by omega)
-    rw [this, if_pos (Or.inr h1), h1, Chebyshev.U_eval_neg_one, Int.cast_negOnePow]
+    rw [this, ite_eq_left (Or.inr h1), h1, Chebyshev.U_eval_neg_one, Int.cast_negOnePow]
     push_cast
     rw [zpow_natCast, pow_succ]; ring
-  · rw [if_neg (by tauto)]
+  · rw [ite_eq_right (by tauto)]
     have h := U_mul_sin_node m j
     have hpos : 0 < Real.sin ((j:ℕ) * Real.pi / ((m + 1 : ℕ) : ℝ)) := by
       have hjm : ((j:ℕ):ℝ) < ((m + 1 : ℕ) : ℝ) := by
@@ -205,7 +160,7 @@ lemma sum_half (m : ℕ) :
   have : ∀ i : Fin m, (if ((i.castSucc.succ : Fin (m + 2)) : ℕ) = 0 ∨
       ((i.castSucc.succ : Fin (m + 2)) : ℕ) = m + 1 then (1 / 2 : ℝ) else 1) = 1 := by
     intro i
-    rw [if_neg]
+    rw [ite_eq_right]
     have := i.isLt
     simp only [Fin.val_succ, Fin.val_castSucc]
     omega
@@ -248,7 +203,7 @@ lemma sum_lagCo_mul_pow {d : ℕ} (y : Fin (d + 1) → ℝ) (hy : Function.Injec
   have e : (if k = d then (1:ℝ) else 0) = if d = k then 1 else 0 := by
     by_cases hkd : k = d
     · subst hkd; simp
-    · rw [if_neg hkd, if_neg (Ne.symm hkd)]
+    · rw [ite_eq_right hkd, ite_eq_right (Ne.symm hkd)]
   rw [e, h]
   refine sum_congr rfl fun i _ => ?_
   unfold lagCo
@@ -270,12 +225,8 @@ lemma lead_complex {V : Type} [AddCommGroup V] [Module ℂ V] {d : ℕ} (y : Fin
     by_cases hk : k = Fin.last d
     · subst hk; simp
     · have hk' : ¬ ((k:ℕ) = d) := fun h0 => hk (Fin.ext (by simpa using h0))
-      rw [if_neg hk, if_neg hk']; simp
+      rw [ite_eq_right hk, ite_eq_right hk']; simp
   simp_rw [this]
   simp
 
 end Formalism.FourierDecayAlt.P.ChebyshevExtremalPolynomials
-
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P

@@ -8,8 +8,8 @@ import Mathlib.RingTheory.Localization.Finiteness
 namespace Bl.general_b_fact_third_bis_other
 
 theorem goal1 :
-  ∀ {R K V : Type} [inst : CommRing.{0} R] [IsDomain.{0} R] [inst_2 : Field.{0} K] [inst_3 : Algebra.{0, 0} R K]
-  [IsFractionRing.{0, 0} R K] [inst_5 : AddCommGroup.{0} V] [inst_6 : Module.{0, 0} K V] [inst_7 : Module.{0, 0} R V]
+  ∀ {R K V : Type} [CommRing.{0} R] [IsDomain.{0} R] [Field.{0} K] [Algebra.{0, 0} R K]
+  [IsFractionRing.{0, 0} R K] [AddCommGroup.{0} V] [Module.{0, 0} K V] [Module.{0, 0} R V]
   [IsScalarTower.{0, 0, 0} R K V] (N : Submodule.{0, 0} R V) {v : V},
   Membership.mem.{0, 0} (Submodule.span.{0, 0} K (SetLike.coe.{0, 0} N)) v →
     Exists.{1} fun (c : R) ↦ And (Ne.{1} c 0) (Membership.mem.{0, 0} N (HSMul.hSMul.{0, 0, 0} c v)) := by

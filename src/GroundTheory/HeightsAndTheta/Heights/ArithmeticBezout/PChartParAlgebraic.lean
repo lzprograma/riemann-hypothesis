@@ -56,34 +56,27 @@ theorem proof : ChartParAlgebraic.Statement := by
     have hm : η m = z m * η j₀ := by rw [hzm, inv_mul_cancel_right₀ hη0]
     rw [hm]
     exact (hmem _ (hzB m)).mul hη0alg
-  have hK : ∀ c : K, IsAlgebraic B (algebraMap K L c) := fun c => by
-    have hc : c ∈ IntermediateField.adjoin F (Set.range u) := by rw [hu]; trivial
-    induction hc using IntermediateField.adjoin_induction with
-    | mem x hx =>
-      obtain ⟨p, rfl⟩ := hx
-      exact hmem _ (huB p)
-    | algebraMap x =>
-      rw [← IsScalarTower.algebraMap_apply F K L]
-      exact hmem _ (hFB x)
-    | add x y _ _ hx hy =>
-      rw [map_add (f := _)]
-      exact hx.add hy
-    | inv x _ hx =>
-      rw [map_inv₀]
-      exact hx.inv
-    | mul x y _ _ hx hy =>
-      rw [map_mul]
-      exact hx.mul hy
-  refine ⟨fun y => ?_⟩
-  have hy : y ∈ IntermediateField.adjoin K (Set.range η) := by rw [hη]; trivial
-  induction hy using IntermediateField.adjoin_induction with
-  | mem x hx =>
-    obtain ⟨m, rfl⟩ := hx
-    exact hηalg m
-  | algebraMap x => exact hK x
-  | add x y _ _ hx hy => exact hx.add hy
-  | inv x _ hx => exact hx.inv
-  | mul x y _ _ hx hy => exact hx.mul hy
+  let S : Subfield L :=
+    { carrier := {y | IsAlgebraic B y}
+      mul_mem' := fun ha hb => ha.mul hb
+      one_mem' := isAlgebraic_one
+      add_mem' := fun ha hb => ha.add hb
+      zero_mem' := isAlgebraic_zero
+      neg_mem' := fun ha => ha.neg
+      inv_mem' := fun _ ha => ha.inv }
+  let SK : IntermediateField F K := IntermediateField.mk
+    (Subalgebra.mk (S.comap (algebraMap K L)).toSubsemiring fun c =>
+      show IsAlgebraic B (algebraMap K L (algebraMap F K c)) from by
+        rw [← IsScalarTower.algebraMap_apply F K L]; exact hmem _ (hFB c))
+    (fun _ hx => (S.comap (algebraMap K L)).inv_mem hx)
+  have hle : IntermediateField.adjoin F (Set.range u) ≤ SK :=
+    IntermediateField.adjoin_le_iff.mpr (Set.range_subset_iff.mpr fun p => hmem _ (huB p))
+  have hK : ∀ c : K, IsAlgebraic B (algebraMap K L c) := fun c => (hu ▸ hle) (trivial : c ∈ ⊤)
+  let SL : IntermediateField K L :=
+    IntermediateField.mk (Subalgebra.mk S.toSubsemiring hK) (fun _ hx => hx.inv)
+  have hle' : IntermediateField.adjoin K (Set.range η) ≤ SL :=
+    IntermediateField.adjoin_le_iff.mpr (Set.range_subset_iff.mpr hηalg)
+  exact ⟨fun y => (hη ▸ hle') (trivial : y ∈ ⊤)⟩
 
 end ChartParAlgebraic
 

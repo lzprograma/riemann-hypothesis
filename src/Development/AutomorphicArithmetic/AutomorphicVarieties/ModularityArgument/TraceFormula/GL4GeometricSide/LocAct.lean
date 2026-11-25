@@ -179,19 +179,6 @@ private theorem epow_loc (s : Bool) (m : ℕ) (a b : Fin n) {f f' : Mat n → V}
     simp only [Epow.eq_2, Finset.sum_apply]
     exact Finset.sum_congr rfl fun d _ => eu_loc s a d (ih d b) hx
 
-private theorem epow_smo (s : Bool) (m : ℕ) (a b : Fin n) {f : Mat n → V} (h : ContDiffOn ℝ ∞ f (GLs n)) :
-    ContDiffOn ℝ ∞ (Epow s m a b f) (GLs n) := by
-  induction m generalizing a b with
-  | zero =>
-    simp only [Epow.eq_1]
-    split_ifs
-    · exact h
-    · exact contDiffOn_const
-  | succ m ih =>
-    simp only [Epow.eq_2]
-    rw [Finset.sum_fn]
-    exact ContDiffOn.sum fun d _ => eu_smo s a d (ih d b)
-
 private theorem epow_smul (s : Bool) (m : ℕ) (a b : Fin n) (c : ℂ) {f : Mat n → V}
     (h : ContDiffOn ℝ ∞ f (GLs n)) :
     Set.EqOn (Epow s m a b (fun y => c • f y)) (fun y => c • Epow s m a b f y) (GLs n) := by
@@ -205,7 +192,7 @@ private theorem epow_smul (s : Bool) (m : ℕ) (a b : Fin n) (c : ℂ) {f : Mat 
     simp only [Epow.eq_2, Finset.sum_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun d _ => ?_
     rw [eu_loc s a d (ih d b) hx]
-    exact eu_smul s a d c (epow_smo s m d b h) hx
+    exact eu_smul s a d c (_root_.PositivityTheory.Rg.BcB.CG.contDiffOn_Epow s m d b h) hx
 
 private theorem gel_loc (s : Bool) (m : ℕ) {f f' : Mat n → V} (h : Set.EqOn f f' (GLs n)) :
     Set.EqOn (gel s m f) (gel s m f') (GLs n) := by

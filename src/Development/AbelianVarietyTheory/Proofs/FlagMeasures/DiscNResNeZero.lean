@@ -436,22 +436,7 @@ theorem sub_count [_root_.NumberField.IsTotallyComplex K] (N : Submodule (𝓞 K
 omit [FiniteDimensional K V] in
 theorem isLattice_of_idx {L M : Submodule (𝓞 K) V} (hL : Submodule.IsFullLattice K L) (hM : M ≤ L)
     (h : idx L M ≠ 0) : Submodule.IsFullLattice K M := by
-  haveI : Submodule.IsFullLattice K L := hL
-  haveI : Submodule.IsLattice K M := Submodule.IsLattice.mono K hM
-  refine ⟨?_⟩
-  rw [← Submodule.IsFullLattice.span_eq_top (A := K) (M := L)]
-  refine le_antisymm (Submodule.span_mono hM) ?_
-  rw [Submodule.span_le]
-  intro m hm
-  have hn : (M.toAddSubgroup.relIndex L.toAddSubgroup) • m ∈ M :=
-    AddSubgroup.nsmul_relIndex_mem M.toAddSubgroup (K := L.toAddSubgroup) hm
-  have hnK : ((M.toAddSubgroup.relIndex L.toAddSubgroup : ℕ) : K) ≠ 0 :=
-    Nat.cast_ne_zero.mpr h
-  have hm' : m = ((M.toAddSubgroup.relIndex L.toAddSubgroup : ℕ) : K)⁻¹ •
-      (M.toAddSubgroup.relIndex L.toAddSubgroup • m) := by
-    rw [← Nat.cast_smul_eq_nsmul K, smul_smul, inv_mul_cancel₀ hnK, one_smul]
-  rw [SetLike.mem_coe, hm']
-  exact Submodule.smul_mem _ _ (Submodule.subset_span hn)
+  apply _root_.GlobalTheory.DegCnt.FixDisc.lattice_of_idx <;> assumption
 
 
 omit [FiniteDimensional K V] [NumberField K] in
@@ -1852,12 +1837,12 @@ theorem main : MinkowskiBound → GlobalTheory.Mass.MaxMass → Formalism.Hermit
         simp only [I, Finset.coe_product, Set.mem_prod, Finset.mem_coe, Finset.mem_Ico, Finset.mem_Icc]
         refine ⟨by omega, l3, ?_⟩
         by_contra hn
-        rw [if_neg (fun a => hn (by exact_mod_cast a))] at l4
+        rw [ite_eq_right (fun a => hn (by exact_mod_cast a))] at l4
         have : ({q ∈ Trip H g L j x x' | fixSp q.2.2 = fixSp p.2.2}).encard = 0 := by simpa using l4
         exact (Set.eq_empty_iff_forall_notMem.1 (Set.encard_eq_zero.1 this)) p ⟨hp, rfl⟩
       · refine add_le_add ?_ (Finset.sum_le_sum fun i hi => encard_fibres_le _ _ _ _ fun U hU => ?_)
         · have p0 := ps 0 D ⊤ hD1 (by simp) ((discN_top _ _).trans hLd)
-          rw [if_pos (by nlinarith)] at p0
+          rw [ite_eq_left (by nlinarith)] at p0
           rw [mul_add, mul_one, ENNReal.ofReal_add (by positivity) (by positivity)]
           refine add_le_add (p0.trans (ENNReal.ofReal_le_ofReal
             (top_bound c D _ Y g k f j x x' hc hD1' rfl hX1 hY))) (pk.trans (ENNReal.ofReal_le_ofReal ?_))
@@ -1867,7 +1852,7 @@ theorem main : MinkowskiBound → GlobalTheory.Mass.MaxMass → Formalism.Hermit
           gcongr
         · simp only [I, Finset.mem_product, Finset.mem_Ico, Finset.mem_Icc] at hi
           have p1 := ps i.1 i.2 U hi.2.1 (by rw [hU.1]; omega) hU.2
-          rw [if_pos (by exact_mod_cast hi.2.2)] at p1
+          rw [ite_eq_left (by exact_mod_cast hi.2.2)] at p1
           exact p1)
   refine h1.trans ?_
   rw [← hmass, ← ENNReal.ofReal_mul hm0.le]

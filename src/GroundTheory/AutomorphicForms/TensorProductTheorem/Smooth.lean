@@ -146,7 +146,7 @@ theorem exists_boxSubgroup_subset [∀ v, IsTopologicalGroup (G v)]
     have hgK : ∀ v, g v ∈ K v := fun v => by
       by_cases hv : v ∈ I
       · have := hg v
-        simp only [K', hv, if_true] at this
+        simp only [K', hv, ite_true] at this
         exact hLK v this
       · have := hg v
         simpa [K', hv] using this
@@ -155,7 +155,7 @@ theorem exists_boxSubgroup_subset [∀ v, IsTopologicalGroup (G v)]
     rw [← hx]
     refine hIt fun v hv => ?_
     have := hg v
-    simp only [K', hv, if_true] at this
+    simp only [K', hv, ite_true] at this
     exact hLt v hv (g v) this (hgK v)
 
 end RestrictedTensor
@@ -251,10 +251,10 @@ theorem exists_boxSubgroup_fixing (hπ : ∀ v, IsSmooth (π v))
       funext v
       have hgv := hg v
       by_cases h : x v = ξ v ∧ ξ v ∈ fixedVectors (π v) (K v)
-      · simp only [K', h, and_self, if_true] at hgv
+      · simp only [K', h, and_self, ite_true] at hgv
         rw [h.1]
         exact h.2 _ hgv
-      · simp only [K', h, if_false] at hgv
+      · simp only [K', h, ite_false] at hgv
         exact hLfix v _ hgv
   | zero =>
     exact ⟨K, hKcs, fun v => hKo.out v, fun v => le_rfl, Eventually.of_forall fun v => rfl,
@@ -459,7 +459,7 @@ theorem le_range_windowEmbed [DecidableEq ι] (hK'e : ∀ᶠ v in cofinite, K' v
       by_cases hvF : v ∈ F
       · rw [Finset.piecewise_eq_of_mem _ _ _ hvF]
         have hvS : v ∉ S := (Finset.mem_filter.1 hvF).2
-        simp only [m, extend, hvS, dif_neg, not_false_eq_true]
+        simp only [m, extend, hvS, dite_eq_right, not_false_eq_true]
         exact (hc v hvS).symm
       · rw [Finset.piecewise_eq_of_notMem _ _ _ hvF]
         by_cases hvS : v ∈ S

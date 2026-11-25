@@ -41,28 +41,15 @@ theorem pi_image_mul (lf : Measure R) [SigmaFinite lf] (u v : ι → R) (huv : �
       (∏ i, (c i : ℝ≥0∞)) * (Measure.pi fun _ : ι => lf) s := by
   have hT : Measurable (fun (x : ι → R) i => v i * x i) :=
     (continuous_pi fun i => continuous_const.mul (continuous_apply i)).measurable
-  have himg : (fun (x : ι → R) i => u i * x i) '' s = (fun (x : ι → R) i => v i * x i) ⁻¹' s := by
-    ext y
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      have : (fun i => v i * (u i * x i)) = x := by
-        funext i
-        rw [← mul_assoc, mul_comm (v i), huv, one_mul]
-      simpa [this] using hx
-    · intro hy
-      refine ⟨_, hy, ?_⟩
-      funext i
-      show u i * (v i * y i) = y i
-      rw [← mul_assoc, huv, one_mul]
-  have hpre : ∀ i (t : Set R), (fun x => v i * x) ⁻¹' t = (fun x => u i * x) '' t := by
-    intro i t
-    ext y
-    constructor
-    · intro hy
-      exact ⟨_, hy, by simp only; rw [← mul_assoc, huv, one_mul]⟩
-    · rintro ⟨x, hx, rfl⟩
-      have : v i * (u i * x) = x := by rw [← mul_assoc, mul_comm (v i), huv, one_mul]
-      simpa [this] using hx
+  have hvu : ∀ i (x : R), v i * (u i * x) = x := fun i x => by rw [← mul_assoc, mul_comm (v i), huv, one_mul]
+  have huv' : ∀ i (x : R), u i * (v i * x) = x := fun i x => by rw [← mul_assoc, huv, one_mul]
+  have himg : (fun (x : ι → R) i => u i * x i) '' s = (fun (x : ι → R) i => v i * x i) ⁻¹' s :=
+    congrFun (Set.image_eq_preimage_of_inverse (f := fun (x : ι → R) i => u i * x i)
+      (g := fun (x : ι → R) i => v i * x i) (fun x => funext fun i => hvu i (x i))
+      (fun y => funext fun i => huv' i (y i))) s
+  have hpre : ∀ i (t : Set R), (fun x => v i * x) ⁻¹' t = (fun x => u i * x) '' t := fun i t =>
+    (congrFun (Set.image_eq_preimage_of_inverse (f := fun x => u i * x) (g := fun x => v i * x)
+      (hvu i) (huv' i)) t).symm
   have e1 : Measure.pi (fun i => c i • lf) =
       (Measure.pi fun _ : ι => lf).map (fun (x : ι → R) i => v i * x i) := by
     refine Measure.pi_eq fun t ht => ?_

@@ -428,8 +428,7 @@ theorem local_additive_char_eq_trace (x : (D.s.atP p).Ep) : psi0 p δ x = psiFof
 
 theorem psiFof_cond (hd : DualAt p δ) :
     ∃ y : 𝒪[(D.s.atP p).Fp], psiFof p δ sg ((y : (D.s.atP p).Fp) / (sg.q : (D.s.atP p).Fp)) ≠ 1 := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   have hq0 : ((sg.q : (D.s.atP p).Fp)) ≠ 0 := fun h0 => sg.q_irr.ne_zero (Subtype.ext h0)
   set x := algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((sg.q : (D.s.atP p).Fp))⁻¹ with hx
   have hall : ∀ z ∈ (D.s.atP p).O,
@@ -545,7 +544,7 @@ theorem locDualC_of (hG : LocDualGenC) (hU : LocUnramC) (hP : PinHostC) : LocDua
         · exact not_both D p hj hi
         · exact hne rfl
       subst hji; exact hval
-  · push_neg at hty
+  · push Not at hty
     obtain ⟨δ, hδ, hd⟩ := g1 hred hun
     exact ⟨δ, hδ, hd, fun i hi => absurd hi (hty i)⟩
 

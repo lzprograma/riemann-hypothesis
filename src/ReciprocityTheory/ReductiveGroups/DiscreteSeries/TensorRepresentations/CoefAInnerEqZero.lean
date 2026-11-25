@@ -114,7 +114,7 @@ theorem coefA_toSum {T : X →ₗ[ℂ] X} (hT : ∀ x y, inner ℂ (T x) y = inn
   refine Finset.sum_congr rfl (fun i _ => ?_)
   by_cases hθ : θ i ≤ C
   · exact hz (b i) (Submodule.subset_span ⟨(hb i).1, θ i, hθ, (hb i).2⟩)
-  · push_neg at hθ
+  · push Not at hθ
     rw [hhigh (b i) (hb i).1 (θ i) hθ (hb i).2]
     exact inner_span_eq_zero_of_eigenvalue_gt hT
       (s := {y | y ∈ M' ∧ ∃ θ : ℝ, θ ≤ C ∧ T y = (θ : ℂ) • y})

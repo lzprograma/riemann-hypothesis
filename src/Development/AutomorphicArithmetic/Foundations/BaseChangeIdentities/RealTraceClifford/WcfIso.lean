@@ -12,57 +12,8 @@ public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities
 public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.DominantRearrangementProperties
 public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.IsoFacts
 public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.Sl2Core
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.RealTrOfAll
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Finsupp.Pointwise
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.RealPlaceAnalysis.QuotientSettingHolds
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -172,31 +123,31 @@ private theorem chSym_rel {A : Type*} [Ring A] {n : ℕ} {E : Fin n → Fin n �
   have hba : b ≠ a := Ne.symm hab
   have f1 : E a b * E a a - E a a * E a b = -E a b := by
     have e := gl a b a a
-    rwa [if_neg hba, if_pos (rfl : a = a), zero_sub] at e
+    rwa [ite_eq_right hba, ite_eq_left (rfl : a = a), zero_sub] at e
   have f2 : E a b * E b b - E b b * E a b = E a b := by
     have e := gl a b b b
-    rwa [if_pos (rfl : b = b), if_neg hba, sub_zero] at e
+    rwa [ite_eq_left (rfl : b = b), ite_eq_right hba, sub_zero] at e
   have f3 : E b a * E a a - E a a * E b a = E b a := by
     have e := gl b a a a
-    rwa [if_pos (rfl : a = a), if_neg hab, sub_zero] at e
+    rwa [ite_eq_left (rfl : a = a), ite_eq_right hab, sub_zero] at e
   have f4 : E b a * E b b - E b b * E b a = -E b a := by
     have e := gl b a b b
-    rwa [if_neg hab, if_pos (rfl : b = b), zero_sub] at e
+    rwa [ite_eq_right hab, ite_eq_left (rfl : b = b), zero_sub] at e
   have f5 : E a b * E b a - E b a * E a b = E a a - E b b := by
     have e := gl a b b a
-    rwa [if_pos (rfl : b = b), if_pos (rfl : a = a)] at e
+    rwa [ite_eq_left (rfl : b = b), ite_eq_left (rfl : a = a)] at e
   have f6 : E a a * E a b - E a b * E a a = E a b := by
     have e := gl a a a b
-    rwa [if_pos (rfl : a = a), if_neg hba, sub_zero] at e
+    rwa [ite_eq_left (rfl : a = a), ite_eq_right hba, sub_zero] at e
   have f7 : E a a * E b a - E b a * E a a = -E b a := by
     have e := gl a a b a
-    rwa [if_neg hab, if_pos (rfl : a = a), zero_sub] at e
+    rwa [ite_eq_right hab, ite_eq_left (rfl : a = a), zero_sub] at e
   have f8 : E b b * E a b - E a b * E b b = -E a b := by
     have e := gl b b a b
-    rwa [if_neg hba, if_pos (rfl : b = b), zero_sub] at e
+    rwa [ite_eq_right hba, ite_eq_left (rfl : b = b), zero_sub] at e
   have f9 : E b b * E b a - E b a * E b b = E b a := by
     have e := gl b b b a
-    rwa [if_pos (rfl : b = b), if_neg hab, sub_zero] at e
+    rwa [ite_eq_left (rfl : b = b), ite_eq_right hab, sub_zero] at e
   refine ⟨?_, ?_, ?_, ?_⟩
   · have e : (E a b - E b a) * (E a a - E b b) - (E a a - E b b) * (E a b - E b a) =
         (E a b * E a a - E a a * E a b) - (E a b * E b b - E b b * E a b) -
@@ -216,10 +167,10 @@ private theorem chSym_rel {A : Type*} [Ring A] {n : ℕ} {E : Fin n → Fin n �
   · intro c hca hcb
     have g1 : E c c * E a b - E a b * E c c = 0 := by
       have e := gl c c a b
-      rwa [if_neg hca, if_neg (Ne.symm hcb), sub_zero] at e
+      rwa [ite_eq_right hca, ite_eq_right (Ne.symm hcb), sub_zero] at e
     have g2 : E c c * E b a - E b a * E c c = 0 := by
       have e := gl c c b a
-      rwa [if_neg hcb, if_neg (Ne.symm hca), sub_zero] at e
+      rwa [ite_eq_right hcb, ite_eq_right (Ne.symm hca), sub_zero] at e
     show E c c * (E a b - E b a) = (E a b - E b a) * E c c
     rw [← sub_eq_zero]
     have e : E c c * (E a b - E b a) - (E a b - E b a) * E c c =
@@ -669,7 +620,7 @@ private theorem rt_sum (g : Fin n → FR n) (i j : Fin n) :
     simp only [rt, Pi.sub_apply, Pi.single_apply]
     split_ifs <;> simp
   rw [sum_congr rfl fun a _ => h a, sum_sub_distrib]
-  simp only [sum_ite_eq', mem_univ, if_true]
+  simp only [sum_ite_eq', mem_univ, ite_true]
 
 private theorem lap_cross (c : FR n) :
     ∑ a, 2 * (lapD a (alt (rhoV n)) * lapD a c) =
@@ -871,7 +822,7 @@ theorem UpperTheory.RealTr.chLap :
     · intro x hx
       have hy : IsWeight F μ (B x) := (hBW μ x hx).1
       have h := LinearMap.congr_fun (hg a b b a) (B x)
-      simp only [LinearMap.sub_apply, Module.End.mul_apply, if_true, hy a, hy b] at h
+      simp only [LinearMap.sub_apply, Module.End.mul_apply, ite_true, hy a, hy b] at h
       simp only [Module.End.mul_apply]
       rw [sub_eq_iff_eq_add'] at h
       rw [h]

@@ -1,54 +1,11 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
 
 @[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace GlobalTheory GlobalTheory.DI GlobalTheory.LogDR GlobalTheory.Cartier
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -152,7 +109,7 @@ theorem isComb_dlog {Z : Set X} {U : X.Opens} {n : ℕ} {x : Fin n → X.functio
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [dK_eq_frame x J j, ite_smul]
     · refine Finset.sum_congr rfl fun j hj => ?_
-      rw [dlog_zpow, frame, if_pos hj, Int.cast_smul_eq_zsmul]
+      rw [dlog_zpow, frame, ite_eq_left hj, Int.cast_smul_eq_zsmul]
 
 theorem isComb_frame {Z : Set X} {U : X.Opens} {n : ℕ} {x : Fin n → X.functionFieldˣ} {J : Finset (Fin n)}
     (hc : IsLogChart Z U x J) {y : X} (hy : y ∈ U) (i : Fin n) :
@@ -164,20 +121,20 @@ theorem isComb_frame {Z : Set X} {U : X.Opens} {n : ℕ} {x : Fin n → X.functi
     · rw [Units.val_one]; exact unitAt_one y
     · rw [one_mul, Finset.prod_eq_single_of_mem i hi (fun j _ hj => by simp [Pi.single_apply, hj])]
       simp
-    · rw [frame, if_pos hi, one_smul]
+    · rw [frame, ite_eq_left hi, one_smul]
   · have hm : RegAt y (x i : X.functionField) := (hc.chart y hy).mem i
     obtain ⟨s, hs⟩ := hm
     rcases IsLocalRing.isUnit_or_isUnit_one_sub_self s with h | h
     · have hu : UnitAt y (x i : X.functionField) := ⟨s, h, hs⟩
       refine isComb_single ((hc.chart y hy).mem i) ⟨x i, hlog _ hu, rfl⟩ ?_
-      rw [frame, if_neg hi, smul_dlog]
+      rw [frame, ite_eq_right hi, smul_dlog]
     · have hu : UnitAt y (1 - (x i : X.functionField)) := ⟨1 - s, h, by rw [map_sub, map_one, hs]⟩
       refine isComb_single (c := -(1 - (x i : X.functionField)))
         (neg_mem (sub_mem (one_mem _) ((hc.chart y hy).mem i)))
         ⟨Units.mk0 _ hu.ne_zero, hlog _ hu, rfl⟩ ?_
       have h2 := smul_dlog (Units.mk0 _ hu.ne_zero)
       rw [Units.val_mk0] at h2
-      rw [frame, if_neg hi, neg_smul, h2]
+      rw [frame, ite_eq_right hi, neg_smul, h2]
       simp [dK]
 
 end Scheme

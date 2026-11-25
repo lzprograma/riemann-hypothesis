@@ -129,7 +129,7 @@ theorem exists_emb_eq (z : X.Ψ → ℂ)
       set_option synthInstance.maxHeartbeats 100000 in
         simp only [hωdef, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hddef,
         LinearMap.BilinForm.apply_dualBasis_left, smul_eq_mul, mul_ite, mul_one, mul_zero,
-        Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     simpa [Algebra.traceForm_apply] using h
   have hbj : ∀ j, (b j : E) = ((NumberField.RingOfIntegers.basis E j : 𝓞 E) : E) := fun j => by
     rw [hbdef, NumberField.integralBasis_apply]
@@ -153,10 +153,10 @@ theorem exists_emb_eq (z : X.Ψ → ℂ)
   let W : (E →+* ℂ) → ℂ := fun φ =>
     if h : φ ∈ X.Ψ then w ⟨φ, h⟩ else conj (w ⟨ComplexEmbedding.conjugate φ, (X.conj_mem_iff φ).2 h⟩)
   have hW1 : ∀ τ : X.Ψ, W τ.1 = w τ := fun τ => by
-    simp only [W, dif_pos τ.2]
+    simp only [W, dite_eq_left τ.2]
   have hW2 : ∀ τ : X.Ψ, W (ComplexEmbedding.conjugate τ.1) = conj (w τ) := fun τ => by
     have hn : ComplexEmbedding.conjugate τ.1 ∉ X.Ψ := fun hc => (X.conj_mem_iff τ.1).1 hc τ.2
-    simp only [W, dif_neg hn]
+    simp only [W, dite_eq_right hn]
     exact congrArg (fun σ : X.Ψ => conj (w σ)) (Subtype.ext (conjugate_conjugate' τ.1))
   have hW : ∀ x : E, ∑ φ : E →+* ℂ, W φ * φ x = 0 := by
     intro x

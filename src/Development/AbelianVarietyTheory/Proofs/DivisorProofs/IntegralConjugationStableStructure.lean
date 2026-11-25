@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyTauFixedUnitCentralizerIsNormStatement
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntCZero
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
 import Mathlib.Algebra.Order.Floor.Extended
@@ -53,21 +54,7 @@ namespace GlobalTheory.FinClsLoc
 theorem ratInt_eventually (x : ℚ) :
     ∀ᶠ v : HeightOneSpectrum ℤ in Filter.cofinite,
       algebraMap ℚ (v.adicCompletion ℚ) x ∈ v.adicCompletionIntegers ℚ := by
-  obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := ℤ) x
-  have hb0 : b ≠ 0 := nonZeroDivisors.ne_zero hb
-  have hI : Ideal.span {b} ≠ (0 : Ideal ℤ) := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]; exact hb0
-  refine Filter.eventually_cofinite.2 ((Ideal.finite_factors hI).subset fun w hw => ?_)
-  simp only [Set.mem_setOf_eq] at hw ⊢
-  by_contra hd
-  apply hw
-  rw [HeightOneSpectrum.mem_adicCompletionIntegers]
-  refine (HeightOneSpectrum.valuedAdicCompletion_eq_valuation' w _).trans_le ?_
-  have h1 : w.valuation ℚ (algebraMap ℤ ℚ b) = 1 :=
-    le_antisymm (w.valuation_le_one b) (not_lt.1 fun h => hd ((w.valuation_lt_one_iff_dvd b).1 h))
-  simp only [Algebra.algebraMap_self, RingHom.id_apply]
-  rw [map_div₀, h1, div_one]
-  exact w.valuation_le_one a
+  apply _root_.GlobalTheory.FinClsLoc.eventually_rat_mem_adicCompletionIntegers <;> assumption
 
 theorem ratInt_eventually_away {p : ℕ} (x : ℚ) :
     ∀ᶠ w : AwayP p in Filter.cofinite,

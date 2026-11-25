@@ -52,24 +52,6 @@ def IsFrameAt (y : (Σ k, ι k) → Ω) (W : ChartBundle ℤ (NumbersDVR.segreVe
 
 end Frames
 
-section Charts
-
-variable {κ : Type*} [Fintype κ] {ι : κ → Type*} [∀ k, Fintype (ι k)] {Ω : Type*} [Field Ω]
-
-end Charts
-
-section Subbundles
-
-variable {Ω : Type*} [Field Ω] {τ : Type*} {N : ℕ} {E : Type*} [AddCommGroup E] [Module Ω E]
-
-end Subbundles
-
-section Lines
-
-variable {κ : Type*} [Fintype κ] {ι : κ → Type*} [∀ k, Fintype (ι k)]
-
-end Lines
-
 end
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.LowerBoundFree

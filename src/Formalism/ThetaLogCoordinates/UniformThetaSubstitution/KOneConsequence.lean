@@ -12,57 +12,9 @@ public import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNa
 public import Formalism.GaussJetBounds.GaussJetProofs.ThmAOp
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.FinsuppStepInduction
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.NormNatCastLeOfDvd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Analysis.Normed.Ring.Ultra
 import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
 import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
 import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.EDecomp
@@ -184,7 +136,7 @@ theorem sum_lgN_le (p : ℕ) (hp : 1 < p) (A : ℕ) (f : ℕ → ℕ) (E : Finse
       have : 0 < p ^ (2 * e' + 1) := pow_pos (by omega) _
       omega
     have h2 := Nat.le_log_of_pow_le hp h1
-    simp only [lgN, hA, if_false]
+    simp only [lgN, hA, ite_false]
     omega
   rw [← Finset.sum_filter_of_ne hsupp]
   calc ∑ e' ∈ E.filter (fun e' => e' < lgN p A), lgN p (f e')
@@ -483,7 +435,7 @@ lemma sum_charge {Φ S : Type} [Fintype Φ] [DecidableEq S] (TT : Finset S) (R :
       · rw [Finset.sum_eq_single (c φ).2]
         · simp
         · intro e _ he
-          rw [if_neg]
+          rw [ite_eq_right]
           intro hc
           apply he
           rw [hc]
@@ -491,7 +443,7 @@ lemma sum_charge {Φ S : Type} [Fintype Φ] [DecidableEq S] (TT : Finset S) (R :
           exact absurd h2 h'
       · intro s _ hs
         refine Finset.sum_eq_zero fun e _ => ?_
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hc
         apply hs
         rw [hc]
@@ -591,8 +543,7 @@ theorem entryExcessBound_of (hS : EntryStar) (hC : HitsCapPos) (hA : ExcessGainB
     exact ValuationParity.level_le p e α β hτ c hc s e'
   have hcapN : ∀ s e', iN s e' ≤ capN sf (s + ((2 * e' + 1 : ℕ) : ZMod (2 * ν))) := by
     intro s e'
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     apply hhasse
     refine hC K (ZMod (2 * ν)) (KapI ν r1 E) r0 r1 C l sf T I
       (fun k => k.1 + ((2 * k.2.1.val + 1 : ℕ) : ZMod (2 * ν)))
@@ -621,7 +572,7 @@ theorem entryExcessBound_of (hS : EntryStar) (hC : HitsCapPos) (hA : ExcessGainB
     · show (iN s e' : ℝ) = 0
       rw [hiN, Nat.cast_eq_zero]
       refine Finset.sum_eq_zero fun k _ => ?_
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hk
       apply he'
       simp only [Prod.mk.injEq] at hk
@@ -630,7 +581,7 @@ theorem entryExcessBound_of (hS : EntryStar) (hC : HitsCapPos) (hA : ExcessGainB
     · show (chN s e' : ℝ) = 0
       rw [hchN, Nat.cast_eq_zero]
       refine Finset.sum_eq_zero fun φ _ => ?_
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hφ
       apply he'
       have he2 : (c φ).2 = e' := by rw [hφ]
@@ -826,8 +777,7 @@ lemma iN_le_cap (hC : HitsCapPos) {K : Type} [Field K] [NeZero ν] {C : ℕ} (p 
     iN β s e' ≤ capN sf (s + ((2 * e' + 1 : ℕ) : ZMod (2 * ν))) := by
   unfold iN
   split_ifs with h
-  · by_contra hlt
-    push_neg at hlt
+  · by_contra! hlt
     apply h4
     exact hC K (ZMod (2 * ν)) (KapI ν r1 E) r0 r1 C l sf T I
       (fun k => k.1 + ((2 * k.2.1.val + 1 : ℕ) : ZMod (2 * ν)))
@@ -900,8 +850,7 @@ lemma low_pay (hJ : HitsColumnsPos) {K : Type} [Field K] [NeZero ν] {C : ℕ} (
       exact ⟨by rw [h]; exact hy.2, h⟩
   rw [hR]
   refine Finset.sum_le_sum (fun y _ => ?_)
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   apply h4
   exact hJ K (ZMod (2 * ν)) (KapI ν r1 E) r0 r1 C l sf T I pos
     (fun k a => ξ k.1 a ^ (p ^ (2 * k.2.1.val + 1))) (fun k => k.2.2)
@@ -1014,13 +963,13 @@ theorem EntryB_of (hS : EntryStar) (hC : HitsCapPos) (hJ : HitsColumnsPos) (hB :
             simp only [oddT, Finset.mem_sdiff, Finset.mem_filter, not_and] at h1
             have := h1.2 h1.1
             omega
-          rw [if_pos h1]
+          rw [ite_eq_left h1]
           by_cases hb : k.2.2 ∈ J
-          · rw [if_pos (show k.1.val % 2 = 0 ∧ k.2.2 ∈ J from ⟨hev, hb⟩)]
+          · rw [ite_eq_left (show k.1.val % 2 = 0 ∧ k.2.2 ∈ J from ⟨hev, hb⟩)]
             exact Nat.le_add_left _ _
-          · rw [if_pos (show (k.1, k.2.2) ∈ P by simp [hPdef, hev, hb])]
+          · rw [ite_eq_left (show (k.1, k.2.2) ∈ P by simp [hPdef, hev, hb])]
             exact Nat.le_add_right _ _
-        · rw [if_neg h1]
+        · rw [ite_eq_right h1]
           exact Nat.zero_le _
       rw [hN]
       omega
@@ -1092,12 +1041,12 @@ theorem HitsCapPos_of (h1 : HasseDerivProdVanish) (h2 : MinorHits) : HitsCapPos 
     try dsimp only at hc
     apply h2 K σ κ r0 r1 (l c) (sf c) (T c) (I c) pos ξ col β'
     by_cases hs : sf c = s₀
-    · rw [if_pos hs] at hc
+    · rw [ite_eq_left hs] at hc
       rcases exists_two_le_or_two_pos_of_one_lt_sum S β' hc with ⟨k, _, h2k⟩ | ⟨k, hk, k', hk', hne, h1k, h1k'⟩
       · exact Or.inl ⟨k, h2k⟩
       · exact Or.inr (Or.inl ⟨k, k', hne, h1k, h1k', (hpos k hk).trans (hpos k' hk').symm,
           Or.inl (hξ k hk k' hk')⟩)
-    · rw [if_neg hs] at hc
+    · rw [ite_eq_right hs] at hc
       obtain ⟨k, hk, hk0⟩ := Finset.exists_ne_zero_of_sum_ne_zero hc.ne'
       exact Or.inr (Or.inr ⟨k, Nat.one_le_iff_ne_zero.mpr hk0,
         Or.inl (fun h => hs (h.symm.trans (hpos k hk)))⟩)
@@ -1115,7 +1064,7 @@ theorem HitsColumnsPos_of (h1 : HasseDerivProdVanish) (h2 : MinorHits) : HitsCol
     try dsimp only at hc
     apply h2 K σ κ r0 r1 (l c) (sf c) (T c) (I c) pos ξ col β'
     by_cases hs : sf c = s₀
-    · rw [if_pos hs] at hc
+    · rw [ite_eq_left hs] at hc
       by_contra hno
       apply absurd hc
       rw [not_lt]
@@ -1147,7 +1096,7 @@ theorem HitsColumnsPos_of (h1 : HasseDerivProdVanish) (h2 : MinorHits) : HitsCol
             Finset.card_le_card_of_injOn col
               (fun k hk => Finset.mem_coe.mpr (hmaps k (Finset.mem_coe.mp hk)))
               (fun k hk k' hk' h => hinj k (Finset.mem_coe.mp hk) k' (Finset.mem_coe.mp hk') h)
-    · rw [if_neg hs] at hc
+    · rw [ite_eq_right hs] at hc
       obtain ⟨k, hk, hk0⟩ := Finset.exists_ne_zero_of_sum_ne_zero hc.ne'
       exact Or.inr (Or.inr ⟨k, Nat.one_le_iff_ne_zero.mpr hk0,
         Or.inl (fun h => hs (h.symm.trans (hpos k hk)))⟩)
@@ -1213,7 +1162,7 @@ private theorem eq_zero_of_mem_support_one {R σ : Type*} [CommSemiring R] {n : 
   classical
   rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one] at hn
   by_contra h
-  exact hn (if_neg (Ne.symm h))
+  exact hn (ite_eq_right (Ne.symm h))
 
 private theorem eq_zero_and_mem_support_of_mem_support_coeff_C {R σ κ' : Type*} [CommSemiring R] {P : MvPolynomial σ R}
     {β : κ' →₀ ℕ} {n : σ →₀ ℕ}
@@ -1222,9 +1171,9 @@ private theorem eq_zero_and_mem_support_of_mem_support_coeff_C {R σ κ' : Type*
   classical
   rw [MvPolynomial.coeff_C] at hn
   by_cases hβ : (0 : κ' →₀ ℕ) = β
-  · rw [if_pos hβ] at hn
+  · rw [ite_eq_left hβ] at hn
     exact ⟨hβ.symm, hn⟩
-  · rw [if_neg hβ] at hn
+  · rw [ite_eq_right hβ] at hn
     simp at hn
 
 lemma biLe_one : BiLe 0 (1 : MvPolynomial κ (MvPolynomial ι K)) := by
@@ -1240,7 +1189,7 @@ private theorem eq_zero_of_mem_support_C {R σ : Type*} [CommSemiring R] {a : R}
   classical
   rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_C] at hn
   by_contra h
-  exact hn (if_neg (Ne.symm h))
+  exact hn (ite_eq_right (Ne.symm h))
 
 lemma biLe_CC (a : K) :
     BiLe 0 (MvPolynomial.C (MvPolynomial.C a) : MvPolynomial κ (MvPolynomial ι K)) := by
@@ -1255,7 +1204,7 @@ private theorem eq_single_of_mem_support_X {R σ : Type*} [CommSemiring R] {x : 
   classical
   rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_X] at hn
   by_contra h
-  exact hn (if_neg (Ne.symm h))
+  exact hn (ite_eq_right (Ne.symm h))
 
 lemma biLe_CX (x : ι) : BiLe (Finsupp.single x 1)
     (MvPolynomial.C (MvPolynomial.X x) : MvPolynomial κ (MvPolynomial ι K)) := by
@@ -1271,13 +1220,13 @@ private theorem biLe_single_one_X (x : ι) (k : κ) :
   intro β n hn
   rw [MvPolynomial.coeff_X] at hn
   by_cases hβ : Finsupp.single k 1 = β
-  · rw [if_pos hβ] at hn
+  · rw [ite_eq_left hβ] at hn
     obtain rfl := eq_zero_of_mem_support_one hn
     subst hβ
     refine ⟨?_, by simp [Finsupp.degree_single]⟩
     first
       | exact fun i => Nat.zero_le _
-  · rw [if_neg hβ] at hn
+  · rw [ite_eq_right hβ] at hn
     simp at hn
 
 lemma biLe_CC_mul_X (x : ι) (a : K) (k : κ) : BiLe (Finsupp.single x 1)
@@ -1479,7 +1428,7 @@ theorem zSub_eq [NeZero ν] (TT : Finset (ZMod (2 * ν))) (ξ : ZMod (2 * ν) �
     (x : ZV ν r0 r1) :
     zSub TT ξ x = ∑ i, MvPowerSeries.C (Amat TT ξ i x) * MvPowerSeries.X i := by
   rw [Fintype.sum_sum_type, Finset.sum_eq_single (x.1, x.2.2), Finset.sum_eq_single x]
-  · simp only [Amat, if_true, map_one, one_mul, zSub]
+  · simp only [Amat, ite_true, map_one, one_mul, zSub]
     rw [add_comm]
     split_ifs <;> simp
   · intro y _ hy
@@ -1511,7 +1460,7 @@ theorem img_inl [NeZero ν] (TT : Finset (ZMod (2 * ν))) (ξ : ZMod (2 * ν) �
         if s ∈ TT then MvPolynomial.C (ξ s a) * MvPolynomial.X (s, a, b) else 0 := by
       intro a
       rw [Finset.sum_eq_single b]
-      · simp only [Amat, if_true]
+      · simp only [Amat, ite_true]
         split_ifs <;> simp
       · intro b' _ hb'
         simp [Amat, Ne.symm hb']
@@ -1563,7 +1512,7 @@ theorem cc_hhS [NeZero ν] {p : ℕ} (hp : p ≠ 0) (u : ZMod (2 * ν) → K) :
     change (∑ l ∈ range ((0 : ZV ν r0 r1 →₀ ℕ).degree + 1),
       if (0 : ZV ν r0 r1 →₀ ℕ) = Finsupp.single (s - 2 * (l : ZMod (2 * ν)), ab) ((p ^ 2) ^ l)
         then (-1 : K) ^ l else 0) = 0
-    refine Finset.sum_eq_zero fun l _ => if_neg fun h => ?_
+    refine Finset.sum_eq_zero fun l _ => ite_eq_right fun h => ?_
     have := Finsupp.single_eq_zero.1 h.symm
     exact (pow_ne_zero l (pow_ne_zero 2 hp)) this
 
@@ -1631,7 +1580,7 @@ theorem star_norm {K : Type} [NormedField K] [IsUltrametricDist K] (hS : StarAri
     intro s
     rw [Finset.sum_range]
     refine Finset.sum_congr rfl fun ε _ => ?_
-    simp only [hi, ε.2, dif_pos]
+    simp only [hi, ε.2, dite_eq_left]
   have hβsum : ∑ k, β k = ∑ s, ∑ e' ∈ range E, i s e' := by
     rw [Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun s _ => ?_
@@ -1782,13 +1731,13 @@ theorem EntryStar_of (hT : TermBound) (hH : HhDecomp) (hC : ClassSubst)
   have hβT : ∀ k, β k ≠ 0 → k.1 ∈ TT := by
     intro k hk
     by_contra hkT
-    exact hβ k hk (by unfold aBof; rw [if_neg hkT])
+    exact hβ k hk (by unfold aBof; rw [ite_eq_right hkT])
   obtain ⟨n0, hn0, hle, hdeg⟩ := hD K (ZV ν r0 r1) _ (bBof p ξ) β (lowOp l sf T I) n hn
   obtain ⟨hn0s, hn0d⟩ := StarEntryOperators.lowOp_deg hM l sf T I n0 hn0
   refine ⟨_, α, β, ?_, hβT, ?_, ?_, ?_⟩
   · intro φ hφ
     by_contra hφT
-    exact hα φ hφ (by unfold aAof; rw [if_neg hφT])
+    exact hα φ hφ (by unfold aAof; rw [ite_eq_right hφT])
   · intro τ
     have := htop τ
     rwa [Finsupp.equivFunOnFinite_symm_apply_apply] at this

@@ -18,7 +18,6 @@ namespace ReciprocityTheory.AnForm
 
 open MeasureTheory Metric Filter Topology
 
-open MeasureTheory Metric Filter Topology
 
 private theorem analyticAt_cons_right {D : ℕ} (t : ℂ) (w : Fin D → ℂ) :
     AnalyticAt ℂ (fun v : Fin D → ℂ => (Fin.cons t v : Fin (D + 1) → ℂ)) w := by

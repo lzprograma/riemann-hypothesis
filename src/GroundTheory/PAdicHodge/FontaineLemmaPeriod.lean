@@ -159,7 +159,6 @@ theorem mem_jacobson_of_pow_mem {x : ACris K p} {m : ℕ} (h : x ^ m ∈ 𝔭) :
   Ideal.isRadical_jacobson ⊥ ⟨m, IsAdicComplete.le_jacobson_bot _ h⟩
 
 
-set_option maxHeartbeats 1600000 in
 theorem exists_periodT_eq_mu_mul_unit {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1)
     (hζ : PreTilt.untilt ((_root_.frobeniusEquiv 𝒪♭ p).symm ε) ≠ 1) :
     ∃ u : ACris K p, IsUnit u ∧
@@ -226,7 +225,7 @@ theorem exists_periodT_eq_mu_mul_unit {ε : 𝒪♭} (hε : PreTilt.untilt ε = 
   obtain ⟨u, hu⟩ := exists_isAdicSum (I := 𝔭)
     (a := fun n => algebraMap (ACrisZero K p) (ACris K p) (U n)) hsmall
   have hMc : algebraMap (ACrisZero K p) (ACris K p) M =
-      algebraMap (AInf K p) (ACris K p) (AInf.mu ε) := (AdicCompletion.algebraMap_apply _ _).symm
+      algebraMap (AInf K p) (ACris K p) (AInf.mu ε) := (IsScalarTower.algebraMap_apply (AInf K p) (ACrisZero K p) (ACris K p) _).symm
   have ht : periodT hε = algebraMap (AInf K p) (ACris K p) (AInf.mu ε) * u := by
     refine log_eq_of_isAdicSum ((hu.mul_left (algebraMap (ACrisZero K p) (ACris K p) M)).congr
       fun n => ?_) |>.trans ?_
@@ -274,7 +273,7 @@ theorem exists_periodT_eq_mu_mul_unit {ε : 𝒪♭} (hε : PreTilt.untilt ε = 
   refine hsum.mem (k := 1) (by rw [pow_one]; exact IsAdicComplete.le_jacobson_bot _) fun n => ?_
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp [hU0]
-  · rw [if_neg hn.ne', sub_zero]
+  · rw [ite_eq_right hn.ne', sub_zero]
     exact hUJ n hn
 
 theorem mu_mem_span_periodT {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1)

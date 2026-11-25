@@ -292,9 +292,9 @@ theorem recR_trans {A : Matrix T T₂ ℤ} {B : Matrix T₂ T ℤ} (hAB : A * B 
   rw [sup_span_comap hAB hBA, multAt_comap hAB hBA _ _ hWp]
   congr 1
   by_cases hh : Geo.IsHorizontal W
-  · rw [if_pos ((isHorizontal_comap A W).2 hh), if_pos hh]
+  · rw [ite_eq_left ((isHorizontal_comap A W).2 hh), ite_eq_left hh]
     rfl
-  · rw [if_neg (mt (isHorizontal_comap A W).1 hh), if_neg hh, charOf_comap]
+  · rw [ite_eq_right (mt (isHorizontal_comap A W).1 hh), ite_eq_right hh, charOf_comap]
     obtain ⟨hmp, hp, hdim⟩ := (Geo.divSuppArith Unit (dualBlocks T) Q n Ab s W hQ hs hW).2 hh
     rw [hG T T₂ A B hAB hBA W n (Geo.charOf W) hmp hp (C_charOf_mem W) hdim]
     rfl

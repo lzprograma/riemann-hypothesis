@@ -212,8 +212,7 @@ namespace Regular
 
 theorem nonneg_of_tendsto {X : Type} [AddCommGroup X] [Module.Free ℤ X] (q : QuadraticMap ℤ X ℝ)
     (h : Filter.Tendsto q Filter.cofinite Filter.atTop) (x : X) : 0 ≤ q x := by
-  by_contra hx
-  push_neg at hx
+  by_contra! hx
   have hx0 : x ≠ 0 := by
     rintro rfl
     simp at hx
@@ -594,9 +593,9 @@ theorem span_lattice_eq_of_valuationRing :
     have hu := hle z ξ c _ k k' hz hs (hcomp c) hk hk' inferInstance hval hnoeth
     have hp : S.proj _ (c.comp (AddSubgroup.inclusion h)) * S.proj _ c = S.proj _ c := by
       rw [hsum, Finset.sum_mul, Finset.sum_eq_single c]
-      · rw [hmul, if_pos rfl]
+      · rw [hmul, ite_eq_left rfl]
       · intro b _ hb
-        rw [hmul, if_neg hb]
+        rw [hmul, ite_eq_right hb]
       · simp
     have e : (fun j => S.th x₀ / S.FF _ c k * algebraMap o Ω (S.proj _ c j i)) =
         ∑ l, ((⟨_, hu⟩ : M.O ξ) * algebraMap o (M.O ξ) (S.proj _ c l i)) •

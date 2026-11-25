@@ -53,7 +53,7 @@ theorem famOf_sumBasis (coE : V ≃ₗ[K] (Cl → W)) (BK : Basis J0 K W) (φ : 
   simp only [famOf]
   rw [Fintype.sum_prod_type]
   simp only [Matrix.blockDiagonal_apply, ite_smul, zero_smul]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
   rw [hφ, hs, map_sum]
   simp only [Pi.single_smul, map_smul, sumBasis_apply]

@@ -281,14 +281,14 @@ theorem rho_projection_assembly : Assembly := by
     · subst hij
       obtain ⟨hne, hsm⟩ := big_one_add_pow (hϖ i) ((map_ne_zero (iw i)).mpr (hz0 i)) (hzi i) hr1
       have hid : iw i (e i) - (if i = i then 1 else 0) = -(1 + iw i (z i) ^ r)⁻¹ := by
-        rw [if_pos rfl, he]
+        rw [ite_eq_left rfl, he]
         calc iw i (z i) ^ r * (1 + iw i (z i) ^ r)⁻¹ - 1
             = (iw i (z i) ^ r - (1 + iw i (z i) ^ r)) * (1 + iw i (z i) ^ r)⁻¹ := by
               rw [sub_mul, mul_inv_cancel₀ hne]
           _ = -(1 + iw i (z i) ^ r)⁻¹ := by ring
       rw [hid]
       exact (hsm.neg.mul (hϖ i) (hk i i)).mono (hϖ i) (hrk i i)
-    · rw [if_neg hij, sub_zero, he]
+    · rw [ite_eq_right hij, sub_zero, he]
       obtain ⟨_, hsm⟩ := small_one_add_pow (hϖ j) (hzj i j (Ne.symm hij)) hr1
       exact (hsm.mul (hϖ j) (hk i j)).mono (hϖ j) (hrk i j)
   have hsum : iw j (∑ i, e i * y i) - x j =
@@ -296,7 +296,7 @@ theorem rho_projection_assembly : Assembly := by
 
     rw [map_sum]
     simp only [map_mul, sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     ring
   have htot : PI.WADVR.Sm (Q j) (ϖ j) K (iw j (∑ i, e i * y i) - x j) := by
     rw [hsum]
@@ -455,8 +455,6 @@ theorem weak_of_locAt (G : GAtP p) (A : LocAt F E n G)
       exact h2 h3
 
 end Gen
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : Formalism.L2.Herm.Herm0 D}
 

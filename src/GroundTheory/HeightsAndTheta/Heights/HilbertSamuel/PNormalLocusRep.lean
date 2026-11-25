@@ -78,29 +78,15 @@ theorem exists_conductor [CharZero Ω] (y : (Σ k, ι k) → Ω) (hbir : Biratio
   have hb0 : ((b : A) : Ω) ≠ 0 := by
     intro h0
     exact nonZeroDivisors.coe_ne_zero b (Subtype.ext h0)
+  have hle : Submodule.span A (S : Set (integralClosure A Ω)) ≤
+      (LinearMap.range (Algebra.linearMap A Ω)).comap
+        ((LinearMap.mulLeft A ((b : A) : Ω)).comp (integralClosure A Ω).val.toLinearMap) :=
+    Submodule.span_le.mpr fun x hx => by
+      obtain ⟨r, hr⟩ := hb (x : Ω) (Finset.mem_image_of_mem _ hx)
+      exact ⟨r, hr.trans (Algebra.smul_def (b : A) (x : Ω))⟩
   refine ⟨((b : A) : Ω), (b : A).2, hb0, fun t ht => ?_⟩
-  have htop : (⟨t, ht⟩ : integralClosure A Ω) ∈ Submodule.span A (S : Set (integralClosure A Ω)) := by
-    rw [hS]; trivial
-  suffices key : ∀ x ∈ Submodule.span A (S : Set (integralClosure A Ω)), ((b : A) : Ω) * (x : Ω) ∈ A from
-    key _ htop
-  intro x hx
-  set_option synthInstance.maxHeartbeats 200000 in
-  induction hx using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨r, hr⟩ := hb (x : Ω) (Finset.mem_image_of_mem _ hx)
-    rw [show ((b : A) : Ω) * (x : Ω) = (b : A) • (x : Ω) by rw [Algebra.smul_def]; rfl, ← hr]
-    exact r.2
-  | zero => simp
-  | add x z _ _ hx hz =>
-    simp only [Subalgebra.coe_add, mul_add]
-    exact add_mem hx hz
-  | smul r x _ hx =>
-    have : ((b : A) : Ω) * (((r : A) • x : integralClosure A Ω) : Ω) = (r : Ω) * (((b : A) : Ω) * (x : Ω)) := by
-      rw [Subalgebra.coe_smul, Algebra.smul_def]
-      show _ * ((r : Ω) * _) = _
-      ring
-    rw [this]
-    exact mul_mem r.2 hx
+  obtain ⟨r, hr⟩ := hle (hS.symm ▸ Submodule.mem_top (x := (⟨t, ht⟩ : integralClosure A Ω)))
+  exact (show (r : Ω) = ((b : A) : Ω) * t from hr) ▸ r.2
 
 
 omit [Fintype K] in

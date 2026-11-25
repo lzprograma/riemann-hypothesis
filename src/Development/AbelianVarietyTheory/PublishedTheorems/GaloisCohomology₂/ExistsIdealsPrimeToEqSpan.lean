@@ -52,8 +52,6 @@ import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.IndefiniteRowSideFullHecke.RayPrincipalIdeals
@@ -273,7 +271,7 @@ theorem exists_quot {𝔪 : Ideal (𝓞 E)} (hm : 𝔪 ≠ ⊥) (k : Eˣ) (hk : 
     rw [← ex_mul hm hD]; exact hβ v
   have h1 : ∀ v : HeightOneSpectrum (𝓞 E), v.asIdeal ∣ 𝔪 → Valued.v (at' v β - 1) ≤ exp (-ex 𝔪 v) := fun v hv => by
     have := hβ' v
-    simp only [g, if_pos hv] at this
+    simp only [g, ite_eq_left hv] at this
     rw [Valuation.map_sub_swap, neg_add, exp_add] at this
     exact this.trans (mul_le_of_le_one_right' (exp_ex_le_one _ v))
   have hint : ∀ v : HeightOneSpectrum (𝓞 E), v.valuation E ((k : E) * β) ≤ 1 := fun v => by
@@ -282,7 +280,7 @@ theorem exists_quot {𝔪 : Ideal (𝓞 E)} (hm : 𝔪 ≠ ⊥) (k : Eˣ) (hk : 
     · rw [show Valued.v (algebraMap E (v.adicCompletion E) (k : E)) = 1 from (hk v hv).1, one_mul]
       exact at'_le_one v β
     · have := hβ' v
-      simp only [g, if_neg hv] at this
+      simp only [g, ite_eq_right hv] at this
       rw [zero_sub, Valuation.map_neg, (ex_eq_zero_iff hm v).2 hv, zero_add, ex,
         FractionalIdeal.coeIdeal_span_singleton, ← valuation_eq_exp_neg_count v hdE, ← valued_algebraMap] at this
       refine (mul_le_mul_right this _).trans ?_
@@ -505,19 +503,6 @@ theorem exists_idealsPrimeTo_eq_span {F : Type} [Field F] [NumberField F] {𝔪 
     fun w hw => ?_⟩, rfl⟩
   rw [Units.val_mk0, FractionalIdeal.coeIdeal_span_singleton]
   exact count_span_eq_zero h0 hc w hw
-
-theorem kills_of_rayPrincipal {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] {𝔪 : Ideal (𝓞 F)}
-    {A : Type} [CommGroup A] (f : idealsPrimeTo 𝔪 →* A) (hf : ∀ J : idealsPrimeTo 𝔪, J.1 ∈ rayPrincipal 𝔪 → f J = 1)
-    (x : 𝓞 F) (J : idealsPrimeTo 𝔪) (hx : x - 1 ∈ 𝔪)
-    (hJ : (J.1 : FractionalIdeal (𝓞 F)⁰ F) = (Ideal.span {x} : Ideal (𝓞 F))) : f J = 1 := by
-  have h0 := ne_zero_of_eq_span hJ
-  refine hf J ⟨Units.mk0 (x : F) h0, ⟨x, 1, ⟨fun h => h0 (by simp [h]), one_ne_zero,
-    Ideal.isCoprime_iff_exists.2 ⟨x, Ideal.mem_span_singleton_self x, _, 𝔪.neg_mem hx, by ring⟩,
-    by simp [← Ideal.one_eq_top, isCoprime_one_left], hx, fun φ => ?_⟩, by simp⟩, Units.ext ?_⟩
-  · exact absurd (ComplexEmbedding.isReal_iff.2 (RingHom.ext fun y => Complex.conj_ofReal (φ y)))
-      (IsTotallyComplex.complexEmbedding_not_isReal (Complex.ofRealHom.comp φ))
-  · rw [coe_toPrincipalIdeal, hJ, FractionalIdeal.coeIdeal_span_singleton]
-    rfl
 
 end GlobalTheory.Published
 

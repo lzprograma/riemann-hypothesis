@@ -9,44 +9,7 @@ public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LeviGLInvVal
 public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.MfacInvMul
 import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.OneAddPow
 public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.Periodic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -179,12 +142,6 @@ theorem core {V G T : Type} [AddCommGroup V] [Module ℂ V] [Group G] [Topologic
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem modu_ne_zero (u : (AF F)ˣ) : (adeleClass F).modu u ≠ 0 := by
-  intro h0
-  have := map_mul (adeleClass F).modu u u⁻¹
-  rw [mul_inv_cancel, map_one, h0, zero_mul] at this
-  exact one_ne_zero this
-
 alias mfac_pos := _root_.PositivityTheory.ThKW.NormModulusHeisenberg.mfac_pos'
 
 theorem mfac_mul {nT : ℕ} (nS : ℕ) (s t : GL (Fin nT) (AF F ⊗[F] E)) :
@@ -207,14 +164,9 @@ theorem lagrInt_lin {nS nT : ℕ} (ν : Measure (WOF F E nS nT)) (𝓕 : Set (WO
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   rw [integral_add (hf.const_mul a) (hg.const_mul b), integral_const_mul, integral_const_mul]
 
-theorem mtF_mul (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (a b : GAF σ J) :
-    mtF σ J (a * b) = mtF σ J a * mtF σ J b := by
-  unfold mtF
-  rw [map_mul, Units.val_mul]
-
 theorem mtF_inv_mul (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (a : GAF σ J) :
     mtF σ J a⁻¹ * mtF σ J a = 1 := by
-  rw [← mtF_mul, inv_mul_cancel]
+  rw [← GlobalTheory.WeilPartsF.mtF_mul, inv_mul_cancel]
   unfold mtF
   rw [map_one, Units.val_one]
 

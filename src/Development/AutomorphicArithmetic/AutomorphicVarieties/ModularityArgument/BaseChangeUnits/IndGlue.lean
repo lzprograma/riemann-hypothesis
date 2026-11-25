@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsSplitAtOfDecompositionLeRestrictionRange
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.QuadraticInductionGL2Alt
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSSRepTraceNondegenerate
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrobeniusRestrictScalarsPowModInertia
@@ -138,25 +139,7 @@ private theorem frob_emb {A : ValuationSubring Ω} {q : ℕ} {g : G E Ω} (h : I
 
 private theorem place_between {A : ValuationSubring Ω} {v : HeightOneSpectrum (𝓞 F)} (hA : IsPlaceOver A v) :
     ∃ w : HeightOneSpectrum (𝓞 E), IsPlaceOver A w ∧ w.under (𝓞 F) = v := by
-  have hint : ∀ x : 𝓞 E, algebraMap E Ω (x : E) ∈ A := fun x => by
-    have h : IsIntegral A (algebraMap E Ω (x : E)) := (x.isIntegral_coe.map (algebraMap E Ω).toIntAlgHom).tower_top
-    obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 h
-    rw [← hy]
-    exact y.2
-  let f : 𝓞 E →+* A := ((algebraMap E Ω).comp (algebraMap (𝓞 E) E)).codRestrict A hint
-  let P : Ideal (𝓞 E) := (IsLocalRing.maximalIdeal A).comap f
-  have hP : ∀ x : 𝓞 E, A.valuation (algebraMap E Ω (x : E)) < 1 ↔ x ∈ P := fun x =>
-    (A.valuation_lt_one_iff (f x)).symm
-  have hu : v.asIdeal = P.under (𝓞 F) := by
-    ext x
-    rw [← hA x, Ideal.under, Ideal.mem_comap, ← hP, IsScalarTower.algebraMap_apply F E Ω]
-    rfl
-  have hne : P ≠ ⊥ := by
-    intro h
-    apply v.ne_bot
-    rw [hu, h]
-    exact Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _)
-  exact ⟨⟨P, inferInstance, hne⟩, hP, HeightOneSpectrum.ext hu.symm⟩
+  apply _root_.place_between <;> assumption
 
 private theorem ev_over {P : HeightOneSpectrum (𝓞 E) → Prop} (h : ∀ᶠ w in Filter.cofinite, P w) :
     ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite, ∀ w : HeightOneSpectrum (𝓞 E), w.under (𝓞 F) = v → P w := by
@@ -295,9 +278,9 @@ private theorem loc {F E Ω : Type} [Field F] [NumberField F] [Field E] [NumberF
     have h4 := (h3 A hA).2 σ hσ
     refine ⟨fun h5 => ?_, fun h5 => ?_⟩
     · by_contra h6
-      rw [if_neg h6, h5] at h4
+      rw [ite_eq_right h6, h5] at h4
       norm_num at h4
-    · rw [if_pos h5] at h4
+    · rw [ite_eq_left h5] at h4
       exact Units.ext (ι.injective (by rw [h4]; simp))
   obtain ⟨B, hB, hE⟩ := hb w rfl
   by_cases hs : δ σ⁻¹ = 1
@@ -349,15 +332,6 @@ private theorem infOf_two (m : Fin 2 → ℤ) : infOf m = {1 / 2 + (m 0 : ℂ), 
   rw [infOf, e]
   rfl
 
-private theorem infOf_add {m m' : Fin 2 → ℤ} (h : Function.Injective ![m 0, m 1, m' 0, m' 1]) :
-    (infOf m + infOf m').Nodup ∧ ∀ z ∈ infOf m + infOf m', ∃ n : ℤ, z = (n : ℂ) + (((4 : ℕ) : ℂ) - 1) / 2 := by
-  have e : infOf m + infOf m' = Finset.univ.val.map fun i => 1 / 2 + ((![m 0, m 1, m' 0, m' 1] i : ℤ) : ℂ) := by
-    rw [infOf_two, infOf_two]
-    rfl
-  rw [e]
-  refine ⟨Finset.univ.nodup.map fun i j hij => h (Int.cast_injective (add_left_cancel hij)), fun z hz => ?_⟩
-  obtain ⟨i, -, rfl⟩ := Multiset.mem_map.1 hz
-  exact ⟨![m 0, m 1, m' 0, m' 1] i - 1, by push_cast; ring⟩
 
 theorem UpperTheory.V.Z.Bc.attInd : AttInd := by
   intro F E Ω _ _ _ _ _ _ _ _ _ _ h2 l _ ι r R sat satP hu huP hatt hfin hR H'

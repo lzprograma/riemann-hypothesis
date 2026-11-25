@@ -5,8 +5,6 @@ import Mathlib.Analysis.CStarAlgebra.Classes
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset
@@ -26,11 +24,11 @@ theorem SchurPowerSumCoefficient.proof (h1 : SchWeightedPreimage.Statement)
   have hk : (k : ℂ) ≠ 0 := by exact_mod_cast (show k ≠ 0 by omega)
   apply Rat.cast_injective (α := ℂ)
   split_ifs with h
-  · rw [if_pos h] at e1
+  · rw [ite_eq_left h] at e1
     push_cast
     rw [eq_div_iff hk]
     linear_combination -e1
-  · rw [if_neg h] at e1
+  · rw [ite_eq_right h] at e1
     push_cast
     rcases mul_eq_zero.mp e1.symm with h0 | h0
     · exact absurd h0 hk

@@ -281,7 +281,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.DescPolKer
 
@@ -798,16 +797,8 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 namespace GlobalTheory.UPel.HT.SympAct
 
 theorem exists_smul_iff {h : ℕ} (M : ℕ) (w : Fin h ⊕ Fin h → ℤ) : (∃ c, w = M • c) ↔ reduceMod M w = 0 := by
-  constructor
-  · rintro ⟨c, rfl⟩
-    funext i
-    simp [reduceMod]
-  · intro hw
-    refine ⟨fun i => w i / M, ?_⟩
-    funext i
-    have hd : (M : ℤ) ∣ w i := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).1 (congrFun hw i)
-    simp only [Pi.smul_apply, nsmul_eq_mul]
-    rw [Int.mul_ediv_cancel' hd]
+  intros
+  refine (@_root_.GlobalTheory.HTLocSim.reduceMod_eq_zero_iff ?_ ?_ ?_).symm <;> first | assumption | infer_instance
 
 theorem lev_eq_of_reduce {h : ℕ} {T : Type*} [Monoid T] {M : ℕ} (hM : 0 < M) (lev : (Fin h ⊕ Fin h → ℤ) → T)
     (hadd : ∀ a b, lev (a + b) = lev a * lev b) (htor : ∀ a, lev a ^ M = 1) {x y : Fin h ⊕ Fin h → ℤ}

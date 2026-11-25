@@ -84,7 +84,7 @@ theorem wdb_cut_bdd (ε : ℝ) (hε : 0 < ε) :
   · have h1 := hC y (mem_closedBall_zero_iff.mpr hy)
     rw [Real.norm_of_nonneg (Finset.sum_nonneg fun j _ => by positivity)] at h1
     exact h1.trans (le_max_left _ _)
-  · push_neg at hy
+  · push Not at hy
     have h0 : ∀ j, wdb n j (cut ε hε) y = 0 := fun j => wdb_cut_zero ε hε j (Or.inr hy)
     simp [h0]
 

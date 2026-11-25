@@ -52,7 +52,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -124,11 +123,11 @@ theorem isQuotientIntegral_indicator_doubleCoset (R K : Subgroup G) (hR : IsClos
   · rw [e h, integral_indicator (isOpen_cellSet hKo q h).measurableSet, setIntegral_const]
     show (if h ∈ dcos R K q then (1 : ℂ) else 0) = ρ.real (cellSet R K q h) • c
     by_cases hh : h ∈ dcos R K q
-    · rw [if_pos hh]
+    · rw [ite_eq_left hh]
       obtain ⟨r0, hr0, k0, hk0, rfl⟩ := hh
       rw [cellSet_of_mem ⟨r0, hr0⟩ k0 hk0 rfl, measureReal_def, measure_preimage_mul_right, hc, Complex.real_smul,
         ← Complex.ofReal_mul, mul_inv_cancel₀ (ENNReal.toReal_ne_zero.2 ⟨hS0, hSt⟩), Complex.ofReal_one]
-    · rw [if_neg hh, cellSet_eq_empty hh]
+    · rw [ite_eq_right hh, cellSet_eq_empty hh]
       simp
   · rw [integral_indicator hAo.measurableSet, setIntegral_const, measureReal_def, hAμ, hc, Complex.real_smul, ← Complex.ofReal_mul, div_eq_mul_inv]
 
@@ -167,11 +166,11 @@ theorem GlobalTheory.CellInt.quotInt_finiteCells : ∀ (G : Type) [Group G] [Top
     intro h
     by_cases hex : ∃ q0 ∈ u, h ∈ dcos R K q0
     · obtain ⟨q0, hq0, hh⟩ := hex
-      rw [Finset.sum_eq_single q0 (fun q hq hne => ?_) (fun h' => absurd hq0 h'), if_pos hh, mul_one, hinv q0 h hh]
-      rw [if_neg, mul_zero]
+      rw [Finset.sum_eq_single q0 (fun q hq hne => ?_) (fun h' => absurd hq0 h'), ite_eq_left hh, mul_one, hinv q0 h hh]
+      rw [ite_eq_right, mul_zero]
       intro hq'
       exact hne (hinj hq hq0 ((dcos_eq_of_mem hq').symm.trans (dcos_eq_of_mem hh)))
-    · rw [Finset.sum_eq_zero fun q hq => by rw [if_neg fun hh => hex ⟨q, hq, hh⟩, mul_zero]]
+    · rw [Finset.sum_eq_zero fun q hq => by rw [ite_eq_right fun hh => hex ⟨q, hq, hh⟩, mul_zero]]
       by_contra hne
       obtain ⟨q, hq, r, hr, k, hk, hh⟩ := hsupp h hne
       have hm : dcos R K q ∈ u.image (dcos R K) := himg ▸ Finset.mem_image_of_mem _ hq

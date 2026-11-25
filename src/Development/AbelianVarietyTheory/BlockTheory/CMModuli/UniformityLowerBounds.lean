@@ -2,44 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -172,11 +134,6 @@ theorem intRing_injective (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
 instance fracAlgebra (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
     Algebra (FractionRing (intRing K)) (PadicAlgCl p) :=
   (IsFractionRing.lift (A := intRing K) (K := FractionRing (intRing K)) (intRing_injective K)).toAlgebra
-
-def PsiNorm {K : IntermediateField ℚ_[p] (PadicAlgCl p)} (D : Out.DegPre (intRing K)) (χ : D.X) (t : ℝ) : Prop :=
-  ∀ i : D.P.L.ι, ⊤ ≤ (D.c χ).left ⁻¹ᵁ D.P.L.U i →
-    ‖algebraMap (FractionRing (intRing K)) (PadicAlgCl p)
-      (valF (𝟙 (Sp (FractionRing (intRing K)))) _ ((D.psi χ).s fun _ => i).val)‖ = t
 
 structure UnifTest {S : ThetaSys o Ω} (Z : Realisation S) (p : ℕ) [Fact p.Prime] (y : S.R →+* PadicAlgCl p) where
   base_int : ∀ a : o, ‖y (algebraMap o S.R a)‖ ≤ 1

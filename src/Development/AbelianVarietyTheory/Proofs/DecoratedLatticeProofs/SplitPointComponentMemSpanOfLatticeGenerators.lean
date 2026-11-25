@@ -49,7 +49,6 @@ import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.Valuati
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain GlobalTheory.SeeSaw ValuativeRel GlobalTheory.LocMod
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -145,9 +144,5 @@ def latW (L : GlobalTheory.FinPl.Lat S) : Submodule 𝒪[k] (Fin S.rank → k) w
 
 theorem mem_latW {L : GlobalTheory.FinPl.Lat S} (w : Fin S.rank → k) :
     w ∈ latW q L ↔ (fun i => q.sec (w i)) ∈ GlobalTheory.FinPl.latV S L (· = q.v) := Iff.rfl
-
-end GlobalTheory.LocMod.FullLatFrame
-
-namespace GlobalTheory.LocMod.FullLatFrame
 
 end GlobalTheory.LocMod.FullLatFrame

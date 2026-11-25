@@ -5,8 +5,6 @@ public import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrI
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -44,7 +42,6 @@ variable {R : Type} [CommRing R] [Algebra R C]
 theorem linAct_toC {Y : FBChart C V OE dd} (actR : OE → Fin dd → PS R 1 dd)
     (hact : ∀ a i, Y.B.A.act a i = toC (actR a i)) (x : OE) (v : Fin dd → R) (i : Fin dd) :
     algebraMap R C ((linPart (actR x)).mulVec v i) = linAct (Y.B.A.act x) (fun j => algebraMap R C (v j)) i := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [linAct, hact, toC, MvPowerSeries.coeff_map, linPart, Matrix.mulVec, dotProduct, Matrix.of_apply,
     map_sum, map_mul]
 

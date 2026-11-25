@@ -2,58 +2,15 @@ module
 
 public import Formalism.HermitianCurvature.StatementG
 public import Mathlib.Analysis.Calculus.LineDeriv.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Calculus.ContDiff.Bounds
 public import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 public import Mathlib.Analysis.Complex.OperatorNorm
 public import Mathlib.Analysis.Complex.RemovableSingularity
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Algebra.Order.Chebyshev
 public import Mathlib.Analysis.Calculus.Deriv.ZPow
 public import Mathlib.Analysis.Calculus.DiffContOnCl
@@ -468,7 +425,7 @@ theorem Bd.sum {W ι : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W] (u : Fi
 
 theorem Bd.clm {W W' : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W] [NormedAddCommGroup W'] [NormedSpace ℝ W']
     (L : W →L[ℝ] W') {f : E → W} {s : Set E} {x : E} {n : ℕ} {A P c : ℝ}
-    (hs : IsOpen s) (hx : x ∈ s) (_hP : 0 ≤ P) (hf : ContDiffOn ℝ n f s) (hL : ‖L‖ ≤ c) (bf : Bd f s x n A P) :
+    (hs : IsOpen s) (hx : x ∈ s) (hf : ContDiffOn ℝ n f s) (hL : ‖L‖ ≤ c) (bf : Bd f s x n A P) :
     Bd (fun y => L (f y)) s x n (c * A) P := by
   intro j hj
   have h1 := L.norm_iteratedFDerivWithin_comp_left (hf.contDiffWithinAt hx) hs.uniqueDiffOn hx
@@ -678,12 +635,12 @@ theorem bk_bound (d q : ℕ) : ∃ B : ℝ, 0 ≤ B ∧ ∀ (Ω : Set (Fin d →
   have hd : 1 ≤ (d : ℝ) := by exact_mod_cast (Nat.succ_le_of_lt (Fin.pos k))
   have bu := fun l => bkb_u_bd hΩ hg hx hb l
   have bcu : ∀ l, Bd (fun x => (starRingEnd ℂ) (fderiv ℂ g x (Pi.single l 1))) Ω x q (1 * G) P := fun l =>
-    Bd.clm (Complex.conjCLE : ℂ →L[ℝ] ℂ) hΩ hx hP.le ((bkb_u_contDiffOn hΩ hg l q).restrict_scalars ℝ)
+    Bd.clm (Complex.conjCLE : ℂ →L[ℝ] ℂ) hΩ hx ((bkb_u_contDiffOn hΩ hg l q).restrict_scalars ℝ)
       Complex.conjCLE_norm.le (bu l)
   have bn : ∀ l, Bd (fun x => Complex.normSq (fderiv ℂ g x (Pi.single l 1))) Ω x q
       (1 * (2 ^ q * (1 * G) * G)) P := fun l => by
     simp only [bkb_nsq_eq]
-    exact Bd.clm Complex.reCLM hΩ hx hP.le
+    exact Bd.clm Complex.reCLM hΩ hx
       ((bkb_cu_contDiffOn hΩ hg l q).smul ((bkb_u_contDiffOn hΩ hg l q).restrict_scalars ℝ))
       Complex.reCLM_norm.le
       (Bd.smul hΩ hx hP.le (bkb_cu_contDiffOn hΩ hg l q) ((bkb_u_contDiffOn hΩ hg l q).restrict_scalars ℝ)
@@ -970,7 +927,3 @@ theorem nonStatPhase : NonStatPhase := by
     (fun x hx k => hBk Ω g P hΩ hg hP hne x hx (hder x hx) k) q le_rfl S a ha hc hsupp hb
 
 end Formalism.FourierDecayAlt.P.WirtingerIntegrationByParts
-
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P

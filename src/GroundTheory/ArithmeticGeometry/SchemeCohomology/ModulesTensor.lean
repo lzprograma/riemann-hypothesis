@@ -30,8 +30,8 @@ def zeroSieve {M : PresheafOfModules.{u} (R ⋙ forget₂ _ _)} {U : Cᵒᵖ} (x
     Sieve U.unop where
   arrows _ g := M.map g.op x = 0
   downward_closed {_ _} g hg h := by
-    rw [op_comp, PresheafOfModules.map_comp_apply]
-    erw [hg]; exact map_zero _
+    rw [op_comp, PresheafOfModules.map_comp_apply, show M.map g.op x = 0 from hg]
+    exact map_zero _
 
 def imSieve {M N : PresheafOfModules.{u} (R ⋙ forget₂ _ _)} (φ : M ⟶ N) {U : Cᵒᵖ}
     (y : N.obj U) : Sieve U.unop where
@@ -53,18 +53,11 @@ lemma zeroSieve_pullback {U : Cᵒᵖ} (x : M.obj U) {V : C} (g : V ⟶ U.unop) 
   rw [op_comp, PresheafOfModules.map_comp_apply]
   exact Iff.rfl
 
-lemma zeroSieve_zero {U : Cᵒᵖ} : zeroSieve (0 : M.obj U) = ⊤ := by
-  ext W h
-  simp only [Sieve.top_apply, iff_true]
-  exact map_zero _
-
 lemma zeroSieve_add {U : Cᵒᵖ} (x y : M.obj U) :
     zeroSieve x ⊓ zeroSieve y ≤ zeroSieve (x + y) := by
   rintro W h ⟨hx, hy⟩
   change M.map h.op (x + y) = 0
-  rw [map_add (f := _)]
-  erw [hx, hy]
-  exact add_zero _
+  rw [map_add (f := _), show M.map h.op x = 0 from hx, show M.map h.op y = 0 from hy, add_zero]
 
 lemma imSieve_add (φ : M ⟶ N) {U : Cᵒᵖ} (x y : N.obj U) :
     imSieve φ x ⊓ imSieve φ y ≤ imSieve φ (x + y) := by
@@ -78,11 +71,7 @@ variable (P : PresheafOfModules.{u} (R ⋙ forget₂ _ _))
 
 lemma whiskerRight_imSieve_mem (φ : M ⟶ N) (hφ : ∀ (U : Cᵒᵖ) (y : N.obj U), imSieve φ y ∈ J U.unop)
     (U : Cᵒᵖ) (y : (N ⊗ P).obj U) : imSieve (φ ▷ P) y ∈ J U.unop := by
-  induction y using TensorProduct.induction_on with
-  | zero =>
-    refine J.superset_covering ?_ (J.top_mem _)
-    rintro W h -
-    exact ⟨0, by erw [map_zero]⟩
+  induction y using TensorProduct.inductionOn with
   | tmul n p =>
     refine J.superset_covering ?_ (hφ U n)
     rintro W h ⟨m, hm⟩
@@ -98,7 +87,7 @@ lemma tmul_zeroSieve_le {U : Cᵒᵖ} (m : M.obj U) (p : P.obj U) :
     zeroSieve m ≤ zeroSieve (M := M ⊗ P) (m ⊗ₜ p : (M ⊗ P).obj U) := by
   intro W h hm
   change M.map h.op m ⊗ₜ P.map h.op p = 0
-  erw [hm]
+  rw [show M.map h.op m = 0 from hm]
   exact TensorProduct.zero_tmul _ _
 
 lemma zeroSieve_mem_of_rTensor_rangeRestrict (φ : M ⟶ N)
@@ -106,17 +95,14 @@ lemma zeroSieve_mem_of_rTensor_rangeRestrict (φ : M ⟶ N)
     (V : Cᵒᵖ) (z : (M ⊗ P).obj V)
     (hz : ((φ.app V).hom.rangeRestrict.rTensor (P.obj V)) z = 0) :
     zeroSieve z ∈ J V.unop := by
-  letI : CommRing ((R ⋙ forget₂ CommRingCat RingCat).obj V) := inferInstanceAs (CommRing (R.obj V))
+  let : CommRing ((R ⋙ forget₂ CommRingCat RingCat).obj V) := inferInstanceAs (CommRing (R.obj V))
   have hex : Function.Exact (LinearMap.ker (φ.app V).hom.rangeRestrict).subtype
       (φ.app V).hom.rangeRestrict := by
     rw [LinearMap.exact_iff, Submodule.range_subtype]
   have hex' := rTensor_exact (P.obj V) hex (φ.app V).hom.surjective_rangeRestrict
   obtain ⟨w, rfl⟩ := (hex' z).1 hz
   clear hz hex hex'
-  induction w using TensorProduct.induction_on with
-  | zero =>
-    rw [map_zero]
-    exact J.superset_covering (zeroSieve_zero (M := M ⊗ P) (U := V)).ge (J.top_mem _)
+  induction w using TensorProduct.inductionOn with
   | tmul k p =>
     refine J.superset_covering (tmul_zeroSieve_le P (k : M.obj V) p) (hφ V _ ?_)
     have := k.2
@@ -140,7 +126,7 @@ lemma whiskerRight_zeroSieve_mem (φ : M ⟶ N)
     (hinj : ∀ (U : Cᵒᵖ) (x : M.obj U), φ.app U x = 0 → zeroSieve x ∈ J U.unop)
     (hsurj : ∀ (U : Cᵒᵖ) (y : N.obj U), imSieve φ y ∈ J U.unop)
     (U : Cᵒᵖ) (x : (M ⊗ P).obj U) (hx : (φ ▷ P).app U x = 0) : zeroSieve x ∈ J U.unop := by
-  letI : CommRing ((R ⋙ forget₂ CommRingCat RingCat).obj U) := inferInstanceAs (CommRing (R.obj U))
+  let : CommRing ((R ⋙ forget₂ CommRingCat RingCat).obj U) := inferInstanceAs (CommRing (R.obj U))
   have hx' : (φ.app U).hom.rTensor (P.obj U) x = 0 := hx
   obtain ⟨A, hA, y, rfl⟩ := Submodule.exists_fg_le_eq_rTensor_subtype (x : (M.obj U) ⊗[_] (P.obj U))
   set f := (φ.app U).hom with hf
@@ -154,7 +140,8 @@ lemma whiskerRight_zeroSieve_mem (φ : M ⟶ N)
   rw [map_zero] at hB0
   obtain ⟨T, hT⟩ := hB
   refine J.transitive (finset_inf_mem T _ (fun t _ => hsurj U t)) _ (fun W g hg => ?_)
-  erw [zeroSieve_pullback (M := M ⊗ P)]
+  change (zeroSieve (M := M ⊗ P) (A.subtype.rTensor (P.obj U) y)).pullback g ∈ J W
+  rw [zeroSieve_pullback (M := M ⊗ P) (A.subtype.rTensor (P.obj U) y) g]
   apply zeroSieve_mem_of_rTensor_rangeRestrict P φ hinj
   have hT' : ∀ t ∈ T, ∃ m, φ.app (op W) m = N.map g.op t :=
     fun t ht => (Finset.inf_le ht : _ ≤ imSieve φ t) g hg
@@ -163,15 +150,15 @@ lemma whiskerRight_zeroSieve_mem (φ : M ⟶ N)
     rw [← hT] at hb
     induction hb using Submodule.span_induction with
     | mem t ht => obtain ⟨m, hm⟩ := hT' t ht; exact ⟨m, hm⟩
-    | zero => erw [map_zero]; exact zero_mem _
-    | add a b _ _ ha hb => erw [map_add]; exact add_mem ha hb
-    | smul r a _ ha => erw [PresheafOfModules.map_smul]; exact Submodule.smul_mem _ _ ha
+    | zero => rw [map_zero]; exact zero_mem _
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact add_mem ha hb
+    | smul r a _ ha => rw [PresheafOfModules.map_smul]; exact Submodule.smul_mem _ _ ha
   let ρ : B →+ LinearMap.range (φ.app (op W)).hom :=
     { toFun := fun b => ⟨N.map g.op b, hρ b b.2⟩
       map_zero' := Subtype.ext (map_zero _)
       map_add' := fun a b => Subtype.ext (map_add _ _ _) }
   let RW := (R ⋙ forget₂ CommRingCat RingCat).obj (op W)
-  letI : CommRing RW := inferInstanceAs (CommRing (R.obj (op W)))
+  let : CommRing RW := inferInstanceAs (CommRing (R.obj (op W)))
   let pW : P.obj U →+ P.obj (op W) :=
     { toFun := fun p => (P.map g.op p : P.obj (op W))
       map_zero' := map_zero (P.map g.op).hom
@@ -197,8 +184,7 @@ lemma whiskerRight_zeroSieve_mem (φ : M ⟶ N)
         ((M ⊗ P).map g.op (A.subtype.rTensor (P.obj U) z)) =
       F ((A.map f).inclusion hle |>.rTensor (P.obj U) (fA.rTensor (P.obj U) z)) := by
     intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp only [map_zero]; erw [map_zero]
+    induction z using TensorProduct.inductionOn with
     | tmul a p =>
       change (φ.app (op W)).hom.rangeRestrict (M.map g.op a) ⊗ₜ[RW] pW p = ρ _ ⊗ₜ[RW] pW p
       congr 1
@@ -207,7 +193,7 @@ lemma whiskerRight_zeroSieve_mem (φ : M ⟶ N)
       simp only [map_add (f := _)] at ha hb ⊢
       exact (congrArg _ (map_add ((M ⊗ P).map g.op).hom _ _)).trans
         ((map_add _ _ _).trans (congrArg₂ (· + ·) ha hb))
-  erw [key, hB0, map_zero]
+  exact (key y).trans (by rw [hB0, map_zero])
 
 end
 
@@ -223,7 +209,8 @@ lemma W_toPresheaf_iff (φ : M ⟶ N) :
   · rintro ⟨h1, h2⟩
     refine ⟨fun U x hx => ?_, fun U y => h2.imageSieve_mem y⟩
     have := h1.equalizerSieve_mem (X := U) x 0 (by
-      erw [hx, map_zero]; rfl)
+      change φ.app U x = φ.app U 0
+      rw [hx, map_zero])
     refine J.superset_covering ?_ this
     intro W g hg
     change M.map g.op x = 0

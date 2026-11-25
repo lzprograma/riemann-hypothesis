@@ -15,43 +15,6 @@ public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MemSupport
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembVB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.IsMultiHom
 import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.DvdOfAdd
@@ -60,18 +23,7 @@ import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValuationOneEqZero
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundReal
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValLamOfSubset
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ThresholdGeOddPosition, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembXXb, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SumMulSumProd, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DecIdentity, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.HomCompRename, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDegF, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembLabF, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ProjectionMemPartialSpan, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwistSliceCoeff, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembershipOfThreeParts, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembFinal
@@ -101,7 +53,7 @@ theorem exists_posU (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (N : ℕ)
   have hlen : ((Fr.LLset j).sort (· ≤ ·)).length = N := by rw [Finset.length_sort, hN]
   simp only [Frames.letters, Finset.mem_filter, Finset.mem_Icc] at hx
   unfold Frames.IsW at hW
-  push_neg at hW
+  push Not at hW
   obtain ⟨⟨hx1, hx2⟩, hxT⟩ := hx
   rcases lt_or_ge x (Fr.fr j 0) with hlt | hge
   · have hxL : x ∈ Fr.LLset j := by
@@ -110,10 +62,9 @@ theorem exists_posU (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (N : ℕ)
     obtain ⟨u, hu, hux⟩ := List.mem_iff_getElem.mp ((Finset.mem_sort (· ≤ ·)).mpr hxL)
     refine ⟨u, by omega, ?_⟩
     unfold posU llPos
-    rw [if_pos (by omega), List.getD_eq_getElem _ _ hu, hux]
+    rw [ite_eq_left (by omega), List.getD_eq_getElem _ _ hu, hux]
   · have key : ∃ i, i < r ∧ Fr.fr j i = x := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       have hall : ∀ i, i < r → Fr.fr j i < x := by
         intro i
         induction i with
@@ -121,8 +72,7 @@ theorem exists_posU (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (N : ℕ)
         | succ k ih =>
           intro hk
           have h1 := ih (by omega)
-          by_contra h2
-          push_neg at h2
+          by_contra! h2
           have h3 : x < Fr.fr j (k + 1) := lt_of_le_of_ne h2 (fun h' => hne (k + 1) hk h'.symm)
           exact hV.2.2.2.2.2.1 j k x hk h1 h3 hxT
       have h4 := hall (r - 1) (by omega)
@@ -130,11 +80,11 @@ theorem exists_posU (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (N : ℕ)
     obtain ⟨i, hi, hix⟩ := key
     refine ⟨N + i, by omega, ?_⟩
     unfold posU
-    rw [if_neg (by omega), Nat.add_sub_cancel_left, hix]
+    rw [ite_eq_right (by omega), Nat.add_sub_cancel_left, hix]
 
 theorem posU_even (hV : Fr.Valid L₁ N₁) (j : ℤ) (N u : ℕ) (h1 : N ≤ u) (h2 : u < N + r) : Even (posU Fr N j u) := by
   unfold posU
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
   exact (hV.2.2.2.2.1 j (u - N) (by omega)).2
 
 theorem posU_letter (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (N : ℕ) (hN : N = (Fr.LLset j).card) (u : ℕ)
@@ -148,18 +98,18 @@ theorem posU_letter (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (N : ℕ)
       · exact (_root_.Formalism.MainNotions.G.WittFrameLocaliserOrders.frame_first_entry_le hV (j - 1) (r - 1) (by omega)).trans hx.1.1.le
       · exact hx.1.2.le.trans (_root_.Formalism.MainNotions.G.WittFrameLocaliserOrders.frame_first_entry_le hV j (r - 1) (by omega))
     · unfold Frames.IsW
-      push_neg
+      push Not
       exact hx.1.1
   unfold posU
   rcases Nat.lt_or_ge u N with hu' | hu'
-  · rw [if_pos hu']
+  · rw [ite_eq_left hu']
     apply hmemLL
     unfold llPos
     have hlen : u < ((Fr.LLset j).sort (· ≤ ·)).length := by rw [Finset.length_sort]; omega
     rw [List.getD_eq_getElem _ _ hlen]
     exact (Finset.mem_sort _).mp (List.getElem_mem _)
   · have hu'' : u = N := le_antisymm hu hu'
-    rw [if_neg (by omega), hu'', Nat.sub_self]
+    rw [ite_eq_right (by omega), hu'', Nat.sub_self]
     have hg := hV.2.2.2.1 (j - 1)
     rw [sub_add_cancel] at hg
     refine ⟨?_, ?_⟩
@@ -167,7 +117,7 @@ theorem posU_letter (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (N : ℕ)
       exact ⟨⟨(_root_.Formalism.MainNotions.G.WittFrameLocaliserOrders.frame_first_entry_le hV (j - 1) (r - 1) (by omega)).trans hg.le, _root_.Formalism.MainNotions.G.WittFrameLocaliserOrders.frame_first_entry_le hV j (r - 1) (by omega)⟩,
         (hV.2.2.2.2.1 j 0 (by omega)).1⟩
     · unfold Frames.IsW
-      push_neg
+      push Not
       exact hg
 
 end Fr
@@ -185,7 +135,7 @@ theorem threshold_ge_even_position (h : Even (posU Fr (nL j) (segZ j) u)) :
     (ka j (u + 1) 0 : ℝ) + mS + slU Fr p deg Y k nL j u ≤ thStar Fr p deg Y k mS nL K ka j u := by
   unfold thStar slU
   dsimp only
-  rw [if_pos h]
+  rw [ite_eq_left h]
   exact le_max_of_le_right (le_max_left _ _)
 
 theorem threshold_ge_odd_position (h : ¬ Even (posU Fr (nL j) (segZ j) u)) :
@@ -193,7 +143,7 @@ theorem threshold_ge_odd_position (h : ¬ Even (posU Fr (nL j) (segZ j) u)) :
   unfold thStar slU
   dsimp only
   have hc : 1 ≤ u + 1 ∧ ¬ Even (posU Fr (nL j) (segZ j) u) := ⟨by omega, h⟩
-  rw [add_tsub_cancel_right, if_pos hc]
+  rw [add_tsub_cancel_right, ite_eq_left hc]
   exact le_max_of_le_right (le_max_right _ _)
 
 end Th
@@ -220,8 +170,7 @@ variable {O : Type} [CommRing O] {r K : ℕ}
 
 theorem exists_of_rename {σ τ : Type} (f : σ → τ) (A : MvPolynomial σ O) (a : τ →₀ ℕ) (ha : a ∈ (rename f A).support) :
     ∃ u ∈ A.support, Finsupp.mapDomain f u = a := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have h0 : (rename f A).coeff a = 0 := MvPolynomial.coeff_rename_eq_zero f A a (fun u hu => by
     by_contra hu0
     exact hc u (MvPolynomial.mem_support_iff.mpr hu0) hu)
@@ -316,7 +265,7 @@ theorem Mx_even {L₁ N₁' : ℕ} (hV : Fr.Valid L₁ N₁') (hnL : ∀ j, Dt.n
   have hc := Classical.choose_spec hex
   have heq : Classical.choose hex = u := hinj _ _ hc.1 hu hc.2
   unfold Mx
-  rw [dite_eq_left hex, if_pos he, heq]
+  rw [dite_eq_left hex, ite_eq_left he, heq]
 
 theorem Mx_odd {L₁ N₁' : ℕ} (hV : Fr.Valid L₁ N₁') (hnL : ∀ j, Dt.nL j = (Fr.LLset (segZ j)).card) (j : ZMod J) (u : ℕ)
     (hu : u < Dt.nL j + r) (he : ¬ Even (pU p O Fr Dt j u)) :
@@ -333,7 +282,7 @@ theorem Mx_odd {L₁ N₁' : ℕ} (hV : Fr.Valid L₁ N₁') (hnL : ∀ j, Dt.nL
   have hc := Classical.choose_spec hex
   have heq : Classical.choose hex = u := hinj _ _ hc.1 hu hc.2
   unfold Mx
-  rw [dite_eq_left hex, if_neg he, heq]
+  rw [dite_eq_left hex, ite_eq_right he, heq]
 
 theorem cond_at {TT : Finset (Fin n')} {L₁ L₂ : ℕ} {d : Fin n' → ℕ}
     (hM : MFH p Fr TT L₁ L₂ N₁ G' deg d Y (r + K) cP) (hnL : ∀ j, Dt.nL j = (Fr.LLset (segZ j)).card)
@@ -461,22 +410,6 @@ theorem back_rename (j : ZMod J) (X : MvPolynomial ((ZMod J × ℤ) × Fin n) O)
   subst hv
   rfl
 
-private theorem twistSub_rename_eq {R : Type} [CommRing R] {ι κ : Type} {n : ℕ} (LL : Letters ι) (LK : Letters κ)
-    (S : Set ι) (T : Set κ) (g : κ → ι) (hvec : ∀ y, LL.vec (g y) = LK.vec y) (hS : ∀ y, g y ∈ S ↔ y ∈ T)
-    (k : Fin n) (X' : MvPolynomial (κ × Fin n) R) :
-    twistSub LL S k (rename (R := R) (fun v : κ × Fin n => (g v.1, v.2)) X') =
-      rename (R := GLLaurent R n) (fun v : κ × Fin n => (g v.1, v.2)) (twistSub LK T k X') := by
-  have h : (twistSub LL S k).comp (rename (R := R) (fun v : κ × Fin n => (g v.1, v.2))).toRingHom =
-      (rename (R := GLLaurent R n) (fun v : κ × Fin n => (g v.1, v.2))).toRingHom.comp (twistSub LK T k) := by
-    apply MvPolynomial.ringHom_ext
-    · intro a
-      simp [twistSub]
-    · intro v
-      simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, rename_X, twistSub,
-        eval₂Hom_X', hS, hvec]
-      split_ifs <;> simp [map_sum]
-  exact congrArg (fun φ => φ X') h
-
 private theorem sDegs_rename_eq_of_injective {R : Type} [CommRing R] {ι κ : Type} {n : ℕ} (LL : Letters ι) (LK : Letters κ)
     (S : Set ι) (T : Set κ) (g : κ → ι) (hg : Function.Injective g) (hvec : ∀ y, LL.vec (g y) = LK.vec y)
     (hS : ∀ y, g y ∈ S ↔ y ∈ T) (k : Fin n) (X' : MvPolynomial (κ × Fin n) R) :
@@ -485,7 +418,7 @@ private theorem sDegs_rename_eq_of_injective {R : Type} [CommRing R] {ι κ : Ty
     simp only [Prod.mk.injEq] at h
     exact Prod.ext (hg h.1) h.2
   unfold sDegs
-  rw [twistSub_rename_eq LL LK S T g hvec hS k X', MvPolynomial.support_rename_of_injective hinj,
+  rw [_root_.Formalism.MainNotions.G.symbolGeneratorData.md_twist_rename g LK LL T S hvec hS k X', MvPolynomial.support_rename_of_injective hinj,
     Finset.image_biUnion]
   simp only [MvPolynomial.coeff_rename_mapDomain _ hinj]
 
@@ -850,8 +783,8 @@ theorem homComp_rename (f : κ × Fin n → ι × Fin n) (δ : ι → ℕ) (G : 
       intro mo _
       by_cases hm : Finsupp.mapDomain f mo = a
       · have hP : ∀ i, multideg (Finsupp.mapDomain f mo) i = δ i := by rw [hm]; exact h
-        rw [if_pos hP]
-      · simp only [hm, if_false, ite_self]
+        rw [ite_eq_left hP]
+      · simp only [hm, ite_false, ite_self]
     · apply Finset.sum_eq_zero
       intro mo _
       by_cases hm : Finsupp.mapDomain f mo = a
@@ -1014,11 +947,11 @@ theorem normDeg_bigM (hinj : Function.Injective fun x : TL J nL r => posOf n' (p
   intro x _
   rw [Fin.sum_univ_add]
   by_cases he : Even (posOf n' (posTL Fr x)).val
-  · simp only [isNormal_pl, isNormal_no, he, not_true_eq_false, if_false, if_true, Finset.sum_const_zero,
+  · simp only [isNormal_pl, isNormal_no, he, not_true_eq_false, ite_false, ite_true, Finset.sum_const_zero,
       zero_add, hno, Finset.sum_add_distrib, ← Finset.mul_sum]
     rw [← h2 x]
     rfl
-  · simp only [isNormal_pl, isNormal_no, he, not_false_eq_true, if_false, if_true, Finset.sum_const_zero,
+  · simp only [isNormal_pl, isNormal_no, he, not_false_eq_true, ite_false, ite_true, Finset.sum_const_zero,
       add_zero, hpl, Finset.sum_add_distrib, ← Finset.mul_sum]
     rw [← h1 x]
     rfl
@@ -1126,15 +1059,7 @@ private theorem fr_mono_of_valid (hV : Fr.Valid L₁ N₁) (j : ℤ) :
 
 private theorem fr_last_mono_in_index_of_valid (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (a : ℤ) :
     ∀ b : ℤ, a ≤ b → Fr.fr a (r - 1) ≤ Fr.fr b (r - 1) := by
-  intro b hab
-  obtain ⟨n, rfl⟩ : ∃ n : ℕ, b = a + n := ⟨(b - a).toNat, by omega⟩
-  clear hab
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    have hstep := le_trans (hV.2.2.2.1 (a + n)).le
-      (fr_mono_of_valid Fr hV (a + n + 1) 0 (r - 1) (Nat.zero_le _) (by omega))
-    exact le_trans ih (by simpa [add_assoc] using hstep)
+  apply _root_.Formalism.MainNotions.G.symbolGeneratorData.ph_z_mono <;> assumption
 
 theorem lf_dist_eq (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j j' x y : ℤ) (hx1 : Fr.fr (j - 1) (r - 1) < x)
     (hx2 : x ≤ Fr.fr j (r - 1)) (hy1 : Fr.fr (j' - 1) (r - 1) < y) (hy2 : y ≤ Fr.fr j' (r - 1))
@@ -1180,14 +1105,14 @@ theorem labO_apply (hinj : Function.Injective fun x : TL J nL r => posOf n' (pos
   · rw [Finset.sum_eq_single c]
     · simp
     · intro c' _ hc'
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hc' (Prod.ext_iff.mp h).2
     · intro h; exact absurd (Finset.mem_univ c) h
   · intro x _ hx
     apply Finset.sum_eq_zero
     intro c' _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hx (hinj (Prod.ext_iff.mp h).1)
   · intro h; exact absurd (Finset.mem_univ y) h
@@ -1195,15 +1120,14 @@ theorem labO_apply (hinj : Function.Injective fun x : TL J nL r => posOf n' (pos
 theorem labO_support (rho : TL J nL r × Fin (r + K) → ℕ) (v : Fin n' × Fin (r + K))
     (hv : v ∈ (labO Fr K nL rho).support) : ∃ x : TL J nL r, v.1 = posOf n' (posTL Fr x) := by
   classical
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply Finsupp.mem_support_iff.mp hv
   simp only [labO, Finsupp.finsetSum_apply, Finsupp.single_apply]
   apply Finset.sum_eq_zero
   intro x _
   apply Finset.sum_eq_zero
   intro c _
-  rw [if_neg]
+  rw [ite_eq_right]
   intro h
   exact hne x (Prod.ext_iff.mp h).1.symm
 
@@ -1229,7 +1153,7 @@ theorem restLabG : RestLabG := by
       have hd := lf_dist_eq Fr hV hr j (segZ y.1) x (posTL Fr y) (not_le.mp hW) hxl.2 hseg.1 hseg.2.1 hy
       rw [hd]
       exact hlt
-    · push_neg at hy
+    · push Not at hy
       have h0 : labO Fr K Dt.nL rho (posOf n' x, c) = 0 := by
         by_contra hne
         obtain ⟨y, hy'⟩ := labO_support Fr K Dt.nL rho (posOf n' x, c) (Finsupp.mem_support_iff.mpr hne)
@@ -1347,24 +1271,24 @@ theorem pj_mono_mul (j : ι) (q : MvPolynomial σ O →ₗ[O] MvPolynomial σ O)
     ext v
     simp only [Finsupp.filter_apply, Finsupp.add_apply]
     by_cases hv : π v = j
-    · rw [if_pos hv]
+    · rw [ite_eq_left hv]
       have : b v = 0 := by
         by_contra h
         exact hb v (Finsupp.mem_support_iff.2 h) hv
       rw [this, add_zero]
-    · rw [if_neg hv]
+    · rw [ite_eq_right hv]
       by_contra h
       exact hv (ha v (Finsupp.mem_support_iff.2 (Ne.symm h)))
   have h2 : (a + b).filter (fun v => π v ≠ j) = b := by
     ext v
     simp only [Finsupp.filter_apply, Finsupp.add_apply]
     by_cases hv : π v = j
-    · rw [if_neg (not_not.2 hv)]
+    · rw [ite_eq_right (not_not.2 hv)]
       have : b v = 0 := by
         by_contra h
         exact hb v (Finsupp.mem_support_iff.2 h) hv
       exact this.symm
-    · rw [if_pos hv]
+    · rw [ite_eq_left hv]
       have : a v = 0 := by
         by_contra h
         exact hv (ha v (Finsupp.mem_support_iff.2 h))
@@ -1556,21 +1480,21 @@ theorem offT_eq_zero (m : ι × Fin n →₀ ℕ) (h : ∀ i, i ∉ T → multid
   ext v
   rw [offT, Finsupp.filter_apply]
   by_cases hv : v.1 ∉ T
-  · rw [if_pos hv]
+  · rw [ite_eq_left hv]
     have h1 := h v.1 hv
     unfold multideg at h1
     have h2 : m (v.1, v.2) ≤ ∑ c : Fin n, m (v.1, c) :=
       Finset.single_le_sum (f := fun c : Fin n => m (v.1, c)) (fun _ _ => Nat.zero_le _) (Finset.mem_univ v.2)
     rw [h1] at h2
     exact Nat.le_zero.1 h2
-  · rw [if_neg hv]
+  · rw [ite_eq_right hv]
     rfl
 
 theorem multideg_onT (mo : ι × Fin n →₀ ℕ) (i : ι) (hi : i ∉ T) : multideg (onT T mo) i = 0 := by
   unfold multideg
   apply Finset.sum_eq_zero
   intro c _
-  rw [onT, Finsupp.filter_apply, if_neg hi]
+  rw [onT, Finsupp.filter_apply, ite_eq_right hi]
 
 end Sl
 
@@ -1627,7 +1551,7 @@ theorem twist_slice_coeff (hST : S ⊆ T) (M : ι × Fin n →₀ ℕ) (hM : M �
     refine Finset.sum_congr rfl fun M' hM' => ?_
     rw [map_mul, twistSub_monomial_off LL S j M' fun v hv hvS => hoff M' hM' v hv (hST hvS)]
   rw [hsum, coeff_sum, Finset.sum_eq_single M]
-  · rw [coeff_mul_monomial', if_pos le_add_self, add_tsub_cancel_right, mul_one]
+  · rw [coeff_mul_monomial', ite_eq_left le_add_self, add_tsub_cancel_right, mul_one]
   · intro M' hM' hne
     rw [coeff_mul_monomial']
     split_ifs with hle

@@ -12,8 +12,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 
 namespace Formalism.IndefR.Eqv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 instance borelMx (m n : ℕ) : BorelSpace (Mx D m n) := ⟨rfl⟩

@@ -29,8 +29,6 @@ open scoped LinearAlgebra.Projectivization
 
 universe u
 
-attribute [local instance] MvPolynomial.gradedAlgebra
-
 noncomputable section
 
 structure ProjScheme (A : Type u) [CommRing A] (N : ℕ) where
@@ -42,14 +40,6 @@ structure ProjScheme (A : Type u) [CommRing A] (N : ℕ) where
   isClosedImmersion : IsClosedImmersion ι
 
 attribute [instance] ProjScheme.isClosedImmersion
-
-namespace ProjScheme
-
-variable {A : Type u} [CommRing A] {N : ℕ}
-
-variable (X : ProjScheme A N)
-
-end ProjScheme
 
 end
 
@@ -70,8 +60,6 @@ namespace GroundTheory.Heights₂.Heights
 open AlgebraicGeometry CategoryTheory Opposite TopologicalSpace NumberField GroundTheory.Arith.SchemeCoh
   MeasureTheory MvPolynomial TensorProduct
 open scoped LinearAlgebra.Projectivization
-
-attribute [local instance] MvPolynomial.gradedAlgebra
 
 noncomputable section
 
@@ -196,7 +184,7 @@ theorem integral_monoInner_eq_zero {a b : Fin (N + 1) →₀ ℕ} (hab : a ≠ b
         (u : ℂ) ^ m k.succ * eval (CP.chartVec 0 z) (monomial m (1 : ℂ)) := fun m z => by
     rw [eval_chartVec_monomial, eval_chartVec_monomial]
     simp only [hT, mul_pow, Finset.prod_mul_distrib, hc, ite_pow, one_pow, Finset.prod_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
 
   set G : (Fin N → ℂ) → ℂ := fun z =>
     (CP.fsVolumeDensity 0 z : ℂ) * monoInner a.degree a b (CP.chartVec 0 z) with hG
@@ -463,7 +451,7 @@ theorem integral_pairVal (k l : Fin r) :
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [integral_finsetSum _ fun j _ => hi i j]
   simp only [integral_const_mul, integral_monoInner_ex, mul_ite, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   push_cast
   ring
 
@@ -478,7 +466,7 @@ theorem integral_pairVal_conj (k l : Fin r) :
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [integral_finsetSum _ fun j _ => hi i j]
   simp only [integral_const_mul, integral_monoInner_ex, mul_ite, mul_zero, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   push_cast
   ring
 

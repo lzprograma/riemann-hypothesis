@@ -4,52 +4,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBr
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwlineLemmas
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DetEmbUnitriA
 public import Formalism.GradedWeylDivisibility.FinalD
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalRingCardinality.Params
 
@@ -121,13 +76,13 @@ theorem fixed_rowOp_A (lam : DomWeight (n + 1)) (mu : DomWeight n) (f : MvPolyno
     eval (lhwline_rowOp (Fin.castSucc a) (Fin.castSucc b) t x) f = eval x f := by
   have hl : ∀ i j, j < i → ((elemGL_A a b hab.ne t : GL (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ) i j = 0 := by
     intro i j hji
-    rw [elemGL_apply_A, if_neg (ne_of_gt hji), if_neg]
+    rw [elemGL_apply_A, ite_eq_right (ne_of_gt hji), ite_eq_right]
     · simp
     · rintro ⟨rfl, rfl⟩
       exact lt_asymm hab hji
   have hd : ∀ i, ((elemGL_A a b hab.ne t : GL (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ) i i = 1 := by
     intro i
-    rw [elemGL_apply_A, if_pos rfl, if_neg]
+    rw [elemGL_apply_A, ite_eq_left rfl, ite_eq_right]
     · simp
     · rintro ⟨rfl, h⟩
       exact hab.ne h.symm
@@ -144,24 +99,24 @@ theorem fixed_rowOp_A (lam : DomWeight (n + 1)) (mu : DomWeight n) (f : MvPolyno
   induction ρ using Fin.lastCases with
   | last =>
     simp only [emb_cl_A, emb_ll_A, zero_mul, Finset.sum_const_zero, one_mul, zero_add]
-    rw [if_neg (Fin.castSucc_lt_last b).ne']
+    rw [ite_eq_right (Fin.castSucc_lt_last b).ne']
   | cast ρ =>
     simp only [emb_cc_A, emb_lc_A, zero_mul, add_zero, elemGL_apply_A, add_mul, Finset.sum_add_distrib,
       ite_mul, one_mul, zero_mul]
-    rw [Finset.sum_ite_eq' Finset.univ ρ, if_pos (Finset.mem_univ _)]
+    rw [Finset.sum_ite_eq' Finset.univ ρ, ite_eq_left (Finset.mem_univ _)]
     by_cases hρ : ρ = b
     · subst hρ
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       rw [Finset.sum_eq_single a]
       · simp
       · intro c _ hc
-        rw [if_neg (fun h => hc h.1.symm)]
+        rw [ite_eq_right (fun h => hc h.1.symm)]
       · simp
-    · rw [if_neg (fun h => hρ (Fin.castSucc_injective _ h))]
+    · rw [ite_eq_right (fun h => hρ (Fin.castSucc_injective _ h))]
       rw [Finset.sum_eq_zero]
       · simp
       · intro c _
-        rw [if_neg (fun h => hρ h.2.symm)]
+        rw [ite_eq_right (fun h => hρ h.2.symm)]
 
 theorem weight_row_A {r c : ℕ} (m : Fin r × Fin c →₀ ℕ) (ρ : Fin r) :
     Finsupp.weight (rowW r c) m ρ = ∑ s : Fin c, m (ρ, s) := by

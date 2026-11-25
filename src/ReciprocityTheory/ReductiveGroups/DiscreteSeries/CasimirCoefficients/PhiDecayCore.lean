@@ -13,50 +13,10 @@ public import Mathlib.Analysis.InnerProductSpace.Positive
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecALogLower
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ToMKMulInv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Analysis.InnerProductSpace.StarOrder
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
@@ -82,8 +42,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 def nuNext (ν : Fin n → ℝ) (i : Fin n) : ℝ := if h : (i : ℕ) + 1 < n then ν ⟨(i : ℕ) + 1, h⟩ else 0
@@ -96,17 +54,9 @@ lemma inP_entry_zero {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ} (hY 
     first | exact h | linear_combination h / 2 | linear_combination -h / 2
 
 lemma conjTranspose_eq_self_of_mem_noncompactPart {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ} (hY : inP ε Y) : Yᴴ = Y := by
-  have hJ : Jm ε * Jm ε = 1 := by
-    rw [Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    ext a
-    split_ifs <;> norm_num
-  have h1 : Yᴴ * Jm ε = Y * Jm ε := by
-    rw [hY.2]
-    exact eq_neg_of_add_eq_zero_left hY.1
-  calc Yᴴ = Yᴴ * Jm ε * Jm ε := by rw [Matrix.mul_assoc, hJ, Matrix.mul_one]
-    _ = Y * Jm ε * Jm ε := by rw [h1]
-    _ = Y := by rw [Matrix.mul_assoc, hJ, Matrix.mul_one]
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.DS.S7.isHermitian_of_mem_noncompactPart'
+    | apply _root_.ReciprocityTheory.ChartRestriction.DS.S7.isHermitian_of_mem_noncompactPart' <;> first | assumption | rfl | infer_instance
 
 lemma inP_norm_symm {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ} (hY : inP ε Y) (a b : Fin n) :
     ‖Y b a‖ = ‖Y a b‖ := by
@@ -179,7 +129,7 @@ theorem dec_weighted {ε : Fin n → Bool} (ν : Fin n → ℝ) (hν : Antitone 
       refine Finset.sum_congr rfl fun i _ => ?_
       split_ifs <;> ring
     · refine Finset.sum_eq_zero fun i _ => ?_
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro h
       exact hba (Fin.lt_iff_val_lt_val.mpr (lt_of_le_of_lt h.1 h.2))
   rw [hR]
@@ -217,8 +167,6 @@ open scoped ComplexOrder ContDiff ENNReal InnerProductSpace
 namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 
@@ -405,8 +353,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 variable {ε : Fin n → Bool} {lam : Fin n → ℝ}
@@ -430,7 +376,7 @@ theorem phi_decay_core (ν : Fin n → ℝ) (hν : Antitone ν) {g : ℝ}
     subst hY0
     have hl : ∀ i : Fin n, lead ((i : ℕ) + 1) (1 : Matrix (Fin n) (Fin n) ℂ) = 1 := fun i => by
       unfold lead
-      rw [dif_pos (show (i : ℕ) + 1 ≤ n from i.isLt), Matrix.submatrix_one _ (Fin.castLE_injective _),
+      rw [dite_eq_left (show (i : ℕ) + 1 ≤ n from i.isLt), Matrix.submatrix_one _ (Fin.castLE_injective _),
         Matrix.det_one]
     unfold phiReal
     rw [NormedSpace.exp_zero, h0]
@@ -453,14 +399,14 @@ theorem phi_decay_core (ν : Fin n → ℝ) (hν : Antitone ν) {g : ℝ}
     intro i
     by_cases hlast : (i : ℕ) + 1 < n
     · have hnn : 0 ≤ ν i - nuNext ν i := by
-        simp only [nuNext, dif_pos hlast]
+        simp only [nuNext, dite_eq_left hlast]
         exact sub_nonneg.mpr (hν (show i ≤ ⟨(i : ℕ) + 1, hlast⟩ from Fin.le_def.mpr (by simp)))
       apply mul_le_mul_of_nonneg_left _ hnn
       have h := decA_log_lower hY hU hYe hq hpos ((i : ℕ) + 1) i.isLt
       simp only [Nat.lt_add_one_iff, Nat.add_one_le_iff] at h
       exact h
     · have hV : V i = 0 :=
-        Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun b _ => if_neg (by have := a.isLt; omega)
+        Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun b _ => ite_eq_right (by have := a.isLt; omega)
       have hn : (i : ℕ) + 1 = n := by have := i.isLt; omega
       have hL : c i = 1 := by
         simp only [hcdef, hn]
@@ -515,7 +461,7 @@ private lemma posDef_exp_of_hermitian {Y : Matrix (Fin n) (Fin n) ℂ} (hY : Y�
 private lemma lead_exp_pos_of_hermitian {Y : Matrix (Fin n) (Fin n) ℂ} (hY : Yᴴ = Y) (i : Fin n) :
     0 < lead ((i : ℕ) + 1) (NormedSpace.exp Y) := by
   have hle : (i : ℕ) + 1 ≤ n := i.isLt
-  rw [lead, dif_pos hle]
+  rw [lead, dite_eq_left hle]
   exact ((posDef_exp_of_hermitian hY).submatrix (Fin.castLE_injective hle)).det_pos
 
 theorem phiM_exp_le (μ : Fin n → ℤ) (hμ : IsMu lam μ) (hlam : IsHCParam lam) {h : ℝ}

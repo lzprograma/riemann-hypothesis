@@ -98,7 +98,7 @@ theorem ann_cre (key_inj : Function.Injective key) (i j : ι) :
     by_cases hi : i ∈ A
     · simp [ann_apply, cre_apply, hi, sg_erase key i hi, tw_self, smul_smul, sg_mul_self, Finset.insert_erase hi]
     · simp [ann_apply, cre_apply, hi, sg_insert key i hi, tw_self, smul_smul, sg_mul_self, Finset.erase_insert hi]
-  rw [if_neg hij]
+  rw [ite_eq_right hij]
   by_cases hi : i ∈ A <;> by_cases hj : j ∈ A <;>
     simp [ann_apply, cre_apply, hi, hj, hij, Ne.symm hij]
   rw [sg_insert key j hi, sg_erase key i hj, tw_swap key key_inj hij, Finset.erase_insert_of_ne hij,

@@ -111,7 +111,7 @@ theorem twistRes_eq {x : Fin (N + 1) → Ω} {y : Fin (N + 1) → K'} (hxy : ∀
     twistRes S x y c z = aeval y t.1 / aeval y t.2.1 := by
   classical
   have hex : ∃ (I : Chart y) (t : Poly S N × Poly S N × ℕ × ℕ), IsFrac x c I.1 z t := ⟨I, t, h⟩
-  rw [twistRes, dif_pos hex]
+  rw [twistRes, dite_eq_left hex]
   have h₀ := Classical.choose_spec (Classical.choose_spec hex)
   exact div_eq_of_isFrac hle h₀ h
     (eval_ne_zero_of_mem_monos (liftChart hxy (Classical.choose hex)) h₀.1)
@@ -221,7 +221,7 @@ theorem map_mul_of {Q : SubSystem S x Ω} {Q' : SubSystem S y K'} {r : Ω → K'
     obtain ⟨f, s, e, hs, hf, hse, rfl⟩ := ha
     exact ⟨(f, s, e), hs, hf, hse, rfl⟩
   obtain ⟨hs, hf, hse, ha'⟩ := Classical.choose_spec hex
-  rw [red, dif_pos hex]
+  rw [red, dite_eq_left hex]
   have := h.smul I q hq _ _ _ hs hf hse
   rw [← ha'] at this
   exact this
@@ -311,7 +311,7 @@ theorem restrictData_twist {Q₁ Q₂ : LineBundle S x} {Q₁' Q₂' : LineBundl
       r z = prodRes r₁ r₂ (L I) z := by
     intro I z hz
     have hex : ∃ I : Chart y, z ∈ Q₂.sub (liftChart hxy I) * Q₁.sub (liftChart hxy I) := ⟨I, hz⟩
-    simp only [r, dif_pos hex]
+    simp only [r, dite_eq_left hex]
     have hJ := Classical.choose_spec hex
     let K : Chart y := ⟨(Classical.choose hex).1 ∪ I.1,
       (Classical.choose hex).2.1.mono Finset.subset_union_left,

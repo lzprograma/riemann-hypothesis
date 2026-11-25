@@ -388,7 +388,7 @@ theorem betaSym : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (w : Pl
     exact hβ ⟨⟨β, a, ha', by rw [mul_comm]; exact ha'⟩, rfl⟩
   obtain ⟨a, ha0, hβa⟩ : ∃ a, a ≠ 0 ∧ β * a = 0 := by
     rw [injective_iff_map_eq_zero] at hinj
-    push_neg at hinj
+    push Not at hinj
     obtain ⟨a, h, ha⟩ := hinj
     exact ⟨a, ha, h⟩
   let v : Fin m → w.adicCompletion E := fun i => e (b.repr a i)
@@ -439,9 +439,9 @@ theorem Phi_transpose' : (GlobalTheory.Tw.Phi n R)ᵀ = (-1 : R) ^ (n + 1) • G
   ext i j
   simp only [GlobalTheory.Tw.Phi, Matrix.of_apply, Matrix.transpose_apply, Matrix.smul_apply, smul_eq_mul]
   by_cases h : (i : ℕ) + j + 1 = n
-  · rw [if_pos h, if_pos (by omega), ← pow_add, show n + 1 + i = j + 2 * (i + 1) by omega, pow_add, pow_mul]
+  · rw [ite_eq_left h, ite_eq_left (by omega), ← pow_add, show n + 1 + i = j + 2 * (i + 1) by omega, pow_add, pow_mul]
     simp
-  · rw [if_neg h, if_neg (by omega), mul_zero]
+  · rw [ite_eq_right h, ite_eq_right (by omega), mul_zero]
 
 theorem PhiU_inv_val : ((PhiU n R)⁻¹ : GL (Fin n) R).val = (GlobalTheory.Tw.Phi n R)ᵀ := rfl
 
@@ -532,8 +532,8 @@ theorem exists_twConj_dlt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
   have hcc : ∀ z, cj w (cj w z) = z := fun z => by
     obtain ⟨x, rfl⟩ := e.surjective z
     rw [← he, ← he, K.c_c]
-  have hth : thL m w = thetaGL m (cj w) := by rw [thL, if_neg hw]
-  have hnr : nrmL m w y = y * thetaGL m (cj w) y := by rw [nrmL, if_neg hw]
+  have hth : thL m w = thetaGL m (cj w) := by rw [thL, ite_eq_right hw]
+  have hnr : nrmL m w y = y * thetaGL m (cj w) y := by rw [nrmL, ite_eq_right hw]
 
   have huu : u * B.σ u = 1 := by
     have h := congrArg B.σ hβ₀

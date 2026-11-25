@@ -16,8 +16,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.Coef.SplitCoefficientComponents
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem cornerSh_of_kind (δ : ∀ p : PlF D, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D)
@@ -28,7 +26,7 @@ theorem cornerSh_of_kind (δ : ∀ p : PlF D, (D.s.atP p).Fp) (T T' : ℕ) (p : 
   · simp [h1, h2]
   · simp [h1, h2] at h
   · simp [h1, h2] at h
-  · simp only [h1, h2, if_false] at h ⊢
+  · simp only [h1, h2, ite_false] at h ⊢
     rw [Option.some.inj h]
 
 theorem sgn_sq (q : ℕ) :
@@ -54,7 +52,7 @@ theorem cross_of_kind {w w' : Point D.host.E (D.R.rS + 1)} {Z Z' : PairVal.MatR 
     · rw [h1, h2]; ring
     · simp [h1, h2] at hk
     · simp [h1, h2] at hk
-    · simp only [h1, h2, if_false, Option.some.injEq] at hk
+    · simp only [h1, h2, ite_false, Option.some.injEq] at hk
       unfold zetaOf at hk
       field_simp at hk
       linear_combination -hk

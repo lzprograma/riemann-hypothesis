@@ -33,10 +33,10 @@ theorem coeff_poly {D : ℕ} (a : Fin D → O) (n : ℕ) :
     (poly a).coeff n = if h : n < D then a ⟨n, h⟩ else 0 := by
   simp only [poly, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
   split_ifs with h
-  · rw [Finset.sum_eq_single ⟨n, h⟩ (fun j _ hj => if_neg (fun e => hj (Fin.ext e.symm)))
+  · rw [Finset.sum_eq_single ⟨n, h⟩ (fun j _ hj => ite_eq_right (fun e => hj (Fin.ext e.symm)))
       (by simp)]
     simp
-  · exact Finset.sum_eq_zero fun j _ => if_neg (by have := j.2; omega)
+  · exact Finset.sum_eq_zero fun j _ => ite_eq_right (by have := j.2; omega)
 
 theorem coe_poly {D : ℕ} (a : Fin D → O) :
     ((poly a : Polynomial O) : O⟦X⟧) = ∑ i : Fin D, C (a i) * X ^ (i : ℕ) := by
@@ -115,11 +115,11 @@ theorem decomp_unique (h : O⟦X⟧ →ₐ[O] O⟦X⟧) (hX : h X = g) (c c' : F
 
 theorem injective (hD : 1 ≤ wd g) (h : O⟦X⟧ →ₐ[O] O⟦X⟧) (hX : h X = g) :
     Function.Injective h := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro a ha
   have := eq_zero_of_sum_eq_zero hg h hX (fun i => if (i : ℕ) = 0 then a else 0) (by
     rw [Finset.sum_eq_single ⟨0, hD⟩ (fun j _ hj => by
-      rw [if_neg (fun e => hj (Fin.ext e)), map_zero, mul_zero]) (by simp)]
+      rw [ite_eq_right (fun e => hj (Fin.ext e)), map_zero, mul_zero]) (by simp)]
     simp [ha])
   simpa using congrFun this ⟨0, hD⟩
 

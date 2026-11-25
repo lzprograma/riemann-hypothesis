@@ -51,6 +51,14 @@ def revInv (x : Fin n → G) : Fin n → G := fun i => (x i.rev)⁻¹
 
 theorem revInv_apply (x : Fin n → G) (i : Fin n) : revInv x i = (x i.rev)⁻¹ := rfl
 
+theorem init_revInv (x : Fin (n + 1) → G) : Fin.init (revInv x) = revInv (Fin.tail x) := by
+  funext i
+  simp only [Fin.init, Fin.tail, revInv_apply]
+  congr 2
+  ext
+  simp only [Fin.val_rev, Fin.val_succ, Fin.val_castSucc]
+  omega
+
 theorem partialProd_last_revInv (x : Fin n → G) :
     Fin.partialProd (revInv x) (Fin.last n) = (Fin.partialProd x (Fin.last n))⁻¹ := by
   induction n with
@@ -59,25 +67,9 @@ theorem partialProd_last_revInv (x : Fin n → G) :
     have h1 := Fin.partialProd_succ (revInv x) (Fin.last n)
     have h2 := Fin.partialProd_succ' x (Fin.last n)
     rw [Fin.succ_last] at h1 h2
-    rw [h1, h2, ← Fin.partialProd_init]
-    have : Fin.init (revInv x) = revInv (Fin.tail x) := by
-      funext i
-      simp only [Fin.init, Fin.tail, revInv_apply]
-      congr 2
-      ext
-      simp only [Fin.val_rev, Fin.val_succ, Fin.val_castSucc]
-      omega
-    rw [this, ih, revInv_apply, mul_inv_rev, Fin.rev_last]
+    rw [h1, h2, ← Fin.partialProd_init, init_revInv, ih, revInv_apply, mul_inv_rev, Fin.rev_last]
 
 theorem tail_revInv (x : Fin (n + 1) → G) : Fin.tail (revInv x) = revInv (Fin.init x) := by
-  funext i
-  simp only [Fin.init, Fin.tail, revInv_apply]
-  congr 2
-  ext
-  simp only [Fin.val_rev, Fin.val_succ, Fin.val_castSucc]
-  omega
-
-theorem init_revInv (x : Fin (n + 1) → G) : Fin.init (revInv x) = revInv (Fin.tail x) := by
   funext i
   simp only [Fin.init, Fin.tail, revInv_apply]
   congr 2

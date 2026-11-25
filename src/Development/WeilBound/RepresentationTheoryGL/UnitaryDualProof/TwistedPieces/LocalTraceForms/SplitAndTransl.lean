@@ -79,12 +79,8 @@ private theorem exists_tau {k R V : Type*} [Field k] [CommRing R] [IsArtinianRin
       FiniteDimensional (R ⧸ I.asIdeal) (V ⧸ (I.asIdeal • (⊤ : Submodule R V))) := fun I => by
     have : Module.Finite R V := Module.Finite.of_restrictScalars_finite k R V
     exact Module.Finite.of_restrictScalars_finite R _ _
-  have hlam : ∀ I : MaximalSpectrum R, ∃ l : (R ⧸ I.asIdeal) →ₗ[k] k, l 1 ≠ 0 := fun I => by
-    let b := Module.Free.chooseBasis k (R ⧸ I.asIdeal)
-    have h1 : b.repr 1 ≠ 0 := fun h => one_ne_zero (b.repr.injective (h.trans (map_zero _).symm))
-    obtain ⟨i, hi⟩ : ∃ i, b.repr 1 i ≠ 0 := by
-      by_contra hne; push Not at hne; exact h1 (Finsupp.ext hne)
-    exact ⟨b.coord i, hi⟩
+  have hlam : ∀ I : MaximalSpectrum R, ∃ l : (R ⧸ I.asIdeal) →ₗ[k] k, l 1 ≠ 0 := fun I =>
+    Module.Projective.exists_dual_ne_zero k one_ne_zero
   choose lam hlam1 using hlam
   let tI : MaximalSpectrum R → (V →ₗ[R] V) → k := fun I x =>
     haveI := finQ I
@@ -332,8 +328,8 @@ private theorem unimod_pf (hT : TraceForm k) : Unimod (k := k) := by
   obtain ⟨c1, hc1⟩ := hcore
   refine ⟨c0 + c1, fun m hm m' hm' => ?_⟩
   obtain ⟨r, rfl⟩ : ∃ r, m' = m + r := ⟨m' - m, by omega⟩
-  refine ⟨Lc_le Z g hg c0 hc0 (by omega) (by omega), ?_, ?_⟩
-  · rw [relIndex_Lc_conj Z g hg c0 hc0 (by omega) (by omega) (by omega), relIndex_Lc Z (by omega) (by omega),
+  refine ⟨Lc_le Z g c0 hc0 (by omega) (by omega), ?_, ?_⟩
+  · rw [relIndex_Lc_conj Z g c0 hc0 (by omega) (by omega) (by omega), relIndex_Lc Z (by omega) (by omega),
       Bi.relIndex_lat_conj, Bi.relIndex_lat]
     exact (hc1 r (by omega)).1
   · rw [relIndex_Lc Z (by omega) (by omega), Bi.relIndex_lat]

@@ -41,39 +41,4 @@ theorem finrank_baseChange_eq : Module.finrank L (L ⊗[K] A) = Module.finrank K
 
 end CentralSimple
 
-section CSA
-
-universe u v w
-
-end CSA
-
-section Tower
-
-variable (K L M A : Type*) [CommSemiring K] [CommSemiring L] [CommSemiring M]
-  [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M] [Semiring A] [Algebra K A]
-
-end Tower
-
-section Matrix
-
-variable (K L A : Type*) [CommSemiring K] [CommSemiring L] [Algebra K L] [Semiring A] [Algebra K A]
-variable (n : Type*) [Fintype n] [DecidableEq n]
-
-end Matrix
-
-section Tensor
-
-variable (K L A B : Type*) [CommSemiring K] [CommSemiring L] [Algebra K L] [Semiring A]
-  [Algebra K A] [Semiring B] [Algebra K B]
-
-end Tensor
-
-section CSAIso
-
-universe u v w w'
-
-variable {K : Type u} [Field K]
-
-end CSAIso
-
 end GroundTheory.Brauer

@@ -20,49 +20,8 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsLatticeE
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsTranslatedRiemannLattice
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicAdaptedFrameOnBall
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.NormSqEqAdaptedFrameSum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.ArchimedeanActionOnLatticeVectors, Development.AutomorphicSpectrum.Proofs.MetricProofs.ArchimedeanUnitaryRepresentation, Development.AutomorphicSpectrum.Proofs.MetricProofs.BallMobiusZeroContinuous, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsMajorantOfPositiveFrame, Development.AutomorphicSpectrum.Proofs.MetricProofs.LatticeStabilizerEquivAutomorphisms, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsGroupDictionary
@@ -164,7 +123,7 @@ theorem tm_basic : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (Ψ : 
     have hm := mem_archUnitary.1 a.2 (plc F τ)
     simp only [LatEmb.tm, tauMat, LatEmb.gr]
     by_cases h0 : (plc F τ).embedding = embOf (F.σ τ)
-    · rw [if_pos h0]
+    · rw [ite_eq_left h0]
       rw [gramAt, h0] at hm
       have e : ((a.1 (plc F τ) : GL (Fin (j + j')) ℂ) : Matrix (Fin (j + j')) (Fin (j + j')) ℂ)ᴴ =
           (((a.1 (plc F τ) : GL (Fin (j + j')) ℂ) : Matrix (Fin (j + j')) (Fin (j + j')) ℂ).map
@@ -174,7 +133,7 @@ theorem tm_basic : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (Ψ : 
       exact hm
     · have h' : (plc F τ).embedding = ComplexEmbedding.conjugate (embOf (F.σ τ)) :=
         (InfinitePlace.embedding_mk_eq (embOf (F.σ τ))).resolve_left h0
-      rw [if_neg h0]
+      rw [ite_eq_right h0]
       apply conj_unitary
       have e : gramAt C.h (Pi.basisFun E (Fin (j + j'))) (plc F τ) =
           ((gram C.h.toSesq (Pi.basisFun E (Fin (j + j')))).map (embOf (F.σ τ))).map (starRingEnd ℂ) := by
@@ -338,25 +297,6 @@ section Arch
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {Ψ : Type} [Fintype Ψ] {j j' n g : ℕ} {Λ : Type}
   [AddCommGroup Λ] [Module (𝓞 E) Λ]
 
-omit [IsCMField E] in
-theorem embOf_coe (s : 𝓞 E →+* ℂ) (a : 𝓞 E) : embOf s (a : E) = s a :=
-  IsFractionRing.lift_algebraMap (intEmb_injective s) a
-
-omit [IsCMField E] in
-theorem embOf_comp (φ : E →+* ℂ) : embOf (φ.comp (algebraMap (𝓞 E) E)) = φ :=
-  IsLocalization.ringHom_ext (nonZeroDivisors (𝓞 E)) (by
-    ext a; simpa using embOf_coe (φ.comp (algebraMap (𝓞 E) E)) a)
-
-omit [IsCMField E] in
-theorem embOf_injective : Function.Injective (embOf : (𝓞 E →+* ℂ) → (E →+* ℂ)) := by
-  intro s s' h
-  ext a
-  have := congrArg (fun φ : E →+* ℂ => φ (a : E)) h
-  simpa [embOf_coe] using this
-
-theorem plc_bijective (F : UnivFam E Ψ j j' n g Λ) : Function.Bijective (plc F) := by
-  apply GlobalTheory.CompanionTheory.Ar.Cusp.Dict.plc_bijective
-
 theorem emb_ne (F : UnivFam E Ψ j j' n g Λ) (τ : Ψ) (h : (plc F τ).embedding ≠ embOf (F.σ τ)) :
     (plc F τ).embedding = ComplexEmbedding.conjugate (embOf (F.σ τ)) :=
   (InfinitePlace.embedding_mk_eq (embOf (F.σ τ))).resolve_left h
@@ -390,19 +330,19 @@ theorem vecAt_of_ne (x : Λ) {τ : Ψ} (h : (plc F τ).embedding ≠ embOf (F.σ
 
 theorem tm_of_eq (a : C.Arch) {τ : Ψ} (h : (plc F τ).embedding = embOf (F.σ τ)) :
     C.tm a τ = ((a : InfinitePlace E → GL (Fin (j + j')) ℂ) (plc F τ) : Matrix (Fin (j + j')) (Fin (j + j')) ℂ) := by
-  rw [LatEmb.tm, tauMat, if_pos h]
+  rw [LatEmb.tm, tauMat, ite_eq_left h]
 
 theorem tm_of_ne (a : C.Arch) {τ : Ψ} (h : (plc F τ).embedding ≠ embOf (F.σ τ)) :
     C.tm a τ = cj ((a : InfinitePlace E → GL (Fin (j + j')) ℂ) (plc F τ) : Matrix (Fin (j + j')) (Fin (j + j')) ℂ) := by
-  rw [LatEmb.tm, tauMat, if_neg h]
+  rw [LatEmb.tm, tauMat, ite_eq_right h]
 
 theorem atPlc_of_eq (Pt : Ψ → Matrix (Fin (j + j')) (Fin (j + j')) ℂ) {τ : Ψ}
     (h : (plc F τ).embedding = embOf (F.σ τ)) : atPlc F Pt τ = Pt τ := by
-  rw [atPlc]; exact if_pos h
+  rw [atPlc]; exact ite_eq_left h
 
 theorem atPlc_of_ne (Pt : Ψ → Matrix (Fin (j + j')) (Fin (j + j')) ℂ) {τ : Ψ}
     (h : (plc F τ).embedding ≠ embOf (F.σ τ)) : atPlc F Pt τ = cj (Pt τ) := by
-  rw [atPlc]; exact if_neg h
+  rw [atPlc]; exact ite_eq_right h
 
 def majOf (Pt : Ψ → Matrix (Fin (j + j')) (Fin (j + j')) ℂ) (hP : ∀ τ, (Pt τ).PosDef)
     (hS : ∀ τ, Pt τ * (C.gr τ)⁻¹ * Pt τ = C.gr τ) : Majorant C.h (Pi.basisFun E (Fin (j + j'))) where
@@ -671,7 +611,6 @@ theorem exists_of_stab (C : LatEmb F) (γ : latticeStab C.h C.e.range) :
   rw [C.form_eq, C.form_eq, hφ, hφ]
   exact congrArg (fun t => Algebra.trace ℚ E (C.xi * t)) hu
 
-
 open scoped Pointwise in
 theorem exists_of_aut (C : LatEmb F) (φ : autGrp (E := E) F.form) :
     ∃ γ : latticeStab C.h C.e.range, ∀ x,
@@ -738,15 +677,6 @@ theorem eqvBy_symm {E : Type} [Field E] [NumberField E] [IsCMField E] {g : ℕ} 
   simp only [LinearEquiv.coe_one, id_eq] at this ⊢
   rw [this, LinearEquiv.symm_apply_apply]
 
-theorem zero_mem_ballDom {Ψ : Type} [Fintype Ψ] {j j' n : ℕ} (q : Ψ × Fin j × Fin j' ≃ Fin n) :
-    (0 : Fin n → ℂ) ∈ ballDom q := by
-  intro τ
-  have : ballMat q 0 τ = 0 := by
-    ext a b
-    simp [ballMat]
-  rw [this]
-  simpa using Matrix.PosDef.one
-
 theorem star_mulVec_dot {m k : Type} [Fintype m] [Fintype k] (c : Matrix m k ℂ) (y : k → ℂ) :
     star (c *ᵥ y) ⬝ᵥ (c *ᵥ y) = star y ⬝ᵥ ((cᴴ * c) *ᵥ y) := by
   rw [star_mulVec, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec (star y) cᴴ]
@@ -756,7 +686,7 @@ theorem groupDict_nonempty : ∀ (E : Type) [Field E] [NumberField E] [IsCMField
   intro E _ _ _ Ψ _ j j' n g Λ _ _ H F
   classical
   obtain ⟨C⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cusp.Dict.LatEmbEx.exists_latEmb E Ψ j j' n g Λ H F
-  have h0 : (0 : Fin n → ℂ) ∈ ballDom F.q := zero_mem_ballDom F.q
+  have h0 : (0 : Fin n → ℂ) ∈ ballDom F.q := GlobalTheory.CompanionTheory.Ar.Cusp.Dict.LatEmbEx.zero_mem_ballDom F.q
   have hform : ∀ t, (F.R t).form = F.form := F.form_eq
   obtain ⟨A0, hA0⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cusp.Dict.Adapted.exists_isAdapted E Ψ j j' n g Λ F C (F.R 0) (hform 0) (F.sig 0 h0)
   have fct := fun τ => _root_.GlobalTheory.CompanionTheory.Ar.Cusp.Dict.cinv_facts E Ψ j j' n g Λ F C τ (A0 τ) (hA0.unit τ)

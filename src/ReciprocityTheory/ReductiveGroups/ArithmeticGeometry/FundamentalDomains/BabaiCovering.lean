@@ -57,7 +57,7 @@ theorem babai : ∀ (m : ℕ) (y : Fin m → V) (v : V), v ∈ span ℝ (Set.ran
           push_cast
           ring
         rw [hsplit, e]
-        push_neg at hc
+        push Not at hc
         nlinarith [mul_nonneg (sub_nonneg.mpr hf1.le) (sub_nonneg.mpr hc.le)]
   intro m y v hv
   obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun ℝ).mp hv

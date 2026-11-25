@@ -52,7 +52,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRin
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR
-attribute [local instance] Over.cartesianMonoidalCategory
 open scoped CategoryTheory.Obj
 
 noncomputable section
@@ -177,7 +176,7 @@ theorem mapsAt_val (w : LB.Iso M' (LB.LinComb M pr (fun _ => 1))) (p : Y ⟶ X')
 theorem val_finProdGen {K I : Type} [Fintype K] [Fintype I] (φ : I → K → (Y ⟶ X)) (ε : I → K → ℤ)
     (t : ∀ i, LB.Gen (LB.LinComb M (φ i) (ε i))) {Z : Scheme.{0}} (r : Z ⟶ Y) (z : Z) {J} (hJ : Good M z J) :
     val (GeneratorPullback.finProdGen M φ ε t) r z J = ∏ i, val (t i) r z J :=
-  (map_prod _ _ _).trans (Finset.prod_congr rfl fun i _ =>
+  (map_prod _ _ _).trans (Finset.prod_congr rfl fun _ _ =>
     gm_res r z _ (hJ.mem (fun p : I × K => φ p.1 p.2) r) _)
 
 end Box

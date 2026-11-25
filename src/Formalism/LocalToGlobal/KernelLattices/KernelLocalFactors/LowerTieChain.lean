@@ -100,14 +100,6 @@ theorem lc_blk_sqAct_mem {k : ℕ} (m : ι → DomWeight k) (g : ι → GL (Fin 
 
 end LcFrameTen
 
-section LcRec
-
-open Formalism.MainNotions.product_first_zeroth_parts
-
-variable {D : Formalism.BasicNotions.D7} {u : D.what₂.Word}
-
-end LcRec
-
 end Formalism.L2.Ker
 
 namespace Formalism.L2.Ker

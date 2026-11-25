@@ -20,8 +20,4 @@ def LiftModel.Statement : Prop :=
       1 ≤ a ∧ (∀ j, x' j ∈ chartLat y (a • N) 1) ∧ KH.GeneratesOn y (a • N) x' ∧
         Birational (fun p : Σ _ : Unit, ι' => x' p.2)
 
-section Inhabitant
-
-end Inhabitant
-
 end GroundTheory.Heights₂.Heights.HilbertSamuel

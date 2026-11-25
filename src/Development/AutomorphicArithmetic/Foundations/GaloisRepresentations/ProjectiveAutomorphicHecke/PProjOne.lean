@@ -1,52 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MapWopWmap
-import Mathlib.Algebra.Module.Torsion.Prod
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -61,14 +16,6 @@ private theorem monoidAlgebra_lift_freeMonoid_eq_wop {F A J : Type*} [Field F] [
     MonoidAlgebra.lift F A (FreeMonoid J) (FreeMonoid.lift T) t =
       wop T (t.coeff.equivMapDomain FreeMonoid.toListEquiv) := by
   simp only [MonoidAlgebra.lift_apply, wop, Finsupp.sum_equivMapDomain, FreeMonoid.lift_apply]
-  rfl
-
-private theorem algHom_wop_eq_wop_comp {F A B J : Type*} [Field F] [Ring A] [Algebra F A] [Ring B]
-    [Algebra F B] (φ : A →ₐ[F] B) (T : J → A) (t : List J →₀ F) :
-    φ (wop T t) = wop (fun j => φ (T j)) t := by
-  unfold wop
-
-  simp only [Finsupp.sum, map_sum, map_smul, map_list_prod, List.map_map]
   rfl
 
 private theorem exists_idempotent_aeval_nilpotent_sub_of_isIntegral {F D : Type*} [Field F] [CommRing D] [Algebra F D] (x : D)
@@ -155,11 +102,11 @@ theorem pProjOne_holds : ProjOne.{u} := by
   have ht' : MonoidAlgebra.lift F (F × A) (FreeMonoid J) (FreeMonoid.lift gen) t = z := ht
   let coeff := t.coeff.equivMapDomain FreeMonoid.toListEquiv
   have hwθ : wop θ coeff = (z : F × A).1 := by
-    have h1 := algHom_wop_eq_wop_comp (AlgHom.fst F F A) gen coeff
+    have h1 := map_wop (AlgHom.fst F F A) gen coeff
     rw [← monoidAlgebra_lift_freeMonoid_eq_wop, ht'] at h1
     exact h1.symm
   have hwT : wop T coeff = (z : F × A).2 := by
-    have h1 := algHom_wop_eq_wop_comp (AlgHom.snd F F A) gen coeff
+    have h1 := map_wop (AlgHom.snd F F A) gen coeff
     rw [← monoidAlgebra_lift_freeMonoid_eq_wop, ht'] at h1
     exact h1.symm
   refine ⟨coeff, ?_, ?_, ?_⟩

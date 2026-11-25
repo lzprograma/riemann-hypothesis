@@ -1,53 +1,11 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CrystallineToDeRhamInjective
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.RingTheory.Valuation.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Presheaf
 public import Mathlib.Algebra.Ring.GeomSum
 public import Mathlib.Data.Nat.Prime.Basic
@@ -61,11 +19,7 @@ namespace Formalism.MainNotions.N.Pv.LocalLengthBound.Val
 variable {LL : Type} [Field LL] (v : AddValuation LL (WithTop ℚ))
 
 theorem v_natCast_nonneg (m : ℕ) : 0 ≤ v (m : LL) := by
-  induction m with
-  | zero => simp [AddValuation.map_zero]
-  | succ n ih =>
-    rw [Nat.cast_succ]
-    exact v.map_le_add ih v.map_one.symm.le
+  apply _root_.Formalism.MainNotions.N.Ln03.Pf.ValuationPow.v_nat_nonneg <;> assumption
 
 private theorem withTop_zero_lt_one : (0 : WithTop ℚ) < 1 := by
   first
@@ -76,19 +30,11 @@ private theorem withTop_rat_not_one_add_one_le_one : ¬ ((1 : WithTop ℚ) + 1 �
   | (rw [← WithTop.coe_one, ← WithTop.coe_add, WithTop.coe_le_coe]; norm_num)
 
 private theorem le_v_sum_range_of_forall (f : ℕ → LL) (g : WithTop ℚ) (hf : ∀ i, g ≤ v (f i)) (m : ℕ) :
-    g ≤ v (∑ i ∈ Finset.range m, f i) := by
-  induction m with
-  | zero => simp [AddValuation.map_zero]
-  | succ n ih =>
-    rw [Finset.sum_range_succ]
-    exact v.map_le_add ih (hf n)
+    g ≤ v (∑ i ∈ Finset.range m, f i) :=
+  v.map_le_sum fun i _ => hf i
 
 theorem v_intCast_nonneg (z : ℤ) : 0 ≤ v (z : LL) := by
-  obtain ⟨n, rfl | rfl⟩ := Int.eq_nat_or_neg z
-  · first
-    | (rw [Int.cast_natCast]; exact v_natCast_nonneg v n)
-  · first
-    | (rw [Int.cast_neg, Int.cast_natCast, v.map_neg]; exact v_natCast_nonneg v n)
+  apply _root_.Formalism.MainNotions.N.Ln03.Pf.ValuationPow.v_int_nonneg <;> assumption
 
 variable {p : ℕ} (hp : p.Prime) (hv : v (p : LL) = 1)
 include hp hv

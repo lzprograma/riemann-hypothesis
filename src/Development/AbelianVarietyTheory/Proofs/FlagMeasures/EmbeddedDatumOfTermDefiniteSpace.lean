@@ -317,19 +317,8 @@ theorem fixLat_comap (Γ : Submodule (𝓞 K) (V × V)) :
 
 private theorem flag_X_isotropic {H : HermSpace K V} {r : ℕ} (F : FlagD H r) :
     ∀ x ∈ F.X, ∀ y ∈ F.X, H.B x y = 0 := by
-  have hgen : ∀ a : Fin r, F.X ≤ LinearMap.ker (H.B (F.e a.castSucc)) := by
-    intro a
-    unfold FlagD.X FlagD.Xa
-    rw [Submodule.span_le]
-    rintro _ ⟨b, -, rfl⟩
-    simpa using F.iso a b
-  intro x hx y hy
-  have hXy : F.X ≤ LinearMap.ker (H.B.flip y) := by
-    unfold FlagD.X FlagD.Xa
-    rw [Submodule.span_le]
-    rintro _ ⟨a, -, rfl⟩
-    simpa using hgen a hy
-  simpa using hXy hx
+  intros
+  apply _root_.GlobalTheory.ModIdent.X_iso <;> assumption
 
 private theorem apply_mem_one_of_mem_flagPairDefinitePartLattice {H : HermSpace K V} {r : ℕ} (F F' : FlagD H r) {Λ : Submodule (𝓞 K) V}
     (hΛ : ∀ x ∈ Λ, ∀ y ∈ Λ, H.B x y ∈ (1 : Submodule (𝓞 K) K)) :

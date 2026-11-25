@@ -4,6 +4,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Points
 import Mathlib.RingTheory.LocalProperties.Reduced
 import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.TypeStar
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -24,33 +25,8 @@ theorem eval₂_scale_of_isWeightedHomogeneous {S : Type*} [CommRing S] [Fintype
     (hf : IsWeightedHomogeneous (coordDeg n) f δ) :
     eval₂ (Int.castRingHom S) (fun v ↦ w v.1 * x v) f =
       (∏ k, w k ^ δ k) * eval₂ (Int.castRingHom S) x f := by
-  conv_lhs => rw [f.as_sum]
-  conv_rhs => rw [f.as_sum]
-  simp only [eval₂_sum, eval₂_monomial, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun μ hμ ↦ ?_
-  have hw : Finsupp.weight (coordDeg n) μ = δ := hf (mem_support_iff.mp hμ)
-  have hδ : ∀ k, δ k = ∑ v ∈ μ.support with v.1 = k, μ v := by
-    intro k
-    rw [← hw, Finsupp.weight_apply, Finsupp.sum, Finset.sum_apply, Finset.sum_filter]
-    refine Finset.sum_congr rfl fun v _ ↦ ?_
-    simp only [coordDeg, Pi.smul_apply, smul_eq_mul, Pi.single_apply]
-    split_ifs with h1 h2 h2
-    · simp
-    · exact absurd h1.symm h2
-    · exact absurd h2.symm h1
-    · simp
-  have hprod : (μ.prod fun v e ↦ w v.1 ^ e) = ∏ k, w k ^ δ k := by
-    rw [Finsupp.prod]
-    symm
-    calc ∏ k, w k ^ δ k = ∏ k, ∏ v ∈ μ.support with v.1 = k, w v.1 ^ μ v := by
-          refine Finset.prod_congr rfl fun k _ ↦ ?_
-          rw [hδ k, ← Finset.prod_pow_eq_pow_sum]
-          refine Finset.prod_congr rfl fun v hv ↦ ?_
-          rw [(Finset.mem_filter.mp hv).2]
-      _ = ∏ v ∈ μ.support, w v.1 ^ μ v := Finset.prod_fiberwise _ _ _
-  rw [← hprod]
-  simp only [Finsupp.prod, mul_pow, Finset.prod_mul_distrib]
-  ring
+  classical
+  exact BlockScaling.eval₂_mul_block_left (Int.castRingHom S) w x fun _ hμ => BlockScaling.sum_eq_of_isWeightedHomogeneous_single hf hμ
 
 namespace ArithVariety
 

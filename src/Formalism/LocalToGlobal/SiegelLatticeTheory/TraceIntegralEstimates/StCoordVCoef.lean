@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.HermitianCombinationZ
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
 public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepPinExistsOfPlace
@@ -26,9 +27,6 @@ namespace Formalism.L2.S.Pv.Chart
 
 variable {n r : ℕ} (ε : Fin n → Bool)
 
-theorem hJ_add (x y y' : Fin n → ℂ) : hJ ε x (y + y') = hJ ε x y + hJ ε x y' := by
-  simp only [hJ, Matrix.mulVec_add, dotProduct_add]
-
 theorem hJ_smul (x y : Fin n → ℂ) (c : ℂ) : hJ ε x (c • y) = c * hJ ε x y := by
   simp only [hJ, Matrix.mulVec_smul, dotProduct_smul, smul_eq_mul]
 
@@ -37,11 +35,7 @@ theorem hJ_zero (x : Fin n → ℂ) : hJ ε x 0 = 0 := by
 
 theorem hJ_sum {ι : Type*} (s : Finset ι) (x : Fin n → ℂ) (g : ι → Fin n → ℂ) :
     hJ ε x (∑ i ∈ s, g i) = ∑ i ∈ s, hJ ε x (g i) := by
-  classical
-  refine Finset.induction_on s ?_ ?_
-  · rw [Finset.sum_empty, Finset.sum_empty, hJ_zero]
-  · intro i t hi ih
-    rw [Finset.sum_insert hi, Finset.sum_insert hi, hJ_add, ih]
+  apply _root_.PI.SchurPlaces.LeviLA.hJ_sum_right <;> assumption
 
 variable (e f : Fin r → Fin n → ℂ) (z : Fin n → ℂ)
   (hdual : ∀ a b, hJ ε (f a) (e b) = if a = b then 1 else 0) (hfz : ∀ a, hJ ε (f a) z = 0)
@@ -56,8 +50,8 @@ theorem span_expand (b : ℕ) (v : Fin n → ℂ) (hv : v ∈ spanLt e b) :
     rw [Set.mem_setOf_eq] at hd
     refine ⟨?_, fun c hc => ?_⟩
     · simp_rw [hdual, ite_smul, one_smul, zero_smul]
-      rw [Finset.sum_ite_eq' Finset.univ d (fun c => e c), if_pos (Finset.mem_univ d)]
-    · rw [hdual, if_neg]
+      rw [Finset.sum_ite_eq' Finset.univ d (fun c => e c), ite_eq_left (Finset.mem_univ d)]
+    · rw [hdual, ite_eq_right]
       intro h
       subst h
       omega
@@ -65,8 +59,8 @@ theorem span_expand (b : ℕ) (v : Fin n → ℂ) (hv : v ∈ spanLt e b) :
     refine ⟨?_, fun c _ => hJ_zero ε _⟩
     simp_rw [hJ_zero, zero_smul, Finset.sum_const_zero]
   | add x y _ _ hx hy =>
-    refine ⟨?_, fun c hc => by rw [hJ_add, hx.2 c hc, hy.2 c hc, add_zero]⟩
-    simp_rw [hJ_add, add_smul]
+    refine ⟨?_, fun c hc => by rw [Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.hJ_add_right, hx.2 c hc, hy.2 c hc, add_zero]⟩
+    simp_rw [Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.hJ_add_right, add_smul]
     rw [Finset.sum_add_distrib, ← hx.1, ← hy.1]
   | smul a x _ hx =>
     refine ⟨?_, fun c hc => by rw [hJ_smul, hx.2 c hc, mul_zero]⟩
@@ -80,7 +74,7 @@ theorem hJ_fam (c : Fin r) (b : Fin (r + 1)) (hcb : c.1 < b.1) : hJ ε (f c) (fa
   | last => simp only [fam, Fin.snoc_last]; exact hfz c
   | cast b' =>
     simp only [fam, Fin.snoc_castSucc]
-    rw [hdual, if_neg]
+    rw [hdual, ite_eq_right]
     intro h
     subst h
     simp at hcb
@@ -101,7 +95,7 @@ theorem expand {g : Matrix (Fin n) (Fin n) ℂ} (hg : InS e z g) (b : Fin (r + 1
       hJ ε (f c) ((g - 1) *ᵥ fam e z b) := by
     intro c
     split_ifs with h
-    · rw [hgw, hJ_add, hJ_fam ε e f z hdual hfz c b h, zero_add]
+    · rw [hgw, Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.hJ_add_right, hJ_fam ε e f z hdual hfz c b h, zero_add]
     · exact (hw0 c (not_lt.mp h)).symm
   simp_rw [hc]
   rw [← hw]
@@ -113,7 +107,7 @@ theorem coef_diag {g : Matrix (Fin n) (Fin n) ℂ} (hg : InS e z g) (a : Fin r) 
   have hgw : g *ᵥ e a = e a + (g - 1) *ᵥ e a := by
     rw [Matrix.sub_mulVec, Matrix.one_mulVec]
     abel
-  rw [hgw, hJ_add, hw0, hdual, if_pos rfl, add_zero]
+  rw [hgw, Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.hJ_add_right, hw0, hdual, ite_eq_left rfl, add_zero]
 
 theorem coef_low {g : Matrix (Fin n) (Fin n) ℂ} (hg : InS e z g) (a c : Fin r) (h : c.1 < a.1) :
     hJ ε (f a) (g *ᵥ e c) = 0 := by
@@ -121,7 +115,7 @@ theorem coef_low {g : Matrix (Fin n) (Fin n) ℂ} (hg : InS e z g) (a c : Fin r)
   have hgw : g *ᵥ e c = e c + (g - 1) *ᵥ e c := by
     rw [Matrix.sub_mulVec, Matrix.one_mulVec]
     abel
-  rw [hgw, hJ_add, hw0, hdual, if_neg (fun h' => by subst h'; exact lt_irrefl _ h), add_zero]
+  rw [hgw, Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.hJ_add_right, hw0, hdual, ite_eq_right (fun h' => by subst h'; exact lt_irrefl _ h), add_zero]
 
 theorem coef_mul {g₁ g₂ : Matrix (Fin n) (Fin n) ℂ} (h₁ : InS e z g₁) (h₂ : InS e z g₂) (a : Fin r)
     (b : Fin (r + 1)) (hab : a.1 < b.1) :
@@ -129,20 +123,20 @@ theorem coef_mul {g₁ g₂ : Matrix (Fin n) (Fin n) ℂ} (h₁ : InS e z g₁) 
       ∑ c : Fin r, if a.1 < c.1 ∧ c.1 < b.1 then hJ ε (f a) (g₁ *ᵥ e c) * hJ ε (f c) (g₂ *ᵥ fam e z b) else 0 := by
   have hx := expand ε e f z hdual hfz h₂ b
   conv_lhs => rw [← Matrix.mulVec_mulVec, hx]
-  rw [Matrix.mulVec_add, Matrix.mulVec_sum, hJ_add, hJ_sum]
+  rw [Matrix.mulVec_add, Matrix.mulVec_sum, Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.hJ_add_right, hJ_sum]
   simp_rw [Matrix.mulVec_smul, hJ_smul]
   rw [add_assoc]
   congr 1
   rw [← Finset.add_sum_erase _ _ (Finset.mem_univ a), ← Finset.add_sum_erase _ _ (Finset.mem_univ a),
-    if_pos hab, coef_diag ε e f z hdual hfz h₁ a, mul_one, if_neg (by omega), zero_add]
+    ite_eq_left hab, coef_diag ε e f z hdual hfz h₁ a, mul_one, ite_eq_right (by omega), zero_add]
   congr 1
   refine Finset.sum_congr rfl fun c hc => ?_
   have hca : c ≠ a := Finset.ne_of_mem_erase hc
   rcases lt_or_gt_of_ne (fun h' : c.1 = a.1 => hca (Fin.ext h')) with h | h
-  · rw [coef_low ε e f z hdual hfz h₁ a c h, mul_zero, if_neg (by omega)]
+  · rw [coef_low ε e f z hdual hfz h₁ a c h, mul_zero, ite_eq_right (by omega)]
   · by_cases hcb : c.1 < b.1
-    · rw [if_pos hcb, if_pos ⟨h, hcb⟩, mul_comm]
-    · rw [if_neg hcb, if_neg (by omega), zero_mul]
+    · rw [ite_eq_left hcb, ite_eq_left ⟨h, hcb⟩, mul_comm]
+    · rw [ite_eq_right hcb, ite_eq_right (by omega), zero_mul]
 
 end Formalism.L2.S.Pv.Chart
 
@@ -163,8 +157,6 @@ open scoped Classical
 namespace Formalism.MainNotions.S.Pv.HH
 
 open NumberField Module Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt Formalism.MainNotions.BridgeLemma₂
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : D7)
 
@@ -195,8 +187,6 @@ open Finset NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism
 
 namespace Formalism.L2.S.Pv.Chart
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem hJ_conj {n : ℕ} (ε : Fin n → Bool) (x y : Fin n → ℂ) : hJ ε x y = star (hJ ε y x) := by
   unfold hJ Formalism.REAL.Jm
   simp only [Matrix.mulVec_diagonal, dotProduct, star_sum, star_mul']
@@ -208,9 +198,9 @@ theorem blkOf_mono {K : Type*} : ∀ (l : List (K × ℕ)) (i j : ℕ), i ≤ j 
   | (x, s) :: bs, i, j, h => by
     unfold blkOf
     by_cases hi : i < s
-    · rw [if_pos hi]; exact Nat.zero_le _
+    · rw [ite_eq_left hi]; exact Nat.zero_le _
     · have hj : ¬ j < s := fun hj => hi (lt_of_le_of_lt h hj)
-      rw [if_neg hi, if_neg hj]
+      rw [ite_eq_right hi, ite_eq_right hj]
       exact Nat.succ_le_succ (blkOf_mono bs (i - s) (j - s) (Nat.sub_le_sub_right h s))
 
 variable {D : D7} {w : Point D.host.E (D.R.rS + 1)}
@@ -270,7 +260,7 @@ theorem dual_v (a b : Fin D.R.rS) :
     Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.hJ_rvX, X.ef]
   by_cases h : a = b
   · subst h; simp
-  · rw [if_neg (Ne.symm h), if_neg h, map_zero, star_zero]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h, map_zero, star_zero]
 
 theorem fz_v (u' : D.what₂.Word) (a : Fin D.R.rS) :
     hJ (X.B.I.ε v) (rv X.B.I v (X.fR a)) (rv X.B.I v (X.zR u')) = 0 := by
@@ -311,7 +301,7 @@ theorem stCoordV_mul {u u' : D.what₂.Word} {γ : X.B.I.Ginf} {y₁ y₂ : Form
   congr 1
   refine Finset.sum_congr rfl fun c _ => ?_
   by_cases hc : p.1.1 < c.castSucc ∧ c.castSucc < p.1.2
-  · rw [dite_eq_left hc, if_pos ⟨hc.1, hc.2⟩]
+  · rw [dite_eq_left hc, ite_eq_left ⟨hc.1, hc.2⟩]
     simp only [midL, midR]
     have e1 : fam (fun a => rv X.B.I v (X.eR a)) (rv X.B.I v (X.zR u')) c.castSucc = rv X.B.I v (X.eR c) := by
       unfold fam; rw [Fin.snoc_castSucc]
@@ -319,7 +309,7 @@ theorem stCoordV_mul {u u' : D.what₂.Word} {γ : X.B.I.Ginf} {y₁ y₂ : Form
     simp only [Fin.val_castSucc, Fin.eta]
     have hpow : (D.host.rdE : ℂ) ^ (D.R.rS - c.castSucc.1) ≠ 0 := pow_ne_zero _ hrd
     field_simp
-  · rw [dite_eq_right hc, if_neg (fun h => hc ⟨h.1, h.2⟩), mul_zero]
+  · rw [dite_eq_right hc, ite_eq_right (fun h => hc ⟨h.1, h.2⟩), mul_zero]
 
 end Law
 

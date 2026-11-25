@@ -16,8 +16,6 @@ open Formalism.IndefR.Datum
 
 namespace Formalism.IndefR.Fin.LevelGroupLemmas
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def SplitOrInert (D : D7) : Prop :=
@@ -91,7 +89,7 @@ theorem fix_split (hSL : SplitLin D) (hPM : PlaceModelAt D) {ψ : AddChar (AF D.
     · have h1 : IsHalf e' (actO S T g⁻¹ h⁻¹ t) := (isHalf_actO g⁻¹ h⁻¹ t).2 ht
       simp only [hpres' t ht, h1, ht, and_true]
     · have h1 : ¬ IsHalf e' (actO S T g⁻¹ h⁻¹ t) := fun h' => ht ((isHalf_actO g⁻¹ h⁻¹ t).1 h')
-      simp only [h1, ht, and_false, if_false]
+      simp only [h1, ht, and_false, ite_false]
   calc om (g, h) f₀ = om (g, h) (Tm ((1 : ℂ) • halfInd e' (latAll S T ΛS ΛT))) := by rw [hTm.vac]
     _ = ((r : ℂ) * (splitFacO χS χT x y : ℂ)) •
           Tm (fun t => ((1 : ℂ) • halfInd e' (latAll S T ΛS ΛT)) (actO S T g⁻¹ h⁻¹ t)) := hrep _ hΦ

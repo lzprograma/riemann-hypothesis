@@ -4,58 +4,7 @@ public import Formalism.BranchSandwichDivisors.StatementW
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LNondomLemmas
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetMinor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -87,7 +36,7 @@ lemma xn_pderiv_supported {σ : Type*} (s : Set σ) (v : σ) (hv : v ∉ s) (f :
 lemma xn_minor_zero {s : ℕ} (I : Fin s → Fin r) (hs : s ≤ n) (h : ¬ Function.Injective I) :
     initMinor ℂ I hs = 0 := by
   unfold Function.Injective at h
-  push_neg at h
+  push Not at h
   obtain ⟨i, j, hij, hne⟩ := h
   unfold initMinor
   exact Matrix.det_zero_of_row_eq hne (funext fun q => by simp [hij])
@@ -287,11 +236,11 @@ private lemma coeff_pderiv_eq_mul_coeff_single_add (v : Fin r × Fin n) (m : (Fi
     rw [MvPolynomial.pderiv_monomial, MvPolynomial.coeff_monomial, MvPolynomial.coeff_monomial]
     by_cases hu : u = Finsupp.single v 1 + m
     · subst hu
-      rw [add_tsub_cancel_left, if_pos rfl, if_pos rfl]
+      rw [add_tsub_cancel_left, ite_eq_left rfl, ite_eq_left rfl]
       simp only [Finsupp.add_apply, Finsupp.single_eq_same]
       push_cast
       ring
-    · rw [if_neg hu, mul_zero]
+    · rw [ite_eq_right hu, mul_zero]
       split_ifs with h2
       · have h3 : u v = 0 := by
           by_contra h4
@@ -659,8 +608,7 @@ lemma xn_sum_castLE {A : Type*} [AddCommMonoid A] {k : ℕ} (hk : k ≤ r) (g : 
   refine Finset.sum_subset (Finset.subset_univ _) ?_
   intro b _ hb
   apply hg
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   exact hb (Finset.mem_image.2 ⟨⟨b.val, hlt⟩, Finset.mem_univ _, Fin.ext rfl⟩)
 
 lemma xn_sum_rows {k : ℕ} (hk : k ≤ r) {f : MvPolynomial (Fin r × Fin n) ℂ}
@@ -688,7 +636,7 @@ lemma xn_R (μ : ℕ → ℕ) (p i : ℕ) (hi : i < p) (h0 : ∀ j, p ≤ j → 
       (∏ j ∈ Finset.range m, xnT μ i j) * ((m : ℝ) - i + μ i) := by
   have hlt : ∀ j, j < p → xnT (xnAdd μ p) i j = xnT μ i j := by
     intro j hj
-    simp only [xnT, xnAdd, if_pos hi, if_pos hj]
+    simp only [xnT, xnAdd, ite_eq_left hi, ite_eq_left hj]
     split_ifs <;> push_cast <;> ring
   obtain ⟨d, rfl⟩ : ∃ d, m = p + d := ⟨m - p, by omega⟩
   clear hm
@@ -702,11 +650,11 @@ lemma xn_R (μ : ℕ → ℕ) (p i : ℕ) (hi : i < p) (h0 : ∀ j, p ≤ j → 
     have h2 : ¬ (p + d < p) := by omega
     have e1 : xnT (xnAdd μ p) i (p + d) =
         ((μ i : ℝ) + 1 + ((p : ℝ) + d) - i) / (((p : ℝ) + d) - i) := by
-      simp only [xnT, xnAdd, if_pos h1, if_pos hi, if_neg h2, hμ]
+      simp only [xnT, xnAdd, ite_eq_left h1, ite_eq_left hi, ite_eq_right h2, hμ]
       push_cast
       ring
     have e2 : xnT μ i (p + d) = ((μ i : ℝ) + ((p : ℝ) + d) - i) / (((p : ℝ) + d) - i) := by
-      simp only [xnT, if_pos h1, hμ]
+      simp only [xnT, ite_eq_left h1, hμ]
       push_cast
       ring
     rw [← Nat.add_assoc, Finset.prod_range_succ, Finset.prod_range_succ, e1, e2]
@@ -719,8 +667,8 @@ lemma xn_R' (μ : ℕ → ℕ) (p i : ℕ) (hi : p ≤ i) (m : ℕ) :
   have h1 : ¬ i < p := by omega
   by_cases hij : i < j
   · have h2 : ¬ j < p := by omega
-    simp only [xnT, xnAdd, if_pos hij, if_neg h1, if_neg h2, Nat.add_zero]
-  · simp only [xnT, if_neg hij]
+    simp only [xnT, xnAdd, ite_eq_left hij, ite_eq_right h1, ite_eq_right h2, Nat.add_zero]
+  · simp only [xnT, ite_eq_right hij]
 
 lemma xnC_ite (M : ℕ) (m : ℕ → ℕ) (p N : ℕ) (hp : p ≤ N) :
     xnC M m p = ∏ i ∈ Finset.range N, if i < p then ((M : ℝ) - i + m i) else 1 := by
@@ -738,9 +686,9 @@ lemma xn_W_ratio (N : ℕ) (μ : ℕ → ℕ) (p : ℕ) (hp : p ≤ N) (h0 : ∀
   rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun i _ => ?_
   by_cases hi : i < p
-  · simp only [if_pos hi]
+  · simp only [ite_eq_left hi]
     exact xn_R μ p i hi h0 N hp
-  · simp only [if_neg hi, mul_one]
+  · simp only [ite_eq_right hi, mul_one]
     exact xn_R' μ p i (by omega) N
 
 lemma xnW_zero (N : ℕ) : xnW N (fun _ => 0) = 1 := by
@@ -835,7 +783,7 @@ lemma xnInv_step {k : ℕ} {μ : ℕ → ℕ} {x h : MvPolynomial (Fin r × Fin 
   have hR := xn_W_ratio r μ k hkr H.supp
   have hC := xnC_nonneg r μ k hkr
   refine ⟨fun q hq => ?_, ?_, ?_, ?_, ?_⟩
-  · simp only [xnAdd, if_neg (show ¬ q < k by omega), Nat.add_zero]
+  · simp only [xnAdd, ite_eq_right (show ¬ q < k by omega), Nat.add_zero]
     exact H.supp q hq
   · rw [← hw]
     exact dualWeyl_mul (initMinor_mem J hk) H.xm
@@ -967,10 +915,10 @@ lemma xn_stage (n : ℕ) (lam sg : Fin n → ℕ) (hI : Interlace (lamZ lam) (fu
       have a1 := xnLam_anti lam sg hI (Nat.le_succ k)
       by_cases hq : q < k + 1
       · have a2 := xnLam_anti lam sg hI (show q ≤ k by omega)
-        simp only [if_pos hq]
+        simp only [ite_eq_left hq]
         omega
       · have a2 := xnLam_anti lam sg hI (show k + 1 ≤ q by omega)
-        simp only [if_neg hq]
+        simp only [ite_eq_right hq]
         omega
     · rw [hf, Finset.prod_insert hnot]
       ring

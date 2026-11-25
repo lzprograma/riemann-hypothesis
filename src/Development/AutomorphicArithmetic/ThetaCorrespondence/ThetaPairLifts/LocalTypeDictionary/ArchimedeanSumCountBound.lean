@@ -239,8 +239,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Form
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 private theorem reps_fg {V : Type} [AddCommGroup V] [Module ℚ V] [Module.Finite ℚ V] (M : Submodule ℤ V) (hM : M.FG) (n : ℕ)
     (hn : 0 < n) : ∃ R : Finset V, R.card ≤ n ^ Module.finrank ℚ V ∧ ∀ u ∈ M, ∃ r ∈ R, ∃ v ∈ M, u = r + n • v := by
   classical
@@ -773,13 +771,6 @@ theorem card_kCosets_theta : _root_.GlobalTheory.FunPr.ThetaLocalInputs → CosK
 end GlobalTheory.CosCount
 end
 end
-
-section
-open GlobalTheory.SumCount GlobalTheory.SumSize
-
-theorem _root_.GlobalTheory.T.theta_kCoset_count_formula : _root_.GlobalTheory.FunPr.ThetaLocalInputs → GlobalTheory.SumCount.CosK := by
-  first | exact @_root_.GlobalTheory.CosCount.card_kCosets_theta
-end
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ThetaKCosetCountFormula =====
@@ -793,15 +784,8 @@ section
 open GlobalTheory.SumSize GlobalTheory.RowClaim
 namespace GlobalTheory.SumCount
 theorem archimedean_sum_count_bound : _root_.GlobalTheory.FunPr.ThetaLocalInputs → DepthK → InfCountK := fun hP hD =>
-  infCountK_of _root_.GlobalTheory.SumCount.DataCount.dataK (_root_.GlobalTheory.T.theta_kCoset_count_formula hP) (GlobalTheory.T.pureTensorCountBound_of_cosetDepthBound hD)
+  infCountK_of _root_.GlobalTheory.SumCount.DataCount.dataK (_root_.GlobalTheory.CosCount.card_kCosets_theta hP) (GlobalTheory.T.pureTensorCountBound_of_cosetDepthBound hD)
 end GlobalTheory.SumCount
-end
-
-section
-open GlobalTheory.SumSize GlobalTheory.RowClaim
-
-theorem _root_.GlobalTheory.T.sum_count_bound_archimedean : _root_.GlobalTheory.FunPr.ThetaLocalInputs → DepthK → InfCountK := by
-  first | exact @_root_.GlobalTheory.SumCount.archimedean_sum_count_bound
 end
 end -- clump:auto
 end -- clump:auto

@@ -4,54 +4,7 @@ public import Formalism.HermitianCurvature.StatementNF
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsPFSum
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuasiDeterminantFromEntries
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -234,8 +187,8 @@ theorem up_of_rho (P : M.Par) {l : ℕ} {π π' : M.Ty P}
   have := h ((i : ℕ) + 1) (Finset.mem_Icc.2 ⟨by omega, by omega⟩)
   rw [rho_succ, rho_succ] at this
   split_ifs at this with hl
-  · simp only [hl, if_true]; exact_mod_cast (by linarith : ((((π' i : Fin _) : ℕ) : ℝ)) = (((π i : Fin _) : ℕ) : ℝ) + 1)
-  · simp only [hl, if_false, add_zero]; exact_mod_cast (by linarith : ((((π' i : Fin _) : ℕ) : ℝ)) = (((π i : Fin _) : ℕ) : ℝ))
+  · simp only [hl, ite_true]; exact_mod_cast (by linarith : ((((π' i : Fin _) : ℕ) : ℝ)) = (((π i : Fin _) : ℕ) : ℝ) + 1)
+  · simp only [hl, ite_false, add_zero]; exact_mod_cast (by linarith : ((((π' i : Fin _) : ℕ) : ℝ)) = (((π i : Fin _) : ℕ) : ℝ))
 
 theorem up_rho (P : M.Par) {l : ℕ} {π π' : M.Ty P} (h : M.Up P l π π') (i : ℕ) (hi : i ∈ Icc 1 (P.k - 1)) :
     M.rho P π' i = M.rho P π i + if i = l then 1 else 0 := Mx3.rhoUp P l π π' h i hi
@@ -729,16 +682,16 @@ theorem sb_SS_pj {l : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) {ρ σ : M.Ty P} (hup : 
     sb_SS κ QQ l * proj κ ρ = sb_K κ QQ l ρ σ := by
   rw [sb_SS, Finset.sum_mul, Finset.sum_eq_single ρ]
   · rw [Finset.sum_mul, Finset.sum_eq_single σ]
-    · rw [if_pos ⟨hl, hup⟩, sb_K_pj, if_pos rfl]
+    · rw [ite_eq_left ⟨hl, hup⟩, sb_K_pj, ite_eq_left rfl]
     · intro σ' _ hσ'
-      rw [if_neg]; · rw [zero_mul]
+      rw [ite_eq_right]; · rw [zero_mul]
       rintro ⟨-, hup'⟩; exact hσ' (up_right P hup' hup)
     · simp
   · intro ρ' _ hρ'
     rw [Finset.sum_mul]
     refine Finset.sum_eq_zero fun σ' _ => ?_
     split_ifs
-    · rw [sb_K_pj, if_neg hρ']
+    · rw [sb_K_pj, ite_eq_right hρ']
     · rw [zero_mul]
   · simp
 
@@ -791,22 +744,22 @@ theorem sb_form (h : SHyp P L0 QQ κ) (hP : P.OK) : SForm P L0 QQ κ (sb_b L0 κ
   rw [sb_lA_blk h]
   by_cases hρ : ρ' = ρ
   · subst hρ
-    rw [if_pos rfl, Finset.sum_eq_zero (fun l hl => if_neg (fun hu => up_ne P hl hu rfl)), add_zero,
+    rw [ite_eq_left rfl, Finset.sum_eq_zero (fun l hl => ite_eq_right (fun hu => up_ne P hl hu rfl)), add_zero,
       sb_diag_form h ρ' hY]
-  · rw [if_neg hρ, zero_add]
+  · rw [ite_eq_right hρ, zero_add]
     by_cases hex : ∃ l ∈ Icc 1 (P.k - 1), M.Up P l ρ ρ'
     · obtain ⟨l, hl, hup⟩ := hex
       rw [Finset.sum_eq_single l]
-      · rw [if_pos hup, mul_assoc, sb_SS_pj hl hup, ← mul_smul_comm (Y + ((M.rho P ρ l : ℝ) : ℂ) + 1)⁻¹,
+      · rw [ite_eq_left hup, mul_assoc, sb_SS_pj hl hup, ← mul_smul_comm (Y + ((M.rho P ρ l : ℝ) : ℂ) + 1)⁻¹,
           sb_K_eval h hP hl hup hY, mul_smul_comm]
       · intro l' hl' hne
-        rw [if_neg]; intro hup'; exact hne (up_idx P hl' hl hup' hup)
+        rw [ite_eq_right]; intro hup'; exact hne (up_idx P hl' hl hup' hup)
       · intro hl'; exact absurd hl hl'
     · rw [Finset.sum_eq_zero]
       · rcases sb_off h hP hρ with h0 | ⟨m, hm, hup, -⟩
         · rw [h0]; simp
         · exact absurd ⟨m, hm, hup⟩ hex
-      · intro l hl; rw [if_neg]; intro hup; exact hex ⟨l, hl, hup⟩
+      · intro l hl; rw [ite_eq_right]; intro hup; exact hex ⟨l, hl, hup⟩
 
 theorem sb_raises : Raises κ (sb_SS κ QQ) := by
   intro l f g hfg
@@ -1515,26 +1468,26 @@ theorem sc_lreg (h : SHyp P L0 QQ κ) {Y : ℂ} (hY : Reg P Y) : QQ Y 1 0 = L0.G
 theorem sc_ldiag {b : M.Ty P → A} {SS : ℕ → A} (hF : SForm P L0 QQ κ b SS) {Y : ℂ} (hY : Reg P Y) (ρ : M.Ty P) :
     proj κ ρ * lA L0 QQ κ Y * proj κ ρ = (b ρ - Y • (L0.ζb * L0.GGi)) * proj κ ρ := by
   have := hF Y hY ρ ρ
-  rw [if_pos rfl, Finset.sum_eq_zero, add_zero] at this
+  rw [ite_eq_left rfl, Finset.sum_eq_zero, add_zero] at this
   · exact this
-  · intro l hl; rw [if_neg (fun hu => up_ne P hl hu rfl)]
+  · intro l hl; rw [ite_eq_right (fun hu => up_ne P hl hu rfl)]
 
 theorem sc_lup {b : M.Ty P → A} {SS : ℕ → A} (hF : SForm P L0 QQ κ b SS) {Y : ℂ} (hY : Reg P Y) {l : ℕ}
     (hl : l ∈ Icc 1 (P.k - 1)) {ρ ρ' : M.Ty P} (hu : M.Up P l ρ ρ') :
     proj κ ρ' * lA L0 QQ κ Y * proj κ ρ = (Y + (M.rho P ρ l : ℂ) + 1)⁻¹ • (L0.GGi * SS l * proj κ ρ) := by
   have := hF Y hY ρ ρ'
-  rw [if_neg (fun e => up_ne P hl hu e.symm), zero_add, Finset.sum_eq_single l] at this
-  · rw [this, if_pos hu]
-  · intro j hj hjl; rw [if_neg (fun hu' => hjl (up_idx P hj hl hu' hu))]
+  rw [ite_eq_right (fun e => up_ne P hl hu e.symm), zero_add, Finset.sum_eq_single l] at this
+  · rw [this, ite_eq_left hu]
+  · intro j hj hjl; rw [ite_eq_right (fun hu' => hjl (up_idx P hj hl hu' hu))]
   · intro h; exact absurd hl h
 
 theorem sc_lzero {b : M.Ty P → A} {SS : ℕ → A} (hF : SForm P L0 QQ κ b SS) {Y : ℂ} (hY : Reg P Y)
     {ρ ρ' : M.Ty P} (hne : ρ' ≠ ρ) (hn : ∀ l ∈ Icc 1 (P.k - 1), ¬ M.Up P l ρ ρ') :
     proj κ ρ' * lA L0 QQ κ Y * proj κ ρ = 0 := by
   have := hF Y hY ρ ρ'
-  rw [if_neg hne, zero_add, Finset.sum_eq_zero] at this
+  rw [ite_eq_right hne, zero_add, Finset.sum_eq_zero] at this
   · exact this
-  · intro l hl; rw [if_neg (hn l hl)]
+  · intro l hl; rw [ite_eq_right (hn l hl)]
 
 theorem sc_Zp (h : SHyp P L0 QQ κ) (ρ : M.Ty P) :
     proj κ ρ * (L0.ζb * L0.GGi) = (L0.ζb * L0.GGi) * proj κ ρ := by
@@ -1932,12 +1885,7 @@ theorem sc_isPF_xEx (κ : (M.Ty P → ℂ) →ₐ[ℂ] A) (ex : Finset ℕ) : Is
 
 theorem sc_x_up {l : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) {τ σ : M.Ty P} (hu : M.Up P l τ σ) (Y : ℂ) :
     M.xC P σ Y = (Y + (M.rho P τ l : ℂ) + 1) * M.xEx P {l} τ Y := by
-  unfold M.xC M.xEx
-  rw [← Finset.mul_prod_erase _ _ hl, Finset.sdiff_singleton_eq_erase]
-  congr 1
-  · rw [up_rho P hu l hl, if_pos rfl]; push_cast; ring
-  · refine Finset.prod_congr rfl fun i hi => ?_
-    rw [up_rho P hu i (Finset.mem_of_mem_erase hi), if_neg (Finset.ne_of_mem_erase hi), add_zero]
+  apply _root_.Formalism.FourierDecayAlt.P.NFx2.sn_x_up <;> assumption
 
 theorem sc_x_self {l : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) (τ : M.Ty P) (Y : ℂ) :
     M.xC P τ Y = (Y + (M.rho P τ l : ℂ)) * M.xEx P {l} τ Y := by
@@ -1999,10 +1947,10 @@ theorem connection_lower_left_regular (h : SHyp P L0 QQ κ) (hF : SForm P L0 QQ 
   rw [sc_lreg h hY, mul_add, add_mul, lower_sum_block_entry hR, projection_gamma_coordinate h, projection_gamma_coordinate h, connection_lowering_block h hF]
   by_cases hst : σ = τ
   · subst hst
-    rw [sc_ldiag hF hY, if_pos rfl, Finset.sum_eq_zero, add_zero]
+    rw [sc_ldiag hF hY, ite_eq_left rfl, Finset.sum_eq_zero, add_zero]
     intro l hl
     rw [blk_ss κ hR l σ σ (fun hu => up_ne P hl hu rfl), smul_zero]
-  · rw [if_neg hst, mul_zero, smul_zero, zero_add]
+  · rw [ite_eq_right hst, mul_zero, smul_zero, zero_add]
     by_cases hex : ∃ l ∈ Icc 1 (P.k - 1), M.Up P l τ σ
     · obtain ⟨l, hl, hu⟩ := hex
       rw [sc_lup hF hY hl hu, Finset.sum_eq_single l, pj_ss_pj κ hR hu, mul_smul_comm, ← mul_assoc, ← mul_assoc,
@@ -2014,7 +1962,7 @@ theorem connection_lower_left_regular (h : SHyp P L0 QQ κ) (hF : SForm P L0 QQ 
         rw [hx]; field_simp
       · intro j hj hjl; rw [blk_ss κ hR j σ τ (fun hu' => hjl (up_idx P hj hl hu' hu)), smul_zero]
       · intro hn; exact absurd hl hn
-    · push_neg at hex
+    · push Not at hex
       rw [sc_lzero hF hY hst (fun l hl => hex l hl), mul_zero, smul_zero, Finset.sum_eq_zero]
       intro l hl; rw [blk_ss κ hR l σ τ (hex l hl), smul_zero]
 

@@ -6,8 +6,6 @@ import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
@@ -36,7 +34,7 @@ theorem sum_single {a : ℕ} (c : Fin a → R) : ∑ i, c i • Pi.single i (1 :
 
 def jetSub {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (m : ℕ) : JetR R (Fin b) m →ₐ[R] JetR R (Fin a) m :=
   jetLift (R := R) (RingHom.ker (jetAug R (Fin a) m)) (ker_jetAug_pow (Fin a) m)
-    (fun k => ∑ i, T (Pi.single i 1) k • zR m i) (fun k => sum_smul_zR_mem m _)
+    (fun k => ∑ i, T (Pi.single i 1) k • zR m i) (fun _ => sum_smul_zR_mem m _)
 
 theorem jetSub_zR {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (m : ℕ) (k : Fin b) :
     jetSub T m (zR m k) = ∑ i, T (Pi.single i 1) k • zR m i := by

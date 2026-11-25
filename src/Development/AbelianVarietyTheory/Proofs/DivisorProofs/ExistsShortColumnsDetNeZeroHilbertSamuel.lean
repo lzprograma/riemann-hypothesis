@@ -430,8 +430,6 @@ section -- clump:auto
 open NumberField MvPolynomial ReciprocityTheory.MultiplicativeHeights ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory GlobalTheory.ChowHt GlobalTheory.Adelic GlobalTheory.HermTools GlobalTheory.HilbertSamuel GlobalTheory.HSChoice GlobalTheory.HSShort
 
-set_option autoImplicit false
-
 namespace GlobalTheory.HSShort.ChooseCols
 
 theorem avoid : ∀ (E : Type) [Field E] [Infinite E] (N δ : ℕ) (y : Fin δ → Fin N → E), (∀ p, y p ≠ 0) →
@@ -447,8 +445,7 @@ theorem avoid : ∀ (E : Type) [Field E] [Infinite E] (N δ : ℕ) (y : Fin δ �
     have h1 := congrArg (eval (Pi.single k 1)) h
     simpa [Pi.single_apply] using h1
   have hx : ∃ x : Fin N → E, eval x P ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact hP (MvPolynomial.funext fun x => by rw [hne x, map_zero])
   obtain ⟨x, hx⟩ := hx
   refine ⟨x, fun p => ?_⟩
@@ -607,8 +604,8 @@ theorem exists_cols : ∀ (F A : Type) [Field F] [NumberField F] [AddCommGroup A
       rw [Matrix.of_apply, Matrix.of_apply]
       refine ((hsym a i'.1 i'.2).choose_spec i.1 i.2).trans ?_
       by_cases h : i.1 = i'.1
-      · rw [if_pos (congrArg Subtype.val h), if_pos h]; rfl
-      · rw [if_neg (fun h' => h (Subtype.ext h')), if_neg h]
+      · rw [ite_eq_left (congrArg Subtype.val h), ite_eq_left h]; rfl
+      · rw [ite_eq_right (fun h' => h (Subtype.ext h')), ite_eq_right h]
     rw [heq]
     exact _root_.GlobalTheory.det_blockSymbolMatrix_ne_zero E _ δ _ _ _ hl hσ0
   have hrspec : ∀ k : J, ∃ k', e1 (Sum.inr k') = k.1 := fun k => hrange k.1 (Finset.mem_filter.1 k.2).2
@@ -674,17 +671,17 @@ theorem exists_cols : ∀ (F A : Type) [Field F] [NumberField F] [AddCommGroup A
       · rw [hcolX']
         refine ⟨(hb0 _).1, fun σ => ?_⟩
         show _ ≤ if (0 : ℕ) = 0 then S.Lam0 else _
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         exact (hb0 _).2 σ
       · rw [hcolD]
         refine ⟨(hbD _).1, fun σ => ?_⟩
         show _ ≤ if S.D = 0 then S.Lam0 else if S.D = S.D then S.LamD else S.LamT
-        rw [if_neg hD0, if_pos rfl]
+        rw [ite_eq_right hD0, ite_eq_left rfl]
         exact (hbD _).2 σ
     · rw [hcol2]
       refine ⟨(hbT _).1, fun σ => ?_⟩
       show _ ≤ if S.T = 0 then S.Lam0 else if S.T = S.D then S.LamD else S.LamT
-      rw [if_neg hT0, if_neg hTD]
+      rw [ite_eq_right hT0, ite_eq_right hTD]
       exact (hbT _).2 σ
   · rw [← hrank, ← hn, Finset.card_filter, ← e2.sum_comp, Fintype.sum_sum_type]
     simp only [hcol1, hcol2]

@@ -143,13 +143,10 @@ lemma norm_emE_le_of_lower_bound {σ a : ℝ} (hσ : -3 ≤ σ) (ha : 1 ≤ a)
   simp only [add_zero]
   ring
 
-lemma norm_emE_le {a : ℝ} (ha : 1 ≤ a) {s : ℂ} (hs : -(15/8 : ℝ) ≤ s.re) :
-    ‖emE a s‖ ≤ (‖s‖ + 2) ^ 4 * a ^ (-(9/8 : ℝ)) := by
-  convert norm_emE_le_of_lower_bound (σ := -(15/8 : ℝ)) (by norm_num) ha hs using 1 <;> norm_num
-
-lemma summable_nine_pow_mul_inv_sq_succ : Summable (fun n : ℕ => ((n : ℝ) + 1) ^ (-(9/8 : ℝ))) := by
-  have := (summable_nat_add_iff 1).2 (Real.summable_nat_rpow.2 (by norm_num : -(9/8 : ℝ) < -1))
-  simpa using this
+private lemma summable_emE_majorant {σ : ℝ} (hσ : -2 < σ) :
+    Summable (fun n : ℕ => ((n : ℝ) + 1) ^ (-σ - 3)) := by
+  simpa using (summable_nat_add_iff 1).2
+    (Real.summable_nat_rpow.2 (by linarith : -σ - 3 < -1))
 
 lemma differentiable_emT {x : ℝ} (hx : 0 < x) : Differentiable ℂ (emT x) := by
   have hx' : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
@@ -172,14 +169,11 @@ lemma differentiableOn_tsum_emE_of_neg_two_lt :
   let σ : ℝ := (s.re - 2) / 2
   have hσ : -2 < σ := by dsimp [σ]; linarith
   have hσs : σ < s.re := by dsimp [σ]; linarith
-  have hsum : Summable (fun n : ℕ => ((n : ℝ) + 1) ^ (-σ - 3)) := by
-    simpa using (summable_nat_add_iff 1).2
-      (Real.summable_nat_rpow.2 (by linarith : -σ - 3 < -1))
   have ho : IsOpen ({z : ℂ | σ < z.re} ∩ Metric.ball 0 (‖s‖ + 1)) :=
     (isOpen_lt continuous_const Complex.continuous_re).inter Metric.isOpen_ball
   have := Complex.differentiableOn_tsum_of_summable_norm
     (F := fun (n : ℕ) (z : ℂ) => emE ((n : ℝ) + 1) z)
-    (hsum.mul_left ((‖s‖ + 3) ^ 4))
+    ((summable_emE_majorant hσ).mul_left ((‖s‖ + 3) ^ 4))
     (fun n => (differentiable_emE (by positivity)).differentiableOn) ho (by
       intro n z hz
       have h1 : ‖z‖ < ‖s‖ + 1 := by simpa using hz.2
@@ -187,10 +181,6 @@ lemma differentiableOn_tsum_emE_of_neg_two_lt :
       have h2 : ‖z‖ + 2 ≤ ‖s‖ + 3 := by linarith
       gcongr)
   exact (this.differentiableAt (ho.mem_nhds ⟨hσs, by simp⟩)).differentiableWithinAt
-
-lemma differentiableOn_tsum_emE :
-    DifferentiableOn ℂ (fun s => ∑' n : ℕ, emE ((n : ℝ) + 1) s) {s : ℂ | -(15/8 : ℝ) < s.re} := by
-  exact differentiableOn_tsum_emE_of_neg_two_lt.mono (fun s hs => by dsimp at hs ⊢; linarith)
 
 lemma tendsto_cpow_zero {c : ℂ} (hc : c.re < 0) :
     Tendsto (fun n : ℕ => (((n : ℝ) + 1 : ℝ) : ℂ) ^ c) atTop (𝓝 0) := by
@@ -205,8 +195,8 @@ lemma tendsto_cpow_zero {c : ℂ} (hc : c.re < 0) :
 lemma eq_of_one_lt {s : ℂ} (hs : 1 < s.re) :
     (s - 1) * riemannZeta s = emT 1 s + ∑' n : ℕ, emE ((n : ℝ) + 1) s := by
   have hsum : Summable (fun n : ℕ => emE ((n : ℝ) + 1) s) :=
-    Summable.of_norm_bounded (summable_nine_pow_mul_inv_sq_succ.mul_left ((‖s‖ + 2) ^ 4))
-      (fun n => norm_emE_le (by simp) (by linarith))
+    Summable.of_norm_bounded ((summable_emE_majorant (σ := s.re) (by linarith)).mul_left ((‖s‖ + 2) ^ 4))
+      (fun n => norm_emE_le_of_lower_bound (by linarith) (by simp) le_rfl)
   have hT : Tendsto (fun n : ℕ => emT ((n : ℝ) + 1) s) atTop (𝓝 0) := by
     have := ((tendsto_cpow_zero (c := 1 - s) (by simp; linarith)).sub
       (((tendsto_cpow_zero (c := 1 - s - 1) (by simp; linarith)).const_mul (1 - s)).div_const 2)).add
@@ -254,25 +244,18 @@ lemma eq_of_neg_two_lt {s : ℂ} (hs : (-2 : ℝ) < s.re) (h1 : s ≠ 1) :
   rw [← hf s h1]
   exact this hs
 
-lemma eq_of_lt {s : ℂ} (hs : -(15/8 : ℝ) < s.re) (h1 : s ≠ 1) :
-    (s - 1) * riemannZeta s = emT 1 s + ∑' n : ℕ, emE ((n : ℝ) + 1) s := by
-  exact eq_of_neg_two_lt (by linarith) h1
-
 /-- Polynomial growth on every closed half-plane strictly to the right of `-2`. -/
 theorem norm_sub_one_mul_riemannZeta_le_of_neg_two_lt {σ : ℝ} (hσ : -2 < σ) :
     ∃ C : ℝ, 0 < C ∧ ∀ s : ℂ, σ ≤ s.re → s ≠ 1 →
       ‖(s - 1) * riemannZeta s‖ ≤ C * (‖s‖ + 2) ^ 5 := by
   set K : ℝ := ∑' n : ℕ, ((n : ℝ) + 1) ^ (-σ - 3) with hK
-  have hsum : Summable (fun n : ℕ => ((n : ℝ) + 1) ^ (-σ - 3)) := by
-    simpa using (summable_nat_add_iff 1).2
-      (Real.summable_nat_rpow.2 (by linarith : -σ - 3 < -1))
   have hK0 : 0 ≤ K := tsum_nonneg fun n => by positivity
   refine ⟨3 + K, by linarith, fun s hs h1 => ?_⟩
   rw [eq_of_neg_two_lt (by linarith) h1]
   set R := ‖s‖ + 2 with hR
   have hR1 : 1 ≤ R := by have := norm_nonneg s; linarith
   have h2 : ‖∑' n : ℕ, emE ((n : ℝ) + 1) s‖ ≤ R ^ 4 * K :=
-    tsum_of_norm_bounded (hsum.hasSum.mul_left (R ^ 4))
+    tsum_of_norm_bounded ((summable_emE_majorant hσ).hasSum.mul_left (R ^ 4))
       (fun n => norm_emE_le_of_lower_bound (by linarith) (by simp) hs)
   have c0 : ‖1 - s‖ ≤ R := by
     have := norm_sub_le 1 s

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsLetterRingBaseChange
 public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.ArcLineFunctions.FunDef
 public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QuotSt
@@ -14,24 +15,8 @@ open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
-private theorem det_X_ne_zero_lemma {ι n R : Type} [Fintype n] [DecidableEq n] [CommRing R] [IsDomain R]
-    (g : n × n → ι) (hg : Function.Injective g) :
-    (Matrix.of fun i k => (MvPolynomial.X (g (i, k)) : MvPolynomial ι R)).det ≠ 0 := by
-  intro hz
-  apply Matrix.det_mvPolynomialX_ne_zero n R
-  apply MvPolynomial.rename_injective g hg
-  rw [map_zero, AlgHom.map_det]
-  convert hz using 2
-  ext i k
-  simp [Matrix.mvPolynomialX]
-
 theorem arcDet_ne_zero (Dw : Datum H) (K₁ : Type) [Field K₁] : arcDet Dw K₁ ≠ 0 := by
-  classical
-  unfold arcDet
-  rw [Finset.prod_ne_zero_iff]
-  intro τ _
-  convert det_X_ne_zero_lemma (R := LaurentSeries K₁) (fun p => (⟨τ, p⟩ : ArcLt Dw))
-    (fun p q hpq => by simpa using hpq)
+  apply _root_.GlobalTheory.LetterMap.det_ne_zero <;> assumption
 
 theorem inj (Dw : Datum H) (K₁ : Type) [Field K₁] :
     Function.Injective (algebraMap (MvPolynomial (ArcLt Dw) (LaurentSeries K₁)) (ArcS Dw K₁)) := by
@@ -42,12 +27,7 @@ theorem inj (Dw : Datum H) (K₁ : Type) [Field K₁] :
 theorem arcNum_map (Dw : Datum H) (K₁ : Type) [Field K₁]
     (P : MvPolynomial (ArcLt Dw) (LaurentSeries K₁)) :
     arcNum (algebraMap _ (ArcS Dw K₁) P) = P := by
-  classical
-  have hex : ∃ Q, algebraMap (MvPolynomial (ArcLt Dw) (LaurentSeries K₁)) (ArcS Dw K₁) Q =
-      algebraMap (MvPolynomial (ArcLt Dw) (LaurentSeries K₁)) (ArcS Dw K₁) P := ⟨P, rfl⟩
-  unfold arcNum
-  rw [dite_eq_left hex]
-  exact inj Dw K₁ hex.choose_spec
+  apply _root_.GlobalTheory.LetterMap.num_algebraMap <;> assumption
 
 theorem laur_alg {S K : Type} [CommRing S] [Field K] [Algebra S K] (x : S) :
     algebraMap S (LaurentSeries K) x = HahnSeries.C (algebraMap S K x) := by

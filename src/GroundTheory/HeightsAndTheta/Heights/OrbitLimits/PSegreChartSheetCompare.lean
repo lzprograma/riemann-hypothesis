@@ -89,13 +89,11 @@ theorem hessC_add_sum_log {D : ℕ} {α : Type*} (s : Finset α) (φ : (Fin D �
 
 variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-
 omit [DecidableEq K] in
 theorem sum_norm_segre_sq [DecidableEq K] (w : (Σ k, ι k) → ℂ) :
     ∑ i', ‖segre w i'‖ ^ 2 = ∏ k, ∑ j, ‖w ⟨k, j⟩‖ ^ 2 := by
   rw [Finset.prod_univ_sum, Fintype.piFinset_univ]
   simp [segre, norm_prod, Finset.prod_pow]
-
 
 omit [DecidableEq K] [∀ k, Fintype (ι k)] in
 theorem log_h_smul (A : HermLine ι) (c : K → ℂ) (w : (Σ k, ι k) → ℂ) (hc : ∀ k, c k ≠ 0)
@@ -106,28 +104,22 @@ theorem log_h_smul (A : HermLine ι) (c : K → ℂ) (w : (Σ k, ι k) → ℂ) 
     Real.log_prod (fun k _ => (hp k).ne'), add_comm]
   simp [Real.log_zpow]
 
-
 variable (ι) in
 def nk (k : K) : ℕ := Fintype.card (ι k) - 1
-
 
 open Classical in
 def eK (jj : (k : K) → ι k) (k : K) : {j : ι k // j ≠ jj k} ≃ Fin (nk ι k) :=
   Fintype.equivFinOfCardEq (by simp [nk, Fintype.card_subtype_compl])
 
-
 variable (ι) in
 def NN : ℕ := Fintype.card (Σ k, Fin (nk ι k))
-
 
 variable (ι) in
 def eS : (Σ k, Fin (nk ι k)) ≃ Fin (NN ι) := Fintype.equivFin _
 
-
 variable (ι) in
 def blk (k : K) : (Fin (NN ι) → ℂ) →L[ℂ] (Fin (nk ι k) → ℂ) :=
   ContinuousLinearMap.pi fun r => ContinuousLinearMap.proj (eS ι ⟨k, r⟩)
-
 
 open Classical in
 def ins (jj : (k : K) → ι k) (t : Fin (NN ι) → ℂ) : (Σ k, ι k) → ℂ :=
@@ -138,7 +130,6 @@ def pt (jj : (k : K) → ι k) (a : Fin (NN ι)) : Σ k, ι k :=
 
 def nrm (jj : (k : K) → ι k) (w : (Σ k, ι k) → ℂ) : Fin (NN ι) → ℂ :=
   fun a => w (pt jj a) / w ⟨(pt jj a).1, jj (pt jj a).1⟩
-
 
 variable (ι) in
 def FSG (t : Fin (NN ι) → ℂ) : ℝ := ∑ k, (1 / 2) * HilbertSamuel.ProjFS.logPot (blk ι k t)
@@ -155,7 +146,6 @@ omit [DecidableEq K] in
 theorem ins_ne (t : Fin (NN ι) → ℂ) {k : K} {j : ι k} (h : j ≠ jj k) :
     ins jj t ⟨k, j⟩ = t (eS ι ⟨k, eK jj k ⟨j, h⟩⟩) := by
   simp [ins, h]
-
 
 omit [DecidableEq K] in
 theorem ins_blockNonzero (t : Fin (NN ι) → ℂ) : ∀ k, ∃ j, ins jj t ⟨k, j⟩ ≠ 0 :=
@@ -178,7 +168,6 @@ theorem pt_eS {k : K} {j : ι k} (h : j ≠ jj k) : pt jj (eS ι ⟨k, eK jj k �
   rw [Equiv.symm_apply_apply]
   simp
 
-
 omit [DecidableEq K] in
 theorem eq_smul_ins (w : (Σ k, ι k) → ℂ) (hw : ∀ k, w ⟨k, jj k⟩ ≠ 0) :
     w = fun p => w ⟨p.1, jj p.1⟩ * ins jj (nrm jj w) p := by
@@ -192,7 +181,6 @@ theorem eq_smul_ins (w : (Σ k, ι k) → ℂ) (hw : ∀ k, w ⟨k, jj k⟩ ≠ 
     dsimp only
     rw [mul_div_cancel₀ _ (hw k)]
 
-
 omit [DecidableEq K] in
 theorem sum_ins_sq (t : Fin (NN ι) → ℂ) (k : K) :
     ∑ j, ‖ins jj t ⟨k, j⟩‖ ^ 2 = 1 + ∑ r, ‖blk ι k t r‖ ^ 2 := by
@@ -204,7 +192,6 @@ theorem sum_ins_sq (t : Fin (NN ι) → ℂ) (k : K) :
   refine Finset.sum_congr rfl fun r _ => ?_
   rw [ins_ne jj _ ((eK jj k).symm r).2]
   simp [blk]
-
 
 omit [DecidableEq K] in
 theorem norm_nrm_le (w : (Σ k, ι k) → ℂ) (hmax : ∀ k j, ‖w ⟨k, j⟩‖ ≤ ‖w ⟨k, jj k⟩‖) :
@@ -237,7 +224,6 @@ theorem log_segre_eq (w : (Σ k, ι k) → ℂ) (hw : ∀ k, w ⟨k, jj k⟩ ≠
   push_cast
   ring
 
-
 omit [DecidableEq K] in
 theorem pot_eq {e : ℕ} (L : Fin e → HermLine ι) (j : Fin e) (w : (Σ k, ι k) → ℂ)
     (hw : ∀ k, w ⟨k, jj k⟩ ≠ 0) :
@@ -260,7 +246,6 @@ theorem contDiff_FSG : ContDiff ℝ 2 (FSG ι) := by
     (((SheetFormComparison.contDiff_logPot _).of_le (WithTop.coe_le_coe.2 le_top)).comp
       ((blk ι k).contDiff.restrict_scalars ℝ))
 
-
 omit [DecidableEq K] in
 theorem contDiff_pot_ins {e : ℕ} (L : Fin e → HermLine ι) (j : Fin e) (hL : IsSmoothHerm (L j)) :
     ContDiff ℝ 2 (fun t => pot L j (ins jj t)) := by
@@ -270,7 +255,6 @@ theorem contDiff_pot_ins {e : ℕ} (L : Fin e → HermLine ι) (j : Fin e) (hL :
       (WithTop.coe_le_coe.2 le_top)
   exact (hh.comp t ((contDiff_ins jj).of_le (WithTop.coe_le_coe.2 le_top)).contDiffAt).log
     ((L j).pos _ (ins_blockNonzero jj t)).ne'
-
 
 omit [DecidableEq K] in
 theorem sum_jacC_blk (t : Fin (NN ι) → ℂ) :
@@ -290,7 +274,6 @@ theorem sum_jacC_blk (t : Fin (NN ι) → ℂ) :
     Equiv.sum_comp (eS ι) (fun a => (Pi.single b (1 : ℂ) : Fin (NN ι) → ℂ) a *
       (starRingEnd ℂ) ((Pi.single c (1 : ℂ) : Fin (NN ι) → ℂ) a))]
   simp [Pi.single_apply, Matrix.one_apply, eq_comm]
-
 
 omit [DecidableEq K] in
 theorem hessC_FSG_lower (t : Fin (NN ι) → ℂ) (ht : ‖t‖ ≤ 1) :
@@ -352,7 +335,6 @@ end Analysis
 
 end SegreSheetFormComparison
 
-
 open SegreSheetFormComparison in
 theorem SegreSheetFormCompare.proof : SegreSheetFormCompare.Statement := by
   classical
@@ -404,7 +386,7 @@ theorem SegreSheetFormCompare.proof : SegreSheetFormCompare.Statement := by
         fun y' => (FSG ι ∘ τ) y' + ∑ k, (1 : ℝ) * Real.log ‖z y' ⟨k, jj k⟩‖ := by
       filter_upwards [hev] with y' hy'
       exact log_segre_eq jj (z y') hy'
-    rw [SheetFormComparison.hessC_congr hg, hessC_add_sum_log _ _ _ (fun k y' => z y' ⟨k, jj k⟩) y
+    rw [ReciprocityTheory.AnForm.A.hessC_congr' hg, hessC_add_sum_log _ _ _ (fun k y' => z y' ⟨k, jj k⟩) y
       ((contDiff_FSG (ι := ι)).contDiffAt.comp y hτc) (fun k => hza _) hd0, hBJ]
     exact ReciprocityTheory.AnForm.A.hessC_comp (FSG ι) τ y hτa (contDiff_FSG (ι := ι)).contDiffAt
   have hη : ∀ j, hessC (pot L j ∘ z) y = Bmᴴ * hessC (fun t => pot L j (ins jj t)) (τ y) * Bm := fun j => by
@@ -412,7 +394,7 @@ theorem SegreSheetFormCompare.proof : SegreSheetFormCompare.Statement := by
         ∑ k, ((L j).a k : ℝ) * Real.log ‖z y' ⟨k, jj k⟩‖ := by
       filter_upwards [hev] with y' hy'
       exact pot_eq jj L j (z y') hy'
-    rw [SheetFormComparison.hessC_congr hg, hessC_add_sum_log _ _ _ (fun k y' => z y' ⟨k, jj k⟩) y
+    rw [ReciprocityTheory.AnForm.A.hessC_congr' hg, hessC_add_sum_log _ _ _ (fun k y' => z y' ⟨k, jj k⟩) y
       ((contDiff_pot_ins jj L j (hL j)).contDiffAt.comp y hτc) (fun k => hza _) hd0, hBJ]
     exact ReciprocityTheory.AnForm.A.hessC_comp _ τ y hτa (contDiff_pot_ins jj L j (hL j)).contDiffAt
 
@@ -515,7 +497,6 @@ theorem eq_segre_chartLift {P : Ideal (MRing ι)} {m : ℕ} {σ : Fin m ≃ ((k 
   exact sub_eq_zero.1 h
 
 end SegreChartSheetComparison
-
 
 open SegreChartSheetComparison in
 theorem SegreChartSheetCompare.of_segreSheetFormCompare (hF : SegreSheetFormCompare.Statement) :

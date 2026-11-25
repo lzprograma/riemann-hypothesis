@@ -51,8 +51,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.LiftFormsMainTerm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 
@@ -95,14 +93,6 @@ structure LiftInput (R : RealDat D A Ks) (i : Fin D.R.m) (σ : D.what₂.LL →+
   ν : Measure (GA D (Vc D i))
 
   fd : Set (GA D (Vc D i))
-
-namespace LiftInput
-
-variable {R : RealDat D A Ks} {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} (X : LiftInput R i σ)
-
-variable {t : T} {s : ℂ →+* ℂ} {P : LevelP R.Pg D.R.r ℂ}
-
-end LiftInput
 
 theorem labE_base (τ : D.what₂.Tau) : labE D.what₂.embLL τ = tauE D τ := by
   ext x

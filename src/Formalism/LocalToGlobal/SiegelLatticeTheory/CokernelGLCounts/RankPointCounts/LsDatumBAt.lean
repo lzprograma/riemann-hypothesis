@@ -13,8 +13,6 @@ namespace Formalism.L2.SG.LsDatumB
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut
 open Classical
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Minors
 
 variable {K : Type*} [CommRing K]
@@ -25,8 +23,7 @@ theorem sum_castLE {N l : ℕ} (h : l ≤ N) (f : Fin N → K) (hf : ∀ k : Fin
   rw [← Finset.sum_subset hsub (fun k _ hk => ?_), Finset.sum_map]
   · rfl
   · apply hf
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     exact hk (Finset.mem_map.2 ⟨⟨k.val, hlt⟩, Finset.mem_univ _, Fin.ext rfl⟩)
 
 theorem submatrix_loUni_mul {N l : ℕ} (h : l ≤ N) (L A U : Matrix (Fin N) (Fin N) K) (hL : IsLoUni L)

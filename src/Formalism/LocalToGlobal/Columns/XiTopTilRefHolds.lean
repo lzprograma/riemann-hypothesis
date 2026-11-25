@@ -109,13 +109,13 @@ theorem xtPhiTop_congr (hX : X.Ok) (hPr : Pr.Ok) {m2 : ℕ} (hm : R.m = m2 + 2) 
   have hle := xt_a_le (R := R) hm
   have hkr : R.k ≤ R.r := by unfold Ranks.r; have := R.two_le_m; omega
   unfold PhiTop
-  rw [if_pos hP]
+  rw [ite_eq_left hP]
   cases sharp
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     refine ciPhiG_congr hq hq0 _ _ false x x' ?_ ?_ (Nat.le_add_right _ _) hle fun p p' hp hp' => hD p p' hp (ha ▸ hp')
     · unfold Ranks.r; have := R.two_le_m; omega
     · unfold Ranks.r; have := R.two_le_m; omega
-  · simp only [if_true]
+  · simp only [ite_true]
     exact xtPhiGS_congr hq hq0 _ _ x x' hkr hle fun p p' hp hp' => hD p p' hp (ha ▸ hp')
 
 theorem xtPhiTop_int {m2 : ℕ} (hm : R.m = m2 + 2) (sharp : Bool) {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∈ Pr.vGs)
@@ -124,12 +124,12 @@ theorem xtPhiTop_int {m2 : ℕ} (hm : R.m = m2 + 2) (sharp : Bool) {P : HeightOn
       IntAt P (LocE.entB (qOf P) R.k (cOf R (m2 + 1)) (R.N (m2 + 1)) 0 (R.N R.m - 1) (fun i => i + 1) (fun i => i + 1) x p p') := by
   have ha := xt_a_eq (R := R) hm
   unfold PhiTop at h
-  rw [if_pos hP] at h
+  rw [ite_eq_left hP] at h
   intro p p' hp hp'
   cases sharp
-  · simp only [Bool.false_eq_true, if_false] at h
+  · simp only [Bool.false_eq_true, ite_false] at h
     exact ciPhiG_int _ _ false x h p p' hp (ha.symm ▸ hp')
-  · simp only [if_true] at h
+  · simp only [ite_true] at h
     exact xtPhiGS_int _ _ x h p p' hp (ha.symm ▸ hp')
 
 
@@ -148,7 +148,7 @@ theorem xtRepY_int {n : ℕ} {ST : Finset (HeightOneSpectrum (𝓞 X.E))} (d : D
   set ρ := repY {z | z - y ∈ locLat (rowSG Pr sel mu) d.1.N (fun P => if P.1 ∈ Pr.vGs then 0 else (cst.M : ℤ))}
   have h1 := (mem_locLat _ _ _ _).1 hy P
   have h2 := (mem_locLat _ _ _ _).1 hrep P
-  simp only [if_pos hP, _root_.zpow_neg, zpow_one, inv_inv, zpow_zero, inv_one, one_smul] at h1 h2
+  simp only [ite_eq_left hP, _root_.zpow_neg, zpow_one, inv_inv, zpow_zero, inv_one, one_smul] at h1 h2
   have h3 : (qOf P.1 : X.E) • ρ ∈ d.1.at P.1 := by
     have e : (qOf P.1 : X.E) • ρ = (qOf P.1 : X.E) • (ρ - y) + (qOf P.1 : X.E) • y := by rw [← smul_add, sub_add_cancel]
     rw [e]

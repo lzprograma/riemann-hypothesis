@@ -17,8 +17,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.HidaSetting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Real
 
 variable {n r : ℕ}

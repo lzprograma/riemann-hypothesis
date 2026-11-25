@@ -47,7 +47,6 @@ open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G.Chart ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.TB ReciprocityTheory.ChartRestriction.G.TB.WickVanishing
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (gm gm_val val val_of Good cubV val₂ IsCub exists_chart psum_hom preHom val_cub val_corr val_one val_mul)
 open ReciprocityTheory.ChartRestriction.G.Out (rosatiφ rosatiε zero2)
-attribute [local instance] Over.cartesianMonoidalCategory
 namespace GlobalTheory.JetSer.FBOf
 
 theorem gm_eq_germ_fnVal {A : Type} [CommRing A] {X : Scheme.{0}} (r : Spec (CommRingCat.of A) ⟶ X) (U : X.Opens)

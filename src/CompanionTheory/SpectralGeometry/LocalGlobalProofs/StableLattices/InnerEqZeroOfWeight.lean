@@ -172,7 +172,7 @@ lemma cdom_kwt (μ : Fin n → ℝ) :
         · exact absurd rfl h
       · exact hc a b h0
     · simp only [Nat.cast_add, add_smul, Finset.sum_add_distrib, ← hs, Nat.cast_ite, ite_smul,
-        Nat.cast_zero, Nat.cast_one, zero_smul, one_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true, kwt_cons]
+        Nat.cast_zero, Nat.cast_one, zero_smul, one_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, kwt_cons]
       simp only [PI.UpqRep.root]
       abel
 

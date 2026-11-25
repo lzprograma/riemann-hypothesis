@@ -61,7 +61,7 @@ theorem sum_single_block (k : K) (i₀ i₁ : ι k) (k' : K) :
   · subst h
     simp [Finsupp.single_apply]
   · have h0 : ∀ (i₂ : ι k) (i : ι k'), (Finsupp.single (⟨k, i₂⟩ : Σ k, ι k) 1) ⟨k', i⟩ = 0 := fun i₂ i => by
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro h'
       exact h (congrArg Sigma.fst h')
     simp only [h0, Finset.sum_const_zero]
@@ -123,7 +123,6 @@ abbrev chartClosure (y : (Σ k, ι k) → Ω) [CharZero Ω] {D : ℕ} (L : Fin (
   integralClosure (Algebra.adjoin ℚ (Set.range fun k => aeval y (L k) / aeval y (L a))) Ω
 
 
-set_option maxHeartbeats 1600000 in
 theorem proof (hG : PullFormsGeneric.Statement) (hS : PullSectionIntegral.Statement)
     (hR : CharpolyRootLift.Statement) : FibreNormDehomRoots.Statement := by
   classical

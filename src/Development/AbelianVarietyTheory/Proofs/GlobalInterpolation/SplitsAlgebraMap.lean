@@ -97,7 +97,7 @@ theorem splits_algebraMap {G : Type} [Mul G] (A : Subalgebra ℂ (G → ℂ)) (r
     simp
 
 theorem main :
-    ∀ {G : Type} [inst : Mul G] (S : Set (G → ℂ)),
+    ∀ {G : Type} [Mul G] (S : Set (G → ℂ)),
       (∀ p ∈ S, ∃ (m : ℕ) (a : Fin m → G → ℂ) (b : Fin m → G → ℂ),
         (∀ (i : Fin m), a i ∈ Algebra.adjoin ℂ S ∧ b i ∈ Algebra.adjoin ℂ S) ∧
           ∀ (x k : G), p (x * k) = ∑ i : Fin m, a i x * b i k) →

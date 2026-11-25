@@ -50,7 +50,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 namespace GlobalTheory.Unf.FB
@@ -75,10 +74,10 @@ theorem ell_succ_eq : ell D (σ + 1) = fun i => incA D (lastE D σ i) := by
   by_cases h : i = Fin.last σ
   · subst h
     show (if (Fin.last σ).1 + 1 = σ + 1 then (1 : AE D) else 0) = incA D (lastE D σ (Fin.last σ))
-    rw [if_pos (by rw [Fin.val_last]), lastE, Pi.single_eq_same, map_one]
+    rw [ite_eq_left (by rw [Fin.val_last]), lastE, Pi.single_eq_same, map_one]
   · have h' : ¬ (i.1 + 1 = σ + 1) := fun h' => h (Fin.ext (by rw [Fin.val_last]; omega))
     show (if i.1 + 1 = σ + 1 then (1 : AE D) else 0) = incA D (lastE D σ i)
-    rw [if_neg h', lastE, Pi.single_eq_of_ne h, map_zero]
+    rw [ite_eq_right h', lastE, Pi.single_eq_of_ne h, map_zero]
 
 theorem zl_eq_rat (B : BesLev D σ) : zl B = rat (vecMulVec B.ζ (lastE D σ)) := by
   funext i j

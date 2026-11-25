@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootLinesFlagDegree
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
 public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AlternatingMapSumSmulEqDetSmul
@@ -9,54 +10,12 @@ public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLo
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreChartBundle
 import Development.WeilBound.CoreStatements.PlurisubharmonicCones.DeterminantLatticeGenerator
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GroundTheory.Heights₂.Heights.LowerBoundFree
-open GroundTheory.Heights₂.Heights.LowerBoundFree
 
 noncomputable section
 namespace GlobalTheory.CompanionTheory.Ar.BigBlock
@@ -127,21 +86,7 @@ theorem zpow_mem_regAt {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec (CommR
   · simpa using pow_mem h.2.2 n
 
 theorem tens_isGenAt : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X) (I : Type) [Fintype I] (Λ : I → Lat ξ Ω) (a : I → ℤ) (p : Cpt ξ) (t : I → Ω), (∀ i, (Λ i).IsGenAt p (t i)) → (Lat.tens Λ a).IsGenAt p (∏ i, t i ^ a i) := by
-  intro X Ω _ ξ I _ Λ a p t ht
-  refine ⟨Finset.prod_ne_zero_iff.2 fun i _ => zpow_ne_zero _ (ht i).1, le_antisymm ?_ ?_⟩
-  · refine Submodule.span_le.2 ?_
-    rintro x ⟨s', hs', rfl⟩
-    have hu : ∀ i, unitAt ξ p (s' i / t i) := fun i =>
-      unitAt_div_of_span_eq (hs' i).1 (ht i).1 ((hs' i).2.symm.trans (ht i).2)
-    have hreg : ∏ i, (s' i / t i) ^ a i ∈ regAt ξ p := prod_mem fun i _ => zpow_mem_regAt (hu i) (a i)
-    refine Submodule.mem_span_singleton.2 ⟨⟨_, hreg⟩, ?_⟩
-    show (∏ i, (s' i / t i) ^ a i) * ∏ i, t i ^ a i = ∏ i, s' i ^ a i
-    rw [← Finset.prod_mul_distrib]
-    refine Finset.prod_congr rfl fun i _ => ?_
-    rw [← mul_zpow, div_mul_cancel₀ _ (ht i).1]
-  · refine Submodule.span_le.2 ?_
-    rintro _ rfl
-    exact Submodule.subset_span ⟨t, ht, rfl⟩
+  exact @_root_.GlobalTheory.CompanionTheory.Ar.FlagModel.tens_isGenAt
 
 theorem detLat_isGenAt : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X) (P : Type) [AddCommGroup P] [Module Ω P] (L : Lat ξ P) (r : ℕ) (s b : Fin r → P) (T : Matrix (Fin r) (Fin r) Ω) (p : Cpt ξ), LinearIndependent Ω s → L.IsFrameAt b p → (∀ k, b k = ∑ k', T k' k • s k') → (Cusp.detLat L s).IsGenAt p T.det := by
   apply LevelTowerAlt.determinant_lattice_generator
@@ -158,11 +103,11 @@ theorem exists_block_frame : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : S
   let v : Fin N → P := fun k => if h : (k : ℕ) < j then b1 ⟨k, h⟩ else b2 ⟨k - j, by have := k.2; omega⟩
   have hvh : ∀ a, v (headIdx hj a) = b1 a := fun a => by
     have h : ((headIdx hj a : Fin N) : ℕ) < j := a.2
-    simp only [v, dif_pos h]
+    simp only [v, dite_eq_left h]
     rfl
   have hvt : ∀ a, v (tailIdx hj a) = b2 a := fun a => by
     have h : ¬ ((tailIdx hj a : Fin N) : ℕ) < j := by simp [tailIdx]
-    simp only [v, dif_neg h]
+    simp only [v, dite_eq_right h]
     congr 1
     ext
     simp [tailIdx]

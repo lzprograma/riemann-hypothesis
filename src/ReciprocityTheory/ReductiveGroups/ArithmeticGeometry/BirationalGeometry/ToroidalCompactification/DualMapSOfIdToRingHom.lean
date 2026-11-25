@@ -5,8 +5,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
@@ -21,6 +19,11 @@ section Dual
 variable {S : Type} [CommRing S] (s : S)
 
 abbrev dAway : DualNumber S →+* DualNumber (Localization.Away s) := dualMapR (algebraMap S (Localization.Away s))
+
+theorem dualMapS_ofId_toRingHom :
+    (dualMapS (Algebra.ofId S (Localization.Away s))).toRingHom = dAway s := by
+  ext x <;> simp [dualMapS_fst, dualMapS_snd, dAway, dualMapR,
+    TrivSqZeroExt.algebraMap_eq_inl']
 
 theorem eq_inl_add_inr {R : Type} [CommRing R] (x : DualNumber R) :
     x = TrivSqZeroExt.inl x.fst + TrivSqZeroExt.inl x.snd * TrivSqZeroExt.inr 1 := by
@@ -178,8 +181,11 @@ theorem glue_tan {n : ℕ} (s : Fin n → S) (hs : Ideal.span (Set.range s) = �
     refine RingHom.ext fun r => ?_
     simp [TrivSqZeroExt.algebraMap_eq_inl', dAway_inl]
   let v : sp (R₀ := S) (DualNumber S) ⟶ G := Over.homMk g hover
-  have hres : ∀ k, spMap (dualMapS (Algebra.ofId S (Localization.Away (s k)))) ≫ v = w k := fun k =>
-    Over.OverMorphism.ext (hg k)
+  have hres : ∀ k, spMap (dualMapS (Algebra.ofId S (Localization.Away (s k)))) ≫ v = w k := by
+    intro k
+    apply Over.OverMorphism.ext
+    simpa only [Over.comp_left, spMap_left, dualMapS_ofId_toRingHom, v, Over.homMk_left]
+      using hg k
   refine ⟨v, ?_, hres⟩
   apply Over.OverMorphism.ext
   let 𝒱 := (Scheme.affineOpenCoverOfSpanRangeEqTop (R := CommRingCat.of S) _ hs).openCover

@@ -12,48 +12,9 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompac
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
 import GroundTheory.AutomorphicForms.GLnLocal
 import GroundTheory.LocalFields.LocalFourierHaar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Separation.Connected
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingTransferOf
 
 @[expose] public section
 
@@ -62,8 +23,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcB.F.F5 PositivityTheory.Rg.BcB.F.Eig PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcN.F2 PositivityTheory.Rg.BcB.F.Tail PositivityTheory.Rg.Bc.ArchbcB.B
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F.LocOk
 
@@ -99,8 +58,8 @@ theorem hk_fsum {α : Type*} (c : α →₀ ℂ) (F : α → ℂ → G → ℂ) 
 theorem hk_dite {p : Prop} [Decidable p] {g : p → G → ℂ} (hg : ∀ h, IsHecke K (g h)) :
     IsHecke K (fun y => if h : p then g h y else 0) := by
   by_cases hp : p
-  · simpa only [dif_pos hp] using hg hp
-  · simpa only [dif_neg hp] using hk_zero' K
+  · simpa only [dite_eq_left hp] using hg hp
+  · simpa only [dite_eq_right hp] using hk_zero' K
 
 theorem hcs_of_fin [IsTopologicalGroup G] [T2Space G] (hK : IsCompact (K : Set G)) {f : G → ℂ}
     (hf : FinDosetSupp K f) : HasCompactSupport f := by
@@ -171,18 +130,18 @@ theorem isTestFunction_of (h1 : IdemAlg) {a b : ℕ} (φ : ∀ w : Pl E, GLw a w
   have hcof : ∀ p : Pl E → Prop, (∀ w ∉ Q, p w) → ∀ᶠ w in Filter.cofinite, p w := fun p hp =>
     Filter.eventually_cofinite.2 (Q.finite_toSet.subset fun w hw => Classical.by_contradiction fun h => hw (hp w h))
   unfold IsTestP GlobalTheory.BCT.IsLevelFam GlobalTheory.BCT.IsTest
-  refine ⟨K₁', K₂', ⟨fun w => ?_, hcof _ fun w hw => if_neg hw⟩, ⟨fun w => ?_, hcof _ fun w hw => if_neg hw⟩,
+  refine ⟨K₁', K₂', ⟨fun w => ?_, hcof _ fun w hw => ite_eq_right hw⟩, ⟨fun w => ?_, hcof _ fun w hw => ite_eq_right hw⟩,
     fun w => ?_, hcof _ fun w hw => ?_⟩
   · by_cases hw : w ∈ Q
-    · rw [show K₁' w = K₁ w from if_pos hw]; exact h₁ w
-    · rw [show K₁' w = _ from if_neg hw]; exact lev_K a w
+    · rw [show K₁' w = K₁ w from ite_eq_left hw]; exact h₁ w
+    · rw [show K₁' w = _ from ite_eq_right hw]; exact lev_K a w
   · by_cases hw : w ∈ Q
-    · rw [show K₂' w = K₂ w from if_pos hw]; exact h₂ w
-    · rw [show K₂' w = _ from if_neg hw]; exact lev_K b w
+    · rw [show K₂' w = K₂ w from ite_eq_left hw]; exact h₂ w
+    · rw [show K₂' w = _ from ite_eq_right hw]; exact lev_K b w
   · show IsHecke ((K₁' w).prod (K₂' w)) (φ w)
     by_cases hw : w ∈ Q
-    · rw [show K₁' w = K₁ w from if_pos hw, show K₂' w = K₂ w from if_pos hw, ← he w]; exact hH w
-    · rw [show K₁' w = _ from if_neg hw, show K₂' w = _ from if_neg hw, hout w hw]
+    · rw [show K₁' w = K₁ w from ite_eq_left hw, show K₂' w = K₂ w from ite_eq_left hw, ← he w]; exact hH w
+    · rw [show K₁' w = _ from ite_eq_right hw, show K₂' w = _ from ite_eq_right hw, hout w hw]
       exact idem_of_lv h1 (maximal_pair_is_level a b w)
   · rw [hout w hw, idempotent_maximal_pair_indicator]
 
@@ -194,29 +153,13 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 theorem dcos_left {m : ℕ} {w : Pl E} (t k g : GLw m w) (hk : k ∈ iwGL m w) :
     dcos m w t (k * g) = dcos m w t g := by
-  have : (∃ x ∈ iwGL m w, ∃ z ∈ iwGL m w, k * g = x * t * z) ↔
-      (∃ x ∈ iwGL m w, ∃ z ∈ iwGL m w, g = x * t * z) := by
-    constructor
-    · rintro ⟨x, hx, z, hz, e⟩
-      refine ⟨k⁻¹ * x, mul_mem (inv_mem hk) hx, z, hz, ?_⟩
-      calc g = k⁻¹ * (k * g) := by group
-        _ = _ := by rw [e]; simp only [mul_assoc]
-    · rintro ⟨x, hx, z, hz, e⟩
-      exact ⟨k * x, mul_mem hk hx, z, hz, by rw [e]; simp only [mul_assoc]⟩
-  simp only [dcos, this]
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.MatchPow.dcos_left' <;> assumption
 
 theorem dcos_right {m : ℕ} {w : Pl E} (t k g : GLw m w) (hk : k ∈ iwGL m w) :
     dcos m w t (g * k) = dcos m w t g := by
-  have : (∃ x ∈ iwGL m w, ∃ z ∈ iwGL m w, g * k = x * t * z) ↔
-      (∃ x ∈ iwGL m w, ∃ z ∈ iwGL m w, g = x * t * z) := by
-    constructor
-    · rintro ⟨x, hx, z, hz, e⟩
-      refine ⟨x, hx, z * k⁻¹, mul_mem hz (inv_mem hk), ?_⟩
-      calc g = (g * k) * k⁻¹ := by group
-        _ = _ := by rw [e]; simp only [mul_assoc]
-    · rintro ⟨x, hx, z, hz, e⟩
-      exact ⟨x, hx, z * k, mul_mem hz hk, by rw [e]; simp only [mul_assoc]⟩
-  simp only [dcos, this]
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.MatchPow.dcos_right' <;> assumption
 
 theorem isHecke_iwahori_pair_double_coset {a b : ℕ} (w : Pl E) (ϖ : (w.adicCompletion E)ˣ) (x : Fin a → ℤ) (y : Fin b → ℤ) :
     IsHecke (I2 a b w) (dc2 w ϖ x y) := by
@@ -231,7 +174,7 @@ theorem isHecke_iwahori_pair_double_coset {a b : ℕ} (w : Pl E) (ϖ : (w.adicCo
 theorem ordL_of_v_one {w : Pl E} (x : w.adicCompletion E) (hx : Valued.v x = 1) : ordL x = 0 := by
   have h0 : Valued.v x ≠ 0 := by rw [hx]; exact one_ne_zero
   unfold ordL
-  rw [dif_neg h0]
+  rw [dite_eq_right h0]
   have : WithZero.unzero h0 = 1 := WithZero.coe_inj.1 (by rw [WithZero.coe_unzero, hx]; rfl)
   rw [this]
   rfl
@@ -239,8 +182,8 @@ theorem ordL_of_v_one {w : Pl E} (x : w.adicCompletion E) (hx : Valued.v x = 1) 
 theorem unifV {w : Pl E} (x : w.adicCompletion E) (h : ordL x = 1) : IsUnifV E w x := by
   unfold ordL at h
   by_cases h0 : Valued.v x = 0
-  · rw [dif_pos h0] at h; exact absurd h (by norm_num)
-  · rw [dif_neg h0] at h
+  · rw [dite_eq_left h0] at h; exact absurd h (by norm_num)
+  · rw [dite_eq_right h0] at h
     show Valued.v x = _
     rw [← WithZero.coe_unzero h0]
     congr 1
@@ -309,16 +252,16 @@ theorem lev₂_lv (hd : d.Ok) (ha : a ≤ n) (w : Pl E) : IsLv (d.lev₂ a w) :=
   · exact maximal_pair_is_level a (n - a) w
 
 theorem level_eq_iwahori_pair_at_bad_places {w : Pl E} (h : w ∈ d.T) : d.lev a w = I2 a (n - a) w := by
-  unfold LocData.lev; rw [if_pos h]
+  unfold LocData.lev; rw [ite_eq_left h]
 
 theorem lev_S {w : Pl E} (hT : w ∉ d.T) (h : w ∈ d.S₀ ∪ d.Bad) : d.lev a w = d.L a w := by
-  unfold LocData.lev; rw [if_neg hT, if_pos h]
+  unfold LocData.lev; rw [ite_eq_right hT, ite_eq_left h]
 
 theorem lev_out {w : Pl E} (hT : w ∉ d.T) (h : w ∉ d.S₀ ∪ d.Bad) : d.lev a w = K2 a (n - a) w := by
-  unfold LocData.lev; rw [if_neg hT, if_neg h]
+  unfold LocData.lev; rw [ite_eq_right hT, ite_eq_right h]
 
 theorem lev₂_out {w : Pl E} (h : w ∉ d.S₀ ∪ d.Bad) : d.lev₂ a w = K2 a (n - a) w := by
-  unfold LocData.lev₂; rw [if_neg h]
+  unfold LocData.lev₂; rw [ite_eq_right h]
 
 theorem out3 {w : Pl E} (hw : w ∉ d.T ∪ d.S₀ ∪ d.Bad) : w ∉ d.T ∧ w ∉ d.S₀ ∪ d.Bad := by
   simp only [Finset.mem_union, not_or] at hw ⊢
@@ -354,22 +297,22 @@ theorem lm_ok (h1 : IdemAlg) (hd : d.Ok) (ha : a ≤ n) (L : LM d.kap a (n - a))
     · exact hm w h _ _
     · exact hs w h
   · unfold LM.ent
-    rw [dif_neg fun h => hw (hQ h)]
+    rw [dite_eq_right fun h => hw (hQ h)]
     exact hso w hw
 
 theorem kap_X {w : Pl E} (hT : w ∉ d.T) (hS : w ∈ d.S₀) (x : d.kap w) : x.1.2 ∈ d.X w := by
   obtain ⟨p, hp⟩ := x
-  have e : d.idx w = {∅} ×ˢ d.X w := by unfold LocData.idx; rw [if_neg hT, if_pos hS]
+  have e : d.idx w = {∅} ×ˢ d.X w := by unfold LocData.idx; rw [ite_eq_right hT, ite_eq_left hS]
   rw [e] at hp
   exact (Finset.mem_product.1 hp).2
 
 theorem kap_ne (hd : d.Ok) (w : Pl E) : Nonempty (d.kap w) := by
   by_cases hT : w ∈ d.T
-  · exact ⟨⟨(∅, 1), by unfold LocData.idx; rw [if_pos hT]; simp⟩⟩
+  · exact ⟨⟨(∅, 1), by unfold LocData.idx; rw [ite_eq_left hT]; simp⟩⟩
   · by_cases hS : w ∈ d.S₀
     · obtain ⟨x, ⟨hx, -⟩, -⟩ := (hd.K' w hS).2.2.2.2.1 1 (one_mem _)
-      exact ⟨⟨(∅, x), by unfold LocData.idx; rw [if_neg hT, if_pos hS]; simp [hx]⟩⟩
-    · exact ⟨⟨(∅, 1), by unfold LocData.idx; rw [if_neg hT, if_neg hS]; simp⟩⟩
+      exact ⟨⟨(∅, x), by unfold LocData.idx; rw [ite_eq_right hT, ite_eq_left hS]; simp [hx]⟩⟩
+    · exact ⟨⟨(∅, 1), by unfold LocData.idx; rw [ite_eq_right hT, ite_eq_right hS]; simp⟩⟩
 
 theorem qT_H (w : Pl E) (s : Finset (Fin (n / 2))) : IsHecke (I2 a (n - a) w) (d.qT a w s) := by
   unfold LocData.qT
@@ -409,8 +352,8 @@ theorem hc_H (h2 : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], LocOp
   let F : GLw n w → ℂ := fun y => Tj ℂ n (Ov E w) (d.ϖ w : w.adicCompletion E) j ((toSub (UL n w) y : UL n w) : GLw n w)
   have hF : F = Tj ℂ n (Ov E w) (d.ϖ w : w.adicCompletion E) j := by
     funext y
-    have hy : y ∈ UL n w := by unfold UL; rw [if_pos hs]; exact Subgroup.mem_top y
-    simp only [F, toSub, dif_pos hy]
+    have hy : y ∈ UL n w := by unfold UL; rw [ite_eq_left hs]; exact Subgroup.mem_top y
+    simp only [F, toSub, dite_eq_left hy]
   have hHk : IsHk (GlobalTheory.LFun.KGL w (n := n)) F := by
     rw [hF]
     exact ⟨isOpen_KGL w n, _root_.GlobalTheory.CompanionTheory.IwLevels.isCompact_KGL w n, hcs_of_fin (_root_.GlobalTheory.CompanionTheory.IwLevels.isCompact_KGL w n) hT.2,
@@ -486,7 +429,7 @@ theorem fixL_ok (h1 : IdemAlg) (hd : d.Ok) (ha : a ≤ n) : (d.fixL a).Ok d.P :=
     · exact idemH d h1 hd ha w
   · have hB : w ∉ d.Bad := fun h => hw (by simp [h])
     show (if w ∈ d.Bad then d.fix a w else idem (d.lev a w)) = _
-    rw [if_neg hB, lev_out d (out3 d hw).1 (out3 d hw).2]
+    rw [ite_eq_right hB, lev_out d (out3 d hw).1 (out3 d hw).2]
 
 theorem hL_ok (h1 : IdemAlg) (h2 : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], LocOpUniformizer E)
     (hd : d.Ok) (ha : a ≤ n) {w₀ : Pl E} (hg : d.Good w₀) (j : ℕ) (intersection_update_fsHerm_neg_one : Bool) :

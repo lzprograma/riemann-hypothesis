@@ -1,58 +1,12 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.CauchyHW
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Bool
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -79,9 +33,9 @@ theorem coeff_diag (T : Module.End ℂ (MvPolynomial σ ℂ)) (w : (σ →₀ �
     simp only [MvPolynomial.coeff_smul, coeff_monomial, smul_eq_mul]
     by_cases h : m = e
     · subst h
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       ring
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       ring
   · rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
@@ -122,11 +76,11 @@ theorem noVar_of_pderiv_eq_zero {P : MvPolynomial σ ℂ} {v : σ} (h : pderiv v
     rw [map_sum, coeff_sum]
     simp only [pderiv_monomial, coeff_monomial]
     rw [Finset.sum_eq_single e]
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
     · intro b _ hbe
       by_cases hbv : b v = 0
       · simp [hbv]
-      · rw [if_neg]
+      · rw [ite_eq_right]
         intro hb
         apply hbe
         have h1 : Finsupp.single v 1 ≤ b := Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr hbv)
@@ -167,7 +121,7 @@ theorem gR_pos_lemma (u v : κ → σ) (pos : κ → Bool) (hu : Function.Inject
   unfold gR at h0
 
   rw [map_sum, Finset.sum_eq_single c0] at h0
-  · rw [if_pos hc0, key, pderiv_X_self, mul_one] at h0
+  · rw [ite_eq_left hc0, key, pderiv_X_self, mul_one] at h0
     exact h0
   · intro c _ hc
     split_ifs with hpc
@@ -188,8 +142,7 @@ theorem seg_pos_gen (u v : κ → σ) (pos : κ → Bool) (hu : Function.Injecti
     (hwV : ∀ e ∈ P.support, (sw e v pos : ℚ) = nuV)
     (hpU : ∀ e ∈ P.support, ∀ c, e (u c) ≠ 0 → nuU ≠ 0 ∧ (pos c = true ↔ 0 < nuU)) (hV : 0 < nuV) :
     0 < nuU := by
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   have hnoU : ∀ c, pos c = true → NoVar P (u c) := by
     intro c hc e he
     by_contra hne
@@ -215,8 +168,7 @@ theorem seg_neg_gen (u v : κ → σ) (pos : κ → Bool) (hv : Function.Injecti
     (hwU : ∀ e ∈ P.support, (sw e u pos : ℚ) = nuU)
     (hpV : ∀ e ∈ P.support, ∀ c, e (v c) ≠ 0 → nuV ≠ 0 ∧ (pos c = true ↔ 0 < nuV)) (hU : nuU < 0) :
     nuV < 0 := by
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   have hnoV : ∀ c, pos c = false → NoVar P (v c) := by
     intro c hc e he
     by_contra hne
@@ -267,7 +219,7 @@ theorem pure_gen {ι κ : Type*} [Fintype ι] [Fintype κ] (x : ι → κ → �
       (Finset.sum_eq_zero_iff_of_nonneg hnn).mp hz c (Finset.mem_univ c)
     have hpc : pos a c = true := by
       by_contra hpc
-      rw [if_neg hpc] at hc0
+      rw [ite_eq_right hpc] at hc0
       omega
     refine ⟨by omega, ?_⟩
     rw [hpc]
@@ -283,7 +235,7 @@ theorem pure_gen {ι κ : Type*} [Fintype ι] [Fintype κ] (x : ι → κ → �
       (Finset.sum_eq_zero_iff_of_nonneg hnn).mp hz c (Finset.mem_univ c)
     have hpc : pos a c = false := by
       by_contra hpc
-      rw [if_pos (by simpa using hpc)] at hc0
+      rw [ite_eq_left (by simpa using hpc)] at hc0
       omega
     refine ⟨hs.ne, ?_⟩
     rw [hpc]
@@ -426,10 +378,10 @@ theorem leftRootOperator_eq_signedPolarization {p q r s : ℕ} (a b : Ix p q) (h
   unfold raiB lowB
   rw [hsame c]
   by_cases h : linePos ((a, c) : Ln p q r s) = true
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     simp
   · have hne : ((b, c) : Ln p q r s) ≠ (a, c) := fun e => hab (Prod.ext_iff.mp e).1.symm
-    simp only [if_neg h]
+    simp only [ite_eq_right h]
     simp [Derivation.leibniz, pderiv_X_of_ne hne]
 
 theorem rightRootOperator_eq_signedPolarization {p q r s : ℕ} (c d : Ix r s) (hcd : c ≠ d)
@@ -444,10 +396,10 @@ theorem rightRootOperator_eq_signedPolarization {p q r s : ℕ} (c d : Ix r s) (
   unfold raiB lowB
   rw [hsame a]
   by_cases h : linePos ((a, c) : Ln p q r s) = true
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     simp
   · have hne : ((a, d) : Ln p q r s) ≠ (a, c) := fun e => hcd (Prod.ext_iff.mp e).2.symm
-    simp only [if_neg h]
+    simp only [ite_eq_right h]
     simp [Derivation.leibniz, pderiv_X_of_ne hne]
 
 theorem ker_of_hw {p q : ℕ} {V : Type*} [AddCommGroup V] [Module ℂ V] {act : Mat p q →ₗ[ℂ] Module.End ℂ V}

@@ -123,8 +123,6 @@ section -- clump:auto
 open scoped IntermediateField Polynomial RatFunc
 open GlobalTheory.Nef
 
-set_option autoImplicit false
-
 namespace GlobalTheory.Nef.PullAd
 
 section

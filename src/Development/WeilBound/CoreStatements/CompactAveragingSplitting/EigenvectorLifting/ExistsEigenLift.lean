@@ -253,8 +253,8 @@ theorem finAt_of {ω ρ ω' ρ'} (L : IsLocRep G.M B.ψ om v ω ρ) (L' : IsLocR
     { Pi := fun _ => Q
       p := fun u => if h : v = u then h ▸ (π ∘ₗ p) else 0
       p' := fun u => if h : v = u then h ▸ (π ∘ₗ q) else 0 }
-  have e : R.p v = π ∘ₗ p := dif_pos rfl
-  have e' : R.p' v = π ∘ₗ q := dif_pos rfl
+  have e : R.p v = π ∘ₗ p := dite_eq_left rfl
+  have e' : R.p' v = π ∘ₗ q := dite_eq_left rfl
   have on' : ∀ x : Q, ∃ φ ∈ SB _, q φ = x := fun x => x.2
   have on : ∀ x : Q, ∃ φ ∈ SB _, p φ = x := fun x => (h1.symm ▸ x.2 : x.1 ∈ (SB _).map p)
   have hx : ∀ x : Q, π x.1 = x := fun x => hπ' x.1 x.2
@@ -371,7 +371,7 @@ theorem finInert_of (hKS : CompAtTriple) (hR : CoinvEmbeds) (hA : LocRepEx) (hB1
       (fun g hg g' hg' => by
         have hg₁ : g ∈ KSub σ G.W v := hg
         have hg₂ : g' ∈ KSub σ G.W v := hg'
-        rw [dif_pos (mul_mem hg₁ hg₂), dif_pos hg₁, dif_pos hg₂, ← Units.val_mul, div_mul_div_comm, ← map_mul, ← map_mul]
+        rw [dite_eq_left (mul_mem hg₁ hg₂), dite_eq_left hg₁, dite_eq_left hg₂, ← Units.val_mul, div_mul_div_comm, ← map_mul, ← map_mul]
         rfl)
       (fun g hg hgP => by
         have hg₁ : g ∈ KSub σ G.W v := hg
@@ -382,8 +382,8 @@ theorem finInert_of (hKS : CompAtTriple) (hR : CoinvEmbeds) (hA : LocRepEx) (hB1
         rw [hf' ⟨g, hg₁⟩, map_smul, smul_eq_mul] at a2
         have : c ⟨g, hg₁⟩ = c' ⟨g, hg₁⟩ :=
           Units.ext ((mul_right_cancel₀ hl0 a1).trans (mul_right_cancel₀ hlf a2).symm)
-        rw [dif_pos hg₁, this, div_self', Units.val_one]) k.1 k.2
-    rw [dif_pos k.2] at this
+        rw [dite_eq_left hg₁, this, div_self', Units.val_one]) k.1 k.2
+    rw [dite_eq_left k.2] at this
     exact div_eq_one.1 (Units.ext this)
   set t := l f.1 / l (G.M.vac v) with ht
   have ht0 : t ≠ 0 := div_ne_zero hlf hl0

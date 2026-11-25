@@ -382,7 +382,7 @@ theorem exists_max (hf : X.IsBddSec (Xa.Fp + Xa.T • Xa.L) f)
     exact (hsm j z hz).2
   obtain ⟨d, hd, hfar⟩ := sumSq_far X Xa Fl hU hxs hsat
   obtain ⟨δ, hδ, hsmall⟩ := quot_far X Xa Fl f hf (A := Uᶜ) hd hfar hε
-  obtain ⟨Kc, hKc, hKsub, hrep⟩ := reductionTheory_holds r X δ hδ
+  obtain ⟨Kc, hKc, hKsub, hrep⟩ := GlobalTheory.FlagMahler.mahler_compactness r X δ hδ
   have hSpos : ∀ x ∈ Kc \ U, 0 < sumSq X Xa Fl x := fun x hx =>
     lt_of_lt_of_le (by positivity) (hfar x (hKsub hx.1) hx.2)
   have hmove : ∀ x ∈ X.dom, quot X Xa Fl f x1 ≤ quot X Xa Fl f x →

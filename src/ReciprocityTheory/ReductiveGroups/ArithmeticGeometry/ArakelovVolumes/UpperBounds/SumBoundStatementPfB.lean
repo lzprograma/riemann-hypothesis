@@ -51,8 +51,7 @@ theorem sumBd_sep {f : ℕ} (Γ : Subgroup (Fin f → GL (Fin p ⊕ Fin q) ℂ))
     ∃ c : ℝ, 0 < c ∧ ∀ γ ∈ Γ, γ ≠ 1 → ∃ k i j,
       c ≤ ‖((γ k : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) i j -
         (1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) i j‖ := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hc' : ∀ n : ℕ, ∃ γ ∈ Γ, γ ≠ 1 ∧ ∀ k i j,
       ‖((γ k : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) i j -
         (1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) i j‖ < 1 / ((n : ℝ) + 1) :=
@@ -106,8 +105,7 @@ theorem sumBd_sep_diff {g h : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ} (h
     (hR : 0 < R) (hc0 : 0 < c) (hgR : ∀ i j, ‖g i j‖ ≤ R) {i j : Fin p ⊕ Fin q}
     (hc : c ≤ ‖(h * g⁻¹) i j - (1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) i j‖) :
     ∃ l, c / (((p + q : ℕ) : ℝ) + 1) / R ≤ ‖h i l - g i l‖ := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hN : (0 : ℝ) < ((p + q : ℕ) : ℝ) + 1 := by positivity
   have hgi : ∀ l, ‖g⁻¹ l j‖ ≤ R := fun l => by rw [sumBd_inv_entry' hg]; exact hgR j l
   have e : (h * g⁻¹) i j - (1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) i j = ((h - g) * g⁻¹) i j := by
@@ -163,7 +161,7 @@ theorem sumBd_count {f : ℕ} {ι : Type*} (x : ι → Fin f → Matrix (Fin p �
     obtain ⟨k, i, j, hsep⟩ := hsep2 a ha b hb hne
     have hre := congrFun hab (k, i, j, true)
     have him := congrFun hab (k, i, j, false)
-    simp only [φ, val, if_true, Bool.false_eq_true, if_false] at hre him
+    simp only [φ, val, ite_true, Bool.false_eq_true, ite_false] at hre him
     have h1 := Int.abs_sub_lt_one_of_floor_eq_floor hre
     have h2 := Int.abs_sub_lt_one_of_floor_eq_floor him
     rw [← sub_div, abs_div, abs_of_pos hη, div_lt_one hη] at h1 h2

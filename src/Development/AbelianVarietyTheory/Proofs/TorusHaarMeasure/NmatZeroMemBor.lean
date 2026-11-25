@@ -85,7 +85,7 @@ theorem leadVal_add {n δ : ℕ} (s : Fin n → ℂ) (w : ℂ) (t : Fin δ → �
   refine Finset.sum_congr rfl fun α hα => ?_
   have hlt := mem_multiLt.1 hα
   by_cases h : ∑ q, α q = a
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     have hm : (∏ q, s q ^ α q) = (∏ k, (s k / w) ^ α k) * w ^ (∑ q, α q) := by
       rw [← Finset.prod_pow_eq_pow_sum, ← Finset.prod_mul_distrib]
       exact Finset.prod_congr rfl fun k _ => by rw [← mul_pow, div_mul_cancel₀ _ hw]

@@ -6,8 +6,6 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementExt
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsZsmulMem
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCoordEmbedBasis
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -16,10 +14,6 @@ namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 open NumberField GroundTheory.Automorphic Module Matrix Topology
 
 noncomputable section
-
-namespace ComplementArchCocompact
-
-end ComplementArchCocompact
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
   [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
@@ -59,7 +53,6 @@ theorem projAt_vecAt (h : HermitianForm F E W) (v : Basis ι E W) {x₀ w₀ : W
   simp only [vecAtHom_apply, vecAt_smul_apply]
 
 end ComplementArchCocompact
-
 
 open ComplementArchCocompact in
 theorem ComplementArchCocompact.proof (h : HermitianForm F E W) (v : Basis ι E W) :

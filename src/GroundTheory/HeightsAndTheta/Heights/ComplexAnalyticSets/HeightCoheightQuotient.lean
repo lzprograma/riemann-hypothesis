@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.RingTheory.Ideal.Height
+import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRatA
 import Mathlib.NumberTheory.Height.NumberField
 import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
 public import Mathlib.RingTheory.KrullDimension.NonZeroDivisors
@@ -13,13 +14,8 @@ set_option maxSynthPendingDepth 1
 namespace GroundTheory.Heights₂.Heights
 
 theorem ringKrullDim_quotient_eq_coheight {B : Type*} [CommRing B] (P : Ideal B) [hP : P.IsPrime] :
-    ringKrullDim (B ⧸ P) = Order.coheight (⟨P, hP⟩ : PrimeSpectrum B) := by
-  rw [ringKrullDim_quotient, Order.coheight_eq_krullDim_Ici]
-  have h : PrimeSpectrum.zeroLocus (P : Set B) = Set.Ici (⟨P, hP⟩ : PrimeSpectrum B) := by
-    ext q
-    rw [PrimeSpectrum.mem_zeroLocus, Set.mem_Ici, ← PrimeSpectrum.asIdeal_le_asIdeal]
-    exact SetLike.coe_subset_coe
-  rw [h]
+    ringKrullDim (B ⧸ P) = Order.coheight (⟨P, hP⟩ : PrimeSpectrum B) :=
+  ReciprocityTheory.AnForm.R.IntegerToRational.ringKrullDim_quotient_eq_coheight P
 
 theorem height_add_ringKrullDim_quotient_le {B : Type*} [CommRing B] (P : Ideal B) [hP : P.IsPrime] :
     (P.height : WithBot ℕ∞) + ringKrullDim (B ⧸ P) ≤ ringKrullDim B := by
@@ -40,13 +36,7 @@ theorem height_map_add_one_le_of_mem_nonZeroDivisors {B : Type*} [CommRing B] [I
   obtain ⟨l, hlast, hlen⟩ := Order.exists_series_of_height_eq_coe (⟨_, hP'⟩ : PrimeSpectrum (B ⧸ I))
     (by rw [← PrimeSpectrum.height_eq_orderHeight]; exact hn)
   let f : PrimeSpectrum (B ⧸ I) → PrimeSpectrum B := PrimeSpectrum.comap (Ideal.Quotient.mk I)
-  have hf : StrictMono f := by
-    refine Monotone.strictMono_of_injective (fun a b hab => ?_) (fun a b hab => ?_)
-    · rw [← PrimeSpectrum.asIdeal_le_asIdeal] at hab ⊢
-      exact Ideal.comap_mono hab
-    · ext1
-      have := congrArg PrimeSpectrum.asIdeal hab
-      exact Ideal.comap_injective_of_surjective _ Ideal.Quotient.mk_surjective this
+  have hf : StrictMono f := RingHom.strictMono_comap_of_surjective Ideal.Quotient.mk_surjective
   let L := l.map f hf
   have hyhead : y ∈ L.head.asIdeal := by
     change y ∈ (l.head.asIdeal).comap (Ideal.Quotient.mk I)

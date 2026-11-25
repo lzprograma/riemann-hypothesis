@@ -7,8 +7,6 @@ public import Formalism.LocalToGlobal.CharacterGerms.GermEvalOneStandardPointSel
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators

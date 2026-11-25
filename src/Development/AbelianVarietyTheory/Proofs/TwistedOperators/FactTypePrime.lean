@@ -55,8 +55,6 @@ open Formalism.IndefR.Datum (InfFam)
 
 namespace GlobalTheory.DefFree
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 instance factTypePrime (D : D7) (k : Fin 2) : Fact (D.host.g k).Prime := ⟨D.host.g_prime k⟩

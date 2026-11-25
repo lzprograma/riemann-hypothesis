@@ -57,21 +57,11 @@ open scoped ComplexConjugate
 
 theorem exists_padicInt_inv {q : ℕ} [Fact q.Prime] {s : ℕ} (h : Nat.Coprime s q) :
     ∃ u : ℤ_[q], (s : ℤ_[q]) * u = 1 := by
-  have h1 : IsUnit (s : ℤ_[q]) := by
-    rw [PadicInt.isUnit_iff]
-    have hq : ¬ (q : ℤ) ∣ (s : ℤ) := by
-      intro hd
-      have hd' : q ∣ s := Int.natCast_dvd_natCast.mp hd
-      have : q ∣ 1 := by
-        have := Nat.dvd_gcd hd' (dvd_refl q)
-        rwa [h] at this
-      exact (Fact.out : q.Prime).one_lt.ne' (Nat.dvd_one.mp this)
-    have h2 := (PadicInt.norm_int_lt_one_iff_dvd (p := q) (s : ℤ)).not.mpr hq
-    have h3 : ‖((s : ℤ) : ℤ_[q])‖ ≤ 1 := PadicInt.norm_le_one _
-    have h4 : ‖((s : ℤ) : ℤ_[q])‖ = 1 := le_antisymm h3 (not_lt.mp h2)
-    simpa using h4
-  obtain ⟨u, hu⟩ := h1
-  exact ⟨((u⁻¹ : ℤ_[q]ˣ) : ℤ_[q]), by rw [← hu]; simp⟩
+  have h1 : IsUnit ((s : ℤ) : ℤ_[q]) := PadicInt.isUnit_iff.2 <|
+    le_antisymm (PadicInt.norm_le_one _) <| not_lt.1 <|
+      (PadicInt.norm_int_lt_one_iff_dvd (p := q) (s : ℤ)).not.2 <|
+        by exact_mod_cast (Fact.out : q.Prime).coprime_iff_not_dvd.1 h.symm
+  simpa using h1.exists_right_inv
 
 theorem latInt_of_span : ∀ (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]) (V : Type) [NormedAddCommGroup V] [NormedSpace ℂ V] (d : ℕ) (ω : ℂ_[q]) (Λ : AddSubgroup V) (κ : Type) [Fintype κ] (b : κ → V) (G : V → ℂ), d.Prime → d % 16 = 7 → Split d q → (∀ x ∈ Λ, ∃ s : ℕ, Nat.Coprime s q ∧ ∃ c : κ → ℂ, (∀ i, InOK d (c i)) ∧ (s : ℂ) • x = ∑ i, c i • b i) → MomInt ι (fun i => ι.symm ω • b i) G → LatInt ι ω Λ G := by
   intro q _ ι V _ _ d ω Λ κ _ b G hd h16 hS hspan hM κ' _ v hv

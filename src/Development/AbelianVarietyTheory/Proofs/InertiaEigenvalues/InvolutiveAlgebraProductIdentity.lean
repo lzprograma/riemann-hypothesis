@@ -13,60 +13,7 @@ public import Mathlib.Algebra.Module.Lattice.Full
 public import Mathlib.LinearAlgebra.Semisimple
 public import Mathlib.Algebra.Module.Lattice.Basic
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLatticeIdempotentPositionInvolutionStable
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.FieldTheory.IsAlgClosed.Spectrum
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Charpoly.ToMatrix
-import Mathlib.LinearAlgebra.Matrix.Charpoly.Eigs
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -470,9 +417,6 @@ theorem img_mem (h : Half B e π) {L : Submodule K.O B.A} (hL : L ∈ B.X 1) :
   · rintro _ ⟨w, hw, rfl⟩
     exact ⟨B.g * w, hg w hw, map_mul π B.g w⟩
 
-private theorem sigma_smul' (B : InvAlg K) (a : K.E) (y : B.A) : B.σ (a • y) = K.c a • B.σ y := by
-  rw [Algebra.smul_def, map_mul, B.σ_alg, ← Algebra.smul_def]
-
 private theorem dual_dual_eq_and_isLat_dual (hB : (Algebra.traceForm K.E C).Nondegenerate) (M : Submodule K.O C)
     (hM : IsLat K.O K.E M) : dual (dual M) = M ∧ IsLat K.O K.E (dual M) := by
   classical
@@ -564,7 +508,7 @@ theorem lift_mem (h : Half B e π) (hs : B.P.Separable) (hu : B.g * B.σ B.g = 1
       · intro x hx'; exact Submodule.subset_span (hσsD x hx')
       · simp
       · intro x x' _ _ h1 h2; rw [map_add (f := _), map_add (f := _)]; exact add_mem h1 h2
-      · intro a x _ h1; rw [map_smul, sigma_smul']; exact Submodule.smul_mem _ _ h1
+      · intro a x _ h1; rw [map_smul, GlobalTheory.UnitLemma.Desc.sigma_smul]; exact Submodule.smul_mem _ _ h1
   ·
     have hσg : B.σ B.g * B.g = 1 := by rw [mul_comm]; exact hu
     have hvint : IsIntegral K.O (π (B.σ B.g)) := (sigma_integral B hi).map (π.restrictScalars K.O)

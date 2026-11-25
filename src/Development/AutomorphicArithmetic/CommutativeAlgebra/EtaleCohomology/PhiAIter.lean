@@ -362,7 +362,7 @@ theorem absCl : AbsCl := by
   refine ⟨(gK r M n 0 r.w (phiA_zero' r)).pull j y, ?_, ?_⟩
   · refine (mor_iter_pull_eq (ACris.phi (K := ℂ_[l]) (p := l)) (Pb.Mid.phiA l) phiA_zero (fun k a => Pb.Mid.phiA_succ k a)
       (phiMor (PQ M.p (gRes r)) n) r.w (gK r M n) j y (fun k σ h => by
-        haveI : RingHomCompTriple σ (ACris.phi (K := ℂ_[l]) (p := l)) ((ACris.phi (K := ℂ_[l]) (p := l)).comp σ) := ⟨rfl⟩
+        have : RingHomCompTriple σ (ACris.phi (K := ℂ_[l]) (p := l)) ((ACris.phi (K := ℂ_[l]) (p := l)).comp σ) := ⟨rfl⟩
         refine (pull_pull ((ACris.phi (K := ℂ_[l]) (p := l)).comp σ) (gK r M n k σ h) (phiMor (PQ M.p (gRes r)) n) j y).trans ?_
         exact cr_pull_eq ((gK r M n k σ h).comp (σ'' := (ACris.phi (K := ℂ_[l]) (p := l)).comp σ) (phiMor (PQ M.p (gRes r)) n))
           (gK r M n (k + 1) ((ACris.phi (K := ℂ_[l]) (p := l)).comp σ) fun w => by rw [Pb.Mid.phiA_succ, h]; rfl) (fun T => 𝟙 (gObj r M n T)) (fun _ _ => rfl)
@@ -409,7 +409,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry GroundTheory.PAdicHodge CrystallineSemistableComparison TensorProduct GlobalTheory.LogCris DividedPowers UpperTheory.Ru.crystallineComparison
 
 private theorem iter_gen {A R ι : Type*} (f : A → A) (φ : R → R) (E : (ι → R) → A)
@@ -444,7 +443,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry GroundTheory.PAdicHodge CrystallineSemistableComparison TensorProduct GlobalTheory.LogCris DividedPowers UpperTheory.Ru.crystallineComparison
 
 theorem UpperTheory.evalEtaleFamily_mem_limit_of_reduced :
@@ -491,7 +489,7 @@ theorem UpperTheory.Reformulated.B.Qi53.zA_smul.{u_1} :
             ((PadicInt.toZModPow n : ℤ_[l] → ZMod (l ^ n)) z).val • y := by
   intro l _ N _ _ n h z y
   have hz : z - (((PadicInt.toZModPow n z).val : ℕ) : ℤ_[l]) ∈ RingHom.ker (PadicInt.toZModPow n : ℤ_[l] →+* ZMod (l ^ n)) := by
-    haveI : NeZero (l ^ n) := ⟨pow_ne_zero n (Fact.out : Nat.Prime l).ne_zero⟩
+    have : NeZero (l ^ n) := ⟨pow_ne_zero n (Fact.out : Nat.Prime l).ne_zero⟩
     rw [RingHom.mem_ker, map_sub, map_natCast, ZMod.natCast_zmod_val, sub_self]
   rw [PadicInt.ker_toZModPow, Ideal.mem_span_singleton] at hz
   obtain ⟨w, hw⟩ := hz
@@ -508,8 +506,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TorsionOfVec", "h": "module\n\npublic import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VecZero\npublic import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ZASmul\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.TypeStar\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
 
@@ -528,9 +524,9 @@ private theorem torsion_of_vec (t : A) (c : A →+* C) (ht : IsUnit (c t))
     (v : ι → T) (a : ι → A) (r : ℕ)
     (h : ∑ k, ((1 : F) ⊗ₜ[R] v k) ⊗ₜ[F] (c (a k) * Ring.inverse (c t) ^ r) = 0) :
     ∃ u : ℕ, t ^ u • ∑ k, (a k ⊗ₜ[R] v k : A ⊗[R] T) = 0 := by
-  letI : Algebra A C := c.toAlgebra
+  let : Algebra A C := c.toAlgebra
   have hsm : ∀ (b : A) (x : C), b • x = c b * x := fun b x => Algebra.smul_def b x
-  haveI : IsLocalization (Submonoid.powers t) C :=
+  have : IsLocalization (Submonoid.powers t) C :=
     { map_units := by
         rintro ⟨_, n, rfl⟩
         change IsUnit (c (t ^ n))
@@ -648,7 +644,7 @@ private theorem zA_smul {N : Type*} [AddCommGroup N] [Module (Acris l) N] (n : �
 theorem vecZero : VecZero := by
   intro l _ K B e _ M j ι _ v c r h
   have h' : ∑ k, ((1 : ℚ_[l]) ⊗ₜ[ℤ_[l]] (v k)) ⊗ₜ[ℚ_[l]] (B.c (c k) * Ring.inverse (B.c (tA l)) ^ r) = 0 := h
-  letI : Algebra ℤ_[l] (Acris l) := (zA l).toAlgebra
+  let : Algebra ℤ_[l] (Acris l) := (zA l).toAlgebra
   obtain ⟨u, hu⟩ := torsion_of_vec (R := ℤ_[l]) (F := ℚ_[l]) (T := M.T j) (tA l) B.c B.t_unit B.loc B.ker
     (fun x => B.z_c x) v c r h'
   refine ⟨0, u, fun n => ?_⟩
@@ -670,7 +666,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry GroundTheory.PAdicHodge CrystallineSemistableComparison TensorProduct GlobalTheory.LogCris DividedPowers UpperTheory.Ru.crystallineComparison
 
 private theorem act_toV {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)} (M : Model l K) (j : ℕ)
@@ -885,7 +880,7 @@ private lemma aux {W : Type u₁} {K : Type u₂} {A : Type u₅} {C : Type u₃
     intro i
     by_cases hi : i ∈ S
     · have hle : a₀ i ≤ N := hN ▸ Finset.le_sup hi
-      simp only [f, Finsupp.onFinset_apply, if_pos hi]
+      simp only [f, Finsupp.onFinset_apply, ite_eq_left hi]
       rw [← IsScalarTower.algebraMap_apply W K C, map_mul, map_pow, map_natCast, ← hw₀ i,
         ← mul_assoc, ← pow_add, Nat.sub_add_cancel hle]
     · have h0 : Φ z i = 0 := by simpa [hS] using hi
@@ -941,18 +936,18 @@ theorem UpperTheory.galois_equivariant_tensor_descent_of_prime_power_units :
         (∀ g, ∃ a b : ℕ, ((l : A) ^ a * t ^ b) • T g z = ((l : A) ^ a * t ^ b * χ g ^ s) • z) →
         ∃ (a b : ℕ) (y : L), ((l : A) ^ a * t ^ b) • z = (t ^ (b + s)) • ((1 : A) ⊗ₜ[W] y) := by
   intro l W A C Γ L _ _ _ _ _ _ _ c t σA σC χ T z s hW hl hct hlocC hker hσ hσW hσt hT hfix hz
-  letI : Algebra A C := c.toAlgebra
-  letI : Algebra W C := (c.comp (algebraMap W A)).toAlgebra
-  haveI : IsScalarTower W A C := IsScalarTower.of_algebraMap_eq' rfl
+  let : Algebra A C := c.toAlgebra
+  let : Algebra W C := (c.comp (algebraMap W A)).toAlgebra
+  have : IsScalarTower W A C := IsScalarTower.of_algebraMap_eq' rfl
   have hunit : ∀ y : nonZeroDivisors W, IsUnit (algebraMap W C y) := by
     intro y
     obtain ⟨m, β, h, hβ⟩ := hW y (nonZeroDivisors.ne_zero y.2)
     rw [h, map_mul, map_pow, map_natCast]
     exact (hl.pow m).mul (hβ.map _)
-  letI : Algebra (FractionRing W) C := (IsLocalization.lift hunit).toAlgebra
-  haveI : IsScalarTower W (FractionRing W) C :=
+  let : Algebra (FractionRing W) C := (IsLocalization.lift hunit).toAlgebra
+  have : IsScalarTower W (FractionRing W) C :=
     IsScalarTower.of_algebraMap_eq (fun w => (IsLocalization.lift_eq hunit w).symm)
-  haveI : IsLocalization (Submonoid.powers t) C :=
+  have : IsLocalization (Submonoid.powers t) C :=
     { map_units := by
         rintro ⟨_, n, rfl⟩
         exact (map_pow c t n).symm ▸ hct.pow n
@@ -980,7 +975,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry GroundTheory.PAdicHodge CrystallineSemistableComparison TensorProduct GlobalTheory.LogCris DividedPowers UpperTheory.Ru.crystallineComparison
 
 private theorem cc_sW {l : ℕ} [Fact l.Prime] (A : PAlg l) (y : Ainf l) :
@@ -1053,7 +1047,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry GroundTheory.PAdicHodge CrystallineSemistableComparison TensorProduct GlobalTheory.LogCris DividedPowers UpperTheory.Ru.crystallineComparison
 
 theorem UpperTheory.integersResidue_eq_zero_of_not_isUnit :
@@ -1109,8 +1102,6 @@ section -- clump:auto
 @[expose] public section
 
 
-
-set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
 
@@ -1247,7 +1238,7 @@ theorem UpperTheory.Ru.crystallineComparison.absInvOf :
   have hy := UpperTheory.evalEtaleFamily_mem_limit_of_reduced e he.red M j v c
   refine Exists.elim (hsurj ⟨_, hy⟩) fun h hh => ?_
   choose χ hχ using (galA_tA (K := K))
-  letI iQ : Module (Acris l) (Pb.AL r M j) := (inferInstance : Module (per l K).A (Pb.AL r M j))
+  let iQ : Module (Acris l) (Pb.AL r M j) := (inferInstance : Module (per l K).A (Pb.AL r M j))
   have hz := chain1 (R := Acris l) (Q := Pb.AL r M j) (Γ := K.fixingSubgroup)
     (Mn := fun n => M.MH n j) (M.HS true j) l (tA l) (phiA l) galA (fun g => zA l (χ g))
     (fun n => B.β (B.schFn M.p) (okToOC l K) true n j) (fun g => Pb.galL M j g)

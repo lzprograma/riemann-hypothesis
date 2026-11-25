@@ -13,8 +13,6 @@ open NumberField Formalism.BasicNotions Formalism.L2.SG.HidaSetting Formalism.L2
 
 namespace Formalism.L2.SG.Pf.KernelOfEmbedding
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section HS
 
 variable {Wq Wp : Type*} [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq]
@@ -131,7 +129,7 @@ theorem inner_vT {u u' : D.what₂.Word} (s₁ s₂ : TT Y u u') (h : row Y s₁
     Real.mul_self_sqrt (mul_nonneg (wRow_nonneg _ _) (wRow_nonneg _ _))
   unfold vT vec
   rw [PiLp.inner_apply, Finset.sum_eq_single (⟨s₁.lam, s₁.mem⟩, ⟨s₁.lam', s₁.mem'⟩)]
-  · simp only [if_true, hposition, hwt]
+  · simp only [ite_true, hposition, hwt]
     rw [inner_smul_left, inner_smul_right, ← Formalism.L2.SG.Pf.KernelOfEmbedding.hsInner_eq_emb, ← hw2]
     simp only [Complex.conj_ofReal, Complex.ofReal_mul]
     ring
@@ -150,10 +148,10 @@ theorem pvR_eq (hF : FinX Y) (hK : PairAmpConst Y) (hN : FibreCountEq hF) {u u' 
     by_cases hr : row Y r.1.1 = row Y r.2.1
     · have hlam : r.1.1.lam = q.1.1.lam := congrArg TermDef.Term.lam r.1.2
       have hc := hK u u' q.1.1 q.1.2 r (q.2.choose, q.2.choose_spec.choose) hr q.2.choose_spec.choose_spec
-      rw [if_pos hr, if_pos hr, inner_vT _ _ hr, hc, hlam]
+      rw [ite_eq_left hr, ite_eq_left hr, inner_vT _ _ hr, hc, hlam]
       simp only [RP.l1, RP.l2, Complex.ofReal_mul]
       ring
-    · rw [if_neg hr, if_neg hr]
+    · rw [ite_eq_right hr, ite_eq_right hr]
       simp
   unfold pvR
   rw [Finset.sum_congr rfl fun r _ => key r, ← Finset.mul_sum, ← Complex.ofReal_sum]

@@ -151,17 +151,10 @@ lemma rpow_compare {K : ℝ} (hK : 0 < K) (A : ℝ) {x y : ℝ} (hx : 0 < x) (hy
     calc x ^ A ≤ y ^ A / K ^ A := this
       _ = _ := by ring
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {k r : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 end GlobalTheory.SOrb.CCBridge
 
-namespace GlobalTheory.SOrb
-
-open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.P.BetaSesquilinearity GlobalTheory.SOrb.CCBridge
-
-end GlobalTheory.SOrb
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -176,9 +169,6 @@ open MeasureTheory Matrix Formalism.BasicNotions Formalism.QuantumDeterminants F
 open scoped InnerProductSpace ENNReal
 
 namespace GlobalTheory.Amp.LocalInputs
-
-theorem hpk_det (k r : ℕ) : IsUnit (Hpk k r).det :=
-  Matrix.isUnit_det_of_right_inverse (hpkFacts k r).2.1
 
 theorem urep_of_ds {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     {ε : Fin (2 * r + k + 1) → Bool} {lam : Fin (2 * r + k + 1) → ℝ} {σ : Mat k r → (H →L[ℂ] H)}
@@ -209,7 +199,7 @@ theorem urep_of_ds {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSp
     simp only [Function.comp, back]
 
 theorem opn_pos {k r : ℕ} {g : Mat k r} (hg : g ∈ GG k r) : 0 < opn g := by
-  have hu := ((uHGroup _ _ (hpk_det k r)).2.2 g hg).1
+  have hu := ((uHGroup _ _ (Formalism.FourierDecayAlt.P.BetaSesquilinearity.Hdet k r)).2.2 g hg).1
   have h := opn_mul_le g⁻¹ g
   rw [nonsing_inv_mul _ hu, opn_one] at h
   rcases (opn_nonneg g).lt_or_eq with h0 | h0
@@ -220,7 +210,7 @@ theorem coef_translate {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProdu
     {σ : Mat k r → (H →L[ℂ] H)} (hσ : IsURepOn (GG k r) σ) {a b g : Mat k r} (ha : a ∈ GG k r)
     (hb : b ∈ GG k r) (hg : g ∈ GG k r) (u v : H) :
     coef σ (σ a u) (σ b v) g = coef σ u v (b⁻¹ * g * a) := by
-  obtain ⟨-, hmul, hinv⟩ := uHGroup _ _ (hpk_det k r)
+  obtain ⟨-, hmul, hinv⟩ := uHGroup _ _ (Formalism.FourierDecayAlt.P.BetaSesquilinearity.Hdet k r)
   have hx : b⁻¹ * g * a ∈ GG k r := hmul _ (hmul _ (hinv b hb).2 _ hg) _ ha
   have e : g * a = b * (b⁻¹ * g * a) := by
     rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, mul_nonsing_inv _ (hinv b hb).1, Matrix.one_mul]
@@ -236,7 +226,7 @@ theorem coef_translate {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProdu
 theorem decay_span {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     {σ : Mat k r → (H →L[ℂ] H)} {V : Set H} {a : ℝ} (ha : 0 ≤ a) (hσ : IsURepOn (GG k r) σ) (hV : Decay σ V a) :
     Decay σ (Submodule.span ℂ {v | ∃ g ∈ GG k r, ∃ u ∈ V, v = σ g u} : Submodule ℂ H) a := by
-  obtain ⟨-, hmul, hinv⟩ := uHGroup _ _ (hpk_det k r)
+  obtain ⟨-, hmul, hinv⟩ := uHGroup _ _ (Formalism.FourierDecayAlt.P.BetaSesquilinearity.Hdet k r)
   intro u hu v hv
   refine Submodule.span_induction₂ (p := fun u v _ _ => ∃ C : ℝ, ∀ g ∈ GG k r, ‖coef σ u v g‖ ≤ C * opn g ^ (-a))
     ?_ ?_ ?_ ?_ ?_ ?_ ?_ hu hv
@@ -315,7 +305,7 @@ theorem gap_of_nodes (D : D7) (τ : D.what₂.Tau) (h : ℝ) (hanti : StrictAnti
         apply hne
         unfold epsSH epsS
         simp only [Fin.val_cast]
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
         split_ifs
         · rfl
         · have : b.val - (D.R.k - 1) = 0 := by omega

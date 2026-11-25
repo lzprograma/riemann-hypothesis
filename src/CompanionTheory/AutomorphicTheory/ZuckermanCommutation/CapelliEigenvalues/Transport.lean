@@ -67,9 +67,9 @@ theorem top_smooth {f : Matrix (Fin n) (Fin n) ℂ → E} (hf : SmoothOnGV ε f)
     SmoothOnGV ε (Top (EabV ε) u a b f) := by
   unfold Formalism.QuantumDeterminants.Top
   by_cases hab : a = b
-  · simp only [if_pos hab]
+  · simp only [ite_eq_left hab]
     exact io_smooth_add (io_smooth_smul u hf) (io_eab_smooth hf a b)
-  · simp only [if_neg hab]
+  · simp only [ite_eq_right hab]
     exact io_smooth_add io_smooth_zero (io_eab_smooth hf a b)
 
 theorem eab_clm (φ : E →L[ℂ] E') {f : Matrix (Fin n) (Fin n) ℂ → E} (hf : SmoothOnGV ε f) (a b : Fin n)

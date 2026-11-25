@@ -163,7 +163,7 @@ abbrev MG (ψ : AddChar (A F) ℂ) : AddSubgroup (A F) := perpG ψ (ohG F)
 variable {ψ : AddChar (A F) ℂ}
 
 theorem ohG_le_MG (hψ : IsStdChar F ψ) : ohG F ≤ MG ψ :=
-  fun _ hx z hz => ((_root_.GlobalTheory.CompanionTheory.SW.Core.StdChar.main F).2 ψ hψ).2.1 _ (oh_mul hz hx)
+  fun _ hx _ hz => ((_root_.GlobalTheory.CompanionTheory.SW.Core.StdChar.main F).2 ψ hψ).2.1 _ (oh_mul hz hx)
 
 theorem algebraMap_mem_MG_iff (hψ : IsStdChar F ψ) {b : F} :
     algebraMap F (A F) b ∈ MG ψ ↔ b ∈ dinv F := by

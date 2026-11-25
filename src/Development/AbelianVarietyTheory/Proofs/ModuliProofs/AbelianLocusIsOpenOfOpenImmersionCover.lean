@@ -61,10 +61,6 @@ private theorem isProper_pullback_snd_of_isPullback {A B C D : Scheme.{0}} {fst 
   rw [← h.isoPullback_inv_snd]
   exact (MorphismProperty.cancel_left_of_respectsIso @IsProper h.isoPullback.inv snd).2 H
 
-private theorem isProper_snd_of_isPullback_of_isProper {A B C D : Scheme.{0}} {fst : A ⟶ B} {snd : A ⟶ C} {f : B ⟶ D}
-    {g : C ⟶ D} (h : IsPullback fst snd f g) (hf : IsProper f) : IsProper snd :=
-  isProper_of_isPullback_of_pullback_snd h inferInstance
-
 theorem isProper_restrict_of_cover {X Z : Scheme.{0}} (p : X ⟶ Z) {I : Type} {Y X' : I → Scheme.{0}}
     (f : ∀ i, Y i ⟶ Z) [∀ i, IsOpenImmersion (f i)] (p' : ∀ i, X' i ⟶ Y i) (F : ∀ i, X' i ⟶ X)
     (h : ∀ i, IsPullback (F i) (p' i) p (f i)) (V : ∀ i, (Y i).Opens) (hV : ∀ i, IsProper (p' i ∣_ V i))
@@ -95,7 +91,7 @@ theorem isProper_restrict_of_cover {X Z : Scheme.{0}} (p : X ⟶ Z) {I : Type} {
       refine IsPullback.of_right ?_ ((hsq i).lift_snd _ _ hw) (hsq i)
       rw [(hsq i).lift_fst]
       exact big
-    exact isProper_snd_of_isPullback_of_isProper sq (hV i)
+    exact MorphismProperty.of_isPullback (P := @IsProper) sq (hV i)
 
 private theorem mem_abLocus_of_map_mem_of_isPullback {Y Z : Scheme.{0}} {A : Over Y} {B : Over Z} {g : Y ⟶ Z}
     {φ : A.left ⟶ B.left} (h : IsPullback φ A.hom B.hom g) (y : Y) (hy : g y ∈ abLocus B) :

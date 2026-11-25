@@ -1,45 +1,7 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TraceSingleMulSingle
 
 @[expose] public section
 
@@ -73,22 +35,8 @@ theorem hb_herm (p : Fin n × Fin n) : (hb p).IsHermitian := by
   · simp [IsHermitian, conjTranspose_smul, conjTranspose_sub, conjTranspose_single]
     rw [← smul_neg, neg_sub]
 
-theorem hb_ortho (p q : Fin n × Fin n) : (hb p * hb q).trace = if p = q then 1 else 0 := by
-  obtain ⟨i, j⟩ := p
-  obtain ⟨k, l⟩ := q
-  have s2 := sq_inv_sqrt_two
-  simp only [PositivityTheory.RgTw.hb, Prod.mk.injEq]
-  split_ifs with h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 <;>
-  simp only [Matrix.smul_mul, Matrix.mul_smul, Matrix.add_mul, Matrix.mul_add, Matrix.sub_mul, Matrix.mul_sub,
-    trace_add, trace_sub, trace_smul, trace_single_mul_single, smul_eq_mul] <;>
-  simp only [Fin.ext_iff, Fin.lt_iff_val_lt_val] at * <;>
-  split_ifs <;>
-  (try (exfalso; omega)) <;>
-  (try simp) <;>
-  (try ring_nf) <;>
-  first
-  | linear_combination 2 * s2
-  | linear_combination 2 * s2 - 2 * ((Real.sqrt 2 : ℂ))⁻¹ ^ 2 * Complex.I_sq
+theorem hb_ortho (p q : Fin n × Fin n) : (hb p * hb q).trace = if p = q then 1 else 0 :=
+  _root_.GlobalTheory.CompanionTheory.TopClass.trace_hb_mul_hb p q
 
 theorem trace_mul_single (D : Mat n) (a b : Fin n) (c : ℂ) : (D * single a b c).trace = D b a * c := by
   simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, Matrix.single_apply, ite_and]
@@ -104,13 +52,13 @@ theorem eq_zero_of_trace (D : Mat n) (h : ∀ p, (D * hb p).trace = 0) : D = 0 :
   have hdiag : ∀ i, D i i = 0 := by
     intro i
     have e := h (i, i)
-    simp only [PositivityTheory.RgTw.hb, if_true, trace_mul_single, mul_one] at e
+    simp only [PositivityTheory.RgTw.hb, ite_true, trace_mul_single, mul_one] at e
     exact e
   have key : ∀ i j : Fin n, i < j → D i j = 0 ∧ D j i = 0 := by
     intro i j hij
     have e1 := h (i, j)
     have e2 := h (j, i)
-    simp only [PositivityTheory.RgTw.hb, ne_of_lt hij, (ne_of_lt hij).symm, not_lt_of_gt hij, hij, if_false, if_true,
+    simp only [PositivityTheory.RgTw.hb, ne_of_lt hij, (ne_of_lt hij).symm, not_lt_of_gt hij, hij, ite_false, ite_true,
       Matrix.mul_smul, trace_smul, Matrix.mul_add, Matrix.mul_sub, trace_add, trace_sub, trace_mul_single,
       smul_eq_mul, mul_one] at e1 e2
     have f1 : D j i + D i j = 0 := (mul_eq_zero.mp e1).resolve_left hs

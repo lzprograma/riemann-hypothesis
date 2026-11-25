@@ -2,7 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.NotOrdGeOfNotMem
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDvrLiftOfGeometricPoint
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraitExistsAfterFiniteExtensionOfCompleteDVRStatement
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -53,7 +52,6 @@ open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM
 open scoped CategoryTheory.Obj
 open GlobalTheory.Poinc GlobalTheory.Poinc.Eq8 Formalism.L2.Pj
 open scoped TensorProduct
-attribute [local instance] Over.cartesianMonoidalCategory
 open Classical
 
 namespace GlobalTheory.Poinc.TraitCen
@@ -100,7 +98,7 @@ theorem exists_cdvr (M : RatModel o' Ω) (U₀ : M.Z.Opens) (hU : (U₀ : Set M.
   have hc0 : c ≠ 0 := by
     by_cases hp : p = 0
     · simp [c, hp]
-    · simp only [c, hp, if_false]
+    · simp only [c, hp, ite_false]
       rw [← map_natCast (PowerSeries.C (R := O))]
       exact (map_ne_zero_iff _ (PowerSeries.C_injective)).2 (Nat.cast_ne_zero.2 hp)
   let f : PowerSeries O := PowerSeries.X * PowerSeries.C f₀ * c
@@ -140,7 +138,7 @@ theorem exists_cdvr (M : RatModel o' Ω) (U₀ : M.Z.Opens) (hU : (U₀ : Set M.
       have hpq : p = q := ringChar.eq κ q
       have hp : p ≠ 0 := hpq ▸ hqp.ne_zero
       apply hψf
-      have hc : c = (q : PowerSeries O) := by simp only [c, if_neg hp, hpq]
+      have hc : c = (q : PowerSeries O) := by simp only [c, ite_eq_right hp, hpq]
       show ψ (PowerSeries.X * PowerSeries.C f₀ * c) = 0
       rw [hc, map_mul, map_natCast, hqW, mul_zero]
     · subst hq0
@@ -162,31 +160,5 @@ theorem exists_cdvr (M : RatModel o' Ω) (U₀ : M.Z.Opens) (hU : (U₀ : Set M.
     have := hf hm
     simp only [a, Scheme.Hom.comp_apply, ht]
     exact this
-
-theorem exists_trait_cen : ∀ (g n : ℕ) (o : Type) [CommRing o] (ζ : o) (F : SFam g n ζ) (o' Ω : Type) [CommRing o']
-    [Field Ω] [Algebra o' Ω] [ArithBase o' Ω] (M : RatModel o' Ω) (U₀ : M.Z.Opens), (U₀ : Set M.Z).Nonempty →
-    ∀ (X : Scheme.{0}) (u₀ : U₀.toScheme ⟶ X) (u : X ⟶ F.X) (x : M.Z), IsClosed ({x} : Set M.Z) →
-      ∃ (T : Trait F) (ξ : Sp T.V ⟶ M.Z), ThroughU M U₀ u₀ u T ξ ∧ ξ (IsLocalRing.closedPoint T.V) = x := by
-  intro g n o _ ζ F o' Ω _ _ _ _ M U₀ hU X u₀ u x _
-  obtain ⟨W, _, _, _, _, hc, a, ha, hg⟩ := exists_cdvr M U₀ hU x
-  have hr : Set.range (jK W ≫ a) ⊆ Set.range U₀.ι := by
-    rw [Scheme.Opens.range_ι]
-    rintro _ ⟨t, rfl⟩
-    exact hg t
-  let ξ₀' : Sp (FractionRing W) ⟶ U₀.toScheme := IsOpenImmersion.lift U₀.ι (jK W ≫ a) hr
-  have hξ₀' : ξ₀' ≫ U₀.ι = jK W ≫ a := IsOpenImmersion.lift_fac _ _ _
-  have hB : GlobalTheory.Mum.Base W := ⟨⟨inferInstance, inferInstance, inferInstance, hc⟩, inferInstance⟩
-  obtain ⟨T, f, fK, -, hloc, -, hcomp, hy⟩ := GlobalTheory.T.traitExistsAfterFiniteExtension_of_completeDVR g n o ζ F W hB inferInstance (ξ₀' ≫ u₀ ≫ u)
-  refine ⟨T, spMap f ≫ a, ⟨spMap fK ≫ ξ₀', ?_, ?_⟩, ?_⟩
-  · rw [Category.assoc, hξ₀', ← Category.assoc, ← Category.assoc]
-    congr 1
-    rw [← Spec.map_comp, ← Spec.map_comp]
-    congr 1
-    ext r
-    exact hcomp r
-  · rw [hy, Category.assoc]
-  · have h : (spMap f) (closedPoint T.V) = closedPoint W := IsLocalRing.comap_closedPoint f
-    show a ((spMap f) (closedPoint T.V)) = x
-    rw [h, ha]
 
 end GlobalTheory.Poinc.TraitCen

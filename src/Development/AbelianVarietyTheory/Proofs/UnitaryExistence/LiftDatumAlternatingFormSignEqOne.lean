@@ -48,7 +48,6 @@ import Formalism.LocalToGlobal.BesselHermitianTheta.NoncompactGapAtLeastRange
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj
 open scoped TensorProduct Matrix Topology
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Member
 
 namespace GlobalTheory.Member
@@ -60,7 +59,7 @@ theorem neg_baseElement_im_neg_baseEmbedding (D : D7) : (D.host.φ₀ (-D.host.x
     rw [hφ]
     have hd : (0 : ℝ) < D.host.d := by exact_mod_cast d_pos D
     simpa using hd
-  rw [if_pos hpos, Int.cast_one, _root_.one_mul] at h1
+  rw [ite_eq_left hpos, Int.cast_one, _root_.one_mul] at h1
   rw [map_neg, Complex.neg_im]
   linarith
 

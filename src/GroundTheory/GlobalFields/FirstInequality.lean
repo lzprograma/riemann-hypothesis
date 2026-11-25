@@ -66,12 +66,12 @@ theorem finrank_infiniteCompletion_eq_ite [IsGalois K L] (v : InfinitePlace K)
     rw [← hv]
     exact NumberField.InfinitePlace.isUnramifiedIn_comap
   rcases w.isUnramified_or_isRamified K with h | h
-  · rw [if_pos (hiff.2 h), h.finrank_eq_one v, Nat.cast_one]
+  · rw [ite_eq_left (hiff.2 h), h.finrank_eq_one v, Nat.cast_one]
   · have hn : ¬ v.IsUnramifiedIn L := fun h' ↦ by
       have := hiff.1 h'
       rw [NumberField.InfinitePlace.IsRamified] at h
       exact h this
-    rw [if_neg hn, h.finrank_eq_two v, Nat.cast_ofNat]
+    rw [ite_eq_right hn, h.finrank_eq_two v, Nat.cast_ofNat]
 
 
 open AdicLiesOver in

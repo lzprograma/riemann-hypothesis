@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetFrameClassProperties
 import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RmulMul
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
@@ -114,12 +115,8 @@ theorem map_span {ι : Type} (g : ι → V) (h : V ≃ₗ[E] V) (Λ : Submodule 
     rw [this]; exact Λ.smul_mem c hx
 
 theorem map_spanE {ι : Type} (g : ι → V) (h : V ≃ₗ[E] V) (Λ : Submodule E V) (H : ∀ i, h (g i) ∈ Λ)
-    {x : V} (hx : x ∈ Submodule.span E (Set.range g)) : h x ∈ Λ := by
-  induction hx using Submodule.span_induction with
-  | mem x hx => obtain ⟨i, rfl⟩ := hx; exact H i
-  | zero => simp
-  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Λ.add_mem hx hy
-  | smul c x _ hx => rw [map_smul]; exact Λ.smul_mem c hx
+    {x : V} (hx : x ∈ Submodule.span E (Set.range g)) : h x ∈ Λ :=
+  (Submodule.span_le (p := Λ.comap (h : V →ₗ[E] V))).2 (Set.range_subset_iff.2 H) hx
 
 theorem map_mem_of_mem_sup_three_submodules (A A' B Λ : Submodule O V) (h : V ≃ₗ[E] V) (H1 : ∀ x ∈ A, h x ∈ Λ)
     (H2 : ∀ x ∈ A', h x ∈ Λ) (H3 : ∀ x ∈ B, h x ∈ Λ) : ∀ x ∈ A ⊔ A' ⊔ B, h x ∈ Λ := by
@@ -272,18 +269,7 @@ theorem cls_map (S : Frames L r k) (g g' : Fin (r + 1) → S.V) (h : S.GLV)
     rw [hp', map_comb g' h s' A' e']
 
 theorem self_mem_cls (S : Frames L r k) (g g' : Fin (r + 1) → S.V) : (g, g') ∈ S.frameCls g g' := by
-  have one : ∀ i j, (1 : Matrix (Fin (r + 1)) (Fin (r + 1)) E) i j ∈ L.O := by
-    intro i j
-    rw [Matrix.one_apply]
-    split_ifs
-    · exact L.O.one_mem
-    · exact L.O.zero_mem
-  refine ⟨1, 1, one, one, fun i j hij => ?_, fun i => ?_, fun i j => ⟨0, L.O.zero_mem, by simp⟩,
-    fun j => ?_, fun j => ?_⟩
-  · simp [Matrix.one_apply_ne hij.ne']
-  · simp
-  · simp [Matrix.one_apply]
-  · simp [Matrix.one_apply]
+  first | exact _root_.GlobalTheory.HL.FrameClass.refl_mem | exact @_root_.GlobalTheory.HL.FrameClass.refl_mem | apply _root_.GlobalTheory.HL.FrameClass.refl_mem <;> assumption
 
 theorem mem_of_cls (S : Frames L r k) (g g' : Fin (r + 1) → S.V) (p : S.FrP) (hp : p ∈ S.frameCls g g') :
     (∀ j, p.1 j ∈ Submodule.span L.O (Set.range g)) ∧ ∀ j, p.2 j ∈ Submodule.span L.O (Set.range g') := by

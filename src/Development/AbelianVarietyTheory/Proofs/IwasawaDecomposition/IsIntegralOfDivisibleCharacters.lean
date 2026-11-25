@@ -142,7 +142,7 @@ theorem _root_.GlobalTheory.IntegralOfPointValues.isIntegral_inv_smul_of_closed 
   let f : C → O := fun α => if hh : ∃ k : O, algebraMap O C k = a * α then hh.choose else 0
   have hf : ∀ α ∈ s, algebraMap O C (f α) = a * α := fun α hα => by
     have hh := hroot α hα
-    simp only [f, dif_pos hh]
+    simp only [f, dite_eq_left hh]
     exact hh.choose_spec
   have hsplit : minpoly C y = (s.map fun α => X - Polynomial.C α).prod :=
     (IsAlgClosed.splits (minpoly C y)).eq_prod_roots_of_monic (minpoly.monic hyint)

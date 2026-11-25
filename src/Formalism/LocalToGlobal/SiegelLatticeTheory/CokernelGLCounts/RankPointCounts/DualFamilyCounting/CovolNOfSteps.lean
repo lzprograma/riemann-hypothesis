@@ -11,8 +11,6 @@ noncomputable section
 
 namespace Formalism.L2.SG.Pf.LsNc5
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 abbrev LtPair (r : ℕ) : Type := {p : Fin r × Fin r // p.1 < p.2}
 
 abbrev CIdx (r k : ℕ) : Type :=

@@ -94,44 +94,4 @@ theorem partC (hS : SplitEq) (hB : BrCusp) : GlobalTheory.Published.CuspFormsBou
   rw [ht, hn]
   exact hC y hy
 
-theorem partB (hS : SplitEq) (hH : MuHaar) (hP : QuotPres) (hE : CmpEquiv) (hF : CmpForm) (h1 : RangeLe) (h2 : ContMem)
-    (hI : AbsIrr) (hN : NeBot) (hK : KFinTr) (hM : KFinMem) (hR : BrRep) : GlobalTheory.Published.CuspFiniteVectorsGL := by
-  intro E _ _ _ a μ _ _ H hH' hirr
-  have := hH E a μ
-  have hp := hP E a μ
-  have hle : H ≤ LinearMap.range (cmp hp).toLinearMap := (range_cmp h1 h2 hp).symm ▸ hH'
-  obtain ⟨_, hV, hVi⟩ := hI _ _ _ _ (cuspRepT (muOne μ)) _ (cmp hp) retractOne retractOne_surjective
-    (hE E a μ _ hp) H hle hirr
-  have hne := hN E a _ _ hV hVi
-  have hcl := CuspidalAutomorphicRepresentation.topologicalClosure_map_ofSummand _ hV hVi hne
-  generalize CuspidalAutomorphicRepresentation.ofSummand _ hV hVi hne = π₀ at hcl
-  obtain ⟨π, hπ⟩ := hR E a π₀
-  have hto : ∀ φ ∈ π.V, ∃ ψ ∈ π₀.carrier, ψ.1 = φ.1 := fun φ hφ => hπ.le ⟨φ, hφ, rfl⟩
-  have hof : ∀ ψ ∈ π₀.carrier, ∃ φ ∈ π.V, φ.1 = ψ.1 := fun ψ hψ => hπ.ge ⟨ψ, hψ, rfl⟩
-  have hnorm : IsNormalised π := fun φ hφ t g => by
-    obtain ⟨ψ, hψ, e⟩ := hto φ hφ
-    rw [← e, hS]
-    exact π₀.le_central hψ _ g
-  have hcls : classes π.V μ = (π₀.carrier.map (cuspVecL (muOne μ))).map (cmp hp).toLinearMap := by
-    ext F
-    constructor
-    · rintro ⟨φ, hφ, e⟩
-      obtain ⟨ψ, hψ, e'⟩ := hto φ hφ
-      exact ⟨_, ⟨ψ, hψ, rfl⟩, l2DiscreteQuotient_ext_iff_lift_ae_eq.2 ((hF E a μ _ hp ψ (π₀.le_central hψ)).trans (e' ▸ e.symm))⟩
-    · rintro ⟨_, ⟨ψ, hψ, rfl⟩, rfl⟩
-      obtain ⟨φ, hφ, e⟩ := hof ψ hψ
-      exact ⟨φ, hφ, e ▸ hF E a μ _ hp ψ (π₀.le_central hψ)⟩
-  refine ⟨π, hnorm, fun φ hφ => ?_, ?_, fun F hFH hk => ?_⟩
-  · obtain ⟨ψ, hψ, e⟩ := hto φ hφ
-    exact memL2_of_ae_eq (leftInv_latticeGL (π.cusp φ hφ).1.left (hnorm φ hφ))
-      (e ▸ hF E a μ _ hp ψ (π₀.le_central hψ))
-  · rw [hcls, ← Submodule.map_comap_eq_self hle, ← hcl]
-    refine SetLike.coe_injective ?_
-    simp only [Submodule.topologicalClosure_coe, Submodule.map_coe]
-    exact (cmp hp).isometry.isClosedEmbedding.closure_image_eq _
-  · obtain ⟨v, rfl⟩ := hle hFH
-    obtain ⟨k1, k2⟩ := hK E a μ _ hp v hk
-    rw [hcls]
-    exact ⟨v, hM E a _ π₀ v (hcl.symm ▸ hFH) k1 k2, rfl⟩
-
 end UpperTheory.V.KernelIndexFullLattice

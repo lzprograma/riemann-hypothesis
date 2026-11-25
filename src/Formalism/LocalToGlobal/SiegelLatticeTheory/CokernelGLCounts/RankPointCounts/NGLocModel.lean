@@ -17,8 +17,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.NGLocModel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 open Formalism.MainNotions.S.LocNG Formalism.MainNotions.S.Loc
@@ -141,8 +139,6 @@ def a2W {Cl Nu : Type} (L : PN.LocalNG Cl Nu) (amp : (∀ p, L.D p) → ℂ) (c 
   match L.dat c ν with
   | none => 0
   | some d => L.rw c * ‖amp d‖ ^ 2
-
-theorem localAmplitudeSq_eq_weighted {Cl Nu : Type} (L : PN.LocalNG Cl Nu) (c : Cl) (ν : Nu) : L.a2 c ν = a2W L L.ampNG c ν := rfl
 
 def FamOKS {Z : LocDat D} {τ : Type} {Cl Nu : Type}
     (N : PN.NGData τ D.host.E D.R.rS Cl Nu) (γ : PN.Pts D.host.E D.R.rS) (S : Finset (Cl × Nu)) (C0n : ℕ) (AAre : ℝ)

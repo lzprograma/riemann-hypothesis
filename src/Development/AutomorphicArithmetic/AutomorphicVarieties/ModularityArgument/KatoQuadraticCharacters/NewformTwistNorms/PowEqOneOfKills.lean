@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedCocycleKillsRoots
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.NewformTwistNorms.NewformOfAdmissibleTwist
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.SsMonoOdd
@@ -158,16 +159,7 @@ theorem pow_eq_one_of_kills [IsAlgClosure ℚ Ω] {C : Type} [CommGroup C] {N : 
 
 theorem isOpen_ker_kills [IsAlgClosure ℚ Ω] {C : Type} [Group C] {M : ℕ} (hM : 0 < M) {φ : G ℚ Ω →* C} (hφ : KillsMu M φ) :
     IsOpen (φ.ker : Set (G ℚ Ω)) := by
-  have hfin : {ζ : Ω | ζ ^ M = 1}.Finite := by
-    classical
-    refine (Polynomial.nthRoots M (1 : Ω)).toFinset.finite_toSet.subset fun ζ hζ => ?_
-    simpa [Polynomial.mem_nthRoots hM] using hζ
-  refine Subgroup.isOpen_of_mem_nhds _ (g := 1) (Filter.mem_of_superset
-    ((hfin.isOpen_biInter fun ζ _ => stabilizer_isOpen_of_isIntegral (K := ℚ) ζ).mem_nhds ?_) fun s hs => ?_)
-  · simp only [Set.mem_iInter]
-    exact fun ζ _ => Subgroup.one_mem _
-  · simp only [Set.mem_iInter] at hs
-    exact hφ s fun ζ hζ => hs ζ hζ
+  apply _root_.GlobalTheory.Ord2.FirstDer.isOpen_ker_of_killsMu <;> assumption
 
 theorem cont_of_kills [IsAlgClosure ℚ Ω] {M : ℕ} (hM : 0 < M) {φ : G ℚ Ω →* (Qbar l)ˣ} (hφ : KillsMu M φ) :
     Continuous fun s => (φ s : Qbar l) := by
@@ -300,12 +292,6 @@ theorem eps_mem [IsAlgClosure ℚ Ω] {W : R2 Ω l} {A A' : ValuationSubring Ω}
   exact h2.imp Units.ext Units.ext
 
 end GlobalTheory.Ord2.SrcForm
-
-namespace GlobalTheory.Ord2
-
-open TwDet SrcForm
-
-end GlobalTheory.Ord2
 
 end
 

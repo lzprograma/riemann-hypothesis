@@ -67,7 +67,7 @@ theorem transpose_mul_incl (f : Fin b ↪ Fin a) : (incl R f)ᵀ * incl R f = 1 
   rw [Finset.sum_eq_single (f p)]
   · simp [eq_comm]
   · intro i _ hi
-    rw [if_neg (Ne.symm hi), zero_mul]
+    rw [ite_eq_right (Ne.symm hi), zero_mul]
   · simp
 
 
@@ -104,9 +104,9 @@ theorem extN_single (f : Fin b ↪ Fin a) (p q : Fin b) (x : R) :
     · obtain ⟨q', rfl⟩ := hj
       simp [extN_apply_apply, Matrix.single_apply]
     · push Not at hj
-      rw [extN_apply_right f _ _ hj, Matrix.single_apply, if_neg fun h => hj q h.2]
+      rw [extN_apply_right f _ _ hj, Matrix.single_apply, ite_eq_right fun h => hj q h.2]
   · push Not at hi
-    rw [extN_apply_left f _ hi, Matrix.single_apply, if_neg fun h => hi p h.1]
+    rw [extN_apply_left f _ hi, Matrix.single_apply, ite_eq_right fun h => hi p h.1]
 
 theorem map_extN (f : Fin b ↪ Fin a) (φ : R →+* S) (X : Matrix (Fin b) (Fin b) R) :
     (extN R f X).map φ = extN S f (X.map φ) := by
@@ -131,83 +131,7 @@ theorem continuous_embGL [TopologicalSpace R] [IsTopologicalRing R] (f : Fin b �
   Continuous.units_map _ (continuous_const.add ((continuous_const.matrix_mul continuous_id).matrix_mul continuous_const :
     Continuous fun X : Matrix (Fin b) (Fin b) R => incl R f * X * (incl R f)ᵀ))
 
-theorem star_extN [StarRing R] (f : Fin b ↪ Fin a) (X : Matrix (Fin b) (Fin b) R) :
-    star (extN R f X) = extN R f (star X) := by
-  have h : (incl R f)ᴴ = (incl R f)ᵀ := by
-    ext p i; simp [incl, apply_ite star]
-  have h' : ((incl R f)ᵀ)ᴴ = incl R f := by rw [← h, Matrix.conjTranspose_conjTranspose]
-  simp only [extN_apply, Matrix.star_eq_conjTranspose, Matrix.conjTranspose_mul, h, h', Matrix.mul_assoc]
-
 open GlobalTheory.LeviGA
-
-def fstIx {r : ℕ} (h : r ≤ a) : Fin r ↪ Fin a := Function.Embedding.inl.trans (blkEquiv h).toEmbedding
-
-def sndIx {r : ℕ} (h : r ≤ a) : Fin (a - r) ↪ Fin a := Function.Embedding.inr.trans (blkEquiv h).toEmbedding
-
-theorem fstIx_apply {r : ℕ} (h : r ≤ a) (p : Fin r) : fstIx h p = blkEquiv h (Sum.inl p) := rfl
-
-theorem sndIx_apply {r : ℕ} (h : r ≤ a) (p : Fin (a - r)) : sndIx h p = blkEquiv h (Sum.inr p) := rfl
-
-theorem blkGL_fst {r : ℕ} (h : r ≤ a) (m : GL (Fin r) R) : blkGL h (m, 1) = embGL (fstIx h) m := by
-  apply Units.ext
-  ext i j
-  obtain ⟨i, rfl⟩ := (blkEquiv h).surjective i
-  obtain ⟨j, rfl⟩ := (blkEquiv h).surjective j
-  have hn : ∀ (q : Fin (a - r)) p, fstIx h p ≠ blkEquiv h (Sum.inr q) := fun q p e => by
-    simpa [fstIx_apply] using e
-  rw [blkGL_apply, embGL_val, Matrix.add_apply, Matrix.sub_apply]
-  rcases i with i | i <;> rcases j with j | j
-  · simp only [← fstIx_apply, extN_apply_apply]; simp [Matrix.one_apply]
-  · simp only [extN_apply_right _ _ _ (hn j)]; simp
-  · simp only [extN_apply_left _ _ (hn i)]; simp
-  · simp only [extN_apply_left _ _ (hn i)]; simp [Matrix.one_apply]
-
-theorem blkGL_snd {r : ℕ} (h : r ≤ a) (m : GL (Fin (a - r)) R) : blkGL h (1, m) = embGL (sndIx h) m := by
-  apply Units.ext
-  ext i j
-  obtain ⟨i, rfl⟩ := (blkEquiv h).surjective i
-  obtain ⟨j, rfl⟩ := (blkEquiv h).surjective j
-  have hn : ∀ (q : Fin r) p, sndIx h p ≠ blkEquiv h (Sum.inl q) := fun q p e => by
-    simpa [sndIx_apply] using e
-  rw [blkGL_apply, embGL_val, Matrix.add_apply, Matrix.sub_apply]
-  rcases i with i | i <;> rcases j with j | j
-  · simp only [extN_apply_left _ _ (hn i)]; simp [Matrix.one_apply]
-  · simp only [extN_apply_left _ _ (hn i)]; simp
-  · simp only [extN_apply_right _ _ _ (hn j)]; simp
-  · simp only [← sndIx_apply, extN_apply_apply]; simp [Matrix.one_apply]
-
-theorem blkGL_eq_fst {r : ℕ} (h : r ≤ a) (m₁ : GL (Fin r) R) (m₂ : GL (Fin (a - r)) R) :
-    blkGL h (m₁, m₂) = blkGL h (1, m₂) * embGL (fstIx h) m₁ := by
-  rw [← blkGL_fst, ← map_mul]; simp
-
-theorem blkGL_eq_snd {r : ℕ} (h : r ≤ a) (m₁ : GL (Fin r) R) (m₂ : GL (Fin (a - r)) R) :
-    blkGL h (m₁, m₂) = blkGL h (m₁, 1) * embGL (sndIx h) m₂ := by
-  rw [← blkGL_snd, ← map_mul]; simp
-
-theorem blkGL_mul_unip {r : ℕ} (h : r ≤ a) (p : GL (Fin r) R × GL (Fin (a - r)) R) (y : BlockIx a r → R) :
-    ∃ y' : BlockIx a r → R, blkGL h p * unip y = unip y' * blkGL h p := by
-  let Z : Matrix (Fin a) (Fin a) R := (blkGL h p).val * nilM y * (blkGL h p⁻¹).val
-  refine ⟨fun q => Z q.1.1 q.1.2, ?_⟩
-  have hZ : nilM (fun q : BlockIx a r => Z q.1.1 q.1.2) = Z := by
-    ext i j
-    simp only [nilM, Matrix.of_apply]
-    split_ifs with hij
-    · rfl
-    · symm
-      simp only [Z, Matrix.mul_apply]
-      refine Finset.sum_eq_zero fun l _ => ?_
-      rcases blkGL_block h p⁻¹ l j with h2 | h2
-      · rw [Finset.sum_eq_zero, zero_mul]
-        intro k _
-        rcases blkGL_block h p i k with h1 | h1
-        · simp only [nilM, Matrix.of_apply]
-          rw [dite_eq_right (fun hh => hij (by omega)), mul_zero]
-        · rw [h1, zero_mul]
-      · rw [h2, mul_zero]
-  apply Units.ext
-  change (blkGL h p).val * (1 + nilM y) = (1 + nilM fun q : BlockIx a r => Z q.1.1 q.1.2) * (blkGL h p).val
-  rw [hZ, mul_add, add_mul, mul_one, one_mul, mul_assoc, ← Units.val_mul, ← map_mul, inv_mul_cancel, map_one,
-    Units.val_one, mul_one]
 
 end Ring
 
@@ -249,16 +173,6 @@ theorem embGL_finGL (k : GL (Fin b) (Af E)) : embGL f (finGL E b k) = finGL E a 
   ga_ext (by simp [map_embGL]) (by simp [map_embGL])
 
 
-omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
-def embK (k : Kinf E b) : Kinf E a :=
-  ⟨(embGL f (Unitary.toUnits k)).val, Matrix.mem_unitaryGroup_iff.2 (by
-    have e : star (embGL f (Unitary.toUnits k)).val = (embGL f (Unitary.toUnits k)⁻¹).val := by
-      rw [embGL_val, embGL_val, star_add, star_sub, star_extN, star_extN, star_one, star_one]; rfl
-    rw [e, ← Units.val_mul, ← map_mul, mul_inv_cancel, map_one, Units.val_one])⟩
-
-omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
-theorem toUnits_embK (k : Kinf E b) : Unitary.toUnits (embK f k) = embGL f (Unitary.toUnits k) := Units.ext rfl
-
 
 omit [_root_.NumberField.IsTotallyComplex E] in
 variable (E) in
@@ -273,20 +187,6 @@ def extL : Lie E b →L[ℝ] Lie E a :=
 omit [_root_.NumberField.IsTotallyComplex E] in
 theorem toL_embGL (y : GL (Fin b) (Cinf E)) :
     toL (embGL f y).val = toL (1 - extN (Cinf E) f 1) + extL E f (toL y.val) := rfl
-
-omit [_root_.NumberField.IsTotallyComplex E] in
-theorem height_embGL : ∃ B : ℝ, 0 ≤ B ∧ ∀ y : GL (Fin b) (Cinf E), height (embGL f y) ≤ B * height y := by
-  refine ⟨1 + 2 * ‖toL (1 - extN (Cinf E) f 1)‖ + ‖extL E f‖, by positivity, fun y => ?_⟩
-  unfold height
-  rw [← map_inv, toL_embGL, toL_embGL]
-  have h1 := (norm_add_le (toL (1 - extN (Cinf E) f 1)) _).trans (add_le_add_right ((extL E f).le_opNorm (toL y.val)) _)
-  have h2 := (norm_add_le (toL (1 - extN (Cinf E) f 1)) _).trans
-    (add_le_add_right ((extL E f).le_opNorm (toL (y⁻¹).val)) _)
-  have n1 := norm_nonneg (toL y.val)
-  have n2 := norm_nonneg (toL (y⁻¹).val)
-  have n3 := norm_nonneg (toL (1 - extN (Cinf E) f 1))
-  have n4 := norm_nonneg (extL E f)
-  nlinarith [mul_nonneg n1 n3, mul_nonneg n2 n3]
 
 theorem chart_slice (ψ : GA E a → ℂ) (g : GA E a) (m : GA E b) {x : Lie E b} (hx : x ∈ invSet E b) :
     toL (1 - extN (Cinf E) f 1) + extL E f x ∈ invSet E a ∧
@@ -340,19 +240,6 @@ theorem aeval_qdet_slice (g : GA E a) (ψ : Sm E a) (τ : E →+* ℂ) (u : ℂ)
       have hx' : x.2 = slice f g x.1 := hx
       change Eop τ p q x.2 = _
       rw [hx', Eop_slice]) u P (ψ, slice f g ψ) rfl
-
-theorem growth_slice (g : GA E a) (ψ : Sm E a)
-    (h : ∀ g, ∃ (C : ℝ) (N : ℕ), ∀ y, ‖ψ.1 (g * infGL E a y)‖ ≤ C * height y ^ N) :
-    ∀ m, ∃ (C : ℝ) (N : ℕ), ∀ y, ‖(slice f g ψ).1 (m * infGL E b y)‖ ≤ C * height y ^ N := by
-  intro m
-  obtain ⟨C, N, hC⟩ := h (g * embGL f m)
-  obtain ⟨B, -, hB⟩ := height_embGL (E := E) f
-  refine ⟨|C| * B ^ N, N, fun y => ?_⟩
-  rw [slice_apply, map_mul, embGL_infGL, ← mul_assoc]
-  have h0 : 0 ≤ height (embGL f y) := zero_le_one.trans (one_le_height _)
-  refine (hC _).trans ((mul_le_mul_of_nonneg_right (le_abs_self C) (pow_nonneg h0 N)).trans ?_)
-  rw [mul_assoc, ← mul_pow]
-  exact mul_le_mul_of_nonneg_left (pow_le_pow_left₀ h0 (hB y) N) (abs_nonneg C)
 
 end GlobalTheory.GLSlice
 

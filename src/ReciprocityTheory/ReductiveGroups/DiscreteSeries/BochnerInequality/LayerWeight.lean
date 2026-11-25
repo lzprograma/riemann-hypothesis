@@ -147,8 +147,7 @@ theorem khw_layer_weight (hE : IsGlRep E) (hU : IsInfUnitary ε E)
   obtain ⟨w₀, hw₀V, hw₀, ws, hsum, hws⟩ := layer_khw_decomp hE hU hV.1 hV.2.1 hw hμ
   by_cases h0 : w₀ = 0
   · have hex : ∃ j, ws j ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       apply hw0
       rw [hsum, h0]
       simp [hc]

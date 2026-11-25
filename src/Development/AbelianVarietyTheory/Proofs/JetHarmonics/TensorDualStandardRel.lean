@@ -73,7 +73,7 @@ theorem _root_.GlobalTheory.tensor_dual_standard_rel : ∀ (V : Type) [NormedAdd
       intro i; split_ifs with h <;> simp [h]
     have h2 : ∀ i, inner ℂ (x.ofLp i) (if i = a then y.ofLp b else 0) = if i = a then inner ℂ (x.ofLp a) (y.ofLp b) else 0 := by
       intro i; split_ifs with h <;> simp [h]
-    simp only [h1, h2, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [h1, h2, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   · intro x y
     simp only [PiLp.inner_apply, hOm, sum_inner, inner_sum, hsym]
     exact Finset.sum_comm
@@ -85,9 +85,9 @@ theorem _root_.GlobalTheory.tensor_dual_standard_rel : ∀ (V : Type) [NormedAdd
       intro i; have h := hE' e i a b (y.ofLp i); rw [sub_eq_iff_eq_add] at h; rw [h]; abel
     have h3 : ∀ i, E e i (if i = b then y.ofLp a else 0) = if i = b then E e b (y.ofLp a) else 0 := by
       intro i; split_ifs with h <;> simp [h]
-    simp only [key, h3, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [key, h3, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     by_cases h : e = b
-    · subst h; simp only [if_true]; abel
-    · simp only [h, Ne.symm h, if_false, Finset.sum_const_zero]; abel
+    · subst h; simp only [ite_true]; abel
+    · simp only [h, Ne.symm h, ite_false, Finset.sum_const_zero]; abel
 
 end GlobalTheory

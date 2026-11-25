@@ -7,8 +7,6 @@ import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDJet
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
@@ -16,8 +14,6 @@ namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.TB.ValAt
 open scoped ContDiff
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {c : Coeff l} {σ' : KA l →+* ℂ} {g : ℕ} {ty : Fin g → (E →+* ℂ)}
@@ -100,13 +96,13 @@ theorem jetSubstP_anAct (m : ℕ) (a : 𝓞 E) (b : Jet ℂ (Fin 1 × Fin g) m) 
           MvPolynomial.C (ty k (a : E)) * MvPolynomial.X q else 0 := by
       unfold psTrunc anAct
       by_cases hmem : Finsupp.single q 1 ∈ (degLE m : Finset ((Fin 1 × Fin g) →₀ ℕ))
-      · rw [if_pos hmem, Finset.sum_eq_single (Finsupp.single q 1)]
+      · rw [ite_eq_left hmem, Finset.sum_eq_single (Finsupp.single q 1)]
         · simp [MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X, MvPolynomial.C_mul_X_eq_monomial, hq]
         · intro e _ he
           simp [MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X, ← hq, he]
         · intro h
           exact absurd hmem h
-      · rw [if_neg hmem]
+      · rw [ite_eq_right hmem]
         apply Finset.sum_eq_zero
         intro e he
         have hne : e ≠ Finsupp.single q 1 := fun h => hmem (h ▸ he)
@@ -120,7 +116,7 @@ theorem jetSubstP_anAct (m : ℕ) (a : 𝓞 E) (b : Jet ℂ (Fin 1 × Fin g) m) 
         have := hmem.2
         rw [Finsupp.sum_single_index rfl] at this
         omega
-      rw [if_neg hnot]
+      rw [ite_eq_right hnot]
       simp only [map_zero, sub_zero]
       symm
       rw [Ideal.Quotient.eq_zero_iff_mem, zero_add, pow_one]
@@ -133,7 +129,7 @@ theorem jetSubstP_anAct (m : ℕ) (a : 𝓞 E) (b : Jet ℂ (Fin 1 × Fin g) m) 
         · subst hj
           simp
         · simp [hj]
-      rw [if_pos hmem]
+      rw [ite_eq_left hmem]
       simp [MvPolynomial.constantCoeff_X, hq]
   show (Ideal.Quotient.mkₐ ℂ _) (MvPolynomial.aeval _ f) = (Ideal.Quotient.mkₐ ℂ _) (MvPolynomial.aeval _ f)
   rw [← AlgHom.comp_apply, ← AlgHom.comp_apply, MvPolynomial.comp_aeval, MvPolynomial.comp_aeval]

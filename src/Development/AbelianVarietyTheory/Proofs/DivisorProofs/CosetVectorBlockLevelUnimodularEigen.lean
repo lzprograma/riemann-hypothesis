@@ -21,48 +21,9 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Exist
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergTranslateUnitVectorCongrUnimodular
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfIdem
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaFunctionsAllLevelsClosure
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -195,11 +156,11 @@ theorem blockJ_unitBlock : ∀ (D : D7) (𝔪 : Ideal (𝓞 D.host.E)), 𝔪 ≠
   have h1 : (J * (unitBlock D o a (o + a)).map (inc D)) i l = J i (Fin.natAdd o l) := by
     rw [Matrix.mul_apply, Finset.sum_eq_single (Fin.natAdd o l)]
     · rw [Matrix.map_apply]; unfold unitBlock
-      rw [Matrix.of_apply, if_pos (by simp only [Fin.coe_natAdd]), map_one, mul_one]
+      rw [Matrix.of_apply, ite_eq_left (by simp only [Fin.coe_natAdd]), map_one, mul_one]
     · intro m _ hm
       have : ¬ (m.1 = o + l.1) := fun h => hm (Fin.ext (by simp only [Fin.coe_natAdd]; exact h))
       rw [Matrix.map_apply]; unfold unitBlock
-      rw [Matrix.of_apply, if_neg this, map_zero, mul_zero]
+      rw [Matrix.of_apply, ite_eq_right this, map_zero, mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   rw [Matrix.sub_apply, h1]
   refine Fin.addCases (fun i' => ?_) (fun p => ?_) i
@@ -208,18 +169,18 @@ theorem blockJ_unitBlock : ∀ (D : D7) (𝔪 : Ideal (𝓞 D.host.E)), 𝔪 ≠
       refine Finset.sum_eq_zero fun m _ => ?_
       have : ¬ ((Fin.castAdd a i' : Fin (o + a)).1 = o + m.1) := by simp only [Fin.coe_castAdd]; omega
       rw [Matrix.map_apply]; unfold unitBlock
-      rw [Matrix.of_apply, if_neg this, map_zero, zero_mul]
+      rw [Matrix.of_apply, ite_eq_right this, map_zero, zero_mul]
     rw [h2, sub_zero]
     exact hA _ _ (by simp) (by simp)
   · have h2 : ((unitBlock D o a (o + a)).map (inc D) * K) (Fin.natAdd o p) l = K p l := by
       rw [Matrix.mul_apply, Finset.sum_eq_single p]
       · rw [Matrix.map_apply]; unfold unitBlock
-        rw [Matrix.of_apply, if_pos (by simp only [Fin.coe_natAdd]), map_one, one_mul]
+        rw [Matrix.of_apply, ite_eq_left (by simp only [Fin.coe_natAdd]), map_one, one_mul]
       · intro m _ hm
         have : ¬ ((Fin.natAdd o p : Fin (o + a)).1 = o + m.1) := by
           simp only [Fin.coe_natAdd]; intro h; exact hm (Fin.ext (by omega))
         rw [Matrix.map_apply]; unfold unitBlock
-        rw [Matrix.of_apply, if_neg this, map_zero, zero_mul]
+        rw [Matrix.of_apply, ite_eq_right this, map_zero, zero_mul]
       · intro h; exact absurd (Finset.mem_univ _) h
     rw [h2]
     exact hkc p l

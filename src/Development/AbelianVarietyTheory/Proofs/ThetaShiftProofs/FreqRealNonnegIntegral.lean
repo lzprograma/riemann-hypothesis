@@ -124,7 +124,7 @@ theorem freq_real_nonneg_integral : ∀ (E : Type) [Field E] [NumberField E] [Is
   intro E _ _ _ r X la P hP ξ hξ ν x hx hne
   have hν : ∀ p ∈ X.periods la, ∃ k : ℤ, 2 * ∑ τ, ν τ * p τ = k := by
     by_contra h
-    exact hne (by unfold Data.fj; rw [if_neg h])
+    exact hne (by unfold Data.fj; rw [ite_eq_right h])
   obtain ⟨ω, hω⟩ := exists_emb_of_freq X la ν hν
   have hre : ∀ τ : X.Ψ, ν τ = (τ.1 ω).re := fun τ => by rw [← hω, Complex.ofReal_re]
   obtain ⟨C, hC⟩ := hP.2

@@ -69,9 +69,6 @@ end HermLattice
 def idealLattice {n : ℕ} (a : Fin n → FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) (Fin n → K) :=
   Submodule.pi Set.univ fun x => (a x : Submodule (𝓞 K) K)
 
-def diagMetric {n : ℕ} (d : (K →+* ℂ) → Fin n → ℝ) : (K →+* ℂ) → Matrix (Fin n) (Fin n) ℂ :=
-  fun σ => Matrix.diagonal fun x => (d σ x : ℂ)
-
 def LineOfLargeDegree.Statement : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (i : ℕ), 1 ≤ i → ∀ (F : HermLattice K i) (ε : ℝ), 0 < ε →
     ∃ (K' : Type) (_ : Field K') (_ : NumberField K') (_ : Algebra K K') (v : Fin i → K'),

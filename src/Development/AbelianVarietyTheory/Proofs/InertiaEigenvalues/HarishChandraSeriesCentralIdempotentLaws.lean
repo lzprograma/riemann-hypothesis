@@ -4,42 +4,6 @@ public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Labe
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentOfIrrCharacterOrthogonalCentral
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteIrrCharactersAndFinsumCentralIdempotentsEq
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -85,7 +49,7 @@ theorem eSerC_laws : ∀ (g : ℕ) [Fact g.Prime] (L : LabelDatum g), 5 ≤ g �
     refine Finset.sum_congr rfl fun χ hχ => ?_
     have hχi := ((hmem f χ).1 hχ).1
     rw [Finset.sum_congr rfl fun χ' hχ' => (horth χ χ' hχi ((hmem f χ').1 hχ').1).1,
-      Finset.sum_ite_eq, if_pos hχ]
+      Finset.sum_ite_eq, ite_eq_left hχ]
   · intro f a
     rw [he f, Finset.sum_mul, Finset.mul_sum]
     exact Finset.sum_congr rfl fun χ hχ =>
@@ -95,7 +59,7 @@ theorem eSerC_laws : ∀ (g : ℕ) [Fact g.Prime] (L : LabelDatum g), 5 ≤ g �
     refine Finset.sum_eq_zero fun χ hχ => Finset.sum_eq_zero fun χ' hχ' => ?_
     obtain ⟨hi, hl⟩ := (hmem f χ).1 hχ
     obtain ⟨hi', hl'⟩ := (hmem f' χ').1 hχ'
-    rw [(horth χ χ' hi hi').1, if_neg]
+    rw [(horth χ χ' hi hi').1, ite_eq_right]
     rintro rfl
     exact hff' ((huniq χ hi).unique hl hl')
   · intro f hf
@@ -120,9 +84,9 @@ theorem eSerC_laws : ∀ (g : ℕ) [Fact g.Prime] (L : LabelDatum g), 5 ≤ g �
           have hi : IsIrr χ := hfin.mem_toFinset.1 hχ
           obtain ⟨f0, hf0, hu⟩ := huniq χ hi
           rw [Finset.sum_eq_single f0]
-          · rw [if_pos hf0]
+          · rw [ite_eq_left hf0]
           · intro b _ hb
-            rw [if_neg]
+            rw [ite_eq_right]
             exact fun h => hb (hu b h)
           · intro h0
             exact absurd ((hSmem f0).2 (hprops χ f0 hf0)) h0

@@ -188,9 +188,6 @@ theorem pushColim : PushColim := by
 
 end LateralTheory.E.PointwisePf
 
-namespace LateralTheory.E.PointwisePf
-
-end LateralTheory.E.PointwisePf
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -579,7 +576,7 @@ theorem key (A B : Type) [CommRing A] [CommRing B] [Algebra A B] [Algebra.Etale 
     rw [hb.2, ← Polynomial.smul_eq_C_mul, algebraMap_smul]
   obtain ⟨r, hr⟩ := Polynomial.map_surjective (Ideal.Quotient.mk P) Ideal.Quotient.mk_surjective q
   obtain ⟨n, hn⟩ : ∃ n, q.coeff n ≠ 0 := by
-    by_contra h; push_neg at h; exact hq0 (Polynomial.ext h)
+    by_contra h; push Not at h; exact hq0 (Polynomial.ext h)
   refine ⟨r, ⟨n, ?_⟩, ?_⟩
   · intro hm; apply hn
     rw [← hr, Polynomial.coeff_map, Ideal.Quotient.eq_zero_iff_mem]; exact hm
@@ -900,7 +897,6 @@ theorem bij (n : ℤ) : Function.Bijective fun (x : CohomologyClass c.pt L n) (j
 
 end General
 
-
 theorem HKCoprod_of : LateralTheory.E.CoprodPf.HKCoprod := by
   intro R _ ι K c hc F n
   have h1 : HasColimitsOfSize.{1, 1} (Shv R) := IsGrothendieckAbelian.hasColimits.{1} (Shv R)
@@ -1018,12 +1014,9 @@ open CategoryTheory Limits LateralTheory.E.t_E3Cut
 
 namespace LateralTheory.E.IECobPf
 
-theorem et_cobase : Et.IsStableUnderCobaseChange :=
-  (RingHom.isStableUnderCobaseChange_toMorphismProperty_iff).2 RingHom.Etale.isStableUnderBaseChange
-
 theorem IECob_of : LateralTheory.E.ULAStalkPf.IECob := by
   intro A B C D f g u v sq hf
-  have := et_cobase
+  have := LateralTheory.E.IECompPf.et_cobase
   have hI : IE.IsStableUnderCobaseChange := by
     unfold IE; infer_instance
   exact hI.of_isPushout sq.flip hf
@@ -1820,7 +1813,6 @@ theorem n80 : LateralTheory.E.ZariskiLocalCech.CechSigma := LateralTheory.E.Cech
 theorem n79 : LateralTheory.E.t_E3Cut.ZarLocal := LateralTheory.E.ZariskiLocalCech.ZarLocal_of n26 n80
 
 theorem n78 : LateralTheory.E.t_E3Cut.Global := LateralTheory.E.GlobalPf.Global_of n79 _root_.LateralTheory.E.AffinePf.Affine_of _root_.LateralTheory.E.LocEtPf.LocEt_of
-
 
 open CategoryTheory LateralTheory.E.t_E3Cut in
 theorem main (H : LateralTheory.E.t_E3Cut.Hyp) : GlobalTheory.EtC.E3 := by

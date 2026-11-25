@@ -264,12 +264,12 @@ theorem _root_.GlobalTheory.HL.LevelRep.level_rep : ∀ {F : Type} [Field F] [Va
       S.spanTo S.f i := fun i =>
     _root_.GlobalTheory.HL.TermBasic.sub_mem (S := S) (g := S.f)
       (fun a j => (S.gram a j.castSucc).trans
-        (if_neg fun h => (Fin.castSucc_lt_last j).ne h.2)) hp i
+        (ite_eq_right fun h => (Fin.castSucc_lt_last j).ne h.2)) hp i
   have hsub' : ∀ i : Fin (r + 1), S.fr' d Λ i - S.f' i ∈
       S.spanTo S.f' i := fun i =>
     _root_.GlobalTheory.HL.TermBasic.sub_mem (S := S) (g := S.f')
       (fun a j => (S.gram' a j.castSucc).trans
-        (if_neg fun h => (Fin.castSucc_lt_last j).ne h.2)) hq i
+        (ite_eq_right fun h => (Fin.castSucc_lt_last j).ne h.2)) hq i
   have hti : algebraMap F E S.th⁻¹ * algebraMap F E S.th = 1 := by
     rw [← map_mul, inv_mul_cancel₀ hθ, map_one]
   have hspan : ∀ j, Submodule.span E (S.fr d Λ '' {i | (i : ℕ) < j}) ≤

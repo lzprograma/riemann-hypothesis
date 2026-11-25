@@ -33,10 +33,6 @@ structure LinOn (w : HeightOneSpectrum (𝓞 K)) (N : Submodule (𝓞 K) V) {A :
   add : ∀ x ∈ N, ∀ y ∈ N, g (x + y) = g x + g y
   smul : ∀ (a : 𝓞 K), ∀ x ∈ N, g (a • x) = Ideal.Quotient.mk w.asIdeal a • g x
 
-namespace LinOn
-
-end LinOn
-
 end Frame
 
 section Mass
@@ -90,10 +86,6 @@ def DecoSet.lat (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : UniLat E
 end Count
 
 section IdxQ
-
-theorem card_res {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) :
-    Nat.card (𝓞 E ⧸ w.asIdeal) = Ideal.absNorm w.asIdeal := by
-  exact (Ideal.absNorm_eq_natCard w.asIdeal).symm
 
 end IdxQ
 

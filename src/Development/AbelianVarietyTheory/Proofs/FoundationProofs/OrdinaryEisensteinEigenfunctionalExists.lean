@@ -36,60 +36,16 @@ public import Mathlib.GroupTheory.Nilpotent
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHeckeEigenfunctionalDepletedEisensteinNeZe
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMuModelMeasureOfEigenfunctional
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MuModelProductValueNeZeroOfDepleted
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.QExpansionHeckeUEqSumSlash
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.NumberTheory.ModularForms.Bounds
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
@@ -138,8 +94,8 @@ theorem depleted_newform_prim : ∀ (k r : ℕ) (g : Newform k), 1 ≤ k → 2 �
       (fun n => if n.Coprime (g.M * r) then g.a n else 0) := by
     funext n
     by_cases h : n.Coprime (g.M * r)
-    · rw [if_pos h, MulChar.one_apply ((ZMod.isUnit_iff_coprime n _).2 h), one_mul]; rfl
-    · rw [if_neg h, MulChar.map_nonunit _ (fun hu => h ((ZMod.isUnit_iff_coprime n _).1 hu)), zero_mul]
+    · rw [ite_eq_left h, MulChar.one_apply ((ZMod.isUnit_iff_coprime n _).2 h), one_mul]; rfl
+    · rw [ite_eq_right h, MulChar.map_nonunit _ (fun hu => h ((ZMod.isUnit_iff_coprime n _).1 hu)), zero_mul]
   rw [hseq] at htw
   have hlin := (_root_.GlobalTheory.EisM.mf_linear k (g.M * (g.M * r) ^ 2) (fun d => ch g.χ d * ch (1 : DirichletCharacter ℂ (g.M * r)) d ^ 2)).2.2.2.1
     (ch χ) _ ?_ htw.1
@@ -151,11 +107,11 @@ theorem depleted_newform_prim : ∀ (k r : ℕ) (g : Newform k), 1 ≤ k → 2 �
     rw [← ZMod.coe_unitOfIsCoprime d hdL, MulChar.one_apply_coe, one_pow, mul_one]
   refine ⟨⟨hlin, htw.2⟩, ?_, ?_, ?_⟩
   · have h1 : (1 : ℕ).Coprime (g.M * r) := Nat.coprime_one_left _
-    simp only [if_pos h1]
+    simp only [ite_eq_left h1]
     exact g.one
   · intro n hn
     have : ¬ n.Coprime (g.M * r) := fun h => hn ((hcop n).2 h)
-    simp only [if_neg this]
+    simp only [ite_eq_right this]
   · intro q hq hqN
     have hqL : q.Coprime (g.M * r) := (Nat.Prime.coprime_iff_not_dvd hq).2 (fun h => hqN (h.trans hLN))
     have hqM : ¬ q ∣ g.M := fun h => hqN (h.trans hdvd)
@@ -163,33 +119,33 @@ theorem depleted_newform_prim : ∀ (k r : ℕ) (g : Newform k), 1 ≤ k → 2 �
       rw [hχZ (q : ℤ) (Nat.isCoprime_iff_coprime.2 ((hcop q).2 hqL))]; simp
     have heig := g.eig q hq hqM
     funext n
-    simp only [To, Vo, hchq, if_pos hqL]
+    simp only [To, Vo, hchq, ite_eq_left hqL]
     by_cases hn : n.Coprime (g.M * r)
     · have hn1 : 1 ≤ n := by
         rcases Nat.eq_zero_or_pos n with h0 | h0
         · subst h0; rw [Nat.coprime_zero_left] at hn; nlinarith
         · exact h0
       have hqn : (q * n).Coprime (g.M * r) := Nat.Coprime.mul_left hqL hn
-      rw [if_pos hqn, if_pos hn]
+      rw [ite_eq_left hqn, ite_eq_left hn]
       have e := heig n hn1
       by_cases hd : q ∣ n
       · have hnq : (n / q).Coprime (g.M * r) := hn.coprime_dvd_left (Nat.div_dvd_of_dvd hd)
-        rw [if_pos hd, if_pos hnq]
-        rw [if_pos hd] at e
+        rw [ite_eq_left hd, ite_eq_left hnq]
+        rw [ite_eq_left hd] at e
         exact e
-      · rw [if_neg hd]
-        rw [if_neg hd] at e
+      · rw [ite_eq_right hd]
+        rw [ite_eq_right hd] at e
         exact e
     · have hqn : ¬ (q * n).Coprime (g.M * r) := fun h => hn (Nat.Coprime.coprime_mul_left h)
-      rw [if_neg hqn, if_neg hn, mul_zero]
+      rw [ite_eq_right hqn, ite_eq_right hn, mul_zero]
       by_cases hd : q ∣ n
       · have hnq : ¬ (n / q).Coprime (g.M * r) := by
           intro h
           apply hn
           rw [← Nat.mul_div_cancel' hd]
           exact Nat.Coprime.mul_left hqL h
-        rw [if_pos hd, if_neg hnq]; simp
-      · rw [if_neg hd]; simp
+        rw [ite_eq_left hd, ite_eq_right hnq]; simp
+      · rw [ite_eq_right hd]; simp
 
 end GlobalTheory.EisM
 
@@ -923,7 +879,7 @@ theorem lam_extend_by_zero : ∀ (k L N : ℕ) (χ₀ : DirichletCharacter ℂ N
   have rep_spec : ∀ a, Fam a → rep (∑ ε, a ε) = a := by
     intro a ha
     have hs : (∑ ε, a ε) ∈ S := ⟨a, ha, rfl⟩
-    simp only [rep, dif_pos hs]
+    simp only [rep, dite_eq_left hs]
     have h := Classical.choose_spec hs
     exact uniq _ _ h.1 ha h.2.symm
   let φ : (ℕ → ℂ) → ℂ := fun s => lam B c (rep s χ₀)
@@ -962,8 +918,8 @@ theorem lam_extend_by_zero : ∀ (k L N : ℕ) (χ₀ : DirichletCharacter ℂ N
     have hfa : Fam fa := by
       intro ε
       by_cases h : ε = ε₀
-      · subst h; simp only [fa, if_pos rfl]; exact ha
-      · simp only [fa, if_neg h]; exact (lin (ch ε)).1
+      · subst h; simp only [fa, ite_eq_left rfl]; exact ha
+      · simp only [fa, ite_eq_right h]; exact (lin (ch ε)).1
     have hs : ∑ ε, fa ε = a := by simp [fa]
     have h := hc' _ ⟨fa, hfa, rfl⟩
     simp only [φ] at h
@@ -973,7 +929,7 @@ theorem lam_extend_by_zero : ∀ (k L N : ℕ) (χ₀ : DirichletCharacter ℂ N
     · subst h'; simp [fa]
     · simp [fa, h', Ne.symm h']
   refine ⟨B₀, c', fun a ha => by simpa using single χ₀ a ha, fun ε a hε ha => ?_⟩
-  rw [single ε a ha, if_neg hε]
+  rw [single ε a ha, ite_eq_right hε]
   simp [lam]
 
 end GlobalTheory
@@ -1024,7 +980,7 @@ theorem eigAll_of_atkinLehner : ∀ (k N l : ℕ) (χ : DirichletCharacter ℂ N
   have hφ : ∀ a a', MF k (N * l) (ch χ⁻¹) a' → qs a' = slz k δ (qs a) → φ a = lam B c a' := by
     intro a a' h1 h2
     have h : ∃ a', MF k (N * l) (ch χ⁻¹) a' ∧ qs a' = slz k δ (qs a) := ⟨a', h1, h2⟩
-    simp only [φ, dif_pos h]
+    simp only [φ, dite_eq_left h]
     rw [uniq _ _ h.choose_spec.1 h1 (h.choose_spec.2.trans h2.symm)]
   have hex : ∀ a, MF k (N * l) (ch χ) a → ∃ a', MF k (N * l) (ch χ⁻¹) a' ∧ qs a' = slz k δ (qs a) :=
     fun a ha => _root_.GlobalTheory.EisM.atkinLehner_MF k N l χ a a₀ b₀ c₀ d₀ hdet hk hN ha
@@ -1173,8 +1129,7 @@ theorem exists_char_parity_mul_ne_one_mul_inv_ne_one : ∀ (N r : ℕ) (χ : Dir
       right
       have := eq_inv_of_mul_eq_one_left h2
       rwa [inv_inv] at this
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   have ha := key θ₀ (fun h => by have := hno θ₀ hθ₀ h.1; exact h.2 this)
   have hb := key (θ₀ * η) (fun h => by
     have := hno (θ₀ * η) (by rw [MulChar.mul_apply, hθ₀, hη2, mul_one]) h.1; exact h.2 this)
@@ -1309,8 +1264,7 @@ theorem unitRoot_split : ∀ (l : ℕ) [Fact l.Prime] (ι : PadicAlgCl l ≃+* �
     have hmulN : ‖ι.symm a‖ * ‖ι.symm b‖ = ‖ι.symm D‖ := by
       rw [← norm_mul, ← map_mul, hmul]
     have hb : ‖ι.symm b‖ < 1 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       have : 1 ≤ ‖ι.symm a‖ * ‖ι.symm b‖ := by nlinarith
       linarith
     have hta : ι.symm a = ι.symm t + (-ι.symm b) := by
@@ -1349,14 +1303,6 @@ open scoped MatrixGroups Real ComplexConjugate Manifold ModularForm
 noncomputable section
 
 namespace GlobalTheory.EisM
-
-theorem chapterM_theta : ∀ (N r : ℕ) (χ : DirichletCharacter ℂ N) (sg : ℂ), 0 < N → r.Prime → 7 ≤ r → r ∣ N →
-    (sg = 1 ∨ sg = -1) → ∃ θ : DirichletCharacter ℂ N, θ (-1) = sg ∧ θ * χ ≠ 1 ∧ θ * χ⁻¹ ≠ 1 := _root_.GlobalTheory.exists_char_parity_mul_ne_one_mul_inv_ne_one
-
-theorem chapterM_smooth : ∀ (N l e : ℕ) (θ₁ θ₂ : DirichletCharacter ℂ N) (ψ : DirichletCharacter ℂ l), 0 < N → l.Prime →
-    ¬ l ∣ N → 1 ≤ e → θ₁ ≠ 1 → θ₂ ≠ 1 → ∃ c d : ℕ, 1 < c ∧ 1 < d ∧ c.Coprime (6 * N * l) ∧ d.Coprime (6 * N * l) ∧
-      (∀ z : ℂ, ‖z‖ = 1 → (c : ℂ) ^ e ≠ z) ∧ ∀ n₁ n₂ : ℤ, (n₁ = 1 ∨ n₁ = -1) →
-        (d : ℂ) ^ 2 ≠ (d : ℂ) ^ (e + 1) * (θ₁ d ^ n₁ * ψ d ^ n₂) ∧ (d : ℂ) ^ 2 ≠ (d : ℂ) ^ (e + 1) * (θ₂ d ^ n₁ * ψ d ^ n₂) := _root_.GlobalTheory.smoothing_integers_two_characters
 
 theorem norm_symm_char_unit {l : ℕ} [Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ) {N : ℕ} [NeZero N]
     (φ : DirichletCharacter ℂ N) (u : (ZMod N)ˣ) : ‖ι.symm (φ u)‖ = 1 := by
@@ -1465,7 +1411,7 @@ theorem chapterM_holds : CuspidalUnitaryTwistsClaim := by
   have hg' : ∀ n : ℕ, n.Coprime (g.M * (g.M * (N₀ * r)) ^ 2) →
       (fun n => if n.Coprime (g.M * (N₀ * r)) then g.a n else 0) n = g.a n := by
     intro n hn
-    simp only [if_pos (hn.coprime_dvd_right hL)]
+    simp only [ite_eq_left (hn.coprime_dvd_right hL)]
   obtain ⟨θ, α, v, B, c, c₁, d₁, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩ :=
     chapterM_of_level l ι e he g hal ψ _ r hN hr (by omega) hrN hlN χ _ hprim hg'
   exact ⟨_, χ, θ, α, v, B, c, c₁, d₁, h1, hMN, hN₀N, hlN, hχ, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩

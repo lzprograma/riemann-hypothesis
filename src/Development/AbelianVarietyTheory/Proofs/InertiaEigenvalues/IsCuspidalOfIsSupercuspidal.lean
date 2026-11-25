@@ -82,8 +82,7 @@ theorem exists_dual_infinite {Q : Type} [AddCommGroup Q] [Module ℂ Q] (w : ℕ
   · haveI : Finite s := hfin.to_subtype
     have hne : ∀ r, ∃ i, B.repr ⟨w r, hmem r⟩ i ≠ 0 := by
       intro r
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       apply hw r
       have h0 : B.repr ⟨w r, hmem r⟩ = B.repr 0 := by rw [map_zero]; exact Finsupp.ext hc
       simpa using congrArg Subtype.val (B.repr.injective h0)
@@ -323,7 +322,7 @@ theorem isCuspidal_of_isSupercuspidal : ∀ (k : Type) [Field k] [ValuativeRel k
     refine ⟨γ, hγ, fun g hg => hTU ?_⟩
     have hMem := hTγ (g.val - 1)
     have hg' : ∀ i j, valuation k ((g.val - 1) i j) < γ := hg
-    rw [Set.mem_preimage, Set.mem_preimage, if_pos hg', sub_add_cancel] at hMem
+    rw [Set.mem_preimage, Set.mem_preimage, ite_eq_left hg', sub_add_cancel] at hMem
     exact hMem
   obtain ⟨γ, hγ, hK⟩ := hFix
   let K := CentralExponent.cong (n := Fin N) γ hγ
@@ -393,7 +392,7 @@ theorem isCuspidal_of_isSupercuspidal : ∀ (k : Type) [Field k] [ValuativeRel k
     rcases i with i | i <;> rcases j with j | j
     · simpa [mul_comm, mul_left_comm] using hEntry
     · simp [(mem_parabLower_two k).1 hc' i j]
-    · simp only [Matrix.one_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, if_false, sub_zero] at hEntry ⊢
+    · simp only [Matrix.one_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, ite_false, sub_zero] at hEntry ⊢
       simpa using (mul_le_of_le_one_right' hz1).trans_lt hEntry
     · simpa using hEntry
   obtain ⟨l, hl, hll⟩ := exists_smooth_form_eq hπ.1 hOpen hCompact A

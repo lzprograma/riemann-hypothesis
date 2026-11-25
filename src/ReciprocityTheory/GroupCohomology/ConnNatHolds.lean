@@ -187,7 +187,7 @@ theorem les_of (hs : SES i p) (δ : ∀ n, C.H n →ₗ[R] A.H (n + 1)) (hδ : I
     LES i p δ := by
   refine ⟨?inj, ?exB, ?exC, ?exA⟩
   case inj =>
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro h hh
     obtain ⟨x, hx, rfl⟩ := cls_surj A 0 h
     rw [H_cls, cls_eq_zero, mem_B_zero] at hh
@@ -259,13 +259,5 @@ theorem lES_holds : LESStatement.{u} := by
   exact ⟨⟨LongExactSequenceMaps.conn i p hs, LongExactSequenceMaps.conn_isConn i p hs,
     LongExactSequenceMaps.les_of i p hs _ (LongExactSequenceMaps.conn_isConn i p hs)⟩,
     fun δ δ' h h' => LongExactSequenceMaps.uniq i p hs δ δ' h h'⟩
-
-theorem connNat_holds : ConnNatStatement.{u} := by
-  intro R _ A B C A' B' C' i p i' p' α β γ δ δ' hs hs' hiα hpγ hδ hδ' n x
-  obtain ⟨b, a, hc, ha, hba, rfl⟩ := LongExactSequenceMaps.rep i p hs n x
-  have hc' : C'.d n (p'.f n (β.f n b)) = 0 := by rw [← hpγ, ← γ.comm, hc, map_zero]
-  have hba' : B'.d n (β.f n b) = i'.f (n + 1) (α.f (n + 1) a) := by rw [← β.comm, hba, hiα]
-  rw [hδ n b a hc ha hba, LongExactSequenceMaps.H_cls, LongExactSequenceMaps.H_cls, LongExactSequenceMaps.cls_congr C' n _ _ _ hc' (hpγ n b)]
-  exact hδ' n (β.f n b) (α.f (n + 1) a) hc' _ hba'
 
 end ReciprocityTheory.Coh

@@ -1,8 +1,10 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralExtensionFiniteAdelesBasicProperties
 public import Formalism.LocalToGlobal.Columns.RecLevel
 public import Formalism.LocalToGlobal.Columns.AdelicLemmas
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.LevelSubgroupFiniteAdelicStandard
+import Formalism.LocalToGlobal.Columns.RecLevelCls
 
 @[expose] public section
 
@@ -31,58 +33,17 @@ theorem rll_sum_apply (S : Finset (HeightOneSpectrum (𝓞 F))) (w : HeightOneSp
     map_sum (evalV F w) _ _
   rw [h]
   by_cases hw : w ∈ S
-  · rw [if_pos hw, Finset.sum_eq_single w]
+  · rw [ite_eq_left hw, Finset.sum_eq_single w]
     · exact afsplitI_self w 1
     · intro v _ hv; exact afsplitI_ne v w (Ne.symm hv) 1
     · intro h'; exact absurd hw h'
-  · rw [if_neg hw]
+  · rw [ite_eq_right hw]
     refine Finset.sum_eq_zero fun v hv => afsplitI_ne v w ?_ 1
     rintro rfl; exact hw hv
 
 theorem rll_int_of_loc (x : E ⊗[F] Formalism.L2.Herm.Af F)
     (h : ∀ v : HeightOneSpectrum (𝓞 F), prV (E := E) v x ∈ Formalism.BasicNotions.intV E v) : x ∈ Formalism.L2.Herm.intAf F E := by
-  classical
-  obtain ⟨D, hD, hDx⟩ := levelaf_denom (E := E) x
-  have hfin := levelaf_finite_places D hD
-  set S := hfin.toFinset with hS
-  have hmem : ∀ v, v ∈ S ↔ Valued.v (algebraMap (𝓞 F) (v.adicCompletion F) D) < 1 := fun v => by
-    rw [hS, Set.Finite.mem_toFinset]; rfl
-  let w' : intAd F := Formalism.L2.DIV.mkAd
-    (fun v => if v ∈ S then 0 else (algebraMap (𝓞 F) (v.adicCompletion F) D)⁻¹) (fun v => by
-      by_cases hv : v ∈ S
-      · simp only [hv, if_true]; exact zero_mem _
-      · simp only [hv, if_false]
-        rw [HeightOneSpectrum.mem_adicCompletionIntegers, map_inv₀]
-        have h1 : 1 ≤ Valued.v (algebraMap (𝓞 F) (v.adicCompletion F) D) :=
-          not_lt.1 (fun hlt => hv ((hmem v).2 hlt))
-        exact inv_le_one_of_one_le₀ h1)
-  have key : algebraMap (𝓞 F) (Formalism.L2.Herm.Af F) D * (w' : Formalism.L2.Herm.Af F) =
-      1 - ∑ v ∈ S, (afsplitI v 1 : Formalism.L2.Herm.Af F) := by
-    refine FiniteAdeleRing.ext _ fun v => ?_
-    have e1 : (algebraMap (𝓞 F) (Formalism.L2.Herm.Af F) D * (w' : Formalism.L2.Herm.Af F)) v =
-        algebraMap (𝓞 F) (v.adicCompletion F) D *
-          (if v ∈ S then 0 else (algebraMap (𝓞 F) (v.adicCompletion F) D)⁻¹) := rfl
-    have e2 : ((1 : Formalism.L2.Herm.Af F) - ∑ v ∈ S, (afsplitI v 1 : Formalism.L2.Herm.Af F)) v =
-        1 - (∑ v ∈ S, (afsplitI v 1 : Formalism.L2.Herm.Af F)) v := rfl
-    rw [e1, e2, rll_sum_apply]
-    by_cases hv : v ∈ S
-    · simp [hv]
-    · simp only [hv, if_false, sub_zero]
-      exact mul_inv_cancel₀ (levelaf_algebraMap_ne_zero v D hD)
-  have hx : x = ∑ v ∈ S, afsplitIE v (prV (E := E) v x) +
-      ((1 : E) ⊗ₜ[F] (w' : Formalism.L2.Herm.Af F)) * (levelafC E D * x) := by
-    have e3 : ((1 : E) ⊗ₜ[F] (w' : Formalism.L2.Herm.Af F)) * (levelafC E D * x) =
-        ((1 : E) ⊗ₜ[F] (1 - ∑ v ∈ S, (afsplitI v 1 : Formalism.L2.Herm.Af F))) * x := by
-      rw [← mul_assoc, levelafC, Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_comm (w' : Formalism.L2.Herm.Af F), key]
-    rw [e3, TensorProduct.tmul_sub, TensorProduct.tmul_sum, sub_mul, Finset.sum_mul, ← Algebra.TensorProduct.one_def,
-      one_mul]
-    have e4 : ∀ v ∈ S, afsplitIE v (prV (E := E) v x) = ((1 : E) ⊗ₜ[F] (afsplitI v 1 : Formalism.L2.Herm.Af F)) * x :=
-      fun v _ => by rw [afsplit_decomp, rll_eps_eq]
-    rw [Finset.sum_congr rfl e4]
-    abel
-  rw [hx]
-  refine add_mem (sum_mem fun v _ => afsplit_IE_int v _ (h v)) (mul_mem ?_ hDx)
-  exact (Formalism.L2.DIV.adS F E w').2
+  apply _root_.GlobalTheory.St.G.IntAd.mem_of_local <;> assumption
 
 end Int
 
@@ -220,58 +181,7 @@ variable (n : ℕ) [NeZero n] (ST : Finset (Pl E))
 theorem rll_mem_baseLb (x : Fin n → E) :
     x ∈ baseLb E n ST ↔ ∃ r : Fin n → 𝓞 E, (∀ i, algebraMap (𝓞 E) E (r i) = x i) ∧
       ∀ P ∈ ST, r (lastIdx n) ∈ P.asIdeal := by
-  classical
-  unfold baseLb
-  have hmem : ∀ x : Fin n → E, x ∈ (Deco.base E n ST (∅ : Finset (Pl E))).L ↔
-      x ∈ stdLat E n ∧ ∀ P : ST, (Deco.base E n ST (∅ : Finset (Pl E))).f P x = 0 := by
-    intro x
-    constructor
-    · intro hx
-      induction hx using Submodule.span_induction with
-      | mem y hy => exact hy
-      | zero =>
-        refine ⟨zero_mem _, fun P => ?_⟩
-        simp only [Deco.base, if_pos (le_locP _ _ (zero_mem (stdLat E n))), Pi.zero_apply]
-        simpa using (reduction_coe P.1 (0 : 𝓞 E))
-      | add y z _ _ hy hz =>
-        refine ⟨add_mem hy.1 hz.1, fun P => ?_⟩
-        have hxy := le_locP P.1 _ (add_mem hy.1 hz.1)
-        have hy' := le_locP P.1 _ hy.1
-        have hz' := le_locP P.1 _ hz.1
-        have hy0 := hy.2 P
-        have hz0 := hz.2 P
-        simp only [Deco.base, if_pos hy'] at hy0
-        simp only [Deco.base, if_pos hz'] at hz0
-        simp only [Deco.base, if_pos hxy, Pi.add_apply]
-        rw [reduction_add ((mem_localization_standardLattice _ _).1 hy' _) ((mem_localization_standardLattice _ _).1 hz' _), hy0, hz0, add_zero]
-      | smul a y _ hy =>
-        refine ⟨Submodule.smul_mem _ _ hy.1, fun P => ?_⟩
-        have hay := le_locP P.1 _ (Submodule.smul_mem (stdLat E n) a hy.1)
-        have hy' := le_locP P.1 _ hy.1
-        have hy0 := hy.2 P
-        simp only [Deco.base, if_pos hy'] at hy0
-        simp only [Deco.base, if_pos hay, Pi.smul_apply]
-        rw [redP_osmul a ((mem_localization_standardLattice _ _).1 hy' _), hy0, mul_zero]
-    · intro hx
-      exact Submodule.subset_span hx
-  rw [hmem]
-  constructor
-  · rintro ⟨hN, hf⟩
-    have hN' : x ∈ stdLat E n := hN
-    choose r hr using (mem_stdLat x).1 hN'
-    refine ⟨r, hr, fun P hP => ?_⟩
-    have h := hf ⟨P, hP⟩
-    have e : (Deco.base E n ST (∅ : Finset (Pl E))).f ⟨P, hP⟩ x = redP P (x (lastIdx n)) :=
-      if_pos (le_locP _ _ hN')
-    rw [e, ← hr, reduction_coe] at h
-    exact Ideal.Quotient.eq_zero_iff_mem.1 h
-  · rintro ⟨r, hr, hP⟩
-    have hN : x ∈ stdLat E n := (mem_stdLat x).2 fun i => ⟨r i, hr i⟩
-    refine ⟨hN, fun P => ?_⟩
-    have e : (Deco.base E n ST (∅ : Finset (Pl E))).f P x = redP P.1 (x (lastIdx n)) :=
-      if_pos (le_locP _ _ hN)
-    rw [e, ← hr, reduction_coe]
-    exact Ideal.Quotient.eq_zero_iff_mem.2 (hP P.1 P.2)
+  apply _root_.Formalism.L2.Col.rlc_mem_baseLb <;> assumption
 
 theorem rll_inf_ne_bot : (ST.inf fun P : Pl E => P.asIdeal) ≠ ⊥ := by
   intro h
@@ -413,7 +323,7 @@ theorem mirabolicLevel_maps_baseLattice {k : GL (Fin n) (E ⊗[F] Formalism.L2.H
   · rw [map_sum, Finset.sum_eq_single (lastIdx n)]
     · rw [map_mul, huP P hP, mul_zero]
     · intro j _ hj
-      rw [map_mul, ← hr P, hm P hP j, if_neg hj, zero_mul]
+      rw [map_mul, ← hr P, hm P hP j, ite_eq_right hj, zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem mirabolicLevel_le_stabilizer_base : J0 hc n ST ≤ stabGL (Formalism.L2.Herm.hatL (F := F) (baseLb E n ST)) := fun k hk =>

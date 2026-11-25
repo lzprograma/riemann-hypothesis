@@ -46,8 +46,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.FinitePartTypes
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def kFin {n : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (ε : Fin n → Bool)
     (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) : Submodule ℂ H :=
   sSup {W | FiniteDimensional ℂ W ∧ IsKStableOn ε σ W}

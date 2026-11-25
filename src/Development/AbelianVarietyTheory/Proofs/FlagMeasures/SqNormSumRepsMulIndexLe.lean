@@ -81,7 +81,6 @@ theorem sq_norm_sum_mul_index_le {G : Type*} [AddCommGroup G] [Fintype G] (Q : A
     · exact h3
   have hexp : (∑ u, f u) * conj (∑ u, f u) = ∑ h, ∑ u, f (u + h) * conj (f u) := by
     calc (∑ u, f u) * conj (∑ u, f u) = ∑ w, ∑ u, f w * conj (f u) := by
-          set_option synthInstance.maxHeartbeats 100000 in
             rw [map_sum, Finset.sum_mul_sum]
       _ = ∑ u, ∑ w, f w * conj (f u) := Finset.sum_comm
       _ = ∑ u, ∑ h, f (u + h) * conj (f u) := Finset.sum_congr rfl fun u _ =>

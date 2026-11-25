@@ -55,8 +55,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap PSpace resG LBIso Is
 open ReciprocityTheory.ChartRestriction.G.DVR.SecOps (secScale)
 open GlobalTheory.QCoh.Qcqs GlobalTheory.Cartier GlobalTheory.AbLaw
 
-attribute [local instance] MvPolynomial.gradedAlgebra
-
 namespace GlobalTheory.ProjSpace
 
 variable {R : Type} [CommRing R] {M : ℕ} {Y Z : Scheme.{0}} {L L' : LB Y}
@@ -441,8 +439,6 @@ theorem isProjOver_of_isIso_comp (g : Z ⟶ Y) [IsIso g] {f : Y ⟶ Sp R} (h : I
   exact ⟨N, inv g ≫ φ, inferInstance, by rw [Category.assoc, e, IsIso.inv_hom_id_assoc]⟩
 
 section Group
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem isProjOver_morphismRestrict_of_relAmple {S : Scheme.{0}} {A : Over S} [GrpObj A] {B : LB A.left}
     (h : RelAmple A B) {U : S.Opens} (hU : IsAffineOpen U) :

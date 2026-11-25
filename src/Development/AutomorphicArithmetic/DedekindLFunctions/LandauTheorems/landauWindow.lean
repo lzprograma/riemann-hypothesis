@@ -19,51 +19,6 @@ public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorem
 public import Mathlib.MeasureTheory.Order.Group.Lattice
 public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 public import Mathlib.MeasureTheory.Integral.ExpDecay
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.IteratedDerivLaplace, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.LandauCoeff, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.LandauDichotomy, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.LandauGrowthContra, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.LandauNearest, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.LandauPoleAsym, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.LandauPoleReLe, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.kernelIntegral, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.landauTails, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.LandauKernelMax, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.landauWindowIneq, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.landauWindow
@@ -290,7 +245,7 @@ theorem landau_dichotomy {Z : Set ℂ} (hiso : ∀ z : ℂ, 0 < z.re → ∀ᶠ 
     · left
       exact ⟨dist ρs (σ : ℂ), hdle, hball, hex⟩
     · right
-      push_neg at hex
+      push Not at hex
       set d := dist ρs (σ : ℂ) with hd
       have hreal : ∀ w ∈ F, dist w (σ : ℂ) = d → w = ((σ - d : ℝ) : ℂ) :=
         fun w hw he => eq_ofReal_sub_of_dist_le_of_le_sub_re (le_of_eq he) (hex w hw.1)
@@ -308,25 +263,15 @@ theorem landau_dichotomy {Z : Set ℂ} (hiso : ∀ z : ℂ, 0 < z.re → ∀ᶠ 
         rcases lt_or_eq_of_le hm with h | h
         · exact h
         · exact absurd (hreal t ht.1 h.symm) ht.2
-      obtain ⟨r, hr, hrT⟩ : ∃ r, d < r ∧ ∀ t ∈ F \ {((σ - d : ℝ) : ℂ)}, r ≤ dist t (σ : ℂ) := by
-        rcases (F \ {((σ - d : ℝ) : ℂ)}).eq_empty_or_nonempty with hTe | hTne
-        · refine ⟨d + 1, by linarith, ?_⟩
-          intro t ht
-          rw [hTe] at ht
-          exact absurd ht (Set.notMem_empty t)
-        · obtain ⟨t₀, ht₀, htmin⟩ := Set.exists_min_image (F \ {((σ - d : ℝ) : ℂ)})
-            (fun w => dist w (σ : ℂ)) (hfin.subset Set.diff_subset) hTne
-          exact ⟨dist t₀ (σ : ℂ), hT t₀ ht₀, htmin⟩
-      refine ⟨min r (σ - θ), ?_, min_le_right _ _, ?_⟩
-      · rw [sub_sub_cancel]
-        exact lt_min hr hdlt
+      obtain ⟨r, hr, hrCap, hrT⟩ := exists_capped_radius (hfin.subset Set.diff_subset)
+        (fun w => dist w (σ : ℂ)) hdlt hT
+      refine ⟨r, ?_, hrCap, ?_⟩
+      · rwa [sub_sub_cancel]
       · intro w hw hb
         rw [Metric.mem_ball] at hb
-        have hwF : w ∈ F := ⟨hw, Metric.mem_closedBall.mpr (le_trans hb.le (min_le_right _ _))⟩
+        have hwF : w ∈ F := ⟨hw, Metric.mem_closedBall.mpr (hb.le.trans hrCap)⟩
         by_contra hne
-        have h3 := hrT w ⟨hwF, hne⟩
-        have h4 := min_le_left r (σ - θ)
-        linarith
+        exact (not_lt_of_ge (hrT w ⟨hwF, hne⟩)) hb
 
 end Deduction
 
@@ -477,16 +422,9 @@ theorem landau_nearest {Z : Set ℂ} (hiso : ∀ z : ℂ, 0 < z.re → ∀ᶠ w 
       apply hw.2
       exact landau_nearest_equi (hle w hw.1.1) (hle ρ hρF.1) h.symm
         (fun hb => hγB ⟨(w, ρ), ⟨hw.1, hρF⟩, hb.symm⟩)
-  obtain ⟨r, hr, hrT⟩ : ∃ r, ‖c - ρ‖ < r ∧ ∀ t ∈ F \ {ρ}, r ≤ ‖c - t‖ := by
-    rcases (F \ {ρ}).eq_empty_or_nonempty with hTe | hTne
-    · refine ⟨‖c - ρ‖ + 1, by linarith, ?_⟩
-      intro t ht
-      rw [hTe] at ht
-      exact absurd ht (Set.notMem_empty t)
-    · obtain ⟨t₀, ht₀, htmin⟩ := Set.exists_min_image (F \ {ρ}) (fun w => ‖c - w‖)
-        (hF.subset Set.diff_subset) hTne
-      exact ⟨‖c - t₀‖, hT t₀ ht₀, htmin⟩
-  refine ⟨γ, ρ, hρF.1, min r D, lt_min hr (by linarith), min_le_right _ _, ?_⟩
+  obtain ⟨r, hr, hrD, hrT⟩ := exists_capped_radius (hF.subset Set.diff_subset)
+    (fun w => ‖c - w‖) (hm.trans_lt hρ₁c) hT
+  refine ⟨γ, ρ, hρF.1, r, hr, hrD, ?_⟩
   intro w hw hb
   rw [Metric.mem_ball, dist_eq_norm, norm_sub_rev] at hb
   have hwF : w ∈ F := by
@@ -494,10 +432,9 @@ theorem landau_nearest {Z : Set ℂ} (hiso : ∀ z : ℂ, 0 < z.re → ∀ᶠ w 
     rw [Metric.mem_closedBall, dist_eq_norm]
     have := norm_add_le (w - c) (c - c₀)
     rw [sub_add_sub_cancel, norm_sub_rev w c, hcc₀] at this
-    linarith [min_le_right r D]
+    linarith
   by_contra hne
-  have h3 := hrT w ⟨hwF, hne⟩
-  linarith [min_le_left r D]
+  exact (not_lt_of_ge (hrT w ⟨hwF, hne⟩)) hb
 
 end Deduction
 
@@ -541,7 +478,7 @@ theorem landau_pole_asym {Φ : ℂ → ℂ} {z ρ c : ℂ} {r r' : ℝ} (hρ : �
     by_cases hsρ : s = ρ
     · rw [hsρ]
       simp [G]
-    · simp only [G, if_neg hsρ]
+    · simp only [G, ite_eq_right hsρ]
       rw [hs (Set.mem_compl_singleton_iff.mpr hsρ)]
       ring
   have hGd : DifferentiableOn ℂ G (Metric.ball z r) := by
@@ -554,7 +491,7 @@ theorem landau_pole_asym {Φ : ℂ → ℂ} {z ρ c : ℂ} {r r' : ℝ} (hρ : �
       have hloc : G =ᶠ[𝓝 s] fun t => Φ t - c / (t - ρ) := by
         filter_upwards [hopen.mem_nhds hmem] with t ht
         have htρ : t ≠ ρ := ht.2
-        simp only [G, if_neg htρ]
+        simp only [G, ite_eq_right htρ]
       have hd' : DifferentiableAt ℂ (fun t => Φ t - c / (t - ρ)) s :=
         hΦ.sub ((differentiableAt_const c).div
           (differentiableAt_id.sub (differentiableAt_const ρ)) (sub_ne_zero.mpr hsρ))
@@ -567,7 +504,7 @@ theorem landau_pole_asym {Φ : ℂ → ℂ} {z ρ c : ℂ} {r r' : ℝ} (hρ : �
   have hloc : Φ =ᶠ[𝓝 z] G + fun s => c * (s - ρ)⁻¹ := by
     filter_upwards [hopen.mem_nhds hmemz] with t ht
     have htρ : t ≠ ρ := ht.2
-    simp only [Pi.add_apply, G, if_neg htρ, div_eq_mul_inv]
+    simp only [Pi.add_apply, G, ite_eq_right htρ, div_eq_mul_inv]
     ring
   have hGc : ContDiffAt ℂ k G z :=
     (hGd.contDiffOn Metric.isOpen_ball).contDiffAt
@@ -1167,13 +1104,7 @@ private theorem WindowHypU.mono {g : ℝ → ℝ} {θ θ' δ : ℝ} (hW : Window
   · simpa only [hweight] using hRbound
 
 /-- A criterion of Landau type on windows: under the pole data `hP : PoleData g Φ Z` and the window
-hypothesis `hW`, every `ρ ∈ Z` has real part at most `θ`.
-
-The classical theorem behind it is
-[E. Landau, *Über einen Satz von Tschebyschef* (§2, Satz)][landau1905]: a Dirichlet series whose
-coefficients are eventually positive has a singularity at the real point of its line of
-convergence. Landau's theorem does not state this lemma, which asks for an upper bound on windows
-only. This reference is a reader's proposal and has not been checked by a mathematician. -/
+hypothesis `hW`, every `ρ ∈ Z` has real part at most `θ`. -/
 theorem landau_window {g : ℝ → ℝ} {Φ : ℂ → ℂ} {Z : Set ℂ}
     (hP : PoleData g Φ Z) {θ δ : ℝ} (hδ : 0 < δ) (hW : WindowHypU g θ δ) :
     ∀ ρ ∈ Z, ρ.re ≤ θ := by

@@ -171,7 +171,7 @@ theorem sum_single_diag' (c : ℤ) : ∑ k : Fin 4 ⊕ Fin 4, single k k c = c �
   rw [Matrix.sum_apply]
   by_cases h : a = b
   · subst h; simp [single_apply]
-  · rw [Finset.sum_eq_zero (fun k _ => by rw [single_apply]; exact if_neg (fun hk => h (hk.1.symm.trans hk.2)))]
+  · rw [Finset.sum_eq_zero (fun k _ => by rw [single_apply]; exact ite_eq_right (fun hk => h (hk.1.symm.trans hk.2)))]
     simp [h]
 
 theorem sum_famM {d : ℕ} (hd : 0 < d) :
@@ -255,7 +255,7 @@ theorem exists_spanning_family_posDef :
     exact SpanFam.span_fam_eq_top
   · rw [transpose_one, Matrix.map_add _ Int.cast_add, Matrix.map_one _ Int.cast_zero Int.cast_one]
     exact Matrix.PosDef.one.add Matrix.PosDef.one
-  · simp only [Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  · simp only [Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [← SpanFam.sum_fam_mul_bar hd]
     exact Equiv.sum_comp e.symm (fun t => SpanFam.fam d t * bar d (SpanFam.fam d t))
 
@@ -521,7 +521,6 @@ variable {S : Scheme.{0}}
 theorem mulA_flat_surjective_qc (A : Over S) [GrpObj A] (hA : IsAbelianScheme A) (n : ℕ) (hn : 1 ≤ n) :
     Flat ((𝟙 A) ^ n : A ⟶ A).left ∧ Surjective ((𝟙 A) ^ n : A ⟶ A).left ∧
       QuasiCompact ((𝟙 A) ^ n : A ⟶ A).left := by
-  have hc := hA.comm
   obtain ⟨h1, h2⟩ := GlobalTheory.AbTorsionAnyBase.isFinite_and_flat_mulA S A hA n hn
   have e : ((𝟙 A) ^ n : A ⟶ A) = ReciprocityTheory.ChartRestriction.G.Out.mulA A n := rfl
   rw [e]
@@ -734,11 +733,11 @@ theorem inc_dMap (h₁ : IsRAct Z₁ act₁) (h₂ : IsRAct Z₂ act₂) (pr₁ 
           rw [h₁.2.2.1]; conv_lhs => rw [hi]
           simp only [Category.assoc]
       _ = inc₁ ≫ (act₁ (idem d) ≫ pr₁ ≫ inc₂ ≫ act₂ (up d (Sum.inl 0))) ^ (d : ℤ) := by
-          rw [idem_lo, if_pos rfl, act_zsmul' h₁, zpow_comp']
+          rw [idem_lo, ite_eq_left rfl, act_zsmul' h₁, zpow_comp']
       _ = ((𝟙 A) ^ d) ≫ inc₂ := by
           rw [hW, comp_zpow', reassoc_of% hip₁, zpow_natCast, npow_comp', Category.id_comp]
   · intro k _ hk
-    rw [hi, Category.assoc, ← Category.assoc (act₁ (idem d)), ← h₁.2.2.1, idem_lo, if_neg hk, act_zero' h₁,
+    rw [hi, Category.assoc, ← Category.assoc (act₁ (idem d)), ← h₁.2.2.1, idem_lo, ite_eq_right hk, act_zero' h₁,
       MonObj.one_comp, MonObj.comp_one]
   · intro h; exact absurd (Finset.mem_univ _) h
 
@@ -832,7 +831,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.SiegelTor GlobalTheory.EndLoc
 open GlobalTheory.AbDual GlobalTheory.CechPic
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 
@@ -896,7 +894,6 @@ theorem natCast_eq_sum (d : ℕ) : ((d : ℕ) : ord d) = ∑ k, colU d k * idem 
 end GlobalTheory.ZarhinUniqBundle
 
 namespace GlobalTheory.ZarhinUniqBundle
-
 
 open ReciprocityTheory.ChartRestriction.G.Out in
 theorem cancel_pow : ∀ (S : Scheme.{0}) (A B : Over S) [GrpObj A] [GrpObj B], IsAbelianScheme A → ∀ d : ℕ, 0 < d →
@@ -962,13 +959,6 @@ theorem act_natCast (hr : IsRAct A act) (n : ℕ) : act (n : O) = 𝟙 A ^ n := 
   induction n with
   | zero => rw [Nat.cast_zero, act_zero hr, pow_zero]
   | succ n ih => rw [Nat.cast_succ, hr.2.2.2, ih, hr.2.1, pow_succ]
-
-theorem act_sum (hr : IsRAct A act) {κ : Type} (s : Finset κ) (f : κ → O) :
-    act (∑ i ∈ s, f i) = ∏ i ∈ s, act (f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => rw [Finset.sum_empty, Finset.prod_empty, act_zero hr]
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.prod_insert ha, hr.2.2.2, ih]
 
 end Act
 
@@ -1073,7 +1063,7 @@ theorem lbIso_of_ordLinear : ∀ (h M d : ℕ), 0 < d → ∀ (S : Scheme.{0}) (
     exact hw
   have hψ1 : ψ = 𝟙 c.A := cancel_pow S c.A c.A c.ab d hd ψ (𝟙 _) hψd
   have hincu' : inc₁ ≫ u = inc₁ := by rw [hincu, hψ1, Category.id_comp]
-  have hsum := act_sum hr₁ Finset.univ (fun k ↦ colU d k * idem d * rowU d k)
+  have hsum := GlobalTheory.ZarhinUniqIso.act_sum' hr₁ Finset.univ (fun k ↦ colU d k * idem d * rowU d k)
   rw [← natCast_eq_sum, act_natCast hr₁] at hsum
   have key : (𝟙 z₁.A ^ d) ≫ u = (𝟙 z₁.A ^ d) ≫ 𝟙 _ := by
     rw [hsum, prod_comp, Category.comp_id]

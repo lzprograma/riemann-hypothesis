@@ -60,13 +60,13 @@ open GlobalTheory.KuennethOne
 variable {T Z A : Scheme.{0}} {I : Type} {U : I → A.Opens} {c : C1 U}
 
 theorem rsT_eq_rs {O₀ O : A.Opens} (s : Γ(A, O₀)) (h : O ≤ O₀) : rsT s O = rs h s := by
-  rw [rsT, dif_pos h]
+  rw [rsT, dite_eq_left h]
   rfl
 
 theorem pbT_eq (f : T ⟶ A) {O₀ : A.Opens} (s : Γ(A, O₀)) {O : T.Opens} (h : O ≤ f ⁻¹ᵁ O₀) :
     pbT f s O = (f.appLE O₀ O h).hom s := by
   unfold pbT
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem rs_pbT (f : T ⟶ A) {O₀ : A.Opens} (s : Γ(A, O₀)) {O O' : T.Opens} (h : O ≤ f ⁻¹ᵁ O₀)
     (h' : O' ≤ O) : rs h' (pbT f s O) = pbT f s O' := by

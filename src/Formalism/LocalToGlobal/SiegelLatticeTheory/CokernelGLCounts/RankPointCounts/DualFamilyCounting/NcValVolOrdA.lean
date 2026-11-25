@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.KitAbs
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
 import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
@@ -16,8 +17,6 @@ open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat 
   Formalism.L2.SG.LocVol Formalism.L2.SG.MassDataConc Formalism.L2.SG.TypedSets Formalism.L2.SG.Sub Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
   NumberField IsDedekindDomain
 open scoped TensorProduct Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def BoxScaleL : Prop :=
   ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
@@ -61,31 +60,18 @@ theorem absNorm_pos : (0 : ℝ) < ((Ideal.absNorm v.asIdeal : ℕ) : ℝ) := by
   exact_mod_cast Nat.pos_of_ne_zero h
 
 theorem absV_mul (x y : Fv F v) : absV v (x * y) = absV v x * absV v y := by
-  by_cases hx : x = 0
-  · subst hx
-    simp [absV]
-  by_cases hy : y = 0
-  · subst hy
-    simp [absV]
-  have hx' : Valued.v x ≠ 0 := (Valuation.ne_zero_iff _).2 hx
-  have hy' : Valued.v y ≠ 0 := (Valuation.ne_zero_iff _).2 hy
-  have hxy' : Valued.v (x * y) ≠ 0 := (Valuation.ne_zero_iff _).2 (mul_ne_zero hx hy)
-  have key : WithZero.unzero hxy' = WithZero.unzero hx' * WithZero.unzero hy' := by
-    apply WithZero.coe_injective
-    rw [WithZero.coe_mul, WithZero.coe_unzero, WithZero.coe_unzero, WithZero.coe_unzero, map_mul]
-  have hN : ((Ideal.absNorm v.asIdeal : ℕ) : ℝ) ≠ 0 := (absNorm_pos v).ne'
-  simp only [absV, dif_neg hx', dif_neg hy', dif_neg hxy', key, toAdd_mul, zpow_add₀ hN]
+  apply _root_.PI.UnitaryGroupMassFormula.LocJacTyp.absV_mul <;> assumption
 
 theorem absV_one : absV v (1 : Fv F v) = 1 := by
   have h1 : Valued.v (1 : Fv F v) ≠ 0 := by simp
   have key : WithZero.unzero h1 = 1 := by
     apply WithZero.coe_injective
     rw [WithZero.coe_unzero, map_one, WithZero.coe_one]
-  simp only [absV, dif_neg h1, key, toAdd_one, zpow_zero]
+  simp only [absV, dite_eq_right h1, key, toAdd_one, zpow_zero]
 
 theorem absV_pos {x : Fv F v} (hx : x ≠ 0) : 0 < absV v x := by
   have hx' : Valued.v x ≠ 0 := (Valuation.ne_zero_iff _).2 hx
-  simp only [absV, dif_neg hx']
+  simp only [absV, dite_eq_right hx']
   exact zpow_pos (absNorm_pos v) _
 
 theorem absV_inv {x : Fv F v} (hx : x ≠ 0) : absV v x⁻¹ = (absV v x)⁻¹ := by
@@ -158,7 +144,7 @@ theorem tri (g : ℕ → ℕ → ℝ) (n : ℕ) :
   apply Finset.sum_congr rfl
   intro i hi
   have hin : i < n := Finset.mem_range.mp hi
-  rw [Finset.sum_range_succ, if_pos hin]
+  rw [Finset.sum_range_succ, ite_eq_left hin]
 
 theorem triU (n : ℕ) :
     ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n,
@@ -241,7 +227,7 @@ theorem volOrd_body {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word) (ψ : A
     simp [ZZOrd, locZ, Set.mem_pi, Prod.forall]
   have eZ : ZZX X u u' ψ v = absV v (dV v) ^ (((D.R.rS : ℝ) + 1) ^ 2 * (2 * D.R.rS + 1)) := by
     unfold ZZX volS
-    rw [if_neg hv, hsetZ, hB v (Fin (D.R.rS + 1) × Fin (D.R.rS + 1)) hfin
+    rw [ite_eq_right hv, hsetZ, hB v (Fin (D.R.rS + 1) × Fin (D.R.rS + 1)) hfin
       (sdE (E := X.B.I.E) ψ v (Fin (D.R.rS + 1) × Fin (D.R.rS + 1)))
       (fun p : Fin (D.R.rS + 1) × Fin (D.R.rS + 1) => alp v D.R.rS p.1 * alp v D.R.rS p.2)
       (fun p => mul_ne_zero (alp_ne_zero v D.R.rS p.1) (alp_ne_zero v D.R.rS p.2)), hO1,
@@ -271,7 +257,7 @@ theorem volOrd_body {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word) (ψ : A
       absV v (dV v) ^ (((D.R.rS : ℝ) ^ 2 + D.R.rS) / 2 - (D.R.rS : ℝ) * (D.R.rS + 1) * (D.R.rS + 2) / 3) *
       absV v (dV v) ^ (((D.R.rS : ℝ) ^ 2 + D.R.rS) / 2 - (D.R.rS : ℝ) * (D.R.rS + 1) * (D.R.rS + 2) / 3) := by
     unfold localVolumeUnit volU
-    rw [if_neg hv, localVolumeOrdinary, Measure.prod_prod, ENNReal.toReal_mul, eUO]
+    rw [ite_eq_right hv, localVolumeOrdinary, Measure.prod_prod, ENNReal.toReal_mul, eUO]
   rw [eU, eZ, ← Real.rpow_add ha, ← Real.rpow_sub ha]
   congr 1
   ring

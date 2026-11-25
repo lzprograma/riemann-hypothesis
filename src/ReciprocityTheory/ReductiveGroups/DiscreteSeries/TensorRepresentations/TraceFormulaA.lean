@@ -188,20 +188,20 @@ theorem tfCoef_orth (dual : Bool) {ε : Fin n → Bool} {g : Matrix (Fin n) (Fin
     rw [← h]
     refine sum_congr rfl fun c _ => ?_
     rw [Matrix.mul_apply, sum_eq_single c]
-    · simp only [tfCoef, cond_false, Matrix.conjTranspose_apply, tf_Jm_apply, if_true]; ring
-    · intro b _ hb; rw [tf_Jm_apply, if_neg hb, mul_zero]
+    · simp only [tfCoef, cond_false, Matrix.conjTranspose_apply, tf_Jm_apply, ite_true]; ring
+    · intro b _ hb; rw [tf_Jm_apply, ite_eq_right hb, mul_zero]
     · simp
   · have h : (g⁻¹ * Jm ε * (g⁻¹)ᴴ) d' d = Jm ε d' d := by rw [tf_inv_mul_Jm_mul hg]
     rw [tf_Jm_apply, Matrix.mul_apply] at h
     have e : (if d = d' then tfSgn ε d else 0) = if d' = d then tfSgn ε d' else 0 := by
       by_cases hdd : d = d'
       · subst hdd; rfl
-      · rw [if_neg hdd, if_neg (Ne.symm hdd)]
+      · rw [ite_eq_right hdd, ite_eq_right (Ne.symm hdd)]
     rw [e, ← h]
     refine sum_congr rfl fun c _ => ?_
     rw [Matrix.mul_apply, sum_eq_single c]
-    · simp only [tfCoef, cond_true, Matrix.conjTranspose_apply, tf_Jm_apply, if_true]; ring
-    · intro b _ hb; rw [tf_Jm_apply, if_neg hb, mul_zero]
+    · simp only [tfCoef, cond_true, Matrix.conjTranspose_apply, tf_Jm_apply, ite_true]; ring
+    · intro b _ hb; rw [tf_Jm_apply, ite_eq_right hb, mul_zero]
     · simp
 
 theorem tf_jquad (t : Fin n → Fin n → ℂ) (s : Fin n → ℂ)

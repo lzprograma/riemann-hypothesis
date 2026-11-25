@@ -4,51 +4,8 @@ public import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDe
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
 import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
 public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAffineOpenNonzeroLocusOfUniversallyClosed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.AlgebraicGeometry.Morphisms.QuasiFinite
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.Spectrum.Prime.LTSeries
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqOfLbIso
 public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
@@ -57,7 +14,6 @@ public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleL
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.AbLaw
 open GlobalTheory.KeyKa
 
@@ -99,8 +55,6 @@ theorem exists_ltSeries_of_anti {R α : Type*} [CommRing R] [IsNoetherianRing R]
 
 variable {X : Scheme.{0}}
 
-theorem le_iff_specializes {x y : X} : x ≤ y ↔ y ⤳ x := Iff.rfl
-
 theorem exists_ltSeries_notMem [IsLocallyNoetherian X] (p : LTSeries X) (hp : p.length ≠ 0) {D V : X.Opens}
     (g : Γ(X, V)) (hg : D ⊓ V = X.basicOpen g) (hV : p.head ∈ V) (hD : p.head ∉ D) :
     ∃ q : LTSeries X, q.length + 1 = p.length ∧ q.last ≤ p.last ∧ q.last ∉ D := by
@@ -123,7 +77,7 @@ theorem exists_ltSeries_notMem [IsLocallyNoetherian X] (p : LTSeries X) (hp : p.
   have hφ : ∀ a b, φ b ≤ φ a ↔ a ≤ b := fun a b =>
     ((@Scheme.Hom.isOpenEmbedding _ _ _ hU.isOpenImmersion_fromSpec).isInducing.specializes_iff (x := a) (y := b)).trans
       (PrimeSpectrum.le_iff_specializes a b).symm
-  choose P hP using fun i => (hr (p i)).1 ((le_iff_specializes.1 (p.head_le i)).mem_open U.isOpen hxU)
+  choose P hP using fun i => (hr (p i)).1 ((AlgebraicGeometry.Scheme.le_iff_specializes.1 (p.head_le i)).mem_open U.isOpen hxU)
   obtain ⟨q, a, h₁, h₂, h₃, h₄⟩ := exists_ltSeries_of_anti φ hφ p P hP g'
     (by by_contra h; exact hD ((show φ (P 0) = p.head from hP 0) ▸ (hm _).2 h)) hp
   exact ⟨q, h₁, h₃, fun h => (hm a).1 (h₂ ▸ h) h₄⟩
@@ -156,7 +110,7 @@ theorem length_le {K : Type} [Field K] (f : X ⟶ Spec (CommRingCat.of K)) [IsPr
   have := LocallyOfFiniteType.jacobsonSpace f
   have := LocallyOfFiniteType.isLocallyNoetherian f
   have nc : ∀ {x y : X}, x < y → ¬ IsClosed ({y} : Set X) := fun hxy hc =>
-    hxy.ne ((le_iff_specializes.1 hxy.le).mem_closed hc rfl)
+    hxy.ne ((AlgebraicGeometry.Scheme.le_iff_specializes.1 hxy.le).mem_closed hc rfl)
   induction r with
   | zero =>
     intro D _ _ W hW hf p hp
@@ -175,9 +129,9 @@ theorem length_le {K : Type} [Field K] (f : X ⟶ Spec (CommRingCat.of K)) [IsPr
     obtain ⟨y, hy, hyD⟩ : ∃ y, y < (p.tail h0).head ∧ y ∉ D 0 := by
       obtain ⟨y, hy, hyD⟩ := Set.not_subset.1 fun h => nc h01 (isClosed_singleton_of_finite isClosed_closure
         (finite_of_subset_isAffineOpen f (hD 0) isClosed_closure h) (subset_closure (Set.mem_singleton _)))
-      have hy' : y ≤ (p.tail h0).head := le_iff_specializes.2 (specializes_iff_mem_closure.2 hy)
+      have hy' : y ≤ (p.tail h0).head := AlgebraicGeometry.Scheme.le_iff_specializes.2 (specializes_iff_mem_closure.2 hy)
       by_cases h : (p.tail h0).head ≤ y
-      · exact ⟨p.head, h01, fun h' => hyD ((le_iff_specializes.1 (h01.le.trans h)).mem_open (D 0).isOpen h')⟩
+      · exact ⟨p.head, h01, fun h' => hyD ((AlgebraicGeometry.Scheme.le_iff_specializes.1 (h01.le.trans h)).mem_open (D 0).isOpen h')⟩
       · exact ⟨y, lt_of_le_not_ge hy' h, hyD⟩
     let p' : LTSeries X := (p.tail h0).cons y hy
     obtain ⟨V, g, hV, e⟩ := hg 0 y
@@ -187,7 +141,7 @@ theorem length_le {K : Type} [Field K] (f : X ⟶ Spec (CommRingCat.of K)) [IsPr
     have hn : p'.length = p.length := by simp [p']; omega
     have := ih (fun i => D i.succ) (fun i => hD _) (fun i => hg _) (W ∩ (D 0 : Set X)ᶜ)
       (hW.inter (D 0).isOpen.isClosed_compl) (hf.subset fun z hz => ⟨hz.1.1, Fin.cases hz.1.2 hz.2⟩) q
-      ⟨(le_iff_specializes.1 (hl ▸ h₂)).mem_closed hW hp, h₃⟩
+      ⟨(AlgebraicGeometry.Scheme.le_iff_specializes.1 (hl ▸ h₂)).mem_closed hW hp, h₃⟩
     omega
 
 theorem topologicalKrullDim_le {W : Set X} (hW : IsClosed W) {r : ℕ}

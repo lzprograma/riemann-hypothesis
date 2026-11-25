@@ -57,7 +57,7 @@ theorem kaehlerD_aeval_eq_sum {K : Type*} {Ω : Type*} [Field K] [Field Ω] [Alg
       ring
     rw [map_mul, aeval_X, Derivation.leibniz, hp]
     simp only [h1, add_smul, Finset.sum_add_distrib, ite_smul, zero_smul, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, mul_smul, ← Finset.smul_sum]
+      Finset.mem_univ, ite_true, mul_smul, ← Finset.smul_sum]
     exact add_comm _ _
 
 open MvPolynomial in
@@ -74,7 +74,7 @@ theorem exists_pderiv_ne_zero_lt {K : Type*} [Field K] [CharZero K] {D : ℕ}
       by_cases h : s = n + Finsupp.single i 1
       · subst h
         simp
-      · rw [if_neg h, zero_mul]
+      · rw [ite_eq_right h, zero_mul]
         split_ifs with h'
         · have hs : s i = 0 := by
             by_contra hs

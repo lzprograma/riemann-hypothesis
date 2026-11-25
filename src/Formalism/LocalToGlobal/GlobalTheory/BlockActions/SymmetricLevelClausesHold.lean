@@ -21,55 +21,12 @@ public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassMapEstimate
 public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.SymmetricClausesOfFormsNorm
 import Formalism.LocalToGlobal.GlobalTheory.BlockActions.HformSmulRightB
 import Formalism.LocalToGlobal.GlobalTheory.BlockActions.LengthInverseBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.Columns.PolyFnLemmas
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.LocalToGlobal.HermitianForms.Interlace
 import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Mathlib.Analysis.Matrix.Order
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -344,18 +301,18 @@ theorem redM_blkDg {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (
     rw [e]
     exact redM_entry v _ _ _ _ _ _ (by simp [blkDg, h])
   · by_cases hxy : (x : ℕ) = y
-    · have e1 : blkDg hN M x y = 1 := by simp only [blkDg, Matrix.of_apply, dif_neg h, if_pos hxy]
-      have e2 : blkDg hN (redM F v M) x y = 1 := by simp only [blkDg, Matrix.of_apply, dif_neg h, if_pos hxy]
+    · have e1 : blkDg hN M x y = 1 := by simp only [blkDg, Matrix.of_apply, dite_eq_right h, ite_eq_left hxy]
+      have e2 : blkDg hN (redM F v M) x y = 1 := by simp only [blkDg, Matrix.of_apply, dite_eq_right h, ite_eq_left hxy]
       have hm : blkDg hN M x y ∈ v.adicCompletionIntegers F := by rw [e1]; exact one_mem _
       rw [e2]
-      simp only [redM, dif_pos hm]
+      simp only [redM, dite_eq_left hm]
       have : (⟨blkDg hN M x y, hm⟩ : v.adicCompletionIntegers F) = 1 := Subtype.ext (by simpa using e1)
       rw [this, map_one]
-    · have e1 : blkDg hN M x y = 0 := by simp only [blkDg, Matrix.of_apply, dif_neg h, if_neg hxy]
-      have e2 : blkDg hN (redM F v M) x y = 0 := by simp only [blkDg, Matrix.of_apply, dif_neg h, if_neg hxy]
+    · have e1 : blkDg hN M x y = 0 := by simp only [blkDg, Matrix.of_apply, dite_eq_right h, ite_eq_right hxy]
+      have e2 : blkDg hN (redM F v M) x y = 0 := by simp only [blkDg, Matrix.of_apply, dite_eq_right h, ite_eq_right hxy]
       have hm : blkDg hN M x y ∈ v.adicCompletionIntegers F := by rw [e1]; exact zero_mem _
       rw [e2]
-      simp only [redM, dif_pos hm]
+      simp only [redM, dite_eq_left hm]
       have : (⟨blkDg hN M x y, hm⟩ : v.adicCompletionIntegers F) = 0 := Subtype.ext (by simpa using e1)
       rw [this, map_zero]
 
@@ -410,7 +367,7 @@ theorem lamSym_blk [Field K] {N : ℕ} (hN : n + 1 = N) (ψ : AddChar K ℂ) (χ
       blkDg rfl M x y else 0)
     (fun x y : Fin n => if (x : ℕ) + 1 = y ∧ (y : ℕ) < rSym k rS ∧ (y : ℕ) ≠ k then M x y else 0)
     (fun i j => by simp)
-    (fun i => if_neg (fun hc => by
+    (fun i => ite_eq_right (fun hc => by
       have := hc.2.1
       simp only [Fin.val_last] at this
       omega))
@@ -428,7 +385,7 @@ theorem lamSym_blk [Field K] {N : ℕ} (hN : n + 1 = N) (ψ : AddChar K ℂ) (χ
     have hs' := s'.is_lt
     have b1 : rSym k rS + i * t + s < n := by linarith
     have b2 : rSym k rS + i * t + s' < n := by linarith
-    simp only [blkMat, entN, dif_pos (And.intro b1 b2), dif_pos (And.intro (Nat.lt_succ_of_lt b1) (Nat.lt_succ_of_lt b2))]
+    simp only [blkMat, entN, dite_eq_left (And.intro b1 b2), dite_eq_left (And.intro (Nat.lt_succ_of_lt b1) (Nat.lt_succ_of_lt b2))]
     simp [blkDg, b1, b2]
   rw [e]
 

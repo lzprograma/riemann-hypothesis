@@ -84,7 +84,7 @@ private theorem finiteType_sec {Z : Scheme.{0}} (s : Z ⟶ Sp ℂ) [LocallyOfFin
 private theorem isCoherent_Omega {Z : Scheme.{0}} (s : Z ⟶ Sp ℂ) [LocallyOfFiniteType s] (a : ℕ) :
     GroundTheory.Arith.SchemeCoh.IsCoherent (Omega s a) := by
   refine ⟨inferInstance, fun U hU => ?_⟩
-  haveI := finiteType_sec s hU
+  have := finiteType_sec s hU
   have h : Module.Finite (CechDR.Sec s U) (CechDR.OmU s U a) := inferInstance
   have h' : Module.Finite (CechDR.Sec s U) Γ(Omega s a, U) := Module.Finite.equiv (toOmEquiv s a hU)
   exact h'
@@ -93,14 +93,14 @@ theorem UpperTheory.finiteDimensional_hodgeCohomology_of_smooth_proj :
     ∀ (Z : Scheme.{0}) [IsIntegral Z] (s : Z ⟶ Sp ℂ) (d : ℕ) [SmoothOfRelativeDimension d s], IsProjOver s → ∀ a b : ℕ, FiniteDimensional ℂ (hodgeH s a b) := by
   intro Z _ s d _ hp a b
   obtain ⟨N, i, hi, his⟩ := hp
-  haveI : IsProper (PSpace.str ℂ N) :=
+  have : IsProper (PSpace.str ℂ N) :=
     inferInstanceAs (IsProper (GroundTheory.Arith.SchemeCoh.ProjSpace.toSpecBase ℂ N))
-  haveI : IsProper s := by rw [← his]; infer_instance
-  letI : Z.Over (Spec (.of ℂ)) := ⟨s⟩
-  haveI : IsProper (Z ↘ Spec (.of ℂ)) := inferInstanceAs (IsProper s)
+  have : IsProper s := by rw [← his]; infer_instance
+  let : Z.Over (Spec (.of ℂ)) := ⟨s⟩
+  have : IsProper (Z ↘ Spec (.of ℂ)) := inferInstanceAs (IsProper s)
   have hc : GroundTheory.Arith.SchemeCoh.IsCoherent (Omega s a) := isCoherent_Omega s a
   have h := @GroundTheory.Arith.SchemeCoh.finite_H_of_isProper ℂ _ _ Z _ _ (Omega s a) hc b
-  letI := algΓ s
+  let := algΓ s
   have h' : Module.Finite ℂ (coh (Omega s a) b) :=
     finite_of_addEquiv h (coh.toH (Omega s a) b) fun r x => by
       have hx := coh.toH_map ℂ (smulHom (Omega s a) (algebraMap ℂ Γ(Z, ⊤) r)) b x

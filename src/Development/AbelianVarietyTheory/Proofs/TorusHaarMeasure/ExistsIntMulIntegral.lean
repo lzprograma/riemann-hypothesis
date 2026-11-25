@@ -2,7 +2,6 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Basic
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVSDBwdHolds
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -63,7 +62,30 @@ theorem exists_int_smul_mem {E : Type} [Field E] [NumberField E] {r : ℕ}
     (Λ : Submodule (NumberField.RingOfIntegers E) (Fin r → E))
     (hΛ : Submodule.span E (Λ : Set (Fin r → E)) = ⊤) (v : Fin r → E) :
     ∃ k : ℤ, k ≠ 0 ∧ k • v ∈ Λ := by
-  apply Formalism.L2.SG.Pf.NcVal.OmVSt.OmX.exists_int_smul_mem <;> assumption
+  have hv : v ∈ Submodule.span E (Λ : Set (Fin r → E)) := hΛ ▸ Submodule.mem_top
+  induction hv using Submodule.span_induction with
+  | mem y hy => exact ⟨1, one_ne_zero, by simpa using hy⟩
+  | zero => exact ⟨1, one_ne_zero, by simp⟩
+  | add y z _ _ hy hz =>
+    obtain ⟨N1, h1, m1⟩ := hy
+    obtain ⟨N2, h2, m2⟩ := hz
+    refine ⟨N1 * N2, mul_ne_zero h1 h2, ?_⟩
+    have e1 : (N1 * N2) • y = N2 • (N1 • y) := by rw [mul_comm, mul_smul]
+    have e2 : (N1 * N2) • z = N1 • (N2 • z) := by rw [mul_smul]
+    rw [smul_add, e1, e2]
+    exact Λ.add_mem (zsmul_mem m1 N2) (zsmul_mem m2 N1)
+  | smul e y _ hy =>
+    obtain ⟨N, hN, m⟩ := hy
+    obtain ⟨c, hc, hint⟩ := exists_integral_multiples ℤ ℚ (L := E) {e}
+    have hi : IsIntegral ℤ (c • e) := hint e (Finset.mem_singleton_self e)
+    refine ⟨c * N, mul_ne_zero hc hN, ?_⟩
+    have e3 : (c * N) • (e • y) = (c • e) • (N • y) := by
+      rw [mul_smul, smul_comm N e y, smul_assoc]
+    rw [e3]
+    have e4 : (c • e) • (N • y) = (⟨c • e, hi⟩ : NumberField.RingOfIntegers E) • (N • y) := by
+      rw [← algebraMap_smul E (⟨c • e, hi⟩ : NumberField.RingOfIntegers E) (N • y)]; rfl
+    rw [e4]
+    exact Λ.smul_mem _ m
 
 alias main := _root_.GlobalTheory.IntegralMultiples.exists_int_smul_mem
 

@@ -120,7 +120,7 @@ private lemma herm_smul_self_re_eq (H : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r
     (a : ℝ) (d : ℂ) (ν : Fin (2 * r + k + 1) → ℂ) :
     (_root_.Formalism.QuantumDeterminants.herm H (((a : ℂ) * (starRingEnd ℂ) d) • ν) (((a : ℂ) * (starRingEnd ℂ) d) • ν)).re =
       a ^ 2 * (Complex.normSq d * (_root_.Formalism.QuantumDeterminants.herm H ν ν).re) := by
-  rw [_root_.GlobalTheory.WigSh.OmgNorm.form_smul_left, _root_.GlobalTheory.WigSh.OmgNorm.form_smul_right, ← mul_assoc, Complex.star_def,
+  rw [_root_.Formalism.FourierDecayAlt.P.B2x4.herm_smul_left, _root_.GlobalTheory.WigSh.OmgNorm.form_smul_right, ← mul_assoc, Complex.star_def,
     Complex.mul_conj, Complex.re_ofReal_mul, Complex.normSq_mul, Complex.normSq_ofReal,
     Complex.normSq_conj]
   ring
@@ -239,7 +239,6 @@ private lemma orbital_comp_lemma_2 {Wq' : Type} [NormedAddCommGroup Wq'] [InnerP
   · exact (h₁ ⟨θ, hθ', hint'⟩).elim
   · exact (h₁ ⟨θ, hθ', hint'⟩).elim
 
-
 open Matrix in
 theorem _root_.GlobalTheory.WigSh.contraction_maps_at_representatives :
     ∃ c₃ : ℝ, ∀ (Wp : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ
@@ -323,7 +322,7 @@ theorem _root_.GlobalTheory.WigSh.contraction_maps_at_representatives :
     have hex : ∃ g, Rep γ g := by
       obtain ⟨g, hg, hZ, hd⟩ := hexist k r Wp Wq D ν' m₀ γ hbase hγ hpos
       exact ⟨g, hg, hZ, hd⟩
-    simp only [rep, dif_pos hex]
+    simp only [rep, dite_eq_left hex]
     exact hex.choose_spec
   have rep_eq : ∀ γ, _root_.Formalism.FourierDecayAlt.D.IsLocPt γ (r + 1) →
       0 < _root_.Formalism.FourierDecayAlt.D.ptG (_root_.Formalism.QuantumDeterminants.Tz k r D.z * _root_.Formalism.QuantumDeterminants.Tz k r D.z') r γ → ∀ g, Rep γ g →

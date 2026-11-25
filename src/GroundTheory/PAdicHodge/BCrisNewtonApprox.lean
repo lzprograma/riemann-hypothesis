@@ -19,7 +19,7 @@ namespace WittTilt
 open _root_.WittVector Laurent ACris
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
-variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
+variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
 
 local notation "𝒪" => normInteger K
 local notation "𝔸" => Localization.Away (p : AInf K p)
@@ -27,27 +27,20 @@ local notation "θ" => fontaineTheta 𝒪 p
 
 theorem exists_approx (a : ACris K p) (N : ℕ) :
     ∃ c : ACrisZero K p, a - algebraMap _ (ACris K p) c ∈ Ideal.span {(p : ACris K p) ^ N} := by
-  obtain ⟨c, hc⟩ := Ideal.Quotient.mk_surjective
-    (_root_.AdicCompletion.evalₐ (Ideal.span {(p : ACrisZero K p)}) N a)
+  obtain ⟨c, z, ha⟩ := Reformulated.AutPerF.Acris.exists_eq_add N a
   refine ⟨c, ?_⟩
-  have h : a - _root_.AdicCompletion.of _ _ c ∈
-      (Ideal.span {(p : ACrisZero K p)} ^ N).map (algebraMap (ACrisZero K p) (ACris K p)) := by
-    rw [← ker_adicCompletion_evalₐ (Submodule.fg_span_singleton _), RingHom.mem_ker]
-    simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, RingHom.map_sub]
-    rw [← hc]
-    exact sub_eq_zero.2 (_root_.AdicCompletion.evalₐ_of _ N c).symm
-  rwa [span_p_pow_map, Ideal.span_singleton_pow] at h
+  rw [Ideal.mem_span_singleton]
+  exact ⟨z, by rw [ha]; ring⟩
 
 theorem exists_eq_pow_mul_of_mem {c₁ c₂ : ACrisZero K p} {N : ℕ}
     (h : algebraMap _ (ACris K p) c₁ - algebraMap _ (ACris K p) c₂ ∈
       Ideal.span {(p : ACris K p) ^ N}) :
     ∃ z : ACrisZero K p, c₁ - c₂ = (p : ACrisZero K p) ^ N * z := by
-  rw [← Ideal.span_singleton_pow, ← span_p_pow_map, ← RingHom.map_sub (algebraMap (ACrisZero K p) (ACris K p)),
-    ← ker_adicCompletion_evalₐ (Submodule.fg_span_singleton _), RingHom.mem_ker] at h
-  have h2 : Ideal.Quotient.mk (Ideal.span {(p : ACrisZero K p)} ^ N) (c₁ - c₂) = 0 := by
-    rw [← _root_.AdicCompletion.evalₐ_of]
-    exact h
-  rw [Ideal.Quotient.eq_zero_iff_mem, Ideal.span_singleton_pow, Ideal.mem_span_singleton] at h2
+  rw [← RingHom.map_sub (algebraMap (ACrisZero K p) (ACris K p))] at h
+  have h2 := (Reformulated.AutPerF.Acris.eval_eq_zero_iff N _).2
+    (Ideal.mem_span_singleton.1 h)
+  rw [Reformulated.AutPerF.Acris.eval_algebraMap, Ideal.Quotient.eq_zero_iff_mem,
+    Ideal.span_singleton_pow, Ideal.mem_span_singleton] at h2
   exact h2
 
 variable {ρ : ℝ}
@@ -55,17 +48,6 @@ variable {ρ : ℝ}
 theorem gn_p_pow_mul (hρ0 : 0 < ρ) (hρ1 : ρ < 1) (N : ℕ) (z : 𝔸) :
     gn K p ρ ((p : 𝔸) ^ N * z) = ρ ^ N * gn K p ρ z := by
   rw [gn_mul hρ0 hρ1, gn_pow hρ0 hρ1, gn_natCast_p hρ0]
-
-theorem gn_sub_le_of_mem (hp0 : ‖(p : K)‖ ≤ ρ) (hρ1 : ρ < 1) {c₁ c₂ : ACrisZero K p} {N : ℕ}
-    (h : algebraMap _ (ACris K p) c₁ - algebraMap _ (ACris K p) c₂ ∈
-      Ideal.span {(p : ACris K p) ^ N}) :
-    gn K p ρ ((c₁ : 𝔸) - c₂) ≤ ρ ^ N := by
-  have hρ0 : 0 < ρ := norm_p_pos.trans_le hp0
-  obtain ⟨z, hz⟩ := exists_eq_pow_mul_of_mem h
-  have e : (c₁ : 𝔸) - c₂ = (p : 𝔸) ^ N * z := by
-    rw [← Subalgebra.coe_sub, hz]; simp
-  rw [e, gn_p_pow_mul hρ0 hρ1]
-  exact mul_le_of_le_one_right (pow_nonneg hρ0.le N) (gn_acrisZero_le_one hp0 hρ0 hρ1 z.2)
 
 theorem gn_eq_of_gn_sub_lt (hρ0 : 0 < ρ) (hρ1 : ρ < 1) {z w : 𝔸}
     (h : gn K p ρ (z - w) < gn K p ρ z) : gn K p ρ w = gn K p ρ z := by
@@ -78,6 +60,19 @@ theorem gn_eq_of_gn_sub_lt (hρ0 : 0 < ρ) (hρ1 : ρ < 1) {z w : 𝔸}
     rcases le_max_iff.1 this with h1 | h1
     · exact absurd h1 (not_le.2 h)
     · exact h1
+
+variable [CharZero K]
+
+theorem gn_sub_le_of_mem (hp0 : ‖(p : K)‖ ≤ ρ) (hρ1 : ρ < 1) {c₁ c₂ : ACrisZero K p} {N : ℕ}
+    (h : algebraMap _ (ACris K p) c₁ - algebraMap _ (ACris K p) c₂ ∈
+      Ideal.span {(p : ACris K p) ^ N}) :
+    gn K p ρ ((c₁ : 𝔸) - c₂) ≤ ρ ^ N := by
+  have hρ0 : 0 < ρ := norm_p_pos.trans_le hp0
+  obtain ⟨z, hz⟩ := exists_eq_pow_mul_of_mem h
+  have e : (c₁ : 𝔸) - c₂ = (p : 𝔸) ^ N * z := by
+    rw [← Subalgebra.coe_sub, hz]; simp
+  rw [e, gn_p_pow_mul hρ0 hρ1]
+  exact mul_le_of_le_one_right (pow_nonneg hρ0.le N) (gn_acrisZero_le_one hp0 hρ0 hρ1 z.2)
 
 theorem le_gn_of_ker_eq_span {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.span {ξ}) :
     ‖(p : K)‖ ≤ gn K p ‖(p : K)‖ (algebraMap (AInf K p) 𝔸 ξ) := by
@@ -114,8 +109,7 @@ theorem le_gn_of_ker_eq_span {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.span 
     (gn_algebraMap_le_one hr0 hr1.le z))
 
 theorem exists_iotaQ_ne_zero {a : ACris K p} (ha : a ≠ 0) : ∃ m, iotaQ K p (m + 1) a ≠ 0 := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   apply ha
   apply iota_injective (K := K) (p := p)
   rw [map_zero]
@@ -148,16 +142,14 @@ theorem exists_lower_bound {a : ACris K p} (ha : a ≠ 0) :
     exact ((isUnit_p_quot (K := K) (p := p) (m + 1)).pow v).mul_right_eq_zero.1 h1
   obtain ⟨k₀, hk₀⟩ : ∃ k₀ : ℕ, ¬ ∃ w : latticeQ K p (m + 1),
       x = (p : latticeQ K p (m + 1)) ^ k₀ * w := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hx0
     refine IsHausdorff.haus' (I := Ideal.span {(p : latticeQ K p (m + 1))}) x fun n => ?_
     obtain ⟨w, hw⟩ := h n
     rw [SModEq.zero, Ideal.smul_eq_mul, Ideal.mul_top, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
     exact ⟨w, hw⟩
   refine ⟨r₀ ^ (k₀ + v + m), k₀, pow_pos hr0 _, fun N hN c hc => ?_⟩
-  by_contra hle
-  push_neg at hle
+  by_contra! hle
   obtain ⟨M, c', hc'⟩ := IsLocalization.Away.surj (p : AInf K p) (c : 𝔸)
   rw [map_natCast] at hc'
   have hgc' : gn K p r₀ (algebraMap _ 𝔸 c') ≤ r₀ ^ ((k₀ + v + M) + m) := by
@@ -186,7 +178,6 @@ theorem exists_lower_bound {a : ACris K p} (ha : a ≠ 0) :
       (p : Q) ^ N * iotaQ K p (m + 1) α := by
     have := congrArg (iotaQ K p (m + 1)) hα
     rw [map_mul, map_pow, map_natCast, RingHom.map_sub (iotaQ K p (m + 1)),
-      show algebraMap (ACrisZero K p) (ACris K p) c = _root_.AdicCompletion.of _ _ c from rfl,
       iotaQ_of] at this
     linear_combination -this
   apply hk₀

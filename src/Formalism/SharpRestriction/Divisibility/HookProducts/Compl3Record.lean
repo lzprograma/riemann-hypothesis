@@ -3,43 +3,6 @@ module
 public import Formalism.LocalRingCardinality.DataDIVDefs
 public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
 public import Formalism.LocalToGlobal.Divisibility.RecBridge
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.Divisibility.HookProducts.AbsPhFSubLeOfLe, Formalism.SharpRestriction.Divisibility.HookProducts.Compl3Record
@@ -131,9 +94,6 @@ theorem nuRow_le (D : D7) (L : SizeData₂ D) (u : D.what₂.Word) (j : ℕ) (τ
   have hN2 : r + 1 ≤ D.R.N j := le_trans (by omega : r + 1 ≤ D.R.k) (Nat.le_add_right _ _)
   have hN1' : (r : ℝ) + 1 ≤ (D.R.N (j - 1) : ℝ) := by exact_mod_cast hN1
   have hN2' : (r : ℝ) + 1 ≤ (D.R.N j : ℝ) := by exact_mod_cast hN2
-  have hs : 0 ≤ ((D.R.N (j - 1) : ℝ) + D.R.N j - 1 - 2 * (r : ℝ)) / 2 := by
-    apply div_nonneg _ (by norm_num)
-    linarith
   linarith [h1.2]
 
 theorem abs_kerPlace_sub_le (D : D7) (L : SizeData₂ D) (u u' : D.what₂.Word) (i : ℕ) (hi : i < D.R.m)
@@ -161,7 +121,7 @@ theorem abs_kerPlace_sub_le (D : D7) (L : SizeData₂ D) (u u' : D.what₂.Word)
       rw [hS, Finset.mem_range] at hr
       simpa using hr
     by_cases hmid : 1 ≤ r ∧ r + 1 < D.R.k
-    · rw [if_pos hmid]
+    · rw [ite_eq_left hmid]
       obtain ⟨n1, hn1, he1⟩ := nuRow_nat D u i hi τ r hrN
       obtain ⟨n2, hn2, he2⟩ := nuRow_nat D u' i hi τ r hrN
       have hy1 : (1 : ℝ) ≤ DV.nuRow D u (i + 1) τ r := by rw [he1]; exact_mod_cast hn1
@@ -180,7 +140,7 @@ theorem abs_kerPlace_sub_le (D : D7) (L : SizeData₂ D) (u u' : D.what₂.Word)
       have hBe : B = L.Sc * Real.log M + L.Sc * |L.logOm| := by rw [hB]; ring
       rw [hBe, abs_le]
       constructor <;> linarith [hA.1, hA.2, hC.1, hC.2]
-    · rw [if_neg hmid, nuRow_eq_of_not_mid D u u' (i + 1) τ r hmid]
+    · rw [ite_eq_right hmid, nuRow_eq_of_not_mid D u u' (i + 1) τ r hmid]
       simp
   calc |∑ r ∈ S, ((phF (DV.nuRow D u (i + 1) τ r) - phF (DV.nuRow D u' (i + 1) τ r)) -
         (DV.nuRow D u (i + 1) τ r - DV.nuRow D u' (i + 1) τ r) * L.logOm)|
@@ -253,6 +213,24 @@ theorem compl3_abs_le (D : D7) (L : SizeData₂ D) (Z : DivX D) (Csz M : ℝ) (h
         simp only [Finset.sum_const, Finset.card_univ, D.what₂.card_Tau, SizeData₂.lifts, Nat.card_Icc,
           Nat.add_sub_cancel, nsmul_eq_mul]
 
+private lemma sc_b'_le (L : Scale) : L.b' ≤ L.x * L.b := by
+  have hx0 : 0 < L.x := by linarith [L.one_lt_alt]
+  have hb0 : 0 < L.b := Real.exp_pos _
+  unfold Scale.b' Scale.a
+  exact div_le_self (by positivity) (Real.one_le_exp (Real.rpow_pos_of_pos hx0 _).le)
+
+private lemma sc_w''_le (D : D7) (L : Scale) (hn0 : (0 : ℝ) < D.R.n) : L.w'' D.R.n ≤ L.b := by
+  have hx0 : 0 < L.x := by linarith [L.one_lt_alt]
+  have hb0 : 0 < L.b := Real.exp_pos _
+  have hn1 : (1 : ℝ) ≤ D.R.n := by
+    have : 0 < D.R.n := by exact_mod_cast hn0
+    exact_mod_cast this
+  unfold Scale.w''
+  rw [div_le_iff₀ (by positivity)]
+  calc L.b' ≤ L.x * L.b := sc_b'_le L
+    _ ≤ L.x * L.b * D.R.n := le_mul_of_one_le_right (by positivity) hn1
+    _ = L.b * (L.x * D.R.n) := by ring
+
 theorem sc_add_wj_le (D : D7) (L : SizeData₂ D) (S : SizesAt L) (i : ℕ) (hi : i < D.R.m) (τ : D.what₂.Tau) :
     L.Sc + wj D (i + 1) τ ≤ 6 * L.sc.x ^ 6 * L.sc.b := by
   obtain ⟨hN, hMm, hK, hKR, hT, hCond, hQD, hTT, hLa, hRho, hBot, hDe2, hLw, hEta, hNodes, hLstar, hDel, hW, hBm,
@@ -267,20 +245,9 @@ theorem sc_add_wj_le (D : D7) (L : SizeData₂ D) (S : SizesAt L) (i : ℕ) (hi 
     have := D.R.m_add_three_le_k
     exact_mod_cast (by omega : 1 ≤ D.R.k)
   have hn0 : (0 : ℝ) < D.R.n := lt_of_lt_of_le (Real.rpow_pos_of_pos hx0 _) hN.1
-  have hn1 : (1 : ℝ) ≤ D.R.n := by
-    have : 0 < D.R.n := by exact_mod_cast hn0
-    exact_mod_cast this
-  have hX'1 : 1 ≤ L.sc.X' := Real.one_le_exp (Real.rpow_pos_of_pos hx0 _).le
-  have hb' : L.sc.b' ≤ L.sc.x * L.sc.b := by
-    unfold Scale.b' Scale.a
-    exact div_le_self (by positivity) hX'1
+  have hb' : L.sc.b' ≤ L.sc.x * L.sc.b := sc_b'_le L.sc
   have hb'0 : 0 ≤ L.sc.b' := by unfold Scale.b' Scale.a Scale.X'; positivity
-  have hw'' : L.sc.w'' D.R.n ≤ L.sc.b := by
-    unfold Scale.w''
-    rw [div_le_iff₀ (by positivity)]
-    calc L.sc.b' ≤ L.sc.x * L.sc.b := hb'
-      _ ≤ L.sc.x * L.sc.b * D.R.n := le_mul_of_one_le_right (by positivity) hn1
-      _ = L.sc.b * (L.sc.x * D.R.n) := by ring
+  have hw'' : L.sc.w'' D.R.n ≤ L.sc.b := sc_w''_le D L.sc hn0
   have hkSc : (D.R.k : ℝ) * L.Sc ≤ L.sc.w'' D.R.n := hDel.2.2.2.1
   have hSc0 : 0 ≤ L.Sc := L.Sc_pos.le
   have hSc : L.Sc ≤ L.sc.b := by
@@ -343,7 +310,6 @@ theorem sc_add_wj_le (D : D7) (L : SizeData₂ D) (S : SizesAt L) (i : ℕ) (hi 
         _ = 2 * L.sc.x ^ 5 := by ring
     have hq : szNst L * L.sc.x ^ L.sc.eps * L.LaG * L.sc.b' / D.R.k ≤ 2 * L.sc.x ^ 5 * (L.sc.x * L.sc.b) := by
       rw [div_le_iff₀ (by linarith)]
-      have h0 : 0 ≤ szNst L * L.sc.x ^ L.sc.eps * L.LaG := by positivity
       calc szNst L * L.sc.x ^ L.sc.eps * L.LaG * L.sc.b' ≤ 2 * L.sc.x ^ 5 * (L.sc.x * L.sc.b) :=
             mul_le_mul hP hb' hb'0 (by positivity)
         _ ≤ 2 * L.sc.x ^ 5 * (L.sc.x * L.sc.b) * D.R.k := le_mul_of_one_le_right (by positivity) hk1
@@ -364,24 +330,8 @@ theorem sc_add_wj_le (D : D7) (L : SizeData₂ D) (S : SizesAt L) (i : ℕ) (hi 
 
 theorem kSc_le_b (D : D7) (L : SizeData₂ D) (S : SizesAt L) : (D.R.k : ℝ) * L.Sc ≤ L.sc.b := by
   obtain ⟨hN, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, hDel, _⟩ := S
-  have hx1 : 1 < L.sc.x := L.sc.one_lt_alt
-  have hx0 : 0 < L.sc.x := by linarith
-  have hn0 : (0 : ℝ) < D.R.n := lt_of_lt_of_le (Real.rpow_pos_of_pos hx0 _) hN.1
-  have hn1 : (1 : ℝ) ≤ D.R.n := by
-    have : 0 < D.R.n := by exact_mod_cast hn0
-    exact_mod_cast this
-  have hX'1 : 1 ≤ L.sc.X' := Real.one_le_exp (Real.rpow_pos_of_pos hx0 _).le
-  have hbpos : 0 < L.sc.b := Real.exp_pos _
-  have hb' : L.sc.b' ≤ L.sc.x * L.sc.b := by
-    unfold Scale.b' Scale.a
-    exact div_le_self (by positivity) hX'1
-  have hw'' : L.sc.w'' D.R.n ≤ L.sc.b := by
-    unfold Scale.w''
-    rw [div_le_iff₀ (by positivity)]
-    calc L.sc.b' ≤ L.sc.x * L.sc.b := hb'
-      _ ≤ L.sc.x * L.sc.b * D.R.n := le_mul_of_one_le_right (by positivity) hn1
-      _ = L.sc.b * (L.sc.x * D.R.n) := by ring
-  exact le_trans hDel.2.2.2.1 hw''
+  have hx0 : 0 < L.sc.x := by linarith [L.sc.one_lt_alt]
+  exact le_trans hDel.2.2.2.1 (sc_w''_le D L.sc (lt_of_lt_of_le (Real.rpow_pos_of_pos hx0 _) hN.1))
 
 theorem abs_logOm_le (D : D7) (L : SizeData₂ D) (S : SizesAt L) (P : ParameterChoice' D L) :
     |L.logOm| ≤ 6 + 2 * L.sc.L := by
@@ -429,7 +379,6 @@ theorem compl3_record (D : D7) (L : SizeData₂ D) (Z : DivX D) (Csz : ℝ) (P :
   unfold Formalism.L2.DIV.Compl3
   intro u u'
   have hx1 : 1 < L.sc.x := L.sc.one_lt_alt
-  have hx0 : 0 < L.sc.x := by linarith
   have heps : 0 < L.sc.eps := L.sc.eps_pos
   have hL1 : 1 ≤ L.sc.L := Real.one_le_rpow hx1.le heps.le
   have hb1 : 1 ≤ L.sc.b := Real.one_le_exp (by linarith)
@@ -445,10 +394,8 @@ theorem compl3_record (D : D7) (L : SizeData₂ D) (Z : DivX D) (Csz : ℝ) (P :
   have hkSc := kSc_le_b D L S
   have hQ0 : 0 ≤ Real.log (6 * L.sc.x ^ 6 * L.sc.b) + |L.logOm| :=
     add_nonneg (Real.log_nonneg hM1) (abs_nonneg _)
-  have hK0 : 0 ≤ 14 + 6 / L.sc.eps := by positivity
   have hQ : Real.log (6 * L.sc.x ^ 6 * L.sc.b) + |L.logOm| ≤ (14 + 6 / L.sc.eps) * L.sc.L := by
     have e1 : 6 * (L.sc.L / L.sc.eps) = 6 / L.sc.eps * L.sc.L := by ring
-    have e2 : (14 + 6 / L.sc.eps) * L.sc.L = 14 * L.sc.L + 6 / L.sc.eps * L.sc.L := by ring
     linarith
   have hm1 : (1 : ℝ) ≤ D.R.m := by
     have := D.R.two_le_m
@@ -456,7 +403,6 @@ theorem compl3_record (D : D7) (L : SizeData₂ D) (Z : DivX D) (Csz : ℝ) (P :
   have hf0 : (0 : ℝ) ≤ D.R.f := Nat.cast_nonneg _
   have hm0 : (0 : ℝ) ≤ D.R.m := Nat.cast_nonneg _
   have hb0 : 0 ≤ L.sc.b := by linarith
-  have hL0 : 0 ≤ L.sc.L := by linarith
   have h1 : (D.R.k : ℝ) * (L.Sc * (Real.log (6 * L.sc.x ^ 6 * L.sc.b) + |L.logOm|)) ≤
       L.sc.b * ((14 + 6 / L.sc.eps) * L.sc.L) := by
     rw [← mul_assoc]

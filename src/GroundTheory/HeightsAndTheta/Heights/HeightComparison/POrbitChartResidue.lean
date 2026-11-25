@@ -93,7 +93,7 @@ theorem OrbitChartResidue.proof (hM : OrbitChartMax.Statement) (hQ : OrbitChartQ
     (by convert hft using 1 <;> rfl) (Geo.charOf V) _
   have hgeo : Geo.geoNum (ι := blockIdx n) 0 V Fin.elim0 =
       ((Module.length ℤ (MvPolynomial (Coord n) ℤ ⧸ J)).toNat : ℤ) := by
-    simp only [Geo.geoNum, dif_pos hrel]
+    simp only [Geo.geoNum, dite_eq_left hrel]
     rfl
   rw [hgeo, Nat.card_congr e.toEquiv, hcard, Nat.cast_pow, Real.log_pow]
   push_cast

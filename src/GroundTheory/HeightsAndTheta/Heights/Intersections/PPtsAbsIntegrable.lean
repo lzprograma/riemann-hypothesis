@@ -125,7 +125,7 @@ theorem PtsAbsIntegrable.proof (hInt : PtsIntegrableStatement) (hMeas : PtsAbsMe
     intro y w
     unfold sheetDensity
     by_cases hγ : ∃ γ, IsSheet P Ψ y w γ
-    · simp only [dif_pos hγ]
+    · simp only [dite_eq_left hγ]
       set γ := hγ.choose
       have hS : IsSheet P Ψ y w γ := hγ.choose_spec
       have hmem : γ y ∈ mcPts P := hS.2.self_of_nhds.2.1
@@ -152,7 +152,7 @@ theorem PtsAbsIntegrable.proof (hInt : PtsIntegrableStatement) (hMeas : PtsAbsMe
               (3 ^ e * maDensity (fun j y' => pot (fun j => ((L j).tensor (T j)).tensor (T j)) j (γ y')) y) :=
             mul_le_mul hg hm (abs_nonneg _) (by linarith [abs_nonneg (logNorm A s (γ y))])
         _ = _ := by ring
-    · simp only [dif_neg hγ]
+    · simp only [dite_eq_right hγ]
       simp
   refine Integrable.mono' (((h2.const_mul (-2)).sub h1).const_mul (3 ^ e))
     (hMeas K ι P e Ψ L A s hP hΨ hL hA hs) (Eventually.of_forall fun y => ?_)

@@ -50,8 +50,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.Published
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace AutFin
 
 def coeffSpan {K W : Type} [Group K] [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ K W) :
@@ -90,10 +88,7 @@ open AutFin in
 a number field, the space of automorphic forms of a given level (open compact subgroup `U`),
 given K-type (finite-dimensional continuous representation `ρ`), and given infinitesimal
 character (eigenvalues `c` under the Casimir / center of the universal enveloping algebra)
-is finite-dimensional.
-
-Proposed reference:
-[Harish-Chandra, *Automorphic Forms on Semisimple Lie Groups* (Theorem 1, p. 7)][harishChandra1968]. -/
+is finite-dimensional. -/
 def HarishChandraFinite : Prop :=
   ∀ (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)), IsInfFam θ →
   ∀ (V : HSp D) (U : Subgroup (GA D V)), IsOpen (U : Set (GA D V)) →

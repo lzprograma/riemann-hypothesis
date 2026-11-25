@@ -121,12 +121,6 @@ theorem index_det (ϖ : R) (hϖ : Irreducible ϖ) {n : Type} [Fintype n] [Decida
 
 end IdxDet
 
-section Count
-
-variable {F : Type} [Field F] [Fintype F]
-
-end Count
-
 end Formalism.HermitianLattices.RamifiedLatticeOperators.IndexDeterminantCharacterSums
 end -- clump:auto
 end -- clump:auto
@@ -145,54 +139,10 @@ namespace Formalism.L2.Col
 
 variable {K : Type} [Field K] [NumberField K]
 
-section Len
-variable {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
-
-end Len
-
 section Rec
 variable [StarRing K]
 
-theorem mem_intW_iff (w : HeightOneSpectrum (𝓞 K)) (x : K) :
-    x ∈ Formalism.BasicNotions.intW (Formalism.BasicNotions.Examples₂.placesOf K) w ↔ x ∈ (algebraMap (Ow w) K).range := by
-  rw [mem_range_ow_iff]
-  show (0 : WithTop ℤ) ≤ Formalism.BasicNotions.Examples₂.PlacesToy.valW w x ↔ _
-  by_cases hx : x = 0
-  · subst hx
-    simp
-  · rw [Formalism.BasicNotions.Examples₂.PlacesToy.valW_of_ne w hx]
-    have h0 : w.valuation K x ≠ 0 := (Valuation.ne_zero_iff _).2 hx
-    unfold Formalism.BasicNotions.vAdd
-    rw [← WithTop.coe_zero, WithTop.coe_le_coe, neg_nonneg, ← WithZero.log_one,
-      WithZero.log_le_log h0 one_ne_zero]
-
 variable {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
-
-theorem mem_locW_iff (w : HeightOneSpectrum (𝓞 K)) (L : Submodule (𝓞 K) V) (x : V) :
-    x ∈ Formalism.BasicNotions.locW (Formalism.BasicNotions.Examples₂.placesOf K) w L ↔ x ∈ atW w L := by
-  constructor
-  · intro hx
-    induction hx using Submodule.span_induction with
-    | mem x hx => exact Submodule.subset_span hx
-    | zero => exact Submodule.zero_mem _
-    | add x y _ _ hx hy => exact Submodule.add_mem _ hx hy
-    | smul r x _ hx =>
-      obtain ⟨r', hr'⟩ := (mem_intW_iff w r.1).1 r.2
-      have : r • x = r' • x := by
-        rw [ow_smul_def, hr']; rfl
-      rw [this]
-      exact Submodule.smul_mem _ _ hx
-  · intro hx
-    induction hx using Submodule.span_induction with
-    | mem x hx => exact Submodule.subset_span hx
-    | zero => exact Submodule.zero_mem _
-    | add x y _ _ hx hy => exact Submodule.add_mem _ hx hy
-    | smul r x _ hx =>
-      have hr : algebraMap (Ow w) K r ∈ Formalism.BasicNotions.intW (Formalism.BasicNotions.Examples₂.placesOf K) w :=
-        (mem_intW_iff w _).2 ⟨r, rfl⟩
-      have : r • x = (⟨algebraMap (Ow w) K r, hr⟩ : Formalism.BasicNotions.intW (Formalism.BasicNotions.Examples₂.placesOf K) w) • x := rfl
-      rw [this]
-      exact Submodule.smul_mem _ _ hx
 
 end Rec
 

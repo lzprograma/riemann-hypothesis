@@ -96,7 +96,7 @@ theorem ext_ae_eq_contRep : ∀ (B : RowsAut) (y : B.I.L2 B.μf B.fund) (f : B.I
     intro z
     have h := B.fund_spec.2.1 z
     have e : B.I.rep B.fund z = h.choose * z := by
-      unfold AutInst.rep; exact dif_pos h
+      unfold AutInst.rep; exact dite_eq_left h
     exact ⟨h.choose, h.choose_spec.1, e, e ▸ h.choose_spec.2⟩
   have key : ∀ f', IsContRep B y f' → B.I.ext y =ᵐ[B.I.muA B.μf] f' := fun f' hf' =>
     comp_rep_ae_eq (B.I.muA B.μf) _ hcount _ B.fund_spec.1 _ hr _ f' hf'.2.1 hf'.2.2

@@ -83,18 +83,18 @@ theorem zOrbit_of (hZ : SemiGenusZ) (hA : AdelGlue) (hF : LocFinite) : ZOrbit :=
     (fun p => if hp : p.IsMaximal then γ p hp else γ p₀ hp₀) ?_ ?_ ?_ ?_
   · intro p
     by_cases hp : p.IsMaximal
-    · simp only [dif_pos hp]; exact hγU p hp
-    · simp only [dif_neg hp]; exact hγU p₀ hp₀
+    · simp only [dite_eq_left hp]; exact hγU p hp
+    · simp only [dite_eq_right hp]; exact hγU p₀ hp₀
   · intro p a
     by_cases hp : p.IsMaximal
-    · simp only [dif_pos hp]; exact hγs p hp a
-    · simp only [dif_neg hp]; exact hγs p₀ hp₀ a
+    · simp only [dite_eq_left hp]; exact hγs p hp a
+    · simp only [dite_eq_right hp]; exact hγs p₀ hp₀ a
   · intro p
     by_cases hp : p.IsMaximal
-    · simp only [dif_pos hp]; exact hγz p hp
-    · simp only [dif_neg hp]; exact hγz p₀ hp₀
+    · simp only [dite_eq_left hp]; exact hγz p hp
+    · simp only [dite_eq_right hp]; exact hγz p₀ hp₀
   · intro p hp v
-    simp only [dif_pos hp]
+    simp only [dite_eq_left hp]
     exact hγL p hp v
 
 end Formalism.L2.SG.Pf.LatDictZ.Z0

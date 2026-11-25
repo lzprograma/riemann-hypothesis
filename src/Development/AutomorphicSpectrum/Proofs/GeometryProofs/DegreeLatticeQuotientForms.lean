@@ -1,56 +1,14 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.AlgebraicSquareBaseIntersection
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StrictWeightGrowthBoundStatement
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartExistsUniquePoint
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 
@@ -83,7 +41,7 @@ theorem ll_C (n : ℤ) : IsMultiHomog (C n : MRing ι) 0 := by
   intro m hm k
   have : m = 0 := by
     by_contra h
-    rw [mem_support_iff, coeff_C, if_neg (Ne.symm h)] at hm
+    rw [mem_support_iff, coeff_C, ite_eq_right (Ne.symm h)] at hm
     exact hm rfl
   simp [this]
 
@@ -109,17 +67,8 @@ theorem ll_sub {f g : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a)
 
 theorem ll_Xpow [DecidableEq K] (k : K) (i : ι k) (n : ℕ) :
     IsMultiHomog ((X ⟨k, i⟩ : MRing ι) ^ n) (Pi.single k n) := by
-  classical
-  intro m hm k'
-  rw [X_pow_eq_monomial] at hm
-  have hm' := support_monomial_subset hm
-  rw [Finset.mem_singleton] at hm'
-  subst hm'
-  by_cases h : k' = k
-  · subst h
-    simp [Finsupp.single_apply]
-  · have : ∀ j : ι k', (⟨k, i⟩ : Σ k, ι k) ≠ ⟨k', j⟩ := fun j e => h (congrArg Sigma.fst e).symm
-    simp [h]
+  intros
+  apply _root_.PositivityTheory.Xgp.sq_diag.isMultiHomog_X_pow' <;> assumption
 
 noncomputable def llMon (c : ∀ k, ι k) (d : K → ℕ) : MRing ι := ∏ k, (X ⟨k, c k⟩ : MRing ι) ^ d k
 
@@ -150,21 +99,8 @@ theorem ll_mon_add (c : ∀ k, ι k) (d d' : K → ℕ) : llMon c (d + d') = llM
   simp [llMon, pow_add, Finset.prod_mul_distrib]
 
 theorem ll_mem_of_zero (y : (Σ k, ι k) → Ω) {F : MRing ι} {α : K → ℕ} (hF : IsMultiHomog F α)
-    (h0 : aeval y F = 0) : F ∈ mCoordIdeal y := by
-  classical
-  have key : mConeMap y F = C (aeval y F) * ∏ k, (X k : MvPolynomial K Ω) ^ α k := by
-
-    rw [mConeMap, aeval_def, aeval_def, eval₂_eq', eval₂_eq', map_sum, Finset.sum_mul]
-    refine Finset.sum_congr rfl fun m hm => ?_
-    have h1 : ∏ p : (Σ k, ι k), (X p.1 : MvPolynomial K Ω) ^ m p = ∏ k, (X k : MvPolynomial K Ω) ^ α k := by
-      rw [Fintype.prod_sigma]
-      refine Finset.prod_congr rfl fun k _ => ?_
-      rw [← hF m hm k]
-      exact Finset.prod_pow_eq_pow_sum Finset.univ (fun i => m ⟨k, i⟩) (X k : MvPolynomial K Ω)
-    simp only [mul_pow, Finset.prod_mul_distrib, h1, map_mul, map_prod, map_pow, eq_intCast, map_intCast,
-      mul_assoc]
-  show mConeMap y F = 0
-  rw [key, h0, map_zero, zero_mul]
+    (h0 : aeval y F = 0) : F ∈ mCoordIdeal y :=
+  _root_.GroundTheory.Heights₂.Heights.LowerBoundFree.mem_mCoordIdeal_of_aeval_eq_zero y hF h0
 
 theorem ll_zero_of_mem (y : (Σ k, ι k) → Ω) {F : MRing ι} (hF : F ∈ mCoordIdeal y) : aeval y F = 0 := by
   have h : mConeMap y F = 0 := hF
@@ -369,13 +305,6 @@ section -- clump:auto
 @[expose] public section
 
 open MvPolynomial AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cmp
-
-namespace GlobalTheory.CompanionTheory.Ar.LineIso
-
-theorem lineIso_of_two_degrees : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X) (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (y : (Σ k, ι k) → Ω) (E : Type) [AddCommGroup E] [Module Ω E] (L : Lat ξ E) (a a' : K → ℤ) (e₀ : E) (ρ : Ω), CoordTie ℤ ξ (fun c' : (k : K) → ι k => ∏ k, y ⟨k, c' k⟩) → Birational y → (∀ k, ∃ i, y ⟨k, i⟩ ≠ 0) → L.IsDegOn Set.univ y a e₀ → L.IsDegOn Set.univ y a' (ρ • e₀) → ∃ f g : MRing ι, IsLineIso (mCoordIdeal y) a a' f g ∧ aeval y f = ρ * aeval y g :=
-  @PositivityTheory.UnitarySelfGeneration.l_lineiso
-
-end GlobalTheory.CompanionTheory.Ar.LineIso
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.GeometryProofs.DegreeLatticeQuotientForms =====

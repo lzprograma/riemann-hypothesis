@@ -46,7 +46,7 @@ theorem ArithKleiman.proof (hMix : MixedKleiman.Statement) : ArithKleiman.Statem
   have h := hMix K ι P P0 (D + 1) A (constLine 0) 0 II hII (Nat.succ_pos D) hP hP0 hsemi hnef hconj hW ha hs hm hc
     (D + 1) le_rfl
   have hl : (fun i : Fin (D + 1) => if (i : ℕ) < D + 1 then A else constLine 0) = fun _ => A :=
-    funext fun i => if_pos i.isLt
+    funext fun i => ite_eq_left i.isLt
   rwa [hl] at h
 
 end

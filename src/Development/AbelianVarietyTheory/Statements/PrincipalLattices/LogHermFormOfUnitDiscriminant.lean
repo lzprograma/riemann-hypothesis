@@ -163,8 +163,4 @@ theorem exists_quadraticField_sq_eq_neg {d : ℕ} (hd : 0 < d) : ∃ (K : Interm
 
 end Inhabitants
 
-section Sign
-
-end Sign
-
 end GlobalTheory

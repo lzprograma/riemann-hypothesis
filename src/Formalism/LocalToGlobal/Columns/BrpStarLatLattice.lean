@@ -72,12 +72,6 @@ theorem brp_latK_mu (N : Submodule (𝓞 K) (Fin n → K)) (hN : N.FG) : (latK K
 
 end Std
 
-section Dual
-
-variable (K : Type) [Field K] [NumberField K] [StarRing K] {n : ℕ}
-
-end Dual
-
 section Star
 
 variable (K : Type) [Field K] [NumberField K] [StarRing K] {n : ℕ}
@@ -168,14 +162,6 @@ variable [_root_.NumberField.IsTotallyComplex K]
 
 end StarMu
 
-section ESide
-
-variable (E : Type) [Field E] [NumberField E] [StarRing E] {n : ℕ}
-
-variable [_root_.NumberField.IsTotallyComplex E]
-
-end ESide
-
 section Tau
 
 variable {E K : Type} [Field E] [NumberField E] [StarRing E] [_root_.NumberField.IsTotallyComplex E] [Field K] [NumberField K] [StarRing K]
@@ -194,11 +180,5 @@ theorem brp_mu_degT {V ι : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K)
   field_simp
 
 end Tau
-
-section EE
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end EE
 
 end Formalism.L2.Col

@@ -49,7 +49,6 @@ open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G.Chart ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (IsGrpPullback pushHom)
 open GlobalTheory.JetSer ReciprocityTheory.ChartRestriction.G.TB.WickVanishing
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ChartBaseChange
 

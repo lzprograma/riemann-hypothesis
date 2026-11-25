@@ -8,55 +8,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasB
 public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDefs
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockHarmonicSplitting.ConjTransposeOneKronecker
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Analysis.InnerProductSpace.Dual
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.ExistsMonomialWeight
 
@@ -574,7 +527,7 @@ theorem cas_bound {K I : Type} [Fintype K] [Fintype I] [DecidableEq I] (σ : K �
                 rw [List.getElem_set, List.getElem_ofFn, List.getElem_ofFn]
                 by_cases hm : (s : ℕ) = m
                 · subst hm; simp
-                · rw [if_neg hm, Function.update_of_ne]
+                · rw [ite_eq_right hm, Function.update_of_ne]
                   intro h; exact hm (by rw [← h])
             rw [e1]
             exact (List.set_perm_cons_eraseIdx (by simpa using s.2) i).trans
@@ -691,13 +644,13 @@ theorem Eab_mul_apply (a b e f : Ix r s) (Z : Mat r s) :
     (Eab a b * Z) e f = if e = a then Z b f else 0 := by
   by_cases h : e = a
   · subst h; simp [Eab]
-  · rw [if_neg h]; exact Matrix.single_mul_apply_of_ne _ _ _ _ _ h _
+  · rw [ite_eq_right h]; exact Matrix.single_mul_apply_of_ne _ _ _ _ _ h _
 
 theorem mul_Eab_apply (a b e f : Ix r s) (Z : Mat r s) :
     (Z * Eab a b) e f = if f = b then Z e a else 0 := by
   by_cases h : f = b
   · subst h; simp [Eab]
-  · rw [if_neg h]; exact Matrix.mul_single_apply_of_ne _ _ _ _ _ h _
+  · rw [ite_eq_right h]; exact Matrix.mul_single_apply_of_ne _ _ _ _ _ h _
 
 theorem Eab_apply (a b e f : Ix r s) : (Eab a b : Mat r s) e f = if a = e ∧ b = f then 1 else 0 := by
   simp [Eab, Matrix.single_apply]
@@ -717,10 +670,10 @@ theorem pc_ad {a b : Ix r s} (h : sameBlock a b) {Z : Mat r s} (hZ : IsPC Z) :
   rw [_root_.PI.FockOneDegW.Core.side_sb] at h hef
   rw [Matrix.sub_apply, Eab_mul_apply, mul_Eab_apply]
   by_cases h1 : e = a <;> by_cases h2 : f = b
-  · rw [if_pos h1, if_pos h2, hb b f (by rw [← h2]), hb e a (by rw [h1]), sub_zero]
-  · rw [if_pos h1, if_neg h2, hb b f (by rw [← h, ← h1, hef]), sub_zero]
-  · rw [if_neg h1, if_pos h2, hb e a (by rw [hef, h2, ← h]), sub_zero]
-  · rw [if_neg h1, if_neg h2, sub_zero]
+  · rw [ite_eq_left h1, ite_eq_left h2, hb b f (by rw [← h2]), hb e a (by rw [h1]), sub_zero]
+  · rw [ite_eq_left h1, ite_eq_right h2, hb b f (by rw [← h, ← h1, hef]), sub_zero]
+  · rw [ite_eq_right h1, ite_eq_left h2, hb e a (by rw [hef, h2, ← h]), sub_zero]
+  · rw [ite_eq_right h1, ite_eq_right h2, sub_zero]
 
 theorem kc_mul {Z W : Mat r s} (hZ : IsPC Z) (hW : IsPC W) : IsKC (Z * W) := by
   intro a b hab

@@ -3,52 +3,8 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
 public import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothOfRelativeDimensionPspace
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IrreducibleOfIrreducibleMap
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -63,57 +19,7 @@ section Sizes
 
 variable {F K : Type} [Field F] [Field K] {N n : ℕ}
 
-def finSize (w : Matrix (Fin N) (Fin n) F) (φ : F →+* K) (v : AbsoluteValue K ℝ) (y : Fin N → K) : ℝ :=
-  ⨆ k, v (∑ j, φ (w j k) * y j)
-
 def archSize (A : Matrix (Fin N) (Fin N) ℂ) (y : Fin N → ℂ) : ℝ := Real.sqrt (∑ i, ‖∑ j, A j i * y j‖ ^ 2)
-
-theorem pointHeight_eq [NumberField F] [NumberField K] [Algebra F K] (w : Matrix (Fin N) (Fin n) F)
-    (A : (F →+* ℂ) → Matrix (Fin N) (Fin N) ℂ) (y : Fin N → K) :
-    pointHeight w A y = ((∑ᶠ v : FinitePlace K, Real.log (finSize w (algebraMap F K) v.1 y)) +
-      ∑ τ : K →+* ℂ, Real.log (archSize (A (τ.comp (algebraMap F K))) fun j => τ (y j))) /
-        (Module.finrank ℚ K : ℝ) := rfl
-
-theorem le_finSize (w : Matrix (Fin N) (Fin n) F) (φ : F →+* K) (v : AbsoluteValue K ℝ) (y : Fin N → K) (k : Fin n) :
-    v (∑ j, φ (w j k) * y j) ≤ finSize w φ v y :=
-  le_ciSup (f := fun k => v (∑ j, φ (w j k) * y j)) (Set.finite_range _).bddAbove k
-
-theorem finSize_nonneg (w : Matrix (Fin N) (Fin n) F) (φ : F →+* K) (v : AbsoluteValue K ℝ) (y : Fin N → K) :
-    0 ≤ finSize w φ v y := Real.iSup_nonneg fun _ => v.nonneg _
-
-theorem finSize_smul (w : Matrix (Fin N) (Fin n) F) (φ : F →+* K) (v : AbsoluteValue K ℝ) (c : K) (y : Fin N → K) :
-    finSize w φ v (c • y) = v c * finSize w φ v y := by
-  rw [finSize, finSize, Real.mul_iSup_of_nonneg (v.nonneg c)]
-  refine iSup_congr fun k => ?_
-  rw [← map_mul, Finset.mul_sum]
-  exact congrArg v (Finset.sum_congr rfl fun j _ => mul_left_comm _ _ _)
-
-theorem archSize_smul (A : Matrix (Fin N) (Fin N) ℂ) (c : ℂ) (y : Fin N → ℂ) :
-    archSize A (c • y) = ‖c‖ * archSize A y := by
-  rw [archSize, archSize, ← Real.sqrt_sq (norm_nonneg c), ← Real.sqrt_mul (sq_nonneg _), Finset.mul_sum]
-  refine congrArg _ (Finset.sum_congr rfl fun i _ => ?_)
-  rw [← mul_pow, ← norm_mul, Finset.mul_sum]
-  exact congrArg (‖·‖ ^ 2) (Finset.sum_congr rfl fun j _ => mul_left_comm _ _ _)
-
-theorem finSize_pos {w : Matrix (Fin N) (Fin n) F} (hw : Submodule.span F (Set.range w.col) = ⊤) (φ : F →+* K)
-    (v : AbsoluteValue K ℝ) {y : Fin N → K} (hy : y ≠ 0) : 0 < finSize w φ v y := by
-  refine (finSize_nonneg w φ v y).lt_of_ne' fun h => hy (funext fun j => ?_)
-  have h0 : ∀ k, ∑ j, φ (w j k) * y j = 0 := fun k =>
-    v.eq_zero.1 (le_antisymm (h ▸ le_finSize w φ v y k) (v.nonneg _))
-  have key : ∀ u ∈ Submodule.span F (Set.range w.col), ∑ j, φ (u j) * y j = 0 := fun u hu => by
-    induction hu using Submodule.span_induction with
-    | mem _ h => obtain ⟨k, rfl⟩ := h; exact h0 k
-    | zero => simp
-    | add a b _ _ ha hb => simp [add_mul, Finset.sum_add_distrib, ha, hb]
-    | smul c a _ ha => simp [mul_assoc, ← Finset.mul_sum, ha]
-  simpa [Pi.single_apply, apply_ite φ] using key (Pi.single j 1) (hw ▸ trivial)
-
-theorem archSize_pos {A : Matrix (Fin N) (Fin N) ℂ} (hA : A.det ≠ 0) {y : Fin N → ℂ} (hy : y ≠ 0) :
-    0 < archSize A y := by
-  refine Real.sqrt_pos.2 ((Finset.sum_nonneg fun _ _ => sq_nonneg _).lt_of_ne' fun h => hy ?_)
-  refine Matrix.eq_zero_of_vecMul_eq_zero hA (funext fun i => ?_)
-  have := (Finset.sum_eq_zero_iff_of_nonneg fun _ _ => sq_nonneg _).1 h i (Finset.mem_univ i)
-  simpa [Matrix.vecMul, dotProduct, mul_comm] using this
 
 theorem norm_pairing_le {A : Matrix (Fin N) (Fin N) ℂ} (hA : A.det ≠ 0) (u y : Fin N → ℂ) :
     ‖∑ j, u j * y j‖ ≤ frameNorm A u * archSize A y := by
@@ -212,14 +118,6 @@ def baseChange (E : Type) [Field E] [NumberField E] [Algebra F E] : HermSys E wh
   A τ := T.A (τ.comp (algebraMap F E))
   abelian₂ := T.abelian₂
 
-section Norms
-
-variable {K : Type} [Field K] {φ : F →+* K} {σ : F →+* ℂ}
-
-variable {T}
-
-end Norms
-
 def ptHeight {Ω : Type} [Field Ω] [Algebra F Ω] [Algebra.IsAlgebraic F Ω] (x : T.Pt Ω) : ℝ :=
   vecHeight T.w T.A (T.coords x.1)
 
@@ -306,18 +204,6 @@ theorem spans : (projTuple M).Spans := top_le_iff.1 fun u _ => by
   refine Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, ?_⟩)
   funext j
   simp [Matrix.one_apply, Pi.single_apply]
-
-theorem shortGenerators : (projTuple M).ShortGenerators := by
-  refine ⟨fun u hu => ?_, fun k σ => ?_, le_rfl⟩
-  · induction hu using Submodule.span_induction with
-    | mem _ h => exact Submodule.subset_span h
-    | zero => exact zero_mem _
-    | add a b _ _ ha hb => exact add_mem ha hb
-    | smul c a _ ha =>
-      obtain ⟨z, rfl⟩ := Rat.ringOfIntegersEquiv.symm.surjective c
-      rw [eq_intCast Rat.ringOfIntegersEquiv.symm z, Int.cast_smul_eq_zsmul]
-      exact Submodule.smul_mem _ _ ha
-  · simp [HermSys.normAt, frameNorm, Matrix.one_apply, apply_ite]
 
 end projTuple
 

@@ -49,17 +49,7 @@ theorem aeval_aff_of_mem_primeOf {f : Poly k N} (hf : f ∈ primeOf (S := k) y) 
       (homogeneousComponent_mem_primeOf y hf d), zero_div]
 
 theorem le_zero_of_add_one_le_one {d : WithBot ℕ∞} (h : d + 1 ≤ 1) : d ≤ 0 := by
-  induction d using WithBot.recBotCoe with
-  | bot => exact bot_le
-  | coe e =>
-    have h' : e + 1 ≤ 1 := by exact_mod_cast h
-    induction e using ENat.recTopCoe with
-    | top => simp at h'
-    | coe m =>
-      have : m + 1 ≤ 1 := by exact_mod_cast h'
-      have hm : m = 0 := by omega
-      subst hm
-      simp
+  exact ENat.WithBot.add_le_add_one_right_iff.mp (h.trans_eq (zero_add 1).symm)
 
 theorem isField_affRing (hy : IsSubvar (x := y) (primeOf (S := k) y) 0) (hj : y j ≠ 0) :
     IsField (affRing k y j) := by

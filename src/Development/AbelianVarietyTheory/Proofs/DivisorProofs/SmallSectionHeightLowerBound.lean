@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfIntersectionLowerHeight
 public import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
 import Mathlib.Algebra.Order.Floor.Extended
@@ -46,8 +47,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology Set
@@ -61,21 +60,10 @@ variable {k : Type} [CommRing k] {Z : Scheme.{0}} [IsIntegral Z] {q : Z ⟶ Sp k
 
 theorem isClosed_of_ne (hd : topologicalKrullDim Z = 1) {z : Z} (hz : z ≠ genericPoint Z) :
     IsClosed ({z} : Set Z) := by
-  let C (w : Z) : IrreducibleCloseds Z := ⟨closure {w}, isIrreducible_singleton.closure, isClosed_closure⟩
-  rcases Order.krullDim_le_one_iff.1 (show Order.krullDim (IrreducibleCloseds Z) ≤ 1 from hd.le) (C z) with h | h
-  · rw [← closure_subset_iff_isClosed]
-    intro w hw
-    have h1 : C w ≤ C z := closure_minimal (singleton_subset_iff.2 hw) isClosed_closure
-    have h2 : z ∈ closure ({w} : Set Z) := h h1 (subset_closure rfl)
-    exact ((specializes_iff_mem_closure.2 h2).antisymm (specializes_iff_mem_closure.2 hw)).eq
-  · exact absurd (IsGenericPoint.eq (eq_univ_of_univ_subset (@h
-      ⟨univ, IrreducibleSpace.isIrreducible_univ Z, isClosed_univ⟩ (subset_univ _))) (genericPoint_spec Z)) hz
+  apply _root_.GlobalTheory.HtSelfInter.isClosed_of_ne_genericPoint <;> assumption
 
 theorem eq_genericPoint (hZ : IsArithVar q 0) {z : Z} (h : CharZero (Z.residueField z)) :
-    z = genericPoint Z := by
-  by_contra hz
-  have := hZ.finite_residueField (isClosed_of_ne hZ.dim_eq hz)
-  exact not_finite (Z.residueField z)
+    z = genericPoint Z := GlobalTheory.HtSelfInter.eq_genericPoint hZ h
 
 theorem apply_closedPoint (hZ : IsArithVar q 0) (y : Sp ℂ ⟶ Z) :
     y (IsLocalRing.closedPoint ℂ) = genericPoint Z :=

@@ -12,7 +12,6 @@ open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Filter
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.QCoh GlobalTheory.CechPic GlobalTheory.Twist
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.NefKleiman
@@ -55,8 +54,7 @@ theorem interNum_top_pos_of_isAmpleLB : ∀ (k : Type) [Field k] (X : Scheme.{0}
     push_cast at h1
     rw [h1, h2]
     rfl
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   have hcD : p.coeff D ≤ 0 := by
     rw [hcoeff]
     have : ((interNum k (structureModule X) fun _ : Fin D => A : ℤ) : ℝ) ≤ 0 := by exact_mod_cast hneg
@@ -65,7 +63,7 @@ theorem interNum_top_pos_of_isAmpleLB : ∀ (k : Type) [Field k] (X : Scheme.{0}
     ((Polynomial.natDegree_sub_le _ _).trans (max_le hdeg
       ((Polynomial.natDegree_C_mul_X_pow_le c D))))
     (by
-      rw [Polynomial.coeff_sub, Polynomial.coeff_C_mul_X_pow, if_pos rfl]
+      rw [Polynomial.coeff_sub, Polynomial.coeff_C_mul_X_pow, ite_eq_left rfl]
       linarith)
   obtain ⟨m, h1, h2, h3⟩ := (hfreq.and_eventually (hchi.and hq)).exists
   rw [Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow,

@@ -1,50 +1,11 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.SigIntIntegrable
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Formalism.FormalDegreeBessel.FinalG
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -310,29 +271,10 @@ theorem isClosed_UH (k r : ℕ) : IsClosed (UH (Hpk k r)) := by
   exact isClosed_eq (by fun_prop) continuous_const
 
 theorem isClosed_N (k r : ℕ) : IsClosed (Nset k r) := by
-  have h1 : IsClosed {g : Mx k r | ∀ (a : Fin r) (i : Fin (2 * r + k + 1)), a.val ≤ i.val →
-      g i (eI k r a) = if i = eI k r a then 1 else 0} := by
-    simp only [Set.ofPred_forall]
-    refine isClosed_iInter fun a => isClosed_iInter fun i => isClosed_iInter fun _ => ?_
-    exact isClosed_eq (continuous_id.matrix_elem _ _) continuous_const
-  have h2 : IsClosed {g : Mx k r | ∀ i j : Fin (2 * r + k + 1), r ≤ j.val → j.val ≤ r + k → r ≤ i.val →
-      g i j = if i = j then 1 else 0} := by
-    simp only [Set.ofPred_forall]
-    refine isClosed_iInter fun i => isClosed_iInter fun j => isClosed_iInter fun _ => isClosed_iInter fun _ =>
-      isClosed_iInter fun _ => ?_
-    exact isClosed_eq (continuous_id.matrix_elem _ _) continuous_const
-  exact (isClosed_UH k r).inter (h1.inter h2)
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.TopH.n_closed <;> assumption
 
 theorem isClosed_UW (z : Fin (2 * r + k + 1) → ℂ) : IsClosed (UWset k r z) := by
-  have h1 : IsClosed {g : Mx k r | ∀ a : Fin r, g *ᵥ bvec (eI k r a) = bvec (eI k r a) ∧
-      g *ᵥ bvec (esI k r a) = bvec (esI k r a)} := by
-    simp only [Set.ofPred_forall, Set.ofPred_and]
-    refine isClosed_iInter fun a => IsClosed.inter ?_ ?_
-    · exact isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const
-    · exact isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const
-  have h2 : IsClosed {g : Mx k r | g *ᵥ z = z} :=
-    isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const
-  exact (isClosed_UH k r).inter (h1.inter h2)
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.TopH.uw_closed <;> assumption
 
 theorem continuous_of : Continuous (fun x : Mt k r => (Matrix.of x : Mx k r)) := continuous_id
 

@@ -69,36 +69,7 @@ def zHat : Subring Af where
   zero_mem' v := zero_mem (v.adicCompletionIntegers ℚ)
   neg_mem' ha v := neg_mem (ha v)
 
-def zHatUnits : Subgroup Afˣ := zHat.toSubmonoid.units
-
 abbrev Idele (K : Type) [Field K] [NumberField K] : Type := (Af ⊗[ℚ] K)ˣ
-
-def ideleNorm (K : Type) [Field K] [NumberField K] : Idele K →* Afˣ :=
-  Units.map (Algebra.norm Af : Af ⊗[ℚ] K →* Af)
-
-def NormUnitCond {K : Type} [Field K] [NumberField K] (s : Idele K) (q : ℚ) : Prop :=
-  ∃ u ∈ zHatUnits, (u : Af) = (((ideleNorm K s)⁻¹ : Afˣ) : Af) * algebraMap ℚ Af q
-
-section Herm
-
-variable {E : Type} [Field E] [NumberField E] [NumberField.IsCMField E]
-  {W : Type} [AddCommGroup W] [Module ℚ W] [Module E W]
-
-
-
-end Herm
-
-section Groups
-
-variable {E : Type} [Field E] [NumberField E]
-  {W : Type} [AddCommGroup W] [Module ℚ W] [Module E W] [IsScalarTower ℚ E W]
-
-
-variable [Module (𝓞 E) W]
-
-
-
-end Groups
 
 end GlobalTheory.IndefiniteRowSideFullHecke.AdelicScalarMultiplier
 end -- clump:auto
@@ -127,35 +98,7 @@ def Zhat : Subring Af where
   zero_mem' := fun v => (v.adicCompletionIntegers ℚ).zero_mem
   neg_mem' := fun {a} ha v => (v.adicCompletionIntegers ℚ).neg_mem _ (ha v)
 
-def ZhatUnits : Subgroup Afˣ := Zhat.toSubmonoid.units
-
 abbrev Adelic (V : Type) [AddCommGroup V] [Module ℚ V] : Type := Af ⊗[ℚ] V
-
-def ideleNorm (K : Type) [Field K] [NumberField K] : (Adelic K)ˣ →* Afˣ :=
-  Units.map (Algebra.norm Af : Adelic K →* Af)
-
-def ratIdele : ℚˣ →* Afˣ := Units.map (algebraMap ℚ Af : ℚ →+* Af).toMonoidHom
-
-def IsNormScale {K : Type} [Field K] [NumberField K] (s : (Adelic K)ˣ) (q : ℚˣ) : Prop :=
-  0 < (q : ℚ) ∧ (ideleNorm K s)⁻¹ * ratIdele q ∈ ZhatUnits
-
-section Groups
-
-variable (E : Type) [Field E] [NumberField E]
-variable {W : Type} [AddCommGroup W] [Module ℚ W] [Module E W] [IsScalarTower ℚ E W]
-
-def IsHermitian [IsCMField E] (h : W →ₗ[ℚ] W →ₗ[ℚ] E) : Prop :=
-  (∀ (a : E) (x y : W), h (a • x) y = a * h x y) ∧
-    ∀ x y : W, h y x = IsCMField.complexConj E (h x y)
-
-def traceForm (ξ₀ : E) (h : W →ₗ[ℚ] W →ₗ[ℚ] E) : LinearMap.BilinForm ℚ W :=
-  h.compr₂ (Algebra.trace ℚ E ∘ₗ LinearMap.mulLeft ℚ ξ₀)
-
-
-
-variable [Module (𝓞 E) W] [IsScalarTower (𝓞 E) E W]
-
-end Groups
 
 end GlobalTheory.IndefiniteRowSideFullHecke.IdeleNormTraceForm
 end -- clump:auto
@@ -264,63 +207,6 @@ theorem exists_adele_equiv :
   exact exists_adele_equiv_of_local primeCorr e he
 
 end Adeles
-
-section Transport
-
-variable {A A' : Type} [CommRing A] [Algebra ℚ A] [CommRing A'] [Algebra ℚ A'] (e : A ≃ₐ[ℚ] A')
-
-variable {V V' : Type} [AddCommGroup V] [Module ℚ V] [AddCommGroup V'] [Module ℚ V']
-
-end Transport
-
-section Adelic
-
-variable (e : IndefiniteRowSideFullHecke.IdeleNormTraceForm.Af ≃ₐ[ℚ] IndefiniteRowSideFullHecke.AdelicScalarMultiplier.Af)
-  (he : ∀ a, e a ∈ IndefiniteRowSideFullHecke.AdelicScalarMultiplier.zHat ↔ a ∈ IndefiniteRowSideFullHecke.IdeleNormTraceForm.Zhat)
-
-
-
-section Ideles
-
-variable {K : Type} [Field K] [NumberField K]
-
-
-
-
-end Ideles
-
-section Groups
-
-variable {E : Type} [Field E] [NumberField E]
-  {W : Type} [AddCommGroup W] [Module ℚ W] [Module E W] [IsScalarTower ℚ E W]
-
-
-include he
-
-
-
-variable [Module (𝓞 E) W] [IsScalarTower (𝓞 E) E W]
-
-end Groups
-
-end Adelic
-
-section Hypotheses
-
-variable {K : Type} [Field K] [NumberField K] {d : ℕ} {δ : K}
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] [Algebra K E]
-
-
-
-variable {W : Type} [AddCommGroup W] [Module ℚ W] [Module E W] [IsScalarTower ℚ E W]
-  [Module (𝓞 E) W] [IsScalarTower (𝓞 E) E W]
-
-
-
-
-
-end Hypotheses
 
 end GlobalTheory.NormLevelCompare
 end -- clump:auto

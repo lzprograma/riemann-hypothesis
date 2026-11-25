@@ -82,7 +82,6 @@ lemma bijective_map_of_isIso_counit {C D : Type*} [Category C] [Category D] {F :
       fun b => ⟨inv (adj.counit.app X) ≫ b, by simp⟩⟩
 
 
-set_option backward.isDefEq.respectTransparency false in
 lemma existsUnique_hom_app_top {A : CommRingCat.{u}} (P P' : (Spec A).Modules)
     [IsIso P.fromTildeΓ] (f : Γ(P, ⊤) →ₗ[Γ(Spec A, ⊤)] Γ(P', ⊤)) :
     ∃! θ : P ⟶ P', ∀ x, θ.app ⊤ x = f x := by

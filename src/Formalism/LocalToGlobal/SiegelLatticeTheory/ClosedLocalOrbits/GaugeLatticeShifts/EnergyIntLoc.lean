@@ -119,16 +119,6 @@ theorem sigC_norm (C : Choice X θ) (τ : D.what₂.Tau)
   rw [sigC_eq]
   exact (Formalism.L2.SG.Pf.WuBL.sigB_rep C τ).2 _ (conj_mem_lemma D ha) x
 
-private theorem mul_mem_UH_Hpk' (D : D7) {a b : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ}
-    (ha : a ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS)) (hb : b ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS)) :
-    a * b ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS) := by
-  have ha' : aᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * a = Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS := ha
-  have hb' : bᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * b = Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS := hb
-  show (a * b)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * (a * b) = Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS
-  calc (a * b)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * (a * b) = bᴴ * (aᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * a) * b := by
-        simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-    _ = Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS := by rw [ha', hb']
-
 theorem dd_sub (C : Choice X θ) (τ : D.what₂.Tau)
     {yc : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ}
     (hyc : yc ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS)) :
@@ -142,13 +132,17 @@ theorem dd_sub (C : Choice X θ) (τ : D.what₂.Tau)
   rintro _ ⟨g, hg, rfl⟩
   beta_reduce
   rw [sigC_mul C τ hg hyc, sigC_eq]
-  have hg'm : torS (muT D) D.R.k D.R.rS * (g * yc) * torS (muT D)⁻¹ D.R.k D.R.rS ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS) := conj_mem_lemma D (mul_mem_UH_Hpk' D hg hyc)
+  have hg'm : torS (muT D) D.R.k D.R.rS * (g * yc) * torS (muT D)⁻¹ D.R.k D.R.rS ∈
+      Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS) :=
+    conj_mem_lemma D (Inh.mul_mem_UH_Hpk_nonempty_parameter_models _ _ hg hyc)
   have e : sigB X (C.Q τ) (C.Qi τ) τ (torS (muT D) D.R.k D.R.rS * (g * yc) * torS (muT D)⁻¹ D.R.k D.R.rS * (C.y τ)⁻¹) (v0Of C τ)
       = sigB X (C.Q τ) (C.Qi τ) τ (torS (muT D) D.R.k D.R.rS * (g * yc) * torS (muT D)⁻¹ D.R.k D.R.rS) (X.B.w (vOf X τ)) := by
     unfold v0Of
-    rw [← ContinuousLinearMap.comp_apply, ← hrep.1.2 _ (mul_mem_UH_Hpk' D hg'm hyi) _ hy,
+    rw [← ContinuousLinearMap.comp_apply,
+      ← hrep.1.2 _ (Inh.mul_mem_UH_Hpk_nonempty_parameter_models _ _ hg'm hyi) _ hy,
       Matrix.mul_assoc, hyy, Matrix.mul_one]
   rw [← e]
-  exact Submodule.subset_span ⟨_, mul_mem_UH_Hpk' D hg'm hyi, rfl⟩
+  exact Submodule.subset_span
+    ⟨_, Inh.mul_mem_UH_Hpk_nonempty_parameter_models _ _ hg'm hyi, rfl⟩
 
 end Formalism.L2.SG.RealObj.EnergyIntLoc

@@ -110,11 +110,11 @@ theorem genRelR_baseChange (hs : φ' ≫ π = Φ ≫ φ) (S : Sq w wD wp w') (hw
       (a : Γ(S, V)ˣ) : gm r z (h ⁻¹ᵁ V) (pullU h V a) = gm (r ≫ h) z V a := by
     by_cases hz : r z ∈ h ⁻¹ᵁ V
     · have hz' : (r ≫ h) z ∈ V := hz
-      simp only [gm, dif_pos hz, dif_pos hz']
+      simp only [gm, dite_eq_left hz, dite_eq_left hz']
       all_goals first
       | rfl
     · have hz' : (r ≫ h) z ∉ V := hz
-      simp only [gm, dif_neg hz, dif_neg hz', MonoidHom.one_apply]
+      simp only [gm, dite_eq_right hz, dite_eq_right hz', MonoidHom.one_apply]
 
   have gm_pullGen' {X Y : Scheme.{0}} (L : LB X) {K : Type} [Fintype K] (φ : K → (Y ⟶ X)) (ε : K → ℤ) (t : LB.Gen (LB.LinComb L φ ε))
       {Z Z' : Scheme.{0}} (h : Z ⟶ Y) (r : Z' ⟶ Z) (z : Z') (j : K → L.ι) :
@@ -122,7 +122,7 @@ theorem genRelR_baseChange (hs : φ' ≫ π = Φ ≫ φ) (S : Sq w wD wp w') (hw
     by_cases hz : r z ∈ LB.wchart L (fun k => h ≫ φ k) j
     · exact (gm_res r z _ hz (pullU h _ (t.s j))).trans (gm_pullU_eq_gm_comp h r z _ _)
     · have hz' : (r ≫ h) z ∉ LB.wchart L φ j := fun H => hz (Set.mem_iInter.2 fun k => Set.mem_iInter.1 H k)
-      simp only [gm, dif_neg hz, dif_neg hz']
+      simp only [gm, dite_eq_right hz, dite_eq_right hz']
       rfl
 
 
@@ -133,7 +133,7 @@ theorem genRelR_baseChange (hs : φ' ≫ π = Φ ≫ φ) (S : Sq w wD wp w') (hw
     have hz : x z ∈ U := ht (show z ∈ (⊤ : (Sp A).Opens) from trivial)
     have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom c) = c :=
       fun c => congrArg (fun f => CommRingCat.Hom.hom f c) (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of A)))
-    rw [valR, dif_pos ht, gm, dif_pos hz]
+    rw [valR, dite_eq_left ht, gm, dite_eq_left hz]
     show ((Sp A).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom
         ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom ((x.appLE U ⊤ ht).hom a.val))) =
       ((Sp A).presheaf.germ (x ⁻¹ᵁ U) z hz).hom ((x.app U).hom a.val)

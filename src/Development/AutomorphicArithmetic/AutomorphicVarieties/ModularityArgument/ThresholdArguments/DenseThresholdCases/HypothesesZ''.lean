@@ -46,7 +46,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 namespace UpperTheory.V.Z.Bc
 structure HypothesesZ' : Prop where
   af : _root_.UpperTheory.V.Af.Hypotheses'
-  eg : PropEG
   up : UpSol
 end UpperTheory.V.Z.Bc
 end

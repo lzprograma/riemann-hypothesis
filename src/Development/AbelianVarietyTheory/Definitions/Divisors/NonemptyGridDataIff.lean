@@ -64,7 +64,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links GlobalTheory.ChiGrid
 open IsDedekindDomain NumberField Matrix
 open scoped TensorProduct nonZeroDivisors Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ChiGrid
 
@@ -85,11 +84,11 @@ theorem hasSignature_diag_signs (p q : ℕ) : Formalism.UG.HasSignature
   · simp only [Formalism.UG.Jpq, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_symm,
       finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, Matrix.fromBlocks_apply₁₂,
       Matrix.diagonal_apply, Matrix.zero_apply]
-    rw [if_neg (hne i j)]
+    rw [ite_eq_right (hne i j)]
   · simp only [Formalism.UG.Jpq, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_symm,
       finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, Matrix.fromBlocks_apply₂₁,
       Matrix.diagonal_apply, Matrix.zero_apply]
-    rw [if_neg (hne j i).symm]
+    rw [ite_eq_right (hne j i).symm]
   · simp only [Formalism.UG.Jpq, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_symm,
       finSumFinEquiv_apply_right, Matrix.fromBlocks_apply₂₂, Matrix.diagonal_apply,
       Matrix.neg_apply, Matrix.one_apply, (Fin.natAdd_injective q p).eq_iff]
@@ -125,7 +124,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links GlobalTheory.ChiGrid
 open IsDedekindDomain NumberField Matrix
 open scoped TensorProduct nonZeroDivisors Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ChiGridModel
 
@@ -145,7 +143,7 @@ theorem exists_sum (X : LSp D) {ν q : ℕ} (hX : X.IsV ν q) (hq : q ≤ ν) (c
     rw [hX.rank] at this
     exact this.symm.trans h1
   · rw [hs τ]
-    cases neg <;> simp only [Bool.false_eq_true, if_true, if_false, Prod.mk.injEq] at h2 ⊢ <;> omega
+    cases neg <;> simp only [Bool.false_eq_true, ite_true, ite_false, Prod.mk.injEq] at h2 ⊢ <;> omega
   · exact GlobalTheory.ChiGrid.SumDual.isSelfDualC_lat D X.sp B c _ d X.lat 𝔟 (by cases neg <;> simp) hX.sd h0 hd
 
 theorem exists_line (X : LSp D) {ν q : ℕ} (hX : X.IsV ν q) (hq : q ≤ ν) :
@@ -205,9 +203,9 @@ theorem nonempty_vertices : ∀ (D : D7) (T : Type) (L : LevCh D T) (𝔞 𝔞' 
     by_cases h : j = D.R.m
     · have e1 : rankX D j = rankV D D.R.m D.R.m + 1 := by
         simp only [h, rankX, rankP, rankV, nRk, hs, Nat.add_sub_cancel]; ring
-      simp only [Xs, if_pos h]
+      simp only [Xs, ite_eq_left h]
       rw [e1]; exact hXm
-    · simp only [Xs, if_neg h]
+    · simp only [Xs, ite_eq_right h]
       exact hS _ _ (Nat.zero_le _)
 
   have hcol : ∀ i, ∃ Y : LSp D, 1 ≤ i → i ≤ D.R.m →
@@ -253,14 +251,14 @@ theorem nonempty_vertices : ∀ (D : D7) (T : Type) (L : LevCh D T) (𝔞 𝔞' 
     intro j h
     have e : Vs D.R.m (j + 1) = R (j + 1) := by
       simp only [Vs]
-      rw [if_neg (Nat.succ_ne_zero j), if_pos ⟨trivial, h⟩]
+      rw [ite_eq_right (Nat.succ_ne_zero j), ite_eq_left ⟨trivial, h⟩]
     rw [hv _ _ (by omega), e]
     exact (hR _ h).2
   have h3 : IsSum (vtxOf L Vs D.R.m D.R.m) (xOf (P D.R.m) Xs D.R.m) 1 1 fun _ => 1 := by
     have e : Vs D.R.m D.R.m = S (rankV D D.R.m D.R.m) 0 := by
       simp only [Vs]
-      rw [if_neg (by omega), if_neg (by omega), Nat.sub_self]
-    have e' : Xs D.R.m = Xm := if_pos rfl
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), Nat.sub_self]
+    have e' : Xs D.R.m = Xm := ite_eq_left rfl
     rw [hv _ _ (by omega), hx _ _ (by omega), e, e']
     exact htop
   choose d1 hd1 using h1

@@ -45,8 +45,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
 namespace GlobalTheory.Katz.LowLaw
@@ -76,11 +74,11 @@ theorem coeff_addLaw (R : Type) [CommRing R] (d : ℕ) (i : Fin d) (α : Fin d �
   · have h2 : α ≠ Finsupp.single (Sum.inr i) 1 := by
       rw [h1]; intro h
       exact Sum.inl_ne_inr ((Finsupp.single_left_inj one_ne_zero).1 h)
-    rw [if_pos h1, if_neg h2, if_pos (Or.inl h1), add_zero]
-  · rw [if_neg h1, zero_add]
+    rw [ite_eq_left h1, ite_eq_right h2, ite_eq_left (Or.inl h1), add_zero]
+  · rw [ite_eq_right h1, zero_add]
     by_cases h2 : α = Finsupp.single (Sum.inr i) 1
-    · rw [if_pos h2, if_pos (Or.inr h2)]
-    · rw [if_neg h2, if_neg (by tauto)]
+    · rw [ite_eq_left h2, ite_eq_left (Or.inr h2)]
+    · rw [ite_eq_right h2, ite_eq_right (by tauto)]
 
 variable {k : Type} [CommRing k] {d : ℕ}
 
@@ -116,7 +114,7 @@ theorem coeff_law_of_degree_le_one (p : ℕ) [Fact p.Prime] (k : Type) [Field k]
   have h1 : coeff α (μ i) = coeff α (addLaw k d i) := by
     rcases Nat.le_one_iff_eq_zero_or_eq_one.1 hα with h0 | h1
     · rw [(Finsupp.degree_eq_zero_iff α).1 h0, coeff_zero_eq_constantCoeff_apply, h.const,
-        coeff_addLaw, if_neg]
+        coeff_addLaw, ite_eq_right]
       rintro (h | h) <;> exact Finsupp.single_ne_zero.2 one_ne_zero h.symm
     · obtain ⟨s, rfl⟩ := eq_single_of_degree_eq_one h1
       rcases s with j | j

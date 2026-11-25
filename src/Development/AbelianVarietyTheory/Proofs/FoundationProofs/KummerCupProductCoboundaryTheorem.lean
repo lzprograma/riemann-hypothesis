@@ -429,7 +429,7 @@ theorem zmod_cocycle_eq_coboundary_of_unit_twisted_cocycle : ∀ (K Ω : Type) [
     intro g
     obtain ⟨i, hi, hi'⟩ := hζ.eq_pow_of_pow_eq_one (hw_pow g)
     have hex : ∃ j : ZMod N, ζ ^ j.val = w g := ⟨(i : ZMod N), by rw [ZMod.val_cast_of_lt hi, hi']⟩
-    simp only [η, E, dif_pos hex]
+    simp only [η, E, dite_eq_left hex]
     exact hex.choose_spec
   refine ⟨η, hw_lc.comp E, ?_⟩
   intro g h

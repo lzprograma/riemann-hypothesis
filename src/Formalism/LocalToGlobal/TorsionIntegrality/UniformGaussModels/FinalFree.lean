@@ -29,18 +29,6 @@ public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.Stat
 public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
 public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated
 public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OneLetterGaussSharpTranslateHolds
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Tactic.Lemma
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.Algebra.Order.Star.Real
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.StatementK, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.GlobTop, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.GlobVol, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.GlobFin, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.UnitDetRootOf, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.Partial, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnitDetRoot, Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.FinalKappa, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.BlockDiagMulBlockShift, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.ConjMatrixApply, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.PadicNormDivLeOne, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.AreaCmLNe, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.DeltaMem, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.NormIntKur, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.HermFrameOfLocCore, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.InsSuccAbove, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.CardEqOfMulEqOne, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.TransposeMulBlockDiagMul, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.LocMain, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.HermFrameHolds, Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.FinalFree
@@ -332,9 +320,9 @@ lemma vol_std_ne_bot {a : ℕ} {b : ℤ} {d : ℕ} {ha : 0 < a} {hd : 0 < d} {la
         UnitDetRootDefs.cmPair]
       exact Submodule.subset_span (Set.mem_insert _ _)
     by_cases h : i = j
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       exact hω
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       exact zero_mem _
   · have hD : (Matrix.of fun (j i : m) => if i = j then lam * (a : ℂ) else 0) =
         Matrix.diagonal (fun _ => lam * (a : ℂ)) := by
@@ -502,7 +490,7 @@ theorem mv_mul_apply {R : Type*} [CommRing R] (a : Fin 4) (G : Matrix (Fin 4 × 
   · rw [Fintype.sum_eq_single (0, z.2)]
     · simp [h]
     · intro y hy
-      rw [if_neg, zero_mul]
+      rw [ite_eq_right, zero_mul]
       rintro ⟨-, h0, h2⟩
       exact hy (Prod.ext h0 h2.symm)
   · simp [h]
@@ -514,7 +502,7 @@ theorem blockShift_mul_apply {R : Type*} [CommRing R] (k : Fin 4) (G : Matrix (F
   · rw [Fintype.sum_eq_single (k, z.2)]
     · simp [h]
     · intro y hy
-      rw [if_neg, zero_mul]
+      rw [ite_eq_right, zero_mul]
       rintro ⟨-, h0, h2⟩
       exact hy (Prod.ext h0 h2.symm)
   · simp [h]
@@ -527,7 +515,7 @@ theorem mv_mulVec (a : Fin 4) (y : Fin 4 × n → ℂ) :
   · rw [Fintype.sum_eq_single (0, x.2)]
     · simp [h]
     · intro z hz
-      rw [if_neg, zero_mul]
+      rw [ite_eq_right, zero_mul]
       rintro ⟨-, h0, h2⟩
       exact hz (Prod.ext h0 h2.symm)
   · simp [h]
@@ -540,7 +528,7 @@ theorem blockShift_mulVec (k : Fin 4) (y : Fin 4 × n → ℂ) :
   · rw [Fintype.sum_eq_single (k, x.2)]
     · simp [h]
     · intro z hz
-      rw [if_neg, zero_mul]
+      rw [ite_eq_right, zero_mul]
       rintro ⟨-, h0, h2⟩
       exact hz (Prod.ext h0 h2.symm)
   · simp [h]
@@ -607,7 +595,7 @@ theorem blockDiag_mul_blockShift {R : Type*} [CommRing R] (P : Matrix n n R) (k 
   · intro z hz
     by_cases hc : z.1 = 0 ∧ y.1 = k ∧ z.2 = y.2
     · exact absurd (Prod.ext hc.1 hc.2.2 : z = (0, y.2)) hz
-    · rw [if_neg hc, mul_zero]
+    · rw [ite_eq_right hc, mul_zero]
 
 theorem exists_cols (G Gi : Matrix (Fin 4 × n) (Fin 4 × n) ℂ) (hG : G * Gi = 1) :
     ∃ w : n → Fin 4 × n, IsUnit (Matrix.of fun i j => G (0, i) (w j)) := by
@@ -1572,16 +1560,16 @@ theorem blockShift_mul_apply {m : Type*} [Fintype m] (c : Fin 4) (X : Matrix (Fi
     (w : m) : ((bmv0 c : Matrix (Fin 4 × n) (Fin 4 × n) K) * X) (b, i) w = if b = 0 then X (c, i) w else 0 := by
   simp only [bmv0, Matrix.mul_apply, ite_mul, one_mul, zero_mul]
   by_cases hb : b = 0
-  · rw [if_pos hb, Finset.sum_eq_single (c, i)]
+  · rw [ite_eq_left hb, Finset.sum_eq_single (c, i)]
     · simp [hb]
     · rintro ⟨b', j⟩ _ hne
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨-, h1, h2⟩
       exact hne (Prod.ext h1 h2.symm)
     · simp
-  · rw [if_neg hb]
+  · rw [ite_eq_right hb]
     refine Finset.sum_eq_zero fun y _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h, -⟩
     exact hb h
 
@@ -1697,7 +1685,7 @@ theorem local_core' : LocCore := by
   have hZc : ∀ b, what₂ M b = Z * U b := by
     intro b; refine Matrix.ext fun i w => ?_
     have := congrFun (congrFun (hUeq b) (0, i)) w
-    rw [blockShift_mul_apply, if_pos rfl] at this
+    rw [blockShift_mul_apply, ite_eq_left rfl] at this
     exact this
   have hrowsN : ∀ b, what₂ (M * U 0) b = if b = 0 then Z else 0 := by
     intro b; refine Matrix.ext fun i w => ?_

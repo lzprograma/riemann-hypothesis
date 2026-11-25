@@ -413,17 +413,8 @@ open NumberField IsDedekindDomain Matrix Loc
 section Local
 variable {O K : Type} [CommRing O] [Field K] [Algebra O K] {Δ : K}
 
-theorem stab_star_int {x : Lsq K Δ} (h : IsIntegral O x) : IsIntegral O (star x) := by
-  let φ : Lsq K Δ →ₐ[O] Lsq K Δ :=
-    { starRingEnd (Lsq K Δ) with
-      commutes' := fun r => by
-        show star (algebraMap O (Lsq K Δ) r) = algebraMap O (Lsq K Δ) r
-        rw [IsScalarTower.algebraMap_apply O K (Lsq K Δ)]
-        ext <;> simp }
-  exact h.map φ
-
 theorem stab_re_int {x : Lsq K Δ} (h : IsIntegral O x) : IsIntegral O (2 * x.re) := by
-  have h2 := h.add (stab_star_int h)
+  have h2 := h.add (UpperTheory.V.Z.Sym.Glob.int_star h)
   have e : x + star x = algebraMap K (Lsq K Δ) (2 * x.re) := by
     ext <;> simp <;> ring
   rw [e] at h2
@@ -438,7 +429,7 @@ theorem stab_im_int {x : Lsq K Δ} (h : IsIntegral O x) {c : K} (hc : IsIntegral
     refine IsIntegral.of_pow (n := 2) two_pos ?_
     rw [hsq]
     exact hc.map (IsScalarTower.toAlgHom O K (Lsq K Δ))
-  have hp := (h.sub (stab_star_int h)).mul hω
+  have hp := (h.sub (UpperTheory.V.Z.Sym.Glob.int_star h)).mul hω
   have e : (x - star x) * (⟨0, c⟩ : Lsq K Δ) = algebraMap K (Lsq K Δ) (2 * (c * Δ * x.im)) := by
     ext <;> simp
     ring
@@ -448,11 +439,6 @@ theorem stab_im_int {x : Lsq K Δ} (h : IsIntegral O x) {c : K} (hc : IsIntegral
 end Local
 
 variable {F : Type} [Field F] [NumberField F] {Δ : F}
-
-theorem stab_mem_of_int {v : Pl F} {a : Kv v} (h : IsIntegral (Ov v) a) : a ∈ v.adicCompletionIntegers F := by
-  obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.mp h
-  rw [← hy]
-  exact y.2
 
 theorem stab_cv_mem (v : Pl F) (N : 𝓞 F) : cv v (N : F) ∈ v.adicCompletionIntegers F :=
   HeightOneSpectrum.coe_mem_adicCompletionIntegers v N
@@ -467,7 +453,7 @@ theorem stab_smul_int {v : Pl F} {d a : Kv v} (ha : a ∈ v.adicCompletionIntege
 
 theorem stab_glob_int {t : F} (h : ∀ v : Pl F, IsIntegral (Ov v) (cv v t)) : IsIntegral ℤ t := by
   obtain ⟨y, rfl⟩ := HeightOneSpectrum.mem_integers_of_valuation_le_one F t (R := 𝓞 F) fun v => by
-    have := stab_mem_of_int (h v)
+    have := UpperTheory.V.Z.Sym.Glob.mem_of_int (h v)
     rw [HeightOneSpectrum.mem_adicCompletionIntegers] at this
     rwa [← HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
   exact y.isIntegral_coe
@@ -935,10 +921,10 @@ theorem finG_fGv_inv (hD : D.Ok) {t : Dat.Par F} (ht : D.Cone t) (v : Pl F) (u :
     D.fGv t v (u * y) = D.fGv t v y ∧ D.fGv t v (y * theta _ u) = D.fGv t v y := by
   by_cases hv : v ∈ D.Sg
   · rw [finG_Jv_of_mem hv] at hu
-    simp only [Dat.fGv, hv, if_true]
+    simp only [Dat.fGv, hv, ite_true]
     exact (hD.sig v hv).G_inv (t v) (ht v hv) u hu y
   · rw [finG_Jv_of_not_mem hv] at hu
-    simp only [Dat.fGv, hv, if_false]
+    simp only [Dat.fGv, hv, ite_false]
     have hθ : theta _ u ∈ KU (Ov v) (cv v Δ) := (finG_theta_mem_KU u).mpr hu
     constructor
     · rw [Subgroup.mul_mem_cancel_left _ hu]

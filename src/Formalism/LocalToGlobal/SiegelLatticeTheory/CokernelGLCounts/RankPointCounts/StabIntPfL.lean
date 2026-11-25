@@ -13,8 +13,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.StabIntSh
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (δ : ∀ p : PlF D, (D.s.atP p).Fp)
   (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (hA : ∀ q, Agree δ M q) (p : PlF D)
 
@@ -99,7 +97,7 @@ theorem untyped (hs : (M p).split = none) :
 theorem unitAt_untyped (hs : (M p).split = none) : (uP p : ℚ) = 1 / (gS D : ℚ) := by
   obtain ⟨h0, h1⟩ := untyped δ M hA p hs
   unfold uP gpart
-  rw [if_neg h0, if_neg h1]
+  rw [ite_eq_right h0, ite_eq_right h1]
   simp
 
 theorem gS_mul_uP (hs : (M p).split = none) :

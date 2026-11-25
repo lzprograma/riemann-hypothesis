@@ -116,7 +116,7 @@ theorem leaf_holds : LeafSt := by
       exact (hk.1 ρ g a a' hkd).2.2 μ' hμ' w hne
     show MvPowerSeries.coeff μ X.hRow =
       (if ∀ w ∈ μ.support, X.OnLf g a a' w then MvPowerSeries.coeff μ X.hRow else 0)
-    rw [if_pos h1]
+    rw [ite_eq_left h1]
 
 end Formalism.L2.FormalSeriesBounds
 end -- clump:auto

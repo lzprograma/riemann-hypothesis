@@ -7,6 +7,7 @@ public import Formalism.LocalToGlobal.Columns.ChainTwCst
 import Formalism.LocalToGlobal.Columns.ColumnsProofs.ChainCounts
 import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
 import Mathlib.RingTheory.SimpleRing.Principal
+import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
 
 @[expose] public section
 
@@ -44,7 +45,7 @@ theorem twAn_intMap_of_entries {N M : ℕ} (f : Sp E N →ₗ[E] Sp E M) (h : �
       rw [Pi.single_apply]
       by_cases hj : j = s
       · subst hj; simp
-      · rw [if_neg (Ne.symm hj), if_neg hj]
+      · rw [ite_eq_right (Ne.symm hj), ite_eq_right hj]
     rw [this]
     rfl
   rw [e]
@@ -58,7 +59,7 @@ theorem twAn_phiQ_int (q : ℕ) (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ r
   split_ifs at h with hc
   · have h1 := hc.1 (LocE.fPos k₀ c n l.1) (LocE.fPos k₀ c' n' s.1) (framePos_lt hk l.2) (framePos_lt hk' s.2)
     unfold LocE.entB at h1
-    rw [frameIndex_framePos hk l.2, frameIndex_framePos hk' s.2, basisVec_eq_single s.2] at h1
+    rw [frameIndex_framePos l.2, frameIndex_framePos s.2, basisVec_eq_single s.2] at h1
     unfold Loc.atN at h1
     rw [dite_eq_left l.2] at h1
     have e0 : ∀ (N : ℕ) (p : ℕ), LocE.scE N (0 : ℕ → ℕ) p = 0 := fun N p => by
@@ -125,14 +126,14 @@ theorem twAn_phiQ_congr (q : ℕ) (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (hq :
   rw [← hM, ← hM']
   by_cases hC : (∀ p p', p < n + c → p' < n' + c' → IntAt P (M p p')) ∧
       (∀ p p', r ≤ p → p < n + c → p' < r → IntAt P (M p p' / q))
-  · rw [if_pos (hc.2 hC), if_pos hC]
+  · rw [ite_eq_left (hc.2 hC), ite_eq_left hC]
     apply ciUnitV_congr
     rw [redP_det (Matrix.of fun s t : Fin r => M' s.1 t.1) (fun s t => (hc.2 hC).1 s.1 t.1 (by omega) (by omega)),
       redP_det (Matrix.of fun s t : Fin r => M s.1 t.1) (fun s t => hC.1 s.1 t.1 (by omega) (by omega))]
     congr 1
     ext s t
     exact k3 s.1 t.1 (by omega) (by omega)
-  · rw [if_neg (fun h => hC (hc.1 h)), if_neg hC]
+  · rw [ite_eq_right (fun h => hC (hc.1 h)), ite_eq_right hC]
 
 theorem frameEntry_unscaled_eq_coord (q : ℕ) {k₀ c' n' c n : ℕ} (hk' : k₀ ≤ n') (hk : k₀ ≤ n) (x : HomE E (n' + c') (n + c)) {p p' : ℕ}
     (hp : p < n + c) (hp' : p' < n' + c') :
@@ -237,7 +238,7 @@ theorem charArg_unipotentExtension_indep {n' c' n c : ℕ} (xj xj' : (Fin n' →
   · have e : Loc.eN E (n' + c') (n' + i + 1) = 0 := by
       funext l
       unfold Loc.eN
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       rfl
     rw [e, map_zero, map_zero]
 
@@ -282,7 +283,7 @@ theorem twAn_chArg_term {n' c' n c : ℕ} (x : (Fin (n' + c') → E) →ₗ[E] (
   · have e : Loc.eN E (n' + c') (n' + i + 1) = 0 := by
       funext l
       unfold Loc.eN
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       rfl
     rw [e, map_zero, dite_eq_right (fun h => h1 h.1)]
     unfold Loc.atN
@@ -419,16 +420,7 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} {Ch : Chars X Pr R.m}
 
 theorem twAn_lam_mem {j : ℕ} {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∉ Pr.vGs) (v : Sp X.E (R.N j + cOf R j)) :
     v ∈ lamYat (Pr := Pr) (R := R) j P ↔ ∀ l, IntAt P (v l) := by
-  have e : lamYat (Pr := Pr) (R := R) j P = LocE.lamY P (qOf P) (R.N j) (cOf R j) 0 := by
-    unfold lamYat
-    rw [if_neg hP]
-  rw [e]
-  unfold LocE.lamY
-  rw [ciMem_sclLat]
-  have h0 : ∀ l : ℕ, LocE.scE (R.N j) 0 l = 0 := fun l => by
-    unfold LocE.scE
-    split_ifs <;> rfl
-  simp only [h0, zpow_zero, inv_one, one_mul]
+  apply _root_.GlobalTheory.IndefiniteRowSideFullHecke.SandwichNormalForm.mem_lamYat <;> assumption
 
 theorem twAn_bdd_inv {j : ℕ} {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∉ Pr.vGs) {h : AutY X R j} (hb : TwBdd (Pr := Pr) j P h) :
     TwAnIntMap P (h⁻¹ : AutY X R j).toLinearMap := fun v hv =>
@@ -450,7 +442,7 @@ theorem twAn_omPhi_supp {i : ℕ} (P : rowSG Pr sel mu) (hP : P.1 ∉ Pr.vGs) (h
   unfold omPhi Loc.om at h
   have h1 := right_ne_zero_of_mul h
   unfold PhiAt at h1
-  rw [if_neg hP] at h1
+  rw [ite_eq_right hP] at h1
   have hz := twAn_intMap_of_entries _ (twAn_phiQ_int (qOf P.1) _ (twAn_k_le i) (twAn_k_le (i + 1)) _ h1)
   have hw := twAn_bdd_inv hP hba (Pi.single s 1) (fun l => twAn_single_int s l)
   have h2 := twAn_bdd_q hP hbb _ (hz _ hw) l
@@ -492,7 +484,7 @@ theorem twAn_omPhi_congr {i : ℕ} (P : rowSG Pr sel mu) (hP : P.1 ∉ Pr.vGs) (
   unfold omPhi Loc.om
   congr 1
   unfold PhiAt
-  rw [if_neg hP]
+  rw [ite_eq_right hP]
   apply twAn_phiQ_congr (qOf P.1) _ (ciQ_mem P.1) hq0 _ _ (twAn_r_le (by omega)) (twAn_r_le (by omega))
   intro p p' hp hp'
   rw [frameEntry_unscaled_eq_coord _ (twAn_k_le i) (twAn_k_le (i + 1)) _ hp hp', frameEntry_unscaled_eq_coord _ (twAn_k_le i) (twAn_k_le (i + 1)) _ hp hp']

@@ -134,9 +134,3 @@ theorem quad_eq {X : Matrix (l ⊕ l) (l ⊕ l) ℝ} (hX : X ∈ LieAlgebra.Symp
   ring
 
 end CompanionTheory.ThKR.LL
-
-namespace CompanionTheory.ThKR
-
-open LL
-
-end CompanionTheory.ThKR

@@ -225,7 +225,7 @@ lemma norm_coeff_one_cub (h : M.Ok) {u : ℂ_[q]} (hu : ‖u‖ < 1) : ‖coeff 
     · rw [norm_mul, norm_pow]
       exact (mul_le_of_le_one_left (by positivity) h2).trans_lt
         (pow_lt_one₀ (norm_nonneg _) hu two_ne_zero)
-  rw [cub, coeff_mk, if_pos rfl]
+  rw [cub, coeff_mk, ite_eq_left rfl]
   have hne : ‖(1 : ℂ_[q])‖ ≠ ‖-(M.W.a₁ * u + M.W.a₂ * u ^ 2)‖ := by
     rw [norm_one, norm_neg]; exact hs.ne'
   rw [sub_eq_add_neg, IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm hne, norm_one, norm_neg,
@@ -241,14 +241,14 @@ lemma bd_cub (h : M.Ok) {u : ℂ_[q]} (hu : ‖u‖ < 1) : Bd 1 (cub M.W u) := b
   · subst e1; exact h1.le
   by_cases e2 : n = 2
   · subst e2
-    rw [cub, coeff_mk, if_neg (by norm_num), if_pos rfl, norm_neg]
+    rw [cub, coeff_mk, ite_eq_right (by norm_num), ite_eq_left rfl, norm_neg]
     refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha3 ?_)
     rw [norm_mul]; exact mul_le_one₀ ha4 (norm_nonneg _) hu.le
   by_cases e3 : n = 3
   · subst e3
-    rw [cub, coeff_mk, if_neg (by norm_num), if_neg (by norm_num), if_pos rfl, norm_neg]
+    rw [cub, coeff_mk, ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl, norm_neg]
     exact ha6
-  · rw [cub, coeff_mk, if_neg e1, if_neg e2, if_neg e3, norm_zero]; exact zero_le_one
+  · rw [cub, coeff_mk, ite_eq_right e1, ite_eq_right e2, ite_eq_right e3, norm_zero]; exact zero_le_one
 
 private lemma one_lt_norm_y_of_small_of_not_mem (h : M.Ok) {p : ℂ} (hp : M.Small p) (hL : p ∉ M.L.lattice) :
     1 < ‖M.ι (M.y p)‖ := by
@@ -262,7 +262,7 @@ lemma ev_cub_small (h : M.Ok) {p : ℂ} (hp : M.Small p) :
   unfold Mdl.u Mdl.w
   by_cases hL : p ∈ M.L.lattice
   · simp [hL]
-  · simp only [hL, if_false]
+  · simp only [hL, ite_false]
     have hY := one_lt_norm_y_of_small_of_not_mem h hp hL
     have hy' : M.ι (M.y p) ≠ 0 := fun e => by rw [e, norm_zero] at hY; linarith
     have E := congrArg M.ι (UW.equation M h hL)
@@ -313,13 +313,13 @@ lemma sub_mem_of_u_eq (h : M.Ok) {p p' : ℂ} (hp : M.Small p) (hp' : M.Small p'
     have hy : M.y p = M.y p' := by
       have h0 := hW
       unfold Mdl.w at h0
-      simp only [hL, hL', if_false] at h0
+      simp only [hL, hL', ite_false] at h0
       rw [neg_div, neg_div, neg_inj, one_div, one_div, inv_inj] at h0
       exact h0
     have hx : M.x p = M.x p' := by
       have h0 := e
       unfold Mdl.u at h0
-      simp only [hL, hL', if_false] at h0
+      simp only [hL, hL', ite_false] at h0
       rw [hy, div_left_inj' hy0, neg_inj] at h0
       exact h0
     obtain ⟨φ, -, hker, hφ⟩ := Mdl.exists_pointHom q M h
@@ -410,7 +410,7 @@ lemma exists_small (h : M.Ok) {u : ℂ_[q]} (hu : ‖u‖ < 1) : ∃ p, M.Small 
       rw [hz.1, norm_div]
       exact (one_lt_div hwpos).2 hwu
     · unfold Mdl.u
-      rw [if_neg hzL, map_div₀, map_neg, hz.1, hz.2]
+      rw [ite_eq_right hzL, map_div₀, map_neg, hz.1, hz.2]
       field_simp
 
 lemma small_add {p l : ℂ} (hl : l ∈ M.L.lattice) (hp : M.Small p) : M.Small (p + l) := by
@@ -426,7 +426,7 @@ private lemma u_add_lattice {l : ℂ} (hl : l ∈ M.L.lattice) (p : ℂ) : M.u (
   by_cases hpL : p ∈ M.L.lattice
   · simp [hpL, add_mem hpL hl]
   · have hpl : p + l ∉ M.L.lattice := fun h' => hpL (by simpa using sub_mem h' hl)
-    simp only [hpL, hpl, if_false, UW.x_add M hl p, UW.y_add M hl p]
+    simp only [hpL, hpl, ite_false, UW.x_add M hl p, UW.y_add M hl p]
 
 theorem at_exists_unique : ∀ (q : ℕ) [Fact q.Prime] (M : Mdl q) (ω : ℂ_[q]), M.MChart ω → (∀ ζ : ℂ_[q], ‖ζ - 1‖ < 1 → ∃ p, M.At ω ζ p) ∧ (∀ p, M.Small p → ∃ ζ, M.At ω ζ p) ∧ (∀ ζ ζ' p, M.At ω ζ p → M.At ω ζ' p → ζ = ζ') ∧ (∀ ζ p p', M.At ω ζ p → (M.At ω ζ p' ↔ p - p' ∈ M.L.lattice)) ∧ M.At ω 1 0 := by
   intro q _ M ω hω

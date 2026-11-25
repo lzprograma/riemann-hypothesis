@@ -71,8 +71,7 @@ theorem exists_finset_eval (W : Submodule LL (G → V)) [Module.Finite LL ↥W] 
   refine ⟨s, fun c hc h0 => ?_⟩
   by_contra hne
   obtain ⟨g, hg⟩ : ∃ g, c g ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne (funext h)
   have hlt : Ks (insert g s) < Ks s := by
     refine lt_of_le_of_ne (fun x hx => ?_) fun heq => ?_

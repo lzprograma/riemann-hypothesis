@@ -12,50 +12,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootVectorAc
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.UpperMinorOfLevelPoint
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UwClosedSubgroup
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -91,11 +47,11 @@ theorem EB_gl (hD : IsOpen D) : GlRel (EB (E := E) hD) := by
   rw [h]
   congr 1
   · by_cases hbc : b = c
-    · rw [if_pos hbc, if_pos hbc]; rfl
-    · rw [if_neg hbc, if_neg hbc]; rfl
+    · rw [ite_eq_left hbc, ite_eq_left hbc]; rfl
+    · rw [ite_eq_right hbc, ite_eq_right hbc]; rfl
   · by_cases hda : d = a
-    · rw [if_pos hda, if_pos hda]; rfl
-    · rw [if_neg hda, if_neg hda]; rfl
+    · rw [ite_eq_left hda, ite_eq_left hda]; rfl
+    · rw [ite_eq_right hda, ite_eq_right hda]; rfl
 
 theorem map_AAx {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] (φ : A →ₐ[ℂ] B)
     (Eu : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → A) (xi : Fin r → Fin (2 * r + k + 1) → ℂ) (m : ℕ)
@@ -223,16 +179,16 @@ theorem plusPosOfParts : CutHL.PlusPosOfParts := by
     · rw [dite_eq_left (by omega), dite_eq_left hq, zfull_apply, dite_eq_left ⟨a.isLt, hq⟩]
     · rw [dite_eq_right hq]
       split_ifs with h1
-      · rw [zfull_apply, dite_eq_right (by simp; omega), if_neg (by simp; omega)]
+      · rw [zfull_apply, dite_eq_right (by simp; omega), ite_eq_right (by simp; omega)]
       · rfl
   have hxl : ∀ q : Fin (2 * r + k + 1), PBG.xi0 x₁ ⟨m + 1, by omega⟩ q = if q.val = m + 1 then τ else 0 := by
     intro q
     rw [hx₁, upper_minor_of_level_point hj Z τ γ ⟨m + 1, by omega⟩ q (by simp)]
     by_cases hq : q.val = m + 1
-    · rw [dite_eq_left (by omega), if_pos hq, zfull_apply, dite_eq_right (by simp), if_pos ⟨rfl, hq⟩]
-    · rw [if_neg hq]
+    · rw [dite_eq_left (by omega), ite_eq_left hq, zfull_apply, dite_eq_right (by simp), ite_eq_left ⟨rfl, hq⟩]
+    · rw [ite_eq_right hq]
       split_ifs with h1
-      · rw [zfull_apply, dite_eq_right (by simp), if_neg (by simp; omega)]
+      · rw [zfull_apply, dite_eq_right (by simp), ite_eq_right (by simp; omega)]
       · rfl
 
   have hHA := Formalism.FourierDecayAlt.P.head_algebra_relations (SB E hD) E k r m (by omega) z' (EB hD) La' (PBG.xi0 x₁) Z τ u

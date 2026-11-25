@@ -10,47 +10,6 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCou
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarOmLocPf
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PairCorankPositivity.EqZeroOfMulVec
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarFrame
 
@@ -93,7 +52,7 @@ theorem dec {TA TB : E} (A : FlagG S r TA) (B : FlagG S r TB) (hdet : (Zhat A B)
     exact eq_neg_of_add_eq_zero_right this
   have hcB : ∀ i : Fin r, S.hT (A.e i) (∑ b, κ (Sum.inr b) • B.fvec b) = 0 := by
     intro i
-    rw [← hyB, ← fvec_cs, hB, hA]
+    rw [← hyB, ← PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, hB, hA]
     simp [Fin.castSucc_ne_last]
   have hyB' := comb_eq A B hdet hΩ (fun b => κ (Sum.inr b)) hcB
   rw [← hyB] at hyB'
@@ -102,7 +61,7 @@ theorem dec {TA TB : E} (A : FlagG S r TA) (B : FlagG S r TB) (hdet : (Zhat A B)
   refine ⟨∑ i : Fin r, κ (Sum.inl i.castSucc) • A.e i, ?_, κ (Sum.inl (Fin.last r)), ?_⟩
   · exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
   · rw [hyB', hzB, hyA, Fin.sum_univ_castSucc]
-    simp only [fvec_cs, fvec_last]
+    simp only [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, fvec_last]
     rw [smul_add, smul_smul, mul_comm]
     abel
 
@@ -119,7 +78,7 @@ theorem om_zcoef {TA TB : E} (A : FlagG S r TA) (B : FlagG S r TB) (hdet : (Zhat
   rw [om_unique A B hdet hΩ hv, Fin.sum_univ_castSucc]
   have hcl : c (Fin.last r) = (Zhat A B)⁻¹ (Fin.last r) (Fin.last r) := by
     rw [hc, Matrix.mulVec_single_one]; rfl
-  simp only [fvec_cs, fvec_last, hcl, add_sub_cancel_right]
+  simp only [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, fvec_last, hcl, add_sub_cancel_right]
   exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
 theorem indep2 {TA TB : E} (A : FlagG S r TA) (B : FlagG S r TB)
@@ -132,7 +91,7 @@ theorem indep2 {TA TB : E} (A : FlagG S r TA) (B : FlagG S r TB)
     Sum.elim (Fin.snoc (α := fun _ => E) (fun i => c i) (-l)) (Fin.snoc (α := fun _ => E) (fun i => d i) (-m))
   have h0 : ∑ s, κ s • Sum.elim A.fvec B.fvec s = 0 := by
     rw [Fintype.sum_sum_type, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
-    simp only [κ, Sum.elim_inl, Sum.elim_inr, Fin.snoc_castSucc, Fin.snoc_last, fvec_cs, fvec_last, neg_smul]
+    simp only [κ, Sum.elim_inl, Sum.elim_inr, Fin.snoc_castSucc, Fin.snoc_last, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, fvec_last, neg_smul]
     rw [← sub_eq_zero] at hxx
     rw [← hxx]
     abel
@@ -211,7 +170,7 @@ theorem span_swap {ι κ : Type*} (a : ι → S.V) (b : κ → S.V) :
 theorem fvec_mem_Xplus {T : E} (A : FlagG S r T) (a : Fin (r + 1)) : A.fvec a ∈ A.Xplus := by
   refine Fin.lastCases ?_ (fun i => ?_) a
   · rw [fvec_last]; exact Submodule.mem_sup_right (Submodule.mem_span_singleton_self _)
-  · rw [fvec_cs]; exact Submodule.mem_sup_left (Submodule.subset_span ⟨i, rfl⟩)
+  · rw [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc]; exact Submodule.mem_sup_left (Submodule.subset_span ⟨i, rfl⟩)
 
 theorem ab_of {TA T' : E} (A : FlagG S r TA) (B₂ : FlagG S r T') {x₁ x₂ Ω₁ Ω₂ : S.V} {a b ρ : E}
     (hx₁ : x₁ ∈ A.X) (hx₂ : x₂ ∈ A.X) (hω₂ : Ω₂ - ρ • B₂.z ∈ B₂.X) (hloc : Ω₂ - Ω₁ ∈ A.X)
@@ -264,8 +223,6 @@ end Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.BwdBetaS
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
 open BwdCut BwdBetaCut BwdBetaS OmP Formalism.L2.SG.Pf.ScalarFramePf Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.PCount Formalism.L2.SG.TermDef
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}

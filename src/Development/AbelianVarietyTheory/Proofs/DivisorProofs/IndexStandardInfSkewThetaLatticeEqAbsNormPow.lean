@@ -152,7 +152,7 @@ theorem mem_YYl_skew_iff (𝔪 : Ideal (𝓞 D.host.E)) (a d : ℕ) (x : Matrix 
         · subst hk
           simp only [Matrix.mulVec, dotProduct, Matrix.single_apply, true_and]
           rw [Finset.sum_eq_single j (fun l _ hl => by simp [Ne.symm hl]) (by simp)]
-          simp only [if_true]
+          simp only [ite_true]
           rw [← ho, mul_comm, ← Algebra.smul_def]
           exact Submodule.smul_mem _ o hn
         · have hk' : i ≠ k := Ne.symm hk

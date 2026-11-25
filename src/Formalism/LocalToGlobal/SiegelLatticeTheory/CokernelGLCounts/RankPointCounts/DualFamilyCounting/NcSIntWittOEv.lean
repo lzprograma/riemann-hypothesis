@@ -1,5 +1,7 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SigRAlgebraMap
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.HRSmulERight
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.LatHat
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSKfOrb
@@ -31,30 +33,10 @@ theorem oev_mul {x y : Fv F v ⊗[F] E} (hx : x ∈ OEv (E := E) v) (hy : y ∈ 
     x * y ∈ OEv (E := E) v := by
   first | exact _root_.PI.OmLocU.oEv_mul | (apply _root_.PI.OmLocU.oEv_mul <;> assumption)
 
-theorem sigR_smul' (σ : E →ₐ[F] E) (c : Fv F v) (x : Fv F v ⊗[F] E) :
-    sigR (Fv F v) σ (c • x) = c • sigR (Fv F v) σ x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a e => simp [sigR, TensorProduct.smul_tmul']
-  | add x y h1 h2 => rw [smul_add, map_add (f := _), h1, h2, map_add (f := _), smul_add]
-
 theorem oev_sigR (σ : E →ₐ[F] E) {x : Fv F v ⊗[F] E} (hx : x ∈ OEv (E := E) v) :
     sigR (Fv F v) σ x ∈ OEv (E := E) v := by
-  unfold OEv at hx ⊢
-  rw [SetLike.mem_coe] at hx ⊢
-  induction hx using Submodule.span_induction with
-  | mem a ha =>
-    obtain ⟨a, -, rfl⟩ := ha
-    refine Submodule.subset_span
-      ⟨⟨σ a, map_isIntegral_int σ (RingOfIntegers.isIntegral_coe a)⟩, trivial, ?_⟩
-    simp [sigR, inclR]
-    rfl
-  | zero => simp
-  | add x y _ _ h1 h2 => rw [map_add (f := _)]; exact Submodule.add_mem _ h1 h2
-  | smul c x _ h =>
-    show sigR (Fv F v) σ ((c : Fv F v) • x) ∈ _
-    rw [sigR_smul']
-    exact Submodule.smul_mem _ c h
+  intros
+  apply _root_.PI.OmLocU.UnN.sigR_mem <;> assumption
 
 def oevRing : Subring (Fv F v ⊗[F] E) where
   carrier := OEv (E := E) v

@@ -56,7 +56,7 @@ import Mathlib.Tactic.Linter.Style
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeedCoeffRecurrenceAlt, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBoundedPeriodsDiscAinf
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeedCoeffRecurrenceAlt =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeedCoeffRecurrenceAlt", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinAinfDiscIsDomainNormBounds\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClosedDiscToDiscInjectiveOfAdicBasis\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineDiscPeriodsFrobeniusEqMul\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineLatticeFrobeniusInverseMatrix\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeedCoeffRecurrenceAlt", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinAinfDiscIsDomainNormBounds\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClosedDiscToDiscInjectiveOfAdicBasis\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineDiscPeriodsFrobeniusEqMul\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineLatticeFrobeniusInverseMatrix\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EisensteinDivClosedDiscOfTopBasis\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -69,10 +69,6 @@ namespace GlobalTheory.BSP
 
 variable {l : ℕ} [hl : Fact l.Prime] {K : FinExt l}
 
-theorem seedRec_ρ₀_pos (bk : BK K) : 0 < bk.ρ₀ := by
-  unfold BK.ρ₀
-  exact NNReal.rpow_pos (by exact_mod_cast hl.out.pos)
-
 theorem seedRec_ρ₀_lt_one (bk : BK K) : bk.ρ₀ < 1 := by
   unfold BK.ρ₀
   apply NNReal.rpow_lt_one_of_one_lt_of_neg
@@ -84,7 +80,7 @@ theorem seedRec_ρ₀_lt_one (bk : BK K) : bk.ρ₀ < 1 := by
 theorem seedRec_frobS_norm (bk : BK K) :
     ‖toDisc l (X : bk.S) bk.ρ₀ (frobS l bk.a X)‖ ≤ bk.ρ₀ := by
   rw [frobS_X]
-  refine (norm_toDisc_pow_le (l := l) (u := (X : bk.S)) l (seedRec_ρ₀_pos bk)).trans ?_
+  refine (norm_toDisc_pow_le (l := l) (u := (X : bk.S)) l (GlobalTheory.BSP.BK.rho_zero_pos bk)).trans ?_
   exact pow_le_of_le_one bk.ρ₀.coe_nonneg (by exact_mod_cast (seedRec_ρ₀_lt_one bk).le) hl.out.ne_zero
 
 theorem seedRec_comm (bk : BK K) (j : bk.DS bk.ρ₀ →+* bk.DA bk.ρ₀) (hj : IsDiscMap (l := _) (u := _) (ρ := _) bk.ev j)
@@ -108,9 +104,22 @@ theorem seedRec_ev_injective (bk : BK K) {ι : Type} (TB : TopBasis bk.ev bk.J �
   intro x y h
   rw [← hev x, h, hev]
 
-theorem seed_coeff_recurrence : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (τ : Ainf l) (hτ : bk.IsPer τ) (d : ℕ) (ρ : ↥(GK K) → Matrix (Fin d) (Fin d) ℤ_[l]) (hρ : ∀ g, IsUnit (ρ g)) (s : Seed bk d ρ τ), ∀ (ι : Type) (TB : TopBasis bk.ev bk.J ι) (j : bk.DS bk.ρ₀ →+* bk.DA bk.ρ₀), IsDiscMap (l := _) (u := _) (ρ := _) bk.ev j → ∀ (cD : ι → (bk.DA bk.ρ₀ →+ bk.DS bk.ρ₀)), (∀ i a, cD i (bk.iA a) = toDisc l (X : bk.S) bk.ρ₀ (TB.c i a)) → (∀ i x y, cD i (j x * y) = x * cD i y) → (∀ y, HasSum (fun i => j (cD i y) * bk.iA (TB.b i)) y) → (∀ i y, ‖cD i y‖ ≤ ‖y‖) → ∀ Φ : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap (l := _) (u := _) (ρ := _) WittVector.frobenius Φ → ∀ (i₁ : ι) (a b : Fin d), HasSum (fun i => Φ ((s.W * (s.W'.map (cD i)).map j) a b) * bk.iS (TB.c i₁ (WittVector.frobenius (TB.b i)))) (bk.iS bk.E ^ (2 * s.N) * (s.W * (s.W'.map (cD i₁)).map j) a b) := by
-  intro l _ K bk τ hτ d ρ hρ s ι TB j hj cD hc hcm hsum hnorm Φ hΦ i₁ a b
-  have h0 := seedRec_ρ₀_pos bk
+theorem coeff_recurrence_of_frob (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (τ : Ainf l) (hτ : bk.IsPer τ)
+    {d : ℕ} (W W' : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀)) (M : Matrix (Fin d) (Fin d) bk.S) (c N : ℕ)
+    (hW_mul : W * W' = bk.iA τ ^ (2 * N) • (1 : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀)))
+    (ι : Type) (TB : TopBasis bk.ev bk.J ι) (j : bk.DS bk.ρ₀ →+* bk.DA bk.ρ₀)
+    (hj : IsDiscMap (l := _) (u := _) (ρ := _) bk.ev j)
+    (cD : ι → (bk.DA bk.ρ₀ →+ bk.DS bk.ρ₀))
+    (hc : ∀ i a, cD i (bk.iA a) = toDisc l (X : bk.S) bk.ρ₀ (TB.c i a))
+    (hcm : ∀ i x y, cD i (j x * y) = x * cD i y)
+    (hsum : ∀ y, HasSum (fun i => j (cD i y) * bk.iA (TB.b i)) y)
+    (hnorm : ∀ i y, ‖cD i y‖ ≤ ‖y‖)
+    (Φ : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀) (hΦ : IsDiscMap (l := _) (u := _) (ρ := _) WittVector.frobenius Φ)
+    (hphi : ((l : bk.DA bk.ρ₀) ^ c * bk.iS (frobS l bk.a bk.E) ^ N) • W.map Φ = W * M.map bk.iS)
+    (i₁ : ι) (a b : Fin d) :
+    HasSum (fun i => Φ ((W * (W'.map (cD i)).map j) a b) * bk.iS (TB.c i₁ (WittVector.frobenius (TB.b i))))
+      (bk.iS bk.E ^ (2 * N) * (W * (W'.map (cD i₁)).map j) a b) := by
+  have h0 := GlobalTheory.BSP.BK.rho_zero_pos bk
   have h1 := seedRec_ρ₀_lt_one bk
   obtain ⟨hdom, -, -⟩ := _root_.GlobalTheory.BSP.discAinf_isDomain l K bk bk.ρ₀ h0 h1
   let ΦS := Disc.map (l := l) (u := (X : bk.S)) (ρ := bk.ρ₀) (u' := (X : bk.S)) (ρ' := bk.ρ₀)
@@ -125,50 +134,46 @@ theorem seed_coeff_recurrence : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk 
     AddMonoidHomClass.continuous_of_bound Φ 1 (fun y => by rw [one_mul]; exact hΦ.norm_le y)
   have hjc : Continuous j :=
     AddMonoidHomClass.continuous_of_bound j 1 (fun y => by rw [one_mul]; exact hj.norm_le y)
-  let c : ι → bk.DA bk.ρ₀ := fun i => bk.iS (TB.c i₁ (WittVector.frobenius (TB.b i)))
+  let cF : ι → bk.DA bk.ρ₀ := fun i => bk.iS (TB.c i₁ (WittVector.frobenius (TB.b i)))
   let L : bk.DA bk.ρ₀ →+ bk.DA bk.ρ₀ := (j : bk.DS bk.ρ₀ →+ bk.DA bk.ρ₀).comp (cD i₁)
   have hLa : ∀ y, L y = j (cD i₁ y) := fun y => rfl
   have hLc : Continuous L := hjc.comp (hcont i₁)
   have hL : ∀ t y, L (bk.iS t * y) = bk.iS t * L y := by
     intro t y
     rw [hLa, hLa, ← hjS, hcm, map_mul]
-  have key : ∀ y, HasSum (fun i => Φ (j (cD i y)) * c i) (L (Φ y)) := by
+  have key : ∀ y, HasSum (fun i => Φ (j (cD i y)) * cF i) (L (Φ y)) := by
     intro y
     have h := ((hsum y).map (Φ : bk.DA bk.ρ₀ →+ bk.DA bk.ρ₀) hΦc).map L hLc
     convert (preTransparency := .reducible) h using 1
     · funext i
-      simp only [Function.comp_apply, AddMonoidHom.coe_coe]
+      simp only [Function.comp_apply, AddMonoidHom.coe_ofClass]
       rw [map_mul Φ, hΦA, hcomm, hLa, hcm, hc, map_mul, hjS]
     · rfl
-  have stepA : HasSum (fun i => Φ ((s.W * (s.W'.map (cD i)).map j) a b) * c i)
-      ((s.W.map Φ * (s.W'.map Φ).map L) a b) := by
-
+  have stepA : HasSum (fun i => Φ ((W * (W'.map (cD i)).map j) a b) * cF i)
+      ((W.map Φ * (W'.map Φ).map L) a b) := by
     simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, map_mul, Finset.sum_mul]
     refine hasSum_sum fun k _ => ?_
     simp_rw [mul_assoc]
-    exact (key (s.W' k b)).mul_left (Φ (s.W a k))
-  haveI := hdom
-  have hphi := _root_.GlobalTheory.BSP.Seed.crystallineDiscPeriods_frobenius_eq_mul l K bk τ hτ d ρ hρ s Φ hΦ
-  have hwp := _root_.GlobalTheory.BSP.seed_frob_inverse l K bk τ hτ d ρ hρ s Φ hΦ
-  have hmapL : ∀ (M : Matrix (Fin d) (Fin d) bk.S) (Y : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀)),
-      (M.map bk.iS * Y).map L = M.map bk.iS * Y.map L := by
-    intro M Y
+    exact (key (W' k b)).mul_left (Φ (W a k))
+  have := hdom
+  have hwp := _root_.GlobalTheory.BSP.disc_frob_inverse l K bk τ hτ W W' M c N hW_mul Φ hΦ hphi
+  have hmapL : ∀ (M' : Matrix (Fin d) (Fin d) bk.S) (Y : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀)),
+      (M'.map bk.iS * Y).map L = M'.map bk.iS * Y.map L := by
+    intro M' Y
     ext k m
-
     simp only [Matrix.map_apply, Matrix.mul_apply, map_sum, hL]
-  have hμ : (l : bk.DA bk.ρ₀) ^ (s.c₁ + s.c₂) * bk.iS (frobS l bk.a bk.E) ^ s.N * bk.iS bk.E ^ (2 * s.N) =
-      bk.iS ((l : bk.S) ^ (s.c₁ + s.c₂) * frobS l bk.a bk.E ^ s.N * bk.E ^ (2 * s.N)) := by
+  have hμ : (l : bk.DA bk.ρ₀) ^ c * bk.iS (frobS l bk.a bk.E) ^ N * bk.iS bk.E ^ (2 * N) =
+      bk.iS ((l : bk.S) ^ c * frobS l bk.a bk.E ^ N * bk.E ^ (2 * N)) := by
     simp only [map_mul, map_pow, map_natCast]
-  have hBL : (s.X' * s.F.map (C : Wq l bk.a →+* bk.S) * s.X.map (frobS l bk.a)).map bk.iS *
-      (s.W'.map Φ).map L = ((l : bk.DA bk.ρ₀) ^ (s.c₁ + s.c₂) * bk.iS (frobS l bk.a bk.E) ^ s.N *
-        bk.iS bk.E ^ (2 * s.N)) • s.W'.map L := by
+  have hBL : M.map bk.iS * (W'.map Φ).map L =
+      ((l : bk.DA bk.ρ₀) ^ c * bk.iS (frobS l bk.a bk.E) ^ N * bk.iS bk.E ^ (2 * N)) • W'.map L := by
     rw [← hmapL, hwp]
     ext k m
     rw [Matrix.map_apply, Matrix.smul_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul, smul_eq_mul, hμ, hL]
-  have hWJ : s.W'.map L = (s.W'.map (cD i₁)).map j := by ext; rfl
-  have heq : ((l : bk.DA bk.ρ₀) ^ (s.c₁ + s.c₂) * bk.iS (frobS l bk.a bk.E) ^ s.N) •
-      (s.W.map Φ * (s.W'.map Φ).map L) = ((l : bk.DA bk.ρ₀) ^ (s.c₁ + s.c₂) * bk.iS (frobS l bk.a bk.E) ^ s.N) •
-      (bk.iS bk.E ^ (2 * s.N) • (s.W * (s.W'.map (cD i₁)).map j)) := by
+  have hWJ : W'.map L = (W'.map (cD i₁)).map j := by ext; rfl
+  have heq : ((l : bk.DA bk.ρ₀) ^ c * bk.iS (frobS l bk.a bk.E) ^ N) •
+      (W.map Φ * (W'.map Φ).map L) = ((l : bk.DA bk.ρ₀) ^ c * bk.iS (frobS l bk.a bk.E) ^ N) •
+      (bk.iS bk.E ^ (2 * N) • (W * (W'.map (cD i₁)).map j)) := by
     conv_lhs => rw [← Matrix.smul_mul, hphi, Matrix.mul_assoc, hBL, Matrix.mul_smul]
     rw [smul_smul, hWJ]
   have hE0 : bk.iS (frobS l bk.a bk.E) ≠ 0 := by
@@ -179,7 +184,7 @@ theorem seed_coeff_recurrence : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk 
     apply (toDisc_injective_of_topBasis l K bk (Ainf l) bk.ev ι TB bk.ρ₀ h0 h1).1
     rw [map_zero]
     exact h
-  have hlam : (l : bk.DA bk.ρ₀) ^ (s.c₁ + s.c₂) * bk.iS (frobS l bk.a bk.E) ^ s.N ≠ 0 :=
+  have hlam : (l : bk.DA bk.ρ₀) ^ c * bk.iS (frobS l bk.a bk.E) ^ N ≠ 0 :=
     mul_ne_zero (pow_ne_zero _ (isUnit_l_disc l (bk.ev X) bk.ρ₀).ne_zero) (pow_ne_zero _ hE0)
   have hab := congrFun (congrFun heq a) b
   rw [Matrix.smul_apply, Matrix.smul_apply, smul_eq_mul, smul_eq_mul] at hab
@@ -223,8 +228,18 @@ theorem tendsto_cofinite_prod_of_finite {ι α E : Type} [Finite α] [Topologica
   rintro ⟨i, a⟩ hia
   exact Set.mem_iUnion.2 ⟨a, i, hia, rfl⟩
 
-theorem exists_bounded_periods : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (τ : Ainf l) (hτ : bk.IsPer τ) (d : ℕ) (ρ : ↥(GK K) → Matrix (Fin d) (Fin d) ℤ_[l]) (hρ : ∀ g, IsUnit (ρ g)) (s : Seed bk d ρ τ), ∃ (ι : Type) (TB : TopBasis bk.ev bk.J ι) (k : ℕ) (v : ι → Matrix (Fin d) (Fin d) (Ainf l)) (Z : ι → Matrix (Fin d) (Fin d) (bk.DS bk.ρ₀)), (∀ (n : ℕ) (a b : Fin d), {i | v i a b ∉ (bk.J ^ n).map bk.ev}.Finite) ∧ (∀ j : bk.DS bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap (l := _) (u := _) (ρ := _) bk.ev j → ∀ i, s.W * (Z i).map j = (v i).map bk.iA) ∧ ∀ a b : Fin d, HasSum (fun i => bk.iA (v i a b * TB.b i)) (bk.iA ((l : Ainf l) ^ k * τ ^ (2 * s.N) * if a = b then 1 else 0)) := by
-  intro l _ K bk τ hτ d ρ hρ s
+theorem exists_bounded_periods_of_frob (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (τ : Ainf l) (hτ : bk.IsPer τ)
+    {d : ℕ} (W W' : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀)) (M : Matrix (Fin d) (Fin d) bk.S) (c N : ℕ)
+    (hW_mul : W * W' = bk.iA τ ^ (2 * N) • (1 : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀)))
+    (hphi : ∀ Φ : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap (l := _) (u := _) (ρ := _) WittVector.frobenius Φ →
+      ((l : bk.DA bk.ρ₀) ^ c * bk.iS (frobS l bk.a bk.E) ^ N) • W.map Φ = W * M.map bk.iS) :
+    ∃ (ι : Type) (TB : TopBasis bk.ev bk.J ι) (k : ℕ) (v : ι → Matrix (Fin d) (Fin d) (Ainf l))
+      (Z : ι → Matrix (Fin d) (Fin d) (bk.DS bk.ρ₀)),
+      (∀ (n : ℕ) (a b : Fin d), {i | v i a b ∉ (bk.J ^ n).map bk.ev}.Finite) ∧
+      (∀ j : bk.DS bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap (l := _) (u := _) (ρ := _) bk.ev j →
+        ∀ i, W * (Z i).map j = (v i).map bk.iA) ∧
+      ∀ a b : Fin d, HasSum (fun i => bk.iA (v i a b * TB.b i))
+        (bk.iA ((l : Ainf l) ^ k * τ ^ (2 * N) * if a = b then 1 else 0)) := by
   obtain ⟨ι, ⟨TB⟩⟩ := _root_.GlobalTheory.BSP.AinfTopBasis.main l K bk
   have hρ0 := bk.ρ₀_pos'
   have hρ1 := bk.ρ₀_lt_one'
@@ -240,44 +255,46 @@ theorem exists_bounded_periods : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk
   let Φ : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀ :=
     Disc.map (l := l) (u := bk.ev X) (ρ := bk.ρ₀) (u' := bk.ev X) (ρ' := bk.ρ₀) WittVector.frobenius hΦ0
   have hΦ : IsDiscMap (l := _) (u := _) (ρ := _) WittVector.frobenius Φ := isDiscMap_map _ _
-  obtain ⟨cD, hc1, hc2, hc3, hc4, hc5, -, -, -⟩ := _root_.GlobalTheory.BSP.disc_coefficients l K bk (Ainf l) bk.ev ι TB bk.ρ₀ hρ0 hρ1 j0 hj0d
-  have hrec := _root_.GlobalTheory.BSP.seed_coeff_recurrence l K bk τ hτ d ρ hρ s ι TB j0 hj0d cD hc1 hc2 hc5 hc3 Φ hΦ
-  let V : ι → Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀) := fun i => s.W * (s.W'.map (cD i)).map j0
+  obtain ⟨cD, hc1, hc2, hc3, hc4, hc5, -, -, -⟩ :=
+    _root_.GlobalTheory.BSP.disc_coefficients l K bk (Ainf l) bk.ev ι TB bk.ρ₀ hρ0 hρ1 j0 hj0d
+  have hrec := _root_.GlobalTheory.BSP.coeff_recurrence_of_frob l K bk τ hτ W W' M c N hW_mul ι TB j0 hj0d
+    cD hc1 hc2 hc5 hc3 Φ hΦ (hphi Φ hΦ)
+  let V : ι → Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀) := fun i => W * (W'.map (cD i)).map j0
   let Vκ : ι × (Fin d × Fin d) → bk.DA bk.ρ₀ := fun p => V p.1 p.2.1 p.2.2
-  let c : ι × (Fin d × Fin d) → ι × (Fin d × Fin d) → Ainf l := fun p q =>
+  let cF : ι × (Fin d × Fin d) → ι × (Fin d × Fin d) → Ainf l := fun p q =>
     if p.2 = q.2 then bk.ev (TB.c q.1 (WittVector.frobenius (TB.b p.1))) else 0
-  have hcfin : ∀ p (n : ℕ), {q | c p q ∉ (bk.J ^ n).map bk.ev}.Finite := by
+  have hcfin : ∀ p (n : ℕ), {q | cF p q ∉ (bk.J ^ n).map bk.ev}.Finite := by
     rintro ⟨i, ab⟩ n
     refine ((TB.fin (WittVector.frobenius (TB.b i)) n).image fun i₁ => (i₁, ab)).subset ?_
     rintro ⟨i₁, ab'⟩ hq
     by_cases e : ab = ab'
     · subst e
       refine ⟨i₁, fun hm => hq ?_, rfl⟩
-      simp only [c, if_pos rfl]
+      simp only [cF, ↓reduceIte]
       exact Ideal.mem_map_of_mem _ hm
-    · exact (hq (by simp [c, e])).elim
+    · exact (hq (by simp [cF, e])).elim
   have hj0c : Continuous j0 :=
     AddMonoidHomClass.continuous_of_bound j0 1 fun y => (hj0d.norm_le y).trans (one_mul _).ge
   have hV : Filter.Tendsto Vκ Filter.cofinite (nhds 0) := by
     refine tendsto_cofinite_prod_of_finite Vκ fun ab => ?_
     have := tendsto_finsetSum (Finset.univ : Finset (Fin d)) fun m _ =>
-      (tendsto_const_nhds (x := s.W ab.1 m)).mul ((hj0c.tendsto 0).comp (hc4 (s.W' m ab.2)))
+      (tendsto_const_nhds (x := W ab.1 m)).mul ((hj0c.tendsto 0).comp (hc4 (W' m ab.2)))
     simpa [Vκ, V, Matrix.mul_apply] using this
-  have hrecκ : ∀ q, HasSum (fun p => Φ (Vκ p) * toDisc l (bk.ev X) bk.ρ₀ (c p q))
-      (toDisc l (bk.ev X) bk.ρ₀ (bk.ev bk.E) ^ (2 * s.N) * Vκ q) := by
+  have hrecκ : ∀ q, HasSum (fun p => Φ (Vκ p) * toDisc l (bk.ev X) bk.ρ₀ (cF p q))
+      (toDisc l (bk.ev X) bk.ρ₀ (bk.ev bk.E) ^ (2 * N) * Vκ q) := by
     rintro ⟨i₁, a, b⟩
     have hg : Function.Injective (fun i : ι => (i, (a, b))) := fun x y h => (Prod.mk.inj h).1
     refine (hg.hasSum_iff ?_).1 ?_
     · rintro ⟨i, a', b'⟩ hx
       have hne : (a', b') ≠ (a, b) := fun e => hx ⟨i, by simp [e]⟩
-      simp [c, hne]
+      simp [cF, hne]
     · convert hrec i₁ a b using 1
       · funext i
-        simp [c, Vκ, V]
-  obtain ⟨k, v, hv1, hv2⟩ := _root_.GlobalTheory.BSP.exists_bounded_of_phi_equation l K bk (Ainf l) bk.ev ι TB WittVector.frobenius (frobenius_ev_X_eq bk)
-    Φ hΦ _ c hcfin (2 * s.N) Vκ hV hrecκ
+        simp [cF, Vκ, V]
+  obtain ⟨k, v, hv1, hv2⟩ := _root_.GlobalTheory.BSP.exists_bounded_of_phi_equation l K bk (Ainf l) bk.ev ι TB
+    WittVector.frobenius (frobenius_ev_X_eq bk) Φ hΦ _ cF hcfin (2 * N) Vκ hV hrecκ
   refine ⟨ι, TB, k, fun i => Matrix.of fun a b => v (i, (a, b)),
-    fun i => (l : bk.DS bk.ρ₀) ^ k • s.W'.map (cD i), ?_, ?_, ?_⟩
+    fun i => (l : bk.DS bk.ρ₀) ^ k • W'.map (cD i), ?_, ?_, ?_⟩
   · intro n a b
     have hg : Function.Injective (fun i : ι => (i, (a, b))) := fun x y h => (Prod.mk.inj h).1
     exact (hv2 n).preimage hg.injOn
@@ -285,29 +302,36 @@ theorem exists_bounded_periods : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk
     have e := IsDiscMap.unique hj hj0d
     subst e
     ext a b
-    show (s.W * ((l : bk.DS bk.ρ₀) ^ k • s.W'.map (cD i)).map j0) a b = bk.iA (v (i, (a, b)))
+    show (W * ((l : bk.DS bk.ρ₀) ^ k • W'.map (cD i)).map j0) a b = bk.iA (v (i, (a, b)))
     rw [hv1]
     simp only [Vκ, V, Matrix.mul_apply, Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_mul, map_pow,
       map_natCast, Finset.mul_sum]
     exact Finset.sum_congr rfl fun m _ => by ring
   · intro a b
     have hs := (hasSum_sum (s := (Finset.univ : Finset (Fin d))) fun m _ =>
-      (hc5 (s.W' m b)).mul_left (s.W a m)).mul_left ((l : bk.DA bk.ρ₀) ^ k)
-    have hW := congrFun (congrFun s.W_mul a) b
+      (hc5 (W' m b)).mul_left (W a m)).mul_left ((l : bk.DA bk.ρ₀) ^ k)
+    have hW := congrFun (congrFun hW_mul a) b
     rw [Matrix.mul_apply] at hW
     rw [hW] at hs
     have hf : (fun i => bk.iA ((Matrix.of fun a b => v (i, (a, b))) a b * TB.b i)) =
-        fun i => (l : bk.DA bk.ρ₀) ^ k * ∑ m, s.W a m * (j0 (cD i (s.W' m b)) * toDisc l (bk.ev X) bk.ρ₀ (TB.b i)) := by
+        fun i => (l : bk.DA bk.ρ₀) ^ k * ∑ m, W a m * (j0 (cD i (W' m b)) * toDisc l (bk.ev X) bk.ρ₀ (TB.b i)) := by
       funext i
       rw [map_mul, Matrix.of_apply, hv1]
       simp only [Vκ, V, Matrix.mul_apply, Matrix.map_apply, Finset.mul_sum, Finset.sum_mul]
       exact Finset.sum_congr rfl fun m _ => by ring
-    have hval : bk.iA ((l : Ainf l) ^ k * τ ^ (2 * s.N) * if a = b then 1 else 0) =
-        (l : bk.DA bk.ρ₀) ^ k * (bk.iA τ ^ (2 * s.N) • (1 : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀))) a b := by
+    have hval : bk.iA ((l : Ainf l) ^ k * τ ^ (2 * N) * if a = b then 1 else 0) =
+        (l : bk.DA bk.ρ₀) ^ k * (bk.iA τ ^ (2 * N) • (1 : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀))) a b := by
       rw [Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
       split_ifs <;> simp
     rw [hf, hval]
     exact hs
+
+theorem exists_bounded_periods : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (τ : Ainf l), bk.IsPer τ → ∀ (d : ℕ) (ρ : ↥(GK K) → Matrix (Fin d) (Fin d) ℤ_[l]), (∀ g, IsUnit (ρ g)) → ∀ (s : Seed bk d ρ τ), ∃ (ι : Type) (TB : TopBasis bk.ev bk.J ι) (k : ℕ) (v : ι → Matrix (Fin d) (Fin d) (Ainf l)) (Z : ι → Matrix (Fin d) (Fin d) (bk.DS bk.ρ₀)), (∀ (n : ℕ) (a b : Fin d), {i | v i a b ∉ (bk.J ^ n).map bk.ev}.Finite) ∧ (∀ j : bk.DS bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap (l := _) (u := _) (ρ := _) bk.ev j → ∀ i, s.W * (Z i).map j = (v i).map bk.iA) ∧ ∀ a b : Fin d, HasSum (fun i => bk.iA (v i a b * TB.b i)) (bk.iA ((l : Ainf l) ^ k * τ ^ (2 * s.N) * if a = b then 1 else 0)) :=
+  fun l _ K bk τ hτ d ρ hρ s =>
+    exists_bounded_periods_of_frob l K bk τ hτ s.W s.W'
+      (s.X' * s.F.map (C : Wq l bk.a →+* bk.S) * s.X.map (frobS l bk.a))
+      (s.c₁ + s.c₂) s.N s.W_mul
+      (_root_.GlobalTheory.BSP.Seed.crystallineDiscPeriods_frobenius_eq_mul l K bk τ hτ d ρ hρ s)
 
 end GlobalTheory.BSP
 end -- clump:auto

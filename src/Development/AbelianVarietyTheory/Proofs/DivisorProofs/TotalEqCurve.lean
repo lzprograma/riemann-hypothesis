@@ -45,8 +45,6 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBlo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Set Filter Topology MeasureTheory Matrix
@@ -89,12 +87,6 @@ theorem chernMat_congr {L N : HermLB p} (e : L.Isometric N) (c : AlgChart p σ D
     (hy : y ∈ c.e.source) : chernMat (L.φ σ) c y = chernMat (N.φ σ) c y := by
   unfold chernMat
   exact (e.hess_eq c hy (mem_pick _ y) (mem_pick _ y)).symm
-
-section Flag
-
-variable {E : X.Modules} {r : ℕ} (h : VMetric p E r) (fl : Vert.Flag E r)
-
-end Flag
 
 section Cell
 

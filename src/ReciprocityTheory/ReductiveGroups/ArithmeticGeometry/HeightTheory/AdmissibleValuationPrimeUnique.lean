@@ -80,9 +80,9 @@ private theorem diag_cS_Pimg (j₀ : Fin (N + 1)) (x : Fin N → Ω) (b : Fin (D
   · rw [Pimg_self]
     by_cases hi : i = 0
     · subst hi
-      rw [if_pos rfl, diag_X]
+      rw [ite_eq_left rfl, diag_X]
       rfl
-    · rw [if_neg hi, map_neg, map_sum, mul_neg, Finset.mul_sum]
+    · rw [ite_eq_right hi, map_neg, map_sum, mul_neg, Finset.mul_sum]
       apply congrArg Neg.neg
       apply Finset.sum_congr rfl
       intro k hk
@@ -328,7 +328,7 @@ theorem sImg_rel {Ω : Type} [Field Ω] {D N : ℕ} (jc : Fin (N + 1)) (b : Fin 
     ∑ j, sImg (D := D) jc (fun k => b (jc.succAbove k)) (i, j) *
       algebraMap Ω (OmS Ω D N) (b j) = 0 := by
   rw [Fin.sum_univ_succAbove _ jc]
-  simp only [sImg, GaussValuationUniqueness.sac_same, GaussValuationUniqueness.sac_succAbove, if_neg hi, hb, map_one,
+  simp only [sImg, GaussValuationUniqueness.sac_same, GaussValuationUniqueness.sac_succAbove, ite_eq_right hi, hb, map_one,
     mul_one]
 
   simp only [IsScalarTower.algebraMap_apply Ω (MvPolynomial (SVar D N) Ω) (OmS Ω D N),
@@ -427,7 +427,7 @@ theorem admissibleValuation_prime_subsingleton {K : Type} [Field K] [NumberField
     have hni := GaussValuationUniqueness.not_inj_of_trdeg (D := d.D) S j0 ρL
       (by have := hd.D_ge; omega) htr
     rw [injective_iff_map_eq_zero] at hni
-    push_neg at hni
+    push Not at hni
     obtain ⟨G, hG0, hG⟩ := hni
     obtain ⟨f, rfl⟩ := MvPolynomial.map_surjective
       (GaussValuationUniqueness.gK v hK) (GaussValuationUniqueness.gK_surj v hK) G

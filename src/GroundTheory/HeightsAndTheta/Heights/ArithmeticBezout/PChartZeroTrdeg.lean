@@ -73,15 +73,10 @@ theorem ChartZeroTrdeg.proof (hA : AffineChartTrdeg.Statement) : ChartZeroTrdeg.
     simpa [gy, hyj] using this
   have hAξ := hA F n d Q j hQ hdim hXj
   rw [Algebra.adjoin_range_eq_range_aeval] at hAξ ⊢
-  let e := Ideal.quotientKerAlgEquivOfSurjective gξ.rangeRestrict_surjective
-  let φ := Ideal.Quotient.liftₐ (RingHom.ker gξ.rangeRestrict) gy.rangeRestrict fun p hp => by
-    apply Subtype.ext
-    exact hker p (congrArg Subtype.val hp)
-  have hφ : Function.Surjective φ := by
-    intro b
-    obtain ⟨p, hp⟩ := gy.rangeRestrict_surjective b
-    exact ⟨Ideal.Quotient.mk _ p, hp⟩
-  have := trdeg_le_of_surjective (φ.comp e.symm.toAlgHom) (hφ.comp e.symm.surjective)
+  let φ := gξ.rangeRestrict.liftOfSurjective gξ.rangeRestrict_surjective gy.rangeRestrict
+    fun p hp => Subtype.ext (hker p (congrArg Subtype.val hp))
+  have := trdeg_le_of_surjective φ
+    (AlgHom.liftOfSurjective_surjective _ _ _ _ gy.rangeRestrict_surjective)
   exact this.trans hAξ.le
 
 end

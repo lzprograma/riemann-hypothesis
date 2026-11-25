@@ -74,7 +74,7 @@ theorem sp_gDet_deg_other (u : σ) (hu : ∀ p, e p ≠ u) : degreeOf u (gDet (K
   intro i j
   classical
   simp only [Matrix.of_apply]
-  rw [degreeOf_X, if_neg (Ne.symm (hu (i, j)))]
+  rw [degreeOf_X, ite_eq_right (Ne.symm (hu (i, j)))]
 
 theorem sp_gDet_deg_le (he : Function.Injective e) (α s : Fin n) : degreeOf (e (α, s)) (gDet (K := K) e) ≤ 1 := by
   unfold gDet
@@ -84,7 +84,7 @@ theorem sp_gDet_deg_le (he : Function.Injective e) (α s : Fin n) : degreeOf (e 
   · intro i j hi
     classical
     simp only [Matrix.of_apply]
-    rw [degreeOf_X, if_neg]
+    rw [degreeOf_X, ite_eq_right]
     intro h
     exact hi (congrArg Prod.fst (he h)).symm
 
@@ -98,8 +98,8 @@ theorem sp_gDet_deg_ge (he : Function.Injective e) (α s : Fin n) : 1 ≤ degree
     intro i j
     simp only [x]
     by_cases hij : π i = j
-    · rw [if_pos ⟨i, by rw [hij]⟩, if_pos hij]
-    · rw [if_neg, if_neg hij]
+    · rw [ite_eq_left ⟨i, by rw [hij]⟩, ite_eq_left hij]
+    · rw [ite_eq_right, ite_eq_right hij]
       rintro ⟨k, hk⟩
       have := he hk
       simp only [Prod.mk.injEq] at this
@@ -127,7 +127,7 @@ theorem sp_gDet_deg_ge (he : Function.Injective e) (α s : Fin n) : 1 ≤ degree
     · subst hi; simp
     · have hne : e (i, s) ≠ e (α, s) := fun h => hi (congrArg Prod.fst (he h))
       rw [Function.update_of_ne hne, hx]
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hs
       apply hi
       have : π i = π α := by rw [hs]; simp [hπ]
@@ -146,8 +146,8 @@ theorem sp_gDet_ne_zero (he : Function.Injective e) (hn : 0 < n) : gDet (K := K)
     simp only [Matrix.one_apply]
     by_cases hij : i = j
     · subst hij
-      rw [if_pos ⟨i, rfl⟩, if_pos rfl]
-    · rw [if_neg hij, if_neg]
+      rw [ite_eq_left ⟨i, rfl⟩, ite_eq_left rfl]
+    · rw [ite_eq_right hij, ite_eq_right]
       rintro ⟨k, hk⟩
       have h2 := he hk
       simp only [Prod.mk.injEq] at h2
@@ -169,7 +169,7 @@ theorem sp_merge_row [DecidableEq σ] (he : Function.Injective e) (α s s' : Fin
   · intro i j hi
     simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, rename_X]
     have h1 : e (i, j) ≠ e (α, s') := fun h => hi (congrArg Prod.fst (he h))
-    rw [if_neg h1]
+    rw [ite_eq_right h1]
     apply degreeOf_X_of_ne
     intro h
     exact hi (congrArg Prod.fst (he h)).symm
@@ -184,7 +184,7 @@ theorem sp_merge_col [DecidableEq σ] (he : Function.Injective e) (α α' s : Fi
   · intro i j hi
     simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.transpose_apply, Matrix.of_apply, rename_X]
     have h1 : e (j, i) ≠ e (α', s) := fun h => hi (congrArg Prod.snd (he h))
-    rw [if_neg h1]
+    rw [ite_eq_right h1]
     apply degreeOf_X_of_ne
     intro h
     exact hi (congrArg Prod.snd (he h)).symm
@@ -424,21 +424,21 @@ theorem sp_vanish (w : ι → Fin a → ℕ) (P : Pol ℂ ι a)
         have hterm : ∀ r, x τ α r * (if r = s then t else if r < s then t * v r / v s else 0) = (t / v s) * (x τ α r * v r) := by
           intro r
           by_cases h1 : r = s
-          · rw [if_pos h1, h1]; field_simp
+          · rw [ite_eq_left h1, h1]; field_simp
           · by_cases h2 : r < s
-            · simp only [if_neg h1, if_pos h2]; field_simp
+            · simp only [ite_eq_right h1, ite_eq_left h2]; field_simp
             · have : s < r := lt_of_le_of_ne (not_lt.1 h2) (Ne.symm h1)
-              simp only [if_neg h1, if_neg h2, hgt r this]; ring
+              simp only [ite_eq_right h1, ite_eq_right h2, hgt r this]; ring
         rw [Finset.sum_congr rfl fun r _ => hterm r, ← Finset.mul_sum]
         have := congrFun hv α
         simp only [Matrix.mulVec, dotProduct, Pi.zero_apply] at this
         rw [this, mul_zero]
-      · simp only [if_neg hs]
+      · simp only [ite_eq_right hs]
         rw [Finset.sum_eq_single s]
         · simp
         · intro r _ hr; simp [hr]
         · simp
-    · simp only [M0, bt, if_neg hτ, Matrix.of_apply]
+    · simp only [M0, bt, ite_eq_right hτ, Matrix.of_apply]
       rw [Finset.sum_eq_single s]
       · simp
       · intro r _ hr; simp [hr]
@@ -552,7 +552,7 @@ theorem sharp_polynomial_frames : SharpPoly := by
   have hFt : ∀ y, Ft (fr y) = G y := by
     intro y
     have h : ∃ y', fr y' = fr y := ⟨y, rfl⟩
-    simp only [Ft, dif_pos h, G]
+    simp only [Ft, dite_eq_left h, G]
     rw [h.choose_spec, hwd y h.choose h.choose_spec]
   have hFt_wt : ∀ x β, (∀ τ, (x τ).det ≠ 0) → IsBor β →
       Ft (fun τ => x τ * β τ) = (∏ τ, ∏ r, β τ r r ^ ν τ r) * Ft x := by

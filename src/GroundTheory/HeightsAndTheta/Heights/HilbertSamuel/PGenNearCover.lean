@@ -75,8 +75,8 @@ theorem component_mem {A : Ideal (MRingOver S ι)} (hA : IsMultiHomogIdeal A) {v
       rw [weight_blockDeg_apply]
       exact h k (Finset.mem_univ k)
   by_cases h : ∀ k ∈ Finset.univ, ∑ i, m ⟨k, i⟩ = D k
-  · rw [if_pos h, if_pos (e.2 h)]
-  · rw [if_neg h, if_neg (fun h' => h (e.1 h'))]
+  · rw [ite_eq_left h, ite_eq_left (e.2 h)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (e.1 h'))]
 
 theorem isMultiHomogIdeal_of_mem_minimalPrimes {J W : Ideal (MRingOver S ι)} (hJ : IsMultiHomogIdeal J)
     (hW : W ∈ J.minimalPrimes) : IsMultiHomogIdeal W :=
@@ -201,7 +201,7 @@ theorem GenNearCover.proof (hG : GradedSubmodules.Statement) : GenNearCover.Stat
   have hdec : cellProd S I.1 ^ k =
       weightedHomogeneousComponent (blockDeg (ι := ι)) D v + ∑ P, gc P * F P.1 ^ N := by
     calc cellProd S I.1 ^ k = weightedHomogeneousComponent (blockDeg (ι := ι)) D (cellProd S I.1 ^ k) := by
-          rw [weightedHomogeneousComponent_of_mem ((mem_weightedHomogeneousSubmodule _ _ _ _).2 hXk), if_pos rfl]
+          rw [weightedHomogeneousComponent_of_mem ((mem_weightedHomogeneousSubmodule _ _ _ _).2 hXk), ite_eq_left rfl]
       _ = weightedHomogeneousComponent (blockDeg (ι := ι)) D (v + ∑ P, g P * F P.1 ^ N) := by rw [hg, hvy]
       _ = _ := by
 
@@ -233,7 +233,7 @@ theorem GenNearCover.proof (hG : GradedSubmodules.Statement) : GenNearCover.Stat
     rw [← isWeightedHomogeneous_iff]
     by_cases hle : N • δ P.1 ≤ D
     · have h1 : IsWeightedHomogeneous (blockDeg (ι := ι)) (gc P) (D - N • δ P.1) := by
-        simp only [gc, if_pos hle]
+        simp only [gc, ite_eq_left hle]
         exact weightedHomogeneousComponent_isWeightedHomogeneous _ _
       have h2 := ((h1.mul ((isWeightedHomogeneous_iff.2 (hFδ P.1)).pow (N - n P))).mul
         (IsWeightedHomogeneous.prod (Finset.univ.erase P) t a fun Q _ => isWeightedHomogeneous_iff.2 (hta Q))).mul
@@ -249,7 +249,7 @@ theorem GenNearCover.proof (hG : GradedSubmodules.Statement) : GenNearCover.Stat
       generalize n P * δ P.1 q = u₂ at e2 ⊢
       generalize N * δ P.1 q = u₃ at e2 hleq ⊢
       omega
-    · have h0 : gc P = 0 := by simp only [gc, if_neg hle]
+    · have h0 : gc P = 0 := by simp only [gc, ite_eq_right hle]
       rw [h0, zero_mul, zero_mul, zero_mul]
       exact isWeightedHomogeneous_zero (R := S) _ _
   let σ := Σ P : Tf I, Fin (r P)

@@ -3,47 +3,7 @@ module
 public import Mathlib.MeasureTheory.Group.Measure
 public import Mathlib.NumberTheory.LocalField.Basic
 public import Mathlib.Topology.Algebra.Module.ModuleTopology
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.MeasureTheory.Measure.Haar.Unique
 
@@ -87,9 +47,6 @@ theorem isOpen_ball (γ : ValueGroupWithZero K) (hγ : γ ≠ 0) :
   rw [sub_add_cancel] at h
   exact h.trans (max_le hy.le hx)
 
-theorem isCompact_ball (γ : ValueGroupWithZero K) : IsCompact {x : K | valuation K x ≤ γ} :=
-  IsNonarchimedeanLocalField.isCompact_closedBall K γ
-
 end Field
 
 variable {K : Type} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
@@ -132,23 +89,19 @@ theorem box_eq_image (b : Basis ι K E) (γ : ι → ValueGroupWithZero K) :
 
 theorem isCompact_box (b : Basis ι K E) (γ : ι → ValueGroupWithZero K) : IsCompact (box b γ) := by
   rw [box_eq_image]
-  exact (isCompact_univ_pi fun i => isCompact_ball (γ i)).image (continuous_equivFun_symm b)
+  exact (isCompact_univ_pi fun i => IsNonarchimedeanLocalField.isCompact_closedBall _ (γ i)).image (continuous_equivFun_symm b)
 
 theorem zero_mem_box (b : Basis ι K E) (γ : ι → ValueGroupWithZero K) : (0 : E) ∈ box b γ := by
   intro i
   simp
 
-theorem locallyCompact (b : Basis ι K E) : LocallyCompactSpace E := by
-  let e : E ≃ₜ (ι → K) :=
-    { toEquiv := b.equivFun.toEquiv
-      continuous_toFun := IsModuleTopology.continuous_of_linearMap (R := K) b.equivFun.toLinearMap
-      continuous_invFun := continuous_equivFun_symm b }
-  exact e.isOpenEmbedding.locallyCompactSpace
-
 def homeo (b : Basis ι K E) : E ≃ₜ (ι → K) where
   toEquiv := b.equivFun.toEquiv
   continuous_toFun := IsModuleTopology.continuous_of_linearMap (R := K) b.equivFun.toLinearMap
   continuous_invFun := continuous_equivFun_symm b
+
+theorem locallyCompact (b : Basis ι K E) : LocallyCompactSpace E :=
+  (homeo b).isOpenEmbedding.locallyCompactSpace
 
 theorem secondCountableE (b : Basis ι K E) : SecondCountableTopology E := by
   haveI := secondCountable K
@@ -172,16 +125,11 @@ theorem image_eq_smul (b : Basis ι K E) (μ : Measure E) [μ.IsAddHaarMeasure] 
   refine ⟨addHaarScalarFactor (μ.map L.symm) μ, fun S => ?_⟩
   have h := isAddLeftInvariant_eq_smul (μ.map L.symm) μ
   have h2 : (μ.map L.symm) S = μ (T '' S) := by
-    have hm : (μ.map L.symm) = μ.map (L.symm.toHomeomorph.toMeasurableEquiv) := rfl
-    rw [hm, MeasurableEquiv.map_apply]
-    have hL : ∀ x, L.symm x = T.symm x := fun x => rfl
-    congr 1
-    ext x
-    simp only [Set.mem_preimage, Homeomorph.toMeasurableEquiv_coe,
-      ContinuousLinearEquiv.coe_toHomeomorph, hL, Set.mem_image]
-    constructor
-    · intro hx; exact ⟨T.symm x, hx, by simp⟩
-    · rintro ⟨y, hy, rfl⟩; simpa using hy
+    rw [show μ.map L.symm = μ.map L.symm.toHomeomorph.toMeasurableEquiv from rfl,
+      MeasurableEquiv.map_apply,
+      show L.symm.toHomeomorph.toMeasurableEquiv ⁻¹' S = T.toEquiv.symm ⁻¹' S from rfl,
+      ← Equiv.image_eq_preimage_symm T.toEquiv]
+    rfl
   have h' : (μ.map L.symm) S = _ := DFunLike.congr_fun h S
   rw [← h2, h']
   first | rfl

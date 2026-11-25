@@ -3,50 +3,7 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
 public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
 public import Development.WeilBound.CoreStatements.FlagImmersions.CombLineSmoothConjInvariant
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -74,7 +31,7 @@ open Classical in
 noncomputable def indLine (ι : K → Type) [∀ k, Fintype (ι k)] : HermLine ι where
   a := 0
   h z := if ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0 then 1 else 0
-  pos z hz := by rw [if_pos hz]; exact one_pos
+  pos z hz := by rw [ite_eq_left hz]; exact one_pos
   smul c z hc := by
     have : (∀ k, ∃ i, c k * z ⟨k, i⟩ ≠ 0) ↔ ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0 := by
       simp [hc]
@@ -82,7 +39,7 @@ noncomputable def indLine (ι : K → Type) [∀ k, Fintype (ι k)] : HermLine �
     simp
 
 theorem indLine_smooth : IsSmoothHerm (indLine ι) :=
-  (contDiffOn_const (c := (1 : ℝ))).congr fun _ hz => if_pos hz
+  (contDiffOn_const (c := (1 : ℝ))).congr fun _ hz => ite_eq_left hz
 
 theorem tensor_indLine {A B : HermLine ι} (ha : A.a = B.a)
     (hh : ∀ z : (Σ k, ι k) → ℂ, (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) → A.h z = B.h z) :
@@ -91,7 +48,7 @@ theorem tensor_indLine {A B : HermLine ι} (ha : A.a = B.a)
   by_cases hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0
   · show A.h z * _ = B.h z * _
     rw [hh z hz]
-  · have : (indLine ι).h z = 0 := if_neg hz
+  · have : (indLine ι).h z = 0 := ite_eq_right hz
     show A.h z * _ = B.h z * _
     rw [this, mul_zero, mul_zero]
 

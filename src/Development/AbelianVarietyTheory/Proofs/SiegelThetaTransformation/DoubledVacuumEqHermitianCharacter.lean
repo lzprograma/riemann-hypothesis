@@ -8,51 +8,9 @@ public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RelIndexDualSubmoduleInfOfSelfDual
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeVacuaExistUnique
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledThetaTestFunctionSesquilinearHeisenberg
 import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
@@ -271,25 +229,12 @@ theorem vecMul_dblT (y₁ y₂ : Fin r → E) : Sum.elim y₁ y₂ ᵥ* dblT X =
       Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     ring
 
-private theorem ccT_mul_siegel_theta_transformation (M N : Matrix (Fin r) (Fin r) E) : ccT (M * N) = ccT N * ccT M := by
-  ext i j
-
-  simp [ccT, cc, Matrix.mul_apply, map_sum, map_mul, mul_comm]
-
-private theorem ccT_one_fin_r : ccT (1 : Matrix (Fin r) (Fin r) E) = 1 := by
-  simp only [ccT]
-  rw [Matrix.map_one _ (by simp [cc]) (by simp [cc]), Matrix.transpose_one]
-
-private theorem ccT_ccT_siegel_theta_transformation (M : Matrix (Fin r) (Fin r) E) : ccT (ccT M) = M := by
-  ext i j
-  simp [ccT, cc]
-
 private theorem pair_smul_left_eq_mul (c : E) (x y : Fin r → E) : pair (c • x) y = c * pair x y := by
   simp only [pair, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
 
 private theorem pair_vecMul_right_eq_ccT (x y : Fin r → E) (N : Matrix (Fin r) (Fin r) E) :
     pair x (y ᵥ* N) = pair (x ᵥ* ccT N) y := by
-  rw [pair_vecMul, ccT_ccT_siegel_theta_transformation]
+  rw [pair_vecMul, Base.ccT_ccT]
 
 theorem doubled_lattice_split : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : Data E r), ∀ w : E, IsIntegral ℤ w → w + cc w = 1 → ∀ L₁ L₂ : Lt E r, SelfD X L₁ → SelfD X L₂ → ∃ β : Matrix (Fin r) (Fin r) E, ccT β = β ∧ ∀ d b : Fin r → E, ((∃ y₁ ∈ L₁, ∃ y₂ ∈ L₂, Sum.elim y₁ y₂ ᵥ* dblT X = Sum.elim d b) ↔ (d ∈ L₁ ⊔ L₂ ∧ ∀ d' ∈ L₁ ⊔ L₂, ∃ k : ℤ, Algebra.trace ℚ E (∑ a, (b - d ᵥ* β) a * cc (d' a)) = k)) := by
   intro E _ _ _ r X w hw hw1 L₁ L₂ h₁ h₂
@@ -305,7 +250,7 @@ theorem doubled_lattice_split : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
   have hhalf : cc (1 / 2 : E) = 1 / 2 := by simp [cc]
   have hD : ccT β₀ - β₀ = (A - 1) * skew X * ccT (A - 1) - A * skew X * ccT A := by
     rw [hβ₀]
-    simp only [ccT_mul_siegel_theta_transformation, ccT_skew, ccT_sub, ccT_smul, ccT_one_fin_r, hhalf, sub_mul, mul_sub,
+    simp only [Base.ccT_mul, ccT_skew, ccT_sub, ccT_smul, Base.ccT_one, hhalf, sub_mul, mul_sub,
       Matrix.smul_mul, one_mul, mul_one, neg_mul]
     module
   have hvA : ∀ d : Fin r → E, d ᵥ* β₀ = (d ᵥ* A - (1 / 2 : E) • d) ᵥ* skew X := by
@@ -340,7 +285,7 @@ theorem doubled_lattice_split : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
     simp only [Matrix.smul_vecMul] at k₁ k₂ ⊢
     exact sub_mem k₂ k₁
   refine ⟨(1 - w) • β₀ + w • ccT β₀, ?_, fun d b => ?_⟩
-  · rw [ccT_add, ccT_smul, ccT_smul, ccT_ccT_siegel_theta_transformation, hcc1, hwcc, add_comm]
+  · rw [ccT_add, ccT_smul, ccT_smul, Base.ccT_ccT, hcc1, hwcc, add_comm]
   have hmem : (∀ d' ∈ L₁ ⊔ L₂, ∃ k : ℤ, Algebra.trace ℚ E
       (∑ a, (b - d ᵥ* ((1 - w) • β₀ + w • ccT β₀)) a * cc (d' a)) = k) ↔
       ∀ d' ∈ L₁ ⊔ L₂, pair (b - d ᵥ* ((1 - w) • β₀ + w • ccT β₀)) d' ∈ intTr E := Iff.rfl
@@ -684,8 +629,6 @@ theorem EF_eq_of_graph (w : E) {β : Matrix (Fin r) (Fin r) E} (hβ : ccT β = �
     pair_sub_right] at e1 e2
   linear_combination e1 + (1 / 2 : E) * e2
 
-alias toCols₁_dblT := _root_.GlobalTheory.SW.DblZero.toCols₁_dblT
-
 theorem toCols₂_dblT (y₁ y₂ : Matrix (Fin n) (Fin r) E) :
     (Matrix.fromCols y₁ y₂ * dblT X).toCols₂ = (1 / 2 : E) • ((y₁ + y₂) * skew X) := by
   unfold dblT skew
@@ -770,7 +713,7 @@ theorem eq_of_law (w : E) {L₁ L₂ : Lt E r} {β : Matrix (Fin r) (Fin r) E} (
     ψ x = if x ∈ tens Λ (L₁ ⊔ L₂) then
       ψ 0 * cexp (π * I * ((Algebra.trace ℚ E (x * β * ccT x).trace : ℚ) : ℂ)) else 0 := by
   by_cases hx : x ∈ tens Λ (L₁ ⊔ L₂)
-  · rw [if_pos hx]
+  · rw [ite_eq_left hx]
     obtain ⟨y₁, hy₁, y₂, hy₂, e1, e2⟩ := exists_lift hβ Λ hx
     have e2' : (1 / 2 : E) • ((y₁ + y₂) * skew X) = (y₁ - y₂) * β := by rw [e1]; exact e2
     have hrow : ∀ k, (1 / 2 : E) • ((y₁ k + y₂ k) ᵥ* skew X) = (y₁ k - y₂ k) ᵥ* β := by
@@ -794,7 +737,7 @@ theorem eq_of_law (w : E) {L₁ L₂ : Lt E r} {β : Matrix (Fin r) (Fin r) E} (
     simp only [GlobalTheory.SW.heisH, sub_self] at key
     rw [htr] at key
     exact key
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     by_contra hψx
     apply hx
     have hB : ∀ a b, rowForm X n a b = -rowForm X n b a := by
@@ -968,7 +911,7 @@ theorem GlobalTheory.SW.dbl_vacuum : ∀ (E : Type) [Field E] [NumberField E] [I
           rw [hV₁.2.2 y₁ hy₁, hV₂.2.2 y₂ hy₂]
       _ = (epsW X w y₁ * conj (epsW X w y₂)) •
             dbl X bas idx (heisG X bas y₁ V₁) (heisG X bas y₂ V₂) := (D9 _ _ s₁ s₂).2.1 _ _
-      _ = _ := by rw [(D9 V₁ V₂ hV₁.1 hV₂.1).2.2 y₁ y₂, toCols₁_dblT, toCols₂_dblT]
+      _ = _ := by rw [(D9 V₁ V₂ hV₁.1 hV₂.1).2.2 y₁ y₂, GlobalTheory.SW.DblZero.toCols₁_dblT, toCols₂_dblT]
   refine ⟨β, a * ip v₁ v₂, hβh, ?_⟩
   intro Λ hΛ x
   obtain ⟨V₁, hV₁⟩ := (VAC L₁ hL₁ M Λ hΛ).1

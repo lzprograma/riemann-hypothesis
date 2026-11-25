@@ -6,46 +6,7 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgHomE
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLaws
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysLatOfTrivial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -94,7 +55,7 @@ def levOf (W : LocWach PD LL O v n) (i : ZMod n) (ζ : LL) : LetA O n →ₐ[O] 
   if ∃ j : ℕ, IsPrimitiveRoot ζ (PD.p ^ j) then W.lev i ζ else W.lev i 1
 
 theorem levOf_root (W : LocWach PD LL O v n) (i : ZMod n) {ζ : LL} (h : ∃ j : ℕ, IsPrimitiveRoot ζ (PD.p ^ j)) :
-    levOf W i ζ = W.lev i ζ := if_pos h
+    levOf W i ζ = W.lev i ζ := ite_eq_left h
 
 theorem levOf_cases (W : LocWach PD LL O v n) (i : ZMod n) (ζ : LL) : ∃ ζ', levOf W i ζ = W.lev i ζ' := by
   unfold levOf; split_ifs <;> exact ⟨_, rfl⟩
@@ -117,7 +78,7 @@ def serOf (W : LocWach PD LL O v n) {s : ℕ} (hs : W.s = s) (hp : PD.p.Prime) (
       rw [levOf_root W i h, levOf_root W (i - 1) (root_pow hp h PD.p)]
       exact hL.2 i ζ h f
     lev_junk := fun i ζ h => by
-      rw [levOf_root W i (ζ := 1) ⟨0, by simp⟩]; exact if_neg h }
+      rw [levOf_root W i (ζ := 1) ⟨0, by simp⟩]; exact ite_eq_right h }
 
 variable {RA RW : Type} [CommRing RA] [CommRing RW] [Algebra O RA]
     [Algebra O RW] {inclR : RA →ₐ[O] RW} {φR : RW →ₐ[O] RW} {gR : G → (RW →ₐ[O] RW)} {πA : RA}
@@ -144,7 +105,7 @@ open Classical in
 def nOf (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) : Submodule (LetA O n) (W.DD T) :=
   if IsCrys PD T.ρ then W.N T else ⊥
 
-theorem nOf_crys (W : LocWach PD LL O v n) {T : LocLat G Qp LL O} (h : IsCrys PD T.ρ) : nOf W T = W.N T := if_pos h
+theorem nOf_crys (W : LocWach PD LL O v n) {T : LocLat G Qp LL O} (h : IsCrys PD T.ρ) : nOf W T = W.N T := ite_eq_left h
 
 theorem nOf_ind (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (p : Submodule (LetA O n) (W.DD T) → Prop)
     (h1 : p (W.N T)) (h0 : p ⊥) : p (nOf W T) := by
@@ -186,7 +147,7 @@ def latOf {Zl : Type} [CommRing Zl] (zl : PowerSeries Zl →+* LetA O n) (h1 : I
       (by
         letI : Module (PowerSeries Zl) ↥(⊥ : Submodule (LetA O n) (W.DD T)) := Module.compHom _ zl
         exact Module.Projective.of_free)
-  N_junk := fun T hT => if_neg hT
+  N_junk := fun T hT => ite_eq_right hT
 
 end Generic
 
@@ -319,7 +280,6 @@ theorem levLaws : LevLaws (H.W K s LL h) := by
 
 theorem laws : Laws H F h := by
   have : FiniteDimensional ℚ_[l] ↥LL.1 := LL.2
-  set_option synthInstance.maxHeartbeats 200000 in
   exact ⟨levLaws H h, ⟨fun e => GlobalTheory.TorsionBoundCompare.ioE_φ _ Subtype.val_injective e,
     fun g e => GlobalTheory.TorsionBoundCompare.ioE_γ _ Subtype.val_injective g e⟩,
     GlobalTheory.TrivCrys.isCrys_lat_of_trivial _ (H.W K s LL h).one_triv⟩

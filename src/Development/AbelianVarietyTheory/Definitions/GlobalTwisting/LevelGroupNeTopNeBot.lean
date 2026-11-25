@@ -1,46 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.IntegralGLSuccEmbeddingMemParahoricTimesPrincipa
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -74,22 +34,22 @@ theorem entB_topQ (hm : R.m = m2 + 2) (q : ℕ) (y : HomE X.E (R.N (m2 + 1)) (R.
   unfold Loc.atN
   by_cases hp : p < R.N R.m - 1
   · have hp0 : p < R.N R.m - 1 + 0 := hp
-    rw [dif_pos hp0]
+    rw [dite_eq_left hp0]
     by_cases hq : p' < R.N (m2 + 1)
-    · rw [dif_pos ⟨hp, hq⟩]
+    · rw [dite_eq_left ⟨hp, hq⟩]
       have e : LinearMap.funLeft X.E X.E (Fin.castAdd (cOf R (m2 + 1))) (Loc.eN X.E (R.N (m2 + 1) + cOf R (m2 + 1)) p') =
           (Pi.single ⟨p', hq⟩ 1 : Sp X.E (R.N (m2 + 1))) := by
         funext i
         simp only [LinearMap.funLeft_apply, Loc.eN, Fin.val_castAdd, Pi.single_apply, Fin.ext_iff]
       simp only [LinearMap.comp_apply, e]
       exact hv _ _ _ _
-    · rw [dif_neg (fun h => hq h.2)]
+    · rw [dite_eq_right (fun h => hq h.2)]
       have e : LinearMap.funLeft X.E X.E (Fin.castAdd (cOf R (m2 + 1))) (Loc.eN X.E (R.N (m2 + 1) + cOf R (m2 + 1)) p') = 0 := by
         funext i
         simp only [LinearMap.funLeft_apply, Loc.eN, Fin.val_castAdd, Pi.zero_apply]
-        rw [if_neg]; omega
+        rw [ite_eq_right]; omega
       simp only [LinearMap.comp_apply, e, map_zero, Pi.zero_apply]
-  · rw [dif_neg (by omega), dif_neg (fun h => hp h.1)]
+  · rw [dite_eq_right (by omega), dite_eq_right (fun h => hp h.1)]
 
 def SuppQ (P : HeightOneSpectrum (𝓞 X.E)) (M : ℕ) (y : HomE X.E (R.N (m2 + 1)) (R.N R.m)) : Prop :=
   ∀ s, (∀ i, IntAt P (y (Pi.single s 1) (Br.iC (N_m_succ R) i))) ∧
@@ -101,10 +61,10 @@ theorem suppQ_of_ne (hm : R.m = m2 + 2) {P : rowSG Pr sel mu} (hP : P.1 ∉ Pr.v
   have hA := left_ne_zero_of_mul h
   have hB := right_ne_zero_of_mul h
   unfold ftY at hB
-  rw [if_neg hP] at hB
+  rw [ite_eq_right hP] at hB
   have hB' := cond_of_ite_ne_zero hB
   unfold PhiTop at hA
-  rw [if_neg hP] at hA
+  rw [ite_eq_right hP] at hA
   unfold LocE.PhiQ at hA
   have hA' := cond_of_ite_ne_zero hA
   intro s
@@ -112,7 +72,7 @@ theorem suppQ_of_ne (hm : R.m = m2 + 2) {P : rowSG Pr sel mu} (hP : P.1 ∉ Pr.v
   · have hi : i.1 < R.N R.m - 1 + 0 := i.2
     have hs : s.1 < R.N (m2 + 1) + cOf R (m2 + 1) := by have := s.2; omega
     have e := hA'.1 i.1 s.1 hi hs
-    rw [entB_topQ hm, dif_pos ⟨i.2, s.2⟩] at e
+    rw [entB_topQ hm, dite_eq_left ⟨i.2, s.2⟩] at e
     exact e
   · have e := hB' s
     rwa [LinearMap.comp_apply, atNL_last] at e
@@ -180,7 +140,7 @@ private theorem phiQ_congr_of_entB_congr {E K : Type} [Field E] [NumberField E] 
   by_cases H : (∀ p p', p < n + c → p' < n' + c' → IntAt P (LocE.entB (qOf P) k₀ c' n' c n 0 0 x p p')) ∧
       (∀ p p', r ≤ p → p < n + c → p' < r → IntAt P (LocE.entB (qOf P) k₀ c' n' c n 0 0 x p p' / (qOf P : E)))
   · have H' := And.intro (c1.2 H.1) (c2.2 H.2)
-    rw [if_pos H, if_pos H']
+    rw [ite_eq_left H, ite_eq_left H']
     apply unitV_det_congr
     intro i j
     have hi : IntAt P (LocE.entB (qOf P) k₀ c' n' c n 0 0 x i.1 j.1) := by
@@ -193,7 +153,7 @@ private theorem phiQ_congr_of_entB_congr {E K : Type} [Field E] [NumberField E] 
   · have H' : ¬ ((∀ p p', p < n + c → p' < n' + c' → IntAt P (LocE.entB (qOf P) k₀ c' n' c n 0 0 x' p p')) ∧
       (∀ p p', r ≤ p → p < n + c → p' < r → IntAt P (LocE.entB (qOf P) k₀ c' n' c n 0 0 x' p p' / (qOf P : E)))) :=
       fun H2 => H ⟨c1.1 H2.1, c2.1 H2.2⟩
-    rw [if_neg H, if_neg H']
+    rw [ite_eq_right H, ite_eq_right H']
 
 theorem locTop_invQ (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} (hP : P.1 ∉ Pr.vGs) (hD : 2 * cst.M ≤ cst.D P)
     (c : TopDepth R cst.M) {κ : GLint X.E (R.N R.m) P.1} (hκ : κ ∈ prinCong _ P.1 c.1)
@@ -215,7 +175,7 @@ theorem locTop_invQ (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} (hP 
     unfold locTop
     congr 1
     · unfold PhiTop
-      rw [if_neg hP]
+      rw [ite_eq_right hP]
       apply phiQ_congr_of_entB_congr
       · intro p p'
         rw [entB_topQ hm, entB_topQ hm]
@@ -226,18 +186,18 @@ theorem locTop_invQ (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} (hP 
           ring
         · exact ⟨0, intAt_zero, by simp⟩
       · intro p p' hp
-        rw [entB_topQ hm, dif_neg]
+        rw [entB_topQ hm, dite_eq_right]
         · exact intAt_zero
         · intro h; exact hp ⟨by have := h.1; omega, by have := h.2; omega⟩
     · unfold ftY
-      rw [if_neg hP, if_neg hP]
+      rw [ite_eq_right hP, ite_eq_right hP]
       have hA : ∀ i : Fin (R.N (m2 + 1)), IntAt P.1 ((qOf P.1 : X.E) ^ cst.M *
           (atNL X.E (R.N R.m) (R.N R.m - 1) ∘ₗ y) (Pi.single i 1)) := by
         intro i; rw [LinearMap.comp_apply, atNL_last]; exact (hS i).2
       have hA' : ∀ i : Fin (R.N (m2 + 1)), IntAt P.1 ((qOf P.1 : X.E) ^ cst.M *
           (atNL X.E (R.N R.m) (R.N R.m - 1) ∘ₗ (κ.1.toLinearMap ∘ₗ y)) (Pi.single i 1)) := by
         intro i; rw [LinearMap.comp_apply, atNL_last]; exact (hS' i).2
-      rw [if_pos hA, if_pos hA']
+      rw [ite_eq_left hA, ite_eq_left hA']
       congr 1
       have hsum : (atNL X.E (R.N R.m) (R.N R.m - 1) ∘ₗ (κ.1.toLinearMap ∘ₗ y)) y' =
           (atNL X.E (R.N R.m) (R.N R.m - 1) ∘ₗ y) y' +
@@ -285,14 +245,6 @@ theorem locTop_invQ (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} (hP 
 
 end Q
 
-section Depth
-
-variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {n N : ℕ} (hN : N = n + 1) {P : HeightOneSpectrum (𝓞 E)}
-  (l : Lev (𝓞 E ⧸ P.asIdeal) K n)
-
-
-end Depth
-
 section Kernel
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Ch : Chars X Pr R.m}
@@ -313,7 +265,7 @@ theorem repY_intQ {j : ℕ} (p : ChPt (R := R) sel mu u j) {Y : Set (Sp X.E (R.N
   have h1 := (Submodule.mem_iInf _).1 hy P
   have h2 := (Submodule.mem_iInf _).1 hv' P
   rw [Submodule.mem_comap] at h1 h2
-  simp only [hP, if_false, LinearMap.restrictScalars_apply, LinearMap.smul_apply, LinearMap.id_apply] at h1 h2
+  simp only [hP, ite_false, LinearMap.restrictScalars_apply, LinearMap.smul_apply, LinearMap.id_apply] at h1 h2
   rw [zpow_neg, inv_inv, zpow_natCast] at h1
   rw [zpow_natCast] at h2
   set q : 𝓞 X.E := ((qOf P.1 : ℕ) : 𝓞 X.E) with hq

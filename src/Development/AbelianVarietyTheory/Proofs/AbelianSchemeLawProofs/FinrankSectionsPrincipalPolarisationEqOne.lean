@@ -106,7 +106,7 @@ theorem le_one_of_convolution (a b : ℕ → ℕ) (g : ℕ)
     (h : ∀ n, ∑ x ∈ Finset.HasAntidiagonal.antidiagonal n, a x.1 * b x.2 = if n = g then 1 else 0) :
     a 0 ≤ 1 := by
   have hg := h g
-  rw [if_pos rfl] at hg
+  rw [ite_eq_left rfl] at hg
   obtain ⟨x, -, hx⟩ := Finset.exists_ne_zero_of_sum_ne_zero (hg.trans_ne one_ne_zero)
   have hb : 1 ≤ b x.2 := Nat.one_le_iff_ne_zero.2 (right_ne_zero_of_mul hx)
   have h₁ : a 0 * b x.2 ≤ ∑ y ∈ Finset.HasAntidiagonal.antidiagonal x.2, a y.1 * b y.2 :=

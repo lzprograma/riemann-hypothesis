@@ -17,43 +17,8 @@ public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyFamOne
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.BeSumStatementIffDefectSumBound
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniversalTripleFibreAtFramedPoint
 import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.FinitePlaceArcs.BeSumPf
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 import Mathlib.NumberTheory.NumberField.Discriminant.Different
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ComponentMassSum
 
 @[expose] public section
@@ -66,11 +31,11 @@ theorem wtOf_zero_fst : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
   intro E _ _ _ H Dw m τ i hi
   unfold Datum.mult at hi
   by_cases h : τ (H.rt : E) = H.rt0
-  · rw [if_pos h] at hi
-    simp only [wtOf, dif_pos h, dif_pos hi, Pi.zero_apply, zero_sub]
-  · rw [if_neg h] at hi
+  · rw [ite_eq_left h] at hi
+    simp only [wtOf, dite_eq_left h, dite_eq_left hi, Pi.zero_apply, zero_sub]
+  · rw [ite_eq_right h] at hi
     have h' : conjEmb τ (H.rt : E) = H.rt0 := conj_mem h
-    simp only [wtOf, dif_neg h, dif_pos h', dif_pos hi, Pi.zero_apply, neg_zero, zero_sub]
+    simp only [wtOf, dite_eq_right h, dite_eq_left h', dite_eq_left hi, Pi.zero_apply, neg_zero, zero_sub]
 
 theorem homN_root : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (r : ℕ) (U : Unf Xo c σ r) (x : ℝ) (Z : Comp Xo c) (ρ : (Rul Xo c)ˣ) (K : Rul Xo c) (a : c.F) (C : ℝ), a ≠ 0 → 0 < C → idem Z * (ρ : Rul Xo c) ^ 4 = a • (idem Z * K) → (∀ k, ∀ y ∈ (U.X k).dom, homN U x (wtOf Dw 0 (-4)) K ⟨k, y⟩ = C) → ∀ z ∈ framesOn U Z, (∀ hz : z.2 ∈ (U.X z.1).dom, Tested (U.un z.1 ⟨z.2, hz⟩)) → homN U x (wtOf Dw 0 1) (idem Z * ((ρ⁻¹ : (Rul Xo c)ˣ) : Rul Xo c)) z = (‖σ a‖ * C) ^ (-(1 / 4) : ℝ) ∧ homN U x (wtOf Dw 0 (-1)) (idem Z * (ρ : Rul Xo c)) z = (‖σ a‖ * C) ^ ((1 / 4) : ℝ) := by
   intro E _ _ _ H Dw l Xo c σ r U x Z ρ K a C ha hC hρ hK z hz ht
@@ -254,7 +219,7 @@ theorem exists_twSec_keyRoot_bounds : ∀ (E : Type) [Field E] [NumberField E] [
   have hnorm := fun σ : c.F →+* ℂ => fun z (hz : z ∈ framesOn (U (goodOf c σ)) Z) =>
     homN_root E H Dw l Xo c (goodOf c σ) r (U (goodOf c σ)) x Z ρ K a (C σ) ha (hCpos σ) haK (hCeq σ) z hz
       ((hP.1 σ).2 z hz)
-  have hgood : ∀ σ, GoodEmb c σ → goodOf c σ = σ := fun σ h => if_pos h
+  have hgood : ∀ σ, GoodEmb c σ → goodOf c σ = σ := fun σ h => ite_eq_left h
   have hmono : ∀ (m : ℤ) (τ : E →+* ℂ) (i j : ℕ), i ≤ j → j < Dw.mult τ →
       (wtOf Dw 0 m).1 (τ, j) ≤ (wtOf Dw 0 m).1 (τ, i) := fun m τ i j hij hj => by
     rw [hwt m τ i (lt_of_le_of_lt hij hj), hwt m τ j hj]

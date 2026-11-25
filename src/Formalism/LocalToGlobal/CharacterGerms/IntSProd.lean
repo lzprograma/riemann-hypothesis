@@ -102,8 +102,7 @@ private theorem cc_ev_lemma {m n : ℕ} (a : Fin m → Pt C n dd)
   · simp
   · intro d hd
     obtain ⟨s, hs'⟩ : ∃ s, d s ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hd (Finsupp.ext h)
     have h0 : MvPowerSeries.constantCoeff (d.prod fun s e => (a s.1 s.2) ^ e) = 0 := by
       rw [Finsupp.prod, map_prod]

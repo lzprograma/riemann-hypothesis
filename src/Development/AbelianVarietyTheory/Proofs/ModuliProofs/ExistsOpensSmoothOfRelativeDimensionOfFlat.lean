@@ -61,7 +61,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open scoped CategoryTheory.Obj TensorProduct
 open GlobalTheory.ZM
 
-set_option backward.isDefEq.respectTransparency false
 
 namespace GlobalTheory.ProperFlatNearFibre
 

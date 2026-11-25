@@ -21,12 +21,6 @@ structure OTied (D : D7) (T : HostTied D) (C : CharFrame D) where
 
   range : ∀ x : Qb, (∃ y : D.what₂.O, T.jLL (D.what₂.OtoLL y) = x) ↔ x ∈ OsQ (KsQ D T C pieces)
 
-namespace OTied
-
-variable {D : D7} {T : HostTied D} {C : CharFrame D} (X : OTied D T C)
-
-end OTied
-
 def ZetaCompatible (D : D7) : Prop :=
   ∀ (u : D.what₂.Word) (μ : D.what₂.Tup) (c : ℂ),
     (∀ (φ : D.what₂.Mu u) (F : D.what₂.Amb μ), F ∈ D.what₂.V0 μ →

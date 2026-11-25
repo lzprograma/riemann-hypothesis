@@ -1,50 +1,7 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Objects
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 
 @[expose] public section
 
@@ -178,16 +135,6 @@ def cutMult (J qq : Ideal (Poly S N)) [qq.IsPrime] : ℕ∞ :=
 
 end Numbers
 
-section Domination
-
-variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N N' : ℕ}
-
-
-
-
-
-end Domination
-
 section Restrict
 
 variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N : ℕ}
@@ -293,31 +240,6 @@ theorem twistSys_zero_twist (Q : SubSystem S x Ω) : (twistSys S x 0).twist Q = 
   · intro q hq
     exact Submodule.subset_span ⟨q, hq, 1, one_mem_twistMod_zero I, by rw [smul_eq_mul, mul_one]⟩
 
-theorem foldl_twist_zero {n : ℕ} (L : Fin n → SubSystem S x Ω) (hL : ∀ i, L i = twistSys S x 0)
-    (l : List (Fin n)) :
-    l.foldl (fun F i => F.twist (L i)) (twistSys S x 0) = twistSys S x 0 := by
-  induction l with
-  | nil => rfl
-  | cons a l ih =>
-    rw [List.foldl_cons, hL a, SubSystem.twist_twistSys_zero]
-    exact ih
-
-theorem tensorSub_of_forall_eq {n : ℕ} (L : Fin n → SubSystem S x Ω)
-    (hL : ∀ i, L i = twistSys S x 0) (T : Finset (Fin n)) : tensorSub L T = twistSys S x 0 :=
-  foldl_twist_zero L hL _
-
-theorem interNum_twistSys_zero (pp : Ideal (Poly S N)) : interNum pp ![twistSys S x 0] = 0 := by
-  have h0 : interSum pp ![twistSys S x 0] = fun _ => 0 := by
-    funext c
-    have hT : ∀ T : Finset (Fin 1), tensorSub ![twistSys S x 0] T = twistSys S x 0 :=
-      tensorSub_of_forall_eq _ (fun i => by fin_cases i; rfl)
-    simp only [interSum, hT]
-    rw [← Finset.powerset_univ, Finset.sum_powerset_apply_card
-      (f := fun j => (-1 : ℤ) ^ (1 - j) * restrLen pp ((twistSys S x 0).twist (twistSys S x (c : ℤ))))]
-    simp [Finset.sum_range_succ]
-  rw [interNum, h0]
-  exact tendsto_const_nhds.limUnder_eq
-
 end Lemmas
 
 section Inhabitants2
@@ -344,12 +266,6 @@ theorem isVeryAmpleBy_twistSys_one : IsVeryAmpleBy (twistSys S x 1) x := by
 theorem isVeryAmple_twistSys_one : IsVeryAmple (twistSys S x 1) := ⟨N, x, isVeryAmpleBy_twistSys_one⟩
 
 end Inhabitants2
-
-section LineData
-
-variable (k : Type u) [Field k]
-
-end LineData
 
 end
 

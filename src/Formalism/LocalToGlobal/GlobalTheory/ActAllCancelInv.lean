@@ -27,8 +27,6 @@ namespace Formalism.L2.GlobalTheoryTheory.ColValS
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {u : D.what₂.Word} (T : Forms0 D u)
 
 abbrev Pol0 (D : D7) : Type := MvPolynomial (D.what₂.Tau × Fin (D.R.N 0) × Fin (D.R.N 0)) D.what₂.LL
@@ -138,8 +136,6 @@ open NumberField Matrix
 namespace Formalism.L2.GlobalTheoryTheory.ColValS
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Alg
 

@@ -38,8 +38,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 lemma toMK_mem (ε : Fin n → Bool) (k : KG ε) : toMK k ∈ Kset ε := k.2
@@ -78,11 +76,6 @@ theorem cf_stdGap_of_pq {ε : Fin n → Bool} {lam : Fin n → ℝ} (hpq : pOf �
     (hmono : StrictAnti lam) : StdGap ε lam := by
   refine ⟨hmono, 2, fun a b hab => absurd (_root_.ReciprocityTheory.ChartRestriction.DS.cmpt_eps_eq hpq a b) hab, ?_⟩
   rcases hpq with h | h <;> rw [h] <;> norm_num
-
-theorem cf_kset_sub {ε : Fin n → Bool} {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ Kset ε) : g ∈ UJset ε := by
-  have h1 : gᴴ * g = 1 := Matrix.mem_unitaryGroup_iff'.1 hg.1
-  show gᴴ * Jm ε * g = Jm ε
-  rw [Matrix.mul_assoc, ← hg.2, ← Matrix.mul_assoc, h1, Matrix.one_mul]
 
 section Datum
 

@@ -700,29 +700,15 @@ theorem polySlash_apply (w : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X]) 
   simp only [slP, LinearMap.sum_apply, LinearMap.comp_apply, lcoeff_apply,
     LinearMap.toSpanSingleton_apply]
 
-theorem homogenize_eq_sum (w : ℕ) (p : ℂ[X]) :
-    p.homogenize w = ∑ i ∈ Finset.range (w + 1),
-      p.coeff i • ((MvPolynomial.X 0 : MvPolynomial (Fin 2) ℂ) ^ i * MvPolynomial.X 1 ^ (w - i)) := by
-  rw [homogenize, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
-  refine Finset.sum_congr rfl fun i hi => ?_
-  have hi' : i ≤ w := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
-  rw [← homogenize_monomial hi', ← homogenize_X_pow hi', ← homogenize_smul, smul_X_eq_monomial]
-
 theorem polySlash_eq_aeval (w : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X]) :
     slP w g p = MvPolynomial.aeval
       ![C ((g 0 0 : ℤ) : ℂ) * X + C ((g 0 1 : ℤ) : ℂ), C ((g 1 0 : ℤ) : ℂ) * X + C ((g 1 1 : ℤ) : ℂ)]
       (p.homogenize w) := by
 
-  rw [polySlash_apply, homogenize_eq_sum, map_sum]
+  rw [polySlash_apply, PerCoc.homogenize_eq_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, map_mul, map_pow, map_pow, MvPolynomial.aeval_X, MvPolynomial.aeval_X]
   rfl
-
-theorem isHomogeneous_lin (a b : ℂ) :
-    (MvPolynomial.C a * MvPolynomial.X 0 + MvPolynomial.C b * MvPolynomial.X 1 :
-      MvPolynomial (Fin 2) ℂ).IsHomogeneous 1 :=
-  ((MvPolynomial.isHomogeneous_X ℂ (0 : Fin 2)).C_mul a).add
-    ((MvPolynomial.isHomogeneous_X ℂ (1 : Fin 2)).C_mul b)
 
 theorem homogenize_slP (w : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X]) :
     (slP w g p).homogenize w = ∑ i ∈ Finset.range (w + 1), MvPolynomial.C (p.coeff i) *
@@ -732,8 +718,8 @@ theorem homogenize_slP (w : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X]) :
   apply homogenize_eq_of_isHomogeneous
   · refine MvPolynomial.IsHomogeneous.sum _ _ _ fun i hi => ?_
     have hi' : i ≤ w := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
-    have h := (((isHomogeneous_lin ((g 0 0 : ℤ) : ℂ) ((g 0 1 : ℤ) : ℂ)).pow i).mul
-      ((isHomogeneous_lin ((g 1 0 : ℤ) : ℂ) ((g 1 1 : ℤ) : ℂ)).pow (w - i))).C_mul (p.coeff i)
+    have h := (((PerCoc.isHomogeneous_lin ((g 0 0 : ℤ) : ℂ) ((g 0 1 : ℤ) : ℂ)).pow i).mul
+      ((PerCoc.isHomogeneous_lin ((g 1 0 : ℤ) : ℂ) ((g 1 1 : ℤ) : ℂ)).pow (w - i))).C_mul (p.coeff i)
     rwa [one_mul, one_mul, Nat.add_sub_of_le hi'] at h
 
   · rw [polySlash_apply, map_sum]

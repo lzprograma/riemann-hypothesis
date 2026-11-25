@@ -5,46 +5,6 @@ public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeil
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.IntegralAlmostAllPlaces
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalDensitiesBoundedAlmostAll
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSquareOfValuedSubOneLt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
@@ -75,15 +35,9 @@ section Alg
 
 variable {F E : Type} [Field F] [Field E] [Algebra F E]
 
-
 variable (F) in
 def cd (δ : E) {R : Type} [CommRing R] [Algebra F R] (a c : R) : R ⊗[F] E :=
   a ⊗ₜ[F] (1 : E) + c ⊗ₜ[F] δ
-
-theorem tmul_algebraMap {R : Type} [CommRing R] [Algebra F R] (r : R) (t : F) :
-    r ⊗ₜ[F] (algebraMap F E t) = (r * algebraMap F R t) ⊗ₜ[F] (1 : E) := by
-  rw [Algebra.algebraMap_eq_smul_one, TensorProduct.tmul_smul, TensorProduct.smul_tmul',
-    Algebra.smul_def, mul_comm]
 
 theorem exists_basis [CharZero F] (σ : E →ₐ[F] E) (hfr : Module.finrank F E = 2) {δ : E} (h0 : δ ≠ 0)
     (hσ : σ δ = -δ) : ∃ b2 : Module.Basis (Fin 2) F E, b2 0 = 1 ∧ b2 1 = δ := by
@@ -131,7 +85,7 @@ theorem cd_mul {D : F} (hD : δ * δ = algebraMap F E D) (a c a' c' : R) :
     cd F δ a c * cd F δ a' c' =
       cd F δ (a * a' + algebraMap F R D * (c * c')) (a * c' + c * a') := by
   simp only [cd, add_mul, mul_add, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul, hD,
-    tmul_algebraMap, TensorProduct.add_tmul]
+    GlobalTheory.CompanionTheory.SW.PiLocalization₂.tmul_algebraMap, TensorProduct.add_tmul]
   rw [show c * c' * algebraMap F R D = algebraMap F R D * (c * c') by ring]
   abel
 
@@ -155,7 +109,6 @@ end Alg
 section Model
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
 
 open GlobalTheory.CompanionTheory.SW.GoodInt GlobalTheory.CompanionTheory.SW.GoodMass in
 theorem model (σ : E →ₐ[F] E) (hcm : IsCMExt F E σ) (J : Matrix (Fin 1) (Fin 1) E) (hJ : IsHermND σ J)
@@ -340,9 +293,9 @@ theorem rv_of_val (e : ℝ) (s : Fv F v) (k : ℕ) (hs : Valued.v s = WithZero.e
   unfold rv
   rw [tsum_eq_sum (s := Finset.range (k + 1))]
   · refine Finset.sum_congr rfl fun i hi => ?_
-    rw [if_pos ⟨hs0, (key i).2 (by simpa [Nat.lt_succ_iff] using hi)⟩]
+    rw [ite_eq_left ⟨hs0, (key i).2 (by simpa [Nat.lt_succ_iff] using hi)⟩]
   · intro i hi
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨-, h⟩
     exact hi (by simpa [Nat.lt_succ_iff] using (key i).1 h)
 
@@ -352,7 +305,7 @@ theorem rv_of_not_int (e : ℝ) (s : Fv F v) (hs : s ∉ v.adicCompletionInteger
   rw [tsum_eq_sum (s := ∅)]
   · simp
   · intro i _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨-, h⟩
     refine hs' (h.trans ?_)
     change WithZero.exp (-(i : ℤ)) ≤ WithZero.exp 0
@@ -398,7 +351,7 @@ theorem gram_rank_one_norm_form (σ : E →ₐ[F] E) (hσ : σ δ = -δ) (hD : �
     ring
   rw [e, hX, norm_cd σ hσ hD, hj]
   change ((1 : R) ⊗ₜ[F] (algebraMap F E j₀)) * _ = _
-  rw [tmul_algebraMap, Algebra.TensorProduct.tmul_mul_tmul, one_mul, one_mul]
+  rw [GlobalTheory.CompanionTheory.SW.PiLocalization₂.tmul_algebraMap, Algebra.TensorProduct.tmul_mul_tmul, one_mul, one_mul]
 
 end Gram
 
@@ -557,7 +510,6 @@ section Split
 
 variable {F E : Type} [Field F] [Field E] [Algebra F E] {R : Type} [Field R] [Algebra F R]
   {b2 : Module.Basis (Fin 2) F E} {δ : E} {D : F} {t : R}
-
 
 variable (F) in
 def wv (δ : E) (t p q : R) : R ⊗[F] E := cd F δ ((p + q) / 2) ((p - q) / (2 * t))
@@ -804,7 +756,6 @@ end Loc3
 
 section Main
 
-
 open PositivityTheory.SiegelWeilFormula.Gen in
 theorem locR : Scal → MassOne → LocR := by
   intro hScal hOne F E _ _ _ _ _ σ J d b li lam μ 𝓕 mi m hcm hJ _ hlam _ _ _ hm
@@ -883,8 +834,8 @@ theorem locR : Scal → MassOne → LocR := by
         have hk' : Valued.v s = WithZero.exp (-((2 * l : ℕ) : ℤ)) := by
           rw [hk, two_mul]
         obtain ⟨u, hu, e⟩ := mass_even h0 h1 hσ hD hj hfib hsc v2 vD vj hns hLm hL hk'
-        rw [e, hfin u hu, if_neg (by simp [Nat.even_add_one])]
-      · rw [mass_odd (L := latV b v) h0 h1 hσ hD hj hfib v2 vD vj hns hk hev, if_pos (by simpa [Nat.even_add_one] using hev)]
+        rw [e, hfin u hu, ite_eq_right (by simp [Nat.even_add_one])]
+      · rw [mass_odd (L := latV b v) h0 h1 hσ hD hj hfib v2 vD vj hns hk hev, ite_eq_left (by simpa [Nat.even_add_one] using hev)]
         simp
     · have hsq : IsSquare (algebraMap F (Fv F v) D) := by
         by_contra h

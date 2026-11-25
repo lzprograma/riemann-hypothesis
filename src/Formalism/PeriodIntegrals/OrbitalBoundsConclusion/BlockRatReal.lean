@@ -12,51 +12,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacob
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RationalRealBlocks.Bridge
 public import Formalism.GradedWeylDivisibility.StatementA
 public import Formalism.PeriodIntegrals.BlockRatReal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.MnrUpdateEqZero
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RationalRealBlocks.AntitoneStar, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RationalRealBlocks.MapDetGenM, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RationalRealBlocks.NuOfAntitone, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BlockRatReal
@@ -97,19 +53,19 @@ theorem stmt_of (hE : EvenStep) (hO : OddStep) : Stmt := by
   have hf' : f ∈ weyl ℤ (m + 1) (m + 1) le_rfl (nuOf (lam τ)) := by
     rw [← natW_eq]; exact hf
   by_cases hs : Even s.val
-  · have hla : lamAt (lam0 v) s = lam τ := by rw [lamAt, if_pos hs, hl]
+  · have hla : lamAt (lam0 v) s = lam τ := by rw [lamAt, ite_eq_left hs, hl]
     obtain ⟨F, hF, hFe⟩ := hE m LL embLL (lam τ) (hanti τ) M0 f hf'
     refine ⟨F, ?_, fun y => ?_⟩
-    · rw [blkMod, hla, if_pos (hanti τ)]; exact hF
+    · rw [blkMod, hla, ite_eq_left (hanti τ)]; exact hF
     · have h1 := hFe (y.1 τ) (y.2 τ)
-      rw [zAt, if_pos hs, reM_rfl, eAt, hla, detShift_eq, hM0]
+      rw [zAt, ite_eq_left hs, reM_rfl, eAt, hla, detShift_eq, hM0]
       exact h1
-  · have hla : lamAt (lam0 v) s = fun i => -lam τ i.rev := by rw [lamAt, if_neg hs, hl]
+  · have hla : lamAt (lam0 v) s = fun i => -lam τ i.rev := by rw [lamAt, ite_eq_right hs, hl]
     obtain ⟨F, hF, hFe⟩ := hO m LL embLL (lam τ) (hanti τ) M0 f hf'
     refine ⟨F, ?_, fun y => ?_⟩
-    · rw [blkMod, hla, if_pos (antitone_star (hanti τ))]; exact hF
+    · rw [blkMod, hla, ite_eq_left (antitone_star (hanti τ))]; exact hF
     · have h1 := hFe (y.1 τ) (y.2 τ)
-      rw [zAt, if_neg hs, reM_rfl, eAt, hla, detShift_eq, hM0]
+      rw [zAt, ite_eq_right hs, reM_rfl, eAt, hla, detShift_eq, hM0]
       exact h1
 
 end PI.BlockRatReal

@@ -6,6 +6,7 @@ public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
 public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChangeOfModel
+import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocRing
 import Mathlib.Tactic.TypeStar
 
 @[expose] public section
@@ -59,17 +60,36 @@ theorem divCycle_eq_of_local {P : Ideal (MRing κ)} {f g : MRing κ}
   by_cases hf : W ∈ divSupp P f
   · obtain ⟨u, v, hu, hv, huv⟩ := h W hf.1.1.1 (le_sup_left.trans hf.1.1.2) hf.2
     obtain ⟨hg, e⟩ := mem_divSupp_and_multAt_eq hf hu hv huv
-    rw [if_pos hf, if_pos hg, e]
+    rw [ite_eq_left hf, ite_eq_left hg, e]
   · by_cases hg : W ∈ divSupp P g
     · obtain ⟨u, v, hu, hv, huv⟩ := h W hg.1.1.1 (le_sup_left.trans hg.1.1.2) hg.2
       exact absurd (mem_divSupp_and_multAt_eq hg hv hu (by rw [← neg_sub]; exact P.neg_mem huv)).1 hf
-    · rw [if_neg hf, if_neg hg]
+    · rw [ite_eq_right hf, ite_eq_right hg]
 
 end Divisor
 
+section Extend
+
+variable {K K₂ M : Type*} [Zero M]
+
+theorem extend_inl_inl (f : K → M) (k : K) : Function.extend (Sum.inl : K → K ⊕ K₂) f 0 (Sum.inl k) = f k :=
+  Sum.inl_injective.extend_apply _ _ _
+
+theorem extend_inl_inr (f : K → M) (k : K₂) : Function.extend (Sum.inl : K → K ⊕ K₂) f 0 (Sum.inr k) = 0 :=
+  (Function.extend_apply' _ _ _ (by rintro ⟨_, h⟩; cases h)).trans rfl
+
+theorem extend_inr_inr (f : K₂ → M) (k : K₂) : Function.extend (Sum.inr : K₂ → K ⊕ K₂) f 0 (Sum.inr k) = f k :=
+  Sum.inr_injective.extend_apply _ _ _
+
+theorem extend_inr_inl (f : K₂ → M) (k : K) : Function.extend (Sum.inr : K₂ → K ⊕ K₂) f 0 (Sum.inl k) = 0 :=
+  (Function.extend_apply' _ _ _ (by rintro ⟨_, h⟩; cases h)).trans rfl
+
+end Extend
+
 section Graph
 
-variable {K : Type} [Fintype K] {ι ι₂ : K → Type} [∀ k, Fintype (ι k)] [∀ k, Fintype (ι₂ k)]
+variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
+  {K₂ : Type} [Fintype K₂] {ι₂ : K₂ → Type} [∀ k, Fintype (ι₂ k)]
 
 theorem graphMap_X_inlV (P : Ideal (MRing ι)) (g : (Σ k, ι₂ k) → MRing ι) (p : Σ k, ι k) :
     graphMap P g (X (inlV p)) = C (Ideal.Quotient.mk P (X p)) := by
@@ -86,115 +106,112 @@ theorem graphMap_rename_inlV (P : Ideal (MRing ι)) (g : (Σ k, ι₂ k) → MRi
   induction p using MvPolynomial.induction_on with
   | C a =>
     have e : ((graphMap P g).comp (rename (inlV (ι₂ := ι₂))).toRingHom).comp C =
-        ((C : (MRing ι ⧸ P) →+* MvPolynomial K (MRing ι ⧸ P)).comp (Ideal.Quotient.mk P)).comp C :=
+        ((C : (MRing ι ⧸ P) →+* MvPolynomial K₂ (MRing ι ⧸ P)).comp (Ideal.Quotient.mk P)).comp C :=
       RingHom.ext_int _ _
     exact RingHom.congr_fun e a
   | add p q hp hq => simp [hp, hq]
   | mul_X p n hp => simp [hp, graphMap_X_inlV]
 
-theorem minor_mem (P : Ideal (MRing ι)) (A : ∀ k, ι₂ k → ι k → ℤ) (k : K) (j₁ j₂ : ι₂ k) :
-    X (inrV ⟨k, j₁⟩) * rename inlV (linForm A ⟨k, j₂⟩) - X (inrV ⟨k, j₂⟩) * rename inlV (linForm A ⟨k, j₁⟩) ∈
-      graphIdeal P (linForm A) := by
+theorem rename_mem_graphIdeal {P : Ideal (MRing ι)} (g : (Σ k, ι₂ k) → MRing ι) {p : MRing ι} (hp : p ∈ P) :
+    rename inlV p ∈ graphIdeal P g := by
+  rw [graphIdeal, RingHom.mem_ker, graphMap_rename_inlV, Ideal.Quotient.eq_zero_iff_mem.mpr hp, map_zero]
+
+theorem minor_mem (P : Ideal (MRing ι)) (g : (Σ k, ι₂ k) → MRing ι) (k : K₂) (j₁ j₂ : ι₂ k) :
+    X (inrV ⟨k, j₁⟩) * rename inlV (g ⟨k, j₂⟩) - X (inrV ⟨k, j₂⟩) * rename inlV (g ⟨k, j₁⟩) ∈
+      graphIdeal P g := by
   rw [graphIdeal, RingHom.mem_ker, map_sub, map_mul, map_mul, graphMap_X_inrV, graphMap_X_inrV,
     graphMap_rename_inlV, graphMap_rename_inlV]
   ring
 
-def num (A : ∀ k, ι₂ k → ι k → ℤ) (j : ∀ k, ι₂ k) (a : K → ℤ) : MRing (Sum.elim ι ι₂) :=
-  ∏ k, rename inlV (linForm A ⟨k, j k⟩) ^ (a k).toNat * X (inrV ⟨k, j k⟩) ^ (-a k).toNat
+def numForms (g : (Σ k, ι₂ k) → MRing ι) (j : ∀ k, ι₂ k) (a : K₂ → ℤ) : MRing (Sum.elim ι ι₂) :=
+  ∏ k, rename inlV (g ⟨k, j k⟩) ^ (a k).toNat * X (inrV ⟨k, j k⟩) ^ (-a k).toNat
 
-def den (A : ∀ k, ι₂ k → ι k → ℤ) (j : ∀ k, ι₂ k) (a : K → ℤ) : MRing (Sum.elim ι ι₂) :=
-  ∏ k, X (inrV ⟨k, j k⟩) ^ (a k).toNat * rename inlV (linForm A ⟨k, j k⟩) ^ (-a k).toNat
+def denForms (g : (Σ k, ι₂ k) → MRing ι) (j : ∀ k, ι₂ k) (a : K₂ → ℤ) : MRing (Sum.elim ι ι₂) :=
+  ∏ k, X (inrV ⟨k, j k⟩) ^ (a k).toNat * rename inlV (g ⟨k, j k⟩) ^ (-a k).toNat
 
-theorem wh_lin [DecidableEq K] (A : ∀ k, ι₂ k → ι k → ℤ) (q : Σ k, ι₂ k) :
+theorem wh_form [DecidableEq K] [DecidableEq K₂] {g : (Σ k, ι₂ k) → MRing ι} {δ : K₂ → K → ℕ}
+    (hg : ∀ q, IsMultiHomog (g q) (δ q.1)) (q : Σ k, ι₂ k) :
     IsWeightedHomogeneous (GroundTheory.Heights₂.Heights.NumbersDVR.blockWeight (Sum.elim ι ι₂))
-      (rename inlV (linForm A q)) (Pi.single (Sum.inl q.1) 1) := by
-  rw [← mem_weightedHomogeneousSubmodule]
+      (rename inlV (g q)) (Function.extend Sum.inl (δ q.1) 0) :=
+  (GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_iff _ _).mpr
+    (GroundTheory.Heights₂.Heights.Inter.rename_isMultiHomog isBlockMap_inl (hg q))
 
-  simp only [linForm, map_sum, map_mul, rename_C, rename_X]
-  refine Submodule.sum_mem _ fun i _ => ?_
-  rw [← smul_eq_C_mul]
-  exact Submodule.smul_mem _ _ ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr (isWeightedHomogeneous_X ℤ _ _))
-
-theorem isMultiHomog_num [DecidableEq K] (A : ∀ k, ι₂ k → ι k → ℤ) (j : ∀ k, ι₂ k) (a : K → ℤ) :
-    IsMultiHomog (num A j a)
-      (∑ k, ((a k).toNat • Pi.single (Sum.inl k) 1 + (-a k).toNat • Pi.single (Sum.inr k) 1)) := by
+theorem isMultiHomog_numForms [DecidableEq K] [DecidableEq K₂] {g : (Σ k, ι₂ k) → MRing ι} {δ : K₂ → K → ℕ}
+    (hg : ∀ q, IsMultiHomog (g q) (δ q.1)) (j : ∀ k, ι₂ k) (a : K₂ → ℤ) :
+    IsMultiHomog (numForms g j a)
+      (∑ k, ((a k).toNat • Function.extend Sum.inl (δ k) 0 + (-a k).toNat • Pi.single (Sum.inr k) 1)) := by
   refine (GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_iff _ _).mp ?_
   exact IsWeightedHomogeneous.prod _ _ _ fun k _ =>
-    ((wh_lin A ⟨k, j k⟩).pow _).mul ((isWeightedHomogeneous_X ℤ _ _).pow _)
+    ((wh_form hg ⟨k, j k⟩).pow _).mul ((isWeightedHomogeneous_X ℤ _ _).pow _)
 
-theorem isMultiHomog_den [DecidableEq K] (A : ∀ k, ι₂ k → ι k → ℤ) (j : ∀ k, ι₂ k) (a : K → ℤ) :
-    IsMultiHomog (den A j a)
-      (∑ k, ((a k).toNat • Pi.single (Sum.inr k) 1 + (-a k).toNat • Pi.single (Sum.inl k) 1)) := by
+theorem isMultiHomog_denForms [DecidableEq K] [DecidableEq K₂] {g : (Σ k, ι₂ k) → MRing ι} {δ : K₂ → K → ℕ}
+    (hg : ∀ q, IsMultiHomog (g q) (δ q.1)) (j : ∀ k, ι₂ k) (a : K₂ → ℤ) :
+    IsMultiHomog (denForms g j a)
+      (∑ k, ((a k).toNat • Pi.single (Sum.inr k) 1 + (-a k).toNat • Function.extend Sum.inl (δ k) 0)) := by
   refine (GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_iff _ _).mp ?_
   exact IsWeightedHomogeneous.prod _ _ _ fun k _ =>
-    ((isWeightedHomogeneous_X ℤ _ _).pow _).mul ((wh_lin A ⟨k, j k⟩).pow _)
+    ((isWeightedHomogeneous_X ℤ _ _).pow _).mul ((wh_form hg ⟨k, j k⟩).pow _)
 
-theorem num_den_not_mem {P : Ideal (MRing ι)} (hP : P.IsPrime) (A : ∀ k, ι₂ k → ι k → ℤ) {j : ∀ k, ι₂ k}
-    (hj : ∀ k, linForm A ⟨k, j k⟩ ∉ P) (a : K → ℤ) :
-    num A j a ∉ graphIdeal P (linForm A) ∧ den A j a ∉ graphIdeal P (linForm A) := by
+theorem num_den_not_mem {P : Ideal (MRing ι)} (hP : P.IsPrime) (g : (Σ k, ι₂ k) → MRing ι) {j : ∀ k, ι₂ k}
+    (hj : ∀ k, g ⟨k, j k⟩ ∉ P) (a : K₂ → ℤ) :
+    numForms g j a ∉ graphIdeal P g ∧ denForms g j a ∉ graphIdeal P g := by
   have := Ideal.Quotient.isDomain P
-  have h1 : ∀ k, (C (Ideal.Quotient.mk P (linForm A ⟨k, j k⟩)) : MvPolynomial K (MRing ι ⧸ P)) ≠ 0 := by
+  have h1 : ∀ k, (C (Ideal.Quotient.mk P (g ⟨k, j k⟩)) : MvPolynomial K₂ (MRing ι ⧸ P)) ≠ 0 := by
     intro k
     rw [Ne, MvPolynomial.C_eq_zero, Ideal.Quotient.eq_zero_iff_mem]
     exact hj k
-  have h2 : ∀ k, (C (Ideal.Quotient.mk P (linForm A ⟨k, j k⟩)) * X k : MvPolynomial K (MRing ι ⧸ P)) ≠ 0 :=
+  have h2 : ∀ k, (C (Ideal.Quotient.mk P (g ⟨k, j k⟩)) * X k : MvPolynomial K₂ (MRing ι ⧸ P)) ≠ 0 :=
     fun k => mul_ne_zero (h1 k) (X_ne_zero _)
   constructor
-  · rw [num, graphIdeal, RingHom.mem_ker]
+  · rw [numForms, graphIdeal, RingHom.mem_ker]
     simp only [map_prod, map_mul, map_pow, graphMap_rename_inlV, graphMap_X_inrV]
     exact Finset.prod_ne_zero_iff.mpr fun k _ => mul_ne_zero (pow_ne_zero _ (h1 k)) (pow_ne_zero _ (h2 k))
-  · rw [den, graphIdeal, RingHom.mem_ker]
+  · rw [denForms, graphIdeal, RingHom.mem_ker]
     simp only [map_prod, map_mul, map_pow, graphMap_rename_inlV, graphMap_X_inrV]
     exact Finset.prod_ne_zero_iff.mpr fun k _ => mul_ne_zero (pow_ne_zero _ (h2 k)) (pow_ne_zero _ (h1 k))
 
-theorem exists_unit {P : Ideal (MRing ι)} {A : ∀ k, ι₂ k → ι k → ℤ} (hBP : IsBasePtFree P (linForm A))
-    (j : ∀ k, ι₂ k) (a : K → ℤ) {W : Ideal (MRing (Sum.elim ι ι₂))} (hW : W.IsPrime)
-    (hΓW : graphIdeal P (linForm A) ≤ W) (hrel : IsRelevant W) :
-    ∃ u v, u ∉ W ∧ v ∉ W ∧ u * num A j a - v * den A j a ∈ graphIdeal P (linForm A) := by
-  have := hW
-  have hlin : ∀ k, ∃ j', rename inlV (linForm A ⟨k, j'⟩) ∉ W := by
-    intro k
-    by_contra hall
-    push Not at hall
-    choose i hi using fun k' => hrel (Sum.inl k')
-    obtain ⟨N, hN⟩ := hBP k i
-    have hle : P ⊔ Ideal.span (Set.range fun j' : ι₂ k => linForm A ⟨k, j'⟩) ≤
-        W.comap (rename (inlV (ι₂ := ι₂)) : MRing ι →ₐ[ℤ] MRing (Sum.elim ι ι₂)) := by
-      refine sup_le (fun p hp => hΓW ?_) (Ideal.span_le.mpr (Set.range_subset_iff.mpr hall))
-      rw [graphIdeal, RingHom.mem_ker, graphMap_rename_inlV, Ideal.Quotient.eq_zero_iff_mem.mpr hp, map_zero]
-    have hmem := hle hN
-    rw [Ideal.mem_comap, map_pow, map_prod] at hmem
-    obtain ⟨k', -, hk'⟩ := Ideal.IsPrime.prod_mem_iff.mp (hW.mem_of_pow_mem N hmem)
-    rw [rename_X] at hk'
-    exact hi k' hk'
+private theorem exists_not_mem_of_basePtFree {P : Ideal (MRing ι)} {g : (Σ k, ι₂ k) → MRing ι}
+    (hBP : IsBasePtFree P g) {I : Ideal (MRing ι)} (hI : I.IsPrime) (hPI : P ≤ I)
+    (hrel : ∀ k', ∃ i, (X ⟨k', i⟩ : MRing ι) ∉ I) (k : K₂) : ∃ j', g ⟨k, j'⟩ ∉ I := by
+  by_contra hall
+  push Not at hall
+  choose i hi using hrel
+  obtain ⟨N, hN⟩ := hBP k i
+  have hmem := sup_le hPI (Ideal.span_le.mpr (Set.range_subset_iff.mpr hall)) hN
+  obtain ⟨k', -, hk'⟩ := Ideal.IsPrime.prod_mem_iff.mp (hI.mem_of_pow_mem N hmem)
+  exact hi k' hk'
+
+theorem exists_unit {P : Ideal (MRing ι)} {g : (Σ k, ι₂ k) → MRing ι} (hBP : IsBasePtFree P g)
+    (j : ∀ k, ι₂ k) (a : K₂ → ℤ) {W : Ideal (MRing (Sum.elim ι ι₂))} (hW : W.IsPrime)
+    (hΓW : graphIdeal P g ≤ W) (hrel : IsRelevant W) :
+    ∃ u v, u ∉ W ∧ v ∉ W ∧ u * numForms g j a - v * denForms g j a ∈ graphIdeal P g := by
+  have hlin : ∀ k, ∃ j', rename inlV (g ⟨k, j'⟩) ∉ W :=
+    exists_not_mem_of_basePtFree hBP (Ideal.comap_isPrime _ W)
+      (fun p hp => hΓW (rename_mem_graphIdeal g hp)) fun k' => by
+        obtain ⟨i, hi⟩ := hrel (Sum.inl k')
+        exact ⟨i, by simpa [inlV] using hi⟩
   choose j' hj' using hlin
   have hy : ∀ k, X (inrV ⟨k, j' k⟩) ∉ W := by
     intro k hyk
     obtain ⟨j'', hj''⟩ := hrel (Sum.inr k)
-    have hm := hΓW (minor_mem P A k j'' (j' k))
-    have hprod : X (inrV ⟨k, j''⟩) * rename inlV (linForm A ⟨k, j' k⟩) ∈ W := by
-      have h := W.add_mem hm (W.mul_mem_right (rename inlV (linForm A ⟨k, j''⟩)) hyk)
+    have hm := hΓW (minor_mem P g k j'' (j' k))
+    have hprod : X (inrV ⟨k, j''⟩) * rename inlV (g ⟨k, j' k⟩) ∈ W := by
+      have h := W.add_mem hm (W.mul_mem_right (rename inlV (g ⟨k, j''⟩)) hyk)
       rwa [sub_add_cancel] at h
-    rcases hW.mem_or_mem hprod with h | h
-    · exact hj'' h
-    · exact hj' k h
-  refine ⟨∏ k, X (inrV ⟨k, j' k⟩) ^ (a k).toNat * rename inlV (linForm A ⟨k, j' k⟩) ^ (-a k).toNat,
-    ∏ k, rename inlV (linForm A ⟨k, j' k⟩) ^ (a k).toNat * X (inrV ⟨k, j' k⟩) ^ (-a k).toNat, ?_, ?_, ?_⟩
-  · intro h
+    exact (hW.mem_or_mem hprod).elim hj'' (hj' k)
+  have hnm : ∀ u v : K₂ → MRing (Sum.elim ι ι₂), (∀ k, u k ∉ W) → (∀ k, v k ∉ W) →
+      ∏ k, u k * v k ∉ W := fun u v hu hv h => by
     obtain ⟨k, -, hk⟩ := Ideal.IsPrime.prod_mem_iff.mp h
-    rcases hW.mem_or_mem hk with h | h
-    · exact hy k (hW.mem_of_pow_mem _ h)
-    · exact hj' k (hW.mem_of_pow_mem _ h)
-  · intro h
-    obtain ⟨k, -, hk⟩ := Ideal.IsPrime.prod_mem_iff.mp h
-    rcases hW.mem_or_mem hk with h | h
-    · exact hj' k (hW.mem_of_pow_mem _ h)
-    · exact hy k (hW.mem_of_pow_mem _ h)
-  · rw [graphIdeal, RingHom.mem_ker, map_sub, sub_eq_zero]
-    simp only [num, den, map_prod, map_mul, map_pow, graphMap_rename_inlV, graphMap_X_inrV]
-    rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    ring
+    exact (hW.mem_or_mem hk).elim (hu k) (hv k)
+  refine ⟨∏ k, X (inrV ⟨k, j' k⟩) ^ (a k).toNat * rename inlV (g ⟨k, j' k⟩) ^ (-a k).toNat,
+    ∏ k, rename inlV (g ⟨k, j' k⟩) ^ (a k).toNat * X (inrV ⟨k, j' k⟩) ^ (-a k).toNat,
+    hnm _ _ (fun k h => hy k (hW.mem_of_pow_mem _ h)) (fun k h => hj' k (hW.mem_of_pow_mem _ h)),
+    hnm _ _ (fun k h => hj' k (hW.mem_of_pow_mem _ h)) (fun k h => hy k (hW.mem_of_pow_mem _ h)), ?_⟩
+  rw [graphIdeal, RingHom.mem_ker, map_sub, sub_eq_zero]
+  simp only [numForms, denForms, map_prod, map_mul, map_pow, graphMap_rename_inlV, graphMap_X_inrV]
+  rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl fun k _ => ?_
+  ring
 
 theorem norm_factor {l : ℝ} (hl : l ≠ 0) (t : ℝ) (e : ℤ) :
     t ^ e.toNat * (l * t) ^ (-e).toNat * l ^ e = (l * t) ^ e.toNat * t ^ (-e).toNat := by
@@ -202,35 +219,37 @@ theorem norm_factor {l : ℝ} (hl : l ≠ 0) (t : ℝ) (e : ℤ) :
   rw [he, zpow_sub₀ hl, zpow_natCast, zpow_natCast, mul_pow, mul_pow]
   field_simp
 
-end Graph
-
-theorem proof : GraphIsometric.Statement := by
-  intro K _ ι ι₂ _ _ P d A B₁ B B₁' B' hP hBP ha hh hpl hpr
+theorem of_forms {P : Ideal (MRing ι)} (hPp : P.IsPrime) {g : (Σ k, ι₂ k) → MRing ι} {δ : K₂ → K → ℕ}
+    {B₁ : HermLine ι} {B : HermLine ι₂} {B₁' B' : HermLine (Sum.elim ι ι₂)}
+    (hgh : ∀ q, IsMultiHomog (g q) (δ q.1)) (hBP : IsBasePtFree P g)
+    (hj : ∀ k, ∃ j, g ⟨k, j⟩ ∉ P)
+    (ha : ∀ k, B₁.a k = ∑ k₂, B.a k₂ * (δ k₂ k : ℤ))
+    (hh : ∀ z ∈ mcPts P, B₁.h z = B.h (fun q => eval z (map (Int.castRingHom ℂ) (g q))))
+    (hpl : IsPullHerm Sum.inl inlV B₁ B₁') (hpr : IsPullHerm Sum.inr inrV B B') :
+    IsIsometricOn (graphIdeal P g) B₁' B' := by
   classical
-  have hPp : P.IsPrime := hP.2.1.1
-  choose j hj using ChangeOfModel.exists_linForm_not_mem hP hBP
-  obtain ⟨hf, hg⟩ := num_den_not_mem hPp A hj B.a
-  refine ⟨num A j B.a, den A j B.a, _, _, isMultiHomog_num A j B.a, isMultiHomog_den A j B.a, hf, hg, ?_,
+  choose j hj using hj
+  obtain ⟨hf, hg⟩ := num_den_not_mem hPp g hj B.a
+  refine ⟨numForms g j B.a, denForms g j B.a, _, _, isMultiHomog_numForms hgh j B.a,
+    isMultiHomog_denForms hgh j B.a, hf, hg, ?_,
     divCycle_eq_of_local fun W hW hΓW hrel => exists_unit hBP j B.a hW hΓW hrel, ?_⟩
   · intro x
-    rw [hpl.1, hpr.1, ha]
+    rw [hpl.1, hpr.1]
     rcases x with k | k
-    · have e1 : pullDeg Sum.inl B.a (Sum.inl k : K ⊕ K) = B.a k := Sum.inl_injective.extend_apply _ _ _
-      have e2 : pullDeg Sum.inr B.a (Sum.inl k : K ⊕ K) = 0 := by
-        rw [pullDeg, Function.extend_apply' _ _ _ (by rintro ⟨_, h⟩; cases h)]
-        rfl
-      rw [e1, e2]
-      simp [Finset.sum_apply, Pi.single_apply]
-    · have e1 : pullDeg Sum.inl B.a (Sum.inr k : K ⊕ K) = 0 := by
-        rw [pullDeg, Function.extend_apply' _ _ _ (by rintro ⟨_, h⟩; cases h)]
-        rfl
-      have e2 : pullDeg Sum.inr B.a (Sum.inr k : K ⊕ K) = B.a k := Sum.inr_injective.extend_apply _ _ _
-      rw [e1, e2]
+    · rw [pullDeg, pullDeg, extend_inl_inl, extend_inr_inl, ha k]
+      simp only [Finset.sum_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul, extend_inl_inl, Pi.single_apply,
+        reduceCtorEq, ite_false, mul_zero, add_zero, zero_add]
+      push_cast
+      rw [← Finset.sum_sub_distrib, sub_zero]
+      refine Finset.sum_congr rfl fun k₂ _ => ?_
+      rw [← sub_mul, Int.toNat_sub_toNat_neg]
+    · rw [pullDeg, pullDeg, extend_inl_inr, extend_inr_inr]
       simp [Finset.sum_apply, Pi.single_apply]
       omega
   · intro z hz
     set x : (Σ k, ι k) → ℂ := fun p => z (inlV p) with hxdef
     set y : (Σ k, ι₂ k) → ℂ := fun q => z (inrV q) with hydef
+    let gx : (Σ k, ι₂ k) → ℂ := fun q => eval x (map (Int.castRingHom ℂ) (g q))
     have hev : ∀ p : MRing ι,
         eval z (map (Int.castRingHom ℂ) (rename (inlV (ι₂ := ι₂)) p)) = eval x (map (Int.castRingHom ℂ) p) := by
       intro p
@@ -239,42 +258,25 @@ theorem proof : GraphIsometric.Statement := by
     have hx : x ∈ mcPts P := by
       refine ⟨fun k => hz.1 (Sum.inl k), fun p hp => ?_⟩
       rw [← hev]
-      refine hz.2 _ ?_
-      rw [graphIdeal, RingHom.mem_ker, graphMap_rename_inlV, Ideal.Quotient.eq_zero_iff_mem.mpr hp, map_zero]
-    have hlin : ∀ q, eval z (map (Int.castRingHom ℂ) (rename inlV (linForm A q))) = linApply A x q := by
-      intro q
-      rw [hev]
-      simp [linForm, linApply]
+      exact hz.2 _ (rename_mem_graphIdeal g hp)
+    have hlin : ∀ q, eval z (map (Int.castRingHom ℂ) (rename inlV (g q))) = gx q := fun q => hev (g q)
     have hyev : ∀ q, eval z (map (Int.castRingHom ℂ) (X (inrV q) : MRing (Sum.elim ι ι₂))) = y q := by
       intro q
       simp [hydef]
-    have hminor : ∀ k (j₁ j₂ : ι₂ k),
-        y ⟨k, j₁⟩ * linApply A x ⟨k, j₂⟩ = y ⟨k, j₂⟩ * linApply A x ⟨k, j₁⟩ := by
+    have hminor : ∀ k (j₁ j₂ : ι₂ k), y ⟨k, j₁⟩ * gx ⟨k, j₂⟩ = y ⟨k, j₂⟩ * gx ⟨k, j₁⟩ := by
       intro k j₁ j₂
-      have h := hz.2 _ (minor_mem P A k j₁ j₂)
+      have h := hz.2 _ (minor_mem P g k j₁ j₂)
       simp only [map_sub, map_mul, hlin, hyev] at h
       exact sub_eq_zero.mp h
-    have hAx : ∀ k, ∃ j', linApply A x ⟨k, j'⟩ ≠ 0 := by
-      intro k
-      by_contra hall
-      push Not at hall
-      choose i hi using hx.1
-      obtain ⟨N, hN⟩ := hBP k i
-      let φ : MRing ι →+* ℂ := (eval x).comp (map (Int.castRingHom ℂ))
-      have hle : P ⊔ Ideal.span (Set.range fun j' : ι₂ k => linForm A ⟨k, j'⟩) ≤ RingHom.ker φ := by
-        refine sup_le (fun p hp => RingHom.mem_ker.mpr (hx.2 p hp))
-          (Ideal.span_le.mpr (Set.range_subset_iff.mpr fun j' => ?_))
-        show φ _ = 0
-        simp only [φ, RingHom.comp_apply]
-        exact ((hev (linForm A ⟨k, j'⟩)).symm.trans (hlin ⟨k, j'⟩)).trans (hall j')
-      have h0 := RingHom.mem_ker.mp (hle hN)
-      have hne : φ ((∏ k', (X ⟨k', i k'⟩ : MRing ι)) ^ N) ≠ 0 := by
-        simp only [φ, map_pow, map_prod, RingHom.comp_apply, map_X, eval_X]
-        exact pow_ne_zero _ (Finset.prod_ne_zero_iff.mpr fun k' _ => hi k')
-      exact hne h0
-    choose jx hjx using hAx
-    set c : K → ℂ := fun k => y ⟨k, jx k⟩ / linApply A x ⟨k, jx k⟩ with hcdef
-    have hyc : ∀ q : Σ k, ι₂ k, y q = c q.1 * linApply A x q := by
+    let φ : MRing ι →+* ℂ := (eval x).comp (map (Int.castRingHom ℂ))
+    have hgx : ∀ k, ∃ j', gx ⟨k, j'⟩ ≠ 0 :=
+      exists_not_mem_of_basePtFree hBP (RingHom.ker_isPrime φ)
+        (fun p hp => RingHom.mem_ker.mpr (hx.2 p hp)) fun k' => by
+          obtain ⟨i, hi⟩ := hx.1 k'
+          exact ⟨i, by simp [φ, hi]⟩
+    choose jx hjx using hgx
+    set c : K₂ → ℂ := fun k => y ⟨k, jx k⟩ / gx ⟨k, jx k⟩ with hcdef
+    have hyc : ∀ q : Σ k, ι₂ k, y q = c q.1 * gx q := by
       rintro ⟨k, j₁⟩
       simp only [hcdef]
       rw [div_mul_eq_mul_div, eq_div_iff (hjx k)]
@@ -285,20 +287,38 @@ theorem proof : GraphIsometric.Statement := by
       have h := hyc ⟨k, j₁⟩
       rw [hck, zero_mul] at h
       exact hj₁ h
-    have hB' : B'.h z = (∏ k, ‖c k‖ ^ B.a k) * B.h (linApply A x) := by
+    have hB' : B'.h z = (∏ k, ‖c k‖ ^ B.a k) * B.h gx := by
       rw [hpr.2 z, ← B.smul c _ hc]
       congr 1
       funext q
       exact hyc q
-    have hB₁' : B₁'.h z = B.h (linApply A x) := by
+    have hB₁' : B₁'.h z = B.h gx := by
       rw [hpl.2 z]
       exact hh x hx
-    rw [hB', hB₁', num, den]
+    rw [hB', hB₁', numForms, denForms]
     simp only [map_prod, map_mul, map_pow, hlin, hyev, hyc, norm_prod, norm_mul, norm_pow]
     rw [← mul_assoc, ← Finset.prod_mul_distrib]
     congr 1
     refine Finset.prod_congr rfl fun k _ => ?_
     exact norm_factor (norm_ne_zero_iff.mpr (hc k)) _ _
+
+end Graph
+
+theorem proof : GraphIsometric.Statement := by
+  intro K _ ι ι₂ _ _ P d A B₁ B B₁' B' hP hBP ha hh hpl hpr
+  classical
+  refine of_forms hP.2.1.1 (δ := fun k => Pi.single k 1) (fun q => ?_) hBP
+    (ChangeOfModel.exists_linForm_not_mem hP hBP) (fun k => by
+      rw [ha, Finset.sum_eq_single k]
+      · simp
+      · intro k₂ _ hk₂; simp [Pi.single_eq_of_ne hk₂.symm]
+      · simp) (fun z hz => ?_) hpl hpr
+  · refine (GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_iff _ _).mp ?_
+    exact IsWeightedHomogeneous.sum _ _ _ fun i _ =>
+      (isWeightedHomogeneous_X ℤ (GroundTheory.Heights₂.Heights.NumbersDVR.blockWeight ι) ⟨q.1, i⟩).C_mul _
+  · convert hh z hz using 2
+    funext q
+    simp [linForm, linApply]
 
 end GraphIsometric
 

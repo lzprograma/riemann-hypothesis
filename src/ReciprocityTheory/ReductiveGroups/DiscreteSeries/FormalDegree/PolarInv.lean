@@ -8,6 +8,7 @@ import Mathlib.CategoryTheory.Countable
 import Mathlib.MeasureTheory.Measure.RegularityCompacts
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.JacBaseA
 
 @[expose] public section
 
@@ -23,16 +24,9 @@ open ReciprocityTheory.ChartRestriction.DS.S7
 variable {n : ℕ}
 
 theorem polarInv_Jm_pmat {ε : Fin n → Bool} (z : PCoord ε → ℂ) : Jm ε * pmat z * Jm ε = -pmat z := by
-  ext a b
-  simp only [Jm, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.neg_apply]
-  by_cases hab : ε a = ε b
-  · have h0 : pmat z a b = 0 := by simp [pmat, hab]
-    rw [h0]; simp
-  · have hs : (if ε a then (1:ℂ) else -1) * (if ε b then 1 else -1) = -1 := by
-      cases ha : ε a <;> cases hb : ε b <;> simp_all
-    calc (if ε a then (1:ℂ) else -1) * pmat z a b * (if ε b then 1 else -1)
-        = ((if ε a then (1:ℂ) else -1) * (if ε b then 1 else -1)) * pmat z a b := by ring
-      _ = -pmat z a b := by rw [hs]; ring
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.DS.dpb_JYJ
+    | apply _root_.ReciprocityTheory.ChartRestriction.DS.dpb_JYJ <;> first | assumption | rfl | infer_instance
 
 theorem polarInv_key {ε : Fin n → Bool} (k : KG ε) (z : PCoord ε → ℂ) :
     Jm ε * (polarM (k, z))ᴴ * Jm ε = polarM (k⁻¹, adK k (-z)) := by
@@ -78,7 +72,7 @@ theorem polarInv_apply (ε : Fin n → Bool) (S : Set (UJ ε)) (hS : MeasurableS
   have hF : Measurable F := measurable_one.indicator hT
   have hpm : Measurable (intMuCD_pM ε) := (polarM_continuous ε).measurable
   have hJ : Measurable (fun z : PCoord ε → ℂ => ENNReal.ofReal (Jac z)) :=
-    ENNReal.measurable_ofReal.comp (jac_continuous ε).measurable
+    ENNReal.measurable_ofReal.comp (ReciprocityTheory.ChartRestriction.DS.pb_jac_continuous ε).measurable
   change Measure.comap (intMuCD_eM ε) (muPolarMat ε) S = _
   rw [he.comap_apply, ← lintegral_indicator_one hT]
   change (∫⁻ x, F x ∂(Measure.map (intMuCD_pM ε) ((dk ε).prod (volume.withDensity _)))) = _

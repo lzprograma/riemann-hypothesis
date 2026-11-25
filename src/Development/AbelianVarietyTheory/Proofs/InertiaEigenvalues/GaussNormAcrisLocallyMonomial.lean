@@ -63,8 +63,7 @@ theorem eventually_iSup_eq_monomial_left (c : ℕ → ℝ) (h0 : ∀ n, 0 ≤ c 
     (hρ : 0 < ρ) (hρ1 : ρ < 1) (hG : (⨆ n, c n * ρ ^ n) ≠ 0) :
     ∃ i, ∀ᶠ r in 𝓝[≤] ρ, (⨆ n, c n * r ^ n) = c i * r ^ i := by
   obtain ⟨j, hj⟩ : ∃ j, 0 < c j := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hG
     have : ∀ n, c n = 0 := fun n => le_antisymm (h n) (h0 n)
     simp [this]
@@ -189,7 +188,7 @@ theorem gC_monomial_near : ∀ (l : ℕ) [Fact l.Prime] (x : Formalism.Per.Acris
       fun n => by positivity, fun n => ?_, fun r hr hr1 => (_root_.GlobalTheory.PMon.Gauss.isGauss_gC_of_le l r hr hr1).2.2.2.2 a⟩
     · rw [h, mul_add, ha, pow_add, mul_assoc]
     · exact Real.rpow_le_one (norm_nonneg _) ((GlobalTheory.RingBasics.mem_OC _).1 (Subtype.prop _)) (by positivity)
-  have hb : 0 < gC l ρ₀ x := _root_.GlobalTheory.PMon.Gauss.gC_pos_target l x hx ρ₀ hρl hρ1
+  have hb : 0 < gC l ρ₀ x := _root_.GlobalTheory.PMon.Gauss.gC_pos_of_ne_zero l x hx ρ₀ hρl hρ1
   constructor
   · have hfL : ∀ᶠ r in 𝓝[≥] ρ₀, (l : ℝ)⁻¹ ≤ r ∧ r < 1 := by
       filter_upwards [self_mem_nhdsWithin, (eventually_lt_nhds hρ1).filter_mono nhdsWithin_le_nhds] with r hr hr1

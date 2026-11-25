@@ -129,7 +129,7 @@ theorem mem_ballR {r : 𝓞 F} {v : HeightOneSpectrum (𝓞 F)} {x : v.adicCompl
 theorem isOpen_ballR {r : 𝓞 F} (hr : r ≠ 0) (v : HeightOneSpectrum (𝓞 F)) :
     IsOpen (ballR r v : Set (v.adicCompletion F)) := by
   set c : v.adicCompletion F := algebraMap F (v.adicCompletion F) (algebraMap (𝓞 F) F r)
-  have hcv : Valued.v c = v.intValuation r := PI.UnipApproxD.IntegersDenseFiniteAdeles.val_R v r
+  have hcv : Valued.v c = v.intValuation r := ReciprocityTheory.ChartRestriction.G.Lib.AdeleIntA.val_R v r
   have hc : c ≠ 0 := by
     intro h
     rw [h, map_zero] at hcv

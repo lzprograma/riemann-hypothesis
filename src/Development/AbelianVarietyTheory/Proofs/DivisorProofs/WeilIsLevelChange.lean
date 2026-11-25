@@ -58,8 +58,6 @@ open scoped CategoryTheory.Obj
 
 noncomputable section
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.LevelChangePairing
 
 open GlobalTheory.CechPic
@@ -108,7 +106,7 @@ theorem pc_mul_right {S : Scheme.{0}} (A : Over S) [GrpObj A] [IsCommMonObj A] (
   have e := (cls_eq_zero_iff hl).2 h
   rw [cls_linComb hP _ _ hl, Fin.sum_univ_eight] at e
   simp only [Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one, one_smul, neg_smul] at e
-  simp only [lift_mul_lift', _root_.mul_one, _root_.one_mul, ← lift_one_one] at e
+  simp only [lift_mul_lift', _root_.mul_one, _root_.one_mul] at e
   have o : (1 : T ⟶ G2 A) = lift (1 : T ⟶ A) 1 := lift_one_one
   rw [o] at e
   have a1 := z₁ (y * y')
@@ -141,7 +139,7 @@ theorem weilIs_levelChange : ∀ (S : Scheme.{0}) (A : Over S) [GrpObj A] [IsCom
   haveI := _root_.GlobalTheory.SS.DivSemi.isMonHom_id_pow A m
   let ψ : G2 A ⟶ G2 A := lift (fst A A) (snd A A ≫ (𝟙 A) ^ m)
   have e : ∀ {T : Over S} (u v : T ⟶ A), lift u v ≫ ψ = lift u (v ^ m) := fun u v => by
-    simp only [ψ, comp_lift, ← Category.assoc, MonObj.comp_pow, Category.comp_id, lift_fst, lift_snd]
+    simp only [ψ, comp_lift, MonObj.comp_pow, Category.comp_id, lift_fst, lift_snd]
   have hψ' : ψ = lift (fst A A) (snd A A ^ m) := by
     rw [← e (fst A A) (snd A A), lift_fst_snd, Category.id_comp]
   have hL : (lbPow P m).IsLB := LB.isLB_linComb hP _ _

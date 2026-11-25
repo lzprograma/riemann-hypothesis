@@ -86,10 +86,6 @@ def NormFormDvd.Statement : Prop :=
       (∑ j, X j * C (x j) : MvPolynomial (Fin n) A) ∣ p.map (algebraMap R A) →
         normForm A x ∣ p ^ Module.finrank R A
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.Vertical

@@ -643,10 +643,6 @@ private theorem zm_abs (hp : p.IsPrime) (h0 : ∀ (n : ℕ) j a, a ∈ 𝒜 j �
 
 end Abs
 
-private theorem zm_lat {B A : Type} [CommRing B] [CommRing A] [Algebra B A] {k : ℕ} (N : Fin k → Submodule B A)
-    (i : Fin k) (n : ℕ) : lat N (Finsupp.single i n) = N i ^ n := by
-  simp [lat, Finsupp.single_apply]
-
 private theorem zm_iota {O A : Type} [CommRing O] [CommRing A] [Algebra O A] (𝒜 : ℤ → Submodule O A) [GradedAlgebra 𝒜]
     (F : A) (hpow : ∀ n : ℕ, oz 𝒜 (-(2 * n)) = oz 𝒜 (-2) ^ n) :
     ∃ ι : ℕ → A →+ rees (mN 𝒜 F), (∀ (n : ℕ) j a, a ∈ 𝒜 j → j ≠ -(2 * n) → ι n a = 0) ∧
@@ -654,7 +650,7 @@ private theorem zm_iota {O A : Type} [CommRing O] [CommRing A] [Algebra O A] (�
   classical
   have hmem : ∀ (n : ℕ) (b : A), b ∈ 𝒜 (-(2 * (n : ℤ))) → b ∈ lat (mN 𝒜 F) (Finsupp.single 0 n) := by
     intro n b hb
-    rw [zm_lat, show mN 𝒜 F 0 = oz 𝒜 (-2) from rfl, ← hpow, mem_oz]
+    rw [UpperTheory.V.Alg.M.GradedPrimePointLifting.lat_single_pow, show mN 𝒜 F 0 = oz 𝒜 (-2) from rfl, ← hpow, mem_oz]
     exact hb
   let ι : ℕ → A →+ rees (mN 𝒜 F) := fun n =>
     { toFun := fun a => mono (mN 𝒜 F) (Finsupp.single 0 n) (DirectSum.decompose 𝒜 a (-(2 * (n : ℤ))) : A)
@@ -689,8 +685,7 @@ private theorem zm_f {B A : Type} [CommRing B] [CommRing A] [Algebra B A] {k : �
   have hle : Irr (reesGr N) ≤ Ideal.span (reesGr N (e i) : Set (rees N)) := by
     unfold Irr
     exact Ideal.prod_le_inf.trans (Finset.inf_le (Finset.mem_univ i))
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hp
   refine hle.trans (Ideal.span_le.mpr ?_)
   intro s hs
@@ -704,8 +699,8 @@ private theorem zm_f {B A : Type} [CommRing B] [CommRing A] [Algebra B A] {k : �
     ext m
     rw [MvPolynomial.coeff_monomial]
     by_cases hm : Finsupp.single i 1 = m
-    · rw [if_pos hm, hm]
-    · rw [if_neg hm]
+    · rw [ite_eq_left hm, hm]
+    · rw [ite_eq_right hm]
       apply hs'
       intro h
       exact hm (toDeg_injective (hdeg.trans h.symm))

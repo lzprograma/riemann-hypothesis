@@ -14,57 +14,8 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EllipticTermOfIsotropic
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SizeFinitePlaces
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.Mahler
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.PiTensorProduct
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicDegreeFormula
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConjugatePlacesFacts
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DegreeBoundedOfBasis
@@ -286,16 +237,9 @@ theorem det_mul_submatrix_expand {K ι ι' κ : Type} [CommRing K] [Fintype ι] 
   rw [MultilinearMap.map_smul_univ, smul_eq_mul]
   rfl
 
-theorem sz_nonneg {K ι κ : Type} [NormedField K] (g : Matrix ι κ K) : 0 ≤ sz g :=
-  Real.iSup_nonneg fun _ => norm_nonneg _
-
 theorem le_sz {K ι κ : Type} [NormedField K] [Finite ι] [Finite κ] (g : Matrix ι κ K)
     (i : ι) (j : κ) : ‖g i j‖ ≤ sz g :=
   le_ciSup (f := fun p : ι × κ => ‖g p.1 p.2‖) (Set.finite_range _).bddAbove (i, j)
-
-theorem nF_nonneg {K ι κ : Type} [NormedField K] [Fintype κ] [DecidableEq κ]
-    (A : Matrix ι κ K) : 0 ≤ nF A :=
-  Real.iSup_nonneg fun _ => norm_nonneg _
 
 theorem le_nF {K ι κ : Type} [NormedField K] [Finite ι] [Fintype κ] [DecidableEq κ]
     (A : Matrix ι κ K) (s : κ → ι) : ‖(A.submatrix s id).det‖ ≤ nF A :=
@@ -306,9 +250,9 @@ theorem norm_minor_mul_le {K ι ι' κ : Type} [NormedField K] [IsUltrametricDis
     ‖((g * A).submatrix t id).det‖ ≤ sz g ^ Fintype.card κ * nF A := by
   rw [det_mul_submatrix_expand]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg
-    (mul_nonneg (pow_nonneg (sz_nonneg g) _) (nF_nonneg A)) fun s _ => ?_
+    (mul_nonneg (pow_nonneg (GlobalTheory.CompanionTheory.Wedge.sz_nonneg' g) _) (GlobalTheory.CompanionTheory.Wedge.nF_nonneg' A)) fun s _ => ?_
   rw [norm_mul, norm_prod]
-  refine mul_le_mul ?_ (le_nF A s) (norm_nonneg _) (pow_nonneg (sz_nonneg g) _)
+  refine mul_le_mul ?_ (le_nF A s) (norm_nonneg _) (pow_nonneg (GlobalTheory.CompanionTheory.Wedge.sz_nonneg' g) _)
   calc ∏ i, ‖g (t i) (s i)‖ ≤ ∏ _i : κ, sz g :=
         Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => le_sz g _ _
     _ = sz g ^ Fintype.card κ := by simp
@@ -317,7 +261,7 @@ theorem nF_mul_le {K ι ι' κ : Type} [NormedField K] [IsUltrametricDist K] [Fi
     [Fintype ι'] [Fintype κ] [DecidableEq κ] (g : Matrix ι' ι K) (A : Matrix ι κ K) :
     nF (g * A) ≤ sz g ^ Fintype.card κ * nF A :=
   Real.iSup_le (fun t => norm_minor_mul_le g A t)
-    (mul_nonneg (pow_nonneg (sz_nonneg g) _) (nF_nonneg A))
+    (mul_nonneg (pow_nonneg (GlobalTheory.CompanionTheory.Wedge.sz_nonneg' g) _) (GlobalTheory.CompanionTheory.Wedge.nF_nonneg' A))
 
 theorem nF_mul_right {K ι κ : Type} [NormedField K] [Fintype ι] [Fintype κ] [DecidableEq κ]
     (A : Matrix ι κ K) (s : Matrix κ κ K) : nF (A * s) = nF A * ‖s.det‖ := by
@@ -591,10 +535,6 @@ namespace GlobalTheory.CompanionTheory.DegBasisGen
 
 variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
-theorem ultra (w : HeightOneSpectrum (𝓞 E)) : IsUltrametricDist (w.adicCompletion E) :=
-  inferInstanceAs (@IsUltrametricDist (w.adicCompletion E)
-    (Valued.toNormedField (w.adicCompletion E) (WithZero (Multiplicative ℤ))).toDist)
-
 theorem exists_left_inv {K ι κ : Type} [Field K] [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
     (P : Matrix ι κ K) (hP : LinearIndependent K Pᵀ) : ∃ Y : Matrix κ ι K, Y * P = 1 := by
   have inj : LinearMap.ker P.mulVecLin = ⊥ := by
@@ -623,7 +563,7 @@ theorem degG_reindex (hF : WedgeF) (hI : WedgeI) {κ κ' : Type} [Fintype κ] [D
     rw [← Matrix.submatrix_map]
     exact (hI (Fin n)).reindex κ κ' e (A.map (cV v))
   have hw : ∀ w, nF ((A.submatrix id e).map (cW w)) = nF (A.map (cW w)) := fun w => by
-    haveI := ultra w
+    haveI := GlobalTheory.CompanionTheory.DegMoveProof.ultra w
     rw [← Matrix.submatrix_map]
     exact (hF (w.adicCompletion E) (Fin n)).reindex κ κ' e (A.map (cW w))
   simp only [degG, hfr, ← hA, hv, hw]
@@ -652,7 +592,7 @@ theorem degG_mul (mF : MulF) (mI : MulI) (lg : LogAbsBasic) (fs : FinSupp) {κ :
     rw [Matrix.map_mul, (mI (Fin n) (Fin n) κ _).2.1, hdet, Real.log_mul (f1 v) hne]
   have hw : ∀ w, Real.log (nF ((A * s.map (algebraMap E (Ad E))).map (cW w))) =
       Real.log (nF (A.map (cW w))) + Real.log ‖cW w (algebraMap E (Ad E) s.det)‖ := fun w => by
-    haveI := ultra w
+    haveI := GlobalTheory.CompanionTheory.DegMoveProof.ultra w
     have hne : ‖cW w (algebraMap E (Ad E) s.det)‖ ≠ 0 := norm_ne_zero_iff.2 (hu.map (cW w)).ne_zero
     rw [Matrix.map_mul, (mF _ (Fin n) (Fin n) κ _).2.1, hdet, Real.log_mul (f2 w) hne]
   have hsupp : (Function.support fun w => Real.log (nF (A.map (cW w)))).Finite :=
@@ -734,10 +674,6 @@ theorem exists_leftInv {K ι κ : Type} [Field K] [Fintype ι] [DecidableEq ι] 
   rw [← h2, hg]
   simp
 
-theorem map_fromCols {R S ι κ κ' : Type} (f : R → S) (P : Matrix ι κ R) (Q : Matrix ι κ' R) :
-    (fromCols P Q).map f = fromCols (P.map f) (Q.map f) := by
-  ext i (j | j) <;> rfl
-
 theorem log_ineq {K ι : Type} [Field K] [Fintype ι] [DecidableEq ι] (N : Fam K ι) (hN : IsWedge N) (hS : WedgeSub)
     {κ₀ κ₁ κ₂ : Type} [Fintype κ₀] [DecidableEq κ₀] [Fintype κ₁] [DecidableEq κ₁] [Fintype κ₂] [DecidableEq κ₂]
     (B : Matrix ι κ₀ K) (A : Matrix ι κ₁ K) (C : Matrix ι κ₂ K)
@@ -769,7 +705,7 @@ theorem frame_fromCols {κ κ' : Type} [Fintype κ] [Fintype κ'] (x : GA E n) (
     (Q : Matrix (Fin n) κ' E) :
     (x⁻¹ : GA E n).val * (fromCols P Q).map (algebraMap E (Ad E)) =
       fromCols ((x⁻¹ : GA E n).val * P.map (algebraMap E (Ad E))) ((x⁻¹ : GA E n).val * Q.map (algebraMap E (Ad E))) := by
-  rw [map_fromCols, Matrix.mul_fromCols]
+  rw [GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols', Matrix.mul_fromCols]
 
 theorem sum_ineq (hF : WedgeF) (hI : WedgeI) (hS : WedgeSub) (hFS : FinSupp)
     {κ₀ κ₁ κ₂ : Type} [Fintype κ₀] [DecidableEq κ₀] [Fintype κ₁] [DecidableEq κ₁] [Fintype κ₂] [DecidableEq κ₂]
@@ -801,9 +737,9 @@ theorem sum_ineq (hF : WedgeF) (hI : WedgeI) (hS : WedgeSub) (hFS : FinSupp)
     have a₀ := i₀ v
     have a₂ := i₂ v
     have a₃ := i₃ v
-    rw [map_fromCols] at a₂ a₃
-    rw [map_fromCols, map_fromCols] at a₀
-    rw [map_fromCols, map_fromCols, map_fromCols, map_fromCols]
+    rw [GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols'] at a₂ a₃
+    rw [GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols', GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols'] at a₀
+    rw [GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols', GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols', GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols', GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols']
     exact log_ineq (fun _ _ _ A => nI A) (hI _) hS _ _ _ a₀ (i₁ v) a₂ a₃
   have finp : ∑ᶠ w, Real.log (nF ((fromCols P (fromCols Q R)).map (cW w))) + ∑ᶠ w, Real.log (nF (P.map (cW w))) ≤
       ∑ᶠ w, Real.log (nF ((fromCols P Q).map (cW w))) + ∑ᶠ w, Real.log (nF ((fromCols P R).map (cW w))) := by
@@ -813,10 +749,10 @@ theorem sum_ineq (hF : WedgeF) (hI : WedgeI) (hS : WedgeSub) (hFS : FinSupp)
     have a₀ := f₀ w
     have a₂ := f₂ w
     have a₃ := f₃ w
-    rw [map_fromCols] at a₂ a₃
-    rw [map_fromCols, map_fromCols] at a₀
+    rw [GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols'] at a₂ a₃
+    rw [GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols', GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols'] at a₀
     simp only
-    rw [map_fromCols, map_fromCols, map_fromCols, map_fromCols]
+    rw [GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols', GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols', GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols', GlobalTheory.CompanionTheory.DegPairingProof.map_fromCols']
     exact log_ineq (fun _ _ _ A => nF A) (hF _ _) hS _ _ _ a₀ (f₁ w) a₂ a₃
   linarith
 
@@ -973,12 +909,6 @@ open Matrix PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.D1 NumberField IsDed
 
 namespace GlobalTheory.CompanionTheory.WedgeSupport
 
-theorem nF_nonneg' {K ι κ : Type} [NormedField K] [Fintype κ] [DecidableEq κ] (A : Matrix ι κ K) : 0 ≤ nF A :=
-  Real.iSup_nonneg fun _ => norm_nonneg _
-
-theorem sz_nonneg' {K ι κ : Type} [NormedField K] (g : Matrix ι κ K) : 0 ≤ sz g :=
-  Real.iSup_nonneg fun _ => norm_nonneg _
-
 theorem map_mul_eq_one {R S ι κ : Type} [CommRing R] [CommRing S] [Fintype ι] [DecidableEq κ] (f : R →+* S)
     {A : Matrix ι κ R} {Y : Matrix κ ι R} (h : Y * A = 1) : Y.map f * A.map f = 1 := by
   rw [← Matrix.map_mul, h, Matrix.map_one _ (map_zero f) (map_one f)]
@@ -1007,10 +937,10 @@ theorem nF_eq_one_of_sz_le (hF : MulF) {K ι κ : Type} [NormedField K] [IsUltra
     [DecidableEq κ] {A : Matrix ι κ K} {Y : Matrix κ ι K} (h : Y * A = 1) (hY : sz Y ≤ 1) (hA : sz A ≤ 1) :
     nF A = 1 := by
   apply le_antisymm
-  · exact (nF_le_sz_pow hF A).trans (pow_le_one₀ (sz_nonneg' A) hA)
+  · exact (nF_le_sz_pow hF A).trans (pow_le_one₀ (GlobalTheory.CompanionTheory.DegBound.sz_nonneg A) hA)
   · have h1 := one_le_sz_pow_mul_nF hF h
-    have h2 : sz Y ^ Fintype.card κ ≤ 1 := pow_le_one₀ (sz_nonneg' Y) hY
-    nlinarith [nF_nonneg' A]
+    have h2 : sz Y ^ Fintype.card κ ≤ 1 := pow_le_one₀ (GlobalTheory.CompanionTheory.DegBound.sz_nonneg Y) hY
+    nlinarith [GlobalTheory.CompanionTheory.DegBound.nF_nonneg A]
 
 theorem nI_ne_zero_of_left_inv (hI : MulI) {ι κ : Type} [Fintype ι] [Fintype κ] [DecidableEq κ]
     {A : Matrix ι κ ℂ} {Y : Matrix κ ι ℂ} (h : Y * A = 1) : nI A ≠ 0 := by
@@ -1172,7 +1102,6 @@ section -- clump:auto
 open Matrix PositivityTheory.Rg.BcB.D1
 
 namespace GlobalTheory.CompanionTheory.Wedge
-
 
 open ComplexOrder in
 theorem pairI_of_detMono : DetMono → PairI := by

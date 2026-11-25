@@ -13,8 +13,6 @@ namespace Formalism.L2.SG.ThmBUse
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.ThB Formalism.FourierDecayAlt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Core
 
 variable {D : D7} {τ Rw I H H₁ : Type} [Fintype I] [NormedAddCommGroup H] [InnerProductSpace ℂ H]

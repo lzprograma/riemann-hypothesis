@@ -97,7 +97,7 @@ theorem exists_norm_tateTrace_le :
   · calc ‖tateTrace K n x‖ ≤ c * ‖x‖ := hc n hn x hx
       _ ≤ c * (1 + ∑ n ∈ Finset.range (stableIndex K), c' n) * ‖x‖ := by
         nlinarith [mul_nonneg (mul_nonneg hc0 hs) (norm_nonneg x)]
-  · push_neg at hn
+  · push Not at hn
     have hle : c' n ≤ ∑ n ∈ Finset.range (stableIndex K), c' n :=
       Finset.single_le_sum (fun n _ => hc'0 n) (Finset.mem_range.2 hn)
     rw [← tateTrace_tateTrace_of_le K hn.le x]

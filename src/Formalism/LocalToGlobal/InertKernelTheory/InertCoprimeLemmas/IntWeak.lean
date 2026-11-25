@@ -169,7 +169,7 @@ theorem wa_unitary {n : ℕ} (g : PI.UG.Sp E n ≃ₗ[E] PI.UG.Sp E n) (hg : g �
   simp only [Matrix.star_apply, LinearMap.toMatrix'_apply, LinearEquiv.coe_coe]
   rw [hij]
   simp only [Pi.single_apply, apply_ite star, star_one, star_zero, mul_ite, ite_mul, one_mul, zero_mul, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   by_cases h : i = j
   · simp [h]
   · simp [h, Ne.symm h]

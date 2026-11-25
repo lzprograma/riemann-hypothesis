@@ -386,7 +386,7 @@ theorem pser_Re (hK : X.LevelSubgroupCharacter) (hWD : PhWellDef X u hK) (hKL : 
     rw [X.e_eq g]
     by_cases hg : g ∈ X.K2
     · have hg' : g ∈ K2set X.B.I X.B.g X.e0 X.z0 X.bw := hg
-      rw [if_pos hg', Set.indicator_of_mem hg, pser_right_K X u hK hWD T Dt y g hg]
+      rw [ite_eq_left hg', Set.indicator_of_mem hg, pser_right_K X u hK hWD T Dt y g hg]
       have hn : ‖X.chi2 g‖ = 1 := hK.2.2.2.2 g hg
       have hc : star (X.chi2 g) * X.chi2 g = 1 := by
         rw [RCLike.star_def, RCLike.conj_mul, hn]; simp
@@ -394,7 +394,7 @@ theorem pser_Re (hK : X.LevelSubgroupCharacter) (hWD : PhWellDef X u hK) (hKL : 
         Pser X u hK Dt T y / ((X.B.μf X.K2).toReal : ℂ)
       rw [div_mul_eq_mul_div, ← mul_assoc, hc, one_mul]
     · have hg' : g ∉ K2set X.B.I X.B.g X.e0 X.z0 X.bw := hg
-      rw [if_neg hg', Set.indicator_of_notMem hg, zero_mul]
+      rw [ite_eq_right hg', Set.indicator_of_notMem hg, zero_mul]
   rw [hfun, integral_indicator hKM, setIntegral_const]
   simp only [measureReal_def, Complex.real_smul]
   have hC : ((X.B.μf X.K2).toReal : ℂ) ≠ 0 := by exact_mod_cast hvol

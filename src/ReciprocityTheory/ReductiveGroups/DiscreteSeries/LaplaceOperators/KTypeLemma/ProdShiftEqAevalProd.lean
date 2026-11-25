@@ -206,7 +206,7 @@ theorem casimirValue_add_single (lam : Fin n → ℝ) (s : Fin n) :
     casVal (lam + Pi.single s 1) = casVal lam + n + 2 * thV lam s := by
   simp only [casVal, nsq, dot, thV, Pi.add_apply, add_mul, mul_add, Finset.sum_add_distrib,
     Pi.single_apply, mul_ite, ite_mul, mul_one, one_mul, mul_zero, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   ring
 
 theorem lowestKType_add_single (ε : Fin n → Bool) (lam : Fin n → ℝ) (s : Fin n) :

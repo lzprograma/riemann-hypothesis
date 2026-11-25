@@ -46,7 +46,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CoefMapRecord
 
@@ -76,7 +75,7 @@ lemma aPl_cast (n : ℕ) (hn : n < D.R.k + i) :
   obtain ⟨e, he⟩ := (D.hc τ).e_int i
   obtain ⟨s, hs⟩ := D.R.t_odd
   have hs' : (D.R.t : ℚ) = 2 * s + 1 := by exact_mod_cast hs
-  rw [aPl, if_pos hn]
+  rw [aPl, ite_eq_left hn]
   refine floor_toNat_cast (z + e - ((D.R.k + i : ℕ) - (n + 1)) - (s + 1)) ?_ ?_
   · rw [hz, he, hs']; push_cast; ring
   · obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_lt hn
@@ -97,7 +96,7 @@ lemma aMi_cast (q n c : ℕ) (hq : i + 1 + q = D.R.m) (hn : n + c + 1 = q) :
   obtain ⟨s, hs⟩ := D.R.t_odd
   have hs' : (D.R.t : ℚ) = 2 * s + 1 := by exact_mod_cast hs
   have h0 := lamAt_b (D.hc τ) (D.R.k + i + c) (i + 1 + c) (by omega) (by omega)
-  rw [aMi, if_pos (by omega), show q - n = c + 1 by omega, show D.R.k + i + (c + 1) - 1 = D.R.k + i + c by omega, h0,
+  rw [aMi, ite_eq_left (by omega), show q - n = c + 1 by omega, show D.R.k + i + (c + 1) - 1 = D.R.k + i + c by omega, h0,
     ← sub_eq_add_neg, Nat.cast_succ]
   refine floor_toNat_cast (-(e - z + (c + 1) + s)) ?_ ?_
   · rw [hz, he, hs']; push_cast; ring
@@ -138,7 +137,7 @@ lemma lamV_eq : ∃ s : ℤ, ∀ n : Fin (Vc D i).rank, (lamV D i τ).w n =
   rw [← Int.cast_inj (α := ℚ), hW n, IndefiniteWeightData.WeightData.lamPrime, hd, IndefiniteWeightData.WeightData.thetaWt, hp, hq', hWt, Fin.val_rev,
     Int.cast_sub, Int.cast_add]
   by_cases h1 : (n : ℕ) < D.R.k + i
-  · rw [if_pos (by omega), if_pos h1, if_neg (by omega), Int.cast_natCast, aPl_cast D i τ n h1, IndefiniteWeightData.WeightData.aPlus,
+  · rw [ite_eq_left (by omega), ite_eq_left h1, ite_eq_right (by omega), Int.cast_natCast, aPl_cast D i τ n h1, IndefiniteWeightData.WeightData.aPlus,
       hp, hq', hnV, hWe']
     have hl : (W.lam (n + 1) : ℚ) = lamAt (D.hc τ) n := by
       unfold IndefiniteWeightData.WeightData.lam
@@ -152,13 +151,13 @@ lemma lamV_eq : ∃ s : ℤ, ∀ n : Fin (Vc D i).rank, (lamV D i τ).w n =
     rw [hl]
     push_cast
     ring
-  · rw [if_neg (by omega), if_neg h1]
+  · rw [ite_eq_right (by omega), ite_eq_right h1]
     by_cases h2 : (n : ℕ) + 1 ≤ D.R.k + i + D.R.t
-    · rw [if_pos h2, if_neg (by omega)]
+    · rw [ite_eq_left h2, ite_eq_right (by omega)]
       push_cast
       ring
     · obtain ⟨c, hc⟩ : ∃ c, (n : ℕ) = D.R.k + i + D.R.t + c := ⟨n - (D.R.k + i + D.R.t), by omega⟩
-      rw [if_neg h2, if_pos (by omega), Int.cast_natCast, aMi_cast D i τ q _ c hq (by omega), IndefiniteWeightData.WeightData.aMinus,
+      rw [ite_eq_right h2, ite_eq_left (by omega), Int.cast_natCast, aMi_cast D i τ q _ c hq (by omega), IndefiniteWeightData.WeightData.aMinus,
         hq', hWj, hWt, hWe', show q + 1 - (q + 1 - (n + 1 - (D.R.k + i) - D.R.t)) = c + 1 by omega,
         show (i : ℕ) + 1 + (c + 1) = i + 1 + c + 1 by omega, hWb ⟨i + 1 + c, by omega⟩]
       push_cast
@@ -185,7 +184,7 @@ theorem exists_io_record : ∀ (D : D7) (Q : Formalism.L2.Pj.Par D), Q.Pins → 
     have hsig : (Wc D i).sig (tauE D τ) = D.R.sigW ((i : ℕ) + 1) := D.sp.W_sigval _ (inR i).1 (inR i).2 _
     obtain ⟨h1, h2, -⟩ := hκ i τ
     rw [hsig] at h1 h2
-    rw [ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum.mult, ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum.mult, if_pos ht, if_neg hc, hp, hq, hs τ n,
+    rw [ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum.mult, ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum.mult, ite_eq_left ht, ite_eq_right hc, hp, hq, hs τ n,
       (hval τ _).1, (hval τ _).2]
     congr 1
     · congr 1

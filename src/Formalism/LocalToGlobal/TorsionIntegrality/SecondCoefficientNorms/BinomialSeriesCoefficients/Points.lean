@@ -327,7 +327,7 @@ theorem coeff_law_of_zero (h : IsLogPair l linv) (d : Fin 2 →₀ ℕ) (hd : d 
             (![0, PowerSeries.X] : Fin 2 → MvPowerSeries Unit K) 1 ^ d' 1) = 0 := by
         rw [h0, pow_zero, one_mul]
         have := PowerSeries.coeff_X_pow (R := K) (d 1) (d' 1)
-        rw [if_neg (fun hh => h1 hh.symm)] at this
+        rw [ite_eq_right (fun hh => h1 hh.symm)] at this
         exact this
       rw [e1, mul_zero]
     · have : (![0, PowerSeries.X] : Fin 2 → MvPowerSeries Unit K) 0 ^ d' 0 = 0 := zero_pow h0

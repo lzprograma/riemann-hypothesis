@@ -59,8 +59,7 @@ theorem UpperTheory.V.Z.Sym.Sig.conjDiag : UpperTheory.V.Z.Sym.Sig.ConjDiag := b
     ((Matrix.isUnit_iff_isUnit_det _).mp y.isUnit).ne_zero
   have col : ∀ j, ∃ i, (y : Matrix (Fin n) (Fin n) k) i j ≠ 0 := by
     intro j
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hdet (Matrix.det_eq_zero_of_column_eq_zero j h)
   choose σ hσ using col
   have hσs : ∀ j, (s (σ j) : k) = s' j := fun j => key _ _ (hσ j)
@@ -68,8 +67,7 @@ theorem UpperTheory.V.Z.Sym.Sig.conjDiag : UpperTheory.V.Z.Sym.Sig.ConjDiag := b
     intro j j' hjj'
     have h1 := hs' j j' hjj'
     rw [← hσs, ← hσs] at h1
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     rcases hle.lt_or_eq with h2 | h2
     · exact lt_irrefl _ (lt_trans h1 (hs _ _ h2))
     · rw [h2] at h1

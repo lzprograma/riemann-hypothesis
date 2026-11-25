@@ -120,7 +120,6 @@ theorem exists_majorant_pureA {κ : Type} [Fintype κ] {g : (κ → FiniteAdeleR
       (∀ v, ‖φ v‖ ≤ C0) → (∀ v, ‖v‖ ^ k * ‖φ v‖ ≤ Ck) → ∀ ξ : κ → F,
         ‖GlobalTheory.WeilM.pureA F φ g (fun j => algebraMap F (AdeleRing (𝓞 F) F) (ξ j) + x j)‖ ≤ (C0 + Ck) * M ξ := by
   obtain ⟨B, hB⟩ := hg.1.continuous.bounded_above_of_compact_support hg.2
-  have hB0 : 0 ≤ B := le_trans (norm_nonneg _) (hB 0)
   let xf : κ → FiniteAdeleRing (𝓞 F) F := fun j => (x j).2
   let a : κ → mixedEmbedding.mixedSpace F := fun j => InfiniteAdeleRing.ringEquiv_mixedSpace F (x j).1
   have hK : IsCompact ((fun y => y - xf) '' tsupport g) :=

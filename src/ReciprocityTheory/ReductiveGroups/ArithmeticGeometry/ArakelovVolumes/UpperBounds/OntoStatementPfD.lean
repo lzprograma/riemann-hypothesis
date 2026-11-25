@@ -75,7 +75,7 @@ theorem ext_glue (hΩ : IsOpen Ω) (hc : IsPreconnected Ω) (hg : Differentiable
     intro z0 hz0 w hw
     by_cases hgw : g w = 0
     · have hwΩ : w ∈ Ω := hB z0 hz0 hw
-      simp only [F, hgw, ne_eq, not_true_eq_false, if_false]
+      simp only [F, hgw, ne_eq, not_true_eq_false, ite_false]
       by_contra hne'
       have hN : ∀ᶠ y in 𝓝 w, y ∈ ball z0 (ρ z0) ∩ ball w (ρ w) :=
         (isOpen_ball.inter isOpen_ball).mem_nhds ⟨hw, mem_ball_self (hρ w hwΩ)⟩
@@ -90,7 +90,7 @@ theorem ext_glue (hΩ : IsOpen Ω) (hc : IsPreconnected Ω) (hg : Differentiable
         exact not_loc_zero hΩ hc hg hne w hwΩ (h.mono fun y hy => by simpa using hy)
       obtain ⟨y, hy1, hy2, hy3⟩ := (hfr.and_eventually (hN.and hev)).exists
       exact hy3 (sub_eq_zero.2 ((hEq w hwΩ ⟨hy2.2, hy1⟩).trans (hEq z0 hz0 ⟨hy2.1, hy1⟩).symm))
-    · simp only [F, ne_eq, hgw, not_false_eq_true, if_true]
+    · simp only [F, ne_eq, hgw, not_false_eq_true, ite_true]
       exact (hEq z0 hz0 ⟨hw, hgw⟩).symm
   refine ⟨F, fun z0 hz0 => ?_, fun z _ hgz => by simp [F, hgz]⟩
   have hd : DifferentiableAt ℂ (U z0) z0 :=

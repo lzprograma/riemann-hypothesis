@@ -11,59 +11,8 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTool
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.CopNormLt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.TrPlus
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.TrivialOnInertiaOfUnr
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
@@ -303,7 +252,7 @@ private lemma homog_of_scale (P : MvPolynomial σ B) (d : ℕ)
   rw [← Finsupp.degree_eq_weight_one]
   by_contra hne
   apply hα
-  rw [if_neg hne]
+  rw [ite_eq_right hne]
   simp
 
 open MvPolynomial in
@@ -318,10 +267,10 @@ private lemma coeff_kill [DecidableEq σ] (T : Finset σ) (P : MvPolynomial σ B
       rw [aeval_monomial, monomial_eq]
       split_ifs with hb
       · congr 1
-        exact Finset.prod_congr rfl fun s hs => by simp only [if_pos (hb hs)]
+        exact Finset.prod_congr rfl fun s hs => by simp only [ite_eq_left (hb hs)]
       · obtain ⟨s, hs, hsT⟩ := Finset.not_subset.1 hb
         rw [Finsupp.prod, Finset.prod_eq_zero hs, mul_zero]
-        rw [if_neg hsT, zero_pow (Finsupp.mem_support_iff.1 hs)]
+        rw [ite_eq_right hsT, zero_pow (Finsupp.mem_support_iff.1 hs)]
     rw [e]
     by_cases hab : β = α
     · subst hab; split_ifs <;> simp
@@ -403,23 +352,23 @@ private lemma exists_phi (D : GDet n A G) : ∃ c : (Fin n → G) → A,
       rw [Finsupp.mem_support_iff, coeff_tens_gam] at hg
       rw [Fintype.mem_piFinset]
       by_contra h
-      exact hg (if_neg h)
+      exact hg (ite_eq_right h)
     have e : ∀ g ∈ Fintype.piFinset fun _ : Fin n => S, AddMonoidAlgebra.coeff ((tens fun _ => gam A S).coeff g * algebraMap A (MvPolynomial G A) (c g))
         α =
           if typ g = α then c g else 0 := by
       intro g hg
-      rw [coeff_tens_gam, if_pos (Fintype.mem_piFinset.1 hg), mul_comm, MvPolynomial.algebraMap_eq,
+      rw [coeff_tens_gam, ite_eq_left (Fintype.mem_piFinset.1 hg), mul_comm, MvPolynomial.algebraMap_eq,
         MvPolynomial.coeff_C_mul, MvPolynomial.coeff_monomial]
       simp
     rw [Finset.sum_congr rfl e]
     by_cases h : α.degree = n ∧ α.support ⊆ S
     · have hr : typ (Function.invFun typ α : Fin n → G) = α := Function.invFun_eq (exists_typ n α h.1)
       rw [Finset.sum_eq_single (Function.invFun typ α)]
-      · simp only [hr, c, c0, if_true]
-        rw [kill S _ α h.2, if_pos subset_rfl]
+      · simp only [hr, c, c0, ite_true]
+        rw [kill S _ α h.2, ite_eq_left subset_rfl]
       · intro g _ hg
         split_ifs with h1
-        · simp only [c, h1, if_neg hg]
+        · simp only [c, h1, ite_eq_right hg]
         · rfl
       · intro h1
         refine absurd (Fintype.mem_piFinset.2 fun i => h.2 ?_) h1
@@ -427,10 +376,10 @@ private lemma exists_phi (D : GDet n A G) : ∃ c : (Fin n → G) → A,
         rwa [hr] at this
     · rw [Finset.sum_eq_zero]
       · by_cases h1 : α.degree = n
-        · rw [kill S S α subset_rfl, if_neg fun h2 => h ⟨h1, h2⟩]
+        · rw [kill S S α subset_rfl, ite_eq_right fun h2 => h ⟨h1, h2⟩]
         · exact (hom S).coeff_eq_zero h1
       · intro g hg
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro rfl
         refine h ⟨by simp [typ], fun a ha => ?_⟩
         obtain ⟨i, rfl⟩ := mem_support_typ.1 ha
@@ -988,7 +937,7 @@ private lemma matrix_units [IsLocalHom (algebraMap A k)] (π : S →ₐ[A] Matri
     exact Matrix.sum_single_one)
   apply hu.mul_left_cancel
   rw [Finset.sum_mul_sum, mul_one]
-  simp only [p6, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [p6, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 private lemma exists_iso [IsLocalHom (algebraMap A k)] (hf : Function.Surjective (algebraMap A k))
     (π : S →ₐ[A] Matrix (Fin n) (Fin n) k) (hπs : Function.Surjective π) (o : Fin n)
@@ -1309,7 +1258,7 @@ private theorem main [IsLocalRing A] [IsAdicComplete (IsLocalRing.maximalIdeal A
         ring
       rw [h3, h1, map_one, ← Polynomial.comp_eq_aeval] at h2
       have h4 := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q 1) h2
-      simp only [Polynomial.comp_C_mul_X_coeff, pow_one, Polynomial.coeff_one, one_ne_zero, if_false] at h4
+      simp only [Polynomial.comp_C_mul_X_coeff, pow_one, Polynomial.coeff_one, one_ne_zero, ite_false] at h4
       have h5 : IsUnit ((D.D (Polynomial A) y).coeff 1) := by
         apply isUnit_of_map_unit (algebraMap A k)
         have e : mapRingHom G (Polynomial.mapRingHom (algebraMap A k)) y =

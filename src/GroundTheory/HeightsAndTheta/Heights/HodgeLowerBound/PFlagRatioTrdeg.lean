@@ -74,7 +74,7 @@ theorem prod_spec (m : ℕ) (hm : m < n) (c : Fin n) (hc : m ≤ (c : ℕ)) :
     simp only [Fin.val_castSucc, Fin.val_last]
     rw [ih (by omega) ⟨m, by omega⟩ le_rfl]
     have e : (⟨m + 1 - 1, by omega⟩ : Fin n) = ⟨m, by omega⟩ := Fin.ext (by simp)
-    simp only [spec, show ¬ ((c : ℕ) < m + 1) by omega, if_false, show m + 1 ≠ 0 by omega, dif_neg, not_false_eq_true, e]
+    simp only [spec, show ¬ ((c : ℕ) < m + 1) by omega, ite_false, show m + 1 ≠ 0 by omega, dite_eq_right, not_false_eq_true, e]
     exact mul_div_cancel₀ _ (genFrac_ne_zero F n _)
 
 theorem spec_pivotMinor (a : Fin (n - 1)) (b : Fin n) (hab : (a : ℕ) ≤ b) :
@@ -140,15 +140,15 @@ theorem ratio_indep (F : Type) [Field F] {ι E : Type} [Field E] [Algebra F E] [
       (IsFractionRing.injective _ _)
   let d : ι → Kp := fun i => if δ i = i then Xk i else Xk i / Xk (δ i)
   let c : ι → MvPolynomial ι F := fun i => if δ i = i then X i else X i * X (δ i)
-  have hdδ : ∀ i, d (δ i) = Xk (δ i) := fun i => by simp only [d, hδ, if_true]
-  have hcδ : ∀ i, c (δ i) = X (δ i) := fun i => by simp only [c, hδ, if_true]
+  have hdδ : ∀ i, d (δ i) = Xk (δ i) := fun i => by simp only [d, hδ, ite_true]
+  have hcδ : ∀ i, c (δ i) = X (δ i) := fun i => by simp only [c, hδ, ite_true]
   have hdc : ∀ i, aeval d (c i) = Xk i := by
     intro i
     by_cases h : δ i = i
-    · simp only [c, d, h, if_true, aeval_X]
-    · simp only [c, h, if_false, map_mul, aeval_X]
+    · simp only [c, d, h, ite_true, aeval_X]
+    · simp only [c, h, ite_false, map_mul, aeval_X]
       rw [hdδ]
-      simp only [d, h, if_false]
+      simp only [d, h, ite_false]
       exact div_mul_cancel₀ _ (hXk _)
   have hc : AlgebraicIndependent F c := by
     refine AlgebraicIndependent.of_comp (aeval d) ?_
@@ -170,12 +170,12 @@ theorem ratio_indep (F : Type) [Field F] {ι E : Type} [Field E] [Algebra F E] [
   have hχ : ∀ i, χ (d i) = Xk i := by
     intro i
     by_cases h : δ i = i
-    · simp only [d, h, if_true]
+    · simp only [d, h, ite_true]
       rw [hχX]
-      simp only [c, h, if_true, Xk]
-    · simp only [d, h, if_false, map_div₀]
+      simp only [c, h, ite_true, Xk]
+    · simp only [d, h, ite_false, map_div₀]
       rw [hχX, hχX, hcδ]
-      simp only [c, h, if_false, map_mul]
+      simp only [c, h, ite_false, map_mul]
       exact mul_div_cancel_right₀ _ (hXk _)
   have hd : AlgebraicIndependent F d := by
     refine AlgebraicIndependent.of_comp χ ?_
@@ -188,8 +188,8 @@ theorem ratio_indep (F : Type) [Field F] {ι E : Type} [Field E] [Algebra F E] [
   have hψ : ⇑ψ ∘ d = fun i => if δ i = i then y i else y i / y (δ i) := by
     funext i
     by_cases h : δ i = i
-    · simp only [Function.comp_apply, d, h, if_true, hψX]
-    · simp only [Function.comp_apply, d, h, if_false, map_div₀, hψX]
+    · simp only [Function.comp_apply, d, h, ite_true, hψX]
+    · simp only [Function.comp_apply, d, h, ite_false, map_div₀, hψX]
   rw [← hψ]
   exact hd.map' (ψ : Kp →+* E).injective
 
@@ -390,7 +390,7 @@ theorem proof : FlagRatioTrdeg.Statement := by
       simp only [δ, incl, Fin.val_castLE] at this
       have := q.2.2.2
       omega
-    simp only [Function.comp_apply, hne, if_false]
+    simp only [Function.comp_apply, hne, ite_false]
     rfl
   have hpr : AlgebraicIndependent F (pivotRatio F Ψ n) := hrat ▸ hz.comp incl hincl
   have hL : ∀ (τ : Ψ) (a : Fin (n - 1)), leadMinor (genMatFr F Ψ n τ) a ≠ 0 := fun τ a =>

@@ -52,10 +52,6 @@ def PrimeMapFractionRing.Statement : Prop :=
     (P : MvPolynomial (Fin n) O),
     Prime P → (∀ a : O, P ≠ C a) → Prime (map (algebraMap O K) P)
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights

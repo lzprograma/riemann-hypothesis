@@ -77,7 +77,7 @@ theorem van_lin (g : Fin 2) (b : I g → C) :
   rw [map_sum]
   apply Finset.sum_eq_zero
   intro c _
-  rw [coeff_smul, coeff_X, if_neg, mul_zero]
+  rw [coeff_smul, coeff_X, ite_eq_right, mul_zero]
   intro h
   exact hν ⟨g, c⟩ (by rw [h]; simp) rfl
 
@@ -151,7 +151,7 @@ theorem coeff_of_ev_zero (h : PS C 2 dd) (g : Fin 2) (a : Fin 2 → Pt C 1 dd) (
     · have h1 : a s.1 s.2 = X ((0 : Fin 1), s.2) := by rw [hao _ hs]; rfl
       rw [h1, subst_X hbS]
       have h2 : s = (1 - g, s.2) := Prod.ext (fin_two_eq_one_sub_of_ne' g s.1 hs) rfl
-      simp only [Pi.smul_apply', if_neg hs, one_smul, hb]
+      simp only [Pi.smul_apply', ite_eq_right hs, one_smul, hb]
       rw [← h2]
   have h3 := congrArg (coeff e) key
   rw [hz, ← coe_substAlgHom hbS, map_zero, map_zero, coeff_rescale] at h3
@@ -160,7 +160,7 @@ theorem coeff_of_ev_zero (h : PS C 2 dd) (g : Fin 2) (a : Fin 2 → Pt C 1 dd) (
     apply Finset.prod_eq_one
     intro s hs
     show (if s.1 = g then (0 : C) else 1) ^ e s = 1
-    rw [if_neg (he s hs), one_pow]
+    rw [ite_eq_right (he s hs), one_pow]
   rw [h4, one_mul] at h3
   exact h3.symm
 

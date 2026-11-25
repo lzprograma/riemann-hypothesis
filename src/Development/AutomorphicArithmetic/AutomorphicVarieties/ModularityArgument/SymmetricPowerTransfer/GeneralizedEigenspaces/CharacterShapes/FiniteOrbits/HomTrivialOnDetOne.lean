@@ -54,8 +54,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private theorem hom_trivial_on_det_one {K C : Type} [Field K] [CharZero K] [CommGroup C]
     (D : GL (Fin 2) K →* C) (g : GL (Fin 2) K) (hg : Matrix.GeneralLinearGroup.det g = 1) :
     D g = 1 := by

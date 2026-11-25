@@ -83,10 +83,10 @@ theorem flat_single (T : Type) [Fintype T] [DecidableEq T] (a b : ℕ) (k : DVar
   funext τ i j
   simp only [flat, LinearEquiv.coe_mk, LinearMap.coe_mk, AddHom.coe_mk, coordX, Pi.single_apply]
   by_cases h : τ = k.1 ∧ i = k.2.1 ∧ j = k.2.2
-  · rw [if_pos h, if_pos]
+  · rw [ite_eq_left h, ite_eq_left]
     obtain ⟨h1, h2, h3⟩ := h
     subst h1 h2 h3; rfl
-  · rw [if_neg h, if_neg]
+  · rw [ite_eq_right h, ite_eq_right]
     rintro rfl
     exact h ⟨rfl, rfl, rfl⟩
 

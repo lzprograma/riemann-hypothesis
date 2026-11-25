@@ -121,13 +121,12 @@ theorem exists_nat_of_inRCone {n : ℕ} (u : Fin n → LinearMap.BilinForm ℤ X
   have h0 := congr_fun ht 0
   simp only [Fin.cons_zero, Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at h0
   obtain ⟨k, hk⟩ : ∃ k, v k 0 ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     simp [hne] at h0
   have hv := (hiff fun i => (v k i : ℝ)).2 ⟨Pi.single k 1, fun j => by
     by_cases h : j = k <;> simp [h], by
     ext i
-    rw [Finset.sum_apply, Finset.sum_eq_single k (fun j _ hj => by simp [Pi.single_apply, hj]) (by simp)]
+    rw [Finset.sum_apply, Finset.sum_eq_single k (fun j _ hj => by simp [hj]) (by simp)]
     simp⟩
   obtain ⟨-, -, hV⟩ := hv
   refine ⟨v k 0, fun i => v k i.succ, Nat.pos_of_ne_zero hk, ?_⟩

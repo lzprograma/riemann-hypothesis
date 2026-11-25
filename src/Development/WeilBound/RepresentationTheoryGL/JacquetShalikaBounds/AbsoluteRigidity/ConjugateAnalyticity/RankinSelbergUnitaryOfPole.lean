@@ -2,48 +2,8 @@ module
 
 public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
 import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Star
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -143,7 +103,7 @@ theorem core (hR : RSPole) {E : Type} [Field E] [NumberField E] [_root_.NumberFi
       have hσ0 : σ₀ < σ := lt_of_le_of_lt (le_max_left _ _) hσ
       have h1 : ZS σ ≠ 0 := by simpa using hne σ (by linarith)
       have h2 := heq σ (by simpa using hσ0)
-      rw [if_pos ⟨hP1, rfl⟩]
+      rw [ite_eq_left ⟨hP1, rfl⟩]
       simp only [Complex.ofReal_zero, zero_mul, add_zero]
       rw [h2]
       field_simp
@@ -164,7 +124,7 @@ theorem core (hR : RSPole) {E : Type} [Field E] [NumberField E] [_root_.NumberFi
         have hne1 : (σ : ℂ) ≠ 1 := by
           intro h; have := congrArg Complex.re h; simp at this; linarith
         have hsub : (σ : ℂ) - 1 ≠ 0 := sub_ne_zero.2 hne1
-        rw [if_neg hP]
+        rw [ite_eq_right hP]
         simp only [Complex.ofReal_zero, zero_mul, add_zero, one_mul]
         rw [dslope_of_ne _ hne1, slope_def_field, h2, hz1]
         field_simp
@@ -188,7 +148,7 @@ theorem core (hR : RSPole) {E : Type} [Field E] [NumberField E] [_root_.NumberFi
           intro h; have := congrArg Complex.im h; simp at this; exact hu this
         have h1 := hne σ (by linarith)
         have h2 := heq ((σ : ℂ) + u * Complex.I) (by rw [re_shift]; exact hσ0)
-        rw [if_neg hP, one_mul]
+        rw [ite_eq_right hP, one_mul]
         show Z ((σ : ℂ) + u * Complex.I) / (((σ : ℂ) + u * Complex.I - 1) * ZS ((σ : ℂ) + u * Complex.I)) = _
         rw [h2]
         field_simp
@@ -230,17 +190,17 @@ theorem rankin_selberg_unitary_of_pole : NormEx → SatTw → RSPole → RSU := 
       rw [hQ, eq_of_heq h3]
     refine ⟨fun s => (if Q ∧ ¬ P then s - 1 else 1) * G s, σ₀, fun σ hσ => ?_, fun σ hσ => ?_⟩
     · by_cases hc' : Q ∧ ¬ P
-      · simp only [if_pos hc']
+      · simp only [ite_eq_left hc']
         exact (analyticAt_id.sub analyticAt_const).mul (hG σ hσ)
-      · simp only [if_neg hc', one_mul]
+      · simp only [ite_eq_right hc', one_mul]
         exact hG σ hσ
     · show (if Q ∧ ¬ P then (σ : ℂ) - 1 else 1) * G σ = _
       rw [hGe σ hσ, ← LS_shift α β _ _ τ τ' (hval τ) (hval τ') σ]
       by_cases hq : Q <;> by_cases hp : P
-      · rw [if_neg (fun h => h.2 hp), if_pos hp, if_pos hq, one_mul]
-      · rw [if_pos ⟨hq, hp⟩, if_neg hp, if_pos hq, one_mul]
+      · rw [ite_eq_right (fun h => h.2 hp), ite_eq_left hp, ite_eq_left hq, one_mul]
+      · rw [ite_eq_left ⟨hq, hp⟩, ite_eq_right hp, ite_eq_left hq, one_mul]
       · exact absurd (hPQ hp) hq
-      · rw [if_neg (fun h => hq h.1), if_neg hp, if_neg hq, one_mul]
+      · rw [ite_eq_right (fun h => hq h.1), ite_eq_right hp, ite_eq_right hq, one_mul]
   · obtain ⟨S₀, hc⟩ := core hR k m π₀' π₀ (τ' - τ) hm hmk.le hn' hn
     refine ⟨S₀, fun S hS α β hα hβ => ?_⟩
     obtain ⟨G, σ₀, hG, hGe⟩ := hc S hS _ _ (transfer hT _ (ν τ') S (hunr τ') β hβ)
@@ -255,9 +215,9 @@ theorem rankin_selberg_unitary_of_pole : NormEx → SatTw → RSPole → RSU := 
       rw [hQ, eq_of_heq h3]
     refine ⟨fun s => (if Q ∧ ¬ P then s - 1 else 1) * conj (G (conj s)), σ₀, fun σ hσ => ?_, fun σ hσ => ?_⟩
     · by_cases hc' : Q ∧ ¬ P
-      · simp only [if_pos hc']
+      · simp only [ite_eq_left hc']
         exact (analyticAt_id.sub analyticAt_const).mul (analyticAt_conj (hG σ hσ))
-      · simp only [if_neg hc', one_mul]
+      · simp only [ite_eq_right hc', one_mul]
         exact analyticAt_conj (hG σ hσ)
     · show (if Q ∧ ¬ P then (σ : ℂ) - 1 else 1) * conj (G (conj (σ : ℂ))) = _
       rw [Complex.conj_ofReal, hGe σ hσ, map_mul]
@@ -276,9 +236,9 @@ theorem rankin_selberg_unitary_of_pole : NormEx → SatTw → RSPole → RSU := 
         split_ifs <;> simp [Complex.conj_ofReal]
       rw [hcif]
       by_cases hq : Q <;> by_cases hp : P
-      · rw [if_neg (fun h => h.2 hp), if_pos hp, if_pos hq, one_mul]
-      · rw [if_pos ⟨hq, hp⟩, if_neg hp, if_pos hq, one_mul]
+      · rw [ite_eq_right (fun h => h.2 hp), ite_eq_left hp, ite_eq_left hq, one_mul]
+      · rw [ite_eq_left ⟨hq, hp⟩, ite_eq_right hp, ite_eq_left hq, one_mul]
       · exact absurd (hPQ hp) hq
-      · rw [if_neg (fun h => hq h.1), if_neg hp, if_neg hq, one_mul]
+      · rw [ite_eq_right (fun h => hq h.1), ite_eq_right hp, ite_eq_right hq, one_mul]
 
 end PositivityTheory.RgJS

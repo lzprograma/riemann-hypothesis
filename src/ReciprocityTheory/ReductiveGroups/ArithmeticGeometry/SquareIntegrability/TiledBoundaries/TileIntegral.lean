@@ -121,15 +121,6 @@ theorem bdd_trans {s : Set V} (hs : Bornology.IsBounded s) (c : V) :
 
 variable (μ : Measure V) [μ.IsAddHaarMeasure]
 
-private theorem isAddFundamentalDomain_zspan_fundamentalDomain (b : Basis ι ℝ V) (μ : Measure V) :
-    IsAddFundamentalDomain (span ℤ (range b)).toAddSubgroup (ZSpan.fundamentalDomain b) μ := by
-  refine IsAddFundamentalDomain.mk' (ZSpan.fundamentalDomain_measurableSet b).nullMeasurableSet ?_
-  intro x
-  obtain ⟨β, hβ, hβx⟩ := fd_exists b x
-  refine ⟨⟨β, hβ⟩, hβx, ?_⟩
-  rintro ⟨g, hg⟩ hgx
-  exact Subtype.ext (fd_uniq b hg hβ hgx hβx)
-
 private theorem setIntegral_preimage_sub_of_periodic (h : V → ℝ) (s : Set V) (c : V)
     (hper : ∀ x, h (x + c) = h x) :
     ∫ x in (fun x => x - c) ⁻¹' s, h x ∂μ = ∫ x in s, h x ∂μ := by
@@ -174,7 +165,7 @@ theorem tile_integral (bA bB : Basis ι ℝ V) (hAB : span ℤ (range bA) ≤ sp
       (reps bA bB).card * ∫ x in ZSpan.fundamentalDomain bB, h x ∂μ := by
   have : VAddInvariantMeasure (span ℤ (range bA)).toAddSubgroup V μ :=
     ⟨fun g s _ => measure_preimage_add μ (g : V) s⟩
-  have hA := isAddFundamentalDomain_zspan_fundamentalDomain bA μ
+  have hA := ZSpan.isAddFundamentalDomain' bA μ
   have hT := tile_fund bA bB hAB μ
   have hperA : ∀ (g : (span ℤ (range bA)).toAddSubgroup) (x : V), h (g +ᵥ x) = h x := by
     intro g x

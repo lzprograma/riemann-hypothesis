@@ -6,52 +6,9 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 import Batteries.Tactic.Lint.Basic
 import Batteries.Tactic.Lint.Misc
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -59,8 +16,6 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
   CartesianMonoidalCategory MonObj TensorProduct
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Out
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.Serre
 
@@ -1130,37 +1085,7 @@ instance tensorObj.isAbelianScheme {O : Type} [CommRing O] {G : Over S} [GrpObj 
 
 end Properties
 
-section Ideals
-
-open NumberField nonZeroDivisors
-
-variable (K : Type) {E : Type} [Field K] [Field E] [NumberField K] [NumberField E] [Algebra K E]
-
-end Ideals
-
 section Examples
-
-abbrev gmRat : Over (Spec (CommRingCat.of ℚ)) := splitTorusAff (CommRingCat.of ℚ) ℤ
-
-theorem gmRat_id_ne_one : (𝟙 gmRat : gmRat ⟶ gmRat) ≠ 1 := by
-  intro e
-  let φ : AddMonoidAlgebra ℚ ℤ →ₐ[ℚ] AddMonoidAlgebra ℚ ℤ := AddMonoidAlgebra.lift ℚ _ ℤ 1
-  let x : gmRat ⟶ gmRat := Over.homMk (Spec.map (CommRingCat.ofHom φ.toRingHom)) (by
-    change Spec.map _ ≫ Spec.map _ = Spec.map _
-    rw [← Spec.map_comp]
-    congr 1
-    exact CommRingCat.hom_ext φ.comp_algebraMap)
-  have hx : x = 𝟙 gmRat := by rw [← Category.comp_id x, e, MonObj.comp_one]
-  have h₁ : Spec.map (CommRingCat.ofHom φ.toRingHom) = Spec.map (𝟙 _) :=
-    (congrArg (fun y ↦ y.left) hx).trans (Spec.map_id _).symm
-  have h₂ := congrArg (fun g ↦ g.hom (AddMonoidAlgebra.single (1 : ℤ) (1 : ℚ)))
-    (Spec.map_injective h₁)
-  have h₃ : (1 : AddMonoidAlgebra ℚ ℤ) = AddMonoidAlgebra.single (1 : ℤ) (1 : ℚ) := by
-    refine Eq.trans ?_ h₂
-    change _ = φ (AddMonoidAlgebra.single (1 : ℤ) (1 : ℚ))
-    rw [AddMonoidAlgebra.lift_single, MonoidHom.one_apply, one_smul]
-  rw [AddMonoidAlgebra.one_def] at h₃
-  exact zero_ne_one (AddMonoidAlgebra.single_left_injective one_ne_zero h₃)
 
 end Examples
 

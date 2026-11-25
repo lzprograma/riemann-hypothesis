@@ -23,20 +23,6 @@ namespace UpperTheory.HilbertEisensteinWeightOne.EisensteinSmoothness
 
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
 
-theorem finite_support_of_hyp {χ : HChar F} {c : HeightOneSpectrum (𝓞 F) → ℕ} (H : Hyp χ c) :
-    {w | c w ≠ 0}.Finite := by
-  obtain ⟨m, hm, h⟩ := (isOfFinOrder_iff_pow_eq_one).mp H.fin
-  have ho := GlobalTheory.HeckeGal.isOpen_ker_of_pow χ.1 χ.2.1 hm fun x => congrArg (fun ξ : HChar F => ξ.1 x) h
-  obtain ⟨S, M, hS, key⟩ := GlobalTheory.OpenIdeleCongr.localIdele_mem_of_isOpen χ.1.ker ho
-  refine hS.subset fun w hw => ?_
-  by_contra hwS
-  apply hw
-  have h0 : (0 : ℕ) ∈ {n : ℕ | ∀ x : (w.adicCompletion F)ˣ, IsUnitAt w x →
-      Valued.v ((x : w.adicCompletion F) - 1) ≤ WithZero.exp (-(n : ℤ)) → χ.loc w x = 1} := by
-    intro x hx _
-    exact key w x hx fun h => absurd h hwS
-  exact Nat.le_zero.mp ((H.cond w).2 h0)
-
 omit [IsTotallyReal F] in
 theorem exists_int_of_val (x : F)
     (h : ∀ w : HeightOneSpectrum (𝓞 F), Valued.v (pLoc F w (algebraMap F (Af F) x)) ≤ 1) :

@@ -1,45 +1,8 @@
 module
 
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiJFrame
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
 import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
 
@@ -54,13 +17,6 @@ namespace GlobalTheory.LFun.CellBound
 section Local
 
 variable {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))] {n : ℕ}
-
-private theorem det_mem_foundation {m : Type} [Fintype m] [DecidableEq m] (M : Matrix m m L)
-    (h : ∀ i j, M i j ∈ intL L) : M.det ∈ intL L := by
-  rw [Matrix.det_apply]
-  refine sum_mem fun σ _ => ?_
-  rw [Units.smul_def]
-  exact zsmul_mem (prod_mem fun i _ => h _ _) _
 
 theorem minor_le {ϖ : L} (hϖ : Valued.v ϖ = WithZero.exp (-1 : ℤ)) {a μ : Fin n → ℤ}
     {b k₁ k₂ : Matrix (Fin n) (Fin n) L} (hb : b.BlockTriangular id) (hd : ∀ i, b i i = ϖ ^ a i)
@@ -101,7 +57,7 @@ theorem minor_le {ϖ : L} (hϖ : Valued.v ϖ = WithZero.exp (-1 : ℤ)) {a μ : 
       rw [hA, Matrix.det_mul, Matrix.det_diagonal, map_mul, map_mul, _root_.GlobalTheory.InertThetaCompare.val_prod_zpow hϖ]
       have h1 : Valued.v (∏ i, B (f i) i) ≤ 1 := (hint _).mp (prod_mem fun i _ => h₂ _ _)
       have h2 : Valued.v (k₁.submatrix (fun i : I => (i : Fin n)) f).det ≤ 1 :=
-        (hint _).mp (det_mem_foundation _ fun i j => h₁ _ _)
+        (hint _).mp (P.cartan_det_mem (intL L) _ fun i j => h₁ _ _)
       have h3 : c ≤ ∑ i, μ (f i) := by
         have := hc (Finset.univ.image f)
           (by rw [Finset.card_image_of_injective _ hf, Finset.card_univ, Fintype.card_coe])
@@ -200,14 +156,6 @@ theorem neg_one_le_tExp {n : ℕ} {a : Fin (n / 2) → ℤ} (h : ∀ i, |a i| �
     omega
   · norm_num
 
-private theorem tMat_eq_diagonal_pow_tExp {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))] (ϖ : L)
-    (n : ℕ) (a : Fin (n / 2) → ℤ) :
-    tMat ϖ n (n / 2) a = Matrix.diagonal (fun j => ϖ ^ tExp n (n / 2) a j) := by
-  unfold tMat tExp
-  congr 1
-  funext j
-  split_ifs <;> simp
-
 theorem cell_bound : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] (ϖ : L) (σ : L →+* L) (q n : ℕ), IsUnramInv ϖ σ q → ∀ (ε κ : Fin (n / 2) → ℤ) (u k k₁ k₂ : GU σ n), (∀ i, |ε i| ≤ 1) → IsUnipU u → k ∈ KU σ n → k₁ ∈ KU σ n → k₂ ∈ KU σ n → tMat ϖ n (n / 2) κ * ((u : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) * ((k : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) = ((k₁ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) * tMat ϖ n (n / 2) ε * ((k₂ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) → (∀ i, |κ i| ≤ 1) ∧ ∑ i, |κ i| ≤ ∑ i, |ε i| := by
   intro L _ _ ϖ σ q n hU ε κ u k k₁ k₂ hε hu hk hk₁ hk₂ e
   classical
@@ -228,14 +176,14 @@ theorem cell_bound : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicativ
     calc b = b * (K * Ki) := by rw [hKK, Matrix.mul_one]
       _ = (b * K) * Ki := (Matrix.mul_assoc b K Ki).symm
       _ = K₁ * tMat ϖ n (n / 2) ε * K₂ * Ki := by rw [e]
-      _ = _ := by rw [tMat_eq_diagonal_pow_tExp, Matrix.mul_assoc]
+      _ = _ := by rw [tMat_eq, Matrix.mul_assoc]
   have hbT : b.BlockTriangular id := by
     intro i j hij
-    rw [hbdef, tMat_eq_diagonal_pow_tExp, Matrix.diagonal_mul]
+    rw [hbdef, tMat_eq, Matrix.diagonal_mul]
     exact mul_eq_zero_of_right _ (show U i j = 0 from hu.1 i j hij)
   have hbd : ∀ j, b j j = ϖ ^ tExp n (n / 2) κ j := by
     intro j
-    rw [hbdef, tMat_eq_diagonal_pow_tExp, Matrix.diagonal_mul, show U j j = 1 from hu.2 j, mul_one]
+    rw [hbdef, tMat_eq, Matrix.diagonal_mul, show U j j = 1 from hu.2 j, mul_one]
   have key := fun I c hc => minor_le hϖ hbT hbd (fun i j => _root_.Formalism.UG.P.fSatake_K_int hk₁ i j) hint₂ hbe I c hc
   have hlow : ∀ j, -1 ≤ tExp n (n / 2) κ j := by
     intro j

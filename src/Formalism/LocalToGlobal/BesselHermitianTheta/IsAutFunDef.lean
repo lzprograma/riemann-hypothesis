@@ -11,8 +11,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Theta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 abbrev GA (V : HSp D) : Type := HA (AF D.host.F) D.sp.cm.sig V.gram

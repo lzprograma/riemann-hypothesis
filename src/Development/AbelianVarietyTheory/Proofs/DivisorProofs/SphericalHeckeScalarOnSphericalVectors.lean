@@ -221,7 +221,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Hk3 (Core Good IsSF SchurAll TwoSided FixAll EEc Wcc eH IsLab HoweUnram SphOp hyp)
 open GlobalTheory.StdFrame (StdPsi)
 attribute [local instance] Formalism.IndefR.principalLevelFrame.instCMHostI
@@ -444,7 +443,7 @@ def ext0 (Q : principalLevelFrame.RowPsi V n) : (Formalism.AUTREP.GAf D.host.E n
 theorem extendByZeroThroughUnitaryFrame_psi (Q : principalLevelFrame.RowPsi V n) (x : Formalism.AUTREP.GAf D.host.E n → ℂ) (h : Formalism.AUTREP.GAf D.host.E n) :
     ext0 Q x (Q.ψ h) = x h := by
   simp only [ext0, LinearMap.coe_mk, AddHom.coe_mk]
-  rw [if_pos ⟨h, rfl⟩, pre_psi]
+  rw [ite_eq_left ⟨h, rfl⟩, pre_psi]
 
 theorem extendByZeroThroughUnitaryFrame_right_translate (Q : principalLevelFrame.RowPsi V n) (x : Formalism.AUTREP.GAf D.host.E n → ℂ) (h : Formalism.AUTREP.GAf D.host.E n) :
     ext0 Q (Formalism.L2.NG.rt D.host.E n h x) = rtA V (Q.ψ h) (ext0 Q x) := by
@@ -456,7 +455,7 @@ theorem extendByZeroThroughUnitaryFrame_right_translate (Q : principalLevelFrame
       hg ⟨y * h⁻¹, by rw [map_mul, hy, map_inv, mul_inv_cancel_right]⟩
     rw [rtA_apply]
     simp only [ext0, LinearMap.coe_mk, AddHom.coe_mk]
-    rw [if_neg hg, if_neg hg']
+    rw [ite_eq_right hg, ite_eq_right hg']
 
 theorem extendByZeroThroughUnitaryFrame_injective (Q : principalLevelFrame.RowPsi V n) {x x' : Formalism.AUTREP.GAf D.host.E n → ℂ} (H : ext0 Q x = ext0 Q x') :
     x = x' := funext fun h => by
@@ -660,10 +659,6 @@ theorem spherical_scalar : ∀ {D : D7} {V : HSp D} {n : ℕ} (hF : D.host.F = m
           principalLevelFrame.Hecke₃ Q (GlobalTheory.Hk3.rep V Pr (dd a)) x := by
         apply hfixBack
         rw [hRop a ha]
-        exact hopfix _ x hx.2
-      have hx'' : ∀ k ∈ K, rtHom D.host.E n k (principalLevelFrame.Hecke₃ Q B x) = principalLevelFrame.Hecke₃ Q B x := by
-        apply hfixBack
-        rw [hBop x hx.2]
         exact hopfix _ x hx.2
       rw [hBop _ hx', hRop a ha, hRop a ha, hBop x hx.2]
       exact GlobalTheory.T.sphericalHeckeCombinations_commute_fixedVectors V Pr _ _ _ (rtA V) _ (hfixA x hx.2)

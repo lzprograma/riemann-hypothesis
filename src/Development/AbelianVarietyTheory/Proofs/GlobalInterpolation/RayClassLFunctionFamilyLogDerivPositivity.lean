@@ -80,7 +80,7 @@ theorem hasSum_re (𝓕 : LFam) (χ : AddChar 𝓕.G ℂ) (σ : ℝ) (u : ℂ) (
     · have hn' : (n : ℂ) ≠ 0 := by exact_mod_cast hn
       rw [LSeries.term_of_ne_zero hn, LFam.lamChi, Finset.sum_div, Complex.re_sum]
       refine Finset.sum_congr rfl fun g _ => ?_
-      rw [if_neg hn, ← Complex.re_ofReal_mul]
+      rw [ite_eq_right hn, ← Complex.re_ofReal_mul]
       congr 1
       rw [div_eq_mul_inv, ← cpow_neg, neg_add, cpow_add _ _ hn']
       push_cast

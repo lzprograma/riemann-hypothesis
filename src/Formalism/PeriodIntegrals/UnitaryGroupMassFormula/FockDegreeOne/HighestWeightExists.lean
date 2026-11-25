@@ -3,59 +3,7 @@ module
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.OneDegOfHalves
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.FockOperatorsKernel
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.RedDefs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 
@@ -83,7 +31,7 @@ theorem coeff_X_mul_pderiv_self {σ : Type*} (l : σ) (P : MvPolynomial σ ℂ) 
   classical
   rw [coeff_X_mul']
   by_cases h : l ∈ β.support
-  · rw [if_pos h, coeff_pderiv]
+  · rw [ite_eq_left h, coeff_pderiv]
     have h1 : 1 ≤ β l := Nat.one_le_iff_ne_zero.mpr (Finsupp.mem_support_iff.mp h)
     have hle : Finsupp.single l 1 ≤ β := Finsupp.single_le_iff.mpr h1
     rw [tsub_add_cancel_of_le hle, Finsupp.tsub_apply, Finsupp.single_eq_same, mul_comm]
@@ -91,7 +39,7 @@ theorem coeff_X_mul_pderiv_self {σ : Type*} (l : σ) (P : MvPolynomial σ ℂ) 
     rw [Nat.cast_sub h1]
     push_cast
     ring
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have h0 : β l = 0 := by simpa [Finsupp.mem_support_iff] using h
     simp [h0]
 
@@ -101,14 +49,14 @@ theorem coeff_X_mul_pderiv_ne {σ : Type*} (l l' : σ) (P : MvPolynomial σ ℂ)
   classical
   rw [coeff_X_mul'] at h
   by_cases hs : l ∈ γ.support
-  · rw [if_pos hs, coeff_pderiv] at h
+  · rw [ite_eq_left hs, coeff_pderiv] at h
     refine ⟨γ - Finsupp.single l 1 + Finsupp.single l' 1, ?_, ?_⟩
     · rw [mem_support_iff]
       exact left_ne_zero_of_mul h
     · have hle : Finsupp.single l 1 ≤ γ :=
         Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr (Finsupp.mem_support_iff.mp hs))
       rw [add_right_comm, tsub_add_cancel_of_le hle]
-  · rw [if_neg hs] at h
+  · rw [ite_eq_right hs] at h
     exact absurd rfl h
 
 theorem wtv_add {p q r s : ℕ} (β γ : Ln p q r s →₀ ℕ) (c : Ix p q) :
@@ -127,7 +75,7 @@ theorem wtv_single {p q r s : ℕ} (l : Ln p q r s) (c : Ix p q) :
     by_cases h1 : d = l.2 ∧ l.1 = c
     · obtain ⟨rfl, rfl⟩ := h1
       simp
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
       have hne : l ≠ ((c, d) : Ln p q r s) := fun he => h1 ⟨by rw [he], by rw [he]⟩
       simp [hne]
   simp_rw [key]
@@ -152,7 +100,7 @@ theorem coeff_Ecc {p q r s : ℕ} (c : Ix p q) (P : Pol p q r s) (β : Ln p q r 
       (((sgnL l * β l + sgnL l / 2 : ℚ)) : ℂ) * AddMonoidAlgebra.coeff P β := by
     intro l
     by_cases hl : linePos l = true
-    · simp only [omE, raiB, lowB, hl, if_true, LinearMap.add_apply, Module.End.mul_apply,
+    · simp only [omE, raiB, lowB, hl, ite_true, LinearMap.add_apply, Module.End.mul_apply,
         LinearMap.mulLeft_apply, Derivation.coeFn_coe, LinearMap.smul_apply,
         Module.End.one_apply, MvPolynomial.coeff_add, MvPolynomial.coeff_smul, smul_eq_mul, coeff_X_mul_pderiv_self, sgnL]
       push_cast
@@ -160,7 +108,7 @@ theorem coeff_Ecc {p q r s : ℕ} (c : Ix p q) (P : Pol p q r s) (β : Ln p q r 
     · have hl' : linePos l = false := by simpa using hl
       have e : AddMonoidAlgebra.coeff (pderiv l (X l * P)) β = ((β l : ℂ) + 1) * AddMonoidAlgebra.coeff P β := by
         rw [coeff_pderiv, add_comm β, coeff_X_mul, mul_comm]
-      simp only [omE, raiB, lowB, hl', Bool.false_eq_true, if_false, if_true, LinearMap.add_apply,
+      simp only [omE, raiB, lowB, hl', Bool.false_eq_true, ite_false, ite_true, LinearMap.add_apply,
         Module.End.mul_apply, LinearMap.mulLeft_apply, LinearMap.neg_apply, Derivation.coeFn_coe,
         LinearMap.smul_apply, Module.End.one_apply, MvPolynomial.coeff_add, MvPolynomial.coeff_neg, MvPolynomial.coeff_smul, smul_eq_mul, e, sgnL]
       push_cast
@@ -187,10 +135,10 @@ theorem wt_Eab {p q r s : ℕ} (a b : Ix p q) (hab : sameBlock a b) (hne : a ≠
   have hne' : ((a, d) : Ln p q r s) ≠ (b, d) := fun h => hne (Prod.ext_iff.mp h).1
   have hpos : linePos ((a, d) : Ln p q r s) = linePos ((b, d) : Ln p q r s) := by
     cases a <;> cases b <;> cases d <;> simp_all [sameBlock, linePos]
-  simp only [omE, if_neg hne', add_zero, Module.End.mul_apply] at hd
+  simp only [omE, ite_eq_right hne', add_zero, Module.End.mul_apply] at hd
   by_cases hl : linePos ((a, d) : Ln p q r s) = true
   · have hl2 : linePos ((b, d) : Ln p q r s) = true := hpos ▸ hl
-    simp only [raiB, lowB, hl, hl2, if_true, LinearMap.mulLeft_apply,
+    simp only [raiB, lowB, hl, hl2, ite_true, LinearMap.mulLeft_apply,
       Derivation.coeFn_coe] at hd
     obtain ⟨β, hβ, hsum⟩ := coeff_X_mul_pderiv_ne _ _ P γ hd
     refine ⟨β, hβ, fun c => ?_⟩
@@ -200,9 +148,9 @@ theorem wt_Eab {p q r s : ℕ} (a b : Ix p q) (hab : sameBlock a b) (hne : a ≠
     have hl2 : linePos ((b, d) : Ln p q r s) = false := hpos ▸ hl1
     have e : pderiv ((a, d) : Ln p q r s) (X ((b, d) : Ln p q r s) * P) =
         X ((b, d) : Ln p q r s) * pderiv ((a, d) : Ln p q r s) P := by
-      rw [Derivation.leibniz, pderiv_X, Pi.single_apply, if_neg hne'.symm]
+      rw [Derivation.leibniz, pderiv_X, Pi.single_apply, ite_eq_right hne'.symm]
       simp
-    simp only [raiB, lowB, hl1, hl2, Bool.false_eq_true, if_false, LinearMap.mulLeft_apply,
+    simp only [raiB, lowB, hl1, hl2, Bool.false_eq_true, ite_false, LinearMap.mulLeft_apply,
       LinearMap.neg_apply, Derivation.coeFn_coe, e, MvPolynomial.coeff_neg, ne_eq, neg_eq_zero] at hd
     obtain ⟨β, hβ, hsum⟩ := coeff_X_mul_pderiv_ne _ _ P γ hd
     refine ⟨β, hβ, fun c => ?_⟩
@@ -267,7 +215,7 @@ theorem exists_wtvec {p q r s : ℕ} (U : Submodule ℂ (Pol p q r s))
     by_cases hall : ∀ β₁ ∈ u.support, ∀ β₂ ∈ u.support, wtv β₁ = wtv β₂
     · obtain ⟨β₀, hβ₀⟩ := Finset.nonempty_iff_ne_empty.2 (fun h => hu0 (MvPolynomial.support_eq_empty.1 h))
       exact ⟨wtv β₀, u, hu, hu0, fun β hβ c => by rw [hall β hβ β₀ hβ₀], subset_rfl⟩
-    · push_neg at hall
+    · push Not at hall
       obtain ⟨β₁, h₁, β₂, h₂, hne⟩ := hall
       obtain ⟨c, hc⟩ := Function.ne_iff.1 hne
 
@@ -333,7 +281,7 @@ theorem fw_shift {p q : ℕ} (ν : Ix p q → ℚ) (a b : Ix p q) :
       fw ν + tw a - tw b := by
   unfold fw
   simp only [mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib, mul_ite, mul_one,
-    mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem posC_facts {p q : ℕ} {a b : Ix p q} (h : posC a b) :
     sameBlock a b ∧ a ≠ b ∧ tw b < tw a := by

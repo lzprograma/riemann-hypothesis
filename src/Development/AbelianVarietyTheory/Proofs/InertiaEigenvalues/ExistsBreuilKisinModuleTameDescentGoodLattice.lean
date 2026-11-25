@@ -799,8 +799,7 @@ theorem one_tmul_inj {O : Type} [CommRing O] [Algebra ℤ_[l] O] [Module.Free �
     {x y : Ainf l} (h : (1 : O) ⊗ₜ[ℤ_[l]] x = (1 : O) ⊗ₜ[ℤ_[l]] y) : x = y := by
   set b := Module.Free.chooseBasis ℤ_[l] O
   obtain ⟨i, hi⟩ : ∃ i, b.repr 1 i ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact one_ne_zero (b.repr.injective (by ext i; simp [hc i]))
   have h1 := congrArg (fun w => TensorProduct.lid ℤ_[l] (Ainf l) ((b.coord i).rTensor (Ainf l) w)) h
   simp only [LinearMap.rTensor_tmul, TensorProduct.lid_tmul, Module.Basis.coord_apply] at h1
@@ -988,16 +987,6 @@ section -- clump:auto
 open GlobalTheory.BK PowerSeries
 
 namespace GlobalTheory.BK.PhiMod
-
-section
-
-variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebra O K]
-  [IsUnitBall O K] {l e a : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι] [Fact l.Prime]
-  [NormedAlgebra ℚ_[l] K] [NeZero e] (P : PhiMod O K l e a ι)
-
-variable [CompleteSpace K]
-
-end
 
 open PowerSeries in
 variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebra O K]
@@ -1289,7 +1278,7 @@ private lemma exists_eq_prime_mul_of_eisenstein_mul {g h : PowerSeries K}
   · ext m
     have key := congrArg (coeff (m + e)) hgh
     simp only [_root_.GlobalTheory.BK.E, add_mul, map_add (f := _),
-      coeff_X_pow_mul', le_add_iff_nonneg_left, zero_le, if_true, Nat.add_sub_cancel] at key
+      coeff_X_pow_mul', le_add_iff_nonneg_left, zero_le, ite_true, Nat.add_sub_cancel] at key
     rw [← map_natCast (PowerSeries.C (R := K)), coeff_C_mul, coeff_C_mul] at key
     rw [← map_natCast (PowerSeries.C (R := K)), coeff_C_mul, coeff_mk]
     linear_combination key

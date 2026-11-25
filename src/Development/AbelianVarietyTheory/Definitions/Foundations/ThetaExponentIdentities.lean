@@ -8,43 +8,7 @@ public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
 public import Formalism.LocalToGlobal.LatticeGeometry.InstAddCommSemigroupWt
 public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AMiEqAMinusQ
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -87,8 +51,6 @@ def cTw (j : ℕ) : ℕ := ceilEight (max (D.R.r + (dX D j + 1).choose 2 + 2) (8
 
 def nCol (j : ℕ) : ℕ :=
   ceilEight (max (D.R.f * (pp D j * (pp D j + 1) + qq D j * (qq D j + 1))) (8 * D.R.f * D.R.r + 4))
-
-def eZero (j : ℕ) : ℝ := (D.R.f : ℝ) * D.R.r * ((cTw D j : ℝ) + 4 * D.R.r)
 
 def bigR : ℝ := D.host.rdE ^ 7
 
@@ -229,55 +191,15 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.SlopeRec
 
 open NumberField Finset Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Indef.Tree GlobalTheory.IndefiniteRowSideFullHecke.DescentConstants
 
-def zetaLogDeriv {n : ℕ} [NeZero n] (χ : DirichletCharacter ℂ n) : ℝ :=
-  (logDeriv (fun s => riemannZeta s * DirichletCharacter.LFunction χ s) 0).re
-
-def maxLift (D : D7) (g : ℕ → ℝ) : ℝ :=
-  (Icc 1 D.R.m).sup' ⟨1, mem_Icc.2 ⟨le_rfl, le_trans one_le_two D.R.two_le_m⟩⟩ g
-
 variable {D : D7} {L : SizeData₂ D} {P : ParameterChoice' D L} (Q : ParamsT D L P)
 
-def pageOf : SlopeBoundParameters where
-  Pl := D.what₂.Tau
-  fPl := inferInstance
-  x := L.sc.x
-  eps := L.sc.eps
-  rd := D.host.rdE
-  v := D.host.v
-  dN := D.host.d
-  dimNeZero := ⟨D.host.hyp.2.1.ne_zero⟩
-  χ := chiK D
-  Z := haveI : NeZero D.host.d := ⟨D.host.hyp.2.1.ne_zero⟩; zetaLogDeriv (chiK D)
-  logOmK := eulerConstantTerm D.host.d
-  logOm := L.logOm
-  f := D.R.f
-  m := D.R.m
-  k := D.R.k
-  S := L.Sc
-  η := L.etaSz
-  R := (D.R.r : ℝ) / 2
-  PPp := maxLift D fun j => (numAt Q j).PPp
-  PPpp := maxLift D fun j => (numAt Q j).PPpp
-  PP := Q.PP
-  PPT := Real.sqrt (ppTsq Q)
-  Zpg := zBase L
-  nV := D.R.nV
-  Nr := D.R.r
-  g12 := (D.host.g 0 : ℝ) * D.host.g 1
-
 section Weights
-
-
-variable (D) in
-def uMinus (j : ℕ) (τ : D.what₂.Tau) (i : ℕ) : ℤ := uAn D j τ i - (cTw D j : ℤ) * deW D j i
 
 
 variable (D) in
@@ -287,63 +209,18 @@ def kapMinus (j : ℕ) (τ : D.what₂.Tau) (i : ℕ) : ℤ := kap D j τ i - (c
 variable (D) in
 def twW (j : ℕ) (_ : D.what₂.Tau) (i : ℕ) : ℤ := (cTw D j : ℤ) * deW D j i
 
-def remW (j : ℕ) (τ : D.what₂.Tau) (i : ℕ) : ℤ :=
-  aW D j τ i - aW D j τ (D.R.k - 2) - ((tN Q + placeRankTwoOne.dimY D + 1 : ℕ) : ℤ) * uOne Q j τ i
-
-def uTwo (j : ℕ) (τ : D.what₂.Tau) (i : ℕ) : ℤ := uOne Q j τ i + remW Q j τ i
-
-def uCan (j : ℕ) (τ : D.what₂.Tau) (i : ℕ) : ℤ := canW D j i + uTwo Q j τ i + (placeRankTwoOne.dimY D : ℤ) * uOne Q j τ i
-
-def uTop (j : ℕ) (τ : D.what₂.Tau) (i : ℕ) : ℤ := uCan Q j τ i + (tN Q : ℤ) * uOne Q j τ i
-
 end Weights
 
 section Numbers
-
-def nOneW (j : ℕ) : ℝ := ∑ τ, nrm D (uOne Q j τ)
-
-def nPrW (j : ℕ) : ℝ := ∑ τ, nrm D (uPr Q j τ)
-
-def supPrW (j : ℕ) : ℕ := univ.sup fun τ : D.what₂.Tau => (range D.R.r).sup fun i => (uPr Q j τ i).natAbs
-
-def bZero (j : ℕ) : ℝ := 4 * (D.R.f : ℝ) * (D.R.r : ℝ) ^ 2 * (1 + (supPrW Q j : ℝ) / (LevelStarExponents.h0 L / (4 * tR Q)))
-
 
 variable (D L) in
 def badPrimes (B : ℝ) : Finset ℕ :=
   (range (⌊B⌋₊ + 1)).filter Nat.Prime ∪ (2 * (discr D.host.E).natAbs * levDeep D L).primeFactors
 
 
-variable (D) in
-def diff_vp (p : ℕ) : ℝ := (padicValNat p (discr D.host.E).natAbs : ℝ) / (Module.finrank ℚ D.host.E : ℝ)
-
-def aSum (j : ℕ) : ℝ :=
-  ∑ p ∈ badPrimes D L (bZero Q j), (1 / ((p : ℝ) - 1) + 40 * diff_vp D p) * (nPrW Q j + (numAt Q j).Pa) * Real.log p
-
-def cInf (j : ℕ) : ℝ := (nOneW Q j + 6 * (numAt Q j).Pinf) / 2
-
 def cA (j : ℕ) : ℝ := 26 * (26 * dY D ^ 2 + 2 * zed Q j * tR Q)
 
-def lZero (j : ℕ) : ℝ := (numAt Q j).PPp * (nKap D j / tR Q + 1) + (numAt Q j).al
-
-def cJ (C2 : ℝ) (j : ℕ) : ℝ :=
-  dY D * (numAt Q j).PPp * (nKap D j / tR Q + 1) + tR Q * ((numAt Q j).QJ + (numAt Q j).PPp) +
-    (dY D + 3) * addY C2 (pageOf Q) / tR Q
-
 def cG (j : ℕ) : ℝ := (dY D + 1) * ((numAt Q j).o + (numAt Q j).B7 + 1) / 2 + 1
-
-def rOne (C2 : ℝ) (j : ℕ) : ℝ :=
-  cJ Q C2 j + 26 * dY D ^ 2 * (lZero Q j + Real.log (tR Q)) + (tR Q + dY D + 1) * (numAt Q j).Bt +
-    (tR Q + dY D ^ 2) * (cG Q j + 2)
-
-def rTwo (j : ℕ) : ℝ :=
-  tR Q * (Real.log 2 + lZero Q j + (numAt Q j).Bt / 2) + 2 * ((numAt Q j).PPp * nKap D j)
-
-def lamKap (j : ℕ) : ℝ := (numAt Q j).G * (nKap D j - (D.R.f : ℝ) * D.R.r * D.R.nV / 2 + D.R.nV)
-
-
-variable (D L) in
-def measureMove : ℝ := 61 * (D.R.f : ℝ) * (D.R.r : ℝ) ^ 2 * L.sc.L
 
 end Numbers
 
@@ -361,11 +238,6 @@ def toWt (Dw : Datum H) (v : D.what₂.Tau → ℕ → ℤ) : Weight Dw :=
 
 variable {Dw : Datum H}
 
-theorem toWt_apply (v : D.what₂.Tau → ℕ → ℤ) {τ : Psi H} {t : D.what₂.Tau} (h : τ.1 = DV.tauEmb D t)
-    (i : Fin (Dw.p + Dw.q)) : toWt Dw v τ i = v t i := by
-  rw [toWt, sum_eq_single t (fun s _ hs => if_neg fun e => hs ?_) (by simp), if_pos h]
-  exact GlobalTheory.WeightExponents.tauEmb_injective D (e.symm.trans h)
-
 def psiOf {T : Par D} (h : T.PinHost) (t : D.what₂.Tau) : Psi T.H := ⟨DV.tauEmb D t, h.2.2.2 t⟩
 
 theorem psiOf_bijective {T : Par D} (h : T.Pins) : Function.Bijective (psiOf h.1) := by
@@ -374,9 +246,6 @@ theorem psiOf_bijective {T : Par D} (h : T.Pins) : Function.Bijective (psiOf h.1
   obtain ⟨t, ht⟩ := ((GlobalTheory.WeightExponents.weight_exponents D T h 1 hj
     (WeightAlgebra.wscalar D 1 0 Even.zero)).2.2.1 τ.1).1 τ.2
   exact ⟨t, Subtype.ext ht.symm⟩
-
-theorem toWt_psiOf {T : Par D} (h : T.PinHost) {Dw : Datum T.H} (v : D.what₂.Tau → ℕ → ℤ) (t : D.what₂.Tau)
-    (i : Fin (Dw.p + Dw.q)) : toWt Dw v (psiOf h t) i = v t i := toWt_apply v rfl i
 
 variable {T : Par D} {j : ℕ}
 
@@ -401,50 +270,6 @@ def thetaExp (Dw : Datum H) (v : D.what₂.Tau → ℕ → ℤ) : WTZ D.host.E :
 
 variable (D) in
 def plainExp (Dw : Datum H) (v : D.what₂.Tau → ℕ → ℤ) : WTZ D.host.E := wtOf Dw (toWt Dw v) 0
-
-theorem thetaExp_kap_eq (h : T.Pins) (hj : InR D j) (w : WeightFamilies.Wt D j) (hn : w.n = D.R.nV)
-    (hw : Formalism.L2.Geo.wtOf w = DV.kapW D j) : thetaExp D (T.Dw j) (kap D j) = wtZ (wtA w) w.n := by
-  obtain ⟨hp, hq, hr⟩ := sig_eq h hj
-  obtain ⟨-, -, hΨ, hΨ', hA⟩ := GlobalTheory.WeightExponents.weight_exponents D T h j hj w
-  have hp' : (T.Dw j).p = (D.R.sigW j).1 := hp
-  have hq' : (T.Dw j).q = (D.R.sigW j).2 := hq
-  refine Prod.ext (funext fun ⟨τ, i⟩ => ?_) ?_
-  · show _ = ((wtA w (τ, i) : ℕ) : ℤ)
-    by_cases hτ : InPsi T.H τ
-    · obtain ⟨t, rfl⟩ := (hΨ τ).1 hτ
-      rw [(hA t i).1, ext0]
-      by_cases hi : i < (T.Dw j).p
-      · refine (wtOf_big _ _ (psiOf h.1 t) i hi).trans ?_
-        rw [toWt_psiOf, GlobalTheory.IndefiniteRowSideFullHecke.DescentConstants.kap, dite_eq_left (by show i < _; omega), ← hw, dite_eq_left (by omega)]
-        simp only [Formalism.L2.Geo.wtOf, Formalism.L2.Geo.wtOfN, hn]
-        rw [dite_eq_left (by omega)]; ring
-      · rw [dite_eq_right (by omega)]
-        simp only [thetaExp, wtOf]
-        unfold InPsi at hτ
-        rw [dite_eq_left hτ, dite_eq_right hi]; rfl
-    · obtain ⟨t, rfl⟩ := (hΨ' τ).1 hτ
-      rw [(hA t i).2, ext0]
-      by_cases hi : i < (T.Dw j).q
-      · refine (wtOf_small _ _ (psiOf h.1 t) i hi).trans ?_
-        rw [toWt_psiOf, GlobalTheory.IndefiniteRowSideFullHecke.DescentConstants.kap, dite_eq_left (by show (T.Dw j).p + _ < _; omega), ← hw, dite_eq_left (by omega)]
-        simp only [Formalism.L2.Geo.wtOf, Formalism.L2.Geo.wtOfN, hn]
-        rw [dite_eq_right (by omega), dite_eq_left (by omega)]
-        have e : ∀ (a : Fin (D.R.sigW j).2) (b : Fin (D.R.sigW j).2), (a : ℕ) + b + 1 = (D.R.sigW j).2 → Fin.rev a = b :=
-          fun a b hab => Fin.ext (by rw [Fin.val_rev]; omega)
-        rw [e _ ⟨i, by omega⟩ (by simp only; omega)]; ring
-      · rw [dite_eq_right (by omega)]
-        simp only [thetaExp, wtOf]
-        unfold InPsi at hτ
-        rw [dite_eq_right hτ]
-        split_ifs <;> first | rfl
-  · obtain ⟨a, ha⟩ := w.n_even
-    show 2 * ((D.R.nV / 2 : ℕ) : ℤ) = ((w.n : ℕ) : ℤ)
-    omega
-
-theorem thetaExp_kap_kapTop (h : T.Pins) (hK : DV.KapDef D) (i : Fin D.R.m) :
-    thetaExp D (T.Dw ((i : ℕ) + 1)) (kap D ((i : ℕ) + 1)) =
-      wtZ (wtA (Formalism.IndefR.FWT.kapTop D i)) (Formalism.IndefR.FWT.kapTop D i).n :=
-  thetaExp_kap_eq h ⟨Nat.le_add_left _ _, i.2⟩ _ rfl (GlobalTheory.RecordWeightVec.wtOf_kapTop D hK i).2
 
 end Transport
 

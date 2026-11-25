@@ -51,7 +51,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField IsDedekindDomain
 open scoped InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open scoped TensorProduct Matrix
 
 namespace GlobalTheory.RedFrame
@@ -221,7 +220,7 @@ theorem upperLeftBlock_eq_submatrix_of_rank_eq {κ : Type} [CommRing κ] {n r : 
   refine upper_block_val_submatrix hr fun i j hij => ?_
   exfalso
   have hi : blk2 (n := n) r i = 0 := by
-    unfold blk2; rw [if_pos (lt_of_lt_of_le i.2 hn)]
+    unfold blk2; rw [ite_eq_left (lt_of_lt_of_le i.2 hn)]
   rw [hi] at hij
   exact Nat.not_lt_zero _ hij
 

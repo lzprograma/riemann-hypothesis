@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
 public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfE
 
 @[expose] public section
@@ -41,15 +42,7 @@ theorem den_mat (π : W) (hπ : Irreducible π) (h : Matrix (Fin k) (Fin k) Qq) 
 
 theorem colSpan_mul_le (g : Matrix (Fin k) (Fin k) Qq) (U : Matrix (Fin k) (Fin k) W) :
     colSpan W (g * U.map (algebraMap W Qq)) ≤ colSpan W g := by
-  unfold colSpan
-  rw [Submodule.span_le]
-  rintro _ ⟨c, rfl⟩
-  have h : (fun i => (g * U.map (algebraMap W Qq)) i c) = ∑ b, U b c • (fun i => g i b) := by
-    funext i
-    simp [Matrix.mul_apply, Finset.sum_apply, Algebra.smul_def, mul_comm]
-  show (fun i => (g * U.map (algebraMap W Qq)) i c) ∈ Submodule.span W (Set.range fun c : Fin k => fun i => g i c)
-  rw [h]
-  exact Submodule.sum_mem _ fun b _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨b, rfl⟩)
+  apply _root_.Formalism.MainNotions.Pf14.colSpan_mul_le <;> assumption
 
 theorem colSpan_mul_unit (g : Matrix (Fin k) (Fin k) Qq) (U : Matrix (Fin k) (Fin k) W) (hU : IsUnit U.det) :
     colSpan W (g * U.map (algebraMap W Qq)) = colSpan W g := by

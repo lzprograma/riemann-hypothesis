@@ -137,8 +137,7 @@ theorem exists_avg_proj_balForms : ∀ (O : Type) [CommRing O] (bar : O → O) (
       rw [← hQ, h0] at this
       simp at this
     obtain ⟨x, hx⟩ : ∃ x, l x ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hl (LinearMap.ext h)
     have := hsumL (l ∘ₗ sp x)
     have hz : ∀ s t, (l ∘ₗ sp x) (bar (b s) * b t) = 0 := by
@@ -159,8 +158,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCmIntegralAveragingTraceTensor", "h": "module\n\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot\npublic import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsStarNormLEOfIsCMField\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Algebra.Order.Star.Rat\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsNatDiagIffIsDiag\nimport Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal\nimport Development.AbelianVarietyTheory.Definitions.Divisors.IsProperToroidalModelStructureMap\nimport Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 open IsLocalRing GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.Poinc
 open NumberField
@@ -273,7 +270,7 @@ theorem exists_cm_trace_tensor : ∀ (E : Type) [Field E] [NumberField E] [Numbe
   · by_cases h : s = u
     · rw [h]
     · rw [Matrix.diagonal_apply_ne _ h, Matrix.diagonal_apply_ne _ (Ne.symm h)]
-  · simp only [Matrix.diagonal_apply, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  · simp only [Matrix.diagonal_apply, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     apply mul_left_cancel₀ hC.ne'
     have h1 : ∀ i, C * (t i * g (b i * a) (b i)) =
         ∑ j, t i * (t j * Algebra.trace ℤ (𝓞 E) (H.bar (b j) * (b i * a))) * g (b j) (b i) := by
@@ -298,7 +295,7 @@ theorem exists_cm_trace_tensor : ∀ (E : Type) [Field E] [NumberField E] [Numbe
     rw [Finset.mul_sum, Finset.mul_sum]
     simp only [h1, h2]
     exact Finset.sum_comm
-  · simp only [Matrix.diagonal_apply, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  · simp only [Matrix.diagonal_apply, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     have hc := StarNormBound.casimir σ e ho fun i => (hdq0 i).ne'
     apply RingOfIntegers.coe_injective
 
@@ -308,7 +305,7 @@ theorem exists_cm_trace_tensor : ∀ (E : Type) [Field E] [NumberField E] [Numbe
     rw [map_zsmul, map_mul]
     change t i • (((H.bar (b i) : 𝓞 E) : E) * (b i : E)) = _
     rw [hbar, ← heb, ← Int.cast_smul_eq_zsmul ℚ, htq, mul_smul, Int.cast_smul_eq_zsmul, zsmul_eq_mul]
-  · simp only [Matrix.diagonal_apply, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  · simp only [Matrix.diagonal_apply, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     obtain ⟨i, hi⟩ := Function.ne_iff.1 hv
     refine Finset.sum_pos' (fun j _ => ?_) ⟨i, Finset.mem_univ _, ?_⟩
     · rw [mul_assoc]; exact mul_nonneg (ht j).le (mul_self_nonneg _)
@@ -329,69 +326,6 @@ open IsLocalRing GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan Glo
 namespace GlobalTheory.Poinc.SumSqFunctional
 
 open Matrix
-
-def quadR {r : ℕ} (L : Matrix (Fin r) (Fin r) ℤ) (v : Fin r → ℝ) : ℝ :=
-  ∑ i, ∑ j, v i * (L i j : ℝ) * v j
-
-lemma quadR_eq {r : ℕ} (L : Matrix (Fin r) (Fin r) ℤ) (v : Fin r → ℝ) :
-    star v ⬝ᵥ (L.map (Int.cast : ℤ → ℝ)) *ᵥ v = quadR L v := by
-  simp [quadR, dotProduct, Matrix.mulVec, Finset.mul_sum, mul_comm, mul_left_comm]
-
-lemma quadR_intCast {r : ℕ} (L : Matrix (Fin r) (Fin r) ℤ) (w : Fin r → ℤ) :
-    quadR L (fun i => (w i : ℝ)) = ((w ⬝ᵥ L *ᵥ w : ℤ) : ℝ) := by
-  simp [quadR, dotProduct, Matrix.mulVec, Finset.mul_sum, mul_comm, mul_left_comm, mul_assoc]
-
-lemma continuous_quadR {r : ℕ} (L : Matrix (Fin r) (Fin r) ℤ) : Continuous (quadR L) := by
-  unfold quadR; fun_prop
-
-lemma exists_int_multiple {r : ℕ} (q : Fin r → ℚ) :
-    ∃ d : ℕ, 0 < d ∧ ∃ w : Fin r → ℤ, ∀ i, (w i : ℚ) = d * q i := by
-  refine ⟨∏ i, (q i).den, Finset.prod_pos (fun i _ => (q i).den_pos), ?_⟩
-  have : ∀ i, ∃ z : ℤ, (z : ℚ) = ((∏ j, (q j).den : ℕ) : ℚ) * q i := by
-    intro i
-    obtain ⟨k, hk⟩ := Finset.dvd_prod_of_mem (fun j => (q j).den) (Finset.mem_univ i)
-    refine ⟨k * (q i).num, ?_⟩
-    rw [hk]; push_cast
-    rw [mul_comm ((q i).den : ℚ) (k : ℚ), mul_assoc, Rat.den_mul_eq_num]
-  choose w hw using this
-  exact ⟨w, hw⟩
-
-lemma quadR_pos_rat {r : ℕ} (L : Matrix (Fin r) (Fin r) ℤ)
-    (hp : ∀ v : Fin r → ℤ, v ≠ 0 → 0 < v ⬝ᵥ L *ᵥ v) (q : Fin r → ℚ) (hq : q ≠ 0) :
-    0 < quadR L (fun i => (q i : ℝ)) := by
-  obtain ⟨d, hd, w, hw⟩ := exists_int_multiple q
-  have hwR : ∀ i, (w i : ℝ) = d * (q i : ℝ) := by
-    intro i; have := congrArg (Rat.cast : ℚ → ℝ) (hw i); push_cast at this; exact this
-  have hw0 : w ≠ 0 := by
-    intro h; apply hq; funext i
-    have := hw i; rw [h] at this; simp at this
-    rcases this with h1 | h1
-    · exact absurd h1 (by exact_mod_cast hd.ne')
-    · exact h1
-  have h1 := hp w hw0
-  have h2 : quadR L (fun i => (w i : ℝ)) = (d : ℝ) ^ 2 * quadR L (fun i => (q i : ℝ)) := by
-    simp only [quadR, hwR, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-  have h3 : 0 < quadR L (fun i => (w i : ℝ)) := by
-    rw [quadR_intCast]; exact_mod_cast h1
-  rw [h2] at h3
-  have hd2 : (0 : ℝ) < (d : ℝ) ^ 2 := by positivity
-  exact pos_of_mul_pos_right h3 hd2.le
-
-lemma quadR_nonneg {r : ℕ} (L : Matrix (Fin r) (Fin r) ℤ)
-    (hp : ∀ v : Fin r → ℤ, v ≠ 0 → 0 < v ⬝ᵥ L *ᵥ v) (x : Fin r → ℝ) : 0 ≤ quadR L x := by
-  have hdense : DenseRange (Pi.map (fun (_ : Fin r) (t : ℚ) => (t : ℝ))) :=
-    DenseRange.piMap (fun _ => Rat.denseRange_cast)
-  have hcl : IsClosed {x : Fin r → ℝ | 0 ≤ quadR L x} :=
-    isClosed_le continuous_const (continuous_quadR L)
-  have hsub : Set.range (Pi.map (fun (_ : Fin r) (t : ℚ) => (t : ℝ))) ⊆ {x | 0 ≤ quadR L x} := by
-    rintro _ ⟨q, rfl⟩
-    by_cases hq : q = 0
-    · subst hq; simp [quadR]
-    · exact (quadR_pos_rat L hp q hq).le
-  have := hcl.closure_subset_iff.mpr hsub
-  rw [hdense.closure_range] at this
-  exact this (Set.mem_univ x)
 
 end GlobalTheory.Poinc.SumSqFunctional
 

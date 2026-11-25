@@ -9,56 +9,11 @@ public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceDualWeylModuleInvRationalPointEqConjCharAt
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLocallyConstantOfRightInv
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapPFinThetaGL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinGLMemOfPow
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
 import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.AntitoneOfMemInterl
+import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.PTranslAd
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousCoordinate, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOfRightInvariant, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CountIsInvInvariant, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsConjEqSign, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsEigenbasis, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsScalarOfCentral, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarSplit, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactOfBounded, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsRegEllIffMemEll, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemRatCentTwConj, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NontrivialFiniteAdeles, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormaliserUnconj, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrbitPreimageEq, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableGL, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableUnits, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwConjugateEquivalence, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfHolds, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.PTermOf, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.PWeylAt, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfFiniteInputs
@@ -329,12 +284,12 @@ theorem phi_transpose (n : ℕ) (R : Type) [CommRing R] :
   simp only [Matrix.transpose_apply, Matrix.smul_apply, GlobalTheory.Tw.Phi, Matrix.of_apply, smul_eq_mul]
   by_cases h : (i : ℕ) + j + 1 = n
   · have h' : (j : ℕ) + i + 1 = n := by omega
-    rw [if_pos h, if_pos h', ← pow_add]
+    rw [ite_eq_left h, ite_eq_left h', ← pow_add]
     have e : n + 1 + (i : ℕ) = j + 2 * ((i : ℕ) + 1) := by omega
     rw [e, pow_add, pow_mul]
     simp
   · have h' : ¬ (j : ℕ) + i + 1 = n := by omega
-    rw [if_neg h, if_neg h']
+    rw [ite_eq_right h, ite_eq_right h']
     simp
 
 theorem phi_map (n : ℕ) {R : Type} [CommRing R] (c : R →+* R) : (GlobalTheory.Tw.Phi n R).map c = GlobalTheory.Tw.Phi n R := by
@@ -365,7 +320,6 @@ theorem exists_conj_eq_sign (n : ℕ) : ∃ s : E, s ≠ 0 ∧ conjE E s = (-1 :
     rw [h, map_sub, hcc]
     ring
 
-
 omit [NumberField E] [IsCMField E] in
 theorem scalar_val {n : ℕ} (t : Eˣ) :
     (GeneralLinearGroup.scalar (Fin n) t).val = (t : E) • (1 : Matrix (Fin n) (Fin n) E) := by
@@ -374,7 +328,6 @@ theorem scalar_val {n : ℕ} (t : Eˣ) :
   · subst h
     simp [GeneralLinearGroup.scalar]
   · simp [GeneralLinearGroup.scalar, h]
-
 
 omit [NumberField E] [IsCMField E] in
 theorem scalar_commute {n : ℕ} (t : Eˣ) (g : GL (Fin n) E) :
@@ -642,48 +595,7 @@ theorem Phi_map {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (n : ℕ)
   split_ifs <;> simp
 
 theorem translAd : TranslAd := by
-  intro E _ _ _ n u hu g
-
-  have hz : ∀ h : GL (Fin n) E, ((PhiU n E)⁻¹ * u) * h = h * ((PhiU n E)⁻¹ * u) := by
-    intro h
-    have hinv : thetaE E n (thetaE E n h) = h :=
-      thetaR_thetaR (conjE E) (fun x => IsCMField.complexConj_apply_apply E x) n h
-    have h1 := hu.1 (thetaE E n h)
-    rw [hinv] at h1
-    have h2 : thE E n (thetaE E n h) = PhiU n E * h * (PhiU n E)⁻¹ := by
-      have := thetaGL_eq n E (IsCMField.complexConj E).toRingEquiv.toRingHom (thetaE E n h)
-      rw [show thetaR (IsCMField.complexConj E).toRingEquiv.toRingHom n (thetaE E n h) = h from hinv] at this
-      exact this
-    rw [h2] at h1
-    have h3 : h * (PhiU n E)⁻¹ * u = (PhiU n E)⁻¹ * u * h := by
-      have h4 : PhiU n E * h * (PhiU n E)⁻¹ * u = u * h := by rw [h1]; group
-      calc h * (PhiU n E)⁻¹ * u = (PhiU n E)⁻¹ * (PhiU n E * h * (PhiU n E)⁻¹ * u) := by group
-        _ = (PhiU n E)⁻¹ * u * h := by rw [h4]; group
-    rw [← h3, mul_assoc h]
-  obtain ⟨c, hc⟩ := exists_scalar_of_central _ hz
-
-  set w : GA E n := ratGL E n ((PhiU n E)⁻¹ * u) with hw
-  have hwc : ∀ t : GA E n, w * t = t * w := by
-    intro t
-    apply Units.ext
-    have hval : w.val = Matrix.scalar (Fin n) (algebraMap E (Ad E) c) := by
-      have : w.val = (((PhiU n E)⁻¹ * u : GL (Fin n) E).val).map (algebraMap E (Ad E)) := rfl
-      rw [this, hc]
-      ext i j
-      by_cases hij : i = j <;> simp [Matrix.scalar_apply, hij]
-    rw [Units.val_mul, Units.val_mul, hval]
-    exact Matrix.scalar_commute _ (fun r' => Commute.all _ _) _
-  have hP : ratGL E n (PhiU n E) = PhiU n (Ad E) := by
-    apply Units.ext
-    rw [phiU_val, ← Phi_map (algebraMap E (Ad E)) n, ← phiU_val]
-    rfl
-  have hr : ratGL E n u = PhiU n (Ad E) * w := by
-    rw [hw, map_mul, map_inv, hP, mul_inv_cancel_left]
-  rw [thetaGL_eq, hr]
-  have h5 : w * thetaA E n g * w⁻¹ = thetaA E n g := by rw [hwc]; group
-  calc PhiU n (Ad E) * thetaR (conjAd E) n g * (PhiU n (Ad E))⁻¹
-      = PhiU n (Ad E) * (w * thetaA E n g * w⁻¹) * (PhiU n (Ad E))⁻¹ := by rw [h5]
-    _ = PhiU n (Ad E) * w * thetaA E n g * (PhiU n (Ad E) * w)⁻¹ := by group
+  exact @_root_.PositivityTheory.Rg.BcB.G8.translAd_holds
 
 end GlobalTheory.CompanionTheory.TranslAdele
 
@@ -1083,30 +995,10 @@ open scoped Classical
 
 namespace GlobalTheory.CompanionTheory.TwistCent
 
-theorem map_thetaR {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (c : R →+* R) (c' : S →+* S)
-    (h : ∀ x, f (c x) = c' (f x)) (n : ℕ) (g : GL (Fin n) R) :
-    GeneralLinearGroup.map f (thetaR c n g) = thetaR c' n (GeneralLinearGroup.map f g) := by
-  apply Units.ext
-  ext i j
-  rw [GeneralLinearGroup.map_apply, thetaR_val, thetaR_val, ← map_inv]
-  simp only [Matrix.transpose_apply, Matrix.map_apply, GeneralLinearGroup.map_apply, h]
-
-theorem map_phiU {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (n : ℕ) :
-    GeneralLinearGroup.map f (PhiU n R) = PhiU n S := by
-  apply Units.ext
-  ext i j
-  simp only [GeneralLinearGroup.map_apply, phiU_val, GlobalTheory.Tw.Phi, Matrix.of_apply]
-  split_ifs <;> simp
-
-theorem map_thetaGL {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (c : R →+* R) (c' : S →+* S)
-    (h : ∀ x, f (c x) = c' (f x)) (n : ℕ) (g : GL (Fin n) R) :
-    GeneralLinearGroup.map f (thetaGL n c g) = thetaGL n c' (GeneralLinearGroup.map f g) := by
-  rw [thetaGL_eq, thetaGL_eq, map_mul, map_mul, map_inv, map_phiU, map_thetaR f c c' h]
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 theorem thF_ratF (g : GL (Fin n) E) : thF E n (ratF E n g) = ratF E n (thE E n g) :=
-  (map_thetaGL (algebraMap E (Af E)) _ _
+  (GlobalTheory.CompanionTheory.AdelEqProof.map_thetaGL (algebraMap E (Af E)) _ _
     (fun x => (conjFin_algebraMap (IsCMField.complexConj E).toRingEquiv x).symm) n g).symm
 
 theorem nontrivial_finiteAdeles : Nontrivial (Af E) := by
@@ -1122,17 +1014,6 @@ theorem ratF_injective : Function.Injective (ratF E n) := by
   ext i j
   have := congrArg (fun x : GL (Fin n) (Af E) => x.val i j) e
   exact (algebraMap E (Af E)).injective this
-
-theorem pFin_ratGL (g : GL (Fin n) E) : GeneralLinearGroup.map (pFin E) (ratGL E n g) = ratF E n g := by
-  apply Units.ext
-  ext i j
-  rfl
-
-theorem cV_ratGL (v : InfinitePlace E) (g : GL (Fin n) E) :
-    GeneralLinearGroup.map (cV v) (ratGL E n g) = GeneralLinearGroup.map v.embedding g := by
-  apply Units.ext
-  ext i j
-  exact pInf_algebraMap (g.val i j) v
 
 theorem mem_twCent_iff {u : GL (Fin n) E} (hu : IsTransl u) (g d : GL (Fin n) E) :
     g ∈ PositivityTheory.Rg.Tf.Loc.twCent (thetaE E n) d ↔ g * (d * u⁻¹) = d * u⁻¹ * thE E n g := by
@@ -1166,7 +1047,7 @@ theorem map_mem_twCent (v : InfinitePlace E) {g d : GL (Fin n) E}
       PositivityTheory.Rg.Tf.Loc.twCent (thetaR (starRingEnd ℂ) n) (GeneralLinearGroup.map v.embedding d) := by
   have h' : g⁻¹ * d * thetaE E n g = d := h
   rw [PositivityTheory.Rg.Tf.Loc.mem_twCent]
-  rw [← map_thetaR v.embedding (conjE E) (starRingEnd ℂ)
+  rw [← GlobalTheory.CompanionTheory.AdelEqProof.map_thetaR v.embedding (conjE E) (starRingEnd ℂ)
     (fun x => IsCMField.complexEmbedding_complexConj E v.embedding x) n g, ← map_inv, ← map_mul, ← map_mul]
   exact congrArg _ h'
 
@@ -1177,16 +1058,16 @@ theorem centEq : CentEq := by
     have hc' := Prod.ext_iff.1 hc
     refine ⟨(ratGL E a g₁, ratGL E b g₂), ?_, ?_⟩
     · exact ⟨⟨g₁, (mem_twCent_iff_ratF h₁ g₁ d₁).2 hc'.1, rfl⟩, ⟨g₂, (mem_twCent_iff_ratF h₂ g₂ d₂).2 hc'.2, rfl⟩⟩
-    · exact Prod.ext (pFin_ratGL g₁) (pFin_ratGL g₂)
+    · exact Prod.ext (GlobalTheory.CompanionTheory.AdelEqProof.map_pFin_ratGL g₁) (GlobalTheory.CompanionTheory.AdelEqProof.map_pFin_ratGL g₂)
   · rintro ⟨⟨γ₁, γ₂⟩, ⟨⟨g₁, hg₁, rfl⟩, ⟨g₂, hg₂, rfl⟩⟩, rfl⟩
     have e : (comps (ratGL E a g₁, ratGL E b g₂)).2 = (ratF E a g₁, ratF E b g₂) :=
-      Prod.ext (pFin_ratGL g₁) (pFin_ratGL g₂)
+      Prod.ext (GlobalTheory.CompanionTheory.AdelEqProof.map_pFin_ratGL g₁) (GlobalTheory.CompanionTheory.AdelEqProof.map_pFin_ratGL g₂)
     rw [e]
     exact ⟨⟨(g₁, g₂), rfl⟩, Prod.ext ((mem_twCent_iff_ratF h₁ g₁ d₁).1 hg₁) ((mem_twCent_iff_ratF h₂ g₂ d₂).1 hg₂)⟩
   · rintro ⟨γ₁, γ₂⟩ ⟨⟨g₁, hg₁, rfl⟩, ⟨g₂, hg₂, rfl⟩⟩
     refine ⟨fun h => ?_, fun v => ?_⟩
     · have e : (comps (ratGL E a g₁, ratGL E b g₂)).2 = (ratF E a g₁, ratF E b g₂) :=
-        Prod.ext (pFin_ratGL g₁) (pFin_ratGL g₂)
+        Prod.ext (GlobalTheory.CompanionTheory.AdelEqProof.map_pFin_ratGL g₁) (GlobalTheory.CompanionTheory.AdelEqProof.map_pFin_ratGL g₂)
       rw [e] at h
       have e₁ : g₁ = 1 := ratF_injective ((congrArg Prod.fst h).trans (map_one _).symm)
       have e₂ : g₂ = 1 := ratF_injective ((congrArg Prod.snd h).trans (map_one _).symm)
@@ -1194,10 +1075,10 @@ theorem centEq : CentEq := by
       exact Prod.ext (map_one _) (map_one _)
     · constructor
       · show GeneralLinearGroup.map (cV v) (ratGL E a g₁) ∈ _
-        rw [cV_ratGL]
+        rw [GlobalTheory.CompanionTheory.AdelEqProof.map_cV_ratGL]
         exact map_mem_twCent v hg₁
       · show GeneralLinearGroup.map (cV v) (ratGL E b g₂) ∈ _
-        rw [cV_ratGL]
+        rw [GlobalTheory.CompanionTheory.AdelEqProof.map_cV_ratGL]
         exact map_mem_twCent v hg₂
 
 end GlobalTheory.CompanionTheory.TwistCent
@@ -1342,10 +1223,7 @@ theorem tw_eq (x d : GL (Fin n) ℂ) : PositivityTheory.RgTw.tw x d = twConj (θ
   simp only [PositivityTheory.RgTw.tw, twConj, h]
 
 theorem theta_theta (g : GL (Fin n) ℂ) : θ n (θ n g) = g := by
-  apply Units.ext
-  show (((g.val.map (starRingEnd ℂ))ᵀ).map (starRingEnd ℂ))ᵀ = g.val
-  ext i j
-  simp
+  apply _root_.GlobalTheory.CompanionTheory.DiagProperProof.th_th <;> assumption
 
 theorem twConj_twConj (g x d : GL (Fin n) ℂ) :
     twConj (θ n) x (twConj (θ n) g d) = twConj (θ n) (g * x) d := by
@@ -1416,7 +1294,6 @@ theorem lefOne_eval (hD : EllDiag) (hW : WeylAt) [MeasurableSpace (GL (Fin n) �
   exact this
 
 end GlobalTheory.CompanionTheory.LefPair
-
 
 open GlobalTheory.CompanionTheory.LefPair in
 theorem GlobalTheory.CompanionTheory.LefPair.lefPairOf : LefPairOf := by
@@ -1644,12 +1521,12 @@ theorem global_character_of_holds : GlobalCharacterOfInputs := by
     rw [hg₁, hg₂, hO E a b μ₁ μ₂ _ _ g₁ _ g₂ (hA E hU a b S u₁ u₂ hu₁ hu₂ ψ φ₁ φ₂ hψ hφ₁ hφ₂ _ _)]
   rw [finsum_eq_if]
   by_cases h : pol x₁ ∈ Ell E a ∧ pol x₂ ∈ Ell E b
-  · rw [if_pos (hiff.2 h), if_pos h, horb]
+  · rw [ite_eq_left (hiff.2 h), ite_eq_left h, horb]
     have ht := hc S hS u₁ u₂ hu₁ hu₂ l₁ l₂ val ψ φ₁ φ₂ hL hφ₁ hφ₂ (x₁.rep * u₁) (x₂.rep * u₂)
       (hr₁.1 (hiff.2 h).1) (hr₂.1 (hiff.2 h).2)
     simp only [mul_inv_cancel_right] at ht
     exact ht
-  · rw [if_neg (mt hiff.1 h), if_neg h, mul_zero]
+  · rw [ite_eq_right (mt hiff.1 h), ite_eq_right h, mul_zero]
 
 end PositivityTheory.Rg.BcB.G8
 
@@ -1895,8 +1772,6 @@ section -- clump:auto
 namespace PositivityTheory.Rg.BcB.G8
 
 open GlobalTheory.CompanionTheory
-
-theorem translation_existence_holds : TranslEx := LocalThetaTranslation.translEx
 
 theorem lefschetz_pair_holds : LefPair := GlobalTheory.CompanionTheory.LefPair.lefPairOf EllipticTwist.ellDiag weylAt_holds LocalThetaTopology.topo
 

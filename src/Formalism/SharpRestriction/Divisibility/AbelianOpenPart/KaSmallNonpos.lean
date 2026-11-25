@@ -1,48 +1,8 @@
 module
 
 public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.LiftErrorLocal
 
 @[expose] public section
@@ -160,23 +120,6 @@ theorem kaBig_nonneg (D : D7) (hK : DV.KapDef D) {j : ℕ} (h1 : 1 ≤ j) (h2 : 
   rw [hsig, he, e1, e2]
   linarith
 
-private lemma aMinusQ_le_aMinusQ_succ (D : D7) (j : ℕ) (τ : D.what₂.Tau) (c : ℕ)
-    (hc : j + c + 1 < D.R.m) : DV.aMinusQ D j τ c ≤ DV.aMinusQ D j τ (c + 1) := by
-  have h0 : j + c < D.R.m := by omega
-  have h1 : j + (c + 1) < D.R.m := by omega
-  have g1 := (D.hc τ).gap_be ⟨j + c, h0⟩
-  have g2 : ((D.R.t : ℚ) + 3) / 2 ≤ (D.hc τ).b ⟨j + (c + 1), h1⟩ - (D.hc τ).e ⟨j + c, h0⟩ := by
-    have g3 := (D.hc τ).gap_eb ⟨j + c, h0⟩ (by show j + c + 1 < D.R.m; omega)
-    have e3 : (⟨j + (c + 1), h1⟩ : Fin D.R.m) = ⟨j + c + 1, by omega⟩ :=
-      Fin.ext (by show j + (c + 1) = j + c + 1; omega)
-    rw [e3]
-    exact g3
-  have ht : (0 : ℚ) ≤ D.R.t := Nat.cast_nonneg _
-  unfold DV.aMinusQ
-  rw [dite_eq_left h0, dite_eq_left h1]
-  push_cast
-  linarith
-
 theorem kaSmall_anti (D : D7) (hK : DV.KapDef D) {j : ℕ} (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (τ : D.what₂.Tau) :
     Antitone (D.what₂.kaSmall j τ) := by
   have hs : (D.R.sigW j).2 = D.R.m - j := rfl
@@ -188,7 +131,7 @@ theorem kaSmall_anti (D : D7) (hK : DV.KapDef D) {j : ℕ} (h1 : 1 ≤ j) (h2 : 
     | zero => intro a _; simp
     | succ d ih =>
       intro a ha
-      have h3 := aMinusQ_le_aMinusQ_succ D j τ (a + d) (by omega)
+      have h3 := Inh.aMinusQ_step D j τ (a + d) (by omega)
       have h4 := ih a (by omega)
       rw [← add_assoc]
       linarith

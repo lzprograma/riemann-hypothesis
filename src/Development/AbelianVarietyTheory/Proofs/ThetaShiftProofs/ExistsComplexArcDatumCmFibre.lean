@@ -107,7 +107,7 @@ theorem exists_primGen {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G]
     · show (η[G]).left ≫ (toUnit G ≫ η[G]).left = _
       rw [← Over.comp_left, ← Category.assoc, toUnit_unique (η[G] ≫ toUnit G) (𝟙 _), Category.id_comp]
   rw [e, fsum_empty]
-  simp [fsum, Fin.sum_univ_four, ← Finsupp.single_add]
+  simp [fsum, Fin.sum_univ_four]
 
 theorem chi_eq {G : Over (Sp ℂ)} [GrpObj G] {L : LB G.left} (hL : L.IsLB) (f : G ⟶ G)
     (w : LB.Gen (LB.LinComb L (K := Fin 4)

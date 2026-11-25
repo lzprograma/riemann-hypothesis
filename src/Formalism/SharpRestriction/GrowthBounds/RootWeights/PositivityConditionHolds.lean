@@ -1,47 +1,8 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.RootWeights.PieAltApply, Formalism.SharpRestriction.GrowthBounds.RootWeights.PositivityConditionHolds
@@ -298,13 +259,11 @@ theorem pie_B_sw {n : ℕ} {lam mu : Fin n → ℕ} {j : Fin n} (hj : j ∈ pie_
   apply le_antisymm
   · apply Finset.max'_le
     intro k hk
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have hkj : k ≠ j := hlt.ne'
     have hkp : k ≠ pie_pr j := by
       intro e
       have h2 : k.val = j.val - 1 := congrArg Fin.val e
-      have h3 : j.val < k.val := hlt
       omega
     have hk' := pie_mem_B.1 hk
     rw [pie_sw_other mu hkj hkp] at hk'
@@ -330,7 +289,6 @@ theorem pie_bad_zero (n b : ℕ) (lam : Fin n → ℕ) (hlam : Antitone lam) :
       rw [← hjdef]
       exact Finset.le_max' _ k hk
     have hj := pie_mem_B.1 hjB
-    have hj2 := hj.2
     have hprj : pie_pr j ≤ j := by
       show (pie_pr j).val ≤ j.val
       exact Nat.sub_le _ _
@@ -395,8 +353,7 @@ theorem pie_good_iff {n : ℕ} (lam mu : Fin n → ℕ) :
     ¬ (pie_B lam mu).Nonempty ↔ ∀ i j : Fin n, i.val + 1 = j.val → mu j ≤ lam i := by
   constructor
   · intro hn i j hij
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hn
     have hpr : pie_pr j = i := Fin.ext (by show j.val - 1 = i.val; omega)
     exact ⟨j, pie_mem_B.2 ⟨by omega, by rw [hpr]; exact hc⟩⟩

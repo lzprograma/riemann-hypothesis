@@ -100,19 +100,12 @@ theorem memFlagOf_holds : MemFlagOf := by
     exact crd_desc X _ _ hd
   refine ⟨fun j x hx => ?_, fun x hx => ?_⟩
   · rw [hXf] at hx ⊢
-    induction hx using Submodule.span_induction with
-    | mem y hy =>
-      obtain ⟨a, ha, rfl⟩ := hy
-      refine Submodule.span_mono ?_ (he a)
-      rintro _ ⟨b, hb, rfl⟩
-      exact ⟨b, lt_of_lt_of_le hb (Nat.lt_succ_iff.1 ha), rfl⟩
-    | zero => simp
-    | add y z _ _ hy hz =>
-      rw [map_add (f := _), add_sub_add_comm]
-      exact add_mem hy hz
-    | smul c y _ hy =>
-      rw [map_smul, ← smul_sub]
-      exact Submodule.smul_mem _ _ hy
+    refine (Submodule.span_le (p := (Submodule.span D.host.E (X.eX '' {i | i.1 < j})).comap
+      (n.toLinearMap - LinearMap.id))).2 ?_ hx
+    rintro _ ⟨a, ha, rfl⟩
+    refine Submodule.span_mono ?_ (he a)
+    rintro _ ⟨b, hb, rfl⟩
+    exact ⟨b, lt_of_lt_of_le hb (Nat.lt_succ_iff.1 ha), rfl⟩
   · have hx0 : ∀ a, hE X (X.eR a) (X.crd x) = 0 := by
       intro a
       have hmem : X.eX a ∈ Xsp (lf D (X.Fu u)) := by

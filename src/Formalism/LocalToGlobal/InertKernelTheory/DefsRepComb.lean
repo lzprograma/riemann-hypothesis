@@ -11,8 +11,6 @@ namespace Formalism.L2.KerInert.RepComb
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Th1.H
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ}
 
 abbrev hK (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (a b : ℕ) : Sesq (TaylorLogMetric.VC D a b) :=
@@ -40,48 +38,6 @@ abbrev halfB {a b : ℕ} (SS : Finset (HeightOneSpectrum (𝓞 D.host.E))) (cl :
     (N : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E a))
     (N' : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E b)) : AddSubgroup (TaylorLogMetric.VC D a b) :=
   BC (ι := D.what₂.Tau) (fun τ => TaylorLogMetric.embT D τ) δ (Formalism.L2.PairingIndexBounds.F.aaOf D cc) SS N N' cl
-
-
-variable (cc δ) in
-abbrev ptsX {a b : ℕ} (SS : Finset (HeightOneSpectrum (𝓞 D.host.E))) (cl : ℕ)
-    (N : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E a))
-    (N' : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E b)) : Finset (TaylorLogMetric.VC D a b) :=
-  repsOf (lamK cc δ N N') (halfA cc δ SS cl N N')
-
-
-variable (cc δ) in
-abbrev ptsA {a b : ℕ} (SS : Finset (HeightOneSpectrum (𝓞 D.host.E))) (cl : ℕ)
-    (N : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E a))
-    (N' : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E b)) : Finset (TaylorLogMetric.VC D a b) :=
-  repsOf (halfB cc δ SS cl N N') (lamK cc δ N N' ⊓ halfA cc δ SS cl N N')
-
-
-variable (cc δ) in
-abbrev ptsB {a b : ℕ} (SS : Finset (HeightOneSpectrum (𝓞 D.host.E))) (cl : ℕ)
-    (N : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E a))
-    (N' : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E b)) : Finset (TaylorLogMetric.VC D a b) :=
-  repsOf (lamK cc δ N N') (halfB cc δ SS cl N N')
-
-
-variable (cc δ) in
-def kerCoef {a b : ℕ} (SS : Finset (HeightOneSpectrum (𝓞 D.host.E))) (cl : ℕ)
-    (N : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E a))
-    (N' : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E b)) (Ξ : Formalism.L2.Col.HomE D.host.E a b → ℂ)
-    (x y : TaylorLogMetric.VC D a b) : ℂ :=
-  alK D cc δ a b x *
-    (hatS (hK D cc δ a b) 1 (ptsA cc δ SS cl N N')
-      (fun s => onV (ι := D.what₂.Tau) (fun τ => TaylorLogMetric.embT D τ) δ Ξ (s - x)) y * alK D cc δ a b y) *
-    Complex.exp ((Real.pi : ℂ) * (hK D cc δ a b y x - hK D cc δ a b x y) / 2)
-
-
-variable (cc δ) in
-def CoefInt {a b : ℕ} (SS : Finset (HeightOneSpectrum (𝓞 D.host.E))) (cl : ℕ)
-    (N : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E a))
-    (N' : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E b)) (Ξ : Formalism.L2.Col.HomE D.host.E a b → ℂ)
-    {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_[p]) : Prop :=
-  ∀ x ∈ ptsX cc δ SS cl N N', ∀ y ∈ ptsB cc δ SS cl N N',
-    kerCoef cc δ SS cl N N' Ξ x y ∈ TaylorLogMetric.Qbar ∧ TaylorLogMetric.IsIntP (TaylorLogMetric.lamC lam (kerCoef cc δ SS cl N N' Ξ x y))
-
 
 
 variable (cc δ) in

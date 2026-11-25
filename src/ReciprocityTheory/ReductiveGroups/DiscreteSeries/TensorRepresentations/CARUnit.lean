@@ -22,8 +22,8 @@ theorem rhoC_mul_sign_sum (ε : Fin n → Bool) (g : Bool → ℝ) :
     rw [sum_comm]
     refine sum_congr rfl fun a _ => sum_congr rfl fun b _ => ?_
     by_cases h : b < a ∧ ε a = ε b
-    · rw [if_pos h, if_pos ⟨h.1, h.2.symm⟩, h.2]
-    · rw [if_neg h, if_neg (fun h' => h ⟨h'.1, h'.2.symm⟩)]
+    · rw [ite_eq_left h, ite_eq_left ⟨h.1, h.2.symm⟩, h.2]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h ⟨h'.1, h'.2.symm⟩)]
   have e : ∀ a, rhoC ε a * g (ε a) = (∑ b, (if a < b ∧ ε b = ε a then g (ε a) else 0) -
       ∑ b, (if b < a ∧ ε b = ε a then g (ε a) else 0)) / 2 := by
     intro a
@@ -150,10 +150,10 @@ theorem pair_apply_khw {E : Fin n → Fin n → Module.End ℂ W} {μ : Fin n �
       rw [← hc]; abel
     rw [hc']
     simp only [LinearMap.add_apply, Module.End.mul_apply, LinearMap.sub_apply, hab h, map_zero,
-      hd, zero_add, if_neg h.ne, if_pos h]
+      hd, zero_add, ite_eq_right h.ne, ite_eq_left h]
     push_cast
     rw [sub_smul]
-  · simp only [Module.End.mul_apply, hd, map_smul, smul_smul, if_true]
+  · simp only [Module.End.mul_apply, hd, map_smul, smul_smul, ite_true]
     push_cast; ring_nf
   · simp [hba h, h.ne', not_lt_of_gt h]
 
@@ -183,7 +183,7 @@ theorem diagE_compact {E cp cm : Fin n → Fin n → Module.End ℂ W} (hE : IsG
       diagE ε E cp cm a a - diagE ε E cp cm b b := by
   have e1 := hE a b b a
   have e2 := sgE_comm hC ε a b b a h h.symm
-  simp only [if_true] at e1 e2
+  simp only [ite_true] at e1 e2
   rw [sub_eq_iff_eq_add] at e1 e2
   unfold diagE
   rw [add_mul, mul_add, mul_add, add_mul, mul_add, mul_add, _root_.ReciprocityTheory.ChartRestriction.DS.csq_E_comm_sgE hEC ε a b b a,

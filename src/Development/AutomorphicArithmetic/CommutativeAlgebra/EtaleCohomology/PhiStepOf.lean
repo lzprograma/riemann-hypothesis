@@ -17,56 +17,9 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsPstAtOf
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PWdModel
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.HodgeTrAt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.Lemma
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
 import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.ZeroPull
-import Mathlib.RingTheory.PicardGroup
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PAdmExact, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PAnnPer, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PAnnSub, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PBoundSt, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PDinvExact, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PJoinAbs, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PNilAnn, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PStOfCr, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.AdmissibleSequenceExact, Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AdmissibleOfPiDecomposition, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PDvdOfNil, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PNilRho, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PNilWeil, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PPhiKNil, Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NilToPhi, Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PhiStepOf
@@ -205,7 +158,7 @@ theorem UpperTheory.Gal.crystallineComparison.annPer_of :
     apply hm_inj
     exact congrArg Subtype.val hab
   obtain ⟨hfin', hle⟩ := hB V ρ
-  haveI : Module.Finite L (Dinv σ ρ) := Module.Finite.of_injective φ hφ
+  have : Module.Finite L (Dinv σ ρ) := Module.Finite.of_injective φ hφ
   have hge : finrank L (Dinv σ ρ) ≤ finrank L (Dinv σ' ρ) :=
     LinearMap.finrank_le_finrank_of_injective hφ
   have heq : finrank L (Dinv σ ρ) = finrank L (Dinv σ' ρ) := by omega
@@ -303,8 +256,8 @@ theorem UpperTheory.Gal.crystallineComparison.boundSt_of :
   refine ⟨?_, fun f g => ?_⟩
   · intro U _ _ _ _ _ ρ
     rw [dinv_σSt]
-    haveI := LL.2
-    haveI : FiniteDimensional ℚ_[l] U := Module.Finite.trans ↥LL.1 U
+    have := LL.2
+    have : FiniteDimensional ℚ_[l] U := Module.Finite.trans ↥LL.1 U
     obtain ⟨hfin, hb⟩ := GlobalTheory.CrysSst.finrank_Dst_le P AI T (GlobalTheory.PstCoeff.resQ ρ)
     have hD : Dst P (GlobalTheory.PstCoeff.resQ ρ) = (Dst P ρ).restrictScalars ℚ_[l] := by
       ext x
@@ -314,8 +267,8 @@ theorem UpperTheory.Gal.crystallineComparison.boundSt_of :
       rw [hD, finrank_mul_finrank]
       rfl
     have hfin' : FiniteDimensional ℚ_[l] ↥((Dst P ρ).restrictScalars ℚ_[l]) := hD ▸ hfin
-    haveI : Module.Finite ℚ_[l] ↥(Dst P ρ) := hfin'
-    haveI hL : FiniteDimensional ↥LL.1 ↥(Dst P ρ) :=
+    have : Module.Finite ℚ_[l] ↥(Dst P ρ) := hfin'
+    have hL : FiniteDimensional ↥LL.1 ↥(Dst P ρ) :=
       Module.Finite.of_restrictScalars_finite ℚ_[l] ↥LL.1 ↥(Dst P ρ)
     refine ⟨hL, ?_⟩
     have hV : finrank ℚ_[l] U = finrank ℚ_[l] ↥LL.1 * finrank ↥LL.1 U :=
@@ -421,11 +374,11 @@ theorem UpperTheory.Gal.crystallineComparison.joinAbs_of :
   intro hEmb hSubq hOfAnn hAnnSub hAnnExt hAdmExact
   intro F G B _ _ _ _ σ ψ hσψ L _ _ e hB V _ _ _ ρ q n T hAdm hAnn U _ _ ρU i TU θ hi hinj hT hTg hTT hnil
     W _ _ _ _ ρW I _ C _ _ ρC f hsub hf hsep
-  letI : Module F U := Module.compHom _ (algebraMap F L)
-  haveI : IsScalarTower F L U := IsScalarTower.of_algebraMap_smul fun _ _ => rfl
-  letI : ∀ a, Module F (C a) := fun a => Module.compHom _ (algebraMap F L)
-  haveI : ∀ a, IsScalarTower F L (C a) := fun a => IsScalarTower.of_algebraMap_smul fun _ _ => rfl
-  haveI : Module.Finite L U := Module.Finite.of_injective i hinj
+  let : Module F U := Module.compHom _ (algebraMap F L)
+  have : IsScalarTower F L U := IsScalarTower.of_algebraMap_smul fun _ _ => rfl
+  let : ∀ a, Module F (C a) := fun a => Module.compHom _ (algebraMap F L)
+  have : ∀ a, IsScalarTower F L (C a) := fun a => IsScalarTower.of_algebraMap_smul fun _ _ => rfl
+  have : Module.Finite L U := Module.Finite.of_injective i hinj
   obtain ⟨hE1, hE2⟩ := hAnnExt F G B σ ψ L V ρ
   have hAdmL := hE1 e hAdm
   have hAnnL := hE2 q n T hAnn
@@ -454,8 +407,6 @@ open UpperTheory.Gal.crystallineComparison
 section
 variable {F B : Type} [Field F] [AddCommGroup B] [Module F B]
   {L : Type} [Field L] [Algebra F L] {V : Type} [AddCommGroup V] [Module L V] [Module F V] [IsScalarTower F L V]
-
-private abbrev Phi (a : End L V) (b : End F B) : End L (V ⊗[F] B) := AlgebraTensorModule.map a b
 
 end
 
@@ -740,10 +691,10 @@ theorem admissible_of_pi_decomposition {e : ℕ} (hB : Bound σ L e) {W : Type} 
     · have e := fun (u : ℕ) (z : C i) => LinearMap.congr_fun (hz i t h) z
       simp only [LinearMap.comp_apply, LinearMap.zero_apply] at e
       rw [e 0, e 0, map_zero]
-  haveI : ∀ i, Module.Finite L (C i) := fun i =>
+  have : ∀ i, Module.Finite L (C i) := fun i =>
     Module.Finite.of_surjective (pr i) fun y => ⟨inc i y, LinearMap.congr_fun (ho i) y⟩
-  haveI : ∀ i, Module.Finite L (Dinv σ (ρC i)) := fun i => (hB (C i) (ρC i)).1
-  haveI : Module.Finite L (Dinv σ ρ) := (hB W ρ).1
+  have : ∀ i, Module.Finite L (Dinv σ (ρC i)) := fun i => (hB (C i) (ρC i)).1
+  have : Module.Finite L (Dinv σ ρ) := (hB W ρ).1
   let Ψ : Dinv σ ρ →ₗ[L] ∀ i, Dinv σ (ρC i) :=
     LinearMap.pi fun i => (tm (F := F) (B := B) (pr i)).restrict fun x hx => tm_mem σ (hE i) hx
   have hΨ : Function.Surjective Ψ := by
@@ -781,19 +732,19 @@ theorem nil_scalar (ψ : End F B) (hσψ : ∀ g, Commute (σ g) ψ) {e : ℕ} (
     intro x hx
     rw [← hN x hx]
     refine Finset.sum_congr rfl fun j hj => ?_
-    simp only [T', if_pos (Nat.lt_succ_iff.1 (Finset.mem_range.1 hj))]
+    simp only [T', ite_eq_left (Nat.lt_succ_iff.1 (Finset.mem_range.1 hj))]
   have hpol : UpperTheory.Gal.crystallineComparison.heckePol q n θ = UpperTheory.Gal.crystallineComparison.heckePol q n θ' := by
     unfold UpperTheory.Gal.crystallineComparison.heckePol
     refine Finset.sum_congr rfl fun j hj => ?_
-    simp only [θ', if_pos (Nat.lt_succ_iff.1 (Finset.mem_range.1 hj))]
+    simp only [θ', ite_eq_left (Nat.lt_succ_iff.1 (Finset.mem_range.1 hj))]
   rw [hpol]
   refine joinAbs_holds F G B σ ψ hσψ L e hB V ρ q n T' hA hN' U ρU i TU θ' hi hinj ?_ (fun j g => ?_) (fun j j' => ?_) (fun j hj => ?_)
     W ρW I C ρC f hS hf hsep
   · intro j u
     by_cases hj : j ≤ n
-    · simp only [TU, T', θ', if_pos hj, Module.End.one_apply, LinearMap.smul_apply]
+    · simp only [TU, T', θ', ite_eq_left hj, Module.End.one_apply, LinearMap.smul_apply]
       rw [map_smul, hiT j hj]
-    · simp [TU, T', θ', if_neg hj, LinearMap.baseChange_zero]
+    · simp [TU, T', θ', ite_eq_right hj, LinearMap.baseChange_zero]
   · exact (Commute.one_left _).smul_left _
   · exact ((Commute.one_left _).smul_left _).smul_right _
   · simp [TU]
@@ -818,7 +769,7 @@ def low (L : Type) [Field L] {a : ℕ} (c : Fin a → ℕ) (m : ℕ) : Submodule
   smul_mem' r x hx i hi := by simp [hx i hi]
 
 def prj (m : ℕ) : (Fin a → L) →ₗ[L] blk L c m where
-  toFun x := ⟨fun i => if c i = m then x i else 0, fun i hi => if_neg hi⟩
+  toFun x := ⟨fun i => if c i = m then x i else 0, fun i hi => ite_eq_right hi⟩
   map_add' x y := by
     ext i
     by_cases h : c i = m <;> simp [h]
@@ -857,12 +808,12 @@ theorem prj_diag {D : Matrix (Fin a) (Fin a) L} (hD : ∀ i j, c i ≠ c j → D
   funext i
   rw [prj_apply, mv, mv]
   by_cases h : c i = m
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     refine Finset.sum_congr rfl fun j _ => ?_
     by_cases h' : c j = m
     · simp [prj_apply, h']
     · simp [prj_apply, h', hD i j (by omega)]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     symm
     refine Finset.sum_eq_zero fun j _ => ?_
     by_cases h' : c j = m
@@ -872,17 +823,17 @@ theorem prj_diag {D : Matrix (Fin a) (Fin a) L} (hD : ∀ i j, c i ≠ c j → D
 theorem prj_tri {A D : Matrix (Fin a) (Fin a) L} (hA : A.BlockTriangular c) (hD : ∀ i j, D i j = if c i = c j then A i j else 0)
     {m : ℕ} {x : Fin a → L} (hx : x ∈ low L c m) :
     (prj c m (A *ᵥ x) : Fin a → L) = D *ᵥ (prj c m x : Fin a → L) := by
-  have hD' : ∀ i j, c i ≠ c j → D i j = 0 := fun i j h => by rw [hD, if_neg h]
+  have hD' : ∀ i j, c i ≠ c j → D i j = 0 := fun i j h => by rw [hD, ite_eq_right h]
   rw [← prj_diag c hD']
   funext i
   rw [prj_apply, prj_apply]
   by_cases h : c i = m
-  · rw [if_pos h, if_pos h, mv, mv]
+  · rw [ite_eq_left h, ite_eq_left h, mv, mv]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [hD]
     by_cases h' : c j = m
     · simp [h, h']
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       rcases lt_or_gt_of_ne h' with h2 | h2
       · simp [hA (show c j < c i by omega)]
       · simp [hx j h2]
@@ -898,7 +849,7 @@ theorem blocks (F : Type) {G L : Type} [Field F] [Group G] [Field L] [Algebra F 
       (_ : ∀ i, Module F (C i)) (_ : ∀ i, IsScalarTower F L (C i)) (ρC : ∀ i, Representation L G (C i))
       (E : (Fin a → L) ≃ₗ[L] ∀ i, C i),
       (∀ i, Inter ρ (ρC i) (LinearMap.proj i ∘ₗ E.toLinearMap)) ∧ ∀ i, Subq ρ₀ (ρC i) := by
-  have hD' : ∀ g i j, c i ≠ c j → D g i j = 0 := fun g i j hne => by rw [hD, if_neg hne]
+  have hD' : ∀ g i j, c i ≠ c j → D g i j = 0 := fun g i j hne => by rw [hD, ite_eq_right hne]
   let I : Type := ↥(Finset.univ.image c)
   let C : I → Type := fun t => ↥(blk L c t.1)
   let ρC : ∀ t : I, Representation L G (C t) := fun t => subRep ρ (blk L c t.1) fun g x hx => by
@@ -912,18 +863,18 @@ theorem blocks (F : Type) {G L : Type} [Field F] [Group G] [Field L] [Algebra F 
     show (prj c t.1 (ofPi y) : Fin a → L) i = (y t : Fin a → L) i
     rw [prj_apply, hof, Finset.sum_apply]
     by_cases hi : c i = t.1
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       refine Finset.sum_eq_single t (fun s _ hs => (y s).2 i fun e => hs (Subtype.ext (e.symm.trans hi))) (by simp)
-    · rw [if_neg hi, (y t).2 i hi]
+    · rw [ite_eq_right hi, (y t).2 i hi]
   have h2 : ofPi ∘ₗ toPi = LinearMap.id := by
     refine LinearMap.ext fun x => funext fun i => ?_
     show ofPi (toPi x) i = x i
     rw [hof, Finset.sum_apply]
     have hmem : c i ∈ Finset.univ.image c := Finset.mem_image_of_mem c (Finset.mem_univ i)
     rw [Finset.sum_eq_single (⟨c i, hmem⟩ : I)]
-    · exact if_pos rfl
+    · exact ite_eq_left rfl
     · intro s _ hs
-      exact if_neg fun e => hs (Subtype.ext e.symm)
+      exact ite_eq_right fun e => hs (Subtype.ext e.symm)
     · simp
   let E : (Fin a → L) ≃ₗ[L] ∀ t : I, C t := LinearEquiv.ofLinear toPi ofPi h1 h2
   refine ⟨I, inferInstance, inferInstance, C, inferInstance, inferInstance, inferInstance, inferInstance, ρC, E, ?_, ?_⟩
@@ -946,8 +897,8 @@ theorem blocks (F : Type) {G L : Type} [Field F] [Group G] [Field L] [Algebra F 
       funext i
       show (if c i = t.1 then y.1 i else 0) = y.1 i
       by_cases hi : c i = t.1
-      · rw [if_pos hi]
-      · rw [if_neg hi, y.2 i hi]
+      · rw [ite_eq_left hi]
+      · rw [ite_eq_right hi, y.2 i hi]
 
 section Coords
 variable {F A V : Type} [Field F] [Field A] [Algebra F A] [AddCommGroup V] [Module F V]
@@ -1006,7 +957,6 @@ end UpperTheory.Ru.crystallineComparison.JQ
 open UpperTheory.Ru.crystallineComparison.JQ in
 theorem UpperTheory.Ru.crystallineComparison.joinQ :
     UpperTheory.Ru.crystallineComparison.JoinQ := by
-  set_option synthInstance.maxHeartbeats 200000 in
     intro l _ P AI hT E Ω _ _ _ Gw O _ _ _ Bw f q n ϑ a r₀ r _ hgr hin
     obtain ⟨V, _, _, _, ρ, T, b, hcr, hann, hb, hbg, hbT⟩ := hin
     obtain ⟨c, hc⟩ := hgr
@@ -1026,7 +976,7 @@ theorem UpperTheory.Ru.crystallineComparison.joinQ :
         (IntermediateField.subset_adjoin _ _ ⟨(i, j), rfl⟩)
     let Θ : Matrix (Fin 1) (Fin (n + 1)) (Om l) := Matrix.of fun _ j => ϑ j
     let L : FinExt l := entExt (entExt Bw.LL M) Θ
-    haveI := L.2
+    have := L.2
     let φ : ↥L.1 →+* Om l := algebraMap ↥L.1 (Om l)
     have hle : (entExt Bw.LL M).1 ≤ L.1 := le_entExt _ _
     have hLL : Bw.LL.1 ≤ L.1 := (le_entExt _ _).trans hle
@@ -1035,7 +985,7 @@ theorem UpperTheory.Ru.crystallineComparison.joinQ :
     let M' : Matrix (Fin d) (Fin a) ↥L.1 := Matrix.of fun i j => ⟨M i j, hMmem i j⟩
     have hM' : M'.map φ = M := Matrix.ext fun i j => rfl
     let ϑ' : ℕ → ↥L.1 := fun j => if h : j ≤ n then ⟨ϑ j, hθmem j h⟩ else 0
-    have hϑ' : ∀ j ≤ n, φ (ϑ' j) = ϑ j := fun j hj => by simp only [ϑ', dif_pos hj]; rfl
+    have hϑ' : ∀ j ≤ n, φ (ϑ' j) = ϑ j := fun j hj => by simp only [ϑ', dite_eq_left hj]; rfl
     have hinjM' : Function.Injective M'.mulVec := by
       intro x y hxy
       have h1 : ∀ w : Fin a → ↥L.1, M *ᵥ (fun i => φ (w i)) = fun i => φ ((M' *ᵥ w) i) :=
@@ -1234,7 +1184,7 @@ private theorem nil_transfer {R S M W : Type} [CommRing R] [CommRing S] [AddComm
 theorem UpperTheory.Gal.crystallineComparison.nilRho_of :
     NilRho := by
   intro l _ P ι E Ω _ _ _ _ _ A w h O _ _ _ Bw hj LL V _ _ _ _ _ ρ hV Q g
-  haveI := hV.finite
+  have := hV.finite
   exact nil_transfer (ι.toRingHom.comp (algebraMap ↥LL.1 (Om l))) (wdMk P ι ρ) (wdMk_zero P ι ρ)
     (wdMk_add P ι ρ) (wdMk_smul P ι ρ) (fun _ _ => wd_ext P ι ρ) _ _
     (wdRho_mk P ι Bw h hj ρ g) Q
@@ -1342,7 +1292,7 @@ end Abstract
 theorem UpperTheory.Gal.crystallineComparison.nilWeil_of :
     NilWeil := by
   intro l _ P E Ω _ _ _ _ _ A w h O _ _ _ Bw hj LL V _ _ _ _ _ ρ hV hs Q hN g hg
-  haveI := hV.finite
+  have := hV.finite
   obtain ⟨N, hN⟩ := hN
   have hSD : Dst P ρ ≤ Dpst P ρ := fun s hs =>
     (mem_Dpst P ρ).mpr ⟨Bw.Kw, fun g _ => (mem_Dst P ρ).mp hs g⟩
@@ -1401,10 +1351,10 @@ theorem UpperTheory.Gal.crystallineComparison.phiKNil_of :
   unfold PhiKOfNil
   intro l _ P AI hT ι E Ω _ _ _ _ _ A w h O _ _ _ Bw hj a r LL r' hm hcr Q hN s u hu hQ
   obtain ⟨T⟩ := hT
-  haveI := LL.2
+  have := LL.2
   have hSst : IsSst P (Bw.repE LL r') := GlobalTheory.CrysSst.isSst_of_isCrys P AI T _ hcr
   have hV : IsPst P (Bw.repE LL r') := _root_.GlobalTheory.GalCut.IwaAll.isPst_of_isSst P AI T _ hSst
-  haveI := hV.finite
+  have := hV.finite
   have hd : deg (frob h)⁻¹ = -1 := by rw [deg_inv, deg_frob]
   have h1 := hW l P E Ω A w h O Bw hj LL _ (Bw.repE LL r') hV hSst Q hN _ hd
   have h2 := nil_of_eq _ hQ (hR l P ι E Ω A w h O Bw hj LL _ (Bw.repE LL r') hV Q _ h1)

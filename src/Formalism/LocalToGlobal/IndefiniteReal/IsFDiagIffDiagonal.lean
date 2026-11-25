@@ -10,8 +10,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH
 
 namespace Formalism.IndefR
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def IsFDiag (V : HSp D) : Prop :=

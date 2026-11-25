@@ -100,12 +100,7 @@ def gamM (𝔞 : Submodule ℝ (A0 k)) (Q : Finset (SV k)) (X : Finset (SV k) �
 def IsOrth (𝔞 : Submodule ℝ (A0 k)) (X : Finset (SV k) → A0 k) : Prop :=
   ∀ P ∈ parF 𝔞 ∅, ∀ Q ⊆ P, X Q = pr Q (X P)
 
-def IsGMFam (𝔞 : Submodule ℝ (A0 k)) (c : Finset (SV k) → A0 k → ℂ) : Prop :=
-  ∀ P ∈ parF 𝔞 ∅, ContDiff ℝ ∞ (c P) ∧ ∀ Q ⊆ P, ∀ l, c Q l = c P (pr Q l)
-
 def eL (l H : A0 k) : ℂ := Complex.exp (Complex.I * (⟪l, H⟫_ℝ : ℝ))
-
-def expFam (X : Finset (SV k) → A0 k) : Finset (SV k) → A0 k → ℂ := fun P l => eL l (X P)
 
 def epsOf (s : Finset (SV k)) (b : SV k → A0 k) (l : A0 k) : ℂ :=
   (√(Matrix.gram ℝ fun u : s => b u).det : ℝ) * ∏ u ∈ s, (Complex.I * (⟪l, b u⟫_ℝ : ℝ))⁻¹
@@ -150,7 +145,7 @@ theorem isPar_stdPar (J : Finset (Fin k)) : IsPar (stdPar J) := by
   · obtain ⟨j, -, rfl⟩ := mem_image.1 hu
     obtain ⟨j', -, rfl⟩ := mem_image.1 hu'
     have key : ∀ a b : Fin k, a ≤ b → Below (stdVec a) (stdVec b) := fun a b h i hi => by
-      have : i ≤ a := by by_contra e; exact hi (if_neg e)
+      have : i ≤ a := by by_contra e; exact hi (ite_eq_right e)
       simp [stdVec, this, this.trans h]
     exact (le_total j j').imp (key _ _) (key _ _)
 

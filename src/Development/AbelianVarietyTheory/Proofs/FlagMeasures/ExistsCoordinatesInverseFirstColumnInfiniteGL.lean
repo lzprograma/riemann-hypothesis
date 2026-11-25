@@ -90,27 +90,6 @@ noncomputable section
 
 namespace GlobalTheory.PiCoord
 
-theorem lintegral_pi_fin {E : Type*} [MeasurableSpace E] (n : ℕ) (μ : Measure E) [SigmaFinite μ]
-    (f : Fin n → E → ℝ≥0∞) (hf : ∀ i, Measurable (f i)) :
-    ∫⁻ x : Fin n → E, ∏ i, f i (x i) ∂(Measure.pi fun _ => μ) = ∏ i, ∫⁻ t, f i t ∂μ := by
-  apply GlobalTheory.HaarPi.lintegral_pi_fin <;> assumption
-
-theorem lintegral_pi_prod {ι E : Type*} [Fintype ι] [MeasurableSpace E] (μ : Measure E) [SigmaFinite μ]
-    (f : ι → E → ℝ≥0∞) (hf : ∀ i, Measurable (f i)) :
-    ∫⁻ x : ι → E, ∏ i, f i (x i) ∂(Measure.pi fun _ => μ) = ∏ i, ∫⁻ t, f i t ∂μ := by
-  let e : Fin (Fintype.card ι) ≃ ι := (Fintype.equivFin ι).symm
-  have hp : MeasurePreserving (MeasurableEquiv.piCongrLeft (fun _ : ι => E) e)
-      (Measure.pi fun _ : Fin (Fintype.card ι) => μ) (Measure.pi fun _ : ι => μ) :=
-    measurePreserving_piCongrLeft (fun _ : ι => μ) e
-  calc ∫⁻ x : ι → E, ∏ i, f i (x i) ∂(Measure.pi fun _ => μ)
-      = ∫⁻ y : Fin (Fintype.card ι) → E, ∏ j, f (e j) (y j) ∂(Measure.pi fun _ => μ) := by
-        rw [← hp.lintegral_comp_emb (MeasurableEquiv.measurableEmbedding _)]
-        refine lintegral_congr fun y => ?_
-        rw [← e.prod_comp]
-        simp [MeasurableEquiv.coe_piCongrLeft, Equiv.piCongrLeft_apply_apply]
-    _ = ∏ j, ∫⁻ t, f (e j) t ∂μ := lintegral_pi_fin _ μ _ fun j => hf (e j)
-    _ = ∏ i, ∫⁻ t, f i t ∂μ := e.prod_comp fun i => ∫⁻ t, f i t ∂μ
-
 theorem pi_withDensity {ι E : Type*} [Fintype ι] [MeasurableSpace E] (μ : Measure E) [SigmaFinite μ]
     (f : E → ℝ≥0∞) (hf : Measurable f) [SigmaFinite (μ.withDensity f)] :
     (Measure.pi fun _ : ι => μ.withDensity f) =

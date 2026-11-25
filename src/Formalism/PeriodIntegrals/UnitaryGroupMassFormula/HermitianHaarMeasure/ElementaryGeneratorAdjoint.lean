@@ -5,56 +5,13 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMea
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 public import Formalism.FormalDegreeBessel.FinalG
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Topology.UniformSpace.Matrix
 public import Mathlib.Analysis.Calculus.Deriv.Shift
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
 
 @[expose] public section
 
@@ -112,16 +69,7 @@ lemma exp_mem_uh {Y : Mx k r} (hY : Yᴴ * Hpk k r + Hpk k r * Y = 0) :
 
 lemma glev_mul_exp {i : Fin (r + 1)} {g X : Mx k r} (hg : g ∈ Glev k r i) (hX : inLieLev k r i X)
     (t : ℝ) : g * NormedSpace.exp ((t : ℂ) • X) ∈ Glev k r i := by
-  have hg' : g ∈ UH (Hpk k r) ∧ ∀ a : Fin r, a.val < i.val →
-      g *ᵥ bvec (eI k r a) = bvec (eI k r a) ∧ g *ᵥ bvec (esI k r a) = bvec (esI k r a) := hg
-  have e : ∀ v, X *ᵥ v = 0 → (g * NormedSpace.exp ((t : ℂ) • X)) *ᵥ v = g *ᵥ v := by
-    intro v hv
-    rw [← Matrix.mulVec_mulVec, exp_mulVec_fix _ v (by rw [Matrix.smul_mulVec, hv, smul_zero])]
-  show _ ∈ UH (Hpk k r) ∧ ∀ a : Fin r, a.val < i.val → _
-  refine ⟨WeylGroupFacts.uh_mul hg'.1 (exp_mem_uh (inU_rsmul hX.1 t)), fun a ha => ?_⟩
-  obtain ⟨h1, h2⟩ := hX.2 a ha
-  obtain ⟨g1, g2⟩ := hg'.2 a ha
-  exact ⟨by rw [e _ h1, g1], by rw [e _ h2, g2]⟩
+  apply _root_.Formalism.FourierDecayAlt.P.Qx2.curve_lev <;> assumption
 
 lemma rd_ext {i : Fin (r + 1)} {f : Mx k r → ℂ} (hf : SmoothLev k r i Set.univ f) {g : Mx k r}
     (hg : g ∈ Glev k r i) : ∃ L : Mx k r →L[ℝ] ℂ, ∀ X, inLieLev k r i X → RdV X f g = L (g * X) := by
@@ -204,7 +152,7 @@ lemma supp_conj {i : Fin (r + 1)} {A : Mx k r} (hA : SuppV i A) : SuppV i (Hpk k
 lemma supp_single (i : Fin (r + 1)) (c d : Fin (mdim k r i)) :
     SuppV i (Matrix.single (posL k r i c) (posL k r i d) (1 : ℂ)) := by
   intro p q h
-  rw [Matrix.single_apply, if_neg]
+  rw [Matrix.single_apply, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   rcases h with h | h <;> exact not_out_posL i _ h
 
@@ -220,29 +168,11 @@ lemma supp_hpart2 {i : Fin (r + 1)} {W : Mx k r} (hW : SuppV i W) : SuppV i (hpa
 
 lemma inU_hpart1 (W : Mx k r) :
     (hpart1 (Hpk k r) W)ᴴ * Hpk k r + Hpk k r * hpart1 (Hpk k r) W = 0 := by
-  unfold hpart1
-  rw [hpk_inv, Matrix.conjTranspose_smul, Matrix.conjTranspose_sub, Matrix.conjTranspose_mul,
-    Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, hpk_ct, Matrix.smul_mul,
-    Matrix.mul_smul, Matrix.sub_mul, Matrix.mul_sub]
-  simp only [Matrix.mul_assoc, WeylGroupFacts.hpk_sq, hpk_hpk, Matrix.mul_one]
-  have hs : star (1 / 2 : ℂ) = 1 / 2 := by simp
-  rw [hs, ← smul_add]
-  convert smul_zero (1 / 2 : ℂ) using 2
-  abel
+  apply _root_.Formalism.FourierDecayAlt.P.Qx2.hpart1_lie <;> assumption
 
 lemma inU_hpart2 (W : Mx k r) :
     (hpart2 (Hpk k r) W)ᴴ * Hpk k r + Hpk k r * hpart2 (Hpk k r) W = 0 := by
-  unfold hpart2
-  rw [hpk_inv, Matrix.conjTranspose_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_mul,
-    Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, hpk_ct, Matrix.smul_mul,
-    Matrix.mul_smul, Matrix.add_mul, Matrix.mul_add]
-  simp only [Matrix.mul_assoc, WeylGroupFacts.hpk_sq, hpk_hpk, Matrix.mul_one]
-  have hs : star (1 / (2 * Complex.I) : ℂ) = -(1 / (2 * Complex.I)) := by
-    rw [star_div₀, star_one, star_mul', Complex.star_def, Complex.conj_I]
-    simp [mul_neg, div_neg, map_ofNat]
-  rw [hs, neg_smul, neg_add_eq_zero]
-  congr 1
-  abel
+  apply _root_.Formalism.FourierDecayAlt.P.Qx2.hpart2_lie <;> assumption
 
 lemma lie_of {i : Fin (r + 1)} {X : Mx k r} (hU : Xᴴ * Hpk k r + Hpk k r * X = 0) (hS : SuppV i X) :
     inLieLev k r i X := by
@@ -345,13 +275,13 @@ lemma hpk_conj_single_apply (a' b' p q : Fin (2 * r + k + 1)) :
 
 lemma hpk_out_left {i : Fin (r + 1)} {p m : Fin (2 * r + k + 1)} (hp : Out i p) (hm : ¬ Out i m) :
     Hpk k r p m = 0 := by
-  rw [WeylGroupFacts.hpk_row, if_neg]
+  rw [WeylGroupFacts.hpk_row, ite_eq_right]
   intro h
   exact hm (h ▸ out_tau hp)
 
 lemma hpk_out_right {i : Fin (r + 1)} {q m : Fin (2 * r + k + 1)} (hq : Out i q) (hm : ¬ Out i m) :
     Hpk k r m q = 0 := by
-  rw [WeylGroupFacts.hpk_row, if_neg]
+  rw [WeylGroupFacts.hpk_row, ite_eq_right]
   intro h
   apply hm
   have := out_tau (k := k) hq
@@ -381,26 +311,26 @@ lemma conj_single_expand (i : Fin (r + 1)) (a b : Fin (mdim k r i)) :
   by_cases hp : Out i p
   · rw [hpk_out_left hp (not_out_posL i b), zero_mul]
     symm
-    refine Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun d _ => if_neg ?_
+    refine Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun d _ => ite_eq_right ?_
     rintro ⟨rfl, -⟩
     exact not_out_posL i c hp
   by_cases hq : Out i q
   · rw [hpk_out_right hq (not_out_posL i a), mul_zero]
     symm
-    refine Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun d _ => if_neg ?_
+    refine Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun d _ => ite_eq_right ?_
     rintro ⟨-, rfl⟩
     exact not_out_posL i d hq
   obtain ⟨c₀, rfl⟩ := posL_surj hp
   obtain ⟨d₀, rfl⟩ := posL_surj hq
-  rw [Finset.sum_eq_single c₀, Finset.sum_eq_single d₀, if_pos ⟨rfl, rfl⟩]
+  rw [Finset.sum_eq_single c₀, Finset.sum_eq_single d₀, ite_eq_left ⟨rfl, rfl⟩]
   · rfl
   · intro d _ hd
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨-, h⟩
     exact hd (posL_inj h)
   · intro h; exact absurd (Finset.mem_univ _) h
   · intro c _ hc
-    refine Finset.sum_eq_zero fun d _ => if_neg ?_
+    refine Finset.sum_eq_zero fun d _ => ite_eq_right ?_
     rintro ⟨h, -⟩
     exact hc (posL_inj h)
   · intro h; exact absurd (Finset.mem_univ _) h

@@ -1,58 +1,14 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.GlobalBasisAlgebra
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralFrameChangeIntegralInvertibleMatrix
 public import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
 public import Formalism.LocalToGlobal.ProjectiveLattices.IntAllProof
 public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
 public import Formalism.LocalToGlobal.ProjectiveLattices.UnifGen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.AlgebraicGeometry.Morphisms.SchemeTheoreticallyDominant
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.AlgebraicGeometry.Sites.Fpqc
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.ExtremalEpi
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -115,54 +71,7 @@ theorem spec_ext_two {R A : Type} [CommRing R] [CommRing A] (p1 p2 : R →+* A)
     (hs : Function.Surjective p1) (hn : ∀ x, p1 x = 0 → x * x = 0)
     (hk : ∀ x, p1 x = 0 → p2 x = 0 → x = 0) {X : Scheme.{0}} (f g : Sp R ⟶ X)
     (h1 : spMap p1 ≫ f = spMap p1 ≫ g) (h2 : spMap p2 ≫ f = spMap p2 ≫ g) : f = g := by
-  have hl1 : equalizer.lift (spMap p1) h1 ≫ equalizer.ι f g = spMap p1 := equalizer.lift_ι _ _
-  have hl2 : equalizer.lift (spMap p2) h2 ≫ equalizer.ι f g = spMap p2 := equalizer.lift_ι _ _
-  have hrange : Set.range (equalizer.ι f g) = Set.univ := by
-    rw [Set.eq_univ_iff_forall]
-    intro x
-    have hx : (show PrimeSpectrum R from x) ∈ Set.range (PrimeSpectrum.comap p1) := by
-      rw [range_comap_of_surjective _ _ hs]
-      intro a ha
-      have h3 : a * a ∈ (show PrimeSpectrum R from x).asIdeal := by
-        rw [hn a ha]; exact Ideal.zero_mem _
-      exact ((show PrimeSpectrum R from x).isPrime.mem_or_mem h3).elim id id
-    obtain ⟨y, hy⟩ := hx
-    refine ⟨equalizer.lift (spMap p1) h1 (show Sp A from y), ?_⟩
-    have h4 := congrArg (fun φ : Sp A ⟶ Sp R => φ (show Sp A from y)) hl1
-    exact h4.trans hy
-  have hc : (equalizer.ι f g).coborderRange = ⊤ := by
-    apply TopologicalSpace.Opens.ext
-    have h5 : Set.range (equalizer.ι f g) ⊆ coborder (Set.range (equalizer.ι f g)) := subset_coborder
-    rw [hrange] at h5
-    have h5' : (↑(equalizer.ι f g).coborderRange : Set (Sp R)) = coborder (Set.range (equalizer.ι f g)) := rfl
-    rw [h5', hrange]
-    exact Set.univ_subset_iff.1 h5
-  have hci : IsClosedImmersion (equalizer.ι f g) := by
-    have : IsIso (equalizer.ι f g).coborderRange.ι := by rw [hc, ← Scheme.topIso_hom]; infer_instance
-    rw [← (equalizer.ι f g).liftCoborder_ι]
-    infer_instance
-  obtain ⟨I, e, he⟩ := IsClosedImmersion.Spec_iff.mp hci
-  have hI : ∀ (p : R →+* A) (l : Sp A ⟶ equalizer f g), l ≫ equalizer.ι f g = spMap p → ∀ x ∈ I, p x = 0 := by
-    intro p l hl x hx
-    rw [he, ← Category.assoc] at hl
-    have h6 : Spec.map (Spec.preimage (l ≫ e.hom)) ≫ Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk I)) =
-        Spec.map (CommRingCat.ofHom p) := by rw [Spec.map_preimage]; exact hl
-    rw [← Spec.map_comp] at h6
-    have h7 := Spec.map_injective h6
-    have h8 := congrArg (fun φ => φ.hom x) h7
-    simp only [CommRingCat.hom_comp, CommRingCat.hom_ofHom, RingHom.comp_apply] at h8
-    rw [← h8, Ideal.Quotient.eq_zero_iff_mem.2 hx, map_zero]
-  have hbot : I = ⊥ := by
-    refine le_bot_iff.mp fun x hx => ?_
-    exact hk x (hI p1 _ hl1 x hx) (hI p2 _ hl2 x hx)
-  subst hbot
-  have hiso : IsIso (equalizer.ι f g) := by
-    rw [he]
-    have : IsIso (CommRingCat.ofHom (Ideal.Quotient.mk (⊥ : Ideal (CommRingCat.of R)))) := by
-      rw [ConcreteCategory.isIso_iff_bijective]
-      exact (RingEquiv.quotientBot R).symm.bijective
-    infer_instance
-  rw [← cancel_epi (equalizer.ι f g), equalizer.condition]
+  apply +allowSynthFailures _root_.GlobalTheory.FrameTangent.spec_ext_two <;> assumption
 
 end Ext
 
@@ -374,8 +283,6 @@ section TanSAB
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {X0 : Scheme.{0}} (t : SAB H X0)
 variable {S : Type} [CommRing S] (x0 : Sp S ⟶ X0)
 
@@ -420,8 +327,6 @@ section Sat
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 section Gen
 
 variable {X0 : Scheme.{0}} {G : Over X0} [GrpObj G]
@@ -454,11 +359,11 @@ theorem smT_zero_jetTan {S : Type} [CommRing S] (x0 : Sp S ⟶ X0) {κ : Type} [
       Algebra.ofId S (DualNumber S) ((jetAug : Jet S κ (m + 1) →ₐ[S] S) (Ideal.Quotient.mk _ (MvPolynomial.X i)))
     rw [h1, h2, map_zero]
     by_cases h : i = ℓ
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       show TrivSqZeroExt.map _ (TrivSqZeroExt.inr 1) = 0
       rw [TrivSqZeroExt.map_inr]
       simp
-    · rw [if_neg h, map_zero]
+    · rw [ite_eq_right h, map_zero]
   unfold smT
   rw [← Category.assoc, homAt_comp, e, ← homAt_comp, Category.assoc, hx, MonObj.comp_one]
 
@@ -566,8 +471,6 @@ section Reb
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section GenA
 

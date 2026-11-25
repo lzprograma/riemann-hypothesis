@@ -2,52 +2,7 @@ module
 
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DiagonalQuotientEigen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletionLines
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -143,11 +98,11 @@ theorem exists_comb {S : Type} [CommRing S] (h : ℕ → S⟦X⟧) (hh : ∀ n, 
     refine ⟨fun n => if n = m then constantCoeff z * ↑hu.unit⁻¹ else c n, ?_⟩
     rw [Finset.sum_range_succ]
     beta_reduce
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have hsum : ∑ n ∈ Finset.range m,
         (if n = m then constantCoeff z * ↑hu.unit⁻¹ else c n) • ((X : S⟦X⟧) ^ n * h n)
           = ∑ n ∈ Finset.range m, c n • ((X : S⟦X⟧) ^ n * h n) :=
-      Finset.sum_congr rfl fun n hn => by rw [if_neg (Finset.mem_range.mp hn).ne]
+      Finset.sum_congr rfl fun n hn => by rw [ite_eq_right (Finset.mem_range.mp hn).ne]
     rw [hsum]
     have hX : (X : S⟦X⟧) ∣ z - (constantCoeff z * ↑hu.unit⁻¹) • h m := by
       rw [X_dvd_iff, smul_eq_C_mul, map_sub, map_mul, constantCoeff_C, mul_assoc,

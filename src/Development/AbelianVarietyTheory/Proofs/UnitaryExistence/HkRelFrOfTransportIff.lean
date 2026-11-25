@@ -61,8 +61,6 @@ namespace GlobalTheory.HeckeFrCompare
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.IndefiniteRowSideFullHecke.FibrePushforwardExistenceTori
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 theorem ext_of_points {Ω : Type} [Field Ω] [IsAlgClosed Ω] {T Y Z : Scheme.{0}} (t : T ⟶ Sp Ω)
     [LocallyOfFiniteType t] [IsReduced T] (s : Y ⟶ Z) [IsSeparated s] {f g : T ⟶ Y} (H' : f ≫ s = g ≫ s)
     (Hq : ∀ q : Sp Ω ⟶ T, q ≫ t = 𝟙 _ → q ≫ f = q ≫ g) : f = g := by

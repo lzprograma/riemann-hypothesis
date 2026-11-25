@@ -127,11 +127,11 @@ theorem attainsOK_of (hdich : X.Alt ∨ ∀ a, X.big 0 a) (hj : X.j' < X.n) (b :
     · have hl : 0 < V.l ^ i * y := Nat.mul_pos (pow_pos V.l_prime.pos i) (Nat.pos_of_ne_zero hy)
       have w1 : X.n ≤ X.rkF g a := by
         apply hwt g a X.n
-        simp only [GlobalTheory.wt, and_self, if_true]
+        simp only [GlobalTheory.wt, and_self, ite_true]
         omega
       have w2 : X.n ≤ X.rkF (1 - g) (a + (i : ZMod d)) := by
         apply hwt (1 - g) (a + (i : ZMod d)) X.n
-        simp only [GlobalTheory.wt, and_self, if_true]
+        simp only [GlobalTheory.wt, and_self, ite_true]
         omega
       have hao := alt_odd_of_big X hdich (big_of_le_rk X hj w1) (big_of_le_rk X hj w2)
       refine ⟨(GlobalTheory.bi g a i y).kind X.n, (rowsOK_iff _ _ _ _).2 ⟨?_, ?_⟩, h⟩

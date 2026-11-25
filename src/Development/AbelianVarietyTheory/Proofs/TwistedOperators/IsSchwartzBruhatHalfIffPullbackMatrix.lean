@@ -49,7 +49,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder Topology
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HalfCoordSB
 
@@ -130,7 +129,7 @@ theorem isSBHalf_iff_pull : ∀ (D : D7) (S T : HSp D) (v : FinPl D) (m n : ℕ)
     · by_cases htH : IsHalf a t
       · have h' : IsHalf a (t + (p ^ N) • u) := isHalf_add htH (isHalf_nsmul hhu _)
         have hm : ∀ x, Φ (x + (p ^ N) • κ u) = Φ x := hN1 (κ u) ⟨u, ⟨hu, hhu⟩, rfl⟩
-        simp only [pull, if_pos htH, if_pos h']
+        simp only [pull, ite_eq_left htH, ite_eq_left h']
         rw [hadd, hns]
         exact hm (κ t)
       · have h' : ¬ IsHalf a (t + (p ^ N) • u) := by
@@ -138,7 +137,7 @@ theorem isSBHalf_iff_pull : ∀ (D : D7) (S T : HSp D) (v : FinPl D) (m n : ℕ)
           apply htH
           have hc' := isHalf_sub hc (isHalf_nsmul hhu (p ^ N))
           simpa using hc'
-        simp only [pull, if_neg htH, if_neg h']
+        simp only [pull, ite_eq_right htH, ite_eq_right h']
     · have htH : IsHalf a t := by
         by_contra hh
         exact ht (by simp [pull, hh])
@@ -196,9 +195,9 @@ theorem isSBHalf_iff_pull : ∀ (D : D7) (S T : HSp D) (v : FinPl D) (m n : ℕ)
         exact ⟨_, hmem, inv_smul_smul₀ hkF x⟩
     · funext t
       by_cases ht : IsHalf a t
-      · simp only [pull, if_pos ht]
+      · simp only [pull, ite_eq_left ht]
         rw [hgk t ht]
-      · simp only [pull, if_neg ht]
+      · simp only [pull, ite_eq_right ht]
         by_contra hne
         exact ht (hsupp t hne)
 

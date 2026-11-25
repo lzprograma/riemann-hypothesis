@@ -28,8 +28,7 @@ theorem exists_basis {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) :
   obtain ⟨-, hc, h2, h⟩ := hσ
   let τ : E →+* ℂ := Classical.choice (inferInstance : Nonempty (E →+* ℂ))
   have hnr : ∃ x : E, star (τ x) ≠ τ x := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hreal : NumberField.ComplexEmbedding.IsReal τ := by
       ext x
       exact hcon x

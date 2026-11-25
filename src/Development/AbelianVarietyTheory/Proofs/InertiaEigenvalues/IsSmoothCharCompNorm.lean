@@ -85,8 +85,7 @@ theorem lt_one_of_lt_one (hc : Continuous (algebraMap k k')) {z : k} (h : valuat
 theorem lt_one_iff (hc : Continuous (algebraMap k k')) (z : k) :
     valuation k' (algebraMap k k' z) < 1 ↔ valuation k z < 1 := by
   refine ⟨fun h => ?_, lt_one_of_lt_one hc⟩
-  by_contra hz
-  push_neg at hz
+  by_contra! hz
   have hz0 : z ≠ 0 := by
     rintro rfl; simp at hz
   rcases hz.lt_or_eq with hlt | heq

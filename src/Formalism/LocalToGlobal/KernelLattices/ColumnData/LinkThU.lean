@@ -23,8 +23,6 @@ variable {D : Car} {N N' : ℕ}
 
 private def sS (z w : VC D N N') : ℂ := ∑ τ, ∑ i, ∑ j, z τ i j * (starRingEnd ℂ) (w τ i j)
 
-private theorem Hf_eq (T : Tor D) (z w : VC D N N') : Formalism.L2.Ker.Cd.TaylorLogMetric.Hf D T z w = sS z w / (area T.abelian₂ : ℂ) := rfl
-
 end Formalism.L2.Ker.Cd.IntegralLatticeDensity
 
 namespace Formalism.L2.Ker.Cd.IntegralLatticeDensity.FL
@@ -455,8 +453,8 @@ theorem La_lower {N N' : ℕ} (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E
   have hA' : ∀ i j, IsIntegral ℤ (A' i j) := by
     intro i j
     by_cases h : i = i0 ∧ j = j0
-    · simp only [A', if_pos h]; exact (t * b).isIntegral_coe
-    · simp only [A', if_neg h]; exact isIntegral_zero
+    · simp only [A', ite_eq_left h]; exact (t * b).isIntegral_coe
+    · simp only [A', ite_eq_right h]; exact isIntegral_zero
   have hmem : (fun i j => if i = i0 ∧ j = j0 then (M1 : D.host.E) * ((t : D.host.E) * b) else 0 :
       Matrix (Fin N') (Fin N) D.host.E) ∈ YYl D L L' := by
     have e : (fun i j => if i = i0 ∧ j = j0 then (M1 : D.host.E) * ((t : D.host.E) * b) else 0 :
@@ -480,15 +478,5 @@ theorem La_lower {N N' : ℕ} (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E
   · simp
 
 end Formalism.L2.Ker.Cd.IntegralLatticeDensity.FL
-
-namespace Formalism.L2.Ker.Cd.IntegralLatticeDensity
-
-open Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity hiding CMConjEmb CMTransitive DedekindFactor LinkChi LinkPer LinkThIndep LinkThU LinkThUFam ThetaNormIndependent theta_norm_independent_of_bounds th22U theta_norm_unitary_invariant_of_bounds
-
-open NumberField Formalism.BasicNotions MeasureTheory
-open Formalism.L2.Ker.Cd.TaylorLogMetric
-open Formalism.MainNotions.TaylorLogMetric hiding admitted AdmittedStatements AllSplit CoefIn DataIn DualB EqAt EqAway FamE Hf IdE InProd Iop IsChi IsComb IsCurveIdeal IsDiscriminantTwelfthRootOfIdealLattice IsFrobC IsIdem JetsInt La LocBasis LocBasisW Mono N1 NNBasis OrthoBasisW Orthonormal Pos Qd QdB Stmt TVar TVarB Th ThSp Tor TorsPrime U VC Wop XiF YYl adm1 al atLog chK chg chgB coordV der detId logDerivativeAtOne ellT embT embV eq22 fF fnConj hYY hh homL int22 jet kap lamOf letterOf liftY logOmVal meanLogNormSq meanLogOm mmM mom22 LargerSupportMomentCondition mono normSq pSer pairN per22 posEmb posG aux₃ pull qH sE sgm str22 tauEmb tauSg taylor th22 tor0 torConj vec22 vecN wPh zB
-
-end Formalism.L2.Ker.Cd.IntegralLatticeDensity
 
 end

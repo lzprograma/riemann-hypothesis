@@ -135,7 +135,7 @@ theorem standard_hermitian_apply (x : Ad F) : H1 F x = phi1 F (homeomorphMixedSp
 
 theorem cosetIndicator_one_of_mem {z : Af F} (h : z ∈ idealFiniteAdeles (1 : (FractionalIdeal (𝓞 F)⁰ F)ˣ)) :
     cosetIndicator 1 0 z = 1 := by
-  rw [cosetIndicator_apply, sub_zero, if_pos h]
+  rw [cosetIndicator_apply, sub_zero, ite_eq_left h]
 
 theorem cosetIndicator_real (z : Af F) : ∃ r : ℝ, 0 ≤ r ∧ cosetIndicator (1 : (FractionalIdeal (𝓞 F)⁰ F)ˣ) 0 z = (r : ℂ) := by
   rw [cosetIndicator_apply]
@@ -465,8 +465,8 @@ theorem integrable_gB_pos : Integrable gB posRealMeasure := by
   have he : ((expPos x : {r : ℝ // 0 < r}) : ℝ) = Real.exp x := rfl
   simp only [Function.comp_apply, gB, he]
   by_cases h : 0 ≤ x
-  · rw [if_pos (Real.one_le_exp h), abs_of_nonneg h, Real.exp_neg]
-  · rw [if_neg (by rw [Real.one_le_exp_iff]; exact h), abs_of_neg (not_le.1 h), neg_neg]
+  · rw [ite_eq_left (Real.one_le_exp h), abs_of_nonneg h, Real.exp_neg]
+  · rw [ite_eq_right (by rw [Real.one_le_exp_iff]; exact h), abs_of_neg (not_le.1 h), neg_neg]
 
 theorem integrable_gB : Integrable (fun p : {r : ℝ // 0 < r} × normOneSubgroup F => gB p.1) (muE F) := by
   have : IsFiniteMeasure ((normOneMeasure F).restrict (normOneFundamentalDomain F)) :=
@@ -518,7 +518,7 @@ theorem theta_prod_le (hH : H1 F ∈ schwartzBruhat F) (hpos : ∀ x, H1 F x = (
   · have d1 := hA1 _ hu1 t h1
     have g2 := hB2 _ hu2 t⁻¹ (by rw [hinv]; exact inv_le_one_of_one_le₀ h1)
     rw [hinv, inv_inv] at g2
-    have hg : gB t = (t : ℝ)⁻¹ := if_pos h1
+    have hg : gB t = (t : ℝ)⁻¹ := ite_eq_left h1
     rw [hg]
     calc θ1 * θ2 ≤ (A1 * ((t : ℝ) ^ 2)⁻¹) * (B2 * t) := mul_le_mul d1 g2 n2 (n1.trans d1)
       _ = (A1 * B2) * (t : ℝ)⁻¹ := by field_simp
@@ -527,7 +527,7 @@ theorem theta_prod_le (hH : H1 F ∈ schwartzBruhat F) (hpos : ∀ x, H1 F x = (
     have g1 := hB1 _ hu1 t h1.le
     have d2 := hA2 _ hu2 t⁻¹ (by rw [hinv]; exact (one_le_inv₀ ht).2 h1.le)
     rw [hinv] at d2
-    have hg : gB t = (t : ℝ) := if_neg (not_le.2 h1)
+    have hg : gB t = (t : ℝ) := ite_eq_right (not_le.2 h1)
     rw [hg]
     calc θ1 * θ2 ≤ (B1 * (t : ℝ)⁻¹) * (A2 * (((t : ℝ)⁻¹) ^ 2)⁻¹) := mul_le_mul g1 d2 n2 (n1.trans g1)
       _ = (B1 * A2) * (t : ℝ) := by field_simp
@@ -1222,7 +1222,7 @@ theorem char_xAd (ξ : F) (x : UpperTheory.V.TR.Rinf F) :
       (((algebraMap F (Ad F) ξ).1 * UpperTheory.V.TR.infEq F x) w)).re) = _
     refine Finset.sum_congr rfl fun w _ => ?_
     have hm : (w.mult : ℝ) = 1 := by
-      rw [InfinitePlace.mult, if_pos (IsTotallyReal.isReal w)]; simp
+      rw [InfinitePlace.mult, ite_eq_left (IsTotallyReal.isReal w)]; simp
     have h1 : InfinitePlace.Completion.extensionEmbedding w
         (((algebraMap F (Ad F) ξ).1 * UpperTheory.V.TR.infEq F x) w) = (w.embedding ξ) * ((x w : ℝ) : ℂ) := by
       show InfinitePlace.Completion.extensionEmbedding w ((algebraMap F (Ad F) ξ).1 w * UpperTheory.V.TR.infEq F x w) = _
@@ -1283,8 +1283,8 @@ theorem fin_le (c : HeightOneSpectrum (𝓞 F) → ℕ) (A Z : Ad F) (P Q : Prop
       rw [WithZero.exp_le_exp]
       have : (0 : ℤ) ≤ dd w := by unfold dd; positivity
       omega
-    rw [if_pos h, if_pos hq]
-  · rw [if_neg h, norm_zero]
+    rw [ite_eq_left h, ite_eq_left hq]
+  · rw [ite_eq_right h, norm_zero]
     exact norm_nonneg _
 
 theorem kernF_le (c : HeightOneSpectrum (𝓞 F) → ℕ) (A Z : Ad F) :
@@ -1410,9 +1410,9 @@ def rowEquiv : Fˣ ⊕ (Fˣ × F) ≃ {ξ : Fin 2 → F // ξ ≠ 0} where
     · simp [a.ne_zero]
   right_inv ξ := by
     by_cases h : ξ.1 0 = 0
-    · simp only [dif_pos h]
+    · simp only [dite_eq_left h]
       ext i; fin_cases i <;> simp [h]
-    · simp only [dif_neg h]
+    · simp only [dite_eq_right h]
       ext i; fin_cases i <;> simp
 
 theorem main_of (hsl : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (c : HeightOneSpectrum (𝓞 F) → ℕ),
@@ -1459,10 +1459,6 @@ theorem main_of (hsl : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F
   ring
 
 end UpperTheory.HilbertEisensteinWeightOne.FourierExpansionEisenstein.L3
-
-namespace UpperTheory.HilbertEisensteinWeightOne.FourierExpansionEisenstein
-
-end UpperTheory.HilbertEisensteinWeightOne.FourierExpansionEisenstein
 
 namespace UpperTheory.HilbertEisensteinWeightOne.FourierExpansionEisenstein
 
@@ -1691,7 +1687,7 @@ theorem sExp_assembly (hPt : SPoint) (hZ : SZero) (hNl : SNull) (hA : SAbs) (hU 
   have hout : ∀ ξ ∉ Set.range e, (fun ξ : Fˣ => ∫ p, Sf ξ p ∂(muE F)) ξ = 0 := by
     intro ξ hξ
     simp only [hcoef]
-    rw [if_neg, mul_zero, mul_zero]
+    rw [ite_eq_right, mul_zero, mul_zero]
     intro hpos
     exact hξ ⟨⟨ξ, hpos⟩, Units.ext rfl⟩
   have h2 := (he.hasSum_iff hout).2 hSint

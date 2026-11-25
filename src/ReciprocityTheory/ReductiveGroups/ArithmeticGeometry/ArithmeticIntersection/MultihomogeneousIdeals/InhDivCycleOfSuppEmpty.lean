@@ -66,7 +66,7 @@ theorem inh_divCycle_of_supp (P : Ideal (MRingOver F ι)) (s : MRingOver F ι) (
   rw [divCycle, Finsupp.ofSupportFinite_coe, Finsupp.single_apply, hsupp, Set.mem_singleton_iff]
   by_cases h : W = Q
   · subst h; simp
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 
 theorem inh_divCycle_of_supp_empty (P : Ideal (MRingOver F ι)) (s : MRingOver F ι)
     (hsupp : divSupp P s = ∅) : divCycle P s = 0 := by
@@ -97,12 +97,6 @@ theorem inh_cycEval_single (J : Ideal (MRingOver F ι) → ℤ) (W : Ideal (MRin
 
 end Div
 
-section Kill
-
-variable {σ : Type*} (F : Type*) [Field F] [DecidableEq σ] (S : Finset σ)
-
-end Kill
-
 section Homog
 
 variable {K : Type*} [Fintype K] [DecidableEq K] {ι : K → Type*} [∀ k, Fintype (ι k)] {F : Type*}
@@ -119,12 +113,12 @@ theorem inh_homog_X_pow (p : Σ k, ι k) (m : ℕ) :
   · subst hk
     rw [Finset.sum_eq_single i']
     · simp
-    · intro b _ hb; rw [Finsupp.single_apply, if_neg]; intro h; exact hb (sigma_mk_injective h).symm
+    · intro b _ hb; rw [Finsupp.single_apply, ite_eq_right]; intro h; exact hb (sigma_mk_injective h).symm
     · simp
-  · rw [Pi.single_apply, if_neg hk]
+  · rw [Pi.single_apply, ite_eq_right hk]
     apply Finset.sum_eq_zero
     intro b _
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro h
     exact hk (congrArg Sigma.fst h).symm
 

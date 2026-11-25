@@ -136,7 +136,7 @@ lemma lpFeasible_eq (l d : ℕ) [NeZero d] (D : ZMod d → ℝ) :
         rcases h with h | h
         · exact h a
         · omega
-      simp only [this, if_false]
+      simp only [this, ite_false]
     · intro s
       simp only [mul_ite, mul_zero]
       rw [sum_range_ite, sum_range_ite]
@@ -147,8 +147,9 @@ lemma lpF_eq (l d : ℕ) [NeZero d] (D : ZMod d → ℝ) : lpF l d D = Formalism
   unfold lpF Formalism.IncomingBounds.Fnum Formalism.IncomingBounds.maxFlow Formalism.IncomingBounds.gam
   rw [lpFeasible_eq]
 
-theorem lemmaFe : LemmaFe := by
-  intro l d _ hl hd _ D _ hD
+theorem fnum_eq_of_demand_ratio_le (l d : ℕ) [NeZero d] (hl : 2 ≤ l) (hd : 2 ≤ d)
+    (D : ZMod d → ℝ) (hD : ∀ a a', D a' ≤ l * D a) :
+    Formalism.IncomingBounds.Fnum l d D = Formalism.IncomingBounds.rho l * ∑ a, D a := by
   have hl' : (2 : ℝ) ≤ l := by exact_mod_cast hl
   have hp : (0 : ℝ) < l + 1 := by linarith
   have hg : IsGreatest (lpFeasible l d D) ((∑ a, D a) / ((l : ℝ) + 1)) := by
@@ -180,6 +181,9 @@ theorem lemmaFe : LemmaFe := by
   field_simp
   ring
 
+theorem lemmaFe : LemmaFe :=
+  fun l d _ hl hd _ D _ hD => fnum_eq_of_demand_ratio_le l d hl hd D hD
+
 lemma pos_add (N : NumDatum) (l : ℕ) (z : RPl N.R) (s t : ℕ) :
     N.pos l (N.pos l z s) t = N.pos l z (s + t) := by
   unfold NumDatum.pos
@@ -194,7 +198,7 @@ lemma pos_mul_period (N : NumDatum) (l : ℕ) (z : RPl N.R) (c : ℕ) :
     N.pos l z (N.ordP l * c) = z := by
   unfold NumDatum.pos NumDatum.ordP
   by_cases h : N.cls l = PrimeClass.signal
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     refine Prod.ext ?_ ?_
     · have : ¬ Odd (2 * addOrderOf (2 • N.hP l) * c) := by
         rw [Nat.not_odd_iff_even, mul_assoc]; exact even_two_mul _
@@ -203,7 +207,7 @@ lemma pos_mul_period (N : NumDatum) (l : ℕ) (z : RPl N.R) (c : ℕ) :
     · dsimp only
       rw [show 2 * addOrderOf (2 • N.hP l) * c = c * addOrderOf (2 • N.hP l) * 2 by ring,
         mul_smul, mul_smul, addOrderOf_nsmul_eq_zero, smul_zero, add_zero]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Prod.ext ?_ ?_
     · simp [h]
     · dsimp only
@@ -238,7 +242,7 @@ theorem fInertReps : FInertReps := by
   intro N j l Z hZ hc hn
   constructor
   · unfold NumDatum.FInert
-    rw [if_neg hn, sum_reps N l Z hZ]
+    rw [ite_eq_right hn, sum_reps N l Z hZ]
     have hd : (N.ordP l : ℝ) ≠ 0 := Nat.cast_ne_zero.2 (NeZero.ne _)
     simp only [FOrb_step, Finset.sum_const, Finset.card_univ, ZMod.card, nsmul_eq_mul]
     rw [← Finset.mul_sum, mul_div_cancel_left₀ _ hd]
@@ -249,7 +253,7 @@ theorem fInertReps : FInertReps := by
     unfold NumDatum.FjP
     have hr : N.cls l ≠ PrimeClass.ramD := by
       rcases hc with h | h <;> rw [h] <;> simp
-    rw [if_neg (by tauto), if_neg hr, if_pos ⟨hc, hX⟩]
+    rw [ite_eq_right (by tauto), ite_eq_right hr, ite_eq_left ⟨hc, hX⟩]
 
 theorem main : ThlEq ∧ LevelBound ∧ LemmaFe ∧ FInertReps :=
   ⟨thlEq, levelBound, lemmaFe, fInertReps⟩

@@ -14,59 +14,9 @@ public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.Tr
 public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.TransposeWordsProofs.FockPairingRowAction
 public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.TransposeWordsProofs.ProdBlockEmbMonomial
 public import Formalism.ThetaLogCoordinates.SandwichModelDomains.FinalW
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.TransposeWordsProofs.CwlApplyWordAppendSingle, Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.TransposeWordsProofs.LowerTriangularOverField, Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.TransposeWordsProofs.WeylFormNondegenerateGlobal
@@ -237,7 +187,7 @@ theorem cwl_coeffT_Phi (L : List (Fin r × Fin r × (Fin r × Fin n)))
       simp only [Finsupp.single_le_iff]
     simp only [key, ih hw]
     rw [Finset.sum_eq_single (d v)]
-    · simp only [le_refl, if_true]
+    · simp only [le_refl, ite_true]
       have hfill : w.map (fun l => (l.1, l.2.1, (d - Finsupp.single v (d v)) l.2.2)) =
           w.map (fun l => (l.1, l.2.1, d l.2.2)) := by
         apply List.map_congr_left
@@ -343,13 +293,13 @@ theorem cw_foldl_point (L : List (Fin r × Fin r × (Fin r × Fin n)))
       intro hmem
       obtain ⟨x, hx, hxe⟩ := List.mem_map.mp hmem
       exact (h2l x hx l (by simp)).2 hxe
-    rw [if_neg hno, add_zero]
+    rw [ite_eq_right hno, add_zero]
     by_cases hv : v = l.2.2
     · subst hv
       have e1 : l.2.2.1 = l.2.1 := hl.1
       have e2 : idFrame (MvPolynomial (Fin r × Fin n) R) r n (l.1, l.2.2.2) = 1 := by
         simp [idFrame, hl.2.1]
-      rw [if_neg hlw, if_pos e1, e2]
+      rw [ite_eq_right hlw, ite_eq_left e1, e2]
       simp
     · have hcond : ¬ (v.1 = l.2.1 ∧ l.1.val = v.2.val) := by
         rintro ⟨c1, c2⟩
@@ -508,7 +458,7 @@ theorem coeffWord' : CoeffWord := by
     rw [hmem] at hu
     simp [cwStrict, hu]
   have key := cwl_coeffT_Phi (cwLetters r n) hnd F (cwStrict e)
-  rw [if_pos hcond, ← hw] at key
+  rw [ite_eq_left hcond, ← hw] at key
   rw [← key, cw_eval_coeffT]
   have hid : (fun v => (C (idFrame R r n v) : MvPolynomial (Fin r × Fin n) R)) =
       idFrame (MvPolynomial (Fin r × Fin n) R) r n := by
@@ -522,10 +472,10 @@ theorem coeffWord' : CoeffWord := by
   rw [hpt, cwl_iota, eval_map, eval₂_eq', coeff_sum]
   simp only [coeff_C_mul, cw_prod_pt]
   rw [Finset.sum_eq_single e]
-  · rw [if_pos he, coeff_monomial, if_pos rfl, mul_one]
+  · rw [ite_eq_left he, coeff_monomial, ite_eq_left rfl, mul_one]
   · intro m hm hne
     split_ifs with hL
-    · rw [coeff_monomial, if_neg, mul_zero]
+    · rw [coeff_monomial, ite_eq_right, mul_zero]
       intro hs
       apply hne
       refine cw_ext m e hL he hs fun s => ?_

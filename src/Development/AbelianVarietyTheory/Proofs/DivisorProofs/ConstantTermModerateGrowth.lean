@@ -69,7 +69,6 @@ theorem height_mul_left_le {Ω : Set (GL (Fin a) (Cinf E))} (hΩ : IsCompact Ω)
     (Units.continuous_coe_inv : Continuous fun u : GL (Fin a) (Cinf E) => (u⁻¹).val)
   obtain ⟨M1, h1⟩ := hΩ.exists_bound_of_continuousOn c1.continuousOn
   obtain ⟨M2, h2⟩ := hΩ.exists_bound_of_continuousOn c2.continuousOn
-  have M0 : (0 : ℝ) ≤ max 0 (max M1 M2) := le_max_left _ _
   have ha : (0 : ℝ) ≤ a := Nat.cast_nonneg a
   refine ⟨1 + a * max 0 (max M1 M2), by positivity, fun c hc y => ?_⟩
   have m1 : ‖toL c.val‖ ≤ max 0 (max M1 M2) := (h1 c hc).trans ((le_max_left _ _).trans (le_max_right _ _))

@@ -183,7 +183,7 @@ theorem _root_.GlobalTheory.TopLevelShare.main : ∀ {F : Type} [Field F] [Valua
   have hsupp : Function.support φ ⊆ A := by
     intro w hw
     by_contra h
-    exact hw (by rw [hφval, if_neg (fun hc => h hc.1)])
+    exact hw (by rw [hφval, ite_eq_right (fun hc => h hc.1)])
   have hfin : ((fun w : S.V × S.V => (w : (S.V × S.V) ⧸ B)) '' Function.support φ).Finite := by
     let h : A ⧸ B.addSubgroupOf A →+ (S.V × S.V) ⧸ B := QuotientAddGroup.map (B.addSubgroupOf A) B A.subtype (fun x hx => hx)
     refine (Set.finite_range h).subset ?_

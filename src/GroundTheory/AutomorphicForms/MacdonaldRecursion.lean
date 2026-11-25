@@ -18,18 +18,9 @@ variable {n : ℕ}
 
 theorem antitone_of_forall_succ_le {f : Fin n → ℤ}
     (h : ∀ i j : Fin n, (j : ℕ) = i + 1 → f j ≤ f i) : Antitone f := by
-  have key : ∀ d : ℕ, ∀ a b : Fin n, (b : ℕ) = a + d → f b ≤ f a := by
-    intro d
-    induction d with
-    | zero =>
-      intro a b hab
-      rw [show b = a from Fin.ext (by omega)]
-    | succ d ih =>
-      intro a b hab
-      have hc : (a : ℕ) + d < n := by omega
-      exact (h ⟨a + d, hc⟩ b (by simp only; omega)).trans (ih a ⟨a + d, hc⟩ rfl)
-  intro a b hab
-  exact key (b - a) a b (by have := Fin.le_def.1 hab; omega)
+  cases n with
+  | zero => exact fun i => i.elim0
+  | succ n => exact Fin.antitone_iff_succ_le.2 fun i => h i.castSucc i.succ rfl
 
 theorem lamS_apply (S : Finset (Fin n)) (i : Fin n) : lamS S i = if i ∈ S then 1 else 0 := rfl
 
@@ -42,7 +33,7 @@ theorem exists_ascent {l : Fin n → ℤ} (hl : Antitone l) {S : Finset (Fin n)}
   refine antitone_of_forall_succ_le fun i j hij => ?_
   have hle : l j ≤ l i := hl (Fin.le_def.2 (by omega))
   simp only [Pi.add_apply, lamS_apply]
-  by_cases hi : i ∈ S <;> by_cases hj : j ∈ S <;> simp only [hi, hj, if_true, if_false]
+  by_cases hi : i ∈ S <;> by_cases hj : j ∈ S <;> simp only [hi, hj, ite_true, ite_false]
   · omega
   · omega
   · rcases lt_or_eq_of_le hle with hlt | heq
@@ -101,7 +92,7 @@ theorem exists_perm_antitone {V : Type*} (H : (Fin n → ℤ) → V)
       exact hσ
     · rw [Equiv.Perm.coe_mul, ← Function.comp_assoc, hcomp, hHσ, ← hcomp]
       refine hH _ i j hij ?_
-      simp only [Pi.add_apply, lamS_apply, hiS, hjS, if_true, if_false, hlij]
+      simp only [Pi.add_apply, lamS_apply, hiS, hjS, ite_true, ite_false, hlij]
       ring
 
 def initSeg {r : ℕ} (hr : r ≤ n) : Finset (Fin n) := Finset.univ.map (Fin.castLEEmb hr)
@@ -309,7 +300,7 @@ theorem eq_zero_of_recursion (κ : Finset (Fin n) → ℝ) (hκ : ∀ S, 0 < κ 
       rw [hl_def]
       simp only [Pi.sub_apply, lamS_apply, hT, mem_initSeg]
       have := hν hij
-      by_cases hi : (i : ℕ) < r <;> by_cases hj : (j : ℕ) < r <;> simp only [hi, hj, if_true, if_false]
+      by_cases hi : (i : ℕ) < r <;> by_cases hj : (j : ℕ) < r <;> simp only [hi, hj, ite_true, ite_false]
       · have := hbefore i hi
         have := hbefore j hj
         linarith

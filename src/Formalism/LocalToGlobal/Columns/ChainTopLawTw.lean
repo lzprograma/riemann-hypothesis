@@ -16,14 +16,6 @@ namespace Formalism.L2.Col
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Ker
 
-section FtY
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks}
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu))
-
-end FtY
-
 section Core
 
 open Classical
@@ -48,31 +40,7 @@ open Classical
 
 variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : HeightOneSpectrum (𝓞 E)} {q : ℕ}
 
-private theorem redP_mul_of_intAt {a b : E} (ha : IntAt P a) (hb : IntAt P b) :
-    redP P (a * b) = redP P a * redP P b := by
-  haveI := P.isPrime
-  obtain ⟨ra, sa, hsa, hra⟩ := ha
-  obtain ⟨rb, sb, hsb, hrb⟩ := hb
-  have hs : sa * sb ∉ P.asIdeal := fun h => (P.isPrime.mem_or_mem h).elim hsa hsb
-  have h3 : algebraMap (𝓞 E) E (sa * sb) * (a * b) = algebraMap (𝓞 E) E (ra * rb) := by
-    rw [map_mul, map_mul, ← hra, ← hrb]; ring
-  have e1 := reduction_spec P hsa hra
-  have e2 := reduction_spec P hsb hrb
-  have e3 := reduction_spec P hs h3
-  have hs0 : Ideal.Quotient.mk P.asIdeal (sa * sb) ≠ 0 := by
-    rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
-  apply mul_left_cancel₀ hs0
-  rw [e3, map_mul, map_mul, ← e1, ← e2]; ring
-
 end Core2
-
-section Core3
-
-open Classical
-
-variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : HeightOneSpectrum (𝓞 E)} {q : ℕ}
-
-end Core3
 
 section K1
 

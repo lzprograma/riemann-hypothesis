@@ -123,40 +123,10 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSub
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.EmbedsLevelZeroDepthZero
 import Mathlib.RingTheory.PiTensorProduct
+import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.EulerdShift
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.GamLocOf, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Reps, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.IndTorOf, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchBCOf, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SideGCenOf, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SideGOf, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppBridge, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.UpDownOf, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.CrossG
-
--- ===== clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.GamLocOf =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.GamLocOf", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.HodgeTateFromSandwich\nimport Formalism.DoubleCosetMeasures.Statement\npublic import GroundTheory.AutomorphicForms.GL2.GJFEInduced\nimport GroundTheory.AutomorphicForms.GL2.GJFEInducedLevi\npublic import GroundTheory.AutomorphicForms.GL2.GJFELevi\nimport GroundTheory.AutomorphicForms.JacquetAdmissible\nimport GroundTheory.GlobalFields.CompletionAtPlace.Integers\nimport GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open NumberField IsDedekindDomain MeasureTheory Polynomial GroundTheory.Automorphic GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Parabolic
-open GroundTheory.Automorphic.GodementJacquet GroundTheory.Automorphic.GJStandardL
-open scoped NNReal Classical ValuativeRel
-
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
-
-theorem UpperTheory.V.Z.Gam.gamLocOf :
-    UpperTheory.V.Z.Gam.GamLocOf := by
-  intro hL hC hS K _ _ n _ v V _ _ π s hs
-  have hirr : π.IsIrreducible := hs.isIrreducible
-  have hsm : IsSmooth π := hs.isSmooth
-  have hψ := GroundTheory.Global.continuous_localAdelicChar (K := K) v
-  have hψ1 := GroundTheory.Global.localAdelicChar_ne_one (K := K) v
-  obtain ⟨β, W, _, _, σ, hσirr, hσs, hσc, hσa, ι, hι⟩ := exists_embedding_parabolicInd (π := π) hsm
-  obtain ⟨γ, hγ⟩ := exists_leviFE hσa hσc (inducedChar β) continuous_inducedChar
-    (leviMeasure β (GroundTheory.Global.localAdelicChar K v)) hψ hψ1
-  obtain ⟨P, c, j, h0, hd, hc, hγ'⟩ := hL _ n β W σ hσa hσirr hσc _ continuous_inducedChar _ _ hψ hψ1 γ hγ
-  refine ⟨P, c, j, h0, ?_, hc, ?_⟩
-  · rw [hd]
-    exact (hS _ n V π s hs β W σ hσa hσirr hσc ι hι).symm
-  · rw [← GroundTheory.Global.residueCard_adicCompletion, ← hγ']
-    exact hC _ n V π hsm β W σ hσs ι hι _ _ hψ hψ1 γ (inducedFE_of_leviFE _ hψ hψ1 hγ)
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.GamLocOf =====
+-- Members: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Reps, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.IndTorOf, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchBCOf, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.UpDownOf, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.CrossG
 
 -- ===== clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Reps =====
 -- clump-header: {"m": "Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Reps", "h": "module\n\npublic import Mathlib.Data.Finset.Defs\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Mathlib.Data.Finset.Empty\npublic import Mathlib.Data.Finset.Insert\n\n"}
@@ -207,9 +177,6 @@ open NumberField IsDedekindDomain MeasureTheory Polynomial Formalism.L2.Host For
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL UpperTheory.Zero.LLC UpperTheory.V.Z.Inf
 open GroundTheory.Global.SemiLocal
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
 namespace UpperTheory.V.Z.Gam
 
@@ -394,9 +361,6 @@ open NumberField IsDedekindDomain MeasureTheory Polynomial Formalism.L2.Host For
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL UpperTheory.Zero.LLC UpperTheory.V.Z.Inf
 open GroundTheory.Global.SemiLocal
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
 namespace UpperTheory.V.Z.Gam
 
@@ -730,662 +694,6 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchBCOf =====
 
--- ===== clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SideGCenOf =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SideGCenOf", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasInfCharGL\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ArchOf\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.BridgeOf\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.CoefSm\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ContDiffFderivApply\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.HasDerivAtProdLog\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.HasFDerivAtExpF\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.IntegralHWMul\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.IsOpenEmbeddingVal\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.LocUnr\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.SatDict\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ShiftOf\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.TestEx\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.GenericFunctionalEquation.GenFE\nimport Formalism.DoubleCosetMeasures.Statement\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC\nimport GroundTheory.AutomorphicForms.GL2.GJStandardLBump\nimport GroundTheory.AutomorphicForms.GL2.GJStandardLCuspidalGen\nimport GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\n\n"}
-section -- clump:auto
-@[expose] public section
-
-noncomputable section
-
-open NumberField IsDedekindDomain MeasureTheory Polynomial Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.HenQ Filter
-open GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.GJStandardL GroundTheory.Automorphic.GodementJacquet
-open GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.GJStandardLCuspidal UpperTheory.V UpperTheory.V.Z.Inf UpperTheory.V.Z.Gam
-
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
-
-private theorem eval_quot (N D : ℂ[X]) (x : ℂ) (hD : D.eval x ≠ 0) :
-    (algebraMap ℂ[X] (RatFunc ℂ) N / algebraMap ℂ[X] (RatFunc ℂ) D).eval (RingHom.id ℂ) x = N.eval x / D.eval x := by
-  have hD0 : D ≠ 0 := fun e => hD (by simp [e])
-  set R := algebraMap ℂ[X] (RatFunc ℂ) N / algebraMap ℂ[X] (RatFunc ℂ) D with hR
-  have h1 : R.denom ∣ D := RatFunc.denom_div_dvd N D
-  have h2 : R.denom.eval x ≠ 0 := fun e => by
-    obtain ⟨u, hu⟩ := h1
-    exact hD (by rw [hu, eval_mul, e, zero_mul])
-  have h3 : R.num * D = N * R.denom := (RatFunc.num_mul_eq_mul_denom_iff hD0).2 hR
-  have h4 := congrArg (eval x) h3
-  simp only [eval_mul] at h4
-  simp only [RatFunc.eval, eval₂_id]
-  rw [div_eq_div_iff h2 hD, h4]
-
-private theorem loc_dual {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
-    (P : ℂ[X]) (c Q b : ℂ) (j : ℤ) (hP : P.eval 0 = 1) {A B : ℂ → ℂ}
-    (h : RatFE F (RatFunc.C c * RatFunc.X ^ j * algebraMap ℂ[X] (RatFunc ℂ) P /
-      algebraMap ℂ[X] (RatFunc ℂ) (P.comp (C Q * X))) A B) (hA : ∀ s, A s = b) :
-    ∃ r : ℝ, ∀ s : ℂ, s.re < -r → B s = c * b * qs F s ^ j * P.eval (qs F s) / P.eval (Q * qs F s) := by
-  obtain ⟨R, s₁, h1, h2⟩ := h
-  have hR : R = RatFunc.C b := eq_of_eval_qs_eq_right (F := F) (s₁ := s₁) fun s hs => by
-    rw [← h1 s hs, hA, RatFunc.eval_C]
-    rfl
-  have hD0 : P.comp (C Q * X) ≠ 0 := fun e => by
-    have := congrArg (eval 0) e
-    simp [eval_comp, hP] at this
-  obtain ⟨Bd, hB, h4⟩ := exists_norm_gt_eval_ne_zero hD0
-  have hq : (1 : ℝ) < GroundTheory.LocalField.residueCard F := by exact_mod_cast GroundTheory.LocalField.one_lt_residueCard
-  refine ⟨max s₁ (Real.logb (GroundTheory.LocalField.residueCard F) Bd), fun s hs => ?_⟩
-  have hs1 := le_max_left s₁ (Real.logb (GroundTheory.LocalField.residueCard F) Bd)
-  have hs2 := le_max_right s₁ (Real.logb (GroundTheory.LocalField.residueCard F) Bd)
-  have h5 : (P.comp (C Q * X)).eval (qs F s) ≠ 0 := h4 _ (by
-    rw [norm_qs]
-    calc Bd = (GroundTheory.LocalField.residueCard F : ℝ) ^ (Real.logb (GroundTheory.LocalField.residueCard F) Bd) :=
-          (Real.rpow_logb (by linarith) hq.ne' hB).symm
-      _ < _ := Real.rpow_lt_rpow_of_exponent_lt hq (by linarith))
-  have hx : qs F s ≠ 0 := qs_ne_zero s
-  have hj : j = (j.toNat : ℤ) - ((-j).toNat : ℤ) := (Int.toNat_sub_toNat_neg j).symm
-  have e : RatFunc.C c * RatFunc.X ^ j * algebraMap ℂ[X] (RatFunc ℂ) P /
-      algebraMap ℂ[X] (RatFunc ℂ) (P.comp (C Q * X)) * RatFunc.C b =
-      algebraMap ℂ[X] (RatFunc ℂ) (C c * C b * X ^ j.toNat * P) /
-        algebraMap ℂ[X] (RatFunc ℂ) (X ^ (-j).toNat * P.comp (C Q * X)) := by
-    simp only [map_mul, map_pow, RatFunc.algebraMap_C, RatFunc.algebraMap_X]
-    rw [hj, zpow_sub₀ RatFunc.X_ne_zero, zpow_natCast, zpow_natCast, ← hj]
-    ring
-  rw [h2 s (by linarith), hR, e, eval_quot _ _ _ (by rw [eval_mul, eval_pow, eval_X]; exact mul_ne_zero (pow_ne_zero _ hx) h5)]
-  simp only [eval_mul, eval_pow, eval_X, eval_C, eval_comp]
-  rw [hj, zpow_sub₀ hx, zpow_natCast, zpow_natCast, ← hj]
-  ring
-
-private theorem comb {I : Type} (S : Finset I) (N : I → ℕ) (P : I → ℂ[X]) (c : I → ℂ) (j : I → ℤ) (q : ℕ) (f d : I → ℕ)
-    (hq : 1 < q) (h : ∀ v ∈ S, 1 < N v ∧ (P v).eval 0 = 1 ∧ (P v).natDegree = d v ∧ (d v ≠ 0 → N v = q ^ f v)) :
-    ∃ (P₀ : ℂ[X]) (c₀ : ℂ) (t : ℝ), P₀.eval 0 = 1 ∧ P₀.natDegree = ∑ v ∈ S, f v * d v ∧ ∀ s : ℂ,
-      ∏ v ∈ S, c v * ((N v : ℂ) ^ (-s)) ^ j v * (P v).eval ((N v : ℂ) ^ (-s)) / (P v).eval (N v * (N v : ℂ) ^ (-s)) =
-        fac c₀ t q P₀ s := by
-  have h1 : ∀ v ∈ S, d v = 0 → P v = 1 := fun v hv e => by
-    have a := eq_C_of_natDegree_eq_zero ((h v hv).2.2.1.trans e)
-    have b := (h v hv).2.1
-    rw [a, eval_C] at b
-    rw [a, b, C_1]
-  have h0 : ∀ v ∈ S, ((P v).comp (X ^ f v)).eval 0 = 1 := fun v hv => by
-    by_cases e : d v = 0
-    · simp [h1 v hv e]
-    · have hf : f v ≠ 0 := fun e' => by
-        have := (h v hv).2.2.2 e
-        have := (h v hv).1
-        rw [e', pow_zero] at *
-        omega
-      rw [eval_comp, eval_pow, eval_X, zero_pow hf, (h v hv).2.1]
-  have hev : ∀ v ∈ S, ∀ u : ℂ, ((P v).comp (X ^ f v)).eval (((q : ℝ) : ℂ) ^ u) = (P v).eval ((N v : ℂ) ^ u) := fun v hv u => by
-    by_cases e : d v = 0
-    · simp [h1 v hv e]
-    · rw [eval_comp, eval_pow, eval_X, (h v hv).2.2.2 e, Nat.cast_pow, ← Complex.natCast_cpow_natCast_mul,
-        Complex.ofReal_natCast, Complex.cpow_nat_mul]
-  refine ⟨∏ v ∈ S, (P v).comp (X ^ f v), ∏ v ∈ S, c v, ∑ v ∈ S, -(j v * Real.log (N v)), ?_, ?_, fun s => ?_⟩
-  · rw [eval_prod]
-    exact Finset.prod_eq_one h0
-  · rw [natDegree_prod _ _ fun v hv e => by simpa [e] using h0 v hv]
-    refine Finset.sum_congr rfl fun v hv => ?_
-    rw [natDegree_comp, natDegree_X_pow, (h v hv).2.2.1, mul_comm]
-  · rw [fac, eval_prod, eval_prod, Complex.ofReal_sum, Finset.sum_mul, Complex.exp_sum, ← Finset.prod_mul_distrib,
-      ← Finset.prod_mul_distrib, ← Finset.prod_div_distrib]
-    refine Finset.prod_congr rfl fun v hv => ?_
-    have hN : (N v : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (by have := (h v hv).1; omega)
-    rw [hev v hv, hev v hv, sub_eq_add_neg, Complex.cpow_add _ _ hN, Complex.cpow_one]
-    congr 3
-    rw [Complex.cpow_def_of_ne_zero hN, ← Complex.exp_int_mul, ← Complex.natCast_log]
-    congr 1
-    push_cast
-    ring
-
-private theorem far_ne {A : ℂ → ℂ} (hA : Differentiable ℂ A) (h0 : A ≠ 0) (c : ℝ) : ∃ s : ℂ, c < s.re ∧ A s ≠ 0 := by
-  by_contra h
-  push Not at h
-  refine h0 (funext fun x => AnalyticOnNhd.eqOn_zero_of_preconnected_of_eventuallyEq_zero
-    (hA.differentiableOn.analyticOnNhd isOpen_univ) isPreconnected_univ (Set.mem_univ ((c + 1 : ℝ) : ℂ)) ?_ trivial)
-  filter_upwards [(isOpen_lt continuous_const Complex.continuous_re).mem_nhds
-    (show c < ((c + 1 : ℝ) : ℂ).re by simp)] with s hs using h s hs
-
-set_option maxHeartbeats 1600000 in
-theorem UpperTheory.V.Z.Gam.sideGCenOf :
-    UpperTheory.V.Z.Gam.SideGCenOf := by
-  set_option synthInstance.maxHeartbeats 400000 in
-    intro hGL hLI K _ _ _ n hn σ h S hRS B hB sp q f hq hsp
-    classical
-    have hLU := locUnr
-    have hSD := satDict
-    have hCS := coefSm
-    have hAS := archOf (shiftOf (ptwOf weyl) parts) fourD testEx (bridgeOf haarL)
-    choose m hm using fun τ : K →+* ℂ => (GlobalTheory.ResW.IrrInfChar.main K n τ).1 σ
-    have hn1 : 1 ≤ n := by omega
-    obtain ⟨D⟩ := (Cm.toRep σ h).nonempty_adelicDecomposition
-    let μ : Measure (Reduction.normOneGL (K := K) (n := n)) := Measure.haar
-    obtain ⟨a, x, hx, ha, hx0, hxK⟩ := exists_pureTensor_spherical _ D
-    obtain ⟨ℓ, fi, hℓs, hℓ1, hℓK, hf, hF1⟩ := matrixCoeff_factorization_of_pureTensor _ D μ a x hx ha hx0
-    have hfix : ∀ v ∉ S, x v ∈ fixedVectors (D.finite.π v) (integralGL (v.adicCompletion K) n) := fun v hv =>
-      hxK v ((hLI K n σ h D v).2 _ (hB v hv))
-    have hsm : ∀ v, x v ∈ smoothVectors (D.finite.π v) := fun v => (D.finite.isAdmissible v).1 (x v)
-    set φ₀ : cuspForms K n := Phi0 _ D a x hx with hφ₀
-    have hmem : φ₀ ∈ Cm.carrier σ := (phi D a x hx).2
-    have hf' : ∀ g, GJGlobal.matrixCoeff μ φ₀.1 φ₀.1 g = fi (archComp K n g) *
-        ∏ᶠ v : HeightOneSpectrum (𝓞 K), Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v)
-          (localComp n v g) := hf
-    have hF1' : GJGlobal.matrixCoeff μ φ₀.1 φ₀.1 1 ≠ 0 := hF1
-    have hone : ∀ v : HeightOneSpectrum (𝓞 K),
-        Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v) 1 = 1 := fun v => by
-      simpa [Parabolic.matrixCoeff] using hℓ1 v
-
-    obtain ⟨T, hT, hTc⟩ := hCS K n hn1 μ σ h φ₀
-    let p : σ.V := ⟨Cm.ofCusp K n φ₀, hmem⟩
-    have hfi : ∀ y, fi y = (T p).1 ((AdelicGLn.prodEquiv K n).symm (y, 1)) := fun y => by
-      have e1 : archComp K n ((AdelicGLn.prodEquiv K n).symm (y, 1)) = y :=
-        congrArg Prod.fst ((AdelicGLn.prodEquiv K n).apply_symm_apply (y, 1))
-      have e2 : ∀ v, localComp n v ((AdelicGLn.prodEquiv K n).symm (y, 1)) = 1 := fun v => by
-        have e : finComp K n ((AdelicGLn.prodEquiv K n).symm (y, 1)) = 1 :=
-          congrArg Prod.snd ((AdelicGLn.prodEquiv K n).apply_symm_apply (y, 1))
-        change AdelicGLn.finiteRestrictedEquiv K n (finComp K n _) v = 1
-        rw [e, map_one, RestrictedProduct.one_apply]
-      rw [hT]
-      change _ = GJGlobal.matrixCoeff μ φ₀.1 φ₀.1 _
-      rw [hf', e1]
-      simp [e2, hone]
-    have hfi0 : ∃ y, fi y ≠ 0 := ⟨_, left_ne_zero_of_mul (hf' 1 ▸ hF1')⟩
-    obtain ⟨φ, φ', k, k', hk, hk', hAd, hA0, hsh, hsh'⟩ := hAS K n hn1 (T p) m (fun τ u => by
-      rw [← hTc τ u p (((m τ).map (u + ·)).prod • p) (show _ = _ by first | exact ((hm τ).2 u _ hmem).symm), map_smul]) fi hfi hfi0 Measure.haar
-
-    have hz : ∀ v, ∃ z : Fin n → ℂˣ, v ∉ S →
-        Spherical.IsSatakeParameter (F := v.adicCompletion K) (D.finite.π v) (localHaar n v) z ∧ B v = Finset.univ.val.map z :=
-      fun v => by
-        by_cases hv : v ∈ S
-        · exact ⟨1, fun e => absurd hv e⟩
-        · exact (hSD K n σ h D v _ (hB v hv)).imp fun z hz _ => hz
-    choose z hz using hz
-    have hb := fun v : HeightOneSpectrum (𝓞 K) => exists_localBump (localHaar n v) (D.finite.π v) (hsm v) (ℓ v) (g₀ := 1)
-      (by rw [hone]; exact one_ne_zero)
-    choose Φb hΦb b hb0 hb using hb
-    let Φ : ∀ v : HeightOneSpectrum (𝓞 K), Matrix (Fin n) (Fin n) (v.adicCompletion K) → ℂ :=
-      fun v => if v ∈ S then Φb v else integralIndicator (v.adicCompletion K) n
-    have hΦS : ∀ v ∈ S, Φ v = Φb v := fun v hv => if_pos hv
-    obtain ⟨c, c', hc, hc', hSB1, hG⟩ := genFE hn μ φ₀.2 φ₀.2 (h hmem) S hRS
-      D.finite.π x ℓ hsm hℓs (fun v hv => ⟨hfix v hv, hℓ1 v⟩) (fun v hv => hℓK v (hfix v hv)) D.finite.isIrreducible
-      D.finite.isAdmissible z (fun v hv => (hz v hv).1) fi hf' ⟨1, hF1'⟩ Φ (fun v hv => hΦS v hv ▸ hΦb v)
-      (fun v hv => if_neg hv)
-    obtain ⟨σ₁, Λ, hΛ, h1⟩ := hG φ
-    obtain ⟨σ₂, Λ', hΛ', h2⟩ := hG φ'
-    have hloc : ∀ s, ∏ v ∈ S, zetaIntegral (localHaar n v) (Φ v)
-        (Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v)) s = ∏ v ∈ S, b v := fun s =>
-      Finset.prod_congr rfl fun v hv => by rw [hΦS v hv, (hb v s).2.2, detPow, GodementJacquet.absDet]; simp
-    have hU := fun v (hv : v ∉ S) => hLU K n hn1 v _ (D.finite.π v) (D.finite.isIrreducible v) (D.finite.isAdmissible v)
-      (fun e => hx0 v (by simpa [e] using hfix v hv)) (z v) (hz v hv).1
-    have hL : ∀ s, partialL S D.finite.π s = eulerL K (cx B) S s := fun s =>
-      tprod_congr fun v => by
-        rw [(hU v.1 v.2 s).1, cx, (hz v.1 v.2).2, Multiset.map_map, Multiset.map_map]
-        rfl
-    have hL' : ∀ s, dualPartialL S D.finite.π (1 - s) = eulerLd K (cx B) S s := fun s =>
-      tprod_congr fun v => by
-        rw [(hU v.1 v.2 (1 - s)).2]
-        simp only [cx]
-        rw [(hz v.1 v.2).2, Multiset.map_map, Multiset.map_map, Multiset.map_map]
-        rfl
-    have hd : ∀ v, ∃ (P : ℂ[X]) (e : ℂ) (j : ℤ) (c : ℝ), v ∈ S → P.eval 0 = 1 ∧ P.natDegree = cnt (sp v) 1 ∧
-        ∀ s : ℂ, s.re < -c →
-        zetaIntegral (localHaar n v) (GJMatrix.localMatrixFourier (GroundTheory.Global.localAdelicChar K v) (Φ v))
-          (fun g => Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v) g⁻¹) (1 - s) =
-          e * (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s)) ^ j * P.eval (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s)) /
-            P.eval (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) * ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s)) :=
-      fun v => by
-        by_cases hv : v ∈ S
-        · obtain ⟨P, e, j, hP0, hPd, -, hγ⟩ := hGL K n hn1 v _ (D.finite.π v) (sp v) ((hLI K n σ h D v).1 _ (hsp v hv).1)
-          obtain ⟨r, hr⟩ := loc_dual P e _ (b v) j hP0 (hγ (Φ v) (hΦS v hv ▸ hΦb v) (x v) (ℓ v) (hℓs v)) fun s => by
-            rw [hΦS v hv, (hb v s).2.2, detPow, GodementJacquet.absDet]; simp
-          refine ⟨P, e * b v, j, r, fun _ => ⟨hP0, hPd, fun s hs => ?_⟩⟩
-          have hqs : qs (v.adicCompletion K) s = ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s) := by
-            rw [qs, GroundTheory.Global.residueCard_adicCompletion]
-          rw [← hqs]
-          exact hr s hs
-        · exact ⟨0, 0, 0, 0, fun e => absurd e hv⟩
-    choose P e j cv hd using hd
-    obtain ⟨P₀, c₀, t, hP0, hPd, hfac⟩ := comb S (fun v => Ideal.absNorm v.asIdeal) P e j q f (fun v => cnt (sp v) 1) hq
-      fun v hv => ⟨NumberField.HeightOneSpectrum.one_lt_absNorm v, (hd v hv).1, (hd v hv).2.1, (hsp v hv).2⟩
-    have hb' : ∏ v ∈ S, b v ≠ 0 := Finset.prod_ne_zero_iff.2 fun v _ => hb0 v
-    set r : ℝ := |σ₁| + |σ₂| + ∑ v ∈ S, |cv v| + 2 with hr
-    have hs0 : 0 ≤ ∑ v ∈ S, |cv v| := Finset.sum_nonneg fun _ _ => abs_nonneg _
-    have a1 := le_abs_self σ₁
-    have a2 := le_abs_self σ₂
-    have a3 := abs_nonneg σ₁
-    have a4 := abs_nonneg σ₂
-    have hND : ∀ s : ℂ, s.re < -r + 1 → (∏ v ∈ S, zetaIntegral (localHaar n v)
-        (GJMatrix.localMatrixFourier (GroundTheory.Global.localAdelicChar K v) (Φ v))
-        (fun g => Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v) g⁻¹) (1 - s)) =
-        fac c₀ t q P₀ s := fun s hs => by
-      rw [← hfac]
-      refine Finset.prod_congr rfl fun v hv => (hd v hv).2.2 s ?_
-      have := Finset.single_le_sum (f := fun v => |cv v|) (fun _ _ => abs_nonneg _) hv
-      linarith [le_abs_self (cv v)]
-    refine ⟨linPoly (∑ τ, m τ), P₀, (monic_multiset_prod_of_monic _ _ fun z _ => monic_X_add_C z).ne_zero, hP0, hPd,
-      Λ, fun s => Λ' (s + 1), fun s => c * archZeta Measure.haar φ fi s * ∏ v ∈ S, b v,
-      fun s => c' * archZeta Measure.haar (archMatrixFourier φ) (fun y => fi y⁻¹) (1 - s),
-      k, k', c₀, t, r, hΛ, hΛ'.comp (differentiable_id.add_const 1), ?_, hk, hk', fun s hs => ⟨?_, ?_⟩,
-      fun s hs => ⟨?_, ?_⟩⟩
-    · obtain ⟨s, hs, hA⟩ := far_ne hAd hA0 σ₁
-      intro e
-      have := (h1 s hs).2.1
-      rw [e, hloc] at this
-      exact mul_ne_zero (mul_ne_zero (mul_ne_zero hc hA) hb') (h1 s hs).1 this.symm
-    · rw [(h1 s (by linarith)).2.1, hloc, hL]
-      ring
-    · beta_reduce
-      rw [(h2 (s + 1) (by simp; linarith)).2.1, hloc, hL, hsh]
-      ring
-    · have := (h1 (1 - s) (by simp; linarith)).2.2
-      rw [sub_sub_cancel, hL', hND s (by linarith)] at this
-      rw [this]
-      ring
-    · have := (h2 (1 - (s + 1)) (by simp; linarith)).2.2
-      rw [sub_sub_cancel, hL', hND (s + 1) (by simp; linarith), hsh', show 1 - (s + 1) + 1 = 1 - s by ring] at this
-      beta_reduce
-      rw [this]
-      ring
-end -- clump:auto
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SideGCenOf =====
-
--- ===== clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SideGOf =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SideGOf", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf\nimport Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalLetterCentralExponentProperties\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdelicAbsValueCpowCharacter\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective\nimport Formalism.DoubleCosetMeasures.Statement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.AdicCompletion.Noetherian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableAutomorphicSpace\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CycCOfCyclic\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InertialOrderFifteenCharAuxiliaryPrimeSpec\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open NumberField IsDedekindDomain MeasureTheory Polynomial Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.HenQ UpperTheory.V.Z.Bc UpperTheory.V.Published
-open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL UpperTheory.Zero.LLC UpperTheory.V.Z.Inf UpperTheory.V
-open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
-
-namespace UpperTheory.V.Z.Gam
-
-variable {K : Type} [Field K] [NumberField K]
-
-private theorem euler_shift (B : HeightOneSpectrum (𝓞 K) → Multiset ℂ) (S : Set (HeightOneSpectrum (𝓞 K))) (z s : ℂ) :
-    eulerL K (fun w => (B w).map fun b => b * ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (-z)) S (s - z) = eulerL K B S s := by
-  unfold eulerL
-  refine tprod_congr fun w => ?_
-  rw [Multiset.map_map]
-  refine congrArg Multiset.prod (Multiset.map_congr rfl fun b _ => ?_)
-  simp only [Function.comp_apply]
-  rw [mul_assoc, ← Complex.cpow_add _ _ (_root_.GlobalTheory.GalChar.absNorm_ne_zero w.1)]
-  congr 4
-  ring
-
-private theorem eulerd_shift (B : HeightOneSpectrum (𝓞 K) → Multiset ℂ) (S : Set (HeightOneSpectrum (𝓞 K))) (z s : ℂ) :
-    eulerLd K (fun w => (B w).map fun b => b * ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (-z)) S (s - z) = eulerLd K B S s := by
-  unfold eulerLd eulerL
-  refine tprod_congr fun w => ?_
-  rw [Multiset.map_map, Multiset.map_map, Multiset.map_map]
-  refine congrArg Multiset.prod (Multiset.map_congr rfl fun b _ => ?_)
-  simp only [Function.comp_apply]
-  rw [mul_inv, Complex.cpow_neg, inv_inv, mul_assoc, ← Complex.cpow_add _ _ (_root_.GlobalTheory.GalChar.absNorm_ne_zero w.1)]
-  congr 4
-  ring
-
-private theorem cnt_unram {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (s : Multiset (IrrGL (k := k))) {χ : kˣ →* ℂˣ} (h : IsUnram χ) : cnt s χ = cnt s 1 := by
-  unfold cnt
-  congr 1
-  refine Multiset.filter_congr fun y _ => ?_
-  have key : ∀ ξ : kˣ →* ℂˣ, IsUnram (ξ * χ) ↔ IsUnram (ξ * 1) := fun ξ =>
-    forall_congr' fun x => forall_congr' fun hx => by
-      rw [MonoidHom.mul_apply, MonoidHom.mul_apply, h x hx, MonoidHom.one_apply]
-  simp only [key]
-
-private theorem unram_loc {χ : HChar K} {v : HeightOneSpectrum (𝓞 K)} (h : χ.UnrAt v) : IsUnram (χ.loc v) := by
-  intro x hx
-  haveI : (Valued.v : Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ))).Compatible :=
-    Valuation.Compatible.ofValuation _
-  exact h x ((ValuativeRel.isEquiv (ValuativeRel.valuation (v.adicCompletion K)) Valued.v).eq_one_iff_eq_one.1 hx)
-
-end UpperTheory.V.Z.Gam
-
-open UpperTheory.V.Z.Gam in
-theorem UpperTheory.V.Z.Gam.sideGOf :
-    UpperTheory.V.Z.Gam.SideGOf := by
-  intro hO hF hC K _ _ _ n hn σ S hS B hB s q f hq hs
-  let x : GlobalTheory.ResW.Letter K := ⟨n, σ⟩
-  have hd : ((n : ℂ) * (Module.finrank ℚ K : ℂ)) ≠ 0 :=
-    mul_ne_zero (Nat.cast_ne_zero.2 (by omega)) (Nat.cast_ne_zero.2 Module.finrank_pos.ne')
-  let z : ℂ := -GlobalTheory.ResW.cex x / ((n : ℂ) * (Module.finrank ℚ K : ℂ))
-  let χ : HChar K := Model.absC K z
-  have hspec := (GlobalTheory.ResW.letter_centralExponent K x).1
-  have htr : (Matrix.of (oneL K n)).trace = (n : ℝ) • (1 : Cinf K) := by
-    change (Matrix.of (fun i j : Fin n => if i = j then (1 : Cinf K) else 0)).trace = _
-    simp [Matrix.trace, Nat.cast_smul_eq_nsmul]
-  have hz : ∀ φ ∈ (σ.twist χ).V, lie K n (oneL K n) φ = 0 := by
-    rintro _ ⟨ψ, hψ, rfl⟩
-    have e0 : lie K n (oneL K n) ψ = GlobalTheory.ResW.cex x • ψ := hspec ψ hψ
-    have e1 : dchi χ (Matrix.of (oneL K n)).trace = -GlobalTheory.ResW.cex x := by
-      rw [htr, map_smul, GlobalTheory.ResW.dchi_absC_one_finrank]
-      have hzd : z * ((n : ℂ) * (Module.finrank ℚ K : ℂ)) = -GlobalTheory.ResW.cex x := div_mul_cancel₀ _ hd
-      simp only [Complex.real_smul, Complex.ofReal_natCast]
-      linear_combination hzd
-    change lie K n (oneL K n) (mulChi n χ ψ) = 0
-    rw [lie_mulChi, e0, e1, ← add_smul, add_neg_cancel, zero_smul, map_zero]
-  have hval : ∀ v, χ.UnrAt v ∧ ((χ.val v : ℂˣ) : ℂ) = ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-z) := fun v => by
-    refine ⟨fun y hy => Units.ext ?_, ?_⟩
-    · change Complex.exp (z * GlobalTheory.Mem.Chr.CharModel.logNorm K (GlobalTheory.Mem.Chr.localIdele K v y)) = 1
-      rw [GlobalTheory.Mem.Chr.CharModel.logNorm_local v y 0 (by simpa [IsUnitAt] using hy)]; simp
-    · change Complex.exp (z * GlobalTheory.Mem.Chr.CharModel.logNorm K (GlobalTheory.Mem.Chr.localIdele K v (atFin v (unif v)))) = _
-      have h0 : (Ideal.absNorm v.asIdeal : ℕ) ≠ 0 := by simpa [Ideal.absNorm_eq_zero_iff] using v.ne_bot
-      rw [GlobalTheory.Mem.Chr.CharModel.logNorm_local v _ 1 (unif_spec v), Complex.cpow_def_of_ne_zero (by exact_mod_cast h0),
-        ← Complex.natCast_log]
-      congr 1; push_cast; ring
-  have hex : ∀ v, ∃ s', v ∈ S → SuppAt (σ.twist χ) v s' ∧ cnt s' 1 = cnt (s v) 1 := fun v => by
-    by_cases hv : v ∈ S
-    · obtain ⟨s', h1, h2, -⟩ := (hF K n (by omega) σ v).2.2.2.2 χ (s v) (hs v hv).1
-      refine ⟨s', fun _ => ⟨h1, ?_⟩⟩
-      rw [h2, mul_one, cnt_unram _ (unram_loc (hval v).1)]
-    · exact ⟨0, fun h => absurd h hv⟩
-  choose s' hs' using hex
-  obtain ⟨β, P, hβ, hP0, hdeg, hP⟩ := hC K n hn (σ.twist χ) (Cm.carrier_le_central _ hz) S hS
-    (fun w => (B w).map (· * χ.val w)) (fun w hw => by
-      have h := (hB w hw).twist (hval w).1
-      rwa [CG.twist_mk] at h) s' q f hq
-    (fun v hv => ⟨(hs' v hv).1, fun h => (hs v hv).2 (by rwa [← (hs' v hv).2])⟩)
-  have hP2 := hO.2.2.2 _ _ _ _ _ z (by exact_mod_cast hq) hP
-  have e : ∀ w, cx (fun w => (B w).map (· * χ.val w)) w =
-      (cx B w).map fun b => b * ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (-z) := fun w => by
-    simp only [cx, Multiset.map_map, Function.comp_def, Units.val_mul, (hval w).2]
-  have e' : cx (fun w => (B w).map (· * χ.val w)) =
-      fun w => (cx B w).map fun b => b * ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (-z) := funext e
-  rw [e'] at hP2
-  have hqz : (((q : ℝ) : ℂ) ^ z) ≠ 0 := by
-    rw [Ne, Complex.cpow_eq_zero_iff]
-    rintro ⟨h, -⟩
-    have : q = 0 := by exact_mod_cast h
-    omega
-  refine ⟨β.comp (X - C z), P.comp (C (((q : ℝ) : ℂ) ^ z) * X), ?_, ?_, ?_, ?_⟩
-  · intro h
-    apply hβ
-    have := congrArg (fun p => p.comp (X + C z)) h
-    simpa [comp_assoc] using this
-  · simp [eval_comp, hP0]
-  · rw [natDegree_comp, natDegree_C_mul_X _ hqz, mul_one, hdeg]
-    exact Finset.sum_congr rfl fun v hv => by rw [(hs' v hv).2]
-  · simpa only [euler_shift, eulerd_shift] using hP2
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SideGOf =====
-
--- ===== clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppBridge =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppBridge", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.HodgeTateFromSandwich\nimport Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NotInSupportOfSubsingleton\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupercuspidalSupportUniqueGL\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCovBySubmodule\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivDetCharacterOfIrreducibleRankLeOne\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FixedNeBotOfIsSubquotientOfIsCompact\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetModuleLeviTransport\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GeometricLemma\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr\nimport Formalism.DoubleCosetMeasures.Statement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.AdicCompletion.Noetherian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Mathlib.RingTheory.PicardGroup\n\n"}
-section -- clump:auto
-@[expose] public section
-
-noncomputable section
-
-open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL ValuativeRel
-open GroundTheory.Automorphic.GLnLocal (integralGL mem_integralGL_iff)
-open GroundTheory.Automorphic.Parabolic (levi parabolicInd mem_levi leviUnipotent)
-open scoped Classical
-
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
-
-namespace UpperTheory.V.Z.Gam
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-private theorem mem_int_one (g : GL (Fin 1) k) :
-    g ∈ integralGL k 1 ↔ valuation k ((Matrix.GeneralLinearGroup.det g : kˣ) : k) = 1 := by
-  have h1 : ((Matrix.GeneralLinearGroup.det g : kˣ) : k) = g 0 0 := by simp [Matrix.det_unique]
-  have h2 : (g⁻¹ : GL (Fin 1) k) 0 0 * g 0 0 = 1 := by
-    have := congrFun (congrFun g.inv_mul 0) 0
-    simpa [Matrix.mul_apply] using this
-  have h3 := congrArg (valuation k) h2
-  rw [map_mul, map_one] at h3
-  rw [mem_integralGL_iff, h1]
-  constructor
-  · rintro ⟨a, b⟩
-    have a' : valuation k (g 0 0) ≤ 1 := a 0 0
-    have b' : valuation k ((g⁻¹ : GL (Fin 1) k) 0 0) ≤ 1 := b 0 0
-    refine le_antisymm a' ?_
-    calc 1 = _ := h3.symm
-      _ ≤ 1 * valuation k (g 0 0) := by gcongr
-      _ = _ := one_mul _
-  · intro h
-    rw [h, mul_one] at h3
-    refine ⟨fun i j => ?_, fun i j => ?_⟩
-    · rw [Subsingleton.elim i 0, Subsingleton.elim j 0]; exact h.le
-    · rw [Subsingleton.elim i 0, Subsingleton.elim j 0]; exact h3.le
-
-private theorem unram_iff {D : ℕ} {Y : Type} [AddCommGroup Y] [Module ℂ Y] (ρ : Representation ℂ (GL (Fin D) k) Y)
-    (hρ : IsSmooth ρ) (y : IrrRep (GL (Fin D) k)) (hy : IsSubquotient y.ρ ρ)
-    (hc : D = 1 → ∀ g v, v ≠ 0 → ρ g v = v → ρ g = 1) :
-    (∃ ξ hξ, IrrGL.of y.ρ y.smooth y.irr = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * 1)) ↔
-      D = 1 ∧ ∀ g ∈ integralGL k D, ρ g = 1 := by
-  have key : ∀ (hD : D = 1) ξ hξ, IrrGL.of y.ρ y.smooth y.irr = IrrGL.ofChar ξ hξ →
-      ∀ g v, y.ρ g v = (ξ (Matrix.GeneralLinearGroup.det g) : ℂ) • v := by
-    rintro rfl ξ hξ h g v
-    have h' : IrrGL.of y.ρ y.smooth y.irr = IrrGL.of (detRep (Fin 1) ξ) (isCuspidal_detRep_one hξ).1
-        (isIrreducible_ofChar _) := h
-    obtain ⟨φ⟩ := IrrGL.of_eq_of.1 h'
-    refine φ.toLinearEquiv.injective ?_
-    refine (φ.toIntertwiningMap.isIntertwining _ _ g v).trans ?_
-    rw [map_smul]
-    simp [detRep]
-    rfl
-  haveI := GlobalTheory.SmGL.Model.nontrivial_of_isIrreducible y.irr
-  obtain ⟨v, hv⟩ := exists_ne (0 : y.V)
-  constructor
-  · rintro ⟨ξ, hξ, h, hu⟩
-    have hD : D = 1 := congrArg Sigma.fst h
-    have k1 := key hD ξ hξ h
-    subst hD
-    rw [mul_one] at hu
-    have hf : fixed y.ρ (integralGL k 1) ≠ ⊥ := (Submodule.ne_bot_iff _).2 ⟨v, fun g => by
-      rw [k1, hu _ ((mem_int_one g.1).1 g.2)]; simp, hv⟩
-    obtain ⟨w, hw, hw0⟩ := (Submodule.ne_bot_iff _).1 (UpperTheory.fixed_ne_bot_of_isSubquotient_of_isCompact _ _ _ _ _ _ hρ hy
-      (GroundTheory.Automorphic.GLnLocal.isCompact_integralGL k 1) hf)
-    exact ⟨rfl, fun g hg => hc rfl g w hw0 (by simpa using hw ⟨g, hg⟩)⟩
-  · rintro ⟨hD, h⟩
-    obtain ⟨ξ, hξ, e⟩ : ∃ ξ hξ, IrrGL.of y.ρ y.smooth y.irr = IrrGL.ofChar ξ hξ := by
-      subst hD
-      obtain ⟨θ, hθ, e⟩ := RankLeOne.exists_equiv_detRep k (Fin 1) _ y.ρ y.smooth y.irr
-      exact ⟨θ, hθ, congrArg (Sigma.mk 1) (IrrRep.cl_eq_iff.2 e)⟩
-    have k1 := key hD ξ hξ e
-    subst hD
-    refine ⟨ξ, hξ, e, fun x hx => ?_⟩
-    have h2 : Matrix.GeneralLinearGroup.det (Matrix.GeneralLinearGroup.scalar (Fin 1) x) = x := by
-      ext; simp [Matrix.GeneralLinearGroup.scalar]
-    have h3 := h _ ((mem_int_one (Matrix.GeneralLinearGroup.scalar (Fin 1) x)).2 (by rw [h2, hx]))
-    obtain ⟨S, f, hf⟩ := hy
-    obtain ⟨w, rfl⟩ := hf v
-    have h4 := k1 (Matrix.GeneralLinearGroup.scalar (Fin 1) x) (f w)
-    have h5 : S.toRepresentation (Matrix.GeneralLinearGroup.scalar (Fin 1) x) w = w :=
-      Subtype.ext (by show ρ _ _ = _; rw [h3]; rfl)
-    rw [← f.isIntertwining, h5, h2] at h4
-    have h6 : ((ξ x : ℂ) - 1) • f w = 0 := by rw [sub_smul, ← h4, one_smul, sub_self]
-    have h7 := (smul_eq_zero.1 h6).resolve_right hv
-    rw [mul_one]
-    exact Units.ext (sub_eq_zero.1 h7)
-
-private theorem cusp_block {n r : ℕ} {d : Fin r → ℕ} (e : (Σ j, Fin (d j)) ≃ Fin n) {β : Fin n → ℕ}
-    (hβ : ∀ x y, β x < β y ↔ blk e x < blk e y) (φ : Levi k (fun j => Fin (d j)) ≃* levi k n β)
-    (hφ : ∀ g, ((φ g : levi k n β) : GL (Fin n) k) = leviEmb k e g) {W : Type} [AddCommGroup W] [Module ℂ W]
-    (σ : Representation ℂ (levi k n β) W) (hc : GroundTheory.Automorphic.Parabolic.IsCuspidal σ) (j : Fin r)
-    {t : ℕ} {c : Fin t → ℕ} (e' : (Σ a, Fin (c a)) ≃ Fin (d j)) (hU : unipRad k e' ≠ ⊥) :
-    Subsingleton (Jacquet ((σ.comp φ.toMonoidHom).comp (MonoidHom.mulSingle (fun j => GL (Fin (d j)) k) j) :
-      Representation ℂ (GL (Fin (d j)) k) W) (unipRad k e')) := by
-  have hinj : Function.Injective fun p : Fin (d j) => e ⟨j, p⟩ := fun p q h => by simpa using h
-  let γ : Fin n → ℕ := Function.extend (fun p : Fin (d j) => e ⟨j, p⟩) (fun p => (blk e' p).val) 0
-  have γ1 : ∀ p, γ (e ⟨j, p⟩) = (blk e' p).val := fun p => hinj.extend_apply _ _ p
-  have γ0 : ∀ a, a ≠ j → ∀ p, γ (e ⟨a, p⟩) = 0 := fun a ha p =>
-    Function.extend_apply' _ _ _ (by
-      rintro ⟨q, hq⟩
-      exact ha (congrArg Sigma.fst (e.injective hq)).symm)
-  obtain ⟨p, q, hpq⟩ := GlobalTheory.SmGL.CuspMax.unipRad_ne_bot_iff.1 hU
-  have hs := hc γ ⟨e ⟨j, p⟩, e ⟨j, q⟩, le_antisymm (not_lt.1 fun h => by simpa using (hβ _ _).1 h)
-    (not_lt.1 fun h => by simpa using (hβ _ _).1 h), by
-      rw [γ1, γ1]; exact fun h => hpq.ne (Fin.ext h)⟩
-  refine Submodule.Quotient.subsingleton_iff.2 (eq_top_iff.2 fun w _ => ?_)
-  have hw : w ∈ Representation.Coinvariants.ker (σ.comp (leviUnipotent k n β γ).subtype) :=
-    (Representation.Coinvariants.mk_eq_zero _).1 (Subsingleton.elim _ _)
-  refine Submodule.span_mono ?_ hw
-  rintro _ ⟨⟨u, v⟩, rfl⟩
-  obtain ⟨g, hg⟩ := φ.surjective u.1
-  obtain ⟨hP, h1⟩ := GroundTheory.Automorphic.Parabolic.mem_unipotentRadical.1 (Subgroup.mem_subgroupOf.1 u.2)
-  rw [← hg, hφ] at hP h1
-  have hg1 : g = Pi.mulSingle j (g j) := by
-    funext a
-    by_cases ha : a = j
-    · subst ha; simp
-    · rw [Pi.mulSingle_eq_of_ne ha]
-      ext x y
-      have := h1 (e ⟨a, x⟩) (e ⟨a, y⟩) (by rw [γ0 a ha, γ0 a ha])
-      rw [leviEmb_apply_same] at this
-      rw [this]
-      simp [Matrix.one_apply]
-  have hu : g j ∈ unipRad k e' := by
-    refine mem_unipRad.2 ⟨mem_parab.2 fun x y hxy => ?_, fun a x y => ?_⟩
-    · have := hP (show γ (e ⟨j, y⟩) < γ (e ⟨j, x⟩) by rw [γ1, γ1]; exact hxy)
-      rwa [leviEmb_apply_same] at this
-    · have := h1 (e ⟨j, e' ⟨a, x⟩⟩) (e ⟨j, e' ⟨a, y⟩⟩) (by rw [γ1, γ1]; simp)
-      rw [leviEmb_apply_same] at this
-      rw [this]
-      simp [Matrix.one_apply]
-  refine ⟨⟨g j, hu⟩, v, ?_⟩
-  show σ u.1 v - v = σ (φ (Pi.mulSingle j (g j))) v - _
-  rw [← hg1, hg]
-  simp
-
-private theorem cnt_eq {n r : ℕ} {d : Fin r → ℕ} (hd : ∀ j, 0 < d j) (e : (Σ j, Fin (d j)) ≃ Fin n) {β : Fin n → ℕ}
-    (hβ : ∀ x y, β x < β y ↔ blk e x < blk e y) (φ : Levi k (fun j => Fin (d j)) ≃* levi k n β)
-    (hφ : ∀ g, ((φ g : levi k n β) : GL (Fin n) k) = leviEmb k e g) {V : Type} [AddCommGroup V] [Module ℂ V]
-    {π : Representation ℂ (GL (Fin n) k) V} {s : Multiset (IrrGL (k := k))} (hs : HasSupport π s)
-    {W : Type} [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ (levi k n β) W) (hi : σ.IsIrreducible)
-    (hc : GroundTheory.Automorphic.Parabolic.IsCuspidal σ) (ι : Representation.IntertwiningMap π (parabolicInd k n β σ))
-    (hι : Function.Injective ι) :
-    cnt s 1 = (Finset.univ.filter fun j => d j = 1 ∧ ∀ g ∈ integralGL k (d j), σ (φ (Pi.mulSingle j g)) = 1).card := by
-  let τ : Representation ℂ (Levi k fun j => Fin (d j)) W := σ.comp φ.toMonoidHom
-  have hστ : τ.comp φ.symm.toMonoidHom = σ := by
-    ext g v
-    simp [τ]
-  have hτ : τ.IsIrreducible := by
-    let o : Subrepresentation τ ≃o Subrepresentation σ :=
-      { toFun := fun S => ⟨S.toSubmodule, fun g v hv => by
-          simpa [τ] using S.apply_mem_toSubmodule (φ.symm g) hv⟩
-        invFun := fun S => ⟨S.toSubmodule, fun g v hv => S.apply_mem_toSubmodule (φ g) hv⟩
-        left_inv := fun _ => rfl
-        right_inv := fun _ => rfl
-        map_rel_iff' := Iff.rfl }
-    exact (OrderIso.isSimpleOrder_iff o).2 hi
-  obtain ⟨E⟩ := GlobalTheory.CompanionTheory.ParIndBridge.parInd_equiv_parabolicInd k e β hβ φ hφ τ
-  rw [hστ] at E
-  haveI := GlobalTheory.SmGL.Model.nontrivial_of_isIrreducible hs.isIrreducible
-  haveI := GlobalTheory.SmGL.Model.nontrivial_of_isIrreducible hτ
-  obtain ⟨v, hv⟩ := exists_ne (0 : V)
-  let f := E.symm.toIntertwiningMap.comp ι
-  have hf : f v ≠ 0 := fun h => hv (hι (E.symm.toLinearEquiv.injective (by
-    have hz : ι 0 = 0 := map_zero ι
-    rw [hz, E.symm.toLinearEquiv.map_zero]
-    exact h)))
-  have hτs : IsSubquotient τ (jac e π) := .of_surjective (GlobalTheory.CompanionTheory.FrobJm.frobMap e f)
-    (GlobalTheory.CompanionTheory.FrobJm.surjective_of_ne_zero hτ _ (GlobalTheory.CompanionTheory.FrobJm.frobMap_ne_zero e f ⟨v, hf⟩))
-  have hτsm : IsSmooth τ := hτs.isSmooth (isSmooth_jac e hs.isSmooth)
-  have hsm : ∀ j, IsSmooth (τ.comp (MonoidHom.mulSingle (fun j => GL (Fin (d j)) k) j) :
-      Representation ℂ (GL (Fin (d j)) k) W) := fun j =>
-    isSmooth_comp hτsm _ (continuous_mulSingle (A := fun j => GL (Fin (d j)) k) j)
-  have hy : ∀ j, ∃ y : IrrRep (GL (Fin (d j)) k), IsSubquotient y.ρ
-      (τ.comp (MonoidHom.mulSingle (fun j => GL (Fin (d j)) k) j) : Representation ℂ (GL (Fin (d j)) k) W) := by
-    intro j
-    obtain ⟨X, _, _, υ, hυ, hυs⟩ := GlobalTheory.IrrSubquot.exists_irreducible_subquotient _ _
-      (τ.comp (MonoidHom.mulSingle (fun j => GL (Fin (d j)) k) j)) inferInstance
-    exact ⟨⟨X, υ, hυs.isSmooth (hsm j), hυ⟩, hυs⟩
-  choose y hy using hy
-  obtain ⟨u, hu, rfl⟩ := GlobalTheory.CompanionTheory.Hypotheses₂.TD.exists_sum_of_jac GlobalTheory.CompanionTheory.GeoLink.geometricLemma
-    GlobalTheory.CompanionTheory.Published.bernsteinZelevinskyFiniteness hs e hτ hτs y hy
-  have hu1 : ∀ j, u j = {IrrGL.of (y j).ρ (y j).smooth (y j).irr} := fun j => by
-    refine SupportUnique.eq_singleton_of_isCusp (IrrGL.isCusp_of.2 ⟨hd j, (y j).smooth, fun t c e' hU => ?_⟩)
-      ((hu j).of_equiv (IrrGL.equivOf _ _ _))
-    have h0 := cusp_block e hβ φ hφ σ hc j e' hU
-    obtain ⟨S, g, hg⟩ := GlobalTheory.JacquetExact.isSubquotient_jac e' (hsm j) (hy j)
-    haveI : Subsingleton S.toSubmodule := ⟨fun a b => Subtype.ext (h0.elim _ _)⟩
-    exact Function.Surjective.subsingleton hg
-  suffices key : ∀ j, (∃ ξ hξ, IrrGL.of (y j).ρ (y j).smooth (y j).irr = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * 1)) ↔
-      d j = 1 ∧ ∀ g ∈ integralGL k (d j), σ (φ (Pi.mulSingle j g)) = 1 by
-    simp only [hu1]
-    rw [← GlobalTheory.CompanionTheory.Hypotheses₂.TD.map_univ_eq_sum, cnt, Multiset.filter_map, Multiset.card_map]
-    rw [← Finset.filter_val, ← Finset.card_def]
-    refine Finset.card_bij (fun j _ => j) ?_ (fun _ _ _ _ h => h) ?_ <;>
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Function.comp, key, exists_prop, exists_eq_right, imp_self, implies_true]
-  intro j
-  refine unram_iff _ (hsm j) (y j) (hy j) fun hD g w hw0 hw => ?_
-  have hcomm : ∀ x : Levi k fun j => Fin (d j), Pi.mulSingle j g * x = x * Pi.mulSingle j g := fun x => by
-    funext a
-    by_cases ha : a = j
-    · subst ha
-      haveI : Unique (Fin (d a)) := hD ▸ inferInstance
-      ext p q
-      simp [Matrix.mul_apply, Subsingleton.elim p default, Subsingleton.elim q default, mul_comm]
-    · simp [Pi.mulSingle_eq_of_ne ha]
-  let K : Subrepresentation τ :=
-    ⟨LinearMap.eqLocus (τ (Pi.mulSingle j g)) 1, fun x z hz => by
-      have hz' : τ (Pi.mulSingle j g) z = z := hz
-      show (τ (Pi.mulSingle j g) * τ x) z = τ x z
-      rw [← map_mul, hcomm, map_mul, Module.End.mul_apply, hz']⟩
-  haveI := hτ
-  rcases eq_bot_or_eq_top K with h | h
-  · have : w ∈ K.toSubmodule := hw
-    rw [h] at this
-    exact absurd ((Submodule.mem_bot ℂ).1 this) hw0
-  · refine LinearMap.ext fun z => ?_
-    have : z ∈ K.toSubmodule := by rw [h]; trivial
-    exact this
-
-end UpperTheory.V.Z.Gam
-
-open UpperTheory.V.Z.Gam GroundTheory.Automorphic.GodementJacquet GroundTheory.Automorphic.Parabolic in
-theorem UpperTheory.V.Z.Gam.suppBridge :
-    UpperTheory.V.Z.Gam.SuppBridge := by
-  intro F _ _ _ _ _ n V _ _ π s hs β W _ _ σ _ hi hc ι hι
-  let o : Fin (Fintype.card (Set.range β)) ≃o Set.range β := monoEquivOfFin _ rfl
-  let d := fun j => blockSize β (o j)
-  let e : (Σ j, Fin (d j)) ≃ Fin n :=
-    (Equiv.sigmaCongr o.toEquiv fun j => fiberFin β (o j)).trans (Equiv.sigmaFiberEquiv (blockOf β))
-  have he : ∀ j p, e ⟨j, p⟩ = (fiberFin β (o j) p).1 := fun _ _ => rfl
-  have hb : ∀ j p, β (e ⟨j, p⟩) = (o j).1 := fun j p => congrArg Subtype.val (fiberFin β (o j) p).2
-  let ψ : levi F n β ≃* Levi F (fun j => Fin (d j)) :=
-    { (leviEquivPi F β).toEquiv.trans
-        (Equiv.piCongrLeft' (fun a => GL (Fin (blockSize β a)) F) o.symm.toEquiv) with
-      map_mul' := fun x y => funext fun j => congrFun (map_mul (leviEquivPi F β) x y) (o j) }
-  have hψ : ∀ m j, ψ m j = leviEquivPi F β m (o j) := fun _ _ => rfl
-  have h := cnt_eq (d := d) (fun j => blockSize_pos β (o j)) e (β := β) (fun x y => by
-    obtain ⟨⟨a, p⟩, rfl⟩ := e.surjective x
-    obtain ⟨⟨b, q⟩, rfl⟩ := e.surjective y
-    rw [hb, hb, blk_apply, blk_apply, Subtype.coe_lt_coe, o.lt_iff_lt]) ψ.symm (fun g => by
-    obtain ⟨m, rfl⟩ := ψ.surjective g
-    rw [ψ.symm_apply_apply]
-    ext x y
-    obtain ⟨⟨a, p⟩, rfl⟩ := e.surjective x
-    obtain ⟨⟨b, q⟩, rfl⟩ := e.surjective y
-    by_cases hab : a = b
-    · subst hab
-      rw [leviEmb_apply_same, hψ, leviEquivPi_apply, he, he]
-    · rw [leviEmb_apply_ne _ _ _ hab]
-      refine mem_levi.1 m.2 _ _ ?_
-      rw [hb, hb]
-      exact fun h => hab (o.injective (Subtype.ext h))) hs σ hi hc ι hι
-  rw [h, cntF]
-  refine Finset.card_equiv o.toEquiv fun j => ?_
-  have hm : ∀ g, ψ.symm (Pi.mulSingle j g) = (leviEquivPi F β).symm (Pi.mulSingle (o j) g) := fun g => by
-    rw [MulEquiv.symm_apply_eq]
-    funext a
-    rw [hψ, ContinuousMulEquiv.apply_symm_apply]
-    by_cases ha : a = j
-    · subst ha; simp
-    · rw [Pi.mulSingle_eq_of_ne ha, Pi.mulSingle_eq_of_ne (o.injective.ne ha)]
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, hm]
-  rfl
-end -- clump:auto
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppBridge =====
-
 -- ===== clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.UpDownOf =====
 -- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.UpDownOf", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf\nimport Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.EmbedsLevelZeroDepthZero\npublic import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.NotIsTemperedGLDetRepTwo\nimport Formalism.DoubleCosetMeasures.Statement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.TypeStar\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CycCOfCyclic\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal\n\n"}
 section -- clump:auto
@@ -1397,9 +705,6 @@ open NumberField IsDedekindDomain MeasureTheory Polynomial Formalism.L2.Host For
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL UpperTheory.Zero.LLC UpperTheory.V.Z.Inf
 open GroundTheory.Global.SemiLocal
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
 namespace UpperTheory.V.Z.Gam
 
@@ -1455,10 +760,10 @@ private theorem sum_card_filter {Y : Type*} (s : Multiset Y) (d F : ℕ) (A : Y 
     simp only [Multiset.filter_cons, Multiset.card_add, Finset.sum_add_distrib, ih, mul_add]
     congr 1
     by_cases hB : B y
-    · rw [← h1 y hB, Finset.card_filter, if_pos hB, Multiset.card_singleton, mul_one]
+    · rw [← h1 y hB, Finset.card_filter, ite_eq_left hB, Multiset.card_singleton, mul_one]
       exact Finset.sum_congr rfl fun j _ => by split_ifs <;> simp
-    · rw [if_neg hB]
-      exact Finset.sum_eq_zero fun j _ => by rw [if_neg fun hA => hB (h2 y j hA)]; simp
+    · rw [ite_eq_right hB]
+      exact Finset.sum_eq_zero fun j _ => by rw [ite_eq_right fun hA => hB (h2 y j hA)]; simp
 
 private theorem loc_pow {K : Type} [Field K] [NumberField K] (η : HChar K) (j : ℕ) (v : HeightOneSpectrum (𝓞 K)) :
     (η ^ j).loc v = η.loc v ^ j := by
@@ -1584,7 +889,38 @@ namespace UpperTheory.V.Z.Gam
 
 theorem crossG : CrossG := crossGOf Inf.expAlg Inf.expIndep secDiff
 
-theorem sideG : SideG := sideGOf pairGOps suppFacts (sideGCenOf (gamLocOf leviDiv coefInd suppBridge) locIso)
+theorem sideG : SideG := by
+  intro K _ _ _ n hn σ S hS B hB s q f hq hs
+  obtain ⟨β, hβ, hP⟩ := UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.sideX K n hn σ S hS B hB s q f hq hs
+  have hfac : ∀ v ∈ S,
+      ((UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.pol (s v) 1).comp (Polynomial.X ^ f v)).eval 0 = 1 ∧
+      ((UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.pol (s v) 1).comp (Polynomial.X ^ f v)).natDegree =
+        f v * cnt (s v) 1 := by
+    intro v hv
+    have hF := (UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.polFacts (v.adicCompletion K)).2.2.2 (s v) 1
+    by_cases hc : cnt (s v) 1 = 0
+    · have hp : UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.pol (s v) 1 = 1 := by
+        have h0 := hF.1
+        rw [Polynomial.eq_C_of_natDegree_eq_zero (hF.2.1.trans hc), Polynomial.eval_C] at h0
+        rw [Polynomial.eq_C_of_natDegree_eq_zero (hF.2.1.trans hc), h0, map_one]
+      simp [hp, hc]
+    · have hf : f v ≠ 0 := by
+        intro hf0
+        have h1 := (hs v hv).2 hc
+        rw [hf0, pow_zero] at h1
+        exact v.isPrime.ne_top (Ideal.absNorm_eq_one_iff.1 h1)
+      refine ⟨?_, ?_⟩
+      · rw [Polynomial.eval_comp, Polynomial.eval_pow, Polynomial.eval_X, zero_pow hf, hF.1]
+      · rw [Polynomial.natDegree_comp, hF.2.1, Polynomial.natDegree_X_pow, mul_comm]
+  refine ⟨β, ∏ v ∈ S, (UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.pol (s v) 1).comp (Polynomial.X ^ f v),
+    hβ, ?_, ?_, hP⟩
+  · rw [Polynomial.eval_prod]
+    exact Finset.prod_eq_one fun v hv => (hfac v hv).1
+  · rw [Polynomial.natDegree_prod _ _ fun v hv h0 => by
+      have h1 := (hfac v hv).1
+      rw [h0, Polynomial.eval_zero] at h1
+      exact zero_ne_one h1]
+    exact Finset.sum_congr rfl fun v hv => (hfac v hv).2
 
 theorem upDown : UpDown := upDownOf suppFacts normCnt (matchBCOf pairGOps crossG sideG suppFacts normLoc globTw regroupBC)
 

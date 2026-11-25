@@ -93,8 +93,7 @@ theorem eq_smul_of_eigen {K κ : Type} [Field K] [Fintype κ] [Invertible (2 : K
     (f η : (κ → K) → ℂ) (hf : ∀ i, schr ψ₀ (L i) f = c i • f) (hη : ∀ i, schr ψ₀ (L i) η = c i • η)
     (hη0 : η ≠ 0) : ∃ c' : ℂ, f = c' • η := by
   obtain ⟨X₀, hX₀⟩ : ∃ X₀, η X₀ ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hη0 (funext h)
   have hne : ∀ t, ψ₀ t ≠ 0 := fun t h => by
     have e := AddChar.map_add_eq_mul ψ₀ t (-t)
@@ -112,7 +111,7 @@ theorem eq_smul_of_eigen {K κ : Type} [Field K] [Fintype κ] [Invertible (2 : K
     field_simp
     refine mul_left_cancel₀ hA ?_
     linear_combination η X₀ * e1 - f X₀ * e2
-  · push_neg at hu
+  · push Not at hu
     obtain ⟨i, hi0, hne1⟩ := hu
     have key : ∀ g : (κ → K) → ℂ, schr ψ₀ (L i) g = c i • g → ∀ Y, ψ₀ (Y ⬝ᵥ (L i).2) * g Y = c i * g Y := by
       intro g hg Y

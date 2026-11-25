@@ -22,15 +22,13 @@ variable {n : ℕ}
 
 section Spec
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {ε : Fin n → Bool}
 
 theorem toL2_eq_toLp_of_memLp {F : Matrix (Fin n) (Fin n) ℂ → ℂ}
     (hF : MemLp (fun g : Formalism.REAL.UJ ε => F (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε)) :
-    toL2 ε F = hF.toLp _ := by
-  unfold toL2
-  rw [dite_eq_left hF]
+    toL2 ε F = hF.toLp _ := ReciprocityTheory.ChartRestriction.DS.toL2_eq_memLp_toLp ε hF
 
 theorem slm_exists_y {g : Matrix (Fin n) (Fin n) ℂ} (hg : Formalism.REAL.inUJ ε g) :
     ∃ y : Formalism.REAL.UJ ε, Formalism.MainNotions.S.umat y = g := by

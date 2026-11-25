@@ -63,8 +63,7 @@ theorem s_mul' {a b : K} (ha : ‖a‖ ≤ 1) (hb : ‖b‖ < 1) : ‖a * b‖ <
     _ < 1 := hb
 
 theorem i_of_quadratic {t b c : K} (hb : ‖b‖ ≤ 1) (hc : ‖c‖ ≤ 1) (h : t ^ 2 + b * t = c) : ‖t‖ ≤ 1 := by
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have h1 : t ^ 2 = c - b * t := by rw [← h]; ring
   have h2 : ‖t ^ 2‖ ≤ max ‖c‖ ‖b * t‖ := by
     rw [h1, sub_eq_add_neg]
@@ -121,8 +120,7 @@ theorem nonsingular_norm : NonsingNorm := by
   have hFx : ‖3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ - W.a₁ * y‖ ≤ 1 :=
     i_sub (i_add (i_add (i_mul (i_ofNat 3) (i_pow hx 2))
       (i_mul (i_mul (i_ofNat 2) h2) hx)) h4) (i_mul h1 hy)
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨hy1, hx1⟩ := hne
   have hy1' : ‖2 * y + W.a₁ * x + W.a₃‖ < 1 := lt_of_le_of_ne hFy hy1
   have hx1' : ‖3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ - W.a₁ * y‖ < 1 := lt_of_le_of_ne hFx hx1

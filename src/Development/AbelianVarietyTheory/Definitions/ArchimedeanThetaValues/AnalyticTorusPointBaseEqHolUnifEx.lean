@@ -5,50 +5,11 @@ public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValue
 public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ExistsChartComplexPoint
 public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
 import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SurjectiveOfComplexPointsLiftOfUniversallyClosed
+import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsArcInTraceArc
 import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
+import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusExtensionComplexPointsEqCharacters
 import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
 
 @[expose] public section
@@ -125,7 +86,7 @@ theorem isDiff_zero {O : Type} [CommRing O] [StarRing O] (A : AnArc O) [IsEmpty 
   have e := GlobalTheory.Points.valR_constFn_of_over (𝟙 (Sp ℂ)) (algebraMap ℂ (DualNumber ℂ)) v.left hv U h (valAt' (𝟙 (Sp ℂ)) U f)
   have e' := (congrArg (valR v.left U) hf).trans e
   unfold valR at e'
-  rw [dif_pos h] at e'
+  rw [dite_eq_left h] at e'
   exact (congrArg TrivSqZeroExt.snd e').trans rfl
 
 variable (c : Coeff l) (bF : c.F →+* ℂ) [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ]
@@ -189,7 +150,7 @@ section General
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} [StarRing (𝓞 E)]
   {D : Datum H} {l : Level H} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F}
-  [Algebra (FractionRing ℂ) ℂ] {b : O →+* ℂ} {a : ArcIn D l β ℂ b} (Λ : GtAn a)
+  [Algebra (FractionRing ℂ) ℂ] {b : O →+* ℂ} {a : ArcIn D l β ℂ b} (Λ : GlobalTheory.ArcPts.GtAn a)
 
 open FrameValue
 
@@ -202,272 +163,69 @@ theorem isScalarTower : IsScalarTower ℂ (FractionRing ℂ) ℂ := by
   have h' := congrArg CommRingCat.Hom.hom (Spec.map_injective h)
   exact IsScalarTower.of_algebraMap_eq' h'.symm
 
-theorem ex_zero : Λ.u.ex 0 = η[a.D₀.P.A] := by
-  rw [(Λ.u.ker 0).2 (zero_mem _), Hom.one_def, toUnit_unit, Category.id_comp]
+theorem ex_zero : Λ.u.ex 0 = η[a.D₀.P.A] :=
+  GlobalTheory.ArcOfModel.ex_zero Λ.u
 
 theorem analyticTorusPoint_base_eq_holUnif_ex (v : Λ.A.V) : (Λ.ex0 v).b = toUnit _ ≫ Λ.u.ex v.2 := by
-  haveI := isScalarTower Λ
-  exact Over.OverMorphism.ext ((Λ.ex0_b v).trans (toUnit_TF_comp_left _).symm)
+  have := isScalarTower Λ
+  exact GlobalTheory.ArcOfModel.analyticTorusPoint_base_eq_holUnif_ex (O := 𝓞 E) (A := Λ.A) (D := a.D₀) (u := Λ.u) Λ.ex0_b v
 
 theorem isLift_gt (v : Λ.A.V) (x : Λ.A.X) :
     IsLift Λ.u (Out.DegPre.gtφ a.D₀ ℂ (Λ.ex0 v).b (Λ.ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ))
-      ![Λ.A.ct x + v.2, Λ.A.ct x, v.2, 0] := fun k => by
-  haveI := isScalarTower Λ
-  refine (Category.id_comp _).trans ?_
-  fin_cases k
-  · refine Eq.trans ?_ (toUnit_TF_comp_left _)
-    change (toUnit _ ≫ a.D₀.c (Λ.ε x) * (Λ.ex0 v).b).left = (toUnit _ ≫ Λ.u.ex (Λ.A.ct x + v.2)).left
-    rw [analyticTorusPoint_base_eq_holUnif_ex, Λ.u.ex_add, MonObj.comp_mul, Λ.ct]
-  · exact (toUnit_TF_comp_left _).trans (congrArg (·.left) (Λ.ct x).symm)
-  · exact Λ.ex0_b v
-  · exact (toUnit_TF_comp_left _).trans (congrArg (·.left) (ex_zero Λ).symm)
+      ![Λ.A.ct x + v.2, Λ.A.ct x, v.2, 0] := by
+  have := isScalarTower Λ
+  exact GlobalTheory.ArcOfModel.is_lift_exponential_zero (ε := Λ.ε) Λ.ct Λ.ex0_b v x
 
 theorem corr_of_genVal {A : Over (Sp ℂ)} [GrpObj A] {L : LB A.left} {g : ℕ} {u : HolUnif A L g} (hL : L.IsLB)
     {K K' : Type} [Fintype K] [Fintype K'] {φ : K → (Sp ℂ ⟶ A.left)} {ε : K → ℤ} {φ' : K' → (Sp ℂ ⟶ A.left)}
     {ε' : K' → ℤ} {t : LB.Gen (LB.LinComb L φ ε)} {t' : LB.Gen (LB.LinComb L φ' ε')} (ht : t.IsGen) (ht' : t'.IsGen)
     {z : K → Fin g → ℂ} {z' : K' → Fin g → ℂ} (hz : IsLift u φ (𝟙 _) z) (hz' : IsLift u φ' (𝟙 _) z')
     (hs : ∀ f : (Fin g → ℂ) → ℂˣ, ∏ k, f (z k) ^ ε k = ∏ k, f (z' k) ^ ε' k)
-    (h : genVal u hL t (𝟙 _) z = genVal u hL t' (𝟙 _) z') : LB.Gen.Corr L φ ε φ' ε' t t' := by
-  classical
-  intro j j' c₁ c₂ c₃
-  refine Units.ext (ComplexPoints.eq_of_valAt'_eq (𝟙 (Sp ℂ)) _ _ _ fun x hx hW => ?_)
-  obtain rfl : x = 𝟙 _ := (Category.comp_id _).symm.trans hx
-  have h₁ : ⊤ ≤ 𝟙 (Sp ℂ) ⁻¹ᵁ L.wchart φ j := hW.trans inf_le_left
-  have h₂ : ⊤ ≤ 𝟙 (Sp ℂ) ⁻¹ᵁ L.wchart φ' j' := hW.trans inf_le_right
-  refine (valAt'_res _ inf_le_left _ hW).trans (Eq.trans ?_ (valAt'_res _ inf_le_right _ hW).symm)
-  rw [valAt'_gen hL ht hz h₁, valAt'_gen hL ht' hz' h₂, h]
-  congr 1
-  have hφ : ∀ k, φ k = (u.ex (z k)).left := fun k => (Category.id_comp _).symm.trans (hz k)
-  have hφ' : ∀ k, φ' k = (u.ex (z' k)).left := fun k => (Category.id_comp _).symm.trans (hz' k)
-  let idx : (Sp ℂ ⟶ A.left) → L.ι := fun p =>
-    if h : ∃ k, φ k = p then j h.choose else if h : ∃ k, φ' k = p then j' h.choose else chartAt hL p
-  have i₁ : ∀ k, idx (φ k) = j k := fun k => by
-    have e : ∃ k', φ k' = φ k := ⟨k, rfl⟩
-    simp only [idx, dif_pos e]
-    exact c₁ _ _ e.choose_spec
-  have i₂ : ∀ k, idx (φ' k) = j' k := fun k => by
-    have e : ∃ k', φ' k' = φ' k := ⟨k, rfl⟩
-    by_cases e' : ∃ k', φ k' = φ' k
-    · simp only [idx, dif_pos e']
-      exact c₃ _ _ e'.choose_spec
-    · simp only [idx, dif_neg e', dif_pos e]
-      exact c₂ _ _ e.choose_spec
-  have hi : ∀ w, u.fr (idx (u.ex w).left) w ≠ 0 := fun w => u.fr_ne _ _ (by
-    by_cases e : ∃ k, φ k = (u.ex w).left
-    · obtain ⟨k, hk⟩ := e
-      rw [← hk, i₁, hφ]; exact (hz.le_iff j).1 h₁ k
-    · by_cases e' : ∃ k, φ' k = (u.ex w).left
-      · obtain ⟨k, hk⟩ := e'
-        rw [← hk, i₂, hφ']; exact (hz'.le_iff j').1 h₂ k
-      · simp only [idx, dif_neg e, dif_neg e']
-        exact le_chartAt hL _)
-  have := congrArg (Units.coeHom ℂ) (hs fun w => Units.mk0 _ (hi w))
-  simp only [map_prod, map_zpow, Units.coeHom_apply, Units.val_mk0, ← hφ, ← hφ', i₁, i₂] at this
-  exact this
+    (h : genVal u hL t (𝟙 _) z = genVal u hL t' (𝟙 _) z') : LB.Gen.Corr L φ ε φ' ε' t t' :=
+  TorusExtChar.corr_of_genVal hL ht ht' hz hz' hs h
 
 theorem genVal_mul_of {A : Over (Sp ℂ)} [GrpObj A] {L : LB A.left} {g : ℕ} {u : HolUnif A L g} {hL : L.IsLB}
     {Y : Scheme.{0}} {K K' : Type} [Fintype K] [Fintype K'] {φ : K → (Y ⟶ A.left)} {ε : K → ℤ}
     {φ' : K' → (Y ⟶ A.left)} {ε' : K' → ℤ} {t : LB.Gen (LB.LinComb L φ ε)} {t' : LB.Gen (LB.LinComb L φ' ε')}
     {y : Sp ℂ ⟶ Y} {z : K → Fin g → ℂ} {z' : K' → Fin g → ℂ} {p q : ℂ} (h : genVal u hL t y z = p)
     (h' : genVal u hL t' y z' = q) : genVal u hL (LB.mulGen L φ ε φ' ε' t t') y (Sum.elim z z') = p * q :=
-  (genVal_mul hL t t' y _).trans (congrArg₂ (· * ·) h h')
+  GlobalTheory.ArcOfModel.genVal_mul_of h h'
 
 theorem genVal_inv_of {A : Over (Sp ℂ)} [GrpObj A] {L : LB A.left} {g : ℕ} {u : HolUnif A L g} {hL : L.IsLB}
     {Y : Scheme.{0}} {K : Type} [Fintype K] {φ : K → (Y ⟶ A.left)} {ε : K → ℤ} {t : LB.Gen (LB.LinComb L φ ε)}
     {y : Sp ℂ ⟶ Y} {z : K → Fin g → ℂ} {p : ℂ} (h : genVal u hL t y z = p) :
     genVal u hL (LB.invGen L φ ε t) y z = p⁻¹ :=
-  (genVal_inv hL t y _).trans (congrArg (·⁻¹) h)
+  GlobalTheory.ArcOfModel.genVal_inv_of h
 
 theorem genVal_pull_of {A : Over (Sp ℂ)} [GrpObj A] {L : LB A.left} {g : ℕ} {u : HolUnif A L g} {hL : L.IsLB}
     {Y Y' : Scheme.{0}} {K : Type} [Fintype K] {φ : K → (Y ⟶ A.left)} {ε : K → ℤ} {t : LB.Gen (LB.LinComb L φ ε)}
     {f : Y' ⟶ Y} {y : Sp ℂ ⟶ Y'} {y' : Sp ℂ ⟶ Y} (e : y ≫ f = y') {z : K → Fin g → ℂ} {p : ℂ}
     (h : genVal u hL t y' z = p) : genVal u hL (LB.pullGen L φ ε t f) y z = p :=
-  (genVal_pull hL t f y z).trans (e ▸ h)
+  GlobalTheory.ArcOfModel.genVal_pull_of e h
 
 theorem genVal_shift (v : Λ.A.V) (z : Fin Λ.A.gB → ℂ) (m : Λ.A.abelian₂) (hv : v.2 = z + m) (x : Λ.A.X) :
     IsLift Λ.u (Out.DegPre.gtφ a.D₀ ℂ (Λ.ex0 v).b (Λ.ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ))
       ![Λ.A.ct x + z, Λ.A.ct x, z, 0] ∧
     genVal Λ.u a.D₀.P.isLB ((Λ.ex0 v).s (Λ.ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ)) ![Λ.A.ct x + z, Λ.A.ct x, z, 0] =
       eTwoPi (v.1 x + Λ.A.H (Λ.A.ct x) m / (2 * Complex.I)) := by
-  let m' : Λ.u.Λ := ⟨m, Λ.lam.ge m.2⟩
-  have e₂ : ![Λ.A.ct x + v.2, Λ.A.ct x, v.2, 0] = fun k => ![Λ.A.ct x + z, Λ.A.ct x, z, 0] k +
-      ((![m', 0, m', 0] : Fin 4 → Λ.u.Λ) k : Fin Λ.A.gB → ℂ) := by
-    funext k
-    fin_cases k <;> simp [m', hv, add_assoc]
-  have hz : IsLift Λ.u (Out.DegPre.gtφ a.D₀ ℂ (Λ.ex0 v).b (Λ.ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ))
-      ![Λ.A.ct x + z, Λ.A.ct x, z, 0] := fun k => by
-    refine (isLift_gt Λ v x k).trans ?_
-    rw [e₂]
-    beta_reduce
-    rw [Λ.u.ex_add, (Λ.u.ker _).2 (Subtype.prop _), _root_.mul_one]
-  refine ⟨hz, ?_⟩
-  have h := Λ.arcDict_expZero_section v x
-  rw [e₂] at h
-  have h' := (genVal_add_period a.D₀.P.isLB Λ.ah _ hz _).symm.trans h
-  simp only [Fin.prod_univ_four, Out.DegPre.gtε, Matrix.cons_val, ahFactor_zero a.D₀.P.isLB Λ.ah] at h'
-  change Λ.A.ah m (Λ.A.ct x + z) ^ (-1 : ℤ) * _ * Λ.A.ah m z ^ (1 : ℤ) * _ * _ = _ at h'
-  have n := Λ.A.ah_ne_zero m z
-  have e₃ : eTwoPi (Λ.A.H (Λ.A.ct x) m / (2 * Complex.I)) = Complex.exp (Real.pi * Λ.A.H (Λ.A.ct x) m) := by
-    have := AnArc.e_neg_div (-Λ.A.H (Λ.A.ct x) m)
-    simpa [neg_div] using this
-  rw [add_comm (Λ.A.ct x) z, AnArc.ah_add] at h'
-  rw [AnArc.e_add, e₃, ← h', add_comm (Λ.A.ct x) z]
-  simp
-  field_simp
-  rfl
+  have := isScalarTower Λ
+  exact GlobalTheory.ArcOfModel.genVal_shift Λ.lam Λ.ah Λ.ct Λ.ex0_b Λ.arcDict_expZero_section v z m hv x
 
 theorem isZero_iff (v : Λ.A.V) : (Λ.ex0 v).IsZero ↔ ∃ la : Λ.A.La, la.y = 0 ∧ v = Λ.A.P0 la := by
-  haveI := isScalarTower Λ
-  constructor
-  · rintro ⟨hb, hs⟩
-    have h0 : Λ.u.ex v.2 = 1 := Over.OverMorphism.ext ((Λ.ex0_b v).symm.trans ((congrArg (·.left) hb).trans
-      ((toUnit_TF_comp_left _).trans (by rw [Hom.one_def, toUnit_unit, Category.id_comp]))))
-    let m : Λ.A.abelian₂ := ⟨v.2, Λ.lam.le ((Λ.u.ker _).1 h0)⟩
-    let w : Λ.A.V := v - Λ.A.P0 (AnArc.La.mk 0 0 m)
-    obtain ⟨n, hn⟩ := (expChar_eq_one_iff w.1).1 (MonoidHom.ext fun x => Units.ext (by
-      obtain ⟨hz, h⟩ := genVal_shift Λ v 0 m (zero_add _).symm x.toAdd
-      have := genVal_corr a.D₀.P.isLB (hs _) hz (z' := PEmpty.elim) (fun k => k.elim)
-        (fun f => by simp [Fin.prod_univ_four, Out.DegPre.gtε])
-      have e := h.symm.trans (this.trans (genVal_one (u := Λ.u) _ _ _))
-      change eTwoPi (w.1 x.toAdd) = 1
-      simpa [w] using e))
-    refine ⟨AnArc.La.mk 0 n m, rfl, Prod.ext (AddMonoidHom.ext fun x => ?_) (by simp [m])⟩
-    have := hn x
-    simp [w] at this
-    simp [← this]
-  · rintro ⟨la, hy, rfl⟩
-    have hv : (Λ.A.P0 la).2 = 0 + la.l := by simp [hy]
-    refine ⟨by rw [analyticTorusPoint_base_eq_holUnif_ex, hv, zero_add, (Λ.u.ker _).2 (Λ.lam.ge la.l.2), Hom.one_def, toUnit_unit, Category.id_comp], fun x => ?_⟩
-    obtain ⟨x, rfl⟩ := Λ.ε.surjective x
-    obtain ⟨hz, h⟩ := genVal_shift Λ _ 0 la.l hv x
-    refine corr_of_genVal (u := Λ.u) a.D₀.P.isLB ((Λ.ex0 _).isGen _) (fun i j => ?_) hz
-      (z' := PEmpty.elim) (fun k => k.elim) (fun f => ?_) ?_
-    · exact (map_one _).trans ((_root_.mul_one _).symm.trans (congrArg₂ (· * ·) rfl (map_one _).symm))
-    · simp [Fin.prod_univ_four, Out.DegPre.gtε]
-    · exact h.trans (Eq.trans (by simp [hy]) (genVal_one (u := Λ.u) _ _ _).symm)
+  have := isScalarTower Λ
+  exact GlobalTheory.ArcOfModel.isZero_iff Λ.lam Λ.ah Λ.ct Λ.ex0_b Λ.arcDict_expZero_section v
 
 theorem isIota (la : Λ.A.La) : Out.GtPtF.IsIota (Λ.ε la.y) (Λ.ex0 (Λ.A.P0 la)) := by
-  haveI := isScalarTower Λ
-  refine ⟨by rw [analyticTorusPoint_base_eq_holUnif_ex, AnArc.degeneratingTori_basePeriodMap_snd, Λ.u.ex_add, (Λ.u.ker _).2 (Λ.lam.ge la.l.2), _root_.mul_one, Λ.ct], fun x => ?_⟩
-  obtain ⟨x, rfl⟩ := Λ.ε.surjective x
-  obtain ⟨hz, h⟩ := genVal_shift Λ _ _ la.l (Λ.A.degeneratingTori_basePeriodMap_snd la) x
-  have hc : ∀ y : Λ.A.X, 𝟙 (Sp ℂ) ≫ Out.jFK (R := ℂ) ℂ ≫ a.D₀.xK (Λ.ε y) = (Λ.u.ex (Λ.A.ct y)).left := fun y => by
-    rw [Category.id_comp, Λ.ct]
-    change Out.jFK (R := ℂ) ℂ ≫ Out.jK ℂ ≫ _ = _
-    rw [← Category.assoc, jFK_comp_jK_complex, Category.id_comp]
-  refine corr_of_genVal (u := Λ.u) a.D₀.P.isLB ((Λ.ex0 _).isGen _) ?_ hz
-    (z' := Sum.elim (Sum.elim (Sum.elim (fun _ => Λ.A.ct (la.y + x)) (fun _ => Λ.A.ct la.y)) (fun _ => Λ.A.ct x))
-      (fun _ => 0)) ?_ (fun f => ?_) ?_
-  · exact DVR.pullGen_isGen _ _ _ _ (DVR.mulGen_isGen _ _ _ _ _ _ _ (DVR.mulGen_isGen _ _ _ _ _ _ _
-      (DVR.mulGen_isGen _ _ _ _ _ _ _ (a.D₀.psi_gen _) (DVR.invGen_isGen _ _ _ _ (a.D₀.psi_gen _)))
-      (DVR.invGen_isGen _ _ _ _ (a.D₀.psi_gen _)))
-      (DVR.invGen_isGen _ _ _ _ (DVR.pullGen_isGen _ _ _ _ a.D₀.rig_gen _))) _
-  · rintro (((k | k) | k) | k)
-    · exact (by rw [map_add (f := _)]; rfl : _ = 𝟙 (Sp ℂ) ≫ Out.jFK (R := ℂ) ℂ ≫ a.D₀.xK (Λ.ε (la.y + x))).trans (hc _)
-    · exact hc _
-    · exact hc _
-    · change 𝟙 (Sp ℂ) ≫ Out.jFK (R := ℂ) ℂ ≫ Out.jK ℂ ≫ eSec a.D₀.P.A = (Λ.u.ex 0).left
-      rw [Category.id_comp, ← Category.assoc, jFK_comp_jK_complex, Category.id_comp, ex_zero]
-      rfl
-  · simp [Fin.prod_univ_four, Out.DegPre.gtε, Fintype.prod_sum_type, add_comm]
-    ac_rfl
-  · have h1 := Λ.psi (la.y + x)
-    rw [map_add Λ.ε] at h1
-    have hr := genVal_pull_of (f := (toUnit (Out.TK ℂ)).left) (y := Out.jFK (R := ℂ) ℂ) jFK_comp_jK_complex
-      (genVal_rig a.D₀.P.isLB Λ.rig)
-    have h2 := genVal_pull_of (Category.id_comp (Out.jFK (R := ℂ) ℂ)) (genVal_mul_of (genVal_mul_of
-      (genVal_mul_of h1 (genVal_inv_of (Λ.psi la.y))) (genVal_inv_of (Λ.psi x))) (genVal_inv_of hr))
-    refine h.trans (Eq.trans ?_ h2.symm)
-    have n1 := (Λ.A.psi la.y).ne_zero
-    have n2 := (Λ.A.psi x).ne_zero
-    simp [Λ.A.psi_add, AnArc.e_add]
-    field_simp
+  have := isScalarTower Λ
+  exact GlobalTheory.ArcOfModel.isIota Λ.lam Λ.ah Λ.rig Λ.ct Λ.psi Λ.ex0_b Λ.arcDict_expZero_section la
 
 theorem isAdd (v v' : Λ.A.V) : (Λ.ex0 v).IsAdd (Λ.ex0 v') (Λ.ex0 (v + v')) := by
-  haveI := isScalarTower Λ
-  refine ⟨by rw [analyticTorusPoint_base_eq_holUnif_ex, analyticTorusPoint_base_eq_holUnif_ex, analyticTorusPoint_base_eq_holUnif_ex, Prod.snd_add, Λ.u.ex_add, MonObj.comp_mul]; rfl, fun x => ?_⟩
-  obtain ⟨x, rfl⟩ := Λ.ε.surjective x
-  have hp : 𝟙 (Sp ℂ) ≫ (lift (Out.DegPre.cF a.D₀ ℂ (Λ.ε x)) (lift (Λ.ex0 v).b (Λ.ex0 v').b)).left =
-      (CubeValues.pt3 Λ.u ![Λ.A.ct x, v.2, v'.2]).left := by
-    rw [Category.id_comp, analyticTorusPoint_base_eq_holUnif_ex, analyticTorusPoint_base_eq_holUnif_ex, Out.DegPre.cF, ← Λ.ct, ← comp_lift, ← comp_lift]
-    exact toUnit_TF_comp_left _
-  refine corr_of_genVal (u := Λ.u) a.D₀.P.isLB
-    (DVR.mulGen_isGen _ _ _ _ _ _ _ ((Λ.ex0 _).isGen _) (DVR.pullGen_isGen _ _ _ _ a.D₀.cub.isGen _))
-    (DVR.mulGen_isGen _ _ _ _ _ _ _ ((Λ.ex0 _).isGen _) ((Λ.ex0 _).isGen _))
-    (z := Sum.elim ![Λ.A.ct x + (v + v').2, Λ.A.ct x, (v + v').2, 0] (cubeLift ![Λ.A.ct x, v.2, v'.2]))
-    (z' := Sum.elim ![Λ.A.ct x + v.2, Λ.A.ct x, v.2, 0] ![Λ.A.ct x + v'.2, Λ.A.ct x, v'.2, 0]) ?_ ?_ (fun f => ?_) ?_
-  · rintro (k | k)
-    · exact isLift_gt Λ _ x k
-    · exact (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ _) hp).trans (isLift_cube Λ.u _ k))
-  · rintro (k | k)
-    · exact isLift_gt Λ _ x k
-    · exact isLift_gt Λ _ x k
-  · erw [Fintype.prod_sum_type, Fintype.prod_sum_type]
-    simp only [Sum.elim_inl, Sum.elim_inr]
-    erw [show ∏ I : thK, f (cubeLift ![Λ.A.ct x, v.2, v'.2] I) ^ thε I = _ from
-      prod_thK fun I => f (∑ a ∈ I, ![Λ.A.ct x, v.2, v'.2] a)]
-    simp only [sum_three, Finset.sum_singleton, Finset.sum_empty, Matrix.cons_val, Fin.prod_univ_four,
-      Out.DegPre.gtε, zpow_neg, zpow_one, Prod.snd_add, add_assoc]
-    apply Additive.ofMul.injective
-    simp only [ofMul_mul, ofMul_inv]
-    abel
-  · have h1 := genVal_mul_of (Λ.arcDict_expZero_section (v + v') x) (genVal_pull_of hp
-      (genVal_cube_of_face a.D₀.P.isLB Λ.ah _ a.D₀.cub.isGen (a.D₀.cub.face 0) _))
-    have h2 := genVal_mul_of (Λ.arcDict_expZero_section v x) (Λ.arcDict_expZero_section v' x)
-    refine h1.trans (Eq.trans ?_ h2.symm)
-    simp [AnArc.e_add]
+  have := isScalarTower Λ
+  exact GlobalTheory.ArcOfModel.isAdd (ε := Λ.ε) Λ.lam Λ.ah Λ.ct Λ.ex0_b Λ.arcDict_expZero_section v v'
 
 theorem analyticTorusPoint_surjective : Function.Surjective Λ.ex0 := by
-  haveI := isScalarTower Λ
-  intro g
-  obtain ⟨z, hz⟩ := Λ.u.ex_onto (Over.homMk (show Sp ℂ ⟶ _ from g.b.left) ((Over.w g.b).trans jFK_comp_jK_complex))
-  have hb : ∀ w : Λ.A.X →+ ℂ, (Λ.ex0 (w, z)).b = g.b := fun w =>
-    Over.OverMorphism.ext ((Λ.ex0_b _).trans (congrArg (·.left) hz))
-  have hl : ∀ x, IsLift Λ.u (Out.DegPre.gtφ a.D₀ ℂ g.b (Λ.ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ))
-      ![Λ.A.ct x + z, Λ.A.ct x, z, 0] := fun x => hb 0 ▸ isLift_gt Λ (0, z) x
-  let t : Multiplicative Λ.A.X →* ℂˣ := MonoidHom.mk'
-    (fun x => Units.mk0 _ (genVal_ne_zero a.D₀.P.isLB (g.s (Λ.ε x.toAdd)) (hl x.toAdd))) fun x' y' => Units.ext (by
-      let x := x'.toAdd
-      let y := y'.toAdd
-      have hp : 𝟙 (Sp ℂ) ≫ (lift (Out.DegPre.cF a.D₀ ℂ (Λ.ε x)) (lift (Out.DegPre.cF a.D₀ ℂ (Λ.ε y)) g.b)).left =
-          (CubeValues.pt3 Λ.u ![Λ.A.ct x, Λ.A.ct y, z]).left := by
-        rw [Category.id_comp, ← hb 0, analyticTorusPoint_base_eq_holUnif_ex, Out.DegPre.cF, Out.DegPre.cF, ← Λ.ct, ← Λ.ct, ← comp_lift, ← comp_lift]
-        exact toUnit_TF_comp_left _
-      have hm := g.mult (Λ.ε x) (Λ.ε y)
-      rw [← map_add Λ.ε] at hm
-      have h0 := genVal_corr (u := Λ.u) a.D₀.P.isLB hm (y := 𝟙 (Sp ℂ))
-        (z := Sum.elim ![Λ.A.ct (x + y) + z, Λ.A.ct (x + y), z, 0] (cubeLift ![Λ.A.ct x, Λ.A.ct y, z]))
-        (z' := Sum.elim ![Λ.A.ct x + z, Λ.A.ct x, z, 0] ![Λ.A.ct y + z, Λ.A.ct y, z, 0])
-        (by
-          rintro (k | k)
-          · exact hl _ k
-          · exact (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ _) hp).trans (isLift_cube Λ.u _ k)))
-        (by
-          rintro (k | k)
-          · exact hl _ k
-          · exact hl _ k)
-        (fun f => by
-          erw [Fintype.prod_sum_type, Fintype.prod_sum_type]
-          simp only [Sum.elim_inl, Sum.elim_inr]
-          erw [show ∏ I : thK, f (cubeLift ![Λ.A.ct x, Λ.A.ct y, z] I) ^ thε I = _ from
-            prod_thK fun I => f (∑ a ∈ I, ![Λ.A.ct x, Λ.A.ct y, z] a)]
-          simp only [sum_three, Finset.sum_singleton, Finset.sum_empty, Matrix.cons_val, Fin.prod_univ_four,
-            Out.DegPre.gtε, zpow_neg, zpow_one, map_add]
-          apply Additive.ofMul.injective
-          simp only [ofMul_mul, ofMul_inv]
-          abel)
-      have h1 := genVal_mul_of (rfl : genVal Λ.u a.D₀.P.isLB (g.s (Λ.ε (x + y))) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ))
-        ![Λ.A.ct (x + y) + z, Λ.A.ct (x + y), z, 0] = _) (genVal_pull_of hp
-        (genVal_cube_of_face a.D₀.P.isLB Λ.ah _ a.D₀.cub.isGen (a.D₀.cub.face 0) _))
-      have h2 := genVal_mul_of (rfl : genVal Λ.u a.D₀.P.isLB (g.s (Λ.ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ))
-        ![Λ.A.ct x + z, Λ.A.ct x, z, 0] = _) (rfl : genVal Λ.u a.D₀.P.isLB (g.s (Λ.ε y))
-        (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ)) ![Λ.A.ct y + z, Λ.A.ct y, z, 0] = _)
-      exact (_root_.mul_one _).symm.trans (h1.symm.trans (h0.trans h2)))
-  obtain ⟨w, hw⟩ := expChar_surjective t
-  refine ⟨(w, z), TorusExt.gt_ext (hb w) fun x => ?_⟩
-  obtain ⟨x, rfl⟩ := Λ.ε.surjective x
-  exact corr_of_genVal (u := Λ.u) a.D₀.P.isLB ((Λ.ex0 _).isGen _) (g.isGen _) (isLift_gt Λ (w, z) x) (hl x)
-    (fun _ => rfl) ((Λ.arcDict_expZero_section _ x).trans (congrArg Units.val (DFunLike.congr_fun hw (Multiplicative.ofAdd x))))
+  have := isScalarTower Λ
+  exact GlobalTheory.ArcOfModel.analyticTorusPoint_surjective (ε := Λ.ε) Λ.lam Λ.ah Λ.ct Λ.ex0_b Λ.arcDict_expZero_section
 
 theorem rep_iff (k : ℕ) (p : Out.QkPt a.D₀ (FractionRing ℂ) k) (la : Λ.A.La) :
     Λ.Rep k p la ↔ ∃ q : Out.QkPt a.D₀ ℂ k, QkExt (algebraMap _ ℂ) p q ∧ q.y = Λ.ε la.y ∧
@@ -486,35 +244,12 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
 open FrameValue
 
-theorem gtAct (Λ : letI := H.starRing; GtAn a) (r : 𝓞 E) (v : letI := H.starRing; Λ.A.V) :
+theorem gtAct (Λ : letI := H.starRing; GlobalTheory.ArcPts.GtAn a) (r : 𝓞 E) (v : letI := H.starRing; Λ.A.V) :
     letI := H.starRing; GtAct a.oa r (Λ.ex0 v) (Λ.ex0 (Λ.A.actV r v)) := by
   letI := H.starRing
-  refine ⟨by rw [analyticTorusPoint_base_eq_holUnif_ex, analyticTorusPoint_base_eq_holUnif_ex, AnArc.actV_snd, Λ.act, Category.assoc], fun w hw h₀ x => ?_⟩
-  obtain ⟨x, rfl⟩ := Λ.ε.surjective x
-  have hp : 𝟙 (Sp ℂ) ≫ (lift (Out.DegPre.cF a.D₀ ℂ (Λ.ε x)) (Λ.ex0 v).b).left =
-      (lift (Λ.u.ex (Λ.A.ct x)) (Λ.u.ex v.2)).left := by
-    rw [Category.id_comp, analyticTorusPoint_base_eq_holUnif_ex, Out.DegPre.cF, ← Λ.ct, ← comp_lift]
-    exact toUnit_TF_comp_left _
-  rw [← map_smul Λ.ε]
-  refine corr_of_genVal (u := Λ.u) a.D₀.P.isLB
-    (DVR.mulGen_isGen _ _ _ _ _ _ _ ((Λ.ex0 _).isGen _) (DVR.pullGen_isGen _ _ _ _ hw _)) ((Λ.ex0 _).isGen _)
-    (z := Sum.elim ![Λ.A.ct (star r • x) + v.2, Λ.A.ct (star r • x), v.2, 0]
-      (rosatiLift (Λ.A.F (star r)) (Λ.A.F r) (Λ.A.ct x) v.2)) ?_ (isLift_gt Λ _ x) (fun f => ?_) ?_
-  · rintro (k | k)
-    · exact isLift_gt Λ _ _ k
-    · exact (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ _) hp).trans
-        (isLift_rosati (Λ.act (star r)) (Λ.act r) _ _ k))
-  · erw [Fintype.prod_sum_type]
-    simp only [Sum.elim_inl, Sum.elim_inr, Fin.prod_univ_four, Fin.prod_univ_six, rosatiLift, Out.rosatiε,
-      Out.DegPre.gtε, Matrix.cons_val, zpow_neg, zpow_one, Λ.A.ct_smul, AnArc.actV_snd]
-    apply Additive.ofMul.injective
-    simp only [ofMul_mul, ofMul_inv]
-    abel
-  · have h1 := genVal_mul_of (Λ.arcDict_expZero_section v (star r • x)) (genVal_pull_of hp
-      ((genVal_rosati a.D₀.P.isLB Λ.ah (Λ.act (star r)) (Λ.act r) w hw h₀).2 _ _))
-    exact h1.trans ((_root_.mul_one _).trans (Λ.arcDict_expZero_section (Λ.A.actV r v) x).symm)
+  exact GlobalTheory.ArcOfModel.gtAct (ε := Λ.ε) Λ.lam Λ.ah Λ.ct Λ.ex0_b Λ.arcDict_expZero_section Λ.act r v
 
-def toDict (Λ : letI := H.starRing; GtAn a) : letI := H.starRing; GtDict a.D₀ a.oa :=
+def toDict (Λ : letI := H.starRing; GlobalTheory.ArcPts.GtAn a) : letI := H.starRing; GtDict a.D₀ a.oa :=
   letI := H.starRing
   { A := Λ.A
     eX := Λ.ε
@@ -543,12 +278,5 @@ def toDict (Λ : letI := H.starRing; GtAn a) : letI := H.starRing; GtDict a.D₀
     iota := isIota Λ }
 
 end Bridge
-
-section Test
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {l : Level H} (c : Coeff l)
-  [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ]
-
-end Test
 
 end GlobalTheory.GtAnModel

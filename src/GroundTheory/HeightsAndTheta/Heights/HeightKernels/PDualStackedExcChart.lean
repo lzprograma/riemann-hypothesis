@@ -74,10 +74,6 @@ def DualStackedExcChartForms.Statement : Prop :=
         ∃ W : Fin (m + 1) → excChartRing b' a v u,
           ∀ t, ∑ j, σ₀ (M t j) * W j = excChartMap b' a v u (graphSecond t)
 
-namespace DualStackedExcChartPartsExample
-
-end DualStackedExcChartPartsExample
-
 end
 
 end GroundTheory.Heights₂.Heights

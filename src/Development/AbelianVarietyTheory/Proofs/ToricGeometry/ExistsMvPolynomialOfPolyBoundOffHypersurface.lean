@@ -326,8 +326,7 @@ theorem _root_.GlobalTheory.exists_mvPolynomial_of_poly_bound_off_hypersurface :
     set R := ∏ k ∈ s, qs (v k) with hRdef
     have hR0 : R ≠ 0 := Finset.prod_ne_zero_iff.mpr fun k _ => hvB k
     obtain ⟨y, hy⟩ : ∃ y, MvPolynomial.eval y R ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hR0 (MvPolynomial.funext fun y => by rw [h y, map_zero])
     set w : Fin d → ℂ := y - x'
     set ρ := _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.PG.lineHom x' w R

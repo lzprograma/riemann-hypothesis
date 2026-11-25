@@ -125,11 +125,6 @@ theorem isPullback_of_isSquare {S' S : Scheme.{0}} {A' : Over S'} {A : Over S} {
       · rw [IsPullback.lift_fst, ← h1, Category.assoc, Category.assoc, h₂]
       · rw [IsPullback.lift_snd, ← h2, Category.assoc, v₂]
 
-theorem spMap_subtype_inclusion {K : Type} [Field K] {K₀ K₁ : Subfield K} (h : K₀ ≤ K₁) :
-    spMap K₁.subtype ≫ spMap (Subfield.inclusion h) = spMap K₀.subtype := by
-  rw [← Spec.map_comp]
-  rfl
-
 theorem siegPre_descends : ∀ (h M : ℕ) (o : Type) [CommRing o] (ζ : o) (K : Type) [Field K] (K₀ : Subfield K) (s₀ : Sp K₀ ⟶ Sp o) (s : Sp K ⟶ Sp o) (c : SiegPre h M ζ s), s = spMap K₀.subtype ≫ s₀ → c.Principal → ∃ F : Finset K, ∀ (K₁ : Subfield K) (hK : K₀ ≤ K₁), (F : Set K) ⊆ K₁ → ∃ c₁ : SiegPre h M ζ (spMap (Subfield.inclusion hK) ≫ s₀), c₁.Principal ∧ SiegPB c c₁ (spMap K₁.subtype) := by
   intro h M o _ ζ K _ K₀ s₀ s c hs hc
   classical
@@ -188,7 +183,7 @@ theorem siegPre_descends : ∀ (h M : ℕ) (o : Type) [CommRing o] (ζ : o) (K :
   have hl₂ : ∀ u, l u ≫ A₁.hom = 𝟙 _ := fun u => hpb₁.lift_snd _ _ _
   let lev₁ : Fin h ⊕ Fin h → (𝟙_ (Over (Sp K₁)) ⟶ A₁) := fun u => Over.homMk (l u) (hl₂ u)
   obtain ⟨c₁, hc₁⟩ := _root_.GlobalTheory.exists_siegPre_of_descended_data h M o ζ K₁ K K₁.subtype (spMap (Subfield.inclusion hK) ≫ s₀) s c A₁ ψ ψ₂ P₁
-    lev₁ (by rw [hs, ← Category.assoc, spMap_subtype_inclusion]) hgrp hsqψ hP₁ hiso (fun u => by
+    lev₁ (by rw [hs, ← Category.assoc, GlobalTheory.GrpDescent.spMap_subtype]) hgrp hsqψ hP₁ hiso (fun u => by
       have e := hlev u
       have key : lv u ≫ ψ = spMap K₁.subtype ≫ l u := by
         apply hpb₁.hom_ext

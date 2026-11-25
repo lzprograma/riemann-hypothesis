@@ -118,7 +118,7 @@ private theorem finrank_Z1_chRep_eq_two_of_ne_one_ne_cyc (hP : LocalPublishedThe
       ring
   have eB := Submodule.comapSubtypeEquivOfLe hBZ
   rw [hD, finrank_bot] at e2
-  rw [hH0, finrank_bot, e2, if_pos rfl, hr, Subgroup.index_top, finrank_self] at e1
+  rw [hH0, finrank_bot, e2, ite_eq_left rfl, hr, Subgroup.index_top, finrank_self] at e1
   haveI : Module.Finite E ↥(ReciprocityTheory.Gal.B1 (chRep κ)) := finite_of_finrank_pos (by omega)
   haveI := Module.Finite.equiv eB.symm
   haveI : Module.Finite E ↥(ReciprocityTheory.Gal.Z1 (chRep κ)) :=
@@ -281,9 +281,9 @@ private theorem prj_diag {B : Type} [CommRing B] (c : Fin 4 → B) (i : Fin 4) :
     by_cases hai : a = i
     · subst hai
       simp
-    · rw [if_pos rfl, if_neg (fun h => hai h.1.symm)]
+    · rw [ite_eq_left rfl, ite_eq_right (fun h => hai h.1.symm)]
       exact Finset.prod_eq_zero (Finset.mem_erase.2 ⟨hai, Finset.mem_univ _⟩) (sub_self _)
-  · rw [if_neg hab, if_neg (fun h => hab (h.1.symm.trans h.2))]
+  · rw [ite_eq_right hab, ite_eq_right (fun h => hab (h.1.symm.trans h.2))]
 
 private theorem prj_mul_eq_zero {B : Type} [CommRing B] {h h' : M4 B} (e : h' * h = 1) (e' : h * h' = 1)
     {c : Fin 4 → B} (hc : ∀ i j, i ≠ j → IsUnit (c i - c j)) (M : M4 B) (i j : Fin 4) :
@@ -321,7 +321,7 @@ private theorem prj_mul_eq_zero {B : Type} [CommRing B] {h h' : M4 B} (e : h' * 
   constructor
   · intro hz
     have h1 := hent (h' * M * h) j i
-    rw [hz, if_pos ⟨rfl, rfl⟩] at h1
+    rw [hz, ite_eq_left ⟨rfl, rfl⟩] at h1
     have h2 : (ua : B) * (h' * M * h) j i * ub = 0 := h1.symm
     simpa using h2
   · intro hz
@@ -567,7 +567,7 @@ private theorem main {H : Type} [Group H] (I : Subgroup H) (s₀ : H) (hs : s₀
     set Y : M4 E := Matrix.of fun a b => if a = b then 0 else γ s₀ a b / (1 - p a s₀ / p b s₀) with hYdef
     have hY : ∀ a b, a ≠ b → γ s₀ a b = (1 - p a s₀ / p b s₀) * Y a b := by
       intro a b hab
-      simp only [hYdef, Matrix.of_apply, if_neg hab]
+      simp only [hYdef, Matrix.of_apply, ite_eq_right hab]
       rw [mul_div_assoc', eq_div_iff (hne a b hab), mul_comm]
     have hY' := (ord_iff I s₀ hs p hp hc γ r hr Y hY).1 hO
     refine ⟨hsp4, ⟨Y, ?_, hY'.1⟩, hY'.2⟩
@@ -579,7 +579,7 @@ private theorem main {H : Type} [Group H] (I : Subgroup H) (s₀ : H) (hs : s₀
     · subst hij
       simp
     · have hij' : j.rev ≠ i.rev := fun h => hij (Fin.rev_injective h).symm
-      rw [if_neg hij', if_neg hij, hrat s₀ i j, ← neg_div, ← hγ, smul_div_assoc]
+      rw [ite_eq_right hij', ite_eq_right hij, hrat s₀ i j, ← neg_div, ← hγ, smul_div_assoc]
   · rintro ⟨hsp4, ⟨X, hX, hlow⟩, hin⟩
     set Y : M4 E := Matrix.of fun a b => if b < a then X a b else γ s₀ a b / (1 - p a s₀ / p b s₀) with hYdef
     have hY : ∀ a b, a ≠ b → γ s₀ a b = (1 - p a s₀ / p b s₀) * Y a b := by
@@ -590,7 +590,7 @@ private theorem main {H : Type} [Group H] (I : Subgroup H) (s₀ : H) (hs : s₀
       · rw [mul_div_assoc', eq_div_iff (hne a b hab), mul_comm]
     refine ⟨hsp4, (ord_iff I s₀ hs p hp hc γ r hr Y hY).2 ⟨?_, hin⟩⟩
     intro g a b hba
-    simp only [hYdef, Matrix.of_apply, if_pos hba]
+    simp only [hYdef, Matrix.of_apply, ite_eq_left hba]
     exact hlow g a b hba
 
 end UpperTheory.V.Loc.SymplecticTangentProjection
@@ -666,16 +666,18 @@ section -- clump:auto
 
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.HV UpperTheory.V.Base IsLocalRing
 
+namespace UpperTheory.Sp4DeformCore
+
 section Core
 
 variable {H E : Type} [Group H] [Field E]
 
-private theorem mem_sp4_iff {X : M4 E} : X ∈ sp4 E ↔ ∀ a b, (sgn a * sgn b) • X b.rev a.rev = -X a b := by
+theorem mem_sp4_iff {X : M4 E} : X ∈ sp4 E ↔ ∀ a b, (sgn a * sgn b) • X b.rev a.rev = -X a b := by
   show adj X = -X ↔ _
   rw [← Matrix.ext_iff]
   rfl
 
-private theorem hom_iff (χ : Fin 4 → H →* Eˣ) (γ : H → M4 E) :
+theorem hom_iff (χ : Fin 4 → H →* Eˣ) (γ : H → M4 E) :
     (∃ r : H →* M4 (DualNumber E), ∀ g a b, r g a b = ⟨if a = b then (χ a g : E) else 0, γ g a b * χ b g⟩) ↔
       ∀ g h a b, γ (g * h) a b = γ g a b + (χ a g : E) / χ b g * γ h a b := by
   have key : ∀ (r : H → M4 (DualNumber E)),
@@ -688,7 +690,7 @@ private theorem hom_iff (χ : Fin 4 → H →* Eˣ) (γ : H → M4 E) :
     have u2 := Units.ne_zero (χ b h)
     rw [TrivSqZeroExt.ext_iff, Matrix.mul_apply, TrivSqZeroExt.snd_sum, TrivSqZeroExt.fst_sum]
     simp only [DualNumber.snd_mul, TrivSqZeroExt.fst_mul, hf, hs, Finset.sum_add_distrib, ite_mul, mul_ite, zero_mul,
-      mul_zero, Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, if_true, map_mul, Units.val_mul]
+      mul_zero, Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, ite_true, map_mul, Units.val_mul]
     rw [and_iff_right (by split_ifs with h <;> simp [h])]
     constructor
     · intro e
@@ -715,7 +717,7 @@ private theorem hom_iff (χ : Fin 4 → H →* Eˣ) (γ : H → M4 E) :
     · subst h; simp [h1]
     · simp [h, h1]
 
-private theorem wt_fib : ∀ a b a' b' : Fin 4, a ≠ b → wt a' b' = wt a b →
+theorem wt_fib : ∀ a b a' b' : Fin 4, a ≠ b → wt a' b' = wt a b →
     (a' = a ∧ b' = b) ∨ (a' = b.rev ∧ b' = a.rev) := by decide
 
 private theorem wt_cases : ∀ j ∈ wts, j = 0 ∨ (∃ a b : Fin 4, a < b ∧ wt a b = j ∧ dimsL j = 2) ∨
@@ -724,14 +726,14 @@ private theorem wt_cases : ∀ j ∈ wts, j = 0 ∨ (∃ a b : Fin 4, a < b ∧ 
 private theorem wt_pos_ne : ∀ a b a' b' : Fin 4, a < b → b' ≤ a' → wt a' b' ≠ wt a b := by decide
 
 private theorem dimsL_out (j : ℤ × ℤ) (h : j ∉ wts) : dimsL j = 0 := by
-  rw [dimsL, if_neg h, if_neg]
+  rw [dimsL, ite_eq_right h, ite_eq_right]
   rintro (rfl | rfl | rfl | rfl | rfl) <;> exact h (by decide)
 
 private theorem sgn_rev : ∀ a b : Fin 4, sgn b.rev * sgn a.rev = sgn a * sgn b := by decide
 
-private theorem sgn_sq : ∀ a b : Fin 4, sgn a * sgn b * (sgn a * sgn b) = 1 := by decide
+theorem sgn_sq : ∀ a b : Fin 4, sgn a * sgn b * (sgn a * sgn b) = 1 := by decide
 
-private theorem ex_root [CharZero E] (a b : Fin 4) :
+theorem ex_root [CharZero E] (a b : Fin 4) :
     ∃ X ∈ sp4 E, X a b ≠ 0 ∧ ∀ a' b', wt a' b' ≠ wt a b → X a' b' = 0 := by
   refine ⟨Matrix.single a b 1 - adj (Matrix.single a b 1), mem_sp4_iff.2 fun i j => ?_, ?_, fun i j h => ?_⟩
   · simp only [Matrix.sub_apply, adj_apply, Fin.rev_rev, sgn_rev, smul_sub, smul_smul, sgn_sq, one_smul, neg_sub]
@@ -744,16 +746,15 @@ private theorem ex_root [CharZero E] (a b : Fin 4) :
 
 variable [TopologicalSpace H] [TopologicalSpace E] [IsTopologicalRing E]
 
-private def Q (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (j : ℤ × ℤ) (γ : H → M4 E) : Prop :=
+def Q (R : Fin 4 → Fin 4 → Prop) (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (j : ℤ × ℤ) (γ : H → M4 E) : Prop :=
   (∀ g h a b, γ (g * h) a b = γ g a b + (χ a g : E) / χ b g * γ h a b) ∧ (∀ g, γ g ∈ sp4 E) ∧
-    (∃ X ∈ sp4 E, ∀ g a b, b < a → γ g a b = (1 - (χ a g : E) / χ b g) * X a b) ∧ (∀ s, I s → ∀ a, γ s a a = 0) ∧
+    (∃ X ∈ sp4 E, ∀ g a b, R a b → γ g a b = (1 - (χ a g : E) / χ b g) * X a b) ∧ (∀ s, I s → ∀ a, γ s a a = 0) ∧
       (∀ a b, Continuous fun g => γ g a b) ∧ ∀ g a b, wt a b ≠ j → γ g a b = 0
 
-private theorem dim_root [CharZero E] (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (θ : H → E)
+theorem dim_root [CharZero E] (R : Fin 4 → Fin 4 → Prop) (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (θ : H → E)
     (hθ : ∀ g a, (χ a.rev g : E) * χ a g = θ g) (hc : ∀ a b, Continuous fun g => (χ a g : E) / χ b g)
-    (a b : Fin 4) (hba : b < a) (g0 : H) (h0 : χ a g0 ≠ χ b g0) (S : Submodule E (H → M4 E))
-    (hS : ∀ γ, γ ∈ S ↔ Q χ I (wt a b) γ) : finrank E S = 1 := by
-  have hab : a ≠ b := hba.ne'
+    (a b : Fin 4) (hab : a ≠ b) (hR : R a b) (g0 : H) (h0 : χ a g0 ≠ χ b g0) (S : Submodule E (H → M4 E))
+    (hS : ∀ γ, γ ∈ S ↔ Q R χ I (wt a b) γ) : finrank E S = 1 := by
   have hr : ∀ g a b, (χ b.rev g : E) / χ a.rev g = χ a g / χ b g := fun g a b => by
     rw [div_eq_div_iff (Units.ne_zero _) (Units.ne_zero _), hθ, mul_comm, hθ]
   have hw : ∀ a', wt a' a' ≠ wt a b := fun a' h => hab ((wt_eq_zero a b).1 (h.symm.trans ((wt_eq_zero _ _).2 rfl)))
@@ -781,7 +782,7 @@ private theorem dim_root [CharZero E] (χ : Fin 4 → H →* Eˣ) (I : H → Pro
     refine ⟨Y a b / X a b, Subtype.ext (funext fun g => Matrix.ext fun a' b' => ?_)⟩
     show Y a b / X a b * v g a' b' = γ g a' b'
     have e : Y a b / X a b * v g a b = γ g a b := by
-      rw [hv, h2 g a b hba]
+      rw [hv, h2 g a b hR]
       field_simp
     by_cases h : wt a' b' = wt a b
     · rcases wt_fib a b a' b' hab h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
@@ -795,7 +796,7 @@ private theorem dim_root [CharZero E] (χ : Fin 4 → H →* Eˣ) (I : H → Pro
 private theorem dim_pos [CharZero E] (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (θ : H → E)
     (hθ : ∀ g a, (χ a.rev g : E) * χ a g = θ g) (a b : Fin 4) (hab : a < b) (T : Submodule E (H → E))
     (hT : ∀ z, z ∈ T ↔ Continuous z ∧ ∀ g h, z (g * h) = z g + (χ a g : E) / χ b g * z h)
-    (S : Submodule E (H → M4 E)) (hS : ∀ γ, γ ∈ S ↔ Q χ I (wt a b) γ) : finrank E S = finrank E T := by
+    (S : Submodule E (H → M4 E)) (hS : ∀ γ, γ ∈ S ↔ Q (fun a b => b < a) χ I (wt a b) γ) : finrank E S = finrank E T := by
   have hr : ∀ g a b, (χ b.rev g : E) / χ a.rev g = χ a g / χ b g := fun g a b => by
     rw [div_eq_div_iff (Units.ne_zero _) (Units.ne_zero _), hθ, mul_comm, hθ]
   obtain ⟨X, hX, hX1, hXw, hY⟩ := UpperTheory.exists_sp4_root_vector_unique_on_weight E a b hab.ne
@@ -831,10 +832,10 @@ private theorem dim_pos [CharZero E] (χ : Fin 4 → H →* Eˣ) (I : H → Prop
       · exact Subtype.ext (funext fun g => (hγ g a b).trans (by rw [hX1, mul_one]))
   exact (LinearEquiv.ofBijective f hf).finrank_eq
 
-private theorem dim_zero (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (σ : H)
+theorem dim_zero (R : Fin 4 → Fin 4 → Prop) (hR : ∀ a, ¬ R a a) (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (σ : H)
     (hex : ∀ e : E, ∃ u : H → E, Continuous u ∧ (∀ g h, u (g * h) = u g + u h) ∧ (∀ g, I g → u g = 0) ∧ u σ = e)
     (hun : ∀ u : H → E, Continuous u → (∀ g h, u (g * h) = u g + u h) → (∀ g, I g → u g = 0) → u σ = 0 → u = 0)
-    (S : Submodule E (H → M4 E)) (hS : ∀ γ, γ ∈ S ↔ Q χ I 0 γ) : finrank E S = 2 := by
+    (S : Submodule E (H → M4 E)) (hS : ∀ γ, γ ∈ S ↔ Q R χ I 0 γ) : finrank E S = 2 := by
   let f : S →ₗ[E] E × E :=
     { toFun := fun γ => (γ.1 σ 0 0, γ.1 σ 1 1)
       map_add' := fun _ _ => rfl
@@ -861,7 +862,8 @@ private theorem dim_zero (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (σ : H)
       obtain ⟨w, w1, w2, w3, w4⟩ := hex y
       let γ : H → M4 E := fun g => Matrix.diagonal ![u g, w g, -w g, -u g]
       refine ⟨⟨γ, (hS γ).2 ⟨fun g h a b => ?_, fun g => mem_sp4_iff.2 fun a b => ?_,
-        ⟨0, zero_mem _, fun g a b h => by simp [γ, h.ne']⟩, fun s hs a => ?_, fun a b => ?_, fun g a b h => ?_⟩⟩, ?_⟩
+        ⟨0, zero_mem _, fun g a b h => by simp [γ, show a ≠ b from fun e => hR a (e ▸ h)]⟩,
+        fun s hs a => ?_, fun a b => ?_, fun g a b h => ?_⟩⟩, ?_⟩
       · by_cases hab : a = b
         · subst hab
           fin_cases a <;> simp [γ, u2, w2, add_comm]
@@ -877,6 +879,47 @@ private theorem dim_zero (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (σ : H)
       · exact Prod.ext u4 w4
   rw [(LinearEquiv.ofBijective f hf).finrank_eq]
   simp
+
+theorem dim_out (R : Fin 4 → Fin 4 → Prop) (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (j : ℤ × ℤ)
+    (h1 : j ∉ wts) (S : Submodule E (H → M4 E)) (hS : ∀ γ, γ ∈ S ↔ Q R χ I j γ) : finrank E S = 0 := by
+  refine (congrArg (fun T : Submodule E (H → M4 E) => finrank E T) (eq_bot_iff.2 fun γ hγ => ?_)).trans (finrank_bot _ _)
+  exact funext fun g => Matrix.ext fun a b => ((hS γ).1 hγ).2.2.2.2.2 g a b fun h => h1 (h ▸ wt_mem a b)
+
+theorem finrank_eq_of_Q (R : Fin 4 → Fin 4 → Prop) (χ : Fin 4 → H →* Eˣ) (I : H → Prop)
+    (hc : ∀ a, Continuous fun g => (χ a g : E)) (hci : ∀ a, Continuous fun g => (χ a g : E)⁻¹)
+    (P : (H →* M4 (DualNumber E)) → Prop)
+    (hP : ∀ (γ : H → M4 E) (r : H →* M4 (DualNumber E)),
+      (∀ g a b, r g a b = ⟨if a = b then (χ a g : E) else 0, γ g a b * χ b g⟩) → (∀ a b, Continuous fun g => γ g a b) →
+      (P r ↔ (∀ g, γ g ∈ sp4 E) ∧ (∃ X ∈ sp4 E, ∀ g a b, R a b → γ g a b = (1 - (χ a g : E) / χ b g) * X a b) ∧
+        ∀ s, I s → ∀ a, γ s a a = 0))
+    (j : ℤ × ℤ) (S : Submodule E (H → M4 E))
+    (hS : ∀ s, s ∈ S ↔ (∃ r : H →* M4 (DualNumber E),
+      (∀ g a b, r g a b = ⟨if a = b then (χ a g : E) else 0, s g a b⟩) ∧ P r) ∧
+        (∀ a b, Continuous fun g => s g a b) ∧ ∀ g a b, wt a b ≠ j → s g a b = 0) :
+    ∃ S' : Submodule E (H → M4 E), finrank E S = finrank E S' ∧ ∀ γ, γ ∈ S' ↔ Q R χ I j γ := by
+  let m : (H → M4 E) ≃ₗ[E] (H → M4 E) :=
+    { toFun := fun γ g => Matrix.of fun a b => γ g a b * χ b g
+      invFun := fun γ g => Matrix.of fun a b => γ g a b * (χ b g : E)⁻¹
+      map_add' := fun x y => funext fun g => Matrix.ext fun a b => add_mul _ _ _
+      map_smul' := fun x y => funext fun g => Matrix.ext fun a b => mul_assoc _ _ _
+      left_inv := fun x => funext fun g => Matrix.ext fun a b => mul_inv_cancel_right₀ (Units.ne_zero _) _
+      right_inv := fun x => funext fun g => Matrix.ext fun a b => inv_mul_cancel_right₀ (Units.ne_zero _) _ }
+  have hm : ∀ γ g a b, m γ g a b = γ g a b * χ b g := fun _ _ _ _ => rfl
+  refine ⟨S.comap (m : (H → M4 E) →ₗ[E] (H → M4 E)), (m.ofSubmodule' S).finrank_eq.symm, fun γ => ?_⟩
+  show m γ ∈ S ↔ _
+  rw [hS]
+  simp only [hm]
+  constructor
+  · rintro ⟨⟨r, h1, h2⟩, h3, h4⟩
+    have h5 : ∀ a b, Continuous fun g => γ g a b := fun a b =>
+      ((h3 a b).mul (hci b)).congr fun g => mul_inv_cancel_right₀ (Units.ne_zero _) _
+    obtain ⟨h6, h7, h8⟩ := (hP γ r h1 h5).1 h2
+    exact ⟨(hom_iff χ γ).1 ⟨r, h1⟩, h6, h7, h8, h5, fun g a b h =>
+      (mul_eq_zero.1 (h4 g a b h)).resolve_right (Units.ne_zero _)⟩
+  · rintro ⟨h1, h2, h3, h4, h5, h6⟩
+    obtain ⟨r, hr⟩ := (hom_iff χ γ).2 h1
+    exact ⟨⟨r, hr, (hP γ r hr h5).2 ⟨h2, h3, h4⟩⟩, fun a b => (h5 a b).mul (hc b),
+      fun g a b h => by rw [h6 g a b h, zero_mul]⟩
 
 private theorem dim_core [CharZero E] (χ : Fin 4 → H →* Eˣ) (I : H → Prop) (θ : H → E) (σ : H)
     (hθ : ∀ g a, (χ a.rev g : E) * χ a g = θ g) (hc : ∀ a, Continuous fun g => (χ a g : E))
@@ -894,47 +937,24 @@ private theorem dim_core [CharZero E] (χ : Fin 4 → H →* Eˣ) (I : H → Pro
     (hS : ∀ s, s ∈ S ↔ (∃ r : H →* M4 (DualNumber E),
       (∀ g a b, r g a b = ⟨if a = b then (χ a g : E) else 0, s g a b⟩) ∧ P r) ∧
         (∀ a b, Continuous fun g => s g a b) ∧ ∀ g a b, wt a b ≠ j → s g a b = 0) : finrank E S = dimsL j := by
-  let m : (H → M4 E) ≃ₗ[E] (H → M4 E) :=
-    { toFun := fun γ g => Matrix.of fun a b => γ g a b * χ b g
-      invFun := fun γ g => Matrix.of fun a b => γ g a b * (χ b g : E)⁻¹
-      map_add' := fun x y => funext fun g => Matrix.ext fun a b => add_mul _ _ _
-      map_smul' := fun x y => funext fun g => Matrix.ext fun a b => mul_assoc _ _ _
-      left_inv := fun x => funext fun g => Matrix.ext fun a b => mul_inv_cancel_right₀ (Units.ne_zero _) _
-      right_inv := fun x => funext fun g => Matrix.ext fun a b => inv_mul_cancel_right₀ (Units.ne_zero _) _ }
-  have hm : ∀ γ g a b, m γ g a b = γ g a b * χ b g := fun _ _ _ _ => rfl
-  have hQ : ∀ γ, γ ∈ S.comap (m : (H → M4 E) →ₗ[E] (H → M4 E)) ↔ Q χ I j γ := fun γ => by
-    show m γ ∈ S ↔ _
-    rw [hS]
-    simp only [hm]
-    constructor
-    · rintro ⟨⟨r, h1, h2⟩, h3, h4⟩
-      have h5 : ∀ a b, Continuous fun g => γ g a b := fun a b =>
-        ((h3 a b).mul (hci b)).congr fun g => mul_inv_cancel_right₀ (Units.ne_zero _) _
-      obtain ⟨h6, h7, h8⟩ := (hP γ r h1 h5).1 h2
-      exact ⟨(hom_iff χ γ).1 ⟨r, h1⟩, h6, h7, h8, h5, fun g a b h =>
-        (mul_eq_zero.1 (h4 g a b h)).resolve_right (Units.ne_zero _)⟩
-    · rintro ⟨h1, h2, h3, h4, h5, h6⟩
-      obtain ⟨r, hr⟩ := (hom_iff χ γ).2 h1
-      exact ⟨⟨r, hr, (hP γ r hr h5).2 ⟨h2, h3, h4⟩⟩, fun a b => (h5 a b).mul (hc b),
-        fun g a b h => by rw [h6 g a b h, zero_mul]⟩
-  rw [← (m.ofSubmodule' S).finrank_eq]
+  obtain ⟨S', hfin, hQ⟩ := finrank_eq_of_Q (fun a b => b < a) χ I hc hci P hP j S hS
+  rw [hfin]
   by_cases h1 : j ∈ wts
   · rcases wt_cases j h1 with rfl | ⟨a, b, hab, rfl, e⟩ | ⟨a, b, hab, rfl, e⟩
-    · exact dim_zero χ I σ hex hun _ hQ
+    · exact dim_zero (fun a b => b < a) (fun _ => lt_irrefl _) χ I σ hex hun S' hQ
     · obtain ⟨T, hT, h2⟩ := hpos a b hab
       rw [e, ← h2]
-      exact dim_pos χ I θ hθ a b hab T hT _ hQ
+      exact dim_pos χ I θ hθ a b hab T hT S' hQ
     · obtain ⟨g, hg⟩ := hne a b hab.ne'
       rw [e]
-      exact dim_root χ I θ hθ (fun a b => ((hc a).mul (hci b)).congr fun g => (div_eq_mul_inv _ _).symm)
-        a b hab g hg _ hQ
+      exact dim_root (fun a b => b < a) χ I θ hθ (fun a b => ((hc a).mul (hci b)).congr fun g => (div_eq_mul_inv _ _).symm)
+        a b hab.ne' hab g hg S' hQ
   · rw [dimsL_out j h1]
-    refine (congrArg (fun T : Submodule E (H → M4 E) => finrank E T) (eq_bot_iff.2 fun γ hγ => ?_)).trans (finrank_bot _ _)
-    exact funext fun g => Matrix.ext fun a b => ((hQ γ).1 hγ).2.2.2.2.2 g a b fun h => h1 (h ▸ wt_mem a b)
+    exact dim_out (fun a b => b < a) χ I j h1 S' hQ
 
 end Core
 
-private theorem cont_of_open {H O E : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H] [Group O]
+theorem cont_of_open {H O E : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H] [Group O]
     [TopologicalSpace E] (φ : H →* O) (h : IsOpen (φ.ker : Set H)) (f : O → E) : Continuous fun g => f (φ g) := by
   have : IsLocallyConstant φ := (IsLocallyConstant.iff_exists_open _).2 fun x =>
     ⟨(fun y => x⁻¹ * y) ⁻¹' φ.ker, h.preimage (continuous_const.mul continuous_id), by simp, fun y hy => by
@@ -942,6 +962,10 @@ private theorem cont_of_open {H O E : Type} [Group H] [TopologicalSpace H] [IsTo
       rw [map_mul, map_inv, inv_mul_eq_one] at this
       exact this.symm⟩
   exact (this.comp f).continuous
+
+end UpperTheory.Sp4DeformCore
+
+open UpperTheory.Sp4DeformCore in
 
 theorem UpperTheory.tangent_space_deformation_at_l :
     LocalPublishedTheorems → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} (D : Raw Ω c) (hD : D.Good) (E : Type) [Field E] [Algebra ℚ_[l] E] [Module.Finite ℚ_[l] E] [Algebra ↥c.O E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] ↥c.O E] [IsScalarTower ℤ_[l] ℚ_[l] E] [IsFractionRing ↥c.O E] (j : ℤ × ℤ) (S : Submodule E (D.Gp l → M4 E)), (∀ s, s ∈ S ↔ (∃ r' : D.Gp l →* M4 (DualNumber E), (∀ g a b, r' g a b = ⟨algebraMap c.O E (D.r0At l g a b), s g a b⟩) ∧ EqL D r') ∧ (∀ a b, QCont l fun g => s g a b) ∧ ∀ g a b, wt a b ≠ j → s g a b = 0) → finrank E ↥S = dimsL j := by

@@ -29,55 +29,11 @@ public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagShif
 public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HomogeneousPowerSumDecomposition
 public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.TowerHeightIdentityExpansion
 public import Mathlib.RingTheory.MvPolynomial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Elementary
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Tactic.Linter.Style
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardFilterValLt
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.FlagImmersions.PartialSumOrderedBounds, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DominantPartialSumBounds, Development.WeilBound.CoreStatements.FlagImmersions.CoeffShift, Development.WeilBound.CoreStatements.FlagImmersions.AltEqZero, Development.WeilBound.CoreStatements.FlagImmersions.SumChooseLe, Development.WeilBound.CoreStatements.FlagImmersions.RestDegreePowerBound, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LieTermFlagBound, Development.WeilBound.CoreStatements.FlagImmersions.TwoMulThreePowLeFactorial, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LinRootRemainderBound, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PowerSumDeltaDecomposition, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.TowerIdentityAtCutoff, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.TowerT2
@@ -163,7 +119,7 @@ theorem coeff_lin {ι : Type} [Fintype ι] [DecidableEq ι] (w : ι → ℝ) (a 
       (n.factorial : ℝ) * ∏ x, (((a x).factorial : ℝ)⁻¹ * w x ^ a x) := by
   rw [MvPolynomial.coeff_linearCombination_X_pow_of_fintype,
     Finsupp.sum_fintype a (fun _ m => m) (fun _ => rfl)]
-  rw [if_pos h, Finsupp.prod_fintype a (fun r m => w r ^ m) (fun _ => pow_zero _),
+  rw [ite_eq_left h, Finsupp.prod_fintype a (fun r m => w r ^ m) (fun _ => pow_zero _),
     ← Finsupp.multinomial_of_support_subset (Finset.subset_univ _),
     Finset.prod_mul_distrib, Finset.prod_inv_distrib]
   have hpos : (∏ x, ((a x).factorial : ℝ)) ≠ 0 :=
@@ -195,19 +151,19 @@ theorem coeff_shift {ι : Type} [Fintype ι] [DecidableEq ι] (w : ι → ℝ) (
         Polynomial.C (∏ x ∈ Finset.univ.erase x0, (((a x).factorial : ℝ)⁻¹ * w x ^ a x)) := by
       rw [map_prod]
       refine Finset.prod_congr rfl fun x hx => ?_
-      rw [if_neg (Finset.ne_of_mem_erase hx), add_zero, map_mul, map_pow]
-    rw [hrest, Polynomial.coeff_mul_C, if_pos (rfl : x0 = x0), add_comm, Polynomial.coeff_C_mul,
+      rw [ite_eq_right (Finset.ne_of_mem_erase hx), add_zero, map_mul, map_pow]
+    rw [hrest, Polynomial.coeff_mul_C, ite_eq_left (rfl : x0 = x0), add_comm, Polynomial.coeff_C_mul,
       Polynomial.coeff_X_add_C_pow]
     ring
   rw [hrhs, MvPolynomial.X_pow_eq_monomial, MvPolynomial.coeff_monomial_mul']
   by_cases hs : s ≤ a x0
-  · rw [if_pos (Finsupp.single_le_iff.mpr hs), one_mul]
+  · rw [ite_eq_left (Finsupp.single_le_iff.mpr hs), one_mul]
     have e4 : (a - Finsupp.single x0 s) x0 = a x0 - s := by
       rw [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.single_eq_same]
     have e3 : ∀ x ∈ Finset.univ.erase x0, (a - Finsupp.single x0 s) x = a x := by
       intro x hx
       rw [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.single_apply,
-        if_neg (Finset.ne_of_mem_erase hx).symm, tsub_zero]
+        ite_eq_right (Finset.ne_of_mem_erase hx).symm, tsub_zero]
     have e1 := Finset.add_sum_erase Finset.univ (fun x => a x) (Finset.mem_univ x0)
     have e2 := Finset.add_sum_erase Finset.univ (fun x => (a - Finsupp.single x0 s) x)
       (Finset.mem_univ x0)
@@ -241,7 +197,7 @@ theorem coeff_shift {ι : Type} [Fintype ι] [DecidableEq ι] (w : ι → ℝ) (
     linear_combination (-((-1 : ℝ) ^ (a x0 - s) * (-1) ^ (∑ x ∈ Finset.univ.erase x0, a x) *
       (n.factorial : ℝ) * (∏ x ∈ Finset.univ.erase x0, (((a x).factorial : ℝ)⁻¹ * w x ^ a x)) *
       w x0 ^ (a x0 - s))) * hfac
-  · rw [if_neg fun h' => hs (Finsupp.single_le_iff.mp h'), Nat.choose_eq_zero_of_lt (not_le.mp hs)]
+  · rw [ite_eq_right fun h' => hs (Finsupp.single_le_iff.mp h'), Nat.choose_eq_zero_of_lt (not_le.mp hs)]
     simp
 
 variable {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {N : ℕ}
@@ -357,8 +313,8 @@ theorem alt_pk (a : Ψ → Fin N → ℕ) (τ : Ψ) (m : ℕ) (G : RP Ψ N) :
         simp [ht, this]
     rw [e2]
     by_cases h : m ≤ a τ (σ τ i)
-    · rw [if_pos (e1.mpr h), if_pos h]
-    · rw [if_neg (fun h' => h (e1.mp h')), if_neg h]
+    · rw [ite_eq_left (e1.mpr h), ite_eq_left h]
+    · rw [ite_eq_right (fun h' => h (e1.mp h')), ite_eq_right h]
   simp only [alt, h1, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun l _ => ?_
@@ -408,7 +364,7 @@ theorem alt_pk_zero (a : Ψ → Fin N → ℕ) (τ : Ψ) (ha : ∀ c : Fin N, a 
     have hne : l ≠ ⟨l + m, by omega⟩ := fun e => by
       have := congrArg Fin.val e; simp at this; omega
     refine alt_eq_zero _ τ l ⟨l + m, by omega⟩ hne ?_ G
-    simp only [lower, true_and, if_true, if_neg hne.symm, ha]
+    simp only [lower, true_and, ite_true, ite_eq_right hne.symm, ha]
     omega
   · rfl
 
@@ -425,7 +381,7 @@ theorem col_sum (τ : Ψ) (k m : ℕ) (hk : 1 ≤ k) (hkN : k ≤ N) (hm : 1 ≤
     have hne : l ≠ l' := fun e => by
       have := congrArg Fin.val e; omega
     rw [Finset.sum_eq_add l l' hne]
-    · rw [if_pos (by simp [bump]; omega), if_pos (by simp [bump]; omega)]
+    · rw [ite_eq_left (by simp [bump]; omega), ite_eq_left (by simp [bump]; omega)]
       rw [alt_swap (lower (bump τ l k) τ l m) (lower (bump τ l' k) τ l m) τ l l' hne G]
       · ring
       · intro c
@@ -448,26 +404,26 @@ theorem col_sum (τ : Ψ) (k m : ℕ) (hk : 1 ≤ k) (hkN : k ≤ N) (hm : 1 ≤
     · simp
   · subst h2
     rw [Finset.sum_eq_single l]
-    · rw [if_pos (by simp [bump])]
+    · rw [ite_eq_left (by simp [bump])]
       congr 1
       funext t c
       simp only [lower, bump, rho]
       split_ifs <;> omega
     · intro c _ hc
-      rw [if_neg]
+      rw [ite_eq_right]
       simp [bump, hc.symm]; omega
     · simp
   · refine Finset.sum_eq_zero fun c _ => ?_
     split_ifs with h
     · by_cases hc : l = c
       · subst hc
-        simp only [bump, true_and, if_true] at h
+        simp only [bump, true_and, ite_true] at h
         set q : Fin N := ⟨N - 1 - (N - 1 - l + k - m), by omega⟩ with hq
         have hv : (q : ℕ) = N - 1 - (N - 1 - l + k - m) := rfl
         have hne : l ≠ q := fun e => by
           have := congrArg Fin.val e; omega
         refine alt_eq_zero _ τ l q hne ?_ G
-        simp only [lower, bump, true_and, if_true, if_neg hne.symm]
+        simp only [lower, bump, true_and, ite_true, ite_eq_right hne.symm]
         omega
       · exfalso
         simp [bump, hc] at h; omega
@@ -482,7 +438,7 @@ theorem lam_pk (τ τ' : Ψ) (k m : ℕ) (hk : 1 ≤ k) (hkN : k ≤ N) (hm : 1 
     simp only [col_sum τ' k m hk hkN hm G]
     by_cases h : m = k
     · subst h
-      simp only [if_true]
+      simp only [ite_true]
       rw [Fin.sum_univ_eq_sum_range (fun l => if l + m < N then 0 else alt rho G) N, Finset.sum_ite,
         Finset.sum_const_zero, zero_add, Finset.sum_const, nsmul_eq_mul]
       have : (Finset.range N).filter (fun l => ¬ l + m < N) = Finset.Ico (N - m) N := by
@@ -490,7 +446,7 @@ theorem lam_pk (τ τ' : Ψ) (k m : ℕ) (hk : 1 ≤ k) (hkN : k ≤ N) (hm : 1 
       rw [this, Nat.card_Ico]
       congr 2; omega
     · simp [h]
-  · rw [if_neg (fun h => ht h.1)]
+  · rw [ite_eq_right (fun h => ht h.1)]
     refine Finset.sum_eq_zero fun c _ => alt_pk_zero _ τ' (fun c' => ?_) m hm G
     simp [bump, ht]
 
@@ -557,9 +513,9 @@ theorem gdet_bump (k : ℕ) (hk : 1 ≤ k) (U : ℝ) (hU : 0 < U) (v : Fin N →
   have hwM : ∀ a, Maj (w a) U (1 / U) := by
     intro a
     by_cases h : a < N
-    · simp only [hw, dif_pos h]
+    · simp only [hw, dite_eq_left h]
       exact hv _
-    · simp only [hw, dif_neg h]
+    · simp only [hw, dite_eq_right h]
       exact Maj.zero hU.le (by positivity)
   refine ⟨∑ c : Fin N, C ((((N - 1 - (c : ℕ) + k).factorial : ℕ) : ℝ)⁻¹ * (((N - 1 - (c : ℕ)).factorial : ℕ) : ℝ)) *
       (rr w (N - 1 - (c : ℕ) + k) N).coeff (N - 1 - (c : ℕ)), ?_, ?_⟩
@@ -576,7 +532,7 @@ theorem gdet_bump (k : ℕ) (hk : 1 ≤ k) (U : ℝ) (hU : 0 < U) (v : Fin N →
       intro c
       have hc : N - 1 - (c : ℕ) < N := by omega
       have hk1 : k ≠ 0 := by omega
-      simp only [cnt, if_pos hc, if_neg hk1]
+      simp only [cnt, ite_eq_left hc, ite_eq_right hk1]
       rw [show N - 1 - (N - 1 - (c : ℕ)) = (c : ℕ) by omega]
       have hf := Nat.add_choose_mul_factorial_mul_factorial k (N - 1 - (c : ℕ))
       rw [add_comm k] at hf
@@ -612,7 +568,7 @@ theorem gdet_bump (k : ℕ) (hk : 1 ≤ k) (U : ℝ) (hU : 0 < U) (v : Fin N →
       rw [Matrix.updateRow_apply]
       by_cases hi : i = c
       · subst hi
-        simp only [if_true, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hA]
+        simp only [ite_true, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hA]
         rw [← hwv b, pow_eq_sum_rr w _ b b.isLt, Finset.mul_sum]
         refine Finset.sum_congr rfl (fun c' _ => ?_)
         have hP : C ((((N - 1 - (c' : ℕ)).factorial : ℕ) : ℝ)) * C ((((N - 1 - (c' : ℕ)).factorial : ℕ) : ℝ))⁻¹
@@ -621,7 +577,7 @@ theorem gdet_bump (k : ℕ) (hk : 1 ≤ k) (U : ℝ) (hU : 0 < U) (v : Fin N →
         rw [map_mul]
         linear_combination (-(C ((((N - 1 - (i : ℕ) + k).factorial : ℕ) : ℝ))⁻¹ *
           (rr w (N - 1 - (i : ℕ) + k) N).coeff (N - 1 - (c' : ℕ)) * w b ^ (N - 1 - (c' : ℕ)))) * hP
-      · simp only [if_neg hi, Matrix.of_apply, hA, add_zero]
+      · simp only [ite_eq_right hi, Matrix.of_apply, hA, add_zero]
     rw [hrow, Matrix.det_updateRow_sum, smul_eq_mul]
 
 end RootFieldNumerics.M5
@@ -690,27 +646,27 @@ theorem maj_rho (u : Wt Ψ N) (τ' : Ψ) (i : Fin N) (g : ℝ) (hg : 0 < g)
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj ha
       have : vv u (τ, a) τ b - vv u (τ, a) τ a =
           Polynomial.C (u τ b - u τ a) + Polynomial.C (-1) * Polynomial.X := by
-        simp only [vv, if_neg hb', if_true, map_sub, map_neg, map_one]; ring
+        simp only [vv, ite_eq_right hb', ite_true, map_sub, map_neg, map_one]; ring
       rw [this]
       refine maj_lin _ _ _ _ hA le_rfl ?_
       have h1 := hsep b hab.ne
-      simp only [w, if_neg hb', if_true, add_zero, abs_neg, abs_one]
+      simp only [w, ite_eq_right hb', ite_true, add_zero, abs_neg, abs_one]
       rw [abs_sub_comm, mul_one_div, one_le_div hg]
       exact h1
     · by_cases hb' : (τ, b) = (τ', i)
       · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hb'
         have : vv u (τ, b) τ b - vv u (τ, b) τ a =
             Polynomial.C (u τ b - u τ a) + Polynomial.C 1 * Polynomial.X := by
-          simp only [vv, if_neg ha, if_true, map_sub, map_one]; ring
+          simp only [vv, ite_eq_right ha, ite_true, map_sub, map_one]; ring
         rw [this]
         refine maj_lin _ _ _ _ hA le_rfl ?_
         have h1 := hsep a hab.ne'
-        simp only [w, if_neg ha, if_true, zero_add, abs_one]
+        simp only [w, ite_eq_right ha, ite_true, zero_add, abs_one]
         rw [mul_one_div, one_le_div hg]
         exact h1
       · have : vv u (τ', i) τ b - vv u (τ', i) τ a =
             Polynomial.C (u τ b - u τ a) + Polynomial.C 0 * Polynomial.X := by
-          simp only [vv, if_neg ha, if_neg hb', map_sub, map_zero]; ring
+          simp only [vv, ite_eq_right ha, ite_eq_right hb', map_sub, map_zero]; ring
         rw [this]
         refine maj_lin _ _ _ _ hA le_rfl ?_
         rw [abs_zero]
@@ -769,7 +725,7 @@ theorem lam_bound (u : Wt Ψ N) (τ τ' : Ψ) (i : Fin N) (g U : ℝ) (hg : 0 < 
       rw [this]
       exact maj_lin _ _ _ _ (by positivity) (hu b) (by rw [mul_one_div_cancel hU.ne', abs_one])
     · have : vv u (τ', i) τ b = Polynomial.C (u τ b) + Polynomial.C 0 * Polynomial.X := by
-        simp only [vv, if_neg h, map_zero, zero_mul]
+        simp only [vv, ite_eq_right h, map_zero, zero_mul]
       rw [this]
       exact maj_lin _ _ _ _ (by positivity) (hu b) (by rw [abs_zero]; positivity)
   obtain ⟨r, hr, hre⟩ := gdet_bump k hk U hU (vv u (τ', i) τ) hv
@@ -833,7 +789,7 @@ theorem lam_shift (u : Wt Ψ N) (τ : Ψ) (a : ℝ) (k : ℕ) (hk : 2 ≤ k) (hk
   obtain ⟨G, hG⟩ := sub_dvd_pow_sub_pow (linRoot (fun σ b => u σ b - if σ = τ then a else 0)) (linRoot u) n
   rw [h, sub_eq_iff_eq_add] at hG
   rw [hG, mul_add, lam_add, show γ * (pk τ 1 * C a * G) = pk τ 1 * (γ * C a * G) by ring,
-    lam_pk τ τ k 1 (by omega) hkN le_rfl (by omega), if_neg (by omega), zero_add]
+    lam_pk τ τ k 1 (by omega) hkN le_rfl (by omega), ite_eq_right (by omega), zero_add]
 
 theorem one_bound (j : ℕ) (u : Wt Ψ N) (g : ℝ) (Q : Ψ → ℕ → RP Ψ N) (hW : WeightHyp j u g)
     (hQ : IsDecomp (linRoot u ^ (dimFl Ψ N + 1)) Q) (τ τ' : Ψ) (k : ℕ) (hk : 2 ≤ k) (hkN : k ≤ N) (i : Fin N)
@@ -861,7 +817,7 @@ theorem one_bound (j : ℕ) (u : Wt Ψ N) (g : ℝ) (Q : Ψ → ℕ → RP Ψ N)
   have hb := lam_bound (fun σ b => u σ b - if σ = τ then ⨅ i, u τ i else 0) τ τ' i g U hg hU
     (fun b hb => by rw [sub_sub_sub_cancel_right]; exact hsep τ' i b hi hb)
     (fun b => by
-      rw [if_pos rfl, abs_of_nonneg (sub_nonneg.mpr (hge b))]
+      rw [ite_eq_left rfl, abs_of_nonneg (sub_nonneg.mpr (hge b))]
       linarith [hle b]) k (by omega)
   rw [lam_shift u τ _ k hk hkN, lam_decomp hQ τ k (by omega) hkN, hfl, abs_of_pos hpos] at hb
   refine hb.trans (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left
@@ -902,9 +858,9 @@ theorem small_block (j : ℕ) (hj : j < N) (σ : Ψ ⊕ Ψ) (m : ℕ) (hm : 1 �
   obtain ⟨τ', h⟩ := base
   by_cases hc : j ≤ N - j
   · exact ⟨τ', _, by rw [cL, min_eq_left hc], fun i hi => by
-      rw [InSmall, if_pos hc]; exact (Finset.mem_filter.mp hi).2, h⟩
+      rw [InSmall, ite_eq_left hc]; exact (Finset.mem_filter.mp hi).2, h⟩
   · exact ⟨τ', _, by rw [cH, min_eq_right (not_le.mp hc).le], fun i hi => by
-      rw [InSmall, if_neg hc]; exact (Finset.mem_filter.mp hi).2, h.trans (key τ')⟩
+      rw [InSmall, ite_eq_right hc]; exact (Finset.mem_filter.mp hi).2, h.trans (key τ')⟩
 
 end RootFieldNumerics.M5
 
@@ -987,7 +943,7 @@ theorem factorial_half_power_sum_le (n : ℕ) :
   induction n with
   | zero => norm_num
   | succ n ih =>
-    rw [Finset.sum_Icc_succ_top (by omega), if_pos (by omega)]
+    rw [Finset.sum_Icc_succ_top (by omega), ite_eq_left (by omega)]
     have h1 : (1 / 2 : ℝ) ^ (n + 1 + 1 - 1) / ((n + 1 + 1).factorial : ℝ) ≤ 1 / 4 * (1 / 6) ^ n := by
       have h := two_mul_three_pow_le_factorial n
       have h3 : (0 : ℝ) < 2 * 3 ^ n := by positivity
@@ -1010,7 +966,7 @@ theorem rest_term_prime_bound (j p : ℕ) (fr : ℕ → Ψ ⊕ Ψ) (k : ℕ) (Q 
   have h := (RestInnerTsumBound.proof p k (fun n => k * degFl (pLie j (k - 1) (fr n) * Q)) M hp' (by omega)
     (fun n => hM _)).2
   unfold restTerm
-  rw [if_pos hk, mul_assoc, ← tsum_mul_left, abs_mul, abs_of_nonneg (Real.log_natCast_nonneg p)]
+  rw [ite_eq_left hk, mul_assoc, ← tsum_mul_left, abs_mul, abs_of_nonneg (Real.log_natCast_nonneg p)]
   refine mul_le_mul_of_nonneg_left ?_ (Real.log_natCast_nonneg p)
   refine le_of_eq_of_le ?_ h
   congr 2
@@ -1154,15 +1110,7 @@ def lieRank {Ψ : Type} (N j : ℕ) (s : Ψ ⊕ Ψ) : ℝ := if s.isLeft then (j
 
 theorem delta_card_filter_lt {N j : ℕ} (hj : j ≤ N) :
     (Finset.univ.filter (fun i : Fin N => (i : ℕ) < j)).card = j := by
-  have h : (Finset.univ.filter (fun i : Fin N => (i : ℕ) < j)).map Fin.valEmbedding = Finset.range j := by
-    ext a
-    simp only [Finset.mem_map, Finset.mem_filter, Finset.mem_univ, true_and, Fin.valEmbedding_apply, Finset.mem_range]
-    constructor
-    · rintro ⟨i, hi, rfl⟩
-      exact hi
-    · intro ha
-      exact ⟨⟨a, lt_of_lt_of_le ha hj⟩, ha, rfl⟩
-  rw [← Finset.card_map Fin.valEmbedding, h, Finset.card_range]
+  apply _root_.GlobalTheory.CardFilterLt.card_filter_val_lt <;> assumption
 
 theorem delta_card_filter_ge {N j : ℕ} (hj : j ≤ N) :
     (Finset.univ.filter (fun i : Fin N => j ≤ (i : ℕ))).card = N - j := by
@@ -1175,11 +1123,11 @@ theorem pLie_zero {Ψ : Type} {N j : ℕ} (hj : j ≤ N) (s : Ψ ⊕ Ψ) :
     (pLie j 0 s : RP Ψ N) = C (lieRank N j s) := by
   cases s with
   | inl τ =>
-    simp only [pLie, pkLow, pow_zero, Finset.sum_const, delta_card_filter_lt hj, lieRank, Sum.isLeft_inl, if_true,
+    simp only [pLie, pkLow, pow_zero, Finset.sum_const, delta_card_filter_lt hj, lieRank, Sum.isLeft_inl, ite_true,
       nsmul_eq_mul, mul_one, map_natCast]
   | inr τ =>
     simp only [pLie, pow_zero, Finset.sum_const, delta_card_filter_ge hj, lieRank, Sum.isLeft_inr,
-      Bool.false_eq_true, if_false, nsmul_eq_mul, mul_one, map_natCast]
+      Bool.false_eq_true, ite_false, nsmul_eq_mul, mul_one, map_natCast]
 
 theorem degFl_C_mul {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {N : ℕ} (c : ℝ) (Q : RP Ψ N) :
     degFl (C c * Q) = c * degFl Q := by
@@ -1199,10 +1147,10 @@ theorem deltaTerm_eq : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) (
   intro p τ k Q hp hk
   have hN' : (N : ℝ) ≠ 0 := by exact_mod_cast hN.ne'
   have hSh : ∑ σ, Sh j σ (pk τ k * Q) = k * degFl (pkLow j τ (k - 1) * Q) := by
-    rw [Finset.sum_congr rfl (fun σ _ => (_root_.GlobalTheory.CompanionTheory.Ar.Top.sh_tot_pk_mul Ψ N j τ σ k Q hk).1)]
+    rw [Finset.sum_congr rfl (fun σ _ => (_root_.RootFieldNumerics.shift_power_sum_mul Ψ N j τ σ k Q hk).1)]
     simp
   have hTot : ∑ σ, Tot σ (pk τ k * Q) = if k = 1 then N * degFl Q else 0 := by
-    rw [Finset.sum_congr rfl (fun σ _ => (_root_.GlobalTheory.CompanionTheory.Ar.Top.sh_tot_pk_mul Ψ N j τ σ k Q hk).2)]
+    rw [Finset.sum_congr rfl (fun σ _ => (_root_.RootFieldNumerics.shift_power_sum_mul Ψ N j τ σ k Q hk).2)]
     by_cases h1 : k = 1 <;> simp [h1]
   rw [hSh, hTot]
   by_cases h1 : k = 1
@@ -1218,11 +1166,11 @@ theorem deltaTerm_eq : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) (
       rw [← tsum_mul_right]
       exact tsum_congr (fun n => by rw [hrank]; ring)
     simp only [deltaTerm, restTerm, hsum]
-    simp only [if_true, Nat.not_ofNat_le_one, if_false]
+    simp only [ite_true, Nat.not_ofNat_le_one, ite_false]
     field_simp
     ring
   · have h2 : 2 ≤ k := by omega
-    simp only [deltaTerm, restTerm, h1, if_false, h2, if_true]
+    simp only [deltaTerm, restTerm, h1, ite_false, h2, ite_true]
     ring
 
 end GlobalTheory.CompanionTheory.Ar.Top
@@ -1330,7 +1278,7 @@ theorem exists_finite_identity (II : IntersectionSystem) (T : RootTower Ψ N) (h
           ∑ p ∈ (Finset.Ioc B₀ B).filter (fun p => p.Prime ∧ p ∉ T.bad), restTerm T.j p (frob p τ) k Q) + E B := by
   have hN : 2 ≤ N := by have := T.j_pos; have := T.j_lt; omega
   obtain ⟨κ, hκ⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Top.deltaTerm_eq Ψ N T.j frob T.j_lt.le (by omega) hshape
-  obtain ⟨-, hSh, hTot, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Top.degFl_Sh_Tot_linear Ψ N
+  obtain ⟨-, hSh, hTot, -⟩ := _root_.RootFieldNumerics.degFl_Sh_Tot_linear_and_degFl_eq_zero_off_dim Ψ N
   choose ΦS hΦS using hSh
   choose ΦT hΦT using hTot
   obtain ⟨C, B₁, hC⟩ := hBA
@@ -1386,10 +1334,10 @@ theorem GlobalTheory.CompanionTheory.Ar.Top.exists_identAt : ∀ II : Intersecti
   have hN : 2 ≤ N := by have := T.j_pos; have := T.j_lt; omega
   obtain ⟨a, b, hid⟩ := exists_finite_identity II T hh frob hshape h6 hBA B₀ hB₀
   have hrest : ∀ (τ : Ψ) (k : ℕ) (Q : RP Ψ N), _ := fun τ k Q =>
-    (_root_.GlobalTheory.CompanionTheory.Ar.Top.restTerm_bound_and_tendsto Ψ N T.j T.bad frob τ k Q).2 B₀
+    (_root_.RootFieldNumerics.rest_term_bound_convergent Ψ N T.j T.bad frob τ k Q).2 B₀
   by_cases hΨ : Nonempty Ψ
   · obtain ⟨τ₀⟩ := hΨ
-    obtain ⟨⟨Q₁, hQ₁, hd₁⟩, Q₂, hQ₂, hd₂⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Top.testForms_sh_tot Ψ N T.j τ₀ T.j_pos T.j_lt
+    obtain ⟨⟨Q₁, hQ₁, hd₁⟩, Q₂, hQ₂, hd₂⟩ := _root_.RootFieldNumerics.exists_degree_one_class Ψ N T.j τ₀ T.j_pos T.j_lt
     have hQ₁' : Q₁.IsHomogeneous (dimFl Ψ N + 1 - 1) := by simpa using hQ₁
     have hQ₂' : Q₂.IsHomogeneous (dimFl Ψ N + 1 - 2) := by
       have : dimFl Ψ N + 1 - 2 = dimFl Ψ N - 1 := by omega
@@ -1397,16 +1345,16 @@ theorem GlobalTheory.CompanionTheory.Ar.Top.exists_identAt : ∀ II : Intersecti
     obtain ⟨E₁, hE₁, h₁⟩ := hid τ₀ 1 le_rfl (by omega) Q₁ hQ₁'
     obtain ⟨E₂, hE₂, h₂⟩ := hid τ₀ 2 (by omega) hN Q₂ hQ₂'
     have hn : ∑ σ, Tot σ (pk τ₀ 1 * Q₁) ≠ 0 := by
-      have h5 := fun σ => (_root_.GlobalTheory.CompanionTheory.Ar.Top.sh_tot_pk_mul Ψ N T.j τ₀ σ 1 Q₁ le_rfl).2
+      have h5 := fun σ => (_root_.RootFieldNumerics.shift_power_sum_mul Ψ N T.j τ₀ σ 1 Q₁ le_rfl).2
       simp only [h5, hd₁]
       simp
       omega
     have hs₂ : ∑ σ, Sh T.j σ (pk τ₀ 2 * Q₂) ≠ 0 := by
-      have h5 := fun σ => (_root_.GlobalTheory.CompanionTheory.Ar.Top.sh_tot_pk_mul Ψ N T.j τ₀ σ 2 Q₂ (by omega)).1
+      have h5 := fun σ => (_root_.RootFieldNumerics.shift_power_sum_mul Ψ N T.j τ₀ σ 2 Q₂ (by omega)).1
       simp only [h5]
       simp [hd₂]
     have ht₂ : ∑ σ, Tot σ (pk τ₀ 2 * Q₂) = 0 := by
-      have h5 := fun σ => (_root_.GlobalTheory.CompanionTheory.Ar.Top.sh_tot_pk_mul Ψ N T.j τ₀ σ 2 Q₂ (by omega)).2
+      have h5 := fun σ => (_root_.RootFieldNumerics.shift_power_sum_mul Ψ N T.j τ₀ σ 2 Q₂ (by omega)).2
       simp [h5]
     obtain ⟨A₀, b₀, ha, hb⟩ := tendsto_coeffs_of_tests hvol.ne' hn hs₂ ht₂
       (hrest τ₀ 1 Q₁) (hrest τ₀ 2 Q₂) hE₁ hE₂ h₁ h₂
@@ -1510,9 +1458,9 @@ theorem tower_T2_of_inputs : ∀ II : IntersectionSystem, ∀ (Ψ : Type) [Finty
   have hfl := _root_.GlobalTheory.CompanionTheory.Ar.Top.flat_85_bound II Ψ N T hh frob C' rd Lval B A₀ b₀ hprop hI9 hF hB128 hbad hId
   have hHom : (linRoot u ^ (dimFl Ψ N + 1) : RP Ψ N).IsHomogeneous (dimFl Ψ N + 1) := by
     simpa using (linRoot_isHomogeneous u).pow (dimFl Ψ N + 1)
-  obtain ⟨Q, hQ1, hQ2⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Top.form_top_succ_eq_sum_pk Ψ N _ hN2 hHom
+  obtain ⟨Q, hQ1, hQ2⟩ := _root_.RootFieldNumerics.decomposition_power_sums_top_degree Ψ N _ hN2 hHom
   have hDec : IsDecomp (linRoot u ^ (dimFl Ψ N + 1)) Q := ⟨hQ1, hQ2⟩
-  have hEq := _root_.GlobalTheory.CompanionTheory.Ar.Top.identOnDecomposedForm II Ψ N T hh frob B A₀ b₀ _ Q hId hDec
+  have hEq := _root_.RootFieldNumerics.tower_point_count_identity II Ψ N T hh frob B A₀ b₀ _ Q hId hDec
   have hRest := _root_.GlobalTheory.CompanionTheory.Ar.Top.restSum_total_bound Ψ N T.j T.bad frob u g B Q T.j_pos T.j_lt hW hB0 hDec
   have hhF : 0 ≤ hh (linRoot u ^ (dimFl Ψ N + 1)) := hI9.2.1 u hdom
   have hdeg : 0 < flagDeg u := (GlobalTheory.CompanionTheory.Ar.Top.flagDeg_eq_weyl Ψ N u).2.1 hreg

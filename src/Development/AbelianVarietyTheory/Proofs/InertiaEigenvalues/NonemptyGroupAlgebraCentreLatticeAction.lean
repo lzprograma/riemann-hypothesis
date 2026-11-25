@@ -83,8 +83,7 @@ theorem addValuation_nonneg_of_ringOfIntegers :
     | pred k ih =>
       rw [Int.cast_sub, Int.cast_one]
       exact AddValuation.map_le_sub v ih (by rw [AddValuation.map_one])
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   obtain ⟨f, hm, hf⟩ := NumberField.RingOfIntegers.isIntegral_coe a
   set x : L := (a : L) with hx
   have hxtop : v x ≠ ⊤ := ne_top_of_lt hneg
@@ -188,7 +187,7 @@ theorem mem_span (R G : Type) [CommRing R] [Group G] [Finite G] (z : MonoidAlgeb
     ext x
     rw [coeff_sum, Finsupp.finsetSum_apply]
     simp only [coeff_smul, Finsupp.smul_apply, hmap, smul_eq_mul, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     refine coeff_conj_eq z hz ?_
     rw [← ConjClasses.mk_eq_mk_iff_isConj, hrep]
   rw [hz']
@@ -197,8 +196,6 @@ theorem mem_span (R G : Type) [CommRing R] [Group G] [Finite G] (z : MonoidAlgeb
 
 end GlobalTheory.GroupAlg.ClassSum
 
-theorem GlobalTheory.GroupAlg.center_mem_span_classSums : ∀ (R G : Type) [CommRing R] [Group G] [Finite G] (z : MonoidAlgebra R G), z ∈ Subalgebra.center R (MonoidAlgebra R G) → z ∈ Submodule.span R ((MonoidAlgebra.mapRingHom G (Int.castRingHom R)) '' {c : MonoidAlgebra ℤ G | ∀ a, c * a = a * c}) :=
-  fun R G _ _ _ z hz => GlobalTheory.GroupAlg.ClassSum.mem_span R G z hz
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CenterMonoidAlgebraLeSpanCentralIntegral =====
@@ -350,7 +347,6 @@ theorem mem_heckeEig_of_mem_typeSum (D : D7) (i : D.nd.Loc) (S : Sec D i) (x : D
     rw [Formalism.MainNotions.TruncatedSeriesCountingIdentities.Br.EigSpan_holds D.nd i]; exact Submodule.mem_top
   obtain ⟨f, hf, hsum⟩ := (Submodule.mem_iSup_iff_exists_finsupp _ w).1 hvtop
   have hΦv : S.Φ w = ∑ y ∈ f.support, S.Φ (f y) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       rw [← hsum, Finsupp.sum, map_sum]
   have hind := GlobalTheory.PendOf.PrTypeProof.typeSum_indep D i
   have key : ∀ y, y ≠ x → f y = 0 := by
@@ -431,7 +427,6 @@ theorem onMt_of_mem (μ : D.what₂.Tup) (j : ℕ) (z : MonoidAlgebra ℂ (G0g D
 
 abbrev CenR (D : D7) (i : D.nd.Loc) : Subalgebra (D.nd.O i) (MonoidAlgebra (D.nd.O i) (G0g D.nd)) :=
   Subalgebra.center (D.nd.O i) (MonoidAlgebra (D.nd.O i) (G0g D.nd))
-
 
 variable (D) in
 def psi (i : D.nd.Loc) (z : MonoidAlgebra (D.nd.O i) (G0g D.nd)) :
@@ -674,7 +669,7 @@ theorem cenO_nonempty : ∀ D : D7, (∀ i, Nonempty (Sec D i)) → ZLStable D �
     (D.nd.embK_w i a).1 (_root_.GlobalTheory.addValuation_nonneg_of_ringOfIntegers D.what₂.LL (D.what₂.places.val (D.nd.w i)) a)
   have hL : ∀ i, ∀ z ∈ CenR D i, ∀ m : D.nd.Mt i, ∃ m' : D.nd.Mt i, J (S i) m' = psi D i z (J (S i) m) :=
     fun i => hL_of (S i) (_root_.GlobalTheory.PendOf.CenLat.cenInt_lat D i (S i) (hint i) (_root_.GlobalTheory.PendOf.CenKey.phi_onMt D i (S i) hTy) hInt)
-      (fun z hz => _root_.GlobalTheory.GroupAlg.center_mem_span_classSums (D.nd.O i) (G0g D.nd) z hz)
+      (fun z hz => _root_.GlobalTheory.GroupAlg.ClassSum.mem_span (D.nd.O i) (G0g D.nd) z hz)
   exact ⟨{ zO := fun i => zA (S i) (hL i)
            zO_comm := fun i z f => zA_comm (S i) (hL i) (_root_.GlobalTheory.PendOf.CenEig.main D i (S i) hTy) z f
            zO_act := fun i z x y h => zA_act (S i) (hL i) (_root_.GlobalTheory.PendOf.CenKey.phi_onMt D i (S i) hTy) z x y h }⟩

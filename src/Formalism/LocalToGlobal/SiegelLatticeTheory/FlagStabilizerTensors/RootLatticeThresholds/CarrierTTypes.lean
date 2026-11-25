@@ -41,7 +41,7 @@ theorem blockW_fix (h : Matrix (Fin k) (Fin k) ℂ) (j : Fin (2 * r + k + 1)) (h
   rw [mvs]
   unfold Formalism.MainNotions.S.blockW
   by_cases hi : r ≤ i.val ∧ i.val < r + k
-  · rw [dite_eq_left hi, dite_eq_right hj, Pi.single_apply, if_neg]
+  · rw [dite_eq_left hi, dite_eq_right hj, Pi.single_apply, ite_eq_right]
     intro e; rw [e] at hi; exact hj hi
   · rw [dite_eq_right hi, Pi.single_apply]
 

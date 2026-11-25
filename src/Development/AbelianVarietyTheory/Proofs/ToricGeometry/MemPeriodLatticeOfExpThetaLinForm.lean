@@ -134,7 +134,7 @@ theorem mem_periodLattice_of_exp_thetaLinForm {g : ℕ} {τ : Matrix (Fin g) (Fi
     rw [hm]
     congr 1
     simp only [dotProduct, mulVec, hk, ofIntVec, Pi.single_apply, mul_ite, _root_.mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.mul_sum]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [hτ.apply i j]
     ring

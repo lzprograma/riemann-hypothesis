@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.SelUnit
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.RootVal
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.KerResAb
@@ -158,7 +159,7 @@ private theorem kerFin_triv {R G M : Type} [CommRing R] [Group G] [TopologicalSp
       ((LinearMap.proj q : (U ⧸ K → M) →ₗ[R] M) ∘ₗ Φ ∘ₗ (LinearMap.ker (resU ρ h)).subtype)
       (fun x => key x.1 x.2 q))
   have hΨ : Function.Injective Ψ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     rintro ⟨x, hxk⟩ hx0
     obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ x
     have hq : ∀ q : U ⧸ K, (z : U → M) (Quotient.out q) = 0 := by
@@ -1010,17 +1011,7 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 
 private theorem relIndex_inf_dvd {G : Type} [Group G] (U' U D : Subgroup G) [U'.Normal] :
     (U' ⊓ D).relIndex (U ⊓ D) ∣ U'.relIndex U := by
-  have e : (U' ⊓ D).relIndex (U ⊓ D) = U'.relIndex (U ⊓ D) := by
-    unfold Subgroup.relIndex
-    congr 1
-    ext x
-    simp only [Subgroup.mem_subgroupOf, Subgroup.mem_inf]
-    exact ⟨fun h => h.1, fun h => ⟨h, x.2.2⟩⟩
-  rw [e]
-  have k : ∀ K : Subgroup G, U'.relIndex K = Nat.card (K.map (QuotientGroup.mk' U')) := fun K => by
-    rw [← Subgroup.relIndex_ker, QuotientGroup.ker_mk']
-  rw [k, k]
-  exact Subgroup.card_dvd_of_le (Subgroup.map_mono inf_le_left)
+  apply _root_.relIndex_inf_dvd <;> assumption
 
 private theorem comm_inf {G : Type} [Group G] (U' D : Subgroup G) (h : ∀ a b : G, a * b * a⁻¹ * b⁻¹ ∈ U') :
     ∀ a ∈ ⊤ ⊓ D, ∀ b ∈ ⊤ ⊓ D, a * b * a⁻¹ * b⁻¹ ∈ U' ⊓ D := fun a ha b hb =>
@@ -1248,9 +1239,9 @@ private theorem sum_split {ι : Type} (T : ℕ → Finset ι) (O : Finset ι) (v
           apply Finset.sum_le_sum
           intro i hi
           by_cases hO : i ∈ O
-          · rw [if_pos hO]
+          · rw [ite_eq_left hO]
             linarith
-          · rw [if_neg hO]
+          · rw [ite_eq_right hO]
             rcases h1 e he i hi with h | h
             · exact absurd h hO
             · linarith [mul_comm (v i e) L]

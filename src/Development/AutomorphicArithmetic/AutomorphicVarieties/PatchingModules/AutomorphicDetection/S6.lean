@@ -21,60 +21,12 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.Commutative
 public import Mathlib.Algebra.Module.BigOperators
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.HatEx
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.OBLt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.ENatToNat
 import Mathlib.RingTheory.AdicCompletion.Noetherian
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.SimpleRing.Principal
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DTrCoeff
 import Mathlib.RingTheory.SimpleModule.WedderburnArtin
 
@@ -590,10 +542,10 @@ theorem UpperTheory.V.Pa.gr_E :
     · exact Or.inr rfl
   have hp : oB n a p = p := by
     unfold oB
-    rw [if_pos (show 0 < a by omega)]
+    rw [ite_eq_left (show 0 < a by omega)]
   have hq : oB n a q = q := by
     unfold oB
-    rw [if_neg (show ¬ (n - 1 < a) by omega)]
+    rw [ite_eq_right (show ¬ (n - 1 < a) by omega)]
   have h0 : ∀ y i j, oB n a i ≠ oB n a j → r y i j = 0 := fun y i j h =>
     (Submodule.mem_bot F).1 ((hev y i j).2 fun h' => h ((oB_eq_iff h1 h2 i j).2 h'))
   obtain ⟨φ, hφ, hφst, -⟩ := vr_hom T (oB n a) U p q hpq ho
@@ -888,7 +840,7 @@ private theorem hr_span {A F : Type} [CommRing A] [IsDomain A] [Field F] [Algebr
   refine S.sum_mem fun i _ => S.sum_mem fun j _ => ?_
   by_cases e : ((i : ℕ) < a) ↔ ((j : ℕ) < a)
   · obtain ⟨s, hs⟩ := hT (single i j 1) (fun p q => ⟨fun _ => trivial, fun e' => by
-      rw [Submodule.mem_bot, Matrix.single_apply, if_neg]
+      rw [Submodule.mem_bot, Matrix.single_apply, ite_eq_right]
       rintro ⟨rfl, rfl⟩
       exact e' e⟩)
     have h2 := S.smul_mem (Z i j * (algebraMap A F (t ^ s))⁻¹) (h1 _ hs)
@@ -1287,7 +1239,7 @@ theorem UpperTheory.V.AlgebraTools.alghom_of_units :
     exact Finset.sum_comm
   have h1 : f 1 = 1 := by
     simp only [f, Pi.one_apply, Matrix.one_apply, ite_smul, one_smul, zero_smul,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     exact hsum
   let L : (∀ s, Matrix (d s) (d s) K) →ₗ[K] E :=
     { toFun := f, map_add' := hadd, map_smul' := hsmul }
@@ -1302,12 +1254,12 @@ theorem UpperTheory.V.AlgebraTools.alghom_of_units :
     · rw [Finset.sum_eq_single k]
       · simp
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         exact fun h => hb h.2.symm
       · intro h; exact absurd (Finset.mem_univ _) h
     · intro b _ hb
       refine Finset.sum_eq_zero fun c _ => ?_
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun h => hb h.1.symm
     · intro h; exact absurd (Finset.mem_univ _) h
   · intro t _ ht
@@ -1353,7 +1305,7 @@ theorem UpperTheory.V.Pa.gr_ss :
     intro i k l hik hkl
     apply g.φ_inj
     rw [map_mul, he, he, he]
-    simp only [M, if_pos hik, if_pos hkl, if_pos (hik.trans hkl), Matrix.single_mul_single_same,
+    simp only [M, ite_eq_left hik, ite_eq_left hkl, ite_eq_left (hik.trans hkl), Matrix.single_mul_single_same,
       mul_one]
   have hzero : ∀ i k l m : Fin n, k ≠ l → e i k * e l m = 0 := by
     intro i k l m hkl
@@ -1364,12 +1316,12 @@ theorem UpperTheory.V.Pa.gr_ss :
     intro i k hik
     apply g.φ_inj
     rw [he, map_zero]
-    simp only [M, if_neg hik, Matrix.single_zero]
+    simp only [M, ite_eq_right hik, Matrix.single_zero]
   have hsum : ∑ i, e i i = 1 := by
     apply g.φ_inj
 
     rw [map_sum, map_one]
-    simp only [he, M, iff_self, if_true]
+    simp only [he, M, iff_self, ite_true]
     ext p q
     rw [Matrix.sum_apply]
     simp only [Matrix.single_apply]
@@ -1377,7 +1329,7 @@ theorem UpperTheory.V.Pa.gr_ss :
     · subst hpq
       simp
     · rw [Matrix.one_apply_ne hpq]
-      exact Finset.sum_eq_zero (fun x _ => if_neg (fun h => hpq (h.1.symm.trans h.2)))
+      exact Finset.sum_eq_zero (fun x _ => ite_eq_right (fun h => hpq (h.1.symm.trans h.2)))
   have hdec : ∀ y : E, ∃ b : Fin n → Fin n → B, s • y = ∑ i, ∑ k, b i k • e i k := by
     intro y
     have hent : ∀ i k, ∃ c : B, s • g.φ y i k = c • (if ((i : ℕ) < a ↔ (k : ℕ) < a) then 1 else 0) := by
@@ -1386,9 +1338,9 @@ theorem UpperTheory.V.Pa.gr_ss :
       by_cases hik : ((i : ℕ) < a ↔ (k : ℕ) < a)
       · obtain ⟨c, hc⟩ := Submodule.mem_one.mp (h1 hik)
         refine ⟨s * c, ?_⟩
-        rw [if_pos hik, ← hc, Algebra.algebraMap_eq_smul_one, smul_smul]
+        rw [ite_eq_left hik, ← hc, Algebra.algebraMap_eq_smul_one, smul_smul]
       · refine ⟨0, ?_⟩
-        rw [if_neg hik, smul_zero]
+        rw [ite_eq_right hik, smul_zero]
         have := (Module.mem_annihilator.mp hann) ⟨_, h2 hik⟩
         simpa using congrArg Subtype.val this
     choose c hc using hent
@@ -1399,8 +1351,8 @@ theorem UpperTheory.V.Pa.gr_ss :
 
     simp only [map_sum, map_smul, he, M, Matrix.smul_apply, Matrix.sum_apply, Matrix.single_apply]
     rw [hc, Finset.sum_eq_single p (fun i _ hi => Finset.sum_eq_zero (fun k _ => by
-        rw [if_neg (fun h => hi h.1), smul_zero])) (by simp),
-      Finset.sum_eq_single q (fun k _ hk => by rw [if_neg (fun h => hk h.2), smul_zero]) (by simp)]
+        rw [ite_eq_right (fun h => hi h.1), smul_zero])) (by simp),
+      Finset.sum_eq_single q (fun k _ hk => by rw [ite_eq_right (fun h => hk h.2), smul_zero]) (by simp)]
     simp
   let bf : Fin n → Bool := fun i => decide ((i : ℕ) < a)
   let cl : Fin n → Set.range bf := Set.rangeFactorization bf

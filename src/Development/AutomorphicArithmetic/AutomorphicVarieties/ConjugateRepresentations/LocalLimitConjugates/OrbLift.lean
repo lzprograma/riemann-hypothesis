@@ -3,40 +3,6 @@ module
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.TestBump
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.ValNhds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.IsConjRepRefl
 import Mathlib.Tactic.Linter.Style
 
@@ -75,15 +41,15 @@ theorem UpperTheory.V.Cj.H.smDiv :
   refine ⟨fun g => ?_, fun Z hZ h0 hw g x hx => ?_⟩
   · refine ((φ.2 g).mul (u.2 g)).congr fun x hx => ?_
     have h : IsUnit (Matrix.of x) := hx
-    simp only [chart, dif_pos h]
+    simp only [chart, dite_eq_left h]
   · have h : IsUnit (Matrix.of x) := hx
     have e : ∀ y ∈ invSet E a, chart (fun g => φ.1 g / w.1 g) g y = chart φ.1 g y * (chart w.1 g y)⁻¹ := by
       intro y hy
       have h' : IsUnit (Matrix.of y) := hy
-      simp only [chart, dif_pos h', div_eq_mul_inv]
+      simp only [chart, dite_eq_left h', div_eq_mul_inv]
     by_cases hz : g * infGL E a h.unit ∈ Z
     · have hne : chart w.1 g x ≠ 0 := by
-        rw [chart, dif_pos h]
+        rw [chart, dite_eq_left h]
         exact hw _ hz
       exact ((φ.2 g x hx).mul ((w.2 g x hx).inv hne)).congr e (e x hx)
     · let v : invSet E a → GL (Fin a) (Cinf E) := fun y => (show IsUnit (Matrix.of y.1) from y.2).unit
@@ -96,7 +62,7 @@ theorem UpperTheory.V.Cj.H.smDiv :
         rw [nhdsWithin_eq_map_subtype_coe hx, eventually_map]
         filter_upwards [hn] with y hy
         have h' : IsUnit (Matrix.of y.1) := y.2
-        rw [chart, dif_pos h', h0 _ hy, zero_div]
+        rw [chart, dite_eq_left h', h0 _ hy, zero_div]
       exact (contDiffWithinAt_const (c := (0 : ℂ))).congr_of_eventuallyEq hv (hv.self_of_nhdsWithin hx)
 end -- clump:auto
 end -- clump:auto
@@ -168,7 +134,6 @@ theorem UpperTheory.V.Cj.H.orbLift :
   obtain ⟨w, hw, ew⟩ := orbSm E a u hu
   have hZ : IsClosed ((latticeGL E a : Set (GA E a)) * C) :=
     by
-      set_option synthInstance.maxHeartbeats 200000 in
         exact IsClosed.mul_right_of_isCompact Subgroup.isClosed_of_discrete hC
   have hwZ : ∀ g ∈ (latticeGL E a : Set (GA E a)) * C, w.1 g ≠ 0 := by
     rintro _ ⟨γ, hγ, c, hc, rfl⟩

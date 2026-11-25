@@ -1,47 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.LevelLetterCocycles.SplitROfSteps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfA
 
 @[expose] public section
@@ -78,21 +38,6 @@ theorem invLiftPf_quot_Δ (π' : LetA O n) (hu : IsUnit (algebraMap (LetA O n) W
     rw [map_pow]; exact hu.pow k
   exact hu'.smul_left_cancel.mp h1
 
-private theorem PiNS_iff_lemma_3 (π' : LetA O n) (k : ℕ) (x : W.DD T) :
-    x ∈ PiNS W T π' k ↔ (∃ y ∈ W.N T, π' ^ k • y = x) ∧ x ∈ DelS W T := by
-  unfold PiNS
-  rw [Submodule.mem_inf]
-  refine and_congr ?_ Iff.rfl
-  show x ∈ (W.N T).map (Formalism.MainNotions.DeltaInvariantLattices.smulA W T (π' ^ k)) ↔ _
-  rw [Submodule.mem_map]
-  rfl
-
-private theorem cancel_lemma_6 (π' : LetA O n) (hu : IsUnit (algebraMap (LetA O n) W.EE π')) (k : ℕ)
-    (u v : W.DD T) (h : π' ^ k • u = π' ^ k • v) : u = v := by
-  rw [← algebraMap_smul W.EE (π' ^ k) u, ← algebraMap_smul W.EE (π' ^ k) v] at h
-  have hu' : IsUnit (algebraMap (LetA O n) W.EE (π' ^ k)) := by rw [map_pow]; exact hu.pow k
-  exact hu'.smul_left_cancel.mp h
-
 theorem invLiftPf_inj (π' f t : LetA O n) (c₀ : O) (hf : W.γA W.gam π' = π' * f)
     (ht : f - algebraMap O (LetA O n) c₀ = π' * t)
     (hu : IsUnit (algebraMap (LetA O n) W.EE π'))
@@ -103,10 +48,7 @@ theorem invLiftPf_inj (π' f t : LetA O n) (c₀ : O) (hf : W.γA W.gam π' = π
       (c₀ ^ y - 1) • r₀ = π' • d → ∃ e ∈ W.N T, r₀ = π' • e)
     (x : W.DD T) (hx : x ∈ PiNS W T π' 1) (hgx : W.γD T W.gamK x - x ∈ PiNS W T π' M) :
     x ∈ PiNS W T π' M := by
-  have hx' := (PiNS_iff_lemma_3 W T π' 1 x).mp hx
-  have hxD : x ∈ DelS W T := hx'.2
-  have hxΔ : ∀ δ ∈ W.DelF, W.γD T δ x = x := (_root_.Formalism.MainNotions.N.Ln34.mem_DelS W T x).mp hxD
-  obtain ⟨x₁, hx₁, hx₁x⟩ := hx'.1
+  obtain ⟨⟨x₁, hx₁, hx₁x⟩, hxΔ⟩ := (mem_PiNS W T π' 1 x).mp hx
   have hxN : x ∈ W.N T := by rw [← hx₁x]; exact (W.N T).smul_mem _ hx₁
   rw [hK] at hgx
   have key : ∀ y : ℕ, y ≤ M → x ∈ PiNS W T π' y := by
@@ -114,12 +56,12 @@ theorem invLiftPf_inj (π' f t : LetA O n) (c₀ : O) (hf : W.γA W.gam π' = π
     induction y with
     | zero =>
       intro _
-      exact (PiNS_iff_lemma_3 W T π' 0 x).mpr ⟨⟨x, hxN, by simp⟩, hxD⟩
+      exact (mem_PiNS W T π' 0 x).mpr ⟨⟨x, hxN, by simp⟩, hxΔ⟩
     | succ y ih =>
       intro hyM
       rcases Nat.eq_zero_or_pos y with hy0 | hy0
       · subst hy0; exact hx
-      · obtain ⟨⟨r₀, hr₀, hr₀x⟩, -⟩ := (PiNS_iff_lemma_3 W T π' y x).mp (ih (by omega))
+      · obtain ⟨⟨r₀, hr₀, hr₀x⟩, -⟩ := (mem_PiNS W T π' y x).mp (ih (by omega))
         have hr₀Δ : r₀ ∈ W.NΔ T :=
           invLiftPf_quot_Δ W T π' hu hπΔ y r₀ hr₀ (fun δ hδ => by rw [hr₀x]; exact hxΔ δ hδ)
         obtain ⟨d, hd, hdγ⟩ := hγN r₀ hr₀Δ
@@ -128,7 +70,7 @@ theorem invLiftPf_inj (π' f t : LetA O n) (c₀ : O) (hf : W.γA W.gam π' = π
           (Dvd.intro t ht.symm).trans (sub_dvd_pow_sub_pow _ _ _)
         have hfy : f ^ y = algebraMap O (LetA O n) c₀ ^ y + π' * s := by rw [← hs]; ring
         have hg' := _root_.Formalism.MainNotions.N.Ln34.gradNPf_PiNS_anti W T π' hyM hgx
-        obtain ⟨⟨e', he', he'x⟩, -⟩ := (PiNS_iff_lemma_3 W T π' (y + 1) _).mp hg'
+        obtain ⟨⟨e', he', he'x⟩, -⟩ := (mem_PiNS W T π' (y + 1) _).mp hg'
         have hγx : W.γD T W.gam x - x = π' ^ y • (algebraMap O (LetA O n) (c₀ ^ y - 1) • r₀ +
             π' • (s • r₀ + f ^ y • d)) := by
           rw [← hr₀x, _root_.Formalism.MainNotions.LiftingTheory.gammaD_semilinear, map_pow, hf, hγr, mul_pow, hfy, map_sub, map_pow, map_one]
@@ -142,14 +84,17 @@ theorem invLiftPf_inj (π' f t : LetA O n) (c₀ : O) (hf : W.γA W.gam π' = π
             _ = _ := by
               simp only [smul_add, smul_smul, add_smul, add_assoc, mul_add]
         rw [hγx, pow_succ, ← smul_smul] at he'x
-        have h1 := cancel_lemma_6 W T π' hu y _ _ he'x
+        have h1 : π' • e' =
+            algebraMap O (LetA O n) (c₀ ^ y - 1) • r₀ + π' • (s • r₀ + f ^ y • d) :=
+          sub_eq_zero.mp <| gradNPf_tf W T (π' ^ y) (by rw [map_pow]; exact hu.pow y) _
+            (by rw [smul_sub, he'x, sub_self])
         have h2 : (c₀ ^ y - 1) • r₀ = π' • (e' - (s • r₀ + f ^ y • d)) := by
           rw [← algebraMap_smul (LetA O n) (c₀ ^ y - 1) r₀, smul_sub, h1]
           abel
         obtain ⟨e, he, hre⟩ := hnz y hy0 (by omega) r₀ hr₀ _
           (Submodule.sub_mem _ he' (Submodule.add_mem _ ((W.N T).smul_mem _ hr₀)
             ((W.N T).smul_mem _ hd))) h2
-        refine (PiNS_iff_lemma_3 W T π' (y + 1) x).mpr ⟨⟨e, he, ?_⟩, hxD⟩
+        refine (mem_PiNS W T π' (y + 1) x).mpr ⟨⟨e, he, ?_⟩, hxΔ⟩
         rw [← hr₀x, hre, smul_smul, ← pow_succ]
   exact key M le_rfl
 

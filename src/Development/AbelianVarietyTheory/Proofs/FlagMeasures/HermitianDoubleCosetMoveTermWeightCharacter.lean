@@ -85,7 +85,7 @@ theorem top_coord (g : Fin (r + 1) → S.V) (gs : Fin r → S.V)
     refine Submodule.span_le.2 ?_
     rintro _ ⟨i, hi, rfl⟩
     change hf L S.Hm (g i) (gs j) = 0
-    rw [hd, if_neg]
+    rw [hd, ite_eq_right]
     rintro rfl
     simp at hi
   have h2 := LinearMap.mem_ker.1 (hK hB)
@@ -97,7 +97,7 @@ theorem top_coord (g : Fin (r + 1) → S.V) (gs : Fin r → S.V)
     change al i * hf L S.Hm (g i) (gs j) = _
     rw [hd]
     split_ifs <;> simp
-  simp only [h3, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h2
+  simp only [h3, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h2
   exact h2
 
 theorem psi'_eq_one (n : S.GLV) (hn : ∀ v ∈ perp L S.Hm S.X', n v = v) : S.psi' n = 1 := by
@@ -106,10 +106,10 @@ theorem psi'_eq_one (n : S.GLV) (hn : ∀ v ∈ perp L S.Hm S.X', n v = v) : S.p
     have hp : S.f' j.succ ∈ perp L S.Hm S.X' := by
       refine FramePsi.hf_span_right L S.Hm _ _ ?_
       rintro _ ⟨i, hi, rfl⟩
-      rw [S.gram', if_neg]
+      rw [S.gram', ite_eq_right]
       rintro ⟨-, rfl⟩
       simp at hi
-    rw [Frames.coef, hn _ hp, Frames.h, S.dual', if_neg]
+    rw [Frames.coef, hn _ hp, Frames.h, S.dual', ite_eq_right]
     intro h
     have := congrArg Fin.val h
     simp at this

@@ -9,45 +9,8 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddEquivA
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRestrictScalarsMatrixLeftRightMulAdeleTens
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -60,26 +23,6 @@ namespace PositivityTheory.SiegelWeilFormula.HeightDict
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-private theorem secondCountable_Fv' (v : HeightOneSpectrum (𝓞 F)) :
-    SecondCountableTopology (HeckeCharacterZeroLocus.SiegelWeilU.Fv F v) := by
-  haveI : Countable F := (Module.finBasis ℚ F).equivFun.toEquiv.injective.countable
-  haveI : TopologicalSpace.SeparableSpace (HeckeCharacterZeroLocus.SiegelWeilU.Fv F v) :=
-    ⟨⟨Set.range (algebraMap F (v.adicCompletion F)), Set.countable_range _,
-      HeightOneSpectrum.denseRange_algebraMap F v⟩⟩
-  infer_instance
-
-private theorem secondCountable_Fv_tensor (v : HeightOneSpectrum (𝓞 F)) :
-    SecondCountableTopology (HeckeCharacterZeroLocus.SiegelWeilU.Fv F v ⊗[F] E) := by
-  classical
-  haveI := secondCountable_Fv' (F := F) v
-  let K := HeckeCharacterZeroLocus.SiegelWeilU.Fv F v
-  let b := Module.Free.chooseBasis K (K ⊗[F] E)
-  let e := b.equivFun
-  have h1 : Continuous e := IsModuleTopology.continuous_of_linearMap e.toLinearMap
-  have h2 : Continuous e.symm := IsModuleTopology.continuous_of_linearMap e.symm.toLinearMap
-  let h : (K ⊗[F] E) ≃ₜ (Module.Free.ChooseBasisIndex K (K ⊗[F] E) → K) := ⟨e.toEquiv, h1, h2⟩
-  exact h.secondCountableTopology
-
 theorem vol_image_mulVec (v : HeightOneSpectrum (𝓞 F)) {n : ℕ} (μ : Measure (Fin n → HeckeCharacterZeroLocus.SiegelWeilU.Fv F v ⊗[F] E))
     [μ.IsAddHaarMeasure] (M : GL (Fin n) (HeckeCharacterZeroLocus.SiegelWeilU.Fv F v ⊗[F] E)) (L : Set (Fin n → HeckeCharacterZeroLocus.SiegelWeilU.Fv F v ⊗[F] E)) :
     μ ((fun y => M.1 *ᵥ y) '' L) =
@@ -87,8 +30,9 @@ theorem vol_image_mulVec (v : HeightOneSpectrum (𝓞 F)) {n : ℕ} (μ : Measur
   classical
   let K := HeckeCharacterZeroLocus.SiegelWeilU.Fv F v
   let B := K ⊗[F] E
-  haveI : SecondCountableTopology K := secondCountable_Fv' v
-  haveI : SecondCountableTopology B := secondCountable_Fv_tensor v
+  haveI : SecondCountableTopology K :=
+    PI.UnitaryGroupMassFormula.LocJacTyp.BM.secondCountable_Fv v
+  haveI : SecondCountableTopology B := inferInstance
   haveI : BorelSpace K := ⟨rfl⟩
   haveI : TopologicalSpace.PseudoMetrizableSpace (Fin n → B) := inferInstance
   haveI : SigmaCompactSpace (Fin n → B) := inferInstance
@@ -149,7 +93,7 @@ theorem vol_image_mulVec' (v : HeightOneSpectrum (𝓞 F)) {n : ℕ} (μ : Measu
 
 theorem exists_haar_tup (v : HeightOneSpectrum (𝓞 F)) (n : ℕ) :
     ∃ lv : Measure (Fin n → HeckeCharacterZeroLocus.SiegelWeilU.Fv F v ⊗[F] E), lv.IsAddHaarMeasure := by
-  haveI : SecondCountableTopology (HeckeCharacterZeroLocus.SiegelWeilU.Fv F v ⊗[F] E) := secondCountable_Fv_tensor (E := E) v
+  haveI := PI.UnitaryGroupMassFormula.LocJacTyp.BM.secondCountable_Fv (F := F) v
   exact ⟨Measure.addHaar, inferInstance⟩
 
 end PositivityTheory.SiegelWeilFormula.HeightDict

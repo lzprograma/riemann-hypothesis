@@ -2,54 +2,8 @@ module
 
 public import Formalism.FormalDegreeBessel.StatementWR
 public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.Calculus.Deriv.Inv
 
 @[expose] public section
@@ -245,10 +199,10 @@ theorem wirt_coef {k : Fin m} {x : Fin m → ℂ} (hx : x ∈ OmX m) (l : Fin m)
     wirt l (coef k j) x = if (j : ℕ) < 3 ∧ l = k then ck k j x else 0 := by
   rw [wirt, fderiv_coef hx, fderiv_coef hx]
   by_cases hj : (j : ℕ) < 3 <;> by_cases hl : l = k
-  · simp only [hl, hj, if_true, and_self, Pi.single_eq_same, smul_eq_mul]
+  · simp only [hl, hj, ite_true, and_self, Pi.single_eq_same, smul_eq_mul]
     linear_combination (-(ck k j x) / 2) * Complex.I_sq
   · simp [hj, hl]
-  · simp only [hl, hj, if_false, false_and, Pi.single_eq_same, smul_eq_mul, star_one,
+  · simp only [hl, hj, ite_false, false_and, Pi.single_eq_same, smul_eq_mul, star_one,
       Complex.star_def, Complex.conj_I]
     linear_combination (ck k j x / 2) * Complex.I_sq
   · simp [hj, hl]
@@ -257,11 +211,11 @@ theorem wirtBar_coef {k : Fin m} {x : Fin m → ℂ} (hx : x ∈ OmX m) (l : Fin
     wirtBar l (coef k j) x = if ¬ (j : ℕ) < 3 ∧ l = k then ck k j x else 0 := by
   rw [wirtBar, fderiv_coef hx, fderiv_coef hx]
   by_cases hj : (j : ℕ) < 3 <;> by_cases hl : l = k
-  · simp only [hl, hj, if_true, not_true_eq_false, false_and, if_false, Pi.single_eq_same,
+  · simp only [hl, hj, ite_true, not_true_eq_false, false_and, ite_false, Pi.single_eq_same,
       smul_eq_mul]
     linear_combination (ck k j x / 2) * Complex.I_sq
   · simp [hj, hl]
-  · simp only [hl, hj, if_false, not_false_eq_true, and_self, if_true, Pi.single_eq_same,
+  · simp only [hl, hj, ite_false, not_false_eq_true, and_self, ite_true, Pi.single_eq_same,
       smul_eq_mul, star_one, Complex.star_def, Complex.conj_I]
     linear_combination (-(ck k j x) / 2) * Complex.I_sq
   · simp [hj, hl]
@@ -291,14 +245,14 @@ theorem opL_ev (k : Fin m) (j : Fin 6) (g : (Fin m → ℂ) → E) {x : Fin m �
     filter_upwards [hev] with y hy
     show pOp k g y = y k • wirt k g y
     change (if y ∈ OmX m then y k • wirt k g y else 0) = _
-    rw [if_pos hy]
+    rw [ite_eq_left hy]
   | 1 => exact Filter.Eventually.of_forall fun y => rfl
   | 2 => exact Filter.Eventually.of_forall fun y => rfl
   | 3 =>
     filter_upwards [hev] with y hy
     show pbOp k g y = star (y k) • wirtBar k g y
     change (if y ∈ OmX m then star (y k) • wirtBar k g y else 0) = _
-    rw [if_pos hy]
+    rw [ite_eq_left hy]
   | 4 => exact Filter.Eventually.of_forall fun y => rfl
   | 5 => exact Filter.Eventually.of_forall fun y => rfl
 
@@ -310,10 +264,10 @@ theorem opL_off (k : Fin m) (j : Fin 6) (g : (Fin m → ℂ) → E) {x : Fin m �
     (h0 : g x = 0) : opL k j g x = 0 := by
   classical
   match j with
-  | 0 => show pOp k g x = 0; change (if x ∈ OmX m then x k • wirt k g x else 0) = 0; rw [if_neg hx]
+  | 0 => show pOp k g x = 0; change (if x ∈ OmX m then x k • wirt k g x else 0) = 0; rw [ite_eq_right hx]
   | 1 => show x k • g x = 0; rw [h0, smul_zero]
   | 2 => show (x k)⁻¹ • g x = 0; rw [h0, smul_zero]
-  | 3 => show pbOp k g x = 0; change (if x ∈ OmX m then star (x k) • wirtBar k g x else 0) = 0; rw [if_neg hx]
+  | 3 => show pbOp k g x = 0; change (if x ∈ OmX m then star (x k) • wirtBar k g x else 0) = 0; rw [ite_eq_right hx]
   | 4 => show star (x k) • g x = 0; rw [h0, smul_zero]
   | 5 => show (star (x k))⁻¹ • g x = 0; rw [h0, smul_zero]
 
@@ -408,14 +362,14 @@ theorem dco_zero {x : Fin m → ℂ} (hx : x ∈ OmX m) (l k : Fin m) (i j : Fin
   match i with
   | 0 =>
     show wirt l (coef k j) x = 0
-    rw [wirt_coef hx, if_neg]
+    rw [wirt_coef hx, ite_eq_right]
     rintro ⟨hj, hlk⟩
     rcases hc with h | h
     · exact h hlk
     · exact (h.mp (show holoIdx (0 : Fin 6) by unfold holoIdx; decide)) hj
   | 3 =>
     show wirtBar l (coef k j) x = 0
-    rw [wirtBar_coef hx, if_neg]
+    rw [wirtBar_coef hx, ite_eq_right]
     rintro ⟨hj, hlk⟩
     rcases hc with h | h
     · exact h hlk
@@ -471,14 +425,14 @@ theorem weyl_functional_holds : WeylFun := by
     by_cases hx : x ∈ OmX m
     · have e := Dop_opL hr hx l l 0 1
       have hw : wirt l (coef l 1) x = 1 := by
-        rw [wirt_coef hx, if_pos ⟨by decide, rfl⟩]
+        rw [wirt_coef hx, ite_eq_left ⟨by decide, rfl⟩]
         rfl
       change opL l 0 (opL l 1 f) x = _
       rw [opL_on l 0 _ hx]
       change x l • Dop l 0 (opL l 1 f) x = _
       rw [e]
       change x l • (wirt l (coef l 1) x • f x + x l • wirt l f x) = x l • pOp l f x + x l • f x
-      simp only [pOp, hx, if_true, hw, one_smul]
+      simp only [pOp, hx, ite_true, hw, one_smul]
       rw [smul_add, add_comm]
     · change opL l 0 (opL l 1 f) x = (opL l 1 (opL l 0 f) + opL l 1 f) x
       rw [opL_off l 0 (opL l 1 f) hx (opL_off l 1 f hx (h0 x hx)),
@@ -499,7 +453,7 @@ theorem weyl_functional_holds : WeylFun := by
     by_cases hx : x ∈ OmX m
     · have e := Dop_opL hr hx l l 3 4
       have hw : wirtBar l (coef l 4) x = 1 := by
-        rw [wirtBar_coef hx, if_pos ⟨by decide, rfl⟩]
+        rw [wirtBar_coef hx, ite_eq_left ⟨by decide, rfl⟩]
         rfl
       change opL l 3 (opL l 4 f) x = _
       rw [opL_on l 3 _ hx]
@@ -507,7 +461,7 @@ theorem weyl_functional_holds : WeylFun := by
       rw [e]
       change star (x l) • (wirtBar l (coef l 4) x • f x + star (x l) • wirtBar l f x) =
         star (x l) • pbOp l f x + star (x l) • f x
-      simp only [pbOp, hx, if_true, hw, one_smul]
+      simp only [pbOp, hx, ite_true, hw, one_smul]
       rw [smul_add, add_comm]
     · change opL l 3 (opL l 4 f) x = (opL l 4 (opL l 3 f) + opL l 4 f) x
       rw [opL_off l 3 (opL l 4 f) hx (opL_off l 4 f hx (h0 x hx)),

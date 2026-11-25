@@ -313,12 +313,4 @@ theorem isPullback_opens_inf {a : X ⟶ Z} {b : Y ⟶ Z} {p : P ⟶ X} {q : P �
 
 end Pullback
 
-section Group
-
-open MonoidalCategory CartesianMonoidalCategory MonObj
-
-variable {R : CommRingCat.{u}}
-
-end Group
-
 end GlobalTheory

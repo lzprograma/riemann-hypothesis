@@ -585,7 +585,6 @@ private theorem exists_orderOf_eq_pred_sl2_zmod (p : ℕ) [Fact p.Prime] :
     · change ((γ⁻¹ : (ZMod p)ˣ) : ZMod p) ^ n = 1
       rw [← Units.val_pow_eq_pow_val, inv_pow, hγn, inv_one, Units.val_one]
 
-
 open scoped MatrixGroups TensorProduct in
 open Matrix in
 theorem _root_.GlobalTheory.sl2_zmod_central_ext_commutator_sq_eq_one :
@@ -1088,11 +1087,6 @@ theorem mem_gamma_iff {M : ℕ} {γ : SL(2, ℤ)} :
   simp only [← ZMod.intCast_zmod_eq_zero_iff_dvd, Fin.forall_fin_two]
   simp [sub_eq_zero, and_assoc]
 
-theorem gamma_mono {M N : ℕ} (h : M ∣ N) : CongruenceSubgroup.Gamma N ≤ CongruenceSubgroup.Gamma M := by
-  intro γ hγ
-  rw [mem_gamma_iff] at hγ ⊢
-  exact fun i j => (Int.natCast_dvd_natCast.2 h).trans (hγ i j)
-
 theorem gamma_inf {M N : ℕ} (h : Nat.Coprime M N) {γ : SL(2, ℤ)} (h1 : γ ∈ CongruenceSubgroup.Gamma M)
     (h2 : γ ∈ CongruenceSubgroup.Gamma N) : γ ∈ CongruenceSubgroup.Gamma (M * N) := by
   rw [mem_gamma_iff] at h1 h2 ⊢
@@ -1139,17 +1133,9 @@ def levSub (X : Tower Ω ε) (M : ℕ) : Subfield X.K where
   neg_mem' := fun ha γ hγ => by rw [map_neg, ha γ hγ]
   inv_mem' := fun a ha γ hγ => by rw [map_inv₀, ha γ hγ]
 
-theorem lev_sl (X : Tower Ω ε) {M : ℕ} {f : X.K} (hf : Lev X M f) (γ : SL(2, ℤ)) :
-    Lev X M (X.sl (ofSL γ) f) := by
-  intro δ hδ
-  have h := hf _ ((CongruenceSubgroup.Gamma_normal M).conj_mem δ hδ γ)
-  rw [← X.sl_mul, ← map_mul]
-  conv_rhs => rw [← h]
-  rw [← X.sl_mul, ← map_mul, inv_mul_cancel_right]
-
 noncomputable def levAct (X : Tower Ω ε) (M : ℕ) (γ : SL(2, ℤ)) : levSub X M →+* levSub X M :=
   RingHom.codRestrict ((X.sl (ofSL γ) : X.K →+* X.K).comp (levSub X M).subtype) (levSub X M)
-    fun a => lev_sl X a.2 γ
+    fun a => GlobalTheory.KZ.ES.RootGal.lev_sl X a.2 γ
 
 theorem coe_levAct (X : Tower Ω ε) (M : ℕ) (γ : SL(2, ℤ)) (a : levSub X M) :
     (levAct X M γ a : X.K) = X.sl (ofSL γ) a := rfl
@@ -1193,7 +1179,7 @@ theorem descent : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ 
     (fun q hq => by
       obtain ⟨h1, h2⟩ := _root_.GlobalTheory.KZ.ES.Scal.lev_and_scalar ε X Mb hMb
       obtain ⟨e1, e2, e3⟩ := h2 (s q) (fun g hg =>
-        congrArg Subtype.val (hq ⟨_, fun γ hγ => h1 g hg γ (gamma_mono (dvd_mul_left Mb Ma) hγ)⟩))
+        congrArg Subtype.val (hq ⟨_, fun γ hγ => h1 g hg γ (GlobalTheory.KZ.ES.CongruenceDescent.Gamma_le_of_dvd (dvd_mul_left Mb Ma) hγ)⟩))
       have key : ∀ i j, (en (s q) i j : ZMod Mb) = q i j := fun i j =>
         congrArg (fun x : SL(2, ZMod Mb) => x i j) (hs2 q)
       simp only [key] at e1 e2 e3
@@ -1258,7 +1244,6 @@ theorem exists_dvd_pow_mul_coprime (M : ℕ) (hM : 0 < M) :
     exact Nat.mul_dvd_mul (Nat.gcd_dvd_left M N) hdiv
 
 end GlobalTheory.KZ.ES.DescInv
-
 
 open GlobalTheory.KZ.ES.DescInv in
 theorem GlobalTheory.KZ.ES.desc_pow_four : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (X : Tower Ω ε),

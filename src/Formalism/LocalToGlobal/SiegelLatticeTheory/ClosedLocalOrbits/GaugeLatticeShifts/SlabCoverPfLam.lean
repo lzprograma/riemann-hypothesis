@@ -22,8 +22,6 @@ open Matrix
 
 namespace Formalism.L2.SG.Pf.SlabCoverPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem exists_ker_mat {E : Type*} [Field E] {n : ℕ} (W : Submodule E (Fin n → E)) :
     ∃ (k : ℕ) (B : Matrix (Fin k) (Fin n) E), ∀ w, B *ᵥ w = 0 ↔ w ∈ W := by
   classical

@@ -22,7 +22,7 @@ variable {𝒰 : Type*} [Ring 𝒰] [Algebra ℂ 𝒰] {n : ℕ} (E : Fin n → 
 
 theorem capelliC_central (hE : GlRelR E) (x : ℂ) (a b : Fin n) : Commute (E a b) (capelliC E x) := by
   have h := cminor_comm E hE a b (id : Fin n → Fin n) id x
-  simp only [id, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+  simp only [id, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
   by_cases hab : a = b
   · subst hab
     rw [show Function.update (id : Fin n → Fin n) a a = id from Function.update_eq_self a id, sub_self] at h
@@ -72,14 +72,14 @@ theorem prod_ofFn_apply_highestWeight (μ : Fin n → ℂ) (v : M) (x : ℂ) (hu
     rcases lt_or_eq_of_le hrl with hlt | heq
     · have hlt' : r (Fin.last p) < c (Fin.last p) := by
         rw [Fin.lt_iff_val_lt_val, hcl]; exact hlt
-      rw [capEntry_apply_end, hup _ _ hlt', if_neg (ne_of_lt hlt'), add_zero, map_zero]
-      rw [if_neg]
+      rw [capEntry_apply_end, hup _ _ hlt', ite_eq_right (ne_of_lt hlt'), add_zero, map_zero]
+      rw [ite_eq_right]
       intro hall
       have := hall (Fin.last p)
       simp only [Fin.val_last] at this
       omega
     · have heq' : r (Fin.last p) = c (Fin.last p) := Fin.ext (by rw [heq, hcl])
-      rw [capEntry_apply_end, if_pos heq', heq', hd, ← add_smul, map_smul]
+      rw [capEntry_apply_end, ite_eq_left heq', heq', hd, ← add_smul, map_smul]
       have hr' : Function.Injective (fun j : Fin p => r j.castSucc) :=
         hr.comp (Fin.castSucc_injective p)
       have hrp' : ∀ j : Fin p, (r j.castSucc : ℕ) < p := by
@@ -100,11 +100,11 @@ theorem prod_ofFn_apply_highestWeight (μ : Fin n → ℂ) (v : M) (x : ℂ) (hu
           · simpa using h i
           · simpa using heq
       by_cases hall : ∀ j : Fin p, (r j.castSucc : ℕ) = j
-      · rw [if_pos hall, if_pos (hiff.2 hall), smul_smul, Fin.prod_univ_castSucc]
+      · rw [ite_eq_left hall, ite_eq_left (hiff.2 hall), smul_smul, Fin.prod_univ_castSucc]
         congr 1
         simp only [Fin.coe_castSucc, Fin.val_last]
         ring
-      · rw [if_neg hall, if_neg (fun h => hall (hiff.1 h)), smul_zero]
+      · rw [ite_eq_right hall, ite_eq_right (fun h => hall (hiff.1 h)), smul_zero]
 
 theorem capelliC_hw (μ : Fin n → ℂ) (v : M) (x : ℂ) (hup : ∀ a b, a < b → E a b v = 0)
     (hd : ∀ a, E a a v = μ a • v) :
@@ -116,14 +116,14 @@ theorem capelliC_hw (μ : Fin n → ℂ) (v : M) (x : ℂ) (hup : ∀ a b, a < b
     have := prod_ofFn_apply_highestWeight E μ v x hup hd n (fun j => (1 : Equiv.Perm (Fin n)) j) id
       (Equiv.injective _) (fun j => by simp) (fun j => rfl)
     simp only [id] at this ⊢
-    rw [this, if_pos (fun j => by simp)]
+    rw [this, ite_eq_left (fun j => by simp)]
     simp
   · intro σ _ hσ
     rw [LinearMap.smul_apply]
     have := prod_ofFn_apply_highestWeight E μ v x hup hd n (fun j => σ j) id
       (Equiv.injective _) (fun j => (σ j).2) (fun j => rfl)
     simp only [id] at this ⊢
-    rw [this, if_neg, smul_zero]
+    rw [this, ite_eq_right, smul_zero]
     intro hall
     apply hσ
     ext j

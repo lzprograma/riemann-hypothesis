@@ -3,43 +3,7 @@ module
 public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
 public import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLb
 public import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SevenLogLeLOfPowerBound
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GlobalSchurBounds.AlcoveOf, Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLo
@@ -61,8 +25,8 @@ theorem entryR (D : D7) (u : D.what₂.Word) (i : ℕ) (hi : i ≤ D.R.m) (τ : 
     rw [(D.fm u).lam_eq i hi τ a]
     unfold flipTwoThree.lamLiftN flipTwoThree.lamCol flipTwoThree.wJ
     by_cases h : a.1 < D.R.k
-    · rw [dite_eq_left h, if_pos h, dite_eq_left h]
-    · rw [dite_eq_right h, if_neg h, dite_eq_left (D.R.blk_lt hi a h)]
+    · rw [dite_eq_left h, ite_eq_left h, dite_eq_left h]
+    · rw [dite_eq_right h, ite_eq_right h, dite_eq_left (D.R.blk_lt hi a h)]
   rw [← h]
   simp
 
@@ -118,7 +82,6 @@ theorem entry_bd {D : D7} {L : SizeData₂ D} {Cn cL : ℝ} (hcL : 1 ≤ cL) (hN
   obtain ⟨s1, s2, s3, s4, s5, s6, s7⟩ := nums hcL u hN
   have hx1 := L.sc.one_lt_alt
   have hb0 : 0 < L.sc.b' := by linarith
-  have hxb : 0 ≤ L.sc.x * L.sc.b := mul_nonneg (by linarith) (by linarith)
   have hsq : 0 ≤ L.sc.b' * L.sc.b' / 64 := by positivity
   have hxb1 : L.sc.b ≤ L.sc.x * L.sc.b := le_mul_of_one_le_left (by linarith) hx1.le
 
@@ -142,7 +105,7 @@ theorem entry_bd {D : D7} {L : SizeData₂ D} {Cn cL : ℝ} (hcL : 1 ≤ cL) (hN
   rw [entryR D u i hi τ a]
   unfold flipTwoThree.lamLiftN
   by_cases hak : a.1 < D.R.k
-  · rw [if_pos hak]
+  · rw [ite_eq_left hak]
     by_cases hT : flipTwoThree.IsTop D τ
     · obtain ⟨t1, t2, t3, t4, t5⟩ := w2 hT
       by_cases h0 : a.1 = 0
@@ -155,7 +118,7 @@ theorem entry_bd {D : D7} {L : SizeData₂ D} {Cn cL : ℝ} (hcL : 1 ≤ cL) (hN
           constructor <;> linarith
     · obtain ⟨e1, e2⟩ := w3 hT a.1 hak
       constructor <;> linarith
-  · rw [if_neg hak]
+  · rw [ite_eq_right hak]
     have hb := D.R.blk_lt hi a hak
     have e2 : ((flipTwoThree.wJ D u τ 0 : ℚ) : ℝ) ≤ ((flipTwoThree.wJ D u τ ((a.1 - D.R.k) / (D.R.t + 1)) : ℚ) : ℝ) := by
       exact_mod_cast wJ_mono w4 _ hb
@@ -183,7 +146,6 @@ theorem alcove_of {D : D7} {L : SizeData₂ D} {Cn cL : ℝ} (hcL : 1 ≤ cL) (h
     have : (4 : ℝ) ≤ D.R.m := by exact_mod_cast hm
     push_cast
     linarith
-  have hbb : L.sc.b ^ 2 = L.sc.b * L.sc.b := sq _
   have h24 : 24 * L.sc.b ≤ L.sc.b * L.sc.b := mul_le_mul_of_nonneg_right hb24 (by linarith)
   have h8 : 24 * L.sc.x * L.sc.b ≤ L.sc.b * L.sc.b := mul_le_mul_of_nonneg_right (s1.trans s2) (by linarith)
   have hq : L.sc.b' * L.sc.b' ≤ L.sc.b * L.sc.b := mul_le_mul s2 s2 hb'0 (by linarith)
@@ -304,7 +266,6 @@ theorem Wt_top_le {D : D7} {L : SizeData₂ D} {Cn cL : ℝ} (hcL : 1 ≤ cL) (h
       (((z - (n : ℤ)).natAbs : ℕ) : ℝ) ≤ 3 * L.sc.b' := by
     intro z n hz hn
     simp only [Nat.cast_natAbs, Int.cast_abs, Int.cast_sub, Int.cast_natCast]
-    have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
     rw [abs_le] at hz ⊢
     constructor <;> linarith [hz.1, hz.2]
   have key : product_first_zeroth_parts.Wt D u τ ≤ ⌊3 * L.sc.b'⌋₊ := by
@@ -437,7 +398,6 @@ theorem levelPrime_setting_of_sizes {D : D7} {L : SizeData₂ D} {Cn cL : ℝ} (
   have hx1 := L.sc.one_lt_alt
   have hb24 : 24 ≤ L.sc.b := by linarith
   have hb1 : 1 ≤ L.sc.b := by linarith
-  have hbb : L.sc.b ^ 2 = L.sc.b * L.sc.b := sq _
   have h24 : 24 * L.sc.b ≤ L.sc.b * L.sc.b := mul_le_mul_of_nonneg_right hb24 (by linarith)
   have hb2 : L.sc.b ^ 2 ≤ ((D.mem u).A.T : ℝ) := by
     refine le_trans ?_ (hT u)
@@ -451,7 +411,6 @@ theorem levelPrime_setting_of_sizes {D : D7} {L : SizeData₂ D} {Cn cL : ℝ} (
       have h1 := D.R.f_le_k
       have : D.R.f ≤ D.R.N D.R.m := by unfold Ranks.f Ranks.n Ranks.N; omega
       exact_mod_cast this
-    have hf0 : (0 : ℝ) ≤ D.R.f := Nat.cast_nonneg _
     have hN0 : (0 : ℝ) ≤ D.R.N D.R.m := Nat.cast_nonneg _
     have h3 : 3 * (D.R.N D.R.m : ℝ) ≤ L.sc.b := by
       obtain ⟨_, _, _, _, _, _, _, _, _, _, n11, _⟩ := hN u

@@ -50,8 +50,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.
 
 namespace GlobalTheory.BigTop.Fun
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open GlobalTheory.FunObj.SqNum GlobalTheory.SignedHC
 
 section Arith
@@ -96,7 +94,6 @@ theorem cen_bounds {L : SizeData₂ D} (hs : GlobalTheory.IndefiniteRowSideFullH
   have hmid : G0.mid i = (G0.v 2 : ℚ) + 1 / 2 + ((D.R.m : ℚ) + 1 - i) * (gap D 1 : ℚ) + (gap D 1 : ℚ) / 2 :=
     G0.mid_eq h1
   have hc : cen D 1 τ i = ⌊G0.mid i⌋ := rfl
-  have hS := L.Sc_pos
   have hi1 : (1 : ℝ) ≤ i := by exact_mod_cast h1
   have hi2 : (i : ℝ) ≤ D.R.m := by exact_mod_cast h2
   have hγ : (0 : ℝ) ≤ gap D 1 := by positivity

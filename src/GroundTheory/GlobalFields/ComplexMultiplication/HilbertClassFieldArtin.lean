@@ -25,12 +25,6 @@ open scoped Pointwise
 
 namespace GroundTheory.Global
 
-section Average
-
-variable {G H : Type*} [Group G] [Group H]
-
-end Average
-
 variable {K F L : Type*} [Field K] [NumberField K] [Field F] [NumberField F] [Field L]
   [NumberField L] [Algebra K F] [Algebra K L] [Algebra F L] [IsScalarTower K F L]
   [IsGalois K F] [IsGalois K L]

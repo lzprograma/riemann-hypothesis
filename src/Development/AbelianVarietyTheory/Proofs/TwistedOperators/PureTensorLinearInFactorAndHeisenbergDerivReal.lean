@@ -58,8 +58,6 @@ open scoped TensorProduct ComplexOrder
 
 namespace GlobalTheory.PureLinear
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem finite_of_eq_off {ι : Type} {a b : ι → ℂ} (q : ι) (ha : (Function.mulSupport a).Finite)
     (h : ∀ p, p ≠ q → b p = a p) : (Function.mulSupport b).Finite := by
   refine (ha.union (Set.finite_singleton q)).subset fun p hp => ?_
@@ -83,7 +81,7 @@ private theorem lineAt_fin_eq_zero_and_inf_other_eq_zero {D : D7} {θ : InfFam D
   set_option synthInstance.maxHeartbeats 200000 in
     refine ⟨by simpa using congrFun (congrFun (hfin t) i) j, fun ρ hρ => ?_⟩
   have h := congrFun (congrFun (hcomp t ρ) i) j
-  simp only [hρ, if_false] at h
+  simp only [hρ, ite_false] at h
   simpa [compAt] using h
 
 private theorem ae_eq_zero_of_fin_zero_of_theta_inf_zero {D : D7} {θ : InfFam D} (hθ : IsInfFam θ) (a : AE D) (h1 : finPart D a = 0)
@@ -202,8 +200,8 @@ theorem isPure_linear_and_dRho : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (
       beta_reduce at e
       rw [(hP.2.2 w).2, e, wAt_lineAt_self hθ τ z t]
     have hG := hthH w f₀ hf₀
-    have h1 := (GlobalTheory.T.hasDerivAt_heisenbergMatrixCoeff_realLine_skew D ψ θ S T μ 𝓕 hψ hθ hμ f (heisO ψ S T w f₀) hfθ hG τ z).1
-    have h2 := ((GlobalTheory.T.hasDerivAt_heisenbergMatrixCoeff_realLine_skew D ψ θ S T μ 𝓕 hψ hθ hμ (x (.inr τ)) (heisO ψ S T (wAt (.inr τ) w) f₀)
+    have h1 := (_root_.GlobalTheory.MatrixCoeffDeriv.hasDerivAt_ipO_and_skew D ψ θ S T μ 𝓕 hψ hθ hμ f (heisO ψ S T w f₀) hfθ hG τ z).1
+    have h2 := ((_root_.GlobalTheory.MatrixCoeffDeriv.hasDerivAt_ipO_and_skew D ψ θ S T μ 𝓕 hψ hθ hμ (x (.inr τ)) (heisO ψ S T (wAt (.inr τ) w) f₀)
       (hxl _).1 (hthH _ _ hf₀) τ z).1).mul_const C
     have h3 : HasDerivAt (fun t : ℝ => ipO μ 𝓕 (heisO ψ S T (lineAt θ τ z t) f) (heisO ψ S T w f₀))
         (ipO μ 𝓕 (Formalism.IndefR.Datum.dRho (heisO ψ S T) θ τ z (x (.inr τ))) (heisO ψ S T (wAt (.inr τ) w) f₀) * C) 0 := by

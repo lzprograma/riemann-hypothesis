@@ -224,13 +224,13 @@ theorem exists_sum_sub_mem {S T : Type} {i : S → T} (hi : Function.Injective i
   rw [map_sub, map_sum, PowerSeries.coeff_mk, sub_eq_zero, ← Finset.sum_subset (s₁ := (L k).image i),
   Finset.sum_image hi.injOn]
   · refine Finset.sum_congr rfl fun mu hmu => ?_
-    rw [h₁, PowerSeries.coeff_mul_C, PowerSeries.coeff_X_pow, if_pos ((hL _ _).1 hmu).symm, _root_.one_mul]
+    rw [h₁, PowerSeries.coeff_mul_C, PowerSeries.coeff_X_pow, ite_eq_left ((hL _ _).1 hmu).symm, _root_.one_mul]
   · exact (Finset.image_subset_image (Finset.subset_biUnion_of_mem L (Finset.mem_range.2 hk))).trans
       Finset.subset_union_right
   · intro x _ hx
     by_cases hx' : ∃ mu, i mu = x
     · obtain ⟨mu, rfl⟩ := hx'
-      rw [h₁, PowerSeries.coeff_mul_C, PowerSeries.coeff_X_pow, if_neg, zero_mul]
+      rw [h₁, PowerSeries.coeff_mul_C, PowerSeries.coeff_X_pow, ite_eq_right, zero_mul]
       exact fun hk' => hx (Finset.mem_image_of_mem _ ((hL _ _).2 hk'.symm))
     · rw [h₂ x fun mu e => hx' ⟨mu, e⟩, map_zero]
 

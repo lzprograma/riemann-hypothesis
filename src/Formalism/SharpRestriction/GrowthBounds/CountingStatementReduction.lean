@@ -21,52 +21,11 @@ import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIn
 public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.LatticeTheoremEps28Valid
 public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.Discharge
 public import Lemmata.GeneralBFactLeftBisForm.Imports
-import Mathlib.Algebra.AffineMonoid.UniqueSums
 public import Mathlib.Algebra.Order.Antidiag.FinsuppEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.MahlerMeasure.QuotientUpperBoundsOfPowerBounds
+import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptFin
 
 @[expose] public section
 
@@ -1596,7 +1555,6 @@ theorem cap_le (hp : 1 ≤ p) (hE0 : 0 ≤ S.E0) (B : ℝ) (hB : ∀ i, (S.bTop 
     refine Finset.sum_le_sum fun i _ => ?_
     split_ifs
     · have h2 : ((coarseA p S b i : ℕ) : ℝ) ≤ S.bTop i := by exact_mod_cast coarseA_le S b i
-      have h3 : (0 : ℝ) ≤ (oEff S b i : ℝ) := Nat.cast_nonneg _
       linarith [hB i]
     · exact hB0 i
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at h1
@@ -1608,10 +1566,8 @@ theorem oPlus_le (hK : Kept p r S aTop b) (hp : 1 ≤ p) (hE0 : 0 ≤ S.E0) (hLa
     (hBp : (S.bPlus : ℝ) ≤ B) : (b.oPlus : ℝ) ≤ S.a + s * B + 2 * S.a * s + B := by
   have h := hK.2.2.2
   unfold Oplus at h
-  have ha : (0 : ℝ) ≤ S.a := Nat.cast_nonneg _
   have hr : (0 : ℝ) < (r : ℝ) + 1 := by positivity
   have h4 : (0 : ℝ) ≤ 4 / (p : ℝ) ^ 2 := by positivity
-  have hc0 : 0 ≤ S.La / ((r : ℝ) + 1) := div_nonneg hLa0 hr.le
   have hsum0 : (0 : ℝ) ≤ ∑ i, 2 * (S.a : ℝ) / (S.P p i : ℝ) :=
     Finset.sum_nonneg fun i _ => by positivity
   have hsum : (∑ i, 2 * (S.a : ℝ) / (S.P p i : ℝ)) ≤ 2 * S.a * s := by
@@ -1755,14 +1711,10 @@ theorem final_num (a m s p : ℝ) (ha : 1 ≤ a) (hm : 4 ≤ m) (hs0 : 0 ≤ s) 
   have h6 : m ^ 2 ≤ p ^ 2 := le_trans h4 (le_self_pow₀ h5 (by norm_num))
   have h7 : 64 * a ≤ (8 * a + m) ^ 2 := by
     have ha2 : a ≤ a ^ 2 := le_self_pow₀ ha (by norm_num)
-    have he : (8 * a + m) ^ 2 = 64 * a ^ 2 + 16 * (a * m) + m ^ 2 := by ring
     have ham : 0 ≤ a * m := by positivity
     have hm2 : 0 ≤ m ^ 2 := sq_nonneg m
     linarith
   have h8 : m ^ 2 * (64 * a) ≤ p ^ 2 * (8 * a + m) ^ 2 := mul_le_mul h6 h7 (by positivity) (by positivity)
-  have he1 : m * (a * (3 * m)) = 3 * (m ^ 2 * a) := by ring
-  have he2 : m ^ 2 * (64 * a) = 64 * (m ^ 2 * a) := by ring
-  have hpos : 0 ≤ m ^ 2 * a := by positivity
   linarith
 
 theorem degIn_le_sum {ι : Type} [Fintype ι] (d : ι → ℕ) (S : Set ι) : degIn d S ≤ ∑ l, d l := by
@@ -1786,7 +1738,6 @@ theorem block_size (C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ) (X : flipOneThree.Inst
   have hp1 : 1 ≤ X.p := by
     have : (1 : ℝ) ≤ (X.L.p : ℝ) := by linarith
     exact_mod_cast this
-  have ha0 : (0 : ℝ) ≤ (X.L.a : ℝ) := Nat.cast_nonneg _
   have hb10 : 5 / 2 * X.L.b' ≤ (X.L.a : ℝ) / 10 := by
     have := mul_le_mul_of_nonneg_right hp25 hF.b0.le
     linarith [hF.b_lt]
@@ -1796,7 +1747,6 @@ theorem block_size (C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ) (X : flipOneThree.Inst
     have h1 := hF.La0
     have h2 := hF.b0.le
     have h3 : (0 : ℝ) ≤ X.L.k := by show (0 : ℝ) ≤ (X.L.m : ℝ) + 1; positivity
-    have h4 : (0 : ℝ) ≤ X.L.Q := by show (0 : ℝ) ≤ (X.L.p : ℝ) ^ X.L.G'; positivity
     positivity
   have hLa : (X.S C0 CE1 CE2).La / ((X.r : ℝ) + 1) + 4 / (X.p : ℝ) ^ 2 ≤ 1 := by
     show X.L.La C0 / ((X.L.m : ℝ) + 1) + 4 / (X.L.p : ℝ) ^ 2 ≤ 1
@@ -1953,11 +1903,11 @@ theorem weight_vector_other_isotypic_in_lowering_image {E : GLOps n K V} (hE : I
       · simpa using hw
       · rw [Finset.mem_singleton] at hκ
         subst hκ
-        simp only [if_neg (Ne.symm hne)]
+        simp only [ite_eq_right (Ne.symm hne)]
         exact Submodule.neg_mem _ hh.1)
     (by
       rw [Finset.sum_pair hne]
-      simp only [if_true, if_neg (Ne.symm hne)]
+      simp only [ite_true, ite_eq_right (Ne.symm hne)]
       have : x + -h = l := by rw [← hxe]; abel
       rw [this]; exact hl.1)
     mu (Finset.mem_insert_self _ _)
@@ -2069,7 +2019,7 @@ theorem ext_abs {r n : ℕ} (E : GLOps r K V) (φ : Fin n → Fin r) (hE : IsGLR
     · refine isotypic_stable_commuting E' (E c c) ?_ mu x hx
       intro a b
       have h := hE.1 c c (φ a) (φ b)
-      rw [if_neg (fun h : c = φ a => hc ⟨a, h.symm⟩), if_neg (fun h : φ b = c => hc ⟨b, h⟩), sub_zero,
+      rw [ite_eq_right (fun h : c = φ a => hc ⟨a, h.symm⟩), ite_eq_right (fun h : φ b = c => hc ⟨b, h⟩), sub_zero,
         sub_eq_zero] at h
       exact h
   have hcd : ∀ c x, e' (E c c x) = E c c (e' x) := fun c x =>
@@ -2388,17 +2338,17 @@ theorem segSub_good (aTop : Fin s → ℕ) (aPlus : ℕ) (m D : ℝ)
   · intro x hx b _
     have hb := hx b (Set.mem_univ b)
     by_cases hk : Kept p r S aTop b
-    · simp only [if_pos hk] at hb ⊢
+    · simp only [ite_eq_left hk] at hb ⊢
       exact (h b hk).1.1 hb
-    · simp only [if_neg hk] at hb ⊢
+    · simp only [ite_eq_right hk] at hb ⊢
       exact hb
   · intro c x hc hx hcx b _
     have hb := hx b (Set.mem_univ b)
     have hcb := hcx b (Set.mem_univ b)
     by_cases hk : Kept p r S aTop b
-    · simp only [if_pos hk] at hb hcb ⊢
+    · simp only [ite_eq_left hk] at hb hcb ⊢
       exact (h b hk).1.2 c (x b) hc hb hcb
-    · simp only [if_neg hk] at hb ⊢
+    · simp only [ite_eq_right hk] at hb ⊢
       exact hb
   · intro u hu
     obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
@@ -2410,7 +2360,7 @@ theorem segSub_good (aTop : Fin s → ℕ) (aPlus : ℕ) (m D : ℝ)
         intro b
         have hb := hu.1 b (Set.mem_univ b)
         by_cases hk : Kept p r S aTop b
-        · simp only [if_pos hk] at hb ⊢
+        · simp only [ite_eq_left hk] at hb ⊢
           have hnp := hno b hk
           unfold PrimIn at hnp
           push Not at hnp
@@ -2419,7 +2369,7 @@ theorem segSub_good (aTop : Fin s → ℕ) (aPlus : ℕ) (m D : ℝ)
           rw [hϖ.maximalIdeal_eq, Ideal.mem_span_singleton] at hcm
           obtain ⟨c', rfl⟩ := hcm
           exact ⟨c' • x, (L₂ b).smul_mem c' hx, by rw [hux, mul_smul]⟩
-        · simp only [if_neg hk] at hb ⊢
+        · simp only [ite_eq_right hk] at hb ⊢
           exact ⟨0, Submodule.zero_mem _, by rw [(Submodule.mem_bot O).1 hb, smul_zero]⟩
       choose y hy huy using hdiv
       have : IsUnit ϖ := hu.2 ϖ y (fun b _ => hy b) (funext fun b => by rw [Pi.smul_apply]; exact huy b)
@@ -2430,7 +2380,7 @@ theorem segSub_good (aTop : Fin s → ℕ) (aPlus : ℕ) (m D : ℝ)
     · intro b' _
       by_cases hbb : b' = b
       · subst hbb
-        simp only [if_pos hk, Pi.single_eq_same]
+        simp only [ite_eq_left hk, Pi.single_eq_same]
         exact hu'
       · rw [Pi.single_eq_of_ne hbb]
         exact Submodule.zero_mem _
@@ -2555,43 +2505,7 @@ theorem rk_cap_le (p : ℕ) (S : SegData s) (b : SegBlock s r) (l : ℕ) :
   split_ifs <;> omega
 
 theorem kept_finite (p r : ℕ) (S : SegData s) (aTop : Fin s → ℕ) : {b : SegBlock s r | Kept p r S aTop b}.Finite := by
-  classical
-  set M : ℝ := ((S.A0 p + ∑ i : Fin s, (S.bTop i : ℤ) : ℤ) : ℝ) +
-    (S.La / (r + 1) + 4 / (p : ℝ) ^ 2) * ∑ i, 2 * (S.a : ℝ) / (S.P p i : ℝ) + S.La * (S.bPlus : ℝ) / (r + 1) with hM
-  let f : SegBlock s r → (Fin s → Fin (r + 1) → ℕ) × (Fin s → Fin (r + 1) → ℕ) × (Fin s → ℕ) × (Fin s → ℕ) ×
-      (Fin s → ℕ) × ℕ := fun b => (b.rz, b.ry, b.o, b.w, b.sg, b.oPlus)
-  have hf : Function.Injective f := by
-    rintro ⟨a1, a2, a3, a4, a5, a6⟩ ⟨b1, b2, b3, b4, b5, b6⟩ h
-    simp only [f, Prod.mk.injEq] at h
-    obtain ⟨h1, h2, h3, h4, h5, h6⟩ := h
-    subst h1 h2 h3 h4 h5 h6
-    rfl
-  have hD : {g : Fin s → Fin (r + 1) → ℕ | ∀ i, g i ∈ {h : Fin (r + 1) → ℕ | ∀ c, h c ∈ Set.Iio (S.P p i)}}.Finite :=
-    Set.Finite.pi' fun i => Set.Finite.pi' fun _ => Set.finite_Iio _
-  have hB : {g : Fin s → ℕ | ∀ i, g i ∈ Set.Iic (S.bTop i)}.Finite := Set.Finite.pi' fun i => Set.finite_Iic _
-  have hA : {g : Fin s → ℕ | ∀ i, g i ∈ Set.Iic (aTop i)}.Finite := Set.Finite.pi' fun i => Set.finite_Iic _
-  have hfin := (hD.prod (hD.prod (hB.prod (hB.prod (hA.prod (Set.finite_Iic ⌊M⌋₊)))))).preimage (hf.injOn)
-  refine hfin.subset ?_
-  intro b hb
-  obtain ⟨⟨hd, -, -⟩, hU, hS, hO⟩ := hb
-  simp only [Set.mem_preimage, Set.mem_prod, Set.mem_ofPred_eq, Set.mem_Iio, Set.mem_Iic, f]
-  refine ⟨fun i c => (hd i c).1, fun i c => (hd i c).2, fun i => ?_, fun i => ?_, fun i => ?_, ?_⟩
-  · rcases Nat.lt_or_ge (i : ℕ) S.sigma with h | h
-    · rw [(hS i h).1]; exact Nat.zero_le _
-    · exact (hU i h).1.trans (rk_coarseA_le p S b i)
-  · rcases Nat.lt_or_ge (i : ℕ) S.sigma with h | h
-    · exact (hS i h).2.1.trans (rk_coarseA_le p S b i)
-    · rw [(hU i h).2.2.1]; exact Nat.zero_le _
-  · rcases Nat.lt_or_ge (i : ℕ) S.sigma with h | h
-    · exact (hS i h).2.2.1.trans (rk_coarseC_le p S aTop b i)
-    · rw [(hU i h).2.2.2]; exact Nat.zero_le _
-  · apply Nat.le_floor
-    refine hO.trans ?_
-    unfold Oplus
-    rw [hM]
-    have : ((cap p S b s : ℤ) : ℝ) ≤ ((S.A0 p + ∑ i : Fin s, (S.bTop i : ℤ) : ℤ) : ℝ) := by
-      exact_mod_cast rk_cap_le p S b s
-    linarith
+  apply _root_.Formalism.MainNotions.ColumnSystems.Pf.kf_kept_finite <;> assumption
 
 end Kept
 
@@ -2652,14 +2566,14 @@ theorem mem_segSub (aTop : Fin s → ℕ)
   · intro h
     refine ⟨fun b hk => ?_, fun b hk => ?_⟩
     · have := h b (Set.mem_univ _)
-      simpa only [if_pos hk] using this
+      simpa only [ite_eq_left hk] using this
     · have := h b (Set.mem_univ _)
-      simp only [if_neg hk] at this
+      simp only [ite_eq_right hk] at this
       exact (Submodule.mem_bot O).1 this
   · rintro ⟨h1, h2⟩ b -
     by_cases hk : Kept p r S aTop b
-    · simp only [if_pos hk]; exact h1 b hk
-    · simp only [if_neg hk]; rw [h2 b hk]; exact Submodule.zero_mem _
+    · simp only [ite_eq_left hk]; exact h1 b hk
+    · simp only [ite_eq_right hk]; rw [h2 b hk]; exact Submodule.zero_mem _
 
 def segSubMap (aTop : Fin s → ℕ)
     (L₂ : SegBlock s r → Submodule O (MvPolynomial (BVar (2 * s + 1) r S.t) (KK O))) :
@@ -2688,14 +2602,14 @@ def segSubEquiv (aTop : Fin s → ℕ)
         ((y ⟨b, (mem_keptSet p r S aTop b).2 hk⟩ : L₂ b) : MvPolynomial (BVar (2 * s + 1) r S.t) (KK O)) else 0, ?_⟩, ?_⟩
       · rw [mem_segSub]
         refine ⟨fun b hk => ?_, fun b hk => ?_⟩
-        · simp only [dif_pos hk]
+        · simp only [dite_eq_left hk]
           exact (y ⟨b, (mem_keptSet p r S aTop b).2 hk⟩).2
-        · simp only [dif_neg hk]
+        · simp only [dite_eq_right hk]
       · funext b
         apply Subtype.ext
         show (if hk : Kept p r S aTop b.1 then
           ((y ⟨b.1, (mem_keptSet p r S aTop b.1).2 hk⟩ : L₂ b.1) : MvPolynomial (BVar (2 * s + 1) r S.t) (KK O)) else 0) = _
-        rw [dif_pos ((mem_keptSet p r S aTop b.1).1 b.2)]⟩
+        rw [dite_eq_left ((mem_keptSet p r S aTop b.1).1 b.2)]⟩
 
 theorem rank_segSub (aTop : Fin s → ℕ)
     (L₂ : SegBlock s r → Submodule O (MvPolynomial (BVar (2 * s + 1) r S.t) (KK O))) :
@@ -2758,7 +2672,7 @@ theorem block_form_of_segment_form (C0 CYb Cde Ck CD Cb CE1 CE2 Cc C : ℝ) (X :
   set L : SegBlock X.s X.r → Submodule X.O (MvPolynomial (BVar (2 * X.s + 1) X.r (X.S C0 CE1 CE2).t) (KK X.O)) :=
     fun b => if hk : Kept X.p X.r (X.S C0 CE1 CE2) aTop b then L₂ b hk else ⊥ with hL
   have hLk : ∀ b (hk : Kept X.p X.r (X.S C0 CE1 CE2) aTop b), L b = L₂ b hk := fun b hk => by
-    rw [hL]; simp only [dif_pos hk]
+    rw [hL]; simp only [dite_eq_left hk]
   refine ⟨L, fun b hk => by rw [hLk b hk]; exact (hL₂ b hk).1, ?_⟩
   rw [segLat_eq_segSub]
   by_cases hinf : ∃ b ∈ keptSet X.p X.r (X.S C0 CE1 CE2) aTop,
@@ -2954,14 +2868,14 @@ theorem realW_top (TT : Finset (Fin n')) (j : Fin (numSeg TT)) (a0 : ℕ) (aTop 
   funext i
   unfold segATop realW
   have h : ∃ i', segPos TT j i' = segPos TT j i := ⟨i, rfl⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact congrArg aTop (segPos_inj TT j h.choose_spec)
 
 theorem realW_plus (TT : Finset (Fin n')) (j : Fin (numSeg TT)) (a0 : ℕ) (aTop : Fin (segS TT j) → ℕ) (aPlus : ℕ) :
     segAPlus TT (realW TT j a0 aTop aPlus) j = aPlus := by
   unfold segAPlus realW
   have h : ¬ ∃ i', segPos TT j i' = segNext TT j := fun ⟨i, hi⟩ => segPos_ne_next TT j i hi
-  rw [dif_neg h, if_pos rfl]
+  rw [dite_eq_right h, ite_eq_left rfl]
 
 theorem realW_mem (TT : Finset (Fin n')) (j : Fin (numSeg TT)) (a0 : ℕ) (aTop : Fin (segS TT j) → ℕ) (aPlus : ℕ)
     (P : ℕ → Prop) (h0 : P a0) (hT : ∀ i, P (aTop i)) (hP : P aPlus) (s : Fin n') :
@@ -3019,12 +2933,12 @@ theorem keptSum_eq_sum {aTop : Fin X.s → ℕ} (hfin : {b | Kept X.p X.r (X.S C
   rw [finsum_eq_sum_of_support_subset (s := hfin.toFinset)]
   · refine Finset.sum_congr rfl fun b hb => ?_
     have hk : Kept X.p X.r (X.S C0 CE1 CE2) aTop b := hfin.mem_toFinset.1 hb
-    rw [if_pos hk]
+    rw [ite_eq_left hk]
   · intro b hb
     rw [Function.mem_support] at hb
     rw [Finset.mem_coe, hfin.mem_toFinset]
     by_contra hk
-    exact hb (if_neg hk)
+    exact hb (ite_eq_right hk)
 
 theorem clSum_eq_sum {aTop : Fin X.s → ℕ} (hfin : {b | Kept X.p X.r (X.S C0 CE1 CE2) aTop b}.Finite)
     (f : SegBlock X.s X.r → ℕ) (dl : DCl X) :
@@ -3035,15 +2949,15 @@ theorem clSum_eq_sum {aTop : Fin X.s → ℕ} (hfin : {b | Kept X.p X.r (X.S C0 
   · refine Finset.sum_congr rfl fun b hb => ?_
     have hk : Kept X.p X.r (X.S C0 CE1 CE2) aTop b := hfin.mem_toFinset.1 hb
     by_cases h : (b.rz, b.ry) = dl
-    · rw [if_pos h, if_pos ⟨hk, congrArg Prod.fst h, congrArg Prod.snd h⟩]
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_left h, ite_eq_left ⟨hk, congrArg Prod.fst h, congrArg Prod.snd h⟩]
+    · rw [ite_eq_right h, ite_eq_right]
       rintro ⟨-, h1, h2⟩
       exact h (Prod.ext h1 h2)
   · intro b hb
     rw [Function.mem_support] at hb
     rw [Finset.mem_coe, hfin.mem_toFinset]
     by_contra hk
-    exact hb (if_neg fun h => hk h.1)
+    exact hb (ite_eq_right fun h => hk h.1)
 
 
 open Classical in
@@ -3315,7 +3229,7 @@ theorem card_Ev_digits (k a P : ℕ) (hP : 0 < P) :
 
 theorem symDim_eq (r n : ℕ) : Formalism.MainNotions.ColumnSystems.symDim (r + 1) (n : ℤ) = (Ev (r + 1) n).card := by
   unfold Formalism.MainNotions.ColumnSystems.symDim
-  rw [if_neg (by omega), card_Ev, Int.toNat_natCast]
+  rw [ite_eq_right (by omega), card_Ev, Int.toNat_natCast]
   have e1 : n + (r + 1) - 1 = n + r := by omega
   have e2 : r + 1 + n - 1 = n + r := by omega
   have e3 : r + 1 - 1 = r := by omega
@@ -3324,7 +3238,7 @@ theorem symDim_eq (r n : ℕ) : Formalism.MainNotions.ColumnSystems.symDim (r + 
 
 theorem symDim_choose (r n : ℕ) : Formalism.MainNotions.ColumnSystems.symDim (r + 1) (n : ℤ) = (n + r).choose r := by
   unfold Formalism.MainNotions.ColumnSystems.symDim
-  rw [if_neg (by omega), Int.toNat_natCast]
+  rw [ite_eq_right (by omega), Int.toNat_natCast]
   have e1 : n + (r + 1) - 1 = n + r := by omega
   have e3 : r + 1 - 1 = r := by omega
   rw [e1, e3]
@@ -3414,18 +3328,18 @@ theorem mCl_factor (rz ry : Fin X.s → Fin (X.r + 1) → ℕ) (hrz : rz ∈ dig
         Formalism.MainNotions.ColumnSystems.symDim (X.r + 1) ((X.S C0 CE1 CE2).bPlus : ℤ) *
         ((∏ i, fA C0 CE1 CE2 X i (rz i)) * ∏ i, fC C0 CE1 CE2 X i (aTop i) (ry i)) := by
   by_cases hc : Compat C0 CE1 CE2 X (rz, ry) aTop
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     obtain ⟨-, hA, hC⟩ := hc
     have e1 : (∏ i, fA C0 CE1 CE2 X i (rz i)) = ∏ i, Formalism.MainNotions.ColumnSystems.symDim (X.r + 1)
         ((coarseA X.p (X.S C0 CE1 CE2) (Formalism.MainNotions.ColumnSystems.digitBlock rz ry) i : ℕ) : ℤ) :=
-      Finset.prod_congr rfl fun i _ => by unfold fA; exact if_pos (hA i)
+      Finset.prod_congr rfl fun i _ => by unfold fA; exact ite_eq_left (hA i)
     have e2 : (∏ i, fC C0 CE1 CE2 X i (aTop i) (ry i)) = ∏ i, Formalism.MainNotions.ColumnSystems.symDim (X.r + 1)
         ((coarseC X.p (X.S C0 CE1 CE2) aTop (Formalism.MainNotions.ColumnSystems.digitBlock rz ry) i : ℕ) : ℤ) :=
-      Finset.prod_congr rfl fun i _ => by unfold fC; exact if_pos (hC i)
+      Finset.prod_congr rfl fun i _ => by unfold fC; exact ite_eq_left (hC i)
     rw [e1, e2, ← Finset.prod_mul_distrib]
     unfold mCl Formalism.MainNotions.ColumnSystems.dimMM
     ring
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
     have hd : ∀ i c, rz i c < (X.S C0 CE1 CE2).P X.p i ∧ ry i c < (X.S C0 CE1 CE2).P X.p i := by
       intro i c
       unfold digSet at hrz hry
@@ -3439,9 +3353,9 @@ theorem mCl_factor (rz ry : Fin X.s → Fin (X.r + 1) → ℕ) (hrz : rz ∈ dig
       rw [Finset.prod_ne_zero_iff] at h1 h2
       refine ⟨hd, fun i => ?_, fun i => ?_⟩
       · by_contra hn
-        exact h1 i (Finset.mem_univ i) (by unfold fA; exact if_neg hn)
+        exact h1 i (Finset.mem_univ i) (by unfold fA; exact ite_eq_right hn)
       · by_contra hn
-        exact h2 i (Finset.mem_univ i) (by unfold fC; exact if_neg hn)
+        exact h2 i (Finset.mem_univ i) (by unfold fC; exact ite_eq_right hn)
     rw [hz, mul_zero]
 
 
@@ -3521,7 +3435,6 @@ theorem Kflat_num (A k Y La b' xa pp Yb N : ℝ) (r s : ℕ) (hkr : k = (r : ℝ
     (hs : (s : ℝ) ≤ Y) :
     ((((⌊A + A / (k * Y) + xa⌋₊ : ℕ) : ℝ) / A) ^ r) ^ s ≤ Real.exp 3 := by
   have hr0 : (0 : ℝ) ≤ (r : ℝ) := Nat.cast_nonneg _
-  have hs0' : (0 : ℝ) ≤ (s : ℝ) := Nat.cast_nonneg _
   have hk1 : (1 : ℝ) ≤ k := by rw [hkr]; linarith
   have hLk : La ≤ k := by
     have h2 : (1 : ℝ) ≤ 2 * Yb * N := by
@@ -3590,7 +3503,6 @@ theorem Kflat_le {CYb Cde Ck CD Cb Cc : ℝ} (hCYb : 1 ≤ CYb) (hH : flipOneThr
     have h1 : (1 : ℝ) ≤ X.L.N * X.L.Y := one_le_mul_of_one_le_of_one_le hN hY
     have := Real.log_nonneg h1
     linarith
-  have hp0 : (0 : ℝ) ≤ (X.L.p : ℝ) := Nat.cast_nonneg _
   have hA : (0 : ℝ) < (X.L.a : ℝ) := by
     by_contra h
     have hz : (X.L.a : ℝ) = 0 := le_antisymm (not_lt.1 h) (Nat.cast_nonneg _)
@@ -3641,7 +3553,6 @@ theorem remaining_of_segment_bound (C0 CYb Cde Ck CD Cb CE1 CE2 Cc C : ℝ) (X :
   have hs : (X.s : ℝ) ≤ X.L.Y := by
     have h1 : (X.s : ℝ) ≤ (X.N₁ : ℝ) := by exact_mod_cast hsN
     have h2 : (0 : ℝ) ≤ (X.N₁ : ℝ) := Nat.cast_nonneg _
-    have h3 : (0 : ℝ) ≤ ((X.S C0 CE1 CE2).t : ℝ) := Nat.cast_nonneg _
     have h4 : (1 : ℝ) ≤ C * (((X.S C0 CE1 CE2).t : ℝ) + 1) := one_le_mul_of_one_le_of_one_le hC (by linarith)
     have h5 : (X.N₁ : ℝ) ≤ C * (((X.S C0 CE1 CE2).t : ℝ) + 1) * X.N₁ := le_mul_of_one_le_left h2 h4
     linarith

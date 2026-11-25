@@ -57,7 +57,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
 open UpperTheory.V.HV (Coef)
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 private theorem uc_eq (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (e : ℕ) :
     Uc k e = GroundTheory.LocalField.unitFiltrationUnits k e := by
@@ -207,7 +206,7 @@ private theorem wt_ex {n : ℕ} (h : s.Wt n) (hh : h.Incr) : ∃ lam, WtOf h lam
     obtain ⟨v', τ'⟩ := p
     obtain rfl : v' = v := Subtype.ext (w_inj s (emb_place τ' τ h1))
     rw [emb_inj τ' τ h1]
-  simp only [htW, lowW, dif_pos H]
+  simp only [htW, lowW, dite_eq_left H]
   rw [e]
   simp [μ]
 end Glob

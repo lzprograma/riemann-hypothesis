@@ -3,6 +3,7 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
 public import Lemmata.FirstBlockLemmaB.Imports
 public import Lemmata.GeneralBFactBis.Imports
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 public import Mathlib.RingTheory.GradedAlgebra.Radical
@@ -98,7 +99,7 @@ theorem cyc_isMultiHomogIdeal_of_isHomogeneous [DecidableEq K] {W : Ideal (MRing
       by_cases h : (fun k => ∑ i, m ⟨k, i⟩) = a
       · subst h
         simp
-      · rw [if_neg h, if_neg]
+      · rw [ite_eq_right h, ite_eq_right]
         intro h'
         exact h (funext fun k => h' k (Finset.mem_univ k))
     simp_rw [e]
@@ -111,7 +112,7 @@ theorem cyc_isMultiHomogIdeal_of_isHomogeneous [DecidableEq K] {W : Ideal (MRing
   refine Ideal.sum_mem _ fun a _ => Ideal.subset_span ⟨hgW a, a, fun m hm k => ?_⟩
   rw [mem_support_iff, hg a] at hm
   by_contra hk
-  exact hm (if_neg fun h => hk (h k (Finset.mem_univ k)))
+  exact hm (ite_eq_right fun h => hk (h k (Finset.mem_univ k)))
 
 theorem cyc_isMultiHomogIdeal_of_mem_minimalPrimes {P W : Ideal (MRingOver R ι)} {s : MRingOver R ι}
     {a : K → ℕ} (hP : IsMultiHomogIdeal P) (hs : IsMultiHomog s a)
@@ -177,19 +178,8 @@ variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)] {F :
 
 theorem aeval_blockScale {A : Type*} [CommRing A] [Algebra F A] {g : MRingOver F ι} {a : K → ℕ}
     (hg : IsMultiHomog g a) (c : K → A) (z : (Σ k, ι k) → A) :
-    aeval (fun p => c p.1 * z p) g = (∏ k, c k ^ a k) * aeval z g := by
-  simp only [aeval_def, eval₂_eq', Finset.mul_sum]
-  refine Finset.sum_congr rfl fun d hd => ?_
-  have h1 : ∏ p, (c p.1 * z p) ^ d p = (∏ p, c p.1 ^ d p) * ∏ p, z p ^ d p := by
-    rw [← Finset.prod_mul_distrib]
-    simp_rw [mul_pow]
-  have h2 : ∏ p : (Σ k, ι k), c p.1 ^ d p = ∏ k, c k ^ a k := by
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    show ∏ y, c k ^ d ⟨k, y⟩ = _
-    rw [Finset.prod_pow_eq_pow_sum, hg d hd k]
-  rw [h1, h2]
-  ring
+    aeval (fun p => c p.1 * z p) g = (∏ k, c k ^ a k) * aeval z g :=
+  GroundTheory.Heights₂.Heights.BlockScaling.eval₂_mul_block_left (algebraMap F A) c z hg
 
 theorem aeval_blockScale_eq_zero {A : Type*} [CommRing A] [Algebra F A] {V : Ideal (MRingOver F ι)}
     (hV : IsMultiHomogIdeal V) (c : K → A) (θ : MRingOver F ι →ₐ[F] A) (hθ : ∀ g ∈ V, θ g = 0)

@@ -157,8 +157,8 @@ theorem unitBlock_mul_int (D : D7) (o : ℕ) {a d : ℕ} (r : GA D a) (hr : r �
   refine sum_mem fun l _ => mul_mem ?_ ?_
   · rw [Matrix.map_apply]
     by_cases h : i.1 = o + l.1
-    · simp only [unitBlock, Matrix.of_apply, h, if_true, map_one]; exact one_mem _
-    · simp only [unitBlock, Matrix.of_apply, h, if_false, map_zero]; exact zero_mem _
+    · simp only [unitBlock, Matrix.of_apply, h, ite_true, map_one]; exact one_mem _
+    · simp only [unitBlock, Matrix.of_apply, h, ite_false, map_zero]; exact zero_mem _
   · rw [Subgroup.coe_inv]
     exact ((mem_intG r).1 hr l j).2
 

@@ -95,16 +95,6 @@ theorem conj_apply {n : ℕ} {s : Equiv.Perm (Fin n)} {y : GL (Fin n) L} (hy : I
   · intro b _ hb; rw [hy b j hb, mul_zero]
   · simp
 
-theorem inv_mul_diag {n : ℕ} {s : Equiv.Perm (Fin n)} {y : GL (Fin n) L} (hy : IsWeylRep s y) (i : Fin n) :
-    ((y⁻¹ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) i (s i) * (y : Matrix (Fin n) (Fin n) L) (s i) i = 1 := by
-  have h : ((y⁻¹ * y : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) i i = ((1 : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) i i := by
-    rw [inv_mul_cancel]
-  rw [Units.val_mul, Matrix.mul_apply, Finset.sum_eq_single (s i), Units.val_one, Matrix.one_apply_eq] at h
-  · exact h
-  · intro b _ hb
-    rw [hy.inv i b (by intro e; apply hb; rw [e]; simp), zero_mul]
-  · simp
-
 theorem swap_inversion {n : ℕ} {a a' p q : Fin n} (h : a'.val = a.val + 1) (hpq : p < q)
     (hs : Equiv.swap a a' q < Equiv.swap a a' p) : p = a ∧ q = a' := by
   rw [Equiv.swap_apply_def, Equiv.swap_apply_def] at hs
@@ -118,13 +108,5 @@ theorem transvection_apply' {n : ℕ} (a a' : Fin n) (d : L) (i j : Fin n) :
   by_cases h1 : a = i <;> by_cases h2 : a' = j <;> simp [h1, h2, eq_comm]
 
 alias ordL_one := _root_.Formalism.UG.P.fSatake_ord_one
-
-end GlobalTheory.UnipShiftU
-
-namespace GlobalTheory.UnipShiftU
-
-end GlobalTheory.UnipShiftU
-
-namespace GlobalTheory.UnipShiftU
 
 end GlobalTheory.UnipShiftU

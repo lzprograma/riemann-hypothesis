@@ -69,14 +69,7 @@ theorem dim_sup_lt {n d : ℕ} (J : Ideal (MvPolynomial (Fin n) ℂ)) (hJ : J.Is
     (by
       rw [Ideal.Quotient.factor_mk, Ideal.Quotient.eq_zero_iff_mem]
       exact Ideal.mem_sup_right (Ideal.mem_span_singleton_self f))
-  rw [hd] at h
-  generalize ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ (J ⊔ Ideal.span {f})) = x at h ⊢
-  induction x using WithBot.recBotCoe with
-  | bot => exact WithBot.bot_lt_coe _
-  | coe e =>
-    have h' : e + 1 ≤ (d : ℕ∞) := by exact_mod_cast h
-    have he : e ≠ ⊤ := fun he => by simp [he] at h'
-    exact_mod_cast (ENat.add_one_le_iff he).mp h'
+  exact ENat.WithBot.add_one_le_natCast_iff.mp (h.trans_eq hd)
 
 theorem ball_lt_top {ι : Type*} [Fintype ι] (R : ℝ) :
     μH[((2 * Fintype.card ι : ℕ) : ℝ)] (Metric.ball (0 : EuclideanSpace ℂ ι) R) < ⊤ := by

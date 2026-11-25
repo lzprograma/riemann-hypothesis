@@ -296,14 +296,14 @@ theorem hermitianFormE_frameE_initialVectors (hP : P.IsStd σ J T) (i : Fin r) (
 theorem hermitianFormE_frameZ_initialVectors (hσ : ∀ e, σ (σ e) = e) (hJ : IsHermND σ J) (hP : P.IsStd σ J T) (c : Fin (r + 1)) :
     hE σ J P.z (F0 P c) = if c = Fin.last r then algebraMap F E (-T) else 0 := by
   induction c using Fin.lastCases with
-  | last => rw [frameInitialVectors_last, if_pos rfl]; exact hP.2.2.2.2.2.1
+  | last => rw [frameInitialVectors_last, ite_eq_left rfl]; exact hP.2.2.2.2.2.1
   | cast k =>
-    rw [frameInitialVectors_castSucc, if_neg (Fin.castSucc_ne_last k), ← hE_symm hσ hJ, hP.2.2.2.1 k, map_zero]
+    rw [frameInitialVectors_castSucc, ite_eq_right (Fin.castSucc_ne_last k), ← hE_symm hσ hJ, hP.2.2.2.1 k, map_zero]
 
 theorem hermitian_flag_dual_basis (hσ : ∀ e, σ (σ e) = e) (hJ : IsHermND σ J) (hP : P.IsStd σ J T) (j : Fin r)
     (c : Fin (r + 1)) : hE σ J (P.f j) (F0 P c) = if c = Fin.castSucc j then 1 else 0 := by
   induction c using Fin.lastCases with
-  | last => rw [frameInitialVectors_last, if_neg (Fin.castSucc_ne_last j).symm]; exact hP.2.2.2.2.1 j
+  | last => rw [frameInitialVectors_last, ite_eq_right (Fin.castSucc_ne_last j).symm]; exact hP.2.2.2.2.1 j
   | cast k =>
     rw [frameInitialVectors_castSucc, ← hE_symm hσ hJ, hP.2.2.1 k j]
     by_cases h : k = j
@@ -347,11 +347,11 @@ theorem yv_w (hP : P.IsStd σ J T) (b : Fin (r + 1)) : hA (yv R P x b) (wv R P T
     | last => rw [coef_last, map_zero, zero_mul]
     | cast i =>
       by_cases hij : Fin.castSucc i < Fin.castSucc j
-      · rw [frameInitialVectors_castSucc, h_rat, hP.2.2.1 i j, if_neg (ne_of_lt (Fin.castSucc_lt_castSucc_iff.1 hij)),
+      · rw [frameInitialVectors_castSucc, h_rat, hP.2.2.1 i j, ite_eq_right (ne_of_lt (Fin.castSucc_lt_castSucc_iff.1 hij)),
           map_zero, mul_zero]
       · simp [coef, hij]
 
-theorem cc_cond (hσ : ∀ e, σ (σ e) = e) (hJ : IsHermND σ J) (hP : P.IsStd σ J T) (b : Fin (r + 1)) :
+theorem cc_cond (hσ : ∀ e, σ (σ e) = e) (hP : P.IsStd σ J T) (b : Fin (r + 1)) :
     cc R T b + sigR R σ (cc R T b) + hA (wv R P T b) (wv R P T b) = 0 := by
   induction b using Fin.lastCases with
   | last =>
@@ -377,15 +377,15 @@ theorem unitriangularEichlerSecondVector_initialVectors (hσ : ∀ e, σ (σ e) 
     simp only [wv, Fin.lastCases_last]
     rw [hf_smul_l, h_rat, hermitianFormE_frameZ_initialVectors hσ hJ hP, sigR_inclR, AlgHom.commutes]
     by_cases hc : c = Fin.last r
-    · rw [if_pos hc, if_pos hc, ← map_mul, ← map_mul, mul_neg, inv_mul_cancel₀ hP.2.2.2.2.2.2]
+    · rw [ite_eq_left hc, ite_eq_left hc, ← map_mul, ← map_mul, mul_neg, inv_mul_cancel₀ hP.2.2.2.2.2.2]
       simp
-    · rw [if_neg hc, if_neg hc]; simp
+    · rw [ite_eq_right hc, ite_eq_right hc]; simp
   | cast j =>
     simp only [wv, Fin.lastCases_castSucc]
     rw [hf_smul_l, h_rat, hermitian_flag_dual_basis hσ hJ hP]
     by_cases hc : c = Fin.castSucc j
-    · rw [if_pos hc, if_pos hc]; simp
-    · rw [if_neg hc, if_neg hc]; simp
+    · rw [ite_eq_left hc, ite_eq_left hc]; simp
+    · rw [ite_eq_right hc, ite_eq_right hc]; simp
 
 end Facts
 
@@ -441,19 +441,19 @@ theorem unitriangularEichlerPartialProduct_initialVectors (hσ : ∀ e, σ (σ e
   | succ k ih =>
     rw [Pm_succ, ← Matrix.mulVec_mulVec, ih]
     by_cases hk : k < r + 1
-    · rw [dif_pos hk, Matrix.mulVec_add, unitriangularColumnEichlerMatrix_initialVectors x hσ hJ hP]
+    · rw [dite_eq_left hk, Matrix.mulVec_add, unitriangularColumnEichlerMatrix_initialVectors x hσ hJ hP]
       by_cases hck : c.val < k
       · have hne : c ≠ ⟨k, hk⟩ := fun h => by rw [h] at hck; exact lt_irrefl _ hck
-        rw [if_pos hck, Mb_fix x hσ hJ hP _ _ (by rw [Fin.le_iff_val_le_val]; simp only [Fin.val_mk]; omega),
-          if_pos (by omega : c.val < k + 1), if_neg hne, add_zero]
-      · rw [if_neg hck, Matrix.mulVec_zero, add_zero]
+        rw [ite_eq_left hck, Mb_fix x hσ hJ hP _ _ (by rw [Fin.le_iff_val_le_val]; simp only [Fin.val_mk]; omega),
+          ite_eq_left (by omega : c.val < k + 1), ite_eq_right hne, add_zero]
+      · rw [ite_eq_right hck, Matrix.mulVec_zero, add_zero]
         by_cases hce : c.val = k
         · have hc : c = ⟨k, hk⟩ := Fin.ext hce
-          rw [if_pos hc, if_pos (by omega : c.val < k + 1), hc]
+          rw [ite_eq_left hc, ite_eq_left (by omega : c.val < k + 1), hc]
         · have hne : c ≠ ⟨k, hk⟩ := fun h => hce (by rw [h])
-          rw [if_neg hne, if_neg (by omega : ¬ c.val < k + 1)]
+          rw [ite_eq_right hne, ite_eq_right (by omega : ¬ c.val < k + 1)]
     · have := c.isLt
-      rw [dif_neg hk, Matrix.one_mulVec, if_pos (by omega : c.val < k), if_pos (by omega : c.val < k + 1)]
+      rw [dite_eq_right hk, Matrix.one_mulVec, ite_eq_left (by omega : c.val < k), ite_eq_left (by omega : c.val < k + 1)]
 
 theorem Pm_unitary (hσ : ∀ e, σ (σ e) = e) (hJ : IsHermND σ J) (hP : P.IsStd σ J T) (k : ℕ) :
     Formalism.UG.cT (sigR R σ) (Pm R σ J P T x k) * JR R J * Pm R σ J P T x k = JR R J := by
@@ -466,7 +466,7 @@ theorem Pm_unitary (hσ : ∀ e, σ (σ e) = e) (hJ : IsHermND σ J) (hP : P.IsS
       simp only [M]
       split_ifs with hk
       · exact eich_unitary _ _ (sigR_invol R σ hσ) (fun i j => JR_herm R σ J hJ i j) _ _ _
-          (yv_iso x hσ hJ hP _) (yv_w x hP _) (cc_cond hσ hJ hP _)
+          (yv_iso x hσ hJ hP _) (yv_w x hP _) (cc_cond hσ hP _)
       · simp [Formalism.UG.cT_one]
     rw [Formalism.UG.cT_mul]
     calc Formalism.UG.cT (sigR R σ) (Pm R σ J P T x k) * Formalism.UG.cT (sigR R σ) M * JR R J * (M * Pm R σ J P T x k)
@@ -540,9 +540,9 @@ theorem unitri_section : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [N
     have hc : Continuous fun x : {p : Fin (r + 1) × Fin (r + 1) // p.1 < p.2} → Fv F v ⊗[F] E =>
         coef (Fv F v) x b a := by
       by_cases h : a < b
-      · simp only [coef, dif_pos h]
+      · simp only [coef, dite_eq_left h]
         exact continuous_apply _
-      · simp only [coef, dif_neg h]
+      · simp only [coef, dite_eq_right h]
         exact continuous_const
     exact hc.smul continuous_const
   have hMb : ∀ b, Continuous fun x : {p : Fin (r + 1) × Fin (r + 1) // p.1 < p.2} → Fv F v ⊗[F] E =>
@@ -574,9 +574,9 @@ theorem unitri_section : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [N
     | succ k ih =>
       simp only [Pm_succ]
       by_cases hk : k < r + 1
-      · simp only [dif_pos hk]
+      · simp only [dite_eq_left hk]
         exact (hMb _).matrix_mul ih
-      · simp only [dif_neg hk]
+      · simp only [dite_eq_right hk]
         exact continuous_const.matrix_mul ih
   refine ⟨fun x => mkHA hdet (Pm (Fv F v) σ J P T x (r + 1)) (Pm_unitary x hσ hJ hP (r + 1)), ?_, ?_⟩
   · have hinv : Continuous fun x : {p : Fin (r + 1) × Fin (r + 1) // p.1 < p.2} → Fv F v ⊗[F] E =>
@@ -587,7 +587,7 @@ theorem unitri_section : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [N
     exact Continuous.subtype_mk (p := fun g => g ∈ HR (Fv F v) σ J)
       (Units.continuous_iff.2 ⟨hPm (r + 1), hinv⟩) _
   · intro x b
-    rw [lin_mkHA, unitriangularEichlerPartialProduct_initialVectors x hσ hJ hP, if_pos b.isLt]
+    rw [lin_mkHA, unitriangularEichlerPartialProduct_initialVectors x hσ hJ hP, ite_eq_left b.isLt]
     have hco : ∀ a : Fin (r + 1), (if a = b then 1 else if h : a < b then x ⟨(a, b), h⟩ else 0 :
         Fv F v ⊗[F] E) = (if a = b then 1 else 0) + coef (Fv F v) x b a := by
       intro a
@@ -595,7 +595,7 @@ theorem unitri_section : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [N
       · subst hab; simp [coef]
       · simp [hab, coef]
     simp only [hco, add_smul, Finset.sum_add_distrib, ite_smul, one_smul, zero_smul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rfl
 
 end GlobalTheory.UnitriSection
@@ -814,7 +814,7 @@ theorem mem_Ssub_of_coef {g : HA R σ J} {x : {p : Fin (r + 1) × Fin (r + 1) //
   rw [hb, ← Finset.sum_sub_distrib]
   refine Submodule.sum_mem _ fun a _ => ?_
   rcases lt_trichotomy a b with h | h | h
-  · simp only [umat, Matrix.of_apply, h.ne, if_false, dif_pos h, sub_zero]
+  · simp only [umat, Matrix.of_apply, h.ne, ite_false, dite_eq_left h, sub_zero]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, h, rfl⟩)
   · subst h; simp [umat]
   · simp [umat, h.ne', not_lt.mpr h.le]
@@ -904,7 +904,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarFrameStabilizerLocalFixerSectionProduct =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsTupleGramDetNeZero =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsTupleGramDetNeZero", "h": "module\n\npublic import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes\npublic import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsOrthogonalBasisDotProductApplyEq\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsTupleGramDetNeZero", "h": "module\n\npublic import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes\npublic import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsOrthogonalBasisDotProductApplyEq\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.FlagMeasures.LinearIndependentRatTupOfDetNeZero\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -912,19 +912,13 @@ open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 
 namespace GlobalTheory.NondegTuple
 
-theorem conj_conj {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
-  obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
-  apply τ.injective
-  rw [h.2.2.2 τ, h.2.2.2 τ, star_star]
-
 theorem exists_tuple_gram_det_ne_zero :
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
       (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J →
       ∀ a : ℕ, a ≤ n → ∃ X0 : Fin a → Fin n → E, (gramE σ J X0).det ≠ 0 ∧
         ∀ i j, σ (gramE σ J X0 j i) = gramE σ J X0 i j := by
   intro F E _ _ _ _ _ σ hσ n J hJ a ha
-  have hc : ∀ t, (σ : E →+* E) ((σ : E →+* E) t) = t := conj_conj hσ
+  have hc : ∀ t, (σ : E →+* E) ((σ : E →+* E) t) = t := GlobalTheory.FrameGram.conj_invol hσ
   obtain ⟨P, d, -, hd, hfix, hne⟩ := GlobalTheory.HermDiag.exists_congr_diagonal (c := (σ : E →+* E))
     (G := J) two_ne_zero hc (fun i j => hJ.1 j i)
   have hg : gramE σ J (fun i k => σ (P k (Fin.castLE ha i))) =
@@ -937,7 +931,7 @@ theorem exists_tuple_gram_det_ne_zero :
         Matrix.diagonal (fun i => d (Fin.castLE ha i)) i j := by
       simp only [Matrix.diagonal_apply, (Fin.castLE_injective ha).eq_iff]
     rw [← h2, ← h1]
-    simp only [gramE, hE, Formalism.UG.hform, RingHom.coe_coe, conj_conj hσ]
+    simp only [gramE, hE, Formalism.UG.hform, RingHom.coe_coe, GlobalTheory.FrameGram.conj_invol hσ]
   refine ⟨fun i k => σ (P k (Fin.castLE ha i)), ?_, ?_⟩
   · rw [hg, Matrix.det_diagonal]
     exact Finset.prod_ne_zero_iff.2 fun i _ => hne hJ.2 _
@@ -1294,7 +1288,7 @@ theorem cgr_mem (hσ : ∀ x, σ (σ x) = x) {a : ℕ} (m : Matrix (Fin a) (Fin 
   intro p q
 
   simp only [cgr, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul,
-  _root_.PI.VolStabS.sigR_invol R σ hσ, Finset.sum_mul]
+  _root_.PI.VolStabSW.sigR_invol R σ hσ, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun l _ => ?_
   rw [hS]
@@ -1541,7 +1535,7 @@ theorem conj_map_eq (x0 : X) (hcl : IsClosed (MulAction.stabilizer G x0 : Set G)
   let sec : X → G := fun y => if h : ∃ g : G, g • x0 = y then h.choose else 1
   have hsec : ∀ y, (∃ g : G, g • x0 = y) → sec y • x0 = y := by
     intro y h
-    simp only [sec, dif_pos h]
+    simp only [sec, dite_eq_left h]
     exact h.choose_spec
   have horb : ∀ y, (∃ g : G, g • x0 = y) → ∃ g : G, g • x0 = R.symm y := by
     rintro y ⟨g, rfl⟩

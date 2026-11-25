@@ -100,7 +100,7 @@ theorem main : (let d1 : {o : Type} → [inst : CommRing o] → {T : Type} → [
   simp only [d1, LinearMap.smul_apply, LinearMap.sum_apply]
   rw [← Finset.smul_sum, Finset.sum_comm]
   simp_rw [← Finset.sum_smul, charSum_inv]
-  simp only [ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true, map_one,
+  simp only [ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, map_one,
     Module.End.one_apply]
   rw [smul_smul, hu, one_smul]
 

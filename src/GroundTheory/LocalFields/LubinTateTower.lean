@@ -190,22 +190,10 @@ theorem card_units_quotient_span_pow_succ (hπ : Irreducible π) (n : ℕ) :
     rw [hI]
     exact Ideal.pow_le_self (Nat.succ_ne_zero n)
   let ψ : 𝒪[K]ˣ →* (𝒪[K] ⧸ I)ˣ := Units.map (Ideal.Quotient.mk I : 𝒪[K] →* 𝒪[K] ⧸ I)
-  have hsurj : Function.Surjective ψ := by
-    intro w
-    obtain ⟨u, hu⟩ := Ideal.Quotient.mk_surjective (w : 𝒪[K] ⧸ I)
-    obtain ⟨v, hv⟩ := Ideal.Quotient.mk_surjective (↑w⁻¹ : 𝒪[K] ⧸ I)
-    have huv : u * v - 1 ∈ I := by
-      rw [← Ideal.Quotient.eq, map_mul, hu, hv, map_one, Units.mul_inv]
-    have hunit : IsUnit (u * v) := by
-      by_contra h
-      have h1 : u * v ∈ 𝓂[K] := (IsLocalRing.mem_maximalIdeal _).mpr h
-      have h2 : (1 : 𝒪[K]) ∈ 𝓂[K] := by
-        have := Ideal.sub_mem _ h1 (hIm huv)
-        rwa [sub_sub_cancel] at this
-      exact (IsLocalRing.maximalIdeal.isMaximal 𝒪[K]).ne_top ((Ideal.eq_top_iff_one _).mpr h2)
-    refine ⟨(isUnit_of_mul_isUnit_left hunit).unit, Units.ext ?_⟩
-    change Ideal.Quotient.mk I u = _
-    exact hu
+  have : Nontrivial (𝒪[K] ⧸ I) := Ideal.Quotient.nontrivial_iff.mpr
+    (ne_top_of_le_ne_top (IsLocalRing.maximalIdeal.isMaximal 𝒪[K]).ne_top hIm)
+  have hsurj : Function.Surjective ψ := IsLocalRing.surjective_units_map_of_local_ringHom _
+    Ideal.Quotient.mk_surjective (IsLocalHom.of_surjective _ Ideal.Quotient.mk_surjective)
   have hker : ψ.ker = unitFiltration K (n + 1) := by
     ext u
     rw [MonoidHom.mem_ker, mem_unitFiltration, ← hI, ← Ideal.Quotient.eq, Units.ext_iff]
@@ -409,13 +397,6 @@ theorem exists_norm_eq_uniformizer (hf : IsLubinTateSeries π f) {n : ℕ} (hn :
     hnorm, ← mul_assoc, ← mul_pow, neg_one_mul, neg_neg, one_pow, one_mul]
 
 end Main
-
-section SeparableClosure
-
-variable (K : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-  {π : 𝒪[K]} (hπ : Irreducible π) {f : PowerSeries 𝒪[K]} (hf : IsLubinTateSeries π f)
-
-end SeparableClosure
 
 end FormalGroup
 

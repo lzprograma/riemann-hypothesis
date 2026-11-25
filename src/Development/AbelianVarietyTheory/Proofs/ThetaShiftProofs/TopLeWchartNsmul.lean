@@ -77,7 +77,7 @@ theorem valR_pullGen (φ : K → (Y ⟶ X)) (t : LB.Gen (LB.LinComb L φ ε)) (h
     refine (HolHom.valR_res (𝟙 (Sp A)) _ _ H').trans ?_
     exact (HolHom.valR_comp (𝟙 (Sp A)) h _ _).symm.trans (by rw [Category.id_comp]; rfl)
   · have H' : ¬ ⊤ ≤ (𝟙 (Sp A)) ⁻¹ᵁ LB.wchart L (fun k => h ≫ φ k) j := fun H' => H ((top_le_wchart_iff φ h j).1 H')
-    exact (dif_neg H').trans (Eq.symm (show valR h (LB.wchart L φ j) (t.s j).val = 0 from dif_neg H))
+    exact (dite_eq_right H').trans (Eq.symm (show valR h (LB.wchart L φ j) (t.s j).val = 0 from dite_eq_right H))
 
 end Val
 

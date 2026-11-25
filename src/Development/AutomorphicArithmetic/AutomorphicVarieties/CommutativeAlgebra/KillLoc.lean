@@ -261,19 +261,19 @@ private theorem mask_mem (Φ : FormData O w) (j : X) {Y : Matrix ι ι k} (hY : 
   · rw [← h0]
     congr 1 <;> refine Finset.sum_congr rfl fun c _ => ?_
     · by_cases h : w c + w b = Φ.c
-      · rw [e1 c h, if_pos hj]
+      · rw [e1 c h, ite_eq_left hj]
       · simp [hJ c b h]
     · by_cases h : w a + w c = Φ.c
-      · rw [e2 c h, if_pos hj]
+      · rw [e2 c h, ite_eq_left hj]
       · simp [hJ a c h]
   · rw [Finset.sum_eq_zero, Finset.sum_eq_zero, add_zero]
     · intro c _
       by_cases h : w a + w c = Φ.c
-      · rw [e2 c h, if_neg hj, mul_zero]
+      · rw [e2 c h, ite_eq_right hj, mul_zero]
       · simp [hJ a c h]
     · intro c _
       by_cases h : w c + w b = Φ.c
-      · rw [e1 c h, if_neg hj, zero_mul]
+      · rw [e1 c h, ite_eq_right hj, zero_mul]
       · simp [hJ c b h]
 
 omit [Fintype ι] [DecidableEq ι] in
@@ -283,7 +283,7 @@ private theorem sum_mask (S : Finset X) (hS : ∀ a b, w a - w b ∈ S) (Y : Mat
   ext a b
   rw [Matrix.sum_apply]
   simp only [mask_apply]
-  convert (Finset.sum_ite_eq S (w a - w b) fun _ => Y a b).trans (if_pos (hS a b))
+  convert (Finset.sum_ite_eq S (w a - w b) fun _ => Y a b).trans (ite_eq_left (hS a b))
 
 private theorem cob_all (Φ : FormData O w) {Γ : Type} [Group Γ] [TopologicalSpace Γ] {ρ : Γ →* Matrix ι ι k}
     (hρ : Φ.Normalises ρ) (N : Subgroup Γ)

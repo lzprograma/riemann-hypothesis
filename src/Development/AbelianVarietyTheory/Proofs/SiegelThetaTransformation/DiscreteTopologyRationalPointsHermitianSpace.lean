@@ -105,8 +105,6 @@ theorem discreteTopology_HFinIn (σ : E →ₐ[F] E) {M : ℕ} (J : Matrix (Fin 
 
 end General
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem discreteTopology_GQ : ∀ (D : D7) (V : HSp D), DiscreteTopology (GQ V) :=
   fun D V => discreteTopology_HFinIn D.sp.cm.sig V.gram
 

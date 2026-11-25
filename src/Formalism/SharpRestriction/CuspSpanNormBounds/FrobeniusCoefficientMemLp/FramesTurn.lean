@@ -6,50 +6,9 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficient
 public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.FramesPt
 public import Mathlib.RingTheory.Complex
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Mathlib.CategoryTheory.Countable
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -335,29 +294,21 @@ theorem conj_mem_lieOf (X : Mx k r) (hX : X ∈ lieOf (Nset k r)) : tT k r * X *
 
 theorem uE_mem : ∀ x ∈ lieE (Nset k r), uE k r x ∈ lieE (Nset k r) := by
   intro x hx
-  unfold lieE at hx ⊢
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨X, hX, rfl⟩ := hy
-    show uE k r ((WithLp.equiv 2 _).symm (realifyFun X)) ∈ _
-    rw [uE_realify]
-    exact Submodule.subset_span ⟨_, conjI_mem_lieOf X hX, rfl⟩
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
-  | smul c y _ hy => rw [map_smul]; exact Submodule.smul_mem _ c hy
+  unfold lieE at hx
+  refine (Submodule.span_le.2 ?_ : _ ≤ (lieE (Nset k r)).comap (uE k r)) hx
+  rintro _ ⟨X, hX, rfl⟩
+  show uE k r ((WithLp.equiv 2 _).symm (realifyFun X)) ∈ lieE (Nset k r)
+  rw [uE_realify]
+  exact Submodule.subset_span ⟨_, conjI_mem_lieOf X hX, rfl⟩
 
 theorem uEI_mem : ∀ x ∈ lieE (Nset k r), uEI k r x ∈ lieE (Nset k r) := by
   intro x hx
-  unfold lieE at hx ⊢
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨X, hX, rfl⟩ := hy
-    show uEI k r ((WithLp.equiv 2 _).symm (realifyFun X)) ∈ _
-    rw [uEI_realify]
-    exact Submodule.subset_span ⟨_, conj_mem_lieOf X hX, rfl⟩
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
-  | smul c y _ hy => rw [map_smul]; exact Submodule.smul_mem _ c hy
+  unfold lieE at hx
+  refine (Submodule.span_le.2 ?_ : _ ≤ (lieE (Nset k r)).comap (uEI k r)) hx
+  rintro _ ⟨X, hX, rfl⟩
+  show uEI k r ((WithLp.equiv 2 _).symm (realifyFun X)) ∈ lieE (Nset k r)
+  rw [uEI_realify]
+  exact Submodule.subset_span ⟨_, conj_mem_lieOf X hX, rfl⟩
 
 def uL (k r : ℕ) : lieE (Nset k r) ≃ₗᵢ[ℝ] lieE (Nset k r) where
   toLinearEquiv := LinearEquiv.ofLinear ((uE k r).restrict uE_mem) ((uEI k r).restrict uEI_mem)
@@ -505,13 +456,13 @@ theorem frame_conj_fix {z : Fin (2 * r + k + 1) → ℂ} {g : Mx k r} (hg : IsFr
     rw [Matrix.mul_apply] at hE
     simp only [hgHq] at hE
     rw [Finset.sum_eq_single i] at hE
-    · rw [hHrow q i hqo, if_pos (by omega), one_mul] at hE
+    · rw [hHrow q i hqo, ite_eq_left (by omega), one_mul] at hE
       rw [hE, hHrow q j hqo]
       by_cases hji : j = i
-      · rw [hji, hb1, if_pos (by omega)]
-      · rw [hb0 i j hji, if_neg (by intro h; apply hji; ext; omega)]
+      · rw [hji, hb1, ite_eq_left (by omega)]
+      · rw [hb0 i j hji, ite_eq_right (by intro h; apply hji; ext; omega)]
     · intro b _ hb
-      rw [hHrow q b hqo, if_neg (by intro h; apply hb; ext; omega), zero_mul]
+      rw [hHrow q b hqo, ite_eq_right (by intro h; apply hb; ext; omega), zero_mul]
     · intro h; exact absurd (Finset.mem_univ i) h
   have hg_comm : tT k r * g = g * tT k r := by
     ext i j
@@ -525,7 +476,7 @@ theorem frame_conj_fix {z : Fin (2 * r + k + 1) → ℂ} {g : Mx k r} (hg : IsFr
       · rw [hcol j hj i]
         have hij : i ≠ j := fun h => hi (by rw [h]; exact hj)
         rw [hb0 j i hij, mul_zero, zero_mul]
-      · push_neg at hi hj
+      · push Not at hi hj
         rw [dT_mid i hi.1 hi.2, dT_mid j hj.1 hj.2, mul_comm]
   have hB_comm : tT k r * blockW k r h = blockW k r h * tT k r := by
     have h1 : tT k r * blockW k r h * tTi k r = blockW k r h := conj_eq_self (fun i j hne => blockW_dT h i j hne)
@@ -750,7 +701,7 @@ theorem flagMat_conjI {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (x : M
       (if i.val < r then star (Complex.I ^ i.val) * Complex.I ^ j.val else 1) * flagMat k r z x i j := by
   unfold flagMat fvec
   by_cases hi : i.val < r
-  · rw [dite_eq_left hi, dite_eq_left hi, if_pos hi]
+  · rw [dite_eq_left hi, dite_eq_left hi, ite_eq_left hi]
     have hv : tT k r *ᵥ (if h : j.val < r then bvec (eI k r ⟨j.val, h⟩) else z) =
         Complex.I ^ j.val • (if h : j.val < r then bvec (eI k r ⟨j.val, h⟩) else z) := by
       by_cases hj : j.val < r
@@ -765,7 +716,7 @@ theorem flagMat_conjI {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (x : M
     rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hv, Matrix.mulVec_smul]
     simp only [tTi, Matrix.mulVec_diagonal, dT_eI, Pi.smul_apply, smul_eq_mul]
     ring
-  · rw [dite_eq_right hi, dite_eq_right hi, if_neg hi, one_mul]
+  · rw [dite_eq_right hi, dite_eq_right hi, ite_eq_right hi, one_mul]
 
 theorem continuous_rootCoordsS {z : Fin (2 * r + k + 1) → ℂ} (S : Finset (Fin (r + 1) × Fin (r + 1))) :
     Continuous (fun (x : Mt k r) (q : S) => flagMat k r z (Matrix.of x) q.1.1 q.1.2) := by

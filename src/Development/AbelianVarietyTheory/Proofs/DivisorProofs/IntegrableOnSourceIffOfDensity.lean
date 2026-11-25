@@ -50,8 +50,6 @@ import ReciprocityTheory.L2DbarEstimates.LeviForms.EventuallyDifferentiableAtOfC
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Set Filter Topology MeasureTheory
@@ -268,7 +266,7 @@ theorem IsCInf.chernInt_eq_mInt_of_isAlgAtlas (h : φ.IsCInf) (hA : IsAlgAtlas A
     fun hi => ?_⟩
   have hm := fwd hi
   rw [chernInt, Measure.restrict_univ, Measure.restrict_univ, (pieces hm 1).2, (pieces hm (-1)).2,
-    mInt, dif_pos hne, integralWith, ← Finset.sum_sub_distrib]
+    mInt, dite_eq_left hne, integralWith, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← integral_sub (back hm 1 j) (back hm (-1) j)]
   simp only [← mul_sub, hsub, hd, P]

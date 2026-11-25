@@ -95,9 +95,9 @@ theorem coeff_eq_zero (x : (Σ k, ι k) → Ω) (i : ∀ k, ι k) (hx : ∀ k, x
         G β * ∏ k, (X ⟨k, i k⟩ : MRingOver F ι) ^ β k := by
 
     rw [map_sum, Finset.sum_eq_single β]
-    · rw [weightedHomogeneousComponent_of_mem (hmem β hβ), if_pos rfl]
+    · rw [weightedHomogeneousComponent_of_mem (hmem β hβ), ite_eq_left rfl]
     · intro α hα hne
-      rw [weightedHomogeneousComponent_of_mem (hmem α hα), if_neg]
+      rw [weightedHomogeneousComponent_of_mem (hmem α hα), ite_eq_right]
       intro h
       exact hne (DFunLike.coe_injective (add_left_cancel h)).symm
     · intro h

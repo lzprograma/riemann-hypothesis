@@ -2,57 +2,11 @@ module
 
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.MonoVal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.Separation.CompletelyRegular
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -100,7 +54,7 @@ theorem pderiv_subst {σ τ : Type} [Fintype σ] [DecidableEq σ] {a : σ → Mv
     next p n hp =>
       simp only [MvPolynomial.coe_mul, MvPolynomial.coe_X, hm, subst_X ha, Derivation.leibniz, smul_eq_mul,
         hsa, pderiv_X, add_mul, Finset.sum_add_distrib, hp, Pi.single_apply, apply_ite (subst a), hz,
-        mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true,
+        mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true,
         Finset.mul_sum, mul_assoc, mul_ite]
   letI : UniformSpace S := ⊥
   haveI : DiscreteUniformity S := by first | exact ⟨rfl⟩
@@ -128,8 +82,7 @@ theorem const_subst0 {σ τ : Type} [Finite σ] {a : σ → MvPowerSeries τ S} 
   · simp
   · intro e he
     obtain ⟨s, hs⟩ : ∃ s, e s ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact he (Finsupp.ext h)
     have hp : constantCoeff (e.prod fun s n => a s ^ n) = 0 := by
       rw [Finsupp.prod, map_prod]
@@ -149,11 +102,6 @@ private theorem subst_C_lemma {σ τ : Type} {a : σ → MvPowerSeries τ S} (ha
     rw [smul_eq_C_mul, mul_one]
   rw [hc, ← coe_substAlgHom ha, map_smul, map_one, smul_eq_C_mul, mul_one]
 
-private theorem subst_X_lemma_2 {σ : Type} (g : MvPowerSeries σ S) :
-    subst (X : σ → MvPowerSeries σ S) g = g := by
-  first
-  | (rw [subst_self]; rfl)
-
 private theorem subst_zero_lemma_3 {σ τ : Type} [Finite σ] (g : MvPowerSeries σ S) :
     subst (fun _ : σ => (0 : MvPowerSeries τ S)) g = C (constantCoeff g) := by
   classical
@@ -163,8 +111,7 @@ private theorem subst_zero_lemma_3 {σ τ : Type} [Finite σ] (g : MvPowerSeries
   · by_cases he : e = 0 <;> simp [coeff_C, coeff_one, he]
   · intro n hn
     obtain ⟨s, hs⟩ : ∃ s, n s ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hn (Finsupp.ext h)
     have hp : (n.prod fun _ k => (0 : MvPowerSeries τ S) ^ k) = 0 := by
       rw [Finsupp.prod]
@@ -226,12 +173,13 @@ theorem subst_sz_cpy (b : Fin 2) (g : MvPowerSeries (Fin 1 × Fin N) S) :
   · have hX : (fun r : Fin 1 × Fin N => if b = 0 then (X r : MvPowerSeries (Fin 1 × Fin N) S) else 0) = X := by
       funext r
       simp [hb]
-    rw [hX, if_pos hb, subst_X_lemma_2]
+    rw [hX, ite_eq_left hb, subst_self]
+    rfl
   · have hZ : (fun r : Fin 1 × Fin N => if b = 0 then (X r : MvPowerSeries (Fin 1 × Fin N) S) else 0) =
         fun _ => 0 := by
       funext r
       simp [hb]
-    rw [hZ, if_neg hb, subst_zero_lemma_3]
+    rw [hZ, ite_eq_right hb, subst_zero_lemma_3]
 
 theorem pderiv_cpy (b : Fin 2) (q : Fin N) (g : MvPowerSeries (Fin 1 × Fin N) S) :
     pderiv (R := S) ((1 : Fin 2), q) (subst (cpy (S := S) b) g) =
@@ -271,8 +219,8 @@ theorem key (h0 : ∀ j, constantCoeff (φ j) = 0) (w : Fin N → Fin d → S)
       rw [map_add (f := _), pderiv_X_of_ne (by simp [Prod.ext_iff]), zero_add]
       by_cases h : r = q
       · subst h; simp
-      · rw [pderiv_X_of_ne (by simp [Prod.ext_iff, h]), if_neg (by simp [Prod.ext_iff, h])]
-    simp only [hdB, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      · rw [pderiv_X_of_ne (by simp [Prod.ext_iff, h]), ite_eq_right (by simp [Prod.ext_iff, h])]
+    simp only [hdB, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [subst_comp_subst_apply hBs hasSubst_sz]
     have : (fun s : Fin 1 × Fin N => subst (sz (S := S) (N := N))
         ((X ((0 : Fin 2), s.2) + X ((1 : Fin 2), s.2) : MvPowerSeries (Fin 2 × Fin N) S))) = (X : Fin 1 × Fin N → MvPowerSeries (Fin 1 × Fin N) S) := by
@@ -297,10 +245,10 @@ theorem key (h0 : ∀ j, constantCoeff (φ j) = 0) (w : Fin N → Fin d → S)
   rw [← eR, ← hE, pderiv_subst hAs, subst_sum' hasSubst_sz, Fintype.sum_prod_type, Fin.sum_univ_two]
   have h0s : subst (sz (S := S) (N := N)) (0 : MvPowerSeries (Fin 2 × Fin N) S) = 0 := by
     rw [← coe_substAlgHom hasSubst_sz, map_zero]
-  simp only [pderiv_cpy, Fin.isValue, zero_ne_one, if_false, if_true, mul_zero, h0s, Finset.sum_const_zero, zero_add]
+  simp only [pderiv_cpy, Fin.isValue, zero_ne_one, ite_false, ite_true, mul_zero, h0s, Finset.sum_const_zero, zero_add]
   apply Finset.sum_congr rfl
   intro i _
-  rw [subst_mul hasSubst_sz, hfam, subst_sz_cpy, if_neg (by decide)]
+  rw [subst_mul hasSubst_sz, hfam, subst_sz_cpy, ite_eq_right (by decide)]
   congr 2
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv]
   simp [hlin]
@@ -429,7 +377,7 @@ private theorem const_dpoly_lemma_3 {E : Type} [Field E] [NumberField E] [IsCMFi
   · haveI : Subsingleton S := subsingleton_of_zero_eq_one h1.symm
     exact Subsingleton.elim _ _
   unfold DpolyOf DmonOf
-  rw [MvPolynomial.support_monomial, if_neg h1, Finset.sum_singleton, MvPolynomial.coeff_monomial, if_pos rfl,
+  rw [MvPolynomial.support_monomial, ite_eq_right h1, Finset.sum_singleton, MvPolynomial.coeff_monomial, ite_eq_left rfl,
     map_one, one_mul]
   simp only [hD]
   rw [← coeff_zero_eq_constantCoeff_apply, foldr_coeff_lemma_2 (fun l => ((0 : Fin 1), ltIdx Dw l)) ?_ α G _

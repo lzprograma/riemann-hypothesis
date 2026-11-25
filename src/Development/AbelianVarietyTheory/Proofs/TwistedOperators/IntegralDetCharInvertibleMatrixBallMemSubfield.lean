@@ -55,11 +55,9 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Form
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest Formalism.IndefR.WeilFull GlobalTheory.RowClaim
 open MeasureTheory GlobalTheory.SplitFlip GlobalTheory.SplitWeil
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open ValuativeRel Formalism.L2.Host
 
 namespace GlobalTheory.GLBallInt
-open MeasureTheory
 open scoped Pointwise
 
 theorem integral_eq_sum_of_rightInv {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -127,7 +125,6 @@ theorem integral_eq_sum_of_rightInv {G : Type} [Group G] [TopologicalSpace G] [I
 end GlobalTheory.GLBallInt
 
 namespace GlobalTheory.GLBallInt
-open MeasureTheory
 open scoped Pointwise
 
 theorem measureReal_eq_inv_natCast {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -160,7 +157,6 @@ theorem isOpen_rightStab {G : Type} [Group G] [TopologicalSpace G] [IsTopologica
 end GlobalTheory.GLBallInt
 
 namespace GlobalTheory.GLBallInt
-open MeasureTheory GlobalTheory.SplitFlip GlobalTheory.SplitWeil ValuativeRel
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable {A' : Type} [Fintype A'] [DecidableEq A']
@@ -214,7 +210,6 @@ theorem isCompact_isOpen_glBall (x : Matrix A' A' k) (c : kˣ) (hdet : ∀ y ∈
 end GlobalTheory.GLBallInt
 
 namespace GlobalTheory.GLBallInt
-open MeasureTheory GlobalTheory.SplitFlip GlobalTheory.SplitWeil ValuativeRel
 
 theorem integral_glBall_mem : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] {A' : Type} [Fintype A'] [DecidableEq A'] (F : Subfield ℂ) {J : Subgroup (GL A' k)}, IsOpen (J : Set (GL A' k)) → J ≤ KO k A' → ∀ (ν : kˣ →* ℂˣ) (z : ℂ) {ϖ : kˣ} {e : ℕ}, IsUnif ϖ → CondLE ϖ e ν → (∀ u, (ν u : ℂ) ∈ F) → (∀ u : kˣ, apow u z ∈ F) → ∀ (c : kˣ) (x : Matrix A' A' k), (∀ y : Matrix A' A' k, (∀ i j, valuation k (y i j - x i j) ≤ valuation k (c : k)) → y.det ≠ 0) → ∫ g in {g : GL A' k | ∀ i j, valuation k (g.val i j - x i j) ≤ valuation k (c : k)}, (ν (gdet g) : ℂ) * apow (gdet g) z ∂(haarVol J) ∈ F := by
   intro k _ _ _ _ _ _ A' _ _ F J hJo hJK ν z ϖ e _ hcond hνF hapF c x hdet

@@ -67,26 +67,6 @@ private theorem rmul_rmul_of_mat_eq_inv {Ψ : Finset (E →+* ℂ)} (x : Frame �
   rw [hc τ, Matrix.mul_nonsing_inv_cancel_right _ _ h]
   rfl
 
-private theorem lact_rmul_upper_bounds {Ψ : Finset (E →+* ℂ)} (γ : GL (Fin r) E) (x b : Frame Ψ r) :
-    lact γ (rmul x b) = rmul (lact γ x) b := by
-  funext τ
-  exact (Matrix.mul_assoc ((γ : Matrix (Fin r) (Fin r) E).map τ.1) (mat x τ) (mat b τ)).symm
-
-private theorem lact_lact' {Ψ : Finset (E →+* ℂ)} (γ δ : GL (Fin r) E) (x : Frame Ψ r) :
-    lact γ (lact δ x) = lact (γ * δ) x := by
-  funext τ
-  show (γ : Matrix (Fin r) (Fin r) E).map τ.1 * ((δ : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ) =
-    ((γ * δ : GL (Fin r) E) : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ
-  rw [Units.val_mul, Matrix.map_mul, Matrix.mul_assoc]
-
-private theorem lact_inv_lact_upper_bounds {Ψ : Finset (E →+* ℂ)} (γ : GL (Fin r) E) (x : Frame Ψ r) :
-    lact γ⁻¹ (lact γ x) = x := by
-  rw [lact_lact', inv_mul_cancel]
-  funext τ
-  show ((1 : GL (Fin r) E) : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ = x τ
-  rw [Units.val_one, Matrix.map_one _ (map_zero τ.1) (map_one τ.1), Matrix.one_mul]
-  try rfl
-
 theorem atMostOnce (X : Data E r) {x0 : Frame X.Ψ r} (ho : IsOrth X x0) {FF : Set (V (nd X))}
     (hFF : IsFundSet X x0 FF) (y : Frame X.Ψ r) :
     ∑' γ : X.Γ, (KU.Sset X x0 FF).indicator (1 : Frame X.Ψ r → ℝ≥0∞) (lact γ.1 y) ≤ 1 := by
@@ -104,15 +84,15 @@ theorem atMostOnce (X : Data E r) {x0 : Frame X.Ψ r} (ho : IsOrth X x0) {FF : S
     obtain ⟨z0, hz0, b0, hb0, hzb0⟩ := hS _ h2
     have hg : γ.1 * γ0.1⁻¹ ∈ X.Γ := X.Γ.mul_mem γ.2 (X.Γ.inv_mem γ0.2)
     have hy : y = lact γ0.1⁻¹ (rmul (cpt X x0 z0) b0) := by
-      rw [← hzb0, lact_inv_lact_upper_bounds]
+      rw [← hzb0, KU.lact_lact, inv_mul_cancel, KU.lact_one]
     have hst : rmul (lact (γ.1 * γ0.1⁻¹) (cpt X x0 z0)) b0 = rmul (cpt X x0 z) b := by
-      rw [← lact_rmul_upper_bounds, ← lact_lact', ← hy, hzb]
+      rw [← KU.lact_rmul' X, ← KU.lact_lact X, ← hy, hzb]
     obtain ⟨bi, hbi⟩ : ∃ c : Frame X.Ψ r, ∀ τ, mat c τ = (mat b τ)⁻¹ :=
       ⟨(fun τ => ((mat b τ)⁻¹ : Matrix (Fin r) (Fin r) ℂ)), fun τ => rfl⟩
     obtain ⟨bi0, hbi0⟩ : ∃ c : Frame X.Ψ r, ∀ τ, mat c τ = (mat b0 τ)⁻¹ :=
       ⟨(fun τ => ((mat b0 τ)⁻¹ : Matrix (Fin r) (Fin r) ℂ)), fun τ => rfl⟩
     have hw : cpt X x0 z = lact (γ.1 * γ0.1⁻¹) (rmul (cpt X x0 z0) (rmul b0 bi)) := by
-      rw [lact_rmul_upper_bounds, ← rmul_rmul', hst, rmul_rmul_of_mat_eq_inv _ hb hbi]
+      rw [KU.lact_rmul' X, ← rmul_rmul', hst, rmul_rmul_of_mat_eq_inv _ hb hbi]
     have hzz : z0 = z := hFinj z0 hz0 z hz _ hg _ (rmul_mem_bor_upper_bounds hb0 (mem_bor_of_mat_eq_inv hb hbi)) hw
     subst hzz
     have hw0 : cpt X x0 z0 ∈ X.dom := hFO hz0
@@ -127,7 +107,7 @@ theorem atMostOnce (X : Data E r) {x0 : Frame X.Ψ r} (ho : IsOrth X x0) {FF : S
       simp
     · intro γ hne
       exact Set.indicator_apply_eq_zero.mpr fun hm => absurd (huniq γ γ0 hm hγ0) hne
-  · push_neg at hex
+  · push Not at hex
     have h0 : ∀ γ : X.Γ, (KU.Sset X x0 FF).indicator (1 : Frame X.Ψ r → ℝ≥0∞) (lact γ.1 y) = 0 :=
       fun γ => Set.indicator_apply_eq_zero.mpr fun hm => absurd hm (hex γ)
     rw [tsum_congr h0, tsum_zero]
@@ -195,8 +175,7 @@ theorem fundSetMeasStatement_of_isCMField {E : Type} [Field E] [NumberField E] [
     refine lintegral_mono_ae (hcov.mono fun z hz => ?_)
     by_cases hS0 : cpt X x0 z ∈ KU.Sset X x0 FF
     · have : ∃ γ : X.Γ, cpt X x0 z ∈ lact γ.1⁻¹ ⁻¹' KU.Sset X x1 CechHodgeFiltration := by
-        by_contra hn
-        push_neg at hn
+        by_contra! hn
         exact hz (Set.mem_iInter.mpr fun γ => hn γ)
       obtain ⟨γ, hγ⟩ := this
       refine le_trans (le_of_eq ?_) (ENNReal.le_tsum γ)

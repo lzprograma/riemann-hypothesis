@@ -7,44 +7,7 @@ public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.Exists
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OrderNeTop
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LFunctionConjEqZero
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ZeroFreePrincipal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -80,12 +43,6 @@ theorem div_log_le {M : ℕ} (hM : 3 ≤ M) {c₁ c : ℝ} (h0 : 0 ≤ c) (h : c
     linarith [le_log_mul hM (a := 2) (by norm_num)]
   rw [div_le_div_iff₀ hpos hpos2]
   nlinarith [mul_nonneg (sub_nonneg.2 h) hpos2.le, mul_nonneg h0 (sub_nonneg.2 hl)]
-
-private theorem exists_ne_zero_smul_mem_of_mem_span' {a b x y : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hx : 0 < x) (hxy : x ≤ y) :
-    a / y ≤ b / x := by
-  have hy : 0 < y := lt_of_lt_of_le hx hxy
-  rw [div_le_div_iff₀ hy hx]
-  nlinarith [mul_le_mul_of_nonneg_right hab hx.le, mul_le_mul_of_nonneg_left hxy (ha.trans hab)]
 
 theorem main : ∃ c₀ : ℝ, 0 < c₀ ∧ ∀ c₁ : ℝ, 0 < c₁ → c₁ ≤ c₀ → ∃ c : ℝ, 0 < c ∧ ∀ (M : ℕ) [NeZero M], 3 ≤ M → (∀ (χ χ' : DirichletCharacter ℂ M) (β β' : ℝ), IsExc c₁ χ β → IsExc c₁ χ' β' → χ = χ' ∧ β = β') ∧ (∀ (χ : DirichletCharacter ℂ M) (β : ℝ), IsExc c₁ χ β → χ ≠ 1 ∧ 7 / 8 ≤ β ∧ LFunction χ β = 0 ∧ ord χ β = 1 ∧ c / ((M : ℝ) ^ 2 * Real.log M) ≤ 1 - β) ∧ ∀ (χ : DirichletCharacter ℂ M) (ρ : ℂ), ρ.re < 1 → LFunction χ ρ = 0 → (ρ.im = 0 ∧ IsExc c₁ χ ρ.re) ∨ ρ.re ≤ 1 - c / Real.log (M * (|ρ.im| + 2)) := by
   obtain ⟨cu, hcu, hU⟩ := GlobalTheory.RealZeroNearOne.main
@@ -150,10 +107,10 @@ theorem main : ∃ c₀ : ℝ, 0 < c₀ ∧ ∀ c₁ : ℝ, 0 < c₁ → c₁ �
       have hD : 0 < (M : ℝ) ^ 2 * Real.log M := by positivity
       have hE : 0 < (M : ℝ) ^ 2 * Real.log (3 * M) := by positivity
       calc c / ((M : ℝ) ^ 2 * Real.log M) ≤ (cs / 2) / ((M : ℝ) ^ 2 * Real.log M) :=
-            exists_ne_zero_smul_mem_of_mem_span' hcpos.le hccs hD le_rfl
+            div_le_div₀ (hcpos.le.trans hccs) hccs hD le_rfl
         _ = cs / (2 * ((M : ℝ) ^ 2 * Real.log M)) := div_div cs 2 _
         _ ≤ cs / ((M : ℝ) ^ 2 * Real.log (3 * M)) :=
-            exists_ne_zero_smul_mem_of_mem_span' hcs.le le_rfl hE (by nlinarith [sq_nonneg (M : ℝ)])
+            div_le_div₀ hcs.le le_rfl hE (by nlinarith [sq_nonneg (M : ℝ)])
         _ ≤ 1 - β := h1
   · by_cases hreal : χ ^ 2 = 1 ∧ ρ.im = 0
     · obtain ⟨hsq, him⟩ := hreal
@@ -176,7 +133,7 @@ theorem main : ∃ c₀ : ℝ, 0 < c₀ ∧ ∀ c₁ : ℝ, 0 < c₁ → c₁ �
         have h2 : Real.log M ≤ Real.log (M * 2) := by
           rw [mul_comm]
           exact le_log_mul hM (by norm_num)
-        have := exists_ne_zero_smul_mem_of_mem_span' hcpos.le hcc₁ hlogpos h2
+        have := div_le_div₀ (hcpos.le.trans hcc₁) hcc₁ hlogpos h2
         linarith
     · right
       have hne' : χ ^ 2 = 1 → ρ.im ≠ 0 := fun h h' => hreal ⟨h, h'⟩
@@ -185,14 +142,14 @@ theorem main : ∃ c₀ : ℝ, 0 < c₀ ∧ ∀ c₁ : ℝ, 0 < c₁ → c₁ �
         have hne : ρ ≠ 1 := fun h => him (by rw [h]; simp)
         rw [hχ] at hL
         have h1 := hP M ρ hne hL
-        have := exists_ne_zero_smul_mem_of_mem_span' hcpos.le hccp (hlogT ρ.im) le_rfl
+        have := div_le_div₀ (hcpos.le.trans hccp) hccp (hlogT ρ.im) le_rfl
         linarith
       · have hor : χ ^ 2 ≠ 1 ∨ ρ.im ≠ 0 := by
           by_cases h : χ ^ 2 = 1
           · exact Or.inr (hne' h)
           · exact Or.inl h
         have h1 := hZ M χ ρ hχ hL hor
-        have := exists_ne_zero_smul_mem_of_mem_span' hcpos.le hccz (hlogT ρ.im) le_rfl
+        have := div_le_div₀ (hcpos.le.trans hccz) hccz (hlogT ρ.im) le_rfl
         linarith
 
 end GlobalTheory.ExceptionalPair

@@ -3,7 +3,6 @@ module
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.MemPairOfMemSingle
 public import Mathlib.Data.Nat.PadicValNat
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Data.Nat.Choose.Multinomial
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 import Mathlib.Tactic.Lemma
@@ -79,14 +78,7 @@ theorem l_unit_mul {ϖ : O} (hϖ : Irreducible ϖ) {l : ℕ} (hl0 : (l : O) ≠ 
 
 private lemma order_unit_mul_X_pow_lemma_3 {K : Type*} [Field K] {w : K⟦X⟧} (hw : IsUnit w) (n : ℕ) :
     (w * X ^ n).order = (n : ℕ∞) := by
-  have hw0 : w.order = 0 := by
-    obtain ⟨u, rfl⟩ := hw
-    have h := congrArg PowerSeries.order u.mul_inv
-    rw [PowerSeries.order_mul, PowerSeries.order_one] at h
-    have h2 : PowerSeries.order (u : K⟦X⟧) ≤ 0 := by
-      rw [← h]; exact le_self_add
-    exact le_antisymm h2 (by simp)
-  rw [PowerSeries.order_mul, hw0, PowerSeries.order_X_pow, zero_add]
+  rw [PowerSeries.order_mul, PowerSeries.order_zero_of_isUnit hw, PowerSeries.order_X_pow, zero_add]
 
 theorem dist_of_map_eq {f : O⟦X⟧} {w : (IsLocalRing.ResidueField O)⟦X⟧} (hw : IsUnit w) (n : ℕ)
     (h : f.map (IsLocalRing.residue O) = w * X ^ n) : IsDist f ∧ wdeg f = n := by

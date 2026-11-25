@@ -84,10 +84,10 @@ theorem exists_hcParam_of_code (R : Ranks) (D h : ℕ) (hD : 1 ≤ D) (hh : ((R.
   have uL : ∀ hk : R.k - 1 < R.k, u ⟨R.k - 1, hk⟩ = UL + 1 / 2 := fun hk => by
     have h1 : ¬ (R.k - 1 = 0) := by omega
     have h2 : ¬ (R.k - 1 - 1 < R.k - 2) := by omega
-    simp only [u, h1, h2, if_false, dite_false]
+    simp only [u, h1, h2, ite_false, dite_false]
   have um : ∀ (l : ℕ) (hl : l < R.k - 2) (hk : l + 1 < R.k), u ⟨l + 1, hk⟩ =
       ((R.k - 2 - l : ℕ) : ℚ) * (4 * (D : ℚ)) - 1 / 2 - (if w ⟨l, hl⟩ then (D : ℚ) else 0) := fun l hl hk => by
-    simp only [u, Nat.add_one_ne_zero, Nat.add_sub_cancel, hl, if_false, dite_true]
+    simp only [u, Nat.add_one_ne_zero, Nat.add_sub_cancel, hl, ite_false, dite_true]
   have hLq : (UL : ℚ) ≤ -1 := by exact_mod_cast (by omega : UL ≤ -1)
   have hBq : -(B : ℚ) ≤ UL := by exact_mod_cast hB
   refine ⟨⟨u, fun i => ((R.k - 2 - i.1 : ℕ) : ℚ) * (4 * (D : ℚ)), fun j => B + (j.1 : ℚ) * (2 * h),
@@ -239,12 +239,12 @@ theorem exists_hc_family : ∀ eps cD ch C8 : ℝ, 0 < eps → eps < 1 / 52 → 
     have hτ : τ ≠ τ0 := by
       rintro rfl
       exact Finset.disjoint_left.1 hdisj ((htop _).2 h) (hτ0 ▸ hg0)
-    simp only [b1, base, U0, UL, dif_pos h, hc, if_neg hτ, add_zero, and_self]
+    simp only [b1, base, U0, UL, dite_eq_left h, hc, ite_eq_right hτ, add_zero, and_self]
   have hN : ∀ τ, (¬ ∃ t : H.TT, (eTau τ : R.GG) = R.tau1 t) →
       1 ≤ b1 τ ∧ U0 τ = ((R.k - 2 : ℕ) : ℤ) * (4 * Delv s cD) + R.k * (4 * Delv s cD) ∧ UL τ = -1 := fun τ h => by
     have c1 : 0 < ⌈s.b⌉ := Int.ceil_pos.2 hb
     have c2 : 0 < ⌈s.w'' R.n⌉ := Int.ceil_pos.2 hw
-    simp only [b1, base, U0, UL, dif_neg h, and_self, and_true]
+    simp only [b1, base, U0, UL, dite_eq_right h, and_self, and_true]
     split_ifs <;> omega
   have hcond : ∀ τ, ((R.k - 2 : ℕ) : ℚ) * (4 * (Delv s cD : ℚ)) ≤ U0 τ ∧ UL τ < 0 ∧ -b1 τ ≤ UL τ := fun τ => by
     by_cases h : ∃ t : H.TT, (eTau τ : R.GG) = R.tau1 t
@@ -286,14 +286,14 @@ theorem exists_hc_family : ∀ eps cD ch C8 : ℝ, 0 < eps → eps < 1 / 52 → 
   · have h : ¬ ∃ t : H.TT, (eTau τ : R.GG) = R.tau1 t := fun h =>
       Finset.disjoint_left.1 hdisj ((htop _).2 h) hτ
     have hτ' : (eTau τ : R.GG) ∈ H.thickPlaces := hτ
-    simp only [b1, base, dif_neg h, if_pos hτ']
+    simp only [b1, base, dite_eq_right h, ite_eq_left hτ']
     split_ifs <;> omega
   · have h : ¬ ∃ t : H.TT, (eTau τ : R.GG) = R.tau1 t := fun h => hτ.2.1 ((htop _).2 h)
     have hτ' : (eTau τ : R.GG) ∉ H.thickPlaces := hτ.2.2
     have hτ1 : τ ≠ τ0 := by
       rintro rfl
       exact hτ' (hτ0 ▸ hg0)
-    simp only [b1, base, dif_neg h, if_neg hτ', if_neg hτ1, add_zero]
+    simp only [b1, base, dite_eq_right h, ite_eq_right hτ', ite_eq_right hτ1, add_zero]
   · refine UpperTheory.Mu.muq_of_parallel H eTau hMU (j.1 * (2 * (⌈s.x ^ ch⌉₊ : ℕ)) + (⌈s.x ^ ch⌉₊ : ℕ)) (fun τ => ?_)
     rw [(hbe w τ j).2, (hbe w τ j).1]
     change _ = ((b1 τ : ℤ) : ℚ) + _
@@ -515,8 +515,7 @@ variable {D : D7} (N : ∀ u, Submodule (𝓞 D.what₂.LL) (D.div.Nu u).V) (h :
 
 @[reducible] def xdTr (x : ThData D) : ThData (setDiv D N h) := { x with }
 
-open DivX (md) in
-@[reducible] def divTr (X : DivX D) : DivX (setDiv D N h) := { X with md := fun S κ p _ la z => { md X S κ p la z with } }
+@[reducible] def divTr (X : DivX D) : DivX (setDiv D N h) := { X with }
 
 @[reducible] def sideTr {EE : Type} [NormedAddCommGroup EE] [InnerProductSpace ℂ EE] [FiniteDimensional ℂ EE] (S : RowSide D EE) :
     RowSide (setDiv D N h) EE := { S with }

@@ -188,10 +188,6 @@ private lemma fromCols_mul_eq_blocks {m : Type*} (X : Matrix m (Fin p) ℂ) (Y :
   ext i (j | j) <;> simp [Matrix.mul_apply, Fintype.sum_sum_type, Matrix.toBlocks₁₁, Matrix.toBlocks₁₂,
     Matrix.toBlocks₂₁, Matrix.toBlocks₂₂]
 
-private lemma mul_fromCols' {m k : Type*} [Fintype m] (N : Matrix k m ℂ) (X : Matrix m (Fin p) ℂ)
-    (Y : Matrix m (Fin q) ℂ) : N * fromCols X Y = fromCols (N * X) (N * Y) := by
-  ext i (j | j) <;> simp [Matrix.mul_apply]
-
 theorem hP_moeb {g : GL (Fin p ⊕ Fin q) ℂ} (hg : g ∈ Upq p q) {z : Matrix (Fin p) (Fin q) ℂ}
     (hz : z ∈ hcDom p q) :
     jW g z * hP z * (jW g z)ᴴ = hP (moeb (g : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) z) := by
@@ -204,7 +200,7 @@ theorem hP_moeb {g : GL (Fin p ⊕ Fin q) ℂ} (hg : g ∈ Upq p q) {z : Matrix 
   rw [Matrix.mul_add, ← Matrix.mul_assoc] at e
   have k1 : fromCols (1 : Matrix (Fin p) (Fin p) ℂ) (-w) * G =
       (G.toBlocks₁₁ - w * G.toBlocks₂₁) * fromCols (1 : Matrix (Fin p) (Fin p) ℂ) (-z) := by
-    rw [fromCols_mul_eq_blocks, mul_fromCols']
+    rw [fromCols_mul_eq_blocks, Matrix.mul_fromCols]
     have b1 : (1 : Matrix (Fin p) (Fin p) ℂ) * G.toBlocks₁₁ + -w * G.toBlocks₂₁ = (G.toBlocks₁₁ - w * G.toBlocks₂₁) * 1 := by
       rw [Matrix.one_mul, Matrix.mul_one, Matrix.neg_mul, sub_eq_add_neg]
     have b2 : (1 : Matrix (Fin p) (Fin p) ℂ) * G.toBlocks₁₂ + -w * G.toBlocks₂₂ = (G.toBlocks₁₁ - w * G.toBlocks₂₁) * -z := by

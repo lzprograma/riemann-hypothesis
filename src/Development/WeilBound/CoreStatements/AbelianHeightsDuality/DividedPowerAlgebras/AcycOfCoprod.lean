@@ -44,8 +44,6 @@ import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory GlobalTheory.CatCoh
@@ -68,57 +66,6 @@ def cm (M : CommAlgCat.{0} R) (G : D ⥤ D) :
   α _ := RingHom.id M
   naturality _ _ := rfl
   smul _ _ _ := rfl
-
-theorem cm_zigzag (M : CommAlgCat.{0} R) {G G' : D ⥤ D} (h : Zigzag G G') :
-    (∀ g : D → M, (∀ a b (_ : a ⟶ b), g b = g a) → ∀ a, g (G.obj a) = g (G'.obj a)) ∧
-    (∀ c, (cm M G).pull1 c = (cm M G').pull1 c) ∧ ∀ c, (cm M G).pull2 c = (cm M G').pull2 c := by
-  have one : ∀ {G G' : D ⥤ D} (_ : G ⟶ G'),
-      (∀ g : D → M, (∀ a b (_ : a ⟶ b), g b = g a) → ∀ a, g (G.obj a) = g (G'.obj a)) ∧
-      (∀ c, (cm M G).pull1 c = (cm M G').pull1 c) ∧ ∀ c, (cm M G).pull2 c = (cm M G').pull2 c :=
-    fun {G G'} θ ↦ ⟨fun g hg a ↦ (hg _ _ (θ.app a)).symm,
-      (cm M G).pullCohomologyOne_eq_of_natTrans (cm M G') θ fun _ _ ↦ rfl,
-      (cm M G).pullCohomologyTwo_eq_of_natTrans (cm M G') θ fun _ _ ↦ rfl⟩
-  induction h with
-  | refl => exact ⟨fun _ _ _ ↦ rfl, fun _ ↦ rfl, fun _ ↦ rfl⟩
-  | tail _ hz ih =>
-    rcases hz with ⟨⟨θ⟩⟩ | ⟨⟨θ⟩⟩
-    · exact ⟨fun g hg a ↦ (ih.1 g hg a).trans ((one θ).1 g hg a), fun c ↦ (ih.2.1 c).trans ((one θ).2.1 c),
-        fun c ↦ (ih.2.2 c).trans ((one θ).2.2 c)⟩
-    · exact ⟨fun g hg a ↦ (ih.1 g hg a).trans ((one θ).1 g hg a).symm,
-        fun c ↦ (ih.2.1 c).trans ((one θ).2.1 c).symm, fun c ↦ (ih.2.2 c).trans ((one θ).2.2 c).symm⟩
-
-theorem acyc_of_zigzag (d : D) (h : Zigzag (𝟭 D) ((Functor.const D).obj d)) : Acyc R D := by
-  refine ⟨⟨d⟩, fun M ↦ ?_⟩
-  obtain ⟨h0, h1, h2⟩ := cm_zigzag M h
-  refine ⟨fun g hg a b ↦ (h0 g hg a).trans (h0 g hg b).symm, fun c ↦ ?_, fun c ↦ ?_⟩
-  · refine ((CoefMap.pullCohomologyOne_id c).symm.trans (h1 c)).trans ?_
-    obtain ⟨f, rfl⟩ := H1.mk_surjective _ c
-    rw [CoefMap.pullCohomologyOne_class, H1.mk_eq_zero]
-    refine ⟨0, ?_⟩
-    rw [map_zero]
-    funext T T' φ
-    exact (Z1.id f d).symm
-  · refine ((CoefMap.pullCohomologyTwo_id c).symm.trans (h2 c)).trans ?_
-    obtain ⟨z, rfl⟩ := H2.mk_surjective _ c
-    rw [CoefMap.pullCohomologyTwo_class, H2.mk_eq_zero]
-    refine ⟨fun _ _ _ ↦ (z.1 d d d (𝟙 d) (𝟙 d) : M), ?_⟩
-    funext T T' T'' φ ψ
-    exact sub_add_cancel (z.1 d d d (𝟙 d) (𝟙 d) : M) (z.1 d d d (𝟙 d) (𝟙 d) : M)
-
-theorem acyc_of_coprod (d : D) (P : D → D) (i : ∀ a, a ⟶ P a) (j : ∀ a, d ⟶ P a)
-    (h : ∀ a b (φ : a ⟶ P b), ∃! ψ : P a ⟶ P b, i a ≫ ψ = φ ∧ j a ≫ ψ = j b) : Acyc R D := by
-  choose m hm hu using h
-  let Q : D ⥤ D :=
-    { obj := P
-      map := fun {a b} φ ↦ m a b (φ ≫ i b)
-      map_id := fun a ↦ (hu a a _ (𝟙 _) ⟨by simp, by simp⟩).symm
-      map_comp := fun {a b c} φ ψ ↦ (hu a c _ _ ⟨by
-        rw [← Category.assoc, (hm a b _).1, Category.assoc, (hm b c _).1, Category.assoc], by
-        rw [← Category.assoc, (hm a b _).2, (hm b c _).2]⟩).symm }
-  let θ : 𝟭 D ⟶ Q := { app := i, naturality := fun a b φ ↦ (hm a b _).1.symm }
-  let η : (Functor.const D).obj d ⟶ Q :=
-    { app := j, naturality := fun a b φ ↦ (Category.id_comp _).trans (hm a b _).2.symm }
-  exact acyc_of_zigzag d ((Zigzag.of_hom θ).trans (Zigzag.of_inv η))
 
 end Contract
 

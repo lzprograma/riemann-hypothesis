@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicUnitaryHaarBiInvariant
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
 public import Mathlib.MeasureTheory.Group.ModularCharacter
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicSplitTorusIwasawaUnitaryGroup
@@ -112,23 +113,7 @@ theorem continuous_modular : Continuous fun g : H => (modularCharacterFun g : �
   exact hc.div_const _
 
 theorem map_inv_eq (ρ : Measure H) [ρ.IsHaarMeasure] [ρ.IsMulRightInvariant] : ρ.inv = ρ := by
-  have h : ρ.inv = haarScalarFactor ρ.inv ρ • ρ := isMulLeftInvariant_eq_smul _ ρ
-  set c := haarScalarFactor ρ.inv ρ
-  have h2 : (c * c) • ρ = (1 : ℝ≥0) • ρ := by
-    have h3 : ρ.inv.inv = c • ρ.inv := by
-      conv_lhs => rw [h]
-      rw [Measure.inv_def, Measure.map_smul, ← Measure.inv_def]
-      exact measurable_inv.aemeasurable
-    rw [Measure.inv_inv, h, smul_smul] at h3
-    rw [one_smul]
-    exact h3.symm
-  have h4 : c * c = 1 := smul_haar_cancel ρ h2
-  have h5 : c = 1 := by
-    have : (c : ℝ) * c = 1 := by exact_mod_cast h4
-    have h0 : (0 : ℝ) ≤ c := c.2
-    have : (c : ℝ) = 1 := by nlinarith
-    exact_mod_cast this
-  rw [h, h5, one_smul]
+  apply _root_.GlobalTheory.AdelicUnimod.map_inv_eq <;> assumption
 
 end Group
 

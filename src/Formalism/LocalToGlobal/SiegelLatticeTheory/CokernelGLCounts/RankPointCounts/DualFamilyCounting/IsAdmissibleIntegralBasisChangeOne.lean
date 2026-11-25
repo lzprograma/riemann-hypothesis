@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationChange.CoefXFinsetSum
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SecondFlagXsLeBigBlock
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LocSplitType
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RowsOneGenusOfLocalDiscriminant
@@ -20,8 +21,6 @@ open NumberField Module IsDedekindDomain Formalism.MainNotions.S Formalism.MainN
 open Classical
 
 namespace Formalism.L2.SG.Pf.Cnt.R3
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} {T T' : D.host.E} {F0 : FlagG (VS D) D.R.rS T} {F' : LFlag (D.sp.Y 0) D.R.rS T'}
 variable (hw : LinearIndependent D.host.E (Sum.elim F0.fvec F'.fl.fvec))
@@ -289,19 +288,12 @@ open Classical
 
 namespace Formalism.L2.SG.Pf.Cnt.R3
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section General
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : Formalism.BasicNotions.HSpace E} {r : ℕ}
 
 theorem frameAct_one (f : Fin (r + 1) → S.V) (b : Fin (r + 1)) : frameAct f 1 b = f b := by
-  unfold frameAct
-  rw [Finset.sum_eq_single b]
-  · simp
-  · intro a _ hab
-    simp [Matrix.one_apply_ne hab]
-  · simp
+  apply _root_.PI.NRCW.frameAct_one <;> assumption
 
 end General
 
@@ -456,8 +448,6 @@ end Formalism.L2.SG.Pf.Cnt.R3
 namespace Formalism.L2.SG.Pf.Cnt
 
 open Formalism.L2.SG.Pf.Cnt.R3
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem mmChar_of (hU : Formalism.MainNotions.BridgeRowsGenus.LocUnimod) : MMChar := by
   intro D u u' _ F0 what₂ _ Z F' hz hZ hP

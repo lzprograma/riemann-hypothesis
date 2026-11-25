@@ -15,54 +15,14 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.CongruenceReduction.LevLoc
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.CongruenceReduction.ShapeOfTorusCentrePower
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import GroundTheory.GlobalFields.CompletionAtPlace.Integers
 import Mathlib.Tactic.Linter.Style
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Etale.Weakly
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormCloseToOneOfCloseAbovePlace
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
-import Mathlib.Tactic.Lemma
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialFinite
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.CharZeroAdicCompletion
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -79,7 +39,6 @@ open GlobalTheory.LFun (KGL)
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc GLw AfQ sim comp loc SameK IsCen cj)
 open UpperTheory.Gal.W2.Seed (Arith Setup)
 open UpperTheory.Gal.Int.Geo UpperTheory.Gal.Int.Geo.Pl UpperTheory.Gal.Int.Geo.Pl.Tj
-attribute [local instance] Ideal.Quotient.field
 
 namespace UpperTheory.Gal.Int.Geo.Pl.Tj.TorusKilling
 
@@ -95,8 +54,7 @@ private theorem exS (w : HeightOneSpectrum (𝓞 E)) (c : 𝓞 E) (hc : c ≠ 0)
   have := w.isMaximal
   obtain ⟨Q, hQ, hIQ⟩ := Ideal.eq_prime_pow_mul_coprime hI w.asIdeal
   have hex : ∃ s ∈ Q, s ∉ w.asIdeal := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have : Q ≤ w.asIdeal := hcon
     rw [sup_eq_left.2 this] at hQ
     exact w.isPrime.ne_top hQ
@@ -215,8 +173,8 @@ theorem UpperTheory.Gal.Int.Geo.Pl.Tj.tKill :
   have hY : ∀ u k, Y u k ∈ u.adicCompletionIntegers E := by
     intro u k
     by_cases hp : (p : 𝓞 E) ∈ u.asIdeal
-    · simp only [Y, if_pos hp]; exact zero_mem _
-    · simp only [Y, if_neg hp, Pi.smul_apply, Matrix.mulVec, dotProduct, smul_eq_mul, Finset.mul_sum]
+    · simp only [Y, ite_eq_left hp]; exact zero_mem _
+    · simp only [Y, ite_eq_right hp, Pi.smul_apply, Matrix.mulVec, dotProduct, smul_eq_mul, Finset.mul_sum]
       refine sum_mem fun l _ => ?_
       rw [← mul_assoc]
       exact mul_mem (key u k l) ((F.vec_hat v).1 hv u hp l)
@@ -228,7 +186,7 @@ theorem UpperTheory.Gal.Int.Geo.Pl.Tj.tKill :
       rw [Frame.cmp, ← Units.val_mul, map_inv]
       simp
     rw [map_sub, F.vec_act u hu, F.vec_mul u hu, hv' u hu]
-    simp only [Y, if_neg hu]
+    simp only [Y, ite_eq_right hu]
     rw [Matrix.mulVec_smul, Matrix.mulVec_mulVec, hmul, Matrix.one_mulVec, sub_self]
 end -- clump:auto
 end -- clump:auto
@@ -245,7 +203,6 @@ open GlobalTheory.LFun (KGL)
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc GLw AfQ sim comp loc SameK IsCen cj)
 open UpperTheory.Gal.W2.Seed (Arith Setup)
 open UpperTheory.Gal.Int.Geo UpperTheory.Gal.Int.Geo.Pl UpperTheory.Gal.Int.Geo.Pl.Tj
-attribute [local instance] Ideal.Quotient.field
 
 section SlopeTestRemainingChoices
 
@@ -366,11 +323,8 @@ variable {κ : Type} [Field κ] {n j : ℕ}
 
 private theorem map_finrank (g : GL (Fin n) κ) (D : Submodule κ (Fin n → κ)) :
     Module.finrank κ (D.map (g : Matrix (Fin n) (Fin n) κ).mulVecLin) = Module.finrank κ D := by
-  have hinj : Function.Injective (g : Matrix (Fin n) (Fin n) κ).mulVecLin := by
-    intro x y h
-    have := congrArg ((g⁻¹ : GL (Fin n) κ) : Matrix (Fin n) (Fin n) κ).mulVec h
-    simpa [Matrix.mulVec_mulVec] using this
-  exact (Submodule.equivMapOfInjective _ hinj D).finrank_eq.symm
+  rw [← Matrix.GeneralLinearGroup.coe_toLin]
+  exact LinearEquiv.finrank_map_eq (Matrix.GeneralLinearGroup.toLin g).toLinearEquiv D
 
 @[reducible] private def actGr (j : ℕ) : MulAction (GL (Fin n) κ) (UpperTheory.Gal.crystallineComparison.Gr κ (Fin n → κ) j) where
   smul g D := ⟨D.1.map (g : Matrix (Fin n) (Fin n) κ).mulVecLin, (map_finrank g D.1).trans D.2⟩
@@ -405,23 +359,11 @@ private theorem exists_gl (D₁ D₂ : Submodule κ (Fin n → κ))
     change (eD x : Fin n → κ) + (eC 0 : Fin n → κ) = (eD x : Fin n → κ)
     rw [eC.map_zero]
     simp only [Submodule.coe_zero, add_zero]
-  let M := LinearMap.toMatrix' (e : (Fin n → κ) →ₗ[κ] (Fin n → κ))
-  let M' := LinearMap.toMatrix' (e.symm : (Fin n → κ) →ₗ[κ] (Fin n → κ))
-  have hMM : M * M' = 1 := by
-    simp only [M, M']
-    rw [← LinearMap.toMatrix'_comp]
-    simp
-  have hMM' : M' * M = 1 := by
-    simp only [M, M']
-    rw [← LinearMap.toMatrix'_comp]
-    simp
-  refine ⟨⟨M, M', hMM, hMM'⟩, ?_⟩
-  have hlin : (M.mulVecLin) = (e : (Fin n → κ) →ₗ[κ] (Fin n → κ)) := by
-    simp only [M]
-    rw [Matrix.mulVecLin, ]
-    exact Matrix.toLin'_toMatrix' _
-  show D₁.map M.mulVecLin = D₂
-  rw [hlin]
+  let g := Matrix.GeneralLinearGroup.toLin.symm (LinearMap.GeneralLinearGroup.ofLinearEquiv e)
+  refine ⟨g, ?_⟩
+  rw [← Matrix.GeneralLinearGroup.coe_toLin, show Matrix.GeneralLinearGroup.toLin g =
+    LinearMap.GeneralLinearGroup.ofLinearEquiv e from MulEquiv.apply_symm_apply _ _]
+  change D₁.map e.toLinearMap = D₂
   apply le_antisymm
   · rintro _ ⟨x, hx, rfl⟩
     have := he ⟨x, hx⟩
@@ -445,25 +387,12 @@ private def stdU (n j : ℕ) (κ : Type) [Field κ] : Submodule κ (Fin n → κ
     simp [hx a ha]
 
 private theorem finrank_stdU (hj : j ≤ n) : Module.finrank κ (stdU n j κ) = j := by
-  let e : stdU n j κ ≃ₗ[κ] (Fin j → κ) :=
-    { toFun := fun x b => x.1 (Fin.castLE hj b)
-      map_add' := fun _ _ => rfl
-      map_smul' := fun _ _ => rfl
-      invFun := fun y => ⟨fun a => if h : (a : ℕ) < j then y ⟨a, h⟩ else 0, by
-        intro a ha
-        simp [not_lt.2 ha]⟩
-      left_inv := by
-        intro x
-        apply Subtype.ext
-        funext a
-        by_cases h : (a : ℕ) < j
-        · simp [h, Fin.castLE]
-        · simp [h, x.2 a (not_lt.1 h)]
-      right_inv := by
-        intro y
-        funext b
-        simp [Fin.castLE] }
-  rw [e.finrank_eq]
+  have h : stdU n j κ = Pi.spanSubset κ (Set.range (Fin.castLE hj)) := by
+    ext x
+    rw [Pi.mem_spanSubset_iff, Fin.range_castLE]
+    change (∀ a : Fin n, j ≤ (a : ℕ) → x a = 0) ↔ _
+    simp only [Set.mem_setOf_eq, not_lt]
+  rw [h, Pi.dim_spanSubset, Set.ncard_range_of_injective (Fin.castLE_injective hj)]
   simp
 
 private theorem stdU_map_le (g : GL (Fin n) κ) (j : ℕ)
@@ -569,19 +498,19 @@ private theorem entries_iff (n j : ℕ) (ϖ : L) (hϖ : ϖ ≠ 0) (hϖO : ϖ ∈
   constructor
   · intro H a b ha hb
     have := H a b
-    rw [if_neg (by omega), if_pos hb, one_mul, mul_comm] at this
+    rw [ite_eq_right (by omega), ite_eq_left hb, one_mul, mul_comm] at this
     exact (hmax _).1 this
   · intro H a b
     by_cases ha : (a : ℕ) < j <;> by_cases hb : (b : ℕ) < j
-    · rw [if_pos ha, if_pos hb]
+    · rw [ite_eq_left ha, ite_eq_left hb]
       have : ϖ * (((h : Matrix (Fin n) (Fin n) O) a b : O) : L) * ϖ⁻¹ =
           (((h : Matrix (Fin n) (Fin n) O) a b : O) : L) := by field_simp
       rw [this]; exact ((h : Matrix (Fin n) (Fin n) O) a b).2
-    · rw [if_pos ha, if_neg hb, mul_one]
+    · rw [ite_eq_left ha, ite_eq_right hb, mul_one]
       exact O.mul_mem hϖO ((h : Matrix (Fin n) (Fin n) O) a b).2
-    · rw [if_neg ha, if_pos hb, one_mul, mul_comm]
+    · rw [ite_eq_right ha, ite_eq_left hb, one_mul, mul_comm]
       exact (hmax _).2 (H a b (by omega) hb)
-    · rw [if_neg ha, if_neg hb, one_mul, mul_one]
+    · rw [ite_eq_right ha, ite_eq_right hb, one_mul, mul_one]
       exact ((h : Matrix (Fin n) (Fin n) O) a b).2
 
 private theorem conj_mem_iff (n j : ℕ) (hj : j ≤ n) (ϖ : L) (hϖ : ϖ ≠ 0) (hϖO : ϖ ∈ O)
@@ -697,7 +626,6 @@ open GlobalTheory.LFun (KGL)
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc GLw AfQ sim comp loc SameK IsCen cj)
 open UpperTheory.Gal.W2.Seed (Arith Setup)
 open UpperTheory.Gal.Int.Geo UpperTheory.Gal.Int.Geo.Pl UpperTheory.Gal.Int.Geo.Pl.Tj
-attribute [local instance] Ideal.Quotient.field
 
 namespace UpperTheory.Gal.Int.Geo.Pl.Tj
 
@@ -781,7 +709,7 @@ private theorem mem_idHat (F : Frame S) (w : Plc E) {v} (hv : v ∈ LaHat S.D)
     refine F.vec_inj _ fun u hu => ?_
     rw [map_sub, map_add (f := _), F.vec_mul u hu, F.vec_mul u hu, h₁ u hu, h₂ u hu]
     funext k
-    simp only [Pi.sub_apply, Pi.add_apply, Pi.smul_apply, Pi.zero_apply, smul_eq_mul, dif_pos hu, e u hu k, sub_self]
+    simp only [Pi.sub_apply, Pi.add_apply, Pi.smul_apply, Pi.zero_apply, smul_eq_mul, dite_eq_left hu, e u hu k, sub_self]
   rw [hv']
   refine add_mem (AddSubgroup.subset_closure ⟨a, ha, v₁, m₁, rfl⟩)
     (AddSubgroup.subset_closure ⟨b, ?_, v₂, m₂, rfl⟩)
@@ -885,7 +813,7 @@ private theorem card_core (F : Frame S) (w : Plc E) (hp : (p : 𝓞 E) ∉ w.asI
     refine sup_le ?_ ((AddSubgroup.closure_le _).2 ?_)
     · rintro _ ⟨v, hv, rfl⟩ j
       change Valued.v (c (S.L.actG (F.j g) v) (Fin.castLE hi j)) < 1
-      rw [c_act, ht, Matrix.mulVec_diagonal, if_pos (by simp), map_mul]
+      rw [c_act, ht, Matrix.mulVec_diagonal, ite_eq_left (by simp), map_mul]
       exact lt_of_le_of_lt (mul_le_of_le_one_right' ((HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 E) E w).1 (c_int v hv _))) hϖ
     · rintro _ ⟨x, hx, v, hv, rfl⟩ j
       change Valued.v (c (mulF S.D x v) (Fin.castLE hi j)) < 1
@@ -921,9 +849,9 @@ private theorem card_core (F : Frame S) (w : Plc E) (hp : (p : 𝓞 E) ∉ w.asI
       refine mulVec_lt w haI (fun k => ?_) k
       rw [c_sub, hfc, Pi.sub_apply]
       by_cases hk : (k : ℕ) < i
-      · rw [if_pos hk, sub_zero]
+      · rw [ite_eq_left hk, sub_zero]
         exact h ⟨k, hk⟩
-      · rw [if_neg hk, sub_self, map_zero]
+      · rw [ite_eq_right hk, sub_self, map_zero]
         exact zero_lt_one
     have : v.1 = S.L.actG (F.j g) v' + (v.1 - S.L.actG (F.j g) v') := by abel
     rw [this]
@@ -979,7 +907,6 @@ open GlobalTheory.LFun (KGL)
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc GLw AfQ sim comp loc SameK IsCen cj)
 open UpperTheory.Gal.W2.Seed (Arith Setup)
 open UpperTheory.Gal.Int.Geo UpperTheory.Gal.Int.Geo.Pl UpperTheory.Gal.Int.Geo.Pl.Tj
-attribute [local instance] Ideal.Quotient.field
 
 namespace UpperTheory.Gal.Int.Geo.Pl.Tj
 
@@ -1075,8 +1002,7 @@ theorem UpperTheory.Gal.Int.Geo.Pl.Tj.tCong :
     rcases tri u with h | ⟨h, rfl | h'⟩
     · exact Or.inl h
     · refine Or.inr ⟨h, ?_⟩
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       have h1 : 𝔞 ≤ u.asIdeal := hc
       rw [sup_eq_right.2 h1] at h𝔞
       exact u.isPrime.ne_top h𝔞
@@ -1295,7 +1221,6 @@ open GlobalTheory.LFun (KGL)
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc GLw AfQ sim comp loc SameK IsCen cj)
 open UpperTheory.Gal.W2.Seed (Arith Setup)
 open UpperTheory.Gal.Int.Geo UpperTheory.Gal.Int.Geo.Pl UpperTheory.Gal.Int.Geo.Pl.Tj
-attribute [local instance] Ideal.Quotient.field
 
 namespace UpperTheory.Gal.Int.Geo.Pl
 

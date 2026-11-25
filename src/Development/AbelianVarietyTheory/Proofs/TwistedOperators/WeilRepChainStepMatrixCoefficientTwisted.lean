@@ -98,11 +98,6 @@ private lemma unit_mul_real_mul_conj_eq_real_sq_mul (m1 m2 : ℂ) (h1 : ‖m1‖
   linear_combination (m2 * (starRingEnd ℂ) m2 * r1 * r2 * r1 * r2 * u * (starRingEnd ℂ) v) * e1 +
     (r1 * r2 * r1 * r2 * u * (starRingEnd ℂ) v) * e2
 
-private lemma nabs_pos_twisted_operators (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (x : kˣ) : 0 < nabs k x := by
-  show (0 : ℝ) < ((distribHaarChar k x : NNReal) : ℝ)
-  exact NNReal.coe_pos.2 (pos_iff_ne_zero.2 ((Group.isUnit x).map (distribHaarChar k)).ne_zero)
-
 private lemma nabs_inv_twisted_operators (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (x : kˣ) : nabs k x⁻¹ = (nabs k x)⁻¹ := by
   show ((distribHaarChar k x⁻¹ : NNReal) : ℝ) = ((distribHaarChar k x : NNReal) : ℝ)⁻¹
@@ -126,7 +121,7 @@ theorem ip_om_om : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k
   have hkey : c * (nabs k (Matrix.GeneralLinearGroup.det h⁻¹) ^ (-(Fintype.card a : ℝ)) *
       ng ^ (-(Fintype.card b : ℝ))) = 1 := by
     rw [hdet]
-    exact rpow_half_mul_rpow_inv_eq_one ng nh (nabs_pos_twisted_operators k _) (nabs_pos_twisted_operators k _) _ _
+    exact rpow_half_mul_rpow_inv_eq_one ng nh (GlobalTheory.SmGL.nabs_pos' k _) (GlobalTheory.SmGL.nabs_pos' k _) _ _
   unfold ip
   calc ∫ x, om μ g h Φ x * (starRingEnd ℂ) (om μ g h Ψ x) ∂(volM ν b a)
       = ∫ x, (c : ℂ) * F ((h⁻¹ : GL b k).val * x * g.val) ∂(volM ν b a) := by

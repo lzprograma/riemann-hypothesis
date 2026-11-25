@@ -41,15 +41,15 @@ theorem frame_of_tr {ε : Fin (2 * r + k + 1) → Bool} {Q : Matrix (Fin (2 * r 
       ef := fun a b => by rw [hG, Hpk_ef]
       ez := fun a => by rw [hG, Hpk_ew]
       fz := fun a => by rw [hG, Hpk_fw]
-      zz := by rw [hG, Hpk_ww, if_pos rfl, if_pos (by simp)]
+      zz := by rw [hG, Hpk_ww, ite_eq_left rfl, ite_eq_left (by simp)]
       ww := fun a b => by
         rw [hG, Hpk_ww]
         by_cases hab : a = b
-        · subst hab; rw [if_pos rfl, if_pos rfl, if_neg (by simp only; omega)]
-        · rw [if_neg (fun h => hab (Fin.ext (by simpa using congrArg Fin.val h))), if_neg hab]
+        · subst hab; rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_right (by simp only; omega)]
+        · rw [ite_eq_right (fun h => hab (Fin.ext (by simpa using congrArg Fin.val h))), ite_eq_right hab]
       ew := fun c a => by rw [hG, Hpk_ew]
       fw := fun c a => by rw [hG, Hpk_fw]
-      zw := fun a => by rw [hG, Hpk_ww, if_neg (fun h => by have := congrArg Fin.val h; simp at this; omega)] }
+      zw := fun a => by rw [hG, Hpk_ww, ite_eq_right (fun h => by have := congrArg Fin.val h; simp at this; omega)] }
 
 theorem Qm_of_tr (Q : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) :
     Qm (fun a => Q *ᵥ bvec (eI k r a)) (fun a => Q *ᵥ bvec (esI k r a))

@@ -636,12 +636,6 @@ attribute [local instance] MvPolynomial.gradedAlgebra
 
 open MvPolynomial
 
-theorem finite_adjoin_range_X (ι : Type*) :
-    Module.Finite (Algebra.adjoin K (Set.range (MvPolynomial.X : ι → MvPolynomial ι K)))
-      (MvPolynomial ι K) :=
-  Module.Finite.of_surjective (Algebra.linearMap _ _) fun p =>
-    ⟨⟨p, by rw [adjoin_range_X]; trivial⟩, rfl⟩
-
 end PolynomialRing
 
 end GlobalTheory
@@ -658,23 +652,6 @@ open Matrix Polynomial
 open scoped BigOperators
 
 namespace GlobalTheory
-
-namespace GradedBezoutCount
-
-open GradedBezout
-
-variable {K T : Type*} [Field K] [CommRing T] [Algebra K T] {𝒜 : ℕ → Submodule K T}
-  [GradedAlgebra 𝒜]
-
-
-variable {ι : Type*} [Finite ι] {x : ι → T} (hx : ∀ i, x i ∈ 𝒜 1)
-  (hfin : Module.Finite (Algebra.adjoin K (Set.range x)) T)
-include hx hfin
-
-
-
-
-end GradedBezoutCount
 
 open Matrix Polynomial in
 open scoped BigOperators in

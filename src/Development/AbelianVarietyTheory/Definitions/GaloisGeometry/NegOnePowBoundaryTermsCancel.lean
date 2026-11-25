@@ -3,52 +3,8 @@ module
 public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsDPMorphismBot
 public import Mathlib.Tactic.Continuity
 public import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -73,21 +29,6 @@ structure Mult (F : C ⥤ ModuleCat.{0} R) where
   map_one : ∀ {X Y : C} (φ : X ⟶ Y), (F.map φ).hom (one X) = one Y
 
 end GlobalTheory.CatH
-
-namespace GlobalTheory.LogCris
-
-variable {b : Base} (L : b.Fun)
-
-def mult : CatH.Mult (O L) where
-  mul T := letI := T.i.toAlgebra; LinearMap.mul b.R T.B
-  one T := (1 : T.B)
-  mul_assoc T x y z := mul_assoc (G := T.B) x y z
-  mul_comm T x y := mul_comm (G := T.B) x y
-  one_mul T x := one_mul (M := T.B) x
-  map_mul {X Y} f x y := map_mul f.φ (show X.B from x) y
-  map_one f := map_one f.φ
-
-end GlobalTheory.LogCris
 
 namespace GlobalTheory.CatH
 
@@ -139,14 +80,6 @@ def bk (m n k : ℕ) (h : m + n ≤ k) : Fin (n + 1) → Fin (k + 1) := fun b =>
 
 theorem bk_mono (m n k : ℕ) (h : m + n ≤ k) : Monotone (bk m n k h) := fun a b hab =>
   show m + (a : ℕ) ≤ m + b from Nat.add_le_add_left hab m
-
-theorem val_succAbove_lt {n : ℕ} (i : Fin (n + 2)) (a : Fin (n + 1)) (h : (a : ℕ) < i) :
-    (i.succAbove a : ℕ) = a := by
-  rw [Fin.succAbove_of_castSucc_lt _ _ (by simpa [Fin.lt_def] using h)]; simp
-
-theorem val_succAbove_ge {n : ℕ} (i : Fin (n + 2)) (a : Fin (n + 1)) (h : (i : ℕ) ≤ a) :
-    (i.succAbove a : ℕ) = a + 1 := by
-  rw [Fin.succAbove_of_le_castSucc _ _ (by simpa [Fin.le_def] using h)]; simp [Fin.val_succ]
 
 section Cup
 
@@ -241,79 +174,6 @@ theorem d_cupC {m n k : ℕ} (h : m + n = k) (f : Cn F m) (g : Cn F n) :
         Fin.lt_def, Fin.val_castSucc, Fin.val_succ, apply_ite, bk, Fin.val_zero] <;>
       split_ifs <;> (try simp only [finCongr_apply_coe, Fin.val_cast, Fin.val_castAdd, Fin.val_natAdd, Fin.val_castLE] at *) <;> omega
 
-theorem cupC_mem_ker {m n k : ℕ} (h : m + n = k) {f : Cn F m} {g : Cn F n} (hf : d F m f = 0)
-    (hg : d F n g = 0) : d F k (cupC μ h f g) = 0 := by
-  rw [d_cupC, hf, hg, map_zero, LinearMap.zero_apply, map_zero, smul_zero, add_zero]
-
-theorem cupC_mem_left {m n k : ℕ} (h : m + n = k) {f : Cn F m} {g : Cn F n} (hf : f ∈ Bn F m)
-    (hg : d F n g = 0) : cupC μ h f g ∈ Bn F k := by
-  cases m with
-  | zero =>
-    obtain rfl : f = 0 := (Submodule.mem_bot R).1 hf
-    rw [map_zero, LinearMap.zero_apply]
-    exact Submodule.zero_mem _
-  | succ m =>
-    obtain ⟨f0, rfl⟩ := hf
-    obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
-    refine ⟨cupC μ (show m + n = k by omega) f0 g, ?_⟩
-    rw [d_cupC, hg, map_zero, smul_zero, add_zero]
-
-theorem cupC_mem_right {m n k : ℕ} (h : m + n = k) {f : Cn F m} {g : Cn F n} (hf : d F m f = 0)
-    (hg : g ∈ Bn F n) : cupC μ h f g ∈ Bn F k := by
-  cases n with
-  | zero =>
-    obtain rfl : g = 0 := (Submodule.mem_bot R).1 hg
-    rw [map_zero]
-    exact Submodule.zero_mem _
-  | succ n =>
-    obtain ⟨g0, rfl⟩ := hg
-    obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
-    refine ⟨((-1 : ℤ) ^ m) • cupC μ (show m + n = k by omega) f g0, ?_⟩
-    rw [map_zsmul, d_cupC, hf, map_zero, LinearMap.zero_apply, zero_add, smul_smul, ← mul_pow, neg_one_mul,
-      neg_neg, one_pow, one_smul]
-
-def cupZ {m n k : ℕ} (h : m + n = k) :
-    LinearMap.ker (d F m) →ₗ[R] LinearMap.ker (d F n) →ₗ[R] LinearMap.ker (d F k) :=
-  LinearMap.mk₂ R (fun f g => ⟨cupC μ h f g, LinearMap.mem_ker.2
-      (cupC_mem_ker μ h (LinearMap.mem_ker.1 f.2) (LinearMap.mem_ker.1 g.2))⟩)
-    (fun f f' g => Subtype.ext (by simp only [Submodule.coe_add, map_add (f := _), LinearMap.add_apply]))
-    (fun r f g => Subtype.ext (by simp only [Submodule.coe_smul, map_smul, LinearMap.smul_apply]))
-    (fun f g g' => Subtype.ext (by simp only [Submodule.coe_add, map_add (f := _)]))
-    (fun r f g => Subtype.ext (by simp only [Submodule.coe_smul, map_smul]))
-
-def cupProductCocycleClass {m n k : ℕ} (h : m + n = k) (f : LinearMap.ker (d F m)) : H F n →ₗ[R] H F k :=
-  Submodule.liftQ _ (Submodule.mkQ _ ∘ₗ cupZ μ h f) fun g hg => by
-    rw [LinearMap.mem_ker, LinearMap.comp_apply, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
-    exact cupC_mem_right μ h (LinearMap.mem_ker.1 f.2) hg
-
-def cup {m n k : ℕ} (h : m + n = k) : H F m →ₗ[R] H F n →ₗ[R] H F k :=
-  Submodule.liftQ _
-    { toFun := cupProductCocycleClass μ h
-      map_add' := fun f f' => Submodule.linearMap_qext _ (LinearMap.ext fun g => by
-        simp only [cupProductCocycleClass, LinearMap.comp_apply, Submodule.mkQ_apply, Submodule.liftQ_apply, map_add (f := _),
-          LinearMap.add_apply])
-      map_smul' := fun r f => Submodule.linearMap_qext _ (LinearMap.ext fun g => by
-        simp only [cupProductCocycleClass, LinearMap.comp_apply, Submodule.mkQ_apply, Submodule.liftQ_apply, map_smul,
-          LinearMap.smul_apply, RingHom.id_apply]) }
-    fun f hf => by
-      rw [LinearMap.mem_ker]
-      refine Submodule.linearMap_qext _ (LinearMap.ext fun g => ?_)
-      simp only [LinearMap.coe_mk, AddHom.coe_mk, cupProductCocycleClass, LinearMap.comp_apply, Submodule.mkQ_apply,
-        Submodule.liftQ_apply, LinearMap.zero_comp, LinearMap.zero_apply, Submodule.Quotient.mk_eq_zero]
-      exact cupC_mem_left μ h hf (LinearMap.mem_ker.1 g.2)
-
-def oneC : Cn F 0 := fun s => μ.one _
-
-theorem d_oneC : d F 0 (oneC μ) = 0 := by
-  funext s
-  change ∑ i : Fin 2, (-1 : ℤ) ^ (i : ℕ) • (F.map (toLast i s)).hom (μ.one _) = 0
-  simp only [μ.map_one, Fin.sum_univ_two, Fin.val_zero, Fin.val_one, pow_zero, one_smul, pow_one, neg_smul,
-    add_neg_cancel]
-
-def oneZ : LinearMap.ker (d F 0) := ⟨oneC μ, LinearMap.mem_ker.2 (d_oneC μ)⟩
-
-def oneH : H F 0 := Submodule.Quotient.mk (oneZ μ)
-
 end Cup
 
 namespace Mor
@@ -329,10 +189,6 @@ namespace GlobalTheory.LogCris
 
 variable {b : Base} (L : b.Fun)
 
-def cup {m n k : ℕ} (h : m + n = k) : H L m →ₗ[b.R] H L n →ₗ[b.R] H L k := CatH.cup (mult L) h
-
-def one : H L 0 := CatH.oneH (mult L)
-
 structure LB where
 
   g : L.A → L.A → ∀ {B : CommRingCat.{0}}, L.Pt.obj B → Bˣ
@@ -346,12 +202,6 @@ namespace LB
 
 variable {L}
 
-def triv : LB L where
-  g _ _ _ _ := 1
-  g_map := fun {_ _ _ _} _ {_} _ _ => (map_one _).symm
-  g_self _ := rfl
-  g_comp _ _ _ := mul_one 1
-
 def mul (E E' : LB L) : LB L where
   g α β _ y := E.g α β y * E'.g α β y
   g_map := fun {_ _ _ _} φ {_} h1 h2 => by
@@ -361,34 +211,6 @@ def mul (E E' : LB L) : LB L where
 
 end LB
 
-def IsDPLog {B : Type} [CommRing B] {J : Ideal B} (δ : DividedPowers J) (v a : B) : Prop :=
-  v - 1 ∈ J ∧ ∃ N : ℕ, (∀ n, N ≤ n → ((n - 1).factorial : B) * δ.dpow n (v - 1) = 0) ∧
-    a = ∑ n ∈ Finset.Ico 1 N, (-1) ^ (n + 1) * ((n - 1).factorial : B) * δ.dpow n (v - 1)
-
-theorem isDPLog_one {B : Type} [CommRing B] {J : Ideal B} (δ : DividedPowers J) : IsDPLog δ 1 0 := by
-  refine ⟨by rw [sub_self]; exact J.zero_mem, 1, fun n hn => ?_, by simp⟩
-  rw [sub_self, δ.dpow_eval_zero (by omega), mul_zero]
-
 variable {L}
-
-def chainUnit (u : ∀ {T T' : Thick L}, (T ⟶ T') → T'.Bˣ) (s : ComposableArrows (Thick L) 2) :
-    (s.obj (Fin.last 2)).B :=
-  let a : (s.obj (Fin.last 2)).B := (s.map' 1 2).φ ↑(u (s.map' 0 1))
-  let b : (s.obj (Fin.last 2)).B := (u (s.map' 1 2)).val
-  let c : (s.obj (Fin.last 2)).B := (u (s.map' 0 2))⁻¹.val
-  a * b * c
-
-def IsFirstChernClassOfLineBundle (E : LB L) (z : H L 2) : Prop :=
-  ∃ (u : ∀ {T T' : Thick L}, (T ⟶ T') → T'.Bˣ) (ℓ : LinearMap.ker (CatH.d (O L) 2)),
-    (∀ {T T' : Thick L} (φ : T ⟶ T'),
-      Units.map (Ideal.Quotient.mk T'.J).toMonoidHom (u φ) = E.g T'.α T.α T'.y) ∧
-    (∀ s : ComposableArrows (Thick L) 2, IsDPLog (s.obj (Fin.last 2)).δ (chainUnit u s) (ℓ.1 s)) ∧
-    Submodule.Quotient.mk ℓ = z
-
-theorem firstChernClass_trivialBundle : IsFirstChernClassOfLineBundle (LB.triv : LB L) 0 := by
-  refine ⟨fun _ => 1, 0, fun φ => map_one _, fun s => ?_, Submodule.Quotient.mk_zero _⟩
-  have e : chainUnit (fun _ => 1) s = 1 := by simp [chainUnit]
-  rw [e]
-  exact isDPLog_one (s.obj (Fin.last 2)).δ
 
 end GlobalTheory.LogCris

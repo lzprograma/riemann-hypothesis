@@ -3,46 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Cobdry
 public import Formalism.FormalGroupWitt.Statement
 public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.MvPowerSeries.Rename
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
 
 @[expose] public section
@@ -68,14 +29,14 @@ theorem _root_.GlobalTheory.BiextInhab.laK_idMod2 (hl : l.Prime) :
   refine ⟨fun j => ?_, fun j i => ?_⟩
   · show _root_.GlobalTheory.BiextInhab.laK K l d j 0 = 0
     unfold _root_.GlobalTheory.BiextInhab.laK
-    refine Finset.sum_eq_zero fun e _ => if_neg fun h => ?_
+    refine Finset.sum_eq_zero fun e _ => ite_eq_right fun h => ?_
     exact pow_ne_zero _ hl.ne_zero (Finsupp.single_eq_zero.mp h.symm)
   · show _root_.GlobalTheory.BiextInhab.laK K l d j (Finsupp.single i 1) = _
     unfold _root_.GlobalTheory.BiextInhab.laK
     rw [Finset.sum_eq_single 0]
     · simp [Finsupp.single_left_inj one_ne_zero]
     · intro e _ he
-      refine if_neg fun h => he ?_
+      refine ite_eq_right fun h => he ?_
       have h1 := congrArg (fun f : ZMod d →₀ ℕ => f.sum fun _ k => k) h
       simp only [Finsupp.sum_single_index] at h1
       rcases Nat.pow_eq_one.mp h1.symm with h2 | h2
@@ -87,16 +48,6 @@ theorem _root_.GlobalTheory.BiextInhab.laK_idMod2 (hl : l.Prime) :
 variable [NeZero d]
 
 end Field
-
-section Padic
-
-open Formalism.G
-
-variable {l : ℕ} [hl : Fact l.Prime] {d : ℕ} {τ : Type}
-
-variable [NeZero d]
-
-end Padic
 
 section Main
 
@@ -128,12 +79,8 @@ variable [NeZero d] in
 private theorem coeff_mapDomain_rename_of_injective {σ τ R : Type} [CommSemiring R] (f : σ → τ)
     [Filter.TendstoCofinite f] (hf : Function.Injective f) (p : MvPowerSeries σ R)
     (n : σ →₀ ℕ) : coeff (Finsupp.mapDomain f n) (rename f p) = coeff n p := by
-  rw [coeff_rename, Finset.sum_eq_single n]
-  · intro y hy hne
-    simp only [Set.Finite.mem_toFinset] at hy
-    exact absurd (Finsupp.mapDomain_injective hf hy) hne
-  · intro hn
-    exact absurd (by simp) hn
+  have h := MvPowerSeries.coeff_embDomain_rename ⟨f, hf⟩ p n
+  rwa [Finsupp.embDomain_eq_mapDomain] at h
 
 
 open MvPowerSeries in
@@ -176,7 +123,7 @@ theorem _root_.GlobalTheory.BiextInhab.bridge (l : ℕ) [Fact l.Prime] (d : ℕ)
     unfold _root_.Formalism.BasicNotions.jetLogG
     dsimp only
     symm
-    refine Finset.sum_eq_zero fun e _ => if_neg ?_
+    refine Finset.sum_eq_zero fun e _ => ite_eq_right ?_
     rintro rfl
     exact hm ⟨_, (hsingle e).symm⟩
 

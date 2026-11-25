@@ -19,9 +19,6 @@ variable {O K V : Type} [CommRing O] [Field K] [Algebra O K]
 def E (T : Subalgebra O (End K V)) (ψ : T →ₐ[O] O) : Submodule K V :=
   ⨅ t : T, (t : End K V).eigenspace (pt ψ t)
 
-def eSum (T : Subalgebra O (End K V)) (Y : Set (T →ₐ[O] O)) : Submodule K V :=
-  ⨆ ψ ∈ Y, E T ψ
-
 theorem E_le_W_pt (T : Subalgebra O (End K V)) (ψ : T →ₐ[O] O) : E T ψ ≤ W T (pt ψ) :=
   iInf_mono fun _ => eigenspace_le_maxGenEigenspace
 
@@ -98,12 +95,6 @@ namespace Formalism.L2
 
 variable {D : D7} {M : MtFam D}
 
-def PsiAct (T : NormalizedLocalCompatibility D M) : Prop :=
-  ∀ j w i (h : i ∈ D.nd.locs j w) (v : PlE D.host) (k : ℕ),
-    GenAt D (D.what₂.places.resChar w) (T.B.Qc j w) v k →
-    ∀ z, T.Psi j w i h (((D.nd.act i (D.nd.hT i v k)).baseChange (FractionRing (D.nd.O i))) z) =
-      T.B.hK j w v k (T.Psi j w i h z)
-
 theorem genAt_iff (T : NormalizedLocalCompatibility D M) {j : ℕ} {w : D.what₂.places.Pl} {i : D.nd.Loc} (h : i ∈ D.nd.locs j w)
     (v : PlE D.host) (k : ℕ) :
     (SplitOut D.nd i v ∧ 1 ≤ k ∧ k ≤ D.R.nV) ↔ GenAt D (D.what₂.places.resChar w) (T.B.Qc j w) v k := by
@@ -171,25 +162,6 @@ theorem map_psiO_rs (T : NormalizedLocalCompatibility D M) {j : ℕ} {w : D.what
     obtain ⟨y, rfl⟩ := hq z hz
     exact ⟨y, (hpq y).2 hz, rfl⟩
 
-theorem eSum_eq (T : NormalizedLocalCompatibility D M) {j : ℕ} {w : D.what₂.places.Pl} {i : D.nd.Loc} (h : i ∈ D.nd.locs j w)
-    (G : Set (heckeAlg T.B j w →ₐ[T.B.Oc j w] T.B.Oc j w)) :
-    NCov.eSum (heckeAlg T.B j w) {ψ | ψ ∈ G ∧ NCov.cls ψ = T.mx j w i} =
-      ⨆ x ∈ {x | (T.ptX j w i h x).1 ∈ G}, NCov.E (heckeAlg T.B j w) (T.ptX j w i h x).1 := by
-  apply le_antisymm
-  · refine iSup₂_le fun ψ hψ => ?_
-    by_cases hE : NCov.E (heckeAlg T.B j w) ψ = ⊥
-    · rw [hE]; exact bot_le
-    · have hW : NCov.W (heckeAlg T.B j w) (NCov.pt ψ) ≠ ⊥ := fun h0 =>
-        hE (eq_bot_iff.2 ((NCov.E_le_W_pt _ ψ).trans h0.le))
-      set x := (T.ptX j w i h).symm ⟨ψ, hψ.2, hW⟩
-      have hxψ : (T.ptX j w i h x).1 = ψ := by simp [x]
-      refine le_iSup₂_of_le (f := fun x (_ : x ∈ {x | (T.ptX j w i h x).1 ∈ G}) =>
-        NCov.E (heckeAlg T.B j w) (T.ptX j w i h x).1) x (by simp only [Set.mem_ofPred_eq, hxψ]; exact hψ.1) ?_
-      rw [hxψ]
-  · refine iSup₂_le fun x hx => ?_
-    exact le_iSup₂_of_le (f := fun ψ (_ : ψ ∈ {ψ | ψ ∈ G ∧ NCov.cls ψ = T.mx j w i}) =>
-      NCov.E (heckeAlg T.B j w) ψ) (T.ptX j w i h x).1 ⟨hx, (T.ptX j w i h x).2.1⟩ le_rfl
-
 end Formalism.L2
 
 namespace Formalism.L2
@@ -244,12 +216,6 @@ theorem map_psiO_MtIn (T : NormalizedLocalCompatibility D M) (hstd : HeckeStdTw 
       _ ≤ P ⊓ (L' ⊔ Q) := inf_le_inf_left _ (sup_le hlat le_sup_right)
       _ = L' ⊔ Q ⊓ P := by rw [inf_comm, sup_inf_assoc_of_le Q hL'P]
       _ = L' := by rw [hPQ, sup_bot_eq]
-
-end Formalism.L2
-
-namespace Formalism.L2
-
-variable {D : D7} {M : MtFam D}
 
 end Formalism.L2
 

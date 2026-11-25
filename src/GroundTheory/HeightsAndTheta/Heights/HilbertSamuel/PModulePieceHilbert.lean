@@ -495,7 +495,7 @@ theorem factor_est [DecidableEq K] {J₂ q : Ideal (MRing ι)} {N d : ℕ} (hN :
     have hpos : 0 < (a + s - c) k := by
       have := (hcle a 1 (fun k' => by have := ha k'; omega) k).2
       omega
-    rw [if_neg hnot, lg, card_mPiece_irrel hk hpos]
+    rw [ite_eq_right hnot, lg, card_mPiece_irrel hk hpos]
     simp
   have hv : ¬ IsHorizontal q := not_horizontal_of_mem hN.ne' hNq
   have hp : (charOf q).Prime := charOf_prime hq hv
@@ -510,7 +510,7 @@ theorem factor_est [DecidableEq K] {J₂ q : Ideal (MRing ι)} {N d : ℕ} (hN :
     obtain ⟨K2, hK2, hs2⟩ := appr_shift (Real.log (charOf q)) d q hS s
     refine ⟨a₀' + tdeg c, (C' + K1 + K2) * ((tdeg s : ℝ) + 1) ^ (d - 1), by positivity,
       fun a ha => ?_⟩
-    rw [if_pos htop]
+    rw [ite_eq_left htop]
     have hx := hcle a a₀' ha
     have h1 := hH (a + s - c) fun k => (hx k).2
     have h2 := hs1 (a + s) fun k => by have := (hx k).1; simp only [Pi.add_apply]; omega
@@ -544,7 +544,7 @@ theorem factor_est [DecidableEq K] {J₂ q : Ideal (MRing ι)} {N d : ℕ} (hN :
     have hB := coefB_nonneg d' q
     refine ⟨a₀' + tdeg c, (C' * d' + Real.log (charOf q) * coefB d' q) * ((tdeg s : ℝ) + 1) ^ (d - 1),
       by positivity, fun a ha => ?_⟩
-    rw [if_neg htop, sub_zero]
+    rw [ite_eq_right htop, sub_zero]
     have hx := hcle a a₀' ha
     set b := a + s - c with hbdef
     have h1 := hH b fun k => (hx k).2

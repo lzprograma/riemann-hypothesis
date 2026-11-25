@@ -255,29 +255,6 @@ private theorem ae_enorm_kG_le_bInt {ν μS ν' μS' : Measure G} [SFinite ν] [
   refine hmem.mono fun p hp => ?_
   exact enorm_kG_shift_le hσ hW hW' hinv hinv' γ p.1.1 p.1.2 p.2.1 p.2.2 hp.1 hp.2
 
-private theorem measurable_bInt_prod {σ : G → (HH →L[ℂ] HH)} (hσ : Formalism.L2.SG.Pf.EnergyAbs.IsUnitRep σ) (w : HH)
-    {W : G → V} {W' : G → V'} (hW : Continuous W) (hW' : Continuous W') (γ : G) :
-    Measurable (fun p : (G × G) × (G × G) => bInt σ w W W' γ p.1.1 p.2.1 p.1.2 p.2.2) := by
-  obtain ⟨-, hmul, -, hc⟩ := hσ
-  have e : (fun p : (G × G) × (G × G) => bInt σ w W W' γ p.1.1 p.2.1 p.1.2 p.2.2) =
-      fun p => ‖⟪σ p.1.1 w, σ (p.1.2 * γ * p.2.2⁻¹ * p.2.1) w⟫_ℂ‖ₑ * ‖W p.1.1‖ₑ * ‖W' p.2.1‖ₑ := by
-    funext p
-    unfold bInt
-    rw [hmul (p.1.2 * γ * p.2.2⁻¹) p.2.1, ContinuousLinearMap.mul_apply]
-  rw [e]
-  have hg : Continuous fun p : (G × G) × (G × G) => p.1.2 * γ * p.2.2⁻¹ * p.2.1 := by fun_prop
-  have h1 : Measurable fun p : (G × G) × (G × G) =>
-      ‖⟪σ p.1.1 w, σ (p.1.2 * γ * p.2.2⁻¹ * p.2.1) w⟫_ℂ‖ₑ :=
-    (continuous_enorm.comp
-      (((hc w).comp (continuous_fst.comp continuous_fst)).inner ((hc w).comp hg))).measurable
-  have h2 : Measurable fun p : (G × G) × (G × G) => ‖W p.1.1‖ₑ :=
-    (continuous_enorm.comp (hW.comp (continuous_fst.comp continuous_fst))).measurable
-  have h3 : Measurable fun p : (G × G) × (G × G) => ‖W' p.2.1‖ₑ :=
-    (continuous_enorm.comp (hW'.comp (continuous_fst.comp continuous_snd))).measurable
-  exact (h1.mul h2).mul h3
-
-
-
 private theorem lintegral_const_mul_bInt_eq_iterated {ν μS ν' μS' : Measure G} [SFinite ν] [SFinite μS]
     [SFinite ν'] [SFinite μS'] {σ : G → (HH →L[ℂ] HH)} (hσ : Formalism.L2.SG.Pf.EnergyAbs.IsUnitRep σ) (w : HH) {W : G → V}
     {W' : G → V'} (hW : Continuous W) (hW' : Continuous W') (γ : G) (c : ℝ≥0∞) :
@@ -285,7 +262,8 @@ private theorem lintegral_const_mul_bInt_eq_iterated {ν μS ν' μS' : Measure 
         ∂((ν.prod μS).prod (ν'.prod μS')) =
       c * ∫⁻ z : G, ∫⁻ z' : G, ∫⁻ s : G, ∫⁻ s' : G, bInt σ w W W' γ z z' s s'
         ∂μS' ∂μS ∂ν' ∂ν := by
-  have hc := measurable_bInt_prod hσ w hW hW' γ
+  have hm : Measurable fun p : (G × G) × (G × G) => (p.1.1, p.2.1, p.1.2, p.2.2) := by fun_prop
+  have hc := (measurable_bInt hσ w hW hW' γ).comp hm
   have e1 := lintegral_const_mul (μ := (ν.prod μS).prod (ν'.prod μS')) c hc
   have e2 := lintegral_four (ν := ν) (μS := μS) (ν' := ν') (μS' := μS')
     (bInt σ w W W' γ) (measurable_bInt hσ w hW hW' γ)

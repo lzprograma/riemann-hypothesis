@@ -48,7 +48,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition GlobalTheory.MixedTerm
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.MixedTerm
 
@@ -60,10 +59,7 @@ theorem heisO_add_fun (S T : HSp D) (u : WO S T) (G H : WO S T → ℂ) :
   simp only [heisO, Pi.add_apply, mul_add]
 
 theorem heisO_smul_fun (S T : HSp D) (u : WO S T) (c : ℂ) (G : WO S T → ℂ) :
-    heisO ψ S T u (c • G) = c • heisO ψ S T u G := by
-  funext w
-  simp only [heisO, Pi.smul_apply, smul_eq_mul]
-  ring
+    heisO ψ S T u (c • G) = c • heisO ψ S T u G := GlobalTheory.SplitScalar.heisO_smul ψ S T u c G
 
 theorem continuous_isoPart (V W : HSp D) {r : ℕ} (C : Matrix (Fin V.rank) (Fin r) D.host.E) :
     Continuous (isoPart V W C) := by

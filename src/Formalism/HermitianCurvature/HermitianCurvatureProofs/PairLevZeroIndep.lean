@@ -15,56 +15,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumPairLevSt
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GammaFamilyCommuteGenerators
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairOperatorCommute
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -104,11 +58,6 @@ theorem freeOf_J_matrix (a : S) : FreeOf2 a JJ := by
   fin_cases i <;> fin_cases j <;> simp [Formalism.YangianSpanCharacter.T.J] <;>
     first | exact free_zero a | exact free_one a | exact free_neg (free_one a)
 
-theorem freeOf2_mul {a : S} {M N : M2 (SlopeTestRemainingChoices S A)} (hM : FreeOf2 a M) (hN : FreeOf2 a N) :
-    FreeOf2 a (M * N) := by
-  intro i j k l
-  simpa only [Matrix.mul_apply] using Commute.sum_right _ _ _ fun m _ => (hM i m k l).mul_right (hN m j k l)
-
 theorem freeOf2_transpose {a : S} {M : M2 (SlopeTestRemainingChoices S A)} (hM : FreeOf2 a M) : FreeOf2 a Mᵀ := fun i j => hM j i
 
 theorem freeOf_matrix_neg {a : S} {M : M2 (SlopeTestRemainingChoices S A)} (hM : FreeOf2 a M) : FreeOf2 a (-M) := fun i j => free_neg (hM i j)
@@ -135,9 +84,6 @@ theorem J_conjTranspose [StarRing A] : JJᴴ = -JJ := by
 
 theorem comm_J (b : SlopeTestRemainingChoices S A) (i j : Fin 2) : Commute b (JJ i j) := by
   fin_cases i <;> fin_cases j <;> simp [Formalism.YangianSpanCharacter.T.J]
-
-theorem diagScalar_mul (x y : SlopeTestRemainingChoices S A) : d0 (x * y) = d0 x * d0 y := by
-  simp [d0, Matrix.diagonal_mul_diagonal]
 
 theorem diagScalar_smul (c : K) (x : SlopeTestRemainingChoices S A) : d0 (c • x) = c • d0 x := by
   funext i j
@@ -214,7 +160,7 @@ theorem mul_ins {a : S} {RR : SlopeTestRemainingChoices S A} (hR : FreeOf a RR) 
 
 theorem star_mul_ins {a : S} {RR : SlopeTestRemainingChoices S A} (hR : FreeOf a RR) {M : M2 (SlopeTestRemainingChoices S A)} (hM : FreeOf2 a M)
     (h : (d0 RR * M)ᴴ = d0 RR * M) : star (RR * ins a M) = RR * ins a M := by
-  rw [mul_ins hR, Wd1.ins_star a _ (freeOf2_mul (freeOf_diagScalar hR) hM), h]
+  rw [mul_ins hR, Wd1.ins_star a _ (Formalism.FourierDecayAlt.P.Wd11.freeOf2_mul (freeOf_diagScalar hR) hM), h]
 
 theorem herm_transpose {RR : SlopeTestRemainingChoices S A} {M : M2 (SlopeTestRemainingChoices S A)}
     (h : (d0 RR * M)ᴴ = d0 RR * M) : (d0 RR * Mᵀ)ᴴ = d0 RR * Mᵀ := by
@@ -246,10 +192,10 @@ theorem position_clauses (TT : K → M2 (SlopeTestRemainingChoices S A)) (q : K 
     rw [Matrix.mul_neg, Matrix.mul_smul, ← Matrix.mul_assoc, h2, smul_smul, inv_mul_cancel₀ hq,
       one_smul, J_transpose]
   · rw [PsiP, ← Wd1.ins_mul a _ _
-      (freeOf_matrix_neg (freeOf_matrix_smul _ (freeOf2_mul (freeOf_J_matrix a) (freeOf2_transpose (hF (Y + 1))))))]
+      (freeOf_matrix_neg (freeOf_matrix_smul _ (Formalism.FourierDecayAlt.P.Wd11.freeOf2_mul (freeOf_J_matrix a) (freeOf2_transpose (hF (Y + 1))))))]
     rw [Matrix.neg_mul, Matrix.smul_mul, Matrix.mul_assoc, ← Matrix.mul_assoc _ JJ, h1,
       Matrix.mul_smul, smul_smul, inv_mul_cancel₀ hq, one_smul, J_mul_J, neg_neg, Wd1.ins_one]
-  · rw [PsiP, ← Wd1.ins_mul a _ _ (freeOf2_mul (freeOf_J_matrix a) (hF Y))]
+  · rw [PsiP, ← Wd1.ins_mul a _ _ (Formalism.FourierDecayAlt.P.Wd11.freeOf2_mul (freeOf_J_matrix a) (hF Y))]
     rw [Matrix.mul_neg, Matrix.mul_smul, Matrix.mul_assoc, ← Matrix.mul_assoc (TT Y), h2,
       Matrix.mul_smul, smul_smul, inv_mul_cancel₀ hq, one_smul, J_mul_J, neg_neg, Wd1.ins_one]
 
@@ -271,7 +217,7 @@ theorem dualPlus_of (hE : ExchMinus) : DualPlus := by
     have hc : d0 (ins a (Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A))) * TT Y0 = TT Y0 * d0 (ins a (Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A))) :=
       diagScalar_commute_of_entries fun i j => (Wd1.ins_comm a _ (TT Y0 i j) (hF Y0 i j) (comm_J _)).symm
     have hk := Rh0_J (A := A) a (Y0 - Y) (Y + 1 - Y0) (by ring) hD0 hD1
-    rw [psiP_eq, diagScalar_neg, diagScalar_smul, diagScalar_mul]
+    rw [psiP_eq, diagScalar_neg, diagScalar_smul, Formalism.FourierDecayAlt.P.Wd11.diagScalar_mul]
     generalize d0 (ins a (Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A))) = Jd at hc hk ⊢
     generalize d0 (ins a (TT (Y + 1))ᵀ) = Td at hex ⊢
     generalize (Rht0 a (Y + 1 - Y0) : M2 (SlopeTestRemainingChoices S A)) = R at hex hk ⊢
@@ -320,7 +266,7 @@ theorem dualMinus_of (hE : ExchPlus) : DualMinus := by
     have hk := Rht0_J (A := A) a (Yb - Y0) (Y0 - Yb + 1) (by ring) hd0' hd1
     rw [show (Yb - Y0) / (Yb - Y0 - 1) = (Y0 - Yb) / (Y0 - Yb + 1) by
       rw [← neg_div_neg_eq]; congr 1 <;> ring] at hk
-    rw [psiM_eq, diagScalar_smul, diagScalar_mul]
+    rw [psiM_eq, diagScalar_smul, Formalism.FourierDecayAlt.P.Wd11.diagScalar_mul]
     generalize d0 (ins a (Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A))) = Jd at hc hk ⊢
     generalize d0 (ins a (TT (Yb - 1))) = Td at hex ⊢
     generalize (Rh0 a (Y0 - Yb + 1) : M2 (SlopeTestRemainingChoices S A)) = R at hex hk ⊢
@@ -466,12 +412,8 @@ theorem free_smul {a : S} {x : SlopeTestRemainingChoices S A} (c : K) (hx : Free
   fun i j => (hx i j).smul_right c
 
 theorem freeOf_J_matrix (a : S) : FreeOf2 a (YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A)) := by
-  intro i j
-  fin_cases i <;> fin_cases j
-  · exact free_zero a
-  · exact free_one a
-  · exact free_neg (free_one a)
-  · exact free_zero a
+  intros
+  apply _root_.Formalism.FourierDecayAlt.P.Wd9.freeOf_J_matrix <;> assumption
 
 theorem freeOf2_mul {a : S} {M N : M2 (SlopeTestRemainingChoices S A)} (hM : FreeOf2 a M) (hN : FreeOf2 a N) :
     FreeOf2 a (M * N) := by
@@ -536,12 +478,6 @@ theorem Jt_conj : ((YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A))ᵀ
 theorem J_entry_comm (x : SlopeTestRemainingChoices S A) (i j : Fin 2) : Commute x (YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A) i j) := by
   fin_cases i <;> fin_cases j <;> simp [YangianSpanCharacter.T.J]
 
-theorem good_cons {l : Letter K S} {W : List (Letter K S)} (h : Good (l :: W)) :
-    Good W ∧ l.intersection_update_fsHerm_neg_one ∉ W.map Letter.intersection_update_fsHerm_neg_one ∧ star l.pt = l.pt ∧ Reg W l.pt := by
-  obtain ⟨h1, h2, h3⟩ := h
-  simp only [List.map_cons, List.nodup_cons, List.pairwise_cons] at h1 h3
-  exact ⟨⟨h1.2, fun l' hl' => h2 l' (List.mem_cons_of_mem _ hl'), h3.2⟩, h1.1, h2 l List.mem_cons_self, h3.1⟩
-
 theorem reg_cons {l : Letter K S} {W : List (Letter K S)} {Y : K} (h : Reg (l :: W) Y) :
     RegL l Y ∧ Reg W Y :=
   ⟨h l List.mem_cons_self, fun x hx => h x (List.mem_cons_of_mem _ hx)⟩
@@ -589,8 +525,8 @@ theorem dualityList_of (hIF : InsFree) (hIS : InsStar) (hWF : WordFree) (hWM : W
       simp [Ps, ph, d0]
   | cons l L ih =>
     intro hG hGd hOK
-    obtain ⟨hG', hnot, hstar, hregY⟩ := good_cons hG
-    obtain ⟨hGd', -, -, hregd⟩ := good_cons hGd
+    obtain ⟨hG', hnot, hstar, hregY⟩ := Formalism.FourierDecayAlt.P.Wd7.good_cons hG
+    obtain ⟨hGd', -, -, hregd⟩ := Formalism.FourierDecayAlt.P.Wd7.good_cons hGd
     obtain ⟨hR1, hq, hOK'⟩ := hOK
     obtain ⟨hU', hk', h3', h4', h5'⟩ := ih hG' hGd' hOK'
     have hM := hWM K A S QQ q (L ++ w) hSt hG'
@@ -972,8 +908,8 @@ theorem word_transfer_mem_entrywise (QQ : ℂ → M2 A) (w : List (Letter ℂ S)
     exact io_mem (hQ a b)
   | cons l w ih =>
     by_cases hp : l.plus
-    · rw [TTw, if_pos hp]; exact entries_mem_mul ih (reflection_entries_mem _ _)
-    · rw [TTw, if_neg hp]; exact entries_mem_mul (reflection_transpose_entries_mem _ _) ih
+    · rw [TTw, ite_eq_left hp]; exact entries_mem_mul ih (reflection_entries_mem _ _)
+    · rw [TTw, ite_eq_right hp]; exact entries_mem_mul (reflection_transpose_entries_mem _ _) ih
 
 theorem rrw_mem_at (QQ : ℂ → M2 A) (w : List (Letter ℂ S)) (hw : ∀ l ∈ w, ∀ a b, QQ l.pt a b ∈ 𝒜) :
     RRw QQ w ∈ entSub 𝒜 := by

@@ -19,8 +19,4 @@ def MoriwakiBigCurve.Statement : Prop :=
     II K ι (mCoordIdeal y) (0 + 1) (fun _ => A) ≤
       arVolP (IsSmallH (mCoordIdeal y) y A) (chartLat y A.a) 1 0
 
-namespace MoriwakiBigCurve
-
-end MoriwakiBigCurve
-
 end GroundTheory.Heights₂.Heights.Targets

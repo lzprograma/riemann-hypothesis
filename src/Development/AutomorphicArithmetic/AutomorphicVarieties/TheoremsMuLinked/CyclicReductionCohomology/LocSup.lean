@@ -46,15 +46,6 @@ import Mathlib.Tactic.ReduceModChar
 
 open IsLocalRing Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th GlobalTheory.GalOfCusp
 
-private theorem up_mul {R : Type} [CommRing R] {n : ℕ} {P Q : Matrix (Fin n) (Fin n) R}
-    (hP : ∀ i j, j < i → P i j = 0) (hQ : ∀ i j, j < i → Q i j = 0) : ∀ i j, j < i → (P * Q) i j = 0 := by
-  intro i j h
-  rw [Matrix.mul_apply]
-  refine Finset.sum_eq_zero fun c _ => ?_
-  by_cases hc : c < i
-  · rw [hP i c hc, zero_mul]
-  · rw [hQ c j (lt_of_lt_of_le h (not_lt.1 hc)), mul_zero]
-
 private theorem up_conj {R : Type} [CommRing R] {n : ℕ} {w wi r s y : Matrix (Fin n) (Fin n) R}
     (h2 : w * wi = 1)
     (hr : ∀ i j, j < i → (wi * r * w) i j = 0) (hs : ∀ i j, j < i → (wi * s * w) i j = 0)
@@ -65,7 +56,8 @@ private theorem up_conj {R : Type} [CommRing R] {n : ℕ} {w wi r s y : Matrix (
           rw [h2]; noncomm_ring
       _ = _ := by noncomm_ring
   intro i j h
-  rw [e, Matrix.sub_apply, up_mul (up_mul hr hy) hs i j h, hy i j h, sub_zero]
+  rw [e, Matrix.sub_apply, BlockTriangular.mul (b := id) (BlockTriangular.mul (b := id) hr hy) hs h,
+    hy i j h, sub_zero]
 
 private theorem red_mul {O : Type} [CommRing O] [IsLocalRing O] {n : ℕ} (m : ℕ) (A B : Matrix (Fin n) (Fin n) O) :
     red m (A * B) = red m A * red m B := Matrix.map_mul

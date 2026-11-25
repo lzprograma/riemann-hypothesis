@@ -42,7 +42,7 @@ theorem relAlg (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (π : Fin (r + 1) �
       U k k.succ * Z (π k.castSucc) k.castSucc := by
     intro k
     rw [hA, Finset.sum_eq_single k]
-    · rw [if_pos (Fin.castSucc_lt_succ : k.castSucc < k.succ)]
+    · rw [ite_eq_left (Fin.castSucc_lt_succ : k.castSucc < k.succ)]
     · intro c _ hck
       split_ifs
       · rw [hZ0 _ _ (fun e => hck (Fin.castSucc_injective r (hπinj e).symm)), mul_zero]
@@ -55,7 +55,7 @@ theorem relAlg (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (π : Fin (r + 1) �
       conj (m j j.succ) * Z j.castSucc (π j.castSucc) := by
     intro j
     rw [← hA, Finset.sum_eq_single j]
-    · rw [if_pos (Fin.castSucc_lt_succ : j.castSucc < j.succ)]
+    · rw [ite_eq_left (Fin.castSucc_lt_succ : j.castSucc < j.succ)]
     · intro c _ hcj
       split_ifs
       · rw [hZ0 _ _ (by rw [hπ]; exact fun e => hcj (Fin.castSucc_injective r e)), mul_zero]
@@ -97,7 +97,7 @@ theorem relAlg (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (π : Fin (r + 1) �
           conj (m c (π k.castSucc)) * Z c.castSucc k.succ else 0) =
           conj (m j j.succ) * Z (π k.succ) k.succ := by
         rw [Finset.sum_eq_single j]
-        · rw [hjs, hjc, if_pos hlt1]
+        · rw [hjs, hjc, ite_eq_left hlt1]
         · intro c _ hcj
           split_ifs
           · rw [hZ0 _ _ (fun e => hcj (Fin.castSucc_injective r (e.trans hjc.symm))), mul_zero]
@@ -175,24 +175,24 @@ theorem ptEntry_eq : ∀ (bs : List (K × ℕ)) (c b : ℕ), b < (bs.map Prod.sn
     simp only [List.map_cons, List.sum_cons] at hb
     rw [ptEntry_cons]
     by_cases hbs : b < s
-    · have hp : ptPar ((t, s) :: bs) b = s - 1 - b := by rw [ptPar_cons, if_pos hbs]
-      have hq : ptSc ((t, s) :: bs) b = t := by rw [ptSc_cons, if_pos hbs]
+    · have hp : ptPar ((t, s) :: bs) b = s - 1 - b := by rw [ptPar_cons, ite_eq_left hbs]
+      have hq : ptSc ((t, s) :: bs) b = t := by rw [ptSc_cons, ite_eq_left hbs]
       rw [hp, hq]
       by_cases hcs : c < s
-      · rw [if_pos ⟨hcs, hbs⟩]
+      · rw [ite_eq_left ⟨hcs, hbs⟩]
         by_cases h : c + b + 1 = s
-        · rw [if_pos h, if_pos (by omega)]
-        · rw [if_neg h, if_neg (by omega)]
-      · rw [if_neg (fun h => hcs h.1), if_neg (fun h => by omega), if_neg (by omega)]
-    · have hp : ptPar ((t, s) :: bs) b = s + ptPar bs (b - s) := by rw [ptPar_cons, if_neg hbs]
-      have hq : ptSc ((t, s) :: bs) b = ptSc bs (b - s) := by rw [ptSc_cons, if_neg hbs]
-      rw [hp, hq, if_neg (fun h => hbs h.2)]
+        · rw [ite_eq_left h, ite_eq_left (by omega)]
+        · rw [ite_eq_right h, ite_eq_right (by omega)]
+      · rw [ite_eq_right (fun h => hcs h.1), ite_eq_right (fun h => by omega), ite_eq_right (by omega)]
+    · have hp : ptPar ((t, s) :: bs) b = s + ptPar bs (b - s) := by rw [ptPar_cons, ite_eq_right hbs]
+      have hq : ptSc ((t, s) :: bs) b = ptSc bs (b - s) := by rw [ptSc_cons, ite_eq_right hbs]
+      rw [hp, hq, ite_eq_right (fun h => hbs h.2)]
       by_cases hcs : s ≤ c
-      · rw [if_pos ⟨hcs, by omega⟩, ptEntry_eq bs (c - s) (b - s) (by omega)]
+      · rw [ite_eq_left ⟨hcs, by omega⟩, ptEntry_eq bs (c - s) (b - s) (by omega)]
         by_cases h : c - s = ptPar bs (b - s)
-        · rw [if_pos h, if_pos (by omega)]
-        · rw [if_neg h, if_neg (by omega)]
-      · rw [if_neg (fun h => hcs h.1), if_neg (by omega)]
+        · rw [ite_eq_left h, ite_eq_left (by omega)]
+        · rw [ite_eq_right h, ite_eq_right (by omega)]
+      · rw [ite_eq_right (fun h => hcs h.1), ite_eq_right (by omega)]
 
 theorem ptPar_lt : ∀ (bs : List (K × ℕ)) (b : ℕ), b < (bs.map Prod.snd).sum →
     ptPar bs b < (bs.map Prod.snd).sum
@@ -201,8 +201,8 @@ theorem ptPar_lt : ∀ (bs : List (K × ℕ)) (b : ℕ), b < (bs.map Prod.snd).s
     simp only [List.map_cons, List.sum_cons] at hb ⊢
     rw [ptPar_cons]
     by_cases hbs : b < s
-    · rw [if_pos hbs]; omega
-    · rw [if_neg hbs]; have := ptPar_lt bs (b - s) (by omega); omega
+    · rw [ite_eq_left hbs]; omega
+    · rw [ite_eq_right hbs]; have := ptPar_lt bs (b - s) (by omega); omega
 
 theorem ptPar_invol : ∀ (bs : List (K × ℕ)) (b : ℕ), b < (bs.map Prod.snd).sum →
     ptPar bs (ptPar bs b) = b
@@ -210,10 +210,10 @@ theorem ptPar_invol : ∀ (bs : List (K × ℕ)) (b : ℕ), b < (bs.map Prod.snd
   | (t, s) :: bs, b, hb => by
     simp only [List.map_cons, List.sum_cons] at hb
     by_cases hbs : b < s
-    · have hp : ptPar ((t, s) :: bs) b = s - 1 - b := by rw [ptPar_cons, if_pos hbs]
-      rw [hp, ptPar_cons, if_pos (by omega)]; omega
-    · have hp : ptPar ((t, s) :: bs) b = s + ptPar bs (b - s) := by rw [ptPar_cons, if_neg hbs]
-      rw [hp, ptPar_cons, if_neg (by omega)]
+    · have hp : ptPar ((t, s) :: bs) b = s - 1 - b := by rw [ptPar_cons, ite_eq_left hbs]
+      rw [hp, ptPar_cons, ite_eq_left (by omega)]; omega
+    · have hp : ptPar ((t, s) :: bs) b = s + ptPar bs (b - s) := by rw [ptPar_cons, ite_eq_right hbs]
+      rw [hp, ptPar_cons, ite_eq_right (by omega)]
       have : s + ptPar bs (b - s) - s = ptPar bs (b - s) := by omega
       rw [this, ptPar_invol bs (b - s) (by omega)]; omega
 
@@ -224,8 +224,8 @@ theorem ptSc_ne : ∀ (bs : List (K × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 ∧ 1 ≤
     simp only [List.map_cons, List.sum_cons] at hb
     rw [ptSc_cons]
     by_cases hbs : b < s
-    · rw [if_pos hbs]; exact (h (t, s) (by simp)).1
-    · rw [if_neg hbs]; exact ptSc_ne bs (fun b hb => h b (by simp [hb])) (b - s) (by omega)
+    · rw [ite_eq_left hbs]; exact (h (t, s) (by simp)).1
+    · rw [ite_eq_right hbs]; exact ptSc_ne bs (fun b hb => h b (by simp [hb])) (b - s) (by omega)
 
 theorem ptPar_consec : ∀ (bs : List (K × ℕ)), (∀ b ∈ bs, 1 ≤ b.2) → ∀ k : ℕ,
     k + 1 < (bs.map Prod.snd).sum →
@@ -237,12 +237,12 @@ theorem ptPar_consec : ∀ (bs : List (K × ℕ)), (∀ b ∈ bs, 1 ≤ b.2) →
     rw [ptPar_cons, ptPar_cons, ptSc_cons, ptSc_cons]
     by_cases h1 : k + 1 < s
     · left
-      rw [if_pos h1, if_pos (by omega), if_pos h1, if_pos (by omega)]
+      rw [ite_eq_left h1, ite_eq_left (by omega), ite_eq_left h1, ite_eq_left (by omega)]
       exact ⟨by omega, rfl⟩
     · by_cases h2 : k < s
       · right
-        rw [if_neg h1, if_pos h2]; omega
-      · rw [if_neg h1, if_neg h2, if_neg h1, if_neg h2]
+        rw [ite_eq_right h1, ite_eq_left h2]; omega
+      · rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right h1, ite_eq_right h2]
         have e : k + 1 - s = k - s + 1 := by omega
         rw [e]
         rcases ptPar_consec bs (fun b hb => h b (by simp [hb])) (k - s) (by omega) with h3 | h3
@@ -339,7 +339,7 @@ theorem flag_expand (e f : Fin r → Fin n → ℂ) (z : Fin n → ℂ)
       rw [fam_last]
       exact hfz c
     | cast b =>
-      rw [fam_castSucc, hfe, if_neg]
+      rw [fam_castSucc, hfe, ite_eq_right]
       intro hbc
       subst hbc
       exact lt_irrefl _ hc
@@ -355,11 +355,11 @@ theorem flag_expand (e f : Fin r → Fin n → ℂ) (z : Fin n → ℂ)
     · have hc' : c.val < a.val := by
         rw [Fin.lt_iff_val_lt_val, Fin.coe_castSucc] at hc
         exact hc
-      rw [if_pos hc', if_pos hc, hsubJ, hzero c hc, sub_zero]
+      rw [ite_eq_left hc', ite_eq_left hc, hsubJ, hzero c hc, sub_zero]
     · have hc' : ¬ c.val < a.val := by
         rw [Fin.lt_iff_val_lt_val, Fin.coe_castSucc] at hc
         exact hc
-      rw [if_neg hc', if_neg hc]
+      rw [ite_eq_right hc', ite_eq_right hc]
   rw [← hS, ← hexp]
   abel
 

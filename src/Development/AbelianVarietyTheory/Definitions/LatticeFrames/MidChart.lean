@@ -46,7 +46,6 @@ open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct Classical
 
 namespace GlobalTheory.AdForm
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7}
 
 abbrev EF (D : D7) : Type := D.host.E ⊗[D.host.F] FiniteAdeleRing (𝓞 D.host.F) D.host.F
@@ -112,10 +111,6 @@ def midChart (i : ℕ) (h1 : 1 ≤ i) (h2 : i + 1 ≤ D.R.m) (β : Ch i) : Chart
 
 def chart (i : ℕ) (hi : i ≤ D.R.m) (β : Ch i) : Chart D u i hi :=
   if h : i = 0 ∨ i = D.R.m then endChart F i hi h else midChart F i (by omega) (by omega) β
-
-def rd (θ : InfFam D) (i : ℕ) (hi : i ≤ D.R.m) (β : Ch i) (ψ : (D.mem u).C.cls i → (D.mem u).C.Y i → ℂ)
-    (y : (D.mem u).C.Y i) : GA D (D.sp.X i) → ℂ :=
-  (chart F i hi β).rd θ ψ y
 
 def OnChart (i : ℕ) (hi : i ≤ D.R.m) (β : Ch i) (ψ : (D.mem u).C.cls i → (D.mem u).C.Y i → ℂ) : Prop :=
   ∀ c, c ∉ Set.range (chart F i hi β).inc → ψ c = 0

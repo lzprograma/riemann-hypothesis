@@ -646,14 +646,14 @@ private theorem filterNeTop_map_filter_append {X Y : Scheme.{u}}
   | nil => rfl
   | cons D L ih =>
       by_cases hpD : p D = true
-      · rw [List.filter_cons, if_pos hpD, List.map_cons, List.map_cons,
+      · rw [List.filter_cons, ite_eq_left hpD, List.map_cons, List.map_cons,
           List.cons_append, List.cons_append]
         by_cases hfD : f D = ⊤
         · rw [hfD, filterNeTop_cons_top, filterNeTop_cons_top]
           exact ih
         · rw [filterNeTop_cons_of_ne_top hfD, filterNeTop_cons_of_ne_top hfD, ih]
       · have hDtop : D = ⊤ := hp D (by simpa using hpD)
-        rw [List.filter_cons, if_neg hpD, List.map_cons, List.cons_append, hDtop, hf,
+        rw [List.filter_cons, ite_eq_right hpD, List.map_cons, List.cons_append, hDtop, hf,
           filterNeTop_cons_top]
         exact ih
 

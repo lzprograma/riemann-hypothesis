@@ -61,7 +61,6 @@ open UpperTheory.V.HV (Coef)
 open UpperTheory.V.Z.Mult (Cp)
 open UpperTheory.V.Z.J.D
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 
 section Alg
@@ -176,7 +175,7 @@ private theorem loc_adm (hU : GlobalTheory.BCT.Unr E) (hn : 1 ≤ n) {σ : Submo
 
 private theorem loc_one (hU : GlobalTheory.BCT.Unr E) (hn : 1 ≤ n) {σ : Submodule ℂ (UA E n → ℂ)} (hσ : IsAutRepU σ) (w : Plc E)
     (τ : SmIrr (UL n w)) (hτ : IsCompU σ w τ) (h : IsUnramU σ w) : Module.finrank ℂ (fixed τ.ρ (KL n w)) = 1 := by
-  obtain ⟨x, hx, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot (GlobalTheory.T.unramifiedVector_gives_localComponent_sphericalVector E hU n σ hσ w τ hτ h)
+  obtain ⟨x, hx, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot (_root_.GlobalTheory.BCT.LocUnr.fixed_KL_ne_bot E hU n σ hσ w τ hτ h)
   obtain ⟨θ, h1, h2, h3⟩ := GlobalTheory.BCT.SphLine.exists_gelfand_anti E hU n w
   obtain ⟨hKo, hKc⟩ := GlobalTheory.BCT.LocCompU.isOpen_isCompact_KL hU n w
   rw [_root_.GlobalTheory.GroupAverageProjection.main (UL n w) (KL n w) hKo hKc θ h1 h2 h3 τ.V τ.ρ τ.irred
@@ -210,7 +209,7 @@ private theorem loc_move (hU : GlobalTheory.BCT.Unr E) (hn : 1 ≤ n) {σ : Subm
     (K : Subgroup (UL n w)) :
     Module.finrank ℂ (fixd τ'.ρ (K.map (UL n w).subtype)) = Module.finrank ℂ (fixed τ.ρ K) := by
   have hm : ∀ g : GLw n w, g ∈ UL n w := fun g => by
-    rw [UL, if_pos hw]
+    rw [UL, ite_eq_left hw]
     trivial
   let τ₁ : SmIrr (UL n w) :=
     { V := τ'.V

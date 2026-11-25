@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.VolUMeasurableSetTriPos
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntMuCD
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.DensOn
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
@@ -11,59 +12,9 @@ public import Mathlib.MeasureTheory.Measure.Prod
 public import Mathlib.MeasureTheory.Measure.WithDensity
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.VolUFactProdMulLe
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.VolUDensity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ExpInPPosDef
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.Blocks
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Algebra.Order.Star.Real
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.ContinuousMatrixExpCompact, ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.KDensA, ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.KDensB, ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.KDensC, ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.KdMeasImageProd, ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.JacobianNearOneOfSmall
@@ -87,22 +38,22 @@ theorem compactMatrix_off_block {ε : Fin n → Bool} (w : KCo ε) {a b : Fin n}
     kMat w a b = 0 := by
   have hab : a ≠ b := fun e => h (e ▸ rfl)
   unfold kMat
-  rw [if_neg hab, dif_neg (fun h' => h h'.2), dif_neg (fun h' => h h'.2.symm)]
+  rw [ite_eq_right hab, dite_eq_right (fun h' => h h'.2), dite_eq_right (fun h' => h h'.2.symm)]
 
 theorem compactMatrix_conjTranspose {ε : Fin n → Bool} (w : KCo ε) : (kMat w)ᴴ = -kMat w := by
   ext a b
   change star (kMat w b a) = -(kMat w a b)
   by_cases hab : a = b
   · subst hab
-    simp only [kMat, if_true]
+    simp only [kMat, ite_true]
     simp
   · have hba : b ≠ a := Ne.symm hab
     by_cases h1 : b < a ∧ ε a = ε b
     · have h2 : ¬ (a < b ∧ ε b = ε a) := fun h => lt_asymm h.1 h1.1
-      simp only [kMat, if_neg hab, if_neg hba, dif_pos h1, dif_neg h2, star_neg, star_star]
+      simp only [kMat, ite_eq_right hab, ite_eq_right hba, dite_eq_left h1, dite_eq_right h2, star_neg, star_star]
     · by_cases h2 : a < b ∧ ε b = ε a
-      · simp only [kMat, if_neg hab, if_neg hba, dif_pos h2, dif_neg h1, neg_neg]
-      · simp only [kMat, if_neg hab, if_neg hba, dif_neg h2, dif_neg h1, star_zero, neg_zero]
+      · simp only [kMat, ite_eq_right hab, ite_eq_right hba, dite_eq_left h2, dite_eq_right h1, neg_neg]
+      · simp only [kMat, ite_eq_right hab, ite_eq_right hba, dite_eq_right h2, dite_eq_right h1, star_zero, neg_zero]
 
 theorem compactMatrix_comm_signature {ε : Fin n → Bool} (w : KCo ε) : kMat w * Jm ε = Jm ε * kMat w := by
   ext a b
@@ -128,7 +79,7 @@ theorem compactMatrix_injective (ε : Fin n → Bool) : Function.Injective (kMat
     simpa [kMat] using h2
   · have h2 := h1 ab.1.1 ab.1.2
     have hne : ab.1.1 ≠ ab.1.2 := ne_of_gt ab.2.1
-    simp only [kMat, if_neg hne, dif_pos ab.2] at h2
+    simp only [kMat, ite_eq_right hne, dite_eq_left ab.2] at h2
     exact h2
 
 theorem compactMatrix_continuous (ε : Fin n → Bool) :
@@ -136,14 +87,14 @@ theorem compactMatrix_continuous (ε : Fin n → Bool) :
   refine continuous_pi fun a => continuous_pi fun b => ?_
   unfold kMat
   by_cases h0 : a = b
-  · simp only [h0, if_true]; fun_prop
-  · simp only [if_neg h0]
+  · simp only [h0, ite_true]; fun_prop
+  · simp only [ite_eq_right h0]
     by_cases h1 : b < a ∧ ε a = ε b
-    · simp only [dif_pos h1]; fun_prop
-    · simp only [dif_neg h1]
+    · simp only [dite_eq_left h1]; fun_prop
+    · simp only [dite_eq_right h1]
       by_cases h2 : a < b ∧ ε b = ε a
-      · simp only [dif_pos h2]; fun_prop
-      · simp only [dif_neg h2]; fun_prop
+      · simp only [dite_eq_left h2]; fun_prop
+      · simp only [dite_eq_right h2]; fun_prop
 
 theorem compactMatrix_zero (ε : Fin n → Bool) : kMat (0 : KCo ε) = 0 := by
   ext a b
@@ -326,13 +277,9 @@ lemma kdD_injective (ε : Fin n → Bool) : Function.Injective (kdD ε) := by
   have := congrFun (congrFun h (kdSig ε ⟨s, i⟩)) (kdSig ε ⟨s, j⟩)
   rwa [kdD_apply, kdD_apply, blockDiagonal'_apply_eq, blockDiagonal'_apply_eq] at this
 
-lemma kd_commJ_iff (ε : Fin n → Bool) (M : Matrix (Fin n) (Fin n) ℂ) :
-    M * Jm ε = Jm ε * M ↔ ∀ a b, ε a ≠ ε b → M a b = 0 := by
-  apply ReciprocityTheory.ChartRestriction.DS.HW.commJ_iff
-
 lemma kdD_commJ (ε : Fin n → Bool) (v : ∀ s : Bool, Matrix (Fin (kdC ε s)) (Fin (kdC ε s)) ℂ) :
     kdD ε v * Jm ε = Jm ε * kdD ε v := by
-  rw [kd_commJ_iff]
+  rw [ReciprocityTheory.ChartRestriction.DS.HW.commJ_iff]
   intro a b hab
   obtain ⟨⟨s, i⟩, rfl⟩ := (kdSig ε).surjective a
   obtain ⟨⟨s', j⟩, rfl⟩ := (kdSig ε).surjective b
@@ -355,7 +302,7 @@ lemma eq_kdD {ε : Fin n → Bool} {X : Matrix (Fin n) (Fin n) ℂ} (hX : X * Jm
   · subst h
     rw [blockDiagonal'_apply_eq]; rfl
   · rw [blockDiagonal'_apply_ne _ _ _ h]
-    exact (kd_commJ_iff ε X).1 hX _ _ (by rw [kdSig_apply, kdSig_apply, ε_kdE ε s i, ε_kdE ε s' j]; exact h)
+    exact (ReciprocityTheory.ChartRestriction.DS.HW.commJ_iff ε X).1 hX _ _ (by rw [kdSig_apply, kdSig_apply, ε_kdE ε s i, ε_kdE ε s' j]; exact h)
 
 lemma kdD_conjTranspose (ε : Fin n → Bool) (v : ∀ s : Bool, Matrix (Fin (kdC ε s)) (Fin (kdC ε s)) ℂ) :
     (kdD ε v)ᴴ = kdD ε (fun s => (v s)ᴴ) := by
@@ -557,14 +504,14 @@ lemma kMat_eq_kdD {ε : Fin n → Bool} (w : KCo ε) : kMat w = kdD ε (fun s =>
         fun h => absurd ((kdE ε s).lt_iff_lt.1 h.1) (not_lt.2 hij.le)
       have h3 : kdE ε s i < kdE ε s j ∧ ε (kdE ε s j) = ε (kdE ε s i) :=
         ⟨(kdE ε s).lt_iff_lt.2 hij, hE.symm⟩
-      simp only [kMat, skMat, kdCoS, if_neg h1, dif_neg h2, dif_pos h3, if_neg hij.ne,
-        dif_neg (not_lt.2 hij.le), dif_pos hij]
+      simp only [kMat, skMat, kdCoS, ite_eq_right h1, dite_eq_right h2, dite_eq_left h3, ite_eq_right hij.ne,
+        dite_eq_right (not_lt.2 hij.le), dite_eq_left hij]
       rfl
     · simp [kMat, skMat, kdCoS]
     · have h1 : kdE ε s i ≠ kdE ε s j := (kdE ε s).injective.ne hij.ne'
       have h2 : kdE ε s j < kdE ε s i ∧ ε (kdE ε s i) = ε (kdE ε s j) :=
         ⟨(kdE ε s).lt_iff_lt.2 hij, hE⟩
-      simp only [kMat, skMat, kdCoS, if_neg h1, dif_pos h2, if_neg hij.ne', dif_pos hij]
+      simp only [kMat, skMat, kdCoS, ite_eq_right h1, dite_eq_left h2, ite_eq_right hij.ne', dite_eq_left hij]
       rfl
   · rw [Matrix.blockDiagonal'_apply_ne _ _ _ hst, kdSig_apply, kdSig_apply]
     have h1 := ε_kdE ε s i
@@ -578,7 +525,7 @@ lemma kMat_eq_kdD {ε : Fin n → Bool} (w : KCo ε) : kMat w = kdD ε (fun s =>
       have := h.2
       rw [h1, h2] at this
       exact this.symm)
-    simp only [kMat, if_neg hne, dif_neg hc2, dif_neg hc3]
+    simp only [kMat, ite_eq_right hne, dite_eq_right hc2, dite_eq_right hc3]
 
 lemma norm_kdCoS_le {ε : Fin n → Bool} (w : KCo ε) (s : Bool) : ‖kdCoS ε w s‖ ≤ ‖w‖ := by
   rw [Prod.norm_def, Prod.norm_def]
@@ -717,19 +664,6 @@ variable {N : ℕ}
 
 def kdF (N : ℕ) (x : UCo N) : Fin N → Fin N → ℂ := Matrix.of.symm (NormedSpace.exp (skMat x))
 
-lemma kd_skMat_injective : Function.Injective (skMat (N := N)) := by
-  intro x y h
-  have hd : ∀ a b, skMat x a b = skMat y a b := fun a b => by rw [h]
-  refine Prod.ext (funext fun a => ?_) (funext fun ab => ?_)
-  · have := hd a a
-    simp only [skMat] at this
-    exact_mod_cast mul_left_cancel₀ Complex.I_ne_zero this
-  · obtain ⟨⟨a, b⟩, hab⟩ := ab
-    have hab' : b < a := hab
-    have := hd a b
-    simp only [skMat, if_neg (ne_of_gt hab'), dif_pos hab'] at this
-    exact this
-
 lemma kd_continuous_skMat : Continuous (skMat (N := N)) := by
   refine continuous_matrix fun a b => ?_
   simp only [skMat]
@@ -779,7 +713,7 @@ lemma kdF_injOn : ∃ r > 0, InjOn (kdF N) (Metric.ball 0 r) := by
     rw [Set.mem_preimage, kd_skMat_zero]
     exact hV0
   obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.1 hU 0 h0
-  refine ⟨r, hr, fun x hx y hy hxy => kd_skMat_injective (hVi (hball hx) (hball hy) ?_)⟩
+  refine ⟨r, hr, fun x hx y hy hxy => ReciprocityTheory.ChartRestriction.DS.volU_skMat_injective (hVi (hball hx) (hball hy) ?_)⟩
   exact hxy
 
 end KDChart

@@ -97,7 +97,7 @@ theorem exists_fin_coset_reps_of_isDom : ∀ (G : Type) [Group G] [TopologicalSp
   intro G _ _ _ D t ht
   exact GlobalTheory.CompanionTheory.CosetReps.exists_fin_coset_reps G D.J
     (D.J ⊓ D.J.map (MulAut.conj (t : G)).toMonoidHom) (D.J ⊓ D.N)
-    D.isCompact_J (GlobalTheory.CompanionTheory.TopGroup.inter_conj_isOpen G D.J D.isOpen_J (t : G)) inf_le_left inf_le_left
+    D.isCompact_J (GlobalTheory.CompanionTheory.TopGroup.inter_conj_isOpen G D.J D.isOpen_J (t : G))
     (exists_mem_inf_conj_of_isDom G D t ht)
 
 end GlobalTheory.CompanionTheory.Casselman

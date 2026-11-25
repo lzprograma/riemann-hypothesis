@@ -58,8 +58,7 @@ namespace GlobalTheory
 
 theorem _root_.GlobalTheory.exists_isUnit_sub_of_ringHom_ne : ∀ (A O : Type) [CommRing A] [Module.Finite ℤ A] [CommRing O] [IsLocalRing O] (g : ℕ), g.Prime → ¬ IsUnit (g : O) → (∀ x : A, x ^ g - x ∈ Ideal.span {(g : A)}) → ∀ σ σ' : A →+* O, σ ≠ σ' → ∃ a : A, IsUnit (σ a - σ' a) := by
   intro A O _ _ _ _ g hg hgO hA σ σ' hne
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hne
   have hgm : (g : O) ∈ IsLocalRing.maximalIdeal O :=
     (IsLocalRing.mem_maximalIdeal _).mpr (mem_nonunits_iff.mpr hgO)

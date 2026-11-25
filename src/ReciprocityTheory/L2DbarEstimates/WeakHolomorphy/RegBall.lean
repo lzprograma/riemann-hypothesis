@@ -144,7 +144,7 @@ theorem moll_conv_symm (n : ℕ) (s t : ℝ) (x y : V n) :
         rw [mul_comm]
         congr 2 <;> abel
 
-private theorem integral_circleMap_smul_eq_two_pi_mul {n : ℕ} {a : ℝ} {h : V n → ℂ} {x z : V n}
+theorem integral_circleMap_smul_eq_two_pi_mul {n : ℕ} {a : ℝ} {h : V n → ℂ} {x z : V n}
     (hh : DifferentiableOn ℂ h (ball x a)) (hz : ‖z‖ < a) :
     ∫ θ in (0 : ℝ)..2 * Real.pi, h (x + circleMap 0 1 θ • z) = 2 * Real.pi * h x := by
   have hd : DifferentiableOn ℂ (fun l : ℂ => h (x + l • z)) (closedBall (0 : ℂ) 1) := by
@@ -248,7 +248,7 @@ theorem moll_mean {n : ℕ} {a : ℝ} (ha : 0 < a) {h : V n → ℂ} {x : V n}
       have hhc : ContinuousAt h (x + circleMap 0 1 θ0 • z0) :=
         (hh.differentiableAt (isOpen_ball.mem_nhds hmem)).continuousAt
       exact hmc.continuousAt.mul (hhc.comp_of_eq hg.continuousAt rfl)
-    · push_neg at hz0
+    · push Not at hz0
       have hopen : IsOpen {p : ℝ × V n | a / 2 < ‖p.2‖} :=
         isOpen_lt continuous_const (continuous_norm.comp continuous_snd)
       have hmem : (θ0, z0) ∈ {p : ℝ × V n | a / 2 < ‖p.2‖} := by
@@ -279,7 +279,7 @@ theorem moll_mean {n : ℕ} {a : ℝ} (ha : 0 < a) {h : V n → ℂ} {x : V n}
       rw [mem_closedBall, dist_eq_norm, add_sub_cancel_left, norm_smul, norm_circleMap_zero,
         abs_one, one_mul]
       exact hp
-    · push_neg at hp
+    · push Not at hp
       rw [moll_eq_zero_of_half_lt_norm ha hp]
       simp
   have hswap := integral_integral_swap hInt
@@ -290,7 +290,7 @@ theorem moll_mean {n : ℕ} {a : ℝ} (ha : 0 < a) {h : V n → ℂ} {x : V n}
     rw [integral_const_mul]
     by_cases hz : ‖z‖ ≤ a / 2
     · rw [← intervalIntegral.integral_of_le Real.two_pi_pos.le, integral_circleMap_smul_eq_two_pi_mul hh (by linarith)]
-    · push_neg at hz
+    · push Not at hz
       rw [moll_eq_zero_of_half_lt_norm ha hz]
       simp
   rw [← intervalIntegral.integral_of_le Real.two_pi_pos.le,

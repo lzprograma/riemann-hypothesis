@@ -18,8 +18,6 @@ namespace Formalism.L2.SG.Pf.Cnt
 
 open Formalism.HermitianLattices.Ext.L3
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem alpha_split' {K F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberField F] [Algebra F K]
     (𝔭 : Ideal (𝓞 F)) {a b : ℕ} (hab : a ≤ b) :
     alphaStd K 𝔭 b = alphaStd K 𝔭 a *

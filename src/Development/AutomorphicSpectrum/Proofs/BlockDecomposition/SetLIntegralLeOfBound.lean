@@ -1,49 +1,7 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -115,7 +73,7 @@ theorem part_last {n : ℕ} (c : Fin (n - 1) → ℝ) (i : Fin n) (hi : (i : ℕ
   unfold part
   refine Finset.sum_eq_zero fun j _ => ?_
   have := j.2
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 theorem y_bound {n : ℕ} (y : Fin n → ℝ) (hl : ∀ i : Fin n, (i : ℕ) + 1 = n → 0 ≤ y i ∧ y i ≤ 1)
     (hd : ∀ j : Fin (n - 1), 0 ≤ sr y ((j : ℕ) + 1) ∧ sr y ((j : ℕ) + 1) ≤ 1) :
@@ -185,18 +143,29 @@ theorem setLIntegral_le_of_bound {α : Type*} [MeasurableSpace α] (μ : Measure
   calc ∫⁻ g in A, f g ∂μ ≤ ∫⁻ _ in A, c ∂μ := lintegral_mono_ae hae
     _ = c * μ A := setLIntegral_const _ _
 
-theorem slabGlue : SlabGlue := by
-  intro hBV K _ _ n μ _ φ κ hφ hB hκ ω hω hωB t₀
-  obtain ⟨Cv, hCv⟩ := hBV K n μ ω hω hωB
-  obtain ⟨C, hC⟩ := hB ω hω hωB (|t₀| + 2 * n) (maxCompact (K := K) (n := n) : Set _)
-    isCompact_maxCompact
-  let box : (Fin n → ℝ) → Set (AdelicGLn.AdelicGL K n) := fun x =>
-    {g | ∃ b ∈ ω, ∃ y : Fin n → ℝ, (∀ i, |y i| ≤ n) ∧ ∃ k ∈ maxCompact (K := K) (n := n),
-      g = b * tor K (x + y) * k}
-  let X : (Fin (n - 1) → ℕ) → Fin n → ℝ := fun s => part n fun j => -t₀ + s j
-  let a : Fin (n - 1) → ℝ := fun j => 2 * (κ ((j : ℕ) + 1) - rho K n ((j : ℕ) + 1))
-  let E : ℝ := ∑ r ∈ Finset.range n, |κ r| * (2 * n)
-  let D : ℝ := (max C 0 * Real.exp E) ^ 2 * Cv * Real.exp (-t₀ * ∑ j, a j)
+theorem slab_box_cover_bound (K : Type) [Field K] [NumberField K] (n : ℕ)
+    (μ : Measure (AdelicGLn.AdelicGL K n)) (ι : Type) (f : ι → AdelicGLn.AdelicGL K n → ℂ) (κ : ℕ → ℝ)
+    (hf : ∀ i, Continuous (f i)) (hκ : ∀ r, 0 < r → r < n → κ r < rho K n r)
+    (ω : Set (AdelicGLn.AdelicGL K n)) (t₀ : ℝ) (Cv C : ℝ)
+    (hCv : ∀ x : Fin n → ℝ,
+      μ {g | ∃ b ∈ ω, ∃ y : Fin n → ℝ, (∀ i, |y i| ≤ n) ∧ ∃ k ∈ maxCompact (K := K) (n := n),
+        g = b * tor K (x + y) * k} ≤
+      ENNReal.ofReal (Cv * Real.exp (-∑ r ∈ Finset.range n, 2 * rho K n r * sr x r)))
+    (hC : ∀ i, ∀ b ∈ ω, ∀ x : Fin n → ℝ, (∀ r, -(|t₀| + 2 * n) ≤ sr x r) →
+      ∀ k ∈ maxCompact (K := K) (n := n),
+        ‖f i (b * tor K x * k)‖ ≤ C * Real.exp (∑ r ∈ Finset.range n, κ r * sr x r)) :
+    let box : (Fin n → ℝ) → Set (AdelicGLn.AdelicGL K n) := fun x =>
+      {g | ∃ b ∈ ω, ∃ y : Fin n → ℝ, (∀ i, |y i| ≤ n) ∧ ∃ k ∈ maxCompact (K := K) (n := n),
+        g = b * tor K (x + y) * k}
+    let X : (Fin (n - 1) → ℕ) → Fin n → ℝ := fun s => part n fun j => -t₀ + s j
+    let a : Fin (n - 1) → ℝ := fun j => 2 * (κ ((j : ℕ) + 1) - rho K n ((j : ℕ) + 1))
+    let E : ℝ := ∑ r ∈ Finset.range n, |κ r| * (2 * n)
+    let D : ℝ := (max C 0 * Real.exp E) ^ 2 * Cv * Real.exp (-t₀ * ∑ j, a j)
+    (slab ω t₀ ⊆ ⋃ s, box (X s)) ∧
+    (∀ i s, ∫⁻ g in box (X s), ‖f i g‖ₑ ^ 2 ∂μ ≤
+      ENNReal.ofReal D * ∏ j, ENNReal.ofReal (Real.exp (a j * s j))) ∧
+    (∑' s : Fin (n - 1) → ℕ, ∏ j, ENNReal.ofReal (Real.exp (a j * s j)) ≠ ⊤) := by
+  intro box X a E D
   have ha : ∀ j, a j < 0 := by
     intro j
     have hj := j.2
@@ -204,7 +173,6 @@ theorem slabGlue : SlabGlue := by
     show 2 * (κ ((j : ℕ) + 1) - rho K n ((j : ℕ) + 1)) < 0
     linarith
   have hXs : ∀ s (j : Fin (n - 1)), sr (X s) ((j : ℕ) + 1) = -t₀ + s j := fun s j => sr_part _ j
-
   have hcover : slab ω t₀ ⊆ ⋃ s, box (X s) := by
     rintro g ⟨b, hb, x, hx, hlast, k, hk, rfl⟩
     let s : Fin (n - 1) → ℕ := fun j => ⌊sr x ((j : ℕ) + 1) + t₀⌋₊
@@ -224,14 +192,13 @@ theorem slabGlue : SlabGlue := by
         have h2 : sr x ((j : ℕ) + 1) + t₀ < (s j : ℕ) + 1 := Nat.lt_floor_add_one _
         constructor <;> linarith
     · rw [add_sub_cancel]
-
-  have hbox : ∀ s, ∫⁻ g in box (X s), ‖φ g‖ₑ ^ 2 ∂μ ≤
+  have hbox : ∀ i s, ∫⁻ g in box (X s), ‖f i g‖ₑ ^ 2 ∂μ ≤
       ENNReal.ofReal D * ∏ j, ENNReal.ofReal (Real.exp (a j * s j)) := by
-    intro s
+    intro i s
     let S : ℝ := ∑ r ∈ Finset.range n, κ r * sr (X s) r
     let W : ℝ := max C 0 * Real.exp E * Real.exp S
     have hW0 : 0 ≤ W := by positivity
-    have hnorm : ∀ g ∈ box (X s), ‖φ g‖ₑ ^ 2 ≤ ENNReal.ofReal (W ^ 2) := by
+    have hnorm : ∀ g ∈ box (X s), ‖f i g‖ₑ ^ 2 ≤ ENNReal.ofReal (W ^ 2) := by
       rintro g ⟨b, hb, y, hy, k, hk, rfl⟩
       have hsr : ∀ r, -(|t₀| + 2 * n) ≤ sr (X s + y) r := by
         intro r
@@ -251,7 +218,7 @@ theorem slabGlue : SlabGlue := by
           have : (0 : ℝ) ≤ n := Nat.cast_nonneg _
           have := abs_nonneg t₀
           linarith
-      have h1 := hC b hb (X s + y) hsr k hk
+      have h1 := hC i b hb (X s + y) hsr k hk
       have h2 : ∑ r ∈ Finset.range n, κ r * sr (X s + y) r ≤ S + E := by
         show _ ≤ ∑ r ∈ Finset.range n, κ r * sr (X s) r + ∑ r ∈ Finset.range n, |κ r| * (2 * n)
         rw [← Finset.sum_add_distrib]
@@ -262,7 +229,7 @@ theorem slabGlue : SlabGlue := by
             _ = |κ r| * |sr y r| := abs_mul _ _
             _ ≤ |κ r| * (2 * n) := mul_le_mul_of_nonneg_left (abs_sr_le y hy r) (abs_nonneg _)
         linarith
-      have h3 : ‖φ (b * tor K (X s + y) * k)‖ ≤ W := by
+      have h3 : ‖f i (b * tor K (X s + y) * k)‖ ≤ W := by
         calc _ ≤ C * Real.exp (∑ r ∈ Finset.range n, κ r * sr (X s + y) r) := h1
           _ ≤ max C 0 * Real.exp (∑ r ∈ Finset.range n, κ r * sr (X s + y) r) :=
               mul_le_mul_of_nonneg_right (le_max_left _ _) (Real.exp_pos _).le
@@ -273,7 +240,7 @@ theorem slabGlue : SlabGlue := by
               rw [Real.exp_add]; ring
       rw [← ofReal_norm_eq_enorm, ← ENNReal.ofReal_pow (norm_nonneg _)]
       exact ENNReal.ofReal_le_ofReal (pow_le_pow_left₀ (norm_nonneg _) h3 2)
-    have hmeas : Measurable fun g => ‖φ g‖ₑ ^ 2 := (hφ.measurable.enorm).pow_const 2
+    have hmeas : Measurable fun g => ‖f i g‖ₑ ^ 2 := ((hf i).measurable.enorm).pow_const 2
     have hexp : W ^ 2 * (Cv * Real.exp (-∑ r ∈ Finset.range n, 2 * rho K n r * sr (X s) r))
         = D * ∏ j, Real.exp (a j * s j) := by
       have e1 : ∑ r ∈ Finset.range n, κ r * sr (X s) r
@@ -301,7 +268,7 @@ theorem slabGlue : SlabGlue := by
       calc _ = (max C 0 * Real.exp E) ^ 2 * Cv * (Real.exp S ^ 2 *
               Real.exp (-∑ r ∈ Finset.range n, 2 * rho K n r * sr (X s) r)) := by ring
         _ = _ := by rw [e4]; ring
-    calc ∫⁻ g in box (X s), ‖φ g‖ₑ ^ 2 ∂μ
+    calc ∫⁻ g in box (X s), ‖f i g‖ₑ ^ 2 ∂μ
         ≤ ENNReal.ofReal (W ^ 2) * μ (box (X s)) :=
           setLIntegral_le_of_bound μ hmeas _ _ hnorm
       _ ≤ ENNReal.ofReal (W ^ 2) * ENNReal.ofReal
@@ -316,13 +283,20 @@ theorem slabGlue : SlabGlue := by
   have hsum : ∑' s : Fin (n - 1) → ℕ, ∏ j, ENNReal.ofReal (Real.exp (a j * s j)) ≠ ⊤ :=
     tsum_pi_prod_ne_top (n - 1) (fun j k => ENNReal.ofReal (Real.exp (a j * k)))
       fun j => tsum_exp_ne_top (ha j)
+  exact ⟨hcover, hbox, hsum⟩
+
+theorem slabGlue : SlabGlue := by
+  intro hBV K _ _ n μ _ φ κ hφ hB hκ ω hω hωB t₀
+  obtain ⟨Cv, hCv⟩ := hBV K n μ ω hω hωB
+  obtain ⟨C, hC⟩ := hB ω hω hωB (|t₀| + 2 * n) (maxCompact (K := K) (n := n) : Set _)
+    isCompact_maxCompact
+  obtain ⟨hcover, hbox, hsum⟩ :=
+    slab_box_cover_bound K n μ PUnit (fun _ => φ) κ (fun _ => hφ) hκ ω t₀ Cv C hCv (fun _ => hC)
   calc ∫⁻ g in slab ω t₀, ‖φ g‖ₑ ^ 2 ∂μ
-      ≤ ∫⁻ g in ⋃ s, box (X s), ‖φ g‖ₑ ^ 2 ∂μ := lintegral_mono_set hcover
-    _ ≤ ∑' s, ∫⁻ g in box (X s), ‖φ g‖ₑ ^ 2 ∂μ := lintegral_iUnion_le _ _
-    _ ≤ ∑' s, ENNReal.ofReal D * ∏ j, ENNReal.ofReal (Real.exp (a j * s j)) :=
-        ENNReal.tsum_le_tsum hbox
-    _ = ENNReal.ofReal D * ∑' s : Fin (n - 1) → ℕ, ∏ j, ENNReal.ofReal (Real.exp (a j * s j)) :=
-        ENNReal.tsum_mul_left
+      ≤ ∫⁻ g in ⋃ s, _, ‖φ g‖ₑ ^ 2 ∂μ := lintegral_mono_set hcover
+    _ ≤ ∑' s, ∫⁻ g in _, ‖φ g‖ₑ ^ 2 ∂μ := lintegral_iUnion_le _ _
+    _ ≤ ∑' s, _ := ENNReal.tsum_le_tsum (hbox PUnit.unit)
+    _ = _ := ENNReal.tsum_mul_left
     _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top (lt_top_iff_ne_top.2 hsum)
 
 end GlobalTheory.CompanionTheory.SlabGlue

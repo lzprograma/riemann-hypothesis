@@ -50,7 +50,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw ValuativeRel IsLocalRing Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastKer InDual)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -129,7 +128,7 @@ theorem GlobalTheory.FinPl.ExtZero.extZero_mem_latO : ∀ (D : D7) (k : Type) [F
     rw [h2] at h1
     unfold halfInd at h1
     by_contra hn
-    rw [if_neg fun h => hn h.1] at h1
+    rw [ite_eq_right fun h => hn h.1] at h1
     exact zero_ne_one h1
 
   have hres : ∀ t ∈ ΛS, IsHalf p.e t → t ⬝ o.jA ∈ ΛA := by
@@ -139,7 +138,7 @@ theorem GlobalTheory.FinPl.ExtZero.extZero_mem_latO : ∀ (D : D7) (k : Type) [F
     rw [h2, OrthDec.boxS] at h1
     by_contra hn
     have : halfInd p.e ΛA ((o.resS T) t).1 = 0 := by
-      unfold halfInd; rw [if_neg fun h => hn h.1]
+      unfold halfInd; rw [ite_eq_right fun h => hn h.1]
     rw [this, zero_mul] at h1
     exact one_ne_zero h1
   have huM : MxAt (· = p.v) u := GlobalTheory.FinPl.LatMem.latO_mxAt hu

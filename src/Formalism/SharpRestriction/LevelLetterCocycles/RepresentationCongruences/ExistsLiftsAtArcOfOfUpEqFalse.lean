@@ -9,49 +9,8 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongr
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LiftsAtThinLetterType
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.RepVVSmulA
 import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoeffXSubCPowSelf, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsLiftsAtArcOfOfUpEqFalse
@@ -279,7 +238,7 @@ theorem lift2a [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain O] [IsDiscreteVa
     unfold abelian₂
     rw [Finset.prod_range_one]
     unfold ArcP.Hs
-    rw [if_pos (Or.inr (by simp [hj]))]
+    rw [ite_eq_left (Or.inr (by simp [hj]))]
     show ps W 0 ^ (w + S) = qA W ^ (w + S)
     simp [ps]
   have hl0 : ((PD.p : ℕ) : O) ≠ 0 := Br.P.hl0
@@ -310,7 +269,7 @@ theorem lift2a [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain O] [IsDiscreteVa
     intro k
     by_cases hk : k = k₀
     · refine ⟨qA W ^ (w + S - w'), pow_mem hqA _, ?_⟩
-      simp only [hf₂, if_pos hk, hΛ, hg₂, mul_one]
+      simp only [hf₂, ite_eq_left hk, hΛ, hg₂, mul_one]
       have e : w + S = (w + S - w') + w' := by omega
       rw [e, pow_add, map_mul, map_mul, map_pow, map_pow, map_pow, Nat.add_sub_cancel]
       linear_combination (algebraMap (LetA O n) W.EE (letE a) *
@@ -461,7 +420,7 @@ theorem lift2a [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain O] [IsDiscreteVa
       EL Br a (Tm i m) := by
     intro i m
     by_cases h : Nn i ≤ w' + S
-    · simp only [hTm, if_pos h]
+    · simp only [hTm, ite_eq_left h]
       have hsplit : algebraMap (LetA O n) W.EE (qA W ^ (w + S)) =
           algebraMap (LetA O n) W.EE (qA W ^ (w + S - Nn i)) * algebraMap (LetA O n) W.EE (qA W ^ Nn i) := by
         rw [← map_mul, ← pow_add, Nat.sub_add_cancel (by omega)]
@@ -474,7 +433,7 @@ theorem lift2a [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain O] [IsDiscreteVa
               rw [EL_mulA Br a _ _ _ (hqcst _)]
         _ = EL Br a (C (c₀ i m) * (X ^ (w + S - Nn i) * (X ^ Pn i * Ψ i))) := by rw [EL_C]
         _ = EL Br a (X ^ (w + S - Nn i + Pn i) * Ψ i * C (c₀ i m)) := by congr 1; rw [pow_add]; ring
-    · simp only [hTm, if_neg h, hbad i (by omega), Pi.zero_apply, map_zero, mul_zero, EL_zero]
+    · simp only [hTm, ite_eq_right h, hbad i (by omega), Pi.zero_apply, map_zero, mul_zero, EL_zero]
   have hstar : ∀ m, C (((PD.p : ℕ) : O) ^ κ) * Φ m = ∑ i, Tm i m := by
     intro m
     apply EL_inj Br a
@@ -514,8 +473,8 @@ theorem lift2a [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain O] [IsDiscreteVa
         have hE : w + S - Nn i + Pn i ≤ J := by
           by_contra h
           apply hz
-          simp only [hcoef, if_pos hgood]
-          rw [PowerSeries.coeff_X_pow_mul', if_neg h]
+          simp only [hcoef, ite_eq_left hgood]
+          rw [PowerSeries.coeff_X_pow_mul', ite_eq_right h]
         have hN' : Nn i = (-(α i 0)).toNat := rfl
         have hP' : Pn i = (α i 0).toNat := rfl
         have hα : (A.η : ℤ) + 1 ≤ -(α i 0) := by
@@ -553,8 +512,8 @@ theorem lift2a [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain O] [IsDiscreteVa
     have hδE : algebraMap (LetA O n) W.EE (qA W ^ (w + S)) * (algebraMap (LetA O n) W.EE aa * (lE W σ * f₂ k)) =
         EL Br a δk := by
       by_cases hk : k = k₀
-      · simp only [hf₂, hδk, if_pos hk]; exact hR₀E
-      · simp [hf₂, hδk, if_neg hk, EL_zero]
+      · simp only [hf₂, hδk, ite_eq_left hk]; exact hR₀E
+      · simp [hf₂, hδk, ite_eq_right hk, EL_zero]
     have hser : C (((PD.p : ℕ) : O) ^ K) * ((∑ m, Φ m * C (μ m k)) - δk) =
         X ^ (2 * (w + S)) * ((X - C ((PD.p : ℕ) : O)) * Uu) := by
       apply EL_inj Br a
@@ -590,13 +549,13 @@ theorem lift2a [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain O] [IsDiscreteVa
       exact hL.symm.trans (h1.trans hR)
     have hco := congrArg (PowerSeries.coeff J) hser
 
-    rw [PowerSeries.coeff_C_mul, map_sub, map_sum, PowerSeries.coeff_X_pow_mul', if_neg (by omega)] at hco
+    rw [PowerSeries.coeff_C_mul, map_sub, map_sum, PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega)] at hco
     have hδc : PowerSeries.coeff J δk = if k = k₀ then ((W.DelF.card : ℕ) : O) * ((PD.p : ℕ) : O) ^ (2 * σ) else 0 := by
       by_cases hk : k = k₀
-      · simp only [hδk, if_pos hk, hR₀def]
-        rw [PowerSeries.coeff_mul_X_pow', if_pos (by omega), hJsub, PowerSeries.coeff_C_mul,
+      · simp only [hδk, ite_eq_left hk, hR₀def]
+        rw [PowerSeries.coeff_mul_X_pow', ite_eq_left (by omega), hJsub, PowerSeries.coeff_C_mul,
           coeff_X_sub_C_pow_self, mul_one]
-      · simp [hδk, if_neg hk]
+      · simp [hδk, ite_eq_right hk]
     rw [hδc] at hco
     have hco' : ∑ m, PowerSeries.coeff J (Φ m * C (μ m k)) = ∑ m, Cc m * μ m k :=
       Finset.sum_congr rfl fun m _ => by rw [PowerSeries.coeff_mul_C]
@@ -620,8 +579,8 @@ theorem lift2a [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain O] [IsDiscreteVa
         rw [hu₀]
         exact this
       by_cases hk : k = k₀
-      · rw [if_pos hk, hk, Pi.single_eq_same, ← mul_assoc, hu, one_mul, mul_one]
-      · rw [if_neg hk, Pi.single_eq_of_ne hk, mul_zero, mul_zero]
+      · rw [ite_eq_left hk, hk, Pi.single_eq_same, ← mul_assoc, hu, one_mul, mul_one]
+      · rw [ite_eq_right hk, Pi.single_eq_of_ne hk, mul_zero, mul_zero]
     have h1 : Formalism.MainNotions.TruncatedSeriesCountingBounds.crisMap B F.f (dvO W T₁ 1 b₁ fun m => ((u₀⁻¹ : Oˣ) : O) * Cc m) =
         ((PD.p : LL) ^ (2 * σ)) • dv W T₂ 1 bb (Pi.single k₀ 1) := by
       rw [crisMap_coords W F 1 b₁ bb μ hμ, hf, dvO_smul, dvO_single, map_pow, map_natCast]

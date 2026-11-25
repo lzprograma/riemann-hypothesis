@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemAdelicLatticeClosureIffSwapMemSpan
 public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.UnimodInst
 public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MeasBrg
 public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
@@ -65,80 +66,7 @@ theorem mul_mem_latHat (L : Set (Fin n → E)) (c : Formalism.MainNotions.Global
 
 theorem mem_latHat_iff (L : Submodule (𝓞 E) (Fin n → E)) (y : Fin n → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F ⊗[F] E) :
     y ∈ latHat F E (L : Set (Fin n → E)) ↔ (fun i => swp (y i)) ∈ lamAf (F := F) L := by
-  constructor
-  · intro hy
-    induction hy using AddSubgroup.closure_induction with
-    | mem y hy =>
-      obtain ⟨a, ha, x, hx, rfl⟩ := hy
-      have hmem : ((1 : E) ⊗ₜ[F] a) ∈ IntAf F E :=
-        Subring.subset_closure (Or.inr ⟨⟨a, fun v => ha v⟩, rfl⟩)
-      have hx' : (fun i => Formalism.UG.inclE (F := F) (Formalism.MainNotions.S.Af F) (x i)) ∈ lamAf (F := F) L :=
-        Submodule.subset_span ⟨⟨x, hx⟩, rfl⟩
-      have := (lamAf (F := F) L).smul_mem (⟨_, hmem⟩ : IntAf F E) hx'
-      convert this using 1
-      funext i
-      simp [swp, Formalism.UG.inclE, Subring.smul_def, Algebra.TensorProduct.tmul_mul_tmul]
-    | zero =>
-      convert (lamAf (F := F) L).zero_mem using 1
-      funext i; simp
-    | add y z _ _ hy hz =>
-      convert (lamAf (F := F) L).add_mem hy hz using 1
-      funext i; simp
-    | neg y _ hy =>
-      convert (lamAf (F := F) L).neg_mem hy using 1
-      funext i; simp
-  · intro hz
-
-    let R : Subring (E ⊗[F] Formalism.MainNotions.S.Af F) :=
-      { carrier := {r | ∀ w ∈ latHat F E (L : Set (Fin n → E)), (fun i => swp.symm r * w i) ∈ latHat F E (L : Set (Fin n → E))}
-        mul_mem' := fun {r s} hr hs w hw => by
-          have := hr _ (hs w hw)
-          simpa [map_mul, mul_assoc] using this
-        one_mem' := fun w hw => by simpa using hw
-        add_mem' := fun {r s} hr hs w hw => by
-          convert (latHat F E (L : Set (Fin n → E))).add_mem (hr w hw) (hs w hw) using 1
-          funext i; simp [map_add (f := _), add_mul]
-        zero_mem' := fun w _ => by
-          convert (latHat F E (L : Set (Fin n → E))).zero_mem using 1
-          funext i; simp
-        neg_mem' := fun {r} hr w hw => by
-          convert (latHat F E (L : Set (Fin n → E))).neg_mem (hr w hw) using 1
-          funext i; simp [map_neg, neg_mul] }
-    have hIR : IntAf F E ≤ R := by
-      refine (Subring.closure_le).2 ?_
-      rintro r (⟨⟨o, ho⟩, rfl⟩ | ⟨⟨a', ha'⟩, rfl⟩)
-      · intro w hw
-        refine mul_mem_latHat _ _ ?_ hw
-        intro a ha x hx
-        obtain ⟨o', rfl⟩ := ho
-        refine AddSubgroup.subset_closure ⟨a, ha, o' • x, L.smul_mem o' hx, ?_⟩
-        funext i
-        simp [swp, Algebra.TensorProduct.tmul_mul_tmul, Algebra.smul_def]
-      · intro w hw
-        refine mul_mem_latHat _ _ ?_ hw
-        intro a ha x hx
-        refine AddSubgroup.subset_closure ⟨a' * a, intAf_mul (fun v => ha' v) ha, x, hx, ?_⟩
-        funext i
-        simp [swp, Algebra.TensorProduct.tmul_mul_tmul]
-    have key : ∀ z ∈ lamAf (F := F) L, (fun i => swp.symm (z i)) ∈ latHat F E (L : Set (Fin n → E)) := by
-      intro z hz
-      induction hz using Submodule.span_induction with
-      | mem z hz =>
-        obtain ⟨x, rfl⟩ := hz
-        refine AddSubgroup.subset_closure ⟨1, intAf_one, x, x.2, ?_⟩
-        funext i
-        simp [swp, Formalism.UG.inclE]
-      | zero =>
-        convert (latHat F E (L : Set (Fin n → E))).zero_mem using 1
-        funext i; simp
-      | add z z' _ _ hz hz' =>
-        convert (latHat F E (L : Set (Fin n → E))).add_mem hz hz' using 1
-        funext i; simp
-      | smul r z _ hz =>
-        have := hIR r.2 _ hz
-        simpa [Subring.smul_def, map_mul] using this
-    have := key _ hz
-    simpa using this
+  apply _root_.GlobalTheory.AdelicLatticeSwap.mem_latHat_iff_comm_mem_lamAf <;> assumption
 
 theorem stab_iff (L : Submodule (𝓞 E) (Fin n → E)) (M : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F ⊗[F] E))
     (M' : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.MainNotions.S.Af F)) (hM : M' = M.map swp) :
@@ -162,8 +90,6 @@ theorem stab_iff (L : Submodule (𝓞 E) (Fin n → E)) (M : Matrix (Fin n) (Fin
 end Gen
 
 section Brg
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {V : HSp D}
 
@@ -204,8 +130,6 @@ noncomputable section
 open MeasureTheory NumberField Matrix Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta
 
 namespace Formalism.L2.S.S7.ZsCovInf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Grp
 
@@ -380,8 +304,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.BasicNotions.TH 
 
 namespace Formalism.L2.S.S7.ZsCovMeas
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {V : HSp D} (fr : Formalism.IndefR.Eqv.UI.Frames D V)
 
 def cdProd : ENNReal := ∏ v, (D.s.cdScale V.rank (fr.ε v) : ENNReal)
@@ -493,8 +415,6 @@ namespace Formalism.L2.SG.Pf.DstarVolPf
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.SG.HidaSetting Formalism.L2.SG.AdBridge
   Formalism.L2.Theta
 open scoped ENNReal
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : D7)
 
@@ -649,7 +569,6 @@ theorem covol_gen (hVM : VolMeasOf D) (hVol : VolTie D) (I : Formalism.MainNotio
     congr 1
     erw [Measure.map_apply hmeas hS]
     rw [Set.preimage_image_eq _ (toHA (IV D) hb).injective, Measure.smul_apply, smul_eq_mul]
-  set_option synthInstance.maxHeartbeats 200000 in
   have hA0 : (IV D).muA μf fund ≠ 0 := by
     haveI : ((IV D).muA μf).IsHaarMeasure := Formalism.L2.SG.PoincareInHH.Cut.muA_isHaar' (IV D) μf
     haveI : ((IV D).muA μf).IsMulLeftInvariant := inferInstance
@@ -665,8 +584,7 @@ theorem covol_gen (hVM : VolMeasOf D) (hVol : VolTie D) (I : Formalism.MainNotio
     exact ENNReal.ofReal_ne_top key.symm
   have hL0 : cdProdI D * (c⁻¹ * (IV D).muA μf fund) ≠ 0 := mul_ne_zero hcd0 (mul_ne_zero hci0 hA0)
   have hvpos : 0 < D.vol (VS D) := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     rw [ENNReal.ofReal_of_nonpos hle] at key
     exact hL0 key
   have hR := congrArg ENNReal.toReal key

@@ -93,7 +93,7 @@ private theorem d_apply_eq_wd_comp_chart_symm {M : Type*} [TopologicalSpace M] (
   have hg : (f ∘ (Classical.choose h).symm) =ᶠ[𝓝 (z y)] (f ∘ e.symm) :=
     (chart_symm_eventuallyEq_symm n z e _ he (Classical.choose_spec h).1 y hy
       (Classical.choose_spec h).2).fun_comp f
-  simp only [d, dif_pos h, wd, hg.fderiv_eq]
+  simp only [d, dite_eq_left h, wd, hg.fderiv_eq]
 
 private theorem db_apply_eq_wdb_comp_chart_symm {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (j : Fin n)
     (f : M → ℂ) (e : OpenPartialHomeomorph M (V n)) (he : IsChart n z e) (y : M)
@@ -102,7 +102,7 @@ private theorem db_apply_eq_wdb_comp_chart_symm {M : Type*} [TopologicalSpace M]
   have hg : (f ∘ (Classical.choose h).symm) =ᶠ[𝓝 (z y)] (f ∘ e.symm) :=
     (chart_symm_eventuallyEq_symm n z e _ he (Classical.choose_spec h).1 y hy
       (Classical.choose_spec h).2).fun_comp f
-  simp only [db, dif_pos h, wdb, hg.fderiv_eq]
+  simp only [db, dite_eq_left h, wdb, hg.fderiv_eq]
 
 theorem comm_chart_setup {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f : M → ℂ)
     (hf : Ck n z 2 f) (e : OpenPartialHomeomorph M (V n)) (he : IsChart n z e) (x : M)

@@ -1,42 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,7 +27,7 @@ theorem UpperTheory.fInert_sub_eatI_le_orbit_average_sub_errors :
   have eF : FInert D (i + 1) p = (∑ z ∈ kindA D p, FOrb D (i + 1) p z) / (nP D p : ℝ) +
       (∑ z ∈ kindBC D p, FOrb D (i + 1) p z) / (nP D p : ℝ) := by
     unfold FInert
-    rw [if_neg (fun h => hcs.2.2 h.2), ← add_div]
+    rw [ite_eq_right (fun h => hcs.2.2 h.2), ← add_div]
     congr 1
     have e : kindBC D p = (kindA D p)ᶜ := by
       ext z; rw [Finset.mem_compl]; exact OrbitPlaces.memBC_iff p z
@@ -105,6 +69,6 @@ theorem UpperTheory.fInert_sub_eatI_le_orbit_average_sub_errors :
   have hm := le_max_right (0 : ℝ) ((∑ z ∈ kindA D p, FOrb D (i + 1) p z) / (nP D p : ℝ))
   rw [eF]
   unfold EatI EatX
-  rw [if_pos hcs, eT]
+  rw [ite_eq_left hcs, eT]
   simp only [Finset.card_empty, Nat.cast_zero, mul_zero, zero_mul, add_zero]
   linarith

@@ -3,6 +3,7 @@ module
 public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.ScalarOnInertiaProp
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
 import Mathlib.Tactic.TypeStar
+import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharPolLpCharOfUnr
 
 @[expose] public section
 
@@ -15,15 +16,6 @@ open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.Loc
 namespace UpperTheory.TNZ
 
 namespace UnramifiedTwist
-
-theorem charpoly_smul_one {V : Type*} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (c : ℂ) :
-    (c • (1 : Module.End ℂ V)).charpoly = (X - C c) ^ Module.finrank ℂ V := by
-  have h1 := LinearMap.charpoly_sub_smul (c • (1 : Module.End ℂ V)) c
-  rw [sub_self, LinearMap.charpoly_zero] at h1
-  calc (c • (1 : Module.End ℂ V)).charpoly
-      = ((c • (1 : Module.End ℂ V)).charpoly.comp (X + C c)).comp (X - C c) := by
-        rw [Polynomial.comp_assoc]; simp
-    _ = (X - C c) ^ Module.finrank ℂ V := by rw [← h1, Polynomial.X_pow_comp]
 
 theorem diagEnd_const (c : ℂ) :
     diagEnd (fun _ : Fin 1 => c) = c • (1 : Module.End ℂ (Fin 1 → ℂ)) :=
@@ -42,7 +34,7 @@ theorem step_unrTwist : UnramifiedTwistProp := by
   · rw [WDRep.tensor_N, hN, WDRep.ofChars_N]
     simp
   · rw [WDRep.tensor_ρ, hI t, WDRep.ofChars_ρ, diagEnd_const, TensorProduct.map_smul_right,
-      TensorProduct.map_one, charpoly_smul_one, Module.finrank_tensorProduct]
+      TensorProduct.map_one, GlobalTheory.SplitRead.BlockParam.charpoly_smul_one, Module.finrank_tensorProduct]
     simp
 
 end UpperTheory.TNZ

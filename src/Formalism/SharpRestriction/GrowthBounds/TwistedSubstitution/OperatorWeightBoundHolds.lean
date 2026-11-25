@@ -15,65 +15,15 @@ public import Mathlib.LinearAlgebra.Dual.Lemmas
 public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FirstWeightLeConductor
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OpWords
 public import Mathlib.Data.Fin.Tuple.Sort
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.GradedWeylDivisibility.FinalD
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Formalism.GradedWeylDivisibility.FinalC
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FilterConcatWLength, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.MultidegSingle, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.NotMemVarsEmbS, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.OkSmulRight, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.StepMonoFactor, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AdjointTensorOfSingleValid, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowDerivationChainRule.ChainRule, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowDerivationChainRule.DetDer, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowDerivationChainRule.NvFalseEq, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowLetter, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowWeightSpan.RowWtSpanOfBideterminant, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowWtSpan, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LetterRowOperator, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePosOf, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RowGenCoeffZero, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ThetaInjHd, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePos, Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.OperatorWeightBoundHolds
+-- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FilterConcatWLength, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.MultidegSingle, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.NotMemVarsEmbS, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.OkSmulRight, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.StepMonoFactor, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AdjointTensorOfSingleValid, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowDerivationChainRule.ChainRule, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowDerivationChainRule.DetDer, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowDerivationChainRule.NvFalseEq, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowLetter, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowWeightSpan.RowWtSpanOfBideterminant, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LetterRowOperator, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePosOf, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RowGenCoeffZero, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ThetaInjHd, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePos, Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.OperatorWeightBoundHolds
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FilterConcatWLength =====
 -- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FilterConcatWLength", "h": "module\n\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.Development\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FockLin\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.BitVec\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
@@ -158,7 +108,7 @@ theorem stepPure_of (hL : StepLift) (hM : StepMonoFactor) : StepPure := by
       rw [mem_concatW] at hz
       by_contra hzT
       have hlen := hLlen z.1 (w z.1) (hw z.1)
-      rw [if_neg hzT] at hlen
+      rw [ite_eq_right hzT] at hlen
       cases hwz : w z.1 with
       | nil => simp [hwz] at hz
       | cons _ _ => simp [hwz] at hlen
@@ -365,7 +315,7 @@ theorem main_list (w : Fin n' → List (Fin k × Fin k)) (G : Fin n' → MvPolyn
     rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ t),
       ← Finset.mul_prod_erase Finset.univ
         (fun s => embS K s (if s ∈ t :: ts then word1 (w s) (G s) else G s)) (Finset.mem_univ t)]
-    simp only [if_neg hts.1, List.mem_cons, true_or, if_true]
+    simp only [ite_eq_right hts.1, List.mem_cons, true_or, ite_true]
     rw [opWord_liftW t (w t) (G t) _ (fun b' => pderiv_prod_ne t b' _ (Finset.notMem_erase t _) _)]
     congr 1
     refine Finset.prod_congr rfl fun s hs => ?_
@@ -556,7 +506,7 @@ private theorem pderiv_X_eq_ite {σ : Type*} {R : Type*} [CommRing R] [Decidable
   rw [pderiv_X]
   by_cases h : c = i
   · subst h; simp
-  · rw [if_neg h, Pi.single_apply, if_neg (Ne.symm h)]
+  · rw [ite_eq_right h, Pi.single_apply, ite_eq_right (Ne.symm h)]
 
 private theorem derivation_aeval_eq_sum_pderiv {K : Type*} [CommRing K] {σ τ : Type*} [Fintype σ] [DecidableEq σ]
     (D : MvPolynomial τ K → MvPolynomial τ K)
@@ -578,11 +528,11 @@ private theorem derivation_aeval_eq_sum_pderiv {K : Type*} [CommRing K] {σ τ :
       intro c
       rw [pderiv_mul_eq, pderiv_X_eq_ite, map_add (f := _), map_mul, map_mul, aeval_X]
       by_cases h : c = i
-      · subst h; rw [if_pos rfl, if_pos rfl, map_one]; ring
-      · rw [if_neg h, if_neg h, map_zero]; ring
+      · subst h; rw [ite_eq_left rfl, ite_eq_left rfl, map_one]; ring
+      · rw [ite_eq_right h, ite_eq_right h, map_zero]; ring
     rw [Finset.sum_congr rfl (fun c _ => e c), Finset.sum_add_distrib, ← Finset.mul_sum, ← ih,
       map_mul, aeval_X, hmul]
-    simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     ring
 
 theorem chainRule : ChainRule := by
@@ -600,11 +550,11 @@ theorem vecX : VecX := by
     rw [pderiv_X]
     by_cases h : c = b ∧ t = 0
     · obtain ⟨rfl, rfl⟩ := h; simp
-    · rw [if_neg h, Pi.single_apply, if_neg]
+    · rw [ite_eq_right h, Pi.single_apply, ite_eq_right]
       intro he
       simp only [Prod.mk.injEq] at he
       exact h ⟨he.1, he.2.symm⟩
-  simp only [PI.RL.Nv, if_true, PI.RL.RE, hp, mul_ite, mul_one, mul_zero]
+  simp only [PI.RL.Nv, ite_true, PI.RL.RE, hp, mul_ite, mul_one, mul_zero]
   by_cases h : c = b
   · subst h; simp [Finset.sum_ite_eq']
   · simp [h]
@@ -737,11 +687,11 @@ theorem keyCov : KeyCov := by
     intro i j
     by_cases hic : i = c
     · subst hic
-      rw [Matrix.updateRow_self, if_pos rfl]
+      rw [Matrix.updateRow_self, ite_eq_left rfl]
       by_cases hj : j = Fin.last m
       · subst hj; simp
       · simp [hj]
-    · rw [Matrix.updateRow_ne hic, hG, REder_X, if_neg hic]
+    · rw [Matrix.updateRow_ne hic, hG, REder_X, ite_eq_right hic]
   simp_rw [hrow]
   have hz : ∀ (M : Matrix (Fin (m + 1)) (Fin (m + 1)) (MvPolynomial (Fin (m + 1) × Fin (m + 1)) K))
       (i : Fin (m + 1)) (r : Fin (m + 1) → MvPolynomial (Fin (m + 1) × Fin (m + 1)) K),
@@ -763,10 +713,10 @@ theorem keyCov : KeyCov := by
     intro j
     split_ifs <;> rfl
   · intro h; exact absurd (Finset.mem_univ b) h
-  simp only [hbc, if_false, if_true]
+  simp only [hbc, ite_false, ite_true]
   by_cases hab : a = b
   · subst hab
-    rw [if_pos rfl, if_neg hbc, sub_zero]
+    rw [ite_eq_left rfl, ite_eq_right hbc, sub_zero]
     congr 1
     refine Matrix.ext fun i j => ?_
     by_cases hi : i = a
@@ -774,10 +724,10 @@ theorem keyCov : KeyCov := by
       simp only [Matrix.updateRow_apply, hG]
       try (split_ifs <;> simp_all)
     · rw [Matrix.updateRow_ne hi]
-  rw [if_neg hab]
+  rw [ite_eq_right hab]
   by_cases hac : a = c
   · subst hac
-    rw [if_pos rfl, zero_sub]
+    rw [ite_eq_left rfl, zero_sub]
     have hperm : (((genM K m).updateRow a (Pi.single (Fin.last m) 1)).updateRow b
         (fun j => X (a, j))) =
         ((genM K m).updateRow b (Pi.single (Fin.last m) 1)).submatrix (Equiv.swap b a) id := by
@@ -786,7 +736,7 @@ theorem keyCov : KeyCov := by
       split_ifs <;> simp_all
     rw [hperm, Matrix.det_permute, Equiv.Perm.sign_swap hbc]
     simp
-  · rw [if_neg hac, sub_zero]
+  · rw [ite_eq_right hac, sub_zero]
     apply Matrix.det_zero_of_row_eq hab
     funext j
     rw [Matrix.updateRow_ne hab, Matrix.updateRow_self, Matrix.updateRow_ne hac, hG]
@@ -865,11 +815,11 @@ theorem wt_le {k N : ℕ} (sz : Fin N → ℕ) (I : ∀ j, Fin (sz j) → Fin k)
   rw [ht0, Finset.card_filter]
   refine Finset.sum_le_sum fun j _ => ?_
   by_cases hj : 0 < sz j
-  · rw [if_pos hj]
+  · rw [ite_eq_left hj]
     refine Finset.card_le_one.2 fun p hp q hq => ?_
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hp hq
     exact (hI j).injective (hp.trans hq.symm)
-  · rw [if_neg hj]
+  · rw [ite_eq_right hj]
     have hem : (Finset.univ : Finset (Fin (sz j))) = ∅ :=
       Finset.univ_eq_empty_iff.2 ⟨fun p => hj (lt_of_le_of_lt (Nat.zero_le _) p.2)⟩
     rw [hem]
@@ -901,15 +851,6 @@ end -- clump:auto
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowWeightSpan.RowWtSpanOfBideterminant =====
-
--- ===== clump member: Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowWtSpan =====
--- clump-header: {"m": "Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowWtSpan", "h": "module\n\npublic import Formalism.PeriodIntegrals.RowWtSpan\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowWeightSpan.RowWtSpanOfBideterminant\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowWtSpan =====
 
 -- ===== clump member: Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LetterRowOperator =====
 -- clump-header: {"m": "Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LetterRowOperator", "h": "module\n\npublic import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FRSmulRight\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
@@ -988,7 +929,7 @@ theorem Ed_comm_eq (K : Type) [Field K] (m : ℕ) (vec : Bool) (d : ℕ) (a b : 
       if vec = true then letterRowOperator K m vec d a b * X - X * letterRowOperator K m vec d a b
       else -(letterRowOperator K m vec d b a * X - X * letterRowOperator K m vec d b a) := by
   cases vec
-  · simp only [Bool.false_eq_true, if_false, letterRowOperator]
+  · simp only [Bool.false_eq_true, ite_false, letterRowOperator]
     split_ifs
     · rw [sub_mul, mul_sub, smul_mul_assoc, one_mul, mul_smul_comm, mul_one]
       abel
@@ -1140,7 +1081,7 @@ theorem RE_X (K : Type) [CommRing K] (k : ℕ) (a b : Fin k) (v : Fin k × Fin k
   unfold RE
   simp only [pderiv_X]
   by_cases h : v.1 = b
-  · rw [if_pos h, Finset.sum_eq_single v.2]
+  · rw [ite_eq_left h, Finset.sum_eq_single v.2]
     · have : ((b, v.2) : Fin k × Fin k) = v := Prod.ext h.symm rfl
       rw [this, Pi.single_eq_same, mul_one]
     · intro t _ ht
@@ -1149,7 +1090,7 @@ theorem RE_X (K : Type) [CommRing K] (k : ℕ) (a b : Fin k) (v : Fin k × Fin k
       apply ht
       rw [hv]
     · simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     apply Finset.sum_eq_zero
     intro t _
     rw [Pi.single_eq_of_ne, mul_zero]
@@ -1220,12 +1161,12 @@ open Formalism.L2.G.Model.TS (fockR)
 theorem nuL_anti (m d : ℕ) (vec : Bool) : Antitone (nuL m d vec) := by
   intro a b hab
   cases vec
-  · simp only [nuL, Bool.false_eq_true, if_false]
+  · simp only [nuL, Bool.false_eq_true, ite_false]
     by_cases ha : a = Fin.last m
     · have hb : b = Fin.last m := le_antisymm (Fin.le_last _) (ha ▸ hab)
       simp [ha, hb]
     · split_ifs <;> omega
-  · simp only [nuL, if_true]
+  · simp only [nuL, ite_true]
     by_cases hb : b = 0
     · have ha : a = 0 := le_antisymm (hb ▸ hab) (Fin.zero_le _)
       simp [ha, hb]
@@ -1315,7 +1256,7 @@ end -- clump:auto
 -- ===== end clump member: Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePos =====
 
 -- ===== clump member: Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.OperatorWeightBoundHolds =====
--- clump-header: {"m": "Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.OperatorWeightBoundHolds", "h": "module\n\npublic import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FirstWeightLeConductor\npublic import Formalism.PeriodIntegrals.RowWtSpan\npublic import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.MemHdIff\nimport Formalism.GradedWeylDivisibility.DualWeylDominanceOf\nimport Formalism.GradedWeylDivisibility.FinalC\nimport Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK\npublic import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AdjointTensorOfSingleValid\npublic import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OpWords\npublic import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowLetter\npublic import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowWtSpan\npublic import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePos\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\npublic import Mathlib.Data.Fin.Tuple.Sort\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.OperatorWeightBoundHolds", "h": "module\n\npublic import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FirstWeightLeConductor\npublic import Formalism.PeriodIntegrals.RowWtSpan\npublic import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.MemHdIff\nimport Formalism.GradedWeylDivisibility.DualWeylDominanceOf\nimport Formalism.GradedWeylDivisibility.FinalC\nimport Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK\npublic import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AdjointTensorOfSingleValid\npublic import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OpWords\npublic import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowLetter\npublic import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePos\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\npublic import Mathlib.Data.Fin.Tuple.Sort\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1369,7 +1310,7 @@ theorem bideterminant_span_holds : PI.RW.BideterminantSpan := by
       (Tuple.monotone_sort (I i)).strictMono_of_injective ((hinj i).comp (Equiv.injective _))
     refine zsmul_mem (Submodule.subset_span ?_) _
     exact ⟨K, sz, hsz, fun i => I i ∘ Tuple.sort (I i), hν, hJ, rfl⟩
-  · push_neg at hinj
+  · push Not at hinj
     obtain ⟨i, hi⟩ := hinj
     have h0 : Formalism.GradedWeylDivisibility.bideterminant R sz hsz I = 0 := by
       show (∏ i, PI.RW.initMinor R (I i) (hsz i)) = 0

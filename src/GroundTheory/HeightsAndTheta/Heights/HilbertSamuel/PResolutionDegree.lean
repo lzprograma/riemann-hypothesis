@@ -5,6 +5,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullF
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFSMass
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridge
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResolutionPotentials
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBlockResolutionDegreeIntegral
 import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AMixSt
@@ -23,65 +24,7 @@ noncomputable section
 
 namespace ResolutionDegree
 
-theorem mInt_congr_of_locDens {e : ℕ} {X : Type*} [TopologicalSpace X] (A : FinHolAtlas e X)
-    {Φ Ψ : Fin e → LocPot X} (h : ∀ j, ∀ y ∈ (A.chart j).target, locDens A Φ j y = locDens A Ψ j y)
-    (g : X → ℝ) : mInt A Φ g = mInt A Ψ g := by
-  unfold mInt
-  split_ifs with hP
-  · unfold integralWith
-    refine Finset.sum_congr rfl fun j _ => ?_
-    refine MeasureTheory.setIntegral_congr_fun (A.chart j).open_target.measurableSet fun y hy => ?_
-    simp only [h j y hy]
-  · rfl
-
 variable {D : ℕ} {Ω : Type} [Field Ω] [CharZero Ω] {κ : Type} [Fintype κ]
-
-theorem smooth_logRatio_resPt (d : HSMDatum D Ω κ) {m₀ m₁ : ConeMetric ℂ (Ix κ)}
-    (h₀ : IsSmoothMetric m₀) (h₁ : IsSmoothMetric m₁) :
-    d.R.A.Smooth (fun y => logRatio m₀ m₁ (resPt d y)) := fun j => by
-  refine contDiffOn_of_locally_contDiffOn fun y hy => ?_
-  refine ⟨(d.R.A.chart j).target ∩ (d.R.A.chart j).symm ⁻¹' d.R.U ((d.R.A.chart j).symm y),
-    (d.R.A.chart j).isOpen_inter_preimage_symm (d.R.isOpen_U _), ⟨hy.1, d.R.mem_U _⟩, ?_⟩
-  have hsm : ContDiffOn ℝ ∞
-      (fun y' => logRatio m₀ m₁ (d.R.lift ((d.R.A.chart j).symm y) ((d.R.A.chart j).symm y')))
-      ((d.R.A.chart j).target ∩ (d.R.A.chart j).symm ⁻¹' d.R.U ((d.R.A.chart j).symm y)) :=
-    (gbamix_smooth_logRatio h₀ h₁).comp (resLift_contDiffOn d _ j)
-      fun y' hy' => gaamix_ne_zero_of_mcPts (d.R.mem _ _ hy'.2)
-  refine (hsm.mono Set.inter_subset_right).congr fun y' hy' => ?_
-  obtain ⟨c, hc, hcy⟩ := d.R.compat ((d.R.A.chart j).symm y') ((d.R.A.chart j).symm y)
-    ((d.R.A.chart j).symm y') ⟨d.R.mem_U _, hy'.2.2⟩
-  change logRatio m₀ m₁ (d.R.lift ((d.R.A.chart j).symm y') ((d.R.A.chart j).symm y')) = _
-  rw [hcy]
-  exact gbamix_logRatio_deg (m₀ := m₀) (m₁ := m₁) c _ hc
-
-theorem mInt_resPot_eq (d : HSMDatum D Ω κ) {m₀ m₁ : ConeMetric ℂ (Ix κ)} (g : d.R.X → ℝ) :
-    mInt d.R.A (fun _ => resPot d m₁) g =
-      mInt d.R.A (fun _ => resPot d m₀ + LocPot.ofFun (fun y => logRatio m₀ m₁ (resPt d y))) g := by
-  refine mInt_congr_of_locDens _ (fun j y hy => ?_) g
-  unfold locDens
-  refine _root_.ReciprocityTheory.ChartRestriction.G.Geo.maDens_congr fun _ => ?_
-  have hmem : (d.R.A.chart j).target ∩ (d.R.A.chart j).symm ⁻¹' d.R.U ((d.R.A.chart j).symm y) ∈ 𝓝 y :=
-    ((d.R.A.chart j).isOpen_inter_preimage_symm (d.R.isOpen_U _)).mem_nhds ⟨hy, d.R.mem_U _⟩
-  filter_upwards [hmem] with y' hy'
-  obtain ⟨c, hc, hcy⟩ := d.R.compat ((d.R.A.chart j).symm y') ((d.R.A.chart j).symm y)
-    ((d.R.A.chart j).symm y') ⟨d.R.mem_U _, hy'.2⟩
-  have hz := gaamix_ne_zero_of_mcPts (d.R.mem ((d.R.A.chart j).symm y) _ hy'.2)
-  have h₀ := m₀.pos _ hz
-  have h₁ := m₁.pos _ hz
-  change Real.log (m₁.ρ (d.R.lift ((d.R.A.chart j).symm y) ((d.R.A.chart j).symm y'))) =
-    Real.log (m₀.ρ (d.R.lift ((d.R.A.chart j).symm y) ((d.R.A.chart j).symm y'))) +
-      logRatio m₀ m₁ (d.R.lift ((d.R.A.chart j).symm y') ((d.R.A.chart j).symm y'))
-  rw [hcy, gbamix_logRatio_deg (m₀ := m₀) (m₁ := m₁) c
-    (d.R.lift ((d.R.A.chart j).symm y) ((d.R.A.chart j).symm y')) hc,
-    logRatio, Real.log_div h₁.ne' h₀.ne']
-  ring
-
-theorem mass_eq (d : HSMDatum D Ω κ) {m₀ m₁ : ConeMetric ℂ (Ix κ)} (h₀ : IsSmoothMetric m₀)
-    (h₁ : IsSmoothMetric m₁) :
-    mInt d.R.A (fun _ => resPot d m₁) (fun _ => 1) = mInt d.R.A (fun _ => resPot d m₀) (fun _ => 1) := by
-  rw [mInt_resPot_eq d (m₀ := m₀)]
-  exact massIndep d.R.A (fun _ => resPot d m₀) (fun _ y => logRatio m₀ m₁ (resPt d y))
-    (fun _ => isPotential_resPot d h₀) (fun _ => smooth_logRatio_resPt d h₀ h₁)
 
 theorem mass_pullFS (hPM : ProjFSMass.Statement) (d : HSMDatum D Ω κ) {e : Fin (D + 1) → Ix κ}
     {m₀ : ConeMetric ℂ (Ix κ)} (hfr : IsProjFrame d.x e) (h₀ : IsSmoothMetric m₀) (hFS : IsPullFS d.x e m₀) :
@@ -111,7 +54,9 @@ theorem ResolutionDegree.proof (hPF : PullFSExtension.Statement) (hPM : ProjFSMa
     ResolutionDegree.Statement := by
   intro D Ω _ _ κ _ d e m hfr hm
   obtain ⟨m₀, h₀, -, -, hFS⟩ := hPF D Ω κ d.x e hfr
-  rw [ResolutionDegree.mass_eq d h₀ hm]
+  rw [BlockResolutionDegreeIntegral.mass_eq d.R (A₀ := HermLine.ofCone m₀) (A₁ := HermLine.ofCone m)
+    rfl (gbamix_smoothHerm_ofCone h₀) (gbamix_smoothHerm_ofCone hm) 1
+    (fun _ _ _ => by show Real.log (m.ρ _) = (1 - 1) * Real.log (m₀.ρ _) + 1 * Real.log (m.ρ _); ring)]
   exact ResolutionDegree.mass_pullFS hPM d hfr h₀ hFS
 
 end

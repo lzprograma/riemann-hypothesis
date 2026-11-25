@@ -6,47 +6,7 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker
 public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
 public import Formalism.FormalDegreeBessel.FinalG
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -55,8 +15,6 @@ noncomputable section
 namespace Formalism.MainNotions.BridgeLemma₂
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt Formalism.HermitianLatticeCounting Formalism.MainNotions.BridgeLemma
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Uni
 
@@ -97,8 +55,7 @@ private theorem rows_leadMinor_aux_lemma {E : Type*} [CommRing E] {n l : ℕ} (h
       (Q.submatrix (Fin.castLE hl) (Fin.castLE hl)).det := by
   have hrange : ∀ q : Fin n, q ∉ Set.range (Fin.castLE hl) → l ≤ q.val := by
     intro q hq
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     exact hq ⟨⟨q.val, hlt⟩, Fin.ext rfl⟩
   have hval : ∀ i : Fin l, ((Fin.castLE hl i : Fin n) : ℕ) = (i : ℕ) := fun i => rfl
   have key : (P * Q * R).submatrix (Fin.castLE hl) (Fin.castLE hl) =
@@ -679,8 +636,8 @@ theorem rows_chRatio_eq (hrd : 0 < D.host.rdE) (t : D.s.Term u u') (τ : D.what�
   unfold chRatio onePlusChSh
   have h := rows_Dr_zero_iff Y hrd t τ
   by_cases h0 : Dr (X.fl t) (X.fl' t) = 0
-  · rw [if_pos (h.2 h0), if_pos h0]
-  · rw [if_neg (fun h1 => h0 (h.1 h1)), if_neg h0, rows_ch_eq Y hrd t τ, rows_sh_eq Y hrd t τ]
+  · rw [ite_eq_left (h.2 h0), ite_eq_left h0]
+  · rw [ite_eq_right (fun h1 => h0 (h.1 h1)), ite_eq_right h0, rows_ch_eq Y hrd t τ, rows_sh_eq Y hrd t τ]
 
 theorem rows_ch_conj (T T' : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (φ : D.host.E →+* ℂ) : Lat.ch T T' F F' (ComplexEmbedding.conjugate φ) = Lat.ch T T' F F' φ := by
@@ -980,7 +937,7 @@ theorem rowsT_small (hS : Cnt.Stand D u u') (hrd : 0 < D.host.rdE) (t t' : D.s.T
               chSh (Tu D u) (Tu D u') (X.fl t) (X.fl' t') (embS D τ)) = 0 := by
         refine Finset.prod_eq_zero (Finset.mem_univ τ0) ?_
         unfold invSh
-        rw [if_pos h0, if_pos h0'']
+        rw [ite_eq_left h0, ite_eq_left h0'']
         ring
       rw [this] at hB
       linarith
@@ -992,7 +949,7 @@ theorem rowsT_small (hS : Cnt.Stand D u u') (hrd : 0 < D.host.rdE) (t t' : D.s.T
       refine Finset.prod_congr rfl fun τ _ => ?_
       have h0'' : Dr (X.fl t) (X.fl' t') ≠ 0 := by rw [e]; exact h0'
       rw [← e]
-      simp only [chSh, invSh, if_pos h0, if_neg h0'']
+      simp only [chSh, invSh, ite_eq_left h0, ite_eq_right h0'']
       ring
   · by_cases h0' : Dr (X.fl t') (X.fl' t') = 0
     · left
@@ -1002,7 +959,7 @@ theorem rowsT_small (hS : Cnt.Stand D u u') (hrd : 0 < D.host.rdE) (t t' : D.s.T
       rw [← D.what₂.card_Tau]
       refine rowsT_small_one _ _ _ _ hT hT' hg (fun τ => rowsT_sh_pos Y hrd t hG hrel h0 τ) (hB.trans (le_of_eq ?_))
       refine Finset.prod_congr rfl fun τ _ => ?_
-      simp only [chSh, invSh, if_neg h0, if_pos h0'']
+      simp only [chSh, invSh, ite_eq_right h0, ite_eq_left h0'']
       ring
     · have h0'' : Dr (X.fl t) (X.fl' t') ≠ 0 := by rw [e]; exact h0'
       have key := _root_.Formalism.HermitianLatticeCounting.P.prodMinLeOfProdRatio D.what₂.Tau
@@ -1018,7 +975,7 @@ theorem rowsT_small (hS : Cnt.Stand D u u') (hrd : 0 < D.host.rdE) (t t' : D.s.T
           have p1 := (rowsT_sh_pos Y hrd t hG hrel h0 τ).ne'
           have p2 := (rowsT_sh_pos Y hrd t' hG' hrel' h0' τ).ne'
           rw [← e] at p2 ⊢
-          simp only [chSh, invSh, if_neg h0, if_neg h0'']
+          simp only [chSh, invSh, ite_eq_right h0, ite_eq_right h0'']
           field_simp)))
       rw [D.what₂.card_Tau] at key
       rcases key with k1 | k2
@@ -1098,14 +1055,14 @@ theorem rowsT_Mt_small {C δ C₁ C₂ : ℝ} (hrd : 0 < D.host.rdE) (t : D.s.Te
       min (nuV (Tr D u) (Y.W τ).z (Y.W τ).z' (Y.γ t τ)) (Tr D u') * tvPr D τ u' * G * κ := by
     intro τ
     unfold ampMinF
-    rw [if_neg fun h => hD ((rows_Dr_zero_iff Y hrd t τ).1 h)]
+    rw [ite_eq_right fun h => hD ((rows_Dr_zero_iff Y hrd t τ).1 h)]
     refine rowsT_min_le (hν τ) (htv τ) hG0 hκ0 ((hlow τ).trans (le_of_eq ?_)) hKκ
     unfold tvPr
     rw [mul_div_cancel₀ _ hT'.ne']
   have nn : ∀ τ, 0 ≤ ampMinF D C δ τ u u' (Y.W τ).z (Y.W τ).z' (Y.γ t τ) := by
     intro τ
     unfold ampMinF
-    rw [if_neg fun h => hD ((rows_Dr_zero_iff Y hrd t τ).1 h)]
+    rw [ite_eq_right fun h => hD ((rows_Dr_zero_iff Y hrd t τ).1 h)]
     exact le_min zero_le_one (by have := hν τ; have := htv τ; positivity)
   have P := Finset.prod_le_prod₀ (s := Finset.univ) (fun τ _ => nn τ) (fun τ _ => each τ)
   rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_const, Finset.prod_const,

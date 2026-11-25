@@ -17,12 +17,8 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
-theorem exists_det_eq (u : kˣ) : ∃ g : GL (Fin 1) k, GeneralLinearGroup.det g = u := by
-  refine ⟨⟨Matrix.diagonal fun _ => (u : k), Matrix.diagonal fun _ => ((u⁻¹ : kˣ) : k), ?_, ?_⟩, ?_⟩
-  · simp [Matrix.diagonal_mul_diagonal]
-  · simp [Matrix.diagonal_mul_diagonal]
-  · ext
-    simp [Matrix.GeneralLinearGroup.val_det_apply]
+theorem exists_det_eq (u : kˣ) : ∃ g : GL (Fin 1) k, GeneralLinearGroup.det g = u :=
+  Matrix.GeneralLinearGroup.det_surjective (n := Fin 1) u
 
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
@@ -69,7 +65,3 @@ theorem eq_on_units (y : IrrGL (k := k)) (h : 1 = y.1) (μ μ' : kˣ →* ℂˣ)
   exact Units.ext this
 
 end UpperTheory.TNZ.ProductIrreducible₂
-
-namespace UpperTheory.TNZ
-
-end UpperTheory.TNZ

@@ -1,51 +1,8 @@
 module
 
 public import Formalism.TorsionNormIteration.InvIntegralOfClass
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.Normed.Ring.Ultra
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
 public import Mathlib.Data.Nat.Choose.Dvd
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -131,10 +88,10 @@ theorem coeffBound : Formalism.LT.CoeffBound.{u} := by
       · have hnq : n = q * (n / q) := (Nat.mul_div_cancel' hdiv).symm
         rw [hnq, pow_succ']
         exact mul_dvd_mul_left q hk
-      · rw [if_pos hdiv]
+      · rw [ite_eq_left hdiv]
         exact norm_add_inv_mul_mul_norm_pow_succ_le_one _ _ _ k hg (hσb _ _ hkb) hp1.le hpK
     · refine ⟨0, by rw [pow_zero]; exact one_dvd n, ?_⟩
-      rw [if_neg hdiv, mul_zero, add_zero, pow_zero, mul_one]
+      rw [ite_eq_right hdiv, mul_zero, add_zero, pow_zero, mul_one]
       exact hg
 
 section Bd
@@ -189,7 +146,7 @@ private lemma bd_add' {c : ℝ} {F G : MvPowerSeries ι K} (hF : Bd c F) (hG : B
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hF d) (hG d))
 
 lemma powp_step {p : ℕ} (hp : p.Prime) {r : ℕ} (hr : 1 ≤ r) {A B : MvPowerSeries ι K}
-    (_hA : Bd 1 A) (hB : Bd 1 B) (hD : Bd (‖(p : K)‖ ^ r) (A - B)) :
+    (hB : Bd 1 B) (hD : Bd (‖(p : K)‖ ^ r) (A - B)) :
     Bd (‖(p : K)‖ ^ (r + 1)) (A ^ p - B ^ p) := by
   have hpn : 0 ≤ ‖(p : K)‖ := norm_nonneg _
   have hp1 : ‖(p : K)‖ ≤ 1 := IsUltrametricDist.norm_natCast_le_one K p
@@ -234,13 +191,13 @@ lemma powp_step {p : ℕ} (hp : p.Prime) {r : ℕ} (hr : 1 ≤ r) {A B : MvPower
       _ ≤ r * p := Nat.mul_le_mul_left r hp.two_le
 
 lemma powpj {p : ℕ} (hp : p.Prime) {r : ℕ} (hr : 1 ≤ r) {A B : MvPowerSeries ι K}
-    (hA : Bd 1 A) (hB : Bd 1 B) (hD : Bd (‖(p : K)‖ ^ r) (A - B)) :
+    (hB : Bd 1 B) (hD : Bd (‖(p : K)‖ ^ r) (A - B)) :
     ∀ j : ℕ, Bd (‖(p : K)‖ ^ (r + j)) (A ^ (p ^ j) - B ^ (p ^ j))
   | 0 => by simpa using hD
   | j + 1 => by
     rw [pow_succ p j, pow_mul, pow_mul, ← add_assoc]
-    exact powp_step hp (by omega) (by simpa using hA.pow zero_le_one (p ^ j))
-      (by simpa using hB.pow zero_le_one (p ^ j)) (powpj hp hr hA hB hD j)
+    exact powp_step hp (by omega)
+      (by simpa using hB.pow zero_le_one (p ^ j)) (powpj hp hr hB hD j)
 
 lemma pow_sub_pow_bd {c : ℝ} (hc : 0 ≤ c) {A B : MvPowerSeries ι K} (hA : Bd 1 A) (hB : Bd 1 B)
     (hD : Bd c (A - B)) (m : ℕ) : Bd c (A ^ m - B ^ m) := by
@@ -267,7 +224,7 @@ theorem powCongr : Formalism.LT.PowCongr.{u, v} := by
     intro d
     rw [← norm_pow]
     exact hD d
-  have h1 := powpj hp hr hA' hB' hD' j
+  have h1 := powpj hp hr hB' hD' j
   have hAj : Bd 1 (A ^ (p ^ j)) := by simpa using Bd.pow hA' zero_le_one (p ^ j)
   have hBj : Bd 1 (B ^ (p ^ j)) := by simpa using Bd.pow hB' zero_le_one (p ^ j)
   have h2 := pow_sub_pow_bd (pow_nonneg (norm_nonneg _) _) hAj hBj h1 m

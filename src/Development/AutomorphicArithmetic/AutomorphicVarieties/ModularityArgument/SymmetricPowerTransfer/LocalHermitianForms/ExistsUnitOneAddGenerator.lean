@@ -117,10 +117,6 @@ theorem tri (L : IsLoc O Δ) (τ₀ : O) : τ₀ - 2 ∈ IsLocalRing.maximalIdea
     have h2 : (4 : O) ∈ IsLocalRing.maximalIdeal O := by
       simpa using (IsLocalRing.maximalIdeal O).sub_mem h1 hx
     exact (IsLocalRing.mem_maximalIdeal _).1 h2 h4
-  have unit_nm : ∀ x : O, x ∉ IsLocalRing.maximalIdeal O → IsUnit x := by
-    intro x hx
-    by_contra hn
-    exact hx ((IsLocalRing.mem_maximalIdeal _).2 hn)
   by_cases ha : τ₀ - 2 ∈ IsLocalRing.maximalIdeal O
   · left
     refine ⟨ha, ?_⟩
@@ -135,10 +131,10 @@ theorem tri (L : IsLoc O Δ) (τ₀ : O) : τ₀ - 2 ∈ IsLocalRing.maximalIdea
       ring
     · right; right
       refine ⟨?_, ?_⟩
-      · have h := unit_nm _ hb
+      · have h := IsLocalRing.notMem_maximalIdeal.mp hb
         convert h using 1
         ring
-      · have h := (unit_nm _ ha).neg
+      · have h := (IsLocalRing.notMem_maximalIdeal.mp ha).neg
         convert h using 1
         ring
 

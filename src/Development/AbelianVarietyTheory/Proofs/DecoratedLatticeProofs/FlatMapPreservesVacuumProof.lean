@@ -52,7 +52,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FinPl.FlatVacuum
 
@@ -175,7 +174,7 @@ theorem latO_empty {S T : HSp D} {LS : Set (Fin S.rank → D.host.E)} {LT : Set 
   have h2 : LatMem.indP D.host.F P = 0 := by
     classical
     refine Subtype.ext (funext fun v => ?_)
-    exact if_neg (hP v)
+    exact ite_eq_right (hP v)
   have h3 : pairA D.host.F 0 (0 : Af D.host.F) = 0 := rfl
   rw [h2, h3, TensorProduct.zero_tmul, mul_zero] at h1
   exact h1.symm

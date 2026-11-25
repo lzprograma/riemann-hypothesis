@@ -60,7 +60,7 @@ variable {K : Type} [Field K] {σ : K →+* ℂ} {U V W : Type} [AddCommGroup U]
 
 theorem semi_injective_of_basis {ι : Type} [Fintype ι] (b : Basis ι K U) (g : U →ₛₗ[σ] W)
     (h : LinearIndependent ℂ fun i => g (b i)) : Function.Injective g := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
 
   rw [← b.sum_repr x, map_sum] at hx
@@ -79,10 +79,8 @@ theorem majAt_expand {V ι : Type} [AddCommGroup V] [Module K V] [Fintype ι] [D
     (X : InfinitePlace K → Matrix ι ι ℂ) (v : InfinitePlace K) (a : K) (x y : V) :
     Formalism.HermitianLatticesTheory.normAt b X v (x + a • y) ^ 2 = Formalism.HermitianLatticesTheory.normAt b X v x ^ 2 + Formalism.HermitianLatticesTheory.normAt b X v (a • y) ^ 2 +
       2 * (v.embedding a * Formalism.HermitianLatticesTheory.majAt b X v x y).re := by
-  have hs : Formalism.HermitianLatticesTheory.fcoord b X v (a • y) = v.embedding a • Formalism.HermitianLatticesTheory.fcoord b X v y := by
-    have : Formalism.HermitianLatticesTheory.vecAt b v (a • y) = v.embedding a • Formalism.HermitianLatticesTheory.vecAt b v y := by
-      funext i; simp [Formalism.HermitianLatticesTheory.vecAt]
-    rw [Formalism.HermitianLatticesTheory.fcoord, this, Matrix.mulVec_smul]; rfl
+  have hs : Formalism.HermitianLatticesTheory.fcoord b X v (a • y) = v.embedding a • Formalism.HermitianLatticesTheory.fcoord b X v y :=
+    Formalism.HN.PlaceDecomposition.fcoord_smul b X v a y
   simp only [normAt_sq_eq_majAt, Formalism.HermitianLatticesTheory.majAt, Formalism.HermitianLatticesTheory.fcoord_add, hs, Finset.mul_sum, Complex.re_sum,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -119,18 +117,6 @@ theorem majAt_eq_of_normAt [_root_.NumberField.IsTotallyComplex K] {V ι W κ : 
   linarith
 
 end Polar
-
-section Block
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] [Fintype G] {Pl0 : Type}
-  (B : BlockDat K G Pl0) (ℓ : Lvl K G)
-
-variable {B ℓ} {v0 : InfinitePlace K} (hv0 : IsConjAt v0) {s : ℕ} (h : B.Ok s) (hX : ∀ χ ∈ ℓ.X, IsAbsIrrChar χ)
-
-
-
-
-end Block
 
 end GlobalTheory.Mem.RowSides
 

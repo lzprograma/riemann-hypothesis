@@ -37,69 +37,15 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.PairTerm
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.SizeLe
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.TowerPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
 import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Mathlib.Analysis.CStarAlgebra.Module.Constructions
-import Mathlib.Topology.Separation.CompletelyRegular
 import GroundTheory.AutomorphicForms.HaarCosets
 import GroundTheory.LocalFields.LocalFourierHaar
 import GroundTheory.AutomorphicForms.SphericalLaurent
-import Mathlib.RingTheory.PicardGroup
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.BlockBound
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.Combine
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.CongSub
@@ -143,51 +89,16 @@ open MeasureTheory GroundTheory.Automorphic.Spherical UpperTheory.Gal.Gen
 theorem UpperTheory.Gal.Gen.algC_pf :
     UpperTheory.Gal.Gen.Alg → UpperTheory.Gal.Gen.AlgC := by
   intro hA l _ ι H _ _ hp P hP hcard
-  let P' : Submodule (Qbar l) (H → Qbar l) :=
-    { carrier := {f | (fun h => ι (f h)) ∈ P}
-      zero_mem' := by
-        show (fun h => ι ((0 : H → Qbar l) h)) ∈ P
-        convert P.zero_mem using 1
-        funext h
-        simp
-      add_mem' := by
-        intro a b ha hb
-        show (fun h => ι ((a + b) h)) ∈ P
-        convert P.add_mem ha hb using 1
-        funext h
-        simp
-      smul_mem' := by
-        intro r a ha
-        show (fun h => ι ((r • a) h)) ∈ P
-        convert P.smul_mem (ι r) ha using 1
-        funext h
-        simp }
-  let j : P ≃+ P' :=
-    { toFun := fun c => ⟨fun h => ι.symm (c.1 h), by
-        show (fun h => ι (ι.symm (c.1 h))) ∈ P
-        simpa using c.2⟩
-      invFun := fun f => ⟨fun h => ι (f.1 h), f.2⟩
-      left_inv := by
-        intro c
-        ext h
-        simp
-      right_inv := by
-        intro f
-        ext h
-        simp
-      map_add' := by
-        intro a b
-        ext h
-        simp }
-  have hrank : Module.rank ℂ P = Module.rank (Qbar l) P' := by
-    refine rank_eq_of_equiv_equiv (fun z => ι.symm z) j ι.symm.bijective ?_
-    intro r m
-    ext h
-    change ι.symm (r * m.1 h) = ι.symm r * ι.symm (m.1 h)
-    exact map_mul ι.symm r (m.1 h)
-  have hfin : Module.finrank ℂ P = Module.finrank (Qbar l) P' := by
-    unfold Module.finrank
-    rw [hrank]
+  have := RingHomInvPair.of_ringEquiv ι
+  have := RingHomInvPair.symm (ι : Qbar l →+* ℂ) (ι.symm : ℂ →+* Qbar l)
+  let e : (H → Qbar l) ≃ₛₗ[(ι : Qbar l →+* ℂ)] (H → ℂ) :=
+    { (RingEquiv.piCongrRight (fun _ : H => ι)).toAddEquiv with
+      map_smul' := fun r f => funext fun h => map_mul ι r (f h) }
+  let P' := P.comap e.toLinearMap
+  let eP := (e.ofSubmodule' P).symm
+  have hfin : Module.finrank ℂ P = Module.finrank (Qbar l) P' :=
+    congrArg Cardinal.toNat (rank_eq_of_equiv_equiv ι.symm eP.toAddEquiv ι.symm.bijective
+      eP.map_smulₛₗ)
   have hinv : ∀ c ∈ P', ∀ g : H, (fun h => c (h * g)) ∈ P' := by
     intro c hc g
     exact hP _ hc g
@@ -801,10 +712,10 @@ theorem UpperTheory.Gal.Gen.gammaInt_pf :
       simp
     by_cases h0 : l = 0
     · subst h0
-      rw [if_pos rfl, halfModulus_zero, one_mul, if_pos]
+      rw [ite_eq_left rfl, halfModulus_zero, one_mul, ite_eq_left]
       rw [hd0, mul_one]
       exact mul_mem hk₁ hk₂
-    · rw [if_neg h0, mul_zero, if_neg]
+    · rw [ite_eq_right h0, mul_zero, ite_eq_right]
       intro hg
       have hk : k₁⁻¹ * (k₁ * Cartan.diagPow F n l * k₂) * k₂⁻¹ ∈ GLnLocal.integralGL F n :=
         mul_mem (mul_mem (inv_mem hk₁) hg) (inv_mem hk₂)
@@ -1093,7 +1004,7 @@ theorem UpperTheory.Gal.Gen.neglAt_pf :
   · intro U hU hB φ hφ hfix
     have hB' : ¬ GenAt w Φ U := hB
     unfold GenAt at hB'
-    push_neg at hB'
+    push Not at hB'
     obtain ⟨z, hz, h0⟩ := hB'
     rw [hop U hU z hz φ hφ hfix, hp1 z h0, one_smul]
 end -- clump:auto
@@ -1277,7 +1188,6 @@ theorem UpperTheory.Gal.Gen.ratFin_pf :
   refine ⟨?_, ?_⟩
   · intro Z hZ
     haveI : DiscreteTopology (ratGL E a).range := GroundTheory.Automorphic.AdelicGLn.discreteTopology_rationalGL E a
-    set_option synthInstance.maxHeartbeats 200000 in
     have hcl : IsClosed (((ratGL E a).range : Subgroup (GA E a)) : Set (GA E a)) := Subgroup.isClosed_of_discrete
     let K : Set (GA E a) := Subtype.val '' Z
     have hK : IsCompact K := hZ.image continuous_subtype_val
@@ -1571,7 +1481,7 @@ theorem UpperTheory.Gal.Gen.stepCore_pf :
   intro hAlg hCod hPF E _ _ _ l _ ι a W C C' hCfin H _ _ hH lam hsurj hC'C hker ℓ hinf hright haut P hfd hcard f hf
   letI : Fintype H := Fintype.ofFinite H
   have hex : ∀ φ : H → ℂ, ∃ F : algForms W, ∀ v g, F.1 v g = φ (ℓ g) * f.1 v g := fun φ =>
-    GlobalTheory.T.exists_algebraicModularForm_mul_archInvariant E a W f (fun g => φ (ℓ g)) (haut φ) (fun g x hx => by simp only [hinf g x hx])
+    GlobalTheory.AlgMul.exists_mul_algForms E a W f (fun g => φ (ℓ g)) (haut φ) (fun g x hx => by simp only [hinf g x hx])
   choose Ψ₀ hΨ₀ using hex
   let Ψ : (H → ℂ) →ₗ[ℂ] algForms W :=
     { toFun := Ψ₀
@@ -1793,8 +1703,7 @@ theorem UpperTheory.Gal.Gen.twistPart_pf :
     rw [hlaw k hkC v g, e]
     simp
   obtain ⟨v, hv⟩ : ∃ v, (G π).1 v ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact h0 (Subtype.ext (LinearMap.ext hcon))
   have hP : GlobalTheory.CongW.HasTypeVec w₀ K J θ χ π.V :=
     ⟨(G π).1 v, AutSub.mem_finPart.1 (h1 π hπ) v, hv, fun x hx => funext fun g => hfix x hx v g,
@@ -1841,7 +1750,7 @@ theorem UpperTheory.Gal.Gen.tyStep_pf :
   obtain ⟨s, hs1, hs2⟩ := hCS (l ^ m)
   have hex : ∀ χ : Multiplicative (ZMod (l ^ m)) →* ℂˣ,
       ∃ F : algForms W, ∀ v g, F.1 v g = ((χ (ℓ g) : ℂˣ) : ℂ) * f.1 v g := fun χ =>
-    GlobalTheory.T.exists_algebraicModularForm_mul_archInvariant E a W f (fun g => ((χ (ℓ g) : ℂˣ) : ℂ)) (hℓa fun y => ((χ y : ℂˣ) : ℂ))
+    GlobalTheory.AlgMul.exists_mul_algForms E a W f (fun g => ((χ (ℓ g) : ℂˣ) : ℂ)) (hℓa fun y => ((χ y : ℂˣ) : ℂ))
       fun g x hx => by simp only [hℓi g x hx]
   choose F hF using hex
   have hpart : ∀ χ ∈ s, F χ ∈ part W K
@@ -1886,16 +1795,13 @@ theorem halfInt_holds : HalfInt := halfInt_pf _root_.UpperTheory.Gal.Gen.wtPos_p
 theorem injAE_holds : InjAE := injAE_pf _root_.UpperTheory.Gal.Gen.nullZero_pf
 theorem rDens_holds : RDens := rDens_pf _root_.UpperTheory.Gal.Gen.rFormula_pf _root_.UpperTheory.Gal.Gen.densSymm
 theorem rInt_holds : RInt := rInt_pf injAE_holds rDens_holds halfInt_holds _root_.UpperTheory.Gal.Gen.densCont_pf
-theorem symEx_holds : SymEx := symEx_pf
-theorem small_holds : Small := small_pf symEx_holds _root_.UpperTheory.Gal.Gen.starEx_pf _root_.UpperTheory.Gal.Gen.nullZero_pf _root_.UpperTheory.Gal.Gen.densCont_pf
+theorem small_holds : Small := small_pf _root_.UpperTheory.Gal.Gen.symEx_pf _root_.UpperTheory.Gal.Gen.starEx_pf _root_.UpperTheory.Gal.Gen.nullZero_pf _root_.UpperTheory.Gal.Gen.densCont_pf
 theorem gammaInt_holds : GammaInt := gammaInt_pf rInt_holds _root_.UpperTheory.Gal.Gen.densCont_pf
 theorem gammaConj_holds : GammaConj := gammaConj_pf rConj_holds
 theorem planch_holds : Planch := planch_pf gammaInt_holds gammaConj_holds _root_.UpperTheory.Gal.Gen.gammaEig_pf injAE_holds _root_.UpperTheory.Gal.Gen.densCont_pf
 theorem combine_holds : Combine := combine_pf
-theorem restrict_holds : Restrict := restrict_pf
 theorem algC_holds : AlgC := algC_pf alg_holds
 theorem locOp_holds : LocOp := locOp_pf _root_.UpperTheory.Gal.Gen.repsEx_pf planch_holds
-theorem satEx_holds : SatEx := satEx_pf
 theorem globOp_holds : GlobOp := globOp_pf locOp_holds
 theorem neglAt_holds : NeglAt := neglAt_pf globOp_holds small_holds
 theorem tower_holds : Tower := tower_pf _root_.UpperTheory.Gal.Gen.congSub_pf
@@ -1907,15 +1813,13 @@ theorem sep_holds : Sep := sep_pf levFacts_holds _root_.UpperTheory.Gal.Gen.locC
 theorem count_holds : Count := count_pf countCore_holds cover_holds sep_holds _root_.UpperTheory.Gal.Gen.partFacts_pf
 theorem countGen_holds : CountGen := countGen_pf count_holds neglAt_holds
 theorem stepCore_holds : StepCore := stepCore_pf algC_holds _root_.UpperTheory.Gal.Gen.codim_pf _root_.UpperTheory.Gal.Gen.partFacts_pf
-theorem smoothAt_holds : SmoothAt := smoothAt_pf
-theorem step_holds : Step := step_pf smoothAt_holds tower_holds levFacts_holds ell_holds countGen_holds stepCore_holds _root_.UpperTheory.Gal.Gen.partFacts_pf
+theorem step_holds : Step := step_pf _root_.UpperTheory.Gal.Gen.smoothAt_pf tower_holds levFacts_holds ell_holds countGen_holds stepCore_holds _root_.UpperTheory.Gal.Gen.partFacts_pf
 theorem denseGen_holds : DenseGen := denseGen_pf step_holds _root_.UpperTheory.Gal.Gen.partFacts_pf
 theorem toPolyX_holds : ToPolyX := toPolyX_pf _root_.UpperTheory.Gal.Gen.partFacts_pf
 theorem denomBdd_holds : DenomBdd := denomBdd_pf
 theorem rhoBound_holds : RhoBound := rhoBound_pf _root_.UpperTheory.Gal.Gen.degLe_pf _root_.UpperTheory.Gal.Gen.blockBound_pf _root_.UpperTheory.Gal.Gen.detBound_pf _root_.UpperTheory.Gal.Gen.sizeLe_pf
 theorem latFacts_holds : LatFacts := latFacts_pf
-theorem levelEx_holds : LevelEx := levelEx_pf
-theorem frameW_holds : FrameW := frameW_pf _root_.UpperTheory.Gal.Gen.kappa_pf denomBdd_holds rhoBound_holds latFacts_holds levelEx_holds
+theorem frameW_holds : FrameW := frameW_pf _root_.UpperTheory.Gal.Gen.kappa_pf denomBdd_holds rhoBound_holds latFacts_holds _root_.UpperTheory.Gal.Gen.levelEx_pf
 theorem kerOpen_holds : KerOpen := kerOpen_pf _root_.UpperTheory.Gal.Gen.powNhds_pf
 theorem tyStep_holds : TyStep := tyStep_pf levFacts_holds ell_holds kerOpen_holds _root_.UpperTheory.Gal.Gen.charSum_pf _root_.UpperTheory.Gal.Gen.twistPart_pf
 

@@ -54,10 +54,9 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConeDegreeGrowthChowFormIntegrality
 
 @[expose] public section
-
-set_option autoImplicit false
 
 namespace GlobalTheory.ChowExists
 
@@ -69,128 +68,45 @@ variable {K : Type} [Field K] {N : ℕ}
 
 theorem isHomogeneous_of_component {I : Ideal (MvPolynomial (Fin N) K)}
     (h : ∀ g ∈ I, ∀ n : ℕ, homogeneousComponent n g ∈ I) :
-    I.IsHomogeneous (homogeneousSubmodule (Fin N) K) := fun d g hg => by
-  have e : ((DirectSum.decompose (homogeneousSubmodule (Fin N) K) g d : _) : MvPolynomial (Fin N) K) =
-      homogeneousComponent d g := MvPolynomial.decomposition.decompose'_apply g d
-  rw [e]
-  exact h g hg d
+    I.IsHomogeneous (homogeneousSubmodule (Fin N) K) :=
+  _root_.GlobalTheory.ConeDeg.isHomogeneous_of_component h
 
 theorem aeval_eq_zero_of_block {P : Ideal (MvPolynomial (Fin N) K)} {D δ : ℕ}
     {f : MvPolynomial (Fin (D + 1) × Fin N) K} (h : IsChowFormInt P D δ f)
     (t : Fin (D + 1) × Fin N → AlgebraicClosure K) (i : Fin (D + 1)) (ht : ∀ j, t (i, j) = 0) :
-    aeval t f = 0 := by
-  have h1 := (isMultiHomogeneous_iff_block.1 h.homog).aeval_smul
-    (fun l => if l = i then (0 : AlgebraicClosure K) else 1) t
-  have h2 : (fun v : Fin (D + 1) × Fin N => (if v.1 = i then (0 : AlgebraicClosure K) else 1) * t v) = t := by
-    funext v
-    split_ifs with hv
-    · obtain ⟨l, j⟩ := v
-      obtain rfl : l = i := hv
-      rw [ht, mul_zero]
-    · rw [one_mul]
-  rw [h2, Finset.prod_eq_zero (Finset.mem_univ i) (by simp [h.pos.ne']), zero_mul] at h1
-  exact h1
+    aeval t f = 0 :=
+  _root_.GlobalTheory.ConeDeg.aeval_eq_zero_of_block h t i ht
 
 theorem not_lt_of_isChowFormInt {P : Ideal (MvPolynomial (Fin N) K)} {D D' δ δ' : ℕ}
     {f : MvPolynomial (Fin (D + 1) × Fin N) K} {f' : MvPolynomial (Fin (D' + 1) × Fin N) K}
-    (h : IsChowFormInt P D δ f) (h' : IsChowFormInt P D' δ' f') : ¬ D < D' := fun hlt => by
-  refine h.ne_zero (map_injective _ (algebraMap K (AlgebraicClosure K)).injective ?_)
-  refine MvPolynomial.funext fun u => ?_
-  rw [map_zero, map_zero, eval_map, ← aeval_def]
-  obtain ⟨y, hy, hP, hu⟩ := (h'.zero_iff _).1 (aeval_eq_zero_of_block h'
-    (fun v => if hv : (v.1 : ℕ) < D + 1 then u (⟨v.1, hv⟩, v.2) else 0) (Fin.last _)
-    (fun j => dif_neg (by simp; omega)))
-  refine (h.zero_iff u).2 ⟨y, hy, hP, fun i => ?_⟩
-  have := hu ⟨i, by omega⟩
-  simpa only [dif_pos i.2] using this
+    (h : IsChowFormInt P D δ f) (h' : IsChowFormInt P D' δ' f') : ¬ D < D' :=
+  _root_.GlobalTheory.ConeDeg.not_lt_of_isChowFormInt h h'
 
 theorem exists_X_notMem {P : Ideal (MvPolynomial (Fin N) K)} {D δ : ℕ}
-    {f : MvPolynomial (Fin (D + 1) × Fin N) K} (h : IsChowFormInt P D δ f) : ∃ j, X j ∉ P := by
-  obtain ⟨y, hy, hyI⟩ := h.exists_point
-  obtain ⟨j, hj⟩ := Function.ne_iff.1 hy
-  exact ⟨j, fun hX => hj (by simpa using hyI _ hX)⟩
+    {f : MvPolynomial (Fin (D + 1) × Fin N) K} (h : IsChowFormInt P D δ f) : ∃ j, X j ∉ P :=
+  _root_.GlobalTheory.ConeDeg.exists_X_notMem h
 
 theorem ringKrullDim_of_isChowFormInt {P : Ideal (MvPolynomial (Fin N) K)} [hp : P.IsPrime]
     (hP : ∀ g ∈ P, ∀ n : ℕ, homogeneousComponent n g ∈ P) {D δ : ℕ}
     {f : MvPolynomial (Fin (D + 1) × Fin N) K} (h : IsChowFormInt P D δ f) :
-    ringKrullDim (MvPolynomial (Fin N) K ⧸ P) = (D + 1 : ℕ) := by
-  obtain ⟨j, hj⟩ := exists_X_notMem h
-  obtain ⟨e, he⟩ := exists_ringKrullDim_quotient_eq_succ (isHomogeneous_of_component hP) hj
-  obtain ⟨δ', f', h'⟩ := GlobalTheory.ChowHt.exists_isChowFormInt_of_ringKrullDim_eq K N e P hp hP he
-  obtain rfl : e = D := le_antisymm (not_lt.1 (not_lt_of_isChowFormInt h h'))
-    (not_lt.1 (not_lt_of_isChowFormInt h' h))
-  exact he
+    ringKrullDim (MvPolynomial (Fin N) K ⧸ P) = (D + 1 : ℕ) :=
+  _root_.GlobalTheory.ConeDeg.ringKrullDim_of_isChowFormInt hP h
 
 theorem exists_eq_coneIdeal {P : Ideal (MvPolynomial (Fin N) K)} [hp : P.IsPrime]
     (hP : ∀ g ∈ P, ∀ n : ℕ, homogeneousComponent n g ∈ P) {δ : ℕ}
     {f : MvPolynomial (Fin (0 + 1) × Fin N) K} (h : IsChowFormInt P 0 δ f) :
     ∃ (y : Fin N → AlgebraicClosure K) (j : Fin N), y j = 1 ∧ P = coneIdeal K y := by
-  obtain ⟨y, hy, hyI⟩ := h.exists_point
-  obtain ⟨j, hj⟩ := Function.ne_iff.1 hy
-  have hj' : y j ≠ 0 := hj
-  refine ⟨(y j)⁻¹ • y, j, by simp [hj'], ?_⟩
-  rw [coneIdeal_smul (inv_ne_zero hj')]
-  have hle : P ≤ coneIdeal K y := fun g hg => (mem_coneIdeal_iff y g).2 fun d => hyI _ (hP g hg d)
-  by_contra hne
-  have := isPrime_coneIdeal (K := K) y
-  have hX : (X j : MvPolynomial (Fin N) K) ∉ coneIdeal K y := fun hX =>
-    hj' (by simpa using aeval_eq_zero_of_mem_coneIdeal hX)
-  obtain ⟨e, he⟩ := exists_ringKrullDim_quotient_eq_succ (isHomogeneous_coneIdeal y) hX
-  have := ringKrullDim_quotient_add_one_le_of_lt (lt_of_le_of_ne hle hne)
-  rw [he, ringKrullDim_of_isChowFormInt hP h] at this
-  have h2 : (e + 1 + 1 : ℕ) ≤ (0 + 1 : ℕ) := by exact_mod_cast this
-  omega
+  apply _root_.GlobalTheory.ConeDeg.exists_eq_coneIdeal <;> assumption
 
 theorem coeff_sub_comp {H : Polynomial ℚ} {D : ℕ} (h : H.natDegree ≤ D + 1) :
-    (H - H.comp (Polynomial.X - Polynomial.C ((1 : ℕ) : ℚ))).coeff D = (D + 1) * H.coeff (D + 1) := by
-  have e : H.comp (Polynomial.X - Polynomial.C ((1 : ℕ) : ℚ)) = Polynomial.taylor (-1) H := by
-    rw [Polynomial.taylor_apply]; simp [sub_eq_add_neg]
-  have h1 : (Polynomial.hasseDeriv D H).natDegree ≤ 1 :=
-    (Polynomial.natDegree_hasseDeriv_le _ _).trans (by omega)
-  rw [e, Polynomial.coeff_sub, Polynomial.taylor_coeff, Polynomial.eq_X_add_C_of_natDegree_le_one h1]
-  simp [Polynomial.hasseDeriv_coeff, add_comm 1 D]
+    (H - H.comp (Polynomial.X - Polynomial.C ((1 : ℕ) : ℚ))).coeff D = (D + 1) * H.coeff (D + 1) :=
+  _root_.GlobalTheory.ConeDeg.coeff_sub_comp h
 
 theorem degree_eq_coeff (D : ℕ) : ∀ (K : Type) [Field K] [CharZero K] (P : Ideal (MvPolynomial (Fin N) K))
     [P.IsPrime], (∀ g ∈ P, ∀ n : ℕ, homogeneousComponent n g ∈ P) → ∀ (δ : ℕ)
     (f : MvPolynomial (Fin (D + 1) × Fin N) K), IsChowFormInt P D δ f →
     (δ : ℚ) = (D.factorial : ℚ) * (idealHilbertPoly P).coeff D := by
-  induction D with
-  | zero =>
-    intro K _ _ P _ hP δ f h
-    obtain ⟨y, j, hy, rfl⟩ := exists_eq_coneIdeal hP h
-    rw [GlobalTheory.CompHt.idealHilbertPoly_coneIdeal_eq_C_finrank_adjoin K N y j hy, le_antisymm (GlobalTheory.CompHt.PointUp.le_finrank_of_isChowFormInt K N δ y j f hy h) (GlobalTheory.CompHt.PointLow.finrank_le_of_isChowFormInt K N δ y j f hy h)]
-    simp
-  | succ D ih =>
-    intro K _ _ P hp hP δ f h
-    let L := FractionRing (MvPolynomial (Fin N) K)
-    have : CharZero L := charZero_of_injective_algebraMap (algebraMap K L).injective
-    obtain ⟨hE, hEH⟩ := GlobalTheory.HilbBaseChange.idealHilbertPoly_map K L N P hP
-    obtain ⟨hEp, hl⟩ := GlobalTheory.ExtPrime.isPrime_map_and_generic_form_notMem K L N P hp
-    obtain ⟨Q, hQ, hIQ, hsat⟩ := GlobalTheory.Chow.exists_prime_saturation_generic_section K L N P hp fun u => by
-      obtain ⟨y, hy, h1, h2⟩ := (h.zero_iff _).1 (aeval_eq_zero_of_block h
-        (fun v => if v.1 = 0 then u v.2 else 0) (Fin.last _) (fun j => if_neg (by simp)))
-      exact ⟨y, hy, h1, by simpa using h2 0⟩
-    obtain ⟨f', hf'⟩ := GlobalTheory.ChowSpec.exists_isChowFormInt_generic_section K L N P D δ f hP h
-    have hlin : (∑ j : Fin N, C (algebraMap (MvPolynomial (Fin N) K) L (X j)) * X j :
-        MvPolynomial (Fin N) L).IsHomogeneous 1 :=
-      IsHomogeneous.sum _ _ _ fun j _ => (isHomogeneous_X L j).C_mul _
-    have hI := isHomogeneous_sup_span_singleton (isHomogeneous_of_component hE) hlin
-    obtain ⟨hQh, hQH⟩ := GlobalTheory.prime_saturation_homogeneous_and_hilbertPoly_eq L N _ Q (fun g hg n => homogeneousComponent_mem_of_mem hI hg n) hQ hIQ hsat
-    have hf'' : IsChowFormInt Q D δ f' := ⟨hf'.homog, hf'.irred, fun u => (hf'.zero_iff u).trans
-      (exists_congr fun y => and_congr_right fun hy => and_congr_left fun _ =>
-        ⟨fun h1 g hg => by
-          obtain ⟨j, hj⟩ := Function.ne_iff.1 hy
-          obtain ⟨m, hm⟩ := hsat g hg j
-          have := h1 _ hm
-          rw [map_mul, map_pow, aeval_X] at this
-          exact (mul_eq_zero.1 this).resolve_left (pow_ne_zero _ hj), fun h1 g hg => h1 g (hIQ hg)⟩)⟩
-    have hdeg := degree_idealHilbertPoly_eq_of_isPrime (isHomogeneous_of_component hP)
-      (ringKrullDim_of_isChowFormInt hP h)
-    rw [ih L Q hQh δ f' hf'', hQH,
-      idealHilbertPoly_sup_of_isPrime (isHomogeneous_of_component hE) hlin (hl (exists_X_notMem h)), hEH,
-      coeff_sub_comp (Polynomial.natDegree_le_of_degree_le hdeg.le), Nat.factorial_succ]
-    push_cast
-    ring
+  apply _root_.GlobalTheory.ConeDeg.degree_eq_coeff <;> assumption
 
 theorem degree_eq_hilbertDegree [CharZero K] {P : Ideal (MvPolynomial (Fin N) K)} [P.IsPrime]
     (hP : P.IsHomogeneous (homogeneousSubmodule (Fin N) K)) {D δ : ℕ}

@@ -161,8 +161,6 @@ theorem emb_cj (τ : E →+* ℂ) (x : E) : τ (cj E x) = starRingEnd ℂ (τ x)
 
 variable {E} {n : ℕ}
 
-def IsHermGram (G : Matrix (Fin n) (Fin n) E) : Prop := (∀ a b, G b a = cj E (G a b)) ∧ G.det ≠ 0
-
 variable (G : Matrix (Fin n) (Fin n) E)
 
 abbrev URat : Type := unitaryOf (cj E) G
@@ -183,32 +181,6 @@ def diag : URat G →* UAd G :=
     (Pi.monoidHom fun w : InfinitePlace E =>
       unitaryMap (cj E) (starRingEnd ℂ) w.embedding (emb_cj E w.embedding) G)
     (unitaryMap (cj E) (cjAf E) (toAf E) (toAf_cj E) G)
-
-def ratPts : Subgroup (UAd G) := (diag G).range
-
-def sgnMat (n p : ℕ) : Matrix (Fin n) (Fin n) ℂ := Matrix.diagonal fun i => if (i : ℕ) < p then 1 else -1
-
-def lieCube (n p : ℕ) (r : ℝ) : Set (Matrix (Fin n) (Fin n) ℂ) :=
-  {X | Xᵀ * sgnMat n p + sgnMat n p * X.map (starRingEnd ℂ) = 0 ∧ (∀ i, |(X i i).im| ≤ r) ∧
-    ∀ i j, i < j → |(X i j).re| ≤ r ∧ |(X i j).im| ≤ r}
-
-def IsOrthoFrame (w : InfinitePlace E) (p : ℕ) (b : GL (Fin n) ℂ) : Prop :=
-  p ≤ n ∧ (b : Matrix (Fin n) (Fin n) ℂ)ᵀ * G.map w.embedding *
-    (b : Matrix (Fin n) (Fin n) ℂ).map (starRingEnd ℂ) = sgnMat n p
-
-def cubeNhd (K : Subgroup (UFin G)) (p : InfinitePlace E → ℕ) (b : InfinitePlace E → GL (Fin n) ℂ) (r : ℝ) :
-    Set (UAd G) :=
-  {g | g.2 ∈ K ∧ ∀ w, ∃ X ∈ lieCube n (p w) r,
-    (((b w)⁻¹ * (g.1 w : GL (Fin n) ℂ) * b w : GL (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ) = NormedSpace.exp X}
-
-def IsNormalised (K : Subgroup (UFin G)) (μ : Measure (UAd G)) : Prop :=
-  IsOpen (K : Set (UFin G)) ∧ IsCompact (K : Set (UFin G)) ∧ μ.IsHaarMeasure ∧
-    ∃ (p : InfinitePlace E → ℕ) (b : InfinitePlace E → GL (Fin n) ℂ), (∀ w, IsOrthoFrame G w (p w) (b w)) ∧
-      Tendsto (fun r : ℝ => μ (cubeNhd G K p b r) /
-        ENNReal.ofReal ((2 * r) ^ (n ^ 2 * Fintype.card (InfinitePlace E)))) (𝓝[>] 0) (𝓝 1)
-
-def IsVolDatum (K : Subgroup (UFin G)) (μ : Measure (UAd G)) (D : Set (UAd G)) : Prop :=
-  IsNormalised G K μ ∧ IsFundamentalDomain (ratPts G) D μ
 
 end GlobalTheory.IndefiniteRowSideFullHecke.AdelicQuotientClasses
 end -- clump:auto
@@ -265,9 +237,6 @@ section Main
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {G : Matrix (Fin n) (Fin n) E}
   {H : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H] [MeasurableSpace H] [BorelSpace H]
   {Γ : Subgroup H}
-
-def IsHaarPair (Γ : Subgroup H) (p : Measure H × Set H) : Prop :=
-  p.1.IsHaarMeasure ∧ IsFundamentalDomain Γ p.2 p.1
 
 end Main
 
@@ -383,8 +352,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S IsDedekindDomain NumberField Formalism.L2.Theta
 open Formalism.IndefR.Mult Formalism.UG GlobalTheory.SphPar GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefTransfer
 open scoped TensorProduct
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.DefTransfer.Glob
 
@@ -540,9 +507,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 local notation3 "F₀" => maximalRealSubfield E
 local notation3 "σ₀" => (IsCMField.complexConj E : E →ₐ[F₀] E)
-
-theorem conj_eq_one_iff {G : Type} [Group G] (a x : G) : a * x * a⁻¹ = 1 ↔ x = 1 := by
-  rw [mul_inv_eq_one, mul_eq_left]
 
 theorem bc_eq_one_iff {R S : Type} [CommRing R] [CommRing S] (φ : R ≃+* S) (x : GL (Fin n) R) :
     bc φ.toRingHom x = 1 ↔ x = 1 := by

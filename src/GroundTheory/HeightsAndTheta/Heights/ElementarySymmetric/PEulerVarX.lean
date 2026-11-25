@@ -15,51 +15,7 @@ public import Mathlib.LinearAlgebra.Dimension.Finite
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PKHCechDSq
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechHcEqCoh, GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CohMkEqZero, GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PEulerVarX
@@ -213,8 +169,6 @@ theorem EulerVar.proof (hSq : KH.CechDSqStatement) (hE : EulerSES.Statement) : E
     (∑ k, (Fintype.card (ι k) - 1))
     (fun n y hy => KHCechDDeg.full F K ι _ (quotPart F W) (m - e) n y hy)
     (fun n y hy => KHCechDDeg.full F K ι _ (quotPart F V) m n y hy)
-    (fun n y hy => KHCechDDeg.full F K ι _ (quotPart F U) m n y hy)
-    (fun n y _ => LinearMap.congr_fun (hSq F K ι _ n) y) (fun n y _ => LinearMap.congr_fun (hSq F K ι _ n) y)
     (fun n y _ => LinearMap.congr_fun (hSq F K ι _ n) y)
     (fun n y hy => (KHCechMapDeg.full F K ι _ _ _ _ g m n hg).1 y (by rw [hCA]; exact hy))
     (fun n y hy => (KHCechMapDeg.full F K ι _ _ _ _ h m n hh).1 y hy)
@@ -345,10 +299,7 @@ structure IsSES (CA : ∀ n, Submodule F (A n)) (CB : ∀ n, Submodule F (B n)) 
     (f : ∀ n, A n →ₗ[F] B n) (g : ∀ n, B n →ₗ[F] C n) : Prop where
   dA_mem : ∀ n, ∀ x ∈ CA n, dA n x ∈ CA (n + 1)
   dB_mem : ∀ n, ∀ x ∈ CB n, dB n x ∈ CB (n + 1)
-  dC_mem : ∀ n, ∀ x ∈ CC n, dC n x ∈ CC (n + 1)
-  dA_dA : ∀ n, ∀ x ∈ CA n, dA (n + 1) (dA n x) = 0
   dB_dB : ∀ n, ∀ x ∈ CB n, dB (n + 1) (dB n x) = 0
-  dC_dC : ∀ n, ∀ x ∈ CC n, dC (n + 1) (dC n x) = 0
   f_mem : ∀ n, ∀ x ∈ CA n, f n x ∈ CB n
   g_mem : ∀ n, ∀ y ∈ CB n, g n y ∈ CC n
   f_d : ∀ n, ∀ x ∈ CA n, dB n (f n x) = f (n + 1) (dA n x)
@@ -612,9 +563,10 @@ end EulerSES
 open EulerSES
 
 theorem EulerSES.full : EulerSES.Statement := by
-  intro F _ A B C _ _ _ _ _ _ CA CB CC dA dB dC f g N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14
-    hfa hfb hfc hsub
-  have H : IsSES CA CB CC dA dB dC f g := ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩
+  intro F _ A B C _ _ _ _ _ _ CA CB CC dA dB dC f g N hdA_mem hdB_mem hdB_sq hf_mem hg_mem
+    hf_d hg_d hf_inj hgf hexact hg_onto hfa hfb hfc hsub
+  have H : IsSES CA CB CC dA dB dC f g :=
+    ⟨hdA_mem, hdB_mem, hdB_sq, hf_mem, hg_mem, hf_d, hg_d, hf_inj, hgf, hexact, hg_onto⟩
   have key := alt_sum (fun n => (Module.finrank F (coh CA dA n) : ℤ))
     (fun n => (Module.finrank F (coh CB dB n) : ℤ)) (fun n => (Module.finrank F (coh CC dC n) : ℤ))
     (fun n => (Module.finrank F (LinearMap.range (H.iA n)) : ℤ))

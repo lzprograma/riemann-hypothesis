@@ -210,15 +210,15 @@ theorem lrel_of_local (G : GFrames A r k) {d : G.Dat} {Γ Γ' : G.Lt} (hT : G.Is
   have hn : ∀ p, n p ∈ (G.S p).St ∧ A.lat p Γ' = n p • A.lat p Γ := by
     intro p
     by_cases hp : A.lat p Γ' = A.lat p Γ
-    · simp only [n, if_pos hp]; exact ⟨(G.S p).St.one_mem, by rw [one_smul]; exact hp⟩
-    · simp only [n, if_neg hp]; exact (H p).choose_spec
+    · simp only [n, ite_eq_left hp]; exact ⟨(G.S p).St.one_mem, by rw [one_smul]; exact hp⟩
+    · simp only [n, ite_eq_right hp]; exact (H p).choose_spec
   have hfin : {p | n p ∉ (G.S p).K0}.Finite := by
     refine (recΓ.2.2.union recΓ'.2.2).subset fun p hp => ?_
     by_contra hc
     simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_not] at hc
     apply hp
     have : A.lat p Γ' = A.lat p Γ := by rw [hc.1, hc.2]
-    simp only [n, if_pos this]
+    simp only [n, ite_eq_left this]
     exact (G.S p).K0.one_mem
   have hc : {p | ¬ ∃ u : (𝒪[(A.loc p).Fp])ˣ,
       ((u : 𝒪[(A.loc p).Fp]) : (A.loc p).Fp) = (((fun _ => 1 : ∀ p, ((A.loc p).Fp)ˣ) p) : (A.loc p).Fp)}.Finite :=
@@ -308,8 +308,8 @@ theorem glue_terms (G : GFrames A r k) (hk : 4 * r + 7 ≤ k) {d : G.Dat} {Λ₀
   have hterm : ∀ p, (G.S p).IsTerm (d p) (Λ' p) := by
     intro p
     by_cases hp : p ∈ B
-    · simp only [Λ', if_pos hp]; exact hΛ p
-    · simp only [Λ', if_neg hp]; rw [← (hB p hp).1]; exact h₀.2 p
+    · simp only [Λ', ite_eq_left hp]; exact hΛ p
+    · simp only [Λ', ite_eq_right hp]; rw [← (hB p hp).1]; exact h₀.2 p
   have hlat : ∀ p, IsLat (A.L p) (Λ' p) := by
     intro p
     haveI := (A.loc p).lf
@@ -320,17 +320,17 @@ theorem glue_terms (G : GFrames A r k) (hk : 4 * r + 7 ≤ k) {d : G.Dat} {Λ₀
     refine hBfin.subset fun p hp => ?_
     by_contra hc
     apply hp
-    simp only [Λ', if_neg hc]
+    simp only [Λ', ite_eq_right hc]
   obtain ⟨Γ, ⟨hL, hlatΓ⟩, -⟩ := _root_.GlobalTheory.HL.Glue.glue A _ Λ' hlat hfin
   refine ⟨Γ, ⟨hL, fun p => (hlatΓ p).symm ▸ hterm p⟩, fun p => ?_⟩
   by_cases hp : p ∈ B
   · refine ⟨1, (G.S p).St.one_mem, ?_⟩
     rw [hlatΓ p, one_smul]
-    simp only [Λ', if_pos hp]
+    simp only [Λ', ite_eq_left hp]
   · obtain ⟨h, hh, he⟩ := (hB p hp).2
     refine ⟨h⁻¹, (G.S p).St.inv_mem hh, ?_⟩
     rw [hlatΓ p, he, inv_smul_smul]
-    simp only [Λ', if_neg hp]
+    simp only [Λ', ite_eq_right hp]
 
 end GlobalTheory.HL.GlobalOrbits
 

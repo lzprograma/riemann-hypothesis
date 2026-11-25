@@ -139,8 +139,8 @@ theorem exists_decomp {U : AddSubgroup A} (hU : IsOpen (U : Set A)) {G : X₀ ×
       conv_lhs => rw [← QuotientAddGroup.out_eq' q]
       exact QuotientAddGroup.eq_iff_sub_mem
     by_cases h : z.2 - q.out ∈ U
-    · rw [Set.indicator_of_mem (show z.2 - q.out ∈ (U : Set A) from h), if_pos (this.mpr h)]
-    · rw [Set.indicator_of_notMem (show z.2 - q.out ∉ (U : Set A) from h), if_neg (fun h' => h (this.mp h'))]
+    · rw [Set.indicator_of_mem (show z.2 - q.out ∈ (U : Set A) from h), ite_eq_left (this.mpr h)]
+    · rw [Set.indicator_of_notMem (show z.2 - q.out ∉ (U : Set A) from h), ite_eq_right (fun h' => h (this.mp h'))]
   simp only [hind, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq]
   split_ifs with h
   · have h2 : -z.2 + (z.2 : A ⧸ U).out ∈ U := QuotientAddGroup.eq.mp (QuotientAddGroup.out_eq' _).symm

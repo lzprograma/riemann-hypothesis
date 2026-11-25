@@ -100,7 +100,7 @@ theorem _root_.GlobalTheory.DoubledFlag.sum_eq_dimN_and_layerProd_eq : ∀ (n a 
       · simp [h, h.ne', not_lt.2 h.le]; ring
     rw [hJ, Finset.sum_mul_sum]
     rw [Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => hsplit i k]
-    simp only [Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.sum_filter, Finset.mem_univ, if_true]
+    simp only [Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.sum_filter, Finset.mem_univ, ite_true]
     rw [Finset.sum_comm (f := fun i k => if k < i then j k * j i else 0)]
     ring
   refine ⟨?_, ?_⟩

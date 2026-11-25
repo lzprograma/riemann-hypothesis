@@ -3,41 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnivCharWithUnivChar
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GoodSetupCountEqZeroOffBadPlaces
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiniteDimensionalSpan
 
@@ -60,8 +25,6 @@ open scoped TensorProduct
 
 
 namespace GlobalTheory.SeriesTie
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {N : NData D.R D.host D.what₂} {X : NTw D.R D.host D.what₂ D.LL0 N}
 
@@ -140,7 +103,7 @@ theorem delU_off (hQ : TWSet X i Q) (σ : G D.host.E N.Om) (v : ↥Q) (hv : v.1 
   classical
   rw [hY, GalChar.delU_apply, GalChar.delCoord]
   split_ifs with h
-  · rw [GalChar.delOf, dif_neg]
+  · rw [GalChar.delOf, dite_eq_right]
     · rfl
     rintro ⟨d, h1, h2, h3, h4, h5⟩
     obtain ⟨P', hc⟩ := GlobalTheory.TwistDet.exists_isConjPl v.1
@@ -169,7 +132,7 @@ theorem delU_off (hQ : TWSet X i Q) (σ : G D.host.E N.Om) (v : ↥Q) (hv : v.1 
 theorem delU_on (σ : G D.host.E N.Om) (v : ↥Q) (hv : v.1 ∈ admissibleConjugatePairPlaces X i Q M) :
     Multiplicative.toAdd (Y.delU i Q M σ) v =
       Multiplicative.toAdd (GalChar.delOf D.host X.cc (X.l i) M (GalChar.pair D.host v.1) σ) := by
-  rw [hY, GalChar.delU_apply, GalChar.delCoord, if_pos]
+  rw [hY, GalChar.delU_apply, GalChar.delCoord, ite_eq_left]
   rintro w (rfl | hw)
   · exact v.2
   · exact admissibleConjugatePairPlaces_subset i Q M (conj_mem_admissibleConjugatePairPlaces hv hw)
@@ -179,7 +142,7 @@ theorem delU_eq_coord (hQ : TWSet X i Q) (σ : G D.host.E N.Om) (v : ↥Q) :
   by_cases hv : v.1 ∈ admissibleConjugatePairPlaces X i Q M
   · rw [delU_on hY σ v hv, coord_apply _ _ _ _ hv, hY, GalChar.delU_apply,
       GalChar.delCoord_of_closed _ _ _ (fun _ h _ hc => conj_mem_admissibleConjugatePairPlaces h hc) M hv]
-  · rw [delU_off hY hQ σ v hv, coord, dif_neg hv]
+  · rw [delU_off hY hQ σ v hv, coord, dite_eq_right hv]
     rfl
 
 theorem delU_eq_spread (hQ : TWSet X i Q) {ch : Set (Pl D.host.E)} (hch : IsChoice ch) (σ : G D.host.E N.Om) :

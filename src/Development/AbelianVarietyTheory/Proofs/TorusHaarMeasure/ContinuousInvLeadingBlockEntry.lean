@@ -399,7 +399,7 @@ theorem norm_Wm_sq_le {r : ℕ} (X : Data E r) (z : V (nd X)) (τ : X.Ψ) (m : F
   refine le_trans (le_of_eq ?_) h
   have hc : ((Fin.castLE X.p0_le b : Fin r) : ℕ) < X.p0 ∧ X.p0 ≤ ((ExF.qI X m : Fin r) : ℕ) :=
     ⟨b.isLt, by simp [ExF.qI]⟩
-  simp only [if_pos hc]
+  simp only [ite_eq_left hc]
   simp [ExF.Wm, ExF.nM, mat, nmat, hlt]
 
 theorem rhF_le_near_zero {r : ℕ} (X : Data E r) (x0 : Frame X.Ψ r) (ho : IsOrth X x0) :

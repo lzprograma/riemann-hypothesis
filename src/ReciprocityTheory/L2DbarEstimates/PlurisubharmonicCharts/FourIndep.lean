@@ -107,9 +107,9 @@ lemma fiSlice_eq {n : ℕ} {Ω : Set (Fin (n + 1) → ℝ)} {h : (Fin (n + 1) �
   have hPdiff : Differentiable ℂ P := by
     refine differentiable_pi.2 fun k => ?_
     by_cases hk : k = i
-    · simp only [P, hk, if_true]
+    · simp only [P, hk, ite_true]
       exact differentiable_id
-    · simp only [P, hk, if_false]
+    · simp only [P, hk, ite_false]
       exact differentiable_const _
   set g : ℂ → ℂ := fun z => fiG h ν (P z) with hgdef
   have hgd : DifferentiableOn ℂ g ([[(0 : ℝ), 1]] ×ℂ [[b i, β]]) := by

@@ -133,43 +133,6 @@ section Universal
 
 open MvPolynomial
 
-private theorem normEDS_two_three_two_nat (n : ℕ) : normEDS (2 : ℤ) 3 2 n = n := by
-  induction n using normEDSRec' with
-  | zero => simp [normEDS_zero]
-  | one => simp [normEDS_one]
-  | two => simp [normEDS_two]
-  | three => simp [normEDS_three]
-  | four => norm_num [normEDS_four]
-  | even m ih =>
-    have h := normEDS_even (2 : ℤ) 3 2 ((m : ℤ) + 3)
-    have e1 := ih (m + 2) (by omega)
-    have e2 := ih (m + 3) (by omega)
-    have e3 := ih (m + 5) (by omega)
-    have e4 := ih (m + 1) (by omega)
-    have e5 := ih (m + 4) (by omega)
-    push_cast at e1 e2 e3 e4 e5 ⊢
-    rw [show (m : ℤ) + 3 - 1 = m + 2 by ring, show (m : ℤ) + 3 + 2 = m + 5 by ring,
-      show (m : ℤ) + 3 - 2 = m + 1 by ring, show (m : ℤ) + 3 + 1 = m + 4 by ring,
-      e1, e2, e3, e4, e5] at h
-    have key : normEDS (2 : ℤ) 3 2 (2 * ((m : ℤ) + 3)) * 2 = 2 * (2 * ((m : ℤ) + 3)) := by
-      rw [h]; ring
-    linarith
-  | odd m ih =>
-    have h := normEDS_odd (2 : ℤ) 3 2 ((m : ℤ) + 2)
-    have e1 := ih (m + 4) (by omega)
-    have e2 := ih (m + 2) (by omega)
-    have e3 := ih (m + 1) (by omega)
-    have e4 := ih (m + 3) (by omega)
-    push_cast at e1 e2 e3 e4 ⊢
-    rw [show (m : ℤ) + 2 + 2 = m + 4 by ring, show (m : ℤ) + 2 - 1 = m + 1 by ring,
-      show (m : ℤ) + 2 + 1 = m + 3 by ring, e1, e2, e3, e4] at h
-    rw [h]; ring
-
-private theorem normEDS_two_three_two (n : ℤ) : normEDS (2 : ℤ) 3 2 n = n := by
-  rcases Int.eq_nat_or_neg n with ⟨k, rfl | rfl⟩
-  · exact normEDS_two_three_two_nat k
-  · rw [normEDS_neg, normEDS_two_three_two_nat]
-
 private noncomputable def uw (n : ℤ) : MvPolynomial (Fin 3) ℤ :=
   normEDS (X 0) (X 1) (X 2) n
 

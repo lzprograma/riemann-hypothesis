@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLocPfA
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
 public import Formalism.SatakeDualWeyl.StatementC
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
@@ -219,7 +220,6 @@ end GiVal
 section Local
 
 open Formalism.MainNotions.S NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Formalism.BasicNotions Formalism.L2.SG.HidaSetting
-open scoped TensorProduct
 
 variable (I : AutInst)
 
@@ -311,7 +311,6 @@ end Local
 section Red
 
 open Formalism.MainNotions.S NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Formalism.BasicNotions Formalism.L2.SG.HidaSetting
-open scoped TensorProduct
 
 variable (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F))
 
@@ -449,7 +448,6 @@ namespace TypedLoc
 section Key
 
 open Formalism.MainNotions.S NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Formalism.BasicNotions Formalism.L2.SG.HidaSetting
-open scoped TensorProduct
 
 variable (I : AutInst)
 
@@ -532,7 +530,7 @@ theorem trV_nondeg (z : I.E ⊗[I.F] v.adicCompletion I.F)
       have := LinearMap.BilinForm.apply_dualBasis_left hB b j i
       rw [tForm_apply, mul_comm] at this
       exact this
-    simp only [e, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true] at h1
+    simp only [e, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h1
     exact h1
   simp [ha]
 
@@ -545,7 +543,6 @@ namespace TypedLoc
 section Lat
 
 open Formalism.MainNotions.S NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Formalism.BasicNotions Formalism.L2.SG.HidaSetting
-open scoped TensorProduct
 
 variable (I : AutInst)
 
@@ -607,7 +604,6 @@ namespace TypedLoc
 section Key2
 
 open Formalism.MainNotions.S NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Formalism.BasicNotions Formalism.L2.SG.HidaSetting
-open scoped TensorProduct
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (v : HeightOneSpectrum (𝓞 X.B.I.F))
 
@@ -739,7 +735,6 @@ end TypedLoc
 section Finals
 
 open Formalism.MainNotions.S NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Formalism.BasicNotions Formalism.L2.SG.HidaSetting TypedLoc
-open scoped TensorProduct
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
@@ -826,28 +821,6 @@ theorem split_at_g : ∀ v : HeightOneSpectrum (𝓞 X.B.I.F), ((X.B.g : ℕ) : 
 end Finals
 
 theorem splitPrimeLoc_holds : Formalism.L2.SG.Pf.SatGramLoc.SplitPrimeLoc := by
-  intro F E _ _ _ _ _ p hp h
-  refine ⟨fun v hv => ⟨TypedLoc.tower_card F E hp h v hv, ?_⟩, ?_⟩
-  · have e : ((p : ℕ) : v.adicCompletion F) = (((p : ℕ) : F) : v.adicCompletion F) := by
-      rw [← map_natCast (algebraMap F (v.adicCompletion F))]; rfl
-    rw [e, IsDedekindDomain.HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
-    have e2 : ((p : ℕ) : F) = algebraMap (NumberField.RingOfIntegers F) F ((p : ℕ) : NumberField.RingOfIntegers F) := by
-      rw [map_natCast]
-    rw [e2, IsDedekindDomain.HeightOneSpectrum.valuation_of_algebraMap]
-    exact TypedLoc.tower_val F E hp h v hv
-  · classical
-    have := TypedLoc.span_p_maximal hp
-    have hq0 := TypedLoc.span_p_ne_bot hp
-    have hsum := Ideal.sum_ramification_inertia (NumberField.RingOfIntegers F) ℚ F hq0
-    have hone : ∀ P ∈ IsDedekindDomain.primesOverFinset (Ideal.span {(p : ℤ)}) (NumberField.RingOfIntegers F),
-        (Ideal.span {(p : ℤ)}).ramificationIdx' P * (Ideal.span {(p : ℤ)}).inertiaDeg' P = 1 := by
-      intro P hP
-      rw [IsDedekindDomain.mem_primesOverFinset_iff hq0, TypedLoc.primesOver_eq F hp] at hP
-      obtain ⟨v, hv, rfl⟩ := hP
-      obtain ⟨h1, h2⟩ := TypedLoc.tower_ef F E hp h v hv
-      rw [h1, h2]
-    rw [Finset.sum_congr rfl hone, Finset.sum_const, smul_eq_mul, mul_one] at hsum
-    rw [← hsum, ← Set.ncard_coe_finset, IsDedekindDomain.coe_primesOverFinset hq0, TypedLoc.primesOver_eq F hp]
-    exact (Set.ncard_image_of_injective _ (fun v w hvw => IsDedekindDomain.HeightOneSpectrum.ext hvw)).symm
+  apply +allowSynthFailures _root_.Formalism.L2.SG.Pf.SatGramLoc.split_prime_local_holds <;> assumption
 
 end Formalism.L2.SG.Pf

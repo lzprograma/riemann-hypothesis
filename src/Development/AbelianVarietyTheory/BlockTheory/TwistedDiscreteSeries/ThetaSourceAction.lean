@@ -49,16 +49,7 @@ open scoped TensorProduct InnerProductSpace
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 abbrev Mat (n : ℕ) : Type := Matrix (Fin n) (Fin n) ℂ
-
-structure IsUnitLieAct {n : ℕ} (L : Set (Mat n)) {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-    (a : Mat n → Module.End ℂ H) : Prop where
-  add : ∀ X ∈ L, ∀ Y ∈ L, a (X + Y) = a X + a Y
-  smul : ∀ (c : ℝ), ∀ X ∈ L, a (c • X) = (c : ℂ) • a X
-  lie : ∀ X ∈ L, ∀ Y ∈ L, a (X * Y - Y * X) = a X * a Y - a Y * a X
-  skew : ∀ X ∈ L, ∀ x y, ⟪a X x, y⟫_ℂ = -⟪x, a X y⟫_ℂ
 
 variable {D : D7}
 
@@ -113,26 +104,11 @@ def IsInv {U : Type} [AddCommGroup U] [Module ℂ U] (q : MvPolynomial ι ℂ �
 
 variable {W : HSp D} {S' : D.what₂.Tau → SPar} (N : DSModel W S') (B : Mat W.rank → (Z → ℂ) → (Z → ℂ))
 
-def IsLiftMap {U : Type} [AddCommGroup U] [Module ℂ U] (R : Mat W.rank → U → U → Prop)
-    (q : MvPolynomial ι ℂ →ₗ[ℂ] kfin M τ →ₗ[ℂ] U) : Prop :=
-  IsInv M τ A pt q ∧ ∀ Y ∈ lieAt W τ, ∀ P P', PolDer B pt Y P P' → ∀ v, R Y (q P v) (q P' v)
-
 def IsJoint (Φ : MvPolynomial ι ℂ) : Prop :=
   Φ ≠ 0 ∧ (∃ d, IsHarm M τ A pt d Φ ∧ IsHarm N τ B pt d Φ) ∧ IsLo M τ A pt Φ ∧ IsHi N τ B pt Φ
 
 structure LiftLaw : Prop where
   joint_ex : ∃ Φ, IsJoint M τ A pt N B Φ
-  joint_uniq : ∀ Φ Φ', IsJoint M τ A pt N B Φ → IsJoint M τ A pt N B Φ' → ∃ c : ℂ, Φ' = c • Φ
-  unitary : ∀ (U : Type) [NormedAddCommGroup U] [InnerProductSpace ℂ U] (a : Mat W.rank → Module.End ℂ U),
-    IsUnitLieAct (lieAt W τ) a → ∀ q : MvPolynomial ι ℂ →ₗ[ℂ] kfin M τ →ₗ[ℂ] U,
-    IsLiftMap M τ A pt B (fun Y x y => y = a Y x) q → q ≠ 0 →
-      (∃ e : kfin N τ →ₗ[ℂ] U, Function.Injective e ∧
-        (∀ Y ∈ lieAt W τ, ∀ x x', VecDer N τ Y x x' → e x' = a Y (e x)) ∧
-        LinearMap.range e = Submodule.span ℂ {y | ∃ P v, y = q P v}) ∧
-      ∀ Φ, IsJoint M τ A pt N B Φ → (∀ v, UnitHighest M τ v → q Φ v ≠ 0) ∧
-        ∀ q', IsLiftMap M τ A pt B (fun Y x y => y = a Y x) q' → q' Φ = q Φ → q' = q
-  line : ∃ q₀ : MvPolynomial ι ℂ →ₗ[ℂ] kfin M τ →ₗ[ℂ] kfin N τ, q₀ ≠ 0 ∧ IsLiftMap M τ A pt B (VecDer N τ) q₀ ∧
-    ∀ q, IsLiftMap M τ A pt B (VecDer N τ) q → ∃ c : ℂ, q = c • q₀
 
 def ZetaLaw (ip : (Z → ℂ) → (Z → ℂ) → ℂ) : Prop :=
   ∀ Φ, IsJoint M τ A pt N B Φ → ∀ v, UnitHighest N τ v →

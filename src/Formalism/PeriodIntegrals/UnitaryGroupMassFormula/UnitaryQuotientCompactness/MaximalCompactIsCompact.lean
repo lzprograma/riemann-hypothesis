@@ -1,53 +1,8 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SsetGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.CStarAlgebra.Matrix
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharedLemmas.HpkSq
 
 @[expose] public section
@@ -76,25 +31,25 @@ lemma hpk_eq (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
   have hi := i.isLt
   have hj := j.isLt
   by_cases h1 : i.val < r ∨ r + k < i.val
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     have hne : i.val ≠ r + k := by omega
     by_cases h2 : j.val = 2 * r + k - i.val
     · have : j = ⟨2 * r + k - i.val, by omega⟩ := Fin.ext h2
-      rw [if_pos this, if_neg hne]
+      rw [ite_eq_left this, ite_eq_right hne]
       rcases h1 with h1 | h1
-      · rw [if_pos ⟨h1, by omega⟩]
-      · rw [if_neg (by omega), if_pos ⟨by omega, by omega⟩]
+      · rw [ite_eq_left ⟨h1, by omega⟩]
+      · rw [ite_eq_right (by omega), ite_eq_left ⟨by omega, by omega⟩]
     · have : j ≠ ⟨2 * r + k - i.val, by omega⟩ := fun h => h2 (by rw [h])
-      rw [if_neg this, if_neg (by omega), if_neg (by omega), if_neg]
+      rw [ite_eq_right this, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right]
       rintro ⟨_, _, h3⟩
       exact h2 (by rw [h3]; omega)
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     push Not at h1
-    rw [if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     by_cases h3 : j = i
     · subst h3
       simp [h1.1, h1.2]
-    · rw [if_neg h3, if_neg]
+    · rw [ite_eq_right h3, ite_eq_right]
       rintro ⟨_, _, h4⟩
       exact h3 h4.symm
 
@@ -135,8 +90,8 @@ lemma hpk_conjTranspose (k r : ℕ) : (Hpk k r)ᴴ = Hpk k r := by
   rw [Matrix.conjTranspose_apply, hpk_eq, hpk_eq]
   by_cases h : j = hσ k r i
   · subst h
-    rw [if_pos (hσ_hσ k r i).symm, if_pos rfl, star_hs, hs_hσ]
-  · rw [if_neg (fun h' => h ((hσ_eq_iff k r i j).1 h')), if_neg h, star_zero]
+    rw [ite_eq_left (hσ_hσ k r i).symm, ite_eq_left rfl, star_hs, hs_hσ]
+  · rw [ite_eq_right (fun h' => h ((hσ_eq_iff k r i j).1 h')), ite_eq_right h, star_zero]
 
 lemma hpk_inv (k r : ℕ) : (Hpk k r)⁻¹ = Hpk k r := Matrix.inv_eq_left_inv (hpk_mul_self k r)
 
@@ -219,8 +174,7 @@ theorem maximal_compact_isCompact : KCompact := by
     mem_closedBall_zero_iff.2 (entry_norm_bound_of_unitary hu' i j)
 
 lemma pow_bdd_le_one {x M : ℝ} (hx : 0 < x) (h : ∀ n : ℕ, x ^ n ≤ M) : x ≤ 1 := by
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt M hlt
   exact absurd (h n) (not_le.2 hn)
 

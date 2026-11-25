@@ -165,10 +165,10 @@ theorem block_iff : ∀ (bs : List (ℂ × ℕ)) (a b : ℕ), a < b → b < D.pt
     simp only [blockIdx, D.ptPartner]
     by_cases h1 : a < s
     · by_cases h2 : b < s
-      · simp only [h1, h2, if_true, true_iff]; omega
-      · simp only [h1, h2, if_true, if_false]; omega
+      · simp only [h1, h2, ite_true, true_iff]; omega
+      · simp only [h1, h2, ite_true, ite_false]; omega
     · have h2 : ¬ b < s := by omega
-      simp only [h1, h2, if_false]
+      simp only [h1, h2, ite_false]
       have := block_iff bs (a - s) (b - s) (by omega) (by omega)
       omega
 
@@ -310,19 +310,6 @@ open Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.Dx2 Formalism.Fouri
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq]
 
-theorem closed_SS (D : B.RealPlaceData k r Wp Wq) : IsClosed {p | D.inSS p} := by
-  have hWc := (P.weyl_subgroup_closed k r D.z).closed
-  have hWc' := (P.weyl_subgroup_closed k r D.z').closed
-  have hNc := (P.unipotent_radical_closed k r).closed
-  have e : {p | D.inSS p} = (fun p : B.SS k r => (p.1.1 : B.Mat k r)) ⁻¹' (UWset k r D.z) ∩
-      ((fun p : B.SS k r => (p.1.2 : B.Mat k r)) ⁻¹' (Nset k r) ∩
-        ((fun p : B.SS k r => (p.2.1 : B.Mat k r)) ⁻¹' (UWset k r D.z') ∩
-          (fun p : B.SS k r => (p.2.2 : B.Mat k r)) ⁻¹' (Nset k r))) := by
-    ext p; rfl
-  rw [e]
-  exact (hWc.preimage continuous_fst.fst).inter ((hNc.preimage continuous_fst.snd).inter
-    ((hWc'.preimage continuous_snd.fst).inter (hNc.preimage continuous_snd.snd)))
-
 theorem integrand_contOn (D : B.RealPlaceData k r Wp Wq) {γ : B.Mat k r} (hγ : γ ∈ B.GV k r)
     {F : B.Mat k r → (Wq →L[ℂ] Wp)} (hF : ContinuousOn F (B.GV k r)) :
     ContinuousOn (Formalism.FourierDecayAlt.D.orbIntegrand D γ F) {p | D.inSS p} := by
@@ -408,7 +395,7 @@ theorem orbInt_eq {μsec : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ} (hS :
     {θ : B.SS k r → ℝ} (hθ : D.IsNormCut Bs g μ θ) :
     OrbInt L F g ν = ((L.κN.toReal * cN) ^ 2 * a) • ∫ p, θ p • D.orbIntegrand Bs g F p ∂Bs.μSS := by
   classical
-  have hcl := closed_SS Bs
+  have hcl := Formalism.FourierDecayAlt.P.B6.setting_support_closed Bs
   have hco := integrand_contOn Bs hrel.1 hF
   borelize (L.Wq →L[ℂ] L.Wp)
   have ha0 : ENNReal.ofReal a⁻¹ ≠ 0 := by simpa using ha

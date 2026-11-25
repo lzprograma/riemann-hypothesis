@@ -69,7 +69,6 @@ namespace PositivityTheory.ThK.SplitLoc
 open GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.GLDoubling
 open GlobalTheory.IwahoriInj (Deep)
 
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 attribute [local instance 10000] GlobalTheory.SplitWeil.matrixMeasurableSpace
 
 section Group
@@ -587,9 +586,9 @@ theorem upperProjection_blockUpper_transpose {b : GL (Fin (a + a')) k} (hb : IsB
   rw [frameMatrixFirstColumnBlock_mul_apply]
   obtain ⟨j | j, rfl⟩ := (finSumFinEquiv (m := a) (n := a')).surjective j
   · simp only [Matrix.mul_apply, X0, of_apply, EmbeddingLike.apply_eq_iff_eq, Sum.inl.injEq, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rfl
-  · simp only [Matrix.mul_apply, X0, of_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, if_false, mul_zero,
+  · simp only [Matrix.mul_apply, X0, of_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, ite_false, mul_zero,
       Finset.sum_const_zero]
     exact hb j i
 
@@ -598,11 +597,11 @@ theorem lowerProjection_blockUpper {b : GL (Fin (a + a')) k} (hb : IsBlockUpper 
   ext i j
   rw [frameMatrixSecondColumnBlock_mul_apply]
   obtain ⟨j | j, rfl⟩ := (finSumFinEquiv (m := a) (n := a')).surjective j
-  · simp only [Matrix.mul_apply, Y0, of_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, if_false, mul_zero,
+  · simp only [Matrix.mul_apply, Y0, of_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, ite_false, mul_zero,
       Finset.sum_const_zero]
     exact hb i j
   · simp only [Matrix.mul_apply, Y0, of_apply, EmbeddingLike.apply_eq_iff_eq, Sum.inr.injEq, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rfl
 
 theorem exists_upperProjection_inverse_transpose {b : GL (Fin (a + a')) k} (hb : IsBlockUpper b) {dA : kˣ} (h1 : (dA : k) = (blkA b).det) :

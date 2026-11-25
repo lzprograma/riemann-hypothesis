@@ -50,16 +50,16 @@ theorem bigCell_one_apply (k r : ℕ) (c : Fin r → ℂ) (i j : Fin (2 * r + k 
   unfold bigCell rhoB tv esI
   rcases lt_or_ge j.val r with h1 | h1
   · have ho : j.val < r ∨ r + k < j.val := Or.inl h1
-    rw [dite_eq_left h1, if_pos ho, dite_eq_left h1]
+    rw [dite_eq_left h1, ite_eq_left ho, dite_eq_left h1]
   · rcases le_or_gt j.val (r + k) with h2 | h2
     · have ho : ¬ (j.val < r ∨ r + k < j.val) := by omega
-      rw [dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_left h2, if_neg ho, dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_left h2]
+      rw [dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_left h2, ite_eq_right ho, dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_left h2]
       by_cases hij : i = j
       · subst hij
-        rw [dite_eq_left ⟨h1, h2⟩, if_pos rfl, Matrix.one_apply, if_pos rfl]
-      · rw [if_neg hij]
+        rw [dite_eq_left ⟨h1, h2⟩, ite_eq_left rfl, Matrix.one_apply, ite_eq_left rfl]
+      · rw [ite_eq_right hij]
         split_ifs with hi
-        · rw [Matrix.one_apply, if_neg]
+        · rw [Matrix.one_apply, ite_eq_right]
           intro h
           apply hij
           apply Fin.ext
@@ -68,11 +68,11 @@ theorem bigCell_one_apply (k r : ℕ) (c : Fin r → ℂ) (i j : Fin (2 * r + k 
           omega
         · rfl
     · have ho : j.val < r ∨ r + k < j.val := Or.inr h2
-      rw [dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_right (show ¬ (j.val ≤ r + k) by omega), if_pos ho,
+      rw [dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_right (show ¬ (j.val ≤ r + k) by omega), ite_eq_left ho,
         dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_right (show ¬ (j.val ≤ r + k) by omega)]
       by_cases hi : i.val = 2 * r + k - j.val
-      · rw [if_pos hi, if_pos (Fin.ext hi)]
-      · rw [if_neg hi, if_neg (fun h => hi (congrArg Fin.val h))]
+      · rw [ite_eq_left hi, ite_eq_left (Fin.ext hi)]
+      · rw [ite_eq_right hi, ite_eq_right (fun h => hi (congrArg Fin.val h))]
 
 theorem Hpk_rhoB (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
     Hpk k r (rhoB k r i) (rhoB k r j) = Hpk k r i j := by
@@ -96,7 +96,7 @@ theorem tv_Hpk_tv (k r : ℕ) (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) (i j :
     unfold Hpk at hz
     split_ifs at hz <;> first | tauto
   rcases key with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2, rfl⟩
-  · have hH : Hpk k r i j = 1 := by unfold Hpk; rw [if_pos ⟨h1, h2⟩]
+  · have hH : Hpk k r i j = 1 := by unfold Hpk; rw [ite_eq_left ⟨h1, h2⟩]
     have hti : tv k r c i = c ⟨i.val, h1⟩ := by unfold tv; rw [dite_eq_left h1]
     have htj : tv k r c j = (star (c ⟨i.val, h1⟩))⁻¹ := by
       have e : (⟨2 * r + k - j.val, by omega⟩ : Fin r) = ⟨i.val, h1⟩ :=
@@ -104,7 +104,7 @@ theorem tv_Hpk_tv (k r : ℕ) (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) (i j :
       unfold tv
       rw [dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_right (show ¬ (j.val ≤ r + k) by omega), e]
     rw [hti, htj, hH, mul_one, mul_inv_cancel₀ (star_ne_zero.mpr (hc _))]
-  · have hH : Hpk k r i j = 1 := by unfold Hpk; rw [if_neg (by omega), if_pos ⟨h1, h2⟩]
+  · have hH : Hpk k r i j = 1 := by unfold Hpk; rw [ite_eq_right (by omega), ite_eq_left ⟨h1, h2⟩]
     have htj : tv k r c j = c ⟨j.val, h1⟩ := by unfold tv; rw [dite_eq_left h1]
     have hti : tv k r c i = (star (c ⟨j.val, h1⟩))⁻¹ := by
       have e : (⟨2 * r + k - i.val, by omega⟩ : Fin r) = ⟨j.val, h1⟩ :=
@@ -274,7 +274,7 @@ theorem UWb_col {m : Mat k r} (hm : m ∈ UWb k r) (x y : Fin (2 * r + k + 1)) (
       by_contra h2
       apply hy
       unfold lv
-      rw [if_neg h1, if_pos (show y.val ≤ r + k by omega)]
+      rw [ite_eq_right h1, ite_eq_left (show y.val ≤ r + k by omega)]
     have hyl := y.isLt
     have hlt : 2 * r + k - y.val < r := by omega
     have e : PI.SwBig.esI k r ⟨2 * r + k - y.val, hlt⟩ = y :=
@@ -584,7 +584,7 @@ theorem gaussUniq_main : GaussUniq := by
     have hl : lv k r (PI.SwBig.eI k r a) ≠ r := by
       have e4 : lv k r (PI.SwBig.eI k r a) = a.val := by
         unfold lv
-        rw [if_pos (show (PI.SwBig.eI k r a).val < r from a.isLt)]
+        rw [ite_eq_left (show (PI.SwBig.eI k r a).val < r from a.isLt)]
         rfl
       omega
     rw [M_mul_apply, M_mul_apply, hs, UWb_col hm₁ _ _ hl, UWb_col hm₂ _ _ hl, hf₁, hf₂,
@@ -1337,20 +1337,6 @@ theorem Log_sgI_val (i : Fin (2 * r + k + 1)) : ((sgI k r i).val = r + k ↔ i.v
   unfold sgI
   split_ifs <;> simp_all <;> omega
 
-theorem hpk_sq : Hpk k r * Hpk k r = 1 := by
-  ext i j
-  rw [Matrix.mul_apply, Finset.sum_eq_single (sgI k r i)]
-  · rw [Log_Hpk_eq, Log_Hpk_eq, if_pos rfl, Log_sgI_sgI, Matrix.one_apply]
-    have hv := (Log_sgI_val (k := k) (r := r) i)
-    by_cases h : j = i
-    · subst h
-      by_cases h2 : j.val = r + k
-      · rw [if_pos h2, if_pos rfl, if_pos (hv.2 h2), if_pos rfl]; norm_num
-      · rw [if_neg h2, if_pos rfl, if_neg (fun h' => h2 (hv.1 h')), if_pos rfl]; norm_num
-    · rw [if_neg h, if_neg (Ne.symm h), mul_zero]
-  · intro l _ hl; rw [Log_Hpk_eq, if_neg hl, zero_mul]
-  · simp
-
 theorem logG : LogG := by
   intro k r
   have hE : HasStrictFDerivAt (NormedSpace.exp : Mat k r → Mat k r)
@@ -1359,7 +1345,7 @@ theorem logG : LogG := by
     exact hasStrictFDerivAt_exp_zero
   obtain ⟨ε, hε, hleft⟩ := Metric.eventually_nhds_iff.1 hE.eventually_left_inverse
   set H := Hpk k r
-  have hHH : H * H = 1 := hpk_sq
+  have hHH : H * H = 1 := PI.SwBig.GU.Hpk_sq
   have hHu : IsUnit H := (Matrix.isUnit_iff_isUnit_det _).2 (Matrix.isUnit_det_of_right_inverse hHH)
   have hHi : H⁻¹ = H := Matrix.inv_eq_right_inv hHH
   set C := ‖H‖ * ‖H‖ + 1

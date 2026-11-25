@@ -46,8 +46,6 @@ open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace GlobalTheory.LocLanglands
 
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
@@ -96,21 +94,11 @@ Deligne's ε-factor of the tensor product, matches cuspidal representations with
 and the Langlands classification with sums over segments, and respects twists, central characters
 and contragredients.
 
-Such a map exists by [Harris and Taylor, *The geometry and cohomology of some simple Shimura
-varieties*][harris2001] and [Henniart, *Une preuve simple des conjectures de Langlands pour GL(n)
-sur un corps p-adique*][henniart2000]. The proof of the main theorems does not use this; it uses
-the weaker `UpperTheory.Zero.LLC.IsRecT`, which it proves. -/
+The proof of the main theorems does not use the existence of such a map; it uses the weaker
+`UpperTheory.Zero.LLC.IsRecT`, which it proves. -/
 def IsRecLit (rc : IrrGL (k := w.adicCompletion E) → WD h) : Prop :=
   ∃ (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (ε : EpsFamily A),
     IsDeligneEps ε ∧ LawsLit a ha (ε E w h) rc
-
-theorem Laws.toLit {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {ε : EpsFamily A}
-    {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : Laws a ha ε rc) : LawsLit a ha (ε E w h) rc :=
-  { bij := H.bij, dim := H.dim, one := H.one, eps := H.eps, cusp := H.cusp, langlands := H.langlands,
-    twist := H.twist, central := H.central, dual := H.dual }
-
-theorem IsRec.toLit {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : IsRec h rc) : IsRecLit h rc :=
-  let ⟨a, ha, ε, hε, H⟩ := H; ⟨a, ha, ε, hε, H.toLit⟩
 
 section Transport
 

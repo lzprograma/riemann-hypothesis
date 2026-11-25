@@ -11,8 +11,6 @@ open scoped TensorProduct ContDiff
 
 namespace Formalism.L2.Theta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D)
 
 
@@ -51,9 +49,6 @@ structure IsAutFunSm (φ : GA D V → ℂ) : Prop extends IsAutFun V φ where
   growth : ∃ N : ℕ, ∀ l : List (D.what₂.Tau × Matrix (Fin V.rank) (Fin V.rank) ℂ), (∀ p ∈ l, p.2 ∈ lieAt V p.1) →
     ∀ x, ∃ C : ℝ, ∀ g ∈ GinfC V,
       ‖(l.foldr (fun p f => Rder θ V p.1 p.2 f) φ) (x * g)‖ ≤ C * normInf θ V g ^ N
-
-def ThetaSmoothnessCondition {X : ThetaX D} (T : ThetaTied D X) : Prop :=
-  AllSome (IsInfFam (D := D)) fun θ => ∀ V : HSp D, V.SigOK → Set.range (T.ev V) = {φ | IsAutFunSm θ V φ}
 
 end Formalism.L2.Theta
 

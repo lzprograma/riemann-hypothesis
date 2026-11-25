@@ -1,49 +1,11 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.DigOKAddInl
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrBase
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.Monomial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -439,19 +401,10 @@ theorem sum_single_inj {α β : Type} [DecidableEq α] (u : α → β) (hu : Fun
   refine ⟨fun v0 => ?_, fun x hx => ?_⟩
   · simp [Finsupp.finsetSum_apply, Finsupp.single_apply, hu.eq_iff]
   · simp only [Finsupp.finsetSum_apply, Finsupp.single_apply]
-    exact Finset.sum_eq_zero fun v _ => if_neg fun h => hx ⟨v, h⟩
+    exact Finset.sum_eq_zero fun v _ => ite_eq_right fun h => hx ⟨v, h⟩
 
 theorem liftVar_inj : Function.Injective Dt.liftVar := by
-  rintro ⟨⟨j, l | m⟩, a⟩ ⟨⟨j', l' | m'⟩, a'⟩ h
-  · simp only [PlaneGramData.SignedChainData.liftVar, Prod.mk.injEq, PlaneGramData.ML.ll.injEq] at h
-    obtain ⟨⟨rfl, h2⟩, rfl⟩ := h
-    cases h2
-    rfl
-  · simp [PlaneGramData.SignedChainData.liftVar] at h
-  · simp [PlaneGramData.SignedChainData.liftVar] at h
-  · simp only [PlaneGramData.SignedChainData.liftVar, Prod.mk.injEq, PlaneGramData.ML.wc.injEq] at h
-    obtain ⟨⟨rfl, rfl⟩, rfl⟩ := h
-    rfl
+  apply _root_.Formalism.MainNotions.PairMembershipBlocks.liftVar_inj <;> assumption
 
 theorem lift_mono (mo : PlaneGramData.TL J Dt.nL r × Fin r →₀ ℕ) :
     rename (Prod.map (fM Dt) id) (∏ v ∈ mo.support, X (Dt.liftVar v) ^ Dt.liftExp mo v) =
@@ -509,9 +462,9 @@ theorem digit_comm (ρ : (toData Dt).Tau → Fin r → ℕ) (F : MvPolynomial (P
   refine Finset.sum_congr rfl fun mo _ => ?_
   rw [coeff_rename_mapDomain _ (gO_inj Dt)]
   by_cases hd : Dt.digOK (fun x => ρ ((zE J).symm x.1.1, x.1.2) x.2) mo
-  · rw [if_pos ((inClass_iff Dt ρ mo).2 hd), if_pos hd, map_mul, rename_C, lift_mono,
+  · rw [ite_eq_left ((inClass_iff Dt ρ mo).2 hd), ite_eq_left hd, map_mul, rename_C, lift_mono,
       C_mul_monomial, mul_one]
-  · rw [if_neg (fun h => hd ((inClass_iff Dt ρ mo).1 h)), if_neg hd]
+  · rw [ite_eq_right (fun h => hd ((inClass_iff Dt ρ mo).1 h)), ite_eq_right hd]
 
 theorem dO_gO (x : PlaneGramData.TL J Dt.nL r) : (toData Dt).dO (gO Dt x) = Dt.d x := by
   rcases x with ⟨j, l | m⟩
@@ -556,12 +509,12 @@ theorem dLL_eq (j : Fin J) : (toData Dt).dLL j = Dt.dLL (zE J j) := by
   unfold TwistData.dLL TwistData.LLj PlaneGramData.SignedChainData.dLL
   rw [Finset.sum_filter, Fintype.sum_sigma, Finset.sum_eq_single (zE J j)]
   · refine Finset.sum_congr rfl fun l _ => ?_
-    rw [if_pos]
+    rw [ite_eq_left]
     show (zE J).symm (zE J j) = j
     exact RingEquiv.symm_apply_apply _ _
   · intro k _ hk
     refine Finset.sum_eq_zero fun l _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply hk
     have h' : (zE J).symm k = j := h
@@ -578,7 +531,7 @@ theorem vQ_unit (S : G.UniformizedDVR p O) (u : O) (hu : IsUnit u) : vQ p S (alg
   have h1 := IsFractionRing.injective O (G.KK O) hs
   have key : G.ordW (algebraMap O (G.KK O) u) = 0 := by
     unfold G.ordW
-    rw [if_neg hx]
+    rw [ite_eq_right hx]
     simp only
     rw [← h1, IsDiscreteValuationRing.addVal_mul, ← hu.unit_spec,
       IsDiscreteValuationRing.addVal_eq_zero_of_unit, zero_add, sub_self]

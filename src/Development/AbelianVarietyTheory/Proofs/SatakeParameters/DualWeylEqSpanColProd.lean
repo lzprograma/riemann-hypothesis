@@ -7,45 +7,6 @@ public import Mathlib.Topology.Sheaves.Presheaf
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.GradedWeylDivisibility.FinalD
 import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -117,10 +78,10 @@ theorem hw_add (R : Type) [CommRing R] (n e : ℕ) (μ : Fin n → ℕ) :
     · refine Finset.prod_congr rfl fun s _ => ?_
       congr 1
       have : (s.castSucc : Fin (n + 1)).val + 1 < n + 1 := by simp
-      simp only [nuNext, dif_pos this]
+      simp only [nuNext, dite_eq_left this]
       omega
     · have : ¬ ((Fin.last n).val + 1 < n + 1) := by simp
-      simp only [nuNext, dif_neg this, Nat.sub_zero, pow_add]
+      simp only [nuNext, dite_eq_right this, Nat.sub_zero, pow_add]
       rfl
 
 theorem weyl_add (R : Type) [CommRing R] (n e : ℕ) (μ : Fin n → ℕ) :
@@ -212,12 +173,12 @@ theorem bidet_lead (R : Type) [CommRing R] (n : ℕ) {K : ℕ} (sz : Fin K → �
   have h1 : bideterminant R sz hsz I = ∏ k, g (sz k) := by
     refine Finset.prod_congr rfl fun k _ => ?_
     have : I k = Fin.castLE (hsz k) := funext fun i => Fin.ext (hI k i)
-    simp only [g, dif_pos (hsz k), this]
+    simp only [g, dite_eq_left (hsz k), this]
     rfl
   rw [h1, prod_sizes g hg n sz hsz]
   refine Finset.prod_congr rfl fun s _ => ?_
   have : s.val + 1 ≤ n := s.2
-  simp only [g, dif_pos this]
+  simp only [g, dite_eq_left this]
 
 theorem colLen_le {n : ℕ} {Y : YoungDiagram} (hY : Y.colLen 0 ≤ n) (c : Fin (Y.rowLen 0)) : Y.colLen c ≤ n :=
   (Y.colLen_anti 0 c (Nat.zero_le _)).trans hY
@@ -287,7 +248,7 @@ theorem natW_cast {n : ℕ} (l : DomWeight n) (r : Fin n) : (l.natW r : ℤ) = l
   refine Int.toNat_of_nonneg (sub_nonneg.mpr ?_)
   have hn : 0 < n := Fin.pos r
   unfold DomWeight.detShift
-  rw [dif_pos hn]
+  rw [dite_eq_left hn]
   exact l.anti (Fin.le_def.mpr (by have := r.2; simp only; omega))
 
 theorem map_gdet {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (n : ℕ) : map φ (gdet R n) = gdet S n := by
@@ -324,7 +285,7 @@ theorem aeval_nablaX {K ι : Type} [Field K] [Fintype ι] [DecidableEq ι] (n : 
   ext1 p q
   have hq : (q : ℕ) < n := lt_of_lt_of_le q.2 (colLen_le (hν s) c)
   simp only [Matrix.transpose_apply, AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, aeval_X,
-    dif_pos hq, blockEmb, rename_X]
+    dite_eq_left hq, blockEmb, rename_X]
   rfl
 
 theorem fockB_ten {K ι : Type} [Field K] [Fintype ι] {n : ℕ} (f g : ι → MvPolynomial (Fin n × Fin n) K) :

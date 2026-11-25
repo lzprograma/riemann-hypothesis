@@ -36,15 +36,6 @@ end Core
 
 variable {K : Type*} [Field K]
 
-section Split
-
-variable (σ : K →+* ℂ) (E F : Type*) [AddCommGroup E] [Module (𝓞 K) E] [AddCommGroup F]
-  [Module (𝓞 K) F]
-
-variable {σ E F}
-
-end Split
-
 variable [NumberField K]
 
 variable {E F : Type*} [AddCommGroup E] [Module (𝓞 K) E] [Module.Finite (𝓞 K) E]

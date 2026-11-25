@@ -347,26 +347,6 @@ variable {K F V : Type} [Field K] [NumberField K] [StarRing K] [Field F] [Number
 local notation "jK" => algebraMap (𝓞 K) K
 local notation "ι" => algebraMap (𝓞 F) (𝓞 K)
 
-private theorem coe_iota_eq_algebraMap_coe (a : 𝓞 F) : jK (ι a) = algebraMap F K (a : F) := by
-  rw [← IsScalarTower.algebraMap_apply (𝓞 F) (𝓞 K) K, IsScalarTower.algebraMap_apply (𝓞 F) F K]
-
-private theorem jK_iota_ne_zero {a : 𝓞 F} (ha : a ≠ 0) : jK (ι a) ≠ 0 := by
-  rw [coe_iota_eq_algebraMap_coe]
-  refine (map_ne_zero (algebraMap F K)).mpr ?_
-  exact (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 F) F)).mpr ha
-
-private theorem jK_ne_zero_of_mem_closure_prime_compl {𝔭 : Ideal (𝓞 F)} {s : 𝓞 K}
-    (hs : s ∈ Submonoid.closure {s : 𝓞 K | ∃ t : 𝓞 F, t ∉ 𝔭 ∧ algebraMap (𝓞 F) (𝓞 K) t = s}) :
-    jK s ≠ 0 := by
-  induction hs using Submonoid.closure_induction with
-  | mem y hy =>
-    obtain ⟨t, ht, rfl⟩ := hy
-    refine jK_iota_ne_zero ?_
-    rintro rfl
-    exact ht 𝔭.zero_mem
-  | one => simp
-  | mul y z _ _ hy hz => rw [map_mul]; exact mul_ne_zero hy hz
-
 section
 
 variable {h : V →ₗ⋆[K] V →ₗ[K] K} {X : Submodule K V} {L : Submodule (𝓞 K) V} {𝔭 : Ideal (𝓞 F)}
@@ -403,50 +383,7 @@ theorem exists_mul_mem_span {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a 
 theorem div_mem_SP_iff {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a : 𝓞 F} (ha : a ≠ 0) (z : 𝓞 K) :
     haveI := h𝔭.isPrime
     jK z / jK (ι a) ∈ HU.SP K 𝔭 ↔ z ∈ extP K 𝔭 ^ vF 𝔭 a := by
-  have := h𝔭.isPrime
-  have ha' := jK_ι_ne_zero (K := K) ha
-  rw [HU.mem_SP]
-  constructor
-  · rintro ⟨t, ht, w, hw⟩
-    have e1 : ι t * z = w * ι a := by
-      apply FaithfulSMul.algebraMap_injective (𝓞 K) K
-      rw [map_mul, map_mul, hw]
-      field_simp
-    obtain ⟨u, hu⟩ := exists_inv_mod h𝔭 ht (vF 𝔭 a)
-    have hA : ι a ∈ extP K 𝔭 ^ vF 𝔭 a := localizedQuotients.ι_mem_pow (localValuationFiltration.mem_pow_vF h𝔭 ha)
-    have e2 : z = ι u * (ι t * z) + ι (1 - t * u) * z := by
-      rw [map_sub, map_mul, map_one]
-      ring
-    rw [e2, e1]
-    exact Submodule.add_mem _ (Ideal.mul_mem_left _ _ (Ideal.mul_mem_left _ _ hA))
-      (Ideal.mul_mem_right _ _ (localizedQuotients.ι_mem_pow hu))
-  · intro hz
-    obtain ⟨t, ht, htx⟩ := exists_mul_mem_span h𝔭 ha
-    refine ⟨t, ht, ?_⟩
-    have hle : Ideal.span {ι t} * extP K 𝔭 ^ vF 𝔭 a ≤ Ideal.span {ι a} := by
-      rw [Ideal.span_singleton_mul_le_iff]
-      intro y hy
-      unfold extP at hy
-      rw [← Ideal.map_pow] at hy
-      refine Submodule.span_induction (p := fun y _ => ι t * y ∈ Ideal.span {ι a}) ?_ ?_ ?_ ?_ hy
-      · rintro _ ⟨x, hx, rfl⟩
-        obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 (htx x hx)
-        rw [← map_mul, ← hc, map_mul]
-        exact Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton_self _)
-      · simp
-      · intro x y _ _ hx hy
-        rw [mul_add]
-        exact Submodule.add_mem _ hx hy
-      · intro c x _ hx
-        rw [smul_eq_mul, mul_left_comm]
-        exact Ideal.mul_mem_left _ _ hx
-    obtain ⟨w, hw⟩ := Ideal.mem_span_singleton'.1
-      (hle (Ideal.mul_mem_mul (Ideal.mem_span_singleton_self _) hz))
-    refine ⟨w, ?_⟩
-    have := congrArg jK hw
-    rw [map_mul, map_mul] at this
-    field_simp
-    rw [this]
+  apply _root_.Formalism.L2.SG.Pf.G2.div_mem_SP_iff <;> assumption
 
 end GlobalTheory.MaxLatExpo.LocalProofs
 
@@ -554,12 +491,11 @@ theorem main : ∀ (K F V : Type) [Field K] [NumberField K] [StarRing K] [Field 
 
   have hle1 : ∀ i, vF p (a i) ≤ 1 := by
     intro i
-    by_contra hgt
-    push_neg at hgt
+    by_contra! hgt
     have h1 : h x x / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i)) ∈ S := by
       have e : h x x / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i)) =
           h x x * (((if i = i then (1 : K) else 0) - c i * (h x x)⁻¹ * h (b i) x) / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i))) + c i * (h (b i) x / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i))) := by
-        rw [if_pos rfl]; field_simp; ring
+        rw [ite_eq_left rfl]; field_simp; ring
       rw [e]
       exact S.add_mem (S.mul_mem hdS (hE i i)) (S.mul_mem (hcS i) (hξ i))
     have h1' : algebraMap (𝓞 K) K a0 / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i)) ∈ S := by
@@ -572,7 +508,7 @@ theorem main : ∀ (K F V : Type) [Field K] [NumberField K] [StarRing K] [Field 
     have hci : c i / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a j)) ∈ S := by
       have e : c i / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a j)) = c i * (((if j = j then (1 : K) else 0) - c j * (h x x)⁻¹ * h (b j) x) / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a j)))
           - c j * (((if j = i then (1 : K) else 0) - c i * (h x x)⁻¹ * h (b j) x) / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a j))) := by
-        rw [if_pos rfl, if_neg (fun e => hij e.symm)]; ring
+        rw [ite_eq_left rfl, ite_eq_right (fun e => hij e.symm)]; ring
       rw [e]
       exact S.sub_mem (S.mul_mem (hcS i) (hE j j)) (S.mul_mem (hcS j) (hE i j))
     obtain ⟨t, ht, w, hw⟩ := HU.mem_SP.1 (hcS i)
@@ -592,14 +528,13 @@ theorem main : ∀ (K F V : Type) [Field K] [NumberField K] [StarRing K] [Field 
     have h1 : algebraMap (𝓞 K) K 1 / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i)) ∈ S := by
       have e : algebraMap (𝓞 K) K 1 / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i)) = ((if i = i then (1 : K) else 0) - c i * (h x x)⁻¹ * h (b i) x) / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i))
           + (c i * (h x x)⁻¹) * (h (b i) x / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i))) := by
-        rw [if_pos rfl, map_one]; ring
+        rw [ite_eq_left rfl, map_one]; ring
       rw [e]; exact S.add_mem (hE i i) (S.mul_mem hcd (hξ i))
     have h2 := (LocalProofs.div_mem_SP_iff hp (ha i) 1).1 h1
     rw [hext] at h2
     exact hP.ne_top ((Ideal.eq_top_iff_one P).2 (Ideal.pow_le_self (by omega) h2))
   have hex : ∃ i, vF p (a i) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hPb.2
     have hinv : ∀ i, algebraMap (𝓞 K) K 1 / algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) (a i)) ∈ S := fun i =>
       (LocalProofs.div_mem_SP_iff hp (ha i) 1).2 (by rw [hcon i, pow_zero, Ideal.one_eq_top]; exact Submodule.mem_top)
@@ -692,7 +627,7 @@ theorem localMassFactor_eq_of_mem_badPrimes (hK : IsCMUnram K) (hF : IsFixF K F)
     have := absNorm_comap_inert hK hF hPm hc
     rw [hq] at this
     exact Nat.pow_left_injective two_ne_zero this
-  have hη : etaF K F 𝔭 = -1 := by rw [h𝔭def, etaF_comap hK hF hPm, if_pos hc]
+  have hη : etaF K F 𝔭 = -1 := by rw [h𝔭def, etaF_comap hK hF hPm, ite_eq_left hc]
   have hdisc : (discAut h ⊤ M 𝔭 : ℝ) = (qIn P : ℝ) + 1 := by
     have hq0 : (qIn P : ℝ) ≠ 0 := by exact_mod_cast (by omega : qIn P ≠ 0)
     rw [_root_.GlobalTheory.DiscAutLenOne.discAut_eq_normRepCount K F V hK hF h hs M hlat 𝔭 h𝔭 b a hJ i hi hj,

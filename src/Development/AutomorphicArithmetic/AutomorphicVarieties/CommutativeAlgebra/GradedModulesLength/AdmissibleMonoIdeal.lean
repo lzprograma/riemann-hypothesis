@@ -733,7 +733,7 @@ private theorem Lead.mul {E : Type} [Field E] {wt : τ → ℤ} {g h : MvPowerSe
 private theorem Lead.one {E : Type} [Field E] (wt : τ → ℤ) : Lead wt (1 : MvPowerSeries τ E) 0 := by
   classical
   refine ⟨fun ν hν => by simp at hν, by simp, fun ν' _ h => ?_⟩
-  rw [MvPowerSeries.coeff_one, if_neg h]
+  rw [MvPowerSeries.coeff_one, ite_eq_right h]
 
 end Comb
 
@@ -1169,7 +1169,7 @@ private theorem rees_graded_piece_surjection {B A : Type} [CommRing B] [CommRing
   · rintro ⟨p, hp⟩
     refine ⟨⟨_, p.2 μ⟩, ?_⟩
     have h1 : AddMonoidAlgebra.coeff (MvPolynomial.monomial μ f.1 - β • p.1) μ ∈ T μ := (hq _).1 hp μ
-    rwa [MvPolynomial.coeff_sub, MvPolynomial.coeff_monomial, if_pos rfl, MvPolynomial.coeff_smul] at h1
+    rwa [MvPolynomial.coeff_sub, MvPolynomial.coeff_monomial, ite_eq_left rfl, MvPolynomial.coeff_smul] at h1
   · rintro ⟨g, hg⟩
     refine ⟨monoL N μ g, ?_⟩
     rw [← map_smul, ← map_sub, hq]

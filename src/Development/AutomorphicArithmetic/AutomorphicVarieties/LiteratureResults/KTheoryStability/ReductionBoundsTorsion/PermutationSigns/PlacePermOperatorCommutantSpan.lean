@@ -4,56 +4,8 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureR
 public import Mathlib.Algebra.MvPolynomial.Degrees
 public import Mathlib.CategoryTheory.Category.Basic
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.Matrix.Spectrum
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
 public import Mathlib.Combinatorics.Nullstellensatz
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.MvPolynomial.Funext
 public import Mathlib.Algebra.Polynomial.Roots
@@ -165,7 +117,7 @@ theorem herm_of_unit (φ : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ →�
     congr 1
     funext w
     rw [Finset.sum_apply, Fintype.sum_prod_type, Finset.sum_eq_single w]
-    · simp only [Pi.smul_apply, if_true]
+    · simp only [Pi.smul_apply, ite_true]
       have hd1 : ∑ x : Fin m, c (w, x) • diagonal (Pi.single x (1 : ℂ)) = diagonal fun a => c (w, a) := by
         ext i j
         simp only [Matrix.sum_apply, Matrix.smul_apply, diagonal_apply, smul_eq_mul]
@@ -262,7 +214,7 @@ theorem mul_perm' (Z : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ) (σ : E
     · exact absurd ⟨h2, hB.symm⟩ h1
     · rw [mul_zero]
   · intro K _ hK
-    rw [perm'_apply, if_neg, mul_zero]
+    rw [perm'_apply, ite_eq_right, mul_zero]
     rintro ⟨-, rfl⟩
     exact hK (by funext i; simp)
   · simp
@@ -279,7 +231,7 @@ theorem perm'_mul (Z : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ) (σ : E
     · exact absurd ⟨h2, rfl⟩ h1
     · rw [zero_mul]
   · intro K _ hK
-    rw [perm'_apply, if_neg, zero_mul]
+    rw [perm'_apply, ite_eq_right, zero_mul]
     rintro ⟨-, rfl⟩
     exact hK rfl
   · simp
@@ -291,9 +243,9 @@ theorem compat_of_comm (Z : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ)
   rw [mul_perm', perm'_mul] at this
   have e1 : J ∘ (1 : Equiv.Perm (Fin q)).symm = J := by funext i; rfl
   rw [e1] at this
-  rw [if_pos (fun _ => rfl)] at this
+  rw [ite_eq_left (fun _ => rfl)] at this
   by_contra hne
-  rw [if_neg hne] at this
+  rw [ite_eq_right hne] at this
   exact h this
 
 theorem sym_of_comm (Z : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ)
@@ -303,11 +255,11 @@ theorem sym_of_comm (Z : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ)
   rw [mul_perm', perm'_mul] at this
   have hJ : (J ∘ σ) ∘ σ.symm = J := by funext i; simp
   rw [hJ] at this
-  rw [if_pos (fun _ => rfl)] at this
+  rw [ite_eq_left (fun _ => rfl)] at this
   rw [← this]
   by_cases h : Z I J = 0
   · rw [h]; split_ifs <;> rfl
-  · rw [if_pos fun i => (compat_of_comm Z hZ I J h i).symm]
+  · rw [ite_eq_left fun i => (compat_of_comm Z hZ I J h i).symm]
 
 end Comm
 
@@ -330,13 +282,13 @@ theorem decomp (Z : Matrix (Fin q → ι) (Fin q → ι) ℂ)
         have h2 : (L ∘ σ.symm) ∘ σ = L := by funext i; simp
         rw [h1, h2, Matrix.single_apply_same, mul_one, hsym]
       · intro J _ hJ
-        rw [Matrix.single_apply, if_neg, mul_zero]
+        rw [Matrix.single_apply, ite_eq_right, mul_zero]
         rintro ⟨-, h⟩
         exact hJ (by rw [← h]; funext i; simp)
       · simp
     · intro I _ hI
       refine Finset.sum_eq_zero fun J _ => ?_
-      rw [Matrix.single_apply, if_neg, mul_zero]
+      rw [Matrix.single_apply, ite_eq_right, mul_zero]
       rintro ⟨h, -⟩
       exact hI (by rw [← h]; funext i; simp)
     · simp
@@ -352,8 +304,7 @@ theorem nu_iff (f : Fin q → Fin q) :
   · intro h
     have hs : Function.Surjective f := by
       intro k
-      by_contra hk
-      push_neg at hk
+      by_contra! hk
       have := congrArg (fun g : Fin q →₀ ℕ => g k) h
       simp only [Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.single_apply] at this
       simpa [hk] using this
@@ -437,7 +388,7 @@ theorem sw2 : PlacePermOperatorCommutantSpan := by
         · intro x y hxy
           simp only [Matrix.sum_apply, Matrix.smul_apply, Matrix.single_apply, smul_eq_mul]
           refine Finset.sum_eq_zero fun j _ => ?_
-          rw [if_neg, mul_zero]
+          rw [ite_eq_right, mul_zero]
           rintro ⟨rfl, rfl⟩
           exact hxy (hc j)
       have hs := sym_zero φ (fun j => Matrix.single (I j) (J j) (1 : ℂ)) h0

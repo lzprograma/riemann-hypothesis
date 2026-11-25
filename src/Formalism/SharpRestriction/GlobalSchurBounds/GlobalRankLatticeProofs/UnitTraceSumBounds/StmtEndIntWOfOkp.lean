@@ -15,54 +15,8 @@ public import Formalism.PeriodIntegrals.WfSubst
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittSubstitution.CoeffMapMem
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittEndomorphism.FlogConstantCoeff
 public import Formalism.PeriodIntegrals.WfRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Tactic.Linter.Style
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialIntegrality.Development
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.EndIntWOf, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittLogarithm.CoefWfIff, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittLogarithm.FormalLogarithmHolds, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittLogarithm.WfLogOf, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittLogarithm, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittEndomorphism.WfEndOfLog, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittFrobeniusEnd, Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.StmtEndIntWOfOkp
@@ -254,7 +208,7 @@ theorem wfLog_of (hI : PI.InvSerSub) (hL : PI.WfLogL) : PI.WfLog := by
   have hc1 : PowerSeries.coeff 1 (AddIntG.flog W wq) = 1 := by
     clear hI hL h1 h2 h3 h4 h6 hex hsub hfl hc0 hq
     rw [AddIntG.flog, PowerSeries.coeff_mk]
-    simp only [one_ne_zero, if_false, Nat.sub_self, Nat.cast_one, div_one,
+    simp only [one_ne_zero, ite_false, Nat.sub_self, Nat.cast_one, div_one,
       PowerSeries.coeff_zero_eq_constantCoeff_apply, AddIntG.omegaW]
     rw [map_mul, PowerSeries.constantCoeff_inv]
     simp [hw0]
@@ -326,7 +280,7 @@ private lemma inv_series_sub : PI.InvSerSub := by
       simp only [Finset.coe_range, Set.mem_Iio]
       by_contra h
       apply hd
-      rw [hpow, if_neg (by omega), smul_zero]
+      rw [hpow, ite_eq_right (by omega), smul_zero]
     rw [← hsub, PowerSeries.coeff_subst' hHS, hfin]
     simp only [smul_eq_mul]
 

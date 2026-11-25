@@ -195,7 +195,6 @@ theorem exists_udl_of_isUnit (I : Ideal R) (hI : ∀ x ∈ I, IsUnit (1 + x)) (n
     have hs1 : s - 1 ∈ I := by simpa [hs] using hg (Fin.last n) (Fin.last n)
     have hsu : IsUnit s := by simpa using hI _ hs1
     obtain ⟨t, hst⟩ := hsu.exists_right_inv
-    have hts : t * s = 1 := by rw [mul_comm]; exact hst
     have hcI : ∀ i k, c i k ∈ I := fun i k => by
       have := hg i.castSucc (Fin.last n)
       rw [Matrix.one_apply_ne (Fin.castSucc_lt_last i).ne, sub_zero] at this
@@ -211,11 +210,7 @@ theorem exists_udl_of_isUnit (I : Ideal R) (hI : ∀ x ∈ I, IsUnit (1 + x)) (n
       rw [Subsingleton.elim i j, Matrix.mul_apply, Matrix.one_apply_eq]
       simp only [Finset.univ_unique, Finset.sum_singleton]
       exact hst
-    have hba : b * a = 1 := by
-      ext i j
-      rw [Subsingleton.elim i j, Matrix.mul_apply, Matrix.one_apply_eq]
-      simp only [Finset.univ_unique, Finset.sum_singleton]
-      exact hts
+    have hba : b * a = 1 := mul_eq_one_comm.mp hab
     have hS : ∀ i j, (A - c * b * r) i j - (1 : Matrix (Fin n) (Fin n) R) i j ∈ I := by
       intro i j
       have h1 : A i j - (1 : Matrix (Fin n) (Fin n) R) i j ∈ I := by

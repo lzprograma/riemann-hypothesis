@@ -43,7 +43,7 @@ lemma exists_far_point (z : Fin D → ℂ) {s : ℝ} (hs : 0 < s) :
     intro i
     by_cases h : z i = 0
     · simp [u, h]
-    · simp only [u, if_neg h, norm_div, Complex.norm_real, norm_norm]
+    · simp only [u, ite_eq_right h, norm_div, Complex.norm_real, norm_norm]
       exact div_self (norm_ne_zero_iff.mpr h)
   let w : Fin D → ℂ := fun i => (s : ℂ) * u i
   have hw : ‖w‖ ≤ s := by
@@ -57,7 +57,7 @@ lemma exists_far_point (z : Fin D → ℂ) {s : ℝ} (hs : 0 < s) :
     · have hzi : 0 < ‖z i‖ := norm_pos_iff.mpr h
       have hc : (‖z i‖ : ℂ) ≠ 0 := by exact_mod_cast hzi.ne'
       have e : (z + w) i = ((‖z i‖ + s) / ‖z i‖ : ℝ) * z i := by
-        simp only [Pi.add_apply, w, u, if_neg h]
+        simp only [Pi.add_apply, w, u, ite_eq_right h]
         push_cast
         field_simp
       rw [e, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by positivity),
@@ -171,7 +171,7 @@ lemma ext_exists (S : Finset (Fin D)) {R : ℝ} (hR : 0 < R) {u : (Fin D → ℂ
     have hx' : R⁻¹ • x ∉ coordDiv S := by
       rw [smul_mem_coordDiv_iff (inv_ne_zero hR.ne')]
       exact hx.2
-    simp only [extT, limsupExt, if_neg hx', smul_inv_smul₀ hR.ne']
+    simp only [extT, limsupExt, ite_eq_right hx', smul_inv_smul₀ hR.ne']
   · intro x hx δ hδ
     by_cases hxA : x ∈ coordDiv S
     · set x' := R⁻¹ • x with hx'
@@ -183,7 +183,7 @@ lemma ext_exists (S : Finset (Fin D)) {R : ℝ} (hR : 0 < R) {u : (Fin D → ℂ
       set F : (Fin D → ℂ) → ℝ := fun y => max (u (R • y)) (-κ) with hF
       have hw : extT S R u κ x = limsup F (𝓝[ball (0 : Fin D → ℂ) 1 \ coordDiv S] x') := by
         simp only [extT, limsupExt]
-        rw [if_pos ((smul_mem_coordDiv_iff (inv_ne_zero hR.ne') x).mpr hxA)]
+        rw [ite_eq_left ((smul_mem_coordDiv_iff (inv_ne_zero hR.ne') x).mpr hxA)]
       haveI : (𝓝[ball (0 : Fin D → ℂ) 1 \ coordDiv S] x').NeBot :=
         mem_closure_iff_nhdsWithin_neBot.mp (mem_closure_off S hx'U)
       have hcob : IsCoboundedUnder (· ≤ ·) (𝓝[ball (0 : Fin D → ℂ) 1 \ coordDiv S] x') F :=
@@ -207,7 +207,7 @@ lemma ext_exists (S : Finset (Fin D)) {R : ℝ} (hR : 0 < R) {u : (Fin D → ℂ
         rw [smul_mem_coordDiv_iff (inv_ne_zero hR.ne')]
         exact hxA
       have hwx : extT S R u κ x = max (u x) (-κ) := by
-        simp only [extT, limsupExt, if_neg hx', smul_inv_smul₀ hR.ne']
+        simp only [extT, limsupExt, ite_eq_right hx', smul_inv_smul₀ hR.ne']
       exact ⟨x, ⟨hx, hxA⟩, by simp [hδ], by linarith⟩
 
 end

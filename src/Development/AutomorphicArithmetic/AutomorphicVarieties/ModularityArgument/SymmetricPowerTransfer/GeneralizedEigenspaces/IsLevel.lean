@@ -46,8 +46,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL Formalism.BasicNotions
 open UpperTheory.V.W (Plc Lp)
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Sym.Dict
 
 section Loc
@@ -135,11 +133,5 @@ variable (L) in
 abbrev Unr : Prop := ∀ w : Plc L, Algebra.IsUnramifiedAt (𝓞 (Lp L)) w.asIdeal
 
 end UpperTheory.V.Z.Sym.Dict
-
-namespace UpperTheory.V.Z.Sym
-
-open Dict
-
-end UpperTheory.V.Z.Sym
 
 end

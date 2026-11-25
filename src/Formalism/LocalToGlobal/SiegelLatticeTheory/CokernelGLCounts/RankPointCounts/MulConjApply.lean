@@ -15,8 +15,6 @@ open NumberField IsDedekindDomain ValuativeRel Formalism.BasicNotions Formalism.
 
 namespace Formalism.L2.SG.Pf.PCountEx
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section IntInv
 
 variable {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [CommRing E] [Algebra F E]
@@ -127,11 +125,11 @@ theorem locReal_ord (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) (w : Poin
     ext a b
     rw [modMat_apply', Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply']
     by_cases hb : b = sgF w a
-    · rw [if_pos hb, if_pos hb, modMat_blk Zd]
+    · rw [ite_eq_left hb, ite_eq_left hb, modMat_blk Zd]
       simp only [twist, qE, tau0, hR, Ring.inverse_one, mul_one, ite_self, sub_zero, map_mul, fr]
       subst hb
       ring
-    · rw [if_neg hb, if_neg hb, map_zero, mul_zero, zero_mul]
+    · rw [ite_eq_right hb, ite_eq_right hb, map_zero, mul_zero, zero_mul]
   set g := Loc.uLow ξ with hgdef
   set h := Loc.uUp w₀ η with hhdef
   have hg : IsLo g := isLo_uLow ξ
@@ -190,7 +188,7 @@ theorem locReal_ord (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) (w : Poin
     rw [conj_mul_apply, Finset.mul_sum]
     refine Subring.sum_mem _ fun k _ => ?_
     have hz := hcz (a, k, b, true)
-    simp only [if_true] at hz
+    simp only [ite_true] at hz
     have e : ac * (fr a * Matrix.of oL a k * fri k * g⁻¹ k b) = oL a k * (ac * (fr a * fri k * g⁻¹ k b)) := by
       rw [Matrix.of_apply]; ring
     rw [e]
@@ -205,7 +203,7 @@ theorem locReal_ord (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) (w : Poin
     rw [mul_conj_apply, Finset.mul_sum]
     refine Subring.sum_mem _ fun k _ => ?_
     have hz := hcz (a, k, b, false)
-    simp only [Bool.false_eq_true, if_false] at hz
+    simp only [Bool.false_eq_true, ite_false] at hz
     have e : ac * (h⁻¹ a k * (fri k * Matrix.of oU k b * fr b)) = oU k b * (ac * (h⁻¹ a k * fri k * fr b)) := by
       rw [Matrix.of_apply]; ring
     rw [e]

@@ -170,15 +170,8 @@ private lemma unitary_conj_exp_zero_diagonal_eq_one {ι : Type} [Fintype ι] [De
 open Matrix in
 open scoped Kronecker ComplexOrder TensorProduct MatrixOrder in
 private lemma posSemidef_eq_of_mul_self_eq {ι : Type} [Fintype ι] [DecidableEq ι]
-    (X Y : Matrix ι ι ℂ) (hX : X.PosSemidef) (hY : Y.PosSemidef) (h : X * X = Y * Y) : X = Y := by
-  have hX2 : (0 : Matrix ι ι ℂ) ≤ X * X := by
-    rw [Matrix.nonneg_iff_posSemidef]
-    have := Matrix.posSemidef_conjTranspose_mul_self X
-    rwa [hX.1.eq] at this
-  have hY2 : (0 : Matrix ι ι ℂ) ≤ Y * Y := h ▸ hX2
-  have h1 := (CFC.sqrt_eq_iff (X * X) X hX2 hX.nonneg).mpr rfl
-  have h2 := (CFC.sqrt_eq_iff (Y * Y) Y hY2 hY.nonneg).mpr rfl
-  rw [← h1, ← h2, h]
+    (X Y : Matrix ι ι ℂ) (hX : X.PosSemidef) (hY : Y.PosSemidef) (h : X * X = Y * Y) : X = Y :=
+  (CFC.mul_self_eq_mul_self_iff X Y hX.nonneg hY.nonneg).mp h
 
 open Matrix in
 open scoped Kronecker ComplexOrder TensorProduct MatrixOrder in

@@ -480,5 +480,21 @@ class Publishing(unittest.TestCase):
             self.assertEqual(said, "updated the earlier comment")
 
 
+class Listing(unittest.TestCase):
+    """Which open pull requests are compared. `gh` is replaced; nothing leaves this machine."""
+
+    def test_only_a_batch_branch_of_this_repository_holds_a_batch(self):
+        rows = "\n".join(["1\taaa\tbatch/mine\tfork/r\tbatch queue",
+                          "2\tbbb\tbatch/ours\tO/R\tbuilding",
+                          "3\tccc\ttopic\to/r\tbuilding|batch queue",
+                          "4\tddd\tbatch/gone\t\tbatch queue"])
+        with patch.object(conflicts, "gh", lambda *args, data=None: rows):
+            pulls = conflicts.open_pulls("o/r")
+        self.assertEqual({number: batch for number, (_, _, batch) in pulls.items()},
+                         {1: False, 2: True, 3: False, 4: False})
+        # What is being built comes first, and the batch itself is not compared.
+        self.assertEqual(conflicts.labelled(pulls, 9), {1: "batch queue", 3: "building", 4: "batch queue"})
+
+
 if __name__ == "__main__":
     unittest.main()

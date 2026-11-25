@@ -52,8 +52,6 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E]
 
 def perp (W : HSpace E) (x : W.V) : Submodule E W.V := LinearMap.ker (W.hT x)
 
-theorem mem_perp (W : HSpace E) (x y : W.V) : y ∈ perp W x ↔ W.hD y x = 0 := Iff.rfl
-
 def IsSelfDualLattice (W : HSpace E) (L : Submodule (𝓞 E) W.V) : Prop :=
   Submodule.IsLattice E L ∧ Formalism.HermitianLatticesTheory.dual W.hT L = L
 

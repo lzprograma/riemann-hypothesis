@@ -7,44 +7,7 @@ import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.Archim
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameBoundSpaces.MemULOfSplit
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ConjEqConjugate
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.DetGelfandMatrixEq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -60,8 +23,6 @@ open scoped Classical
 
 
 namespace PositivityTheory.Rg.BcB.F.BC
-
-attribute [local instance] borelG borelF borelA GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem gelfand_value_fin_zero {k : ℕ} (hk : k = 0) (x y : Fin k → ℂ) (m : ℕ) : GlobalTheory.Dec.gelfVal x m = GlobalTheory.Dec.gelfVal y m := by
   subst hk; simp [GlobalTheory.Dec.gelfVal]
@@ -79,7 +40,7 @@ theorem limAtOf_holds : LimAtOf := by
     (fun v => ⟨(F₀.A i).kerb [] v, fun χ => by simp [RunFrame.β, RunFrame.ptL, Arch.pt, Arch.valW, zVal]⟩)
   rw [Nat.sub_add_cancel F.m_pos] at hsop hsval
   have h0 : χ ⟨(F.g (.inl ()) i).op, StarAlgebra.subset_adjoin ℂ _ (Or.inl ⟨.inl (), rfl⟩)⟩ = 1 := hχ.2.1 (.inl ())
-  have hM := (hR E).choose_spec.choose_spec.choose_spec.choose_spec.choose_spec.choose_spec.2.2
+  have hM := (rl_spec hR E).2.2
   refine hM (F.B i) _ _ o₁ c₁ o₂ c₂ F.Γ (fun x => F.g x i) (.inl ()) (F.t₀ i) (F₀.A i).bump cK
     (fun v s m => (.inr (.inl (i, v, s, m, false)), .inr (.inl (i, v, s, m, true)))) (X F i) ((F.β i).sq (F.m - 1))
     (2 * F.m) χ ?_ (fun x => h.ok x i) hsO hsop.symm (fun χa χb => hsval χa χb) rfl (F₀.A i).isBump ?_
@@ -94,10 +55,10 @@ theorem limAtOf_holds : LimAtOf := by
       exact Or.inr rfl
     · simp only [RunFrame.g] at hx
       by_cases hi : i = x.1
-      · rw [if_pos hi, Sum.inr.injEq] at hx
+      · rw [ite_eq_left hi, Sum.inr.injEq] at hx
         subst hx
         exact Or.inr rfl
-      · rw [if_neg hi] at hx
+      · rw [ite_eq_right hi] at hx
         cases hx
     · simp only [RunFrame.g, Sum.inr.injEq] at hx
       subst hx

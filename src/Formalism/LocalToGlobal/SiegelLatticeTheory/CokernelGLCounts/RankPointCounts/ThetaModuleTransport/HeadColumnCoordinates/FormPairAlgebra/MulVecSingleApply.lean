@@ -174,7 +174,7 @@ theorem formC_eqG (Y W : Ix r → O) :
       _ = _ := by
           rw [hb, hl]
           simp only [mul_add, Finset.sum_add_distrib, mul_ite, mul_zero, Finset.sum_ite_eq',
-            Finset.mem_univ, if_true]
+            Finset.mem_univ, ite_true]
           congr 1
           · exact Finset.sum_congr rfl fun k _ => mul_comm _ _
           · ring
@@ -212,7 +212,7 @@ theorem uniq_core (d d' : E)
       rw [this, e1]
       simp only [c, Sum.elim_inl, Pi.zero_apply]
       by_cases hb : b = Fin.last r
-      · simp only [hb, if_true]
+      · simp only [hb, ite_true]
         rw [h2]; ring
       · simp [hb]
     · rw [vecMul_gramC_inr]
@@ -225,7 +225,7 @@ theorem uniq_core (d d' : E)
       rw [this, e1]
       simp only [c, Sum.elim_inr, Pi.zero_apply]
       by_cases hb : b = Fin.last r
-      · simp only [hb, if_true, map_one]
+      · simp only [hb, ite_true, map_one]
         rw [h1]; ring
       · simp [hb, Ne.symm hb]
   have hc : c = 0 := by

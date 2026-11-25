@@ -230,7 +230,7 @@ end USideB
 
 section Main2
 
-theorem phNormUnit_of (hE : MvExpLaws) (_hS : MvExpSubst) (hH : LGHalf) (hU : IsogenyU) :
+theorem phNormUnit_of (hE : MvExpLaws) (hH : LGHalf) (hU : IsogenyU) :
     PhNormUnit := by
   intro K _ _ R e s2 l linv ph A c0 ι _ xP al h hph hX hI hA hxP hal hali hal0 h2 hm
   obtain ⟨L0, L1, L2, -⟩ := hE K Unit

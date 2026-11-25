@@ -98,7 +98,7 @@ theorem exists_dual (hG : IsHerm σ G) {x : Fin n → E} (hx : x ≠ 0) : ∃ y,
   have : hf σ G x (Pi.single b (σ (Matrix.vecMul x G b)⁻¹)) =
       Matrix.vecMul x G b * (Matrix.vecMul x G b)⁻¹ := by
     simp only [hf, Pi.single_apply, apply_ite σ, map_zero, mul_ite, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, hG.invol, ← Finset.sum_mul]
+      Finset.mem_univ, ite_true, hG.invol, ← Finset.sum_mul]
     rfl
   rw [this, mul_inv_cancel₀ hb]
 
@@ -565,7 +565,7 @@ theorem real_isotropic_or_one_class : ∀ (K L : Type) [Field K] [Field L] [Char
   by_cases hiso : ∃ z : Fin n → L, z ≠ 0 ∧ GlobalTheory.UTrans.hf σ G z z = 0
   · exact Or.inl hiso
   right
-  push_neg at hiso
+  push Not at hiso
   intro x y hx hy
   obtain ⟨p, hp⟩ := hfix _ (_root_.GlobalTheory.UTrans.Calc.hf_conj σ G hσ hG x x)
   obtain ⟨q, hq⟩ := hfix _ (_root_.GlobalTheory.UTrans.Calc.hf_conj σ G hσ hG y y)
@@ -581,8 +581,7 @@ theorem real_isotropic_or_one_class : ∀ (K L : Type) [Field K] [Field L] [Char
     rw [hq, (map_eq_zero_iff e e.injective).mp h, map_zero]
 
   have hpos : 0 < e q / e p := by
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     have hlt : e q * e p < 0 := by
       have h1 : e q / e p < 0 := lt_of_le_of_ne hneg (div_ne_zero hq0 hp0)
       have h2 : e q * e p = e q / e p * (e p * e p) := by field_simp
@@ -640,7 +639,6 @@ open MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker GlobalTheory.AdSpan
 open GlobalTheory.SW hiding Level
 open scoped TensorProduct ComplexConjugate Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.UCharDet
 open GlobalTheory.UTrans
@@ -732,7 +730,7 @@ theorem kill {n : ℕ} (H : Matrix (Fin n) (Fin n) ℂ) (hH : H.IsHermitian) (hd
     exact zero_ne_one this
   let X : Matrix (Fin n) (Fin n) ℂ → ℂˣ := fun g => if h : c g = 0 then 1 else Units.mk0 (c g) h
   have hX : ∀ g ∈ Formalism.QuantumDeterminants.UH H, (X g : ℂ) = c g := fun g hg => by
-    simp only [X, dif_neg (hne g hg), Units.val_mk0]
+    simp only [X, dite_eq_right (hne g hg), Units.val_mk0]
   have key := GlobalTheory.UTrans.char_eq_one_of_det_eq_one ℂ n (starRingEnd ℂ) (H.map (starRingEnd ℂ)) (isHerm H hH hd)
     (iso_or_one_class H hH hd) ℂˣ X (fun a b ha hb => by
       rw [isU_iff] at ha hb
@@ -903,10 +901,7 @@ open MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker GlobalTheory.AdSpan
 open GlobalTheory.SW hiding Level
 open scoped TensorProduct ComplexConjugate Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.realPoints_unitaryCharacter_eq_detPower : ∀ (D : D7) (θ : InfFam D) (V : HSp D), IsInfFam θ → V.SigOK → ∀ z : GA D V → ℂ, (∀ a ∈ GinfC V, ∀ a' ∈ GinfC V, z (a * a') = z a * z a') → (∀ a ∈ GinfC V, ‖z a‖ = 1) → ContinuousOn z (GinfC V : Set (GA D V)) → ∃ m : D.what₂.Tau → ℤ, ∀ a ∈ GinfC V, z a = detPow θ V m a := by
-  first | exact @GlobalTheory.AdSpan.char_eq_detPow
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealPointsUnitaryCharacterEqDetPowerStatement =====

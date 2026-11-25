@@ -242,7 +242,7 @@ theorem exists_majorant {Φ : Matrix (Fin n) (Fin n) 𝔸[K] → ℂ}
       (if IsInBox I X then 1 else 0) := by
     by_cases hmem : finPartPi (matrixCoordEquiv X) ∈ L
     · have hbox : IsInBox I X := fun i j => hI (mem_iUnion.2 ⟨(i, j), _, hmem, rfl⟩)
-      rw [indicator_of_mem hmem, if_pos hbox]
+      rw [indicator_of_mem hmem, ite_eq_left hbox]
     · rw [indicator_of_notMem hmem]
       split_ifs <;> norm_num
   calc C * ((1 + a) ^ M)⁻¹ * L.indicator (fun _ => (1 : ℝ)) (finPartPi (matrixCoordEquiv X))
@@ -339,8 +339,8 @@ theorem summable_latticeWeight (J : (FractionalIdeal (𝓞 K)⁰ K)ˣ) {M : ℕ}
     funext ξ
     unfold latticeWeight
     by_cases h : ∀ i j, ξ i j ∈ (J : FractionalIdeal (𝓞 K)⁰ K)
-    · rw [if_pos h, indicator_of_mem (show ξ ∈ T from h)]
-    · rw [if_neg h, indicator_of_notMem (show ξ ∉ T from h)]
+    · rw [ite_eq_left h, indicator_of_mem (show ξ ∈ T from h)]
+    · rw [ite_eq_right h, indicator_of_notMem (show ξ ∉ T from h)]
   rw [heq, ← summable_subtype_iff_indicator]
   exact hsT'
 
@@ -383,7 +383,7 @@ theorem twistedWeight_le {I J : (FractionalIdeal (𝓞 K)⁰ K)ˣ}
   have hw0 : 0 ≤ infNorm W := infNorm_nonneg _
   rw [twistedWeight, ← hW]
   by_cases hbox : IsInBox I W
-  · rw [if_pos hbox, mul_one]
+  · rw [ite_eq_left hbox, mul_one]
     have hξ : ratMat ξ = (x : Matrix (Fin n) (Fin n) 𝔸[K]) * W *
         ((y⁻¹ : AdelicGLn.AdelicGL K n) : Matrix (Fin n) (Fin n) 𝔸[K]) := by
       rw [hW, Matrix.mul_assoc, Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one, ← Matrix.mul_assoc,
@@ -394,7 +394,7 @@ theorem twistedWeight_le {I J : (FractionalIdeal (𝓞 K)⁰ K)ˣ}
       rw [← finMat_mul, ← finMat_mul, ← hξ, finMat_apply, ratMat_apply_snd] at h1
       exact (algebraMap_mem_idealFiniteAdeles_iff J _).1 h1
     have hlw : latticeWeight J M ξ = ((1 + infNorm (ratMat ξ)) ^ M)⁻¹ := by
-      unfold latticeWeight; rw [if_pos hmemJ]
+      unfold latticeWeight; rw [ite_eq_left hmemJ]
     rw [hlw]
     have hR : infNorm (ratMat ξ) ≤ a * infNorm W * b := by
       rw [hξ, ha, hb]
@@ -414,7 +414,7 @@ theorem twistedWeight_le {I J : (FractionalIdeal (𝓞 K)⁰ K)ˣ}
       _ ≤ ((1 + a) * (1 + b)) ^ M * ((1 + infNorm (ratMat ξ)) ^ M)⁻¹ :=
           mul_le_mul_of_nonneg_left (inv_anti₀ (pow_pos hRp M) (pow_le_pow_left₀ hRp.le
             h1 M)) (pow_nonneg hpos.le M)
-  · rw [if_neg hbox, mul_zero]
+  · rw [ite_eq_right hbox, mul_zero]
     exact mul_nonneg (pow_nonneg (mul_nonneg (by linarith) (by linarith)) M)
       (latticeWeight_nonneg J M ξ)
 

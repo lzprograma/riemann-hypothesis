@@ -39,25 +39,6 @@ def psi : 𝓞 D.host.K →+ ℂ where
   map_zero' := by simp
   map_add' a b := by simp
 
-theorem mem_lamOf_iff (cc : Ideal (𝓞 D.host.K)) (w : ℂ) :
-    w ∈ lamOf D cc 1 ↔ ∃ c ∈ cc, psi D c = w := by
-  constructor
-  · intro hw
-    induction hw using AddSubgroup.closure_induction with
-    | mem x hx =>
-      obtain ⟨c, hc, rfl⟩ := hx
-      exact ⟨c, hc, by simp [psi]⟩
-    | zero => exact ⟨0, cc.zero_mem, by simp⟩
-    | add x y _ _ h1 h2 =>
-      obtain ⟨c1, hc1, rfl⟩ := h1
-      obtain ⟨c2, hc2, rfl⟩ := h2
-      exact ⟨c1 + c2, cc.add_mem hc1 hc2, by simp⟩
-    | neg x _ h1 =>
-      obtain ⟨c1, hc1, rfl⟩ := h1
-      exact ⟨-c1, cc.neg_mem hc1, by simp⟩
-  · rintro ⟨c, hc, rfl⟩
-    exact AddSubgroup.subset_closure ⟨c, hc, by simp [psi]⟩
-
 theorem exists_sqrt : ∃ β : 𝓞 D.host.K,
     D.host.φ₀ (((β : D.host.K) : D.host.E)) = Complex.I * (Real.sqrt D.host.d : ℂ) := by
   have hsq : D.host.sqd ^ 2 = -(D.host.d : D.host.E) :=

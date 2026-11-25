@@ -54,13 +54,13 @@ variable {g : ℕ} [Fact g.Prime] {a b : ℕ}
 theorem tl_apply (M : Mt g (a + b)) (i j : Fin a) : tl a M i j = M (Fin.castAdd b i) (Fin.castAdd b j) := by
   have hi : (i : ℕ) < a + b := by omega
   have hj : (j : ℕ) < a + b := by omega
-  simp only [tl, entN, hi, hj, and_self, dif_pos]
+  simp only [tl, entN, hi, hj, and_self, dite_eq_left]
   rfl
 
 theorem br_apply (M : Mt g (a + b)) (i j : Fin b) : br a b M i j = M (Fin.natAdd a i) (Fin.natAdd a j) := by
   have hi : a + (i : ℕ) < a + b := by omega
   have hj : a + (j : ℕ) < a + b := by omega
-  simp only [br, entN, hi, hj, and_self, dif_pos]
+  simp only [br, entN, hi, hj, and_self, dite_eq_left]
   rfl
 
 def blkM (A : Mt g a) (B : Matrix (Fin a) (Fin b) (ZMod g)) (D : Mt g b) : Mt g (a + b) :=
@@ -162,7 +162,7 @@ theorem card_fibre (h₁ : Gn g a) (h₂ : Gn g b) :
     · simp only [IsUnit.unit_spec, ur_blkM]
 
 theorem toG_val {n : ℕ} {M : Mt g n} (h : IsUnit M) : (toG M).val = M := by
-  rw [toG, dif_pos h, IsUnit.unit_spec]
+  rw [toG, dite_eq_left h, IsUnit.unit_spec]
 
 theorem card_par :
     (Finset.univ.filter fun x : Gn g (a + b) => InPar a (x : Mt g (a + b))).card =

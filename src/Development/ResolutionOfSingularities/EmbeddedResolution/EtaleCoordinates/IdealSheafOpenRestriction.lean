@@ -4,47 +4,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoor
 public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.ClopenSubscheme
 public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.OpenImmersionAppLE
 public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -67,23 +27,14 @@ theorem openSubschemeKer_eq_ker {X : Scheme.{u}} (Z : X.IdealSheafData) (W : Z.s
 theorem support_openSubschemeKer {X : Scheme.{u}} (Z : X.IdealSheafData) (W : Z.subscheme.Opens)
     (hW : IsClosed (W : Set Z.subscheme)) :
     ((openSubschemeKer Z W).support : Set X) = ⇑Z.subschemeι.base '' (W : Set Z.subscheme) := by
-  have hindW : Topology.IsInducing ⇑(Scheme.Opens.ι W).base :=
-    (Scheme.Opens.ι W).isEmbedding.toIsInducing
-  have hrangeW : Set.range ⇑(Scheme.Opens.ι W).base = (W : Set Z.subscheme) := by
-    rw [Scheme.Opens.range_ι]
-  have hqcW : QuasiCompact (Scheme.Opens.ι W) := by
-    refine ⟨fun U _ hUc => ?_⟩
-    refine hindW.isCompact_iff.mpr ?_
-    rw [Set.image_preimage_eq_inter_range, hrangeW]
-    exact hUc.inter_right hW
-  have hqc : QuasiCompact (Scheme.Opens.ι W ≫ Z.subschemeι) := inferInstance
+  have : IsClosedImmersion (Scheme.Opens.ι W) := W.isClosedImmersion_ι_of_isClosed hW
   have hclosed : IsClosed (⇑Z.subschemeι.base '' (W : Set Z.subscheme)) :=
     Z.subschemeι.isClosedEmbedding.isClosedMap _ hW
   have hcomp : ⇑(Scheme.Opens.ι W ≫ Z.subschemeι).base
       = ⇑Z.subschemeι.base ∘ ⇑(Scheme.Opens.ι W).base := rfl
   have hrange : Set.range ⇑(Scheme.Opens.ι W ≫ Z.subschemeι).base
       = ⇑Z.subschemeι.base '' (W : Set Z.subscheme) := by
-    rw [hcomp, Set.range_comp, hrangeW]
+    rw [hcomp, Set.range_comp, Scheme.Opens.range_ι]
   rw [openSubschemeKer_eq_ker, Scheme.Hom.support_ker]
   show closure (Set.range ⇑(Scheme.Opens.ι W ≫ Z.subschemeι).base)
       = ⇑Z.subschemeι.base '' (W : Set Z.subscheme)
@@ -95,7 +46,6 @@ private theorem exists_isIso_openSubschemeKer_subscheme {X : Scheme.{u}} (Z : X.
     ∃ e : W.toScheme ⟶ (openSubschemeKer Z W).subscheme, IsIso e ∧
       e ≫ (openSubschemeKer Z W).subschemeι = Scheme.Opens.ι W ≫ Z.subschemeι := by
   have : IsClosedImmersion (Scheme.Opens.ι W) := W.isClosedImmersion_ι_of_isClosed hW
-  have : IsClosedImmersion (Scheme.Opens.ι W ≫ Z.subschemeι) := inferInstance
   have hker : (Scheme.Opens.ι W ≫ Z.subschemeι).ker = (openSubschemeKer Z W).subschemeι.ker :=
     (Scheme.IdealSheafData.ker_subschemeι (openSubschemeKer Z W)).symm
   refine ⟨IsClosedImmersion.lift (openSubschemeKer Z W).subschemeι
@@ -110,7 +60,6 @@ theorem smooth_subschemeι_openSubschemeKer_comp {X S : Scheme.{u}} (Z : X.Ideal
     Smooth ((openSubschemeKer Z W).subschemeι ≫ g) := by
   obtain ⟨e, he, hfac⟩ := exists_isIso_openSubschemeKer_subscheme Z W hW
   have := he
-  have hsm : Smooth (Scheme.Opens.ι W ≫ Z.subschemeι ≫ g) := inferInstance
   have hfac2 : inv e ≫ Scheme.Opens.ι W ≫ Z.subschemeι ≫ g
       = (openSubschemeKer Z W).subschemeι ≫ g := by
     rw [← Category.assoc (Scheme.Opens.ι W) Z.subschemeι g, ← hfac, Category.assoc,
@@ -205,18 +154,7 @@ theorem restrictIdeal_openSubschemeKer_of_preimage_le {X : Scheme.{u}} (Z : X.Id
     (W : Z.subscheme.Opens) (hW : IsClosed (W : Set Z.subscheme)) (U : X.Opens)
     (hU : (Z.subschemeι ⁻¹ᵁ U) ≤ W) :
     restrictIdeal (openSubschemeKer Z W) U = restrictIdeal Z U := by
-  have hindW : Topology.IsInducing ⇑(Scheme.Opens.ι W).base :=
-    (Scheme.Opens.ι W).isEmbedding.toIsInducing
-  have hrangeW : Set.range ⇑(Scheme.Opens.ι W).base = (W : Set Z.subscheme) := by
-    rw [Scheme.Opens.range_ι]
-  have hqcW : QuasiCompact (Scheme.Opens.ι W) := by
-    refine ⟨fun V _ hVc => ?_⟩
-    refine hindW.isCompact_iff.mpr ?_
-    rw [Set.image_preimage_eq_inter_range, hrangeW]
-    exact hVc.inter_right hW
-  have hqc : QuasiCompact (Scheme.Opens.ι W ≫ Z.subschemeι) := inferInstance
-  have hqc1 : QuasiCompact ((openSubschemeKer Z W).subschemeι ∣_ U) := inferInstance
-  have hqc2 : QuasiCompact (Z.subschemeι ∣_ U) := inferInstance
+  have : IsClosedImmersion (Scheme.Opens.ι W) := W.isClosedImmersion_ι_of_isClosed hW
   rw [restrictIdeal_eq_comap_ι (openSubschemeKer Z W) U, restrictIdeal_eq_comap_ι Z U,
     comap_opensι_eq_ker_morphismRestrict (openSubschemeKer Z W) U,
     comap_opensι_eq_ker_morphismRestrict Z U]
@@ -300,15 +238,6 @@ theorem restrictIdeal_openSubschemeKer_eq_top {X : Scheme.{u}} (Z : X.IdealSheaf
     refine le_antisymm ?_ bot_le
     intro y _
     exact (hempty y).elim
-  have hqcm : QuasiCompact ((openSubschemeKer Z W).subschemeι ∣_ U) := by
-    refine ⟨fun O _ _ => ?_⟩
-    have hE : (⇑((openSubschemeKer Z W).subschemeι ∣_ U).base ⁻¹' O) = ∅ := by
-      ext y
-      simp only [Set.mem_empty_iff_false, iff_false]
-      intro _
-      exact hempty y
-    rw [hE]
-    exact isCompact_empty
   rw [restrictIdeal_eq_comap_ι, comap_opensι_eq_ker_morphismRestrict (openSubschemeKer Z W) U]
   refine Scheme.IdealSheafData.ext ?_
   funext V
@@ -387,16 +316,7 @@ private theorem one_eq_zero_sections_of_eq_bot {Y : Scheme.{u}} (V : Y.Opens) (h
 theorem isLocallyGeneratedByNonZeroDivisor_openSubschemeKer {X : Scheme.{u}} (Z : X.IdealSheafData)
     (W : Z.subscheme.Opens) (hW : IsClosed (W : Set Z.subscheme))
     (hZ : Blowup.IsLocallyGeneratedByNonZeroDivisor Z) : Blowup.IsLocallyGeneratedByNonZeroDivisor (openSubschemeKer Z W) := by
-  have hindW : Topology.IsInducing ⇑(Scheme.Opens.ι W).base :=
-    (Scheme.Opens.ι W).isEmbedding.toIsInducing
-  have hrangeW : Set.range ⇑(Scheme.Opens.ι W).base = (W : Set Z.subscheme) := by
-    rw [Scheme.Opens.range_ι]
-  have hqcW : QuasiCompact (Scheme.Opens.ι W) := by
-    refine ⟨fun U _ hUc => ?_⟩
-    refine hindW.isCompact_iff.mpr ?_
-    rw [Set.image_preimage_eq_inter_range, hrangeW]
-    exact hUc.inter_right hW
-  have hqc : QuasiCompact (Scheme.Opens.ι W ≫ Z.subschemeι) := inferInstance
+  have : IsClosedImmersion (Scheme.Opens.ι W) := W.isClosedImmersion_ι_of_isClosed hW
   have hpiece : ∀ V : X.affineOpens, (Z.subschemeι ⁻¹ᵁ V.1) ≤ W →
       (openSubschemeKer Z W).ideal V = Z.ideal V := by
     intro V hVW

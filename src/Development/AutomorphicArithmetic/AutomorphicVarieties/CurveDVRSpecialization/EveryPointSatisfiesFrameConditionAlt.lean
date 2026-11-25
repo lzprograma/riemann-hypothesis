@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NiceIrr
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -48,16 +49,7 @@ open IsLocalRing Matrix Polynomial UpperTheory.V.W
 private theorem chi_map_ofRep {n : ℕ} {A K G : Type} [CommRing A] [CommRing K] [Group G] (f : A →+* K)
     (ρ : G →* Matrix (Fin n) (Fin n) A) (g : G) :
     ((GDet.ofRep ρ).map f).chi (MonoidAlgebra.single g 1) = (ρ g).charpoly.map f := by
-  rw [← Matrix.charpoly_map]
-  simp only [GDet.chi, GDet.map, GDet.ofRep]
-  rw [Matrix.charpoly]
-  simp only [MonoidHom.comp_apply, Matrix.coe_detMonoidHom]
-  congr 1
-  simp only [MonoidAlgebra.mapRingHom_single, map_one, GDet.repAlg, AlgHom.toRingHom_eq_coe]
-  refine Matrix.ext fun i k => ?_
-  simp [Matrix.charmatrix_apply, Matrix.one_apply, Matrix.smul_apply]
-  rw [Matrix.diagonal_apply]
-  rfl
+  apply _root_.chi_map_ofRep <;> assumption
 
 private theorem aeval_mapM {n : ℕ} {A K : Type} [CommRing A] [CommRing K] (f : A →+* K)
     (M : Matrix (Fin n) (Fin n) A) (q : A[X]) :

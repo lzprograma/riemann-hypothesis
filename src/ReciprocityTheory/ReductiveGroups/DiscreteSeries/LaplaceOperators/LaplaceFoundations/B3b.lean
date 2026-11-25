@@ -17,7 +17,7 @@ theorem b3b : DerivMatrixCoeffExp := by
   intro n ε H _ _ σ w hσ hw Z hZ s
   have h0 := (isDerivedOn_smE hσ).deriv Z hZ ⟨w, hw⟩
   have hphi : phiW ε σ w Z = ((actM (smE ε σ) Z ⟨w, hw⟩ : smD ε σ) : H) := by
-    simp only [phiW, dif_pos hw]
+    simp only [phiW, dite_eq_left hw]
   set g := σ (NormedSpace.exp ((s : ℂ) • Z)) with hg
   set T : H →L[ℂ] ℂ := (innerSL ℂ w).comp g with hT
   have h1 := ((T.restrictScalars ℝ).hasFDerivAt).comp_hasDerivAt (0 : ℝ) h0

@@ -83,7 +83,7 @@ theorem MixedSectionStep.proof (hS : SmallSectionMixed.Statement) (hR : GroundTh
     · subst hj
       rw [Function.update_self]
       simp only [F, Fin.val_last]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     · rw [Function.update_of_ne hj]
 
   have hscale : II K ι P (n + 1) (Fin.snoc L (HermLine.zcomb M H ((m * q : ℕ) : ℤ) ((m * p : ℕ) : ℤ))) =

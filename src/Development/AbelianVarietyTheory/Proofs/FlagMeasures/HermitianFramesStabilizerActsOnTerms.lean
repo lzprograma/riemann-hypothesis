@@ -160,7 +160,7 @@ theorem spanTo_map (g : Fin (r + 1) → S.V) (t : E)
           intro e
           rw [e] at hi'
           simp at hi'
-        rw [if_neg (fun e => hne e.2)]
+        rw [ite_eq_right (fun e => hne e.2)]
       have hd : h (g (Fin.last r)) - g (Fin.last r) ∈ S.spanTo g r := htop'.2 _ hperp
       have h1 : g (Fin.last r) ∈ S.spanTo g J := Submodule.subset_span ⟨Fin.last r, hi, rfl⟩
       have h2 : S.spanTo g r ≤ S.spanTo g J := hmono _ _ (by simp at hi; omega)

@@ -144,14 +144,14 @@ private theorem leAt_eq_colSpan_la_tw_mul_lb_D_of_edgeBasis {p n' : ℕ} {W Qq O
       by_cases hc : c.val < r
       · have hA : (fun i => la_tw ι σ s g i c) =
             w • (fun i => (la_tw ι σ s g * lb_D (m + 1) r (algebraMap O Kf w)) i c) := by
-          rw [Rcol c, if_pos hc, ← algebraMap_smul Kf w, smul_smul, mul_inv_cancel₀ hw0, one_smul]
+          rw [Rcol c, ite_eq_left hc, ← algebraMap_smul Kf w, smul_smul, mul_inv_cancel₀ hw0, one_smul]
         rw [SetLike.mem_coe]
         beta_reduce
         rw [hA]
         exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨c, rfl⟩)
       · have hA : (fun i => la_tw ι σ s g i c) =
             (fun i => (la_tw ι σ s g * lb_D (m + 1) r (algebraMap O Kf w)) i c) := by
-          rw [Rcol c, if_neg hc, one_smul]
+          rw [Rcol c, ite_eq_right hc, one_smul]
         rw [SetLike.mem_coe]
         beta_reduce
         rw [hA]
@@ -165,12 +165,12 @@ private theorem leAt_eq_colSpan_la_tw_mul_lb_D_of_edgeBasis {p n' : ℕ} {W Qq O
         beta_reduce
         rw [key c]
         by_cases hc : c.val < r
-        · rw [if_pos hc]
-          exact Submodule.subset_span ⟨c, by beta_reduce; rw [Rcol c, if_pos hc]⟩
-        · rw [if_neg hc, algebraMap_smul]
+        · rw [ite_eq_left hc]
+          exact Submodule.subset_span ⟨c, by beta_reduce; rw [Rcol c, ite_eq_left hc]⟩
+        · rw [ite_eq_right hc, algebraMap_smul]
           refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨c, ?_⟩)
           beta_reduce
-          rw [Rcol c, if_neg hc, one_smul]
+          rw [Rcol c, ite_eq_right hc, one_smul]
       | zero => rw [Tzero]; exact Submodule.zero_mem _
       | add x y _ _ hx hy => rw [Tadd]; exact Submodule.add_mem _ hx hy
       | smul a x _ hx =>
@@ -183,11 +183,11 @@ private theorem leAt_eq_colSpan_la_tw_mul_lb_D_of_edgeBasis {p n' : ℕ} {W Qq O
     beta_reduce
     by_cases hc : c.val < r
     · have hk := key c
-      rw [if_pos hc] at hk
-      rw [Rcol c, if_pos hc, ← hk]
+      rw [ite_eq_left hc] at hk
+      rw [Rcol c, ite_eq_left hc, ← hk]
       apply Submodule.mem_sup_right
       exact Submodule.subset_span ⟨_, Submodule.subset_span ⟨c, rfl⟩, rfl⟩
-    · rw [Rcol c, if_neg hc, one_smul]
+    · rw [Rcol c, ite_eq_right hc, one_smul]
       exact Submodule.mem_sup_left (Submodule.subset_span ⟨c, rfl⟩)
 
 section

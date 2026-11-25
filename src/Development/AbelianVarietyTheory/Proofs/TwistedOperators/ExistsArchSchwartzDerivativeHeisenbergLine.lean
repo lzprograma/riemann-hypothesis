@@ -117,7 +117,6 @@ end GlobalTheory.HeisDeriv
 namespace GlobalTheory.HeisDeriv
 
 open scoped Classical
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 
 variable {F : Type} [Field F] [NumberField F]
 

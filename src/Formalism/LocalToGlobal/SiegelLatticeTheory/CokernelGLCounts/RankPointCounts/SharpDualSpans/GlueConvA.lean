@@ -101,9 +101,9 @@ theorem mem_MMo_of_dual (H : HermSp M V) {r : ℕ} (t : Term V M r) (hG : IsUnit
     have h1 := hd u (dual_mem_sharp H t hu j hu')
     have h2 : H.h (∑ i, c i • H.MMfam t i) u = c j := by
       rw [hermSp_h_finset_sum_smul_left, Finset.sum_eq_single j]
-      · rw [H.h_herm u, hu' j, if_pos rfl, map_one, mul_one]
+      · rw [H.h_herm u, hu' j, ite_eq_left rfl, map_one, mul_one]
       · intro i _ hij
-        rw [H.h_herm u, hu' i, if_neg hij, map_zero, mul_zero]
+        rw [H.h_herm u, hu' i, ite_eq_right hij, map_zero, mul_zero]
       · intro h
         exact absurd (Finset.mem_univ j) h
     rwa [h2] at h1
@@ -119,9 +119,9 @@ theorem sharp_le_span_dual (H : HermSp M V) {r : ℕ} (t : Term V M r) (hG : IsU
   have hy : ∀ i, H.h (∑ j, H.h x (H.MMfam t j) • u j) (H.MMfam t i) = H.h x (H.MMfam t i) := by
     intro i
     rw [hermSp_h_finset_sum_smul_left, Finset.sum_eq_single i]
-    · rw [hu' i i, if_pos rfl, mul_one]
+    · rw [hu' i i, ite_eq_left rfl, mul_one]
     · intro j _ hji
-      rw [hu' j i, if_neg (Ne.symm hji), mul_zero]
+      rw [hu' j i, ite_eq_right (Ne.symm hji), mul_zero]
     · intro h
       exact absurd (Finset.mem_univ i) h
   have hmem : x - ∑ j, H.h x (H.MMfam t j) • u j ∈ Submodule.span E (Set.range (H.MMfam t)) :=

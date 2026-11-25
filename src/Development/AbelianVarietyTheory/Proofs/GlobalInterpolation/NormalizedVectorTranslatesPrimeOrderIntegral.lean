@@ -336,9 +336,9 @@ theorem latInt_th0_of_split_prime : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (�
     rintro rfl
     rw [hAF] at hApos
     simp at hApos
-  have hmemL : ∀ x, x ∈ B.L.lattice ↔ x ∈ lamOf D cc δ := Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.mem_iff B
+  have hmemL : ∀ x, x ∈ B.L.lattice ↔ x ∈ lamOf D cc δ := GlobalTheory.FourthRootStd.mem_iff B
   obtain ⟨hGd0, hG00, -, hzero, hlaw⟩ :=
-    Formalism.L2.Th1.F.th0Basic B.L B.ω₀ B.omega_mem (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.half B)
+    Formalism.L2.Th1.F.th0Basic B.L B.ω₀ B.omega_mem (GlobalTheory.FourthRootStd.half B)
   set N : ℕ := Ideal.absNorm cc with hN
   set G : ℂ → ℂ := fun z => B.th0 (δ * N * z) with hG
   have hGd : Differentiable ℂ G := by
@@ -385,14 +385,14 @@ theorem latInt_th0_of_split_prime : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (�
       rw [ho]; push_cast; rw [map_mul, map_natCast]; ring
     have hl := hlaw _ hω (δ * N * z)
     rw [← Formalism.L2.Th1.F.thetaZeroCharacter] at hl
-    rw [← Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SC.char_eq (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.hst B) B.omega_mem (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.hθ B)
-      (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.hθ' B) (by omega) _ hω, hkey, hkey] at hl
+    rw [← Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SC.char_eq (GlobalTheory.FourthRootStd.hst B) B.omega_mem (GlobalTheory.FourthRootStd.hθ B)
+      (GlobalTheory.FourthRootStd.hθ' B) (by omega) _ hω, hkey, hkey] at hl
     have ha : Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SC.aa B.L D.host.d (δ * N * x) = 1 ∨
         Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SC.aa B.L D.host.d (δ * N * x) = -1 := by
       rw [Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SC.char_eq
-        (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.hst B) B.omega_mem
-        (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.hθ B)
-        (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.hθ' B) (by omega) _ hω]
+        (GlobalTheory.FourthRootStd.hst B) B.omega_mem
+        (GlobalTheory.FourthRootStd.hθ B)
+        (GlobalTheory.FourthRootStd.hθ' B) (by omega) _ hω]
       exact Formalism.L2.Th1.H.th0Char_pm B.L B.ω₀ _ B.omega_mem hω
     have hq1 : Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SC.q1 B.L D.host.d (δ * N * x) = N * Complex.normSq x := by
       rw [Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SC.q1, hkey, h1, Complex.mul_conj]
@@ -470,7 +470,7 @@ theorem omegaK_eq (d : ℕ) : Formalism.L2.Th1.CM.omegaK d = Formalism.L2.Th1.F.
 theorem hasCMBy (B : Base D cc δ) : Formalism.L2.Th1.CM.HasCMBy D.host.d B.L := by
   intro ω hω
   rw [omegaK_eq]
-  exact Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.hst B ω hω
+  exact GlobalTheory.FourthRootStd.hst B ω hω
 
 theorem disc_one (B : Base D cc δ) (hcc : TaylorLogMetric.IsCurveIdeal D cc) (hδ : TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ) :
     B.L.g₂ ^ 3 - 27 * B.L.g₃ ^ 2 = 1 := by
@@ -541,14 +541,14 @@ theorem weierstrassP_halfPeriod_algebraic (B : Base D cc δ) (hcc : TaylorLogMet
     rw [e]; exact B.omega_mem
   have hx : IsAlgebraic ℚ (B.L.weierstrassP (B.ω₀ / 2)) :=
     (PI.GalTorsConj.W.wp_isAlgebraic B.L TaylorLogMetric.Qbar h2 h3 2 (B.ω₀ / 2) (by norm_num) hN
-      (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.half B)).restrictScalars ℚ
+      (GlobalTheory.FourthRootStd.half B)).restrictScalars ℚ
   exact mem_algebraicClosure_iff.2 hx
 
 theorem evenTheta_iteratedDeriv_zero_algebraic : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Base D cc δ), TaylorLogMetric.IsCurveIdeal D cc →
     TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ → ∀ k : ℕ, iteratedDeriv k B.th0 0 ∈ TaylorLogMetric.Qbar := by
   intro D cc δ B hcc hδ k
   obtain ⟨h2, h3⟩ := g₂_g₃_mem_Qbar B hcc hδ
-  have hc := Formalism.L2.KerInert.AlgP.theta_null_coefficients B.L B.ω₀ B.omega_mem (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.half B) TaylorLogMetric.Qbar h2 h3
+  have hc := Formalism.L2.KerInert.AlgP.theta_null_coefficients B.L B.ω₀ B.omega_mem (GlobalTheory.FourthRootStd.half B) TaylorLogMetric.Qbar h2 h3
     (kernelBase_periodLattice_sigmaTwo_algebraic B hcc hδ) (weierstrassP_halfPeriod_algebraic B hcc hδ) k
   unfold Formalism.L2.Th1.F.taylor0 at hc
   rw [PowerSeries.coeff_mk] at hc
@@ -922,11 +922,11 @@ theorem mahler_mul_of_disjoint_support :
         funext p
         by_cases hS : p ∈ S
         · have hT : p ∉ T := Finset.disjoint_left.mp hST hS
-          simp only [hS, hT, if_true, if_false, Nat.sub_self]
+          simp only [hS, hT, ite_true, ite_false, Nat.sub_self]
         · by_cases hT : p ∈ T
-          · simp only [hS, hT, if_true, if_false, Nat.sub_zero]
+          · simp only [hS, hT, ite_true, ite_false, Nat.sub_zero]
           · have h0 : N p = 0 := hN p (by simp [hS, hT])
-            simp only [hS, hT, if_false, h0, Nat.sub_zero]
+            simp only [hS, hT, ite_false, h0, Nat.sub_zero]
       exact congrArg (fun g => GlobalTheory.MomN.mahler u F (fun p => if p ∈ S then N p else 0) *
         GlobalTheory.MomN.mahler u H g) hfun
     · intro k hk hne
@@ -942,9 +942,9 @@ theorem mahler_mul_of_disjoint_support :
         have : N p - k p = 0 := by
           by_contra h
           exact h2 (hHT _ ⟨p, hT, h⟩)
-        simp only [hS, if_true]
+        simp only [hS, ite_true]
         omega
-      · simp only [hS, if_false]
+      · simp only [hS, ite_false]
         by_contra h
         exact h1 (hFS _ ⟨p, hS, h⟩)
     · intro h
@@ -1020,7 +1020,7 @@ theorem mahler_embed : ∀ (V : Type) [NormedAddCommGroup V] [NormedSpace ℂ V]
     rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_X_mul'] at hm
     have hpm : p ∈ m.support := by
       by_contra h
-      exact hm (if_neg h)
+      exact hm (ite_eq_right h)
     have hmem : p ∈ m.toMultiset.toList := by
       rw [Multiset.mem_toList]
       simpa using hpm
@@ -1084,15 +1084,6 @@ theorem mahler_embed (V : Type) [NormedAddCommGroup V] [NormedSpace ℂ V] (κ �
     (∀ k : ι' → ℕ, (∃ p, p ∉ Set.range e ∧ k p ≠ 0) → mahler u G k = 0) ∧
     (∀ k : ι' → ℕ, (∀ p, p ∉ Set.range e → k p = 0) → mahler u G k = mahler w G (fun i => k (e i))) :=
   _root_.GlobalTheory.MomEmbed.mahler_embed V κ ι' e w u G hG hu hz
-
-theorem mahler_mul_disj (V : Type) [NormedAddCommGroup V] [NormedSpace ℂ V] (ι' : Type) [Fintype ι'] [DecidableEq ι']
-    (u : ι' → V) (F H : V → ℂ) (hF : ContDiff ℂ ⊤ F) (hH : ContDiff ℂ ⊤ H) (S T : Finset ι') (hST : Disjoint S T)
-    (hFS : ∀ k : ι' → ℕ, (∃ p, p ∉ S ∧ k p ≠ 0) → mahler u F k = 0)
-    (hHT : ∀ k : ι' → ℕ, (∃ p, p ∉ T ∧ k p ≠ 0) → mahler u H k = 0) :
-    (∀ N : ι' → ℕ, (∃ p, p ∉ S ∪ T ∧ N p ≠ 0) → mahler u (fun z => F z * H z) N = 0) ∧
-    (∀ N : ι' → ℕ, (∀ p, p ∉ S ∪ T → N p = 0) → mahler u (fun z => F z * H z) N =
-      mahler u F (fun p => if p ∈ S then N p else 0) * mahler u H (fun p => if p ∈ T then N p else 0)) :=
-  _root_.GlobalTheory.mahler_mul_of_disjoint_support V ι' u F H hF hH S T hST hFS hHT
 
 variable {n : Type} [Fintype n]
 
@@ -1236,7 +1227,7 @@ theorem translates_latInt : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ)
 
   have hmem : B.thMM ∈ Formalism.L2.Th1.H.Th (Formalism.L2.Th1.H.matH (hOne B.L D.what₂.Tau))
       (Formalism.L2.Th1.H.alphaQ B.cq (Formalism.L2.Th1.H.matH (hOne B.L D.what₂.Tau))) B.lamM :=
-    (thM_spec B.L B.ω₀ B.cq B.lamM B.gC B.kappa (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.stdOK B hcc hδ) B.kappa_ne_zero).1
+    (thM_spec B.L B.ω₀ B.cq B.lamM B.gC B.kappa (GlobalTheory.FourthRootStd.stdOK B hcc hδ) B.kappa_ne_zero).1
   have hUs : ContDiff ℂ ⊤ (Formalism.L2.Th1.H.opU (Formalism.L2.Th1.H.matH (hOne B.L D.what₂.Tau)) t B.thMM) :=
     contDiff_of_analytic (Formalism.L2.Th1.H.opUAnalytic (D.what₂.Tau → ℂ) _ t B.thMM hmem.1)
   have hthd : Differentiable ℂ B.th0 := (Formalism.L2.Th1.F.th0Basic B.L B.ω₀ hS.per hS.half).1
@@ -1646,7 +1637,7 @@ theorem transPrime_int : (∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (
       (U D B.tor (s k) (B.thZero N N')) := fun k =>
     _root_.GlobalTheory.MomN.latInt_U_thZero D cc δ B hcc hδ q hq2 hsplit hcop ι δ₀ θ Ω hPer N N' (s k) (hs k)
   have hd : ContDiff ℂ ⊤ (B.thZero N N') :=
-    AnalyticOnNhd.contDiff (B.thZeroMem (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.stdOK B hcc hδ) N N').1
+    AnalyticOnNhd.contDiff (B.thZeroMem (GlobalTheory.FourthRootStd.stdOK B hcc hδ) N N').1
   have hsm : ∀ k, ContDiff ℂ ⊤ (U D B.tor (s k) (B.thZero N N')) := fun k => contDiff_U _ _ hd
   have hcn : ∀ k, ‖ι (c k)‖ ≤ 1 := by
     intro k

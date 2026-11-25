@@ -13,48 +13,7 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.AdmBoundsBOfAdm
 public import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfFrame
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsGaloisExtendingAlgHom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Linter.Style
 import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Rat
 
@@ -115,25 +74,12 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL] [CommRing O] [Algebra O LL]
     {v : AddValuation LL (WithTop ℚ)} {n : ℕ} (W : LocWach PD LL O v n)
 
-theorem exists_horizontal_solutions (hH : Formalism.MainNotions.LiftingTheory.coreH W) (hA : Formalism.MainNotions.LiftingTheory.CaseA W) (T : LocLat G Qp LL O)
-    (hT : IsCrys PD T.ρ) (i : ZMod n) {d : ℕ} (b : Fin d → W.DD T)
-    (hb : Formalism.MainNotions.LiftingTheory.IsFrameΔ W T i b) : ∃ sol, IsHor W T i b sol := by
-  have h3 := (hH hA T hT i).2.2.1 d b hb 0
-    ⟨0, Formalism.MainNotions.UnusedSlot80.Relay2.InNΔi_zero W T i, (smul_zero _).symm⟩
-  choose sol hsol using fun k : Fin d => (h3 (Pi.single k 1)).1
-  refine ⟨sol, hb, fun k => ⟨(hsol k).1, ?_⟩⟩
-  rw [(hsol k).2]
-  funext m
-  by_cases h : m = k
-  · subst h; simp
-  · simp [h]
-
 theorem horizontal_frame_structure (hH : Formalism.MainNotions.LiftingTheory.coreH W) (hP9 : Formalism.MainNotions.DeltaInvariantLattices.P9W W) :
     Formalism.MainNotions.N.FrobeniusPowerSeries.HorFrameCore W := by
   intro hCA _ A _ T hT c
   have hmod := ((hP9 T hT.1 hCA.2.1 hCA.2.2).2.2 (_root_.Formalism.MainNotions.UnusedSlot80.SatW.finrank_one_of_bij' hCA.1)).2
   obtain ⟨d, b, hb⟩ := Formalism.MainNotions.UnusedSlot80.Relay2.frame_exists W T c hmod
-  obtain ⟨sol, hsol⟩ := exists_horizontal_solutions W hH hCA T hT.1 c b hb
+  obtain ⟨sol, hsol⟩ := Formalism.MainNotions.UnusedSlot80.UnivF.hor_exists W hH hCA T hT.1 c b hb
   exact ⟨d, b, sol, hsol⟩
 
 theorem exists_algHom_over_of_bijective_algebraMap (hbij : Function.Bijective (algebraMap K₀ K)) (c : ZMod n) :
@@ -462,15 +408,15 @@ theorem exists_partition_of_l_pow_levels (hC : Formalism.MainNotions.UnusedSlot8
     refine ⟨m + m', fun t => if t = a then lA W ^ m * q * P else ε t * r * ps W a ^ N, ?_, ?_, ?_⟩
     · intro t
       by_cases h : t = a
-      · simp only [h, if_true]
+      · simp only [h, ite_true]
         exact W.AΔ.mul_mem (W.AΔ.mul_mem (l_pow_mem_invariants W m) hq) hPΔ
-      · simp only [h, if_false]
+      · simp only [h, ite_false]
         exact W.AΔ.mul_mem (W.AΔ.mul_mem (hεΔ t) hr) (W.AΔ.pow_mem (hps a) N)
     · intro t ht
       by_cases h : t = a
       · subst h
         refine ⟨lA W ^ m * q, W.AΔ.mul_mem (l_pow_mem_invariants W m) hq, ?_⟩
-        simp only [if_true, Finset.erase_insert ha]
+        simp only [ite_true, Finset.erase_insert ha]
         ring
       · have hts : t ∈ s := by
           rcases Finset.mem_insert.1 ht with h' | h'
@@ -479,10 +425,10 @@ theorem exists_partition_of_l_pow_levels (hC : Formalism.MainNotions.UnusedSlot8
         obtain ⟨r₁, hr₁, he₁⟩ := hεd t hts
         refine ⟨r₁ * r, W.AΔ.mul_mem hr₁ hr, ?_⟩
         have hat : a ∉ s.erase t := fun h' => ha (Finset.mem_of_mem_erase h')
-        simp only [h, if_false, Finset.erase_insert_of_ne (Ne.symm h), Finset.prod_insert hat, he₁]
+        simp only [h, ite_false, Finset.erase_insert_of_ne (Ne.symm h), Finset.prod_insert hat, he₁]
         ring
     · rw [Finset.sum_insert ha]
-      simp only [if_true]
+      simp only [ite_true]
       have hs2 : ∑ t ∈ s, (if t = a then lA W ^ m * q * P else ε t * r * ps W a ^ N) =
           ∑ t ∈ s, ε t * r * ps W a ^ N :=
         Finset.sum_congr rfl fun t ht => by
@@ -514,7 +460,7 @@ theorem inId_shift_levels (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP 
   set Pz := ∏ t ∈ (Finset.range e).erase s, ps W t ^ N with hPzDef
   have hδ : ∏ t ∈ Finset.range e, ps W t ^ (if t = s then 0 else N) = Pz := by
     rw [← Finset.mul_prod_erase _ _ (Finset.mem_range.2 hs)]
-    simp only [if_true, pow_zero, one_mul]
+    simp only [ite_true, pow_zero, one_mul]
     exact Finset.prod_congr rfl fun t ht => by simp [Finset.ne_of_mem_erase ht]
   have key : Nm' * D = Nm * Pz * D' := by
     rw [← hδ, hNm', hD, hNm, hD', ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib,
@@ -524,8 +470,8 @@ theorem inId_shift_levels (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP 
     congr 1
     simp only [hα']
     by_cases h : t = s
-    · rw [if_pos h, if_pos h]; omega
-    · rw [if_neg h, if_neg h]
+    · rw [ite_eq_left h, ite_eq_left h]; omega
+    · rw [ite_eq_right h, ite_eq_right h]
       exact toNat_add_neg_identity (α t) N
   have hDU : IsUnit (algebraMap (LetA O n) W.EE D) := by
     rw [hD, map_prod]
@@ -623,9 +569,9 @@ theorem section_in_ideal_of_levels (hR : Formalism.MainNotions.UnusedSlot80.Tool
     refine ⟨inId_shift_levels W hR hs ((hsec s hs).1 i).1 hx, fun t ht => ?_⟩
     by_cases hts : t = s
     · subst hts
-      simp only [A', if_true]
+      simp only [A', ite_true]
       exact ((hsec t hs).1 i).2
-    · simp only [A', hts, if_false]
+    · simp only [A', hts, ite_false]
       refine hU t ht _ ?_ _
       have h1 : (U t).natAbs + (α s i t).natAbs ≤
           ∑ t' ∈ Finset.range e, ((U t').natAbs + (α s i t').natAbs) :=
@@ -982,7 +928,7 @@ theorem arc_section_map (hinj : Function.Injective (algebraMap O LL))
   let Y : Fin d → ℕ → Fin d → O := fun k r j => if h : r < A.M PD.p then y₂ k ⟨r, h⟩ j else 0
   have hY : ∀ k, ∀ r < A.M PD.p, ∀ j, algebraMap O LL (Y k r j) = (PD.p : LL) ^ (κ + t) * sol k r j := by
     intro k r hr j
-    simp only [Y, dif_pos hr]
+    simp only [Y, dite_eq_left hr]
     exact hy₂ k ⟨r, hr⟩ j
   let Hh : Fin d → W.DD T₂ := fun k =>
     ∑ r ∈ Finset.range (A.M PD.p), W.π₀ ^ r • Formalism.MainNotions.LiftingTheory.vecB W T₂ b (Y k r)

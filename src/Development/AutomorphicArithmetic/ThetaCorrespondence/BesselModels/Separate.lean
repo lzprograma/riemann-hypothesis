@@ -18,61 +18,9 @@ public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.ExistsI
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.IrreducibleUnitaryRepIsoHarishChandraType
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.Choice
 public import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGapAlt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
 import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OffQOfSizeRows
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -102,7 +50,7 @@ theorem blockW_mul_colW {m r : ℕ} (s : Matrix (Fin m) (Fin m) ℂ) :
     have hb := block_mk hi hp
     rw [← hb, blockW_bl, Matrix.mul_apply]
     simp [colW, blockIndex_injective.eq_iff]
-  · rw [blockW_out s hi, if_neg (ne_of_inB (inB_bl a) hi).symm, Matrix.mul_apply]
+  · rw [blockW_out s hi, ite_eq_right (ne_of_inB (inB_bl a) hi).symm, Matrix.mul_apply]
     refine (Finset.sum_eq_zero fun b _ => ?_).symm
     simp [colW, (ne_of_inB (inB_bl b) hi).symm]
 
@@ -149,8 +97,6 @@ theorem isEmb_conj_blockW {m r : ℕ} {J Q Qi : Matrix (Fin (2 * r + m + 1)) (Fi
     rw [← mulVec_mulVec, ← mulVec_mulVec, blockW_mulVec_of_vanish s hy, mulVec_mulVec, h1, one_mulVec]
 
 end UpperTheory.Lit.Bur.BlockEmb
-
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 
 end -- clump:auto
 end -- clump:auto
@@ -222,8 +168,6 @@ theorem isCWCont_of_sobCont {k r : ℕ} {H : Type} [NormedAddCommGroup H] [Inner
   exact ⟨C, Ws, hW, fun v hv => by rw [hB v hv]; exact hb v hv⟩
 
 end UpperTheory.Lit.Bur.CWCombo
-
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 
 end -- clump:auto
 end -- clump:auto
@@ -366,8 +310,6 @@ theorem unitarize : ∀ {k : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W] [Fi
 
 end UpperTheory.Lit.Bur.Unitarize
 
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
-
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -448,8 +390,6 @@ theorem isContIrred_contra_conj : ∀ {m : ℕ} {W : Type} [AddCommGroup W] [Mod
 
 end UpperTheory.Lit.Bur.BesselContra
 
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.ContragredientConjDefiniteUnitaryIsContIrred =====
@@ -462,7 +402,6 @@ section -- clump:auto
 open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 
 namespace UpperTheory.Lit.Bur.HermCongr
-
 
 open scoped ComplexOrder in
 theorem posDef_of_herm_re_pos {m : ℕ} {J₀ : Matrix (Fin m) (Fin m) ℂ} (hH : J₀ᴴ = J₀)
@@ -538,8 +477,6 @@ theorem exists_congr_one {m : ℕ} {J₀ : Matrix (Fin m) (Fin m) ℂ} (hH : J�
 
 end UpperTheory.Lit.Bur.HermCongr
 
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.HermitianFormPosCongruentIdentity =====
@@ -614,20 +551,17 @@ theorem hpk_zero (i j : Fin (2 * r + m + 1)) (h1 : ¬ (i.val < r ∧ i.val + j.v
     (h2 : ¬ (j.val < r ∧ i.val + j.val = 2 * r + m)) (h3 : ¬ (r ≤ i.val ∧ i.val ≤ r + m ∧ i.val = j.val)) :
     Hpk m r i j = 0 := by
   unfold Hpk
-  rw [if_neg h1, if_neg h2, if_neg (fun h => h3 ⟨h.1, h.2.1, congrArg Fin.val h.2.2⟩)]
+  rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right (fun h => h3 ⟨h.1, h.2.1, congrArg Fin.val h.2.2⟩)]
 
 theorem hpk_one (i j : Fin (2 * r + m + 1)) (h1 : i.val < r ∧ i.val + j.val = 2 * r + m) :
     Hpk m r i j = 1 := by
   unfold Hpk
-  rw [if_pos h1]
+  rw [ite_eq_left h1]
 
 theorem hpk_diag (i : Fin (2 * r + m + 1)) (h1 : r ≤ i.val) (h2 : i.val < r + m) : Hpk m r i i = 1 := by
   unfold Hpk
-  rw [if_neg (by omega), if_neg (by omega), if_pos ⟨h1, by omega, rfl⟩, if_neg (by omega)]
+  rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨h1, by omega, rfl⟩, ite_eq_right (by omega)]
 
-theorem hpk_ee (a b : Fin r) : Hpk m r (eI m r a) (eI m r b) = 0 := by
-  have := a.isLt; have := b.isLt
-  exact hpk_zero _ _ (by simp only [eI]; omega) (by simp only [eI]; omega) (by simp only [eI]; omega)
 theorem hpk_eb (a : Fin r) (b : Fin m) : Hpk m r (eI m r a) (PI.HwUniqW.bl m r b) = 0 := by
   have := a.isLt; have := b.isLt
   exact hpk_zero _ _ (by simp only [eI, PI.HwUniqW.bl]; omega) (by simp only [eI, PI.HwUniqW.bl]; omega) (by simp only [eI, PI.HwUniqW.bl]; omega)
@@ -639,10 +573,10 @@ theorem hpk_es (a b : Fin r) : Hpk m r (eI m r a) (esI m r b) = (1 : Matrix (Fin
   rw [Matrix.one_apply]
   by_cases h : a = b
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact hpk_one _ _ (by simp only [eI, esI]; omega)
   · have h' : a.val ≠ b.val := fun q => h (Fin.ext q)
-    rw [if_neg h]
+    rw [ite_eq_right h]
     exact hpk_zero _ _ (by simp only [eI, esI]; omega) (by simp only [eI, esI]; omega) (by simp only [eI, esI]; omega)
 theorem hpk_bb (a b : Fin m) : Hpk m r (PI.HwUniqW.bl m r a) (PI.HwUniqW.bl m r b) =
     (1 : Matrix (Fin m) (Fin m) ℂ) a b := by
@@ -650,10 +584,10 @@ theorem hpk_bb (a b : Fin m) : Hpk m r (PI.HwUniqW.bl m r a) (PI.HwUniqW.bl m r 
   rw [Matrix.one_apply]
   by_cases h : a = b
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact hpk_diag _ (by simp only [PI.HwUniqW.bl]; omega) (by simp only [PI.HwUniqW.bl]; omega)
   · have h' : a.val ≠ b.val := fun q => h (Fin.ext q)
-    rw [if_neg h]
+    rw [ite_eq_right h]
     exact hpk_zero _ _ (by simp only [PI.HwUniqW.bl]; omega) (by simp only [PI.HwUniqW.bl]; omega) (by simp only [PI.HwUniqW.bl]; omega)
 theorem hpk_bw (a : Fin m) : Hpk m r (PI.HwUniqW.bl m r a) (wI m r (Fin.last m)) = 0 := by
   have := a.isLt
@@ -664,14 +598,11 @@ theorem hpk_bs (a : Fin m) (b : Fin r) : Hpk m r (PI.HwUniqW.bl m r a) (esI m r 
 theorem hpk_ww : Hpk m r (wI m r (Fin.last m)) (wI m r (Fin.last m)) = -1 := by
   unfold Hpk
   have h : (wI m r (Fin.last m)).val = r + m := by simp [wI]
-  rw [if_neg (by omega), if_neg (by omega), if_pos ⟨by omega, by omega, rfl⟩, if_pos h]
+  rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨by omega, by omega, rfl⟩, ite_eq_left h]
 
 theorem hpk_ws (b : Fin r) : Hpk m r (wI m r (Fin.last m)) (esI m r b) = 0 := by
   have := b.isLt
   exact hpk_zero _ _ (by simp only [wI, esI, Fin.val_last]; omega) (by simp only [wI, esI, Fin.val_last]; omega) (by simp only [wI, esI, Fin.val_last]; omega)
-theorem hpk_ss (a b : Fin r) : Hpk m r (esI m r a) (esI m r b) = 0 := by
-  have := a.isLt; have := b.isLt
-  exact hpk_zero _ _ (by simp only [esI]; omega) (by simp only [esI]; omega) (by simp only [esI]; omega)
 
 end Hpk
 
@@ -730,7 +661,7 @@ theorem exists_frame_matrix {m r : ℕ} {J : Matrix (Fin (2 * r + m + 1)) (Fin (
     rw [bf_symm hH, h, hpk_symm i j]
   have pee : ∀ a b, bf J (fun k => Q k (Formalism.QuantumDeterminants.eI m r a)) (fun k => Q k (Formalism.QuantumDeterminants.eI m r b)) =
       Formalism.QuantumDeterminants.Hpk m r (Formalism.QuantumDeterminants.eI m r a) (Formalism.QuantumDeterminants.eI m r b) := fun a b => by
-    rw [ce, ce, ← entry_eq, h2, hpk_ee]; rfl
+    rw [ce, ce, ← entry_eq, h2, Formalism.QuantumDeterminants.ggHpk_ee]; rfl
   have peb : ∀ a b, bf J (fun k => Q k (PI.HwUniqW.bl m r b)) (fun k => Q k (Formalism.QuantumDeterminants.eI m r a)) =
       Formalism.QuantumDeterminants.Hpk m r (PI.HwUniqW.bl m r b) (Formalism.QuantumDeterminants.eI m r a) := fun a b => by
     refine sym _ _ ?_
@@ -759,7 +690,7 @@ theorem exists_frame_matrix {m r : ℕ} {J : Matrix (Fin (2 * r + m + 1)) (Fin (
     rw [cs, cw, bf_symm hH, ← vec_eq, h9, hpk_ws]; simp
   have pss : ∀ a b, bf J (fun k => Q k (Formalism.QuantumDeterminants.esI m r a)) (fun k => Q k (Formalism.QuantumDeterminants.esI m r b)) =
       Formalism.QuantumDeterminants.Hpk m r (Formalism.QuantumDeterminants.esI m r a) (Formalism.QuantumDeterminants.esI m r b) := fun a b => by
-    rw [cs, cs, ← entry_eq, h3, hpk_ss]; rfl
+    rw [cs, cs, ← entry_eq, h3, Formalism.L2.SG.Pf.WFL.Hpk_ff]; rfl
   have key : Qᴴ * J * Q = Formalism.QuantumDeterminants.Hpk m r := by
     ext i j
     rw [entry_eq]
@@ -787,19 +718,17 @@ theorem exists_frame_matrix {m r : ℕ} {J : Matrix (Fin (2 * r + m + 1)) (Fin (
   refine ⟨Q, Formalism.QuantumDeterminants.Hpk m r * Qᴴ * J, mul_eq_one_comm.1 hinv, hinv, key, ?_, ?_, ?_⟩
   · ext i a
     rw [Matrix.mul_apply]
-    simp only [colE, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [colE, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     exact frameMat_eI e f Fa y i a
   · ext i a
     rw [Matrix.mul_apply]
-    simp only [colW, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [colW, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     exact frameMat_bl e f Fa y i a
   · funext i
     simp only [Formalism.QuantumDeterminants.bvec, Matrix.mulVec_single_one]
     exact frameMat_w e f Fa y i
 
 end UpperTheory.Lit.Bur.BesselFrame
-
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 
 end -- clump:auto
 end -- clump:auto
@@ -814,7 +743,6 @@ section -- clump:auto
 open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 
 namespace UpperTheory.Lit.Bur.DualCols
-
 
 open scoped ComplexOrder in
 theorem exists_right_inv {n r : ℕ} {J : Matrix (Fin n) (Fin n) ℂ} {e : Matrix (Fin n) (Fin r) ℂ}
@@ -912,8 +840,6 @@ theorem exists_dual_cols {n m r : ℕ} {J : Matrix (Fin n) (Fin n) ℂ} {J₀ : 
 
 end UpperTheory.Lit.Bur.DualCols
 
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.IsFrameExistsIsotropicDualColumns =====
@@ -965,8 +891,6 @@ theorem conj_mem_unipRad : ∀ {n r : ℕ} {J G Q Qi : Matrix (Fin n) (Fin n) �
 
 end UpperTheory.Lit.Bur.UnipRadConj
 
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.IsometryConjMapsUnipotentRadical =====
@@ -991,9 +915,9 @@ theorem mem_unipRad_of_mem_Nset {k r : ℕ} {u : Matrix (Fin (2 * r + k + 1)) (F
     by_cases hi : (i : ℕ) < r
     · rw [Finset.sum_eq_single (⟨i, hi⟩ : Fin r)]
       · have h : i = PI.UpqRep.eI k r ⟨i, hi⟩ := Fin.ext rfl
-        rw [if_pos h, ← h]
+        rw [ite_eq_left h, ← h]
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         exact hb (Fin.ext (congrArg Fin.val h).symm)
       · intro h
@@ -1002,7 +926,7 @@ theorem mem_unipRad_of_mem_Nset {k r : ℕ} {u : Matrix (Fin (2 * r + k + 1)) (F
       symm
       apply Finset.sum_eq_zero
       intro b _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hi
       rw [h]
@@ -1065,8 +989,6 @@ theorem mem_unipRad_of_mem_Nset {k r : ℕ} {u : Matrix (Fin (2 * r + k + 1)) (F
     · rw [hxz j (not_le.mp hj), mul_zero]
 
 end UpperTheory.Lit.Bur.BesselRadical
-
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 
 end -- clump:auto
 end -- clump:auto
@@ -1167,8 +1089,6 @@ theorem smoothVec_conj_iff (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H))
 
 end UpperTheory.Lit.Bur.SmoothConj
 
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
-
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1226,8 +1146,6 @@ theorem smoothVec_translate : ∀ {n : ℕ} {H : Type} [NormedAddCommGroup H] [I
 
 end UpperTheory.Lit.Bur.SmoothTranslate
 
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
-
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1266,8 +1184,6 @@ theorem sobCont_conj {n : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSp
 
 end UpperTheory.Lit.Bur.SobConj
 
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.SobolevContOfConjGramForm =====
@@ -1291,8 +1207,6 @@ theorem card_plus_of_congr_Hpk : ∀ {m r : ℕ} (ε : Fin (2 * r + m + 1) → B
   exact (ReciprocityTheory.ChartRestriction.DS.Lap.TransportIntA.cayley_signature' hc).1
 
 end UpperTheory.Lit.Bur.Inertia
-
-open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 
 end -- clump:auto
 end -- clump:auto
@@ -1506,7 +1420,7 @@ theorem burGapPos_of_bmu : CompanionTheory.Bmu.BesselMapUniqGap → UpperTheory.
     intro β hβ
     have hBm : ∃ B : H → Wq, ∀ x : smSub J σ, B x = T (β.flip x) := by
       classical
-      exact ⟨fun v => if hv : v ∈ smSub J σ then T (β.flip ⟨v, hv⟩) else 0, fun x => dif_pos x.2⟩
+      exact ⟨fun v => if hv : v ∈ smSub J σ then T (β.flip ⟨v, hv⟩) else 0, fun x => dite_eq_left x.2⟩
     obtain ⟨B, hBx⟩ := hBm
     refine ⟨B, ⟨fun v hv w hw => ?_, fun a v hv => ?_, fun h' hh' u' hu' v hv => ?_, ?_⟩, hBx⟩
     · have hv' := (hsm v).1 hv

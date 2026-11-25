@@ -4,48 +4,6 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoor
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceProduct
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceLinearEmbeddings
 public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.KernelFlatBaseChange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -118,17 +76,13 @@ instance instIsClosedImmersionAffineSpaceOrigin (k : Type u) [Field k] (m : ℕ)
     IsClosedImmersion (affineSpaceOrigin k m) :=
   isClosedImmersion_affineSpaceOrigin k m
 
-private theorem appTop_id (X : Scheme.{u}) :
-    Scheme.Hom.appTop (𝟙 X) = 𝟙 (X.presheaf.obj (Opposite.op ⊤)) := by
-  simp [Scheme.Hom.appTop]
-
 private theorem appTop_hom_appTop_inv_apply {X Y : Scheme.{u}} (e : X ≅ Y)
     (x : ↑(X.presheaf.obj (Opposite.op ⊤))) :
     CommRingCat.Hom.hom (Scheme.Hom.appTop e.hom)
         (CommRingCat.Hom.hom (Scheme.Hom.appTop e.inv) x) = x := by
   have h : Scheme.Hom.appTop e.inv ≫ Scheme.Hom.appTop e.hom =
       𝟙 (X.presheaf.obj (Opposite.op ⊤)) := by
-    rw [← Scheme.Hom.comp_appTop, e.hom_inv_id, appTop_id]
+    rw [← Scheme.Hom.comp_appTop, e.hom_inv_id, Scheme.Hom.id_appTop]
   have h2 := congrArg (fun φ => CommRingCat.Hom.hom φ x) h
   simpa using h2
 
@@ -239,18 +193,6 @@ private theorem ker_eq_span_range_X {σ : Type u} {K : Type u} [Field K] {T : Ty
   rw [hpe]
   exact hsub
 
-private theorem ker_eq_span_image_of_surjective {A B C : Type u} [CommRing A] [CommRing B]
-    [CommRing C] (ψ : A →+* B) (hsurj : Function.Surjective ψ) (g : B →+* C) (s : Set A)
-    (h : RingHom.ker (g.comp ψ) = Ideal.span s) :
-    RingHom.ker g = Ideal.span (ψ '' s) := by
-  have h1 : Ideal.comap ψ (RingHom.ker g) = Ideal.span s := by
-    rw [← h]
-    ext x
-    simp [RingHom.mem_ker, Ideal.mem_comap]
-  have h2 : Ideal.map ψ (Ideal.comap ψ (RingHom.ker g)) = RingHom.ker g :=
-    Ideal.map_comap_of_surjective ψ hsurj _
-  rw [← h2, h1, Ideal.map_span]
-
 private theorem ker_appTop_affineSpaceOrigin (k : Type u) [Field k] (m : ℕ) :
     RingHom.ker (CommRingCat.Hom.hom (Scheme.Hom.appTop (affineSpaceOrigin k m))) =
       Ideal.span (Set.range fun i : Fin m =>
@@ -265,9 +207,12 @@ private theorem ker_appTop_affineSpaceOrigin (k : Type u) [Field k] (m : ℕ) :
     intro i
     rw [RingHom.comp_apply, mvPolynomialToSections_X k m i]
     exact affineSpaceOrigin_appTop_coord k m i
-  have main := ker_eq_span_image_of_surjective (mvPolynomialFinToAffineSpaceGlobalSections k m)
-    (mvPolynomialToSections_surjective k m)
-    (CommRingCat.Hom.hom (Scheme.Hom.appTop (affineSpaceOrigin k m))) _ hcomp
+  have main : RingHom.ker (CommRingCat.Hom.hom (Scheme.Hom.appTop (affineSpaceOrigin k m))) =
+      Ideal.span ((mvPolynomialFinToAffineSpaceGlobalSections k m) ''
+        Set.range (MvPolynomial.X : ULift.{u, 0} (Fin m) →
+          MvPolynomial (ULift.{u, 0} (Fin m)) k)) := by
+    rw [← Ideal.map_comap_of_surjective _ (mvPolynomialToSections_surjective k m)
+        (RingHom.ker _), RingHom.comap_ker, hcomp, Ideal.map_span]
   rw [main]
   congr 1
   ext y
@@ -281,7 +226,6 @@ private theorem ker_appTop_affineSpaceOrigin (k : Type u) [Field k] (m : ℕ) :
 
 theorem ker_affineSpaceOrigin (k : Type u) [Field k] (m : ℕ) :
     Scheme.Hom.ker (affineSpaceOrigin k m) = coordSubspaceIdeal k m Finset.univ := by
-  have : QuasiCompact (affineSpaceOrigin k m) := inferInstance
   have hker : RingHom.ker (CommRingCat.Hom.hom (Scheme.Hom.app (affineSpaceOrigin k m) ⊤)) =
       Ideal.span (Set.range fun i : Fin m =>
         AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up.{u, 0} i)) :=
@@ -365,7 +309,6 @@ theorem ker_affineSpaceInl_eq_comap (hsm : AffineSpaceIsSmooth.{u}) (k : Type u)
     Scheme.Hom.ker (affineSpaceInl k n m) =
       (Scheme.Hom.ker (affineSpaceOrigin k m)).comap (projRight k n m) := by
   have hsmooth : AlgebraicGeometry.Smooth (projRight k n m) := smooth_projRight hsm k n m
-  have hflat : AlgebraicGeometry.Flat (projRight k n m) := inferInstance
   have hbig : IsPullback (affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin n)))
       (affineSpaceInl k n m ≫ projLeft k n m)
       (affineSpaceOrigin k m ≫ affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin m)))
@@ -376,7 +319,6 @@ theorem ker_affineSpaceInl_eq_comap (hsm : AffineSpaceIsSmooth.{u}) (k : Type u)
       (affineSpaceOrigin k m) (projRight k n m) :=
     IsPullback.of_bot hbig (affineSpaceInl_comp_projRight k n m).symm
       (isPullback_projLeft_projRight k n m).flip
-  have : QuasiCompact (affineSpaceOrigin k m) := inferInstance
   have : QuasiCompact (affineSpaceInl k n m) := quasiCompact_of_isPullback hsq
   exact ker_eq_comap_ker_of_isPullback_of_flat hsq
 
@@ -401,9 +343,6 @@ theorem ker_affineSpaceInrEmbedding_eq_comap (hsm : AffineSpaceIsSmooth.{u}) (k 
     Scheme.Hom.ker (affineSpaceInrEmbedding k n m) =
       (Scheme.Hom.ker (affineSpaceOrigin k n)).comap (projLeft k n m) := by
   have hsmooth : AlgebraicGeometry.Smooth (projLeft k n m) := smooth_projLeft hsm k n m
-  have hflat : AlgebraicGeometry.Flat (projLeft k n m) := inferInstance
-  have hq1 : AlgebraicGeometry.QuasiCompact (affineSpaceOrigin k n) := inferInstance
-  have hq2 : AlgebraicGeometry.QuasiCompact (affineSpaceInrEmbedding k n m) := inferInstance
   exact ker_eq_comap_ker_of_isPullback_of_flat (isPullback_affineSpaceInrEmbedding_projLeft k n m)
 
 theorem hasSmoothCoordCodim_affineSpaceInl (hsm : AffineSpaceIsSmooth.{u}) (k : Type u) [Field k]

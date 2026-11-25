@@ -7,52 +7,10 @@ public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieGerm
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
 import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDVal
 import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -62,87 +20,12 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor NumberField Formalism.L2.Pj
 open MvPowerSeries
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
-private lemma mem_degLE_lemma {κ : Type} [Fintype κ] [DecidableEq κ] (m : ℕ) (e : κ →₀ ℕ) :
-    e ∈ degLE m ↔ (e.sum fun _ k => k) ≤ m := by
-  unfold degLE
-  rw [Finset.mem_filter]
-  constructor
-  · exact fun h => h.2
-  · intro h
-    refine ⟨?_, h⟩
-    rw [Finset.mem_image]
-    refine ⟨fun i => ⟨e i, ?_⟩, Finset.mem_univ _, ?_⟩
-    · have hi : e i ≤ e.sum fun _ k => k := by
-        by_cases hi0 : e i = 0
-        · omega
-        · exact Finset.single_le_sum (f := fun j => e j) (fun _ _ => Nat.zero_le _)
-            (Finsupp.mem_support_iff.2 hi0)
-      omega
-    · ext i
-      simp
-
-private lemma coeff_psTrunc_lemma_2 {R κ : Type} [CommRing R] [Fintype κ] [DecidableEq κ] (m : ℕ)
-    (f : MvPowerSeries κ R) (e : κ →₀ ℕ) (he : (e.sum fun _ k => k) ≤ m) :
-    AddMonoidAlgebra.coeff (psTrunc m f) e = MvPowerSeries.coeff e f := by
-  unfold psTrunc
-  rw [MvPolynomial.coeff_sum, Finset.sum_eq_single e]
-  · simp [MvPolynomial.coeff_monomial]
-  · intro b _ hb
-    simp [MvPolynomial.coeff_monomial, hb]
-  · intro h
-    exact absurd ((mem_degLE_lemma m e).2 he) h
-
-private lemma mem_orig_pow_lemma_3 {R κ : Type} [CommRing R] (m : ℕ) (p : MvPolynomial κ R)
-    (hp : ∀ e : κ →₀ ℕ, (e.sum fun _ k => k) ≤ m → AddMonoidAlgebra.coeff p e = 0) :
-    p ∈ orig R κ ^ (m + 1) := by
-  rw [p.as_sum]
-  refine Ideal.sum_mem _ fun e _ => ?_
-  by_cases he : (e.sum fun _ k => k) ≤ m
-  · rw [hp e he, map_zero]
-    exact Ideal.zero_mem _
-  · have h1 : MvPolynomial.monomial e (AddMonoidAlgebra.coeff p e) ∈
-        orig R κ ^ (e.sum fun _ k => k) := by
-      rw [MvPolynomial.monomial_eq]
-      refine Ideal.mul_mem_left _ _ ?_
-      rw [Finsupp.prod, Finsupp.sum, ← Finset.prod_pow_eq_pow_sum]
-      exact Ideal.prod_mem_prod fun i _ => Ideal.pow_mem_pow (Ideal.subset_span (Set.mem_range_self i)) _
-    exact Ideal.pow_le_pow_right (by omega) h1
-
-private lemma psJet_mul_lemma_4 {R κ : Type} [CommRing R] [Fintype κ] [DecidableEq κ] (m : ℕ)
-    (f g : MvPowerSeries κ R) : psJet m (f * g) = psJet m f * psJet m g := by
-  unfold psJet
-  rw [← map_mul, Ideal.Quotient.eq]
-  apply mem_orig_pow_lemma_3
-  intro e he
-  rw [MvPolynomial.coeff_sub, MvPolynomial.coeff_mul, coeff_psTrunc_lemma_2 m _ e he,
-    MvPowerSeries.coeff_mul, sub_eq_zero]
-  refine Finset.sum_congr rfl fun p hp => ?_
-  have hpe : p.1 + p.2 = e := by simpa using hp
-  have hd : (p.1.sum fun _ k => k) + (p.2.sum fun _ k => k) = e.sum fun _ k => k := by
-    rw [← hpe, Finsupp.sum_add_index' (fun _ => rfl) (fun _ _ _ => rfl)]
-  rw [coeff_psTrunc_lemma_2 m f p.1 (by omega), coeff_psTrunc_lemma_2 m g p.2 (by omega)]
-
-private lemma psJet_one_lemma_5 {R κ : Type} [CommRing R] [Fintype κ] [DecidableEq κ] (m : ℕ) :
-    psJet m (1 : MvPowerSeries κ R) = 1 := by
-  unfold psJet
-  rw [← map_one (Ideal.Quotient.mk (orig R κ ^ (m + 1))), Ideal.Quotient.eq]
-  apply mem_orig_pow_lemma_3
-  intro e he
-  rw [MvPolynomial.coeff_sub, coeff_psTrunc_lemma_2 m _ e he, MvPowerSeries.coeff_one,
-    MvPolynomial.coeff_one]
-  by_cases h0 : e = 0
-  · subst h0
-    simp
-  · simp [h0, Ne.symm h0]
-
 theorem psJet_pow {R κ : Type} [CommRing R] [Fintype κ] [DecidableEq κ] (m : ℕ) (f : MvPowerSeries κ R) (k : ℕ) :
     psJet m (f ^ k) = psJet m f ^ k := by
   induction k with
-  | zero => rw [pow_zero, pow_zero]; exact psJet_one_lemma_5 m
+  | zero => rw [pow_zero, pow_zero]; exact FBIdJet.psJet_one m
   | succ k ih =>
-    rw [pow_succ, psJet_mul_lemma_4, ih]
+    rw [pow_succ, FBIdJet.psJet_mul, ih]
     exact (pow_succ _ _).symm
 
 private lemma mk_eq_psJet_lemma_6 {R κ : Type} [CommRing R] [Fintype κ] [DecidableEq κ] (m : ℕ)
@@ -151,15 +34,18 @@ private lemma mk_eq_psJet_lemma_6 {R κ : Type} [CommRing R] [Fintype κ] [Decid
     (Ideal.Quotient.mk (orig R κ ^ (m + 1)) p : Jet R κ m) = psJet m g := by
   unfold psJet
   rw [Ideal.Quotient.eq]
-  apply mem_orig_pow_lemma_3
-  intro e he
-  rw [MvPolynomial.coeff_sub, coeff_psTrunc_lemma_2 m _ e he, h e he, sub_self]
+  refine GermD.mem_orig_pow_of fun e he => ?_
+  by_contra hlt
+  have hle : e.degree ≤ m := by omega
+  exact (MvPolynomial.mem_support_iff.1 he) (by
+    rw [MvPolynomial.coeff_sub, GermFun.coeff_psTrunc m g e hle, h e hle, sub_self])
 
 private lemma psJet_add_lemma_7 {R κ : Type} [CommRing R] [Fintype κ] [DecidableEq κ] (m : ℕ)
     (f g : MvPowerSeries κ R) : psJet m (f + g) = psJet m f + psJet m g := by
   have h := mk_eq_psJet_lemma_6 m (psTrunc m f + psTrunc m g) (f + g) (by
     intro e he
-    rw [MvPolynomial.coeff_add, coeff_psTrunc_lemma_2 m f e he, coeff_psTrunc_lemma_2 m g e he, map_add (f := _)])
+    rw [MvPolynomial.coeff_add, GermFun.coeff_psTrunc m f e he, GermFun.coeff_psTrunc m g e he,
+      map_add (f := _)])
   rw [← h, map_add (f := _)]
   all_goals rfl
 
@@ -253,12 +139,13 @@ theorem jetSubstPS_psJet {S : Type} [CommRing S] {d N : ℕ} (φ : Fin d → MvP
     next p q hp hq =>
       rw [map_add (f := _), map_add (f := _), hp, hq, MvPolynomial.coe_add, map_add (f := _), psJet_add_lemma_7]
     next p n hp =>
-      rw [map_mul, map_mul, hp, MvPolynomial.coe_mul, map_mul, psJet_mul_lemma_4]
+      rw [map_mul, map_mul, hp, MvPolynomial.coe_mul, map_mul, FBIdJet.psJet_mul]
       congr 1
       rw [MvPolynomial.coe_X, MvPowerSeries.coe_substAlgHom, MvPowerSeries.subst_X hs]
       have hc : MvPolynomial.constantCoeff (psTrunc m (φ n.2)) = 0 := by
         rw [show MvPolynomial.constantCoeff (psTrunc m (φ n.2)) =
-            AddMonoidAlgebra.coeff (psTrunc m (φ n.2)) 0 from rfl, coeff_psTrunc_lemma_2 m _ 0 (by simp)]
+              AddMonoidAlgebra.coeff (psTrunc m (φ n.2)) 0 from rfl,
+          GermFun.coeff_psTrunc m _ 0 (by simp)]
         first
           | (rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply]; exact h0 n.2)
       have hX : (jetSubstPS (m := m) (fun p : Fin 1 × Fin d => φ p.2))
@@ -279,7 +166,7 @@ theorem jetSubstPS_psJet {S : Type} [CommRing S] {d N : ℕ} (φ : Fin d → MvP
     apply finsum_eq_zero_of_forall_eq_zero
     intro u
     by_cases hu : (u.sum fun _ j => j) ≤ m
-    · rw [map_sub, MvPolynomial.coeff_coe, coeff_psTrunc_lemma_2 m f u hu, sub_self, zero_smul]
+    · rw [map_sub, MvPolynomial.coeff_coe, GermFun.coeff_psTrunc m f u hu, sub_self, zero_smul]
     · have hz := vanish_prod_lemma_11 (fun p : Fin 1 × Fin d => φ p.2) (fun p => h0 p.2) u e (by omega)
       first
         | exact (congrArg (fun x => MvPowerSeries.coeff u (f - ((psTrunc m f : MvPolynomial (Fin 1 × Fin d) S) :
@@ -351,8 +238,6 @@ namespace Formalism.MainNotions.ModuliIntegralCharts.H1
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor NumberField Formalism.L2.Pj
 open MvPowerSeries ExpTieAlg ExpTieGerm ExpTiePf
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem tie_holds : TieSt := by
   intro E _ _ _ H Dw l Xo c _ _ S _ _ _ y C φ hφ e he k F f hf

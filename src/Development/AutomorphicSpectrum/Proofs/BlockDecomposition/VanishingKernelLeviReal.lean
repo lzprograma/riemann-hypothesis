@@ -11,51 +11,8 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.InnerEqZeroOfWeight
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantCompactSpan
 import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Polynomial.Degree.Defs
-import Mathlib.Algebra.Polynomial.Eval.Defs
-import Mathlib.Basic.Complex.Basic
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NewtonRecursionPolyUnique
 import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PosPartUnitaryMul
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ScalarCapelliTruncatedPerelomovPopov
@@ -65,10 +22,6 @@ import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.Wign
 import Development.AutomorphicArithmetic.IntegralCasts.IsOpenStabOfMemNhds
 import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.WtProj
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ExistsPowEqZero
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.Finiteness.Lattice
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Bool
 
@@ -143,7 +96,7 @@ theorem epow_left {A : Type} [Ring A] (E : Fin n → Fin n → A) (k : ℕ) (a b
 theorem cov_apply {E : Fin n → Fin n → Module.End ℂ V} (hE : GlRel E) (k : ℕ) (p c q : Fin n) (x : V) :
     E p c (Formalism.REAL.epow E k c q x) = Formalism.REAL.epow E k c q (E p c x) + Formalism.REAL.epow E k p q x - (if q = p then Formalism.REAL.epow E k c c x else 0) := by
   have h := LinearMap.congr_fun (_root_.Formalism.REAL.generatorPowCovariance_holds _ n E hE k c q p c) x
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, if_true] at h
+  simp only [LinearMap.sub_apply, Module.End.mul_apply, ite_true] at h
   rw [sub_eq_iff_eq_add] at h
   rw [h]
   split_ifs <;> (try simp only [LinearMap.zero_apply]) <;> abel
@@ -161,7 +114,7 @@ theorem upper_mem {E : Fin n → Fin n → Module.End ℂ V} (hE : GlRel E) (k :
     rw [Module.End.mul_apply]
     rcases lt_or_ge p c with hc | hc
     · exact e_mem E hc _
-    · rw [cov_apply hE, if_neg h.ne', sub_zero]
+    · rw [cov_apply hE, ite_eq_right h.ne', sub_zero]
       exact Submodule.add_mem _ (ih c q (lt_of_le_of_lt hc h) _) (ih p q h x)
 
 def bk (n k : ℕ) : Fin n → FreeAlgebra ℂ (Fin n) :=
@@ -197,9 +150,9 @@ theorem diag_mem {E : Fin n → Fin n → Module.End ℂ V} (hE : GlRel E) (k : 
       rw [Nat.cast_smul_eq_nsmul]
     have h1 : ∀ c ∈ Finset.Iio a, E a c (Formalism.REAL.epow E k c a x) =
         Formalism.REAL.epow E k c a (E a c x) + Formalism.REAL.epow E k a a x - Formalism.REAL.epow E k c c x := fun c _ => by
-      rw [cov_apply hE, if_pos rfl]
+      rw [cov_apply hE, ite_eq_left rfl]
     have h2 : E a a (Formalism.REAL.epow E k a a x) = Formalism.REAL.epow E k a a (E a a x) := by
-      rw [cov_apply hE, if_pos rfl]
+      rw [cov_apply hE, ite_eq_left rfl]
       abel
     have e : Formalism.REAL.epow E (k + 1) a a x - evd (fun c => E c c) (bk n (k + 1) a) x =
         ∑ c ∈ Finset.Iio a, Formalism.REAL.epow E k c a (E a c x) + (Formalism.REAL.epow E k a a (E a a x) - B a (E a a x)) +
@@ -260,8 +213,7 @@ theorem trHC (n m : ℕ) : ∃ b : FreeAlgebra ℂ (Fin n),
       simp [etr, map_sum, LinearMap.sum_apply, Finset.sum_sub_distrib]
     rw [e]
     exact Submodule.sum_mem (nSub E) fun a _ => diag_mem hE m a x
-  · set_option synthInstance.maxHeartbeats 100000 in
-      simp only [map_sum, bk_val, GlobalTheory.Dec.gelfVal]
+  · simp only [map_sum, bk_val, GlobalTheory.Dec.gelfVal]
     exact Finset.sum_comm
 
 section Kill
@@ -754,7 +706,7 @@ theorem frC_apply (B : Finset (Lt n)) (y : Cn n V) (S : Finset (Lt n)) :
 
 theorem toC_frC {B : Finset (Lt n)} (hB : ∀ l ∈ B, l.1 = true) (y : Cn n V) : toC B (frC B y) = y := by
   funext A
-  simp only [toC, frC_apply, ppart_emb hB, kpart_emb hB, if_true]
+  simp only [toC, frC_apply, ppart_emb hB, kpart_emb hB, ite_true]
 
 theorem frC_toC {B : Finset (Lt n)} {x : Cq n V} (hx : PartL B x) : frC B (toC B x) = x := by
   funext S
@@ -803,7 +755,7 @@ theorem frC_bd (B : Finset (Lt n)) (E1 E2 : Fin n → Fin n → Module.End ℂ V
     frC B (bd (allT n) (kA E1 E2) y) = bdL isK E1 E2 (frC B y) := by
   rw [bdL_isK]
 
-  simp only [bd, cpt, true_and, if_true, LinearMap.add_apply, LinearMap.sum_apply, map_add (f := _), map_sum,
+  simp only [bd, cpt, true_and, ite_true, LinearMap.add_apply, LinearMap.sum_apply, map_add (f := _), map_sum,
   Module.End.mul_apply]
   congr 1
   · refine Finset.sum_congr rfl fun i _ => ?_
@@ -815,12 +767,12 @@ theorem frC_bd (B : Finset (Lt n)) (E1 E2 : Fin n → Fin n → Module.End ℂ V
 
 theorem part_frC (B : Finset (Lt n)) (y : Cn n V) : PartL B (frC B y) := fun S h => by
   by_contra h2
-  exact h (by rw [frC_apply, if_neg h2])
+  exact h (by rw [frC_apply, ite_eq_right h2])
 
 theorem deg_frC {B : Finset (Lt n)} {j : ℕ} {y : Cn n V} (hy : Sup (allT n) ∅ j y) : DegL (j + B.card) (frC B y) := by
   intro S h
   have h1 : ppart S = B := part_frC B y S h
-  rw [frC_apply, if_pos h1] at h
+  rw [frC_apply, ite_eq_left h1] at h
   have h2 := (hy _ h).2
   rw [Finset.filter_true_of_mem (fun _ _ => rfl)] at h2
   rw [card_parts S, h2, h1]

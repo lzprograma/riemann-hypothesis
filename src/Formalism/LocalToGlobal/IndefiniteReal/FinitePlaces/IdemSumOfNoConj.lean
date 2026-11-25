@@ -13,8 +13,6 @@ open Formalism.BasicNotions IsDedekindDomain NumberField Formalism.L2.Theta
 
 namespace Formalism.IndefR.Fin
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 
@@ -27,7 +25,7 @@ theorem idemSum_of_noConj (S : Finset (Formalism.L2.DIV.Pl D.host.E))
   have hes : ∀ PP ∈ S, Formalism.L2.NTheta.IsIdemAt (es PP) PP := by
     intro PP hPP
     have h := hnc PP hPP PP hPP
-    simp only [es, dif_pos h]
+    simp only [es, dite_eq_left h]
     exact (idem_exists_at PP h).choose_spec.1
   refine ⟨∑ PP ∈ S, es PP, ⟨es, hes, rfl⟩, ?_⟩
 

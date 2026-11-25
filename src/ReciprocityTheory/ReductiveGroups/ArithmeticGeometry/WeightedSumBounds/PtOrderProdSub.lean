@@ -23,13 +23,6 @@ def PTAgree (k : ℕ) (A A' : ι → MvPowerSeries τ R) : Prop :=
 theorem PTAgree.eq {A A' : ι → MvPowerSeries τ R} (h : ∀ k, PTAgree k A A') : A = A' :=
   funext fun i => MvPowerSeries.ext fun e => h (e.degree + 1) i e (Nat.lt_succ_self _)
 
-section Fixed
-
-variable (T : (ι → MvPowerSeries τ R) → (ι → MvPowerSeries τ R))
-  (P : (ι → MvPowerSeries τ R) → Prop)
-
-end Fixed
-
 section Order
 
 private theorem natCast_le_order_iff_coeff_eq_zero {f : MvPowerSeries τ R} {n : ℕ} :
@@ -56,14 +49,6 @@ private theorem one_le_order_of_constantCoeff_eq_zero {f : MvPowerSeries τ R} (
   subst hd0
   simpa using hf
 
-private theorem natCast_le_order_pow_of_constantCoeff_eq_zero {f : MvPowerSeries τ R} (hf : constantCoeff f = 0) (m : ℕ) :
-    (m : ℕ∞) ≤ (f ^ m).order := by
-  induction m with
-  | zero => simp
-  | succ m ih =>
-    rw [pow_succ]
-    exact natCast_add_le_order_mul ih (one_le_order_of_constantCoeff_eq_zero hf)
-
 theorem pt_order_pow_sub {f g : MvPowerSeries τ R} {j : ℕ}
     (hfg : ((j + 1 : ℕ) : ℕ∞) ≤ (f - g).order) (hf : constantCoeff f = 0)
     (hg : constantCoeff g = 0) (m : ℕ) : ((j + m : ℕ) : ℕ∞) ≤ (f ^ m - g ^ m).order := by
@@ -73,7 +58,7 @@ theorem pt_order_pow_sub {f g : MvPowerSeries τ R} {j : ℕ}
     have key : f ^ (m + 1) - g ^ (m + 1) = f ^ m * (f - g) + (f ^ m - g ^ m) * g := by ring
     rw [key]
     refine natCast_le_order_add ?_ ?_
-    · exact natCast_le_order_of_le (by omega) (natCast_add_le_order_mul (natCast_le_order_pow_of_constantCoeff_eq_zero hf m) hfg)
+    · exact natCast_le_order_of_le (by omega) (natCast_add_le_order_mul (MvPowerSeries.le_order_pow_of_constantCoeff_eq_zero m hf) hfg)
     · exact natCast_le_order_of_le (by omega)
         (natCast_add_le_order_mul ih (one_le_order_of_constantCoeff_eq_zero hg))
 
@@ -85,7 +70,7 @@ theorem pt_order_prod_pow {σ : Type*} (A : σ → MvPowerSeries τ R)
   | empty => simp
   | @insert a S ha ih =>
     rw [Finset.sum_insert ha, Finset.prod_insert ha]
-    exact natCast_add_le_order_mul (natCast_le_order_pow_of_constantCoeff_eq_zero (hA a) (α a)) ih
+    exact natCast_add_le_order_mul (MvPowerSeries.le_order_pow_of_constantCoeff_eq_zero (α a) (hA a)) ih
 
 theorem pt_order_prod_sub {σ : Type*} {A A' : σ → MvPowerSeries τ R} {j : ℕ}
     (hA : ∀ s, constantCoeff (A s) = 0) (hA' : ∀ s, constantCoeff (A' s) = 0)
@@ -105,7 +90,7 @@ theorem pt_order_prod_sub {σ : Type*} {A A' : σ → MvPowerSeries τ R} {j : �
     · exact natCast_le_order_of_le (by omega)
         (natCast_add_le_order_mul (pt_order_pow_sub (hAA a) (hA a) (hA' a) (α a))
           (pt_order_prod_pow A hA α S))
-    · exact natCast_le_order_of_le (by omega) (natCast_add_le_order_mul (natCast_le_order_pow_of_constantCoeff_eq_zero (hA' a) (α a)) ih)
+    · exact natCast_le_order_of_le (by omega) (natCast_add_le_order_mul (MvPowerSeries.le_order_pow_of_constantCoeff_eq_zero (α a) (hA' a)) ih)
 
 theorem pt_subst_agree {σ : Type*} {A A' : σ → MvPowerSeries τ R} (hA : HasSubst A)
     (hA' : HasSubst A') (hA0 : ∀ s, constantCoeff (A s) = 0)

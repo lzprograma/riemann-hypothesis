@@ -51,7 +51,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DiscSpec GlobalTheory.ResW GlobalTheory.Published
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.ResW
 
@@ -105,7 +104,7 @@ theorem isUnitarisable_of_isLocComp_cusp : ∀ (E : Type) [Field E] [NumberField
       rw [mul_div_cancel₀ _ this]; ring
     change zc E a (mulChi a χ φ) = (0 : ℂ) • mulChi a χ φ
     rw [hz, e1, ← add_smul, e2, zero_smul, map_zero, zero_smul]
-  have hdisc := (GlobalTheory.T.cuspForm_sqIntegrable_and_isDiscrete_splitCentre E a).2 _ hnorm
+  have hdisc := (_root_.GlobalTheory.ResW.cuspForm_isSqInt_and_isDiscrete E a).2 _ hnorm
   obtain ⟨f, h0, hf⟩ := hσ.twist χ
   have hgl : IsLocCompGL (x.twist χ).V w (σ.twist (CuspSub.locDet a χ w) (CuspSub.isOpen_ker_locDet χ w)) :=
     ⟨(x.twist χ).V.subtype ∘ₗ f, fun h => h0 (LinearMap.ext fun v => Subtype.ext (LinearMap.congr_fun h v)),

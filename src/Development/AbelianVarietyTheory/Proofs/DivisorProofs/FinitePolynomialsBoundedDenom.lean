@@ -100,7 +100,6 @@ theorem norm_le_of_isIntegral_inv (w : ℂ) (c : ℚ) (N : ℕ) (hN : 0 < N) (hw
     simpa using hprod
   obtain ⟨k, hk⟩ := (IsIntegrallyClosed.isIntegral_iff (R := ℤ) (K := ℚ)).1 hq
   have hcq : (0 : ℚ) < c := by exact_mod_cast hcpos
-  have hNq : (0 : ℚ) < N := by exact_mod_cast hN
   have hpos : (0 : ℚ) < (N : ℚ) ^ 2 / c := by positivity
   have hk1 : (1 : ℚ) ≤ (N : ℚ) ^ 2 / c := by
     rw [← hk] at hpos ⊢

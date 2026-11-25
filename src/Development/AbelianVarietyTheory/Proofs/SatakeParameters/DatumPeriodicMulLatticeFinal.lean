@@ -1,50 +1,6 @@
 module
 
 public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.KernelLattices.XiIndCClass
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 
@@ -61,8 +17,8 @@ open Formalism.L2.Col.LocE Formalism.L2.Col.Loc
 theorem ite_ctx {α : Type} {b c : Prop} {db : Decidable b} {dc : Decidable c} {x y u : α} (h : b ↔ c) (ht : c → x = u) :
     @ite _ b db x y = @ite _ c dc u y := by
   by_cases hc : c
-  · rw [if_pos hc, if_pos (h.2 hc), ht hc]
-  · rw [if_neg hc, if_neg fun hb => hc (h.1 hb)]
+  · rw [ite_eq_left hc, ite_eq_left (h.2 hc), ht hc]
+  · rw [ite_eq_right hc, ite_eq_right fun hb => hc (h.1 hb)]
 
 section Local
 
@@ -172,13 +128,13 @@ theorem fIdx_zero (k₀ n p : ℕ) : fIdx k₀ 0 n p = p := by
 
 theorem entB_row {n' c' n : ℕ} (k₀ : ℕ) (ex' ex : ℕ → ℕ) (x : HomE E (n' + c') (n + 0)) {p : ℕ} (p' : ℕ) (hp : ¬ p < n + 0) :
     entB q k₀ c' n' 0 n ex' ex x p p' = 0 := by
-  simp only [entB, fIdx_zero, atN, dif_neg hp, zero_mul]
+  simp only [entB, fIdx_zero, atN, dite_eq_right hp, zero_mul]
 
 theorem eN_out {N p : ℕ} (hp : ¬ p < N) : eN E N p = 0 := by
   funext l
   have := l.2
   simp only [eN, Pi.zero_apply]
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 theorem entB_col {n' n : ℕ} (k₀ : ℕ) (ex' ex : ℕ → ℕ) (x : HomE E (n' + 0) (n + 0)) (p : ℕ) {p' : ℕ} (hp : ¬ p' < n' + 0) :
     entB q k₀ 0 n' 0 n ex' ex x p p' = 0 := by
@@ -192,8 +148,8 @@ theorem entB_int {n' n : ℕ} (k₀ : ℕ) (ex' ex : ℕ → ℕ) (z : HomE E (n
     · have e : eN E (n' + 0) p' = Pi.single ⟨p', hp'⟩ 1 := by
         funext l
         simp [eN, Pi.single_apply, Fin.ext_iff]
-      simp only [entB, fIdx_zero, atN, dif_pos hp, scE, e]
-      rw [if_pos (by omega), if_pos (by omega)]
+      simp only [entB, fIdx_zero, atN, dite_eq_left hp, scE, e]
+      rw [ite_eq_left (by omega), ite_eq_left (by omega)]
       simpa using hz ⟨p', hp'⟩ ⟨p, hp⟩
     · rw [entB_col k₀ ex' ex z p hp', zero_div]
       exact zero_mem (intS P)
@@ -371,12 +327,12 @@ theorem ftY_add (hc : cst.Ok) (P : rowSG Pr sel mu) (hD : P.1 ∉ Pr.vGs → 2 *
     rw [LinearMap.add_apply, mul_add, intAt_add_iff (h1 i)]
   simp only [e1, e2]
   by_cases hP : P.1 ∈ Pr.vGs
-  · simp only [if_pos hP] at hy ⊢
+  · simp only [ite_eq_left hP] at hy ⊢
     split_ifs with h
     · exact psi_shift hq0 (cst.psi P) (cst.D P) 0 1 (by simpa using hc.D_pos P) (hc.psi_add P) (hc.psi_int P) η ζ y _
         (by simpa using h) (fun i => intAt_div_pow_le hq0 hc.B_pos (hζ i)) hy
     · rfl
-  · simp only [if_neg hP] at hy ⊢
+  · simp only [ite_eq_right hP] at hy ⊢
     split_ifs with h
     · rw [psi_shift hq0 (cst.psi P) (cst.D P) cst.M cst.M (by have := hD hP; omega) (hc.psi_add P) (hc.psi_int P) η ζ y _
         h (fun i => intAt_div_pow_le hq0 hc.M_le_B (hζ i)) hy]
@@ -396,12 +352,12 @@ theorem repY_mem {n : ℕ} (N : Submodule (𝓞 X.E) (Sp X.E n)) (Y : Set (Sp X.
   have h2 := (Submodule.mem_iInf _).1 hmem P
   simp only [Submodule.mem_comap, LinearMap.restrictScalars_apply, LinearMap.smul_apply, LinearMap.id_apply] at h1 h2
   by_cases hP : P.1 ∈ Pr.vGs
-  · simp only [if_pos hP] at h1 h2 ⊢
+  · simp only [ite_eq_left hP] at h1 h2 ⊢
     have := add_mem (Submodule.smul_mem _ ((qOf P.1 : ℕ) : 𝓞 X.E) h2) h1
     convert this using 1
     rw [Nat.cast_smul_eq_nsmul, ← Nat.cast_smul_eq_nsmul X.E]
     simp [smul_sub]
-  · simp only [if_neg hP] at h1 h2 ⊢
+  · simp only [ite_eq_right hP] at h1 h2 ⊢
     have := add_mem (Submodule.smul_mem _ ((qOf P.1 ^ (cst.M + cst.M) : ℕ) : 𝓞 X.E) h2) h1
     convert this using 1
     rw [Nat.cast_smul_eq_nsmul, ← Nat.cast_smul_eq_nsmul X.E, smul_smul]

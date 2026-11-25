@@ -45,7 +45,7 @@ theorem GradedFinite.proof : GradedFinite.Statement := by
       ((Module.Finite.iff_fg.mp hfin).map (Ideal.Quotient.mkₐ F I).toLinearMap)
   refine ⟨hP, ?_⟩
   unfold hilbFn
-  rw [if_pos fun k => Int.natCast_nonneg (m k)]
+  rw [ite_eq_left fun k => Int.natCast_nonneg (m k)]
   simp only [Int.toNat_natCast]
 
 end

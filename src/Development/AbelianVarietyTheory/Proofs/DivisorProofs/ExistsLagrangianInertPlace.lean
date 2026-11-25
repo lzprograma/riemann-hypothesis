@@ -184,8 +184,7 @@ theorem exists_isLagr_tensor : ∀ (F E : Type) [Field F] [NumberField F] [Field
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
   have hσσ : ∀ y, σ (σ y) = y := fun y => τ.injective (by rw [hcm.2.2.2, hcm.2.2.2, star_star])
   obtain ⟨t, ht⟩ : ∃ t, σ t ≠ t := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have hw := hcm.2.1.isComplex (NumberField.InfinitePlace.mk τ)
     rw [NumberField.InfinitePlace.isComplex_mk_iff, NumberField.ComplexEmbedding.isReal_iff] at hw
     apply hw
@@ -714,15 +713,7 @@ theorem dual_bound (σ : E →ₐ[F] E) (n : ℕ) (J : Matrix (Fin n) (Fin n) E)
 theorem val_det_le (w : HeightOneSpectrum (𝓞 E)) {n : ℕ} (M : Matrix (Fin n) (Fin n) E)
     (c : WithZero (Multiplicative ℤ)) (h : ∀ i j, w.valuation E (M i j) ≤ c) :
     w.valuation E M.det ≤ c ^ n := by
-  rw [Matrix.det_apply]
-  refine Valuation.map_sum_le _ fun p _ => ?_
-  have hp : w.valuation E (∏ i, M (p i) i) ≤ c ^ n := by
-    rw [map_prod]
-    calc ∏ i, w.valuation E (M (p i) i) ≤ ∏ _i : Fin n, c := Finset.prod_le_prod' fun i _ => h _ _
-      _ = c ^ n := by simp
-  rcases Int.units_eq_one_or (Equiv.Perm.sign p) with h1 | h1 <;> rw [h1]
-  · rwa [one_smul]
-  · rwa [Units.neg_smul, one_smul, Valuation.map_neg]
+  apply _root_.GlobalTheory.valuation_det_le_pow_of_entry_le <;> assumption
 
 end GlobalTheory.SkewDetParity
 

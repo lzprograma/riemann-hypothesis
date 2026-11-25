@@ -1,48 +1,10 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.DetTransposeApply
 public import Formalism.HermitianCurvature.OperatorsCommuteTranslations
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AAvCongr
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstPeelingMinorMemIdeal
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignPermutationIdentity
 
 @[expose] public section
@@ -54,17 +16,12 @@ namespace Formalism.FourierDecayAlt.P.SignAntidiagonal
 open Formalism.FourierDecayAlt.C3 Formalism.REAL Formalism.QuantumDeterminants
 
 theorem keyS_inj (k r : ℕ) : Function.Injective (keyS k r) := by
-  intro p q hpq
-  apply Fin.ext
-  have hp := p.isLt
-  have hq := q.isLt
-  unfold keyS at hpq
-  split_ifs at hpq <;> omega
+  apply _root_.AAInvW.keyS_inj <;> assumption
 
 theorem keyS_esI (k r : ℕ) (x : Fin r) : keyS k r (esI k r x) = x.val := by
   have hx := x.isLt
   have c : r + k < 2 * r + k - x.val := by omega
-  simp only [keyS, Formalism.QuantumDeterminants.esI, c, if_true]
+  simp only [keyS, Formalism.QuantumDeterminants.esI, c, ite_true]
   omega
 
 theorem star_sgnW (m : ℕ) : star (sgnW m) = sgnW m := by
@@ -97,7 +54,7 @@ theorem first_expansion_identity : ExpansionOmittedColumn := by
       have ha := a.isLt
       have hb := b.isLt
       rw [hxi _ _ (by simp only [Fin.coe_castLE]; omega)]
-      rw [if_pos (by simp only [xR, Formalism.QuantumDeterminants.eI, Fin.coe_castLE]; omega)]
+      rw [ite_eq_left (by simp only [xR, Formalism.QuantumDeterminants.eI, Fin.coe_castLE]; omega)]
       simp [Zb, xR, Formalism.QuantumDeterminants.eI, ha, hb]
   have he : StrictMono (fun l : Fin (i0 + s') =>
       xR k r (i0 + s' + 1) (by omega) ((⟨i0, by omega⟩ : Fin (i0 + s' + 1)).succAbove l)) := by
@@ -138,7 +95,7 @@ theorem first_expansion_identity : ExpansionOmittedColumn := by
         (xR k r (i0 + s' + 1) (by omega) ((⟨i0, by omega⟩ : Fin (i0 + s' + 1)).succAbove l))).det =
         h.det * t ^ s' * sgnW s' := by
       have hp := minors_first_case i0 s' h t ⟨i0, by omega⟩
-      rw [if_pos rfl] at hp
+      rw [ite_eq_left rfl] at hp
       rw [← hp]
       congr 1
       ext a l
@@ -146,7 +103,7 @@ theorem first_expansion_identity : ExpansionOmittedColumn := by
       have hl := ((⟨i0, by omega⟩ : Fin (i0 + s' + 1)).succAbove l).isLt
       simp only [Matrix.of_apply]
       rw [hxi _ _ (by simp only [Fin.coe_castLE]; omega)]
-      rw [if_pos (by simp only [xR, Formalism.QuantumDeterminants.eI, Fin.coe_castLE]; omega)]
+      rw [ite_eq_left (by simp only [xR, Formalism.QuantumDeterminants.eI, Fin.coe_castLE]; omega)]
       simp only [xR, Formalism.QuantumDeterminants.eI, Fin.coe_castLE]
     unfold AAx
     rw [← hdet']

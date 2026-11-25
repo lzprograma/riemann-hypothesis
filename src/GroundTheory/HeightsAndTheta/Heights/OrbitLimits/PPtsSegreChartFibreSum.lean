@@ -184,7 +184,7 @@ theorem isSectionOn_ofWeight_one {P : Ideal (MRing ι)} (hP : P.IsPrime) (g : ((
   rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one] at hm
   have h0 : (0 : (Σ k, ι k) →₀ ℕ) = mm := by
     by_contra h
-    exact hm (if_neg h)
+    exact hm (ite_eq_right h)
   subst h0
   simp
 

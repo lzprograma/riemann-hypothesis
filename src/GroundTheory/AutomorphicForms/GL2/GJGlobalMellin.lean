@@ -196,7 +196,6 @@ theorem integral_mul_matrixCoeff_eq_thetaPairing (hφ₁ : Continuous φ₁) (h�
     (s : {r : ℝ // 0 < r}) :
     ∫ y, Ξ (centralSection K n s * (y : AdelicGLn.AdelicGL K n)) *
         matrixCoeff μ φ₁ φ₂ (y : AdelicGLn.AdelicGL K n) ∂μ = thetaPairing μ φ₁ φ₂ Ξ s := by
-  set_option synthInstance.maxHeartbeats 400000 in
     set F := fundamentalDomain (rationalGLOne (K := K) (n := n)) with hF
     have hFfin := measure_fundamentalDomain_rationalGLOne_lt_top μ
     set f : normOneGL (K := K) (n := n) → normOneGL (K := K) (n := n) → ℂ := fun y x =>
@@ -305,7 +304,6 @@ theorem detPow_inv (g : AdelicGLn.AdelicGL K n) (w : ℂ) : detPow g⁻¹ w = de
 
 theorem stronglyMeasurable_matrixCoeff (hφ₁ : Continuous φ₁) (hφ₂ : Continuous φ₂) :
     StronglyMeasurable (matrixCoeff μ φ₁ φ₂) := by
-  set_option synthInstance.maxHeartbeats 400000 in
     have hc : Continuous (Function.uncurry fun (g : AdelicGLn.AdelicGL K n) (x : normOneGL (K := K) (n := n)) =>
         φ₁ ((x : AdelicGLn.AdelicGL K n) * g) * conj (φ₂ (x : AdelicGLn.AdelicGL K n))) :=
       (hφ₁.comp ((continuous_subtype_val.comp continuous_snd).mul continuous_fst)).mul
@@ -328,7 +326,6 @@ theorem exists_integral_eq_mellin_thetaPairing (hn : 0 < n) (ν : Measure (Adeli
       Integrable (fun g => Ξ g * matrixCoeff μ φ₁ φ₂ g * detPow g w) ν ∧
       ∫ g, Ξ g * matrixCoeff μ φ₁ φ₂ g * detPow g w ∂ν =
         (c : ℂ) * mellin (fun t : ℝ => if h : 0 < t then thetaPairing μ φ₁ φ₂ Ξ ⟨t, h⟩ else 0) w := by
-  set_option synthInstance.maxHeartbeats 400000 in
     refine ⟨centralHaarConst hn μ ν, by exact_mod_cast centralHaarConst_pos hn μ ν, ?_⟩
     intro φ₁ φ₂ Ξ w B hφ₁ hφ₂ hΞ hφ₁l hφ₁z hB hBint
     set F := fundamentalDomain (rationalGLOne (K := K) (n := n)) with hF
@@ -440,11 +437,11 @@ theorem exists_integral_eq_mellin_thetaPairing (hn : 0 < n) (ν : Measure (Adeli
     have e4 : (fun s : {r : ℝ // 0 < r} => thetaPairing μ φ₁ φ₂ Ξ s * ((s : ℝ) : ℂ) ^ w) =
         fun s : {r : ℝ // 0 < r} => J' (s : ℝ) := by
       funext s
-      simp only [hJ', dif_pos s.2, Subtype.coe_eta]
+      simp only [hJ', dite_eq_left s.2, Subtype.coe_eta]
     rw [e4, integral_posRealMeasure, Complex.real_smul, mellin]
     congr 1
     refine setIntegral_congr_fun measurableSet_Ioi fun t (ht : 0 < t) => ?_
-    simp only [hJ', dif_pos ht]
+    simp only [hJ', dite_eq_left ht]
     rw [Complex.real_smul, smul_eq_mul, Complex.cpow_sub _ _ (Complex.ofReal_ne_zero.2 ht.ne'),
       Complex.cpow_one, Complex.ofReal_inv]
     have : (t : ℂ) ≠ 0 := Complex.ofReal_ne_zero.2 ht.ne'

@@ -2,50 +2,7 @@ module
 
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CxPairing
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -55,7 +12,6 @@ open CategoryTheory Opposite CrystallineSemistableComparison CrystallineSemistab
 universe w w' w'' t t' v u v' u' v'' u''
 
 namespace CrystallineSemistableComparison.Auxff
-open CategoryTheory CrystallineSemistableComparison CrystallineSemistableComparison.CH
 
 theorem term_comp {R : Type} [CommRing R] {C : Type u} [Category.{v} C] (F : C ⥤ ModuleCat.{w} R) {p m n : ℕ}
     (s : ComposableArrows C n) (f : Cn F p)
@@ -135,7 +91,6 @@ theorem CrystallineSemistableComparison.P.leibniz : ∀ {R : Type} [CommRing R] 
         funext t <;> apply Fin.ext <;> simp only [Function.comp, CrystallineSemistableComparison.Auxff.sa_val, front, back, Fin.val_last, Fin.val_zero] <;> split_ifs <;> omega
 
 namespace CrystallineSemistableComparison.Auxff
-open CategoryTheory CrystallineSemistableComparison CrystallineSemistableComparison.CH
 
 theorem cls_out {R : Type} [CommRing R] (K : Cx.{w} R) {n : ℕ} (x : K.H n) :
     K.cls (Quotient.out x).1 (Quotient.out x).2 = x := Quotient.out_eq x
@@ -180,7 +135,6 @@ theorem CrystallineSemistableComparison.P.cxcup_cls : ∀ {R : Type} [CommRing R
     (CrystallineSemistableComparison.Auxff.memB_right P h a ha _ h2)
 
 namespace CrystallineSemistableComparison.Auxff
-open CategoryTheory CrystallineSemistableComparison CrystallineSemistableComparison.CH
 
 noncomputable def toCx {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {F₁ : C ⥤ ModuleCat.{w} R}
     {F₂ : C ⥤ ModuleCat.{w'} R} {F₃ : C ⥤ ModuleCat.{w''} R} (P : Pairing F₁ F₂ F₃) :
@@ -252,7 +206,6 @@ theorem CrystallineSemistableComparison.P.cup_bilin : ∀ {R : Type} [CommRing R
   exact ⟨b, fun x y => (hb x y).trans (CrystallineSemistableComparison.Auxff.cup_eq P h x y).symm⟩
 
 namespace CrystallineSemistableComparison.Auxff
-open CategoryTheory CrystallineSemistableComparison CrystallineSemistableComparison.CH
 
 theorem cls_congr {R : Type} [CommRing R] (K : Cx.{w} R) {n : ℕ} {a b : K.X n} (e : a = b) (ha : K.d n a = 0)
     (hb : K.d n b = 0) : K.cls a ha = K.cls b hb := by

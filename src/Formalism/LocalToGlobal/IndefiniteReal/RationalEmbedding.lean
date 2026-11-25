@@ -12,8 +12,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 
 namespace Formalism.IndefR.RationalEmbedding
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 abbrev inst : Formalism.MainNotions.S.AutInst := Formalism.L2.SG.InstExistsPf.instOf D

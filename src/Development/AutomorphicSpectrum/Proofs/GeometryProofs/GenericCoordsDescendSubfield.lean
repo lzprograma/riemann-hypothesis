@@ -26,50 +26,8 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreRefineL
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIsLocalRingIsFractionRingStalk
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -190,26 +148,8 @@ theorem exists_frame_map_mkQ {I : Type} [Finite I] {L : Lat ξ Li} {p : Cpt ξ} 
       exact Submodule.subset_span ⟨_, ⟨_, rfl⟩, rfl⟩
 
 theorem ofPrime_le {A : Subring Ω} [IsLocalRing A] (P : Ideal A) [hP : P.IsMaximal] :
-    (LocalSubring.ofPrime A P).toSubring ≤ A := by
-  intro z hz
-  have key : ∀ φ : Localization.AtPrime P →+* Ω, (∀ a : A, φ (algebraMap A _ a) = a) → ∀ w, φ w ∈ A := by
-    intro φ hφ w
-    obtain ⟨⟨x, s⟩, hxs⟩ := IsLocalization.surj P.primeCompl w
-    have hs : (s : A) ∉ P := s.2
-    have hu : IsUnit (s : A) := IsLocalRing.notMem_maximalIdeal.1 (IsLocalRing.eq_maximalIdeal hP ▸ hs)
-    obtain ⟨u, hu⟩ := hu.exists_right_inv
-    have h1 : φ w * ((s : A) : Ω) = (x : Ω) := by
-      have := congrArg φ hxs
-      rwa [map_mul, hφ, hφ] at this
-    have h2 : ((s : A) : Ω) * (u : Ω) = 1 := by exact_mod_cast congrArg Subtype.val hu
-    have h3 : φ w = x * u := by
-      calc φ w = φ w * (((s : A) : Ω) * (u : Ω)) := by rw [h2, _root_.mul_one]
-        _ = x * u := by rw [← _root_.mul_assoc, h1]
-    rw [h3]
-    exact mul_mem x.2 u.2
-  simp only [LocalSubring.ofPrime, LocalSubring.range_toSubring] at hz
-  obtain ⟨w, rfl⟩ := hz
-  exact key _ (fun a => IsLocalization.lift_eq _ a) w
+    (LocalSubring.ofPrime A P).toSubring ≤ A :=
+  (NormAt.ofPrime_of_isLocalRing A P hP).le
 
 theorem isLocalRing_of_eq {A B : Subring Ω} (h : A = B) [IsLocalRing B] : IsLocalRing A := by
   subst h

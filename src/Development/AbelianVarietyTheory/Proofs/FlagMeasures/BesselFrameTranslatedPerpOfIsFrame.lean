@@ -83,8 +83,6 @@ namespace GlobalTheory.UnitaryRetraction
 
 variable {n : ℕ}
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 section Calculus
 
 variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] {s : Set X}
@@ -579,8 +577,8 @@ theorem colW_mulVec (x : Fin (2 * r + k + 1) → ℂ) (a : Fin k) :
 
 theorem colE_mulVec (x : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
     (((colE k r)ᴴ * Hpk k r) *ᵥ x) a = x (esI k r a) := by
-  have h1 : piI k r (eI k r a) = esI k r a := Fin.ext (by rw [piI_val, if_neg (by simp only [eI]; omega)]; rfl)
-  have h2 : epsI k r (eI k r a) = 1 := if_neg (by simp only [eI]; omega)
+  have h1 : piI k r (eI k r a) = esI k r a := Fin.ext (by rw [piI_val, ite_eq_right (by simp only [eI]; omega)]; rfl)
+  have h2 : epsI k r (eI k r a) = 1 := ite_eq_right (by simp only [eI]; omega)
   rw [← mulVec_mulVec, mulVec, dotProduct]
   simp [colE, apply_ite, Hpk_mulVec_apply, h1, h2]
 
@@ -598,7 +596,7 @@ theorem frame_perp (hg : g ∈ UH (Hpk k r)) (x : Fin (2 * r + k + 1) → ℂ) (
 
 theorem frame_perp_bvec (hg : g ∈ UH (Hpk k r)) {j : Fin (2 * r + k + 1)} (hj : ¬ InB k r j) :
     ((g * colW k r)ᴴ * Hpk k r) *ᵥ (g *ᵥ bvec j) = 0 := funext fun a => by
-  rw [frame_perp hg, bvec_apply, if_neg (ne_of_inB (inB_bl a) hj)]; rfl
+  rw [frame_perp hg, bvec_apply, ite_eq_right (ne_of_inB (inB_bl a) hj)]; rfl
 
 theorem not_inB_eI (a : Fin r) : ¬ InB k r (eI k r a) := by simp only [InB, eI]; omega
 
@@ -624,7 +622,7 @@ theorem isFrame (hg : IsFrameW k r z g) (hz : inWb k r z) (hT : 0 < Tz k r z) :
   e_iso := by
     ext a b
     have := colE_mulVec (fun i => colE k r i b) a
-    rw [show colE k r (esI k r a) b = 0 from if_neg (by simp only [esI, eI, Fin.ext_iff]; omega)] at this
+    rw [show colE k r (esI k r a) b = 0 from ite_eq_right (by simp only [esI, eI, Fin.ext_iff]; omega)] at this
     exact this,
   e_perp := by
     ext a b

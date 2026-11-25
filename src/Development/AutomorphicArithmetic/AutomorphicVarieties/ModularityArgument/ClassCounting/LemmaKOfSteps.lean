@@ -129,7 +129,7 @@ def SStein : Prop :=
 
 def SClass : Prop :=
   ∀ (L F : Type) [Field L] [NumberField L] [Field F] [NumberField F] [Algebra L F] (l c ν e : ℕ) [Fact l.Prime]
-    (ζ : (𝓞 F)ˣ) (γ : F ≃ₐ[L] F) (h : Lay l c ν ζ γ), 2 * e + 3 < l ^ c →
+    (ζ : (𝓞 F)ˣ) (γ : F ≃ₐ[L] F) (_ : Lay l c ν ζ γ), 2 * e + 3 < l ^ c →
     ∀ (α : Fˣ) (𝔡 : HeightOneSpectrum (𝓞 F) →₀ ℤ), DivDel γ ((1 + l ^ c) ^ (e + 1)) α 𝔡 →
       ∃ (N : ℕ) (y : Ch (ZMod (l ^ ν)) (GL (Fin N) (𝓞 L)) (2 * e + 1 + 1 + 1)) (b : 𝓞 F), Cyc y ∧ b ≠ 0 ∧
         ∀ (k : Type) [Field k] [Finite k] (r : 𝓞 F →+* k), Function.Surjective (r.comp (algebraMap (𝓞 L) (𝓞 F))) →

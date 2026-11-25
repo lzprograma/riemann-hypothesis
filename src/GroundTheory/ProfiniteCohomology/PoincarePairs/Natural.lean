@@ -18,8 +18,6 @@ open CategoryTheory MonoidalCategory Limits GroundTheory.GroupCoh
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section LeibnizNatural
 
 variable {k : Type u} [CommRing k] {M M' N N' P : CochainComplex (ModuleCat.{u} k) ℕ}

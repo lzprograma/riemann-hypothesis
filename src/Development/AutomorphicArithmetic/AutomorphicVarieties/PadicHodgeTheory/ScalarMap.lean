@@ -6,54 +6,10 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeT
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtPoints
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDiag
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.UnivEx
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Finiteness.NilpotentKer
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.MvPowerSeries.Equiv
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -70,11 +26,6 @@ private def Cond (Ψ : G →* Oˣ) (I : Subgroup G) {C : Type} [CommRing C] [Alg
         ((r (s 1)).mat - Matrix.scalar _ (algebraMap O C (UpperTheory.V.UnitaryThreeInertia.psi Ψ 1 (s 1)))) *
         ((r (s 2)).mat - Matrix.scalar _ (algebraMap O C (UpperTheory.V.UnitaryThreeInertia.psi Ψ 2 (s 2)))) = 0
 
-private theorem scalar_map {R C : Type} [CommRing R] [CommRing C] (f : R →+* C) (c : R) :
-    f.mapMatrix (Matrix.scalar (Fin 3) c) = Matrix.scalar (Fin 3) (f c) := by
-  ext i j
-  simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.scalar_apply, Matrix.diagonal_apply]
-  split_ifs <;> simp
 
 private theorem cond_eqs (Ψ : G →* Oˣ) (I : Subgroup G) {R : Type} [CommRing R] [Algebra O R] (r : G →* GG (m := 3) (R := R)) :
     ∃ S : Set R, ∀ (C : Type) [CommRing C] [Algebra O C] (f : R →ₐ[O] C),
@@ -97,7 +48,8 @@ private theorem cond_eqs (Ψ : G →* Oˣ) (I : Subgroup G) {R : Type} [CommRing
       ((push f r (s 0)).mat - Matrix.scalar _ (algebraMap O C (UpperTheory.V.UnitaryThreeInertia.psi Ψ 0 (s 0)))) *
         ((push f r (s 1)).mat - Matrix.scalar _ (algebraMap O C (UpperTheory.V.UnitaryThreeInertia.psi Ψ 1 (s 1)))) *
         ((push f r (s 2)).mat - Matrix.scalar _ (algebraMap O C (UpperTheory.V.UnitaryThreeInertia.psi Ψ 2 (s 2)))) := fun s => by
-    simp only [M, hm, map_mul, map_sub, scalar_map, hc]
+    simp only [M, hm, map_mul, map_sub, Matrix.scalar_apply, RingHom.mapMatrix_apply,
+      Matrix.diagonal_map (RingHom.map_zero _), hc]
   constructor
   · rintro ⟨h1, h2⟩ a (⟨s, hs, k, rfl⟩ | ⟨s, hs, i, j, rfl⟩)
     · have := hP s
@@ -135,31 +87,6 @@ private theorem cond_tri (Ψ : G →* Oˣ) (I : Subgroup G) {C : Type} [CommRing
     ext i j
     fin_cases i <;> fin_cases j <;>
       simp [Matrix.mul_apply, Fin.sum_univ_three, h10, h20, h21, e0, e1, e2]
-
-private theorem cond_conj (Ψ : G →* Oˣ) (I : Subgroup G) {C : Type} [CommRing C] [Algebra O C] (u : G →* GG (m := 3) (R := C))
-    (hu : ∀ s ∈ I, (u s).right = 1) (n : GL (Fin 3) C) (h : Cond Ψ I u) : Cond Ψ I (conjBy n u) := by
-  have hm : ∀ s ∈ I, (conjBy n u s).mat =
-      (n : Matrix (Fin 3) (Fin 3) C) * (u s).mat * ((n⁻¹ : GL (Fin 3) C) : Matrix (Fin 3) (Fin 3) C) := by
-    intro s hs
-    have : (conjBy n u s).left = n * (u s).left * n⁻¹ := by
-      simp [conjBy, hu s hs]
-    simp only [GG.mat, this, Units.val_mul]
-  have hc : ∀ (A : Matrix (Fin 3) (Fin 3) C) (c : C),
-      (n : Matrix (Fin 3) (Fin 3) C) * A * ((n⁻¹ : GL (Fin 3) C) : Matrix (Fin 3) (Fin 3) C) - Matrix.scalar _ c =
-      (n : Matrix (Fin 3) (Fin 3) C) * (A - Matrix.scalar _ c) *
-        ((n⁻¹ : GL (Fin 3) C) : Matrix (Fin 3) (Fin 3) C) := by
-    intro A c
-    rw [mul_sub, sub_mul, ← (Matrix.scalar_commute c (fun _ => Commute.all _ _) _).eq, mul_assoc (Matrix.scalar _ c),
-      Units.mul_inv, mul_one]
-  refine ⟨fun s hs => ?_, fun s hs => ?_⟩
-  · rw [hm s hs, ← h.1 s hs, Matrix.coe_units_inv, Matrix.charpoly_units_conj]
-  · rw [hm _ (hs 0), hm _ (hs 1), hm _ (hs 2), hc, hc, hc]
-    have := h.2 s hs
-    generalize (u (s 0)).mat - _ = A at *
-    generalize (u (s 1)).mat - _ = B at *
-    generalize (u (s 2)).mat - _ = D at *
-    simp only [mul_assoc, Units.inv_mul_cancel_left]
-    rw [← mul_assoc B, ← mul_assoc A, ← mul_assoc A, this, zero_mul, mul_zero]
 
 end
 
@@ -240,6 +167,6 @@ theorem UpperTheory.V.Loc.lemma2a :
   obtain ⟨u, m, hu, -, -, hum⟩ := (ordEq hL D (FractionRing O) B π hn _).1 ⟨U.r.hasMult, hred, hc, hcr⟩
   have hcond : Cond D.Ψ (Iq l) (push g U.r.hom) := by
     rw [hum]
-    exact cond_conj _ _ u (fun s hs => (hu.mult s).trans (D.η_unr s hs)) m
+    exact GlobalTheory.OrdLoc.DcrOrd.cond_conj _ _ u (fun s hs => (hu.mult s).trans (D.η_unr s hs)) m
       (cond_tri _ _ u hu.tri (triDiag D (FractionRing O) B π hn u hu))
   exact Ideal.Quotient.eq_zero_iff_mem.1 ((hS B g).1 hcond a ha)

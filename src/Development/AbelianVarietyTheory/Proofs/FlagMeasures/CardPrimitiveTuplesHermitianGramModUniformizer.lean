@@ -183,7 +183,7 @@ theorem sum_char_unit_mul_ip_eq_zero {B : Type} [CommRing B] [Fintype B] (c : B 
   exact AddChar.sum_eq_zero_of_ne_one hψ
 
 theorem norm_gauss_sum_ip_le {B : Type} [CommRing B] [Fintype B] (c : B →+* B)
-    (hc : ∀ u, c (c u) = u) (q : ℕ) (_hq : 2 ≤ q) (hB : Fintype.card B = q ^ 2)
+    (hc : ∀ u, c (c u) = u) (q : ℕ) (hB : Fintype.card B = q ^ 2)
     (χ : AddChar B ℂ) (hχ : χ.IsPrimitive) (hinv : ∀ u, χ (c u) = χ u) (n : ℕ) (a : B)
     (ha : IsUnit (a + c a)) (v : Fin n → B) :
     ‖∑ y : Fin n → B, χ (a * ip c y y + ip c y v)‖ ≤ (q : ℝ) ^ n := by
@@ -202,7 +202,6 @@ theorem norm_gauss_sum_ip_le {B : Type} [CommRing B] [Fintype B] (c : B →+* B)
   have hsq : S * (starRingEnd ℂ) S = (((q : ℝ) ^ n) ^ 2 : ℝ) := by
     calc S * (starRingEnd ℂ) S
         = ∑ y : Fin n → B, S * (starRingEnd ℂ) (χ (Q y)) := by
-          set_option synthInstance.maxHeartbeats 100000 in
             conv_lhs => rw [hS, map_sum, ← hS, Finset.mul_sum]
       _ = ∑ y : Fin n → B, ∑ z : Fin n → B, χ (Q z) * χ ((a + c a) * ip c y z) := by
           refine Finset.sum_congr rfl fun y _ => ?_
@@ -337,7 +336,7 @@ theorem quad_count {B : Type} [CommRing B] [Fintype B] (c : B →+* B) (hc : ∀
           simp only [sub_eq_add_neg, AddChar.map_add_eq_mul]
           rw [← Finset.sum_mul]
           have h2 := quad_sum_char_pi χ hχ (fun j => c ((∑ i, c (s i) • x i) j))
-          rw [if_neg] at h2
+          rw [ite_eq_right] at h2
           · simp only [ip]
             rw [h2, zero_mul]
           · intro h3
@@ -354,7 +353,7 @@ theorem quad_count {B : Type} [CommRing B] [Fintype B] (c : B →+* B) (hc : ∀
       positivity
     · have hu : IsUnit (a + c a) := hf _ (by rw [map_add (f := _), hc, add_comm])
         (fun h => ha (by linear_combination h))
-      have h1 := _root_.GlobalTheory.GramCount.norm_gauss_sum_ip_le c hc q hq hB χ hχ hχc n a hu (∑ i, c (s i) • x i)
+      have h1 := _root_.GlobalTheory.GramCount.norm_gauss_sum_ip_le c hc q hB χ hχ hχc n a hu (∑ i, c (s i) • x i)
       have h2 : F (a, s) = χ (-(a * t + ∑ i, s i * g i)) *
           ∑ y : Fin n → B, χ (a * ip c y y + ip c y (∑ i, c (s i) • x i)) := by
         simp only [F, hv, Finset.mul_sum, ← AddChar.map_add_eq_mul]
@@ -413,8 +412,7 @@ theorem exists_isPrimitive_invol_invariant {B : Type} [CommRing B] [Fintype B] (
   refine ⟨ψ.compAddMonoidHom T, ?_, ?_⟩
   · intro a ha h
     have hex : ∃ u, a * u + c (a * u) ≠ 0 := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       have h1 := hne 1
       have h2 := hne ω
       rw [mul_one] at h1
@@ -473,8 +471,7 @@ theorem exists_dot_eq_of_indep {B : Type} [CommRing B] [Fintype B] (χ : AddChar
     (hχ : χ.IsPrimitive) {k n : ℕ} (x : Fin k → Fin n → B)
     (hx : ∀ s : Fin k → B, ∑ a, s a • x a = 0 → s = 0) (u : Fin k → B) :
     ∃ z : Fin n → B, ∀ a, ∑ i, x a i * z i = u a := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have h1 : ∑ z : Fin n → B, ∑ s : Fin k → B, χ (∑ a, s a * (∑ i, x a i * z i - u a)) = 0 := by
     refine Finset.sum_eq_zero fun z _ => ?_
     refine sum_char_dot_eq_zero χ hχ (fun a => ∑ i, x a i * z i - u a) ?_
@@ -1092,7 +1089,7 @@ theorem hensel_step [Finite A] (c : A →+* A) (hc : ∀ u, c (c u) = u) {ω : A
           rw [← hH.1 a b, hu b a, map_mul, hq]
         simp only [henselDiff, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Matrix.of_apply,
           ip_sum_left, ip_sum_right, ip_smul_left, ip_smul_right, hy, hy', mul_ite, mul_one,
-          mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, map_mul]
+          mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, map_mul]
         linear_combination (c θ) * h1 - θ * hu a b + H a b * hθ
       rw [this, sub_self]
       exact zero_mem _

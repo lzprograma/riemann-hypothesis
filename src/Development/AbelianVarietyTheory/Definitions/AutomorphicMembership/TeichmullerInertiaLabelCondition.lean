@@ -8,54 +8,8 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DepthZero
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TeichmullerRoots
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTameGenAt
 public import Mathlib.NumberTheory.Padics.HeightOneSpectrum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodChi
-import Mathlib.LinearAlgebra.Eigenspace.Charpoly
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.PicardGroup
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTeichmullerMaps, Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TeichmullerInertiaLabelCondition
@@ -68,9 +22,6 @@ section -- clump:auto
 open Formalism.BasicNotions GlobalTheory.Mem GlobalTheory.MemN NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial
 
 namespace GlobalTheory.MemN
-
-theorem exists_teichmuller_maps : ∀ (g : ℕ) (hg : g.Prime), (∃ τ : Fb g hg →* ℂ, ∀ x y, x ≠ 0 → y ≠ 0 → τ x = τ y → x = y) ∧ ∀ (l : ℕ) (hl : l.Prime), ∃ ι : Fb g hg →* Fb l hl, ∀ x y, x ≠ 0 → y ≠ 0 → (orderOf x).Coprime l → (orderOf y).Coprime l → ι x = ι y → x = y :=
-  fun g hg => ⟨@GaloisStage.exists_teichC g ⟨hg⟩, fun l hl => @GaloisStage.exists_iota g l ⟨hg⟩ ⟨hl⟩⟩
 
 end GlobalTheory.MemN
 end -- clump:auto
@@ -477,7 +428,7 @@ open Classical in
 def lab (τ : Fbar g →* ℂ) (γ : G E Ω) (x : WD h) : (ZMod g)[X] :=
   if H : TeichmullerInertiaLabelCondition A w τ γ then (existsUnique_lab H x).choose else 1
 
-theorem lab_of_not (H : ¬ TeichmullerInertiaLabelCondition A w τ γ) (x : WD h) : lab τ γ x = 1 := dif_neg H
+theorem lab_of_not (H : ¬ TeichmullerInertiaLabelCondition A w τ γ) (x : WD h) : lab τ γ x = 1 := dite_eq_right H
 
 theorem lab_monic (τ : Fbar g →* ℂ) (γ : G E Ω) (x : WD h) : (lab τ γ x).Monic := by
   unfold lab
@@ -603,19 +554,6 @@ theorem rootsBar_X_sub_C_pow (c : ZMod g) (n : ℕ) :
     rootsBar ((X - C c) ^ n) = n • {algebraMap (ZMod g) (Fbar g) c} := by
   rw [rootsBar, Polynomial.map_pow, Polynomial.map_sub, map_X, map_C, roots_pow, roots_X_sub_C]
 
-theorem lab_mk_of_trivial (H : TeichmullerInertiaLabelCondition A w τ γ) (a : WDRep h V)
-    (ha : ∀ σ : Ine (F := E) A, a.ρ (ineIncl h σ) = 1) :
-    lab τ γ (mk a) = (X - 1) ^ finrank ℂ V := by
-  rw [lab_eq_iff_of_tame H ((tame_mk a).mpr fun σ hσ => ha ⟨σ, Wild_le_Ine hσ⟩), ← C_1,
-    rootsBar_X_sub_C_pow, inePol_of_mem_Ine _ H.2.1, charPol_mk, ha, LinearMap.charpoly_one, ← C_1,
-    roots_pow, roots_X_sub_C]
-  exact ⟨(monic_X_sub_C _).pow _, by simp [Multiset.map_nsmul]⟩
-
-theorem lab_lpSp (H : TeichmullerInertiaLabelCondition A w τ γ) (n : ℕ) :
-    lab τ γ (lpSp (h := h) n) = (X - 1) ^ n := by
-  rw [lpSp, lab_mk_of_trivial H (WDRep.sp (h := h) n) (WDRep.unr_diag (WDRep.spEig w n)).2]
-  simp
-
 theorem lab_lpOfChar_eq_iff (H : TeichmullerInertiaLabelCondition A w τ γ) {χ : Weil h →* ℂˣ} (hχ : IsSmooth χ)
     (ht : ∀ σ : Weil h, (σ : G E Ω) ∈ Wild E A → χ σ = 1) (c : ZMod g) :
     lab τ γ (lpOfChar h χ hχ) = X - C c ↔
@@ -630,21 +568,6 @@ theorem lab_lpOfChar_eq_iff (H : TeichmullerInertiaLabelCondition A w τ γ) {χ
   exact and_iff_right (monic_X_sub_C c)
 
 end WD
-
-theorem exists_tameInertiaSetting (h : IsPlaceOver A w) (hw : normV w = g) :
-    ∃ (τ : Fbar g →* ℂ) (γ : G E Ω), TameGenAt A γ ∧ TeichmullerInertiaLabelCondition A w τ γ := by
-  obtain ⟨γ, hγ⟩ := GlobalTheory.MemTame.exists_tameGenAt E Ω w A h
-  obtain ⟨τ, hτ⟩ := (GlobalTheory.MemN.exists_teichmuller_maps g Fact.out).1
-  exact ⟨τ, γ, hγ, .of_tameGenAt hw hγ hτ⟩
-
-theorem exists_normV_eq (g : ℕ) (hg : g.Prime) : ∃ v : HeightOneSpectrum (𝓞 ℚ), normV v = g := by
-  obtain ⟨p, hp⟩ := (Rat.HeightOneSpectrum.primesEquiv (R := 𝓞 ℚ)).surjective ⟨g, hg⟩
-  have hp' : Rat.HeightOneSpectrum.natGenerator p = g := congrArg Subtype.val hp
-  have e := Ideal.quotientEquiv p.asIdeal _ (Rat.IsIntegralClosure.intEquiv (𝓞 ℚ))
-    (Rat.HeightOneSpectrum.span_natGenerator p)
-  refine ⟨p, ?_⟩
-  rw [normV, Nat.card_congr e.toEquiv, hp']
-  simpa using Nat.card_congr (Int.quotientSpanNatEquivZMod g).toEquiv
 
 
 

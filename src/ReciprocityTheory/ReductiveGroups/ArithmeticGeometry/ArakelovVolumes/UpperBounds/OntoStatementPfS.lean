@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KaUnfoldPfA
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
@@ -58,18 +59,7 @@ theorem dom_rmul {x b : Frame X.Ψ r} (hx : x ∈ X.dom) (hb : b ∈ Bor X.Ψ r)
 
 theorem stab_mat {γ : GL (Fin r) E} (hγ : γ ∈ X.Γ) :
     (γ : Matrix (Fin r) (Fin r) E)ᵀ * X.Gm * (γ : Matrix (Fin r) (Fin r) E).map cc = X.Gm := by
-  have hst := (X.Γ_stab γ hγ).1
-  ext i j
-  have h := hst (Pi.single i 1) (Pi.single j 1)
-  have hR : herm X.Gm (Pi.single i (1 : E)) (Pi.single j 1) = X.Gm i j := by
-    simp [herm, Pi.single_apply, cc, apply_ite]
-  have hL : herm X.Gm ((γ : Matrix (Fin r) (Fin r) E) *ᵥ Pi.single i 1)
-      ((γ : Matrix (Fin r) (Fin r) E) *ᵥ Pi.single j 1) =
-      ((γ : Matrix (Fin r) (Fin r) E)ᵀ * X.Gm * (γ : Matrix (Fin r) (Fin r) E).map cc) i j := by
-    simp only [herm, Matrix.mulVec_single_one, Matrix.col_apply, Matrix.mul_apply, Matrix.transpose_apply,
-      Matrix.map_apply, Finset.sum_mul]
-    rw [Finset.sum_comm]
-  rw [← hL, h, hR]
+  apply ReciprocityTheory.ChartRestriction.G.AR.Up.KU.herm_mat <;> assumption
 
 theorem gram_gam {γ : GL (Fin r) E} (hγ : γ ∈ X.Γ) (τ : X.Ψ) :
     gram τ.1 X.Gm ((γ : Matrix (Fin r) (Fin r) E).map τ.1) = X.Gm.map τ.1 := by
@@ -87,19 +77,7 @@ theorem gram_lact {γ : GL (Fin r) E} (hγ : γ ∈ X.Γ) (x : Frame X.Ψ r) (τ
 
 theorem dom_lact {γ : GL (Fin r) E} (hγ : γ ∈ X.Γ) {x : Frame X.Ψ r} (hx : x ∈ X.dom) :
     lact γ x ∈ X.dom := by
-  rw [X.mem_dom_iff] at hx ⊢
-  intro τ
-  refine ⟨?_, fun i => ?_⟩
-  · show ((γ : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ).det ≠ 0
-    rw [Matrix.det_mul]
-    refine mul_ne_zero ?_ (hx τ).1
-    have h1 : ((γ : Matrix (Fin r) (Fin r) E).map τ.1).det = τ.1 (γ : Matrix (Fin r) (Fin r) E).det := by
-      rw [RingHom.map_det]
-      rfl
-    rw [h1]
-    exact (map_ne_zero τ.1).2 (Matrix.isUnits_det_units γ).ne_zero
-  · have := (hx τ).2 i
-    simpa only [dmin, gram_lact X hγ x τ] using this
+  apply ReciprocityTheory.ChartRestriction.G.AR.Up.KU.lact_dom <;> assumption
 
 end
 

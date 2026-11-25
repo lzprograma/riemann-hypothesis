@@ -11,49 +11,8 @@ public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PolyDe
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DetOfTriangular
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnLeftInverse
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.L2NormFundamentalDomain
 
@@ -180,7 +139,7 @@ theorem split_form {p q : ℕ} (hr : p + q = r) (N M : Matrix (Fin r) (Fin r) �
   have hM (a b) : M a b = t * (-(sgn p a : ℝ) * N a b + N a b * -(sgn p b : ℝ)) := by
     rw [← h, Matrix.smul_apply, Matrix.add_apply, diagonal_mul, mul_diagonal, smul_eq_mul]
   rw [hB, hB, Finset.sum_comm (f := fun i j => N (rowIdx hr (.inr j)) (rowIdx hr (.inl i)) * _ * _)]
-  simp only [e, hM, sgn, h1, h2, if_true, if_false, mul_add, Finset.mul_sum,
+  simp only [e, hM, sgn, h1, h2, ite_true, ite_false, mul_add, Finset.mul_sum,
     Finset.sum_add_distrib]
   have c2 {m m' : ℕ} (f f' : Fin m → Fin m' → ℂ) (h : ∀ a b, f a b = f' a b) :
       ∑ a, ∑ b, f a b = ∑ a, ∑ b, f' a b := by simp only [h]
@@ -316,9 +275,9 @@ theorem kZero_eq {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h₂ : x₂
     dotProduct_mulVec _ (aLin X x₁ x₂ τ)⁻¹ᵀ,
     vecMul_transpose] at h
   have m1 (z w : Fin n → Fin g → ℂ) (i) : mix X idx z w τ k (rowIdx hr (.inl i)) =
-    w k (idx.symm (τ, rowIdx hr (.inl i))) := if_neg (h1 i)
+    w k (idx.symm (τ, rowIdx hr (.inl i))) := ite_eq_right (h1 i)
   have m2 (z w : Fin n → Fin g → ℂ) (i) : mix X idx z w τ k (rowIdx hr (.inr i)) =
-    z k (idx.symm (τ, rowIdx hr (.inr i))) := if_pos (h2 i)
+    z k (idx.symm (τ, rowIdx hr (.inr i))) := ite_eq_left (h2 i)
   simp only [m1, m2] at h
   simp only [mul_assoc (s τ), ← Finset.mul_sum]
   rw [e2]

@@ -83,7 +83,7 @@ theorem _root_.GlobalTheory.ev_starProjection_eigenspace_eq_residue :
           have hortho := hOm.orthogonalFamily_eigenspaces.isOrtho hne
           exact (Submodule.starProjection_apply_eq_zero_iff _).mpr (hortho.symm hxμ)
       have hsum : ∑ j, c j u • ev (P j x) = c i u • ev x := by
-        rw [Finset.sum_eq_single i (fun j _ hji => by rw [hPx, if_neg hji, map_zero, smul_zero]) (by simp), hPx, if_pos rfl]
+        rw [Finset.sum_eq_single i (fun j _ hji => by rw [hPx, ite_eq_right hji, map_zero, smul_zero]) (by simp), hPx, ite_eq_left rfl]
       have hKx : (u + m i) • K u x = (∏ k, (u + m k)) • ev x := by
         rw [← hK u x, hOmx, ← map_smul]
         congr 1

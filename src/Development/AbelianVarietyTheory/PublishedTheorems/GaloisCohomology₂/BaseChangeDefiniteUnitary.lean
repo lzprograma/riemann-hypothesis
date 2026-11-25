@@ -84,7 +84,6 @@ def HasInfCharGL (V : Submodule ℂ (Sm E a)) (τ : E →+* ℂ) (m : Multiset �
   Multiset.card m = a ∧ ∀ u, ∀ φ ∈ V, cap τ u φ = (m.map (u + ·)).prod • φ
 
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 omit [_root_.NumberField.IsTotallyComplex E] in
 def locProd {c n : ℕ} {N : Fin c → ℕ} (h : ∑ i, N i = n) (w : HeightOneSpectrum (𝓞 E))
     (σ : ∀ i, SmIrr (GL (Fin (N i)) (w.adicCompletion E))) :=

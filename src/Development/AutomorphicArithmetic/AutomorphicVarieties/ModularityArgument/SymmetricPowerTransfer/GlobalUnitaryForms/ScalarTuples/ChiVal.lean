@@ -74,7 +74,7 @@ private theorem hs_sq {K : Type} [Field K] (D x : K) : hs D x ^ 2 = 1 := by
 private theorem hs_of_sq {K : Type} [Field K] [CharZero K] (D x : K) (h0 : D ≠ 0) (h : IsSquare D) : hs D x = 1 := by
   obtain ⟨r, rfl⟩ := h
   have hr : r ≠ 0 := fun e => h0 (by rw [e, mul_zero])
-  refine if_pos ⟨(x + 1) / 2, (x - 1) / (2 * r), ?_⟩
+  refine ite_eq_left ⟨(x + 1) / 2, (x - 1) / (2 * r), ?_⟩
   field_simp
   ring
 

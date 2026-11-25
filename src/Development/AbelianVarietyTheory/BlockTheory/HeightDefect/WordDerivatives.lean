@@ -51,8 +51,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.LieAlgebraExponentialFamilies
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 attribute [local instance 100] LieRing.ofAssociativeRing
 
 def lieU {n : ℕ} (J : Matrix (Fin n) (Fin n) ℂ) : LieSubalgebra ℝ (Matrix (Fin n) (Fin n) ℂ) where

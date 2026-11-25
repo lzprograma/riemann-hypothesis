@@ -190,8 +190,8 @@ theorem firstMinimum_continuousOn (X : Data E r) : ContinuousOn X.la1 X.dom := b
     · linarith
   exact (Real.continuous_sqrt.continuousAt).comp_continuousWithinAt hsq
 
-theorem la1GGStatement_firstMinimum : LineBundleFirstBoundGlobalGeneration (E := E) := fun r X hr =>
-  ⟨fun γ hγ x hx b hb => firstMinimum_biinvariant X hγ hx hb, firstMinimum_continuousOn X, fun x hx => la1_pos_of_mem_dom X hr hx⟩
+theorem la1GGStatement_firstMinimum : LineBundleFirstBoundGlobalGeneration (E := E) := fun _ X hr =>
+  ⟨fun _ hγ _ hx _ hb => firstMinimum_biinvariant X hγ hx hb, firstMinimum_continuousOn X, fun _ hx => la1_pos_of_mem_dom X hr hx⟩
 
 end
 

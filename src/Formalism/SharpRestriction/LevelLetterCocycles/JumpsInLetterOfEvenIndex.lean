@@ -6,46 +6,6 @@ import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMulVBFilCris
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVOfNotJump
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -173,10 +133,10 @@ theorem jumps_in_letter_of_even_index (hE : Formalism.MainNotions.RamifiedCoeffi
   · subst hj
     have hηb := Formalism.MainNotions.N.Pv.LocalLengthBound.rk_eta_lt W hS j
     unfold JumpWinS at hw
-    simp only [hie, if_true, Set.mem_union, Set.mem_Icc] at hw
+    simp only [hie, ite_true, Set.mem_union, Set.mem_Icc] at hw
     push_cast
     omega
-  · simp only [hj, if_false]
+  · simp only [hj, ite_false]
     unfold JumpWinS at hw
     split_ifs at hw <;> (simp only [Set.mem_union, Set.mem_Icc] at hw; push_cast; omega)
 
@@ -191,7 +151,7 @@ theorem qpφ_mem (hE : Formalism.MainNotions.RamifiedCoefficientChains.DcrisExac
   have h5T := h5 T₂ (MiS b S η i) (hiS b S η i) hT (fun τ j hτ => hJL j τ hτ)
   have hmem : e' k ∈ W.Nl T₂ (i - 1) := ⟨e' k, (he'.1 k).1, by simpa using (he'.1 k).2.1⟩
   have h1 := h5T.1 i (e' k) hmem
-  simp only [MiS, if_true] at h1
+  simp only [MiS, ite_true] at h1
   obtain ⟨-, -, w, hw⟩ := uniformizer_unit_and_q_factor W h9 hS.1 T₂ hT (by have := hS.2.1; omega)
   rw [Formalism.MainNotions.RamifiedCoefficientChains.S9.NinQ.Q_eq_q W hS.1.2.1, hw, mul_pow, mul_smul] at h1
   have hN : Formalism.MainNotions.LiftingTheory.qp W ^ (b i + S) • W.φD T₂ (e' k) ∈ W.N T₂ := by
@@ -282,38 +242,38 @@ theorem detAlg_of (hE : Formalism.MainNotions.RamifiedCoefficientChains.DcrisExa
     ext l k
     rw [Matrix.mul_diagonal, Matrix.mul_apply]
     by_cases hk : (k : ℕ) < m'
-    · simp only [QQc, dd, Zext, dif_pos hk, if_pos hk]
+    · simp only [QQc, dd, Zext, dite_eq_left hk, ite_eq_left hk]
       rw [mul_comm, hlowc k hk l, Matrix.mul_apply]
-    · simp only [QQc, dd, Zext, dif_neg hk, if_neg hk, mul_one]
+    · simp only [QQc, dd, Zext, dite_eq_right hk, ite_eq_right hk, mul_one]
       rw [hhigh k hk]
       simp [P]
   let zz : Fin (finrank LL T₂.V) → O := fun k => if (k : ℕ) < m' then ((PD.p : ℕ) : O) ^ σ else 1
   have hZext : ∀ l k, PowerSeries.constantCoeff (Zext l k) = if l = k then zz k else 0 := by
     intro l k
     by_cases hk : (k : ℕ) < m'
-    · simp only [Zext, zz, if_pos hk]
+    · simp only [Zext, zz, ite_eq_left hk]
       exact hZ0 l k
-    · simp only [Zext, zz, if_neg hk]
+    · simp only [Zext, zz, ite_eq_right hk]
       split_ifs <;> simp
   have hconst := det_const QQc P Zext dd zz hid hZext
 
   let κ : ℕ → ℕ := fun k => if hk : k < m' then kk ⟨k, hk⟩ else 0
   have hsumκ : ∑ k : Fin (finrank LL T₂.V), κ k = ∑ j : Fin m', kk j := by
     rw [Fin.sum_univ_eq_sum_range κ, ← Finset.sum_subset (Finset.range_subset_range.mpr hmr)
-      (fun k _ hk => by rw [Finset.mem_range] at hk; simp only [κ, dif_neg hk]), Finset.sum_range]
+      (fun k _ hk => by rw [Finset.mem_range] at hk; simp only [κ, dite_eq_right hk]), Finset.sum_range]
     refine Finset.sum_congr rfl fun j _ => by simp [κ, j.2]
   have hsumσ : ∑ k : Fin (finrank LL T₂.V), (if (k : ℕ) < m' then σ else 0) = σ * m' := by
     rw [Fin.sum_univ_eq_sum_range (fun k => if k < m' then σ else 0),
       ← Finset.sum_subset (Finset.range_subset_range.mpr hmr)
-        (fun k _ hk => by rw [Finset.mem_range] at hk; simp only [if_neg hk]), Finset.sum_range]
+        (fun k _ hk => by rw [Finset.mem_range] at hk; simp only [ite_eq_right hk]), Finset.sum_range]
     simp [Finset.sum_const, mul_comm]
   have hdd : ∏ k, PowerSeries.constantCoeff (dd k) = ((PD.p : ℕ) : O) ^ (∑ j : Fin m', kk j) := by
     rw [← hsumκ, ← Finset.prod_pow_eq_pow_sum]
     refine Finset.prod_congr rfl fun k _ => ?_
     by_cases hk : (k : ℕ) < m'
-    · simp only [dd, κ, dif_pos hk, map_pow, (PowerSeries.constantCoeff (R := O)).map_add,
+    · simp only [dd, κ, dite_eq_left hk, map_pow, (PowerSeries.constantCoeff (R := O)).map_add,
         PowerSeries.constantCoeff_X, PowerSeries.constantCoeff_C, zero_add]
-    · simp [dd, κ, dif_neg hk]
+    · simp [dd, κ, dite_eq_right hk]
   have hzz : ∏ k, zz k = ((PD.p : ℕ) : O) ^ (σ * m') := by
     rw [← hsumσ, ← Finset.prod_pow_eq_pow_sum]
     refine Finset.prod_congr rfl fun k _ => ?_

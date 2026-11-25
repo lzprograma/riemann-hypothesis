@@ -3,44 +3,6 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep
 public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.JointEIntList
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationBoundDetPowerFactor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.FlipOneThree
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.IntegralEnvelopingPreservesStable
 
@@ -69,14 +31,14 @@ theorem oneT_monomial (e : Module.End Kf (MvPolynomial τ Kf)) (mo : σ →₀ �
   unfold oneT
   by_cases hq : q = 0
   · simp [hq]
-  · rw [support_monomial, if_neg hq, Finset.sum_singleton, coeff_monomial, if_pos rfl]
+  · rw [support_monomial, ite_eq_right hq, Finset.sum_singleton, coeff_monomial, ite_eq_left rfl]
 
 theorem planeCoeff_monomial (nu : τ →₀ ℕ) (mo : σ →₀ ℕ) (q : MvPolynomial τ Kf) :
     planeCoeff nu (monomial mo q) = monomial mo (q.coeff nu) := by
   unfold planeCoeff
   by_cases hq : q = 0
   · simp [hq]
-  · rw [support_monomial, if_neg hq, Finset.sum_singleton, coeff_monomial, if_pos rfl]
+  · rw [support_monomial, ite_eq_right hq, Finset.sum_singleton, coeff_monomial, ite_eq_left rfl]
 
 theorem X_mul_monomial' {R : Type} [CommSemiring R] (v : σ) (u : σ →₀ ℕ) (a : R) :
     (X v : MvPolynomial σ R) * monomial u a = monomial (Finsupp.single v 1 + u) a := by
@@ -174,7 +136,7 @@ theorem touch_cost_nonneg {n' r : ℕ} [NeZero n'] (Fr : Frames n' r) (s : Fin n
 theorem touch_cost_eq_one {n' r : ℕ} [NeZero n'] (Fr : Frames n' r) (s : Fin n') (jz : ℤ) (u : ℕ) (h : touchT Fr jz u s) :
     cost1 Fr s jz u = 1 := by
   unfold cost1
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 def thUp {n' r : ℕ} [NeZero n'] (Fr : Frames n' r) {p : ℕ} {O : Type} [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] {J : ℕ} (Dt : SignedChainData p O r J) (s : Fin n') (th : ∀ j, Fin (Dt.nch j) → ℝ) :
@@ -267,8 +229,6 @@ theorem thDrop_of (hB : Base Fr p Dt) {x0 : TL J Dt.nL r} (hG : TouchAt Fr Dt x0
       rcases hx with ⟨l, hl⟩ | ⟨m', hlt, hm'⟩
       · exact Or.inl ⟨l, hl, by have := l.isLt; omega⟩
       · refine Or.inr ⟨m', hm', ?_⟩
-        have h1 : mm.val < m'.val := hlt
-        have h2 := m'.isLt
         omega
     unfold thLUp
     rw [touch_cost_eq_one Fr _ _ _ ht]
@@ -349,7 +309,6 @@ theorem var_cases (x0 : TL J nL r) (b : Fin (m + 1)) :
     unfold Formalism.MainNotions.TestSideWords.plVar
     exact Prod.ext rfl (Fin.ext rfl)
   · right
-    have h1 := b.isLt
     refine ⟨⟨b.val - r, by omega⟩, ?_⟩
     unfold Formalism.MainNotions.TestSideWords.noVar
     refine Prod.ext rfl (Fin.ext ?_)

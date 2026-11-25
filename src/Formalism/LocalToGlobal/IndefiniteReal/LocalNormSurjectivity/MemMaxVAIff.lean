@@ -24,33 +24,11 @@ theorem mem_VA {x : L} : x ∈ VA L ↔ Valued.v x ≤ 1 := Valuation.mem_valuat
 
 theorem mem_intL {x : L} : x ∈ Formalism.UG.intL L ↔ Valued.v x ≤ 1 := Valuation.mem_integer_iff _ _
 
-theorem isUnit_VA_iff (a : VA L) : IsUnit a ↔ Valued.v (a : L) = 1 := by
-  constructor
-  · rintro ⟨u, rfl⟩
-    have hmul : ((u : VA L) : L) * (((u⁻¹ : (VA L)ˣ) : VA L) : L) = 1 := by
-      exact congrArg (fun x : VA L => (x : L)) u.mul_inv
-    have hu : Valued.v ((u : VA L) : L) ≤ 1 := mem_VA.1 (u : VA L).2
-    have hu' : Valued.v (((u⁻¹ : (VA L)ˣ) : VA L) : L) ≤ 1 := mem_VA.1 (u⁻¹ : (VA L)ˣ).1.2
-    have hprod := congrArg Valued.v hmul
-    rw [map_mul, map_one] at hprod
-    refine le_antisymm hu ?_
-    calc (1 : WithZero (Multiplicative ℤ)) = Valued.v ((u : VA L) : L) *
-          Valued.v (((u⁻¹ : (VA L)ˣ) : VA L) : L) := hprod.symm
-      _ ≤ Valued.v ((u : VA L) : L) := mul_le_of_le_one_right' hu'
-  · intro h
-    have ha0 : (a : L) ≠ 0 := by
-      intro h0
-      rw [h0, map_zero] at h
-      exact zero_ne_one h
-    have hinv : (a : L)⁻¹ ∈ VA L := by
-      rw [mem_VA, map_inv₀, h, inv_one]
-    refine IsUnit.of_mul_eq_one (⟨(a : L)⁻¹, hinv⟩ : VA L) ?_
-    apply Subtype.ext
-    exact mul_inv_cancel₀ ha0
+theorem isUnit_VA_iff (a : VA L) : IsUnit a ↔ Valued.v (a : L) = 1 :=
+  (Valuation.valuationSubring.integers (Valued.v : Valuation L _)).isUnit_iff_valuation_eq_one
 
-theorem mem_max_VA_iff (a : VA L) : a ∈ IsLocalRing.maximalIdeal (VA L) ↔ Valued.v (a : L) < 1 := by
-  rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, isUnit_VA_iff]
-  exact ⟨fun h => lt_of_le_of_ne (mem_VA.1 a.2) h, fun h => ne_of_lt h⟩
+theorem mem_max_VA_iff (a : VA L) : a ∈ IsLocalRing.maximalIdeal (VA L) ↔ Valued.v (a : L) < 1 :=
+  Valuation.mem_maximalIdeal_iff L Valued.v
 
 variable (σ : L →+* L) (hv : ∀ x, Valued.v (σ x) = Valued.v x)
 
@@ -217,9 +195,5 @@ theorem normSurj [CompleteSpace L] (hF : FinNormSurj) (hS : HenselSqrt) {ϖ : L}
     ring
 
 end Norm
-
-section Final
-
-end Final
 
 end Formalism.IndefR.LocBrg

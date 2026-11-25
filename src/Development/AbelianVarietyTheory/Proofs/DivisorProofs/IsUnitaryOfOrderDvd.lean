@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasInfOfChars
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOfBalanced
 public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatHeckeCharacterTrivialCongruentUnits
@@ -67,21 +68,7 @@ open Formalism.L2.Host
 
 theorem inf_eq_one {L : Type} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] {χ : HChar L} {n : ℕ} (hn : 0 < n)
     (h : χ.OrderDvd n) (k : Lˣ) : χ.inf k = 1 := by
-  have hx : ∀ x, (χ.1 x) ^ n = 1 := fun x => congrArg (fun ξ : HChar L => ξ.1 x) h
-  have hw : ∀ (w : InfinitePlace L) (y : (w.Completion)ˣ), χ.locInf w y = 1 := by
-    intro w y
-    let e := InfinitePlace.Completion.ringEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)
-    obtain ⟨z, hz⟩ := IsAlgClosed.exists_pow_nat_eq (e (y : w.Completion)) hn
-    have hz' : (e.symm z) ^ n = y := by rw [← map_pow, hz]; simp
-    have hz0 : e.symm z ≠ 0 := by
-      intro h0; rw [h0, zero_pow hn.ne'] at hz'; exact y.ne_zero hz'.symm
-    have : y = (Units.mk0 _ hz0) ^ n := Units.ext (by simp [hz'])
-    rw [this, map_pow]
-    exact hx _
-  show χ.1 (Formalism.L2.Host.infDiag k) = 1
-  unfold Formalism.L2.Host.infDiag
-  rw [MonoidHom.finsetProd_apply, map_prod]
-  exact Finset.prod_eq_one fun w _ => hw w _
+  apply _root_.GlobalTheory.Mem.Chr.TieModel.inf_eq_one_of_order <;> assumption
 
 theorem smul_eq_of_isConjPl {D : D7} {w w' : HeightOneSpectrum (𝓞 D.host.E)} (hc : Formalism.IndefR.Lev.IsConjPl w w') :
     D.host.conj • w.asIdeal = w'.asIdeal := by

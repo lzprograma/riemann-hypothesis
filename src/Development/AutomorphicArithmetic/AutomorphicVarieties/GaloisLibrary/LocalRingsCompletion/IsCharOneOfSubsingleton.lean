@@ -99,7 +99,7 @@ def lift (I : Ideal R) [IsAdicComplete I R] (x : I) : O⟦X⟧ →ₐ[O] R where
     have h2 := (exists_lim I x f).choose_spec n
     have h3 := (exists_lim I x g).choose_spec n
     have h4 := aeval_sub_mem (p := trunc n (f * g)) (q := trunc n f * trunc n g) (n := n) x.2 fun i hi => by
-      rw [coeff_trunc, if_pos hi, ← Polynomial.coeff_coe, Polynomial.coe_mul,
+      rw [coeff_trunc, ite_eq_left hi, ← Polynomial.coeff_coe, Polynomial.coe_mul,
         coeff_mul_eq_coeff_trunc_mul_trunc _ _ hi]
     have := (I ^ n).sub_mem ((I ^ n).sub_mem ((I ^ n).add_mem h1 h4)
       (Ideal.mul_mem_right (exists_lim I x g).choose _ h2))
@@ -177,9 +177,6 @@ def omega (R : Type*) [CommRing R] (l n : ℕ) : Polynomial R := (1 + Polynomial
 section Char
 
 variable {R : Type*} [CommRing R]
-
-def locLen (P : Ideal R) [P.IsPrime] (M : Type*) [AddCommGroup M] [Module R M] : ℕ∞ :=
-  Module.length (Localization.AtPrime P) (LocalizedModule P.primeCompl M)
 
 def coinvLen (g : R) (M : Type*) [AddCommGroup M] [Module R M] : ℕ∞ :=
   Module.length R (QuotSMulTop g M)

@@ -18,20 +18,6 @@ namespace Formalism.L2.S.Pv.EnergyAbs
 
 open Formalism.L2.SG.Pf.EnergyAbs
 
-section General
-
-variable {α β : Type} [MeasurableSpace α] [MeasurableSpace β]
-
-private theorem norm_eq_of_inner_self_eq_inner_self_lemma {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    {a b : E} (h : ⟪a, a⟫_ℂ = ⟪b, b⟫_ℂ) : ‖a‖ = ‖b‖ := by
-  have h2 : ‖a‖ ^ 2 = ‖b‖ ^ 2 := by
-    have h' := h
-    rw [inner_self_eq_norm_sq_to_K, inner_self_eq_norm_sq_to_K] at h'
-    exact_mod_cast h'
-  nlinarith [norm_nonneg a, norm_nonneg b]
-
-end General
-
 section Main
 
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G]
@@ -48,7 +34,7 @@ def Fk (σ : G → (HH →L[ℂ] HH)) (w : HH) (W : G → V) (z z' q : G) : ℂ 
 
 theorem fol_rep_norm {σ : G → (HH →L[ℂ] HH)} (hσ : IsUnitRep σ) (x : G) (a : HH) : ‖σ x a‖ = ‖a‖ := by
   obtain ⟨-, -, hin, -⟩ := id hσ
-  exact norm_eq_of_inner_self_eq_inner_self_lemma (hin x a a)
+  rw [norm_eq_sqrt_re_inner (𝕜 := ℂ) (σ x a), norm_eq_sqrt_re_inner (𝕜 := ℂ) a, hin x a a]
 
 theorem fol_rep_mul {σ : G → (HH →L[ℂ] HH)} (hσ : IsUnitRep σ) (x y : G) (a : HH) :
     σ (x * y) a = σ x (σ y a) := by
@@ -63,8 +49,9 @@ theorem W_inner_trans {S : Set G} {τ : G → (V →L[ℂ] V)} {W : G → V}
 
 theorem W_norm_trans {S : Set G} {τ : G → (V →L[ℂ] V)} {W : G → V}
     (hWeq : ∀ s ∈ S, ∀ x, W (s * x) = τ s (W x)) (hτu : ∀ s ∈ S, ∀ a b, ⟪τ s a, τ s b⟫_ℂ = ⟪a, b⟫_ℂ)
-    {s : G} (hs : s ∈ S) (x : G) : ‖W (s * x)‖ = ‖W x‖ :=
-  norm_eq_of_inner_self_eq_inner_self_lemma (W_inner_trans hWeq hτu hs x x)
+    {s : G} (hs : s ∈ S) (x : G) : ‖W (s * x)‖ = ‖W x‖ := by
+  rw [norm_eq_sqrt_re_inner (𝕜 := ℂ) (W (s * x)), norm_eq_sqrt_re_inner (𝕜 := ℂ) (W x),
+    W_inner_trans hWeq hτu hs x x]
 
 theorem gvec_continuous {σ : G → (HH →L[ℂ] HH)} (hσ : IsUnitRep σ) (w : HH) {W : G → V} (hWc : Continuous W) :
     Continuous (gvec σ w W) := by

@@ -3,44 +3,6 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.BlockSubstitutionEmbedding
 public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CoeffSumMonomialLinear
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylPoint
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.SubYGenCoefHom
 import Mathlib.RingTheory.PiTensorProduct
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
@@ -134,7 +96,7 @@ theorem caseC (j0 : Fin r) (c : K) (b : Bool) (v : MvPolynomial (Fin (r + 1 + 1)
       rcases hw : midOf t with _ | j
       · have e1 : th K r b (X (a, t)) = X (a, t) := by simp [th, Formalism.MainNotions.flipOneThree.Pf.subY, hw]
         have hz : (∑ j ∈ Finset.univ, if t = midI r j then e j else 0) = 0 :=
-          Finset.sum_eq_zero fun j _ => if_neg (hnone t j hw)
+          Finset.sum_eq_zero fun j _ => ite_eq_right (hnone t j hw)
         rw [e1, hz, zero_mul, add_zero]
         simp [psiB, Formalism.GradedWeylDivisibility.colAdd, hnone t j0 hw]
       · have ht : t = midI r j := hsome t j hw
@@ -145,7 +107,7 @@ theorem caseC (j0 : Fin r) (c : K) (b : Bool) (v : MvPolynomial (Fin (r + 1 + 1)
           rw [Finset.sum_eq_single j]
           · simp
           · intro j' _ hj'
-            rw [if_neg]
+            rw [ite_eq_right]
             intro h
             apply hj'
             have := congrArg midOf h
@@ -259,8 +221,7 @@ theorem caseM (ψ : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) K →ₐ[K
     simp
   · rintro ⟨a, t⟩
     rcases midOf_cases t with ⟨j, rfl⟩ | ⟨ht, -⟩
-    · set_option synthInstance.maxHeartbeats 100000 in
-        simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, th_X_mid, map_sum, map_mul]
+    · simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, th_X_mid, map_sum, map_mul]
       simp only [thR, AlgHom.comp_apply, mAH_subY_mid]
       rw [← hgen b a j]
       refine Finset.sum_congr rfl fun i _ => ?_
@@ -314,7 +275,7 @@ theorem lam_scaleM (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K) (
     simp only [scCol_X, midI_inj, rowAct, aeval_X, Matrix.diagonal_apply, blockEmb, map_mul, map_C, map_X,
     map_sum, rename_C, rename_X]
     rw [Finset.sum_eq_single i (fun x _ hx => by simp [Ne.symm hx]) (by simp)]
-    simp only [if_true, MvPolynomial.algebraMap_eq]
+    simp only [ite_true, MvPolynomial.algebraMap_eq]
     ring
   · intro a t' ht'
     rw [scCol_X]
@@ -326,7 +287,7 @@ theorem rowAct_transv (l j : Fin r) (c : K) (i t : Fin r) :
   classical
   simp only [rowAct, aeval_X, Matrix.transvection, Matrix.add_apply, Matrix.one_apply]
   simp only [map_add (f := _), add_mul, Finset.sum_add_distrib, apply_ite C, ite_mul, map_one, map_zero, one_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   congr 1
   by_cases h : i = l
   · subst h
@@ -367,7 +328,7 @@ theorem lam_addM (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K) (N 
       have h1 : ∀ x, (if x = k then f x + g x else f x + 0) = f x + if x = k then g x else 0 := by
         intro x
         split_ifs <;> simp
-      simp only [h1, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      simp only [h1, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [hs j (fun x => C (X (b, x, j')) * X (a, midI r x))
         (fun x => C (X (b, x, j')) * (C ((algebraMap K (MvPolynomial (Bool × Fin r × Fin r) K)) c) * X (a, midI r l))),
       hs l (fun x => C (X (b, x, j')) * X (a, midI r x)) (fun x => C (C c) * C (X (b, j, j')) * X (a, midI r x))]

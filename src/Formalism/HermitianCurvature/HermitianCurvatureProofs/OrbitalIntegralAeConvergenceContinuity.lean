@@ -8,57 +8,10 @@ public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BFCell
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessPolynomiallyBounded
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralZeroFrequencyInvariant
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.Trace
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -72,7 +25,7 @@ namespace Formalism.FourierDecayAlt.P.B7
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section common
 
@@ -520,9 +473,9 @@ theorem d_comm (z : Fin (2 * r + k + 1) → ℂ) (t : ℝ) {h : Mat k r} (hh : h
       · subst hij; simp [mul_comm]
       · simp [hij]
     · have e1 : d_dg k r t i = 1 := by
-        unfold d_dg; rw [if_neg (by omega), if_pos (by omega)]
+        unfold d_dg; rw [ite_eq_right (by omega), ite_eq_left (by omega)]
       have e2 : d_dg k r t j = 1 := by
-        unfold d_dg; rw [if_neg (by omega), if_pos (by omega)]
+        unfold d_dg; rw [ite_eq_right (by omega), ite_eq_left (by omega)]
       rw [e1, e2, one_mul, mul_one]
 
 theorem d_conj_apply (t : ℝ) (ht : t ≠ 0) (n : Mat k r) (i j : Fin (2 * r + k + 1)) :
@@ -538,9 +491,9 @@ theorem d_ell (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (t : ℝ) (ht 
   by_cases h : a.val + 1 < r
   · rw [dite_eq_left h, dite_eq_left h, d_conj_apply t ht]
     have e1 : d_dg k r t (eI k r a) = ((t ^ (r - a.val) : ℝ) : ℂ) := by
-      unfold d_dg; rw [if_pos (by simp only [eI]; omega)]; rfl
+      unfold d_dg; rw [ite_eq_left (by simp only [eI]; omega)]; rfl
     have e2 : d_dg k r t⁻¹ (eI k r ⟨a.val + 1, h⟩) = (((t⁻¹) ^ (r - (a.val + 1)) : ℝ) : ℂ) := by
-      unfold d_dg; rw [if_pos (by simp only [eI]; omega)]; rfl
+      unfold d_dg; rw [ite_eq_left (by simp only [eI]; omega)]; rfl
     rw [e1, e2]
     have e3 : r - a.val = (r - (a.val + 1)) + 1 := by omega
     have e4 : ((t ^ (r - a.val) : ℝ) : ℂ) * (((t⁻¹) ^ (r - (a.val + 1)) : ℝ) : ℂ) = (t : ℂ) := by
@@ -555,13 +508,13 @@ theorem d_ell (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (t : ℝ) (ht 
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [d_conj_apply t ht]
     have e1 : d_dg k r t (eI k r a) = (t : ℂ) := by
-      unfold d_dg; rw [if_pos (by simp only [eI]; omega)]
+      unfold d_dg; rw [ite_eq_left (by simp only [eI]; omega)]
       have : r - (eI k r a).val = 1 := by simp only [eI]; omega
       rw [this, pow_one]
     by_cases hj : j.val < r ∨ r + k < j.val
     · rw [hz j hj]; simp
     · have e2 : d_dg k r t⁻¹ j = 1 := by
-        unfold d_dg; rw [if_neg (by omega), if_pos (by omega)]
+        unfold d_dg; rw [ite_eq_right (by omega), ite_eq_left (by omega)]
       rw [e1, e2]; ring
 
 theorem d_lam (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (t : ℝ) (ht : t ≠ 0) (n : Mat k r) :

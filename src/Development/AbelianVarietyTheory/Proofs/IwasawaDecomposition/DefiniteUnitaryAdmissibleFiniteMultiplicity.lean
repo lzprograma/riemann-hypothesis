@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinUMulInfU
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivLocProdTriv
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
@@ -56,25 +57,7 @@ namespace GlobalTheory.DefU.admitted
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 theorem exists_fin_mul_inf (y : UA E n) : ∃ a ∈ finU (E := E) (n := n), ∃ b ∈ infU E n, y = a * b := by
-  let yi := GeneralLinearGroup.map (pInf E) y.1
-  have hyi : yi.valᴴ * yi.val = 1 := by
-    have hy : cT (conjAd E) y.1.val * 1 * y.1.val = 1 := y.2
-    have h3 : (cT (conjAd E) y.1.val).map (pInf E) = yi.valᴴ := by
-      ext1 i j
-      rw [Matrix.conjTranspose_apply]
-      exact (infEq E).symm_apply_apply _
-    have h := congrArg (pInf E).mapMatrix hy
-    rw [map_mul, map_mul, map_one, mul_one, RingHom.mapMatrix_apply, h3] at h
-    exact h
-  let b : UA E n := ⟨infGL E n yi, infGL_mem_UA yi hyi⟩
-  have hb : b ∈ infU E n := MonoidHom.mem_ker.2 (pFin_infGL yi)
-  have ha : b⁻¹ * y ∈ finU (E := E) (n := n) := by
-    refine MonoidHom.mem_ker.2 ?_
-    rw [map_mul, map_inv]
-    have : cInf b = cInf y := pInf_infGL yi
-    rw [this, inv_mul_cancel]
-  refine ⟨b⁻¹ * y, ha, b, hb, ?_⟩
-  rw [fin_mul_inf ha hb, mul_inv_cancel_left]
+  first | exact _root_.GlobalTheory.DefU.exists_finU_mul_infU | exact @_root_.GlobalTheory.DefU.exists_finU_mul_infU | apply _root_.GlobalTheory.DefU.exists_finU_mul_infU <;> assumption
 
 def X (φ : UA E n → ℂ) : Submodule ℂ (UA E n → ℂ) := Submodule.span ℂ (Set.range fun k : infU E n => RU E n k φ)
 

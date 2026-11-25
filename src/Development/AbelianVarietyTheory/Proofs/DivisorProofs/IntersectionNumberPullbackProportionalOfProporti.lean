@@ -77,8 +77,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.LevelStructureAutomorphisms (LevelA
 open GlobalTheory.OrbitSep
 open GlobalTheory.Discrepancy GlobalTheory.QCoh
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.NumPull
@@ -137,7 +135,7 @@ theorem interNumRed_pull_curve {k : Type} [Field k] {M W : Scheme.{0}} (p : W �
     intro L hL
     rw [hdeg L hL]
     exact ArInt.topSelf_pull_eq_zero_of_const k hL g _ hc
-  push_neg at hc
+  push Not at hc
   obtain ⟨x₀, hx₀⟩ := hc
   right
   let φ := g.toImage

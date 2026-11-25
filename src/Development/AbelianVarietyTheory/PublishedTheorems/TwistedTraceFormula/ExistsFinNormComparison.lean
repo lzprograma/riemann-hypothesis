@@ -122,8 +122,6 @@ theorem finprod_le_mul {α : Type} {f g K : α → ℝ≥0} (hf : (Function.mulS
   rw [← finprod_mul_distrib hK hg]
   exact finprod_le_finprod' hf ((hK.union hg).subset (Function.mulSupport_mul _ _)) h
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)} (V : HSp D)
 
 theorem evalV_finCoord (v : HeightOneSpectrum (𝓞 D.host.F)) (g : GA D V) (i j : Fin V.rank)

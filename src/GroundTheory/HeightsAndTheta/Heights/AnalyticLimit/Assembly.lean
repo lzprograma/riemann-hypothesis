@@ -108,7 +108,7 @@ noncomputable section
 
 theorem mixedForms_all {W : Type} [TopologicalSpace W] {D : ℕ} (Om : ReciprocityTheory.AnForm.M.LocPot W)
     (T : Fin (D + 1) → ReciprocityTheory.AnForm.M.LocPot W) : mixedForms Om T (D + 1) = T :=
-  funext fun i => if_pos i.isLt
+  funext fun i => ite_eq_left i.isLt
 
 theorem UniformIntegrability.proof (h₀ : GreenMassZero.Statement) (h₁ : GreenMassStep.Statement)
     (h₂ : GreenMassReplace.Statement) (h₃ : GreenMassError.Statement) :

@@ -82,7 +82,7 @@ private theorem ker_gen_approx {O : Type} [CommRing O] [IsLocalRing O] {X : Type
 
     rw [map_sub, map_sum]
     simp only [coeff_wcomp]
-    rw [Finset.sum_ite_eq, if_pos, sub_self]
+    rw [Finset.sum_ite_eq, ite_eq_left, sub_self]
     exact Finset.mem_image_of_mem _ (by simpa [hD] using hd)
   have key := GlobalTheory.algHom_mem_pow_of_le_order (AlgHom.id O (MvPowerSeries σ O)) hX hord
   simpa using key

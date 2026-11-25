@@ -125,7 +125,7 @@ structure NormalizedLocalCompatibility (D : D7) (M : MtFam D) where
   Psi_pr : ∀ j w i (h : i ∈ D.nd.locs j w) (x : D.what₂.MtL (D.nd.mu i) (D.nd.j i)),
     Psi j w i h (D.nd.prMt i x) - B.iV j w (castMt D h x) ∈ NCov.off (heckeAlg B j w) (mx j w i)
 
-  ptX : ∀ j w i (h : i ∈ D.nd.locs j w), D.nd.X i ≃
+  ptX : ∀ j w i (_ : i ∈ D.nd.locs j w), D.nd.X i ≃
     {ψ : heckeAlg B j w →ₐ[B.Oc j w] B.Oc j w //
       NCov.cls ψ = mx j w i ∧ NCov.W (heckeAlg B j w) (NCov.pt ψ) ≠ ⊥}
 

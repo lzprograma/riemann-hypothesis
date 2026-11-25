@@ -3,61 +3,18 @@ module
 public import Formalism.LocalToGlobal.ProjectiveLattices.IsThRule
 public import Mathlib.RingTheory.PiTensorProduct
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofDApply
-public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.InvariantDerivationsCommuteFormalConnection
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofComm
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndRaw
 public import Mathlib.Algebra.MvPolynomial.Funext
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.RowTriangular
 
@@ -94,9 +51,9 @@ theorem eval₂_shift [Infinite k] (φ : k →+* T) {P : MvPolynomial (Letter Ty
     funext ℓ
     by_cases hℓ : ∃ b, ℓ = ⟨σ, (i, b)⟩
     · obtain ⟨b, rfl⟩ := hℓ
-      simp only [G, if_pos (show ∃ b', (⟨σ, (i, b)⟩ : Letter Ty r n) = ⟨σ, (i, b')⟩ from ⟨b, rfl⟩)]
+      simp only [G, ite_eq_left (show ∃ b', (⟨σ, (i, b)⟩ : Letter Ty r n) = ⟨σ, (i, b')⟩ from ⟨b, rfl⟩)]
       simp [g, h₁]
-    · simp only [G, if_neg hℓ]
+    · simp only [G, ite_eq_right hℓ]
       simp [g, h₂ ℓ hℓ]
   have e2 := congrArg (aeval g) hQ
   rw [← AlgHom.comp_apply, MvPolynomial.comp_aeval, aeval_rename, e1] at e2
@@ -120,10 +77,10 @@ private theorem eval₂Hom_unipotent_substitution_eq [Infinite k] (φ : k →+* 
           rintro ⟨b', h⟩
           simp only [Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and] at h
           exact hji.ne h.1
-        simp only [if_pos hb, if_neg hb', Finset.sum_insert hj]
+        simp only [ite_eq_left hb, ite_eq_right hb', Finset.sum_insert hj]
         ring
       · intro ℓ hℓ
-        simp only [if_neg hℓ]
+        simp only [ite_eq_right hℓ]
     · have h0 : N j = 0 := hN j (not_lt.1 hji)
       refine congrArg (fun g => eval₂Hom φ g P) (funext fun ℓ => ?_)
       split_ifs <;> simp [Finset.sum_insert hj, h0]
@@ -147,8 +104,8 @@ private theorem eval₂Hom_unipotent_block_substitution_eq [Infinite k] (φ : k 
     by_cases hrow : (⟨σ', i'⟩ : Σ σ : Ty, Fin (r σ)) = ⟨σ, i⟩
     · cases hrow
       dsimp only
-      rw [if_pos (Finset.mem_insert_self _ _), if_neg hp,
-        if_pos (show ∃ b', (⟨σ, (i, b)⟩ : Letter Ty r n) = ⟨σ, (i, b')⟩ from ⟨b, rfl⟩), add_zero]
+      rw [ite_eq_left (Finset.mem_insert_self _ _), ite_eq_right hp,
+        ite_eq_left (show ∃ b', (⟨σ, (i, b)⟩ : Letter Ty r n) = ⟨σ, (i, b')⟩ from ⟨b, rfl⟩), add_zero]
     · have hne : ∀ j : Fin (r σ'), (⟨σ', j⟩ : Σ σ : Ty, Fin (r σ)) ≠ ⟨σ, i⟩ →
           ¬ ∃ b', (⟨σ', (j, b)⟩ : Letter Ty r n) = ⟨σ, (i, b')⟩ := by
         rintro j hj ⟨b', h⟩
@@ -156,14 +113,14 @@ private theorem eval₂Hom_unipotent_block_substitution_eq [Infinite k] (φ : k 
         cases h
         rfl
       dsimp only
-      rw [if_neg (hne i' hrow)]
+      rw [ite_eq_right (hne i' hrow)]
       by_cases hR : (⟨σ', i'⟩ : Σ σ : Ty, Fin (r σ)) ∈ R
-      · rw [if_pos (Finset.mem_insert_of_mem hR), if_pos hR]
+      · rw [ite_eq_left (Finset.mem_insert_of_mem hR), ite_eq_left hR]
         congr 1
         refine Finset.sum_congr rfl fun j _ => ?_
         by_cases hj : i' ≤ j
         · rw [hN σ' i' j hj, zero_mul, zero_mul]
-        · rw [if_neg (hne j ?_)]
+        · rw [ite_eq_right (hne j ?_)]
           intro hji
           cases hji
           exact hj (Fin.le_iff_val_le_val.2 (hmax _ hR))
@@ -171,7 +128,7 @@ private theorem eval₂Hom_unipotent_block_substitution_eq [Infinite k] (φ : k 
           rw [Finset.mem_insert]
           rintro (h | h)
           exacts [hrow h, hR h]
-        rw [if_neg hI, if_neg hR]
+        rw [ite_eq_right hI, ite_eq_right hR]
 
 theorem eval₂_unip [Infinite k] [Fintype Ty] (φ : k →+* T) {P : MvPolynomial (Letter Ty r n) k}
     (hP : RowInv r n k P) (N : ∀ σ, Fin (r σ) → Fin (r σ) → T) (hN : ∀ σ i j, i ≤ j → N σ i j = 0)
@@ -216,14 +173,14 @@ theorem eval₂_triangular [Infinite k] [Fintype Ty] (φ : k →+* T) {a : Ty �
         (if j = i then c σ i i * y ⟨σ, i, b⟩ else 0) + c σ i i * (N σ i j * y ⟨σ, j, b⟩) := by
       intro j
       rcases lt_trichotomy j i with h | h | h
-      · simp only [N, if_pos h, if_neg h.ne, zero_add]
+      · simp only [N, ite_eq_left h, ite_eq_right h.ne, zero_add]
         rw [← _root_.mul_assoc, ← _root_.mul_assoc, (hu σ i).mul_val_inv, _root_.one_mul]
       · subst h
         simp [N]
       · simp [N, h.ne', not_lt.2 h.le, hc σ i j h]
     dsimp only
     rw [Finset.sum_congr rfl fun j _ => e j, Finset.sum_add_distrib, Finset.sum_ite_eq',
-      if_pos (Finset.mem_univ _), mul_add, Finset.mul_sum]
+      ite_eq_left (Finset.mem_univ _), mul_add, Finset.mul_sum]
   have h1 := eval₂_diag φ hD (fun σ i => c σ i i) (fun ℓ => y ℓ + ∑ j, N ℓ.1 ℓ.2.1 j * y ⟨ℓ.1, j, ℓ.2.2⟩)
   have h2 := eval₂_unip φ hI N hN y
   rw [hfun]
@@ -315,7 +272,7 @@ theorem nabVal_triangular : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
       refine LinearMap.ext fun g => ?_
       simp only [Module.End.mul_apply, dEnd_apply]
       rw [t4]
-      exact FormalConnection.dof_comm_law B.G u v g
+      exact WickVanishing.Nab.dof_comm_law B.G u v g
     let s : Set (Module.End S (PS S 1 d)) := Set.range fun e : Fin d => dEnd (B.FK S) (Pi.single e 1)
     have hs : ∀ x ∈ s, ∀ y ∈ s, x * y = y * x := by
       rintro _ ⟨e, rfl⟩ _ ⟨e', rfl⟩

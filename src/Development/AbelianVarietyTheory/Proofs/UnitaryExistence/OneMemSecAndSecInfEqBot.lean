@@ -63,7 +63,3 @@ theorem exists_frBor {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Rec
     exact Matrix.diagonal_apply_eq _ _
 
 end GlobalTheory.SecSeparation
-
-namespace GlobalTheory
-
-end GlobalTheory

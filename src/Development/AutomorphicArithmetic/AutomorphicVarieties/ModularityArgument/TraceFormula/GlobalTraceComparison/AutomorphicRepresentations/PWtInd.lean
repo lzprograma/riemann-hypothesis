@@ -350,7 +350,6 @@ end SlopeTestRemainingChoices
 
 end UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi
 
-open UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi UpperTheory.Zero.ConvolutionTheory.EB
 
 theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.wtInd_pf :
     Basic → WtInd := by

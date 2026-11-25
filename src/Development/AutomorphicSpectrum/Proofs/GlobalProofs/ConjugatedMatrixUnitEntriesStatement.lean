@@ -2,46 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OfIsSmoothModerate
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
@@ -61,8 +21,6 @@ open NumberField Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.Main
 open scoped TensorProduct
 
 noncomputable section
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompanionTheory.Hypotheses₂.ConjAdapted
 
@@ -216,39 +174,39 @@ theorem gramShape (hH : Hᴴ = H) (hxx : Xcᴴ * H * Xc = 0) (hyy : Ycᴴ * H * 
     · rw [conjTranspose_mul_mul_apply_eq_of_col_eq H P i ⟨i.val, hi⟩ (colX i ⟨i.val, hi⟩ rfl) b]
       by_cases hb1 : b.val < m
       · rw [col_lemma_2 (Xcᴴ * H) b ⟨b.val, hb1⟩ (colX b ⟨b.val, hb1⟩ rfl), hxx, Matrix.zero_apply,
-          if_neg (show ¬ (i.val + b.val + 1 = n) by omega)]
+          ite_eq_right (show ¬ (i.val + b.val + 1 = n) by omega)]
       · by_cases hb2 : n ≤ b.val + m
         · have hj : n - 1 - b.val < m := by omega
           rw [col_lemma_2 (Xcᴴ * H) b ⟨n - 1 - b.val, hj⟩
             (columnBlock b ⟨n - 1 - b.val, hj⟩ (show b.val + (n - 1 - b.val) + 1 = n by omega)), hxy, Matrix.one_apply]
           by_cases hc : i.val + b.val + 1 = n
-          · rw [if_pos hc, if_pos (Fin.ext (show i.val = n - 1 - b.val by omega))]
-          · rw [if_neg hc, if_neg (fun h => hc (by have h4 := Fin.mk.inj h; omega))]
-        · rw [conjTranspose_mul_mul_apply_eq_zero_of_mulVec b (perpX b (by omega) (by omega)), if_neg (show ¬ (i.val + b.val + 1 = n) by omega)]
+          · rw [ite_eq_left hc, ite_eq_left (Fin.ext (show i.val = n - 1 - b.val by omega))]
+          · rw [ite_eq_right hc, ite_eq_right (fun h => hc (by have h4 := Fin.mk.inj h; omega))]
+        · rw [conjTranspose_mul_mul_apply_eq_zero_of_mulVec b (perpX b (by omega) (by omega)), ite_eq_right (show ¬ (i.val + b.val + 1 = n) by omega)]
     · have hj : n - 1 - i.val < m := by omega
       rw [conjTranspose_mul_mul_apply_eq_of_col_eq H P i ⟨n - 1 - i.val, hj⟩
         (columnBlock i ⟨n - 1 - i.val, hj⟩ (show i.val + (n - 1 - i.val) + 1 = n by omega)) b]
       by_cases hb1 : b.val < m
       · rw [col_lemma_2 (Ycᴴ * H) b ⟨b.val, hb1⟩ (colX b ⟨b.val, hb1⟩ rfl), hyx, Matrix.one_apply]
         by_cases hc : i.val + b.val + 1 = n
-        · rw [if_pos hc, if_pos (Fin.ext (show n - 1 - i.val = b.val by omega))]
-        · rw [if_neg hc, if_neg (fun h => hc (by have h4 := Fin.mk.inj h; omega))]
+        · rw [ite_eq_left hc, ite_eq_left (Fin.ext (show n - 1 - i.val = b.val by omega))]
+        · rw [ite_eq_right hc, ite_eq_right (fun h => hc (by have h4 := Fin.mk.inj h; omega))]
       · by_cases hb2 : n ≤ b.val + m
         · have hj2 : n - 1 - b.val < m := by omega
           rw [col_lemma_2 (Ycᴴ * H) b ⟨n - 1 - b.val, hj2⟩
             (columnBlock b ⟨n - 1 - b.val, hj2⟩ (show b.val + (n - 1 - b.val) + 1 = n by omega)), hyy, Matrix.zero_apply,
-            if_neg (show ¬ (i.val + b.val + 1 = n) by omega)]
-        · rw [conjTranspose_mul_mul_apply_eq_zero_of_mulVec b (perpY b (by omega) (by omega)), if_neg (show ¬ (i.val + b.val + 1 = n) by omega)]
+            ite_eq_right (show ¬ (i.val + b.val + 1 = n) by omega)]
+        · rw [conjTranspose_mul_mul_apply_eq_zero_of_mulVec b (perpY b (by omega) (by omega)), ite_eq_right (show ¬ (i.val + b.val + 1 = n) by omega)]
   refine ⟨?_, ?_, ?_⟩
   · intro i b hi hne
     rw [hrow i b hi] at hne
     by_contra hc
-    exact hne (if_neg hc)
+    exact hne (ite_eq_right hc)
   · intro i b hi hne hb
     apply hne
-    rw [hGs i b, hrow b i hb, if_neg (show ¬ (b.val + i.val + 1 = n) by unfold Outer at hi hb; omega), star_zero]
+    rw [hGs i b, hrow b i hb, ite_eq_right (show ¬ (b.val + i.val + 1 = n) by unfold Outer at hi hb; omega), star_zero]
   · intro i b hi hc
-    rw [hrow i b hi, if_pos hc]
+    rw [hrow i b hi, ite_eq_left hc]
 
 private theorem valuation_single_one_le_one {u : ℕ} (A B : Matrix (Fin u) (Fin u) ℂ) (q p a b : Fin u) :
     (A * Matrix.single q p (1 : ℂ) * B : Matrix (Fin u) (Fin u) ℂ) a b = A a q * B p b := by
@@ -394,17 +352,9 @@ section -- clump:auto
 
 open NumberField Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Published GlobalTheory.Published.AutFin GlobalTheory.StdPar GlobalTheory.ThK.SmoothLev GlobalTheory.CompanionTheory.Hypotheses₂.ConstFin GlobalTheory.CompanionTheory.Hypotheses₂.LeviPart
 open GlobalTheory.UAut GlobalTheory.AdelicU GlobalTheory.SiegelSet
 
-theorem _root_.GlobalTheory.T.adapted_basis_conjugate_zero_entries : ∀ (D : D7) (V : HSp D) (m : ℕ) (X Y : Matrix (Fin V.rank) (Fin m) D.host.E),
-    IsWittFrame D.sp.cm.sig V.gram X Y → ∀ l d : ℕ, l + d ≤ m →
-    ∀ C : GL (Fin V.rank) D.host.E, GlobalTheory.BlockForms.IsAdapted D.sp.cm.sig V.gram X Y C → ∀ (τ : D.what₂.Tau) (p q a b : Fin V.rank),
-    (∃ e : ℕ, (e = l ∨ e = l + d ∨ e + l + d = V.rank ∨ e + l = V.rank) ∧ p.val < e ∧ e ≤ q.val) →
-    ((C.1.map (tauE D τ))⁻¹ * conjAt V τ (C.1.map (tauE D τ) * Matrix.single p q 1 * (C.1.map (tauE D τ))⁻¹) * C.1.map (tauE D τ)) a b ≠ 0 →
-      ∃ e : ℕ, (e = l ∨ e = l + d ∨ e + l + d = V.rank ∨ e + l = V.rank) ∧ a.val < e ∧ e ≤ b.val := by
-  first | exact @GlobalTheory.CompanionTheory.Hypotheses₂.ConjAdapted.conj_strict
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.GlobalProofs.ConjugatedMatrixUnitEntriesStatement =====

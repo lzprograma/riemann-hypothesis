@@ -294,14 +294,12 @@ theorem comb_iff_coeff (U : Fin m → Fin g → A) (cf : Fin m → PowerSeries A
 theorem eig_const_iff (N : Matrix (Fin g) (Fin g) A) (r : A) (z : Fin g → A) :
     (fun j => PowerSeries.C (R := A) (z j)) ᵥ* N.map (PowerSeries.C (R := A)) =
       PowerSeries.C (R := A) r • (fun j => PowerSeries.C (R := A) (z j)) ↔ z ᵥ* N = r • z := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [funext_iff, vecMul, dotProduct, map_apply, Pi.smul_apply, smul_eq_mul, ← map_mul, ← map_sum,
     PowerSeries.C_injective.eq_iff]
 
 theorem comb_const_iff (U : Fin m → Fin g → A) (cf : Fin m → A) (z : Fin g → A) :
     ((fun j => PowerSeries.C (R := A) (z j)) =
       ∑ k, PowerSeries.C (R := A) (cf k) • fun j => PowerSeries.C (R := A) (U k j)) ↔ z = ∑ k, cf k • U k := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [funext_iff, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, ← map_mul, ← map_sum,
     PowerSeries.C_injective.eq_iff]
 

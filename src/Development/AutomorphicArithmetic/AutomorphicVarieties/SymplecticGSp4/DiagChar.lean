@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.WtChar
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.DecompSigmaOrd
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SplAdjUnit
@@ -127,37 +128,7 @@ private theorem perm_cases (m : Fin 4 → Fin 4) (h1 : Function.Injective m) (h2
 private theorem open_ker {Ω K : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] [Field K] [TopologicalSpace K] [T2Space K]
     [ContinuousMul K] (δ : G ℚ Ω →* Kˣ) (hc : Continuous fun g => (δ g : K)) (N : ℕ) (hN : N ≠ 0)
     (h : ∀ A : ValuationSubring Ω, ∀ g ∈ Ine (F := ℚ) A, δ g ^ N = 1) : IsOpen (δ.ker : Set (G ℚ Ω)) := by
-  have hcl : IsClosed ((δ ^ N).ker : Set (G ℚ Ω)) := by
-    have : ((δ ^ N).ker : Set (G ℚ Ω)) = {g | (δ g : K) ^ N = 1} := by
-      ext g
-      simp [MonoidHom.mem_ker, Units.ext_iff]
-    rw [this]
-    exact isClosed_eq (hc.pow N) continuous_const
-  have key := ProfiniteGrp.closedSubgroup_eq_sInf_open (G := G ℚ Ω) ⟨(δ ^ N).ker, hcl⟩
-  have htop : ∀ g, δ g ^ N = 1 := by
-    intro g
-    have : g ∈ (δ ^ N).ker := by
-      have key' : (δ ^ N).ker = _ := key
-      rw [key', Subgroup.mem_sInf]
-      rintro U ⟨hU, hle⟩
-      have hle' : (δ ^ N).ker ≤ U := hle
-      have hn : U.Normal := Subgroup.Normal.of_commutator_le _ ((Abelianization.commutator_subset_ker _).trans hle')
-      rw [B3.minkowski Ω U hn hU fun B x hx => hle' (h B x hx)]
-      trivial
-    exact this
-  have hfin : Finite δ.range := by
-    haveI : NeZero N := ⟨hN⟩
-    have hle : δ.range ≤ rootsOfUnity N K := by
-      rintro _ ⟨g, rfl⟩
-      exact htop g
-    exact Finite.of_injective _ (Subgroup.inclusion_injective hle)
-  haveI : δ.ker.FiniteIndex := Subgroup.finiteIndex_ker δ
-  refine Subgroup.isOpen_of_isClosed_of_finiteIndex _ ?_
-  have : (δ.ker : Set (G ℚ Ω)) = {g | (δ g : K) = 1} := by
-    ext g
-    simp [MonoidHom.mem_ker]
-  rw [this]
-  exact isClosed_eq hc continuous_const
+  apply _root_.UpperTheory.V.Ws.WeightCharacterKernel.open_ker <;> assumption
 
 private theorem residue_eq {l : ℕ} [Fact l.Prime] (c : Coef l) (a b : c.O) (h : ‖(a : PadicAlgCl l) - b‖ < 1) :
     residue c.O a = residue c.O b := by

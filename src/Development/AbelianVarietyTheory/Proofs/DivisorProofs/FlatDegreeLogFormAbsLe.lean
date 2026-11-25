@@ -60,8 +60,6 @@ noncomputable section
 
 namespace GlobalTheory.CovTop.FlatSz
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts}
   {Y0 : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Y0 cX} {Csz : ℝ}
 
@@ -111,10 +109,6 @@ theorem abs_flatDegVal_le (p : PtAt ex Csz) (i : Fin D.R.m) {PP A M : ℝ} (hH :
   have hQr : Q ≤ D.R.r := by rw [← hpq]; linarith
   have hr : (0 : ℝ) ≤ D.R.r := Nat.cast_nonneg _
   nlinarith [mul_le_mul_of_nonneg_right hQr (by linarith : (0 : ℝ) ≤ 2 * L.sc.L), mul_nonneg hr (by linarith : (0 : ℝ) ≤ L.sc.L)]
-
-end GlobalTheory.CovTop.FlatSz
-
-namespace GlobalTheory.CovTop.FlatSz
 
 end GlobalTheory.CovTop.FlatSz
 

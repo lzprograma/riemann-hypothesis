@@ -156,10 +156,4 @@ theorem DiscreteSeriesHermitianUnique.exists_intertwiner (h : DiscreteSeriesHerm
   choose U hU using key
   exact ⟨U, hU⟩
 
-theorem DiscreteSeriesUpqUnique.exists_intertwiner (h : DiscreteSeriesUpqUnique) {D : D7} {V : HSp D}
-    {S : D.what₂.Tau → SPar} (M M' : DSModel V S) :
-    ∃ U : ∀ τ, M'.H τ ≃ₗᵢ[ℂ] M.H τ,
-      ∀ τ, ∀ g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ), ∀ w, U τ (M'.rep τ g w) = M.rep τ g (U τ w) :=
-  (discreteSeriesHermitianUnique_iff.2 h).exists_intertwiner M M'
-
 end GlobalTheory.Published

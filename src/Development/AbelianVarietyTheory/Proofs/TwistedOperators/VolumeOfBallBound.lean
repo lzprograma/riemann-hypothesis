@@ -103,8 +103,7 @@ theorem main : ∀ {G E : Type} [inst : Group G] [inst_1 : TopologicalSpace G] [
     have hgT : g ∉ T := fun hgT => hne g hgT (hW g g hg' (by simp; positivity))
     have far : ∀ h ∈ T, 2 * r < ‖φ g - φ h‖ := by
       intro h hh
-      by_contra hle
-      push_neg at hle
+      by_contra! hle
       exact hne h hh (hW g h (hT.1 h hh) hle)
     have hP : P (insert g T) := by
       refine ⟨?_, ?_⟩
@@ -148,8 +147,6 @@ open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalis
 open scoped InnerProductSpace
 
 namespace GlobalTheory.SepReal.VolBallPf
-
-alias double_count := _root_.GlobalTheory.SeparatedSetCardBound.main
 
 def toEuc {m : ℕ} (A : Mat m) : EuclideanSpace ℂ (Fin m × Fin m) := WithLp.toLp 2 fun p => A p.1 p.2
 
@@ -206,7 +203,7 @@ theorem volBall : VolBall := by
     rw [sub_add_cancel] at h2
     have h3 : hsn (umat g) ≤ δ + hsn (1 : Mat m) := by linarith
     exact (Real.sqrt_le_iff.1 h3).2
-  · have key := double_count (muG ε) (fun g : UJ ε => toEuc (umat g)) (continuous_vec.comp hu) (nbh ε δ) R (δ / (2 * R)) hR.le
+  · have key := GlobalTheory.SeparatedSetCardBound.main (muG ε) (fun g : UJ ε => toEuc (umat g)) (continuous_vec.comp hu) (nbh ε δ) R (δ / (2 * R)) hR.le
       (by positivity) (fun g h hh hgh => by
         rw [norm_vec] at hh
         rw [toEuc_sub, norm_vec] at hgh

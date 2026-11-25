@@ -53,7 +53,7 @@ theorem paTh_diff_le (hP : Ext.PackingCount) (hA : Ext.GaussianTailBound) (Y : G
       simp [g, B]
     · have hne : γ ≠ 0 := fun h' => h (by rw [h']; rfl)
       rw [hgdef, Function.update_of_ne hne]
-      simp only [B, if_neg h]
+      simp only [B, ite_eq_right h]
       rw [norm_mul, Y.ka_abs γ γ.2, one_mul]
       exact polynomial_translate_innerProduct_bound hq (γ : EuclideanSpace ℂ ι) hF hG
   have hsB : Summable fun γ => K * B γ * paN q F * paN q G :=
@@ -128,21 +128,7 @@ theorem propA_core (hP : Ext.PackingCount) (hA : Ext.GaussianTailBound) (Y : GT 
   have hg0 : (0 : ℝ) ≤ Fintype.card ι := Nat.cast_nonneg _
   have hc0 : (0 : ℝ) ≤ c := Nat.cast_nonneg _
   have hR : 16 * (2 * (Fintype.card ι : ℝ) + 1) ≤ R0 ^ 2 := by linarith
-  have hk0 : Y.ka 0 = 1 := by
-    have h := hC 0 (Submodule.zero_mem _) 0 (Submodule.zero_mem _)
-    have h1 : ‖Y.ka 0‖ = 1 := Y.ka_abs 0 (Submodule.zero_mem _)
-    have hne : Y.ka 0 ≠ 0 := by
-      intro h0
-      rw [h0, norm_zero] at h1
-      exact zero_ne_one h1
-    have h2 : Y.ka 0 * Y.ka 0 = Y.ka 0 * 1 := by
-      simp only [add_zero] at h
-      have hH : Hf (0 : EuclideanSpace ℂ ι) 0 = 0 := by simp [Hf]
-      simp only [hH, Complex.zero_im, Complex.ofReal_zero, mul_zero, neg_zero, zero_mul,
-        Complex.exp_zero, mul_one] at h
-      rw [mul_one]
-      exact h.symm
-    exact mul_left_cancel₀ hne h2
+  have hk0 : Y.ka 0 = 1 := FPw.ka_zero (q := q) hC
   have hdata := fun {F : EuclideanSpace ℂ ι → ℂ} (hF : F ∈ paPoly c) =>
     paTh_data hP hA Y hq hR0 hlat hR hF
   have hcd : ∀ {F : EuclideanSpace ℂ ι → ℂ}, F ∈ paPoly c → ContDiff ℂ (⊤ : ℕ∞) (paTh Y q F) :=
@@ -230,7 +216,7 @@ theorem propA_core (hP : Ext.PackingCount) (hA : Ext.GaussianTailBound) (Y : GT 
     have h3 := hsq F
     nlinarith
   have hinj : Function.Injective T := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro F hF0
     have h0 : paJet c (paTh Y q F) = 0 := congrArg Subtype.val hF0
     have h1 := hlow F.2

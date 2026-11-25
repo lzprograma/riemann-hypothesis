@@ -4,46 +4,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_Ge
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeVLem
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -169,7 +129,7 @@ theorem gauge_kappa_of_point_line : GTKapOfCut := by
         _ = inner ℂ (B.hsVec ((E ρ).comp (Qr ρ'))) (B.hsVec (E ρ')) := hs_comp_right _ _ _ (hQs ρ')
         _ = 0 := by
           have h0 : (E ρ).comp (Qr ρ') = 0 := by
-            rw [← hEQ ρ, ContinuousLinearMap.comp_assoc, hQQ ρ ρ', if_neg h, ContinuousLinearMap.comp_zero]
+            rw [← hEQ ρ, ContinuousLinearMap.comp_assoc, hQQ ρ ρ', ite_eq_right h, ContinuousLinearMap.comp_zero]
           rw [h0, VLem.hsV_zero, inner_zero_left]
   · have hZ0 : Z ∈ NF.Fib P.k P.r Bs.z Bs.z' Bs.μsec Bs.π Bs.π' ζ0 := by rw [← hFib ζ hζ]; exact hZ
     have hdec : Z = ∑ ρ, Z.comp (Qr ρ) := by
@@ -177,7 +137,7 @@ theorem gauge_kappa_of_point_line : GTKapOfCut := by
     conv_lhs => rw [hdec]
     refine Finset.sum_congr rfl fun ρ _ => ?_
     have hfix : (Z.comp (Qr ρ)).comp (Qr ρ) = Z.comp (Qr ρ) := by
-      rw [ContinuousLinearMap.comp_assoc, hQQ ρ ρ, if_pos rfl]
+      rw [ContinuousLinearMap.comp_assoc, hQQ ρ ρ, ite_eq_left rfl]
     rw [hEu ρ _ (hcomp Z hZ0 ρ) hfix, hs_comp_right _ _ _ (hQs ρ), hEQ ρ]
   · intro f Φ
     funext ρ
@@ -196,9 +156,9 @@ theorem gauge_kappa_of_point_line : GTKapOfCut := by
         split_ifs with h
         · subst h; rw [hEQ σ]
         · have h0 : (E ρ).comp (Qr σ) = 0 := by
-            rw [← hEQ ρ, ContinuousLinearMap.comp_assoc, hQQ ρ σ, if_neg (Ne.symm h), ContinuousLinearMap.comp_zero]
+            rw [← hEQ ρ, ContinuousLinearMap.comp_assoc, hQQ ρ σ, ite_eq_right (Ne.symm h), ContinuousLinearMap.comp_zero]
           rw [h0, VLem.hsV_zero, inner_zero_left, mul_zero]
-      simp only [hterm, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      simp only [hterm, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       ring
     show MA.toSm P (rawR P Bs.μsec (fun ρ _ => E ρ)
         (((d.κ f).1 Φ : Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) ρ) = _

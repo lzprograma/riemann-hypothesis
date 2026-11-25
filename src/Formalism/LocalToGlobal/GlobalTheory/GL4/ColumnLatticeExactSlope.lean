@@ -13,21 +13,9 @@ public import Formalism.LocalToGlobal.Columns.BrpStarLatLattice
 public import Formalism.LocalToGlobal.GlobalTheory.GL4.MemDualCrdLat
 public import Formalism.LocalToGlobal.GlobalTheory.GL4.PZBasis
 public import Formalism.SharpRestriction.GlobalSchurBounds.TotallyPositiveTraceGeOfNormDiscr
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Ideal.Norm.RelNorm
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Topology.Sheaves.Presheaf
 import Formalism.LocalToGlobal.Columns.BrzColLatOneLattice
 import Formalism.LocalToGlobal.GlobalTheory.HLatOpsP
 import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.ExistsFrameOfSig
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.MonomialMeanResidues.MonomialMeanProofs.SpanEqTopAndRankOfLinearIndependent, Formalism.MonomialMeanResidues.ZerosPerVariable, Formalism.LocalToGlobal.GlobalTheory.GL4.ColumnLatticeExactSlope
@@ -954,8 +942,6 @@ theorem bc_mu (hc : CMData F E) (S : HSpace E) (hsig : S.SigOK) (hpos : S.IsPosD
   exact hbc.2
 
 end BC
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem q_lattice_slope (D : D7) : QSlope D := by
   intro u CV c τ

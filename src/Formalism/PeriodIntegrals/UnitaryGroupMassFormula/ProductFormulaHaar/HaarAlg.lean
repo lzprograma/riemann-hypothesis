@@ -4,56 +4,9 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHa
 public import Mathlib.MeasureTheory.Measure.Haar.DistribChar
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.ResCharIff
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.HaarMain
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.HaarScale, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.HaarTransv, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.HaarAlg
@@ -153,11 +106,11 @@ theorem scale_box (b : Basis ι K E) (μ : Measure E) [μ.IsAddHaarMeasure] (i :
       simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_setOf_eq, hrepr_add]
       constructor
       · rintro ⟨h1, h2⟩
-        exact ⟨fun j hj => by rw [if_neg (Ne.symm hj), zero_add]; exact h1 j hj, h2⟩
+        exact ⟨fun j hj => by rw [ite_eq_right (Ne.symm hj), zero_add]; exact h1 j hj, h2⟩
       · rintro ⟨h1, h2⟩
         refine ⟨fun j hj => ?_, h2⟩
         have := h1 j hj
-        rwa [if_neg (Ne.symm hj), zero_add] at this
+        rwa [ite_eq_right (Ne.symm hj), zero_add] at this
     rw [hset, measure_preimage_add]
   haveI : IsFiniteMeasureOnCompacts ν := by
     refine ⟨fun C hC => ?_⟩
@@ -187,7 +140,7 @@ theorem scale_box (b : Basis ι K E) (μ : Measure E) [μ.IsAddHaarMeasure] (i :
     · rw [hP]
       intro j hj
       rw [map_smul, Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply,
-        if_neg (Ne.symm hj), smul_zero, map_zero]
+        ite_eq_right (Ne.symm hj), smul_zero, map_zero]
       exact zero_le'
     · rw [Set.mem_preimage, hc]
       simpa using hu
@@ -285,9 +238,9 @@ theorem transvection_mulVec (t : Matrix.TransvectionStruct ι K) (v : ι → K) 
   simp only [Matrix.TransvectionStruct.toMatrix, Matrix.transvection, Matrix.add_mulVec,
     Matrix.one_mulVec, Pi.add_apply, add_right_inj]
   by_cases hk : k = t.i
-  · rw [if_pos hk, hk]
+  · rw [ite_eq_left hk, hk]
     simp [Matrix.mulVec, dotProduct, Matrix.single_apply, ite_mul]
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
     simp [Matrix.mulVec, dotProduct, Ne.symm hk]
 
 def tγ (t : Matrix.TransvectionStruct ι K) : ι → ValueGroupWithZero K :=
@@ -314,7 +267,7 @@ theorem toLin_mem_box (b : Basis ι K E) (t : Matrix.TransvectionStruct ι K) (x
     rw [congrFun (repr_toLin b t.toMatrix x) k, transvection_mulVec]
   rw [e]
   by_cases hk : k = t.i
-  · rw [if_pos hk]
+  · rw [ite_eq_left hk]
     have hj : valuation K (b.repr x t.j) ≤ 1 := by
       have h := hx t.j
       rwa [tGamma_apply_of_ne t t.hij.symm] at h
@@ -330,7 +283,7 @@ theorem toLin_mem_box (b : Basis ι K E) (t : Matrix.TransvectionStruct ι K) (x
           | gcongr
       _ = valuation K t.c := mul_one _
       _ ≤ max (valuation K t.c) 1 := le_max_left _ _
-  · rw [if_neg hk, add_zero]
+  · rw [ite_eq_right hk, add_zero]
     exact hx k
 
 theorem transvection_box (b : Basis ι K E) (t : Matrix.TransvectionStruct ι K) :

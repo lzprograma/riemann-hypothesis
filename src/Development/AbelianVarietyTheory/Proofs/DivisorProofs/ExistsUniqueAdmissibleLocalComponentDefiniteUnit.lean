@@ -48,7 +48,6 @@ public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -86,7 +85,7 @@ theorem exists_equiv (hU : Unr E) (n : ℕ) (w : Pl E) :
     ∃ e : locU n w ≃ₜ* UL n w, ∀ x : locU n w, ((e x : UL n w) : GLw n w) = cLoc w (x : UA E n) := by
   by_cases hs : IsSplitAt w
   · obtain ⟨e, he⟩ := GlobalTheory.locU_equiv_GL E n w hs
-    have h : UL n w = ⊤ := if_pos hs
+    have h : UL n w = ⊤ := ite_eq_left hs
     have hm : ∀ g : GLw n w, g ∈ UL n w := fun g => by rw [h]; exact Subgroup.mem_top _
     refine ⟨{ toFun := fun x => ⟨e x, hm _⟩
               invFun := fun g => e.symm g.1
@@ -97,7 +96,7 @@ theorem exists_equiv (hU : Unr E) (n : ℕ) (w : Pl E) :
               continuous_invFun := e.symm.continuous.comp continuous_subtype_val }, fun x => he x⟩
   · obtain ⟨-, -, hv, hns, -⟩ := GlobalTheory.ConjAtPlace.main E hU w
     obtain ⟨e, he⟩ := GlobalTheory.DefU.Inert.locU_equiv E n w (cj w) (hns hs).1 hv
-    have h : UL n w = UJ (cj w) 1 := if_neg hs
+    have h : UL n w = UJ (cj w) 1 := ite_eq_right hs
     rw [h]
     exact ⟨e, he⟩
 
@@ -113,7 +112,6 @@ theorem exists_unique_locComp : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
   refine ⟨?_, ?_⟩
   · obtain ⟨σ₀, hadm, hirr, f, hf0, hfm, hf⟩ := GlobalTheory.DefU.LocAdm.exists_admissible_comp E n ⟨π, hπ⟩ w
     let ρ : Representation ℂ (UL n w) σ₀.V := σ₀.ρ.comp e.toMulEquiv.symm.toMonoidHom
-    have hρ : ∀ g v, ρ g v = σ₀.ρ (e.symm g) v := fun _ _ => rfl
     let σ : SmIrr (UL n w) :=
       { V := σ₀.V
         ρ := ρ

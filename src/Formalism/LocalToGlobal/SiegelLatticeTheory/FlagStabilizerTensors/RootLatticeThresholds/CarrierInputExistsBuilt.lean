@@ -14,8 +14,6 @@ namespace Formalism.L2.SG.Pf.CarrierT
 
 open Formalism.L2.SG.RealObj
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def instCMT2 (D : D7) : IsCMField D.host.E := D.host.isCMField_hostE
 
 attribute [local instance] instCMT2

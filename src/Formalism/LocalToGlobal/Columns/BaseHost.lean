@@ -17,34 +17,6 @@ namespace Formalism.L2.Col
 
 open Formalism.BasicNotions Formalism.L2.Host Formalism.L2.DIV Formalism.FrobeniusOrbits
 
-section Host
-
-variable {R : Ranks} {H : Formalism.BasicNotions.Host R} (T : Frame H)
-
-
-end Host
-
-section Host2
-
-variable {R : Ranks} {H : Formalism.BasicNotions.Host R} (T : Frame H)
-
-
-
-variable (ι : Qb →+* ℂ) (LL : Fld) [Normal ℚ LL] (hE : H.EQ ≤ LL)
-
-
-
-
-end Host2
-
-section Host3
-
-variable {R : Ranks} {H : Formalism.BasicNotions.Host R} (T : Frame H)
-variable (ι : Qb →+* ℂ) (LL : Fld) [FiniteDimensional ℚ LL] [Normal ℚ LL] (hE : H.EQ ≤ LL)
-
-
-end Host3
-
 theorem ram_conj_mem {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (hrank : Module.finrank F E = 2) (c : 𝓞 E →+* 𝓞 E) (hcc : ∀ x, c (c x) = x)
     (hcF : ∀ a : 𝓞 F, c (algebraMap (𝓞 F) (𝓞 E) a) = algebraMap (𝓞 F) (𝓞 E) a)

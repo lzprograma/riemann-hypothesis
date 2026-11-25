@@ -168,11 +168,11 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.levBlock
     have e₂ := h₂ v
     rw [finEmb_bHom, finAt_bHom]
     by_cases hv : v ∈ im w
-    · simp only [hv, if_true] at e₁ e₂ ⊢
+    · simp only [hv, ite_true] at e₁ e₂ ⊢
       have := (U' v).mul_mem e₁.2.1 e₂.2.2
       rw [MonoidHom.comp_apply, MonoidHom.comp_apply, ← map_mul] at this
       simpa using this
-    · simp only [hv, if_false] at e₁ e₂ ⊢
+    · simp only [hv, ite_false] at e₁ e₂ ⊢
       exact bHom_int v e₁ e₂
   have hl : lv (fin1 u₁) (fin1 u₂) 0 = fin1 (bHom (u₁, u₂)) := by
     have h2 := ((levLaws (K := K) 2 (im w)).1 U₂ hU₂).2

@@ -65,7 +65,7 @@ theorem exists_sub_X_eq_X_mul :
   obtain ⟨G, hG⟩ := hdvd
   refine ⟨G, ?_, hG⟩
   have h := congrArg (coeff (Finsupp.single 1 1)) hG
-  rw [map_sub, F.lin_coeff_Y, coeff_X, if_neg (by
+  rw [map_sub, F.lin_coeff_Y, coeff_X, ite_eq_right (by
     intro e; simpa using congrArg (fun d => d 1) e)] at h
   have e := coeff_add_monomial_mul (m := Finsupp.single (1 : Fin 2) 1) (n := 0) (φ := G) (1 : R)
   rw [add_zero, one_mul, ← X_def] at e
@@ -384,10 +384,10 @@ theorem sum_enatMin_lowerIndex_lubinTateField (hf : IsLubinTateSeries π f) {n k
       · rw [hi, enatMin_coe, enatMin_coe, hS]
         push_cast
         by_cases hkm : k + 1 ≤ m
-        · rw [if_pos hkm, min_eq_right (pow_le_pow_right₀ hqR hkm),
+        · rw [ite_eq_left hkm, min_eq_right (pow_le_pow_right₀ hqR hkm),
             min_eq_right (pow_le_pow_right₀ hqR (by omega))]
           ring
-        · rw [if_neg hkm, min_eq_left (pow_le_pow_right₀ hqR (by omega)),
+        · rw [ite_eq_right hkm, min_eq_left (pow_le_pow_right₀ hqR (by omega)),
             min_eq_left (pow_le_pow_right₀ hqR (by omega))]
           ring
     simp_rw [h1]

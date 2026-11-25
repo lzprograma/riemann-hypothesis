@@ -2,43 +2,7 @@ module
 
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGLocModel
 import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -49,8 +13,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
   Formalism.L2.SG.Full Formalism.FourierDecayAlt Formalism.L2.SG.RowsConc Formalism.L2.SG.TermLoc Formalism.L2.SG.NGLocModel
 
 namespace Formalism.L2.SG.FamDefs
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Loc
 
@@ -212,7 +174,7 @@ def OrbitFamilyIdentityNonGeneric : Prop :=
       Ctx Cg cb Cw cT CT C0 C' Cl D large₂ X Y u u' →
       ∀ (νL νB : X.B.I.Ginf → Measure X.B.I.Ginf) (ng : PN.Pts D.host.E D.R.rS → ℝ)
         (γ : PN.Pts D.host.E D.R.rS), PN.IsPt (Y.tO u u') (NOf2 Y u u' νL νB ng) γ →
-      ∀ (S : Finset (Set (TauC Y u u') × NuC D)) (Fm : LocFam (zOf Y) (Set (TauC Y u u')) (NuC D)),
+      ∀ (_ : Finset (Set (TauC Y u u') × NuC D)) (Fm : LocFam (zOf Y) (Set (TauC Y u u')) (NuC D)),
         FamTie (Y.tO u u').ngSet (clsOf Y u u') (nmlOf Y u u') γ Fm → ∃ V0, OrbitFamilyIdentityAt Fm V0
 
 def WeightsNG : Prop :=
@@ -228,7 +190,7 @@ def WeightsNG : Prop :=
         MassDataAdmissible X Y u u' (bkU X hb Y u u' X0 ψ sd C Th vR Q i0 i0' νq) Irat Ire →
       ∀ (νL νB : X.B.I.Ginf → Measure X.B.I.Ginf) (ng : PN.Pts D.host.E D.R.rS → ℝ)
         (γ : PN.Pts D.host.E D.R.rS), PN.IsPt (Y.tO u u') (NOf2 Y u u' νL νB ng) γ →
-      ∀ (S : Finset (Set (TauC Y u u') × NuC D)) (Fm : LocFam (zOf Y) (Set (TauC Y u u')) (NuC D)),
+      ∀ (_ : Finset (Set (TauC Y u u') × NuC D)) (Fm : LocFam (zOf Y) (Set (TauC Y u u')) (NuC D)),
         FamTie (Y.tO u u').ngSet (clsOf Y u u') (nmlOf Y u u') γ Fm →
         (∀ p ∈ Fm.P, (Fm.FP p).RelG (LocNG.theta ((zOf Y).M p))) →
         (∀ p ∈ Fm.P, ∃ (d : Datum (Fm.FP p)) (t : Loc.Term (Vp D p) ((zOf Y).M p) D.R.rS), IsTermOver (Fm.FP p) d t) →
@@ -262,7 +224,7 @@ def ExistNG : Prop :=
       Ctx Cg cb Cw cT CT C0 C' Cl D large₂ X Y u u' →
       ∀ (νL νB : X.B.I.Ginf → Measure X.B.I.Ginf) (ng : PN.Pts D.host.E D.R.rS → ℝ)
         (γ : PN.Pts D.host.E D.R.rS), PN.IsPt (Y.tO u u') (NOf2 Y u u' νL νB ng) γ →
-      ∀ S : Finset (Set (TauC Y u u') × NuC D), ∃ Fm : LocFam (zOf Y) (Set (TauC Y u u')) (NuC D),
+      ∀ _ : Finset (Set (TauC Y u u') × NuC D), ∃ Fm : LocFam (zOf Y) (Set (TauC Y u u')) (NuC D),
         FamTie (Y.tO u u').ngSet (clsOf Y u u') (nmlOf Y u u') γ Fm ∧
         (∀ p ∈ Fm.P, (Fm.FP p).RelG (LocNG.theta ((zOf Y).M p))) ∧
         (∀ p ∈ Fm.P, ∃ (d : Datum (Fm.FP p)) (t : Loc.Term (Vp D p) ((zOf Y).M p) D.R.rS), IsTermOver (Fm.FP p) d t) ∧

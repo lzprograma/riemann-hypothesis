@@ -179,7 +179,6 @@ theorem trace_map_subtype {L : Submodule ℂ D} [FiniteDimensional ℂ L] (g : D
 
 end Helpers2
 
-
 open MeasureTheory in
 theorem supTrace (n : ℕ) : SupTraceStatement n := by
   intro ε lam h H _ _ σ hDS hHC hgap hthr hp hq
@@ -257,7 +256,7 @@ theorem supTrace (n : ℕ) : SupTraceStatement n := by
     rintro k _ ⟨y, hy, rfl⟩
     exact ⟨sigD hD (hφK k) y, sigD_layer hσ hD hV.2.1 hVK J (hφK k) hy, rfl⟩
   have hAc : ∀ v, Continuous fun k => σ (φ k) v := fun v =>
-    (hσ.2.2 v).comp_continuous hφc fun g => kset_mem_UJset (hφK g)
+    (hσ.2.2 v).comp_continuous hφc fun g => ReciprocityTheory.ChartRestriction.DS.closure_inUJ_of_mem_Kset (hφK g)
   have hcont : Continuous fun k => MvPolynomial.eval (entVar (φ k)) P * physDet ε (φ k) := by
     have := hent (P * Q)
     simpa only [map_mul, hQ] using this

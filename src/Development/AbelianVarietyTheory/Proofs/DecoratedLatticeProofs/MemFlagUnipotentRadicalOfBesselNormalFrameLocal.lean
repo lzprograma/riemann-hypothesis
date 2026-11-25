@@ -75,7 +75,7 @@ theorem conj_vanish {k : Type} [CommRing k] {Z Y M : Type} [Fintype Z] [Decidabl
       rw [← Matrix.mul_one (B * _), ← hAB, ← Matrix.mul_assoc, Matrix.mul_assoc B, h1, ← Matrix.mul_assoc, hBA,
         Matrix.one_mul]
     have h3 := congrFun (congrFun h2 t) b
-    rwa [diagonal_mul, mul_diagonal, if_pos rfl, if_neg h, mul_one, zero_mul] at h3
+    rwa [diagonal_mul, mul_diagonal, ite_eq_left rfl, ite_eq_right h, mul_one, zero_mul] at h3
   have e : P * (β * q * γ - 1) * J = (P * β) * (q - 1) * (γ * J) := by
     rw [← hβγ]
     simp only [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_assoc, Matrix.one_mul]

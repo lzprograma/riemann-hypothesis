@@ -68,17 +68,6 @@ theorem mem_of_isIntegral {L : Type} [Field L] (W : ValuationSubring L) {x : L} 
   obtain ⟨y, hy⟩ := (IsIntegrallyClosed.isIntegral_iff (R := W) (K := L)).mp h
   exact hy ▸ y.2
 
-theorem isUnit_of_coprime {L : Type} [Field L] (V : ValuationSubring L) {p n : ℕ} (hp : (p : L) ∈ V.nonunits)
-    (h : n.Coprime p) : IsUnit (n : V) := by
-  have hpV : (p : V) ∈ IsLocalRing.maximalIdeal V :=
-    ValuationSubring.coe_mem_nonunits_iff.mp (by simpa using hp)
-  obtain ⟨a, b, hab⟩ : IsCoprime (n : V) (p : V) := Nat.Coprime.cast h
-  by_contra hn
-  have hnV : (n : V) ∈ IsLocalRing.maximalIdeal V := hn
-  have h1 : (1 : V) ∈ IsLocalRing.maximalIdeal V :=
-    hab ▸ add_mem (Ideal.mul_mem_left _ a hnV) (Ideal.mul_mem_left _ b hpV)
-  exact (IsLocalRing.maximalIdeal.isMaximal V).ne_top ((Ideal.eq_top_iff_one _).mpr h1)
-
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct Pointwise in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] in

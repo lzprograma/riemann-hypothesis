@@ -4,48 +4,8 @@ public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.IsMultiHom
 public import Formalism.PeriodIntegrals.AdmissibleModel.WeylDim
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RemainingWeightVectorCount
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -281,33 +241,11 @@ theorem cntSpec : CntSpec := by
   simp only [nuOf_cast lam hlam]
   exact _root_.Formalism.MainNotions.Pf14.weylDim_shift (m + 1) lam _
 
-private lemma weylDim_const_sub_rev (m : ℕ) (μ : Fin m → ℤ) (c : ℤ) :
-    Formalism.CountingSumsFrames.weylDim m (fun t => c - μ t.rev) = Formalism.CountingSumsFrames.weylDim m μ := by
-  unfold Formalism.CountingSumsFrames.weylDim
-  rw [Finset.prod_comm]
-  refine Fintype.prod_equiv Fin.revPerm _ _ (fun j => ?_)
-  refine Fintype.prod_equiv Fin.revPerm _ _ (fun i => ?_)
-  simp only [Fin.revPerm_apply]
-  have hr : ∀ x : Fin m, ((x.rev : ℕ) : ℚ) = (m : ℚ) - 1 - ((x : ℕ) : ℚ) := by
-    intro x
-    have := x.isLt
-    rw [Fin.val_rev, Nat.cast_sub (by omega)]
-    push_cast
-    ring
-  rw [hr i, hr j]
-  by_cases h : i < j
-  · have h' : j.rev < i.rev := Fin.rev_lt_rev.mpr h
-    rw [if_pos h, if_pos h']
-    push_cast
-    congr 1 <;> ring
-  · have h' : ¬ j.rev < i.rev := fun h2 => h (Fin.rev_lt_rev.mp h2)
-    rw [if_neg h, if_neg h']
-
 theorem cntTop : CntTop := by
   intro m _ lo hlo _ vec
   cases vec with
   | true =>
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have hν : ∀ t : Fin m, nuOf lo t.succ ≤ nuOf lo 0 := fun t => by
       have h1 := nuOf_cast lo hlo t.succ
       have h2 := nuOf_cast lo hlo 0
@@ -322,7 +260,7 @@ theorem cntTop : CntTop := by
     simp only [nuOf_cast lo hlo]
     exact _root_.Formalism.MainNotions.Pf14.weylDim_shift m (fun i => lo i.succ) _
   | false =>
-    rw [if_neg Bool.false_ne_true]
+    rw [ite_eq_right Bool.false_ne_true]
     have hL : Antitone (fun i : Fin (m + 1) => -lo i.rev) := by
       intro a b hab
       have := hlo (Fin.rev_le_rev.mpr hab)
@@ -343,7 +281,10 @@ theorem cntTop : CntTop := by
       simp only
       linarith
     rw [hf, dGT_weylDim _ _ hanti]
-    exact weylDim_const_sub_rev m (fun i => lo i.succ) (lo 0)
+    rw [show (fun t : Fin m => lo 0 - lo t.rev.succ) = fun t => -lo t.rev.succ + lo 0 from
+      funext fun _ => sub_eq_neg_add _ _,
+      _root_.Formalism.MainNotions.Pf14.weylDim_shift m _ (lo 0),
+      _root_.Formalism.MainNotions.Pf14.weylDim_dual m fun i => lo i.succ]
 
 
 open Formalism.MainNotions.Pf14 (restW dT flW flatDeg vecE remainingWeightVectorCount) in
@@ -421,7 +362,6 @@ theorem card_all {n' m : ℕ} (hm : 2 ≤ m) (TT : Finset (Fin n')) (lam0 : Fin 
     rw [hR0 s hs]
     split_ifs
     · rfl
-    · have := weylDim_const_sub_rev (m + 1) (lam0 s) 0
-      simpa using this
+    · simpa using _root_.Formalism.MainNotions.Pf14.weylDim_dual (m + 1) (lam0 s)
 
 end Formalism.MainNotions.TestSideCounting

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsPreDividedPowersAugmentationIdeal
 public import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -47,8 +48,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open DividedPowers GlobalTheory.Cris GlobalTheory.PDA PowerSeries
@@ -65,7 +64,6 @@ theorem isExpType_one : IsExpType (1 : PowerSeries B) := by
   rcases Nat.eq_zero_or_pos m with rfl | hm
   · simp
   · have h1 : m ≠ 0 := hm.ne'
-    have h2 : m + n ≠ 0 := by omega
     simp [coeff_one, h1]
 
 theorem isExpType_mul {f g : PowerSeries B} (hf : IsExpType f) (hg : IsExpType g) :
@@ -126,16 +124,7 @@ theorem ser_zero {g : ℕ → B} (h0 : g 0 = 1) : ser g 0 = 1 := by
 
 theorem ser_add {g : ℕ → B} (hm : ∀ m n, g m * g n = ((m + n).choose m : B) * g (m + n)) (a b : B) :
     ser g (a + b) = ser g a * ser g b := by
-  ext n
-  rw [coeff_mul]
-  simp only [ser, coeff_mk]
-  rw [(Commute.all a b).add_pow', Finset.sum_mul]
-  refine Finset.sum_congr rfl fun k hk ↦ ?_
-  rw [Finset.HasAntidiagonal.mem_antidiagonal] at hk
-  have := hm k.1 k.2
-  rw [hk] at this
-  rw [show a ^ k.1 * g k.1 * (b ^ k.2 * g k.2) = a ^ k.1 * b ^ k.2 * (g k.1 * g k.2) by ring, this, nsmul_eq_mul]
-  ring
+  apply _root_.GlobalTheory.PDA.mk_exp_add <;> assumption
 
 theorem ser_smul {g : ℕ → B} (a b : B) : ser g (a * b) = rescale a (ser g b) := by
   ext n

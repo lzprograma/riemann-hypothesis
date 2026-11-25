@@ -8,44 +8,7 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Nontr
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupIrreducibleOfAdmissibleUnitary
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SpanRangeEqTopOfIsIrreducible
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryAdmissibleFiniteMultiplicity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Module.StablyFree.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AutTranslate, Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.AdmissibleEquivariantFormsRepresentation, Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupAutomorphicRepsOfInvariantForm
@@ -203,13 +166,13 @@ private theorem UpperTheory.Reformulated.B.Gr38.stab_open {E : Type} [Field E] [
 
 noncomputable def UpperTheory.Reformulated.B.Gr38.eqForms :
     {E : Type} →
-      [inst : Field E] →
-        [inst_1 : NumberField E] →
-          [inst_2 : NumberField.IsCMField E] →
+      [Field E] →
+        [NumberField E] →
+          [NumberField.IsCMField E] →
             {n : ℕ} →
               {S : Type} →
-                [inst_3 : AddCommGroup S] →
-                  [inst_4 : _root_.Module ℂ S] →
+                [AddCommGroup S] →
+                  [_root_.Module ℂ S] →
                     Representation ℂ (↥(GlobalTheory.UnitaryBC.infU E n)) S → Submodule ℂ (S →ₗ[ℂ] ↥(GlobalTheory.UnitaryBC.UA E n) → ℂ) :=
     fun {E : Type} [Field E] [NumberField E] [NumberField.IsCMField E] {n : ℕ} {S : Type} [AddCommGroup S]
         [_root_.Module ℂ S] (ρ : Representation ℂ (↥(GlobalTheory.UnitaryBC.infU E n)) S) ↦
@@ -238,13 +201,13 @@ noncomputable def UpperTheory.Reformulated.B.Gr38.eqForms :
 
 noncomputable def UpperTheory.Reformulated.B.Gr38.eqRep :
     {E : Type} →
-      [inst : Field E] →
-        [inst_1 : NumberField E] →
-          [inst_2 : NumberField.IsCMField E] →
+      [Field E] →
+        [NumberField E] →
+          [NumberField.IsCMField E] →
             {n : ℕ} →
               {S : Type} →
-                [inst_3 : AddCommGroup S] →
-                  [inst_4 : _root_.Module ℂ S] →
+                [AddCommGroup S] →
+                  [_root_.Module ℂ S] →
                     (ρ : Representation ℂ (↥(GlobalTheory.UnitaryBC.infU E n)) S) →
                       Representation ℂ ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) :=
     fun {E : Type} [Field E] [NumberField E] [NumberField.IsCMField E] {n : ℕ} {S : Type} [AddCommGroup S]
@@ -286,8 +249,8 @@ noncomputable def UpperTheory.Reformulated.B.Gr38.eqRep :
         ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) →* ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) →ₗ[ℂ] ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) }
 
 theorem UpperTheory.Reformulated.B.Gr38.eqRep_adm :
-    ∀ {E : Type} [inst : Field E] [inst_1 : NumberField E] [inst_2 : NumberField.IsCMField E] {n : ℕ} {S : Type}
-      [inst_3 : AddCommGroup S] [inst_4 : _root_.Module ℂ S] [FiniteDimensional ℂ S]
+    ∀ {E : Type} [Field E] [NumberField E] [NumberField.IsCMField E] {n : ℕ} {S : Type}
+      [AddCommGroup S] [_root_.Module ℂ S] [FiniteDimensional ℂ S]
       (ρ : Representation ℂ (↥(GlobalTheory.UnitaryBC.infU E n)) S) (f : ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ)),
       ∃ (K : Subgroup ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))),
         (∀ k ∈ K,

@@ -8,7 +8,7 @@ public import Mathlib.NumberTheory.NumberField.Basic
 namespace Bl.general_b_fact_third_alt
 
 theorem goal1 :
-  ∀ {K : Type} [inst : Field.{0} K] [NumberField.{0} K] {n : Nat}
+  ∀ {K : Type} [Field.{0} K] [NumberField.{0} K] {n : Nat}
   (R : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} K) (Fin n → K)) (x : Fin n → K),
   Membership.mem.{0, 0} (Submodule.span.{0, 0} K (SetLike.coe.{0, 0} R)) x →
     Exists.{1} fun (d : NumberField.RingOfIntegers.{0} K) ↦

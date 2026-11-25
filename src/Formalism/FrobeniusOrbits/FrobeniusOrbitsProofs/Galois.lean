@@ -3,51 +3,8 @@ module
 public import Formalism.FrobeniusOrbits.Statement
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import Formalism.TameInertiaTowers.CentralOrderTwo.Galois
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -153,7 +110,7 @@ theorem fix_of_sgn_one {K : Type*} [Field K] [Algebra ℚ K] {σ : Gal(K/ℚ)} {
     (hs : sgn σ x = 1) : σ x = x := by
   rw [sgn.eq_1] at hs
   by_contra hne
-  rw [if_neg hne] at hs
+  rw [ite_eq_right hne] at hs
   exact absurd (congrArg Units.val hs) (by norm_num)
 
 theorem gal_mul_comm_of_isLayer (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b) (σ τ : Gal(L/ℚ)) :
@@ -227,8 +184,8 @@ theorem zeta_inversion_sq_eq_one (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ 
   have hB : (tau0 hqd h ^ 2) b = b := by rw [pow_two, AlgEquiv.mul_apply, zeta_inversion_fixes_b, zeta_inversion_fixes_b]
   have hU : h.1.autToPow ℚ (tau0 hqd h ^ 2) = h.1.autToPow ℚ 1 := by
     rw [map_pow, map_one, autToPow_tau0_eq_neg_one hqd h, neg_one_sq]
-  rw [galMap.eq_1, galMap.eq_1, hU, sgn.eq_1, sgn.eq_1, sgn.eq_1, sgn.eq_1, if_pos hA, if_pos hB,
-    if_pos (AlgEquiv.one_apply a), if_pos (AlgEquiv.one_apply b)]
+  rw [galMap.eq_1, galMap.eq_1, hU, sgn.eq_1, sgn.eq_1, sgn.eq_1, sgn.eq_1, ite_eq_left hA, ite_eq_left hB,
+    ite_eq_left (AlgEquiv.one_apply a), ite_eq_left (AlgEquiv.one_apply b)]
 
 theorem orderOf_zeta_inversion (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b) :
     orderOf (tau0 hqd h) = 2 := by
@@ -283,14 +240,14 @@ theorem fixingSubgroup_hostE_le (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a
   rw [apply_theta h.1] at hθ
   have hc : h.1.autToPow ℚ σ = 1 ∨ h.1.autToPow ℚ σ = -1 := by
     rw [← trace_eq_iff_units h.1, hθ, Units.val_one, one_val, pow_one, pow_one]
-  have hsa : sgn σ a = 1 := by rw [sgn.eq_1, if_pos ha]
-  have hsb : sgn σ b = 1 := by rw [sgn.eq_1, if_pos hb]
+  have hsa : sgn σ a = 1 := by rw [sgn.eq_1, ite_eq_left ha]
+  have hsb : sgn σ b = 1 := by rw [sgn.eq_1, ite_eq_left hb]
   have hbij := (layer_galois hqd h).2.2.2
   rcases hc with hc | hc
   · have h1 : σ = 1 := by
       apply hbij.1
       rw [galMap.eq_1, galMap.eq_1, hc, hsa, hsb, map_one, sgn.eq_1, sgn.eq_1,
-        if_pos (AlgEquiv.one_apply a), if_pos (AlgEquiv.one_apply b)]
+        ite_eq_left (AlgEquiv.one_apply a), ite_eq_left (AlgEquiv.one_apply b)]
     rw [h1]
     exact Subgroup.one_mem _
   · have h1 : σ = tau0 hqd h := by
@@ -349,8 +306,8 @@ theorem sgn_lift {σ : hostE ζ a b ≃ₐ[ℚ] hostE ζ a b} {τ : Gal(L/ℚ)}
     exact Subtype.ext_iff
   rw [sgn.eq_1, sgn.eq_1]
   by_cases hx : σ x = x
-  · rw [if_pos hx, if_pos (key.1 hx)]
-  · rw [if_neg hx, if_neg (fun h' => hx (key.2 h'))]
+  · rw [ite_eq_left hx, ite_eq_left (key.1 hx)]
+  · rw [ite_eq_right hx, ite_eq_right (fun h' => hx (key.2 h'))]
 
 theorem hPart_lift (h : IsLayer (e + 2) q d ζ a b) {σ : hostE ζ a b ≃ₐ[ℚ] hostE ζ a b}
     {τ : Gal(L/ℚ)} (hστ : ∀ x : hostE ζ a b, ((σ x : hostE ζ a b) : L) = τ x) :
@@ -435,8 +392,8 @@ private theorem apply_eq_sgn_mul_of_apply_sq_eq_sq {K : Type*} [Field K] [Algebr
     (hx : σ (x ^ 2) = x ^ 2) : σ x = ((sgn σ x : ℤ) : K) * x := by
   rw [sgn.eq_1]
   by_cases hs : σ x = x
-  · rw [if_pos hs, Units.val_one, Int.cast_one, one_mul, hs]
-  · rw [if_neg hs, Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one, neg_one_mul]
+  · rw [ite_eq_left hs, Units.val_one, Int.cast_one, one_mul, hs]
+  · rw [ite_eq_right hs, Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one, neg_one_mul]
     rw [map_pow] at hx
     have h2 : (σ x - x) * (σ x + x) = 0 := by linear_combination hx
     rcases mul_eq_zero.1 h2 with h1 | h1

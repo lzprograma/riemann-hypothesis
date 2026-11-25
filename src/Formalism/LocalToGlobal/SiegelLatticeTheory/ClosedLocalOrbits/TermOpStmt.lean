@@ -13,8 +13,6 @@ namespace Formalism.L2.SG.TermOp
 
 section Stmt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
@@ -110,7 +108,7 @@ theorem GG_diag (i : Iof TR) :
     intro v
     have h1 : Formalism.L2.SG.GGMirabolic.psiNat (TR.psi0 v) (1 : GL (Fin D.R.k) (TR.Fq v)) = 1 := by
       unfold Formalism.L2.SG.GGMirabolic.psiNat Formalism.L2.SG.GGMirabolic.psiU
-      rw [if_pos]
+      rw [ite_eq_left]
       · have hs : Formalism.L2.SG.GGMirabolic.superdiag D.R.k (1 : Matrix (Fin D.R.k) (Fin D.R.k) (TR.Fq v)) = 0 :=
           Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun j _ => by
             split_ifs with h
@@ -144,15 +142,13 @@ theorem ggBound (h : Formalism.L2.SG.GGMirabolic.TermsGGBound) (hψ : ∀ v, TR.
   · rw [MulOpposite.smul_eq_mul_unop] at hx
     exact MulOpposite.unop_injective (mul_left_cancel (hx.trans (mul_one j).symm))
   · rw [MulOpposite.smul_eq_mul_unop, MulOpposite.unop_op, mul_inv_cancel_left]
-  · rw [if_pos ⟨MulOpposite.op (j⁻¹ * i), by
+  · rw [ite_eq_left ⟨MulOpposite.op (j⁻¹ * i), by
       rw [MulOpposite.smul_eq_mul_unop, MulOpposite.unop_op, mul_inv_cancel_left]⟩]
     rfl
 
 end Stmt
 
 section IdCell
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.PoincareInHH.PoincareSetting
 

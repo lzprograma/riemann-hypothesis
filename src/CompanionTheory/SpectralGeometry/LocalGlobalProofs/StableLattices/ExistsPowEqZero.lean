@@ -3,56 +3,7 @@ module
 public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.InnerEqZeroOfWeight
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantCompactSpan
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents.HighestWeightDifferencesNat
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -86,18 +37,18 @@ lemma isWeight_pow (hF : KRel ε E) {a b : Fin n} (he : ε a = ε b) {μ : Fin n
       simp [shift]
     · subst h1
       have h2' : ¬ c = b := fun h => h2 h.symm
-      simp only [shift, if_neg h2', if_neg h2, sub_zero]
+      simp only [shift, ite_eq_right h2', ite_eq_right h2, sub_zero]
       push_cast
       simp only [mul_one, add_smul, one_smul]
       abel
     · subst h2
       have h1' : ¬ b = a := h1
-      simp only [shift, if_neg h1', zero_sub, mul_neg, zero_sub]
+      simp only [shift, ite_eq_right h1', zero_sub, mul_neg, zero_sub]
       push_cast
       simp only [mul_one, add_smul, neg_add, neg_smul, one_smul]
       abel
     · have h2' : ¬ c = b := fun h => h2 h.symm
-      simp only [shift, if_neg h1, if_neg h2', if_neg h2, sub_zero, mul_zero, add_zero]
+      simp only [shift, ite_eq_right h1, ite_eq_right h2', ite_eq_right h2, sub_zero, mul_zero, add_zero]
 
 lemma norm_identity (hF : KRel ε E) (hU : KUnit ε E) {a b : Fin n} (he : ε a = ε b) {μ : Fin n → ℝ} {w : V}
     (hw : IsWeight E μ w) : ‖E a b w‖ ^ 2 = ‖E b a w‖ ^ 2 + (μ b - μ a) * ‖w‖ ^ 2 := by
@@ -131,7 +82,7 @@ lemma string_bound (hF : KRel ε E) (hU : KUnit ε E) {a b : Fin n} (hab : a ≠
       rw [pow_succ', Module.End.mul_apply]
     have hE1 : (E a b ^ (k + 1)) z = E a b ((E a b ^ k) z) := by rw [pow_succ', Module.End.mul_apply]
     have hsh : shift μ a b (k + 1) b - shift μ a b (k + 1) a = μ b - μ a - 2 * ((k : ℝ) + 1) := by
-      simp only [shift, if_neg hab, if_neg (Ne.symm hab), ↓reduceIte]; push_cast; ring
+      simp only [shift, ite_eq_right hab, ite_eq_right (Ne.symm hab), ↓reduceIte]; push_cast; ring
     have hcs : ‖(E a b ^ (k + 1)) z‖ ^ 2 ≤ ‖E b a ((E a b ^ (k + 1)) z)‖ * ‖(E a b ^ k) z‖ := by
       have h1 : inner ℂ (E b a ((E a b ^ (k + 1)) z)) ((E a b ^ k) z) =
           inner ℂ ((E a b ^ (k + 1)) z) ((E a b ^ (k + 1)) z) := by
@@ -178,7 +129,7 @@ lemma exists_pow_eq_zero (hF : KRel ε E) (hU : KUnit ε E) {L : Submodule ℂ V
   have hinj : ∀ k k' : ℕ, k ≠ k' → shift μ a b k ≠ shift μ a b k' := by
     intro k k' hkk' h
     have := congrFun h a
-    simp only [shift, if_neg hab, ↓reduceIte, sub_zero, mul_one, add_right_inj] at this
+    simp only [shift, ite_eq_right hab, ↓reduceIte, sub_zero, mul_one, add_right_inj] at this
     exact hkk' (by exact_mod_cast this)
   let f : ℕ → L := fun k => ⟨(E a b ^ k) z, hmem k⟩
   have hli : LinearIndependent ℂ (L.subtype ∘ f) := by
@@ -217,9 +168,9 @@ lemma swap_weight_of_le (hF : KRel ε E) (hU : KUnit ε E) {L : Submodule ℂ V}
       mul_pos (mul_pos (by positivity) (by linarith)) hupos
     nlinarith
   have hνa : shift μ a b K' a = μ a + K' := by
-    simp only [shift, if_neg hab, ↓reduceIte]; ring
+    simp only [shift, ite_eq_right hab, ↓reduceIte]; ring
   have hνb : shift μ a b K' b = μ b - K' := by
-    simp only [shift, if_neg (Ne.symm hab), ↓reduceIte]; ring
+    simp only [shift, ite_eq_right (Ne.symm hab), ↓reduceIte]; ring
   have hlow : ∀ j : ℕ, E a b ((E b a ^ (j + 1)) ((E a b ^ K') z)) =
       (((((j : ℝ) + 1) * (shift μ a b K' a - shift μ a b K' b - j)) : ℝ) : ℂ) • (E b a ^ j) ((E a b ^ K') z) := by
     intro j
@@ -237,7 +188,7 @@ lemma swap_weight_of_le (hF : KRel ε E) (hU : KUnit ε E) {L : Submodule ℂ V}
       have hwj := isWeight_pow hF he.symm hνu (j + 1)
       rw [hwj a, hwj b, ← Module.End.mul_apply (E b a), ← pow_succ', ← sub_smul, ← add_smul]
       congr 1
-      simp only [shift, if_neg hab, if_neg (Ne.symm hab), ↓reduceIte]
+      simp only [shift, ite_eq_right hab, ite_eq_right (Ne.symm hab), ↓reduceIte]
       push_cast
       ring
   have hnormlow : ∀ j : ℕ, ‖(E b a ^ (j + 1)) ((E a b ^ K') z)‖ ^ 2 =
@@ -299,15 +250,15 @@ lemma swap_weight_of_le (hF : KRel ε E) (hU : KUnit ε E) {L : Submodule ℂ V}
     by_cases hca : c = a
     · subst hca
       rw [Equiv.swap_apply_left]
-      simp only [↓reduceIte, if_neg hab, sub_zero, mul_one]
+      simp only [↓reduceIte, ite_eq_right hab, sub_zero, mul_one]
       linarith
     · by_cases hcb : c = b
       · subst hcb
         rw [Equiv.swap_apply_right]
-        simp only [↓reduceIte, if_neg hca, zero_sub, mul_neg, mul_one]
+        simp only [↓reduceIte, ite_eq_right hca, zero_sub, mul_neg, mul_one]
         linarith
       · rw [Equiv.swap_apply_of_ne_of_ne hca hcb]
-        simp only [if_neg hca, if_neg hcb, sub_zero, mul_zero, add_zero]
+        simp only [ite_eq_right hca, ite_eq_right hcb, sub_zero, mul_zero, add_zero]
   rw [hsw]
   exact isWeight_pow hF he hz _
 
@@ -365,7 +316,7 @@ private lemma casK_mul_comm_of_eq_sign {A : Type} [Ring A] {F : Fin n → Fin n 
       have h3 : F a b * F b a * F c d - F c d * (F a b * F b a) =
           F a b * (F b a * F c d - F c d * F b a) + (F a b * F c d - F c d * F a b) * F b a := by
         noncomm_ring
-      rw [if_pos hab, h3, h1, h2]
+      rw [ite_eq_left hab, h3, h1, h2]
       simp only [hab, true_and, mul_sub, sub_mul, mul_ite, ite_mul, mul_zero, zero_mul]
     · simp [hab]
   unfold CasK
@@ -403,13 +354,13 @@ private lemma casK_apply_eq_of_kHighest (hF : KRel ε E) {ν : Fin n → ℝ} {y
       (((if ε a = ε b then (if a = b then ν a ^ 2 else if a < b then ν a - ν b else 0) else 0 : ℝ)) : ℂ) • y := by
     intro a b
     by_cases hab : ε a = ε b
-    · simp only [if_pos hab, Module.End.mul_apply]
+    · simp only [ite_eq_left hab, Module.End.mul_apply]
       rcases lt_trichotomy a b with hlt | heq | hgt
-      · rw [if_neg hlt.ne, if_pos hlt, ReciprocityTheory.ChartRestriction.DS.HW.lie_relation_raise_lower hF hab, hy.2 a b hlt hab, map_zero,
+      · rw [ite_eq_right hlt.ne, ite_eq_left hlt, ReciprocityTheory.ChartRestriction.DS.HW.lie_relation_raise_lower hF hab, hy.2 a b hlt hab, map_zero,
           zero_add, hy.1 a, hy.1 b, ← sub_smul, Complex.ofReal_sub]
       · subst heq
-        rw [if_pos rfl, hy.1 a, map_smul, hy.1 a, smul_smul, Complex.ofReal_pow, sq]
-      · rw [if_neg hgt.ne', if_neg (not_lt.mpr hgt.le), hy.2 b a hgt hab.symm, map_zero]
+        rw [ite_eq_left rfl, hy.1 a, map_smul, hy.1 a, smul_smul, Complex.ofReal_pow, sq]
+      · rw [ite_eq_right hgt.ne', ite_eq_right (not_lt.mpr hgt.le), hy.2 b a hgt hab.symm, map_zero]
         simp
     · simp [hab]
   have hsum : ∑ a, ∑ b, (if ε a = ε b then (if a = b then ν a ^ 2 else if a < b then ν a - ν b else 0) else 0 : ℝ) =

@@ -18,7 +18,7 @@ open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS
 
 variable {n : ℕ}
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 def blkMinor (ε : Fin n → Bool) (a : Fin n) (x : Matrix (Fin n) (Fin n) ℂ) : ℂ :=
   (x.submatrix (fun b : {b : Fin n // ε b = ε a ∧ b ≤ a} => (b : Fin n))
@@ -153,9 +153,9 @@ lemma hwmf_mul_tv (x : Matrix (Fin n) (Fin n) ℂ) (a b : Fin n) (s : ℂ) (r q 
   congr 1
   by_cases hq : q = b
   · subst hq
-    rw [if_pos rfl, Matrix.mul_apply]
+    rw [ite_eq_left rfl, Matrix.mul_apply]
     simp [Matrix.single_apply]
-  · rw [if_neg hq, Matrix.mul_apply]
+  · rw [ite_eq_right hq, Matrix.mul_apply]
     simp [Ne.symm hq]
 
 lemma hwmf_blk_tv (ε : Fin n → Bool) {a b : Fin n} (hab : a < b) (he : ε a = ε b) (c : Fin n)
@@ -191,9 +191,9 @@ lemma hwmf_mul_dg (x : Matrix (Fin n) (Fin n) ℂ) (a : Fin n) (s : ℂ) (r q : 
   rw [hwmf_mul_tv]
   by_cases hq : q = a
   · subst hq
-    rw [if_pos rfl, if_pos rfl]
+    rw [ite_eq_left rfl, ite_eq_left rfl]
     ring
-  · rw [if_neg hq, if_neg hq]
+  · rw [ite_eq_right hq, ite_eq_right hq]
     ring
 
 lemma hwmf_blk_dg (ε : Fin n → Bool) (a c : Fin n) (x : Matrix (Fin n) (Fin n) ℂ) (s : ℂ) :
@@ -284,8 +284,8 @@ lemma hwmf_bd_single (ε : Fin n → Bool) {a b : Fin n} (he : ε a = ε b) :
   simp only [bdPart, Matrix.of_apply]
   by_cases h : a = i ∧ b = j
   · obtain ⟨rfl, rfl⟩ := h
-    rw [if_pos he]
-  · rw [Matrix.single_apply, if_neg h, ite_self]
+    rw [ite_eq_left he]
+  · rw [Matrix.single_apply, ite_eq_right h, ite_self]
 
 private theorem f0_dg_lemma (ε : Fin n → Bool) (m : Fin n → ℤ) (a : Fin n) (X : Matrix (Fin n) (Fin n) ℂ)
     (s : ℂ) : f0 ε m (X * (1 + s • single a a (1 : ℂ))) =

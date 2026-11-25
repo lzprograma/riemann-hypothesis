@@ -106,7 +106,7 @@ theorem partner_exists (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) (he : L
     intro b
     have h := hq (Fin.last r) (Fin.castSucc b)
     rw [Fin.snoc_last] at h
-    rw [h, if_neg (Fin.castSucc_lt_last b).ne']
+    rw [h, ite_eq_right (Fin.castSucc_lt_last b).ne']
   have hqE : ∀ a d, hJ ε (q (Fin.castSucc a)) (e d) = if d = a then 1 else 0 := by
     intro a d
     rw [_root_.Formalism.L2.SG.PoincareInHH.Cut.hJ_conj ε (q (Fin.castSucc a)) (e d), hEq]
@@ -117,12 +117,12 @@ theorem partner_exists (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) (he : L
       -(1 / 2 : ℂ) * hJ ε (q (Fin.castSucc a)) (q (Fin.castSucc b)) := by
     intro a b
     rw [hJ_fsum_r]
-    simp only [hqE, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hqE, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hB : ∀ a b, hJ ε (∑ c, (-(1 / 2 : ℂ) * hJ ε (q (Fin.castSucc c)) (q (Fin.castSucc a))) • e c)
       (q (Fin.castSucc b)) = -(1 / 2 : ℂ) * hJ ε (q (Fin.castSucc a)) (q (Fin.castSucc b)) := by
     intro a b
     rw [hJ_fsum_l]
-    simp only [hEq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hEq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [map_mul, _root_.Formalism.L2.SG.PoincareInHH.Cut.hJ_conj ε (q (Fin.castSucc a)) (q (Fin.castSucc b))]
     have hc2 : conj (-(1 / 2 : ℂ)) = -(1 / 2) := by
       rw [map_neg, map_div₀, map_one, map_ofNat]
@@ -169,7 +169,7 @@ theorem scalar_frame_w_zero_exists (k : ℕ) (e p : Fin r → Fin n → ℂ) (z 
     rw [_root_.Formalism.L2.SG.PoincareInHH.Cut.hJ_conj ε (p a) (e b), hep]
     by_cases h : a = b
     · subst h; simp
-    · rw [if_neg (Ne.symm h), if_neg h, map_zero]
+    · rw [ite_eq_right (Ne.symm h), ite_eq_right h, map_zero]
   have hpz : ∀ a, hJ ε (p a) z = 0 := fun a => hJ_zero_of_cj ε (hzp a)
   have hze : ∀ a, hJ ε z (e a) = 0 := fun a => hJ_zero_of_cj ε (hez a)
   let Ψ : (Fin n → ℂ) →ₗ[ℂ] (Fin r → ℂ) × (Fin r → ℂ) × ℂ :=
@@ -216,8 +216,7 @@ theorem scalar_frame_w_zero_exists (k : ℕ) (e p : Fin r → Fin n → ℂ) (z 
     · rw [hsl, hξe, hξp, sub_zero]
     · exact hξz
   have hpos : 0 < (hJ ε ξ ξ).re := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     have h := Formalism.L2.SG.PoincareInHH.Cut.card_le_of_orth' ε (r + 1) nv ξ horth hneg hnvξ hle hξ0
     rw [hsig] at h
     omega

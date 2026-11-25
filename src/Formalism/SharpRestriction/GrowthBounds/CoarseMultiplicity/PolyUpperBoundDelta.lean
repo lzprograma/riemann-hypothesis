@@ -6,42 +6,7 @@ public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegree
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
 public import Mathlib.Algebra.Order.Field.GeomSum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -174,66 +139,68 @@ theorem Std.twoP (St : Std C0 Cde CE1 CE2 1 X) : 2 * (X.b' / X.p) ≤ eps X C0 *
   rw [h2]
   exact mul_le_mul_of_nonneg_right (h1.trans St.eps_ge) St.bpos.le
 
+private theorem Std.segHyp (St : Std C0 Cde CE1 CE2 1 X) (j : Fin (numSeg X.TT)) : SegHyp X.p (X.seg C0 CE1 CE2 j) X.b' (X.de C0 Cde) (_root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) (X.aT (segStart X.TT j) : ℝ) X.Q := by
+  exact {
+  p5 := St.p5
+  G2 := by
+    show 2 ≤ segG X.TT j
+    have h1 := segG_even St.nEven X.TT j
+    have h2 : 0 < segG X.TT j := by
+      unfold segG
+      split_ifs with h
+      · have := St.n2
+        omega
+      · omega
+    rw [Nat.even_iff] at h1
+    omega
+  dlt := dist_pos_lt X.TT j
+  dodd := dist_odd St.nEven X.TT j
+  dmono := dist_strictMono X.TT j
+  sig := fun i => sigma_iff X.p (by have := St.p5; omega) X.TT X.bT X.a X.b' X.Y _ _ j i
+  bpos := St.bpos
+  La0 := by
+    show 0 ≤ X.La C0
+    linarith [St.La1]
+  errorNonneg := St.E0nn
+  bT := fun i => St.winB _ (pos_mem X.TT j i).1
+  bP := (St.winB _ (next_mem X.TT j).1).2
+  be0 := St.be0
+  beLe := by
+    have h1 := St.beLe
+    have h2 := St.La1
+    have hk : 0 < X.k := by
+      unfold Loc.k
+      positivity
+    have h3 : 0 ≤ 18 * (X.N1 : ℝ) * X.La C0 / X.k := by positivity
+    linarith
+  de6 := St.de6
+  band := St.band
+  aS := (St.winA _ (start_mem X.TT j).1).1
+  sp := by
+    have h1 : (segS X.TT j : ℝ) ≤ (X.N1 : ℝ) := by exact_mod_cast (St.segB j).2
+    have h2 := St.N1k
+    have h3 := St.pk
+    have h4 := St.Y1
+    have h5 : (0 : ℝ) ≤ (X.N1 : ℝ) := Nat.cast_nonneg _
+    have hk1 : 1 ≤ X.k := by linarith
+    have h6 : X.k ≤ X.k ^ 2 := by rw [sq]; exact le_mul_of_one_le_right (by linarith) hk1
+    have h7 : X.k ^ 2 * 1 ≤ X.k ^ 2 * X.Y ^ 2 := mul_le_mul_of_nonneg_left (one_le_pow₀ h4) (by positivity)
+    linarith
+  Q := by
+    show (X.p : ℝ) ^ (segG X.TT j) ≤ (X.p : ℝ) ^ X.G'
+    have hp : (1 : ℝ) ≤ (X.p : ℝ) := by
+      have := St.p5
+      exact_mod_cast (by omega : 1 ≤ X.p)
+    exact pow_le_pow_right₀ hp (St.segB j).1
+  }
+
 theorem kept_upper_level_bound (St : Std C0 Cde CE1 CE2 1 X) (j : Fin (numSeg X.TT)) (b : SegBlock (segS X.TT j) X.m)
     (hdig : DigitsOK X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b) (i : Fin (segS X.TT j))
     (hi : (X.seg C0 CE1 CE2 j).sigma ≤ (i : ℕ)) :
     (cap X.p (X.seg C0 CE1 CE2 j) b i : ℝ) +
         (X.seg C0 CE1 CE2 j).La * (coarseA X.p (X.seg C0 CE1 CE2 j) b i : ℝ) / ((X.m : ℝ) + 1) ≤
       (coarseA X.p (X.seg C0 CE1 CE2 j) b i : ℝ) * (1 - X.de C0 Cde / 4) := by
-  have H : SegHyp X.p (X.seg C0 CE1 CE2 j) X.b' (X.de C0 Cde) (_root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) (X.aT (segStart X.TT j) : ℝ) X.Q := by
-    exact {
-    p5 := St.p5
-    G2 := by
-      show 2 ≤ segG X.TT j
-      have h1 := segG_even St.nEven X.TT j
-      have h2 : 0 < segG X.TT j := by
-        unfold segG
-        split_ifs with h
-        · have := St.n2
-          omega
-        · omega
-      rw [Nat.even_iff] at h1
-      omega
-    dlt := dist_pos_lt X.TT j
-    dodd := dist_odd St.nEven X.TT j
-    dmono := dist_strictMono X.TT j
-    sig := fun i => sigma_iff X.p (by have := St.p5; omega) X.TT X.bT X.a X.b' X.Y _ _ j i
-    bpos := St.bpos
-    La0 := by
-      show 0 ≤ X.La C0
-      linarith [St.La1]
-    errorNonneg := St.E0nn
-    bT := fun i => St.winB _ (pos_mem X.TT j i).1
-    bP := (St.winB _ (next_mem X.TT j).1).2
-    be0 := St.be0
-    beLe := by
-      have h1 := St.beLe
-      have h2 := St.La1
-      have hk : 0 < X.k := by
-        unfold Loc.k
-        positivity
-      have h3 : 0 ≤ 18 * (X.N1 : ℝ) * X.La C0 / X.k := by positivity
-      linarith
-    de6 := St.de6
-    band := St.band
-    aS := (St.winA _ (start_mem X.TT j).1).1
-    sp := by
-      have h1 : (segS X.TT j : ℝ) ≤ (X.N1 : ℝ) := by exact_mod_cast (St.segB j).2
-      have h2 := St.N1k
-      have h3 := St.pk
-      have h4 := St.Y1
-      have h5 : (0 : ℝ) ≤ (X.N1 : ℝ) := Nat.cast_nonneg _
-      have hk1 : 1 ≤ X.k := by linarith
-      have h6 : X.k ≤ X.k ^ 2 := by rw [sq]; exact le_mul_of_one_le_right (by linarith) hk1
-      have h7 : X.k ^ 2 * 1 ≤ X.k ^ 2 * X.Y ^ 2 := mul_le_mul_of_nonneg_left (one_le_pow₀ h4) (by positivity)
-      linarith
-    Q := by
-      show (X.p : ℝ) ^ (segG X.TT j) ≤ (X.p : ℝ) ^ X.G'
-      have hp : (1 : ℝ) ≤ (X.p : ℝ) := by
-        have := St.p5
-        exact_mod_cast (by omega : 1 ≤ X.p)
-      exact pow_le_pow_right₀ hp (St.segB j).1
-    }
+  have H := Std.segHyp St j
   have hb := St.bpos
   obtain ⟨hP0, hpd0, hQj, hQ, hPQ⟩ := St.levels j i
   have hcb := coarse_bounds (X.bT (segPos X.TT j i)) (X.p ^ (segG X.TT j - (segDists X.TT j).get i)) (b.rz i)
@@ -272,60 +239,7 @@ theorem kept_upper_level_bound (St : Std C0 Cde CE1 CE2 1 X) (j : Fin (numSeg X.
 
 theorem extra_order_le_maximal (St : Std C0 Cde CE1 CE2 1 X) (j : Fin (numSeg X.TT)) (b : SegBlock (segS X.TT j) X.m) :
     Oplus X.p X.m (X.seg C0 CE1 CE2 j) b ≤ localOrderCap C0 X := by
-  have H : SegHyp X.p (X.seg C0 CE1 CE2 j) X.b' (X.de C0 Cde) (_root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) (X.aT (segStart X.TT j) : ℝ) X.Q := by
-    exact {
-    p5 := St.p5
-    G2 := by
-      show 2 ≤ segG X.TT j
-      have h1 := segG_even St.nEven X.TT j
-      have h2 : 0 < segG X.TT j := by
-        unfold segG
-        split_ifs with h
-        · have := St.n2
-          omega
-        · omega
-      rw [Nat.even_iff] at h1
-      omega
-    dlt := dist_pos_lt X.TT j
-    dodd := dist_odd St.nEven X.TT j
-    dmono := dist_strictMono X.TT j
-    sig := fun i => sigma_iff X.p (by have := St.p5; omega) X.TT X.bT X.a X.b' X.Y _ _ j i
-    bpos := St.bpos
-    La0 := by
-      show 0 ≤ X.La C0
-      linarith [St.La1]
-    errorNonneg := St.E0nn
-    bT := fun i => St.winB _ (pos_mem X.TT j i).1
-    bP := (St.winB _ (next_mem X.TT j).1).2
-    be0 := St.be0
-    beLe := by
-      have h1 := St.beLe
-      have h2 := St.La1
-      have hk : 0 < X.k := by
-        unfold Loc.k
-        positivity
-      have h3 : 0 ≤ 18 * (X.N1 : ℝ) * X.La C0 / X.k := by positivity
-      linarith
-    de6 := St.de6
-    band := St.band
-    aS := (St.winA _ (start_mem X.TT j).1).1
-    sp := by
-      have h1 : (segS X.TT j : ℝ) ≤ (X.N1 : ℝ) := by exact_mod_cast (St.segB j).2
-      have h2 := St.N1k
-      have h3 := St.pk
-      have h4 := St.Y1
-      have h5 : (0 : ℝ) ≤ (X.N1 : ℝ) := Nat.cast_nonneg _
-      have hk1 : 1 ≤ X.k := by linarith
-      have h6 : X.k ≤ X.k ^ 2 := by rw [sq]; exact le_mul_of_one_le_right (by linarith) hk1
-      have h7 : X.k ^ 2 * 1 ≤ X.k ^ 2 * X.Y ^ 2 := mul_le_mul_of_nonneg_left (one_le_pow₀ h4) (by positivity)
-      linarith
-    Q := by
-      show (X.p : ℝ) ^ (segG X.TT j) ≤ (X.p : ℝ) ^ X.G'
-      have hp : (1 : ℝ) ≤ (X.p : ℝ) := by
-        have := St.p5
-        exact_mod_cast (by omega : 1 ≤ X.p)
-      exact pow_le_pow_right₀ hp (St.segB j).1
-    }
+  have H := Std.segHyp St j
   have hp5 := H.p0
   have hp0 : (0 : ℝ) < X.p := by linarith
   have hb := St.bpos
@@ -346,7 +260,7 @@ theorem extra_order_le_maximal (St : Std C0 Cde CE1 CE2 1 X) (j : Fin (numSeg X.
         ≤ ∑ i : Fin (segS X.TT j), 2 * X.b' *
             (1 / (X.p : ℝ) ^ ((X.seg C0 CE1 CE2 j).G - (X.seg C0 CE1 CE2 j).d i)) := by
           refine Finset.sum_le_sum fun i _ => ?_
-          rw [if_pos i.2]
+          rw [ite_eq_left i.2]
           have a1 := coarseA_mul X.p (X.seg C0 CE1 CE2 j) b i
           have a2 := H.top_degree_le_two_b i
           have a3 : (0 : ℝ) < (X.p : ℝ) ^ ((X.seg C0 CE1 CE2 j).G - (X.seg C0 CE1 CE2 j).d i) := by positivity

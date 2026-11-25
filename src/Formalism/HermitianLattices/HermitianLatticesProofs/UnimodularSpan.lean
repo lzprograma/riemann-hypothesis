@@ -1,7 +1,6 @@
 module
 
 public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
-import Mathlib.RingTheory.Localization.Integer
 
 public section
 

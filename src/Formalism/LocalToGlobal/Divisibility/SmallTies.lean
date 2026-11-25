@@ -83,18 +83,6 @@ theorem two_FoOfR_eq_Fo (L : SizeData₂ D) (P : IndefCoreR Df0 Df1 Dc Sp N) (eJ
 
 end Fo
 
-section Sg
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {I : Type}
-
-end Sg
-
-section Mu1
-
-variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {m : ℕ}
-
-end Mu1
-
 end Formalism.L2.DIV
 
 end

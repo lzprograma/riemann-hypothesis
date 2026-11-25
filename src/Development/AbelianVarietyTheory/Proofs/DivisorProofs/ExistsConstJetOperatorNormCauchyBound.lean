@@ -7,44 +7,7 @@ public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.I
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FockNormExtremalVectorEqBoundedNat
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MonomialDerivCauchyBoundGaussianGrowth
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.SumIcoTsubTelescope
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Sub.Prod
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbLLMem
 
 @[expose] public section
@@ -454,10 +417,6 @@ theorem GlobalTheory.FockJetBound.jetOp_norm_le : ∃ K : ℝ, 0 ≤ K ∧ ∀ (
   have cd : (∑ τ, ∑ i, ((lam τ).natW i : ℝ)) = (dn : ℝ) := by simp only [hdn, Nat.cast_sum]
   have cd' : (∑ τ, ∑ i, ((lam' τ).natW i : ℝ)) = (dn' : ℝ) := by simp only [hdn', Nat.cast_sum]
   rw [cd, cd']
-  have h0 : (0 : ℝ) ≤ dn := Nat.cast_nonneg _
-  have h0' : (0 : ℝ) ≤ dn' := Nat.cast_nonneg _
-  have ha0 : (0 : ℝ) ≤ a := Nat.cast_nonneg _
-  have hb0 : (0 : ℝ) ≤ b := Nat.cast_nonneg _
   have hc0 : (0 : ℝ) ≤ Fintype.card D.what₂.Tau := Nat.cast_nonneg _
   obtain ⟨Y, hY⟩ : ∃ Y : ℝ, Y = 2 + (dn : ℝ) + dn' + a + b + Fintype.card D.what₂.Tau := ⟨_, rfl⟩
   rw [← hY]
@@ -492,8 +451,8 @@ theorem GlobalTheory.FockJetBound.jetOp_norm_le : ∃ K : ℝ, 0 ≤ K ∧ ∀ (
       rw [hs] at key
       have happ : GL3Theta.applyAt0 D (MvPolynomial.monomial m 1) H =
           (m.prod fun _ n => (n.factorial : ℂ)) * taylor D H m := by
-        rw [Formalism.MainNotions.GL3Theta.applyAt0, MvPolynomial.support_monomial, if_neg one_ne_zero, Finset.sum_singleton,
-          MvPolynomial.coeff_monomial, if_pos rfl, one_mul]
+        rw [Formalism.MainNotions.GL3Theta.applyAt0, MvPolynomial.support_monomial, ite_eq_right one_ne_zero, Finset.sum_singleton,
+          MvPolynomial.coeff_monomial, ite_eq_left rfl, one_mul]
       rw [happ]; exact key
     have hT1 : (1 : ℝ) ≤ 1 + (dn : ℝ) + dn' + a + b := by linarith
     have hTY : (1 : ℝ) + (dn : ℝ) + dn' + a + b ≤ Y := by rw [hY]; linarith

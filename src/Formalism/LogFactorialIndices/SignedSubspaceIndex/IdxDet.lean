@@ -6,51 +6,7 @@ public import Mathlib.Algebra.Module.Lattice.Full
 public import Mathlib.LinearAlgebra.Determinant
 public import Lemmata.DiscreteValuationQuotients.LenQuotSpan
 public import Lemmata.GeneralBFactSecondExtra.Key
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -105,33 +61,20 @@ theorem len_span (b : Basis ι K Y) (w : ι → Y) (hw : ∀ j, w j ∈ Submodul
   have : Module.Free O L := Module.Free.of_basis bO
   have : Module.Finite O L := Module.Finite.of_basis bO
   let φ : L →ₗ[O] L := bO.constr O (fun j => ⟨w j, hw j⟩)
-  have hφ : ∀ z : L, (φ z : Y) = ∑ j, bO.equivFun z j • w j := by
-    intro z
-    simp only [φ, Basis.constr_apply_fintype, Submodule.coe_sum, Submodule.coe_smul]
   have hwK : LinearIndependent K w :=
     ((b.is_basis_iff_det).2 (by rw [Basis.det_apply]; exact isUnit_iff_ne_zero.2 hdet)).1
   have hwO : LinearIndependent O w :=
     LinearIndependent.restrict_scalars' (R := O) (K := K) hwK
-  have hinj : Function.Injective φ := by
-    rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
-    intro z hz
-    have h0 : ∑ j, bO.equivFun z j • w j = 0 := by rw [← hφ, hz]; rfl
-    have h1 := Fintype.linearIndependent_iff.1 hwO _ h0
-    apply bO.equivFun.injective
-    funext j
-    simp [h1 j]
+  have hinj : Function.Injective φ :=
+    bO.injective_constr_of_linearIndependent (hwO.codRestrict L hw)
+  have hwL : Submodule.span O (Set.range w) ≤ L :=
+    Submodule.span_le.2 (Set.range_subset_iff.2 hw)
   have hrange : LinearMap.range φ = (Submodule.span O (Set.range w)).comap L.subtype := by
-    ext y
-    constructor
-    · rintro ⟨z, rfl⟩
-      show (φ z : Y) ∈ Submodule.span O (Set.range w)
-      rw [hφ]
-      exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
-    · intro hy
-      have hy' : (y : Y) ∈ Submodule.span O (Set.range w) := hy
-      obtain ⟨g, hg⟩ := (Submodule.mem_span_range_iff_exists_fun O).1 hy'
-      refine ⟨bO.equivFun.symm g, Subtype.ext ?_⟩
-      rw [hφ, LinearEquiv.apply_symm_apply, hg]
+    apply Submodule.map_injective_of_injective L.subtype_injective
+    dsimp only [φ]
+    rw [Basis.constr_range, Submodule.map_span, ← Set.range_comp',
+      Submodule.map_comap_subtype, inf_eq_right.mpr hwL]
+    rfl
   have hH : ∀ i j, algebraMap O K (LinearMap.toMatrix bO bO φ i j) = b.toMatrix w i j := by
     intro i j
     rw [Basis.toMatrix_apply, LinearMap.toMatrix_apply]
@@ -263,7 +206,6 @@ end Formalism.LatticeIndexTer.LatticeIndexDeterminant
 
 namespace Formalism.LatticeIndexTer
 
-open Module
 
 theorem lattice_index_eq_det_valuation : IdxDet := by
   intro O K X Y ι _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ bX bY f a b ha hb h

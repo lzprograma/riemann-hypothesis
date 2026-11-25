@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.SplittingAdmissibleOfTermData
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
 public import Formalism.FlagUnipotentLattices.SignaturePreservingEntryNorms
 import Mathlib.Algebra.Order.Star.Real
@@ -60,14 +61,6 @@ def DNeZeroAt : Prop :=
     (∀ a, τ (star a) = starRingEnd ℂ (τ a)) → S.SigOK →
     ∀ (r T T' : ℕ), (S.sig τ).2 = r + 1 → 0 < T → 0 < T' →
     ∀ (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)), Gflag F F' ≠ 0 → Dl F F' (r + 1) ≠ 0
-
-section Record
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-open Formalism.MainNotions.S.Lat
-
-end Record
 
 section Lemmas
 
@@ -189,8 +182,6 @@ theorem dNeZeroAt_of (h : GNonnegAt) : DNeZeroAt := by
 
 section Record
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.MainNotions.S.Lat
 
 theorem sig_hS (D : D7) (τ : D.host.E →+* ℂ) : ((hS D).sig τ).2 = D.R.rS + 1 := by
@@ -199,17 +190,7 @@ theorem sig_hS (D : D7) (τ : D.host.E →+* ℂ) : ((hS D).sig τ).2 = D.R.rS +
   rfl
 
 theorem Tu_pos (D : D7) (u : D.what₂.Word) : 0 < Tu D u := by
-  show 0 < (D.mem u).A.T
-  by_contra hneg
-  have h0 : (D.mem u).A.T = 0 := by omega
-  have hc := D.host.level_coprimeS _ (D.T_level u)
-  rw [h0] at hc
-  have hQ : D.host.QS = 1 := (Nat.coprime_zero_left _).1 hc
-  have hdvd := D.host.tower_dvd
-  rw [hQ] at hdvd
-  have h1 := Nat.dvd_one.1 hdvd
-  rw [Nat.pow_eq_one] at h1
-  rcases h1 with h1 | h1 <;> omega
+  apply _root_.Formalism.MainNotions.BridgeLemma.tie_Tu_pos <;> assumption
 
 end Record
 

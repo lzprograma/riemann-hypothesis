@@ -6,65 +6,22 @@ import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 public import Formalism.GradedWeylDivisibility.FinalB
 import Formalism.GradedWeylDivisibility.FinalC
 import Formalism.GradedWeylDivisibility.FinalD
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Monoid.Prod
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
 public import Mathlib.RingTheory.MvPolynomial.Groebner
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -562,12 +519,12 @@ def pev (t : S) (z : S × (Fin n × Fin n) → K) :
 
 theorem pev_self (t : S) (z : S × (Fin n × Fin n) → K) (f : MvPolynomial (Fin n × Fin n) K) :
     pev t z (blockEmb K t f) = f := by
-  simp only [pev, blockEmb, aeval_rename, Function.comp_def, if_true]
+  simp only [pev, blockEmb, aeval_rename, Function.comp_def, ite_true]
   exact aeval_X_left_apply f
 
 theorem pev_ne {s t : S} (h : s ≠ t) (z : S × (Fin n × Fin n) → K) (f : MvPolynomial (Fin n × Fin n) K) :
     pev t z (blockEmb K s f) = C (eval (fun v => z (s, v)) f) := by
-  simp only [pev, blockEmb, aeval_rename, Function.comp_def, h, if_false]
+  simp only [pev, blockEmb, aeval_rename, Function.comp_def, h, ite_false]
   induction f using MvPolynomial.induction_on with
   | C a => simp
   | add p q hp hq => simp only [map_add (f := _), hp, hq]
@@ -609,7 +566,7 @@ theorem mem_tensor [Infinite K] (V : S → Submodule K (MvPolynomial (Fin n × F
     have : (pev t z).toLinearMap ∘ₗ tens (fun s => if s = t then π s else 1) = π t ∘ₗ (pev t z).toLinearMap := by
       apply lin_ext
       intro f
-      simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, tens_prod, pev_prod, map_smul, if_true]
+      simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, tens_prod, pev_prod, map_smul, ite_true]
       congr 1
       exact Finset.prod_congr rfl fun s hs => by simp [Finset.ne_of_mem_erase hs]
     have e := congrArg (fun F => F G) this
@@ -634,7 +591,7 @@ theorem mem_tensor [Infinite K] (V : S → Submodule K (MvPolynomial (Fin n × F
         · simp [hs]
       rw [this, LinearMap.comp_apply, h1, ih]
   rw [← h2 Finset.univ]
-  simp only [Finset.mem_univ, if_true]
+  simp only [Finset.mem_univ, ite_true]
   generalize G = F
   induction F using MvPolynomial.induction_on' with
   | add p q hp hq => rw [map_add]; exact add_mem hp hq
@@ -697,7 +654,7 @@ theorem closed_of_stable (M : Submodule ℚ (MvPolynomial (Fin n × Fin n) ℚ))
             · simp [hi]
             · simp [hi, Ne.symm hi]
           · simp only [Matrix.add_apply, Matrix.one_apply_ne hij, Matrix.diagonal_apply_ne _ hij, Matrix.single_apply]
-            rw [if_neg (by rintro ⟨rfl, rfl⟩; exact hij rfl)]; simp
+            rw [ite_eq_right (by rintro ⟨rfl, rfl⟩; exact hij rfl)]; simp
         rw [this, Matrix.det_diagonal, Finset.prod_ne_zero_iff]
         intro i _
         split_ifs
@@ -850,7 +807,7 @@ theorem val_transv {A : Type} [CommRing A] [Algebra K A] (g : Ix → Matrix (Fin
     intro s i b
     rw [val_inr]
     by_cases hs : s = t
-    · simp only [hs, if_true, Matrix.adjugate_mul_distrib, adj_transv hlj.ne, true_and]
+    · simp only [hs, ite_true, Matrix.adjugate_mul_distrib, adj_transv hlj.ne, true_and]
       by_cases hi : cy h i = l
       · simp [hi]
       · simp [hi]
@@ -867,7 +824,7 @@ theorem val_transv {A : Type} [CommRing A] [Algebra K A] (g : Ix → Matrix (Fin
       by_cases h2 : s = t ∧ i = ⟨j, h1⟩
       · obtain ⟨rfl, rfl⟩ := h2
         simp [cx]
-      · rw [if_neg (by rw [this]; exact h2), if_neg (by simpa using h2)]; simp
+      · rw [ite_eq_right (by rw [this]; exact h2), ite_eq_right (by simpa using h2)]; simp
     · rw [hy]
       have : cy h i ≠ l := by simp only [cy, ne_eq, Fin.ext_iff]; omega
       simp [this]
@@ -883,10 +840,10 @@ theorem val_transv {A : Type} [CommRing A] [Algebra K A] (g : Ix → Matrix (Fin
     · rw [hy]
       have : cy h i = l ↔ i = ⟨n - 1 - l, h3⟩ := by simp only [cy, Fin.ext_iff]; omega
       by_cases h2 : s = t ∧ i = ⟨n - 1 - l, h3⟩
-      · rw [if_pos (by rw [this]; exact h2), if_pos (by simpa using h2)]
+      · rw [ite_eq_left (by rw [this]; exact h2), ite_eq_left (by simpa using h2)]
         have e : cy h (⟨n - 1 - j, by omega⟩ : Fin q) = j := by simp only [cy, Fin.ext_iff]; omega
         rw [val_inr, val_inr, e, h2.1]
-      · rw [if_neg (by rw [this]; exact h2), if_neg (by simpa using h2)]; simp
+      · rw [ite_eq_right (by rw [this]; exact h2), ite_eq_right (by simpa using h2)]; simp
   · congr 2
     funext ⟨⟨s, i⟩, b⟩
     rcases i with i | i
@@ -1039,14 +996,14 @@ theorem shift_act (g : Ix → GL (Fin n) K) {ρ ρ' : Row Ix p q} (hm : mat g ρ
   intro ℓ
   by_cases hl : ℓ.1 = ρ
 
-  · simp only [AlgHom.comp_apply, act, shift, aeval_X, hl, if_true, map_sum, map_mul, map_add (f := _), algHom_C, algebraMap_eq,
+  · simp only [AlgHom.comp_apply, act, shift, aeval_X, hl, ite_true, map_sum, map_mul, map_add (f := _), algHom_C, algebraMap_eq,
     ← hm, Finset.mul_sum, ← Finset.sum_add_distrib]
     simp only [mul_add, Finset.sum_add_distrib]
     congr 1
     apply Finset.sum_congr rfl
     intro j _
     ring
-  · simp only [AlgHom.comp_apply, act, shift, aeval_X, hl, if_false, map_sum, map_mul, algHom_C, algebraMap_eq]
+  · simp only [AlgHom.comp_apply, act, shift, aeval_X, hl, ite_false, map_sum, map_mul, algHom_C, algebraMap_eq]
 
 theorem act_inv (g : Ix → GL (Fin n) K) {P : MvPolynomial (Lt Ix p q n) K} (hP : Inv P) : Inv (act g P) :=
   ⟨fun t i i' hi c => (shift_act g (by rfl) c P).trans (by rw [hP.1 t i i' hi]),
@@ -1063,7 +1020,7 @@ theorem pderiv_shift (ρ ρ' : Row Ix p q) (c : K) (v : Lt Ix p q n) (P : MvPoly
     simp only [shift, aeval_X]
     by_cases h1 : r = ρ
     · subst h1
-      simp only [if_true, map_add (f := _), pderiv_C_mul, pderiv_X, Pi.single_apply, Prod.mk.injEq, true_and]
+      simp only [ite_true, map_add (f := _), pderiv_C_mul, pderiv_X, Pi.single_apply, Prod.mk.injEq, true_and]
       congr 1
       by_cases h2 : r' = ρ'
       · subst h2; simp [smul_eq_C_mul]
@@ -1091,21 +1048,21 @@ theorem harm_shift (t : Ix) (c : K) {P : MvPolynomial (Lt Ix p q n) K} (hP : ∀
     have h2 := congrArg (shift (t, Sum.inl u) (t, Sum.inl u') c) (hP (t, u, j))
 
     simp only [lp, xl, yl, map_sum, map_zero] at h1 h2 ⊢
-    simp only [pderiv_shift, Prod.mk.injEq, reduceCtorEq, and_false, if_false, add_zero, Finset.sum_add_distrib, h1,
+    simp only [pderiv_shift, Prod.mk.injEq, reduceCtorEq, and_false, ite_false, add_zero, Finset.sum_add_distrib, h1,
       zero_add]
     by_cases h3 : s = t ∧ (Sum.inl i : Fin p ⊕ Fin q) = Sum.inl u'
-    · simp only [h3, and_self, if_true, ← Finset.smul_sum, h2, smul_zero]
-    · simp only [h3, if_false, Finset.sum_const_zero]
+    · simp only [h3, and_self, ite_true, ← Finset.smul_sum, h2, smul_zero]
+    · simp only [h3, ite_false, Finset.sum_const_zero]
   · rintro u u' ⟨s, i, j⟩
     have h1 := congrArg (shift (t, Sum.inr u) (t, Sum.inr u') c) (hP (s, i, j))
     have h2 := congrArg (shift (t, Sum.inr u) (t, Sum.inr u') c) (hP (t, i, u))
 
     simp only [lp, xl, yl, map_sum, map_zero] at h1 h2 ⊢
     by_cases h3 : s = t ∧ (Sum.inr j : Fin p ⊕ Fin q) = Sum.inr u'
-    · simp only [pderiv_shift, Prod.mk.injEq, h3, if_true, map_add (f := _), Derivation.map_smul, reduceCtorEq, and_false,
-        if_false, add_zero, Finset.sum_add_distrib, ← Finset.smul_sum, h2, smul_zero]
+    · simp only [pderiv_shift, Prod.mk.injEq, h3, ite_true, map_add (f := _), Derivation.map_smul, reduceCtorEq, and_false,
+        ite_false, add_zero, Finset.sum_add_distrib, ← Finset.smul_sum, h2, smul_zero]
       simpa only [h3] using h1
-    · simp only [pderiv_shift, Prod.mk.injEq, h3, reduceCtorEq, and_false, if_false, add_zero, h1]
+    · simp only [pderiv_shift, Prod.mk.injEq, h3, reduceCtorEq, and_false, ite_false, add_zero, h1]
 
 theorem ideal_shift_of {ρ ρ' : Row Ix p q} {c : K}
     (hq : ∀ i, shift ρ ρ' c (qf xl yl K i) ∈ II Ix p q n K) {P : MvPolynomial (Lt Ix p q n) K}
@@ -1198,8 +1155,8 @@ theorem det_wm_ne (t : Ix) : (wm p q n K t).det ≠ 0 := by
     simp only [ym, Matrix.map_apply, Matrix.of_apply, Matrix.one_apply]
     by_cases hk : n - 1 - k < q
     · have e : cy h ⟨n - 1 - k, hk⟩ = k := Fin.ext h3
-      simp only [hk, dif_pos, eval_X, z, Sum.elim_inr, e, eq_comm]
-    · simp only [hk, dif_neg, not_false_eq_true]
+      simp only [hk, dite_eq_left, eval_X, z, Sum.elim_inr, e, eq_comm]
+    · simp only [hk, dite_eq_right, not_false_eq_true]
       split_ifs <;> simp
   have h3 : (wm p q n K t).map (eval z) = 1 := by
     have h4 : (ym p q n K t * xm p q n K t).map (eval z) = 1 := by rw [Matrix.map_mul, h1, h2, one_mul]
@@ -1274,7 +1231,7 @@ theorem th_mod (t : Ix) (j : Fin q) (b : Fin n) :
   by_cases hk : (k : ℕ) < p
   · have h1 : k = cx h ⟨k, hk⟩ := rfl
     have h2 : cy h j ≠ k := by rw [h1]; exact cx_ne_cy h _ _
-    simp only [wm, Matrix.of_apply, hk, if_true, h2, if_false, sub_zero]
+    simp only [wm, Matrix.of_apply, hk, ite_true, h2, ite_false, sub_zero]
     refine Ideal.subset_span ⟨(t, ⟨k, hk⟩, j), ?_⟩
     rw [Matrix.mul_apply, qf]
     refine Finset.sum_congr rfl fun b _ => ?_
@@ -1356,7 +1313,7 @@ theorem degree_det (m : MonomialOrder.{0,0} (Lt Ix p q n))
       exact hσ (Equiv.ext h3)
     have hk' : (k : ℕ) < p := by by_contra h3; exact hk (h2 k h3)
     refine ⟨k, Finset.mem_univ _, ?_⟩
-    simp only [hk', dif_pos, Finsupp.weight_single, one_smul]
+    simp only [hk', dite_eq_left, Finsupp.weight_single, one_smul]
     zify
     simp only [weight_variable_formula, id]
     have : ((σ k : ℕ) : ℤ) - (k : ℕ) ≠ 0 := by
@@ -1396,7 +1353,7 @@ theorem det_xm_nzd (t : Ix) (g : MvPolynomial (Lt Ix p q n) K) (hg : (xm p q n K
       obtain ⟨rfl, -⟩ := hk
       apply h1
       simp only [Finsupp.add_apply, Finsupp.single_apply, xl, yl, lead, Prod.mk.injEq, Sum.inl.injEq, Fin.ext_iff]
-      rw [if_neg (by omega), if_neg (by simp), add_zero]
+      rw [ite_eq_right (by omega), ite_eq_right (by simp), add_zero]
     · simp at hk
 
 theorem cof_inj (φ : K →+* ℂ) {a : Row Ix p q → ℕ} {P : MvPolynomial (Lt Ix p q n) K} (hP : Deg Prod.fst a P)
@@ -1570,7 +1527,7 @@ theorem NN_ne [CharZero K] (t : Ix) (a : Row Ix p q → ℕ) (ha : Antitone fun 
     rw [map_mul, aeval_rename, aeval_rename]
     simp only [Function.comp_def, id]
     rw [e1, e2, rename_eq_aeval, rename_eq_aeval, Fintype.prod_prod_type, Finset.prod_eq_single t]
-    · simp only [res, if_true, Fintype.prod_sum_type, map_mul, map_prod, map_pow, Function.comp_def]
+    · simp only [res, ite_true, Fintype.prod_sum_type, map_mul, map_prod, map_pow, Function.comp_def]
       ring
     · intro s _ hs; simp [res, hs]
     · simp
@@ -1795,9 +1752,9 @@ include he
 
 theorem psi_pl (t : Ix) : InPsi H (pl t) := (he.2 _).2 ⟨t, rfl⟩
 
-theorem mult_pl (t : Ix) : Dw.mult (pl t) = Dw.p := if_pos (psi_pl he t)
+theorem mult_pl (t : Ix) : Dw.mult (pl t) = Dw.p := ite_eq_left (psi_pl he t)
 
-theorem mult_conj (t : Ix) : Dw.mult (ComplexEmbedding.conjugate (pl t)) = Dw.q := if_neg (not_psi_conj (psi_pl he t))
+theorem mult_conj (t : Ix) : Dw.mult (ComplexEmbedding.conjugate (pl t)) = Dw.q := ite_eq_right (not_psi_conj (psi_pl he t))
 
 theorem pl_ne (s t : Ix) : pl s ≠ ComplexEmbedding.conjugate (pl t) := fun e =>
   not_psi_conj (psi_pl he t) (e ▸ psi_pl he s)
@@ -1857,14 +1814,14 @@ theorem cof_fw (h : Dw.p + Dw.q ≤ n) (P : MvPolynomial (Lt Ix Dw.p Dw.q n) K) 
   · have h1 : ∃ s, pl s = pl t := ⟨t, rfl⟩
     have h2 : h1.choose = t := he.1 h1.choose_spec
     have h3 : (i : ℕ) < n := by omega
-    simp only [AlgHom.comp_apply, rename_X, cof, aeval_X, fw_inl, Fin.val_cast, h3, dif_pos, h1, h2, val_inl]
+    simp only [AlgHom.comp_apply, rename_X, cof, aeval_X, fw_inl, Fin.val_cast, h3, dite_eq_left, h1, h2, val_inl]
     rfl
   · have h0 : ¬ ∃ s, pl s = ComplexEmbedding.conjugate (pl t) := fun ⟨s, hs⟩ => pl_ne he _ _ hs
     have h1 : ∃ s, ComplexEmbedding.conjugate (pl s) = ComplexEmbedding.conjugate (pl t) := ⟨t, rfl⟩
     have h2 : h1.choose = t := conj_pl_inj he h1.choose_spec
     have h3 : (i : ℕ) < n := by omega
-    simp only [AlgHom.comp_apply, rename_X, cof, aeval_X, fw_inr, Fin.val_cast, h3, dif_pos, h1, h2, val_inr, h0,
-      dif_neg, not_false_eq_true]
+    simp only [AlgHom.comp_apply, rename_X, cof, aeval_X, fw_inr, Fin.val_cast, h3, dite_eq_left, h1, h2, val_inr, h0,
+      dite_eq_right, not_false_eq_true]
     congr 1
     simp only [cy, Fin.ext_iff, Fin.val_rev]
     omega
@@ -1878,14 +1835,14 @@ theorem letAct_fw (g : Ix → GL (Fin n) K) (P : MvPolynomial (Lt Ix Dw.p Dw.q n
   · have h1 : ∃ s, pl s = pl t := ⟨t, rfl⟩
     have h2 : h1.choose = t := he.1 h1.choose_spec
 
-    simp only [AlgHom.comp_apply, rename_X, letAct, aeval_X, fw_inl, dif_pos, h1, h2, act, map_sum, map_mul, rename_C]
+    simp only [AlgHom.comp_apply, rename_X, letAct, aeval_X, fw_inl, dite_eq_left, h1, h2, act, map_sum, map_mul, rename_C]
     rfl
   · have h0 : ¬ ∃ s, pl s = ComplexEmbedding.conjugate (pl t) := fun ⟨s, hs⟩ => pl_ne he _ _ hs
     have h1 : ∃ s, ComplexEmbedding.conjugate (pl s) = ComplexEmbedding.conjugate (pl t) := ⟨t, rfl⟩
     have h2 : h1.choose = t := conj_pl_inj he h1.choose_spec
 
-    simp only [AlgHom.comp_apply, rename_X, letAct, aeval_X, fw_inr, dif_pos, h1, h2, act, map_sum, map_mul, rename_C,
-    h0, dif_neg, not_false_eq_true]
+    simp only [AlgHom.comp_apply, rename_X, letAct, aeval_X, fw_inr, dite_eq_left, h1, h2, act, map_sum, map_mul, rename_C,
+    h0, dite_eq_right, not_false_eq_true]
     rfl
 
 theorem rowShift_fw {ρ ρ' : Row Ix Dw.p Dw.q} {σ : E →+* ℂ} {i i' : Fin (Dw.mult σ)}
@@ -1993,25 +1950,25 @@ theorem mu_eq (h : Dw.p + Dw.q ≤ n) {a : (E →+* ℂ) × ℕ → ℕ} {s : Ix
       if (k : ℕ) < Dw.p then a (pl t, k) else 0 := by
     split_ifs with hk
     · rw [Finset.sum_eq_single ⟨k, hk⟩]
-      · exact if_pos rfl
+      · exact ite_eq_left rfl
       · intro i _ hi
-        exact if_neg fun e => hi (Fin.ext (show (i : ℕ) = k from congrArg Fin.val e))
+        exact ite_eq_right fun e => hi (Fin.ext (show (i : ℕ) = k from congrArg Fin.val e))
       · simp
-    · refine Finset.sum_eq_zero fun i _ => if_neg fun e => hk ?_
+    · refine Finset.sum_eq_zero fun i _ => ite_eq_right fun e => hk ?_
       rw [← e]; exact i.2
   have h2 : (∑ j, if k = cy h j then aa Dw pl a (t, Sum.inr j) else 0) =
       if (Fin.rev k : ℕ) < Dw.q then a (ComplexEmbedding.conjugate (pl t), (Fin.rev k : ℕ)) else 0 := by
     have hk' := k.2
     split_ifs with hk
     · rw [Finset.sum_eq_single ⟨_, hk⟩]
-      · exact if_pos (by simp only [cy, Fin.ext_iff, Fin.val_rev]; omega)
+      · exact ite_eq_left (by simp only [cy, Fin.ext_iff, Fin.val_rev]; omega)
       · intro i _ hi
-        refine if_neg fun e => hi ?_
+        refine ite_eq_right fun e => hi ?_
         have := i.2
         simp only [cy, Fin.ext_iff, Fin.val_rev] at e ⊢
         omega
       · simp
-    · refine Finset.sum_eq_zero fun i _ => if_neg fun e => hk ?_
+    · refine Finset.sum_eq_zero fun i _ => ite_eq_right fun e => hk ?_
       have := i.2
       simp only [cy, Fin.ext_iff, Fin.val_rev] at e ⊢
       omega
@@ -2027,13 +1984,13 @@ theorem mu_eq (h : Dw.p + Dw.q ≤ n) {a : (E →+* ℂ) × ℕ → ℕ} {s : Ix
 omit he in
 theorem shift_le (lam : DomWeight n) (k : Fin n) : lam.detShift ≤ lam.w k := by
   have hk := k.2
-  rw [DomWeight.detShift, dif_pos (by omega)]
+  rw [DomWeight.detShift, dite_eq_left (by omega)]
   exact lam.anti (by rw [Fin.le_def]; simp only; omega)
 
 theorem exp_nonneg (h : Dw.p + Dw.q ≤ n) {a : (E →+* ℂ) × ℕ → ℕ} {s : Ix → ℤ} {lam : Ix → DomWeight n}
     (hw : WtIs Dw pl a s lam) (hn : 0 < n) (t : Ix) : 0 ≤ (degC Dw pl a t : ℤ) + (lam t).detShift - s t := by
   have := mu_eq Dw he h hw t ⟨n - 1, by omega⟩
-  rw [DomWeight.detShift, dif_pos hn]
+  rw [DomWeight.detShift, dite_eq_left hn]
   omega
 
 theorem natW_add (h : Dw.p + Dw.q ≤ n) {a : (E →+* ℂ) × ℕ → ℕ} {s : Ix → ℤ} {lam : Ix → DomWeight n}

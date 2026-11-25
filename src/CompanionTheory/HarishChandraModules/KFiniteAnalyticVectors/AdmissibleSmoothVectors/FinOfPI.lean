@@ -241,7 +241,7 @@ theorem word_cases (hφ : ∀ i ≤ M, ∀ j ≤ M, φ i (E (x j)) = if i = j th
         rw [List.length_cons, List.range'_succ, hak, ← h]
       · left
         rw [h, word_range' E M φ x hφ _ k hk, ContinuousLinearMap.smulRight_apply, hφ _ (by omega) _ (by omega),
-          if_neg hak]
+          ite_eq_right hak]
         simp
 
 theorem ofFn_val (M : ℕ) : (List.ofFn fun i : Fin M => (i : ℕ)) = List.range' 0 M := by
@@ -306,7 +306,7 @@ theorem rank_le (E : H →L[ℂ] H) (M : ℕ) (h : ∀ a : Fin M → H →L[ℂ]
   let x' : ℕ → H := fun i => if hi : i < M + 1 then x ⟨i, hi⟩ else 0
   have hφ' : ∀ i ≤ M, ∀ j ≤ M, φ' i (E (x' j)) = if i = j then 1 else 0 := by
     intro i hi j hj
-    simp only [φ', x', dif_pos (Nat.lt_succ_of_le hi), dif_pos (Nat.lt_succ_of_le hj), hx', hφ, Fin.mk.injEq]
+    simp only [φ', x', dite_eq_left (Nat.lt_succ_of_le hi), dite_eq_left (Nat.lt_succ_of_le hj), hx', hφ, Fin.mk.injEq]
   have h1 := stdPoly_apply E M φ' x' hφ'
   rw [h] at h1
   have h2 := hφ' 0 (Nat.zero_le _) 0 (Nat.zero_le _)

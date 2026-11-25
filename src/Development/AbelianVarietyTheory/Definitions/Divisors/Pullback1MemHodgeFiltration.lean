@@ -5,55 +5,11 @@ public import Mathlib.Algebra.TrivSqZeroExt.Basic
 public import Mathlib.RingTheory.DividedPowers.DPMorphism
 public import Mathlib.RingTheory.DividedPowers.RatAlgebra
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -98,15 +54,7 @@ theorem isDPNilpotent_bot (B : Type) [CommRing B] : IsNilDP (dividedPowersBot B)
   isDPNilpotent_of_sq _ (fun a ha b _ ↦ by rw [Ideal.mem_bot.1 ha, zero_mul])
     (fun n hn a _ ↦ by
       classical
-      rw [dividedPowersBot_dpow_eq, if_neg fun h' ↦ absurd h'.2 (by omega)])
-
-theorem IsNilDP.exists_dpow_eq_zero {δ : DividedPowers J} (h : IsNilDP δ) :
-    ∃ N : ℕ, ∀ n, N ≤ n → ∀ a, δ.dpow n a = 0 := by
-  obtain ⟨N, hN⟩ := h
-  refine ⟨N, fun n hn a ↦ ?_⟩
-  by_cases ha : a ∈ J
-  · simpa using hN [(n, a)] (by simpa using ha) (by simpa using hn)
-  · exact δ.dpow_null ha
+      rw [dividedPowersBot_dpow_eq, ite_eq_right fun h' ↦ absurd h'.2 (by omega)])
 
 theorem isDPMorphism_of_eq_bot (δ : DividedPowers J) (hJ : J = ⊥) (δ' : DividedPowers J')
     (f : B →+* B') : IsDPMorphism δ δ' f := by
@@ -428,7 +376,7 @@ theorem hodgeFiltration_eq_range (s : X ⟶ Sp R) : F1 s = LinearMap.range (Form
     obtain ⟨g, hg⟩ := hc
     classical
     obtain ⟨g', hg'⟩ : ∃ g' : C0 (O (dp0 R) s), ∀ (T : Thick (dp0 R) s) (hT : T.J = ⊥), g' T = g ⟨T, hT⟩ :=
-      ⟨fun T ↦ if hT : T.J = ⊥ then g ⟨T, hT⟩ else 0, fun T hT ↦ dif_pos hT⟩
+      ⟨fun T ↦ if hT : T.J = ⊥ then g ⟨T, hT⟩ else 0, fun T hT ↦ dite_eq_left hT⟩
     have key : ∀ ⦃T T' : Thick (dp0 R) s⦄ (φ : T ⟶ T') (hT : T.J = ⊥) (hT' : T'.J = ⊥),
         f.1 T T' φ = g' T' - mp (O (dp0 R) s) φ (g' T) := by
       intro T T' φ hT hT'

@@ -13,54 +13,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompac
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdmissibleSubTop
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.PicardGroup
 import Formalism.RealPlaceAnalysis.FinalF
 import Mathlib.Tactic.Linter.Style
 
@@ -256,14 +209,11 @@ variable {n : ℕ} (ε : Fin n → Bool)
 def pt (k : KG ε) : ((Fin n × Fin n) ⊕ (Fin n × Fin n)) → ℂ :=
   Sum.elim (fun x => toMK k x.1 x.2) (fun x => star (toMK k x.1 x.2))
 
-theorem continuous_toMK : Continuous fun k : KG ε => toMK k :=
-  Units.continuous_val.comp (continuous_subtype_val.comp continuous_subtype_val)
-
 theorem continuous_pt : Continuous (pt ε) := by
   refine continuous_pi fun v => ?_
   rcases v with x | x
-  · exact (continuous_apply x.2).comp ((continuous_apply x.1).comp (continuous_toMK ε))
-  · exact continuous_star.comp ((continuous_apply x.2).comp ((continuous_apply x.1).comp (continuous_toMK ε)))
+  · exact (continuous_apply x.2).comp ((continuous_apply x.1).comp (GlobalTheory.PsCo.PolyAvg.continuous_toMK ε))
+  · exact continuous_star.comp ((continuous_apply x.2).comp ((continuous_apply x.1).comp (GlobalTheory.PsCo.PolyAvg.continuous_toMK ε)))
 
 def evL : Poly n →ₗ[ℂ] (KG ε → ℂ) where
   toFun P k := eval (pt ε k) P
@@ -375,9 +325,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-theorem _root_.GlobalTheory.T.exists_reproducingPolynomial_valueAtOne_maxCompact : GlobalTheory.PsCo.Pc3.Repro := by
-  first | exact @GlobalTheory.PsCo.Pc3.fock_reproducing_formula
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsReproducingPolynomialValueAtOneMaxCompactStatement =====
@@ -681,7 +628,7 @@ section -- clump:auto
 
 namespace GlobalTheory.PsCo.Pc3
 
-theorem uFin : UFin := _root_.GlobalTheory.PsCo.Pc3.uFin_of' GlobalTheory.T.exists_reproducingPolynomial_valueAtOne_maxCompact _root_.GlobalTheory.PsCo.PolyAvg.polyAvg
+theorem uFin : UFin := _root_.GlobalTheory.PsCo.Pc3.uFin_of' GlobalTheory.PsCo.Pc3.ReproPf.fock_reproducing_formula _root_.GlobalTheory.PsCo.PolyAvg.polyAvg
 
 end GlobalTheory.PsCo.Pc3
 end -- clump:auto

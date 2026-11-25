@@ -13,50 +13,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNo
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVZeroOfVanish
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UwClosedSubgroup
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerBZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.FormalDegreeBessel.StatementWR
 import Formalism.HermitianCurvature.StatementI
 import Formalism.RealPlaceAnalysis.StatementA
@@ -67,7 +25,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerBlockActionIn
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Mathlib.Tactic.Linter.Style
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -437,10 +394,10 @@ theorem tz_sum (k : ℕ) (z : Fin (2 * 0 + k + 1) → ℂ) :
   simp only [Matrix.mulVec_diagonal, dotProduct, Fin.sum_univ_castSucc, Pi.star_apply, Complex.star_def]
   have h1 : ∀ i : Fin (2 * 0 + k), dS (2 * 0 + k) i.castSucc = 1 := fun i => by
     unfold dS
-    rw [if_neg (Fin.castSucc_lt_last i).ne]
+    rw [ite_eq_right (Fin.castSucc_lt_last i).ne]
   have h2 : dS (2 * 0 + k) (Fin.last (2 * 0 + k)) = -1 := by
     unfold dS
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
   simp only [h1, h2, one_mul, neg_one_mul, mul_neg, Complex.add_re, Complex.neg_re, Complex.re_sum, e]
   ring
 
@@ -520,7 +477,7 @@ theorem pullback_support : CutEX.PbSupp := by
       {q | c ≤ Q.GGl P.k (P.r - P.r) zr zr' (Matrix.of q.2)}, ?_, ?_, ?_⟩
   · refine (((hA.prod hB).inter_right ?_).inter_right ?_).inter_right ?_
     · exact hK0c.isClosed.preimage (Continuous.matrix_det continuous_fst)
-    · exact (Formalism.FourierDecayAlt.P.JCTx5.glev_closed _ _ _).preimage continuous_snd
+    · exact (QnRdSkewW.glev_closed _ _ _).preimage continuous_snd
     · exact isClosed_le continuous_const ((Formalism.FourierDecayAlt.P.Qx8.GGl_cont _ _ _ _).comp continuous_snd)
   · rintro q ⟨⟨⟨_, hq1⟩, _⟩, hq3⟩
     refine ⟨fun h0 => h0K0 ?_, lt_of_lt_of_le hcpos hq3⟩

@@ -92,13 +92,7 @@ private lemma comp_eq {F E K A : Type} [Field F] [Field E] [Algebra F E] [Field 
         (Algebra.TensorProduct.includeRight : E →ₐ[F] K ⊗[F] E).toRingHom).comp (algebraMap F E) =
       (algebraMap K A).comp (algebraMap F K) := by
   ext c
-  have h : (1 : K) ⊗ₜ[F] (algebraMap F E c) = algebraMap K (K ⊗[F] E) (algebraMap F K c) := by
-    rw [Algebra.algebraMap_eq_smul_one c, TensorProduct.tmul_smul, Algebra.TensorProduct.algebraMap_apply,
-      Algebra.algebraMap_eq_smul_one c]
-    simp [TensorProduct.smul_tmul']
-  simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
-    Algebra.TensorProduct.includeRight_apply]
-  rw [h, AlgHom.commutes]
+  simpa using f.commutes (algebraMap F K c)
 
 private lemma splitting {F E K A : Type} [Field F] [Field E] [Algebra F E] [Field K] [Algebra F K]
     [Field A] [Algebra K A] (p : F[X]) [IsSplittingField F E p] (f : K ⊗[F] E →ₐ[K] A)
@@ -421,13 +415,7 @@ private lemma fin {σ : R ≃ₐ[k] R} {q : ℕ} (h : IsGal σ q) : Module.Finit
   exact expand h.pos hs b
 
 private lemma norm_pi {q : ℕ} (f : Fin q → R) : Algebra.norm R f = ∏ j, f j := by
-  rw [Algebra.norm_eq_matrix_det (Pi.basisFun R (Fin q)), ← Matrix.det_diagonal]
-  congr 1
-  ext i j
-  rw [Algebra.leftMulMatrix_eq_repr_mul]
-  by_cases hij : i = j
-  · simp [hij]
-  · simp [hij]
+  simp [norm_pi' R R (Fin q) f]
 
 end SlopeTestRemainingChoices
 
@@ -466,14 +454,9 @@ private theorem aeval_map_sg {k R : Type} [CommRing k] [CommRing R] [Algebra k R
   have hγ : ((up R γ).val).map s = (up R γ).val := by
     ext i j
     simp [up]
-  induction p using Polynomial.induction_on with
-  | C r =>
-    ext i j
-    simp [Matrix.algebraMap_matrix_apply, apply_ite s]
-  | add p q hp hq => rw [map_add (f := _), Polynomial.map_add (f := _), map_add (f := _), ← hp, ← hq, Matrix.map_add _ (map_add s)]
-  | monomial m r h =>
-    rw [pow_succ, ← mul_assoc, map_mul, Matrix.map_mul, h, Polynomial.map_mul (p := C r * X ^ m), map_mul]
-    simp [hγ]
+  have h := map_aeval_eq_aeval_map (ψ := (s : R →+* R).mapMatrix) (φ := (s : R →+* R))
+    (by ext; simp [Matrix.algebraMap_matrix_apply, apply_ite s]) p (up R γ).val
+  rwa [RingHom.mapMatrix_apply, RingHom.mapMatrix_apply, RingHom.coe_coe, hγ] at h
 
 private theorem nm_aeval {k R : Type} [CommRing k] [CommRing R] [Algebra k R] {n : ℕ} (σ : R ≃ₐ[k] R)
     (γ : GL (Fin n) k) (p : R[X]) (a : GL (Fin n) R) (ha : a.val = aeval (up R γ).val p) (q : ℕ) :
@@ -514,11 +497,8 @@ private theorem core {k R A T : Type} [Field k] [CommRing R] [Algebra k R] [Comm
   have heq : ∀ p p', χ p = χ p' ↔ aeval (up R γ).val p = aeval (up R γ).val p' := by
     intro p p'
     rw [← sub_eq_zero, ← map_sub, hker, ← hk, map_sub, sub_eq_zero]
-  have hjp : ∀ (i : ℕ) r, (τ ^ i) (j r) = j ((σ ^ i) r) := by
-    intro i
-    induction i with
-    | zero => simp
-    | succ i ih => intro r; rw [pow_succ, pow_succ, AlgEquiv.mul_apply, AlgEquiv.mul_apply, hj, ih]
+  have hjp : ∀ (i : ℕ) r, (τ ^ i) (j r) = j ((σ ^ i) r) := fun i r => by
+    simpa using (Function.Semiconj.iterate_right (f := j) (fun r => (hj r).symm) i r).symm
   have hχp : ∀ (i : ℕ) p, (τ ^ i) (χ p) = χ (p.map ((σ ^ i : R ≃ₐ[k] R) : R →+* R)) := by
     intro i p
     have : ((τ ^ i : T ≃ₐ[A] T) : T →+* T).comp χ = χ.comp (mapRingHom ((σ ^ i : R ≃ₐ[k] R) : R →+* R)) := by

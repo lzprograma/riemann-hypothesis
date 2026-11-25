@@ -2,48 +2,8 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.Padics.PadicNumbers
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -109,16 +69,13 @@ theorem den_sub_sum_eq_one {ι : Type*} (ℓ : ι → ℕ) (hℓ : ∀ i, (ℓ i
   apply den_eq_one_of_forall_padicNorm_le_one
   intro q hq
   haveI : Fact q.Prime := ⟨hq⟩
-  have hsum : ∀ s : Finset ι, (∀ i ∈ s, padicNorm q (a i) ≤ 1) →
-      padicNorm q (∑ i ∈ s, a i) ≤ 1 :=
-    fun s hs => Finset.sum_induction _ (fun x => padicNorm q x ≤ 1)
-      (fun x y hx hy => padicNorm_add_le_one hx hy) (by simp) hs
   have h1 : padicNorm q (∑ i ∈ fib q \ I, a i) ≤ 1 :=
-    hsum _ (fun i hi => padicNorm_le_one_of_den_eq_one (hI i (Finset.mem_sdiff.1 hi).2))
-  have h2 : padicNorm q (∑ i ∈ I \ fib q, a i) ≤ 1 := hsum _ (fun i hi => by
+    padicNorm.sum_le' (fun i hi => padicNorm_le_one_of_den_eq_one (hI i (Finset.mem_sdiff.1 hi).2))
+      zero_le_one
+  have h2 : padicNorm q (∑ i ∈ I \ fib q, a i) ≤ 1 := padicNorm.sum_le' (fun i hi => by
     obtain ⟨n, hn⟩ := ha i
     have hne : ℓ i ≠ q := fun h => (Finset.mem_sdiff.1 hi).2 ((hfib i q).2 h)
-    exact padicNorm_le_one_of_den_pow (hℓ i) hne hn)
+    exact padicNorm_le_one_of_den_pow (hℓ i) hne hn) zero_le_one
   have e : t - ∑ i ∈ I, a i =
       (t - ∑ i ∈ fib q, a i) + (∑ i ∈ fib q \ I, a i - ∑ i ∈ I \ fib q, a i) := by
     rw [Finset.sum_sdiff_sub_sum_sdiff]
@@ -195,12 +152,8 @@ theorem den_eq_one_of_norm_le_one {l : ℕ} [hl : Fact l.Prime] {a : ℚ} {n : �
     refine le_trans (Padic.nonarchimedean _ _) (max_le hT ?_)
     rw [norm_neg]
     exact hTa
-  have h2 : padicNorm l a ≤ 1 := by
-    have e : ‖((a : ℚ) : ℚ_[l])‖ = _ := Padic.eq_padicNorm a
-    have h' : ((padicNorm l a : ℚ) : ℝ) ≤ 1 := by
-      rw [← e]
-      exact h1
-    exact_mod_cast h'
+  rw [Padic.eq_padicNorm] at h1
+  have h2 : padicNorm l a ≤ 1 := by exact_mod_cast h1
   have h3 := (padicNorm_le_one_iff_not_dvd_den a).1 h2
   rw [ha] at h3 ⊢
   rcases n with _ | n

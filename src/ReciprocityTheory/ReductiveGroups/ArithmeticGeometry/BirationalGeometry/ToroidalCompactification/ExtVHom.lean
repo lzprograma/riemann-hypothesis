@@ -1,12 +1,11 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TautologicalModel
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -224,8 +223,6 @@ section RigPull
 
 open MonoidalCategory CartesianMonoidalCategory
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {S S' : Scheme.{0}} {G : Over S} {G' : Over S'} [GrpObj G] [IsCommMonObj G] [GrpObj G'] [IsCommMonObj G']
 
 private theorem pullU_pullU_eq_pullU_comp {X Y Z : Scheme.{0}} (b : Z ⟶ Y) (a : Y ⟶ X) (W : X.Opens) (u : Γ(X, W)ˣ) :
@@ -251,27 +248,7 @@ private theorem res_pullU_pullU_eq_of_comp_eq {P Q Q' Z : Scheme.{0}} (A : P ⟶
 theorem rigPullOf_isGen (F : G'.left ⟶ G.left) (e : (𝟙_ (Over S')).left ⟶ (𝟙_ (Over S)).left)
     (he : eSec G' ≫ F = e ≫ eSec G) (L : LB G.left) (r : LB.Gen (L.pull (eSec G))) (hr : r.IsGen) :
     (rigPullOf F e he L r).IsGen := by
-  intro i j
-  have hV : ((L.pull F).pull (eSec G')).U i ⊓ ((L.pull F).pull (eSec G')).U j ≤
-      e ⁻¹ᵁ ((L.pull (eSec G)).U (fun _ => i ⟨⟩ ⟨⟩) ⊓ (L.pull (eSec G)).U (fun _ => j ⟨⟩ ⟨⟩)) :=
-    le_inf (inf_le_left.trans (rigPull_le F e he L i)) (inf_le_right.trans (rigPull_le F e he L j))
-  have hr' := congrArg (fun x => res hV (pullU e _ x)) (hr (fun _ => i ⟨⟩ ⟨⟩) (fun _ => j ⟨⟩ ⟨⟩))
-  simp only [map_mul, _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.pullU_res₂, res_res_eq_res_trans'] at hr'
-  have hG : res hV (pullU e _ ((L.pull (eSec G)).g (fun _ => i ⟨⟩ ⟨⟩) (fun _ => j ⟨⟩ ⟨⟩))) =
-      ((L.pull F).pull (eSec G')).g i j := by
-    rw [pull_g_eq_res_pullU_g (P := L) (eSec G) _ _ (pull_U_inf_le_preimage_inf (P := L) (eSec G) _ _), _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.pullU_res₂, res_res_eq_res_trans',
-      pull_g_eq_res_pullU_g (P := L.pull F) (eSec G') i j (pull_U_inf_le_preimage_inf (P := L.pull F) (eSec G') i j),
-      pull_g_eq_res_pullU_g (P := L) F (i ⟨⟩) (j ⟨⟩) (pull_U_inf_le_preimage_inf (P := L) F (i ⟨⟩) (j ⟨⟩)), _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.pullU_res₂, res_res_eq_res_trans']
-    exact res_pullU_pullU_eq_of_comp_eq e (eSec G) (eSec G') F he.symm _ _ _ _
-  rw [hG] at hr'
-  first
-    | (erw [← res_res_eq_res_trans' (rigPull_le F e he L i)
-          (inf_le_left : ((L.pull F).pull (eSec G')).U i ⊓ ((L.pull F).pull (eSec G')).U j ≤
-            ((L.pull F).pull (eSec G')).U i),
-        ← res_res_eq_res_trans' (rigPull_le F e he L j)
-          (inf_le_right : ((L.pull F).pull (eSec G')).U i ⊓ ((L.pull F).pull (eSec G')).U j ≤
-            ((L.pull F).pull (eSec G')).U j)] at hr'
-       exact hr')
+  apply _root_.GlobalTheory.Proof.TautologicalModel.rigPullOf_isGen <;> assumption
 
 end RigPull
 
@@ -292,8 +269,6 @@ end Germs
 section GermsRig
 
 open MonoidalCategory CartesianMonoidalCategory
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {S S' Z : Scheme.{0}} {G : Over S} {G' : Over S'} [GrpObj G] [IsCommMonObj G] [GrpObj G'] [IsCommMonObj G']
 

@@ -100,25 +100,7 @@ theorem isDiscreteValuationRing_of_isAdicComplete {π : B} [IsAdicComplete (span
   have : IsLocalRing B := isLocalRing_of_isAdicComplete_maximal (span {π})
   have hm : maximalIdeal B = span {π} := (IsLocalRing.eq_maximalIdeal hmax).symm
   have hπ0 : π ≠ 0 := by simpa using hpow 1
-  have hnu : ¬ IsUnit π := by
-    intro h
-    exact hmax.ne_top (Ideal.span_singleton_eq_top.mpr h)
-  have hirr : Irreducible π := by
-    refine ⟨hnu, ?_⟩
-    intro a b hab
-    by_contra h
-    push Not at h
-    have ha : a ∈ span {π} := hm ▸ (IsLocalRing.mem_maximalIdeal a).mpr h.1
-    have hb : b ∈ span {π} := hm ▸ (IsLocalRing.mem_maximalIdeal b).mpr h.2
-    rw [mem_span_singleton] at ha hb
-    obtain ⟨c, rfl⟩ := ha
-    obtain ⟨d, rfl⟩ := hb
-    apply hnu
-    have h1 : π * (1 - π * (c * d)) = 0 := by
-      have : π = π * c * (π * d) := hab
-      linear_combination this
-    have h2 : 1 - π * (c * d) = 0 := (mul_eq_zero.mp h1).resolve_left hπ0
-    exact isUnit_iff_exists_inv.mpr ⟨c * d, by linear_combination -h2⟩
+  have hirr : Irreducible π := IsDiscreteValuationRing.irreducible_of_span_eq_maximalIdeal π hπ0 hm
   refine ⟨IsDiscreteValuationRing.ofHasUnitMulPowIrreducibleFactorization ⟨π, hirr, ?_⟩, hirr⟩
   intro x hx
   obtain ⟨n, u, rfl⟩ := exists_eq_pow_mul_unit_of_isAdicComplete hmax hx

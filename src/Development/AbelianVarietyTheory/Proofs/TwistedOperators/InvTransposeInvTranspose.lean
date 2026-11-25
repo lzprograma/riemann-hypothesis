@@ -58,21 +58,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.LocalThetaGL
 
-section Abstract
-
-variable {H V W U Y Γ : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H]
-  [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W] [AddCommGroup U] [Module ℂ U]
-  [AddCommGroup Y] [Module ℂ Y] {P : Subgroup H}
-
-end Abstract
-
-section Regular
-
-variable {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V] [Module ℂ V]
-  [MeasurableSpace G] [BorelSpace G] (ν : Measure G) [ν.IsHaarMeasure] {π : Representation ℂ G V}
-
-end Regular
-
 section Local
 
 open GlobalTheory.IndefiniteRowSideFullHecke
@@ -88,28 +73,5 @@ theorem compact_open_basis (n : Type) [Fintype n] [DecidableEq n] : ∀ U ∈ nh
   exact ⟨J, h1, SplitFlip.isCompact_KO.of_isClosed_subset (J.isClosed_of_isOpen h1) h3, h2⟩
 
 end Local
-
-section Main
-
-open GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.Published
-
-variable {G V W Y : Type} [Group G] [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-  [AddCommGroup Y] [Module ℂ Y]
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-end Main
-
-section Final
-
-open GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.Published
-
-variable {G V W Y : Type} [Group G] [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-  [AddCommGroup Y] [Module ℂ Y]
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-
-end Final
 
 end GlobalTheory.LocalThetaGL

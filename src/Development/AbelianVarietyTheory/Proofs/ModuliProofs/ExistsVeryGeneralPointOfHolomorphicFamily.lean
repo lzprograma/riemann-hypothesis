@@ -125,17 +125,17 @@ theorem exists_veryGeneral_point_of_holomorphic_family :
   have hWo : ∀ F, IsOpen (W F) := by
     intro F
     by_cases h : Set.EqOn (f F) 0 Ω
-    · simp only [W, if_pos h]
+    · simp only [W, ite_eq_left h]
       exact isOpen_univ
-    · simp only [W, if_neg h]
+    · simp only [W, ite_eq_right h]
       exact ((hfd F).continuousOn.isOpen_inter_preimage hΩo isOpen_compl_singleton).union
         isClosed_closure.isOpen_compl
   have hWd : ∀ F, Dense (W F) := by
     intro F
     by_cases h : Set.EqOn (f F) 0 Ω
-    · simp only [W, if_pos h]
+    · simp only [W, ite_eq_left h]
       exact dense_univ
-    · simp only [W, if_neg h]
+    · simp only [W, ite_eq_right h]
       have hsub : Ω ⊆ closure (Ω ∩ f F ⁻¹' {0}ᶜ) := by
         intro q hq
         by_contra hq'
@@ -157,7 +157,7 @@ theorem exists_veryGeneral_point_of_holomorphic_family :
   · have hmem : (Fin.cons c' z' : Fin (m + 1) → ℂ) ∈ Ω := ⟨by simpa using hz', by simpa using hc'⟩
     simpa [f] using h hmem
   · have hpW' := Set.mem_iInter.1 hpW F
-    simp only [W, if_neg h] at hpW'
+    simp only [W, ite_eq_right h] at hpW'
     rcases hpW' with hp' | hp'
     · exact absurd hF hp'.2
     · exact absurd (subset_closure hpΩ) hp'

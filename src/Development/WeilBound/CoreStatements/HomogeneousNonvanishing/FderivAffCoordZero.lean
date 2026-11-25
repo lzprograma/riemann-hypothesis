@@ -2,52 +2,9 @@ module
 
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
 public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.ContinuousAtOfClosedRel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.FsMetricFinIsSemipositive
 
@@ -97,115 +54,25 @@ theorem levi_fs_nonneg {κ : Type} [Fintype κ] {z : κ → ℂ} (hz : z ≠ 0) 
   rw [mul_pow, mul_comm (‖fsLp κ z‖ ^ 2)] at hsq
   exact div_nonneg (sub_nonneg.mpr hsq) (by positivity)
 
-private theorem fderiv_fderiv_eq_deriv_deriv_line {κ : Type} [Fintype κ] {φ : (κ → ℂ) → ℝ} {z : κ → ℂ}
-    (hφ : ContDiffAt ℝ 2 φ z) (v : κ → ℂ) :
-    fderiv ℝ (fderiv ℝ φ) z v v = deriv (deriv (fun t : ℝ => φ (z + t • v))) 0 := by
-  have hd : ∀ᶠ y in 𝓝 z, DifferentiableAt ℝ φ y :=
-    (hφ.eventually (by simp)).mono fun y hy => hy.differentiableAt (by norm_num)
-  have hd2 : DifferentiableAt ℝ (fderiv ℝ φ) z :=
-    (hφ.fderiv_right (m := 1) (by norm_num)).differentiableAt (by norm_num)
-  have hγ : ∀ t : ℝ, HasDerivAt (fun s : ℝ => z + s • v) v t := fun t => by
-    simpa using ((hasDerivAt_id t).smul_const v).const_add z
-  have hlim : Filter.Tendsto (fun s : ℝ => z + s • v) (𝓝 0) (𝓝 z) := by
-    simpa using (hγ 0).continuousAt.tendsto
-  have hev : ∀ᶠ t in 𝓝 (0 : ℝ), DifferentiableAt ℝ φ (z + t • v) := hlim.eventually hd
-  have h1 : deriv (fun t : ℝ => φ (z + t • v)) =ᶠ[𝓝 0] fun t => fderiv ℝ φ (z + t • v) v := by
-    filter_upwards [hev] with t ht
-    exact (ht.hasFDerivAt.comp_hasDerivAt t (hγ t)).deriv
-  rw [h1.deriv_eq]
-  have h2 : HasFDerivAt (fun y => fderiv ℝ φ y v)
-      ((ContinuousLinearMap.apply ℝ ℝ v).comp (fderiv ℝ (fderiv ℝ φ) z)) z :=
-    (ContinuousLinearMap.apply ℝ ℝ v).hasFDerivAt.comp z hd2.hasFDerivAt
-  have h3 : HasDerivAt (fun t : ℝ => fderiv ℝ φ (z + t • v) v) (fderiv ℝ (fderiv ℝ φ) z v v) 0 :=
-    h2.comp_hasDerivAt_of_eq (0 : ℝ) (hγ 0) (by simp)
-  exact h3.deriv.symm
-
-private theorem deriv_deriv_half_log_quadratic_at_zero (N P C : ℝ) (hN : 0 < N) :
-    deriv (deriv (fun t : ℝ => Real.log (N + 2 * t * P + t ^ 2 * C) / 2)) 0 =
-      (C * N - 2 * P ^ 2) / N ^ 2 := by
-  have hN' : N ≠ 0 := hN.ne'
-  have hq : ∀ t : ℝ, HasDerivAt (fun s : ℝ => N + 2 * s * P + s ^ 2 * C) (2 * P + 2 * t * C) t := by
-    intro t
-    have h1 := ((hasDerivAt_id' t).const_mul (2 * P)).const_add N
-    have h2 := (hasDerivAt_pow 2 t).mul_const C
-    have e : (fun s : ℝ => N + 2 * s * P + s ^ 2 * C) = (fun x => N + 2 * P * x) + (fun y => y ^ 2 * C) := by
-      funext s
-      simp only [Pi.add_apply]
-      ring
-    rw [e]
-    exact (h1.add h2).congr_deriv (by
-      rw [show (2 : ℕ) - 1 = 1 from rfl, pow_one]
-      push_cast
-      ring)
-  have hq0 : N + 2 * (0 : ℝ) * P + (0 : ℝ) ^ 2 * C ≠ 0 := by simpa using hN'
-  have hev : ∀ᶠ t in 𝓝 (0 : ℝ), N + 2 * t * P + t ^ 2 * C ≠ 0 :=
-    (hq 0).continuousAt.eventually_ne hq0
-  have hd : deriv (fun t : ℝ => Real.log (N + 2 * t * P + t ^ 2 * C) / 2) =ᶠ[𝓝 0]
-      fun t => (P + C * t) / (N + 2 * t * P + t ^ 2 * C) := by
-    filter_upwards [hev] with t ht
-    rw [(((hq t).log ht).div_const 2).deriv]
-    field_simp
-  rw [hd.deriv_eq]
-  have h4 := (((hasDerivAt_id' (0 : ℝ)).const_mul C).const_add P).div (hq 0) hq0
-  rw [show (fun t : ℝ => (P + C * t) / (N + 2 * t * P + t ^ 2 * C)) =
-    (fun x => P + C * x) / (fun s => N + 2 * s * P + s ^ 2 * C) from rfl, h4.deriv]
-  simp only [mul_zero, zero_mul, add_zero, mul_one, zero_pow two_ne_zero]
-  field_simp
-
 theorem levi_fs_zero {κ : Type} [Fintype κ] {z : κ → ℂ} (hz : z ≠ 0) (w : κ → ℂ)
     (h : levi (fun z => Real.log ((fsMetric (ι := κ)).ρ z)) z w = 0) : ∃ c : ℂ, w = c • z := by
   have hxne : WithLp.toLp 2 z ≠ 0 := fun h => hz (by simpa using congrArg WithLp.ofLp h)
   have hN : 0 < ‖WithLp.toLp 2 z‖ ^ 2 := pow_pos (norm_pos_iff.2 hxne) 2
-  have hρ : ContDiffAt ℝ 2 (fun u : κ → ℂ => (fsMetric (ι := κ)).ρ u) z := by
-    show ContDiffAt ℝ 2 (fun u => ‖WithLp.toLp 2 u‖) z
-    exact (contDiffAt_norm ℂ hxne).comp z
-      ((PiLp.continuousLinearEquiv 2 ℝ (fun _ : κ => ℂ)).symm.contDiff.contDiffAt)
-  have hφ : ContDiffAt ℝ 2 (fun u => Real.log ((fsMetric (ι := κ)).ρ u)) z :=
-    hρ.log (ne_of_gt ((fsMetric (ι := κ)).pos z hz))
-  have key : ∀ v : κ → ℂ, fderiv ℝ (fderiv ℝ (fun u => Real.log ((fsMetric (ι := κ)).ρ u))) z v v =
-      (‖WithLp.toLp 2 v‖ ^ 2 * ‖WithLp.toLp 2 z‖ ^ 2 -
-        2 * (inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 v)).re ^ 2) / (‖WithLp.toLp 2 z‖ ^ 2) ^ 2 := by
-    intro v
-    rw [fderiv_fderiv_eq_deriv_deriv_line hφ v]
-    have hF : (fun t : ℝ => Real.log ((fsMetric (ι := κ)).ρ (z + t • v))) = fun t : ℝ =>
-        Real.log (‖WithLp.toLp 2 z‖ ^ 2 + 2 * t * (inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 v)).re +
-          t ^ 2 * ‖WithLp.toLp 2 v‖ ^ 2) / 2 := by
-      funext t
-      have e : WithLp.toLp 2 (z + t • v) = WithLp.toLp 2 z + (t : ℂ) • WithLp.toLp 2 v := by
-        rw [WithLp.toLp_add, WithLp.toLp_smul, Complex.coe_smul]
-      show Real.log ‖WithLp.toLp 2 (z + t • v)‖ = _
-      have hsq : ‖WithLp.toLp 2 z + (t : ℂ) • WithLp.toLp 2 v‖ ^ 2 =
-          ‖WithLp.toLp 2 z‖ ^ 2 + 2 * t * (inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 v)).re +
-            t ^ 2 * ‖WithLp.toLp 2 v‖ ^ 2 := by
-        rw [norm_add_sq (𝕜 := ℂ), inner_smul_right, RCLike.re_to_complex, Complex.re_ofReal_mul,
-          norm_smul, mul_pow, Complex.norm_real, Real.norm_eq_abs, sq_abs]
-        ring
-      rw [e, ← hsq, Real.log_pow]
-      push_cast
-      ring
-    rw [hF, deriv_deriv_half_log_quadratic_at_zero _ _ _ hN]
-  have hI : inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 (Complex.I • w)) =
-      Complex.I * inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 w) := by
-    rw [WithLp.toLp_smul, inner_smul_right]
-  have hIn : ‖WithLp.toLp 2 (Complex.I • w)‖ = ‖WithLp.toLp 2 w‖ := by
-    rw [WithLp.toLp_smul, norm_smul]
-    simp
-  unfold levi at h
-  rw [key, key, hI, hIn, Complex.I_mul_re, neg_sq] at h
-  rw [← add_div, div_div, div_eq_zero_iff] at h
+  change leviForm (fun z => Real.log ((fsMetric (ι := κ)).ρ z)) z w = 0 at h
+  rw [leviForm_fsMetric hz w, div_eq_zero_iff] at h
+  simp only [fsLp_apply] at h
   have hsum : ‖WithLp.toLp 2 w‖ ^ 2 * ‖WithLp.toLp 2 z‖ ^ 2 =
-      (inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 w)).re ^ 2 +
-        (inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 w)).im ^ 2 := by
+      ‖inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 w)‖ ^ 2 := by
     rcases h with h | h
     · linarith
     · exfalso
-      have : 0 < (‖WithLp.toLp 2 z‖ ^ 2) ^ 2 * 4 := by positivity
+      have : 0 < 2 * (‖WithLp.toLp 2 z‖ ^ 2) ^ 2 := by positivity
       linarith
   have hcs : ‖inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 w)‖ = ‖WithLp.toLp 2 z‖ * ‖WithLp.toLp 2 w‖ := by
     have hsq : ‖inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 w)‖ ^ 2 =
         (‖WithLp.toLp 2 z‖ * ‖WithLp.toLp 2 w‖) ^ 2 := by
-      rw [Complex.sq_norm, Complex.normSq_apply, mul_pow]
-      linear_combination -hsum
+      rw [mul_pow, mul_comm]
+      exact hsum.symm
     exact (pow_left_inj₀ (norm_nonneg _) (by positivity) two_ne_zero).1 hsq
   by_cases hw : WithLp.toLp 2 w = 0
   · refine ⟨0, ?_⟩
@@ -453,8 +320,7 @@ theorem g_pos : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι
         (blk k (R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm v)))
         (blk k (fderiv ℂ (fun u => R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm u)) v w)) :=
       fun k => GP.levi_fs_nonneg (hblk k) _
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     have hz0 : ∀ k, levi (fun z : ι k → ℂ => Real.log ((fsMetric (ι := ι k)).ρ z))
         (blk k (R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm v)))
         (blk k (fderiv ℂ (fun u => R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm u)) v w)) = 0 :=

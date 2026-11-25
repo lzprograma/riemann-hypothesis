@@ -1,5 +1,7 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
+import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FjCauchyBound
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicOutsideLine
 import Mathlib.Algebra.Order.Star.Real
@@ -28,25 +30,11 @@ def FjRealFlow : Prop :=
 
 theorem isIsoV_embV {r : ℕ} (X : Data E r) {ξ : Fin r → E} (h : X.IsIso ξ) :
     X.IsIsoV (X.embV ξ) := by
-  intro τ
-  obtain ⟨-, hh, hne⟩ := h
-  have key : hermC τ.1 X.Gm (X.embV ξ τ) (X.embV ξ τ) = τ.1 (herm X.Gm ξ ξ) := by
-    set_option synthInstance.maxHeartbeats 100000 in
-      simp only [hermC, herm, Data.embV, Data.emb, map_sum, map_mul, cc,
-      IsCMField.complexEmbedding_complexConj]
-  refine ⟨by rw [key, hh, map_zero], fun h0 => hne ?_⟩
-  funext a
-  have h1 := congrFun h0 a
-  simp only [Data.embV, Data.emb, Pi.zero_apply, map_eq_zero] at h1
-  simpa using h1
+  apply GlobalTheory.FjCauchy.isIsoV_embV <;> assumption
 
 theorem dmin_ne {r : ℕ} (X : Data E r) {x : Frame X.Ψ r} (hx : x ∈ X.dom) (τ : X.Ψ)
     (j : Fin (r + 1)) : dmin X.Gm x τ j ≠ 0 := by
-  intro h0
-  simp only [Data.dom, GG, Set.mem_setOf_eq] at hx
-  have h1 := (hx τ).2 j
-  rw [h0, Complex.zero_re, mul_zero] at h1
-  exact lt_irrefl _ h1
+  exact ReciprocityTheory.ChartRestriction.G.FD.FlowCoefficientBounds.dmin_ne X hx τ j
 
 theorem nfac_pos {r : ℕ} (X : Data E r) (la : Wt X.Ψ r) {x : Frame X.Ψ r} (hx : x ∈ X.dom) :
     0 < X.nfac la x := by
@@ -79,18 +67,8 @@ theorem realFlow {r : ℕ} (X : Data E r) (h1 : FlowDomainCriterion (E := E))
     (x : Frame X.Ψ r) (hx : x ∈ X.dom) (s : X.Ψ → ℝ) :
     X.flow ξ (fun τ => (s τ : ℂ)) x ∈ X.dom ∧
       X.nfac la (X.flow ξ (fun τ => (s τ : ℂ)) x) = X.nfac la x := by
-  rw [flow_eq]
-  have he := isIsoV_embV X hξ
-  have hd : X.flowV (X.embV ξ) (fun τ => (s τ : ℂ)) x ∈ X.dom :=
-    (h1 r X _ he x hx _).1.2 fun τ => by simp
-  refine ⟨hd, ?_⟩
-  obtain ⟨hlo, hhi⟩ := h2 r X _ he la x hx _ hd
-  simp only [Complex.ofReal_im, zero_div, add_zero, inv_one, min_self, max_self,
-    Real.one_rpow, Finset.prod_const_one] at hlo hhi
-  have hn := nfac_pos X la hd
-  have heq := le_antisymm hhi hlo
-  rw [div_eq_one_iff_eq hn.ne'] at heq
-  exact heq.symm
+  intros
+  apply _root_.ReciprocityTheory.ChartRestriction.G.FD.FlowCoefficientBounds.flow_real <;> assumption
 
 theorem fj_pnorm_le {r : ℕ} (X : Data E r) (la : Wt X.Ψ r) (P : Frame X.Ψ r → ℂ) (ξ : Fin r → E)
     (ν : X.Ψ → ℝ) (C : ℝ) (hC0 : 0 ≤ C)

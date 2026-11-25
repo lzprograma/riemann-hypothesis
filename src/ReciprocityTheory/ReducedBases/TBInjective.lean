@@ -30,7 +30,7 @@ private lemma eq_sum_smul_gs {E : Type*} [NormedAddCommGroup E] [InnerProductSpa
     · subst h1; simp
     · by_cases h2 : b < a <;> simp [h1, h2]
   rw [Finset.sum_congr rfl (fun b _ => hterm b), Finset.sum_add_distrib]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [← Finset.sum_filter]
   have hf : Finset.univ.filter (fun b => b < a) = Finset.Iio a := by ext; simp
   rw [hf]

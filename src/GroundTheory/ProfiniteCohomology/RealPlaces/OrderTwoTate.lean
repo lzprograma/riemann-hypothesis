@@ -80,7 +80,7 @@ def h1EquivOfOrderTwo : tateQuot (-act A c) ≃+ cohomology A 1 :=
       rw [← hy, AddMonoidHom.neg_apply, map_neg]
       simp [sub_eq_add_neg, add_comm]))
     ⟨by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro x hx
       obtain ⟨α, rfl⟩ := QuotientAddGroup.mk_surjective x
       rw [QuotientAddGroup.lift_mk, h1Hom_apply, cohomologyπ_cocycleOne_eq_zero_iff] at hx
@@ -126,7 +126,7 @@ def h2EquivOfOrderTwo : tateQuot (act A c) ≃+ cohomology A 2 :=
       rw [AddMonoidHom.mem_ker, h2Hom_apply, cohomologyπ_cocycleTwo_eq_zero_iff]
       exact ⟨y, hy.symm⟩))
     ⟨by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro x hx
       obtain ⟨a, rfl⟩ := QuotientAddGroup.mk_surjective x
       rw [QuotientAddGroup.lift_mk, h2Hom_apply, cohomologyπ_cocycleTwo_eq_zero_iff] at hx
@@ -193,7 +193,7 @@ def cohomZeroEquivContinuous : tateQuot (act A c) ≃+ cohomologyTateZero A :=
       congr 1
       exact Subtype.ext hN.symm))
     ⟨by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro x hx
       obtain ⟨a, rfl⟩ := QuotientAddGroup.mk_surjective x
       rw [QuotientAddGroup.lift_mk, h0Hom_apply, Submodule.Quotient.mk_eq_zero,

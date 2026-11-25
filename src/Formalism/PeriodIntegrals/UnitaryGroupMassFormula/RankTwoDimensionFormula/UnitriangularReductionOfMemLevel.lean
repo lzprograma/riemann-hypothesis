@@ -3,45 +3,7 @@ module
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.MemMLOfInAt
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DualBetaReferenceCongruence
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsUnitDetLeviM
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -49,21 +11,11 @@ noncomputable section
 
 open scoped Classical ComplexConjugate TensorProduct
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Matrix Formalism.L2.SG.TermOp Formalism.L2.SG.HidaSetting
-  PI.UnitaryDimensionFormula.unitaryCongruence
+  Formalism.L2.SG.Pf.unitaryCongruence
 
 namespace PI.UnitaryDimensionFormula.NormCutK
 
-section NCongS
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
-
-end NCongS
-
 section K2iff
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (TR : TypedRed X)
 
@@ -81,14 +33,14 @@ theorem res_of_Z_delta (v : TR.Pl) {c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (hc : c
     [Decidable b] (hZ : ZMod' X.B.I X.B.g (c - if b then X.ew else 0)) :
     TR.res v ⟨c, hc⟩ = if b then 1 else 0 := by
   by_cases hb : b
-  · rw [if_pos hb] at hZ ⊢
+  · rw [ite_eq_left hb] at hZ ⊢
     have hmem : c - X.ew ∈ IntAf X.B.I.F X.B.I.E := sub_mem hc X.ew_int
     have hk := (TR.res_ker ⟨c - X.ew, hmem⟩).mpr (Z_smul X.B.I X.B.g X.ew_int hZ) v
     have e : (⟨c - X.ew, hmem⟩ : IntAf X.B.I.F X.B.I.E) = ⟨c, hc⟩ - ⟨X.ew, X.ew_int⟩ := rfl
     rw [e, map_sub, res_ew_one, sub_eq_zero] at hk
     exact hk
-  · rw [if_neg hb, sub_zero] at hZ
-    rw [if_neg hb]
+  · rw [ite_eq_right hb, sub_zero] at hZ
+    rw [ite_eq_right hb]
     exact (TR.res_ker ⟨c, hc⟩).mpr (Z_smul X.B.I X.B.g X.ew_int hZ) v
 
 theorem unitriangular_reduction_of_mem_level {x : X.B.I.Gf} (hx : Good X x) (hk : x ∈ X.K2) (v : TR.Pl) :
@@ -98,7 +50,7 @@ theorem unitriangular_reduction_of_mem_level {x : X.B.I.Gf} (hx : Good X x) (hk 
   have hbb : ∀ i j : Fin D.R.k, i ≠ j → ZMod' X.B.I X.B.g (hA X.B.I (X.bwd i) (X.bw j)) := by
     intro i j hij
     have h := X.bw_dual i j
-    rwa [if_neg hij, sub_zero] at h
+    rwa [ite_eq_right hij, sub_zero] at h
   have key : ∀ i j : Fin D.R.k, j ≤ i → leviM TR x v i j = if i = j then 1 else 0 := by
     intro i j hji
     have hmv : X.B.I.fmat x *ᵥ X.bw j ∈ X.B.I.Lf := K_mv X.B.I hK (X.vectorsInLattice.2.2 j).1
@@ -124,8 +76,8 @@ theorem unitriangular_reduction_of_mem_level {x : X.B.I.Gf} (hx : Good X x) (hk 
     ∀ i j : Fin D.R.k, j < i →
       ((levi TR x v : GL (Fin D.R.k) (TR.Fq v)) : Matrix (Fin D.R.k) (Fin D.R.k) (TR.Fq v)) i j = 0
   rw [levi_coe TR hx v]
-  exact ⟨fun i => by rw [key i i le_rfl, if_pos rfl],
-    fun i j hji => by rw [key i j hji.le, if_neg (ne_of_lt hji).symm]⟩
+  exact ⟨fun i => by rw [key i i le_rfl, ite_eq_left rfl],
+    fun i j hji => by rw [key i j hji.le, ite_eq_right (ne_of_lt hji).symm]⟩
 
 end K2iff
 

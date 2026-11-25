@@ -135,8 +135,7 @@ theorem exists_second_functional :
     rw [← map_natCast (algebraMap F (v.adicCompletion F))]
     exact (map_ne_zero _).2 (Nat.cast_ne_zero.2 hT)
   obtain ⟨y₁, hy₁, hy₁'⟩ : ∃ y ∈ L₂, H y ∉ intV E v := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hx1 ((h2 x).2 fun y hy => hH y ▸ hc y hy)
   have hgt : 1 < Valued.v (prPbar s (H y₁)) := by
     by_contra hc

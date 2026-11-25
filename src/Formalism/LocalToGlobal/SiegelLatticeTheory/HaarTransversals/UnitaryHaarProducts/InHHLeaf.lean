@@ -312,14 +312,6 @@ variable {G : Type*} [Group G] [MeasurableSpace G] [MeasurableMul₂ G] [Measura
   {μ : Measure G} [SigmaFinite μ] [μ.IsMulLeftInvariant] [μ.IsMulRightInvariant]
   {Γ : Subgroup G} [Countable Γ] {D : Set G}
 
-private theorem isFundamentalDomain_of_rr_FD (h : rr_FD μ Γ D) : IsFundamentalDomain Γ D μ := by
-  refine IsFundamentalDomain.mk'' h.meas.nullMeasurableSet
-    (Filter.Eventually.of_forall fun y => by
-      obtain ⟨γ, hγ, hy⟩ := h.cov y
-      exact ⟨⟨γ, hγ⟩, hy⟩)
-    (fun g hg => h.disj g g.2 (fun h' => hg (Subtype.ext h')))
-    (fun g => (measurePreserving_mul_left μ (g : G)).quasiMeasurePreserving)
-
 theorem unfold_lint (h : rr_FD μ Γ D) (S : Subgroup G) (hS : S ≤ Γ) (Dt : Set G)
     (hD : FoldBound.IsRightTransversal Γ S Dt) (Fs : Set G) (hFs : IsFundamentalDomain S Fs μ)
     (f : G → ℝ≥0∞) (hf : Measurable f) (hinv : ∀ s ∈ S, ∀ y, f (s * y) = f y) :
@@ -329,7 +321,7 @@ theorem unfold_lint (h : rr_FD μ Γ D) (S : Subgroup G) (hS : S ≤ Γ) (Dt : S
   have hDc : Dt.Countable := Set.Countable.mono hD.1 hΓc
   haveI : Countable Dt := hDc.to_subtype
   haveI : Countable S := Function.Injective.countable (Subgroup.inclusion_injective hS)
-  have hU := isFundamentalDomain_of_rr_FD (rr_FD_union h S hS Dt hD hDc)
+  have hU := rr_isFD (rr_FD_union h S hS Dt hD hDc)
   have hUeq : (⋃ δ ∈ Dt, (fun y => δ * y) '' D) = ⋃ δ : Dt, (fun y => (δ : G) * y) '' D := by
     ext x
     simp only [Set.mem_iUnion]

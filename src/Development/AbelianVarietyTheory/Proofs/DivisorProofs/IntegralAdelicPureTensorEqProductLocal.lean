@@ -414,7 +414,7 @@ theorem integral_pure_haar : ∀ (F : Type) [Field F] [NumberField F] (κ : Type
     by_contra hne
     exact hv (by simpa [hS] using hne)
   have hpi : Continuous fun x : κ → AF F => fun i => evI F (x i) :=
-    continuous_pi fun i => (GlobalTheory.Core.Rk.RapidInt.continuous_toMixed F).comp (continuous_fst.comp (continuous_apply i))
+    continuous_pi fun i => (PositivityTheory.ThKF0.Split.continuous_toMixed F).comp (continuous_fst.comp (continuous_apply i))
   have hpv : ∀ v : Pl (F := F), Continuous fun x : κ → AF F => fun i => evFin F v (x i) := fun v =>
     continuous_pi fun i => (GlobalTheory.GaugeGlue.continuous_evalV v).comp (continuous_snd.comp (continuous_apply i))
   set B : Set (κ → AF F) := {x | ∀ v ∉ S, ∀ i, evFin F v (x i) ∈ v.adicCompletionIntegers F} with hB

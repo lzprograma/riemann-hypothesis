@@ -24,9 +24,6 @@ theorem tDen_cc : constantCoeff (tDen W xP) = 1 := by
 
 theorem tDen_mul_inv : tDen W xP * invOfUnit (tDen W xP) 1 = 1 := PowerSeries.mul_invOfUnit _ _ (by simpa using tDen_cc W xP)
 
-theorem inv_cc : constantCoeff (invOfUnit (tDen W xP) 1) = 1 := by
-  simp [PowerSeries.constantCoeff_invOfUnit]
-
 theorem toL_tDen_mul_inv : toL (tDen W xP) * toL (invOfUnit (tDen W xP) 1) = 1 := by
   rw [← map_mul, tDen_mul_inv, map_one]
 

@@ -2,39 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaTW
 public import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -59,7 +26,6 @@ theorem isThB_iff (X : Tower Ω ε) (A : ValuationSubring Ω) (N l n : ℕ) [Fac
 
 instance topMu.neZero (l n m N : ℕ) [Fact l.Prime] [NeZero N] : NeZero (topMu l n m N) :=
   ⟨Nat.mul_ne_zero (pow_ne_zero _ (Fact.out : l.Prime).ne_zero) (Nat.mul_ne_zero (NeZero.ne N) (NeZero.ne N))⟩
-
 
 open Classical in
 def Gs (N l M : ℕ) [NeZero M] : Finset SL(2, ZMod M) :=
@@ -95,12 +61,10 @@ def bTop (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n m N : ℕ) (bB : (Ω ≃�
 instance topM.neZero (l n m N : ℕ) [Fact l.Prime] [NeZero N] : NeZero (topM l n m (N * N)) :=
   ⟨Nat.mul_ne_zero (pow_ne_zero _ (Fact.out : l.Prime).ne_zero) (Nat.mul_ne_zero (NeZero.ne N) (NeZero.ne N))⟩
 
-
 open Classical in
 def bMid (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n m N : ℕ) [NeZero N] (bB : (Ω ≃ₐ[ℚ] Ω) → X.Fn l) (s : Ω ≃ₐ[ℚ] Ω)
     (z : (ZMod (l ^ (m + n)))ˣ) : X.Fn l :=
   ∑ y ∈ Finset.univ.filter (fun y => redTop l n m N y = z), bTop X l n m N bB s y
-
 
 open Classical in
 def Fsum [CharZero Ω] (ε : Ω →+* ℂ) (l : ℕ) [Fact l.Prime] (n m N : ℕ) [NeZero N] (x : ZMod N) (c d w : ℕ)

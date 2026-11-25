@@ -1,49 +1,8 @@
 module
 
 public import Formalism.SharpRestriction.LevelLetterCocycles.LamPS
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -65,55 +24,37 @@ include hπ0
 
 theorem framepf_ι_mul (g h : PowerSeries O) :
     framepf_ι π' i (g * h) = framepf_ι π' i g * framepf_ι π' i h := by
-  have ha : PowerSeries.HasSubst (π' i) := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
-  let S : PowerSeries O →ₐ[O] PowerSeries O := PowerSeries.substAlgHom ha
-  have hS : ∀ g, PowerSeries.subst (π' i) g = S g := fun g => by
-    first | exact (congrFun (PowerSeries.coe_substAlgHom ha) g).symm
-  simp only [framepf_ι, hS, map_mul, Pi.single_mul]
+  have ha := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
+  simp only [framepf_ι, PowerSeries.subst_mul ha, Pi.single_mul]
 
 theorem framepf_ι_add (g h : PowerSeries O) :
     framepf_ι π' i (g + h) = framepf_ι π' i g + framepf_ι π' i h := by
-  have ha : PowerSeries.HasSubst (π' i) := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
-  let S : PowerSeries O →ₐ[O] PowerSeries O := PowerSeries.substAlgHom ha
-  have hS : ∀ g, PowerSeries.subst (π' i) g = S g := fun g => by
-    first | exact (congrFun (PowerSeries.coe_substAlgHom ha) g).symm
-  simp only [framepf_ι, hS, map_add (f := _), Pi.single_add]
+  have ha := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
+  simp only [framepf_ι, PowerSeries.subst_add ha, Pi.single_add]
 
 theorem framepf_ι_sub (g h : PowerSeries O) :
     framepf_ι π' i (g - h) = framepf_ι π' i g - framepf_ι π' i h := by
-  have ha : PowerSeries.HasSubst (π' i) := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
-  let S : PowerSeries O →ₐ[O] PowerSeries O := PowerSeries.substAlgHom ha
-  have hS : ∀ g, PowerSeries.subst (π' i) g = S g := fun g => by
-    first | exact (congrFun (PowerSeries.coe_substAlgHom ha) g).symm
-  simp only [framepf_ι, hS, map_sub, Pi.single_sub]
+  have ha := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
+  simp only [framepf_ι, PowerSeries.subst_sub ha, Pi.single_sub]
 
 theorem framepf_ι_C (o : O) :
     framepf_ι π' i (PowerSeries.C o) = letE i * algebraMap O (LetA O n) o := by
-  have ha : PowerSeries.HasSubst (π' i) := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
-  let S : PowerSeries O →ₐ[O] PowerSeries O := PowerSeries.substAlgHom ha
-  have hS : ∀ g, PowerSeries.subst (π' i) g = S g := fun g => by
-    first | exact (congrFun (PowerSeries.coe_substAlgHom ha) g).symm
+  have ha := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
   have hC : PowerSeries.C o = o • (1 : PowerSeries O) := by rw [PowerSeries.smul_eq_C_mul, mul_one]
-  simp only [framepf_ι, hS, letE, hC, map_smul, map_one, Algebra.algebraMap_eq_smul_one]
+  simp only [framepf_ι, ← PowerSeries.coe_substAlgHom ha, letE, hC, map_smul, map_one,
+    Algebra.algebraMap_eq_smul_one]
   funext j
   by_cases hj : j = i
   · subst hj; simp
   · simp [hj]
 
 theorem framepf_ι_one : framepf_ι π' i 1 = letE i := by
-  have ha : PowerSeries.HasSubst (π' i) := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
-  let S : PowerSeries O →ₐ[O] PowerSeries O := PowerSeries.substAlgHom ha
-  have hS : ∀ g, PowerSeries.subst (π' i) g = S g := fun g => by
-    first | exact (congrFun (PowerSeries.coe_substAlgHom ha) g).symm
-  simp only [framepf_ι, hS, map_one, letE]
+  have ha := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
+  simp only [framepf_ι, ← PowerSeries.coe_substAlgHom ha, map_one, letE]
 
 theorem framepf_ι_X : framepf_ι π' i PowerSeries.X = letE i * π' := by
-  have ha : PowerSeries.HasSubst (π' i) := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
-  let S : PowerSeries O →ₐ[O] PowerSeries O := PowerSeries.substAlgHom ha
-  have hS : ∀ g, PowerSeries.subst (π' i) g = S g := fun g => by
-    first | exact (congrFun (PowerSeries.coe_substAlgHom ha) g).symm
-  have hSX : S PowerSeries.X = π' i := by rw [← hS]; exact PowerSeries.subst_X ha
-  simp only [framepf_ι, hS, hSX, letE]
+  have ha := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
+  simp only [framepf_ι, PowerSeries.subst_X ha, letE]
   funext j
   by_cases hj : j = i
   · subst hj; simp
@@ -144,7 +85,7 @@ private lemma powerSeries_algHom_eq_subst_X (ψ : PowerSeries O →ₐ[O] PowerS
   have hdvd : PowerSeries.X ^ (k + 1) ∣ f - (PowerSeries.trunc (k + 1) f : PowerSeries O) := by
     rw [PowerSeries.X_pow_dvd_iff]
     intro m hm
-    rw [map_sub, Polynomial.coeff_coe, PowerSeries.coeff_trunc, if_pos hm, sub_self]
+    rw [map_sub, Polynomial.coeff_coe, PowerSeries.coeff_trunc, ite_eq_left hm, sub_self]
   obtain ⟨q, hq⟩ := hdvd
   have hf : f = (PowerSeries.trunc (k + 1) f : PowerSeries O) + PowerSeries.X ^ (k + 1) * q := by
     rw [← hq]; ring
@@ -222,14 +163,33 @@ variable {W T} (Bs : FramepfBas W T) (π' : LetA O n) (i : ZMod n)
       ∀ j, a j = PowerSeries.subst (π' j) (f j))
 
 
+private lemma memNcS_iff {W : LocWach PD LL O v n} {T : LocLat G Qp LL O}
+    {i : ZMod n} {z : W.DD T} :
+    z ∈ NcS W T i ↔
+      (z ∈ W.N T ∧ ∀ δ ∈ W.DelF, W.γD T δ z = z) ∧ (letE i : LetA O n) • z = z := by
+  simp [NcS, DelS, letS, sub_eq_zero]
+
+private lemma letγ_letE (W : LocWach PD LL O v n) (g : W.Gam) (i : ZMod n) :
+    letγ (W.γ₀ g) (letE i : LetA O n) = letE i := by
+  funext j
+  show W.γ₀ g ((Pi.single i 1 : LetA O n) j) = (Pi.single i 1 : LetA O n) j
+  by_cases hj : j = i
+  · subst hj; simp
+  · simp [Pi.single_eq_of_ne hj]
+
+private lemma γD_smul_letA {W : LocWach PD LL O v n} {T : LocLat G Qp LL O} (g : W.Gam)
+    (a : LetA O n) (y : W.DD T) : W.γD T g (a • y) = letγ (W.γ₀ g) a • W.γD T g y := by
+  rw [← algebraMap_smul W.EE a y, W.γD_smul, W.γE_ext, algebraMap_smul]
+
+private lemma letE_mul_letE {O : Type} [CommRing O] {n : ℕ} (i : ZMod n) :
+    (letE i : LetA O n) * letE i = letE i := by
+  show (Pi.single i 1 : LetA O n) * Pi.single i 1 = Pi.single i 1
+  rw [← Pi.single_mul, mul_one]
+
 include hπ0 hR2 in
 theorem framepf_coord {x : W.DD T} (hx : x ∈ NcS W T i) :
     ∃ g : Fin Bs.r → PowerSeries O, x = ∑ k, framepf_ι π' i (g k) • Bs.b k := by
-  have memNcS : ∀ z : W.DD T, z ∈ NcS W T i ↔
-      (z ∈ W.N T ∧ ∀ δ ∈ W.DelF, W.γD T δ z = z) ∧ (letE i : LetA O n) • z = z := by
-    intro z
-    simp [NcS, DelS, letS, sub_eq_zero]
-  obtain ⟨⟨hN, hD⟩, hL⟩ := (memNcS x).1 hx
+  obtain ⟨⟨hN, hD⟩, hL⟩ := memNcS_iff.1 hx
   obtain ⟨a, ha, hxa⟩ := Bs.delta x (show _ ∧ _ from ⟨hN, hD⟩)
   choose f hf using fun k => (hR2 (a k) (ha k)).exists
   refine ⟨fun k => f k i, ?_⟩
@@ -337,10 +297,8 @@ theorem framepf_γ_vec (Gs : PowerSeries O) (hGs0 : PowerSeries.constantCoeff Gs
     W.γD T W.gam (framepf_vec Bs π' i H k) =
       framepf_vec Bs π' i (Γ * H.map (PowerSeries.subst Gs)) k := by
   have hγ0 : PowerSeries.constantCoeff (W.γ₀ W.gam PowerSeries.X) = 0 := (W.γ₀_X W.gam).1
-  have hsm : ∀ (a : LetA O n) (y : W.DD T), W.γD T W.gam (a • y) = letγ (W.γ₀ W.gam) a • W.γD T W.gam y := by
-    intro a y
-    rw [← algebraMap_smul W.EE a y, W.γD_smul, W.γE_ext, algebraMap_smul]
-  have hι : ∀ h : PowerSeries O, letγ (W.γ₀ W.gam) (framepf_ι π' i h) = framepf_ι π' i (PowerSeries.subst Gs h) :=
+  have hι : ∀ h : PowerSeries O,
+      letγ (W.γ₀ W.gam) (framepf_ι π' i h) = framepf_ι π' i (PowerSeries.subst Gs h) :=
     fun h => framepf_ι_letγ π' i (hπ0 i) (W.γ₀ W.gam) hγ0 Gs hGs0 hGs h
   unfold framepf_vec
 
@@ -348,8 +306,8 @@ theorem framepf_γ_vec (Gs : PowerSeries O) (hGs0 : PowerSeries.constantCoeff Gs
   have hterm : ∀ m, W.γD T W.gam (framepf_ι π' i (H m k) • Bs.b m) =
       ∑ p, framepf_ι π' i (Γ p m * PowerSeries.subst Gs (H m k)) • Bs.b p := by
     intro m
-    rw [← framepf_letE_ι π' i hπ0 (H m k), mul_comm (letE i : LetA O n), ← smul_smul, hsm, hι, hΓ m,
-      framepf_vec, Finset.smul_sum]
+    rw [← framepf_letE_ι π' i hπ0 (H m k), mul_comm (letE i : LetA O n), ← smul_smul,
+      γD_smul_letA, hι, hΓ m, framepf_vec, Finset.smul_sum]
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [smul_smul, framepf_ι_mul π' i (hπ0 i), mul_comm (framepf_ι π' i (PowerSeries.subst Gs (H m k)))]
   rw [Finset.sum_congr rfl fun m _ => hterm m, Finset.sum_comm]
@@ -381,27 +339,11 @@ theorem framepf_vec_X_smul (Hm : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (
     mul_right_comm, framepf_letE_ι π' i hπ0, mul_comm]
 
 theorem framepf_letE_mem (m : Fin Bs.r) : (letE i : LetA O n) • Bs.b m ∈ NcS W T i := by
-  have memNcS : ∀ z : W.DD T, z ∈ NcS W T i ↔
-      (z ∈ W.N T ∧ ∀ δ ∈ W.DelF, W.γD T δ z = z) ∧ (letE i : LetA O n) • z = z := by
-    intro z
-    simp [NcS, DelS, letS, sub_eq_zero]
   have hb := (show Bs.b m ∈ W.N T ∧ ∀ δ ∈ W.DelF, W.γD T δ (Bs.b m) = Bs.b m from Bs.mem m)
-  have hfixE : ∀ g, letγ (W.γ₀ g) (letE i : LetA O n) = letE i := by
-    intro g; funext j
-    show W.γ₀ g ((Pi.single i 1 : LetA O n) j) = (Pi.single i 1 : LetA O n) j
-    by_cases hj : j = i
-    · subst hj; simp
-    · simp [Pi.single_eq_of_ne hj]
-  have hsm : ∀ g (a : LetA O n) (y : W.DD T), W.γD T g (a • y) = letγ (W.γ₀ g) a • W.γD T g y := by
-    intro g a y
-    rw [← algebraMap_smul W.EE a y, W.γD_smul, W.γE_ext, algebraMap_smul]
-  have hEE : (letE i : LetA O n) * letE i = letE i := by
-    show (Pi.single i 1 : LetA O n) * Pi.single i 1 = Pi.single i 1
-    rw [← Pi.single_mul, mul_one]
-  rw [memNcS]
+  rw [memNcS_iff]
   refine ⟨⟨Submodule.smul_mem _ _ hb.1, fun δ hδ => ?_⟩, ?_⟩
-  · rw [hsm, hfixE, hb.2 δ hδ]
-  · rw [smul_smul, hEE]
+  · rw [γD_smul_letA, letγ_letE, hb.2 δ hδ]
+  · rw [smul_smul, letE_mul_letE]
 
 
 include hπ0 hΔπ hR2 in
@@ -411,22 +353,6 @@ theorem framepf_Γ (hu : IsUnit (algebraMap (LetA O n) W.EE π'))
       (∀ m, W.γD T W.gam ((letE i : LetA O n) • Bs.b m) = framepf_vec Bs π' i Γ m) ∧
       ∃ R : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O), Γ = 1 + (PowerSeries.X : PowerSeries O) • R := by
   have γ0 : ∀ δ ∈ W.DelF, PowerSeries.constantCoeff (W.γ₀ δ PowerSeries.X) = 0 := fun δ _ => (W.γ₀_X δ).1
-  have memNcS : ∀ z : W.DD T, z ∈ NcS W T i ↔
-      (z ∈ W.N T ∧ ∀ δ ∈ W.DelF, W.γD T δ z = z) ∧ (letE i : LetA O n) • z = z := by
-    intro z
-    simp [NcS, DelS, letS, sub_eq_zero]
-  have hfixE : ∀ g, letγ (W.γ₀ g) (letE i : LetA O n) = letE i := by
-    intro g; funext j
-    show W.γ₀ g ((Pi.single i 1 : LetA O n) j) = (Pi.single i 1 : LetA O n) j
-    by_cases hj : j = i
-    · subst hj; simp
-    · simp [Pi.single_eq_of_ne hj]
-  have hsm : ∀ g (a : LetA O n) (y : W.DD T), W.γD T g (a • y) = letγ (W.γ₀ g) a • W.γD T g y := by
-    intro g a y
-    rw [← algebraMap_smul W.EE a y, W.γD_smul, W.γE_ext, algebraMap_smul]
-  have hEE : (letE i : LetA O n) * letE i = letE i := by
-    show (Pi.single i 1 : LetA O n) * Pi.single i 1 = Pi.single i 1
-    rw [← Pi.single_mul, mul_one]
   have hinj : ∀ z : W.DD T, π' • z = 0 → z = 0 := by
     intro z hz
     obtain ⟨u, hu'⟩ := hu
@@ -440,28 +366,28 @@ theorem framepf_Γ (hu : IsUnit (algebraMap (LetA O n) W.EE π'))
     intro m
     have hyM := framepf_letE_mem Bs i m
     generalize hy : (letE i : LetA O n) • Bs.b m = y at hyM ⊢
-    obtain ⟨⟨yN, yD⟩, yL⟩ := (memNcS y).1 hyM
+    obtain ⟨⟨yN, yD⟩, yL⟩ := memNcS_iff.1 hyM
     obtain ⟨d, hdN, hd⟩ := hγN y (show _ ∧ _ from ⟨yN, yD⟩)
     have gyD : ∀ δ ∈ W.DelF, W.γD T δ (W.γD T W.gam y) = W.γD T W.gam y := by
       intro δ hδ; rw [← W.γD_mul, mul_comm, W.γD_mul, yD δ hδ]
     have gyE : (letE i : LetA O n) • W.γD T W.gam y = W.γD T W.gam y := by
-      rw [← hfixE W.gam, ← hsm, yL]
+      rw [← letγ_letE W W.gam i, ← γD_smul_letA, yL]
     have gyN : W.γD T W.gam y ∈ W.N T := by
       rw [← sub_add_cancel (W.γD T W.gam y) y, hd]
       exact (W.N T).add_mem (Submodule.smul_mem _ _ hdN) yN
-    obtain ⟨c, hc⟩ := framepf_coord Bs π' i hπ0 hR2 ((memNcS _).2 ⟨⟨gyN, gyD⟩, gyE⟩)
+    obtain ⟨c, hc⟩ := framepf_coord Bs π' i hπ0 hR2 (memNcS_iff.2 ⟨⟨gyN, gyD⟩, gyE⟩)
     have hd' : W.γD T W.gam y - y = π' • ((letE i : LetA O n) • d) := by
       rw [smul_comm, ← hd, smul_sub, gyE, yL]
     have d'N : (letE i : LetA O n) • d ∈ W.N T := Submodule.smul_mem _ _ hdN
     have d'E : (letE i : LetA O n) • (letE i : LetA O n) • d = (letE i : LetA O n) • d := by
-      rw [smul_smul, hEE]
+      rw [smul_smul, letE_mul_letE]
     have d'D : ∀ δ ∈ W.DelF, W.γD T δ ((letE i : LetA O n) • d) = (letE i : LetA O n) • d := by
       intro δ hδ
       apply sub_eq_zero.mp
       apply hinj
       have hπδ : letγ (W.γ₀ δ) π' = π' := hΔπ δ hδ
-      rw [smul_sub, ← hπδ, ← hsm, hπδ, ← hd', map_sub, gyD δ hδ, yD δ hδ, sub_self]
-    obtain ⟨e, he⟩ := framepf_coord Bs π' i hπ0 hR2 ((memNcS _).2 ⟨⟨d'N, d'D⟩, d'E⟩)
+      rw [smul_sub, ← hπδ, ← γD_smul_letA, hπδ, ← hd', map_sub, gyD δ hδ, yD δ hδ, sub_self]
+    obtain ⟨e, he⟩ := framepf_coord Bs π' i hπ0 hR2 (memNcS_iff.2 ⟨⟨d'N, d'D⟩, d'E⟩)
     exact ⟨c, e, hc, by rw [hd', he]⟩
   choose c e hc he using hcol
   refine ⟨Matrix.of fun p m => c m p, fun m => hc m, Matrix.of fun p m => e m p, ?_⟩

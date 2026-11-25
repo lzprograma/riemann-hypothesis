@@ -100,7 +100,7 @@ theorem bp_wden {K : Type*} [Field K] {n : ℕ} (ε : Fin n → Bool) (t : Fin n
   have hother : ∀ (b b' : Bool), b ≠ b' → ∀ (r : Fin (cnt ε b)) (s : Fin (cnt ε b')),
       (if blk ε b r < blk ε b' s ∧ ε (blk ε b r) = ε (blk ε b' s) then t (blk ε b r) - t (blk ε b' s) else 1) = 1 := by
     intro b b' hbb r s
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨_, h⟩
     rw [hmem b r, hmem b' s] at h
     exact hbb h
@@ -322,9 +322,6 @@ theorem sp_sub_pow {ε : Fin n → Bool} (c : Bool) {M : Matrix (Fin n) (Fin n) 
   | zero => rw [pow_zero, pow_zero, sp_sub_one]
   | succ k ih => rw [pow_succ', pow_succ', sp_sub_mul c hM, ih]
 
-theorem sp_Jm_true (k : ℕ) : Jm (fun _ : Fin k => true) = 1 := by
-  simp [Jm]
-
 theorem sp_sub_Kset {ε : Fin n → Bool} (c : Bool) {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ Kset ε) :
     sp_sub ε c g ∈ Kset (fun _ : Fin (cnt ε c) => true) := by
   simp only [Kset, Set.mem_setOf_eq] at hg ⊢
@@ -332,7 +329,7 @@ theorem sp_sub_Kset {ε : Fin n → Bool} (c : Bool) {g : Matrix (Fin n) (Fin n)
   have hzs : ∀ a b, ε a ≠ ε b → (star g) a b = 0 := by
     intro a b h
     rw [Matrix.star_apply, apply_eq_zero_of_commute_Jm_of_eps_ne hc b a (Ne.symm h), star_zero]
-  refine ⟨?_, by rw [sp_Jm_true, Matrix.mul_one, Matrix.one_mul]⟩
+  refine ⟨?_, by rw [ReciprocityTheory.ChartRestriction.DS.HW.Jm_allPos, Matrix.mul_one, Matrix.one_mul]⟩
   rw [Matrix.mem_unitaryGroup_iff']
   have hst : star (sp_sub ε c g) = sp_sub ε c (star g) := by
     ext i j
@@ -380,9 +377,9 @@ theorem sp_sub_inK {ε : Fin n → Bool} (c : Bool) {X : Matrix (Fin n) (Fin n) 
     inK (fun _ : Fin (cnt ε c) => true) (sp_sub ε c X) := by
   unfold inK at hX ⊢
   obtain ⟨hG, hc⟩ := hX
-  refine ⟨?_, by rw [sp_Jm_true, Matrix.mul_one, Matrix.one_mul]⟩
+  refine ⟨?_, by rw [ReciprocityTheory.ChartRestriction.DS.HW.Jm_allPos, Matrix.mul_one, Matrix.one_mul]⟩
   unfold inG at hG ⊢
-  rw [sp_Jm_true, Matrix.mul_one, Matrix.one_mul]
+  rw [ReciprocityTheory.ChartRestriction.DS.HW.Jm_allPos, Matrix.mul_one, Matrix.one_mul]
   ext i j
   have e := congrFun (congrFun hG (blk ε c i)) (blk ε c j)
   simp only [Jm, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.add_apply, Matrix.zero_apply,
@@ -890,8 +887,7 @@ theorem highest_weight_model_equiv (N : ℕ) (Λ : Fin N → ℝ) (H : Type) [No
   obtain ⟨ν, F, hν, hFmem, hF0, hFint⟩ := hM N S P w0 μ K hP hw0ne hT'' hL'
   have hanti : Antitone ν := by
     intro l j hlj
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     rcases eq_or_lt_of_le hlj with h | h
     · subst h; exact lt_irrefl _ hlt
     · have hbot := dualWeylNonDom ℂ N N ν ⟨l, j, h, hlt⟩
@@ -914,7 +910,7 @@ theorem highest_weight_model_equiv (N : ℕ) (Λ : Fin N → ℝ) (H : Type) [No
     have h2 := hν ⟨N - 1, by omega⟩
     have h3 : ν ⟨N - 1, by omega⟩ ≤ ν a := hanti (by rw [Fin.le_def]; simp; omega)
     have h3' : (ν ⟨N - 1, by omega⟩ : ℤ) ≤ ν a := by exact_mod_cast h3
-    simp only [DomWeight.natW, DomWeight.detShift, c, dif_pos hN, lam]
+    simp only [DomWeight.natW, DomWeight.detShift, c, dite_eq_left hN, lam]
     omega
   have hlast : ∀ h : 0 < N, lam.natW ⟨N - 1, by omega⟩ = 0 := by
     intro h; simp [DomWeight.natW, DomWeight.detShift, h, lam]
@@ -1030,7 +1026,7 @@ theorem highest_weight_model_equiv (N : ℕ) (Λ : Fin N → ℝ) (H : Type) [No
     by_cases hN : 0 < N
     · have hds : lam.detShift = (c : ℤ) - K := by
         have h1 := hν ⟨N - 1, by omega⟩
-        simp only [DomWeight.detShift, c, dif_pos hN, lam]
+        simp only [DomWeight.detShift, c, dite_eq_left hN, lam]
         omega
       rw [detPow, hds, _root_.zpow_sub, zpow_natCast, zpow_natCast, Units.val_mul, Units.val_inv_eq_inv_val,
         Units.val_pow_eq_pow_val, Units.val_pow_eq_pow_val, hu, mul_assoc, inv_mul_cancel₀ hdK, mul_one]

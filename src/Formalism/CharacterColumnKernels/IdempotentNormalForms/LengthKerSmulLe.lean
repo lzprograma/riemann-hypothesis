@@ -2,52 +2,10 @@ module
 
 public import Formalism.CharacterColumnKernels.StatementRho
 public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthEqKerAddRange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.CharacterColumnKernels.StatBlockRhoCount, Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerSmulLe
@@ -248,8 +206,8 @@ theorem blockRhoAbs : StatBlockRhoAbs := by
   classical
   let A : ∀ w, Submodule O (H1z (resRep ρM (D w))) := fun w =>
     if hw : w ∈ what₂ then Classical.choose (hrows w hw) else F w
-  have hA : ∀ w (hw : w ∈ what₂), A w = Classical.choose (hrows w hw) := fun w hw => dif_pos hw
-  have hA' : ∀ w, w ∉ what₂ → A w = F w := fun w hw => dif_neg hw
+  have hA : ∀ w (hw : w ∈ what₂), A w = Classical.choose (hrows w hw) := fun w hw => dite_eq_left hw
+  have hA' : ∀ w, w ∉ what₂ → A w = F w := fun w hw => dite_eq_right hw
   have hFA : ∀ w, F w ≤ A w := by
     intro w
     by_cases hw : w ∈ what₂
@@ -273,9 +231,9 @@ theorem blockRhoAbs : StatBlockRhoAbs := by
         if w ∈ what₂ then lenRow w else 0 := by
       intro w _
       by_cases hwr : w ∈ what₂
-      · rw [if_pos hwr, hA w hwr]
+      · rw [ite_eq_left hwr, hA w hwr]
         exact (Classical.choose_spec (hrows w hwr)).2.1
-      · rw [if_neg hwr, hA' w hwr, Submodule.comap_subtype_self, Module.length_eq_zero]
+      · rw [ite_eq_right hwr, hA' w hwr, Submodule.comap_subtype_self, Module.length_eq_zero]
     calc Module.length O S ≤ _ := h2
       _ ≤ s + ∑ w ∈ what₂ ∪ cols, (if w ∈ what₂ then lenRow w else 0) :=
           add_le_add hsel (Finset.sum_le_sum hterm)

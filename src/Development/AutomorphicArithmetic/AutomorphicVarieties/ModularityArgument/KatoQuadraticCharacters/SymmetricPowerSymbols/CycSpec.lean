@@ -48,18 +48,14 @@ import Mathlib.Topology.Sheaves.Init
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym
 
-private theorem pow_mod_eq_pow_of_pow_eq_one' {F : Type} [Field F] {z : F} {m : ℕ} (h : z ^ m = 1) (k : ℕ) :
-    z ^ (k % m) = z ^ k := by
-  conv_rhs => rw [← Nat.mod_add_div k m, pow_add, pow_mul, h, one_pow, mul_one]
-
 private theorem rt_add {F : Type} [Field F] {ζ : F} {m : ℕ} (hm : 0 < m) (h : IsPrimitiveRoot ζ m) (i j : ZMod m) :
     ζ ^ (i + j).val = ζ ^ i.val * ζ ^ j.val := by
   haveI : NeZero m := ⟨hm.ne'⟩
-  rw [ZMod.val_add, pow_mod_eq_pow_of_pow_eq_one' h.pow_eq_one, pow_add]
+  rw [ZMod.val_add, ← pow_eq_pow_mod _ h.pow_eq_one, pow_add]
 
 private theorem rt_mul {F : Type} [Field F] {z : F} {m : ℕ} (h : z ^ m = 1) (i j : ZMod m) :
     z ^ (i * j).val = (z ^ i.val) ^ j.val := by
-  rw [ZMod.val_mul, pow_mod_eq_pow_of_pow_eq_one' h, pow_mul]
+  rw [ZMod.val_mul, ← pow_eq_pow_mod _ h, pow_mul]
 
 private theorem rt_inj {F : Type} [Field F] {ζ : F} {m : ℕ} (hm : 0 < m) (h : IsPrimitiveRoot ζ m) {i j : ZMod m}
     (e : ζ ^ i.val = ζ ^ j.val) : i = j := by
@@ -137,4 +133,4 @@ theorem UpperTheory.V.Z.Kato.Sym.lgB :
       rfl
     · apply rt_inj hm hζΩ
       rw [← cyc_spec hm hζΩ 1 _ hζΩ.pow_eq_one, AlgEquiv.one_apply, ZMod.val_one_eq_one_mod,
-        pow_mod_eq_pow_of_pow_eq_one' hζΩ.pow_eq_one, pow_one]
+        ← pow_eq_pow_mod _ hζΩ.pow_eq_one, pow_one]

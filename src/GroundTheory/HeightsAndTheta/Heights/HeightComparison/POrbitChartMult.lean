@@ -4,51 +4,8 @@ public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitC
 public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartMultLemmas
 import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartQuot
 public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.Smooth.Flat
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
 
 @[expose] public section
@@ -114,7 +71,7 @@ theorem isUnit_prod_X_pow (m : Ideal O) [hm : m.IsPrime] (a : ι → ℕ) :
   have hnot : (∏ k, X k ^ a k : MvPolynomial ι O) ∉ fibO ι m := by
     intro h
     have h' := MvPolynomial.mem_map_C_iff.mp h (Finsupp.equivFunOnFinite.symm a)
-    rw [prod_X_pow_eq_monomial_fintype, coeff_monomial, if_pos rfl] at h'
+    rw [prod_X_pow_eq_monomial_fintype, coeff_monomial, ite_eq_left rfl] at h'
     exact hm.ne_top ((Ideal.eq_top_iff_one _).mpr h')
   exact IsLocalization.map_units (locB ι m) (⟨∏ k, X k ^ a k, hnot⟩ : (fibO ι m).primeCompl)
 
@@ -125,7 +82,7 @@ theorem isUnit_C_locB (m : Ideal O) [m.IsPrime] (u : m.primeCompl) :
   classical
   have hnot : (C (u : O) : MvPolynomial ι O) ∉ fibO ι m := fun h ↦ u.2 (by
     have h' := MvPolynomial.mem_map_C_iff.mp h 0
-    rwa [coeff_C, if_pos rfl] at h')
+    rwa [coeff_C, ite_eq_left rfl] at h')
   exact IsLocalization.map_units (locB ι m) (⟨C (u : O), hnot⟩ : (fibO ι m).primeCompl)
 
 

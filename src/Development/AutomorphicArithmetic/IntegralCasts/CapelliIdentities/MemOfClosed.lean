@@ -4,68 +4,21 @@ public import Mathlib.Algebra.Algebra.ZMod
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.NumberTheory.LocalField.Basic
 public import Mathlib.NumberTheory.Padics.PadicNumbers
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.Padics.RingHoms
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 
 @[expose] public section
 
 namespace UpperTheory.Reformulated.B.Qi13
 
-theorem aux1 : ∀ (K : Type) [inst : Field K] [inst_1 : ValuativeRel K]
-  [inst_2 : TopologicalSpace K] [IsNonarchimedeanLocalField K], IsLocalRing ↥(ValuativeRel.valuation K).integer := by
-  intro K _ _ _ _
-  infer_instance
-
 @[reducible] noncomputable def algRes : (K : Type) →
-  [inst : Field K] →
-    [inst_1 : ValuativeRel K] →
-      [inst_2 : TopologicalSpace K] →
-        [inst_3 : IsNonarchimedeanLocalField K] →
+  [Field K] →
+    [ValuativeRel K] →
+      [TopologicalSpace K] →
+        [IsNonarchimedeanLocalField K] →
           (l : ℕ) →
-            [inst_4 : Fact (Nat.Prime l)] →
+            [Fact (Nat.Prime l)] →
               [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l] →
                 Algebra (ZMod l) (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) :=
   fun K [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] l [Fact (Nat.Prime l)]
@@ -75,31 +28,27 @@ theorem aux1 : ∀ (K : Type) [inst : Field K] [inst_1 : ValuativeRel K]
 attribute [local instance] algRes
 
 @[reducible] noncomputable def fdim : (K : Type) →
-  [inst : Field K] →
-    [inst_1 : ValuativeRel K] →
-      [inst_2 : TopologicalSpace K] →
-        [inst_3 : IsNonarchimedeanLocalField K] →
+  [Field K] →
+    [ValuativeRel K] →
+      [TopologicalSpace K] →
+        [IsNonarchimedeanLocalField K] →
           (l : ℕ) →
             [Fact (Nat.Prime l)] → [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l] → ℕ :=
   fun K [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] l [Fact (Nat.Prime l)]
       [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l] =>
     Module.finrank (ZMod l) (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer)
 
-theorem aux4 : ∀ (K : Type) [inst : Field K] [inst_1 : ValuativeRel K]
-  [inst_2 : TopologicalSpace K] [inst_3 : IsNonarchimedeanLocalField K] (l : ℕ) [inst_4 : Fact (Nat.Prime l)]
-  [inst_5 : CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l],
+theorem aux4 : ∀ (K : Type) [Field K] [ValuativeRel K]
+  [TopologicalSpace K] [IsNonarchimedeanLocalField K] (l : ℕ) [Fact (Nat.Prime l)]
+  [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l],
   Module.Free (ZMod l) (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) := by
   intro K _ _ _ _ l _ _
   letI := algRes K l
   exact Module.Free.of_divisionRing (ZMod l) _
 
-theorem aux5 : ∀ (l : ℕ) [Fact (Nat.Prime l)], StrongRankCondition (ZMod l) := by
-  intro l _
-  infer_instance
-
-theorem aux6 : ∀ (K : Type) [inst : Field K] [inst_1 : ValuativeRel K]
-  [inst_2 : TopologicalSpace K] [inst_3 : IsNonarchimedeanLocalField K] (l : ℕ) [inst_4 : Fact (Nat.Prime l)]
-  [inst_5 : CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l],
+theorem aux6 : ∀ (K : Type) [Field K] [ValuativeRel K]
+  [TopologicalSpace K] [IsNonarchimedeanLocalField K] (l : ℕ) [Fact (Nat.Prime l)]
+  [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l],
   Module.Finite (ZMod l) (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) := by
   intro K _ _ _ _ l _ _
   letI := algRes K l
@@ -109,35 +58,35 @@ theorem aux6 : ∀ (K : Type) [inst : Field K] [inst_1 : ValuativeRel K]
 attribute [local instance] aux4 aux6
 
 noncomputable def bb : (K : Type) →
-  [inst : Field K] →
-    [inst_1 : ValuativeRel K] →
-      [inst_2 : TopologicalSpace K] →
-        [inst_3 : IsNonarchimedeanLocalField K] →
+  [Field K] →
+    [ValuativeRel K] →
+      [TopologicalSpace K] →
+        [IsNonarchimedeanLocalField K] →
           (l : ℕ) →
-            [inst_4 : Fact (Nat.Prime l)] →
-              [inst_5 : CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l] →
+            [Fact (Nat.Prime l)] →
+              [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l] →
                 Module.Basis (Fin (fdim K l)) (ZMod l)
                   (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) :=
   fun K [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] l [Fact (Nat.Prime l)]
       [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l] =>
     Module.finBasis (ZMod l) (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer)
 
-theorem aux8 : ∀ (K : Type) [inst : Field K] [inst_1 : ValuativeRel K]
-  [inst_2 : TopologicalSpace K] [inst_3 : IsNonarchimedeanLocalField K] (l : ℕ) [inst_4 : Fact (Nat.Prime l)]
-  [inst_5 : CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l]
+theorem aux8 : ∀ (K : Type) [Field K] [ValuativeRel K]
+  [TopologicalSpace K] [IsNonarchimedeanLocalField K] (l : ℕ) [Fact (Nat.Prime l)]
+  [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l]
   (i : Fin (fdim K l)),
   ∃ a, (IsLocalRing.residue ↥(ValuativeRel.valuation K).integer) a = (bb K l) i := by
   intro K _ _ _ _ l _ _ i
   exact IsLocalRing.residue_surjective _
 
 noncomputable def blift : (K : Type) →
-  [inst : Field K] →
-    [inst_1 : ValuativeRel K] →
-      [inst_2 : TopologicalSpace K] →
-        [inst_3 : IsNonarchimedeanLocalField K] →
+  [Field K] →
+    [ValuativeRel K] →
+      [TopologicalSpace K] →
+        [IsNonarchimedeanLocalField K] →
           (l : ℕ) →
-            [inst_4 : Fact (Nat.Prime l)] →
-              [inst_5 : CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l] →
+            [Fact (Nat.Prime l)] →
+              [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l] →
                 Fin (fdim K l) → ↥(ValuativeRel.valuation K).integer :=
   fun K [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] l [Fact (Nat.Prime l)]
       [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l] i =>
@@ -207,9 +156,9 @@ private theorem mem_of_closed {l : ℕ} [Fact l.Prime] {K : Type} [Field K]
     rw [PadicInt.coe_natCast, map_natCast]
     exact natCast_mem O n
 
-theorem linIndep : ∀ (K : Type) [inst : Field K] [inst_1 : ValuativeRel K]
-  [inst_2 : TopologicalSpace K] [inst_3 : IsNonarchimedeanLocalField K] (l : ℕ) [inst_4 : Fact (Nat.Prime l)]
-  [inst_5 : Algebra ℚ_[l] K] [inst_6 : CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l],
+theorem linIndep : ∀ (K : Type) [Field K] [ValuativeRel K]
+  [TopologicalSpace K] [IsNonarchimedeanLocalField K] (l : ℕ) [Fact (Nat.Prime l)]
+  [Algebra ℚ_[l] K] [CharP (IsLocalRing.ResidueField ↥(ValuativeRel.valuation K).integer) l],
   Continuous ⇑(Algebra.algebraMap ℚ_[l] K) →
     LinearIndependent ℚ_[l] fun i => (blift K l i : K) := by
   intro K _ _ _ _ l _ _ _ hc

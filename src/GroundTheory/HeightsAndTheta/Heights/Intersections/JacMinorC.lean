@@ -33,7 +33,7 @@ theorem pderiv_facts_charZero {F : Type*} [Field F] [CharZero F] {σ : Type*} (p
   refine ⟨?_, ?_, ?_⟩
   · have : ¬ degreeOf j p < 1 := by omega
     rw [degreeOf_lt_iff one_pos] at this
-    push_neg at this
+    push Not at this
     obtain ⟨m, hm, hmj⟩ := this
     have hle : Finsupp.single j 1 ≤ m := Finsupp.single_le_iff.mpr hmj
     intro h0
@@ -128,7 +128,7 @@ theorem exists_jacobian_minor_not_mem_charZero {F : Type} [Field F] [CharZero F]
       rw [AlgebraicIndependent.option_iff] at h
       exact h.2 (hub.isAlgebraic.isAlgebraic (xb j))
     rw [algebraicIndependent_iff] at hw
-    push_neg at hw
+    push Not at hw
     obtain ⟨p, hp0, hp⟩ := hw
     let h : Option u → σ := fun o => o.elim j g
     have hinj : Function.Injective h := by
@@ -201,8 +201,7 @@ theorem exists_jacobian_minor_not_mem_charZero {F : Type} [Field F] [CharZero F]
       rw [hQd]
       exact Nat.find_min' hex ⟨Q', h1, h2, h3, rfl⟩
     have hpos : 0 < degreeOf j Q := by
-      by_contra h0
-      push_neg at h0
+      by_contra! h0
       apply hQ0
       apply hind Q _ hQp
       intro i hi
@@ -244,13 +243,5 @@ theorem exists_jacobian_minor_not_mem_charZero {F : Type} [Field F] [CharZero F]
     rfl
   rw [hM']
   exact h1
-
-section Minors
-
-open ReciprocityTheory.ChartRestriction.G.Geo
-
-variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {R : Type} [CommRing R]
-
-end Minors
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Inter

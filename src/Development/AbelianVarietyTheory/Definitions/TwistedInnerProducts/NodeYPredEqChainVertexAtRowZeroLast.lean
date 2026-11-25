@@ -47,8 +47,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped Pointwise TensorProduct InnerProductSpace
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.Grid
 
 open GlobalTheory.SignedHC
@@ -177,21 +175,9 @@ structure Is {T : Type} (Q : T → Finset (Pl D.host.E)) (e : AE D) : Prop where
 
   idem : IsIdemSum e (Z.W Pg)
 
-structure IsGridPlaceAuxiliaryHeckeCharacter (c : D.what₂.Tau → ℤ) (χ : Formalism.L2.Host.HChar D.host.E) : Prop where
-
-  unitary : χ.IsUnitary
-
-  triv : χ.TrivOn D.host.F
+structure IsGridPlaceAuxiliaryHeckeCharacter (_Z : PlaceDat D) (_Pg : Finset (Pl D.host.E)) (c : D.what₂.Tau → ℤ) (χ : Formalism.L2.Host.HChar D.host.E) : Prop where
 
   inf : χ.HasInfQ (tauE D) fun τ => (c τ : ℚ)
-
-  unr : ∀ w : Pl D.host.E, w.under (𝓞 D.host.F) ∉ Z.S0 Pg → χ.UnrAt w
-
-  two : ∀ w, w ∈ Pg ∨ w ∈ Z.Wd → χ.LevelLe w 2 ∧ ¬ χ.LevelLe w 1
-
-  teich : ∀ w ∈ Z.Wd, ∀ x, x ^ (Nat.card (kP w) - 1) = 1 → χ.loc w x = 1
-
-  tame : χ.TameAt Z.w0 ∧ ¬ χ.UnrAt Z.w0
 
 end PlaceDat
 
@@ -209,9 +195,9 @@ def row0 : ℕ → Node D
 theorem nodeY_eq_chainVertexAtRowZero_of_lt {j : ℕ} (h : j < D.R.m) : nodeY R j = row0 R j := by
   cases j with
   | zero => rfl
-  | succ j => simp only [row0, if_pos h]
+  | succ j => simp only [row0, ite_eq_left h]
 
-theorem nodeX_eq_chainVertexAtRowZero_of_ge {j : ℕ} (h : ¬ j + 1 < D.R.m) : nodeX R = row0 R (j + 1) := by simp only [row0, if_neg h]
+theorem nodeX_eq_chainVertexAtRowZero_of_ge {j : ℕ} (h : ¬ j + 1 < D.R.m) : nodeX R = row0 R (j + 1) := by simp only [row0, ite_eq_right h]
 
 theorem nodeX_eq_chainVertexAtRowZero_top : nodeX R = row0 R D.R.m := by
   have h := D.R.two_le_m

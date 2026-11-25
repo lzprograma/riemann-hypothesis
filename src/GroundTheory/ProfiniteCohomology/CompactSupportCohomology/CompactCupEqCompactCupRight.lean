@@ -341,6 +341,48 @@ variable {SA : ShortComplex (Rep.{u} k G)} [IsDiscreteRep SA.X₁] [IsDiscreteRe
     resTensorHom (φ v).toMonoidHom (sA v).τ₃ (𝟙 _) ≫ μ₃ᵥ v)
 
 
+private theorem cupCochain_pairing {k G : Type u} [CommRing k] [Group G]
+    {A₁ A₂ B₁ B₂ C : Rep.{u} k G} {f : A₁ ⟶ A₂} {g : B₁ ⟶ B₂} {μA : A₂ ⊗ B₁ ⟶ C}
+    {μB : A₁ ⊗ B₂ ⟶ C} (hAB : (f ⊗ₘ 𝟙 B₁) ≫ μA = (𝟙 A₁ ⊗ₘ g) ≫ μB) {p q n : ℕ}
+    (h : p + q = n) (a : (Fin p → G) → A₁) (b : (Fin q → G) → B₁) (σ : Fin n → G) :
+    μA.hom (cupCochain h (fun τ => f.hom (a τ)) b σ) =
+      μB.hom (cupCochain h a (fun τ => g.hom (b τ)) σ) := by
+  have e := congrArg (fun ψ : A₁ ⊗ B₁ ⟶ C => ψ.hom (cupCochain h a b σ)) hAB
+  simp only [Rep.hom_comp, Representation.IntertwiningMap.comp_apply] at e
+  rwa [tensorHom_cupCochain, tensorHom_cupCochain] at e
+
+private theorem compactCup_pairing_aux {A₁ A₂ B₁ B₂ : Rep.{u} k G} [IsDiscreteRep A₁]
+    [IsDiscreteRep A₂] [IsDiscreteRep B₁] [IsDiscreteRep B₂] {A₁ᵥ A₂ᵥ : ∀ v, Rep.{u} k (H v)}
+    [∀ v, IsDiscreteRep (A₁ᵥ v)] [∀ v, IsDiscreteRep (A₂ᵥ v)]
+    {a₁ : ∀ v, Rep.res (φ v).toMonoidHom A₁ ⟶ A₁ᵥ v}
+    {a₂ : ∀ v, Rep.res (φ v).toMonoidHom A₂ ⟶ A₂ᵥ v} (f : A₁ ⟶ A₂) (fᵥ : ∀ v, A₁ᵥ v ⟶ A₂ᵥ v)
+    (hf : ∀ v, a₁ v ≫ fᵥ v = (Rep.resFunctor (φ v).toMonoidHom).map f ≫ a₂ v) (g : B₁ ⟶ B₂)
+    (μA : A₂ ⊗ B₁ ⟶ C) (μB : A₁ ⊗ B₂ ⟶ C) (μAᵥ : ∀ v, A₂ᵥ v ⊗ Rep.res (φ v).toMonoidHom B₁ ⟶ Cᵥ v)
+    (μBᵥ : ∀ v, A₁ᵥ v ⊗ Rep.res (φ v).toMonoidHom B₂ ⟶ Cᵥ v)
+    (hμA : ∀ v, (Rep.resFunctor (φ v).toMonoidHom).map μA ≫ c v =
+      resTensorHom (φ v).toMonoidHom (a₂ v) (𝟙 _) ≫ μAᵥ v)
+    (hμB : ∀ v, (Rep.resFunctor (φ v).toMonoidHom).map μB ≫ c v =
+      resTensorHom (φ v).toMonoidHom (a₁ v) (𝟙 _) ≫ μBᵥ v)
+    (hAB : (f ⊗ₘ 𝟙 B₁) ≫ μA = (𝟙 A₁ ⊗ₘ g) ≫ μB) (hABᵥ : ∀ v, (fᵥ v ⊗ₘ 𝟙 _) ≫ μAᵥ v =
+      (𝟙 _ ⊗ₘ (Rep.resFunctor (φ v).toMonoidHom).map g) ≫ μBᵥ v) {r s n : ℕ} (h : r + s = n)
+    (p : (compactCochains φ A₁ A₁ᵥ a₁).X r) (y : (cochainsComplex B₁).X s) :
+    (compactCupLeibniz φ μA μAᵥ hμA).μ h (((compactCochainsMap φ f fᵥ hf).f r).hom p) y =
+      (compactCupLeibniz φ μB μBᵥ hμB).μ h p (((cochainsMap g).f s).hom y) := by
+  revert p
+  intro (p : (cochainsComplex A₁).X r × shiftNegOneX (piComplex fun v => cochainsComplex (A₁ᵥ v)) r)
+  obtain ⟨x0, b⟩ := p
+  refine Prod.ext (cochainOf_injective (funext fun σ => cupCochain_pairing hAB h _ _ σ)) ?_
+  cases r with
+  | zero => rfl
+  | succ r =>
+    cases n with
+    | zero => rfl
+    | succ m =>
+      revert b
+      intro (b : (piComplex fun v => cochainsComplex (A₁ᵥ v)).X r)
+      refine funext fun v => cochainOf_injective (funext fun σ => cupCochain_pairing (hABᵥ v)
+        (by omega) (cochainOf _ (b v)) (fun τ => cochainOf B₁ y (⇑(φ v).toMonoidHom ∘ τ)) σ)
+
 include hμ₂ in
 theorem compactCup_compactδ_add_compactCup_δ
     (h₁₂ : (SA.f ⊗ₘ 𝟙 SB.X₂) ≫ μ₂ = (𝟙 SA.X₁ ⊗ₘ SB.g) ≫ μ₁)
@@ -354,60 +396,17 @@ theorem compactCup_compactδ_add_compactCup_δ
     (x : compactCohomology φ SA.X₃ (fun v => (SAᵥ v).X₃) (fun v => (sA v).τ₃) r)
     (y : cohomology SB.X₃ s) :
     compactCup φ μ₁ μ₁ᵥ hμ₁ h₁ ((compactδ φ sA hSA hSAᵥ r).hom x) y +
-      (-1 : k) ^ r • compactCup φ μ₃ μ₃ᵥ hμ₃ h₃ x ((δ hSB s (s + 1) rfl).hom y) = 0 := by
-  refine LeibnizPairing.homology_δ_add_homology_δ
+      (-1 : k) ^ r • compactCup φ μ₃ μ₃ᵥ hμ₃ h₃ x ((δ hSB s (s + 1) rfl).hom y) = 0 :=
+  LeibnizPairing.homology_δ_add_homology_δ
     (SM := mappingCoconeNat.mapShortComplex (localResShortComplex φ SA SAᵥ sA))
     (SN := cochainsShortComplex SB) (compactCupLeibniz φ μ₂ μ₂ᵥ hμ₂)
-    (compactCupLeibniz φ μ₁ μ₁ᵥ hμ₁) (compactCupLeibniz φ μ₃ μ₃ᵥ hμ₃) ?_ ?_
+    (compactCupLeibniz φ μ₁ μ₁ᵥ hμ₁) (compactCupLeibniz φ μ₃ μ₃ᵥ hμ₃)
+    (fun {_ _ _} h p y => compactCup_pairing_aux φ SA.f (fun v => (SAᵥ v).f)
+      (fun v => (sA v).comm₁₂) SB.g μ₂ μ₁ μ₂ᵥ μ₁ᵥ hμ₂ hμ₁ h₁₂ h₁₂ᵥ h p y)
+    (fun {_ _ _} h p y => (compactCup_pairing_aux φ SA.g (fun v => (SAᵥ v).g)
+      (fun v => (sA v).comm₂₃) SB.f μ₃ μ₂ μ₃ᵥ μ₂ᵥ hμ₃ hμ₂ h₂₃.symm
+      (fun v => (h₂₃ᵥ v).symm) h p y).symm)
     (compactCochains_shortExact φ sA hSA hSAᵥ) (cochainsShortComplex_shortExact hSB) h₁ h₃ x y
-  · intro r s n h p y
-    revert p
-    intro (p : (cochainsComplex SA.X₁).X r ×
-      shiftNegOneX (piComplex fun v => cochainsComplex (SAᵥ v).X₁) r)
-    obtain ⟨x0, b⟩ := p
-    refine Prod.ext ?_ ?_
-    · apply cochainOf_injective
-      funext σ
-      exact cupCochain_pairing_left μ₁ μ₂ h₁₂ h (cochainOf _ x0) (cochainOf _ y) σ
-    · cases r with
-      | zero => rfl
-      | succ r =>
-        cases n with
-        | zero => rfl
-        | succ m =>
-          revert b
-          intro (b : (piComplex fun v => cochainsComplex (SAᵥ v).X₁).X r)
-          refine funext fun v => ?_
-          apply cochainOf_injective
-          funext σ
-          exact cupCochain_pairing_left (S := SAᵥ v)
-            (T := SB.map (Rep.resFunctor (φ v).toMonoidHom)) (μ₁ᵥ v) (μ₂ᵥ v) (h₁₂ᵥ v)
-            (show r + s = m by omega) (cochainOf _ (b v))
-            (fun τ => cochainOf SB.X₂ y (⇑(φ v).toMonoidHom ∘ τ)) σ
-  · intro r s n h p y
-    revert p
-    intro (p : (cochainsComplex SA.X₂).X r ×
-      shiftNegOneX (piComplex fun v => cochainsComplex (SAᵥ v).X₂) r)
-    obtain ⟨x0, b⟩ := p
-    refine Prod.ext ?_ ?_
-    · apply cochainOf_injective
-      funext σ
-      exact cupCochain_pairing_right μ₂ μ₃ h₂₃ h (cochainOf _ x0) (cochainOf _ y) σ
-    · cases r with
-      | zero => rfl
-      | succ r =>
-        cases n with
-        | zero => rfl
-        | succ m =>
-          revert b
-          intro (b : (piComplex fun v => cochainsComplex (SAᵥ v).X₂).X r)
-          refine funext fun v => ?_
-          apply cochainOf_injective
-          funext σ
-          exact cupCochain_pairing_right (S := SAᵥ v)
-            (T := SB.map (Rep.resFunctor (φ v).toMonoidHom)) (μ₂ᵥ v) (μ₃ᵥ v) (h₂₃ᵥ v)
-            (show r + s = m by omega) (cochainOf _ (b v))
-            (fun τ => cochainOf SB.X₁ y (⇑(φ v).toMonoidHom ∘ τ)) σ
 
 end TwoSequences
 

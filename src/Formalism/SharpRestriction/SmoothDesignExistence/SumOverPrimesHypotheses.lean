@@ -25,52 +25,11 @@ public import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.LocalBou
 public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.OrbitAdmissibleOfSplitBound
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PrvAndKernelCommutationUpToUnitsOfRests
 public import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.ENatToNat
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeAbsorption.SizeDel
 import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
-import Mathlib.Tactic.ReduceModChar
 import Aesop.Frontend.Tactic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -262,8 +221,6 @@ theorem rowA : RowA := by
   have hbl := blocks_le D L u j τ hj1 hj2
   have hr1 := nuRow_le_Sc_add_wSz D L u j τ 1 le_rfl (by omega)
   rw [hw] at hcl hr1
-  have e : ((D.R.k : ℝ) - 1) * (L.Sc + wj D j τ) + (L.Sc + wj D j τ) =
-      (D.R.k : ℝ) * (L.Sc + wj D j τ) := by ring
   rw [hsplit]
   linarith
 
@@ -307,8 +264,6 @@ theorem rowB : RowB := by
   have hcl := cloudRows_le D L u j τ
   have hbl := blocks_le D L u j τ hj1 hj2
   rw [hw] at hcl
-  have e : ((D.R.k : ℝ) - 1) * (L.Sc + wj D j τ) + (3 * L.Sc + wj D j τ) =
-      ((D.R.k : ℝ) + 2) * L.Sc + (D.R.k : ℝ) * wj D j τ := by ring
   rw [hsplit]
   linarith
 
@@ -468,13 +423,8 @@ theorem ct_le (hA : RowA) (hB : RowB) (hC : RowC) (hS : SizeFacts) (hP : PlaceFa
   have hwx : L.sc.w'' D.R.n / L.sc.x ≤ L.sc.w'' D.R.n := by nlinarith
   have h3Sc : 3 * L.Sc ≤ (D.R.k : ℝ) * L.Sc := by nlinarith
   have hkb' : 5 * L.sc.b' ≤ (D.R.k : ℝ) * L.sc.b' := mul_le_mul_of_nonneg_right hk5 hb'0
-  have hmη0 : 0 ≤ (D.R.m : ℝ) * ((D.R.t : ℝ) + 1) * L.etaSz := by
-    have : (0 : ℝ) ≤ L.etaSz := by
-      obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, hEta, -⟩ := hSz
-      exact le_trans (Nat.cast_nonneg _) hEta.1
-    positivity
   by_cases ht : t ∈ D.host.TT
-  · simp only [ctD, if_pos ht]
+  · simp only [ctD, ite_eq_left ht]
     have hRA := hA D L j hj u (tauPl D (false, t))
     have hRC := hC D L P j hj u (tauPl D (true, t)) (hP3 t)
     have hwF := L.win_top j hj1 hj2 (tauPl D (false, t)) ⟨t, ht⟩ (hP1 t)
@@ -498,11 +448,9 @@ theorem ct_le (hA : RowA) (hB : RowB) (hC : RowC) (hS : SizeFacts) (hP : PlaceFa
       mul_le_mul_of_nonneg_left (by linarith) hk0
     have k3 : (D.R.k : ℝ) * L.etaSz ≤ (D.R.k : ℝ) * (L.sc.b' / 3) :=
       mul_le_mul_of_nonneg_left (by linarith) hk0
-    have e3 : (D.R.k : ℝ) * (5 / 4 * L.sc.b') + (D.R.k : ℝ) * (L.sc.b' / 3) +
-        (D.R.k : ℝ) * (L.sc.b' / 3) = 23 / 12 * ((D.R.k : ℝ) * L.sc.b') := by ring
     have e4 : 4 * (D.R.k : ℝ) * L.sc.b' = 4 * ((D.R.k : ℝ) * L.sc.b') := by ring
     rcases hwT with hT | hT <;> linarith
-  · simp only [ctD, if_neg ht]
+  · simp only [ctD, ite_eq_right ht]
     have hthin := hP2 t ht
     have hRB := hB D L P j hj u (tauPl D (false, t)) hthin.2.1
     have hwF := (L.win_thin j hj1 hj2 (tauPl D (false, t)) hthin).2
@@ -538,9 +486,6 @@ theorem szCt_of (hA : RowA) (hB : RowB) (hC : RowC) (hS : SizeFacts) (hP : Place
     push_cast
     ring
   rw [hf]
-  have e : (D.R.n : ℝ) * (4 * (D.R.k : ℝ) * L.sc.b') = 2 * (2 * (D.R.n : ℝ)) * (D.R.k : ℝ) * L.sc.b' := by
-    ring
-  have e2 : (D.host.TT.card : ℝ) * (2 * L.sc.b) = 2 * (D.host.TT.card : ℝ) * L.sc.b := by ring
   linarith
 
 end PI.SzCt.UnitaryGroupMassFormula
@@ -666,7 +611,7 @@ theorem first_clause_cases
       unfold lowS ES Eval vDG
       congr 1
       refine Finset.sum_congr rfl fun j _ => ?_
-      simp only [if_neg hw, if_neg h0, if_neg h1, if_pos h2]
+      simp only [ite_eq_right hw, ite_eq_right h0, ite_eq_right h1, ite_eq_left h2]
       ring
     rw [e]; exact h
   by_cases h3 : (IsResidueClassZero D (D.what₂.places.resChar w) ∨ IsSg D (D.what₂.places.resChar w)) ∧
@@ -686,7 +631,7 @@ theorem first_clause_cases
         unfold lowS ES Eval vDG
         congr 1
         refine Finset.sum_congr rfl fun j _ => ?_
-        simp only [if_neg hw, if_neg h0, if_neg h1, if_neg h2, if_pos h3, if_pos h4]
+        simp only [ite_eq_right hw, ite_eq_right h0, ite_eq_right h1, ite_eq_right h2, ite_eq_left h3, ite_eq_left h4]
         ring
       rw [e]; exact h
     · have hcl : (IsResidueClassZero D (D.what₂.places.resChar w) ∧ hP D (D.what₂.places.resChar w) ≠ 0) ∨
@@ -715,9 +660,9 @@ theorem first_clause_cases
         intro j hj
         rw [hF j hj w]
         unfold Fval FvalP SizeData₂.gTypes
-        rw [if_neg hg, if_neg h2, if_neg h3]
+        rw [ite_eq_right hg, ite_eq_right h2, ite_eq_right h3]
       rw [Finset.sum_congr rfl fun j hj => by rw [this j hj]]
-      simp only [if_neg hw, if_neg h0, if_neg h1, if_neg h2, if_neg h3]
+      simp only [ite_eq_right hw, ite_eq_right h0, ite_eq_right h1, ite_eq_right h2, ite_eq_right h3]
       simp [Finset.sum_const]
       ring
     rw [e]; exact h
@@ -797,12 +742,12 @@ theorem baseChange_preserves_unitary_of (W : TwLoc D Y) (hV : CmpV c Dx T W) (hG
     by_cases h1 : (IsResidueClassZero D (D.what₂.places.resChar w) ∨ IsSg D (D.what₂.places.resChar w)) ∧ ¬ Exc D (D.what₂.places.resChar w)
     swap
     · have : ∑ j ∈ SizeData₂.lifts D, gainS X K (D.what₂.places.resChar w) j = 0 :=
-        Finset.sum_eq_zero fun j _ => by rw [gainS, if_neg h1]
+        Finset.sum_eq_zero fun j _ => by rw [gainS, ite_eq_right h1]
       rw [this, zero_add]; exact hlow
     by_cases h2 : (IsResidueClassZero D (D.what₂.places.resChar w) ∧ hP D (D.what₂.places.resChar w) = 0) ∨
         L.sc.X'' D.R.n < (D.what₂.places.resChar w : ℝ)
     · have : ∑ j ∈ SizeData₂.lifts D, gainS X K (D.what₂.places.resChar w) j = 0 :=
-        Finset.sum_eq_zero fun j _ => by rw [gainS, if_pos h1, gainP, if_pos h2, ite_self]
+        Finset.sum_eq_zero fun j _ => by rw [gainS, ite_eq_left h1, gainP, ite_eq_left h2, ite_self]
       rw [this, zero_add]; exact hlow
     · have hcl : (IsResidueClassZero D (D.what₂.places.resChar w) ∧ hP D (D.what₂.places.resChar w) ≠ 0) ∨
           IsSg D (D.what₂.places.resChar w) := by
@@ -814,7 +759,7 @@ theorem baseChange_preserves_unitary_of (W : TwLoc D Y) (hV : CmpV c Dx T W) (hG
       have e : ∑ j ∈ SizeData₂.lifts D, gainS X K (D.what₂.places.resChar w) j =
           ∑ j ∈ SizeData₂.lifts D, g0S X K (D.what₂.places.resChar w) j :=
         Finset.sum_congr rfl fun j _ => by
-          rw [gainS, if_pos h1, g0S, gainP, if_neg h2, hVV, Finset.sum_empty, zero_add, Finset.sdiff_empty]
+          rw [gainS, ite_eq_left h1, g0S, gainP, ite_eq_right h2, hVV, Finset.sum_empty, zero_add, Finset.sdiff_empty]
       rw [e]; exact h
 
 theorem statements_of_remaining_bound (W : TwLoc D Y) (hV : CmpV c Dx T W) (hA : admitted D L X Y K Dx T W lev Xe ce sp)
@@ -1133,10 +1078,10 @@ theorem UAt_of (D : D7) (L : SizeData₂ D) (X : Inst D L) (Y : LatInst D) (K : 
     intro t0 ht0 j hj
     have h : ∃ t1 ∈ VV', vOf t1 = vOf t0 := ⟨t0, ht0, rfl⟩
     have h' : ∃ t1 ∈ reps X p, vOf t1 = vOf t0 := ⟨t0, hVVr ht0, rfl⟩
-    simp only [Gn, PRn, G0n, dif_pos h, dif_pos h', chV t0 ht0 h, chR t0 (hVVr ht0) h']
+    simp only [Gn, PRn, G0n, dite_eq_left h, dite_eq_left h', chV t0 ht0 h, chR t0 (hVVr ht0) h']
     by_cases hAA : A
-    · simp only [if_pos hAA]; exact le_rfl
-    · simp only [if_neg hAA]
+    · simp only [ite_eq_left hAA]; exact le_rfl
+    · simp only [ite_eq_right hAA]
       obtain ⟨h1, h2⟩ := hLarge w (lt_of_not_ge hAA) t0 (hVVr ht0) j hj
       have : max (g0 X K (aL L) (bL L) p j t0) 0 = 0 := max_eq_right h2
       rw [this]
@@ -1144,32 +1089,32 @@ theorem UAt_of (D : D7) (L : SizeData₂ D) (X : Inst D L) (Y : LatInst D) (K : 
   have hII : ∀ t0 ∈ reps X p, ∀ j ∈ SizeData₂.lifts D, max (g0 X K (aL L) (bL L) p j t0) 0 ≤ G0n (vOf t0) j := by
     intro t0 ht0 j hj
     have h' : ∃ t1 ∈ reps X p, vOf t1 = vOf t0 := ⟨t0, ht0, rfl⟩
-    simp only [G0n, dif_pos h', chR t0 ht0 h']
+    simp only [G0n, dite_eq_left h', chR t0 ht0 h']
     by_cases hAA : A
-    · simp only [if_pos hAA]; exact le_rfl
-    · simp only [if_neg hAA]; exact (max_eq_right (hLarge w (lt_of_not_ge hAA) t0 ht0 j hj).2).le
+    · simp only [ite_eq_left hAA]; exact le_rfl
+    · simp only [ite_eq_right hAA]; exact (max_eq_right (hLarge w (lt_of_not_ge hAA) t0 ht0 j hj).2).le
 
   have c1 : ∀ v ∈ BB, ∀ j ∈ Finset.Icc 1 (Y.Fl u w hg).mm, Gn v j ≤ Formalism.MainNotions.FormalGroupSystem.gB p (Y.Fl u w hg).t ((Y.Fl u w hg).TT v) ((D.gat u w hg).P.lam0 v) ((Y.Fl u w hg).w v) j := by
     intro v hv j hj
     obtain ⟨t0, ht0, rfl⟩ := Finset.mem_image.1 hv
     have h : ∃ t1 ∈ VV', vOf t1 = vOf t0 := ⟨t0, ht0, rfl⟩
-    simp only [Gn, dif_pos h, chV t0 ht0 h]
+    simp only [Gn, dite_eq_left h, chV t0 ht0 h]
     by_cases hAA : A
-    · simp only [if_pos hAA]; exact (hNum hT hLT u w hg hAA t0 (hVVr ht0) j ((hlift j).2 hj)).1
-    · simp only [if_neg hAA]; exact min_le_left _ _
+    · simp only [ite_eq_left hAA]; exact (hNum hT hLT u w hg hAA t0 (hVVr ht0) j ((hlift j).2 hj)).1
+    · simp only [ite_eq_right hAA]; exact min_le_left _ _
   have c2 : ∀ v, ∀ j < (Y.Fl u w hg).mm, Y5.LowAt j v (G0n v (j + 1)) := by
     intro v j hj
     by_cases h : ∃ t0 ∈ reps X p, vOf t0 = v
     · obtain ⟨t0, ht0, rfl⟩ := h
       refine Formalism.MainNotions.FormalGroupSystem.lowAt_max D _ Y5 hU2 h11 (vOf t0) j hj _ ?_
       have h' : ∃ t1 ∈ reps X p, vOf t1 = vOf t0 := ⟨t0, ht0, rfl⟩
-      simp only [G0n, dif_pos h', chR t0 ht0 h']
+      simp only [G0n, dite_eq_left h', chR t0 ht0 h']
       by_cases hAA : A
-      · simp only [if_pos hAA]
+      · simp only [ite_eq_left hAA]
         exact max_le_max ((hNum hT hLT u w hg hAA t0 ht0 (j + 1)
           ((hlift (j + 1)).2 (Finset.mem_Icc.2 ⟨by omega, by omega⟩))).2.1) le_rfl
-      · simp only [if_neg hAA]; exact le_max_right _ _
-    · simp only [G0n, dif_neg h]
+      · simp only [ite_eq_right hAA]; exact le_max_right _ _
+    · simp only [G0n, dite_eq_right h]
       refine hFn v (fun hv => h ?_) j (by rw [← hmm]; exact hj)
       obtain ⟨t0, ht0, h0⟩ := Finset.mem_image.1 hv
       exact ⟨t0, ht0, h0⟩
@@ -1177,10 +1122,10 @@ theorem UAt_of (D : D7) (L : SizeData₂ D) (X : Inst D L) (Y : LatInst D) (K : 
     intro v hv j hj
     obtain ⟨t0, ht0, rfl⟩ := Finset.mem_image.1 hv
     have h : ∃ t1 ∈ VV', vOf t1 = vOf t0 := ⟨t0, ht0, rfl⟩
-    simp only [PRn, dif_pos h, chV t0 ht0 h]
+    simp only [PRn, dite_eq_left h, chV t0 ht0 h]
     by_cases hAA : A
-    · simp only [if_pos hAA]; exact (hNum hT hLT u w hg hAA t0 (hVVr ht0) j ((hlift j).2 hj)).2.2
-    · simp only [if_neg hAA]; exact le_rfl
+    · simp only [ite_eq_left hAA]; exact (hNum hT hLT u w hg hAA t0 (hVVr ht0) j ((hlift j).2 hj)).2.2
+    · simp only [ite_eq_right hAA]; exact le_rfl
   have hnodup : (VV'.toList.map vOf).Nodup :=
     List.Nodup.map_on (fun a ha b hb hab => hinj (hVVr (Finset.mem_toList.1 ha)) (hVVr (Finset.mem_toList.1 hb)) hab)
       (Finset.nodup_toList VV')
@@ -1242,7 +1187,7 @@ theorem UAt_of (D : D7) (L : SizeData₂ D) (X : Inst D L) (Y : LatInst D) (K : 
         refine Finset.sum_congr rfl fun v hv => ?_
         have hn : ¬ ∃ t0 ∈ reps X p, vOf t0 = v := fun ⟨t0, ht0, h0⟩ =>
           (Finset.mem_sdiff.1 hv).2 (Finset.mem_image.2 ⟨t0, ht0, h0⟩)
-        simp only [G0n, dif_neg hn]
+        simp only [G0n, dite_eq_right hn]
       have hsplit : Finset.univ \ BB = ((reps X p \ VV').image vOf) ∪ (Finset.univ \ (reps X p).image vOf) := by
         ext v
         simp only [Finset.mem_sdiff, Finset.mem_univ, true_and, Finset.mem_union, Finset.mem_image, BB]
@@ -1341,8 +1286,6 @@ section -- clump:auto
 @[expose] public section
 
 namespace Formalism.MainNotions.FormalGroupSystem.Pf
-
-theorem stmtNumE : Formalism.MainNotions.FormalGroupSystem.NumericalComparisonUniform := numericalComparisonUniform_of_size nd_size
 
 end Formalism.MainNotions.FormalGroupSystem.Pf
 end -- clump:auto
@@ -1523,7 +1466,7 @@ theorem sum_over_primes_service (𝒞 : FamClass) (hD : Closed 𝒞 fun Fm _ => 
   have hpdv := h.pdv
   have h01 : OrbitPlaces.OrbitLetterBoundsAll 11 1 := DIV.Bridge.DworkPowerSeriesWeights.split_bound_eleven_one
   refine closed_large_pos ⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩
-    (hD.and (h.twU.and (hpdv.and (G.num_closed 𝒞 FormalGroupSystem.Pf.stmtNumE))))
+    (hD.and (h.twU.and (hpdv.and (G.num_closed 𝒞))))
     fun {eps} Fm CH hpos hL ⟨hDg, ⟨xb, hb⟩, ⟨xc, hc⟩, ⟨xn, hnum⟩⟩ => ?_
   have hpr1 : 1 ≤ Fm.GK.Pr1 := le_of_eq Fm.fixed.1.symm
   have hCL : OrbitPlaces.CLarge 11 1 Fm.GK Fm.cX.err :=

@@ -2,48 +2,8 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.CoefLeftAAv
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.SubsetUpperHessenberg
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.TypeStar
-import Std.Tactic.BVDecide.Normalize.Prop
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSchmidtFrames.HermBvecEI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.CoefLeftAaVector, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.LyQminorLeft
@@ -75,19 +35,7 @@ theorem lx_mulVec_bvec {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) (j i : Fin n) 
 
 theorem lx_herm_eI (k r : ℕ) (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
     herm (Hpk k r) v (bvec (eI k r a)) = v (esI k r a) := by
-  unfold herm
-  rw [dotProduct, Finset.sum_eq_single (eI k r a)]
-  · rw [Pi.star_apply, lf_bvec_apply, if_pos rfl, star_one, one_mul, lx_mulVec_apply,
-      Finset.sum_eq_single (esI k r a)]
-    · rw [lf_H_eI, if_pos rfl, one_mul]
-    · intro q _ hq
-      rw [lf_H_eI, if_neg hq, zero_mul]
-    · intro hn
-      exact absurd (Finset.mem_univ _) hn
-  · intro t _ ht
-    rw [Pi.star_apply, lf_bvec_apply, if_neg ht, star_zero, zero_mul]
-  · intro hn
-    exact absurd (Finset.mem_univ _) hn
+  apply _root_.PI.UnitaryGroupMassFormula.GsFr.herm_bvec_eI <;> assumption
 
 theorem lx_sum_red {n m : ℕ} (e : Fin m → Fin n) (he : Function.Injective e) (F : Fin n → ℂ)
     (hF : ∀ j, j ∉ Set.range e → F j = 0) : ∑ j, F j = ∑ b, F (e b) := by
@@ -136,7 +84,7 @@ theorem coef_left_aa : CoefLeftAA := by
         apply hj
         refine ⟨⟨b.val, by simp only [Fin.val_castLE] at hb; omega⟩, ?_⟩
         rw [he]; rfl
-      rw [hrow _ j hc, if_neg]
+      rw [hrow _ j hc, ite_eq_right]
       intro he; exact hj ⟨a, he.symm⟩
     rw [h0, zero_mul]
   have hM : (Matrix.of fun a l : Fin m => herm (Hpk k r) ((s * g) *ᵥ bvec (c l)) (bvec (eI k r (Fin.castLE hm a)))) =
@@ -149,13 +97,13 @@ theorem coef_left_aa : CoefLeftAA := by
   · intro a b hab
     simp only [of_apply]
     have hab' : a.val < b.val := hab
-    rw [hrow _ _ ?_, if_neg]
+    rw [hrow _ _ ?_, ite_eq_right]
     · exact lx_esI_ne k r _ _ (by simp only [Fin.val_castLE]; omega)
     · intro c hc
       exact lx_esI_ne k r _ _ (by simp only [Fin.val_castLE] at hc ⊢; omega)
   · intro a
     simp only [of_apply]
-    rw [hrow _ _ ?_, if_pos rfl]
+    rw [hrow _ _ ?_, ite_eq_left rfl]
     intro c hc
     exact lx_esI_ne k r _ _ (by omega)
 
@@ -180,12 +128,12 @@ theorem coef_left_aa_vector : CoefLeftAAv := by
     · intro j hj
       show g⁻¹ (B l) j * s⁻¹ j (eI k r (Fin.castLE hm a)) = 0
       by_cases hle : (Fin.castLE hm a).val ≤ j.val
-      · rw [lf_S_invCol k r z s hs (Fin.castLE hm a) j hle, if_neg, mul_zero]
+      · rw [lf_S_invCol k r z s hs (Fin.castLE hm a) j hle, ite_eq_right, mul_zero]
         intro he
         exact hj ⟨a, he.symm⟩
       · exfalso
         apply hj
-        push_neg at hle
+        push Not at hle
         simp only [Fin.coe_castLE] at hle
         have := a.isLt
         refine ⟨⟨j.val, by omega⟩, ?_⟩
@@ -200,9 +148,9 @@ theorem coef_left_aa_vector : CoefLeftAAv := by
       simp only [lf_eI_val, Fin.coe_castLE]
       omega
     rw [Matrix.of_apply, lf_S_invCol k r z s hs (Fin.castLE hm a) _ hle,
-      if_neg (lx_eI_ne k r _ _ (by simp only [Fin.coe_castLE]; omega))]
+      ite_eq_right (lx_eI_ne k r _ _ (by simp only [Fin.coe_castLE]; omega))]
   · intro a
-    rw [Matrix.of_apply, lf_S_invCol k r z s hs (Fin.castLE hm a) _ (lf_eI_val k r _).ge, if_pos rfl]
+    rw [Matrix.of_apply, lf_S_invCol k r z s hs (Fin.castLE hm a) _ (lf_eI_val k r _).ge, ite_eq_left rfl]
 
 end AAInvW
 end -- clump:auto

@@ -74,7 +74,7 @@ theorem rev_N (hF : IsFrameJ ε e f wf z0) {zB z : Fin (2 * r + k + 1) → ℂ} 
     refine Finset.sum_eq_zero fun i _ => ?_
     by_cases hi : i.val < r ∨ r + k < i.val
     · rw [hzB i hi, mul_zero]
-    · push_neg at hi; rw [hcolW i j hi.1 hi.2 hj, zero_mul]
+    · push Not at hi; rw [hcolW i j hi.1 hi.2 hj, zero_mul]
   · rw [key]
     refine Qm_mulVec_mem_span le_rfl _ fun j hj => ?_
     rw [show ((m - 1) *ᵥ (Qi ε e f wf z0 *ᵥ y)) j = ∑ i, (m - 1) j i * (Qi ε e f wf z0 *ᵥ y) i from rfl]

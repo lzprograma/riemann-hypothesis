@@ -21,64 +21,12 @@ public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
 public import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Topology.Algebra.Order.Archimedean
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.PiTensorProduct
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodicLeftHalfPlaneShiftNonnegOfImPos, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonodromyMatrixDotProductNonnegIntegral, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHolomorphicDescentPunctPolydiscLogCover, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExtensionAcrossZeroOfExpTwoPiIBound, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocallyBoundedOffCoordinateHyperplanes, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CauchySliceEqRemovableExtension, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableAtCoordinateCauchyIntegral, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RiemannExtensionCoordinateHyperplane, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExtensionAcrossCoordinateHyperplanes, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodQuadFormExtendsHolomorphicPunctPolydisc, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PosSemidefRealOfIntQuadFormNonneg, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodMatrixBoundaryExtensionMonodromyPosSemidef, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodMatrixBoundaryExtensionMonodromyPosSemidefStatement
@@ -155,8 +103,7 @@ theorem periodic_strip_shift_nonneg (c : ℝ) (f : ℂ → ℂ) (m : ℤ)
       rw [Set.uIcc_of_le h12] at hz
       show z.re < c
       linarith [hz.1.2]
-  by_contra hm
-  push_neg at hm
+  by_contra! hm
   have hm1 : (m : ℝ) ≤ -1 := by exact_mod_cast (by omega : m ≤ -1)
   set a := (∫ y : ℝ in (0:ℝ)..(2 * Real.pi), f ((c - 1 : ℝ) + y * I)).im with ha
   have ha0 : 0 ≤ a := hVim (c - 1) (by linarith)
@@ -198,7 +145,7 @@ theorem monodromy_dotProduct_nonneg : ∀ (n a g : ℕ) (ha : a ≤ n) (ρ₁ : 
     · intro i
       by_cases hi : i = j
       · subst hi
-        simp only [u, Function.update_self, hjlt, if_true]
+        simp only [u, Function.update_self, hjlt, ite_true]
         linarith
       · simp only [u, Function.update_of_ne hi, s₀]
         split_ifs with h
@@ -208,7 +155,7 @@ theorem monodromy_dotProduct_nonneg : ∀ (n a g : ℕ) (ha : a ≤ n) (ρ₁ : 
       intro i
       by_cases hi : i = j
       · subst hi
-        simp only [logExp, u, Function.update_self, hjlt, if_true, Complex.norm_exp]
+        simp only [logExp, u, Function.update_self, hjlt, ite_true, Complex.norm_exp]
         calc Real.exp t.re < Real.exp (Real.log ρ₁) := Real.exp_lt_exp.2 ht
           _ = ρ₁ := Real.exp_log hρ0
       · simp only [logExp, u, Function.update_of_ne hi, s₀]
@@ -268,8 +215,6 @@ section -- clump:auto
 
 open GlobalTheory.ShFam.Hor
 
-set_option autoImplicit false
-
 namespace GlobalTheory.LogDescent
 
 open Complex Topology
@@ -287,9 +232,9 @@ theorem mem_logDom_of_mem_ball {n a : ℕ} {ρ : ℝ} (hρ1 : ρ ≤ 1) (s : Fin
   have hz := mem_ball_zero_iff.1 hs
   have hk' := (norm_le_pi_norm (logExp a s) k).trans_lt hz
   split_ifs with hk
-  · simp only [logExp, hk, if_true, Complex.norm_exp] at hk'
+  · simp only [logExp, hk, ite_true, Complex.norm_exp] at hk'
     exact Real.exp_lt_one_iff.mp (lt_of_lt_of_le hk' hρ1)
-  · simp only [logExp, hk, if_false] at hk'
+  · simp only [logExp, hk, ite_false] at hk'
     exact lt_of_lt_of_le hk' hρ1
 
 theorem logExp_shift {n a : ℕ} (s : Fin n → ℂ) (k : Fin n) (hk : (k : ℕ) < a) (m : ℤ) :
@@ -297,7 +242,7 @@ theorem logExp_shift {n a : ℕ} (s : Fin n → ℂ) (k : Fin n) (hk : (k : ℕ)
   funext j
   by_cases hj : j = k
   · subst hj
-    simp only [logExp, hk, if_true, Pi.add_apply, Pi.single_eq_same]
+    simp only [logExp, hk, ite_true, Pi.add_apply, Pi.single_eq_same]
     rw [Complex.exp_add, Complex.exp_int_mul_two_pi_mul_I, mul_one]
   · simp [logExp, Pi.single_eq_of_ne hj]
 
@@ -359,7 +304,7 @@ theorem key (hρ1 : ρ ≤ 1)
     rw [h1]
     have hs2 : logExp a s'' ∈ Metric.ball (0 : Fin n → ℂ) ρ := he'' ▸ hs
     by_cases hja : (j : ℕ) < a
-    · simp only [logExp, hja, if_true] at hej
+    · simp only [logExp, hja, ite_true] at hej
       obtain ⟨m, hm⟩ := Complex.exp_eq_exp_iff_exists_int.1 hej.symm
       have e : s' = s'' + Pi.single j ((m : ℂ) * (2 * Real.pi * Complex.I)) := by
         funext k
@@ -367,7 +312,7 @@ theorem key (hρ1 : ρ ≤ 1)
         · subst hkj; simp [hs'', hm]
         · simp [hs'', Function.update_of_ne hkj, Pi.single_eq_of_ne hkj]
       rw [e, inv_int hρ1 hinv s'' hs2 j hja m]
-    · simp only [logExp, hja, if_false] at hej
+    · simp only [logExp, hja, ite_false] at hej
       congr 1
       rw [hs'', hej, Function.update_eq_self]
 
@@ -396,7 +341,7 @@ theorem logExp_logSecAt (z₀ z : Fin n → ℂ) (hz₀ : ∀ k : Fin n, (k : �
     (hz : ∀ k : Fin n, (k : ℕ) < a → z k ≠ 0) : logExp a (logSecAt a z₀ z) = z := by
   funext k
   by_cases hk : (k : ℕ) < a
-  · simp only [logExp, logSecAt, hk, if_true]
+  · simp only [logExp, logSecAt, hk, ite_true]
     rw [Complex.exp_add, Complex.exp_log (hz₀ k hk), Complex.exp_log (div_ne_zero (hz k hk) (hz₀ k hk))]
     field_simp [hz₀ k hk]
   · simp [logExp, logSecAt, hk]
@@ -407,7 +352,7 @@ theorem differentiableAt_logSecAt (z₀ : Fin n → ℂ) (hz₀ : ∀ k : Fin n,
   intro k
   have hpk : DifferentiableAt ℂ (fun z : Fin n → ℂ => z k) z₀ := differentiableAt_apply k z₀
   by_cases hk : (k : ℕ) < a
-  · simp only [logSecAt, hk, if_true]
+  · simp only [logSecAt, hk, ite_true]
     refine (differentiableAt_const _).add ?_
     have hq : DifferentiableAt ℂ (fun z : Fin n → ℂ => z k / z₀ k) z₀ := by
       simpa [div_eq_mul_inv] using hpk.mul_const (z₀ k)⁻¹
@@ -449,7 +394,7 @@ theorem descent : ∀ (n a : ℕ) (ρ : ℝ) (h : (Fin n → ℂ) → ℂ), 0 < 
     exact (hcomp.congr_of_eventuallyEq hEq).differentiableWithinAt
   · intro s _ hs
     have hn : ∀ k : Fin n, (k : ℕ) < a → logExp a s k ≠ 0 := fun k hk => by
-      simp only [logExp, hk, if_true]; exact Complex.exp_ne_zero _
+      simp only [logExp, hk, ite_true]; exact Complex.exp_ne_zero _
     refine key hρ1 hinv _ _ hs ?_
     rw [logExp_logSec _ hn]
 
@@ -841,8 +786,8 @@ theorem locally_bounded : (∀ (H : ℂ → ℂ) (r C : ℝ) (N : ℕ), 0 < r �
   let w : ℂ → Fin n → ℂ := fun s j => if z j = 0 then s else z j
   have hwc : Continuous w := continuous_pi fun j => by
     by_cases h : z j = 0
-    · simp only [w, h, if_true]; exact continuous_id
-    · simp only [w, h, if_false]; exact continuous_const
+    · simp only [w, h, ite_true]; exact continuous_id
+    · simp only [w, h, ite_false]; exact continuous_const
   have hw0 : w 0 = z := funext fun j => by by_cases h : z j = 0 <;> simp [w, h]
   have hΦz : ContinuousAt Φ z := (hΦ.differentiableAt (hUo.mem_nhds hzU)).continuousAt
   have hT : Tendsto (fun s => Φ (w s)) (𝓝[≠] (0 : ℂ)) (𝓝 (Φ z)) := by
@@ -931,8 +876,8 @@ theorem cauchy_slice_removable_extension :
   rw [hcongr] at hcauchy
   rw [hcauchy]
   by_cases h0 : z k = 0
-  · rw [if_pos h0, h0, hg_def, Function.update_self]
-  · rw [if_neg h0, hg_def, Function.update_of_ne h0, hs_def]
+  · rw [ite_eq_left h0, h0, hg_def, Function.update_self]
+  · rw [ite_eq_right h0, hg_def, Function.update_of_ne h0, hs_def]
     simp only [Function.update_eq_self]
 
 end GlobalTheory
@@ -1273,7 +1218,7 @@ theorem periodVec_extends : ∀ (n a g : ℕ) (ha : a ≤ n) (ρ₁ : ℝ) (τ :
       simp only [Pi.add_apply, add_mul, add_div, Finset.sum_add_distrib]
       congr 1
       simp only [Pi.single_apply, (Fin.castLE_injective ha).eq_iff, ite_mul, zero_mul, ite_div, zero_div,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       field_simp
     rw [hsum]; ring
   obtain ⟨H, hHd, hHe⟩ := _root_.GlobalTheory.LogDescent.descent n a ρ₁ h hρ0 hρ1 hdh hinv
@@ -1315,7 +1260,7 @@ theorem periodVec_extends : ∀ (n a g : ℕ) (ha : a ≤ n) (ρ₁ : ℝ) (τ :
       have hk : ((Fin.castLE ha k : Fin n) : ℕ) < a := by simp
       rw [mul_comm, ← hm0 k, Complex.exp_nat_mul]
       congr 1
-      simp only [s, if_pos hk]; exact (Complex.exp_log (hz0 _ hk)).symm
+      simp only [s, ite_eq_left hk]; exact (Complex.exp_log (hz0 _ hk)).symm
     calc ‖Complex.exp (2 * Real.pi * Complex.I * H z)‖ * ∏ k, ‖z k‖ ^ m' k
         = ‖Complex.exp (2 * Real.pi * Complex.I * h s) * ∏ k, z k ^ m' k‖ := by
           rw [norm_mul, norm_prod, hHz]; simp only [norm_pow]
@@ -1413,9 +1358,6 @@ open Matrix
 open scoped ComplexOrder Topology
 open GlobalTheory.ShFam.Hor GlobalTheory.CxPts
 open MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.ShFam.Hor.LogCh
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1436,7 +1378,7 @@ theorem mem_logDom_add_single {n a : ℕ} {s : Fin n → ℂ} (hs : s ∈ logDom
   have := hs k
   by_cases hk : k = j
   · subst hk
-    simp only [if_pos hj] at this ⊢
+    simp only [ite_eq_left hj] at this ⊢
     simpa using this
   · simpa [Pi.single_apply, hk] using this
 
@@ -1469,13 +1411,13 @@ theorem periodMatrix_extension : ∀ (n a g : ℕ) (ha : a ≤ n) (ρ₁ : ℝ) 
     refine ⟨fun k => if (k : ℕ) < a then ((Real.log (ρ₁ / 2) : ℝ) : ℂ) else 0, ?_, ?_⟩
     · intro k
       by_cases hk : (k : ℕ) < a
-      · simp only [if_pos hk, Complex.ofReal_re]
+      · simp only [ite_eq_left hk, Complex.ofReal_re]
         exact Real.log_neg (by positivity) (by linarith)
       · simp [hk]
     · rw [mem_ball_zero_iff, pi_norm_lt_iff hρ]
       intro k
       by_cases hk : (k : ℕ) < a
-      · simp only [logExp, if_pos hk]
+      · simp only [logExp, ite_eq_left hk]
         rw [← Complex.ofReal_exp, Real.exp_log (by positivity), Complex.norm_real, Real.norm_eq_abs,
           abs_of_pos (by positivity)]
         linarith
@@ -1509,8 +1451,8 @@ theorem periodMatrix_extension : ∀ (n a g : ℕ) (ha : a ≤ n) (ρ₁ : ℝ) 
     fun i j => ?_, fun z _ => ?_, fun s hs hsB => ?_⟩
   · simp only [Matrix.of_apply]
     by_cases hij : i = j
-    · simp only [if_pos hij]; exact hFd _
-    · simp only [if_neg hij]
+    · simp only [ite_eq_left hij]; exact hFd _
+    · simp only [ite_eq_right hij]
       have h1 := hFd (e i + e j)
       have h2 := hFd (e i)
       have h3 := hFd (e j)
@@ -1519,7 +1461,7 @@ theorem periodMatrix_extension : ∀ (n a g : ℕ) (ha : a ≤ n) (ρ₁ : ℝ) 
     simp only [Matrix.of_apply]
     by_cases hij : i = j
     · subst hij; rfl
-    · rw [if_neg (Ne.symm hij), if_neg hij, add_comm (e j)]
+    · rw [ite_eq_right (Ne.symm hij), ite_eq_right hij, add_comm (e j)]
       ring
   · refine Matrix.ext fun i j => ?_
     beta_reduce
@@ -1535,11 +1477,11 @@ theorem periodMatrix_extension : ∀ (n a g : ℕ) (ha : a ≤ n) (ρ₁ : ℝ) 
       fun l => Finset.sum_congr rfl fun k _ => by ring
     by_cases hij : i = j
     · subst hij
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       have hee : F (e i) (logExp a s) = F (Pi.single i 1) (logExp a s) := rfl
       rw [hee, ← hi, hsum1 i]
       ring
-    · simp only [if_neg hij]
+    · simp only [ite_eq_right hij]
       have hp := hFe (e i + e j) s hs hsB
       simp only [e, cast_single_add, quad_add] at hp
       have hsi : (τ s) j i = (τ s) i j := ((hsym s hs hsB).1.apply i j)
@@ -1571,11 +1513,8 @@ open Matrix
 open scoped ComplexOrder Topology
 open GlobalTheory.ShFam.Hor GlobalTheory.CxPts
 open MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.ShFam.Hor.LogCh
-attribute [local instance] Over.cartesianMonoidalCategory
 
 
-theorem _root_.GlobalTheory.T.periodMatrix_boundaryExtension_monodromy_posSemidef : ∀ (n a g : ℕ) (ha : a ≤ n) (ρ₁ : ℝ) (τ : (Fin n → ℂ) → Matrix (Fin g) (Fin g) ℂ) (B : Fin a → Matrix (Fin g) (Fin g) ℤ), 0 < ρ₁ → ρ₁ ≤ 1 → (∀ i j, DifferentiableOn ℂ (fun s => τ s i j) {s | s ∈ logDom n a ∧ logExp a s ∈ Metric.ball (0 : Fin n → ℂ) ρ₁}) → (∀ s ∈ logDom n a, logExp a s ∈ Metric.ball (0 : Fin n → ℂ) ρ₁ → (τ s).IsSymm ∧ ((τ s).map Complex.im).PosDef) → (∀ s ∈ logDom n a, logExp a s ∈ Metric.ball (0 : Fin n → ℂ) ρ₁ → ∀ k : Fin a, τ (s + Pi.single (Fin.castLE ha k) (2 * Real.pi * Complex.I)) = τ s + (B k).map (Int.cast : ℤ → ℂ)) → (∀ k, ((B k).map (Int.cast : ℤ → ℝ)).PosSemidef) ∧ ∃ τ₀ : (Fin n → ℂ) → Matrix (Fin g) (Fin g) ℂ, (∀ i j, DifferentiableOn ℂ (fun z => τ₀ z i j) (Metric.ball 0 ρ₁)) ∧ (∀ z ∈ Metric.ball (0 : Fin n → ℂ) ρ₁, (τ₀ z).IsSymm) ∧ ∀ s ∈ logDom n a, logExp a s ∈ Metric.ball (0 : Fin n → ℂ) ρ₁ → τ s = τ₀ (logExp a s) + ∑ k, (s (Fin.castLE ha k) / (2 * Real.pi * Complex.I)) • (B k).map (Int.cast : ℤ → ℂ) := by
-  first | exact @GlobalTheory.ShFam.Hor.LogCh.PerExt.periodMatrix_extension
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodMatrixBoundaryExtensionMonodromyPosSemidefStatement =====

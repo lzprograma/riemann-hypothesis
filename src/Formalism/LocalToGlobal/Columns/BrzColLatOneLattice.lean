@@ -72,12 +72,6 @@ theorem isLattice_ne_bot {K : Type} [Field K] [NumberField K] {V : Type} [AddCom
   rw [h, Submodule.bot_coe, Submodule.span_zero_singleton] at h2
   exact bot_ne_top h2
 
-section Val
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {S : GSD K}
-
-end Val
-
 section Std
 
 variable (K : Type) [Field K] [NumberField K] [StarRing K] {n : ℕ} (lam : DomWeight n)
@@ -91,11 +85,5 @@ theorem brz_colLat_one_lattice : Submodule.IsLattice K (colLat (1 : GL (Fin n) K
   exact stdLat_lattice
 
 end Std
-
-section Cols
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end Cols
 
 end Formalism.L2.Col

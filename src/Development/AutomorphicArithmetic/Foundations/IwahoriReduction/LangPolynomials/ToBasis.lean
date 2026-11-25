@@ -4,44 +4,6 @@ public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.Lan
 public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.DvdOfNormLe
 public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FrobEx
 public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.KumAlg
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalToGlobal.NormalizedHeckeFactors.TypesDefs
 
 @[expose] public section
@@ -55,9 +17,6 @@ variable {l : ℕ} [Fact l.Prime]
 private theorem norm_alg_le (z : ℤ_[l]) : ‖algebraMap ℤ_[l] (PadicAlgCl l) z‖ ≤ 1 := by
   rw [IsScalarTower.algebraMap_apply ℤ_[l] ℚ_[l] (PadicAlgCl l), norm_algebraMap']
   exact z.2
-
-private theorem norm_nat_le (a : ℕ) : ‖(a : Qbar l)‖ ≤ 1 := by
-  simpa using norm_alg_le (l := l) (a : ℤ_[l])
 
 private theorem cg_sum {ι : Type} [Fintype ι] (n : ℕ) (f g : ι → Qbar l) (h : ∀ i, Cg n (f i) (g i)) :
     Cg n (∑ i, f i) (∑ i, g i) := by
@@ -78,10 +37,9 @@ private theorem cg_trans {n : ℕ} {a b c : Qbar l} (h : Cg n a b) (h' : Cg n b 
 private theorem cg_nat {n x y : ℕ} (h : (x : ZMod (l ^ n)) = y) : Cg n (x : Qbar l) y := by
   obtain ⟨e, he⟩ := (Nat.modEq_iff_dvd.1 ((ZMod.natCast_eq_natCast_iff _ _ _).1 h).symm)
   have he' : (x : Qbar l) - y = (l : Qbar l) ^ n * (e : Qbar l) := by exact_mod_cast congrArg (Int.cast : ℤ → Qbar l) he
-  have hn : ‖(e : Qbar l)‖ ≤ 1 := by simpa using norm_alg_le (l := l) (e : ℤ_[l])
   unfold Cg
   rw [he', norm_mul]
-  exact mul_le_of_le_one_right (norm_nonneg _) hn
+  exact mul_le_of_le_one_right (norm_nonneg _) (IsUltrametricDist.norm_intCast_le_one (Qbar l) e)
 
 private theorem coords {c : Coef l} (β : Bas c) (hβ : ∀ i, ‖β.val i‖ ≤ 1) (n : ℕ) (o : Qbar l) (ho : o ∈ c.O) :
     ∃ a : Fin β.d → ℕ, Cg n o (∑ i, β.val i * (a i : Qbar l)) := by
@@ -129,26 +87,6 @@ private theorem logd {Ω : Type} [Field Ω] {ι : Type} (S : Finset ι) (P : ι 
     · simp
     · simp only [Nat.add_sub_cancel, pow_succ]
       field_simp
-
-private theorem pv_mem {Ω : Type} [Field Ω] [Algebra ℚ Ω] {A : ValuationSubring Ω} (P : Polynomial (R0 A)) {z : Ω} (hz : z ∈ A) :
-    (P.map (R0 A).subtype).eval z ∈ A := by
-  induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [Polynomial.map_add (f := _), Polynomial.eval_add]; exact A.add_mem _ _ hp hq
-  | monomial n a =>
-    rw [Polynomial.map_monomial, Polynomial.eval_monomial]
-    exact A.mul_mem _ _ a.2.1 (A.toSubring.pow_mem hz n)
-
-private theorem pv_conj {Ω : Type} [Field Ω] [Algebra ℚ Ω] {A : ValuationSubring Ω} (P : Polynomial (R0 A)) (z : Ω)
-    {s : G ℚ Ω} (hs : s ∈ Ine (F := ℚ) A) :
-    (P.map (R0 A).subtype).eval (s z) = s ((P.map (R0 A).subtype).eval z) := by
-  induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [Polynomial.map_add (f := _), Polynomial.eval_add, Polynomial.eval_add, map_add (f := _), hp, hq]
-  | monomial n a =>
-    rw [Polynomial.map_monomial, Polynomial.eval_monomial, Polynomial.eval_monomial, map_mul, map_pow]
-    congr 1
-    exact (a.2.2 s hs).symm
-
-private alias root_mem := _root_.Formalism.L2.NT.mem_of_pow_eq_one
 
 private theorem ex_conj {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] {A : ValuationSubring Ω}
     (h : ∀ u : ℤ_[l]ˣ, ∃ s ∈ Ine (F := ℚ) A, cycZ ℚ Ω l s = u) {m : ℕ} (hm : 1 ≤ m) {z : Ω} (hz : z ^ l ^ m = 1)
@@ -205,7 +143,8 @@ theorem UpperTheory.Kd.C7.pToBasis :
       | insert k S hk ih =>
         rw [Finset.prod_insert hk, Finset.sum_insert hk]
         exact (hKA _ _ _ _ ((hKA _ _ _ _ (hκ k) (hκ k)).2.2 (a k i)) ih).1
-    · refine cg_trans hcg (cg_trans (cg_swap β.val o _ a ha fun k => norm_nat_le _) (cg_sum n _ _ fun i => ?_))
+    · refine cg_trans hcg (cg_trans (cg_swap β.val o _ a ha fun _ =>
+        IsUltrametricDist.norm_natCast_le_one (Qbar l) _) (cg_sum n _ _ fun i => ?_))
       rw [mul_comm (β.val i), mul_comm (β.val i)]
       refine cg_mul ?_ (hβ i)
       haveI : NeZero (l ^ n) := ⟨pow_ne_zero _ (Fact.out : l.Prime).ne_zero⟩
@@ -213,10 +152,16 @@ theorem UpperTheory.Kd.C7.pToBasis :
         (by simp)
       simpa using this
   · obtain ⟨s, hs, hsz⟩ := ex_conj hfr hm (hζ m).1.pow_eq_one b
-    have hzA : ζ m ∈ A := root_mem A (pow_pos (Fact.out : l.Prime).pos m) (hζ m).1.pow_eq_one
+    have hzA : ζ m ∈ A :=
+      _root_.Formalism.L2.NT.mem_of_pow_eq_one A (pow_pos (Fact.out : l.Prime).pos m)
+        (hζ m).1.pow_eq_one
     have hz : ζ m ^ (b : ZMod (l ^ m)).val ∈ A := A.toSubring.pow_mem hzA _
     have hev : ∀ k, (P k).eval (ζ m ^ (b : ZMod (l ^ m)).val) = s ((P k).eval (ζ m)) := fun k => by
-      rw [← hsz, ← hQ, pv_conj _ _ hs]
+      rw [← hsz, ← hQ, Polynomial.eval_map, Polynomial.eval_map]
+      have h1 := Polynomial.hom_eval₂ (Q k) (R0 A).subtype s.toRingHom (ζ m)
+      rw [show s.toRingHom.comp (R0 A).subtype = (R0 A).subtype from
+        RingHom.ext fun x => x.2.2 s hs] at h1
+      exact h1.symm
     have hne : ∀ k, (P k).eval (ζ m ^ (b : ZMod (l ^ m)).val) ≠ 0 := fun k => by
       rw [hev]; exact (map_ne_zero s).2 (hu k).2.1
     unfold htv
@@ -225,5 +170,11 @@ theorem UpperTheory.Kd.C7.pToBasis :
     refine cg_swap β.val o _ a ha fun k => hj _ ?_
     rw [div_eq_mul_inv]
     refine A.mul_mem _ _ (A.mul_mem _ _ hz ?_) ?_
-    · rw [← hQ, Polynomial.derivative_map]; exact pv_mem _ hz
+    · rw [← hQ, Polynomial.derivative_map, Polynomial.eval_map]
+      let ι : R0 A →+* A.toSubring := Subring.inclusion fun _ hx => hx.1
+      have h1 : (((Q k).derivative.eval₂ ι ⟨_, hz⟩ : A.toSubring) : Ω) =
+          (Q k).derivative.eval₂ (R0 A).subtype (ζ m ^ (b : ZMod (l ^ m)).val) := by
+        simpa [show A.toSubring.subtype.comp ι = (R0 A).subtype from RingHom.ext fun _ => rfl]
+          using Polynomial.hom_eval₂ (Q k).derivative ι A.toSubring.subtype ⟨_, hz⟩
+      exact h1 ▸ ((Q k).derivative.eval₂ ι ⟨_, hz⟩).2
     · rw [hev, ← map_inv₀, apply_mem_iff_of_mem_Dec (Ine_le_Dec A hs)]; exact (hu k).2.2

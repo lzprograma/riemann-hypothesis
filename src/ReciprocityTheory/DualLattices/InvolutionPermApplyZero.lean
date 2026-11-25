@@ -62,17 +62,17 @@ def pi2 {m : ℕ} (e : Fin m → O) (π : Equiv.Perm (Fin m)) (hσ : ∀ i, σ (
     simp only at hab
     by_cases ha : e a = 0 <;> by_cases hb : e b = 0
     · simpa [ha, hb] using hab
-    · rw [if_pos ha, if_neg hb] at hab
+    · rw [ite_eq_left ha, ite_eq_right hb] at hab
       exfalso; apply hb
       have h := hσ b
       rw [← hab, ha] at h
       exact σ.injective (h.trans (map_zero σ).symm)
-    · rw [if_neg ha, if_pos hb] at hab
+    · rw [ite_eq_right ha, ite_eq_left hb] at hab
       exfalso; apply ha
       have h := hσ a
       rw [hab, hb] at h
       exact σ.injective (h.trans (map_zero σ).symm)
-    · rw [if_neg ha, if_neg hb] at hab
+    · rw [ite_eq_right ha, ite_eq_right hb] at hab
       exact π.injective hab)
 
 lemma involutionPerm_apply {m : ℕ} (e : Fin m → O) (π : Equiv.Perm (Fin m)) (hσ : ∀ i, σ (e i) = e (π i))
@@ -108,7 +108,7 @@ lemma involutionPerm_involutive {m : ℕ} (e : Fin m → O) (π : Equiv.Perm (Fi
     have h2 : e (π (π k)) = e k := by
       rw [← hσ, ← hσ, hinv]
     have h3 := horth (π (π k)) k
-    rw [if_neg hne, h2, horth k k, if_pos rfl] at h3
+    rw [ite_eq_right hne, h2, horth k k, ite_eq_left rfl] at h3
     exact hk h3
 
 end Inv
@@ -186,19 +186,19 @@ theorem wdetLen : WdetLenStatement := by
   have hTo : ∀ a b, εT a * εT b = if a = b then εT a else 0 := by
     intro a b
     refine Fin.cases ?_ (fun i => ?_) a <;> refine Fin.cases ?_ (fun j => ?_) b
-    · simp only [hεT, Fin.cons_zero, if_true, ← map_mul, H.projectors.1]
+    · simp only [hεT, Fin.cons_zero, ite_true, ← map_mul, H.projectors.1]
     · simp only [hεT, Fin.cons_zero, Fin.cons_succ, ← map_mul, hPcomm, map_zero,
-        (Fin.succ_ne_zero j).symm, if_false]
+        (Fin.succ_ne_zero j).symm, ite_false]
     · simp only [hεT, Fin.cons_zero, Fin.cons_succ, ← map_mul, hPT, map_zero,
-        Fin.succ_ne_zero i, if_false]
+        Fin.succ_ne_zero i, ite_false]
     · simp only [hεT, Fin.cons_succ, ← map_mul, ← map_mul H.ρ, horth, Fin.succ_inj]
       split_ifs <;> simp
   have hLo : ∀ a b, εL a * εL b = if a = b then εL a else 0 := by
     intro a b
     refine Fin.cases ?_ (fun i => ?_) a <;> refine Fin.cases ?_ (fun j => ?_) b
-    · simp only [hεL, Fin.cons_zero, if_true, H.projectors.2.1]
-    · simp only [hεL, Fin.cons_zero, Fin.cons_succ, hPLcomm, (Fin.succ_ne_zero j).symm, if_false]
-    · simp only [hεL, Fin.cons_zero, Fin.cons_succ, hPL, Fin.succ_ne_zero i, if_false]
+    · simp only [hεL, Fin.cons_zero, ite_true, H.projectors.2.1]
+    · simp only [hεL, Fin.cons_zero, Fin.cons_succ, hPLcomm, (Fin.succ_ne_zero j).symm, ite_false]
+    · simp only [hεL, Fin.cons_zero, Fin.cons_succ, hPL, Fin.succ_ne_zero i, ite_false]
     · simp only [hεL, Fin.cons_succ, ← map_mul, horth, Fin.succ_inj]
       split_ifs <;> simp
   have hTs : ∑ a, εT a = 1 := by
@@ -232,7 +232,7 @@ theorem wdetLen : WdetLenStatement := by
     simp only [hεT, hεL, Fin.cons_zero, Fin.cons_succ, btP, hι, RingHom.mapMatrix_apply]
     rw [add_comm]
   rw [hbt] at hua hub
-  have hidem : H.ρL (e w) * H.ρL (e w) = H.ρL (e w) := by rw [← map_mul, horth, if_pos rfl]
+  have hidem : H.ρL (e w) * H.ρL (e w) = H.ρL (e w) := by rw [← map_mul, horth, ite_eq_left rfl]
   obtain ⟨d, ⟨φ⟩⟩ := idem_free (H.ρL (e w)) hidem
   obtain ⟨hEt, -, hEdet⟩ := htd_E H
   have hcw' : HasLen v R (cokE H.Ht εT εL w.succ (π' w.succ)) cw := by

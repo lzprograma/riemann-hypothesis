@@ -50,7 +50,6 @@ open Matrix
 open scoped ComplexOrder Topology
 open GlobalTheory.ShFam.Hor GlobalTheory.CxPts
 open MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.ShFam.Hor.LogCh
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory
 
@@ -85,8 +84,8 @@ theorem eq_on_ball_of_eq_on_logExp_image : ∀ (n a : ℕ) (ρ₁ : ℝ) (X : Ty
     have hg : Continuous g := by
       refine continuous_pi fun k => ?_
       by_cases hk : (k:ℕ) < a
-      · simp only [g, hk, if_true]; fun_prop
-      · simp only [g, hk, if_false]; fun_prop
+      · simp only [g, hk, ite_true]; fun_prop
+      · simp only [g, hk, ite_false]; fun_prop
     let T : Set ℂ := Set.range (fun k : Fin n => - z k)
     have hT : T.Finite := Set.finite_range _
     have hS : Dense (Set.univ \ T) := dense_univ.diff_finite hT
@@ -98,7 +97,7 @@ theorem eq_on_ball_of_eq_on_logExp_image : ∀ (n a : ℕ) (ρ₁ : ℝ) (X : Ty
     have h2 : U ∩ g '' (Set.univ \ T) ⊆ D := by
       rintro _ ⟨hU, t, ⟨-, htT⟩, rfl⟩
       refine ⟨hU, fun k hk => ?_⟩
-      simp only [g, hk, if_true]
+      simp only [g, hk, ite_true]
       intro heq
       exact htT ⟨k, by linear_combination -heq⟩
     exact closure_mono h2 (Metric.isOpen_ball.inter_closure ⟨hz, h1⟩)

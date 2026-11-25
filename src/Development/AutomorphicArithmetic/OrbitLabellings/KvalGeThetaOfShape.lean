@@ -10,59 +10,11 @@ public import Formalism.GaussJetBounds.GaussJetProofs.AsmOne
 public import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
 public import Formalism.GaussJetBounds.OneLetterRadius
 public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.GaussJetBounds.GaussJetProofs.AsmRDotAddRight
-import Mathlib.RingTheory.WittVector.IsPoly
 import Formalism.GaussJetBounds.GaussJetProofs.LogarithmWeightComparison
 import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
 import Formalism.IncomingBounds.FlowDegreeBounds.ProdRangeEqFactorialMulProdIco
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -210,7 +162,7 @@ theorem UpperTheory.exists_nonneg_dual_fnum_sub_le_of_demand_near_mul :
         have : -(4 * w s) ≤ (D s - κ * w s) * (gam l - max (sig s) c) := by
           linarith
         linarith
-      · push_neg at hh
+      · push Not at hh
         have hlt : max (sig s) c < 2 / (l : ℝ) := max_lt hh hc2
         have hlow : -(1 / (l : ℝ)) ≤ gam l - max (sig s) c := by
           have : 2 / (l : ℝ) = 1 / l + 1 / l := by ring
@@ -443,8 +395,7 @@ theorem UpperTheory.beS_constantCoeff_eq_zero_and_wtGe :
     · simpa using Real.rpow_nonneg h0.le _
   unfold beS
   constructor
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [map_sum]
+  · rw [map_sum]
     refine Finset.sum_eq_zero fun r hr => asmOne_smul_const _ ?_
     have hbe0 : MvPowerSeries.constantCoeff (be r) = 0 := by
       by_contra h
@@ -662,7 +613,7 @@ private theorem lpF_eq (l d : ℕ) [NeZero d] (D : ZMod d → ℝ) : Formalism.B
       rw [Finset.mem_range] at hi; by_cases ho : Odd i <;> simp [ho, hi]
     refine ⟨fun s i => if Odd i ∧ i < d then x s i else 0, ?_, ?_, ?_, ?_⟩
     · intro s i; dsimp only; split_ifs <;> simp [h0]
-    · intro s i h; dsimp only; rw [if_neg]; rintro ⟨h1, h2⟩; rcases h with h | h; exact h h1; omega
+    · intro s i h; dsimp only; rw [ite_eq_right]; rintro ⟨h1, h2⟩; rcases h with h | h; exact h h1; omega
     · intro s
       have h2 : ∀ i, (l : ℝ) ^ i * (if Odd i ∧ i < d then x s i else 0) =
           (if Odd i ∧ i < d then (l : ℝ) ^ i * x s i else 0) := by intro i; split_ifs <;> simp
@@ -698,7 +649,7 @@ private theorem orbit (D : D7) (L : SizeData₂ D) (X : Inst D L) (E : OrbitPlac
       unfold Formalism.IncomingBounds.gam
       rw [sub_nonneg, div_le_div_iff₀ (by linarith) (by nlinarith)]
       nlinarith
-  · have hn : nP D p = addOrderOf (hP D p) := if_neg hs
+  · have hn : nP D p = addOrderOf (hP D p) := ite_eq_right hs
     have h2 : 2 ≤ nP D p := by
       have h0 : nP D p ≠ 0 := NeZero.ne _
       have h1 : nP D p ≠ 1 := by rw [hn]; exact fun h => hh (AddMonoid.addOrderOf_eq_one_iff.1 h)

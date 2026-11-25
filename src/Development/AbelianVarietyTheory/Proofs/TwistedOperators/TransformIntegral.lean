@@ -7,123 +7,16 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOnMemGo
 import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsFramedPointBaseChangeAlgHom
 public import Formalism.LocalToGlobal.ProjectiveLattices.AxHSupA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
 open NumberField IsDedekindDomain
-open scoped TensorProduct
 
 namespace GlobalTheory.HeckeSup
-
-section Lin
-
-open Formalism.IndefR.Arith GlobalTheory.IndefiniteRowSideFullHecke.LatticesOverBalls
-
-theorem baseChange_mem {K K' M : Type} [Field K] [Field K'] [Algebra K K'] [AddCommGroup M] [Module K M]
-    (φ : M →ₗ[K] M) (V : Submodule K M) (h : ∀ x ∈ V, φ x ∈ V) : ∀ x ∈ V.baseChange K', φ.baseChange K' x ∈ V.baseChange K' := by
-  intro x hx
-  rw [Submodule.baseChange_eq_span] at hx ⊢
-  induction hx using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨v, hv, rfl⟩ := hx
-    exact Submodule.subset_span ⟨φ v, h v hv, rfl⟩
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
-  | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
-
-theorem span_mem {K' M : Type} [Field K'] [AddCommGroup M] [Module K' M] (O : ValuationSubring K')
-    (φ : M →ₗ[K'] M) (S : Set M) (h : ∀ x ∈ S, φ x ∈ S) : ∀ x ∈ Submodule.span O S, φ x ∈ Submodule.span O S := by
-  intro x hx
-  induction hx using Submodule.span_induction with
-  | mem x hx => exact Submodule.subset_span (h x hx)
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
-  | smul a x _ hx =>
-    have : φ (a • x) = a • φ x := φ.map_smul (a : K') x
-    rw [this]; exact Submodule.smul_mem _ _ hx
-
-variable {LL Ks : Type} [Field LL] [NumberField LL] [Field Ks] [NumberField Ks] [Algebra Ks LL]
-  {WL : Type} [AddCommGroup WL] [Module LL WL] [Module Ks WL] [IsScalarTower Ks LL WL]
-  {W : (LL →+* ℂ) → Type} [∀ σ, NormedAddCommGroup (W σ)] [∀ σ, InnerProductSpace ℂ (W σ)]
-  {G : Type} [Group G] [Fintype G] (Φ : FormsL LL Ks WL W G)
-
-theorem keeps_of (la : HeightOneSpectrum (𝓞 Ks)) (hL : WL →ₗ[LL] WL) (hW : ∀ x ∈ Φ.WK, hL x ∈ Φ.WK)
-    (hs : ∀ f : Φ.WK, (∀ y : Φ.Pt la, Φ.nrm la y f ≤ 1) → ∀ y : Φ.Pt la, Φ.nrm la y ⟨hL f, hW f f.2⟩ ≤ 1)
-    (hr : ∀ g : G, hL ∘ₗ Φ.ρ g = Φ.ρ g ∘ₗ hL) : Keeps Φ la hL hW := by
-  have he : ∀ eC : G → LL, hL ∘ₗ Φ.eOp eC = Φ.eOp eC ∘ₗ hL := fun eC => by
-    ext x
-
-    simp only [FormsL.eOp, LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
-    exact Finset.sum_congr rfl fun g _ => congrArg _ (LinearMap.congr_fun (hr g) x)
-  have ht : ∀ (J : Subgroup G) (lam : J →* LLˣ), ∀ x ∈ Φ.typeP J lam, hL x ∈ Φ.typeP J lam := fun J lam x hx p => by
-    have h1 : Φ.ρ p (hL x) = hL (Φ.ρ p x) := (LinearMap.congr_fun (hr p) x).symm
-    rw [h1, hx p, map_smul]
-  have hg : ∀ eC : G → LL, ∀ x ∈ Φ.good eC, hL x ∈ Φ.good eC := by
-    rintro eC _ ⟨x, rfl⟩
-    exact ⟨hL x, (LinearMap.congr_fun (he eC) x).symm⟩
-  have hw : ∀ (J : Subgroup G) (lam : J →* LLˣ) (eC : G → LL), ∀ x ∈ Φ.Wgood J lam eC, hL x ∈ Φ.Wgood J lam eC :=
-    fun J lam eC x hx => ⟨ht J lam x hx.1, hg eC x hx.2⟩
-  refine ⟨hs, hr, he, ht, hg, fun K' _ _ O _ => ?_, fun K' _ _ _ _ O _ => ?_⟩
-  · have h1 : ∀ x ∈ latK Φ la O, (resW Φ hL hW).baseChange K' x ∈ latK Φ la O := by
-      refine span_mem O _ _ ?_
-      rintro _ ⟨f, hf, rfl⟩
-      exact ⟨⟨hL f, hW f f.2⟩, hs f hf, rfl⟩
-    have h2 : ∀ V : Submodule LL WL, (∀ x ∈ V, hL x ∈ V) →
-        ∀ x ∈ latKIn Φ la O V, (resW Φ hL hW).baseChange K' x ∈ latKIn Φ la O V := fun V hV x hx =>
-      ⟨h1 x hx.1, baseChange_mem (resW Φ hL hW) _ (fun y hy => hV _ hy) x hx.2⟩
-    exact ⟨h1, fun J lam => ⟨h2 _ (ht J lam), fun eC => h2 _ (hw J lam eC)⟩⟩
-  · have h1 : ∀ x ∈ latL Φ la O, hL.baseChange K' x ∈ latL Φ la O := by
-      refine span_mem O _ _ ?_
-      rintro _ ⟨f, hf, rfl⟩
-      exact ⟨⟨hL f, hW f f.2⟩, hs f hf, rfl⟩
-    have h2 : ∀ V : Submodule LL WL, (∀ x ∈ V, hL x ∈ V) →
-        ∀ x ∈ latLIn Φ la O V, hL.baseChange K' x ∈ latLIn Φ la O V := fun V hV x hx =>
-      ⟨h1 x hx.1, baseChange_mem hL _ hV x hx.2⟩
-    exact ⟨h1, fun J lam => ⟨h2 _ (ht J lam), fun eC => h2 _ (hw J lam eC)⟩⟩
-
-end Lin
 
 section Grp
 

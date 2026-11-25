@@ -122,10 +122,10 @@ theorem UpperTheory.V.Z.Sym.Glob.sideGSupp :
     rw [e]; exact h2
   refine ⟨fun v hv => ?_, fun v hv => ?_⟩
   · have h := hne v
-    simp only [Dat.fGv, if_pos hv] at h
+    simp only [Dat.fGv, ite_eq_left hv] at h
     exact (hD.sig v hv).G_supp _ (ht v hv) _ _ (hloc v) h
   · have h := hne v
-    simp only [Dat.fGv, if_neg hv] at h
+    simp only [Dat.fGv, ite_eq_right hv] at h
     have hk : x.1 v ∈ KU (Ov v) (cv v Δ) := by
       by_contra hn
       exact h (by simp [one, hn])
@@ -457,18 +457,6 @@ private theorem tr_map {K K' : Type} [Field K] [Field K'] (f : K →+* K') {Δ �
   · rw [e, Matrix.trace_fin_two_of, ← lmap_star', ← map_add (f := _), ht]
     ext <;> simp [lmap]
 
-private theorem conj_tr {K : Type} [Field K] {Δ τ : K} {γ : DX Δ} (h : HasTr γ τ) (y : DX Δ) :
-    HasTr (y⁻¹ * γ * y) τ := by
-  have e : mt (y⁻¹ * γ * y) = mt y⁻¹ * mt γ * mt y := rfl
-  have e1 : mt y⁻¹ * mt y = 1 := by
-    rw [show mt y⁻¹ * mt y = mt (y⁻¹ * y) from rfl, inv_mul_cancel]; rfl
-  have e2 : mt y * mt y⁻¹ = 1 := by
-    rw [show mt y * mt y⁻¹ = mt (y * y⁻¹) from rfl, mul_inv_cancel]; rfl
-  refine ⟨?_, ?_⟩
-  · rw [e, Matrix.det_mul, Matrix.det_mul, h.1, mul_one, ← Matrix.det_mul, e1, Matrix.det_one]
-  · rw [e, Matrix.trace_mul_comm, ← mul_assoc, e2, one_mul]
-    exact h.2
-
 private theorem supp_el {K : Type} [Field K] [CharZero K] (O : Type) [CommRing O] [Algebra O K] {Δ : K} (hΔ : Δ ≠ 0)
     {χ : Kˣ →* ℂˣ} {S : SigData Δ} (h : SigOk O χ S) {t : Kˣ} (ht : t ∈ S.P) {τ : K} (hτ : τ ^ 2 - 4 ≠ 0)
     (hI : Ind S.H τ t) {γ : DX Δ} (hγ : HasTr γ τ) : ∃ g : DX Δ, HasTr g τ ∧ S.fS t g ≠ 0 := by
@@ -483,16 +471,15 @@ private theorem supp_el {K : Type} [Field K] [CharZero K] (O : Type) [CommRing O
     QuadraticAlgebra.isUnit_iff_norm_isUnit.2 (isUnit_iff_ne_zero.2 hn)
   have ho := (h.D_orb t ht τ γ j hτ hγ hj z hz).2.2.1
   have hc : ((S.cS : ℝ) : ℂ) ≠ 0 := by exact_mod_cast h.cS.ne'
-  have h1 : Glob.one (Ind S.H τ t) = 1 := if_pos hI
+  have h1 : Glob.one (Ind S.H τ t) = 1 := ite_eq_left hI
   rw [h1, mul_one] at ho
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply hc
   rw [← ho]
   unfold orb wcount
   apply finsum_eq_zero_of_forall_eq_zero
   intro o
-  exact mul_eq_zero_of_right _ (hne _ (conj_tr hγ (Quotient.out (Quotient.out o))))
+  exact mul_eq_zero_of_right _ (hne _ (UpperTheory.V.Z.Sym.Glob.hasTr_conj hγ (Quotient.out (Quotient.out o))))
 
 private theorem common_den (O : Type) {K : Type} [Field K] [CommRing O] [IsDomain O] [Algebra O K] [IsFractionRing O K]
     {Δ : K} {T : Set (Lsq K Δ)} (hT : T.Finite) : ∃ N : O, N ≠ 0 ∧ ∀ e ∈ T, IsIntegral O (N • e) := by
@@ -1223,7 +1210,7 @@ private theorem hs_sq {K : Type} [Field K] [CharZero K] {D : K} (h0 : D ≠ 0) (
     rintro rfl
     simp at h0
   unfold hs
-  rw [if_pos]
+  rw [ite_eq_left]
   refine ⟨(x + 1) / 2, (x - 1) / (2 * r), ?_⟩
   field_simp
   ring
@@ -1233,7 +1220,7 @@ private theorem disc_norm {Δ : F} (D : Dat Δ) (hok : D.Ok) (hΔ0 : Δ ≠ 0) {
   have harch : ∀ σ : F →+* ℝ, hs (σ Δ) (σ w) = 1 := by
     intro σ
     unfold hs
-    rw [if_pos]
+    rw [ite_eq_left]
     exact ⟨Real.sqrt (σ w), 0, by simp [Real.sq_sqrt (hw σ).le]⟩
   have hloc : ∀ v : Pl F, hs (cv v Δ) (cv v w) = 1 := by
     intro v
@@ -1313,8 +1300,7 @@ theorem exG : ExG := by
     have h3 := norm_pos_part hok.neg y σ
     have h4 := congrArg σ hmain
     rw [map_mul, map_mul] at h4
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     nlinarith [mul_pos h1 h2, mul_nonneg (neg_nonneg.mpr hle) h3]
   have hw : TPos (c * (2 - τ)) := fun σ => by
     rw [map_mul]
@@ -1395,8 +1381,7 @@ private theorem nrm_nonneg (σ : F →+* ℝ) (h : σ Δ < 0) (x : Lsq F Δ) : 0
 private theorem nrm_pos (σ : F →+* ℝ) (h : σ Δ < 0) (x : Lsq F Δ) (hx : x ≠ 0) : 0 < σ (x * star x).re := by
   rw [re_mul_star, map_sub, map_mul, map_pow, map_pow]
   have hne : x.re ≠ 0 ∨ x.im ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hx (QuadraticAlgebra.ext (by simp [hc.1]) (by simp [hc.2]))
   have ha := mul_nonneg (neg_nonneg.mpr h.le) (sq_nonneg (σ x.im))
   have hb := sq_nonneg (σ x.re)
@@ -1528,10 +1513,10 @@ private theorem sum_GI (hD : D.Ok) (t : Dat.Par F) (ht : D.Cone t) (ch : F → �
     by_cases hg : D.Good t τ
     · by_cases hi : ∀ v ∉ D.Sg, (cv v) τ ∈ (algebraMap (Ov v) (Kv v)).range
       · have hG : GI D t τ := ⟨hg, hi⟩
-        simp only [one, if_pos hg, if_pos hG]
+        simp only [one, ite_eq_left hg, ite_eq_left hG]
       · rw [hh hg hi, mul_zero, mul_zero]
     · have hG : ¬ GI D t τ := fun h' => hg h'.1
-      simp only [one, if_neg hg, if_neg hG]
+      simp only [one, ite_eq_right hg, ite_eq_right hG]
   have van : ∀ τ, D.Good t τ → ¬ (∀ v ∉ D.Sg, (cv v) τ ∈ (algebraMap (Ov v) (Kv v)).range) →
       D.nS τ = 0 ∧ D.nK τ = 0 := fun τ hg hi => sg_vanish D hD (aux_statement_10 D hD t ht τ hg.2) hi
   have kS : ∀ τ, one (D.Good t τ) * (ch τ * ms τ * D.nS τ) = one (GI D t τ) * (ch τ * ms τ * D.nS τ) :=
@@ -1546,11 +1531,11 @@ private theorem sum_GI (hD : D.Ok) (t : Dat.Par F) (ht : D.Cone t) (ch : F → �
   have sup : ∀ h : F → ℂ, (Function.support fun τ => one (GI D t τ) * h τ).Finite := fun h =>
     hfin.subset (fun τ hτ => by
       by_contra hn
-      exact hτ (by simp only [one, if_neg (show ¬ GI D t τ from hn), zero_mul]))
+      exact hτ (by simp only [one, ite_eq_right (show ¬ GI D t τ from hn), zero_mul]))
   have sup' : ∀ h : F → ℂ, (Function.support fun τ => e * (one (GI D t τ) * h τ)).Finite := fun h =>
     hfin.subset (fun τ hτ => by
       by_contra hn
-      exact hτ (by simp only [one, if_neg (show ¬ GI D t τ from hn), zero_mul, mul_zero]))
+      exact hτ (by simp only [one, ite_eq_right (show ¬ GI D t τ from hn), zero_mul, mul_zero]))
   rw [sum_sub (GI D t) (fun τ => ch τ * ms τ * (D.nS τ + e * D.nK τ))]
   simp only [Dat.sumS, Dat.sumK]
   rw [finsum_congr kS, finsum_congr kK, ← const_sum, ← finsum_add_distrib (sup _) (sup' _)]
@@ -1566,7 +1551,7 @@ private theorem term_eq (hD : D.Ok) {V : Type} [AddCommGroup V] [Module ℂ V] {
   have a := sideGTerm _ _ V _ B hF s (D.FG t) (hT t ht) hB.ω hB.Γ₀ δ (negU Δ) i h3
     (fun x => by rw [hB.θΓ]; exact h4 x) D.UG (scalE τ) hB.U h2
   have b := gqG F Δ D hD B.ι hB.ι s.θ.toMonoidHom hB.θ t ht τ c d m δ i P hτ.1 hd h
-  have o : one (D.admitted t τ) = 1 := if_pos hτ.2
+  have o : one (D.admitted t τ) = 1 := ite_eq_left hτ.2
   have a' := a.trans (congrArg₂ (fun x y : ℂ => x * y) (hB.tr δ τ h1) b)
   simp only [o] at a'
   linear_combination (1 / 2 : ℂ) * a'
@@ -1586,8 +1571,8 @@ private theorem weight_eq (hD : D.Ok) {τ : F} {d m : EL Δ τ} (hd : IsDat 1 d 
     · obtain ⟨δ, ι, P, hM⟩ := hm
       have hq := (posLaw F Δ D hD τ d m hp (c.out : F) (u : F)).2 δ ι P hM
       have hS : c ∈ D.Sel (2 - τ) := ⟨hq.1, hev⟩
-      simp only [one, if_pos (show ∃ δ ι P, Models (c.out : F) d ((u : F) • m) δ ι P from ⟨δ, ι, P, hM⟩),
-        if_pos hS, if_pos hq.2]
+      simp only [one, ite_eq_left (show ∃ δ ι P, Models (c.out : F) d ((u : F) • m) δ ι P from ⟨δ, ι, P, hM⟩),
+        ite_eq_left hS, ite_eq_left hq.2]
       ring
     · have hno : ¬ (c ∈ D.Sel (2 - τ) ∧ TPos (u : F)) := by
         rintro ⟨hS, hu⟩
@@ -1595,9 +1580,9 @@ private theorem weight_eq (hD : D.Ok) {τ : F} {d m : EL Δ τ} (hd : IsDat 1 d 
           ((posLaw F Δ D hD τ d m hp (c.out : F) (u : F)).1 hS.1 hu) hev)
       by_cases hS : c ∈ D.Sel (2 - τ)
       · have hu : ¬ TPos (u : F) := fun hu => hno ⟨hS, hu⟩
-        simp only [one, if_neg hm, if_pos hS, if_neg hu]
+        simp only [one, ite_eq_right hm, ite_eq_left hS, ite_eq_right hu]
         ring
-      · simp only [one, if_neg hm, if_neg hS]
+      · simp only [one, ite_eq_right hm, ite_eq_right hS]
         ring
 
 private theorem cls_eq {K : Type} [Field K] {τ : K} {x y : (Kˣ ⧸ (powMonoidHom 2 : Kˣ →* Kˣ).range) × (Kˣ ⧸ NE τ)}
@@ -1680,7 +1665,7 @@ theorem sideG : SideG := by
         ∃ δ ι P, Models (x.1.out : F) (d τ) ((x.2.out : F) • m τ) δ ι P})
     (fun i => δf i.1 i.2) inj surj
   rw [htr.2]
-  have indicator_eq_one_of_true : ∀ {p : Prop}, p → one p = 1 := fun h => if_pos h
+  have indicator_eq_one_of_true : ∀ {p : Prop}, p → one p = 1 := fun h => ite_eq_left h
   have hterm : ∀ i : (Σ τ : {τ // GI D t τ}, {x : (Fˣ ⧸ (powMonoidHom 2 : Fˣ →* Fˣ).range) × (Fˣ ⧸ NE τ.1) //
         ∃ δ ι P, Models (x.1.out : F) (d τ) ((x.2.out : F) • m τ) δ ι P}),
       s.term (D.FG t) (δf i.1 i.2) = (1 / 2 * ∏ v ∈ D.Sg, ((D.S v).cG : ℂ)) * (ch i.1.1 * ms i.1.1) *

@@ -75,13 +75,13 @@ theorem norm_nat_le_one (v : HeightOneSpectrum (𝓞 F)) (m : ℕ) : ‖(m : v.a
 
 theorem norm_int_le_one (v : HeightOneSpectrum (𝓞 F)) (o : 𝓞 F) :
     ‖algebraMap F (v.adicCompletion F) (o : F)‖ ≤ 1 :=
-  (norm_le_one_iff_int v _).2 (PI.UnipApproxD.IntegersDenseFiniteAdeles.int_R v o)
+  (norm_le_one_iff_int v _).2 (ReciprocityTheory.ChartRestriction.G.Lib.AdeleIntA.int_R v o)
 
 theorem norm_int_eq_one (v : HeightOneSpectrum (𝓞 F)) (o : 𝓞 F) (ho : o ∉ v.asIdeal) :
     ‖algebraMap F (v.adicCompletion F) (o : F)‖ = 1 := by
   refine le_antisymm (norm_int_le_one v o) (not_lt.1 fun h => ho ?_)
   rw [Valued.toNormedField.norm_lt_one_iff] at h
-  have e := PI.UnipApproxD.IntegersDenseFiniteAdeles.val_R (K := F) v o
+  have e := ReciprocityTheory.ChartRestriction.G.Lib.AdeleIntA.val_R (K := F) v o
   rw [show algebraMap F (v.adicCompletion F) (o : F) = algebraMap F (v.adicCompletion F) (algebraMap (𝓞 F) F o) from rfl,
     e] at h
   exact (HeightOneSpectrum.intValuation_lt_one_iff_mem v o).1 h
@@ -98,7 +98,7 @@ theorem norm_natCast_lt_one (v : HeightOneSpectrum (𝓞 F)) (c : ℕ) (hc : Ide
     exact Ideal.mul_mem_right _ _ (Ideal.absNorm_mem _)
   have hval := (HeightOneSpectrum.intValuation_lt_one_iff_mem v (c : 𝓞 F)).2 hmem
   rw [Valued.toNormedField.norm_lt_one_iff]
-  have e := PI.UnipApproxD.IntegersDenseFiniteAdeles.val_R (K := F) v (c : 𝓞 F)
+  have e := ReciprocityTheory.ChartRestriction.G.Lib.AdeleIntA.val_R (K := F) v (c : 𝓞 F)
   rw [map_natCast, map_natCast] at e
   rw [e]
   exact hval
@@ -231,7 +231,7 @@ theorem strong_approx (v₀ : HeightOneSpectrum (𝓞 F)) (t : InfiniteAdeleRing
         ‖algebraMap F (v.adicCompletion F) c - s v‖ ≤ ‖(M : v.adicCompletion F)‖ := by
   have hMF : (M : F) ≠ 0 := Nat.cast_ne_zero.2 hM
   have hMR : (0 : ℝ) < M := Nat.cast_pos.2 (Nat.pos_of_ne_zero hM)
-  obtain ⟨u, hu⟩ := PI.UnipApproxD.IntegersDenseFiniteAdeles.exists_approx_adele
+  obtain ⟨u, hu⟩ := ReciprocityTheory.ChartRestriction.G.Lib.AdeleIntA.exists_approx_adele
     (algebraMap F (FiniteAdeleRing (𝓞 F) F) (M : F)⁻¹ * s)
   obtain ⟨C, hC, hCt⟩ := exists_int_near F
   obtain ⟨x, hx0, hxw, hxv⟩ := exists_small_elt v₀ (ε / (M * (C + 1))) (by positivity)

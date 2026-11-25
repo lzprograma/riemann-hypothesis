@@ -93,7 +93,3 @@ theorem exists_eq_of_count {La G : Type} [AddCommGroup La] [Module.Finite ℤ La
   exact hq
 
 end GlobalTheory.UPel.GeometricLevelExistence
-
-namespace GlobalTheory.UPel.GeometricLevelExistence
-
-end GlobalTheory.UPel.GeometricLevelExistence

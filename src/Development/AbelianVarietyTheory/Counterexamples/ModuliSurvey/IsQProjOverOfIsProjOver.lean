@@ -76,10 +76,4 @@ theorem _root_.GlobalTheory.SchemeWords.isProjOver_iff : _root_.ReciprocityTheor
 
 end Proj
 
-section Hens
-variable {A R : Type} [CommRing A] [IsLocalRing A] [CommRing R] [IsLocalRing R]
-  [Algebra A R] [IsLocalHom (algebraMap A R)]
-
-end Hens
-
 end GlobalTheory.SchemeWords

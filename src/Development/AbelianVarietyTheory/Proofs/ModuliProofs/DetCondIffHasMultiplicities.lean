@@ -58,27 +58,6 @@ section Linear
 
 variable {k N : Type} [Field k] [AddCommGroup N] [Module k N]
 
-theorem exists_bijOn_iff (W : Submodule k N) (n : ℕ) :
-    (∃ v : Fin n → N, (∀ i, v i ∈ W) ∧ Set.BijOn (fun c : Fin n → k => ∑ i, c i • v i) Set.univ W) ↔
-      Module.Finite k W ∧ Module.finrank k W = n := by
-  constructor
-  · rintro ⟨v, -, hm, hi, hs⟩
-    let f : (Fin n → k) →ₗ[k] W := (Fintype.linearCombination k v).codRestrict W fun c => hm trivial
-    have hf : Function.Bijective f := by
-      refine ⟨fun c c' h => hi trivial trivial (congrArg Subtype.val h), fun w => ?_⟩
-      obtain ⟨c, -, hc⟩ := hs w.2
-      exact ⟨c, Subtype.ext hc⟩
-    have e := LinearEquiv.ofBijective f hf
-    exact ⟨Module.Finite.equiv e, by simpa using e.finrank_eq.symm⟩
-  · rintro ⟨_, h⟩
-    let b := Module.finBasisOfFinrankEq k W h
-    have hb : ∀ c : Fin n → k, ∑ i, c i • (b i : N) = (b.equivFun.symm c : W) := fun c => by
-      simp [Module.Basis.equivFun_symm_apply]
-    refine ⟨fun i => b i, fun i => (b i).2, fun c _ => ?_, fun c _ c' _ h => ?_, fun w hw => ?_⟩
-    · simp only [hb]; exact Subtype.property _
-    · simp only [hb] at h; exact b.equivFun.symm.injective (Subtype.ext h)
-    · exact ⟨b.equivFun ⟨w, hw⟩, trivial, by simp only [hb, LinearEquiv.symm_apply_apply]⟩
-
 end Linear
 
 variable {S : Scheme.{0}} {k : Type} [Field k]
@@ -157,21 +136,6 @@ theorem lieMult_iff (act : OAct O G) (t : Sp k ⟶ S) (τ : O →+* k) (n : ℕ)
     obtain ⟨c, -, hc⟩ := hs h2
     refine (existsUnique_congr fun c => comb_iff v c w).2 ⟨c, (congrArg Subtype.val hc).symm, fun c' hc' => ?_⟩
     exact hi trivial trivial ((Subtype.ext hc' : (⟨w, h1⟩ : Lie G t) = comb v c').symm.trans hc.symm)
-
-theorem hasEigenDim_iff (act : OAct O G) (t : Sp k ⟶ S) (τ : O →+* k) (n : ℕ) :
-    HasEigenDim act t τ n ↔ Module.Finite k (eigenSub (TanSp.act t act) τ) ∧
-      Module.finrank k (eigenSub (TanSp.act t act) τ) = n := by
-  rw [← exists_bijOn_iff]
-  refine (Equiv.piCongrRight fun _ => lieEquiv t).exists_congr fun v => and_congr
-    (forall_congr' fun i => mem_eigenspace_iff act t τ _) ?_
-  have h1 : (fun c : Fin n → k => ∑ i, c i • (Equiv.piCongrRight fun _ => lieEquiv t) v i) =
-      lieEquiv t ∘ comb v := funext fun c => (lieEquiv_comb v c).symm
-  have h2 : Set.BijOn (lieEquiv t) (eigenspace act t τ) (eigenSub (TanSp.act t act) τ) :=
-    (lieEquiv t).bijOn (mem_eigenspace_iff act t τ · |>.symm)
-  rw [h1]
-  refine ⟨h2.comp, fun h => ?_⟩
-  have := ((lieEquiv t).bijOn_symm.2 h2).comp h
-  rwa [← Function.comp_assoc, Equiv.symm_comp_self, Function.id_comp] at this
 
 variable {E : Type} [Field E] [NumberField E]
 

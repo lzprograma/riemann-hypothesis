@@ -1,5 +1,6 @@
 module
 
+import GroundTheory.AutomorphicForms.GL2.GJStandardLEuler
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuot
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointPf
 import Mathlib.Tactic.TypeStar
@@ -19,32 +20,14 @@ namespace Formalism.L2.SG.Pf.Carrier.JointQuot
 
 open Formalism.L2.SG.RealObj
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section PiProd
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem lintegral_fin_nat_prod {n : ℕ} {E : Fin n → Type*} {mE : ∀ i, MeasurableSpace (E i)}
     {μ : (i : Fin n) → Measure (E i)} [∀ i, SigmaFinite (μ i)] (f : (i : Fin n) → E i → ℝ≥0∞)
     (hf : ∀ i, Measurable (f i)) :
     ∫⁻ x : (i : Fin n) → E i, ∏ i, f i (x i) ∂(Measure.pi μ) = ∏ i, ∫⁻ x, f i x ∂(μ i) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    calc ∫⁻ x : (i : Fin (n + 1)) → E i, ∏ i, f i (x i) ∂(Measure.pi μ)
-        = ∫⁻ x : E 0 × ((i : Fin n) → E (Fin.succ i)), f 0 x.1 * ∏ i : Fin n, f (Fin.succ i) (x.2 i)
-            ∂((μ 0).prod (Measure.pi fun i => μ (Fin.succ i))) := by
-          rw [← ((measurePreserving_piFinSuccAbove μ 0).symm).lintegral_comp_emb
-            (MeasurableEquiv.measurableEmbedding _)]
-          simp_rw [MeasurableEquiv.piFinSuccAbove_symm_apply, Fin.insertNthEquiv,
-            Fin.prod_univ_succ, Fin.insertNth_zero]
-          simp
-      _ = (∫⁻ x, f 0 x ∂(μ 0)) * ∏ i : Fin n, ∫⁻ x, f (Fin.succ i) x ∂(μ (Fin.succ i)) := by
-          rw [← ih (fun i => f (Fin.succ i)) (fun i => hf _)]
-          exact lintegral_prod_mul (hf 0).aemeasurable
-            (Finset.measurable_prod _ fun i _ => (hf _).comp (measurable_pi_apply i)).aemeasurable
-      _ = ∏ i, ∫⁻ x, f i x ∂(μ i) := by rw [Fin.prod_univ_succ]
+  apply _root_.GroundTheory.Automorphic.RestrictedHaar.lintegral_fin_nat_prod_eq_prod <;> assumption
 
 theorem lintegral_fintype_prod {ι : Type*} [Fintype ι] {E : ι → Type*} {mE : ∀ i, MeasurableSpace (E i)}
     {μ : (i : ι) → Measure (E i)} [∀ i, SigmaFinite (μ i)] (f : (i : ι) → E i → ℝ≥0∞)

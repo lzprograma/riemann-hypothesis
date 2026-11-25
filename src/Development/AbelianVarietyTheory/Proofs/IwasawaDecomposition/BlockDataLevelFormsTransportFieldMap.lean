@@ -81,8 +81,6 @@ theorem main {K K' : Type} [Field K] [Field K'] (φ : K →+* K') {n d : ℕ}
   have := congrArg (Matrix.mulVec ((LinearMap.toMatrix' g).map φ)) hxy
   simpa [Matrix.mulVec_mulVec, hB'] using this
 
-alias target := _root_.GlobalTheory.IsolatedTheoremFive.main
-
 end GlobalTheory.IsolatedTheoremFive
 end -- clump:auto
 end -- clump:auto

@@ -148,7 +148,7 @@ theorem eq_one_of_unimodular {E : Matrix (Fin n) (Fin n) ℤ} (hE : E.det = 1) (
     refine Finset.prod_congr rfl fun w _ => ?_
     exact (map_sum (zpowersHom H (x w)).toAdditiveRight _ _).symm
   simp only [h, one_zpow, Finset.prod_const_one, e, Matrix.one_apply] at e₁
-  rw [Finset.prod_eq_single u (fun b _ hb => by rw [if_neg hb, zpow_zero]) (by simp), if_pos rfl, zpow_one] at e₁
+  rw [Finset.prod_eq_single u (fun b _ hb => by rw [ite_eq_right hb, zpow_zero]) (by simp), ite_eq_left rfl, zpow_one] at e₁
   exact e₁.symm
 
 end Algebra

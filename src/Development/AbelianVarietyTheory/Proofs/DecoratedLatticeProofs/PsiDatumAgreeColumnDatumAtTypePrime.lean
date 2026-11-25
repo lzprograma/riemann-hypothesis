@@ -165,7 +165,7 @@ theorem withCol_toLoc {E k : Type} [Field E] [NumberField E] [StarRing E]
       unfold atNL
       rw [dite_eq_left (by omega)]
       simp only [LinearMap.coe_proj, Function.eval, Pi.single_apply, Fin.ext_iff, Fin.val_castAdd]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     rw [h1, h2, zero_mul, add_zero]
   · simp only [withCol, fromBlocks_apply₁₂, toLoc, Equiv.trans_apply, Equiv.sumCongr_apply, Sum.map_inl, Sum.map_inr,
       finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, joinCol_apply]
@@ -174,12 +174,12 @@ theorem withCol_toLoc {E k : Type} [Field E] [NumberField E] [StarRing E]
       funext l
       have hl := l.isLt
       simp only [Pi.single_apply, Fin.ext_iff, Fin.val_castAdd, Fin.val_natAdd, Pi.zero_apply]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     have h2 : atNL E (n' + (0 + 1)) n' (Pi.single (Fin.natAdd n' (finCongr (rfl : 0 + 1 = 0 + 1) j)) 1) = 1 := by
       unfold atNL
       rw [dite_eq_left (by omega)]
       simp only [LinearMap.coe_proj, Function.eval, Pi.single_apply, Fin.ext_iff, Fin.val_natAdd]
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
     rw [h1, map_zero, Pi.zero_apply, h2, one_mul]
     rw [zero_add (y' (e r))]
     rfl
@@ -242,6 +242,6 @@ theorem psiAgree_of_atType : ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (Ch : 
     exact withCol_toLoc ι e e' hc1 hc0 x₀ y'
   rw [one_mul, Chain.Psi, om_one_one, hmat, hPhi, PsiAt, omPhi_one_one]
   unfold PhiAt
-  rw [if_pos hA.mem, if_pos hA.sharp, hrS, hr]
+  rw [ite_eq_left hA.mem, ite_eq_left hA.sharp, hrS, hr]
 
 end GlobalTheory.SymBridge

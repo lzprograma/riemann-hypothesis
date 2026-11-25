@@ -70,7 +70,7 @@ theorem Ad3P.sEig : Ad3P.SEig := by
   intro k N _ _ χ g
   refine ⟨⟨fun γ hγ => g.char γ hγ, fun τ => exp_of g.f τ⟩, coef_zero g.f, g.one, fun p n hp => ?_⟩
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp only [Eigenform.a, mul_zero, dvd_zero, if_true, Nat.zero_div, coef_zero, add_zero]
+  · simp only [Eigenform.a, mul_zero, dvd_zero, ite_true, Nat.zero_div, coef_zero, add_zero]
   · have h := g.eig p hp n hn
     simp only [Eigenform.a]
     rw [← h]

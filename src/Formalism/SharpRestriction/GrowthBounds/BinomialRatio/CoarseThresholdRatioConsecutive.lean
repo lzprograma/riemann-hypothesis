@@ -5,45 +5,7 @@ import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeAlterna
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairFacts
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -120,7 +82,6 @@ theorem coarse_threshold_ratio_consecutive {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (h
   have hlt := (dist_pos_lt X.TT j l').2
   obtain ⟨k1, hk1⟩ := ho1
   obtain ⟨k2, hk2⟩ := ho2
-  have hdd : (segDists X.TT j).get l + 2 ≤ (segDists X.TT j).get l' := by omega
   set P := X.p ^ (segG X.TT j - (segDists X.TT j).get l) with hP
   set P' := X.p ^ (segG X.TT j - (segDists X.TT j).get l') with hP'
   have hp1 : 1 ≤ X.p := by have := hs.p5; omega
@@ -149,12 +110,10 @@ theorem coarse_threshold_ratio_consecutive {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (h
   have hk0 : (0 : ℝ) < X.k := by linarith
   have hkP : X.k * (P' : ℝ) ≤ X.b' / 25 := by
     have h1 : X.k * (P' : ℝ) ≤ X.k * X.Q := mul_le_mul_of_nonneg_left (le_trans hPQ' hQ) hk0.le
-    have hQ1 := hs.Q1
     have h3 : 25 * (X.k * X.Q) ≤ X.k ^ 3 * X.Q := by
       have h25 : (25 : ℝ) ≤ X.k ^ 2 := by nlinarith
       nlinarith [mul_nonneg (mul_nonneg hk0.le (by linarith : (0:ℝ) ≤ X.Q)) (by linarith : (0:ℝ) ≤ X.k ^ 2 - 25)]
     linarith
-  have ha0 : (0 : ℝ) ≤ X.a := by linarith [wa.1, (Nat.cast_nonneg _ : (0:ℝ) ≤ (X.aT (segPos X.TT j l) : ℝ))]
   have hwin : (X.a : ℝ) * (1 + 2 / (X.k * X.Y)) ≤ X.a * (7 / 5) := by
     have : 2 / (X.k * X.Y) ≤ 2 / 5 := by
       apply div_le_div_of_nonneg_left (by norm_num) (by norm_num)
@@ -186,7 +145,7 @@ theorem coarse_threshold_prefix_sum {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (hs : Std
   intro ⟨i, hi⟩
   induction i with
   | zero =>
-    simp only [Nat.not_lt_zero, if_false, Finset.sum_const_zero]
+    simp only [Nat.not_lt_zero, ite_false, Finset.sum_const_zero]
     positivity
   | succ i ih =>
     have ih' := ih (by omega)
@@ -199,10 +158,10 @@ theorem coarse_threshold_prefix_sum {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (hs : Std
       rw [← h2, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun l _ => ?_
       by_cases h1 : l.val < i
-      · rw [if_pos (by omega), if_pos h1, if_neg (fun h => by rw [h] at h1; simp at h1)]; ring
+      · rw [ite_eq_left (by omega), ite_eq_left h1, ite_eq_right (fun h => by rw [h] at h1; simp at h1)]; ring
       · by_cases h3 : l.val = i
-        · rw [if_pos (by omega), if_neg h1, if_pos (Fin.ext h3)]; ring
-        · rw [if_neg (by omega), if_neg h1, if_neg (fun h => h3 (by rw [h]))]; ring
+        · rw [ite_eq_left (by omega), ite_eq_right h1, ite_eq_left (Fin.ext h3)]; ring
+        · rw [ite_eq_right (by omega), ite_eq_right h1, ite_eq_right (fun h => h3 (by rw [h]))]; ring
     rw [e]
     have hC : (0 : ℝ) ≤ (clC C0 CE1 CE2 X j rz ry ⟨i, by omega⟩ : ℝ) := Nat.cast_nonneg _
     have hp0 : (0 : ℝ) < (X.p : ℝ) ^ 2 := by linarith
@@ -235,10 +194,10 @@ theorem nUp_of_std {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
     rw [← h2, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases h1 : x.val < i.val
-    · rw [if_pos (by omega), if_pos h1, if_neg (fun h => by rw [h] at h1; simp at h1)]; ring
+    · rw [ite_eq_left (by omega), ite_eq_left h1, ite_eq_right (fun h => by rw [h] at h1; simp at h1)]; ring
     · by_cases h3 : x.val = i.val
-      · rw [if_pos (by omega), if_neg h1, if_pos (Fin.ext h3)]; ring
-      · rw [if_neg (by omega), if_neg h1, if_neg (fun h => h3 (by rw [h]))]; ring
+      · rw [ite_eq_left (by omega), ite_eq_right h1, ite_eq_left (Fin.ext h3)]; ring
+      · rw [ite_eq_right (by omega), ite_eq_right h1, ite_eq_right (fun h => h3 (by rw [h]))]; ring
   rw [e] at h2
   have hcast : ((∑ x : Fin (segS X.TT j), if x.val < i.val then (clC C0 CE1 CE2 X j rz ry x : ℤ) else 0 : ℤ) : ℝ) =
       ∑ x : Fin (segS X.TT j), if x.val < i.val then (clC C0 CE1 CE2 X j rz ry x : ℝ) else 0 := by

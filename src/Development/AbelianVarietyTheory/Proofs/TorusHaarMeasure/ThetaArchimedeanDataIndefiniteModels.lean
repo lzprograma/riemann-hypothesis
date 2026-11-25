@@ -123,17 +123,6 @@ namespace GlobalTheory.CMConjugationOfSquareRoot
 open NumberField Complex
 open scoped ComplexConjugate
 
-theorem conj_eq_neg_of_sq_eq_neg {z : ℂ} {d : ℝ} (hd : 0 < d) (h : z ^ 2 = -(d : ℂ)) :
-    conj z = -z := by
-  have hre := congrArg Complex.re h
-  have him := congrArg Complex.im h
-  simp [pow_two] at hre him
-  have hre0 : z.re = 0 := by
-    rcases mul_eq_zero.mp (show z.re * z.im = 0 by linarith) with h0 | h0
-    · exact h0
-    · rw [h0] at hre; nlinarith [mul_self_nonneg z.re]
-  apply Complex.ext <;> simp [hre0]
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 theorem complexConj_rt (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) :
@@ -141,7 +130,7 @@ theorem complexConj_rt (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E)
   obtain ⟨φ⟩ : Nonempty (E →+* ℂ) := inferInstance
   apply φ.injective
   rw [IsCMField.complexEmbedding_complexConj, map_neg]
-  apply conj_eq_neg_of_sq_eq_neg (d := (H.d : ℝ)) (by exact_mod_cast H.d_prime.pos)
+  apply GlobalTheory.ConjugateMembership.conj_eq_neg_of_sq (d := (H.d : ℝ)) (by exact_mod_cast H.d_prime.pos)
   have h := congrArg (fun x : 𝓞 E => φ (x : E)) H.rt_sq
   simpa using h
 
@@ -160,8 +149,6 @@ theorem conj_halfIntegralGenerator (H : ReciprocityTheory.ChartRestriction.G.Geo
   unfold ReciprocityTheory.ChartRestriction.G.FD.cc
   apply mul_left_cancel₀ (two_ne_zero : (2 : E) ≠ 0)
   rw [h3, mul_sub, h2]; ring
-
-alias main := _root_.GlobalTheory.CMConjugationOfSquareRoot.conj_halfIntegralGenerator
 
 end GlobalTheory.CMConjugationOfSquareRoot
 end -- clump:auto
@@ -462,7 +449,6 @@ theorem prod_eq_sq (T : PT E) (s : (Fin 1 → Vsp T.dim) → ℂ) (a : Fin T.r �
   refine Finset.prod_congr rfl fun j _ => ?_
   rw [div_pow, Real.sq_sqrt (hp _), Real.sq_sqrt hl]
 
-
 omit [IsCMField E] in
 theorem finsum_le (T : PT E) (S : Set (Fin T.r → Vsp T.dim))
     (hS : ∀ a ∈ S, (∀ j, a j ∈ ZSpan.fundamentalDomain T.b) ∧ ∀ j, ((5 : ℂ) ^ 2) • a j ∈ T.L)
@@ -550,7 +536,7 @@ theorem growth_decay : TStatement → ∀ (E : Type) [Field E] [NumberField E] [
       (by positivity) hS hla0 hth (by positivity) (by positivity) hB0 hfR ht
       (fun h => by
         have eph : P.ph = c / X.la1 x ^ 2 := by
-          simp only [Par.ph, PT.ph, hq, hR, hla, if_pos h, hc]
+          simp only [Par.ph, PT.ph, hq, hR, hla, ite_eq_left h, hc]
           field_simp
         have hK' : K = (25 : ℝ) ^ (2 * (Module.finrank ℚ E * A.T.r) * A.T.r) := by rw [hAr]
         rw [hK']
@@ -568,7 +554,7 @@ theorem growth_decay : TStatement → ∀ (E : Type) [Field E] [NumberField E] [
         rwa [h5, Nat.cast_ofNat] at this)
       (fun h => by
         have eph : P.ph = 0 := by
-          simp only [Par.ph, PT.ph, hq, hR, hla, if_neg (not_lt.2 h)]
+          simp only [Par.ph, PT.ph, hq, hR, hla, ite_eq_right (not_lt.2 h)]
         have hK' : K = (25 : ℝ) ^ (2 * (Module.finrank ℚ E * A.T.r) * A.T.r) := by rw [hAr]
         rw [hK']
         refine finsum_le A.T {a | (∀ j, a j ∈ ZSpan.fundamentalDomain A.T.b) ∧
@@ -861,13 +847,6 @@ section -- clump:auto
 @[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G.I2
-
-namespace GlobalTheory
-
-theorem theta_bound_tStatement : TStatement :=
-  tOf ext_all_inputs _root_.ReciprocityTheory.ChartRestriction.G.I2.split_holds (gSup ext_all_inputs.1) dim
-
-end GlobalTheory
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TorusSplitting.ThetaBound =====
@@ -876,14 +855,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Parity", "h": "module\n\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
-
-open ReciprocityTheory.ChartRestriction.G.FD in
-private theorem UpperTheory.Reformulated.B.Ue6.herm_smul_right {E : Type} [Field E] [NumberField E]
-    [NumberField.IsCMField E] {r : ℕ} (G : Matrix (Fin r) (Fin r) E) (c : E) (x y : Fin r → E) :
-    herm G x (c • y) = cc c * herm G x y := by
-  simp only [herm, cc, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  ring
 
 theorem UpperTheory.Reformulated.B.Ue6.even_im_hermitian_sub :
     ∀ {E : Type} [inst : Field E] [inst_1 : NumberField E] [inst_2 : NumberField.IsCMField E] {r : ℕ}
@@ -907,9 +878,9 @@ theorem UpperTheory.Reformulated.B.Ue6.even_im_hermitian_sub :
     rw [hw, h1, hw]
     ring
   unfold ReciprocityTheory.ChartRestriction.G.FD.EFf at ha hb
-  rw [UpperTheory.Reformulated.B.Ue6.herm_smul_right, hw] at ha
+  rw [GlobalTheory.SemicharIndep.herm_smul_right, hw] at ha
   refine ⟨b - a, ?_⟩
-  rw [UpperTheory.Reformulated.B.Ue6.herm_smul_right, hc, Int.cast_sub, ← ha, ← hb, ← map_sub, ← map_sub,
+  rw [GlobalTheory.SemicharIndep.herm_smul_right, hc, Int.cast_sub, ← ha, ← hb, ← map_sub, ← map_sub,
     two_mul ((Algebra.trace ℚ E) _), ← map_add]
   congr 1
   ring
@@ -968,7 +939,7 @@ theorem extra_weight_exists : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (
   have hρ : 0 < WeightFamilies.rho D j := by
     show 0 < D.R.m - j
     omega
-  have key := GlobalTheory.ThetaWeight.exists_weight GlobalTheory.theta_bound_tStatement D.host.E D.R.r (e k).toX
+  have key := GlobalTheory.ThetaWeight.exists_weight ReciprocityTheory.ChartRestriction.G.I2.T_holds D.host.E D.R.r (e k).toX
     (exists_isIso _ cu hρ)
     ⟨⟨T.Q.H.w0, _root_.UpperTheory.Reformulated.B.Ue6.even_im_hermitian_sub _ _ (_root_.GlobalTheory.CMConjugationOfSquareRoot.conj_halfIntegralGenerator T.Q.H)⟩, by rw [hPf, hPr]; nlinarith, by rw [hPf, hPr]; exact hf2,
       by rw [hPr]; exact hrd, D.R.m, by omega, by rw [hPf]; exact hm4,
@@ -1009,9 +980,6 @@ theorem sq_le_of_mul_le_exp {a b i p q : ℝ} (ha : 0 < a) (hb : 0 ≤ b) (h : a
   congr 1
   push_cast
   ring
-
-
-
 
 theorem archAt_of_run : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (large₂ : SizeData₂ D) (H : KHyp) (C2 A2 CT : ℝ) (ka wL wF : WeightFamilies.Wt D j) (Tn nP nW : ℕ) (h0 : ℝ) (EX : ErrX D) (p : ℕ) (S : Scal (recB h.toLawsCore)) (nus : HeightOneSpectrum (𝓞 (recB h.toLawsCore).KO) → ℝ), ParOK T EX p j → PageOK large₂ (recPJ h j hj) H C2 A2 CT ka wL wF Tn nP nW h0 → HypC large₂ (recPJ h j hj) H C2 A2 7 0 CT S ka wL wF Tn nP nW h0 nus → j < D.R.m → ∀ G : GlobalFamilyData (recPJ h j hj) ka wL wF, GenOK h j hj large₂ G S (cc D large₂ C2 A2 7 wL) → EtaOK h j hj large₂ wL G.iet G.et → Nonempty (GlobalTheory.Shares.ArchAt h j G.w wF Tn (WeightFamilies.c1 D 7 Tn (cc D large₂ C2 A2 7 wL) j)) := by
   intro D T h j hj large₂ H C2 A2 CT ka wL wF Tn nP nW h0 EX p S nus _ hP hC hjm G hGen hEta

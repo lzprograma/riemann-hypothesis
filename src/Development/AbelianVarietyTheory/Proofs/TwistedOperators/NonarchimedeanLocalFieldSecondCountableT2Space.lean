@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
 public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -97,21 +98,21 @@ theorem exists_conj (h1 : 1 ≤ p) (hc : p < c) (u β : n → k) :
     · simp [Matrix.one_apply]
     · simp only [lev, Sum.elim_inl, Sum.elim_inr] at hrs
       simp only [fromBlocks_apply₁₂, hB, Matrix.of_apply]
-      rw [if_neg (by omega)]; simp
+      rw [ite_eq_right (by omega)]; simp
     · simp
     · simp only [lev, Sum.elim_inr] at hrs
       simp only [fromBlocks_apply₂₂, Matrix.add_apply, hCB]
-      rw [if_neg (by omega)]; simp [Matrix.one_apply]
+      rw [ite_eq_right (by omega)]; simp [Matrix.one_apply]
   · unfold simpleSum
     rw [hv]
     simp only [fromBlocks_apply₂₂, Matrix.add_apply, hCB]
     rw [Finset.sum_eq_single (⟨p - 1, by omega⟩ : Fin c), Finset.sum_eq_single (⟨p, hc⟩ : Fin c)]
-    · rw [if_pos (by simp; omega), if_pos (by simp; omega), Matrix.one_apply_ne, add_zero]
+    · rw [ite_eq_left (by simp; omega), ite_eq_left (by simp; omega), Matrix.one_apply_ne, add_zero]
       intro h
       have := congrArg Fin.val h
       simp at this; omega
     · intro j _ hj
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hj
       ext
@@ -158,16 +159,7 @@ theorem upU_mem_KO {n : Type} [Fintype n] [DecidableEq n] {c : ℕ} (C : Matrix 
   all_goals first | rfl
 
 theorem nonarchimedeanLocalField_secondCountable_t2Space : SecondCountableTopology k ∧ T2Space k := by
-  let _ := IsTopologicalAddGroup.rightUniformSpace k
-  have := isUniformAddGroup_of_addCommGroup (G := k)
-  let _ : (Valued.v (R := k)).RankOne :=
-  { hom' := IsRankLeOne.nonempty.some.emb (R := k).comp MonoidWithZeroHom.ValueGroup₀.embedding
-    strictMono' := IsRankLeOne.nonempty.some.strictMono.comp
-        MonoidWithZeroHom.ValueGroup₀.embedding_strictMono }
-  open scoped Valued in
-  have : ProperSpace k := .of_nontriviallyNormedField_of_weaklyLocallyCompactSpace k
-  open scoped Valued in
-  exact ⟨secondCountable_of_proper, inferInstance⟩
+  apply _root_.GlobalTheory.SplitWeil.Model.secondCountable_and_t2_local_field <;> assumption
 
 theorem vanish {n : Type} [Fintype n] [DecidableEq n] {c p : ℕ} (h1 : 1 ≤ p) (hc : p < c)
     {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) {A : Type} [AddCommGroup A] [Module ℂ A]

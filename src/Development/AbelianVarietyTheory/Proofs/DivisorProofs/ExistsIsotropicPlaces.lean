@@ -95,7 +95,6 @@ theorem exists_mul_sq_le (Q : (Fin n → K) → (Fin m → K)) (hc : Continuous 
   have hns : ∀ (c : K) y, ‖Q (c • y)‖ = ‖c‖ * ‖c‖ * ‖Q y‖ := fun c y => by
     rw [hs, norm_smul, norm_mul]
   obtain ⟨c, hc1⟩ := NormedField.exists_one_lt_norm K
-  have hc0 : 0 < ‖c‖ := lt_trans one_pos hc1
   let S : Set (Fin n → K) := {y | 1 / ‖c‖ ≤ ‖y‖ ∧ ‖y‖ ≤ 1}
   have hSc : IsCompact S := (isCompact_closedBall (0 : Fin n → K) 1).of_isClosed_subset
     ((isClosed_le continuous_const continuous_norm).inter
@@ -215,9 +214,9 @@ theorem exists_isCompact_entries_of_anisotropic :
     ∃ C : Set (K ⊗[F] E), IsCompact C ∧ ∀ g : Matrix (Fin M) (Fin M) (K ⊗[F] E),
       Formalism.UG.cT (sigR K σ) g * JR K J * g = JR K J → ∀ i j, g i j ∈ C := by
   intro F E _ _ _ _ _ σ hcm K _ _ _ M J _ haniso
-  haveI : Module.Finite F E := Module.finite_of_finrank_pos (by rw [hcm.2.2.1]; norm_num)
-  haveI : IsModuleTopology K (K ⊗[F] E) := ⟨rfl⟩
-  haveI : IsTopologicalRing (K ⊗[F] E) := IsModuleTopology.isTopologicalRing K _
+  have : Module.Finite F E := Module.finite_of_finrank_pos (by rw [hcm.2.2.1]; norm_num)
+  have : IsModuleTopology K (K ⊗[F] E) := ⟨rfl⟩
+  have : IsTopologicalRing (K ⊗[F] E) := IsModuleTopology.isTopologicalRing K _
   let bV := Module.finBasis K (Fin M → K ⊗[F] E)
   let bE := Module.finBasis K (K ⊗[F] E)
   let φ := bV.equivFun
@@ -251,7 +250,6 @@ theorem exists_isCompact_entries_of_anisotropic :
     rw [hform_mulVec, hg]
   let e : Fin M → Fin (Module.finrank K (Fin M → K ⊗[F] E)) → K := fun j => φ (Pi.single j 1)
   let D := ∑ j, ‖e j‖ ^ 2
-  have hD0 : 0 ≤ D := Finset.sum_nonneg fun j _ => sq_nonneg _
   let r := B / a * D + 1
   refine ⟨⋃ i : Fin M, (fun y => φ.symm y i) '' closedBall 0 r,
     isCompact_iUnion fun i => (isCompact_closedBall _ _).image ((continuous_apply i).comp hφs), ?_⟩
@@ -259,7 +257,6 @@ theorem exists_isCompact_entries_of_anisotropic :
   refine Set.mem_iUnion.2 ⟨i, φ (g *ᵥ Pi.single j 1), ?_, ?_⟩
   · rw [mem_closedBall_zero_iff]
     set t := ‖φ (g *ᵥ Pi.single j 1)‖
-    have ht : 0 ≤ t := norm_nonneg _
     have h1 := hlow (φ (g *ᵥ Pi.single j 1))
     have hQeq : Q (φ (g *ᵥ Pi.single j 1)) = Q (e j) := by
       simp only [Q, e, LinearEquiv.symm_apply_apply, hunit g hg]
@@ -270,7 +267,6 @@ theorem exists_isCompact_entries_of_anisotropic :
     have h3 : t ^ 2 ≤ B / a * D := by
       rw [div_mul_eq_mul_div, le_div_iff₀ ha]
       nlinarith
-    have h4 : 0 ≤ B / a * D := mul_nonneg (div_nonneg hB ha.le) hD0
     nlinarith [sq_nonneg (t - 1)]
   · simp only [LinearEquiv.symm_apply_apply]
     rw [Matrix.mulVec_single_one]
@@ -489,8 +485,7 @@ variable [NumberField F] [NumberField E]
 
 theorem exists_gram2E_ne (h : IsCMExt F E σ) (hM : 2 ≤ M) (hJ : IsHermND σ J)
     (z : Fin M → E) (hz : hE σ J z z ≠ 0) : ∃ w, gram2E σ J z w ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   obtain ⟨d, hd⟩ := GlobalTheory.HermLineZeros.exists_conj_ne h
   set a : Fin M → E := fun i => hE σ J (Pi.single i 1) z
   set b : Fin M → E := fun j => hE σ J z (Pi.single j 1)
@@ -551,7 +546,7 @@ theorem GlobalTheory.exists_common_hermitianGramDetTwoVectors_ne' : ∀ (F E : T
     have := ((Polynomial.finite_setOf_isRoot hPx).union (Polynomial.finite_setOf_isRoot hPy)).preimage
       (FaithfulSMul.algebraMap_injective F E).injOn
     exact this
-  haveI : Infinite F := Infinite.of_injective (Nat.cast : ℕ → F) Nat.cast_injective
+  have : Infinite F := Infinite.of_injective (Nat.cast : ℕ → F) Nat.cast_injective
   obtain ⟨f, hf⟩ := hfin.infinite_compl.nonempty
   simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_or, Polynomial.IsRoot.def] at hf
   have hfix : σ (algebraMap F E f) = algebraMap F E f := σ.commutes f
@@ -603,11 +598,11 @@ end Alg
 theorem exists_unitNorm_pair : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (K : Type) [Field K] [Algebra F K] (M : ℕ) (J : Matrix (Fin M) (Fin M) E), IsHermND σ J → (∀ a : K ⊗[F] E, a ≠ 0 → IsUnit a) → (∃ u : Fin M → K ⊗[F] E, u ≠ 0 ∧ hR K σ J u u = 0) → ∀ a b : Fin M → K ⊗[F] E, a ≠ 0 → b ≠ 0 → ∃ w : Fin M → K ⊗[F] E, IsUnitNorm K σ (-(gram2R K σ J a w)) ∧ IsUnitNorm K σ (-(gram2R K σ J w b)) := by
   intro F E _ _ _ _ _ σ hcm K _ _ M J hJ hunit hiso a b ha hb
   have hinj := inclR_injective (F := F) (E := E) K
-  haveI : Nontrivial (K ⊗[F] E) := hinj.nontrivial
-  haveI : CharZero (K ⊗[F] E) := charZero_of_injective_algebraMap (algebraMap F (K ⊗[F] E)).injective
+  have : Nontrivial (K ⊗[F] E) := hinj.nontrivial
+  have : CharZero (K ⊗[F] E) := charZero_of_injective_algebraMap (algebraMap F (K ⊗[F] E)).injective
   have hfield : IsField (K ⊗[F] E) :=
     ⟨exists_pair_ne _, mul_comm, fun {x} hx => (hunit x hx).exists_right_inv⟩
-  letI : Field (K ⊗[F] E) := hfield.toField
+  let : Field (K ⊗[F] E) := hfield.toField
   have hG : GlobalTheory.UTrans.IsHerm (sigR K σ) (JR K J).transpose :=
     { invol := sigR_sigR K σ (GlobalTheory.HermLineZeros.conj_invol hcm)
       ne_id := by
@@ -672,8 +667,8 @@ theorem unit_or_norm : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
     intro h0; apply he; rw [hd, sub_eq_zero] at h0; exact h0.symm
   have hfix : σ (d * d) = d * d := by rw [map_mul, hσd]; ring
   obtain ⟨c0, hc0⟩ := GlobalTheory.HermLineZeros.exists_of_fixed h _ hfix
-  haveI : CharZero F := inferInstance
-  haveI : CharZero K := charZero_of_injective_algebraMap (algebraMap F K).injective
+  have : CharZero F := inferInstance
+  have : CharZero K := charZero_of_injective_algebraMap (algebraMap F K).injective
   set L := K ⊗[F] E
   set ι := algebraMap K L with hι
   set D : L := inclR K d with hD
@@ -741,7 +736,7 @@ theorem unit_or_norm : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
     rw [map_add (f := _), map_mul, map_sub, map_one, hst, hσε]
     linear_combination (ι k ^ 2 + 1 - 2 * ι k) * he0
   · left
-    push_neg at hsq
+    push Not at hsq
     intro a ha
     obtain ⟨u, v, rfl⟩ := hdec a
     have hn : u * u - c * (v * v) ≠ 0 := by
@@ -974,10 +969,7 @@ theorem hermitianGramDetTwoVectorsTensor_incl (σ : E →ₐ[F] E) {M : ℕ} (J 
   simp only [gram2R, gram2E, hR_incl, map_sub, map_mul]
 
 theorem sigR_sigR {σ : E →ₐ[F] E} (hσ : ∀ e, σ (σ e) = e) (u : K ⊗[F] E) : sigR K σ (sigR K σ u) = u := by
-  induction u using TensorProduct.induction_on with
-  | zero => simp
-  | tmul k e => simp [sigR, hσ]
-  | add a b ha hb => simp only [map_add (f := _), ha, hb]
+  apply _root_.GlobalTheory.PlaneNorm.FieldCase.sigR_sigR <;> assumption
 
 theorem sigR_hR {σ : E →ₐ[F] E} (hσ : ∀ e, σ (σ e) = e) {M : ℕ} {J : Matrix (Fin M) (Fin M) E}
     (hJ : ∀ i j, σ (J j i) = J i j) (a b : Fin M → K ⊗[F] E) :
@@ -1164,9 +1156,9 @@ theorem approx : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFie
     ∃ z : Fin M → E, hE σ J z z ≠ 0 ∧ IsUnitNorm K σ (-(inclR K (gram2E σ J x z))) ∧
       IsUnitNorm K σ (-(inclR K (gram2E σ J z y))) := by
   intro F E _ _ _ _ _ σ h K _ _ _ hd M J hJ x y hxx w h1 h2
-  haveI : Module.Finite F E := Module.finite_of_finrank_pos (by rw [h.2.2.1]; norm_num)
-  haveI : IsModuleTopology K (K ⊗[F] E) := ⟨rfl⟩
-  haveI : IsTopologicalRing (K ⊗[F] E) := IsModuleTopology.isTopologicalRing K _
+  have : Module.Finite F E := Module.finite_of_finrank_pos (by rw [h.2.2.1]; norm_num)
+  have : IsModuleTopology K (K ⊗[F] E) := ⟨rfl⟩
+  have : IsTopologicalRing (K ⊗[F] E) := IsModuleTopology.isTopologicalRing K _
   have hσ := GlobalTheory.HermLineZeros.conj_invol h
   set xb : Fin M → K ⊗[F] E := fun i => inclR K (x i) with hxb
   set yb : Fin M → K ⊗[F] E := fun i => inclR K (y i) with hyb
@@ -1460,10 +1452,10 @@ theorem iB_eq_sum [FiniteDimensional F E] (P : PlaceMap F K) (y : K ⊗[F] E) :
 
 theorem continuous_iB [FiniteDimensional F E] [IsTopologicalRing K] (P : PlaceMap F K) :
     Continuous (iB (E := E) P) := by
-  haveI : IsModuleTopology K (K ⊗[F] E) := ⟨rfl⟩
-  haveI : IsModuleTopology (AF F) (AF F ⊗[F] E) := ⟨rfl⟩
-  haveI : ContinuousAdd (AF F ⊗[F] E) := IsModuleTopology.toContinuousAdd (AF F) (AF F ⊗[F] E)
-  haveI : ContinuousSMul (AF F) (AF F ⊗[F] E) := IsModuleTopology.toContinuousSMul (AF F) (AF F ⊗[F] E)
+  have : IsModuleTopology K (K ⊗[F] E) := ⟨rfl⟩
+  have : IsModuleTopology (AF F) (AF F ⊗[F] E) := ⟨rfl⟩
+  have : ContinuousAdd (AF F ⊗[F] E) := IsModuleTopology.toContinuousAdd (AF F) (AF F ⊗[F] E)
+  have : ContinuousSMul (AF F) (AF F ⊗[F] E) := IsModuleTopology.toContinuousSMul (AF F) (AF F ⊗[F] E)
   have hc : ∀ k, Continuous fun y : K ⊗[F] E =>
       (Algebra.TensorProduct.basis K (Module.finBasis F E)).repr y k := fun k =>
     IsModuleTopology.continuous_of_linearMap ((Algebra.TensorProduct.basis K (Module.finBasis F E)).coord k)
@@ -1694,7 +1686,7 @@ namespace GlobalTheory.SUSuppCompact
 theorem isCompact_SUSupp_of_bounded : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (M : ℕ) (J : Matrix (Fin M) (Fin M) E), IsHermND σ J → ∀ (S₁ : Finset (InfinitePlace F)) (S₂ : Finset (HeightOneSpectrum (𝓞 F))) (ε : AF F), IsPlacesIdem S₁ S₂ ε → (∀ w ∈ S₁, ∃ C : Set (w.Completion ⊗[F] E), IsCompact C ∧ ∀ g : Matrix (Fin M) (Fin M) (w.Completion ⊗[F] E), Formalism.UG.cT (sigR w.Completion σ) g * JR w.Completion J * g = JR w.Completion J → ∀ i j, g i j ∈ C) → (∀ v ∈ S₂, ∃ C : Set (Fv F v ⊗[F] E), IsCompact C ∧ ∀ g : Matrix (Fin M) (Fin M) (Fv F v ⊗[F] E), Formalism.UG.cT (sigR (Fv F v) σ) g * JR (Fv F v) J * g = JR (Fv F v) J → ∀ i j, g i j ∈ C) → IsCompact (SUSupp σ J ε) := by
   intro F E _ _ _ _ _ σ hCM M J hJ S₁ S₂ ε hε h₁ h₂
   classical
-  haveI : FiniteDimensional F E := inferInstance
+  have : FiniteDimensional F E := inferInstance
   have h₁' : ∀ w : InfinitePlace F, ∃ C : Set (w.Completion ⊗[F] E), IsCompact C ∧ (w ∈ S₁ →
       ∀ g : Matrix (Fin M) (Fin M) (w.Completion ⊗[F] E), Formalism.UG.cT (sigR w.Completion σ) g * JR w.Completion J * g =
         JR w.Completion J → ∀ i j, g i j ∈ C) := by
@@ -1713,8 +1705,8 @@ theorem isCompact_SUSupp_of_bounded : ∀ (F E : Type) [Field F] [NumberField F]
     · exact ⟨∅, isCompact_empty, fun h => absurd h hv⟩
   choose C₁ hC₁ hC₁' using h₁'
   choose C₂ hC₂ hC₂' using h₂'
-  haveI : IsModuleTopology (AF F) (AF F ⊗[F] E) := ⟨rfl⟩
-  haveI : IsTopologicalRing (AF F ⊗[F] E) := IsModuleTopology.isTopologicalRing (AF F) _
+  have : IsModuleTopology (AF F) (AF F ⊗[F] E) := ⟨rfl⟩
+  have : IsTopologicalRing (AF F ⊗[F] E) := IsModuleTopology.isTopologicalRing (AF F) _
   have hsum : ∀ {ι : Type} (s : Finset ι) (f : ι → Set (AF F ⊗[F] E)), (∀ i ∈ s, IsCompact (f i)) →
       IsCompact (∑ i ∈ s, f i) := by
     intro ι s f hf
@@ -1786,18 +1778,17 @@ theorem exists_isotropic_places : ∀ (F E : Type) [Field F] [NumberField F] [Fi
   classical
   have key : (∃ w ∈ S₁, ∃ u : Fin M → w.Completion ⊗[F] E, u ≠ 0 ∧ hR w.Completion σ J u u = 0) ∨
       (∃ v ∈ S₂, ∃ u : Fin M → Fv F v ⊗[F] E, u ≠ 0 ∧ hR (Fv F v) σ J u u = 0) := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     apply hnc
     apply _root_.GlobalTheory.SUSuppCompact.isCompact_SUSupp_of_bounded F E σ hσ M J hJ S₁ S₂ ε hε
     · intro w hw
-      letI := GroundTheory.Automorphic.completionNontriviallyNormedField (K := F) w
+      let := GroundTheory.Automorphic.completionNontriviallyNormedField (K := F) w
       exact _root_.GlobalTheory.AnisoCpt.exists_isCompact_entries_of_anisotropic F E σ hσ w.Completion M J hJ (fun u hu => by
         by_contra h
         exact hno.1 w hw u h hu)
     · intro v hv
-      letI : NontriviallyNormedField (v.adicCompletion F) := Valued.toNontriviallyNormedField _ _
-      haveI := Formalism.BasicNotions.Examples₂.LocF.proper v
+      let : NontriviallyNormedField (v.adicCompletion F) := Valued.toNontriviallyNormedField _ _
+      have := Formalism.BasicNotions.Examples₂.LocF.proper v
       exact _root_.GlobalTheory.AnisoCpt.exists_isCompact_entries_of_anisotropic F E σ hσ (Fv F v) M J hJ (fun u hu => by
         by_contra h
         exact hno.2 v hv u h hu)
@@ -1806,7 +1797,7 @@ theorem exists_isotropic_places : ∀ (F E : Type) [Field F] [NumberField F] [Fi
     refine ⟨{w}, ∅, ε', Finset.singleton_subset_iff.2 hw, Finset.empty_subset _,
       Or.inl (Finset.singleton_nonempty w), hε', ?_⟩
     intro x y hx hy
-    letI := GroundTheory.Automorphic.completionNontriviallyNormedField (K := F) w
+    let := GroundTheory.Automorphic.completionNontriviallyNormedField (K := F) w
     obtain ⟨z, hz, ⟨h1, ht1⟩, ⟨h2, ht2⟩⟩ :=
       _root_.GlobalTheory.PlaneNorm.exists_rational_middle_vector F E σ hσ w.Completion (denseRange_algebraMap_completion F w) M J hM hJ ⟨u, hu0, hu⟩ x y hx hy
     exact ⟨z, hz, ⟨h1, _root_.GlobalTheory.normEq_inf_place F E σ w ε' hε' _ ht1⟩, ⟨h2, _root_.GlobalTheory.normEq_inf_place F E σ w ε' hε' _ ht2⟩⟩
@@ -1814,7 +1805,7 @@ theorem exists_isotropic_places : ∀ (F E : Type) [Field F] [NumberField F] [Fi
     refine ⟨∅, {v}, ε', Finset.empty_subset _, Finset.singleton_subset_iff.2 hv,
       Or.inr (Finset.singleton_nonempty v), hε', ?_⟩
     intro x y hx hy
-    letI : NontriviallyNormedField (v.adicCompletion F) := Valued.toNontriviallyNormedField _ _
+    let : NontriviallyNormedField (v.adicCompletion F) := Valued.toNontriviallyNormedField _ _
     obtain ⟨z, hz, ⟨h1, ht1⟩, ⟨h2, ht2⟩⟩ :=
       _root_.GlobalTheory.PlaneNorm.exists_rational_middle_vector F E σ hσ (Fv F v) (HeightOneSpectrum.denseRange_algebraMap F v) M J hM hJ ⟨u, hu0, hu⟩ x y hx hy
     exact ⟨z, hz, ⟨h1, _root_.GlobalTheory.NormFin.idem_norm_eq_of_local F E σ v ε' hε' _ ht1⟩, ⟨h2, _root_.GlobalTheory.NormFin.idem_norm_eq_of_local F E σ v ε' hε' _ ht2⟩⟩

@@ -3,45 +3,6 @@ module
 public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
 public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineMapLemmas
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.LevelLetterCocycles.StrictSesLetter
 
 @[expose] public section
@@ -105,19 +66,12 @@ theorem φVB_pow_Dcris (s : ℕ) {z : V ⊗[Qp] B} (hz : z ∈ Dcris PD ρ) :
     rw [pow_succ']
     exact φVB_Dcris PD ih
 
-theorem act_mulVB (g : G) (c : K₀) (z : V ⊗[Qp] B) :
-    actVB PD ρ g (mulVB (LL := LL) (V := V) (B := B) c z) = mulVB (LL := LL) (V := V) (B := B) c (actVB PD ρ g z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul v w => simp [actVB, mulVB]
-  | add x y hx hy => simp only [map_add (f := _), hx, hy]
-
 theorem mulVB_Dcris (c : K₀) {z : V ⊗[Qp] B} (hz : z ∈ Dcris PD ρ) :
     mulVB (LL := LL) (V := V) (B := B) c z ∈ Dcris PD ρ := by
   simp only [Dcris, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply,
     sub_eq_zero] at hz ⊢
   intro g
-  rw [act_mulVB, hz g]
+  rw [Formalism.MainNotions.LiftingTheory.lext_act_mul, hz g]
 
 theorem coord_ιV {ι₀ : Type} (b : Module.Basis ι₀ Qp V) (i : ι₀) (z : V ⊗[Qp] B) :
     Formalism.MainNotions.LiftingTheory.lone_coord b i BdR (ιV PD (LL := LL) (V := V) z) = PD.ι (Formalism.MainNotions.LiftingTheory.lone_coord b i B z) := by
@@ -128,106 +82,30 @@ theorem coord_ιV {ι₀ : Type} (b : Module.Basis ι₀ Qp V) (i : ι₀) (z : 
       IsScalarTower.algebraMap_apply Qp K₀ BdR]
   | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
-private theorem tensor_eq_sum_lemma {n : ℕ} (b : Module.Basis (Fin n) Qp V) (C : Type) [AddCommGroup C]
-    [Module Qp C] (z : V ⊗[Qp] C) :
-    z = ∑ i, b i ⊗ₜ[Qp] Formalism.MainNotions.LiftingTheory.lone_coord b i C z := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul v c =>
-    have e : (∑ i, b i ⊗ₜ[Qp] Formalism.MainNotions.LiftingTheory.lone_coord b i C (v ⊗ₜ[Qp] c)) =
-        (∑ i, b.repr v i • b i) ⊗ₜ[Qp] c := by
-      rw [TensorProduct.sum_tmul]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [TensorProduct.smul_tmul]
-      simp [Formalism.MainNotions.LiftingTheory.lone_coord]
-    rw [e, Module.Basis.sum_repr]
-  | add x y hx hy =>
-    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
-    exact congrArg₂ (· + ·) hx hy
-
-private theorem coord_act_lemma_2 (hρ : ∀ g x, ρ g x = x) {n : ℕ} (b : Module.Basis (Fin n) Qp V) (i : Fin n)
-    (g : G) (z : V ⊗[Qp] B) :
-    Formalism.MainNotions.LiftingTheory.lone_coord b i B (actVB PD ρ g z) = PD.actB g (Formalism.MainNotions.LiftingTheory.lone_coord b i B z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul v c =>
-    simp [Formalism.MainNotions.LiftingTheory.lone_coord, actVB, hρ, Algebra.smul_def, IsScalarTower.algebraMap_apply Qp K₀ B]
-  | add x y hx hy => simp only [map_add (f := _), hx, hy]
-
-private theorem coord_map_lemma_3 {n : ℕ} (b : Module.Basis (Fin n) Qp V) (i : Fin n) {C D : Type}
-    [AddCommGroup C] [Module Qp C] [AddCommGroup D] [Module Qp D] (g : C →ₗ[Qp] D) (w : V ⊗[Qp] C) :
-    Formalism.MainNotions.LiftingTheory.lone_coord b i D (AlgebraTensorModule.map (LinearMap.id : V →ₗ[LL] V) g w) =
-      g (Formalism.MainNotions.LiftingTheory.lone_coord b i C w) := by
-  induction w using TensorProduct.induction_on with
-  | zero => simp
-  | tmul v c => simp [Formalism.MainNotions.LiftingTheory.lone_coord]
-  | add x y hx hy => simp only [map_add (f := _), hx, hy]
-
-private theorem fil_le_lemma_4 (a : ℤ) (k : ℕ) : PD.Fil (a + (k : ℤ)) ≤ PD.Fil a := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have e : a + ((k + 1 : ℕ) : ℤ) = (a + k) + 1 := by push_cast; ring
-    rw [e]
-    exact le_trans (PD.Fil_anti (a + k)) ih
-
-private theorem fil_one_lemma_5 (h1 : (1 : BdR) ∈ PD.Fil 1) (a : ℤ) : (1 : BdR) ∈ PD.Fil a := by
-  have hn : ∀ m : ℕ, (1 : BdR) ∈ PD.Fil (m : ℤ) := by
-    intro m
-    induction m with
-    | zero => simpa using PD.one_mem
-    | succ m ih =>
-      have h := PD.Fil_mul 1 (m : ℤ) 1 1 h1 ih
-      rw [mul_one, show (1 : ℤ) + (m : ℤ) = ((m + 1 : ℕ) : ℤ) by push_cast; ring] at h
-      exact h
-  rcases le_or_gt a 0 with ha | ha
-  · have hle := fil_le_lemma_4 PD a (Int.toNat (-a))
-    have e : a + ((Int.toNat (-a) : ℕ) : ℤ) = 0 := by
-      rw [Int.toNat_of_nonneg (by omega)]; omega
-    rw [e] at hle
-    exact hle PD.one_mem
-  · rw [← Int.toNat_of_nonneg ha.le]
-    exact hn _
-
-private theorem fil_const_lemma_6 (u : ℤ) (hu : 1 ≤ u) (k : K) (hk : algebraMap K BdR k ∈ PD.Fil u) :
-    algebraMap K BdR k = 0 := by
-  by_cases h0 : k = 0
-  · simp [h0]
-  · have h1u : (1 : BdR) ∈ PD.Fil u := by
-      have h := (PD.Fil u).smul_mem k⁻¹ hk
-      rwa [Algebra.smul_def, ← map_mul, inv_mul_cancel₀ h0, map_one] at h
-    have hle := fil_le_lemma_4 PD 1 (Int.toNat (u - 1))
-    have e : (1 : ℤ) + ((Int.toNat (u - 1) : ℕ) : ℤ) = u := by
-      rw [Int.toNat_of_nonneg (by omega)]; omega
-    rw [e] at hle
-    have h10 : (1 : BdR) = 0 := PD.Fil_sep 1 (fun a => fil_one_lemma_5 PD (hle h1u) a)
-    rw [← mul_one (algebraMap K BdR k), h10, mul_zero]
-
 theorem filCris_triv [FiniteDimensional Qp V] (hρ : ∀ g x, ρ g x = x) (u : ℤ) (hu : 1 ≤ u) {z : V ⊗[Qp] B}
     (hz : z ∈ FilCris PD ρ u) : z = 0 := by
   rw [FilCris, Submodule.mem_inf] at hz
   obtain ⟨hD, hF⟩ := hz
   simp only [Dcris, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply,
     sub_eq_zero] at hD
-  rw [Submodule.mem_comap, FilV, LinearMap.mem_range] at hF
-  obtain ⟨w, hw⟩ := hF
+  rw [Submodule.mem_comap] at hF
   have b : Module.Basis (Fin (Module.finrank Qp V)) Qp V := Module.finBasis Qp V
   have key : ∀ i, Formalism.MainNotions.LiftingTheory.lone_coord b i B z = 0 := by
     intro i
-    have hinv : ∀ g, PD.actB g (Formalism.MainNotions.LiftingTheory.lone_coord b i B z) = Formalism.MainNotions.LiftingTheory.lone_coord b i B z := by
+    have hinv : ∀ g, PD.actB g (Formalism.MainNotions.LiftingTheory.lone_coord b i B z) =
+        Formalism.MainNotions.LiftingTheory.lone_coord b i B z := by
       intro g
-      rw [← coord_act_lemma_2 PD hρ b i g z, hD g]
+      rw [← Formalism.MainNotions.LiftingTheory.lone_coord_actB PD ρ hρ b i g z, hD g]
     obtain ⟨k, hk⟩ := PD.invB _ hinv
     have hι : PD.ι (Formalism.MainNotions.LiftingTheory.lone_coord b i B z) ∈ PD.Fil u := by
-      rw [← coord_ιV PD (LL := LL) b i z, ← hw, coord_map_lemma_3 (LL := LL) b i]
-      exact (Formalism.MainNotions.LiftingTheory.lone_coord b i _ w).2
+      rw [← coord_ιV PD (LL := LL) b i z]
+      exact Formalism.MainNotions.LiftingTheory.lone_coord_FilV PD b i u _ hF
     rw [← hk] at hι ⊢
     rw [AlgHom.commutes, IsScalarTower.algebraMap_apply K₀ K BdR] at hι
-    have h0 := fil_const_lemma_6 PD u hu _ hι
-    rw [← IsScalarTower.algebraMap_apply K₀ K BdR, ← PD.ι.commutes] at h0
+    have h0 := Formalism.MainNotions.LiftingTheory.lone_K_inter PD _ u hu hι
     apply PD.ι_inj
-    rw [h0, map_zero]
-  rw [tensor_eq_sum_lemma b B z]
+    rw [PD.ι.commutes, IsScalarTower.algebraMap_apply K₀ K BdR, h0, map_zero, map_zero]
+  rw [Formalism.MainNotions.LiftingTheory.lone_decomp b z]
   simp [key]
 
 end Funct

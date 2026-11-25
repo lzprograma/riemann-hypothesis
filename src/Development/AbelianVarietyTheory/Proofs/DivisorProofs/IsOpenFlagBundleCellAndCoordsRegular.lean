@@ -39,8 +39,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -82,7 +80,7 @@ theorem isOpen_inCell_and_regAt : ∀ (F : Type) [Field F] (X Y : Var F) (ι : T
   have h2 := (h τ).1 a b
   have hab' : a < b := hab
   have e : upM u τ a b = u ⟨τ, ⟨(b, a), hab⟩⟩ := by
-    simp only [upM, upU, Matrix.of_apply, dif_pos hab']
+    simp only [upM, upU, Matrix.of_apply, dite_eq_left hab']
   rw [e] at h2
   exact mem_O_ratOf.1 h2
 

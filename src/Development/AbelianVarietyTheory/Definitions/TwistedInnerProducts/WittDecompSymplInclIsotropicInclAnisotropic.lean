@@ -51,8 +51,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct ContDiff
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.MixModel
 
 variable {D : D7}
@@ -352,17 +350,6 @@ section Examples
 abbrev diagSp (D : D7) (N : ℕ) (neg : Fin N → Bool) (p q : ℕ) : HSp D :=
   Examples₂.stdSpace Examples₂.star_isIntegral N neg p q
 
-theorem diagSp_gram (N : ℕ) (neg : Fin N → Bool) (p q : ℕ) :
-    (diagSp D N neg p q).gram = (Matrix.diagonal fun i => Examples₂.sgn (neg i) : Matrix (Fin N) (Fin N) D.host.E) := by
-  funext i j
-  exact Examples₂.stdSpace_gram_apply _ N neg p q i j
-
-theorem gram_check {N k l : ℕ} {neg : Fin N → Bool} {p q : ℕ} (a : Matrix (Fin N) (Fin k) D.host.E)
-    (b : Matrix (Fin N) (Fin l) D.host.E) (c : Matrix (Fin k) (Fin l) D.host.E)
-    (h : aᴴ * (Matrix.diagonal fun i => Examples₂.sgn (neg i) : Matrix (Fin N) (Fin N) D.host.E) * b = c) :
-    aᴴ * (show Matrix (Fin N) (Fin N) D.host.E from (diagSp D N neg p q).gram) * b = c := by
-  rw [← h]; congr 2; exact diagSp_gram N neg p q
-
 section Field
 
 variable (E : Type) [Field E] [CharZero E] [StarRing E]
@@ -377,29 +364,7 @@ theorem col_gram {N : ℕ} (neg : Fin N → Bool) (a b : Matrix (Fin N) (Fin 1) 
   simp only [Matrix.mul_diagonal, Matrix.conjTranspose_apply]
 
 
-theorem three_gram (e e' i : Matrix (Fin 3) (Fin 1) E) (he : e = !![0; 1; 1]) (he' : e' = !![0; 1 / 2; -(1 / 2)])
-    (hi : i = !![1; 0; 0]) :
-    eᴴ * sgnM E ![false, false, true] * e = 0 ∧ e'ᴴ * sgnM E ![false, false, true] * e' = 0 ∧
-    e'ᴴ * sgnM E ![false, false, true] * e = 1 ∧ iᴴ * sgnM E ![false, false, true] * i = sgnM E ![false] ∧
-    iᴴ * sgnM E ![false, false, true] * e = 0 ∧ iᴴ * sgnM E ![false, false, true] * e' = 0 := by
-  subst he he' hi
-  refine ⟨col_gram E _ _ _ _ ?_, col_gram E _ _ _ _ ?_, col_gram E _ _ _ _ ?_, col_gram E _ _ _ _ ?_,
-    col_gram E _ _ _ _ ?_, col_gram E _ _ _ _ ?_⟩ <;> simp [Fin.sum_univ_three, Examples₂.sgn]
-  norm_num
-
 end Field
-
-def hypDecThree (D : D7) : HypDec (diagSp D 3 ![false, false, true] 2 1) (diagSp D 1 ![false] 1 0) 1 where
-  e := (!![0; 1; 1] : Matrix (Fin 3) (Fin 1) D.host.E)
-  e' := (!![0; 1 / 2; -(1 / 2)] : Matrix (Fin 3) (Fin 1) D.host.E)
-  i₀ := (!![1; 0; 0] : Matrix (Fin 3) (Fin 1) D.host.E)
-  ee := gram_check _ _ _ (three_gram D.host.E _ _ _ rfl rfl rfl).1
-  e'e' := gram_check _ _ _ (three_gram D.host.E _ _ _ rfl rfl rfl).2.1
-  e'e := gram_check _ _ _ (three_gram D.host.E _ _ _ rfl rfl rfl).2.2.1
-  iso := (gram_check _ _ _ (three_gram D.host.E _ _ _ rfl rfl rfl).2.2.2.1).trans (diagSp_gram 1 _ 1 0).symm
-  i₀e := gram_check _ _ _ (three_gram D.host.E _ _ _ rfl rfl rfl).2.2.2.2.1
-  i₀e' := gram_check _ _ _ (three_gram D.host.E _ _ _ rfl rfl rfl).2.2.2.2.2
-  rank_add := rfl
 
 theorem pairS_plus (S₀ T : HSp D) {ρ : ℕ} (x : Mx D T.rank ρ) (b b' : Mx D ρ S₀.rank) :
     pairS T x (x * (b' * plus S₀ b)) = hO S₀ T (x * b) (x * b') := by

@@ -62,7 +62,7 @@ theorem TwoBlockFnField.proof : TwoBlockFnField.Statement := by
     by_cases hb : b = 0
     · subst hb
       simpa [pair] using TwoBlockFnField.ratio_mem x ⟨(), i⟩ ⟨(), j⟩
-    · simp only [pair, hb, if_false]
+    · simp only [pair, hb, ite_false]
       rw [← hE]
       exact TwoBlockFnField.ratio_mem (matAct B x) ⟨(), i⟩ ⟨(), j⟩
   · refine IntermediateField.adjoin_le_iff.mpr ?_

@@ -165,36 +165,6 @@ theorem cubeComplex_exists_smul_homology_eq_zero [Finite ι] (A : Cube.{max u v}
     rw [cubeComplex_d]
     exact h
 
-theorem cubeComplex_exists_smul_homology_eq_zero_of_isLocalizedModule [Finite ι]
-    (A : Cube.{max u v} ι R) (S : Submonoid R) (i : ι)
-    (hA : ∀ s : Finset ι, i ∉ s → IsLocalizedModule S (Cube.res A (Finset.subset_insert i s)))
-    (p : ℕ) (x : (cubeComplex A).homology p) : ∃ c ∈ S, c • x = 0 := by
-  refine cubeComplex_exists_smul_homology_eq_zero A S i (fun s hs y hy => ?_) (fun s hs z => ?_) p x
-  · have := hA s hs
-    obtain ⟨c, hc⟩ := (IsLocalizedModule.eq_zero_iff S _).1 hy
-    exact ⟨c, c.2, hc⟩
-  · obtain ⟨⟨y, c⟩, h⟩ := (hA s hs).surj z
-    exact ⟨c, c.2, y, h.symm⟩
-
-theorem cubeComplex_exists_pow_smul_homology_eq_zero [Finite ι] (A : Cube.{max u v} ι R) (a : R) (i : ι)
-    (hA : ∀ s : Finset ι, i ∉ s →
-      IsLocalizedModule.Away a (Cube.res A (Finset.subset_insert i s)))
-    (p : ℕ) (x : (cubeComplex A).homology p) : ∃ n : ℕ, a ^ n • x = 0 := by
-  obtain ⟨_, ⟨n, rfl⟩, h⟩ :=
-    cubeComplex_exists_smul_homology_eq_zero_of_isLocalizedModule A (.powers a) i hA p x
-  exact ⟨n, h⟩
-
-theorem cubeComplex_exactAt_of_isLocalizedModule_res [Finite ι] (A : Cube.{max u v} ι R) (f : ι → R)
-    (hA : ∀ (i : ι) (s : Finset ι), i ∉ s →
-      IsLocalizedModule.Away (f i) (Cube.res A (Finset.subset_insert i s)))
-    (hf : Ideal.span (Set.range f) = ⊤) (p : ℕ) : (cubeComplex A).ExactAt p := by
-  rw [HomologicalComplex.exactAt_iff_isZero_homology, ModuleCat.isZero_iff_subsingleton]
-  refine subsingleton_of_forall_eq 0 fun x => ?_
-  refine (Submodule.mem_bot R).1
-    (Submodule.mem_of_span_eq_top_of_smul_pow_mem ⊥ _ hf x ?_)
-  rintro ⟨_, i, rfl⟩
-  exact cubeComplex_exists_pow_smul_homology_eq_zero A (f i) i (hA i) p x
-
 end General
 
 section Away
@@ -245,29 +215,6 @@ end Away
 section Loc
 
 variable {ι : Type} {R : Type u} [CommRing R]
-
-theorem Cube.isLocalizedModule_res_insert [DecidableEq ι] (A : Cube.{max u v} ι R) (f : ι → R)
-    {M : Type*} [AddCommGroup M] [Module R M] (g : ∀ s, M →ₗ[R] A.obj s)
-    (hg : ∀ s, IsLocalizedModule.Away (∏ i ∈ s, f i) (g s))
-    (hres : ∀ {s t : Finset ι} (h : s ⊆ t) (m : M), Cube.res A h (g s m) = g t m)
-    (i : ι) (s : Finset ι) (hi : i ∉ s) :
-    IsLocalizedModule.Away (f i) (Cube.res A (Finset.subset_insert i s)) := by
-  have h1 := hg s
-  have h2 : IsLocalizedModule.Away (f i * ∏ j ∈ s, f j)
-      (Cube.res A (Finset.subset_insert i s) ∘ₗ g s) := by
-    rw [show Cube.res A (Finset.subset_insert i s) ∘ₗ g s = g (insert i s) from
-      LinearMap.ext (hres _), ← Finset.prod_insert hi]
-    exact hg _
-  exact isLocalizedModule_away_of_comp (b := ∏ j ∈ s, f j) (g s) _
-
-theorem cubeComplex_exactAt_of_isLocalizedModule [LinearOrder ι] [Finite ι]
-    (A : Cube.{max u v} ι R) (f : ι → R)
-    {M : Type*} [AddCommGroup M] [Module R M] (g : ∀ s, M →ₗ[R] A.obj s)
-    (hg : ∀ s, IsLocalizedModule.Away (∏ i ∈ s, f i) (g s))
-    (hres : ∀ {s t : Finset ι} (h : s ⊆ t) (m : M), Cube.res A h (g s m) = g t m)
-    (hf : Ideal.span (Set.range f) = ⊤) (p : ℕ) : (cubeComplex A).ExactAt p :=
-  cubeComplex_exactAt_of_isLocalizedModule_res A f
-    (Cube.isLocalizedModule_res_insert A f g hg hres) hf p
 
 variable (f : ι → R) (M : Type v) [AddCommGroup M] [Module R M]
 
@@ -321,39 +268,13 @@ theorem res_toLocCube {s t : Finset ι} (h : s ⊆ t) (m : M) :
     Cube.res (locCube f M) h (toLocCube f M s m) = toLocCube f M t m :=
   locRes_mk_one f M h m
 
-theorem isLocalizedModule_res_locCube [DecidableEq ι] (i : ι) (s : Finset ι) (hi : i ∉ s) :
-    IsLocalizedModule.Away (f i) (Cube.res (locCube f M) (Finset.subset_insert i s)) :=
-  Cube.isLocalizedModule_res_insert _ f (toLocCube f M) inferInstance (res_toLocCube f M) i s hi
-
-theorem toLocCube_empty_bijective : Function.Bijective (toLocCube f M ∅) := by
-  constructor
-  · intro x y h
-    obtain ⟨n, hn⟩ := IsLocalizedModule.Away.exists_of_eq (∏ i ∈ (∅ : Finset ι), f i) h
-    simpa using hn
-  · intro y
-    obtain ⟨n, x, hx⟩ := IsLocalizedModule.Away.surj (toLocCube f M ∅) (∏ i ∈ (∅ : Finset ι), f i) y
-    exact ⟨x, by simpa using hx.symm⟩
-
-theorem isLocalizedModule_toLocCube_singleton (i : ι) :
-    IsLocalizedModule.Away (f i) (toLocCube f M {i}) := by
-  have := isLocalizedModule_toLocCube f M {i}
-  rwa [Finset.prod_singleton] at this
-
 
 
 variable [LinearOrder ι] [Finite ι]
 
 variable {f}
 
-theorem locCube_exactAt (hf : Ideal.span (Set.range f) = ⊤) (p : ℕ) :
-    (cubeComplex (locCube f M)).ExactAt p :=
-  cubeComplex_exactAt_of_isLocalizedModule_res _ f (isLocalizedModule_res_locCube f M) hf p
-
 
 end Loc
-
-section Examples
-
-end Examples
 
 end GlobalTheory

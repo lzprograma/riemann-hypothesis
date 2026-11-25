@@ -81,10 +81,10 @@ theorem ind_fourier_self : ∀ (F : Type) [Field F] [NumberField F] (v : Pl (F :
   · have hy' : y ∉ {x : κ → Fv F v | ∀ i, x i ∈ v.adicCompletionIntegers F} := hy
     have h0 : ind κ v y = 0 := by simp only [ind, Set.indicator_of_notMem hy']
     rw [h0]
-    push_neg at hy
+    push Not at hy
     obtain ⟨i, hi⟩ := hy
     have : ¬ ∀ t ∈ v.adicCompletionIntegers F, ψ (y i * t) = 1 := fun h => hi ((hψ (y i)).1 h)
-    push_neg at this
+    push Not at this
     obtain ⟨t, ht, hne⟩ := this
     have hs : ∀ j, (Pi.single i t : κ → Fv F v) j ∈ v.adicCompletionIntegers F := fun j => by
       by_cases hj : j = i

@@ -50,14 +50,6 @@ import Mathlib.Tactic.ReduceModChar
 open scoped MatrixGroups Matrix Classical
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym UpperTheory.Kd.K4 UpperTheory.V.Z.Kato.Nb
 
-private theorem diam_ex (N l p : ℕ) (h : Nat.Coprime p (l * N)) : IsDiam N l p (sgD N l p) := by
-  obtain ⟨a, b, hab⟩ : IsCoprime (p : ℤ) ((l * N : ℕ) : ℤ) := Nat.isCoprime_iff_coprime.mpr h
-  refine Classical.epsilon_spec (p := IsDiam N l p)
-    ⟨⟨!![a, -b; ((l * N : ℕ) : ℤ), (p : ℤ)], by rw [Matrix.det_fin_two_of]; linear_combination hab⟩, ?_, ?_⟩
-  · refine Subgroup.mem_inf.mpr ⟨?_, ?_⟩ <;> refine CongruenceSubgroup.Gamma0_mem.mpr ?_ <;>
-      show (Int.cast ((l * N : ℕ) : ℤ) : ZMod _) = 0 <;> simp
-  · simp [en]
-
 private theorem conj_mem (N l : ℕ) (σ γ : SL(2, ℤ))
     (hσ : σ ∈ CongruenceSubgroup.Gamma0 N ⊓ CongruenceSubgroup.Gamma0 l) (hγ : γ ∈ Gam N l) :
     σ * γ * σ⁻¹ ∈ Gam N l := by
@@ -96,17 +88,17 @@ theorem UpperTheory.V.Z.Kato.Nb.sBStab :
   refine ⟨fun s => key _ fun c hc => ⟨StabGal.galB_mem_Pol X l w s (hG s) c hc.1,
     fun γ hγ => StabGal.inv_galB X N l w hN s c hc γ hγ⟩, fun σ hσ => key _ fun c hc => ?_,
     fun p hp hc' => key _ fun c hc => ?_⟩
-  · refine ⟨StabHecke.polAct X l w _ (hA _) c hc.1, fun γ hγ => ?_⟩
+  · refine ⟨GlobalTheory.KZ.PolAct.act_mem_pol X l w _ (hA _) c hc.1, fun γ hγ => ?_⟩
     have hg : (σ : Matrix (Fin 2) (Fin 2) ℤ) * (γ : Matrix (Fin 2) (Fin 2) ℤ) =
         ((σ * γ * σ⁻¹ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) * (σ : Matrix (Fin 2) (Fin 2) ℤ) := by
       rw [← Matrix.SpecialLinearGroup.coe_mul, ← Matrix.SpecialLinearGroup.coe_mul, inv_mul_cancel_right]
     rw [StabHecke.act_act X l _ _ (hdet γ) (hdet σ), hg, ← StabHecke.act_act X l _ _ (hdet σ) (hdet _),
       hc.2 _ (conj_mem N l σ γ hσ hγ)]
-  · have hσ := diam_ex N l p hc'
+  · have hσ := GlobalTheory.KZ.Betti.isDiam_sgD hN.ne' (Fact.out : l.Prime).ne_zero hc'.coprime_mul_left_right
     have hpl : IsCoprime (p : ℤ) (l : ℤ) := Nat.isCoprime_iff_coprime.mpr (Nat.Coprime.coprime_mul_right_right hc')
     refine ⟨?_, fun γ hγ => ?_⟩
     · rw [StabHecke.heckeT_eq]
-      exact StabHecke.Pol_sum X l w _ _ fun o _ => StabHecke.polAct X l w _ (hA _) c hc.1
+      exact StabHecke.Pol_sum X l w _ _ fun o _ => GlobalTheory.KZ.PolAct.act_mem_pol X l w _ (hA _) c hc.1
     · rw [StabHecke.heckeT_eq]
       exact StabHecke.sum_act_inv X l N (StabHecke.repT p (sgD N l p))
         (fun o => by rw [StabHecke.det_repT]; exact_mod_cast hp.pos) γ

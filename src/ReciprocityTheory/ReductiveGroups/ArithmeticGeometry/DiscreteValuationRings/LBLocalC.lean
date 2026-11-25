@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ClosedPointWeilPower
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.WchartLePreimage
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
@@ -10,7 +11,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValua
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 namespace ReciprocityTheory.ChartRestriction.G.DVR
@@ -36,22 +36,7 @@ lemma eq_top_of_closedPoint_mem {V : Type} [CommRing V] [IsLocalRing V] (U : (Sp
 
 theorem exists_gen_of_isLB_local {V : Type} [CommRing V] [IsLocalRing V]
     (M : LB (Spec (CommRingCat.of V))) (hM : M.IsLB) : ∃ e : M.Gen, e.IsGen := by
-  obtain ⟨i₀, hi₀⟩ : ∃ i, (IsLocalRing.closedPoint V : Spec (CommRingCat.of V)) ∈ M.U i := by
-    have : (IsLocalRing.closedPoint V : Spec (CommRingCat.of V)) ∈
-        (⊤ : (Spec (CommRingCat.of V)).Opens) := trivial
-    rw [← hM.cover] at this
-    exact TopologicalSpace.Opens.mem_iSup.1 this
-  have htop := eq_top_of_closedPoint_mem _ hi₀
-  have hto : ∀ W : (Spec (CommRingCat.of V)).Opens, W ≤ M.U i₀ := fun W => by
-    rw [htop]
-    exact le_top
-  refine ⟨⟨fun i => res (le_inf le_rfl (hto _) : M.U i ≤ M.U i ⊓ M.U i₀) (M.g i i₀)⟩, fun i j => ?_⟩
-  have hc := congrArg (res (le_inf le_rfl (hto _) : M.U i ⊓ M.U j ≤ M.U i ⊓ M.U j ⊓ M.U i₀))
-    (hM.cocycle i j i₀)
-  simp only [map_mul, res_res'] at hc
-  simp only [res_res']
-  rw [← hc]
-  congr 1
+  apply _root_.ReciprocityTheory.ChartRestriction.G.H1.ClosedPointWeilPower.gen_local <;> assumption
 
 theorem exists_gen_of_local {V : Type} [CommRing V] [IsLocalRing V] {X : Scheme.{0}} (L : LB X) (hL : L.IsLB)
     {K : Type} [Fintype K] (φ : K → (Spec (CommRingCat.of V) ⟶ X)) (ε : K → ℤ) :
@@ -176,7 +161,7 @@ lemma genHasVal_top {X : Scheme.{0}} (L : LB X) {Ix : Type} [Fintype Ix]
   rw [h1]
   erw [map_mul]
   congr 1
-  · simp only [resTop, scal, Scheme.Hom.id_appTop, ← CommRingCat.comp_apply, ← Functor.map_comp]
+  · simp only [resTop, scal, Scheme.Hom.id_appTop, ← CommRingCat.comp_apply]
     have : (homOfLE (le_top : LB.wchart L (fun k => jK V ≫ φ k) j₀ ≤ ⊤)).op ≫ (homOfLE hK).op =
         𝟙 (Opposite.op (⊤ : (Spec (CommRingCat.of (FractionRing V))).Opens)) := Subsingleton.elim _ _
     rw [Category.id_comp, ← Functor.map_comp]

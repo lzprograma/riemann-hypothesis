@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsLogAExtends
 public import Mathlib.Algebra.Algebra.Defs
 public import Mathlib.LinearAlgebra.Span.Defs
 public import Mathlib.Algebra.Ring.Divisibility.Basic
@@ -64,7 +65,7 @@ section -- clump:auto
 
 namespace GlobalTheory.IsolatedTheoremThree
 
-theorem main : (let d1 : (R : Type) → {A : Type} → [inst : CommRing R] → [inst_1 : CommRing A] → [inst_2 : Algebra R A] → (ℕ → A) → ℕ → Submodule R A := @(fun (R : Type) {A : Type} [CommRing R] [CommRing A] [Algebra R A] (γ : ℕ → A) (N : ℕ) ↦ Submodule.span R (γ '' {m : ℕ | m < N})); ∀ {R A : Type} [inst : CommRing R] [inst_1 : CommRing A] [inst_2 : Algebra R A], (∀ (n : ℕ), IsUnit (↑(Nat.factorial n) : A)) → ∀ (ξ : R) (γ : ℕ → A), (∀ (n : ℕ), (↑(Nat.factorial n) : A) * γ n = (Algebra.algebraMap R A : R → A) ξ ^ n) → ∀ (N : ℕ), ∀ w ∈ Submodule.span R (Set.range γ), ∃ w₁ ∈ d1 R γ N, (Algebra.algebraMap R A : R → A) ξ ^ N ∣ w - w₁) := by
+theorem main : (let d1 : (R : Type) → {A : Type} → [CommRing R] → [CommRing A] → [Algebra R A] → (ℕ → A) → ℕ → Submodule R A := @(fun (R : Type) {A : Type} [CommRing R] [CommRing A] [Algebra R A] (γ : ℕ → A) (N : ℕ) ↦ Submodule.span R (γ '' {m : ℕ | m < N})); ∀ {R A : Type} [CommRing R] [CommRing A] [Algebra R A], (∀ (n : ℕ), IsUnit (↑(Nat.factorial n) : A)) → ∀ (ξ : R) (γ : ℕ → A), (∀ (n : ℕ), (↑(Nat.factorial n) : A) * γ n = (Algebra.algebraMap R A : R → A) ξ ^ n) → ∀ (N : ℕ), ∀ w ∈ Submodule.span R (Set.range γ), ∃ w₁ ∈ d1 R γ N, (Algebra.algebraMap R A : R → A) ξ ^ N ∣ w - w₁) := by
   intro d1 R A _ _ _ hfac ξ γ hγ N w hw
   induction hw using Submodule.span_induction with
   | mem w hw =>
@@ -222,18 +223,7 @@ theorem mem_of_forall (hu : ∀ n : ℕ, IsUnit ((n.factorial : ℕ) : A)) (ξ :
   linear_combination hc
 
 theorem exists_eps (l : ℕ) [Fact l.Prime] : ∃ e : Per.Fl l, IsEps e := by
-  obtain ⟨ζ, e, h0, -, h1, hr⟩ := exists_zeta_eps l
-  refine ⟨e, ?_, fun h => ?_⟩
-  · have h := hr 0
-    rw [h0, map_one] at h
-    exact Subtype.ext h
-  · have h' := hr 1
-    have h2 : rootT e 1 = 1 := h
-    rw [h2] at h'
-    apply h1
-    apply (algebraMap (Om l) ℂ_[l]).injective
-    rw [map_one, ← h']
-    rfl
+  first | exact _root_.GlobalTheory.MemLoc.Model.exists_isEps | exact @_root_.GlobalTheory.MemLoc.Model.exists_isEps | apply _root_.GlobalTheory.MemLoc.Model.exists_isEps <;> assumption
 
 theorem xi_sat_pow {l : ℕ} [Fact l.Prime] {e : Per.Fl l} (he : IsEps e) (k : ℕ) (a : Per.Ainf l)
     (h : xi e ∣ (l : Per.Ainf l) ^ k * a) : xi e ∣ a := by

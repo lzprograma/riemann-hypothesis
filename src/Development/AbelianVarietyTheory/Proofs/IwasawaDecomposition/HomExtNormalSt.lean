@@ -54,7 +54,6 @@ open MonoidalCategory CartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R Formalism.L2.Pj
 open GlobalTheory.Toroidal GlobalTheory.Models GlobalTheory.LN GlobalTheory.ShFam
 open scoped CategoryTheory.Obj Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.TorRef
 
@@ -84,12 +83,6 @@ def IsStrict (B : Closeds X) {ι : Type} (E : ι → Closeds X) : Prop :=
   ∀ x : X, ∃ (m d : ℕ) (f : Fin m ⊕ Fin d → X.presheaf.stalk x) (c : Fin m → ι), ColAt B E x f c ∧ Function.Injective c
 
 end Branches
-
-section Pairs
-
-variable {K F : Type} [Field K] [Field F] {XK X X'K X' : Scheme.{0}}
-
-end Pairs
 
 section Sections
 

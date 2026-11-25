@@ -1,49 +1,11 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusElementActsOnFrameColumns
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsotropicUnipotentRadicalsRationalCocompact
 public import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactUnipFlag
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyNormFinLeOne
 import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.LinearAlgebra.TensorProduct.Prod
 
@@ -109,19 +71,19 @@ theorem dg_mul_dg (he : CompleteOrthogonalIdempotents ε) {x y : S} (h : x * y =
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [sand_dg he, sand_dg he]
     rcases lt_trichotomy (w a) (w c) with h1 | h1 | h1
-    · rw [if_neg h1.ne, hx a c h1, zero_mul, zero_mul]
-    · rw [if_pos h1, if_pos (h1 ▸ hab)]
-    · rw [if_neg h1.ne', hy c b (hab ▸ h1), zero_mul, mul_zero]
+    · rw [ite_eq_right h1.ne, hx a c h1, zero_mul, zero_mul]
+    · rw [ite_eq_left h1, ite_eq_left (h1 ▸ hab)]
+    · rw [ite_eq_right h1.ne', hy c b (hab ▸ h1), zero_mul, mul_zero]
   · rw [mul_one, he.ortho (fun e => hab (congrArg w e)), sand_mul he]
     refine Finset.sum_eq_zero fun c _ => ?_
     rw [sand_dg he, sand_dg he]
     by_cases h1 : w a = w c
-    · rw [if_neg (show ¬ w c = w b from h1 ▸ hab), mul_zero]
-    · rw [if_neg h1, zero_mul]
+    · rw [ite_eq_right (show ¬ w c = w b from h1 ▸ hab), mul_zero]
+    · rw [ite_eq_right h1, zero_mul]
 
 theorem exists_weightPart : ∀ {S ι : Type} [Ring S] [Fintype ι] (st : S →+ S) (ε : ι → S) (w : ι → ℤ) (τ : ι → ι), (∀ x y, st (x * y) = st y * st x) → (∀ x, st (st x) = x) → CompleteOrthogonalIdempotents ε → (∀ a, st (ε a) = ε (τ a)) → (∀ a, w (τ a) = -w a) → (∀ a, τ (τ a) = a) → ∀ x y : S, x * y = 1 → y * x = 1 → st x = y → (∀ a b, w a < w b → ε a * x * ε b = 0) → (∀ a b, w a < w b → ε a * y * ε b = 0) → ∃ m m' : S, m * m' = 1 ∧ m' * m = 1 ∧ st m = m' ∧ (∀ a b, w a ≠ w b → ε a * m * ε b = 0) ∧ (∀ a b, w a ≠ w b → ε a * m' * ε b = 0) ∧ x * m' - 1 ∈ raise ε w 0 ∧ ∀ S₀ : Subring S, (∀ a, ε a ∈ S₀) → x ∈ S₀ → y ∈ S₀ → m ∈ S₀ ∧ m' ∈ S₀ := by
   intro S ι _ _ st ε w τ hst hss he hε hw hτ x y hxy hyx hs hx hy
-  have hm : ∀ z a b, w a ≠ w b → ε a * dg ε w z * ε b = 0 := fun z a b h => by rw [sand_dg he, if_neg h]
+  have hm : ∀ z a b, w a ≠ w b → ε a * dg ε w z * ε b = 0 := fun z a b h => by rw [sand_dg he, ite_eq_right h]
   have h1 := dg_mul_dg he hxy hx hy
   refine ⟨dg ε w x, dg ε w y, h1, dg_mul_dg he hyx hy hx, ?_, hm x, hm y, ?_, ?_⟩
   · have key : ∀ z a b, ε a * st z * ε b = st (ε (τ b) * z * ε (τ a)) := fun z a b => by
@@ -129,8 +91,8 @@ theorem exists_weightPart : ∀ {S ι : Type} [Ring S] [Fintype ι] (st : S →+
     refine ext_sand he fun a b => ?_
     rw [key, sand_dg he, sand_dg he, ← hs, key, hw, hw]
     by_cases h : w a = w b
-    · rw [if_pos h, if_pos (by rw [h])]
-    · rw [if_neg h, if_neg (fun e => h (neg_inj.1 e).symm), map_zero]
+    · rw [ite_eq_left h, ite_eq_left (by rw [h])]
+    · rw [ite_eq_right h, ite_eq_right (fun e => h (neg_inj.1 e).symm), map_zero]
   · intro a b hab
     have hab' : w a ≤ w b := by simpa using hab
     rw [← h1, ← sub_mul, sand_mul he]
@@ -428,18 +390,8 @@ theorem prodTens_ext {F E A B : Type} [Field F] [Field E] [Algebra F E] [CommRin
       Algebra.TensorProduct.map (AlgHom.fst F A B) (AlgHom.id F E) z')
     (b : Algebra.TensorProduct.map (AlgHom.snd F A B) (AlgHom.id F E) z =
       Algebra.TensorProduct.map (AlgHom.snd F A B) (AlgHom.id F E) z') : z = z' := by
-  have key : ∀ x : (A × B) ⊗[F] E, TensorProduct.prodLeft F F A B E x =
-      (Algebra.TensorProduct.map (AlgHom.fst F A B) (AlgHom.id F E) x,
-        Algebra.TensorProduct.map (AlgHom.snd F A B) (AlgHom.id F E) x) := by
-    intro x
-    induction x using TensorProduct.induction_on with
-    | zero => simp <;> rfl
-    | tmul p e =>
-      obtain ⟨p₁, p₂⟩ := p
-      simp
-    | add x y hx hy => simp [hx, hy]
-  apply (TensorProduct.prodLeft F F A B E).injective
-  rw [key, key, a, b]
+  intros
+  apply _root_.GlobalTheory.TorusMat.prod_tens_ext <;> assumption
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {r : ℕ}
@@ -515,7 +467,7 @@ theorem exists_diagonal (h : IsCMExt F E σ) {a : GAd σ J} (ha : a ∈ infPts �
       rfl
 
     simp only [map_sum, map_mul, hfin, hδ, Matrix.one_apply, ite_mul, one_mul, zero_mul, mul_one,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem mem_parFlag (h : IsCMExt F E σ) {a : GAd σ J} (ha : a ∈ infPts σ J) (Z : Matrix (Fin n) (Fin r) E)
     (d : Fin r → ℕ) (s : Fin r → ℝ) (h0 : ∀ i, s i ≠ 0) (hs : ∀ (w : InfinitePlace F) (τ : EmbOver E w),

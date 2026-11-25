@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ShiftOf
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.IntegralHWMul
 import Mathlib.Algebra.Order.Floor.Extended
@@ -170,29 +171,7 @@ private theorem four_foldr (e : ℝ) (L : List (K →+* ℂ)) (Φ : Lie K n → 
     ring
 
 private theorem prod_coord (c : Cinf K) : ∏ τ : K →+* ℂ, coord τ c = ((∏ w, ‖c w‖ ^ 2 : ℝ) : ℂ) := by
-  classical
-  rw [← Finset.prod_fiberwise Finset.univ InfinitePlace.mk, Complex.ofReal_prod]
-  refine Finset.prod_congr rfl fun w _ => ?_
-  have hne : ComplexEmbedding.conjugate w.embedding ≠ w.embedding := fun h =>
-    InfinitePlace.not_isReal_iff_isComplex.2 (IsTotallyComplex.isComplex w)
-      (InfinitePlace.isReal_iff.2 (ComplexEmbedding.isReal_iff.2 h))
-  have hf : (Finset.univ.filter fun τ : K →+* ℂ => InfinitePlace.mk τ = w) =
-      {w.embedding, ComplexEmbedding.conjugate w.embedding} := by
-    ext τ
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Finset.mem_singleton]
-    constructor
-    · rintro rfl
-      rcases InfinitePlace.embedding_mk_eq τ with h | h
-      · exact Or.inl h.symm
-      · right; rw [h]; simp
-    · rintro (rfl | rfl)
-      · exact InfinitePlace.mk_embedding w
-      · rw [InfinitePlace.mk_conjugate_eq, InfinitePlace.mk_embedding]
-  rw [hf, Finset.prod_pair hne.symm]
-  unfold coord
-  rw [if_pos (by rw [InfinitePlace.mk_embedding]),
-    if_neg (by rw [InfinitePlace.mk_conjugate_eq, InfinitePlace.mk_embedding]; exact hne.symm)]
-  simp [InfinitePlace.mk_embedding, InfinitePlace.mk_conjugate_eq, Complex.mul_conj']
+  apply _root_.UpperTheory.V.Z.Inf.prod_coord <;> assumption
 
 end UpperTheory.V.Z.Inf.FourDH
 

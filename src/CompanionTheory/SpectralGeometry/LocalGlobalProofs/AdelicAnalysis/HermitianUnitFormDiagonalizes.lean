@@ -53,7 +53,7 @@ theorem exists_isUnit_add (A : Type) [CommRing A] [Finite (MaximalSpectrum A)] (
   have huM : x 0 + ∑ k, a k * x k.succ ∈ M.asIdeal := hle (Ideal.mem_span_singleton_self _)
   by_cases h0 : x 0 ∈ M.asIdeal
   · have hy : ∑ k, y k M * x k.succ = x (kM M h0).succ := by
-      simp only [y, dif_pos h0, ite_mul, one_mul, zero_mul]
+      simp only [y, dite_eq_left h0, ite_mul, one_mul, zero_mul]
       simp [Finset.sum_ite_eq]
     have hin : x 0 + ∑ k, (a k - y k M) * x k.succ ∈ M.asIdeal :=
       M.asIdeal.add_mem h0 (Ideal.sum_mem _ fun k _ => Ideal.mul_mem_right _ _ (ha k M))

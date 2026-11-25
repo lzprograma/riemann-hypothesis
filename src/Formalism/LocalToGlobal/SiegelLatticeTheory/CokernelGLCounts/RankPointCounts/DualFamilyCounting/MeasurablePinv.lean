@@ -15,8 +15,6 @@ namespace Formalism.L2.SG.Pf.NcReal.JX.CovB
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.RealObj.InfCut Formalism.MainNotions.S Formalism.L2.SG.Pf.NcReal.JX
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Fib
 
 variable {V : Type} [AddCommGroup V] [MeasurableSpace V] [MeasurableAdd₂ V] (μ : Measure V) [SigmaFinite μ]

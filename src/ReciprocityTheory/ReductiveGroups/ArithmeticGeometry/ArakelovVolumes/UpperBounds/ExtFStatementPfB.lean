@@ -5,6 +5,7 @@ import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Tactic.Lemma
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
 
 @[expose] public section
 
@@ -47,49 +48,28 @@ variable {X} {x0 : Frame X.Ψ r} (D : LUData X x0) (la : Wt X.Ψ r) (F : V (nd X
 def Gf (x : Frame X.Ψ r) : ℝ≥0∞ := ENNReal.ofReal (X.pnorm la (P0 D la F) x ^ 2)
 
 private lemma dom_isOpen : IsOpen X.dom := by
-  have hd : ∀ (τ : X.Ψ) (i : Fin (r + 1)), Continuous fun x : Frame X.Ψ r => dmin X.Gm x τ i :=
-    fun τ i => cont_dmin X τ i
-  have hdet : ∀ τ : X.Ψ, Continuous fun x : Frame X.Ψ r => (mat x τ).det := by
-    intro τ
-    first
-      | exact Continuous.matrix_det (continuous_apply τ)
-  show IsOpen {x : Frame X.Ψ r | ∀ τ : X.Ψ, (mat x τ).det ≠ 0 ∧
-    ∀ i : Fin (r + 1), 0 < psgn X.p0 i * (dmin X.Gm x τ i).re}
-  simp only [Set.setOf_forall, Set.setOf_and]
-  refine isOpen_iInter_of_finite fun τ => ?_
-  refine (isOpen_ne_fun (hdet τ) continuous_const).inter (isOpen_iInter_of_finite fun i => ?_)
-  exact isOpen_lt continuous_const (continuous_const.mul (Complex.continuous_re.comp (hd τ i)))
+  apply _root_.ReciprocityTheory.ChartRestriction.G.FD.FourierCoefficientDomain.isOpen_dom <;> assumption
 
 private lemma continuous_cpt' : Continuous (cpt X x0) := by
   have hn : ∀ (τ : X.Ψ) (a b : Fin r), Continuous fun z : V (nd X) => nmat X z τ a b := by
     intro τ a b
     by_cases h : b < a
-    · simp only [nmat, dif_pos h]
+    · simp only [nmat, dite_eq_left h]
       first
         | exact (EuclideanSpace.proj (𝕜 := ℂ) _).continuous
     · by_cases h' : a = b
-      · simp only [nmat, dif_neg h, if_pos h']
+      · simp only [nmat, dite_eq_right h, ite_eq_left h']
         exact continuous_const
-      · simp only [nmat, dif_neg h, if_neg h']
+      · simp only [nmat, dite_eq_right h, ite_eq_right h']
         exact continuous_const
   refine continuous_pi fun τ => continuous_pi fun a => continuous_pi fun b => ?_
   show Continuous fun z => ∑ k, mat x0 τ a k * mat (nmat X z) τ k b
   exact continuous_finsetSum _ fun k _ => continuous_const.mul (hn τ k b)
 
-private lemma bor_diag_ne_zero {Ψ : Finset (E →+* ℂ)} {b : Frame Ψ r} (hb : b ∈ Bor Ψ r) (τ : Ψ)
-    (i : Fin r) : b τ i i ≠ 0 := by
-  have h := (hb τ).1
-  rw [Matrix.det_of_upperTriangular (by intro a c hca; exact (hb τ).2 a c hca)] at h
-  exact Finset.prod_ne_zero_iff.1 h i (Finset.mem_univ _)
-
 theorem Gf_meas (hF : DifferentiableOn ℂ F (OmF X x0)) : Measurable (Gf D la F) := by
   classical
   have hd : ∀ (τ : X.Ψ) (i : Fin (r + 1)), Continuous fun x : Frame X.Ψ r => dmin X.Gm x τ i :=
     fun τ i => cont_dmin X τ i
-  have hcellO : IsOpen (cell D) := by
-    have hc : cell D = X.dom ∩ {x | D.Δ x ≠ 0} := rfl
-    rw [hc]
-    exact dom_isOpen.inter (isOpen_ne_fun D.hΔ.continuous continuous_const)
   have hfc : ContinuousOn (fun x => bchar la (D.bOf x) * F (D.zOf x)) (cell D) := by
     have hzc : ContinuousOn D.zOf (cell D) := D.hz.continuousOn
     have hbc : ContinuousOn D.bOf (cell D) := D.hb.continuousOn
@@ -108,18 +88,18 @@ theorem Gf_meas (hF : DifferentiableOn ℂ F (OmF X x0)) : Measurable (Gf D la F
       exact hent.comp_continuousOn hbc
     · intro x hx
       left
-      exact bor_diag_ne_zero (hsplit x hx).2 τ i
+      exact FrameDegreeData.bdiag_ne X (hsplit x hx).2 τ i
   have hP : P0 D la F = (cell D).piecewise (fun x => bchar la (D.bOf x) * F (D.zOf x)) 0 := by
     funext x
     by_cases h : x ∈ cell D
     · rw [Set.piecewise_eq_of_mem _ _ _ h]
-      exact if_pos h
+      exact ite_eq_left h
     · first
         | rw [Set.piecewise_eq_of_notMem _ _ _ h]
-      exact if_neg h
+      exact ite_eq_right h
   have hPm : Measurable (P0 D la F) := by
     rw [hP]
-    exact hfc.measurable_piecewise continuous_zero.continuousOn hcellO.measurableSet
+    exact hfc.measurable_piecewise continuous_zero.continuousOn (isOpen_cell D).measurableSet
   have hnf : Measurable fun x => X.nfac la x := by
     unfold Data.nfac
     apply Finset.measurable_prod
@@ -138,44 +118,13 @@ theorem Gf_inv {x b : Frame X.Ψ r} (hx : x ∈ X.dom) (hb : b ∈ Bor X.Ψ r) :
   unfold Gf
   rw [FrameDegreeData.pnorm_rmul X la _ (fun y hy b' hb' => poincareLift_borel_equivariant D la F hy hb') x hx b hb]
 
-private lemma one_mem_bor_upper_bounds {Ψ : Finset (E →+* ℂ)} :
-    (fun _ => (1 : Matrix (Fin r) (Fin r) ℂ) : Frame Ψ r) ∈ Bor Ψ r := by
-  intro τ
-  refine ⟨?_, fun a c hca => ?_⟩
-  · show (1 : Matrix (Fin r) (Fin r) ℂ).det ≠ 0
-    simp
-  · show (1 : Matrix (Fin r) (Fin r) ℂ) a c = 0
-    exact Matrix.one_apply_ne hca.ne'
-
 theorem Gf_cpt {z : V (nd X)} (hz : z ∈ OmF X x0) :
     Gf D la F (cpt X x0 z) = ENNReal.ofReal (‖F z‖ ^ 2 * Real.exp (-phla X la (cpt X x0 z))) := by
-  have hzd : cpt X x0 z ∈ X.dom := hz
-  have hne : ∀ (τ : X.Ψ) (i : Fin (r + 1)), dmin X.Gm (cpt X x0 z) τ i ≠ 0 := by
-    intro τ i h0
-    have h1 := (hzd τ).2 i
-    rw [h0] at h1
-    simp at h1
-  have hpos : 0 < X.nfac la (cpt X x0 z) := by
-    unfold Data.nfac
-    apply Finset.prod_pos
-    intro τ _
-    apply Finset.prod_pos
-    intro i _
-    apply Real.rpow_pos_of_pos
-    exact norm_pos_iff.2 (div_ne_zero (hne τ i.succ) (hne τ i.castSucc))
-  have hr1 : rmul (cpt X x0 z) (fun _ => (1 : Matrix (Fin r) (Fin r) ℂ)) = cpt X x0 z := by
-    funext τ
-    exact Matrix.mul_one (mat (cpt X x0 z) τ)
-  obtain ⟨hΔ, hzo, hbo⟩ := D.uniq z hz _ one_mem_bor_upper_bounds
-  rw [hr1] at hΔ hzo hbo
-  have hP : P0 D la F (cpt X x0 z) = F z := by
-    unfold P0
-    rw [if_pos (show cpt X x0 z ∈ X.dom ∧ D.Δ (cpt X x0 z) ≠ 0 from ⟨hzd, hΔ⟩), hzo, hbo]
-    simp [bchar]
+  have hpos := FlowCoefficientBounds.nfac_pos X hz la
   unfold Gf
   have hp : X.pnorm la (P0 D la F) (cpt X x0 z) =
       ‖P0 D la F (cpt X x0 z)‖ * X.nfac la (cpt X x0 z) := rfl
-  rw [hp, hP]
+  rw [hp, poincareLift_on_chart D la F hz]
   congr 1
   unfold phla
   have hl : -(-2 * Real.log (X.nfac la (cpt X x0 z))) = Real.log (X.nfac la (cpt X x0 z) ^ 2) := by

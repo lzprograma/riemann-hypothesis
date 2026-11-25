@@ -111,7 +111,7 @@ private theorem UpperTheory.Reformulated.B.Glb3.reps_smul {K : Type} [Field K] [
   exact hy1.trans (congrArg (c • ·) hy)
 
 theorem UpperTheory.Reformulated.B.Glb3.sec_add :
-    ∀ {K : Type} [inst : Field K] [inst_1 : NumberField K] {μ₂ : MeasureTheory.Measure (PositivityTheory.Rg.Tf.Core.G1 K (2 : ℕ))}
+    ∀ {K : Type} [Field K] [NumberField K] {μ₂ : MeasureTheory.Measure (PositivityTheory.Rg.Tf.Core.G1 K (2 : ℕ))}
       [μ₂.IsHaarMeasure] {τ₁ τ₂ : Submodule ℂ (PositivityTheory.Rg.Tf.Core.L2 μ₂)}
       {f f' : PositivityTheory.Rg.Tf.Core.G1 K ((2 : ℕ) + (2 : ℕ)) → ℂ},
       PositivityTheory.Rg.Tf.Adel.IsSec τ₁ τ₂ f →

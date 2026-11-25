@@ -66,8 +66,6 @@ theorem valuation_eq_count (v : HeightOneSpectrum R) {x : K} (hx : x ≠ 0) :
   obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := R) x
   have hb0 : b ≠ 0 := nonZeroDivisors.ne_zero hb
   have ha0 : a ≠ 0 := by rintro rfl; simp at hx
-  have ha' : algebraMap R K a ≠ 0 := by simpa using ha0
-  have hb' : algebraMap R K b ≠ 0 := by simpa using hb0
   rw [map_div₀, count_span_int K v ha0, count_span_int K v hb0, div_eq_mul_inv (algebraMap R K a),
     ← FractionalIdeal.spanSingleton_mul_spanSingleton, FractionalIdeal.count_mul K v
       (by simpa [FractionalIdeal.spanSingleton_eq_zero_iff] using ha0)

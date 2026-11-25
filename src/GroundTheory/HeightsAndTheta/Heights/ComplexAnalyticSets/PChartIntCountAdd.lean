@@ -56,8 +56,8 @@ theorem hasSum_sheetSum {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin 
   simp only [sheetSum_eq_sum hfin]
   refine hasSum_sum fun x _ => ?_
   by_cases h : ∃ s, IsSheetAt J A x s
-  · simp only [dif_pos h]; exact hF x _
-  · simp only [dif_neg h]; exact hasSum_zero
+  · simp only [dite_eq_left h]; exact hF x _
+  · simp only [dite_eq_right h]; exact hasSum_zero
 
 theorem abs_sheetSum_le {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin d) (Fin n) ℂ} {y : Fin d → ℂ}
     (hfin : (fibre J A y).Finite) (F : (Fin n → ℂ) → ((Fin d → ℂ) → Fin n → ℂ) → ℝ) :
@@ -66,8 +66,8 @@ theorem abs_sheetSum_le {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin 
   rw [sheetSum_eq_sum hfin, sheetSum_eq_sum hfin]
   refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun x _ => ?_)
   by_cases h : ∃ s, IsSheetAt J A x s
-  · simp only [dif_pos h, le_refl]
-  · simp only [dif_neg h, abs_zero, le_refl]
+  · simp only [dite_eq_left h, le_refl]
+  · simp only [dite_eq_right h, abs_zero, le_refl]
 
 theorem sheetSum_mono {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin d) (Fin n) ℂ} {y : Fin d → ℂ}
     (hfin : (fibre J A y).Finite) {F G : (Fin n → ℂ) → ((Fin d → ℂ) → Fin n → ℂ) → ℝ}
@@ -76,8 +76,8 @@ theorem sheetSum_mono {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin d)
   rw [sheetSum_eq_sum hfin, sheetSum_eq_sum hfin]
   refine Finset.sum_le_sum fun x _ => ?_
   by_cases h : ∃ s, IsSheetAt J A x s
-  · simp only [dif_pos h]; exact hFG x _
-  · simp only [dif_neg h, le_refl]
+  · simp only [dite_eq_left h]; exact hFG x _
+  · simp only [dite_eq_right h, le_refl]
 
 theorem indicator_mul (S : Set (Fin n → ℂ)) (f : (Fin n → ℂ) → ℝ) (x : Fin n → ℂ) (c : ℝ) :
     S.indicator f x * c = S.indicator (fun z => f z * c) x := by

@@ -70,10 +70,4 @@ theorem CharT.Ok.psiC_ne {Ps : CharT X Pr} (h : Ps.Ok) (σ₀ : X.K →+* ℂ) (
 
 end Weil
 
-section Gauss
-
-variable (ι : Qb →+* ℂ) (LL : Fld) [FiniteDimensional ℚ LL] [Normal ℚ LL] (hE : KQ 1 ≤ LL)
-
-end Gauss
-
 end Formalism.L2.Col

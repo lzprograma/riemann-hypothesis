@@ -155,10 +155,10 @@ theorem tri_alg (n : ℕ) (b : ℕ → ℕ → ℂ) (hb : ∀ i k, b i k ∈ For
     rw [← Finset.sum_subset hsub (f := fun i => q i * (if i ≤ k then b i (k - i) else 0))]
     · refine Finset.sum_congr rfl fun i hi => ?_
       simp only [Finset.mem_range] at hi
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
     · intro i hi hni
       simp only [Finset.mem_range] at hi hni
-      rw [if_neg (by omega), mul_zero]
+      rw [ite_eq_right (by omega), mul_zero]
   have key : ∀ k, k ≤ n → q k ∈ V k := by
     intro k
     induction k using Nat.strong_induction_on with
@@ -216,17 +216,17 @@ theorem prod_expand {ι : Type} (A Y : PowerSeries ℂ) (s : Finset ι) (c : ι 
     set m := s.card
     have e1 : ∑ i ∈ Finset.range (m + 1 + 1), C (if i ≤ m then q i else 0) * Y ^ i * A ^ (m + 1 - i)
         = A * ∑ i ∈ Finset.range (m + 1), C (q i) * Y ^ i * A ^ (m - i) := by
-      rw [Finset.sum_range_succ, if_neg (by omega), map_zero, zero_mul, zero_mul, add_zero, Finset.mul_sum]
+      rw [Finset.sum_range_succ, ite_eq_right (by omega), map_zero, zero_mul, zero_mul, add_zero, Finset.mul_sum]
       refine Finset.sum_congr rfl fun i hi => ?_
       simp only [Finset.mem_range] at hi
-      rw [if_pos (by omega), show m + 1 - i = m - i + 1 by omega, pow_succ]
+      rw [ite_eq_left (by omega), show m + 1 - i = m - i + 1 by omega, pow_succ]
       ring
     have e2 : ∑ i ∈ Finset.range (m + 1 + 1), C (if i = 0 then 0 else c a * q (i - 1)) * Y ^ i * A ^ (m + 1 - i)
         = C (c a) * Y * ∑ i ∈ Finset.range (m + 1), C (q i) * Y ^ i * A ^ (m - i) := by
-      rw [Finset.sum_range_succ', if_pos rfl, map_zero, zero_mul, zero_mul, add_zero, Finset.mul_sum]
+      rw [Finset.sum_range_succ', ite_eq_left rfl, map_zero, zero_mul, zero_mul, add_zero, Finset.mul_sum]
       refine Finset.sum_congr rfl fun i hi => ?_
       simp only [Finset.mem_range] at hi
-      rw [if_neg (by omega), Nat.add_sub_cancel, show m + 1 - (i + 1) = m - i by omega, map_mul, pow_succ]
+      rw [ite_eq_right (by omega), Nat.add_sub_cancel, show m + 1 - (i + 1) = m - i by omega, map_mul, pow_succ]
       ring
     have e3 : ∑ i ∈ Finset.range (m + 1 + 1),
         C ((if i ≤ m then q i else 0) - (if i = 0 then 0 else c a * q (i - 1))) * Y ^ i * A ^ (m + 1 - i)
@@ -261,9 +261,9 @@ theorem coeff_mvExp_gauss (t : ℂ) (k : ℕ) :
         = coeff (2 * k) ((C t * X ^ 2 : PowerSeries ℂ) ^ j) := rfl
     rw [e2, mul_pow, ← map_pow, ← pow_mul, coeff_C_mul_X_pow]
   rw [e, coeff_mvExp h0 (N := 2 * k + 1) (by rw [Finsupp.degree_single]; omega), Finset.sum_eq_single k]
-  · rw [ej, if_pos rfl, div_eq_inv_mul]
+  · rw [ej, ite_eq_left rfl, div_eq_inv_mul]
   · intro j _ hj
-    rw [ej, if_neg (by omega), mul_zero]
+    rw [ej, ite_eq_right (by omega), mul_zero]
   · intro hk
     simp only [Finset.mem_range] at hk
     omega
@@ -294,7 +294,7 @@ theorem mul_s2_mem_Qbar_of_isogenyFormula (e : PowerSeries ℂ) (he : InQ e) (s 
       refine mul_ne_zero ?_ (pow_ne_zero _ X_ne_zero)
       intro h0
       have := congrArg (coeff 0) h0
-      rw [coeff_C, if_pos rfl, map_zero] at this
+      rw [coeff_C, ite_eq_left rfl, map_zero] at this
       exact hα0 (pow_eq_zero_iff (by norm_num) |>.1 this)
     have key : C (α ^ 2) * X ^ (2 * n + 2) * ((rescale α Φ) ^ 2 - Φ ^ (2 * (n + 1)) * Pi) = 0 := by
       rw [map_pow] at hI' ⊢
@@ -361,8 +361,8 @@ theorem mul_s2_mem_Qbar_of_isogenyFormula (e : PowerSeries ℂ) (he : InQ e) (s 
     rw [coeff_C_mul, coeff_X_pow_mul']
     congr 1
     by_cases hik : i ≤ k
-    · rw [if_pos (by omega), if_pos hik, show 2 * k - 2 * i = 2 * (k - i) by omega]
-    · rw [if_neg (by omega), if_neg hik]
+    · rw [ite_eq_left (by omega), ite_eq_left hik, show 2 * k - 2 * i = 2 * (k - i) by omega]
+    · rw [ite_eq_right (by omega), ite_eq_right hik]
   have e : (((Fintype.card ι + 1 : ℕ) : ℂ) - α ^ 2) * s = t := by
     rw [ht, ← hn]; push_cast; ring
   rw [e]; exact htri

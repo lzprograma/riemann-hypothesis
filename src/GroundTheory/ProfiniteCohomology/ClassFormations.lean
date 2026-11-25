@@ -312,17 +312,6 @@ universe u
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-section QuotQuot
-
-variable {U V V' : Subgroup G} [(V.subgroupOf U).Normal] [(V'.subgroupOf U).Normal]
-
-
-variable (C : Rep.{u} k G)
-
-variable [IsDiscreteRep C]
-
-end QuotQuot
-
 namespace PreClassFormation
 
 variable [CompactSpace G] [TotallyDisconnectedSpace G]

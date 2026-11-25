@@ -100,7 +100,7 @@ private theorem exists_valuation_sub_lt_of_injective (F : Type) [Field F] [Numbe
     by_cases hv : v ∈ T
     · obtain ⟨r, hr⟩ := RingHom.mem_rangeS.1 (hb v hv)
       refine ⟨r, ?_⟩
-      rw [if_pos hv, hr, Algebra.smul_def]
+      rw [ite_eq_left hv, hr, Algebra.smul_def]
     · exact ⟨0, by simp [hv]⟩
   choose g hg using hex
   have hfin : {v : HeightOneSpectrum (𝓞 F) | v.asIdeal ∣ Ideal.span {d}}.Finite :=
@@ -124,10 +124,10 @@ private theorem exists_valuation_sub_lt_of_injective (F : Type) [Field F] [Numbe
     exact (v.intValuation_le_pow_iff_mem _ _).2 (hr v hv)
   refine ⟨algebraMap (𝓞 F) F r / algebraMap (𝓞 F) F d, fun v hv => ?_, fun v hv => ?_⟩
   · have h := key v (Finset.mem_union_left _ hv)
-    rwa [if_pos hv] at h
+    rwa [ite_eq_left hv] at h
   · by_cases hvS : v ∈ S
     · have h := key v hvS
-      rwa [if_neg hv, sub_zero] at h
+      rwa [ite_eq_right hv, sub_zero] at h
     · have hnd : ¬ v.asIdeal ∣ Ideal.span {d} := fun h =>
         hvS (Finset.mem_union_right _ (hfin.mem_toFinset.2 h))
       have hd1 : v.valuation F (algebraMap (𝓞 F) F d) = 1 := by

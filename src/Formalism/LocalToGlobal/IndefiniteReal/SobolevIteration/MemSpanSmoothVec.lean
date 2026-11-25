@@ -16,12 +16,6 @@ namespace Formalism.IndefR.Tow.OrbStPf
 variable {n : ℕ} {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
   (ρ : Matrix (Fin n) (Fin n) ℂ → (E →L[ℂ] E)) (Lie U : Set (Matrix (Fin n) (Fin n) ℂ))
 
-section SV
-
-variable {ρ Lie}
-
-end SV
-
 variable {ρ Lie U}
 variable (hU1 : (1 : Matrix (Fin n) (Fin n) ℂ) ∈ U) (hUm : ∀ a ∈ U, ∀ b ∈ U, a * b ∈ U)
   (hρ : ∀ a ∈ U, ∀ b ∈ U, ρ (a * b) = (ρ a).comp (ρ b))
@@ -90,7 +84,7 @@ lemma prod_mask {N : ℕ} (Z : Fin N → Matrix (Fin n) (Fin n) ℂ) (j : ℕ) (
     · simp
     · intro k h1 h2
       simp only [List.getElem_drop, List.getElem_ofFn, mask]
-      rw [if_neg (by simp)]
+      rw [ite_eq_right (by simp)]
   have ht : ((List.ofFn fun i => NormedSpace.exp (mask j r i • Z i)).take j).prod = 1 := by
     apply List.prod_eq_one
     intro x hx
@@ -102,9 +96,9 @@ lemma prod_mask {N : ℕ} (Z : Fin N → Matrix (Fin n) (Fin n) ℂ) (j : ℕ) (
 lemma contDiff_mask {N : ℕ} (j : ℕ) : ContDiff ℝ ∞ (mask (N := N) j) := by
   refine contDiff_pi.2 fun i => ?_
   by_cases h : i.val < j
-  · simp only [mask, h, if_true]
+  · simp only [mask, h, ite_true]
     exact contDiff_const
-  · simp only [mask, h, if_false]
+  · simp only [mask, h, ite_false]
     exact contDiff_pi.1 contDiff_id i
 
 lemma contDiff_orb {N : ℕ} (Z : Fin N → Matrix (Fin n) (Fin n) ℂ) (hZ : ∀ i, Z i ∈ Lie) {u : E}
@@ -128,11 +122,11 @@ lemma orb_update {N : ℕ} (Z : Fin N → Matrix (Fin n) (Fin n) ℂ) (hZ : ∀ 
     · simp
     · intro k h1 h2
       simp only [List.getElem_drop, List.getElem_ofFn]
-      rw [Function.update_apply, if_neg]
+      rw [Function.update_apply, ite_eq_right]
       intro h
       simp only [Fin.mk.injEq] at h
       omega
-  rw [hdrop, List.getElem_ofFn, Function.update_apply, if_pos rfl,
+  rw [hdrop, List.getElem_ofFn, Function.update_apply, ite_eq_left rfl,
     hρ _ (hexp _ (hZ _) _) _ (prod_drop_mem hU1 hUm hexp Z hZ r (j + 1))]
   rfl
 
@@ -218,7 +212,7 @@ lemma word_eval (l : List (Matrix (Fin n) (Fin n) ℂ)) (hl : ∀ Y ∈ l, Y ∈
     · exact hX
   have hZl : ∀ (i : Fin (l.length + 1)) (h : i.val < l.length), Z i = l[i.val]'(by omega) := by
     intro i h
-    simp only [Z, dif_pos h]
+    simp only [Z, dite_eq_left h]
   obtain ⟨L, -, hL⟩ := word_pds hU1 hUm hρ hexp l rfl Z hZ hZl l.length 0 (by simp)
   refine ⟨Z, L, hZ, by simp [Z], ?_⟩
   intro v hv t

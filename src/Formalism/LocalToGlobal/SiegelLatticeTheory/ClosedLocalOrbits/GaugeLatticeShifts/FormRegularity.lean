@@ -111,8 +111,6 @@ theorem psiInf_neg {E : Type} [Field E] [NumberField E] (g : ℕ) (x : E) :
   push_cast
   ring
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Main
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)

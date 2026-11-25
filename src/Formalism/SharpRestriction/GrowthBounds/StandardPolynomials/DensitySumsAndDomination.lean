@@ -3,47 +3,6 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.ObjSeg
 public import Formalism.SharpRestriction.GrowthBounds.PolBridge
 public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCore
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -73,13 +32,13 @@ theorem glAct_mul' (Lt : Letters (Fin N)) (S : Set (Fin N)) (c d : Fin r) (f h :
   refine Finset.sum_congr rfl fun l _ => ?_
   by_cases hl : l ∈ S
   · by_cases hv : Lt.vec l = true
-    · simp only [if_pos hl, if_pos hv, LinearMap.comp_apply, LinearMap.mulLeft_apply, Derivation.coeFn_coe,
+    · simp only [ite_eq_left hl, ite_eq_left hv, LinearMap.comp_apply, LinearMap.mulLeft_apply, Derivation.coeFn_coe,
         Derivation.leibniz, smul_eq_mul]
       ring
-    · simp only [if_pos hl, if_neg hv, LinearMap.neg_apply, LinearMap.comp_apply, LinearMap.mulLeft_apply,
+    · simp only [ite_eq_left hl, ite_eq_right hv, LinearMap.neg_apply, LinearMap.comp_apply, LinearMap.mulLeft_apply,
         Derivation.coeFn_coe, Derivation.leibniz, smul_eq_mul]
       ring
-  · simp only [if_neg hl, LinearMap.zero_apply]
+  · simp only [ite_eq_right hl, LinearMap.zero_apply]
     ring
 
 open Classical in
@@ -93,30 +52,30 @@ theorem glAct_X' (Lt : Letters (Fin N)) (S : Set (Fin N)) (c d : Fin r) (a : Fin
   rw [Finset.sum_eq_single a]
   · by_cases hl : a ∈ S
     · by_cases hv : Lt.vec a = true
-      · simp only [if_pos hl, if_pos hv, LinearMap.comp_apply, LinearMap.mulLeft_apply, Derivation.coeFn_coe, pderiv_X]
+      · simp only [ite_eq_left hl, ite_eq_left hv, LinearMap.comp_apply, LinearMap.mulLeft_apply, Derivation.coeFn_coe, pderiv_X]
         by_cases he : e = d
         · subst he; simp
         · have : (a, d) ≠ (a, e) := fun h => he (Prod.mk.inj h).2.symm
           simp [he, Ne.symm this]
-      · simp only [if_pos hl, if_neg hv, LinearMap.neg_apply, LinearMap.comp_apply, LinearMap.mulLeft_apply,
+      · simp only [ite_eq_left hl, ite_eq_right hv, LinearMap.neg_apply, LinearMap.comp_apply, LinearMap.mulLeft_apply,
           Derivation.coeFn_coe, pderiv_X]
         by_cases he : e = c
         · subst he; simp
         · have : (a, c) ≠ (a, e) := fun h => he (Prod.mk.inj h).2.symm
           simp [he, Ne.symm this]
-    · simp only [if_neg hl, LinearMap.zero_apply]
+    · simp only [ite_eq_right hl, LinearMap.zero_apply]
   · intro l _ hla
     have h1 : ∀ b : Fin r, pderiv (l, b) (X (a, e) : MvPolynomial (Fin N × Fin r) K) = 0 := by
       intro b
-      rw [pderiv_X, Pi.single_apply, if_neg]
+      rw [pderiv_X, Pi.single_apply, ite_eq_right]
       intro h
       exact hla (Prod.mk.inj h).1.symm
     by_cases hl : l ∈ S
     · by_cases hv : Lt.vec l = true
-      · simp only [if_pos hl, if_pos hv, LinearMap.comp_apply, LinearMap.mulLeft_apply, Derivation.coeFn_coe, h1, mul_zero]
-      · simp only [if_pos hl, if_neg hv, LinearMap.neg_apply, LinearMap.comp_apply, LinearMap.mulLeft_apply,
+      · simp only [ite_eq_left hl, ite_eq_left hv, LinearMap.comp_apply, LinearMap.mulLeft_apply, Derivation.coeFn_coe, h1, mul_zero]
+      · simp only [ite_eq_left hl, ite_eq_right hv, LinearMap.neg_apply, LinearMap.comp_apply, LinearMap.mulLeft_apply,
           Derivation.coeFn_coe, h1, mul_zero, neg_zero]
-    · simp only [if_neg hl, LinearMap.zero_apply]
+    · simp only [ite_eq_right hl, LinearMap.zero_apply]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem chWt_add (LL : ChainLetters N) (j : ℕ) (c : Fin r) (m m' : Fin N × Fin r →₀ ℕ) :
@@ -193,7 +152,7 @@ theorem ycond_one (LL : ChainLetters N) (j : ℕ) : (1 : MvPolynomial (Fin N × 
         have := MvPolynomial.mem_support_iff.1 (Finset.mem_coe.1 hm)
         rw [MvPolynomial.coeff_one] at this
         by_contra h
-        exact this (if_neg (Ne.symm h))
+        exact this (ite_eq_right (Ne.symm h))
       subst hm'
       show ((chWt LL j 0 (0 : Fin N × Fin r →₀ ℕ) : ℤ) : WithTop ℤ) ≤ _
       simp [chWt]
@@ -276,7 +235,7 @@ theorem ycond_pair (LL : ChainLetters N) (j : ℕ) (a a' : Fin N) (ha : LL.vec a
     tcPairP K (r := r) a a' ∈ YCond K (r := r) LL j ((pWt j a a' : ℤ) : WithTop ℤ) := by
   classical
   by_cases hboth : (a : ℕ) < j ∧ (a' : ℕ) < j
-  · have hp : pWt j a a' = 0 := by unfold pWt; rw [if_neg]; tauto
+  · have hp : pWt j a a' = 0 := by unfold pWt; rw [ite_eq_right]; tauto
     rw [hp]
     have key : Submodule.span K {tcPairP K (r := r) a a'} ≤ YCond K (r := r) LL j (((0 : ℕ) : ℤ) : WithTop ℤ) := by
       refine ycond_of_stable LL j _ _ ?_ ?_
@@ -291,7 +250,7 @@ theorem ycond_pair (LL : ChainLetters N) (j : ℕ) (a a' : Fin N) (ha : LL.vec a
         rw [Finset.mem_singleton.1 hx, Finset.mem_singleton.1 hy]
         show ((chWt LL j 0 _ : ℤ) : WithTop ℤ) ≤ _
         have hv' : ¬ LL.vec a' = true := by rw [ha']; exact Bool.false_ne_true
-        rw [chWt_add, chWt_single, chWt_single, if_pos hboth.1, if_pos hboth.2, if_pos ha, if_neg hv']
+        rw [chWt_add, chWt_single, chWt_single, ite_eq_left hboth.1, ite_eq_left hboth.2, ite_eq_left ha, ite_eq_right hv']
         by_cases hc : c = 0 <;> simp [hc]
       · intro c d x hx
         obtain ⟨t, rfl⟩ := Submodule.mem_span_singleton.1 hx
@@ -302,9 +261,9 @@ theorem ycond_pair (LL : ChainLetters N) (j : ℕ) (a a' : Fin N) (ha : LL.vec a
           simp only [glAct_mul', glAct_X']
           have m1 : a ∈ {i : Fin N | (i : ℕ) < j} := hboth.1
           have m2 : a' ∈ {i : Fin N | (i : ℕ) < j} := hboth.2
-          simp only [if_pos m1, if_pos m2, if_pos ha, ha', Bool.false_eq_true, if_false]
+          simp only [ite_eq_left m1, ite_eq_left m2, ite_eq_left ha, ha', Bool.false_eq_true, ite_false]
           rw [Finset.sum_add_distrib]
-          simp only [ite_mul, mul_ite, zero_mul, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+          simp only [ite_mul, mul_ite, zero_mul, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
           ring
         rw [map_smul, h0, smul_zero]
         exact Submodule.zero_mem _
@@ -312,7 +271,7 @@ theorem ycond_pair (LL : ChainLetters N) (j : ℕ) (a a' : Fin N) (ha : LL.vec a
   · have hle : ((vWt LL j a : ℤ) : WithTop ℤ) + ((vWt LL j a' : ℤ) : WithTop ℤ) ≤ ((pWt j a a' : ℤ) : WithTop ℤ) := by
       rw [← WithTop.coe_add, WithTop.coe_le_coe]
       unfold vWt pWt
-      simp only [ha, ha', true_and, Bool.false_eq_true, false_and, if_false]
+      simp only [ha, ha', true_and, Bool.false_eq_true, false_and, ite_false]
       split_ifs <;> simp_all
     refine Submodule.sum_mem _ fun c _ => ?_
     exact ycond_mono LL j hle (ycond_mul LL j _ _ (ycond_X LL j a c) (ycond_X LL j a' c))
@@ -603,7 +562,7 @@ theorem uTot_mem {ju : Fin S.t → ℕ} {jp : ℕ} {G : MvPolynomial (Fin (2 * s
       constructor <;> omega
     refine ⟨fun l => hLv l, ?_⟩
     have d1 := hdeg (chU s)
-    rw [if_pos (show (chU s).val = 2 * s from rfl)] at d1
+    rw [ite_eq_left (show (chU s).val = 2 * s from rfl)] at d1
     show jp ≤ min ((segChain p S aTop b').deg (chU s)) S.bPlus
     exact le_min (by omega) (by omega)
   · refine ⟨y, ⟨⟨?_, ?_⟩, ?_⟩, ∏ c, X (xiVar (2 * s + 1) r S.t c) ^ γ c, ?_, ?_⟩

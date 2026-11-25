@@ -5,49 +5,8 @@ public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMir
 public import Mathlib.LinearAlgebra.Matrix.Permutation
 public import Mathlib.Basic.PEquiv
 public import Mathlib.Data.Matrix.PEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotypicTraceEqOfOneDoubleCoset, Development.AbelianVarietyTheory.Proofs.FlagMeasures.PatternGroupSubgroupOrderCharacter, Development.AbelianVarietyTheory.Proofs.FlagMeasures.PhIUnionTrans, Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumGraphEqSumEntN, Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsConjRenumber, Development.AbelianVarietyTheory.Proofs.FlagMeasures.TrFirstPattern, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GroupAlgebraTracePatternIdempotentExchange
@@ -381,7 +340,7 @@ theorem conj_pat {Φ Φ₁ E : Fin N → Fin N → Prop} (hE : ∀ a, ¬ E a a) 
     rw [sumAt_one_add hE]
     unfold sumAt
     rw [Finset.sum_eq_single p (fun a _ ha => Finset.sum_eq_zero fun b _ => h0 a b (Or.inl ha)) (by simp),
-      Finset.sum_eq_single q (fun b _ hb => h0 p b (Or.inr hb)) (by simp), if_pos hpq, conj_entry]
+      Finset.sum_eq_single q (fun b _ hb => h0 p b (Or.inr hb)) (by simp), ite_eq_left hpq, conj_entry]
 
 def patChar (ψ : AddChar (ZMod g) ℂ) (E : Fin N → Fin N → Prop) (hE : ∀ a, ¬ E a a) (H : Subgroup (Gn g N))
     (hm : ∀ x y : H, sumAt E (((x : Gn g N) : Mt g N) * ((y : Gn g N) : Mt g N)) =
@@ -691,7 +650,7 @@ theorem sum_graph_eq_sum_entN {A : Type} [AddCommMonoid A] {N : ℕ} (M : Matrix
       if (a : ℕ) ∈ S then entN M a (f a) else 0 := by
     intro a
     by_cases ha : (a : ℕ) ∈ S
-    · rw [if_pos ha]
+    · rw [ite_eq_left ha]
       by_cases hf : f a < N
       · rw [Finset.sum_eq_single ⟨f a, hf⟩]
         · split_ifs with hc
@@ -699,7 +658,7 @@ theorem sum_graph_eq_sum_entN {A : Type} [AddCommMonoid A] {N : ℕ} (M : Matrix
             rw [dite_eq_left ⟨a.isLt, hf⟩]
           · exact absurd ⟨ha, rfl⟩ hc
         · intro b _ hb
-          rw [if_neg]
+          rw [ite_eq_right]
           intro h
           exact hb (Fin.ext h.2)
         · intro h
@@ -708,11 +667,11 @@ theorem sum_graph_eq_sum_entN {A : Type} [AddCommMonoid A] {N : ℕ} (M : Matrix
         · unfold entN
           rw [dite_eq_right (fun hh => hf hh.2)]
         · intro b _
-          rw [if_neg]
+          rw [ite_eq_right]
           intro h
           exact hf (h.2 ▸ b.isLt)
-    · rw [if_neg ha]
-      exact Finset.sum_eq_zero (fun b _ => if_neg (fun h => ha h.1))
+    · rw [ite_eq_right ha]
+      exact Finset.sum_eq_zero (fun b _ => ite_eq_right (fun h => ha h.1))
   rw [Finset.sum_congr rfl (fun a _ => h1 a)]
   rw [Fin.sum_univ_eq_sum_range (fun a => if a ∈ S then entN M a (f a) else 0) N]
   rw [← Finset.sum_filter]
@@ -789,8 +748,8 @@ private theorem sum_sum_ite_eq_sum_entN_of_iff {A : Type} [AddCommMonoid A] {N :
   rw [← sum_graph_eq_sum_entN]
   refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
   by_cases hp : P a b
-  · rw [if_pos hp, if_pos ((h a b b.isLt).1 hp)]
-  · rw [if_neg hp, if_neg (fun hq => hp ((h a b b.isLt).2 hq))]
+  · rw [ite_eq_left hp, ite_eq_left ((h a b b.isLt).1 hp)]
+  · rw [ite_eq_right hp, ite_eq_right (fun hq => hp ((h a b b.isLt).2 hq))]
 
 theorem sumAt_eeI_eq_phiJ {N : ℕ} (k s : ℕ) (hN : N = k + 2 * s + 1) (M : Mt g N) :
     sumAt (eeI k s) M = phiJ k s M := by
@@ -851,7 +810,7 @@ theorem sumAt_eeI_eq_phiJ {N : ℕ} (k s : ℕ) (hN : N = k + 2 * s + 1) (M : Mt
         simp only [add_zero]
         congr 1
         exact Finset.sum_congr rfl (fun i _ => by congr 1 <;> omega)
-      rw [hB, Finset.sum_singleton, hC, if_pos (show 1 ≤ t + 1 by omega), Nat.add_sub_cancel]
+      rw [hB, Finset.sum_singleton, hC, ite_eq_left (show 1 ≤ t + 1 by omega), Nat.add_sub_cancel]
       ring
   rw [hsplit, h1, h2, h3, h4]
   unfold phiJ
@@ -905,7 +864,7 @@ private lemma traceOnCharacter_averagedSingles_eq (g N : ℕ) [Fact g.Prime]
     Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun u _ => ?_
-  simp only [mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   ring
 
 
@@ -1071,15 +1030,15 @@ theorem sumAt_eq {g : ℕ} [Fact g.Prime] (N k : ℕ) (M : Mt g N) (hz : ∀ a, 
     by_cases ha : (a : ℕ) + 1 < N
     · rw [Finset.sum_eq_single (⟨a + 1, ha⟩ : Fin N)]
       · by_cases hk : (a : ℕ) + 1 = k
-        · rw [if_neg (by simp [hk]), hk, hz a (by omega)]
-        · rw [if_pos (by simp [hk]), entN, dite_eq_left ⟨a.2, ha⟩]
+        · rw [ite_eq_right (by simp [hk]), hk, hz a (by omega)]
+        · rw [ite_eq_left (by simp [hk]), entN, dite_eq_left ⟨a.2, ha⟩]
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨e, -⟩
         exact hb (Fin.ext e)
       · simp
     · rw [entN, dite_eq_right (by omega)]
-      refine Finset.sum_eq_zero fun b _ => if_neg ?_
+      refine Finset.sum_eq_zero fun b _ => ite_eq_right ?_
       have := b.2
       omega
   have h2 : ∑ i ∈ Finset.range (N - 1), entN M i (i + 1) = ∑ i ∈ Finset.range N, entN M i (i + 1) := by

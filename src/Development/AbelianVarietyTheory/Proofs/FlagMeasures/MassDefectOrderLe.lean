@@ -81,7 +81,7 @@ lemma tsum_subtype_le {α : Type} (P : α → Prop) (s : Set α) (hs : ∀ a, P 
 theorem share_le {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
     [IsNonarchimedeanLocalField F] [CharZero F] {E : Type} [CommRing E] [Algebra F E]
     [TopologicalSpace E] (L : LocE F E) (r k : ℕ) (S : Frames L r k) (hk : 4 * r + 7 ≤ k)
-    (C : Set S.FrP) (hC : S.IsCls C) (β : ℕ) (_hβ : 1 ≤ β) :
+    (C : Set S.FrP) (hC : S.IsCls C) (β : ℕ) :
     (S.sumData fun d => S.nT d C fun Λ => S.be d Λ = β) ≤
       ENNReal.ofReal (4 * (S.q : ℝ) ^ (2 * S.a * (2 * r + 2)) * ((β : ℝ) ^ (k - 1))⁻¹) *
         S.sumData fun d => S.nT d C fun Λ => S.BBzero d Λ := by
@@ -180,7 +180,7 @@ theorem mass_defect_order_le : ∀ {F : Type} [Field F] [ValuativeRel F] [Topolo
   split_ifs with hC
   · rw [mul_left_comm]
     refine mul_le_mul_right ?_ _
-    refine (_root_.GlobalTheory.HL.DefectShare.share_le L r k S hk _ hC.1 β hβ).trans ?_
+    refine (_root_.GlobalTheory.HL.DefectShare.share_le L r k S hk _ hC.1 β).trans ?_
     refine mul_le_mul' (ENNReal.ofReal_le_ofReal hconst) ?_
     unfold Frames.sumData
     refine ENNReal.tsum_le_tsum fun o' => mul_le_mul' le_rfl ?_

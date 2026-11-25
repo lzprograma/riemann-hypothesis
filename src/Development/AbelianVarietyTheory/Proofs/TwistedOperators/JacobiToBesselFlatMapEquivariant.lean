@@ -68,7 +68,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Asc
 
 namespace GlobalTheory.AscFlatEquiFB
@@ -100,17 +99,17 @@ theorem embA_bx (B : BesL D σ) (h : GA D B.A) : mt B.V (embA B.d B.o h) ⬝ bx 
 
 theorem pX_bx (B : BesL D σ) (i : Fin σ) (k : Fin (σ + 1)) : (B.d.pX ⬝ bx B) i k = if k = Fin.castSucc i then 1 else 0 := by
   refine Fin.lastCases ?_ (fun j => ?_) k
-  · rw [mul_bx_last, Matrix.mulVec_mulVec, B.d.pX_j0, Matrix.zero_mulVec, if_neg (Fin.castSucc_lt_last i).ne']
+  · rw [mul_bx_last, Matrix.mulVec_mulVec, B.d.pX_j0, Matrix.zero_mulVec, ite_eq_right (Fin.castSucc_lt_last i).ne']
     rfl
   · rw [mul_bx_cs, B.d.pX_jX, Matrix.one_apply]
     by_cases h : i = j
     · subst h; simp
-    · rw [if_neg h, if_neg (fun e => h (Fin.castSucc_injective _ e).symm)]
+    · rw [ite_eq_right h, ite_eq_right (fun e => h (Fin.castSucc_injective _ e).symm)]
 
 theorem pX_bx_mul (B : BesL D σ) (U : Mx D (σ + 1) (σ + 1)) (i : Fin σ) (k : Fin (σ + 1)) :
     (B.d.pX ⬝ (bx B ⬝ U)) i k = U (Fin.castSucc i) k := by
   rw [← Matrix.mul_assoc, Matrix.mul_apply]
-  simp only [pX_bx, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [pX_bx, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem simpleSum_eq_upSum (B : BesL D σ) {n : GA D B.V} {U : Mx D (σ + 1) (σ + 1)} (e : mt B.V n ⬝ bx B = bx B ⬝ U) :
     simpleSum B.d (vecB B.o B.ζ) n = upSum U := by

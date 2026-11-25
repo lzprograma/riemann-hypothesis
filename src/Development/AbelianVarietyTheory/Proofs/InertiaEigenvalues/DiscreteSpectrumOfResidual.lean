@@ -14,47 +14,7 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Capelli
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CapelliDetDiagonalBlockActsByInfinitesimalCharac
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfCharInfCharOfCommute
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
 
@@ -413,11 +373,11 @@ theorem tv_mem_unipRad (e : (Σ a, m a) ≃ Fin N) {p q : Fin N} (hpq : blk e p 
   · have hne : i ≠ j := by rintro rfl; exact lt_irrefl _ hij
     change (transvection p q c) i j = 0
     rw [transvection, Matrix.add_apply, Matrix.one_apply_ne hne, Matrix.single_apply]
-    rw [if_neg, zero_add]
+    rw [ite_eq_right, zero_add]
     rintro ⟨rfl, rfl⟩
     exact lt_asymm hpq hij
   · change (transvection p q c) (e ⟨a, i⟩) (e ⟨a, j⟩) = _
-    rw [transvection, Matrix.add_apply, Matrix.single_apply, if_neg, add_zero]
+    rw [transvection, Matrix.add_apply, Matrix.single_apply, ite_eq_right, add_zero]
     · by_cases hij : i = j
       · subst hij; simp
       · have hne : e ⟨a, i⟩ ≠ e ⟨a, j⟩ := fun h => hij (by simpa using e.injective h)
@@ -508,19 +468,6 @@ theorem lie_tensorForms : ∀ (E : Type) [Field E] [NumberField E] [_root_.Numbe
     ∀ (k : Kinf E N) (g : GL (Fin N) (Af E)), (fun m => (lie E N X φ).1 (leviEmb (Ad E) (stdBlocks n h) m *
       (infGL E N (Unitary.toUnits k) * finGL E N g))) ∈ tensorForms π :=
   _root_.GlobalTheory.LieTensor.lie_tensorForms
-
-theorem qdet_sub_blocks_mem : ∀ (A : Type) [Ring A] [Algebra ℂ A] {c N : ℕ} (n : Fin c → ℕ) (h : ∑ i, n i = N)
-    (X : Fin N → Fin N → A), Formalism.REAL.GlRel X → ∀ u : ℂ,
-    Formalism.REAL.qdet X (u + ((N : ℂ) - 1) / 2) -
-              (List.ofFn fun i : Fin c => Formalism.REAL.qdet (fun p q : Fin (n i) => X (stdBlocks n h ⟨i, p⟩) (stdBlocks n h ⟨i, q⟩))
-                (u + ((n i : ℂ) - 1) / 2 - (modExp (fun i => Fin (n i)) i : ℂ) / 2)).prod ∈
-      Submodule.span ℂ {y : A | ∃ (p q : Fin N) (w : A), blk (stdBlocks n h) p < blk (stdBlocks n h) q ∧ y = X p q * w} :=
-  _root_.GlobalTheory.CapHC.qdet_blocks_congr
-
-theorem exists_iwasawa : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {c N : ℕ} (n : Fin c → ℕ)
-    (h : ∑ i, n i = N) (x : GA E N), ∃ u ∈ unipRad (Ad E) (stdBlocks n h), ∃ (m : ∀ i, GA E (n i)) (k : Kinf E N)
-      (g : GL (Fin N) (Af E)), x = u * leviEmb (Ad E) (stdBlocks n h) m * (infGL E N (Unitary.toUnits k) * finGL E N g) :=
-  _root_.GlobalTheory.IwasawaAdelic.iwasawa
 
 variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
@@ -704,52 +651,6 @@ theorem cap_commute_act {a : ℕ} (τ : E →+* ℂ) (u : ℂ) (o : Op E a) : Co
   | fin k => exact commute_cap_finRep τ u k
   | cpt k => exact GlobalTheory.CapAdInv.cap_commute_rt_infGL E a τ u _
   | lie X => exact commute_cap_lie τ u X
-
-theorem hasInfCharGL_of_isSpehOf {N a d : ℕ} {V : Submodule ℂ (Sm E N)} {π : CuspSub E a} (hV : IsSpehOf V π d)
-    (τ : E →+* ℂ) : ∃ m, π.HasInfChar τ m ∧ HasInfCharGL V τ (GlobalTheory.SphGal.spehInf d m) := by
-  have hm : π.HasInfChar τ ((CG.mk π).infChar τ) :=
-    hasInfChar_infChar_of_commute E a (fun τ u o => cap_commute_act τ u o) (CG.mk π) τ
-  refine ⟨(CG.mk π).infChar τ, hm, ?_, fun u ψ hψ => ?_⟩
-  · have hN := hV.mul_eq
-    simp only [GlobalTheory.SphGal.spehInf, Multiset.card_sum, Multiset.card_map, hm.1, Finset.sum_const, Finset.card_univ,
-      Fintype.card_fin, smul_eq_mul]
-    exact hN
-  obtain ⟨hs, ν, hν, f, hfV, hf⟩ := hV
-  set m := (CG.mk π).infChar τ
-  have hI : ∀ X, ∀ φ ∈ indForms hs (fun i => π.twist (ν i)), lie E N X φ ∈ indForms hs (fun i => π.twist (ν i)) :=
-    fun X φ hφ => lie_mem_indForms _ hs _ X φ hφ
-  rw [← hfV] at hψ
-  obtain ⟨φ, hφ, rfl⟩ := hψ
-  have hexpo : ∀ i : Fin d, expo (ν i) τ = ((spehExp d i + a * spehExp d i : ℝ) : ℂ) := fun i =>
-    (GlobalTheory.CuspRep.InfType.expo_of_infType E (ν i)).2.1 _ (hν i) τ
-  have hmod : ∀ i : Fin d, ((modExp (fun _ : Fin d => Fin a) i : ℤ) : ℂ) / 2 = ((a * spehExp d i : ℝ) : ℂ) := fun i => by
-    rw [mul_spehExp]
-    push_cast
-    rfl
-  have hc := cap_indForms (fun _ : Fin d => a) hs (fun i => π.twist (ν i)) τ (fun i => m.map (· + expo (ν i) τ))
-    (fun i => hm.twist (ν i)) u φ hφ
-  rw [cap_comm_quot hI f hf τ u φ hφ |>.symm, hc, map_smul]
-  congr 1
-  rw [GlobalTheory.SphGal.spehInf, prod_map_finset_sum]
-  refine Finset.prod_congr rfl fun i _ => ?_
-  rw [Multiset.map_map, Multiset.map_map]
-  congr 1
-  refine Multiset.map_congr rfl fun x _ => ?_
-  simp only [Function.comp_apply]
-  have h1 := hexpo i
-  have h2 := hmod i
-  have h3 : ((spehExp d i : ℝ) : ℂ) = ((d : ℂ) - 1) / 2 - ((i : ℕ) : ℂ) := by
-    simp [spehExp]
-  change u + (x + expo (ν i) τ) - ((modExp (fun _ : Fin d => Fin a) i : ℤ) : ℂ) / 2 = u + (x + (((d : ℂ) - 1) / 2 - ((i : ℕ) : ℂ)))
-  rw [h1, h2, ← h3]
-  push_cast
-  ring
-
-theorem discreteSpectrumGL_of_residual : GlobalTheory.Published.DiscreteSpectrumResidual → GlobalTheory.Published.DiscreteSpectrumGL := by
-  intro H E _ _ _ N hN
-  obtain ⟨h1, h2, h3, h4, h5⟩ := H E N hN
-  exact ⟨h1, h2, h3, h4, fun V hV a d π hn e => ⟨fun w => (h5 V hV a d π hn e w).1, fun w => (h5 V hV a d π hn e w).2,
-    hasInfCharGL_of_isSpehOf e⟩⟩
 
 end GlobalTheory.SpehInfChar
 end -- clump:auto

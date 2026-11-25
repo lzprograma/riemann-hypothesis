@@ -2,45 +2,6 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
 import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrData
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -84,9 +45,6 @@ private theorem exists_ee {V : Type} [Fintype V] (μ : V → ℝ) (h : μ ≠ 0)
   rw [ee, this, ← Complex.exp_pi_mul_I]
   congr 1; ring
 
-private theorem hs_congr {ι : Type} {f g : ι → ℂ} {d : ℂ} (h : HasSum f d) (e : ∀ i, g i = f i) : HasSum g d :=
-  (funext e : g = f) ▸ h
-
 private theorem kill {V ι : Type} [Fintype V] (μ : ι → V → ℝ) (B : ι → ℂ) (d : ℂ) (hμ : ∀ i, B i ≠ 0 → μ i ≠ 0)
     (h : ∀ x, HasSum (fun i => B i * ee (μ i) x) d) (S : Finset ι) :
     ∃ C : ι → ℂ, (∀ i, ‖C i‖ ≤ ‖B i‖) ∧ (∀ i ∈ S, C i = 0) ∧ ∀ x, HasSum (fun i => C i * ee (μ i) x) d := by
@@ -113,7 +71,7 @@ private theorem kill {V ι : Type} [Fintype V] (μ : ι → V → ℝ) (B : ι �
       · simp [h2 i hi]
     · have := ((h3 x).add (h3 (x + g))).div_const 2
       rw [show (d + d) / 2 = d by ring] at this
-      refine hs_congr this fun i => ?_
+      refine this.congr_fun fun i => ?_
       rw [ee_add]; ring
 
 private theorem const_zero {V ι : Type} [Fintype V] (μ : ι → V → ℝ) (B : ι → ℂ) (d : ℂ) (hμ : ∀ i, B i ≠ 0 → μ i ≠ 0)
@@ -144,7 +102,7 @@ private theorem coef_zero {V ι : Type} [Fintype V] (μ : ι → V → ℝ) (B :
     exact sub_ne_zero.2 (hμ.ne this)
   · have := ((h x).mul_right (ee (-μ j) x)).sub (hasSum_ite_eq j (B j))
     rw [zero_mul, zero_sub] at this
-    refine hs_congr this fun i => ?_
+    refine this.congr_fun fun i => ?_
     rw [mul_assoc, ← ee_add', ← sub_eq_add_neg]
     by_cases hi : i = j
     · subst hi; simp [ee_zero']
@@ -199,7 +157,7 @@ theorem UpperTheory.V.Sd.expUnique :
     intro yf x
     have := (h x 1 (by simp) yf).sub (h' x 1 (by simp) yf)
     rw [sub_sub_sub_cancel_left] at this
-    refine hs_congr this fun ξ => ?_
+    refine this.congr_fun fun ξ => ?_
     rw [← sub_mul, mul_assoc, ee, ← Complex.exp_add, ← mul_add, ← Finset.sum_add_distrib]
     congr 3
     refine Finset.sum_congr rfl fun v _ => ?_

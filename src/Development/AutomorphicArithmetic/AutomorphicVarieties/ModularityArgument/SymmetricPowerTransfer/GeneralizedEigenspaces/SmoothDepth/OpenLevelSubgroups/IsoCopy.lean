@@ -62,7 +62,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 private theorem isoCopy_struct {H T M : Type} [Group H] [AddCommGroup T] [Module ℂ T] [AddCommGroup M] [Module ℂ M]
@@ -121,7 +120,7 @@ theorem UpperTheory.V.Z.Sym.Al.isoCopy :
       Representation.IntertwiningMap.equivLinearMapAsModule ν μ
         ((q i).intertwiningMap_of_isIntertwiningMap ν μ (hq i))
     have hinj : Function.Injective (LinearMap.pi Q) := by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro x hx
       exact hsep x fun i => congrFun hx i
     have hNs : IsSemisimpleModule (MonoidAlgebra ℂ H) ν.asModule :=
@@ -133,8 +132,7 @@ theorem UpperTheory.V.Z.Sym.Al.isoCopy :
     haveI := IsSimpleModule.nontrivial (MonoidAlgebra ℂ H) S
     obtain ⟨s, hs⟩ := exists_ne (0 : S)
     obtain ⟨i, hi⟩ : ∃ i, Q i s ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hs (Subtype.ext (hsep s.1 fun i => hc i))
     have hne : (Q i).comp S.subtype ≠ 0 := fun h => hi (LinearMap.congr_fun h s)
     have hj : Function.Injective ((Q i).comp S.subtype) :=

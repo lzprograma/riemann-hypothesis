@@ -78,11 +78,11 @@ theorem tri_exists {T : E} (F : FlagG S r T) (s : S.V ≃ₗ[E] S.V)
         simp only [Fin.lastCases_castSucc]
         refine ⟨fun h => ?_, fun h => ?_⟩
         · have h' : a.val < i.val := h
-          rw [hl0 a i (by omega), if_neg (by rintro rfl; omega)]
+          rw [hl0 a i (by omega), ite_eq_right (by rintro rfl; omega)]
           simp
         · have h' : i = a := Fin.castSucc_injective _ h
           subst h'
-          rw [hl0 i i (lt_irrefl _), if_pos rfl]
+          rw [hl0 i i (lt_irrefl _), ite_eq_left rfl]
           simp
   · intro b
     induction b using Fin.lastCases with
@@ -95,7 +95,7 @@ theorem tri_exists {T : E} (F : FlagG S r T) (s : S.V ≃ₗ[E] S.V)
       rw [Fin.sum_univ_castSucc]
       simp only [Fin.lastCases_last, Fin.lastCases_castSucc, FlagG.fvec, Fin.snoc_castSucc, Fin.snoc_last,
         zero_smul, add_zero, add_smul, Finset.sum_add_distrib, ite_smul, one_smul, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true]
+        Finset.mem_univ, ite_true]
       rw [← hlsum a]
       abel
 
@@ -160,8 +160,6 @@ theorem lo_conjT {E : Type} [Field E] [StarRing E] {n : ℕ} {M : Matrix (Fin n)
   refine ⟨fun hij => by rw [(h j i).1 hij, star_zero], fun hij => ?_⟩
   subst hij
   rw [(h i i).2 rfl, star_one]
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem volume_index_b_stable (D : D7) (u u' : D.what₂.Word)
     (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))

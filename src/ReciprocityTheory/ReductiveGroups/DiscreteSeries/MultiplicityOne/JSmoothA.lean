@@ -1,6 +1,7 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HpkMulVecMulVec
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 public import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.Geometry.Manifold.Sheaf.Basic
@@ -28,115 +29,50 @@ variable {k r : ℕ}
 section hpk
 
 theorem hpk_out {i : Fin (2 * r + k + 1)} (h : i.val < r ∨ r + k < i.val) (j : Fin (2 * r + k + 1)) :
-    Hpk k r i j = if j.val = 2 * r + k - i.val then 1 else 0 := by
-  have hi := i.isLt
-  have hj := j.isLt
-  simp only [Hpk, Fin.ext_iff]
-  split_ifs <;> first | rfl | (exfalso; omega)
+    Hpk k r i j = if j.val = 2 * r + k - i.val then 1 else 0 :=
+  TopH.hpk_out h j
 
 theorem hpk_mid {i : Fin (2 * r + k + 1)} (h : ¬(i.val < r ∨ r + k < i.val)) (j : Fin (2 * r + k + 1)) :
-    Hpk k r i j = if j.val = i.val then (if i.val = r + k then -1 else 1) else 0 := by
-  have hi := i.isLt
-  have hj := j.isLt
-  simp only [Hpk, Fin.ext_iff]
-  split_ifs <;> first | rfl | (exfalso; omega)
+    Hpk k r i j = if j.val = i.val then (if i.val = r + k then -1 else 1) else 0 :=
+  TopH.hpk_mid h j
 
 theorem hpk_mulVec (v : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 1)) :
     (Hpk k r *ᵥ v) i = if i.val < r ∨ r + k < i.val then v ⟨2 * r + k - i.val, by omega⟩
-      else if i.val = r + k then -v i else v i := by
-  show ∑ j, Hpk k r i j * v j = _
-  have hi := i.isLt
-  by_cases h1 : i.val < r ∨ r + k < i.val
-  · rw [if_pos h1, Finset.sum_eq_single ⟨2 * r + k - i.val, by omega⟩]
-    · rw [hpk_out h1]; simp
-    · intro j _ hj
-      rw [hpk_out h1, if_neg, zero_mul]
-      intro hc; exact hj (Fin.ext hc)
-    · intro h; exact absurd (Finset.mem_univ _) h
-  · rw [if_neg h1, Finset.sum_eq_single i]
-    · rw [hpk_mid h1]
-      by_cases h2 : i.val = r + k
-      · simp [h2]
-      · simp [h2]
-    · intro j _ hj
-      rw [hpk_mid h1, if_neg, zero_mul]
-      intro hc; exact hj (Fin.ext hc)
-    · intro h; exact absurd (Finset.mem_univ _) h
+      else if i.val = r + k then -v i else v i :=
+  TopH.hpk_mulVec v i
 
-theorem hpk_mulVec_mulVec (v : Fin (2 * r + k + 1) → ℂ) : Hpk k r *ᵥ (Hpk k r *ᵥ v) = v := by
-  funext i
-  have hi := i.isLt
-  rw [hpk_mulVec]
-  by_cases h1 : i.val < r ∨ r + k < i.val
-  · rw [if_pos h1, hpk_mulVec]
-    have h3 : 2 * r + k - i.val < r ∨ r + k < 2 * r + k - i.val := by omega
-    rw [if_pos (show ((⟨2 * r + k - i.val, by omega⟩ : Fin (2 * r + k + 1)).val < r ∨
-      r + k < (⟨2 * r + k - i.val, by omega⟩ : Fin (2 * r + k + 1)).val) from h3)]
-    congr 1
-    ext
-    show 2 * r + k - (2 * r + k - i.val) = i.val
-    omega
-  · rw [if_neg h1]
-    by_cases h2 : i.val = r + k
-    · rw [if_pos h2, hpk_mulVec, if_neg h1, if_pos h2, neg_neg]
-    · rw [if_neg h2, hpk_mulVec, if_neg h1, if_neg h2]
+theorem hpk_mulVec_mulVec (v : Fin (2 * r + k + 1) → ℂ) : Hpk k r *ᵥ (Hpk k r *ᵥ v) = v :=
+  TopH.hpk_mulVec_mulVec v
 
-theorem mat_eq_of_mulVec {A B : Mat k r} (h : ∀ v, A *ᵥ v = B *ᵥ v) : A = B := by
-  first
-  | exact Matrix.toLin'.injective (LinearMap.ext fun v => by simpa [Matrix.toLin'_apply] using h v)
+theorem mat_eq_of_mulVec {A B : Mat k r} (h : ∀ v, A *ᵥ v = B *ᵥ v) : A = B :=
+  TopH.mat_eq_of_mulVec h
 
-theorem hpk_sq : Hpk k r * Hpk k r = 1 := mat_eq_of_mulVec fun v => by
-  rw [← Matrix.mulVec_mulVec, hpk_mulVec_mulVec, Matrix.one_mulVec]
+theorem hpk_sq : Hpk k r * Hpk k r = 1 :=
+  TopH.hpk_sq
 
-theorem hpk_conjT : (Hpk k r)ᴴ = Hpk k r := by
-  ext i j
-  have hi := i.isLt
-  have hj := j.isLt
-  simp only [Matrix.conjTranspose_apply, Hpk, Fin.ext_iff]
-  split_ifs <;> first | rfl | (exfalso; omega) | simp
+theorem hpk_conjT : (Hpk k r)ᴴ = Hpk k r :=
+  TopH.hpk_conjT
 
-theorem gv_left_inv {g : Mat k r} (hg : g ∈ GV k r) : Hpk k r * gᴴ * Hpk k r * g = 1 := by
-  have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
-  calc Hpk k r * gᴴ * Hpk k r * g = Hpk k r * (gᴴ * Hpk k r * g) := by
-        simp only [Matrix.mul_assoc]
-    _ = 1 := by rw [hg', hpk_sq]
+theorem gv_left_inv {g : Mat k r} (hg : g ∈ GV k r) : Hpk k r * gᴴ * Hpk k r * g = 1 :=
+  TopH.gv_left_inv hg
 
-theorem gv_inv_eq {g : Mat k r} (hg : g ∈ GV k r) : g⁻¹ = Hpk k r * gᴴ * Hpk k r := Matrix.inv_eq_left_inv (gv_left_inv hg)
+theorem gv_inv_eq {g : Mat k r} (hg : g ∈ GV k r) : g⁻¹ = Hpk k r * gᴴ * Hpk k r :=
+  TopH.gv_inv_eq hg
 
-theorem gv_inv_mul {g : Mat k r} (hg : g ∈ GV k r) : g⁻¹ * g = 1 := by
-  rw [gv_inv_eq hg]
-  exact gv_left_inv hg
+theorem gv_inv_mul {g : Mat k r} (hg : g ∈ GV k r) : g⁻¹ * g = 1 :=
+  TopH.gv_inv_mul hg
 
-theorem gv_mul_inv {g : Mat k r} (hg : g ∈ GV k r) : g * g⁻¹ = 1 := by
-  first
-  | exact Matrix.mul_nonsing_inv g (Matrix.isUnit_det_of_left_inverse (gv_left_inv hg))
+theorem gv_mul_inv {g : Mat k r} (hg : g ∈ GV k r) : g * g⁻¹ = 1 :=
+  TopH.gv_mul_inv hg
 
-theorem gv_one : (1 : Mat k r) ∈ GV k r := by
-  show (1 : Mat k r)ᴴ * Hpk k r * 1 = Hpk k r
-  simp
+theorem gv_one : (1 : Mat k r) ∈ GV k r :=
+  TopH.gv_one
 
-theorem gv_mul {g h : Mat k r} (hg : g ∈ GV k r) (hh : h ∈ GV k r) : g * h ∈ GV k r := by
-  have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
-  have hh' : hᴴ * Hpk k r * h = Hpk k r := hh
-  show (g * h)ᴴ * Hpk k r * (g * h) = Hpk k r
-  rw [Matrix.conjTranspose_mul]
-  calc hᴴ * gᴴ * Hpk k r * (g * h) = hᴴ * (gᴴ * Hpk k r * g) * h := by
-        simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by rw [hg', hh']
+theorem gv_mul {g h : Mat k r} (hg : g ∈ GV k r) (hh : h ∈ GV k r) : g * h ∈ GV k r :=
+  TopH.gv_mul hg hh
 
-theorem gv_inv_mem {g : Mat k r} (hg : g ∈ GV k r) : g⁻¹ ∈ GV k r := by
-  have hH : ∀ X : Mat k r, Hpk k r * (Hpk k r * X) = X := fun X => by
-    rw [← Matrix.mul_assoc, hpk_sq, Matrix.one_mul]
-  have h1 : g * (Hpk k r * gᴴ * Hpk k r) = 1 := by
-    rw [← gv_inv_eq hg]; exact gv_mul_inv hg
-  have h2 : ∀ X : Mat k r, g * (Hpk k r * (gᴴ * X)) = Hpk k r * X := fun X => by
-    calc g * (Hpk k r * (gᴴ * X)) = g * (Hpk k r * gᴴ * Hpk k r) * (Hpk k r * X) := by
-          simp only [Matrix.mul_assoc, hH]
-      _ = Hpk k r * X := by rw [h1, Matrix.one_mul]
-  show (g⁻¹)ᴴ * Hpk k r * g⁻¹ = Hpk k r
-  rw [gv_inv_eq hg]
-  simp only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, hpk_conjT,
-    Matrix.mul_assoc, hH, h2]
+theorem gv_inv_mem {g : Mat k r} (hg : g ∈ GV k r) : g⁻¹ ∈ GV k r :=
+  TopH.gv_inv_mem hg
 
 theorem gv_closed : IsClosed (GV k r) := by
   show IsClosed {g : Mat k r | gᴴ * Hpk k r * g = Hpk k r}
@@ -190,20 +126,14 @@ end hpk
 section gn
 
 theorem gN_eq_frob (g : Mat k r) :
-    gN g = @Norm.norm _ (Matrix.frobeniusSeminormedAddCommGroup).toNorm g := by
-  rw [Matrix.frobenius_norm_def]
-  unfold gN
-  rw [Real.sqrt_eq_rpow]
-  congr 1
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  first
-  | rw [Complex.normSq_eq_norm_sq, Real.rpow_two]
+    gN g = @Norm.norm _ (Matrix.frobeniusSeminormedAddCommGroup).toNorm g :=
+  TopH.gN_eq_frob g
 
-theorem gN_mul_le (a b : Mat k r) : gN (a * b) ≤ gN a * gN b := by
-  rw [gN_eq_frob, gN_eq_frob, gN_eq_frob]
-  exact Matrix.frobenius_norm_mul a b
+theorem gN_mul_le (a b : Mat k r) : gN (a * b) ≤ gN a * gN b :=
+  TopH.gN_mul_le a b
 
-theorem gN_nonneg (g : Mat k r) : 0 ≤ gN g := Real.sqrt_nonneg _
+theorem gN_nonneg (g : Mat k r) : 0 ≤ gN g :=
+  TopH.gN_nonneg g
 
 theorem gN_continuous : Continuous (fun g : Mat k r => gN g) := by
   show Continuous fun g : Mat k r => Real.sqrt (∑ i, ∑ j, Complex.normSq (g i j))
@@ -211,16 +141,11 @@ theorem gN_continuous : Continuous (fun g : Mat k r => gN g) := by
   | exact Real.continuous_sqrt.comp (continuous_finsetSum _ fun i _ => continuous_finsetSum _
       fun j _ => Complex.continuous_normSq.comp (continuous_id.matrix_elem i j))
 
-theorem gN_conjT (g : Mat k r) : gN gᴴ = gN g := by
-  first
-  | (rw [gN_eq_frob, gN_eq_frob]; exact Matrix.frobenius_norm_conjTranspose g)
+theorem gN_conjT (g : Mat k r) : gN gᴴ = gN g :=
+  TopH.gN_conjT g
 
-theorem gN_inv_le {g : Mat k r} (hg : g ∈ GV k r) : gN g⁻¹ ≤ gN (Hpk k r) ^ 2 * gN g := by
-  rw [gv_inv_eq hg]
-  calc gN (Hpk k r * gᴴ * Hpk k r) ≤ gN (Hpk k r * gᴴ) * gN (Hpk k r) := gN_mul_le _ _
-    _ ≤ gN (Hpk k r) * gN gᴴ * gN (Hpk k r) :=
-        mul_le_mul_of_nonneg_right (gN_mul_le _ _) (gN_nonneg _)
-    _ = gN (Hpk k r) ^ 2 * gN g := by rw [gN_conjT]; ring
+theorem gN_inv_le {g : Mat k r} (hg : g ∈ GV k r) : gN g⁻¹ ≤ gN (Hpk k r) ^ 2 * gN g :=
+  TopH.gN_inv_le hg
 
 theorem gN_add_le (a b : Mat k r) : gN (a + b) ≤ gN a + gN b := by
   letI : SeminormedAddCommGroup (Mat k r) := Matrix.frobeniusSeminormedAddCommGroup
@@ -295,7 +220,7 @@ end meas
 section ext
 open scoped Manifold
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem ext_test {φ : Mat k r → ℂ} (hφ : IsTestG φ) :
     ∃ Φ : Mat k r → ℂ, ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) Φ ∧ HasCompactSupport Φ ∧

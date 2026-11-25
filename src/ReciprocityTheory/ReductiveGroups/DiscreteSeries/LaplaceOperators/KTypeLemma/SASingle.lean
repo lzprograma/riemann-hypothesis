@@ -103,7 +103,7 @@ theorem deriv_Xi (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) (hV
 
     simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, sA_single, map_add (f := _),
     smul_eq_mul, mul_add, sum_add_distrib, t1, t2, t3, mul_ite, mul_zero, sum_ite_eq, mem_univ,
-    if_true, adX, actM, Submodule.coe_sum, Submodule.coe_smul, inner_sum, inner_smul_right,
+    ite_true, adX, actM, Submodule.coe_sum, Submodule.coe_smul, inner_sum, inner_smul_right,
     Matrix.mul_apply, Pi.mul_apply, ← mul_sum, ← hB]
     have u1 : ∑ a, ∑ b, X a b * (ei X s c' p.2 *
         l (Finsupp.linearCombination ℂ (wB EM φ X s) (adLW a b p.1)) * A v) =

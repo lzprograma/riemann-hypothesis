@@ -16,8 +16,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.KerJoinS
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section SSide
 
 variable {D : D7} {X : HidaSetting D} {Y : Formalism.L2.SG.Full.Full X} (hF : FinX Y) (I : SIso D.s (sOf hF))
@@ -33,21 +31,10 @@ theorem besS_conc (u : D.what₂.Word) (φ : D.what₂.Mu u) (F : D.what₂.EE) 
 
 end SSide
 
-section Unfold
-
-variable {D : D7} (X : HidaSetting D) (u : D.what₂.Word) (hK : X.LevelSubgroupCharacter)
-
-def perU (Fs : Set X.B.I.GA) (f : X.B.I.L2 X.B.μf X.B.fund) (T : Cu X u hK) : ℂ :=
-  ∫ g in Fs, X.B.I.ext f g * Ph X u hK T g ∂(X.B.I.muA X.B.μf)
-
-end Unfold
-
 section Ker
 
 variable {D : D7} (X : HidaSetting D) (G : GoodOp X) (j : D.what₂.EE ≃ₗᵢ[ℂ] EEC X G)
   {Fm : ∀ u, Formalism.L2.Forms.Forms0 D u} (Tr : ∀ u, Transport X u (Fm u)) (hK : X.LevelSubgroupCharacter)
-
-def rowL (F : D.what₂.EE) : X.B.I.L2 X.B.μf X.B.fund := ((j F : EEC X G) : L2X X)
 
 def KerJoinS (Dt : D.what₂.Word → Set X.B.I.GA) : Prop :=
   ∃ V : D.what₂.EE ≃ₗᵢ[ℂ] D.what₂.EE, ∀ u, ∃ a : ℂ, a ≠ 0 ∧ ∃ U : D.what₂.Mu u ≃ₗᵢ[ℂ] D.what₂.Mu u,

@@ -97,14 +97,14 @@ theorem exists_smul_mem_span_invariants_sup :
     rw [hz', hsumI, ← Finset.sum_sub_distrib]
     refine Submodule.sum_mem _ (fun g _ => ?_)
     by_cases hg : g ∈ q.inertia Γ
-    · rw [if_pos hg]
+    · rw [ite_eq_left hg]
       have e : (∑ j, d j * g • c j) • (g • x) - s • x
           = ((∑ j, d j * g • c j) - s) • (g • x) + s • (g • x - x) := by
         rw [sub_smul, smul_sub]; abel
       rw [e]
       exact Submodule.add_mem _ (Submodule.smul_mem_smul ((hsep g).1 hg) Submodule.mem_top)
         (Submodule.smul_mem _ s (htriv g hg x))
-    · rw [if_neg hg, sub_zero]
+    · rw [ite_eq_right hg, sub_zero]
       exact Submodule.smul_mem_smul ((hsep g).2 hg) Submodule.mem_top
   have key := Submodule.sub_mem _ (Submodule.mem_sup_left hz) (Submodule.mem_sup_right hdiff)
   rwa [sub_sub_cancel] at key

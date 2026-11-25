@@ -6,60 +6,8 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Exist
 public import Mathlib.RingTheory.Localization.Module
 public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IrreducibleOfValued
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ElementaryDivisorsInvHeckeElementSplitPlace
-import Mathlib.RingTheory.PicardGroup
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeElementaryDivisors, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCoordLattice
@@ -299,35 +247,12 @@ theorem smul_mem_latHat {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) {x : �
   | add y z _ _ h1 h2 => rw [add_smul]; exact add_mem h1 h2
   | neg y _ h => rw [neg_smul]; exact neg_mem h
 
-theorem trace_field (h2 : Module.finrank F E = 2)
-    (σ : E →ₐ[F] E) (hσ : ∀ e, σ (σ e) = e) (hf : ∀ e, σ e = e → ∃ f, algebraMap F E f = e) (e : E) :
-    algebraMap F E (Algebra.trace F E e) = e + σ e := by
-  obtain ⟨a, ha⟩ := hf (e + σ e) (by rw [map_add (f := _), hσ, add_comm])
-  have h1 : Algebra.trace F E (σ e) = Algebra.trace F E e :=
-    Algebra.trace_eq_of_algEquiv (AlgEquiv.ofAlgHom σ σ (AlgHom.ext hσ) (AlgHom.ext hσ)) e
-  have h3 := congrArg (Algebra.trace F E) ha
-  rw [Algebra.trace_algebraMap, h2, map_add (f := _), h1, two_smul, ← two_mul, ← two_mul] at h3
-  rw [← ha, mul_left_cancel₀ two_ne_zero h3]
-
 theorem trace_tmul (R : Type) [CommRing R] [Algebra F R] (a : R) (e : E) :
     Algebra.trace R (R ⊗[F] E) (a ⊗ₜ[F] e) = a * algebraMap F R (Algebra.trace F E e) := by
   have h1 : a ⊗ₜ[F] e = a • ((1 : R) ⊗ₜ[F] e) := by
     rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
   rw [h1, map_smul, Algebra.trace_apply, Algebra.trace_apply, ← Algebra.baseChange_lmul,
     LinearMap.trace_baseChange, smul_eq_mul]
-
-theorem trace_tensor (h2 : Module.finrank F E = 2)
-    (σ : E →ₐ[F] E) (hσ : ∀ e, σ (σ e) = e) (hf : ∀ e, σ e = e → ∃ f, algebraMap F E f = e)
-    (R : Type) [CommRing R] [Algebra F R] (z : R ⊗[F] E) :
-    algebraMap R (R ⊗[F] E) (Algebra.trace R (R ⊗[F] E) z) = z + sigR R σ z := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | add a b ha hb => simp only [map_add (f := _), ha, hb]; ring
-  | tmul a e =>
-    have h4 : sigR R σ (a ⊗ₜ[F] e) = a ⊗ₜ[F] σ e := rfl
-    rw [trace_tmul, h4, ← TensorProduct.tmul_add, ← trace_field h2 σ hσ hf, Algebra.TensorProduct.algebraMap_apply,
-      Algebra.algebraMap_self, RingHom.id_apply, mul_comm, ← Algebra.smul_def, TensorProduct.smul_tmul,
-      Algebra.algebraMap_eq_smul_one]
 
 theorem trace_mem_intAf {z : 𝔸ᶠ[F] ⊗[F] E} (hz : z ∈ intA F E) (v : HeightOneSpectrum (𝓞 F)) :
     evalV F v (Algebra.trace 𝔸ᶠ[F] (𝔸ᶠ[F] ⊗[F] E) z) ∈ v.adicCompletionIntegers F := by
@@ -341,55 +266,6 @@ theorem trace_mem_intAf {z : 𝔸ᶠ[F] ⊗[F] E} (hz : z ∈ intA F E) (v : Hei
   | zero => rw [map_zero, map_zero]; exact zero_mem _
   | add y z _ _ h1 h2 => rw [map_add (f := _), map_add (f := _)]; exact add_mem h1 h2
   | neg y _ h => rw [map_neg, map_neg]; exact neg_mem h
-
-theorem exists_component (h2 : Module.finrank F E = 2)
-    (σ : E →ₐ[F] E) (hσ : ∀ e, σ (σ e) = e) (hf : ∀ e, σ e = e → ∃ f, algebraMap F E f = e)
-    (v : HeightOneSpectrum (𝓞 F)) (e : 𝔸ᶠ[F] ⊗[F] E) (α : 𝔸ᶠ[F]) (h1 : e * e = e) (h0 : e * sigR 𝔸ᶠ[F] σ e = 0)
-    (hs : e + sigR 𝔸ᶠ[F] σ e = algebraMap 𝔸ᶠ[F] _ α) (hv : evalV F v α = 1)
-    (hw : ∀ w, w ≠ v → evalV F w α = 0) :
-    ∃ φ : 𝔸ᶠ[F] ⊗[F] E →+* Fv F v, (∀ x y, e * x = e * y ↔ φ x = φ y) ∧
-      (∀ a : 𝔸ᶠ[F], φ (algebraMap 𝔸ᶠ[F] _ a) = evalV F v a) ∧
-      ∀ x, e * x ∈ intA F E → φ x ∈ v.adicCompletionIntegers F := by
-  set c := sigR 𝔸ᶠ[F] σ with hc
-  set tr := Algebra.trace 𝔸ᶠ[F] (𝔸ᶠ[F] ⊗[F] E) with htr
-  have inj : Function.Injective (algebraMap 𝔸ᶠ[F] (𝔸ᶠ[F] ⊗[F] E)) :=
-    Algebra.TensorProduct.includeLeft_injective (S := F) (algebraMap F E).injective
-  have ht : ∀ x, algebraMap 𝔸ᶠ[F] _ (tr (e * x)) = e * x + c e * c x := fun x => by
-    rw [htr, trace_tensor h2 σ hσ hf, map_mul]
-  have hcc : c e * c e = c e := by rw [← map_mul, h1]
-  have hca : ∀ a : 𝔸ᶠ[F], c (algebraMap 𝔸ᶠ[F] _ a) = algebraMap 𝔸ᶠ[F] _ a := fun a => by
-    change a ⊗ₜ[F] σ 1 = a ⊗ₜ[F] 1
-    rw [map_one]
-  have halg : ∀ a : 𝔸ᶠ[F], tr (e * algebraMap 𝔸ᶠ[F] _ a) = α * a := fun a => inj (by
-    rw [ht, hca, map_mul, ← hs, add_mul])
-  have hsupp : ∀ x, tr (e * x) = α * tr (e * x) := fun x => inj (by
-    rw [RingHom.map_mul, ht, ← hs]
-    linear_combination (-x) * h1 - (c x) * hcc - (x + c x) * h0)
-  let φ : 𝔸ᶠ[F] ⊗[F] E →+* Fv F v :=
-    { toFun := fun x => evalV F v (tr (e * x))
-      map_one' := by
-        have := halg 1
-        rw [map_one] at this
-        rw [this, mul_one, hv]
-      map_mul' := fun x y => by
-        rw [← map_mul]
-        congr 1
-        apply inj
-        rw [RingHom.map_mul, ht, ht, ht, map_mul]
-        linear_combination (-(x * y)) * h1 - (c x * c y) * hcc - (x * c y + c x * y) * h0
-      map_zero' := by rw [mul_zero, map_zero, map_zero]
-      map_add' := fun x y => by rw [mul_add, map_add (f := _), map_add (f := _)] }
-  refine ⟨φ, fun x y => ⟨fun h => ?_, fun h => ?_⟩, fun a => ?_, fun x hx => trace_mem_intAf hx v⟩
-  · change evalV F v (tr (e * x)) = evalV F v (tr (e * y))
-    rw [h]
-  · have h3 : tr (e * x) = tr (e * y) := af_ext fun w => by
-      by_cases hwv : w = v
-      · subst hwv; exact h
-      · rw [hsupp x, hsupp y, map_mul (evalV F w), map_mul (evalV F w), hw w hwv, zero_mul, zero_mul]
-    have h4 := (ht x).symm.trans ((congrArg _ h3).trans (ht y))
-    linear_combination e * h4 - (x - y) * h1 - (c x - c y) * h0
-  · change evalV F v (tr (e * _)) = _
-    rw [halg, map_mul, hv, one_mul]
 
 theorem exists_local_lattice {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hfg : L.FG)
     (hsp : Submodule.span E (L : Set (Fin n → E)) = ⊤) (v : HeightOneSpectrum (𝓞 F))
@@ -479,121 +355,6 @@ theorem exists_local_lattice {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (h
       have : φ ∘ (-x) = -(φ ∘ x) := funext fun i => map_neg φ _
       rw [this]; exact neg_mem h
 
-theorem comp_mulVec {n : ℕ} {A K : Type} [CommRing A] [CommRing K] (φ : A →+* K) (m : Matrix (Fin n) (Fin n) A)
-    (y : Fin n → A) : φ ∘ m.mulVec y = (m.map φ).mulVec (φ ∘ y) :=
-  funext fun i => RingHom.map_mulVec φ m y i
-
-theorem exists_divisor_basis (h2 : Module.finrank F E = 2)
-    (σ : E →ₐ[F] E) (hσ : ∀ e, σ (σ e) = e) (hf : ∀ e, σ e = e → ∃ f, algebraMap F E f = e)
-    (v : HeightOneSpectrum (𝓞 F)) (e : 𝔸ᶠ[F] ⊗[F] E) (α : 𝔸ᶠ[F]) (h1 : e * e = e) (h0 : e * sigR 𝔸ᶠ[F] σ e = 0)
-    (hs : e + sigR 𝔸ᶠ[F] σ e = algebraMap 𝔸ᶠ[F] _ α) (hv : evalV F v α = 1)
-    (hw : ∀ w, w ≠ v → evalV F w α = 0) (P : HeightOneSpectrum (𝓞 E))
-    (hP : ∀ x : 𝓞 E, x ≠ 0 → (x ∈ P.asIdeal ↔ e * inclR 𝔸ᶠ[F] ((x : E)⁻¹) ∉ intA F E))
-    (ϖ : 𝓞 E) (hϖ : ϖ ∈ P.asIdeal) (hϖ2 : ϖ ∉ P.asIdeal ^ 2) {n k : ℕ} (hk : k ≤ n)
-    (L : Submodule (𝓞 E) (Fin n → E)) (hfg : L.FG) (hsp : Submodule.span E (L : Set (Fin n → E)) = ⊤)
-    (m m' : Matrix (Fin n) (Fin n) (𝔸ᶠ[F] ⊗[F] E)) (hm : m * m' = 1)
-    (hin : ∀ y ∈ latHat F E (L : Set (Fin n → E)), (fun a => e * m.mulVec y a) ∈ latHat F E (L : Set (Fin n → E)))
-    (hout : ∀ y ∈ latHat F E (L : Set (Fin n → E)), ∃ z ∈ latHat F E (L : Set (Fin n → E)),
-      (fun a => e * (inclR 𝔸ᶠ[F] (ϖ : E) * y a)) = fun a => e * m.mulVec z a)
-    (u u' : 𝔸ᶠ[F] ⊗[F] E) (hu : u ∈ intA F E) (hu' : u' ∈ intA F E) (huu : e * u * u' = e)
-    (hdet : e * m.det = e * inclR 𝔸ᶠ[F] (ϖ : E) ^ k * u) (d : Fin n → ℤ)
-    (hd : ∀ i, d i = if i.1 < n - k then 0 else -1) :
-    ∃ B : Matrix (Fin n) (Fin n) (𝔸ᶠ[F] ⊗[F] E),
-      (∀ z : Fin n → 𝔸ᶠ[F] ⊗[F] E, (∀ i, z i ∈ intA F E) →
-        (fun a => e * B.mulVec z a) ∈ latHat F E (L : Set (Fin n → E))) ∧
-      (∀ y ∈ latHat F E (L : Set (Fin n → E)), ∃ z : Fin n → 𝔸ᶠ[F] ⊗[F] E, (∀ i, z i ∈ intA F E) ∧
-        (fun a => e * y a) = fun a => e * B.mulVec z a) ∧
-      (∀ y ∈ latHat F E (L : Set (Fin n → E)), ∃ z : Fin n → 𝔸ᶠ[F] ⊗[F] E, (∀ i, z i ∈ intA F E) ∧
-        (fun a => e * m'.mulVec y a) = fun a => e * B.mulVec (fun i => inclR 𝔸ᶠ[F] ((ϖ : E) ^ d i) * z i) a) ∧
-      (∀ z : Fin n → 𝔸ᶠ[F] ⊗[F] E, (∀ i, z i ∈ intA F E) → ∃ y ∈ latHat F E (L : Set (Fin n → E)),
-        (fun a => e * m'.mulVec y a) = fun a => e * B.mulVec (fun i => inclR 𝔸ᶠ[F] ((ϖ : E) ^ d i) * z i) a) := by
-  classical
-  obtain ⟨φ, hφ, hφa, hφe⟩ := exists_component h2 σ hσ hf v e α h1 h0 hs hv hw
-  have he : e ∈ intA F E := by
-    have := (hP 1 one_ne_zero).not.1 ((Ideal.ne_top_iff_one _).1 P.isPrime.ne_top)
-    simpa using this
-  have hφi : ∀ x ∈ intA F E, φ x ∈ v.adicCompletionIntegers F := fun x hx => hφe x (mul_mem_intA he hx)
-  have hφv : ∀ x y : Fin n → 𝔸ᶠ[F] ⊗[F] E, ((fun a => e * x a) = fun a => e * y a) ↔ φ ∘ x = φ ∘ y := fun x y => by
-    simp only [funext_iff, hφ, Function.comp_apply]
-  let s : Fv F v → 𝔸ᶠ[F] ⊗[F] E := fun t => algebraMap 𝔸ᶠ[F] _ (singleV F v t)
-  have hs1 : ∀ t, φ (s t) = t := fun t => by rw [hφa, evalV_singleV_same]
-  have hsi : ∀ t : v.adicCompletionIntegers F, s t ∈ intA F E := fun t =>
-    tmul_mem_intA (singleV_mem_intAf v t) 1
-  have hφe' : ∀ x, φ x ∈ v.adicCompletionIntegers F → e * x ∈ intA F E := fun x hx => by
-    rw [(hφ x (s (φ x))).2 (hs1 _).symm]
-    exact mul_mem_intA he (hsi ⟨_, hx⟩)
-  have hφ1 : φ e = 1 := by rw [← map_one φ, ← hφ, h1, mul_one]
-  set ψ : E →+* Fv F v := φ.comp (inclR 𝔸ᶠ[F]) with hψ
-  obtain ⟨π, hπ, hπϖ⟩ := GlobalTheory.DegreeOneUniformiser.exists_irreducible_eq F E v P ψ
-    (fun a => by
-      have : inclR 𝔸ᶠ[F] (algebraMap F E a) = algebraMap 𝔸ᶠ[F] (𝔸ᶠ[F] ⊗[F] E) (algebraMap F _ a) := by
-        rw [← IsScalarTower.algebraMap_apply]
-        exact (Algebra.TensorProduct.includeRight : E →ₐ[F] 𝔸ᶠ[F] ⊗[F] E).commutes a
-      rw [hψ, RingHom.comp_apply, this, hφa, AlgHom.commutes])
-    (fun x => hφi _ (tmul_mem_intA one_mem_intAf x))
-    (fun x hx => (hP x hx).trans (not_congr ⟨hφe _, hφe' _⟩)) ϖ hϖ hϖ2
-  obtain ⟨Λ, hΛfg, hΛsp, hΛ⟩ := exists_local_lattice L hfg hsp v φ hφa hφi
-  have hlat : ∀ x : Fin n → 𝔸ᶠ[F] ⊗[F] E, φ ∘ x ∈ Λ → (fun a => e * x a) ∈ latHat F E (L : Set (Fin n → E)) :=
-    fun x hx => by
-      obtain ⟨y, hy, hxy⟩ := (hΛ _).1 hx
-      rw [(hφv x y).2 hxy]
-      exact smul_mem_latHat L he hy
-  have huu' : φ u * φ u' = 1 := by
-    have := congrArg φ huu
-    rwa [map_mul, map_mul, hφ1, one_mul] at this
-  let U : (v.adicCompletionIntegers F)ˣ :=
-    ⟨⟨φ u, hφi u hu⟩, ⟨φ u', hφi u' hu'⟩, Subtype.ext huu', Subtype.ext ((mul_comm _ _).trans huu')⟩
-  have hπ' : algebraMap (v.adicCompletionIntegers F) (Fv F v) π = ψ (ϖ : E) := hπϖ
-  obtain ⟨B, hB1, hB2⟩ := GlobalTheory.LatticeMinuscule.lattice_elementary_divisors (v.adicCompletionIntegers F) (Fv F v) π hπ n k hk Λ hΛfg hΛsp
-    (m.map φ) (m'.map φ) (by rw [← Matrix.map_mul, hm, Matrix.map_one _ (map_zero φ) (map_one φ)])
-    (fun w hw => by
-      obtain ⟨y, hy, rfl⟩ := (hΛ _).1 hw
-      refine (hΛ _).2 ⟨_, hin y hy, ?_⟩
-      rw [← comp_mulVec, ← hφv]
-      funext a
-      rw [← mul_assoc, h1])
-    (fun w hw => by
-      obtain ⟨y, hy, rfl⟩ := (hΛ _).1 hw
-      obtain ⟨z, hz, hyz⟩ := hout y hy
-      refine ⟨_, (hΛ _).2 ⟨z, hz, rfl⟩, ?_⟩
-      rw [← comp_mulVec, ← (hφv _ _).1 hyz, hπ']
-      funext a
-      exact (map_mul φ _ _).symm)
-    U (by
-      have := congrArg φ hdet
-      rw [map_mul, map_mul, map_mul, hφ1, one_mul, one_mul, map_pow, RingHom.map_det] at this
-      rw [hπ']
-      exact this)
-  have hBφ : (B.map s).map φ = B := Matrix.ext fun i j => hs1 _
-  have hz1 : ∀ z : Fin n → 𝔸ᶠ[F] ⊗[F] E, φ ∘ (B.map s).mulVec z = B.mulVec (φ ∘ z) := fun z => by
-    rw [comp_mulVec, hBφ]
-  have hz2 : ∀ z : Fin n → 𝔸ᶠ[F] ⊗[F] E, (φ ∘ fun i => inclR 𝔸ᶠ[F] ((ϖ : E) ^ d i) * z i) = fun i =>
-      algebraMap (v.adicCompletionIntegers F) (Fv F v) π ^ (if i.1 < n - k then (0 : ℤ) else -1) * φ (z i) :=
-    fun z => funext fun i => by
-      rw [hπ', ← hd, ← map_zpow₀]
-      exact map_mul φ _ _
-  refine ⟨B.map s, fun z hz => hlat _ ?_, fun y hy => ?_, fun y hy => ?_, fun z hz => ?_⟩
-  · rw [hz1]
-    exact (hB1 _).2 ⟨fun i => ⟨φ (z i), hφi _ (hz i)⟩, rfl⟩
-  · obtain ⟨z, hz⟩ := (hB1 _).1 ((hΛ _).2 ⟨y, hy, rfl⟩)
-    refine ⟨fun i => s (z i), fun i => hsi _, (hφv _ _).2 ?_⟩
-    rw [hz1, hz]
-    congr 1
-    funext i
-    exact (hs1 _).symm
-  · obtain ⟨z, hz⟩ := (hB2 _).1 ⟨_, (hΛ _).2 ⟨y, hy, rfl⟩, rfl⟩
-    refine ⟨fun i => s (z i), fun i => hsi _, (hφv _ _).2 ?_⟩
-    rw [hz1, comp_mulVec, hz, hz2]
-    congr 1
-    funext i
-    rw [hs1]
-    rfl
-  · obtain ⟨x, hx, hxz⟩ := (hB2 _).2 ⟨fun i => ⟨φ (z i), hφi _ (hz i)⟩, rfl⟩
-    obtain ⟨y, hy, rfl⟩ := (hΛ _).1 hx
-    refine ⟨y, hy, (hφv _ _).2 ?_⟩
-    rw [hz1, comp_mulVec, hz2, ← hxz]
-    rfl
-
 end Generic
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -607,51 +368,6 @@ theorem splitLab_getD {n k i : ℕ} (hk : k ≤ n) (hi : i < n) :
   · rw [List.getD_append_right _ _ _ _ (by simpa using h)]
     have : i - (n - k) < k := by omega
     simp [this]
-
-theorem exists_coord_lattice {D : D7} (V : HSp D) : ∃ L : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E),
-    (L : Set (Fin V.rank → D.host.E)) = L0c D V ∧ L.FG ∧
-      Submodule.span D.host.E (L : Set (Fin V.rank → D.host.E)) = ⊤ := by
-  let ι := V.frame.equivFun
-  refine ⟨V.L0.map (ι.restrictScalars (𝓞 D.host.E)).toLinearMap, ?_, V.standardTuple_isLattice.fg.map _, ?_⟩
-  · ext x
-    rw [SetLike.mem_coe, Submodule.mem_map_equiv]
-    change ι.symm x ∈ V.L0 ↔ ∑ i, x i • V.frame i ∈ V.L0
-    rw [Module.Basis.equivFun_symm_apply]
-  · have hspan : Submodule.span D.host.E (V.L0 : Set V.V) = ⊤ := by
-      let W := Submodule.span D.host.E (V.L0 : Set V.V)
-      change W = ⊤
-      by_contra hW
-      let e : V.V ≃ₗ⋆[D.host.E] V.V :=
-        (ι.trans (starLinearEquiv D.host.E)).trans ι.symm
-      let g : V.V →ₗ[D.host.E] Module.Dual D.host.E W :=
-        (LinearMap.domRestrict' W).comp (V.hT.comp e.toLinearMap)
-      have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E V.V := by
-        rw [Subspace.dual_finrank_eq]
-        exact Submodule.finrank_lt hW
-      obtain ⟨x, hx, hx₀⟩ :=
-        Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
-      have hsmul (a : D.host.E) : a • e x ∈ V.L0 := by
-        rw [← V.baseLattice_isUnimodular]
-        simp only [Formalism.HermitianLatticesTheory.dual, Formalism.E.hdual,
-          Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
-        intro y hy
-        have hxy : V.hT (e x) y = 0 :=
-          congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩)
-            (LinearMap.mem_ker.mp hx)
-        have hyx : V.hT y (e x) = 0 := by
-          rw [(V.herm.eq (e x) y).symm, hxy, map_zero]
-        simp [hyx]
-      let i : D.host.E →ₗ[𝓞 D.host.E] V.L0 :=
-        ((LinearMap.toSpanSingleton D.host.E _ (e x)).restrictScalars (𝓞 D.host.E)).codRestrict V.L0 hsmul
-      let : Module.Finite (𝓞 D.host.E) V.L0 := Module.Finite.iff_fg.mpr V.standardTuple_isLattice.fg
-      let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
-        smul_left_injective D.host.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
-      exact RingOfIntegers.not_isField D.host.E
-        (isField_of_isIntegral_of_isField (R := 𝓞 D.host.E) (S := D.host.E)
-          (FaithfulSMul.algebraMap_injective _ _) (Field.toIsField _))
-    have : ((V.L0.map (ι.restrictScalars (𝓞 D.host.E)).toLinearMap : Submodule _ _) : Set _) =
-        ι.toLinearMap '' (V.L0 : Set V.V) := rfl
-    rw [this, Submodule.span_image, hspan, Submodule.map_top, LinearEquiv.range]
 
 theorem finPart_cA (D : D7) (x : Formalism.L2.Theta.AE D) :
     finPart D (cA D x) = sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) D.sp.cm.sig (finPart D x) := by

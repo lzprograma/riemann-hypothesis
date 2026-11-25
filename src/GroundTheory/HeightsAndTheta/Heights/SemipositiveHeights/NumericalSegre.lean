@@ -68,60 +68,10 @@ public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSemilocalLen
 public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSemilocalMaxIdeals
 public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSemilocalResidueLength
 public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PValuativeCentre
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Algebra.Order.Sub.Prod
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Algebra.Lie.OfAssociative
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PProjIdealFormValue
 import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PDegZeroLocQuot
@@ -226,7 +176,7 @@ theorem FlagBundleDim.proof (hspan : TwistedDualGensSpan.Statement)
       rw [hsum]
       · refine Finset.sum_congr rfl fun j _ => ?_
         have hj : ((ι' j : Fin N) : ℕ) < i := by rw [hval]; exact j.isLt
-        simp only [truncCoord, hj, if_true, hG, Function.comp_apply, Pi.basisFun_apply]
+        simp only [truncCoord, hj, ite_true, hG, Function.comp_apply, Pi.basisFun_apply]
         rw [LinearMap.comp_apply, Matrix.mulVecLin_apply, Matrix.mulVec_single_one]
         rfl
       · intro j hj
@@ -295,23 +245,8 @@ theorem FlagBundleSectionForms.proof : FlagBundleSectionForms.Statement := by
     refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun j _ => ?_
     simp only [chartPow, Pi.neg_apply]
     ring
-  obtain ⟨n, U, hUh, hUe⟩ : ∃ (n : ℕ) (U : Fin M → MRing (bundleIdx ι M) F),
-      (∀ l, IsMultiHomog (U l) (liftNat fun _ => n)) ∧
-      ∀ l, eval₂ ((algebraMap Ω Φ).comp (algebraMap F Ω)) (projCoord y w φ (truncCoord t ((i : ℕ) + 1)))
-        (U l) = algebraMap Ω Φ (u l * segreVec y c ^ n) := by
-    have h := fun l => chartRing_forms y w φ (truncCoord t ((i : ℕ) + 1)) c hsc (hu l)
-    choose n U hU hUe using h
-    refine ⟨∑ l, n l, fun l => U l * chartMono M c (fun _ => ∑ l, n l - n l), fun l => ?_, fun l => ?_⟩
-    · have hle : n l ≤ ∑ l, n l := Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ l)
-      have hd : liftNat (K := K) (fun _ => ∑ l, n l) =
-          liftNat (fun _ => n l) + liftNat (fun _ => ∑ l, n l - n l) := by
-        funext o; cases o <;> simp [liftNat]; omega
-      rw [hd]
-      exact (hU l).mul (chartMono_homog M c _)
-    · have hle : n l ≤ ∑ l, n l := Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ l)
-      rw [eval₂_mul, hUe, eval_chartMono, ← map_mul]
-      congr 1
-      rw [Finset.prod_pow, mul_assoc, ← segreVec, ← pow_add, Nat.add_sub_cancel' hle]
+  obtain ⟨n, U, hUh, hUe⟩ :=
+    FlagBundleChartSection.chartRing_forms_fin y w φ (truncCoord t ((i : ℕ) + 1)) c hsc hu
   let α : K → ℕ := fun k => (|a k| + |b i k| - a k).toNat
   let β : K → ℕ := fun k => (|a k| + |b i k| + n - b i k).toNat
   have hid : segreVec y c ^ n * ∏ k, y ⟨k, c k⟩ ^ α k =
@@ -413,7 +348,6 @@ theorem contractFracMap_mk (f : MRing (fun k => ι' (j k)) F) :
       algebraMap _ _ (Ideal.Quotient.mk P' (rename (blockIncl j ι') f)) := by
   simp [contractFracMap, contractQuot]
   rfl
-
 
 end SplitRelDeg
 
@@ -557,7 +491,6 @@ theorem subst_homog {K : Type*} [DecidableEq K] {ι : K → Type} {M : ℕ} {F :
   exact this
 
 end FlagLineDegreeProof
-
 
 open FlagLineDegreeProof in
 theorem FlagLineDegree.proof : FlagLineDegree.Statement := by
@@ -945,7 +878,6 @@ theorem chartMon_not_mem {W : Ideal (MRing (bundleIdx ι M) F)} [hW : W.IsPrime]
   exact hc k (hW.mem_of_pow_mem _ hk)
 
 end FlagLineSectionProof
-
 
 open FlagLineSectionProof in
 theorem FlagLineSection.proof : FlagLineSection.Statement := by
@@ -1401,7 +1333,6 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo IntermediateField.alg
 
 noncomputable section
 
-
 set_option maxHeartbeats 400000 in
 theorem SpanBundleTrdegLe.proof : SpanBundleTrdegLe.Statement := by
   intro F _ Ω _ _ K _ ι y M i G c a H _hc hH hGH Φ _ _ s
@@ -1577,7 +1508,7 @@ theorem SpanBundleTrdegLe.proof : SpanBundleTrdegLe.Statement := by
   have hAz : Algebra.trdeg F (MRing (bundleIdx ι M) F ⧸ projIdeal F y (Pi.basisFun Ω (Fin i))
       (fun l => LinearMap.proj l ∘ₗ (Matrix.of G).mulVecLin) s) ≤ Algebra.trdeg F T := by
     refine trdeg_le_of_injective (Ideal.Quotient.liftₐ _ φT fun f hf => (hmem f).2 hf) ?_
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective x
     exact Ideal.Quotient.eq_zero_iff_mem.2 ((hmem f).1 hx)
@@ -1603,7 +1534,6 @@ section -- clump:auto
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
-
 
 open GroundTheory.Heights₂.Heights.FieldNumbers in
 theorem DivPushForwardLocalZero : FieldNumbers.DivPushForwardLocal.Statement.{0} := by

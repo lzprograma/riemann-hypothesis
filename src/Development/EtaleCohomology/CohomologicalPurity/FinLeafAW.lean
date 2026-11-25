@@ -32,49 +32,8 @@ public import Development.EtaleCohomology.TateTwists.acycIffPf
 public import Development.EtaleCohomology.TateTwists.conePf
 public import Development.EtaleCohomology.TateTwists.EtaleTensorTwistedResolutionOfExistenceBoundAndS
 public import Development.EtaleCohomology.CohomologicalPurity.LeafAWCutTw
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.CategoryTheory.Abelian.GrothendieckCategory.EnoughInjectives
 import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
-import Mathlib.Tactic.Lemma
 import Development.EtaleCohomology.TateTwists.EtaleComplexAcyclicIffLocalExactness
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -196,51 +155,6 @@ namespace LateralTheory.EtaleFoundations
 abbrev secF (R : Type) [CommRing R] (U : Scheme.{0}) : Shv R ⥤ Type 1 :=
   sheafToPresheaf Scheme.etaleTopology.{0} (ModuleCat.{1} (ULift.{1} R)) ⋙ (evaluation _ _).obj (op U) ⋙ forget _
 
-lemma etale_sheaf_sections_map_comp_hom {R : Type} [CommRing R] {F G H : Shv R} (φ : F ⟶ G) (ψ : G ⟶ H) {U : Scheme.{0}} (x : Sec F U) :
-    Sec.map (φ ≫ ψ) x = Sec.map ψ (Sec.map φ x) := rfl
-
-lemma etale_sheaf_sections_map_zero_hom {R : Type} [CommRing R] {F G : Shv R} {U : Scheme.{0}} (x : Sec F U) :
-    Sec.map (0 : F ⟶ G) x = 0 := rfl
-
-lemma kernel_sec {R : Type} [CommRing R] {F G : Shv R} (g : F ⟶ G) (U : Scheme.{0}) :
-    Function.Injective (fun k : Sec (kernel g) U => Sec.map (kernel.ι g) k) ∧
-    ∀ b : Sec F U, Sec.map g b = 0 → ∃ k, Sec.map (kernel.ι g) k = b := by
-  have w : (secF R U).map (kernel.ι g) ≫ (secF R U).map g = (secF R U).map (kernel.ι g) ≫ (secF R U).map 0 := by
-    rw [← (secF R U).map_comp, ← (secF R U).map_comp, kernel.condition, comp_zero]
-  have hl : IsLimit (Fork.ofι _ w) := isLimitForkMapOfIsLimit (secF R U) _ (kernelIsKernel g)
-  have hu := Types.unique_of_type_equalizer _ _ hl
-  have hc : ∀ k : Sec (kernel g) U, Sec.map g (Sec.map (kernel.ι g) k) = 0 := by
-    intro k; rw [← etale_sheaf_sections_map_comp_hom, kernel.condition]; rfl
-  refine ⟨fun k₁ k₂ h => ?_, fun b hb => ?_⟩
-  · obtain ⟨x, -, hx⟩ := hu (Sec.map (kernel.ι g) k₁) ((hc k₁).trans (etale_sheaf_sections_map_zero_hom (G := G) _).symm)
-    exact (hx k₁ rfl).trans (hx k₂ h.symm).symm
-  · obtain ⟨x, hx, -⟩ := hu b (hb.trans (etale_sheaf_sections_map_zero_hom (G := G) b).symm)
-    exact ⟨x, hx⟩
-
-theorem etale_short_complex_exact_iff_locally_surjective_on_kernel : EtaleShortComplexExactIffLocallySurjectiveOnKernel := by
-  intro R _ S
-  rw [S.exact_iff_epi_kernel_lift, ← Sheaf.isLocallySurjective_iff_epi']
-  have hl : ∀ {V : Scheme.{0}} (a : Sec S.X₁ V),
-      Sec.map (kernel.ι S.g) (Sec.map (kernel.lift S.g S.f S.zero) a) = Sec.map S.f a := by
-    intro V a; rw [← etale_sheaf_sections_map_comp_hom, kernel.lift_ι]
-  constructor
-  · intro h U b hb
-    obtain ⟨k, rfl⟩ := (kernel_sec S.g U).2 b hb
-    refine ⟨_, Presheaf.imageSieve_mem Scheme.etaleTopology (kernel.lift S.g S.f S.zero).hom (U := op U) k, ?_⟩
-    rintro V g ⟨t, ht⟩
-    refine ⟨t, ?_⟩
-    rw [← hl t, show Sec.map (kernel.lift S.g S.f S.zero) t = Sec.res g k from ht, sec_map_res]
-  · intro h
-    constructor
-    intro U k
-    obtain ⟨T, hT, hTa⟩ := h U (Sec.map (kernel.ι S.g) k)
-      (by rw [← etale_sheaf_sections_map_comp_hom, kernel.condition]; rfl)
-    refine Scheme.etaleTopology.superset_covering ?_ hT
-    intro V g hg
-    obtain ⟨a, ha⟩ := hTa V g hg
-    refine ⟨a, (kernel_sec S.g V).1 ?_⟩
-    exact (hl a).trans (ha.trans (sec_map_res _ _ _).symm)
-
 end LateralTheory.EtaleFoundations
 end -- clump:auto
 end -- clump:auto
@@ -276,22 +190,6 @@ theorem tens_ind {I J : Cx R} (V : Scheme.{0}) (w : ℤ) (P : Tens I J V w → P
     | add a b ha hb => rw [map_add (f := _)]; exact hadd _ _ ha hb
   | add a b ha hb => exact hadd _ _ ha hb
 
-theorem res_lof {I J : Cx R} {V U : Scheme.{0}} (g : V ⟶ U) (w : ℤ) (p : {p : ℤ × ℤ // p.1 + p.2 = w})
-    (a : Sec (I.X p.1.1) U) (b : Sec (J.X p.1.2) U) :
-    Tens.res g w (DirectSum.lof (ULift.{1} R) _ (fun p : {p : ℤ × ℤ // p.1 + p.2 = w} =>
-        (Sec (I.X p.1.1) U ⊗[ULift.{1} R] Sec (J.X p.1.2) U)) p (a ⊗ₜ b)) =
-      DirectSum.lof (ULift.{1} R) _ (fun p : {p : ℤ × ℤ // p.1 + p.2 = w} =>
-        (Sec (I.X p.1.1) V ⊗[ULift.{1} R] Sec (J.X p.1.2) V)) p (Sec.res g a ⊗ₜ Sec.res g b) := by
-  classical
-  simp [Tens.res, Sec.res]
-
-theorem lift_lof {I J K : Cx R} (μ : Pair I J K) (U : Scheme.{0}) (w : ℤ) (p : {p : ℤ × ℤ // p.1 + p.2 = w})
-    (a : Sec (I.X p.1.1) U) (b : Sec (J.X p.1.2) U) :
-    μ.lift U w (DirectSum.lof (ULift.{1} R) _ (fun p : {p : ℤ × ℤ // p.1 + p.2 = w} =>
-        (Sec (I.X p.1.1) U ⊗[ULift.{1} R] Sec (J.X p.1.2) U)) p (a ⊗ₜ b)) = μ.mul U p.1.1 p.1.2 w p.2 a b := by
-  classical
-  simp [Pair.lift]
-
 def Tmap {I J I' J' : Cx R} (f : I ⟶ I') (g : J ⟶ J') (U : Scheme.{0}) (w : ℤ) :
     Tens I J U w →ₗ[ULift.{1} R] Tens I' J' U w :=
   DirectSum.lmap fun p => TensorProduct.map ((f.f p.1.1).hom.app (op U)).hom ((g.f p.1.2).hom.app (op U)).hom
@@ -312,13 +210,13 @@ def TP (I J : Cx R) (w : ℤ) : Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1} (ULift.{1} R)
     refine ModuleCat.hom_ext (LinearMap.ext fun x => ?_)
     refine tens_ind U.unop w (fun x => Tens.res (𝟙 U.unop) w x = x) (by simp) (fun a b ha hb => ?_) (fun p a b => ?_) x
     · rw [map_add (f := _), ha, hb]
-    · rw [res_lof]; simp [Sec.res]
+    · rw [LateralTheory.E.LeafTwTensExPf.tres_tmul]; simp [Sec.res]
   map_comp g h := by
     refine ModuleCat.hom_ext (LinearMap.ext fun x => ?_)
     refine tens_ind _ w (fun x => Tens.res (g ≫ h).unop w x = Tens.res h.unop w (Tens.res g.unop w x))
       (by simp) (fun a b ha hb => ?_) (fun p a b => ?_) x
     · rw [map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
-    · rw [res_lof, res_lof, res_lof]; simp [Sec.res]
+    · rw [LateralTheory.E.LeafTwTensExPf.tres_tmul, LateralTheory.E.LeafTwTensExPf.tres_tmul, LateralTheory.E.LeafTwTensExPf.tres_tmul]; simp [Sec.res]
 
 def alpha {I J K : Cx R} (τ : Pair I J K) (w : ℤ) : TP I J w ⟶ (K.X w).obj where
   app U := ModuleCat.ofHom (τ.lift U.unop w)
@@ -327,7 +225,7 @@ def alpha {I J K : Cx R} (τ : Pair I J K) (w : ℤ) : TP I J w ⟶ (K.X w).obj 
     refine tens_ind U.unop w (fun x => τ.lift V.unop w (Tens.res g.unop w x) = Sec.res g.unop (τ.lift U.unop w x))
       (by simp) (fun a b ha hb => ?_) (fun p a b => ?_) x
     · simp only [map_add (f := _), ha, hb]
-    · rw [res_lof, lift_lof, lift_lof, τ.nat]
+    · rw [LateralTheory.E.LeafTwTensExPf.tres_tmul, LateralTheory.EtaleFoundations.FlipPf.lift_lof, LateralTheory.EtaleFoundations.FlipPf.lift_lof, τ.nat]
 
 def beta {I J I' J' K' : Cx R} (ν : Pair I' J' K') (f : I ⟶ I') (g : J ⟶ J') (w : ℤ) : TP I J w ⟶ (K'.X w).obj where
   app U := ModuleCat.ofHom (ν.lift U.unop w ∘ₗ Tmap f g U.unop w)
@@ -337,7 +235,7 @@ def beta {I J I' J' K' : Cx R} (ν : Pair I' J' K') (f : I ⟶ I') (g : J ⟶ J'
         Sec.res e.unop (ν.lift U.unop w (Tmap f g U.unop w x)))
       (by simp) (fun a b ha hb => ?_) (fun p a b => ?_) x
     · simp only [map_add (f := _), ha, hb]
-    · rw [res_lof, tmap_lof, tmap_lof, lift_lof, lift_lof, ν.nat, TensUnivPf.nat_sec, TensUnivPf.nat_sec]
+    · rw [LateralTheory.E.LeafTwTensExPf.tres_tmul, tmap_lof, tmap_lof, LateralTheory.EtaleFoundations.FlipPf.lift_lof, LateralTheory.EtaleFoundations.FlipPf.lift_lof, ν.nat, TensUnivPf.nat_sec, TensUnivPf.nat_sec]
 
 theorem alpha_locSurj {I J K : Cx R} (τ : Pair I J K) (hτ : τ.IsTensor) (w : ℤ) :
     Presheaf.IsLocallySurjective Scheme.etaleTopology (alpha τ w) where
@@ -374,7 +272,7 @@ theorem LateralTheory.EtaleFoundations.etale_tensor_pairing_degreewise_universal
         (Sec (I.X p.1.1) U ⊗[ULift.{1} R] Sec (J.X p.1.2) U)) ⟨(s, t), h⟩ (a ⊗ₜ b))) hm
   simp only [NatTrans.comp_app, ModuleCat.hom_comp] at e
   change Sec.map ⟨m⟩ (τ.lift U w _) = (ν.lift U w ∘ₗ Tmap f g U w) _ at e
-  rw [lift_lof, LinearMap.comp_apply, tmap_lof, lift_lof] at e
+  rw [LateralTheory.EtaleFoundations.FlipPf.lift_lof, LinearMap.comp_apply, tmap_lof, LateralTheory.EtaleFoundations.FlipPf.lift_lof] at e
   exact e
 end -- clump:auto
 end -- clump:auto
@@ -409,9 +307,6 @@ theorem of_pair (h : LateralTheory.E.CupProductRingLaws.LeafTwPairExists) : Late
   intro q _ i j
   exact ⟨pick_spec (h q i j), fun E n m α β => LateralTheory.KummerTheory.CupAW_of (ZMod q) (twPair q i j) E rfl α β⟩
 
-theorem tensQis : EtaleTensorPairQuasiIsoOfFlatQuasiIso :=
-  LateralTheory.Fin.EtaleTensorPairQuasiIsoOfFlatQuasiIso.etale_tensor_quasiIso_of_acyclic_cone
-
 theorem pair_of (hq : EtaleTensorPairQuasiIsoOfFlatQuasiIso) (hm : EtaleTateTwistSingletonTensorGenMul) : LateralTheory.E.CupProductRingLaws.LeafTwPairExists :=
   LateralTheory.E.LeafTwPairExistsPf.LeafTwPairExists_of' LateralTheory.E.LeafTwTensExPf.LeafTwTensEx_of
     (LateralTheory.E.LeafTwTensResPf.leafTwTensRes_of
@@ -429,7 +324,7 @@ theorem twMul (hT : LeafTwSec) : EtaleTateTwistSingletonTensorGenMul :=
       (etale_tate_twist_generator_map_injective_of_sections_glue hT LateralTheory.Fin.EtaleLocalPropertyBasicClosure.intersectionNumber_baseChange LateralTheory.Fin.EtaleSheafSectionsSeparatedAndGlue.intersectionNumber_baseChange))
 
 theorem goal_of (h2 : LeafTwSec) : LateralTheory.CohomologicalPurity.LeafAW :=
-  of_pair (pair_of tensQis (twMul h2))
+  of_pair (pair_of LateralTheory.Fin.EtaleTensorPairQuasiIsoOfFlatQuasiIso.etale_tensor_quasiIso_of_acyclic_cone (twMul h2))
 
 end LateralTheory.CohomologicalPurity.LeafAWCut
 end -- clump:auto

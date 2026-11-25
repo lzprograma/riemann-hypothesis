@@ -3,48 +3,7 @@ module
 public import Formalism.HermitianCurvature.OperatorsCommuteTranslations
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -78,9 +37,9 @@ theorem peel_core {m : ℕ} (I : Ideal A) {ι : Type} [Fintype ι] (η : ι → 
     congr 1
     · exact Finset.sum_comm
     · rw [Finset.sum_eq_single (Fin.last m)]
-      · rw [if_pos rfl, Fin.val_last, sign_last, one_mul, Algebra.smul_def, Algebra.commutes]
+      · rw [ite_eq_left rfl, Fin.val_last, sign_last, one_mul, Algebra.smul_def, Algebra.commutes]
       · intro l _ hl
-        rw [if_neg hl, map_zero, mul_zero, mul_zero]
+        rw [ite_eq_right hl, map_zero, mul_zero, mul_zero]
       · intro hn
         exact absurd (Finset.mem_univ _) hn
   rw [key]
@@ -176,7 +135,7 @@ theorem first_peeling_minor_mem_ideal {A : Type} [Ring A] [Algebra ℂ A] (k r :
             omega
           have hd : dpsiP k r z' (pe k r l.val) (pe k r (m + 1)) = if l.val = m then 1 else 0 := by
             simp only [dpsiP, pe_val, h1, h2]
-            rw [if_pos ⟨by omega, by omega⟩]
+            rw [ite_eq_left ⟨by omega, by omega⟩]
             split_ifs <;> first | rfl | (exfalso; omega)
           simp only [Finset.univ_unique, Finset.sum_singleton, one_smul, last_iff]
           rw [tm_offdiag _ _ hne, ← hd]
@@ -188,7 +147,7 @@ theorem first_peeling_minor_mem_ideal {A : Type} [Ring A] [Algebra ℂ A] (k r :
       have e : (fun l : Fin (m + 1) => pe k r (if l.val < m + 1 then l.val else l.val + 1)) =
           fun l : Fin (m + 1) => pe k r l.val := by
         funext l
-        rw [if_pos l.isLt]
+        rw [ite_eq_left l.isLt]
       rw [e, sub_self]
       exact Submodule.zero_mem _
 

@@ -73,8 +73,7 @@ theorem exists_indep_span {Q : Type} [AddCommGroup Q] [Module k⸨X⸩ Q] [Modul
   haveI : Module.Finite k⟦X⟧ P := Module.Finite.iff_fg.mpr hP
   haveI : NoZeroSMulDivisors k⟦X⟧ Q := by
     refine ⟨fun {c x} h => ?_⟩
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have hc : algebraMap k⟦X⟧ k⸨X⸩ c ≠ 0 := by
       intro h0
       exact hne.1 ((IsFractionRing.injective k⟦X⟧ k⸨X⸩) (by rw [h0, map_zero]))
@@ -126,7 +125,7 @@ theorem comap_pull {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X
     [IsScalarTower k⟦X⟧ k⸨X⸩ V] {W : Type} [AddCommGroup W] [Module k⸨X⸩ W] [Module k⟦X⟧ W]
     [IsScalarTower k⟦X⟧ k⸨X⸩ W] [Module k V] [Module k W] {l n : ℕ} {R : RingPG k l}
     (D : ModPG R n V) (D' : ModPG R n W) (i : ZMod n) (f g : W →ₗ[k⸨X⸩] V)
-    (_hf : Function.Injective f) (hg : Function.Injective g)
+    (hg : Function.Injective g)
     (h : ∀ x, g (D'.φ i x) = D.φ i (f x)) {N : Submodule k⟦X⟧ V} (hN : N.FG) :
     (pull (D.φ i) N).comap (g.restrictScalars k⟦X⟧) = pull (D'.φ i) (N.comap (f.restrictScalars k⟦X⟧)) := by
   classical
@@ -291,11 +290,6 @@ open scoped LaurentSeries PowerSeries
 namespace GlobalTheory.PhiGam.Sat
 variable {k : Type} [Field k]
 
-section
-variable {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k V] {l n : ℕ} {R : RingPG k l}
-
-end
-
 variable {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X⟧ V] [IsScalarTower k⟦X⟧ k⸨X⸩ V]
   {W : Type} [AddCommGroup W] [Module k⸨X⸩ W] [Module k⟦X⟧ W] [IsScalarTower k⟦X⟧ k⸨X⸩ W]
 
@@ -311,10 +305,10 @@ theorem isLat_comap (f : W →ₗ[k⸨X⸩] V) (hf : Function.Injective f) {N : 
 variable [Module k V] [Module k W] {l n : ℕ} {R : RingPG k l}
 
 theorem comap_pull (D : ModPG R n V) (D' : ModPG R n W) (i : ZMod n) (f g : W →ₗ[k⸨X⸩] V)
-    (hf : Function.Injective f) (hg : Function.Injective g) (hφ : ∀ x, g (D'.φ i x) = D.φ i (f x))
+    (hg : Function.Injective g) (hφ : ∀ x, g (D'.φ i x) = D.φ i (f x))
     {N : Submodule k⟦X⟧ V} (hN : N.FG) :
     (pull (D.φ i) N).comap (g.restrictScalars k⟦X⟧) = pull (D'.φ i) (N.comap (f.restrictScalars k⟦X⟧)) :=
-  _root_.GlobalTheory.IndependentSpanDual.comap_pull D D' i f g hf hg hφ hN
+  _root_.GlobalTheory.IndependentSpanDual.comap_pull D D' i f g hg hφ hN
 
 theorem main : ∀ {k : Type} [Field k] {l : ℕ} [Fact l.Prime] [CharP k l] (R : RingPG k l)
     {n : ℕ} [NeZero n]
@@ -335,7 +329,7 @@ theorem main : ∀ {k : Type} [Field k] {l : ℕ} [Fact l.Prime] [CharP k l] (R 
       ∀ i, CondC (D'.γ i) ((N i).comap ((f i).restrictScalars k⟦X⟧)) := by
   intro k _ l _ _ R n _ V _ _ _ _ _ _ _ _ W _ _ _ _ _ _ _ _ D D' f hf hφ hγ w w' N hN hAB hC
   refine ⟨fun i => _root_.GlobalTheory.LatticeComap.isLat_comap _ (hf i) (hN i), fun i => ?_, fun i x hx => ?_⟩
-  · have h := _root_.GlobalTheory.IndependentSpanDual.comap_pull D D' i (f (i - 1)) (f i) (hf _) (hf _) (hφ i) (hN (i - 1)).1
+  · have h := _root_.GlobalTheory.IndependentSpanDual.comap_pull D D' i (f (i - 1)) (f i) (hf _) (hφ i) (hN (i - 1)).1
     rw [← h, ← comap_sh, ← comap_sh]
     exact ⟨Submodule.comap_mono (hAB i).1, Submodule.comap_mono (hAB i).2⟩
   · rw [← comap_sh]

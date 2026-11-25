@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGluing.MemOfProjEqZero
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.ThetaGC
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.SharpEquivApply
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.HSumRight
@@ -37,12 +38,7 @@ theorem mmfam_some {g : SplitG M.L} (hs : M.split = some g) (t : Term V M r) :
   simp only [HermSp.MMfam, hs]
 
 theorem h_sub_right (x y y' : V) : H.h x (y - y') = H.h x y - H.h x y' := by
-  have h1 : H.h (y - y') x = H.h y x - H.h y' x := by
-    have h2 := H.h_add_left (y - y') y' x
-    rw [sub_add_cancel] at h2
-    rw [h2]
-    ring
-  rw [H.h_herm (y - y') x, h1, map_sub, ← H.h_herm, ← H.h_herm]
+  apply _root_.PI.LocHerm.Glue.h_sub_right <;> assumption
 
 theorem gramH_eqG {g : SplitG M.L} {t : Term V M r} (hg : GoodG H g t) :
     gramH H (H.MMfam t) = gramG (M.L.cj : E →+* E) (algebraMap F E ((g.q : F)⁻¹)) (H.Zhat t.f t.f')
@@ -114,39 +110,6 @@ theorem gramH_comb {ι : Type} [Fintype ι] (B : Matrix ι ι E) (v : ι → V) 
     hsr, hsmr, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl (fun j _ => Finset.sum_congr rfl (fun l _ => by ring))
-
-theorem unit_gramH_of {g : SplitG M.L} (hs : M.split = some g) {t : Term V M r}
-    (hF : Formalism.MainNotions.ThinScalesBound.FrameK H t.f t.T) (hF' : Formalism.MainNotions.ThinScalesBound.FrameK H t.f' t.T')
-    (hD1 : IsUnit (H.Dl t.f t.f' (r + 1))) (hD0 : H.Dl t.f t.f' r = 0) :
-    IsUnit (gramH H (H.MMfam t)).det := by
-  set qi := algebraMap F E ((g.q : F)⁻¹) with hqi
-  let B : Matrix (Ix r) (Ix r) E := Matrix.fromBlocks 1 0 (-qi • (1 : Matrix (Fin (r + 1)) (Fin (r + 1)) E))
-    (qi • (1 : Matrix (Fin (r + 1)) (Fin (r + 1)) E))
-  have hfam : H.MMfam t = fun i => ∑ j, B i j • Sum.elim t.f t.f' j := by
-    rw [mmfam_some H hs]
-    funext i
-    rcases i with a | a
-    · simp [B, Fintype.sum_sum_type, Matrix.one_apply]
-    · simp [B, Fintype.sum_sum_type, Matrix.one_apply, sub_eq_add_neg, add_comm, neg_smul]
-      rfl
-  have hqu : IsUnit qi := by
-    refine ⟨⟨qi, algebraMap F E (g.q : F), qi_mul_q g, ?_⟩, rfl⟩
-    rw [mul_comm]; exact qi_mul_q g
-  have hB : IsUnit B.det := by
-    simp only [B]
-    rw [Matrix.det_fromBlocks_zero₁₂, Matrix.det_one, one_mul, Matrix.det_smul, Matrix.det_one, mul_one]
-    exact hqu.pow _
-  have hV : gramH H (Sum.elim t.f t.f') = gramC (M.L.cj : E →+* E) (H.Zhat t.f t.f')
-      (algebraMap F E t.T) (algebraMap F E t.T') := by
-    rw [gramC_eq H _ _ _ _ hF hF']
-    ext i j; rfl
-  have hG := unit_gramC H _ _ _ _ hF hF' hD1 hD0
-  rw [hfam, gramH_comb, Matrix.det_mul, Matrix.det_mul, Matrix.det_transpose, hV]
-  have hBc : IsUnit (B.map M.L.cj).det := by
-    have : (B.map M.L.cj).det = M.L.cj B.det := by
-      rw [show (B.map M.L.cj) = (M.L.cj : E →+* E).mapMatrix B from rfl, ← RingHom.map_det]; rfl
-    rw [this]; exact hB.map _
-  exact (hB.mul hG).mul hBc
 
 theorem unit_gramHG {g : SplitG M.L} {t : Term V M r} (hg : GoodG H g t) :
     IsUnit (gramH H (H.MMfam t)).det := hg.2.2.2.2

@@ -67,7 +67,7 @@ theorem mem_colLat_one {K : Type} [Field K] [NumberField K] {n : ℕ} (x : Fin n
   have hx : x = ∑ j, y j • fun a : Fin n => ((1 : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) a j := by
     funext a
     simp only [Finset.sum_apply, Pi.smul_apply, Units.val_one, Matrix.one_apply, Algebra.smul_def, mul_ite,
-      mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, hy]
+      mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, hy]
   rw [hx]
   exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
 

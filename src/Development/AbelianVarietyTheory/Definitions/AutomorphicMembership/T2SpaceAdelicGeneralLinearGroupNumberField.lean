@@ -8,48 +8,6 @@ public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MeanSquareAdd
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiscreteTopologyRatN
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Algebra.Group.Matrix
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -254,14 +212,6 @@ theorem mem_cuspCont_of_isCuspForm {φ : Sm E a} (h : IsCuspForm φ) (h' : ∀ t
     φ.1 ∈ cuspCont E a :=
   ⟨ContAut.continuous_of_isOpen_stab E a φ h.1.level, h.1.left, h', h.2⟩
 
-theorem mem_cuspCont_of_le_one (ha : a ≤ 1) : φ ∈ cuspCont E a ↔ Continuous φ ∧ (∀ γ g, φ (ratGL E a γ * g) = φ g) ∧
-    ∀ t g, φ (splitCentre E a t * g) = φ g :=
-  ⟨fun h => ⟨h.1, h.2.1, h.2.2.1⟩, fun h => ⟨h.1, h.2.1, h.2.2, fun r h0 h1 => by omega⟩⟩
-
-theorem one_mem_cuspCont_iff : (fun _ => (1 : ℂ)) ∈ cuspCont E a ↔ a ≤ 1 :=
-  ⟨fun h => not_lt.1 fun ha => GlobalTheory.ConstNotCusp.not_isCuspidal_oneFn E a ha h.2.2.2,
-    fun ha => (mem_cuspCont_of_le_one ha).2 ⟨continuous_const, fun _ _ => rfl, fun _ _ => rfl⟩⟩
-
 end Cusp
 
 section L2
@@ -321,10 +271,6 @@ theorem L2cusp_le {U : Submodule ℂ (L2 (latticeGL E a) μ)} (hU : IsClosed (U 
 theorem closure_classes_le_L2cusp (h : ∀ φ ∈ V, IsCuspForm φ)
     (h' : ∀ φ ∈ V, ∀ t g, φ.1 (splitCentre E a t * g) = φ.1 g) : (classes V μ).topologicalClosure ≤ L2cusp μ :=
   Submodule.topologicalClosure_mono fun _ ⟨φ, hφ, e⟩ => ⟨_, mem_cuspCont_of_isCuspForm (h φ hφ) (h' φ hφ), e⟩
-
-theorem classes_le_L2cusp (h : ∀ φ ∈ V, IsCuspForm φ)
-    (h' : ∀ φ ∈ V, ∀ t g, φ.1 (splitCentre E a t * g) = φ.1 g) : classes V μ ≤ L2cusp μ :=
-  (Submodule.le_topologicalClosure _).trans (closure_classes_le_L2cusp h h')
 
 
 variable (μ) in
@@ -426,19 +372,6 @@ section RankOne
 
 variable {μ : Measure (GA E 1)} [μ.IsHaarMeasure]
 
-theorem memL2_of_rank_one {φ : GA E 1 → ℂ} (hc : Continuous φ) (h : LeftInv (latticeGL E 1) φ) : MemL2Quotient (latticeGL E 1) μ φ := by
-  have hd := isFundamentalDomain_stdDom (latticeGL E 1) μ
-  obtain ⟨K, hK, hcov⟩ := exists_compact_latticeGL E
-  refine (memL2_iff_fundamental_domain hd).2 ⟨h, (memLp_two_iff_integrable_sq_norm hc.aestronglyMeasurable).2 ?_⟩
-  simpa only [← _root_.norm_pow] using (GlobalTheory.integrableOn_fundamentalDomain_of_cocompact _ _ K hK hcov μ inferInstance _ hd
-    (fun g => φ g ^ 2) (hc.pow 2) fun γ hγ g => by rw [h γ hγ]).norm
-
-
-variable (μ) in
-theorem exists_one_mem_L2cusp : ∃ F ∈ L2cusp μ, F ≠ 0 ∧ lift (latticeGL E 1) F =ᵐ[μ] fun _ => 1 :=
-  have h : MemL2Quotient (latticeGL E 1) μ fun _ => 1 := memL2_of_rank_one continuous_const fun _ _ _ => rfl
-  ⟨h.toL2, toL2_mem_cuspidal h (one_mem_cuspCont_iff.2 le_rfl),
-    toL2_ne_zero h continuous_const fun e => one_ne_zero (congrFun e 1), h.lift_toL2_ae_eq⟩
 
 end RankOne
 

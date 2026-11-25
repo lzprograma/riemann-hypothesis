@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.LatticeEmbeddings.IotaPlaceB
 public import Mathlib.NumberTheory.Padics.Complex
 public import Mathlib.SetTheory.Cardinal.Continuum
 import Mathlib.Algebra.Order.Floor.Extended
@@ -73,21 +74,7 @@ namespace GlobalTheory.PadicCard
 
 theorem mk_le_pow_aleph0_of_denseRange {D X : Type} [TopologicalSpace X] [FirstCountableTopology X]
     [T2Space X] (f : D → X) (hf : DenseRange f) : #X ≤ #D ^ ℵ₀ := by
-  have h : ∀ x : X, ∃ u : ℕ → D, Tendsto (fun n => f (u n)) atTop (𝓝 x) := by
-    intro x
-    obtain ⟨v, hv, hlim⟩ := mem_closure_iff_seq_limit.1 (hf x)
-    choose u hu using hv
-    exact ⟨u, by simpa only [hu] using hlim⟩
-  choose g hg using h
-  have hinj : Function.Injective g := by
-    intro x y hxy
-    have := hg y
-    rw [← hxy] at this
-    exact tendsto_nhds_unique (hg x) this
-  simpa using mk_le_of_injective hinj
-
-theorem mk_padic_le (l : ℕ) [Fact l.Prime] : #ℚ_[l] ≤ 𝔠 := by
-  simpa using mk_le_pow_aleph0_of_denseRange _ (Padic.denseRange_ratCast l)
+  first | exact _root_.ReciprocityTheory.ChartRestriction.T1.lat_mk_le_of_denseRange | exact @_root_.ReciprocityTheory.ChartRestriction.T1.lat_mk_le_of_denseRange | apply _root_.ReciprocityTheory.ChartRestriction.T1.lat_mk_le_of_denseRange <;> assumption
 
 theorem mk_padicComplex (l : ℕ) [Fact l.Prime] : #ℂ_[l] = 𝔠 := by
   refine le_antisymm ?_ (continuum_le_cardinal_of_nontriviallyNormedField ℂ_[l])

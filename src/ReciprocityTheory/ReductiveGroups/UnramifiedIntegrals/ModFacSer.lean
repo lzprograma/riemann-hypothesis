@@ -146,7 +146,7 @@ theorem hasUnitLeadingCoeff_rescaleExpand_eisensteinFourCubeSeries (R : Subring 
     LowUnit R (sub1 c k aC) 0 1 := by
   refine ⟨one_mem R, by rw [inv_one]; exact one_mem R, one_ne_zero,
     fun n hn => absurd hn (Nat.not_lt_zero n), ?_⟩
-  rw [sub1, coeff_xp, if_pos (dvd_zero k), Nat.zero_div, PowerSeries.coeff_rescale, pow_zero, one_mul,
+  rw [sub1, coeff_xp, ite_eq_left (dvd_zero k), Nat.zero_div, PowerSeries.coeff_rescale, pow_zero, one_mul,
     eisensteinFourCubeSeries_coeff_zero]
 
 theorem hasUnitLeadingCoeff_rescaleExpand_discriminantSeries {R : Subring ℂ} {c : ℂ} (hc : c ∈ R) (hc' : c⁻¹ ∈ R) (hc0 : c ≠ 0) {k : ℕ}
@@ -158,7 +158,7 @@ theorem hasUnitLeadingCoeff_rescaleExpand_discriminantSeries {R : Subring ℂ} {
       subst h0
       rw [Nat.zero_div, PowerSeries.coeff_rescale, discriminantSeries_coeff_zero, mul_zero]
     · rfl
-  · rw [sub1, coeff_xp, if_pos dvd_rfl, Nat.div_self (Nat.pos_of_ne_zero hk), PowerSeries.coeff_rescale,
+  · rw [sub1, coeff_xp, ite_eq_left dvd_rfl, Nat.div_self (Nat.pos_of_ne_zero hk), PowerSeries.coeff_rescale,
       pow_one, discriminantSeries_coeff_one, mul_one]
 
 theorem rescaleExpand_one (k : ℕ) (f : PowerSeries ℂ) : sub1 1 k f = xp k f := by

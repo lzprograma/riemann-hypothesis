@@ -161,8 +161,7 @@ theorem haar_map_mul_right_of_lattice (μ : Measure H) [IsHaarMeasure μ] (Γ : 
     exact ENNReal.coe_le_coe.1 (h2.trans_eq (ENNReal.coe_toNNReal hne).symm)
   have hle : ∀ r : H, modularCharacterFun r ≤ 1 := by
     intro r
-    by_contra h
-    push_neg at h
+    by_contra! h
     obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt b h
     have := hbd (r ^ n)
     have e : modularCharacterFun (r ^ n) = modularCharacterFun r ^ n :=
@@ -234,8 +233,7 @@ theorem one_le_of_iterate_bounded (μ : Measure H) [IsHaarMeasure μ] {f : H →
     rw [e]
     gcongr
     exact hb n
-  by_contra h
-  push_neg at h
+  by_contra! h
   have ht : Tendsto (fun n : ℕ => c ^ n * μ L) atTop (𝓝 0) := by
     simpa using ENNReal.Tendsto.mul_const (ENNReal.tendsto_pow_atTop_nhds_zero_of_lt_one h) (Or.inr hLtop)
   obtain ⟨n, hn⟩ := (ht.eventually (gt_mem_nhds hVpos)).exists

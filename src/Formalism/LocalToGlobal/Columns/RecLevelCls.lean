@@ -313,7 +313,7 @@ theorem rlc_mem_baseLb (x : Fin n → E) :
     intro r hr P
     have hx : x ∈ stdLat E n := (mem_stdLat x).2 fun i => ⟨r i, hr i⟩
     show (if x ∈ Formalism.HermitianLatticesTheory.localization₂ P.1.asIdeal (stdLat E n) then redP P.1 (x (lastIdx n)) else 0) = _
-    rw [if_pos (le_locP _ _ hx), ← hr, reduction_coe]
+    rw [ite_eq_left (le_locP _ _ hx), ← hr, reduction_coe]
   unfold baseLb
   rw [hok.mem_L]
   constructor
@@ -469,7 +469,7 @@ theorem decoRaw_L {x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)} (hx : x ∈
     have hv : v ∈ Formalism.UG.CS.globLat x (stdLat E n) := (mem_globLat x v).2 h
     show (if v ∈ Formalism.HermitianLatticesTheory.localization₂ P.1.asIdeal (Formalism.UG.CS.globLat x (stdLat E n)) then
       redA P.1 (pullV x v (lastIdx n)) else 0) = _
-    rw [if_pos (le_locP _ _ hv), redA_int]
+    rw [ite_eq_left (le_locP _ _ hv), redA_int]
   constructor
   · rintro ⟨hN, h0⟩
     have h := (mem_globLat x v).1 hN
@@ -496,13 +496,6 @@ theorem levU_y_lat (hS : DecoPtSurj hc n ST SG) (d : DecoSet (E := E) (n := n) (
   exact h
 
 end Hat
-
-section Fin
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
-
-end Fin
 
 section AtPrimes
 

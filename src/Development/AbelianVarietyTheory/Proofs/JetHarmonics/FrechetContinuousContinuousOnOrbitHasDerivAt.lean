@@ -4,6 +4,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTr
 public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DerivedActionDiscreteSeriesPropertiesStatement
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiffQuotientBesselMapTendsto
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.HeckeMultiplication
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.Smooth
@@ -69,62 +70,28 @@ open scoped ContDiff
 
 section Smooth
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 theorem smoothOnH_continuousOn {H : Matrix (Fin n) (Fin n) ℂ} {f : Matrix (Fin n) (Fin n) ℂ → E}
-    (hf : SmoothOnH H f) : ContinuousOn f (Formalism.QuantumDeterminants.UH H) := by
-  intro g hg
-  obtain ⟨U, F, hU, hgU, hF, hfF⟩ := hf g hg
-  have h1 : ContinuousWithinAt F (Formalism.QuantumDeterminants.UH H) g :=
-    (hF.continuousOn.continuousAt (hU.mem_nhds hgU)).continuousWithinAt
-  refine h1.congr_of_eventuallyEq ?_ (hfF g hgU hg)
-  filter_upwards [mem_nhdsWithin_of_mem_nhds (hU.mem_nhds hgU), self_mem_nhdsWithin] with x hx hx'
-  exact hfF x hx hx'
+    (hf : SmoothOnH H f) : ContinuousOn f (Formalism.QuantumDeterminants.UH H) :=
+  GlobalTheory.DiffQuot.smoothOnH_continuousOn hf
 
 theorem left_hasDerivAt {H : Matrix (Fin n) (Fin n) ℂ} (hH : AAInvW.HInvol H)
     {f F : Matrix (Fin n) (Fin n) ℂ → E} {U : Set (Matrix (Fin n) (Fin n) ℂ)} {g X : Matrix (Fin n) (Fin n) ℂ}
     (hU : IsOpen U) (hg : g ∈ U) (hgH : inUH H g) (hF : ContDiffOn ℝ ∞ F U)
     (hfF : ∀ x ∈ U, inUH H x → f x = F x) (hX : AAInvW.inLH H X) :
-    HasDerivAt (fun t : ℝ => f (NormedSpace.exp ((t : ℂ) • X) * g)) (fderiv ℝ F g (X * g)) 0 := by
-  have hγ1 := Formalism.REAL.hasDerivAt_mul_exp_smul_zero 1 X
-  simp only [Matrix.one_mul] at hγ1
-  have hγ : HasDerivAt (fun t : ℝ => NormedSpace.exp ((t : ℂ) • X) * g) (X * g) 0 :=
-    (Formalism.REAL.mulRightRealCLM g).hasFDerivAt.comp_hasDerivAt (0 : ℝ) hγ1
-  have hγ0 : NormedSpace.exp (((0 : ℝ) : ℂ) • X) * g = g := by
-    simp [NormedSpace.exp_zero]
-  have hFd : DifferentiableAt ℝ F g :=
-    (hF.differentiableOn (by simp)).differentiableAt (hU.mem_nhds hg)
-  have hcomp : HasDerivAt (fun t : ℝ => F (NormedSpace.exp ((t : ℂ) • X) * g))
-      (fderiv ℝ F g (X * g)) 0 :=
-    hFd.hasFDerivAt.comp_hasDerivAt_of_eq (0 : ℝ) hγ hγ0.symm
-  refine hcomp.congr_of_eventuallyEq ?_
-  have hmem : ∀ᶠ t : ℝ in 𝓝 0, NormedSpace.exp ((t : ℂ) • X) * g ∈ U :=
-    hγ.continuousAt.preimage_mem_nhds (by rw [hγ0]; exact hU.mem_nhds hg)
-  filter_upwards [hmem] with t ht
-  exact hfF _ ht (AAInvW.ana_mul (AAInvW.ana_expt hH hX t) hgH)
+    HasDerivAt (fun t : ℝ => f (NormedSpace.exp ((t : ℂ) • X) * g)) (fderiv ℝ F g (X * g)) 0 :=
+  GlobalTheory.DiffQuot.left_hasDerivAt hH hU hg hgH hF hfF hX
 
 theorem left_smooth {H : Matrix (Fin n) (Fin n) ℂ} (hH : AAInvW.HInvol H)
     {f f' : Matrix (Fin n) (Fin n) ℂ → E} {X : Matrix (Fin n) (Fin n) ℂ}
     (hf : SmoothOnH H f) (hX : AAInvW.inLH H X)
     (hf' : ∀ g, inUH H g → ∀ D, HasDerivAt (fun t : ℝ => f (NormedSpace.exp ((t : ℂ) • X) * g)) D 0 → D = f' g) :
     SmoothOnH H f' ∧
-      ∀ g, inUH H g → HasDerivAt (fun t : ℝ => f (NormedSpace.exp ((t : ℂ) • X) * g)) (f' g) 0 := by
-  constructor
-  · intro g₀ hg₀
-    obtain ⟨U, F, hU, hg₀U, hF, hfF⟩ := hf g₀ hg₀
-    refine ⟨U, fun k => fderiv ℝ F k (X * k), hU, hg₀U, ?_, ?_⟩
-    · have h1 := hF.fderiv_of_isOpen (m := ∞) hU Formalism.REAL.withTop_enat_infty_add_one_le_infty
-      have h2 : ContDiffOn ℝ ∞ (fun k : Matrix (Fin n) (Fin n) ℂ => X * k) U :=
-        (LinearMap.toContinuousLinearMap (LinearMap.mulLeft ℝ X)).contDiff.contDiffOn
-      exact h1.clm_apply h2
-    · intro k hk hkH
-      exact (hf' k hkH _ (left_hasDerivAt hH hU hk hkH hF hfF hX)).symm
-  · intro g hg
-    obtain ⟨U, F, hU, hgU, hF, hfF⟩ := hf g hg
-    have h := left_hasDerivAt hH hU hgU hg hF hfF hX
-    rwa [hf' g hg _ h] at h
+      ∀ g, inUH H g → HasDerivAt (fun t : ℝ => f (NormedSpace.exp ((t : ℂ) • X) * g)) (f' g) 0 :=
+  GlobalTheory.DiffQuot.left_smooth hH hf hX hf'
 
 end Smooth
 
@@ -172,9 +139,8 @@ theorem dsigW_adjoint {R : Rep k r} (hD : DerFacts R) (W : List (Mx k r)) (hW : 
     rfl
 
 theorem eq_zero_of_closure {R : Rep k r} {x : R.H} (hx : x ∈ closure R.sm) (h : ∀ w ∈ R.sm, ⟪w, x⟫_ℂ = 0) :
-    x = 0 := by
-  have hc : IsClosed {w : R.H | ⟪w, x⟫_ℂ = 0} := isClosed_eq (by fun_prop) continuous_const
-  exact inner_self_eq_zero.mp (closure_minimal (t := {w : R.H | ⟪w, x⟫_ℂ = 0}) h hc hx)
+    x = 0 :=
+  GlobalTheory.DiffQuot.eq_zero_of_closure hx h
 
 theorem sm_comb {R : Rep k r} (a : ℂ) {x y z : R.H} (hx : x ∈ R.sm) (hy : y ∈ R.sm) (hz : z ∈ R.sm) :
     a • (x - y) - z ∈ R.sm :=

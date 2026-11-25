@@ -265,7 +265,7 @@ theorem good_dualFun (D : D7) (t : Tup2 D) (h : D.ntypes.goodTuple t) :
   have e : (fun v => dualFun D k (t k v)) = fun v => dl (t k v) := by
     funext v
     unfold dualFun
-    rw [if_pos (show IsLabel D k (t k v) from h1.1 v)]
+    rw [ite_eq_left (show IsLabel D k (t k v) from h1.1 v)]
     rfl
   show Formalism.CyclotomicNorms.IsGood _ _ (fun v => dualFun D k (t k v)) _ ∧
     Formalism.CyclotomicNorms.IsGood _ _ (fun v => dualFun D k (t k v)) _

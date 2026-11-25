@@ -38,12 +38,6 @@ def indL (M : AddSubgroup V) (t : V) : ℂ := if t ∈ M then 1 else 0
 def xiInd (H : Sesq V) (α : V → ℂ) (vol : ℝ) (M : AddSubgroup V) (SA SB : Finset V) (e : V → ℂ) (s : V) : V → ℂ :=
   fun z => α s * opU H (-s) (xiS H α vol SA SB (indL M) e) z
 
-def xiU (H : Sesq V) (α : V → ℂ) (A B Λ : AddSubgroup V) (θ : V → ℂ) : Sch (cU H A B) (Λ.addSubgroupOf A) →ₗ[ℂ] (V → ℂ) :=
-  Classical.epsilon fun Xi => IsXi (cU H A B) (wA H α A) (wB H α B) (Λ.addSubgroupOf A) θ Xi
-
-def xiT (H : Sesq V) (α : V → ℂ) (vol : ℝ) (A B Λ : AddSubgroup V) (θ : V → ℂ) : Sch (cU H A B) (Λ.addSubgroupOf A) →ₗ[ℂ] (V → ℂ) :=
-  ((Real.sqrt vol : ℝ) : ℂ) • xiU H α A B Λ θ
-
 def SplitHyp (H : Sesq V) (α : V → ℂ) (A B Λ : AddSubgroup V) : Prop :=
   IsHerm H ∧ IsSemiChar H A α ∧ IsSemiChar H B α ∧ IsSelfDual H A ∧ IsSelfDual H B ∧ GoodLat H α A B Λ
 

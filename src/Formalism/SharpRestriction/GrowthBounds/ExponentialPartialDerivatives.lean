@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.CharacterGerms.RowTiePLogSt
 public import Formalism.LocalToGlobal.CharacterGerms.RowTiePCEqOf
 public import Formalism.LocalToGlobal.CharacterGerms.RowTieCartAdd
 public import Formalism.LocalToGlobal.CharacterGerms.RowTiePCEqSum2
@@ -9,50 +10,7 @@ public import Formalism.LocalToGlobal.CharacterGerms.RowTiePCEqM2
 public import Formalism.LocalToGlobal.CharacterGerms.RowTiePAddCvSelf
 public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
 import Formalism.LocalToGlobal.CharacterGerms.ConstMemTypeSetOfNonneg
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.CharacterGerms.RowTiePOActLog
 import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
@@ -405,19 +363,7 @@ theorem pderiv_eval_single {n : ℕ} {a : Fin 1 → Pt C n dd} (ha : Z0 a) (f : 
     Fintype.sum_prod_type, Fin.sum_univ_one]
 
 theorem germEval_oneStandardPoint_self (f : PS C 1 dd) : ev (n := 1) ![pt C dd 0] f = f := by
-  unfold ev
-  have : (fun p : Fin 1 × Fin dd => (![pt C dd 0] : Fin 1 → Pt C 1 dd) p.1 p.2) = X := by
-    funext p
-    obtain ⟨k, j⟩ := p
-    fin_cases k
-    rfl
-  rw [this, subst_self]
-  rfl
-
-theorem constantCoeff_pderiv {σ : Type} (q : σ) (f : MvPowerSeries σ C) :
-    constantCoeff (pderiv (R := C) q f) = coeff (Finsupp.single q 1) f := by
-  rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, zero_add]
-  simp
+  apply _root_.Formalism.L2.FormalSeriesBounds.LogEx.ev_self1 <;> assumption
 
 theorem ev_zero_pt {n : ℕ} (f : PS C 1 dd) : ev (n := n) (![0] : Fin 1 → Pt C n dd) f = MvPowerSeries.C (constantCoeff f) := by
   apply Formalism.L2.FormalSeriesBounds.OActLog.ev_zero_pt
@@ -431,23 +377,23 @@ theorem ex_lin (Y : FBChart C V O dd) (i m : Fin dd) :
   unfold comp1 at h
 
   rw [pderiv_eval_single hZ, map_sum] at h
-  simp only [map_mul, constantCoeff_ev hZ, constantCoeff_pderiv] at h
+  simp only [map_mul, constantCoeff_ev hZ, Formalism.L2.FormalSeriesBounds.OActLog.cc_pderiv] at h
   have hl : ∀ k, coeff (Finsupp.single ((0 : Fin 1), k) 1) (Y.lg m) = if k = m then 1 else 0 := by
     intro k
     rw [Y.lg_lin m _ (by simp), coeff_X]
     by_cases hk : k = m
-    · rw [if_pos hk, if_pos (by rw [hk])]
-    · rw [if_neg hk, if_neg]
+    · rw [ite_eq_left hk, ite_eq_left (by rw [hk])]
+    · rw [ite_eq_right hk, ite_eq_right]
       intro e
       exact hk (Prod.mk.inj (Finsupp.single_left_injective one_ne_zero e)).2
-  simp only [hl, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
-  rw [← constantCoeff_pderiv] at h
+  simp only [hl, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
+  rw [← Formalism.L2.FormalSeriesBounds.OActLog.cc_pderiv] at h
   change constantCoeff (pderiv (R := C) ((0 : Fin 1), i) (Y.ex m)) =
     coeff (Finsupp.single ((0 : Fin 1), i) 1) (X ((0 : Fin 1), m) : PS C 1 dd) at h
   rw [h, coeff_X]
   by_cases him : i = m
-  · rw [if_pos him, if_pos (by rw [him])]
-  · rw [if_neg him, if_neg]
+  · rw [ite_eq_left him, ite_eq_left (by rw [him])]
+  · rw [ite_eq_right him, ite_eq_right]
     intro e
     exact him (Prod.mk.inj (Finsupp.single_left_injective one_ne_zero e)).2
 
@@ -523,7 +469,6 @@ theorem ex_add (Y : FBChart C V O dd) (j : Fin dd) :
   exact (hPS j).symm
 
 end RowTiePCEqEx
-
 
 open RowTiePCEqEx in
 theorem exDer_holds {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [CommRing O] [StarRing O] {dd : ℕ}
@@ -619,14 +564,14 @@ theorem exDer_holds {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [Com
     rw [ev_sum hQ]
     simp only [ev_mul hQ, eAB, eB, ex_lin]
     rw [Finset.sum_eq_single i]
-    · rw [if_pos rfl, map_one, mul_one, ev_ev (z0_p0 _ (z0_pt 0)) hZex]
+    · rw [ite_eq_left rfl, map_one, mul_one, ev_ev (z0_p0 _ (z0_pt 0)) hZex]
       congr 1
       funext k m
       fin_cases k
       · exact (ev_X hZex 0 m).symm
       · exact (ev_zero hZex).symm
     · intro m _ hm
-      rw [if_neg (Ne.symm hm), map_zero, mul_zero]
+      rw [ite_eq_right (Ne.symm hm), map_zero, mul_zero]
     · intro h
       exact absurd (Finset.mem_univ i) h
   have key : ∀ i, pderiv (R := C) ((0 : Fin 1), i) (Y.ex j) =
@@ -732,9 +677,9 @@ theorem derAt_rawU (hu : ∀ g c i, V.Ge 0 (u g c i)) : DerAt V (rawU Y d u) := 
           (MvPowerSeries.pderiv (R := C) ((1 - g : Fin 2), j) Y.h) *
         MvPowerSeries.subst ((rawU Y d u).expPt (1 - g)) (un1 (Y.dF ((rawU Y d u).u (1 - g) k) j)) := by
     rw [Formalism.G.LogCR.pderiv_subst hE0, Fintype.sum_prod_type, Finset.sum_eq_single (1 - g)]
-    · simp only [hd, if_true]
+    · simp only [hd, ite_true]
     · intro g' _ hg'
-      simp only [hd, if_neg hg', mul_zero, Finset.sum_const_zero]
+      simp only [hd, ite_eq_right hg', mul_zero, Finset.sum_const_zero]
     · intro h
       exact absurd (Finset.mem_univ _) h
   set J : PS C 2 dd := (∑ j, ev (n := 2) ![pt C dd (1 - g)] (Y.dF ((rawU Y d u).u (1 - g) k) j) *
@@ -958,7 +903,6 @@ theorem addM_self : AddM V (Y.rawSelf p) := by
     exact intS_sum _ fun col _ => hGsg col _ fun i => hv (col, i)
 
 end CEqGen
-
 
 open CEqGen in
 theorem cEqSelf_holds : CEqSelfSt := by

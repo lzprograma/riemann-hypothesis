@@ -43,43 +43,8 @@ theorem proof : PullSectionIntegralInt.Statement := by
   have hBV : ∀ x ∈ B, x ∈ V := fun x hx =>
     hRV (isIntegral_algebraMap (R := B) (A := Ω) (x := ⟨x, hx⟩))
 
-  have hmax : ∀ k, ∃ c : ι k, ∀ i, V.valuation (y ⟨k, i⟩) ≤ V.valuation (y ⟨k, c⟩) := by
-    intro k
-    obtain ⟨i0, -⟩ := hrel k
-    obtain ⟨c, -, hc⟩ := Finset.exists_max_image Finset.univ (fun i => V.valuation (y ⟨k, i⟩))
-      ⟨i0, Finset.mem_univ _⟩
-    exact ⟨c, fun i => hc i (Finset.mem_univ _)⟩
-  choose c hc using hmax
-  have hc0 : ∀ k, y ⟨k, c k⟩ ≠ 0 := by
-    intro k h0
-    obtain ⟨i0, hi0⟩ := hrel k
-    have := hc k i0
-    rw [h0, map_zero, le_zero_iff, map_eq_zero] at this
-    exact hi0 this
-  have hratio : ∀ p : Σ k, ι k, y p / y ⟨p.1, c p.1⟩ ∈ V := by
-    intro p
-    rw [← V.valuation_le_one_iff, map_div₀]
-    exact div_le_one_of_le₀ (hc p.1 p.2) zero_le
-
+  obtain ⟨c, hc0, hratio, hMc0, hxV⟩ := PullSectionIntegral.exists_valMax_chart V y hrel e q τ s hs
   set Mc : Ω := ∏ k, y ⟨k, c k⟩ ^ e k
-  have hMc0 : Mc ≠ 0 := Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (hc0 k)
-  have hchart : (chartRingZ y c : Set Ω) ⊆ V := by
-    intro x hx
-    induction hx using Algebra.adjoin_induction with
-    | mem x hx => obtain ⟨p, rfl⟩ := hx; exact hratio p
-    | algebraMap r => simp
-    | add a b _ _ ha hb => exact add_mem ha hb
-    | mul a b _ _ ha hb => exact mul_mem ha hb
-  have : IsIntegrallyClosedIn V.toSubring Ω := inferInstanceAs (IsIntegrallyClosedIn V Ω)
-  have hxV : s * ∏ k, y ⟨k, c k⟩ ^ (-((τ : ℤ) * ((q * e k : ℕ) : ℤ))) ∈ V.toSubring :=
-    (Subring.integralClosure_le_iff (R := chartRingZ y c) (T := V.toSubring)).mpr
-      (fun r => hchart r.2) (hs c hc0)
-  have hprod : ∏ k, y ⟨k, c k⟩ ^ (-((τ : ℤ) * ((q * e k : ℕ) : ℤ))) = (Mc ^ (q * τ))⁻¹ := by
-    rw [← Finset.prod_pow, ← Finset.prod_inv_distrib]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    rw [show -((τ : ℤ) * ((q * e k : ℕ) : ℤ)) = -((e k * (q * τ) : ℕ) : ℤ) by push_cast; ring,
-      zpow_neg, zpow_natCast, pow_mul]
-  rw [hprod] at hxV
 
   set w := N * ∑ k, Fintype.card (ι k)
   have hd : ∀ k, e k + N * Fintype.card (ι k) ≤ ((w + 1) • e) k := by

@@ -1,5 +1,6 @@
 module
 
+import all ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KaUnfoldPfA
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.QuotientIsHausdorff
 public import Lemmata.GeneralBFactVariant.Imports
@@ -51,13 +52,7 @@ theorem mat_lact_eq (X : Data E r) {x0 : Frame X.Ψ r} (ho : IsOrth X x0) (γ : 
   rw [gm, untl_tl, ← Matrix.mul_assoc, ← Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hu, Matrix.one_mul]; rfl
 
 theorem orth_dom (X : Data E r) {x0 : Frame X.Ψ r} (ho : IsOrth X x0) : x0 ∈ X.dom := by
-  refine ExF.mem_dom_of_gramPos X fun τ => ⟨ExF.det_ne_of_orth X ho τ, ?_⟩
-  have e : X.gramPos x0 τ = 1 := by
-    ext a b
-    simp only [Data.gramPos, ho τ, Matrix.submatrix_apply, Matrix.diagonal_apply, Matrix.one_apply,
-      Fin.castLE_inj]
-    split_ifs <;> simp [sgn]
-  rw [e]; exact Matrix.PosDef.one
+  apply _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.IW.mem_dom_of_isOrth' <;> assumption
 
 def rho (X : Data E r) {x0 : Frame X.Ψ r} (ho : IsOrth X x0) :
     GL (Fin r) E →* (Fin (Fintype.card X.Ψ) → GL (Fin (r - X.p0) ⊕ Fin X.p0) ℂ) where

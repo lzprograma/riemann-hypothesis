@@ -1,49 +1,7 @@
 module
 
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HasStepCharts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -75,7 +33,7 @@ theorem exists_sign (S : Finset (Fin N)) (φ : Fin S.card → Fin N) (hφ : Func
     rintro _ ⟨i, rfl⟩
     simp)
   refine ⟨((Equiv.Perm.sign σ : ℤ) : ℂ), fun h => ?_⟩
-  rw [minorIJ, dif_pos hT]
+  rw [minorIJ, dite_eq_left hT]
   have key : h.submatrix φ (S.orderEmbOfFin rfl) =
       (h.submatrix ((Finset.univ.image φ).orderEmbOfFin hT) (S.orderEmbOfFin rfl)).submatrix σ id := by
     ext x t
@@ -125,7 +83,7 @@ theorem sum_smul_coefM (R : Finset (Fin N)) (e : Fin m → Fin N) (ε : Fin N �
   ext r c
   simp only [Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, coefM, movM]
   by_cases hr : r ∈ R
-  · simp only [if_pos hr]
+  · simp only [ite_eq_left hr]
     simp_rw [Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun s _ => ?_
@@ -223,7 +181,7 @@ theorem core (j : ℕ) (A S I₀ : Finset (Fin N)) (hS : S ⊆ A) (hI : I₀ ⊆
   have hGe : ∀ r c, ((1 + movM R e ε u).submatrix id π.symm) r c = (1 + movM R e ε u) r (π.symm c) :=
     fun r c => rfl
   have hw0' : w I₀ = a * (h.submatrix e f).det := by
-    rw [hw I₀ hc hI, minorIJ, dif_pos hc]
+    rw [hw I₀ hc hI, minorIJ, dite_eq_left hc]
   have hD : (h.submatrix e f).det ≠ 0 := by
     intro h0
     apply hw0
@@ -308,7 +266,7 @@ theorem core (j : ℕ) (A S I₀ : Finset (Fin N)) (hS : S ⊆ A) (hI : I₀ ⊆
     rcases Int.units_eq_one_or (Equiv.Perm.sign π.symm) with hs | hs <;> rw [hs] <;> norm_num
   · intro I
     by_cases hIc : I.card = S.card
-    · simp only [minorIJ, dif_pos hIc]
+    · simp only [minorIJ, dite_eq_left hIc]
       rw [← hf_def]
       have hsub : ((1 + movM R e ε u).submatrix id π.symm).submatrix (I.orderEmbOfFin hIc) f =
           (h.submatrix (I.orderEmbOfFin hIc) f) * (h.submatrix e f)⁻¹ := by
@@ -318,7 +276,7 @@ theorem core (j : ℕ) (A S I₀ : Finset (Fin N)) (hS : S ⊆ A) (hI : I₀ ⊆
         simp only [Matrix.mul_apply, Matrix.submatrix_apply, id]
       rw [hsub, Matrix.det_mul, Matrix.det_nonsing_inv, Ring.inverse_eq_inv, hw0']
       field_simp
-    · simp only [minorIJ, dif_neg hIc]
+    · simp only [minorIJ, dite_eq_right hIc]
       ring
 
 theorem exists_isGrChart : ∀ (N j : ℕ) (i : Fin N) (I₀ : Finset (Fin N)), j ≤ N → IsStepRows N j i I₀ →
@@ -328,10 +286,10 @@ theorem exists_isGrChart : ∀ (N j : ℕ) (i : Fin N) (I₀ : Finset (Fin N)), 
       I₀ ⊆ (if (i : ℕ) + 1 ≤ j then wIdx N j else omIdx N j) := hI₀
   have hlt := i.isLt
   by_cases hij : (i : ℕ) + 1 ≤ j
-  · rw [if_pos hij] at hI
+  · rw [ite_eq_left hij] at hI
     have hS : stepCols N j i ⊆ wIdx N j := by
       intro a ha
-      simp only [stepCols, wIdx, if_pos hij, Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
+      simp only [stepCols, wIdx, ite_eq_left hij, Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
       exact ha.1
     have hin : ∀ a ∈ wIdx N j, ∀ b ∈ wIdx N j, ((a : ℕ) < N - j ↔ (b : ℕ) < N - j) := by
       intro a ha b hb
@@ -346,12 +304,12 @@ theorem exists_isGrChart : ∀ (N j : ℕ) (i : Fin N) (I₀ : Finset (Fin N)), 
     intro h a w hbd _ ha hw hw0
     refine hCB h a w hbd ha (fun I hc hsub => hw I ?_) hw0
     show I.card = (stepCols N j i).card ∧ I ⊆ (if (i : ℕ) + 1 ≤ j then wIdx N j else omIdx N j)
-    rw [if_pos hij]
+    rw [ite_eq_left hij]
     exact ⟨hc, hsub⟩
-  · rw [if_neg hij] at hI
+  · rw [ite_eq_right hij] at hI
     have hS : stepCols N j i ⊆ omIdx N j := by
       intro a ha
-      simp only [stepCols, omIdx, if_neg hij, Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
+      simp only [stepCols, omIdx, ite_eq_right hij, Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
       omega
     have hin : ∀ a ∈ omIdx N j, ∀ b ∈ omIdx N j, ((a : ℕ) < N - j ↔ (b : ℕ) < N - j) := by
       intro a ha b hb
@@ -366,7 +324,7 @@ theorem exists_isGrChart : ∀ (N j : ℕ) (i : Fin N) (I₀ : Finset (Fin N)), 
     intro h a w hbd _ ha hw hw0
     refine hCB h a w hbd ha (fun I hc hsub => hw I ?_) hw0
     show I.card = (stepCols N j i).card ∧ I ⊆ (if (i : ℕ) + 1 ≤ j then wIdx N j else omIdx N j)
-    rw [if_neg hij]
+    rw [ite_eq_right hij]
     exact ⟨hc, hsub⟩
 
 end GlobalTheory.CompanionTheory.Ar.PB.StepW.GrChart

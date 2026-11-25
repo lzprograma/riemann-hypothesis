@@ -101,9 +101,9 @@ theorem subD_colSub_bSc (τ : ι) (x : K) (Q : Pol K ι a) :
     simp only [subD, aeval_X, aeval_C, algebraMap_eq]
     by_cases hb : v.2.2.1 < b
 
-    · simp only [dif_pos hb, map_sum, map_mul, aeval_X, scU, Sum.elim_inl, Sum.elim_inr, C_1, one_mul, Finset.mul_sum]
+    · simp only [dite_eq_left hb, map_sum, map_mul, aeval_X, scU, Sum.elim_inl, Sum.elim_inr, C_1, one_mul, Finset.mul_sum]
       exact Finset.sum_congr rfl fun β _ => by simp only [mul_assoc, mul_comm]
-    · simp only [dif_neg hb, mul_zero, map_zero]
+    · simp only [dite_eq_right hb, mul_zero, map_zero]
   exact AlgHom.congr_fun e Q
 
 theorem jetLin_congr (J J' : (DVar ι a b →₀ ℕ) → K) (R : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K)

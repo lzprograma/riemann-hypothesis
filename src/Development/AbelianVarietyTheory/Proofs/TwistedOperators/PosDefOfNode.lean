@@ -60,8 +60,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.MinorOrderedEntries
 
 open scoped ComplexOrder
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.DefConv
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} (W : G.Weil) (M : Vol G)
@@ -159,9 +157,5 @@ theorem good_row {i : ℕ} (hi : i < D.R.m) (f : Sch G (.right i D.R.m))
   obtain ⟨hc, -⟩ := GlobalTheory.thetaKO_continuous_and_rat_invariant W.ψ _ _ _ _ _ (W.om_is _ hr) f hf
   refine ⟨?_, fun γ hγ γ' hγ' g h => _root_.GlobalTheory.RowReal.ker_rat_left W _ hr f hf γ hγ γ' hγ' g h, hpos, hM.haar_fund.1, hM.haar_fund.2⟩
   exact hc.comp (((continuous_negGA _).comp continuous_snd).prodMk continuous_fst)
-
-end GlobalTheory.DefConv
-
-namespace GlobalTheory.DefConv
 
 end GlobalTheory.DefConv

@@ -69,7 +69,6 @@ theorem specMap_component [DecidableEq K] {E : Type*} [Field E] (ψ : MRing ι �
     exact ((weightedHomogeneousComponent (R := E) (tWeight k) d).map_add _ _).symm
 
 
-set_option backward.isDefEq.respectTransparency.types false in
 theorem ker_isMultiHomogIdeal [DecidableEq K] {E : Type*} [Field E] (ψ : MRing ι →+* E) :
     IsMultiHomogIdeal (RingHom.ker (RegularityFunctionFieldNumber.specMap ψ ∅)) := by
   refine isMultiHomogIdeal_of_isHomogeneous fun k d g hg => ?_

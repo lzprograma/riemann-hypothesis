@@ -4,8 +4,6 @@ public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsS
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
 

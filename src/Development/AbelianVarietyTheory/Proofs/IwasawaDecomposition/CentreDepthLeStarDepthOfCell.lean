@@ -369,8 +369,7 @@ theorem depthSet_bddAbove_of_unique_centre : ∀ (O : Type) [CommRing O] (bar : 
       BddAbove (depthSet bar ψ w n (fun a b => B (π a) (π b))) := by
   intro O _ bar ψ w X _ _ _ m γ B v hγ hB hv hvp hv0 huniq n π hπ
   obtain ⟨y₀, hy₀⟩ : ∃ y, 0 < v y y := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hv0
     have hz : ∀ y, v y y = 0 := fun y => le_antisymm (hc y) (hvp y)
     refine LinearMap.ext₂ fun x y => ?_

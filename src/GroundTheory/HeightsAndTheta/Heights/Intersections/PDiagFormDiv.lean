@@ -33,13 +33,6 @@ theorem aeval_scale (u : K → Φ) (c : (Σ k, ι k) → Φ) (s : MRing ι) (β 
 
 end Generic
 
-section Geometry
-
-variable {Ω : Type} [Field Ω] {ι ν κ : Type} [Fintype ι] [Fintype ν] [Fintype κ] {E : Type} [AddCommGroup E] [Module Ω E] {Φ : Type} [Field Φ]
-  [Algebra Ω Φ]
-
-end Geometry
-
 end DiagonalFormDivisor
 
 

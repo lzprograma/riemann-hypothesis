@@ -1,53 +1,7 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.NullSec
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.Matrix.Spectrum
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.IsSingTest
 public import Mathlib.Algebra.Star.UnitaryStarAlgAut
@@ -84,9 +38,6 @@ theorem lin_lf (φ : PX m n →ₗ[ℂ] PX m n) (b : Bool) (N M : Matrix (Fin m)
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [Finset.sum_mul]
   exact Finset.sum_congr rfl fun x _ => C_mul'.symm
-
-theorem mstar_mul (A B : Matrix (Fin m) (Fin m) ℂ) : (A * B).map star = A.map star * B.map star := by
-  ext i j; simp [Matrix.mul_apply]
 
 theorem am_mul (b : Bool) (A B : Matrix (Fin m) (Fin m) ℂ) : am b (A * B) = am b A * am b B := by
   cases b <;> simp [am]
@@ -176,7 +127,7 @@ theorem actU_dY_actU (V : Matrix (Fin m) (Fin m) ℂ) (hV : V ∈ unitaryGroup (
       · simp [am, dm, Matrix.mul_assoc]
       · have h1 : (star V).map star = Vᵀ := by ext c e; simp [star_eq_conjTranspose]
         have h2 : V.map star = (star V)ᵀ := by ext c e; simp [star_eq_conjTranspose]
-        simp only [am, dm, if_true, h1, h2, transpose_mul, Matrix.mul_neg, Matrix.neg_mul, Matrix.mul_assoc]
+        simp only [am, dm, ite_true, h1, h2, transpose_mul, Matrix.mul_neg, Matrix.neg_mul, Matrix.mul_assoc]
     rw [map_mul, Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add (f := _), map_mul, map_mul, hid, hid, hp, key,
       Derivation.leibniz, smul_eq_mul, smul_eq_mul]
 
@@ -205,10 +156,10 @@ theorem actU_diag_monomial (ζ : Fin m → ℂ) (s : Fin m × Fin n × Bool →�
     rintro ⟨a, i, b⟩
     rw [actU_X]
     cases b
-    · simp only [lf, am, Bool.false_eq_true, if_false]
+    · simp only [lf, am, Bool.false_eq_true, ite_false]
       rw [Finset.sum_eq_single a (fun c _ hc => by rw [diagonal_apply_ne _ (Ne.symm hc)]; simp) (by simp)]
       simp
-    · simp only [lf, am, if_true]
+    · simp only [lf, am, ite_true]
       rw [Finset.sum_eq_single a (fun c _ hc => by rw [map_apply, diagonal_apply_ne _ (Ne.symm hc)]; simp) (by simp)]
       simp
   simp only [monomial_eq, C_1, one_mul, Finsupp.prod, map_prod, map_pow, hX, mul_pow, ← Finset.prod_mul_distrib]
@@ -280,10 +231,10 @@ theorem kill_diag (Λ : PX m n →ₗ[ℂ] ℂ) (hΛ : ∀ u ∈ unitaryGroup (F
     rintro ⟨a, i, b⟩
     rw [dY_X]
     cases b
-    · simp only [lf, dm, Bool.false_eq_true, if_false]
+    · simp only [lf, dm, Bool.false_eq_true, ite_false]
       rw [Finset.sum_eq_single a (fun c _ hc => by rw [diagonal_apply_ne _ (Ne.symm hc)]; simp) (by simp)]
       simp
-    · simp only [lf, dm, if_true]
+    · simp only [lf, dm, ite_true]
       rw [Finset.sum_eq_single a (fun c _ hc => by
         rw [Matrix.neg_apply, transpose_apply, diagonal_apply_ne _ hc]; simp) (by simp)]
       simp
@@ -345,7 +296,7 @@ theorem hOp_eq (c : ℝ) (a b : Fin m) (P : PX m n) : hOp (fun _ => true) c a b 
   set D' : Derivation ℂ (PX m n) (PX m n) := ∑ i, ((X (b, i, false) : PX m n) • pderiv (a, i, false) -
     (X (a, i, true) : PX m n) • pderiv (b, i, true))
   have h1 : hOp (fun _ => true) c a b P = D' P := by
-    simp only [D', dsum_apply, Derivation.sub_apply, Derivation.smul_apply, smul_eq_mul, hOp, sgn, if_true, mul_one,
+    simp only [D', dsum_apply, Derivation.sub_apply, Derivation.smul_apply, smul_eq_mul, hOp, sgn, ite_true, mul_one,
       sub_self, mul_zero, map_zero, zero_mul, sub_zero, C_1, one_mul]
   have h2 : D' = dY (single a b 1) := by
     apply MvPolynomial.derivation_ext
@@ -354,14 +305,14 @@ theorem hOp_eq (c : ℝ) (a b : Fin m) (P : PX m n) : hOp (fun _ => true) c a b 
     simp only [D', dsum_apply, Derivation.sub_apply, Derivation.smul_apply, smul_eq_mul, pderiv_X, Pi.single_apply,
       Prod.mk.injEq]
     cases b'
-    · simp only [lf, dm, Bool.false_eq_true, if_false, and_false, mul_zero, sub_zero, single_apply]
+    · simp only [lf, dm, Bool.false_eq_true, ite_false, and_false, mul_zero, sub_zero, single_apply]
       by_cases ha : a' = a
       · subst ha
         rw [Finset.sum_eq_single b (fun c _ hc => by simp [Ne.symm hc]) (by simp)]
         rw [Finset.sum_eq_single i' (fun c _ hc => by simp [Ne.symm hc]) (by simp)]
         simp
       · simp [Ne.symm ha, ha]
-    · simp only [lf, dm, if_true, and_true, single_apply, Matrix.neg_apply,
+    · simp only [lf, dm, ite_true, and_true, single_apply, Matrix.neg_apply,
         transpose_apply]
       by_cases hb : a' = b
       · subst hb

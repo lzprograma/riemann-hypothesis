@@ -7,46 +7,27 @@ public import Mathlib.RingTheory.RootsOfUnity.Complex
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open Polynomial Finset
 
 theorem SchProdOneSubRootsOfUnity.proof : SchProdOneSubRootsOfUnity.Statement := by
   intro k hk
-  have hk0 : 0 < k := hk
-  have : NeZero k := ⟨Nat.pos_iff_ne_zero.mp hk0⟩
-  have hζ : IsPrimitiveRoot (rootOfUnity k) k := by
-    unfold rootOfUnity
-    exact Complex.isPrimitiveRoot_exp k (Nat.pos_iff_ne_zero.mp hk0)
-  set p : ℂ[X] := ∏ i ∈ range k, (1 - C (rootOfUnity k ^ i) * X) with hp
-  set q : ℂ[X] := 1 - X ^ k with hq
-  have hpdeg : p.natDegree ≤ k := by
-    have h1 : ∀ i ∈ range k, (1 - C (rootOfUnity k ^ i) * X).natDegree ≤ 1 := fun i _ => by
-      compute_degree
-    refine (natDegree_prod_le _ _).trans ((sum_le_sum h1).trans ?_)
-    simp
-  have hqdeg : q.natDegree ≤ k := by
-    rw [hq]; compute_degree
-  have hdeg : (p - q).degree < #(insert (0 : ℂ) (nthRootsFinset k (1 : ℂ))) := by
-    rw [card_insert_of_notMem (by simp [mem_nthRootsFinset hk0, zero_pow hk0.ne']),
+  let : NeZero k := ⟨Nat.ne_of_gt hk⟩
+  have hζ : IsPrimitiveRoot (rootOfUnity k) k := Complex.isPrimitiveRoot_exp k (NeZero.ne k)
+  refine eq_of_degree_sub_lt_of_eval_finset_eq (insert 0 (nthRootsFinset k 1)) ?_ fun x hx => ?_
+  · rw [card_insert_of_notMem (by simp [mem_nthRootsFinset hk, zero_pow (NeZero.ne k)]),
       hζ.card_nthRootsFinset]
-    refine (degree_le_of_natDegree_le ((natDegree_sub_le _ _).trans (max_le hpdeg hqdeg))).trans_lt ?_
-    exact_mod_cast Nat.lt_succ_self k
-  refine eq_of_degree_sub_lt_of_eval_finset_eq _ hdeg fun x hx => ?_
-  rcases mem_insert.mp hx with rfl | hx
-  · simp [hp, hq, eval_prod, zero_pow hk0.ne']
-  · have hxk : x ^ k = 1 := (mem_nthRootsFinset hk0 _).mp hx
-    have hinv : x⁻¹ ^ k = 1 := by rw [inv_pow, hxk, inv_one]
-    obtain ⟨i, hi, hi'⟩ := hζ.eq_pow_of_pow_eq_one hinv
-    have hx0 : x ≠ 0 := by
-      rintro rfl; simp [zero_pow hk0.ne'] at hxk
-    have hzero : p.eval x = 0 := by
-      rw [hp, eval_prod]
-      refine prod_eq_zero (mem_range.mpr hi) ?_
-      simp [hi', inv_mul_cancel₀ hx0]
-    rw [hzero, hq]
-    simp [hxk]
+    refine (degree_le_of_natDegree_le (n := k) ?_).trans_lt (by exact_mod_cast Nat.lt_succ_self k)
+    refine (natDegree_sub_le _ _).trans (max_le ?_ (by compute_degree))
+    refine (natDegree_prod_le _ _).trans ?_
+    exact (sum_le_sum (g := fun _ => 1) (fun i _ => by compute_degree)).trans (by simp)
+  · rcases mem_insert.mp hx with rfl | hx
+    · simp [eval_prod, zero_pow (NeZero.ne k)]
+    · have hxk := (mem_nthRootsFinset hk _).mp hx
+      obtain ⟨i, hi, hi'⟩ := hζ.eq_pow_of_pow_eq_one (show x⁻¹ ^ k = 1 by simp [inv_pow, hxk])
+      simp only [eval_prod, eval_sub, eval_one, eval_pow, eval_X, hxk, sub_self]
+      apply prod_eq_zero (mem_range.mpr hi)
+      simp [hi', inv_mul_cancel₀ (ne_zero_of_mem_nthRootsFinset one_ne_zero hx)]
 
 end GroundTheory.Heights₂.Heights.RestTerms

@@ -4,46 +4,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrin
 public import Mathlib.Tactic.Bound
 public import Mathlib.Tactic.Monotonicity.Lemmas
 public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -78,10 +39,10 @@ variable (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length))
 def appendSchemeAt (i : ℕ) : Scheme.{u} :=
   if i ≤ s.length then s.obj i else t.obj (i - s.length)
 
-theorem appendSchemeAt_of_le_length {i : ℕ} (h : i ≤ s.length) : appendSchemeAt s t i = s.obj i := if_pos h
+theorem appendSchemeAt_of_le_length {i : ℕ} (h : i ≤ s.length) : appendSchemeAt s t i = s.obj i := ite_eq_left h
 
 theorem appendSchemeAt_of_length_lt {i : ℕ} (h : s.length < i) :
-    appendSchemeAt s t i = t.obj (i - s.length) := if_neg (not_le.2 h)
+    appendSchemeAt s t i = t.obj (i - s.length) := ite_eq_right (not_le.2 h)
 
 theorem appendSchemeAt_zero : appendSchemeAt s t 0 = s.obj 0 := appendSchemeAt_of_le_length s t (Nat.zero_le _)
 
@@ -124,9 +85,9 @@ theorem isBlowupAlongIdealSheaf_appendBlowupMorphism (i : ℕ) (hi : i < s.lengt
   rcases lt_trichotomy i s.length with h | h | h
   · have hmap : appendBlowupMorphism s t i =
         eqToHom (appendSchemeAt_succ_of_lt_length s t h) ≫ s.map i ≫
-          eqToHom (appendSchemeAt_of_le_length s t (le_of_lt h)).symm := dif_pos h
+          eqToHom (appendSchemeAt_of_le_length s t (le_of_lt h)).symm := dite_eq_left h
     have hcen : appendCenter s t i =
-        (s.center i).comap (eqToHom (appendSchemeAt_of_le_length s t (le_of_lt h))) := dif_pos h
+        (s.center i).comap (eqToHom (appendSchemeAt_of_le_length s t (le_of_lt h))) := dite_eq_left h
     rw [hmap, hcen]
     exact Blowup.IsBlowupAlongIdealSheaf.of_eq (s.isBlowup i h) (appendSchemeAt_succ_of_lt_length s t h).symm
       (appendSchemeAt_of_le_length s t (le_of_lt h)).symm
@@ -136,11 +97,11 @@ theorem isBlowupAlongIdealSheaf_appendBlowupMorphism (i : ℕ) (hi : i < s.lengt
         eqToHom (appendSchemeAt_succ_of_eq_length s t (rfl : s.length = s.length)) ≫ t.map 0 ≫
           t.isoZero.hom ≫
             eqToHom (appendSchemeAt_of_eq_length s t (rfl : s.length = s.length)).symm :=
-      (dif_neg (lt_irrefl s.length)).trans (dif_neg (lt_irrefl s.length))
+      (dite_eq_right (lt_irrefl s.length)).trans (dite_eq_right (lt_irrefl s.length))
     have hcen : appendCenter s t s.length =
         ((t.center 0).comap t.isoZero.inv).comap
           (eqToHom (appendSchemeAt_of_eq_length s t (rfl : s.length = s.length))) :=
-      (dif_neg (lt_irrefl s.length)).trans (dif_neg (lt_irrefl s.length))
+      (dite_eq_right (lt_irrefl s.length)).trans (dite_eq_right (lt_irrefl s.length))
     rw [hmap, hcen, ← Category.assoc (t.map 0) t.isoZero.hom]
     exact Blowup.IsBlowupAlongIdealSheaf.of_eq (Blowup.IsBlowupAlongIdealSheaf.comp_iso_hom (t.isBlowup 0 ht) t.isoZero)
       (appendSchemeAt_succ_of_eq_length s t (rfl : s.length = s.length)).symm
@@ -149,10 +110,10 @@ theorem isBlowupAlongIdealSheaf_appendBlowupMorphism (i : ℕ) (hi : i < s.lengt
     have hmap : appendBlowupMorphism s t i =
         eqToHom (appendSchemeAt_succ_of_length_lt s t h) ≫ t.map (i - s.length) ≫
           eqToHom (appendSchemeAt_of_length_lt s t h).symm :=
-      (dif_neg (not_lt.2 (le_of_lt h))).trans (dif_pos h)
+      (dite_eq_right (not_lt.2 (le_of_lt h))).trans (dite_eq_left h)
     have hcen : appendCenter s t i =
         (t.center (i - s.length)).comap (eqToHom (appendSchemeAt_of_length_lt s t h)) :=
-      (dif_neg (not_lt.2 (le_of_lt h))).trans (dif_pos h)
+      (dite_eq_right (not_lt.2 (le_of_lt h))).trans (dite_eq_left h)
     rw [hmap, hcen]
     exact Blowup.IsBlowupAlongIdealSheaf.of_eq (t.isBlowup (i - s.length) hlt)
       (appendSchemeAt_succ_of_length_lt s t h).symm (appendSchemeAt_of_length_lt s t h).symm
@@ -201,34 +162,34 @@ theorem append_blowupMorphism_of_lt_length {i : ℕ} (h : i < s.length) :
     (s.append t).map i =
       eqToHom (append_schemeAt_succ_of_lt_length s t h) ≫ s.map i ≫
         eqToHom (append_schemeAt_of_le_length s t (le_of_lt h)).symm := by
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem append_blowupMorphism_of_length_lt {i : ℕ} (h : s.length < i) :
     (s.append t).map i =
       eqToHom (append_schemeAt_succ_of_length_lt s t h) ≫ t.map (i - s.length) ≫
         eqToHom (append_schemeAt_of_length_lt s t h).symm := by
-  exact (dif_neg (not_lt.2 (le_of_lt h))).trans (dif_pos h)
+  exact (dite_eq_right (not_lt.2 (le_of_lt h))).trans (dite_eq_left h)
 
 theorem append_blowupMorphism_length :
     (s.append t).map s.length =
       eqToHom (append_schemeAt_length_succ s t) ≫ t.map 0 ≫ t.isoZero.hom ≫
         eqToHom (append_schemeAt_of_le_length s t (le_refl s.length)).symm := by
-  exact (dif_neg (lt_irrefl s.length)).trans (dif_neg (lt_irrefl s.length))
+  exact (dite_eq_right (lt_irrefl s.length)).trans (dite_eq_right (lt_irrefl s.length))
 
 theorem append_center_of_lt_length {i : ℕ} (h : i < s.length) :
     (s.append t).center i = (s.center i).comap (eqToHom (append_schemeAt_of_le_length s t (le_of_lt h))) := by
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem append_center_of_length_lt {i : ℕ} (h : s.length < i) :
     (s.append t).center i =
       (t.center (i - s.length)).comap (eqToHom (append_schemeAt_of_length_lt s t h)) := by
-  exact (dif_neg (not_lt.2 (le_of_lt h))).trans (dif_pos h)
+  exact (dite_eq_right (not_lt.2 (le_of_lt h))).trans (dite_eq_left h)
 
 theorem append_center_length :
     (s.append t).center s.length =
       ((t.center 0).comap t.isoZero.inv).comap
         (eqToHom (append_schemeAt_of_le_length s t (le_refl s.length))) := by
-  exact (dif_neg (lt_irrefl s.length)).trans (dif_neg (lt_irrefl s.length))
+  exact (dite_eq_right (lt_irrefl s.length)).trans (dite_eq_right (lt_irrefl s.length))
 
 theorem projectionToBase_append_of_le_length {i : ℕ} (h : i ≤ s.length) :
     projectionToBase (s.append t) i = eqToHom (append_schemeAt_of_le_length s t h) ≫ projectionToBase s i := by
@@ -414,13 +375,13 @@ def appendProjectionToBase (i : ℕ) : (s.appendToBlowupSequenceData t).obj i �
 
 theorem appendProjectionToBase_of_le_length {i : ℕ} (h : i ≤ s.toBlowupSequenceData.length) :
     s.appendProjectionToBase t i = eqToHom (appendToBlowupSequenceData_schemeAt_of_le_length s t h) ≫ s.proj i :=
-  dif_pos h
+  dite_eq_left h
 
 theorem appendProjectionToBase_of_length_lt {i : ℕ} (h : s.toBlowupSequenceData.length < i) :
     s.appendProjectionToBase t i =
       eqToHom (appendToBlowupSequenceData_schemeAt_of_length_lt s t h) ≫ t.proj (i - s.toBlowupSequenceData.length) ≫
         s.proj s.toBlowupSequenceData.length :=
-  dif_neg (not_le.2 h)
+  dite_eq_right (not_le.2 h)
 
 def appendIdeal (i : ℕ) : ((s.appendToBlowupSequenceData t).obj i).IdealSheafData :=
   if h : i ≤ s.toBlowupSequenceData.length then
@@ -430,12 +391,12 @@ def appendIdeal (i : ℕ) : ((s.appendToBlowupSequenceData t).obj i).IdealSheafD
 
 theorem appendIdeal_of_le_length {i : ℕ} (h : i ≤ s.toBlowupSequenceData.length) :
     s.appendIdeal t i = (s.ideal i).comap (eqToHom (appendToBlowupSequenceData_schemeAt_of_le_length s t h)) :=
-  dif_pos h
+  dite_eq_left h
 
 theorem appendIdeal_of_length_lt {i : ℕ} (h : s.toBlowupSequenceData.length < i) :
     s.appendIdeal t i =
       (t.ideal (i - s.toBlowupSequenceData.length)).comap (eqToHom (appendToBlowupSequenceData_schemeAt_of_length_lt s t h)) :=
-  dif_neg (not_le.2 h)
+  dite_eq_right (not_le.2 h)
 
 private theorem comap_eqToHom_congr {A : Scheme.{u}} (F : ℕ → Scheme.{u})
     (G : ∀ n : ℕ, (F n).IdealSheafData) {i j : ℕ} (hij : i = j)
@@ -463,13 +424,13 @@ def appendBoundary (i : ℕ) : List ((s.appendToBlowupSequenceData t).obj i).Ide
 theorem appendBoundary_of_le_length {i : ℕ} (h : i ≤ s.toBlowupSequenceData.length) :
     s.appendBoundary t i =
       (s.boundary i).map (fun D => D.comap (eqToHom (appendToBlowupSequenceData_schemeAt_of_le_length s t h))) :=
-  dif_pos h
+  dite_eq_left h
 
 theorem appendBoundary_of_length_lt {i : ℕ} (h : s.toBlowupSequenceData.length < i) :
     s.appendBoundary t i =
       (t.boundary (i - s.toBlowupSequenceData.length)).map
         (fun D => D.comap (eqToHom (appendToBlowupSequenceData_schemeAt_of_length_lt s t h))) :=
-  dif_neg (not_le.2 h)
+  dite_eq_right (not_le.2 h)
 
 private theorem map_comap_eqToHom_congr {A : Scheme.{u}}
     {F : ℕ → Scheme.{u}} (B : ∀ n : ℕ, List (F n).IdealSheafData) (i j : ℕ) (hij : i = j)

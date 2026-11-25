@@ -47,12 +47,6 @@ def FibreNormDehomCharpoly.Statement : Prop :=
         ∃ c : ℕ → MvPolynomial (Fin (D + 1)) ℚ, IsDehomNormForms y L j (q * τ) s c ∧
           (s ≠ 0 → c (Module.finrank (pullField y L) Ω) ≠ 0)
 
-section Inhabitants
-
-open ProjLine
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

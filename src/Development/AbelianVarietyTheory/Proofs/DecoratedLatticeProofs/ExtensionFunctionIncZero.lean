@@ -59,7 +59,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedCharacter (CharUnramAt)
 open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastPair lastKer)
 open GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedLocalFrameSequences (IsFockOver StepsAll vec atW IsMoved InAt InvOnUnits IsBesFrame IsJacFrame FrameMapsPrefix jacLat ptBF ptFB)
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Mem.Isom
 
 namespace GlobalTheory.OverTgt
@@ -112,22 +111,5 @@ theorem mul_mem_latO {S T T' : HSp D} {LS : Set (Fin S.rank → D.host.E)} {LT :
   | zero => rw [Matrix.mul_zero]; exact zero_mem _
   | add z z' _ _ hz hz' => rw [Matrix.mul_add]; exact add_mem hz hz'
   | neg z _ hz => rw [Matrix.mul_neg]; exact neg_mem hz
-
-section Isometry
-
-variable {V V' : HSp D} (I : IsoMat V V') (S : HSp D)
-
-variable {Λ : AddSubgroup (WO S V)} {Λ' : AddSubgroup (WO S V')} (hΛ : ∀ u, u ∈ Λ ↔ I.phi S u ∈ Λ')
-include hΛ
-
-end Isometry
-
-section Frames
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {p : SplitPt D k}
-  {S T T₀ : HSp D} (d : HypDec T T₀ 0) {n n' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n']
-  (α : GlobalTheory.FinPl.Frame p S n') (β : GlobalTheory.FinPl.Frame p T n) (β₀ : GlobalTheory.FinPl.Frame p T₀ n)
-
-end Frames
 
 end GlobalTheory.OverTgt

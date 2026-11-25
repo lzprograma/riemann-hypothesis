@@ -54,7 +54,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
 open GlobalTheory.SW hiding Level IsSB
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open scoped TensorProduct Classical ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.PtId.OneScalar
 
@@ -91,7 +90,7 @@ theorem lt_injective {D : D7} {H : Geo.Tor.Host D.host.E} {Dw : Datum H} (hH : �
     have hs := s.2
     have : Dw.mult σ = Dw.p := by
       rw [show σ = tauE D ρ from h]
-      exact if_pos (hH ρ)
+      exact ite_eq_left (hH ρ)
     exact this ▸ hs
   intro x y hxy
   obtain ⟨a1, a2⟩ := hlt x

@@ -20,7 +20,7 @@ open Finset Matrix
 
 namespace ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -189,7 +189,7 @@ theorem tensor_coef_Eab_action (dual : Bool) (hσ : IsURepOn (UJset ε) σ) (hD 
   refine Finset.sum_congr rfl fun c _ => ?_
   cases dual
   · simp only [cond_false, tensF, tensV_coord, oa1Phi, Submodule.coe_add, map_add (f := _), inner_add_right, mul_add,
-      Finset.sum_add_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_add_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [add_comm]
     congr 1
     rw [Finset.sum_eq_single a (fun d _ hd => by simp [hd]) (by simp)]
@@ -210,7 +210,7 @@ theorem tensor_coef_Eab_action (dual : Bool) (hσ : IsURepOn (UJset ε) σ) (hD 
       · simp [h]
     simp only [hL, hR]
     simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_neg_distrib, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, oa1Phi, cond_true]
+      Finset.mem_univ, ite_true, oa1Phi, cond_true]
     ring
 
 end Eab

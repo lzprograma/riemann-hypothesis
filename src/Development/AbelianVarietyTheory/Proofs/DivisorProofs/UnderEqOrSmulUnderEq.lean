@@ -74,8 +74,6 @@ theorem under_eq_or_smul_under_eq {L : Type} [Field L] [NumberField L] [IsGalois
     have h4 : (σ * c) • c⁻¹ • v = W := by rw [mul_smul, smul_inv_smul, hσ]
     rw [hWQ.over, ← h4, GlobalTheory.Mem.Chr.under_smul_of_fix b _ h2]
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem div_or_conj_div : ∀ (D : D7) (P : Formalism.L2.Host.PiBar D.host) (k : Fin 2) (w : HeightOneSpectrum (𝓞 D.host.E)), ((D.host.g k : ℕ) : 𝓞 D.host.E) ∈ w.asIdeal → P.Div k w ∨ ∃ w' : HeightOneSpectrum (𝓞 D.host.E), P.Div k w' ∧ w'.asIdeal = Formalism.HermitianLatticesTheory.conjIdeal (K := D.host.E) w.asIdeal := by
   intro D P k w hw
   have hG : IsGalois ℚ D.host.E := D.host.hostE_isGalois

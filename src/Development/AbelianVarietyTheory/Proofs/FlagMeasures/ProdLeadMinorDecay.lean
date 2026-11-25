@@ -412,16 +412,16 @@ theorem trace_block {n : ℕ} (Y : Matrix (Fin n) (Fin n) ℂ) (hY : Y.IsHermiti
       ∑ b : Fin n, ((if l ≤ b.val ∧ a.val < l then ‖Y b a‖ ^ 2 else 0 : ℝ) : ℂ) := by
     intro a
     by_cases ha : a.val < l
-    · rw [if_pos ha, if_pos ha, ← Finset.sum_sub_distrib]
+    · rw [ite_eq_left ha, ite_eq_left ha, ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl (fun b _ => ?_)
       by_cases hb : b.val < l
-      · rw [if_pos hb, if_neg (fun h => absurd h.1 (Nat.not_le.mpr hb)), sub_self,
+      · rw [ite_eq_left hb, ite_eq_right (fun h => absurd h.1 (Nat.not_le.mpr hb)), sub_self,
           Complex.ofReal_zero]
-      · rw [if_neg hb, sub_zero, if_pos ⟨Nat.le_of_not_lt hb, ha⟩, hH]
-    · rw [if_neg ha, if_neg ha, sub_self]
+      · rw [ite_eq_right hb, sub_zero, ite_eq_left ⟨Nat.le_of_not_lt hb, ha⟩, hH]
+    · rw [ite_eq_right ha, ite_eq_right ha, sub_self]
       symm
       refine Finset.sum_eq_zero (fun b _ => ?_)
-      rw [if_neg (fun h => ha h.2), Complex.ofReal_zero]
+      rw [ite_eq_right (fun h => ha h.2), Complex.ofReal_zero]
   rw [e1, e2, ← Finset.sum_sub_distrib, Finset.sum_congr rfl (fun a _ => key a), Finset.sum_comm,
     Complex.ofReal_sum]
   simp only [Complex.ofReal_sum]
@@ -515,14 +515,7 @@ namespace GlobalTheory.GapSum
 
 theorem inP_apply_eq_zero {n : ℕ} {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ}
     (hY : inP ε Y) {a b : Fin n} (hab : ε a = ε b) : Y a b = 0 := by
-  have h := congrFun (congrFun hY.2 a) b
-  simp only [Jm, Matrix.mul_diagonal, Matrix.neg_apply, Matrix.diagonal_mul, hab] at h
-  by_cases hb : ε b = true
-  · simp only [hb, if_true] at h
-    linear_combination h / 2
-  · simp only [hb] at h
-    simp only [Bool.false_eq_true, if_false] at h
-    linear_combination -h / 2
+  apply _root_.GlobalTheory.EigenPartialSum.apply_eq_zero_of_inP <;> assumption
 
 theorem inP_norm_symm {n : ℕ} {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ}
     (hY : inP ε Y) (a b : Fin n) : ‖Y a b‖ = ‖Y b a‖ := by
@@ -596,7 +589,7 @@ theorem gap_mul_hs_le : ∀ (n : ℕ) (ε : Fin n → Bool) (lam : Fin n → ℝ
   refine Finset.sum_le_sum fun b _ => ?_
   by_cases hba : b < a
   · have hba' : b.val < a.val := hba
-    rw [if_pos hba, if_pos hba']
+    rw [ite_eq_left hba, ite_eq_left hba']
     by_cases he : ε a = ε b
     · simp [inP_apply_eq_zero hY he]
     · have h1 := hgap a b he
@@ -627,7 +620,7 @@ theorem sum_dite_card {n l : ℕ} {M : Type*} [AddCommMonoid M] (f : Set.powerse
   refine Finset.sum_of_injOn (fun S : Set.powersetCard (Fin n) l => S.1)
     (fun _ _ _ _ h => Subtype.ext h) (fun _ _ => Finset.mem_univ _) ?_ ?_
   · intro J _ hJ
-    rw [dif_neg]
+    rw [dite_eq_right]
     intro h
     exact hJ ⟨⟨J, h⟩, by simp, rfl⟩
   · intro S _
@@ -679,7 +672,7 @@ theorem leadMinor_exp_eq_sum (n : ℕ) (Y : Matrix (Fin n) (Fin n) ℂ) (hY : Y.
     split_ifs <;> positivity
   · intro J hJ
     by_contra h
-    exact hJ (dif_neg h)
+    exact hJ (dite_eq_right h)
   · rw [sum_dite_card (fun S => ‖(A.submatrix id (GlobalTheory.subsetEnum S)).det‖ ^ 2)]
     exact GlobalTheory.sum_norm_sq_minors_eq_one A hAA
   · intro t

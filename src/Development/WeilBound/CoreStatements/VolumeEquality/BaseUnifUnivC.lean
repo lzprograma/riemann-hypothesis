@@ -78,22 +78,6 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.Ar.Cusp.Univ.MemBall
 
-theorem exists_sqLen {m : Type} [Fintype m] (x : m → ℂ) :
-    ∃ r : ℝ, 0 ≤ r ∧ star x ⬝ᵥ x = (r : ℂ) ∧ (x ≠ 0 → 0 < r) := by
-  have h0 : 0 ≤ star x ⬝ᵥ x := dotProduct_star_self_nonneg x
-  have hz := Complex.nonneg_iff.1 h0
-  have heq : star x ⬝ᵥ x = (((star x ⬝ᵥ x).re : ℝ) : ℂ) := by
-    apply Complex.ext
-    · simp
-    · simpa using hz.2.symm
-  refine ⟨(star x ⬝ᵥ x).re, hz.1, heq, fun hx => ?_⟩
-  have hp : 0 < star x ⬝ᵥ x := dotProduct_star_self_pos_iff.2 hx
-  exact (Complex.pos_iff.1 hp).1
-
-theorem qf_one_sub {m n : Type} [Fintype m] [Fintype n] [DecidableEq n] (A : Matrix m n ℂ) (w : n → ℂ) :
-    star w ⬝ᵥ ((1 - Aᴴ * A) *ᵥ w) = star w ⬝ᵥ w - star (A *ᵥ w) ⬝ᵥ (A *ᵥ w) := by
-  rw [sub_mulVec, one_mulVec, dotProduct_sub, ← mulVec_mulVec, dotProduct_mulVec, vecMul_conjTranspose, star_star]
-
 theorem posDef_adjoint {m n : Type} [Fintype m] [Fintype n] [DecidableEq m] [DecidableEq n] (A : Matrix m n ℂ)
     (h : (1 - Aᴴ * A).PosDef) : (1 - A * Aᴴ).PosDef := by
   apply GlobalTheory.CompanionTheory.Ar.Cusp.Dict.Moeb.posDef_one_sub_swap <;> assumption
@@ -175,7 +159,6 @@ theorem posDef_transpose_block {m n : Type} [Fintype m] [Fintype n] [DecidableEq
 end GlobalTheory.CompanionTheory.Ar.Cusp.Univ.MemBall
 
 namespace GlobalTheory.CompanionTheory.Ar.Cusp.Univ
-
 
 open MemBall in
 theorem mem_ballDom_iff_posDef_bigZe {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {j j' n g : ℕ} (e : Ix Ψ j j' ≃ Fin g)
@@ -951,23 +934,15 @@ theorem span_single_eq_eigSp {ι : Type} (σ : Ψ → (𝓞 E →+* ℂ)) (e : I
       obtain ⟨i, rfl⟩ := h2 k hs
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
-
 omit [NumberField E] in
 theorem conj_ne (σ : Ψ → (𝓞 E →+* ℂ)) (h : IsCMFam σ) (τ τ' : Ψ) : σ τ' ≠ (starRingEnd ℂ).comp (σ τ) :=
   fun hc => ((h.2 (σ τ)).1 ⟨τ, rfl⟩) ⟨τ', hc⟩
-
 
 omit [NumberField E] in
 theorem conj_comp_inj {s t : 𝓞 E →+* ℂ} (h : (starRingEnd ℂ).comp s = (starRingEnd ℂ).comp t) : s = t := by
   ext a
   have := congrArg (starRingEnd ℂ) (RingHom.congr_fun h a)
   simpa using this
-
-
-omit [NumberField E] in
-theorem conj_conj_comp (s : 𝓞 E →+* ℂ) : (starRingEnd ℂ).comp ((starRingEnd ℂ).comp s) = s := by
-  ext a
-  simp
 
 theorem span_single_eigenspace [IsCMField E] [Fintype Ψ] (σ : Ψ → (𝓞 E →+* ℂ)) (e : Ix Ψ j j' ≃ Fin g)
     (B : 𝓞 E →+* Module.End ℂ (Fin g → ℂ)) (hcm : IsCMFam σ) (hB : ∀ a x k, B a x k = emb σ (e.symm k) a * x k) (τ : Ψ) :
@@ -985,7 +960,7 @@ theorem span_single_eigenspace [IsCMField E] [Fintype Ψ] (σ : Ψ → (𝓞 E �
         exact ⟨b, rfl⟩
       · have h : (starRingEnd ℂ).comp (σ τ') = σ τ := hk
         refine absurd ?_ (conj_ne σ hcm τ τ')
-        rw [← h, conj_conj_comp]
+        rw [← h, LevelTowerAlt.cj_cj]
   · refine span_single_eq_eigSp σ e B hB _ (fun i : Fin j => e (Sum.inr i, τ)) (fun i => ?_) fun k hk => ?_
     · simp [emb]
     · obtain ⟨⟨u, τ'⟩, rfl⟩ := e.surjective k
@@ -1600,8 +1575,6 @@ theorem exists_univFam : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
 
 end SheetDecomposition.Univ
 
-theorem SheetDecomposition.univExists : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (Ψ : Type) [Fintype Ψ] (j j' n g : ℕ) (Λ : Type) [AddCommGroup Λ] [Module (𝓞 E) Λ] (R₀ : RiemLat E g Λ) (σ : Ψ → (𝓞 E →+* ℂ)) (q : Ψ × Fin j × Fin j' ≃ Fin n), IsCMFam σ → R₀.HasSig σ j j' → ∃ F : UnivFam E Ψ j j' n g Λ, F.q = q ∧ F.σ = σ ∧ F.form = R₀.form :=
-  SheetDecomposition.Univ.exists_univFam
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto

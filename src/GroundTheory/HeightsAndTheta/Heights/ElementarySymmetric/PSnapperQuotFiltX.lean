@@ -77,14 +77,6 @@ variable {i : Fin (N + 1)} (hi : x i ≠ 0) {j : Fin (N' + 1)} (hj : x' j ≠ 0)
 
 end Charts
 
-section Clauses
-
-variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N N' : ℕ}
-  {x : Fin (N + 1) → Ω} {x' : Fin (N' + 1) → Ω}
-
-
-end Clauses
-
 end Domination
 
 end
@@ -364,22 +356,22 @@ theorem homogeneousComponent_mul_form (c h : Poly S N) {d : ℕ} (hh : h.IsHomog
       if i + d = n then homogeneousComponent i c * h else 0 := fun i => by
     rw [homogeneousComponent_of_mem ((homogeneousComponent_isHomogeneous i c).mul hh)]
     by_cases hi : i + d = n
-    · rw [if_pos hi.symm, if_pos hi]
-    · rw [if_neg (Ne.symm hi), if_neg hi]
+    · rw [ite_eq_left hi.symm, ite_eq_left hi]
+    · rw [ite_eq_right (Ne.symm hi), ite_eq_right hi]
   simp_rw [each]
   rw [Finset.sum_eq_single (n - d)]
   · by_cases hdn : d ≤ n
-    · rw [if_pos (by omega), if_pos hdn]
-    · rw [if_neg hdn]
+    · rw [ite_eq_left (by omega), ite_eq_left hdn]
+    · rw [ite_eq_right hdn]
       by_cases h0 : n - d + d = n
       · exfalso; omega
-      · rw [if_neg h0]
+      · rw [ite_eq_right h0]
   · intro i _ hi
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   · intro hn
     by_cases h0 : n - d + d = n
-    · rw [if_pos h0, homogeneousComponent_eq_zero _ _ (by simp at hn; omega), zero_mul]
-    · rw [if_neg h0]
+    · rw [ite_eq_left h0, homogeneousComponent_eq_zero _ _ (by simp at hn; omega), zero_mul]
+    · rw [ite_eq_right h0]
 
 theorem smul_mem_gmul (M : FinGradedSub (S := S) (x := x) E) {s : ℕ} (h : Fin s → Poly S N) (d : Fin s → ℕ)
     (hh : ∀ l, (h l).IsHomogeneous (d l)) {J : Ideal (Poly S N)} (hJ : Ideal.span (Set.range h) = J)
@@ -397,11 +389,11 @@ theorem smul_mem_gmul (M : FinGradedSub (S := S) (x := x) E) {s : ℕ} (h : Fin 
   rw [hf', map_sum, Finset.sum_smul]
   refine Submodule.sum_mem _ fun l _ => ?_
   by_cases hle : d l ≤ e
-  · rw [if_pos hle, map_mul, mul_comm, mul_smul]
+  · rw [ite_eq_left hle, map_mul, mul_comm, mul_smul]
     refine Submodule.subset_span ⟨l, a + ((e - d l : ℕ) : ℤ), _,
       M.smul_mem _ _ _ _ (homogeneousComponent_isHomogeneous _ _) hz, ?_, rfl⟩
     rw [Nat.cast_sub hle]; ring
-  · rw [if_neg hle, map_zero, zero_smul]
+  · rw [ite_eq_right hle, map_zero, zero_smul]
     exact Submodule.zero_mem _
 
 theorem tilde_gmul_le (M : FinGradedSub (S := S) (x := x) E) {s : ℕ} (h : Fin s → Poly S N) (d : Fin s → ℕ)

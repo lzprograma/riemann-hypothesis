@@ -20,32 +20,6 @@ section Gen
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] [Fintype G] {Pl0 : Type}
 
-namespace DefFam
-
-variable {T T' J : Type} (F : DefFam K G Pl0 T J)
-
-def comap (f : T' → T) (μ0' : T') : DefFam K G Pl0 T' J where
-  v0 := F.v0
-  μ0 := μ0'
-  X := F.X
-  R t := F.R (f t)
-  L j t := F.L j (f t)
-  tr := F.tr
-
-end DefFam
-
-namespace DefFam3
-
-variable {I0 Ty T T' J : Type} (F3 : DefFam3 K G Pl0 I0 Ty T J)
-
-def comap (f : T' → T) (μ0' : T') : DefFam3 K G Pl0 I0 Ty T' J where
-  F := F3.F.comap f μ0'
-  RI t := F3.RI (f t)
-  LI j t := F3.LI j (f t)
-  trI := F3.trI
-
-end DefFam3
-
 namespace FamIn
 
 variable {T T' : Type} {m : ℕ} (A : FamIn K G Pl0 T m)

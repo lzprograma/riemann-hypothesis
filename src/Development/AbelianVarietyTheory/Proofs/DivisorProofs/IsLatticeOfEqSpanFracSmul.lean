@@ -56,8 +56,7 @@ theorem isLattice_of_eq_span_frac_smul {K V : Type} [Field K] [NumberField K] [A
     (h : M = Submodule.span (𝓞 K) {x | ∃ a ∈ I, ∃ y ∈ N, x = (a : K) • y})
     (hM : Submodule.IsLattice K M) : Submodule.IsLattice K N := by
   obtain ⟨a, haI, ha0⟩ : ∃ a ∈ I, a ≠ (0 : K) := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hI (FractionalIdeal.eq_zero_iff.2 hc)
   refine ⟨?_, ?_⟩
   · let f : V →ₗ[𝓞 K] V := (LinearMap.lsmul K V a).restrictScalars (𝓞 K)

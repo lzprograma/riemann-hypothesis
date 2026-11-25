@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalClassLatticesIffRationalClassLocalFramePStatement
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AdmissibleLocalPartner
@@ -16,8 +17,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.PCount Formalism.L2.SG.Pf.FrameGlobalPatching Formalism.L2.SG.Saturated
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.IotaBP
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) (p : PlF D)
 
@@ -42,23 +41,7 @@ alias localLattice_mono := _root_.Formalism.L2.SG.Pf.BBTie.latP_mono
 theorem smul_gS_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
     (F' : LFlag (D.sp.Y 0) D.R.rS T') {v : Vp D p} (hv : v ∈ lattice₂ D Zd.M p Λ) :
     (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • v ∈ lattice₂ D Zd.M p (NgX Λ (gS D) F F') := by
-  induction hv using Submodule.span_induction with
-  | mem v hv =>
-    obtain ⟨y, hy, rfl⟩ := hv
-    rw [← Formalism.L2.SG.Pf.LocalDenominators.baseChange_smul₂]
-    refine Submodule.subset_span ⟨_, ?_, rfl⟩
-    have h1 : ((gS D : ℕ) : D.host.E) • y = ((gS D : ℕ) : 𝓞 D.host.E) • y := by
-      rw [← algebraMap_smul D.host.E ((gS D : ℕ) : 𝓞 D.host.E) y, map_natCast]
-    rw [SetLike.mem_coe, h1]
-    refine Submodule.mem_sup_left (Submodule.mem_sup_left ?_)
-    exact Submodule.smul_mem_smul (Ideal.mem_span_singleton_self _) hy
-  | zero => rw [smul_zero]; exact zero_mem _
-  | add a b _ _ ha hb => rw [smul_add]; exact add_mem ha hb
-  | smul o v _ hv =>
-    have e : (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • (o • v) = o • ((D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • v) := by
-      show _ • ((o : (D.s.atP p).Ep) • v) = (o : (D.s.atP p).Ep) • _
-      rw [smul_smul, smul_smul, mul_comm]
-    rw [e]; exact Submodule.smul_mem _ _ hv
+  apply +allowSynthFailures _root_.GlobalTheory.IotaLocA.smul_gS_mem <;> assumption
 
 theorem untyped_mem (hs : (Zd.M p).split = none) {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E}
     (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') {v : Vp D p} (hv : v ∈ lattice₂ D Zd.M p Λ) :

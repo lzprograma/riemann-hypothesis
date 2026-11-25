@@ -16,6 +16,7 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSecti
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeC
 import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
+import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FramedPointBaseChangeLaws
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.RdIndepOf, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.TanAddPf, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.WtFieldPf, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FrameLaws
@@ -75,8 +76,6 @@ namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 
 theorem tanAdd_holds (Xo : Moduli Dw l) : TanAddSt Xo := by
@@ -115,22 +114,15 @@ theorem wtf_id_appLE {X : Scheme.{0}} (U : X.Opens) (h : U ≤ (𝟙 X : X ⟶ X
 
 theorem wtf_appLE_congr {X Y : Scheme.{0}} {f g : X ⟶ Y} (e : f = g) (U : Y.Opens) (V : X.Opens)
     (h : V ≤ f ⁻¹ᵁ U) (h' : V ≤ g ⁻¹ᵁ U) : f.appLE U V h = g.appLE U V h' := by
-  subst e
-  rfl
+  exact GlobalTheory.FramedBaseChange.appLE_eq_of_eq e U V h h'
 
 theorem wtf_ppx_le {S T : Type} [CommRing S] [CommRing T] {x : Sp S ⟶ Xo.X} {x' : Sp T ⟶ Xo.X}
     (pm : Gx x' ⟶ Gx x)
     (hs : pm ≫ (snd (Over.mk x) Xo.univ.t.G).left = (snd (Over.mk x') Xo.univ.t.G).left)
     (i : Fin 1 → Xo.univ.t.PP.L.ι) : (PPx x').U i ≤ pm ⁻¹ᵁ (PPx x).U i := by
-  intro p hp
-  have hp' : ∀ k, p ∈ (snd (Over.mk x') Xo.univ.t.G).left.base ⁻¹' (Xo.univ.t.PP.L.U (i k) : Set _) :=
-    Set.mem_iInter.1 hp
-  have e := congrArg (fun f : Gx x' ⟶ Xo.univ.t.G.left => f.base p) hs
-  show pm.base p ∈ ⋂ k, (snd (Over.mk x) Xo.univ.t.G).left.base ⁻¹' (Xo.univ.t.PP.L.U (i k) : Set _)
-  refine Set.mem_iInter.2 fun k => ?_
-  show (pm ≫ (snd (Over.mk x) Xo.univ.t.G).left).base p ∈ (Xo.univ.t.PP.L.U (i k) : Set _)
-  rw [e]
-  exact hp' k
+  first
+    | exact _root_.GlobalTheory.FramedBaseChange.chart_le
+    | apply _root_.GlobalTheory.FramedBaseChange.chart_le <;> first | assumption | rfl | infer_instance
 
 theorem wtf_dualMap_comp {R S T : Type} [CommRing R] [CommRing S] [CommRing T] (f : S →+* T) (g : R →+* S) :
     (dualMap f).comp (dualMap g) = dualMap (f.comp g) :=
@@ -317,8 +309,6 @@ namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l}
 
@@ -356,11 +346,6 @@ theorem rdIndep_laws (hS : ReciprocityTheory.ChartRestriction.G.Out.SecBaseChang
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections
 
-namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
-
-open Formalism.L2.Pj
-
-end ReciprocityTheory.ChartRestriction.G.PullbackSections
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto

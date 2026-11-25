@@ -179,10 +179,6 @@ open AlgebraicGeometry CategoryTheory Limits
 
 namespace GlobalTheory.RelDimFibCrit
 
-end GlobalTheory.RelDimFibCrit
-
-namespace GlobalTheory.RelDimFibCrit
-
 open AlgebraicGeometry CategoryTheory Limits in
 private lemma specMap_residueFieldMap_conj_eq_ofHom_map {R S : CommRingCat.{0}} (φ : R ⟶ S)
     (p : PrimeSpectrum S) :
@@ -293,7 +289,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.LevelStructureAutomorphisms (LevelA
 open GlobalTheory.OrbitSep
 open GlobalTheory.QCoh
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.ClosureDim
 
@@ -405,7 +400,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.LevelStructureAutomorphisms (LevelA
 open GlobalTheory.OrbitSep
 open GlobalTheory.QCoh
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.NefDescent
 
@@ -440,8 +434,7 @@ theorem isNef_of_pull : ∀ (F : Type) [Field F] [NumberField F] (Y X : Scheme.{
   refine ⟨hL, fun Z hZ => ?_⟩
   obtain ⟨C, hCi, hCd, hCZ⟩ := exists_curve_over F Y X π sX p hπ hX hY hs Z hZ.1 hZ.2
   have hC : IsCompleteCurve F C := (isCompleteCurve_iff (f := p) (fun _ => rfl)).2 ⟨hCi, hCd⟩
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   have hM := isLB_dual hL
   have hMpos : 0 < interNumRed F Z ![dual L] := by rw [hZ.interNumRed_dual hA hL]; linarith
   obtain ⟨r, hr, s, hs0⟩ := PosBaseChange.exists_hasNonzeroSec (k := F) hA hM hZ.1 hZ.2.le fun _ => hMpos

@@ -127,7 +127,7 @@ theorem mulVec_mem_box {A : Matrix ι ι F} (hA : ∀ i j, A i j ∈ 𝒪[F]) {x
 
 noncomputable def modulus : F →*₀ ℝ≥0 where
   toFun x := by classical exact if h : x = 0 then 0 else distribHaarChar F (Units.mk0 x h)
-  map_zero' := dif_pos rfl
+  map_zero' := dite_eq_left rfl
   map_one' := by
     rw [dite_eq_right one_ne_zero]
     convert map_one (distribHaarChar F (G := Fˣ))

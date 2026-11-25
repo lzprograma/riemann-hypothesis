@@ -309,14 +309,14 @@ theorem extend_ae_linear_of_local_sq : ∀ {X : Type} [MeasurableSpace X] (μ : 
   have hTae : ∀ u, T u =ᵐ[ν] Ext u := by
     intro u
     by_cases hu : u ∈ D
-    · simp only [T, if_pos hu]
+    · simp only [T, ite_eq_left hu]
       rw [hExt u hu]
       exact (MemLp.coeFn_toLp _).symm
-    · simp only [T, if_neg hu]
+    · simp only [T, ite_eq_right hu]
       rfl
   have hres : ∀ n, μ.restrict (K n) ≪ ν := fun n =>
     (Measure.absolutelyContinuous_of_le Measure.restrict_le_self).trans hμν
-  refine ⟨T, fun u hu => if_pos hu, fun u u' => ?_, fun b u => ?_, fun n => ?_⟩
+  refine ⟨T, fun u hu => ite_eq_left hu, fun u u' => ?_, fun b u => ?_, fun n => ?_⟩
   · refine hμν.ae_le ?_
     filter_upwards [hTae (u + u'), hTae u, hTae u', Lp.coeFn_add (Ext u) (Ext u')]
       with x h1 h2 h3 h4
@@ -996,7 +996,7 @@ theorem GlobalTheory.SgInf.exists_besselExt : ∀ (k r : ℕ) {H : Type} [Normed
       ‖F u 1‖ ≤ C * (Ws.map fun ws => ‖dsigW σ ws u‖).sum := by
     intro u hu
     have := (hreg u hu).choose_spec
-    simp only [F, dif_pos hu]
+    simp only [F, dite_eq_left hu]
     exact this
   have hDDsm : ∀ u ∈ DD σ w, IsSmoothVec σ u := fun u hu => (hDDi.2.2.2.2 hw).1 u (hDDi.2.2.1 hu)
   refine ⟨fun u => F u 1, ⟨?_, ?_, ?_, ?_⟩, ?_⟩

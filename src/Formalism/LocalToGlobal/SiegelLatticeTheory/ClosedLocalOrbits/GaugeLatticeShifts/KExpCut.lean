@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHCut
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOpInhab
@@ -81,8 +82,6 @@ end Blocks
 
 section Steps
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
@@ -135,8 +134,6 @@ end Steps
 
 section StepsDiag
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u : D.what₂.Word}
@@ -179,18 +176,7 @@ theorem fa_torsion {F : Type} [Field F] [NumberField F] (a : FiniteAdeleRing (�
 
 theorem int_multiple {E : Type} [Field E] [NumberField E] (e : E) :
     ∃ n : ℕ, 0 < n ∧ (n : E) * e ∈ Formalism.UG.intOE E := by
-  obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 E) e
-  have hb0 : b ≠ 0 := nonZeroDivisors.ne_zero hb
-  obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 (Ideal.absNorm_mem (Ideal.span {b}))
-  have hn0 : Ideal.absNorm (Ideal.span {b}) ≠ 0 := by
-    rw [Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
-    exact hb0
-  refine ⟨Ideal.absNorm (Ideal.span {b}), Nat.pos_of_ne_zero hn0, c * a, ?_⟩
-  have hbE : algebraMap (𝓞 E) E b ≠ 0 := by
-    rw [Ne, map_eq_zero_iff _ (FaithfulSMul.algebraMap_injective (𝓞 E) E)]
-    exact hb0
-  rw [← map_natCast (algebraMap (𝓞 E) E), ← hc, map_mul, map_mul]
-  field_simp
+  apply _root_.PIW.AdelClassFin.DictRing.e_denom <;> assumption
 
 theorem tens_torsion {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (x : E ⊗[F] Formalism.MainNotions.S.Af F) : ∃ n : ℕ, 0 < n ∧ n • x ∈ Formalism.MainNotions.S.IntAf F E := by
@@ -233,8 +219,6 @@ theorem psi_unit_of {F E : Type} [Field F] [NumberField F] [Field E] [NumberFiel
 end PsiTorsion
 
 section Abs
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.PoincareInHH.PoincareSetting
 
@@ -386,8 +370,6 @@ end FromAbs
 
 section FromAbsT
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
@@ -414,8 +396,6 @@ theorem kExpansion_of_abs (hK : X.LevelSubgroupCharacter) (Dt Dt' : Set X.B.I.GA
 end FromAbsT
 
 section Closed
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.Full Formalism.L2.SG.PoincareInHH.PoincareSetting
 
@@ -461,8 +441,6 @@ end Closed
 
 section Unfold
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.PoincareSeriesSquareIntegrable
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
@@ -506,8 +484,8 @@ theorem kform_unfold (hK : X.LevelSubgroupCharacter) (hR : FoldReadyX X)
     (Ω₀ ∪ Ω₀') hΩ (Or.inl h10) a a' (Ph X u hK T) (Ph X u' hK T')
     ((hT T).1 _ hΩ Set.subset_union_left) ((hT' T').1 _ hΩ Set.subset_union_right) F F' hF hF'
     ((hT T).2 _ hΩ F hF) ((hT' T').2 _ hΩ F' hF') Dt Dt' hD hD' R hRt Fs hFs X.B.fund hFB
-  have e1 : PuFun X u hK Dt T = hm.toLp _ := dif_pos hm
-  have e2 : PuFun X u' hK Dt' T' = hm'.toLp _ := dif_pos hm'
+  have e1 : PuFun X u hK Dt T = hm.toLp _ := dite_eq_left hm
+  have e2 : PuFun X u' hK Dt' T' = hm'.toLp _ := dite_eq_left hm'
   unfold Kform scl
   rw [e1, e2, MeasureTheory.L2.inner_def]
   congr 1
@@ -576,8 +554,6 @@ def DCSingle : Prop :=
 
 section Slab
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
@@ -618,8 +594,6 @@ def Regroup (hK : X.LevelSubgroupCharacter) (Dt' : Set X.B.I.GA) : Prop :=
 end Slab
 
 section SlabAsm
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.PoincareSeriesSquareIntegrable
 
@@ -728,8 +702,6 @@ theorem dcTerms_of [SigmaFinite (Formalism.L2.SG.ProjRows.muInf X.B.I)] (hK : X.
 end SlabAsm
 
 section Chain
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.PoincareSeriesSquareIntegrable
 

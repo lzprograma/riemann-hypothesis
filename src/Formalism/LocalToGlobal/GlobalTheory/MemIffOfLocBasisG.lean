@@ -68,12 +68,6 @@ theorem zpow_mem_intW (u : (intW Pl w)ˣ) (z : ℤ) : ((u : intW Pl w) : LL) ^ z
 
 end IntW
 
-section Row
-
-variable {K : Type} [CommRing K]
-
-end Row
-
 section WO
 
 variable {K : Type} [Field K] (O : Subring K)

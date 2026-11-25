@@ -17,30 +17,6 @@ open MvPolynomial
 
 universe u
 
-private theorem withBot_eq_of_add_one_eq (a : WithBot ℕ∞) (m : ℕ)
-    (h : a + 1 = ((m + 1 : ℕ) : WithBot ℕ∞)) : a = (m : WithBot ℕ∞) := by
-  induction a using WithBot.recBotCoe with
-  | bot =>
-    exfalso
-    have e : ((m : WithBot ℕ∞) + 1) = (((m + 1 : ℕ) : ℕ∞) : WithBot ℕ∞) := by push_cast; rfl
-    rw [Nat.cast_add, Nat.cast_one, e] at h
-    exact WithBot.bot_ne_coe h
-  | coe a =>
-    induction a using ENat.recTopCoe with
-    | top =>
-      exfalso
-      have h' : (⊤ : ℕ∞) = (m + 1 : ℕ) := by
-        apply WithBot.coe_injective
-        simpa using h
-      exact ENat.top_ne_natCast (m + 1) h'
-    | coe a =>
-      have h' : ((a + 1 : ℕ) : WithBot ℕ∞) = ((m + 1 : ℕ) : WithBot ℕ∞) := by
-        rw [← h]; push_cast; rfl
-      have : a + 1 = m + 1 := by exact_mod_cast h'
-      have ham : a = m := by omega
-      subst ham
-      rfl
-
 theorem FibreVarieties.proof
     (hGen : GenericFibProps.Statement.{u}) (hBound : GenericDimBound.Statement.{u})
     (hGe : GenericDimGe.Statement.{u}) (hCorr : SpecialIdealCorresp.Statement.{u})
@@ -61,8 +37,8 @@ theorem FibreVarieties.proof
   ·
     have h1 := hBound O K ι P hP.multiProj hP.noTorsion
     have h2 := hGe O K ι P hP.multiProj.isPrime hP.noTorsion
-    rw [hP.dim, hcast] at h1 h2
-    exact withBot_eq_of_add_one_eq _ _ (le_antisymm h1 h2)
+    rw [hP.dim, hcast, Nat.cast_add, Nat.cast_one] at h1 h2
+    exact ENat.WithBot.add_one_cancel.mp (le_antisymm h1 h2)
   ·
     intro W hW
     have hW0 := hW

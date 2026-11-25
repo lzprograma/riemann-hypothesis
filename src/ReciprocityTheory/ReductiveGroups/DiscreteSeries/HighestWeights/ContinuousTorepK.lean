@@ -141,7 +141,7 @@ lemma torep_diag_sum (d : Fin n → ℂ) :
     simp [Matrix.single_apply]
   · rw [Matrix.diagonal_apply_ne _ h]
     refine (Finset.sum_eq_zero fun a _ => ?_).symm
-    rw [Matrix.smul_apply, Matrix.single_apply, if_neg (fun h' => h (h'.1.symm.trans h'.2)), smul_zero]
+    rw [Matrix.smul_apply, Matrix.single_apply, ite_eq_right (fun h' => h (h'.1.symm.trans h'.2)), smul_zero]
 
 lemma torep_inK_diag (ε : Fin n → Bool) (d : Fin n → ℂ) (hd : ∀ a, star (d a) = -d a) :
     inK ε (Matrix.diagonal d) := by
@@ -359,7 +359,7 @@ lemma torep_dτ_of_wt {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε �
       · simp [hd, hia]
       · simp [hd, hia, Ne.symm hia]
     · rw [Matrix.diagonal_apply_ne _ hij, Matrix.smul_apply, Matrix.single_apply,
-        if_neg (fun h' => hij (h'.1.symm.trans h'.2)), smul_zero]
+        ite_eq_right (fun h' => hij (h'.1.symm.trans h'.2)), smul_zero]
   let γ : ℝ → KG ε := fun t => torepK ε (hmem t)
   have hγ : ∀ t : ℝ, toMK (γ t) = NormedSpace.exp ((t : ℂ) • Matrix.diagonal d) := fun t => by
     rw [hexp t]

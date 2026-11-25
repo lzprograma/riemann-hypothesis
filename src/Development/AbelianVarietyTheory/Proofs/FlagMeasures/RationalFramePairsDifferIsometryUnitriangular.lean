@@ -48,7 +48,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc Formalism.L2.SG.TermDef GlobalTheory.LocOver
 open scoped Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocOver.WittFrames
 
@@ -131,7 +130,7 @@ theorem witt_frames_at_point : ∀ (D : D7) {T T' : D.host.E} (F F00 : LFlag (D.
     Gval F00 F'0 = Gval F F' ∧ ∃ γ ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT,
       Tri D.host.E (frame F00) (fun a => γ (frame F a)) ∧ Tri D.host.E (frame F'0) (fun a => γ (frame F' a)) := by
   intro D T T' F F00 F' F'0 w hT hT' hG hcell hpt
-  obtain ⟨⟨Fb, Fb', h1, h2, hb⟩, hall⟩ := GlobalTheory.T.exists_unitriangular_frames_gram_eq_cell_point D F F' w hT hT' hcell
+  obtain ⟨⟨Fb, Fb', h1, h2, hb⟩, hall⟩ := _root_.GlobalTheory.LocOver.base_frames_at_point D F F' w hT hT' hcell
   have hGb : Gval Fb Fb' = Gval F F' := (hall Fb Fb' h1 h2).2
   have hZ : ZhatL Fb Fb' = ZhatL F00 F'0 := zhatOM_injective (hb.trans hpt.symm)
   have hG0 : Gval F00 F'0 = Gval Fb Fb' := by

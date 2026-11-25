@@ -5,50 +5,8 @@ public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCoh
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.DeRhamPotentiallySemistable.DeRhamTwists.ContinuousCyclotomicCharacter
 public import GroundTheory.PAdicHodge.BCrisEigenMaps
 public import GroundTheory.PAdicHodge.BCrisNewton
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
-
-set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
 
@@ -66,26 +24,7 @@ private theorem eq_mul_of_mul_eq {M : Type*} [CommMonoid M] {x T L W Ti Li : M} 
 
 variable {F : Type*} [Field F]
 
-theorem eq_mul_inv_pow {x T L W : F} {n m : ℕ} (hT : T ≠ 0) (hL : L ≠ 0) (h : x * (T ^ n * L ^ m) = W) :
-    x = W * T⁻¹ ^ n * L⁻¹ ^ m :=
-  eq_mul_of_mul_eq (mul_inv_cancel₀ hT) (mul_inv_cancel₀ hL) h
-
 end Abstract
-
-private theorem away_away_range_le {A B F : Type*} [CommRing A] [CommRing B] [CommRing F] {r : A}
-    {t : Localization.Away r} (i : A →+* B) (iP : Localization.Away r →+* B)
-    (hi : ∀ a, iP (algebraMap A _ a) = i a) (j : B →+* F)
-    (f : Localization.Away t →+* F) (hf : ∀ b, f (algebraMap _ _ b) = j (iP b))
-    (S : Subring F) {T L Ti Li : F} (ht : j (iP t) = T) (hr : j (i r) = L)
-    (hT : T * Ti = 1) (hL : L * Li = 1) (hTi : Ti ∈ S) (hLi : Li ∈ S)
-    (hm : ∀ a, j (i a) ∈ S) :
-    f.range ≤ S := by
-  intro x hx
-  obtain ⟨u, rfl⟩ := RingHom.mem_range.mp hx
-  obtain ⟨w, n, m, hw⟩ := exists_mul_eq_of_away_away i iP hi j f hf u
-  simp only [map_mul, map_pow, ht, hr] at hw
-  rw [eq_mul_of_mul_eq hT hL hw]
-  exact mul_mem (mul_mem (hm w) (pow_mem hTi n)) (pow_mem hLi m)
 
 private theorem closure_range_pair_eq {A R F : Type*} [CommRing A] [CommRing R] [CommRing F]
     (i : A →+* F) (f : R →+* F) (g : A → R) (hg : ∀ a, f (g a) = i a) {u v : F}
@@ -172,14 +111,24 @@ theorem tinv_mem_bcr : (tQ l)⁻¹ ∈ Bcr l := Subring.subset_closure (Or.inr (
 
 
 theorem range_le_bcr : (ιB).range ≤ Bcr l := by
-  let j := algebraMap (BdRp l) (BdR l)
-  refine away_away_range_le (r := (l : ACris.ACris ℂ_[l] l))
-    (t := algebraMap (ACris.ACris ℂ_[l] l) (ACris.BCrisPlus ℂ_[l] l) (tA l))
-    (ACris.iota ℂ_[l] l) (ACris.iotaPlus ℂ_[l] l) ACris.iotaPlus_algebraMap j ιB
-    (ACris.iotaB_algebraMap (untilt_epsilon (p := l)) untilt_frobeniusEquiv_symm_epsilon_ne_one)
-    (Bcr l) ?_ (map_natCast (iC l) l) (mul_inv_cancel₀ DeRhamTwist.Twist.tQ_ne) (mul_inv_cancel₀ l_ne)
-    tinv_mem_bcr linv_mem_bcr iC_mem_bcr
-  exact congrArg j (ACris.iotaPlus_algebraMap (tA l))
+  rintro _ ⟨u, rfl⟩
+  -- Clear the two denominators through `IsLocalization.Away.surj` at `BCris` and `BCrisPlus`
+  -- themselves. A lemma stated for a generic `Localization.Away` makes the kernel identify its
+  -- ring structures with the named instances of these two rings, which is slow.
+  obtain ⟨n, x, hx⟩ := IsLocalization.Away.surj (S := ACris.BCris (untilt_epsilon (p := l)))
+    (algebraMap (ACris.ACris ℂ_[l] l) (ACris.BCrisPlus ℂ_[l] l)
+      (ACris.periodT (untilt_epsilon (p := l)))) u
+  obtain ⟨m, w, hw⟩ := IsLocalization.Away.surj (S := ACris.BCrisPlus ℂ_[l] l)
+    (l : ACris.ACris ℂ_[l] l) x
+  have h1 : ιB u * tQ l ^ n = ιB (algebraMap _ _ x) := by
+    have h := congrArg ιB hx
+    rwa [map_mul, map_pow, iotaB_acris] at h
+  have h2 : ιB (algebraMap _ _ x) * (l : BdR l) ^ m = iC l w := by
+    have h := congrArg (fun y => ιB (algebraMap _ (ACris.BCris (untilt_epsilon (p := l))) y)) hw
+    simpa only [map_mul, map_pow, iotaB_acris, map_natCast] using h
+  have h3 : ιB u * (tQ l ^ n * (l : BdR l) ^ m) = iC l w := by rw [← mul_assoc, h1, h2]
+  rw [eq_mul_of_mul_eq (mul_inv_cancel₀ DeRhamTwist.Twist.tQ_ne) (mul_inv_cancel₀ l_ne) h3]
+  exact mul_mem (mul_mem (iC_mem_bcr w) (pow_mem tinv_mem_bcr n)) (pow_mem linv_mem_bcr m)
 
 
 theorem bcr_eq : Bcr l = (ιB).range :=

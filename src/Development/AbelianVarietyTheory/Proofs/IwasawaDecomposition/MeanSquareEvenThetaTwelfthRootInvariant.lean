@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmInverseHalfDifferentMulRelativeDifferent
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsHalfPtIff
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.DedekindZetaEqSumRealEisenstein
@@ -8,50 +9,10 @@ public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.Exists
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Retie
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EisGEqZeroOfInfinite
 import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsBasisEmbedding
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarComplexMultiplicationPoints
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaNormUnimodularLattice
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -73,38 +34,10 @@ variable {R : Ranks} (H : Host R)
 
 theorem mem_baseLat (w : ℂ) :
     w ∈ baseLat H ↔ ∃ c ∈ H.ccK, w = H.φ₀ (((c : H.K) : H.E)) := by
-  constructor
-  · intro hw
-    induction hw using AddSubgroup.closure_induction with
-    | mem x hx => exact hx
-    | zero => exact ⟨0, H.ccK.zero_mem, by simp⟩
-    | add x y _ _ hx hy =>
-      obtain ⟨c, hc, rfl⟩ := hx
-      obtain ⟨c', hc', rfl⟩ := hy
-      exact ⟨c + c', H.ccK.add_mem hc hc', by simp⟩
-    | neg x _ hx =>
-      obtain ⟨c, hc, rfl⟩ := hx
-      exact ⟨-c, H.ccK.neg_mem hc, by simp⟩
-  · exact fun hw => AddSubgroup.subset_closure hw
+  first | exact _root_.GlobalTheory.Mem.PerField.mem_baseLat | exact @_root_.GlobalTheory.Mem.PerField.mem_baseLat | apply _root_.GlobalTheory.Mem.PerField.mem_baseLat <;> assumption
 
 theorem exists_periodPair_baseLat : ∃ L : PeriodPair, ∀ z, z ∈ baseLat H ↔ z ∈ L.lattice := by
-  have hr : Module.finrank ℚ H.K = 2 :=
-    Formalism.FrobeniusOrbits.SplitK.finrank_K H.hyp.2.1.pos (H.sqd_sq)
-  have hd : NumberField.discr H.K = -(H.d : ℤ) :=
-    GlobalTheory.discr_eq_neg_of_sq_eq hr H.hyp.2.1.squarefree
-      (by have := H.hyp.2.2.2.1; omega)
-      (Formalism.FrobeniusOrbits.SplitK.bK_sq (H.sqd_sq))
-  let σ : H.K →+* ℂ := H.φ₀.comp H.K.val.toRingHom
-  let I : (Ideal (𝓞 H.K))⁰ := ⟨H.ccK, mem_nonZeroDivisors_of_ne_zero H.ccK_ne_bot⟩
-  obtain ⟨L, hL⟩ := GlobalTheory.QuadraticZeta.exists_periodPair hr hd σ (FractionalIdeal.mk0 H.K I)
-  refine ⟨L, fun z => ?_⟩
-  rw [mem_baseLat, ← SetLike.mem_coe (p := L.lattice), hL]
-  constructor
-  · rintro ⟨c, hc, rfl⟩
-    exact ⟨(c : H.K), FractionalIdeal.mem_coeIdeal_of_mem _ hc, rfl⟩
-  · rintro ⟨y, hy, rfl⟩
-    obtain ⟨c, hc, rfl⟩ := (FractionalIdeal.mem_coeIdeal _).1 hy
-    exact ⟨c, hc, rfl⟩
+  first | exact _root_.GlobalTheory.Mem.PerField.exists_periodPair_baseLat | exact @_root_.GlobalTheory.Mem.PerField.exists_periodPair_baseLat | apply _root_.GlobalTheory.Mem.PerField.exists_periodPair_baseLat <;> assumption
 
 end GlobalTheory.Mem.Per.ConjCM
 end -- clump:auto
@@ -386,8 +319,8 @@ theorem lamConj_spec {Λ : AddSubgroup ℂ} (h : TaylorLogMetric.discr Λ = 1) (
   obtain ⟨L, e2, e3⟩ := GlobalTheory.LatticeInvariants.exists_periodPair_of_invariants (a := ρ ⟨_, h2⟩) (b := ρ ⟨_, h3⟩)
     (by rw [h1]; exact one_ne_zero)
   have hd := GlobalTheory.LatticeInvariants.invariants_dictionary L L.lattice.toAddSubgroup (fun _ => Iff.rfl)
-  have l2 : liftM M (g2 Λ) = ⟨_, h2⟩ := dif_pos h2
-  have l3 : liftM M (g3 Λ) = ⟨_, h3⟩ := dif_pos h3
+  have l2 : liftM M (g2 Λ) = ⟨_, h2⟩ := dite_eq_left h2
+  have l3 : liftM M (g3 Λ) = ⟨_, h3⟩ := dite_eq_left h3
   have hs := Classical.epsilon_spec (p := fun Λ' : AddSubgroup ℂ =>
     g2 Λ' = ρ (liftM M (g2 Λ)) ∧ g3 Λ' = ρ (liftM M (g3 Λ)))
     ⟨L.lattice.toAddSubgroup, by rw [hd.1, e2, l2], by rw [hd.2.1, e3, l3]⟩
@@ -497,7 +430,7 @@ theorem thOne_sq (hF : FieldOK D.host D.what₂.embLL D.embE) (h : IsDiscriminan
     rw [e, meanSquare_evenTheta_twelfthRoot_invariant hd hζ, normSq1_eq_nrm1Sq, thetaZero_eq_of_isThetaZero hc hM ρ ((hT v).1 hε) ht]
   have hp := normSq_thetaZero_pos hc hM ρ ht
   change posOr1 (thAt D.host D.what₂.embLL s) ^ 2 = _
-  rw [posOr1, hv, if_pos (Real.sqrt_pos.2 hp), Real.sq_sqrt hp.le]
+  rw [posOr1, hv, ite_eq_left (Real.sqrt_pos.2 hp), Real.sq_sqrt hp.le]
 
 theorem perTie_retie (hF : FieldOK D.host D.what₂.embLL D.embE) (h : IsDiscriminantTwelfthRootOfIdealLattice D D.host.ccK δ)
     (h2 : g2 (lamOf D D.host.ccK δ) ∈ coefM D) (h3 : g3 (lamOf D D.host.ccK δ) ∈ coefM D) :

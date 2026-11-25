@@ -3,45 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
 public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
 public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -53,8 +15,6 @@ open scoped TensorProduct nonZeroDivisors
 open GlobalTheory.SignedHC GlobalTheory.ChiGrid Formalism.L2.DIV Formalism.L2.Ker
 
 namespace GlobalTheory.FunObj
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Weights
 
@@ -68,21 +28,21 @@ theorem highestWeight_below {a b t : ℕ} (hb : b = a + t) {E F : Finset ℚ} (c
   let g : Fin (a + t) → ℚ := fun i =>
     if h : i.1 < a then descEnum E hE ⟨i.1, h⟩ else c + ((t : ℚ) - 1) / 2 - ((i.1 - a : ℕ) : ℚ)
   have hblock : ∀ i : Fin (a + t), ¬ i.1 < a → g i ∈ TPar.block c t := fun i h => by
-    simp only [g, dif_neg h]
+    simp only [g, dite_eq_right h]
     exact mem_block.2 ⟨i.1 - a, by omega, rfl⟩
   have hmem : ∀ i : Fin (a + t), i.1 < a → g i ∈ E := fun i h => by
-    simp only [g, dif_pos h]
+    simp only [g, dite_eq_left h]
     exact descEnum_mem _ _ _
   have hg : StrictAnti g := by
     intro i j hij
     have hij' : i.1 < j.1 := hij
     by_cases hi : i.1 < a
     · by_cases hj : j.1 < a
-      · simp only [g, dif_pos hi, dif_pos hj]
+      · simp only [g, dite_eq_left hi, dite_eq_left hj]
         exact strictAnti_descEnum E hE (by simpa using hij')
       · exact hlt _ (hmem i hi) _ (hblock j hj)
     · have hj : ¬ j.1 < a := by omega
-      simp only [g, dif_neg hi, dif_neg hj]
+      simp only [g, dite_eq_right hi, dite_eq_right hj]
       have : ((i.1 - a : ℕ) : ℚ) < ((j.1 - a : ℕ) : ℚ) := by exact_mod_cast (by omega : i.1 - a < j.1 - a)
       linarith
   have key := descEnum_unique hF hg fun i => by
@@ -91,12 +51,12 @@ theorem highestWeight_below {a b t : ℕ} (hb : b = a + t) {E F : Finset ℚ} (c
     · exact mem_union_right _ (hblock i h)
   refine ⟨fun r => ?_, fun r hr => ?_⟩
   · have h : (Fin.castLE (by omega) r : Fin (a + t)).1 < a := r.2
-    simp only [highestWeight, key, g, dif_pos h]
+    simp only [highestWeight, key, g, dite_eq_left h]
     push_cast
     simp only [Fin.val_castLE, Fin.eta]
     ring
   · have h : ¬ r.1 < a := by omega
-    simp only [highestWeight, key, g, dif_neg h]
+    simp only [highestWeight, key, g, dite_eq_right h]
     rw [Nat.cast_sub hr]
     push_cast
     ring
@@ -138,10 +98,10 @@ theorem natW_step {a b t : ℕ} (hb : b = a + t) (ha : 0 < a) {E F : Finset ℚ}
       ring
     exact_mod_cast this
   have hb0 : 0 < b := by omega
-  have hS : lam'.detShift = lam'.w ⟨b - 1, by omega⟩ := by rw [DomWeight.detShift, dif_pos hb0]
-  have hS0 : lam.detShift = lam.w ⟨a - 1, by omega⟩ := by rw [DomWeight.detShift, dif_pos ha]
+  have hS : lam'.detShift = lam'.w ⟨b - 1, by omega⟩ := by rw [DomWeight.detShift, dite_eq_left hb0]
+  have hS0 : lam.detShift = lam.w ⟨a - 1, by omega⟩ := by rw [DomWeight.detShift, dite_eq_left ha]
   by_cases h : r.1 < a
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     simp only [DomWeight.natW]
     have e1 := hdiff ⟨r.1, h⟩ ⟨a - 1, by omega⟩
     have e2 : (Fin.castLE (by omega) (⟨r.1, h⟩ : Fin a) : Fin b) = r := Fin.ext rfl
@@ -151,7 +111,7 @@ theorem natW_step {a b t : ℕ} (hb : b = a + t) (ha : 0 < a) {E F : Finset ℚ}
     have a2 : lam'.w ⟨b - 1, by omega⟩ ≤ lam'.w ⟨a - 1, by omega⟩ := lam'.anti (Fin.mk_le_mk.2 (by omega))
     rw [hS, hS0]
     omega
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     have e : (lam'.w r : ℚ) = lam'.w ⟨b - 1, by omega⟩ := by
       rw [h2, h2, w2 r (by omega), w2 _ (by simp only; omega)]
     have e' : lam'.w r = lam'.w ⟨b - 1, by omega⟩ := by exact_mod_cast e
@@ -267,15 +227,12 @@ theorem v_lt_a {i : ℕ} (h1 : 2 ≤ i) (h2 : i ≤ D.R.k) : ((Γ).v i : ℚ) < 
 theorem weightX_above {j : ℕ} (hj : j + 1 ≤ D.R.m) {x y : ℚ} (hx : x ∈ (Γ).weightX j) (hy : y ∈ (Γ).blockMPlus (j + 1)) : y < x := by
   have hm : 1 ≤ D.R.m := by omega
   have hk : 2 ≤ D.R.k := by have := D.R.m_add_three_le_k; omega
-  have ht : (0 : ℚ) ≤ D.R.t := by positivity
-  have hg : (0 : ℚ) ≤ (Γ).ga := by positivity
   obtain ⟨y1, y2⟩ := blockMPlus_bd D C τ hy
   have hbe := num_be D C τ (l := 1) le_rfl hm
   have he1 : ((Γ).e 1 : ℚ) ≤ (Γ).e (j + 1) := by
     rcases Nat.eq_zero_or_pos j with rfl | h
     · exact le_rfl
     · linarith [num_e_lt D C τ (l := 1) (l' := j + 1) le_rfl (by omega) hj]
-  have hlow : y < -((Γ).b 1 : ℚ) := by linarith
   have hc2 := num_cloud D C τ (i := 2) le_rfl hk
   have ham : (Γ).a (Γ).m = (Γ).v 2 + (Γ).ga + 1 / 2 := (Γ).a_m
   rcases GridData.mem_weightX.1 hx with h | h | ⟨i, h1, h2, h⟩ | ⟨l, h1, h2, h⟩
@@ -395,7 +352,6 @@ theorem card_Ms : ((Icc 1 (Γ).m).biUnion (Γ).blockM).card = D.R.m * D.R.t := b
   · intro i hi j hj hij
     have hi := mem_Icc.1 hi
     have hj := mem_Icc.1 hj
-    have ht : (0 : ℚ) ≤ D.R.t := by positivity
     refine disjoint_left.2 fun x h1 h2 => ?_
     obtain ⟨a1, a2⟩ := blockM_bd D C τ h1
     obtain ⟨b1, b2⟩ := blockM_bd D C τ h2
@@ -425,7 +381,6 @@ theorem lows_le {x : ℚ} (hx : x ∈ (Γ).lows) : x ≤ -((Γ).b 1 : ℚ) := by
 theorem Ms_lt {x : ℚ} (hx : x ∈ (Icc 1 (Γ).m).biUnion (Γ).blockM) : x < -((Γ).b 1 : ℚ) := by
   obtain ⟨l, hl, hx⟩ := mem_biUnion.1 hx
   have hl := mem_Icc.1 hl
-  have ht : (0 : ℚ) ≤ D.R.t := by positivity
   have hbe := num_be D C τ hl.1 hl.2
   have hb := num_b_le D C τ le_rfl hl.1 hl.2
   linarith [(blockM_bd D C τ hx).2]
@@ -439,7 +394,6 @@ theorem low_lt_a {x : ℚ} (h : x ≤ -((Γ).b 1 : ℚ)) : x < (Γ).a (Γ).m := 
   linarith [cloud_gt D C τ (x := ((Γ).v 2 : ℚ)) (GridData.mem_cloud.2 ⟨2, le_rfl, hk, rfl⟩)]
 
 theorem disj_lows_Ms : Disjoint (Γ).lows ((Icc 1 (Γ).m).biUnion (Γ).blockM) := by
-  have ht : (0 : ℚ) ≤ D.R.t := by positivity
   have hm : (Γ).m = D.R.m := rfl
   refine disjoint_left.2 fun x h0 h2 => ?_
   obtain ⟨l, h1, h1', rfl⟩ := GridData.mem_lows.1 h0
@@ -529,13 +483,13 @@ theorem isHC_grid {i n : ℕ} (hi : i ≤ D.R.m) (hn : n = rankV D i D.R.m) : Is
     by_cases ho : Odd (i + D.R.m)
     · obtain ⟨u, hu⟩ := (even_rankV D i D.R.m).2 ho
       refine ⟨z + 1 - (u : ℤ) - 1 + 1 - 1, ?_⟩
-      rw [if_pos ho, hn, hu]
+      rw [ite_eq_left ho, hn, hu]
       push_cast
       ring
     · have ho' : Odd (rankV D i D.R.m) := Nat.not_even_iff_odd.1 fun h => ho ((even_rankV D i D.R.m).1 h)
       obtain ⟨u, hu⟩ := ho'
       refine ⟨z - u, ?_⟩
-      rw [if_neg ho, hn, hu]
+      rw [ite_eq_right ho, hn, hu]
       push_cast
       ring
 

@@ -58,11 +58,6 @@ theorem finprod_iSup_algebraMap_int {ι : Type*} [Finite ι] {y : ι → 𝓞 K}
   have hL' : ∏ᶠ w : FinitePlace L, ⨆ i, w (algebraMap K L (y i)) =
       ∏ᶠ w : FinitePlace L, ⨆ i, w (y' i) := rfl
   rw [hL']
-  set N : ℝ := ((Ideal.span (Set.range y)).absNorm : ℝ)
-  have hN : N ≠ 0 := by
-    intro h
-    rw [h, zero_mul] at hK
-    exact zero_ne_one hK
   push_cast at hL
   rw [eq_inv_of_mul_eq_one_right hL, eq_inv_of_mul_eq_one_right hK, inv_pow]
 
@@ -157,19 +152,9 @@ end Extension
 theorem finsum_sum_mul {α ι : Type*} [Fintype ι] (c : ι → ℝ) (g : ι → α → ℝ)
     (hg : ∀ k, (Function.support (g k)).Finite) :
     ∑ᶠ a, ∑ k, c k * g k a = ∑ k, c k * ∑ᶠ a, g k a := by
-  have hS : (⋃ k, Function.support (g k)).Finite := Set.finite_iUnion hg
-  have hsub : ∀ k, Function.support (g k) ⊆ hS.toFinset := fun k ↦ by
-    rw [Set.Finite.coe_toFinset]
-    exact Set.subset_iUnion (fun k ↦ Function.support (g k)) k
-  have hsum : Function.support (fun a ↦ ∑ k, c k * g k a) ⊆ hS.toFinset := by
-    intro a ha
-    rw [Set.Finite.coe_toFinset, Set.mem_iUnion]
-    by_contra h
-    push Not at h
-    exact ha (Finset.sum_eq_zero fun k _ ↦ by rw [Function.notMem_support.mp (h k), mul_zero])
-  rw [finsum_eq_sum_of_support_subset _ hsum, Finset.sum_comm]
-  refine Finset.sum_congr rfl fun k _ ↦ ?_
-  rw [finsum_eq_sum_of_support_subset _ (hsub k), Finset.mul_sum]
+  rw [finsum_sum_comm]
+  · exact Finset.sum_congr rfl fun k _ ↦ (mul_finsum _ _).symm
+  · exact fun k _ ↦ (hg k).subset fun a ha h ↦ ha (by simp only [h, mul_zero])
 
 theorem support_log_iSup_place_finite {F : Type*} [Field F] [NumberField F] {ι : Type*} [Finite ι]
     {y : ι → F} (hy : y ≠ 0) :

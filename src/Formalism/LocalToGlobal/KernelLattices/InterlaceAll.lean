@@ -61,22 +61,6 @@ def CoefXi (K : Type) [Field K] : Prop :=
 
 end Io
 
-section Fn
-
-variable {K : Type} [Field K] {ι : Type} [Fintype ι] {N n : ℕ} (hN : N = n + 1)
-  (lam : ι → DomWeight N) (sg : ι → DomWeight n)
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-end Fn
-
-section BC
-
-variable {K K' : Type} [Field K] [Field K'] (j : K →+* K') {ι : Type} [Fintype ι] {n : ℕ}
-
-end BC
-
 section One
 
 variable (K : Type) [Field K] {N n : ℕ} (hN : N = n + 1) (lam : DomWeight N) (sg : DomWeight n)
@@ -113,11 +97,5 @@ def brTen (D : Formalism.BasicNotions.D7) (u : D.what₂.Word) : MvPolynomial (D
   blk fun τ => brOne ℂ (Nm_succ D.R).symm (lamTr D u τ) (sgTr D u τ)
 
 end Record
-
-section Chi
-
-variable {G : Type} [CommGroup G]
-
-end Chi
 
 end Formalism.L2.Ker

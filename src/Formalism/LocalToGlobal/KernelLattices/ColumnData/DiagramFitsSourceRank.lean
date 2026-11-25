@@ -127,7 +127,7 @@ theorem kfTieC_un (hB : BasOk P O B) (hS : CanS P B) (hT : CanT P B) (hL : TwLe 
   intro i hi c c'
   show unC P O B u μ w i c c' = _
   unfold unC
-  rw [if_neg (unF_ne P O B hB u μ hR w i hi c c')]
+  rw [ite_eq_right (unF_ne P O B hB u μ hR w i hi c c')]
   unfold GL3Columns.KFTie.un GL3Columns.KFTie.cK
   simp only [kfTieC, one_pow, Finset.prod_const_one, inv_one, one_mul]
   rfl
@@ -262,10 +262,10 @@ theorem srcPol_mem {D : D7} (u : D.what₂.Word) (μ : D.what₂.Tup) (i : ℕ) 
 theorem diagram_fits_source_rank (D : D7) (u : D.what₂.Word) (i : ℕ) (hi : i < D.R.m) : NuFits D (nuD D u i) (nuT D u i) := by
   refine ⟨fun z r => ?_, fun z r hr => ?_⟩
   · have h1 := nuRowOK D u i hi z r.1
-    rw [if_pos r.2, ← (nu_t_identity D u i hi (tauPl D z) r).1] at h1
+    rw [ite_eq_left r.2, ← (nu_t_identity D u i hi (tauPl D z) r).1] at h1
     exact_mod_cast h1
   · have h1 := nuRowOK D u i hi z r
-    rw [if_neg (by omega)] at h1
+    rw [ite_eq_right (by omega)] at h1
     exact_mod_cast h1
 
 theorem nuFits_tgt (D : D7) (u : D.what₂.Word) (i : ℕ) (hi : i < D.R.m) :

@@ -83,9 +83,6 @@ def frobUnitMod (M p : ℕ) : (ZMod M)ˣ := by
   exact if h : ∃ w : (ZMod M)ˣ, ((w : ZMod M).cast : ZMod (ordCompl[p] M)) = (p : ZMod (ordCompl[p] M)) ∧
     ((w : ZMod M).cast : ZMod (ordProj[p] M)) = 1 then h.choose else 1
 
-def hArt {φ : Formalism.HC.Frame} (H : Formalism.HC.HostRaw φ) (p : ℕ) : φ.A :=
-  φ.iotaInv (H.art (frobUnitMod H.condN p)).2
-
 namespace NumDatum
 
 variable (N : NumDatum)
@@ -173,8 +170,6 @@ def nu (δ : Code N) (j : ℕ) (z : RPl N.R) (i : ℕ) : ℚ :=
 
 def nuAbs (δ : Code N) (j : ℕ) (z : RPl N.R) : ℚ := ∑ i ∈ Finset.range (N.R.N (j - 1)), N.nu δ j z i
 
-def Dpi (δ : Code N) (j : ℕ) : ℚ := ∑ z : RPl N.R, N.nuAbs δ j z
-
 def wN (j : ℕ) (z : RPl N.R) : ℕ := ⌊N.eQ j z⌋.toNat
 
 def nuN (δ : Code N) (j : ℕ) (z : RPl N.R) (i : ℕ) : ℕ := ⌊N.nu δ j z i⌋.toNat
@@ -218,48 +213,6 @@ def hU (C : ℝ) (δ : Code N) (T : ℕ) : ℝ :=
 def mainT (T : ℕ) : ℝ :=
   ∑ t ∈ N.TT, ((N.R.m : ℝ) * (Formalism.LatticeIndexTer.ph ((N.aT t : ℚ) : ℝ) - ((N.aT t : ℚ) : ℝ) * N.logOm) -
     ((N.aT t : ℚ) : ℝ) * Real.log (T : ℝ))
-
-def ctD (δ : Code N) (j : ℕ) (t : N.R.A) : ℚ :=
-  N.nuAbs δ j (false, t) - (if t ∈ N.TT then N.nu δ j (false, t) 0 - N.nu δ j (false, t) 1 else 0) +
-    (if t ∈ N.TT then N.nu δ j (true, t) 0 else 0)
-
-def EatD (W : Finset (Code N)) (hW : W.Nonempty) (j : ℕ) : ℝ :=
-  N.FRamD j + (W.sup' hW fun δ => ((∑ t : N.R.A, N.ctD δ j t : ℚ) : ℝ)) / 2
-
-def EatC (cdig : ℝ) (j p : ℕ) : ℝ :=
-  cdig * (N.R.f : ℝ) * (N.Nm : ℝ) ^ 2 * Real.logb p N.sc.a + (∑ z : RPl N.R, N.w j z) / ((p : ℝ) ^ 2 - 1)
-
-
-open Classical in
-def kindA (p : ℕ) : Finset (RPl N.R) := Finset.univ.filter fun z => ¬ N.cls p = PrimeClass.signal ∧ z.1 = false
-
-
-open Classical in
-def kindBC (p : ℕ) : Finset (RPl N.R) := Finset.univ.filter fun z => N.cls p = PrimeClass.signal ∨ z.1 = true
-
-
-open Classical in
-def topsBC (p : ℕ) : Finset (RPl N.R) := (N.kindBC p).filter fun z => z.1 = false ∧ z.2 ∈ N.TT
-
-def IsCs (p : ℕ) : Prop := N.cls p = PrimeClass.inertClass ∧ Odd (addOrderOf (N.hP p)) ∧ N.hP p ≠ 0
-
-
-open Classical in
-def EatX (c6 : ℝ) (j p : ℕ) : ℝ :=
-  if N.IsCs p then
-    ((N.R.k : ℝ) - 1) * (∑ z ∈ N.kindBC p, N.w j z) / (p : ℝ) ^ 3 +
-      c6 * (N.R.f : ℝ) * (N.Nm : ℝ) ^ 2 * Real.logb p N.sc.a
-  else 0
-
-def EatI (c6 dl1 dl2 : ℝ) (j p : ℕ) : ℝ :=
-  max 0 ((∑ z ∈ N.kindA p, N.FOrb j p z) / (N.ordP p : ℝ)) +
-    (p : ℝ) / ((p : ℝ) ^ 2 - 1) * ((N.topsBC p).card : ℝ) * (N.sc.b + N.eta + 1 + 3 * N.Sc) +
-    c6 * (∑ z ∈ N.kindBC p, N.w j z) / (p : ℝ) +
-    ((N.kindBC p).card : ℝ) * (N.R.N (j - 1) : ℝ) * (N.R.N j : ℝ) *
-      (Real.logb p (4 * (N.ordP p : ℝ) * (N.Nm : ℝ) * N.sc.a) + 1) +
-    (dl1 * ((N.kindBC p).card : ℝ) * (N.Nm : ℝ) ^ 2 * Real.logb p (2 * N.sc.a) +
-      dl2 * ((N.topsBC p).card : ℝ) * Real.logb p (2 * N.sc.a) ^ 2) +
-    N.EatX c6 j p
 
 end NumDatum
 

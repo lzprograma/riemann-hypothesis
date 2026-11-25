@@ -69,7 +69,6 @@ noncomputable section
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.H1
 open GlobalTheory GlobalTheory.FamGerm
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.GermJets
 
@@ -161,7 +160,7 @@ theorem exists_comb {V F κ : Type} [CommRing V] [Field F] [Finite κ] (φ : V �
 
       rw [← Finset.mul_sum, ← map_sum, hb m mo hmo]
       split_ifs <;> simp
-    rw [Finset.sum_congr rfl this, Finset.sum_ite_eq, if_pos]
+    rw [Finset.sum_congr rfl this, Finset.sum_ite_eq, ite_eq_left]
     simpa [S] using hmo
 
 section Fam

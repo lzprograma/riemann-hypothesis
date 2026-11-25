@@ -9,6 +9,7 @@ import Mathlib.Tactic.Lemma
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermEqZeroOfTraceFormVanish
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianPairingAlgebra
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsIntegralCc
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCombinations
 
 @[expose] public section
 
@@ -158,15 +159,9 @@ def Sform : ReciprocityTheory.MultiplicativeHeights.HermForm E n where
 private lemma herm_sum_smul_left' {m : ℕ} (G : Matrix (Fin r) (Fin r) E) (c : Fin m → E)
     (v : Fin m → Fin r → E) (y : Fin r → E) :
     herm G (∑ k, c k • v k) y = ∑ k, c k * herm G (v k) y := by
-  unfold herm
-  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul, Finset.mul_sum]
-  calc _ = ∑ a, ∑ k, ∑ b, c k * v k a * G a b * cc (y b) :=
-        Finset.sum_congr rfl fun a _ => Finset.sum_comm
-    _ = ∑ k, ∑ a, ∑ b, c k * v k a * G a b * cc (y b) := Finset.sum_comm
-    _ = _ := by
-        refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun a _ =>
-          Finset.sum_congr rfl fun b _ => ?_
-        ring
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.FD.IsotropicCombinations.herm_sum_smul
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.FD.IsotropicCombinations.herm_sum_smul <;> first | assumption | rfl | infer_instance
 
 private lemma herm_sum_smul_right' {m : ℕ} (G : Matrix (Fin r) (Fin r) E) (x : Fin r → E)
     (c : Fin m → E) (v : Fin m → Fin r → E) :

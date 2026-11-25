@@ -48,7 +48,6 @@ noncomputable section
 namespace GlobalTheory.OneEmbeddingProbe
 open NumberField MeasureTheory ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct Topology
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
   {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {r : ℕ}
@@ -111,7 +110,7 @@ theorem chi_eq_one (U : Unf Xo c σ r)
           laU U (step (Function.invFun (relab c σ) τ0.1) (j0 - (U.X k).p0 + 1)) 0 k -
             laU U (step (Function.invFun (relab c σ) τ0.1) (j0 - (U.X k).p0)) 0 k := by
         funext τ j
-        simp only [Pi.sub_apply, laU, step, hI.eq_iff, hcn τ τ0, false_and, if_false, Subtype.val_inj]
+        simp only [Pi.sub_apply, laU, step, hI.eq_iff, hcn τ τ0, false_and, ite_false, Subtype.val_inj]
         by_cases ht : τ = τ0
         · subst ht
           simp only [Pi.single_eq_same, Pi.single_apply, true_and, Fin.ext_iff]
@@ -122,7 +121,7 @@ theorem chi_eq_one (U : Unf Xo c σ r)
           laU U (step (Function.invFun (relab c σ) (conjEmb τ0.1)) ((U.X k).p0 - 1 - j0)) 0 k -
             laU U (step (Function.invFun (relab c σ) (conjEmb τ0.1)) ((U.X k).p0 - j0)) 0 k := by
         funext τ j
-        simp only [Pi.sub_apply, laU, step, hI.eq_iff, (hcn τ0 τ).symm, false_and, if_false]
+        simp only [Pi.sub_apply, laU, step, hI.eq_iff, (hcn τ0 τ).symm, false_and, ite_false]
         by_cases ht : τ = τ0
         · subst ht
           simp only [Pi.single_eq_same, Pi.single_apply, true_and, Fin.ext_iff]

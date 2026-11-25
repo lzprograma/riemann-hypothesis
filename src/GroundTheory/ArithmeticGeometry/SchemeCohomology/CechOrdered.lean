@@ -233,8 +233,7 @@ lemma bd_ocone {q : ℕ} (c : ι) (S : Set ι) (hc : ∀ s ∈ S, c ≤ s) (z : 
   have hface : ∀ a : Fin (q + 2), t 0 ≤ (t ∘ a.succAbove) 0 := fun a =>
     ht.monotone (Fin.zero_le _)
   by_cases hct : c < t 0
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [ite_eq_left hct, map_zsmul, ← cone_single, bd_cone, bd_single, map_sum]
+  · rw [ite_eq_left hct, map_zsmul, ← cone_single, bd_cone, bd_single, map_sum]
     simp only [ocone_single, smul_sub, map_zsmul, Finset.smul_sum]
     congr 1
     · simp

@@ -46,8 +46,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open GlobalTheory.CxForm
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.CxForm.DensPow

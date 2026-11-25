@@ -16,8 +16,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.KappaOffDiagonal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section ZsC1b
 
 variable {D : D7} {X : HidaSetting D}
@@ -32,7 +30,7 @@ theorem relevantSet_zeroG_not_identity {Y : Full X} {u : D.what₂.Word} {t : GT
   have h : Gt t = 0 := hG
   unfold Gt at h
   by_contra hne
-  rw [if_neg hne] at h
+  rw [ite_eq_right hne] at h
   exact one_ne_zero h
 
 theorem exists_nfFull_of_relevant_of_G_eq_zero (Y : Full X) {u : D.what₂.Word} (t : GTu Y u) (hr : t.relevant) (hG : t.G = 0) :
@@ -73,7 +71,7 @@ theorem delta_pos_le_height_sq (hPF : PFHost D) (large₂ : SizeData₂ D) {CH C
   have hD : Dl (lf D (X.Fu u)).fl (frq X t.rep).fl j ≠ 0 := (nf_gen _ _ _ _ j hj c hN).2.2.2.1
   have hlab : labT t (jT t) = Dl (lf D (X.Fu u)).fl (frq X t.rep).fl j := by
     unfold labT
-    rw [if_pos le_rfl, hjT]
+    rw [ite_eq_left le_rfl, hjT]
   have hdel : k2Del D (jT t) (labT t) =
       ∏ τ : D.what₂.Tau, absReal D.host.rdE (embS D τ) D.R.rS (jT t) (labT t (jT t)) ^ 2 := by
     unfold k2Del

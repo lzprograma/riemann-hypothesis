@@ -105,12 +105,12 @@ theorem isotropicCoefficientSplitting_holds : IsotropicCoefficientSplitting (E :
   have hmemMp : ∀ μ ∈ X.Λp ξ, μ ∈ Mp X ξ := fun μ h => ⟨h.1, h.2⟩
   refine ⟨fun μ => if h : μ ∈ Mp X ξ then coef ⟨μ, h⟩ else 0, ?_, ?_, ?_, ?_⟩
   · intro μ hμ
-    simp only [dif_pos (hmemMp μ hμ)]
+    simp only [dite_eq_left (hmemMp μ hμ)]
     rw [← hcoef]
     exact (ρ _).2.1
   · intro μ hμ μ' hμ'
     have hs' := (Mp X ξ).add_mem (hmemMp μ hμ) (hmemMp μ' hμ')
-    simp only [dif_pos hs', dif_pos (hmemMp μ hμ), dif_pos (hmemMp μ' hμ')]
+    simp only [dite_eq_left hs', dite_eq_left (hmemMp μ hμ), dite_eq_left (hmemMp μ' hμ')]
     apply huniq
     rw [← hcoef, add_smul, ← hcoef, ← hcoef]
     have : (⟨μ + μ', hs'⟩ : Mp X ξ) = ⟨μ, hmemMp μ hμ⟩ + ⟨μ', hmemMp μ' hμ'⟩ := rfl
@@ -120,14 +120,14 @@ theorem isotropicCoefficientSplitting_holds : IsotropicCoefficientSplitting (E :
     have hs' : (α : E) • μ ∈ Mp X ξ := by
       rw [← smul_O]
       exact (Mp X ξ).smul_mem α (hmemMp μ hμ)
-    simp only [dif_pos hs', dif_pos (hmemMp μ hμ)]
+    simp only [dite_eq_left hs', dite_eq_left (hmemMp μ hμ)]
     apply huniq
     rw [← hcoef, mul_smul, ← hcoef]
     have : (⟨(α : E) • μ, hs'⟩ : Mp X ξ) = α • ⟨μ, hmemMp μ hμ⟩ := Subtype.ext (smul_O α μ).symm
     rw [this, map_smul, Submodule.coe_smul, smul_O]
   · intro e he
     have hmem : e • ξ ∈ Mp X ξ := ⟨he, by rw [herm_smul_left, hξ.2.1, mul_zero]⟩
-    simp only [dif_pos hmem]
+    simp only [dite_eq_left hmem]
     apply huniq
     rw [← hcoef, hρid _ ⟨e, rfl⟩]
 

@@ -14,48 +14,10 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Orthonorm
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthonormalRealBasisComplexCoordinates
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslateGaloisRationalityCmPoints
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaVacuaConjugatesCmPoints
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthonormalBasisGaloisMap, Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumNormConjCmPointsAllEmbeddings
@@ -116,8 +78,6 @@ namespace GlobalTheory.ConjNorm
 
 noncomputable def torTw (D : D7) (σ : D.host.E ≃ₐ[ℚ] D.host.E) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) : Tor D :=
   ⟨fun τ x => embT D τ (σ x), lamOf D cc δ⟩
-
-alias U_zero := _root_.GlobalTheory.GalTheta.U_zero
 
 theorem norm_core (D : D7) (σ : D.host.E ≃ₐ[ℚ] D.host.E)
     (hσ : ∀ a : D.host.K, σ (a : D.host.E) = (a : D.host.E))
@@ -213,7 +173,7 @@ theorem exists_ext (M : IntermediateField ℚ ℂ) (ρ : M →ₐ[ℚ] ℂ) :
   · rw [IntermediateField.mem_restrictScalars, mem_algebraicClosure_iff]
     exact (mem_algebraicClosure_iff.1 hx).extendScalars (algebraMap ℚ M).injective
   · rw [← hφ]
-    simp only [TaylorLogMetric.liftM, dif_pos hx, dif_pos (hle hx)]
+    simp only [TaylorLogMetric.liftM, dite_eq_left hx, dite_eq_left (hle hx)]
     rfl
 
 theorem norm_fix (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (hc : Crv D cc δ) (t0 : ℂ)
@@ -246,7 +206,7 @@ theorem norm_fix (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (hc : Crv D cc
   obtain ⟨x', hx', -⟩ := _root_.GlobalTheory.GalExist.galEx_all D cc δ hc M ρ hK hD
     (fun t h1 h2 => ⟨hQ (htors t h1 h2).1, hQ (htors t h1 h2).2⟩) N N' L L' hL hL' x (2 * m) ⟨m, hm, hmx⟩ (by omega)
   have hcomb : comb D (tor0 D cc δ) (fun _ : Fin 1 => (1 : ℂ)) (fun _ => 0) G = G := by
-    funext z; simp [comb, U_zero]
+    funext z; simp [comb, GlobalTheory.GalTheta.U_zero]
   have hg := _root_.GlobalTheory.GalTheta.gal_all D cc δ hc M ρ hK hD N N' L L' hL hL' 1 (fun _ => 1) (fun _ => 0) G x x' m hGTh hm hmx
     (fun _ => by rw [smul_zero]; exact zero_mem _) hx'
   rw [hcomb] at hg
@@ -325,8 +285,8 @@ theorem useNorm_all : ∀ D : D7, useNorm D := by
     exact norm_big D cc δ hc t0 ht L L' hL hL' hN G hG M' ρ' hQ hD' (fun α => hle (hC α)) t0' (hl ▸ ht') x hx
       (fun α => hle (hCx α))
   refine ⟨?_, main⟩
-  have := main 0 ⟨1, one_pos, by rw [smul_zero]; exact zero_mem _⟩ (by rw [U_zero]; exact hC)
-  rwa [U_zero] at this
+  have := main 0 ⟨1, one_pos, by rw [smul_zero]; exact zero_mem _⟩ (by rw [GlobalTheory.GalTheta.U_zero]; exact hC)
+  rwa [GlobalTheory.GalTheta.U_zero] at this
 
 end GlobalTheory.ConjNorm
 end -- clump:auto

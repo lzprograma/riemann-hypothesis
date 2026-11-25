@@ -60,7 +60,7 @@ theorem ordP_eq [IsDomain W] [IsFractionRing W Qq] {p : ℕ} (hp : Irreducible (
     ordP W p (algebraMap W Qq u * (p : Qq) ^ n) = n := by
   have hex : ∃ n' : ℤ, ∃ u' : Wˣ, algebraMap W Qq u * (p : Qq) ^ n = algebraMap W Qq u' * (p : Qq) ^ n' :=
     ⟨n, u, rfl⟩
-  rw [ordP, dif_pos hex]
+  rw [ordP, dite_eq_left hex]
   obtain ⟨u', hu'⟩ := hex.choose_spec
   exact (unit_mul_zpow_congr_zpow hp hu').symm
 
@@ -115,7 +115,7 @@ theorem lenLat_colSpan [IsDomain W] [IsDiscreteValuationRing W] [IsFractionRing 
     (hp : Irreducible (p : W)) {k : ℕ} (g : Matrix (Fin k) (Fin k) Qq) (hg : IsUnit g.det) :
     lenLat W p (colSpan W g) = -ordP W p g.det := by
   have hL : IsLattice W (colSpan W g) := ⟨g, hg, rfl⟩
-  rw [lenLat, dif_pos hL]
+  rw [lenLat, dite_eq_left hL]
   obtain ⟨_, heq⟩ := hL.choose_spec
   obtain ⟨u, hu⟩ := det_of_colSpan_eq g hL.choose hg heq
   rw [hu, ordP_mul_unit hp hg.ne_zero]
@@ -128,10 +128,10 @@ theorem det_dD (p r k : ℕ) (hr : r ≤ k) : (Formalism.MainNotions.Pf14.dD Qq 
   have h1 : ∏ x ∈ Finset.range r, (if x < r then ((p : Qq))⁻¹ else 1) = ((p : Qq))⁻¹ ^ r := by
     calc ∏ x ∈ Finset.range r, (if x < r then ((p : Qq))⁻¹ else 1)
         = ∏ x ∈ Finset.range r, ((p : Qq))⁻¹ :=
-          Finset.prod_congr rfl fun x hx => if_pos (Finset.mem_range.mp hx)
+          Finset.prod_congr rfl fun x hx => ite_eq_left (Finset.mem_range.mp hx)
       _ = ((p : Qq))⁻¹ ^ r := by rw [Finset.prod_const, Finset.card_range]
   have h2 : ∏ x ∈ Finset.range d, (if r + x < r then ((p : Qq))⁻¹ else 1) = 1 :=
-    Finset.prod_eq_one fun x _ => if_neg (by omega)
+    Finset.prod_eq_one fun x _ => ite_eq_right (by omega)
   rw [h1, h2, mul_one, zpow_neg, zpow_natCast, inv_pow]
 
 theorem edge_le [IsDomain W] [IsDiscreteValuationRing W] [IsFractionRing W Qq] {p n' r k : ℕ}
@@ -145,7 +145,7 @@ theorem edge_le [IsDomain W] [IsDiscreteValuationRing W] [IsFractionRing W Qq] {
         fun c : Fin k => if c.val < k then ((p : Qq))⁻¹ else 1 := by
       funext c
       have c1 : c.val < r := lt_trans c.isLt hlt
-      rw [if_pos c1, if_pos c.isLt]
+      rw [ite_eq_left c1, ite_eq_left c.isLt]
     refine ⟨h1, h2, ?_⟩
     rw [h3, hdiag]
   have he' := Formalism.MainNotions.Pf14.isEdge_of_basis p n' k hp.ne_zero hcard le_rfl e g hb

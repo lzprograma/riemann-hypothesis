@@ -47,8 +47,7 @@ theorem Cont.mem_iff_le (ϖ : O) (g f : O⟦X⟧) (k : ℕ) :
       apply iSup₂_le
       intro j hj
       have hj' : j ≤ k - 1 := by
-        by_contra hjk
-        push_neg at hjk
+        by_contra! hjk
         exact hnot (Cont.mem_pair_mono ϖ g f (by omega) hj)
       exact_mod_cast hj'
     have h3 := le_trans hk hbound
@@ -122,24 +121,6 @@ theorem C2' {g : O⟦X⟧} (hg : IsDist g) (f : O⟦X⟧) (k : ℕ) :
 theorem mem_iff_le_cont {g : O⟦X⟧} (hg : IsDist g) (f : O⟦X⟧) (k : ℕ) :
     f ∈ Ideal.span {C ϖ ^ k, g} ↔ (k : ℕ∞) ≤ cont ϖ g f := by
   exact Cont.mem_iff_le ϖ g f k
-
-theorem m1 {g g' : O⟦X⟧} (hg : IsDist g) (hg' : IsDist g') (hdvd : g ∣ g') (f : O⟦X⟧) :
-    cont ϖ g' f ≤ cont ϖ g f := by
-  apply Cont.enat_le_of_forall
-  intro k hk
-  have h1 := (Cont.mem_iff_le ϖ g' f k).2 hk
-  apply (Cont.mem_iff_le ϖ g f k).1
-  refine (Ideal.span_le.2 ?_) h1
-  intro x hx
-  rcases hx with rfl | rfl
-  · exact Ideal.subset_span (by simp)
-  · obtain ⟨c, rfl⟩ := hdvd
-    exact Ideal.mul_mem_right _ _ (Ideal.subset_span (by simp))
-
-theorem m2 {g : O⟦X⟧} (hg : IsDist g) (k f : O⟦X⟧) : cont ϖ g f ≤ cont ϖ g (k * f) := by
-  apply Cont.enat_le_of_forall
-  intro j hj
-  exact (Cont.mem_iff_le ϖ g _ j).1 (Ideal.mul_mem_left _ k ((Cont.mem_iff_le ϖ g f j).2 hj))
 
 
 end Formalism.MainNotions.N.FrobeniusPowerSeries

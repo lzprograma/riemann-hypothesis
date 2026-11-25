@@ -192,16 +192,9 @@ theorem exists_ptOf {y : (Σ k, ι k) → Ω} (hP : IsArithVar (mCoordIdeal y) 1
   have hker : ∀ g ∈ RingHom.ker ev, aeval (fun p ↦ z p / z ⟨p.1, d p.1⟩) g = 0 := fun g hg ↦
     aeval_pt_eq_zero hP d hyd hz hd (by rw [← hval, RingHom.mem_ker.mp hg]; rfl)
   let φ : blockFnField y →ₐ[ℚ] ℂ :=
-    (Ideal.Quotient.liftₐ (RingHom.ker ev) (aeval fun p ↦ z p / z ⟨p.1, d p.1⟩) hker).comp
-      (Ideal.quotientKerAlgEquivOfSurjective hsurj).symm.toAlgHom
-  have hφ : ∀ g, φ (ev g) = aeval (fun p ↦ z p / z ⟨p.1, d p.1⟩) g := fun g ↦ by
-    have : (Ideal.quotientKerAlgEquivOfSurjective hsurj).symm (ev g) = Ideal.Quotient.mk _ g := by
-      rw [AlgEquiv.symm_apply_eq]
-      rfl
-    change (Ideal.Quotient.liftₐ (RingHom.ker ev) _ hker)
-      ((Ideal.quotientKerAlgEquivOfSurjective hsurj).symm (ev g)) = _
-    rw [this]
-    rfl
+    ev.liftOfSurjective hsurj (aeval fun p ↦ z p / z ⟨p.1, d p.1⟩) hker
+  have hφ : ∀ g, φ (ev g) = aeval (fun p ↦ z p / z ⟨p.1, d p.1⟩) g :=
+    AlgHom.liftOfSurjective_apply ev hsurj _ hker
   have hpt : ∀ p, ptOf y c φ p = z p / z ⟨p.1, c p.1⟩ := fun p ↦ by
     have e : ratioF y c p = ev (X p) / ev (X ⟨p.1, c p.1⟩) := by
       apply Subtype.ext

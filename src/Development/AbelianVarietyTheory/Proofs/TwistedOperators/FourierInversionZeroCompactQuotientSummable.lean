@@ -62,8 +62,6 @@ import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMa
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open scoped Pointwise
 
 namespace GlobalTheory.SeparatingCharacters
@@ -169,8 +167,7 @@ theorem tsum_coefficients_eq_value_zero : ∀ (G : Type) [AddCommGroup G] [Topol
     · subst ha
       simp [hχ0, Measure.real, h𝓕1]
     · obtain ⟨y, hy⟩ : ∃ y, χ a y ≠ 1 := by
-        by_contra hcon
-        push_neg at hcon
+        by_contra! hcon
         exact ha (hχinj a hcon)
       have htr : IsAddFundamentalDomain Γ (y +ᵥ 𝓕) μ := h𝓕.vadd_of_comm y
       have key : (∫ x in 𝓕, χ a x ∂μ) = χ a y * ∫ x in 𝓕, χ a x ∂μ := by
@@ -257,8 +254,7 @@ theorem tsum_coefficients_eq_value_zero : ∀ (G : Type) [AddCommGroup G] [Topol
     obtain ⟨y, rfl⟩ := QuotientAddGroup.mk_surjective q'
     have hnot : -x + y ∉ Γ := fun h => hne (QuotientAddGroup.eq.mpr h)
     obtain ⟨a, ha⟩ : ∃ a, χ a (-x + y) ≠ 1 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       exact hnot ((hχker _).mp hcon)
     refine ⟨e a, ⟨e a, Submodule.subset_span ⟨a, rfl⟩, rfl⟩, ?_⟩
     simp only [he]

@@ -4,52 +4,8 @@ public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LeviEmbMemNormalizerLower
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
 
@@ -61,12 +17,6 @@ open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Ste
 open scoped TensorProduct
 
 namespace GlobalTheory.CentralExponent
-
-section Abstract
-
-variable {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V] [Module ℂ V]
-
-end Abstract
 
 section Local
 
@@ -136,43 +86,10 @@ theorem exists_cong_subset {U : Set (GL n k)} (hU : U ∈ 𝓝 (1 : GL n k)) :
   refine ⟨γ, hγ1, fun g hg => hTU ?_⟩
   have := hγ (g.val - 1)
   have hg' : ∀ i j, valuation k ((g.val - 1) i j) < γ := hg
-  rw [Set.mem_preimage, Set.mem_preimage, if_pos hg', sub_add_cancel] at this
+  rw [Set.mem_preimage, Set.mem_preimage, ite_eq_left hg', sub_add_cancel] at this
   exact this
 
 variable {a b : Type} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b]
-
-theorem cong_factor (e : a ⊕ b ≃ n) (γ : (ValueGroupWithZero k)ˣ) (hγ : γ ≤ 1) :
-    ∀ g ∈ cong (n := n) γ hγ, ∃ x ∈ unipRad k (two e), ∃ c ∈ cong (n := n) γ hγ ⊓ parabLower k (two e), g = x * c := by
-  intro g hg
-  let M : Matrix n n k := Matrix.of fun i j => if (e.symm j).isLeft then (1 : Matrix n n k) i j else g.val i j
-  have hM : ∀ i j, valuation k ((M - 1) i j) < γ := fun i j => by
-    by_cases h : (e.symm j).isLeft
-    · simp [M, h]
-    · simpa [M, h] using hg i j
-  obtain ⟨p, -, hp⟩ := exists_mem_KOne (M := M) fun i j => (hM i j).trans_le hγ
-  have hpK : p ∈ cong (n := n) γ hγ := fun i j => hp ▸ hM i j
-  have hpP : p ∈ parab k (two e) := (mem_parab_two k).2 fun j i => by simp [hp, M]
-  let q : parab k (two e) := ⟨_, leviEmb_mem_parab k (two e) (leviProj k (two e) ⟨p, hpP⟩)⟩
-  have hqK : q.1 ∈ cong (n := n) γ hγ := by
-    intro i j
-    obtain ⟨⟨s, i⟩, rfl⟩ := (two e).surjective i
-    obtain ⟨⟨t, j⟩, rfl⟩ := (two e).surjective j
-    by_cases h : s = t
-    · subst h
-      have := hpK (two e ⟨s, i⟩) (two e ⟨s, j⟩)
-      simpa [q] using this
-    · rw [Matrix.sub_apply, leviEmb_apply_ne k (two e) _ h, one_apply_ne (by simp [h])]
-      simp
-  refine ⟨((⟨p, hpP⟩ * q⁻¹ : parab k (two e)) : GL n k), (coe_mem_unipRad k _).2 ?_, q * (p⁻¹ * g),
-    Subgroup.mem_inf.2 ⟨mul_mem hqK (mul_mem (inv_mem hpK) hg), mul_mem (leviEmb_mem_parabLower k _ _)
-      ((mem_parabLower_two k).2 fun i j => ?_)⟩, by simp [mul_assoc]⟩
-  · rw [map_mul, map_inv, leviProj_leviEmb, mul_inv_cancel]
-  · have : (p⁻¹ * g).val (e (.inl i)) (e (.inr j)) = (p⁻¹ * p).val (e (.inl i)) (e (.inr j)) := by
-      simp only [Units.val_mul, Matrix.mul_apply]
-      refine Finset.sum_congr rfl fun l _ => ?_
-      congr 1
-      simp [hp, M]
-    rw [this, inv_mul_cancel, Units.val_one, one_apply_ne (by simp)]
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem val_emb₂_scalar (e : a ⊕ b ≃ n) (z : kˣ) :
@@ -184,28 +101,6 @@ theorem val_emb₂_scalar (e : a ⊕ b ≃ n) (z : kˣ) :
   obtain ⟨j, rfl⟩ := e.surjective j
   rcases i with i | i <;> rcases j with j | j <;>
     simp [GeneralLinearGroup.scalar, diagonal_apply, Matrix.one_apply]
-
-theorem cong_contract (e : a ⊕ b ≃ n) (γ : (ValueGroupWithZero k)ˣ) (hγ : γ ≤ 1) {z : kˣ}
-    (hz : valuation k (z : k) ≤ 1) : ∀ c ∈ cong (n := n) γ hγ ⊓ parabLower k (two e),
-      (emb₂ k e (GeneralLinearGroup.scalar a z, 1))⁻¹ * c * emb₂ k e (GeneralLinearGroup.scalar a z, 1) ∈
-        cong (n := n) γ hγ ⊓ parabLower k (two e) := by
-  intro c hcc
-  obtain ⟨hc, hc'⟩ := Subgroup.mem_inf.1 hcc
-  have hm : emb₂ k e (GeneralLinearGroup.scalar a z, 1) ∈ parabLower k (two e) :=
-    leviEmb_mem_parabLower k _ _
-  refine Subgroup.mem_inf.2 ⟨fun i j => ?_, mul_mem (mul_mem (inv_mem hm) hc') hm⟩
-  have h1 := hc i j
-  rw [← map_inv, Prod.inv_mk, ← map_inv, inv_one, Units.val_mul, Units.val_mul, val_emb₂_scalar,
-    val_emb₂_scalar, Matrix.sub_apply, mul_diagonal, diagonal_mul]
-  rw [Matrix.sub_apply] at h1
-  obtain ⟨i, rfl⟩ := e.surjective i
-  obtain ⟨j, rfl⟩ := e.surjective j
-  rcases i with i | i <;> rcases j with j | j
-  · simpa [mul_comm, mul_left_comm] using h1
-  · simp [(mem_parabLower_two k).1 hc' i j]
-  · simp only [Matrix.one_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, if_false, sub_zero] at h1 ⊢
-    simpa using (mul_le_of_le_one_right' hz).trans_lt h1
-  · simpa using h1
 
 end Local
 

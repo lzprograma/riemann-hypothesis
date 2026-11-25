@@ -13,58 +13,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliAbstr
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CommonEigenvectors
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HighestWeightPolynomials
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeightMonotonicity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.BranchingSystems, Formalism.HermitianCurvature.HermitianCurvatureProofs.ClosureOperators, Formalism.HermitianCurvature.HermitianCurvatureProofs.StarSumLemmas, Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictBoxOrder, Formalism.HermitianCurvature.HermitianCurvatureProofs.IrreducibleCapelliModules
@@ -539,13 +491,13 @@ theorem MS_le_ker {n : ℕ} (f : Fin n → Module.End ℂ V) (v : V) (ξ : Modul
 theorem yK_comm {n : ℕ} {E : Fin (n + 1) → Fin (n + 1) → Module.End ℂ V} (hE : GlRel E) (a b : Fin n) :
     yK E a * yK E b = yK E b * yK E a := by
   have h := hE (Fin.last n) a.castSucc (Fin.last n) b.castSucc
-  rw [if_neg (Fin.castSucc_lt_last a).ne, if_neg (Fin.castSucc_lt_last b).ne, sub_zero] at h
+  rw [ite_eq_right (Fin.castSucc_lt_last a).ne, ite_eq_right (Fin.castSucc_lt_last b).ne, sub_zero] at h
   exact sub_eq_zero.mp h
 
 theorem etaK_comm {n : ℕ} {E : Fin (n + 1) → Fin (n + 1) → Module.End ℂ V} (hE : GlRel E) (a b : Fin n) :
     etaK E a * etaK E b = etaK E b * etaK E a := by
   have h := hE a.castSucc (Fin.last n) b.castSucc (Fin.last n)
-  rw [if_neg (Fin.castSucc_lt_last b).ne', if_neg (Fin.castSucc_lt_last a).ne', sub_zero] at h
+  rw [ite_eq_right (Fin.castSucc_lt_last b).ne', ite_eq_right (Fin.castSucc_lt_last a).ne', sub_zero] at h
   exact sub_eq_zero.mp h
 
 theorem exists_castSucc {n : ℕ} (a : Fin (n + 1)) (h : a ≠ Fin.last n) : ∃ a' : Fin n, a = a'.castSucc := by
@@ -841,16 +793,16 @@ theorem sumT (hE : GlRel E) (w : ℂ) (j c : Fin (N + 1)) :
 theorem detVecR (hE : GlRel E) (y : Fin (N + 1) → A) (hy : IsVec E y) (w : ℂ) (j : Fin (N + 1)) :
     qdet E w * y j = y j * qdet E w - ∑ l, Tch E (w - 1) j l * y l := by
   have h := sumT E hE w j j
-  rw [if_pos rfl] at h
+  rw [ite_eq_left rfl] at h
   rw [← h, Finset.sum_mul, Finset.mul_sum, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl (fun l _ => ?_)
   have hM : Commute (y j) (Tch E (w - 1) j l) := by
     refine Commute.smul_right (QuantumMinorCommutation.commute_qminor E _ _ _ _ (fun s s' => ?_)) _
     have := hy (j.succAbove s) (l.succAbove s') j
-    rw [if_neg (Fin.succAbove_ne j s), sub_eq_zero] at this
+    rw [ite_eq_right (Fin.succAbove_ne j s), sub_eq_zero] at this
     exact this.symm
   have hT : Tm E w j l * y j - y j * Tm E w j l = -y l := by
-    rw [QuantumMinorCommutation.Tm_comm, hy, if_pos rfl]
+    rw [QuantumMinorCommutation.Tm_comm, hy, ite_eq_left rfl]
   have hT' : Tm E w j l * y j = y j * Tm E w j l - y l := by
     rw [sub_eq_add_neg, ← hT]; abel
   rw [mul_assoc, hT', mul_sub, ← mul_assoc, ← hM.eq, mul_assoc]
@@ -859,12 +811,12 @@ theorem star (hE : GlRel E) (y : Fin (N + 1) → A) (hy : IsVec E y) (w : ℂ) (
     ∑ l, Tch E (w - 1) j l * ((w + 1) • y l + ∑ c, E c l * y c) = y j * qdet E w := by
   have h1 : ∀ l, (w + 1) • y l + ∑ c, E c l * y c = y l + ∑ c, Tm E w c l * y c := by
     intro l
-    simp only [Tm, add_mul, Finset.sum_add_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [Tm, add_mul, Finset.sum_add_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [add_smul, one_smul, Algebra.smul_def]
     abel
   simp only [h1, mul_add, Finset.sum_add_distrib, Finset.mul_sum]
   rw [Finset.sum_comm]
-  simp only [← mul_assoc, ← Finset.sum_mul, sumT E hE, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [← mul_assoc, ← Finset.sum_mul, sumT E hE, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [detVecR E hE y hy]
   abel
 
@@ -878,12 +830,12 @@ theorem vecD (hE : GlRel E) (y : Fin (N + 1) → A) (hy : IsVec E y) : IsVec E (
   simp only []
   rw [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
   simp only [h1, sub_mul, ite_mul, zero_mul, mul_ite, mul_zero, Finset.sum_add_distrib, Finset.sum_sub_distrib,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   by_cases hal : a = l
   · subst hal
-    simp only [if_true, mul_neg]
+    simp only [ite_true, mul_neg]
     abel
-  · rw [if_neg hal]
+  · rw [ite_eq_right hal]
     simp [Ne.symm hal]
 
 theorem vec_add {y z : Fin (N + 1) → A} (hy : IsVec E y) (hz : IsVec E z) : IsVec E (fun l => y l + z l) := by
@@ -922,12 +874,12 @@ theorem coeffs (hPV : PolyVanish) (K : Module.End ℂ W) (A : ℕ → Module.End
   have e1 : ∑ s ∈ range (d + 1), u ^ s • (if s = 0 then (0 : W) else A (s - 1) x) =
       ∑ s ∈ range d, u ^ s • A s (u • x) := by
     rw [Finset.sum_range_succ']
-    simp only [if_true, smul_zero, add_zero, Nat.succ_ne_zero, if_false, Nat.add_sub_cancel, map_smul, smul_smul, pow_succ]
+    simp only [ite_true, smul_zero, add_zero, Nat.succ_ne_zero, ite_false, Nat.add_sub_cancel, map_smul, smul_smul, pow_succ]
   have e2 : ∑ s ∈ range (d + 1), u ^ s • (if s < d then A s (K x) else (0 : W)) =
       ∑ s ∈ range d, u ^ s • A s (K x) := by
-    rw [Finset.sum_range_succ, if_neg (lt_irrefl d), smul_zero, add_zero]
+    rw [Finset.sum_range_succ, ite_eq_right (lt_irrefl d), smul_zero, add_zero]
     refine Finset.sum_congr rfl (fun s hs => ?_)
-    rw [if_pos (Finset.mem_range.1 hs)]
+    rw [ite_eq_left (Finset.mem_range.1 hs)]
   have e3 : ∑ s ∈ range (d + 1), u ^ s • P.coeff s • x = P.eval u • x := by
     rw [Polynomial.eval_eq_sum_range' hP, Finset.sum_smul]
     refine Finset.sum_congr rfl (fun s _ => ?_)
@@ -937,20 +889,11 @@ theorem coeffs (hPV : PolyVanish) (K : Module.End ℂ W) (A : ℕ → Module.End
   rw [Finset.sum_sub_distrib, sub_self]
 
 theorem pow_mem (G : Submodule ℂ W) (K : Module.End ℂ W) (hK : ∀ x ∈ G, K x ∈ G) (s : ℕ) : ∀ x ∈ G, (K ^ s) x ∈ G := by
-  induction s with
-  | zero => intro x hx; simpa using hx
-  | succ s ih =>
-    intro x hx
-    rw [pow_succ', Module.End.mul_apply]
-    exact hK _ (ih x hx)
+  apply _root_.Formalism.FourierDecayAlt.P.CapelliAbstractCharacter.pow_mem <;> assumption
 
 theorem aeval_mem (G : Submodule ℂ W) (K : Module.End ℂ W) (hK : ∀ x ∈ G, K x ∈ G) (q : ℂ[X]) :
     ∀ x ∈ G, aeval K q x ∈ G := by
-  intro x hx
-  rw [Polynomial.aeval_eq_sum_range, LinearMap.sum_apply]
-  refine Submodule.sum_mem _ (fun s _ => ?_)
-  rw [LinearMap.smul_apply]
-  exact Submodule.smul_mem _ _ (pow_mem G K hK s x hx)
+  apply _root_.Formalism.FourierDecayAlt.P.CapelliAbstractCharacter.aeval_mem <;> assumption
 
 theorem ch (hPV : PolyVanish) (G : Submodule ℂ W) (K : Module.End ℂ W) (hK : ∀ x ∈ G, K x ∈ G)
     (A : ℕ → Module.End ℂ W) (d : ℕ) (P : ℂ[X]) (hP : P.natDegree < d + 1)
@@ -964,9 +907,9 @@ theorem ch (hPV : PolyVanish) (G : Submodule ℂ W) (K : Module.End ℂ W) (hK :
     rw [LinearMap.smul_apply]
     exact (coeffs hPV K A d P hP _ (h _ (pow_mem G K hK s x hx)) s hs).symm
   rw [Finset.sum_congr rfl h1, Finset.sum_sub_distrib, Finset.sum_range_succ', Finset.sum_range_succ (fun s => if s < d then _ else _),
-    if_neg (lt_irrefl d), if_pos rfl, add_zero, add_zero, sub_eq_zero]
+    ite_eq_right (lt_irrefl d), ite_eq_left rfl, add_zero, add_zero, sub_eq_zero]
   refine Finset.sum_congr rfl (fun s hs => ?_)
-  rw [if_pos (Finset.mem_range.1 hs), if_neg (Nat.succ_ne_zero s), Nat.add_sub_cancel, pow_succ', Module.End.mul_apply]
+  rw [ite_eq_left (Finset.mem_range.1 hs), ite_eq_right (Nat.succ_ne_zero s), Nat.add_sub_cancel, pow_succ', Module.End.mul_apply]
 
 theorem basis_mul {n : ℕ} (r : Fin n → ℂ) (i : Fin n) :
     (X - C (r i)) * Lagrange.basis univ r i =
@@ -1175,16 +1118,7 @@ theorem box_strictAnti {n : ℕ} {L : Fin (n + 1) → ℤ} {M : Fin n → ℤ} (
     exact lt_of_le_of_lt h1 h2
 
 theorem sdec_shf {n : ℕ} (β : ℂ) {M : Fin n → ℤ} (h : StrictAnti M) : SDec (shf β M) := by
-  intro a b hab
-  have h1 := h hab
-  refine ⟨(M a - M b - 1).toNat, ?_⟩
-  simp only [shf]
-  have h2 : ((M a - M b - 1).toNat : ℤ) = M a - M b - 1 := Int.toNat_of_nonneg (by omega)
-  have h3 : (((M a - M b - 1).toNat : ℕ) : ℂ) = ((M a - M b - 1 : ℤ) : ℂ) := by
-    rw [← Int.cast_natCast, h2]
-  rw [h3]
-  push_cast
-  ring
+  apply _root_.Formalism.FourierDecayAlt.P.HighestWeightPolynomials.sdec_shf <;> assumption
 
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
@@ -1198,11 +1132,11 @@ theorem isWt_vec {n : ℕ} {E : Fin n → Fin n → Module.End ℂ V} {y : Fin n
   simp only [LinearMap.sub_apply, Module.End.mul_apply, ht, map_smul] at e
   by_cases hcx : c = x
   · subst hcx
-    rw [if_pos rfl, LinearMap.neg_apply, sub_eq_iff_eq_add] at e
+    rw [ite_eq_left rfl, LinearMap.neg_apply, sub_eq_iff_eq_add] at e
     refine ⟨t - 1, ?_⟩
     rw [e, sub_smul, one_smul]
     abel
-  · rw [if_neg hcx, LinearMap.zero_apply, sub_eq_zero] at e
+  · rw [ite_eq_right hcx, LinearMap.zero_apply, sub_eq_zero] at e
     exact ⟨t, e⟩
 
 theorem list_prod_pres (P : V → Prop) (l : List (Module.End ℂ V)) (h : ∀ f ∈ l, ∀ v, P v → P (f v)) :

@@ -184,7 +184,7 @@ private lemma coeff_single_pt_eq_ite (j j' : Fin n) (l l' : Fin d) :
   by_cases h : j = j' ∧ l = l'
   · obtain ⟨rfl, rfl⟩ := h
     simp
-  · rw [if_neg h, if_neg]
+  · rw [ite_eq_right h, ite_eq_right]
     intro h'
     have h2 := Finsupp.single_left_injective one_ne_zero h'
     simp only [Prod.mk.injEq] at h2

@@ -2,43 +2,7 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.RestPathFrom
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.DividedPowerZeroOfGlActionZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 
 @[expose] public section
@@ -81,9 +45,9 @@ theorem colH_step {n N : ℕ} {LL : Letters (Fin N)} {B : Fin N → ℕ} (P : PP
   have e2 : (Fin.succ (⟨j, h⟩ : Fin N)) = ⟨j + 1, by omega⟩ := rfl
   rw [e1, e2] at hs
   split_ifs with hv
-  · rw [if_pos hv] at hs
+  · rw [ite_eq_left hv] at hs
     exact column_height_mono hs.1 c
-  · rw [if_neg hv] at hs
+  · rw [ite_eq_right hv] at hs
     exact column_height_mono hs.1 c
 
 theorem Kcol_eq_pathWord (R : Type*) [CommRing R] {n N : ℕ} {LL : Letters (Fin N)} {B : Fin N → ℕ}
@@ -117,20 +81,20 @@ theorem Kcol_eq_pathWord (R : Type*) [CommRing R] {n N : ℕ} {LL : Letters (Fin
     rw [hV]
     unfold colStep Formalism.InvariantFactorPaths.GelfandTsetlinBases.stepF
     by_cases hv : LL.vec ⟨j, h⟩ = true
-    · rw [if_pos hv] at hst
+    · rw [ite_eq_left hv] at hst
       rw [hv]
       by_cases he : colH (P.mu ⟨j + 1, by omega⟩) c = colH (P.mu ⟨j, by omega⟩) c
-      · rw [if_pos he, if_neg (by omega), if_neg (by omega)]
-      · rw [if_neg he, if_pos (by omega)]
+      · rw [ite_eq_left he, ite_eq_right (by omega), ite_eq_right (by omega)]
+      · rw [ite_eq_right he, ite_eq_left (by omega)]
         by_cases hc : 1 ≤ c
         · simp [hc, wedgeR_eq_wedgeF]
         · simp [hc, contrR_eq_contrF]
-    · rw [if_neg hv] at hst
+    · rw [ite_eq_right hv] at hst
       have hv' : LL.vec ⟨j, h⟩ = false := by simpa using hv
       rw [hv']
       by_cases he : colH (P.mu ⟨j + 1, by omega⟩) c = colH (P.mu ⟨j, by omega⟩) c
-      · rw [if_pos he, if_neg (by omega), if_neg (by omega)]
-      · rw [if_neg he, if_neg (by omega), if_pos (by omega)]
+      · rw [ite_eq_left he, ite_eq_right (by omega), ite_eq_right (by omega)]
+      · rw [ite_eq_right he, ite_eq_right (by omega), ite_eq_left (by omega)]
         by_cases hc : 1 ≤ c
         · simp [hc, contrR_eq_contrF]
         · simp [hc, wedgeR_eq_wedgeF]
@@ -142,12 +106,12 @@ theorem colH_off {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) {c : ℤ} (hc 
   simp only [colRange, Finset.mem_Icc, not_and_or, not_le] at hc
   unfold colH
   rcases hc with hc | hc
-  · rw [if_neg (by omega)]
+  · rw [ite_eq_right (by omega)]
     rw [Finset.filter_true_of_mem, Finset.card_univ, Fintype.card_fin]
     intro m _
     have := abs_le.mp (hT m)
     omega
-  · rw [if_pos (by omega)]
+  · rw [ite_eq_left (by omega)]
     rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
     intro m _
     have := abs_le.mp (hT m)
@@ -161,7 +125,7 @@ theorem pathWord_off (R : Type*) [CommRing R] {n N : ℕ} (isVec : ℕ → Bool)
   | succ j ih =>
     simp only [Formalism.InvariantFactorPaths.GelfandTsetlinBases.pathWord]
     rw [colHeight_eq, colHeight_eq, ext_apply mu j (by omega), ext_apply mu (j + 1) (by omega),
-      colH_off mu hc, colH_off mu hc, if_pos rfl]
+      colH_off mu hc, colH_off mu hc, ite_eq_left rfl]
     exact ih (by omega)
 
 theorem restPsi : RestPsi := by

@@ -3,53 +3,9 @@ module
 public import Mathlib.Algebra.Module.ZLattice.Covolume
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Calculus.LogDerivUniformlyOn
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.Normed.Module.Connected
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Transform
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.Calculus.UniformLimitsDeriv
 public import Mathlib.Analysis.Complex.Liouville
@@ -140,14 +96,14 @@ theorem hasSum_weierstrassZetaExcept (l₀ z : ℂ) :
 theorem weierstrassZetaExcept_of_notMem {l₀ : ℂ} (h : l₀ ∉ L.lattice) :
     weierstrassZetaExcept L l₀ = weierstrassZeta L := by
   ext z
-  refine tsum_congr fun l => if_neg ?_
+  refine tsum_congr fun l => ite_eq_right ?_
   rintro rfl
   exact h l.2
 
 theorem hasSumLocallyUniformly_weierstrassZeta :
     HasSumLocallyUniformly (fun (l : L.lattice) (z : ℂ) => zetaTerm l z) (weierstrassZeta L) := by
   convert hasSumLocallyUniformly_weierstrassZetaExcept L (L.ω₁ / 2) using 3 with l
-  · rw [if_neg]; exact fun e => L.ω₁_div_two_notMem_lattice (e ▸ l.2)
+  · rw [ite_eq_right]; exact fun e => L.ω₁_div_two_notMem_lattice (e ▸ l.2)
   · rw [weierstrassZetaExcept_of_notMem _ L.ω₁_div_two_notMem_lattice]
 
 theorem hasSum_weierstrassZeta (z : ℂ) :
@@ -224,7 +180,7 @@ theorem analyticOnNhd_weierstrassZeta :
 
 theorem weierstrassZeta_eq_inv_add (z : ℂ) :
     weierstrassZeta L z = 1 / z + weierstrassZetaExcept L 0 z := by
-  rw [← weierstrassZetaExcept_add L (zero_mem _), add_comm, zetaTerm, if_pos rfl]
+  rw [← weierstrassZetaExcept_add L (zero_mem _), add_comm, zetaTerm, ite_eq_left rfl]
 
 @[simp] theorem weierstrassZetaExcept_zero (l₀ : ℂ) : weierstrassZetaExcept L l₀ 0 = 0 := by
   simp [weierstrassZetaExcept, zetaTerm_eq]
@@ -782,35 +738,15 @@ open scoped Classical in
 open Classical in
 def sigmaSign (w : ℂ) : ℂ := if w / 2 ∈ L.lattice then 1 else -1
 
-theorem sigmaSign_of_mem {w : ℂ} (h : w / 2 ∈ L.lattice) : sigmaSign L w = 1 := if_pos h
+theorem sigmaSign_of_mem {w : ℂ} (h : w / 2 ∈ L.lattice) : sigmaSign L w = 1 := ite_eq_left h
 
-theorem sigmaSign_of_notMem {w : ℂ} (h : w / 2 ∉ L.lattice) : sigmaSign L w = -1 := if_neg h
+theorem sigmaSign_of_notMem {w : ℂ} (h : w / 2 ∉ L.lattice) : sigmaSign L w = -1 := ite_eq_right h
 
 @[simp] theorem sigmaSign_sq (w : ℂ) : sigmaSign L w ^ 2 = 1 := by
   unfold sigmaSign; split_ifs <;> simp
 
 theorem sigmaSign_ne_zero (w : ℂ) : sigmaSign L w ≠ 0 := by
   unfold sigmaSign; split_ifs <;> simp
-
-theorem sigmaSign_int (m n : ℤ) :
-    sigmaSign L (m * L.ω₁ + n * L.ω₂) = (-1 : ℂ) ^ (m + n + m * n) := by
-  have h : (m * L.ω₁ + n * L.ω₂) / 2 ∈ L.lattice ↔ Even m ∧ Even n := by
-    constructor
-    · intro h
-      obtain ⟨a, b, e⟩ := mem_lattice.1 h
-      have := LinearIndependent.pair_iff.1 L.indep (m - 2 * a) (n - 2 * b) (by
-        simp only [real_smul]; push_cast; linear_combination (-2) * e)
-      simp only [sub_eq_zero] at this
-      norm_cast at this
-      exact ⟨⟨a, by omega⟩, ⟨b, by omega⟩⟩
-    · rintro ⟨⟨a, rfl⟩, ⟨b, rfl⟩⟩
-      exact mem_lattice.2 ⟨a, b, by push_cast; ring⟩
-  by_cases h' : Even m ∧ Even n
-  · rw [sigmaSign_of_mem L (h.2 h'), Even.neg_one_zpow ((h'.1.add h'.2).add (h'.1.mul_right _))]
-  · rw [sigmaSign_of_notMem L (h.not.2 h'), Odd.neg_one_zpow]
-    rw [← Int.not_even_iff_odd]
-    simp only [Int.even_add, Int.even_mul]
-    tauto
 
 theorem exists_weierstrassSigma_add {w : ℂ} (hw : w ∈ L.lattice) : ∃ C : ℂ, C ≠ 0 ∧ ∀ z,
     weierstrassSigma L (z + w) = C * cexp (quasiPeriod L w * (z + w / 2)) * weierstrassSigma L z := by
@@ -1008,19 +944,19 @@ theorem eq_const_of_periodic_of_tendsto {f : ℂ → ℂ} {c : ℂ}
   have hg : ∀ z, ∀ w ∈ L.lattice, g (z + w) = g z := by
     intro z w hw
     by_cases hz : z ∈ L.lattice
-    · simp only [g, if_pos hz, if_pos (add_mem hz hw)]
-    · simp only [g, if_neg hz, if_neg (add_notMem_lattice hz hw), hper z hz w hw]
+    · simp only [g, ite_eq_left hz, ite_eq_left (add_mem hz hw)]
+    · simp only [g, ite_eq_right hz, ite_eq_right (add_notMem_lattice hz hw), hper z hz w hw]
   have hd : ∀ z ∉ L.lattice, DifferentiableAt ℂ g z := by
     intro z hz
     have hn := L.isClosed_lattice.isOpen_compl.mem_nhds hz
     refine (hf.differentiableAt hn).congr_of_eventuallyEq ?_
-    filter_upwards [hn] with x hx using if_neg hx
+    filter_upwards [hn] with x hx using ite_eq_right hx
   have h0 : AnalyticAt ℂ g 0 := by
     refine analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt
       ((eventually_notMem_lattice L 0).mono hd) ?_
-    rw [← continuousWithinAt_compl_self, ContinuousWithinAt, show g 0 = c from if_pos (zero_mem _)]
+    rw [← continuousWithinAt_compl_self, ContinuousWithinAt, show g 0 = c from ite_eq_left (zero_mem _)]
     refine hc.congr' ?_
-    filter_upwards [eventually_notMem_lattice L 0] with x hx using (if_neg hx).symm
+    filter_upwards [eventually_notMem_lattice L 0] with x hx using (ite_eq_right hx).symm
   have hdiff : Differentiable ℂ g := by
     intro x
     by_cases hx : x ∈ L.lattice
@@ -1030,7 +966,7 @@ theorem eq_const_of_periodic_of_tendsto {f : ℂ → ℂ} {c : ℂ}
     · exact hd x hx
   have := hdiff.apply_eq_apply_of_bounded
     (IsZLattice.isCompact_range_of_periodic L.lattice _ hdiff.continuous hg).isBounded z 0
-  simpa only [g, if_neg hz, if_pos (zero_mem L.lattice)] using this
+  simpa only [g, ite_eq_right hz, ite_eq_left (zero_mem L.lattice)] using this
 
 theorem exists_eq_const_of_periodic_of_even {f N : ℂ → ℂ}
     (hf : DifferentiableOn ℂ f (L.lattice : Set ℂ)ᶜ)
@@ -1204,20 +1140,5 @@ def periodsOfUpperHalfPlane (τ : UpperHalfPlane) : PeriodPair where
 theorem latticeArea_periodsOfUpperHalfPlane (τ : UpperHalfPlane) :
     latticeArea (periodsOfUpperHalfPlane τ) = τ.im := by
   simp [latticeArea_eq, periodsOfUpperHalfPlane, abs_of_pos τ.im_pos]
-
-theorem isHomothetic_I_gaussian : IsHomothetic I (periodsOfUpperHalfPlane UpperHalfPlane.I)
-    (periodsOfUpperHalfPlane UpperHalfPlane.I) := by
-  intro x
-  simp only [mem_lattice, periodsOfUpperHalfPlane, UpperHalfPlane.coe_I]
-  constructor
-  · rintro ⟨m, n, h⟩
-    exact ⟨n, -m, by push_cast; linear_combination -I * h + (n - x) * I_mul_I⟩
-  · rintro ⟨m, n, h⟩
-    exact ⟨-n, m, by push_cast; linear_combination I * h - n * I_mul_I⟩
-
-theorem sTwo_gaussian : sTwo (periodsOfUpperHalfPlane UpperHalfPlane.I) = 0 := by
-  have := isHomothetic_I_gaussian.sTwo_eq
-  rw [I_sq] at this
-  linear_combination this / 2
 
 end GlobalTheory

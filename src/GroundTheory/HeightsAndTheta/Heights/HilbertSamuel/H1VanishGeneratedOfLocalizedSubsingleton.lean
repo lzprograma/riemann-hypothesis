@@ -28,16 +28,8 @@ variable {S : Type} [CommRing S] {K : Type} [Fintype K] [LinearOrder K] {ι : K 
 omit [Fintype K] [LinearOrder K] [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)] [Module S M]
   [IsScalarTower S (MRingOver S ι) M] in
 theorem loc_subsingleton_of_kill {T : Submonoid (MRingOver S ι)} {u : MRingOver S ι} (hu : u ∈ T)
-    (hk : ∀ y : M, u • y = 0) : Subsingleton (LocalizedModule T M) := by
-  have h0 : ∀ x : LocalizedModule T M, x = 0 := by
-    intro x
-    induction x using LocalizedModule.induction_on with
-    | h y s =>
-      rw [← LocalizedModule.zero_mk s]
-      refine LocalizedModule.mk_eq.mpr ⟨⟨u, hu⟩, ?_⟩
-      simp only [Submonoid.smul_def, smul_zero]
-      rw [smul_comm, hk, smul_zero]
-  exact ⟨fun a b => by rw [h0 a, h0 b]⟩
+    (hk : ∀ y : M, u • y = 0) : Subsingleton (LocalizedModule T M) :=
+  LocalizedModule.subsingleton_iff.mpr fun y => ⟨u, hu, hk y⟩
 
 theorem h1_vanish_generated_of_localized_subsingleton
     (h : ∀ (n : ℕ) (I : KH.Cell K ι n), Subsingleton (LocalizedModule (KH.cellMon S I.1) M))

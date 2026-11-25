@@ -657,7 +657,7 @@ lemma sum_w (N : ℕ) {B : ℝ} (hB : 0 ≤ B) :
     simp only [w, Finset.sum_add_distrib, mul_add, Finset.mul_sum]
   rw [hsplit, hz1, hz2]
   simp only [Finset.sum_ite_eq', Finset.mem_range, show N < N + 1 + (N + 1) by omega,
-    show N + 1 < N + 1 + (N + 1) by omega, if_true]
+    show N + 1 < N + 1 + (N + 1) by omega, ite_true]
   have h := harm N
   have h2 := mul_le_mul_of_nonneg_left
     (show ∑ k ∈ Finset.range (N + 1), 1 / (k : ℝ) + ∑ k ∈ Finset.range (N + 1), 1 / (k : ℝ)
@@ -801,11 +801,11 @@ lemma near_term {u T C E : ℝ} {n : ℕ} (hu : 2 ≤ u) (hT : 0 < T) (hC : 0 �
       rw [e1] at h1
       exact e2.trans (e3.trans (h1.trans (le_abs_self _)))
     · have hcast : ((N - n : ℕ) : ℝ) = (N : ℝ) - n := Nat.cast_sub hlt.le
-      rw [hwdef, hcast, if_neg hlt.ne, if_neg (by omega), mul_add]
+      rw [hwdef, hcast, ite_eq_right hlt.ne, ite_eq_right (by omega), mul_add]
       have : 0 ≤ B * (1 / ((n - (N + 1) : ℕ) : ℝ)) := mul_nonneg hB0 (by positivity)
       linarith
   · apply caseA
-    rw [hwdef, if_pos heq]
+    rw [hwdef, ite_eq_left heq]
     have : (0 : ℝ) ≤ if n = N + 1 then 1 else 0 := by split_ifs <;> norm_num
     linarith
   · rcases Nat.lt_or_ge (N + 1) n with hgt2 | hle
@@ -828,12 +828,12 @@ lemma near_term {u T C E : ℝ} {n : ℕ} (hu : 2 ≤ u) (hT : 0 < T) (hC : 0 �
           rw [Nat.cast_sub hgt2.le]
           push_cast
           ring
-        rw [hwdef, hcast, if_neg (by omega), if_neg (by omega), mul_add]
+        rw [hwdef, hcast, ite_eq_right (by omega), ite_eq_right (by omega), mul_add]
         have : 0 ≤ B * (1 / ((N - n : ℕ) : ℝ)) := mul_nonneg hB0 (by positivity)
         linarith
     · have heq1 : n = N + 1 := by omega
       apply caseA
-      rw [hwdef, if_neg (by omega), if_pos heq1]
+      rw [hwdef, ite_eq_right (by omega), ite_eq_left heq1]
       linarith
 
 /-- The Perron height may be chosen independently of the summation cutoff. -/
@@ -918,7 +918,7 @@ theorem truncated_perron_psi_of_one_le : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [N
         + C0 * (16 * L * ∑ n ∈ Finset.range (N + 1 + (N + 1)),
           (if n ∈ Finset.range (N + 1 + (N + 1)) then w N B n else 0))) := by
     refine HasSum.add ((hs1.hasSum.mul_left _).mul_left _) ((HasSum.mul_left _ ?_).mul_left _)
-    exact hasSum_sum_of_ne_finset_zero (fun n hn => if_neg hn)
+    exact hasSum_sum_of_ne_finset_zero (fun n hn => ite_eq_right hn)
   have hpt : ∀ n : ℕ, ‖a n * (if 1 ≤ u / n then (1 : ℂ) else 0)
       - (1 / (2 * Real.pi) : ℂ) * (a n * ∫ t in (-T)..T,
         ((u / n : ℝ) : ℂ) ^ ((σ : ℂ) + t * I) / ((σ : ℂ) + t * I))‖
@@ -966,7 +966,7 @@ theorem truncated_perron_psi_of_one_le : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [N
           linarith
         rw [Finset.mem_range]
         exact_mod_cast h3
-      rw [if_pos hmem]
+      rw [ite_eq_left hmem]
       linarith
   have key := hcomb.norm_le_of_bounded hg hpt
   have hZ : ∑' n : ℕ, 1 / (n : ℝ) ^ (1 + 1 / (2 * L)) ≤ 1 + 2 * L := by
@@ -975,7 +975,7 @@ theorem truncated_perron_psi_of_one_le : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [N
   have hWeq : ∑ n ∈ Finset.range (N + 1 + (N + 1)),
       (if n ∈ Finset.range (N + 1 + (N + 1)) then w N B n else 0)
       = ∑ n ∈ Finset.range (N + 1 + (N + 1)), w N B n :=
-    Finset.sum_congr rfl (fun n hn => if_pos hn)
+    Finset.sum_congr rfl (fun n hn => ite_eq_left hn)
   have hlogN : Real.log N ≤ L := by
     have h2 : (2 : ℕ) ≤ N := Nat.le_floor (by exact_mod_cast hu)
     have hNpos : (0 : ℝ) < N := by exact_mod_cast (show 0 < N by omega)
@@ -1004,10 +1004,6 @@ theorem truncated_perron_psi_of_one_le : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [N
     linarith
   have b5 := mul_le_mul_of_nonneg_left b4 hC0.le
   linarith
-
-theorem truncated_perron_psi : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (u T : ℝ), 2 ≤ T → T ≤ 2 * u → 2 ≤ u → ‖(∑ n ∈ Finset.Icc 1 ⌊u⌋₊, (Λ n : ℂ) * χ (n : ZMod q)) - (1 / (2 * Real.pi) : ℂ) * ∫ t in (-T)..T, -(deriv (LFunction χ) ((1 + 1 / Real.log u : ℝ) + t * I) / LFunction χ ((1 + 1 / Real.log u : ℝ) + t * I)) * (u : ℂ) ^ (((1 + 1 / Real.log u : ℝ) : ℂ) + t * I) / ((1 + 1 / Real.log u : ℝ) + t * I)‖ ≤ C * (u * Real.log u ^ 2 / T + Real.log u) := by
-  obtain ⟨C, hC, h⟩ := truncated_perron_psi_of_one_le
-  exact ⟨C, hC, fun q _ χ u T hT _ hu => h q χ u T (by linarith) hu⟩
 
 end GlobalTheory.PerronPsi
 end -- clump:auto

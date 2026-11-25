@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundV
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WuDecayPf
@@ -110,43 +111,35 @@ theorem sig_esI (a : Fin r) : (GBasic.sig k r (esI k r a)).val = a.val := by
 section HpkVals
 variable (k r)
 theorem sgn_eI (a : Fin r) : GBasic.sgn k r (eI k r a) = 1 := by
-  unfold GBasic.sgn; rw [if_neg (by rw [eI_val]; have := a.isLt; omega)]
+  unfold GBasic.sgn; rw [ite_eq_right (by rw [eI_val]; have := a.isLt; omega)]
 theorem sgn_esI (a : Fin r) : GBasic.sgn k r (esI k r a) = 1 := by
-  unfold GBasic.sgn; rw [if_neg (by rw [esI_val]; have := a.isLt; omega)]
+  unfold GBasic.sgn; rw [ite_eq_right (by rw [esI_val]; have := a.isLt; omega)]
 theorem Hpk_ee (a b : Fin r) : Hpk k r (eI k r a) (eI k r b) = 0 := by
-  rw [Hpk_sig, if_neg (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; have := b.isLt; omega)]
+  rw [Hpk_sig, ite_eq_right (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; have := b.isLt; omega)]
 theorem Hpk_ew (a : Fin r) (c : Fin (k + 1)) : Hpk k r (eI k r a) (wI k r c) = 0 := by
-  rw [Hpk_sig, if_neg (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; have := c.isLt; omega)]
+  rw [Hpk_sig, ite_eq_right (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; have := c.isLt; omega)]
 theorem Hpk_ef (a b : Fin r) : Hpk k r (eI k r a) (esI k r b) = if a = b then 1 else 0 := by
-  rw [Hpk_sig]
-  by_cases hab : a = b
-  · subst hab; rw [if_pos (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]), if_pos rfl, sgn_eI]
-  · have : a.val ≠ b.val := fun h => hab (Fin.ext h)
-    rw [if_neg (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; have := b.isLt; omega), if_neg hab]
+  apply _root_.PI.UnitaryGroupMassFormula.DLm.NBk.Hpk_es <;> assumption
 theorem Hpk_we (c : Fin (k + 1)) (a : Fin r) : Hpk k r (wI k r c) (eI k r a) = 0 := by
-  rw [Hpk_sig, if_neg (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; omega)]
+  rw [Hpk_sig, ite_eq_right (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; omega)]
 theorem Hpk_ww (c d : Fin (k + 1)) : Hpk k r (wI k r c) (wI k r d) =
     if c = d then (if c.val = k then -1 else 1) else 0 := by
   rw [Hpk_sig]
   by_cases hcd : c = d
-  · subst hcd; rw [if_pos (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]), if_pos rfl]; unfold GBasic.sgn
+  · subst hcd; rw [ite_eq_left (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]), ite_eq_left rfl]; unfold GBasic.sgn
     by_cases hck : c.val = k
-    · rw [if_pos (by rw [wI_val]; omega), if_pos hck]
-    · rw [if_neg (by rw [wI_val]; omega), if_neg hck]
+    · rw [ite_eq_left (by rw [wI_val]; omega), ite_eq_left hck]
+    · rw [ite_eq_right (by rw [wI_val]; omega), ite_eq_right hck]
   · have : c.val ≠ d.val := fun h => hcd (Fin.ext h)
-    rw [if_neg (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; omega), if_neg hcd]
+    rw [ite_eq_right (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; omega), ite_eq_right hcd]
 theorem Hpk_wf (c : Fin (k + 1)) (a : Fin r) : Hpk k r (wI k r c) (esI k r a) = 0 := by
-  rw [Hpk_sig, if_neg (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; have := c.isLt; omega)]
+  rw [Hpk_sig, ite_eq_right (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; have := c.isLt; omega)]
 theorem Hpk_fe (a b : Fin r) : Hpk k r (esI k r a) (eI k r b) = if a = b then 1 else 0 := by
-  rw [Hpk_sig]
-  by_cases hab : a = b
-  · subst hab; rw [if_pos (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]), if_pos rfl, sgn_esI]
-  · have : a.val ≠ b.val := fun h => hab (Fin.ext h)
-    rw [if_neg (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; omega), if_neg hab]
+  apply _root_.PI.UnitaryGroupMassFormula.DLm.NBk.Hpk_se <;> assumption
 theorem Hpk_fw (a : Fin r) (c : Fin (k + 1)) : Hpk k r (esI k r a) (wI k r c) = 0 := by
-  rw [Hpk_sig, if_neg (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; omega)]
+  rw [Hpk_sig, ite_eq_right (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; omega)]
 theorem Hpk_ff (a b : Fin r) : Hpk k r (esI k r a) (esI k r b) = 0 := by
-  rw [Hpk_sig, if_neg (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; have := b.isLt; omega)]
+  rw [Hpk_sig, ite_eq_right (by simp only [sig_eI, sig_wI, sig_esI, eI_val, wI_val, esI_val]; have := a.isLt; have := b.isLt; omega)]
 end HpkVals
 
 theorem gramQ {ε : Fin (2 * r + k + 1) → Bool} {e f : Fin r → Fin (2 * r + k + 1) → ℂ}
@@ -170,24 +163,24 @@ theorem gramQ {ε : Fin (2 * r + k + 1) → Bool} {e f : Fin r → Fin (2 * r + 
     by_cases hck : c.val < k <;> by_cases hdk : d.val < k
     · rw [colQ_wI _ _ _ _ _ hck, colQ_wI _ _ _ _ _ hdk, hF.ww]
       by_cases hcd : c = d
-      · subst hcd; rw [if_pos rfl, if_pos rfl, if_neg (by omega)]
+      · subst hcd; rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_right (by omega)]
       · have hv : c.val ≠ d.val := fun h => hcd (Fin.ext h)
         have h1 : ¬ (⟨c.val, hck⟩ : Fin k) = ⟨d.val, hdk⟩ := fun h => hv (Fin.mk.inj h)
-        rw [if_neg h1, if_neg hcd]
+        rw [ite_eq_right h1, ite_eq_right hcd]
     · rw [colQ_wI _ _ _ _ _ hck, colQ_wI_last _ _ _ _ _ (by have := d.isLt; omega), hJ_swap, hF.zw, star_zero,
-        if_neg (fun h => by subst h; omega)]
+        ite_eq_right (fun h => by subst h; omega)]
     · rw [colQ_wI_last _ _ _ _ _ (by have := c.isLt; omega), colQ_wI _ _ _ _ _ hdk, hF.zw,
-        if_neg (fun h => by subst h; omega)]
+        ite_eq_right (fun h => by subst h; omega)]
     · have e1 : c = d := Fin.ext (by have := c.isLt; have := d.isLt; omega)
       subst e1
-      rw [colQ_wI_last _ _ _ _ _ (by have := c.isLt; omega), hF.zz, if_pos rfl, if_pos (by have := c.isLt; omega)]
+      rw [colQ_wI_last _ _ _ _ _ (by have := c.isLt; omega), hF.zz, ite_eq_left rfl, ite_eq_left (by have := c.isLt; omega)]
   · by_cases hck : c.val < k
     · rw [colQ_wI _ _ _ _ _ hck, colQ_esI, hJ_swap, hF.fw, star_zero, Hpk_wf]
     · rw [colQ_wI_last _ _ _ _ _ (by have := c.isLt; omega), colQ_esI, hJ_swap, hF.fz, star_zero, Hpk_wf]
   · rw [colQ_esI, colQ_eI, hJ_swap, hF.ef, Hpk_fe]
     by_cases hab : a = b
     · subst hab; simp
-    · rw [if_neg (Ne.symm hab), if_neg hab, star_zero]
+    · rw [ite_eq_right (Ne.symm hab), ite_eq_right hab, star_zero]
   · by_cases hdk : d.val < k
     · rw [colQ_esI, colQ_wI _ _ _ _ _ hdk, hF.fw, Hpk_fw]
     · rw [colQ_esI, colQ_wI_last _ _ _ _ _ (by have := d.isLt; omega), hF.fz, Hpk_fw]
@@ -303,7 +296,7 @@ theorem conj_mem_UWset (hF : IsFrameJ ε e f wf z0) {zB z : Fin (2 * r + k + 1) 
 
 theorem Qi_e_apply (hF : IsFrameJ ε e f wf z0) (b : Fin r) (i : Fin (2 * r + k + 1)) (hi : i ≠ eI k r b) :
     (Qi ε e f wf z0 *ᵥ e b) i = 0 := by
-  rw [Qi_e hF, bvec_apply, if_neg hi]
+  rw [Qi_e hF, bvec_apply, ite_eq_right hi]
 
 theorem conj_mem_Nset (hF : IsFrameJ ε e f wf z0) {z : Fin (2 * r + k + 1) → ℂ}
     (hz0 : ∃ t : ℂ, z0 = t • z) {n : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
@@ -354,7 +347,7 @@ theorem sig_esI_eq (a : Fin r) : GBasic.sig k r (esI k r a) = eI k r a := Fin.ex
 theorem sig_wI_eq (c : Fin (k + 1)) : GBasic.sig k r (wI k r c) = wI k r c := Fin.ext (by rw [sig_wI, wI_val])
 
 theorem sgn_wI (c : Fin (k + 1)) (hc : c.val < k) : GBasic.sgn k r (wI k r c) = 1 := by
-  unfold GBasic.sgn; rw [if_neg (by rw [wI_val]; omega)]
+  unfold GBasic.sgn; rw [ite_eq_right (by rw [wI_val]; omega)]
 
 theorem UW_row {zB : Fin (2 * r + k + 1) → ℂ} {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
     (hh : h ∈ UWset k r zB) (a : Fin r) (j : Fin (2 * r + k + 1)) : h (eI k r a) j = if j = eI k r a then 1 else 0 := by
@@ -375,7 +368,7 @@ theorem ellA_UW_mul {zB : Fin (2 * r + k + 1) → ℂ} {h m : Matrix (Fin (2 * r
     (hh : h ∈ UWset k r zB) (a : Fin r) : ellA k r zB (h * m) a = ellA k r zB m a := by
   have hrow : ∀ y : Fin (2 * r + k + 1) → ℂ, (h *ᵥ y) (eI k r a) = y (eI k r a) := by
     intro y
-    simp only [mulVec, dotProduct, UW_row hh, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [mulVec, dotProduct, UW_row hh, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   unfold ellA
   split
   · rw [mat_apply_bvec (h * m), ← Matrix.mulVec_mulVec, hrow, ← mat_apply_bvec]
@@ -467,7 +460,7 @@ theorem Tz_zB {T : ℝ} (hT : 0 ≤ T) : Tz k r (zBv k r T) = T := by
   have h1 : star (bvec (wI k r (Fin.last k))) ⬝ᵥ (Hpk k r *ᵥ bvec (wI k r (Fin.last k))) = -1 := by
     have := GBasic.herm_bvec k r (wI k r (Fin.last k)) (wI k r (Fin.last k))
     unfold herm at this
-    rw [this, Hpk_ww, if_pos rfl, if_pos (by simp)]
+    rw [this, Hpk_ww, ite_eq_left rfl, ite_eq_left (by simp)]
   rw [h1]
   simp only [smul_eq_mul, Complex.star_def, Complex.conj_ofReal]
   rw [show ((Real.sqrt T : ℝ) : ℂ) * (((Real.sqrt T : ℝ) : ℂ) * -1) = ((-(Real.sqrt T * Real.sqrt T) : ℝ) : ℂ) by
@@ -477,7 +470,7 @@ theorem Tz_zB {T : ℝ} (hT : 0 ≤ T) : Tz k r (zBv k r T) = T := by
 theorem inWb_zB (T : ℝ) : inWb k r (zBv k r T) := by
   intro i hi
   simp only [zBv, Pi.smul_apply, bvec, Pi.single_apply, smul_eq_mul]
-  rw [if_neg (fun h => by subst h; rw [wI_val] at hi; (simp at hi)), mul_zero]
+  rw [ite_eq_right (fun h => by subst h; rw [wI_val] at hi; (simp at hi)), mul_zero]
 
 theorem frameW_one (T : ℝ) (hT : 0 ≤ T) : IsFrameW k r (zBv k r T) 1 := by
   refine ⟨by show (1 : Matrix _ _ ℂ)ᴴ * Hpk k r * 1 = Hpk k r; simp, fun a => ⟨by simp, by simp⟩, ?_⟩

@@ -17,27 +17,7 @@ open IsDedekindDomain NumberField
 
 namespace Formalism.IndefR.Seed.FrmC
 
-section Vec
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E]
-
-variable (n a c : ℕ) (neg : Fin n → Bool) (hn : n = a + c) (hneg : ∀ x : Fin n, neg x = decide (a + c / 2 ≤ (x : ℕ)))
-
-
-
-
-
-
-
-
-
-
-
-end Vec
-
 open scoped TensorProduct
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section SpL
 
@@ -97,12 +77,6 @@ def IsG2 (D : D7) : Prop :=
     (hlam : lam + star lam = 1),
     D.sp = spL D.R hstar cm T hT pz hpz hy lam hlam
 
-section Key
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E]
-
-end Key
-
 def StdLat {D : D7} (V : HSp D) : Prop :=
   ∀ x : Fin V.rank → D.host.E, x ∈ Formalism.MainNotions.StandardLattice.L0c D V ↔ ∀ i, IsIntegral ℤ (x i)
 
@@ -130,34 +104,9 @@ theorem stdLat_std {E : Type} [Field E] [NumberField E] [StarRing E] (hstar : �
       rw [Pi.smul_apply, Pi.basisFun_apply, Pi.single_eq_of_ne (Ne.symm hb), smul_zero]
     · simp
 
-section Cols
-
-variable {E : Type} [Field E]
-
-variable (k a c : ℕ) (l1 l2 : E) (sc : ℕ → E) (pz : E)
-
-end Cols
-
-section Unimod
-
-variable {E : Type} [Field E] [NumberField E]
-
-variable (O : Subring E) (n k a c : ℕ) (l1 l2 : E) (sc : ℕ → E) (pz : E)
-
-
-
-
-end Unimod
-
 
 
 theorem N_zero (D : D7) : D.R.N 0 = D.R.k := by simp [Ranks.N]
-
-section Val
-
-variable {E : Type} [Field E] [NumberField E]
-
-end Val
 
 
 end Formalism.IndefR.Seed.FrmC

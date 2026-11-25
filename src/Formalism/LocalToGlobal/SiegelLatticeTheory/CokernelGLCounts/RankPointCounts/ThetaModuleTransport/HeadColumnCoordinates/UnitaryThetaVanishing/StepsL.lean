@@ -9,6 +9,22 @@ noncomputable section
 
 open ValuativeRel Formalism.MainNotions.S.Loc Formalism.L2.SG.LsDatumA Formalism.L2.SG.LocalCountModules.LocCntCommon
 
+namespace Formalism.L2.SG.LocalCountModules.LocCntCommon
+
+/-- The local theta count for integral presentations with invertible full frame determinants. -/
+def ThetaPresentation {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
+    {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
+    (M : Model F E) (r n : ℕ) : Prop :=
+  ∀ (V : Type) [AddCommGroup V] [Module E V] (H : HermSp M V), Module.finrank E V = n →
+  ∀ (t₁ : Term V M r) (f₂ f₂' : Fin (r + 1) → V)
+    (φ : H.Wb t₁.f ≃ₗ[E] H.Wb f₂) (φ' : H.Wb t₁.f' ≃ₗ[E] H.Wb f₂'),
+    LocalCountHypotheses H t₁ f₂ f₂' φ φ' → IsUnit (H.Dl f₂ f₂' (r + 1)) →
+  ∀ (Z₁ Z₂ : Matrix (Fin (r + 1)) (Fin (r + 1)) M.R),
+    Z₁.map M.R.subtype = H.ZZplus t₁ → Z₂.map M.R.subtype = HermSp.ZZplusOf M (H.Zhat f₂ f₂') t₁.T t₁.T' →
+    Nat.card (Theta H t₁ ⟨⊥, f₂, f₂', t₁.T, t₁.T'⟩ φ φ') = Nat.card (IsoMbe Z₁ Z₂)
+
+end Formalism.L2.SG.LocalCountModules.LocCntCommon
+
 namespace Formalism.L2.SG.LocalCountModules.UnitaryGroupMassFormula.ThetaMbeU
 
 def CoordU : Prop :=
@@ -18,7 +34,7 @@ def CoordU : Prop :=
   ∀ (r n : ℕ) (V : Type) [AddCommGroup V] [Module E V] (H : HermSp M V), Module.finrank E V = n →
   ∀ (t₁ : Term V M r) (f₂ f₂' : Fin (r + 1) → V)
     (φ : H.Wb t₁.f ≃ₗ[E] H.Wb f₂) (φ' : H.Wb t₁.f' ≃ₗ[E] H.Wb f₂'), LocalCountHypotheses H t₁ f₂ f₂' φ φ' →
-    IsUnit (H.Dl t₁.f t₁.f' r) → IsUnit (H.Dl f₂ f₂' (r + 1)) →
+    IsUnit (H.Dl f₂ f₂' (r + 1)) →
     (∀ a b, H.Zhat f₂ f₂' a b ∈ M.L.O) →
     Nat.card (Theta H t₁ ⟨⊥, f₂, f₂', t₁.T, t₁.T'⟩ φ φ') =
       Nat.card (ThetaC M.L.O (M.L.cj : E →+* E) (H.Zhat t₁.f t₁.f') (H.Zhat f₂ f₂')

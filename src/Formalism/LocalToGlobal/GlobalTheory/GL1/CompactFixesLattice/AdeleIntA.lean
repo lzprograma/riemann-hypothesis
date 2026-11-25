@@ -15,34 +15,20 @@ variable {R : Type*} [CommRing R] [IsDedekindDomain R] {K : Type*} [Field K] [Al
 
 def IsInt (b : FiniteAdeleRing R K) : Prop := ∀ v, b v ∈ v.adicCompletionIntegers K
 
-private theorem memO_lemma (v : HeightOneSpectrum R) (x : v.adicCompletion K) :
-    x ∈ v.adicCompletionIntegers K ↔ Valued.v x ≤ 1 := by
-  first
-  | exact IsDedekindDomain.HeightOneSpectrum.mem_adicCompletionIntegers ..
-
-private theorem valR_lemma_2 (v : HeightOneSpectrum R) (r : R) :
-    Valued.v (algebraMap K (v.adicCompletion K) (algebraMap R K r)) = v.intValuation r := by
-  first
-  | exact (IsDedekindDomain.HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v _).trans
-      (IsDedekindDomain.HeightOneSpectrum.valuation_of_algebraMap v _)
-
 theorem int_R (v : HeightOneSpectrum R) (r : R) :
     algebraMap K (v.adicCompletion K) (algebraMap R K r) ∈ v.adicCompletionIntegers K := by
-  rw [memO_lemma, valR_lemma_2]
+  rw [IsDedekindDomain.HeightOneSpectrum.mem_adicCompletionIntegers,
+    ReciprocityTheory.ChartRestriction.G.Lib.AdeleIntA.val_R]
   first
   | exact v.intValuation_le_one r
 
 theorem val_R (v : HeightOneSpectrum R) (r : R) :
-    Valued.v (algebraMap K (v.adicCompletion K) (algebraMap R K r)) = v.intValuation r := valR_lemma_2 v r
+    Valued.v (algebraMap K (v.adicCompletion K) (algebraMap R K r)) = v.intValuation r :=
+  ReciprocityTheory.ChartRestriction.G.Lib.AdeleIntA.val_R v r
 
 theorem exists_near (v : HeightOneSpectrum R) (y : v.adicCompletion K) :
     ∃ k : K, y - algebraMap K (v.adicCompletion K) k ∈ v.adicCompletionIntegers K :=
   ReciprocityTheory.ChartRestriction.G.Lib.AdeleIntA.exists_near v y
-
-theorem exists_den_local (v : HeightOneSpectrum R) (y : v.adicCompletion K) :
-    ∃ s : R, s ≠ 0 ∧
-      algebraMap K (v.adicCompletion K) (algebraMap R K s) * y ∈ v.adicCompletionIntegers K :=
-  ReciprocityTheory.ChartRestriction.G.Lib.AdeleIntA.exists_den_local v y
 
 theorem exists_den (b : FiniteAdeleRing R K) :
     ∃ r : R, r ≠ 0 ∧ IsInt (algebraMap R (FiniteAdeleRing R K) r * b) :=
@@ -70,7 +56,7 @@ theorem mem_of_isInt (k : K) (h : IsInt (algebraMap K (FiniteAdeleRing R K) k)) 
     k ∈ (algebraMap R K).range := by
   refine IsDedekindDomain.HeightOneSpectrum.mem_integers_of_valuation_le_one K k (fun v => ?_)
   have h1 := h v
-  rw [algKApp_lemma_6, memO_lemma] at h1
+  rw [algKApp_lemma_6, IsDedekindDomain.HeightOneSpectrum.mem_adicCompletionIntegers] at h1
   first
   | exact (IsDedekindDomain.HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v k).symm.le.trans h1
 

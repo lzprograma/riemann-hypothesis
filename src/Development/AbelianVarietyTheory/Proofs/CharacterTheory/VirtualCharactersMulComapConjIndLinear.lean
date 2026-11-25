@@ -78,12 +78,8 @@ theorem _root_.GlobalTheory.BI.isChar_mul_complex {G : Type} [Group G] {a b : G 
 
 open Polynomial in
 private lemma trace_mulLeft_complex_lemma (z : ℂ) :
-    LinearMap.trace ℂ ℂ (Algebra.lmul ℂ ℂ z) = z := by
-  have hz : (Algebra.lmul ℂ ℂ z : ℂ →ₗ[ℂ] ℂ) = z • LinearMap.id := by
-    ext
-    simp
-  rw [hz, map_smul, LinearMap.trace_id]
-  simp
+    LinearMap.trace ℂ ℂ (Algebra.lmul ℂ ℂ z) = z :=
+  Algebra.trace_self_apply z
 
 open Polynomial in
 theorem _root_.GlobalTheory.BI.isChar_monoidHom_complex {G : Type} [Group G] (lam : G →* ℂˣ) :

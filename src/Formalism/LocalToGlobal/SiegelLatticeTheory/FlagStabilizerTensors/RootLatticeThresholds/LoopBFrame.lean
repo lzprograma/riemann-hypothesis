@@ -40,7 +40,7 @@ theorem psiF_f (e f : Fin r → S.V) (U U' : Matrix (Fin r) (Fin r) E) (hff : �
     (hef : ∀ a b, S.hT (e a) (f b) = if a = b then 1 else 0) (j : Fin r) :
     psiF e f U U' (f j) = ∑ c, U' c j • f c := by
   rw [psiF_apply]
-  simp only [hff, hef, zero_smul, Finset.sum_const_zero, add_zero, ite_smul, one_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [hff, hef, zero_smul, Finset.sum_const_zero, add_zero, ite_smul, one_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   abel
 
 theorem levi_mem (Λ : Submodule (𝓞 E) S.V) (aa : Fin r → FractionalIdeal (nonZeroDivisors (𝓞 E)) E)
@@ -105,8 +105,6 @@ end Gen
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem ddS_pow_le_one (D : D7) (n : ℕ) : ddS D ^ n ≤ 1 := by
   unfold ddS
   rw [← FractionalIdeal.coeIdeal_pow]
@@ -154,8 +152,6 @@ namespace Formalism.L2.S.Pv.ClassCounting
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef PI.TermsAtPtFiniteW
   PI.TermsAtPtFiniteW.HeisW PI.TermsAtPtFiniteW.LeviW PI.TermsAtPtFiniteW.FrameW Formalism.L2.SG.Saturated
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem frameOpFull (D : D7) (u : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
     (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : IsRowLat D F0 Λ)
@@ -287,7 +283,7 @@ theorem frameOpFull (D : D7) (u : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS ((Tu
             ⟨c, show c.1 < j from lt_of_lt_of_le (Fin.lt_def.mp h) (Nat.lt_succ_iff.mp hi), rfl⟩)
         · subst h
           simp [hUE, hUd1]
-        · simp [hUE, hUlo c i h, if_neg h.ne']
+        · simp [hUE, hUlo c i h, ite_eq_right h.ne']
       have := hsub hx
       rw [hnL]
       exact this
@@ -323,8 +319,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.TermTieOf Formalism.L2.SG.LoopsFinal
 
 namespace Formalism.L2.SG.Pf.LoopBFrame
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y} (W : WittDat X) (hI : SIso D.s (sOf hF))
 

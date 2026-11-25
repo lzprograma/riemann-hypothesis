@@ -21,53 +21,11 @@ public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RunWei
 public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.CurvNumStatementPf
 import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
 import Formalism.LocalToGlobal.ProjectiveLattices.CuspMulOf
@@ -117,11 +75,10 @@ theorem exists_isHomogeneous_aeval_eq_zero {K Ω : Type} [Field K] [Field Ω] [A
     rw [htr, Cardinal.mk_fin, Nat.cast_le] at h1
     omega
   rw [algebraicIndependent_iff] at hdep
-  push_neg at hdep
+  push Not at hdep
   obtain ⟨P, hP, hP0⟩ := hdep
   have hex : ∃ d, MvPolynomial.homogeneousComponent d P ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply hP0
     rw [← MvPolynomial.sum_homogeneousComponent P]
     exact Finset.sum_eq_zero fun d _ => hall d
@@ -153,7 +110,6 @@ theorem aeval_mem_sec {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ} {σ : Type} (
     (hu : ∀ i, u i ∈ sec Xo c a n) {Q : MvPolynomial σ c.F} {d : ℕ} (hQ : Q.IsHomogeneous d) :
     MvPolynomial.aeval u Q ∈ sec Xo c (d • a) (d • n) := by
   classical
-  set_option synthInstance.maxHeartbeats 100000 in
     rw [Q.as_sum, map_sum]
   refine Submodule.sum_mem _ fun s hs => ?_
   have hc : s.toMultiset.card = d := by
@@ -312,7 +268,7 @@ theorem phi_lower (X : Data E r) (hf : 0 < PT.f E) {th : ℝ} (hth : 0 < th) :
   have h1 := one_le_rd (E := E)
   refine ⟨2 * PT.f E / PT.rd E ^ 2, th, by positivity, hth, fun x _ hx => ?_⟩
   unfold phiFD
-  rw [if_pos hx, div_div]
+  rw [ite_eq_left hx, div_div]
 
 theorem phi_le (X : Data E r) (th : ℝ) (x : Frame X.Ψ r) : phiFD X th x ≤ 2 * PT.f E / X.la1 x ^ 2 := by
   have h1 := one_le_rd (E := E)
@@ -331,7 +287,7 @@ theorem phi_threshold (X : Data E r) (th : ℝ) {th' : ℝ} (h' : 0 < th') :
   · have : phiFD X th x ≤ phiFD X th' x := by
       have h0 := phi_nonneg X th' x
       unfold phiFD at h0 ⊢
-      rw [if_pos hx] at h0 ⊢
+      rw [ite_eq_left hx] at h0 ⊢
       split_ifs
       · exact le_rfl
       · exact h0
@@ -406,17 +362,17 @@ theorem gaps_all (X : Data E r) (L G : Wt X.Ψ r) (T : ℕ) (hL : IsStrictDom X 
     have ha : (a : ℕ) < X.p0 := lt_of_le_of_lt hab hb
     have h1' : (G τ b : ℝ) + 2 * (L τ a - L τ b) ≤ G τ a := by exact_mod_cast h1
     have h2' : (L τ b : ℝ) ≤ L τ a := by exact_mod_cast h2
-    simp only [de2W, if_neg (not_le.2 ha), if_neg (not_le.2 hb)]
+    simp only [de2W, ite_eq_right (not_le.2 ha), ite_eq_right (not_le.2 hb)]
     linarith
   · obtain ⟨h1, h2⟩ := hg τ a b hab (Or.inr ha)
     have hb : X.p0 ≤ (b : ℕ) := ha.trans hab
     have h1' : (G τ b : ℝ) + 2 * (L τ a - L τ b) ≤ G τ a := by exact_mod_cast h1
     have h2' : (L τ b : ℝ) ≤ L τ a := by exact_mod_cast h2
-    simp only [de2W, if_pos ha, if_pos hb]
+    simp only [de2W, ite_eq_left ha, ite_eq_left hb]
     linarith
   · obtain ⟨-, -, h3⟩ := hn τ a b ha hb
     have h3' : 57 * (T : ℝ) ≤ 10 * (2 * ((G τ b : ℝ) - G τ a) - (L τ b - L τ a)) := by exact_mod_cast h3
-    simp only [de2W, if_neg (not_le.2 ha), if_pos hb]
+    simp only [de2W, ite_eq_right (not_le.2 ha), ite_eq_left hb]
     push_cast
     linarith
 

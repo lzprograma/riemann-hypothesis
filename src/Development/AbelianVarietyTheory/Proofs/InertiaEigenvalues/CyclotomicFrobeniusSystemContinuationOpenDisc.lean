@@ -5,51 +5,6 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Cycloto
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAddValuationFinExt
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvariantBasis
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GeomSumOneAddPrime
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -254,11 +209,11 @@ theorem bd_log_div (a : (↥LL.1)⟦X⟧) (h1 : (1 + X) * derivative (X * a) = 1
     induction k with
     | zero =>
       have := congrArg (coeff 0) h1
-      rw [add_mul, one_mul, map_add (f := _), coeff_zero_X_mul, add_zero, coeff_one, if_pos rfl] at this
+      rw [add_mul, one_mul, map_add (f := _), coeff_zero_X_mul, add_zero, coeff_one, ite_eq_left rfl] at this
       rw [this, norm_one]
     | succ k ih =>
       have := congrArg (coeff (k + 1)) h1
-      rw [add_mul, one_mul, map_add (f := _), coeff_succ_X_mul, coeff_one, if_neg k.succ_ne_zero] at this
+      rw [add_mul, one_mul, map_add (f := _), coeff_succ_X_mul, coeff_one, ite_eq_right k.succ_ne_zero] at this
       rw [eq_neg_of_add_eq_zero_left this, norm_neg, ih]
   have hb : ∀ k, ‖coeff k a‖ ≤ k + 1 := by
     intro k
@@ -340,44 +295,5 @@ end GlobalTheory.Cyc.Cont
 namespace GlobalTheory.Cyc
 
 open Cont
-
-theorem continuation_to_open_disc : ∀ (l : ℕ) [Fact l.Prime], ∀ (LL : FinExt l) (s r n M : ℕ) [NeZero n], 1 ≤ s → ∀ (t τ : PowerSeries ↥LL.1), PowerSeries.constantCoeff t = 0 → (1 + PowerSeries.X) * PowerSeries.derivative t = 1 → XX l ↥LL.1 s * τ = t → ∀ (U : ZMod n → Matrix (Fin r) (Fin r) (PowerSeries ↥LL.1)) (Pm : ZMod n → Matrix (Fin r) (Fin r) (PowerSeries ↥(OL LL))) (Cm : ZMod n → Matrix (Fin r) (Fin r) ↥LL.1) (ρ : ℝ), 0 < ρ → (∀ i, QQ l ↥LL.1 s ^ M • U i = (Pm i).map (PowerSeries.map (algebraMap ↥(OL LL) ↥LL.1)) * (U (i - 1)).map (phi l ↥LL.1) * (Cm i).map PowerSeries.C) → (∀ i a b, (∀ r : ℝ, 0 < r → r < ρ → Filter.Tendsto (fun k : ℕ => ‖((PowerSeries.coeff k (U i a b) : ↥LL.1) : Om l)‖ * r ^ k) Filter.atTop (nhds 0))) → ∀ i a b, (∀ r : ℝ, 0 < r → r < 1 → Filter.Tendsto (fun k : ℕ => ‖((PowerSeries.coeff k (τ ^ M * U i a b) : ↥LL.1) : Om l)‖ * r ^ k) Filter.atTop (nhds 0)) := by
-  intro l hl LL s r n M _ hs t τ h0 h1 hτ U Pm Cm ρ hρ hU hc i a b x hx hx1
-  have hX : XX l ↥LL.1 s ≠ 0 := fun h => by
-    rw [h, zero_mul] at hτ
-    simp [← hτ] at h1
-  have hQ : QQ l ↥LL.1 s * phi l ↥LL.1 τ = (l : (↥LL.1)⟦X⟧) * τ := by
-    apply mul_left_cancel₀ hX
-    rw [← mul_assoc, ← (XX_QQ_properties l _ s hs).1, ← map_mul, hτ, phi_log_series l _ t h0 h1, ← hτ]
-    ring
-  have hl0 : (l : ↥LL.1) ≠ 0 := by exact_mod_cast hl.out.ne_zero
-  have hinv : C (((l : ↥LL.1) ^ M)⁻¹) * (l : (↥LL.1)⟦X⟧) ^ M = 1 := by
-    rw [← map_natCast (C (R := ↥LL.1)), ← map_pow, ← map_mul, inv_mul_cancel₀ (pow_ne_zero _ hl0), map_one]
-  obtain ⟨y, hxy, hy1⟩ := exists_between hx1
-  have key := continuation_abstract (phi l ↥LL.1) (phi_X_const l _) _ (inv_lt_one l) (bd_phi_X l LL)
-    (fun i : ZMod n => i - 1) (fun i => τ ^ M • U i)
-    (fun i => (Pm i).map (PowerSeries.map (algebraMap ↥(OL LL) ↥LL.1)))
-    (fun i => C (((l : ↥LL.1) ^ M)⁻¹) • (Cm i).map C)
-    (fun z hz hz1 i a b => ⟨1, bd_map _ (norm_OL l LL) hz hz1.le _⟩)
-    (fun z hz hz1 i a b => ex_mul hz ⟨_, bd_C z _⟩ ⟨_, bd_C z _⟩)
-    (fun i => by
-      have e : (τ ^ M • U (i - 1)).map (phi l ↥LL.1) =
-          phi l ↥LL.1 τ ^ M • (U (i - 1)).map (phi l ↥LL.1) := by
-        ext1 a b
-        simp
-      simp only [e, Matrix.mul_smul, Matrix.smul_mul, ← hU, smul_smul]
-      congr 1
-      have : phi l ↥LL.1 τ ^ M * QQ l ↥LL.1 s ^ M = (l : (↥LL.1)⟦X⟧) ^ M * τ ^ M := by
-        rw [← mul_pow, mul_comm, hQ, mul_pow]
-      linear_combination -(C (((l : ↥LL.1) ^ M)⁻¹)) * this - τ ^ M * hinv)
-    (min (ρ / 2) (1 / 2)) (by positivity)
-    (fun i a b => by
-      have hz : 0 < min (ρ / 2) (1 / 2) := by positivity
-      obtain ⟨c, hc'⟩ := bd_tau l LL s t τ h0 h1 hτ _ hz ((min_le_right _ _).trans_lt (by norm_num))
-      exact ex_mul hz ⟨_, hc'.pow hz M⟩
-        (bd_of_tendsto (hc i a b _ hz ((min_le_left _ _).trans_lt (by linarith)))))
-    y (hx.trans hxy) hy1 i a b
-  obtain ⟨c, hc⟩ := key
-  exact hc.tendsto hx hxy
 
 end GlobalTheory.Cyc

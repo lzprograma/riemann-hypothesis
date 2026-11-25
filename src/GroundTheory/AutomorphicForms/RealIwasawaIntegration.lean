@@ -65,12 +65,6 @@ end Unimodular
 
 variable {𝕜 : Type*} [RCLike 𝕜] {n : Type*} [Fintype n] [LinearOrder n]
 
-section Abelian
-
-variable [MeasurableSpace (GL n 𝕜)] [BorelSpace (GL n 𝕜)]
-
-end Abelian
-
 section Borel
 
 variable [WellFoundedLT n] [LocallyFiniteOrderBot n] [MeasurableSpace (GL n 𝕜)]

@@ -123,17 +123,12 @@ abbrev KA : Type := (maxCompact : Subgroup G2)
 def LInv {X : Type} (H : G2 → X) : Prop := ∀ γ g, H (dia2 γ * g) = H g
 def CInv {X : Type} (H : G2 → X) : Prop := ∀ (z : Jd) g, H (dg2 z z * g) = H g
 
-structure Set0 (μ : Measure G2) (𝓕 : Set G2) (mK : Measure KA) (𝓓 : Set Jd) : Prop where
+structure Set0 (μ : Measure G2) (𝓕 : Set G2) : Prop where
   haar : μ.IsHaarMeasure
   right : μ.IsMulRightInvariant
   fd : IsFundamentalDomain (AdelicGLn.diagonal ℚ 2).range 𝓕 μ
   meas : MeasurableSet 𝓕
   vol : μ (𝓕 ∩ band) < ∞
-  haarK : mK.IsHaarMeasure
-  probK : IsProbabilityMeasure mK
-  measD : MeasurableSet 𝓓
-  uniqD : ∀ a : Jd, ∃! α : ℚˣ, pri α * a ∈ 𝓓
-  finD : ∀ (τ : ℝ) (M : ℕ), 0 < τ → τ < M → ∫⁻ a in 𝓓, ENNReal.ofReal (min 1 (md a)⁻¹ ^ M * md a ^ τ) ∂ideleMeasure ℚ < ∞
 
 def Dec (H : G2 → ℂ) : Prop := ∀ M : ℕ, ∃ C : ℝ, ∀ x (a : Jd) (κ : KA), ‖H (uni2 x * dg2 a 1 * κ.1)‖ ≤ C * min 1 (md a)⁻¹ ^ M
 

@@ -63,7 +63,6 @@ import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CardFilter
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LoopC.FrameDet
 
@@ -329,13 +328,13 @@ theorem exists_norm_eq (F : FlagG S r T) (F' : FlagG S r T') (hT : T ≠ 0) (hs 
 
     simp only [hy, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hT_fvec,
     diagonal_apply, starRingEnd_apply, RingHom.id_apply, mul_ite, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, hc]
+    Finset.mem_univ, ite_true, hc]
     ring
   have h3 : S.hT F.z y = Z.det := by simpa [FlagG.fvec] using h1 (Fin.last r)
   have h4 : S.hT y F.z = star Z.det := by rw [← h3]; exact (S.herm.eq _ _).symm
   refine ⟨y + (Z.det / T) • F.z, (Formalism.MainNotions.mem_orth_iff _ _).2 (Formalism.MainNotions.hT_zero_of_mem_Xplus F (fun a => ?_) ?_), ?_⟩
   · have := h1 a.castSucc
-    simp only [FlagG.fvec, Fin.snoc_castSucc, Fin.castSucc_ne_last, if_false] at this
+    simp only [FlagG.fvec, Fin.snoc_castSucc, Fin.castSucc_ne_last, ite_false] at this
     rw [map_add (f := _), map_smul, this, F.z_orth, smul_zero, add_zero]
   · rw [map_add (f := _), map_smul, h3, F.z_norm, smul_eq_mul]
     field_simp

@@ -1,43 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFrobeniusSectionAcrisBreuilKisin
 
 @[expose] public section
@@ -46,25 +10,10 @@ namespace UpperTheory.Gal.ClosedPhiFromClosedTrace
 
 open GlobalTheory.CrisSec Matrix
 
-private theorem eq_zero_of_pow_mul_eq_zero_of_nonzerodivisor {R : Type} [CommRing R] (L : R) (hL : ∀ x : R, L * x = 0 → x = 0) :
-    ∀ (m : ℕ) (x : R), L ^ m * x = 0 → x = 0 := by
-  intro m
-  induction m with
-  | zero => intro x hx; simpa using hx
-  | succ k ih =>
-    intro x hx
-    apply ih
-    apply hL
-    rw [pow_succ] at hx
-    linear_combination hx
-
-private theorem matrix_eq_of_smul_eq_nonzerodivisor {R : Type} [CommRing R] {d : ℕ} (s : R) (hs : ∀ x : R, s * x = 0 → x = 0)
-    (X Y : Matrix (Fin d) (Fin d) R) (h : s • X = s • Y) : X = Y := by
-  ext i j
-  have h1 : s * X i j = s * Y i j := by
-    have := congrArg (fun M : Matrix (Fin d) (Fin d) R => M i j) h
-    simpa [Matrix.smul_apply] using this
-  exact sub_eq_zero.mp (hs _ (by rw [mul_sub, h1, sub_self]))
+private theorem matrix_eq_of_smul_eq_nonzerodivisor {R : Type} [CommRing R] {d : ℕ} (s : R)
+    (hs : IsLeftRegular s) (X Y : Matrix (Fin d) (Fin d) R) (h : s • X = s • Y) : X = Y :=
+  Matrix.ext fun i j =>
+    hs (by simpa [Matrix.smul_apply] using congrArg (fun M : Matrix (Fin d) (Fin d) R => M i j) h)
 
 private theorem lau_mem_iff_vecL_mem {R : Type} [CommRing R] (L x : R) (m : ℕ) :
     x ∈ (Ideal.span {L}) ^ m • (⊤ : Submodule R R) ↔ L ^ m ∣ x := by
@@ -108,14 +57,13 @@ private theorem exists_matrix_limit_adic_series {R : Type} [CommRing R] {d : ℕ
   simp only [Matrix.sub_apply, Matrix.sum_apply, Matrix.smul_apply, Matrix.of_apply, smul_eq_mul]
   exact hz i j
 
-private theorem matrix_mul_comm_of_mul_eq_smul_one {R : Type} [CommRing R] {d : ℕ} (c : R) (hc : ∀ x : R, c * x = 0 → x = 0)
-    (X Y : Matrix (Fin d) (Fin d) R) (h : X * Y = c • 1) : Y * X = c • 1 := by
+private theorem matrix_mul_comm_of_mul_eq_smul_one {R : Type} [CommRing R] {d : ℕ} (c : R)
+    (hc : IsLeftRegular c) (X Y : Matrix (Fin d) (Fin d) R) (h : X * Y = c • 1) :
+    Y * X = c • 1 := by
   have hdet : X.det * Y.det = c ^ d := by
     rw [← Matrix.det_mul, h, Matrix.det_smul, Matrix.det_one, mul_one, Fintype.card_fin]
-  have hX : ∀ x : R, X.det * x = 0 → x = 0 := by
-    intro x hx
-    apply eq_zero_of_pow_mul_eq_zero_of_nonzerodivisor c hc d
-    rw [← hdet, mul_comm X.det, mul_assoc, hx, mul_zero]
+  have hX : IsLeftRegular X.det :=
+    IsLeftRegular.of_mul (a := Y.det) (by rw [mul_comm, hdet]; exact hc.pow d)
   apply matrix_eq_of_smul_eq_nonzerodivisor X.det hX
   calc X.det • (Y * X) = (X.adjugate * X) * Y * X := by
         rw [Matrix.adjugate_mul, Matrix.smul_mul, Matrix.smul_mul, one_mul]
@@ -181,8 +129,8 @@ private theorem exists_matrix_pow_sub_mod_u {R : Type} [CommRing R] {d N q : ℕ
     simp only [smul_add, smul_smul]
     congr 1 <;> congr 1 <;> ring
 
-private theorem matrix_seq_diff_divisible_of_le {R : Type} [CommRing R] {d N q n₀ : ℕ} (L u : R) (hq : 0 < q)
-    (hL : ∀ x : R, L * x = 0 → x = 0)
+private theorem matrix_seq_diff_divisible_of_le {R : Type} [CommRing R] {d N q n₀ : ℕ} (L u : R)
+    (hq : 0 < q) (hL : IsLeftRegular L)
     (hdiv : ∀ n, n₀ ≤ n → L ^ ((2 * N + 1) * (n + 1) + 1) ∣ u ^ (q ^ (n + 1) - 1))
     (P : ℕ → Matrix (Fin d) (Fin d) R)
     (hD : ∀ n, ∃ M : Matrix (Fin d) (Fin d) R,
@@ -251,8 +199,10 @@ private theorem exists_limit_matrix_seq_congruent {R : Type} [CommRing R] {d N n
 theorem coreU_holds : CoreU := by
   intro R _ d l q N hl hc φ u hu hq α α' β β' Γ hαα hββ hΓ n₀ hdiv
   have hφL : φ (l : R) = l := map_natCast φ l
+  have hl' : IsLeftRegular (l : R) :=
+    fun a b hab => sub_eq_zero.mp (hl _ (by rw [mul_sub, sub_eq_zero]; exact hab))
   have hβ'β : β' * β = (l : R) ^ (2 * N) • 1 :=
-    matrix_mul_comm_of_mul_eq_smul_one _ (fun x hx => eq_zero_of_pow_mul_eq_zero_of_nonzerodivisor _ hl _ x hx) β β' hββ
+    matrix_mul_comm_of_mul_eq_smul_one _ (hl'.pow (2 * N)) β β' hββ
   obtain ⟨P, hP0, hPs⟩ : ∃ P : ℕ → Matrix (Fin d) (Fin d) R,
       P 0 = 1 ∧ ∀ n, P (n + 1) = α * (P n).map φ * β' :=
     ⟨fun n => Nat.rec 1 (fun _ X => α * X.map φ * β') n, rfl, fun _ => rfl⟩
@@ -264,9 +214,11 @@ theorem coreU_holds : CoreU := by
   have hD := exists_matrix_seq_diff_congruence _ u φ hφL hu α β β' Γ hββ hΓ P hP0 hPs
   have hD' := exists_matrix_seq_diff_congruence _ u φ hφL hu β α α' (-Γ) hαα hΓ' P' hP'0 hP's
   obtain ⟨S, Sq, hSq, hSl, hSu⟩ :=
-    exists_limit_matrix_seq_congruent _ u hc P (matrix_seq_diff_divisible_of_le _ u hq hl hdiv P hD) (exists_matrix_pow_sub_mod_u _ u hq P hP0 hD)
+    exists_limit_matrix_seq_congruent _ u hc P (matrix_seq_diff_divisible_of_le _ u hq hl' hdiv P hD)
+      (exists_matrix_pow_sub_mod_u _ u hq P hP0 hD)
   obtain ⟨S', Sq', hSq', hSl', hSu'⟩ :=
-    exists_limit_matrix_seq_congruent _ u hc P' (matrix_seq_diff_divisible_of_le _ u hq hl hdiv P' hD') (exists_matrix_pow_sub_mod_u _ u hq P' hP'0 hD')
+    exists_limit_matrix_seq_congruent _ u hc P' (matrix_seq_diff_divisible_of_le _ u hq hl' hdiv P' hD')
+      (exists_matrix_pow_sub_mod_u _ u hq P' hP'0 hD')
   have hPP : ∀ n, P n * P' n = (l : R) ^ (4 * N * n) • 1 := by
     intro n
     induction n with
@@ -288,7 +240,7 @@ theorem coreU_holds : CoreU := by
             ring
   have hSS0 : ∀ m, Sq m * Sq' m = (l : R) ^ (4 * N * n₀) • 1 := by
     intro m
-    apply matrix_eq_of_smul_eq_nonzerodivisor ((l : R) ^ (4 * N * m)) (eq_zero_of_pow_mul_eq_zero_of_nonzerodivisor _ hl _)
+    apply matrix_eq_of_smul_eq_nonzerodivisor ((l : R) ^ (4 * N * m)) (hl'.pow _)
     rw [smul_smul, ← pow_add, show 4 * N * m + 4 * N * n₀ = 4 * N * (n₀ + m) by ring, ← hPP,
       hSq, hSq', smul_mul_smul_comm, ← pow_add, show 2 * N * m + 2 * N * m = 4 * N * m by ring]
   have hSS : S * S' = (l : R) ^ (4 * N * n₀) • 1 := by
@@ -304,7 +256,7 @@ theorem coreU_holds : CoreU := by
     exact sub_eq_zero.mp h0
   have hstep : ∀ m, Sq (m + 1) * β = α * (Sq m).map φ := by
     intro m
-    apply matrix_eq_of_smul_eq_nonzerodivisor ((l : R) ^ (2 * N * (m + 1))) (eq_zero_of_pow_mul_eq_zero_of_nonzerodivisor _ hl _)
+    apply matrix_eq_of_smul_eq_nonzerodivisor ((l : R) ^ (2 * N * (m + 1))) (hl'.pow _)
     rw [← Matrix.smul_mul, ← hSq, show n₀ + (m + 1) = n₀ + m + 1 from rfl, hPs, Matrix.mul_assoc,
       hβ'β, Matrix.mul_smul, Matrix.mul_one, hSq, _root_.GlobalTheory.CrisSec.map_smul', map_pow, hφL, Matrix.mul_smul,
       smul_smul, ← pow_add]

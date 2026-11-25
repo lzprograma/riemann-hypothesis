@@ -66,20 +66,8 @@ private lemma isUnit_iff_isUnit_det_leftMulMatrix {A R : Type} [CommRing A] [Com
     IsUnit x ↔ IsUnit (Algebra.leftMulMatrix b x).det := by
   have := Module.Free.of_basis b
   have := Module.Finite.of_basis b
-  constructor
-  · intro hx
-    exact (Matrix.isUnit_iff_isUnit_det _).1 (hx.map (Algebra.leftMulMatrix b))
-  · intro hd
-    rw [Algebra.leftMulMatrix_apply, LinearMap.det_toMatrix, ← LinearMap.isUnit_iff_isUnit_det] at hd
-    obtain ⟨y, hy⟩ : ∃ y, Algebra.lmul A R x y = 1 := ((Module.End.isUnit_iff _).1 hd).2 1
-    have hxy : x * y = 1 := by simpa using hy
-    exact ⟨⟨x, y, hxy, by rw [mul_comm]; exact hxy⟩, rfl⟩
-
-private lemma sum_leftMulMatrix_mulVec_repr_one_smul_eq {A R : Type} [CommRing A] [CommRing R] [Algebra A R] {ι : Type}
-    [Fintype ι] [DecidableEq ι] (b : Module.Basis ι A R) (y : R) :
-    ∑ i, (Algebra.leftMulMatrix b y *ᵥ ⇑(b.repr 1)) i • b i = y := by
-  rw [Algebra.leftMulMatrix_mulVec_repr, mul_one]
-  exact b.sum_repr y
+  rw [Algebra.leftMulMatrix_apply, LinearMap.det_toMatrix, ← LinearMap.isUnit_iff_isUnit_det,
+    Algebra.lmul_isUnit_iff]
 
 theorem units_of_free {A R : Type} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [CommRing R]
     [Algebra A R] [TopologicalSpace R] [IsModuleTopology A R] {ι : Type} [Fintype ι] [DecidableEq ι]
@@ -109,8 +97,7 @@ theorem units_of_free {A R : Type} [CommRing A] [TopologicalSpace A] [IsTopologi
       · have hinv : (M y)⁻¹ = M (Ring.inverse y) := by
           refine Matrix.inv_eq_left_inv ?_
           rw [← map_mul, Ring.inverse_mul_cancel y hy, map_one]
-        rw [hinv]
-        exact (sum_leftMulMatrix_mulVec_repr_one_smul_eq b _).symm
+        rw [hinv]; simp only [L, hM, Algebra.leftMulMatrix_mulVec_repr, mul_one, b.sum_repr]
       · have hd : ¬ IsUnit (M y).det := fun h => hy ((isUnit_iff_isUnit_det_leftMulMatrix b y).2 h)
         rw [Ring.inverse_non_unit y hy, Matrix.nonsing_inv_apply_not_isUnit _ hd]
         simp [L]
@@ -124,85 +111,6 @@ theorem units_of_free {A R : Type} [CommRing A] [TopologicalSpace A] [IsTopologi
         continuous_id.matrix_adjugate.continuousAt
     rw [heq]
     exact hL.continuousAt.comp (hinvc.comp hMc.continuousAt)
-
-private theorem cayley_preserves_form_of_skew {A : Type} [CommRing A] (σ : A →+* A) {n : ℕ} (G S V : Matrix (Fin n) (Fin n) A)
-    (hS : Sᵀ * G + G * S.map σ = 0) (hV' : (1 + S) * V = 1) :
-    ((1 - S) * V)ᵀ * G * ((1 - S) * V).map σ = G := by
-  set φ : Matrix (Fin n) (Fin n) A →+* Matrix (Fin n) (Fin n) A := σ.mapMatrix with hφdef
-  have hφ : ∀ M : Matrix (Fin n) (Fin n) A, M.map σ = φ M := fun _ => rfl
-  simp only [hφ] at hS ⊢
-  have hS' : Sᵀ * G = -(G * φ S) := eq_neg_of_add_eq_zero_left hS
-  have e1 : (1 - S)ᵀ * G = G * φ (1 + S) := by
-    rw [Matrix.transpose_sub, Matrix.transpose_one, sub_mul, hS', map_add (f := _), map_one]; noncomm_ring
-  have e2 : (1 + S)ᵀ * G = G * φ (1 - S) := by
-    rw [Matrix.transpose_add, Matrix.transpose_one, add_mul, hS', map_sub, map_one]; noncomm_ring
-  have e3 : (1 + S) * ((1 - S) * V) = 1 - S := by
-    rw [← mul_assoc, show (1 + S) * (1 - S) = (1 - S) * (1 + S) by noncomm_ring, mul_assoc, hV', mul_one]
-  calc ((1 - S) * V)ᵀ * G * φ ((1 - S) * V) = Vᵀ * ((1 - S)ᵀ * G) * φ ((1 - S) * V) := by
-        rw [Matrix.transpose_mul]; simp only [mul_assoc]
-    _ = Vᵀ * G * φ ((1 + S) * ((1 - S) * V)) := by rw [e1, map_mul φ (1 + S)]; simp only [mul_assoc]
-    _ = Vᵀ * G * φ (1 - S) := by rw [e3]
-    _ = Vᵀ * ((1 + S)ᵀ * G) := by rw [e2]; simp only [mul_assoc]
-    _ = ((1 + S) * V)ᵀ * G := by rw [Matrix.transpose_mul]; simp only [mul_assoc]
-    _ = G := by rw [hV', Matrix.transpose_one, one_mul]
-
-private theorem cayley_skew_and_inverse_of_preserves_form {A : Type} [CommRing A] (σ : A →+* A) {n : ℕ} (G h V : Matrix (Fin n) (Fin n) A)
-    (t : A) (ht : 2 * t = 1) (hh : hᵀ * G * h.map σ = G) (hV : V * (1 + h) = 1) (hV' : (1 + h) * V = 1) :
-    ((1 - h) * V)ᵀ * G + G * ((1 - h) * V).map σ = 0 ∧
-    (1 + (1 - h) * V) * (t • (1 + h)) = 1 ∧
-    (1 - (1 - h) * V) * (t • (1 + h)) = h := by
-  set φ : Matrix (Fin n) (Fin n) A →+* Matrix (Fin n) (Fin n) A := σ.mapMatrix with hφdef
-  have hφ : ∀ M : Matrix (Fin n) (Fin n) A, M.map σ = φ M := fun _ => rfl
-  simp only [hφ] at hh ⊢
-  obtain ⟨S, hSdef⟩ : ∃ S, S = (1 - h) * V := ⟨_, rfl⟩
-  rw [← hSdef]
-  have hS1 : S * (1 + h) = 1 - h := by rw [hSdef, mul_assoc, hV, mul_one]
-  refine ⟨?_, ?_, ?_⟩
-  · have hX : (1 + h)ᵀ * (Sᵀ * G + G * φ S) * φ (1 + h) = 0 := by
-      have e0 : (1 + h)ᵀ * (Sᵀ * G + G * φ S) * φ (1 + h) =
-          (S * (1 + h))ᵀ * G * φ (1 + h) + (1 + h)ᵀ * G * φ (S * (1 + h)) := by
-        rw [Matrix.transpose_mul, map_mul]; noncomm_ring
-      rw [e0, hS1, Matrix.transpose_sub, Matrix.transpose_add, Matrix.transpose_one, map_add (f := _), map_sub, map_one]
-      have e : (1 - hᵀ) * G * (1 + φ h) + (1 + hᵀ) * G * (1 - φ h) =
-          G + G - (hᵀ * G * φ h + hᵀ * G * φ h) := by noncomm_ring
-      rw [e, hh, sub_self]
-    have a : Vᵀ * (1 + h)ᵀ = 1 := by rw [← Matrix.transpose_mul, hV', Matrix.transpose_one]
-    have b : φ (1 + h) * φ V = 1 := by rw [← map_mul, hV', map_one]
-    calc Sᵀ * G + G * φ S = (Vᵀ * (1 + h)ᵀ) * (Sᵀ * G + G * φ S) * (φ (1 + h) * φ V) := by
-          rw [a, b, one_mul, mul_one]
-      _ = Vᵀ * ((1 + h)ᵀ * (Sᵀ * G + G * φ S) * φ (1 + h)) * φ V := by simp only [mul_assoc]
-      _ = 0 := by rw [hX, mul_zero, zero_mul]
-  · rw [Matrix.mul_smul]
-    have e : (1 + S) * (1 + h) = 1 + 1 := by
-      calc (1 + S) * (1 + h) = (1 + h) + S * (1 + h) := by noncomm_ring
-        _ = 1 + 1 := by rw [hS1]; noncomm_ring
-    rw [e, smul_add, ← add_smul, ← two_mul, ht, one_smul]
-  · rw [Matrix.mul_smul]
-    have e : (1 - S) * (1 + h) = h + h := by
-      calc (1 - S) * (1 + h) = (1 + h) - S * (1 + h) := by noncomm_ring
-        _ = h + h := by rw [hS1]; noncomm_ring
-    rw [e, smul_add, ← add_smul, ← two_mul, ht, one_smul]
-
-private theorem skew_component_is_skew {A : Type} [CommRing A] (σ : A →+* A) (hσ : ∀ x, σ (σ x) = x) {n : ℕ}
-    (G : Matrix (Fin n) (Fin n) A) (hG : (G.map σ)ᵀ = G) (hGu : IsUnit G.det) (X : Matrix (Fin n) (Fin n) A) :
-    (GlobalTheory.UnRep.WeakApprox.skewPart σ G X)ᵀ * G + G * (GlobalTheory.UnRep.WeakApprox.skewPart σ G X).map σ = 0 := by
-  have hP : GlobalTheory.UnRep.WeakApprox.skewPart σ G X = X - (G * X.map σ * G⁻¹)ᵀ := rfl
-  have hinv : G⁻¹.map σ = (G.map σ)⁻¹ := (GlobalTheory.UnRep.WeakApprox.map_inv' σ G hGu).symm
-  have hinvol : (X.map σ).map σ = X := by ext i j; simp [hσ]
-  have hGG : G⁻¹ * G = 1 := Matrix.nonsing_inv_mul G hGu
-  have hGG' : G * G⁻¹ = 1 := Matrix.mul_nonsing_inv G hGu
-  set φ : Matrix (Fin n) (Fin n) A →+* Matrix (Fin n) (Fin n) A := σ.mapMatrix with hφdef
-  have hφ : ∀ M : Matrix (Fin n) (Fin n) A, M.map σ = φ M := fun _ => rfl
-  have hT : ∀ M : Matrix (Fin n) (Fin n) A, φ Mᵀ = (φ M)ᵀ := fun M => by
-    simp only [← hφ]; exact Matrix.transpose_map
-  rw [hP]
-  simp only [hφ] at hinv hinvol hG ⊢
-  have hGinvT : (φ G⁻¹)ᵀ = G⁻¹ := by rw [hinv, Matrix.transpose_nonsing_inv, hG]
-  rw [Matrix.transpose_sub, Matrix.transpose_transpose, map_sub, hT, map_mul, map_mul, hinvol,
-    Matrix.transpose_mul, Matrix.transpose_mul, hG, hGinvT]
-  have e1 : (Xᵀ - G * φ X * G⁻¹) * G + G * (φ X - G⁻¹ * (Xᵀ * G)) =
-      Xᵀ * G - G * φ X * (G⁻¹ * G) + G * φ X - (G * G⁻¹) * (Xᵀ * G) := by noncomm_ring
-  rw [e1, hGG, hGG']; noncomm_ring
 
 private theorem skew_component_eq_add_self_of_skew {A : Type} [CommRing A] (σ : A →+* A) {n : ℕ} (G S : Matrix (Fin n) (Fin n) A)
     (hS : Sᵀ * G + G * S.map σ = 0) (hGu : IsUnit G.det) :
@@ -222,65 +130,11 @@ private theorem exists_norm_one_isUnit_det_one_add_smul {K R : Type} [Field K] [
     (ι : K →+* R) (c : K →+* K) (hc : ∀ x, c (c x) = x) (hne : ∃ z, c z ≠ z) {n : ℕ}
     (g : Matrix (Fin n) (Fin n) R) : ∃ lam : K, lam * c lam = 1 ∧ IsUnit (1 + ι lam • g).det := by
   obtain ⟨z, hz⟩ := hne
-  have hw : ∀ k : ℕ, (k : K) + z ≠ 0 := by
-    intro k h
-    apply hz
-    have hz' : z = -(k : K) := by linear_combination h
-    rw [hz', map_neg, map_natCast]
-  have hcw : ∀ k : ℕ, c ((k : K) + z) ≠ 0 := by
-    intro k h
-    apply hw k
-    have := congrArg c h
-    rwa [hc, map_zero] at this
-  set lam : ℕ → K := fun k => ((k : K) + z) / c ((k : K) + z) with hlamdef
-  have hlam : ∀ k, lam k * c (lam k) = 1 := by
-    intro k
-    simp only [hlamdef, map_div₀, hc]
-    rw [div_mul_div_comm, div_eq_one_iff_eq (mul_ne_zero (hcw k) (hw k)), mul_comm]
-  have hinj : Function.Injective lam := by
-    intro a b hab
-    simp only [hlamdef] at hab
-    rw [div_eq_div_iff (hcw a) (hcw b)] at hab
-    simp only [map_add (f := _), map_natCast] at hab
-    have h0 : ((a : K) - b) * (c z - z) = 0 := by linear_combination hab
-    rcases mul_eq_zero.1 h0 with h | h
-    · exact_mod_cast sub_eq_zero.1 h
-    · exact absurd (sub_eq_zero.1 h) hz
-  have hfin := IsArtinianRing.setOfPred_isMaximal_finite R
-  have hbad : ∀ I ∈ {I : Ideal R | I.IsMaximal}, {k : ℕ | (1 + ι (lam k) • g).det ∈ I}.Finite := by
-    intro I hI
-    haveI : I.IsMaximal := hI
-    letI := Ideal.Quotient.field I
-    set π := Ideal.Quotient.mk I with hπ
-    set p : Polynomial (R ⧸ I) := (1 + (Polynomial.X : Polynomial (R ⧸ I)) • (g.map π).map Polynomial.C).det
-      with hpdef
-    have hev : ∀ r : R, p.eval (π r) = π (1 + r • g).det := by
-      intro r
-      rw [hpdef, ← Polynomial.coe_evalRingHom, RingHom.map_det, RingHom.map_det]
-      congr 1
-      ext i j
-      by_cases hij : i = j <;> simp [hij] <;> ring
-    have hp : p ≠ 0 := by
-      intro h0
-      have := hev 0
-      rw [h0, Polynomial.eval_zero, zero_smul, add_zero, Matrix.det_one, map_one] at this
-      exact zero_ne_one this
-    have hroots := Polynomial.finite_setOfPred_isRoot hp
-    have hinj' : Function.Injective (fun k => π (ι (lam k))) := (RingHom.injective (π.comp ι)).comp hinj
-    refine (Set.Finite.preimage hinj'.injOn hroots).subset ?_
-    intro k hk
-    simp only [Set.mem_ofPred_eq, Set.mem_preimage] at hk ⊢
-    show p.eval (π (ι (lam k))) = 0
-    rw [hev]
-    exact Ideal.Quotient.eq_zero_iff_mem.2 hk
-  have hB := hfin.biUnion hbad
-  obtain ⟨N, hN⟩ := hB.bddAbove
-  refine ⟨lam (N + 1), hlam _, ?_⟩
-  by_contra hu
-  obtain ⟨I, hI, hmem⟩ := exists_max_ideal_of_mem_nonunits (mem_nonunits_iff.2 hu)
-  have hm : N + 1 ∈ ⋃ I ∈ {I : Ideal R | I.IsMaximal}, {k : ℕ | (1 + ι (lam k) • g).det ∈ I} :=
-    Set.mem_biUnion hI hmem
-  exact Nat.not_succ_le_self N (hN hm)
+  let c' : K ≃ₐ[ℚ] K := (RingEquiv.ofRingHom c c (RingHom.ext hc) (RingHom.ext hc)).toRatAlgEquiv
+  obtain ⟨lam, hlam, hu⟩ := ((GlobalTheory.NormOneInfinite.normOne_infinite c' hc fun h => hz
+    (DFunLike.congr_fun h z)).sdiff (GlobalTheory.UnRep.finite_not_isUnit_det ι g 1 (mul_one 1)
+    ((IsArtinianRing.setOfPred_isMaximal_finite R).subset fun _ hM => hM.1))).nonempty
+  exact ⟨lam, hlam, by simpa using hu⟩
 
 
 open GlobalTheory.UnRep.WeakApprox in
@@ -297,19 +151,18 @@ theorem mem_closure_unitary {K R : Type} [Field K] [CharZero K] [CommRing R] [To
   have hG'u : IsUnit (G.map ι).det := by rw [hdetmap]; exact hGu.map ι
   have hmapc : ∀ M : Matrix (Fin n) (Fin n) K, (M.map ι).map σ = (M.map c).map ι := by
     intro M; ext i j; simp [hσι]
-  obtain ⟨lam, hlam, hu⟩ := exists_norm_one_isUnit_det_one_add_smul ι c hc hne g
-  have hlam' : ι lam * σ (ι lam) = 1 := by rw [hσι, ← map_mul, hlam, map_one]
-  have hh : (ι lam • g)ᵀ * G.map ι * (ι lam • g).map σ = G.map ι := smul_preserves_form_of_mul_conj_eq_one σ (G.map ι) (ι lam) hlam' g hg
-  have hV : (1 + ι lam • g)⁻¹ * (1 + ι lam • g) = 1 := Matrix.nonsing_inv_mul _ hu
-  have hV' : (1 + ι lam • g) * (1 + ι lam • g)⁻¹ = 1 := Matrix.mul_nonsing_inv _ hu
   have h2K : (2 : K) ≠ 0 := two_ne_zero
   have ht : 2 * ι (2⁻¹ : K) = 1 := by rw [← map_ofNat ι 2, ← map_mul, mul_inv_cancel₀ h2K, map_one]
   have hσt : σ (ι (2⁻¹ : K)) = ι (2⁻¹ : K) := by rw [hσι, map_inv₀, map_ofNat]
-  obtain ⟨hskew, hinvS, hcay⟩ := cayley_skew_and_inverse_of_preserves_form σ (G.map ι) (ι lam • g) _ (ι (2⁻¹ : K)) ht hh hV hV'
+  obtain ⟨cR1, cR2, -, -⟩ := GlobalTheory.CayleyInv.cayley_transform R σ n (G.map ι) hσ
+    (by rw [hmapc, ← Matrix.transpose_map, hG]) hG'u (IsUnit.of_mul_eq_one _ ht)
+  obtain ⟨-, -, cK3, cK4⟩ := GlobalTheory.CayleyInv.cayley_transform K c n G hc hG hGu h2K.isUnit
+  obtain ⟨lam, hlam, hu⟩ := exists_norm_one_isUnit_det_one_add_smul ι c hc hne g
+  have hlam' : ι lam * σ (ι lam) = 1 := by rw [hσι, ← map_mul, hlam, map_one]
+  obtain ⟨hskew, hSu⟩ := cR1 _ (smul_preserves_form_of_mul_conj_eq_one σ (G.map ι) (ι lam) hlam' g hg) hu
+  have hcay := cR2 _ hu
   set S := (1 - ι lam • g) * (1 + ι lam • g)⁻¹ with hSdef
   set t : R := ι (2⁻¹ : K) with htdef
-  have hSu : IsUnit (1 + S).det := Matrix.isUnit_det_of_right_inverse hinvS
-  have hSinv : (1 + S)⁻¹ = t • (1 + ι lam • g) := Matrix.inv_eq_right_inv hinvS
   have hPS : skewPart σ (G.map ι) (t • S) = S := by
     rw [skewPart_smul σ (G.map ι) t hσt S, skew_component_eq_add_self_of_skew σ (G.map ι) S hskew hG'u, smul_add, ← add_smul,
       ← two_mul, ht, one_smul]
@@ -317,7 +170,7 @@ theorem mem_closure_unitary {K R : Type} [Field K] [CharZero K] [CommRing R] [To
     ι (c lam) • ((1 - skewPart σ (G.map ι) A) * (1 + skewPart σ (G.map ι) A)⁻¹) with hΨ
   have hΨA : Ψ (t • S) = g := by
     show ι (c lam) • ((1 - skewPart σ (G.map ι) (t • S)) * (1 + skewPart σ (G.map ι) (t • S))⁻¹) = g
-    rw [hPS, hSinv, hcay, smul_smul, ← map_mul, mul_comm, hlam, map_one, one_smul]
+    rw [hPS, hcay, smul_smul, ← map_mul, mul_comm, hlam, map_one, one_smul]
   have hPc : Continuous (fun A : Matrix (Fin n) (Fin n) R => skewPart σ (G.map ι) A) := by
     show Continuous (fun A : Matrix (Fin n) (Fin n) R => A - (G.map ι * A.map σ * (G.map ι)⁻¹)ᵀ)
     exact continuous_id.sub (((continuous_const.matrix_mul (continuous_id.matrix_map hσc)).matrix_mul
@@ -361,8 +214,7 @@ theorem mem_closure_unitary {K R : Type} [Field K] [CharZero K] [CommRing R] [To
     rw [hPmap, ← eadd, hdetmap, h0, map_zero] at hU0
     exact not_isUnit_zero hU0
   refine ⟨c lam • ((1 - skewPart c G A₀) * (1 + skewPart c G A₀)⁻¹), ?_, ?_⟩
-  · refine smul_preserves_form_of_mul_conj_eq_one c G (c lam) (by rw [hc, mul_comm, hlam]) _ ?_
-    exact cayley_preserves_form_of_skew c G (skewPart c G A₀) _ (skew_component_is_skew c hc G hG hGu A₀) (Matrix.mul_nonsing_inv _ hS₀u)
+  · exact smul_preserves_form_of_mul_conj_eq_one c G (c lam) (by rw [hc, mul_comm, hlam]) _ (cK3 _ (cK4 A₀) hS₀u)
   · show ι (c lam) • ((1 - skewPart σ (G.map ι) (A₀.map ι)) * (1 + skewPart σ (G.map ι) (A₀.map ι))⁻¹) =
       (c lam • ((1 - skewPart c G A₀) * (1 + skewPart c G A₀)⁻¹)).map ι
     rw [hPmap, map_smul'' ι (c lam), Matrix.map_mul, ← map_inv' ι _ hS₀u, esub, eadd]
@@ -587,43 +439,28 @@ private theorem weak_approx_real_lemma_3 (F E : Type) [Field F] [NumberField F] 
   exact Continuous.smul (f := fun x => emb (bQ.equivFun x i)) (g := fun _ => Φ.symm (bQ i, 0))
     (hemb.comp ((continuous_apply i).comp hcoord)) continuous_const
 
-private theorem sigR_transpose_mul_JR_mul_eq_JR (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) {n : ℕ}
-    (J : Matrix (Fin n) (Fin n) E) (x : GL (Fin n) (R ⊗[F] E)) :
-    x ∈ Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR R σ J ↔
-      Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ) (x : Matrix (Fin n) (Fin n) (R ⊗[F] E)) * Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR R J *
-        (x : Matrix (Fin n) (Fin n) (R ⊗[F] E)) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR R J := Iff.rfl
-
-private theorem weak_approx_real_lemma_7 (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) {n : ℕ}
-    (J : Matrix (Fin n) (Fin n) E) (M : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E)) :
-    ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix (Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ) M) = Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ) (((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix M) ∧
-    ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA F) (AlgHom.id F E)).toRingHom).mapMatrix (Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ) M) = Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F) σ) (((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA F) (AlgHom.id F E)).toRingHom).mapMatrix M) ∧
-    ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) J) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) J ∧ ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA F) (AlgHom.id F E)).toRingHom).mapMatrix (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) J) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F) J := by
-  have hsI : ∀ z, (Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ z) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)) z) := by
+private theorem weak_approx_real_lemma_7 {F E R R' : Type} [Field F] [Field E] [Algebra F E] [CommRing R] [Algebra F R]
+    [CommRing R'] [Algebra F R'] (f : R →ₐ[F] R') (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E)
+    (M : Matrix (Fin n) (Fin n) (R ⊗[F] E)) :
+    ((Algebra.TensorProduct.map f (AlgHom.id F E)).toRingHom).mapMatrix (Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ) M) = Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R' σ) (((Algebra.TensorProduct.map f (AlgHom.id F E)).toRingHom).mapMatrix M) ∧
+    ((Algebra.TensorProduct.map f (AlgHom.id F E)).toRingHom).mapMatrix (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR R J) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR R' J := by
+  have hs : ∀ z, (Algebra.TensorProduct.map f (AlgHom.id F E)) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ z) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R' σ ((Algebra.TensorProduct.map f (AlgHom.id F E)) z) := by
     intro z
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a e => simp [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR]
     | add x y hx hy => simp only [map_add (f := _), hx, hy]
-  have hsF : ∀ z, (Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA F) (AlgHom.id F E)) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ z) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F) σ ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA F) (AlgHom.id F E)) z) := by
-    intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a e => simp [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR]
-    | add x y hx hy => simp only [map_add (f := _), hx, hy]
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · ext i j; simp [Formalism.UG.cT, hsI]
-  · ext i j; simp [Formalism.UG.cT, hsF]
-  · ext i j; simp [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR]
+  refine ⟨?_, ?_⟩
+  · ext i j; simp [Formalism.UG.cT, hs]
   · ext i j; simp [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR]
 
 private theorem weak_approx_real_lemma_8 (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) {n : ℕ}
     (J : Matrix (Fin n) (Fin n) E) (g : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J) :
     ∃ p : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J, (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J p : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F ⊗[F] E)) = ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J g : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E)) := by
   have hg : Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J g : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E)) * Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) J * (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J g : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E)) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) J :=
-    (sigR_transpose_mul_JR_mul_eq_JR F E (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J _).1 (show (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J) from g).2
-  obtain ⟨h1, -, h3, -⟩ := weak_approx_real_lemma_7 F E σ J (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J g : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E))
+    (show (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J) from g).2
+  obtain ⟨h1, h3⟩ := weak_approx_real_lemma_7 (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) σ J (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J g : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E))
   have hmem : Units.map ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix.toMonoidHom (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J g) ∈ Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J := by
-    rw [sigR_transpose_mul_JR_mul_eq_JR]
     show Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ) (((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J g : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E))) * Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) J *
       ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J g : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E)) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) J
     rw [← h1, ← h3, ← map_mul, ← map_mul, hg]
@@ -647,10 +484,10 @@ private theorem weak_approx_real_lemma_9 (F E : Type) [Field F] [NumberField F] 
   have hinj : ∀ M N : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E), ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix M = ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix N →
       ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA F) (AlgHom.id F E)).toRingHom).mapMatrix M = ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA F) (AlgHom.id F E)).toRingHom).mapMatrix N → M = N :=
     fun M N h1 h2 => eq_of_map_fstA_eq_of_map_sndA_eq F E M N h1 h2
-  have hcTI := fun M => (weak_approx_real_lemma_7 F E σ J M).1
-  have hcTF := fun M => (weak_approx_real_lemma_7 F E σ J M).2.1
-  have hJI := (weak_approx_real_lemma_7 F E σ J 0).2.2.1
-  have hJF := (weak_approx_real_lemma_7 F E σ J 0).2.2.2
+  have hcTI := fun M => (weak_approx_real_lemma_7 (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) σ J M).1
+  have hcTF := fun M => (weak_approx_real_lemma_7 (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA F) σ J M).1
+  have hJI := (weak_approx_real_lemma_7 (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) σ J 0).2
+  have hJF := (weak_approx_real_lemma_7 (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA F) σ J 0).2
   let sec : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F ⊗[F] E) → Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F ⊗[F] E) → Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E) := fun X Y i j => Φ.symm (X i j, Y i j)
   have hsecI : ∀ X Y, ((Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F) (AlgHom.id F E)).toRingHom).mapMatrix (sec X Y) = X := by
     intro X Y; ext i j; exact (hΦs _ _).1
@@ -678,11 +515,11 @@ private theorem weak_approx_real_lemma_9 (F E : Type) [Field F] [NumberField F] 
       exact hone
   have hmemI : ∀ x : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J,
       Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J x : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F ⊗[F] E)) * Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) J * (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J x : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F ⊗[F] E)) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) J :=
-    fun x => (sigR_transpose_mul_JR_mul_eq_JR F E (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J _).1 (show (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J) from x).2
+    fun x => (show (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J) from x).2
   let S : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J := fun x =>
     (⟨⟨sec (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J x : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F ⊗[F] E)) 1, sec (↑(Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J x)⁻¹) 1,
         by rw [hsecmul, Units.mul_inv, mul_one, hsec1], by rw [hsecmul, Units.inv_mul, mul_one, hsec1]⟩,
-      (sigR_transpose_mul_JR_mul_eq_JR F E (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J _).2 (hsecmem _ (hmemI x))⟩ : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J)
+      hsecmem _ (hmemI x)⟩ : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J)
   have hmatc : Continuous fun x : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J => (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J x : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F ⊗[F] E)) :=
     Units.continuous_val.comp continuous_subtype_val
   have hmatc' : Continuous fun x : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J => (↑(Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA.mat (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F) σ J x)⁻¹ : Matrix (Fin n) (Fin n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf F ⊗[F] E)) :=
@@ -699,8 +536,7 @@ private theorem sig_involutive_and_nontrivial (D : Formalism.BasicNotions.D7) :
     (∀ x, D.sp.cm.sig (D.sp.cm.sig x) = x) ∧ ∃ z, D.sp.cm.sig z ≠ z := by
   letI := D.host.cmStar
   refine ⟨fun x => star_star x, ?_⟩
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have htop : (⊥ : Subalgebra D.host.F D.host.E) = ⊤ := by
     refine eq_top_iff.2 fun a _ => ?_
     obtain ⟨b, hb⟩ := (D.sp.cm.fixed a).1 (hcon a)
@@ -718,7 +554,6 @@ private theorem exists_adelic_point_of_mem_unitaryGroup (F E : Type) [Field F] [
       Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ) ((Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F)).mapMatrix (γ0 : Matrix (Fin n) (Fin n) E)) := by
     ext i j; simp [Formalism.UG.cT, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR]
   have hmem : Formalism.UG.bc (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F)) γ0 ∈ Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ J := by
-    rw [sigR_transpose_mul_JR_mul_eq_JR]
     show Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) σ) ((Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F)).mapMatrix (γ0 : Matrix (Fin n) (Fin n) E)) *
       (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F)).mapMatrix J * (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F)).mapMatrix (γ0 : Matrix (Fin n) (Fin n) E) =
         (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F)).mapMatrix J
@@ -732,7 +567,6 @@ private theorem exists_adelic_point_of_mem_unitaryGroup (F E : Type) [Field F] [
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum
 open scoped ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem weak_approx_real : ∀ {D : D7} (V : HSp D) (u : GA D V), u ∈ GinfC V → ∀ U : Set (GA D V), IsOpen U → u ∈ U → ∃ γ ∈ GQ V, ∃ k ∈ GfC V, γ * k ∈ U ∧ γ * k ∈ GinfC V := by
   intro D V u hu U hU huU

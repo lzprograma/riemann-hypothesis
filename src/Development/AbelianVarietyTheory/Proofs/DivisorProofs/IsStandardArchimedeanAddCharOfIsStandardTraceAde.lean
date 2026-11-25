@@ -65,8 +65,7 @@ theorem isStdInf_of_isStd : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddCh
     GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsStd ψ → GlobalTheory.WeilL2Words.IsStdInf F ψ := by
   intro F _ _ ψ hψ
   refine ⟨-(Algebra.trace ℝ (mixedEmbedding.mixedSpace F)), fun z hz => ?_, fun z => ?_⟩
-  · by_contra h
-    push_neg at h
+  · by_contra! h
     exact hz (GlobalTheory.ArchUniq.Coord.eq_zero_of_trace z fun b => by
       have := h b
       rw [LinearMap.neg_apply, neg_eq_zero] at this

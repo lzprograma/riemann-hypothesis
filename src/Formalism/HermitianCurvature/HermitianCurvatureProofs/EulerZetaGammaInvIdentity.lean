@@ -2,54 +2,9 @@ module
 
 public import Formalism.HermitianCurvature.StatementM
 public import Mathlib.Algebra.Order.Group.PiLex
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -179,11 +134,11 @@ theorem eci (v w : Var r) : euler v (coord w)⁻¹ = if v = w then -(coord w)⁻
 theorem euler_GG_z (TT : ℝ) : euler vz (gg TT : Fn r) = coord vz * coord vzb := by
   unfold gg
   rw [map_sub, eulerLeibniz, (eulerCoord r vz vz 0).1, (eulerCoord r vz vzb 0).1, (eulerCoord r vz vz _).2,
-    if_pos rfl, if_neg vz_ne]; simp
+    ite_eq_left rfl, ite_eq_right vz_ne]; simp
 theorem euler_gg_zb (TT : ℝ) : euler vzb (gg TT : Fn r) = coord vz * coord vzb := by
   unfold gg
   rw [map_sub, eulerLeibniz, (eulerCoord r vzb vz 0).1, (eulerCoord r vzb vzb 0).1, (eulerCoord r vzb vz _).2,
-    if_pos rfl, if_neg vz_ne.symm]; simp
+    ite_eq_left rfl, ite_eq_right vz_ne.symm]; simp
 
 theorem gg_ne (TT : ℝ) : (gg TT : Fn r) ≠ 0 := by
   intro h
@@ -210,85 +165,9 @@ theorem mk_comm (X Xs Y Ys : Op r) (h1 : X * Y = Y * X) (h2 : Xs * Ys = Ys * Xs)
   show MulOpposite.op (Ys * Xs) = MulOpposite.op (Xs * Ys)
   rw [h2]
 
-theorem dd_comm : (mulOp (coord vzb)⁻¹ * euler vzb : Op r) * (mulOp (coord vz)⁻¹ * euler vz) =
-    (mulOp (coord vz)⁻¹ * euler vz) * (mulOp (coord vzb)⁻¹ * euler vzb) := by
-  have h1 : euler vzb ((coord vz)⁻¹ : Fn r) = 0 := by rw [eci, if_neg vz_ne.symm]
-  have h2 : euler vz ((coord vzb)⁻¹ : Fn r) = 0 := by rw [eci, if_neg vz_ne]
-  have a1 := comm_eu vzb vz _ h1
-  have a2 := comm_eu vz vzb _ h2
-  calc (mulOp (coord vzb)⁻¹ * euler vzb : Op r) * (mulOp (coord vz)⁻¹ * euler vz)
-      = mulOp (coord vzb)⁻¹ * (euler vzb * (mulOp (coord vz)⁻¹ * euler vz)) := mul_assoc _ _ _
-    _ = mulOp (coord vzb)⁻¹ * ((mulOp (coord vz)⁻¹ * euler vz) * euler vzb) := by rw [a1]
-    _ = (mulOp (coord vzb)⁻¹ * mulOp (coord vz)⁻¹) * (euler vz * euler vzb) := by simp only [mul_assoc]
-    _ = (mulOp (coord vz)⁻¹ * mulOp (coord vzb)⁻¹) * (euler vzb * euler vz) := by
-        rw [mulOp_mul, mulOp_mul, mul_comm (coord vzb)⁻¹ (coord vz)⁻¹, eulerComm r vz vzb]
-    _ = mulOp (coord vz)⁻¹ * ((mulOp (coord vzb)⁻¹ * euler vzb) * euler vz) := by simp only [mul_assoc]
-    _ = mulOp (coord vz)⁻¹ * (euler vz * (mulOp (coord vzb)⁻¹ * euler vzb)) := by rw [a2]
-    _ = (mulOp (coord vz)⁻¹ * euler vz) * (mulOp (coord vzb)⁻¹ * euler vzb) := (mul_assoc _ _ _).symm
-
-theorem dz_comm : (dzbP : Pr r) * dzP = dzP * dzbP := by
-  apply mk_comm
-  · exact dd_comm
-  · rw [neg_mul_neg, neg_mul_neg]; exact dd_comm.symm
-
-theorem key_zb (TT : ℝ) : (coord vzb)⁻¹ * euler vzb (coord vzb * (gg TT)⁻¹ : Fn r) =
-    -(algebraMap ℂ (Fn r) (TT : ℂ) * ((gg TT)⁻¹ * (gg TT)⁻¹)) := by
-  have hg : (coord vz * coord vzb : Fn r) = gg TT + algebraMap ℂ (Fn r) (TT : ℂ) := by unfold gg; ring
-  have h1 := gg_ne (r := r) TT
-  have h2 := coord_ne r vzb
-  rw [eulerLeibniz, ec, if_pos rfl, euler_inv _ _ h1, euler_gg_zb, hg]
-  field_simp
-  ring
-
-theorem euler_zeta_gamma_inv_identity (TT : ℝ) : (coord vz)⁻¹ * euler vz (coord vz * (gg TT)⁻¹ : Fn r) =
-    -(algebraMap ℂ (Fn r) (TT : ℂ) * ((gg TT)⁻¹ * (gg TT)⁻¹)) := by
-  have hg : (coord vz * coord vzb : Fn r) = gg TT + algebraMap ℂ (Fn r) (TT : ℂ) := by unfold gg; ring
-  have h1 := gg_ne (r := r) TT
-  have h2 := coord_ne r vz
-  rw [eulerLeibniz, ec, if_pos rfl, euler_inv _ _ h1, euler_GG_z, hg]
-  field_simp
-  ring
-
-theorem curv (a TT : ℝ) :
-    (-dzbP + (a : ℂ) • (zP * ggiP TT)) * (dzP + (a : ℂ) • (zbP * ggiP TT)) -
-      (dzP + (a : ℂ) • (zbP * ggiP TT)) * (-dzbP + (a : ℂ) • (zP * ggiP TT)) =
-      (algebraMap ℂ (Pr r) ((2 * a * TT : ℝ) : ℂ)) * ggiP TT * ggiP TT := by
-  have e1 : (dzbP : Pr r) * fnP ((a : ℂ) • (coord vzb * (gg TT)⁻¹)) ((a : ℂ) • (coord vz * (gg TT)⁻¹)) =
-      fnP ((a : ℂ) • (coord vzb * (gg TT)⁻¹)) ((a : ℂ) • (coord vz * (gg TT)⁻¹)) * dzbP +
-      fnP ((coord vzb)⁻¹ * euler vzb ((a : ℂ) • (coord vzb * (gg TT)⁻¹)))
-        ((coord vz)⁻¹ * euler vz ((a : ℂ) • (coord vz * (gg TT)⁻¹))) := by
-    rw [dzbP, der_fn]
-  have e2 : (dzP : Pr r) * fnP ((a : ℂ) • (coord vz * (gg TT)⁻¹)) ((a : ℂ) • (coord vzb * (gg TT)⁻¹)) =
-      fnP ((a : ℂ) • (coord vz * (gg TT)⁻¹)) ((a : ℂ) • (coord vzb * (gg TT)⁻¹)) * dzP +
-      fnP ((coord vz)⁻¹ * euler vz ((a : ℂ) • (coord vz * (gg TT)⁻¹)))
-        ((coord vzb)⁻¹ * euler vzb ((a : ℂ) • (coord vzb * (gg TT)⁻¹))) := by
-    rw [dzP, der_fn]
-  rw [mul_assoc, ← Algebra.smul_def, zP, zbP, ggiP, multiplierPair_mul, multiplierPair_mul, multiplierPair_mul, smul_fnP, smul_fnP, smul_fnP]
-  simp only [map_smul, mul_smul_comm, euler_zeta_gamma_inv_identity, key_zb] at e1 e2
-  have e3 := multiplierPair_comm ((a : ℂ) • (coord vz * (gg TT)⁻¹ : Fn r)) ((a : ℂ) • (coord vzb * (gg TT)⁻¹))
-    ((a : ℂ) • (coord vzb * (gg TT)⁻¹)) ((a : ℂ) • (coord vz * (gg TT)⁻¹))
-  have e4 : fnP (((2 * a * TT : ℝ) : ℂ) • ((gg TT)⁻¹ * (gg TT)⁻¹ : Fn r)) (((2 * a * TT : ℝ) : ℂ) • ((gg TT)⁻¹ * (gg TT)⁻¹)) =
-      -fnP ((a : ℂ) • -(algebraMap ℂ (Fn r) (TT : ℂ) * ((gg TT)⁻¹ * (gg TT)⁻¹)))
-        ((a : ℂ) • -(algebraMap ℂ (Fn r) (TT : ℂ) * ((gg TT)⁻¹ * (gg TT)⁻¹))) -
-      fnP ((a : ℂ) • -(algebraMap ℂ (Fn r) (TT : ℂ) * ((gg TT)⁻¹ * (gg TT)⁻¹)))
-        ((a : ℂ) • -(algebraMap ℂ (Fn r) (TT : ℂ) * ((gg TT)⁻¹ * (gg TT)⁻¹))) := by
-    rw [multiplierPair_neg, sub_eq_add_neg, multiplierPair_neg, multiplierPair_add]
-    have : (((2 * a * TT : ℝ) : ℂ) • ((gg TT)⁻¹ * (gg TT)⁻¹ : Fn r)) =
-        -((a : ℂ) • -(algebraMap ℂ (Fn r) (TT : ℂ) * ((gg TT)⁻¹ * (gg TT)⁻¹))) +
-        -((a : ℂ) • -(algebraMap ℂ (Fn r) (TT : ℂ) * ((gg TT)⁻¹ * (gg TT)⁻¹))) := by
-      simp only [Algebra.smul_def]
-      push_cast
-      simp only [map_ofNat]
-      ring
-    rw [← this]
-  rw [e4]
-  simp only [add_mul, mul_add, neg_mul, mul_neg]
-  rw [e1, e2, e3, dz_comm]
-  abel
-
 theorem rho_eq (P : Par) (π : Ty P) (i : ℕ) (h : 1 ≤ i ∧ i ≤ P.k - 1) :
     rho P π i = P.lo i + (((π ⟨i - 1, by omega⟩ : Fin _) : ℕ) : ℝ) := by
-  simp only [rho, dif_pos h]
+  simp only [rho, dite_eq_left h]
 
 theorem tyInterlaces : TyInterlaces := by
   intro P hP π i hi
@@ -397,7 +276,7 @@ theorem nrm_pos (P : Par) (hP : P.OK) (l : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) (π
   have hI := tyInterlaces P hP π
   have hI' := tyInterlaces P hP π'
   have hr := rhoUp P l π π' hU l hl
-  rw [if_pos rfl] at hr
+  rw [ite_eq_left rfl] at hr
   have b' := hI' l hl
   rw [hr] at b'
   have b := hI l hl
@@ -428,19 +307,19 @@ theorem nrm_down (P : Par) (l : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) (π π' : Ty P
     NrmDown P l π' = Nrm P l π := by
   have hr := rhoUp P l π π' hU
   have hrl := hr l hl
-  rw [if_pos rfl] at hrl
+  rw [ite_eq_left rfl] at hrl
   unfold NrmDown Nrm
   rw [hrl]
   have e1 : ∏ j ∈ (Icc 1 (P.k - 1)).erase l, (rho P π' j - (rho P π l + 1) + 1) =
       ∏ j ∈ (Icc 1 (P.k - 1)).erase l, (rho P π j - rho P π l) := by
     refine Finset.prod_congr rfl ?_
     intro j hj
-    rw [hr j (Finset.mem_of_mem_erase hj), if_neg (Finset.ne_of_mem_erase hj)]; ring
+    rw [hr j (Finset.mem_of_mem_erase hj), ite_eq_right (Finset.ne_of_mem_erase hj)]; ring
   have e2 : ∏ j ∈ (Icc 1 (P.k - 1)).erase l, (rho P π' j - (rho P π l + 1)) =
       ∏ j ∈ (Icc 1 (P.k - 1)).erase l, (rho P π j - rho P π l - 1) := by
     refine Finset.prod_congr rfl ?_
     intro j hj
-    rw [hr j (Finset.mem_of_mem_erase hj), if_neg (Finset.ne_of_mem_erase hj)]; ring
+    rw [hr j (Finset.mem_of_mem_erase hj), ite_eq_right (Finset.ne_of_mem_erase hj)]; ring
   rw [e1, e2]
   congr 3
   ring
@@ -521,10 +400,10 @@ theorem up_square (P : Par) (l j : ℕ) (hjl : j ≠ l) (π π1 π2 : Ty P) (h1 
     have b := h2 i
     by_cases hj : (i : ℕ) + 1 = j
     · have hl : (i : ℕ) + 1 ≠ l := fun h => hjl (hj.symm.trans h)
-      simp only [if_pos hj, if_neg hl] at a b ⊢; omega
+      simp only [ite_eq_left hj, ite_eq_right hl] at a b ⊢; omega
     · by_cases hl : (i : ℕ) + 1 = l
-      · simp only [if_neg hj, if_pos hl] at a b ⊢; omega
-      · simp only [if_neg hj, if_neg hl] at a b ⊢; omega
+      · simp only [ite_eq_right hj, ite_eq_left hl] at a b ⊢; omega
+      · simp only [ite_eq_right hj, ite_eq_right hl] at a b ⊢; omega
 
 theorem up_mixed1 (P : Par) (l j : ℕ) (hjl : j ≠ l) (π π1 π2 : Ty P) (h1 : Up P j π π1) (h2 : Up P l π2 π1) :
     ∃ π3, Up P l π3 π ∧ Up P j π3 π2 := by
@@ -534,10 +413,10 @@ theorem up_mixed1 (P : Par) (l j : ℕ) (hjl : j ≠ l) (π π1 π2 : Ty P) (h1 
     have b := h2 i
     by_cases hj : (i : ℕ) + 1 = j
     · have hl : (i : ℕ) + 1 ≠ l := fun h => hjl (hj.symm.trans h)
-      simp only [if_pos hj, if_neg hl] at a b ⊢; omega
+      simp only [ite_eq_left hj, ite_eq_right hl] at a b ⊢; omega
     · by_cases hl : (i : ℕ) + 1 = l
-      · simp only [if_neg hj, if_pos hl] at a b ⊢; omega
-      · simp only [if_neg hj, if_neg hl] at a b ⊢; omega
+      · simp only [ite_eq_right hj, ite_eq_left hl] at a b ⊢; omega
+      · simp only [ite_eq_right hj, ite_eq_right hl] at a b ⊢; omega
 
 theorem up_mixed2 (P : Par) (l j : ℕ) (hjl : j ≠ l) (π π2 π3 : Ty P) (h1 : Up P l π3 π) (h2 : Up P j π3 π2) :
     ∃ π1, Up P j π π1 ∧ Up P l π2 π1 := by
@@ -547,22 +426,22 @@ theorem up_mixed2 (P : Par) (l j : ℕ) (hjl : j ≠ l) (π π2 π3 : Ty P) (h1 
     have b := h2 i
     by_cases hj : (i : ℕ) + 1 = j
     · have hl : (i : ℕ) + 1 ≠ l := fun h => hjl (hj.symm.trans h)
-      simp only [if_pos hj, if_neg hl] at a b ⊢; omega
+      simp only [ite_eq_left hj, ite_eq_right hl] at a b ⊢; omega
     · by_cases hl : (i : ℕ) + 1 = l
-      · simp only [if_neg hj, if_pos hl] at a b ⊢; omega
-      · simp only [if_neg hj, if_neg hl] at a b ⊢; omega
+      · simp only [ite_eq_right hj, ite_eq_left hl] at a b ⊢; omega
+      · simp only [ite_eq_right hj, ite_eq_right hl] at a b ⊢; omega
 
 theorem nrm_shift (P : Par) (l j : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) (hj : j ∈ Icc 1 (P.k - 1)) (hjl : j ≠ l)
     (π πj : Ty P) (hU : Up P j π πj) (hp : rho P π j - rho P π l + 1 ≠ 0) (hm : rho P π j - rho P π l - 1 ≠ 0) :
     Nrm P l πj * (rho P π j - rho P π l + 1) = Nrm P l π * (rho P π j - rho P π l - 1) := by
   have hr := rhoUp P j π πj hU
-  have hrl : rho P πj l = rho P π l := by rw [hr l hl, if_neg hjl.symm, add_zero]
-  have hrj : rho P πj j = rho P π j + 1 := by rw [hr j hj, if_pos rfl]
+  have hrl : rho P πj l = rho P π l := by rw [hr l hl, ite_eq_right hjl.symm, add_zero]
+  have hrj : rho P πj j = rho P π j + 1 := by rw [hr j hj, ite_eq_left rfl]
   have hjm : j ∈ (Icc 1 (P.k - 1)).erase l := Finset.mem_erase.2 ⟨hjl, hj⟩
   have hother : ∀ i ∈ ((Icc 1 (P.k - 1)).erase l).erase j, rho P πj i = rho P π i := by
     intro i hi
     have h1 := Finset.mem_erase.1 hi
-    rw [hr i (Finset.mem_of_mem_erase h1.2), if_neg h1.1, add_zero]
+    rw [hr i (Finset.mem_of_mem_erase h1.2), ite_eq_right h1.1, add_zero]
   have p1 : ∏ i ∈ (Icc 1 (P.k - 1)).erase l, (rho P πj i - rho P πj l) =
       (rho P π j - rho P π l + 1) * ∏ i ∈ ((Icc 1 (P.k - 1)).erase l).erase j, (rho P π i - rho P π l) := by
     rw [← Finset.mul_prod_erase _ _ hjm, hrj, hrl]
@@ -601,7 +480,7 @@ theorem gap (P : Par) (hP : P.OK) (l j : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) (hj :
     have o := (ord P.k P.u P.u' (rho P π) hI l hl).2.2.1 j hj h
     have b := tyInterlaces P hP πl l hl
     have e := rhoUp P l π πl h1 l hl
-    rw [if_pos rfl] at e
+    rw [ite_eq_left rfl] at e
     rw [e] at b
     linarith [o.1, b.1]
   · right
@@ -609,7 +488,7 @@ theorem gap (P : Par) (hP : P.OK) (l j : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) (hj :
     have o := (ord P.k P.u P.u' (rho P πj) hIj l hl).2.2.2 j hj h
     have b := hI l hl
     have e := rhoUp P j π πj h2 j hj
-    rw [if_pos rfl] at e
+    rw [ite_eq_left rfl] at e
     rw [e] at o
     linarith [o.1, b.2.2.1]
 
@@ -650,42 +529,15 @@ theorem corner (P : Par) (hP : P.OK) (l j : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) (h
 noncomputable def sR (P : Par) (l : ℕ) : Matrix (Ty P) (Ty P) ℝ :=
   Matrix.of fun π' π => if Up P l π π' then Real.sqrt (Nrm P l π) else 0
 
-noncomputable def ioR (P : Par) : Matrix (Ty P) (Ty P) ℝ →+* A P :=
-  ((algebraMap ℂ (Pr P.r)).comp Complex.ofRealHom).mapMatrix
-
-theorem ioR_apply (P : Par) (M : Matrix (Ty P) (Ty P) ℝ) (a b : Ty P) :
-    ioR P M a b = algebraMap ℂ (Pr P.r) ((M a b : ℝ) : ℂ) := rfl
-
 theorem kap_eq (P : Par) (f : Ty P → ℂ) :
     kap P f = Matrix.diagonal fun π => algebraMap ℂ (Pr P.r) (f π) := by
   rfl
 
-theorem ioR_sR (P : Par) (l : ℕ) : ioR P (sR P l) = SS P l := by
-  ext π' π
-  rw [ioR_apply]
-  simp only [sR, SS, Matrix.of_apply]
-  split_ifs
-  · rfl
-  · simp
-
-theorem ioR_diag (P : Par) (f : Ty P → ℝ) : ioR P (Matrix.diagonal f) = kap P fun π => ((f π : ℝ) : ℂ) := by
-  rw [kap_eq]
-  ext a b
-  rw [ioR_apply]
-  by_cases h : a = b
-  · subst h; simp
-  · simp [Matrix.diagonal_apply_ne _ h]
-
-theorem ioR_transpose (P : Par) (M : Matrix (Ty P) (Ty P) ℝ) : ioR P M.transpose = star (ioR P M) := by
-  ext a b
-  rw [Matrix.star_apply, ioR_apply, ioR_apply, Matrix.transpose_apply, ← algebraMap_star_comm]
-  simp
-
 theorem sR_pos {P : Par} {l : ℕ} {π π' : Ty P} (h : Up P l π π') : sR P l π' π = Real.sqrt (Nrm P l π) := by
-  unfold sR; rw [Matrix.of_apply, if_pos h]
+  unfold sR; rw [Matrix.of_apply, ite_eq_left h]
 
 theorem sR_neg {P : Par} {l : ℕ} {π π' : Ty P} (h : ¬ Up P l π π') : sR P l π' π = 0 := by
-  unfold sR; rw [Matrix.of_apply, if_neg h]
+  unfold sR; rw [Matrix.of_apply, ite_eq_right h]
 
 theorem r_norm (P : Par) (hP : P.OK) (l : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) :
     (sR P l).transpose * sR P l = Matrix.diagonal (Nrm P l) := by
@@ -802,82 +654,7 @@ theorem aC_up (P : Par) (l : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) (π π' : Ty P) (
     aC P π' = aC P π - 1 := by
   unfold aC
   have : ∑ i ∈ Icc 1 (P.k - 1), rho P π' i = ∑ i ∈ Icc 1 (P.k - 1), rho P π i + 1 := by
-    rw [Finset.sum_congr rfl (rhoUp P l π π' hU), Finset.sum_add_distrib, Finset.sum_ite_eq', if_pos hl]
+    rw [Finset.sum_congr rfl (rhoUp P l π π' hU), Finset.sum_add_distrib, Finset.sum_ite_eq', ite_eq_left hl]
   rw [this]; ring
 
-theorem nab_step (a : ℝ) (D W : Pr r) (c : ℂ) :
-    (D + ((a - 1 : ℝ) : ℂ) • W) * algebraMap ℂ (Pr r) c =
-      algebraMap ℂ (Pr r) c * (D + (a : ℂ) • W) - W * algebraMap ℂ (Pr r) c := by
-  rw [Algebra.commutes c (D + (a : ℂ) • W), ← sub_mul]
-  congr 1
-  push_cast
-  rw [sub_smul, one_smul]
-  abel
-
 end Formalism.FourierDecayAlt.P.Mx4
-
-namespace Formalism.FourierDecayAlt.P
-
-open Mx4
-
-theorem shift_shift_relation : Formalism.FourierDecayAlt.M.SSShift := by
-  intro P l f g h
-  rw [kap_eq, kap_eq]
-  ext π' π
-  rw [Matrix.diagonal_mul, Matrix.mul_diagonal]
-  by_cases hu : Up P l π π'
-  · simp only [SS, Matrix.of_apply, if_pos hu, h π π' hu]
-    exact (Algebra.commutes _ _)
-  · simp [SS, hu]
-
-theorem shift_norm_relation : Formalism.FourierDecayAlt.M.SSNorm := by
-  intro P hP l hl
-  constructor
-  · rw [← ioR_sR P l, ← ioR_transpose, ← map_mul, r_norm P hP l hl, ioR_diag]
-  · rw [← ioR_sR P l, ← ioR_transpose, ← map_mul, r_normDown P hP l hl, ioR_diag]
-
-theorem shift_commute_relation : Formalism.FourierDecayAlt.M.SSComm := by
-  intro P hP l hl j hj hjl
-  have e1 : (kap P fun π => ((rho P π j - rho P π l - 1 : ℝ) : ℂ)) =
-      ioR P (Matrix.diagonal fun π => rho P π j - rho P π l - 1) := (ioR_diag P _).symm
-  have e2 : (kap P fun π => ((rho P π j - rho P π l + 1 : ℝ) : ℂ)) =
-      ioR P (Matrix.diagonal fun π => rho P π j - rho P π l + 1) := (ioR_diag P _).symm
-  rw [e1, e2, ← ioR_sR P l, ← ioR_sR P j]
-  simp only [← map_mul]
-  rw [r_comm P hP l j hl hj hjl]
-
-theorem shift_mixed_relation : Formalism.FourierDecayAlt.M.SSMixed := by
-  intro P hP l hl j hj hjl
-  rw [← ioR_sR P l, ← ioR_sR P j, ← ioR_transpose]
-  simp only [← map_mul]
-  rw [r_mixed P hP l j hl hj hjl]
-
-theorem nabla_shift_relation : Formalism.FourierDecayAlt.M.NabSS := by
-  intro P l hl
-  constructor
-  · ext π' π
-    simp only [nabA, zbA, ggiA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul,
-      Matrix.mul_diagonal, Matrix.sub_apply]
-    by_cases hU : Up P l π π'
-    · simp only [SS, Matrix.of_apply, if_pos hU]
-      rw [aC_up P l hl π π' hU]
-      exact nab_step _ _ _ _
-    · simp only [SS, Matrix.of_apply, if_neg hU, mul_zero, zero_mul, sub_zero]
-  · ext π' π
-    simp only [nabsA, zA, ggiA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul,
-      Matrix.mul_diagonal, Matrix.sub_apply]
-    by_cases hU : Up P l π π'
-    · simp only [SS, Matrix.of_apply, if_pos hU]
-      rw [aC_up P l hl π π' hU]
-      exact nab_step _ _ _ _
-    · simp only [SS, Matrix.of_apply, if_neg hU, mul_zero, zero_mul, sub_zero]
-
-theorem m_curvature_proof : Formalism.FourierDecayAlt.M.Curvature := by
-  intro P
-  rw [kap_eq]
-  simp only [nabA, nabsA, ggiA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_sub]
-  congr 1
-  funext π
-  exact curv _ _
-
-end Formalism.FourierDecayAlt.P

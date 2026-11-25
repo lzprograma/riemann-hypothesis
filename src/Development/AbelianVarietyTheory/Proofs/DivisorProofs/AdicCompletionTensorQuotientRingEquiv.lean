@@ -3,48 +3,7 @@ module
 public import Mathlib.RingTheory.AdicCompletion.Functoriality
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Defs
 public import Mathlib.RingTheory.TensorProduct.Maps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.AdicCompletion.AsTensorProduct
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Algebra.Exact.Basic
 
 @[expose] public section
@@ -106,8 +65,7 @@ theorem map_val_mk_eq_iff (s : AdicCauchySequence J A) (n : ℕ) (c : B) :
   rfl
 
 theorem psi_surjective [IsNoetherianRing A] (hs : Function.Surjective (algebraMap A B)) :
-    Function.Surjective (psi B J) := by
-  intro y
+    Function.Surjective (psi B J) := fun y => by
   obtain ⟨t, rfl⟩ := AdicCompletion.mk_surjective _ _ y
   let t' : AdicCauchySequence J B := ⟨t.val, fun {m n} hmn ↦ by
     have h := t.property hmn
@@ -115,50 +73,34 @@ theorem psi_surjective [IsNoetherianRing A] (hs : Function.Surjective (algebraMa
     rw [SModEq.sub_mem, mem_smul_top_iff]; exact h⟩
   obtain ⟨x, hx⟩ := map_surjective J (f := Algebra.linearMap A B) hs (AdicCompletion.mk J _ t')
   obtain ⟨s, rfl⟩ := AdicCompletion.mk_surjective J A x
-  refine ⟨AdicCompletion.mk J A s, ext_evalₐ fun n ↦ ?_⟩
-  rw [evalₐ_psi, evalₐ_mk]
-  refine (map_val_mk_eq_iff B J s n (t n)).mp ?_
-  rw [hx]; rfl
+  exact ⟨AdicCompletion.mk J A s, ext_evalₐ fun n ↦ by
+    rw [evalₐ_psi, evalₐ_mk]; exact (map_val_mk_eq_iff B J s n (t n)).mp (hx ▸ rfl)⟩
 
 theorem ker_psi [IsNoetherianRing A] (hs : Function.Surjective (algebraMap A B)) :
     RingHom.ker (psi B J) =
       Ideal.map (algebraMap A (AdicCompletion J A)) (LinearMap.ker (Algebra.linearMap A B)) := by
   set q := LinearMap.ker (Algebra.linearMap A B)
-  apply le_antisymm
-  · intro x hx
-    rw [RingHom.mem_ker] at hx
-    have hz : map J (Algebra.linearMap A B) x = 0 := by
-      obtain ⟨s, rfl⟩ := AdicCompletion.mk_surjective J A x
-      ext n
-      have := (map_val_mk_eq_iff B J s n 0).mpr
-        (by rw [← evalₐ_psi, hx, _root_.map_zero, _root_.map_zero])
-      simpa using this
-    obtain ⟨y, rfl⟩ := ((AdicCompletion.map_exact (I := J) (f := q.subtype) (g := Algebra.linearMap A B)
-      Subtype.val_injective (LinearMap.exact_subtype_ker_map _) hs) x).mp hz
-    obtain ⟨t, rfl⟩ := ofTensorProduct_surjective_of_finite J q y
-    clear hx hz
-    induction t using TensorProduct.induction_on with
-    | zero => simp
-    | tmul r m =>
-      rw [ofTensorProduct_tmul, map_smul, map_of, smul_eq_mul]
-      have hm : (of J A) (q.subtype m) = algebraMap A (AdicCompletion J A) (m : A) := by
-        rw [AdicCompletion.algebraMap_apply]; rfl
-      rw [hm]
-      exact Ideal.mul_mem_left _ _ (Ideal.mem_map_of_mem _ m.2)
-    | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
-  · rw [Ideal.map_le_iff_le_comap]
-    intro a ha
-    rw [Ideal.mem_comap, RingHom.mem_ker, psi_algebraMap, AdicCompletion.algebraMap_apply]
+  refine le_antisymm (fun x hx => ?_) (Ideal.map_le_iff_le_comap.2 fun a ha => by
     have : algebraMap A B a = 0 := LinearMap.mem_ker.mp ha
-    rw [this, _root_.map_zero]
+    rw [Ideal.mem_comap, RingHom.mem_ker, psi_algebraMap, AdicCompletion.algebraMap_apply, this, _root_.map_zero])
+  rw [RingHom.mem_ker] at hx
+  have hz : map J (Algebra.linearMap A B) x = 0 := by
+    obtain ⟨s, rfl⟩ := AdicCompletion.mk_surjective J A x
+    ext n
+    simpa using (map_val_mk_eq_iff B J s n 0).mpr (by rw [← evalₐ_psi, hx, _root_.map_zero, _root_.map_zero])
+  obtain ⟨y, rfl⟩ := ((AdicCompletion.map_exact (I := J) (f := q.subtype) (g := Algebra.linearMap A B)
+    Subtype.val_injective (LinearMap.exact_subtype_ker_map _) hs) x).mp hz
+  obtain ⟨t, rfl⟩ := ofTensorProduct_surjective_of_finite J q y
+  clear hx hz
+  induction t using TensorProduct.inductionOn with
+  | tmul r m =>
+    rw [ofTensorProduct_tmul, map_smul, map_of, smul_eq_mul,
+      show (of J A) (q.subtype m) = algebraMap A (AdicCompletion J A) (m : A) by
+        rw [AdicCompletion.algebraMap_apply]; rfl]
+    exact Ideal.mul_mem_left _ _ (Ideal.mem_map_of_mem _ m.2)
+  | add _ _ ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
 
-end GlobalTheory.AdicSurj
-
-namespace GlobalTheory.AdicSurj
-
-open AdicCompletion
-
-variable {A B : Type} [CommRing A] [CommRing B] [Algebra A B] (J : Ideal A)
+variable {B}
 
 instance isScalarTower_adic :
     IsScalarTower A B (AdicCompletion (J.map (algebraMap A B)) B) :=
@@ -176,8 +118,7 @@ theorem theta_bijective [IsNoetherianRing A] (hs : Function.Surjective (algebraM
     Function.Bijective (theta (B := B) J) := by
   let e := RingHom.quotientKerEquivOfSurjective (psi_surjective B J hs)
   have hker : RingHom.ker (psi B J) ≤
-      RingHom.ker (Algebra.TensorProduct.includeRight (R := A) (A := B)
-        (B := AdicCompletion J A)).toRingHom := by
+      RingHom.ker (Algebra.TensorProduct.includeRight (R := A) (A := B) (B := AdicCompletion J A)).toRingHom := by
     rw [ker_psi B J hs, Ideal.map_le_iff_le_comap]
     intro a ha
     have h0 : algebraMap A B a = 0 := LinearMap.mem_ker.mp ha
@@ -187,27 +128,21 @@ theorem theta_bijective [IsNoetherianRing A] (hs : Function.Surjective (algebraM
       TensorProduct.zero_tmul]
   let σ : AdicCompletion (J.map (algebraMap A B)) B →+* B ⊗[A] AdicCompletion J A :=
     (Ideal.Quotient.lift _ _ hker).comp e.symm.toRingHom
-  have hσ : ∀ x, σ (psi B J x) = 1 ⊗ₜ[A] x := by
-    intro x
+  have hσ : ∀ x, σ (psi B J x) = 1 ⊗ₜ[A] x := fun x => by
     have : e.symm (psi B J x) = Ideal.Quotient.mk _ x := e.symm_apply_eq.mpr rfl
-    simp only [σ, RingHom.comp_apply, RingEquiv.toRingHom_eq_coe, RingHom.coe_coe, this]
-    rfl
-  have hleft : ∀ t, σ (theta J t) = t := by
-    intro t
-    induction t using TensorProduct.induction_on with
-    | zero => simp
-    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
+    simp only [σ, RingHom.comp_apply, RingEquiv.toRingHom_eq_coe, RingHom.coe_coe, this]; rfl
+  have hleft : ∀ t, σ (theta J t) = t := fun t => by
+    induction t using TensorProduct.inductionOn with
+    | add _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     | tmul b x =>
       obtain ⟨a, rfl⟩ := hs b
       rw [theta, Algebra.TensorProduct.lift_tmul, Algebra.ofId_apply,
         ← IsScalarTower.algebraMap_apply, ← psi_algebraMap B J a]
       change σ (psi B J _ * psi B J x) = _
       rw [← map_mul, hσ, ← Algebra.smul_def, ← TensorProduct.smul_tmul, Algebra.algebraMap_eq_smul_one]
-  refine ⟨Function.LeftInverse.injective hleft, fun y ↦ ?_⟩
+  refine ⟨Function.LeftInverse.injective hleft, fun y => ?_⟩
   obtain ⟨x, rfl⟩ := psi_surjective B J hs y
-  refine ⟨1 ⊗ₜ[A] x, ?_⟩
-  rw [theta, Algebra.TensorProduct.lift_tmul, map_one, one_mul]
-  rfl
+  exact ⟨1 ⊗ₜ[A] x, by rw [theta, Algebra.TensorProduct.lift_tmul, map_one, one_mul]; rfl⟩
 
 theorem tensor_ringEquiv [IsNoetherianRing A] (hs : Function.Surjective (algebraMap A B))
     (I : Ideal B) (hI : I = J.map (algebraMap A B)) (K : Type) [CommRing K] [Algebra B K] [Algebra A K]
@@ -229,15 +164,11 @@ theorem GlobalTheory.adicCompletion_tensor_quotient_ringEquiv :
         Nonempty (AdicCompletion (maximalIdeal R) R ⊗[R] K ≃+*
           AdicCompletion (maximalIdeal R₀) R₀ ⊗[R₀] K) := by
   intro R₀ R K _ _ _ _ _ _ _ _ _ _ hs
-  have hk : RingHom.ker (algebraMap R₀ R) ≤ maximalIdeal R₀ :=
-    le_maximalIdeal (RingHom.ker_ne_top _)
-  have hmax : ((maximalIdeal R₀).map (algebraMap R₀ R)).IsMaximal := by
-    rcases Ideal.map_eq_top_or_isMaximal_of_surjective (hf := hs) (H := maximalIdeal.isMaximal R₀) with h | h
-    · exfalso
+  have hk : RingHom.ker (algebraMap R₀ R) ≤ maximalIdeal R₀ := le_maximalIdeal (RingHom.ker_ne_top _)
+  have hmax : ((maximalIdeal R₀).map (algebraMap R₀ R)).IsMaximal :=
+    (Ideal.map_eq_top_or_isMaximal_of_surjective (hf := hs) (H := maximalIdeal.isMaximal R₀)).resolve_left fun h => by
       have h1 : (1 : R) ∈ (maximalIdeal R₀).map (algebraMap R₀ R) := h ▸ Submodule.mem_top
       obtain ⟨a, ha, hfa⟩ := (Ideal.mem_map_iff_of_surjective _ hs).mp h1
       have h2 : 1 - a ∈ maximalIdeal R₀ := hk (by rw [RingHom.mem_ker, map_sub, hfa, map_one, sub_self])
-      have h3 : (1 : R₀) ∈ maximalIdeal R₀ := by simpa using add_mem h2 ha
-      exact (maximalIdeal.isMaximal R₀).ne_top ((Ideal.eq_top_iff_one _).mpr h3)
-    · exact h
+      exact (maximalIdeal.isMaximal R₀).ne_top ((Ideal.eq_top_iff_one _).mpr (by simpa using add_mem h2 ha))
   exact GlobalTheory.AdicSurj.tensor_ringEquiv (maximalIdeal R₀) hs _ (eq_maximalIdeal hmax).symm K

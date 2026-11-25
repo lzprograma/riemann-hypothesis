@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CommonStabilizerStabilizersCommensurableVolume
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntSmulLe
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
@@ -69,14 +70,6 @@ open NumberField
 
 namespace GlobalTheory.IntMulIntegral
 
-theorem exists_int_mul_integral {K : Type} [Field K] [NumberField K] (z : K) :
-    ∃ M : ℤ, M ≠ 0 ∧ IsIntegral ℤ ((M : K) * z) := by
-  have hz : IsAlgebraic ℤ z :=
-    (IsFractionRing.isAlgebraic_iff ℤ ℚ K).mpr (Algebra.IsAlgebraic.isAlgebraic z)
-  obtain ⟨y, hy, hint⟩ := hz.exists_integral_multiple
-  refine ⟨y, hy, ?_⟩
-  simpa [zsmul_eq_mul] using hint
-
 theorem main : ∀ {K V : Type} [inst : Field K] [NumberField K] [inst_2 : AddCommGroup V] [inst_3 : Module K V]
     [inst_4 : Module (NumberField.RingOfIntegers K) V] [IsScalarTower (NumberField.RingOfIntegers K) K V]
     {A : Submodule (NumberField.RingOfIntegers K) V}, Submodule.span K (↑A : Set V) = ⊤ →
@@ -102,9 +95,7 @@ variable {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
 theorem exists_mul_mem {A : Submodule (𝓞 K) V} (hA : Submodule.span K (A : Set V) = ⊤) (x : V) :
-    ∃ N : ℤ, N ≠ 0 ∧ N • x ∈ A := by
-  first
-  | (apply _root_.GlobalTheory.IntMulIntegral.main <;> assumption)
+    ∃ N : ℤ, N ≠ 0 ∧ N • x ∈ A := GlobalTheory.IntMulIntegral.main hA x
 
 theorem finite_between {Λ : Submodule (𝓞 K) V} (hΛ : Λ.FG) {a b : ℤ} (ha : a ≠ 0) (hb : b ≠ 0) :
     {M : Submodule (𝓞 K) V | (∀ x ∈ Λ, a • x ∈ M) ∧ ∀ x ∈ M, b • x ∈ Λ}.Finite := by
@@ -224,19 +215,7 @@ theorem exists_den {s : V ≃ₗ[K] V} {n : ℕ} (hs : ((s : V →ₗ[K] V) - 1)
 
 theorem inf_stab_smul {Γ X : Type} [Group Γ] [MulAction Γ X] (G : Subgroup Γ) {s : Γ} (hs : s ∈ G) (x : X) :
     G ⊓ MulAction.stabilizer Γ (s • x) = MulAut.conj s • (G ⊓ MulAction.stabilizer Γ x) := by
-  ext g
-  rw [Subgroup.mem_pointwise_smul_iff_inv_smul_mem]
-  simp only [Subgroup.mem_inf, MulAction.mem_stabilizer_iff, MulAut.smul_def, MulAut.conj_inv_apply]
-  constructor
-  · rintro ⟨h1, h2⟩
-    refine ⟨G.mul_mem (G.mul_mem (G.inv_mem hs) h1) hs, ?_⟩
-    rw [mul_smul, mul_smul, h2, inv_smul_smul]
-  · rintro ⟨h1, h2⟩
-    refine ⟨?_, ?_⟩
-    · have := G.mul_mem (G.mul_mem hs h1) (G.inv_mem hs)
-      simpa [mul_assoc] using this
-    · rw [mul_smul, mul_smul, inv_smul_eq_iff] at h2
-      exact h2
+  apply _root_.GlobalTheory.HL.volSt_inf_stab_smul <;> assumption
 
 theorem invVol_smul : ∀ (K V : Type) [Field K] [NumberField K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (G : Subgroup (V ≃ₗ[K] V)) (n : ℕ), (∀ s ∈ G, ((s : V →ₗ[K] V) - 1) ^ n = 0) → ∀ Λ Λ' : Submodule (𝓞 K) V, Submodule.IsFullLattice K Λ → Submodule.IsFullLattice K Λ' → (G ⊓ MulAction.stabilizer (V ≃ₗ[K] V) Λ).relIndex (G ⊓ MulAction.stabilizer (V ≃ₗ[K] V) Λ') ≠ 0 ∧ ∀ s ∈ G, GlobalTheory.HL.invVol (G ⊓ MulAction.stabilizer (V ≃ₗ[K] V) Λ') (G ⊓ MulAction.stabilizer (V ≃ₗ[K] V) (s • Λ)) = GlobalTheory.HL.invVol (G ⊓ MulAction.stabilizer (V ≃ₗ[K] V) Λ') (G ⊓ MulAction.stabilizer (V ≃ₗ[K] V) Λ) := by
   intro K V _ _ _ _ _ _ _ G n hG Λ Λ' hΛ hΛ'

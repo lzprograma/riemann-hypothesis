@@ -11,48 +11,6 @@ public import GroundTheory.LocalFields.LocalZetaEpsilon
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
 public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import Mathlib.NumberTheory.ModularForms.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.AutomorphicForms.GL2.FiniteIdeleDecomp
 
 @[expose] public section
@@ -131,20 +89,6 @@ def IsStd (ψ : AddChar F Circle) : Prop := Continuous ψ ∧ ψ ≠ 1 ∧ addCh
 
 end Fin
 
-def LocF : Prop :=
-  ∀ (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [MeasurableSpace F] [BorelSpace F]
-    (ψ : AddChar F Circle), IsStd ψ → ∀ ν : Fˣ →* ℂˣ, IsUnit1 ν →
-    ∃ V, WhF ψ ν V ∧ (IsUnramifiedChar ν → sphW ψ ν ∈ V)
-
-def LocU : Prop :=
-  ∀ (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [MeasurableSpace F] [BorelSpace F]
-    (ψ : AddChar F Circle), IsStd ψ → ∀ ν c : Fˣ →* ℂˣ, IsUnit1 ν → IsUnit1 c → IsUnramifiedChar ν → IsUnramifiedChar c →
-    (∀ s : ℂ, 0 < s.re → ∫ a, zF (sphW ψ ν) c s a ∂multHaar F = lf3 ν c s) ∧
-    (∀ s : ℂ, s.re < 1 → ∫ p, zF' (sphW ψ ν) c s p ∂((multHaar F).prod (selfDualMeasure ψ)) = lf3 ν c⁻¹ (1 - s)) ∧
-    (∀ (t : Fˣ) (u : F), (u ∈ 𝒪[F] → sphW ψ ν (mm t u) = sphW ψ ν (dg 1 1 t)) ∧ (u ∉ 𝒪[F] → sphW ψ ν (mm t u) = 0)) ∧
-    ∀ (a b : Fˣ), ∀ k ∈ GLnLocal.integralGL F 3, ‖sphW ψ ν (dg (a * b) b 1 * k)‖ ≤ ((modulus (a : F) : ℝ) * modulus (b : F))⁻¹ ∧
-      (sphW ψ ν (dg (a * b) b 1 * k) ≠ 0 → (a : F) ∈ 𝒪[F] ∧ (b : F) ∈ 𝒪[F])
-
 abbrev M3 : Type := Fin 3 → Fin 3 → ℝ
 
 def ext (W : GL (Fin 3) ℝ → ℂ) (m : M3) : ℂ :=
@@ -182,8 +126,6 @@ structure WhR (k : ℕ) (V : Submodule ℂ (GL (Fin 3) ℝ → ℂ)) (E : Fin 3 
       gamR k δ s * ∫ a, W (dg a 1 1) * chR δ (s - 1) a ∂mulR
   cap : ∀ (u : ℂ) (W : V), Formalism.REAL.qdet E (u + 1) W = ((u + (k - 1)) * u * (u - (k - 1))) • W
   kfin : ∃ W ∈ V, W ≠ 0 ∧ FiniteDimensional ℂ (Submodule.span ℂ {W' | ∃ o ∈ O3, W' = fun g => W (g * o)})
-
-def LocR : Prop := ∀ k : ℕ, 3 ≤ k → ∃ V E, WhR k V E
 
 abbrev Pl : Type := HeightOneSpectrum (𝓞 ℚ)
 abbrev Qv (v : Pl) : Type := v.adicCompletion ℚ
@@ -243,18 +185,6 @@ structure WhA (V : Submodule ℂ (G3 → ℂ)) : Prop where
 def Vor (W : G3 → ℂ) : Prop :=
   ∑' a : ℚˣ, W (dia (dg a 1 1)) = ∑' b : ℚˣ, ∫ u, W (dia (dg 1 1 b) * cyc u) ∂adeleMeasure ℚ
 
-def Mellin : Prop :=
-  ∀ f₁ f₂ : IdeleGroup ℚ → ℂ, Continuous f₁ → Continuous f₂ →
-    (∃ U : OpenSubgroup (FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ, ∀ u ∈ U, ∀ x, f₁ (x * IdeleGroup.ofFinite u) = f₁ x ∧ f₂ (x * IdeleGroup.ofFinite u) = f₂ x) →
-    (∀ K : Set (IdeleGroup ℚ), IsCompact K → ∃ b : ℚˣ → ℝ, Summable b ∧ ∀ a : ℚˣ, ∀ x ∈ K,
-      ‖f₁ (Units.map (algebraMap ℚ 𝔸[ℚ]).toMonoidHom a * x)‖ ≤ b a ∧ ‖f₂ (Units.map (algebraMap ℚ 𝔸[ℚ]).toMonoidHom a * x)‖ ≤ b a) →
-    ∀ σ : ℝ, 0 < σ → Integrable (fun x => ‖f₁ x‖ * (IdeleGroup.ideleModule ℚ x : ℝ) ^ σ) (ideleMeasure ℚ) →
-    Integrable (fun x => ‖f₂ x‖ * (IdeleGroup.ideleModule ℚ x : ℝ) ^ (-σ)) (ideleMeasure ℚ) →
-    (∀ c : HeckeCharacter ℚ, IsOfFinOrder c → ∃ M : ℂ → ℂ, Differentiable ℂ M ∧ Ord M (-σ) ∧
-      (∀ s : ℂ, s.re = σ → M s = ∫ x, f₁ x * (c.toIdele x : ℂ) * ((IdeleGroup.ideleModule ℚ x : ℝ) : ℂ) ^ s ∂ideleMeasure ℚ) ∧
-      ∀ s : ℂ, s.re = -σ → M s = ∫ x, f₂ x * (c.toIdele x : ℂ) * ((IdeleGroup.ideleModule ℚ x : ℝ) : ℂ) ^ s ∂ideleMeasure ℚ) →
-    ∑' a : ℚˣ, f₁ (Units.map (algebraMap ℚ 𝔸[ℚ]).toMonoidHom a) = ∑' a : ℚˣ, f₂ (Units.map (algebraMap ℚ 𝔸[ℚ]).toMonoidHom a)
-
 def IsLoc (v : Pl) (x : GL (Fin 3) (Qv v)) (h : G3) : Prop :=
   Reduction.finAt v h = x ∧ (∀ v' ≠ v, Reduction.finAt v' h = 1) ∧ ∀ w, Reduction.infAt w h = 1
 
@@ -267,8 +197,6 @@ def Good (D : Dat) (V : Submodule ℂ (G3 → ℂ)) (hV : WhA V) : Prop :=
     ((u + (D.k - 1)) * u * (u - (D.k - 1))) • (⟨W, hV.arch W hW⟩ : archSmooth ℚ 3)) ∧
   (∀ W (hW : W ∈ V), (∑ i, EA i i) ⟨W, hV.arch W hW⟩ = 0) ∧
   ∃ W ∈ V, W ≠ 0 ∧ IsKFinite W ∧ ∃ S : Finset Pl, ∀ v ∉ S, SphAt D v W
-
-def Glob : Prop := LocF → LocU → LocR → Mellin → ∀ D, An D → ∃ V hV, Good D V hV
 
 
 open UpperHalfPlane CongruenceSubgroup in

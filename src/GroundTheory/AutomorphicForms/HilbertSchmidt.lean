@@ -2,9 +2,6 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.l2Space
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Separation.CompletelyRegular
 
 @[expose] public section
 
@@ -25,9 +22,7 @@ theorem ennreal_add_sq_le (a b : ℝ≥0∞) : (a + b) ^ 2 ≤ 2 * a ^ 2 + 2 * b
   lift a to NNReal using ha
   lift b to NNReal using hb
   norm_cast
-  rw [← NNReal.coe_le_coe]
-  push_cast
-  nlinarith [sq_nonneg ((a : ℝ) - b)]
+  simpa only [mul_add] using (add_sq_le (a := a) (b := b))
 
 theorem ennreal_mul_le_sq_add_sq (a b : ℝ≥0∞) : a * b ≤ a ^ 2 + b ^ 2 := by
   rcases le_total a b with h | h
@@ -47,29 +42,15 @@ variable {𝕜 : Type*} [RCLike 𝕜]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace 𝕜 K] [CompleteSpace K]
   {L : Type*} [NormedAddCommGroup L] [InnerProductSpace 𝕜 L] [CompleteSpace L]
 
-theorem enorm_inner_le (x y : H) : ‖⟪x, y⟫_𝕜‖ₑ ≤ ‖x‖ₑ * ‖y‖ₑ := by
-  rw [← ofReal_norm, ← ofReal_norm, ← ofReal_norm, ← ENNReal.ofReal_mul (norm_nonneg _)]
-  exact ENNReal.ofReal_le_ofReal (norm_inner_le_norm x y)
+theorem enorm_inner_le (x y : H) : ‖⟪x, y⟫_𝕜‖ₑ ≤ ‖x‖ₑ * ‖y‖ₑ :=
+  eNorm_inner_le_eNorm x y
 
 theorem enorm_inner_comm (x y : H) : ‖⟪x, y⟫_𝕜‖ₑ = ‖⟪y, x⟫_𝕜‖ₑ := by
   rw [← ofReal_norm, ← ofReal_norm, norm_inner_symm]
 
-theorem enorm_apply_le (A : H →L[𝕜] K) (x : H) : ‖A x‖ₑ ≤ ‖A‖ₑ * ‖x‖ₑ := by
-  rw [← ofReal_norm, ← ofReal_norm, ← ofReal_norm, ← ENNReal.ofReal_mul (norm_nonneg _)]
-  exact ENNReal.ofReal_le_ofReal (A.le_opNorm x)
-
 theorem enorm_sq_eq_tsum {ι : Type*} (b : HilbertBasis ι 𝕜 H) (x : H) :
-    ‖x‖ₑ ^ 2 = ∑' i, ‖⟪b i, x⟫_𝕜‖ₑ ^ 2 := by
-  have hp : (0 : ℝ) < (2 : ℝ≥0∞).toReal := by norm_num
-  have h1 := lp.norm_rpow_eq_tsum hp (b.repr x)
-  have h2 := (lp.memℓp (b.repr x)).summable hp
-  simp only [LinearIsometryEquiv.norm_map, HilbertBasis.repr_apply_apply, ENNReal.toReal_ofNat,
-    Real.rpow_two] at h1 h2
-  rw [← ofReal_norm, ← ENNReal.ofReal_pow (norm_nonneg _), h1,
-    ENNReal.ofReal_tsum_of_nonneg (fun _ => by positivity) h2]
-  congr 1
-  ext i
-  rw [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm]
+    ‖x‖ₑ ^ 2 = ∑' i, ‖⟪b i, x⟫_𝕜‖ₑ ^ 2 :=
+  (b.tsum_eNorm_inner_sq x).symm
 
 theorem tsum_enorm_sq_eq_adjoint {ι κ : Type*} (b : HilbertBasis ι 𝕜 H)
     (c : HilbertBasis κ 𝕜 K) (T : H →L[𝕜] K) :
@@ -157,13 +138,15 @@ theorem hsNormSq_add_le (S T : H →L[𝕜] K) :
         gcongr; exact enorm_add_le _ _
     _ ≤ _ := ennreal_add_sq_le _ _
 
-theorem hsNormSq_comp_left_le (A : K →L[𝕜] L) (T : H →L[𝕜] K) :
+theorem hsNormSq_comp_left_le {K L : Type*}
+    [NormedAddCommGroup K] [InnerProductSpace 𝕜 K]
+    [NormedAddCommGroup L] [InnerProductSpace 𝕜 L] (A : K →L[𝕜] L) (T : H →L[𝕜] K) :
     hsNormSq (A.comp T) ≤ ‖A‖ₑ ^ 2 * hsNormSq T := by
   simp only [hsNormSq, ← ENNReal.tsum_mul_left, comp_apply]
   refine ENNReal.tsum_le_tsum fun i => ?_
   rw [← mul_pow]
   gcongr
-  exact enorm_apply_le _ _
+  exact A.le_opENorm _
 
 theorem hsNormSq_comp_right_le (T : K →L[𝕜] L) (B : H →L[𝕜] K) :
     hsNormSq (T.comp B) ≤ ‖B‖ₑ ^ 2 * hsNormSq T := by
@@ -172,7 +155,10 @@ theorem hsNormSq_comp_right_le (T : K →L[𝕜] L) (B : H →L[𝕜] K) :
     _ = ‖B‖ₑ ^ 2 * hsNormSq (T†) := by
         rw [← ofReal_norm, ← ofReal_norm, adjoint.norm_map]
 
-theorem IsHilbertSchmidt.comp_left {T : H →L[𝕜] K} (hT : IsHilbertSchmidt T) (A : K →L[𝕜] L) :
+theorem IsHilbertSchmidt.comp_left {K L : Type*}
+    [NormedAddCommGroup K] [InnerProductSpace 𝕜 K]
+    [NormedAddCommGroup L] [InnerProductSpace 𝕜 L]
+    {T : H →L[𝕜] K} (hT : IsHilbertSchmidt T) (A : K →L[𝕜] L) :
     IsHilbertSchmidt (A.comp T) :=
   (hsNormSq_comp_left_le A T).trans_lt (ENNReal.mul_lt_top (by simp) hT)
 

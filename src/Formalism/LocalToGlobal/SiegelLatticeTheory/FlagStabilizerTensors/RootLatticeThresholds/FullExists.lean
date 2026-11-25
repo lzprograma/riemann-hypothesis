@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormStepsColLatRepS
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
 import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
@@ -20,23 +21,9 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Lin
 
 variable {D : D7} (X : HidaSetting D) (u : D.what₂.Word) (hK : X.LevelSubgroupCharacter)
-
-theorem phVal_add (T T' : Cu X u hK) (yinf : X.B.I.Ginf) (n : X.B.I.Gf) (h : Hfin X u) (k : X.B.I.Gf) :
-    phVal X u hK (T + T') yinf n h k = phVal X u hK T yinf n h k + phVal X u hK T' yinf n h k := by
-  unfold phVal
-  simp only [Submodule.coe_add, LinearMap.add_apply, Pi.add_apply]
-  ring
-
-theorem phVal_smul (c : ℂ) (T : Cu X u hK) (yinf : X.B.I.Ginf) (n : X.B.I.Gf) (h : Hfin X u) (k : X.B.I.Gf) :
-    phVal X u hK (c • T) yinf n h k = c * phVal X u hK T yinf n h k := by
-  unfold phVal
-  simp only [Submodule.coe_smul, LinearMap.smul_apply, Pi.smul_apply, smul_eq_mul]
-  ring
 
 end Lin
 
@@ -232,7 +219,7 @@ theorem rowsCols_of (hK : X.LevelSubgroupCharacter) (h0 : EqvEquiv X u) (h1 : La
       base_lam := by
         intro Λ hΛ
         have hΛ' := (hmem Λ).1 hΛ
-        simp only [dif_pos hΛ', hqcc]
+        simp only [dite_eq_left hΛ', hqcc]
         exact hΛ'.choose_spec
       lat_eq := by
         intro ρ y
@@ -476,18 +463,7 @@ theorem matE_repr (M : GL (Fin X.B.I.n) X.B.I.E) (y : (VS D).V) :
 
 theorem matE_crd (M : GL (Fin X.B.I.n) X.B.I.E) (y : (VS D).V) :
     X.crd (matE X M y) = (M : Matrix _ _ _) *ᵥ X.crd y := by
-  funext i
-  have h := RingHom.map_mulVec (X.ιE.symm : D.host.E →+* X.B.I.E) (mapM X (M : Matrix _ _ _))
-    (X.bas.equivFun y) i
-  have hM : (mapM X (M : Matrix _ _ _)).map (X.ιE.symm : D.host.E →+* X.B.I.E) = (M : Matrix _ _ _) := by
-    ext a b
-    simp [mapM]
-  have e1 : X.crd (matE X M y) i = X.ιE.symm ((mapM X (M : Matrix _ _ _) *ᵥ X.bas.equivFun y) i) := by
-    rw [← matE_repr]
-    rfl
-  rw [e1]
-  erw [h, hM]
-  rfl
+  apply _root_.Formalism.L2.SG.Pf.NormSteps.ColLatRepSPf.matE_crd <;> assumption
 
 theorem matE_incl (M : GL (Fin X.B.I.n) X.B.I.E) (y : (VS D).V) :
     incl X.B.I (X.crd (matE X M y)) =
@@ -534,18 +510,7 @@ theorem mapM_unitary (M : GL (Fin X.B.I.n) X.B.I.E) (hM : M ∈ Formalism.UG.UJ 
 
 theorem matE_isom (M : GL (Fin X.B.I.n) X.B.I.E) (hM : M ∈ Formalism.UG.UJ (starRingEnd X.B.I.E) X.B.I.J) :
     matE X M ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT := by
-  intro x y
-  rw [hT_expand X (matE X M x) (matE X M y), hT_expand X x y]
-  simp only [← X.J_eq]
-  rw [qform, qform, matE_repr, matE_repr]
-  calc star (mapM X (M : Matrix _ _ _) *ᵥ X.bas.equivFun x) ⬝ᵥ
-        (mapM X X.B.I.J *ᵥ (mapM X (M : Matrix _ _ _) *ᵥ X.bas.equivFun y))
-      = (star (X.bas.equivFun x) ᵥ* ((mapM X (M : Matrix _ _ _))ᴴ * mapM X X.B.I.J * mapM X (M : Matrix _ _ _))) ⬝ᵥ
-          X.bas.equivFun y := by
-        rw [Matrix.star_mulVec, Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul,
-          Matrix.mul_assoc]
-    _ = star (X.bas.equivFun x) ⬝ᵥ (mapM X X.B.I.J *ᵥ X.bas.equivFun y) := by
-        rw [mapM_unitary X M hM, Matrix.dotProduct_mulVec]
+  apply _root_.Formalism.L2.SG.Pf.NormSteps.ColLatRepSPf.matE_isom <;> assumption
 
 def InclInj : Prop :=
   Function.Injective (Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) : X.B.I.E → X.B.I.E ⊗[X.B.I.F] Af X.B.I.F)

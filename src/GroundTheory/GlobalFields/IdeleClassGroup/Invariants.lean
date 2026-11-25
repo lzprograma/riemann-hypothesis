@@ -228,11 +228,6 @@ theorem fixedModule_fixingSubgroup (F : FiniteSubfield) :
   · rintro _ ⟨c, rfl⟩ σ hσ
     exact smul_of_eq_of_mem_fixingSubgroup hσ c
 
-theorem fixedModule_openSubgroup (U : OpenSubgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) :
-    fixedModule IdeleClassLimit (U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) = (of (ofOpenSubgroup U)).range := by
-  have h := fixedModule_fixingSubgroup (ofOpenSubgroup U)
-  rwa [fixingSubgroup_ofOpenSubgroup] at h
-
 def fixedEquiv (F : FiniteSubfield) :
     IdeleClassGroup F.1 ≃* fixedModule IdeleClassLimit F.1.fixingSubgroup :=
   (MonoidHom.ofInjective (of_injective F)).trans

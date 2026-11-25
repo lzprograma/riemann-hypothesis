@@ -55,8 +55,6 @@ open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GalOfCusp UpperTheory.Zero.LLC UpperTheory.V UpperTheory.V.Af UpperTheory.V.Base UpperTheory.V.Sd
 open UpperTheory.V.Z.Gam UpperTheory.V.Z.Win UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter UpperTheory.V.Z.Win.Birth GroundTheory.Global.SemiLocal UpperTheory.V.Published
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Win.Birth.UnramifiedPlaceWindow
 
 private theorem window_pow {N M f : ℕ} (hf : 0 < f) (hM : M = N ^ f) {a b x y : ℝ} (hx : 0 ≤ x) (hy : y = x ^ f)

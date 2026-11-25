@@ -47,8 +47,6 @@ public import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix
@@ -61,8 +59,6 @@ open GlobalTheory.AllWt (Psi ptF framesOn LiesOn)
 open scoped ComplexOrder
 
 namespace GlobalTheory.TrueCx
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r j : ℕ} {Tau : Type}
 
@@ -128,13 +124,6 @@ variable {H : Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff
   (Y : Model Xo c (RingHom.id c.F)) (σ : c.F →+* ℂ)
 
 abbrev torC : Scheme.{0} := pullback Y.s (spMap σ)
-
-abbrev torStr : torC Y σ ⟶ Sp ℂ := pullback.snd Y.s (spMap σ)
-
-abbrev torPr : torC Y σ ⟶ Y.X := pullback.fst Y.s (spMap σ)
-
-abbrev TorPts : Type := CxPts (torStr Y σ) (RingHom.id ℂ)
-
 variable {Y σ}
 
 variable (Y)
@@ -147,44 +136,7 @@ theorem ptC_fst (y : FrPt Xo c (CAt σ)) : ptC y ≫ pullback.fst _ _ = xC y := 
 
 theorem ptC_snd (y : FrPt Xo c (CAt σ)) : ptC y ≫ pullback.snd _ _ = spMap σ := pullback.lift_snd _ _ _
 
-def torPt (y : FrPt Xo c (CAt σ)) : TorPts Y σ :=
-  ⟨pullback.lift (ptC y ≫ Y.j) (spMap (RingHom.id ℂ)) (by
-      rw [Model.j, Category.assoc, Category.assoc, pullback.condition, ← Category.assoc Y.jQ, Y.jQ_over,
-        ← Category.assoc, ptC_snd, ← Spec.map_comp, ← Spec.map_comp]
-      rfl), pullback.lift_snd _ _ _⟩
-
-theorem torPt_pr (y : FrPt Xo c (CAt σ)) : (torPt Y y).1 ≫ torPr Y σ = ptC y ≫ Y.j := pullback.lift_fst _ _ _
-
-abbrev LieAt (y : TorPts Y σ) : Type := TanM (y.1 ≫ torPr Y σ) Y.t.G
-
-
-variable (σ) in
-abbrev LieForm : Type := ∀ y : TorPts Y σ, LieAt Y y →ₗ[ℂ] LieAt Y y →ₗ⋆[ℂ] ℂ
-
-def lieEquiv (y : FrPt Xo c (CAt σ)) : TanM (xC y) Xo.univ.t.G ≃ₗ[ℂ] LieAt Y (torPt Y y) :=
-  (pushE Y.m0.toSABMap (ptC y) (ptC_fst y)).symm.trans (pushE Y.m (ptC y) (torPt_pr Y y).symm)
-
 end Tor
-
-section Bd
-
-variable {H : Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
-  (Y : Model Xo c (RingHom.id c.F)) {σ : c.F →+* ℂ}
-
-variable (U : Unf Xo c σ r) (hU : IsUnf U) (e : Dw.p = j) (hσ : GoodEmb c σ) (T : Tau ≃ Psi H)
-
-
-def letter (t : Tau) : Psi H := (letterAt hσ).symm (T t)
-
-
-variable [Fintype Tau]
-
-
-variable (B : ∀ k, BdData Tau j (r - j) (gammaU (U.X k) (le_of_isUnf U hU e) (cmEquiv U hU T k)))
-
-variable {Y U hU e hσ T B}
-
-end Bd
 
 section Flat
 

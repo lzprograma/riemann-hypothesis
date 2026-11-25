@@ -20,12 +20,10 @@ theorem indepToC_comp {K : Type*} [Field K] {σ : K →+* ℂ} {C C' : Type*} [A
 
 variable {D : D7} {T : Top D}
 
-set_option synthInstance.maxHeartbeats 400000 in
 def jRec (j : ℕ) (ka : WeightFamilies.Wt D j) :
     cutR T.C j ka →ₛₗ[T.σ₀] FDSec (T.U j T.σ₀).X :=
   (rdC (T.U j) T.σ₀ (wtA ka) ka.n).comp (Submodule.inclusion (cutR_le T.C j ka))
 
-set_option synthInstance.maxHeartbeats 400000 in
 theorem spanAt_rec (h : LawsP T) (j : ℕ) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (ka : WeightFamilies.Wt D j)
     (hJ : JInjRd T j (wtA ka) ka.n) (A : Set (FDSec (T.U j T.σ₀).X))
     (hG : holSub0 (T.U j T.σ₀).X (laU (T.U j T.σ₀) (wtA ka) ka.n) ≤ Submodule.span ℂ A)

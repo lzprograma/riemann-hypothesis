@@ -52,7 +52,6 @@ open scoped TensorProduct nonZeroDivisors Pointwise
 namespace GlobalTheory.FunObj.CosSB
 
 open GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.StdFrames Formalism.L2.Host Formalism.L2.DIV GlobalTheory.LatVac
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 variable {D : D7}
 
@@ -152,7 +151,6 @@ end GlobalTheory.FunObj.CosSB
 namespace GlobalTheory.FunObj.CosSB
 
 open GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.StdFrames Formalism.L2.Host Formalism.L2.DIV GlobalTheory.LatVac
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 theorem prod_pow_ne_bot {D : D7} (P : Finset (Pl D.host.E)) (n : ℕ) : (∏ w ∈ P, w.asIdeal ^ n) ≠ ⊥ := by
   rw [← Ideal.zero_eq_bot, Finset.prod_ne_zero_iff]
@@ -190,13 +188,12 @@ theorem isSBHalf_cosLoc : ∀ {D : D7} (S T : HSp D) (ΛS : Submodule (𝓞 D.ho
       exact zero_mem _
   choose kk hkk using hc1
   set c : ℕ := N ^ (Finset.univ.sup kk) with hcdef
-  have hc0 : 0 < c := pow_pos hN _
   have hc : ∀ i j, (c : Lev.EAf D) * (toEAf D e * Comparison₂.fr βT βS (r.map (toEAf D)) i j) ∈ OA D :=
     fun i j => hkk (i, j) _ (Finset.le_sup (f := kk) (Finset.mem_univ (i, j)))
   refine ⟨fun t ht => ?_, (a * c) * (b * Ideal.absNorm (∏ w ∈ P, w.asIdeal ^ n)), by positivity,
     fun u hu hh t => ?_, fun t ht => ?_⟩
   · by_contra h
-    exact ht (by unfold cosLoc; rw [if_neg fun H => h H.1])
+    exact ht (by unfold cosLoc; rw [ite_eq_right fun H => h H.1])
   · have hk : IsSmall P βT βS n (((a * c) * (b * Ideal.absNorm (∏ w ∈ P, w.asIdeal ^ n))) • u) := by
       refine isSmall_of_mem_hatMx hFS hFT P n ?_
       rw [mul_nsmul']
@@ -207,7 +204,7 @@ theorem isSBHalf_cosLoc : ∀ {D : D7} (S T : HSp D) (ΛS : Submodule (𝓞 D.ho
     exact ⟨fun h => by simpa using isSmall_sub h hk, fun h => isSmall_add h hk⟩
   · obtain ⟨hth, hts⟩ : IsHalf e t ∧ IsSmall P βT βS n (t - r) := by
       by_contra h
-      exact ht (by unfold cosLoc; rw [if_neg h])
+      exact ht (by unfold cosLoc; rw [ite_eq_right h])
     set X := Comparison₂.fr βT βS (t.map (toEAf D))
     set R := Comparison₂.fr βT βS (r.map (toEAf D))
     have hX : Comparison₂.fr βT βS ((c • t).map (toEAf D)) = (c : Lev.EAf D) • (toEAf D e • X) := by

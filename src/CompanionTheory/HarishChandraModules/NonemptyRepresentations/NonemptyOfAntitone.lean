@@ -116,7 +116,7 @@ theorem tpow_mulVec (b : Matrix (Fin k) (Fin k) ℂ) (I : {a // p a} → Fin k) 
   · simp [mul_comm]
   · intro J _ hJ
     obtain ⟨s, hs⟩ := Function.ne_iff.1 hJ
-    rw [Finset.prod_eq_zero (f := fun s => if J s = (σ s).1 then (1 : ℂ) else 0) (Finset.mem_univ s) (if_neg hs)]
+    rw [Finset.prod_eq_zero (f := fun s => if J s = (σ s).1 then (1 : ℂ) else 0) (Finset.mem_univ s) (ite_eq_right hs)]
     simp
   · simp
 
@@ -155,9 +155,9 @@ def wedge (hp : ∀ a b, a ≤ b → p b → p a) : HWRep k (fun a => if p a the
       · rw [Finset.sum_eq_single ⟨I s, h⟩]
         · simp
         · intro q' _ hq'
-          exact if_neg fun e => hq' (Subtype.ext e.symm)
+          exact ite_eq_right fun e => hq' (Subtype.ext e.symm)
         · simp
-      · rw [Finset.sum_eq_zero fun (q' : {a // p a}) _ => if_neg fun (e : I s = q'.1) => h (e ▸ q'.2)]
+      · rw [Finset.sum_eq_zero fun (q' : {a // p a}) _ => ite_eq_right fun (e : I s = q'.1) => h (e ▸ q'.2)]
         exact hb (show q.1 < I s from lt_of_not_ge fun hle => h (hp _ _ hle q.2))
     have ht : (Matrix.of fun q q' : {a // p a} => b q.1 q'.1).BlockTriangular id :=
       fun q q' h => hb (show q'.1 < q.1 from h)

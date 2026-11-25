@@ -20,10 +20,10 @@ variable {n : ℕ}
 theorem pmat_continuous (ε : Fin n → Bool) : Continuous (fun z : PCoord ε → ℂ => pmat z) := by
   refine continuous_matrix fun a b => ?_
   by_cases h1 : b < a ∧ ε a ≠ ε b
-  · simp only [pmat, dif_pos h1]; exact continuous_apply _
+  · simp only [pmat, dite_eq_left h1]; exact continuous_apply _
   · by_cases h2 : a < b ∧ ε b ≠ ε a
-    · simp only [pmat, dif_neg h1, dif_pos h2]; exact (continuous_apply _).star
-    · simp only [pmat, dif_neg h1, dif_neg h2]; exact continuous_const
+    · simp only [pmat, dite_eq_right h1, dite_eq_left h2]; exact (continuous_apply _).star
+    · simp only [pmat, dite_eq_right h1, dite_eq_right h2]; exact continuous_const
 
 theorem pb_trace_pow_herm {A : Matrix (Fin n) (Fin n) ℂ} (hA : A.IsHermitian) (j : ℕ) :
     (A ^ j).trace = ∑ a, ((hA.eigenvalues a : ℝ) : ℂ) ^ j := by

@@ -41,13 +41,6 @@ theorem levi_smul' {f : (Fin e → ℂ) → ℝ} {z : Fin e → ℂ} (c : ℝ) (
   simp only [ContinuousLinearMap.smul_apply, smul_eq_mul]
   ring
 
-private theorem levi_rsmul_lemma (φ : (Fin e → ℂ) → ℝ) (z w : Fin e → ℂ) (t : ℝ) :
-    levi φ z (t • w) = t ^ 2 * levi φ z w := by
-  unfold levi
-  rw [smul_comm Complex.I t w]
-  simp only [map_smul, ContinuousLinearMap.smul_apply, smul_eq_mul]
-  ring
-
 theorem chern_local (A : FinHolAtlas e X) (Θ L : LocPot X) (hΘ : IsPotential A Θ)
     (hpos : IsPosPot A Θ) (hL : IsPotential A L) (p : X) (j : Fin A.n)
     (hp : p ∈ (A.chart j).source) :
@@ -115,11 +108,11 @@ theorem chern_local (A : FinHolAtlas e X) (Θ L : LocPot X) (hΘ : IsPotential A
   have hM0 : 0 ≤ M := (abs_nonneg _).trans hH0
   have e1 : levi (L.φ p ∘ (A.chart j).symm) y u =
       ‖u‖ ^ 2 * levi (L.φ p ∘ (A.chart j).symm) y u0 := by
-    rw [← levi_rsmul_lemma]
+    rw [← levi_smul_dir]
     congr 1
   have e2 : levi (Θ.φ p ∘ (A.chart j).symm) y u =
       ‖u‖ ^ 2 * levi (Θ.φ p ∘ (A.chart j).symm) y u0 := by
-    rw [← levi_rsmul_lemma]
+    rw [← levi_smul_dir]
     congr 1
   rw [e1, e2, abs_mul, abs_of_nonneg (sq_nonneg _)]
   have hMc : M ≤ M / c * levi (Θ.φ p ∘ (A.chart j).symm) y u0 := by

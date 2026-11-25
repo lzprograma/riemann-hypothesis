@@ -78,7 +78,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open MeasureTheory Matrix GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.Grid GlobalTheory.Chain.RealIt GlobalTheory.Chain.IoLift
 open scoped TensorProduct InnerProductSpace Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.PairLift
 open GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension (kFin KVec KMap maxCpt rep_mem_kFin)
 open GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators GlobalTheory.IndefiniteRowSideFullHecke.BarMatrix GlobalTheory.PointAtPlaceHom
@@ -86,59 +85,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators GlobalTheo
 namespace GlobalTheory.PairLift.RuleLift
 
 variable {D : D7}
-
-section Emb
-
-variable {θ : InfFam D} {V : HSp D}
-
-theorem bounded (hP : GlobalTheory.Published.CuspRapidDecay) (hθ : IsInfFam θ) {φ : GA D V → ℂ} (h : IsCuspGrow θ V φ) :
-    ∃ B : ℝ, ∀ g, ‖φ g‖ ≤ B :=
-  (GlobalTheory.Grow.rapidDec_of_unifModGrowth hP hθ h.1 h.2.1 h.2.2.2 h.2.2.1).bounded
-
-theorem exists_embedding_skew (hP : GlobalTheory.Published.CuspRapidDecay) (θ : InfFam D) (V : HSp D) (μ : Measure (GA D V))
-    (𝓕 : Set (GA D V)) (hθ : IsInfFam θ) (hμ : μ.IsHaarMeasure) (h𝓕 : IsFundamentalDomain (GQ V) 𝓕 μ) :
-    ∃ E : (GA D V → ℂ) →ₗ[ℂ] Lp ℂ 2 (μ.restrict 𝓕), (∀ φ, IsCuspGrow θ V φ → MemLp φ 2 (μ.restrict 𝓕) ∧
-      (E φ = 0 → φ = 0)) ∧ ∀ τ, ∀ X ∈ lieAt V τ, ∀ φ φ', IsCuspGrow θ V φ → IsCuspGrow θ V φ' →
-        IsCuspGrow θ V (Rder θ V τ X φ) → IsCuspGrow θ V (Rder θ V τ X φ') →
-          ⟪E (Rder θ V τ X φ), E φ'⟫_ℂ + ⟪E φ, E (Rder θ V τ X φ')⟫_ℂ = 0 := by
-  obtain ⟨-, -, -, _, _, -, _⟩ := GlobalTheory.Mem.AdelicGroupTop.adelic_unitary_topology D V
-  have hfin := (GlobalTheory.CuspDecay.measure_lt_top GlobalTheory.Mem.VolFin.finVol V μ 𝓕 hμ h𝓕).ne
-  have : IsFiniteMeasure (μ.restrict 𝓕) := isFiniteMeasure_restrict.2 hfin
-  have := (GlobalTheory.Mem.AdelicGroupFund.rightInvariant_and_exists_fundamentalDomain D V μ hμ).1
-  obtain ⟨E, hE⟩ := GlobalTheory.Chain.CuspL2.exists_toLp_ext (μ.restrict 𝓕)
-  have mem : ∀ φ, IsCuspGrow θ V φ → MemLp φ 2 (μ.restrict 𝓕) := fun φ h => by
-    obtain ⟨B, hB⟩ := bounded hP hθ h
-    exact MemLp.of_bound h.1.cont.measurable.aestronglyMeasurable B (.of_forall hB)
-  refine ⟨E, fun φ h => ⟨mem φ h, fun h0 => ?_⟩, fun τ X hX φ φ' h h' hd hd' => ?_⟩
-  · have h1 := hE φ (mem φ h)
-    rw [h0] at h1
-    have h2 : φ =ᵐ[μ.restrict 𝓕] 0 := h1.symm.trans (Lp.coeFn_zero _ _ _)
-    have hm : MeasurableSet {g | φ g ≠ 0} := (isOpen_ne_fun h.1.cont continuous_const).measurableSet
-    have h3 : μ {g | φ g ≠ 0} = 0 := by
-      refine h𝓕.measure_zero_of_invariant _ (fun γ => ?_) ?_
-      · ext g
-        rw [Set.mem_smul_set_iff_inv_smul_mem]
-        change φ (((γ⁻¹ : GQ V) : GA D V) * g) ≠ 0 ↔ φ g ≠ 0
-        rw [h.1.left _ (γ⁻¹).2]
-      · rw [← Measure.restrict_apply hm]
-        exact h2
-    exact (Continuous.ae_eq_iff_eq μ h.1.cont continuous_zero).1 h3
-  · rw [GlobalTheory.Chain.CuspL2.inner_eq (hE _ (mem _ hd)) (hE _ (mem _ h')),
-      GlobalTheory.Chain.CuspL2.inner_eq (hE _ (mem _ h)) (hE _ (mem _ hd'))]
-    obtain ⟨c0, B0, hB0⟩ := GlobalTheory.Chain.CuspL2.conj_mul h.1.cont h'.1.cont (bounded hP hθ h) (bounded hP hθ h')
-    obtain ⟨c1, B1, hB1⟩ := GlobalTheory.Chain.CuspL2.conj_mul hd.1.cont h'.1.cont (bounded hP hθ hd) (bounded hP hθ h')
-    obtain ⟨c2, B2, hB2⟩ := GlobalTheory.Chain.CuspL2.conj_mul h.1.cont hd'.1.cont (bounded hP hθ h) (bounded hP hθ hd')
-    rw [← integral_add (Integrable.of_bound c1.measurable.aestronglyMeasurable B1 (.of_forall hB1))
-      (Integrable.of_bound c2.measurable.aestronglyMeasurable B2 (.of_forall hB2))]
-    exact GlobalTheory.Mem.IntByParts.setIntegral_deriv_eq_zero (GQ V) μ h𝓕 hfin
-      (Φ := fun g => (starRingEnd ℂ) (φ g) * φ' g)
-      (fun γ hγ g => by simp only [h.1.left γ hγ, h'.1.left γ hγ]) c0 (c1.add c2) hB0
-      (fun g => (norm_add_le _ _).trans (add_le_add (hB1 g) (hB2 g)))
-      (GlobalTheory.Mem.Lift.oneP_zero (V := V) (τ := τ) (X := X) hθ)
-      fun g t => (GlobalTheory.Mem.Lift.hasDerivAt_oneP hθ hX (GlobalTheory.Mem.Lift.hasDerivAt_Rder h.2.1 hX) g t).star.mul
-        (GlobalTheory.Mem.Lift.hasDerivAt_oneP hθ hX (GlobalTheory.Mem.Lift.hasDerivAt_Rder h'.2.1 hX) g t)
-
-end Emb
 
 variable {V W : HSp D} {S S' : D.what₂.Tau → SPar}
 
@@ -161,146 +107,6 @@ theorem exists_local {X : ProvA} (hX : ChosenSeries X) (h5 : GlobalTheory.Publis
   exact GlobalTheory.Chain.IoLift.KerTransfer.locKer_of_coverKer D V W S S' M M' τ _ _ _ _ _ _ _ _ e e' m m' aS aT U U' κ a' hm' hU hU' hκ ha'
     (GlobalTheory.Chain.IoLift.CoverKernel.coverKer_of_down X _ _ _ _ _ _ hR.down i1.2 (GlobalTheory.Chain.IoLift.UImg.unitaryImage _ _ _ _)
       (GlobalTheory.Chain.IoLift.finiteSupport_of_admissible _ _ _ _ _ _ i2.1) GlobalTheory.Chain.IoLift.TensorFormProof.tensorForm)
-
-variable {M : DSModel V S} {M' : DSModel W S'}
-
-theorem exists_factor_kFin (hdec : GlobalTheory.Published.CuspRapidDecay) {θ : InfFam D} (hθ : IsInfFam θ)
-    {aS aT : D.what₂.Tau → ℚ} {a : ∀ τ, Matrix (Fin V.rank) (Fin V.rank) ℂ → Module.End ℂ (kFin M τ)}
-    {a' : ∀ τ, Matrix (Fin W.rank) (Fin W.rank) ℂ → Module.End ℂ (kFin M' τ)} (ha : ∀ τ, IsKAct M τ (a τ))
-    (hirr : ∀ τ, AbsIrr fun X : lieAt V τ => a τ X) (hker : ∀ τ, LocKer M M' τ (aS τ) (aT τ) (a' τ))
-    (I : PolF D W.rank V.rank →ₗ[ℂ] KT M' →ₗ[ℂ] KT M) (B : PolF D W.rank V.rank →ₗ[ℂ] KT M' →ₗ[ℂ] (GA D V → ℂ))
-    (h0 : I ≠ 0) (hIs : ∀ τ, ∀ X ∈ lieAt V τ, ∀ φ y, I (srcOp M M' τ (aT τ) X φ) y = intersection_update_fsHerm_neg_one τ (a τ X) (I φ y))
-    (hIt : ∀ τ, ∀ Y ∈ lieAt W τ, ∀ φ y, I (tgtOp M M' τ (aS τ) Y φ) y + I φ (intersection_update_fsHerm_neg_one τ (a' τ Y) y) = 0)
-    (hBg : ∀ φ y, IsCuspGrow θ V (B φ y))
-    (hBs : ∀ τ, ∀ X ∈ lieAt V τ, ∀ φ y, B (srcOp M M' τ (aT τ) X φ) y = Rder θ V τ X (B φ y))
-    (hBt : ∀ τ, ∀ Y ∈ lieAt W τ, ∀ φ (y : KVec M'), B (tgtOp M M' τ (aS τ) Y φ) (PiTensorProduct.tprod ℂ y) +
-      B φ (intersection_update_fsHerm_neg_one τ (a' τ Y) (PiTensorProduct.tprod ℂ y)) = 0) :
-    (∃ T : KT M →ₗ[ℂ] (GA D V → ℂ), ∀ φ y, T (I φ y) = B φ y) ∧ Submodule.span ℂ {x | ∃ φ y, I φ y = x} = ⊤ := by
-  obtain ⟨μ, 𝓕, hμ, h𝓕⟩ := GlobalTheory.Ker.HypModel.exists_haar_fundDom D V
-  obtain ⟨E, hE0, hE⟩ := GlobalTheory.PairLift.RuleLift.exists_embedding_skew hdec θ V μ 𝓕 hθ hμ h𝓕
-  have s1 : ∀ τ X (p : D.what₂.Tau → LPol W.rank V.rank) x, glue (Function.update p τ (sOp M M' τ (aT τ) X x)) =
-      srcOp M M' τ (aT τ) X (glue (Function.update p τ x)) := fun τ X p x => by
-    rw [srcOp_glue, Function.update_idem, Function.update_self]
-  have s2 : ∀ τ Y (p : D.what₂.Tau → LPol W.rank V.rank) x, glue (Function.update p τ (tOp M M' τ (aS τ) Y x)) =
-      tgtOp M M' τ (aS τ) Y (glue (Function.update p τ x)) := fun τ X p x => by
-    rw [tgtOp_glue, Function.update_idem, Function.update_self]
-  have s3 : ∀ τ (A : Module.End ℂ (kFin M' τ)) (y : KVec M') z, PiTensorProduct.tprod ℂ (Function.update y τ (A z)) =
-      intersection_update_fsHerm_neg_one τ A (PiTensorProduct.tprod ℂ (Function.update y τ z)) := fun τ A y z => by
-    rw [position_tprod, Function.update_idem, Function.update_self]
-  have pI : ∀ τ L, IsContr τ L → ∀ p y,
-      IsLocPair M M' τ (aS τ) (aT τ) (a' τ) ((slice (multi I) τ p y).compr₂ L) := fun τ L hL p y => by
-    refine ⟨fun X hX P P' z z' => ?_, fun Y hY P z => ?_⟩
-    · have hL' := fun x => LinearMap.congr_fun (hL (a τ X)) x
-      simp only [LinearMap.comp_apply] at hL'
-      simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s1, hIs τ X hX, hL']
-      exact (ha τ).skew X hX _ _
-    · simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s2, s3]
-      rw [← map_add (f := _), hIt τ Y hY, map_zero]
-  have pB : ∀ τ p y, IsLocPair M M' τ (aS τ) (aT τ) (a' τ) ((slice (multi B) τ p y).compr₂ E) := fun τ p y => by
-    refine ⟨fun X hX P P' z z' => ?_, fun Y hY P z => ?_⟩
-    · simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s1, hBs τ X hX]
-      exact hE τ X hX _ _ (hBg _ _) (hBg _ _) (hBs τ X hX _ _ ▸ hBg _ _) (hBs τ X hX _ _ ▸ hBg _ _)
-    · simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s2, s3]
-      rw [← map_add (f := _), hBt τ Y hY, map_zero]
-  obtain ⟨⟨T, hT⟩, hs⟩ := exists_factor (fun τ (X : lieAt V τ) => sOp M M' τ (aT τ) X) _ hirr (multi I) (multi B)
-    (by by_contra hn; exact h0 (span_multi I fun p y => by_contra fun h => hn ⟨p, y, h⟩))
-    (fun τ X p y => by rw [multi_apply, multi_apply, ← srcOp_glue, hIs τ X X.2])
-    fun τ L hL p y hne => ⟨fun L' hL' p' y' => hker τ _ _ _ _ (pI τ L hL p y) (pI τ L' hL' p' y') hne,
-      fun p' y' n x z h => by
-        refine (hE0 _ (GlobalTheory.Chain.CuspGrowSpace.isCuspGrow_of_mem_span D θ V _ (sum_mem fun i _ => Submodule.subset_span (hBg _ _)))).2 ?_
-
-        rw [map_sum]
-        exact hker τ _ _ _ _ (pI τ L hL p y) (pB τ p' y') hne n x z h⟩
-  refine ⟨⟨T, fun φ y => ?_⟩, eq_top_iff.2 (hs ▸ Submodule.span_mono ?_)⟩
-  · have := span_multi (I.compr₂ T - B) fun p y => sub_eq_zero.2 (hT p y)
-    exact sub_eq_zero.1 (LinearMap.congr_fun₂ this φ y)
-  · rintro _ ⟨p, y, rfl⟩
-    exact ⟨_, _, rfl⟩
-
-theorem exists_mult (hG : GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension.ExtExists D) (hdec : GlobalTheory.Published.CuspRapidDecay) {θ : InfFam D}
-    (hθ : IsInfFam θ) (h : KSm M) (h' : KSm M')
-    {aS aT : D.what₂.Tau → ℚ} {a : ∀ τ, Matrix (Fin V.rank) (Fin V.rank) ℂ → Module.End ℂ (kFin M τ)}
-    {a' : ∀ τ, Matrix (Fin W.rank) (Fin W.rank) ℂ → Module.End ℂ (kFin M' τ)} (ha : ∀ τ, IsKAct M τ (a τ))
-    (ha' : ∀ τ, IsKAct M' τ (a' τ))
-    (hirr : ∀ τ, AbsIrr fun X : lieAt V τ => a τ X) (hker : ∀ τ, LocKer M M' τ (aS τ) (aT τ) (a' τ))
-    (It : PolF D W.rank V.rank →ₗ[ℂ] SmT M' →ₗ[ℂ] SmT M) (B : PolF D W.rank V.rank →ₗ[ℂ] SmT M' →ₗ[ℂ] (GA D V → ℂ))
-    {J : Set (GA D V)} {χ : GA D V → ℂ} (h0 : ∃ φ y, It φ (inclK h' y) ≠ 0)
-    (hK : ∀ τ (φ : PolF D W.rank V.rank), ∀ k ∈ maxCpt M τ, ∃ φ' : PolF D W.rank V.rank,
-      φ'.totalDegree ≤ φ.totalDegree ∧ ∀ v, inclT M (It φ' v) = actT M τ k (inclT M (It φ v)) ∧
-        B φ' v = rTr V (atTau θ V τ k) (B φ v))
-    (hIs : ∀ τ, ∀ X ∈ lieAt V τ, ∀ φ v, DerT M τ X (It φ v) (It (srcOp M M' τ (aT τ) X φ) v))
-    (hIt : ∀ τ, ∀ Y ∈ lieAt W τ, ∀ φ v v', DerT M' τ Y v v' → It (tgtOp M M' τ (aS τ) Y φ) v + It φ v' = 0)
-    (hBg : ∀ φ v, IsCuspGrow θ V (B φ v))
-    (hBs : ∀ τ, ∀ X ∈ lieAt V τ, ∀ φ v, B (srcOp M M' τ (aT τ) X φ) v = Rder θ V τ X (B φ v))
-    (hBt : ∀ τ, ∀ Y ∈ lieAt W τ, ∀ φ (v : M'.Vec) (w : M'.sm τ), (w : M'.H τ) = dRep (M'.rep τ) Y (v τ) →
-      B (tgtOp M M' τ (aS τ) Y φ) (PiTensorProduct.tprod ℂ v) +
-        B φ (PiTensorProduct.tprod ℂ (Function.update v τ w)) = 0)
-    (hlev : ∀ φ v, ∀ k ∈ J, ∀ g, B φ v (g * k) = χ k * B φ v g) :
-    ∃ u ∈ MultT θ M J χ, ∀ φ y, u (It φ (inclK h' y)) = B φ (inclK h' y) := by
-  have inj := inclK_injective h
-  obtain ⟨g, hg⟩ := LinearMap.exists_leftInverse_of_injective _ (LinearMap.ker_eq_bot.2 inj)
-  let I := (It.compl₂ (inclK h')).compr₂ g
-  have hI : ∀ φ y, inclK h (I φ y) = It φ (inclK h' y) := fun φ y => by
-    obtain ⟨z, hz⟩ := mem_range_inclK h (It φ (inclK h' y)) fun τ =>
-      ⟨(MvPolynomial.restrictTotalDegree _ ℂ φ.totalDegree).map (inclT M ∘ₗ It.flip (inclK h' y)), inferInstance,
-        fun k hk => by
-          obtain ⟨φ', h1, h2⟩ := hK τ φ k hk
-          exact ⟨φ', (MvPolynomial.mem_restrictTotalDegree _ _ _).2 h1, (h2 _).1⟩⟩
-    change inclK h (g (It φ (inclK h' y))) = _
-    rw [← hz, ← LinearMap.comp_apply g, hg, LinearMap.id_apply]
-  have hIs' : ∀ τ, ∀ X ∈ lieAt V τ, ∀ φ y, I (srcOp M M' τ (aT τ) X φ) y = intersection_update_fsHerm_neg_one τ (a τ X) (I φ y) :=
-    fun τ X hX φ y => inj (by
-      rw [hI]
-      exact derT_unique (hIs τ X hX φ _) (hI φ y ▸ (GlobalTheory.Chain.IoLift.FinTensor.kFinTensor D V S M τ h).2.1 _ (ha τ) X hX _))
-  obtain ⟨⟨T, hT⟩, hs⟩ := GlobalTheory.PairLift.RuleLift.exists_factor_kFin hdec hθ ha hirr hker I (B.compl₂ (inclK h'))
-    (fun e => by
-      obtain ⟨φ, y, h0⟩ := h0
-      exact h0 (by rw [← hI, e]; simp)) hIs'
-    (fun τ Y hY φ y => inj (by
-      rw [map_add (f := _), hI, hI, map_zero]
-      exact hIt τ Y hY φ _ _ ((GlobalTheory.Chain.IoLift.FinTensor.kFinTensor D W S' M' τ h').2.1 _ (ha' τ) Y hY _)))
-    (fun φ y => hBg _ _) (fun τ X hX φ y => hBs τ X hX _ _) fun τ Y hY φ y => by
-      rw [LinearMap.compl₂_apply, LinearMap.compl₂_apply, position_tprod, inclK_update, inclK_tprod]
-      exact hBt τ Y hY φ _ _ ((ha' τ).der Y hY _).deriv.symm
-  simp only [LinearMap.compl₂_apply] at hT
-  have hind : ∀ p : KT M → Prop, (∀ φ y, p (I φ y)) → (∀ x y, p x → p y → p (x + y)) → ∀ y, p y := by
-    intro p h1 h3 y
-    have hy : y ∈ Submodule.span ℂ {x | ∃ φ y, I φ y = x} := hs ▸ Submodule.mem_top
-    suffices ∀ c : ℂ, p (c • y) by simpa using this 1
-    induction hy using Submodule.span_induction with
-    | mem _ h => obtain ⟨P, x, rfl⟩ := h; intro c; rw [← map_smul]; exact h1 _ _
-    | zero => intro c; simpa using h1 0 0
-    | add _ _ _ _ a b => intro c; rw [smul_add]; exact h3 _ _ (a c) (b c)
-    | smul a _ _ h => intro c; rw [smul_smul]; exact h _
-  have hg : ∀ x, IsCuspGrow θ V (T x) := fun x => GlobalTheory.Chain.CuspGrowSpace.isCuspGrow_of_mem_span D θ V _ (hind (fun x => T x ∈ _)
-    (fun φ y => Submodule.subset_span (hT φ y ▸ hBg _ _)) (fun x y a b => by rw [map_add (f := _)]; exact add_mem a b) x)
-  obtain ⟨μ, 𝓕, hμ, h𝓕⟩ := GlobalTheory.Ker.HypModel.exists_haar_fundDom D V
-  obtain ⟨E, hE0, -⟩ := GlobalTheory.PairLift.RuleLift.exists_embedding_skew hdec θ V μ 𝓕 hθ hμ h𝓕
-  obtain ⟨U, ⟨hU, hUe⟩, -⟩ := hG θ hθ V S M J χ μ 𝓕 hμ h𝓕 (T.compMultilinearMap (PiTensorProduct.tprod ℂ))
-    ⟨fun u => (hg _).1, fun u => (hg _).2.1, fun u => (hg _).2.2.1, fun u => (hE0 _ (hg _)).1, fun u => (hg _).2.2.2,
-      fun u => hind (fun x => ∀ k ∈ J, ∀ g, T x (g * k) = χ k * T x g) (fun φ y => hT φ y ▸ hlev _ _)
-        (fun x y a b k hk g => by simp only [map_add (f := _), Pi.add_apply, a k hk g, b k hk g, mul_add]) _,
-      fun τ k hk u w hw => by
-        obtain rfl : w = kOp M τ hk (u τ) := Subtype.ext hw
-        rw [LinearMap.compMultilinearMap_apply, ← position_tprod]
-        refine hind (fun x => T (intersection_update_fsHerm_neg_one τ (kOp M τ hk) x) = rTr V (atTau θ V τ k) (T x)) (fun φ y => ?_)
-          (fun x y a b => by rw [map_add (f := _), map_add (f := _), map_add (f := _), a, b]; rfl) _
-        obtain ⟨φ', -, h2⟩ := hK τ φ k hk
-        rw [hT, ← (h2 _).2, ← hT]
-        refine congrArg T (inj ((tensorLaw D V S M).inj ?_))
-        rw [(GlobalTheory.Chain.IoLift.FinTensor.kFinTensor D V S M τ h).2.2, hI, hI, (h2 _).1],
-      fun τ X hX u w hw => by
-        obtain rfl : w = a τ X (u τ) := Subtype.ext (hw.trans ((ha τ).der X hX _).deriv)
-        rw [LinearMap.compMultilinearMap_apply, ← position_tprod]
-        refine hind (fun x => T (intersection_update_fsHerm_neg_one τ (a τ X) x) = Rder θ V τ X (T x)) (fun φ y => ?_)
-          (fun x y a b => by
-            rw [map_add (f := _), map_add (f := _), map_add (f := _), a, b, (GlobalTheory.Mem.AutSpace.linOnSm_Rder hX).add _ (hg _).2.1 _ (hg _).2.1]) _
-        rw [← hIs' τ X hX, hT, hT, hBs τ X hX]⟩
-  refine ⟨PiTensorProduct.lift U, ⟨U, Submodule.subset_span hU, rfl⟩, fun φ y => ?_⟩
-  have e : PiTensorProduct.lift U ∘ₗ inclK h = T := PiTensorProduct.ext (MultilinearMap.ext fun u => by
-    rw [LinearMap.compMultilinearMap_apply, LinearMap.comp_apply, inclK_tprod, PiTensorProduct.lift.tprod]
-    exact hUe _ u fun _ => rfl)
-  rw [← hI, ← hT, ← e, LinearMap.comp_apply]
 
 theorem signBlockDeterminant_zpow_eq_of_agree {n : ℕ} (ε : Fin n → Bool) (w : Bool → ℚ) {x x₀ : Bool → ℤ} (hx : ∀ j, (x (ε j) : ℚ) = w (ε j))
     (hx₀ : ∀ j, (x₀ (ε j) : ℚ) = w (ε j)) (e : Bool) (g : Matrix (Fin n) (Fin n) ℂ) :
@@ -432,7 +238,9 @@ theorem pairLifts (D : D7) (X : ProvA) (hI : Inputs D X) (hC : CuspAll D X) : Pa
       rw [hφ, hp]
 
       simp only [map_sum, map_smul]
-  obtain ⟨u, hu, hue⟩ := GlobalTheory.PairLift.RuleLift.exists_mult hI.ext.1 hI.decay hθ h h' ha ha' hirr hker It BF
+  obtain ⟨u, hu, hue⟩ := GlobalTheory.Chain.IoLift.exists_mult hI.ext.1 hθ
+    (fun _ hφ => (GlobalTheory.Grow.rapidDec_of_unifModGrowth hI.decay hθ hφ.1 hφ.2.1 hφ.2.2.2 hφ.2.2.1).bounded)
+    h h' ha ha' hirr hker It BF
     (J := ∅) (χ := 1)
     (by
       by_contra hn

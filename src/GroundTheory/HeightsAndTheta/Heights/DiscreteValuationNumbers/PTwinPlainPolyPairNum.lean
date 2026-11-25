@@ -51,13 +51,13 @@ theorem term_tail {N q : ℕ} (i : Fin N) (μ : Fin N →₀ ℕ) (t : Fin q →
       (X (Sum.inr j) : MvPolynomial (Fin (N + q) ⊕ Fin (N + q)) ℤ) ^ ν j) =
       ∏ j ∈ Finset.univ.filter (fun j => j < i), X (Sum.inr (Fin.castAdd q j)) ^ μ j := by
     rw [Finset.prod_filter, Finset.prod_filter, Fin.prod_univ_add]
-    simp only [hlt, if_false, Finset.prod_const_one, mul_one, hcc, hc]
+    simp only [hlt, ite_false, Finset.prod_const_one, mul_one, hcc, hc]
   have h3 : (∏ j ∈ Finset.univ.filter (fun j => Fin.castAdd q i < j),
       (X (Sum.inl j) : MvPolynomial (Fin (N + q) ⊕ Fin (N + q)) ℤ) ^ ν j) =
       (∏ j ∈ Finset.univ.filter (fun j => i < j), X (Sum.inl (Fin.castAdd q j)) ^ μ j) *
         ∏ j : Fin q, X (Sum.inl (Fin.natAdd N j)) ^ t j := by
     rw [Finset.prod_filter, Finset.prod_filter, Fin.prod_univ_add]
-    simp only [hgt, if_true, hcc, hc, hn]
+    simp only [hgt, ite_true, hcc, hc, hn]
   unfold term
   rw [h1, h3, hc i]
 

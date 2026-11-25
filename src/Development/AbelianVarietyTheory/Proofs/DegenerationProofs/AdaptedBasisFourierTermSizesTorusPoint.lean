@@ -67,9 +67,7 @@ public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.Exist
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH Classical
-attribute [local instance] SplitExt.free SplitExt.finite MvPolynomial.gradedAlgebra
 
 noncomputable section
 namespace GlobalTheory.TermSize
@@ -106,8 +104,8 @@ theorem exists_addValuation {p : ℕ} [hp : Fact p.Prime] {π : PadicAlgCl p} (h
   have mono : ∀ a b : ℚ, Real.exp (-(a * c)) ≤ Real.exp (-(b * c)) ↔ b ≤ a := fun a b => by
     rw [Real.exp_le_exp, neg_le_neg_iff, mul_le_mul_iff_left₀ hc, Rat.cast_le]
   let f : PadicAlgCl p → WithTop ℚ := fun x => if x = 0 then ⊤ else r x
-  have f0 : f 0 = ⊤ := if_pos rfl
-  have fn : ∀ x, x ≠ 0 → f x = r x := fun x hx => if_neg hx
+  have f0 : f 0 = ⊤ := ite_eq_left rfl
+  have fn : ∀ x, x ≠ 0 → f x = r x := fun x hx => ite_eq_right hx
   have key : ∀ x (q : ℚ), ((q : WithTop ℚ) ≤ f x ↔ ‖x‖ ≤ Real.exp (-(q * c))) ∧
       (f x ≤ (q : WithTop ℚ) ↔ Real.exp (-(q * c)) ≤ ‖x‖) := fun x q => by
     by_cases hx : x = 0

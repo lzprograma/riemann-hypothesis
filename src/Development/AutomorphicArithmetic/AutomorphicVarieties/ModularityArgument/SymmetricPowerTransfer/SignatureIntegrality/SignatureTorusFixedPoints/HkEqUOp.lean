@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomSum
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.UnitaryHyperbolicOrbitCount
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwLeviMul
@@ -60,47 +61,7 @@ private theorem sum_reps {I : Subgroup G} (F : LeviFact I) (a : G) (hI : HeckePa
     (hs' : ∀ x ∈ F.Uf ⊓ I, ∃! u, u ∈ s ∧ a⁻¹ * (u⁻¹ * x) * a ∈ I)
     {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] (ρ : Representation A G M) (v : fixd ρ I) :
     (hk ρ I a v : M) = ∑ u ∈ s, ρ (u * a) v := by
-  classical
-  obtain ⟨-, h2, -⟩ := hkApply A G M ρ I I a (hI a)
-  have hsm : ∀ g : I, g • (a : G ⧸ I) = ((g * a : G) : G ⧸ I) := fun g => rfl
-  have hg' : ∀ g ∈ I, ∃ u ∈ F.Uf ⊓ I, ((g * a : G) : G ⧸ I) = ((u * a : G) : G ⧸ I) := by
-    intro g hg
-    obtain ⟨u, hu, m, hm, l, hl, rfl⟩ := F.fact g hg
-    refine ⟨u, hu, ?_⟩
-    rw [QuotientGroup.eq]
-    have e : (u * m * l * a)⁻¹ * (u * a) = (a⁻¹ * l * a)⁻¹ * (a⁻¹ * m * a)⁻¹ := by group
-    rw [e]
-    exact I.mul_mem (I.inv_mem (hp.2.2 l hl)) (I.inv_mem (hn m hm).2)
-  show (hk2 ρ I I a v : M) = _
-  rw [h2 (s.image (· * a)) ?_ ?_ v, Finset.sum_image]
-  · intro x _ y _ hxy
-    exact mul_right_cancel hxy
-  · intro y hy
-    obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hy
-    exact ⟨⟨u, (hs u hu).2⟩, hsm _⟩
-  · intro q hq
-    obtain ⟨⟨g, hg⟩, rfl⟩ := hq
-    obtain ⟨u', hu', he⟩ := hg' g hg
-    obtain ⟨u, ⟨hus, hui⟩, huniq⟩ := hs' u' hu'
-    have hq : ((u * a : G) : G ⧸ I) = ((u' * a : G) : G ⧸ I) := by
-      rw [QuotientGroup.eq]
-      have e : (u * a)⁻¹ * (u' * a) = a⁻¹ * (u⁻¹ * u') * a := by group
-      rw [e]
-      exact hui
-    refine ⟨u * a, ⟨Finset.mem_image_of_mem _ hus, ?_⟩, ?_⟩
-    · show ((u * a : G) : G ⧸ I) = ((g * a : G) : G ⧸ I)
-      rw [he, hq]
-    · rintro y ⟨hy, hyq⟩
-      obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hy
-      change ((w * a : G) : G ⧸ I) = ((g * a : G) : G ⧸ I) at hyq
-      have hw' : w = u := by
-        apply huniq w
-        refine ⟨hw, ?_⟩
-        rw [he] at hyq
-        have e : a⁻¹ * (w⁻¹ * u') * a = (w * a)⁻¹ * (u' * a) := by group
-        rw [e, ← QuotientGroup.eq]
-        exact hyq
-      simp [hw']
+  apply _root_.domSum_gen <;> assumption
 
 private theorem hk_eq_uOp (D : Iwa G) {I : Subgroup G} (F : LeviFact I) (a : G) (hI : HeckePair I)
     (hp : F.Pos a) (hn : F.NormJ a) (hU : F.Uf ⊓ I = D.N)

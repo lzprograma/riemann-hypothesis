@@ -3,48 +3,10 @@ module
 public import Formalism.SharpRestriction.ParConsts
 public import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
 public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -163,22 +125,6 @@ def HidaSetting : Prop :=
     ∀ τ ∈ tops D, 0 ≤ (D.fm u).bTop τ
 
 def admS : Prop := (D.mem u).C.StabZero
-
-def TrIso : Prop :=
-  ∀ i, i ≤ D.R.m → ∀ v c, ∀ φ ∈ (D.fm u).Fi i, ∀ ψ ∈ (D.fm u).Fi i,
-    (∀ x : (D.fm u).lv i v c, (D.fm u).fv i v c x = 1 →
-      (D.fm u).ipV i c ((D.fm u).upT i v c x (φ ((D.fm u).up i v c x))) ((D.fm u).upT i v c x (ψ ((D.fm u).up i v c x))) =
-        (D.fm u).ipV i ((D.fm u).up i v c x) (φ ((D.fm u).up i v c x)) (ψ ((D.fm u).up i v c x))) ∧
-    (∀ g : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk i v c), g ≠ 0 →
-      (D.fm u).ipV i c ((D.fm u).dnT i v c g (φ ((D.fm u).dn i v c g))) ((D.fm u).dnT i v c g (ψ ((D.fm u).dn i v c g))) =
-        (D.fm u).ipV i ((D.fm u).dn i v c g) (φ ((D.fm u).dn i v c g)) (ψ ((D.fm u).dn i v c g))) ∧
-    ∀ a : ((D.mem u).A.Fv v)ˣ,
-      (D.fm u).ipV i c ((D.fm u).dilT i v a c (φ ((D.fm u).dil i v a c))) ((D.fm u).dilT i v a c (ψ ((D.fm u).dil i v a c))) =
-        (D.fm u).ipV i ((D.fm u).dil i v a c) (φ ((D.fm u).dil i v a c)) (ψ ((D.fm u).dil i v a c))
-
-def DiaMul : Prop :=
-  ∀ i, i ≤ D.R.m → ∀ v, ∀ φ ∈ (D.fm u).Fi i,
-    dia D u i v 1 φ = φ ∧ ∀ a b, dia D u i v (a * b) φ = dia D u i v a (dia D u i v b φ)
 
 def Conclusion1 : Prop :=
   (∀ i, i ≤ D.R.m → ∀ v, ∀ φ ∈ (D.fm u).Fi i,
@@ -487,15 +433,6 @@ structure Pend where
   pt_co : ∀ w, ∀ z ∈ (D.fm u).ptC, (∃ y ∈ (D.fm u).SP w, (D.fm u).ptEmb y = z) ↔ ∀ c, coP w z c ∈ IntSpan D w (D.fm u).sg
 
   gP : D.what₂.places.Pl → (D.fm u).clsP → D.what₂.Tau → GL (Fin (D.R.N D.R.m - 1)) ℂ
-
-  ipV_co : ∀ w c, ∀ φ ∈ (D.fm u).Fi D.R.m, ((D.fm u).ipV D.R.m ((D.fm u).til c) (φ ((D.fm u).til c)) (φ ((D.fm u).til c))).re =
-    (nfAll ((D.fm u).lam D.R.m)
-      (blk (fun τ => sqAct ℂ _ (lamTr D u τ) (gFull D u (gP w c τ))) (coM w c (φ ((D.fm u).til c))))
-      (blk (fun τ => sqAct ℂ _ (lamTr D u τ) (gFull D u (gP w c τ))) (coM w c (φ ((D.fm u).til c))))).re
-
-  re_petersson_self_eq_sum_coord : ∀ w, ∀ z ∈ (D.fm u).ptC, ((D.fm u).ipP z z).re = ∑ c, ((Nat.card ((D.fm u).stabilizer₂ c) : ℝ))⁻¹ *
-    (nfAll (D.fm u).sg (blk (fun τ => sqAct ℂ _ (sgTr D u τ) (gP w c τ)) (coP w z c))
-      (blk (fun τ => sqAct ℂ _ (sgTr D u τ) (gP w c τ)) (coP w z c))).re
 
   beOn_eq : ∀ τ, (D.fm u).beOn τ = opNorm D u τ (br τ)
 

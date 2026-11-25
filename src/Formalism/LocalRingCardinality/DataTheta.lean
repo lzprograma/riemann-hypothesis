@@ -3,48 +3,7 @@ module
 public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
 public import Formalism.FormalDegreeBessel.StatementG
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -298,13 +257,13 @@ theorem X_mul_pderiv_monomial {σ : Type*} [DecidableEq σ] (l : σ) (α : σ �
 
 theorem omE_pos {p q r s : ℕ} (l : Ln p q r s) (hl : linePos l = true) (α : Ln p q r s →₀ ℕ) :
     omE l l (monomial α 1) = (((α l : ℕ) : ℂ) + 1 / 2) • monomial α 1 := by
-  simp only [omE, raiB, lowB, hl, if_true]
+  simp only [omE, raiB, lowB, hl, ite_true]
   show (X l : Pol p q r s) * pderiv l (monomial α (1 : ℂ)) + (1 / 2 : ℂ) • monomial α (1 : ℂ) = _
   rw [X_mul_pderiv_monomial, add_smul]
 
 theorem omE_neg {p q r s : ℕ} (l : Ln p q r s) (hl : linePos l = false) (α : Ln p q r s →₀ ℕ) :
     omE l l (monomial α 1) = (-(((α l : ℕ) : ℂ) + 1 / 2)) • monomial α 1 := by
-  simp only [omE, raiB, lowB, hl, if_true, Bool.false_eq_true, if_false]
+  simp only [omE, raiB, lowB, hl, ite_true, Bool.false_eq_true, ite_false]
   show -(pderiv l ((X l : Pol p q r s) * monomial α (1 : ℂ))) + (1 / 2 : ℂ) • monomial α (1 : ℂ) = _
   rw [Derivation.leibniz, pderiv_X_self, smul_eq_mul, smul_eq_mul, X_mul_pderiv_monomial, mul_one]
   module
@@ -517,8 +476,6 @@ namespace Formalism.BasicNotions
 
 open MeasureTheory
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace TH
 
 abbrev HSp (D : D7) : Type 1 := HSpace D.host.E
@@ -576,11 +533,6 @@ def Dpar (j : ℕ) (τ : D.what₂.Tau) : SPar :=
   ((Finset.univ.filter fun i : Fin D.R.m => i.1 < j).biUnion fun i =>
     (block (-P.e τ i) P.t).image fun x => (x, true))).image
       fun x => (x.1 + (if Odd j then P.eta τ else 0), x.2)
-
-def Xpar (j : ℕ) (τ : D.what₂.Tau) : SPar :=
-  (Finset.univ.image fun i : Fin D.R.k => (P.u τ i, true)) ∪
-  ((Finset.univ.filter fun i : Fin D.R.m => i.1 < j).biUnion fun i =>
-    (block (-P.e τ i) (P.t + 1)).image fun x => (x, true))
 
 end TPar
 

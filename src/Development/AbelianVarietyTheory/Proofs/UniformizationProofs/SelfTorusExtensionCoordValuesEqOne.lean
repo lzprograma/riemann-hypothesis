@@ -70,7 +70,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValua
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 
@@ -579,8 +578,3 @@ theorem exists_degData (hC : CubeSt) {R : Type} [CommRing R] [IsDomain R] [IsLoc
       ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (vt _ _ y J hJ) (vt _ _ y J hJ))).symm
 
 end GlobalTheory.SelfUnif
-
-namespace GlobalTheory
-
-
-end GlobalTheory

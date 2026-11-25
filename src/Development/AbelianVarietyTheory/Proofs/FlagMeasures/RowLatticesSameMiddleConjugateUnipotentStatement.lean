@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FrameTermCountSublatticeBoundStatement
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameFixingIsometrySplitRowLatticeStatement
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitRowLatticeMiddleIffGluedLatticeStatement
@@ -54,7 +55,6 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -92,30 +92,8 @@ theorem rowsLift_Lsub_gmap (F : LFlag S r T) (Λ : Submodule (𝓞 E) S.V) (n : 
     (hi : n ∈ Formalism.HermitianLatticesTheory.isom S.hT) (hn : ∀ x ∈ Xsp F, n x = x)
     (hq : ∀ x ∈ orth S (Xsp F), n x - x ∈ Xsp F) :
     Lsub (Formalism.HermitianLatticesTheory.gmap n Λ) F = Lsub Λ F := by
-  ext y
-  unfold Lsub Lrep
-  constructor
-  · intro hy
-    obtain ⟨hy1, hyO⟩ := Submodule.mem_inf.mp hy
-    obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hy1
-    obtain ⟨ha1, haO⟩ := Submodule.mem_inf.mp ha
-    obtain ⟨l, hl, rfl⟩ := Submodule.mem_map.mp ha1
-    have hlO : l ∈ orth S (Xsp F) := (_root_.GlobalTheory.LoopC.RowSplit.orth_iff _ n hi hn l).mp haO
-    have hd : n l - l ∈ Xsp F := hq l hlO
-    refine Submodule.mem_inf.mpr ⟨Submodule.mem_sup.mpr
-      ⟨l, Submodule.mem_inf.mpr ⟨hl, hlO⟩, (n l - l) + b, (toO S (Xsp F)).add_mem hd hb, ?_⟩, hyO⟩
-    show l + (n l - l + b) = n l + b
-    abel
-  · intro hy
-    obtain ⟨hy1, hyO⟩ := Submodule.mem_inf.mp hy
-    obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hy1
-    obtain ⟨hl, haO⟩ := Submodule.mem_inf.mp ha
-    have hnO : n a ∈ orth S (Xsp F) := (_root_.GlobalTheory.LoopC.RowSplit.orth_iff _ n hi hn a).mpr haO
-    have hd : n a - a ∈ Xsp F := hq a haO
-    refine Submodule.mem_inf.mpr ⟨Submodule.mem_sup.mpr
-      ⟨n a, Submodule.mem_inf.mpr ⟨Submodule.mem_map.mpr ⟨a, hl, rfl⟩, hnO⟩, b - (n a - a),
-        (toO S (Xsp F)).sub_mem hb hd, ?_⟩, hyO⟩
-    abel
+  intros
+  apply _root_.GlobalTheory.LoopC.FrCount.Lsub_gmap <;> assumption
 
 theorem rowsLift_cancel (X W : Submodule E S.V) (hXW : ∀ x ∈ X, x ∈ W → x = 0)
     (A B : Submodule (𝓞 E) S.V) (h : (A ⊓ toO S W) ⊔ toO S X = (B ⊓ toO S W) ⊔ toO S X) :
@@ -246,7 +224,6 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 end -- clump:auto
 end -- clump:auto

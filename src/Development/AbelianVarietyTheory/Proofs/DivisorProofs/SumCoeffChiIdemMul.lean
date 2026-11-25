@@ -71,9 +71,9 @@ theorem sum_coeff_chiIdem_mul {K : Type} [Field K] [CharZero K] {G : Type} [Grou
   rw [hsum, hc]
   by_cases h : φ = χ
   · subst h
-    rw [if_pos rfl, if_pos rfl, mul_div_cancel_left₀ _ hG]
+    rw [ite_eq_left rfl, ite_eq_left rfl, mul_div_cancel_left₀ _ hG]
   · have h' : ¬ χ = φ := fun e => h e.symm
-    rw [if_neg h', if_neg h, zero_div]
+    rw [ite_eq_right h', ite_eq_right h, zero_div]
 
 theorem sum_coeff_idemOf_mul : ∀ (K : Type) [Field K] [CharZero K] (G : Type) [Group G] [Fintype G] (X : Finset (G → K)), (∀ χ ∈ X, IsAbsIrrChar χ) → ∀ χ ∈ X, ∑ g : G, (idemOf X).coeff g * χ g = χ 1 := by
   intro K _ _ G _ _ X hX χ hχ

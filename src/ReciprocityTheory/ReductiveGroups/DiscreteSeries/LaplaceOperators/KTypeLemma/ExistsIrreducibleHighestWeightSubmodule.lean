@@ -35,7 +35,7 @@ theorem highest_weight_dominant_of_unitary (hA : IsGlRep A) (hU : IsKUnitary ε 
     (hy : IsKHWVec ε A ν y) (hy0 : y ≠ 0) {a b : Fin n} (hab : a < b) (he : ε a = ε b) :
     ν b ≤ ν a := by
   have hc := hA a b b a
-  rw [if_pos rfl, if_pos rfl] at hc
+  rw [ite_eq_left rfl, ite_eq_left rfl] at hc
   have h1 : A a b (A b a y) = ((ν a - ν b : ℝ) : ℂ) • y := by
     have := congrArg (fun T : Module.End ℂ X => T y) hc
     simp only [LinearMap.sub_apply, Module.End.mul_apply, hy.2 a b hab he, map_zero, sub_zero] at this

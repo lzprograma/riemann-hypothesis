@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridNuUnitTrivial
 public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemPrincipalCongruenceLevelSubgroupIffIntegralCo
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfIdem
@@ -70,15 +71,7 @@ theorem inc_mul_mem_hatId {I J : Ideal (𝓞 D.host.E)} {b : 𝓞 D.host.E} (hb 
 
 theorem sgA_mem_hatId {𝔪 : Ideal (𝓞 D.host.E)} {y : AE D} (hy : y ∈ hatId D 𝔪) :
     sgA D y ∈ hatId D (D.host.conj • 𝔪) := by
-  induction hy using AddSubgroup.closure_induction with
-  | mem x hx =>
-    obtain ⟨c, hc, s, hs, rfl⟩ := hx
-    refine AddSubgroup.subset_closure ⟨D.host.conj • c, Ideal.smul_mem_pointwise_smul _ _ _ hc, sgA D s,
-      VacMove.sgA_mem D hs, ?_⟩
-    rw [map_mul, GlobalTheory.NormSum.PtsMem.sgA_inc]; rfl
-  | zero => rw [map_zero]; exact zero_mem _
-  | add _ _ _ _ h1 h2 => rw [map_add]; exact add_mem h1 h2
-  | neg _ _ h => rw [map_neg]; exact neg_mem h
+  apply _root_.GlobalTheory.BotPairSmall.CondNu.sgA_mem_hatId <;> assumption
 
 theorem prod_sub_prod_mem {𝔪 : Ideal (𝓞 D.host.E)} {ι : Type*} (s : Finset ι) (f g : ι → AE D)
     (hf : ∀ i ∈ s, f i ∈ OhE D) (hg : ∀ i ∈ s, g i ∈ OhE D) (h : ∀ i ∈ s, f i - g i ∈ hatId D 𝔪) :

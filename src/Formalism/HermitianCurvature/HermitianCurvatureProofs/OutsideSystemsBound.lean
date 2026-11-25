@@ -2,18 +2,6 @@ module
 
 public import Formalism.HermitianCurvature.StatementJ
 import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -320,20 +308,20 @@ theorem t_UniformMajorant : UniformMajorant := by
     obtain ⟨Th, hOk⟩ := hyp (u.biUnion id)
     have hOk' : (LocSys.mk N (fun t h h' => if h ∈ u.biUnion id ∧ h' ∈ u.biUnion id then Th t h h' else 0)
         B L L').Ok (u.biUnion id) :=
-      ok_congr (fun t x hx y hy => by rw [if_pos ⟨hx, hy⟩]) hOk
+      ok_congr (fun t x hx y hy => by rw [ite_eq_left ⟨hx, hy⟩]) hOk
     refine ⟨_, ?_, Set.mem_iInter₂.2 fun F hF => ok_mono (subset_biUnion_of_mem id hF) hOk'⟩
     intro t _ h _ h' _
     rw [mem_closedBall_zero_iff]
     beta_reduce
     by_cases hc : h ∈ u.biUnion id ∧ h' ∈ u.biUnion id
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       have hOk2 := hOk
       simp only [LocSys.Ok] at hOk2
       have a0 := psd_off (hOk2.2.2.2.1 t) hc.1 hc.2
       have a1 := (hdiag _ Th hOk t h hc.1).2
       have a2 := (hdiag _ Th hOk t h' hc.2).2
       linarith
-    · rw [if_neg hc, norm_zero]; exact add_nonneg (hB h) (hB h')
+    · rw [ite_eq_right hc, norm_zero]; exact add_nonneg (hB h) (hB h')
 
 theorem psd_pull {α β : Type} {G : Finset β} {F : Finset α} (f : G → F) {k : α → α → ℂ}
     {k' : β → β → ℂ} (h : ∀ x y : G, k' x y = k (f x) (f y)) (hk : TB.PSDOn F k) : TB.PSDOn G k' := by
@@ -363,8 +351,8 @@ theorem t_UniformMajorantOn : UniformMajorantOn := by
   let Th : E → α → α → ℂ := fun t h h' =>
     if hh : h ∈ A ∧ h' ∈ A then Th' t ⟨h, hh.1⟩ ⟨h', hh.2⟩ else 0
   have hT : ∀ t x y (hx : x ∈ A) (hy : y ∈ A), Th t x y = Th' t ⟨x, hx⟩ ⟨y, hy⟩ :=
-    fun t x y hx hy => dif_pos ⟨hx, hy⟩
-  have hz : ∀ t x y, ¬ (x ∈ A ∧ y ∈ A) → Th t x y = 0 := fun t x y h => dif_neg h
+    fun t x y hx hy => dite_eq_left ⟨hx, hy⟩
+  have hz : ∀ t x y, ¬ (x ∈ A ∧ y ∈ A) → Th t x y = 0 := fun t x y h => dite_eq_right h
   have part1 : ∀ F : Finset α, (∀ h ∈ F, h ∈ A) → (LocSys.mk N Th B L L').Ok F := by
     intro F hF
     obtain ⟨g1, g2, g3, g4, g5, g6⟩ := hTh' (F.subtype (· ∈ A))
@@ -429,13 +417,13 @@ theorem t_OutsideDomination : OutsideDomination := by
   refine psd_congr (fun x _ y _ => ?_) this
   congr 1
   by_cases h : t ∈ ⨅ p, L p
-  · rw [if_pos h]
-    exact Finset.prod_eq_one fun p _ => if_pos (AddSubgroup.mem_iInf.1 h p)
-  · rw [if_neg h]
+  · rw [ite_eq_left h]
+    exact Finset.prod_eq_one fun p _ => ite_eq_left (AddSubgroup.mem_iInf.1 h p)
+  · rw [ite_eq_right h]
     rw [AddSubgroup.mem_iInf] at h
     push Not at h
     obtain ⟨p, hp⟩ := h
-    exact Finset.prod_eq_zero (Finset.mem_univ p) (if_neg hp)
+    exact Finset.prod_eq_zero (Finset.mem_univ p) (ite_eq_right hp)
 
 theorem t_PhaseOk : PhaseOk := by
   intro E α _ d S F hd hS

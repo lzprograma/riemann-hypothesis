@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JDiagExists
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableOfDecay4
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
@@ -10,48 +11,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgrou
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RankOneEmbeddings
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingDecay
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -174,13 +133,13 @@ theorem weight_annulus (k : ℕ) {T T' : ℝ} (hTT : 0 ≤ T * T') :
       _ ≤ ∫⁻ ζ in A', rbW k T T' ζ := by
         refine setLIntegral_mono (measurable_radial_weight k _ _) fun ζ hζ => ?_
         unfold rbW B2.zWeight
-        rw [if_pos (by linarith [hζ.1])]
+        rw [ite_eq_left (by linarith [hζ.1])]
         exact ENNReal.ofReal_le_ofReal (pow_le_pow_left₀ (by norm_num) (by linarith [hζ.1]) _)
       _ ≤ ∫⁻ ζ in A, rbW k T T' ζ := lintegral_mono_set hA'A
   · calc ∫⁻ ζ in A, rbW k T T' ζ ≤ ∫⁻ _ in A, (1 : ℝ≥0∞) := by
           refine setLIntegral_mono measurable_const fun ζ hζ => ?_
           unfold rbW B2.zWeight
-          rw [if_pos hζ.1.le]
+          rw [ite_eq_left hζ.1.le]
           rw [ENNReal.ofReal_le_one]
           exact pow_le_one₀ (by linarith [hζ.1]) (by linarith [hζ.2])
       _ = volume A := by rw [setLIntegral_const, one_mul]
@@ -253,25 +212,7 @@ section exist
 
 theorem haar_smul {k r : ℕ} {U : Set (B.Mat k r)} {μ : Measure (Mt k r)} (h : B.IsHaarOn U μ) {c : ℝ≥0∞}
     (hc0 : c ≠ 0) (hcT : c ≠ ∞) : B.IsHaarOn U (c • μ) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · rw [Measure.smul_apply, h.conc, smul_zero]
-  · intro a ha
-    have hcont : Continuous (lmulM a : Mt k r → Mt k r) := by
-      unfold lmulM
-      exact continuous_const.matrix_mul (continuous_id (X := B.Mat k r))
-    rw [Measure.map_smul c hcont.measurable.aemeasurable, h.left a ha]
-  · intro a ha
-    have hcont : Continuous (B.rmulF a) := by
-      unfold B.rmulF
-      exact (continuous_id (X := B.Mat k r)).matrix_mul continuous_const
-    rw [Measure.map_smul c hcont.measurable.aemeasurable, h.right a ha]
-  · intro K hK
-    rw [Measure.smul_apply, smul_eq_mul]
-    exact ENNReal.mul_lt_top (lt_top_iff_ne_top.2 hcT) (h.finite_compact K hK)
-  · intro h0
-    apply h.ne_zero
-    have := congrArg (fun ν : Measure (Mt k r) => c⁻¹ • ν) h0
-    simpa [smul_smul, ENNReal.inv_mul_cancel hc0 hcT] using this
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.isHaarOn_smul_of <;> assumption
 
 theorem zetaNormExists : Formalism.FourierDecayAlt.P.PBO.ZetaNormExists := by
   intro k r Wp Wq _ _ _ _ Bs

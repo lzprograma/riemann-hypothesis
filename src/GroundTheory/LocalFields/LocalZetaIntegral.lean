@@ -147,7 +147,7 @@ theorem integrable_localZeta (hf : f ∈ schwartzBruhat K) (hχ : Continuous χ)
     refine hasSum_int_of_shift M (fun k hk => by simp [a, not_le.mpr hk]) ?_
     have e : (fun n : ℕ => a (M + n)) = fun n : ℕ => C * ρ ^ M * ρ ^ n := by
       funext n
-      simp only [a, le_add_iff_nonneg_right, Nat.cast_nonneg, if_true]
+      simp only [a, le_add_iff_nonneg_right, Nat.cast_nonneg, ite_true]
       rw [zpow_add₀ hρ0.ne', zpow_natCast, mul_assoc]
     rw [e]
     exact (hasSum_geometric_of_lt_one hρ0.le hρ1).mul_left _
@@ -220,24 +220,24 @@ theorem localZeta_eq_sum (hf : f ∈ schwartzBruhat K) (hχ : Continuous χ) {M 
         · simp [not_lt.mpr hk])
     convert this using 1
     refine Finset.sum_congr rfl fun k hk => ?_
-    rw [if_pos (Finset.mem_Ico.mp hk).2]
+    rw [ite_eq_left (Finset.mem_Ico.mp hk).2]
   have h2 : HasSum (fun k => if k < N then 0 else Z k * T ^ k)
       (if IsUnramifiedChar χ then f 0 * (α * T) ^ N * (1 - α * T)⁻¹ else 0) := by
     by_cases hu : IsUnramifiedChar χ
-    · rw [if_pos hu]
+    · rw [ite_eq_left hu]
       refine hasSum_int_of_shift N (fun k hk => by simp [hk]) ?_
       have e : (fun n : ℕ => if N + (n : ℤ) < N then 0 else Z (N + n) * T ^ (N + (n : ℤ))) =
           fun n : ℕ => f 0 * (α * T) ^ N * (α * T) ^ n := by
         funext n
-        rw [if_neg (by omega), hhigh _ (by omega), if_pos hu, mul_assoc, ← mul_zpow,
+        rw [ite_eq_right (by omega), hhigh _ (by omega), ite_eq_left hu, mul_assoc, ← mul_zpow,
           zpow_add₀ hαT0, zpow_natCast, mul_assoc]
       rw [e]
       exact (hasSum_geometric_of_norm_lt_one hαT).mul_left _
-    · rw [if_neg hu]
+    · rw [ite_eq_right hu]
       convert hasSum_zero with k
       split_ifs with hk
       · rfl
-      · rw [hhigh k (not_lt.mp hk), if_neg hu, mul_zero, zero_mul]
+      · rw [hhigh k (not_lt.mp hk), ite_eq_right hu, mul_zero, zero_mul]
   have h12 := h1.add h2
   have e : (fun k => (if k < N then Z k * T ^ k else 0) + (if k < N then 0 else Z k * T ^ k)) =
       fun k => Z k * T ^ k := by

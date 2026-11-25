@@ -109,8 +109,4 @@ theorem gap_mono {k : ℕ} {ε : Fin k → Bool} {lam : Fin k → ℝ} {a b : �
 
 end GlobalTheory.SepReal.RealAsm
 
-namespace GlobalTheory.SepReal
-
-end GlobalTheory.SepReal
-
 end

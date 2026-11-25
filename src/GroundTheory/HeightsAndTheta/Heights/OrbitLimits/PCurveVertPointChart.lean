@@ -23,10 +23,21 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo CurveVerticalPointCha
 
 noncomputable section
 
-theorem CurveVertPointChart.proof (hF : CurveRingFinite.Statement) (hCP : CurveClosedPointChart.Statement) :
-    CurveVertPointChart.Statement := by
+theorem CurveVertPointChart.of_single {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
+    {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {s : MRing ι} {d : K → ℕ}
+    (hy : IsArithVar (mCoordIdeal y) 1) (hs : IsMultiHomog s d) (hsP : s ∉ mCoordIdeal y)
+    (hF : Module.Finite ℤ (curveRing y))
+    (hCP : ∀ m : Ideal (curveRing y), m.IsMaximal →
+      ∃ c : ∀ k, ι k, (∀ k, y ⟨k, c k⟩ ≠ 0) ∧
+        ∀ p : Σ k, ι k, ∃ a b : curveRing y, b ∉ m ∧ (b : Ω) * (y p / y ⟨p.1, c p.1⟩) = a)
+    {W : Ideal (MRing ι)} (hW : W ∈ divSupp (mCoordIdeal y) s) (c : ∀ k, ι k)
+    (hc : ∀ k, (X ⟨k, c k⟩ : MRing ι) ∉ W) :
+    (curvePtIdeal y W).IsMaximal ∧
+    (∀ p : Σ k, ι k, ∃ a b : curveRing y, b ∉ curvePtIdeal y W ∧ (b : Ω) * (y p / y ⟨p.1, c p.1⟩) = a) ∧
+    ∀ (e : K → ℕ) (g : MRing ι), IsMultiHomog g e →
+      (g ∈ W ↔ ∃ a b : curveRing y, a ∈ curvePtIdeal y W ∧ b ∉ curvePtIdeal y W ∧
+        (b : Ω) * aeval y g = a * ∏ k, y ⟨k, c k⟩ ^ e k) := by
   classical
-  intro K _ ι _ Ω _ y s d hy hs hsP W hW c hc
   have hWp : W.IsPrime := hW.1.1.1
   have hPW : mCoordIdeal y ≤ W := le_sup_left.trans hW.1.1.2
   have hyc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k => ne_zero_of_X_notMem fun h => hc k (hPW h)
@@ -34,12 +45,12 @@ theorem CurveVertPointChart.proof (hF : CurveRingFinite.Statement) (hCP : CurveC
   have hv := IndefiniteRowSideFullHecke.HeightsSet.CurveDivVertical.full K ι (mCoordIdeal y) s d hy hs hsP W hW
   rw [IsHorizontal, ← Ne, Submodule.ne_bot_iff] at hv
   obtain ⟨n, hn, hn0⟩ := hv
-  have hmax := chartPrimeB_isMaximal y (hF K ι Ω y hy) hPW hWp hc hyc hn0 (Ideal.mem_comap.mp hn)
+  have hmax := chartPrimeB_isMaximal y hF hPW hWp hc hyc hn0 (Ideal.mem_comap.mp hn)
   rw [curvePtIdeal_eq y hPW hWp hc hyc]
   have hmp : (chartPrimeB y c W hyc).IsPrime := hmax.isPrime
 
   have hrat : ∀ p : Σ k, ι k, y p / y ⟨p.1, c p.1⟩ ∈ locSub y _ hmp := by
-    obtain ⟨c', hyc', h'⟩ := hCP K ι Ω y hy _ hmax
+    obtain ⟨c', hyc', h'⟩ := hCP _ hmax
     have hinv : ∀ k, y ⟨k, c' k⟩ / y ⟨k, c k⟩ ∈ locSub y _ hmp := by
       intro k
       obtain ⟨a, b, hb, hab⟩ := h' ⟨k, c k⟩
@@ -112,6 +123,11 @@ theorem CurveVertPointChart.proof (hF : CurveRingFinite.Statement) (hCP : CurveC
         ((∏ k, y ⟨k, c k⟩ ^ f k) * aeval y g) * hbw -
         ((∏ k, y ⟨k, c k⟩ ^ f k) * ∏ k, y ⟨k, c k⟩ ^ f' k) * hab
     exact (hWp.mem_or_mem (mem_of_chartMono_mul hWp hc h1)).resolve_left hwW
+
+theorem CurveVertPointChart.proof (hF : CurveRingFinite.Statement) (hCP : CurveClosedPointChart.Statement) :
+    CurveVertPointChart.Statement :=
+  fun K _ ι _ Ω _ y _ _ hy hs hsP _ hW c hc =>
+    CurveVertPointChart.of_single hy hs hsP (hF K ι Ω y hy) (hCP K ι Ω y hy) hW c hc
 
 end
 

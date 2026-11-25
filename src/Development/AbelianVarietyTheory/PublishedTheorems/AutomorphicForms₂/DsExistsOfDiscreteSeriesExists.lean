@@ -48,8 +48,6 @@ noncomputable section
 
 namespace GlobalTheory.Published
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def DiscreteSeriesExists : Prop := DiscreteSeriesUpqExists
 
 theorem discreteSeriesExists_iff_upq : DiscreteSeriesExists ↔ DiscreteSeriesUpqExists := Iff.rfl

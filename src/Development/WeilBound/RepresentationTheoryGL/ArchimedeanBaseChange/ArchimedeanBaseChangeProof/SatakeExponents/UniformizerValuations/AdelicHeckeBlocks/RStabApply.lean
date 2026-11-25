@@ -3,42 +3,7 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelRep
 import Aesop.Main
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinsumOutOfLe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -52,8 +17,6 @@ open PositivityTheory.Rg.BcN.F2 (mconv)
 open scoped Classical
 
 namespace PositivityTheory.Rg.BcB.F
-
-attribute [local instance] borelG borelF borelH
 
 namespace Hint
 
@@ -77,17 +40,13 @@ theorem ind_mul {H : Type} [Group H] (K : Subgroup H) {k : H} (hk : k ∈ K) (x 
   · rw [Set.indicator_of_notMem (show x * k ∉ (K : Set H) from fun h => hx ((K.mul_mem_cancel_right hk).1 h)),
       Set.indicator_of_notMem (show x ∉ (K : Set H) from hx)]
 
-theorem out_mem {H : Type} [Group H] (K : Subgroup H) (q : H ⧸ K) : q.out ∈ K ↔ q = ((1 : H) : H ⧸ K) := by
-  conv_rhs => rw [← QuotientGroup.out_eq' q]
-  rw [QuotientGroup.eq, mul_one, inv_mem_iff]
-
 theorem hint_ind {H : Type} [Group H] (K : Subgroup H) : hint K ((K : Set H).indicator 1) = 1 := by
   have hle : K ≤ rStab ((K : Set H).indicator (1 : H → ℂ)) := fun k hk => mem_rStab (ind_mul K hk)
   rw [hint, inf_eq_right.2 hle, Subgroup.relIndex_self, Nat.cast_one, inv_one, one_mul,
     finsum_eq_single _ ((1 : H) : H ⧸ K)]
-  · exact Set.indicator_of_mem (show _ ∈ (K : Set H) from (out_mem K _).2 rfl) _
+  · exact Set.indicator_of_mem (show _ ∈ (K : Set H) from (QuotientGroup.out_mem_iff (s := K)).2 rfl) _
   · intro q hq
-    exact Set.indicator_of_notMem (show q.out ∉ (K : Set H) from fun h => hq ((out_mem K q).1 h)) _
+    exact Set.indicator_of_notMem (show q.out ∉ (K : Set H) from fun h => hq ((QuotientGroup.out_mem_iff (s := K) (a := q)).1 h)) _
 
 theorem idx_eq {H : Type} [Group H] (K L : Subgroup H) (hLK : L ≤ K) (hidx : L.relIndex K ≠ 0) :
     ∑ᶠ q : H ⧸ L, (K : Set H).indicator (1 : H → ℂ) q.out = ((L.relIndex K : ℕ) : ℂ) := by
@@ -214,8 +173,8 @@ theorem count {ι Γ : Type} [Group Γ] {Hl : ι → Type} [∀ i, Group (Hl i)]
     obtain ⟨v, hv⟩ := QuotientGroup.mk_out_eq_mul V x
     rw [hv, hFV x v v.2]
   let y : (∀ i : T, Hl i ⧸ W i) → ∀ i, Hl i := fun c i => if hi : i ∈ T then (c ⟨i, hi⟩).out else 1
-  have hy_out : ∀ c (i : T), y c i = (c i).out := fun c i => dif_pos i.2
-  have hy_one : ∀ c i, i ∉ T → y c i = 1 := fun c i hi => dif_neg hi
+  have hy_out : ∀ c (i : T), y c i = (c i).out := fun c i => dite_eq_left i.2
+  have hy_one : ∀ c i, i ∉ T → y c i = 1 := fun c i hi => dite_eq_right hi
   have hy : ∀ c, ∀ᶠ i in cofinite, y c i ∈ KH i := fun c =>
     Filter.eventually_cofinite.2 (T.finite_toSet.subset fun i hi => by
       by_contra hiT
@@ -257,9 +216,9 @@ theorem count {ι Γ : Type} [Group Γ] {Hl : ι → Type} [∀ i, Group (Hl i)]
     refine QuotientGroup.eq.2 ((hmemV _).2 fun i => ?_)
     rw [map_mul, map_inv, hX]
     by_cases hi : i ∈ T
-    · simp only [y, dif_pos hi]
+    · simp only [y, dite_eq_left hi]
       exact QuotientGroup.eq.1 (QuotientGroup.out_eq' _)
-    · simp only [y, dif_neg hi, inv_one, one_mul]
+    · simp only [y, dite_eq_right hi, inv_one, one_mul]
       rw [hW i hi]
       exact hK i hi
   have hval : ∀ c, F (Φ c).out = ∏ i : T, h i (c i).out := by
@@ -346,8 +305,7 @@ theorem hintProd : HintProd := by
       exact finprod_eq_one_of_forall_eq_one fun i => Set.indicator_of_mem ((hK x).1 hx i) _
     · rw [Set.indicator_of_notMem (show x ∉ (K : Set Γ) from hx)]
       obtain ⟨i, hi⟩ : ∃ i, p i x ∉ KH i := by
-        by_contra hn
-        push_neg at hn
+        by_contra! hn
         exact hx ((hK x).2 hn)
       refine finprod_eq_zero _ i (Set.indicator_of_notMem hi _) ?_
       refine (Filter.eventually_cofinite.1 (hfin x)).subset fun j hj => ?_

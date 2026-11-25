@@ -153,8 +153,6 @@ def goodPartHermitianForm : Matrix (Fin (S.BaseDimension r X P ψ)) (Fin (S.Base
 
 def Mt : Submodule (𝓞 K) (Fin (S.BaseDimension r X P ψ) → K) := S.cutNab r (goodAt X P ψ)
 
-def MtDel : Submodule (𝓞 K) (Fin (S.BaseDimension r X P ψ) → K) := S.cutDel r (goodAt X P ψ)
-
 end CSD
 
 section Statements

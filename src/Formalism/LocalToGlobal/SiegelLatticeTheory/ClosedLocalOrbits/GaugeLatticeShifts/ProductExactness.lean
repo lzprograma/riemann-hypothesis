@@ -196,8 +196,6 @@ end Pure
 
 section Glob
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 alias hJ_X := _root_.Formalism.L2.SG.PoincareInHH.Cut.hJ_crd

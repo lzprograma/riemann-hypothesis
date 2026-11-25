@@ -62,8 +62,7 @@ lemma inUJ_jAdj {ε : Fin n → Bool} {g : Matrix (Fin n) (Fin n) ℂ} (hg : inU
   rw [h2, Matrix.mul_one]
 
 lemma inUJ_one (ε : Fin n → Bool) : inUJ ε (1 : Matrix (Fin n) (Fin n) ℂ) := by
-  unfold inUJ
-  simp
+  exact ReciprocityTheory.ChartRestriction.DS.smd_inUJ_one
 
 end Grp
 
@@ -432,9 +431,6 @@ theorem capVal_main : CapValStatement := by
 
 end ReciprocityTheory.ChartRestriction.DS.Lap.CapelliClosureMembership
 
-namespace ReciprocityTheory.ChartRestriction.DS.Lap
-
-end ReciprocityTheory.ChartRestriction.DS.Lap
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto

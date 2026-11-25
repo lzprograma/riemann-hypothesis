@@ -146,7 +146,7 @@ theorem cover : Koszul → Verma → Cover := by
         have := i.2.2; rw [e, j.2.1] at this; exact Bool.noConfusion this
       have h2 : j.1.2 ≠ i.1.1 := fun e => by
         have := j.2.2; rw [e, i.2.1] at this; exact Bool.noConfusion this
-      rw [if_neg h1, if_neg h2, sub_zero, sub_eq_zero] at h
+      rw [ite_eq_right h1, ite_eq_right h2, sub_zero, sub_eq_zero] at h
       exact h
     · intro i j
       apply TensorProduct.ext'

@@ -107,12 +107,6 @@ theorem coe_derivative_charpolyRev (M : Matrix n n R) :
 
 end MatrixJacobi
 
-section LogSeries
-
-variable {k : Type*} [Field k] [CharZero k]
-
-end LogSeries
-
 section Endomorphism
 
 variable {k W W' : Type*} [Field k] [AddCommGroup W] [Module k W] [FiniteDimensional k W]

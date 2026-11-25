@@ -1,6 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RightTranslationActionApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VectorValuedLiftFieldChange
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -66,44 +67,23 @@ theorem exists_coords : ∃ (ι : Type) (e : ι → L) (c : ι → L →+ K), (�
 
 variable {I : Type}
 
-def coefMap (c : L →+ K) (p : MvPolynomial I L) : MvPolynomial I K :=
-  ∑ m ∈ p.support, MvPolynomial.monomial m (c (p.coeff m))
-
-theorem coeff_coefMap (c : L →+ K) (p : MvPolynomial I L) (m : I →₀ ℕ) : (coefMap c p).coeff m = c (p.coeff m) := by
-  classical
-  simp only [coefMap, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial, Finset.sum_ite_eq']
-  split_ifs with h
-  · rfl
-  · rw [MvPolynomial.notMem_support_iff.1 h, map_zero]
-
-theorem coefMap_add (c : L →+ K) (p q : MvPolynomial I L) : coefMap c (p + q) = coefMap c p + coefMap c q := by
-  ext m
-  simp only [coeff_coefMap, MvPolynomial.coeff_add, map_add (f := _)]
-
-theorem coefMap_zero (c : L →+ K) : coefMap c (0 : MvPolynomial I L) = 0 := by
-  ext m
-  simp only [coeff_coefMap, MvPolynomial.coeff_zero]
-  change c 0 = 0
-  exact map_zero c
+abbrev coefMap (c : L →+ K) (p : MvPolynomial I L) : MvPolynomial I K :=
+  GlobalTheory.IoExtend.cf c p
 
 theorem coefMap_sum {J : Type*} (c : L →+ K) (s : Finset J) (p : J → MvPolynomial I L) :
     coefMap c (∑ j ∈ s, p j) = ∑ j ∈ s, coefMap c (p j) := by
   ext m
 
-  simp only [coeff_coefMap, MvPolynomial.coeff_sum, map_sum]
+  have hcf : ∀ (p' : MvPolynomial I L) (m : I →₀ ℕ), (coefMap c p').coeff m = c (p'.coeff m) := GlobalTheory.IoExtend.coeff_cf c
+  simp only [hcf, MvPolynomial.coeff_sum, map_sum]
 
 variable {σ}
-
-theorem coefMap_smul_map {c : L →+ K} (hc : ∀ k a, c (σ k * a) = k * c a) (a : L) (p : MvPolynomial I K) :
-    coefMap c (a • MvPolynomial.map σ p) = c a • p := by
-  ext m
-  rw [coeff_coefMap, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, MvPolynomial.coeff_map, smul_eq_mul, smul_eq_mul,
-    mul_comm, hc, mul_comm]
 
 theorem coefMap_smul {c : L →+ K} (hc : ∀ k a, c (σ k * a) = k * c a) (k : K) (p : MvPolynomial I L) :
     coefMap c (σ k • p) = k • coefMap c p := by
   ext m
-  rw [coeff_coefMap, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, coeff_coefMap, smul_eq_mul, smul_eq_mul, hc]
+  have hcf : ∀ (p' : MvPolynomial I L) (m : I →₀ ℕ), (coefMap c p').coeff m = c (p'.coeff m) := GlobalTheory.IoExtend.coeff_cf c
+  rw [hcf, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, hcf, smul_eq_mul, smul_eq_mul, hc]
 
 theorem exists_sum_coefMap {ι : Type} {e : ι → L} {c : ι → L →+ K}
     (h : ∀ a, ∃ T : Finset ι, ∀ T' : Finset ι, T ⊆ T' → ∑ i ∈ T', e i * σ (c i a) = a) (p : MvPolynomial I L) :
@@ -112,7 +92,8 @@ theorem exists_sum_coefMap {ι : Type} {e : ι → L} {c : ι → L →+ K}
   choose T hT using h
   refine ⟨p.support.biUnion fun m => T (p.coeff m), fun T' hT' => ?_⟩
   ext m
-  simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_smul, MvPolynomial.coeff_map, coeff_coefMap, smul_eq_mul]
+  have hcf : ∀ (c' : L →+ K) (p' : MvPolynomial I L) (m : I →₀ ℕ), (coefMap c' p').coeff m = c' (p'.coeff m) := GlobalTheory.IoExtend.coeff_cf
+  simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_smul, MvPolynomial.coeff_map, hcf, smul_eq_mul]
   by_cases hm : m ∈ p.support
   · exact hT _ _ ((Finset.subset_biUnion_of_mem (fun m => T (p.coeff m)) hm).trans hT')
   · simp [MvPolynomial.notMem_support_iff.1 hm]
@@ -127,9 +108,11 @@ theorem linearIndependent_map_pi {D J : Type*} {f : J → D → MvPolynomial I K
   have h0 : ∀ i, c i (g j) = 0 := fun i => by
     refine hf s (fun j => c i (g j)) (funext fun d => ?_) j hj
     have h1 := congrArg (coefMap (c i)) (congrFun hg d)
-    rw [Finset.sum_apply, coefMap_sum, Pi.zero_apply, coefMap_zero] at h1
+    rw [Finset.sum_apply, coefMap_sum, Pi.zero_apply] at h1
+    dsimp only [coefMap] at h1
+    rw [GlobalTheory.IoExtend.cf_zero] at h1
     rw [Finset.sum_apply, Pi.zero_apply, ← h1]
-    exact Finset.sum_congr rfl fun k _ => (coefMap_smul_map (hc i) _ _).symm
+    exact Finset.sum_congr rfl fun k _ => (GlobalTheory.IoExtend.cf_smul_map σ (hc i) _ _).symm
   obtain ⟨T, hT⟩ := h (g j)
   rw [← hT T le_rfl]
   simp [h0]
@@ -151,9 +134,9 @@ variable {σ}
 theorem coefMap_mem_VV {ι : Type} [Fintype ι] {n : ℕ} (lam : ι → DomWeight n) {c : L →+ K}
     (hc : ∀ k a, c (σ k * a) = k * c a) (x : Pol L ι n) (hx : x ∈ VV L lam) : coefMap c x ∈ VV K lam := by
   refine VV_induction σ lam (P := fun x => coefMap c x ∈ VV K lam) ?_ (fun x y hx hy => ?_) (fun a v => ?_) x hx
-  · rw [coefMap_zero]; exact zero_mem _
-  · rw [coefMap_add]; exact add_mem hx hy
-  · rw [coefMap_smul_map hc]; exact Submodule.smul_mem _ _ v.2
+  · dsimp only [coefMap]; rw [GlobalTheory.IoExtend.cf_zero]; exact zero_mem _
+  · dsimp only [coefMap]; rw [GlobalTheory.IoExtend.cf_add]; exact add_mem hx hy
+  · dsimp only [coefMap]; rw [GlobalTheory.IoExtend.cf_smul_map σ hc]; exact Submodule.smul_mem _ _ v.2
 
 end Coord
 
@@ -166,16 +149,18 @@ theorem coefMap_rhoC {c : ℂ →+ X.K} (hc : ∀ k a, c (σ k * a) = k * c a) (
     coefMap c (rhoC σ lam γ x) = (rhoV X.emb lam (ufGL X.E n γ) ⟨coefMap c x, coefMap_mem_VV lam hc x hx⟩).1 := by
   have h : ∃ y : VV X.K lam, y.1 = coefMap c x ∧ coefMap c (rhoC σ lam γ x) = (rhoV X.emb lam (ufGL X.E n γ) y).1 := by
     refine VV_induction σ lam (P := fun x => ∃ y : VV X.K lam, y.1 = coefMap c x ∧
-      coefMap c (rhoC σ lam γ x) = (rhoV X.emb lam (ufGL X.E n γ) y).1) ⟨0, (coefMap_zero c).symm, ?_⟩ ?_ ?_ x hx
-    · rw [map_zero, coefMap_zero, map_zero]
+      coefMap c (rhoC σ lam γ x) = (rhoV X.emb lam (ufGL X.E n γ) y).1) ⟨0, (GlobalTheory.IoExtend.cf_zero c).symm, ?_⟩ ?_ ?_ x hx
+    · dsimp only [coefMap]; rw [map_zero, GlobalTheory.IoExtend.cf_zero, map_zero]
       rfl
     · rintro x y ⟨u, hu, hu'⟩ ⟨v, hv, hv'⟩
-      refine ⟨u + v, by rw [coefMap_add, ← hu, ← hv]; rfl, ?_⟩
-      rw [map_add (f := _), coefMap_add, hu', hv', map_add (f := _)]
+      refine ⟨u + v, by dsimp only [coefMap] at hu hv ⊢; rw [GlobalTheory.IoExtend.cf_add, ← hu, ← hv]; rfl, ?_⟩
+      dsimp only [coefMap] at hu' hv' ⊢
+      rw [map_add (f := _), GlobalTheory.IoExtend.cf_add, hu', hv', map_add (f := _)]
       rfl
     · intro a v
-      refine ⟨c a • v, (coefMap_smul_map hc a v.1).symm, ?_⟩
-      rw [map_smul, rhoC_map, coefMap_smul_map hc, map_smul]
+      refine ⟨c a • v, (GlobalTheory.IoExtend.cf_smul_map σ hc a v.1).symm, ?_⟩
+      dsimp only [coefMap]
+      rw [map_smul, rhoC_map, GlobalTheory.IoExtend.cf_smul_map σ hc, map_smul]
       rfl
   obtain ⟨y, hy, h⟩ := h
   rw [h]

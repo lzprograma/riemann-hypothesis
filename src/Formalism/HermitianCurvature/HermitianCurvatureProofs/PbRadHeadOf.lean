@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadCorrespondenceOfParts
 public import Formalism.HermitianCurvature.StatementHeads
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableOfDecay4
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
@@ -8,46 +9,7 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.QNFAsm
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialTransportPlus
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceCompactSupportCoefficient
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumPairAtStarMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -88,22 +50,13 @@ end smul
 
 theorem isLocPt_snoc {h : C.LPt} {j : ℕ} (hh : D.IsLocPt h j) {t : ℂ} (ht : t ≠ 0) :
     D.IsLocPt (h ++ [(1, t)]) (j + 1) := by
-  obtain ⟨h1, h2⟩ := hh
-  refine ⟨fun b hb => ?_, ?_⟩
-  · rcases List.mem_append.1 hb with hb | hb
-    · exact h1 b hb
-    · rw [List.mem_singleton] at hb
-      subst hb
-      exact ⟨le_rfl, ht⟩
-  · unfold D.ptSize at h2 ⊢
-    rw [List.map_append, List.sum_append, h2]
-    simp
+  apply _root_.Formalism.FourierDecayAlt.P.PBI.isLocPt_app <;> assumption
 
 theorem levW_below (P : M.Par) (j : ℕ) (hj : j + 1 ≤ P.r) {t : ℂ} (ht : t ≠ 0) :
     ‖t‖ ^ (-2 : ℤ) * (‖t‖ ^ (2 * (P.r - j) + P.k)) ^ 2 = KB.levW P (j + 1) t := by
   have hj' : j + 1 ≠ P.r + 1 := by omega
   unfold KB.levW
-  rw [if_neg hj']
+  rw [ite_eq_right hj']
   have ht' : ‖t‖ ≠ 0 := norm_ne_zero_iff.2 ht
   rw [← pow_mul, ← zpow_natCast, ← zpow_add₀ ht']
   congr 1

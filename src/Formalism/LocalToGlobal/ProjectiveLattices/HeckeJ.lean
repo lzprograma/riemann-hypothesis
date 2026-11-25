@@ -8,8 +8,6 @@ public import Mathlib.Algebra.Algebra.Defs
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj
@@ -34,13 +32,6 @@ variable (σ₀ j em TF c)
 variable {σ₀ j em TF c}
 
 end Gen
-
-section Inj
-
-variable {K L : Type} [Field K] [Field L] [Algebra K L] {M : Type} [AddCommGroup M] [Module K M]
-  {W : Type} [AddCommGroup W] [Module ℂ W]
-
-end Inj
 
 end HeckeJ
 

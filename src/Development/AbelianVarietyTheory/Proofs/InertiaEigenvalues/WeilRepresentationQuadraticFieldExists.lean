@@ -19,64 +19,9 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormGro
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StableQuadraticGaussIntegralTransformWeil
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticWeilUnipotentTorusPreserveTest
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticStarStructure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Field.ProperSpace
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleHermitianPairStructureFacts
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticWeilFOpNOpFOpGauss, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticWeilFourierCompSmul, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticWeilTorusMulUnipotentCommute, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Sl2PresentationRelations, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleTraceAddCharNormEqOneNearZero, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLargeCompactOpenSubgroupWithSmallDual, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaussIntegralOneMulGaussIntegralNegOneEqOne, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StableQuadraticGaussNegOneEqOne, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StableQuadraticGaussIntegralSqEqOne, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WeilRepresentationQuadraticFieldExists
@@ -559,11 +504,11 @@ lemma three_eq {a a' b b' : K} (ha : a = a') (hb : b = b') :
 
 lemma rho_pos {g : SpecialLinearGroup (Fin 2) K} (h : en g 1 0 = 0) :
     rho n m t g = mx m (en g 0 0) * n (en g 0 1 / en g 0 0) := by
-  unfold rho; rw [if_pos h]
+  unfold rho; rw [ite_eq_left h]
 
 lemma rho_neg {g : SpecialLinearGroup (Fin 2) K} (h : en g 1 0 ≠ 0) :
     rho n m t g = n (en g 0 0 / en g 1 0) * mx m (-1 / en g 1 0) * t * n (en g 1 1 / en g 1 0) := by
-  unfold rho; rw [if_neg h]
+  unfold rho; rw [ite_eq_right h]
 
 lemma rho_n (hn : ∀ a b, n (a + b) = n a * n b) (g : SpecialLinearGroup (Fin 2) K) (z : K) :
     rho n m t (g * nS z) = rho n m t g * n z := by
@@ -640,7 +585,7 @@ lemma rho_one (hn0 : n 0 = 1) (hm1 : m 1 = 1) : rho n m t (1 : SpecialLinearGrou
   have e : ∀ i j : Fin 2, en (1 : SpecialLinearGroup (Fin 2) K) i j = (1 : Matrix (Fin 2) (Fin 2) K) i j :=
     fun _ _ => rfl
   simp only [rho, e, Matrix.one_apply_ne (show (1 : Fin 2) ≠ 0 by decide),
-    Matrix.one_apply_ne (show (0 : Fin 2) ≠ 1 by decide), Matrix.one_apply_eq, if_true, zero_div, hn0, mul_one]
+    Matrix.one_apply_ne (show (0 : Fin 2) ≠ 1 by decide), Matrix.one_apply_eq, ite_true, zero_div, hn0, mul_one]
   have := mx_unit m 1; rw [Units.val_one] at this; rw [this, hm1]
 
 lemma rho_mul (hn0 : n 0 = 1) (hn : ∀ a b, n (a + b) = n a * n b) (hm : ∀ a b, m (a * b) = m a * m b)
@@ -732,18 +677,8 @@ open GlobalTheory.JR GlobalTheory.JR.WeilQuad Matrix MeasureTheory Filter Topolo
 namespace GlobalTheory.JR.WeilQuad.NearZero
 variable {F E : Type} [NontriviallyNormedField F] [NontriviallyNormedField E] [NormedAlgebra F E] [StarRing E]
 
-theorem finite_E_L [Unram F E] (A : Et F E) : Module.Finite E A.L := by
-  have hE : Module.Finite F E := Module.finite_of_finrank_pos (by rw [Unram.finrank_eq (F := F) (E := E)]; norm_num)
-  have h := A.push.out
-  exact Module.Finite.equiv h.equiv
-
-theorem finite_F_L [Unram F E] (A : Et F E) : Module.Finite F A.L := by
-  have hE : Module.Finite F E := Module.finite_of_finrank_pos (by rw [Unram.finrank_eq (F := F) (E := E)]; norm_num)
-  have := finite_E_L A
-  exact Module.Finite.trans E A.L
-
 theorem finite_K_L [Unram F E] (A : Et F E) : Module.Finite A.K A.L := by
-  have := finite_F_L A
+  have := GlobalTheory.JR.EtMeas.finite_L A
   exact Module.Finite.of_restrictScalars_finite F A.K A.L
 
 theorem continuous_NL [Unram F E] (A : Et F E) (hK : IsField A.K) :
@@ -806,7 +741,7 @@ theorem main : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedF
       {y : A.L | ∀ w ∈ (Λ : Set A.L), A.kerL ψ x w y = 1} ⊆ V := by
   intro F E _ _ _ _ _ A ψ x μ ω h C hC V hV
   obtain ⟨hK, hL, hψ, -, -⟩ := h
-  haveI := FourierTest.finite_F_L A
+  haveI := GlobalTheory.JR.EtMeas.finite_L A
   haveI : IsUltrametricDist F := Unram.ultraF (F := F) (E := E)
   haveI : LocallyCompactSpace F := Unram.lcF (F := F) (E := E)
   haveI : ProperSpace F := ProperSpace.of_locallyCompactSpace F
@@ -962,7 +897,7 @@ theorem trace_NL_add [Unram F E] (A : Et F E) (hK : IsField A.K) (hL : IsField A
 
 theorem continuous_trace_NL [Unram F E] (A : Et F E) (hK : IsField A.K) (hL : IsField A.L) (x : A.K) :
     Continuous fun y : A.L => Algebra.trace F A.K (x * A.NL y) := by
-  haveI := finite_F_L A
+  haveI := GlobalTheory.JR.EtMeas.finite_L A
   haveI : CharZero F := Unram.charZero (F := F) (E := E)
   have h2 : (2 : F) ≠ 0 := two_ne_zero
   have hβc : Continuous (fun p : A.L × A.L => beta A x p.1 p.2) :=
@@ -988,11 +923,11 @@ theorem GlobalTheory.JR.WeilQuad.gaussInt_one_mul_neg_one : ∀ (F E : Type) [No
   intro F E _ _ _ _ _ A ψ x μ ω h Λ hΛo hΛc hPS hQ
   obtain ⟨hK, hL, hψ, hsd, -⟩ := h
   haveI := hsd.1
-  haveI := finite_F_L A
+  haveI := GlobalTheory.JR.EtMeas.finite_L A
   obtain ⟨hLC, hSC, hT2, hTG⟩ := GlobalTheory.JR.SelfDualLat.topo F E A.L
   haveI := hLC; haveI := hSC; haveI := hT2; haveI := hTG
   have hψ' := (_root_.GlobalTheory.StdChar.psi_conductor F E).2 ψ hψ
-  have hψc : Continuous (fun t : F => ψ t) := cont_psi hψ
+  have hψc : Continuous (fun t : F => ψ t) := GlobalTheory.JR.DualLattice.stdChar_continuous hψ
   set β := beta A (x : A.K) with hβdef
   have hβc : Continuous (fun p : A.L × A.L => β p.1 p.2) :=
     IsModuleTopology.continuous_bilinear_of_finite_left β
@@ -1187,10 +1122,6 @@ end GlobalTheory.JR.WeilQuad
 
 namespace GlobalTheory.JR.WeilQuad
 
-end GlobalTheory.JR.WeilQuad
-
-namespace GlobalTheory.JR.WeilQuad
-
 variable {F E : Type} [NontriviallyNormedField F] [NontriviallyNormedField E] [NormedAlgebra F E] [StarRing E]
 
 theorem omega_sq (A : Et F E) {ψ : AddChar F ℂ} {x : A.Kˣ} {μ : Measure A.L} {ω : A.K → ℂ}
@@ -1361,24 +1292,24 @@ theorem weilField_main : WeilField := by
   obtain ⟨ρ, hρn, hρm, hρw⟩ := _root_.GlobalTheory.BruhatRep.exists_hom_of_bruhat A.K hK (Module.End ℂ S) Nz Ms Tw e1 e2 e3 e4 e5 e6 e7 e8
   refine ⟨G₁⁻¹, fun g φ => if h : IsTest φ then ((ρ g ⟨φ, h⟩ : S) : A.L → ℂ) else 0, ⟨?_, ?_, ?_, ?_⟩, ?_⟩
   · intro g f hf
-    simp only [dif_pos hf]
+    simp only [dite_eq_left hf]
     exact (ρ g ⟨f, hf⟩).2
   · intro f hf
-    simp [dif_pos hf]
+    simp [dite_eq_left hf]
   · intro g h f hf
     have hh : IsTest ((ρ h ⟨f, hf⟩ : S) : A.L → ℂ) := (ρ h ⟨f, hf⟩).2
-    simp only [dif_pos hf, dif_pos hh, map_mul, Module.End.mul_apply]
+    simp only [dite_eq_left hf, dite_eq_left hh, map_mul, Module.End.mul_apply]
   · intro g c f f' hf hf'
     have hc : IsTest (c • f + f') := S.add_mem (S.smul_mem c hf) hf'
-    simp only [dif_pos hf, dif_pos hf', dif_pos hc]
+    simp only [dite_eq_left hf, dite_eq_left hf', dite_eq_left hc]
     have : (⟨c • f + f', hc⟩ : S) = c • ⟨f, hf⟩ + ⟨f', hf'⟩ := rfl
     rw [this, map_add (f := _), map_smul]
     rfl
   · intro φ hφ
     refine ⟨fun z y => ?_, fun s y => ?_, fun y => ?_⟩
-    · simp only [dif_pos hφ, hρn]; rfl
-    · simp only [dif_pos hφ, hρm]; rfl
-    · simp only [dif_pos hφ, hρw]; rfl
+    · simp only [dite_eq_left hφ, hρn]; rfl
+    · simp only [dite_eq_left hφ, hρm]; rfl
+    · simp only [dite_eq_left hφ, hρw]; rfl
 
 end GlobalTheory.JR.WeilQuad
 

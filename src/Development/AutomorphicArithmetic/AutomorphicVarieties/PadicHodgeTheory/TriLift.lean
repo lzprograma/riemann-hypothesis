@@ -27,64 +27,16 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeT
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ContinuousUnitsInvOfContinuousCoeFiniteQpAlgebra
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrystallineTriangularIffMemFiniteCocyclesOfCha
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDiag
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobDense
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.NumberTheory.Padics.LocalField
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.FieldTheory.Galois.Profinite
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -766,11 +718,11 @@ theorem UpperTheory.exists_torus_coords_of_unipotent :
     have hg := hab g
     simp only [Tor.χ2_apply, Tor.adjointSuperdiagRep_apply, omg]
     rcases hc with ⟨e, -, rfl, rfl, rfl⟩ | ⟨e, -, rfl, rfl, rfl⟩
-    · simp only [e, if_true]
+    · simp only [e, ite_true]
       rw [hx, hy, hz]
       push_cast
       linear_combination (-(x g * ((t g 1 / t g 2 : Bˣ) : B) * y g')) * h2 - (h * x g' * y g') * hg
-    · simp only [e, hne, if_false]
+    · simp only [e, hne, ite_false]
       rw [hx, hy, hz]
       push_cast
       linear_combination (((t g 1 / t g 2 : Bˣ) : B) * x g * x g' - ((t g 0 / t g 2 : Bˣ) : B) * x g' * y g') * h2 - (h * x g' * y g') * hg
@@ -867,10 +819,10 @@ private theorem tor_inv_apply_eq_ite_rev {G : Type} [Group G] {η : G →* ℤˣ
   have h := T.mul a a⁻¹
   split_ifs with ha
   · have h1 := h i
-    rw [mul_inv_cancel, T.t_one, if_pos ha] at h1
+    rw [mul_inv_cancel, T.t_one, ite_eq_left ha] at h1
     exact eq_inv_of_mul_eq_one_right h1.symm
   · have h1 := h i.rev
-    rw [mul_inv_cancel, T.t_one, if_neg ha, Fin.rev_rev] at h1
+    rw [mul_inv_cancel, T.t_one, ite_eq_right ha, Fin.rev_rev] at h1
     exact (mul_inv_eq_one.mp h1.symm).symm
 
 private theorem tor_ext {l : ℕ} [Fact l.Prime] {η : GQ l →* ℤˣ} {B B' : Type} [CommRing B] [CommRing B']
@@ -1000,9 +952,9 @@ theorem UpperTheory.exists_torus_lift_to_nilpotent_thickening :
   have ha : ∀ g h i, a (g * h) i = a g i + if η g = 1 then a h i else -a h i.rev := by
     intro g h i
     rcases Int.units_eq_one_or (η g) with h1 | h1
-    · simp only [a, hcm, hdm', h1, if_pos, Units.val_one, Int.cast_one, one_mul, add_smul]
+    · simp only [a, hcm, hdm', h1, ite_eq_left, Units.val_one, Int.cast_one, one_mul, add_smul]
       abel
-    · rw [if_neg (by rw [h1]; decide)]
+    · rw [ite_eq_right (by rw [h1]; decide)]
       simp only [a, hcm, hdm', h1, hs, hu, Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one,
         neg_one_mul, add_smul, neg_smul, smul_neg]
       abel
@@ -1032,11 +984,11 @@ theorem UpperTheory.exists_torus_lift_to_nilpotent_thickening :
   have hX1 : ∀ g h i, η g = 1 → XU (g * h) i = XU g i * XU h i := by
     intro g h i h1
     apply Units.ext
-    rw [Units.val_mul, hXU, hXU, hXU, ha, if_pos h1,
+    rw [Units.val_mul, hXU, hXU, hXU, ha, ite_eq_left h1,
       exp_add_of_commute (Commute.all _ _) (han g i) (han h i)]
   have hX2 : ∀ g h i, ¬ η g = 1 → (XU (g * h) i : B) * XU h i.rev = XU g i := by
     intro g h i h1
-    rw [hXU, hXU, hXU, ha, if_neg h1,
+    rw [hXU, hXU, hXU, ha, ite_eq_right h1,
       ← exp_add_of_commute (Commute.all _ _) (nil_add (han g i) (han h i.rev).neg) (han h i.rev),
       neg_add_cancel_right]
   let T : Tor η B := ⟨fun g i => EU g i * XU g i, by
@@ -1199,11 +1151,11 @@ theorem UpperTheory.exists_unipotent_from_torus_coords :
     · simp only [F, SemidirectProduct.mul_left]
       rcases Int.units_eq_one_or (η g) with he | he
       · rw [he, sgnAct_one, triGL_mul]
-        rw [Tor.adjointSuperdiagRep_apply, if_pos he] at hb
-        rw [Tor.adjointSuperdiagRep_apply, if_pos he, Tor.χ2_apply, he] at hc
+        rw [Tor.adjointSuperdiagRep_apply, ite_eq_left he] at hb
+        rw [Tor.adjointSuperdiagRep_apply, ite_eq_left he, Tor.χ2_apply, he] at hc
         apply triGL_congr
         · funext i
-          rw [T.mul, if_pos he]
+          rw [T.mul, ite_eq_left he]
         · rw [hb]; rfl
         · rw [hb]; rfl
         · rw [hc, hb, hab]
@@ -1211,11 +1163,11 @@ theorem UpperTheory.exists_unipotent_from_torus_coords :
           linear_combination ((β g).1 * ((T.t g 1 / T.t g 2 : Bˣ) : B) * (β g').2) * hh
       · have hne : η g ≠ 1 := by rw [he]; decide
         rw [he, sgnAct_neg_one, theta_triGL, triGL_mul]
-        rw [Tor.adjointSuperdiagRep_apply, if_neg hne] at hb
-        rw [Tor.adjointSuperdiagRep_apply, if_neg hne, Tor.χ2_apply, he] at hc
+        rw [Tor.adjointSuperdiagRep_apply, ite_eq_right hne] at hb
+        rw [Tor.adjointSuperdiagRep_apply, ite_eq_right hne, Tor.χ2_apply, he] at hc
         apply triGL_congr
         · funext i
-          rw [T.mul, if_neg hne]
+          rw [T.mul, ite_eq_right hne]
         · rw [hb]
           simp only [Prod.fst_add]
           ring
@@ -1310,7 +1262,7 @@ theorem UpperTheory.mem_finiteCocycles_iff_restrict_subgroup_mem :
       (chRep (T.ch H hD.ηH 0 / T.ch H hD.ηH 1) g v.1, chRep (T.ch H hD.ηH 1 / T.ch H hD.ηH 2) g v.2) := by
     intro g v
     change T.M1 g v = _
-    rw [Tor.adjointSuperdiagRep_apply, if_pos (hD.ηH g g.2)]
+    rw [Tor.adjointSuperdiagRep_apply, ite_eq_left (hD.ηH g g.2)]
     rfl
   rw [z1fDesc (MonoidHom.id (GQ l)) T.M1 H β hβ, MonoidHom.id_comp]
   constructor
@@ -1360,7 +1312,7 @@ private theorem multiplicity_one_positive {l : ℕ} [Fact l.Prime] {E : Type} [F
     have hu : ∀ i, T.t g i = Units.map (algebraMap E B : E →* B) (Ψ g ^ wt1 i) := fun i =>
       Units.ext (hT.ine g hg' i)
     change T.M1 g x = ((cycA l l E g ^ (e : ℤ) : Eˣ) : E) • x
-    rw [zpow_natCast, ← hD.ΨH g g.2 hg', Tor.adjointSuperdiagRep_apply, if_pos (hD.ηH g g.2)]
+    rw [zpow_natCast, ← hD.ΨH g g.2 hg', Tor.adjointSuperdiagRep_apply, ite_eq_left (hD.ηH g g.2)]
     simp only [hu, w0, w1, w2, ← map_div]
     ext <;> simp [Algebra.smul_def]
   · let ε : GQ l →* Eˣ := (Units.map (Int.castRingHom E : ℤ →* E)).comp η
@@ -1780,7 +1732,7 @@ theorem UpperTheory.V.Loc.triLift :
   have cu' : ∀ a b, Continuous fun g => (u' g).mat a b := hu'.cont
   have hD : TriDat D.η Ψ D.HL D.e := triDat D E (by
     have : (fun g => algebraMap O E (D.Ψ g)) = fun g => π' ((u' g).mat 0 0) := funext fun g => by
-      rw [red', if_pos rfl, ← hpow]
+      rw [red', ite_eq_left rfl, ← hpow]
       simp [wt1]
     rw [this]
     exact cπ'.comp (cu' 0 0))
@@ -1805,7 +1757,7 @@ theorem UpperTheory.V.Loc.triLift :
       ine := fun g hg i => by
         rw [d', triDiag D E B' π' hπ' u' hu' g hg i, IsScalarTower.algebraMap_apply O E B', ← hpow]
         rfl
-      red := fun g i => by rw [d', red', if_pos rfl] }
+      red := fun g i => by rw [d', red', ite_eq_left rfl] }
   have e1 : ∀ g, (β' g).1 = (u' g).mat 0 1 * ((T'.t g 1)⁻¹ : B'ˣ) := fun g => by
     rw [c'.mat]
     simp [triM]
@@ -1826,7 +1778,7 @@ theorem UpperTheory.V.Loc.triLift :
     rw [funext e3]
     exact ((cu' 0 2).mul (hT'.cont_inv 2)).sub ((continuous_const.mul c1).mul c2)
   have β0' : ∀ g, π' (β' g).1 = 0 := fun g => by
-    rw [e1, map_mul, red', if_neg (by decide), zero_mul]
+    rw [e1, map_mul, red', ite_eq_right (by decide), zero_mul]
   have fβ' : β' ∈ UpperTheory.V.Loc.finiteCocycles (MonoidHom.id (GQ l)) T'.M1 := by
     obtain ⟨ρ, hρ, hcr⟩ := hu'.cr
     refine (UpperTheory.mem_finiteCocycles_iff_restrict_subgroup_mem hD π' hπ' T' hT' β' ⟨cβ', zβ'⟩).2 ?_

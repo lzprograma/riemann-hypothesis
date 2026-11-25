@@ -26,7 +26,6 @@ open GlobalTheory.ZM GlobalTheory.SiegelTor
 
 open scoped CategoryTheory.Obj
 
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.SharpPull
 namespace GlobalTheory.KthRoot
 
@@ -34,7 +33,6 @@ theorem finite_flat_surjective_mulN_any : ∀ (S : Scheme.{0}) (A : Over S) [Grp
     IsAbelianScheme A → ∀ n : ℕ, 0 < n →
       IsFinite (mulN A n).left ∧ Flat (mulN A n).left ∧ Surjective (mulN A n).left := by
   intro S A _ hA n hn
-  have hc := hA.comm
   obtain ⟨h1, h2⟩ := GlobalTheory.AbTorsionAnyBase.isFinite_and_flat_mulA S A hA n hn
   have e : mulN A n = ReciprocityTheory.ChartRestriction.G.Out.mulA A n := GlobalTheory.MulFlatSurj.mulN_eq_pow A n
   rw [e]

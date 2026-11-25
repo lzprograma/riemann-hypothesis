@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.OneLeGN
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.FixedUnitaryApplyFixedIndexRight
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InductiveHeisenbergInputs
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.IntegrableUnitIndicator
@@ -82,7 +83,7 @@ lemma herm_re (y : Fin (2 * 0 + k + 1) → ℂ) :
     · simp [sg, h, Complex.normSq_apply, Complex.mul_re]
   rw [herm0, tW_sq, Complex.re_sum, Finset.sum_congr rfl fun i _ => hterm i,
     Finset.sum_sub_distrib]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 lemma phi'_eq (hk : 1 ≤ k) :
@@ -127,12 +128,12 @@ lemma phi'_dot (hk : 1 ≤ k) : star (phiV' k 0 0) ⬝ᵥ phiV' k 0 0 = 1 := by
       (if i = iW k then 1 / 2 else 0) + (if i = iK k then 1 / 2 else 0) := by
     intro i
     rcases eq_or_ne i (iW k) with rfl | h1
-    · rw [phi'_iW hk, normSq_c, if_pos rfl, if_neg hWK, add_zero]
+    · rw [phi'_iW hk, normSq_c, ite_eq_left rfl, ite_eq_right hWK, add_zero]
     · rcases eq_or_ne i (iK k) with rfl | h2
-      · rw [phi'_iK hk, Complex.normSq_neg, normSq_c, if_neg h1, if_pos rfl, zero_add]
-      · rw [phi'_zero hk i h1 h2, map_zero, if_neg h1, if_neg h2, add_zero]
+      · rw [phi'_iK hk, Complex.normSq_neg, normSq_c, ite_eq_right h1, ite_eq_left rfl, zero_add]
+      · rw [phi'_zero hk i h1 h2, map_zero, ite_eq_right h1, ite_eq_right h2, add_zero]
   rw [dot_star_self, Finset.sum_congr rfl fun i _ => hφ i, Finset.sum_add_distrib]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   norm_num
 
 private lemma sum_phi_lemma (hk : 1 ≤ k) (X : Fin (2 * 0 + k + 1) → ℂ) :
@@ -142,14 +143,14 @@ private lemma sum_phi_lemma (hk : 1 ≤ k) (X : Fin (2 * 0 + k + 1) → ℂ) :
       (if i = iW k then ((Real.sqrt 2)⁻¹ : ℂ) * X (iW k) else 0) + (if i = iK k then ((Real.sqrt 2)⁻¹ : ℂ) * X (iK k) else 0) := by
     intro i
     rcases eq_or_ne i (iW k) with rfl | h1
-    · rw [phi'_iW hk, star_c, if_pos rfl, if_neg hWK, add_zero]
+    · rw [phi'_iW hk, star_c, ite_eq_left rfl, ite_eq_right hWK, add_zero]
       simp [sg, hWK]
     · rcases eq_or_ne i (iK k) with rfl | h2
-      · rw [phi'_iK hk, star_neg, star_c, if_neg h1, if_pos rfl, zero_add]
+      · rw [phi'_iK hk, star_neg, star_c, ite_eq_right h1, ite_eq_left rfl, zero_add]
         simp [sg]
-      · rw [phi'_zero hk i h1 h2, star_zero, zero_mul, if_neg h1, if_neg h2, add_zero]
+      · rw [phi'_zero hk i h1 h2, star_zero, zero_mul, ite_eq_right h1, ite_eq_right h2, add_zero]
   rw [Finset.sum_congr rfl fun i _ => h i, Finset.sum_add_distrib]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 lemma phi'_iso (hk : 1 ≤ k) : herm (Hpk k 0) (phiV' k 0 0) (phiV' k 0 0) = 0 := by
@@ -1054,11 +1055,6 @@ open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.Fourier
 
 namespace XI
 
-private theorem lintegral_prod_le_lintegral_lintegral {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
-    (μ : Measure α) (ν : Measure β) (f : α × β → ℝ≥0∞) :
-    ∫⁻ p, f p ∂(μ.prod ν) ≤ ∫⁻ x, ∫⁻ y, f (x, y) ∂ν ∂μ := by
-  exact lintegral_prod_le f
-
 private theorem side {k r : ℕ} (s : Fin (r + 1) → ℝ) (hs : ∀ l, 0 ≤ s l) (z : Fin (2 * r + k + 1) → ℂ)
     (μW μN : Measure (Mt k r)) (hW : IsHaarOn (UWset k r z) μW)
     (hconj : ∀ h₀ ∈ UWset k r z, μN.map (conjM h₀) = μN) (hcomp : IsCompact (UWset k r z))
@@ -1153,7 +1149,7 @@ private theorem side {k r : ℕ} (s : Fin (r + 1) → ℝ) (hs : ∀ l, 0 ≤ s 
         ENNReal.ofReal ((1 + |lam k r z (Matrix.of p.2)|) ^ (-(2 : ℝ))) ∂(μW.prod μN))
       ≤ ∫⁻ x : Mt k r, ∫⁻ n : Mt k r, (xiN k r s (Matrix.of n * Matrix.of x) : ℝ≥0∞) *
         ENNReal.ofReal ((1 + |lam k r z (Matrix.of n)|) ^ (-(2 : ℝ))) ∂μN ∂μW :=
-        lintegral_prod_le_lintegral_lintegral μW μN _
+        MeasureTheory.lintegral_prod_le (μ := μW) (ν := μN) _
     _ ≤ ∫⁻ _x : Mt k r, ENNReal.ofReal C * IInt μN z s (1 / 2) ∂μW :=
         lintegral_mono_ae (hae.mono fun x hx => hinner (Matrix.of x) hx)
     _ = ENNReal.ofReal C * IInt μN z s (1 / 2) * μW Set.univ := lintegral_const _
@@ -1205,15 +1201,7 @@ namespace ReciprocityTheory.ChartRestriction.DS.Xi.DetB
 open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
 
 theorem entry_le_gN {k r : ℕ} (h : Mat k r) (m j : Fin (2 * r + k + 1)) : ‖h m j‖ ≤ gN h := by
-  unfold gN
-  apply Real.le_sqrt_of_sq_le
-  rw [← Complex.normSq_eq_norm_sq]
-  calc Complex.normSq (h m j) ≤ ∑ j', Complex.normSq (h m j') :=
-        Finset.single_le_sum (f := fun j' => Complex.normSq (h m j')) (fun _ _ => Complex.normSq_nonneg _)
-          (Finset.mem_univ j)
-    _ ≤ ∑ i, ∑ j', Complex.normSq (h i j') :=
-        Finset.single_le_sum (f := fun i => ∑ j', Complex.normSq (h i j'))
-          (fun _ _ => Finset.sum_nonneg fun _ _ => Complex.normSq_nonneg _) (Finset.mem_univ m)
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Lap.S0.DecA.gN_entry <;> assumption
 
 def cst {k r : ℕ} (H : Mat k r) (v w : Fin (2 * r + k + 1) → ℂ) : ℝ :=
   ∑ i, ∑ m, ∑ j, ‖w i‖ * ‖H i m‖ * ‖v j‖
@@ -1346,9 +1334,9 @@ theorem hpk_conjT : (Hpk k r)ᴴ = Hpk k r := by
   ext i j
   simp only [conjTranspose_apply, hpk_apply]
   by_cases h : j = sigI k r i
-  · subst h; rw [if_pos (sig_sig i).symm, if_pos rfl, sgn_sig, star_sgn]
+  · subst h; rw [ite_eq_left (sig_sig i).symm, ite_eq_left rfl, sgn_sig, star_sgn]
   · have h' : ¬ i = sigI k r j := fun h2 => h (by rw [h2, sig_sig])
-    rw [if_neg h', if_neg h, star_zero]
+    rw [ite_eq_right h', ite_eq_right h, star_zero]
 
 theorem hpk_K : Hpk k r ∈ Kset k r := by
   have h2 := HermitianLiftIdentities.hpk_sq (k := k) (r := r)

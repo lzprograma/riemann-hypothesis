@@ -48,7 +48,6 @@ import Mathlib.RingTheory.PicardGroup
 noncomputable section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.TypeRec GlobalTheory.GLq GlobalTheory.GLp GlobalTheory.SerSys
-attribute [local instance] GlobalTheory.TypeRec.factG
 
 namespace GlobalTheory.SuppIne
 
@@ -69,13 +68,6 @@ theorem glMap_surjective {n : Type} [Fintype n] [DecidableEq n] (i : k ≃+* k')
   ⟨Matrix.GeneralLinearGroup.map i.toRingHom g, Units.ext (Matrix.ext fun _ _ => i.symm_apply_apply _)⟩
 
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [ValuativeRel k'] [TopologicalSpace k'] [IsNonarchimedeanLocalField k'] in
-theorem isSubquotient_comp {G G' V W : Type} [Group G] [Group G'] [AddCommGroup V] [Module ℂ V] [AddCommGroup W]
-    [Module ℂ W] {σ : Representation ℂ G W} {ρ : Representation ℂ G V} (h : IsSubquotient σ ρ) (ψ : G' →* G) :
-    IsSubquotient (σ.comp ψ) (ρ.comp ψ) := by
-  obtain ⟨S, f, hf⟩ := h
-  exact ⟨⟨S.toSubmodule, fun g _ hv => S.apply_mem_toSubmodule (ψ g) hv⟩, ⟨f.toLinearMap, fun g => f.isIntertwining' (ψ g)⟩, hf⟩
-
 def trGL (i : k ≃+* k') (hi' : Continuous i.symm) (x : IrrGL (k := k)) : IrrGL (k := k') :=
   IrrGL.of (x.rep.comp (Matrix.GeneralLinearGroup.map (n := Fin x.1) i.symm.toRingHom))
     (fun v => (x.2.rep.smooth v).preimage (continuous_glMap _ hi'))
@@ -92,7 +84,7 @@ theorem hasSupport_comp (i : k ≃+* k') (hi : Continuous i) (hi' : Continuous i
       ⟨(hc a).1, GlobalTheory.CuspRep.ParLaws.isIrreducible_comp (hc a).2.1 _ (glMap_surjective i),
         _root_.GlobalTheory.LocGL.isCuspidal_comp_generalLinearGroupMap i hi' _ (hc a).2.2⟩, e, ?_⟩
     obtain ⟨φ⟩ := _root_.GlobalTheory.IndField.multiProd_comp_glMap i hi hi' (_root_.GlobalTheory.SplitWeil.nabs_map_of_homeomorph i hi hi') e (fun a => (x a).rep)
-    exact (isSubquotient_comp hsub _).trans (.of_injective φ.toIntertwiningMap φ.toLinearEquiv.injective)
+    exact (GlobalTheory.CuspRep.ParLaws.isSubquotient_comp hsub _).trans (.of_injective φ.toIntertwiningMap φ.toLinearEquiv.injective)
   have := hasSupport_of_isCuspSupport H
   rw [Multiset.map_map]
   exact this
@@ -104,8 +96,6 @@ end GlobalTheory.SuppIne
 namespace GlobalTheory.SuppIne
 
 open GlobalTheory.LocGL GlobalTheory.SmGL
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem continuous_symm {D : D7} (I : Ident D) (k : Fin 2) (v : D.nd.PlG k) : Continuous (I.i k v).symm := by
   letI := (I.i k v).toRingHom.toAlgebra

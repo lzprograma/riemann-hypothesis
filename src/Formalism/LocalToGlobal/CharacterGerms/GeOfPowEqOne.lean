@@ -81,7 +81,7 @@ theorem tyS_Vpow {l : ℕ} (hl : 2 ≤ l) (a : ℕ → C) :
     · obtain ⟨t, rfl⟩ := hk
       rw [← pow_succ', _root_.Formalism.L2.FormalSeriesBounds.coeff_tyS_pow hl, _root_.Formalism.L2.FormalSeriesBounds.coeff_tyS_pow hl]
       simp
-    · push_neg at hk
+    · push Not at hk
       have hk' : ∀ s, l ^ s ≠ l * k := by
         intro s hs
         rcases s with _ | s

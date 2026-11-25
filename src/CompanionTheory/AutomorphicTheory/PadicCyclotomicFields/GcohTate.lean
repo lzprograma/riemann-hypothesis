@@ -20,8 +20,6 @@ open CategoryTheory MonoidalCategory GroundTheory.ProfCoh ReciprocityTheory.Gal 
 
 namespace CompanionTheory.LocalTateOrthogonality.Gcoh
 
-attribute [local instance 2000] Rep.hV2
-
 section Core
 
 variable {n : ℕ} {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -121,8 +119,6 @@ section -- clump:auto
 open CategoryTheory MonoidalCategory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel Formalism.GaloisCohomology
 
 namespace CompanionTheory.LocalTateOrthogonality.Gcoh
-
-attribute [local instance 2000] Rep.hV2
 
 theorem tate_core (hRep : SgcRep) (h0 : Sgc0) (h1 : Sgc1) (h2 : Sgc2) {n : ℕ} [NeZero n]
     {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]

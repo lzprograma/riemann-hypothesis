@@ -4,43 +4,7 @@ public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.IntegralGLSuccEmbeddingMemParahoricTimesPrincipa
 public import Formalism.LocalToGlobal.Columns.RowFormsSym
 public import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -206,7 +170,7 @@ end Cong
 theorem pref_prefRep {G D : Type} [Group G] [MulAction G D] (pref : D → Prop) {p : D} (hp : pref p) :
     pref (prefRep pref (Quotient.mk (MulAction.orbitRel G D) p)) := by
   have h : ∃ p', Quotient.mk (MulAction.orbitRel G D) p' = Quotient.mk (MulAction.orbitRel G D) p ∧ pref p' := ⟨p, rfl, hp⟩
-  rw [prefRep, dif_pos h]
+  rw [prefRep, dite_eq_left h]
   exact h.choose_spec.2
 
 section Top
@@ -257,16 +221,16 @@ theorem two_mul_le_topDep (M : ℕ) : 2 * M ≤ topDep R M := by
 
 def topLev : TopLev X Pr R (QE sel (mu : Chr X.F X.E X.K)) := topLevAt Ch sel mu P (topDep R cst.M)
 
-theorem topLevAt_levG_m (c : ℕ) : (topLevAt Ch sel mu P c).levG R.m = levGTop Ch P := dif_pos rfl
+theorem topLevAt_levG_m (c : ℕ) : (topLevAt Ch sel mu P c).levG R.m = levGTop Ch P := dite_eq_left rfl
 
-theorem topLevAt_levQ_m (c : ℕ) : (topLevAt Ch sel mu P c).levQ R.m = levQTop R sel mu c := dif_pos rfl
+theorem topLevAt_levQ_m (c : ℕ) : (topLevAt Ch sel mu P c).levQ R.m = levQTop R sel mu c := dite_eq_left rfl
 
 theorem topLevAt_finiteIndex (c j : ℕ) (Q : QE sel (mu : Chr X.F X.E X.K)) : ((topLevAt Ch sel mu P c).levQ j Q).H.FiniteIndex := by
   by_cases h : j = R.m
   · subst h
     rw [topLevAt_levQ_m]
     exact levCong_finiteIndex _ _ _
-  · rw [show (topLevAt Ch sel mu P c).levQ j = LevQFam.top X.E X.K (R.N j) _ from dif_neg h]
+  · rw [show (topLevAt Ch sel mu P c).levQ j = LevQFam.top X.E X.K (R.N j) _ from dite_eq_right h]
     exact ⟨fun e => one_ne_zero (Subgroup.index_top.symm.trans e)⟩
 
 theorem topLevAt_root (c j : ℕ) (Q : QE sel (mu : Chr X.F X.E X.K)) :
@@ -275,12 +239,12 @@ theorem topLevAt_root (c j : ℕ) (Q : QE sel (mu : Chr X.F X.E X.K)) :
   · subst h
     rw [topLevAt_levQ_m]
     exact levCong_root _ _ _
-  · rw [show (topLevAt Ch sel mu P c).levQ j = LevQFam.top X.E X.K (R.N j) _ from dif_neg h]
+  · rw [show (topLevAt Ch sel mu P c).levQ j = LevQFam.top X.E X.K (R.N j) _ from dite_eq_right h]
     exact ⟨1, one_pos, fun _ => pow_one _⟩
 
-theorem topLev_levG_m : (topLev Ch sel mu cst P).levG R.m = levGTop Ch P := dif_pos rfl
+theorem topLev_levG_m : (topLev Ch sel mu cst P).levG R.m = levGTop Ch P := dite_eq_left rfl
 
-theorem topLev_levQ_m : (topLev Ch sel mu cst P).levQ R.m = levQTop R sel mu (topDep R cst.M) := dif_pos rfl
+theorem topLev_levQ_m : (topLev Ch sel mu cst P).levQ R.m = levQTop R sel mu (topDep R cst.M) := dite_eq_left rfl
 
 theorem topLev_pref_m (u : Pr.Word) (p : ChPt (R := R) sel mu u R.m) :
     (topLev Ch sel mu cst P).pref u R.m p ↔ ∃ d, p = tilF sel mu u d := ⟨fun h => h rfl, fun h _ => h⟩
@@ -338,48 +302,6 @@ section Ok
 
 variable (hPr : Pr.Ok) (hQ : ∀ (u : Pr.Word) (Q : QE sel (mu : Chr X.F X.E X.K)), Pr.piT u ∉ Q.1.asIdeal)
 include hPr hQ
-
-theorem topLevAt_ok (c : ℕ) : (topLevAt Ch sel mu P c).Ok := by
-  constructor
-  case idx => exact topLevAt_finiteIndex Ch sel mu P c
-  case root =>
-    intro j Q g
-    obtain ⟨m, h, h'⟩ := topLevAt_root Ch sel mu P c j Q
-    exact ⟨m, h, h' g⟩
-  case levG_top =>
-    intro a ha
-    rw [topLevAt_levG_m] at ha
-    obtain ⟨h, -, e⟩ := (mem_levGTop_grp Ch P a).1 ha
-    exact ⟨h, e⟩
-  case levQ_last =>
-    intro Q k hk x hx
-    rw [topLevAt_levQ_m] at hk
-    obtain ⟨g, -, e⟩ := sup_prinCong_le _ _ _ _ hk
-    have h2 := congrFun (redV_redGL k hx) (Br.iL (N_m_succ R))
-    rw [← e] at h2
-    refine h2.trans ?_
-    simp only [Matrix.mulVec, dotProduct, diagEmb_val]
-    have hh : ¬ (Br.iL (N_m_succ R)).1 < R.N R.m - 1 := lt_irrefl (R.N R.m - 1)
-    simp only [diagMat_of_not_left _ _ hh]
-    simp [Matrix.one_apply, redV]
-  case levQ_ini =>
-    intro Q k hk i
-    rw [topLevAt_levQ_m] at hk
-    obtain ⟨g, -, e⟩ := sup_prinCong_le _ _ _ _ hk
-    have h2 := congrFun (redV_redGL k (single_mem_stdAt (Br.iL (N_m_succ R)))) (Br.iC (N_m_succ R) i)
-    rw [← e, redV_single, Matrix.mulVec_single_one] at h2
-    refine h2.trans ?_
-    show diagMat _ _ _ _ _ = 0
-    have hh : ¬ (Br.iL (N_m_succ R)).1 < R.N R.m - 1 := lt_irrefl (R.N R.m - 1)
-    rw [diagMat_of_not_right _ _ hh, Matrix.one_apply_ne]
-    exact fun h => absurd (congrArg Fin.val h) i.2.ne
-  case pref_off => exact fun u j h p h' => absurd h' h
-  case pref_top =>
-    intro u p h
-    obtain ⟨d, rfl⟩ : ∃ d, p = tilF sel mu u d := h rfl
-    exact ⟨d.deco, tilF_deco sel mu hPr u (hQ u) d⟩
-
-theorem topLev_ok : (topLev Ch sel mu cst P).Ok := topLevAt_ok Ch sel mu P hPr hQ _
 
 end Ok
 

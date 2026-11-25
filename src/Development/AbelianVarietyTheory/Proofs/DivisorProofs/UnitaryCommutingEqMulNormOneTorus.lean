@@ -117,7 +117,7 @@ theorem torusOf_mem_of_mem_UL_commute : ∀ (E : Type) [Field E] [NumberField E]
 
   have hUJ : cT (cj w) h.val * 1 * h.val = 1 := by
     have : h ∈ UJ (cj w) (1 : Matrix (Fin n) (Fin n) (w.adicCompletion E)) := by
-      unfold UL at hU; rwa [if_neg hw] at hU
+      unfold UL at hU; rwa [ite_eq_right hw] at hU
     exact this
   have hinv : ∀ y z, B.herm x ((t : B.A) * y) ((t : B.A) * z) = B.herm x y z := by
     intro y z

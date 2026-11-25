@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeStableUnderAction
 public import Mathlib.AlgebraicGeometry.Stalk
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
 public import Mathlib.Data.Nat.Factorization.Induction
@@ -8,54 +9,7 @@ public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.Exi
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorGeneric
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
 import Mathlib.Tactic.Linter.HaveILetI
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -69,10 +23,6 @@ section -- clump:auto
 @[expose] public section
 
 namespace UpperTheory.Reformulated.B.RegularUnitPoints
-
-theorem aux1 : ∀ {Ω : Type} [inst : Field Ω], IsLocalRing Ω := by
-  intro Ω inst
-  infer_instance
 
 noncomputable def genPt : {X : AlgebraicGeometry.Scheme} →
   {Ω : Type} → [inst : Field Ω] → (AlgebraicGeometry.Spec ↧Ω ⟶ X) → ↥X :=
@@ -179,8 +129,6 @@ section Weil
 
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.CommutatorPairing
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {S : Scheme.{0}} {A : Over S} [GrpObj A] {L : LB A.left} {k : ℤ}
 
 theorem exists_theta_one (hL : L.IsLB) (T : Over S) :
@@ -246,17 +194,8 @@ variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {G : Over X} [GrpObj G] {ξ : S
 theorem lat_stable (M : LieModel G ξ E) {O : Type} [CommRing O] (act : ReciprocityTheory.ChartRestriction.G.Geo.Tor.OAct O G)
     (ρ : O →+* Module.End Ω E) (h : M.IsActOf act.act ρ) (q : Cpt ξ) (a : O) {e : E} (he : e ∈ M.lat q) :
     ρ a e ∈ M.lat q := by
-  obtain ⟨v, hv⟩ := (M.mem_lat_iff q e).1 he
-  refine (M.mem_lat_iff q _).2 ⟨v ≫ act.act a, ?_⟩
-  unfold LieModel.Extends at hv ⊢
-  have := act.hom a
-  refine ⟨?_, ?_⟩
-  · have h1 := hv.1
-    rw [LieTangent.isTanAt_iff] at h1 ⊢
-    rw [← Category.assoc, h1, MonObj.one_comp]
-  · have hpt := congrArg (fun f => f.left) (h a e)
-    simp only [Over.comp_left] at hpt ⊢
-    rw [hpt, hv.2, Category.assoc]
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.LieStable.lat_stable <;> assumption
 
 end Stable
 
@@ -345,8 +284,6 @@ theorem mem_iSup_of_dual {I : Type} [Fintype I] [DecidableEq I] (V : I → Submo
 end Linear
 
 section HT
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {G : Over X} [GrpObj G] {ξ : Spec (CommRingCat.of Ω) ⟶ X}
   {E : Type} [AddCommGroup E] [Module Ω E]

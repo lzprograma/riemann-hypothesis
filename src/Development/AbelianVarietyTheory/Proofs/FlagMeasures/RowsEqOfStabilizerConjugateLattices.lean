@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitLatticeUnimodularAndPrimitive
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HbApply
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -45,7 +46,6 @@ import Mathlib.Topology.Sheaves.Init
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.RowsOrb.Uniq
 
@@ -78,12 +78,10 @@ theorem dual_symm (hh : ∀ x y, star (h x y) = h y x) {e c : Fin r → V}
 
 theorem pair_sum_e {e c : Fin r → V} (hd : ∀ a b, h (c a) (e b) = if a = b then 1 else 0)
     (s : Fin r → K) (b : Fin r) : h (c b) (∑ a, s a • e a) = s b := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [map_sum, map_smul, hd, Finset.sum_ite_eq]
 
 theorem pair_sum_zero {x : V} {c : Fin r → V} (H : ∀ a, h x (c a) = 0) (s : Fin r → K) :
     h x (∑ a, s a • c a) = 0 := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [map_sum, map_smul, H]
 
 theorem coord {e c : Fin r → V} (hd : ∀ a b, h (c a) (e b) = if a = b then 1 else 0) {v : V}
@@ -113,7 +111,6 @@ variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V]
 
 theorem pair_first (s : Fin r → K) (e : Fin r → V) (y : V) :
     h (∑ a, s a • e a) y = ∑ a, star (s a) * h (e a) y := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [map_sum, LinearMap.map_smulₛₗ, starRingEnd_apply]
 
 theorem P_iso (hh : ∀ x y, star (h x y) = h y x) {e : Fin r → V} (hee : ∀ a b, h (e a) (e b) = 0)
@@ -264,19 +261,7 @@ theorem hnd (x : (VS D).V) (H : ∀ y, (VS D).hT x y = 0) : x = 0 := (VS D).nond
 
 theorem fixedFrameOfWord_isotropicSpan_eq (X : HidaSetting D) (u : D.what₂.Word) :
     (GlobalTheory.TypeAsm.F0 X u).X = Submodule.span D.host.E (Set.range X.eX) := by
-  unfold Formalism.HermitianLatticeCounting.S6.FlagD.X Formalism.HermitianLatticeCounting.S6.FlagD.Xa
-  congr 1
-  ext v
-  simp only [Set.mem_image, Set.mem_setOf_eq, Set.mem_range]
-  constructor
-  · rintro ⟨b, hb, rfl⟩
-    refine ⟨b, ?_⟩
-    show X.eX b = (X.Fu u).fvec b.castSucc
-    rw [GlobalTheory.TypeAsm.fv_cast, HidaSetting.Fu_e]
-  · rintro ⟨b, rfl⟩
-    refine ⟨b, b.2, ?_⟩
-    show (X.Fu u).fvec b.castSucc = X.eX b
-    rw [GlobalTheory.TypeAsm.fv_cast, HidaSetting.Fu_e]
+  apply _root_.GlobalTheory.RowsOrb.Basic.fixed_frame_span <;> assumption
 
 theorem orth_span {x : (VS D).V} {r : ℕ} {v : Fin r → (VS D).V} (H : ∀ b, (VS D).hT x (v b) = 0)
     {y : (VS D).V} (hy : y ∈ Submodule.span D.host.E (Set.range v)) : (VS D).hT x y = 0 := by

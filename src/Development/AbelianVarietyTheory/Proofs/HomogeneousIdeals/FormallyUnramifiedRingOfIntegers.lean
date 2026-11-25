@@ -55,8 +55,6 @@ public import Mathlib.RingTheory.Unramified.Field
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open TensorProduct

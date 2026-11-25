@@ -66,7 +66,7 @@ theorem lf_rhoN_sub_nat (ε : Fin n → Bool) {a b : Fin n} (hab : a < b) (he : 
     ∃ m : ℕ, rhoN ε a - rhoN ε b = m := by
   refine ⟨(univ.filter fun c => a < c ∧ c < b ∧ ε c ≠ ε a).card, ?_⟩
   have hc := lfD_cnt (fun c => ε c ≠ ε a) hab
-  rw [lfD_single, lfD_single, if_neg (fun h => h rfl), if_neg (fun h => h he.symm)] at hc
+  rw [lfD_single, lfD_single, ite_eq_right (fun h => h rfl), ite_eq_right (fun h => h he.symm)] at hc
   have hr := congrArg (Nat.cast : ℕ → ℝ) hc
   push_cast at hr
   simp only [rhoN, ← he]

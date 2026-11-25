@@ -47,7 +47,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.IndefR.Links Formalism.L2.JoinChr Formalism.L2.Host
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CharUnramVal
 
@@ -83,15 +82,15 @@ theorem char_eq_prod_val_zpow : ∀ (D : D7) (ι : (Af D.host.F ⊗[D.host.F] D.
   choose k hk using fun P => GlobalTheory.adicCompletion_exists_unit_approx D.host.E N hN P _ (hx0 P)
   have key := hprod x hx (S ∪ S') (fun P => if P ∈ S then k P else 1) (fun P _ => by
     by_cases hP : P ∈ S
-    · simp only [if_pos hP]
+    · simp only [ite_eq_left hP]
       exact ⟨(hk P).1, (hk P).2.1⟩
-    · simp only [if_neg hP, hoff P hP, Units.val_one, map_one, sub_self, map_zero, zero_le, and_self])
+    · simp only [ite_eq_right hP, hoff P hP, Units.val_one, map_one, sub_self, map_zero, zero_le, and_self])
     (fun P hP => hS' P fun h => hP (Finset.mem_union_right _ h))
   rw [key, Units.coe_prod, ← Finset.prod_subset (Finset.subset_union_left (s₁ := S) (s₂ := S'))]
   · refine Finset.prod_congr rfl fun P hP => ?_
-    simp only [if_pos hP]
+    simp only [ite_eq_left hP]
     rw [locK_eq_val_zpow χ P (hS P hP).1 (k P) (m P) ((hk P).1.symm.trans (hS P hP).2)]
   · intro P _ hP
-    simp only [if_neg hP, map_one, Units.val_one]
+    simp only [ite_eq_right hP, map_one, Units.val_one]
 
 end GlobalTheory.CharUnramVal

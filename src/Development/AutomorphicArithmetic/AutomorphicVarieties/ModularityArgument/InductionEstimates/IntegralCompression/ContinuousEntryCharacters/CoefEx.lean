@@ -243,11 +243,7 @@ open scoped ComplexConjugate Classical InnerProductSpace
 
 private lemma chi_add (ν ν' : Fin (2 + 2) → ℤ) (θ : Fin (2 + 2) → ℝ) :
     chi (ν + ν') θ = chi ν θ * chi ν' θ := by
-  unfold chi
-  rw [← Complex.exp_add, ← mul_add, ← Finset.sum_add_distrib]
-  congr 2
-  refine Finset.sum_congr rfl fun i _ => ?_
-  simp only [Pi.add_apply, Int.cast_add, add_mul]
+  apply _root_.UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.eb_chi_add <;> assumption
 
 private lemma weak (π : Equiv.Perm (Fin (2 + 2))) (ν μ : Fin (2 + 2) → ℤ)
     (h : ∀ (w : Equiv.Perm (Fin (2 + 2))) (y : Fin (2 + 2) → ℤ), Antitone (y ∘ π) →

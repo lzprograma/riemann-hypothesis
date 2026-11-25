@@ -112,24 +112,6 @@ theorem dense_weilSubgroup : Dense (weilSubgroup K Ω : Set (Ω ≃ₐ[K] Ω)) :
   have := C.mul_mem hc hk'
   rwa [mul_inv_cancel_left] at this
 
-def WeilGroup : Type _ := weilSubgroup K Ω
-
-namespace WeilGroup
-
-
-
-
-
-variable {K Ω}
-
-
-
-
-
-
-
-end WeilGroup
-
 end Weil
 
 end GroundTheory.LocalField

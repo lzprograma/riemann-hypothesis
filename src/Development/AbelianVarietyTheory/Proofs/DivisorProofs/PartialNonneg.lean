@@ -1,45 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -48,7 +10,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HolDict.FlowGS
 
@@ -58,15 +19,15 @@ def tri (E : ℕ → ℝ) (Y : ℕ → ℂ) (τ : ℝ) (ρ : ℕ → ℝ) (a j :
 
 private theorem tri_eq_zero_of_gt (E : ℕ → ℝ) (Y : ℕ → ℂ) (τ : ℝ) (ρ : ℕ → ℝ) {a j : ℕ} (h : j < a) :
     tri E Y τ ρ a j = 0 := by
-  unfold tri; rw [if_pos h]
+  unfold tri; rw [ite_eq_left h]
 
 private theorem tri_self (E : ℕ → ℝ) (Y : ℕ → ℂ) (τ : ℝ) (ρ : ℕ → ℝ) (a : ℕ) :
     tri E Y τ ρ a a = (ρ (a + 1) : ℂ) / ρ a := by
-  unfold tri; rw [if_neg (lt_irrefl a), if_pos rfl]
+  unfold tri; rw [ite_eq_right (lt_irrefl a), ite_eq_left rfl]
 
 private theorem tri_of_lt (E : ℕ → ℝ) (Y : ℕ → ℂ) (τ : ℝ) (ρ : ℕ → ℝ) {a j : ℕ} (h : a < j) :
     tri E Y τ ρ a j = (τ : ℂ) * Y a * E j * star (Y j) / ((ρ a : ℂ) * ρ (a + 1)) := by
-  unfold tri; rw [if_neg (show ¬ j < a by omega), if_neg (show ¬ j = a by omega)]
+  unfold tri; rw [ite_eq_right (show ¬ j < a by omega), ite_eq_right (show ¬ j = a by omega)]
 
 theorem tri_gram (E : ℕ → ℝ) (Y : ℕ → ℂ) (τ : ℝ) (ρ : ℕ → ℝ) (hE : ∀ a, E a * E a = 1) (hρ : ∀ a, ρ a ≠ 0)
     (h0 : ρ 0 = 1) (hs : ∀ a, (ρ (a + 1) : ℂ) ^ 2 = (ρ a : ℂ) ^ 2 + τ * E a * (Y a * star (Y a))) (i j k : ℕ) :
@@ -82,32 +43,32 @@ theorem tri_gram (E : ℕ → ℝ) (Y : ℕ → ℂ) (τ : ℝ) (ρ : ℕ → �
     have hrk := hr k
     have hrk1 := hr (k + 1)
     rcases lt_trichotomy i k with hi | hi | hi
-    · rw [tri_eq_zero_of_gt E Y τ ρ hi, if_neg (show ¬(k ≤ i ∧ k ≤ j) from fun h => by omega),
-        if_neg (show ¬(k + 1 ≤ i ∧ k + 1 ≤ j) from fun h => by omega)]
+    · rw [tri_eq_zero_of_gt E Y τ ρ hi, ite_eq_right (show ¬(k ≤ i ∧ k ≤ j) from fun h => by omega),
+        ite_eq_right (show ¬(k + 1 ≤ i ∧ k + 1 ≤ j) from fun h => by omega)]
       simp
     · rw [hi]
       rcases lt_trichotomy j k with hj | hj | hj
-      · rw [tri_eq_zero_of_gt E Y τ ρ hj, if_neg (show ¬(k ≤ k ∧ k ≤ j) from fun h => by omega),
-          if_neg (show ¬(k + 1 ≤ k ∧ k + 1 ≤ j) from fun h => by omega)]
+      · rw [tri_eq_zero_of_gt E Y τ ρ hj, ite_eq_right (show ¬(k ≤ k ∧ k ≤ j) from fun h => by omega),
+          ite_eq_right (show ¬(k + 1 ≤ k ∧ k + 1 ≤ j) from fun h => by omega)]
         simp
-      · rw [hj, tri_self, if_pos (show k ≤ k ∧ k ≤ k from ⟨le_rfl, le_rfl⟩),
-          if_neg (show ¬(k + 1 ≤ k ∧ k + 1 ≤ k) from fun h => by omega), if_pos (rfl : k = k)]
+      · rw [hj, tri_self, ite_eq_left (show k ≤ k ∧ k ≤ k from ⟨le_rfl, le_rfl⟩),
+          ite_eq_right (show ¬(k + 1 ≤ k ∧ k + 1 ≤ k) from fun h => by omega), ite_eq_left (rfl : k = k)]
         simp only [Complex.star_def, map_div₀, Complex.conj_ofReal] at hk ⊢
         linear_combination ((E k : ℂ) * ((ρ k : ℂ) * (ρ k : ℂ)⁻¹ + 1)) * hrk + ((ρ k : ℂ)⁻¹ ^ 2 * (E k : ℂ)) * hk
-      · rw [tri_self, tri_of_lt E Y τ ρ hj, if_pos (show k ≤ k ∧ k ≤ j from ⟨le_rfl, hj.le⟩),
-          if_neg (show ¬(k + 1 ≤ k ∧ k + 1 ≤ j) from fun h => by omega), if_neg (show ¬(k = j) from by omega)]
+      · rw [tri_self, tri_of_lt E Y τ ρ hj, ite_eq_left (show k ≤ k ∧ k ≤ j from ⟨le_rfl, hj.le⟩),
+          ite_eq_right (show ¬(k + 1 ≤ k ∧ k + 1 ≤ j) from fun h => by omega), ite_eq_right (show ¬(k = j) from by omega)]
         simp only [Complex.star_def, map_div₀, Complex.conj_ofReal] at hk ⊢
         linear_combination ((τ : ℂ) * (E k : ℂ) * Y k * (E j : ℂ) * (starRingEnd ℂ) (Y j) * (ρ k : ℂ)⁻¹ ^ 2) * hrk1
     · rcases lt_trichotomy j k with hj | hj | hj
-      · rw [tri_eq_zero_of_gt E Y τ ρ hj, if_neg (show ¬(k ≤ i ∧ k ≤ j) from fun h => by omega),
-          if_neg (show ¬(k + 1 ≤ i ∧ k + 1 ≤ j) from fun h => by omega)]
+      · rw [tri_eq_zero_of_gt E Y τ ρ hj, ite_eq_right (show ¬(k ≤ i ∧ k ≤ j) from fun h => by omega),
+          ite_eq_right (show ¬(k + 1 ≤ i ∧ k + 1 ≤ j) from fun h => by omega)]
         simp
-      · rw [hj, tri_self, tri_of_lt E Y τ ρ hi, if_pos (show k ≤ i ∧ k ≤ k from ⟨hi.le, le_rfl⟩),
-          if_neg (show ¬(k + 1 ≤ i ∧ k + 1 ≤ k) from fun h => by omega), if_neg (show ¬(i = k) from by omega)]
+      · rw [hj, tri_self, tri_of_lt E Y τ ρ hi, ite_eq_left (show k ≤ i ∧ k ≤ k from ⟨hi.le, le_rfl⟩),
+          ite_eq_right (show ¬(k + 1 ≤ i ∧ k + 1 ≤ k) from fun h => by omega), ite_eq_right (show ¬(i = k) from by omega)]
         simp only [Complex.star_def, map_div₀, map_mul, Complex.conj_ofReal, Complex.conj_conj] at hk ⊢
         linear_combination ((τ : ℂ) * (E i : ℂ) * Y i * (E k : ℂ) * (starRingEnd ℂ) (Y k) * (ρ k : ℂ)⁻¹ ^ 2) * hrk1
-      · rw [tri_of_lt E Y τ ρ hi, tri_of_lt E Y τ ρ hj, if_pos (show k ≤ i ∧ k ≤ j from ⟨hi.le, hj.le⟩),
-          if_pos (show k + 1 ≤ i ∧ k + 1 ≤ j from ⟨hi, hj⟩)]
+      · rw [tri_of_lt E Y τ ρ hi, tri_of_lt E Y τ ρ hj, ite_eq_left (show k ≤ i ∧ k ≤ j from ⟨hi.le, hj.le⟩),
+          ite_eq_left (show k + 1 ≤ i ∧ k + 1 ≤ j from ⟨hi, hj⟩)]
         simp only [Complex.star_def, map_div₀, map_mul, Complex.conj_ofReal, Complex.conj_conj] at hk ⊢
         linear_combination ((τ : ℂ) * ((E i : ℂ) * Y i) * ((E j : ℂ) * (starRingEnd ℂ) (Y j))) *
           (-((ρ k : ℂ)⁻¹ ^ 2 * (ρ (k + 1) : ℂ)⁻¹ ^ 2) * hk
@@ -123,12 +84,12 @@ theorem tri_vec (E : ℕ → ℝ) (Y : ℕ → ℂ) (τ : ℝ) (ρ : ℕ → ℝ
   | succ k ih =>
     rw [Finset.sum_range_succ, ih]
     rcases lt_trichotomy k a with hk | hk | hk
-    · rw [tri_eq_zero_of_gt E Y τ ρ hk, if_pos hk.le, if_pos (show k + 1 ≤ a from hk)]
+    · rw [tri_eq_zero_of_gt E Y τ ρ hk, ite_eq_left hk.le, ite_eq_left (show k + 1 ≤ a from hk)]
       simp
-    · rw [hk, tri_self, if_pos le_rfl, if_neg (show ¬(a + 1 ≤ a) from by omega)]
+    · rw [hk, tri_self, ite_eq_left le_rfl, ite_eq_right (show ¬(a + 1 ≤ a) from by omega)]
       have h1 : (ρ (a + 1) : ℂ) * (ρ (a + 1) : ℂ)⁻¹ = 1 := mul_inv_cancel₀ (by exact_mod_cast hρ (a + 1))
       linear_combination (-((ρ (a + 1) : ℂ) * (ρ a : ℂ)⁻¹ * Y a)) * h1
-    · rw [tri_of_lt E Y τ ρ hk, if_neg (show ¬(k ≤ a) from by omega), if_neg (show ¬(k + 1 ≤ a) from by omega)]
+    · rw [tri_of_lt E Y τ ρ hk, ite_eq_right (show ¬(k ≤ a) from by omega), ite_eq_right (show ¬(k + 1 ≤ a) from by omega)]
       linear_combination (-(Y a * (ρ a : ℂ)⁻¹ * (ρ (a + 1) : ℂ)⁻¹)) * hs k
 
 theorem partial_nonneg (q n : ℕ) (g : ℕ → ℝ) (hg : ∀ a, 0 ≤ g a) (hz : ∀ a, n ≤ a → g a = 0)
@@ -138,9 +99,9 @@ theorem partial_nonneg (q n : ℕ) (g : ℕ → ℝ) (hg : ∀ a, 0 ≤ g a) (hz
   · apply Finset.sum_nonneg
     intro a ha
     have : a < q := by rw [Finset.mem_range] at ha; omega
-    simp only [ReciprocityTheory.ChartRestriction.G.FD.sgn, if_pos this, one_mul]
+    simp only [ReciprocityTheory.ChartRestriction.G.FD.sgn, ite_eq_left this, one_mul]
     exact hg a
-  · push_neg at hkq
+  · push Not at hkq
     have hmn : ∑ a ∈ Finset.range (max k n), ReciprocityTheory.ChartRestriction.G.FD.sgn q a * g a = 0 := by
       rw [← Finset.sum_range_add_sum_Ico _ (le_max_right k n), hn, zero_add]
       apply Finset.sum_eq_zero
@@ -153,7 +114,7 @@ theorem partial_nonneg (q n : ℕ) (g : ℕ → ℝ) (hg : ∀ a, 0 ≤ g a) (hz
       apply Finset.sum_congr rfl
       intro a ha
       have : ¬ a < q := by have := (Finset.mem_Ico.mp ha).1; omega
-      simp only [ReciprocityTheory.ChartRestriction.G.FD.sgn, if_neg this]
+      simp only [ReciprocityTheory.ChartRestriction.G.FD.sgn, ite_eq_right this]
       ring
     rw [hneg] at hmn
     have : 0 ≤ ∑ a ∈ Finset.Ico k (max k n), g a := Finset.sum_nonneg fun a _ => hg a
@@ -238,7 +199,7 @@ theorem core (n q : ℕ) (y : Fin n → ℂ) (hy : star y ⬝ᵥ (sgnM n q).mulV
     exact div_ne_zero (by exact_mod_cast hρ0 _) (by exact_mod_cast hρ0 _)
   · ext i j
     have key := tri_gram (ReciprocityTheory.ChartRestriction.G.FD.sgn q) Y (2 * t) ρ hE hρ0 h0 hs i j n
-    rw [if_neg (show ¬ (n ≤ (i : ℕ) ∧ n ≤ (j : ℕ)) from fun h => by have := i.isLt; omega),
+    rw [ite_eq_right (show ¬ (n ≤ (i : ℕ) ∧ n ≤ (j : ℕ)) from fun h => by have := i.isLt; omega),
       Finset.sum_range] at key
     simp only [hY] at key
     rw [Matrix.mul_apply]
@@ -247,10 +208,10 @@ theorem core (n q : ℕ) (y : Fin n → ℂ) (hy : star y ⬝ᵥ (sgnM n q).mulV
       Matrix.vecMul_diagonal, Pi.star_apply, smul_eq_mul]
     by_cases hij : i = j
     · subst hij
-      simp only [if_true] at key ⊢
+      simp only [ite_true] at key ⊢
       linear_combination key
     · have hij' : (i : ℕ) ≠ j := fun h => hij (Fin.ext h)
-      simp only [hij, hij', if_false] at key ⊢
+      simp only [hij, hij', ite_false] at key ⊢
       linear_combination key
   · have hG : ∑ c, ‖y c‖ ^ 2 = ∑ c ∈ Finset.range n, g c := by
       rw [Finset.sum_range]; simp only [hgd, hY]
@@ -269,7 +230,7 @@ theorem core (n q : ℕ) (y : Fin n → ℂ) (hy : star y ⬝ᵥ (sgnM n q).mulV
         _ ≤ _ := (hρle _).trans hM
   · intro a
     have key := tri_vec (ReciprocityTheory.ChartRestriction.G.FD.sgn q) Y (2 * t) ρ hρ0 hs a n
-    rw [if_neg (show ¬ (n ≤ (a : ℕ)) from by have := a.isLt; omega), Finset.sum_range] at key
+    rw [ite_eq_right (show ¬ (n ≤ (a : ℕ)) from by have := a.isLt; omega), Finset.sum_range] at key
     simp only [hY] at key
     have hρn : (ρ n : ℂ) ^ 2 = 1 := by
       have : ρ n ^ 2 = 1 := by rw [hρsq, hPn]; ring

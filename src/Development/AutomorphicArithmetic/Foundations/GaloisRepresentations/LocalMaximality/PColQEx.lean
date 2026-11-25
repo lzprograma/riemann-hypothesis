@@ -1,52 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -106,14 +61,14 @@ theorem UpperTheory.Gal.productCup_of_system.colQEx_of :
         intro L _
         show c (uni b L) ∈ (if ((L.card : ℕ) : ℤ) = m then A (uni b L) else ⊥)
         by_cases hL : ((L.card : ℕ) : ℤ) = m
-        · rw [if_pos hL]
+        · rw [ite_eq_left hL]
           have h1 := hmem (uni b L)
           split_ifs at h1 with h2
           · exact h1
           · rw [Submodule.mem_bot] at h1
             rw [h1]
             exact Submodule.zero_mem _
-        · rw [if_neg hL, Submodule.mem_bot]
+        · rw [ite_eq_right hL, Submodule.mem_bot]
           apply hlev
           show ¬ (((uni b L ∩ Q).card : ℕ) : ℤ) = m
           rwa [show (uni b L ∩ Q).card = L.card by convert hQc b L]
@@ -153,30 +108,30 @@ theorem UpperTheory.Gal.productCup_of_system.colQEx_of :
     have hcard := (hU β κ E w c (lft s) (rgt s)).2.2.2.1
     rw [hU2 s] at hcard
     by_cases h1 : (((lft s).card : ℕ) : ℤ) = n - m
-    · rw [if_pos h1]
+    · rw [ite_eq_left h1]
       by_cases h2 : ((s.card : ℕ) : ℤ) = n - 1
-      · rw [if_pos h2]
+      · rw [ite_eq_left h2]
         by_cases h3 : (((rgt s).card : ℕ) : ℤ) = m - 1
-        · rw [if_pos h3] at hs
+        · rw [ite_eq_left h3] at hs
           exact zsmul_mem hs _
-        · rw [if_neg h3, Submodule.mem_bot] at hs
+        · rw [ite_eq_right h3, Submodule.mem_bot] at hs
           rw [hs, smul_zero]
           exact Submodule.zero_mem _
-      · rw [if_neg h2, Submodule.mem_bot]
-        rw [if_neg, Submodule.mem_bot] at hs
+      · rw [ite_eq_right h2, Submodule.mem_bot]
+        rw [ite_eq_right, Submodule.mem_bot] at hs
         · rw [hs, smul_zero]
         · intro h3
           apply h2
           rw [hcard]
           push_cast
           omega
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
       exact Submodule.zero_mem _
   · intro s hs
     rw [hy]
     split_ifs with h1
     · have hY0 := hYmem (lft s) (rgt s)
-      rw [if_neg] at hY0
+      rw [ite_eq_right] at hY0
       · rw [Submodule.mem_bot] at hY0
         rw [hY0, smul_zero]
       · intro h3
@@ -197,13 +152,13 @@ theorem UpperTheory.Gal.productCup_of_system.colQEx_of :
       split_ifs <;> rfl
     rw [hfun]
     by_cases hb : (((b.card : ℕ) : ℤ) = n - m)
-    · rw [if_pos hb, map_zsmul, Pi.smul_apply, hYD, smul_smul, ← mul_pow]
+    · rw [ite_eq_left hb, map_zsmul, Pi.smul_apply, hYD, smul_smul, ← mul_pow]
       simp
-    · rw [if_neg hb, map_zero, Pi.zero_apply, smul_zero]
+    · rw [ite_eq_right hb, map_zero, Pi.zero_apply, smul_zero]
       symm
       by_cases hL : ((L.card : ℕ) : ℤ) = m
       · have h5 := hmem (uni b L)
-        rw [if_neg] at h5
+        rw [ite_eq_right] at h5
         · exact (Submodule.mem_bot _).1 h5
         · intro hn
           apply hb

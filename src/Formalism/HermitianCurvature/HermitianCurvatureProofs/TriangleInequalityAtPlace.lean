@@ -1,55 +1,11 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
 public import Formalism.HermitianCurvature.StatementTBB
 public import Formalism.FormalDegreeBessel.FinalG
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
 public import Mathlib.Data.Set.Finite.List
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -84,21 +40,7 @@ theorem Gf_sgs {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductS
 theorem ae_inSS {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] (Ds : B.RealPlaceData k r Wp Wq) :
     ∀ᵐ q ∂Ds.μSS, Ds.inSS q := by
-  have key : ∀ {α β : Type} [MeasurableSpace α] [MeasurableSpace β] (μ : Measure α) (ν : Measure β)
-      (P : α → Prop), (∀ᵐ x ∂μ, P x) → ∀ᵐ p ∂(μ.prod ν), P p.1 := by
-    intro α β _ _ μ ν P h
-    exact Measure.quasiMeasurePreserving_fst.ae h
-  have key2 : ∀ {α β : Type} [MeasurableSpace α] [MeasurableSpace β] (μ : Measure α) (ν : Measure β)
-      (P : β → Prop), (∀ᵐ y ∂ν, P y) → ∀ᵐ p ∂(μ.prod ν), P p.2 := by
-    intro α β _ _ μ ν P h
-    exact Measure.quasiMeasurePreserving_snd.ae h
-  have h1 : ∀ᵐ x ∂Ds.μW, Matrix.of x ∈ UWset k r Ds.z := ae_iff.mpr Ds.haarW.conc
-  have h2 : ∀ᵐ x ∂Ds.μN, Matrix.of x ∈ Nset k r := ae_iff.mpr Ds.haarN.conc
-  have h3 : ∀ᵐ x ∂Ds.μW', Matrix.of x ∈ UWset k r Ds.z' := ae_iff.mpr Ds.haarW'.conc
-  show ∀ᵐ q ∂((Ds.μW.prod Ds.μN).prod (Ds.μW'.prod Ds.μN)), Ds.inSS q
-  filter_upwards [key _ _ _ (key _ _ _ h1), key _ _ _ (key2 _ _ _ h2), key2 _ _ _ (key _ _ _ h3),
-    key2 _ _ _ (key2 _ _ _ h2)] with q a b c d
-  exact And.intro a (And.intro b (And.intro c d))
+  apply _root_.Formalism.FourierDecayAlt.P.B5.ae_inSS <;> assumption
 
 theorem Gf_of_Zhat {k r : ℕ} (z z' : Fin (2 * r + k + 1) → ℂ) (g : B.Mat k r) (pt : C.LPt)
     (h : Zhat k r z z' g = D.ptMatN pt (r + 1)) :
@@ -145,7 +87,7 @@ theorem RR_top (p : KB.Pl P Wp Wq) (G : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (γ
     p.RR G (P.r + 1) [] γ γ = B.hsInner (p.V G γ) (p.V G γ) := by
   have h1 : ¬ (P.r + 1 ≤ P.r) := by omega
   unfold KB.Pl.RR KB.Pl.V D.RRplace
-  rw [dite_eq_left (And.intro hγ hγ), dite_eq_right h1, if_pos rfl, if_pos rfl]
+  rw [dite_eq_left (And.intro hγ hγ), dite_eq_right h1, ite_eq_left rfl, ite_eq_left rfl]
 
 theorem Ew_nil (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (G : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (i : ℕ) (γ : C.LPt) :
     TBB.Ew p nn G i [] γ = TBB.Ew p (fun _ => 1) G i [] γ := by
@@ -194,8 +136,7 @@ theorem Formalism.FourierDecayAlt.P.point_bound_of_corollary_s : TBB.PtBoundOfCo
       rw [Formalism.FourierDecayAlt.P.TBBx2.Ew_nil p nn F (P.r + 1) γ] at hle
       exact hle
   have hfreq : ∃ w ∈ ({w | TBB.AdmW P p.l0 Y w ∧ w.length ≤ N} : Set (List C.Letter)), ∃ᶠ ε in 𝓝[>] (0 : ℝ), TBB.Ew p (fun _ => 1) F (P.r + 1) [] γ ≤ (C₂ * Λ ^ 2) ^ (P.r + 1) * TBB.Ew p nn (D.cutF p.T.base χ F ε) 0 w [] := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hall := (Filter.eventually_all_finite hSfin).mpr hcon
     obtain ⟨ε, ⟨w, hw, hle⟩, hall'⟩ := (hclaim.and hall).exists
     first

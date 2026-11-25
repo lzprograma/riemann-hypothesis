@@ -53,7 +53,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRin
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open scoped CategoryTheory.Obj
 open scoped TensorProduct
 
@@ -178,8 +177,7 @@ def powDatum (D : Datum H) (n : ℕ) : Datum H where
     · intro x hx
       simp only [powForm_baseChange, ← he, diagEnd_apply]
       have : ∃ i, e x i ≠ 0 := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         exact hx (e.injective (by rw [map_zero]; exact funext hc))
       obtain ⟨i, hi⟩ := this
       refine Finset.sum_pos' (fun j _ => ?_) ⟨i, Finset.mem_univ _, h3 _ hi⟩

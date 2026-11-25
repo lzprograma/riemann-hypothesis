@@ -51,10 +51,6 @@ def segreLift (W : Ideal (MRing ι R)) : Ideal (MRing (segreIdx ι) R) :=
 
 end Objects
 
-section Examples
-
-end Examples
-
 end
 
 end GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

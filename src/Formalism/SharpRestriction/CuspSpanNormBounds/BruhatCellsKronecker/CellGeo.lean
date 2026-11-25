@@ -1,46 +1,8 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.ClauseAOfIdentityFlag
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelevantCarrierNonempty.InSCarrierNonempty
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellDef
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -152,12 +114,7 @@ theorem geo_e_mem_Xa (F : FlagG S r T) (i : Fin r) (a : ℕ) (h : i.val < a) : F
   exact Submodule.subset_span ⟨i, h, rfl⟩
 
 theorem geo_Xa_mono (F : FlagG S r T) {a b : ℕ} (h : a ≤ b) : F.Xa a ≤ F.Xa b := by
-  unfold FlagG.Xa
-  apply Submodule.span_mono
-  apply Set.image_mono
-  intro i hi
-  simp only [Set.mem_setOf_eq] at hi ⊢
-  omega
+  apply _root_.Formalism.MainNotions.BridgeLemma.tie_Xa_mono <;> assumption
 
 theorem geo_Xa_le_X (F : FlagG S r T) (a : ℕ) : F.Xa a ≤ F.X := by
   unfold FlagG.Xa FlagG.X
@@ -273,12 +230,12 @@ theorem geo_side (F : FlagG S r T) (A : Matrix (Fin j) (Fin j) E) (hA : StrictUp
     have hg : ∀ i : Fin r, F.coefX (Y (F.fvec i.succ)) i = G i.val := by
       intro i
       by_cases h : i.val + 1 < j
-      · simp only [G, dif_pos h]
+      · simp only [G, dite_eq_left h]
         obtain ⟨y, hy, hyeq⟩ := geo_W_split hj F A hA ⟨i.val + 1, h⟩ i rfl
         have hsucc : F.fvec i.succ = F.fvec (Fin.castLE hj ⟨i.val + 1, h⟩) := rfl
         rw [hsucc, H2, hyeq]
         exact geo_coefX F i _ y hy
-      · simp only [G, dif_neg h]
+      · simp only [G, dite_eq_right h]
         have hjr : j ≤ r := by have := i.isLt; omega
         have hle : j - 1 ≤ i.val := by omega
         have hmem : Y (F.fvec i.succ) ∈ F.Xa i.val :=
@@ -295,7 +252,7 @@ theorem geo_side (F : FlagG S r T) (A : Matrix (Fin j) (Fin j) E) (hA : StrictUp
     rw [e1, e2]
     exact geo_sum_range hj G fun n hn => by
       simp only [G]
-      rw [dif_neg (show ¬ (n + 1 < j) by omega)]
+      rw [dite_eq_right (show ¬ (n + 1 < j) by omega)]
 
 end Flag
 
@@ -460,7 +417,7 @@ theorem geo_hsk (F : FlagG S r T) (F' : FlagG S r T') (hj : j ≤ r + 1) (A A' :
 theorem geo_Z_det (F : FlagG S r T) (F' : FlagG S r T') (hj : j ≤ r + 1) (h : Dl F F' j ≠ 0) :
     ((Zhat F F').submatrix (Fin.castLE hj) (Fin.castLE hj)).det ≠ 0 := by
   unfold Dl leadMinorE at h
-  rw [dif_pos hj] at h
+  rw [dite_eq_left hj] at h
   exact h
 
 theorem geo_gram_unit (F : FlagG S r T) (F' : FlagG S r T') (hj : j ≤ r + 1)
@@ -541,13 +498,13 @@ theorem geo_gram_unit (F : FlagG S r T) (F' : FlagG S r T') (hj : j ≤ r + 1)
       simp only [hcl]
       rw [Fin.sum_univ_castSucc]
       rcases Fin.eq_castSucc_or_eq_last a with ⟨b, rfl⟩ | rfl
-      · rw [if_neg (Fin.castSucc_lt_last b).ne]
+      · rw [ite_eq_right (Fin.castSucc_lt_last b).ne]
         have he : ∀ c : Fin r, S.hT (F.fvec b.castSucc) (F.fvec c.castSucc) = 0 := fun c => by
           rw [geo_fvec_cast, geo_fvec_cast]
           exact F.e_iso b c
         simp only [he, zero_mul, Finset.sum_const_zero, zero_add]
         rw [geo_fvec_cast, geo_fvec_last, F.z_orth b, zero_mul]
-      · rw [if_pos rfl]
+      · rw [ite_eq_left rfl]
         have hz0 : ∀ c : Fin r, S.hT (F.fvec (Fin.last r)) (F.fvec c.castSucc) = 0 := fun c => by
           rw [geo_fvec_last, geo_fvec_cast, ← S.herm.eq (F.e c) F.z, F.z_orth c, map_zero]
         simp only [hz0, zero_mul, Finset.sum_const_zero, zero_add]
@@ -558,13 +515,13 @@ theorem geo_gram_unit (F : FlagG S r T) (F' : FlagG S r T') (hj : j ≤ r + 1)
       simp only [hcl]
       rw [Fin.sum_univ_castSucc]
       rcases Fin.eq_castSucc_or_eq_last a with ⟨b, rfl⟩ | rfl
-      · rw [if_neg (Fin.castSucc_lt_last b).ne]
+      · rw [ite_eq_right (Fin.castSucc_lt_last b).ne]
         have he : ∀ c : Fin r, S.hT (F'.fvec b.castSucc) (F'.fvec c.castSucc) = 0 := fun c => by
           rw [geo_fvec_cast, geo_fvec_cast]
           exact F'.e_iso b c
         simp only [he, zero_mul, Finset.sum_const_zero, zero_add]
         rw [geo_fvec_cast, geo_fvec_last, F'.z_orth b, zero_mul]
-      · rw [if_pos rfl]
+      · rw [ite_eq_left rfl]
         have hz0 : ∀ c : Fin r, S.hT (F'.fvec (Fin.last r)) (F'.fvec c.castSucc) = 0 := fun c => by
           rw [geo_fvec_last, geo_fvec_cast, ← S.herm.eq (F'.e c) F'.z, F'.z_orth c, map_zero]
         simp only [hz0, zero_mul, Finset.sum_const_zero, zero_add]
@@ -576,10 +533,10 @@ theorem geo_gram_unit (F : FlagG S r T) (F' : FlagG S r T') (hj : j ≤ r + 1)
       rw [hPL a] at e
       rw [hmvL a]
       rcases Fin.eq_castSucc_or_eq_last a with ⟨b, rfl⟩ | rfl
-      · rw [if_neg (Fin.castSucc_lt_last b).ne, zero_add] at e
+      · rw [ite_eq_right (Fin.castSucc_lt_last b).ne, zero_add] at e
         rw [Pi.single_eq_of_ne (Fin.castSucc_lt_last b).ne]
         exact e
-      · rw [if_pos rfl] at e
+      · rw [ite_eq_left rfl] at e
         rw [Pi.single_eq_same]
         linear_combination e
     have hZx : ((Zhat F F').submatrix (Fin.castLE hj) (Fin.castLE hj))ᴴ *ᵥ (fun c => w (Sum.inl c)) =
@@ -589,10 +546,10 @@ theorem geo_gram_unit (F : FlagG S r T) (F' : FlagG S r T') (hj : j ≤ r + 1)
       rw [hUR a] at e
       rw [hmvR a]
       rcases Fin.eq_castSucc_or_eq_last a with ⟨b, rfl⟩ | rfl
-      · rw [if_neg (Fin.castSucc_lt_last b).ne, add_zero] at e
+      · rw [ite_eq_right (Fin.castSucc_lt_last b).ne, add_zero] at e
         rw [Pi.single_eq_of_ne (Fin.castSucc_lt_last b).ne]
         exact e
-      · rw [if_pos rfl] at e
+      · rw [ite_eq_left rfl] at e
         rw [Pi.single_eq_same]
         linear_combination e
     have hadj : ∀ (M : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (v : Fin (r + 1) → E) (s : E),
@@ -609,10 +566,10 @@ theorem geo_gram_unit (F : FlagG S r T) (F' : FlagG S r T') (hj : j ≤ r + 1)
     have hdl : Dl F F' r = (((Zhat F F').submatrix (Fin.castLE hj) (Fin.castLE hj)).submatrix
         Fin.castSucc Fin.castSucc).det := by
       unfold Dl leadMinorE
-      exact dif_pos (Nat.le_succ r)
+      exact dite_eq_left (Nat.le_succ r)
     have hDl : Dl F F' (r + 1) = ((Zhat F F').submatrix (Fin.castLE hj) (Fin.castLE hj)).det := by
       unfold Dl leadMinorE
-      exact dif_pos hj
+      exact dite_eq_left hj
     have hadjll : ((Zhat F F').submatrix (Fin.castLE hj) (Fin.castLE hj)).adjugate (Fin.last r) (Fin.last r) =
         Dl F F' r := by
       rw [Matrix.adjugate_fin_succ_eq_det_submatrix, Fin.succAbove_last, hdl, Fin.val_last,
@@ -663,8 +620,7 @@ theorem geo_gram_unit (F : FlagG S r T) (F' : FlagG S r T') (hj : j ≤ r + 1)
       · exact Matrix.eq_zero_of_mulVec_eq_zero h hMv
       · exact lead M v hMv hvl h
     have hor : Dl F F' (r + 1) ≠ 0 ∨ Dl F F' r ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       apply hG
       rw [hc.1, hc.2]
       ring

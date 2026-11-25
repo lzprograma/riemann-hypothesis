@@ -54,15 +54,6 @@ theorem contDiffAt_sandwich {m : Type*} [Fintype m] {A B : F → Matrix m m ℂ}
 
 end Calculus
 
-section Chart
-
-variable {II : IntersectionSystem} {Ψ : Type} [Fintype Ψ] {K : Type} [Fintype K] {ι : K → Type}
-  [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω] [Algebra ℚ Ω] {E : Ψ → Type} [∀ τ, AddCommGroup (E τ)]
-  [∀ τ, Module Ω (E τ)]
-
-
-end Chart
-
 end MuWeightChartSmooth
 
 end GroundTheory.Heights₂.Heights.LowerBoundFree

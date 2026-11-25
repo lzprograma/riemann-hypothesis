@@ -119,7 +119,7 @@ theorem proj_one_of_mem {K : Submodule ℝ (Vsp X.dim)} (hK : ∀ a ∈ K, ∀ b
     intro k
     conv_lhs => rw [ha']
     simp only [z, Hf_sum_l, Hf_rsmul_l, Hf_e hK, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
   conv_rhs => rw [ha']
   simp only [p1, hz, Complex.coe_smul]
 
@@ -240,7 +240,7 @@ theorem reps_bdd (hP : Ext.PackingCount) (C : ℝ) :
   have hg : ∀ u ∈ F, g u ∈ X.L ∧ uc (IR I) (g u) = u := by
     intro u hu
     have := Classical.choose_spec hu
-    simp only [g, dif_pos hu]
+    simp only [g, dite_eq_left hu]
     exact ⟨this.1, this.2.2⟩
   refine ⟨∑ u ∈ hfin.toFinset, ‖p2 (IR I) (g u)‖, Finset.sum_nonneg fun _ _ => norm_nonneg _,
     fun y hy hyC => ?_⟩

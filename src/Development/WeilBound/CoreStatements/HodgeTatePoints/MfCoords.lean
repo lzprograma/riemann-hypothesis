@@ -271,24 +271,6 @@ theorem isIntegral_cone_iff {p : L[X]} :
     rw [p.as_sum_support_C_mul_X_pow]
     exact IsIntegral.sum _ fun n _ => h n
 
-theorem piece_zero : piece o t 0 = (integralClosure o L).toSubmodule := by
-  ext a
-  rw [mem_piece, pow_zero, mul_one, Subalgebra.mem_toSubmodule, mem_integralClosure_iff]
-  constructor
-  · intro h
-    have h1 : ∀ s : cone o t, ((evalRingHom 0).comp (algebraMap (cone o t) L[X])) s ∈
-        (⊥ : Subalgebra o L) := fun s => by
-      have := coeff_mem_span_pow s.2 0
-      rw [pow_zero, Submodule.mem_one, coeff_zero_eq_eval_zero] at this
-      exact Algebra.mem_bot.mpr this
-    have h2 : IsIntegral (⊥ : Subalgebra o L) (evalRingHom 0 (C a)) :=
-      h.map_of_comp_eq (RingHom.codRestrict _ _ h1) (evalRingHom 0) rfl
-    rw [coe_evalRingHom, eval_C] at h2
-    haveI : Algebra.IsIntegral o (⊥ : Subalgebra o L) := inferInstance
-    exact isIntegral_trans a h2
-  · intro h
-    exact (h.map (CAlgHom (R := o) (A := L))).tower_top
-
 theorem isIntegral_div_of_mem_piece (i : σ) {n : ℕ} {a : L} (ha : a ∈ piece o t n) :
     IsIntegral (ratioRing o t i) (a / t i ^ n) := by
   have h1 : ∀ s : cone o t, ((evalRingHom (t i)⁻¹).comp (algebraMap (cone o t) L[X])) s ∈
@@ -502,71 +484,10 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap PSpace resG valR lbP
 open ReciprocityTheory.ChartRestriction.G.Semi (LB)
 open GlobalTheory.QCoh.Qcqs GlobalTheory.ProjSpace GlobalTheory.Points GlobalTheory.TupleCone GlobalTheory.TuplePoint
 
-attribute [local instance] MvPolynomial.gradedAlgebra
-
 namespace GlobalTheory.TupleNorm
 
 variable {L : Type} [Field L]
 
-
-open Polynomial in
-theorem pow_mem_forms (o : Type*) [CommRing o] {L : Type*} [Field L] [Algebra o L] {σ : Type*}
-    (t : σ → L) [IsDedekindDomain o] [CharZero L] [Algebra.EssFiniteType o L] [Fintype σ] {e : ℕ}
-    (he : 0 < e) (hv : ∀ j, 0 < j → piece o t (j * e) = piece o t e ^ j) {a : L}
-    (ha : a ∈ piece o t e) :
-    ∃ n, ∃ c : σ → L, (∀ i, c i ∈ piece o t e ^ n) ∧ a ^ (n + 1) = ∑ i, t i ^ e * c i := by
-  obtain ⟨d, hd, h⟩ := exists_piece_succ_eq o t
-  let A := integralClosure (cone o t) L[X]
-  let τ : σ → A := fun i =>
-    ⟨C (t i) * X, isIntegral_algebraMap (x := (⟨_, C_mul_X_mem_cone i⟩ : cone o t))⟩
-  let I : Ideal A := Ideal.span (Set.range fun i => τ i ^ e)
-  have h1 : ∀ m, ∀ b ∈ Submodule.span o (Set.range t) * piece o t m,
-      ∃ q : A, q ∈ I.radical ∧ (q : L[X]) = C b * X ^ (m + 1) := by
-    intro m b hb
-    induction hb using Submodule.mul_induction_on' with
-    | add x _ y _ hx hy =>
-      obtain ⟨q, hq, hx⟩ := hx
-      obtain ⟨q', hq', hy⟩ := hy
-      exact ⟨q + q', add_mem hq hq', by rw [AddMemClass.coe_add, hx, hy, map_add (f := _), add_mul]⟩
-    | mem_mul_mem x hx y hy =>
-      induction hx using Submodule.span_induction with
-      | mem x hx =>
-        obtain ⟨i, rfl⟩ := hx
-        have : τ i ∈ I.radical := ⟨e, Ideal.subset_span ⟨i, rfl⟩⟩
-        refine ⟨τ i * ⟨_, mem_piece.mp hy⟩, I.radical.mul_mem_right _ this, ?_⟩
-        change (C (t i) * X) * (C y * X ^ m) = _
-        rw [map_mul]; ring
-      | zero => exact ⟨0, zero_mem _, by simp⟩
-      | add x x' _ _ hx hx' =>
-        obtain ⟨q, hq, hx⟩ := hx
-        obtain ⟨q', hq', hy⟩ := hx'
-        exact ⟨q + q', add_mem hq hq',
-          by rw [AddMemClass.coe_add, hx, hy, add_mul, map_add (f := _), add_mul]⟩
-      | smul c x _ hx =>
-        obtain ⟨q, hq, hx⟩ := hx
-        refine ⟨algebraMap (cone o t) A (algebraMap o _ c) * q, I.radical.mul_mem_left _ hq, ?_⟩
-        rw [MulMemClass.coe_mul, hx]
-        change algebraMap o L[X] c * _ = _
-        rw [Algebra.smul_def, Polynomial.algebraMap_apply]; simp only [map_mul]; ring
-  obtain ⟨m, hm⟩ : ∃ m, (d + 1) * e = m + 1 := Nat.exists_eq_add_one.mpr (by positivity)
-  have hdm : d ≤ m := by nlinarith
-  have h3 : a ^ (d + 1) ∈ piece o t (m + 1) := by
-    rw [← hm, hv _ d.succ_pos]; exact Submodule.pow_mem_pow _ ha _
-  rw [h m hdm] at h3
-  obtain ⟨q, ⟨N, hN⟩, hq⟩ := h1 m _ h3
-  obtain ⟨p, hp⟩ := Ideal.mem_span_range_iff_exists_fun.mp
-    (I.pow_mem_of_pow_mem hN (Nat.le_add_right N 2))
-  obtain ⟨n, hn⟩ : ∃ n, (d + 1) * (N + 2) = n + 1 := Nat.exists_eq_add_one.mpr (by positivity)
-  have hn0 : 0 < n := by nlinarith
-  refine ⟨n, fun i => (p i : L[X]).coeff (n * e),
-    fun i => hv n hn0 ▸ isIntegral_cone_iff.mp (p i).2 _, ?_⟩
-  have h4 := congrArg (fun q : A => (q : L[X]).coeff (n * e + e)) hp
-  simp only [τ, hq, AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul, SubmonoidClass.coe_pow,
-    finsetSum_coeff, mul_pow, ← C_pow, ← pow_mul, ← mul_assoc, coeff_mul_X_pow, coeff_mul_C] at h4
-  rw [hn, ← hm, show (d + 1) * e * (N + 2) = n * e + e by rw [mul_right_comm, hn]; ring,
-    coeff_C_mul_X_pow, if_pos rfl] at h4
-  rw [← h4]
-  exact Finset.sum_congr rfl fun i _ => mul_comm _ _
 
 theorem isIntegralElem_iff_of_range_eq {o A : Type*} [CommRing o] [Algebra o L] [CommRing A]
     (φ : A →+* L) (S : Subalgebra o L) (h : Set.range φ = S) (a : L) :
@@ -883,48 +804,6 @@ theorem isProjOver_str : IsProjOver (str o t ht) := by
 
 end Dedekind
 
-theorem normalization_closure_projective [IsDedekindDomain o] [CharZero o] [FaithfulSMul o L]
-    [FiniteDimensional (ratioField o t) L] :
-    (∀ p : Polynomial L, IsIntegral (cone o t) p ↔ ∀ n, p.coeff n ∈ piece o t n) ∧
-    Module.Finite (cone o t) (integralClosure (cone o t) (Polynomial L)) ∧
-    piece o t 0 = (integralClosure o L).toSubmodule ∧ (∀ n, (piece o t n).FG) ∧
-    IsIntegral (Nm o t ht) ∧ ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme (Nm o t ht) ∧
-    (∀ x, IsIso ((nmPoint o t ht).stalkMap x)) ∧ IsFinite (toCl o t ht) ∧
-    (∀ i, t i ≠ 0 → ∃ h : ⊤ ≤ nmPoint o t ht ⁻¹ᵁ (toProj o t ht ⁻¹ᵁ chart o r i),
-      Function.Injective (valMap (nmPoint o t ht) _ h).hom ∧
-      Set.range (valMap (nmPoint o t ht) _ h).hom = integralClosure (ratioRing o t i) L) ∧
-    IsProjOver (str o t ht) ∧
-    ∃ (e : ℕ) (_ : 0 < e) (M : ℕ) (z : Fin (M + 1) → L) (hz : z ≠ 0),
-      (∀ j, 0 < j → piece o t (j * e) = piece o t e ^ j) ∧
-      Submodule.span o (Set.range z) = piece o t e ∧ (∀ j, t j ^ e ∈ Set.range z) ∧
-      (∀ i, t i ≠ 0 → ∀ f, f ∈ Algebra.adjoin o (Set.range fun k => z k / t i ^ e) ↔
-        IsIntegral (ratioRing o t i) f) ∧
-      (∀ k, ∃ (n : ℕ) (c : Fin (r + 1) → L), (∀ i, c i ∈ Submodule.span o (Set.range z) ^ n) ∧
-        z k ^ (n + 1) = ∑ i, t i ^ e * c i) ∧
-      (⨆ k : {k // ∃ j, t j ≠ 0 ∧ z k = t j ^ e}, clι o z hz ⁻¹ᵁ chart o M k.1 = ⊤) ∧
-      ∃ ν : Nm o t ht ≅ Cl o z hz, nmPoint o t ht ≫ ν.hom = clPoint o z hz ∧
-        (ν.hom ≫ clι o z hz) ≫ PSpace.str o M = str o t ht ∧
-        (∀ j k, z k = t j ^ e →
-          (ν.hom ≫ clι o z hz) ⁻¹ᵁ chart o M k = toProj o t ht ⁻¹ᵁ chart o r j) ∧
-        LBIso (lbPow (twist o t ht) e) ((O1 o M).pull (ν.hom ≫ clι o z hz)) := by
-  have : CharZero L := charZero_of_injective_algebraMap (FaithfulSMul.algebraMap_injective o L)
-  have := essFiniteType_of_finiteDimensional o t ht
-  obtain ⟨e, he, M, z, hz, h₁, h₂, h₃, ν, h₄, h₅, h₆, w, hw, -⟩ := exists_iso_Cl o t ht
-  have h₇ : ⨆ k : {k // ∃ j, t j ≠ 0 ∧ z k = t j ^ e}, clι o z hz ⁻¹ᵁ chart o M k.1 = ⊤ := by
-    refine top_le_iff.mp fun y _ => Opens.mem_iSup.mpr ?_
-    obtain ⟨x, rfl⟩ := ν.hom.surjective y
-    obtain ⟨i, hi⟩ := Opens.mem_iSup.1 ((iSup_preimage_chart o t ht).ge (Set.mem_univ x))
-    obtain ⟨k, hk⟩ := h₃ i.1
-    exact ⟨⟨k, i.1, i.2, hk⟩, (h₆ i.1 k hk).ge hi⟩
-  exact ⟨fun _ => isIntegral_cone_iff, finite_integralClosure_cone o t, piece_zero, piece_fg o t,
-    isIntegral_Nm o t ht, isNormalScheme_Nm o t ht, isIso_stalkMap_nmPoint o t ht,
-    isFinite_toCl o t ht, fun i hi => ⟨le_preimage_chart (nmPoint_toProj o t ht) hi,
-      valMap_injective _ _, Set.ext fun a => mem_range_valMap_iff rfl _ a⟩,
-    isProjOver_str o t ht, e, he, M, z, hz, h₁, h₂, h₃,
-    fun i hi f => (isIntegral_ratioRing_iff_mem_adjoin he h₂ h₁ hi).symm,
-    fun k => h₂ ▸ pow_mem_forms o t he h₁ (h₂ ▸ Submodule.subset_span ⟨k, rfl⟩), h₇,
-    ν, h₄, h₅, h₆, w, hw⟩
-
 end GlobalTheory.TupleNorm
 end -- clump:auto
 end -- clump:auto
@@ -945,8 +824,6 @@ noncomputable section
 
 namespace PositivityTheory.HtPt.Mf
 
-attribute [local instance] MvPolynomial.gradedAlgebra
-
 variable {X : Scheme.{0}} {Ω : Type} [Field Ω]
 
 theorem le_preimage_of_cpt (ξ : Sp Ω ⟶ X) (q : Cpt ξ) {U : X.Opens} (hq : q.1 ∈ U) : ⊤ ≤ ξ ⁻¹ᵁ U := by
@@ -966,7 +843,7 @@ theorem genMap_germ_eq (ξ : Sp Ω ⟶ X) (q : Cpt ξ) {U : X.Opens} (hq : q.1 �
     rw [Scheme.germ_stalkClosedPointTo, Iso.trans_hom, ← Category.assoc]
     congr 1
   have e4 := congrArg (fun φ => φ.hom s) (e5.trans e6)
-  simp only [valR, dif_pos hle]
+  simp only [valR, dite_eq_left hle]
   exact e4
 
 theorem exists_point {o : Type} [CommRing o] [Algebra o Ω] {n : ℕ} (y : Sp Ω ⟶ PSpace o n)
@@ -976,7 +853,7 @@ theorem exists_point {o : Type} [CommRing o] [Algebra o Ω] {n : ℕ} (y : Sp Ω
   have hle : ⊤ ≤ y ⁻¹ᵁ chart o n i := (Scheme.preimage_eq_top_of_closedPoint_mem y hi).ge
   let t : Fin (n + 1) → Ω := fun j => valR y (chart o n i) (ratio o n i j)
   have hti : t i = 1 := by
-    simp only [t, ratio, GlobalTheory.ProjSpace.ratioOn_self, valR, dif_pos hle, map_one]
+    simp only [t, ratio, GlobalTheory.ProjSpace.ratioOn_self, valR, dite_eq_left hle, map_one]
   have ht : t ≠ 0 := fun h0 => one_ne_zero (hti.symm.trans (congrFun h0 i))
   refine ⟨t, ht, GlobalTheory.TuplePoint.eq_point hy (i := i) (by rw [hti]; exact one_ne_zero) hle (fun j => ?_)⟩
   rw [hti, div_one]
@@ -1025,7 +902,7 @@ private theorem valR_point_chart_aeval_ratio {o : Type} [CommRing o] [Algebra o 
   have htop : ⊤ ≤ point o t ht ⁻¹ᵁ chart o n c := by
     have h1 := valR_point_ratio (L := Ω) (o := o) (t := t) (ht := ht) hc c
     by_contra hne
-    simp only [valR, dif_neg hne] at h1
+    simp only [valR, dite_eq_right hne] at h1
     rw [div_self hc] at h1
     exact zero_ne_one h1
   induction P using MvPolynomial.induction_on with
@@ -1316,7 +1193,7 @@ theorem genMap_point_mem {o : Type} [CommRing o] [Algebra o Ω] {n : ℕ} {t : F
     rw [genMap_germ_eq _ q hi b]
     have hb : valR (point o t ht) (chart o n i) b ∈
         Set.range (valMap (point o t ht) (chart o n i) hle).hom :=
-      ⟨b, by simp [valR, dif_pos hle, valMap]⟩
+      ⟨b, by simp [valR, dite_eq_left hle, valMap]⟩
     rw [GlobalTheory.TuplePoint.range_valMap_point hle] at hb
     exact hb
   have hunit : IsUnit (algebraMap Γ(PSpace o n, chart o n i) ((PSpace o n).presheaf.stalk q.1) s) :=

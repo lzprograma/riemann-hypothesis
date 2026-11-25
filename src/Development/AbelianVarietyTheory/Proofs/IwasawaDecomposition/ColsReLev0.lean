@@ -44,8 +44,6 @@ namespace GlobalTheory.Mem.Top.ColOwe
 
 open Formalism.BasicNotions Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC NumberField IsDedekindDomain
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {B : Base} {C : Cols B}
 
 abbrev recOf (Z : Later B C) : D7 := assemble B C Z.W Z.V Z.S Z.N Z.G
@@ -136,8 +134,7 @@ def atTRe {u : B.Word}
 def hermRe (H : Formalism.L2.Herm.ColsHermS (recOf Z)) : Formalism.L2.Herm.ColsHermS (recOf Z') :=
   { H with
     base := hermChRe Z' H.base
-    atT := fun u => atTRe Z' (H.atT u)
-    ad := { H.ad with } }
+    atT := fun u => atTRe Z' (H.atT u) }
 
 
 

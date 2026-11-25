@@ -2,11 +2,7 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.MajorantInvolutionDiagonalForm
 public import Mathlib.Algebra.Module.ZLattice.Basic
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.MeasureTheory.Group.GeometryOfNumbers
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 

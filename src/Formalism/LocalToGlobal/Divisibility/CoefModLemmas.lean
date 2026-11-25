@@ -311,7 +311,7 @@ variable {K : Type} [Field K] [StarRing K]
 theorem fockL_monomial_left {σ : Type} (u : σ →₀ ℕ) (c : K) (g : MvPolynomial σ K) :
     fockL (monomial u c) g = star c * g.coeff u * (mfact u : K) := by
   classical
-  rw [fockL_apply, fockS_eq_sum _ _ {u} support_monomial_subset, Finset.sum_singleton, coeff_monomial, if_pos rfl]
+  rw [fockL_apply, fockS_eq_sum _ _ {u} support_monomial_subset, Finset.sum_singleton, coeff_monomial, ite_eq_left rfl]
 
 theorem fockL_symm {σ : Type} (f g : MvPolynomial σ K) : fockL f g = star (fockL g f) :=
   fockSHerm K σ g f
@@ -325,7 +325,7 @@ theorem fockL_pderiv_X {σ : Type} [DecidableEq σ] (v : σ) (f g : MvPolynomial
     · have : v ∉ u.support := Finsupp.notMem_support_iff.mpr hv
       simp [hv, this]
     · have : v ∈ u.support := Finsupp.mem_support_iff.mpr hv
-      rw [if_pos this]
+      rw [ite_eq_left this]
       unfold mfact
       rw [Formalism.REAL.prod_factorial_support_sub_single u v hv, star_mul', star_natCast]
       push_cast; ring
@@ -371,14 +371,14 @@ theorem pderiv_blockAct [DecidableEq ι] (V : ι → Matrix (Fin n) (Fin n) K) (
       by_cases hk : k.1 = s ∧ k.2.2 = t
       · obtain ⟨h1, h2⟩ := hk
         subst h1; subst h2
-        rw [if_pos ⟨rfl, rfl⟩, Finset.sum_eq_single a]
+        rw [ite_eq_left ⟨rfl, rfl⟩, Finset.sum_eq_single a]
         · simp [pderiv_X]
         · intro b _ hb
           rw [Derivation.leibniz, pderiv_C, pderiv_X_of_ne (by
             intro h; exact hb (by simpa using congrArg (fun z : ι × Fin n × Fin n => z.2.1) h))]
           simp
         · simp
-      · rw [if_neg hk]
+      · rw [ite_eq_right hk]
         refine Finset.sum_eq_zero fun b _ => ?_
         rw [Derivation.leibniz, pderiv_C, pderiv_X_of_ne (by
           intro h
@@ -392,14 +392,14 @@ theorem pderiv_blockAct [DecidableEq ι] (V : ι → Matrix (Fin n) (Fin n) K) (
     · by_cases hk : k.1 = s ∧ k.2.2 = t
       · obtain ⟨h1, h2⟩ := hk
         subst h1; subst h2
-        rw [if_pos ⟨rfl, rfl⟩, Finset.sum_eq_single k.2.1]
+        rw [ite_eq_left ⟨rfl, rfl⟩, Finset.sum_eq_single k.2.1]
         · rw [show ((k.1, (k.2.1, k.2.2)) : ι × Fin n × Fin n) = k from rfl, pderiv_X_self, map_one]; ring
         · intro b _ hb
           rw [pderiv_X_of_ne (by
             intro h; exact hb (by simpa using (congrArg (fun z : ι × Fin n × Fin n => z.2.1) h).symm))]
           simp
         · simp
-      · rw [if_neg hk, mul_zero]
+      · rw [ite_eq_right hk, mul_zero]
         symm
         refine Finset.sum_eq_zero fun b _ => ?_
         rw [pderiv_X_of_ne (by
@@ -640,32 +640,9 @@ theorem extNormPos : ExtNormPos := by
     refine Finset.prod_congr rfl fun τ _ => ?_
     rw [← fockSQ K, map_extremal]
 
-section Checks
-
-variable {K : Type} [Field K]
-
-variable [StarRing K]
-
-end Checks
-
 section RankOne
 
 variable {K : Type} [Field K] [NumberField K]
-
-theorem colLat_one_eq (B : GL (Fin 1) K) :
-    colLat B = Submodule.span (𝓞 K) {fun _ : Fin 1 => (B : Matrix (Fin 1) (Fin 1) K) 0 0} := by
-  unfold colLat
-  congr 1
-  ext x
-  simp only [Set.mem_range, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨j, rfl⟩
-    funext a
-    rw [Subsingleton.elim a 0, Subsingleton.elim j 0]
-  · rintro rfl
-    refine ⟨0, ?_⟩
-    funext a
-    rw [Subsingleton.elim a 0]
 
 end RankOne
 

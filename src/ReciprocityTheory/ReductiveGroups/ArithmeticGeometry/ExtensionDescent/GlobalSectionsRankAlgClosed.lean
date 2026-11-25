@@ -10,8 +10,6 @@ import Mathlib.AlgebraicGeometry.Modules.Sheaf
 
 open ReciprocityTheory.ChartRestriction.G
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj

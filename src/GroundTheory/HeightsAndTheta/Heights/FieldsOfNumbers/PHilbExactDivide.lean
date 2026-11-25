@@ -2,50 +2,8 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
 public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Sub.Prod
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -72,12 +30,9 @@ theorem component_mul_form {c : K → ℕ} {s : MRing ι F} (hs : IsMultiHomog s
     (t : MRing ι F) (n : K → ℕ) :
     weightedHomogeneousComponent (blockWeight ι) n (t * s) =
       if c ≤ n then weightedHomogeneousComponent (blockWeight ι) (n - c) t * s else 0 := by
-  have hs' : s ∈ weightedHomogeneousSubmodule F (blockWeight ι) c :=
-    (mem_weightedHomogeneousSubmodule _ _ _ _).mpr hs
-  have := DirectSum.coe_decompose_mul_of_right_mem
-    (𝒜 := weightedHomogeneousSubmodule F (blockWeight ι)) n (a := t) hs'
-  rw [← weightedDecomposition.decompose'_apply, ← weightedDecomposition.decompose'_apply]
-  exact this
+  simp_rw [← weightedDecomposition.decompose'_apply]
+  exact DirectSum.coe_decompose_mul_of_right_mem (weightedHomogeneousSubmodule F (blockWeight ι)) n
+    (a := t) ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hs)
 
 theorem exists_sub_component_mem {I : Ideal (MRing ι F)} (hI : IsMultiHomogIdeal I)
     {s f : MRing ι F} {n : K → ℕ} (hf : IsMultiHomog f n) (hfL : f ∈ I ⊔ Ideal.span {s}) :
@@ -96,15 +51,8 @@ theorem exists_sub_component_mem {I : Ideal (MRing ι F)} (hI : IsMultiHomogIdea
 
 omit [DecidableEq K] in
 theorem mem_colon_span_iff {I : Ideal (MRing ι F)} {s g : MRing ι F} :
-    g ∈ I.colon (Ideal.span {s}) ↔ g * s ∈ I := by
-  rw [Submodule.mem_colon]
-  constructor
-  · intro h
-    simpa [smul_eq_mul] using h s (Ideal.subset_span rfl)
-  · intro h x hx
-    obtain ⟨t, rfl⟩ := Ideal.mem_span_singleton'.mp hx
-    rw [smul_eq_mul, show g * (t * s) = t * (g * s) by ring]
-    exact I.mul_mem_left t h
+    g ∈ I.colon (Ideal.span {s}) ↔ g * s ∈ I :=
+  Ideal.mem_colon_span_singleton
 
 
 open Classical in
@@ -142,7 +90,7 @@ theorem finrank_eq (h1 : GradedFinite.Statement.{u}) [Fintype K] [∀ k, Fintype
   rw [← hrange, ← hrn]
   congr 1
   by_cases hc : c ≤ n
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     let W := weightedHomogeneousSubmodule F (blockWeight ι) (n - c)
     let α : W →ₗ[F] (MRing ι F ⧸ I.colon (Ideal.span {s})) :=
       (Ideal.Quotient.mkₐ F (I.colon (Ideal.span {s}))).toLinearMap ∘ₗ W.subtype
@@ -173,7 +121,7 @@ theorem finrank_eq (h1 : GradedFinite.Statement.{u}) [Fintype K] [∀ k, Fintype
       · rintro ⟨y, hy, rfl⟩
         obtain ⟨f, hf, hfL, hyf⟩ := hkerdesc y hy
         obtain ⟨t, ht⟩ := exists_sub_component_mem hI hf hfL
-        rw [component_mul_form hs, if_pos hc] at ht
+        rw [component_mul_form hs, ite_eq_left hc] at ht
         refine ⟨⟨weightedHomogeneousComponent (blockWeight ι) (n - c) t,
           weightedHomogeneousComponent_mem _ _ _⟩, ?_⟩
         change Ideal.Quotient.mk I (weightedHomogeneousComponent (blockWeight ι) (n - c) t * s) =
@@ -185,13 +133,13 @@ theorem finrank_eq (h1 : GradedFinite.Statement.{u}) [Fintype K] [∀ k, Fintype
     rw [← e1, eα.finrank_eq, e2]
     exact (Submodule.equivMapOfInjective (gradedPiece I n).subtype Subtype.val_injective
       (LinearMap.ker (π.domRestrict (gradedPiece I n)))).finrank_eq
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
     have hbot : LinearMap.ker (π.domRestrict (gradedPiece I n)) = ⊥ := by
       rw [eq_bot_iff]
       intro y hy
       obtain ⟨f, hf, hfL, hyf⟩ := hkerdesc y hy
       obtain ⟨t, ht⟩ := exists_sub_component_mem hI hf hfL
-      rw [component_mul_form hs, if_neg hc, sub_zero] at ht
+      rw [component_mul_form hs, ite_eq_right hc, sub_zero] at ht
       rw [Submodule.mem_bot]
       apply Subtype.ext
       rw [hyf, ZeroMemClass.coe_zero, Ideal.Quotient.eq_zero_iff_mem]
@@ -206,7 +154,7 @@ theorem proof (h1 : GradedFinite.Statement.{u}) : HilbExactDivide.Statement.{u} 
     have key := finrank_eq h1 hI hs n
     rw [(h1 F K ι I n).2, (h1 F K ι (I ⊔ Ideal.span {s}) n).2, key]
     by_cases hc : c ≤ n
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       have hnc : ((fun k => (n k : ℤ)) - fun k => (c k : ℤ)) = fun k => ((n - c) k : ℤ) :=
         funext fun k => by
           have : c k ≤ n k := hc k
@@ -215,10 +163,10 @@ theorem proof (h1 : GradedFinite.Statement.{u}) : HilbExactDivide.Statement.{u} 
       rw [hnc, (h1 F K ι _ (n - c)).2]
       push_cast
       ring
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       have hneg : hilbFn (I.colon (Ideal.span {s}))
           ((fun k => (n k : ℤ)) - fun k => (c k : ℤ)) = 0 := by
-        rw [hilbFn, if_neg]
+        rw [hilbFn, ite_eq_right]
         intro hall
         apply hc
         intro k
@@ -236,7 +184,7 @@ theorem proof (h1 : GradedFinite.Statement.{u}) : HilbExactDivide.Statement.{u} 
       have := hall k
       simp only [Pi.sub_apply] at this
       omega
-    simp only [hilbFn, if_neg hm, if_neg hm', sub_zero]
+    simp only [hilbFn, ite_eq_right hm, ite_eq_right hm', sub_zero]
 
 theorem closed : HilbExactDivide.Statement.{u} :=
   proof GradedFinite.proof

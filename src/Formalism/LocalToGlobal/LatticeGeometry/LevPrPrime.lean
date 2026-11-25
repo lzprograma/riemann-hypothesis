@@ -29,10 +29,4 @@ structure ShimFam (D : D7) (G : DV.Geo D.what₂.LL) (Lev : Type) : Type 1 where
     (fun j => (U (datW D κg j)).alg)
     (fun j p => ((U (datW D κg j)).pad.loc p).Pt ((U (datW D κg j)).pad.loc p).YY)
 
-namespace ShimFam
-
-variable {D : D7} {G : DV.Geo D.what₂.LL} {Lev : Type} (F : ShimFam D G Lev)
-
-end ShimFam
-
 end Formalism.L2.Geo

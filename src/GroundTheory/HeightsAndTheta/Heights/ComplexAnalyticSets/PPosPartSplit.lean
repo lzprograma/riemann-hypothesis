@@ -33,11 +33,11 @@ theorem PosPartSplit.proof : PosPartSplit.Statement := by
     by_cases hs : ∃ s, IsSheetAt J A x s
     · obtain ⟨k₀, hk₀⟩ := hcov x hx' hs
       rw [tsum_eq_single k₀]
-      · simp only [hT, dif_pos hs, Set.indicator_of_mem hk₀]
+      · simp only [hT, dite_eq_left hs, Set.indicator_of_mem hk₀]
       · intro k hk
         have hxk : x ∉ E k := fun hxk => Set.disjoint_left.mp (hE hk) hxk hk₀
-        simp [hT, dif_pos hs, Set.indicator_of_notMem hxk]
-    · simp [hT, dif_neg hs]
+        simp [hT, dite_eq_left hs, Set.indicator_of_notMem hxk]
+    · simp [hT, dite_eq_right hs]
   rw [ENNReal.ofReal_sum_of_nonneg (fun x _ => hT0 f x), Finset.sum_congr rfl hpt,
     ← Summable.tsum_finsetSum (fun _ _ => ENNReal.summable)]
   exact tsum_congr fun k => (ENNReal.ofReal_sum_of_nonneg (fun x _ => hT0 _ x)).symm

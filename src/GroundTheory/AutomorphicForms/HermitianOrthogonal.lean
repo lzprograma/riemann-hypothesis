@@ -65,9 +65,6 @@ variable {V V' V'' : Type*} [AddCommGroup V] [Module E V] [AddCommGroup V'] [Mod
 
 namespace HermitianForm
 
-def Isometric (h : HermitianForm F E V) (h' : HermitianForm F E V') : Prop :=
-  ∃ e : V ≃ₗ[E] V', ∀ x y, h'.toSesq (e x) (e y) = h.toSesq x y
-
 theorem conj_toSesq (h : HermitianForm F E V) (x y : V) :
     conj F E (h.toSesq x y) = h.toSesq y x :=
   h.isSymm.eq x y

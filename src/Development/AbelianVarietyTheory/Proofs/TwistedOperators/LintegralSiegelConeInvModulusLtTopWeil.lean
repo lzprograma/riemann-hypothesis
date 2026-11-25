@@ -133,7 +133,7 @@ theorem lintegral_cone_lt_top {c : ℝ} (hc : 0 < c) : ∀ (m : ℕ) (a : ℕ �
       have h := ha (k + 1) (by omega)
       rw [Finset.sum_range_succ', Finset.sum_range_succ'] at h
       rw [Finset.sum_range_succ']
-      simp only [ha', if_pos, Nat.add_eq_zero_iff, one_ne_zero, and_false, if_false] at *
+      simp only [ha', ite_eq_left, Nat.add_eq_zero_iff, one_ne_zero, and_false, ite_false] at *
       linarith
     set K : ℝ≥0∞ := ENNReal.ofReal (c ^ a 0 / (-a 0))
     set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (m + 2) => ℝ) 0
@@ -174,7 +174,7 @@ theorem lintegral_cone_lt_top {c : ℝ} (hc : 0 < c) : ∀ (m : ℕ) (a : ℕ �
         have h2 : 0 ≤ c ^ a 0 / (-a 0) := div_nonneg (Real.rpow_nonneg hc.le _) (by linarith)
         have h0 : ENNReal.ofReal ((c * y 0) ^ a 0 / (-a 0)) * ENNReal.ofReal (y 0 ^ (a ((0 : Fin (m + 1)).val + 1) - 1))
             = K * ENNReal.ofReal (y 0 ^ (a' (0 : Fin (m + 1)).val - 1)) := by
-          simp only [K, ha', Fin.val_zero, zero_add, if_true]
+          simp only [K, ha', Fin.val_zero, zero_add, ite_true]
           rw [← ENNReal.ofReal_mul h1, ← ENNReal.ofReal_mul h2]
           congr 1
           rw [Real.mul_rpow hc.le hy0.le, show a 0 + a 1 - 1 = (a 1 - 1) + a 0 by ring, Real.rpow_add hy0]

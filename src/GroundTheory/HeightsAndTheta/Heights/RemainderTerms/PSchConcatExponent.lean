@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchu
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 noncomputable section
@@ -61,17 +59,17 @@ theorem SchConcatExponent.proof : SchConcatExponent.Statement := by
       rw [← hq]; exact SchConcatExponent.rotateFun_val r a p
     simp only [Schur.padPartition, smallBlockOf]
     by_cases h : (p : ℕ) < a
-    · have hn : ¬ ((q : ℕ) < r) := by rw [hv, if_pos h]; omega
+    · have hn : ¬ ((q : ℕ) < r) := by rw [hv, ite_eq_left h]; omega
       rw [dite_eq_left h, dite_eq_right hn]
       simp only [Sum.elim_inr]
-      rw [hv, if_pos h]
+      rw [hv, ite_eq_left h]
       omega
     · have h' : (p : ℕ) - a < r := by omega
-      have hn : (q : ℕ) < r := by rw [hv, if_neg h]; exact h'
+      have hn : (q : ℕ) < r := by rw [hv, ite_eq_right h]; exact h'
       rw [dite_eq_right h, dite_eq_left hn]
       simp only [Sum.elim_inl]
-      have hqe : (⟨q, hn⟩ : Fin r) = ⟨(p : ℕ) - a, h'⟩ := Fin.ext (by rw [hv, if_neg h])
-      rw [hqe, hv, if_neg h]
+      have hqe : (⟨q, hn⟩ : Fin r) = ⟨(p : ℕ) - a, h'⟩ := Fin.ext (by rw [hv, ite_eq_right h])
+      rw [hqe, hv, ite_eq_right h]
       have := hlam ⟨(p : ℕ) - a, h'⟩
       omega
 

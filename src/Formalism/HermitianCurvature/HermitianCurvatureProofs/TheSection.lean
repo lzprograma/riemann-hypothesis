@@ -1,50 +1,7 @@
 module
 
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -115,11 +72,6 @@ def theSecB (a b : Fin (k + 1) → ℂ) (T T' : ℝ) (ζ : ℂ) : Matrix (Fin (k
 def theSection (r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ :=
   theSecB k (wbPart k r z) (wbPart k r z') (Tz k r z) (Tz k r z')
 
-private theorem herm_mulVec_of_conjTranspose_mul_eq (H g : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (hg : gᴴ * H * g = H)
-    (x y : Fin (k + 1) → ℂ) : herm H (g *ᵥ x) (g *ᵥ y) = herm H x y := by
-  unfold herm
-  rw [Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, hg]
-
 private theorem mul_conjTranspose_form_preserving (H A B : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (hA : Aᴴ * H * A = H)
     (hB : Bᴴ * H * B = H) : (A * B)ᴴ * H * (A * B) = H := by
   rw [Matrix.conjTranspose_mul]
@@ -158,60 +110,6 @@ private theorem nu_apply' (hk : 1 ≤ k) (w s : ℂ) (l m : Fin (k + 1)) :
           simp [h0L.symm]
         · simp [hl0, hlL, h0L.symm]
     · simp [hm0, hmL]
-
-private theorem nu_conjTranspose_mul_Hb_mul_nu (hk : 1 ≤ k) (w s : ℂ) (hs : star s = s)
-    (hws : star w * w - s * s = 1) : (nu k w s)ᴴ * Hb k * nu k w s = Hb k := by
-  have h0L : (0 : Fin (k + 1)) ≠ Fin.last k := by
-    intro h
-    have h' := congrArg Fin.val h
-    simp only [Fin.val_zero, Fin.val_last] at h'
-    omega
-  ext i j
-  rw [Matrix.mul_apply]
-  simp only [Hb, Matrix.mul_diagonal, Matrix.conjTranspose_apply, Matrix.diagonal_apply,
-    nu_apply' k hk]
-  by_cases hi0 : i = 0
-  · subst hi0
-    rw [Fintype.sum_eq_add 0 (Fin.last k) h0L]
-    · by_cases hj0 : j = 0
-      · subst hj0
-        simp only [h0L, h0L.symm, hs, star_star, ↓reduceIte, mul_one, mul_neg, neg_mul]
-        linear_combination hws
-      · by_cases hjL : j = Fin.last k
-        · subst hjL
-          simp only [h0L, h0L.symm, hs, star_star, ↓reduceIte, mul_one, mul_neg, neg_mul]
-          ring
-        · simp [h0L, h0L.symm, hj0, hjL, Ne.symm hj0, Ne.symm hjL]
-    · intro x hx
-      simp [hx.1, hx.2]
-  · by_cases hiL : i = Fin.last k
-    · subst hiL
-      rw [Fintype.sum_eq_add 0 (Fin.last k) h0L]
-      · by_cases hj0 : j = 0
-        · subst hj0
-          simp only [h0L, h0L.symm, hs, ↓reduceIte, mul_one, mul_neg, neg_mul]
-          ring
-        · by_cases hjL : j = Fin.last k
-          · subst hjL
-            simp only [h0L, h0L.symm, hs, ↓reduceIte, mul_one, mul_neg, neg_mul]
-            linear_combination (-1 : ℂ) * hws
-          · simp [h0L, h0L.symm, hj0, hjL, Ne.symm hj0, Ne.symm hjL]
-      · intro x hx
-        simp [hx.1, hx.2]
-    · rw [Fintype.sum_eq_single i]
-      · simp only [hi0, hiL, ↓reduceIte, star_one, one_mul]
-        by_cases hj0 : j = 0
-        · subst hj0
-          simp [hi0]
-        · by_cases hjL : j = Fin.last k
-          · subst hjL
-            simp [hiL]
-          · by_cases hij : i = j
-            · subst hij
-              simp [hi0, hiL]
-            · simp [hj0, hjL, hij]
-      · intro x hx
-        simp [hi0, hiL, hx]
 
 private theorem nu_mulVec_single_last (hk : 1 ≤ k) (w s : ℂ) :
     nu k w s *ᵥ Pi.single (Fin.last k) 1 = s • Pi.single 0 1 + w • Pi.single (Fin.last k) 1 := by
@@ -313,11 +211,11 @@ theorem theSecB_core (hk : 1 ≤ k) (a b : Fin (k + 1) → ℂ) (T T' : ℝ) (hT
     have hB := gB_spec k hT' hb
     refine ⟨?_, ?_⟩
     · unfold theSecB
-      exact mul_conjTranspose_form_preserving k _ _ _ (mul_conjTranspose_form_preserving k _ _ _ hA.1 (nu_conjTranspose_mul_Hb_mul_nu k hk _ _ hsr hkey)) hB.1
+      exact mul_conjTranspose_form_preserving k _ _ _ (mul_conjTranspose_form_preserving k _ _ _ hA.1 (nu_unitary k hk _ _ hsr (by linear_combination -hkey))) hB.1
     · unfold theSecB
       rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hB.2]
       conv_lhs => arg 3; rw [← hA.2]
-      rw [herm_mulVec_of_conjTranspose_mul_eq k _ _ hA.1, Matrix.mulVec_smul, nu_mulVec_single_last k hk]
+      rw [form_of_unitary _ hA.1, Matrix.mulVec_smul, nu_mulVec_single_last k hk]
       have hcs : star ((Real.sqrt T : ℝ) : ℂ) = ((Real.sqrt T : ℝ) : ℂ) := Complex.conj_ofReal _
       have hT0 : ((Real.sqrt T : ℝ) : ℂ) ≠ 0 := by exact_mod_cast (Real.sqrt_pos.2 hT).ne'
       have hT0' : ((Real.sqrt T' : ℝ) : ℂ) ≠ 0 := by exact_mod_cast (Real.sqrt_pos.2 hT').ne'
@@ -343,12 +241,12 @@ private theorem herm_Hb_wbPart_eq_herm_Hpk_of_inWb (r : ℕ) (z : Fin (2 * r + k
     simp only [Matrix.mulVec, dotProduct]
     rw [Finset.sum_eq_single i]
     · simp only [Hpk]
-      rw [if_neg (by omega), if_neg (by omega), if_pos (by simp [h1, h2])]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by simp [h1, h2])]
     · intro j _ hji
       by_cases hj : j.val < r ∨ r + k < j.val
       · rw [hz j hj, mul_zero]
       · simp only [Hpk]
-        rw [if_neg (by omega), if_neg (by omega), if_neg (by
+        rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by
           rintro ⟨_, _, h⟩
           exact hji h.symm), zero_mul]
     · intro h
@@ -378,8 +276,8 @@ private theorem herm_Hb_wbPart_eq_herm_Hpk_of_inWb (r : ℕ) (z : Fin (2 * r + k
       simp [wI, Fin.ext_iff]
     simp only [wbPart]
     by_cases hjl : j = Fin.last k
-    · rw [if_pos hjl, if_pos (hc.1 hjl)]
-    · rw [if_neg hjl, if_neg (fun h => hjl (hc.2 h))]
+    · rw [ite_eq_left hjl, ite_eq_left (hc.1 hjl)]
+    · rw [ite_eq_right hjl, ite_eq_right (fun h => hjl (hc.2 h))]
 
 theorem theSection_isSection (r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (hk : 1 ≤ k) (hz : inWb k r z)
     (hz' : inWb k r z') (hT : 0 < Tz k r z) (hT' : 0 < Tz k r z') :

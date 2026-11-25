@@ -1,49 +1,8 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDualGenerator.FpDualUnram
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -84,43 +43,16 @@ theorem addCharKernel : PsiKer := by
       rw [e]
       exact le_trans (Padic.nonarchimedean _ _) (max_le ht h)
   have hrat : ‖(a : ℚ_[l])‖ ≤ 1 ↔ a.den = 1 := by
-    constructor
-    · intro h
-      by_contra hd
-      have hn0 : n ≠ 0 := by
-        rintro rfl
-        rw [pow_zero] at hn
-        exact hd hn
-      have hlp : l.Prime := Fact.out
-      have hnum : ¬ (l : ℤ) ∣ a.num := by
-        intro hdvd
-        have h1 : l ∣ a.num.natAbs := Int.natCast_dvd.mp hdvd
-        have h2 : l ∣ a.den := by
-          rw [hn]
-          exact dvd_pow_self l hn0
-        have h3 := Nat.dvd_gcd h1 h2
-        rw [a.reduced.gcd_eq_one] at h3
-        exact hlp.one_lt.ne' (Nat.dvd_one.mp h3)
-      have hnum1 : ‖(a.num : ℚ_[l])‖ = 1 :=
-        le_antisymm (Padic.norm_int_le_one _)
-          (not_lt.mp fun h' => hnum (Padic.norm_intCast_lt_one_iff.mp h'))
-      have hden : ‖(a.den : ℚ_[l])‖ = ((l : ℝ)⁻¹) ^ n := by
-        rw [hn, Nat.cast_pow, norm_pow, Padic.norm_p]
-      have ha : (a : ℚ_[l]) = (a.num : ℚ_[l]) / (a.den : ℚ_[l]) := by
-        rw [← Rat.cast_intCast, ← Rat.cast_natCast, ← Rat.cast_div, Rat.num_div_den]
-      rw [ha, norm_div, hnum1, hden] at h
-      have hl1 : (1 : ℝ) < l := by exact_mod_cast hlp.one_lt
-      have hgt : (1 : ℝ) < 1 / ((l : ℝ)⁻¹) ^ n := by
-        rw [inv_pow, one_div, inv_inv]
-        exact one_lt_pow₀ hl1 hn0
-      linarith
-    · intro h1
-      have ha : (a : ℚ_[l]) = (a.num : ℚ_[l]) := by
-        have h := (Rat.den_eq_one_iff a).mp h1
-        norm_cast
-        exact h.symm
-      rw [ha]
-      exact Padic.norm_int_le_one _
+    have hden : a.den = 1 ↔ ¬ l ∣ a.den :=
+      ⟨fun h => h ▸ (Fact.out : l.Prime).not_dvd_one, fun h => by
+        rcases n with _ | n
+        · exact hn
+        · exact absurd (hn ▸ dvd_pow_self l n.succ_ne_zero) h⟩
+    rw [hden, ← Rat.padicValuation_le_one_iff (p := l), ← Padic.comap_mulValuation_eq_padicValuation]
+    by_cases ha : (a : ℚ_[l]) = 0
+    · simp [ha]
+    · rw [Padic.norm_le_one_iff_val_nonneg]
+      simp [Padic.mulValuation_toFun, ha]
   rw [hexp, hna, hrat]
 
 end PI.LocDualGen.Psi

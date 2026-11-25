@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalLevelCharacterMatchAtTypePrime
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemAdelicSpanOfLatticeIffForallPlace
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.HformSumRight
@@ -300,17 +301,7 @@ theorem bwd_loc (hJ : J.det ≠ 0) (L : Submodule (𝓞 E) (Fin n → E)) (hL : 
 
 theorem prV_int (v : HeightOneSpectrum (𝓞 F)) (c : E ⊗[F] Ad F) (hc : c ∈ OAd F E) :
     prV (E := E) v c ∈ intV E v := by
-  change c ∈ Subring.closure _ at hc
-  induction hc using Subring.closure_induction with
-  | mem x hx =>
-    rcases hx with ⟨⟨e, he⟩, rfl⟩ | ⟨⟨b, hb⟩, rfl⟩
-    · exact Subring.subset_closure (Or.inl ⟨⟨e, he⟩, rfl⟩)
-    · exact Subring.subset_closure (Or.inr ⟨⟨b v, hb v⟩, rfl⟩)
-  | zero => rw [map_zero]; exact zero_mem _
-  | one => rw [map_one]; exact one_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
-  | neg x _ hx => rw [map_neg]; exact neg_mem hx
-  | mul x y _ _ hx hy => rw [map_mul]; exact mul_mem hx hy
+  first | exact _root_.GlobalTheory.St.G.FrLoc.prV_OAd | exact @_root_.GlobalTheory.St.G.FrLoc.prV_OAd | apply _root_.GlobalTheory.St.G.FrLoc.prV_OAd <;> assumption
 
 omit [NumberField E] in
 theorem prV_hR (v : HeightOneSpectrum (𝓞 F)) (a : Fin n → E) (x : Fin n → E ⊗[F] Ad F) :

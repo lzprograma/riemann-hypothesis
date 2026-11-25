@@ -160,17 +160,13 @@ open NumberField MeasureTheory
 
 namespace GlobalTheory.CMTypeNorm
 
-theorem place_bijective {K : Type} [Field K] [NumberField K] {I : Type} {φ : I → K →+* ℂ} (h : GlobalTheory.CMVal.IsCMType φ) :
-    Function.Bijective fun i => InfinitePlace.mk (φ i) := by
-  apply GlobalTheory.CMVal.Model.IsCMType.bijective <;> assumption
-
 theorem prod_norm_sq_eq_absNorm :
     ∀ (K : Type) [Field K] [NumberField K] [NumberField.IsTotallyComplex K] (I : Type) [Fintype I] (φ : I → K →+* ℂ),
       GlobalTheory.CMVal.IsCMType φ → ∀ α : 𝓞 K,
         ∏ i, ‖φ i (α : K)‖ ^ 2 = ((Ideal.absNorm (Ideal.span {α}) : ℕ) : ℝ) := by
   intro K _ _ _ I _ φ h α
   have h1 : ∏ i, ‖φ i (α : K)‖ ^ 2 = ∏ w : InfinitePlace K, w (α : K) ^ w.mult := by
-    refine Fintype.prod_bijective _ (place_bijective h) _ _ fun i => ?_
+    refine Fintype.prod_bijective _ (GlobalTheory.CMVal.Model.IsCMType.bijective h) _ _ fun i => ?_
     rw [InfinitePlace.apply, IsTotallyComplex.mult_eq]
   rw [h1, InfinitePlace.prod_eq_abs_norm, Ideal.absNorm_span_singleton, ← Algebra.coe_norm_int, Nat.cast_natAbs]
   push_cast
@@ -889,7 +885,6 @@ theorem continuous_proj (hφ : GlobalTheory.CMVal.IsCMType φ) : Continuous (pro
 
 end UnitLogPartition
 
-
 open NumberField.Units NumberField.Units.dirichletUnitTheorem NumberField.InfinitePlace UnitLogPartition in
 theorem exists_measurable_nonneg_hasSum_ulog_translates : ∀ (K : Type) [Field K] [NumberField K]
     [NumberField.IsTotallyComplex K] (I : Type) [Fintype I] (φ : I → K →+* ℂ), GlobalTheory.CMVal.IsCMType φ →
@@ -1116,8 +1111,7 @@ variable {K : Type} [Field K] [NumberField K] {I : Type} [Fintype I]
 
 theorem exists_one_le_norm {φ : I → K →+* ℂ} (hφ : GlobalTheory.CMVal.IsCMType φ) {α : 𝓞 K} (hα : α ≠ 0) :
     ∃ i, 1 ≤ ‖φ i (α : K)‖ := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   have hlt : ∀ w : InfinitePlace K, w (α : K) < 1 := by
     intro w
     obtain ⟨i, hi, -⟩ := hφ w.embedding
@@ -1144,14 +1138,13 @@ def embHom (φ : I → K →+* ℂ) : 𝓞 K →+ (I → ℂ) where
   map_add' a b := by funext i; simp [GlobalTheory.HeckeTheta.emb]
 
 theorem embHom_injective {φ : I → K →+* ℂ} (hφ : GlobalTheory.CMVal.IsCMType φ) : Function.Injective (embHom φ) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra h0
   obtain ⟨i, hi⟩ := exists_one_le_norm hφ h0
   have : φ i (a : K) = 0 := congrFun ha i
   rw [this, norm_zero] at hi
   exact absurd hi (by norm_num)
-
 
 omit [Fintype I] in
 theorem summable_exp_neg_mul_norm_sq {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
@@ -1316,7 +1309,6 @@ open scoped nonZeroDivisors
 
 namespace GlobalTheory.HeckeStrip
 
-
 open Classical in
 theorem tsum_ideal_eq_sum_classGroup_of_summable {K : Type} [Field K] [NumberField K]
     (b : ClassGroup (𝓞 K) → (Ideal (𝓞 K))⁰) (G : Ideal (𝓞 K) → ℂ) (H : ClassGroup (𝓞 K) → Ideal (𝓞 K) → ℂ)
@@ -1369,11 +1361,11 @@ theorem classPartFun_mul_wt
     classPartFun φ n m X b α * wt φ n (α : K) = open Classical in if α ∈ b then X (Ideal.span {α}) else 0 := by
   unfold classPartFun classUnitPart
   by_cases hb : α ∈ b
-  · rw [if_pos hb, if_pos hb]
+  · rw [ite_eq_left hb, ite_eq_left hb]
     by_cases hm : m = ⊤
-    · rw [if_pos hm, one_mul, hβ α hα (hm ▸ Submodule.mem_top)]
-    · rw [if_neg hm, mul_assoc, inv_mul_cancel₀ (wt_ne_zero_of_ne_zero φ n hα), mul_one]
-  · rw [if_neg hb, if_neg hb, zero_mul]
+    · rw [ite_eq_left hm, one_mul, hβ α hα (hm ▸ Submodule.mem_top)]
+    · rw [ite_eq_right hm, mul_assoc, inv_mul_cancel₀ (wt_ne_zero_of_ne_zero φ n hα), mul_one]
+  · rw [ite_eq_right hb, ite_eq_right hb, zero_mul]
 
 theorem classUnitPart_eq_of_inv
     (hmul : ∀ a b : Ideal (𝓞 K), X (a * b) = X a * X b)
@@ -1397,7 +1389,7 @@ theorem classUnitPart_eq_of_inv
     rw [h0, zero_mul] at key
     exact mul_ne_zero hwγ hwα key.symm
   unfold classUnitPart
-  rw [if_neg hm]
+  rw [ite_eq_right hm]
   field_simp
   linear_combination key
 
@@ -1430,7 +1422,7 @@ theorem classUnitPart_add
       rw [e]; exact m.add_mem e1 (m.mul_mem_left γ hμ)
     rw [classUnitPart_eq_of_inv hmul hβ hm e1, classUnitPart_eq_of_inv hmul hβ hm e2]
   · have hc' : Ideal.span {α + μ} ⊔ m ≠ ⊤ := hsup ▸ hc
-    simp only [classUnitPart, if_neg hm, hzero _ hc, hzero _ hc', zero_mul]
+    simp only [classUnitPart, ite_eq_right hm, hzero _ hc, hzero _ hc', zero_mul]
 
 theorem classPartFun_add
     (hmul : ∀ a b : Ideal (𝓞 K), X (a * b) = X a * X b)
@@ -1442,9 +1434,9 @@ theorem classPartFun_add
   have hμb : μ ∈ b := (Ideal.mul_le_inf.trans inf_le_right) hμ
   unfold classPartFun
   by_cases h : α ∈ b
-  · rw [if_pos h, if_pos (b.add_mem h hμb), classUnitPart_add hmul hzero hβ hμm]
+  · rw [ite_eq_left h, ite_eq_left (b.add_mem h hμb), classUnitPart_add hmul hzero hβ hμm]
   · have h' : α + μ ∉ b := fun h' => h (by simpa using b.sub_mem h' hμb)
-    rw [if_neg h, if_neg h']
+    rw [ite_eq_right h, ite_eq_right h']
 
 theorem classPartFun_unit
     (hβ : ∀ β : 𝓞 K, β ≠ 0 → β - 1 ∈ m → X (Ideal.span {β}) = wt φ n (β : K))
@@ -1458,8 +1450,8 @@ theorem classPartFun_unit
   have hiff : (u : 𝓞 K) * α ∈ b ↔ α ∈ b :=
     ⟨fun h => by simpa using b.mul_mem_left ((u⁻¹ : (𝓞 K)ˣ) : 𝓞 K) h, fun h => b.mul_mem_left _ h⟩
   by_cases h : α ∈ b
-  · rw [if_pos h, if_pos (hiff.2 h)]
-  · rw [if_neg h, if_neg (fun h' => h (hiff.1 h'))]
+  · rw [ite_eq_left h, ite_eq_left (hiff.2 h)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (hiff.1 h'))]
 
 theorem pval_classPartFun
     (hβ : ∀ β : 𝓞 K, β ≠ 0 → β - 1 ∈ m → X (Ideal.span {β}) = wt φ n (β : K))
@@ -1473,8 +1465,8 @@ theorem pval_classPartFun
   unfold pval
   rw [classPartFun_mul_wt hβ b hg, Ideal.span_singleton_generator]
   by_cases h : J ≤ b
-  · rw [if_pos (hle.2 h), if_pos h]
-  · rw [if_neg (fun h' => h (hle.1 h')), if_neg h]
+  · rw [ite_eq_left (hle.2 h), ite_eq_left h]
+  · rw [ite_eq_right (fun h' => h (hle.1 h')), ite_eq_right h]
 
 theorem pSeries_classPartFun
     (hβ : ∀ β : 𝓞 K, β ≠ 0 → β - 1 ∈ m → X (Ideal.span {β}) = wt φ n (β : K))
@@ -1499,10 +1491,10 @@ theorem pSeries_classPartFun
   · by_cases h : J ≤ b
     · rw [Set.indicator_of_mem (show J ∈ {J : Ideal (𝓞 K) | J ≠ ⊥ ∧ J.IsPrincipal} from hJ),
         Set.indicator_of_mem (show J ∈ {J : Ideal (𝓞 K) | J ≠ ⊥ ∧ J.IsPrincipal ∧ J ≤ b} from ⟨hJ.1, hJ.2, h⟩)]
-      simp only [f, g, if_pos h]
+      simp only [f, g, ite_eq_left h]
     · rw [Set.indicator_of_mem (show J ∈ {J : Ideal (𝓞 K) | J ≠ ⊥ ∧ J.IsPrincipal} from hJ),
         Set.indicator_of_notMem (show J ∉ {J : Ideal (𝓞 K) | J ≠ ⊥ ∧ J.IsPrincipal ∧ J ≤ b} from fun h' => h h'.2.2)]
-      simp only [f, if_neg h, zero_mul]
+      simp only [f, ite_eq_right h, zero_mul]
   · rw [Set.indicator_of_notMem (show J ∉ {J : Ideal (𝓞 K) | J ≠ ⊥ ∧ J.IsPrincipal} from hJ),
       Set.indicator_of_notMem (show J ∉ {J : Ideal (𝓞 K) | J ≠ ⊥ ∧ J.IsPrincipal ∧ J ≤ b} from
         fun h' => hJ ⟨h'.1, h'.2.1⟩)]

@@ -81,18 +81,13 @@ private lemma adjoint_apply_eq_conj_smul_of_eigen {I A : Type} [NormedAddCommGro
     simp
   exact sub_eq_zero.mp (inner_self_eq_zero.mp h0)
 
-private lemma mem_eigPart_iff' {I A : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
-    [FiniteDimensional ℂ A] (op : I → Module.End ℂ A) (c : I → ℂ) (x : A) :
-    x ∈ eigPart op c ↔ ∀ i, op i x = c i • x := by
-  simp [eigPart, sub_eq_zero]
-
 private lemma inner_eq_zero_of_mem_eigPart_ne {I A : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
     [FiniteDimensional ℂ A] (op : I → Module.End ℂ A) (hc : PairCommF op) (ha : AdjClosed op)
     {c c' : I → ℂ} (hcc : c ≠ c') {x y : A} (hx : x ∈ eigPart op c) (hy : y ∈ eigPart op c') :
     ⟪x, y⟫_ℂ = 0 := by
   obtain ⟨i, hi⟩ := Function.ne_iff.mp hcc
-  have hx' := (mem_eigPart_iff' op c x).mp hx i
-  have hy' := adjoint_apply_eq_conj_smul_of_eigen op hc ha i (c' i) y ((mem_eigPart_iff' op c' y).mp hy i)
+  have hx' := (mem_eigPart.mp hx) i
+  have hy' := adjoint_apply_eq_conj_smul_of_eigen op hc ha i (c' i) y ((mem_eigPart.mp hy) i)
   have h1 : ⟪op i x, y⟫_ℂ = ⟪x, LinearMap.adjoint (op i) y⟫_ℂ :=
     (LinearMap.adjoint_inner_right (op i) x y).symm
   rw [hx', hy', inner_smul_left, inner_smul_right] at h1
@@ -121,13 +116,13 @@ private lemma le_iSup_eigPart_inf_of_invariant {I A : Type} [NormedAddCommGroup 
     exact bot_le
   by_cases hsc : ∀ i, ∃ μ : ℂ, ∀ x ∈ W, op i x = μ • x
   · choose c hc' using hsc
-    have hle : W ≤ eigPart op c := fun x hx => (mem_eigPart_iff' op c x).mpr fun i => hc' i x hx
+    have hle : W ≤ eigPart op c := fun x hx => mem_eigPart.mpr fun i => hc' i x hx
     have hocc : c ∈ Occ op W := by
       change eigPart op c ⊓ W ≠ ⊥
       rw [inf_eq_right.mpr hle]
       exact hbot
     exact le_iSup₂_of_le c hocc (le_inf hle le_rfl)
-  push_neg at hsc
+  push Not at hsc
   obtain ⟨i, hi⟩ := hsc
   have hex : ∃ μ : ℂ, ∃ v : A, v ∈ W ∧ v ≠ 0 ∧ op i v = μ • v := by
     haveI : Nontrivial W := Submodule.nontrivial_iff_ne_bot.mpr hbot

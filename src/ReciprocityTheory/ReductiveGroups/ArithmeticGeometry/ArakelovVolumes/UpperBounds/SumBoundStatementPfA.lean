@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.RhGradStatementPfB
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.SumBoundStatement
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
@@ -217,24 +218,7 @@ theorem sumBd_exists_S {n : Type*} [Fintype n] [DecidableEq n] {H : Matrix n n �
 
 theorem sumBd_posDef_swap {Z : Matrix (Fin p) (Fin q) ℂ} (hZ : (1 - Z * Zᴴ).PosDef) :
     (1 - Zᴴ * Z).PosDef := by
-  set P := 1 - Z * Zᴴ
-  have hQ : (1 + Zᴴ * P⁻¹ * Z).PosDef :=
-    PosDef.one.add_posSemidef (hZ.inv.posSemidef.conjTranspose_mul_mul_same Z)
-  have hPi : P * P⁻¹ = 1 := mul_nonsing_inv P (isUnit_iff_ne_zero.mpr hZ.det_pos.ne')
-  have hm : (1 + Zᴴ * P⁻¹ * Z) * (1 - Zᴴ * Z) = 1 := by
-    have : Zᴴ * P⁻¹ * Z - Zᴴ * P⁻¹ * (Z * Zᴴ) * Z = Zᴴ * Z := by
-      calc Zᴴ * P⁻¹ * Z - Zᴴ * P⁻¹ * (Z * Zᴴ) * Z = Zᴴ * (P⁻¹ * (1 - Z * Zᴴ)) * Z := by
-            simp only [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one, Matrix.mul_assoc]
-        _ = Zᴴ * Z := by
-            rw [nonsing_inv_mul P (isUnit_iff_ne_zero.mpr hZ.det_pos.ne'), Matrix.mul_one]
-    calc (1 + Zᴴ * P⁻¹ * Z) * (1 - Zᴴ * Z)
-        = 1 - Zᴴ * Z + (Zᴴ * P⁻¹ * Z - Zᴴ * P⁻¹ * (Z * Zᴴ) * Z) := by
-          simp only [Matrix.add_mul, Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one, Matrix.mul_assoc]
-          abel
-      _ = 1 := by rw [this]; abel
-  have hm' : (1 - Zᴴ * Z) * (1 + Zᴴ * P⁻¹ * Z) = 1 := mul_eq_one_comm.mp hm
-  rw [← inv_eq_left_inv hm']
-  exact hQ.inv
+  apply ReciprocityTheory.ChartRestriction.G.AR.Up.RgC.posDef_swap <;> assumption
 
 theorem sumBd_isUpq_mul {g G : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ} (hg : IsUpq g) (hG : IsUpq G) :
     IsUpq (g * G) := by

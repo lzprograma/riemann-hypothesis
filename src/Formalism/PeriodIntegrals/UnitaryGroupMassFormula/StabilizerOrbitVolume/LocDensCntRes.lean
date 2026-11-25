@@ -1,49 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -107,68 +64,6 @@ private theorem appr_unit_lemma (m c : 𝓞 F) (hc : c ∉ v.asIdeal) :
       ≤ 1 * v.valuation F (algebraMap (𝓞 F) F (1 - c * c')) := by gcongr
     _ < 1 := by rw [one_mul]; exact h1
 
-private theorem appr_den_lemma_2 (k : F) (hk : v.valuation F k ≤ 1) :
-    ∃ m c : 𝓞 F, c ∉ v.asIdeal ∧ k = algebraMap (𝓞 F) F m / algebraMap (𝓞 F) F c := by
-  obtain ⟨n, d, hd, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 F) k
-  have hd0 : d ≠ 0 := nonZeroDivisors.ne_zero hd
-  have hdF : algebraMap (𝓞 F) F d ≠ 0 :=
-    (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 F) F)).mpr hd0
-  have hB : ∀ r : 𝓞 F, v.valuation F (algebraMap (𝓞 F) F r) = v.intValuation r := by
-    intro r
-    first
-      | exact HeightOneSpectrum.valuation_of_algebraMap v r
-  have hιd0 : v.intValuation d ≠ 0 := by
-    rw [← hB]
-    exact (Valuation.ne_zero_iff _).mpr hdF
-  have hιd1 : v.intValuation d ≤ 1 := by
-    rw [← hB]
-    exact v.valuation_le_one d
-  have hLe : WithZero.exp (WithZero.log (v.intValuation d)) = v.intValuation d := WithZero.exp_log hιd0
-  have hL0 : WithZero.log (v.intValuation d) ≤ 0 := by
-    have h := hιd1
-    rw [← hLe, ← WithZero.exp_zero, WithZero.exp_le_exp] at h
-    exact h
-  obtain ⟨e, he⟩ : ∃ e : ℕ, (e : ℤ) = -WithZero.log (v.intValuation d) :=
-    ⟨(-WithZero.log (v.intValuation d)).toNat, Int.toNat_of_nonneg (by omega)⟩
-  have hιd : v.intValuation d = WithZero.exp (-(e : ℤ)) := by
-    rw [he, neg_neg, hLe]
-  have hdiv : v.asIdeal ^ e ∣ Ideal.span {d} :=
-    (HeightOneSpectrum.intValuation_le_pow_iff_dvd v d e).mp (le_of_eq hιd)
-  have hndiv : ¬ v.asIdeal ^ (e + 1) ∣ Ideal.span {d} := by
-    intro h
-    have h2 := (HeightOneSpectrum.intValuation_le_pow_iff_dvd v d (e + 1)).mpr h
-    rw [hιd, WithZero.exp_le_exp] at h2
-    push_cast at h2
-    omega
-  obtain ⟨J, hJ⟩ := hdiv
-  have hJP : ¬ J ≤ v.asIdeal := by
-    intro h
-    apply hndiv
-    rw [hJ, pow_succ]
-    exact mul_dvd_mul_left _ (Ideal.dvd_iff_le.mpr h)
-  obtain ⟨c, hcJ, hcP⟩ := SetLike.not_le_iff_exists.mp hJP
-  have hn : n ∈ v.asIdeal ^ e := by
-    have hιn : v.intValuation n ≤ v.intValuation d := by
-      have h := hk
-      rw [map_div₀, hB, hB] at h
-      calc v.intValuation n = v.intValuation n / v.intValuation d * v.intValuation d := by
-            rw [div_mul_cancel₀ _ hιd0]
-        _ ≤ 1 * v.intValuation d := by gcongr
-        _ = v.intValuation d := one_mul _
-    rw [hιd] at hιn
-    exact Ideal.dvd_span_singleton.mp ((HeightOneSpectrum.intValuation_le_pow_iff_dvd v n e).mp hιn)
-  have hcn : c * n ∈ Ideal.span {d} := by
-    rw [hJ, mul_comm c n]
-    exact Ideal.mul_mem_mul hn hcJ
-  obtain ⟨m, hm⟩ := Ideal.mem_span_singleton'.mp hcn
-  refine ⟨m, c, hcP, ?_⟩
-  have hc0 : c ≠ 0 := by
-    rintro rfl
-    exact hcP v.asIdeal.zero_mem
-  have hcF : algebraMap (𝓞 F) F c ≠ 0 :=
-    (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 F) F)).mpr hc0
-  rw [div_eq_div_iff hdF hcF, ← map_mul, ← map_mul, mul_comm n c, ← hm]
-
 theorem exists_appr {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) :
     ∃ a : 𝓞 F, Valued.v (x - iO v a) < 1 := by
   have hx1 : Valued.v x ≤ 1 := hx
@@ -183,7 +78,10 @@ theorem exists_appr {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) :
     have h := Valuation.map_add_le Valued.v (le_of_lt hy) hx1
     rwa [sub_add_cancel] at h
   rw [vcoe] at hk1
-  obtain ⟨m, c, hc, rfl⟩ := appr_den_lemma_2 v k hk1
+  obtain ⟨m, ⟨c, hc⟩, hmc⟩ := HeightOneSpectrum.exists_primeCompl_mul_eq_of_integer v k hk1
+  have hcF : algebraMap (𝓞 F) F c ≠ 0 :=
+    (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 F) F)).mpr fun h => hc (h ▸ v.asIdeal.zero_mem)
+  obtain rfl : k = algebraMap (𝓞 F) F m / algebraMap (𝓞 F) F c := eq_div_of_mul_eq hcF hmc
   obtain ⟨a, ha⟩ := appr_unit_lemma v m c hc
   refine ⟨a, ?_⟩
   have h2 : Valued.v (algebraMap F (Fv F v) (algebraMap (𝓞 F) F m / algebraMap (𝓞 F) F c) - iO v a) < 1 := by
@@ -285,9 +183,5 @@ theorem red_surj (t : 𝓞 F ⧸ v.asIdeal) : ∃ x ∈ v.adicCompletionIntegers
   exact ⟨iO v a, mem_O_iO v a, red_iO v a⟩
 
 end Res
-
-section Count
-
-end Count
 
 end PI.VolStabSW

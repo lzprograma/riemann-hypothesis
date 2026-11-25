@@ -89,46 +89,6 @@ theorem one_mem_locPart (T : Submonoid (MRingOver S ι)) :
   refine Submodule.subset_span ⟨1, ⟨fun k => by simp, ?_⟩, rfl⟩
   exact GroundTheory.Heights₂.Heights.HilbertSamuel.GenTwistGenerated.isMultiHomog_one _ fun k => by simp
 
-theorem exists_cocycle {n : K → ℤ} {s : Ω} (hs : s ∈ secOver S y n) :
-    ∃ z ∈ cechZc ι (quotPart S (mIdealOver S y)) n 0,
-      ∀ c : ∀ k, ι k, (∀ k, y ⟨k, c k⟩ ≠ 0) → evMap y (chart c) (z (cell0 c)) = s := by
-  have hs' : ∀ c : ∀ k, ι k, (∀ k, y ⟨k, c k⟩ ≠ 0) →
-      s * ∏ k, y ⟨k, c k⟩ ^ (-n k) ∈ chartRingOver S y c := by
-    intro c hc
-    exact (Submodule.mem_iInf _).mp ((Submodule.mem_iInf _).mp hs c) hc
-  have hlift : ∀ I : Cell K ι 0, Good y I.1 → ∃ w ∈ locPart ι (quotPart S (mIdealOver S y)) (cellMon S I.1) n,
-      evMap y I.1 w = s := fun I hI =>
-    exists_lift hI (fun k => Finset.min'_mem _ (I.2.1 k)) n
-      (hs' _ fun k => hI k _ (Finset.min'_mem _ (I.2.1 k)))
-  classical
-  let z : CechC S ι (MRingOver S ι ⧸ mIdealOver S y) 0 := fun I =>
-    if hI : Good y I.1 then (hlift I hI).choose else 0
-  have hzC : ∀ I : Cell K ι 0, z I ∈ locPart ι (quotPart S (mIdealOver S y)) (cellMon S I.1) n := by
-    intro I
-    by_cases hI : Good y I.1
-    · simp only [z, dif_pos hI]; exact (hlift I hI).choose_spec.1
-    · simp only [z, dif_neg hI]; exact Submodule.zero_mem _
-  have hzv : ∀ I : Cell K ι 0, Good y I.1 → evMap y I.1 (z I) = s := by
-    intro I hI
-    simp only [z, dif_pos hI]
-    exact (hlift I hI).choose_spec.2
-  have hzCc : z ∈ cechCc ι (quotPart S (mIdealOver S y)) n 0 :=
-    Submodule.mem_pi.mpr fun I _ => hzC I
-  have hzD : cechD S ι _ 0 z = 0 := by
-    funext J
-    by_cases hJ : Good y J.1
-    · refine evMap_injOn y hJ n (cechD_mem_locPart n 0 hzCc J) (Submodule.zero_mem _) ?_
-      have hconst : constD K ι Ω 0 (fun I => evMap y I.1 (z I)) J = constD K ι Ω 0 (fun _ => s) J :=
-        CechPointVanish.constD_congr J.1 0 (fun I hIJ => hzv I fun k i hi => hJ k i (hIJ k hi)) J
-          fun k => subset_refl _
-      rw [evMap_cechD z J hJ, hconst, constD_const, Pi.zero_apply, map_zero]
-    · unfold Good at hJ
-      push Not at hJ
-      obtain ⟨k, i, hi, hy0⟩ := hJ
-      have := subsingleton_of_bad (S := S) hi hy0
-      exact @Subsingleton.elim _ this _ _
-  exact ⟨z, Submodule.mem_inf.mpr ⟨hzCc, hzD⟩, fun c hc => hzv (cell0 c) (good_chart hc)⟩
-
 end GeneratedCechTie
 
 

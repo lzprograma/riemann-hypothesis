@@ -69,7 +69,6 @@ open GroundTheory.Automorphic.Parabolic (levi parabolicInd mem_levi leviUnipoten
 open GroundTheory.Automorphic.GodementJacquet (centralUnif coe_centralUnif)
 open scoped Classical
 
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
 namespace UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 

@@ -139,9 +139,9 @@ theorem hPart_mul {z : Fin (2 * r + k + 1) → ℂ} {h m : Mat k r} (hh : h ∈ 
   ext i j
   unfold hPart
   by_cases H1 : (r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)
-  · rw [if_pos H1]
+  · rw [ite_eq_left H1]
     exact block_mul_col hb hc i j H1.2.2 (Or.inr H1.1.1)
-  · rw [if_neg H1, block_entry hb H1]
+  · rw [ite_eq_right H1, block_entry hb H1]
 
 theorem PiS_mul {Wp : Type*} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] (ψ : Mat k r → ℂ)
     (π : Mat k r → (Wp →L[ℂ] Wp)) {z : Fin (2 * r + k + 1) → ℂ} {h m : Mat k r}
@@ -153,9 +153,9 @@ theorem hPart_continuous : Continuous (hPart k r) := by
   refine continuous_pi fun i => continuous_pi fun j => ?_
   show Continuous fun s : Mat k r => hPart k r s i j
   by_cases H1 : (r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)
-  · simp only [hPart, if_pos H1]
+  · simp only [hPart, ite_eq_left H1]
     exact (continuous_apply j).comp (continuous_apply i)
-  · simp only [hPart, if_neg H1]
+  · simp only [hPart, ite_eq_right H1]
     exact continuous_const
 
 theorem adjoint_eq_of_isometry {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]

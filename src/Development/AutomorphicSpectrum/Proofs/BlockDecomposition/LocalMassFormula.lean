@@ -13,65 +13,12 @@ public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.Binar
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresContinuity
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalLatticeCompactOpenUnitVolume
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityNearOne
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.PrimitiveVectorQuadraticLevelMeasure
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardLocalHaarProperties
 import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -327,96 +274,6 @@ theorem core_unit (lam : Measure (Fv F v)) (hlam : IsStdV v lam) (h2 : Valued.v 
   let 𝓴 := IsLocalRing.ResidueField 𝒪
   let phi := ValuationSubring.subtype 𝒪
   let res := IsLocalRing.residue 𝒪
-  have res_eq_zero_iff (a : 𝒪) : res a = 0 ↔ Valued.v (a : Fv F v) < 1 := by
-    rw [IsLocalRing.residue_eq_zero_iff, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
-    constructor
-    · intro h
-      have h1 : Valued.v (a : Fv F v) ≤ 1 := a.2
-      refine lt_of_le_of_ne h1 fun h2 => h ?_
-      have ha0 : (a : Fv F v) ≠ 0 := by
-        intro h0
-        rw [h0, map_zero] at h2
-        exact zero_ne_one h2
-      have hinv : (a : Fv F v)⁻¹ ∈ v.adicCompletionIntegers F := by
-        show Valued.v ((a : Fv F v)⁻¹) ≤ 1
-        rw [map_inv₀, h2, inv_one]
-      refine IsUnit.of_mul_eq_one (⟨(a : Fv F v)⁻¹, hinv⟩ : v.adicCompletionIntegers F) ?_
-      apply Subtype.ext
-      show (a : Fv F v) * (a : Fv F v)⁻¹ = 1
-      exact mul_inv_cancel₀ ha0
-    · intro h hu
-      obtain ⟨b, hb⟩ := hu.exists_right_inv
-      have h3 : Valued.v ((a : Fv F v) * (b : Fv F v)) = 1 := by
-        have : (a : Fv F v) * (b : Fv F v) = 1 := congrArg Subtype.val hb
-        rw [this, map_one]
-      rw [map_mul] at h3
-      have hb1 : Valued.v (b : Fv F v) ≤ 1 := b.2
-      have h4 : Valued.v (a : Fv F v) * Valued.v (b : Fv F v) < 1 := by
-        calc _ ≤ Valued.v (a : Fv F v) * 1 := by gcongr
-          _ < 1 := by simpa using h
-      exact absurd h3 (ne_of_lt h4)
-
-  have res_eq_iff (a b : 𝒪) : res a = res b ↔ Valued.v ((a : Fv F v) - b) < 1 := by
-    rw [← sub_eq_zero, ← map_sub, res_eq_zero_iff]
-    rfl
-
-  let lift (y : 𝓴) : 𝒪 := Function.surjInv IsLocalRing.residue_surjective y
-
-  have res_lift (y : 𝓴) : res (lift y) = y := Function.surjInv_eq _ y
-
-  let lf (y : ι → 𝓴) : ι → Fv F v := fun i => (lift (y i) : 𝒪)
-
-  have cover (x : ι → Fv F v) :
-      ((∀ i, x i ∈ 𝒪) ∧ ∃ i, Valued.v (x i) = 1) ↔
-        ∃ y : ι → 𝓴, y ≠ 0 ∧ ∀ i, Valued.v (x i - lf y i) < 1 := by
-    constructor
-    · rintro ⟨hx, i₀, hi₀⟩
-      refine ⟨fun i => res ⟨x i, hx i⟩, ?_, fun i => ?_⟩
-      · intro h0
-        have h1 := (res_eq_zero_iff (⟨x i₀, hx i₀⟩ : 𝒪)).1 (congrFun h0 i₀)
-        exact absurd hi₀ (ne_of_lt h1)
-      · exact (res_eq_iff (⟨x i, hx i⟩ : 𝒪) (lift _)).1 (res_lift _).symm
-    · rintro ⟨y, hy, h⟩
-      have hx : ∀ i, x i ∈ 𝒪 := by
-        intro i
-        have e : x i = (x i - lf y i) + lf y i := by ring
-        show Valued.v (x i) ≤ 1
-        rw [e]
-        exact Valuation.map_add_le _ (h i).le (lift (y i)).2
-      refine ⟨hx, ?_⟩
-      obtain ⟨i, hi⟩ := Function.ne_iff.1 hy
-      refine ⟨i, le_antisymm (hx i) (not_lt.1 fun hlt => hi ?_)⟩
-      have e : res (⟨x i, hx i⟩ : 𝒪) = y i := by
-        rw [(res_eq_iff (⟨x i, hx i⟩ : 𝒪) (lift (y i))).2 (h i), res_lift]
-      rw [← e]
-      exact (res_eq_zero_iff _).2 hlt
-
-  have eq_of_close (x : ι → Fv F v) (y y' : ι → 𝓴)
-      (h : ∀ i, Valued.v (x i - lf y i) < 1) (h' : ∀ i, Valued.v (x i - lf y' i) < 1) : y = y' := by
-    funext i
-    have h1 := Valuation.map_sub_lt _ (h' i) (h i)
-    have e : (x i - lf y' i) - (x i - lf y i) = lf y i - lf y' i := by ring
-    rw [e] at h1
-    have h2 := (res_eq_iff (lift (y i)) (lift (y' i))).2 h1
-    rwa [res_lift, res_lift] at h2
-
-  have res_Q (c : 𝒪) (hc : (c : Fv F v) = 2⁻¹) (hr : res c = 2⁻¹)
-      (BO : Matrix ι ι 𝒪) (y : ι → 𝓴) :
-      ∃ a : 𝒪, (a : Fv F v) = (2 : Fv F v)⁻¹ * (lf y ⬝ᵥ ((BO.map phi) *ᵥ lf y)) ∧
-        res a = (2 : 𝓴)⁻¹ * (y ⬝ᵥ ((BO.map res) *ᵥ y)) := by
-    refine ⟨c * ((lift ∘ y) ⬝ᵥ (BO *ᵥ (lift ∘ y))), ?_, ?_⟩
-    · have h1 := map_quad phi BO (lift ∘ y)
-      have h2 : (phi : 𝒪 →+* Fv F v) (c * ((lift ∘ y) ⬝ᵥ (BO *ᵥ (lift ∘ y)))) = phi c * phi ((lift ∘ y) ⬝ᵥ (BO *ᵥ (lift ∘ y))) := map_mul _ _ _
-      rw [h1] at h2
-      have h3 : phi c = (2 : Fv F v)⁻¹ := hc
-      rw [h3] at h2
-      exact h2
-    · rw [map_mul, hr, map_quad]
-      have : (⇑res ∘ lift ∘ y) = y := by
-        funext i
-        exact res_lift _
-      rw [this]
-
   have hs : s ∈ v.adicCompletionIntegers F := mem_int.2 hsu.le
   have hLoc := _root_.GlobalTheory.CompanionTheory.SW.LocFv.isLocR_Fv F v
   haveI : SecondCountableTopology (Fv F v) := hLoc.2.2.1

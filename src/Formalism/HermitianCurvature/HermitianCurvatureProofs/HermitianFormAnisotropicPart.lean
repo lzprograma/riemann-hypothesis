@@ -3,48 +3,6 @@ module
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadCorrespondenceOfParts
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -123,7 +81,7 @@ theorem base_point_block_eq (p : KB.Pl P Wp Wq) :
       have := congrFun (hme ⟨j.val, hj⟩) i
       rw [← e] at this
       simp only [mulVec, dotProduct, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true] at this
+        Finset.mem_univ, ite_true] at this
       rw [this, eq_comm]
     · have hj2 := j.isLt
       have e : bvec j = es P.k P.r ⟨2 * P.r + P.k - j.val, by omega⟩ := by
@@ -131,7 +89,7 @@ theorem base_point_block_eq (p : KB.Pl P Wp Wq) :
       have := congrFun (hms ⟨2 * P.r + P.k - j.val, by omega⟩) i
       rw [← e] at this
       simp only [mulVec, dotProduct, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true] at this
+        Finset.mem_univ, ite_true] at this
       rw [this, eq_comm]
   have hrow : ∀ (i j : Fin (2 * P.r + P.k + 1)), (i.val < P.r ∨ P.r + P.k < i.val) →
       (P.r ≤ j.val ∧ j.val ≤ P.r + P.k) → p.m₀ i j = 0 := by
@@ -145,7 +103,7 @@ theorem base_point_block_eq (p : KB.Pl P Wp Wq) :
       rw [hi', hmj] at h1
       rw [← h1]
       simp only [bvec, Pi.single_apply]
-      rw [if_neg]; intro h; have := congrArg Fin.val h; omega
+      rw [ite_eq_right]; intro h; have := congrArg Fin.val h; omega
     · have hi2 := i.isLt
       have h1 := herm_ee (k := P.k) (r := P.r) (p.m₀ *ᵥ bvec j) ⟨2 * P.r + P.k - i.val, by omega⟩
       rw [← hme ⟨2 * P.r + P.k - i.val, by omega⟩, Formalism.FourierDecayAlt.P.Dx2.DF.herm_m0_mulVec_invariant p.m₀ hmU, herm_ee] at h1
@@ -153,7 +111,7 @@ theorem base_point_block_eq (p : KB.Pl P Wp Wq) :
       rw [hi', hmj] at h1
       rw [← h1]
       simp only [bvec, Pi.single_apply]
-      rw [if_neg]; intro h; have := congrArg Fin.val h; omega
+      rw [ite_eq_right]; intro h; have := congrArg Fin.val h; omega
   ext i j
   simp only [D.castM, Matrix.reindex_apply, Matrix.submatrix_apply]
   unfold ιLev
@@ -162,9 +120,9 @@ theorem base_point_block_eq (p : KB.Pl P Wp Wq) :
     simp only [m0R]
     congr 1 <;> ext <;> simp <;> omega
   · rw [dite_eq_left (by simp; omega), dite_eq_right (by simp; omega), hcol i j (by omega)]
-    rw [if_neg]; intro h; rw [h] at hi; exact hj hi
+    rw [ite_eq_right]; intro h; rw [h] at hi; exact hj hi
   · rw [dite_eq_right (by simp; omega)]
-    rw [hrow i j (by omega) hj, if_neg]
+    rw [hrow i j (by omega) hj, ite_eq_right]
     · intro h; apply hi; have := congrArg Fin.val h; simp at this; omega
   · rw [dite_eq_right (by simp; omega), hcol i j (by omega)]
     congr 1

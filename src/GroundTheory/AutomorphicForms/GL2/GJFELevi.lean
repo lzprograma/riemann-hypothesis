@@ -185,11 +185,11 @@ theorem leviEquivPi_symm_mulSingle (a : Set.range β) :
   by_cases hb : b = a
   · subst hb
     rw [Pi.mulSingle_eq_same, coe_centralUnif]
-    simp only [Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, blockIndicator, hk, if_true,
+    simp only [Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, blockIndicator, hk, ite_true,
       zpow_one, hkl]
     split_ifs <;> simp
   · rw [Pi.mulSingle_eq_of_ne hb]
-    simp only [Units.val_one, Matrix.one_apply, blockIndicator, hk, if_neg hb, zpow_zero, hkl]
+    simp only [Units.val_one, Matrix.one_apply, blockIndicator, hk, ite_eq_right hb, zpow_zero, hkl]
 
 
 variable (β) in
@@ -396,9 +396,12 @@ theorem exists_leviFE (hσ : IsAdmissible σ) [σ.IsIrreducible] (hc : IsCuspida
   have _ : ∀ a : Set.range β, NeZero (blockSize β a) := fun a => ⟨(blockSize_pos β a).ne'⟩
   set μb : ∀ a : Set.range β, Measure (GL (Fin (blockSize β a)) F) := fun a => Measure.haar
     with hμb
-  obtain ⟨γ, hmain⟩ := multiFEStatement_all.{uF, u, w} hψ hψ1
+  obtain ⟨γ, _, hmain⟩ := multiFEStatement_all.{uF, u, w} (M := Unit) (PH := fun _ _ => True)
+    (Shape := fun _ _ => True) (wt := fun _ _ _ => ()) trivial (fun _ _ => trivial)
+    (fun _ _ _ _ _ _ _ => trivial) (fun _ _ _ _ _ => trivial) hψ hψ1
+    (fun _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => trivial)
     (Fintype.card (Set.range β)) (Set.range β) rfl (fun a => blockSize β a) μb
-    PUnit.{max u uF + 1} ρ hadm hirr αc hα0 hα hsupp
+    PUnit.{max u uF + 1} trivial ρ hadm hirr αc hα0 hα hsupp
   obtain ⟨s₀, hconv⟩ := exists_integrable_multi ρ hadm.1 hα0 hα hsupp μb
 
   set em := e.toHomeomorph.toMeasurableEquiv with hem

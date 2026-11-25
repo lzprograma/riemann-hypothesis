@@ -84,7 +84,6 @@ theorem finite_support_and_sum_ord_eq_zero : ∀ (k F : Type) [Field k] [IsAlgCl
     set B := {v : Place k F | v.1 x⁻¹ < 1}
     have hsub : {v : Place k F | v.1 x ≠ 1} ⊆ A ∪ B := by
       intro v hv
-      have h0 : v.1 x ≠ 0 := (Valuation.ne_zero_iff _).2 hx
       rcases lt_or_gt_of_ne hv with h | h
       · exact Or.inl h
       · right

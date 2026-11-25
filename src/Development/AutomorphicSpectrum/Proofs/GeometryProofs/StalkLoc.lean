@@ -8,53 +8,10 @@ public import Mathlib.Tactic.ENatToNat
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateWeilOpenChart
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NatCastSmulMemHtLat
-import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
-import Mathlib.Combinatorics.Quiver.ReflQuiver
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionExtendsFromStalkPullback
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionLiftIsClosedImmersion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -186,48 +143,8 @@ theorem exists_denom {X : Scheme.{0}} (G : Over X) [GrpObj G] [IsCommMonObj G] [
     {z : Spec (CommRingCat.of O) ⟶ X} (hz : Spec.map (CommRingCat.ofHom (algebraMap R O)) ≫ x = z)
     (v : epsAt z ⟶ G) (hv : IsTanAt G z v) :
     ∃ u ∈ S, ∃ b : L₀, Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.epsMul (algebraMap R O u))) ≫ v.left =
-      Spec.map (CommRingCat.ofHom (dualMap (algebraMap R O))) ≫ (M₀.pt b).left := by
-  subst hz
-  obtain ⟨L', _, _, ⟨M'⟩⟩ := lieModel_exists X G O (Spec.map (CommRingCat.ofHom (algebraMap R O)) ≫ x)
-  letI : Module R L' := Module.compHom L' (algebraMap R O)
-  have hsm : ∀ (r : R) (l : L'), r • l = algebraMap R O r • l := fun _ _ => rfl
-  haveI : IsScalarTower R O L' := ⟨fun r a l => by
-    rw [Algebra.smul_def, mul_smul, hsm]⟩
-  have hψ : Spec.map (CommRingCat.ofHom (dualMap (algebraMap R O))) ≫ (epsAt x).hom =
-      (epsAt (Spec.map (CommRingCat.ofHom (algebraMap R O)) ≫ x)).hom := by
-    simp only [epsAt, Over.mk_hom]
-    rw [← Category.assoc, ← Category.assoc, ← spec_comp, ← spec_comp, dual_alg]
-  let ψ : epsAt (Spec.map (CommRingCat.ofHom (algebraMap R O)) ≫ x) ⟶ epsAt x := Over.homMk _ hψ
-  have hleft : ∀ l, (ψ ≫ M₀.pt l).left =
-      Spec.map (CommRingCat.ofHom (dualMap (algebraMap R O))) ≫ (M₀.pt l).left := fun l => rfl
-  have htan : ∀ l, IsTanAt G (Spec.map (CommRingCat.ofHom (algebraMap R O)) ≫ x) (ψ ≫ M₀.pt l) := by
-    intro l
-    have t : _ ≫ (M₀.pt l).left = _ := M₀.tan l
-    rw [one_left] at t
-    show _ ≫ (ψ ≫ M₀.pt l).left = _
-    rw [hleft, one_left, ← Category.assoc, ← spec_comp, dual_fst, spec_comp, Category.assoc, t]
-    simp
-  choose j hj using fun l => M'.onto _ (htan l)
-  have hjl : ∀ l, (M'.pt (j l)).left =
-      Spec.map (CommRingCat.ofHom (dualMap (algebraMap R O))) ≫ (M₀.pt l).left := fun l => by
-    rw [hj, hleft]
-  have jadd : ∀ a b, j (a + b) = j a + j b := fun a b => M'.inj (by
-    rw [hj, M'.add, M₀.add, hj, hj, comp_mul])
-  have jsmul : ∀ (r : R) a, j (r • a) = r • j a := fun r a => M'.inj (Over.OverMorphism.ext (by
-    rw [hsm, M'.smul, hjl, hjl, M₀.smul, ← Category.assoc, ← Category.assoc, ← spec_comp, ← spec_comp, dual_eps]))
-  let β : L₀ →ₗ[R] L' :=
-    { toFun := j
-      map_add' := jadd
-      map_smul' := jsmul }
-  have hbc : IsBaseChange O β := (_root_.GlobalTheory.CompanionTheory.Ar.LieProj.lie_finite_projective_baseChange X G R x L₀ M₀).2.2 O L' M' β hjl
-  have hloc : IsLocalizedModule S β := (isLocalizedModule_iff_isBaseChange S O β).2 hbc
-  obtain ⟨e', he'⟩ := M'.onto v hv
-  obtain ⟨⟨b, u⟩, hb⟩ := IsLocalizedModule.surj S β e'
-  refine ⟨u, u.2, b, ?_⟩
-  have h1 := M'.smul (algebraMap R O u) e'
-  rw [he'] at h1
-  rw [← h1, ← hjl]
-  congr 3
+      Spec.map (CommRingCat.ofHom (dualMap (algebraMap R O))) ≫ (M₀.pt b).left :=
+  _root_.GlobalTheory.CompanionTheory.Ar.HTChart.exists_denom G S x M₀ hz v hv
 
 theorem core_tan {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec (CommRingCat.of Ω) ⟶ X} {G : Over X} [GrpObj G]
     [IsCommMonObj G] [Smooth G.hom] {E : Type} [AddCommGroup E] [Module Ω E]
@@ -251,62 +168,14 @@ theorem core_tan {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec (CommRingCat
       valAt (y ≫ i) W h f = valAt y ⊤ le_top s)
     (e : E) (v : epsAt z ⟶ G) (hv : IsTanAt G z v)
     (he : (M.pt e).left = Spec.map (CommRingCat.ofHom (dualMap g)) ≫ v.left) :
-    ∃ c : O, w e = g c ∧ ∀ h : ⊤ ≤ v.left ⁻¹ᵁ W, ∃ r : O, c = (valAt v.left W h f).snd + n * r := by
-  subst hk₀
-  obtain ⟨u, hu, b, hub⟩ := exists_denom G S x M₀ hz v hv
-  obtain ⟨U', hU⟩ := (IsLocalization.map_units O (⟨u, hu⟩ : S)).exists_right_inv
-  replace hU : algebraMap R O u * U' = 1 := hU
-  have hje : g (algebraMap R O u) • e = j b := M.inj (Over.OverMorphism.ext (by
-    rw [M.smul, he, hj, ← dual_comp, spec_comp, Category.assoc, ← hub, ← Category.assoc, ← Category.assoc,
-      ← spec_comp, ← spec_comp, dual_eps]))
-  have hwe : g (algebraMap R O u) * w e = g (algebraMap R O (w₀ b)) := by
-    have := congrArg w hje
-    rwa [map_smul, smul_eq_mul, hwj] at this
-  refine ⟨U' * algebraMap R O (w₀ b), ?_, fun h => ?_⟩
-  · have h1 : g (algebraMap R O u) * g U' = 1 := by rw [← map_mul, hU, map_one]
-    rw [map_mul, ← hwe]
-    linear_combination (-(w e)) * h1
-  · obtain ⟨v₀, h1, h2, h3⟩ := hs b
-    have hIJ : Ideal.span {(n : R)} ≤ (Ideal.span {(n : O)}).comap (algebraMap R O) := by
-      rw [Ideal.span_le]
-      rintro _ rfl
-      simpa using Ideal.mem_span_singleton_self (n : O)
-    let φb : R ⧸ Ideal.span {(n : R)} →+* O ⧸ Ideal.span {(n : O)} :=
-      Ideal.quotientMap (Ideal.span {(n : O)}) (algebraMap R O) hIJ
-    have hφ : φb.comp (Ideal.Quotient.mk (Ideal.span {(n : R)})) =
-        (Ideal.Quotient.mk (Ideal.span {(n : O)})).comp (algebraMap R O) := Ideal.quotientMap_comp_mk hIJ
-    obtain ⟨vv, hvvd⟩ : ∃ vv, vv = Spec.map (CommRingCat.ofHom (dualMap φb)) ≫ v₀ := ⟨_, rfl⟩
-    obtain ⟨y', hy'd⟩ : ∃ y', y' = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.epsMul (algebraMap R O u))) ≫ v.left := ⟨_, rfl⟩
-    have hy' : ⊤ ≤ y' ⁻¹ᵁ W := by
-      rw [hy'd]
-      exact fun t _ => h (by trivial)
-    have hvv : vv ≫ i = Spec.map (CommRingCat.ofHom (dualMap (Ideal.Quotient.mk (Ideal.span {(n : O)})))) ≫ y' := by
-      rw [hvvd, hy'd, hub, Category.assoc, h2, ← Category.assoc, ← Category.assoc, ← spec_comp, ← spec_comp,
-        dual_comp, dual_comp, hφ]
-    have h2' : ⊤ ≤ (vv ≫ i) ⁻¹ᵁ W := by
-      rw [hvv]
-      exact fun t _ => hy' (by trivial)
-    have e3 := valAt_mod y' n hvv W hy' h2' f
-    have hov : vv ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom (((algebraMap (O ⧸ Ideal.span {(n : O)})
-        (DualNumber (O ⧸ Ideal.span {(n : O)}))).comp (Ideal.Quotient.mk _)).comp (algebraMap R O))) := by
-      rw [hvvd, Category.assoc, h1, ← spec_comp, ← RingHom.comp_assoc, dual_alg, RingHom.comp_assoc, hφ,
-        RingHom.comp_assoc]
-    rw [hval vv _ hov] at e3
-    have e4 : valAt vv ⊤ le_top s = dualMap φb (valAt v₀ ⊤ le_top s) := by
-      subst hvvd
-      exact valAt_spec (dualMap φb) v₀ ⊤ le_top le_top s
-    have e5 : dualMap φb (TrivSqZeroExt.inl 1 + TrivSqZeroExt.inr (Ideal.Quotient.mk (Ideal.span {(n : R)}) (w₀ b))) =
-        TrivSqZeroExt.inl 1 + TrivSqZeroExt.inr (Ideal.Quotient.mk (Ideal.span {(n : O)}) (algebraMap R O (w₀ b))) := by
-      have := RingHom.congr_fun hφ (w₀ b)
-      simp only [RingHom.comp_apply] at this
-      ext <;> simp [dualMap, this]
-    rw [e4, h3, e5] at e3
-    obtain ⟨r, hr⟩ := snd_of_mod n _ _ e3
-    have e6 : valAt y' W hy' f = GlobalTheory.CompanionTheory.Ar.epsMul (algebraMap R O u) (valAt v.left W h f) := by
-      subst hy'd
-      exact valAt_spec (GlobalTheory.CompanionTheory.Ar.epsMul (algebraMap R O u)) v.left W h hy' f
-    refine ⟨U' * r, ?_⟩
-    rw [hr, e6, snd_epsMul]
-    linear_combination (valAt v.left W h f).snd * hU
+    ∃ c : O, w e = g c ∧ ∀ h : ⊤ ≤ v.left ⁻¹ᵁ W, ∃ r : O, c = (valAt v.left W h f).snd + n * r :=
+  _root_.GlobalTheory.CompanionTheory.Ar.HTChart.core_tan_of M S Γ i x hz g k₀ hk₀ M₀ j hj n w₀ w hwj s
+    (fun v₀ => v₀ ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom ((algebraMap (R ⧸ Ideal.span {(n : R)})
+      (DualNumber (R ⧸ Ideal.span {(n : R)}))).comp (Ideal.Quotient.mk _))))
+    hs W f (fun {φb} {v₀} hφ h1 h => hval (Spec.map (CommRingCat.ofHom (dualMap φb)) ≫ v₀)
+      ((algebraMap (O ⧸ Ideal.span {(n : O)}) (DualNumber (O ⧸ Ideal.span {(n : O)}))).comp (Ideal.Quotient.mk _))
+      (by rw [Category.assoc, h1, ← spec_comp, ← RingHom.comp_assoc, dual_alg, RingHom.comp_assoc, hφ,
+        RingHom.comp_assoc]) h)
+    e v hv he
 
 end GlobalTheory.CompanionTheory.HtLink

@@ -14,8 +14,6 @@ namespace Formalism.L2.SG.RealObj.RootCoordinateFrames
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def NRealize : Prop :=
   ∀ (n r : ℕ) (ε : Fin n → Bool) (e f : Fin r → Fin n → ℂ) (z : Fin n → ℂ),
     (∀ a b, hJ ε (e a) (e b) = 0) → (∀ a b, hJ ε (f a) (f b) = 0) →

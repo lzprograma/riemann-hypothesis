@@ -2,42 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
 public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroTypeInertia
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -45,10 +9,7 @@ noncomputable section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GLq
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial
-open Formalism.ConjugateSelfDual ReciprocityTheory.Gal
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.Zero.LLC
 
@@ -148,11 +109,8 @@ def IsRecT (rc : IrrGL (k := w.adicCompletion E) → WD h) : Prop := ∃ a ha, L
 representations of the groups `GL_n(E_w)` to Weil–Deligne representations satisfying `IsRecT`.
 
 This is the form of the local Langlands correspondence for `GL_n` that the proof of the main
-theorems uses, and it is proved in this repository as `UpperTheory.Zero.LLC.recTExists`. The full
-correspondence, characterized by `GlobalTheory.LocLanglands.IsRecLit`, exists by
-[Harris and Taylor, *The geometry and cohomology of some simple Shimura varieties*][harris2001]
-and [Henniart, *Une preuve simple des conjectures de Langlands pour GL(n) sur un corps
-p-adique*][henniart2000]; the proof does not use it. -/
+theorems uses, and it is proved in this repository as `UpperTheory.Zero.LLC.recTExists`. The proof
+does not use the full correspondence, characterized by `GlobalTheory.LocLanglands.IsRecLit`. -/
 def RecTExists : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w), ∃ rc, IsRecT h rc
@@ -167,29 +125,6 @@ def RecTUnique : Prop :=
 def AbConverse (y : WD h) (x : IrrGL (k := w.adicCompletion E)) : Prop :=
   ∀ ξ : Fin x.1 → (Weil h →* ℂˣ), (∀ t : Ine (F := E) A, y.charPol (ineIncl h t) = ∏ j, (X - C ((ξ j (ineIncl h t) : ℂˣ) : ℂ))) →
     Toral x
-
-theorem lawsT_of_laws {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {ε : EpsFamily A}
-    {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : Laws a ha ε rc) (hT : TypeLaw h rc) : LawsT a ha rc :=
-  { dim := H.dim
-    one := H.one
-    langlands := H.langlands
-    cusp x := (H.cusp x).1
-    nu := H.nu_eq
-    absCentral x ω hω σ := by rw [H.central x ω hω σ]
-    twist x χ hχ _ := H.twist x χ hχ
-    central x ω _ := H.central x ω
-    dual n π π' _ := H.dual n π π'
-    inj _ _ _ e := H.bij.1 e
-    depth x _ := (H.depth x).1
-    type := hT }
-
-theorem isRecT_of_isRec (hD : GlobalTheory.Published.DepthZeroTypeInertia) {rc : IrrGL (k := w.adicCompletion E) → WD h}
-    (H : IsRec h rc) : IsRecT h rc := by
-  have hT : TypeLaw h rc := by
-    intro E' _ _ _ _ _ _ g _ w' h'
-    exact hD E E' Ω g A w h w' h' rc H
-  obtain ⟨a, ha, ε, -, H⟩ := H
-  exact ⟨a, ha, lawsT_of_laws H hT⟩
 
 end UpperTheory.Zero.LLC
 

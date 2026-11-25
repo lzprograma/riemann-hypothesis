@@ -203,13 +203,6 @@ def CutTuples2 (C CH : ℝ) : Prop :=
 
 end Tuples
 
-section Passage
-
-variable {fc : DefSub A → DefFace Bs} (cr : Crd A fc)
-
-
-end Passage
-
 end CxData
 
 end Formalism.IndefR.Cx

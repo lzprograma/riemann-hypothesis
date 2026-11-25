@@ -18,8 +18,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.D
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Inst.CurvPf
@@ -37,18 +35,18 @@ theorem coef_nonneg (la : Wt X.Ψ r) (hdom : X.IsDominant la) (τ : X.Ψ) (a j :
   · have ha : (a : ℕ) < X.p0 := by omega
     have hz := h1 a j haj.le hj
     have hr : (la τ j : ℝ) ≤ la τ a := by exact_mod_cast hz
-    rw [if_pos hj, if_pos ha]
+    rw [ite_eq_left hj, ite_eq_left ha]
     norm_num
     linarith
   · by_cases ha : (a : ℕ) < X.p0
     · have hz := h3 a j ha (by omega)
       have hr : (la τ a : ℝ) ≤ la τ j := by exact_mod_cast hz
-      rw [if_neg hj, if_pos ha]
+      rw [ite_eq_right hj, ite_eq_left ha]
       norm_num
       linarith
     · have hz := h2' a j (by omega) haj.le
       have hr : (la τ j : ℝ) ≤ la τ a := by exact_mod_cast hz
-      rw [if_neg hj, if_neg ha]
+      rw [ite_eq_right hj, ite_eq_right ha]
       norm_num
       linarith
 
@@ -61,18 +59,18 @@ theorem coef_pos (la : Wt X.Ψ r) (hs : IsStrictDom X la) (τ : X.Ψ) (a j : Fin
   · have ha : (a : ℕ) < X.p0 := by omega
     have hz := h1 a j haj hj
     have hr : (la τ j : ℝ) < la τ a := by exact_mod_cast hz
-    rw [if_pos hj, if_pos ha]
+    rw [ite_eq_left hj, ite_eq_left ha]
     norm_num
     linarith
   · by_cases ha : (a : ℕ) < X.p0
     · have hz := h3 a j ha (by omega)
       have hr : (la τ a : ℝ) < la τ j := by exact_mod_cast hz
-      rw [if_neg hj, if_pos ha]
+      rw [ite_eq_right hj, ite_eq_left ha]
       norm_num
       linarith
     · have hz := h2' a j (by omega) haj
       have hr : (la τ j : ℝ) < la τ a := by exact_mod_cast hz
-      rw [if_neg hj, if_neg ha]
+      rw [ite_eq_right hj, ite_eq_right ha]
       norm_num
       linarith
 
@@ -149,8 +147,6 @@ end -- clump:auto
 -- clump-header: {"m": "ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.CurvatureStatementHolds", "h": "module\n\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.PnormInvStatement\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.TelePoint\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Calculus.ContDiff.WithLp\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\npublic import Mathlib.Analysis.InnerProductSpace.Calculus\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.CoefNonneg\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DetSubUpper\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantNormalForms\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -255,7 +251,7 @@ theorem curvature_statement_holds : CurvGGStatement (E := E) := by
     refine Finset.sum_pos' (fun τ' _ => Finset.sum_nonneg fun a' _ => Finset.sum_nonneg fun j' _ => hnn τ' a' j')
       ⟨τ, Finset.mem_univ _, Finset.sum_pos' (fun a' _ => Finset.sum_nonneg fun j' _ => hnn τ a' j')
         ⟨a, Finset.mem_univ _, Finset.sum_pos' (fun j' _ => hnn τ a j') ⟨j, Finset.mem_univ _, ?_⟩⟩⟩
-    rw [if_pos haj]
+    rw [ite_eq_left haj]
     exact mul_pos (coef_pos X la hs τ a j haj) (pow_pos (norm_pos_iff.2 hY) 2)
 
 end ReciprocityTheory.ChartRestriction.G.AR.Inst.CurvPf

@@ -84,7 +84,7 @@ theorem VanishesOnFirstAxis.sum {α : Type} (s : Finset α) {F : α → MvPowerS
 theorem vanishes_X_inr (b : ι') :
     VanishesOnFirstAxis (MvPowerSeries.X (Sum.inr b) : MvPowerSeries (ι ⊕ ι') C) := by
   intro μ hμ
-  rw [MvPowerSeries.coeff_X, if_neg]
+  rw [MvPowerSeries.coeff_X, ite_eq_right]
   intro h
   have h1 := hμ b
   rw [h] at h1

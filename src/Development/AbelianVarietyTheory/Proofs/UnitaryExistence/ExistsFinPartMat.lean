@@ -134,8 +134,6 @@ theorem exists_finPart_mat {F E : Type} [Field F] [NumberField F] [Field E] [Alg
     rw [hke]
     simp [h1]
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem exists_finPart (D : D7) (V : HSp D) (g : GA D V) : ∃ k ∈ GfC V, finHom V k = finHom V g := by
   let g' : HR (AF D.host.F) D.sp.cm.sig V.gram := g
   obtain ⟨k, hk, h1, h2⟩ := exists_finPart_mat D.sp.cm.sig V.gram (matHom V g) g'.2

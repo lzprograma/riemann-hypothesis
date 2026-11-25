@@ -121,7 +121,7 @@ lemma norm_lt_one_of_mem {z : Fin n → ℂ} (hz : z ∈ puncturedChart h (ball 
 omit h in
 lemma exp_branchLift {z0 z : Fin n → ℂ} {k : Fin n} (hk : k.val < a) (h0 : z0 k ≠ 0)
     (hz : z k ≠ 0) : Complex.exp (branchLift a z0 z k) = z k := by
-  simp only [branchLift, if_pos hk]
+  simp only [branchLift, ite_eq_left hk]
   rw [Complex.exp_add, Complex.exp_log (div_ne_zero hz h0), Complex.exp_log h0,
     div_mul_cancel₀ _ h0]
 
@@ -133,7 +133,7 @@ lemma branchLift_mem {z0 z : Fin n → ℂ} (h0 : z0 ∈ puncturedChart h (ball 
     have hn := norm_lt_one_of_mem hz (Fin.castLE h i)
     rw [← e, Complex.norm_exp] at hn
     exact Real.exp_lt_one_iff.1 hn
-  · simp only [branchLift, if_neg (by omega : ¬ k.val < a)]
+  · simp only [branchLift, ite_eq_right (by omega : ¬ k.val < a)]
     exact norm_lt_one_of_mem hz k
 
 omit h in
@@ -141,12 +141,12 @@ lemma analyticAt_branchLift {z0 : Fin n → ℂ} (h0 : ∀ k : Fin n, k.val < a 
     AnalyticAt ℂ (branchLift a z0) z0 := by
   refine AnalyticAt.pi (f := fun k z => branchLift a z0 z k) fun k => ?_
   by_cases hk : k.val < a
-  · simp only [branchLift, if_pos hk]
+  · simp only [branchLift, ite_eq_left hk]
     refine AnalyticAt.add (AnalyticAt.clog ?_ ?_) analyticAt_const
     · exact (analyticAt_eval k z0).div analyticAt_const (h0 k hk)
     · rw [div_self (h0 k hk)]
       exact Complex.one_mem_slitPlane
-  · simp only [branchLift, if_neg hk]
+  · simp only [branchLift, ite_eq_right hk]
     exact analyticAt_eval k z0
 
 lemma isOpen_puncturedChart : IsOpen (puncturedChart h (ball (0 : Fin n → ℂ) 1)) := by
@@ -172,13 +172,13 @@ theorem LogCoverDescent.proof : LogCoverDescent.Statement := by
     symm
     refine eq_of_exp_eq hφ (branchLift_mem hz0 hz) fun k => ⟨fun hk => ?_, fun hk => ?_⟩
     · rw [exp_branchLift hk (h0 k hk) (ne_zero_of_mem hz k hk)]
-      simp only [logLift, if_pos hk]
+      simp only [logLift, ite_eq_left hk]
       exact Complex.exp_log (ne_zero_of_mem hz k hk)
-    · simp only [logLift, branchLift, if_neg (by omega : ¬ k.val < a)]
+    · simp only [logLift, branchLift, ite_eq_right (by omega : ¬ k.val < a)]
   · refine eq_of_exp_eq hφ hw fun k => ⟨fun hk => ?_, fun hk => ?_⟩
-    · simp only [logLift, expCover, if_pos hk]
+    · simp only [logLift, expCover, ite_eq_left hk]
       exact Complex.exp_log (Complex.exp_ne_zero _)
-    · simp only [logLift, expCover, if_neg (by omega : ¬ k.val < a)]
+    · simp only [logLift, expCover, ite_eq_right (by omega : ¬ k.val < a)]
 
 end
 

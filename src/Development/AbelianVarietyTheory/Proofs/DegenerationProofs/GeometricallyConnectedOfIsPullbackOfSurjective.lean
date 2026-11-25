@@ -444,16 +444,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-section
-
-open TensorProduct
-
-namespace GlobalTheory.UnitRigidity
-
-end GlobalTheory.UnitRigidity
-
-end
-
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor

@@ -7,8 +7,6 @@ public import Mathlib.RingTheory.MvPowerSeries.Basic
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj
@@ -115,7 +113,7 @@ def psJet [Fintype ι] [DecidableEq ι] (m : ℕ) (f : MvPowerSeries ι R) : Jet
 
 def jetSubstPS {ι' : Type} [Fintype ι'] [DecidableEq ι'] (φ : ι → MvPowerSeries ι' R) : Jet R ι m →ₐ[R] Jet R ι' m :=
   jetMap (fun i => psTrunc m (φ i) - C (MvPolynomial.constantCoeff (psTrunc m (φ i))))
-    fun i => sub_const_mem_orig _
+    fun _ => sub_const_mem_orig _
 
 def jetTrunc : Jet R ι (m + 1) →ₐ[R] Jet R ι m :=
   Ideal.Quotient.factorₐ R (Ideal.pow_le_pow_right (by omega))

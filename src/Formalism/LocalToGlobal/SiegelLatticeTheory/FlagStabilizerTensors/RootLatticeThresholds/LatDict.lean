@@ -25,8 +25,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.Pf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace LatDict
 
 section Basic
@@ -922,7 +920,7 @@ theorem hT_hyp (α β α' β' : Fin D.R.rS → D.host.E) (p p' : (VS D).V)
   simp only [map_add (f := _), map_sum, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
   LinearMap.smul_apply, smul_eq_mul, hee, heg, hgg, hT_g_e hee hgg heg, (hp' _).1, (hp' _).2, hpe, hpg,
   mul_zero, Finset.sum_const_zero, add_zero, zero_add, mul_ite, mul_one,
-  Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true, starRingEnd_apply]
+  Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true, starRingEnd_apply]
   rw [Finset.sum_add_distrib]
   simp only [RingHom.id_apply]
   rw [add_comm (∑ x, α' x * star (β x))]

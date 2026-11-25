@@ -73,7 +73,7 @@ def cmpL (hex : ValEx S emb embLL G A pos embV yc) (hu : ValUniq S emb embLL G A
       cmpC S emb embLL G e A pos embV yc x i L + cmpC S emb embLL G e A pos embV yc y i L
     unfold cmpC
     by_cases hL : G.P.IsLatTup L
-    · simp only [hL, if_true]
+    · simp only [hL, ite_true]
       rw [← map_add (f := _)]
       congr 1
       exact hu (x + y) i L _ _ hL (valC_spec hex _ i L hL) ((valC_spec hex x i L hL).add (valC_spec hex y i L hL))
@@ -83,7 +83,7 @@ def cmpL (hex : ValEx S emb embLL G A pos embV yc) (hu : ValUniq S emb embLL G A
     show cmpC S emb embLL G e A pos embV yc (a • x) i L = e a • cmpC S emb embLL G e A pos embV yc x i L
     unfold cmpC
     by_cases hL : G.P.IsLatTup L
-    · simp only [hL, if_true]
+    · simp only [hL, ite_true]
       rw [← map_smul']
       congr 1
       exact hu (a • x) i L _ _ hL (valC_spec hex _ i L hL) ((valC_spec hex x i L hL).smul a)
@@ -97,7 +97,7 @@ def cmpC_tie (tE : Tau → E →+* LL) (hex : ValEx S emb embLL G A pos embV yc)
     CmpTie S emb embLL tE G e A pos (fun x => embV x) yc (cmpC S emb embLL G e A pos embV yc) where
   pos_emb := hpos
   val := valC S emb embLL G A pos embV yc
-  val_cmp := fun x i L hL => by unfold cmpC; rw [if_pos hL]
+  val_cmp := fun x i L hL => by unfold cmpC; rw [ite_eq_left hL]
   val_emb := fun x i L g hg => (valC_spec hex x i L
     (fun v => ⟨(g v : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v)),
       (Matrix.isUnit_iff_isUnit_det _).1 (g v).isUnit, hg v⟩)).2 g hg

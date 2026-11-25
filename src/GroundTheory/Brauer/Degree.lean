@@ -37,24 +37,4 @@ theorem exists_algEquiv_matrix_algebraicClosure [Algebra.IsCentral K A] [IsSimpl
 
 end Degree
 
-section CSA
-
-variable {K : Type u} [Field K]
-
-end CSA
-
-section Index
-
-variable (K : Type u) [Field K] (A : Type v) [Ring A] [Algebra K A]
-
-variable {K A}
-
-variable (K A)
-
-variable {K A}
-
-variable (K A)
-
-end Index
-
 end GroundTheory.Brauer

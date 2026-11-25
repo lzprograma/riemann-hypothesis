@@ -74,7 +74,7 @@ private theorem unip_mem_iff {n r : ℕ} (Y : UPos n r → 𝔸[K]) :
     have := p.2
     rw [e] at this
     omega
-  simp only [AdelicGLn.diagonal_apply, coe_unipGL, unipMatrix, Matrix.add_apply, blockEntry_apply, dif_pos p.2,
+  simp only [AdelicGLn.diagonal_apply, coe_unipGL, unipMatrix, Matrix.add_apply, blockEntry_apply, dite_eq_left p.2,
     Matrix.one_apply_ne hne, zero_add] at h1
   exact h1
 
@@ -157,7 +157,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.ctKv :
     fun γ hγ x => rconv_mul_left (Gam K (2 + 2)) μ a φ hγ x
   refine ⟨continuous_rconv (Gam K (2 + 2)) μ a φ, ?_, hinv, fun γ hγ z => ?_, fun X z => ct_unip hinv X z⟩
   · have := Reduction.isFiniteMeasure_quotientMeasure (K := K) (n := 2 + 2) μ
-    set_option synthInstance.maxHeartbeats 200000 in
     filter_upwards [QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K (2 + 2)) μ)
       (integrated_ae_eq_rconvQ (Gam K (2 + 2)) μ a φ)] with y hy
     exact hy

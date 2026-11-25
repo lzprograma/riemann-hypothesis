@@ -8,50 +8,6 @@ public import Mathlib.Algebra.Polynomial.Degree.Operations
 public import Mathlib.Analysis.Normed.Group.Ultra
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NewtonPolygonDominantIndexXSubCMul, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NewtonPolygonLastDominantIndexMulXSubC, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardRootsClosedBallEqDominantIndex, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardRootsClosedBallBoundsUltrametric
@@ -281,8 +237,8 @@ theorem dominantIndex_prod_X_sub_C (K : Type) [NormedField K] [IsUltrametricDist
     refine ⟨fun j => ?_, fun j hj => ?_⟩
     · rcases Nat.eq_zero_or_pos j with h | h
       · subst h; simp
-      · rw [coeff_C, if_neg (Nat.pos_iff_ne_zero.mp h)]; simp
-    · rw [coeff_C, if_neg (Nat.pos_iff_ne_zero.mp hj)]; simp [hc]
+      · rw [coeff_C, ite_eq_right (Nat.pos_iff_ne_zero.mp h)]; simp
+    · rw [coeff_C, ite_eq_right (Nat.pos_iff_ne_zero.mp hj)]; simp [hc]
   | cons a s ih =>
     intro c hc
     obtain ⟨h1, h2⟩ := ih c hc
@@ -291,9 +247,9 @@ theorem dominantIndex_prod_X_sub_C (K : Type) [NormedField K] [IsUltrametricDist
       rw [Multiset.map_cons, Multiset.prod_cons, mul_left_comm]
     rw [heq, Multiset.filter_cons]
     by_cases ha : ‖a‖ ≤ ρ
-    · rw [if_pos ha, Multiset.singleton_add, Multiset.card_cons]
+    · rw [ite_eq_left ha, Multiset.singleton_add, Multiset.card_cons]
       exact _root_.GlobalTheory.newton_step_root_in_disc K _ a ρ _ hρ ha h1 h2
-    · rw [if_neg ha, zero_add]
+    · rw [ite_eq_right ha, zero_add]
       exact _root_.GlobalTheory.newton_step_root_outside_disc K _ a ρ _ hρ (not_le.mp ha) h1 h2
 
 theorem card_roots_closedBall_eq_dominantIndex :
@@ -333,13 +289,11 @@ theorem card_roots_le_radius_bounds :
   obtain ⟨hA, hB⟩ := _root_.GlobalTheory.card_roots_closedBall_eq_dominantIndex K f ρ hρ hf
   set e := Multiset.card (f.roots.filter fun z => ‖z‖ ≤ ρ) with he
   refine ⟨fun H => ?_, fun H => ?_⟩
-  · by_contra hlt
-    push_neg at hlt
+  · by_contra! hlt
     have h1 := hB d hlt
     have h2 := H e
     linarith
-  · by_contra hlt
-    push_neg at hlt
+  · by_contra! hlt
     have h1 := H e hlt
     have h2 := hA d
     linarith

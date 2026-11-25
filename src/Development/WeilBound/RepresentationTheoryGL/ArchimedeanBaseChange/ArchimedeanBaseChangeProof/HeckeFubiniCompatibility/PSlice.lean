@@ -9,49 +9,7 @@ import GroundTheory.AutomorphicForms.RealIwasawaIntegration
 import GroundTheory.AutomorphicForms.ReductionMeasure
 import GroundTheory.GlobalFields.Adele.Topology
 import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Separation.Connected
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,8 +21,6 @@ open PositivityTheory.RgTw (Mat G)
 open PositivityTheory.Rg.BcB.SpectralAccumulation (Hf finH)
 open PositivityTheory.RgBcC.Bridge (along atW)
 open scoped Classical InnerProductSpace
-
-attribute [local instance] PositivityTheory.Rg.BcB.E.borelH
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedSimpArgs false
@@ -159,7 +115,6 @@ theorem integral_split (hF : CompatFub) (D : Dom E a b) (hC : Compat D μa μb �
     (Q : H E a b → ℂ) (hQ : Continuous Q) (hQs : HasCompactSupport Q) :
     Integrable (fun q : G a × RA E a b v => Q (ιA v q.1 * σA v q.2)) (μa.prod (restA μa μb ν v)) ∧
       ∫ g, Q g ∂D.μ = ∫ t, ∫ r, Q (ιA v t * σA v r) ∂restA μa μb ν v ∂μa := by
-  set_option synthInstance.maxHeartbeats 800000 in
     haveI : SigmaFinite μa := inferInstance
     haveI : SigmaFinite μb := inferInstance
     haveI : SigmaFinite ν := inferInstance
@@ -203,8 +158,8 @@ theorem tens_ισ (v : InfinitePlace E) (ka : Kers Ma) (kb : Kers Mb) (ψ : Matr
   simp only [tens, entA, gInf_splitH₁, gInf_splitH₂, hFin_splitH, cA]
   rw [Fintype.prod_eq_mul_prod_subtype_ne _ v]
   have e : ∀ w : {w : InfinitePlace E // w ≠ v},
-      (if h : (w : InfinitePlace E) = v then t else r.1 ⟨w, h⟩) = r.1 w := fun w => by rw [dif_neg w.2]
-  simp only [dif_pos, e]
+      (if h : (w : InfinitePlace E) = v then t else r.1 ⟨w, h⟩) = r.1 w := fun w => by rw [dite_eq_right w.2]
+  simp only [dite_eq_left, e]
   ring
 
 theorem conv_slice (hF : CompatFub) (D : Dom E a b) (hC : Compat D μa μb ν) (v : InfinitePlace E) (ka : Kers Ma)
@@ -273,8 +228,8 @@ omit [BorelSpace (G a)] [BorelSpace (G b)] [BorelSpace (Hf E a b)] in
 theorem continuous_σA (v : InfinitePlace E) : Continuous (σA (a := a) (b := b) v) := by
   refine (splitH a b).continuous.comp (Continuous.prodMk (continuous_pi fun w => ?_) continuous_snd)
   by_cases h : w = v
-  · simp only [h, dif_pos]; exact continuous_const
-  · simp only [h, dif_neg, not_false_eq_true]; exact (continuous_apply _).comp continuous_fst
+  · simp only [h, dite_eq_left]; exact continuous_const
+  · simp only [h, dite_eq_right, not_false_eq_true]; exact (continuous_apply _).comp continuous_fst
 
 theorem ιA_mul (v : InfinitePlace E) (s t : G a) : ιA (b := b) v (s * t) = ιA v s * ιA v t := by
   rw [ιA, ιA, ιA, ← map_mul, Pi.mulSingle_mul]
@@ -286,7 +241,6 @@ theorem cA_props (v : InfinitePlace E) {ka : Kers Ma} {kb : Kers Mb} {ψ : Matri
     (hkb : ∀ w, Continuous (fun t : G b => kb w t.val) ∧ HasCompactSupport (fun t : G b => kb w t.val))
     (hψ : IsFinM ψ) (i j : Io Ma Mb κ) :
     Continuous (cA v ka kb ψ i j) ∧ HasCompactSupport (cA v ka kb ψ i j) := by
-  set_option synthInstance.maxHeartbeats 800000 in
     refine ⟨?_, ?_⟩
     · refine ((continuous_finsetProd _ fun w _ => ?_).mul (continuous_finsetProd _ fun w _ => ?_)).mul
         ((hψ i.2 j.2).1.comp (continuous_snd.comp continuous_snd))
@@ -317,7 +271,6 @@ theorem continuous_Rv_comp (v : InfinitePlace E) {ka : Kers Ma} {kb : Kers Mb} {
     (hψ : IsFinM ψ) (i : Io Ma Mb κ) {X : Type} [TopologicalSpace X] [FirstCountableTopology X]
     [LocallyCompactSpace X] {φ : X → H E a b} (hφ : Continuous φ) :
     Continuous fun z : X => Rv v μa μb ν ka kb ψ f i (φ z) := by
-  set_option synthInstance.maxHeartbeats 800000 in
     haveI : SigmaFinite μa := inferInstance
     haveI : SigmaFinite μb := inferInstance
     haveI : SigmaFinite ν := inferInstance
@@ -362,7 +315,7 @@ theorem along_conv (hF : CompatFub) (D : Dom E a b) (hC : Compat D μa μb ν) (
     have hxt : x * t.val ∈ GLs a := GlobalTheory.CompanionTheory.WaveAll.mul_mem_GLs hx (val_mem_GLs t)
     have hm : GeneralLinearGroup.mkOfDetNeZero (x * t.val) hxt = GeneralLinearGroup.mkOfDetNeZero x hx * t :=
       Units.ext rfl
-    simp only [FA, dif_pos hxt, hm, ιA_mul, hp0, mul_assoc]
+    simp only [FA, dite_eq_left hxt, hm, ιA_mul, hp0, mul_assoc]
   have hc : Continuous fun t : G a => ka v t.val (FA v μa μb ν ka kb ψ f i y m₂ (x * t.val)) := by
     simp only [hFA]
     exact (hka v).1.clm_apply (continuous_Rv v hf hka hkb hψ i p0)
@@ -418,7 +371,7 @@ theorem continuousOn_FA (v : InfinitePlace E) (ka : Kers Ma) (kb : Kers Mb) (ψ 
   have e : (fun x : GLs a => FA v μa μb ν ka kb ψ f i y m₂ x.1) =
       fun x : GLs a => Rv v μa μb ν ka kb ψ f i ((y, m₂) * ιA v (GeneralLinearGroup.mkOfDetNeZero x.1 x.2)) := by
     funext x
-    simp only [FA, dif_pos x.2]
+    simp only [FA, dite_eq_left x.2]
   rw [e]
   exact (continuous_Rv v hf hka hkb hψ i (y, m₂)).comp hm
 

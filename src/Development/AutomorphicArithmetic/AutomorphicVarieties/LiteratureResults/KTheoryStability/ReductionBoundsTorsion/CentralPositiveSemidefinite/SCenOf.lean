@@ -1,65 +1,15 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.IteratedHeckeBounds.HkIterContOn
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.TSpan
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.Basic
 public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.StabDirectedSystem
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Aesop.Main
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.ActLEqOfScalar, Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.AvCongr, Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.ContinuousOnPullbackCentralScalingSimplexParam, Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.LamSApply, Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.RealSmulPosSemidef, Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.SCenOf
@@ -679,11 +629,6 @@ private theorem lamS_apply (x : {w : InfinitePlace L // w ≠ w₀} → ℝ) (w 
   · simp [h, LinearMap.pi_apply, LinearMap.sum_apply]
   · simp [h, LinearMap.pi_apply]
 
-omit [NumberField L] in
-private theorem mult_ne (w : InfinitePlace L) : (mult w : ℝ) ≠ 0 := by
-  have := mult_pos (w := w)
-  exact_mod_cast this.ne'
-
 private theorem lamS_log (u : (𝓞 L)ˣ) :
     lamS L (logEmbedding L (Additive.ofMul u)) = fun w => Real.log (w ((u : 𝓞 L) : L)) := by
   classical
@@ -697,9 +642,9 @@ private theorem lamS_log (u : (𝓞 L)ˣ) :
         -(mult (w₀ : InfinitePlace L) : ℝ) * Real.log (w₀ ((u : 𝓞 L) : L)) := by
       convert hs
     rw [this]
-    field_simp [mult_ne L w₀]
+    field_simp [NumberField.InfinitePlace.mult_coe_ne_zero (w := w₀)]
   · rw [dite_eq_right h, logEmbedding_component]
-    field_simp [mult_ne L w]
+    field_simp [NumberField.InfinitePlace.mult_coe_ne_zero (w := w)]
 
 private theorem span_fund :
     Submodule.span ℝ (Set.range fun i => logEmbedding L (Additive.ofMul (fundSystem L i))) = ⊤ := by
@@ -754,10 +699,10 @@ theorem span_units : ∃ l : List (𝓞 L)ˣ, ∀ t : InfinitePlace L → ℝ,
         simp only [t']; linarith
       rw [this]
       simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, mul_one]
-      field_simp [mult_ne L w₀]
+      field_simp [NumberField.InfinitePlace.mult_coe_ne_zero (w := w₀)]
     · rw [dite_eq_right h]
       simp only [t', Pi.sub_apply, Pi.smul_apply, smul_eq_mul, mul_one]
-      field_simp [mult_ne L w]
+      field_simp [NumberField.InfinitePlace.mult_coe_ne_zero (w := w)]
   have : t = lamS L t' + c • (fun _ => (1 : ℝ)) := by rw [h2]; abel
   rw [this]
   refine Submodule.add_mem _ (Submodule.span_mono (Set.subset_insert _ _) h1) ?_
@@ -782,30 +727,8 @@ open NumberField NumberField.InfinitePlace Matrix MeasureTheory UpperTheory.V.KT
 namespace PositivityTheory.KB.CentralizerFixed
 
 open ComplexOrder in
-theorem real_smul_posDef {n : ℕ} {M : Matrix (Fin n) (Fin n) ℂ} (h : M.PosDef) {a : ℝ} (ha : 0 < a) :
-    (a • M).PosDef := by
-  have e : a • M = (a : ℂ) • M := by ext i j; simp [Complex.real_smul]
-  rw [e]
-  exact h.smul (Complex.zero_lt_real.2 ha)
-
-open ComplexOrder in
-theorem real_smul_posSemidef {n : ℕ} {M : Matrix (Fin n) (Fin n) ℂ} (h : M.PosSemidef) {a : ℝ}
-    (ha : 0 ≤ a) : (a • M).PosSemidef := by
-  have e : a • M = (a : ℂ) • M := by ext i j; simp [Complex.real_smul]
-  rw [e]
-  exact h.smul (Complex.zero_le_real.2 ha)
-
-open ComplexOrder in
 theorem pos_convex (L : Type) [Field L] [NumberField L] (N : ℕ) : Convex ℝ (Pos L N) := by
-  intro x hx y hy a b ha hb hab w
-  have e : mat (a • x + b • y) w = a • mat x w + b • mat y w := by simp
-  change (mat (a • x + b • y) w).PosDef
-  rw [e]
-  rcases ha.lt_or_eq with ha' | ha'
-  · exact (real_smul_posDef (hx w) ha').add_posSemidef (real_smul_posSemidef (hy w).posSemidef hb)
-  · have hb1 : b = 1 := by linarith
-    rw [← ha', hb1, zero_smul, zero_add, one_smul]
-    exact hy w
+  apply _root_.PositivityTheory.KB.JoinReconstruction.pos_convex <;> assumption
 
 theorem simplex_meas (q : ℕ) :
     MeasurableSet {t : Fin q → ℝ | (∀ j, 0 ≤ t j) ∧ ∑ j, t j ≤ 1} := by

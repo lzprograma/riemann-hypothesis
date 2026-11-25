@@ -11,45 +11,7 @@ import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
 public import Formalism.LocalRingCardinality.FactDelDualNabla
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.RepFrame
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.RepTrace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -356,7 +318,7 @@ theorem rho_yy (i : Fin r) (j : (Bool × HH D) × Fin N × Fin N') :
   rw [Fintype.sum_prod_type, Finset.sum_eq_single (tauPl D j.1)]
   · rw [Fintype.sum_prod_type]
 
-    simp only [yy, map_sum, map_mul, cA, if_true, lamBc_eq]
+    simp only [yy, map_sum, map_mul, cA, ite_true, lamBc_eq]
     refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
     ring
   · intro t _ ht
@@ -369,7 +331,7 @@ theorem rho_conj_yy (i : Fin r) (j : (Bool × HH D) × Fin N × Fin N') :
   rw [Fintype.sum_prod_type, Finset.sum_eq_single (tauPl D j.1)]
   · rw [Fintype.sum_prod_type]
 
-    simp only [yy, map_sum, map_mul, cB, if_true, lamB_eq, conj_conj]
+    simp only [yy, map_sum, map_mul, cB, ite_true, lamB_eq, conj_conj]
     refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
     ring
   · intro t _ ht
@@ -397,10 +359,10 @@ theorem chgB_eq (hU : ∀ z, ((P (tauPl D z)).map D.host.conj).transpose * P (ta
     rw [tauEmb_eq, ← Matrix.map_mul, hU, Matrix.map_one _ (map_zero _) (map_one _)]
   unfold chgB cA
   by_cases h : tauPl D j.1 = k.1
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     rw [hinv, tauEmb_eq]
     rfl
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
 
 theorem sum_cB_cA (hU : ∀ z, ((P (tauPl D z)).map D.host.conj).transpose * P (tauPl D z) = 1)
     (hU' : ∀ z, ((P' (tauPl D z)).map D.host.conj).transpose * P' (tauPl D z) = 1)
@@ -426,7 +388,7 @@ theorem sum_cB_cA (hU : ∀ z, ((P (tauPl D z)).map D.host.conj).transpose * P (
 
         rw [map_sum, map_sum, Finset.sum_mul_sum]
         refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
-        simp only [map_mul, cA, cB, if_true]
+        simp only [map_mul, cA, cB, ite_true]
         ring
       · intro t _ ht
         refine Finset.sum_eq_zero fun x _ => ?_
@@ -440,7 +402,7 @@ theorem sum_cB_cA (hU : ∀ z, ((P (tauPl D z)).map D.host.conj).transpose * P (
         simp [hb, ha, ha']
     · simp [hb]
   · have hne : tauPl D z ≠ tauPl D z' := fun h => hz ((tauPl_bij D).1 h)
-    rw [if_neg (fun h => hz (congrArg Prod.fst h))]
+    rw [ite_eq_right (fun h => hz (congrArg Prod.fst h))]
     refine Finset.sum_eq_zero fun k _ => ?_
     by_cases h : tauPl D z = k.1
     · have h' : tauPl D z' ≠ k.1 := fun h2 => hne (h.trans h2.symm)

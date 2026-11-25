@@ -1,5 +1,7 @@
 module
 
+import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InertialOrderFifteenCharAuxiliaryPrimeSpec
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsoOfFrob
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
 import Mathlib.Algebra.Order.Floor.Extended
@@ -119,32 +121,13 @@ theorem exists_eigData {P W : Type} (Sig : Set P) (Iso : P → P → Prop) (sys 
 open NumberField IsDedekindDomain in
 theorem natCast_notMem_of_not_dvd {F : Type} [Field F] [NumberField F] {p M : ℕ} (hp : p.Prime)
     {w : HeightOneSpectrum (𝓞 F)} (hw : (p : 𝓞 F) ∈ w.asIdeal) (hM : ¬ p ∣ M) : (M : 𝓞 F) ∉ w.asIdeal := by
-  intro hMw
-  have hcop : Nat.Coprime p M := (Nat.Prime.coprime_iff_not_dvd hp).mpr hM
-  have h := Nat.gcd_eq_gcd_ab p M
-  rw [Nat.Coprime.gcd_eq_one hcop] at h
-  have h1 : (1 : 𝓞 F) = (p : 𝓞 F) * (Nat.gcdA p M : 𝓞 F) + (M : 𝓞 F) * (Nat.gcdB p M : 𝓞 F) := by
-    have h' := congrArg (Int.cast : ℤ → 𝓞 F) h
-    push_cast at h'
-    exact h'
-  have hone : (1 : 𝓞 F) ∈ w.asIdeal := by
-    rw [h1]
-    exact w.asIdeal.add_mem (Ideal.mul_mem_right _ _ hw) (Ideal.mul_mem_right _ _ hMw)
-  exact w.isPrime.ne_top ((Ideal.eq_top_iff_one _).mpr hone)
+  intros
+  apply _root_.Formalism.L2.G.natCast_notMem <;> assumption
 
 
 open NumberField IsDedekindDomain in
 theorem eventually_natCast_notMem {F : Type} [Field F] [NumberField F] {M : ℕ} (hM : M ≠ 0) :
     ∀ᶠ w : HeightOneSpectrum (𝓞 F) in Filter.cofinite, (M : 𝓞 F) ∉ w.asIdeal := by
-  rw [Filter.eventually_cofinite]
-  have hM' : (M : 𝓞 F) ≠ 0 := Nat.cast_ne_zero.mpr hM
-  have hI : Ideal.span {(M : 𝓞 F)} ≠ 0 := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
-    exact hM'
-  refine (Ideal.finite_factors hI).subset ?_
-  intro w hw
-  simp only [Set.mem_setOf_eq, not_not] at hw ⊢
-  rw [Ideal.dvd_iff_le, Ideal.span_singleton_le_iff_mem]
-  exact hw
+  apply _root_.GlobalTheory.GalChar.away_ae <;> assumption
 
 end UpperTheory.V.Af

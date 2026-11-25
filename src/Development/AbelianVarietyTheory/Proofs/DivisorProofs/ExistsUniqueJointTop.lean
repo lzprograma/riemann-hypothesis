@@ -132,7 +132,7 @@ theorem colOp_homog {I J : Type} [Fintype I] (z : I × J → σ) (i j : J) {d : 
   exact Submodule.sum_mem _ fun _ _ => polar_homog _ _ h
 
 theorem finite_homog [Finite σ] (d : ℕ) : FiniteDimensional ℂ (homogeneousSubmodule σ ℂ d) :=
-  Submodule.finiteDimensional_of_le (S₂ := restrictTotalDegree σ ℂ d) fun P hP =>
+  Submodule.finiteDimensional_of_le (S₂ := restrictTotalDegree σ ℂ d) fun _ hP =>
     (mem_restrictTotalDegree _ _ _).2 (IsHomogeneous.totalDegree_le hP)
 
 theorem polar_rename (f : τ → σ) (hf : Function.Injective f) (u v : τ) (Q : MvPolynomial τ ℂ) :

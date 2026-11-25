@@ -6,48 +6,7 @@ public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.
 public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalBounds
 public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.CechFamily
 public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalCompare
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalCechSmul
-import Mathlib.AlgebraicGeometry.QuasiAffine
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalIdealMul, GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalVanish, GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalFunctions
@@ -275,19 +234,6 @@ lemma isSeparated_of_over [IsSeparated (X ↘ Spec (.of A))] : X.IsSeparated := 
   rw [show terminal.from X = (X ↘ Spec (.of A)) ≫ terminal.from _ from terminal.hom_ext _ _]
   infer_instance
 
-lemma cechK_succ_le {ι : Type u} (𝔘 : ι → X.Opens) (p n : ℕ) :
-    cechK I 𝔘 p (F := F) (n + 1) ≤ cechK I 𝔘 p n := by
-  rintro _ ⟨z, rfl⟩
-  refine ⟨cechH.linearMap 𝔘 A (idealPowSucc I F n) p z, ?_⟩
-  have h := congrArg (fun f => f.hom) (show modulesAbMap (idealPowSucc I F n) ≫
-      modulesAbMap (idealPowι I F n) = modulesAbMap (idealPowι I F (n + 1)) by
-    rw [← modulesAbMap_comp, idealPowSucc_ι])
-  change cechHMap 𝔘 (modulesAbMap (idealPowι I F n)).hom p
-      (cechHMap 𝔘 (modulesAbMap (idealPowSucc I F n)).hom p z) =
-    cechHMap 𝔘 (modulesAbMap (idealPowι I F (n + 1))).hom p z
-  rw [← cechHMap_comp]
-  exact congrArg (fun f => cechHMap 𝔘 f p z) h
-
 lemma towerComp_formalτQ_val (q n : ℕ) : ∀ (c : ℕ) (y : formalQ I F q (n + c)),
     ((towerComp (E := fun m => formalQ I F q m) (formalτQ I F q) n c y : formalQ I F q n) :
       Sheaf.H.{u} (modulesAb (idealPow I F (n + 1))) (q + 1)) =
@@ -308,29 +254,6 @@ lemma towerComp_formalτQ_val (q n : ℕ) : ∀ (c : ℕ) (y : formalQ I F q (n 
     rfl
 
 variable [IsProper (X ↘ Spec (.of A))] (hF : IsCoherent F)
-
-include hF in
-lemma exists_formalK_le (q : ℕ) : ∃ c, ∀ n, formalK I F q (n + c) ≤
-    I ^ n • (⊤ : Submodule A (Sheaf.H.{u} (modulesAb F) q)) := by
-  have := hF.1
-  have : CompactSpace X := QuasiCompact.compactSpace_of_compactSpace (X ↘ Spec (.of A))
-  have := isSeparated_of_over (A := A) (X := X)
-  obtain ⟨ι, _, 𝔘, hUtop, hU⟩ := exists_finite_affineCover X
-  obtain ⟨c, hc⟩ := exists_cechK_eq_pow_smul I hF 𝔘 hU q hUtop
-  refine ⟨c, fun n => ?_⟩
-  rintro _ ⟨z, rfl⟩
-  obtain ⟨zČ, rfl⟩ := (cechHLinearEquivH 𝔘 hUtop hU A (idealPow I F (n + c + 1)) q).surjective z
-  rw [formalα, ← cechHLinearEquivH_naturality]
-  have h2 := cechK_succ_le I 𝔘 q (n + c) (F := F) ⟨zČ, rfl⟩
-  rw [hc n] at h2
-  have hmem : cechH.linearMap 𝔘 A (idealPowι I F (n + c + 1)) q zČ ∈
-      I ^ n • (⊤ : Submodule A (cechH (modulesAb F).obj 𝔘 q)) :=
-    Submodule.smul_mono le_rfl le_top h2
-  refine Submodule.smul_induction_on hmem (fun a ha y _ => ?_) (fun y y' hy hy' => ?_)
-  · rw [map_smul]
-    exact Submodule.smul_mem_smul ha trivial
-  · rw [map_add (f := _)]
-    exact add_mem hy hy'
 
 include hF in
 lemma exists_towerComp_formalτQ_eq_zero (q : ℕ) :

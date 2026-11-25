@@ -73,8 +73,6 @@ theorem trace_eq_sum_places [IsTotallyReal F] [IsTotallyComplex E] (h2 : Module.
 
 end General
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem TraceSum_holds : Formalism.L2.SG.RealObj.RootCoordinateFrames.TraceSum := by
   intro D X g x
   have : IsTotallyReal X.B.I.F := X.B.I.cm.totReal

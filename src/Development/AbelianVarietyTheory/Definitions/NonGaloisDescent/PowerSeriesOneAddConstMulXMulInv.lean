@@ -4,56 +4,8 @@ public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.RingTheory.LaurentSeries
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Dimension.OrzechProperty
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.SpecificLimits.Basic
 
 @[expose] public section
@@ -296,33 +248,11 @@ def mob (c : k) : k⟦X⟧ →ₐ[k] k⟦X⟧ := PowerSeries.substAlgHom (hasSub
 
 theorem mob_X (c : k) : mob c PowerSeries.X = PowerSeries.X * inv1 c := PowerSeries.substAlgHom_X _
 
-theorem mob_C (c d : k) : mob c (PowerSeries.C d) = PowerSeries.C d := (mob c).commutes d
-
 theorem mob_X_ne (c : k) : mob c PowerSeries.X ≠ 0 := by
   rw [mob_X]
   exact mul_ne_zero PowerSeries.X_ne_zero (right_ne_zero_of_mul_eq_one (powerSeries_oneAddConstMulX_mul_inv c))
 
-theorem mob_mob (c : k) (f : k⟦X⟧) : mob c (mob (-c) f) = f := by
-  have key : mob c (PowerSeries.X * inv1 (-c)) = PowerSeries.X := by
-    have h1 := congrArg (mob c) (powerSeries_oneAddConstMulX_mul_inv (-c))
-    rw [map_mul, map_add (f := _), map_one, map_mul, mob_C, mob_X, map_neg] at h1
-    have h2 := powerSeries_oneAddConstMulX_mul_inv c
-    rw [map_mul, mob_X]
-    linear_combination PowerSeries.X * h1 + PowerSeries.X * mob c (inv1 (-c)) * h2
-  have h := PowerSeries.subst_comp_subst_apply (R := k) (hasSubst_mob (-c)) (hasSubst_mob c) f
-  rw [mob, PowerSeries.coe_substAlgHom] at key
-  rw [key, PowerSeries.X_subst] at h
-  simpa only [mob, PowerSeries.coe_substAlgHom] using h
-
 def gam (k : Type) [Field k] : k⸨X⸩ →ₐ[k] k⸨X⸩ := extend (mob 1) (mob_X_ne 1)
-
-theorem extend_mob_mob (c : k) (x : k⸨X⸩) :
-    extend (mob c) (mob_X_ne c) (extend (mob (-c)) (mob_X_ne (-c)) x) = x :=
-  algHom_ext (f := (extend (mob c) (mob_X_ne c)).comp (extend (mob (-c)) (mob_X_ne (-c)))) (g := AlgHom.id _ _)
-    (fun a => by simp only [AlgHom.comp_apply, extend_coe, mob_mob, AlgHom.id_apply]) x
-
-theorem gam_bijective : Function.Bijective (gam k) :=
-  ⟨RingHom.injective (gam k).toRingHom, fun x => ⟨_, extend_mob_mob 1 x⟩⟩
 
 theorem hasSubst_pow (l : ℕ) [Fact l.Prime] : PowerSeries.HasSubst (PowerSeries.X ^ l : k⟦X⟧) :=
   PowerSeries.HasSubst.X_pow (Fact.out : l.Prime).ne_zero
@@ -332,45 +262,6 @@ def frob (k : Type) [Field k] (l : ℕ) [Fact l.Prime] : k⟦X⟧ →ₐ[k] k⟦
 
 theorem frob_X (l : ℕ) [Fact l.Prime] : frob k l PowerSeries.X = PowerSeries.X ^ l :=
   PowerSeries.substAlgHom_X _
-
-theorem frob_X_ne (l : ℕ) [Fact l.Prime] : frob k l PowerSeries.X ≠ 0 := by
-  rw [frob_X]; exact pow_ne_zero _ PowerSeries.X_ne_zero
-
-theorem frob_mob (l : ℕ) [Fact l.Prime] [CharP k l] (f : k⟦X⟧) :
-    frob k l (mob 1 f) = mob 1 (frob k l f) := by
-  haveI : CharP k⟦X⟧ l := charP_of_injective_algebraMap (algebraMap k k⟦X⟧).injective l
-  have key : frob k l (PowerSeries.X * inv1 1) = mob 1 (PowerSeries.X ^ l) := by
-    have h0 := powerSeries_oneAddConstMulX_mul_inv (1 : k)
-    rw [map_one, one_mul] at h0
-    have h1 := congrArg (frob k l) h0
-    rw [map_mul, map_add (f := _), map_one, frob_X] at h1
-    have h2 := congrArg (· ^ l) h0
-    simp only [mul_pow, add_pow_char, one_pow] at h2
-    rw [map_mul, frob_X, map_pow, mob_X, mul_pow]
-    congr 1
-    linear_combination (inv1 (1 : k)) ^ l * h1 - frob k l (inv1 1) * h2
-  have h := PowerSeries.subst_comp_subst_apply (R := k) (hasSubst_mob (1 : k)) (hasSubst_pow (k := k) l) f
-  have h' := PowerSeries.subst_comp_subst_apply (R := k) (hasSubst_pow (k := k) l) (hasSubst_mob (1 : k)) f
-  simp only [frob, mob, PowerSeries.coe_substAlgHom] at key ⊢
-  rw [h, h', key]
-
-def stdRing (k : Type) [Field k] (l : ℕ) [Fact l.Prime] [CharP k l] : RingPG k l where
-  φ := extend (frob k l) (frob_X_ne l)
-  γ := gam k
-  φ_int a := ⟨_, extend_coe _ _ a⟩
-  γ_int a := ⟨_, extend_coe _ _ a⟩
-  φ_v := ⟨1, by rw [vv_eq_coe_X, extend_coe, frob_X]; simp⟩
-  γ_v := ⟨inv1 1, by simp [inv1], by
-    rw [gam, vv_eq_coe_X, extend_coe, mob_X, ← map_mul, ← map_one (HahnSeries.ofPowerSeries ℤ k), ← map_sub,
-      ← map_mul]
-    congr 1
-    have := powerSeries_oneAddConstMulX_mul_inv (1 : k)
-    rw [map_one] at this
-    linear_combination PowerSeries.X * this⟩
-  comm x := by
-    refine algHom_ext (f := (extend (frob k l) (frob_X_ne l)).comp (gam k))
-      (g := (gam k).comp (extend (frob k l) (frob_X_ne l))) (fun a => ?_) x
-    simp only [AlgHom.comp_apply, gam, extend_coe, frob_mob]
 
 def lin (σ : k⸨X⸩ →ₐ[k] k⸨X⸩) : k⸨X⸩ →ₗ[k] k⸨X⸩ where
   toFun := σ

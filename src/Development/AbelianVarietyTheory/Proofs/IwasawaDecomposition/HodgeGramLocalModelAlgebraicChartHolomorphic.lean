@@ -97,8 +97,6 @@ open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts G
 open GlobalTheory.PointChern Filter Topology
 open scoped Matrix
 
-set_option autoImplicit false
-
 theorem GlobalTheory.ShFam.chart_lift_periods_of_openPart : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (T : TorModel Y) (F : Type) [Field F] (e : F ≃+* c.F) (σ : c.F →+* ℂ) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (Fu : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty) (X : Var F) (j : X.X ⟶ gen T.Z) (hj : j ≫ genStr T.Z ≫ spMap e.toRingHom = X.str), IsOpenImmersion j → ∀ y ∈ ptsIn X.str (σ.comp e.toRingHom) (openPart j), ∀ c' : AlgChart X.str (σ.comp e.toRingHom) X.dim, y ∈ c'.e.source → ∃ (i : Fin Fu.n) (B : Set (ReciprocityTheory.L2DbarEstimates.V X.dim)) (P : ReciprocityTheory.L2DbarEstimates.V X.dim → ((Fu.Di i).La →+ (Fin g → ℂ))), IsOpen B ∧ c'.e y ∈ B ∧ B ⊆ c'.e.target ∧ (∀ b ∈ B, IsPeriod (Fu.Di i) ty (P b)) ∧ (∀ x, DifferentiableOn ℂ (fun b => P b x) B) ∧ ∀ b ∈ B, ∃ q : FrPt Xo c (Formalism.L2.Pj.CAt σ), cxPt T.Z q = cxOf e σ hj (c'.e.symm b) ∧ Fu.u i (P b) = q.x := by
   intro E _ _ _ H Dw l Xo c O _ β Y T F _ e σ g ty Fu X j hj hjo y hy c' hyc
   have := T.Z.jQ_open
@@ -192,7 +190,7 @@ theorem sep_types {E : Type} [Field E] [NumberField E] {La : Type} [AddCommGroup
   have hzero : ∀ χ ∈ Finset.univ.image ty, χ ≠ τ → H χ v = 0 := by
     intro χ hχ hne
     obtain ⟨a, ha⟩ : ∃ a : 𝓞 E, χ (a : E) ≠ τ (a : E) := by
-      by_contra hc; push_neg at hc; exact hne (hres _ _ hc)
+      by_contra hc; push Not at hc; exact hne (hres _ _ hc)
     have key : ∑ χ' ∈ Finset.univ.image ty, ((χ' (a : E) - τ (a : E)) * H χ' v) • (fun b : 𝓞 E => χ' (b : E)) = 0 := by
       funext b
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
@@ -293,10 +291,10 @@ theorem sum_fin_ite (n : ℕ) (f : Fin r → ℂ) :
   split_ifs with h
   · rw [Finset.sum_eq_single ⟨n, h⟩]
     · simp
-    · intro b _ hb; rw [if_neg]; intro e; exact hb (Fin.ext e)
+    · intro b _ hb; rw [ite_eq_right]; intro e; exact hb (Fin.ext e)
     · simp
   · refine Finset.sum_eq_zero fun k _ => ?_
-    rw [if_neg]; intro e; exact h (e ▸ k.2)
+    rw [ite_eq_right]; intro e; exact h (e ▸ k.2)
 
 theorem perFr_conj_type (X : Data E r) (x : Frame X.Ψ r) (ρ : X.Ψ) (w : Fin r → E) (i : ℕ) :
     Formalism.L2.PjFree.perFr X x w (conjEmb ρ.1) i =
@@ -336,7 +334,7 @@ theorem rep_fwd (X : Data E r) {La : Type} [AddCommGroup La] [Module (𝓞 E) La
   refine ⟨fun k => ∑ j', if ty j' = conjEmb ρ.1 ∧ (k : ℕ) = X.p0 - 1 - idx j' then c j' else 0, ?_, ?_⟩
   · intro k hk
     refine Finset.sum_eq_zero fun j' _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     have := hidx j' (h1 ▸ ReciprocityTheory.ChartRestriction.G.PullbackSections.UH.conjEmb_not_mem X ρ)
     omega
@@ -346,13 +344,13 @@ theorem rep_fwd (X : Data E r) {La : Type} [AddCommGroup La] [Module (𝓞 E) La
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j' _ => ?_
     by_cases hj' : ty j' = conjEmb ρ.1
-    · rw [if_pos hj', hj', perFr_conj_type, Finset.mul_sum]
+    · rw [ite_eq_left hj', hj', perFr_conj_type, Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       simp only [true_and]
       split_ifs <;> simp
-    · rw [if_neg hj', zero_mul]
+    · rw [ite_eq_right hj', zero_mul]
       refine (Finset.sum_eq_zero fun k _ => ?_).symm
-      rw [if_neg (fun hh => hj' hh.1), zero_mul]
+      rw [ite_eq_right (fun hh => hj' hh.1), zero_mul]
 
 theorem rep_bwd (X : Data E r) {La : Type} [AddCommGroup La] [Module (𝓞 E) La] (φ : La ≃ₗ[𝓞 E] X.Λ) {g : ℕ}
     (ty : Fin g → (E →+* ℂ)) (idx : Fin g → ℕ) (x' : Frame X.Ψ r)
@@ -404,7 +402,7 @@ theorem lift_frame : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r :
     intro ρ m hm
     obtain ⟨j0, hj0, hi0⟩ := hcov ρ.1 ρ.2 (X.p0 - 1 - m) (by omega)
     obtain ⟨c, hc⟩ := rep_bwd X φ ty idx x₀ h₀ (fun v => P b₀ v) (fun a v j => hsl b₀ hb₀ a v j) hh₀ ρ j0 hj0
-    refine ⟨fun j => if ty j = conjEmb ρ.1 then c j else 0, fun j hj => if_neg hj, ?_⟩
+    refine ⟨fun j => if ty j = conjEmb ρ.1 then c j else 0, fun j hj => ite_eq_right hj, ?_⟩
     have key : ∀ v, ReciprocityTheory.ChartRestriction.G.FD.hermC ρ.1 X.Gm (ReciprocityTheory.ChartRestriction.G.FD.col (ReciprocityTheory.ChartRestriction.G.FD.mat x₀ ρ) m)
         (ReciprocityTheory.ChartRestriction.G.FD.Data.emb ρ.1 (φ v : Fin r → E)) =
         ReciprocityTheory.ChartRestriction.G.FD.hermC ρ.1 X.Gm (∑ j, (if ty j = conjEmb ρ.1 then c j else 0) • yv b₀ ρ j)
@@ -418,16 +416,16 @@ theorem lift_frame : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r :
           ReciprocityTheory.ChartRestriction.G.FD.hermC ρ.1 X.Gm (ReciprocityTheory.ChartRestriction.G.FD.col (ReciprocityTheory.ChartRestriction.G.FD.mat x₀ ρ) m)
             (ReciprocityTheory.ChartRestriction.G.FD.Data.emb ρ.1 (φ v : Fin r → E)) := by
         rw [Finset.sum_eq_single m]
-        · rw [if_pos (by omega)]
-        · intro k _ hk; rw [if_neg]; intro e; exact hk (Fin.ext (by omega))
+        · rw [ite_eq_left (by omega)]
+        · intro k _ hk; rw [ite_eq_right]; intro e; exact hk (Fin.ext (by omega))
         · simp
       rw [← e2, e1, ReciprocityTheory.ChartRestriction.G.FD.hermC_sum_left]
       refine Finset.sum_congr rfl fun j _ => ?_
       by_cases hj : ty j = conjEmb ρ.1
-      · rw [if_pos hj, ReciprocityTheory.ChartRestriction.G.FD.hermC_smul_left]
+      · rw [ite_eq_left hj, ReciprocityTheory.ChartRestriction.G.FD.hermC_smul_left]
         obtain ⟨w, -, -, hPv⟩ := hrep b₀ hb₀ x₀ h₀ hh₀ ρ j hj
         rw [hPv v]
-      · rw [if_neg hj, zero_mul, zero_smul, ReciprocityTheory.ChartRestriction.G.FD.hermC_zero_left]
+      · rw [ite_eq_right hj, zero_mul, zero_smul, ReciprocityTheory.ChartRestriction.G.FD.hermC_zero_left]
     have := congrArg (L ρ.1) (funext fun k => key (a k))
     simpa only [hL] using this
   choose! cc hcc0 hcc using hcol
@@ -450,9 +448,9 @@ theorem lift_frame : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r :
       exact (LinearMap.toContinuousLinearMap (L ρ.1)).differentiable.comp_differentiableOn h1
     refine differentiableOn_pi.2 fun ρ => differentiableOn_pi.2 fun k => differentiableOn_pi.2 fun m => ?_
     by_cases hm : (m : ℕ) < X.p0
-    · simp only [s, if_pos hm]
+    · simp only [s, ite_eq_left hm]
       exact DifferentiableOn.fun_sum fun j _ => (differentiableOn_const _).mul (differentiableOn_pi.1 (hv ρ j) k)
-    · simp only [s, if_neg hm]
+    · simp only [s, ite_eq_right hm]
       exact differentiableOn_const _
   refine ⟨s, GlobalTheory.SCV.analyticAt_of_differentiableOn hsd (hBo.mem_nhds hb₀), ?_⟩
   have hev : ∀ᶠ b in 𝓝 b₀, s b ∈ X.dom :=
@@ -473,7 +471,7 @@ theorem lift_frame : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r :
     have hcolW : ReciprocityTheory.ChartRestriction.G.FD.col (ReciprocityTheory.ChartRestriction.G.FD.mat (s b) τ) b' = ReciprocityTheory.ChartRestriction.G.FD.mat x' τ *ᵥ W := by
       rw [hW, Matrix.mulVec_sum]
       funext k
-      simp only [ReciprocityTheory.ChartRestriction.G.FD.col, ReciprocityTheory.ChartRestriction.G.FD.mat, Matrix.of_apply, s, if_pos hb', Finset.sum_apply]
+      simp only [ReciprocityTheory.ChartRestriction.G.FD.col, ReciprocityTheory.ChartRestriction.G.FD.mat, Matrix.of_apply, s, ite_eq_left hb', Finset.sum_apply]
       refine Finset.sum_congr rfl fun j _ => ?_
       by_cases hj : ty j = conjEmb τ.1
       · have e := hyw j hj
@@ -501,16 +499,16 @@ theorem lift_frame : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r :
     intro i j hij
     dsimp only at hij
     by_cases hi : (i : ℕ) < X.p0
-    · rw [if_pos hi] at hij; exact absurd hij (Nat.not_lt_zero _)
+    · rw [ite_eq_left hi] at hij; exact absurd hij (Nat.not_lt_zero _)
     · by_cases hj : (j : ℕ) < X.p0
       · exact R2 τ i j (by omega) hj
-      · rw [if_neg hi, if_neg hj] at hij; exact absurd hij (lt_irrefl _)
+      · rw [ite_eq_right hi, ite_eq_right hj] at hij; exact absurd hij (lt_irrefl _)
   have hinv := Matrix.blockTriangular_inv_of_blockTriangular hbt
   have eM : M⁻¹ = (ReciprocityTheory.ChartRestriction.G.FD.mat (s b) τ)⁻¹ * ReciprocityTheory.ChartRestriction.G.FD.mat x' τ := by
     rw [hM, Matrix.mul_inv_rev, Matrix.nonsing_inv_nonsing_inv _ hdx]
   rw [← eM]
   exact hinv (show (if (b' : ℕ) < X.p0 then 0 else 1) < (if (a' : ℕ) < X.p0 then 0 else 1) by
-    rw [if_pos hb', if_neg (by omega)]; exact Nat.zero_lt_one)
+    rw [ite_eq_left hb', ite_eq_right (by omega)]; exact Nat.zero_lt_one)
 
 end GlobalTheory.PeriodFamFrame
 end -- clump:auto
@@ -614,8 +612,6 @@ open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts G
 open GlobalTheory.PointChern Filter Topology
 open scoped Matrix
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.LieBase
@@ -654,7 +650,7 @@ theorem exists_analytic_frame_lift : ∀ (E : Type) [Field E] [NumberField E] [I
     have hmult : ∀ τ : E →+* ℂ, Formalism.L2.PjFree.relab c σ τ ∉ (U.X k).Ψ → Dw.mult τ = (U.X k).p0 := by
       intro τ hτ
       rw [hp0]
-      exact if_neg fun h => hτ ((hty _).2 ((hrt τ).2 h))
+      exact ite_eq_right fun h => hτ ((hty _).2 ((hrt τ).2 h))
     have hrep : ∀ b ∈ B, ∀ q : FrPt Xo c (Formalism.L2.Pj.CAt σ), W.F.u (W.ik k) (P b) = q.x →
         ∃ x' : (U.X k).dom, (U.un k x').x = q.x ∧ ∃ h : (Fin W.g → ℂ) ≃ₗ[ℂ] (Fin W.g → ℂ), ∀ v, P b v =
           h (fun j => Formalism.L2.PjFree.perFr (U.X k) x'.1 (W.φ k v : Fin (Dw.p + Dw.q) → E)
@@ -703,7 +699,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formali
 open Formalism.DegreeFormula Formalism.MJ GlobalTheory.HodgeDomain GlobalTheory.TrueCx
 open ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.FramePairGram
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.FramePairGram
 
@@ -748,7 +743,7 @@ theorem coef_conj_eq_coOm {E : Type} [Field E] [NumberField E] [IsCMField E] {r 
   have hb := b.2
   have hi := i.2
   have hl : X.p0 - 1 - (i : ℕ) < r ∧ X.p0 - 1 - (b : ℕ) < r := by omega
-  simp only [of_apply, submatrix_apply, transpose_apply, coef, dif_neg hc, dif_pos hcc, ent, dif_pos hl, hs,
+  simp only [of_apply, submatrix_apply, transpose_apply, coef, dite_eq_right hc, dite_eq_left hcc, ent, dite_eq_left hl, hs,
     toBlocks₂₂, reindex_apply]
   refine congrArg₂ _ (Fin.ext ?_) (Fin.ext ?_) <;> simp [idx_symm_inr, Fin.val_rev, hp] <;> omega
 
@@ -762,8 +757,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeMetricGramHolomorphicFrameForm", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ToroidalCompactificationData\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqOfConjEqOne\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFramedChartExponentialToroidalModel\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrameCoefficientEqOmegaRatio\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrameCoefficientEqWeightRatio\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeMetricUniformisationSmoothOnInterior\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtEqOfPtOfFrameEq\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnfoldedFramesParabolicRelation\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KaUnfoldPfB\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OrthoStatementPf\nimport Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -803,7 +796,7 @@ theorem gram_orth {U : Formalism.L2.PjFree.Unf Xo c σ (Dw.p + Dw.q)} (hσ : For
     ⟨_, isHodgeFrame_cxFrame (U := unfFam U) hσ hx⟩
   have hg : (hodgeMet Z U).gram (cxPt Z ((unfFam U σ).un k x)) (cxFrame Z ((unfFam U σ).un k x)) τ =
       ((2 * Real.pi : ℝ) : ℂ) • ((hex.choose.co (cxFrame Z ((unfFam U σ).un k x)) τ)ᴴ *
-        hex.choose.co (cxFrame Z ((unfFam U σ).un k x)) τ) := dif_pos hex
+        hex.choose.co (cxFrame Z ((unfFam U σ).un k x)) τ) := dite_eq_left hex
   obtain ⟨k₂, x₂, hx₂, hkx, hv⟩ := hodgeFrame_comp hσ hex.choose_spec
   have e : ((unfFam U σ).un k₂ x₂).x = ((unfFam U σ).un k x).x := x_eq_of_cxPt (congrArg Subtype.val hkx)
   have hik : W.ik k₂ = W.ik k := W.F.disj _ _ _ _ (W.period k₂ x₂) (W.period k x)
@@ -961,23 +954,23 @@ theorem GlobalTheory.HodgeGramGen.hodge_gram_frame : ∀ (E : Type) [Field E] [N
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro τ a b
     by_cases h : τ (H.rt : E) = H.rt0
-    · simp only [dif_pos h, submatrix_apply, transpose_apply]
+    · simp only [dite_eq_left h, submatrix_apply, transpose_apply]
       exact GlobalTheory.HodgeGramGen.an_coW _ hj hp _ hx _ _
     · by_cases h' : conjEmb τ (H.rt : E) = H.rt0
-      · simp only [dif_neg h, dif_pos h', submatrix_apply]
+      · simp only [dite_eq_right h, dite_eq_left h', submatrix_apply]
         exact GlobalTheory.HodgeGramGen.an_coOm_inv _ hj hp _ hx _ _
-      · simp only [dif_neg h, dif_neg h']
+      · simp only [dite_eq_right h, dite_eq_right h']
         exact analyticAt_const
   · intro τ a b
     exact GlobalTheory.HodgeGramGen.an_moeb _ hj hp _ hx _ _
   · intro τ
     by_cases h : τ (H.rt : E) = H.rt0
-    · simp only [dif_pos h]
+    · simp only [dite_eq_left h]
       rw [show (Fin.cast (mult_of_mem Dw h) : Fin (Dw.mult τ) → Fin Dw.p) = ⇑(finCongr (mult_of_mem Dw h)) from rfl,
         det_submatrix_equiv_self, det_transpose]
       exact isUnit_coW _ hj hp hx _
     · by_cases h' : conjEmb τ (H.rt : E) = H.rt0
-      · simp only [dif_neg h, dif_pos h']
+      · simp only [dite_eq_right h, dite_eq_left h']
         rw [← isUnit_iff_isUnit_det]
         have e1 : (fun a => Fin.rev (cq (Fin.cast (mult_of_not_mem Dw h) a))) =
           ⇑((finCongr ((mult_of_not_mem Dw h).trans hq.symm)).trans Fin.revPerm) := rfl
@@ -985,7 +978,7 @@ theorem GlobalTheory.HodgeGramGen.hodge_gram_frame : ∀ (E : Type) [Field E] [N
           ⇑(finCongr ((mult_of_not_mem Dw h).trans hq.symm)) := rfl
         rw [e1, e2, isUnit_submatrix_equiv, isUnit_iff_isUnit_det]
         exact isUnit_nonsing_inv_det _ (isUnit_coOm _ hj hp hx _)
-      · simp only [dif_neg h, dif_neg h', det_one]
+      · simp only [dite_eq_right h, dite_eq_right h', det_one]
         exact isUnit_one
   · intro τ
     have hd := domPt_mem (U.X k') hj (fun t : GlobalTheory.AllWt.Psi H => ρ t.1 t.2) hp hx τ
@@ -1024,8 +1017,8 @@ theorem GlobalTheory.HodgeGramGen.hodge_gram_frame : ∀ (E : Type) [Field E] [N
       obtain ⟨hco1, -⟩ := hodge_co (U.X k') hj hp h1 (ρ τ h)
       rw [hKe, conjTranspose_submatrix, ← submatrix_mul _ _ _ _ _ e.bijective, transpose_submatrix,
         GlobalTheory.HodgeGramGen.gram_cm (isUnit_coW (U.X k') hj hp hx1 _) hco1, ← hmo, GlobalTheory.HodgeGramGen.hP_transpose]
-      simp only [dif_pos h]
-      rw [modelGram, dif_pos h, reindex_apply]
+      simp only [dite_eq_left h]
+      rw [modelGram, dite_eq_left h, reindex_apply]
       show _ = (coW (U.X k') hj x (ρ τ h))ᵀ.submatrix e e *
         ((1 - ((zr x ⟨τ, h⟩).submatrix id ⇑(finCongr hq.symm)).map (starRingEnd ℂ) *
           ((zr x ⟨τ, h⟩).submatrix id ⇑(finCongr hq.symm))ᵀ)⁻¹).submatrix e e *
@@ -1048,8 +1041,8 @@ theorem GlobalTheory.HodgeGramGen.hodge_gram_frame : ∀ (E : Type) [Field E] [N
         obtain ⟨-, hco2⟩ := hodge_co (U.X k') hj hp h1 (ρ _ h')
         rw [hKe, conjTranspose_submatrix, ← submatrix_mul _ _ _ _ _ er.bijective, transpose_submatrix,
           GlobalTheory.HodgeGramGen.gram_conj (isUnit_coOm (U.X k') hj hp hx1 _) hco2, ← hmo]
-        simp only [dif_neg h, dif_pos h']
-        rw [modelGram, dif_neg h, dif_pos h', reindex_apply]
+        simp only [dite_eq_right h, dite_eq_left h']
+        rw [modelGram, dite_eq_right h, dite_eq_left h', reindex_apply]
         show _ = (coOm (U.X k') hj x (ρ _ h'))⁻¹.submatrix er e *
           ((1 - ((zr x ⟨conjEmb τ, h'⟩).submatrix id ⇑(finCongr hq.symm))ᴴ *
             (zr x ⟨conjEmb τ, h'⟩).submatrix id ⇑(finCongr hq.symm))⁻¹).submatrix
@@ -1069,8 +1062,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeGramLocalModelAlgebraicChartHolomorphic", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAnalyticFlagDomainFrameLiftAlgebraicChart\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHolomorphicInvertibleFrameCoordinates\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeMetricGramHolomorphicFrameForm\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric GlobalTheory.LieBase
 open Classical

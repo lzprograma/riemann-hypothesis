@@ -192,7 +192,7 @@ theorem exists_coeffs {E : Type} [Field E] [NumberField E] {Λ : Type} [AddCommG
     rw [Finset.sum_eq_single i]
     · rw [hb' i]
       have := hne _ (ha i)
-      simp only [if_true]
+      simp only [ite_true]
       field_simp
     · intro j _ hj
       simp [hj.symm]
@@ -505,7 +505,7 @@ theorem block_sign (A : ι → Matrix (Fin r) (Fin r) ℂ) (hA : ∀ t, (A t).Is
     intro h0
     have := blockOf_ofBlock idx q t t (star u)
     rw [h0] at this
-    simp only [map_zero, if_true] at this
+    simp only [map_zero, ite_true] at this
     exact hu (star_eq_zero.mp this.symm)
   have h2 := hpos _ hz
   rw [← hI', I_smul_ofBlock, h1] at h2
@@ -566,9 +566,9 @@ theorem exists_frames {ι : Type} [Fintype ι] {g r : ℕ} (idx : Fin g ≃ ι �
   have h1 := congrFun (hM v t) a
   rw [blockOf_apply, kap_apply] at h1
   by_cases ha : (a : ℕ) < q
-  · rw [if_pos ha] at h1 ⊢
+  · rw [ite_eq_left ha] at h1 ⊢
     rw [(hx2 (e t v) a).1 ha, ← h1, Complex.conj_conj]
-  · rw [if_neg ha] at h1 ⊢
+  · rw [ite_eq_right ha] at h1 ⊢
     rw [(hx2 (e t v) a).2 ha, h1]
 
 section Field

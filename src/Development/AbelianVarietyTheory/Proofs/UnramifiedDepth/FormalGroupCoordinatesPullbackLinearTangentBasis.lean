@@ -129,7 +129,7 @@ theorem linPull_coords : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) (I J : Ty
   have hal' : ∀ c s x, S.al c s x = ∑ b', al c s b' * S.tan b' x := by
     intro c s x
     rcases Nat.eq_zero_or_pos s with rfl | hs
-    · simp only [hal0, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    · simp only [hal0, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       exact S.cur_zero_inl c x
     · rw [hal c s x hs]
       refine Finset.sum_congr rfl fun b' _ => ?_

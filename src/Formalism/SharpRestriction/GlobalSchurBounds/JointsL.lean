@@ -5,47 +5,7 @@ public import Formalism.SharpRestriction.GlobalSchurBounds.QuadraticLogDerivCong
 public import Formalism.SharpRestriction.ParamsHeightRankConstant
 public import Formalism.LocalRingCardinality.Lemmas
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -81,7 +41,6 @@ theorem count_at_of (D : D7) (L : SizeData₂ D) (C0 C Δ : ℝ)
     exact_mod_cast this
   have hfk : 1 ≤ (D.R.f : ℝ) * D.R.k := one_le_mul_of_one_le_of_one_le hf1 (by linarith)
   have hfk0 : 0 < (D.R.f : ℝ) * D.R.k := by linarith
-  have hm0 : 0 ≤ (D.R.m : ℝ) := Nat.cast_nonneg _
   have hL1 : 1 ≤ L.sc.L := Real.one_le_rpow hx.le L.sc.eps_pos.le
   have hLa : L.sc.L ≤ L.La := by
     have hrd : D.host.rdE = 2 * D.host.v := by unfold Host.v; ring
@@ -222,9 +181,6 @@ theorem logGam_le {eps : ℝ} (Fm : FamP eps) (x : ℝ) (hx : Fm.x1 < x) (i : Fm
     exact_mod_cast this
   rw [div_le_one (mul_pos (by linarith) (by linarith)), (Fm.L x i).Gam_eq u]
   have hkfk : ((Fm.D x i).R.k : ℝ) ≤ ((Fm.D x i).R.f : ℝ) * (Fm.D x i).R.k := le_mul_of_one_le_left (by linarith) hf1
-  have hX0 : 0 ≤ (Fm.L x i).CGam * ((Fm.D x i).R.m : ℝ) ^ 5 * ((Fm.D x i).R.f : ℝ) * (Fm.L x i).sc.L :=
-    mul_nonneg (mul_nonneg (mul_nonneg (Fm.L x i).CGam_pos.le (by positivity)) (by linarith))
-      (Real.rpow_nonneg (le_trans zero_le_one (Fm.L x i).sc.one_lt_alt.le) _)
   linarith
 
 theorem exists_le_rpow (θ : ℝ) (hθ : 0 < θ) (C : ℝ) : ∃ x0 : ℝ, 1 ≤ x0 ∧ ∀ x, x0 ≤ x → C ≤ x ^ θ := by
@@ -240,7 +196,6 @@ theorem m_large {eps : ℝ} (Fm : FamP eps) (K : ℝ) :
   obtain ⟨x0, hx0, h⟩ := exists_le_rpow (1 / 4) (by norm_num) K
   refine ⟨x0, fun x hx hx1 i => ?_⟩
   obtain ⟨-, ⟨hM, -⟩, -⟩ := Fm.sizes x hx1 i
-  have hs := (Fm.L x i).sc
   have hxx : (Fm.L x i).sc.x = x := Fm.L_x x i hx1
   have he0 := (Fm.L x i).sc.eps_pos
   have he1 := (Fm.L x i).sc.eps_lt
@@ -363,7 +318,6 @@ theorem tuSize_of {eps : ℝ} (Fm : FamP eps) (C0 C x0 : ℝ)
   obtain ⟨-, h5c, -⟩ := h x hxa hxd i
   have hL1 : 1 ≤ (Fm.L x i).sc.L :=
     Real.one_le_rpow (Fm.L x i).sc.one_lt_alt.le (Fm.L x i).sc.eps_pos.le
-  have hm0 : 0 ≤ ((Fm.D x i).R.m : ℝ) := Nat.cast_nonneg _
   have hC0 : 0 ≤ max C 0 := le_max_right _ _
   have hmm := hm x hxc hxd i
   rw [div_le_iff₀ (by norm_num)] at hmm
@@ -803,11 +757,8 @@ theorem db_w {D : D7} (L : SizeData₂ D) : 0 < L.sc.w'' D.R.n ∧ L.sc.w'' D.R.
 theorem db_b'le {D : D7} (L : SizeData₂ D) (S : SizesAt L) (hx : 3 ≤ L.sc.x) : L.sc.b' ≤ L.sc.b := by
   obtain ⟨hk3, hm2, hkt, hkr, hn1, hf, hmk⟩ := db_rk D
   obtain ⟨hL1, hLx, hb2, hkb, hvb, hlx⟩ := db_basic L S hx
-  have hx0 : 0 < L.sc.x := by linarith
-  have hx1 : 1 ≤ L.sc.x := by linarith
   have hE1 : 1 ≤ L.sc.x ^ L.sc.eps := hL1
   have hb0 : 0 < L.sc.b := by linarith
-  have hη := L.etaSz_pos
   have hSc := L.Sc_pos
   have hb'0 := db_b'pos L
   obtain ⟨-, -, -, hKR, -, -, -, -, -, -, -, -, -, hEta, -⟩ := S
@@ -834,15 +785,11 @@ theorem db_b'le {D : D7} (L : SizeData₂ D) (S : SizesAt L) (hx : 3 ≤ L.sc.x)
   have s4 : (D.R.r : ℝ) * ((L.sc.b' + L.Sc) * D.R.k) * Real.log L.sc.x ≤
       (D.R.r : ℝ) * ((L.sc.b' + L.Sc) * D.R.k) * Real.log L.sc.x * L.sc.x ^ L.sc.eps :=
     le_mul_of_one_le_right p3 hE1
-  have e2 : (D.R.r : ℝ) * ((L.sc.b' + L.Sc) * D.R.k) * Real.log L.sc.x * L.sc.x ^ L.sc.eps =
-      (D.R.r : ℝ) * (L.sc.b' + L.Sc) * Real.log L.sc.x * ((D.R.k : ℝ) * L.sc.x ^ L.sc.eps) := by ring
   have hm2L : (D.R.m : ℝ) ^ 2 * L.sc.L ≤ D.R.k := hKR.2.2.2.2.1
   have hm2k : (D.R.m : ℝ) ^ 2 ≤ D.R.k := by
     have := le_mul_of_one_le_right (sq_nonneg (D.R.m : ℝ)) hL1
     linarith
   have hd2 : L.de2 ^ 2 ≤ 1 := by simpa using pow_le_pow_left₀ hd0.le hd1 2
-  have u1 : L.de2 * D.R.m * L.sc.b * ((D.R.m : ℝ) * L.de2) = L.de2 ^ 2 * ((D.R.m : ℝ) ^ 2 * L.sc.b) := by
-    ring
   have u2 : L.de2 ^ 2 * ((D.R.m : ℝ) ^ 2 * L.sc.b) ≤ 1 * ((D.R.m : ℝ) ^ 2 * L.sc.b) :=
     mul_le_mul_of_nonneg_right hd2 (by positivity)
   have u3 : (D.R.m : ℝ) ^ 2 * L.sc.b ≤ D.R.k * L.sc.b := mul_le_mul_of_nonneg_right hm2k hb0.le
@@ -852,12 +799,7 @@ theorem db_b'le {D : D7} (L : SizeData₂ D) (S : SizesAt L) (hx : 3 ≤ L.sc.x)
 theorem eta_size_le_b_div_27 {D : D7} (L : SizeData₂ D) (S : SizesAt L) (hx : 3 ≤ L.sc.x) : L.etaSz ≤ L.sc.b / 27 := by
   obtain ⟨hk3, hm2, hkt, hkr, hn1, hf, hmk⟩ := db_rk D
   obtain ⟨hL1, hLx, hb2, hkb, hvb, hlx⟩ := db_basic L S hx
-  have hx0 : 0 < L.sc.x := by linarith
-  have hx1 : 1 ≤ L.sc.x := by linarith
-  have hE1 : 1 ≤ L.sc.x ^ L.sc.eps := hL1
   have hb0 : 0 < L.sc.b := by linarith
-  have hη := L.etaSz_pos
-  have hSc := L.Sc_pos
   obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, hEta, -⟩ := S
   have h2 : L.etaSz ≤ L.sc.b / ((D.R.t : ℝ) ^ 3 * D.R.f * (D.R.k : ℝ) ^ 3) := hEta.2.1
   have ht1 : (1 : ℝ) ≤ (D.R.t : ℝ) ^ 3 := one_le_pow₀ (by linarith)
@@ -875,11 +817,7 @@ theorem db_xeta {D : D7} (L : SizeData₂ D) (S : SizesAt L) (hx : 3 ≤ L.sc.x)
   obtain ⟨hk3, hm2, hkt, hkr, hn1, hf, hmk⟩ := db_rk D
   obtain ⟨hL1, hLx, hb2, hkb, hvb, hlx⟩ := db_basic L S hx
   have hx0 : 0 < L.sc.x := by linarith
-  have hx1 : 1 ≤ L.sc.x := by linarith
-  have hE1 : 1 ≤ L.sc.x ^ L.sc.eps := hL1
-  have hb0 : 0 < L.sc.b := by linarith
   have hη := L.etaSz_pos
-  have hSc := L.Sc_pos
   obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, hEta, -⟩ := S
   have h4 : (D.R.t : ℝ) * L.etaSz ≤ L.sc.w'' D.R.n / L.sc.x := hEta.2.2.2.1
   rw [le_div_iff₀ hx0] at h4
@@ -928,9 +866,6 @@ theorem db_xS {D : D7} (L : SizeData₂ D) (S : SizesAt L) (hx : 3 ≤ L.sc.x) :
   obtain ⟨hL1, hLx, hb2, hkb, hvb, hlx⟩ := db_basic L S hx
   have hx0 : 0 < L.sc.x := by linarith
   have hx1 : 1 ≤ L.sc.x := by linarith
-  have hE1 : 1 ≤ L.sc.x ^ L.sc.eps := hL1
-  have hb0 : 0 < L.sc.b := by linarith
-  have hη := L.etaSz_pos
   have hSc := L.Sc_pos
   obtain ⟨-, -, hK, -, -, -, -, -, -, -, -, -, -, -, -, -, hDel, -⟩ := S
   have h4 : (D.R.k : ℝ) * L.Sc ≤ L.sc.w'' D.R.n := hDel.2.2.2.1
@@ -1018,7 +953,6 @@ theorem sizes_clause_thirteen {D : D7} (L : SizeData₂ D) (S : SizesAt L) (hx :
   obtain ⟨a1, a2⟩ := db_win L S hx ρ j hj
   obtain ⟨b1, b2⟩ := db_be L ρ j hj
   have hxη := db_xeta L S hx
-  have hη := L.etaSz_pos
   have hx0 : 0 < L.sc.x := by linarith
   refine ⟨by linarith, b1, ?_⟩
   rw [abs_of_pos (by linarith), le_div_iff₀ hx0]
@@ -1069,7 +1003,6 @@ theorem sizes_clause_sixteen {D : D7} (L : SizeData₂ D) (P : ParameterChoice' 
       (((D.hc ρ).b ⟨j + 1, hj⟩ : ℚ) : ℝ) - (((D.hc ρ).b ⟨j, by omega⟩ : ℚ) : ℝ) := h1
   have hth : 1 ≤ L.sc.x ^ szTh L :=
     Real.one_le_rpow hx1 (by unfold szTh; linarith [L.sc.eps_pos])
-  have hL0 : 0 ≤ L.sc.L := by linarith
   have hA : 0 ≤ (D.R.r : ℝ) ^ 19 * (D.R.f : ℝ) ^ 5 * L.sc.L := by positivity
   have key : (D.R.r : ℝ) ^ 19 * (D.R.f : ℝ) ^ 5 * L.sc.L / C0 ≤
       L.sc.x ^ szTh L * (D.R.r : ℝ) ^ 19 * (D.R.f : ℝ) ^ 5 * L.sc.L := by
@@ -1175,7 +1108,6 @@ theorem jnt_duS_pos_of_proviso {D : D7} (L : SizeData₂ D) (C0 : ℝ) (hC0 : 0 
   rcases Nat.eq_zero_or_pos (D.duS u) with h0 | h0
   · have h1 := (h u).1
     rw [h0] at h1
-    have h2 : (0 : ℝ) < C0⁻¹ := inv_pos.mpr hC0
     simp at h1
     linarith
   · exact h0

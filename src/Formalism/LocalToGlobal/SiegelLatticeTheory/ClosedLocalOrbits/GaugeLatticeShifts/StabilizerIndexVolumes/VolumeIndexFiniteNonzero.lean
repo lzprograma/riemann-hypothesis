@@ -12,8 +12,6 @@ namespace Formalism.L2.SG.Pf.StabilizerIndexVolumes
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.PairVal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7) (u u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
   (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V))
 

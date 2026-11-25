@@ -45,9 +45,6 @@ def DvrDataAt (P : ValPt Y) : Prop :=
 def SplitsAt (P : ValPt Y) : Prop :=
   ∃ (W : UnramExt P.V) (t : SAB H (Sp W.W)) (_ : SABMap t Y.t (P.ξ W)), SplitOver W t
 
-private theorem comp_apply_point {A B C : Scheme.{0}} (f : A ⟶ B) (g : B ⟶ C) (x : A) :
-    (f ≫ g) x = g (f x) := rfl
-
 private theorem spMap_comp_xi_eq_spMap_lift_comp_y_comp_j (P : ValPt Y) (W : UnramExt P.V) (lift : P.K' →+* FractionRing W.W)
     (hlift : lift.comp (algebraMap P.V P.K') =
       (algebraMap W.W (FractionRing W.W)).comp (algebraMap P.V W.W)) :
@@ -79,7 +76,7 @@ private theorem xi_spMap_eq_pullback_fst_jQ (P : ValPt Y) (W : UnramExt P.V) (li
     (z : Sp (FractionRing W.W)) :
     (P.ξ W) (spMap (algebraMap W.W (FractionRing W.W)) z) =
       pullback.fst Y.s (spMap β) (Y.jQ (P.y (spMap lift z))) := by
-  rw [← comp_apply_point, spMap_comp_xi_eq_spMap_lift_comp_y_comp_j P W lift hlift, comp_apply_point, comp_apply_point, Model.j, comp_apply_point]
+  rw [← Scheme.Hom.comp_apply, spMap_comp_xi_eq_spMap_lift_comp_y_comp_j P W lift hlift, Scheme.Hom.comp_apply, Scheme.Hom.comp_apply, Model.j, Scheme.Hom.comp_apply]
 
 theorem ValPt.ξ_ab (P : ValPt Y) (W : UnramExt P.V) : (P.ξ W ⁻¹' abLocus Y.t.G).Nonempty := by
   obtain ⟨lift, hlift⟩ := exists_lift_fractionRing_comp_algebraMap P W

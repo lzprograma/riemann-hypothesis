@@ -129,8 +129,8 @@ theorem isAddFundamentalDomain_levelDomain :
       algebraMap ℚ (InfiniteAdeleRing ℚ) q' + a.1 := fun _ => rfl
   have hfin : ∀ q' : ℚ, ((algebraMap ℚ 𝔸[ℚ] q' + a : 𝔸[ℚ]).2) = algebraMap ℚ 𝔸ᶠ[ℚ] q' + a.2 :=
     fun _ => rfl
-  refine ⟨⟨algebraMap ℚ 𝔸[ℚ] q, q, rfl⟩, ⟨?_, ?_⟩, ?_⟩
-  · change RationalIdeles.realEquiv ((algebraMap ℚ 𝔸[ℚ] q + a : 𝔸[ℚ]).1) ∈ Set.Ico (0 : ℝ) N
+  have hr :
+      RationalIdeles.realEquiv ((algebraMap ℚ 𝔸[ℚ] q + a : 𝔸[ℚ]).1) ∈ Set.Ico (0 : ℝ) N := by
     rw [hreal, map_add (f := _), realEquiv_algebraMap]
     have h1 : (m : ℝ) ≤ r / N := Int.floor_le _
     have h2 : r / N < m + 1 := Int.lt_floor_add_one _
@@ -138,29 +138,16 @@ theorem isAddFundamentalDomain_levelDomain :
     rw [div_lt_iff₀ hN] at h2
     simp only [q, Rat.cast_sub, Rat.cast_mul, Rat.cast_natCast, Rat.cast_intCast]
     constructor <;> nlinarith
-  · change (algebraMap ℚ 𝔸[ℚ] q + a : 𝔸[ℚ]).2 ∈ levelIdeal N
+  have hf : (algebraMap ℚ 𝔸[ℚ] q + a : 𝔸[ℚ]).2 ∈ levelIdeal N := by
     rw [hfin]
-    have : algebraMap ℚ 𝔸ᶠ[ℚ] q + a.2 = (a.2 + algebraMap ℚ 𝔸ᶠ[ℚ] q₀) - (N : 𝔸ᶠ[ℚ]) * (m : 𝔸ᶠ[ℚ]) := by
+    have : algebraMap ℚ 𝔸ᶠ[ℚ] q + a.2 =
+        (a.2 + algebraMap ℚ 𝔸ᶠ[ℚ] q₀) - (N : 𝔸ᶠ[ℚ]) * (m : 𝔸ᶠ[ℚ]) := by
       simp only [q, map_sub, map_mul, map_natCast, map_intCast]
       ring
     rw [this]
     exact sub_mem_levelIdeal hq₀ (natCast_mul_intCast_mem_levelIdeal N m)
+  refine ⟨⟨algebraMap ℚ 𝔸[ℚ] q, q, rfl⟩, ⟨hr, hf⟩, ?_⟩
   · rintro ⟨_, q', rfl⟩ ⟨hr', hf'⟩
-    have hr : RationalIdeles.realEquiv ((algebraMap ℚ 𝔸[ℚ] q + a : 𝔸[ℚ]).1) ∈ Set.Ico (0 : ℝ) N := by
-      rw [hreal, map_add (f := _), realEquiv_algebraMap]
-      have h1 : (m : ℝ) ≤ r / N := Int.floor_le _
-      have h2 : r / N < m + 1 := Int.lt_floor_add_one _
-      rw [le_div_iff₀ hN] at h1
-      rw [div_lt_iff₀ hN] at h2
-      simp only [q, Rat.cast_sub, Rat.cast_mul, Rat.cast_natCast, Rat.cast_intCast]
-      constructor <;> nlinarith
-    have hf : (algebraMap ℚ 𝔸[ℚ] q + a : 𝔸[ℚ]).2 ∈ levelIdeal N := by
-      rw [hfin]
-      have : algebraMap ℚ 𝔸ᶠ[ℚ] q + a.2 = (a.2 + algebraMap ℚ 𝔸ᶠ[ℚ] q₀) - (N : 𝔸ᶠ[ℚ]) * (m : 𝔸ᶠ[ℚ]) := by
-        simp only [q, map_sub, map_mul, map_natCast, map_intCast]
-        ring
-      rw [this]
-      exact sub_mem_levelIdeal hq₀ (natCast_mul_intCast_mem_levelIdeal N m)
     change RationalIdeles.realEquiv ((algebraMap ℚ 𝔸[ℚ] q' + a : 𝔸[ℚ]).1) ∈ Set.Ico (0 : ℝ) N at hr'
     change (algebraMap ℚ 𝔸[ℚ] q' + a : 𝔸[ℚ]).2 ∈ levelIdeal N at hf'
     rw [hreal, map_add (f := _), realEquiv_algebraMap] at hr hr'

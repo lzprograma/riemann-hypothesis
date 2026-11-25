@@ -35,57 +35,17 @@ public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.OrbitAdm
 import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.ComplexMultiplicationFieldData
 import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
 import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.TransportFirstLevel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.TraceDualExists
 import Mathlib.Tactic.Linter.Style
 import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
 import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionHypothesesOfLevelOne
 import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SubstFirstCoboundaryThree
-import Mathlib.Tactic.ReduceModChar
 import Formalism.GaussJetBounds.GaussJetProofs.LogarithmWeightComparison
 import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.BiextensionOfExpSpec
 import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.OneLetterJetKernel
 import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSp
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrimeOfLiesOver
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.RepFrame
 import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.RepTrace
 
@@ -759,14 +719,14 @@ theorem fOf_fOf'_dual : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalUnram
       by_cases htt : t' = t + 1
       · subst htt
         have hodd : ¬ (t.val + 1) % 2 = 0 := by omega
-        rw [if_pos rfl, h1, if_pos ht, if_pos ht, if_neg hodd, iterate_mul_ringHom]
+        rw [ite_eq_left rfl, h1, ite_eq_left ht, ite_eq_left ht, ite_eq_right hodd, iterate_mul_ringHom]
         by_cases hc : r0 = r1 ∧ a = a' ∧ b = b'
         · obtain ⟨rfl, rfl, rfl⟩ := hc
           simp
-        · rw [if_neg hc, if_neg]
+        · rw [ite_eq_right hc, ite_eq_right]
           rintro ⟨hp, ha, hb⟩
           exact hc ⟨reps _ _ hp, ha, hb⟩
-      · rw [if_neg htt]
+      · rw [ite_eq_right htt]
         by_cases ht' : t'.val % 2 = 0
         · simp [ht']
         · by_cases hc : posPl D p r0 (t.val + 1) = posPl D p r1 t'.val
@@ -778,7 +738,7 @@ theorem fOf_fOf'_dual : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalUnram
           · simp [hc]
     · simp [ht]
   rw [h2, Finset.sum_congr rfl fun t _ => Finset.sum_congr rfl fun t' _ => key t t']
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [← Finset.sum_mul]
   have h3 : ∑ t : ZMod (nP D p), (if t.val % 2 = 0 then σ^[t.val + 1] (om k * oms k') else 0) =
       σ (∑ t : ZMod (nP D p), if t.val % 2 = 0 then σ^[t.val] (om k * oms k') else 0) := by
@@ -941,7 +901,7 @@ theorem sum_sigma_comb_mul_comb (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalU
             (σ (c t) * c' t') * (h (posPl D p (OrbitPlaces.orbMap D p r t) 1) a b i *
               g (OrbitPlaces.orbMap D p r' t') a' b' i) := fun i => by ring
         simp only [e]
-        rw [← Finset.mul_sum, hp, if_neg (fun hh => hne hh.1), mul_zero]
+        rw [← Finset.mul_sum, hp, ite_eq_right (fun hh => hne hh.1), mul_zero]
       · simp [hc' t' h2]
     · simp [hc t h1]
 
@@ -958,13 +918,13 @@ theorem fOf_isotropic : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalUnram
     have key := sum_sigma_comb_mul_comb D p σ R g h hO.even hR hg hp e.1.1.2 e'.1.1.2 e.2.1 e'.2.1 e.2.2 e'.2.2
       (fun t => if t.val % 2 = 0 then σ^[t.val] (om e.1.2) else 0)
       (fun t => if t.val % 2 = 0 then σ^[t.val] (om e'.1.2) else 0) 0
-      (fun t ht => if_neg ht) (fun t ht => if_neg ht)
+      (fun t ht => ite_eq_right ht) (fun t ht => ite_eq_right ht)
     simpa only [fOf, ite_mul, zero_mul] using key
   · intro e e'
     have key := sum_sigma_comb_mul_comb D p σ R g h hO.even hR hg hp e.1.1.2 e'.1.1.2 e.2.1 e'.2.1 e.2.2 e'.2.2
       (fun t => if t.val % 2 = 0 then 0 else σ^[t.val] (oms e.1.2))
       (fun t => if t.val % 2 = 0 then 0 else σ^[t.val] (oms e'.1.2)) 1
-      (fun t ht => if_pos (by omega)) (fun t ht => if_pos (by omega))
+      (fun t ht => ite_eq_left (by omega)) (fun t ht => ite_eq_left (by omega))
     simpa only [fOf', ite_mul, zero_mul] using key
 
 end GlobalTheory.KerStd.HypCoord
@@ -1053,31 +1013,31 @@ theorem sum_coef_fOf (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalUnramifiedEx
     ∑ k, (if s.val % 2 = 0 then fOf D p σ om R g ((r₀, k), a, b) i * σ^[s.val] (oms k)
       else fOf' D p σ oms R g ((r₀, k), a, b) i * σ^[s.val] (om k)) = g (OrbitPlaces.orbMap D p r₀ s) a b i := by
   by_cases hs : s.val % 2 = 0
-  · simp only [hs, if_true, fOf, Finset.sum_mul]
+  · simp only [hs, ite_true, fOf, Finset.sum_mul]
     rw [Finset.sum_comm, Finset.sum_eq_single s]
-    · simp only [hs, if_true]
+    · simp only [hs, ite_true]
       have h := hdual s s rfl
-      rw [if_pos rfl] at h
+      rw [ite_eq_left rfl] at h
       calc ∑ k, σ^[s.val] (om k) * g (OrbitPlaces.orbMap D p r₀ s) a b i * σ^[s.val] (oms k)
           = g (OrbitPlaces.orbMap D p r₀ s) a b i * ∑ k, σ^[s.val] (om k) * σ^[s.val] (oms k) := by
             rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun k _ => by ring
         _ = _ := by rw [h, mul_one]
     · intro t _ hts
       by_cases ht : t.val % 2 = 0
-      · simp only [ht, if_true]
+      · simp only [ht, ite_true]
         have h := hdual t s (by rw [ht, hs])
-        rw [if_neg hts] at h
+        rw [ite_eq_right hts] at h
         calc ∑ k, σ^[t.val] (om k) * g (OrbitPlaces.orbMap D p r₀ t) a b i * σ^[s.val] (oms k)
             = g (OrbitPlaces.orbMap D p r₀ t) a b i * ∑ k, σ^[t.val] (om k) * σ^[s.val] (oms k) := by
               rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun k _ => by ring
           _ = 0 := by rw [h, mul_zero]
       · simp [ht]
     · intro h; exact absurd (Finset.mem_univ s) h
-  · simp only [hs, if_false, fOf', Finset.sum_mul]
+  · simp only [hs, ite_false, fOf', Finset.sum_mul]
     rw [Finset.sum_comm, Finset.sum_eq_single s]
-    · simp only [hs, if_false]
+    · simp only [hs, ite_false]
       have h := hdual s s rfl
-      rw [if_pos rfl] at h
+      rw [ite_eq_left rfl] at h
       calc ∑ k, σ^[s.val] (oms k) * g (OrbitPlaces.orbMap D p r₀ s) a b i * σ^[s.val] (om k)
           = g (OrbitPlaces.orbMap D p r₀ s) a b i * ∑ k, σ^[s.val] (om k) * σ^[s.val] (oms k) := by
             rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun k _ => by ring
@@ -1085,9 +1045,9 @@ theorem sum_coef_fOf (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalUnramifiedEx
     · intro t _ hts
       by_cases ht : t.val % 2 = 0
       · simp [ht]
-      · simp only [ht, if_false]
+      · simp only [ht, ite_false]
         have h := hdual s t (by omega)
-        rw [if_neg (Ne.symm hts)] at h
+        rw [ite_eq_right (Ne.symm hts)] at h
         calc ∑ k, σ^[t.val] (oms k) * g (OrbitPlaces.orbMap D p r₀ t) a b i * σ^[s.val] (om k)
             = g (OrbitPlaces.orbMap D p r₀ t) a b i * ∑ k, σ^[s.val] (om k) * σ^[t.val] (oms k) := by
               rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun k _ => by ring
@@ -1108,26 +1068,6 @@ theorem hypZ_term (D : D7) (p : ℕ) [Fact p.Prime] {N0 N1 : ℕ} (σ : MaximalU
   · simp [hs, map_mul, mul_assoc]
   · simp [hs, map_mul, mul_assoc]
 
-theorem bijective_orbMap (D : D7) (p : ℕ) (R : Finset (OrbitPlaces.Pl D)) (hR : OrbitPlaces.IsReps D p R) :
-    Function.Bijective (fun y : R × ZMod (nP D p) => OrbitPlaces.orbMap D p y.1 y.2) := by
-  constructor
-  · rintro ⟨r₁, s₁⟩ ⟨r₂, s₂⟩ h
-    simp only at h
-    have hr : (r₁ : OrbitPlaces.Pl D) = r₂ := by
-      obtain ⟨r0, _, hu⟩ := hR (OrbitPlaces.orbMap D p r₁ s₁)
-      have e1 := hu r₁ ⟨r₁.2, s₁.val, rfl⟩
-      have e2 := hu r₂ ⟨r₂.2, s₂.val, h.symm⟩
-      rw [e1, e2]
-    have hr' : r₁ = r₂ := Subtype.ext hr
-    subst hr'
-    have hs : s₁ = s₂ := ZMod.val_injective _ (posPl_inj D p r₁ _ _ (ZMod.val_lt s₁) (ZMod.val_lt s₂) h)
-    rw [hs]
-  · intro z
-    obtain ⟨r0, ⟨hr0, e, he⟩, _⟩ := hR z
-    refine ⟨(⟨r0, hr0⟩, (e : ZMod (nP D p))), ?_⟩
-    show posPl D p r0 (e : ZMod (nP D p)).val = z
-    rw [ZMod.val_natCast, posPl_mod, he]
-
 end GlobalTheory.KerStd.HypCoord
 
 namespace GlobalTheory.KerStd.HypCoord
@@ -1145,7 +1085,7 @@ theorem hypZ_fOf (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalUnramifiedExtens
         MvPowerSeries.X (OrbitPlaces.orbMap D p e.1.1 s, e.2.1, e.2.2) with hF
   have hB : Function.Bijective (fun y : (R × ZMod (nP D p)) × Fin N × Fin N' => ((OrbitPlaces.orbMap D p y.1.1 y.1.2, y.2) :
       OrbitPlaces.Pl D × Fin N × Fin N')) :=
-    (bijective_orbMap D p R hR).prodMap Function.bijective_id
+    (GlobalTheory.KerStd.IntegralSeriesSubstitution.orb_bijective D p R hR).prodMap Function.bijective_id
   let eqv : ((R × ZMod (nP D p)) × Fin N × Fin N') × Fin (nP D p / 2) ≃
       ((R × Fin (nP D p / 2)) × Fin N × Fin N') × ZMod (nP D p) :=
     { toFun := fun y => (((y.1.1.1, y.2), y.1.2), y.1.1.2)
@@ -1270,7 +1210,6 @@ theorem sum_bilin {R : Type*} [CommRing R] {ι κ μ : Type*} [Fintype ι] [Fint
 
 end GlobalTheory.KerStd.HypCoord.Pair
 
-
 open GlobalTheory.KerStd.HypCoord.Pair in
 theorem GlobalTheory.KerStd.HypCoord.hK_gK_dual : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) (σ : MaximalUnramifiedExtension p →+* MaximalUnramifiedExtension p), UnrOK (MaximalUnramifiedExtension p) p σ → (IsResidueClassZero D p ∨ IsSg D p) → ∀ (N N' : ℕ) (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)) (L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)) (P : D.what₂.Tau → Matrix (Fin N) (Fin N) D.host.E) (P' : D.what₂.Tau → Matrix (Fin N') (Fin N') D.host.E), StdBases D lam L P → StdBases D lam L' P' → ∀ (r : ℕ) (b : Fin r → Matrix (Fin N') (Fin N) D.host.E), Formalism.L2.KerInert.RepFrame.LamONB D lam b → ∀ w z a b₀ a₁ b₁, ∑ i, hK D lam P P' b w a b₀ i * gK D lam P P' b z a₁ b₁ i = if w = z ∧ a = a₁ ∧ b₀ = b₁ then 1 else 0 := by
   intro D p _ lam σ hσ hcl N N' L L' P P' hP hP' r b hL w z a b₀ a₁ b₁
@@ -1312,7 +1251,7 @@ theorem GlobalTheory.KerStd.HypCoord.hK_gK_dual : ∀ (D : D7) (p : ℕ) [Fact p
     have hsimp : ∀ k m : Fin N' × Fin N, ((tauPl D w, k.1, k.2) = (tauPl D w, m.1, m.2)) ↔ k = m := by
       intro k m
       simp [Prod.ext_iff]
-    simp only [hsimp, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hsimp, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     have e1 : ∑ k : Fin N' × Fin N, A b₀ k.1 * rhoK D lam w (P (tauPl D w) k.2 a) *
         (rhoK D lam w (P' (tauPl D w) k.1 b₁) * B a₁ k.2) =
         (A * (P' (tauPl D w)).map (rhoK D lam w)) b₀ b₁ * (B * (P (tauPl D w)).map (rhoK D lam w)) a₁ a := by
@@ -1322,9 +1261,9 @@ theorem GlobalTheory.KerStd.HypCoord.hK_gK_dual : ∀ (D : D7) (p : ℕ) [Fact p
       Matrix.one_apply, Matrix.one_apply]
     by_cases h1 : b₀ = b₁ <;> by_cases h2 : a = a₁ <;> simp [h1, h2, eq_comm]
   · have hne : tauPl D w ≠ tauPl D z := fun h => hwz ((tauPl_bij D).1 h)
-    rw [if_neg (fun h => hwz h.1)]
+    rw [ite_eq_right (fun h => hwz h.1)]
     refine Finset.sum_eq_zero fun k _ => Finset.sum_eq_zero fun m _ => ?_
-    rw [if_neg (fun h => hne (congrArg Prod.fst h)), mul_zero]
+    rw [ite_eq_right (fun h => hne (congrArg Prod.fst h)), mul_zero]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.SatakeParameters.OrthonormalLocalBasisCoordinatesDual =====
@@ -1414,7 +1353,7 @@ theorem sum_range_even (m : ℕ) (G : ℕ → K) :
   | zero => simp
   | succ m ih =>
     rw [show 2 * (m + 1) = 2 * m + 1 + 1 by ring, Finset.sum_range_succ, Finset.sum_range_succ, ih,
-      Finset.sum_range_succ, if_pos (by omega), if_neg (by omega), add_zero]
+      Finset.sum_range_succ, ite_eq_left (by omega), ite_eq_right (by omega), add_zero]
 
 theorem even_case {m d : ℕ} [NeZero d] (hd : 2 * m = d) (σ : K →+* K) (om oms : Fin m → K)
     (h : ∀ r r' : Fin m, (∑ s : ZMod d, if s.val % 2 = 0 then σ^[s.val] (om r * oms r') else 0) =
@@ -1492,7 +1431,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNoti
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
 open Formalism.L2.Th1.D (F1 F2 OwOK TrDual phFF)
 open Formalism.InvariantFactorPaths.G7 (UnrOK IsLawOfLog cob)
-
 
 open GlobalTheory.KerStd.HypCoord in
 theorem GlobalTheory.KerStd.hyp_of_stdBases : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) (σ : MaximalUnramifiedExtension p →+* MaximalUnramifiedExtension p), UnrOK (MaximalUnramifiedExtension p) p σ → OrbitPlaces.OrbOK D p → ((IsResidueClassZero D p ∧ hP D p ≠ 0) ∨ IsSg D p) → ∀ (om oms : Fin (nP D p / 2) → MaximalUnramifiedExtension p), OwOK (nP D p) σ om oms → TrDual (nP D p) σ om oms → ∀ (R : Finset (OrbitPlaces.Pl D)), OrbitPlaces.IsReps D p R → ∀ (N N' : ℕ) (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)) (L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)) (P : D.what₂.Tau → Matrix (Fin N) (Fin N) D.host.E) (P' : D.what₂.Tau → Matrix (Fin N') (Fin N') D.host.E), admitted D N N' L L' → StdBases D lam L P → StdBases D lam L' P' → ∀ (r : ℕ) (b : Fin r → Matrix (Fin N') (Fin N) D.host.E), LocBasis D p (YYl D L L') b → TaylorLogMetric.Orthonormal D b → ∃ f f' : (R × Fin (nP D p / 2)) × Fin N × Fin N' → Fin r → MaximalUnramifiedExtension p, HypPair σ f f' ∧ ∀ (c : ℂ_[p]) (G : MvPowerSeries (D.what₂.Tau × Fin N' × Fin N) ℂ_[p]), (MvPowerSeries.subst (fun v : OrbitPlaces.Pl D × Fin N × Fin N' => (MvPowerSeries.C c * MvPowerSeries.X v : MvPowerSeries (OrbitPlaces.Pl D × Fin N × Fin N') ℂ_[p])) (stdSer D lam (fun _ => 1) P P' G) : MvPowerSeries (OrbitPlaces.Pl D × Fin N × Fin N') ℂ_[p]) = MvPowerSeries.subst (hypZ D p σ om oms R f f') (thOrth D lam c b G) := by

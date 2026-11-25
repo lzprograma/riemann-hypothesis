@@ -8,65 +8,13 @@ public import Mathlib.NumberTheory.Padics.Complex
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Mathlib.RingTheory.DedekindDomain.FiniteAdeleRing
 public import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Algebra.Azumaya.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.Padics.Hensel
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.Central.Matrix
 public import Mathlib.RingTheory.SimpleRing.Matrix
-import Mathlib.RingTheory.PicardGroup
 
 @[expose] public section
 
@@ -173,23 +121,7 @@ def bc (R : Type) [CommRing R] [Algebra ℚ R] : GQpts F H →* Gpts F H R :=
       rfl)
     rfl
 
-def bcMap {R R' : Type} [CommRing R] [Algebra ℚ R] [CommRing R'] [Algebra ℚ R'] (f : R →ₐ[ℚ] R') :
-    Gpts F H R →* Gpts F H R' :=
-  simMap ((Algebra.TensorProduct.map f (AlgHom.id ℚ F)).toRingHom) (f : R →+* R')
-    (fun x => by
-      induction x using TensorProduct.inductionOn with
-      | tmul r y => rfl
-      | add x y hx hy => simp only [map_add (f := _), hx, hy])
-    (fun a => rfl)
-    (by rw [Matrix.map_map]; congr 1; funext x; simp [Algebra.TensorProduct.map_tmul])
-
 end Points
-
-section Topology
-
-variable {F : Type} [Field F] [NumberField F] [IsCMField F] {n : ℕ} {H : Matrix (Fin n) (Fin n) F}
-
-end Topology
 
 section Adeles
 
@@ -336,16 +268,7 @@ theorem starT_tmul (R : Type) [CommRing R] [Algebra ℚ R] (r : R) (x : C) :
 def UPts (R : Type) [CommRing R] [Algebra ℚ R] : Subgroup ((R ⊗[ℚ] C)ˣ × Rˣ) :=
   uGroup (A := R) (starT star R)
 
-def UQpts : Subgroup (Cˣ × ℚˣ) := uGroup (A := ℚ) star
-
 variable {star}
-
-def ubc (R : Type) [CommRing R] [Algebra ℚ R] : UQpts star →* UPts star R :=
-  uMap ((Algebra.TensorProduct.includeRight : C →ₐ[ℚ] R ⊗[ℚ] C) : C →+* R ⊗[ℚ] C) (algebraMap ℚ R)
-    (fun x => starT_tmul star R 1 x)
-    (fun a => by
-      simp only [RingHom.coe_coe, AlgHom.commutes]
-      exact IsScalarTower.algebraMap_apply ℚ R (R ⊗[ℚ] C) a)
 
 def ubcMap {R R' : Type} [CommRing R] [Algebra ℚ R] [CommRing R'] [Algebra ℚ R'] (f : R →ₐ[ℚ] R') :
     UPts star R →* UPts star R' :=
@@ -455,26 +378,17 @@ structure HTGroup (p : ℕ) [Fact p.Prime] where
 
 attribute [instance] HTGroup.fieldF HTGroup.numF HTGroup.cmF HTGroup.ringC HTGroup.algC HTGroup.algQC
   HTGroup.towerC HTGroup.finC HTGroup.centralC HTGroup.simpleC
-section BcLemmas
-
-variable {F : Type} [Field F] [NumberField F] [IsCMField F] {n : ℕ} {H : Matrix (Fin n) (Fin n) F}
-
-end BcLemmas
 namespace HTGroup
 
 variable {p : ℕ} [Fact p.Prime] (G : HTGroup p)
 
 instance finQ : Module.Finite ℚ G.C := Module.Finite.trans G.F G.C
 
-abbrev GQ : Type := UQpts G.star
-
 abbrev GR : Type := UPts G.star ℝ
 
 abbrev GAf : Type := UPts G.star (AfP p)
 
 abbrev GQp : Type := UPts G.star ℚ_[p]
-
-abbrev GQbar : Type := UPts G.star (AlgebraicClosure ℚ)
 
 abbrev MuIdx : Type := {τ : G.F →+* PadicAlgCl p // LiesOver G.Kq G.u τ}
 
@@ -497,20 +411,8 @@ def localization₂ : G.GQp →* ℚ_[p]ˣ × ((i : Fin G.m) → GL (Fin G.n) (G
         ℚ_[p] ⊗[ℚ] G.C →* Matrix (Fin G.n) (Fin G.n) (G.Fw i))).comp
       ((MonoidHom.fst _ _).comp (UPts G.star ℚ_[p]).subtype))
 
-def IsSS (γ : G.GQ) : Prop :=
-  Module.End.IsSemisimple (LinearMap.mulLeft G.F (((γ : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C))
-
 def psiR (v : InfinitePlace G.F) : ℝ ⊗[ℚ] G.C →ₐ[ℝ] Matrix (Fin G.n) (Fin G.n) ℂ :=
   Algebra.TensorProduct.lift (Algebra.ofId ℝ _) (G.psi v).toRatAlgHom (fun x _ => Algebra.commute_algebraMap_left x _)
-
-def IsEllR (γ : G.GR) : Prop :=
-  ∀ v : InfinitePlace G.F,
-    Module.End.IsSemisimple (Matrix.toLin' (G.psiR v (((γ : (ℝ ⊗[ℚ] G.C)ˣ × ℝˣ).1 : (ℝ ⊗[ℚ] G.C)ˣ) : ℝ ⊗[ℚ] G.C))) ∧
-    ∀ μ : ℂ, Module.End.HasEigenvalue
-      (Matrix.toLin' (G.psiR v (((γ : (ℝ ⊗[ℚ] G.C)ˣ × ℝˣ).1 : (ℝ ⊗[ℚ] G.C)ˣ) : ℝ ⊗[ℚ] G.C))) μ →
-      ‖μ‖ ^ 2 = (((γ : (ℝ ⊗[ℚ] G.C)ˣ × ℝˣ).2 : ℝˣ) : ℝ)
-
-def StQ (γ γ' : G.GQ) : Prop := ∃ h : G.GQbar, h * ubc _ γ * h⁻¹ = ubc _ γ'
 
 def placeOf (s : G.MuIdx) : Fin G.m := (G.emb_all _ s.2).choose
 
@@ -518,13 +420,6 @@ structure Level (G : HTGroup p) where
 
   K : OpenSubgroup G.GAf
   compact : IsCompact (K : Set G.GAf)
-
-theorem stQ_refl (γ : G.GQ) : G.StQ γ γ := ⟨1, by simp⟩
-
-theorem isSS_one : G.IsSS 1 := by
-  show Module.End.IsSemisimple (LinearMap.mulLeft G.F (1 : G.C))
-  rw [LinearMap.mulLeft_one]
-  exact Module.End.isSemisimple_id
 
 end HTGroup
 
@@ -552,20 +447,6 @@ instance finiteDimensional_Fw (i : Fin G.m) : FiniteDimensional ℚ_[p] (G.Fw i)
     exact h1.tower_top
   exact Module.Finite.of_injective (IntermediateField.inclusion hle).toLinearMap
     (IntermediateField.inclusion hle).injective
-
-theorem isEllR_one : G.IsEllR 1 := by
-  intro v
-  have h1 : Matrix.toLin' (G.psiR v ((((1 : G.GR) : (ℝ ⊗[ℚ] G.C)ˣ × ℝˣ).1 : (ℝ ⊗[ℚ] G.C)ˣ) : ℝ ⊗[ℚ] G.C)) =
-      LinearMap.id := by
-    simp
-  rw [h1]
-  refine ⟨Module.End.isSemisimple_id, fun μ hμ => ?_⟩
-  obtain ⟨x, hx⟩ := hμ.exists_hasEigenvector
-  have h2 : x = μ • x := by simpa using hx.apply_eq_smul
-  have h3 : μ = 1 := by
-    have : (μ - 1) • x = 0 := by rw [sub_smul, one_smul, ← h2, sub_self]
-    exact sub_eq_zero.1 ((smul_eq_zero.1 this).resolve_right hx.2)
-  simp [h3]
 
 end HTGroup
 
@@ -821,27 +702,6 @@ def ex (c : ℚ) (hc : c ≠ 0) : HTGroup 5 :=
 end Example
 
 namespace Example
-
-theorem sigPos_Hc (c : ℚ) (τ : QI →+* ℂ) : sigPos (herm_Hc c) τ = if 0 < c then 1 else 0 := by
-  unfold sigPos
-  simp only [eig_Hc]
-  split_ifs with h
-  · have h' : (0 : ℝ) < c := by exact_mod_cast h
-    simp [h']
-  · have h' : ¬ (0 : ℝ) < c := by exact_mod_cast h
-    simp [h']
-
-theorem card_infinitePlace_QI : Fintype.card (InfinitePlace QI) = 1 := by
-  have h1 := NumberField.InfinitePlace.card_add_two_mul_card_eq_rank QI
-  have h2 : NumberField.InfinitePlace.nrRealPlaces QI = 0 := NumberField.IsTotallyComplex.nrRealPlaces_eq_zero QI
-  rw [finrank_QI, h2] at h1
-  rw [NumberField.InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces, h2]
-  omega
-
-theorem a_ex_one : (ex 1 one_ne_zero).a = 1 := by
-  show Fintype.card {v : InfinitePlace QI // sigPos (herm_Hc 1) v.embedding = 1} = 1
-  simp only [sigPos_Hc, zero_lt_one, if_true]
-  rw [Fintype.card_subtype_true, card_infinitePlace_QI]
 
 end Example
 

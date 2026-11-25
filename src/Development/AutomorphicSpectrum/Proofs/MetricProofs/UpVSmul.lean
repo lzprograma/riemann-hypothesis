@@ -12,45 +12,7 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentAr
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticSecond
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
 import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
 
 @[expose] public section
@@ -76,12 +38,12 @@ theorem upV_smul {κ : Kk → K} {v : (Σ k, ιk k) → (Σ k, ι k)} (hb : IsBl
     upV v (fun p => c (κ p.1) * z p) q = c q.1 * upV v z q := by
   unfold upV
   by_cases h : ∃ q', v q' = q
-  · rw [dif_pos h, dif_pos h]
+  · rw [dite_eq_left h, dite_eq_left h]
     have e : κ h.choose.1 = q.1 := by
       rw [← hb.2.2.1, h.choose_spec]
     show c (κ h.choose.1) * z h.choose = _
     rw [e]
-  · rw [dif_neg h, dif_neg h, mul_zero]
+  · rw [dite_eq_right h, dite_eq_right h, mul_zero]
 
 end Scale
 
@@ -110,9 +72,9 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
   let c : K → ℂ := fun k => if h : ∀ p, M.blk p ≠ some k then c₀ ⟨k, h⟩ else 1
   have hc : ∀ k, c k ≠ 0 := fun k => by
     by_cases h : ∀ p, M.blk p ≠ some k
-    · simp only [c, dif_pos h]
+    · simp only [c, dite_eq_left h]
       exact hc₀ _
-    · simp only [c, dif_neg h]
+    · simp only [c, dite_eq_right h]
       exact one_ne_zero
   let z' : (Σ k, ιk k) → ℂ := fun p => c (κ p.1) * z p
   have hz' : z' ∈ mcPts (mCoordIdeal (y ∘ v)) :=
@@ -123,7 +85,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
     obtain ⟨⟨k, hk⟩, m⟩ := q
     show upV v z' ⟨k, m⟩ = c₀ ⟨k, hk⟩ * upV v z ⟨k, m⟩
     rw [upV_smul hbm c z ⟨k, m⟩]
-    simp only [c, dif_pos hk]
+    simp only [c, dite_eq_left hk]
   obtain ⟨h, hh, H⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.PFl.Fwd.main K ι Φ y Ψ N j M keep Kk ιk κ v hbm hrange F z' hF hz'
     (hbp ▸ hblgood) (hbp ▸ hblnorm)
   refine ⟨F, kb, V, bl, r, h, ⟨hbm, hrange, hF, hBC, hr1, hr2, hh⟩, hz, hsrc, ?_, ?_⟩
@@ -131,7 +93,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
     exact hV
   · intro p k hkeep hp
     obtain ⟨A, hA0, hA'⟩ := H p k hkeep hp
-    have hk : c k = 1 := dif_neg fun e => e p hp
+    have hk : c k = 1 := dite_eq_right fun e => e p hp
     have hw : ∀ m : ι k, upV v z ⟨k, m⟩ =
         A * ∑ I, valAt M.x (F.u ⟨k, m⟩ I) (pBase M v z) * minorIJ (h p.1) I (stepCols N j p.2) := fun m => by
       have e : upV v z' ⟨k, m⟩ = upV v z ⟨k, m⟩ := by

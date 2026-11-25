@@ -6,53 +6,8 @@ public import Formalism.DefsOC
 public import Formalism.ZetaNonvanishing.MellinSAux
 public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.Perron
 import Formalism.ZetaNonvanishing.MellinSgen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.MellinInversion
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
 public import Mathlib.NumberTheory.LSeries.Linearity
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -87,10 +42,6 @@ lemma vonMangoldtCharIm_bound (n : ℕ) : |vonMangoldtCharIm χ n| ≤ 1 * Λ n 
   refine le_trans ?_ (DirichletCharacter.norm_le_one χ (n : ZMod q))
   first
   | exact Complex.abs_im_le_norm _
-
-lemma vonMangoldtCharRe_zero : vonMangoldtCharRe χ 0 = 0 := by simp [vonMangoldtCharRe]
-
-lemma vonMangoldtCharIm_zero : vonMangoldtCharIm χ 0 = 0 := by simp [vonMangoldtCharIm]
 
 lemma chebyshev_character_re_im (x : ℝ) :
     Schi χ x = (Formalism.Sa (vonMangoldtCharRe χ) x : ℂ) + I * (Formalism.Sa (vonMangoldtCharIm χ) x : ℂ) := by
@@ -176,49 +127,25 @@ lemma perron_integrand_continuous {y : ℝ} (hy : 0 < y) {σ₀ : ℝ} (hσ : 1 
 
 lemma perron_integrand_integrable {y : ℝ} (hy : 0 < y) {σ₀ : ℝ} (hσ : 1 < σ₀) :
     Integrable (fun t : ℝ => Fchi χ y ((σ₀ : ℂ) + t * I)) := by
-  set B := ∑' n, ‖LSeries.term ↗Λ (σ₀ : ℂ) n‖ with hBdef
-  have hB : 0 ≤ B := tsum_nonneg (fun n => norm_nonneg _)
-  set dd := min ((σ₀ - 1) ^ 2) 1 with hdddef
-  have hdd : 0 < dd := lt_min (by nlinarith) one_pos
-  have hy' : 0 < y ^ σ₀ := Real.rpow_pos_of_pos hy _
-  refine Integrable.mono' ((integrable_inv_one_add_sq).const_mul (B * y ^ σ₀ / dd))
-    (perron_integrand_continuous χ hy hσ).aestronglyMeasurable (Eventually.of_forall fun t => ?_)
-  have hre : ((σ₀ : ℂ) + t * I).re = σ₀ := by simp
-  unfold Fchi
-  rw [norm_div, norm_mul, norm_cpow_eq_rpow_re_of_pos hy, hre]
-  have hL := norm_neg_log_deriv_le_tsum χ hσ _ hre
-  have hD := Formalism.ZF.perron_denom_bound hσ t
-  have hpos : 0 < dd * (1 + t ^ 2) := by positivity
-  have hc : 0 ≤ B * y ^ σ₀ / dd * (1 + t ^ 2)⁻¹ :=
-    mul_nonneg (div_nonneg (mul_nonneg hB hy'.le) hdd.le) (inv_nonneg.mpr (by positivity))
-  rw [div_le_iff₀ (lt_of_lt_of_le hpos hD)]
-  calc ‖negLD χ ((σ₀ : ℂ) + t * I)‖ * y ^ σ₀ ≤ B * y ^ σ₀ :=
-        mul_le_mul_of_nonneg_right hL hy'.le
-    _ = B * y ^ σ₀ / dd * (1 + t ^ 2)⁻¹ * (dd * (1 + t ^ 2)) := by
-        field_simp
-    _ ≤ B * y ^ σ₀ / dd * (1 + t ^ 2)⁻¹ * ‖((σ₀ : ℂ) + t * I) * ((σ₀ : ℂ) + t * I - 1)‖ :=
-        mul_le_mul_of_nonneg_left hD hc
+  exact Formalism.ZF.perron_integrable_of_bounded (g := negLD χ) hy hσ
+    (fun t => norm_neg_log_deriv_le_tsum χ hσ _ (by simp)) (perron_integrand_continuous χ hy hσ)
 
 end
 
 section
 variable {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
 
-lemma summatory_eq_sum_range {a : ℕ → ℝ} (ha0 : a 0 = 0) {N : ℕ} {x : ℝ} (hx : x < N) :
-    Formalism.Sa a x = ∑ n ∈ Finset.range N, a n * Formalism.mxS n x :=
-  Formalism.Sa_eq_sum_range a ha0 hx
-
-lemma summatory_function_continuousAt {a : ℕ → ℝ} (ha0 : a 0 = 0) (y : ℝ) :
+lemma summatory_function_continuousAt (a : ℕ → ℝ) (y : ℝ) :
     ContinuousAt (fun x => (Formalism.Sa a x : ℂ)) y :=
-  (Complex.continuous_ofReal.comp (Formalism.Sa_continuous a ha0)).continuousAt
+  (Complex.continuous_ofReal.comp (Formalism.Sa_continuous a)).continuousAt
 
 lemma chebyshev_character_continuousAt (y : ℝ) : ContinuousAt (fun x => Schi χ x) y := by
   have h : (fun x => Schi χ x) =
       fun x => (Formalism.Sa (vonMangoldtCharRe χ) x : ℂ) + I * (Formalism.Sa (vonMangoldtCharIm χ) x : ℂ) :=
     funext (chebyshev_character_re_im χ)
   rw [h]
-  exact (summatory_function_continuousAt (vonMangoldtCharRe_zero χ) y).add
-    (continuousAt_const.mul (summatory_function_continuousAt (vonMangoldtCharIm_zero χ) y))
+  exact (summatory_function_continuousAt (vonMangoldtCharRe χ) y).add
+    (continuousAt_const.mul (summatory_function_continuousAt (vonMangoldtCharIm χ) y))
 
 lemma summatory_rpow_integrableOn {a : ℕ → ℝ} (ha : ∀ n, |a n| ≤ 1 * Λ n) {w : ℂ} (hw : 1 < w.re) :
     IntegrableOn (fun x : ℝ => (Formalism.Sa a x : ℂ) * (x : ℂ) ^ (-w - 1)) (Ioi 1) := by

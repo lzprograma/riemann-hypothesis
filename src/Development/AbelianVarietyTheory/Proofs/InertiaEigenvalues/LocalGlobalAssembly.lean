@@ -65,8 +65,7 @@ theorem main : ∀ D : D7, SumRepresentations.tie0 D → SumRepresentations.Conc
     apply hE
     rw [← h1, h, Submodule.map_bot]
   obtain ⟨σ, hW, hσ⟩ : ∃ σ, HasParamW D.nd D.naut a σ Sig ∧ D.what₂.isot (D.nd.j a) σ ≠ ⊥ := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hM
     unfold MjSig
     exact le_bot_iff.1 (iSup₂_le fun σ hW => (hc σ hW).le)

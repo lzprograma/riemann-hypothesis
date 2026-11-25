@@ -66,17 +66,9 @@ namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
 
 open MvPolynomial Topology Filter
 
-theorem isAnalyticNear_zeroSetIn {σ : Type} [Fintype σ] (I : Ideal (MvPolynomial σ ℂ)) (w : σ → ℂ) :
-    IsAnalyticNear (zeroSetIn I) w := by
-  apply GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets.zeroSetIn_isAnalyticNear
-
 theorem analyticOnNhd_of_differentiableOn_scalar_fin {d : ℕ} {U : Set (Fin d → ℂ)} {F : (Fin d → ℂ) → ℂ}
-    (hU : IsOpen U) (hF : DifferentiableOn ℂ F U) : AnalyticOnNhd ℂ F U := by
-  refine analyticOnNhd_of_continuousOn_of_separately hU hF.continuousOn (fun z hz i => ?_)
-  have h1 : DifferentiableAt ℂ F (Function.update z i (z i)) := by
-    rw [Function.update_eq_self]
-    exact hF.differentiableAt (hU.mem_nhds hz)
-  exact h1.comp (z i) (hasFDerivAt_update (𝕜 := ℂ) z (z i)).differentiableAt
+    (hU : IsOpen U) (hF : DifferentiableOn ℂ F U) : AnalyticOnNhd ℂ F U :=
+  ReciprocityTheory.AnForm.Osgood.osgood d U F hU hF
 
 theorem germIrreducibleAt_zeroSetIn_of_integrallyClosed (hic : NormalGermIntegrallyClosed.Statement)
     {σ : Type} [Fintype σ] (I : Ideal (MvPolynomial σ ℂ)) (w : σ → ℂ) (hI : I.IsPrime)
@@ -138,7 +130,7 @@ theorem NormalZerosNowhereDense.proof (hic : NormalGermIntegrallyClosed.Statemen
     (hconn : IrreducibleGermRegularConnected.Statement) (hdense : RegularLocusDense.Statement) :
     NormalZerosNowhereDense.Statement := by
   intro σ _ I w N G hI hn hw hN hwN hG hne
-  have han := isAnalyticNear_zeroSetIn I w
+  have han := GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets.zeroSetIn_isAnalyticNear I w
   have hirr := germIrreducibleAt_zeroSetIn_of_integrallyClosed hic I w hI hn hw
   set X := zeroSetIn I with hX
   obtain ⟨N₀, hN₀, hwN₀, hd⟩ := hdense σ X w han

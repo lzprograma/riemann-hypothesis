@@ -309,11 +309,11 @@ theorem uni_part {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K 
   let σ := Fintype.equivFinOfCardEq hQ
   obtain ⟨gP, hg0, hgq⟩ : ∃ gP : {i // e i = e i₀} → V, gP p₀ = Xs ∧
       ∀ q : {p : {i // e i = e i₀} // p ≠ p₀}, gP q.1 = f (σ q) :=
-    ⟨fun p => if hp : p = p₀ then Xs else f (σ ⟨p, hp⟩), dif_pos rfl, fun q => dif_neg q.2⟩
+    ⟨fun p => if hp : p = p₀ then Xs else f (σ ⟨p, hp⟩), dite_eq_left rfl, fun q => dite_eq_right q.2⟩
   obtain ⟨c, hcP, hcn⟩ : ∃ c : ι → V, (∀ p : {i // e i = e i₀}, c p = gP p) ∧
       ∀ i, e i ≠ e i₀ → c i = b i :=
-    ⟨fun i => if hi : e i = e i₀ then gP ⟨i, hi⟩ else b i, fun p => dif_pos p.2,
-      fun i hi => dif_neg hi⟩
+    ⟨fun i => if hi : e i = e i₀ then gP ⟨i, hi⟩ else b i, fun p => dite_eq_left p.2,
+      fun i hi => dite_eq_right hi⟩
   have hc0 : c i₀ = Xs := (hcP p₀).trans hg0
   have hXf : ∀ j, h Xs (f j) = 0 := fun j => by
     have hm : f j ∈ cutW h' (Submodule.span K (Set.range bP)) Xs := by

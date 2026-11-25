@@ -61,14 +61,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory
 
-section Index
-
-variable {R S ι : Type*} [CommRing R] [CommRing S] [Algebra R S] [Fintype ι] [DecidableEq ι]
-
-variable [IsDomain R] [IsDiscreteValuationRing R]
-
-end Index
-
 section Points
 
 variable {R S L ι : Type*} [CommRing R] [CommRing S] [Algebra R S] [CommRing L] [IsDomain L]
@@ -207,20 +199,5 @@ theorem natCard_algHom_eq_finrank_of_etale : Nat.card (S →ₐ[K] L) = finrank 
 variable {K L} {ι : Type*} [Fintype ι]
 
 end Etale
-
-section Reduced
-
-variable {K S L ι : Type*} [Field K] [PerfectField K] [CommRing S] [Algebra K S]
-  [Module.Finite K S] [IsReduced S] [Field L] [Algebra K L] [IsSepClosed L] [Fintype ι]
-  [DecidableEq ι]
-
-end Reduced
-
-section Both
-
-variable {R S L ι : Type*} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] [CommRing S]
-  [Algebra R S] [CommRing L] [IsDomain L] [Algebra R L] [Fintype ι] [DecidableEq ι]
-
-end Both
 
 end GlobalTheory

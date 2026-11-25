@@ -3,48 +3,7 @@ module
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BlowupSequenceFlatBaseChange
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -342,13 +301,13 @@ theorem concatIndex_of_lt (s : BlowupSequenceData X) (t : BlowupSequenceData (s.
     (s' : BlowupSequenceData X') (t' : BlowupSequenceData (s'.obj s'.length))
     (c : SequenceOfBlowupsPullback φ s'.toSequenceOfBlowups s.toSequenceOfBlowups)
     (e : SequenceOfBlowupsPullback c.lastMap t'.toSequenceOfBlowups t.toSequenceOfBlowups) (j : ℕ) (h : j < s'.length) :
-    concatIndex s t s' t' c e j = c.idx j := if_pos h
+    concatIndex s t s' t' c e j = c.idx j := ite_eq_left h
 
 theorem concatIndex_of_ge (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length))
     (s' : BlowupSequenceData X') (t' : BlowupSequenceData (s'.obj s'.length))
     (c : SequenceOfBlowupsPullback φ s'.toSequenceOfBlowups s.toSequenceOfBlowups)
     (e : SequenceOfBlowupsPullback c.lastMap t'.toSequenceOfBlowups t.toSequenceOfBlowups) (j : ℕ) (h : s'.length ≤ j) :
-    concatIndex s t s' t' c e j = s.length + e.idx (j - s'.length) := if_neg (not_lt.2 h)
+    concatIndex s t s' t' c e j = s.length + e.idx (j - s'.length) := ite_eq_right (not_lt.2 h)
 
 private theorem append_schemeAt_concatIndex_of_lt (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length))
     (s' : BlowupSequenceData X') (t' : BlowupSequenceData (s'.obj s'.length))
@@ -541,7 +500,7 @@ private theorem isPullback_concatMap (s : BlowupSequenceData X) (t : BlowupSeque
     IsPullback (concatMap s t s' t' c e j hj) ((s'.append t').toSequenceOfBlowups.projectionToBase j)
       ((s.append t).toSequenceOfBlowups.projectionToBase (concatIndex s t s' t' c e j)) φ := by
   by_cases h : j < s'.length
-  · have hmap : concatMap s t s' t' c e j hj = concatMapOfLtLength s t s' t' c e j h := dif_pos h
+  · have hmap : concatMap s t s' t' c e j hj = concatMapOfLtLength s t s' t' c e j h := dite_eq_left h
     have hidx : concatIndex s t s' t' c e j = c.idx j := concatIndex_of_lt s t s' t' c e j h
     have hobj : s.obj (c.idx j) = (s.append t).obj (concatIndex s t s' t' c e j) :=
       append_schemeAt_concatIndex_of_lt s t s' t' c e j h
@@ -558,7 +517,7 @@ private theorem isPullback_concatMap (s : BlowupSequenceData X) (t : BlowupSeque
     have hmap : concatMap s t s' t' c e j hj =
         eqToHom (append_schemeAt_eq_length_add_sub s' t' j hge) ≫
           concatMapAddLength s t s' t' c e (j - s'.length) (sub_length_le_of_le_length_add s' t' j hj) ≫
-          eqToHom (append_schemeAt_concatIndex_of_le s t s' t' c e j hge) := dif_neg h
+          eqToHom (append_schemeAt_concatIndex_of_le s t s' t' c e j hge) := dite_eq_right h
     refine isPullback_of_iso
       (eqToIso (append_schemeAt_eq_length_add_sub s' t' j hge) ≪≫
         BlowupSequenceData.concatObjAddIso s' t' (j - s'.length))
@@ -784,7 +743,7 @@ private theorem concatMap_eq_lowerMap_of_lt (s : BlowupSequenceData X) (t : Blow
     (A : (s'.append t').obj j = s'.obj j)
     (B : s.obj (c.idx j) = (s.append t).obj (concatIndex s t s' t' c e j)) :
     concatMap s t s' t' c e j hj = eqToHom A ≫ mapOfToSequenceOfBlowups c j (le_of_lt h) ≫ eqToHom B :=
-  dif_pos h
+  dite_eq_left h
 
 private theorem concatMap_eq_upperConcatMap_of_le (s : BlowupSequenceData X)
     (t : BlowupSequenceData (s.obj s.length)) (s' : BlowupSequenceData X')
@@ -801,7 +760,7 @@ private theorem concatMap_eq_upperConcatMap_of_le (s : BlowupSequenceData X)
   have h0 : concatMap s t s' t' c e j hj =
       eqToHom (append_schemeAt_eq_length_add_sub s' t' j hge) ≫
         appendMapAdd s t s' t' c e (j - s'.length) (sub_length_le_of_le_length_add s' t' j hj) ≫
-        eqToHom (append_schemeAt_concatIndex_of_le s t s' t' c e j hge) := dif_neg (not_lt.2 hge)
+        eqToHom (append_schemeAt_concatIndex_of_le s t s' t' c e j hge) := dite_eq_right (not_lt.2 hge)
   exact h0.trans (upperConcatMap_congr s t s' t' c e hjq (sub_length_le_of_le_length_add s' t' j hj) hq
     (append_schemeAt_eq_length_add_sub s' t' j hge) (append_schemeAt_concatIndex_of_le s t s' t' c e j hge) E1 E2)
 
@@ -974,7 +933,7 @@ private theorem concatMap_eq_map_of_lt (s : BlowupSequenceData X) (t : BlowupSeq
     (hj : j ≤ s'.length + t'.length) (h : j < s'.length) :
     concatMap s t s' t' c e j hj =
       eqToHom (BlowupSequenceData.append_schemeAt_of_le_length s' t' (le_of_lt h)) ≫ c.map j (le_of_lt h) ≫
-        eqToHom (append_schemeAt_concatIndex_of_lt s t s' t' c e j h) := dif_pos h
+        eqToHom (append_schemeAt_concatIndex_of_lt s t s' t' c e j h) := dite_eq_left h
 
 private theorem append_center_eq_comap_concatMap (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length))
     (s' : BlowupSequenceData X') (t' : BlowupSequenceData (s'.obj s'.length))
@@ -1017,7 +976,7 @@ private theorem append_center_eq_comap_concatMap (s : BlowupSequenceData X) (t :
           concatMapAddLength s t s' t' c e (s'.length + i - s'.length)
             (sub_length_le_of_le_length_add s' t' (s'.length + i) (le_of_lt hj)) ≫
           eqToHom (append_schemeAt_concatIndex_of_le s t s' t' c e (s'.length + i) hge) :=
-      dif_neg (not_lt.2 hge)
+      dite_eq_right (not_lt.2 hge)
     have hshift := concatMapAddLength_congr s t s' t' c e hsub
       (sub_length_le_of_le_length_add s' t' (s'.length + i) (le_of_lt hj)) hile
       (append_schemeAt_eq_length_add_sub s' t' (s'.length + i) hge)

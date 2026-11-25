@@ -77,8 +77,7 @@ lemma tendsto_E {k : ℕ} (hk : 3 ≤ k) (hk2 : Even k) : Tendsto (E hk) atImInf
 
 lemma exists_zero (F : ModularForm 𝒮ℒ 12) (c : ℂ) (hc : c ≠ 0)
     (hF : Tendsto F atImInfty (𝓝 c)) : ∃ z, F z = 0 := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
 
   have hD0 : Tendsto ModularForm.discriminant atImInfty (𝓝 0) := by
     have h1 := tendsto_coeff_zero (ModularFormClass.modularForm CuspForm.discriminant)

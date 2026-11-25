@@ -17,44 +17,6 @@ public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsPolAV
 import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsRefinementOfIsLimit
 import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.MorphismDescendsToSubring
 import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.RigidifiedSymDescendToSubring
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsNatDiagIffIsDiag
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
 import Development.AbelianVarietyTheory.Definitions.Divisors.IsProperToroidalModelStructureMap
@@ -71,13 +33,25 @@ open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM
 open scoped CategoryTheory.Obj
 open GlobalTheory.Poinc
 open MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 
 namespace GlobalTheory.Poinc.HypSExt
 
 open GlobalTheory.CechPic
+
+private lemma ab_pull {X Y : Scheme.{0}} {f : X ⟶ Y} {C : Over Y} {C' : Over X}
+    [GrpObj C] [GrpObj C'] {ψ : C'.left ⟶ C.left}
+    (hC : IsAbelianScheme C) (h : IsGrpPullback C' C f ψ) : IsAbelianScheme C' := by
+  have := hC.comm
+  have hcomm : IsCommMonObj C' := by
+    rw [isCommMonObj_iff_isMulCommutative]
+    refine fun T => ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+    rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
+      ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
+  exact ⟨hcomm, MorphismProperty.of_isPullback (P := @Smooth) h.1 hC.smooth,
+    MorphismProperty.of_isPullback (P := @IsProper) h.1 hC.proper,
+    MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hC.geomConnected⟩
 
 theorem exists_model {R : Type} [CommRing R] (P : PolAV (Sp R)) :
     ∃ (S : Subring R) (B : Over (Sp S)) (_ : GrpObj B) (φ : P.A.left ⟶ B.left) (L : LB B.left),
@@ -90,33 +64,18 @@ theorem exists_model {R : Type} [CommRing R] (P : PolAV (Sp R)) :
   obtain ⟨R₁, h₁, s₁, ft₁⟩ := GlobalTheory.KeyTf.exists_finiteType_subring_adjoin R R₀ F₁ ft₀
   obtain ⟨A₁, _, φ₁, π₁, e₁, G₁, H₁⟩ := GlobalTheory.KeyTf.exists_model_of_le h₁ P.A A₀ φ₀ H₀
   obtain ⟨L₁, lb₁, iso₁⟩ := hF₁ R₁ h₁ s₁ _ A₁.hom π₁ φ₁ G₁.1 e₁ H₁.1.w
-  have ab_pull {X Y : Scheme.{0}} {f : X ⟶ Y} {C : Over Y} {C' : Over X}
-      [GrpObj C] [GrpObj C'] {ψ : C'.left ⟶ C.left}
-      (hC : IsAbelianScheme C) (h : IsGrpPullback C' C f ψ) : IsAbelianScheme C' := by
-    have := hC.comm
-    have hcomm : IsCommMonObj C' := by
-      rw [isCommMonObj_iff_isMulCommutative]
-      intro T
-      refine ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
-      rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
-        ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
-    exact ⟨hcomm, MorphismProperty.of_isPullback (P := @Smooth) h.1 hC.smooth,
-      MorphismProperty.of_isPullback (P := @IsProper) h.1 hC.proper,
-      MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hC.geomConnected⟩
-  have ab₁ := ab_pull ab₀ G₁
   let e : Sp R₁ ⟶ A₁.left := eSec A₁
   let e' : Sp R ⟶ P.A.left := eSec P.A
-  have he : e ≫ A₁.hom = 𝟙 _ := Over.w η[A₁]
-  have hee : e' ≫ φ₁ = spMap R₁.subtype ≫ e := PolBaseChange.eSec_comm H₁
   have hc : cls P.L P.isLB = pull φ₁ (cls L₁ lb₁) := (cls_eq_iff P.isLB (pull_isLB lb₁ φ₁)).2 iso₁
-  have h0 : pull e' (cls P.L P.isLB) = 0 := (GlobalTheory.RigSymSubring.rigidified_iff P.isLB).1 P.rigid
   obtain ⟨L, hL, eL⟩ := cls_surj (cls L₁ lb₁ - pull A₁.hom (pull e (cls L₁ lb₁)))
-  refine ⟨R₁, A₁, inferInstance, φ₁, L, ft₁, ab₁, H₁, hL, (GlobalTheory.RigSymSubring.rigidified_iff hL).2 ?_,
+  refine ⟨R₁, A₁, inferInstance, φ₁, L, ft₁, ab_pull ab₀ G₁, H₁, hL, (GlobalTheory.RigSymSubring.rigidified_iff hL).2 ?_,
     (cls_eq_iff P.isLB (pull_isLB hL φ₁)).1 ?_⟩
   · change pull e (cls L hL) = 0
+    have he : e ≫ A₁.hom = 𝟙 _ := Over.w η[A₁]
     rw [eL, map_sub, ← pull_comp, he, pull_id, sub_self]
-  · rw [cls_pull hL, eL, map_sub, ← hc, ← pull_comp, H₁.1.w, pull_comp, ← pull_comp (spMap R₁.subtype), ← hee,
-      pull_comp, ← hc, h0, map_zero, sub_zero]
+  · rw [cls_pull hL, eL, map_sub, ← hc, ← pull_comp, H₁.1.w, pull_comp, ← pull_comp (spMap R₁.subtype),
+      ← PolBaseChange.eSec_comm H₁, pull_comp, ← hc,
+      (GlobalTheory.RigSymSubring.rigidified_iff P.isLB).1 P.rigid, map_zero, sub_zero]
 
 theorem exists_hom_descend {S Ω : Type} [CommRing S] [CommRing Ω] (q : S →+* Ω) (hinj : Function.Injective q)
     {X X₀ : Scheme.{0}} (f : X ⟶ Sp Ω) (f₀ : X₀ ⟶ Sp S) (π : X ⟶ X₀) [QuasiCompact f₀] [QuasiSeparated f₀]
@@ -129,30 +88,24 @@ theorem exists_hom_descend {S Ω : Type} [CommRing S] [CommRing Ω] (q : S →+*
     inferInstanceAs (IsIso (Spec.map e.toCommRingCatIso.hom))
   let e : q.range ≃+* S := (RingEquiv.ofBijective q.rangeRestrict
     ⟨fun a b h => hinj (congrArg Subtype.val h), q.rangeRestrict_surjective⟩).symm
-  have he : q.comp e.toRingHom = q.range.subtype := RingHom.ext fun x =>
-    congrArg Subtype.val (e.symm_apply_apply x)
+  have he : q.comp e.toRingHom = q.range.subtype := RingHom.ext fun x => congrArg Subtype.val (e.symm_apply_apply x)
   have := iso e
   obtain ⟨F, hF⟩ := GlobalTheory.morphism_descends_to_subring Ω q.range X X₀ X₀ f (f₀ ≫ spMap e.toRingHom)
     (f₀ ≫ spMap e.toRingHom) π φ (by
-      have s : IsPullback (spMap q) (𝟙 _) (spMap e.toRingHom) (spMap q.range.subtype) :=
-        IsPullback.of_vert_isIso ⟨by rw [_root_.GlobalTheory.ModelDescent.spMap_comp_eq he, Category.id_comp]⟩
-      have s' := H.paste_vert s
+      have s' := H.paste_vert (IsPullback.of_vert_isIso
+        ⟨by rw [_root_.GlobalTheory.ModelDescent.spMap_comp_eq he, Category.id_comp]⟩ :
+        IsPullback (spMap q) (𝟙 _) (spMap e.toRingHom) (spMap q.range.subtype))
       rwa [Category.comp_id] at s') (by rw [reassoc_of% hφ])
   refine ⟨F, fun K _ κ i hi hc hK X₁ f₁ π₁ j H₁ hj hj' => ?_⟩
   let e' : i.range ≃+* K := (RingEquiv.ofBijective i.rangeRestrict
     ⟨fun a b h => hi (congrArg Subtype.val h), i.rangeRestrict_surjective⟩).symm
-  have he' : i.comp e'.toRingHom = i.range.subtype := RingHom.ext fun x =>
-    congrArg Subtype.val (e'.symm_apply_apply x)
+  have he' : i.comp e'.toRingHom = i.range.subtype := RingHom.ext fun x => congrArg Subtype.val (e'.symm_apply_apply x)
   have := iso e'
-  have hle : q.range ≤ i.range := by
-    rintro _ ⟨x, rfl⟩
-    exact ⟨κ x, by rw [← hc]; rfl⟩
+  have hle : q.range ≤ i.range := by rintro _ ⟨x, rfl⟩; exact ⟨κ x, by rw [← hc]; rfl⟩
   have hsq : spMap κ ≫ spMap e.toRingHom = spMap e'.toRingHom ≫ spMap (Subring.inclusion hle) := by
     rw [_root_.GlobalTheory.ModelDescent.spMap_comp_eq rfl, _root_.GlobalTheory.ModelDescent.spMap_comp_eq rfl]
-    congr 1
-    refine RingHom.ext fun x => hi ?_
-    exact ((RingHom.congr_fun hc _).trans (RingHom.congr_fun he x)).trans
-      (RingHom.congr_fun he' (Subring.inclusion hle x)).symm
+    exact congrArg spMap (RingHom.ext fun x => hi (((RingHom.congr_fun hc _).trans (RingHom.congr_fun he x)).trans
+      (RingHom.congr_fun he' (Subring.inclusion hle x)).symm))
   obtain ⟨ψ, h₁, h₂⟩ := hF i.range hle hK X₁ (f₁ ≫ spMap e'.toRingHom) π₁ j
     (H₁.paste_vert (IsPullback.of_vert_isIso ⟨hsq⟩)) hj
     (by rw [reassoc_of% hj', _root_.GlobalTheory.ModelDescent.spMap_comp_eq he'])
@@ -233,19 +186,6 @@ theorem hypS_normal {R Ω : Type} [CommRing R] [IsDomain R] [IsIntegrallyClosed 
   rw [Finset.coe_union, Set.union_subset_iff] at hF
   let G := (Over.pullback (spMap σ)).obj B
   have HG : IsGrpPullback G B (spMap σ) (pullback.fst B.hom (spMap σ)) := isGrpPullback_pullback B _
-  have ab_pull {X Y : Scheme.{0}} {f : X ⟶ Y} {C : Over Y} {C' : Over X}
-      [GrpObj C] [GrpObj C'] {ψ : C'.left ⟶ C.left}
-      (hC : IsAbelianScheme C) (h : IsGrpPullback C' C f ψ) : IsAbelianScheme C' := by
-    have := hC.comm
-    have hcomm : IsCommMonObj C' := by
-      rw [isCommMonObj_iff_isMulCommutative]
-      intro T
-      refine ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
-      rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
-        ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
-    exact ⟨hcomm, MorphismProperty.of_isPullback (P := @Smooth) h.1 hC.smooth,
-      MorphismProperty.of_isPullback (P := @IsProper) h.1 hC.proper,
-      MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hC.geomConnected⟩
   have abG := ab_pull ab HG
   have := abG.comm
   let A := (Over.pullback (spMap (algebraMap D K))).obj G

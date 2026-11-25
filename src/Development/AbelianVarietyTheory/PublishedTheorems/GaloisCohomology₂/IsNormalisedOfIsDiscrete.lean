@@ -104,7 +104,6 @@ def IsSpehOf (V : Submodule ℂ (Sm E N)) (π : CuspSub E a) (d : ℕ) : Prop :=
 def IsNormalised (π : CuspSub E a) : Prop := ∀ φ ∈ π.V, ∀ t g, φ.1 (splitCentre E a t * g) = φ.1 g
 
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 structure HasSpehComp (V : Submodule ℂ (Sm E N)) (π : CuspSub E a) (d : ℕ) : Prop where
   exLoc : ∀ w, ∃ σ σ', π.IsLocComp w σ ∧ IsLocCompGL V w σ'
   loc : ∀ w σ σ', π.IsLocComp w σ → IsLocCompGL V w σ' →

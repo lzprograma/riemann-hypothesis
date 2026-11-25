@@ -8,52 +8,9 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.CoordEx
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.DChartEx
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.ExChart
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Lemma
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.DCoord
-import Mathlib.AlgebraicGeometry.QuasiAffine
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.ExistsUnit, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.LineEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BlowOfBl
@@ -74,6 +31,17 @@ namespace UpperTheory.Gal.KunnethLefschetz.G
 section
 variable {Y : Scheme.{0}}
 
+private lemma flat_nzd {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (h : φ.Flat) {a : A}
+    (ha : a ∈ nonZeroDivisors A) : φ a ∈ nonZeroDivisors B := by
+  algebraize [φ]
+  have hr := Module.Flat.isSMulRegular_of_nonZeroDivisors (M := B) ha
+  rw [mem_nonZeroDivisors_iff_right]
+  intro y hy
+  apply hr
+  change a • y = a • 0
+  rw [Algebra.smul_def, Algebra.smul_def, mul_zero, mul_comm]
+  exact hy
+
 private abbrev rs {U V : Y.Opens} (h : V ≤ U) : Γ(Y, U) →+* Γ(Y, V) := (Y.presheaf.map (homOfLE h).op).hom
 
 private theorem rs_rs {U V T : Y.Opens} (h : V ≤ U) (h' : T ≤ V) (x : Γ(Y, U)) :
@@ -86,21 +54,7 @@ private theorem nzd_rs {U V : Y.Opens} (hU : IsAffineOpen U) (hV : IsAffineOpen 
     {s : Γ(Y, U)} (hs : s ∈ nonZeroDivisors Γ(Y, U)) : rs h s ∈ nonZeroDivisors Γ(Y, V) := by
   have hf : (Scheme.Hom.appLE (𝟙 Y) U V h).hom.Flat :=
     HasRingHomProperty.appLE (P := @Flat) (Q := RingHom.Flat) (𝟙 Y) inferInstance ⟨U, hU⟩ ⟨V, hV⟩ h
-  have e : (Scheme.Hom.appLE (𝟙 Y) U V h).hom = rs h := by
-    ext x
-    simp only [Scheme.Hom.appLE, Scheme.Hom.id_app]
-    rfl
-  rw [e] at hf
-  letI : Algebra Γ(Y, U) Γ(Y, V) := (rs h).toAlgebra
-  haveI : Module.Flat Γ(Y, U) Γ(Y, V) := hf
-  have hr : IsSMulRegular Γ(Y, U) s := fun a b e => (mul_cancel_left_mem_nonZeroDivisors hs).1 e
-  have hr' := IsSMulRegular.of_flat (S := Γ(Y, V)) hr
-  rw [mem_nonZeroDivisors_iff_right]
-  intro x hx
-  apply hr'
-  change rs h s * x = rs h s * 0
-  rw [mul_zero, mul_comm]
-  exact hx
+  exact flat_nzd _ hf hs
 
 private theorem exists_unit (J : Y.IdealSheafData) {U₁ U₂ T : Y.Opens}
     (a₁ : IsAffineOpen U₁) (a₂ : IsAffineOpen U₂) (aT : IsAffineOpen T) (h₁ : T ≤ U₁) (h₂ : T ≤ U₂)
@@ -153,14 +107,6 @@ private theorem aff2 [X.left.IsSeparated] (J : X.left.IdealSheafData) (i : Fin 2
   rw [this]
   exact (i 0).1.2.inf (i 1).1.2
 
-private theorem aff3 [X.left.IsSeparated] (J : X.left.IdealSheafData) (i : Fin 3 → Idx J) :
-    IsAffineOpen (cap (X := X) (idxU J) i) := by
-  have : cap (X := X) (idxU J) i = idxU J (i 0) ⊓ idxU J (i 1) ⊓ idxU J (i 2) := by
-    ext x
-    simp [mem_inter_iff, Fin.forall_fin_succ, and_assoc]
-  rw [this]
-  exact ((i 0).1.2.inf (i 1).1.2).inf (i 2).1.2
-
 private theorem exists_g [X.left.IsSeparated] (J : X.left.IdealSheafData) (i : Fin 2 → Idx J) :
     ∃ g : Γ(X.left, cap (X := X) (idxU J) i)ˣ, rs (inter_le (X := X.left.toTopCat) (idxU J) i 0) (i 0).2.1 =
       g.val * rs (inter_le (X := X.left.toTopCat) (idxU J) i 1) (i 1).2.1 :=
@@ -169,42 +115,17 @@ private theorem exists_g [X.left.IsSeparated] (J : X.left.IdealSheafData) (i : F
 private def gg [X.left.IsSeparated] (J : X.left.IdealSheafData) (i : Fin 2 → Idx J) : Γ(X.left, cap (X := X) (idxU J) i)ˣ :=
   (exists_g (X := X) J i).choose
 
-private theorem gg_spec [X.left.IsSeparated] (J : X.left.IdealSheafData) {T : X.left.Opens} (j : Fin 2 → Idx J)
-    (a c : Idx J) (ha : j 0 = a) (hc : j 1 = c) (hT : T ≤ cap (X := X) (idxU J) j) (ta : T ≤ idxU J a) (tc : T ≤ idxU J c) :
-    rs ta a.2.1 = rs hT (gg (X := X) J j).val * rs tc c.2.1 := by
-  subst ha hc
-  have e := congrArg (rs hT) (exists_g (X := X) J j).choose_spec
-  rw [map_mul, rs_rs, rs_rs] at e
-  exact e
-
-private theorem gg_coc [X.left.IsSeparated] (J : X.left.IdealSheafData) (i : Fin 3 → Idx J) :
-    rs (inter_le_comp (X := X.left.toTopCat) (idxU J) i (Fin.succAbove 2)) (gg (X := X) J (i ∘ Fin.succAbove 2)).val *
-      rs (inter_le_comp (X := X.left.toTopCat) (idxU J) i (Fin.succAbove 0)) (gg (X := X) J (i ∘ Fin.succAbove 0)).val =
-      rs (inter_le_comp (X := X.left.toTopCat) (idxU J) i (Fin.succAbove 1)) (gg (X := X) J (i ∘ Fin.succAbove 1)).val := by
-  have t : ∀ a, cap (X := X) (idxU J) i ≤ idxU J (i a) := inter_le (X := X.left.toTopCat) (idxU J) i
-  have A := gg_spec (X := X) J (i ∘ Fin.succAbove 2) (i 0) (i 1) rfl rfl
-    (inter_le_comp (X := X.left.toTopCat) (idxU J) i (Fin.succAbove 2)) (t 0) (t 1)
-  have B := gg_spec (X := X) J (i ∘ Fin.succAbove 0) (i 1) (i 2) rfl rfl
-    (inter_le_comp (X := X.left.toTopCat) (idxU J) i (Fin.succAbove 0)) (t 1) (t 2)
-  have C := gg_spec (X := X) J (i ∘ Fin.succAbove 1) (i 0) (i 2) rfl rfl
-    (inter_le_comp (X := X.left.toTopCat) (idxU J) i (Fin.succAbove 1)) (t 0) (t 2)
-  refine (mul_cancel_right_mem_nonZeroDivisors (nzd_rs (i 2).1.2 (aff3 J i) (t 2) (i 2).2.2.2)).1 ?_
-  rw [← C, mul_assoc, ← B, ← A]
-
 private theorem exists_coc [X.left.IsSeparated] (J : X.left.IdealSheafData) (hJ : IsLocallyGeneratedByNonZeroDivisor J) :
     ∃ (L : Coc X) (s : ∀ j : L.ι, Sec X (L.U j)) (a : ∀ j, IsAffineOpen (L.U j)),
       (∀ j, J.ideal ⟨L.U j, a j⟩ = Ideal.span {(s j : Γ(X.left, L.U j))}) ∧
       (∀ j, s j ∈ nonZeroDivisors (Sec X (L.U j))) ∧
       ∀ j : Fin 2 → L.ι, secRes X (inter_le (X := X.left.toTopCat) L.U j 0) (s (j 0)) =
         (L.g j).val * secRes X (inter_le (X := X.left.toTopCat) L.U j 1) (s (j 1)) := by
-  refine ⟨{ ι := Idx J, U := idxU J, cov := ⟨fun j => j.1.2, ?_⟩, g := gg (X := X) J, coc := ?_ }, fun j => j.2.1,
+  refine ⟨{ ι := Idx J, U := idxU J, cov := ⟨fun j => j.1.2, ?_⟩, g := gg (X := X) J }, fun j => j.2.1,
     fun j => j.1.2, fun j => j.2.2.1, fun j => j.2.2.2, fun j => ?_⟩
   · refine eq_top_iff.2 fun x _ => ?_
     obtain ⟨U, f, hx, hf, e⟩ := hJ x
     exact TopologicalSpace.Opens.mem_iSup.2 ⟨⟨U, f, e, hf⟩, hx⟩
-  · intro i
-    simp only [secRes_eq]
-    exact gg_coc (X := X) J i
   · refine (secRes_eq _ _).trans (((exists_g (X := X) J j).choose_spec).trans ?_)
     exact congrArg (fun t => (gg (X := X) J j).val * t) (secRes_eq _ _).symm
 
@@ -259,17 +180,6 @@ open CategoryTheory Limits AlgebraicGeometry CrystallineSemistableComparison Top
 
 namespace UpperTheory.Gal.KunnethLefschetz.G
 
-private lemma flat_nzd {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (h : φ.Flat) {a : A}
-    (ha : a ∈ nonZeroDivisors A) : φ a ∈ nonZeroDivisors B := by
-  algebraize [φ]
-  have hr := Module.Flat.isSMulRegular_of_nonZeroDivisors (M := B) ha
-  rw [mem_nonZeroDivisors_iff_right]
-  intro y hy
-  apply hr
-  change a • y = a • 0
-  rw [Algebra.smul_def, Algebra.smul_def, mul_zero, mul_comm]
-  exact hy
-
 private def Reg {X : Scheme.{0}} (b : Γ(X, ⊤)) : Prop :=
   ∀ x : X, (X.presheaf.germ ⊤ x trivial).hom b ∈ nonZeroDivisors (X.presheaf.stalk x)
 
@@ -314,16 +224,11 @@ private lemma glue_div {X : Scheme.{0}} (a b : Γ(X, ⊤)) (hb : Reg b)
   let W (x : X) : Γ(X, O x) := (O x).topIso.hom.hom (w x)
   have hW (x : X) : (X.presheaf.map (homOfLE le_top : O x ⟶ ⊤).op).hom a = W x * (X.presheaf.map (homOfLE le_top : O x ⟶ ⊤).op).hom b := by
     rw [← res, ← res, hw, map_mul]
-  have rr {A B C : X.Opens} (h₁ : C ≤ B) (h₂ : B ≤ A) (t : Γ(X, A)) :
-      (X.presheaf.map (homOfLE h₁).op).hom ((X.presheaf.map (homOfLE h₂).op).hom t) = (X.presheaf.map (homOfLE (h₁.trans h₂)).op).hom t := by
-    rw [← CommRingCat.comp_apply, ← Functor.map_comp]
-    rfl
   have hcomp (x y : X) : (X.presheaf.map (homOfLE inf_le_left : O x ⊓ O y ⟶ O x).op).hom (W x) = (X.presheaf.map (homOfLE inf_le_right : O x ⊓ O y ⟶ O y).op).hom (W y) := by
     refine sub_eq_zero.1 (reg_cancel hb (O x ⊓ O y) _ ?_)
     have e1 := congrArg (X.presheaf.map (homOfLE inf_le_left : O x ⊓ O y ⟶ O x).op).hom (hW x)
     have e2 := congrArg (X.presheaf.map (homOfLE inf_le_right : O x ⊓ O y ⟶ O y).op).hom (hW y)
-    rw [map_mul, rr] at e1 e2
-    rw [rr] at e1 e2
+    rw [map_mul, rs_rs, rs_rs] at e1 e2
     rw [sub_mul, ← e1, ← e2, sub_self]
   obtain ⟨c, hc⟩ : ∃ c : Γ(X, ⊤), ∀ x, (X.presheaf.map (homOfLE le_top : O x ⟶ ⊤).op).hom c = W x := by
     obtain ⟨c, hc, -⟩ := X.sheaf.existsUnique_gluing' O ⊤ (fun x => homOfLE le_top)
@@ -370,18 +275,9 @@ private lemma reg_sigma {I : Type} (V : I → Scheme.{0}) (s0 : Γ(∐ V, ⊤))
   intro x
   obtain ⟨⟨i, p⟩, rfl⟩ := (sigmaMk V).surjective x
   rw [sigmaMk_mk]
-  have hi := h i p
-  have e := Scheme.Hom.germ_stalkMap_apply (Sigma.ι V i) ⊤ p trivial s0
-  rw [mem_nonZeroDivisors_iff_right]
-  intro y hy
-  have h1 := congrArg ((Sigma.ι V i).stalkMap p).hom hy
-  rw [map_mul, map_zero] at h1
-  have h2 : ((Sigma.ι V i).stalkMap p).hom y * (V i).presheaf.germ ⊤ p trivial ((Sigma.ι V i).appTop.hom s0) = 0 := by
-    rw [← h1]
-    congr 1
-    exact e.symm
-  have h3 := mem_nonZeroDivisors_iff_right.1 hi _ h2
-  exact (ConcreteCategory.bijective_of_isIso ((Sigma.ι V i).stalkMap p)).1 (h3.trans (map_zero _).symm)
+  refine mem_nonZeroDivisors_of_injective (ConcreteCategory.bijective_of_isIso ((Sigma.ι V i).stalkMap p)).1 ?_
+  rw [Scheme.Hom.germ_stalkMap_apply (Sigma.ι V i) ⊤ p trivial s0]
+  exact h i p
 
 private lemma local_div {Y : Scheme.{0}} {I : Type} (U : I → Y.Opens) (s : ∀ i, Γ(Y, U i))
     (hdiv : ∀ i i' y, y ∈ U i → y ∈ U i' → ∃ (W : Y.Opens) (h : W ≤ U i) (h' : W ≤ U i') (c : Γ(Y, W)), y ∈ W ∧
@@ -449,36 +345,19 @@ private lemma reg_cancel_top {X : Scheme.{0}} {b : Γ(X, ⊤)} (hb : Reg b) (z :
   exact h
 
 private lemma nzd_topIso {Y : Scheme.{0}} {V : Y.Opens} {s : Γ(Y, V)} (hs : s ∈ nonZeroDivisors Γ(Y, V)) :
-    V.topIso.inv.hom s ∈ nonZeroDivisors Γ(V, ⊤) := by
-  rw [mem_nonZeroDivisors_iff_right]
-  intro y hy
-  have h1 := congrArg V.topIso.hom.hom hy
-  rw [map_mul, map_zero] at h1
-  have h2 : V.topIso.hom.hom (V.topIso.inv.hom s) = s := congrArg (fun t => t.hom s) V.topIso.inv_hom_id
-  rw [h2] at h1
-  have h3 := mem_nonZeroDivisors_iff_right.1 hs _ h1
-  have h4 : V.topIso.inv.hom (V.topIso.hom.hom y) = y := congrArg (fun t => t.hom y) V.topIso.hom_inv_id
-  rw [← h4, h3, map_zero]
+    V.topIso.inv.hom s ∈ nonZeroDivisors Γ(V, ⊤) :=
+  (MulEquivClass.map_nonZeroDivisors V.topIso.symm.commRingCatIsoToRingEquiv).le ⟨s, hs, rfl⟩
 
 private lemma ker_div {Y T : Scheme.{0}} (j : T ⟶ Y) [IsClosedImmersion j] {V V' : Y.Opens} {s : Γ(Y, V)} {s' : Γ(Y, V')}
     (hV : IsAffineOpen V) (hV' : IsAffineOpen V') (hk : RingHom.ker (j.app V).hom = Ideal.span {s})
-    (hk' : RingHom.ker (j.app V').hom = Ideal.span {s'}) (y : Y) (hy : y ∈ V) (hy' : y ∈ V') :
+    (hk' : RingHom.ker (j.app V').hom = Ideal.span {s'}) (hn' : s' ∈ nonZeroDivisors Γ(Y, V')) (y : Y)
+    (hy : y ∈ V) (hy' : y ∈ V') :
     ∃ (W : Y.Opens) (h : W ≤ V) (h' : W ≤ V') (c : Γ(Y, W)), y ∈ W ∧
       (Y.presheaf.map (homOfLE h).op).hom s = c * (Y.presheaf.map (homOfLE h').op).hom s' := by
   obtain ⟨W, hWa, hyW, hle⟩ := exists_isAffineOpen_mem_and_subset (X := Y) (U := V ⊓ V') (x := y) ⟨hy, hy'⟩
-  have h : W ≤ V := fun x hx => (hle hx).1
-  have h' : W ≤ V' := fun x hx => (hle hx).2
-  have m1 := j.ker.map_ideal (U := ⟨W, hWa⟩) (V := ⟨V, hV⟩) h
-  have m2 := j.ker.map_ideal (U := ⟨W, hWa⟩) (V := ⟨V', hV'⟩) h'
-  rw [Scheme.Hom.ker_apply, hk, Ideal.map_span, Set.image_singleton] at m1
-  rw [Scheme.Hom.ker_apply, hk', Ideal.map_span, Set.image_singleton] at m2
-  have m3 := m1.trans m2.symm
-  have m4 : (Y.presheaf.map (homOfLE h).op).hom s ∈ Ideal.span {(Y.presheaf.map (homOfLE h').op).hom s'} := by
-    have : (Y.presheaf.map (homOfLE h).op).hom s ∈ Ideal.span {(Y.presheaf.map (homOfLE h).op).hom s} :=
-      Ideal.subset_span rfl
-    exact m3 ▸ this
-  obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 m4
-  exact ⟨W, h, h', c, hyW, hc.symm⟩
+  obtain ⟨g, hg⟩ := exists_unit j.ker hV hV' hWa (fun x hx => (hle hx).1) (fun x hx => (hle hx).2)
+    ((j.ker_apply ⟨V, hV⟩).trans hk) ((j.ker_apply ⟨V', hV'⟩).trans hk') hn'
+  exact ⟨W, _, _, g, hyW, hg⟩
 
 private lemma off_image {Y T : Scheme.{0}} (j : T ⟶ Y) [IsClosedImmersion j] {V : Y.Opens} {s : Γ(Y, V)}
     (hV : IsAffineOpen V) (hk : RingHom.ker (j.app V).hom = Ideal.span {s}) (y : Y) (hy : y ∈ V)
@@ -621,7 +500,7 @@ theorem lineEx : LineEx := by
     (fun y => by
       obtain ⟨V, s, hy, ha, hn, hk⟩ := hc y
       exact ⟨⟨⟨V, s⟩, ha, hn, hk⟩, hy⟩)
-    (fun i i' y hy hy' => ker_div j i.2.1 i'.2.1 i.2.2.2 i'.2.2.2 y hy hy')
+    (fun i i' y hy hy' => ker_div j i.2.1 i'.2.1 i.2.2.2 i'.2.2.2 i'.2.2.1 y hy hy')
   refine ⟨D, f, h1, h2, fun a ha => h3 a fun v i hv => off_image j i.2.1 i.2.2.2 _ hv (ha v), ?_, ?_⟩
   · refine top_le_iff.1 fun y _ => ?_
     obtain ⟨V, s, hy, ha, hn, hk⟩ := hc y

@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.AdjointActionReduction
 import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NotDvdAbsNormDifferent
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
 public import Mathlib.Algebra.AffineMonoid.Basic
@@ -15,19 +16,12 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S
 
 namespace Formalism.L2.SG.SplitPrimeNormLemmas.IntG
 
-theorem not_dvd_absNorm_different (K : Type) [Field K] [NumberField K] (p : ℕ) (hp : p.Prime)
-    (hram : ∀ P : Ideal (𝓞 K), P.IsPrime → P ≠ ⊥ → ((p : ℕ) : 𝓞 K) ∈ P → P.ramificationIdx ℤ = 1) :
-    ¬ p ∣ Ideal.absNorm (differentIdeal ℤ (𝓞 K)) := by
-  apply GlobalTheory.FrameIntegral.not_dvd_absNorm_different <;> assumption
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem coprime_gi (i : Fin 2) : Nat.Coprime (Ideal.absNorm (differentIdeal ℤ (𝓞 D.host.F))) (D.host.g i) := by
   have hall := (ReciprocityTheory.ChartRestriction.N2.ncard_places_eq_finrank_iff D.host.E _ (D.host.g_prime i)).mp (D.nd.g_split i)
   refine Nat.Coprime.symm ((Nat.Prime.coprime_iff_not_dvd (D.host.g_prime i)).2 ?_)
-  refine not_dvd_absNorm_different D.host.F _ (D.host.g_prime i) fun P hPp hPb hpP => ?_
+  refine GlobalTheory.FrameIntegral.not_dvd_absNorm_different D.host.F _ (D.host.g_prime i) fun P hPp hPb hpP => ?_
   exact (SplitG.ef_one_of_split D.host.F D.host.E _ hall P hPp hPb hpP).1
 
 theorem natNorm_mem (m : ℕ) :
@@ -40,14 +34,7 @@ theorem natNorm_mem (m : ℕ) :
     (Ideal.absNorm_mem (differentIdeal ℤ (𝓞 D.host.F)))
 
 theorem ddS_ne_zero : ddS D ≠ 0 := by
-  intro h
-  have hm := natNorm_mem (D := D) 1
-  simp only [pow_one] at hm
-  rw [h, FractionalIdeal.mem_zero_iff] at hm
-  have hne : Ideal.absNorm (differentIdeal ℤ (𝓞 D.host.F)) ≠ 0 := by
-    rw [Ne, Ideal.absNorm_eq_zero_iff]
-    exact differentIdeal_ne_bot
-  exact hne (by exact_mod_cast hm)
+  apply _root_.PI.SRW.ddS_ne <;> assumption
 
 theorem aaD_eq (a : Fin D.R.rS) : aaD D a = (ddS D ^ (D.R.rS - (a : ℕ)))⁻¹ := by
   have ha : ((D.R.rS : ℤ) - ((a : ℕ) : ℤ)) = ((D.R.rS - (a : ℕ) : ℕ) : ℤ) := by

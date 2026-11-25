@@ -98,12 +98,12 @@ theorem vol_one [IsAlgClosed K] (hH : Out.GlobalSectionsRankAlgClosed) (hG : Out
       show ∏ _ : PUnit.{1}, (_ : Γ(P.A.left, LB.wchart P.L (fun _ : PUnit.{1} => 𝟙 _) i ⊓
         LB.wchart P.L (fun _ : PUnit.{1} => 𝟙 _) j)ˣ) ^ (0 : ℤ) = 1
       simp only [zpow_zero, Finset.prod_const_one]
-    · simp only [if_neg he.ne']
+    · simp only [ite_eq_right he.ne']
       exact PowSec.exists_basis_sections hH K P e he
   · refine tendsto_const_nhds.congr' ?_
     filter_upwards [Filter.eventually_gt_atTop 0] with e he
     have : (e : ℝ) ^ P.g ≠ 0 := pow_ne_zero _ (Nat.cast_ne_zero.2 he.ne')
-    rw [if_neg he.ne', Nat.cast_pow, div_self this]
+    rw [ite_eq_right he.ne', Nat.cast_pow, div_self this]
 
 theorem formIs_id (P : Out.PolAV (Sp K)) : FormIs P P.L (𝟙 P.A) := by
   refine ⟨inferInstance, ?_⟩

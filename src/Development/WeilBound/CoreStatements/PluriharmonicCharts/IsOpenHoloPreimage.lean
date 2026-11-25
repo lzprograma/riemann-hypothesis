@@ -19,50 +19,7 @@ import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjecti
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorIJMap
 import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
 
 @[expose] public section
@@ -174,12 +131,12 @@ theorem sum_dy (M : FlagModel y Ψ N j) (p : Ψ × Fin N) (L : K → ℝ) :
       rw [Finset.sum_eq_single (⟨k₁, fun h => h p hp⟩ : {k // ¬ ∀ p', M.blk p' ≠ some k})]
       · simp
       · intro k _ hk
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         exact hk (Subtype.ext (Option.some.inj h).symm)
       · simp
   · refine Finset.sum_congr (by congr; exact Subsingleton.elim _ _) fun k _ => ?_
-    rw [FlagModel.dy, dif_pos k.2]
+    rw [FlagModel.dy, dite_eq_left k.2]
     simp
 
 theorem exists_exact (M : FlagModel y Ψ N j) {F : FrameData ι Ψ N M.Ω M.blk} {z : (Σ k, ι k) → ℂ}
@@ -242,10 +199,10 @@ theorem img_exact (Cv : FlagCover M' M) (z : (Σ k, ι' k) → ℂ) (F' : FrameD
     rw [e1]
     congr 1
     rw [Finset.sum_eq_single I']
-    · rw [hdelta I' I' hI hI, if_pos rfl, one_mul]
+    · rw [hdelta I' I' hI hI, ite_eq_left rfl, one_mul]
     · intro J _ hne
       by_cases hJ : IsStepRows N j p.2 J
-      · rw [hdelta I' J hI hJ, if_neg hne.symm, zero_mul]
+      · rw [hdelta I' J hI hJ, ite_eq_right hne.symm, zero_mul]
       · rw [hoff J hJ, mul_zero]
     · simp
   rw [img_step Cv F' F z hp hk' m]
@@ -257,8 +214,8 @@ theorem img_exact (Cv : FlagCover M' M) (z : (Σ k, ι' k) → ℂ) (F' : FrameD
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun I' _ => ?_
   by_cases hI : IsStepRows N j p.2 I'
-  · rw [if_pos hI, hread I' hI]; ring
-  · rw [if_neg hI, hoff I' hI, mul_zero, mul_zero]
+  · rw [ite_eq_left hI, hread I' hI]; ring
+  · rw [ite_eq_right hI, hoff I' hI, mul_zero, mul_zero]
 
 variable {n d : ℕ} {BM : BaseMetric M n} {FA : FlagAn BM d} {Cv : FlagCover M' M}
 
@@ -293,7 +250,7 @@ theorem met (CR : CovReal FA Cv) {z : (Σ k, ι' k) → ℂ} (hz : z ∈ mcPts (
       (∀ kb : NonPluckerBlocks M.blk, e kb.1 = ((basePart M'.blk z ∘ Cv.v) ⟨kb, F.c kb⟩)⁻¹) ∧
       ∀ k k', M.blk p = some k → M'.blk p = some k' → e k = c k' := by
     refine ⟨fun k => if hk : ∀ p, M.blk p ≠ some k then ((basePart M'.blk z ∘ Cv.v) ⟨⟨k, hk⟩, F.c ⟨k, hk⟩⟩)⁻¹
-      else (M'.blk p).elim 1 c, fun k => ?_, fun kb => dif_pos kb.2, fun k k' h1 h2 => ?_⟩
+      else (M'.blk p).elim 1 c, fun k => ?_, fun kb => dite_eq_left kb.2, fun k k' h1 h2 => ?_⟩
     · dsimp only
       split_ifs with hk
       · exact inv_ne_zero (hch _)

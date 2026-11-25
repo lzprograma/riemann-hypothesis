@@ -13,53 +13,9 @@ public import Mathlib.Data.Nat.Prime.Int
 public import Formalism.PieriBlockIdeals.StatementLR
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.GradedWeylDivisibility.FinalB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PieriBlockIdeals.PieriColumnMinors.LrbPiSingleCast, Formalism.PieriBlockIdeals.PieriColumnMinors.LrcFockZeroRight, Formalism.PieriBlockIdeals.PieriColumnMinors.XiOfDepth2
@@ -133,7 +89,7 @@ theorem lrb_rowGen (b b' : Fin q) :
   simp only [AlgHom.comp_apply, lrb_res_X]
   rw [rowGen, aeval_X]
   refine Fin.addCases (fun a => ?_) (fun c => ?_) x
-  · rw [if_neg (lrb_cast_ne_nat p q a b'), add_zero, lrb_mapC]
+  · rw [ite_eq_right (lrb_cast_ne_nat p q a b'), add_zero, lrb_mapC]
     refine Fin.addCases (fun s' => ?_) (fun t => ?_) s
     · rw [lrb_var_ll]
       split_ifs <;> simp
@@ -179,11 +135,11 @@ theorem res_eval_id (f : MvPolynomial (Fin (p + q) × Fin (p + q)) R) :
     · rw [lrb_var_lr]
       have := a.isLt
       simp only [idFrame, Fin.val_castAdd, Fin.val_natAdd, map_zero]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     · rw [lrb_var_rl]
       have := s'.isLt
       simp only [idFrame, Fin.val_castAdd, Fin.val_natAdd, map_zero]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     · rw [lrb_var_rr, aeval_X]
       simp only [idFrame, Fin.val_natAdd, add_right_inj]
   have h2 := congrArg (fun φ => φ f) h
@@ -302,7 +258,7 @@ theorem lrb_resO_colAdd (l j : Fin q) :
   simp only [AlgHom.comp_apply, lrb_res_X]
   rw [colAddGen, aeval_X]
   refine Fin.addCases (fun a => ?_) (fun c => ?_) x <;> refine Fin.addCases (fun s' => ?_) (fun t => ?_) s
-  · rw [if_neg (lrb_cast_ne_nat p q s' j), lrb_resO_some, lrb_var_ll]
+  · rw [ite_eq_right (lrb_cast_ne_nat p q s' j), lrb_resO_some, lrb_var_ll]
     split_ifs <;> simp
   · simp only [Fin.natAdd_inj]
     split_ifs
@@ -310,7 +266,7 @@ theorem lrb_resO_colAdd (l j : Fin q) :
       simp
     · rw [lrb_resO_some, lrb_var_lr]
       simp
-  · rw [if_neg (lrb_cast_ne_nat p q s' j), lrb_resO_some, lrb_var_rl]
+  · rw [ite_eq_right (lrb_cast_ne_nat p q s' j), lrb_resO_some, lrb_var_rl]
     simp
   · simp only [Fin.natAdd_inj]
     rw [lrb_var_rr, colAddGen, aeval_X]
@@ -397,7 +353,7 @@ theorem lrc_inv_mem {l : ℕ} (hl : l.Prime) (m : ℤ) (hm : ¬ (l : ℤ) ∣ m)
     rintro rfl
     exact hm (dvd_zero _)
   have h : ((m : ℚ)⁻¹).den = m.natAbs := by
-    rw [Rat.inv_intCast_den, if_neg hm0]
+    rw [Rat.inv_intCast_den, ite_eq_right hm0]
   rw [h, lrc_coprime_iff hl, Int.dvd_natAbs]
   exact hm
 
@@ -506,14 +462,8 @@ theorem lrc_applyWord_mem (R : Type) [CommRing R] (r n : ℕ) (ν : Fin n → �
     rw [applyWord_cons]
     exact rowDivStable R r n ν _ _ _ _ ih
 
-theorem lrc_fock_add_right {σ : Type} (f g g' : MvPolynomial σ ℚ) : fockQ f (g + g') = fockQ f g + fockQ f g' := by
-  rw [(fockQPos σ f (g + g')).1, (fockQBilin σ g g' f 1).1, (fockQPos σ g f).1, (fockQPos σ g' f).1]
-
-theorem lrc_fock_smul_right {σ : Type} (c : ℚ) (f g : MvPolynomial σ ℚ) : fockQ f (c • g) = c * fockQ f g := by
-  rw [(fockQPos σ f (c • g)).1, (fockQBilin σ g 0 f c).2, (fockQPos σ g f).1]
-
 theorem lrc_fock_zero_right {σ : Type} (f : MvPolynomial σ ℚ) : fockQ f 0 = 0 := by
-  have := lrc_fock_smul_right (0 : ℚ) f 0
+  have := Formalism.CohomologicalDescent.LR.fock_smul_right (0 : ℚ) f 0
   simpa using this
 
 theorem fock_word (r : ℕ) (ν : Fin r → ℕ) (hν : Antitone ν) (F : MvPolynomial (Fin r × Fin r) ℚ)
@@ -542,13 +492,13 @@ theorem fock_int (r : ℕ) (ν : Fin r → ℕ) (hν : Antitone ν) (x : MvPolyn
     obtain ⟨z, hz⟩ := ih
     obtain ⟨z', hz'⟩ := ih'
     refine ⟨z + z', ?_⟩
-    rw [map_add (f := _), lrc_fock_add_right, hz, hz']
+    rw [map_add (f := _), Formalism.CohomologicalDescent.LR.fock_add_right, hz, hz']
     push_cast
     ring
   | smul c y _ ih =>
     obtain ⟨z, hz⟩ := ih
     refine ⟨c * z, ?_⟩
-    rw [map_smul, ← Int.cast_smul_eq_zsmul ℚ, lrc_fock_smul_right, hz]
+    rw [map_smul, ← Int.cast_smul_eq_zsmul ℚ, Formalism.CohomologicalDescent.LR.fock_smul_right, hz]
     push_cast
     ring
 

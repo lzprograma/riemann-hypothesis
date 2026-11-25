@@ -192,7 +192,7 @@ theorem trace_lattice_eq : ∀ (F : Type) [Field F] [NumberField F] (O : Type) [
       rw [Matrix.trace_eq_neg_charpoly_coeff, hcp, Fintype.card_fin]
       have hnd : (f ^ (k * r)).natDegree = n := by rw [hfmon.natDegree_pow, hsize]; ring
       have hne : (f ^ (k * r)).nextCoeff = (f ^ (k * r)).coeff (n - 1) := by
-        rw [nextCoeff, hnd, if_neg hpos.ne']
+        rw [nextCoeff, hnd, ite_eq_right hpos.ne']
       rw [← hne, hfmon.nextCoeff_pow, nsmul_eq_mul]
       push_cast; ring
 

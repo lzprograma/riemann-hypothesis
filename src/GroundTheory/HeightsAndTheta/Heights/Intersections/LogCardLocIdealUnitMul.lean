@@ -145,19 +145,19 @@ theorem RegularityLocalProduct.proof (hN : RegularityFunctionFieldNumber.Stateme
       have hm' := log_card_locIdeal_mul hbS hygS hb0' (fin _ hbS hb0') (fin _ hygS hyg0)
       rw [e] at hm
       by_cases h1 : W ∈ divSupp P f <;> by_cases h2 : W ∈ divSupp P g
-      · rw [if_pos h1, if_pos h2]; linarith
+      · rw [ite_eq_left h1, ite_eq_left h2]; linarith
       · obtain ⟨-, z, hz, hz1⟩ := frac_unit_locRing hPW hg htW (fun h => h2 ((hmem hg hgP hWc hPW).mpr h)) htn hyg
         have := log_card_locIdeal_unit hygS hz hz1
-        rw [if_pos h1, if_neg h2]; linarith
+        rw [ite_eq_left h1, ite_eq_right h2]; linarith
       · obtain ⟨-, z, hz, hz1⟩ := frac_unit_locRing hPW hf htW (fun h => h1 ((hmem hf hfP hWc hPW).mpr h)) htn hyf
         have := log_card_locIdeal_unit hyfS hz hz1
-        rw [if_neg h1, if_pos h2]; linarith
+        rw [ite_eq_right h1, ite_eq_left h2]; linarith
       · exact absurd hU (by simp [h1, h2])
     · have h1 : W ∉ divSupp P f := fun h => hU (Or.inl h)
       have h2 : W ∉ divSupp P g := fun h => hU (Or.inr h)
       obtain ⟨hxS, z, hz, hz1⟩ := frac_unit_locRing hPW hf hg (fun h => h1 ((hmem hf hfP hWc hPW).mpr h))
         (fun h => h2 ((hmem hg hgP hWc hPW).mpr h)) hx
-      rw [if_neg h1, if_neg h2, hxc, log_card_locIdeal_unit_mul hxS hz hz1 hcS]
+      rw [ite_eq_right h1, ite_eq_right h2, hxc, log_card_locIdeal_unit_mul hxS hz hz1 hcS]
       ring
   obtain ⟨hbfin, hbsum⟩ := hR K ι P (x * c) hP hb0 (fun W h1 h2 => (hcW W h1 h2).2)
   obtain ⟨hcfin, hcsum⟩ := hR K ι P c hP hc0 (fun W h1 h2 => (hcW W h1 h2).1)
@@ -172,7 +172,7 @@ theorem RegularityLocalProduct.proof (hN : RegularityFunctionFieldNumber.Stateme
         if W ∈ divSupp P s then Real.log (Nat.card (locRing P W ⧸ locIdeal P W (y W))) else 0).Finite :=
     fun s y => (divSupp_finite P s).subset fun W hW => by
       by_contra h
-      exact hW (if_neg h)
+      exact hW (ite_eq_right h)
   have fsB : ∀ z : FractionRing (MRing ι ⧸ P),
       {W | IsClosedPt W ∧ P ≤ W ∧ Nat.card (locRing P W ⧸ locIdeal P W z) ≠ 1}.Finite →
       (Function.support ({W : Ideal (MRing ι) | IsClosedPt W ∧ P ≤ W}.indicator
@@ -204,8 +204,8 @@ theorem RegularityLocalProduct.proof (hN : RegularityFunctionFieldNumber.Stateme
         · rw [Set.indicator_of_mem hWC, Set.indicator_of_mem hWC]
           exact key W hWC.1 hWC.2
         · rw [Set.indicator_of_notMem hWC, Set.indicator_of_notMem hWC,
-            if_neg fun h => hWC ⟨((hC K ι P f a W hP hf hfP).mp h).1, ((hC K ι P f a W hP hf hfP).mp h).2.1⟩,
-            if_neg fun h => hWC ⟨((hC K ι P g a W hP hg hgP).mp h).1, ((hC K ι P g a W hP hg hgP).mp h).2.1⟩]
+            ite_eq_right fun h => hWC ⟨((hC K ι P f a W hP hf hfP).mp h).1, ((hC K ι P f a W hP hf hfP).mp h).2.1⟩,
+            ite_eq_right fun h => hWC ⟨((hC K ι P g a W hP hg hgP).mp h).1, ((hC K ι P g a W hP hg hgP).mp h).2.1⟩]
     _ = ∑ᶠ σ : funField P →+* ℂ, Real.log ‖σ (x * c)‖ - ∑ᶠ σ : funField P →+* ℂ, Real.log ‖σ c‖ := by
         rw [finsum_sub_distrib (fsB _ hbfin) (fsB _ hcfin), ← finsum_mem_def, ← finsum_mem_def, hbsum, hcsum]
     _ = _ := by

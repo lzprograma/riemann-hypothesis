@@ -2,42 +2,6 @@ module
 
 public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnesRepresent
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -95,14 +59,6 @@ def PhiTopAgree : Prop :=
     ∀ (e' : XIx (Fin κ) (Fin τ) (s + 1) ⊕ Fin 0 ≃ Fin (n' + c')) (e : Ix (Fin κ ⊕ Fin (s + 1)) (Fin τ) (s + 2) ≃ Fin (n + 0)),
       IsOrd (yPos xPos n') e' → IsOrd zPos e → ∀ x,
         (S.T (Fin τ)).PhiTop (toLoc ι e e' x) = σ₀ (LocE.PhiGS q ψ₀ χ κ S.ρ (κ + s + 1) τ (s + 2) c' n' 0 n x)
-
-def LevelAgree : Prop :=
-  ∀ (τ j c : ℕ) (h : j + c = s + 1) (n c₂ : ℕ), n = κ + j * (τ + 1) → c₂ = c →
-    ∀ (e : XIx (Fin κ) (Fin τ) j ⊕ Fin c ≃ Fin (n + c₂)), IsOrd (yPos xPos n) e →
-      ∀ (γ : Sp E (n + c₂) ≃ₗ[E] Sp E (n + c₂)) (g : GL (XIx (Fin κ) (Fin τ) j ⊕ Fin c) k), g.val = toLoc ι e e γ.toLinearMap →
-        (g ∈ ((S.T (Fin τ)).lev j c h).J ↔ γ ∈ LocE.JGsym P q κ S.ρ (κ + s + 1) τ n c₂) ∧
-        ∀ hg : g ∈ ((S.T (Fin τ)).lev j c h).J,
-          (((S.T (Fin τ)).lev j c h).lam ⟨g, hg⟩ : ℂ) = σ₀ (LocE.lamGBS q ψ₀ χ κ (κ + s + 1) τ j n c₂ γ.toLinearMap)
 
 end Loc
 

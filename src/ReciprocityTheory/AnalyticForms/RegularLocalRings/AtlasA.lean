@@ -124,7 +124,7 @@ theorem AlgRes.exists_goodChart (R : AlgRes (ι := ι) P D e) (i : Fin R.n) (x :
   have hinv : ∀ w ∈ V, inv w ∈ R.src i ∧ R.coord i (inv w) = g w := by
     intro w hw
     have h := hex w hw
-    simp only [inv, dif_pos h]
+    simp only [inv, dite_eq_left h]
     exact h.choose_spec
   have hback : ∀ y ∈ R.src i, R.coord i y ∈ U → g (evalFam r (R.coord i y)) = R.coord i y := by
     intro y hy hyU

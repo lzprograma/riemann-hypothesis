@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDict
 public import Formalism.LocalToGlobal.Columns.AlgebraMapMemMaximalIdealPowIff
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
 public import Formalism.LocalRingCardinality.DataParams₂
@@ -165,25 +166,11 @@ structure ColIface (K : Type) [Field K] [NumberField K] [StarRing K] (I : Type) 
 
   Mtil_good : Mtil.Good
 
-section Places
-
-variable {K : Type} [Field K] [NumberField K]
-
-end Places
-
 namespace ColIface
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {I : Type} (C : ColIface K I)
 
 end ColIface
-
-section Sig
-
-open Formalism.L2.GlobalTheoryTheory
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {I : Type}
-
-end Sig
 
 section Glue
 
@@ -223,62 +210,9 @@ variable {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarT
 
 theorem exists_smul_le_of_lattice {M N : Submodule (𝓞 K) V} (hM : M.FG) (hN : Submodule.IsFullLattice K N) :
     ∃ c : 𝓞 K, c ≠ 0 ∧ ∀ y ∈ M, c • y ∈ N := by
-  have key : ∀ x : V, ∃ c : 𝓞 K, c ≠ 0 ∧ c • x ∈ N := by
-    intro x
-    have hx : x ∈ Submodule.span K (N : Set V) := by rw [hN.span_eq_top]; trivial
-    induction hx using Submodule.span_induction with
-    | mem y hy => exact ⟨1, one_ne_zero, by rwa [one_smul]⟩
-    | zero => exact ⟨1, one_ne_zero, by rw [smul_zero]; exact N.zero_mem⟩
-    | add y z _ _ hy hz =>
-      obtain ⟨c, hc, h1⟩ := hy
-      obtain ⟨d, hd, h2⟩ := hz
-      refine ⟨c * d, mul_ne_zero hc hd, ?_⟩
-      have e1 : (c * d) • y = d • (c • y) := by rw [mul_comm, mul_smul]
-      have e2 : (c * d) • z = c • (d • z) := mul_smul c d z
-      rw [smul_add, e1, e2]
-      exact N.add_mem (N.smul_mem d h1) (N.smul_mem c h2)
-    | smul a y _ hy =>
-      obtain ⟨c, hc, h1⟩ := hy
-      obtain ⟨⟨n, d⟩, hnd⟩ := IsLocalization.surj (nonZeroDivisors (𝓞 K)) a
-      refine ⟨c * d, mul_ne_zero hc (nonZeroDivisors.ne_zero d.2), ?_⟩
-      have h2 : ((d : 𝓞 K)) • (a • y) = n • y := by
-        rw [← algebraMap_smul K (d : 𝓞 K) (a • y), smul_smul, mul_comm, hnd, algebraMap_smul]
-      rw [mul_smul, h2, smul_comm]
-      exact N.smul_mem n h1
-  obtain ⟨s, hs⟩ := hM
-  classical
-  choose c hc hcs using key
-  refine ⟨∏ x ∈ s, c x, Finset.prod_ne_zero_iff.2 fun x _ => hc x, ?_⟩
-  intro y hy
-  rw [← hs] at hy
-  induction hy using Submodule.span_induction with
-  | mem x hx =>
-    rw [← Finset.mul_prod_erase s c hx, mul_comm, mul_smul]
-    exact N.smul_mem _ (hcs x)
-  | zero => rw [smul_zero]; exact N.zero_mem
-  | add y z _ _ hy hz => rw [smul_add]; exact N.add_mem hy hz
-  | smul a y _ hy => rw [smul_comm]; exact N.smul_mem a hy
+  apply _root_.Formalism.L2.SG.Pf.LatDict.uniform_mul <;> assumption
 
 end Glue
-
-section ItMLoc
-
-variable {K : Type} [Field K] [NumberField K]
-variable {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
-
-end ItMLoc
-
-section NuSpec
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Ch : Chars X Pr R.m}
-
-end NuSpec
-
-section SgFin
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {I : Type}
-
-end SgFin
 
 structure ScNum where
 
@@ -398,18 +332,5 @@ def ColArg.tau (w : HeightOneSpectrum (𝓞 X.K)) : ℝ := if prW w ∈ A.served
 
 
 end Conc
-
-section RowSide
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S) (hX : X.Ok)
-
-end RowSide
-
-section Empty
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K]
-
-end Empty
 
 end Formalism.L2.Col

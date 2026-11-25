@@ -458,11 +458,11 @@ theorem irreducible_X_pow_sub_C {R : Type*} (K : Type*) [CommRing R] [IsDomain R
       exact fun h => hπ.not_isUnit (isUnit_of_dvd_one h)
     · intro i hi
       rw [degree_X_pow_sub_C (Nat.pos_of_ne_zero hn), Nat.cast_lt] at hi
-      rw [coeff_sub, coeff_X_pow, if_neg hi.ne, coeff_C, Ideal.mem_span_singleton]
+      rw [coeff_sub, coeff_X_pow, ite_eq_right hi.ne, coeff_C, Ideal.mem_span_singleton]
       split_ifs <;> simp
     · rw [degree_X_pow_sub_C (Nat.pos_of_ne_zero hn)]
       exact_mod_cast Nat.pos_of_ne_zero hn
-    · rw [coeff_sub, coeff_X_pow, if_neg hn.symm, coeff_C, if_pos rfl, Ideal.span_singleton_pow,
+    · rw [coeff_sub, coeff_X_pow, ite_eq_right hn.symm, coeff_C, ite_eq_left rfl, Ideal.span_singleton_pow,
         Ideal.mem_span_singleton, zero_sub, dvd_neg]
       intro h
       have : π * π ∣ π * 1 := by simpa [sq] using h

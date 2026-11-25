@@ -109,12 +109,12 @@ def freeGraded {r : ℕ} (deg : Fin r → ℤ) : GradedPMod S N (Fin r → Poly 
       funext j
       have hj : f j ∈ (polyGraded S N).piece (c - deg j) := (Submodule.mem_pi.mp hf) j (Set.mem_univ _)
       change weightedHomogeneousComponent _ (c - deg j) (f j) = f j
-      rw [weightedHomogeneousComponent_of_mem hj, if_pos rfl]
+      rw [weightedHomogeneousComponent_of_mem hj, ite_eq_left rfl]
     · intro c c' f hcc' hf
       funext j
       have hj : f j ∈ (polyGraded S N).piece (c' - deg j) := (Submodule.mem_pi.mp hf) j (Set.mem_univ _)
       change weightedHomogeneousComponent _ (c - deg j) (f j) = 0
-      rw [weightedHomogeneousComponent_of_mem hj, if_neg (by omega)]
+      rw [weightedHomogeneousComponent_of_mem hj, ite_eq_right (by omega)]
     · rw [eq_top_iff]
       rintro f -
       rw [← Finset.univ_sum_single f]

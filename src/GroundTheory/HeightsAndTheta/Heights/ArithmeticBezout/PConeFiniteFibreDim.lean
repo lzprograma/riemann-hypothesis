@@ -76,7 +76,7 @@ theorem ConeFiniteFibreDim.proof : ConeFiniteFibreDim.Statement := by
       | coe d => exact ⟨d, rfl⟩
   rw [hd]
   by_contra hlt
-  have hmd : m < d := by push_neg at hlt; exact_mod_cast hlt
+  have hmd : m < d := by push Not at hlt; exact_mod_cast hlt
   obtain ⟨k, rfl⟩ : ∃ k, d = m + k := ⟨d - m, by omega⟩
   have hk : 0 < k := by omega
 

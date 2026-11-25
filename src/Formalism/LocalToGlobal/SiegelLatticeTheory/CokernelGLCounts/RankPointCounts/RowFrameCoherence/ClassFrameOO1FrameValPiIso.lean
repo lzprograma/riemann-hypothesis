@@ -15,8 +15,6 @@ open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Loca
 
 open scoped Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace ClassFrameUnitaryProducts
 
 variable {D : D7} (X : HidaSetting D)

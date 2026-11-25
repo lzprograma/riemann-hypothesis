@@ -2,45 +2,6 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.RestPathFrom
 public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.IndexWeightsDominance
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.ConclusionA2
 
 @[expose] public section
@@ -67,12 +28,12 @@ theorem expSet_eq (n N : ℕ) (B : Fin N → ℕ) :
   constructor
   · rintro ⟨m, hm, rfl⟩ i
     by_cases h : i < N
-    · rw [if_pos h, pe_Bn_of_lt B h, ← hm ⟨i, h⟩]
+    · rw [ite_eq_left h, pe_Bn_of_lt B h, ← hm ⟨i, h⟩]
       unfold multideg
       refine Finset.sum_congr rfl fun a _ => ?_
       have : ((i, a) : ℕ × Fin n) = iv N n (⟨i, h⟩, a) := rfl
       rw [this, Finsupp.mapDomain_apply_of_injective (iv_inj N n)]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       refine Finset.sum_eq_zero fun a _ => ?_
       apply Finsupp.mapDomain_of_notMem_range
       rintro ⟨⟨x, y⟩, hxy⟩
@@ -85,14 +46,14 @@ theorem expSet_eq (n N : ℕ) (B : Fin N → ℕ) :
       · exact ⟨(⟨i, h⟩, a), rfl⟩
       · exfalso
         have h0 := he i
-        rw [if_neg h] at h0
+        rw [ite_eq_right h] at h0
         have := (Finset.sum_eq_zero_iff.mp h0) a (Finset.mem_univ a)
         simp only [Finset.mem_coe, Finsupp.mem_support_iff] at hia
         exact hia this
     refine ⟨e.comapDomain (iv N n) (iv_inj N n).injOn, ?_, Finsupp.mapDomain_comapDomain _ (iv_inj N n) e hsupp⟩
     intro i
     have h0 := he i.val
-    rw [if_pos i.2, pe_Bn_of_lt B i.2] at h0
+    rw [ite_eq_left i.2, pe_Bn_of_lt B i.2] at h0
     rw [← h0]
     unfold multideg
     refine Finset.sum_congr rfl fun a _ => ?_

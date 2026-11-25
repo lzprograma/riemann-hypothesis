@@ -202,7 +202,7 @@ theorem ext_ae_eq_on_fund (B : RowsAut) (y : B.I.L2 B.μf B.fund) :
   filter_upwards [ae_restrict_of_ae h2, ae_restrict_mem B.fund_spec.1] with z hz hzf
   have h := B.fund_spec.2.1 z
   have e : B.I.rep B.fund z = h.choose * z := by
-    unfold AutInst.rep; exact dif_pos h
+    unfold AutInst.rep; exact dite_eq_left h
   have e1 : h.choose = 1 := by
     by_contra hne
     exact hz _ h.choose_spec.1 hne ⟨⟨z, hzf, rfl⟩, h.choose_spec.2⟩

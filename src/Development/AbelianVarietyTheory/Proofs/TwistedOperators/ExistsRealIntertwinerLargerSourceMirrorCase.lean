@@ -69,7 +69,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open GlobalTheory.Grid GlobalTheory.ChiGrid GlobalTheory.GridJoin
 open scoped Pointwise TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -141,8 +140,7 @@ theorem exists_isCoverIt_swap (p q r s : ℕ) (T₀ : GrpData (p * r + q * s) (p
     rw [this, ← Submodule.map_span]
     infer_instance
   · intro x hx
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hcon' : ∀ P : Pol p q r s, A x (F.ι P) = 0 := fun P => by
       have := hcon (MvPolynomial.rename Prod.swap P)
       rwa [hB, hsw, MvPolynomial.rename_rename, Prod.swap_swap_eq, MvPolynomial.rename_id_apply] at this

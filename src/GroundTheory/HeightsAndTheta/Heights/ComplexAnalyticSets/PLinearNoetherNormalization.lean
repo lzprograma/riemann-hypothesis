@@ -22,17 +22,8 @@ noncomputable section
 
 theorem LinearNoetherNormalization.ringKrullDim_quotient_le {R : Type*} [CommRing R] (J : Ideal R)
     (k : WithBot ℕ∞) (h : ∀ W ∈ J.minimalPrimes, ringKrullDim (R ⧸ W) ≤ k) :
-    ringKrullDim (R ⧸ J) ≤ k := by
-  rw [ringKrullDim_quotient]
-  refine iSup_le fun l => ?_
-  obtain ⟨W, hW, hle⟩ := Ideal.exists_minimalPrimes_le (show J ≤ l.head.1.asIdeal from l.head.2)
-  let l' : LTSeries (PrimeSpectrum.zeroLocus (R := R) W) :=
-    ⟨l.length, fun i => ⟨(l i).1, show (W : Set R) ⊆ (l i).1.asIdeal from hle.trans (l.head_le i)⟩,
-      fun i => l.step i⟩
-  calc (l.length : WithBot ℕ∞) = l'.length := rfl
-    _ ≤ Order.krullDim (PrimeSpectrum.zeroLocus (R := R) W) := Order.LTSeries.length_le_krullDim l'
-    _ = ringKrullDim (R ⧸ W) := (ringKrullDim_quotient W).symm
-    _ ≤ k := h W hW
+    ringKrullDim (R ⧸ J) ≤ k :=
+  by apply _root_.GroundTheory.Heights₂.Heights.ComplexSets.quotient_dim_le_of_minimalPrimes; assumption
 
 theorem LinearNoetherNormalization.exists_nat_of_le {x : WithBot ℕ∞} {d : ℕ} (h0 : 0 ≤ x)
     (hd : x ≤ d) : ∃ e : ℕ, e ≤ d ∧ x = e := by

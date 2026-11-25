@@ -57,8 +57,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRin
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -321,8 +319,3 @@ theorem exists_rational_ker {k k' : Type} [Field k] [IsAlgClosed k] [Field k'] {
     rw [← Category.assoc, hy, pullback.lift_fst]
 
 end GlobalTheory.ThetaSplit
-
-namespace GlobalTheory
-
-
-end GlobalTheory

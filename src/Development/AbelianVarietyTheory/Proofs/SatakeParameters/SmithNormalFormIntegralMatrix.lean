@@ -1,51 +1,6 @@
 module
 
 public import Formalism.SatakeDualWeyl.StatementF
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -206,7 +161,7 @@ theorem exists_diag : ∀ (m n : ℕ) (x : Matrix (Fin m) (Fin n) L),
       by_cases hx : ∀ i j, x i j = 0
       · refine ⟨1, 1, isUnimod_one, isUnimod_one, fun i j _ => ?_⟩
         simp [hx i j]
-      push_neg at hx
+      push Not at hx
       obtain ⟨i0, j0, hx0⟩ := hx
       obtain ⟨⟨r, c⟩, -, hrc⟩ := Finset.exists_max_image Finset.univ
         (fun q : Fin (m+1) × Fin (n+1) => Valued.v (x q.1 q.2)) ⟨(i0, j0), Finset.mem_univ _⟩
@@ -313,15 +268,15 @@ theorem GlobalTheory.Hk3.smith_int_approx : ∀ (L : Type) [Field L] [Valued L (
   by_cases hij : (i : ℕ) = (j : ℕ)
   · have hi : (i : ℕ) < n := hij ▸ j.isLt
     have hj : j = ⟨i, hi⟩ := Fin.ext hij.symm
-    have hzd : z i j = d i := by simp only [d, dif_pos hi, hj]
+    have hzd : z i j = d i := by simp only [d, dite_eq_left hi, hj]
     rw [hzd]
     by_cases ha : 0 < a i
-    · rw [if_pos ⟨hij, ha⟩]
-      simp only [s, if_pos ha]
+    · rw [ite_eq_left ⟨hij, ha⟩]
+      simp only [s, ite_eq_left ha]
       rw [div_mul_cancel₀ _ (hdne i ha), sub_self]
       exact Subring.zero_mem _
-    · rw [if_neg (fun h => ha h.2), sub_zero]
-      simp only [s, if_neg ha, one_mul]
+    · rw [ite_eq_right (fun h => ha h.2), sub_zero]
+      simp only [s, ite_eq_right ha, one_mul]
       by_cases hd0 : d i = 0
       · rw [hd0]; exact Subring.zero_mem _
       · rw [mem_intL, v_eq_ord hd0]
@@ -329,5 +284,5 @@ theorem GlobalTheory.Hk3.smith_int_approx : ∀ (L : Type) [Field L] [Valued L (
         rw [Int.toNat_eq_zero] at h0
         rw [← WithZero.coe_one, WithZero.coe_le_coe, ← ofAdd_zero, Multiplicative.ofAdd_le]
         exact h0
-  · rw [hD i j hij, if_neg (fun h => hij h.1), mul_zero, sub_zero]
+  · rw [hD i j hij, ite_eq_right (fun h => hij h.1), mul_zero, sub_zero]
     exact Subring.zero_mem _

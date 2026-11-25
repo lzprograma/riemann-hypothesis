@@ -47,7 +47,6 @@ public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelf
 noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair ValuativeRel NumberField Filter
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FinPl.HalfInd
 
@@ -146,10 +145,10 @@ theorem exists_SB_extFun_eq_halfInd : ∀ (D : D7) (k : Type) [Field k] [Valuati
   · funext t
     unfold extFun
     by_cases ht : IsHalf p.e t
-    · rw [if_pos ht]
+    · rw [ite_eq_left ht]
       beta_reduce
       rw [wr_rd α β ht]
-    · rw [if_neg ht, halfInd, if_neg fun h => ht h.2]
+    · rw [ite_eq_right ht, halfInd, ite_eq_right fun h => ht h.2]
 
 end GlobalTheory.FinPl.HalfInd
 

@@ -78,11 +78,11 @@ theorem eval₂_blockVar_component (g : R →+* κ) (c : (Σ k, ι k) → κ) (F
     rw [eval₂_blockVar_of_isMultiHomog g c hd, coeff_monomial]
     by_cases h : Finsupp.weight (blockWeight ι) d = b
     · subst h
-      rw [hd.weightedHomogeneousComponent_same, eval₂_blockVar_of_isMultiHomog g c hd, if_pos rfl]
+      rw [hd.weightedHomogeneousComponent_same, eval₂_blockVar_of_isMultiHomog g c hd, ite_eq_left rfl]
     · have h0 : weightedHomogeneousComponent (blockWeight ι) b (monomial d r : MRing ι R) = 0 := by
         rw [weightedHomogeneousComponent_of_mem (p := (monomial d r : MRing ι R))
-          (n := Finsupp.weight (blockWeight ι) d) hd, if_neg (Ne.symm h)]
-      rw [h0, if_neg (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h')), eval₂_zero, map_zero]
+          (n := Finsupp.weight (blockWeight ι) d) hd, ite_eq_right (Ne.symm h)]
+      rw [h0, ite_eq_right (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h')), eval₂_zero, map_zero]
   | add p q hp hq =>
     rw [map_add (f := _), eval₂_add, hp, hq, eval₂_add, MvPolynomial.coeff_add, map_add (f := _)]
 

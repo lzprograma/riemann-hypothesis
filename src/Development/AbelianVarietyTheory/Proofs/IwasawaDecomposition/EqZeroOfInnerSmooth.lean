@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DKerHasCompactSupport
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmoothVecLowKSub
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
@@ -104,8 +105,7 @@ theorem expProd_mem_UH (hG : IsUnit G) {k : ℕ} {Xs : Fin k → Matrix (Fin n) 
     exact exp_mem_UH hG (hX i) _
 
 theorem isUnit_of_mem_UH (hG : IsUnit G) {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ UH G) : IsUnit g := by
-  have h : gᴴ * G * g = G := hg
-  exact isUnit_of_mul_isUnit_right (h.symm ▸ hG : IsUnit (gᴴ * G * g))
+  exact GlobalTheory.SmLinSub.isUnit_of_mem hG hg
 
 theorem inv_mem_UH (hG : IsUnit G) {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ UH G) : g⁻¹ ∈ UH G := by
   have h : gᴴ * G * g = G := hg
@@ -155,16 +155,7 @@ theorem hasDerivAt_dRep {w : H} (hw : w ∈ smSub G π) {X : Matrix (Fin n) (Fin
 
 theorem contDiff_deriv_snoc {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] {k : ℕ} {F : (Fin (k + 1) → ℝ) → E}
     (hF : ContDiff ℝ ∞ F) : ContDiff ℝ ∞ fun t : Fin k → ℝ => deriv (fun s : ℝ => F (Fin.snoc t s)) 0 := by
-  have hs : ContDiff ℝ ∞ fun p : (Fin k → ℝ) × ℝ => (Fin.snoc p.1 p.2 : Fin (k + 1) → ℝ) := by
-    refine contDiff_pi.2 fun i => ?_
-    refine Fin.lastCases ?_ (fun j => ?_) i
-    · simpa using contDiff_snd
-    · simp only [Fin.snoc_castSucc]
-      fun_prop
-  have h1 : ContDiff ℝ ∞ (Function.uncurry fun (t : Fin k → ℝ) (s : ℝ) => F (Fin.snoc t s)) := hF.comp hs
-  have h2 := ContDiff.fderiv (𝕜 := ℝ) (m := ∞) (n := ∞) (g := fun _ : Fin k → ℝ => (0 : ℝ)) h1 contDiff_const
-    (le_of_eq rfl)
-  exact h2.clm_apply (contDiff_const (c := (1 : ℝ)))
+  first | exact _root_.GlobalTheory.SmLinSub.contDiff_deriv_snoc | exact @_root_.GlobalTheory.SmLinSub.contDiff_deriv_snoc | apply _root_.GlobalTheory.SmLinSub.contDiff_deriv_snoc <;> assumption
 
 theorem dRep_mem (hG : IsUnit G) (hπ : IsURepOn (UH G) π) {w : H} (hw : w ∈ smSub G π)
     {X : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ lieG G) : dRep π X w ∈ smSub G π := by
@@ -185,13 +176,7 @@ theorem dRep_mem (hG : IsUnit G) (hπ : IsURepOn (UH G) π) {w : H} (hw : w ∈ 
   simp [List.ofFn_succ', -List.ofFn_succ]
 
 theorem prod_conj {g : Matrix (Fin n) (Fin n) ℂ} (hg : IsUnit g) (l : List (Matrix (Fin n) (Fin n) ℂ)) :
-    g * (l.map fun x => g⁻¹ * x * g).prod = l.prod * g := by
-  have hd := (Matrix.isUnit_iff_isUnit_det g).1 hg
-  induction l with
-  | nil => simp
-  | cons x l ih =>
-    rw [List.map_cons, List.prod_cons, List.prod_cons, Matrix.mul_assoc x, ← ih]
-    simp only [← Matrix.mul_assoc, mul_nonsing_inv _ hd, Matrix.one_mul]
+    g * (l.map fun x => g⁻¹ * x * g).prod = l.prod * g := GlobalTheory.SmLinSub.prod_conj hg l
 
 theorem rep_mem (hG : IsUnit G) (hπ : IsURepOn (UH G) π) {w : H} (hw : w ∈ smSub G π)
     {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ UH G) : π g w ∈ smSub G π := by

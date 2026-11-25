@@ -5,45 +5,6 @@ public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
 public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonnegIffIntegral
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Presheaf
 
@@ -100,7 +61,6 @@ private theorem eeN_mul_comm_of_val_le {n' : ℕ} (S : UniformizedDVR p O) (hR :
     eeN D K Dt ⟨j, a⟩ mu * eeN D K Dt ⟨j, b⟩ mu' = eeN D K Dt ⟨j, b⟩ mu' * eeN D K Dt ⟨j, a⟩ mu := by
   have hmono : Monotone (fun k : Fin 2 => if k.val = 0 then NSet (r := r) Dt.nL j a.val else NSet Dt.nL j b.val) := by
     intro x y hxy
-    have hxy' : x.val ≤ y.val := hxy
     dsimp only
     split_ifs <;> first | exact le_refl _ | exact NSet_mono Dt.nL j hab | omega
   have h := ((Formalism.MainNotions.G.GLWeightTheory.filtered_projector_corollary_field D) p n' O S hR K (TL J Dt.nL r) Dt.trueLet 2 _ hmono).2
@@ -337,7 +297,7 @@ theorem greedy_list (S : UniformizedDVR p O) (l : List (NIdx Dt)) (hl : l.Nodup)
       apply List.map_congr_left
       intro j hj
       have hne : j ≠ i := fun h => hi (h ▸ hj)
-      rw [Function.update_apply, if_neg hne]
+      rw [Function.update_apply, ite_eq_right hne]
     have hi' : Function.update ka' i mu i = mu := by simp
     rw [List.map_cons, List.prod_cons, Module.End.mul_apply, hmap, hi']
     exact hmu.trans hka'
@@ -355,7 +315,7 @@ theorem restJP {n' : ℕ} (S : UniformizedDVR p O) (hR : AdmissibleDVR p n' O) (
       ∀ F i, e F ∈ isoSub (normE p K Dt i) (ka i.1 i.2.val) := by
   obtain ⟨ka0, hka0⟩ := greedy_list D K Dt S (Finset.univ : Finset (NIdx Dt)).toList (Finset.nodup_toList _) y
   obtain ⟨ka, hka⟩ : ∃ ka : ZMod J → ℕ → Fin K → ℤ, ∀ i : NIdx Dt, ka i.1 i.2.val = ka0 i :=
-    ⟨fun j u => if h : u < Dt.nL j + r + 1 then ka0 ⟨j, ⟨u, h⟩⟩ else 0, fun i => dif_pos i.2.isLt⟩
+    ⟨fun j u => if h : u < Dt.nL j + r + 1 then ka0 ⟨j, ⟨u, h⟩⟩ else 0, fun i => dite_eq_left i.2.isLt⟩
   have hfun : (fun i : Σ j, Fin (Dt.nL j + r + 1) => ka i.1 i.2.val) = ka0 := funext hka
   obtain ⟨h1, h2, h3, h4⟩ := jointN_props D K Dt S hR ka0
   have hj := jointE_int D K Dt S hR ka0 dNo

@@ -16,70 +16,13 @@ public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PEvalSpecFir
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PMahlerIntegrand
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PSpecFirstHomog
 public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.TargetsProjRegularDens
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.SimpleRing.Principal
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.MeasureTheory.Measure.RegularityCompacts
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.UniformSpace.Uniformizable
 import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeFsLogIntegrable
 import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
 import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChowDegree
-import Mathlib.Algebra.MvPolynomial.Nilpotent
+import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LogIntSphere
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MahlerMeasureOfProduct, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AePolynomialNonvanishingRows, Development.WeilBound.CoreStatements.CommonZeroEvaluation.EvalEqZeroOfCommonZero, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChowFormSpecializationProportional, Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XXgzChowMahlerFibrefactor, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChowFormFibreSpecialization, Development.WeilBound.CoreStatements.CommonZeroEvaluation.GaussianSphereMeanIntegral, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SphereMeanNormalizedGroups, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MahlerMinusConeIntegralIndep, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MahlerSectionStatementHolds
@@ -138,14 +81,7 @@ namespace GlobalTheory.CompanionTheory.Ar.Short.Crofton
 
 theorem eq_zero_of_hermNorm_eq_zero {n : ℕ} (h : HermNorm n) {u : Fin n → ℂ} (hu : h.norm u = 0) :
     u = 0 := by
-  have hs : ∑ i, ‖(h.mat *ᵥ u) i‖ ^ 2 = 0 :=
-    (Real.sqrt_eq_zero (Finset.sum_nonneg fun _ _ => by positivity)).mp hu
-  have hz : h.mat *ᵥ u = 0 := by
-    funext i
-    have hi := (Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => by positivity)).mp hs i (Finset.mem_univ i)
-    simpa using hi
-  have := congrArg (fun w => h.mat⁻¹ *ᵥ w) hz
-  simpa [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ h.isUnit_det] using this
+  apply _root_.GroundTheory.Heights₂.Heights.HermNorm.li_eq_zero_of_norm_eq_zero <;> assumption
 
 theorem eval_scale_groups {k n δ : ℕ} {q : MvPolynomial (Fin k × Fin n) ℂ} (hq : GroundTheory.Heights₂.Heights.IsMultiHomog δ q)
     (c : Fin k → ℂ) (v : Fin k × Fin n → ℂ) :
@@ -485,7 +421,7 @@ theorem ModelDimension.chow_form_product_formula :
     rw [h, map_zero] at hR1
     exact hR0 hR1
   · rw [← eval_sectionPoly, hR, hR1, map_mul, eval_C, map_prod, mul_comm]
-    simp only [eval_linForm, coeff_C, if_true]
+    simp only [eval_linForm, coeff_C, ite_true]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.WeilBound.CoreStatements.CommonZeroEvaluation.EvalEqZeroOfCommonZero =====

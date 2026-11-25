@@ -1,50 +1,6 @@
 module
 
 public import Formalism.MahlerMeasure.IsFrozenInv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -130,13 +86,13 @@ theorem freeze_mem_pol (p : ℕ) [Fact p.Prime] {N r : ℕ} (LL : M.Letters N) (
   have ht : LL.total = ∑ b, LL.deg b := rfl
   induction i using Fin.lastCases with
   | last =>
-    simp only [Fin.castSucc_ne_last, if_false, if_true, zero_add, one_mul, smul_eq_mul, mul_one,
+    simp only [Fin.castSucc_ne_last, ite_false, ite_true, zero_add, one_mul, smul_eq_mul, mul_one,
       M.Letters.snoc, Fin.lastCases_last]
     rw [← ht]
     omega
   | cast j =>
-    simp only [(Fin.castSucc_ne_last _).symm, Fin.castSucc_inj, if_false, add_zero, smul_eq_mul, mul_zero,
-      zero_add, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, M.Letters.snoc,
+    simp only [(Fin.castSucc_ne_last _).symm, Fin.castSucc_inj, ite_false, add_zero, smul_eq_mul, mul_zero,
+      zero_add, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, M.Letters.snoc,
       Fin.lastCases_castSucc]
 
 end Formalism.GM.FrozenVariableLemmas
@@ -154,7 +110,7 @@ theorem glAct_full_apply (F : MvPolynomial (Fin K × Fin r) ℚ_[p]) :
   unfold M.glAct
   rw [LinearMap.sum_apply]
   refine Finset.sum_congr rfl (fun i _ => ?_)
-  rw [if_pos i.isLt]
+  rw [ite_eq_left i.isLt]
   split_ifs <;> simp
 
 theorem glAct_full_mul (F G : MvPolynomial (Fin K × Fin r) ℚ_[p]) :
@@ -223,21 +179,21 @@ theorem freeze_inv (p : ℕ) [Fact p.Prime] {N r : ℕ} (LL : M.Letters N) (ρ :
     by_cases hv : LL.vec i
     · by_cases hc' : c' = ρ
       · set_option synthInstance.maxHeartbeats 100000 in
-          rw [if_pos hv, if_pos hc', _root_.map_sum]
-        simp only [glAct_full_mul, hX, snoc_vec_castSucc, snoc_vec_last, hv, if_true, Bool.false_eq_true,
-          if_false, mul_ite, mul_zero, mul_neg, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ]
+          rw [ite_eq_left hv, ite_eq_left hc', _root_.map_sum]
+        simp only [glAct_full_mul, hX, snoc_vec_castSucc, snoc_vec_last, hv, ite_true, Bool.false_eq_true,
+          ite_false, mul_ite, mul_zero, mul_neg, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ]
         ring
-      · rw [if_pos hv, if_neg hc']
-        simp only [glAct_full_mul, hX, snoc_vec_castSucc, snoc_vec_last, hv, hc', Ne.symm hc, if_true, if_false, Bool.false_eq_true, mul_zero, add_zero]
+      · rw [ite_eq_left hv, ite_eq_right hc']
+        simp only [glAct_full_mul, hX, snoc_vec_castSucc, snoc_vec_last, hv, hc', Ne.symm hc, ite_true, ite_false, Bool.false_eq_true, mul_zero, add_zero]
     · by_cases hc' : c' = ρ
-      · rw [if_neg hv, if_pos hc']
-        simp only [glAct_full_mul, hX, snoc_vec_castSucc, snoc_vec_last, hv, Ne.symm hc, if_true, if_false, Bool.false_eq_true, mul_zero, add_zero]
-      · rw [if_neg hv, if_neg hc', _root_.map_sub]
-        simp only [glAct_full_mul, hX, snoc_vec_castSucc, snoc_vec_last, hv, hc', Ne.symm hc, if_true, if_false, Bool.false_eq_true, mul_zero, add_zero]
+      · rw [ite_eq_right hv, ite_eq_left hc']
+        simp only [glAct_full_mul, hX, snoc_vec_castSucc, snoc_vec_last, hv, Ne.symm hc, ite_true, ite_false, Bool.false_eq_true, mul_zero, add_zero]
+      · rw [ite_eq_right hv, ite_eq_right hc', _root_.map_sub]
+        simp only [glAct_full_mul, hX, snoc_vec_castSucc, snoc_vec_last, hv, hc', Ne.symm hc, ite_true, ite_false, Bool.false_eq_true, mul_zero, add_zero]
         by_cases hcc : c' = c
-        · simp only [hcc, if_true]
+        · simp only [hcc, ite_true]
           ring
-        · simp only [hcc, if_false, mul_zero, sub_zero]
+        · simp only [hcc, ite_false, mul_zero, sub_zero]
   unfold M.freeze
   rw [glAct_full_mul, glAct_full_pow _ _ _ _ _ hlast, glAct_full_aeval _ _ _ _ _ hsub, mul_zero, mul_zero,
     add_zero]

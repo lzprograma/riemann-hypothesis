@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsJointlySmoothBiThetaTwoVarCombinationStatement
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleThetaUnfoldingEquivariantUnitaryGroups
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
 public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
@@ -35,46 +37,9 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitar
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HatMemSBAndHatOmCol
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
 import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
 import Mathlib.Dynamics.Ergodic.Action.Regular
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -84,7 +49,6 @@ open GlobalTheory.PosOne (toOne Covers TriPos)
 open GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage (app HasTensorVal fl opEFJ IsQuotIntFJ RFJ)
 open GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum (IsCO)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -96,16 +60,7 @@ variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ}
 
 theorem setIntegral_mul_right {V : HSp D} (v : Vol V) (G : GA D V → ℂ) (hG : ∀ γ ∈ GQ V, ∀ h, G (γ * h) = G h)
     (a : GA D V) : ∫ h in v.𝓕, G (h * a) ∂v.μ = ∫ h in v.𝓕, G h ∂v.μ := by
-  obtain ⟨i1, i2, i3, i4, i5, i6, i7⟩ := GlobalTheory.Mem.AdelicGroupTop.adelic_unitary_topology D V
-  haveI := v.haar
-  haveI : v.μ.IsMulRightInvariant := GlobalTheory.AdelicPointsUnimod.isMulRightInvariant_of_isHaarMeasure D V v.μ v.haar
-  have hmp : MeasurePreserving (· * a) v.μ v.μ := measurePreserving_mul_right _ a
-  have hmp' : MeasurePreserving (· * a⁻¹) v.μ v.μ := measurePreserving_mul_right _ a⁻¹
-  rw [← hmp.setIntegral_image_emb (measurableEmbedding_mulRight a) G v.𝓕, Set.image_mul_right]
-  have hF : IsFundamentalDomain (GQ V) ((· * a⁻¹) ⁻¹' v.𝓕) v.μ :=
-    v.fund.preimage_of_equiv hmp'.quasiMeasurePreserving (e := id) Function.bijective_id
-      fun g x => by simp [Subgroup.smul_def, smul_eq_mul, mul_assoc]
-  exact (v.fund.setIntegral_eq hF fun γ x => hG γ γ.2 x).symm
+  apply _root_.GlobalTheory.FinPl.Comm.integral_right <;> assumption
 
 theorem biLift_mid {A S X : HSp D} {χA χS χS' χX : (AE D)ˣ →* Circle} {oma : Om A S} {omb : Om S X}
     (ha : IsWeilDatumO ψ A S χA χS oma) (hb : IsWeilDatumO ψ S X χS' χX omb) (vA : Vol A) (vS : Vol S) (φ : GA D A → ℂ)
@@ -134,18 +89,7 @@ theorem biLift_mid {A S X : HSp D} {χA χS χS' χX : (AE D)ˣ →* Circle} {om
 open GlobalTheory.BiTransfer in
 theorem biTheta_biComb (hψ : IsStdChar D ψ (-1)) {A S X : HSp D} {C : WO A S → WO S X → ℂ} (hC : IsBiTheta ψ A S X C)
     (c : WO A S →₀ ℂ) (c' : WO S X →₀ ℂ) : IsBiTheta ψ A S X (biComb ψ A S X c c' C) := by
-  let d := sumDec A (GlobalTheory.ChiGrid.negSp X)
-  refine isBiTheta_of_join d ?_
-  have e : join d S (biComb ψ A S X c c' C) = ∑ x ∈ c.support, ∑ y ∈ c'.support,
-      (c x * c' y) • heisO ψ _ S (inlH d S x + inrH d S y) (join d S C) := by
-    funext w
-    simp only [join_apply, biComb, GlobalTheory.FrComb.comb_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, heisO, symplOH_split d,
-      map_add, fst_inl, fst_inr, snd_inl, snd_inr, add_zero, zero_add, AddChar.map_add_eq_mul, Finset.mul_sum]
-    exact Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => by ring
-  rw [e]
-  refine Finset.sum_induction _ (IsThetaFunO ψ _ S) (fun _ _ => GlobalTheory.WeilVacMove.isTheta_add) GlobalTheory.WeilVacMove.isTheta_zero
-    fun x _ => Finset.sum_induction _ (IsThetaFunO ψ _ S) (fun _ _ => GlobalTheory.WeilVacMove.isTheta_add) GlobalTheory.WeilVacMove.isTheta_zero
-    fun y _ => GlobalTheory.WeilVacMove.isTheta_smul _ (GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hψ (isThetaFunO_join d hC) _)
+  apply _root_.GlobalTheory.T.isJointlySmoothBiTheta_twoVarCombination <;> assumption
 
 theorem comb_aconv {S T : HSp D} {e : AE D} (hc : cA D e = e) (he : e * e = e) {c d : WO S T →₀ ℂ}
     (h₁ : ∀ u ∈ c.support, IsHalf (1 - e) u) (h₂ : ∀ u ∈ d.support, IsHalf e u) (f : WO S T → ℂ) :
@@ -430,7 +374,7 @@ theorem lst_model {D : D7} {c : GlobalTheory.SeeSaw.Comm D} {v : GlobalTheory.Se
   let O₂' : SB _ := ⟨_, intInd_mem_SB (k := Q.k) Q.Z (Q.X (Q.s + 1))⟩
   have b₁ : flatBF s₁ (T₁ O₁) = U₁ O₁' := hfl O₁ O₁' (by
     have := (GlobalTheory.LocFlat.flat_contr_intIndicator Q.k Q.ψk Q.ν Q.cond Q.unitVol (Q.X (Q.s + 1)) (Q.X Q.s) Unit 0 (0 + 1)).1
-    rw [if_neg (by omega)] at this
+    rw [ite_eq_right (by omega)] at this
     exact this.symm)
   have b₂ := hext O₂ O₂' fun x => by
     have hx : (∀ r q, x r q ∈ 𝒪[Q.k]) ↔ ∀ r (q : Q.X (Q.s + 1) ⊕ Fin 0), (fromCols x 0) r q ∈ 𝒪[Q.k] := by

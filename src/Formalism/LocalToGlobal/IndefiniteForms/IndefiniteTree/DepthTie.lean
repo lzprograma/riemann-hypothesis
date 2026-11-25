@@ -12,8 +12,6 @@ import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Indef.Tree.DepthTie
@@ -149,8 +147,8 @@ theorem tieE (hE : ∀ v j, O.E v j = EAt (Xo := Xo (ι j)) (c := c) (LL := K) D
     have hb : (if Dd.Q.IsBad (resCharOf (placeBelow (K := c.F) v)) then (1 : ℝ) else 0) =
         (if plc v ∈ O.Bad then 1 else 0) := by
       by_cases h : plc v ∈ O.Bad
-      · rw [if_pos h, if_pos ((bad_iff c Dd O hpr v).2 h)]
-      · rw [if_neg h, if_neg (fun h' => h ((bad_iff c Dd O hpr v).1 h'))]
+      · rw [ite_eq_left h, ite_eq_left ((bad_iff c Dd O hpr v).2 h)]
+      · rw [ite_eq_right h, ite_eq_right (fun h' => h ((bad_iff c Dd O hpr v).1 h'))]
     have hnn := nuStar_nonneg Xo c Dd ι v j
     have hbn : (0 : ℝ) ≤ (if plc v ∈ O.Bad then 1 else 0) := by split_ifs <;> norm_num
     have hc : (0 : ℤ) ≤ ⌈(e2 c v : ℝ) * O.T * (nuT Xo c Dd ι v j + if plc v ∈ O.Bad then 1 else 0)⌉ := by
@@ -356,7 +354,7 @@ theorem sprimeRam (hT : O.T = ((Dd.Q.T : ℕ) : ℝ))
       rw [← h2]; rcases hv with h | h <;> rw [h]; exacts [hqg.2.1, hqg.2.2.2]
     have hs : sWT Xo c Dd ι v j = (Dd.Q.cP (DF (Dw (ι j)) (Dd.aL (ι j))) (plc v) : ℝ) := by
       unfold sWT nuT nuWT nuStarAt DepPage.nuN e2
-      rw [resChar_below (F := c.F) v, if_neg hn1, if_neg hn2]
+      rw [resChar_below (F := c.F) v, ite_eq_right hn1, ite_eq_right hn2]
       ring
     set N := Nsig Dd.Q (DF (Dw (ι j)) (Dd.aL (ι j))) (DF (Dw (ι j)) (Dd.aF (ι j))) with hNdef
     have hN : N ≠ 0 := Nsig_ne_zero Dd.Q hprime _ _
@@ -405,7 +403,7 @@ theorem nnLevel (hnn : ∀ j, O.nnK j = nnKAt (H := H) (LL := K) Dd (ι j)) (hsp
     rcases hg with h | h
     · left; rw [h, hpr.1]
     · right; rw [h, hpr.2.1]
-  rw [if_pos hw] at hlev
+  rw [ite_eq_left hw] at hlev
   unfold OnObj.nn
   rw [ramw_conjPl w, ← ValuationRepresentative.vw_star w, hnn j, ← add_div, ← Int.cast_add,
     ← ValuationRepresentative.vw_mul w _ _ hnn0 (star_ne_zero.2 hnn0), hprod, hlev, mul_div_cancel_left₀ _ he.ne', (hD j).1, (hD j).2]

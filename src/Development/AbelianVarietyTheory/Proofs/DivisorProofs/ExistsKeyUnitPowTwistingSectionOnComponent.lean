@@ -125,7 +125,7 @@ theorem exists_twSec_key (E : Type) [Field E] [NumberField E] [IsCMField E] (H :
     have h5 := hm (-4) 4 s s'
     rw [hss', neg_add_cancel, h1, h2] at h5
     exact eq_inv_of_mul_eq_one_left (by rw [mul_comm]; exact h5.symm)
-  have hgood : ∀ σ, GoodEmb c σ → goodOf c σ = σ := fun σ h => if_pos h
+  have hgood : ∀ σ, GoodEmb c σ → goodOf c σ = σ := fun σ h => ite_eq_left h
   have hmono : ∀ (m : ℤ) (τ : E →+* ℂ) (i j : ℕ), i ≤ j → j < Dw.mult τ →
       (wtOf Dw 0 m).1 (τ, j) ≤ (wtOf Dw 0 m).1 (τ, i) := fun m τ i j hij hj => by
     rw [hwt m τ i (lt_of_le_of_lt hij hj), hwt m τ j hj]

@@ -3,49 +3,8 @@ module
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.Connected
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ExistsNhdsInvariant
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealDictionaryHypotheses
@@ -83,7 +42,7 @@ theorem kill {X : Type} [TopologicalSpace X] (N : Submodule ℂ (X → ℂ)) (Y�
   have hmm : ∀ Y, Y ≠ Y₁ → IsLocallyConstant (mm Y) ∧ mm Y Y ≠ mm Y Y₁ ∧
       ∀ Φ ∈ SB X, (fun y => (mm Y y - mm Y Y₁) * Φ y) ∈ N := by
     intro Y hY
-    simp only [mm, dif_neg hY]
+    simp only [mm, dite_eq_right hY]
     exact Classical.choose_spec (h Y hY)
   let U : X → Set X := fun Y => {y | mm Y y ≠ mm Y Y₁}
   have hUc : ∀ Y, Y ≠ Y₁ → IsClopen (U Y) := by
@@ -279,7 +238,7 @@ theorem box_of_near {M : ℕ} {c y : κ → Af F} (h : Near M c y) : box M c y =
 
 theorem box_of_not {M : ℕ} (hM : M ≠ 0) {c y : κ → Af F} (h : ¬ Near M c y) : box M c y = 0 := by
   unfold Near at h
-  push_neg at h
+  push Not at h
   obtain ⟨v, i, hvi⟩ := h
   unfold box
   apply finprod_eq_zero _ v
@@ -311,156 +270,6 @@ theorem Near.trans {M : ℕ} {a b c : κ → Af F} (h : Near M a b) (h' : Near M
   have : evalV F v (c i) - evalV F v (a i) = (evalV F v (c i) - evalV F v (b i)) + (evalV F v (b i) - evalV F v (a i)) := by ring
   rw [this]
   exact le_trans (Valuation.map_add _ _ _) (max_le h2 h1)
-
-private theorem exists_natCast_intValuation_lt (v : Pl F) {γ : WithZero (Multiplicative ℤ)} (hγ : γ ≠ 0) :
-    ∃ n : ℕ, n ≠ 0 ∧ v.intValuation (n : 𝓞 F) < γ := by
-  set N := Ideal.absNorm v.asIdeal with hNdef
-  have hN0 : N ≠ 0 := by
-    rw [Ne, hNdef, Ideal.absNorm_eq_zero_iff]
-    exact v.ne_bot
-  have hNmem : (N : 𝓞 F) ∈ v.asIdeal := Ideal.absNorm_mem _
-  set k : ℕ := (-(WithZero.log γ) + 1).toNat with hk
-  refine ⟨N ^ k, pow_ne_zero _ hN0, ?_⟩
-  have h1 : v.intValuation ((N ^ k : ℕ) : 𝓞 F) ≤ WithZero.exp (-(k : ℤ)) := by
-    rw [IsDedekindDomain.HeightOneSpectrum.intValuation_le_pow_iff_mem]
-    push_cast
-    exact Ideal.pow_mem_pow hNmem k
-  refine lt_of_le_of_lt h1 ?_
-  rw [← WithZero.exp_log hγ, WithZero.exp_lt_exp]
-  have := Int.self_le_toNat (-(WithZero.log γ) + 1)
-  omega
-
-private theorem valuation_le_natCast_iff_inv_mul_mem_integers {M : ℕ} (hM : M ≠ 0) (a : Af F) :
-    (∀ v : Pl F, Valued.v (a v) ≤ v.intValuation (M : 𝓞 F)) ↔
-      (∀ v : Pl F, (algebraMap F (Af F) ((M : F)⁻¹) * a) v ∈ v.adicCompletionIntegers F) := by
-  refine forall_congr' (fun v => ?_)
-  have hM' : (M : 𝓞 F) ≠ 0 := Nat.cast_ne_zero.mpr hM
-  have hv0 : v.intValuation (M : 𝓞 F) ≠ 0 := IsDedekindDomain.HeightOneSpectrum.intValuation_ne_zero v _ hM'
-  have hval : Valued.v (((M : F)⁻¹ : F) : Fv F v) = (v.intValuation (M : 𝓞 F))⁻¹ := by
-    rw [IsDedekindDomain.HeightOneSpectrum.valuedAdicCompletion_eq_valuation', map_inv₀,
-      ← IsDedekindDomain.HeightOneSpectrum.valuation_of_algebraMap (K := F)]
-    congr 2
-  have happ : (algebraMap F (Af F) ((M : F)⁻¹) * a) v = (((M : F)⁻¹ : F) : Fv F v) * a v := rfl
-  rw [happ, IsDedekindDomain.HeightOneSpectrum.mem_adicCompletionIntegers, map_mul, hval,
-    inv_mul_le_iff₀ (zero_lt_iff.mpr hv0), mul_one]
-
-private theorem isOpen_isCompact_adelic_integers :
-    IsOpen {a : Af F | ∀ v : Pl F, a v ∈ v.adicCompletionIntegers F} ∧
-      IsCompact {a : Af F | ∀ v : Pl F, a v ∈ v.adicCompletionIntegers F} := by
-  constructor
-  · exact RestrictedProduct.isOpen_forall_mem (fun v => Valued.isOpen_valuationSubring _)
-  · have hr := RestrictedProduct.range_structureMap (fun v : Pl F => Fv F v)
-      (fun v => (v.adicCompletionIntegers F : Set (Fv F v))) (𝓕 := cofinite)
-    haveI : ∀ v : Pl F, CompactSpace (v.adicCompletionIntegers F) := fun v =>
-      GlobalTheory.AdelicUnitaryTop.compactSpace_adicCompletionIntegers F v
-    have hc := isCompact_range (RestrictedProduct.isEmbedding_structureMap (R := fun v : Pl F => Fv F v)
-      (A := fun v => (v.adicCompletionIntegers F : Set (Fv F v))) (𝓕 := cofinite)).continuous
-    rw [hr] at hc
-    exact hc
-
-private theorem exists_nat_valuation_le_subset_of_mem_nhds_zero {W : Set (Af F)} (hW : W ∈ 𝓝 (0 : Af F)) :
-    ∃ n : ℕ, n ≠ 0 ∧ ∀ a : Af F, (∀ v : Pl F, Valued.v (a v) ≤ v.intValuation (n : 𝓞 F)) → a ∈ W := by
-  obtain ⟨W', hW'W, hW'o, h0⟩ := mem_nhds_iff.mp hW
-  haveI : Nonempty {n : ℕ // n ≠ 0} := ⟨⟨1, one_ne_zero⟩⟩
-  let D : {n : ℕ // n ≠ 0} → Set (Af F) := fun n =>
-    {a | ∀ v : Pl F, Valued.v (a v) ≤ v.intValuation ((n : ℕ) : 𝓞 F)}
-  have hDclosed : ∀ n, IsClosed (D n) := by
-    intro n
-    have hset : D n = (fun a => algebraMap F (Af F) (((n : ℕ) : F)⁻¹) * a) ⁻¹'
-        {a : Af F | ∀ v : Pl F, a v ∈ v.adicCompletionIntegers F} := by
-      ext a
-      exact valuation_le_natCast_iff_inv_mul_mem_integers n.2 a
-    rw [hset]
-    exact isOpen_isCompact_adelic_integers.2.isClosed.preimage (continuous_const.mul continuous_id)
-  have hDsub : ∀ n, D n ⊆ {a : Af F | ∀ v : Pl F, a v ∈ v.adicCompletionIntegers F} :=
-    fun n a ha v => (IsDedekindDomain.HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).mpr
-      (le_trans (ha v) (IsDedekindDomain.HeightOneSpectrum.intValuation_le_one _ _))
-  have hempty : {a : Af F | ∀ v : Pl F, a v ∈ v.adicCompletionIntegers F} ∩ ⋂ n, (D n ∩ W'ᶜ) = ∅ := by
-    ext a
-    simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_empty_iff_false, iff_false, not_and]
-    intro _ hall
-    by_cases ha0 : a = 0
-    · exact (hall ⟨1, one_ne_zero⟩).2 (ha0 ▸ h0)
-    · obtain ⟨v, hv⟩ : ∃ v : Pl F, a v ≠ 0 := by
-        by_contra hcon
-        push_neg at hcon
-        exact ha0 (IsDedekindDomain.FiniteAdeleRing.ext F (fun v => by
-          change a v = 0
-          exact hcon v))
-      have hγ : Valued.v (a v) ≠ 0 := by simpa using hv
-      obtain ⟨m, hm0, hm⟩ := exists_natCast_intValuation_lt v hγ
-      exact absurd ((hall ⟨m, hm0⟩).1 v) (not_le.mpr hm)
-  have hdir : Directed (fun x1 x2 : Set (Af F) => x1 ⊇ x2) (fun n => D n ∩ W'ᶜ) := by
-    intro n m
-    refine ⟨⟨n.1 * m.1, Nat.mul_ne_zero n.2 m.2⟩, ?_, ?_⟩
-    · rintro a ⟨ha, hw⟩
-      refine ⟨fun v => le_trans (ha v) ?_, hw⟩
-      push_cast
-      rw [map_mul]
-      exact mul_le_of_le_one_right' (IsDedekindDomain.HeightOneSpectrum.intValuation_le_one _ _)
-    · rintro a ⟨ha, hw⟩
-      refine ⟨fun v => le_trans (ha v) ?_, hw⟩
-      push_cast
-      rw [map_mul]
-      exact mul_le_of_le_one_left' (IsDedekindDomain.HeightOneSpectrum.intValuation_le_one _ _)
-  obtain ⟨n, hn⟩ := isOpen_isCompact_adelic_integers.2.elim_directed_family_closed (fun n => D n ∩ W'ᶜ)
-    (fun n => (hDclosed n).inter hW'o.isClosed_compl) (Set.disjoint_iff_inter_eq_empty.mpr hempty) hdir
-  refine ⟨n.1, n.2, fun a ha => hW'W ?_⟩
-  by_contra hna
-  have hmem : a ∈ {a : Af F | ∀ v : Pl F, a v ∈ v.adicCompletionIntegers F} ∩ (D n ∩ W'ᶜ) :=
-    ⟨hDsub n ha, ha, hna⟩
-  exact Set.disjoint_left.mp hn hmem.1 hmem.2
-
-private theorem isOpen_setOf_near {M : ℕ} (hM : M ≠ 0) (c : κ → Af F) : IsOpen {y | Near M c y} := by
-  have hset : {y | Near M c y} = ⋂ i, (fun y : κ → Af F => algebraMap F (Af F) ((M : F)⁻¹) * (y i - c i)) ⁻¹'
-      {a : Af F | ∀ v : Pl F, a v ∈ v.adicCompletionIntegers F} := by
-    ext y
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_preimage, Near]
-    rw [forall_comm]
-    refine forall_congr' (fun i => ?_)
-    rw [← valuation_le_natCast_iff_inv_mul_mem_integers hM]
-    refine forall_congr' (fun v => ?_)
-    rw [← map_sub]
-    rfl
-  rw [hset]
-  exact isOpen_iInter_of_finite (fun i => isOpen_isCompact_adelic_integers.1.preimage
-    (continuous_const.mul ((continuous_apply i).sub continuous_const)))
-
-private theorem exists_near_subset_of_mem_nhds (y : κ → Af F) {U : Set (κ → Af F)} (hU : U ∈ 𝓝 y) :
-    ∃ n : ℕ, n ≠ 0 ∧ {z | Near n y z} ⊆ U := by
-  classical
-  have hV : (fun d => y + d) ⁻¹' U ∈ 𝓝 (0 : κ → Af F) := by
-    apply (continuous_const.add continuous_id).continuousAt.preimage_mem_nhds
-    simpa using hU
-  rw [nhds_pi, Filter.mem_pi] at hV
-  obtain ⟨I, _, t, ht, hsub⟩ := hV
-  choose n hn0 hn using fun i => exists_nat_valuation_le_subset_of_mem_nhds_zero (ht i)
-  refine ⟨∏ i, n i, Finset.prod_ne_zero_iff.mpr (fun i _ => hn0 i), ?_⟩
-  intro z hz
-  have hz' : z = y + (z - y) := by abel
-  rw [hz']
-  apply hsub
-  intro i _
-  apply hn i
-  intro v
-  have h1 := hz v i
-  have h2 : v.intValuation (((∏ j, n j : ℕ)) : 𝓞 F) ≤ v.intValuation ((n i : ℕ) : 𝓞 F) := by
-    rw [Nat.cast_prod, map_prod, ← Finset.mul_prod_erase _ _ (Finset.mem_univ i)]
-    exact mul_le_of_le_one_right' (Finset.prod_le_one' (fun j _ =>
-      IsDedekindDomain.HeightOneSpectrum.intValuation_le_one _ _))
-  have e : (z - y) i v = evalV F v (z i) - evalV F v (y i) := by
-    rw [Pi.sub_apply, ← map_sub]
-    rfl
-  rw [e]
-  exact le_trans h1 h2
-
-private theorem near_of_dvd {n M : ℕ} (h : n ∣ M) {a b : κ → Af F} (hab : Near M a b) : Near n a b := by
-  intro v i
-  refine le_trans (hab v i) ?_
-  obtain ⟨k, rfl⟩ := h
-  push_cast
-  rw [map_mul]
-  exact mul_le_of_le_one_right' (IsDedekindDomain.HeightOneSpectrum.intValuation_le_one _ _)
 
 theorem schA_le (L : Submodule ℂ ((κ → AF F) → ℂ))
     (hL : ∀ (f : SInf F κ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ), (∀ v, φ v ∈ SB _) →

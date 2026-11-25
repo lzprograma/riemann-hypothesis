@@ -142,8 +142,8 @@ private lemma core {G W V : Type} [Group G] [TopologicalSpace G] [IsTopologicalG
   exact hne' (by rw [h0, map_zero])
 
 theorem UpperTheory.Reformulated.B.HasFixedVector.hasFixed :
-    ∀ {F : Type} [inst : Field F] [inst_1 : NumberField F] {n : ℕ} {V : Type} [inst_2 : AddCommGroup V]
-      [inst_3 : _root_.Module ℂ V] {ρ : Representation ℂ (GL (Fin n) (GlobalTheory.CuspRep.Af F)) V}
+    ∀ {F : Type} [Field F] [NumberField F] {n : ℕ} {V : Type} [AddCommGroup V]
+      [_root_.Module ℂ V] {ρ : Representation ℂ (GL (Fin n) (GlobalTheory.CuspRep.Af F)) V}
       {w : IsDedekindDomain.HeightOneSpectrum (NumberField.RingOfIntegers F)}
       {σ : GlobalTheory.CuspRep.SmIrr (GL (Fin n) (IsDedekindDomain.HeightOneSpectrum.adicCompletion F w))},
       UpperTheory.V.Af.LocIsotypic ρ w σ →
@@ -174,24 +174,6 @@ open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.LFun Formali
 namespace UpperTheory.V.Af
 
 variable {F : Type} [Field F] [NumberField F]
-
-private theorem sLoc_mem (w : HeightOneSpectrum (𝓞 F)) (x : Ov F w) : sLoc F w x ∈ Ohat F := by
-  classical
-  refine Subring.mem_iInf.2 fun v => ?_
-  change (Pi.single w (x : w.adicCompletion F) : ∀ v : HeightOneSpectrum (𝓞 F), v.adicCompletion F) v ∈
-    v.adicCompletionIntegers F
-  by_cases h : v = w
-  · subst h
-    rw [Pi.single_eq_same]
-    exact x.2
-  · rw [Pi.single_eq_of_ne h]
-    exact zero_mem _
-
-private def sInt (w : HeightOneSpectrum (𝓞 F)) : Ov F w →ₙ+* Ohat F where
-  toFun x := ⟨sLoc F w x, sLoc_mem w x⟩
-  map_mul' x y := Subtype.ext (map_mul (sLoc F w) x.1 y.1)
-  map_zero' := Subtype.ext (map_zero (sLoc F w))
-  map_add' x y := Subtype.ext (map_add (sLoc F w) x.1 y.1)
 
 alias LocIsotypic.hasFixed := _root_.UpperTheory.Reformulated.B.HasFixedVector.hasFixed
 

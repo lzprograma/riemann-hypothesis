@@ -108,13 +108,10 @@ theorem core_roomR {b' g A P Q k c de be eps N Y N1 ka : ℝ} (hb : 0 < b') (hAP
     c * (ka + 2 * Q + 3 * k) + 4 ≤ de / 4 * A := by
   have hk0 : 0 < k := by linarith
   have hQ0 : 0 < Q := by linarith
-  have hbe12 : be ≤ 1 / 12 := by linarith
   have h1 : b' * (11 / 12) ≤ b' * (1 - be) := mul_le_mul_of_nonneg_left (by linarith) hb.le
   have h2 : A * P ≤ A * Q := mul_le_mul_of_nonneg_left hPQ hA0
   have h3 : k * P ≤ k * Q := mul_le_mul_of_nonneg_left hPQ hk0.le
-  have hAQ : b' * (11 / 12) - k * Q ≤ A * Q := by linarith
   have hQ2 : Q ^ 2 ≤ Q ^ 4 := pow_le_pow_right₀ hQ1 (by norm_num)
-  have hk3 : 0 ≤ k ^ 3 := by positivity
   have hb2 : 2 * k ^ 3 * Q ^ 2 * c ≤ b' := by
     have a0 : 0 ≤ k ^ 3 * c := by positivity
     have a1 : 2 * k ^ 3 * Q ^ 2 * c ≤ 2 * k ^ 3 * Q ^ 4 * c := by
@@ -124,7 +121,6 @@ theorem core_roomR {b' g A P Q k c de be eps N Y N1 ka : ℝ} (hb : 0 < b') (hAP
     have a2 : 2 * (k ^ 3 * Q ^ 4 * c) ≤ N * (k ^ 3 * Q ^ 4 * c) := mul_le_mul_of_nonneg_right hN2 a5
     have a6 : 0 ≤ N * (k ^ 3 * Q ^ 4 * c) := by positivity
     have a3 : N * (k ^ 3 * Q ^ 4 * c) * 1 ≤ N * (k ^ 3 * Q ^ 4 * c) * Y := mul_le_mul_of_nonneg_left hY1 a6
-    have a4 : 1 * k ^ 3 * N * Q ^ 4 * c * Y = N * (k ^ 3 * Q ^ 4 * c) * Y := by ring
     linarith
   have hA1 : ((11 / 6) * k ^ 3 * Q * c - k) * Q ≤ A * Q := by
     have e : ((11 / 6) * k ^ 3 * Q * c - k) * Q = (11 / 12) * (2 * k ^ 3 * Q ^ 2 * c) - k * Q := by ring
@@ -162,7 +158,6 @@ theorem core_roomR {b' g A P Q k c de be eps N Y N1 ka : ℝ} (hb : 0 < b') (hAP
     have := mul_le_mul_of_nonneg_right hk25 hQc0
     linarith
   have hkQc : 5 * k * (Q * c) ≤ k * k * (Q * c) := mul_le_mul_of_nonneg_right hk5k hQc0
-  have hX : k ^ 2 * Q * c = k * k * (Q * c) := by ring
   have hfirst : c * (ka + 2 * Q + 3 * k) ≤ c * (13 * k ^ 2 * Q + 2 * Q + 3 * (k * Q)) := by
     apply mul_le_mul_of_nonneg_left _ hc0
     linarith
@@ -273,7 +268,6 @@ theorem numCore_std {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
     nlinarith only [this]
   have b4 : X.k ≤ (X.N1 : ℝ) * X.k := le_mul_of_one_le_left hk0.le hN1pos
   have b5 : X.Q * e ≤ (X.N1 : ℝ) * (X.Q * e) := le_mul_of_one_le_left (by linarith) hN1pos
-  have hnumA : 3 * X.k + 2 * (X.Q * e) ≤ e * ka1 X := by rw [hx]; linarith
   have hnumB : (X.N1 : ℝ) * e + ((X.N1 : ℝ) + 1) * (X.k + X.Q * e) + (X.N1 : ℝ) * (3 * X.k + 2 * (X.Q * e)) ≤
       e * ka1 X := by
     have e1 : (X.N1 : ℝ) * e + ((X.N1 : ℝ) + 1) * (X.k + X.Q * e) + (X.N1 : ℝ) * (3 * X.k + 2 * (X.Q * e)) =
@@ -348,13 +342,13 @@ theorem numCore_std {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
             ((3 * (X.m + 1) + 2 * (X.p ^ X.G' * e) : ℕ) : ℤ) := by
         intro i
         by_cases hi : (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma
-        · have e1 : oEff (X.seg C0 CE1 CE2 j) b i = b.w i + b.sg i := if_pos hi
-          have e2 : oEff (X.seg C0 CE1 CE2 j) b' i = b'.w i + b'.sg i := if_pos hi
+        · have e1 : oEff (X.seg C0 CE1 CE2 j) b i = b.w i + b.sg i := ite_eq_left hi
+          have e2 : oEff (X.seg C0 CE1 CE2 j) b' i = b'.w i + b'.sg i := ite_eq_left hi
           rw [e1, e2]
           obtain ⟨-, -, -, hg, hw⟩ := hS' i hi
           exact core_termS (hA i) hw hg
-        · have e1 : oEff (X.seg C0 CE1 CE2 j) b i = b.o i := if_neg hi
-          have e2 : oEff (X.seg C0 CE1 CE2 j) b' i = b'.o i := if_neg hi
+        · have e1 : oEff (X.seg C0 CE1 CE2 j) b i = b.o i := ite_eq_right hi
+          have e2 : oEff (X.seg C0 CE1 CE2 j) b' i = b'.o i := ite_eq_right hi
           rw [e1, e2]
           obtain ⟨-, ho, -, -⟩ := hU' i (not_lt.1 hi)
           exact core_termU (hA i) ho

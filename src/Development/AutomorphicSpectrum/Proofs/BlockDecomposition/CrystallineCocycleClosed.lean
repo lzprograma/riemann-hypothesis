@@ -50,7 +50,6 @@ import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomology
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb GroundTheory.PAdicHodge
 namespace GlobalTheory.CompanionTheory.TruncLog
 
@@ -238,7 +237,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb GroundTheory.PAdicHodge
 
 noncomputable section
@@ -385,9 +383,6 @@ theorem red_w (Λ : CLift G D) {T T' : C} (φ : T ⟶ T') :
 
 def Rf (Λ : CLift G D) {T₀ T₁ T₂ : C} (f : T₀ ⟶ T₁) (g : T₁ ⟶ T₂) (k : T₀ ⟶ T₂) : ((G.obj T₂).B)ˣ :=
   um g G (Λ.w f) * Λ.w g * (Λ.w k)⁻¹
-
-theorem r_eq (Λ : CLift G D) (s : ComposableArrows C 2) :
-    Λ.r s = Rf Λ (s.map' 0 1) (s.map' 1 2) (s.map' 0 2) := rfl
 
 theorem red_Rf (Λ : CLift G D) {T₀ T₁ T₂ : C} (f : T₀ ⟶ T₁) (g : T₁ ⟶ T₂) :
     red T₂ G (Rf Λ f g (f ≫ g)) = 1 := by

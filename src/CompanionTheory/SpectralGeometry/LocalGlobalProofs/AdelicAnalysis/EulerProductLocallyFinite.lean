@@ -193,7 +193,7 @@ theorem GlobalTheory.CompanionTheory.SW.EulerInt.euler_int : ∀ (F E : Type) [F
       by_cases h : v ∈ S
       · rw [hφS ⟨v, h⟩]
         exact measurable_one.indicator (hB _)
-      · simp only [φ, dif_neg h]
+      · simp only [φ, dite_eq_right h]
         exact measurable_const
     have e := hEP S hSS φinf φ (measurable_one.indicator hA) hφm
     have hPm : MeasurableSet (P ⁻¹' (A ×ˢ Set.univ.pi B)) :=

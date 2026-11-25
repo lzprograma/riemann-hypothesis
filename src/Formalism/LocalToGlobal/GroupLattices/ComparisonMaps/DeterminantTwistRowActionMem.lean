@@ -19,7 +19,7 @@ theorem dw_eq {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf]
     (g : Matrix (Fin (m + 1)) (Fin (m + 1)) Kf) (hg : IsUnit g.det) :
     Dl0 O m lam (colSpan O g) = deltaLTw O Kf m lam g := by
   unfold Dl0
-  rw [if_pos hlam]
+  rw [ite_eq_left hlam]
   exact le_antisymm (iInf₂_le g ⟨hg, rfl⟩) (le_iInf₂ fun h hh => dl_indep hinj m lam g h hg hh.2)
 
 theorem dw_tw {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf] (m : ℕ) (lam : Fin (m + 1) → ℤ)

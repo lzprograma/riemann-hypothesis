@@ -69,10 +69,6 @@ structure SlopeBoundParameters where
 
 attribute [instance] SlopeBoundParameters.fPl SlopeBoundParameters.dimNeZero
 
-def eulerConstantTerm (n : ℕ) : ℝ :=
-  (∑ q ∈ reducedForms (-(n : ℤ)), Real.log (4 * Real.pi * (formRoot (-(n : ℤ)) q).im *
-    ‖ModularForm.eta (formRoot (-(n : ℤ)) q)‖ ^ 4)) / ((reducedForms (-(n : ℤ))).card : ℝ)
-
 namespace SlopeBoundParameters
 
 variable (P : SlopeBoundParameters)
@@ -188,12 +184,6 @@ namespace SlopeBoundLiftData
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {P : SlopeBoundParameters} (F : SlopeBoundLiftData K P)
 
 end SlopeBoundLiftData
-
-section Leaves
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {P : SlopeBoundParameters}
-
-end Leaves
 
 
 

@@ -171,7 +171,7 @@ theorem exists_sign [IsUltrametricDist E] (hstar : ∀ y : E, ‖star y‖ = ‖
     refine ⟨refl (Pi.single k 1) 2⁻¹ (inv_ne_zero h2) hN, bddPow_refl hstar _ _ _ _, ?_, ?_⟩
     · intro i hi
       rw [MulMemClass.coe_mul, col_mul, refl_mulVec, hg i hi, star_single_one, dotProduct_single,
-        Pi.single_apply, if_neg (ne_of_gt hi), zero_mul, mul_zero, zero_smul, sub_zero]
+        Pi.single_apply, ite_eq_right (ne_of_gt hi), zero_mul, mul_zero, zero_smul, sub_zero]
     · have h := congrFun (col_mul (refl (Pi.single k (1 : E)) 2⁻¹ (inv_ne_zero h2) hN : Matrix (Fin r) (Fin r) E)
         (g : Matrix (Fin r) (Fin r) E) k) k
       rw [refl_mulVec, star_single_one, single_dotProduct] at h
@@ -209,7 +209,7 @@ theorem exists_refl [IsUltrametricDist E] (hstar : ∀ y : E, ‖star y‖ = ‖
   · subst h
     rw [MulMemClass.coe_mul, col_mul, refl_mulVec, ← hw, hvw, inv_mul_cancel₀ ha, one_smul, hv, sub_sub_cancel]
   · rw [MulMemClass.coe_mul, col_mul, refl_mulVec, hg i h, dotProduct_single, mul_one]
-    have : v i = 0 := by rw [hv, Pi.sub_apply, hwi i h, Pi.single_apply, if_neg (ne_of_gt h), sub_zero]
+    have : v i = 0 := by rw [hv, Pi.sub_apply, hwi i h, Pi.single_apply, ite_eq_right (ne_of_gt h), sub_zero]
     rw [Pi.star_apply, this, star_zero, mul_zero, zero_smul, sub_zero]
 
 theorem hom_eq_one_of_bddPow [IsUltrametricDist E] (hstar : ∀ y : E, ‖star y‖ = ‖y‖) (h2 : (2 : E) ≠ 0)
@@ -248,8 +248,7 @@ theorem real_eq_one {x y C : ℝ} (hx : 0 < x) (hy : 0 < y) (hxy : x * y = 1) (h
     (hyn : ∀ n : ℕ, y ^ n ≤ C) : x = 1 := by
   have le1 : ∀ z : ℝ, (∀ n : ℕ, z ^ n ≤ C) → z ≤ 1 := by
     intro z h
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     obtain ⟨n, hn⟩ := ((tendsto_pow_atTop_atTop_of_one_lt hlt).eventually_gt_atTop C).exists
     exact absurd (h n) (not_le.2 hn)
   have hx1 := le1 x hxn

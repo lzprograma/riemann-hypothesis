@@ -267,8 +267,6 @@ section Ball
 
 variable {r : ℕ} {X : Data E r} {G G' : Subgroup (GL (Fin r) E)} {x0 x : Frame X.Ψ r} {ρ0 ρ1 : ℝ}
 
-theorem FreeBall.le (h : FreeBall X G x0 ρ0) : X.Γ ≤ G := h.1
-
 theorem FreeBall.isUStab (h : FreeBall X G x0 ρ0) {γ : GL (Fin r) E} (hγ : γ ∈ G) :
     IsUStab X.Gm X.Λ γ := h.2.1 γ hγ
 
@@ -283,17 +281,6 @@ theorem FreeBall.unique (h : FreeBall X G x0 ρ0) {γ γ' : GL (Fin r) E} (hγ :
     (by rwa [FundSetPf.lact_mul, FundSetPf.lact_inv])
   exact (mul_inv_eq_one.1 this).symm
 
-theorem FreeBall.lact (h : FreeBall X G x0 ρ0) {g : GL (Fin r) E} (hg : g ∈ G) :
-    FreeBall X G (lact g x0) ρ0 := by
-  refine ⟨h.1, h.2.1, fun γ hγ hne x hx hlt => ?_⟩
-  have hg' := h.isUStab (G.inv_mem hg)
-  rw [← rhX_lact_lact hg', FundSetPf.lact_inv] at hlt ⊢
-  have hc : g⁻¹ * γ * g ≠ 1 := fun hc => hne (by
-    have : γ = g * (g⁻¹ * γ * g) * g⁻¹ := by group
-    rw [this, hc]; group)
-  have := h.2.2 _ (G.mul_mem (G.mul_mem (G.inv_mem hg) hγ) hg) hc _ (MajInv.lact_mem_dom X hg' hx) hlt
-  rwa [← FundSetPf.lact_mul, mul_inv_cancel_right, FundSetPf.lact_mul] at this
-
 end Ball
 
 section Pole
@@ -305,11 +292,6 @@ theorem IsPole.lact (h : IsPole X G x0 κ ε C δ ψ) {γ : GL (Fin r) E} (hγ :
     ψ (lact γ x) = ψ x := by
   have := h.1 γ hγ x hx _ (ExtFPf.oneF_mem X)
   rwa [ExtFPf.rmul_oneF] at this
-
-theorem IsPole.rmul (h : IsPole X G x0 κ ε C δ ψ) (hx : x ∈ X.dom) {b : Frame X.Ψ r}
-    (hb : b ∈ Bor X.Ψ r) : ψ (rmul x b) = ψ x := by
-  have := h.1 1 G.one_mem x hx b hb
-  rwa [FundSetPf.lact_one] at this
 
 theorem IsPole.isInvFn (h : IsPole X G x0 κ ε C δ ψ) (hG : X.Γ ≤ G) : IsInvFn X ψ :=
   fun γ hγ => h.1 γ (hG hγ)
@@ -362,18 +344,14 @@ theorem blockConst_iff : BlockConst X la ↔
     beta_reduce
     by_cases hi : (i : ℕ) < X.p0
     · have hex : ∃ i : Fin r, (i : ℕ) < X.p0 := ⟨i, hi⟩
-      rw [if_pos hi, dite_eq_left hex]
+      rw [ite_eq_left hi, dite_eq_left hex]
       exact h τ _ _ (iff_of_true hi hex.choose_spec)
     · have hex : ∃ i : Fin r, ¬ (i : ℕ) < X.p0 := ⟨i, hi⟩
-      rw [if_neg hi, dite_eq_left hex]
+      rw [ite_eq_right hi, dite_eq_left hex]
       exact h τ _ _ (iff_of_false hi hex.choose_spec)
   · rintro ⟨a, a', rfl⟩
     exact blockConst_ite a a'
 
 end Block
-
-section Checks
-
-end Checks
 
 end GlobalTheory.Up

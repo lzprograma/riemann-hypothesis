@@ -4,45 +4,7 @@ public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LevelChainSharpColumnValuationOwnChainIff
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelFunctionalDilatedClass
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelPrimeDiamondPreservesComplexForms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -148,8 +110,8 @@ variable {X : Fields} {n : ℕ} {ST SG Q Q' : Finset (HeightOneSpectrum (𝓞 X.
 theorem mv_deco {y : Ys X n} (p : PtY ST SG Q y) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) (h : (p.mv d).1.1.deco.1.N = d.1.N) :
     (p.mv d).1.1.deco = d := by
   by_cases hc : (∀ (P : Q) (x : Sp X.E n), p.1.1.1.2 P x ∈ d.1.at P.1 ↔ x ∈ stdAt X.E n P.1) ∧ p.1.2 ∈ y.ys d.1.N
-  · exact congrArg (fun q : PtY ST SG Q y => q.1.1.deco) (dif_pos hc : p.mv d = _)
-  · have h1 : p.mv d = p := dif_neg hc
+  · exact congrArg (fun q : PtY ST SG Q y => q.1.1.deco) (dite_eq_left hc : p.mv d = _)
+  · have h1 : p.mv d = p := dite_eq_right hc
     rw [h1] at h
     refine absurd ⟨fun P x => ?_, h ▸ p.2⟩ hc
     have := p.1.1.2 P x
@@ -168,16 +130,16 @@ theorem up_deco (hT : (tdatY ST T y β Λ Θ pref).Tied T) (b : β) (p : PtY ST 
     have h1 := congrArg Deco.N (hT.up_deco b p P x hx hf)
     refine Eq.trans h1 ?_
     unfold DecoSet.up
-    rw [dif_pos hc]
+    rw [dite_eq_left hc]
     rfl
-  · have h1 : p.1.1.deco.up P (T : 𝓞 X.E) x = p.1.1.deco := dif_neg hc
+  · have h1 : p.1.1.deco.up P (T : 𝓞 X.E) x = p.1.1.deco := dite_eq_right hc
     rw [h1]
-    exact congrArg (fun q : PtY ST SG Q y => q.1.1.deco) (dif_pos ⟨p.1.1.2, p.2⟩ : p.mv p.1.1.deco = _)
+    exact congrArg (fun q : PtY ST SG Q y => q.1.1.deco) (dite_eq_left ⟨p.1.1.2, p.2⟩ : p.mv p.1.1.deco = _)
 
 theorem dia_deco (p : PtY ST SG Q y) (P : ST) (a : (Res P.1)ˣ) :
     (p.mv (DecoSet.dia1 P a p.1.1.deco)).1.1.deco = DecoSet.dia1 P a p.1.1.deco :=
   congrArg (fun q : PtY ST SG Q y => q.1.1.deco)
-    (dif_pos ⟨p.1.1.2, p.2⟩ : p.mv (DecoSet.dia1 P a p.1.1.deco) = _)
+    (dite_eq_left ⟨p.1.1.2, p.2⟩ : p.mv (DecoSet.dia1 P a p.1.1.deco) = _)
 
 theorem exists_lift {y' : Ys X n} (hy : ∀ N, y.ys N = {∅}) {Λ₁ Λ₂ : LevFam X.E X.K n SG} {Θ₁ : LevQFam X.E X.K n Q}
     {Θ₂ : LevQFam X.E X.K n Q'} (hΛ : Λ₁ = Λ₂) (h₁ : Θ₁ = LevQFam.top X.E X.K n Q) (h₂ : Θ₂ = LevQFam.top X.E X.K n Q')
@@ -210,19 +172,6 @@ theorem exists_lift {y' : Ys X n} (hy : ∀ N, y.ys N = {∅}) {Λ₁ Λ₂ : Le
   · rw [LevQFam.top_chr, LevQFam.top_chr]
 
 end Points
-
-section Start
-
-variable {X : Fields} {n : ℕ} {ST SG Q Q' : Finset (HeightOneSpectrum (𝓞 X.E))} {T : ℕ}
-  {y y' : Ys X n} {β β' : Type} {iβ : Fintype β} {jβ : DecidableEq β} {iβ' : Fintype β'} {jβ' : DecidableEq β'}
-  {Λ : β → LevFam X.E X.K n SG} {Θ : β → LevQFam X.E X.K n Q} {pref : DecoF X.E n ST SG Q → Prop}
-  {Λ' : β' → LevFam X.E X.K n SG} {Θ' : β' → LevQFam X.E X.K n Q'} {pref' : DecoF X.E n ST SG Q' → Prop}
-  (σ : X.K →+* ℂ) (lam : X.Tau → DomWeight n)
-
-variable {σ lam} {e : ((stepY ST y β Λ Θ pref).Cl → Fr X.emb σ n → ℂ) ≃ₗ[ℂ]
-    ((stepY ST y' β' Λ' Θ' pref').Cl → Fr X.emb σ n → ℂ)}
-
-end Start
 
 section Lattice
 
@@ -295,28 +244,5 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks}
 variable {sel mu cst L} {Cr : Chars X Pr R.m} {G : ChGlob X R.m} {m2 : ℕ}
 
 end Inputs
-
-section Main
-
-variable {D : D7} {u : D.what₂.Word} {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [StarRing E]
-  {emb : D.what₂.Tau → E →+* D.what₂.LL} {Pr : Primes (fieldsOver D F E emb)} {u' : Pr.Word}
-
-variable {Cr : Chars (fieldsOver D F E emb) Pr D.R.m} {sel : HeightOneSpectrum (𝓞 F) → HeightOneSpectrum (𝓞 E)} {S : Set ℕ} {m2 : ℕ}
-  {mu₀ : Tup F E D.what₂.LL S} {cst₀ : LocCst (fieldsOver D F E emb) (rowSG Pr sel mu₀)}
-  {L₀ : ChIdx (fieldsOver D F E emb) Pr D.R (QE (X := fieldsOver D F E emb) sel (mu₀ : Chr F E D.what₂.LL))}
-  {Tp₀ : TopLev (fieldsOver D F E emb) Pr D.R (QE (X := fieldsOver D F E emb) sel (mu₀ : Chr F E D.what₂.LL))}
-  {G₀ : ChGlob (fieldsOver D F E emb) D.R.m} {rho₀ rho₀' jet₀} {DG₀ : ℕ} {psi₀} {du₀ : ℕ} {Ds₀ Ga₀ : ℝ}
-  {Q₀ : PerIn (chainOn (X := fieldsOver D F E emb) sel mu₀ cst₀ L₀ Tp₀ u' rho₀ rho₀' jet₀ DG₀)}
-  {Z₀ : FmIn (levelOn (X := fieldsOver D F E emb) sel mu₀ cst₀ L₀ Tp₀ u' (rho := rho₀) (rho' := rho₀') (jet := jet₀) (DG := DG₀)
-    psi₀ du₀ Ds₀ Ga₀) D.what₂.places} {hI₀ hJ₀} {hQ₀ : Q₀.Ok} {l₀ lf₀ hO₀}
-  {mu : Tup F E D.what₂.LL S} {cst : LocCst (fieldsOver D F E emb) (rowSG Pr sel mu)}
-  {L : ChIdx (fieldsOver D F E emb) Pr D.R (QE (X := fieldsOver D F E emb) sel (mu : Chr F E D.what₂.LL))}
-  {Tp : TopLev (fieldsOver D F E emb) Pr D.R (QE (X := fieldsOver D F E emb) sel (mu : Chr F E D.what₂.LL))}
-  {G : ChGlob (fieldsOver D F E emb) D.R.m} {rho rho' jet} {DG : ℕ} {psi} {du : ℕ} {Ds Ga : ℝ}
-  {Q : PerIn (chainOn (X := fieldsOver D F E emb) sel mu cst L Tp u' rho rho' jet DG)}
-  {Z : FmIn (levelOn (X := fieldsOver D F E emb) sel mu cst L Tp u' (rho := rho) (rho' := rho') (jet := jet) (DG := DG)
-    psi du Ds Ga) D.what₂.places} {hI hJ} {hQ : Q.Ok} {l lf hO}
-
-end Main
 
 end GlobalTheory.LvT.StartTie

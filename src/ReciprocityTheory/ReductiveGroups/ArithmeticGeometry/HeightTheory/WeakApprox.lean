@@ -106,15 +106,13 @@ theorem wa_eq_of_le (v w : AddValuation F (WithTop ℤ)) (hv : ∀ a : F, a ≠ 
     intro x m n hm hn
     constructor
     · intro hm0
-      by_contra hn0
-      push_neg at hn0
+      by_contra! hn0
       obtain ⟨y, c, d, hc, hd, hc0, hd0⟩ := exists_pos_neg_valuation v w hq1 hp hm hn one_pos hm0 hn0
       have hy := h y (by rw [hc, ← WithTop.coe_zero, WithTop.coe_lt_coe]; exact hc0)
       rw [hd, ← WithTop.coe_zero, WithTop.coe_le_coe] at hy
       omega
     · intro hn0
-      by_contra hm0
-      push_neg at hm0
+      by_contra! hm0
       obtain ⟨y, c, d, hc, hd, hc0, hd0⟩ := exists_pos_neg_valuation w v hq1' hr hn hm one_pos hn0 hm0
       have hy := h y⁻¹ (by rw [wa_inv v hd, ← WithTop.coe_zero, WithTop.coe_lt_coe]; omega)
       rw [wa_inv w hc, ← WithTop.coe_zero, WithTop.coe_le_coe] at hy
@@ -149,8 +147,7 @@ theorem wa_eq_of_le (v w : AddValuation F (WithTop ℤ)) (hv : ∀ a : F, a ≠ 
 theorem wa_pair (v w : AddValuation F (WithTop ℤ)) (hv : ∀ a : F, a ≠ 0 → v a ≠ ⊤)
     (hw : ∀ a : F, a ≠ 0 → w a ≠ ⊤) (hv1 : ∃ π : F, v π = 1) (hw1 : ∃ ρ : F, w ρ = 1)
     (hne : v ≠ w) : ∃ s, 0 < v s ∧ w s < 0 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   exact hne (wa_eq_of_le v w hv hw hv1 hw1 hcon)
 
 private theorem addValuation_add_eq_of_lt (w : AddValuation F (WithTop ℤ)) {x y : F} (h : w x < w y) :
@@ -280,20 +277,6 @@ theorem wa_sep {ι : Type*} [DecidableEq ι] (v : ι → AddValuation F (WithTop
 
 end WeakApproxAux
 
-private theorem lt_addValuation_sum_of_forall_lt {F : Type*} [Field F] {ι : Type*} (w : AddValuation F (WithTop ℤ))
-    (S : Finset ι) (x : ι → F) (c : WithTop ℤ) (h : ∀ i ∈ S, c < w (x i)) (hc : c ≠ ⊤) :
-    c < w (∑ i ∈ S, x i) := by
-  classical
-  revert h
-  refine Finset.induction_on S ?_ ?_
-  · intro _
-    rw [Finset.sum_empty, AddValuation.map_zero]
-    exact lt_top_iff_ne_top.mpr hc
-  · intro j S hjS ih h
-    rw [Finset.sum_insert hjS]
-    exact lt_of_lt_of_le (lt_min (h j (Finset.mem_insert_self j S))
-      (ih fun i hi => h i (Finset.mem_insert_of_mem hi))) (AddValuation.map_add w _ _)
-
 theorem weak_approx_orders {F : Type*} [Field F] {k : ℕ} (v : Fin k → AddValuation F (WithTop ℤ))
     (hfin : ∀ i (a : F), a ≠ 0 → v i a ≠ ⊤) (hone : ∀ i, ∃ π : F, v i π = 1)
     (hdist : Pairwise fun i j => v i ≠ v j) (n : Fin k → ℤ) :
@@ -337,7 +320,7 @@ theorem weak_approx_orders {F : Type*} [Field F] {k : ℕ} (v : Fin k → AddVal
   rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
   have hrest : ((n j : ℤ) : WithTop ℤ) <
       v j (∑ i ∈ Finset.univ.erase j, q i ^ n i * (1 + s i ^ (N i + 1))⁻¹) :=
-    lt_addValuation_sum_of_forall_lt (v j) _ _ _ (fun i hi => hoff i j (Finset.ne_of_mem_erase hi)) WithTop.coe_ne_top
+    (v j).map_lt_sum WithTop.coe_ne_top fun i hi => hoff i j (Finset.ne_of_mem_erase hi)
   have hlt : v j (q j ^ n j * (1 + s j ^ (N j + 1))⁻¹) <
       v j (∑ i ∈ Finset.univ.erase j, q i ^ n i * (1 + s i ^ (N i + 1))⁻¹) := by
     rw [hdiag j]

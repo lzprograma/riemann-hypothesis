@@ -63,11 +63,11 @@ theorem exists_adelicNorm_vecMul_le_mul {C : Set (AdelicGLn.AdelicGL K n)} (hC :
       exact mul_pos (Real.sqrt_pos.2 this) (mul_pos this (lt_of_lt_of_le one_pos (ha1 w)))
     · rw [hb']
       dsimp only
-      rw [if_pos hv]
+      rw [ite_eq_left hv]
       exact lt_of_lt_of_le one_pos (hb1 v)
   refine ⟨P, hPpos, fun g hg y hy => ?_⟩
   refine (adelicNorm_le_of_local (hy.vecMul g) hy (fun w => √n * (n * a w)) b' S (fun w => ?_)
-    (fun v hv => by rw [hb']; dsimp only; rw [if_neg hv]) (fun v => ?_)).trans (le_of_eq rfl)
+    (fun v hv => by rw [hb']; dsimp only; rw [ite_eq_right hv]) (fun v => ?_)).trans (le_of_eq rfl)
   · rw [infComp_vecMul_GL]
     exact euclidNorm_vecMul_le (zero_le_one.trans (ha1 w)) (ha w g hg) _
   · rw [finComp_vecMul_GL, hb']

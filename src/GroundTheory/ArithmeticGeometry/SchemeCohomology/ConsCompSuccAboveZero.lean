@@ -65,12 +65,8 @@ noncomputable def cechCosimplicial : CosimplicialObject AddCommGrpCat.{max w u} 
     rfl
 
 lemma hom_finset_sum_apply {M N : AddCommGrpCat.{v}} {α : Type*} (s : Finset α)
-    (f : α → (M ⟶ N)) (x : M) : (∑ a ∈ s, f a).hom x = ∑ a ∈ s, (f a).hom x := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, AddCommGrpCat.hom_add, AddMonoidHom.add_apply, ih]
+    (f : α → (M ⟶ N)) (x : M) : (∑ a ∈ s, f a).hom x = ∑ a ∈ s, (f a).hom x :=
+  map_sum ((AddMonoidHom.eval x).comp AddCommGrpCat.homAddEquiv.toAddMonoidHom) f s
 
 noncomputable def d (n : ℕ) : Cochain P U n →+ Cochain P U (n + 1) :=
   (AlgebraicTopology.AlternatingCofaceMapComplex.objD (cechCosimplicial P U) n).hom

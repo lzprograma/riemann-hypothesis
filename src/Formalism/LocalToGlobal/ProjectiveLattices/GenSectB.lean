@@ -48,7 +48,7 @@ theorem exists_pderiv_ne_zero_lt' {K : Type*} [Field K] [CharZero K] {ι : Type*
   · intro h0
     have hc := congrArg (AddMonoidAlgebra.coeff · (s - Finsupp.single i 1)) h0
     rw [hder, coeff_sum, AddMonoidAlgebra.coeff_zero, Finset.sum_eq_single s] at hc
-    · rw [coeff_monomial, if_pos rfl] at hc
+    · rw [coeff_monomial, ite_eq_left rfl] at hc
       exact mul_ne_zero (mem_support_iff.1 hs) (by exact_mod_cast hi) hc
     · intro t _ hts
       rw [coeff_monomial]
@@ -111,11 +111,7 @@ theorem isAlgebraic_map_adjoin {R A B : Type*} [CommRing R] [CommRing A] [CommRi
     rw [← AlgHom.map_adjoin]
     exact Subalgebra.mem_map.2 ⟨y, y.2, rfl⟩
   let f : Algebra.adjoin R s →+* Algebra.adjoin R (φ '' s) :=
-    { toFun := fun y => ⟨φ y, hmem y⟩
-      map_one' := by ext; simp
-      map_mul' := by intros; ext; simp
-      map_zero' := by ext; simp
-      map_add' := by intros; ext; simp }
+    ((φ.comp (Algebra.adjoin R s).val).codRestrict _ hmem).toRingHom
   have hf : Function.Injective f := fun y z hyz => Subtype.ext (hφ (congrArg Subtype.val hyz))
   exact h.ringHom_of_comp_eq (f := f) (g := φ.toRingHom) hf (RingHom.ext fun y => rfl)
 
@@ -146,7 +142,7 @@ theorem alg_CT (x : Fin m → Ω) (j₀ : Fin m)
   rintro y ⟨hy | ⟨ω, rfl⟩, -⟩
   · obtain ⟨q, rfl⟩ := hy
     have hq : (X q : CT (Ω := Ω) (D := D) j₀) ∈ Algebra.adjoin K (Set.range (gs (D := D) x j₀)) :=
-      Algebra.subset_adjoin ⟨q.1, by rw [gs, if_neg q.2, xv_of_not q.2]⟩
+      Algebra.subset_adjoin ⟨q.1, by rw [gs, ite_eq_right q.2, xv_of_not q.2]⟩
     exact isAlgebraic_algebraMap (⟨X q, hq⟩ : Algebra.adjoin K _)
   · exact hC ω
 
@@ -178,15 +174,15 @@ theorem gs_indep [CharZero K] (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ 
           if q.1.1 = 0 then 0 else aeval (gs x j₀) (pderiv (q.1.1, j₀) G) * C (rr x j₀ q.1.2) := by
     intro q
     simp_rw [pderiv_gs, mul_sub, mul_ite, mul_one, mul_zero, Finset.sum_sub_distrib,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     congr 1
     split_ifs with h0
     · exact Finset.sum_eq_zero fun p _ =>
-        if_neg (show ¬ (Zs j₀ p ∧ p.1 = q.1.1) from fun e => e.1.1 (e.2.trans h0))
+        ite_eq_right (show ¬ (Zs j₀ p ∧ p.1 = q.1.1) from fun e => e.1.1 (e.2.trans h0))
     · rw [Finset.sum_eq_single (q.1.1, j₀)]
-      · exact if_pos (show Zs j₀ (q.1.1, j₀) ∧ (q.1.1, j₀).1 = q.1.1 from ⟨⟨h0, rfl⟩, rfl⟩)
+      · exact ite_eq_left (show Zs j₀ (q.1.1, j₀) ∧ (q.1.1, j₀).1 = q.1.1 from ⟨⟨h0, rfl⟩, rfl⟩)
       · intro p _ hp
-        exact if_neg (show ¬ (Zs j₀ p ∧ p.1 = q.1.1) from fun e => hp (Prod.ext_iff.mpr ⟨e.2, e.1.2⟩))
+        exact ite_eq_right (show ¬ (Zs j₀ p ∧ p.1 = q.1.1) from fun e => hp (Prod.ext_iff.mpr ⟨e.2, e.1.2⟩))
       · intro h; exact absurd (Finset.mem_univ _) h
   have hpos : 0 < G.totalDegree := by
     by_contra h
@@ -225,7 +221,7 @@ theorem gs_indep [CharZero K] (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ 
       exact isAlgebraic_one
     · have hq : ¬ Zs j₀ (i.succ, k) := fun h => hk h.2
       have h := hd ⟨(i.succ, k), hq⟩
-      rw [hsum, if_neg (Fin.succ_ne_zero i), sub_eq_zero] at h
+      rw [hsum, ite_eq_right (Fin.succ_ne_zero i), sub_eq_zero] at h
       have m1 : aeval (gs x j₀) (pderiv (i.succ, j₀) G) ∈ Algebra.adjoin K (Set.range (gs x j₀)) := by
         rw [Algebra.adjoin_range_eq_range_aeval]; exact ⟨_, rfl⟩
       have m2 : aeval (gs x j₀) (pderiv (i.succ, k) G) ∈ Algebra.adjoin K (Set.range (gs x j₀)) := by
@@ -234,7 +230,7 @@ theorem gs_indep [CharZero K] (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ 
       · intro h0
         have h1 := congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f 1) h0
         simp only [Polynomial.coeff_sub, Polynomial.coeff_C_mul_X, Polynomial.coeff_C,
-          Polynomial.coeff_zero, if_pos, one_ne_zero, if_false, sub_zero] at h1
+          Polynomial.coeff_zero, ite_eq_left, one_ne_zero, ite_false, sub_zero] at h1
         exact hi (congrArg Subtype.val h1)
       · rw [map_sub, map_mul, Polynomial.aeval_C, Polynomial.aeval_C, Polynomial.aeval_X]
         exact sub_eq_zero.mpr h.symm

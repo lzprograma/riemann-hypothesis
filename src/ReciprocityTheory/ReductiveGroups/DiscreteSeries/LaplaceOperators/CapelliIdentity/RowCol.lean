@@ -165,7 +165,7 @@ theorem update_comp_succAbove {α : Type*} {p : ℕ} (f : Fin (p + 1) → α) (i
   by_cases hu : u = t
   · subst hu
     simp
-  · simp only [Function.update_apply, if_neg hu, Function.comp_apply]
+  · simp only [Function.update_apply, ite_eq_right hu, Function.comp_apply]
     rw [Equiv.swap_apply_of_ne_of_ne (Fin.succAbove_ne i u)
       (fun h => hu (Fin.succAbove_right_injective h))]
 
@@ -245,8 +245,8 @@ theorem comm_term (hE : GlRelR E) {p : ℕ} (R C : Fin (p + 1) → Fin n) (i j :
   · refine Finset.sum_congr rfl fun t _ => ?_
     simp only [capT, Function.comp_apply]
     by_cases h : C (j.succAbove t) = R i
-    · rw [if_pos h, if_pos h.symm, cminor_update_col E hE, smul_smul, neg_one_pow_col]
-    · rw [if_neg h, if_neg (Ne.symm h), smul_zero]
+    · rw [ite_eq_left h, ite_eq_left h.symm, cminor_update_col E hE, smul_smul, neg_one_pow_col]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h), smul_zero]
 
 end Ring
 

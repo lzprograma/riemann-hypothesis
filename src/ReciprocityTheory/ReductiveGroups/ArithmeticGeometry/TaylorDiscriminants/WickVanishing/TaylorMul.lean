@@ -5,8 +5,6 @@ import Mathlib.RingTheory.SimpleRing.Principal
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections.TM
@@ -54,13 +52,13 @@ theorem mD_const (c : ℂ) (s : Multiset (Fin g → ℂ)) :
         iteratedFDeriv ℂ l.length (fun _ : Fin g → ℂ => c) 0 (fun i => l.get i) = c := by
       rintro l rfl
       simp
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact key _ (Multiset.toList_eq_nil.2 rfl)
   · have hlen : s.toList.length ≠ 0 := by
       rw [Multiset.length_toList]
       exact fun h0 => hs (Multiset.card_eq_zero.1 h0)
     unfold mD lD
-    rw [iteratedFDeriv_const_of_ne hlen, if_neg hs]
+    rw [iteratedFDeriv_const_of_ne hlen, ite_eq_right hs]
     rfl
 
 theorem tay_const (c : ℂ) : tay (g := g) (fun _ => c) 0 = C c := by
@@ -76,7 +74,7 @@ theorem tay_const (c : ℂ) : tay (g := g) (fun _ => c) 0 = C c := by
       apply hn
       have h1 : Finsupp.toMultiset n = 0 := by simpa [dirs] using h0
       simpa using congrArg Multiset.toFinsupp h1
-    rw [if_neg hd, if_neg hn, zero_div]
+    rw [ite_eq_right hd, ite_eq_right hn, zero_div]
 
 theorem mD_cons_deriv {θ : (Fin g → ℂ) → ℂ} (hθ : ContDiffAt ℂ ω θ 0) (v : Fin g → ℂ) (t : Multiset (Fin g → ℂ)) :
     mD θ 0 (v ::ₘ t) = mD (fun y => fderiv ℂ θ y v) 0 t := by
@@ -153,8 +151,7 @@ theorem taylor_mul_coeff_low_degree (N : ℕ) : ∀ (f h : (Fin g → ℂ) → �
       show mD (f * h) 0 (dirs 0 + 0) / fct 0 = (mD f 0 (dirs 0 + 0) / fct 0) * (mD h 0 (dirs 0 + 0) / fct 0)
       simp [dirs, fct, mD_zero]
     · obtain ⟨x, hx⟩ : ∃ x, n x ≠ 0 := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         exact h0 (Finsupp.ext hc)
       obtain ⟨i, j⟩ := x
       have hi : i = 0 := Subsingleton.elim _ _

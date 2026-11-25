@@ -183,12 +183,9 @@ private theorem fibVan_pull {n N q : ℕ} {Z : SubMat k n} {Z' : SubMat k N}
   have hmemh : (∑ c ∈ S, c • (B c).indicator (fun _ => (1 : ℂ))) ∈ supportedIn {p : Sp k N | p.2 ≠ 0} :=
     Submodule.sum_mem _ fun c hc => Submodule.smul_mem _ _ <| by
       obtain ⟨hBc, hBk, hBO, -⟩ := hB c (Finset.mem_filter.1 hc).2
-      refine ⟨⟨fun s => ?_, HasCompactSupport.intro hBk fun _ hx => Set.indicator_of_notMem hx _⟩,
+      refine ⟨⟨((LocallyConstant.const (Sp k N) (1 : ℂ)).indicator hBc).isLocallyConstant,
+        HasCompactSupport.intro hBk fun _ hx => Set.indicator_of_notMem hx _⟩,
         Set.support_indicator_subset.trans hBO⟩
-      have := Set.indicator_const_preimage (B c) s (1 : ℂ)
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at this
-      rcases this with h | h | h | h <;> rw [h]
-      exacts [isOpen_univ, hBc.isOpen, hBc.isClosed.isOpen_compl, isOpen_empty]
   have heq : (∑ c ∈ S, c • (B c).indicator (fun _ => (1 : ℂ))) ∘ Φ = f := funext fun x => by
     simp only [Function.comp_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     have hterm : ∀ c ∈ S, c * (B c).indicator (fun _ => (1 : ℂ)) (Φ x) = if f x = c then c else 0 :=
@@ -254,14 +251,9 @@ private theorem pullPieces {n N q : ℕ} (Z : SubMat k n) (Z' : SubMat k N)
       fun _ hx => hx.1, fun g hg x ⟨hxB, hxc, hxφc, hxF⟩ => by
         let g' : GL (Fin N) k := Units.map (φ : Mat k n →* Mat k N) g
         have hφ : φ (g.val * x * g⁻¹.val) = g'.val * φ x * g'⁻¹.val := by rw [map_mul, map_mul]; rfl
-        have hcj : g.val * x * g⁻¹.val ∈ Bz Z := fun a ha => by
-          have hi : a * g⁻¹.val = g⁻¹.val * a := by
-            have e := congrArg (fun m => g⁻¹.val * m * g⁻¹.val) (hg a ha)
-            simp only [mul_assoc, Units.mul_inv, mul_one, Units.inv_mul_cancel_left] at e; exact e.symm
-          calc a * (g.val * x * g⁻¹.val) = g.val * (a * x) * g⁻¹.val := by
-                simp only [← mul_assoc, hg a ha]
-            _ = g.val * x * (a * g⁻¹.val) := by rw [hxB a ha]; simp only [mul_assoc]
-            _ = g.val * x * g⁻¹.val * a := by rw [hi]; simp only [mul_assoc]
+        have hcj : g.val * x * g⁻¹.val ∈ Bz Z := fun a ha =>
+          ((show Commute a g.val from hg a ha).mul_right (hxB a ha)).mul_right
+            (show Commute a g.val from hg a ha).units_inv_right
         refine ⟨hcj, by rw [Matrix.coe_units_inv, Matrix.charpoly_units_conj]; exact hxc,
           by show (φ (g.val * x * g⁻¹.val)).charpoly = _
              rw [hφ, Matrix.coe_units_inv, Matrix.charpoly_units_conj]; exact hxφc,
@@ -328,12 +320,7 @@ private theorem fb_exists (p c : ℕ) [Fact p.Prime] [CharP k p] :
   let E : (Fin d → k) ≃+ k := AddEquiv.ofBijective fF hbij
   exact ⟨d, hdpos, ⟨{
     β := β, cF := E.symm.toAddMonoidHom, recon := E.apply_symm_apply, uniq := E.symm_apply_apply
-    cont := continuous_def.2 fun U hU => by
-      show IsOpen (⇑E.symm ⁻¹' U)
-      rw [show ⇑E.symm ⁻¹' U = fF '' U from Set.ext fun y =>
-        ⟨fun hy => ⟨E.symm y, hy, E.apply_symm_apply y⟩,
-         fun ⟨x, hx, hxy⟩ => by subst hxy; show E.symm (E x) ∈ U; rwa [E.symm_apply_apply]⟩]
-      exact hopen U hU }⟩⟩
+    cont := E.toEquiv.continuous_symm_iff.2 hopen }⟩⟩
 
 private theorem phi_mu {p c d n : ℕ} [Fact p.Prime] [CharP k p] (B : FB k (p ^ c) d) (hdpos : 0 < d)
     (Z : SubMat k n) (Z' : SubMat k (n * d)) (φ : Mat k n →+* Mat k (n * d))
@@ -401,23 +388,16 @@ private theorem phi_mu {p c d n : ℕ} [Fact p.Prime] [CharP k p] (B : FB k (p ^
       · exact Or.inr (by rw [h])
   unfold mu; rw [hpi, finsum_mem_image fun _ _ _ _ h => hφ_inj h]
   refine finsum_mem_congr rfl fun e _ => ?_
-  have hcm : (cenSub Z').map (LinearMap.mulLeft k (φ e)) = img ((cenSub Z).map (LinearMap.mulLeft k e)) :=
+  have himg : ∀ (S : Submodule k (Mat k n)) (S' : Submodule k (Mat k (n * d))), (S' : Set _) = φ '' S →
+      S'.map (LinearMap.mulLeft k (φ e)) = img (S.map (LinearMap.mulLeft k e)) := fun S S' hS =>
     Submodule.ext fun y => ⟨by
         rintro ⟨x', hx', rfl⟩
-        obtain ⟨x, hx, rfl⟩ : x' ∈ φ '' Bz Z := hcen ▸ hx'
+        obtain ⟨x, hx, rfl⟩ : x' ∈ φ '' S := hS ▸ hx'
         exact ⟨e * x, ⟨x, hx, rfl⟩, map_mul φ e x⟩,
       by
         rintro ⟨_, ⟨x, hx, rfl⟩, rfl⟩
-        exact ⟨φ x, show φ x ∈ Bz Z' from hcen.symm ▸ ⟨x, hx, rfl⟩, (map_mul φ e x).symm⟩⟩
-  have hzm : Z'.toSubmodule.map (LinearMap.mulLeft k (φ e)) = img (Z.toSubmodule.map (LinearMap.mulLeft k e)) :=
-    Submodule.ext fun y => ⟨by
-        rintro ⟨x', hx', rfl⟩
-        obtain ⟨x, hx, rfl⟩ : x' ∈ φ '' (Z : Set (Mat k n)) := hZ'c ▸ hx'
-        exact ⟨e * x, ⟨x, hx, rfl⟩, map_mul φ e x⟩,
-      by
-        rintro ⟨_, ⟨x, hx, rfl⟩, rfl⟩
-        exact ⟨φ x, show φ x ∈ (Z' : Set (Mat k (n * d))) from hZ'c.symm ▸ ⟨x, hx, rfl⟩, (map_mul φ e x).symm⟩⟩
-  rw [hcm, hzm, hfr, hfr, Nat.mul_div_mul_left _ _ hdpos]
+        exact ⟨φ x, show φ x ∈ (S' : Set _) from hS.symm ▸ ⟨x, hx, rfl⟩, (map_mul φ e x).symm⟩⟩
+  rw [himg (cenSub Z) _ hcen, himg Z.toSubmodule _ hZ'c, hfr, hfr, Nat.mul_div_mul_left _ _ hdpos]
 
 private abbrev ix {n d : ℕ} (r : Fin (n * d)) : Fin n × Fin d := finProdFinEquiv.symm r
 
@@ -516,9 +496,8 @@ private theorem phiEx (p c : ℕ) [Fact p.Prime] [CharP k p] (n : ℕ) (Z : SubM
   have hgz : ∀ g' : GL (Fin (n * d)) k, g' ∈ Gz Z' ↔ ∃ g ∈ Gz Z, φ g.val = g'.val := fun g' =>
     ⟨fun hg => by
       obtain ⟨y, hy, hyg⟩ : g'.val ∈ φ '' Bz Z := hcen ▸ hg
-      obtain ⟨y', _, hyg'⟩ : g'⁻¹.val ∈ φ '' Bz Z := hcen ▸ fun a ha => by
-        have e := congrArg (fun m => g'⁻¹.val * m * g'⁻¹.val) (hg a ha)
-        simp only [mul_assoc, Units.mul_inv, mul_one, Units.inv_mul_cancel_left] at e; exact e.symm
+      obtain ⟨y', _, hyg'⟩ : g'⁻¹.val ∈ φ '' Bz Z :=
+        hcen ▸ fun a ha => (show Commute a g'.val from hg a ha).units_inv_right
       exact ⟨⟨y, y', hφ_inj (by rw [map_mul, map_one, hyg, hyg', Units.mul_inv]),
         hφ_inj (by rw [map_mul, map_one, hyg, hyg', Units.inv_mul])⟩, hy, hyg⟩,
      fun ⟨g, hg, hgg⟩ => show g'.val ∈ Bz Z' from hcen.symm ▸ ⟨g.val, hg, hgg⟩⟩

@@ -25,8 +25,6 @@ open CategoryTheory MonoidalCategory
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section Criteria
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -285,17 +283,15 @@ theorem charCocycle_eq_bockInt [NeZero n] (χ : G → ZMod n) (ψ : Additive G �
   constructor
   · rw [le_div_iff₀ hn]
     have : (0 : ℚ) ≤ r := by positivity
-    nlinarith
+    linarith only []
   · rw [div_lt_iff₀ hn]
     have : (r : ℚ) < n := by exact_mod_cast hlt
-    nlinarith
+    linarith only [this]
 
-theorem exists_cocycle_cupPairing_δ_bockSeq (hn : n ≠ 0) (A : Rep.{0} (ULift.{0} ℤ) G)
-    [IsDiscreteRep A] (z : cocycles (zmodRep.{0} G n) 1) (a : A.ρ.invariants) :
-    ∃ w : cocycles A 2, cohomologyπ A 2 w =
-        cupPairing (intMulPairing G A) (show 2 + 0 = 2 from rfl)
-          ((δ (bockSeq_shortExact G n hn) 1 2 rfl).hom (cohomologyπ _ 1 z)) ((H0Iso A).inv.hom a) ∧
-      ∀ g h : G, cochainOf A (cocycleι A 2 w) ![g, h] = bockInt (zmodCocycleHom z) g h • (a : A) := by
+theorem exists_cocycle_δ_bockSeq (hn : n ≠ 0) (z : cocycles (zmodRep.{0} G n) 1) :
+    ∃ x₁ : cocycles (intRepTriv G) 2,
+      cohomologyπ _ 2 x₁ = (δ (bockSeq_shortExact G n hn) 1 2 rfl).hom (cohomologyπ _ 1 z) ∧
+      ∀ g h : G, (cochainOf _ (cocycleι _ 2 x₁) ![g, h]).down = bockInt (zmodCocycleHom z) g h := by
   have : NeZero n := ⟨hn⟩
   have hS := bockSeq_shortExact G n hn
   have hχ : ∀ g h : G, zmodCocycleHom z (g * h) = zmodCocycleHom z g + zmodCocycleHom z h :=
@@ -322,26 +318,32 @@ theorem exists_cocycle_cupPairing_δ_bockSeq (hn : n ≠ 0) (A : Rep.{0} (ULift.
     rfl
   obtain ⟨x₁, hx₁⟩ := exists_cocycle_map_f_eq_d hS 2 z x₂ hx₂
   have hδ := δ_cohomologyπ_of_lift hS rfl z x₂ hx₂ x₁ hx₁
-  have hx₁v : ∀ g h : G, (cochainOf _ (cocycleι _ 2 x₁) ![g, h]).down =
-      bockInt (zmodCocycleHom z) g h := by
-    intro g h
-    have e : cochainOf (bockSeq G n).X₂ ((cochainsMap (bockSeq G n).f).f 2 (cocycleι _ 2 x₁)) ![g, h] =
-        cochainOf (bockSeq G n).X₂ (((cochainsComplex (bockSeq G n).X₂).d 1 2).hom x₂) ![g, h] :=
-      congrArg (fun c => cochainOf (bockSeq G n).X₂ c ![g, h]) hx₁
-    rw [cochainOf_cochainsMap_f, cochainOf_d_one_apply] at e
-    have e2 := congrArg ULift.down e
-    change n • (cochainOf _ (cocycleι _ 2 x₁) ![g, h]).down =
-      ((zmodCocycleHom z h).val : ℤ) - ((zmodCocycleHom z (g * h)).val : ℤ) +
-        ((zmodCocycleHom z g).val : ℤ) at e2
-    have e3 := natCast_mul_bockInt (zmodCocycleHom z) hχ g h
-    rw [nsmul_eq_mul] at e2
-    apply mul_left_cancel₀ (show (n : ℤ) ≠ 0 by exact_mod_cast hn)
-    rw [e2, e3]
-    ring
+  refine ⟨x₁, hδ.symm, fun g h => ?_⟩
+  have e : cochainOf (bockSeq G n).X₂ ((cochainsMap (bockSeq G n).f).f 2 (cocycleι _ 2 x₁)) ![g, h] =
+      cochainOf (bockSeq G n).X₂ (((cochainsComplex (bockSeq G n).X₂).d 1 2).hom x₂) ![g, h] :=
+    congrArg (fun c => cochainOf (bockSeq G n).X₂ c ![g, h]) hx₁
+  rw [cochainOf_cochainsMap_f, cochainOf_d_one_apply] at e
+  have e2 := congrArg ULift.down e
+  change n • (cochainOf _ (cocycleι _ 2 x₁) ![g, h]).down =
+    ((zmodCocycleHom z h).val : ℤ) - ((zmodCocycleHom z (g * h)).val : ℤ) +
+      ((zmodCocycleHom z g).val : ℤ) at e2
+  have e3 := natCast_mul_bockInt (zmodCocycleHom z) hχ g h
+  rw [nsmul_eq_mul] at e2
+  apply mul_left_cancel₀ (show (n : ℤ) ≠ 0 by exact_mod_cast hn)
+  rw [e2, e3]
+  ring
+
+theorem exists_cocycle_cupPairing_δ_bockSeq (hn : n ≠ 0) (A : Rep.{0} (ULift.{0} ℤ) G)
+    [IsDiscreteRep A] (z : cocycles (zmodRep.{0} G n) 1) (a : A.ρ.invariants) :
+    ∃ w : cocycles A 2, cohomologyπ A 2 w =
+        cupPairing (intMulPairing G A) (show 2 + 0 = 2 from rfl)
+          ((δ (bockSeq_shortExact G n hn) 1 2 rfl).hom (cohomologyπ _ 1 z)) ((H0Iso A).inv.hom a) ∧
+      ∀ g h : G, cochainOf A (cocycleι A 2 w) ![g, h] = bockInt (zmodCocycleHom z) g h • (a : A) := by
+  obtain ⟨x₁, hδ, hx₁v⟩ := exists_cocycle_δ_bockSeq hn z
   obtain ⟨z0, hz0, hz0c⟩ := exists_cocycle_H0Iso_inv A a
   refine ⟨HomologicalComplex.cyclesMap (cochainsMap (intMulPairing G A)) 2
     (cupCocycles (show 2 + 0 = 2 from rfl) x₁ z0), ?_, fun g h => ?_⟩
-  · rw [← hz0, hδ, cupPairing_cohomologyπ]
+  · rw [← hz0, ← hδ, cupPairing_cohomologyπ]
   · rw [cochainOf_cocycleι_cyclesMap_cupCocycles, hz0c]
     have e1 : cochainOf _ (cocycleι _ 2 x₁) (fun i : Fin 2 => (![g, h] : Fin 2 → G) ⟨i, by omega⟩) =
         (ULift.up (bockInt (zmodCocycleHom z) g h) : intRepTriv G) := by

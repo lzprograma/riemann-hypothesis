@@ -50,20 +50,9 @@ noncomputable section
 
 namespace BranchChartInt
 
-theorem analyticOnNhd_of_differentiableOn {k m : ℕ} {U : Set (Fin k → ℂ)} {f : (Fin k → ℂ) → Fin m → ℂ}
-    (hU : IsOpen U) (hf : DifferentiableOn ℂ f U) : AnalyticOnNhd ℂ f U := by
-  refine analyticOnNhd_pi_iff.2 fun j => ?_
-  have hj : DifferentiableOn ℂ (fun t => f t j) U := differentiableOn_pi.1 hf j
-  refine IndefiniteRowSideFullHecke.ComplexSets.analyticOnNhd_of_continuousOn_of_separately hU hj.continuousOn fun w hw i => ?_
-  have hw : DifferentiableAt ℂ (fun t => f t j) (Function.update w i (w i)) := by
-    rw [Function.update_eq_self]
-    exact (hj w hw).differentiableAt (hU.mem_nhds hw)
-  exact hw.comp (w i) (hasFDerivAt_update w (w i)).differentiableAt
-
 theorem differentiable_mulVec {d n : ℕ} (A : Matrix (Fin d) (Fin n) ℂ) :
     Differentiable ℂ (fun x : Fin n → ℂ => A *ᵥ x) :=
   (Matrix.mulVecLin A).toContinuousLinearMap.differentiable
-
 
 open Classical in
 theorem chartDens_indicator_image {n d : ℕ} (J : Ideal (MvPolynomial (Fin n) ℂ)) (A : Matrix (Fin d) (Fin n) ℂ)
@@ -109,7 +98,7 @@ theorem maDens_branch_eq {n d : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)} {A :
   set τ : (Fin d → ℂ) → Fin d → ℂ := fun t => A *ᵥ γ.toFun t with hτ
   have hτd : DifferentiableOn ℂ τ (Metric.ball 0 γ.radius) :=
     (differentiable_mulVec A).comp_differentiableOn γ.differentiableOn
-  have hτa : AnalyticAt ℂ τ t := analyticOnNhd_of_differentiableOn Metric.isOpen_ball hτd t ht
+  have hτa : AnalyticAt ℂ τ t := GroundTheory.Heights₂.Heights.ImplicitCurve.analyticOnNhd_of_differentiableOn Metric.isOpen_ball hτd t ht
   have hΔ : Metric.ball (0 : Fin d → ℂ) γ.radius ∈ 𝓝 t := Metric.isOpen_ball.mem_nhds ht
   have hγc : ContinuousAt γ.toFun t := γ.differentiableOn.continuousOn.continuousAt hΔ
   have hev : ∀ k, φ k ∘ γ.toFun =ᶠ[𝓝 t] (φ k ∘ s) ∘ τ := by
@@ -127,7 +116,7 @@ theorem maDens_branch_eq {n d : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)} {A :
       ((hev k).fderiv (𝕜 := ℝ)).fderiv_eq
     unfold ReciprocityTheory.AnForm.hessC
     rw [h2]
-  have hsa : AnalyticAt ℂ s (τ t) := analyticOnNhd_of_differentiableOn hUo hsd (τ t) hxU
+  have hsa : AnalyticAt ℂ s (τ t) := GroundTheory.Heights₂.Heights.ImplicitCurve.analyticOnNhd_of_differentiableOn hUo hsd (τ t) hxU
   have hc : ∀ k, ContDiffAt ℝ 2 (φ k ∘ s) (τ t) := by
     intro k
     obtain ⟨O, hOo, hZO, hφO⟩ := hφ k
@@ -148,7 +137,7 @@ theorem integrableOn_branch {n d : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)} {
       (Metric.ball 0 γ.radius) := by
   obtain ⟨K, hKc, hKΔ, hK0⟩ := hK
   have hγ : ContDiffOn ℝ 2 γ.toFun (Metric.ball 0 γ.radius) :=
-    ((analyticOnNhd_of_differentiableOn Metric.isOpen_ball γ.differentiableOn).contDiffOn_of_completeSpace
+    ((GroundTheory.Heights₂.Heights.ImplicitCurve.analyticOnNhd_of_differentiableOn Metric.isOpen_ball γ.differentiableOn).contDiffOn_of_completeSpace
       ).restrict_scalars ℝ
   have hc2 : ∀ k, ContDiffOn ℝ 2 (φ k ∘ γ.toFun) (Metric.ball 0 γ.radius) := by
     intro k
@@ -163,7 +152,6 @@ theorem integrableOn_branch {n d : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)} {
   simp [hK0 t htΔ htK]
 
 end BranchChartInt
-
 
 open BranchChartInt in
 theorem BranchChartInt.proof (hA : HolomorphicFibreSumInt.Statement) (hS : BranchSheetAE.Statement)
@@ -184,7 +172,7 @@ theorem BranchChartInt.proof (hA : HolomorphicFibreSumInt.Statement) (hS : Branc
   have hae : ∀ᵐ t ∂(volume.restrict Δ), (g ∘ γ.toFun) t * ReciprocityTheory.AnForm.maDens (fun k => φ k ∘ γ.toFun) t =
       Complex.normSq (jacC τ t).det * H t := by
     filter_upwards [hS n d J A p γ hJ hdim hfin, ae_restrict_mem measurableSet_ball] with t hts htΔ
-    simp only [hH, dif_pos hts, Function.comp_apply]
+    simp only [hH, dite_eq_left hts, Function.comp_apply]
     rw [maDens_branch_eq γ hφ htΔ hts.choose_spec]
     ring
   have hint : IntegrableOn (fun t => Complex.normSq (jacC τ t).det * H t) Δ :=

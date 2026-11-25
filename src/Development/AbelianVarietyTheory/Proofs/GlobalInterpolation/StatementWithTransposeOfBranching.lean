@@ -96,8 +96,8 @@ theorem colLat_block {K : Type} [Field K] [NumberField K] {N n : ℕ} (hN : N = 
     refine ⟨fun j => if hj : j.val < n then c ⟨j.val, hj⟩ else d, fun a => ?_⟩
     rw [sum_split hN]
     have e1 : ∀ j : Fin n, (if hj : (Br.iC hN j).val < n then c ⟨(Br.iC hN j).val, hj⟩ else d) = c j :=
-      fun j => dif_pos j.2
-    have e2 : (if hj : (Br.iL hN).val < n then c ⟨(Br.iL hN).val, hj⟩ else d) = d := dif_neg (lt_irrefl n)
+      fun j => dite_eq_left j.2
+    have e2 : (if hj : (Br.iL hN).val < n then c ⟨(Br.iL hN).val, hj⟩ else d) = d := dite_eq_right (lt_irrefl n)
     simp only [e1, e2]
     rcases cases_idx hN a with rfl | ⟨a, rfl⟩
     · simp only [h3, (h2 _).2, mul_zero, Finset.sum_const_zero, zero_add, hd]
@@ -164,10 +164,10 @@ theorem isBlock_mul_lastGL {R : Type} [CommRing R] {N n : ℕ} {hN : N = n + 1} 
   have hc : ∀ a : Fin n, ¬ ((iC hN a).1 + 1 = N) := fun a => by have := a.2; simp only [iC]; omega
   have hl : (iL hN).1 + 1 = N := hN.symm
   refine ⟨fun a b => ?_, fun a => ⟨?_, ?_⟩, ?_⟩ <;> rw [e]
-  · rw [if_neg (hc b), h.1]; simp
+  · rw [ite_eq_right (hc b), h.1]; simp
   · rw [(h.2.1 a).1, zero_mul]
   · rw [(h.2.1 a).2, zero_mul]
-  · rw [if_pos hl, h.2.2, one_mul]
+  · rw [ite_eq_left hl, h.2.2, one_mul]
 
 theorem sum_bExp {N n : ℕ} (hN : N = n + 1) {lam : DomWeight N} {sg : DomWeight n} (hI : Interlace hN lam sg) :
     ((∑ s, (bBr hN lam sg s).toNat : ℕ) : ℤ) + lam.detShift = nBr lam sg := by

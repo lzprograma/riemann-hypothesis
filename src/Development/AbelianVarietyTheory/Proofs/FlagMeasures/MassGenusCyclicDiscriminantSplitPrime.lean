@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimitiveHermitianSublatticeDiscriminantGenerato
 public import Mathlib.Algebra.Module.Lattice.Full
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
@@ -319,16 +320,7 @@ variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [M
 
 omit [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem nondeg_of_pd (h : V →ₗ⋆[K] V →ₗ[K] K) (hp : PD h) : h.Nondegenerate := by
-  obtain ⟨τ⟩ : Nonempty (K →+* ℂ) := inferInstance
-  refine ⟨fun x hx => ?_, fun x hx => ?_⟩
-  · by_contra hne
-    have := hp τ x hne
-    rw [hx x] at this
-    simp at this
-  · by_contra hne
-    have := hp τ x hne
-    rw [hx x] at this
-    simp at this
+  apply _root_.GlobalTheory.Mass.PrimDisc.nondeg <;> assumption
 
 omit [IsScalarTower (𝓞 K) K V] in
 theorem pd_of_ortho (hK : IsCMUnram K) (h : V →ₗ⋆[K] V →ₗ[K] K) (I : Submodule (𝓞 K) V) (n : ℕ)

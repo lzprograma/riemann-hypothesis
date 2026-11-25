@@ -67,8 +67,8 @@ theorem WSk_meas (Xa : ArchInM X) (Fl : FlatM X Xa) : Measurable (WSk X Xa Fl) :
           ∑ k, X.pnorm Xa.L (Xa.w k) x ^ 2) ^ (-((Xa.T : ℝ) - 1 / 2))) 0 := by
     funext x
     by_cases hx : x ∈ X.dom
-    · simp only [WSk, if_pos hx, Pi.mul_apply, Set.piecewise_eq_of_mem _ _ _ hx]
-    · simp only [WSk, if_neg hx, Pi.mul_apply, Set.piecewise_eq_of_notMem _ _ _ hx, Pi.zero_apply,
+    · simp only [WSk, ite_eq_left hx, Pi.mul_apply, Set.piecewise_eq_of_mem _ _ _ hx]
+    · simp only [WSk, ite_eq_right hx, Pi.mul_apply, Set.piecewise_eq_of_notMem _ _ _ hx, Pi.zero_apply,
         zero_mul]
   rw [key]
   exact (h1.mul h2).mul h3
@@ -96,7 +96,7 @@ theorem WSk_metric (Xa : ArchInM X) (Fl : FlatM X Xa) :
       IW.pnorm_rmul X normFactor_rightBorel_holds Xa.L (hwS k) hx hb
     have hps : ∀ k, X.pnorm Xa.L (Fl.s k) (rmul x b) = X.pnorm Xa.L (Fl.s k) x := fun k =>
       IW.pnorm_rmul X normFactor_rightBorel_holds Xa.L (hsS k) hx hb
-    simp only [WSk, if_pos hxb, if_pos hx, hpw, hps]
+    simp only [WSk, ite_eq_left hxb, ite_eq_left hx, hpw, hps]
     rw [IW.exp_neg_phla_rmul X normFactor_rightBorel_holds _ hx hb, ENNReal.ofReal_div_of_pos hbc]
     simp only [div_eq_mul_inv]
     ring
@@ -105,7 +105,7 @@ theorem WSk_metric (Xa : ArchInM X) (Fl : FlatM X Xa) :
       pnorm_lact Xa.L (hwS k) hγ hx
     have hps : ∀ k, X.pnorm Xa.L (Fl.s k) (lact γ x) = X.pnorm Xa.L (Fl.s k) x := fun k =>
       pnorm_lact Xa.L (hsS k) hγ hx
-    simp only [WSk, if_pos hxg, if_pos hx, hpw, hps, phla_lact _ hγ hx]
+    simp only [WSk, ite_eq_left hxg, ite_eq_left hx, hpw, hps, phla_lact _ hγ hx]
 
 end
 
@@ -162,7 +162,7 @@ theorem WSk_lower (Xa : ArchInM X) (Fl : FlatM X Xa) :
   set Ss := ∑ k, X.pnorm Xa.L (Fl.s k) x ^ 2 with hSsd
   set e := Real.exp (-phla X (Xa.Fp + Xa.T • Xa.L) x) with he
   have he0 : 0 < e := Real.exp_pos _
-  simp only [WSk, if_pos hx]
+  simp only [WSk, ite_eq_left hx]
   rw [← hSwd, ← hSsd, ← he]
   rcases hSs0.eq_or_lt with hS | hS
   · rw [← hS, zero_div, ENNReal.ofReal_zero, ENNReal.zero_rpow_of_neg (by linarith),

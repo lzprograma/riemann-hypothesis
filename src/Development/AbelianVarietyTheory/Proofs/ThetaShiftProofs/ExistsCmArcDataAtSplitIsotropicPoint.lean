@@ -1190,30 +1190,6 @@ theorem exists_cmObj_extend {ρ : 𝓞 K} {σ : K →+* ℂ} {p q : ℕ} (X : CM
 
 end Extend
 
-section Conclusions
-
-variable {D : Datum H} {l : Level H} (Xo : Moduli D l) {D' : Datum H} {g : ℕ} {ty : Fin g → (E →+* ℂ)}
-  {Pe : D'.La →+ (Fin g → ℂ)} {hP : IsPeriod D' ty Pe}
-
-variable {Xo} {Z : CMLat hP D.p D.q} {x : Sp ℂ ⟶ Xo.X} {e : (Fin g → ℂ) → (Over.mk x ⟶ Xo.univ.t.G)}
-  {K' : Type} [Field K'] [NumberField K'] {κ : KA l →+* K'} {σ' : K' →+* ℂ} {k : IntermediateField ℚ ℂ}
-
-end Conclusions
-
-section ChangeOfExp
-
-variable {D₁ D₂ : Datum H} {g : ℕ} {ty : Fin g → (E →+* ℂ)} {P₁ : D₁.La →+ (Fin g → ℂ)} {P₂ : D₂.La →+ (Fin g → ℂ)}
-
-end ChangeOfExp
-
-section Point
-
-end Point
-
-section Tensor
-
-end Tensor
-
 end GlobalTheory.CMExistsCompare
 end
 end -- clump:auto

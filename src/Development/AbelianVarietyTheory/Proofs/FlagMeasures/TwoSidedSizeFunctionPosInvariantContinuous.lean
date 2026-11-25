@@ -57,12 +57,11 @@ theorem exists_coord {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k 
     ∃ i : Fin (2 * r + k + 1), a.val ≤ i.val ∧ fvec k r z a i ≠ 0 := by
   by_cases ha : a.val < r
   · refine ⟨eI k r ⟨a.val, ha⟩, le_of_eq rfl, ?_⟩
-    simp only [fvec, dif_pos ha, bvec, Pi.single_eq_same]
+    simp only [fvec, dite_eq_left ha, bvec, Pi.single_eq_same]
     exact one_ne_zero
   ·
     have hz0 : ∃ i, z i ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       have : z = 0 := funext h
       subst this
       simp [Tz, herm] at hT
@@ -71,7 +70,7 @@ theorem exists_coord {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k 
       by_contra h
       exact hi (hz i (Or.inl (Nat.lt_of_not_le h)))
     refine ⟨i, le_trans (Nat.le_of_lt_succ a.isLt) hri, ?_⟩
-    simp only [fvec, dif_neg ha]
+    simp only [fvec, dite_eq_right ha]
     exact hi
 
 theorem lA_pos {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < Tz k r z)

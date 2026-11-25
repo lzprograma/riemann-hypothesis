@@ -20,8 +20,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.BetaI
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open BwdNP
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D)

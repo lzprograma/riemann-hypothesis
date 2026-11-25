@@ -3,44 +3,7 @@ module
 public import Formalism.LocalRingCardinality.DataMink
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
 public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.TameGeneratorWindow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.PrimesCongruentOne
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -250,31 +213,6 @@ theorem eq_of_from {C : FC} (p : Pt C) {R : Ranks} {H : Host R} {a b : R.A → �
   obtain ⟨eR, -, -, eq, ed, -, ep, ep', -⟩ := hF
   subst eR
   exact globalTwisting_congr_fact p.D.host eS eq ed ep ep' (by rw [h1, h2, Ideal.absNorm_top, Ideal.absNorm_top])
-
-theorem not_tameDistinct_of_eq_inv {r g m : ℕ} [Fact g.Prime] (χ : Fin m → (ZMod g)ˣ) (j : Fin m) (h : χ j = (χ j)⁻¹) :
-    ¬ TameDistinct r g χ := fun hd => by
-  have := hd.1 (a₁ := some (j, true)) (a₂ := some (j, false)) h
-  simp at this
-
-theorem primeToPart_of_cube {M : Type} [Monoid M] (l : ℕ) (hl : l.Prime) (h3 : l ≠ 3) (x : M) (hx : x ^ 3 = 1) :
-    Formalism.CyclotomicNorms.primeToPart l x = x := by
-  have hd : orderOf x ∣ 3 := orderOf_dvd_of_pow_eq_one hx
-  have hf : (orderOf x).factorization l = 0 := by
-    apply Nat.factorization_eq_zero_of_not_dvd
-    intro h
-    exact h3 ((Nat.prime_dvd_prime_iff_eq hl Nat.prime_three).1 (h.trans hd))
-  unfold Formalism.CyclotomicNorms.primeToPart
-  rw [hf]
-  rcases (Nat.dvd_prime Nat.prime_three).1 hd with h | h
-  · rw [orderOf_eq_one_iff.1 h]; simp
-  · have e : ∀ n, n = 3 → (((l ^ 0 : ℕ) : ZMod (n / l ^ 0))⁻¹).val = 1 := by
-      rintro n rfl
-      have e2 : ∀ m, m = 3 → (((1 : ℕ) : ZMod m)⁻¹).val = 1 := by
-        rintro m rfl
-        decide +kernel
-      rw [show ((l ^ 0 : ℕ) : ZMod (3 / l ^ 0)) = ((1 : ℕ) : ZMod (3 / l ^ 0)) by rw [pow_zero l]]
-      exact e2 _ (by simp)
-    rw [e _ h]; simp
 
 end GlobalTheory.EX.DC
 

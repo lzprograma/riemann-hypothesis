@@ -14,8 +14,6 @@ open Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups
 
 namespace Formalism.L2.SG.RowsAbsX
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 theorem summable_of_fibre_bound {P T : Type*} (A : P → T → Prop)

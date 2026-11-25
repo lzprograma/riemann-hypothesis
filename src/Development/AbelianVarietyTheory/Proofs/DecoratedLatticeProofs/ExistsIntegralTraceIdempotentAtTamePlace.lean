@@ -67,7 +67,7 @@ theorem idAt₂ (v : Pl D) : algebraMap (AF D.host.F) (AE D) (cP (· = v)) ∈ i
       simp only [GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedCharacter.compFin, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul,
         AlgHom.id_apply]
       rfl
-    rw [h, evalV_indP, if_neg w.2]
+    rw [h, evalV_indP, ite_eq_right w.2]
     exact TensorProduct.zero_tmul _ _
 
 
@@ -89,8 +89,8 @@ theorem placeIdem_eq_cP {v : Pl D} {εF : AF D.host.F} (h : IsPlaceIdem D v εF)
   show evalV D.host.F w α = evalV D.host.F w (indP (· = v))
   rw [evalV_indP]
   by_cases hw : w = v
-  · subst hw; rw [if_pos rfl, h1]
-  · rw [if_neg hw, h0 w hw]
+  · subst hw; rw [ite_eq_left rfl, h1]
+  · rw [ite_eq_right hw, h0 w hw]
 
 theorem half_mem_int (v : Pl D) (h2 : (2 : 𝓞 D.host.F) ∉ v.asIdeal) :
     algebraMap D.host.F (Fv D.host.F v) (2⁻¹) ∈ v.adicCompletionIntegers D.host.F := by
@@ -122,9 +122,9 @@ theorem exists_trace_one_at_tame : ∀ (D : D7) (v : Pl D) (ε : AE D) (hεε : 
       rw [evalV_indP]
       by_cases hw : w = v
       · subst hw
-        rw [if_pos rfl, one_mul, AlgHom.commutes]
+        rw [ite_eq_left rfl, one_mul, AlgHom.commutes]
         exact half_mem_int w h2
-      · rw [if_neg hw, zero_mul]
+      · rw [ite_eq_right hw, zero_mul]
         exact zero_mem _
     · rw [cA_alg, ← map_add (f := _), hεη]
       congr 1

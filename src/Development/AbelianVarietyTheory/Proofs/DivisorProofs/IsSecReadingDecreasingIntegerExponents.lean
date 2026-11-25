@@ -70,8 +70,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KchMul
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
@@ -103,7 +101,7 @@ theorem exists_sec_rdU_ne_zero (U : Formalism.L2.PjFree.Unf Xo c σ r) (k : U.Co
   have hv := (GlobalTheory.EtaForm.etaValAt_evR_of_fromTest E H Dw l Xo c 3 hR _ _ _ _ f hrule (CAt σ) (U.un k ⟨x₀, hx₀⟩)
     (hT _ _)).1
   have h0 := hne 0 _ hv
-  have e1 : Formalism.L2.PjFree.rdU U f k x₀ = Formalism.L2.PjFree.toC (evR Xo c f (U.un k ⟨x₀, hx₀⟩)) := dif_pos hx₀
+  have e1 : Formalism.L2.PjFree.rdU U f k x₀ = Formalism.L2.PjFree.toC (evR Xo c f (U.un k ⟨x₀, hx₀⟩)) := dite_eq_left hx₀
   rw [e1]
   exact h0
 
@@ -120,7 +118,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.FlatTw GlobalTheory.IndefiniteRowSideFullHecke.ComponentMassSum GlobalTheory.ShFam GlobalTheory.LamT GlobalTheory.KeyFourth GlobalTheory.IndefiniteRowSideFullHecke.DifferentConjugateDefects
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.FlatTw.Hol
@@ -278,7 +275,7 @@ theorem isSec_modelWt_rdU : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     · simp [exZ, wtZ]
       linarith
     · simp [exZ, wtZ, hag]
-      rw [ha τ j, if_pos j.isLt]
+      rw [ha τ j, ite_eq_left j.isLt]
   have hfgsec : f * ((κ.ρ : Rul Xo c) ^ (B + 1) * f₀ ^ (B + 1 + N + 1)) ∈ sec Xo c a (2 * t) := by
     rw [← hsn, hEa]; exact GlobalTheory.AllWt.mul_mem_secZ hf hgZ
 
@@ -294,11 +291,11 @@ theorem isSec_modelWt_rdU : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     have hj := ha τ j
     by_cases hjm : j < Dw.mult τ
     · have him : i < Dw.mult τ := lt_of_le_of_lt hij hjm
-      rw [if_pos hjm] at hj
-      rw [if_pos him] at hi
+      rw [ite_eq_left hjm] at hj
+      rw [ite_eq_left him] at hi
       have hd := hdec τ i j hij hjm
       omega
-    · rw [if_neg hjm] at hj
+    · rw [ite_eq_right hjm] at hj
       omega
 
   have hWeven : Even (wtZ ag (2 * tg)).2 := ⟨(tg : ℤ), by simp [wtZ, two_mul]⟩

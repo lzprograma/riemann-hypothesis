@@ -101,7 +101,7 @@ def chartPullDiv (L M : LB X) (f : Y ⟶ X) :
 def chartDivPull (L M : LB X) (f : Y ⟶ X) :
     ChartPull (LB.div (M.pull f) (L.pull f)) ((LB.div M L).pull f) (𝟙 Y) :=
   have le : ∀ (p : (PUnit → M.ι) × (PUnit → L.ι)) (y : Y), y ∈ (M.pull f).U p.1 ⊓ (L.pull f).U p.2 →
-      y ∈ ((LB.div M L).pull f).U (fun _ => (p.1 PUnit.unit, p.2 PUnit.unit)) := fun p y hy =>
+      y ∈ ((LB.div M L).pull f).U (fun _ => (p.1 PUnit.unit, p.2 PUnit.unit)) := fun p _ hy =>
     (mem_pull (L := LB.div M L) (J := fun _ => (p.1 PUnit.unit, p.2 PUnit.unit))).2
       ⟨mem_pull.1 hy.1, mem_pull.1 hy.2⟩
   { idx := fun p _ => (p.1 PUnit.unit, p.2 PUnit.unit)

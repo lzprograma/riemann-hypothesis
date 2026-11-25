@@ -3,50 +3,9 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.JointTypeLatticeSaturated
 import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.AntitoneOfAppend
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.DvrFractionFieldCharZeroPrime
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
+import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsEqMulProdMinors
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.IntegralJointTypeSumOfParts, Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.IntegralJointTypeSum
@@ -385,23 +344,12 @@ lemma coeff_XD {σ : Type*} (i j : σ) (f : MvPolynomial σ F) (mm : σ →₀ �
   classical
   rw [coeff_X_mul']
   by_cases h : mm i = 0
-  · rw [if_neg (by simpa using h), if_pos h]
-  · rw [if_pos (by simpa using h), if_neg h, coeff_pderiv]
+  · rw [ite_eq_right (by simpa using h), ite_eq_left h]
+  · rw [ite_eq_left (by simpa using h), ite_eq_right h, coeff_pderiv]
 
 lemma coeff_XDii {σ : Type*} (i : σ) (f : MvPolynomial σ F) (mm : σ →₀ ℕ) :
     AddMonoidAlgebra.coeff (X i * pderiv i f) mm = (mm i : F) * AddMonoidAlgebra.coeff f mm := by
-  rw [coeff_XD]
-  by_cases h : mm i = 0
-  · rw [if_pos h, h]; simp
-  · rw [if_neg h]
-    have h1 : Finsupp.single i 1 ≤ mm := Finsupp.single_le_iff.2 (Nat.one_le_iff_ne_zero.2 h)
-    rw [tsub_add_cancel_of_le h1]
-    have h2 : ((mm - Finsupp.single i 1 : σ →₀ ℕ) i : ℕ) + 1 = mm i := by
-      simp only [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.single_eq_same]
-      omega
-    have h3 : (((mm - Finsupp.single i 1 : σ →₀ ℕ) i : ℕ) + 1 : F) = (mm i : F) := by
-      rw [← h2, Nat.cast_add, Nat.cast_one]
-    rw [h3, mul_comm]
+  apply _root_.GlobalTheory.Harm.HighestUnique.coeff_X_mul_pderiv <;> assumption
 
 
 open Classical in
@@ -440,14 +388,14 @@ lemma tot_single (he : Function.Injective e) (l : Fin N) (c : Fin m) :
   · simp
   · intro l' _ hl'
     have : (Finsupp.single (l, e c) 1 : Fin N × Fin k →₀ ℕ) (l', e c) = 0 := by
-      rw [Finsupp.single_apply, if_neg]; intro h; exact hl' (congrArg Prod.fst h).symm
+      rw [Finsupp.single_apply, ite_eq_right]; intro h; exact hl' (congrArg Prod.fst h).symm
     rw [this]; simp
   · intro h; exact absurd (Finset.mem_univ _) h
   · intro a _ ha
     apply Finset.sum_eq_zero
     intro l' _
     have : (Finsupp.single (l, e c) 1 : Fin N × Fin k →₀ ℕ) (l', e a) = 0 := by
-      rw [Finsupp.single_apply, if_neg]; intro h; exact ha (he (congrArg Prod.snd h)).symm
+      rw [Finsupp.single_apply, ite_eq_right]; intro h; exact ha (he (congrArg Prod.snd h)).symm
     rw [this]; simp
   · intro h; exact absurd (Finset.mem_univ _) h
 
@@ -462,8 +410,8 @@ lemma XD_mem (he : Function.Injective e) (s : ℤ) (l : Fin N) (c d : Fin m) (f 
   intro mm hmm
   rw [Finset.mem_coe, mem_support_iff, coeff_XD] at hmm
   by_cases h : mm (l, e c) = 0
-  · rw [if_pos h] at hmm; exact absurd rfl hmm
-  · rw [if_neg h] at hmm
+  · rw [ite_eq_left h] at hmm; exact absurd rfl hmm
+  · rw [ite_eq_right h] at hmm
     have h0 : AddMonoidAlgebra.coeff f (mm - Finsupp.single (l, e c) 1 + Finsupp.single (l, e d) 1) ≠ 0 := left_ne_zero_of_mul hmm
     have h1 := hf (Finset.mem_coe.2 (mem_support_iff.2 h0))
     have h2 : Finsupp.single (l, e c) 1 ≤ mm := Finsupp.single_le_iff.2 (Nat.one_le_iff_ne_zero.2 h)
@@ -562,9 +510,9 @@ lemma deg_of_iso_path [CharZero F] (he : Function.Injective e) (b : Fin N → �
   have h3 : ((∑ a, mm (l, e a) : ℕ) : ℤ) = (b l : ℤ) := by
     push_cast
     by_cases hv : LL.vec l
-    · simp only [hv, if_true] at h1 h2
+    · simp only [hv, ite_true] at h1 h2
       rw [h1, h2]
-    · simp only [hv, if_false, Bool.false_eq_true, Finset.sum_neg_distrib] at h1 h2
+    · simp only [hv, ite_false, Bool.false_eq_true, Finset.sum_neg_distrib] at h1 h2
       rw [h2]; linarith
   exact_mod_cast h3
 
@@ -643,8 +591,7 @@ lemma eval_Tev (hd2 : ∀ c a, dcd c = some a → c = e a) (z : Fin N × Fin k �
 
 lemma exists_Tev_ne [Infinite F] (hd2 : ∀ c a, dcd c = some a → c = e a) (x : MvPolynomial (Fin N × Fin k) F)
     (hx : x ≠ 0) : ∃ y, Tev dcd y x ≠ 0 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hx
   apply MvPolynomial.funext
   intro z
@@ -680,9 +627,9 @@ theorem path_of_iso (D : Formalism.BasicNotions.D7) (h14 : JointComponentsPaths 
         unfold multideg
         push_cast
         by_cases hv : LL.vec l
-        · simp only [hv, if_true, id] at h5 ⊢
+        · simp only [hv, ite_true, id] at h5 ⊢
           exact h5
-        · simp only [hv, Bool.false_eq_true, if_false, Finset.sum_neg_distrib, id] at h5 ⊢
+        · simp only [hv, Bool.false_eq_true, ite_false, Finset.sum_neg_distrib, id] at h5 ⊢
           linarith
       unfold dOf
       rw [← h4, Int.toNat_natCast]

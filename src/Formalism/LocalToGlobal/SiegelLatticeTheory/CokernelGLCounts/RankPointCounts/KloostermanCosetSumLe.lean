@@ -25,8 +25,6 @@ namespace Formalism.MainNotions.KTwoCosetCount
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section G
 
 def ccOf (CH Cl : ℝ) : ℝ := 17 + 4 / Cl + 4 * |CH|
@@ -142,12 +140,6 @@ theorem final_arith {L Cl CH rd : ℝ} {r m f n j : ℕ} (hL : 1 < L) (hCl : 0 <
 
 end G
 
-section H
-
-variable {D : D7}
-
-end H
-
 end Formalism.MainNotions.KTwoCosetCount
 
 end
@@ -165,8 +157,6 @@ noncomputable section
 namespace Formalism.MainNotions.KTwoCosetCount
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section A
 
@@ -298,12 +288,6 @@ theorem sum_prod_le {ι α : Type*} [DecidableEq ι] [DecidableEq α] (S : Finse
 
 end C
 
-section Dsum
-
-variable {D : D7}
-
-end Dsum
-
 end Formalism.MainNotions.KTwoCosetCount
 
 end
@@ -323,8 +307,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNoti
   Formalism.L2.SG.Full Formalism.MainNotions.KTwoCosetCount Formalism.MainNotions.MinorIntegralityTorus
 
 namespace Formalism.L2.SG.KappaOffDiagonal
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Gen
 
@@ -486,9 +468,9 @@ theorem labFacts_conc (t : GTu Y u) :
     · exact minorInt_conc t l (le_trans hl (Nat.sub_le _ _))
     · exact isIntegral_zero
   · unfold labT
-    rw [if_neg (not_le.mpr (by unfold jT at hl; exact hl))]
+    rw [ite_eq_right (not_le.mpr (by unfold jT at hl; exact hl))]
   · unfold labT
-    rw [if_pos (Nat.zero_le _)]
+    rw [ite_eq_left (Nat.zero_le _)]
     unfold Dl leadMinorE
     first
       | exact Matrix.det_isEmpty

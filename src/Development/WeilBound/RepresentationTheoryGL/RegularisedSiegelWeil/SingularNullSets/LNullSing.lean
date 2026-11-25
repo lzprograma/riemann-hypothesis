@@ -20,59 +20,12 @@ public import Mathlib.LinearAlgebra.Matrix.SchurComplement
 public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.MeasureTheory.Measure.Haar.Basic
 public import Mathlib.Topology.Instances.Matrix
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactUnipFlag
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToGAdMat
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Topology.Compactness.Paracompact
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.GlobalFields.Adele.Topology
 
@@ -117,12 +70,6 @@ theorem absE_eq_ideleModule (x : (_root_.GlobalTheory.IndefiniteRowSideFullHecke
   rw [h2, h3]
 
 end Transfer
-
-section OnE
-
-variable {E : Type} [Field E] [NumberField E]
-
-end OnE
 
 end GlobalTheory.IdeleLogHom
 end -- clump:auto
@@ -209,7 +156,6 @@ open scoped NNReal ENNReal Matrix
 open PositivityTheory.Rg.Rsw PositivityTheory.Rg.Rsw.L
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -486,7 +432,7 @@ end Places
 
 theorem exists_isFieldDec (D : D7) (S : Finset (Pl D)) (e : AE D) (h : IsIdem S e) :
     ∃ (ι : Type) (_ : Fintype ι) (f : ι → AE D), IsFieldDec e f ∧ ∀ j, NonDiscreteAt (f j) :=
-  exists_dec_adeles S h.1 (fun v hv => (h.2 v).trans (if_pos hv)) fun v hv => (h.2 v).trans (if_neg hv)
+  exists_dec_adeles S h.1 (fun v hv => (h.2 v).trans (ite_eq_left hv)) fun v hv => (h.2 v).trans (ite_eq_right hv)
 
 end GlobalTheory.CompanionTheory.NullFr.FieldDec
 end -- clump:auto
@@ -588,10 +534,10 @@ theorem alt_of_field {K : Type} [Field K] (π : A →+* K) (hs : Function.Surjec
             intro k
             by_cases h : k = i
             · subst h
-              simp only [hb, if_true]
+              simp only [hb, ite_true]
               field_simp
               ring
-            · simp only [hb, if_neg h]
+            · simp only [hb, ite_eq_right h]
               field_simp
               ring
           rw [Finset.sum_congr rfl fun k _ => hsplit k, Finset.sum_add_distrib,
@@ -648,7 +594,6 @@ open scoped NNReal ENNReal Matrix
 open PositivityTheory.Rg.Rsw PositivityTheory.Rg.Rsw.L
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompanionTheory.NullFr
 
@@ -1064,8 +1009,7 @@ theorem net : ∀ {A : Type} [CommRing A] [TopologicalSpace A] [IsTopologicalRin
     · exact ⟨c, hcP, 0, mem_of_mem_nhds hU, by simp, by simp⟩
     · obtain ⟨p, hp, hpc⟩ : ∃ p ∈ P, ¬ Disjoint ((fun x : A => p + (u : A) * x) '' K)
           ((fun x : A => c + (u : A) * x) '' K) := by
-        by_contra hcon
-        push_neg at hcon
+        by_contra! hcon
         have hQ : (∀ p ∈ insert c P, f * p = p ∧ p ∈ C) ∧ ∀ p ∈ insert c P, ∀ q ∈ insert c P,
             p ≠ q → Disjoint ((fun x : A => p + (u : A) * x) '' K)
               ((fun x : A => q + (u : A) * x) '' K) := by
@@ -1213,12 +1157,12 @@ theorem mul_gU_apply' {m : ℕ} (M : Fx A m t) (i : Fin t) (d : Fin t → A) (p 
   rw [GlobalTheory.CompanionTheory.NullFr.gU, Matrix.mul_add, Matrix.mul_one, Matrix.add_apply, Matrix.mul_apply]
   congr 1
   by_cases h : j = i
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [Matrix.of_apply, if_pos h, mul_comm]
-  · rw [if_neg h]
+    rw [Matrix.of_apply, ite_eq_left h, mul_comm]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun k _ => ?_
-    rw [Matrix.of_apply, if_neg h, mul_zero]
+    rw [Matrix.of_apply, ite_eq_right h, mul_zero]
 
 theorem mul_gD_apply' {m : ℕ} (M : Fx A m t) (i : Fin t) (u : A) (p : Fin m) (j : Fin t) :
     (M * gD i u) p j = if j = i then u * M p i else M p j := by
@@ -1234,9 +1178,9 @@ theorem mul_gU_gD_apply {m : ℕ} (M : Fx A m t) (i : Fin t) (c : Fin t → A) (
       if j = i then u' * (M p i - ∑ k, c k * M p k) else M p j := by
   rw [GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gD_apply', GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_apply', GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_apply']
   by_cases h : j = i
-  · rw [if_pos h, if_pos h, if_pos rfl]
+  · rw [ite_eq_left h, ite_eq_left h, ite_eq_left rfl]
     simp only [Pi.neg_apply, neg_mul, Finset.sum_neg_distrib, sub_eq_add_neg]
-  · simp only [if_neg h, add_zero]
+  · simp only [ite_eq_right h, add_zero]
 
 theorem gU_neg_mul (i : Fin t) (c : Fin t → A) (hc : c i = 0) : gU i (-c) * gU i c = 1 := by
   refine Matrix.ext fun p j => ?_
@@ -1330,7 +1274,7 @@ theorem point_eq_translate : ∀ {A : Type} [CommRing A] {a r t : ℕ} (e f : A)
     · intro l k
       rw [GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_gD_apply]
       by_cases hk : k = i
-      · rw [if_pos hk, hsum l, Matrix.sub_apply, hY₀i l]
+      · rw [ite_eq_left hk, hsum l, Matrix.sub_apply, hY₀i l]
         refine ⟨?_, ?_⟩
         · rw [mul_left_comm, key l, ← mul_assoc, Units.inv_mul, one_mul]
           exact (hy₁ l).2
@@ -1339,13 +1283,13 @@ theorem point_eq_translate : ∀ {A : Type} [CommRing A] {a r t : ℕ} (e f : A)
       · have hE : (GlobalTheory.CompanionTheory.NullFr.yc P z - GlobalTheory.CompanionTheory.NullFr.yU i y₀) l k =
             GlobalTheory.CompanionTheory.NullFr.yc P z l k := by
           simp [GlobalTheory.CompanionTheory.NullFr.yU, hk]
-        rw [if_neg hk, hE]
+        rw [ite_eq_right hk, hE]
         exact hY l k
     · intro p k hk
-      rw [GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_gD_apply, if_neg hk]
+      rw [GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_gD_apply, ite_eq_right hk]
       exact hKo p k hk
     · intro p
-      rw [GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_gD_apply, if_pos rfl, ← mul_assoc, hu', mul_sub,
+      rw [GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_gD_apply, ite_eq_left rfl, ← mul_assoc, hu', mul_sub,
         Finset.mul_sum]
       simp_rw [← mul_assoc, h1fc₀, zero_mul, Finset.sum_const_zero, sub_zero]
       exact hKi p
@@ -1356,13 +1300,13 @@ theorem point_eq_translate : ∀ {A : Type} [CommRing A] {a r t : ℕ} (e f : A)
         rw [GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_gD_apply]
         by_cases hk : k = i
         · simp [hk, hc₁i]
-        · rw [if_neg hk]
+        · rw [ite_eq_right hk]
       have hL : f * (GlobalTheory.CompanionTheory.NullFr.vc P z p i - ∑ k, c₀ k * GlobalTheory.CompanionTheory.NullFr.vc P z p k) =
           (u : A) * ∑ k, c₁ k * GlobalTheory.CompanionTheory.NullFr.vc P z p k := by
         rw [mul_sub, hfK p, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [← mul_assoc, hfc₀, ← sub_mul, hc k, add_sub_cancel_left, mul_assoc]
-      rw [hR, GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_gD_apply, if_pos rfl, mul_left_comm, hL,
+      rw [hR, GlobalTheory.CompanionTheory.NullFr.CoverStep.mul_gU_gD_apply, ite_eq_left rfl, mul_left_comm, hL,
         ← mul_assoc, Units.inv_mul, one_mul]
   · refine Prod.ext rfl ?_
     dsimp only
@@ -1681,7 +1625,6 @@ section
 open PositivityTheory.Rg.Rsw PositivityTheory.Rg.Rsw.L
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompanionTheory.NullFr
 

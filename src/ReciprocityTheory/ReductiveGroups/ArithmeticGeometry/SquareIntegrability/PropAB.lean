@@ -1384,9 +1384,9 @@ theorem paD_jet (c : ℕ) (H : EuclideanSpace ℂ ι → ℂ) {α : ι →₀ �
   rw [paD_sum_smul_paMono, Finset.sum_eq_single α]
   · have hf : (paFact α : ℂ) ≠ 0 :=
       Nat.cast_ne_zero.2 (Finset.prod_ne_zero_iff.2 fun i _ => Nat.factorial_ne_zero _)
-    rw [paD_mono, if_pos rfl, div_mul_cancel₀ _ hf]
+    rw [paD_mono, ite_eq_left rfl, div_mul_cancel₀ _ hf]
   · intro β _ hβ
-    rw [paD_mono, if_neg (Ne.symm hβ), mul_zero]
+    rw [paD_mono, ite_eq_right (Ne.symm hβ), mul_zero]
   · intro h
     exact absurd hα h
 

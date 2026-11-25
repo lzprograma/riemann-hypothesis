@@ -100,11 +100,11 @@ theorem sum_block (L : ℕ → ℝ) (a a' : ℝ) {p r : ℕ} (h : p ≤ r) :
       a * (L p - L 0) + a' * (L r - L p) := by
   induction r, h using Nat.le_induction with
   | base =>
-    rw [Finset.sum_congr rfl fun i hi => by rw [if_pos (Finset.mem_range.1 hi)],
+    rw [Finset.sum_congr rfl fun i hi => by rw [ite_eq_left (Finset.mem_range.1 hi)],
       ← Finset.mul_sum, Finset.sum_range_sub]
     ring
   | succ r h ih =>
-    rw [Finset.sum_range_succ, ih, if_neg (by omega)]
+    rw [Finset.sum_range_succ, ih, ite_eq_right (by omega)]
     ring
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
@@ -118,14 +118,14 @@ theorem phla_block {r : ℕ} (X : Data E r) {x0 : Frame X.Ψ r} (h0 : IsOrth X x
   set x := cpt X x0 z
   let L' : ℕ → ℝ := fun k => if h : k < r + 1 then IW.Lm X x τ ⟨k, h⟩ else 0
   have h1 : ∀ i : Fin r, IW.Lm X x τ i.succ = L' (i + 1) := fun i => by
-    simp only [L', dif_pos (Nat.succ_lt_succ i.isLt)]; rfl
+    simp only [L', dite_eq_left (Nat.succ_lt_succ i.isLt)]; rfl
   have h2 : ∀ i : Fin r, IW.Lm X x τ i.castSucc = L' i := fun i => by
-    simp only [L', dif_pos (Nat.lt_succ_of_lt i.isLt)]; rfl
-  have hL0 : L' 0 = 0 := by simp only [L', dif_pos (Nat.succ_pos r)]; exact IW.Lm_zero X x τ
+    simp only [L', dite_eq_left (Nat.lt_succ_of_lt i.isLt)]; rfl
+  have hL0 : L' 0 = 0 := by simp only [L', dite_eq_left (Nat.succ_pos r)]; exact IW.Lm_zero X x τ
   have hLr : L' r = 0 := by
-    simp only [L', dif_pos (Nat.lt_succ_self r)]; exact IW.Lm_last_cpt X x0 h0 z τ
+    simp only [L', dite_eq_left (Nat.lt_succ_self r)]; exact IW.Lm_last_cpt X x0 h0 z τ
   have hLp : L' X.p0 = IW.Lm X x τ ⟨X.p0, Nat.lt_succ_of_le X.p0_le⟩ := by
-    simp only [L', dif_pos (Nat.lt_succ_of_le X.p0_le)]
+    simp only [L', dite_eq_left (Nat.lt_succ_of_le X.p0_le)]
   simp_rw [h1, h2, Int.cast_ite]
   rw [Fin.sum_univ_eq_sum_range
     (fun i => (if i < X.p0 then (a τ : ℝ) else a' τ) * (L' (i + 1) - L' i)) r,

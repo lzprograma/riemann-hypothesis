@@ -5,49 +5,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursi
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -146,7 +103,7 @@ theorem cancel (Z : Fin n → A[X]) (v : ℂ) (h : ∀ c, ∑ p, Z p * Tm (EX E)
     intro k hk c
     have h1 := congrArg (fun f : A[X] => f.coeff (k + 1)) (h c)
     simp only [Tm_EX, mul_add, Finset.sum_add_distrib, coeff_add, finsetSum_coeff, coeff_mul_C, hk, zero_mul,
-      Finset.sum_const_zero, zero_add, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, coeff_mul_X,
+      Finset.sum_const_zero, zero_add, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, coeff_mul_X,
       coeff_zero] at h1
     exact h1
   have all : ∀ N, (∀ k, N ≤ k → ∀ p, (Z p).coeff k = 0) → ∀ k p, (Z p).coeff k = 0 := by
@@ -174,27 +131,16 @@ end ring
 theorem skip_two_succAbove_comp {m : ℕ} (q : Fin (m + 2)) (i' : Fin (m + 1)) :
     (skip2 (min (q.succAbove i') q) (max (q.succAbove i') q) : Fin m → Fin (m + 2)) =
       q.succAbove ∘ i'.succAbove := by
-  funext j
-  by_cases h : i'.castSucc < q
-  · rw [Fin.succAbove_of_castSucc_lt _ _ h, min_eq_left h.le, max_eq_right h.le]
-    apply Fin.ext
-    simp only [skip2, Function.comp, Fin.succAbove, Fin.lt_def, Fin.val_castSucc] at h ⊢
-    split_ifs <;> simp at * <;> omega
-  · have h' := not_lt.mp h
-    have h2 : q ≤ q.succAbove i' := by
-      rw [Fin.succAbove_of_le_castSucc _ _ h']
-      exact h'.trans (Fin.castSucc_lt_succ).le
-    rw [min_eq_right h2, max_eq_left h2]
-    exact skip_succ_double_identity m q i' j (by simpa [Fin.le_def] using h')
+  apply _root_.Formalism.FourierDecayAlt.P.Qx6.skip_two_succAbove_comp_alt <;> assumption
 
 theorem sign_succ {m : ℕ} (q : Fin (m + 1)) (x : Fin m) :
     ((-1 : ℤ) ^ (x : ℕ)) = (-1) ^ ((q.succAbove x : Fin (m + 1)) : ℕ) * eps (q.succAbove x) q := by
   unfold eps
   by_cases h : x.castSucc < q
-  · rw [Fin.succAbove_of_castSucc_lt _ _ h, if_pos (by simpa [Fin.lt_def] using h)]
+  · rw [Fin.succAbove_of_castSucc_lt _ _ h, ite_eq_left (by simpa [Fin.lt_def] using h)]
     simp
   · have h' := not_lt.mp h
-    rw [Fin.succAbove_of_le_castSucc _ _ h', if_neg (by simp [Fin.le_def] at h' ⊢; omega)]
+    rw [Fin.succAbove_of_le_castSucc _ _ h', ite_eq_right (by simp [Fin.le_def] at h' ⊢; omega)]
     simp [pow_succ]
 
 theorem eps_sq {t : ℕ} (i q : Fin t) : eps i q * eps i q = 1 := by
@@ -223,15 +169,15 @@ theorem quantum_minor_expansion_second_sum (hE : GlRel E) (q : Fin (m + 2)) (i' 
         (if c = q then ((-1 : ℤ) ^ (q' : ℕ)) • qminor E (q.succAbove i').succAbove j.succAbove (u + 1) else 0) := by
   by_cases hc : c = q
   · have hne : c ≠ q.succAbove i' := by rw [hc]; exact (Fin.succAbove_ne _ _).symm
-    rw [if_neg hne, if_pos hc, zero_add]
+    rw [ite_eq_right hne, ite_eq_left hc, zero_add]
     have hrows : q.succAbove ∘ i'.succAbove = (q.succAbove i').succAbove ∘ q'.succAbove := by
       rw [← skip_two_succAbove_comp q i', ← skip_two_succAbove_comp (q.succAbove i') q', hq', min_comm, max_comm]
     have h := sumA E hE (q.succAbove i').succAbove j.succAbove q' q' (u + 1)
-    simp only [add_sub_cancel_right, if_true, hq'] at h
+    simp only [add_sub_cancel_right, ite_true, hq'] at h
     rw [hrows, hc]
     exact h
   · obtain ⟨c', rfl⟩ := Fin.exists_succAbove_eq hc
-    rw [if_neg hc, add_zero]
+    rw [ite_eq_right hc, add_zero]
     have h := sumA E hE q.succAbove j.succAbove i' c' (u + 1)
     simp only [add_sub_cancel_right] at h
     rw [h]
@@ -273,13 +219,13 @@ theorem step1 (hE : GlRel E) (σ : ℤ) (q : Fin (m + 2)) (i' : Fin (m + 1)) (q'
   have hne : q ≠ q.succAbove i' := (Fin.succAbove_ne _ _).symm
   by_cases h1 : c = q
   · subst h1
-    rw [if_pos rfl, if_neg hne, if_neg hne, if_pos rfl, mul_zero, sub_zero, zero_add, mul_smul_comm, mul_smul_comm,
+    rw [ite_eq_left rfl, ite_eq_right hne, ite_eq_right hne, ite_eq_left rfl, mul_zero, sub_zero, zero_add, mul_smul_comm, mul_smul_comm,
       smul_smul, hσ1, c1, sub_self]
-  · rw [if_neg h1, if_neg h1, mul_zero, zero_sub, add_zero]
+  · rw [ite_eq_right h1, ite_eq_right h1, mul_zero, zero_sub, add_zero]
     by_cases h2 : c = q.succAbove i'
-    · rw [if_pos h2, if_pos h2, mul_smul_comm, mul_smul_comm, smul_smul, hσ2, c2, neg_smul, sub_neg_eq_add,
+    · rw [ite_eq_left h2, ite_eq_left h2, mul_smul_comm, mul_smul_comm, smul_smul, hσ2, c2, neg_smul, sub_neg_eq_add,
         neg_add_cancel]
-    · rw [if_neg h2, if_neg h2, mul_zero, mul_zero, smul_zero, neg_zero, sub_zero]
+    · rw [ite_eq_right h2, ite_eq_right h2, mul_zero, mul_zero, smul_zero, neg_zero, sub_zero]
 
 end core
 
@@ -380,10 +326,10 @@ theorem jac2 (hE : GlRel E) (u : ℂ) (i q j p : Fin (m + 2)) (hiq : i ≠ q) :
   obtain ⟨h0, h1⟩ := jacS E hE u q i' j
   by_cases hjp : j = p
   · subst hjp
-    rw [if_pos (Or.inr rfl), hs, hs, hs]
+    rw [ite_eq_left (Or.inr rfl), hs, hs, hs]
     exact h0
   · obtain ⟨x, rfl⟩ := Fin.exists_succAbove_eq (Ne.symm hjp)
-    rw [if_neg (by tauto), skip_two_succAbove_comp q i', min_comm j, max_comm j, skip_two_succAbove_comp j x, hs, hs, hs, hs]
+    rw [ite_eq_right (by tauto), skip_two_succAbove_comp q i', min_comm j, max_comm j, skip_two_succAbove_comp j x, hs, hs, hs, hs]
     exact h1 x
 
 end final

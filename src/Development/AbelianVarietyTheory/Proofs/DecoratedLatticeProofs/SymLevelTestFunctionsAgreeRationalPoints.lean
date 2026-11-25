@@ -88,15 +88,15 @@ theorem patOfPlaces : ∀ (F : Type) [Zero F] [One F] (κ ρ s τ j : ℕ) (R : 
     by_cases h : i.val = i'.val
     · have : i = i' := Fin.ext h
       subst this
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact (h1 _ (by omega)).1
-    · rw [if_neg (by intro e; simp only [Sum.inl.injEq] at e; exact h (congrArg Fin.val e))]
+    · rw [ite_eq_right (by intro e; simp only [Sum.inl.injEq] at e; exact h (congrArg Fin.val e))]
       refine (h1 _ (by omega)).2 _ (by omega) (by omega) (Or.inr (Or.inl ?_))
       simp only [symIdx]; split_ifs <;> omega
   ·
     simp only [FreeIx, FreeTop, not_lt] at hab
     simp only [zPos]
-    rw [if_neg (by simp)]
+    rw [ite_eq_right (by simp)]
     rcases Nat.lt_or_eq_of_le hab with hl | hl
     · refine (h1 _ (by omega)).2 _ (by omega) (by omega) (Or.inr (Or.inl ?_))
       simp only [symIdx]; split_ifs <;> omega
@@ -105,7 +105,7 @@ theorem patOfPlaces : ∀ (F : Type) [Zero F] [One F] (κ ρ s τ j : ℕ) (R : 
   ·
     simp only [FreeIx, FreeTop, not_lt] at hab
     simp only [zPos]
-    rw [if_neg (by simp)]
+    rw [ite_eq_right (by simp)]
     refine (h1 _ (by omega)).2 _ (by omega) (by omega) (Or.inr (Or.inl ?_))
     simp only [symIdx]; split_ifs <;> omega
   ·
@@ -114,25 +114,25 @@ theorem patOfPlaces : ∀ (F : Type) [Zero F] [One F] (κ ρ s τ j : ℕ) (R : 
     by_cases h : i.val = i'.val
     · have : i = i' := Fin.ext h
       subst this
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact (h1 _ (by omega)).1
-    · rw [if_neg (by intro e; simp only [Sum.inl.injEq, Sum.inr.injEq] at e; exact h (congrArg Fin.val e))]
+    · rw [ite_eq_right (by intro e; simp only [Sum.inl.injEq, Sum.inr.injEq] at e; exact h (congrArg Fin.val e))]
       refine (h1 _ (by omega)).2 _ (by omega) (by omega) (Or.inr (Or.inl ?_))
       simp only [symIdx]; split_ifs <;> omega
   · simp [FreeIx] at hab
   ·
     simp only [zPos]
-    rw [if_neg (by simp)]
+    rw [ite_eq_right (by simp)]
     have := hA i u
     exact (h1 _ (by omega)).2 _ (by omega) (by omega) (Or.inl (by omega))
   · simp only [zPos]
-    rw [if_neg (by simp)]
+    rw [ite_eq_right (by simp)]
     have := hA i u
     exact (h1 _ (by omega)).2 _ (by omega) (by omega) (Or.inl (by omega))
   ·
     simp only [FreeIx, not_le, Fin.lt_def] at hab
     simp only [zPos]
-    rw [if_neg (by intro e; simp only [Sum.inr.injEq, Prod.mk.injEq] at e; rw [e.1] at hab; omega)]
+    rw [ite_eq_right (by intro e; simp only [Sum.inr.injEq, Prod.mk.injEq] at e; rw [e.1] at hab; omega)]
     have hu := hA i u
     have hu' := hA i' u'
     apply h2 _ _ (by omega) (by omega) (by omega)
@@ -151,11 +151,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain MeasureTheory ValuativeRel Matrix Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain GlobalTheory.SymBridge
 
-theorem _root_.GlobalTheory.T.iteratedLevelPattern_to_framePlaces : ∀ (F : Type) [Zero F] [One F] (κ ρ s τ j : ℕ) (R : ℕ → ℕ → F), (∀ (a b : Ix (Fin κ ⊕ Fin (s + 1)) (Fin τ) j), ¬ FreeIx ρ a b → R (zPos a) (zPos b) = if a = b then 1 else 0) → ((∀ p', p' < κ + s + 1 → R p' p' = 1 ∧ ∀ p, p < κ + s + 1 + j * τ → p ≠ p' →
-        (κ + s + 1 ≤ p ∨ symIdx κ ρ p' < symIdx κ ρ p ∨ (p' = κ + ρ ∧ p < κ)) → R p p' = 0) ∧
-      (∀ p p', κ + s + 1 ≤ p' → p' < κ + s + 1 + j * τ → p < κ + s + 1 + j * τ →
-        (p' - (κ + s + 1)) / τ < (p - (κ + s + 1)) / τ → R p p' = 0)) := by
-  first | exact @GlobalTheory.PatPlaces.pattern_to_places
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IteratedLevelPatternToFramePlacesStatement =====
@@ -177,9 +172,7 @@ theorem places_iff_pattern : ∀ (F : Type) [Zero F] [One F] (κ ρ s τ j : ℕ
       (∀ p p', κ + s + 1 ≤ p' → p' < κ + s + 1 + j * τ → p < κ + s + 1 + j * τ →
         (p' - (κ + s + 1)) / τ < (p - (κ + s + 1)) / τ → R p p' = 0)) := by
   intro F _ _ κ ρ s τ j R
-  exact ⟨GlobalTheory.T.iteratedLevelPattern_to_framePlaces F κ ρ s τ j R, _root_.GlobalTheory.patOfPlaces F κ ρ s τ j R⟩
-
-theorem symmetricLevelCharacter_rationalPoint_eq_residue : ∀ (E K k : Type) [Field E] [NumberField E] [StarRing E] [Field K] [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (P : HeightOneSpectrum (𝓞 E)) (q : ℕ) (ι : E →+* k) (σ₀ : K →+* ℂ) (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (s κ : ℕ) (S : SymData k s κ), Comparison₂ P q ι σ₀ ψ₀ χ S → ∀ (M : ℕ → ℕ → E), (∀ p p', p < κ + s + 1 → p' < κ + s + 1 → IntAt P (M p p')) → ∀ (g : S.P.J), (g : GL (Fin κ ⊕ Fin (s + 1)) k).val = Matrix.of (fun a b => ι (M (GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum.framePos κ (s + 1) a) (GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum.framePos κ (s + 1) b))) → ((S.P.lam g : ℂˣ) : ℂ) = σ₀ (ψ₀ (redP P (∑ i ∈ Finset.range (κ - 1), M i (i + 1) + ∑ i ∈ Finset.range (κ + s + 1 - κ - 1), M (κ + i) (κ + i + 1)))) := _root_.GlobalTheory.symLevel_lam_residue
+  exact ⟨GlobalTheory.PatPlaces.pattern_to_places F κ ρ s τ j R, _root_.GlobalTheory.patOfPlaces F κ ρ s τ j R⟩
 
 theorem zPos_equiv : ∀ (κ l τ j : ℕ), ∃ eqv : Ix (Fin κ ⊕ Fin l) (Fin τ) j ≃ Fin (κ + l + j * τ), ∀ a, (eqv a : ℕ) = zPos a := by
   intro κ l τ j

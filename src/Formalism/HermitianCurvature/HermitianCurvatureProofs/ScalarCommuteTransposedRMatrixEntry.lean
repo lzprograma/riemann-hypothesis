@@ -3,51 +3,8 @@ module
 public import Formalism.HermitianCurvature.StatementWd
 public import Mathlib.CategoryTheory.Category.Basic
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EntryCommuteTransposedRMatrix
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -146,9 +103,6 @@ theorem insert_diagScalar_mul_of_free (a : S) (M : M2 (SlopeTestRemainingChoices
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [← mul_assoc, (hb i j).eq, mul_assoc]
 
-theorem io_mul_apply (x : A) (M : SlopeTestRemainingChoices S A) (z y : Ix S) : ((io x : SlopeTestRemainingChoices S A) * M) z y = x * M z y := by
-  simp [io, Matrix.scalar_apply, Matrix.diagonal_mul]
-
 theorem mul_io_apply (x : A) (M : SlopeTestRemainingChoices S A) (z y : Ix S) : (M * (io x : SlopeTestRemainingChoices S A)) z y = M z y * x := by
   simp [io, Matrix.scalar_apply, Matrix.mul_diagonal]
 
@@ -162,7 +116,7 @@ alias io_comm_io := _root_.Formalism.FourierDecayAlt.P.Wd6.io_comm
 theorem free_apply_zero {a : S} {M : SlopeTestRemainingChoices S A} (hM : FreeOf a M) {z y : Ix S} (h : z a ≠ y a) :
     M z y = 0 := by
   have h1 := congrFun (congrFun (hM (z a) (z a)).eq z) y
-  rw [eU_mul_apply, mul_eU_apply, if_pos rfl, if_neg (Ne.symm h), Function.update_eq_self] at h1
+  rw [eU_mul_apply, mul_eU_apply, ite_eq_left rfl, ite_eq_right (Ne.symm h), Function.update_eq_self] at h1
   exact h1
 
 theorem free_one (a : S) : FreeOf a (1 : SlopeTestRemainingChoices S A) := fun _ _ => Commute.one_right _
@@ -225,7 +179,7 @@ theorem freeOf_positive_word_matrix {c : S} (w : List (Letter K S)) (hc : c ∉ 
   | cons l w ih =>
     simp only [List.map_cons, List.mem_cons, not_or] at hc
     by_cases h : l.plus
-    · simp only [Xp, h, if_true]
+    · simp only [Xp, h, ite_true]
       exact freeOf2_mul (ih hc.2) (freeOf2_rmatrix hc.1 _)
     · simp only [Xp, h]
       exact ih hc.2
@@ -237,7 +191,7 @@ theorem freeOf_negative_word_matrix {c : S} (w : List (Letter K S)) (hc : c ∉ 
   | cons l w ih =>
     simp only [List.map_cons, List.mem_cons, not_or] at hc
     by_cases h : l.plus
-    · simp only [Xm, h, if_true]
+    · simp only [Xm, h, ite_true]
       exact ih hc.2
     · simp only [Xm, h]
       exact freeOf2_mul (freeOf2_rmatrix_transpose hc.1 _) (ih hc.2)
@@ -280,7 +234,7 @@ theorem Rh0_col (a : S) (D : K) (hD : D ≠ 1) (m : Fin 2) (z : Ix S) :
   · subst hm
     by_cases hz : z = e1
     · subst hz
-      simp only [if_true, and_self, Matrix.one_apply_eq]
+      simp only [ite_true, and_self, Matrix.one_apply_eq]
       exact smul_cancel D hD 1
     · simp [hz]
   · have hm' : ¬ (0 = m) := fun h => hm h.symm
@@ -308,7 +262,7 @@ theorem Xp_fix (w : List (Letter K S)) (Y : K) (hr : Reg w Y) (k : Fin 2) (z : I
     · have hl : Y - l.pt ≠ 1 := by
         have := hr l List.mem_cons_self
         simpa [RegL, h] using this
-      simp only [Xp, h, if_true]
+      simp only [Xp, h, ite_true]
       rw [mul_col _ _ (Rh0_col l.intersection_update_fsHerm_neg_one _ hl)]
       exact ih hr' k z
     · simp only [Xp, h]
@@ -329,7 +283,7 @@ theorem Rht0_row (b : S) (d : K) (hd : d ≠ 1) (X : M2 (SlopeTestRemainingChoic
     simp [e1]
   by_cases hz : z b = 0
   · have hu : Function.update z b 0 = z := by rw [← hz]; exact Function.update_eq_self b z
-    simp only [hz, if_true, h1, add_zero, hu]
+    simp only [hz, ite_true, h1, add_zero, hu]
     exact smul_cancel d hd _
   · have h0 : (X 0 k) z e1 = 0 := free_apply_zero (hX 0 k) hz
     simp [hz, h0]
@@ -348,7 +302,7 @@ theorem Xm_fix (w : List (Letter K S)) (Y : K) (hn : (w.map Letter.intersection_
     have hr' : Reg w Y := fun l' hl' => hr l' (List.mem_cons_of_mem _ hl')
     simp only [List.map_cons, List.nodup_cons] at hn
     by_cases h : l.plus
-    · simp only [Xm, h, if_true]
+    · simp only [Xm, h, ite_true]
       exact ih hn.2 hr' k z
     · have hl : l.pt - Y ≠ 1 := by
         have := hr l List.mem_cons_self
@@ -371,7 +325,7 @@ theorem entry_ins (a : S) (R : SlopeTestRemainingChoices S A) (M : M2 (SlopeTest
   by_cases hz : z a = 0
   · congr 1
     unfold ins
-    simp only [Fin.sum_univ_two, Matrix.add_apply, eU_mul_apply, hz, if_true]
+    simp only [Fin.sum_univ_two, Matrix.add_apply, eU_mul_apply, hz, ite_true]
     have hu : Function.update z a 0 = z := by rw [← hz]; exact Function.update_eq_self a z
     have h1 : ∀ i, (M i 1) (Function.update z a 1) e1 = 0 := fun i => by
       apply free_apply_zero (hM i 1)

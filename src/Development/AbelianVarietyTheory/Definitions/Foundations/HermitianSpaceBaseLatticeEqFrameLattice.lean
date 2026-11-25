@@ -422,8 +422,6 @@ section Moderate
 def IsModerate {G X : Type*} [Norm X] (ht : G → ℝ≥0) (f : G → X) : Prop :=
   ∃ (C : ℝ) (N : ℕ), ∀ g, ‖f g‖ ≤ C * (ht g : ℝ) ^ N
 
-def ModerateGrowth {X : Type*} [Norm X] (f : GAd σ J → X) : Prop := IsModerate (height σ J) f
-
 variable {σ J}
 
 end Moderate
@@ -444,8 +442,6 @@ theorem frameLat_fg {E : Type} [Field E] [NumberField E] [StarRing E] (V : HSpac
     (Submodule.map_equiv_eq_comap_symm (V.frame.equivFun.restrictScalars (𝓞 E)) V.L0).symm
   rw [this]
   exact V.standardTuple_isLattice.fg.map _
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (V : HSp D)
 

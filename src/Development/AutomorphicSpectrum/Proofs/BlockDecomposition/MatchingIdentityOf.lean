@@ -6,44 +6,7 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinea
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermLocallyConstant
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingTransferOf
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -52,8 +15,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun PositivityTheory.Rg.BcB.F.F5 PositivityTheory.Rg.BcB.F.Eig PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcN.F2 PositivityTheory.Rg.BcB.F.Tail PositivityTheory.Rg.Bc.ArchbcB.B PositivityTheory.Rg.BcB.F
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.CompanionTheory.MatchId
 
@@ -105,7 +66,7 @@ theorem sum_mconv_diag_right (d : LocData E n) {a : ℕ} {w : Pl E} (F : d.kap w
   · simp [LocData.diag]
   · intro z _ hz
     have : d.diag g z y = fun _ => 0 := by
-      simp only [LocData.diag, if_neg hz]
+      simp only [LocData.diag, ite_eq_right hz]
       rfl
     rw [this, mconv_zero_right]
   · simp
@@ -117,7 +78,7 @@ theorem sum_mconv_diag_left (d : LocData E n) {a : ℕ} {w : Pl E} (F : d.kap w 
   · simp [LocData.diag]
   · intro z _ hz
     have : d.diag g x z = fun _ => 0 := by
-      simp only [LocData.diag, if_neg (Ne.symm hz)]
+      simp only [LocData.diag, ite_eq_right (Ne.symm hz)]
       rfl
     rw [this, mconv_zero_left]
   · simp
@@ -188,9 +149,9 @@ theorem qT_inv (d : LocData E n) {a : ℕ} {w : Pl E} (s : Finset (Fin (n / 2)))
   obtain ⟨h1, h2⟩ := Subgroup.mem_prod.1 hk
   unfold LocData.qT
   by_cases h : LocData.admitted n a s
-  · simp only [dif_pos h, dc2, Prod.fst_mul, Prod.snd_mul, GlobalTheory.CompanionTheory.MatchPow.dcos_left' _ h1,
+  · simp only [dite_eq_left h, dc2, Prod.fst_mul, Prod.snd_mul, GlobalTheory.CompanionTheory.MatchPow.dcos_left' _ h1,
       GlobalTheory.CompanionTheory.MatchPow.dcos_left' _ h2, GlobalTheory.CompanionTheory.MatchPow.dcos_right' _ h1, GlobalTheory.CompanionTheory.MatchPow.dcos_right' _ h2, and_self]
-  · simp only [dif_neg h, and_self]
+  · simp only [dite_eq_right h, and_self]
 
 theorem cMu_left {a b : ℕ} {w : Pl E} {μ : (w.adicCompletion E)ˣ →* ℂˣ} {κ : GLw a w × GLw b w}
     (h1 : μ (GeneralLinearGroup.det κ.1 ^ b * GeneralLinearGroup.det κ.2 ^ a) = 1) (m : GLw a w × GLw b w) :
@@ -238,11 +199,11 @@ theorem hc_hecke {d : LocData E n} (hd : d.Ok) {a : ℕ} (ha : a ≤ n) {w : Pl 
 
 theorem lev_good {d : LocData E n} {a : ℕ} {w : Pl E} (hG : d.Good w) : d.lev a w = K2 a (n - a) w := by
   have : w ∉ d.S₀ ∪ d.Bad := by simp [hG.2.2.1, hG.2.2.2.1]
-  simp only [LocData.lev, if_neg hG.2.1, if_neg this]
+  simp only [LocData.lev, ite_eq_right hG.2.1, ite_eq_right this]
 
 theorem lev₂_good {d : LocData E n} {a : ℕ} {w : Pl E} (hG : d.Good w) : d.lev₂ a w = K2 a (n - a) w := by
   have : w ∉ d.S₀ ∪ d.Bad := by simp [hG.2.2.1, hG.2.2.2.1]
-  simp only [LocData.lev₂, if_neg this]
+  simp only [LocData.lev₂, ite_eq_right this]
 
 theorem eqv_eL (hI : IdemAlg) {d : LocData E n} (hd : d.Ok) {a : ℕ} (ha : a ≤ n) :
     ((d.eL a).mul (d.eL a)).Eqv d.P (d.eL a) ∧ ((d.eL a).mul (d.eL a)).Eqv d.P (d.eL a) :=
@@ -262,7 +223,7 @@ theorem eqv_fixL (hI : IdemAlg) {d : LocData E n} (hd : d.Ok) {a : ℕ} (ha : a 
     split_ifs with hB
     · have hT : w ∉ d.T := fun h => hw (Finset.mem_union_left _ h)
       have e : d.lev a w = d.L a w := by
-        simp only [LocData.lev, if_neg hT, if_pos (Finset.mem_union_right _ hB)]
+        simp only [LocData.lev, ite_eq_right hT, ite_eq_left (Finset.mem_union_right _ hB)]
       rw [e]
       exact hd.fix a ha w hB
     · exact idem_lev hI hd ha w
@@ -273,25 +234,25 @@ theorem eqv_betaL (hI : IdemAlg) (hne : ∀ (d : LocData E n) (_ : d.Ok) (a : �
   obtain ⟨h1, h2⟩ := hne d hd a ha
   refine eqv_of_hecke hI hd ha _ (fun w hw x y => ?_) (fun w _ => idem_lev hI hd ha w) (fun w => idem_lev₂ hI hd ha w)
   by_cases hT : w ∈ d.T
-  · have e : d.lev a w = I2 a (n - a) w := by simp only [LocData.lev, if_pos hT]
+  · have e : d.lev a w = I2 a (n - a) w := by simp only [LocData.lev, ite_eq_left hT]
     rw [e]
     refine ⟨compact_m h1 h2 hw x y, fun k hk m => ?_⟩
     show (if w ∈ d.T then d.diag (fun x => d.qT a w x.1.1) x y else _) (k * m) = (if w ∈ d.T then d.diag (fun x => d.qT a w x.1.1) x y else _) m ∧
       (if w ∈ d.T then d.diag (fun x => d.qT a w x.1.1) x y else _) (m * k) = (if w ∈ d.T then d.diag (fun x => d.qT a w x.1.1) x y else _) m
-    simp only [if_pos hT, LocData.diag]
+    simp only [ite_eq_left hT, LocData.diag]
     split_ifs
     · exact qT_inv d _ hk m
     · exact ⟨rfl, rfl⟩
   · have hS : w ∈ d.S₀ := (Finset.mem_union.1 hw).resolve_left hT
     have e : d.lev a w = d.L a w := by
-      simp only [LocData.lev, if_neg hT, if_pos (Finset.mem_union_left _ hS)]
+      simp only [LocData.lev, ite_eq_right hT, ite_eq_left (Finset.mem_union_left _ hS)]
     have mem : ∀ x : d.kap w, x.1.2 ∈ d.X w := fun x => by
       have := x.2
-      simp only [LocData.idx, if_neg hT, if_pos hS] at this
+      simp only [LocData.idx, ite_eq_right hT, ite_eq_left hS] at this
       exact (Finset.mem_product.1 this).2
     rw [e]
     show IsHecke _ (if w ∈ d.T then _ else d.mac a ha w (d.e w) x.1.2 y.1.2)
-    rw [if_neg hT]
+    rw [ite_eq_right hT]
     exact mac_hecke hd ha hS (mem x) (mem y)
 
 theorem eqv_hL (hI : IdemAlg) {d : LocData E n} (hd : d.Ok) {a : ℕ} (ha : a ≤ n) {w : Pl E} (hG : d.Good w) (k : ℕ)
@@ -303,22 +264,22 @@ theorem eqv_hL (hI : IdemAlg) {d : LocData E n} (hd : d.Ok) {a : ℕ} (ha : a �
   · cases intersection_update_fsHerm_neg_one
     · by_cases e : v = w
       · subst e
-        simp only [LocData.hL, Bool.false_eq_true, if_false, Function.update_self]
+        simp only [LocData.hL, Bool.false_eq_true, ite_false, Function.update_self]
         rw [lev_good hG]
         exact hc_hecke hd ha hG k
-      · simp only [LocData.hL, Bool.false_eq_true, if_false, Function.update_of_ne e]
+      · simp only [LocData.hL, Bool.false_eq_true, ite_false, Function.update_of_ne e]
         exact idem_lev hI hd ha v
-    · simp only [LocData.hL, if_true]
+    · simp only [LocData.hL, ite_true]
       exact idem_lev hI hd ha v
   · cases intersection_update_fsHerm_neg_one
-    · simp only [LocData.hL, Bool.false_eq_true, if_false]
+    · simp only [LocData.hL, Bool.false_eq_true, ite_false]
       exact idem_lev₂ hI hd ha v
     · by_cases e : v = w
       · subst e
-        simp only [LocData.hL, if_true, Function.update_self]
+        simp only [LocData.hL, ite_true, Function.update_self]
         rw [lev₂_good hG]
         exact hc_hecke hd ha hG k
-      · simp only [LocData.hL, if_true, Function.update_of_ne e]
+      · simp only [LocData.hL, ite_true, Function.update_of_ne e]
         exact idem_lev₂ hI hd ha v
 
 theorem matchLMIdOf : PositivityTheory.Rg.BcB.F.MLM.MatchLMIdOf := by

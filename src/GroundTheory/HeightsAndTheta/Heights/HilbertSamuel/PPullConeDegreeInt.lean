@@ -4,6 +4,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullC
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeDegree
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBlockImageHilb
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -35,21 +36,8 @@ theorem isMultiHomog_of_isWeightedHomogeneous {f : MRing ι} {a : K → ℕ}
 
 theorem mConeMap_eq (y : (Σ k, ι k) → Ω) {f : MRing ι} {a : K → ℕ}
     (hf : IsWeightedHomogeneous (NumbersDVR.blockWeight ι) f a) :
-    mConeMap y f = MvPolynomial.C (aeval y f) * ∏ k, MvPolynomial.X k ^ a k := by
-  conv_lhs => rw [f.as_sum]
-  conv_rhs => rw [f.as_sum]
-
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun μ hμ => ?_
-  have hX : ∏ p : (Σ k, ι k), (MvPolynomial.X p.1 : MvPolynomial K Ω) ^ μ p = ∏ k, MvPolynomial.X k ^ a k := by
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    show ∏ i, (MvPolynomial.X k : MvPolynomial K Ω) ^ μ ⟨k, i⟩ = _
-    rw [Finset.prod_pow_eq_pow_sum, ← weight_blockWeight_apply, hf (mem_support_iff.mp hμ)]
-  simp only [mConeMap, aeval_monomial]
-  rw [Finsupp.prod_fintype _ _ (fun i => by simp), Finsupp.prod_fintype _ _ (fun i => by simp)]
-  simp only [mul_pow, Finset.prod_mul_distrib, hX, map_mul, map_prod, map_pow, MvPolynomial.algebraMap_apply]
-  ring
+    mConeMap y f = MvPolynomial.C (aeval y f) * ∏ k, MvPolynomial.X k ^ a k :=
+  BlockScaling.aeval_cone_block y fun _ hμ => BlockScaling.sum_eq_of_isWeightedHomogeneous_single hf hμ
 
 theorem coeff_mConeMap (y : (Σ k, ι k) → Ω) (f : MRing ι) (n : K → ℕ) :
     AddMonoidAlgebra.coeff (mConeMap y f) (Finsupp.equivFunOnFinite.symm n) =
@@ -60,8 +48,8 @@ theorem coeff_mConeMap (y : (Σ k, ι k) → Ω) (f : MRing ι) (n : K → ℕ) 
     rw [mConeMap_eq y hm, PullConeDegree.prod_X_pow_eq_monomial, C_mul_monomial, mul_one, coeff_monomial,
       weightedHomogeneousComponent_of_mem (n := Finsupp.weight (NumbersDVR.blockWeight ι) m) hm]
     by_cases h : n = Finsupp.weight (NumbersDVR.blockWeight ι) m
-    · rw [if_pos h, if_pos (by rw [h])]
-    · rw [if_neg h, if_neg (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h').symm), map_zero]
+    · rw [ite_eq_left h, ite_eq_left (by rw [h])]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h').symm), map_zero]
   | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, hp, hq, map_add (f := _), map_add (f := _)]
 
 
@@ -122,7 +110,7 @@ theorem proof : PullConeDegreeInt.Statement := by
     fun j => isMultiHomog_of_isWeightedHomogeneous (weightedHomogeneousComponent_isWeightedHomogeneous _ _), ?_⟩
   have hc := congrArg (AddMonoidAlgebra.coeff · (Finsupp.equivFunOnFinite.symm d)) hψg
   rw [mConeMap_eq y hMg, PullConeDegree.prod_X_pow_eq_monomial, C_mul_monomial, mul_one,
-    coeff_monomial, if_pos rfl, coeff_sum, map_mul, map_natCast] at hc
+    coeff_monomial, ite_eq_left rfl, coeff_sum, map_mul, map_natCast] at hc
   rw [hc]
   refine Finset.sum_congr rfl fun j _ => ?_
   have hle : Finsupp.equivFunOnFinite.symm e ≤ Finsupp.equivFunOnFinite.symm d :=
@@ -131,7 +119,7 @@ theorem proof : PullConeDegreeInt.Statement := by
       Finsupp.equivFunOnFinite.symm (d - e) := by
     ext k
     simp
-  rw [coeff_mul_monomial', if_pos hle, hsub, coeff_mConeMap]
+  rw [coeff_mul_monomial', ite_eq_left hle, hsub, coeff_mConeMap]
 
 end PullConeDegreeInt
 

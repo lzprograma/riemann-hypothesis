@@ -107,7 +107,7 @@ theorem mem_divSupp_of_ne {R : Type} [CommRing R] [IsNoetherianRing R] (P : Idea
   by_contra hW
   apply h
   simp only [ReciprocityTheory.ChartRestriction.G.Geo.divCycle, Finsupp.ofSupportFinite_coe]
-  rw [if_neg hW]
+  rw [ite_eq_right hW]
 
 theorem intCycle_join (hD : JoinDivCycle.Statement) {R : Type} [CommRing R] [IsNoetherianRing R]
     (P : Ideal (MRing ι R)) (s : MRing ι R) :

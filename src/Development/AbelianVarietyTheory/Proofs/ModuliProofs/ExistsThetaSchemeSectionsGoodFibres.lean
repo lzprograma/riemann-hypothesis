@@ -195,47 +195,8 @@ theorem exists_emb (l1 : Out.Laws) (l2 : Out.Laws2) {o : Type} [CommRing o] {g N
 section Unit
 variable {S : Scheme.{0}} (A : Over S)
 
-def unitInv : A ⟶ Over.mk (𝟙 S) ⊗ A := lift (Over.homMk A.hom (by simp)) (𝟙 A)
-
-theorem unitInv_snd : (unitInv A).left ≫ (snd (Over.mk (𝟙 S)) A).left = 𝟙 _ := by
-  rw [← Over.comp_left, unitInv, lift_snd]; rfl
-
 theorem to_base_ext {T : Over S} (f f' : T ⟶ Over.mk (𝟙 S)) : f = f' :=
   Over.mkIdTerminal.hom_ext f f'
-
-theorem snd_unitInv : (snd (Over.mk (𝟙 S)) A).left ≫ (unitInv A).left = 𝟙 _ := by
-  rw [← Over.comp_left]
-  have : snd (Over.mk (𝟙 S)) A ≫ unitInv A = 𝟙 _ :=
-    CartesianMonoidalCategory.hom_ext _ _ (to_base_ext _ _) (by simp [unitInv])
-  rw [this]; rfl
-
-theorem unitInv_fst : (unitInv A).left ≫ (fst (Over.mk (𝟙 S)) A).left = A.hom := by
-  rw [← Over.comp_left, unitInv, lift_fst]; rfl
-
-theorem pt_unitInv (z : Over.mk (𝟙 S) ⟶ A) : z.left ≫ (unitInv A).left = (lift (𝟙 (Over.mk (𝟙 S))) z).left := by
-  rw [← Over.comp_left]
-  congr 1
-  exact CartesianMonoidalCategory.hom_ext _ _ (to_base_ext _ _) (by simp [unitInv])
-
-theorem isPullback_unitInv : IsPullback (unitInv A).left A.hom (fst (Over.mk (𝟙 S)) A).left (𝟙 S) := by
-  haveI : IsIso (unitInv A).left := ⟨_, unitInv_snd A, snd_unitInv A⟩
-  exact IsPullback.of_horiz_isIso ⟨by rw [unitInv_fst, Category.comp_id]⟩
-
-def chartPullUnit (L : LB A.left) (k : ℕ) (a : ℤ) (ha : a = k) :
-    ChartPull (lbPow L k) (Out.LPow A L a (Over.mk (𝟙 S))) (unitInv A).left :=
-  have le : ∀ j : PUnit → L.ι, LB.wchart L (fun _ : PUnit => 𝟙 A.left) j ≤ (unitInv A).left ⁻¹ᵁ
-      LB.wchart L (fun _ : Fin 1 => (snd (Over.mk (𝟙 S)) A).left) (fun _ => j PUnit.unit) :=
-    fun j y hy => Set.mem_iInter.2 fun _ => by
-      have h1 : y ∈ L.U (j PUnit.unit) := Set.mem_iInter.1 hy PUnit.unit
-      show ((unitInv A).left ≫ (snd (Over.mk (𝟙 S)) A).left) y ∈ L.U (j PUnit.unit)
-      rw [unitInv_snd]; exact h1
-  { idx := fun j _ => j PUnit.unit
-    le := le
-    g := fun y j j' hj hj' => by
-      refine (gm_linComb L (fun _ : PUnit => 𝟙 A.left) (fun _ => (k : ℤ)) (𝟙 _) y j j' hj hj').trans
-        (Eq.trans ?_ (gm_linComb L (fun _ : Fin 1 => (snd (Over.mk (𝟙 S)) A).left) (fun _ => a) (unitInv A).left y _ _
-          (le j hj) (le j' hj')).symm)
-      rw [Fintype.prod_unique, Fintype.prod_unique, unitInv_snd, Category.comp_id, ha] }
 
 end Unit
 
@@ -278,13 +239,6 @@ theorem exists_section {R σ : Type} [CommRing R] [IsReduced R] {I : Ideal (MvPo
     exact h1
   obtain ⟨y, ⟨hy, hc⟩, -⟩ := hP.2.2 R (RingHom.id R) p hu hF
   exact ⟨Over.homMk y (hy.trans (spMap_id R)), hc⟩
-
-theorem pt_unique {R σ : Type} [CommRing R] {I : Ideal (MvPolynomial σ R)} {Z : Scheme.{0}} {s : Z ⟶ Sp R}
-    {M : LB Z} {th : σ → M.Sec} (hP : ProjRep I s M th) {T : Type} [CommRing T] {β : R →+* T} {y y' : Sp T ⟶ Z}
-    {w : σ → T} (hy : y ≫ s = spMap β) (hy' : y' ≫ s = spMap β) (hc : SecCoord M th y w) (hc' : SecCoord M th y' w) :
-    y = y' := by
-  obtain ⟨h1, h2⟩ := hP.2.1 T β y w hy hc
-  exact (hP.2.2 T β w h1 h2).unique ⟨hy, hc⟩ ⟨hy', hc'⟩
 
 theorem span_theta (l1 : Out.Laws) (l2 : Out.Laws2) {o : Type} [CommRing o] {g N' : ℕ} {J : Type} {b : TBase o (N' ^ 2)}
     {K : Type} [Field K] {s : Sp K ⟶ Sp o} (t : TObj g (N' ^ 2) J b s) (n : ℕ) (v : Ix g (N' ^ 2) → K)
@@ -382,7 +336,7 @@ theorem exists_scheme_sections_fibres : Out.Laws → Out.Laws2 → ∀ (g : ℕ)
   choose sc hsc using hsc
   refine ⟨Z, _, M, th, sc, p, ⟨hZ, hsm.1, hsm.2, hsc⟩, fun K _ _ x t' _ hth => ?_⟩
   obtain ⟨φ, h1, h2, h3, h4⟩ := key K x t' hth
-  refine ⟨φ, h1, h2, h3, fun h => pt_unique hZ (h4 h).1 ?_ (h4 h).2
+  refine ⟨φ, h1, h2, h3, fun h => GlobalTheory.ZM.FamOf.pt_unique hZ (h4 h).1 ?_ (h4 h).2
     ((Coord.secCoord_bc_scale_unique _ M _ th R _ _ hZ.1 (hsc h)).1 K x)⟩
   rw [Category.assoc, Over.w]
   exact Category.comp_id _

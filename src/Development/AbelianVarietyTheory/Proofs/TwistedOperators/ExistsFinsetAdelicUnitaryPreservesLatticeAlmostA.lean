@@ -59,12 +59,6 @@ namespace GlobalTheory.IntSmulMemLatticeTwistedOperators
 
 open NumberField
 
-theorem exists_int_mul_integral {E : Type} [Field E] [NumberField E] (a : E) :
-    ∃ d : ℤ, d ≠ 0 ∧ IsIntegral ℤ ((d : E) * a) := by
-  obtain ⟨y, hy, hint⟩ := IsAlgebraic.exists_integral_multiple (R := ℤ) ((IsFractionRing.isAlgebraic_iff ℤ ℚ E).mpr (Algebra.IsAlgebraic.isAlgebraic a))
-  refine ⟨y, hy, ?_⟩
-  simpa [zsmul_eq_mul] using hint
-
 theorem exists_int_smul_mem {E : Type} [Field E] [NumberField E] {n : ℕ}
     (L : Submodule (RingOfIntegers E) (Fin n → E)) (hL : Submodule.IsFullLattice E L)
     (v : Fin n → E) : ∃ c : ℤ, c ≠ 0 ∧ c • v ∈ L := by

@@ -250,8 +250,8 @@ theorem trivOn_of_cofinite (hr : ∀ (P : HeightOneSpectrum (𝓞 E)) (k : Fˣ),
         χ.val P ^ ordF P (upF F k)) = 1 := by
       refine finprod_eq_one_of_forall_eq_one fun P => ?_
       by_cases hP : P ∈ T'.biUnion (aboveF (L := E) F)
-      · exact finprod_eq_if.trans (if_neg (not_not.2 hP))
-      rw [finprod_eq_if, if_pos hP]
+      · exact finprod_eq_if.trans (ite_eq_right (not_not.2 hP))
+      rw [finprod_eq_if, ite_eq_left hP]
       have : ordF (P.under (𝓞 F)) k = 0 := by
         by_contra hne
         exact hP ((hS P).2 (Finset.mem_union_right _ ((Set.Finite.mem_toFinset _).2 hne)))
@@ -278,7 +278,7 @@ theorem trivOn_of_cofinite (hr : ∀ (P : HeightOneSpectrum (𝓞 E)) (k : Fˣ),
       obtain ⟨y, hy⟩ := exists_approx T (fun u => if u = v then a else 1)
         (fun u => by split_ifs; exacts [ha', one_ne_zero])
       have hP := hy v hvT
-      simp only [if_true] at hP
+      simp only [ite_true] at hP
       have hy0 : (y : F) ≠ 0 := by
         intro h0
         rw [h0, zero_sub, Valuation.map_neg] at hP
@@ -290,7 +290,7 @@ theorem trivOn_of_cofinite (hr : ∀ (P : HeightOneSpectrum (𝓞 E)) (k : Fˣ),
       symm
       refine Finset.prod_eq_single_of_mem v hvT fun u hu hne => ?_
       have h3 := hy u hu
-      simp only [if_neg hne] at h3
+      simp only [ite_eq_right hne] at h3
       rw [h2 u 1 _ (by simpa using h3), map_one]
     obtain ⟨a, b, hb, hab⟩ := IsFractionRing.div_surjective (𝓞 F) (k : F)
     have hb0 : (b : F) ≠ 0 := by simpa using nonZeroDivisors.ne_zero hb

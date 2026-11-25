@@ -32,7 +32,7 @@ theorem lamStarC_mulVec (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (hu : IsUnit 
   simp only [lamStarC, Finset.mul_sum]
   rw [Finset.sum_comm]
   simp only [← mul_assoc, ← Finset.sum_mul, h, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
 
 end Alg
 

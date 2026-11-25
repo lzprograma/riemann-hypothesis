@@ -40,7 +40,7 @@ theorem regularityPointsSum_holds.proof : regularityPointsSum_holds.Statement :=
   have hpick : ∀ w ∈ fibre P hΨ.choose default, pick w ∈ mcPts P ∧ segre (pick w) = w := by
     intro w hw
     have hγ := exists_isSheet_fin_zero hw
-    simp only [pick, dif_pos hγ]
+    simp only [pick, dite_eq_left hγ]
     exact ⟨hγ.choose_spec.2.self_of_nhds.2.1, hγ.choose_spec.1⟩
   have hone : ∀ w ∈ fibre P hΨ.choose default, hΨ.choose w 0 = 1 := by
     rintro w ⟨_, _, _, h⟩
@@ -85,7 +85,7 @@ theorem regularityPointsSum_holds.proof : regularityPointsSum_holds.Statement :=
         rw [← (hpick w hw).2, horb _ ht hzt, hseg₁]
       rw [hw']
   · unfold ptsIntegral
-    rw [dif_pos hΨ]
+    rw [dite_eq_left hΨ]
     unfold ptsIntegralAt
     rw [integral_unique]
     have hvol : (volume : Measure (Fin 0 → ℂ)).real Set.univ = 1 := by
@@ -101,8 +101,8 @@ theorem regularityPointsSum_holds.proof : regularityPointsSum_holds.Statement :=
     refine Finset.sum_congr rfl fun w hw => ?_
     have hγ := exists_isSheet_fin_zero (hF.mem_toFinset.mp hw)
     unfold sheetDensity
-    rw [dif_pos hγ, maDensity_fin_zero, mul_one]
-    simp only [pick, dif_pos hγ]
+    rw [dite_eq_left hγ, maDensity_fin_zero, mul_one]
+    simp only [pick, dite_eq_left hγ]
 
 end
 

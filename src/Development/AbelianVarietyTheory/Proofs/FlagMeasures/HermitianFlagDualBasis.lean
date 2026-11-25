@@ -112,12 +112,12 @@ theorem hermitian_flag_dual_basis (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ
     hE σ J (P.f a) (F0 P c) = if c = a.castSucc then 1 else 0 := by
   induction c using Fin.lastCases with
   | last =>
-    rw [F0, Fin.snoc_last, hP.2.2.2.2.1 a, if_neg (Fin.castSucc_lt_last a).ne']
+    rw [F0, Fin.snoc_last, hP.2.2.2.2.1 a, ite_eq_right (Fin.castSucc_lt_last a).ne']
   | cast c =>
     rw [F0, Fin.snoc_castSucc, hE_symm σ J hσ hJ, hP.2.2.1 c a]
     by_cases h : c = a
     · subst h; simp
-    · rw [if_neg h, if_neg (fun e => h (Fin.castSucc_injective _ e)), map_zero]
+    · rw [ite_eq_right h, ite_eq_right (fun e => h (Fin.castSucc_injective _ e)), map_zero]
 
 theorem pairR (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) {r : ℕ} {P : Frame E n r} {T : F}
     (hP : P.IsStd σ J T) (a : Fin r) (c : Fin (r + 1)) :
@@ -131,7 +131,7 @@ theorem pair_sum (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) {r : ℕ} {P 
 
   rw [← hRight_apply, map_sum]
   simp only [map_smul, hRight_apply, pairR hσ hJ hP, smul_eq_mul, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem expand (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) {r : ℕ} {P : Frame E n r} {T : F}
     (hP : P.IsStd σ J T) (b : Fin (r + 1)) (w : Fin n → R ⊗[F] E)
@@ -145,10 +145,10 @@ theorem expand (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) {r : ℕ} {P : 
     have hc' : c < b := hc
     symm
     rw [Finset.sum_eq_single c]
-    · rw [dite_eq_left hc', pairR hσ hJ hP, Fin.castSucc_castLT, if_pos rfl, one_smul]
+    · rw [dite_eq_left hc', pairR hσ hJ hP, Fin.castSucc_castLT, ite_eq_left rfl, one_smul]
     · intro a _ hac
       split_ifs with h
-      · rw [pairR hσ hJ hP, Fin.castSucc_castLT, if_neg (fun e => hac e.symm), zero_smul]
+      · rw [pairR hσ hJ hP, Fin.castSucc_castLT, ite_eq_right (fun e => hac e.symm), zero_smul]
       · rw [zero_smul]
     · intro h; exact absurd (Finset.mem_univ c) h
   | zero =>
@@ -178,7 +178,7 @@ theorem combine {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] {r : ℕ
     by_cases hab : a = b
     · subst hab; simp
     · simp [hab]
-  simp only [key, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [key, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem sigma_sigma {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
@@ -217,7 +217,7 @@ theorem exists_coeff : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
       congr 1
       split_ifs with h1 h2
       · rfl
-      · rw [hR_sub_right, pairR hss hJ hP, Fin.castSucc_castLT, if_neg h2.ne', sub_zero]
+      · rw [hR_sub_right, pairR hss hJ hP, Fin.castSucc_castLT, ite_eq_right h2.ne', sub_zero]
       · rfl
     · intro H
       funext p
@@ -225,6 +225,6 @@ theorem exists_coeff : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
       symm
       show hR (Fv F v) σ J (ratV (F := F) (Fv F v) (P.f (a.castLT (lt_of_lt_of_le h (Fin.le_last b)))))
         (lin (Fv F v) σ J (s : HA (Fv F v) σ J) (ratV (F := F) (Fv F v) (F0 P b))) = x ⟨(a, b), h⟩
-      rw [H b, pair_sum hss hJ hP, Fin.castSucc_castLT, if_neg h.ne, dite_eq_left h]
+      rw [H b, pair_sum hss hJ hP, Fin.castSucc_castLT, ite_eq_right h.ne, dite_eq_left h]
 
 end GlobalTheory.UnitriangularCoeff

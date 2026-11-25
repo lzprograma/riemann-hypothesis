@@ -164,7 +164,7 @@ theorem term_eq (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) {u : Pr.Word} (hS
       rw [← natCast_mem_under, hQv, ← hPv', natCast_mem_under]
       exact T_mem hPr u ⟨P, hP⟩
     unfold term
-    rw [hfil, Finset.prod_singleton, if_neg hno, if_neg hno, ← Units.val_mul]
+    rw [hfil, Finset.prod_singleton, ite_eq_right hno, ite_eq_right hno, ← Units.val_mul]
     congr 1
     unfold idxExp
     rcases (hsp (sel v)).1 (hsel v) with e | e

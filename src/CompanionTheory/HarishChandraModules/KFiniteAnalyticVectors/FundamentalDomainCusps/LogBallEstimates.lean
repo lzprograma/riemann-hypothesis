@@ -62,7 +62,7 @@ theorem dual_rep (E : Type) [Field E] [NumberField E] (n : ℕ) : ∃ D : ℕ, 1
           (integralBasis_apply E k).symm, Module.Basis.trace_traceDual_mul]
         simp
       · rw [mul_assoc, ← zsmul_eq_mul, map_zsmul, show ((RingOfIntegers.basis E k : 𝓞 E) : E) = integralBasis E k from
-          (integralBasis_apply E k).symm, mul_comm, Module.Basis.trace_mul_traceDual, if_neg (Ne.symm hl), smul_zero]
+          (integralBasis_apply E k).symm, mul_comm, Module.Basis.trace_mul_traceDual, ite_eq_right (Ne.symm hl), smul_zero]
     exact LinearMap.congr_fun hAB u
 
 variable (I : AutInst)
@@ -79,7 +79,7 @@ theorem span_phi (hs : ∀ v (a : I.E), I.φ v (star a) = star (I.φ v a)) :
       split_ifs <;> simp
     have h2 := Finset.sum_congr (rfl : Finset.univ = _) fun k _ => h1 k
     rw [Finset.sum_comm] at h2
-    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h2
+    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h2
     rw [h2]
     refine Finset.sum_eq_zero fun v _ => ?_
     have h3 := congrFun hr v

@@ -182,10 +182,9 @@ theorem nonScal : NonScal := by
     rw [hω] at hq
     linear_combination hq
   obtain ⟨d, hd⟩ : ∃ d : Fin (m + 1), cminor X.E s.succAbove d.succAbove (ω - 1) v ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     have h := LinearMap.congr_fun (capelli_expand_minus X.E hE' (ω - 1) s s) v
-    rw [LinearMap.sum_apply, if_pos rfl, hC] at h
+    rw [LinearMap.sum_apply, ite_eq_left rfl, hC] at h
     have h0 : ∑ d : Fin (m + 1), (((-1 : ℂ) ^ ((d : ℕ) + (s : ℕ))) •
         (capEntry X.E (ω - 1 - (m : ℂ)) s d * cminor X.E s.succAbove d.succAbove (ω - 1))) v = 0 :=
       Finset.sum_eq_zero fun d _ => by simp [hall d]

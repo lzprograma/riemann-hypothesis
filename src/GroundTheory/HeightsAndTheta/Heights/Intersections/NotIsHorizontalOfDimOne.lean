@@ -56,18 +56,18 @@ theorem divCycle_mul' {P : Ideal (MRing ι)} (hP : P.IsPrime) {f g : MRing ι}
     have key := locLen_mul hP hf g ⟨W, hWp⟩
     have hfin := locLen_ne_top h.1
     rw [key] at hfin
-    rw [if_pos h, multAt_eq' _ _ hWp, key]
+    rw [ite_eq_left h, multAt_eq' _ _ hWp, key]
     by_cases hfW : f ∈ W <;> by_cases hgW : g ∈ W
-    · rw [if_pos (mem_divSupp_of_mul' h hfW), if_pos (mem_divSupp_of_mul' h' hgW),
+    · rw [ite_eq_left (mem_divSupp_of_mul' h hfW), ite_eq_left (mem_divSupp_of_mul' h' hgW),
         multAt_eq' _ _ hWp, multAt_eq' _ _ hWp, ENat.toNat_add (WithTop.add_ne_top.mp hfin).1
           (WithTop.add_ne_top.mp hfin).2, add_comm]
-    · rw [if_pos (mem_divSupp_of_mul' h hfW), if_neg fun h2 => hgW (mem_of_mem_divSupp' h2),
+    · rw [ite_eq_left (mem_divSupp_of_mul' h hfW), ite_eq_right fun h2 => hgW (mem_of_mem_divSupp' h2),
         multAt_eq' _ _ hWp, locLen_quot_eq_zero _ hgW, zero_add, add_zero]
-    · rw [if_neg fun h2 => hfW (mem_of_mem_divSupp' h2), if_pos (mem_divSupp_of_mul' h' hgW),
+    · rw [ite_eq_right fun h2 => hfW (mem_of_mem_divSupp' h2), ite_eq_left (mem_divSupp_of_mul' h' hgW),
         multAt_eq' _ _ hWp, locLen_quot_eq_zero (V := P) (g := f) _ hfW, add_zero, zero_add]
     · exact absurd (hWp.mem_or_mem (mem_of_mem_divSupp' h)) (by tauto)
-  · rw [if_neg h, if_neg fun h2 => h (mem_divSupp_mul_left' hP hg h2),
-      if_neg fun h2 => h (by rw [mul_comm]; exact mem_divSupp_mul_left' hP hf h2)]
+  · rw [ite_eq_right h, ite_eq_right fun h2 => h (mem_divSupp_mul_left' hP hg h2),
+      ite_eq_right fun h2 => h (by rw [mul_comm]; exact mem_divSupp_mul_left' hP hf h2)]
 
 
 open Classical in

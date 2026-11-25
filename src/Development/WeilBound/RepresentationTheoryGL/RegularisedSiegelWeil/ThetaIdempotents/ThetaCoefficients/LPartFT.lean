@@ -6,49 +6,10 @@ public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil
 public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.ThetaCoefficients.LPartFTD
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PullbackSchwartzLinearIndependentStatement
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBlockMatrixTwoByTwoFinEq
 import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SecondOnCommonRangeOfSecond
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinRationalPoints
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaSumInvariantWeylInvolution
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinHeisenbergSchwartzStatement
 
@@ -67,8 +28,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open PositivityTheory.GramSchwartzFunctions.EC GlobalTheory.CompanionTheory.EisCovar
 
@@ -181,8 +140,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open PositivityTheory.GramSchwartzFunctions.EC GlobalTheory.CompanionTheory.EisCovar GlobalTheory.CompanionTheory.ThetaPoisson
 
 namespace PositivityTheory.Rg.Rsw.L.LPartFT
@@ -243,17 +200,6 @@ theorem yPart_xz {m : ℕ} (X : Mx D m n) : yPart (xz X) = 0 := by
   show Sum.elim (X i) (fun _ => (0 : AE D)) (finSumFinEquiv.symm (finSumFinEquiv (Sum.inr j))) = _
   rw [Equiv.symm_apply_apply]; rfl
 
-theorem heis_xz (ψ : AddChar (AF D.host.F) ℂ) (V : HSp D) (X : Mx D V.rank n) (F : Mx D V.rank n → ℂ) :
-    PositivityTheory.GramSchwartzFunctions.EC.Heisenberg₂ ψ V (xz X) F 0 = F X := by
-  simp [PositivityTheory.GramSchwartzFunctions.EC.Heisenberg₂, xPart_xz, yPart_xz, GlobalTheory.StdUnn.inner, halfTr]
-
-theorem trace_inner_jn (V : HSp D) (hn : r + t = n) (x x' : Mx D V.rank r) (v v' : Mx D V.rank t) :
-    Matrix.trace (GlobalTheory.StdUnn.inner V (jn hn x v) (jn hn x' v')) = Matrix.trace (ip V x x') + Matrix.trace (ip V v v') := by
-  simp only [Matrix.trace, Matrix.diag, GlobalTheory.StdUnn.inner, ip, mm]
-  rw [← (ee hn).sum_comp, Fintype.sum_sum_type]
-  simp only [Matrix.mul_apply, adj, Matrix.transpose_apply, Matrix.map_apply, jn_ee, Matrix.fromCols_apply_inl,
-    Matrix.fromCols_apply_inr]
-
 theorem psi_ip_symm (ψ : AddChar (AF D.host.F) ℂ) (V : HSp D) (x y : Mx D V.rank t) :
     ψ (trA (Matrix.trace (ip V x y))) = ψ (trA (Matrix.trace (ip V y x))) := by
   have hs := pairing_symm (n := t) (isHermND_gram V) ψ x y
@@ -262,28 +208,6 @@ theorem psi_ip_symm (ψ : AddChar (AF D.host.F) ℂ) (V : HSp D) (x y : Mx D V.r
       simp only [GlobalTheory.IndefiniteRowSideFullHecke.GramMatrixBlocks.pairing, GlobalTheory.SiegelWeilLitCompare.gramQ_eq]
       rfl
   rw [← e, ← e, hs]
-
-theorem levi_zero {V : HSp D} {ψ χ θ μ ω} (hS : SetW D n V ψ χ θ μ ω) (g : G D n) (u : GL (Fin n) D.host.E)
-    (hg : mat g = blk4 (u.1.map (incA D)) 0 0 (adj ((u⁻¹).1.map (incA D)))) (F : schwartzA θ V.rank n) :
-    (ω g F).1 0 = F.1 0 := by
-  obtain ⟨-, hχ, -, -, hω⟩ := hS
-  let a' : GL (Fin n) (AE D) := Matrix.GeneralLinearGroup.map (incA D) u
-  have hdet : Matrix.GeneralLinearGroup.det a' =
-      Units.map (incA D).toMonoidHom (Matrix.GeneralLinearGroup.det u) := by
-    apply Units.ext
-    simp [a', Matrix.GeneralLinearGroup.map]
-    exact (RingHom.map_det _ _).symm
-  have h1 : absA D (Matrix.GeneralLinearGroup.det a') = 1 := by
-    rw [hdet]; exact absE_inclR _
-  have h2 : χ (Matrix.GeneralLinearGroup.det a') = 1 := by
-    rw [hdet]; exact hχ.2 _
-  have hinv : (a'⁻¹).1 = (u⁻¹).1.map (incA D) := by
-    show ((Matrix.GeneralLinearGroup.map (incA D) u)⁻¹).1 = _
-    rw [← map_inv]; rfl
-  have hg' : mat g = blk4 a'.1 0 0 (adj (a'⁻¹).1) := by
-    rw [hinv]; exact hg
-  rw [hω.levi g a' hg' F, h1, h2]
-  simp [npow]
 
 end PositivityTheory.Rg.Rsw.L.LPartFT
 end -- clump:auto
@@ -303,8 +227,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open PositivityTheory.GramSchwartzFunctions.EC GlobalTheory.CompanionTheory.EisCovar
 
@@ -333,7 +255,7 @@ theorem clause1 {V : HSp D} {ψ χ θ μ ω} (hS : SetW D n V ψ χ θ μ ω) (h
 
 theorem clause2 {θ : InfFam D} (hθ : IsInfFam θ) {V : HSp D} (hn : r + t = n) (Φ : schwartzA θ V.rank n) :
     (fun x => Φ.1 (jn hn x 0)) ∈ schwartzA θ V.rank r := by
-  have := GlobalTheory.T.pullback_schwartz_linear_independent D θ hθ V.rank r n (c₁ D hn) (linInd_c₁ hn) Φ.1 Φ.2
+  have := GlobalTheory.CompanionTheory.PullSch.pullSchLI D θ hθ V.rank r n (c₁ D hn) (linInd_c₁ hn) Φ.1 Φ.2
   convert this using 1
   funext x
   exact congrArg Φ.1 (mul_c₁ hn x).symm
@@ -353,7 +275,7 @@ theorem clause3 {V : HSp D} {ψ χ θ μ ω} (hS : SetW D n V ψ χ θ μ ω) (h
     rw [mat_mul', ← h1, ← Matrix.mul_assoc, mat_inv_mul', Matrix.one_mul]
   have hψ := hS.1
   have hθ := hS.2.2.1
-  have hΨm := GlobalTheory.T.eisenstein_heisenberg_schwartz D ψ hψ θ hθ V n (HMul.hMul (xz (jn hn x v₀)) (mat (M.emb w))) Φ.1 Φ.2
+  have hΨm := _root_.PositivityTheory.RdEc.heisSch D ψ hψ θ hθ V n (HMul.hMul (xz (jn hn x v₀)) (mat (M.emb w))) Φ.1 Φ.2
   let Ψ : schwartzA θ V.rank n := ⟨Heisenberg₂ ψ V (HMul.hMul (xz (jn hn x v₀)) (mat (M.emb w))) Φ.1, hΨm⟩
   have hc := covar_w hS (M.emb w) hγ (HMul.hMul (xz (jn hn x v₀)) (mat (M.emb w))) Φ Ψ rfl
   have hv : HMul.hMul (HMul.hMul (xz (jn hn x v₀)) (mat (M.emb w))) (mat (M.emb w)⁻¹) = xz (jn hn x v₀) := by

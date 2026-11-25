@@ -175,12 +175,6 @@ theorem finite_and_finrank_integer :
     (fun r m ↦ rfl)
   exact congrArg Cardinal.toNat this
 
-theorem padicIntHom_mem_valBall_zero (a : ℤ_[p]) :
-    padicIntHom (K := K) p a ∈ valBall (K := K) 0 := by
-  change normalizedValuation K (padicIntHom K p a) ≤ WithZero.exp (-(0 : ℤ))
-  rw [neg_zero, WithZero.exp_zero, normalizedValuation_le_one_iff]
-  exact padicIntHom_mem p a
-
 
 variable (K) in
 noncomputable def valBallSubmodule (m : ℤ) : Submodule ℤ_[p] K where
@@ -195,10 +189,6 @@ noncomputable def valBallSubmodule (m : ℤ) : Submodule ℤ_[p] K where
     change normalizedValuation K (padicIntHom K p a * x) ≤ WithZero.exp (-m)
     rw [map_mul]
     simpa only [one_mul] using mul_le_mul' ha hx
-
-theorem mem_valBallSubmodule {m : ℤ} {x : K} :
-    x ∈ valBallSubmodule (K := K) p m ↔ x ∈ valBall (K := K) m :=
-  Iff.rfl
 
 
 variable (K) in

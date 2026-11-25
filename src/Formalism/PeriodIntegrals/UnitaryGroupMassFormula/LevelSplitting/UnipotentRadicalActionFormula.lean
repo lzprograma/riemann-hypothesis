@@ -1,50 +1,7 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.HermitianIsotropicProjComplement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -95,18 +52,6 @@ theorem pWp_apply (D : Dat A n r) (v : n → A) : pWp D v = v - D.pX v - D.pXv v
 
 variable {D : Dat A n r}
 
-private theorem hRadd_lemma_2 (x y y' : n → A) : D.h x (y + y') = D.h x y + D.h x y' := by
-  show (D.hL x) (y + y') = (D.hL x) y + (D.hL x) y'
-  exact map_add _ _ _
-
-private theorem hRsub_lemma_3 (x y y' : n → A) : D.h x (y - y') = D.h x y - D.h x y' := by
-  show (D.hL x) (y - y') = (D.hL x) y - (D.hL x) y'
-  exact map_sub _ _ _
-
-private theorem hRsmul_lemma_4 (x y : n → A) (c : A) : D.h x (c • y) = c * D.h x y := by
-  show (D.hL x) (c • y) = c * (D.hL x) y
-  rw [map_smul, smul_eq_mul]
-
 private theorem hRsum_lemma_5 (x : n → A) (g : Fin r → n → A) :
     D.h x (∑ i, g i) = ∑ i, D.h x (g i) := by
   show (D.hL x) (∑ i, g i) = ∑ i, (D.hL x) (g i)
@@ -120,13 +65,7 @@ private theorem hLsum_lemma_8 (H : D.Hyp) (g : Fin r → n → A) (y : n → A) 
 
 private theorem hLsub_lemma_9 (H : D.Hyp) (x x' y : n → A) :
     D.h (x - x') y = D.h x y - D.h x' y := by
-  rw [_root_.PI.VolSemiDirect.W.PG.Dat.h_symm H y (x - x'), hRsub_lemma_3, map_sub, ← _root_.PI.VolSemiDirect.W.PG.Dat.h_symm H, ← _root_.PI.VolSemiDirect.W.PG.Dat.h_symm H]
-
-private theorem pXap_lemma_10 (v : n → A) : D.pX v = ∑ a, D.h (D.f a) v • D.e a := by
-  simp only [Dat.pX, LinearMap.sum_apply, LinearMap.smulRight_apply, hLap_lemma]
-
-private theorem pXvap_lemma_11 (v : n → A) : D.pXv v = ∑ a, D.h (D.e a) v • D.f a := by
-  simp only [Dat.pXv, LinearMap.sum_apply, LinearMap.smulRight_apply, hLap_lemma]
+  rw [_root_.PI.VolSemiDirect.W.PG.Dat.h_symm H y (x - x'), PI.VolSemiDirect.W.PG.Dat.h_sub_right, map_sub, ← _root_.PI.VolSemiDirect.W.PG.Dat.h_symm H, ← _root_.PI.VolSemiDirect.W.PG.Dat.h_symm H]
 
 theorem h_W_e' (H : D.Hyp) {w : n → A} (hw : IsWp D w) (b : Fin r) : D.h w (D.e b) = 0 := by
   unfold IsWp at hw
@@ -140,22 +79,22 @@ theorem xp_of_span (H : D.Hyp) {x : n → A} (hx : x ∈ Submodule.span A (Set.r
   rw [Submodule.mem_span_range_iff_exists_fun] at hx
   obtain ⟨c, rfl⟩ := hx
   intro a
-  simp [hRsum_lemma_5, hRsmul_lemma_4, H.ee]
+  simp [hRsum_lemma_5, PI.VolSemiDirect.W.PG.Dat.h_smul_right, H.ee]
 
 theorem h_W_span' (H : D.Hyp) {w : n → A} (hw : IsWp D w) {x : n → A}
     (hx : x ∈ Submodule.span A (Set.range D.e)) : D.h w x = 0 := by
   rw [Submodule.mem_span_range_iff_exists_fun] at hx
   obtain ⟨c, rfl⟩ := hx
-  simp [hRsum_lemma_5, hRsmul_lemma_4, h_W_e' H hw]
+  simp [hRsum_lemma_5, PI.VolSemiDirect.W.PG.Dat.h_smul_right, h_W_e' H hw]
 
 theorem xp_add {v w : n → A} (hv : Xp D v) (hw : Xp D w) : Xp D (v + w) := by
   intro a
-  rw [hRadd_lemma_2, hv a, hw a, add_zero]
+  rw [PI.VolSemiDirect.W.PG.Dat.h_add_right, hv a, hw a, add_zero]
 
 theorem xp_sub_pXv (H : D.Hyp) (v : n → A) : Xp D (v - D.pXv v) := by
   intro a
-  rw [hRsub_lemma_3, pXvap_lemma_11, hRsum_lemma_5]
-  simp [hRsmul_lemma_4, H.ef]
+  rw [PI.VolSemiDirect.W.PG.Dat.h_sub_right, PI.VolSemiDirect.W.PG.Dat.pXv_apply, hRsum_lemma_5]
+  simp [PI.VolSemiDirect.W.PG.Dat.h_smul_right, H.ef]
 
 theorem xp_e (H : D.Hyp) (c : Fin r) : Xp D (D.e c) := by
   intro a
@@ -164,24 +103,24 @@ theorem xp_e (H : D.Hyp) (c : Fin r) : Xp D (D.e c) := by
 theorem pWp_isWp (H : D.Hyp) (v : n → A) : IsWp D (pWp D v) := by
   unfold IsWp
   refine ⟨fun a => ?_, fun a => ?_⟩ <;>
-    simp [pWp_apply, pXap_lemma_10, pXvap_lemma_11, hRsub_lemma_3, hRsum_lemma_5, hRsmul_lemma_4, H.ee, H.ff, H.ef,
+    simp [pWp_apply, PI.VolSemiDirect.W.PG.Dat.pX_apply, PI.VolSemiDirect.W.PG.Dat.pXv_apply, PI.VolSemiDirect.W.PG.Dat.h_sub_right, hRsum_lemma_5, PI.VolSemiDirect.W.PG.Dat.h_smul_right, H.ee, H.ff, H.ef,
       _root_.PI.VolSemiDirect.W.PG.Dat.fe H]
 
 theorem pWp_of_isWp {w : n → A} (hw : IsWp D w) : pWp D w = w := by
   unfold IsWp at hw
   obtain ⟨h1, h2⟩ := hw
-  simp [pWp_apply, pXap_lemma_10, pXvap_lemma_11, h1, h2]
+  simp [pWp_apply, PI.VolSemiDirect.W.PG.Dat.pX_apply, PI.VolSemiDirect.W.PG.Dat.pXv_apply, h1, h2]
 
 theorem pWp_span (H : D.Hyp) {x : n → A} (hx : x ∈ Submodule.span A (Set.range D.e)) :
     pWp D x = 0 := by
   rw [Submodule.mem_span_range_iff_exists_fun] at hx
   obtain ⟨c, rfl⟩ := hx
-  simp [pWp_apply, pXap_lemma_10, pXvap_lemma_11, H.ee, _root_.PI.VolSemiDirect.W.PG.Dat.fe H]
+  simp [pWp_apply, PI.VolSemiDirect.W.PG.Dat.pX_apply, PI.VolSemiDirect.W.PG.Dat.pXv_apply, H.ee, _root_.PI.VolSemiDirect.W.PG.Dat.fe H]
 
 theorem pWp_e (H : D.Hyp) (c : Fin r) : pWp D (D.e c) = 0 := pWp_span H (Submodule.subset_span ⟨c, rfl⟩)
 
 theorem pWp_f (H : D.Hyp) (c : Fin r) : pWp D (D.f c) = 0 := by
-  simp [pWp_apply, pXap_lemma_10, pXvap_lemma_11, H.ff, H.ef]
+  simp [pWp_apply, PI.VolSemiDirect.W.PG.Dat.pX_apply, PI.VolSemiDirect.W.PG.Dat.pXv_apply, H.ff, H.ef]
 
 private theorem hy1_lemma_12 {y : Fin r → n → A} (hy : ∀ a, IsWp D (y a)) (a b : Fin r) :
     D.h (D.e b) (y a) = 0 := by
@@ -203,7 +142,7 @@ theorem ext_Xp_f (H : D.Hyp) {Φ Ψ : (n → A) →ₗ[A] (n → A)} (h1 : ∀ v
   rw [e1, map_add (f := _), map_add (f := _), h1 _ (xp_sub_pXv H v)]
   congr 1
 
-  simp only [pXvap_lemma_11, map_sum, map_smul, h2]
+  simp only [PI.VolSemiDirect.W.PG.Dat.pXv_apply, map_sum, map_smul, h2]
 
 section Sec
 
@@ -211,13 +150,13 @@ variable (H : D.Hyp) {half : A} {y : Fin r → n → A} (hy : ∀ a, IsWp D (y a
 include H hy
 
 theorem h_e_uv (a c : Fin r) : D.h (D.e c) (uv D half y a) = 0 := by
-  simp [uv, hRadd_lemma_2, hRsum_lemma_5, hRsmul_lemma_4, H.ee, hy1_lemma_12 hy]
+  simp [uv, PI.VolSemiDirect.W.PG.Dat.h_add_right, hRsum_lemma_5, PI.VolSemiDirect.W.PG.Dat.h_smul_right, H.ee, hy1_lemma_12 hy]
 
 theorem h_uv_e (a c : Fin r) : D.h (uv D half y a) (D.e c) = 0 := by
   rw [_root_.PI.VolSemiDirect.W.PG.Dat.h_symm H, h_e_uv H hy, map_zero]
 
 theorem h_uv_uv (a a' : Fin r) : D.h (uv D half y a) (uv D half y a') = D.h (y a) (y a') := by
-  simp [uv, hRadd_lemma_2, hRsum_lemma_5, hRsmul_lemma_4, h_add_left, hLsum_lemma_8 H, h_smul_left, H.ee,
+  simp [uv, PI.VolSemiDirect.W.PG.Dat.h_add_right, hRsum_lemma_5, PI.VolSemiDirect.W.PG.Dat.h_smul_right, h_add_left, hLsum_lemma_8 H, h_smul_left, H.ee,
     hy1_lemma_12 hy, hy2_lemma_13 H hy]
 
 theorem sL_e (c : Fin r) : sL D half y (D.e c) = D.e c := by
@@ -245,7 +184,7 @@ theorem h_tV_right (x x' : n → A) :
       ∑ a, ∑ b, D.h (D.e a) x' * (cf D half y a b * D.σA (D.h (D.e b) x)) -
       ∑ b, D.h (y b) x' * D.σA (D.h (D.e b) x) := by
   have sw : ∀ z, D.h x z = D.σA (D.h z x) := fun z => _root_.PI.VolSemiDirect.W.PG.Dat.h_symm H z x
-  simp only [tV, uv, hRsub_lemma_3, hRsum_lemma_5, hRsmul_lemma_4, hRadd_lemma_2]
+  simp only [tV, uv, PI.VolSemiDirect.W.PG.Dat.h_sub_right, hRsum_lemma_5, PI.VolSemiDirect.W.PG.Dat.h_smul_right, PI.VolSemiDirect.W.PG.Dat.h_add_right]
   simp only [sw, mul_add, Finset.mul_sum, Finset.sum_add_distrib]
 
 theorem h_tV_left (x x' : n → A) :
@@ -259,11 +198,11 @@ theorem h_tV_tV (x x' : n → A) :
     D.h (tV D half y x) (tV D half y x') =
       ∑ a, ∑ b, D.σA (D.h (D.e a) x) * (D.h (D.e b) x' * D.h (y a) (y b)) := by
   have k1 : ∀ b, D.h (D.e b) (tV D half y x') = 0 := fun b => by
-    simp only [tV, hRsub_lemma_3, hRsum_lemma_5, hRsmul_lemma_4, h_e_uv H hy, H.ee, mul_zero,
+    simp only [tV, PI.VolSemiDirect.W.PG.Dat.h_sub_right, hRsum_lemma_5, PI.VolSemiDirect.W.PG.Dat.h_smul_right, h_e_uv H hy, H.ee, mul_zero,
       Finset.sum_const_zero, sub_self]
   have k2 : ∀ a, D.h (uv D half y a) (tV D half y x') =
       ∑ b, D.h (D.e b) x' * D.h (y a) (y b) := fun a => by
-    simp only [tV, hRsub_lemma_3, hRsum_lemma_5, hRsmul_lemma_4, h_uv_uv H hy, h_uv_e H hy, mul_zero,
+    simp only [tV, PI.VolSemiDirect.W.PG.Dat.h_sub_right, hRsum_lemma_5, PI.VolSemiDirect.W.PG.Dat.h_smul_right, h_uv_uv H hy, h_uv_e H hy, mul_zero,
       Finset.sum_const_zero, sub_zero]
   rw [show tV D half y x = ∑ a, D.h (D.e a) x • uv D half y a - ∑ b, D.h (y b) x • D.e b from rfl]
   simp only [hLsub_lemma_9 H, hLsum_lemma_8 H, h_smul_left, k1, k2, mul_zero, Finset.sum_const_zero,
@@ -273,7 +212,7 @@ theorem sL_uni (hh : Half D half) (x x' : n → A) : D.h (sL D half y x) (sL D h
   have e1 := h_tV_right H hy (half := half) x x'
   have e2 := h_tV_left H hy (half := half) x x'
   have e3 := h_tV_tV H hy (half := half) x x'
-  rw [sL_eq, sL_eq, h_add_left, hRadd_lemma_2, hRadd_lemma_2, e1, e2, e3]
+  rw [sL_eq, sL_eq, h_add_left, PI.VolSemiDirect.W.PG.Dat.h_add_right, PI.VolSemiDirect.W.PG.Dat.h_add_right, e1, e2, e3]
   have c1 : ∑ a, D.h (D.e a) x' * D.σA (D.h (y a) x) =
       ∑ b, D.σA (D.h (y b) x) * D.h (D.e b) x' :=
     Finset.sum_congr rfl fun a _ => mul_comm _ _
@@ -310,10 +249,10 @@ theorem unipotent_radical_action_formula (H : D.Hyp) {Φ : (n → A) →ₗ[A] (
       intro a
       rw [← he a, hU (D.e a) (D.f b), H.ef]
     have hpXv : D.pXv (Φ (D.f b)) = D.f b := by
-      rw [pXvap_lemma_11]
+      rw [PI.VolSemiDirect.W.PG.Dat.pXv_apply]
       simp [hew]
     have hpX0 : D.h (D.pX (Φ (D.f b))) v = 0 := by
-      rw [pXap_lemma_10, hLsum_lemma_8 H]
+      rw [PI.VolSemiDirect.W.PG.Dat.pX_apply, hLsum_lemma_8 H]
       simp [h_smul_left, hv']
     have hw_v : D.h (Φ (D.f b)) v = D.h (D.f b) v + D.h (pWp D (Φ (D.f b))) v := by
       have hdec : Φ (D.f b) = D.pX (Φ (D.f b)) + D.pXv (Φ (D.f b)) + pWp D (Φ (D.f b)) := by
@@ -321,8 +260,8 @@ theorem unipotent_radical_action_formula (H : D.Hyp) {Φ : (n → A) →ₗ[A] (
       conv_lhs => rw [hdec]
       rw [h_add_left, h_add_left, hpX0, hpXv, zero_add]
     have hUv := hU (D.f b) v
-    rw [hΦv, hRadd_lemma_2, hRsum_lemma_5, hw_v] at hUv
-    simp [hRsmul_lemma_4, hwe] at hUv
+    rw [hΦv, PI.VolSemiDirect.W.PG.Dat.h_add_right, hRsum_lemma_5, hw_v] at hUv
+    simp [PI.VolSemiDirect.W.PG.Dat.h_smul_right, hwe] at hUv
     linear_combination hUv
   rw [hΦv, sub_eq_add_neg, ← Finset.sum_neg_distrib]
   congr 1
@@ -344,16 +283,16 @@ theorem fix_f_mem (H : D.Hyp) (hND : ND D) {Φ : (n → A) →ₗ[A] (n → A)} 
     intro b
     have h1 := hU (D.e b) (D.f a)
     rw [hfix (D.e b) (xp_e H b)] at h1
-    rw [hw, hRsub_lemma_3, h1, sub_self]
+    rw [hw, PI.VolSemiDirect.W.PG.Dat.h_sub_right, h1, sub_self]
   have hpXv : D.pXv w = 0 := by
-    rw [pXvap_lemma_11]
+    rw [PI.VolSemiDirect.W.PG.Dat.pXv_apply]
     simp [hew]
   have hdec : w = D.pX w + pWp D w := by
     rw [pWp_apply, hpXv]; abel
   have hpX0 : ∀ v, Xp D v → D.h (D.pX w) v = 0 := by
     intro v hv
     have hv' : ∀ b, D.h (D.e b) v = 0 := hv
-    rw [pXap_lemma_10, hLsum_lemma_8 H]
+    rw [PI.VolSemiDirect.W.PG.Dat.pX_apply, hLsum_lemma_8 H]
     simp [h_smul_left, hv']
   have hP0 : pWp D w = 0 := by
     apply hND
@@ -371,10 +310,10 @@ theorem fix_f_mem (H : D.Hyp) (hND : ND D) {Φ : (n → A) →ₗ[A] (n → A)} 
     have hB : D.h (u - D.pXv u) (pWp D w) = 0 := by
       rw [_root_.PI.VolSemiDirect.W.PG.Dat.h_symm H, hA, map_zero]
     have hC : D.h (D.pXv u) (pWp D w) = 0 := by
-      rw [pXvap_lemma_11, hLsum_lemma_8 H]
+      rw [PI.VolSemiDirect.W.PG.Dat.pXv_apply, hLsum_lemma_8 H]
       simp [h_smul_left, hWf]
     rw [hB, hC, add_zero]
-  rw [hdec, hP0, add_zero, pXap_lemma_10]
+  rw [hdec, hP0, add_zero, PI.VolSemiDirect.W.PG.Dat.pX_apply]
   exact sum_mem fun b _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨b, rfl⟩)
 
 end PI.LevelKSplit.W.NCH

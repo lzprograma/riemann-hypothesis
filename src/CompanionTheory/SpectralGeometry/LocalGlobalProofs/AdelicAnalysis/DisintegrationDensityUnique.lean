@@ -246,12 +246,7 @@ theorem isContDensityOn_fibreIntegral : ∀ (V X Y : Type) [TopologicalSpace V]
     exact hcongr c4 b hb
   · intro S hS hSB
     have hpre : f ⁻¹' (ι '' S) = g ⁻¹' S := by
-      ext v
-      simp only [Set.mem_preimage, Set.mem_image, hf]
-      constructor
-      · rintro ⟨x, hx, hxv⟩
-        exact hι hxv ▸ hx
-      · exact fun hv => ⟨g v, hv, rfl⟩
+      rw [show f = ι ∘ g from funext hf, Set.preimage_comp, Set.preimage_image_eq S hι]
     have hSm : MeasurableSet S := hS.isClosed.measurableSet
     obtain ⟨ψ, c1, c2, c3, c4⟩ := exists_cutoff hg hB hS hSB hc hs
     rw [hpre]

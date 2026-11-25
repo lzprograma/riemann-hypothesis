@@ -1,5 +1,6 @@
 module
 
+import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsRepsOfCover
 public import Mathlib.GroupTheory.GroupAction.Defs
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Mathlib.Tactic.Linter.HaveILetI
@@ -21,15 +22,7 @@ variable {Γ}
 
 theorem card_stab_smul {A : Type*} [MulAction Γ A] (g : Γ) (a : A) :
     Nat.card (MulAction.stabilizer Γ (g • a)) = Nat.card (MulAction.stabilizer Γ a) := by
-  refine Nat.card_congr
-    { toFun := fun s => ⟨g⁻¹ * (s : Γ) * g, by
-        rw [MulAction.mem_stabilizer_iff, mul_smul, mul_smul, MulAction.mem_stabilizer_iff.1 s.2,
-          inv_smul_smul]⟩
-      invFun := fun t => ⟨g * (t : Γ) * g⁻¹, by
-        rw [MulAction.mem_stabilizer_iff, mul_smul, mul_smul, inv_smul_smul,
-          MulAction.mem_stabilizer_iff.1 t.2]⟩
-      left_inv := fun s => Subtype.ext (by first | simp [mul_assoc])
-      right_inv := fun t => Subtype.ext (by first | simp [mul_assoc]) }
+  apply _root_.Formalism.HermitianLattices.Ext.L3.OrbSum.card_stab_smul <;> assumption
 
 theorem card_stab_of_orbitRel {A : Type*} [MulAction Γ A] {a a' : A} (h : MulAction.orbitRel Γ A a' a) :
     Nat.card (MulAction.stabilizer Γ a') = Nat.card (MulAction.stabilizer Γ a) := by
@@ -116,23 +109,5 @@ def orbEquiv (oB : Quotient (MulAction.orbitRel Γ B)) :
       Quotient.mk _ oA.out).trans (Quotient.out_eq oA)
 
 end Fibre
-
-section Sub
-
-variable {Y : Type*} [MulAction Γ Y]
-
-end Sub
-
-section Pair
-
-variable {Y : Type*} [MulAction Γ Y]
-
-end Pair
-
-section Local
-
-variable {T : Type*} [MulAction Γ T]
-
-end Local
 
 end Formalism.L2.SG.Pf.StabilizerMassQuotient

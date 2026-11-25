@@ -2,46 +2,6 @@ module
 
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ParabolicBlockForms.UpperBlockRankOneUpdate
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.IncMTranspose
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -76,7 +36,7 @@ theorem shift_coordinates_column {M : Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n)
     (W : Fin n ⊕ Fin n → R) : ∑ r, M r (Sum.inl i₀) * W r = W (Sum.inl i₀) := by
   have h : ∀ r, M r (Sum.inl i₀) = if r = Sum.inl i₀ then 1 else 0 := fun r => by
     rw [NQ.apply hN (Or.inl rfl), Matrix.one_apply]
-  simp_rw [h, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp_rw [h, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem col_c {M : Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n) R} (hN : NQ (Sum.inl i₀) (Sum.inr i₀) M)
     {c : Fin n ⊕ Fin n} (hcx : c ≠ Sum.inl i₀) (hcy : c ≠ Sum.inr i₀) (W : Fin n ⊕ Fin n → R) :
@@ -84,10 +44,10 @@ theorem col_c {M : Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n) R} (hN : NQ (Sum.i
   have h : ∀ r, M r c = (if r = c then 1 else 0) + (if r = Sum.inl i₀ then M (Sum.inl i₀) c else 0) := by
     intro r
     by_cases hr : r = Sum.inl i₀
-    · subst hr; rw [if_neg (Ne.symm hcx), if_pos rfl, zero_add]
+    · subst hr; rw [ite_eq_right (Ne.symm hcx), ite_eq_left rfl, zero_add]
     · rw [NQ.apply hN (Or.inr ⟨hcy, hr⟩), Matrix.one_apply]; simp [hr]
   rw [Finset.sum_congr rfl fun r _ => congrArg (· * W r) (h r)]
-  simp_rw [add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp_rw [add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem sum_split' {A : Type} [AddCommMonoid A] {m : ℕ} (em : Fin m → Fin n) (hem : Function.Injective em)
     (hrng : ∀ k, k ≠ i₀ ↔ k ∈ Set.range em) (f : Fin n → A) : ∑ a, f a = f i₀ + ∑ j, f (em j) := by
@@ -172,7 +132,6 @@ theorem even_im_hermitian_sub (hs : ∀ a, s (s a) = a) (he : e * e = 1) (hse : 
     rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun j _ => by ring
   rw [hA, hB, he, one_mul] at h0
   have hS : s S2 = S1 := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [S2, S1, map_sum, map_mul, hs]
   rw [map_add (f := _), hS]
   linear_combination e * h0 - (s α + S1) * he

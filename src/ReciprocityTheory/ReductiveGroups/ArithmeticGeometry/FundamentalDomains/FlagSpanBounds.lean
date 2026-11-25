@@ -66,9 +66,3 @@ lemma maj_nonneg {x : Frame X.Ψ r} (hx : x ∈ X.dom) (τ : X.Ψ) (v : Fin r �
 end
 
 end ReciprocityTheory.ChartRestriction.G.FD.FlagSpanBounds
-
-namespace ReciprocityTheory.ChartRestriction.G.FD
-
-variable {E : Type} [Field E] [NumberField E] [NumberField.IsCMField E]
-
-end ReciprocityTheory.ChartRestriction.G.FD

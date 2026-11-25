@@ -125,7 +125,7 @@ theorem exists_offS_compS (ι : Type) (S : Finset (HeightOneSpectrum (𝓞 F)))
     exact evalV_liftS_of_mem (fun v => t v i) v
 
 theorem isOpen_integral : IsOpen {x : Af F | ∀ v, x v ∈ v.adicCompletionIntegers F} :=
-  RestrictedProduct.isOpen_forall_mem (fun v => Valued.isOpen_valuationSubring _)
+  RestrictedProduct.isOpen_forall_mem (fun _ => Valued.isOpen_valuationSubring _)
 
 theorem isOpen_offS (ι : Type) [Finite ι] (S : Finset (HeightOneSpectrum (𝓞 F))) :
     IsOpen (offS (F := F) ι S : Set (ι → Af F)) := by

@@ -116,7 +116,7 @@ theorem dOp_chart_le {n : ℕ} {ε : Fin n → Bool} {s : ℝ} {E : Fin (n ^ 2) 
     intro i
     have hF : ‖E i‖ = 1 := by
       have h2 : ‖E i‖ ^ 2 = 1 := by
-        rw [← GlobalTheory.ProductChart.ip_self, GlobalTheory.ProductChart.ip_apply, hE i i, if_pos rfl]
+        rw [← GlobalTheory.ProductChart.ip_self, GlobalTheory.ProductChart.ip_apply, hE i i, ite_eq_left rfl]
       nlinarith [norm_nonneg (E i)]
     refine ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun v => ?_
     have hv : T (E i) v = WithLp.toLp 2 (E i *ᵥ WithLp.ofLp v) := rfl
@@ -137,7 +137,6 @@ theorem dOp_chart_le {n : ℕ} {ε : Fin n → Bool} {s : ℝ} {E : Fin (n ^ 2) 
           NormedSpace.map_exp T hTc _
       _ = NormedSpace.exp (x i • T (E i)) := by rw [map_smul, Complex.coe_smul]
   haveI : CompleteSpace (EuclideanSpace ℂ (Fin n) →L[ℂ] EuclideanSpace ℂ (Fin n)) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       infer_instance
   obtain ⟨-, B, hB, hBn, -, -, -⟩ := GlobalTheory.ProductChart.exists_deriv_prod hs t' (n ^ 2) (fun i => T (E i))
     (fun i => ContinuousLinearMap.proj i) hEn ht'
@@ -297,7 +296,7 @@ theorem lintegral_chart_all_le : ∀ (I : AutInst) (c : InfinitePlace I.F → �
               apply Real.exp_le_exp.2
               rw [mul_one]
               exact_mod_cast hcard
-      · push_neg at hc0
+      · push Not at hc0
         obtain ⟨v, hv⟩ := hc0
         have : ENNReal.ofReal (Kc * c v) = 0 :=
           ENNReal.ofReal_eq_zero.2 (mul_nonpos_of_nonneg_of_nonpos (Real.exp_pos _).le hv.le)

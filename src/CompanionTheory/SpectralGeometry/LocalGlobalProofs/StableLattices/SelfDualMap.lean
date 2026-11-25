@@ -45,9 +45,9 @@ variable {R : Type} [CommRing R] [TopologicalSpace R] [IsTopologicalRing R]
 def evalE : (Unit → R) ≃ₜ+ R where
   toFun x := x ()
   invFun s := fun _ => s
-  left_inv x := rfl
-  right_inv s := rfl
-  map_add' x y := rfl
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_add' _ _ := rfl
   continuous_toFun := continuous_apply ()
   continuous_invFun := continuous_pi fun _ => continuous_id
 

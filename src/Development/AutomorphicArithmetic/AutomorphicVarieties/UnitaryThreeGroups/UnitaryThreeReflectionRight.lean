@@ -3,52 +3,7 @@ module
 public import Mathlib.GroupTheory.SemidirectProduct
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.RepresentationTheory.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -156,14 +111,14 @@ def thetaAut : MulAut (GL (Fin m) R) where
 variable (m R) in
 def sgnAct : ℤˣ →* MulAut (GL (Fin m) R) where
   toFun s := if s = 1 then 1 else thetaAut (m := m) (R := R)
-  map_one' := if_pos rfl
+  map_one' := ite_eq_left rfl
   map_mul' s t := by
     rcases Int.units_eq_one_or s with rfl | rfl <;> rcases Int.units_eq_one_or t with rfl | rfl
     · simp
     · simp
     · simp
     · have h : ((-1 : ℤˣ) = 1) = False := by decide
-      simp only [neg_mul_neg, mul_one, if_true, h, if_false]
+      simp only [neg_mul_neg, mul_one, ite_true, h, ite_false]
       ext1 g
       exact (theta_theta (R := R) g).symm
 
@@ -172,7 +127,7 @@ def sgnAct : ℤˣ →* MulAut (GL (Fin m) R) where
 @[simp] theorem sgnAct_neg_one (g : GL (Fin m) R) : sgnAct (m := m) (R := R) (-1) g = theta g := by
   have h : ((-1 : ℤˣ) = 1) = False := by decide
   show (if (-1 : ℤˣ) = 1 then 1 else thetaAut (m := m) (R := R)) g = theta g
-  simp only [h, if_false]
+  simp only [h, ite_false]
   rfl
 
 
@@ -234,7 +189,7 @@ theorem GG.adFun_mul (x y : GG (m := m) (R := R)) (X : Matrix (Fin m) (Fin m) R)
   have hn : ((-1 : ℤˣ) = 1) = False := by decide
   rcases Int.units_eq_one_or s with rfl | rfl <;> rcases Int.units_eq_one_or t with rfl | rfl <;>
     simp only [GG.adFun, GG.mat, SemidirectProduct.mul_left, SemidirectProduct.mul_right,
-      sgnAct_one, sgnAct_neg_one, hn, if_true, if_false, mul_one, one_mul, neg_mul_neg,
+      sgnAct_one, sgnAct_neg_one, hn, ite_true, ite_false, mul_one, one_mul, neg_mul_neg,
       Units.val_mul, _root_.mul_inv_rev, Matrix.mul_assoc]
   · rw [← theta_conj_thetaLie_eq_thetaLie_conj]
     simp only [Matrix.mul_assoc]

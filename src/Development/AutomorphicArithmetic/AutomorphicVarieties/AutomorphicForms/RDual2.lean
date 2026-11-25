@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RDualC
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RInv2
 public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.AntisymmetrizedProductEqFactorialSmulQdet
@@ -136,14 +137,7 @@ theorem Eop_dualFn (τ : InfinitePlace E) (i j : Fin a) (φ : Sm E a) :
 private theorem qdet_conj {V : Type} [AddCommGroup V] [Module ℂ V] (e : V ≃ₗ[ℂ] V) (X Y : Fin a → Fin a → Module.End ℂ V)
     (h : ∀ i j φ, X i j (e φ) = e (Y i j φ)) (u : ℂ) (φ : V) :
     Formalism.REAL.qdet X u (e φ) = e (Formalism.REAL.qdet Y u φ) := by
-  have h0 : ∀ (z : Module.End ℂ V) ψ, (e.conjAlgEquiv ℂ).toAlgHom z (e ψ) = e (z ψ) := fun z ψ =>
-    congrArg (fun x => e (z x)) (e.symm_apply_apply ψ)
-  have e1 : (fun i j => (e.conjAlgEquiv ℂ).toAlgHom (Y i j)) = X := by
-    funext i j
-    refine LinearMap.ext fun ψ => ?_
-    obtain ⟨ψ, rfl⟩ := e.surjective ψ
-    rw [h0, h]
-  rw [← h0, map_qdet, e1]
+  apply _root_.UpperTheory.V.TC.qdet_conj <;> assumption
 
 open Formalism.REAL Finset in
 private theorem qdet_dual {V : Type} [AddCommGroup V] [Module ℂ V] (e : V ≃ₗ[ℂ] V) (X : Fin a → Fin a → Module.End ℂ V)

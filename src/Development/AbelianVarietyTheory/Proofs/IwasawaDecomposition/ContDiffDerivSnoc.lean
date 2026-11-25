@@ -54,7 +54,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct ContDiff
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.MultMem
 
@@ -111,7 +110,7 @@ def smFun : Submodule ℂ (GA D V → ℂ) where
       ContDiff ℝ ∞ fun t : Fin k → ℝ => φ (g * (List.ofFn fun i => oneP θ V (τs i) (Xs i) (t i)).prod)}
   add_mem' := fun h h' k τs Xs hX g => (h k τs Xs hX g).add (h' k τs Xs hX g)
   zero_mem' := fun _ _ _ _ _ => contDiff_const
-  smul_mem' := fun c _ h k τs Xs hX g => contDiff_const.mul (h k τs Xs hX g)
+  smul_mem' := fun _ _ h k τs Xs hX g => contDiff_const.mul (h k τs Xs hX g)
 
 variable {θ V}
 

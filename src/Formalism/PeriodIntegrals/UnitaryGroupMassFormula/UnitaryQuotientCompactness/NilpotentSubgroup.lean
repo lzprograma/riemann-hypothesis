@@ -2,51 +2,8 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SsetGroup
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SBasic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -73,7 +30,7 @@ lemma mem_Nset_iff (g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) 
     · have hej : eI k r ⟨j.val, hjr⟩ = j := Fin.ext (by simp [eI])
       have h := h2 ⟨j.val, hjr⟩ i (by rw [min_eq_left hjr.le] at hi; exact hi)
       rwa [hej] at h
-    · push_neg at hjr
+    · push Not at hjr
       exact h3 i j hjr hj (by rwa [min_eq_right hjr] at hi)
   · rintro ⟨hU, hN⟩
     refine ⟨hU, fun a i hai => ?_, fun i j hj1 hj2 hi => ?_⟩
@@ -89,15 +46,15 @@ lemma nc_mul {a b : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
     (ha : NC k r a) (hb : NC k r b) : NC k r (a * b) := by
   intro i j hj hi
   rw [Matrix.mul_apply, Finset.sum_eq_single j]
-  · rw [hb j j hj (min_le_left _ _), if_pos rfl, mul_one]
+  · rw [hb j j hj (min_le_left _ _), ite_eq_left rfl, mul_one]
     exact ha i j hj hi
   · intro l _ hlj
     by_cases hl : min j.val r ≤ l.val
-    · rw [hb l j hj hl, if_neg hlj, mul_zero]
-    · push_neg at hl
+    · rw [hb l j hj hl, ite_eq_right hlj, mul_zero]
+    · push Not at hl
       have hlr : l.val < r := lt_of_lt_of_le hl (min_le_right _ _)
       have h := ha i l (by omega) (by rw [min_eq_left hlr.le]; omega)
-      rw [h, if_neg (by intro h'; rw [h'] at hi; omega), zero_mul]
+      rw [h, ite_eq_right (by intro h'; rw [h'] at hi; omega), zero_mul]
   · intro h
     exact absurd (Finset.mem_univ j) h
 
@@ -109,15 +66,15 @@ private lemma mul_apply_eq_ite_of_lower_block_scalar {a : Matrix (Fin (2 * r + k
       (x * a) i j = if i = j then c else 0 := by
   intro i j hj hi
   rw [Matrix.mul_apply, Finset.sum_eq_single j]
-  · rw [ha j j hj (min_le_left _ _), if_pos rfl, mul_one]
+  · rw [ha j j hj (min_le_left _ _), ite_eq_left rfl, mul_one]
     exact hx i j hj hi
   · intro l _ hlj
     by_cases hl : min j.val r ≤ l.val
-    · rw [ha l j hj hl, if_neg hlj, mul_zero]
-    · push_neg at hl
+    · rw [ha l j hj hl, ite_eq_right hlj, mul_zero]
+    · push Not at hl
       have hlr : l.val < r := lt_of_lt_of_le hl (min_le_right _ _)
       have h := hx i l (by omega) (by rw [min_eq_left hlr.le]; omega)
-      rw [h, if_neg (by intro h'; rw [h'] at hi; omega), zero_mul]
+      rw [h, ite_eq_right (by intro h'; rw [h'] at hi; omega), zero_mul]
   · intro h
     exact absurd (Finset.mem_univ j) h
 
@@ -143,7 +100,7 @@ lemma nc_inv {a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
   have hV : ∀ x ∈ V, LinearMap.mulRight ℂ a x ∈ V := by
     intro x hx i j hj hi
     have h00 : (x * a) 0 0 = x 0 0 := by
-      rw [hfix (x 0 0) hx 0 0 (by simp) (by simp), if_pos rfl]
+      rw [hfix (x 0 0) hx 0 0 (by simp) (by simp), ite_eq_left rfl]
     show (x * a) i j = if i = j then (x * a) 0 0 else 0
     rw [h00]
     exact hfix (x 0 0) hx i j hj hi
@@ -166,7 +123,7 @@ lemma nc_inv {a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
       _ = a⁻¹ := by rw [hxa, Matrix.one_mul]
   have hc : (x : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) 0 0 = 1 := by
     have h := hfix ((x : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) 0 0) x.2 0 0 (by simp) (by simp)
-    rw [hxa, if_pos rfl, Matrix.one_apply_eq] at h
+    rw [hxa, ite_eq_left rfl, Matrix.one_apply_eq] at h
     exact h.symm
   intro i j hj hi
   rw [← hxinv]
@@ -191,19 +148,19 @@ lemma n_ut {n : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hn : n 
   obtain ⟨hU, hN⟩ := (mem_Nset_iff n).1 hn
   by_cases hj : j.val ≤ r + k
   · exact hN i j hj (le_trans (min_le_left _ _) hij)
-  · push_neg at hj
+  · push Not at hj
     have hinv : NC k r n⁻¹ := nc_inv hU hN
     have hvj : (piI k r j).val = 2 * r + k - j.val := by
-      rw [piI_val, if_neg (by omega)]
+      rw [piI_val, ite_eq_right (by omega)]
     have hvi : (piI k r i).val = 2 * r + k - i.val := by
-      rw [piI_val, if_neg (by omega)]
+      rw [piI_val, ite_eq_right (by omega)]
     have h1 := hinv (piI k r j) (piI k r i) (by omega)
       (by rw [hvi, hvj, min_eq_left (by omega)]; omega)
     rw [inv_eq_UH hU, Hpk_mul_mul_Hpk_apply, piI_piI, piI_piI, conjTranspose_apply] at h1
     have he1 : epsI k r (piI k r j) = 1 := by
-      simp only [epsI]; rw [if_neg (by omega)]
+      simp only [epsI]; rw [ite_eq_right (by omega)]
     have he2 : epsI k r (piI k r i) = 1 := by
-      simp only [epsI]; rw [if_neg (by omega)]
+      simp only [epsI]; rw [ite_eq_right (by omega)]
     rw [he1, he2, one_mul, mul_one] at h1
     have h2 := congrArg star h1
     rw [star_star] at h2
@@ -216,6 +173,6 @@ lemma n_ut {n : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hn : n 
         have h' := congrArg (piI k r) h
         rw [piI_piI, piI_piI] at h'
         exact hij' h'.symm
-      rw [if_neg hne, if_neg hij', star_zero]
+      rw [ite_eq_right hne, ite_eq_right hij', star_zero]
 
 end PI.QuotSetU.UnitaryGroupMassFormula.SW

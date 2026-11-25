@@ -3,44 +3,6 @@ module
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondEmbeddingAlgebraMap
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LatBasisAllOfParts
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondEmbeddingEqStar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -87,7 +49,7 @@ theorem denom_holds (hθ : IsSplitEquiv X p θ) : DenomP X p θ := by
     have hyp : y ∉ p.1.asIdeal := by
       intro hmem
       have h1 := hy p.1 (Finset.mem_insert_self _ _)
-      simp only [if_true, pow_one] at h1
+      simp only [ite_true, pow_one] at h1
       have h2 : (1 : 𝓞 X.B.I.F) ∈ p.1.asIdeal := by
         have h3 : y - (y - 1) ∈ p.1.asIdeal := p.1.asIdeal.sub_mem hmem h1
         simpa using h3
@@ -101,7 +63,7 @@ theorem denom_holds (hθ : IsSplitEquiv X p θ) : DenomP X p θ := by
           rw [Set.Finite.mem_toFinset, h] at hw
           exact absurd hf (not_le.2 hw)
         have h1 := hy w (Finset.mem_insert_of_mem hw)
-        simp only [hwp, if_false, sub_zero] at h1
+        simp only [hwp, ite_false, sub_zero] at h1
         have h2 : w.valuation X.B.I.F (y : X.B.I.F) ≤ WithZero.exp (-(N w : ℤ)) := by
           rw [IsDedekindDomain.HeightOneSpectrum.valuation_of_algebraMap]
           exact (IsDedekindDomain.HeightOneSpectrum.intValuation_le_pow_iff_mem w y (N w)).2 h1

@@ -8,53 +8,9 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Gaug
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.NatSmulMem
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.PtMatIsUnit
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexBStable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.SESymmApply, Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.GramBlockUnit, Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexBCongruence
@@ -255,8 +211,8 @@ theorem gram_block_unit {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T 
     rw [hJ] at this
     simp only [Matrix.mulVec, dotProduct, Pi.single_apply]
     by_cases ha : a = l
-    · rw [if_pos ha] at this ⊢; linear_combination this
-    · rw [if_neg ha] at this ⊢; linear_combination this
+    · rw [ite_eq_left ha] at this ⊢; linear_combination this
+    · rw [ite_eq_right ha] at this ⊢; linear_combination this
   have E2 : Z.conjTranspose *ᵥ α = Pi.single l (T' * β l) := by
     ext a
     have := congrFun hv (Sum.inr a)
@@ -264,8 +220,8 @@ theorem gram_block_unit {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T 
     rw [hJ] at this
     simp only [Matrix.mulVec, dotProduct, Pi.single_apply, Matrix.conjTranspose_apply]
     by_cases ha : a = l
-    · rw [if_pos ha] at this ⊢; linear_combination this
-    · rw [if_neg ha] at this ⊢; linear_combination this
+    · rw [ite_eq_left ha] at this ⊢; linear_combination this
+    · rw [ite_eq_right ha] at this ⊢; linear_combination this
   have hZi : Z⁻¹ * Z = 1 := nonsing_inv_mul _ hZ
   have hZti : IsUnit Z.conjTranspose.det := by
     rw [Matrix.det_conjTranspose]; exact hZ.star
@@ -340,7 +296,7 @@ theorem strictLo_last {r : ℕ} {M : Matrix (Fin (r + 1)) (Fin (r + 1)) K} (h : 
     (M - 1) *ᵥ Pi.single (Fin.last r) 1 = 0 := by
   ext i
   simp only [Matrix.mulVec, dotProduct, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, Pi.zero_apply, Matrix.sub_apply]
+    Finset.mem_univ, ite_true, Pi.zero_apply, Matrix.sub_apply]
   by_cases hi : i = Fin.last r
   · subst hi; rw [(h _ _).2 rfl, Matrix.one_apply_eq, sub_self]
   · have hlt : i < Fin.last r := lt_of_le_of_ne (Fin.le_last i) hi
@@ -364,11 +320,11 @@ theorem hT_fvec {T0 : E} (F0 : Formalism.MainNotions.S.FlagG S r T0) (i j : Fin 
   · simp [Formalism.MainNotions.S.FlagG.fvec, F0.z_norm]
   · have h := F0.z_orth b
     simp only [Formalism.MainNotions.S.FlagG.fvec, Fin.snoc_last, Fin.snoc_castSucc]
-    rw [if_neg (fun h' => (Fin.castSucc_lt_last b).ne h'.2), ← S.herm.eq, h, map_zero]
+    rw [ite_eq_right (fun h' => (Fin.castSucc_lt_last b).ne h'.2), ← S.herm.eq, h, map_zero]
   · simp only [Formalism.MainNotions.S.FlagG.fvec, Fin.snoc_last, Fin.snoc_castSucc]
-    rw [if_neg (fun h' => (Fin.castSucc_lt_last a).ne h'.1), F0.z_orth a]
+    rw [ite_eq_right (fun h' => (Fin.castSucc_lt_last a).ne h'.1), F0.z_orth a]
   · simp only [Formalism.MainNotions.S.FlagG.fvec, Fin.snoc_castSucc]
-    rw [if_neg (fun h' => (Fin.castSucc_lt_last a).ne h'.1), F0.e_iso a b]
+    rw [ite_eq_right (fun h' => (Fin.castSucc_lt_last a).ne h'.1), F0.e_iso a b]
 
 theorem gram_gg : gramOf (gg F F') =
     Matrix.fromBlocks (Jc (-T)) (Formalism.MainNotions.S.Zhat F F') (Formalism.MainNotions.S.Zhat F F').conjTranspose (Jc (-T')) := by
@@ -395,13 +351,13 @@ theorem Jc_conj {c : E} {P : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (hP : Formali
   have hlast : ∀ j, P (Fin.last r) j = if j = Fin.last r then 1 else 0 := by
     intro j
     by_cases hj : j = Fin.last r
-    · subst hj; rw [if_pos rfl, (hP _ _).2 rfl]
-    · rw [if_neg hj, (hP _ _).1 (lt_of_le_of_ne (Fin.le_last j) hj)]
+    · subst hj; rw [ite_eq_left rfl, (hP _ _).2 rfl]
+    · rw [ite_eq_right hj, (hP _ _).1 (lt_of_le_of_ne (Fin.le_last j) hj)]
   ext i j
   simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, Jc]
-  simp only [mul_ite, mul_zero, ite_and, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [mul_ite, mul_zero, ite_and, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [Finset.sum_eq_single (Fin.last r)]
-  · simp only [if_true, hlast]
+  · simp only [ite_true, hlast]
     by_cases hi : i = Fin.last r <;> by_cases hj : j = Fin.last r <;> simp [hi, hj]
   · intro k _ hk; simp [hk]
   · simp
@@ -473,7 +429,7 @@ theorem sL_frame (hG : IsUnit (gramOf (gg F F')).det) (P P' : Matrix (Fin (r + 1
   rw [← sub_add_cancel (sL (gg F F') (UU P P') (F.fvec b)) (F.fvec b), h,
     Finset.sum_congr rfl (fun x _ => by rw [hcol x])]
   simp only [sub_smul, Finset.sum_sub_distrib, Matrix.one_apply, ite_smul, one_smul, zero_smul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   abel
 
 theorem sL_frame' (hG : IsUnit (gramOf (gg F F')).det) (P P' : Matrix (Fin (r + 1)) (Fin (r + 1)) E)
@@ -493,7 +449,7 @@ theorem sL_frame' (hG : IsUnit (gramOf (gg F F')).det) (P P' : Matrix (Fin (r + 
   rw [← sub_add_cancel (sL (gg F F') (UU P P') (F'.fvec b)) (F'.fvec b), h,
     Finset.sum_congr rfl (fun x _ => by rw [hcol x])]
   simp only [sub_smul, Finset.sum_sub_distrib, Matrix.one_apply, ite_smul, one_smul, zero_smul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   abel
 
 end Act
@@ -554,7 +510,7 @@ theorem sL_orth (hG : IsUnit (gramOf (gg F F')).det) {P P' : Matrix (Fin (r + 1)
     ext a
     by_cases ha : a = Fin.last r
     · subst ha; simp
-    · rw [Pi.single_apply, if_neg ha]
+    · rw [Pi.single_apply, ite_eq_right ha]
       obtain ⟨i, rfl⟩ := Fin.exists_castSucc_eq.2 ha
       have h1 := hrow (Fin.castSucc i)
       rw [Jc_mulVec_ne _ ha, zero_add] at h1
@@ -585,7 +541,7 @@ theorem sL_orth' (hG : IsUnit (gramOf (gg F F')).det) {P P' : Matrix (Fin (r + 1
     ext a
     by_cases ha : a = Fin.last r
     · subst ha; simp
-    · rw [Pi.single_apply, if_neg ha]
+    · rw [Pi.single_apply, ite_eq_right ha]
       obtain ⟨i, rfl⟩ := Fin.exists_castSucc_eq.2 ha
       have h1 := hrow (Fin.castSucc i)
       rw [Jc_mulVec_ne _ ha, add_zero] at h1
@@ -744,7 +700,7 @@ theorem volume_index_b_congruence (D : D7) (u u' : D.what₂.Word)
     gram_gg_unit F0 F'.fl (star_natCast _) (star_natCast _) hZu hG
 
   obtain ⟨mc, hmc0, hmc⟩ := lat_fun_bdd t.lam hlat.toIsLattice (coordL (gg F0 F'.fl))
-  have hmgm : ∀ m, ∃ k : ℕ, k ≠ 0 ∧ (k : D.host.E) • gg F0 F'.fl m ∈ t.lam := fun m => lat_smul_mem t.lam hlat _
+  have hmgm : ∀ m, ∃ k : ℕ, k ≠ 0 ∧ (k : D.host.E) • gg F0 F'.fl m ∈ t.lam := fun m => Bl.general_b_fact_third_version.goal1 t.lam hlat _
   choose mm hmm0 hmmL using hmgm
   set mg : ℕ := ∏ m, mm m with hmg
   have hmg0 : mg ≠ 0 := Finset.prod_ne_zero_iff.mpr fun m _ => hmm0 m

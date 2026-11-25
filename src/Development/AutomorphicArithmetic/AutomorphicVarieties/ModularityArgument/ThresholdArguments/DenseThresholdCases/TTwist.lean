@@ -123,11 +123,11 @@ private theorem exists_chi [IsAlgClosure K Ω] (hK : Module.finrank ℚ K = 2) (
   let δ : G ℚ Ω →* ℂˣ := MonoidHom.mk' (fun s => if s ∈ galOf ℚ K Ω then 1 else -1) fun a b => by
     by_cases ha : a ∈ galOf ℚ K Ω <;> by_cases hb : b ∈ galOf ℚ K Ω <;>
       simp [Subgroup.mul_mem_iff_of_index_two hi, ha, hb]
-  have hδ : (Chr.cls ℚ Ω N).ker ≤ δ.ker := fun s hs => if_pos (hker hs)
+  have hδ : (Chr.cls ℚ Ω N).ker ≤ δ.ker := fun s hs => ite_eq_left (hker hs)
   have hs := (Chr.clsOnto Ω N).1
   have e : ∀ t, (Chr.cls ℚ Ω N).liftOfSurjective hs ⟨δ, hδ⟩ (Chr.cls ℚ Ω N t) = δ t := fun t =>
     MonoidHom.liftOfRightInverse_comp_apply _ _ _ _ t
-  refine ⟨hker, (Chr.cls ℚ Ω N).liftOfSurjective hs ⟨δ, hδ⟩, MonoidHom.ext fun u => ?_, fun t ht => (e t).trans (if_neg ht)⟩
+  refine ⟨hker, (Chr.cls ℚ Ω N).liftOfSurjective hs ⟨δ, hδ⟩, MonoidHom.ext fun u => ?_, fun t ht => (e t).trans (ite_eq_right ht)⟩
   obtain ⟨t, rfl⟩ := hs u
   rw [MonoidHom.pow_apply, e]
   change (if t ∈ galOf ℚ K Ω then (1 : ℂˣ) else -1) ^ 2 = 1

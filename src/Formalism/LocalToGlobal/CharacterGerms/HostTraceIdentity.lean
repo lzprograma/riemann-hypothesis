@@ -4,8 +4,6 @@ public import Formalism.LocalToGlobal.CharacterGerms.RowTieVal
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -161,11 +159,5 @@ def Lab.RankOK {Orb : Type} {d : ℕ} (lab : Lab E Orb d) (Dw : Datum H) : Prop 
   ∀ o, (∀ g a, lab.big o (1 - g) a ↔ ¬ lab.big o g a) ∧
     (∀ g a, lab.big o g a → Dw.mult (lab.tau o g a) = lab.n + lab.j) ∧
     (∀ g a, ¬ lab.big o g a → Dw.mult (lab.tau o g a) = lab.j')
-
-section Top
-
-variable {T : CDVR} {io : c.F →+* T.Fr} {y : IntFr Xo c T io} {Orb : Type} [Fintype Orb] {d : ℕ} [NeZero d]
-
-end Top
 
 end Formalism.L2.FormalSeriesBounds

@@ -601,12 +601,12 @@ theorem comp_overR {R : Type} [CommRing R] (X : Over (Sp R)) (a : R) {S : Type} 
 theorem awR_comp {R : Type} [CommRing R] (x y : R) :
     (IsLocalization.Away.awayToAwayRight (P := Localization.Away (x * y)) x y).comp
       (algebraMap R (Localization.Away x)) = algebraMap R _ :=
-  RingHom.ext (IsLocalization.Away.awayToAwayRight_eq x y)
+  RingHom.ext (IsLocalization.Away.awayToAwayRight_eq (S := Localization.Away x) x y)
 
 theorem awL_comp {R : Type} [CommRing R] (x y : R) :
     (IsLocalization.Away.awayToAwayLeft (P := Localization.Away (y * x)) x y).comp
       (algebraMap R (Localization.Away x)) = algebraMap R _ :=
-  RingHom.ext (IsLocalization.Away.awayToAwayLeft_eq x y)
+  RingHom.ext (IsLocalization.Away.awayToAwayLeft_eq (S := Localization.Away x) x y)
 
 end GlobalTheory.SecGlue.Red
 
@@ -1049,36 +1049,6 @@ noncomputable section
 
 namespace GlobalTheory.SecGlue.Pair
 
-theorem spMap_comp' {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* B) (g : B →+* C) :
-    spMap (g.comp f) = spMap g ≫ spMap f := by
-  show Spec.map (CommRingCat.ofHom (g.comp f)) = Spec.map _ ≫ Spec.map _
-  rw [← Spec.map_comp]; rfl
-
-theorem chart_rebuild {Y : Scheme.{0}} {V : Y.Opens} (hV : IsAffineOpen V) {S : Type} [CommRing S]
-    (x : Sp S ⟶ Y) (hx : x ⁻¹ᵁ V = ⊤) : spMap (chartHom V x hx) ≫ hV.fromSpec = x := by
-  have h := IsAffineOpen.SpecMap_appLE_fromSpec x hV (isAffineOpen_top (Sp S)) hx.ge
-  rw [IsAffineOpen.fromSpec_top, Scheme.isoSpec_Spec_inv] at h
-  have e : CommRingCat.ofHom (chartHom V x hx) =
-      x.appLE V ⊤ hx.ge ≫ (Scheme.ΓSpecIso (CommRingCat.of S)).hom := rfl
-  show Spec.map (CommRingCat.ofHom (chartHom V x hx)) ≫ hV.fromSpec = x
-  rw [e, Spec.map_comp, Category.assoc, h, ← Category.assoc, ← Spec.map_comp, Iso.inv_hom_id,
-    Spec.map_id, Category.id_comp]
-
-theorem fromSpec_comp_top {Y : Scheme.{0}} {V : Y.Opens} (hV : IsAffineOpen V) {S : Type} [CommRing S]
-    (χ : Γ(Y, V) →+* S) : (spMap χ ≫ hV.fromSpec) ⁻¹ᵁ V = ⊤ :=
-  top_le_iff.1 fun _ _ => hV.range_fromSpec.subset ⟨_, rfl⟩
-
-theorem chartHom_fromSpec {Y : Scheme.{0}} {V : Y.Opens} (hV : IsAffineOpen V) {S : Type} [CommRing S]
-    (χ : Γ(Y, V) →+* S) (hc : (spMap χ ≫ hV.fromSpec) ⁻¹ᵁ V = ⊤) :
-    chartHom V (spMap χ ≫ hV.fromSpec) hc = χ := by
-  have e := chart_rebuild hV (spMap χ ≫ hV.fromSpec) hc
-  rw [cancel_mono] at e
-  exact congrArg CommRingCat.Hom.hom (Spec.map_injective e)
-
-theorem chartHom_congr {Y : Scheme.{0}} (V : Y.Opens) {S : Type} [CommRing S] {x x' : Sp S ⟶ Y}
-    (e : x = x') (h : x ⁻¹ᵁ V = ⊤) (h' : x' ⁻¹ᵁ V = ⊤) : chartHom V x h = chartHom V x' h' := by
-  subst e; rfl
-
 def strHom {R : Type} [CommRing R] (X : Over (Sp R)) (V : X.left.Opens) : R →+* Γ(X.left, V) :=
   ((Scheme.ΓSpecIso (CommRingCat.of R)).inv ≫ X.hom.appLE ⊤ V (le_top : V ≤ X.hom ⁻¹ᵁ ⊤)).hom
 
@@ -1093,7 +1063,7 @@ theorem chartHom_comp_strHom {R : Type} [CommRing R] (X : Over (Sp R)) {V : X.le
     (hV : IsAffineOpen V) {S : Type} [CommRing S] (f : R →+* S) (u : Sp S ⟶ X.left) (hu : u ⁻¹ᵁ V = ⊤)
     (hf : u ≫ X.hom = spMap f) : (chartHom V u hu).comp (strHom X V) = f := by
   have e : spMap ((chartHom V u hu).comp (strHom X V)) = spMap f := by
-    rw [spMap_comp', ← fromSpec_over X hV, ← Category.assoc, chart_rebuild, hf]
+    rw [CombEx.spMap_comp', ← fromSpec_over X hV, ← Category.assoc, CombEx.chart_rebuild, hf]
   exact congrArg CommRingCat.Hom.hom (Spec.map_injective e)
 
 theorem smooth_strHom {R : Type} [CommRing R] (X : Over (Sp R)) [Smooth X.hom] {V : X.left.Opens}
@@ -1141,8 +1111,8 @@ theorem red_comp {R R₀ : Type} [CommRing R] [CommRing R₀] (π : R →+* R₀
     apply IsLocalization.ringHom_ext (Submonoid.powers c)
     rw [RingHom.comp_assoc, hr, awayMap_comp_algebraMap, RingHom.comp_assoc, awayMap_comp_algebraMap,
       ← RingHom.comp_assoc, IsLocalization.Away.lift_comp]
-  rw [← Category.assoc, ← spMap_comp', e1, spMap_comp', Category.assoc, he, ← Category.assoc,
-    ← spMap_comp', IsLocalization.Away.lift_comp]
+  rw [← Category.assoc, ← CombEx.spMap_comp', e1, CombEx.spMap_comp', Category.assoc, he, ← Category.assoc,
+    ← CombEx.spMap_comp', IsLocalization.Away.lift_comp]
 
 end GlobalTheory.SecGlue.Pair
 
@@ -1172,7 +1142,7 @@ namespace GlobalTheory.SecGlue.Pair
 theorem comp_over {Y : Scheme.{0}} {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (e : Sp B ⟶ Y)
     (p : Y ⟶ Sp A) (f : A →+* B) (he : e ≫ p = spMap f) (r : B →+* C) (g : A →+* C) (hr : r.comp f = g) :
     (spMap r ≫ e) ≫ p = spMap g := by
-  rw [Category.assoc, he, ← spMap_comp', hr]
+  rw [Category.assoc, he, ← CombEx.spMap_comp', hr]
 
 end GlobalTheory.SecGlue.Pair
 
@@ -1203,10 +1173,10 @@ theorem exists_pair_lift_comb : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀]
 
   have hρ : (IsLocalization.Away.awayToAwayRight (S := Localization.Away a) (P := Localization.Away (a * b))
       a b).comp (algebraMap R (Localization.Away a)) = algebraMap R (Localization.Away (a * b)) :=
-    RingHom.ext (IsLocalization.Away.awayToAwayRight_eq a b)
+    RingHom.ext (IsLocalization.Away.awayToAwayRight_eq (S := Localization.Away a) a b)
   have hρ' : (IsLocalization.Away.awayToAwayLeft (S := Localization.Away b) (P := Localization.Away (a * b))
       b a).comp (algebraMap R (Localization.Away b)) = algebraMap R (Localization.Away (a * b)) :=
-    RingHom.ext (IsLocalization.Away.awayToAwayLeft_eq b a)
+    RingHom.ext (IsLocalization.Away.awayToAwayLeft_eq (S := Localization.Away b) b a)
   generalize IsLocalization.Away.awayToAwayRight (S := Localization.Away a) (P := Localization.Away (a * b))
       a b = ρ at hρ ⊢
   generalize IsLocalization.Away.awayToAwayLeft (S := Localization.Away b) (P := Localization.Away (a * b))
@@ -1225,9 +1195,6 @@ theorem exists_pair_lift_comb : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀]
       commutes' := fun r => RingHom.congr_fun (chartHom_comp_strHom X hV _ ea heaV hea) r }
 
   obtain ⟨eP⟩ := exists_awayEquiv a b
-  have hePc : (eP.toAlgHom : Localization.Away (a * b) →+* Localization.Away (algebraMap R (Localization.Away a) b)).comp
-      (algebraMap R (Localization.Away (a * b))) = algebraMap R (Localization.Away (algebraMap R (Localization.Away a) b)) :=
-    eP.toAlgHom.comp_algebraMap
   have heP := equiv_restrict a b eP ρ hρ
   have heb' : (spMap ρ' ≫ eb) ≫ X.hom = spMap (algebraMap R (Localization.Away (a * b))) :=
     comp_over eb X.hom _ heb ρ' _ hρ'
@@ -1245,7 +1212,7 @@ theorem exists_pair_lift_comb : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀]
       rw [RingHom.mem_ker, map_sub, sub_eq_zero,
         ← chartHom_spMap_comp V _ _ hbV (preimage_spMap_comp_eq_top _ hbV),
         ← chartHom_spMap_comp V _ _ h2 (preimage_spMap_comp_eq_top _ h2)]
-      exact RingHom.congr_fun (chartHom_congr V hred _ _) x
+      exact RingHom.congr_fun (CombEx.chartHom_congr V hred _ _) x
     rw [ker_awayMap] at hd
     have h3 := Ideal.mem_map_of_mem (eP : Localization.Away (a * b) →+* Localization.Away (algebraMap R (Localization.Away a) b)) hd
     rw [Ideal.map_map, show (eP : Localization.Away (a * b) →+* Localization.Away (algebraMap R (Localization.Away a) b)).comp
@@ -1261,19 +1228,19 @@ theorem exists_pair_lift_comb : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀]
   obtain ⟨N₀, hN⟩ := _root_.GlobalTheory.SecGlue.exists_sqZero_extend_pow R Γ(X.left, V) (Localization.Away a) (RingHom.ker (Localization.awayMap π a)) hJ (algebraMap R (Localization.Away a) b) φ ψ hcond
   refine ⟨N₀, fun N hN' => ?_⟩
   obtain ⟨χ, hχJ, hχ⟩ := hN N hN'
-  have htop := fromSpec_comp_top hV (χ : Γ(X.left, V) →+* Localization.Away a)
+  have htop := CombEx.fromSpec_comp_top hV (χ : Γ(X.left, V) →+* Localization.Away a)
   refine ⟨spMap (χ : Γ(X.left, V) →+* Localization.Away a) ≫ hV.fromSpec, ?_, ?_, htop, ?_⟩
-  · rw [Category.assoc, fromSpec_over, ← spMap_comp']
+  · rw [Category.assoc, fromSpec_over, ← CombEx.spMap_comp']
     exact congrArg spMap (RingHom.ext fun r => χ.commutes r)
-  · rw [← hea₀, ← chart_rebuild hV ea heaV, ← Category.assoc, ← Category.assoc, ← spMap_comp',
-      ← spMap_comp']
+  · rw [← hea₀, ← CombEx.chart_rebuild hV ea heaV, ← Category.assoc, ← Category.assoc, ← CombEx.spMap_comp',
+      ← CombEx.spMap_comp']
     refine congrArg (fun f => spMap f ≫ hV.fromSpec) (RingHom.ext fun x => ?_)
     have := hχJ x
     rw [RingHom.mem_ker, map_sub, sub_eq_zero] at this
     exact this
   · refine ⟨h2, preimage_spMap_comp_eq_top ρ htop, fun i => by rw [Matrix.cons_val_fin_one]; exact hbV, fun x => ?_⟩
     simp only [Fin.sum_univ_one, Matrix.cons_val_zero]
-    rw [chartHom_spMap_comp V ρ _ htop, chartHom_fromSpec hV _ htop, chartHom_spMap_comp V ρ ea heaV]
+    rw [chartHom_spMap_comp V ρ _ htop, CombEx.chartHom_fromSpec hV _ htop, chartHom_spMap_comp V ρ ea heaV]
     apply eP.injective
     rw [map_add (f := _), map_mul, map_sub, map_pow, heP, heP, AlgEquiv.commutes,
       IsScalarTower.algebraMap_apply R (Localization.Away a) (Localization.Away (algebraMap R (Localization.Away a) b))]
@@ -1496,7 +1463,6 @@ theorem lift_of_nilpotent_of_sqZero :
     intro R R₀ _ _ π hπ hn X X₀ i hi hX e₀ he₀
     by_cases hn2 : n + 1 ≤ 2
     · exact H R R₀ π hπ (le_bot_iff.mp ((Ideal.pow_le_pow_right hn2).trans hn.le)) X X₀ i hi hX e₀ he₀
-    have hn1 : 1 ≤ n := by omega
     set I := RingHom.ker π with hIdef
     set J : Ideal R := I ^ n with hJdef
     have hJI : J ≤ RingHom.ker π := Ideal.pow_le_self (by omega)
@@ -1552,8 +1518,6 @@ section -- clump:auto
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj DividedPowers
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.Published GlobalTheory.Published.GrothendieckMessing
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.SecLift
 

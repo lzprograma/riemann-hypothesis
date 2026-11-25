@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.SigIntIntegrable
 import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ColOfLeftInv
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
 import Mathlib.Tactic.Lemma
@@ -215,9 +216,9 @@ theorem hpk_row (i m : Fin (2 * r + k + 1)) :
 theorem hpk_mul_apply (A : Mx k r) (i j : Fin (2 * r + k + 1)) :
     (Hpk k r * A) i j = sgn k r i * A (tau k r i) j := by
   rw [Matrix.mul_apply, Finset.sum_eq_single (tau k r i)]
-  · rw [hpk_row, if_pos rfl]
+  · rw [hpk_row, ite_eq_left rfl]
   · intro m _ hm
-    rw [hpk_row, if_neg hm, zero_mul]
+    rw [hpk_row, ite_eq_right hm, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -309,21 +310,7 @@ theorem col_of_left_inv {g g' : Mx k r} (hg : col k r g) (hm : g' * g = 1) : col
   apply WlocSk.UnitaryGroupBasics.col_of_left_inv <;> assumption
 
 theorem n_closed : IsClosed (Nset k r : Set (Mx k r)) := by
-  have he : ∀ i j : Fin (2 * r + k + 1), Continuous fun g : Mx k r => g i j := fun i j =>
-    continuous_id.matrix_elem i j
-  have e : Nset k r = UH (Hpk k r) ∩ ((⋂ (a : Fin r) (i : Fin (2 * r + k + 1)) (_ : a.val ≤ i.val),
-        {g : Mx k r | g i (eI k r a) = if i = eI k r a then 1 else 0}) ∩
-      (⋂ (i : Fin (2 * r + k + 1)) (j : Fin (2 * r + k + 1)) (_ : r ≤ j.val) (_ : j.val ≤ r + k) (_ : r ≤ i.val),
-        {g : Mx k r | g i j = if i = j then 1 else 0})) := by
-    ext g
-    simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq]
-    exact Iff.rfl
-  rw [e]
-  refine uh_closed.inter (IsClosed.inter ?_ ?_)
-  · exact isClosed_iInter fun a => isClosed_iInter fun i => isClosed_iInter fun _ =>
-      isClosed_eq (he _ _) continuous_const
-  · exact isClosed_iInter fun i => isClosed_iInter fun j => isClosed_iInter fun _ => isClosed_iInter fun _ =>
-      isClosed_iInter fun _ => isClosed_eq (he _ _) continuous_const
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.TopH.n_closed <;> assumption
 
 theorem n_clsub : ClSub (Nset k r : Set (Mx k r)) := by
   refine ⟨(nset_iff _).2 ⟨uh_one, col_one⟩, ?_, ?_, fun a ha => isUnit_of_uh ha.1, n_closed⟩

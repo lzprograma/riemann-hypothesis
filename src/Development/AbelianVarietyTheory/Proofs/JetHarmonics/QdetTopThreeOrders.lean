@@ -116,10 +116,10 @@ theorem qdet_expand [Algebra ℂ A] (E : Fin n → Fin n → A) (u : ℂ) :
   rw [mul_smul_comm]
   split_ifs with hσ
   · congr 1
-    exact Finset.prod_congr rfl fun k hk => by rw [if_pos (hσ k (Finset.mem_compl.1 hk))]
+    exact Finset.prod_congr rfl fun k hk => by rw [ite_eq_left (hσ k (Finset.mem_compl.1 hk))]
   · push Not at hσ
     obtain ⟨k, hk, hk'⟩ := hσ
-    rw [Finset.prod_eq_zero (Finset.mem_compl.2 hk) (if_neg hk'), zero_smul]
+    rw [Finset.prod_eq_zero (Finset.mem_compl.2 hk) (ite_eq_right hk'), zero_smul]
 
 theorem subdet_empty (E : Fin n → Fin n → A) : subdet E ∅ = 1 := by
   have : univ.filter (fun σ : Equiv.Perm (Fin n) => ∀ k, k ∉ (∅ : Finset (Fin n)) → σ k = k) = {1} := by

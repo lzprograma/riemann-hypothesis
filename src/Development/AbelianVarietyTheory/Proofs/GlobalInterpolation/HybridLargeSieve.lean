@@ -76,9 +76,9 @@ theorem kernel_eq (n δ x : ℝ) :
   have he := Real.exp_pos δ
   by_cases hx : x < n ∧ n ≤ x * Real.exp δ
   · have hmem : x ∈ Set.Ico (n / Real.exp δ) n := ⟨(div_le_iff₀ he).2 hx.2, hx.1⟩
-    rw [if_pos hx, Set.indicator_of_mem hmem]
+    rw [ite_eq_left hx, Set.indicator_of_mem hmem]
   · have hmem : x ∉ Set.Ico (n / Real.exp δ) n := fun hm => hx ⟨hm.2, (div_le_iff₀ he).1 hm.1⟩
-    rw [if_neg hx, Set.indicator_of_notMem hmem]
+    rw [ite_eq_right hx, Set.indicator_of_notMem hmem]
 
 theorem kernel_integral (n δ : ℝ) (hn : 0 < n) (hδ : 0 ≤ δ) :
     IntegrableOn (fun x : ℝ => if x < n ∧ n ≤ x * Real.exp δ then 1 / x else 0) (Set.Ioi 0) ∧

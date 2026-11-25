@@ -21,82 +21,10 @@ variable {V F : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [Fie
   [IsFractionRing V F]
 
 
-variable (V) in
-abbrev valI : Valuation F (WithZero (Multiplicative ℤ)) := (IsDiscreteValuationRing.maximalIdeal V).valuation F
-
-theorem exists_of_valI_le_one {x : F} (h : valI (V := V) x ≤ 1) : ∃ a : V, algebraMap V F a = x := by
-  have hall : ∀ w : IsDedekindDomain.HeightOneSpectrum V, w = IsDiscreteValuationRing.maximalIdeal V := by
-    intro w
-    first
-    | exact IsDedekindDomain.HeightOneSpectrum.ext (IsLocalRing.eq_maximalIdeal w.isMaximal)
-  obtain ⟨a, ha⟩ := IsDedekindDomain.HeightOneSpectrum.mem_integers_of_valuation_le_one F x
-    (fun w => by rw [hall w]; exact h)
-  exact ⟨a, ha⟩
-
-theorem exists_clear_col {n : ℕ} (A : Matrix (Fin (n + 1)) (Fin (n + 1)) F) (hA : A.det ≠ 0) :
-    ∃ Q : Matrix (Fin (n + 1)) (Fin (n + 1)) V, IsUnit Q.det ∧
-      ∀ i : Fin n, (Q.map (algebraMap V F) * A) i.succ 0 = 0 := by
-  exact GlobalTheory.ValIwasawa.exists_clear_col (V := V) A hA
-
 theorem iwasawa : ∀ {n : ℕ} (A : Matrix (Fin n) (Fin n) F), A.det ≠ 0 →
     ∃ (k : Matrix (Fin n) (Fin n) V) (U : Matrix (Fin n) (Fin n) F), IsUnit k.det ∧ U.BlockTriangular id ∧
-      (∀ i, U i i ≠ 0) ∧ A = k.map (algebraMap V F) * U := by
-  intro n
-  induction n with
-  | zero =>
-    intro A _
-    exact ⟨1, A, by simp, fun i => i.elim0, fun i => i.elim0, by ext i; exact i.elim0⟩
-  | succ n ih =>
-    intro A hA
-    obtain ⟨Q, hQ, hQA⟩ := exists_clear_col (V := V) (n := n) A hA
-    set B := Q.map (algebraMap V F) * A with hB
-    have hdetB : B.det = B 0 0 * (B.submatrix Fin.succ Fin.succ).det := by
-      rw [Matrix.det_succ_column_zero, Fin.sum_univ_succ]
-      simp [hQA, B]
-    have hQF : (Q.map (algebraMap V F)).det = algebraMap V F Q.det := by
-      rw [RingHom.map_det]; rfl
-    have hBne : B.det ≠ 0 := by
-      rw [hB, Matrix.det_mul, hQF]
-      exact mul_ne_zero (hQ.map (algebraMap V F)).ne_zero hA
-    have hB00 : B 0 0 ≠ 0 := by intro h; apply hBne; rw [hdetB, h, zero_mul]
-    obtain ⟨k', U', hk', hU', hd', hA'⟩ := ih (B.submatrix Fin.succ Fin.succ) (by
-      intro h; apply hBne; rw [hdetB, h, mul_zero])
-    let K : Matrix (Fin (n + 1)) (Fin (n + 1)) V := Matrix.of fun i j =>
-      Fin.cases (Fin.cases 1 (fun _ => 0) j) (fun i' => Fin.cases 0 (fun j' => k' i' j') j) i
-    let U : Matrix (Fin (n + 1)) (Fin (n + 1)) F := Matrix.of fun i j =>
-      Fin.cases (B 0 j) (fun i' => Fin.cases 0 (fun j' => U' i' j') j) i
-    have hKU : K.map (algebraMap V F) * U = B := by
-      ext i j
-      refine Fin.cases ?_ (fun i' => ?_) i
-      · simp [K, U, Matrix.mul_apply, Fin.sum_univ_succ]
-      · refine Fin.cases ?_ (fun j' => ?_) j
-        · simp [K, U, Matrix.mul_apply, Fin.sum_univ_succ, hQA]
-        · have h1 := congrFun (congrFun hA' i') j'
-          simp only [Matrix.submatrix_apply] at h1
-          rw [h1]
-          simp [K, U, Matrix.mul_apply, Fin.sum_univ_succ]
-    have hKdet : K.det = k'.det := by
-      rw [Matrix.det_succ_column_zero, Fin.sum_univ_succ]
-      simp [K]
-      rfl
-    refine ⟨Q⁻¹ * K, U, ?_, ?_, ?_, ?_⟩
-    · rw [Matrix.det_mul, hKdet]
-      exact (Matrix.isUnit_nonsing_inv_det Q hQ).mul hk'
-    · intro i j hij
-      induction i using Fin.cases with
-      | zero => exact absurd hij (Fin.not_lt_zero _)
-      | succ i' =>
-        induction j using Fin.cases with
-        | zero => simp [U]
-        | succ j' =>
-          have : j' < i' := Fin.succ_lt_succ_iff.1 hij
-          simpa [U] using hU' this
-    · intro i
-      induction i using Fin.cases with
-      | zero => simpa [U] using hB00
-      | succ i' => simpa [U] using hd' i'
-    · rw [Matrix.map_mul, Matrix.mul_assoc, hKU, hB, ← Matrix.mul_assoc, ← Matrix.map_mul,
-        Matrix.nonsing_inv_mul Q hQ, Matrix.map_one _ (map_zero _) (map_one _), Matrix.one_mul]
+      (∀ i, U i i ≠ 0) ∧ A = k.map (algebraMap V F) * U :=
+  fun A hA => GlobalTheory.ValIwasawa.iwasawa_matrix (V := V) A hA
 
 theorem upper_inv {m : ℕ} (U : Matrix (Fin m) (Fin m) F) (hU : U.BlockTriangular id) (hd : ∀ i, U i i ≠ 0) :
     U⁻¹.BlockTriangular id ∧ (∀ i, U⁻¹ i i ≠ 0) ∧ U * U⁻¹ = 1 := by

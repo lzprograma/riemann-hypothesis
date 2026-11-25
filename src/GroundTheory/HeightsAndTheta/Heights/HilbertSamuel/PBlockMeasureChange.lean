@@ -82,12 +82,7 @@ theorem quad_le (d d' : HSMBlockDatum D K ι Ω) (hy : d'.y = d.y) (hk : d'.k₀
 
 theorem det_le {r : ℕ} {G G' : Matrix (Fin r) (Fin r) ℝ} (hG : G.IsHermitian) (hG' : G'.PosSemidef) {c : ℝ}
     (h : ∀ a, a ⬝ᵥ (G' *ᵥ a) ≤ c * (a ⬝ᵥ (G *ᵥ a))) : G'.det ≤ c ^ r * G.det := by
-  have hH : (c • G - G').IsHermitian := by
-    refine Matrix.IsHermitian.ext fun i j => ?_
-    have e1 := hG.apply i j
-    have e2 := hG'.1.apply i j
-    simp only [star_trivial] at e1 e2 ⊢
-    simp only [Matrix.sub_apply, Matrix.smul_apply, e1, e2]
+  have hH : (c • G - G').IsHermitian := (hG.smul (IsSelfAdjoint.all c)).sub hG'.1
   have hpsd : (c • G - G').PosSemidef := by
     refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hH fun a => ?_
     rw [star_trivial, sub_mulVec, smul_mulVec, dotProduct_sub, dotProduct_smul, smul_eq_mul]

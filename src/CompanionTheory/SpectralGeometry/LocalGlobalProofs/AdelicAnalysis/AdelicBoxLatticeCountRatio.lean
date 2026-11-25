@@ -68,8 +68,7 @@ theorem Sep.exists_near {e : Λ →+ V} {r R : ℝ} (hr : 0 < r) {s : Finset Λ}
     (hs : Sep e r R s) (hmax : ∀ t : Finset Λ, Sep e r R t → t.card ≤ s.card)
     {l : Λ} (hl : ‖e l‖ ≤ R) : ∃ t ∈ s, ‖e (l - t)‖ ≤ r := by
   classical
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hns : l ∉ s := fun h => by
     have := hcon l h
     simp only [sub_self, map_zero, norm_zero] at this

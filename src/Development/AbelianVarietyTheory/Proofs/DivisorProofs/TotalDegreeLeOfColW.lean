@@ -50,8 +50,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
 
 open NumberField IsDedekindDomain GlobalTheory.ExpFrame Formalism.CohomologicalDescent.DepthNonnegative Formalism.CohomologicalDescent.LD Formalism.RankGapBounds.FormsTensorLocalization
 
-set_option autoImplicit false
-
 open MvPolynomial
 
 namespace GlobalTheory.NablaFin

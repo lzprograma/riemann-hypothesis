@@ -101,11 +101,6 @@ theorem jetsIn_sum {α : Type} (s : Finset α) (f : α → MvPowerSeries ι K)
   exact Finset.sum_induction f (JetsIn R) (fun a b ha hb => jetsIn_add ha hb)
     (by simpa using jetsIn_C (ι := ι) (R := R) R.zero_mem) hf
 
-theorem jetsIn_prod {α : Type} (s : Finset α) (f : α → MvPowerSeries ι K)
-    (hf : ∀ a ∈ s, JetsIn R (f a)) : JetsIn R (∏ a ∈ s, f a) := by
-  exact Finset.prod_induction f (JetsIn R) (fun a b ha hb => jetsIn_mul ha hb)
-    jetsIn_one hf
-
 theorem jet_pderiv (f : MvPowerSeries ι K) (i : ι) (κ : ι →₀ ℕ) :
     ((mfact κ : ℕ) : K) * MvPowerSeries.coeff κ (MvPowerSeries.pderiv (R := K) i f) =
       ((mfact (κ + Finsupp.single i 1) : ℕ) : K) *
@@ -133,8 +128,7 @@ theorem jetsIn_iff_pderiv (f : MvPowerSeries ι K) :
     · subst hκ
       simpa [mfact_zero] using h0
     · obtain ⟨i, hi⟩ : ∃ i, κ i ≠ 0 := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact hκ (Finsupp.ext h)
       have hk : κ - Finsupp.single i 1 + Finsupp.single i 1 = κ :=
         tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr hi))

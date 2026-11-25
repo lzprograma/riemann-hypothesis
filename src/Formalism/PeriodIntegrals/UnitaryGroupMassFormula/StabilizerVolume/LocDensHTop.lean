@@ -168,7 +168,7 @@ theorem card_norm (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : �
         have : Unique {x : V // h x x = 0} :=
           ⟨⟨⟨0, h00⟩⟩, fun y => Subtype.ext (Subsingleton.elim _ _)⟩
         exact Nat.card_unique
-      rw [hcard, if_pos rfl, Nat.cast_one]
+      rw [hcard, ite_eq_left rfl, Nat.cast_one]
       have hqq : (q : ℝ) * (q : ℝ)⁻¹ = 1 := mul_inv_cancel₀ hQ
       linear_combination -hqq
     · have hcard : Nat.card {x : V // h x x = c} = 0 := by
@@ -178,7 +178,7 @@ theorem card_norm (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : �
             rw [Subsingleton.elim y.1 0, h00] at hy
             exact hy.symm)⟩
         exact Nat.card_of_isEmpty
-      rw [hcard, if_neg hc0, Nat.cast_zero]
+      rw [hcard, ite_eq_right hc0, Nat.cast_zero]
       ring
   | succ m ih =>
     intro V i1 i2 i3 h hh hm c hc
@@ -281,8 +281,8 @@ theorem card_diag (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : �
     let E : {Y : Fin (a + 1) → V // ∀ i j, h (Y i) (Y j) = if i = j then d i else 0} ≃
         Σ y : {y : V // h y y = d 0}, {Z : Fin a → V // (∀ i, h y.1 (Z i) = 0) ∧
           ∀ i j, h (Z i) (Z j) = if i = j then d i.succ else 0} :=
-      { toFun := fun Y => ⟨⟨Y.1 0, (Y.2 0 0).trans (if_pos rfl)⟩,
-          ⟨fun i => Y.1 i.succ, fun i => (Y.2 0 i.succ).trans (if_neg (Fin.succ_ne_zero i).symm),
+      { toFun := fun Y => ⟨⟨Y.1 0, (Y.2 0 0).trans (ite_eq_left rfl)⟩,
+          ⟨fun i => Y.1 i.succ, fun i => (Y.2 0 i.succ).trans (ite_eq_right (Fin.succ_ne_zero i).symm),
             fun i j => (Y.2 i.succ j.succ).trans (by simp only [Fin.succ_inj])⟩⟩
         invFun := fun p => ⟨(Fin.cons p.1.1 p.2.1 : Fin (a + 1) → V), by
           intro i j
@@ -295,7 +295,7 @@ theorem card_diag (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : �
             induction j using Fin.cases with
             | zero =>
               simp only [Fin.cons_zero, Fin.cons_succ]
-              rw [if_neg (Fin.succ_ne_zero i), hs.herm, p.2.2.1 i, map_zero]
+              rw [ite_eq_right (Fin.succ_ne_zero i), hs.herm, p.2.2.1 i, map_zero]
             | succ j => simpa [Fin.succ_inj] using p.2.2.2 i j⟩
         left_inv := fun Y => Subtype.ext (Fin.cons_self_tail Y.1)
         right_inv := by
@@ -305,7 +305,7 @@ theorem card_diag (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : �
           simp }
     have hN0 : (Nat.card {y : V // h y y = d 0} : ℝ) =
         (q : ℝ) ^ (2 * m - 1) - (-1) ^ m * (q : ℝ) ^ (m - 1) := by
-      rw [card_norm q hq0 hK hσ h2 hN m V h hh hm (d 0) (hd 0), if_neg (hd0 0),
+      rw [card_norm q hq0 hK hσ h2 hN m V h hh hm (d 0) (hd 0), ite_eq_right (hd0 0),
         show (2 * (m : ℤ) - 1) = ((2 * m - 1 : ℕ) : ℤ) by omega,
         show ((m : ℤ) - 1) = ((m - 1 : ℕ) : ℤ) by omega, zpow_natCast, zpow_natCast]
       ring
@@ -424,47 +424,6 @@ private theorem card_eq_card_sq_of_finrank_two (h2 : finrank k K = 2) :
   rw [← h2]
   exact Module.card_eq_pow_finrank
 
-private theorem add_pow_card_eq_add_pow_card (a b : K) :
-    (a + b) ^ Fintype.card k = a ^ Fintype.card k + b ^ Fintype.card k := by
-  obtain ⟨p, hp⟩ := CharP.exists k
-  obtain ⟨n, hprime, hn⟩ := FiniteField.card k p
-  haveI : Fact p.Prime := ⟨hprime⟩
-  haveI : CharP K p := charP_of_injective_algebraMap (algebraMap k K).injective p
-  rw [hn]
-  exact add_pow_char_pow a b p (n : ℕ)
-
-private theorem mem_range_algebraMap_of_pow_card_eq (d : K) (hd : d ^ Fintype.card k = d) :
-    ∃ d0 : k, algebraMap k K d0 = d := by
-  have hq1 : 1 < Fintype.card k := Fintype.one_lt_card
-  have hP : (X ^ Fintype.card k - X : K[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hq1
-  have hsub : Finset.univ.image (algebraMap k K) ⊆
-      (X ^ Fintype.card k - X : K[X]).roots.toFinset := by
-    intro x hx
-    obtain ⟨y, -, rfl⟩ := Finset.mem_image.mp hx
-    rw [Multiset.mem_toFinset, mem_roots hP, IsRoot.def, eval_sub, eval_pow, eval_X, ← map_pow,
-      FiniteField.pow_card, sub_self]
-  have hcard : (X ^ Fintype.card k - X : K[X]).roots.toFinset.card ≤
-      (Finset.univ.image (algebraMap k K)).card := by
-    rw [Finset.card_image_of_injective _ (algebraMap k K).injective, Finset.card_univ]
-    calc _ ≤ Multiset.card (X ^ Fintype.card k - X : K[X]).roots := Multiset.toFinset_card_le _
-      _ ≤ (X ^ Fintype.card k - X : K[X]).natDegree := card_roots' _
-      _ = Fintype.card k := Polynomial.natDegree_X_pow_sub_X (R := K) hq1
-  have heq := Finset.eq_of_subset_of_card_le hsub hcard
-  have hmem : d ∈ (X ^ Fintype.card k - X : K[X]).roots.toFinset := by
-    rw [Multiset.mem_toFinset, mem_roots hP, IsRoot.def, eval_sub, eval_pow, eval_X, hd, sub_self]
-  rw [← heq] at hmem
-  obtain ⟨y, -, hy⟩ := Finset.mem_image.mp hmem
-  exact ⟨y, hy⟩
-
-theorem frob_of_ne (σ : K ≃ₐ[k] K) (h2 : finrank k K = 2) (hne : σ ≠ AlgEquiv.refl) :
-    ∀ x, σ x = x ^ Fintype.card k := by
-  apply PI.VolStabSW.FFHS.frob_of_ne <;> assumption
-
-theorem card_norm_fiber (σ : K ≃ₐ[k] K) (hfrob : ∀ x, σ x = x ^ Fintype.card k)
-    (h2 : finrank k K = 2) (d : K) (hd : σ d = d) :
-    Nat.card {t : K // t * σ t = d} = if d = 0 then 1 else Fintype.card k + 1 := by
-  apply PI.VolStabSW.FFHS.card_norm_fiber <;> assumption
-
 end field
 
 theorem fFInert_holds : FFInert := by
@@ -474,7 +433,7 @@ theorem fFInert_holds : FFInert := by
   haveI : Finite K := Module.finite_of_finite k
   letI : Fintype k := Fintype.ofFinite k
   letI : Fintype K := Fintype.ofFinite K
-  have hfrob := frob_of_ne σ hrank hne
+  have hfrob := PI.VolStabSW.FFHS.frob_of_ne σ hrank hne
   have hσr : ∀ x, (σ : K →+* K) ((σ : K →+* K) x) = x := fun x => hσ x
   have h2K : (2 : K) ≠ 0 := by
     have h2' := (algebraMap k K).injective.ne h2k
@@ -487,7 +446,7 @@ theorem fFInert_holds : FFInert := by
       Nat.card {t : K // t * (σ : K →+* K) t = d} = if d = 0 then 1 else Nat.card k + 1 := by
     intro d hd
     rw [Nat.card_eq_fintype_card (α := k)]
-    exact card_norm_fiber σ hfrob hrank d hd
+    exact PI.VolStabSW.FFHS.card_norm_fiber σ hfrob hrank d hd
   have hsV : IsHS (σ : K →+* K) (PI.VolStabS.ffH (σ : K →+* K) J) :=
     ffH_isHS hσr J hJ hJdet
   have hsU : IsHS (σ : K →+* K) (PI.VolStabS.ffH (σ : K →+* K) T) :=

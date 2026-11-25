@@ -7,9 +7,6 @@ public import Mathlib.LinearAlgebra.Eigenspace.Basic
 public import Mathlib.Order.CompletePartialOrder
 import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.InnerProductSpace.Spectrum
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.TypeStar
 
 @[expose] public section
@@ -33,12 +30,8 @@ theorem finite_setOf_mem_of_orthonormal {ι : Type*} {v : ι → E} (hv : Orthon
 
 theorem isClosed_eigenspace (T : E →L[𝕜] E) (μ : 𝕜) :
     IsClosed (eigenspace (T : E →ₗ[𝕜] E) μ : Set E) := by
-  have : (eigenspace (T : E →ₗ[𝕜] E) μ : Set E) =
-      (T - μ • ContinuousLinearMap.id 𝕜 E) ⁻¹' {0} := by
-    ext x
-    simp [sub_eq_zero]
-  rw [this]
-  exact isClosed_singleton.preimage (map_continuous _)
+  rw [eigenspace_def]
+  exact (T - μ • ContinuousLinearMap.id 𝕜 E).isClosed_ker
 
 section HilbertBasis
 

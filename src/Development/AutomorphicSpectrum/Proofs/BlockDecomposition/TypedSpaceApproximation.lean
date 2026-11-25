@@ -26,64 +26,15 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsEx
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteLatticePointsSiegel
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformBoundConstantTerm
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UpdateLeUpdate
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.IntegralCasts.IsOpenStabOfMemNhds
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 import GroundTheory.AutomorphicForms.ReductionMeasure
 import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
-import Mathlib.Dynamics.Ergodic.Action.Regular
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
 import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
 import GroundTheory.GlobalFields.Adele.Topology
-import Mathlib.CategoryTheory.Countable
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.HaveILetI
 import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
 import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsSiegel
@@ -93,7 +44,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOf
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLeftInvariantOfIsAutForm
 import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.NormalisedExistence.ExistsNormed
 import Formalism.LocalToGlobal.IndefiniteReal.PHeisFCA
-import Mathlib.Topology.Sheaves.Presheaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousArchimedeanSmoothing, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsOpenIntegralSubgroup, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelEigenfunctionBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelEigenfunctionBoundStatement, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.EnnrealRpowTwoEqSq, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelEigenfunctionEquicontinuous, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KilledByPolynomialSmoothing, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothingFundamentalDomainBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothingFundamentalDomainIntegral, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothingLipschitzBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformBoundOfArchimedeanLipschitz, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformBoundSiegelSet, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformBoundSmoothing, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformFamilySmoothing, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TypedSpaceApproximation
@@ -307,16 +257,6 @@ theorem pointwise (μ : Measure G) [μ.IsMulLeftInvariant] [IsFiniteMeasureOnCom
 
 end GlobalTheory.CompanionTheory.Conc.BesselPt
 
-
-open GlobalTheory.CompanionTheory.Conc.BesselPt in
-theorem GlobalTheory.CompanionTheory.Conc.besselPt : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ) [MeasurableSpace (GA E N)] [BorelSpace (GA E N)] (μ : Measure (GA E N)) [μ.IsHaarMeasure] (α : GA E N → ℂ) (δ : ℝ) (F : Set (GA E N)), Continuous α → HasCompactSupport α → 0 < δ →
-  IsFundamentalDomain (latticeGL E N) F μ → ∃ C₀ : ℝ, ∀ ψ : GA E N → ℂ, Continuous ψ → (∀ γ ∈ latticeGL E N, ∀ g, ψ (γ * g) = ψ g) →
-  (∃ s : ℂ, δ ≤ ‖s‖ ∧ ∀ x, ∫ y, α y * ψ (x * y) ∂μ = s * ψ x) → (∫⁻ x in F, ‖ψ x‖ₑ ^ 2 ∂μ) = 1 →
-  ∀ (x : GA E N) (k : ℕ), {γ : GA E N | γ ∈ latticeGL E N ∧ ∃ a ∈ tsupport α, ∃ b ∈ tsupport α, γ = x * a * b⁻¹ * x⁻¹}.encard ≤ k →
-    ‖ψ x‖ ^ 2 ≤ C₀ * k := by
-  intro E _ _ _ N _ _ μ _ α δ F hα hc hδ hF
-  haveI : Countable (latticeGL E N) := GlobalTheory.DiscreteUnit.countable_latticeGL
-  exact pointwise μ (latticeGL E N) hα hc hδ hF
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelEigenfunctionBound =====
@@ -564,7 +504,7 @@ theorem GlobalTheory.CompanionTheory.Conc.translate_sq_mean_close : ∀ (E : Typ
   (∀ γ ∈ latticeGL E N, ∀ g, ψ (γ * g) = ψ g) → (∃ s : ℂ, δ ≤ ‖s‖ ∧ ∀ x, ∫ y, α y * ψ (x * y) ∂μ = s * ψ x) →
   (∫⁻ x in F, ‖ψ x‖ₑ ^ 2 ∂μ) = 1 → ∀ y ∈ U, ∫⁻ x in F, ‖ψ (x * y) - ψ x‖ₑ ^ 2 ∂μ ≤ η := by
   intro E _ _ _ N _ _ μ _ α δ F hα hs hδ hF η hη
-  haveI : μ.IsMulRightInvariant := _root_.GlobalTheory.CompanionTheory.GAUnimod.isMulRightInvariant_haar_GA E N μ
+  haveI : μ.IsMulRightInvariant := _root_.GlobalTheory.CompanionTheory.PairDom.isMulRightInvariant_GA E N μ
   haveI : Countable (latticeGL E N) := GlobalTheory.DiscreteUnit.countable_latticeGL
   set_option synthInstance.maxHeartbeats 200000 in
     exact GlobalTheory.CompanionTheory.Conc.WeightedCauchySchwarzLintegral.exists_nhds_sq_mean_le μ (latticeGL E N) hα hs hδ hF hη
@@ -629,7 +569,6 @@ theorem ctn_sm {K : Type} [Field K] [NumberField K] {n : ℕ} [MeasurableSpace (
     simp only [integral_const_mul]
 
 end GlobalTheory.CompanionTheory.Conc.SmKill
-
 
 open GlobalTheory.CompanionTheory.Conc.SmKill in
 theorem GlobalTheory.CompanionTheory.Conc.kill_sm : ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) [MeasurableSpace (archGroup K n)] [BorelSpace (archGroup K n)] (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (β : archGroup K n → ℝ) (f : AdelicGLn.AdelicGL K n → ℂ) (r : ℕ) (p : ℂ[X]), Ker ν β → 0 < r → r < n → Continuous f →
@@ -844,7 +783,7 @@ theorem sm_sq_mass_le : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberF
   haveI : Countable (latticeGL E N) := GlobalTheory.DiscreteUnit.countable_latticeGL
   haveI : SecondCountableTopology (GA E N) := GlobalTheory.CuspRep.CuspidalL2GL.secondCountableTopology_GA E N
   haveI : LocallyCompactSpace (GA E N) := GlobalTheory.CuspRep.CuspidalL2GL.locallyCompactSpace_GA E N
-  haveI : μ.IsMulRightInvariant := _root_.GlobalTheory.CompanionTheory.GAUnimod.isMulRightInvariant_haar_GA E N μ
+  haveI : μ.IsMulRightInvariant := _root_.GlobalTheory.CompanionTheory.PairDom.isMulRightInvariant_GA E N μ
   refine lintegral_sq_le_of_average μ (latticeGL E N) F hF ν (fun y => ENNReal.ofReal (β y))
     hβ.cont.measurable.ennreal_ofReal ?_ (infEmb E N) continuous_infEmb f hf hinv (sm ν β f) ?_
   · rw [← ofReal_integral_eq_lintegral_ofReal
@@ -985,7 +924,6 @@ open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.Reduc
 
 namespace GlobalTheory.CompanionTheory.Conc
 
-
 open PositivityTheory.Rg.Rs.diffstep in
 theorem diffStepU (K : Type) [Field K] [NumberField K] (n : ℕ) (ι : Type)
     (f₀ f₁ : ι → AdelicGLn.AdelicGL K n → ℂ) (m : ℕ → ℝ) (r : ℕ) (hr : 0 < r) (hrn : r < n) (hN : UFam f₁)
@@ -1121,125 +1059,8 @@ theorem tail_lib (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (A
   let a : Fin (n - 1) → ℝ := fun j => 2 * (κ ((j : ℕ) + 1) - rho K n ((j : ℕ) + 1))
   let E : ℝ := ∑ r ∈ Finset.range n, |κ r| * (2 * n)
   let D : ℝ := (max C 0 * Real.exp E) ^ 2 * Cv * Real.exp (-t₀ * ∑ j, a j)
-  have ha : ∀ j, a j < 0 := by
-    intro j
-    have hj := j.2
-    have := hκ ((j : ℕ) + 1) (by omega) (by omega)
-    show 2 * (κ ((j : ℕ) + 1) - rho K n ((j : ℕ) + 1)) < 0
-    linarith
-  have hXs : ∀ s (j : Fin (n - 1)), sr (X s) ((j : ℕ) + 1) = -t₀ + s j := fun s j => sr_part _ j
-
-  have hcover : slab ω t₀ ⊆ ⋃ s, box (X s) := by
-    rintro g ⟨b, hb, x, hx, hlast, k, hk, rfl⟩
-    let s : Fin (n - 1) → ℕ := fun j => ⌊sr x ((j : ℕ) + 1) + t₀⌋₊
-    refine Set.mem_iUnion.2 ⟨s, b, hb, x - X s, ?_, k, hk, ?_⟩
-    · refine abs_y_le _ ?_ ?_
-      · intro i hi
-        have : X s i = 0 := part_last _ i hi
-        simpa [this] using hlast i hi
-      · intro j
-        have e : sr x ((j : ℕ) + 1) = sr (X s) ((j : ℕ) + 1) + sr (x - X s) ((j : ℕ) + 1) := by
-          rw [← sr_add, add_sub_cancel]
-        rw [hXs] at e
-        have h0 : 0 ≤ sr x ((j : ℕ) + 1) + t₀ := by
-          have := hx ((j : ℕ) + 1)
-          linarith
-        have h1 : ((s j : ℕ) : ℝ) ≤ sr x ((j : ℕ) + 1) + t₀ := Nat.floor_le h0
-        have h2 : sr x ((j : ℕ) + 1) + t₀ < (s j : ℕ) + 1 := Nat.lt_floor_add_one _
-        constructor <;> linarith
-    · rw [add_sub_cancel]
-
-  have hbox : ∀ i s, ∫⁻ g in box (X s), ‖f i g‖ₑ ^ 2 ∂μ ≤
-      ENNReal.ofReal D * ∏ j, ENNReal.ofReal (Real.exp (a j * s j)) := by
-    intro i s
-    let S : ℝ := ∑ r ∈ Finset.range n, κ r * sr (X s) r
-    let W : ℝ := max C 0 * Real.exp E * Real.exp S
-    have hW0 : 0 ≤ W := by positivity
-    have hnorm : ∀ g ∈ box (X s), ‖f i g‖ₑ ^ 2 ≤ ENNReal.ofReal (W ^ 2) := by
-      rintro g ⟨b, hb, y, hy, k, hk, rfl⟩
-      have hsr : ∀ r, -(|t₀| + 2 * n) ≤ sr (X s + y) r := by
-        intro r
-        by_cases hr : 0 < r ∧ r < n
-        · rw [sr_add]
-          have h1 : sr (X s) r = -t₀ + s ⟨r - 1, by omega⟩ := by
-            have := hXs s ⟨r - 1, by omega⟩
-            simp only at this
-            rwa [Nat.sub_add_cancel hr.1] at this
-          have h2 := abs_le.1 (abs_sr_le y hy r)
-          have h3 : (0 : ℝ) ≤ (s ⟨r - 1, by omega⟩ : ℕ) := Nat.cast_nonneg _
-          have h4 := le_abs_self t₀
-          rw [h1]
-          linarith [h2.1]
-        · have : sr (X s + y) r = 0 := by simp [sr, hr]
-          rw [this]
-          have : (0 : ℝ) ≤ n := Nat.cast_nonneg _
-          have := abs_nonneg t₀
-          linarith
-      have h1 := hC i b hb (X s + y) hsr k hk
-      have h2 : ∑ r ∈ Finset.range n, κ r * sr (X s + y) r ≤ S + E := by
-        show _ ≤ ∑ r ∈ Finset.range n, κ r * sr (X s) r + ∑ r ∈ Finset.range n, |κ r| * (2 * n)
-        rw [← Finset.sum_add_distrib]
-        refine Finset.sum_le_sum fun r _ => ?_
-        rw [sr_add, mul_add]
-        have h3 : κ r * sr y r ≤ |κ r| * (2 * n) := by
-          calc κ r * sr y r ≤ |κ r * sr y r| := le_abs_self _
-            _ = |κ r| * |sr y r| := abs_mul _ _
-            _ ≤ |κ r| * (2 * n) := mul_le_mul_of_nonneg_left (abs_sr_le y hy r) (abs_nonneg _)
-        linarith
-      have h3 : ‖f i (b * tor K (X s + y) * k)‖ ≤ W := by
-        calc _ ≤ C * Real.exp (∑ r ∈ Finset.range n, κ r * sr (X s + y) r) := h1
-          _ ≤ max C 0 * Real.exp (∑ r ∈ Finset.range n, κ r * sr (X s + y) r) :=
-              mul_le_mul_of_nonneg_right (le_max_left _ _) (Real.exp_pos _).le
-          _ ≤ max C 0 * Real.exp (S + E) :=
-              mul_le_mul_of_nonneg_left (Real.exp_le_exp.2 h2) (le_max_right _ _)
-          _ = W := by
-              show _ = max C 0 * Real.exp E * Real.exp S
-              rw [Real.exp_add]; ring
-      rw [← ofReal_norm_eq_enorm, ← ENNReal.ofReal_pow (norm_nonneg _)]
-      exact ENNReal.ofReal_le_ofReal (pow_le_pow_left₀ (norm_nonneg _) h3 2)
-    have hmeas : Measurable fun g => ‖f i g‖ₑ ^ 2 := ((hf i).measurable.enorm).pow_const 2
-    have hexp : W ^ 2 * (Cv * Real.exp (-∑ r ∈ Finset.range n, 2 * rho K n r * sr (X s) r))
-        = D * ∏ j, Real.exp (a j * s j) := by
-      have e1 : ∑ r ∈ Finset.range n, κ r * sr (X s) r
-          = ∑ j : Fin (n - 1), κ ((j : ℕ) + 1) * (-t₀ + s j) := by
-        rw [sum_range_sr]
-        exact Finset.sum_congr rfl fun j _ => by rw [hXs]
-      have e2 : ∑ r ∈ Finset.range n, 2 * rho K n r * sr (X s) r
-          = ∑ j : Fin (n - 1), 2 * rho K n ((j : ℕ) + 1) * (-t₀ + s j) := by
-        rw [sum_range_sr (fun r => 2 * rho K n r)]
-        exact Finset.sum_congr rfl fun j _ => by rw [hXs]
-      have e3 : 2 * S - ∑ r ∈ Finset.range n, 2 * rho K n r * sr (X s) r
-          = -t₀ * ∑ j, a j + ∑ j, a j * s j := by
-        show 2 * ∑ r ∈ Finset.range n, κ r * sr (X s) r - _ = _
-        rw [e1, e2, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib,
-          ← Finset.sum_add_distrib]
-        refine Finset.sum_congr rfl fun j _ => ?_
-        show _ = -t₀ * (2 * (κ ((j : ℕ) + 1) - rho K n ((j : ℕ) + 1)))
-          + (2 * (κ ((j : ℕ) + 1) - rho K n ((j : ℕ) + 1))) * s j
-        ring
-      have e4 : Real.exp S ^ 2 * Real.exp (-∑ r ∈ Finset.range n, 2 * rho K n r * sr (X s) r)
-          = Real.exp (-t₀ * ∑ j, a j) * ∏ j, Real.exp (a j * s j) := by
-        rw [← Real.exp_sum, ← Real.exp_add, ← e3, ← Real.exp_nat_mul, ← Real.exp_add]
-        congr 1
-      show (max C 0 * Real.exp E * Real.exp S) ^ 2 * _ = (max C 0 * Real.exp E) ^ 2 * Cv * Real.exp (-t₀ * ∑ j, a j) * _
-      calc _ = (max C 0 * Real.exp E) ^ 2 * Cv * (Real.exp S ^ 2 *
-              Real.exp (-∑ r ∈ Finset.range n, 2 * rho K n r * sr (X s) r)) := by ring
-        _ = _ := by rw [e4]; ring
-    calc ∫⁻ g in box (X s), ‖f i g‖ₑ ^ 2 ∂μ
-        ≤ ENNReal.ofReal (W ^ 2) * μ (box (X s)) :=
-          setLIntegral_le_of_bound μ hmeas _ _ hnorm
-      _ ≤ ENNReal.ofReal (W ^ 2) * ENNReal.ofReal
-            (Cv * Real.exp (-∑ r ∈ Finset.range n, 2 * rho K n r * sr (X s) r)) := by
-          gcongr
-          exact hCv (X s)
-      _ = ENNReal.ofReal (D * ∏ j, Real.exp (a j * s j)) := by
-          rw [← ENNReal.ofReal_mul (by positivity), hexp]
-      _ = _ := by
-          rw [ENNReal.ofReal_mul' (Finset.prod_nonneg fun j _ => (Real.exp_pos _).le),
-            ENNReal.ofReal_prod_of_nonneg fun j _ => (Real.exp_pos _).le]
-  have hsum : ∑' s : Fin (n - 1) → ℕ, ∏ j, ENNReal.ofReal (Real.exp (a j * s j)) ≠ ⊤ :=
-    tsum_pi_prod_ne_top (n - 1) (fun j k => ENNReal.ofReal (Real.exp (a j * k)))
-      fun j => tsum_exp_ne_top (ha j)
+  obtain ⟨hcover, hbox, hsum⟩ :=
+    slab_box_cover_bound K n μ ι f κ hf hκ ω t₀ Cv C hCv hC
   let G : (Fin (n - 1) → ℕ) → ℝ≥0∞ := fun s =>
     ENNReal.ofReal D * ∏ j, ENNReal.ofReal (Real.exp (a j * s j))
   have hG : ∑' s, G s ≠ ⊤ := by
@@ -1349,7 +1170,6 @@ theorem continuous_sm_uFam {K : Type} [Field K] [NumberField K] {n : ℕ}
       (β y : ℂ) * f (x * infEmb K n y)) := by
     refine (Complex.continuous_ofReal.comp (hβ.cont.comp continuous_snd)).mul (hf.comp ?_)
     exact continuous_fst.mul (continuous_infEmb.comp continuous_snd)
-  set_option synthInstance.maxHeartbeats 1000000 in
   have h := continuous_parametric_integral_of_continuous (μ := ν) hF hβ.cpt.isCompact
   refine h.congr fun x => ?_
   refine setIntegral_eq_integral_of_forall_compl_eq_zero fun y hy => ?_
@@ -1410,10 +1230,10 @@ theorem ubnd_mono {ι : Type*} {f : ι → AdelicGLn.AdelicGL K n → ℂ} {m m'
     apply Finset.sum_le_sum
     intro r _
     by_cases hr : 0 < r ∧ r < n
-    · rw [if_pos hr]
+    · rw [ite_eq_left hr]
       have := mul_le_mul_of_nonneg_left (hx r) (sub_nonneg.2 (hm r hr.1 hr.2))
       nlinarith
-    · rw [if_neg hr, GlobalTheory.CompanionTheory.AnBoot.sr_eq_zero x hr]
+    · rw [ite_eq_right hr, GlobalTheory.CompanionTheory.AnBoot.sr_eq_zero x hr]
       simp
   calc ‖f i (b * An.tor K x * q)‖ ≤ C * Real.exp (∑ r ∈ Finset.range n, m r * An.sr x r) := h1
     _ ≤ max C 0 * Real.exp (∑ r ∈ Finset.range n, m r * An.sr x r) :=
@@ -1536,7 +1356,7 @@ theorem iterU {ι : Type} {f : ι → AdelicGLn.AdelicGL K n → ℂ} {M : ℝ} 
       have hna : a ∉ s := ha
       by_cases hr : r = a
       · subst hr
-        simp only [Function.update_self, Finset.mem_insert, true_or, if_true, hna, if_false]
+        simp only [Function.update_self, Finset.mem_insert, true_or, ite_true, hna, ite_false]
         exact max_le (by linarith) le_rfl
       · simp [Finset.mem_insert, hr]
   obtain ⟨k, hk⟩ := key (Finset.Ioo 0 n) (fun r hr => Finset.mem_Ioo.1 hr)
@@ -1825,7 +1645,6 @@ theorem half_of_cover {F Ω Sl : Set (G)} (hF : IsFundamentalDomain (Γ) F μ) (
 
 end Half
 
-
 open PositivityTheory.Rg.BcB.SpectralAccumulation in
 open scoped Classical in
 theorem conc : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ) [MeasurableSpace (GA E N)] [BorelSpace (GA E N)]
@@ -1935,7 +1754,6 @@ theorem conc : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ) 
       nlinarith) ω hω hωB (max 0 (-Real.log t)) (1 / 8) h8
   refine ⟨Ω, hΩ, fun V ψ hV hψ hT hI hE hs hn => ?_⟩
   let i : ι := ⟨ψ, V, hV, hψ, hT, hI, hE, hs, hn⟩
-  set_option synthInstance.maxHeartbeats 200000 in
   exact half_of_cover (latticeGL E N) μ hF hΩ (fun g => JSqIntGlue.exists_mem_slab hS hL ht hsieg g)
     (hcont i) ((iter_fam ν hβ hfam k).cont i) (hleft i) (iter_left ν (hleft i) k) hn
     (hβψ _ (hcont i) (hleft i) (hrep i) hn) (hΩf i)

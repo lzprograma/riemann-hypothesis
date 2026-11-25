@@ -230,8 +230,6 @@ end Gen
 
 section Terms
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp
 
 variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word}
@@ -257,7 +255,7 @@ theorem corankOne_equivalence_holds : CorankOneEquivalence := by
     apply ht.1
     show Formalism.L2.SG.TermOp.Gt t = 0
     unfold Formalism.L2.SG.TermOp.Gt
-    rw [if_pos ((Formalism.L2.SG.Pf.SatGram.gterm_G Y t).trans h)]
+    rw [ite_eq_left ((Formalism.L2.SG.Pf.SatGram.gterm_G Y t).trans h)]
   have hlat : ∀ t : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u'),
       Submodule.IsFullLattice D.host.E t.lam := fun t => ((Y.rowsOK u).1 t.lam t.mem).1.1
   have hLF : ∀ t : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u'),
@@ -267,7 +265,7 @@ theorem corankOne_equivalence_holds : CorankOneEquivalence := by
   refine ⟨fun t ht => ?_, fun t ht t' ht' hr h1 => ?_, fun t ht t' ht' t'' ht'' hr1 hr2 h1 h2 => ?_⟩
   · show Formalism.L2.SG.TermOp.s0T t t = 1
     unfold Formalism.L2.SG.TermOp.s0T
-    rw [if_pos ⟨rfl, rfl⟩, mul_inv_cancel]
+    rw [ite_eq_left ⟨rfl, rfl⟩, mul_inv_cancel]
     exact (s0_eq_one_iff_Th_eq_Hp D.R.k hdim t.lam (hlat t) _ t.frame t.frame 1 (hLF t) (hLt t) (hGv t ht)).2
       (Th_one _ _ _)
   · have hlam : t.lam = t'.lam := congrArg (fun r => (r.1 : Submodule (𝓞 D.host.E) (VS D).V)) hr
@@ -275,8 +273,8 @@ theorem corankOne_equivalence_holds : CorankOneEquivalence := by
     have h1' : Formalism.L2.SG.TermOp.s0T t t' = 1 := h1
     show Formalism.L2.SG.TermOp.s0T t' t = 1
     unfold Formalism.L2.SG.TermOp.s0T at h1' ⊢
-    rw [if_pos ⟨hlam, hlam'⟩] at h1'
-    rw [if_pos ⟨hlam.symm, hlam'.symm⟩, ← hlam]
+    rw [ite_eq_left ⟨hlam, hlam'⟩] at h1'
+    rw [ite_eq_left ⟨hlam.symm, hlam'.symm⟩, ← hlam]
     have hth := (s0_eq_one_iff_Th_eq_Hp D.R.k hdim t.lam (hlat t) _ t.frame t'.frame _ (hLF t) (hLt t)
       (hGv t ht)).1 h1'
     have hL' : IsLift t.lam t'.frame := by rw [hlam]; exact hLt t'
@@ -293,9 +291,9 @@ theorem corankOne_equivalence_holds : CorankOneEquivalence := by
     have h2' : Formalism.L2.SG.TermOp.s0T t' t'' = 1 := h2
     show Formalism.L2.SG.TermOp.s0T t t'' = 1
     unfold Formalism.L2.SG.TermOp.s0T at h1' h2' ⊢
-    rw [if_pos ⟨hl1, hl1'⟩] at h1'
-    rw [if_pos ⟨hl2, hl2'⟩, ← hl1] at h2'
-    rw [if_pos ⟨hl1.trans hl2, hl1'.trans hl2'⟩]
+    rw [ite_eq_left ⟨hl1, hl1'⟩] at h1'
+    rw [ite_eq_left ⟨hl2, hl2'⟩, ← hl1] at h2'
+    rw [ite_eq_left ⟨hl1.trans hl2, hl1'.trans hl2'⟩]
     have hL' : IsLift t.lam t'.frame := by rw [hl1]; exact hLt t'
     have hth1 := (s0_eq_one_iff_Th_eq_Hp D.R.k hdim t.lam (hlat t) _ t.frame t'.frame _ (hLF t) (hLt t)
       (hGv t ht)).1 h1'

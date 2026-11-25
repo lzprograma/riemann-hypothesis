@@ -52,26 +52,13 @@ theorem skMat_low_om (x : UCo N) (l : {ab : Fin N × Fin N // ab.2 < ab.1}) :
     skMat x l.1.1 l.1.2 = x.2 l := by
   obtain ⟨⟨a, b⟩, h⟩ := l
   show skMat x a b = x.2 ⟨(a, b), h⟩
-  simp only [skMat, if_neg (ne_of_gt h), dif_pos h]
+  simp only [skMat, ite_eq_right (ne_of_gt h), dite_eq_left h]
 
 theorem skMat_up_om (x : UCo N) (l : {ab : Fin N × Fin N // ab.2 < ab.1}) :
     skMat x l.1.2 l.1.1 = -star (x.2 l) := by
   obtain ⟨⟨a, b⟩, h⟩ := l
   show skMat x b a = -star (x.2 ⟨(a, b), h⟩)
-  simp only [skMat, if_neg (ne_of_lt h), dif_neg (not_lt.2 h.le), dif_pos h]
-
-theorem skMat_conjTranspose_om (x : UCo N) : (skMat x)ᴴ = -skMat x := by
-  ext a b
-  rw [Matrix.conjTranspose_apply, Matrix.neg_apply]
-  rcases lt_trichotomy a b with h | rfl | h
-  · have h1 : skMat x b a = x.2 ⟨(b, a), h⟩ := skMat_low_om x ⟨(b, a), h⟩
-    have h2 : skMat x a b = -star (x.2 ⟨(b, a), h⟩) := skMat_up_om x ⟨(b, a), h⟩
-    rw [h1, h2, neg_neg]
-  · rw [skMat_diag_om]
-    simp [Complex.conj_ofReal]
-  · have h1 : skMat x a b = x.2 ⟨(a, b), h⟩ := skMat_low_om x ⟨(a, b), h⟩
-    have h2 : skMat x b a = -star (x.2 ⟨(a, b), h⟩) := skMat_up_om x ⟨(a, b), h⟩
-    rw [h1, h2, star_neg, star_star]
+  simp only [skMat, ite_eq_right (ne_of_lt h), dite_eq_right (not_lt.2 h.le), dite_eq_left h]
 
 theorem skMat_add_om (x y : UCo N) : skMat (x + y) = skMat x + skMat y := by
   ext a b
@@ -313,7 +300,7 @@ theorem uToLieMat_apply (x : UCo N) (i j : Fin N ⊕ Fin 0) :
 theorem uToLieMat_mem (x : UCo N) : uToLieMat x ∈ Formalism.BasicNotions.lieU N 0 := by
   rw [mem_lieU_zero_iff_om]
   ext i j
-  have h := congrFun (congrFun (skMat_conjTranspose_om x) (Equiv.sumEmpty (Fin N) (Fin 0) i))
+  have h := congrFun (congrFun (ReciprocityTheory.ChartRestriction.DS.volU_skMat_conjTranspose x) (Equiv.sumEmpty (Fin N) (Fin 0) i))
     (Equiv.sumEmpty (Fin N) (Fin 0) j)
   simp only [Matrix.conjTranspose_apply, Matrix.neg_apply] at h ⊢
   rw [uToLieMat_apply, uToLieMat_apply]
@@ -668,22 +655,8 @@ lemma toM_preimage_exp_ball_eq_upqT_exp_ball (N : ℕ) (r : ℝ) :
 
 alias volU_pos := _root_.ReciprocityTheory.ChartRestriction.DS.volU_pos'
 
-lemma continuous_skMat (N : ℕ) : Continuous (skMat : UCo N → Matrix (Fin N) (Fin N) ℂ) := by
-  refine continuous_pi fun a => continuous_pi fun b => ?_
-  simp only [skMat]
-  by_cases h1 : a = b
-  · simp only [ite_eq_left h1]
-    exact continuous_const.mul (Complex.continuous_ofReal.comp ((continuous_apply a).comp continuous_fst))
-  · simp only [ite_eq_right h1]
-    by_cases h2 : b < a
-    · simp only [dite_eq_left h2]
-      exact (continuous_apply _).comp continuous_snd
-    · simp only [dite_eq_right h2]
-      by_cases h3 : a < b
-      · simp only [dite_eq_left h3]
-        exact ((continuous_apply _).comp continuous_snd).star.neg
-      · simp only [dite_eq_right h3]
-        exact continuous_const
+lemma continuous_skMat (N : ℕ) : Continuous (skMat : UCo N → Matrix (Fin N) (Fin N) ℂ) :=
+  _root_.ReciprocityTheory.ChartRestriction.DS.volU_continuous_skMat
 
 lemma continuous_uToLie (N : ℕ) : Continuous (uToLie (N := N)) := by
   show Continuous fun x : UCo N => (⟨uToLieMat x, uToLieMat_mem x⟩ : Formalism.BasicNotions.lieU N 0)

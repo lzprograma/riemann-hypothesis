@@ -12,6 +12,9 @@ public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
 import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.IdeleModuleInfIdDetLe
+import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.InvMulVecScalarMul
+import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.FinalH
 
 @[expose] public section
 
@@ -26,35 +29,13 @@ namespace UpperTheory.HilbertEisensteinWeightOne.FourierExpansionEisenstein.L2
 
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
 
-theorem norm_omega_eq_one {ω : HChar F} (h : IsOfFinOrder ω) (x : Ideles F) :
-    ‖((ω.1 x : ℂˣ) : ℂ)‖ = 1 := by
-  obtain ⟨n, hn, hpow⟩ := h.exists_pow_eq_one
-  have h1 : (ω.1 x) ^ n = 1 := by
-    have := congrArg (fun χ : HChar F => (χ.1 x)) hpow
-    simpa using this
-  have h2 : ((ω.1 x : ℂˣ) : ℂ) ^ n = 1 := by
-    rw [← Units.val_pow_eq_pow_val, h1, Units.val_one]
-  have h3 : ‖((ω.1 x : ℂˣ) : ℂ)‖ ^ n = 1 := by rw [← norm_pow, h2, norm_one]
-  exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) hn.ne').1 h3
-
-theorem finite_support {ω : HChar F} {c : HeightOneSpectrum (𝓞 F) → ℕ} (hH : Hyp ω c) :
-    {w | c w ≠ 0}.Finite := by
-  obtain ⟨m, hm, hω⟩ := isOfFinOrder_iff_pow_eq_one.1 hH.fin
-  have ho := GlobalTheory.HeckeGal.isOpen_ker_of_pow ω.1 ω.2.1 hm fun x => by
-    have := congrArg (fun ξ : HChar F => ξ.1 x) hω
-    simpa using this
-  obtain ⟨S, M, hS, key⟩ := GlobalTheory.OpenIdeleCongr.localIdele_mem_of_isOpen ω.1.ker ho
-  refine hS.subset fun w hw => ?_
-  by_contra hwS
-  exact hw (Nat.le_zero.1 ((hH.cond w).2 fun x hu _ => MonoidHom.mem_ker.1 (key w x hu fun h => absurd h hwS)))
-
 def Nc (c : HeightOneSpectrum (𝓞 F) → ℕ) : (FractionalIdeal (𝓞 F)⁰ F)ˣ :=
   ∏ᶠ w, primeIdealUnit w ^ (c w : ℤ)
 
 theorem count_Nc {ω : HChar F} {c : HeightOneSpectrum (𝓞 F) → ℕ} (hH : Hyp ω c) (v : HeightOneSpectrum (𝓞 F)) :
     FractionalIdeal.count F v ((Nc c : (FractionalIdeal (𝓞 F)⁰ F)ˣ) : FractionalIdeal (𝓞 F)⁰ F) = c v := by
   refine count_finprod_primeIdealUnit_zpow (fun w => (c w : ℤ)) ?_ v
-  refine Filter.eventually_cofinite.2 ((finite_support hH).subset fun w hw => ?_)
+  refine Filter.eventually_cofinite.2 ((EisensteinIntegrability.finite_c hH).subset fun w hw => ?_)
   intro h
   exact hw (by simp [h])
 
@@ -87,14 +68,14 @@ instance isEmpty_complexPlaces : IsEmpty {w : InfinitePlace F // w.IsComplex} :=
   ⟨fun w => (InfinitePlace.not_isComplex_iff_isReal.2 (IsTotallyReal.isReal w.1)) w.2⟩
 
 theorem pInf_apply_eq (x : Ad F) (v : InfinitePlace F) :
-    UpperTheory.V.TR.pInf F x v = (homeomorphMixedSpace F x.1).1 ⟨v, IsTotallyReal.isReal v⟩ := by
-  rw [homeomorphMixedSpace_apply]; rfl
+    UpperTheory.V.TR.pInf F x v = (homeomorphMixedSpace F x.1).1 ⟨v, IsTotallyReal.isReal v⟩ :=
+  EisensteinIntegrability.pInf_apply_eq x v
 
 theorem arch_zero_eq (B : Ad F) :
     arch (UpperTheory.V.TR.pInf F 0) (UpperTheory.V.TR.pInf F B) = oddSchwartz F (homeomorphMixedSpace F B.1) := by
   set m := homeomorphMixedSpace F B.1 with hm
   have hb : ∀ v : InfinitePlace F, UpperTheory.V.TR.pInf F B v = m.1 ⟨v, IsTotallyReal.isReal v⟩ :=
-    fun v => pInf_apply_eq B v
+    fun v => EisensteinIntegrability.pInf_apply_eq B v
   have hc : (∑ w : {w : InfinitePlace F // w.IsComplex}, ‖m.2 w‖ ^ 2) = 0 := by simp
   rw [oddSchwartz_apply, hc, mul_zero, add_zero, Complex.ofReal_exp]
   push_cast
@@ -154,9 +135,9 @@ theorem integral_oddSchwartz : ∫ x, oddSchwartz F x ∂selfDualMeasure F = 0 :
     refine volume_preserving_pi (ι := {w : InfinitePlace F // w.IsReal})
       (f := fun i (r : ℝ) => if i = w₀ then -r else r) fun i => ?_
     by_cases h : i = w₀
-    · have e : (fun r : ℝ => if i = w₀ then -r else r) = Neg.neg := funext fun r => if_pos h
+    · have e : (fun r : ℝ => if i = w₀ then -r else r) = Neg.neg := funext fun r => ite_eq_left h
       rw [e]; exact Measure.measurePreserving_neg volume
-    · have e : (fun r : ℝ => if i = w₀ then -r else r) = id := funext fun r => if_neg h
+    · have e : (fun r : ℝ => if i = w₀ then -r else r) = id := funext fun r => ite_eq_right h
       rw [e]; exact MeasurePreserving.id volume
   set σ : mixedSpace F → mixedSpace F := Prod.map σ₁ id with hσdef
   have hσ : MeasurePreserving σ volume volume := by
@@ -258,36 +239,13 @@ theorem bound_small {ω : HChar F} {c : HeightOneSpectrum (𝓞 F) → ℕ} (hH 
       ≤ (t : ℝ)⁻¹ * ((((t : ℝ))⁻¹ ^ 2)⁻¹ * M) := mul_le_mul_of_nonneg_left h1 (inv_nonneg.2 ht0.le)
     _ = (t : ℝ) * M := by field_simp
 
-theorem lintegral_min_lt_top :
-    ∫⁻ t, ENNReal.ofReal (min (t : ℝ) (t : ℝ)⁻¹) ∂posRealMeasure < ⊤ := by
-  have hmeas : Measurable fun t : {r : ℝ // 0 < r} => ENNReal.ofReal (min (t : ℝ) (t : ℝ)⁻¹) :=
-    ENNReal.measurable_ofReal.comp
-      ((continuous_subtype_val.min (continuous_subtype_val.inv₀ fun t => t.2.ne')).measurable)
-  rw [posRealMeasure_eq_map_expPos, lintegral_map hmeas measurable_expPos]
-  have key : ∀ y : ℝ, 0 ≤ y → (Real.exp y)⁻¹ ≤ 2 * (1 + y ^ 2)⁻¹ := fun y hy => by
-    have h1 := Real.quadratic_le_exp_of_nonneg hy
-    rw [← div_eq_mul_inv, le_div_iff₀ (by positivity), inv_mul_le_iff₀ (Real.exp_pos y)]
-    nlinarith
-  have hle : ∀ x : ℝ, ENNReal.ofReal (min ((expPos x : {r : ℝ // 0 < r}) : ℝ)
-      ((expPos x : {r : ℝ // 0 < r}) : ℝ)⁻¹) ≤ ENNReal.ofReal (2 * (1 + x ^ 2)⁻¹) := by
-    intro x
-    apply ENNReal.ofReal_le_ofReal
-    simp only [coe_expPos]
-    rcases le_total 0 x with hx | hx
-    · exact (min_le_right _ _).trans (key x hx)
-    · refine (min_le_left _ _).trans ?_
-      have := key (-x) (by linarith)
-      rwa [Real.exp_neg, inv_inv, neg_sq] at this
-  calc _ ≤ ∫⁻ x, ENNReal.ofReal (2 * (1 + x ^ 2)⁻¹) := lintegral_mono hle
-    _ < ⊤ := (integrable_inv_one_add_sq.const_mul 2).lintegral_lt_top
-
 theorem integrable_min : Integrable (fun t : {r : ℝ // 0 < r} => min (t : ℝ) (t : ℝ)⁻¹) posRealMeasure := by
   have hc : Continuous fun t : {r : ℝ // 0 < r} => min (t : ℝ) (t : ℝ)⁻¹ :=
     continuous_subtype_val.min (continuous_subtype_val.inv₀ fun t => t.2.ne')
   refine ⟨hc.aestronglyMeasurable, ?_⟩
   rw [hasFiniteIntegral_iff_ofReal (Filter.Eventually.of_forall fun t =>
     le_min t.2.le (inv_nonneg.2 t.2.le))]
-  exact lintegral_min_lt_top
+  exact eisensteinGrowth.lintegral_min_lt_top
 
 theorem continuous_integrand {ω : HChar F} {c : HeightOneSpectrum (𝓞 F) → ℕ} (hH : Hyp ω c) :
     Continuous (fun p : {r : ℝ // 0 < r} × normOneSubgroup F => zeroRow c (tau p.1 p.2) * wt ω p.1 p.2) := by
@@ -324,7 +282,7 @@ theorem zero_term_holds : SZero := by
   obtain ⟨t, u⟩ := p
   have ht0 : 0 < (t : ℝ) := t.2
   have hw : ‖wt ω t u‖ = (t : ℝ) := by
-    rw [wt, norm_mul, norm_inv, norm_omega_eq_one hH.fin, inv_one, one_mul, Complex.norm_real,
+    rw [wt, norm_mul, norm_inv, Esk.HyperbolicKernelContinuity.norm_omega hH.fin, inv_one, one_mul, Complex.norm_real,
       Real.norm_of_nonneg ht0.le]
   rw [norm_mul, hw, mul_one]
   have hC1 : M₁ ≤ C := (le_max_left _ _).trans (le_max_left _ _)

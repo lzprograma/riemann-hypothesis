@@ -106,7 +106,7 @@ theorem wt_int {n : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace �
     · subst hb; simp
     · simp [hb]
   rw [e, h1] at h2
-  simp only [Pi.single_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h2
+  simp only [Pi.single_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h2
   have h3 : Complex.exp (((μ a * (2 * Real.pi) : ℝ) : ℂ) * Complex.I) = 1 := by
     apply smul_left_injective ℂ hv
     simpa using h2.symm

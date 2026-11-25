@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensIdxC
 public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
@@ -16,45 +17,6 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSLocSB
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.HformSmulRight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Volumes
 import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.LevelIntersectParabolic
@@ -62,20 +24,7 @@ import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoMeas
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensPos
 import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSAdTup
@@ -337,14 +286,14 @@ theorem box_volume_holds : BoxVol := by
       intro v
       obtain ⟨μv, hμv⟩ := hA2.1
       have hex : ∃ μ, SdW F E σ n J (Fv F v) (psiV F ψ v) a μ := ⟨μv v, hμv v⟩
-      simp only [dX, dif_pos hex]
+      simp only [dX, dite_eq_left hex]
       exact hex.choose_spec
     have hA3 := hA2.2 (fun v => dX σ J ψ v a) hdX
     have hdT : ∀ v, SdHerm F E σ (Fv F v) (psiV F ψ v) a (dT σ ψ v a) := by
       intro v
       obtain ⟨νv, hνv⟩ := hA3.1
       have hex : ∃ ν, SdHerm F E σ (Fv F v) (psiV F ψ v) a ν := ⟨νv v, hνv v⟩
-      simp only [dT, dif_pos hex]
+      simp only [dT, dite_eq_left hex]
       exact hex.choose_spec
     have hA4 := hA3.2 (fun v => dT σ ψ v a) hdT
     have hA5 := hA4.2 fibInf hfib
@@ -352,7 +301,7 @@ theorem box_volume_holds : BoxVol := by
       intro v
       obtain ⟨fibV, hfibV⟩ := hA5.1
       have hex : ∃ fib, IsOm σ J ψ v a fib := ⟨fibV v, hfibV v⟩
-      simp only [omFam, dif_pos hex]
+      simp only [omFam, dite_eq_left hex]
       exact hex.choose_spec
     have hQ := hA5.2 (fun v => omFam σ J ψ v a) hOmF
 
@@ -399,7 +348,7 @@ theorem box_volume_holds : BoxVol := by
       intro v
       have hom : omAt σ J ψ v ((gramE σ J X0).map (inclR (Fv F v))) =
           omFam σ J ψ v a (hermOf (Fv F v) σ (gramE σ J X0) hT) := by
-        simp only [omAt, dif_pos (map_mem_HermR (Fv F v) σ (gramE σ J X0) hT)]
+        simp only [omAt, dite_eq_left (map_mem_HermR (Fv F v) σ (gramE σ J X0) hT)]
         rfl
       have hnull : omFam σ J ψ v a (hermOf (Fv F v) σ (gramE σ J X0) hT)
           {X | gramR (Fv F v) σ J X = (gramE σ J X0).map (inclR (Fv F v))}ᶜ = 0 :=
@@ -483,23 +432,8 @@ section CM
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem sigma_sq_of_cm (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
-  obtain ⟨-, -, -, hτ⟩ := h
-  let τ : E →+* ℂ := Classical.arbitrary _
-  apply τ.injective
-  rw [hτ, hτ, star_star]
-
 theorem exists_moved_of_cm (σ : E →ₐ[F] E) (h : IsCMExt F E σ) : ∃ y, σ y ≠ y := by
-  obtain ⟨-, hC, -, hτ⟩ := h
-  by_contra hno
-  push Not at hno
-  let τ : E →+* ℂ := Classical.arbitrary _
-  have hR : ComplexEmbedding.IsReal τ := by
-    rw [ComplexEmbedding.isReal_iff]
-    ext x
-    exact ((hτ τ x).symm.trans (congrArg τ (hno x)) : _)
-  exact (InfinitePlace.not_isReal_iff_isComplex.2 (hC.isComplex (InfinitePlace.mk τ)))
-    (InfinitePlace.isReal_mk_iff.2 hR)
+  apply _root_.PI.VolStabS.IdxHW.sigma_ne_id <;> assumption
 
 end CM
 
@@ -720,7 +654,7 @@ end LtSplSPf
 
 theorem splitStr : SplitStr := by
   intro F E _ _ _ _ _ σ v hCM hnf
-  exact LtSplSPf.main_gen (Fv F v) σ (LtSplSPf.sigma_sq_of_cm σ hCM)
+  exact LtSplSPf.main_gen (Fv F v) σ (PI.VolStabS.sigma_invol_cm σ hCM)
     (LtSplSPf.exists_moved_of_cm σ hCM) hCM.2.2.1 hnf
 
 end Formalism.L2.SG.Pf.NcS.LT
@@ -809,12 +743,10 @@ private theorem eq_zero_of_mem_of_disjoint {V : Type*} [AddCommGroup V] [Module 
 private theorem exists_not_mem_of_ne_top_of_ne_top {V : Type*} [AddCommGroup V] [Module K V]
     (U W : Submodule K V) (hU : U ≠ ⊤) (hW : W ≠ ⊤) : ∃ v, v ∉ U ∧ v ∉ W := by
   obtain ⟨u, hu⟩ : ∃ u, u ∉ U := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hU (Submodule.eq_top_iff'.mpr hcon)
   obtain ⟨w, hw⟩ : ∃ w, w ∉ W := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hW (Submodule.eq_top_iff'.mpr hcon)
   by_cases huW : u ∈ W
   · by_cases hwU : w ∈ U

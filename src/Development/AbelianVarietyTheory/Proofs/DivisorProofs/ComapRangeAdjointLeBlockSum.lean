@@ -92,19 +92,6 @@ theorem sum_selfAdj {G : Type} [Group G] [Fintype G] (r : Representation K G V) 
 
 end Linear
 
-section Poly
-
-end Poly
-
-section Core
-
-variable {K V H E Pl : Type} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V]
-  [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]
-  [NormedAddCommGroup E] [InnerProductSpace ℂ E] [FiniteDimensional ℂ E]
-  {σ : K →+* ℂ} {j : V →ₛₗ[σ] H} {ι : Type} [Fintype ι] {b : Module.Basis ι K V}
-
-end Core
-
 section Pres
 
 variable {G Γ W K : Type} [Group G] [Group Γ] [NormedAddCommGroup W] [InnerProductSpace ℂ W]

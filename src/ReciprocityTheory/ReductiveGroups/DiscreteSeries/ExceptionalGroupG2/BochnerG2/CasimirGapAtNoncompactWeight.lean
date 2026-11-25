@@ -29,6 +29,7 @@ import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.CasimirKK
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerOrth
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.Numerics
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.BochnerG2.Numerics
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.BochIneq
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.BochnerG2.BochIneq, ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SchSharp, ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.BochnerG2.KhwEqZeroSharp, ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.BochnerG2.LayerBound, ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.BochnerG2.CasimirGapAtNoncompactWeight
@@ -55,45 +56,9 @@ theorem bochner_ineq (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε
     (hbig : 2 * (n : ℝ) < h) {k : ℕ} {P : Big n k M} (hP : P ∈ ncV ε V k)
     (hposition : ∀ i κ, slice i κ P ∈ Wp ε E V) :
     (casValK ε (lowK ε lam) + 2 * (k : ℝ) * (h - n + 1)) * ‖P‖ ^ 2 ≤
-      RCLike.re (inner ℂ (casimirK ε (bAct E k) P) P) := by
-  classical
-
-  have hP' := hP
-  simp only [ReciprocityTheory.ChartRestriction.DS.ncV, Submodule.mem_iInf, Submodule.mem_comap] at hP'
-
-  have hcas : casimirK ε (mAct E k) P = ((casValK ε (lowK ε lam) : ℝ) : ℂ) • P := by
-    refine PiLp.ext fun κ => ?_
-    rw [ReciprocityTheory.ChartRestriction.DS.casimirK_mAct_apply, PiLp.smul_apply]
-    have hm := hP' κ
-    by_cases hκ : ∀ i, ε (κ i).1 ≠ ε (κ i).2
-    · rw [if_pos hκ] at hm
-      have hm' : P κ ∈ V := hm
-      exact ReciprocityTheory.ChartRestriction.DS.casimirK_irr hE hV _ hm'
-    · rw [if_neg hκ] at hm
-      have hz : P κ = 0 := (Submodule.mem_bot ℂ).1 hm
-      rw [hz, map_zero, smul_zero]
-
-  have hsplit : RCLike.re (inner ℂ (casimirK ε (bAct E k) P) P)
-      = RCLike.re (inner ℂ (factorCasimir ε k P) P) + RCLike.re (inner ℂ (casimirK ε (mAct E k) P) P)
-        + 2 * ∑ i, RCLike.re (inner ℂ (crossOp ε E k i P) P) := by
-    rw [ReciprocityTheory.ChartRestriction.DS.casimirK_bAct]
-
-    simp only [two_nsmul, LinearMap.add_apply, LinearMap.sum_apply,
-    inner_add_left, sum_inner, map_add, map_sum]
-    ring
-  have h1 : 0 ≤ RCLike.re (inner ℂ (factorCasimir ε k P) P) :=
-    ReciprocityTheory.ChartRestriction.DS.factorCasimir_nonneg k P
-  have h2 : RCLike.re (inner ℂ (casimirK ε (mAct E k) P) P) = casValK ε (lowK ε lam) * ‖P‖ ^ 2 := by
-    rw [hcas, inner_smul_left, Complex.conj_ofReal, ← inner_self_eq_norm_sq (𝕜 := ℂ) P]
-    simp
-
-  have h3 : ∀ i : Fin k, 2 * (h - n + 1) * ‖P‖ ^ 2 ≤ 2 * RCLike.re (inner ℂ (crossOp ε E k i P) P) :=
-    fun i => ReciprocityTheory.ChartRestriction.DS.G2.crossOp_position_bound hE hU hV hmono hh hbig i (fun κ => hposition i κ)
-  have h4 : (k : ℝ) * (2 * (h - n + 1) * ‖P‖ ^ 2) ≤ ∑ i : Fin k, 2 * RCLike.re (inner ℂ (crossOp ε E k i P) P) := by
-    have := Finset.sum_le_sum (s := Finset.univ) (fun i _ => h3 i)
-    simpa [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] using this
-  rw [hsplit, h2, ← Finset.mul_sum] at *
-  nlinarith [h1, h4]
+      RCLike.re (inner ℂ (casimirK ε (bAct E k) P) P) :=
+  DS.bochner_ineq_of hE hV hP fun i =>
+    crossOp_position_bound hE hU hV hmono hh hbig i (fun κ => hposition i κ)
 
 end Boch
 
@@ -206,78 +171,24 @@ theorem khw_eq_zero_sharp (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hmono : Str
 
 theorem phi_one_Wm (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
     (hmono : StrictAnti lam) {h : ℝ} (hh : GapAtLeast ε lam h)
-    (hbig : 2 * (n : ℝ) < h) {x : Big n 1 M} (hx : x ∈ Wm ε E V) : phi E 1 x = 0 := by
-  by_contra hne
-  have := finiteDimensional_ncV (ε := ε) hV.1 1
-  have hfdW : FiniteDimensional ℂ (Wm ε E V) := Submodule.finiteDimensional_of_le Wm_le_ncV
-  have hWst : IsKStableSub ε (bAct E 1) (Wm ε E V) := Wm_kStable hE hU hV
-  set T : Submodule ℂ M := (Wm ε E V).map (phi E 1) with hTdef
-  have hfdT : FiniteDimensional ℂ T := inferInstance
-  have hTst : IsKStableSub ε E T := by
-    intro a b hab v hv
-    obtain ⟨y, hy, rfl⟩ := Submodule.mem_map.1 hv
-    rw [← phi_bAct hE 1 hab y]
-    exact Submodule.mem_map_of_mem (hWst a b hab y hy)
-  have hTne : T ≠ ⊥ := by
-    intro hT
-    have : phi E 1 x ∈ T := Submodule.mem_map_of_mem hx
-    rw [hT, Submodule.mem_bot] at this
-    exact hne this
-  have hKU : IsKUnitary ε E := isKUnitary_of_isInfUnitary hU
-  obtain ⟨y, hyT, hy0, μ, hyμ⟩ := exists_khw hE hKU hfdT hTst hTne
-  obtain ⟨x₀, hx₀, rfl⟩ := Submodule.mem_map.1 hyT
-  obtain ⟨x1, hx1, -, hkhw, hfx⟩ := lift_khw (A := bAct E 1) (bAct_isKUnitary hU 1) (phi E 1)
-    (fun a b hab z => phi_bAct hE 1 hab z) hfdW hWst hx₀ hyμ
-  have hx10 : x1 ≠ 0 := by
-    rintro rfl
-    rw [map_zero] at hfx
-    exact hy0 hfx.symm
-  obtain ⟨a, b, hab, hε, hμ⟩ := Wm_khw hE hU hV hmono hh hbig hx1 hx10 hkhw
-  have hTc : ∀ v ∈ T, casimir E v = (casVal lam : ℂ) • v := by
-    intro v hv
-    obtain ⟨x', hx', rfl⟩ := Submodule.mem_map.1 hv
-    exact casimir_genSub hE hc _ (layer_le_genSub (ε := ε) 1 (_root_.ReciprocityTheory.ChartRestriction.DS.wordContraction_mem_noncompactLayer' (Wm_le_ncV hx')))
-  rw [hμ] at hyμ
-  exact hy0 (khw_eq_zero_sharp hE hU hmono hh (two_lt_of_gap hε hbig) hab hε hfdT hTst hTc hyT hyμ)
+    (hbig : 2 * (n : ℝ) < h) {x : Big n 1 M} (hx : x ∈ Wm ε E V) : phi E 1 x = 0 :=
+  DS.phi_one_Wm_of hE hU hV hc
+    (fun hx1 hx10 hkhw => Wm_khw hE hU hV hmono hh hbig hx1 hx10 hkhw)
+    (fun hfdT hTst hTc hab hε hyT hyμ =>
+      khw_eq_zero_sharp hE hU hmono hh (two_lt_of_gap hε hbig) hab hε hfdT hTst hTc hyT hyμ)
+    hx
 
 theorem phi_Wm_last (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
     (hmono : StrictAnti lam) {h : ℝ} (hh : GapAtLeast ε lam h)
     (hbig : 2 * (n : ℝ) < h) {k : ℕ} {F : Big n (k + 1) M}
-    (hF : ∀ κ, slice (Fin.last k) κ F ∈ Wm ε E V) : phi E (k + 1) F = 0 := by
-  have key : ∀ init : Fin k → Fin n × Fin n,
-      ∑ p : Fin n × Fin n, E p.1 p.2 (F (Fin.snoc init p : Fin (k + 1) → Fin n × Fin n)) = 0 := by
-    intro init
-    rcases isEmpty_or_nonempty (Fin n × Fin n) with h0 | hne
-    · simp [Finset.univ_eq_empty]
-    · obtain ⟨p0⟩ := hne
-      have := phi_one_Wm hE hU hV hc hmono hh hbig (hF (Fin.snoc init p0))
-      rw [sch_phi_one_apply] at this
-      simpa only [sch_slice_apply, Fin.update_snoc_last] using this
-  unfold phi
-  rw [LinearMap.sum_apply, ← (Fin.snocEquiv (fun _ => Fin n × Fin n)).sum_comp,
-    Fintype.sum_prod_type, Finset.sum_comm]
-  refine Finset.sum_eq_zero (fun init _ => ?_)
-  have hs : ∀ p, (Fin.snocEquiv (fun _ => Fin n × Fin n)) (p, init) =
-      (Fin.snoc init p : Fin (k + 1) → Fin n × Fin n) := fun p => rfl
-  simp only [hs, LinearMap.comp_apply, sch_coord_apply, sch_word_snoc, Module.End.mul_apply]
-
-  rw [← map_sum, key, map_zero]
+    (hF : ∀ κ, slice (Fin.last k) κ F ∈ Wm ε E V) : phi E (k + 1) F = 0 :=
+  DS.phi_Wm_last_of (fun hx => phi_one_Wm hE hU hV hc hmono hh hbig hx) hF
 
 theorem phi_Wm_position (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
     (hmono : StrictAnti lam) {h : ℝ} (hh : GapAtLeast ε lam h)
     (hbig : 2 * (n : ℝ) < h) {k : ℕ} (i : Fin (k + 1)) {F : Big n (k + 1) M} (hF0 : F ∈ ncV ε V (k + 1))
-    (hF : ∀ κ, slice i κ F ∈ Wm ε E V) : phi E (k + 1) F ∈ layer ε E V k := by
-  set σ : Equiv.Perm (Fin (k + 1)) := Equiv.swap i (Fin.last k) with hσ
-  have hperm : ∀ κ, slice (Fin.last k) κ (permute σ F) = slice i (κ ∘ σ) F := by
-    intro κ
-    unfold slice
-    congr 1
-    funext ι
-    rw [_root_.ReciprocityTheory.ChartRestriction.DS.permute_apply, Function.update_comp_equiv, hσ, Equiv.symm_swap, Equiv.swap_apply_right]
-  have h0 : phi E (k + 1) (permute σ F) = 0 :=
-    phi_Wm_last hE hU hV hc hmono hh hbig (fun κ => by rw [hperm]; exact hF _)
-  have hs := phi_permute_sub_mem hE hV.2.1 σ hF0
-  rwa [h0, sub_zero] at hs
+    (hF : ∀ κ, slice i κ F ∈ Wm ε E V) : phi E (k + 1) F ∈ layer ε E V k :=
+  DS.phi_Wm_position_of hE hV.2.1 i hF0 (fun hx => phi_one_Wm hE hU hV hc hmono hh hbig hx) hF
 
 end Sch
 
@@ -311,22 +222,11 @@ theorem khw_layer_succ_bound (hE : IsGlRep E) (hU : IsInfUnitary ε E)
     (hw : w ∈ layer ε E V (k + 1)) (hperp : ∀ u ∈ layer ε E V k, inner ℂ u w = 0)
     (hw0 : w ≠ 0) (hμ : IsKHWVec ε E μ w) :
     IsNCSum ε (k + 1) (μ - lowK ε lam) ∧
-      casValK ε (lowK ε lam) + 2 * ((k : ℝ) + 1) * (h - n + 1) ≤ casValK ε μ := by
-  obtain ⟨hVfd, hVk, -, -⟩ := id hV
-  obtain ⟨P, hP, hP0, hPμ, hPperp⟩ := lift_layer hE hU hVfd hVk hw hperp hμ hw0
-  refine ⟨khw_big_weight hE hV hP hP0 hPμ, ?_⟩
-  have hposition : ∀ i κ, slice i κ P ∈ Wp ε E V := fun i =>
-    position_perp hE hU hV hmono hh hbig i hP
-      (fun F hF hFs => hPperp F hF (phi_Wm_position hE hU hV hc hmono hh hbig i hF hFs))
-  have hb := bochner_ineq hE hU hV hmono hh hbig hP hposition
-  have hcas := casimirK_khwVec ε (bAct_isGlRep hE (k + 1)) hPμ
-  rw [hcas, inner_smul_left, inner_self_eq_norm_sq_to_K, Complex.conj_ofReal,
-    ← RCLike.ofReal_pow, RCLike.re_mul_ofReal] at hb
-  simp only [RCLike.re_to_complex, Complex.ofReal_re] at hb
-  change _ ≤ casValK ε μ * ‖P‖ ^ 2 at hb
-  have hpos : 0 < ‖P‖ ^ 2 := pow_pos (norm_pos_iff.2 hP0) 2
-  push_cast at hb
-  exact le_of_mul_le_mul_right hb hpos
+      casValK ε (lowK ε lam) + 2 * ((k : ℝ) + 1) * (h - n + 1) ≤ casValK ε μ :=
+  DS.khw_layer_succ_bound_of hE hU hV k hw hperp hw0 hμ
+    (fun hP hPperp i => position_perp hE hU hV hmono hh hbig i hP
+      fun F hF hFs => hPperp F hF (phi_Wm_position hE hU hV hc hmono hh hbig i hF hFs))
+    (fun hP hposition => bochner_ineq hE hU hV hmono hh hbig hP hposition)
 
 end LayerBound
 
@@ -361,14 +261,10 @@ theorem k_highest_weight_layer_decomp (hE : IsGlRep E) (hU : IsInfUnitary ε E)
     ∃ w₀ ∈ V, IsKHWVec ε E μ w₀ ∧ ∃ m, ∃ ws : Fin m → M, w = w₀ + ∑ j, ws j ∧
       ∀ j : Fin m, ws j ∈ layer ε E V ((j : ℕ) + 1) ∧ (ws j ≠ 0 →
         IsNCSum ε ((j : ℕ) + 1) (μ - lowK ε lam) ∧ 0 < h - n + 1 ∧
-        casValK ε (lowK ε lam) + 2 * (((j : ℕ) : ℝ) + 1) * (h - n + 1) ≤ casValK ε μ) := by
-  obtain ⟨m, hm⟩ := exists_layer_of_mem_genSub hE hV.2.1 hw
-  obtain ⟨w₀, hw₀, hw₀μ, ws, hsum, hws⟩ := layer_khw_decomp hE hU hV.1 hV.2.1 hm hμ
-  refine ⟨w₀, hw₀, hw₀μ, m, ws, hsum, fun j => ⟨(hws j).1, fun h0 => ?_⟩⟩
-  obtain ⟨h1, h2⟩ := khw_layer_succ_bound hE hU hV hc hmono hh hbig (j : ℕ) (hws j).1
-    (hws j).2.1 h0 (hws j).2.2
-  have := (gap_gt hbig).2
-  exact ⟨h1, by linarith, h2⟩
+        casValK ε (lowK ε lam) + 2 * (((j : ℕ) : ℝ) + 1) * (h - n + 1) ≤ casValK ε μ) :=
+  DS.k_highest_weight_layer_decomp_of hE hU hV hw hμ
+    (fun k hv hperp hv0 hvμ => khw_layer_succ_bound hE hU hV hc hmono hh hbig k hv hperp hv0 hvμ)
+    (fun _ => by linarith [(Nat.cast_nonneg n : (0 : ℝ) ≤ n)])
 
 theorem casimir_gap_at_noncompact_weight (hE : IsGlRep E) (hU : IsInfUnitary ε E)
     (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
@@ -376,37 +272,16 @@ theorem casimir_gap_at_noncompact_weight (hE : IsGlRep E) (hU : IsInfUnitary ε 
     (hbig : 2 * (n : ℝ) < h) {μ : Fin n → ℝ} {w : M}
     (hw : w ∈ genSub E V) (hw0 : w ≠ 0) (hμ : IsKHWVec ε E μ w) (hne : μ ≠ lowK ε lam) :
     ∃ j : ℕ, IsNCSum ε (j + 1) (μ - lowK ε lam) ∧ 0 < h - n + 1 ∧
-      casValK ε (lowK ε lam) + 2 * ((j : ℝ) + 1) * (h - n + 1) ≤ casValK ε μ := by
-  obtain ⟨w₀, hw₀, -, m, ws, hwsum, hws⟩ := k_highest_weight_layer_decomp hE hU hV hc hmono hh hbig hw hμ
-  by_cases hall : ∀ j, ws j = 0
-  · exfalso
-    have hweq : w = w₀ := by
-      rw [hwsum]
-      simp [hall]
-    have hwV : w ∈ V := by
-      rw [hweq]
-      exact hw₀
-    exact hne (khw_weight_eq_of_irr hE hV hwV hw0 hμ)
-  · push_neg at hall
-    obtain ⟨j, hj⟩ := hall
-    obtain ⟨h1, h2, h3⟩ := (hws j).2 hj
-    exact ⟨(j : ℕ), h1, h2, h3⟩
+      casValK ε (lowK ε lam) + 2 * ((j : ℝ) + 1) * (h - n + 1) ≤ casValK ε μ :=
+  DS.casimir_gap_at_noncompact_weight_of hE hU hV hw0 hμ hne
+    (k_highest_weight_layer_decomp hE hU hV hc hmono hh hbig hw hμ)
 
 theorem khw_lowK_mem (hE : IsGlRep E) (hU : IsInfUnitary ε E)
     (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
     (hgap : StdGap ε lam) {w : M} (hw : w ∈ genSub E V) (hμ : IsKHWVec ε E (lowK ε lam) w) :
     w ∈ V := by
   obtain ⟨hmono, h, hh, hbig⟩ := hgap
-  obtain ⟨w₀, hw₀, -, m, ws, rfl, hws⟩ := k_highest_weight_layer_decomp hE hU hV hc hmono hh hbig hw hμ
-
-  have hzero : ∀ j, ws j = 0 := by
-    intro j
-    by_contra hne
-    obtain ⟨-, hpos, hle⟩ := (hws j).2 hne
-    have h1 : (0 : ℝ) < 2 * (((j : ℕ) : ℝ) + 1) := by positivity
-    have h2 := mul_pos h1 hpos
-    linarith
-  simpa [hzero] using hw₀
+  exact DS.khw_lowK_mem_of (k_highest_weight_layer_decomp hE hU hV hc hmono hh hbig hw hμ)
 
 theorem vogan_min (hE : IsGlRep E) (hU : IsInfUnitary ε E)
     (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
@@ -472,26 +347,8 @@ theorem khw_mem_layer (hE : IsGlRep E) (hU : IsInfUnitary ε E)
     (hgap : StdGap ε lam) (μ : Fin n → ℝ) :
     ∃ k : ℕ, ∀ w ∈ genSub E V, IsKHWVec ε E μ w → w ∈ layer ε E V k := by
   obtain ⟨hmono, h, hh, hbig⟩ := hgap
-  have hmon : Monotone (layer ε E V) := by
-    refine monotone_nat_of_le_succ fun k => ?_
-    simp only [layer]
-    exact le_sup_left
-  refine ⟨⌈(casValK ε μ - casValK ε (lowK ε lam)) / (2 * (h - n + 1))⌉₊, fun w hw hμ => ?_⟩
-  obtain ⟨w₀, hw₀, -, m, ws, rfl, hws⟩ := k_highest_weight_layer_decomp hE hU hV hc hmono hh hbig hw hμ
-  refine add_mem (hmon (Nat.zero_le _) (show w₀ ∈ layer ε E V 0 from hw₀))
-    (_root_.sum_mem fun j _ => ?_)
-  by_cases hj : ws j = 0
-  · rw [hj]
-    exact zero_mem _
-  · obtain ⟨hmem, hrest⟩ := hws j
-    obtain ⟨-, -, hle⟩ := hrest hj
-    refine hmon ?_ hmem
-
-    have hq : (((j : ℕ) : ℝ) + 1) ≤ (casValK ε μ - casValK ε (lowK ε lam)) / (2 * (h - n + 1)) := by
-      rw [le_div_iff₀ (by linarith)]
-      linarith
-    have hq' := hq.trans (Nat.le_ceil _)
-    exact_mod_cast hq'
+  exact DS.khw_mem_layer_of μ fun w hw hμ =>
+    k_highest_weight_layer_decomp hE hU hV hc hmono hh hbig hw hμ
 
 end Unitary
 

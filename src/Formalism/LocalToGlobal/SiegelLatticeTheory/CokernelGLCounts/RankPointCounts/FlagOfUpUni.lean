@@ -67,8 +67,8 @@ theorem loUni_inv {A : Matrix (Fin N) (Fin N) K} [StarRing K] (h : IsLoUni A) : 
 theorem upUni_last {r : ℕ} {A : Matrix (Fin (r + 1)) (Fin (r + 1)) K} (h : IsUpUni A) (c : Fin (r + 1)) :
     A (Fin.last r) c = if c = Fin.last r then 1 else 0 := by
   by_cases hc : c = Fin.last r
-  · subst hc; rw [if_pos rfl]; exact (h _ _).2 rfl
-  · rw [if_neg hc]
+  · subst hc; rw [ite_eq_left rfl]; exact (h _ _).2 rfl
+  · rw [ite_eq_right hc]
     exact (h _ _).1 (lt_of_le_of_ne (Fin.le_last c) hc)
 
 end Uni

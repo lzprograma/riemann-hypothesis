@@ -2,46 +2,6 @@ module
 
 public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -59,25 +19,6 @@ def PrimeToPartEndo : Prop :=
     IsOfFinOrder x → IsOfFinOrder y →
     primeToPart l (x * y) = primeToPart l x * primeToPart l y ∧
       φ (primeToPart l x) = primeToPart l (φ x)
-
-def PowPolyExists : Prop :=
-  ∀ (K L : Type) [Field K] [Fintype K] [Field L] [Algebra K L] [IsAlgClosed L] (f : K[X])
-    (a : ℕ), f.Monic →
-    ∃ f' : K[X], f'.Monic ∧ f'.aroots L = (f.aroots L).map (fun x => x ^ a)
-
-def ExcludedSimplify : Prop :=
-  ∀ (N : ℕ) (Y : ℝ), 1 ≤ N → 1 ≤ Y →
-    (3 * N + 1 : ℝ) * (1 + 2 * (N : ℝ) ^ 2 * (Y ^ ((3 : ℝ) / 4) + 1)) ≤
-      20 * (N : ℝ) ^ 3 * Y ^ ((3 : ℝ) / 4)
-
-def AdmissibleCount : Prop :=
-  ∀ (c₀ c X B h P A : ℝ), 0 < c₀ → (2 : ℝ) ^ 14 / c₀ ≤ c → 1 < X → Real.log X ≤ c →
-    0 < B → B ≤ 4 * c ^ 3 → 0 < h → h ≤ c ^ 3 →
-    c₀ * B ^ (-5 : ℤ) * X / (h * Real.log X) ≤ P → P ≤ 2 * A →
-    8 * c ^ (-20 : ℤ) * X ≤ A
-
-
-
 
 open Classical in
 def LemmaPSubSum : Prop :=
@@ -298,11 +239,5 @@ def ShareFromCount : Prop :=
     0 ≤ PP₁ → PP₁ ≤ W₁ → 0 ≤ PP₂ → PP₂ ≤ W₂ → |Dall - Dstar| ≤ ε * Dstar →
     |D₁ - PP₁ * Dstar| ≤ ε * (PP₁ * Dstar) → |D₂ - PP₂ * Dstar| ≤ ε * (PP₂ * Dstar) →
     bad ≤ D₁ + D₂ → bad / Dall ≤ (1 + ε) / (1 - ε) * (W₁ + W₂)
-
-def BadRankUnion : Prop :=
-  ∀ (k V : Type) [Field k] [AddCommGroup V] [Module k V] [FiniteDimensional k V]
-    (p₁ p₂ : V →ₗ[k] V), p₁ ∘ₗ p₁ = p₁ → p₂ ∘ₗ p₂ = p₂ → p₁ ∘ₗ p₂ = p₂ ∘ₗ p₁ →
-    Module.finrank k (LinearMap.range (p₁ + p₂ - p₁ ∘ₗ p₂)) ≤
-      Module.finrank k (LinearMap.range p₁) + Module.finrank k (LinearMap.range p₂)
 
 end Formalism.IrreducibleCountingLemmas.GaloisIrreducibility

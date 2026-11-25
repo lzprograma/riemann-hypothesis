@@ -7,55 +7,14 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCou
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMirProj
 public import GroundTheory.AutomorphicForms.LocallyProfinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.GroupTheory.DoubleCoset
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.Topology.Algebra.Nonarchimedean.TotallyDisconnected
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
 
 @[expose] public section
@@ -131,7 +90,7 @@ theorem exists_bump (H : Subgroup G) (ρ : Representation ℂ H W) (K : Subgroup
   have hb1 : ∀ (a : H), ∀ x ∈ K, b ((a : G) * c * x) = ρ a w := by
     intro a x hx
     have h : ∃ a' : H, ∃ x' ∈ K, (a : G) * c * x = (a' : G) * c * x' := ⟨a, x, hx, rfl⟩
-    simp only [b, dif_pos h]
+    simp only [b, dite_eq_left h]
     obtain ⟨x', hx', e⟩ := h.choose_spec
     generalize h.choose = a' at e ⊢
     have e2 : ((a'⁻¹ * a : H) : G) = c * (x' * x⁻¹) * c⁻¹ := by
@@ -143,7 +102,7 @@ theorem exists_bump (H : Subgroup G) (ρ : Representation ℂ H W) (K : Subgroup
     rw [map_mul, Module.End.mul_apply] at e4
     calc ρ a' w = ρ a' (ρ a'⁻¹ (ρ a w)) := by rw [e4]
       _ = ρ a w := by rw [← Module.End.mul_apply (ρ a'), ← map_mul]; simp
-  have hb0 : ∀ g, (¬ ∃ a : H, ∃ x ∈ K, g = (a : G) * c * x) → b g = 0 := fun g h => dif_neg h
+  have hb0 : ∀ g, (¬ ∃ a : H, ∃ x ∈ K, g = (a : G) * c * x) → b g = 0 := fun g h => dite_eq_right h
   have hind : b ∈ indSpace H ρ := by
     intro h g
     by_cases hg : ∃ a : H, ∃ x ∈ K, g = (a : G) * c * x

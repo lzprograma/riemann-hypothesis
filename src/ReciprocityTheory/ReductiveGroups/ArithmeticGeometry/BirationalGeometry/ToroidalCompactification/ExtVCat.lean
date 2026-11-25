@@ -5,16 +5,12 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G.Semi
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {S : Scheme.{0}} (G : Over S) [GrpObj G] [IsCommMonObj G]
 
@@ -93,8 +89,8 @@ theorem cub_at_one {L : RigLB G} (c : CubicalStr G L) (z : (𝟙_ (Over S)).left
     if χ = eSec G then q₀ else (exists_chart L.isLB (χ z)).choose
   have hJ : Good L.L z J := fun χ => by
     by_cases h : χ = eSec G
-    · subst h; simp only [J, if_pos rfl]; exact hq₀
-    · simp only [J, if_neg h]; exact (exists_chart L.isLB (χ z)).choose_spec
+    · subst h; simp only [J, ite_eq_left rfl]; exact hq₀
+    · simp only [J, ite_eq_right h]; exact (exists_chart L.isLB (χ z)).choose_spec
   have hv := val_corr hJ (c.face 0) (eSec (G2 G))
   have hv2 : val (φ := thφ G (x3 G)) (ε := thε) c.t (eSec (G2 G) ≫ (faceMap G 0).left) z J = 1 :=
     (val_pull hJ (φ := thφ G (x3 G)) (ε := thε) c.t (faceMap G 0).left (eSec (G2 G))).symm.trans

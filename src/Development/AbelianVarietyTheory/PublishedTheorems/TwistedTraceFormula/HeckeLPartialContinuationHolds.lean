@@ -134,7 +134,7 @@ theorem _root_.GlobalTheory.Published.HeckeLPartialContinuation_holds : GlobalTh
       fun s hs => mul_ne_zero (IsHeckeL.ne_zero_of_one_le hu hχ hΛ hs) (removed_ne_zero T hu (by linarith))⟩
   · obtain ⟨Z, hZd, hZ1, hZ⟩ := GlobalTheory.dedekindZeta_eulerProduct_mul_sub_one_entire_ne_zero K
     have hu : (1 : HChar K).IsUnitary := fun _ => by simp
-    have hc : ∀ P : HeightOneSpectrum (𝓞 K), cf (1 : HChar K) P = 1 := fun P => if_pos fun _ _ => rfl
+    have hc : ∀ P : HeightOneSpectrum (𝓞 K), cf (1 : HChar K) P = 1 := fun P => ite_eq_left fun _ _ => rfl
     refine ⟨fun s => Z s * removed T 1 s, hZd.mul (differentiable_removed T 1), fun s hs => ?_,
       fun s hs => mul_ne_zero ?_ (removed_ne_zero T hu (by linarith))⟩
     · have h := hasProd_exp hu hs

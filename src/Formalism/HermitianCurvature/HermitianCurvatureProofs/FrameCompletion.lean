@@ -5,54 +5,10 @@ public import Formalism.HermitianCurvature.FrameExists2
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AnisotropicColumnSums
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -63,8 +19,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr Formalism.FourierDecayAlt.P.QrD
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace HermitianFormSums
 
@@ -96,11 +50,7 @@ theorem herm_comb {m : ℕ} {vs : List (Fin (2 * r + k + 1) → ℂ)} {C : Fin m
     (hC : IsFrameOf k r vs C) (f g : Fin m → ℂ) :
     herm (Hpk k r) (∑ a, f a • C a) (∑ b, g b • C b) = ∑ a, f a * star (g a) := by
   rw [herm_lsum]
-  simp only [herm_rsum, hC.2.1, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
-
-theorem sum_mdim {X : Type*} [AddCommMonoid X] (F : ℕ → X) :
-    ∑ j : Fin (mdim k r (Fin.last r)), F j.val = ∑ a : Fin k, F a.val + F k := by
-  rw [Fin.sum_univ_eq_sum_range, AnisotropicColumnSums.mdim_last, Finset.sum_range_succ, Fin.sum_univ_eq_sum_range]
+  simp only [herm_rsum, hC.2.1, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem complete {x : Fin (2 * r + k + 1) → ℂ} {Bs : Fin k → Fin (2 * r + k + 1) → ℂ} (hx : inWb k r x)
     (hxx : herm (Hpk k r) x x ≠ 0) (hB : IsFrameOf k r [x] Bs) {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) :
@@ -164,7 +114,7 @@ theorem exists_frame_two : Formalism.FourierDecayAlt.Qr.FrameExists2 := by
   · rw [HermitianFormSums.herm_comb hC, ← hin, orthonormal_iff_ite.1 b.orthonormal]
     by_cases h : i = j
     · subst h; simp
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_right h, ite_eq_right]
       intro h'
       exact h (Fin.castSucc_injective _ h').symm
   · simp only [List.mem_cons, List.not_mem_nil, or_false] at hv
@@ -177,7 +127,7 @@ theorem exists_frame_two : Formalism.FourierDecayAlt.Qr.FrameExists2 := by
       have h1 : ∑ a, (b j.castSucc) a * star (ε a) = inner ℂ (b (Fin.last n)) (b j.castSucc) := by
         rw [hin, hbl]
       rw [show (∑ a, (b j.castSucc) a * star (herm (Hpk (n + 1) r) v (C a))) = ∑ a, (b j.castSucc) a * star (ε a) from rfl,
-        h1, orthonormal_iff_ite.1 b.orthonormal, if_neg]
+        h1, orthonormal_iff_ite.1 b.orthonormal, ite_eq_right]
       exact (Fin.castSucc_lt_last j).ne'
 
 theorem qr_frameChange_of : Formalism.FourierDecayAlt.Qr.EcLie → Formalism.FourierDecayAlt.Qr.FrameGl → Formalism.FourierDecayAlt.Qr.FrameChange := by
@@ -198,10 +148,10 @@ theorem qr_frameChange_of : Formalism.FourierDecayAlt.Qr.EcLie → Formalism.Fou
       · rw [hCc]; exact hB'.1 a
     · refine Fin.lastCases ?_ (fun a => ?_) a
       · refine Fin.lastCases ?_ (fun b => ?_) b
-        · rw [hCl, hee, if_pos rfl]
-        · rw [hCl, hCc, heB, if_neg (Fin.castSucc_lt_last b).ne']
+        · rw [hCl, hee, ite_eq_left rfl]
+        · rw [hCl, hCc, heB, ite_eq_right (Fin.castSucc_lt_last b).ne']
       · refine Fin.lastCases ?_ (fun b => ?_) b
-        · rw [hCl, hCc, hBe, if_neg (Fin.castSucc_lt_last a).ne]
+        · rw [hCl, hCc, hBe, ite_eq_right (Fin.castSucc_lt_last a).ne]
         · rw [hCc, hCc, hB'.2.1]
           simp only [Fin.castSucc_inj]
     · simp only [List.mem_cons, List.not_mem_nil, or_false] at hv

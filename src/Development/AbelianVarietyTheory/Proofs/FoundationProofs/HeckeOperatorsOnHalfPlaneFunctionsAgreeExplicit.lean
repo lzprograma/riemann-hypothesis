@@ -75,7 +75,7 @@ theorem slash_upper (k : ℤ) (a b d : ℤ) (ha : 0 < a) (hd : 0 < d) (f : ℍ �
   have hsm : G • τ = ofComplex (((a : ℂ) * τ + b) / d) := by
     rw [← ofComplex_apply (G • τ), coe_smul_of_det_pos hpos]
     simp [num, denom, e00, e01, e10, e11]
-  rw [ModularForm.slash_apply, hsm, σ, if_pos hpos, hG]
+  rw [ModularForm.slash_apply, hsm, σ, ite_eq_left hpos, hG]
   have hden : denom G τ = d := by simp [denom, e10, e11]
   rw [hden, abs_of_pos (by positivity)]
   simp
@@ -115,9 +115,9 @@ theorem tq_eq (k : ℤ) (q : ℕ) (σ : SL(2, ℤ)) (f : ℍ → ℂ) (hq : 0 < 
     TqF k q σ f = GlobalTheory.Hk.heckeT k q σ f := by
   have hsplit : TqF k q σ f = UlF k q f + f ∣[k] toGL (mat σ * dg q 1) := by
     have e : ∀ i : Fin q, tqFam q σ i.castSucc = ulFam q i := fun i => by
-      rw [tqFam, if_pos (by simp)]; rfl
+      rw [tqFam, ite_eq_left (by simp)]; rfl
     have e2 : tqFam q σ (Fin.last q) = mat σ * dg q 1 := by
-      rw [tqFam, if_neg (by simp)]
+      rw [tqFam, ite_eq_right (by simp)]
     simp only [TqF, UlF, hkF]
     rw [Fin.sum_univ_castSucc, e2]
     simp only [e]

@@ -53,7 +53,7 @@ theorem summable_gauss_of_discrete {V : Type*} [NormedAddCommGroup V] [NormedSpa
       exact fun h => hx (Subtype.ext h)
     have hs : 0 < a * ‖(x : V)‖ ^ 2 := by positivity
     have h1 := exp_neg_le_factorial_div hs n
-    rw [if_neg hx, add_zero]
+    rw [ite_eq_right hx, add_zero]
     calc Real.exp (-a * ‖(x : V)‖ ^ 2) = Real.exp (-(a * ‖(x : V)‖ ^ 2)) := by rw [neg_mul]
       _ ≤ (n ! : ℝ) / (a * ‖(x : V)‖ ^ 2) ^ n := h1
       _ = (n ! : ℝ) / a ^ n * ‖(x : V)‖⁻¹ ^ (2 * n) := by

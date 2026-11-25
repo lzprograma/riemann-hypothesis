@@ -140,7 +140,7 @@ lemma cyclic_solvable (l : ℝ) (d : ℕ) [NeZero d] (X : ZMod d → ℝ) (hl : 
       map_add' := fun y z => by ext a; simp; ring
       map_smul' := fun c y => by ext a; simp; ring }
   have hinj : Function.Injective T := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro y hy
     have hy' : ∀ a, l * y a + y (a - 1) = 0 := fun a => congrFun hy a
     ext a
@@ -173,9 +173,9 @@ lemma balanced (l d : ℕ) [NeZero d] (X : ZMod d → ℝ) (hl : 2 ≤ l) (hd : 
       exact ⟨odd_one, by omega⟩
     · exact absurd rfl h
   · intro a
-    simp only [mul_ite, mul_zero, Finset.sum_ite_eq', h1, if_true, pow_one, Nat.cast_one]
+    simp only [mul_ite, mul_zero, Finset.sum_ite_eq', h1, ite_true, pow_one, Nat.cast_one]
     exact (hy a).le
-  · simp only [Finset.sum_ite_eq', h1, if_true]
+  · simp only [Finset.sum_ite_eq', h1, ite_true]
     have : ∑ a, y (a - 1) = ∑ a, y a := Equiv.sum_comp (Equiv.subRight (1 : ZMod d)) y
     rw [← Finset.sum_congr rfl fun a _ => hy a, Finset.sum_add_distrib, this, ← Finset.mul_sum]
     ring

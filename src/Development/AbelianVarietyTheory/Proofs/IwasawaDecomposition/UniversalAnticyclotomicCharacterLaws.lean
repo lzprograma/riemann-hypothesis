@@ -170,7 +170,7 @@ theorem delCoord_laws (Q : Finset (PlE H)) (M : ℕ) (P : PlE H) :
 
 theorem delCoord_of_closed {Q : Finset (PlE H)} (hQ : ∀ P ∈ Q, ∀ P', IsConjPl H P P' → P' ∈ Q) (M : ℕ) {P : PlE H}
     (hP : P ∈ Q) : delCoord H cc l Q M P = delOf H cc l M (pair H P) := by
-  refine if_pos ?_
+  refine ite_eq_left ?_
   rintro v (rfl | hv)
   · exact hP
   · exact hQ P hP v hv

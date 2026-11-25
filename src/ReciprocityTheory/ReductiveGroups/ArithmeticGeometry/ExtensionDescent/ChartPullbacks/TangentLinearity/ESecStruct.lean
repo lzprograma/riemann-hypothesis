@@ -348,7 +348,7 @@ theorem hA_act (k : Fin 4 ⊕ Fin 6) :
     fin_cases k
     · exact left_act_lemma (U := U) (e := e)
         (padd D.toPre.P.A (U.gt e).pG (toUnit _ ≫ D.toPre.c (star a • χ)))
-        (by simp only [padd, ← Category.assoc, comp_lift, pG_act_lemma, q_act_lemma, unit_act_lemma])
+        (by simp only [padd, ← Category.assoc, comp_lift, q_act_lemma, unit_act_lemma])
     · exact left_act_lemma (U := U) (e := e) (toUnit _ ≫ D.toPre.c (star a • χ))
         (by simp only [← Category.assoc, unit_act_lemma])
     · exact left_act_lemma (U := U) (e := e) (U.gt e).pG (pG_act_lemma U e)

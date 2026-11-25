@@ -57,9 +57,6 @@ theorem projHom_X (i : Fin (e + 1)) :
   simp [ComplexSets.projHom, ComplexSets.pullback]
 
 
-set_option synthInstance.maxHeartbeats 100000 in
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 1600000 in
 theorem finrank_eq [Algebra ℝt (MvPolynomial (Fin n) ℂ ⧸ J)]
     (hφ : ∀ p, algebraMap ℝt (MvPolynomial (Fin n) ℂ ⧸ J) p = ComplexSets.projHom J A p) :
     Module.finrank 𝕂 (TensorProduct ℝt 𝕂 (MvPolynomial (Fin n) ℂ ⧸ J)) =

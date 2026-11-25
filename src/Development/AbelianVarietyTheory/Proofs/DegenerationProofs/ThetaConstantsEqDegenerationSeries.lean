@@ -68,7 +68,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.Ex
 
 noncomputable section
@@ -235,7 +234,7 @@ theorem c_sF {Y : Scheme.{0}} {K : Type} [Fintype K] {φ : K → (Y ⟶ D.P.A.le
     cstH y (sF (F := F) s r ν.J) = sval s r y ν.J := by
   have h := (good ν y).mem φ r
   have h' := (top_le_iff_mem (F := F) r _ y).2 h
-  refine (congrArg (cstH y) (dif_pos h')).trans (Eq.trans ?_ (gs_eq r y _ h _).symm)
+  refine (congrArg (cstH y) (dite_eq_left h')).trans (Eq.trans ?_ (gs_eq r y _ h _).symm)
   show ((Sp F).presheaf.germ ⊤ y trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of F)).inv.hom
     ((Scheme.ΓSpecIso (CommRingCat.of F)).hom.hom _)) = _
   rw [Iso.hom_inv_id_apply]

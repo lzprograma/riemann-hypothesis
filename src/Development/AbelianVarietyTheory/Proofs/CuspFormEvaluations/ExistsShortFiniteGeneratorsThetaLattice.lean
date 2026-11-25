@@ -211,7 +211,7 @@ theorem theta_family : Formalism.MainNotions.ModuliIntegralCharts.H1.ChartIndepS
     have hs : (recB h.toLawsCore).supN j w σ (w0 k) = T.Ns j w σ (g (e.symm k)) := by
       dsimp only [recB, mkB]
       unfold cutN
-      rw [if_pos hj]
+      rw [ite_eq_left hj]
     rw [hs]
     have hexp := hl1 (e.symm k).2 σ
     simp only [hfd, hpq] at hexp

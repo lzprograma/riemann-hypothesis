@@ -21,8 +21,6 @@ open Matrix
 
 namespace Formalism.L2.SG.Pf.FibreCounting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {V V' : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [NormedAddCommGroup V']

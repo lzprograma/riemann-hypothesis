@@ -9,8 +9,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 namespace ReciprocityTheory.ChartRestriction.G.Out.KrullAlg
 
 variable {A : Type*} [CommRing A] [IsDomain A] {K : Type*} [Field K] [Algebra A K]
@@ -18,17 +16,10 @@ variable {A : Type*} [CommRing A] [IsDomain A] {K : Type*} [Field K] [Algebra A 
 
 def denIdeal {ι : Type*} (x : ι → K) : Ideal A where
   carrier := {r | ∀ i, algebraMap A K r * x i ∈ (algebraMap A K).range}
-  add_mem' := by
-    intro a b ha hb i
-    obtain ⟨u, hu⟩ := ha i
-    obtain ⟨v, hv⟩ := hb i
-    exact ⟨u + v, by rw [map_add (f := _), hu, hv, map_add (f := _), add_mul]⟩
-  zero_mem' := fun i => ⟨0, by simp⟩
-  smul_mem' := by
-    intro c a ha i
-    obtain ⟨u, hu⟩ := ha i
-    exact ⟨c * u, by rw [map_mul, hu, smul_eq_mul, map_mul, mul_assoc]⟩
-
+  add_mem' ha hb i := let ⟨u, hu⟩ := ha i; let ⟨v, hv⟩ := hb i
+    ⟨u + v, by rw [map_add (f := _), hu, hv, map_add (f := _), add_mul]⟩
+  zero_mem' _ := ⟨0, by simp⟩
+  smul_mem' c _ ha i := let ⟨u, hu⟩ := ha i; ⟨c * u, by rw [map_mul, hu, smul_eq_mul, map_mul, mul_assoc]⟩
 
 lemma exists_assoc [IsNoetherianRing A] {ι : Type*} (x : ι → K)
     (hx : ∃ i, x i ∉ (algebraMap A K).range) :
@@ -38,29 +29,19 @@ lemma exists_assoc [IsNoetherianRing A] {ι : Type*} (x : ι → K)
   classical
   have hne : (Ideal.Quotient.mk (denIdeal (A := A) x) 1) ≠ 0 := by
     rw [Ne, Ideal.Quotient.eq_zero_iff_mem]
-    intro h
-    obtain ⟨i, hi⟩ := hx
-    apply hi
-    have := h i
-    simpa using this
+    intro h; obtain ⟨i, hi⟩ := hx; exact hi (by simpa using h i)
   obtain ⟨P, hP, -⟩ := exists_le_isAssociatedPrime_of_isNoetherianRing A _ hne
   rw [isAssociatedPrime_iff] at hP
   obtain ⟨hPp, y, hy⟩ := hP
   obtain ⟨d, rfl⟩ := Ideal.Quotient.mk_surjective y
-  have key : ∀ r, r ∈ P ↔ ∀ i, algebraMap A K r * (algebraMap A K d * x i) ∈ (algebraMap A K).range := by
-    intro r
+  have key : ∀ r, r ∈ P ↔ ∀ i, algebraMap A K r * (algebraMap A K d * x i) ∈ (algebraMap A K).range := fun r => by
     rw [hy, Submodule.mem_colon_singleton, Submodule.mem_bot, Algebra.smul_def,
       Ideal.Quotient.algebraMap_eq, ← map_mul, Ideal.Quotient.eq_zero_iff_mem]
     show (∀ i, algebraMap A K (r * d) * x i ∈ (algebraMap A K).range) ↔ _
     simp only [map_mul, mul_assoc]
   refine ⟨d, P, hPp, key, ?_⟩
-  by_contra hcon
-  apply hPp.ne_top
-  rw [Ideal.eq_top_iff_one, key 1]
-  intro i
-  rw [(algebraMap A K).map_one, one_mul]
-  by_contra hi
-  exact hcon ⟨i, hi⟩
+  by_contra hcon; apply hPp.ne_top; rw [Ideal.eq_top_iff_one, key 1]
+  intro i; rw [(algebraMap A K).map_one, one_mul]; exact by_contra fun hi => hcon ⟨i, hi⟩
 
 theorem exists_clear [IsNoetherianRing A] [IsIntegrallyClosed A] {ι : Type*} [Finite ι]
     (x : ι → K) (hx : ∃ i, x i ∉ (algebraMap A K).range) :
@@ -69,72 +50,46 @@ theorem exists_clear [IsNoetherianRing A] [IsIntegrallyClosed A] {ι : Type*} [F
       ∃ i, ∃ u ∉ P, algebraMap A K u = algebraMap A K b * x i := by
   classical
   obtain ⟨d, P, hP, hPmem, i0, hi0⟩ := exists_assoc x hx
-  obtain ⟨b0, hb0⟩ := IsLocalization.exist_integer_multiples_of_finite (nonZeroDivisors A)
-    (fun i => algebraMap A K d * x i)
-  have hb0P : (b0 : A) ∈ P := (hPmem _).2 fun i => by
-    obtain ⟨y, hy⟩ := hb0 i
-    exact ⟨y, by rw [hy, Algebra.smul_def]⟩
+  obtain ⟨b0, hb0⟩ := IsLocalization.exist_integer_multiples_of_finite (nonZeroDivisors A) (fun i => algebraMap A K d * x i)
+  have hb0P : (b0 : A) ∈ P := (hPmem _).2 fun i => let ⟨y, hy⟩ := hb0 i; ⟨y, by rw [hy, Algebra.smul_def]⟩
   have hb0ne : (b0 : A) ≠ 0 := nonZeroDivisors.coe_ne_zero b0
-  have hPne : P ≠ ⊥ := fun h => hb0ne (by rw [h] at hb0P; exact (Submodule.mem_bot A).1 hb0P)
-  have hex : ∃ p ∈ P, ∃ u : A, algebraMap A K u = algebraMap A K p * (algebraMap A K d * x i0) ∧
-      u ∉ P := by
-    by_contra hne
-    apply hi0
+  have hPne : P ≠ ⊥ := fun h => hb0ne (h ▸ hb0P |> (Submodule.mem_bot A).1)
+  have hex : ∃ p ∈ P, ∃ u : A, algebraMap A K u = algebraMap A K p * (algebraMap A K d * x i0) ∧ u ∉ P := by
+    by_contra hne; apply hi0
     let N : Submodule A K := Submodule.map (Algebra.linearMap A K) P
-    have hNfg : N.FG := (IsNoetherian.noetherian P).map (Algebra.linearMap A K)
-    have hNne : N ≠ ⊥ := by
-      intro h
+    have hNne : N ≠ ⊥ := fun h => by
       have hm : algebraMap A K b0 ∈ N := (Submodule.mem_map).2 ⟨(b0 : A), hb0P, rfl⟩
       rw [h, Submodule.mem_bot] at hm
       exact hb0ne ((IsFractionRing.injective A K) (hm.trans (map_zero _).symm))
-    have hint : IsIntegral A (algebraMap A K d * x i0) := by
-      refine isIntegral_of_smul_mem_submodule N hNne hNfg _ fun n hn => ?_
-      obtain ⟨a, haP, rfl⟩ := (Submodule.mem_map).1 hn
-      obtain ⟨u, hu⟩ := (hPmem a).1 haP i0
-      have huP : u ∈ P := by
-        by_contra huP
-        exact hne ⟨a, haP, u, hu, huP⟩
-      refine (Submodule.mem_map).2 ⟨u, huP, ?_⟩
-      change algebraMap A K u = (algebraMap A K d * x i0) * algebraMap A K a
-      rw [hu, mul_comm]
-    obtain ⟨a, ha⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
-    exact ⟨a, ha⟩
+    have hint : IsIntegral A (algebraMap A K d * x i0) :=
+      isIntegral_of_smul_mem_submodule N hNne ((IsNoetherian.noetherian P).map _) _ fun n hn => by
+        obtain ⟨a, haP, rfl⟩ := (Submodule.mem_map).1 hn
+        obtain ⟨u, hu⟩ := (hPmem a).1 haP i0
+        exact (Submodule.mem_map).2 ⟨u, by_contra fun huP => hne ⟨a, haP, u, hu, huP⟩,
+          by change algebraMap A K u = (algebraMap A K d * x i0) * algebraMap A K a; rw [hu, mul_comm]⟩
+    exact IsIntegrallyClosed.isIntegral_iff.1 hint
   obtain ⟨p, hpP, u, hu, huP⟩ := hex
-  refine ⟨P, hP, ?_, p * d, P.mul_mem_right d hpP, fun j => ?_, i0, u, huP, ?_⟩
-  · haveI : Submodule.IsPrincipal (Ideal.span {p}) := ⟨⟨p, rfl⟩⟩
-    have hmin : P ∈ (Ideal.span {p}).minimalPrimes := by
-      refine ⟨⟨hP, (Ideal.span_singleton_le_iff_mem P).2 hpP⟩, fun Q hQ hQP => ?_⟩
-      intro q hq
+  refine ⟨P, hP, ?_, p * d, P.mul_mem_right d hpP,
+    fun j => let ⟨v, hv⟩ := (hPmem p).1 hpP j; ⟨v, by rw [hv, (algebraMap A K).map_mul, mul_assoc]⟩,
+    i0, u, huP, by rw [hu, (algebraMap A K).map_mul, mul_assoc]⟩
+  have : Submodule.IsPrincipal (Ideal.span {p}) := ⟨⟨p, rfl⟩⟩
+  have hmin : P ∈ (Ideal.span {p}).minimalPrimes :=
+    ⟨⟨hP, (Ideal.span_singleton_le_iff_mem P).2 hpP⟩, fun Q hQ hQP q hq => by
       obtain ⟨v, hv⟩ := (hPmem q).1 hq i0
-      have e : q * u = p * v := IsFractionRing.injective A K (by
-        rw [(algebraMap A K).map_mul, (algebraMap A K).map_mul, hu, hv, mul_left_comm])
-      have h1 : q * u ∈ Q := e ▸ Q.mul_mem_right v ((Ideal.span_singleton_le_iff_mem Q).1 hQ.2)
-      rcases hQ.1.mem_or_mem h1 with h2 | h2
-      · exact h2
-      · exact absurd (hQP h2) huP
-    have h1 : P.height ≤ 1 := Ideal.height_le_one_of_isPrincipal_of_mem_minimalPrimes _ P hmin
-    have h0 : P.height ≠ 0 := fun h => hPne (Ideal.height_eq_zero_iff_eq_bot.1 h)
-    exact le_antisymm h1 (ENat.one_le_iff_ne_zero.2 h0)
-  · obtain ⟨v, hv⟩ := (hPmem p).1 hpP j
-    exact ⟨v, by rw [hv, (algebraMap A K).map_mul, mul_assoc]⟩
-  · rw [hu, (algebraMap A K).map_mul, mul_assoc]
+      have e : q * u = p * v := IsFractionRing.injective A K (by rw [map_mul, map_mul, hu, hv, mul_left_comm])
+      exact (hQ.1.mem_or_mem (e ▸ Q.mul_mem_right v ((Ideal.span_singleton_le_iff_mem Q).1 hQ.2))).resolve_right
+        fun h2 => huP (hQP h2)⟩
+  exact le_antisymm (Ideal.height_le_one_of_isPrincipal_of_mem_minimalPrimes _ P hmin)
+    (Order.one_le_iff_ne_zero.2 fun h => hPne (Ideal.height_eq_zero_iff_eq_bot.1 h))
 
 theorem exists_height_one_not_mem [IsNoetherianRing A] [IsIntegrallyClosed A] (x : K)
     (hx : x ∉ (algebraMap A K).range) :
     ∃ P : Ideal A, P.IsPrime ∧ P.height = 1 ∧
       ∀ s ∉ P, algebraMap A K s * x ∉ (algebraMap A K).range := by
-  obtain ⟨P, hP, h1, b, hbP, -, ⟨i, u, huP, hu⟩⟩ :=
-    exists_clear (A := A) (ι := Unit) (fun _ => x) ⟨(), hx⟩
-  have hu' : algebraMap A K u = algebraMap A K b * x := hu
-  refine ⟨P, hP, h1, fun s hs hsx => ?_⟩
-  obtain ⟨a, ha⟩ := hsx
-  have e : algebraMap A K (s * u) = algebraMap A K (b * a) := by
-    rw [(algebraMap A K).map_mul, (algebraMap A K).map_mul, hu', ha, mul_left_comm]
-  have e2 : s * u = b * a := IsFractionRing.injective A K e
-  have h3 : s * u ∈ P := e2 ▸ P.mul_mem_right a hbP
-  rcases hP.mem_or_mem h3 with h4 | h4
-  · exact hs h4
-  · exact huP h4
+  obtain ⟨P, hP, h1, b, hbP, -, ⟨_, u, huP, hu⟩⟩ := exists_clear (A := A) (ι := Unit) (fun _ => x) ⟨(), hx⟩
+  refine ⟨P, hP, h1, fun s hs ⟨a, ha⟩ => ?_⟩
+  have e2 : s * u = b * a := IsFractionRing.injective A K (by rw [map_mul, map_mul, hu, ha, mul_left_comm])
+  exact (hP.mem_or_mem (e2 ▸ P.mul_mem_right a hbP)).elim hs huP
 
 theorem mem_range_of_forall_height_one [IsNoetherianRing A] [IsIntegrallyClosed A] (x : K)
     (h : ∀ P : Ideal A, P.IsPrime → P.height = 1 →
@@ -145,39 +100,11 @@ theorem mem_range_of_forall_height_one [IsNoetherianRing A] [IsIntegrallyClosed 
   obtain ⟨s, hsP, hsx⟩ := h P hP h1
   exact hs s hsP hsx
 
-
 omit [IsFractionRing A K] in
 theorem finite_height_one [IsNoetherianRing A] {a : A} (ha : a ≠ 0) :
-    {P : Ideal A | P.IsPrime ∧ P.height = 1 ∧ a ∈ P}.Finite := by
-  classical
-  refine (Ideal.finite_minimalPrimes_of_isNoetherianRing A (Ideal.span {a})).subset ?_
-  rintro P ⟨hP, h1, haP⟩
-  have hle : Ideal.span {a} ≤ P := (Ideal.span_singleton_le_iff_mem P).mpr haP
-  obtain ⟨Q, hQ, hQP⟩ := Ideal.exists_minimalPrimes_le hle
-  have hQprime : Q.IsPrime := hQ.1.1
-  by_cases hQP' : Q = P
-  · exact hQP' ▸ hQ
-  · exfalso
-    have hlt : Q < P := lt_of_le_of_ne hQP hQP'
-    have hQne : (⊥ : Ideal A) < Q := by
-      refine lt_of_le_of_ne bot_le (fun hb => ha ?_)
-      have h3 : a ∈ Q := hQ.1.2 (Ideal.mem_span_singleton_self a)
-      rw [← hb] at h3
-      exact Ideal.mem_bot.mp h3
-    have h1' : Order.height (⟨P, hP⟩ : PrimeSpectrum A) = 1 := by
-      rw [← PrimeSpectrum.height_eq_orderHeight]
-      exact h1
-    have hlt' : (⟨Q, hQprime⟩ : PrimeSpectrum A) < ⟨P, hP⟩ := (PrimeSpectrum.asIdeal_lt_asIdeal _ _).mp hlt
-    have hQ1 : Order.height (⟨Q, hQprime⟩ : PrimeSpectrum A) < 1 := by
-      rw [← h1']
-      exact Order.height_strictMono hlt'
-        (lt_of_le_of_lt (Order.height_mono (le_of_lt hlt')) (by rw [h1']; exact ENat.one_lt_top))
-    have hne' : (⟨⊥, Ideal.isPrime_bot⟩ : PrimeSpectrum A) < ⟨Q, hQprime⟩ :=
-      (PrimeSpectrum.asIdeal_lt_asIdeal _ _).mp hQne
-    have hQ0 := Order.height_strictMono hne'
-      (lt_of_le_of_lt (Order.height_mono (le_of_lt hne')) (lt_trans hQ1 ENat.one_lt_top))
-    have hQz : Order.height (⟨Q, hQprime⟩ : PrimeSpectrum A) = 0 := ENat.lt_one_iff_eq_zero.mp hQ1
-    rw [hQz] at hQ0
-    exact absurd hQ0 (not_lt_zero')
+    {P : Ideal A | P.IsPrime ∧ P.height = 1 ∧ a ∈ P}.Finite :=
+  (Ideal.finite_minimalPrimes_of_isNoetherianRing A (Ideal.span {a})).subset fun _ ⟨_, h1, haP⟩ =>
+    Ideal.mem_minimalPrimes_of_height_le ((Ideal.span_singleton_le_iff_mem _).2 haP) <|
+      h1 ▸ Ideal.one_le_height_span_singleton_of_mem_nonZeroDivisors (mem_nonZeroDivisors_of_ne_zero ha)
 
 end ReciprocityTheory.ChartRestriction.G.Out.KrullAlg

@@ -1,55 +1,8 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.JointMultOfSteps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.Derivation.Lie
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -145,25 +98,25 @@ private theorem sgnL_eq_neg_one_of_not_linePos {p q r s : ℕ} {l : FockH1Action
 
 private theorem raiB_eq_mulLeft_X_of_linePos {p q r s : ℕ} {l : FockH1Action.Ln p q r s}
     (h : FockH1Action.linePos l = true) : FockH1Action.raiB l = LinearMap.mulLeft ℂ (X l) := by
-  rw [FockH1Action.raiB, if_pos h]
+  rw [FockH1Action.raiB, ite_eq_left h]
 
 private theorem raiB_eq_neg_pderiv_of_not_linePos {p q r s : ℕ} {l : FockH1Action.Ln p q r s}
     (h : FockH1Action.linePos l = false) : FockH1Action.raiB l = -(pderiv l).toLinearMap := by
-  rw [FockH1Action.raiB, if_neg (show ¬ (FockH1Action.linePos l = true) by simp [h])]
+  rw [FockH1Action.raiB, ite_eq_right (show ¬ (FockH1Action.linePos l = true) by simp [h])]
 
 private theorem lowB_eq_pderiv_of_linePos {p q r s : ℕ} {l : FockH1Action.Ln p q r s}
     (h : FockH1Action.linePos l = true) : FockH1Action.lowB l = (pderiv l).toLinearMap := by
-  rw [FockH1Action.lowB, if_pos h]
+  rw [FockH1Action.lowB, ite_eq_left h]
 
 private theorem lowB_eq_mulLeft_X_of_not_linePos {p q r s : ℕ} {l : FockH1Action.Ln p q r s}
     (h : FockH1Action.linePos l = false) : FockH1Action.lowB l = LinearMap.mulLeft ℂ (X l) := by
-  rw [FockH1Action.lowB, if_neg (show ¬ (FockH1Action.linePos l = true) by simp [h])]
+  rw [FockH1Action.lowB, ite_eq_right (show ¬ (FockH1Action.linePos l = true) by simp [h])]
 
 theorem omE_self_monomial {p q r s : ℕ} (l : Ln p q r s) (α : Ln p q r s →₀ ℕ) (c : ℂ) :
     omE l l (monomial α c) = (sgnL l * (((α l : ℕ) : ℂ) + 1 / 2)) • monomial α c := by
   have h1 := X_mul_pderiv_monomial l α c
   have h2 := pderiv_X_mul_monomial l α c
-  rw [FockH1Action.omE, if_pos rfl, LinearMap.add_apply, moduleEnd_mul_apply, LinearMap.smul_apply,
+  rw [FockH1Action.omE, ite_eq_left rfl, LinearMap.add_apply, moduleEnd_mul_apply, LinearMap.smul_apply,
     moduleEnd_one_apply]
   cases hl : FockH1Action.linePos l
   · rw [raiB_eq_neg_pderiv_of_not_linePos hl, lowB_eq_mulLeft_X_of_not_linePos hl, sgnL_eq_neg_one_of_not_linePos hl, LinearMap.neg_apply,
@@ -176,7 +129,7 @@ theorem omE_self_monomial {p q r s : ℕ} (l : Ln p q r s) (α : Ln p q r s →�
     | module
 
 theorem omE_ne {p q r s : ℕ} {l l' : Ln p q r s} (h : l ≠ l') : omE l l' = raiB l * lowB l' := by
-  rw [FockH1Action.omE, if_neg h, add_zero]
+  rw [FockH1Action.omE, ite_eq_right h, add_zero]
 
 open PI.FJM
 
@@ -317,7 +270,6 @@ theorem rightDiagonalActionFormula : FormWt2 := by
 
 section Grade
 
-open MvPolynomial
 
 variable {σ : Type*}
 
@@ -403,7 +355,7 @@ theorem minusPart_raise (A : Module.End ℂ (MvPolynomial σ ℂ))
   rw [minusPart_eq_sum]
   refine Finset.sum_eq_zero fun d _ => ?_
   rw [homogeneousComponent_of_mem (hA (d + 2) _ (homogeneousComponent_mem (d + 2) P)),
-    if_neg (by omega)]
+    ite_eq_right (by omega)]
 
 private theorem homogeneousComponent_minusPart (A : Module.End ℂ (MvPolynomial σ ℂ))
     (P : MvPolynomial σ ℂ) (e : ℕ) :
@@ -415,8 +367,8 @@ private theorem homogeneousComponent_minusPart (A : Module.End ℂ (MvPolynomial
   first
   | rw [Finset.sum_ite_eq]
   by_cases h : e ∈ Finset.range (P.totalDegree + 1)
-  · rw [if_pos h]
-  · rw [if_neg h]
+  · rw [ite_eq_left h]
+  · rw [ite_eq_right h]
     rw [Finset.mem_range, not_lt] at h
     rw [homogeneousComponent_eq_zero (e + 2) P (by omega), map_zero, map_zero]
 
@@ -428,7 +380,7 @@ theorem minusPart_lower (L : Module.End ℂ (MvPolynomial σ ℂ))
   apply eq_zero_of_hc
   intro e
   rw [map_sub, homogeneousComponent_minusPart, hL, hL,
-    hc_hc, if_pos rfl, sub_self]
+    hc_hc, ite_eq_left rfl, sub_self]
 
 theorem mulXX_homog (l l' : σ) (d : ℕ) (Q : MvPolynomial σ ℂ) (hQ : Q ∈ homog σ d) :
     ((LinearMap.mulLeft ℂ (X l) * LinearMap.mulLeft ℂ (X l') : Module.End ℂ (MvPolynomial σ ℂ)) Q) ∈
@@ -560,7 +512,7 @@ theorem minusPart2_expand (Y : Mat r s) (P : Pol p q r s) :
 
 theorem isPC_Eab {n m : ℕ} (a b : Ix n m) (h : ¬ sameBlock a b) : IsPC (Eab a b) := by
   intro a' b' h'
-  rw [FockH1Action.Eab, Matrix.single_apply, if_neg]
+  rw [FockH1Action.Eab, Matrix.single_apply, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   exact h h'
 
@@ -609,7 +561,6 @@ section HW
 
 variable {p q r s : ℕ}
 
-open MvPolynomial
 
 theorem coeff_fockAct1_diag (a : Ix p q) (P : Pol p q r s) (m : Ln p q r s →₀ ℕ) :
     AddMonoidAlgebra.coeff (fockAct1 p q r s (Eab a a) P) m =

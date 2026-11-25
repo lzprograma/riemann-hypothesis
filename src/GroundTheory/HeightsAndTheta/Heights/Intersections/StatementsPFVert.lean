@@ -24,10 +24,6 @@ def PFVert.Statement : Prop :=
     W ∈ divSupp P' s → ¬ IsHorizontal W →
     geoNum (d + r) W (fun j => (Fin.append L' N j).a) = 0
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.Inter

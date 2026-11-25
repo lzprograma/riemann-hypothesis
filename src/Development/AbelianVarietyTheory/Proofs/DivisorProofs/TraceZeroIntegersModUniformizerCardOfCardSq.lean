@@ -61,7 +61,6 @@ theorem traceZeroIndex_of_intIndex : IntIndex → TraceZeroIndex := by
     show Valued.v (σ y) ≤ 1
     rw [hv]; exact hy
   have hδ0 : σ x - x ≠ 0 := fun h => by rw [h, map_zero] at hδ; exact zero_ne_one hδ
-  have hδ1 : x - σ x ≠ 0 := fun h => hδ0 (by linear_combination -h)
   have hδi : (σ x - x)⁻¹ ∈ intL L := by
     show Valued.v (σ x - x)⁻¹ ≤ 1
     rw [map_inv₀, hδ, inv_one]

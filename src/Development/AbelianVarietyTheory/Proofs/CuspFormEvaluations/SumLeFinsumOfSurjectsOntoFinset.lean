@@ -40,59 +40,16 @@ public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.Relabelling
 public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.ThetaFunctionTorusL2Norm
 public import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SupGenTies
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndRaw
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetA
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CmTypeLetterFrameColumnDictionary
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Topology.Sheaves.Presheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
@@ -113,7 +70,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal GlobalTheory.BlockTh GlobalTheory.EtaAn
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.AnVal
 
@@ -152,11 +108,8 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal GlobalTheory.BlockTh GlobalTheory.EtaAn
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ScalarTorus
 
@@ -359,8 +312,8 @@ theorem exists_torusOf_rows : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
       rw [Equiv.symm_apply_eq]
       rfl
     rcases em (i = ⟨ty j, ⟨row j, hrow' j⟩⟩) with h | h
-    · rw [if_pos (hiff.2 h), if_pos h]
-    · rw [if_neg (mt hiff.1 h), if_neg h]
+    · rw [ite_eq_left (hiff.2 h), ite_eq_left h]
+    · rw [ite_eq_right (mt hiff.1 h), ite_eq_right h]
 
 end GlobalTheory.ScalarTorus
 end -- clump:auto
@@ -374,7 +327,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal GlobalTheory.BlockTh GlobalTheory.EtaAn
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.HermDiag
 
@@ -466,12 +418,12 @@ theorem hm_eq_diagonal : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
     intro τ hτ
     rw [hΨ, hkey] at hτ
     unfold Geo.Tor.Datum.mult
-    rw [if_pos hτ]
+    rw [ite_eq_left hτ]
   have hqm : ∀ τ, relab c σ τ ∉ (U.X k).Ψ → Dw.mult τ = Dw.q := by
     intro τ hτ
     rw [hΨ, hkey] at hτ
     unfold Geo.Tor.Datum.mult
-    rw [if_neg hτ]
+    rw [ite_eq_right hτ]
   obtain ⟨f, hf⟩ := GlobalTheory.FrameUnif.exists_letter_equiv (U.X k).Ψ (U.X k).cmType Dw.p Dw.q r hr
     (relab c σ) hbij Dw.mult hpm hqm
   set idx : Fin W.g ≃ (U.X k).Ψ × Fin r := W.e.trans f with hidx
@@ -488,7 +440,7 @@ theorem hm_eq_diagonal : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
     · have hi : (U.X k).p0 + ((W.e j).2 : ℕ) < r := by
         have := (f (W.e j)).2.isLt
         omega
-      rw [dite_eq_left hin, dite_eq_left hi, if_neg (by omega)]
+      rw [dite_eq_left hin, dite_eq_left hi, ite_eq_right (by omega)]
       have e1 : (f (W.e j)).1 = ⟨relab c σ (W.e j).1, hin⟩ := Subtype.ext h1
       have e2 : (f (W.e j)).2 = ⟨(U.X k).p0 + ((W.e j).2 : ℕ), hi⟩ := Fin.ext (by
         show ((f (W.e j)).2 : ℕ) = (U.X k).p0 + ((W.e j).2 : ℕ)
@@ -503,7 +455,7 @@ theorem hm_eq_diagonal : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
       have hi : (U.X k).p0 - 1 - ((W.e j).2 : ℕ) < r := by
         have := (f (W.e j)).2.isLt
         omega
-      rw [dite_eq_right hout, dite_eq_left hin', dite_eq_left hi, if_pos (by omega)]
+      rw [dite_eq_right hout, dite_eq_left hin', dite_eq_left hi, ite_eq_left (by omega)]
       have e1 : (f (W.e j)).1 = ⟨conjEmb (relab c σ (W.e j).1), hin'⟩ := Subtype.ext hcj.symm
       have e2 : (f (W.e j)).2 = ⟨(U.X k).p0 - 1 - ((W.e j).2 : ℕ), hi⟩ := Fin.ext (by
         show ((f (W.e j)).2 : ℕ) = (U.X k).p0 - 1 - ((W.e j).2 : ℕ)
@@ -575,7 +527,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal GlobalTheory.BlockTh GlobalTheory.EtaAn
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.AnVal.IsPiAct
 
@@ -641,9 +592,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal GlobalTheory.BlockTh GlobalTheory.EtaAn
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 namespace GlobalTheory
 
@@ -659,15 +607,6 @@ theorem levReps_act_mul (a b : 𝓞 E) (v : I2.Vsp dim) : I2.act a (I2.act b v) 
 theorem levReps_act_nat (m : ℕ) (v : I2.Vsp dim) : I2.act (m : 𝓞 E) v = (m : ℂ) • v := by
   ext i
   simp [I2.act]
-
-theorem levReps_act_smul (a : 𝓞 E) (c : ℂ) (v : I2.Vsp dim) : I2.act a (c • v) = c • I2.act a v := by
-  ext i
-  simp [I2.act]
-  ring
-
-theorem levReps_act_add (a : 𝓞 E) (v w : I2.Vsp dim) : I2.act a (v + w) = I2.act a v + I2.act a w := by
-  ext i
-  simp [I2.act, mul_add]
 
 theorem levReps_act_neg (a : 𝓞 E) (v : I2.Vsp dim) : I2.act a (-v) = -I2.act a v := by
   ext i
@@ -723,7 +662,7 @@ theorem isReps_level_translates : ∀ (E : Type) [Field E] [NumberField E] [IsCM
     obtain ⟨u, hq⟩ := hu q
     have : (l.M : ℂ) • t q = -mk (α • u) := by
       simp only [ht]
-      rw [hq, hlin α (α • u), levReps_act_neg, levReps_act_smul, levReps_act_mul, mul_comm (H.bar α), hα,
+      rw [hq, hlin α (α • u), levReps_act_neg, ReciprocityTheory.ChartRestriction.G.I2.tof_act_smul, levReps_act_mul, mul_comm (H.bar α), hα,
         levReps_act_nat, smul_neg, smul_smul, smul_smul]
       have : (l.M : ℂ) * ((l.M : ℂ) ^ 2)⁻¹ * l.M = 1 := by field_simp
       rw [this, one_smul]
@@ -757,7 +696,7 @@ theorem isReps_level_translates : ∀ (E : Type) [Field E] [NumberField E] [IsCM
       calc b = (l.M : ℂ)⁻¹ • (l.M : ℂ) • b := by rw [smul_smul, inv_mul_cancel₀ hM, one_smul]
         _ = _ := by rw [hab, smul_add, smul_smul, inv_mul_cancel₀ hM, one_smul]
     have h3 : vspActL α (b - t q) = mk (r • (α • u + a) + s • d) + I2.act α v' := by
-      rw [hsub, hb', levReps_act_add, levReps_act_smul, ← hlin, add_right_comm, ← smul_add, ← map_add (f := _),
+      rw [hsub, hb', ReciprocityTheory.ChartRestriction.G.I2.tof_act_add, ReciprocityTheory.ChartRestriction.G.I2.tof_act_smul, ← hlin, add_right_comm, ← smul_add, ← map_add (f := _),
         add_comm (α • a), h2, hlin, levReps_act_nat, smul_smul, inv_mul_cancel₀ hM, one_smul]
     rw [h3]
     exact T.L.add_mem (hL _) (T.stable _ _ hv')
@@ -797,7 +736,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal GlobalTheory.BlockTh GlobalTheory.EtaAn
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.OrthoPeriodTorus
 
@@ -899,18 +837,18 @@ theorem isTorusAt_of_isTorusOf : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
       have hi1 := i1.isLt
       have hi2 := i2.isLt
       by_cases h1 : relab c σ τ1 ∈ (U.X k).Ψ <;> by_cases h2 : relab c σ τ2 ∈ (U.X k).Ψ
-      · simp only [fwd, dif_pos h1, dif_pos h2, Prod.mk.injEq, Subtype.mk.injEq, Fin.mk.injEq] at heq
+      · simp only [fwd, dite_eq_left h1, dite_eq_left h2, Prod.mk.injEq, Subtype.mk.injEq, Fin.mk.injEq] at heq
         obtain ⟨he1, he2⟩ := heq
         obtain rfl := hbij.1 he1
         obtain rfl : i1 = i2 := Fin.ext (by omega)
         rfl
-      · simp only [fwd, dif_pos h1, dif_neg h2, Prod.mk.injEq, Fin.mk.injEq] at heq
+      · simp only [fwd, dite_eq_left h1, dite_eq_right h2, Prod.mk.injEq, Fin.mk.injEq] at heq
         have := hmultN _ h2
         omega
-      · simp only [fwd, dif_neg h1, dif_pos h2, Prod.mk.injEq, Fin.mk.injEq] at heq
+      · simp only [fwd, dite_eq_right h1, dite_eq_left h2, Prod.mk.injEq, Fin.mk.injEq] at heq
         have := hmultN _ h1
         omega
-      · simp only [fwd, dif_neg h1, dif_neg h2, Prod.mk.injEq, Subtype.mk.injEq, Fin.mk.injEq] at heq
+      · simp only [fwd, dite_eq_right h1, dite_eq_right h2, Prod.mk.injEq, Subtype.mk.injEq, Fin.mk.injEq] at heq
         obtain ⟨he1, he2⟩ := heq
         have hρ : relab c σ τ1 = relab c σ τ2 := by
           have h3 := congrArg conjEmb he1
@@ -923,7 +861,7 @@ theorem isTorusAt_of_isTorusOf : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
       obtain ⟨τ', rfl⟩ := hbij.2 ρ
       by_cases ht0 : (U.X k).p0 ≤ (t : ℕ)
       · refine ⟨⟨τ', ⟨t - (U.X k).p0, by have := hmultP _ hρ; have := t.isLt; omega⟩⟩, ?_⟩
-        simp only [fwd, dif_pos hρ]
+        simp only [fwd, dite_eq_left hρ]
         refine Prod.ext (Subtype.ext rfl) (Fin.ext ?_)
         show (U.X k).p0 + ((t : ℕ) - (U.X k).p0) = t
         omega
@@ -934,7 +872,7 @@ theorem isTorusAt_of_isTorusOf : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
           rw [(U.X k).cmType, hcc] at hm
           exact hm hρ
         refine ⟨⟨τ'', ⟨(U.X k).p0 - 1 - t, by have := hmultN _ hn; omega⟩⟩, ?_⟩
-        simp only [fwd, dif_neg hn]
+        simp only [fwd, dite_eq_right hn]
         refine Prod.ext (Subtype.ext ?_) (Fin.ext ?_)
         · show conjEmb (relab c σ τ'') = relab c σ τ'
           rw [hτ'', hcc2]
@@ -952,16 +890,16 @@ theorem isTorusAt_of_isTorusOf : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     · have := hmultP _ h
       have hlt : (U.X k).p0 + (i : ℕ) < r := by omega
       have hnlt : ¬ (U.X k).p0 + (i : ℕ) < (U.X k).p0 := by omega
-      simp only [fwd, dif_pos h]
+      simp only [fwd, dite_eq_left h]
       unfold Formalism.L2.Pj.perFr GlobalTheory.RiemMaj.pc
-      simp only [dif_pos h, dif_pos hlt, hnlt, if_false]
+      simp only [dite_eq_left h, dite_eq_left hlt, hnlt, ite_false]
     · have := hmultN _ h
       have hc := hconjMem _ h
       have hlt : (U.X k).p0 - 1 - (i : ℕ) < r := by omega
       have hlt' : (U.X k).p0 - 1 - (i : ℕ) < (U.X k).p0 := by omega
-      simp only [fwd, dif_neg h]
+      simp only [fwd, dite_eq_right h]
       unfold Formalism.L2.Pj.perFr GlobalTheory.RiemMaj.pc
-      simp only [dif_neg h, dif_pos hc, dif_pos hlt, hlt', if_true]
+      simp only [dite_eq_right h, dite_eq_left hc, dite_eq_left hlt, hlt', ite_true]
   have him : ∀ a b, (hermForm Wu.Hm (W.Pm a) (W.Pm b)).im =
       ((Algebra.trace ℚ E (-(U.X k).ξ0 * ReciprocityTheory.ChartRestriction.G.FD.herm (U.X k).Gm (W.φ k a : Fin r → E) (W.φ k b)) : ℚ) : ℝ) := by
     intro a b
@@ -1025,15 +963,12 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.AlphaChain
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal GlobalTheory.BlockTh GlobalTheory.EtaAn
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem polyDeriv_comp_clm {J V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] (Q : MvPolynomial J ℂ) (u : J → V)
     (G : V → ℂ) (hG : ContDiff ℂ ⊤ G) (g : V →L[ℂ] V) (c : J → ℂ) (hg : ∀ l, g (u l) = c l • u l) (κ : ℂ)
@@ -1141,7 +1076,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal GlobalTheory.BlockTh GlobalTheory.EtaAn
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.AnVal
 
@@ -1263,13 +1197,6 @@ section -- clump:auto
 @[expose] public section
 
 open NumberField Complex ReciprocityTheory.ChartRestriction.G.I2
-
-namespace GlobalTheory
-
-theorem charStatement_holds : CharStatement :=
-  ReciprocityTheory.ChartRestriction.G.I2.char_holds
-
-end GlobalTheory
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TorusSplitting.CharStatementHolds =====
@@ -1283,13 +1210,11 @@ open ReciprocityTheory.ChartRestriction.G.I2
 
 namespace GlobalTheory.ThetaTorus
 
-theorem gSup_holds : GSupStatement := gSup GlobalTheory.packingCount
-
 theorem propA_holds : PropAStatement := propA GlobalTheory.packingCount GlobalTheory.gaussTail_of_card_le
 
 theorem J_holds : JStatement :=
-  jOf GlobalTheory.ext_all_inputs _root_.ReciprocityTheory.ChartRestriction.G.I2.split_holds GlobalTheory.charStatement_holds
-    (colTorus GlobalTheory.ext_all_inputs propA_holds gSup_holds)
+  jOf GlobalTheory.ext_all_inputs _root_.ReciprocityTheory.ChartRestriction.G.I2.split_holds ReciprocityTheory.ChartRestriction.G.I2.char_holds
+    (colTorus GlobalTheory.ext_all_inputs propA_holds GlobalTheory.sup_le_l2_principal_torus)
     (colAbel GlobalTheory.ext_all_inputs propA_holds _root_.GlobalTheory.sup_le_l2_principal_torus)
     (colEmpty GlobalTheory.ext_all_inputs propA_holds _root_.GlobalTheory.sup_le_l2_principal_torus)
 
@@ -1304,8 +1229,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TorusSplitting.SemicharUnitFrame", "h": "module\n\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.Semichar\npublic import Development.AbelianVarietyTheory.Proofs.TorusSplitting.AhFrameFactorEqNegOnePowRiemannForm\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\npublic import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 namespace GlobalTheory
 
@@ -1329,15 +1252,12 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.ThetaLower
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal GlobalTheory.BlockTh GlobalTheory.EtaAn
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
@@ -1389,8 +1309,8 @@ theorem exists_mult_le {H : Host E} (Dw : Datum H) (m : ℕ) (h : Dw.p ≤ m ∨
     · exact ⟨(starRingEnd ℂ).comp τ, τ, by simp [h, hconj], h⟩
   obtain ⟨τ₁, τ₂, h₁, h₂⟩ := key
   rcases h with h | h
-  · exact ⟨τ₁, by rwa [Datum.mult, if_pos h₁]⟩
-  · exact ⟨τ₂, by rwa [Datum.mult, if_neg (by rw [h₂]; exact hne)]⟩
+  · exact ⟨τ₁, by rwa [Datum.mult, ite_eq_left h₁]⟩
+  · exact ⟨τ₂, by rwa [Datum.mult, ite_eq_right (by rw [h₂]; exact hne)]⟩
 
 theorem normSq_emb_bar {H : Host E} (α : 𝓞 E) (M : ℕ) (hα : α * H.bar α = (M : 𝓞 E)) (τ : E →+* ℂ) :
     ‖τ ((H.bar α : 𝓞 E) : E)‖ ^ 2 = M := by

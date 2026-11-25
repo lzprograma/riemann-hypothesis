@@ -836,11 +836,6 @@ theorem rmul_one {n m : ℕ} (x : Fin m → Fin n → E) : rmul x 1 = x := by
   funext j
   simp [rmul, Matrix.one_apply]
 
-theorem isIntM_mul (L : LocE F E) {m : ℕ} {A B : Matrix (Fin m) (Fin m) E} (hA : IsIntM L A)
-    (hB : IsIntM L B) : IsIntM L (A * B) := fun a b => by
-  rw [Matrix.mul_apply]
-  exact Subring.sum_mem _ fun i _ => Subring.mul_mem _ (hA a i) (hB i b)
-
 variable [IsNonarchimedeanLocalField F]
 
 theorem exists_pow_mul_mem (L : LocE F E) {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ) (e : E) :
@@ -931,7 +926,7 @@ theorem cont_prim_scale : ∀ {F : Type} [Field F] [ValuativeRel F] [Topological
       exact _root_.GlobalTheory.HL.PrimVol.gram_herm L hH.1 _
     · change IsIntM L (cT L A⁻¹ * (cT L K * gramT L Hm x * K) * A⁻¹)
       rw [h1]
-      exact isIntM_mul L (isIntM_mul L (fun a b => (hO.2.1 _ (hK' b a)).1) hint) hK'
+      exact GlobalTheory.CongTrans.int_mul L (GlobalTheory.CongTrans.int_mul L (fun a b => (hO.2.1 _ (hK' b a)).1) hint) hK'
   obtain ⟨hTco, hT1, hT2⟩ := _root_.GlobalTheory.HL.PrimVol.cont_primitive_tuples L ϖ hϖ Hm hH Λs hΛ m hmn B hBint hBco
   have hS : {z : Fin m → Fin n → E | IsPrimT L Hm Λs (rmul z A⁻¹) ∧ gramT L Hm z ∈ O}
       = (fun x => rmul x A) ''

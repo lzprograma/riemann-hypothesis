@@ -29,11 +29,6 @@ theorem le_maxUnramifiedOutside {E : IntermediateField F Ω} [FiniteDimensional 
     (hE : IsUnramifiedOutside S E) : E ≤ maxUnramifiedOutside (F := F) (Ω := Ω) S :=
   le_iSup_of_le E (le_iSup_of_le ‹_› (le_iSup_of_le hE le_rfl))
 
-theorem maxUnramifiedOutside_mono {S T : Set (HeightOneSpectrum (𝓞 F))} (h : S ⊆ T) :
-    maxUnramifiedOutside (F := F) (Ω := Ω) S ≤ maxUnramifiedOutside (F := F) (Ω := Ω) T :=
-  iSup_mono fun _ => iSup_mono fun _ => iSup_le fun hE =>
-    le_iSup_of_le (fun v hv => hE v fun hs => hv (h hs)) le_rfl
-
 theorem maxUnramifiedOutside_eq_iSup :
     maxUnramifiedOutside (F := F) (Ω := Ω) S =
       ⨆ E : {E : IntermediateField F Ω // FiniteDimensional F E ∧ IsUnramifiedOutside S E}, E.1 := by
@@ -124,10 +119,11 @@ section Relative
 
 variable [NumberField F] (S : Set (HeightOneSpectrum (𝓞 F)))
 
-theorem isUnramifiedOutside_restrictScalars_iff {L : IntermediateField F Ω} [FiniteDimensional F L]
-    (hL : IsUnramifiedOutside S L) (M : IntermediateField L Ω) [FiniteDimensional L M] :
+theorem isUnramifiedOutside_restrictScalars_iff_of_isUnramifiedIn {L : Type*} [Field L]
+    [NumberField L] [Algebra F L] [Algebra L Ω] [IsScalarTower F L Ω]
+    (hL : ∀ v ∉ S, Algebra.IsUnramifiedIn (𝓞 L) v.asIdeal) (M : IntermediateField L Ω)
+    [FiniteDimensional L M] :
     IsUnramifiedOutside S (M.restrictScalars F) ↔ IsUnramifiedOutside (placesOver S) M := by
-  have := NumberField.of_module_finite F L
   have : FiniteDimensional F M := FiniteDimensional.trans F L M
   have := NumberField.of_module_finite L M
   change (∀ v ∉ S, Algebra.IsUnramifiedIn (𝓞 M) v.asIdeal) ↔ _
@@ -155,6 +151,12 @@ theorem isUnramifiedOutside_restrictScalars_iff {L : IntermediateField F Ω} [Fi
     have h1 := hM w hw Q hQ ⟨rfl⟩
     have h2 := hL v hv (Q.under (𝓞 L)) inferInstance hwv
     exact (isUnramifiedAt_tower_iff (F := F) (L := L) Q).2 ⟨h2, h1⟩
+
+theorem isUnramifiedOutside_restrictScalars_iff {L : IntermediateField F Ω} [FiniteDimensional F L]
+    (hL : IsUnramifiedOutside S L) (M : IntermediateField L Ω) [FiniteDimensional L M] :
+    IsUnramifiedOutside S (M.restrictScalars F) ↔ IsUnramifiedOutside (placesOver S) M := by
+  have := NumberField.of_module_finite F L
+  exact isUnramifiedOutside_restrictScalars_iff_of_isUnramifiedIn S hL M
 
 variable [IsGalois F Ω]
 

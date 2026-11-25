@@ -16,32 +16,10 @@ theorem component_mul_multiHomog {R : Type*} [CommRing R] {K : Type} [DecidableE
     weightedHomogeneousComponent (blockWeight ι) b y * f =
       weightedHomogeneousComponent (blockWeight ι) (b + s) (y * f) := by
   classical
-  ext d
-  rw [coeff_weightedHomogeneousComponent, coeff_mul, coeff_mul]
-  split_ifs with hd
-  · refine Finset.sum_congr rfl fun x hx => ?_
-    rw [coeff_weightedHomogeneousComponent]
-    split_ifs with hx1
-    · rfl
-    · by_cases h2 : AddMonoidAlgebra.coeff f x.2 = 0
-      · rw [h2, mul_zero, mul_zero]
-      · exfalso
-        apply hx1
-        have hw := hf h2
-        rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
-        rw [← hx, map_add (f := _), hw] at hd
-        exact add_right_cancel hd
-  · refine Finset.sum_eq_zero fun x hx => ?_
-    rw [coeff_weightedHomogeneousComponent]
-    split_ifs with hx1
-    · by_cases h2 : AddMonoidAlgebra.coeff f x.2 = 0
-      · rw [h2, mul_zero]
-      · exfalso
-        apply hd
-        have hw := hf h2
-        rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
-        rw [← hx, map_add (f := _), hw, hx1]
-    · rw [zero_mul]
+  let _ := weightedGradedAlgebra R (blockWeight ι)
+  simp_rw [← weightedDecomposition.decompose'_apply]
+  exact (DirectSum.coe_decompose_mul_add_of_right_mem (weightedHomogeneousSubmodule R (blockWeight ι))
+    (a := y) (i := b) ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hf)).symm
 
 theorem ColonMultiHomog.proof : ColonMultiHomog.Statement := by
   intro R _ K _ ι I f s hI hf y hy b

@@ -3,7 +3,7 @@ module
 public import Formalism.LocalToGlobal.ComplexLatticeArea
 public import Formalism.LocalToGlobal.KernelLattices.ColumnData.HfTrace
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralClosureCriterion
-import Mathlib.Algebra.Order.Star.Int
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfArith
 import Mathlib.Tactic.TypeStar
 
 @[expose] public section
@@ -16,212 +16,36 @@ export Formalism.ComplexLatticeArea
   (Bf Bf_swap Bf_sub_zsmul_left Bf_sub_zsmul_right cramer Bf_comb cast_toNat area_spec)
 
 open Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity hiding CMConjEmb CMTransitive DedekindFactor LinkChi LinkPer LinkThIndep LinkThU LinkThUFam ThetaNormIndependent theta_norm_independent_of_bounds th22U theta_norm_unitary_invariant_of_bounds
-
-open NumberField Formalism.BasicNotions Formalism.FrobeniusOrbits
-open Formalism.L2.Ker.Cd.TaylorLogMetric
-open Formalism.MainNotions.TaylorLogMetric hiding admitted AdmittedStatements AllSplit CoefIn DataIn DualB EqAt EqAway FamE Hf IdE InProd Iop IsChi IsComb IsCurveIdeal IsDiscriminantTwelfthRootOfIdealLattice IsFrobC IsIdem JetsInt La LocBasis LocBasisW Mono N1 NNBasis OrthoBasisW Orthonormal Pos Qd QdB Stmt TVar TVarB Th ThSp Tor TorsPrime U VC Wop XiF YYl adm1 al atLog chK chg chgB coordV der detId logDerivativeAtOne ellT embT embV eq22 fF fnConj hYY hh homL int22 jet kap lamOf letterOf liftY logOmVal meanLogNormSq meanLogOm mmM mom22 LargerSupportMomentCondition mono normSq pSer pairN per22 posEmb posG aux₃ pull qH sE sgm str22 tauEmb tauSg taylor th22 tor0 torConj vec22 vecN wPh zB
-
-variable (D : Car)
-
-abbrev bb : D.host.E := D.host.sqd
-
-abbrev be : ℂ := Complex.I * (Real.sqrt D.host.d : ℂ)
-
-def OKc (z : ℂ) : Prop :=
-  ∃ x y : ℤ, Even (x - y) ∧ z = ((x : ℂ) + (y : ℂ) * be D) / 2
-
-theorem d_pos : (0 : ℝ) < D.host.d := by exact_mod_cast D.host.hyp.2.1.pos
-
-alias sqrt_pos := _root_.Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.sqrt_d_pos
-
-theorem sq_sqrtC : ((Real.sqrt D.host.d : ℝ) : ℂ) ^ 2 = (D.host.d : ℂ) := by
-  rw [← Complex.ofReal_pow, Real.sq_sqrt (d_pos D).le]; simp
-
-theorem be_sq : be D ^ 2 = -(D.host.d : ℂ) := by
-  rw [be, mul_pow, Complex.I_sq, sq_sqrtC]; ring
-
-theorem conj_be : starRingEnd ℂ (be D) = -be D := by
-  simp [be, Complex.conj_ofReal]
-
-theorem d_mod : ∃ k : ℤ, (D.host.d : ℤ) = 4 * k + 3 :=
-  ⟨(D.host.d : ℤ) / 4, by have := D.host.hyp.2.2.2.1; omega⟩
-
-theorem phi_b : D.host.φ₀ (bb D) = be D := D.host.φ₀_mem
-
-theorem b_sq : bb D ^ 2 = -(D.host.d : D.host.E) := by
-  apply D.host.φ₀.injective
-  rw [map_pow, phi_b, be_sq, map_neg, map_natCast]
-
-theorem bK_mem : bb D ∈ D.host.K := FL.bE_mem D
-
-def bK : D.host.K := ⟨bb D, bK_mem D⟩
-
-theorem okc_of (u : 𝓞 D.host.K) : OKc D (D.host.φ₀ ((u : D.host.K) : D.host.E)) :=
-  by apply _root_.UpperTheory.Reformulated.B.IntegralClosureCriterion.okc_of
-
-end Formalism.L2.Ker.Cd.IntegralLatticeDensity.AR
-
-end
-
-noncomputable section
-
-namespace Formalism.L2.Ker.Cd.IntegralLatticeDensity.AR
-
-open Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity hiding CMConjEmb CMTransitive DedekindFactor LinkChi LinkPer LinkThIndep LinkThU LinkThUFam ThetaNormIndependent theta_norm_independent_of_bounds th22U theta_norm_unitary_invariant_of_bounds
-
 open NumberField Formalism.BasicNotions Formalism.FrobeniusOrbits Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO
 open Formalism.L2.Ker.Cd.TaylorLogMetric
 open Formalism.MainNotions.TaylorLogMetric hiding admitted AdmittedStatements AllSplit CoefIn DataIn DualB EqAt EqAway FamE Hf IdE InProd Iop IsChi IsComb IsCurveIdeal IsDiscriminantTwelfthRootOfIdealLattice IsFrobC IsIdem JetsInt La LocBasis LocBasisW Mono N1 NNBasis OrthoBasisW Orthonormal Pos Qd QdB Stmt TVar TVarB Th ThSp Tor TorsPrime U VC Wop XiF YYl adm1 al atLog chK chg chgB coordV der detId logDerivativeAtOne ellT embT embV eq22 fF fnConj hYY hh homL int22 jet kap lamOf letterOf liftY logOmVal meanLogNormSq meanLogOm mmM mom22 LargerSupportMomentCondition mono normSq pSer pairN per22 posEmb posG aux₃ pull qH sE sgm str22 tauEmb tauSg taylor th22 tor0 torConj vec22 vecN wPh zB
 
 variable (D : Car)
 
-abbrev ph (c : 𝓞 D.host.K) : ℂ := D.host.φ₀ (((c : D.host.K) : D.host.E))
-
-theorem okc_mul {z w : ℂ} (hz : OKc D z) (hw : OKc D w) : OKc D (z * w) := by
-  obtain ⟨x, y, ⟨a, ha⟩, rfl⟩ := hz
-  obtain ⟨x', y', ⟨a', ha'⟩, rfl⟩ := hw
-  obtain ⟨k, hk⟩ := d_mod D
-  obtain rfl : x = y + a + a := by omega
-  obtain rfl : x' = y' + a' + a' := by omega
-  refine ⟨-(2 * k + 1) * y * y' + a * y' + a' * y + 2 * a * a', y * y' + a * y' + a' * y,
-    ⟨-(k + 1) * y * y' + a * a', by ring⟩, ?_⟩
-  have hkC : (D.host.d : ℂ) = 4 * k + 3 := by exact_mod_cast hk
-  have hsq := be_sq D
-  push_cast
-  linear_combination hsq * ((y : ℂ) * y' / 4) - hkC * ((y : ℂ) * y' / 4)
-
-theorem okc_conj {z : ℂ} (hz : OKc D z) : OKc D (starRingEnd ℂ z) := by
-  obtain ⟨x, y, ⟨a, ha⟩, rfl⟩ := hz
-  refine ⟨x, -y, ⟨a + y, by omega⟩, ?_⟩
-  rw [map_div₀, map_add (f := _), map_mul, conj_be, map_intCast, map_intCast, map_ofNat]; push_cast; ring
-
-theorem coord_eq (x y : ℤ) :
-    ((x : ℂ) + (y : ℂ) * be D) / 2 =
-      (((x : ℝ) / 2 : ℝ) : ℂ) + (((y : ℝ) * Real.sqrt D.host.d / 2 : ℝ) : ℂ) * Complex.I := by
-  push_cast; ring
-
-theorem im_coord (x y : ℤ) :
-    (((x : ℂ) + (y : ℂ) * be D) / 2).im = (y : ℝ) * Real.sqrt D.host.d / 2 := by
-  rw [coord_eq]; simp
-
-theorem good_of_okc {u : ℂ} (hu : OKc D u) : Good D (2 * u / (Real.sqrt D.host.d : ℂ)) := by
-  obtain ⟨x, y, hxy, rfl⟩ := hu
-  refine ⟨x, y, hxy, ?_⟩
-  have hs : (Real.sqrt D.host.d : ℂ) ≠ 0 := by exact_mod_cast (sqrt_pos D).ne'
-  push_cast
-  field_simp
-
-theorem half_int {F : Type*} [Field F] [CharZero F] (x : F) (k : ℤ)
-    (hx : x ^ 2 = -(4 * (k : F) + 3)) : IsIntegral ℤ ((1 + x) / 2) := by
-  refine ⟨Polynomial.X ^ 2 - Polynomial.X + Polynomial.C (k + 1), by monicity!, ?_⟩
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_sub, Polynomial.eval₂_X_pow,
-    Polynomial.eval₂_X, Polynomial.eval₂_C]
-  push_cast
-  linear_combination hx / 4
-
-theorem bK_sq : bK D ^ 2 = -(D.host.d : D.host.K) := by
-  apply Subtype.ext
-  push_cast
-  exact b_sq D
-
-def om : 𝓞 D.host.K :=
-  ⟨(1 + bK D) / 2, half_int _ (d_mod D).choose (by
-    have h2 : ((D.host.d : ℤ) : D.host.K) = ((4 * (d_mod D).choose + 3 : ℤ) : D.host.K) :=
-      congrArg (fun t : ℤ => (t : D.host.K)) (d_mod D).choose_spec
-    push_cast at h2
-    rw [bK_sq D]; linear_combination -h2)⟩
-
-theorem ph_om : ph D (om D) = (1 + be D) / 2 := by
-  show D.host.φ₀ ((((1 + bK D) / 2 : D.host.K)) : D.host.E) = _
-  have h2 : ((2 : D.host.K) : D.host.E) = 2 := by
-    rw [show (2 : D.host.K) = 1 + 1 by norm_num, IntermediateField.coe_add, IntermediateField.coe_one]
-    norm_num
-  push_cast
-  rw [h2, map_div₀, map_add (f := _), map_one, map_ofNat]
-  exact congrArg (fun t => (1 + t) / 2) (phi_b D)
-
-theorem Bf_lat (δ : ℂ) (c₁ c₂ : 𝓞 D.host.K) :
-    Bf (δ * ph D c₁) (δ * ph D c₂) = Complex.normSq δ * (starRingEnd ℂ (ph D c₁) * ph D c₂).im := by
-  have : starRingEnd ℂ (δ * ph D c₁) * (δ * ph D c₂) =
-      (Complex.normSq δ : ℂ) * (starRingEnd ℂ (ph D c₁) * ph D c₂) := by
-    rw [Complex.normSq_eq_conj_mul_self, map_mul]; ring
-  rw [Bf, this]; simp [Complex.mul_im]
-
-theorem okc_pair (c₁ c₂ : 𝓞 D.host.K) : OKc D (starRingEnd ℂ (ph D c₁) * ph D c₂) :=
-  okc_mul D (okc_conj D (okc_of D c₁)) (okc_of D c₂)
-
+abbrev bb : D.host.E := D.host.sqd
+abbrev be : ℂ := AR.beH D.host
+abbrev ph (c : 𝓞 D.host.K) : ℂ := AR.phH D.host c
+def OKc (z : ℂ) : Prop := AR.OKcH D.host z
+theorem d_pos : (0 : ℝ) < D.host.d := AR.d_pos_host D.host
+alias sqrt_pos := _root_.Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.sqrt_d_pos
+theorem d_mod : ∃ k : ℤ, (D.host.d : ℤ) = 4 * k + 3 := AR.d_mod_host D.host
+theorem phi_b : D.host.φ₀ (bb D) = be D := D.host.φ₀_mem
+theorem b_sq : bb D ^ 2 = -(D.host.d : D.host.E) := AR.b_sq_host D.host
+def bK : D.host.K := AR.bK_host D.host
+theorem okc_of (u : 𝓞 D.host.K) : OKc D (D.host.φ₀ ((u : D.host.K) : D.host.E)) :=
+  by apply _root_.UpperTheory.Reformulated.B.IntegralClosureCriterion.okc_of
+theorem okc_mul {z w : ℂ} (hz : OKc D z) (hw : OKc D w) : OKc D (z * w) := AR.okc_mul_host D.host hz hw
+theorem coord_eq (x y : ℤ) : ((x : ℂ) + (y : ℂ) * be D) / 2 =
+    (((x : ℝ) / 2 : ℝ) : ℂ) + (((y : ℝ) * Real.sqrt D.host.d / 2 : ℝ) : ℂ) * Complex.I := AR.coord_eq_host D.host x y
+theorem good_of_okc {u : ℂ} (hu : OKc D u) : Good D (2 * u / (Real.sqrt D.host.d : ℂ)) := AR.good_of_okc_host D.host hu
+theorem bK_sq : bK D ^ 2 = -(D.host.d : D.host.K) := AR.bK_sq_host D.host
+def om : 𝓞 D.host.K := AR.om_host D.host
+theorem ph_om : ph D (om D) = (1 + be D) / 2 := AR.ph_om_host D.host
 theorem div_okc (cc : Ideal (𝓞 D.host.K)) (hcc : cc ≠ ⊥) (δ : ℂ) (hδ : δ ≠ 0) :
     ∃ m : ℕ, 0 < m ∧ area (lamOf D cc δ) = Complex.normSq δ * (Real.sqrt D.host.d / 2) * m ∧
-      ∀ c ∈ cc, ∀ c' ∈ cc, OKc D (starRingEnd ℂ (ph D c') * ph D c / m) := by
-  have hn : 0 < Complex.normSq δ := Complex.normSq_pos.2 hδ
-  have hs := sqrt_pos D
-  have hκ : 0 < Complex.normSq δ * (Real.sqrt D.host.d / 2) := by positivity
-  have hdisc : ∀ w₁ ∈ lamOf D cc δ, ∀ w₂ ∈ lamOf D cc δ, ∃ n : ℤ,
-      Bf w₁ w₂ = Complex.normSq δ * (Real.sqrt D.host.d / 2) * n := by
-    intro w₁ h₁ w₂ h₂
-    obtain ⟨c₁, -, rfl⟩ := FL.lam_mem D cc δ w₁ h₁
-    obtain ⟨c₂, -, rfl⟩ := FL.lam_mem D cc δ w₂ h₂
-    obtain ⟨x, y, -, hz⟩ := okc_pair D c₁ c₂
-    refine ⟨y, ?_⟩
-    rw [Bf_lat, hz, im_coord]; ring
-  have hne : ∃ w₁ ∈ lamOf D cc δ, ∃ w₂ ∈ lamOf D cc δ, Bf w₁ w₂ ≠ 0 := by
-    obtain ⟨c, hc, hc0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hcc
-    refine ⟨δ * ph D c, AddSubgroup.subset_closure ⟨c, hc, rfl⟩,
-      δ * ph D (c * om D), AddSubgroup.subset_closure ⟨c * om D, cc.mul_mem_right _ hc, rfl⟩, ?_⟩
-    have hph : ph D (c * om D) = ph D c * ((1 + be D) / 2) := by
-      rw [← ph_om]; simp [ph]
-    have hc1 : ph D c ≠ 0 := by
-      simp only [ph, map_ne_zero_iff _ D.host.φ₀.injective]
-      intro h
-      apply hc0
-      apply RingOfIntegers.coe_eq_zero_iff.mp
-      exact Subtype.ext h
-    rw [Bf_lat, hph]
-    have e : starRingEnd ℂ (ph D c) * (ph D c * ((1 + be D) / 2)) =
-        (Complex.normSq (ph D c) : ℂ) * ((1 + be D) / 2) := by
-      rw [Complex.normSq_eq_conj_mul_self]; ring
-    have e4 : (1 + be D) / 2 =
-        (((1 : ℝ) / 2 : ℝ) : ℂ) + ((Real.sqrt D.host.d / 2 : ℝ) : ℂ) * Complex.I := by
-      push_cast; ring
-    have e5 : ((Complex.normSq (ph D c) : ℂ) * ((((1 : ℝ) / 2 : ℝ) : ℂ) +
-        ((Real.sqrt D.host.d / 2 : ℝ) : ℂ) * Complex.I)).im =
-        Complex.normSq (ph D c) * (Real.sqrt D.host.d / 2) := by simp [Complex.mul_im]
-    rw [e, e4, e5]
-    exact mul_ne_zero hn.ne' (mul_ne_zero (Complex.normSq_pos.2 hc1).ne' (by positivity))
-  obtain ⟨m, hm, harea, hall⟩ := area_spec (lamOf D cc δ) _ hκ hdisc hne
-  refine ⟨m, hm, harea, fun c hc c' hc' => ?_⟩
-  obtain ⟨x, y, -, hz⟩ := okc_pair D c' c
-  obtain ⟨n₁, h₁⟩ := hall _ (AddSubgroup.subset_closure ⟨c', hc', rfl⟩) _
-    (AddSubgroup.subset_closure ⟨c, hc, rfl⟩)
-  obtain ⟨n₂, h₂⟩ := hall _ (AddSubgroup.subset_closure ⟨c', hc', rfl⟩) _
-    (AddSubgroup.subset_closure ⟨c * om D, cc.mul_mem_right _ hc, rfl⟩)
-  have hph : ph D (c * om D) = ph D c * ((1 + be D) / 2) := by
-    rw [← ph_om]; simp [ph]
-  rw [Bf_lat, hz, im_coord, harea] at h₁
-  rw [Bf_lat, hph, ← mul_assoc, hz, harea] at h₂
-  have e2 : ((x : ℂ) + (y : ℂ) * be D) / 2 * ((1 + be D) / 2) =
-      ((((x - D.host.d * y : ℤ) : ℂ) + ((x + y : ℤ) : ℂ) * be D) / 2) / 2 := by
-    push_cast; linear_combination (y : ℂ) / 4 * be_sq D
-  rw [e2, Complex.div_ofNat_im, im_coord] at h₂
-  have hy : (y : ℝ) = m * n₁ := by
-    have : Complex.normSq δ * (Real.sqrt D.host.d / 2) * (y - m * n₁) = 0 := by linear_combination h₁
-    have := (mul_eq_zero.1 this).resolve_left hκ.ne'
-    linarith
-  have hxy : ((x + y : ℤ) : ℝ) = 2 * (m * n₂) := by
-    have : Complex.normSq δ * (Real.sqrt D.host.d / 2) * (((x + y : ℤ) : ℝ) - 2 * (m * n₂)) = 0 := by
-      linear_combination 2 * h₂
-    have := (mul_eq_zero.1 this).resolve_left hκ.ne'
-    linarith
-  have hyZ : y = m * n₁ := by exact_mod_cast hy
-  have hxZ : x = 2 * m * n₂ - m * n₁ := by
-    have : x + y = 2 * (m * n₂) := by exact_mod_cast hxy
-    linarith
-  refine ⟨2 * n₂ - n₁, n₁, ⟨n₂ - n₁, by ring⟩, ?_⟩
-  have hm0 : (m : ℂ) ≠ 0 := by exact_mod_cast hm.ne'
-  rw [hz, hxZ, hyZ]
-  field_simp
-  push_cast
-  ring
+      ∀ c ∈ cc, ∀ c' ∈ cc, OKc D (starRingEnd ℂ (ph D c') * ph D c / m) :=
+  AR.div_okc_host D.host cc hcc δ hδ (lamOf D cc δ) (FL.lam_mem D cc δ)
+    (fun c hc => AddSubgroup.subset_closure ⟨c, hc, rfl⟩) (okc_of D)
 
 def HYYIntRec : Prop :=
   ∀ D : Car, ∀ N N' (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E))
@@ -233,7 +57,6 @@ end Formalism.L2.Ker.Cd.IntegralLatticeDensity.AR
 namespace Formalism.L2.Ker.Cd.IntegralLatticeDensity
 
 open Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity hiding CMConjEmb CMTransitive DedekindFactor LinkChi LinkPer LinkThIndep LinkThU LinkThUFam ThetaNormIndependent theta_norm_independent_of_bounds th22U theta_norm_unitary_invariant_of_bounds
-
 open NumberField Formalism.BasicNotions Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO Formalism.L2.Ker.Cd.IntegralLatticeDensity.AR
 open Formalism.L2.Ker.Cd.TaylorLogMetric
 open Formalism.MainNotions.TaylorLogMetric hiding admitted AdmittedStatements AllSplit CoefIn DataIn DualB EqAt EqAway FamE Hf IdE InProd Iop IsChi IsComb IsCurveIdeal IsDiscriminantTwelfthRootOfIdealLattice IsFrobC IsIdem JetsInt La LocBasis LocBasisW Mono N1 NNBasis OrthoBasisW Orthonormal Pos Qd QdB Stmt TVar TVarB Th ThSp Tor TorsPrime U VC Wop XiF YYl adm1 al atLog chK chg chgB coordV der detId logDerivativeAtOne ellT embT embV eq22 fF fnConj hYY hh homL int22 jet kap lamOf letterOf liftY logOmVal meanLogNormSq meanLogOm mmM mom22 LargerSupportMomentCondition mono normSq pSer pairN per22 posEmb posG aux₃ pull qH sE sgm str22 tauEmb tauSg taylor th22 tor0 torConj vec22 vecN wPh zB
@@ -243,18 +66,14 @@ theorem HfArithRec_of_int (h : HYYIntRec) : HfArithRec := by
   obtain ⟨m, hm, harea, hdiv⟩ := div_okc D cc hcc.1 δ h0
   have hh : OKc D (D.host.φ₀ ((hYY D A B : D.host.K) : D.host.E)) :=
     okc_of D ⟨hYY D A B, h D N N' L L' hA A hA' B hB'⟩
-  have hprod := okc_mul D (hdiv c hc c' hc') hh
-  have hg := good_of_okc D hprod
+  have hg := good_of_okc D (okc_mul D (hdiv c hc c' hc') hh)
   convert hg using 1
-  have hnz : (Complex.normSq δ : ℂ) ≠ 0 := by exact_mod_cast (Complex.normSq_pos.2 h0).ne'
-  have hs : (Real.sqrt D.host.d : ℂ) ≠ 0 := by exact_mod_cast (sqrt_pos D).ne'
-  have hm0 : (m : ℂ) ≠ 0 := by exact_mod_cast hm.ne'
-  have hcd : starRingEnd ℂ δ ≠ 0 := by simpa using h0
-  rw [harea]
-  simp only [ph, map_mul]
-  push_cast
-  rw [Complex.normSq_eq_conj_mul_self] at hnz ⊢
-  field_simp
+  have hr := Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.AR.ratio_eq_of_area_host D.host
+    (z := ph D c') (w := ph D c) h0 hm harea
+  calc _ = (starRingEnd ℂ (δ * ph D c') * (δ * ph D c)) / (area (lamOf D cc δ) : ℂ) *
+            D.host.φ₀ ((hYY D A B : D.host.K) : D.host.E) := by
+          simp only [ph, Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.AR.phH]; ring
+    _ = _ := by rw [hr]; ring
 
 end Formalism.L2.Ker.Cd.IntegralLatticeDensity
 

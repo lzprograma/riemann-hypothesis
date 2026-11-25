@@ -7,55 +7,10 @@ public import Mathlib.RingTheory.Noetherian.Basic
 public import Formalism.SharpRestriction.LevelLetterCocycles.CoprimeFrobeniusUniformizerPowers
 public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsSmulPowEqSumOfInFNc
 public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineFiltrationAntitone
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.LevelLetterCocycles.DvOZeroHigh
 import Formalism.SharpRestriction.LevelLetterCocycles.LevLetEMul
 import Formalism.SharpRestriction.LevelLetterCocycles.ProdPsUnitE
@@ -101,9 +56,9 @@ theorem stage_step (G : ℤ → Submodule K (Fin d → K)) (hG : Antitone G) (hi
   · intro x hx
     by_cases hxS : x ∈ S
     · obtain ⟨h1, h2, h3⟩ := hmem x hxS
-      simp only [hxS, if_true]
+      simp only [hxS, ite_true]
       exact ⟨h1, by omega, h3⟩
-    · simp only [hxS, if_false]
+    · simp only [hxS, ite_false]
       exact ⟨hbt hx, le_rfl, hu.le⟩
   · intro u' h1 h2
     rcases eq_or_lt_of_le h1 with rfl | hlt
@@ -113,9 +68,9 @@ theorem stage_step (G : ℤ → Submodule K (Fin d → K)) (hG : Antitone G) (hi
         refine ⟨hx, ?_⟩
         by_cases hxS : x ∈ S
         · have h3 := (hmem x hxS).2.1
-          simp only [hxS, if_true]
+          simp only [hxS, ite_true]
           omega
-        · simp only [hxS, if_false]
+        · simp only [hxS, ite_false]
           exact le_rfl
       exact Submodule.span_mono hsub (htb hv)
     · refine (hspan u' (by omega) h2).trans (Submodule.span_mono ?_)
@@ -352,10 +307,10 @@ theorem secIn_of_fil (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (A : Ar
       rw [Finset.prod_range_succ']
       have h1 : ∏ s ∈ Finset.range e, ps W (s + 1) ^ (-(α i (s + 1))).toNat = 1 :=
         Finset.prod_eq_one fun s _ => by
-          simp only [α, if_neg (Nat.succ_ne_zero s)]
+          simp only [α, ite_eq_right (Nat.succ_ne_zero s)]
           rw [Int.toNat_eq_zero.2 (by omega), pow_zero]
       rw [h1, one_mul]
-      simp only [α, if_pos rfl, neg_sub]
+      simp only [α, ite_eq_left rfl, neg_sub]
     refine ⟨W.π₀ * h' i, W.AΔ.mul_mem C.hR.1 (hh'A i), ?_⟩
     rw [hnum, hden]
     have hk : ((H : ℤ) - k i).toNat + k i = H + ((k i : ℤ) - H).toNat := by omega
@@ -371,7 +326,7 @@ theorem secIn_of_fil (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (A : Ar
   ·
     intro s hs
     rcases Nat.eq_zero_or_pos s with rfl | hs1
-    · have e1 : -(α i 0) = (H : ℤ) - k i := by simp only [α, if_pos rfl]; ring
+    · have e1 : -(α i 0) = (H : ℤ) - k i := by simp only [α, ite_eq_left rfl]; ring
       rw [e1]
       have e2 : dvO W T (e + 1) b (c₀ i) = ((PD.p : LL) ^ κ1) • dv W T (e + 1) b (P i) := by
         unfold dvO
@@ -382,7 +337,7 @@ theorem secIn_of_fil (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (A : Ar
       have := (hlev i).1
       show (H : ℤ) - ((H : ℤ) - h i).toNat ≤ h i
       omega
-    · have e1 : α i s = (A.Hs a (e + 1) s : ℤ) := by simp only [α, if_neg (by omega : s ≠ 0)]
+    · have e1 : α i s = (A.Hs a (e + 1) s : ℤ) := by simp only [α, ite_eq_right (by omega : s ≠ 0)]
       rw [e1]
       exact Formalism.MainNotions.UnusedSlot80.LevC.dvO_filLow W C.hbij A hA c' hc' T hT b hb (e + 1) s hs (c₀ i)
   ·

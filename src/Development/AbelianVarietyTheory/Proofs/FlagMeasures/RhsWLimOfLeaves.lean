@@ -660,7 +660,7 @@ private lemma exp_opGen_conjTranspose_mul_diagonal_mul (k r : ℕ) (q : TrE k) (
     by_cases hj : sgn k r j = 0
     · obtain ⟨h1, h2⟩ := hz j i hj
       simp [h1, h2]
-    simp only [if_neg hi, if_neg hj]
+    simp only [ite_eq_right hi, ite_eq_right hj]
     exact hent i j
 
 theorem exp_form (k r : ℕ) (q : TrE k) :
@@ -696,14 +696,14 @@ theorem form_eq (k r : ℕ) (v : Fin (2 * r + k + 1) → ℂ) :
     intro i hi
     have : sgn k r i = 0 := by
       unfold sgn
-      rw [if_neg, if_neg]
+      rw [ite_eq_right, ite_eq_right]
       · intro h; exact hi ⟨⟨i.val - r, by omega⟩, by ext; simp [wI]; omega⟩
       · rintro ⟨h1, h2⟩; exact hi ⟨⟨i.val - r, by omega⟩, by ext; simp [wI]; omega⟩
     simp [this]
   have h1 : ∀ j : Fin k, sgn k r (wI k r j.castSucc) = 1 := by
-    intro j; unfold sgn; rw [if_pos]; simp [wI]
+    intro j; unfold sgn; rw [ite_eq_left]; simp [wI]
   have h2 : sgn k r (wI k r (Fin.last k)) = -1 := by
-    unfold sgn; rw [if_neg, if_pos] <;> simp [wI]
+    unfold sgn; rw [ite_eq_right, ite_eq_left] <;> simp [wI]
   rw [hs, Fin.sum_univ_castSucc, h2]
   simp only [h1, opCo]
   push_cast
@@ -810,12 +810,12 @@ theorem opVec_wI (p : (Fin k → ℂ) × ℂ) (m : Fin (k + 1)) : opVec k r p (w
   by_cases h : m.val < k
   · rw [dite_eq_left (by simp only; omega), dite_eq_left h]
     exact congrArg p.1 (Fin.ext (by simp))
-  · rw [dite_eq_right (by simp only; omega), dite_eq_right h, if_pos (by simp only; omega)]
+  · rw [dite_eq_right (by simp only; omega), dite_eq_right h, ite_eq_left (by simp only; omega)]
 
 theorem opVec_inWb (p : (Fin k → ℂ) × ℂ) : inWb k r (opVec k r p) := by
   intro i hi
   unfold opVec
-  rw [dite_eq_right (by omega), if_neg (by omega)]
+  rw [dite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem opCo_opVec (p : (Fin k → ℂ) × ℂ) : opCo k r (opVec k r p) = p := by
   refine Eq.trans ?_ (ofW_toW p)
@@ -901,7 +901,7 @@ theorem entry_bound {μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ} (hμ : μᴴ *
     intro j
     refine Fin.lastCases le_rfl (fun j => ?_) j
     have h := col hμ' (Fin.last k)
-    simp only [conjTranspose_apply, if_true, Complex.star_def, Complex.normSq_conj] at h
+    simp only [conjTranspose_apply, ite_true, Complex.star_def, Complex.normSq_conj] at h
     have := Finset.single_le_sum (f := fun l : Fin k => Complex.normSq (μ (Fin.last k) l.castSucc))
       (fun l _ => Complex.normSq_nonneg _) (Finset.mem_univ j)
     linarith
@@ -1073,16 +1073,16 @@ variable {k r : ℕ}
 theorem opVec_inWb (p : (Fin k → ℂ) × ℂ) : inWb k r (opVec k r p) := by
   intro i hi
   unfold opVec
-  rw [dif_neg (by omega), if_neg (by omega)]
+  rw [dite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem wbPart_opVec (p : (Fin k → ℂ) × ℂ) : wbPart k r (opVec k r p) = toW k p := by
   funext m
   have := m.isLt
   unfold wbPart opVec toW wI
   by_cases h : m.val < k
-  · rw [dif_pos (by simp only; omega), dif_pos h]
+  · rw [dite_eq_left (by simp only; omega), dite_eq_left h]
     exact congrArg p.1 (Fin.ext (by simp))
-  · rw [dif_neg (by simp only; omega), dif_neg h, if_pos (by simp only; omega)]
+  · rw [dite_eq_right (by simp only; omega), dite_eq_right h, ite_eq_left (by simp only; omega)]
 
 theorem opCo_eq (v : Fin (2 * r + k + 1) → ℂ) : opCo k r v = ofW k (wbPart k r v) := rfl
 
@@ -1107,17 +1107,7 @@ theorem inWb_uwb {s : Mat k r} (hs : s ∈ UWb k r) {v : Fin (2 * r + k + 1) →
   exact RI.inWb_emb _ hv
 
 theorem continuous_opVec : Continuous (opVec k r) := by
-  refine continuous_pi fun i => ?_
-  unfold opVec
-  by_cases h : r ≤ i.val ∧ i.val < r + k
-  · simp only [dif_pos h]
-    exact (continuous_apply _).comp continuous_fst
-  · simp only [dif_neg h]
-    by_cases h' : i.val = r + k
-    · simp only [if_pos h']
-      exact continuous_snd
-    · simp only [if_neg h']
-      exact continuous_const
+  apply _root_.GlobalTheory.HypOrbitUnique.continuous_opVec <;> assumption
 
 theorem continuous_opCo : Continuous (opCo k r) :=
   (continuous_pi fun i => continuous_apply (wI k r (Fin.castSucc i))).prodMk
@@ -1314,15 +1304,11 @@ abbrev Kw (k r : ℕ) : Set (Mat k r) := UWset k r (wLast k r)
 theorem mem_Kw {g : Mat k r} : g ∈ Kw k r ↔ g ∈ UWb k r ∧ g *ᵥ wLast k r = wLast k r :=
   ⟨fun h => ⟨⟨h.1, h.2.1⟩, h.2.2⟩, fun h => ⟨h.1.1, h.1.2, h.2⟩⟩
 
-theorem isMatGroup_UWb : PI.IsMatGroup (UWb k r) :=
-  ⟨HU.amb_closed, HU.uwb_one, fun _ ha _ hb => HU.uwb_mul ha hb,
-    fun a ha => ⟨HU.uwb_inv ha, Matrix.mul_nonsing_inv a (HU.uwb_unit ha)⟩⟩
-
 theorem isMatGroup_Kw : PI.IsMatGroup (Kw k r) := by
   refine ⟨?_, mem_Kw.2 ⟨HU.uwb_one, Matrix.one_mulVec _⟩, fun a ha b hb => ?_, fun a ha => ?_⟩
   · have : Kw k r = UWb k r ∩ {g | g *ᵥ wLast k r = wLast k r} := Set.ext fun _ => mem_Kw
     rw [this]
-    exact isMatGroup_UWb.1.inter (isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const)
+    exact GlobalTheory.HaarDensChart.isMatGroup_uwb.1.inter (isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const)
   · rw [mem_Kw] at *
     exact ⟨HU.uwb_mul ha.1 hb.1, by rw [← Matrix.mulVec_mulVec, hb.2, ha.2]⟩
   · rw [mem_Kw] at *
@@ -1476,10 +1462,10 @@ theorem inner_genE (q : TrE k) (A : lieE (Kw k r)) : inner ℝ (genE k r q) (A :
       cases b <;> simp [genE, realifyFun, gen_off q h.1 h.2]
     rw [this, inner_zero_left]
 
-theorem genE_mem (q : TrE k) : genE k r q ∈ lieE (UWb k r) := (mem_lieE_iff isMatGroup_UWb _).2 (gen_mem q)
+theorem genE_mem (q : TrE k) : genE k r q ∈ lieE (UWb k r) := (mem_lieE_iff GlobalTheory.HaarDensChart.isMatGroup_uwb _).2 (gen_mem q)
 
 theorem lieK_le : lieE (Kw k r) ≤ lieE (UWb k r) := fun _ hx =>
-  (mem_lieE_iff isMatGroup_UWb _).2 ((mem_lieOf_Kw _).1 ((mem_lieE_iff isMatGroup_Kw _).1 hx)).1
+  (mem_lieE_iff GlobalTheory.HaarDensChart.isMatGroup_uwb _).2 ((mem_lieOf_Kw _).1 ((mem_lieE_iff isMatGroup_Kw _).1 hx)).1
 
 def tang (k r : ℕ) : TrE k × lieE (Kw k r) →ₗ[ℝ] lieE (UWb k r) :=
   ((genE k r).codRestrict _ genE_mem).coprod (Submodule.inclusion lieK_le)
@@ -1497,7 +1483,7 @@ theorem unrealify_sub {m : ℕ} (x y : EuclideanSpace ℝ (Fin m × Fin m × Boo
 
 theorem tang_surjective : Function.Surjective (tang k r) := by
   intro Y
-  obtain ⟨h1, h2⟩ := (mem_lieOf_UWb _).1 ((mem_lieE_iff isMatGroup_UWb _).1 Y.2)
+  obtain ⟨h1, h2⟩ := (mem_lieOf_UWb _).1 ((mem_lieE_iff GlobalTheory.HaarDensChart.isMatGroup_uwb _).1 Y.2)
   set M := unrealify (Y : EuclideanSpace ℝ (Fin (2 * r + k + 1) × Fin (2 * r + k + 1) × Bool)) with hM
   let q : TrE k := WithLp.toLp 2 fun o => match o with
     | none => (M (pw k r) (pw k r)).im
@@ -1518,7 +1504,7 @@ theorem tang_surjective : Function.Surjective (tang k r) := by
     · rw [h2 i _ fun h => hi h.1, gen_out q i _ fun h => hi h.1]
   have hA : (Y : EuclideanSpace ℝ _) - genE k r q ∈ lieE (Kw k r) := by
     refine (mem_lieE_iff isMatGroup_Kw _).2 ((mem_lieOf_Kw _).2
-      ⟨(mem_lieE_iff isMatGroup_UWb _).1 (Submodule.sub_mem _ Y.2 (genE_mem q)), fun i => ?_⟩)
+      ⟨(mem_lieE_iff GlobalTheory.HaarDensChart.isMatGroup_uwb _).1 (Submodule.sub_mem _ Y.2 (genE_mem q)), fun i => ?_⟩)
     rw [unrealify_sub, unrealify_genE, Matrix.sub_apply, ← hM, hq, sub_self]
   exact ⟨(q, ⟨_, hA⟩), Subtype.ext (by rw [coe_tang]; exact add_sub_cancel _ _)⟩
 
@@ -1547,7 +1533,6 @@ theorem measurePreserving_tang : MeasurePreserving (tang k r) (volume.prod volum
 theorem tang_injective : Function.Injective (tang k r) :=
   (measurePreserving_of_norm _ norm_tang tang_surjective).1
 
-set_option synthInstance.maxHeartbeats 100000 in
 def tangEquiv (k r : ℕ) : (TrE k × lieE (Kw k r)) ≃L[ℝ] lieE (UWb k r) :=
   (LinearEquiv.ofBijective _ ⟨tang_injective, tang_surjective⟩).toContinuousLinearEquiv
 
@@ -1629,7 +1614,7 @@ theorem hasDens_of_gauge {S : Set (Mat k r)} {ν : Measure (Mt k r)} (h : IsGaug
 theorem box_lim {ν : Measure (Mt k r)} (h : IsGaugeOn k r (UWb k r) ν) :
     Tendsto (fun ρ : ℝ => (ν ((fun v => Matrix.of.symm (chart k r v)) '' Metric.ball 0 ρ)).toReal /
       (tVol k ρ * sVol k r (Kw k r) ρ)) (𝓝[>] 0) (𝓝 1) := by
-  have h1 := GlobalTheory.ChartDensity.density_in_chart _ (UWb k r) ν 1 isMatGroup_UWb h.1 (hasDens_of_gauge h)
+  have h1 := GlobalTheory.ChartDensity.density_in_chart _ (UWb k r) ν 1 GlobalTheory.HaarDensChart.isMatGroup_uwb h.1 (hasDens_of_gauge h)
     (TrE k × lieE (Kw k r)) (chart k r) (tangEquiv k r) chart_zero (Eventually.of_forall chart_mem) chart_strict
   refine ((ENNReal.tendsto_toReal ENNReal.one_ne_top).comp h1).congr fun ρ => ?_
   have e := volume_tang_ball (k := k) (r := r) ρ

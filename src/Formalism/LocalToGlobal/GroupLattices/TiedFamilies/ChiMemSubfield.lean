@@ -33,8 +33,6 @@ theorem chi_mem_subfield {S : StepLevel F E σ J T f bad} {G : GLoc F E σ gp} {
 
 end Gen
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem adExt_rec (T : ∀ u : D.what₂.Word, Forms0 D u) (u : D.what₂.Word) :

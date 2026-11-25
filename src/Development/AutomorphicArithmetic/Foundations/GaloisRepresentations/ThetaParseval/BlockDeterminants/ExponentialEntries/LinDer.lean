@@ -1,49 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -218,15 +175,12 @@ theorem linDer_locFin (T : Matrix σ σ ℂ) :
     LocFin ((linDer T : Derivation ℂ (MvPolynomial σ ℂ) (MvPolynomial σ ℂ)) : MvPolynomial σ ℂ →ₗ[ℂ] MvPolynomial σ ℂ) := by
   have hst0 : ∀ y ∈ Submodule.span ℂ (Set.range (X : σ → MvPolynomial σ ℂ)),
       linDer T y ∈ Submodule.span ℂ (Set.range (X : σ → MvPolynomial σ ℂ)) := by
-    intro y hy
-    induction hy using Submodule.span_induction with
-    | mem y hy =>
-      obtain ⟨i, rfl⟩ := hy
-      rw [linDer_X]
-      exact Submodule.sum_mem _ fun l _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨l, rfl⟩)
-    | zero => simp
-    | add a b _ _ ha hb => simpa using Submodule.add_mem _ ha hb
-    | smul c a _ ha => simpa using Submodule.smul_mem _ c ha
+    refine (Submodule.span_le.2 ?_ :
+      _ ≤ (Submodule.span ℂ (Set.range (X : σ → MvPolynomial σ ℂ))).comap
+        (linDer T : MvPolynomial σ ℂ →ₗ[ℂ] MvPolynomial σ ℂ))
+    rintro _ ⟨i, rfl⟩
+    rw [SetLike.mem_coe, Submodule.mem_comap, Derivation.coeFn_coe, linDer_X]
+    exact Submodule.sum_mem _ fun l _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨l, rfl⟩)
   have hfd0 : (Submodule.span ℂ (Set.range (X : σ → MvPolynomial σ ℂ))).FG :=
     Submodule.fg_span (Set.finite_range _)
   intro v
@@ -362,7 +316,7 @@ theorem omAct_definite (n d : ℕ) (T : Matrix (Ln n 0 d 0) (Ln n 0 d 0) ℂ) :
     by_cases h : l = l' <;> simp [omE, raiB, lowB, hpos, h]
   refine LinearMap.ext fun f => ?_
   have htr : ∑ l, ∑ l', T l l' • (if l = l' then (1 / 2 : ℂ) • f else 0) = ((1 / 2 : ℂ) * T.trace) • f := by
-    simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, Matrix.trace, Matrix.diag_apply,
+    simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Matrix.trace, Matrix.diag_apply,
       smul_smul, Finset.mul_sum, Finset.sum_smul, mul_comm]
   rw [omAct_apply]
   simp only [LinearMap.add_apply, LinearMap.sum_apply, LinearMap.smul_apply, hE, smul_add, Finset.sum_add_distrib,

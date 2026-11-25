@@ -47,31 +47,28 @@ theorem spanR {ι : Type*} (x : ι → S.V) (y : S.V) (h : ∀ i, S.hT y (x i) =
 
 variable {S} {r : ℕ}
 
-theorem fvecC {T : E} (F : FlagG S r T) (i : Fin r) : F.fvec i.castSucc = F.e i :=
-  PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc F i
-
 alias fvecL := _root_.PI.ScalarPairDr.W.fvec_last
 
 theorem hT_f_e {T : E} (F : FlagG S r T) (a : Fin (r + 1)) (c : Fin r) : S.hT (F.fvec a) (F.e c) = 0 := by
   refine Fin.lastCases ?_ (fun i => ?_) a
   · rw [fvecL]; exact PI.UnitaryGroupMassFormula.BetaLUniq.GN.hT_z_e F c
-  · rw [fvecC]; exact F.e_iso i c
+  · rw [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc]; exact F.e_iso i c
 
 theorem hT_f_X {T : E} (F : FlagG S r T) (a : Fin (r + 1)) {x : S.V} (hx : x ∈ F.X) : S.hT (F.fvec a) x = 0 :=
   spanR S F.e _ (fun c => hT_f_e F a c) x hx
 
 theorem hT_X_X {T : E} (F : FlagG S r T) {x y : S.V} (hx : x ∈ F.X) (hy : y ∈ F.X) : S.hT x y = 0 :=
-  spanL S F.e y (fun c => by rw [← fvecC F c]; exact hT_f_X F _ hy) x hx
+  spanL S F.e y (fun c => by rw [← PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc F c]; exact hT_f_X F _ hy) x hx
 
 theorem gram_flag {T : E} (P Q : FlagG S r T) (a c : Fin (r + 1)) :
     S.hT (Q.fvec a) (Q.fvec c) = S.hT (P.fvec a) (P.fvec c) := by
   refine Fin.lastCases ?_ (fun i => ?_) a
   · refine Fin.lastCases ?_ (fun j => ?_) c
     · rw [fvecL, fvecL, Q.z_norm, P.z_norm]
-    · rw [fvecL, fvecL, fvecC, fvecC, PI.UnitaryGroupMassFormula.BetaLUniq.GN.hT_z_e, PI.UnitaryGroupMassFormula.BetaLUniq.GN.hT_z_e]
+    · rw [fvecL, fvecL, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, PI.UnitaryGroupMassFormula.BetaLUniq.GN.hT_z_e, PI.UnitaryGroupMassFormula.BetaLUniq.GN.hT_z_e]
   · refine Fin.lastCases ?_ (fun j => ?_) c
-    · rw [fvecL, fvecL, fvecC, fvecC, Q.z_orth, P.z_orth]
-    · rw [fvecC, fvecC, fvecC, fvecC, Q.e_iso, P.e_iso]
+    · rw [fvecL, fvecL, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, Q.z_orth, P.z_orth]
+    · rw [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, Q.e_iso, P.e_iso]
 
 theorem hermitian_double_sum_expand {ι : Type*} [Fintype ι] (x : ι → S.V) (g g' : ι → E) :
     S.hT (∑ i, g i • x i) (∑ j, g' j • x j) = ∑ i, ∑ j, star (g i) * (g' j * S.hT (x i) (x j)) := by
@@ -102,7 +99,7 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
     unfold FlagG.X
     rw [Submodule.span_le]
     rintro _ ⟨i, rfl⟩
-    rw [← fvecC F i]
+    rw [← PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc F i]
     exact hfU _
   have hW : ∀ w ∈ W, ∀ u ∈ U, S.hT u w = 0 := fun w hw u hu =>
     (PI.UnitaryGroupMassFormula.BetaLUniq.mem_orth S).1 hw u hu
@@ -204,7 +201,7 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
       have : Pi.single b (1 : E) ∈ LinearMap.ker ℓ := by rw [htop]; trivial
       rw [LinearMap.mem_ker, hℓ] at this
       simp only [Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-        if_true] at this
+        ite_true] at this
       exact hb (by simpa using this)
     have h3 := Submodule.finrank_lt h2
     simp only [Module.finrank_fin_fun] at h3
@@ -315,14 +312,13 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
 
 end NMoveP
 
-
 open NMoveP in
 theorem n_move_holds (D : Formalism.BasicNotions.D7) : NMove D := by
   intro T T' F0 F'₂ F' hZ hG hO
   obtain ⟨n, hiso, hf, hp, horth⟩ := exists_move (VS D) F0 F'₂.fl F'.fl hZ hG hO
-  have hfe : ∀ a, n (F0.e a) = F0.e a := fun a => by rw [← fvecC F0 a]; exact hf _
+  have hfe : ∀ a, n (F0.e a) = F0.e a := fun a => by rw [← PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc F0 a]; exact hf _
   refine ⟨n, ⟨hiso, ?_, horth, hfe, by rw [← fvecL F0]; exact hf _⟩,
-    fun a => by rw [← fvecC F'₂.fl a, ← fvecC F'.fl a]; exact hp _,
+    fun a => by rw [← PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc F'₂.fl a, ← PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc F'.fl a]; exact hp _,
     by rw [← fvecL F'₂.fl, ← fvecL F'.fl]; exact hp _⟩
   intro j x hx
   have hle : Xflag (lf D F0) (j + 1) ≤ LinearMap.ker ((n : (VS D).V →ₗ[D.host.E] (VS D).V) - LinearMap.id) := by

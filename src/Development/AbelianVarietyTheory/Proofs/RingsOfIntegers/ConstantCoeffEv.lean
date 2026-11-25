@@ -213,7 +213,7 @@ private theorem pderiv_subst_coe_mvPolynomial_eq_sum {σ τ : Type} [Fintype σ]
       · rw [pderiv_X_of_ne (Ne.symm hr), map_zero]
     simp only [Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul, substAlgHom_X, hX, hf, mul_ite,
       mul_one, mul_zero, add_mul, Finset.sum_add_distrib, ite_mul, zero_mul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, Finset.mul_sum, mul_assoc]
+      Finset.mem_univ, ite_true, Finset.mul_sum, mul_assoc]
 
 private theorem pderiv_subst_eq_sum_of_constantCoeff_eq_zero {σ τ : Type} [Fintype σ] [DecidableEq σ] [Finite τ]
     {A : σ → MvPowerSeries τ k} (hA : ∀ r, constantCoeff (A r) = 0) (f : MvPowerSeries σ k) (s : τ) :
@@ -360,7 +360,7 @@ theorem pderiv_pt (j j' : Fin n) (i i' : Fin d) :
   by_cases hc : j' = j ∧ i' = i
   · obtain ⟨rfl, rfl⟩ := hc
     simp
-  · rw [if_neg hc, pderiv_X_of_ne]
+  · rw [ite_eq_right hc, pderiv_X_of_ne]
     intro he
     exact hc ⟨congrArg Prod.fst he, congrArg Prod.snd he⟩
 

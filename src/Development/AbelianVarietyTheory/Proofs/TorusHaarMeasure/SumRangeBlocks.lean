@@ -105,11 +105,11 @@ theorem sum_range_blocks (p : ℕ) (M : ℕ → ℝ) (a a' : ℝ) (n : ℕ) :
   | succ n ih =>
     rw [Finset.sum_range_succ, ih]
     by_cases h : n < p
-    · rw [if_pos h, min_eq_left h.le, max_eq_right h.le, min_eq_left (Nat.succ_le_of_lt h),
+    · rw [ite_eq_left h, min_eq_left h.le, max_eq_right h.le, min_eq_left (Nat.succ_le_of_lt h),
         max_eq_right (Nat.succ_le_of_lt h)]
       ring
     · have h' := not_lt.1 h
-      rw [if_neg h, min_eq_right h', max_eq_left h', min_eq_right (h'.trans (Nat.le_succ n)),
+      rw [ite_eq_right h, min_eq_right h', max_eq_left h', min_eq_right (h'.trans (Nat.le_succ n)),
         max_eq_left (h'.trans (Nat.le_succ n))]
       ring
 
@@ -117,7 +117,7 @@ theorem sum_fin_blocks {r p : ℕ} (hp : p ≤ r) (L : Fin (r + 1) → ℝ) (a a
     ∑ i : Fin r, (if (i : ℕ) < p then a else a') * (L i.succ - L i.castSucc) =
       a * (L ⟨p, Nat.lt_succ_of_le hp⟩ - L 0) + a' * (L (Fin.last r) - L ⟨p, Nat.lt_succ_of_le hp⟩) := by
   set M : ℕ → ℝ := fun n => if h : n < r + 1 then L ⟨n, h⟩ else 0 with hM
-  have e : ∀ k : Fin (r + 1), L k = M k := fun k => by simp only [hM, dif_pos k.isLt]
+  have e : ∀ k : Fin (r + 1), L k = M k := fun k => by simp only [hM, dite_eq_left k.isLt]
   simp only [e, Fin.val_succ, Fin.val_castSucc, Fin.val_zero, Fin.val_last]
   rw [Fin.sum_univ_eq_sum_range (fun i => (if i < p then a else a') * (M (i + 1) - M i)),
     sum_range_blocks, min_eq_right hp, max_eq_left hp]
@@ -174,8 +174,6 @@ theorem exp_neg_phla_le {r : ℕ} {X : Data E r} {x0 : Frame X.Ψ r} (h0 : IsOrt
     _ ≤ |(a' τ : ℝ) - a τ| * (-l) := mul_le_mul_of_nonneg_right (neg_le_abs _) (by linarith)
     _ ≤ _ := mul_le_mul_of_nonneg_left h4 (abs_nonneg _)
 
-alias ae_mem_OmF := _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.FundSetPf.ae_OmF'
-
 theorem lintegral_lt_top (hMI : MeasInvStatement (E := E)) {r : ℕ} {X : Data E r} {x0 : Frame X.Ψ r}
     (h0 : IsOrth X x0) {la : Wt X.Ψ r} (hla : BlockConst X la) {bb ε : ℝ} (hbb : 0 ≤ bb)
     {χ : ℝ → ℝ} (hχ0 : ∀ u, ε ≤ u → χ u = 0) (hχ1 : ∀ u, |χ u| ≤ 1) {ψ : Frame X.Ψ r → ℝ}
@@ -190,7 +188,7 @@ theorem lintegral_lt_top (hMI : MeasInvStatement (E := E)) {r : ℕ} {X : Data E
     (OntoB.cd_cpt X x0).continuous.measurable (measurableSet_le (measurable_rhX h0) measurable_const)
   have hSμ : muF X x0 (cpt X x0 ⁻¹' S) < ⊤ := by
     refine lt_of_le_of_lt (measure_mono_ae ?_) (SublevelFin.muF_sublevel_lt_top hMI r X x0 h0 ε)
-    filter_upwards [ae_mem_OmF X x0] with z hz h
+    filter_upwards [ReciprocityTheory.ChartRestriction.G.AR.Up.FundSetPf.ae_OmF' X x0] with z hz h
     have h' : rhX X x0 (cpt X x0 z) ≤ ε := h
     rw [rhX_cpt h0 hz] at h'
     exact h'
@@ -199,7 +197,7 @@ theorem lintegral_lt_top (hMI : MeasInvStatement (E := E)) {r : ℕ} {X : Data E
       (cpt X x0 ⁻¹' S).indicator (fun _ => ENNReal.ofReal (2 * (K * Real.exp (bb * ε)))) z +
         ENNReal.ofReal 2 * ENNReal.ofReal (‖(χ (rhF X x0 z) : ℂ) - F z‖ ^ 2 *
           Real.exp (-(phla X la (cpt X x0 z) + ψ (cpt X x0 z))) / kaF X x0 bb z) := by
-    filter_upwards [ae_mem_OmF X x0] with z hz
+    filter_upwards [ReciprocityTheory.ChartRestriction.G.AR.Up.FundSetPf.ae_OmF' X x0] with z hz
     have hk : 0 < kaF X x0 bb z := Real.exp_pos _
     set w := Real.exp (-phla X la (cpt X x0 z)) / kaF X x0 bb z with hw
     set w' := Real.exp (-(phla X la (cpt X x0 z) + ψ (cpt X x0 z))) / kaF X x0 bb z with hw'
@@ -330,7 +328,7 @@ theorem exists_density (hMI : MeasInvStatement (E := E)) {r : ℕ} {X : Data E r
   refine ⟨φ, hv, fun x hx => ?_⟩
   rw [← hMI r X x0 x h0 hx φ hφm hφB]
   refine le_trans (lintegral_mono_ae ?_) hM
-  filter_upwards [ae_mem_OmF X x0] with z hz
+  filter_upwards [ReciprocityTheory.ChartRestriction.G.AR.Up.FundSetPf.ae_OmF' X x0] with z hz
   by_cases h : ε ≤ rhX X x0 (cpt X x0 z)
   · rw [hv _ hz h, hPF z hz, hκF z hz]
     rw [rhX_cpt h0 hz] at h
@@ -381,7 +379,7 @@ theorem exists_approx
   obtain ⟨P, hP, hPF⟩ := hExt r X x0 h0 la F hF fun K _ _ => by
     refine (lintegral_mono' Measure.restrict_le_self le_rfl).trans_lt
       (lt_of_le_of_lt (lintegral_mono_ae ?_) hfin)
-    filter_upwards [ae_mem_OmF X x0] with z hz
+    filter_upwards [ReciprocityTheory.ChartRestriction.G.AR.Up.FundSetPf.ae_OmF' X x0] with z hz
     refine ENNReal.ofReal_le_ofReal (le_div_self (by positivity) (hka z) ?_)
     rw [← hκF z hz]; exact (hκ1 _ hz).2
 
@@ -405,7 +403,7 @@ theorem exists_approx
   refine ⟨F, P, hF, ?_, hP, hPF, ?_, fun g hg hne => ?_⟩
   · unfold InAt
     refine lt_of_eq_of_lt (lintegral_congr_ae ?_) hfin
-    filter_upwards [ae_mem_OmF X x0] with z hz
+    filter_upwards [ReciprocityTheory.ChartRestriction.G.AR.Up.FundSetPf.ae_OmF' X x0] with z hz
     have hz' : cpt X x0 z ∈ X.dom := hz
     rw [Set.indicator_of_mem hz', ← ENNReal.ofReal_mul (div_nonneg (by positivity) (hka z).le), add_zero]
     congr 1

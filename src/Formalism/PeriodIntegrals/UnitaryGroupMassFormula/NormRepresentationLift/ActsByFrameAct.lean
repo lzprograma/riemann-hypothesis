@@ -3,52 +3,8 @@ module
 public import Formalism.LocalRingCardinality.DataSpaces
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
 public import Mathlib.Data.Matrix.Mul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.Basify
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.TvMapApply, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.ExistsMulEqOneAddSmulOfRowsGe, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.ActsByFrameAct
@@ -152,34 +108,34 @@ theorem exists_mul_eq_one_add_smul_of_rows_ge (g : R) (P : Matrix (Fin (r + 1)) 
       show ξ d c + (if d = a then w c else 0) =
         (if d = a then (if d = c then 1 else 0) else ξ d c) + g * (if d = a then (if a < c then q c else 0) else 0)
       by_cases hd : d = a
-      · rw [hd, if_pos rfl, if_pos rfl, if_pos rfl]
+      · rw [hd, ite_eq_left rfl, ite_eq_left rfl, ite_eq_left rfl]
         rcases lt_trichotomy c a with hca | hca | hca
-        · rw [hξ.1 a c hca, hw0 c hca.le, if_neg (ne_of_lt hca).symm, if_neg (not_lt.mpr hca.le)]
+        · rw [hξ.1 a c hca, hw0 c hca.le, ite_eq_right (ne_of_lt hca).symm, ite_eq_right (not_lt.mpr hca.le)]
           simp
-        · rw [hca, hξ.2 a, hw0 a le_rfl, if_pos rfl, if_neg (lt_irrefl a)]
+        · rw [hca, hξ.2 a, hw0 a le_rfl, ite_eq_left rfl, ite_eq_right (lt_irrefl a)]
           simp
-        · rw [hq c hca, if_neg (ne_of_lt hca), if_pos hca]
+        · rw [hq c hca, ite_eq_right (ne_of_lt hca), ite_eq_left hca]
           ring
-      · rw [if_neg hd, if_neg hd, if_neg hd]
+      · rw [ite_eq_right hd, ite_eq_right hd, ite_eq_right hd]
         simp
     have hξ₀ : UniUp ξ₀ := by
       refine ⟨fun d c hcd => ?_, fun d => ?_⟩
       · show (if d = a then (if d = c then 1 else 0) else ξ d c) = 0
         by_cases h1' : d = a
-        · rw [if_pos h1', if_neg (ne_of_lt hcd).symm]
-        · rw [if_neg h1']
+        · rw [ite_eq_left h1', ite_eq_right (ne_of_lt hcd).symm]
+        · rw [ite_eq_right h1']
           exact hξ.1 d c hcd
       · show (if d = a then (if d = d then 1 else 0) else ξ d d) = 1
         by_cases h1' : d = a
-        · rw [if_pos h1', if_pos rfl]
-        · rw [if_neg h1']
+        · rw [ite_eq_left h1', ite_eq_left rfl]
+        · rw [ite_eq_right h1']
           exact hξ.2 d
     have hid₀ : ∀ d c : Fin (r + 1), k ≤ d.val → ξ₀ d c = if d = c then 1 else 0 := by
       intro d c hdk
       show (if d = a then (if d = c then 1 else 0) else ξ d c) = _
       by_cases h1' : d = a
-      · rw [if_pos h1']
-      · rw [if_neg h1']
+      · rw [ite_eq_left h1']
+      · rw [ite_eq_right h1']
         apply hid d c
         have hne : d.val ≠ k := fun h' => h1' (Fin.ext h')
         omega
@@ -402,7 +358,7 @@ theorem tv_actsBy (F : LFlag S r T) (a : Fin r) (v : S.V) (l : E) (hee hev hve)
   unfold frameAct at hfa ⊢
   simp only [smul_coe] at hfa ⊢
   simp only [Matrix.add_apply, add_smul, Finset.sum_add_distrib, hfa, rowMat, ite_smul, zero_smul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, hfr]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true, hfr]
 
 end PI.NRL
 end -- clump:auto

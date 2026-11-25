@@ -2,45 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.DividedWeightUnique
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedWeightEntriesSignsSizes
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -83,19 +44,19 @@ theorem Wts.node_lower_int {ι : Type} {N : ℕ} (W : Wts ι N) (H : W.Hyp) (hd 
     by_cases hp : (i : ℕ) = W.p
     · have e1 : W.p ≤ (i : ℕ) := by omega
       have e2 : ¬ W.p ≤ (a : ℕ) := by omega
-      rw [if_pos hp] at hx
-      rw [if_neg e2] at h1
-      rw [if_pos e1]
+      rw [ite_eq_left hp] at hx
+      rw [ite_eq_right e2] at h1
+      rw [ite_eq_left e1]
       linarith
-    · rw [if_neg hp] at hx
+    · rw [ite_eq_right hp] at hx
       by_cases e1 : W.p ≤ (i : ℕ)
       · have e2 : W.p ≤ (a : ℕ) := by omega
-        rw [if_pos e2] at h1
-        rw [if_pos e1]
+        rw [ite_eq_left e2] at h1
+        rw [ite_eq_left e1]
         linarith
       · have e2 : ¬ W.p ≤ (a : ℕ) := by omega
-        rw [if_neg e2] at h1
-        rw [if_neg e1]
+        rw [ite_eq_right e2] at h1
+        rw [ite_eq_right e1]
         linarith
 
 theorem nodes_far_and_spread : ∀ (ι : Type) [Fintype ι] (N : ℕ) (W : Wts ι N), W.Hyp → W.IsDiv → ∀ τ, (∀ i : Fin N, W.kc ≤ (i : ℕ) → W.w τ / (2 * W.T) ≤ -(W.u1 τ i : ℝ) ∧ W.w τ / (4 * W.T) ≤ |(W.u' τ i : ℝ)|) ∧ ∀ i l : Fin N, (W.u' τ i : ℝ) - W.u' τ l ≤ 3 / 2 * W.w τ / W.T := by
@@ -105,8 +66,6 @@ theorem nodes_far_and_spread : ∀ (ι : Type) [Fintype ι] (N : ℕ) (W : Wts �
   have hpN := H.p_lt
   have hc0 : (0 : ℝ) ≤ W.c0 := by exact_mod_cast H.weightConst_nonneg
   have hT : 4 * (W.Dd : ℝ) + 4 ≤ W.T := by exact_mod_cast H.h1
-  have hD : (0 : ℝ) ≤ W.Dd := by positivity
-  have hN : (0 : ℝ) ≤ N := by positivity
   have hT0 : (0 : ℝ) < W.T := by linarith
   have hw := H.h3w τ
   have hS : 0 ≤ W.S := by
@@ -115,7 +74,6 @@ theorem nodes_far_and_spread : ∀ (ι : Type) [Fintype ι] (N : ℕ) (W : Wts �
     linarith [this.2]
   have hr : 0 ≤ W.eta + W.S + N := (abs_nonneg _).trans (H.h3node τ ⟨W.p, hpN⟩ hkp.le)
   have hNT : 4 * (N : ℝ) ≤ N * W.T := by nlinarith
-  have hw0 : 0 ≤ W.w τ := by linarith
   obtain ⟨q, hq⟩ : ∃ q : ℝ, q = W.w τ / W.T := ⟨_, rfl⟩
   have hqT : W.w τ = q * W.T := by rw [hq]; field_simp
   have e2 : W.w τ / (2 * W.T) = q / 2 := by rw [hq]; field_simp
@@ -136,7 +94,7 @@ theorem nodes_far_and_spread : ∀ (ι : Type) [Fintype ι] (N : ℕ) (W : Wts �
     unfold Wts.u'
     by_cases h : (i : ℕ) < W.p
     · simp [h]
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
       push_cast
       exact ⟨by linarith, le_rfl, fun h' => by omega⟩
   have node : ∀ i : Fin N, W.kc ≤ (i : ℕ) → q / 2 ≤ -(W.u1 τ i : ℝ) := by

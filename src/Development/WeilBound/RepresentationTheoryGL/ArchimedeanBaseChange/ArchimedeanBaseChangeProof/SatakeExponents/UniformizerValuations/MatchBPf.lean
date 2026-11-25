@@ -3,44 +3,7 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchB
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -50,18 +13,12 @@ open NumberField IsDedekindDomain Matrix Polynomial
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun PositivityTheory.Rg.BcB.F.F5 PositivityTheory.Rg.BcB.F.Eig PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcN.F2 PositivityTheory.Rg.BcB.F.Tail PositivityTheory.Rg.Bc.ArchbcB.B PositivityTheory.Rg.BcB.F
 open scoped Classical
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace PositivityTheory.Rg.BcB.F.MB
 
 open PositivityTheory.Rg.BcB.F.U (lpow lone)
-open PositivityTheory.Rg.BcN.F2 (mconv)
 open PositivityTheory.Rg.BcB.F.MT (MatchLin)
 
 section SlopeTestRemainingChoices
-
-theorem mb_finsum_mul {α : Type*} (c : ℂ) (g : α → ℂ) : ∑ᶠ i, c * g i = c * ∑ᶠ i, g i := by
-  exact (mul_finsum g c).symm
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
@@ -86,7 +43,7 @@ theorem mb_hint_coset {H : Type} [Group H] (K L : Subgroup H) (hLK : L ≤ K) (g
     · intro hk
       by_contra hkL
       have h1 := hk g
-      simp only [inv_mul_cancel_left, inv_mul_cancel, L.one_mem, if_true, if_neg hkL] at h1
+      simp only [inv_mul_cancel_left, inv_mul_cancel, L.one_mem, ite_true, ite_eq_right hkL] at h1
       exact hc h1.symm
     · intro hk x
       simp only [← mul_assoc, Subgroup.mul_mem_cancel_right _ hk]
@@ -99,7 +56,7 @@ theorem mb_hint_coset {H : Type} [Group H] (K L : Subgroup H) (hLK : L ≤ K) (g
   rw [finsum_eq_single _ (QuotientGroup.mk g : H ⧸ L)]
   · have hm : g⁻¹ * (QuotientGroup.mk g : H ⧸ L).out ∈ L :=
       QuotientGroup.eq.1 (QuotientGroup.out_eq' (QuotientGroup.mk g : H ⧸ L)).symm
-    exact if_pos hm
+    exact ite_eq_left hm
   · intro q hq
     have hm : g⁻¹ * q.out ∉ L := by
       intro hm
@@ -108,7 +65,7 @@ theorem mb_hint_coset {H : Type} [Group H] (K L : Subgroup H) (hLK : L ≤ K) (g
       refine QuotientGroup.eq.2 ?_
       have := L.inv_mem hm
       rwa [_root_.mul_inv_rev, inv_inv] at this
-    exact if_neg hm
+    exact ite_eq_right hm
 
 theorem mb_relIndex_ne_zero {H : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H]
     (K L : Subgroup H) (hL : IsOpen (L : Set H)) (hK : IsCompact (K : Set H)) : L.relIndex K ≠ 0 := by
@@ -132,9 +89,9 @@ theorem mb_lconv_lone {n : ℕ} {w : Pl E} (K' : Subgroup (UL n w)) (hK : K' ≤
       simp only [mb_lone_apply, inv_one, one_mul]
       by_cases hz : z ∈ K'
       · have h2 : z⁻¹ * y ∈ K' := K'.mul_mem (K'.inv_mem hz) hy
-        rw [if_pos hz, if_pos h2, if_pos hz]
-      · rw [if_neg hz, if_neg hz, zero_mul]
-    rw [hu, mb_hint_coset _ _ hK, mb_lone_apply, if_pos hy]
+        rw [ite_eq_left hz, ite_eq_left h2, ite_eq_left hz]
+      · rw [ite_eq_right hz, ite_eq_right hz, zero_mul]
+    rw [hu, mb_hint_coset _ _ hK, mb_lone_apply, ite_eq_left hy]
     by_cases hN : ((K'.relIndex (KL n w) : ℕ) : ℂ) = 0
     · rw [hN, mul_zero, mul_zero]
     · rw [← mul_assoc, inv_mul_cancel₀ hN, one_mul]
@@ -143,13 +100,13 @@ theorem mb_lconv_lone {n : ℕ} {w : Pl E} (K' : Subgroup (UL n w)) (hK : K' ≤
       simp only [mb_lone_apply, inv_one, one_mul, ite_self]
       by_cases hz : z ∈ K'
       · have h2 : z⁻¹ * y ∉ K' := fun h => hy (by simpa using K'.mul_mem hz h)
-        rw [if_neg h2, mul_zero]
-      · rw [if_neg hz, zero_mul]
-    rw [hu, mb_hint_coset _ _ hK, mb_lone_apply, if_neg hy, mul_zero]
+        rw [ite_eq_right h2, mul_zero]
+      · rw [ite_eq_right hz, zero_mul]
+    rw [hu, mb_hint_coset _ _ hK, mb_lone_apply, ite_eq_right hy, mul_zero]
 
 theorem mb_isCompact_KL_split {n : ℕ} {w : Pl E} (hw : IsSplitAt w) : IsCompact (KL n w : Set (UL n w)) := by
   have hcl : IsClosed (UL n w : Set (GLw n w)) := by
-    have h : UL n w = ⊤ := if_pos hw
+    have h : UL n w = ⊤ := ite_eq_left hw
     rw [h]
     exact isClosed_univ
   have hKL : (KL n w : Set (UL n w)) = Subtype.val ⁻¹' (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) := by
@@ -165,7 +122,7 @@ theorem mb_isHecke_lone {n : ℕ} {w : Pl E} {K' : Subgroup (UL n w)} (hK : IsLe
     have hsupp : Function.support (lone K') ⊆ (K' : Set (UL n w)) := by
       intro x hx
       by_contra h
-      exact hx (by rw [mb_lone_apply, if_neg (show x ∉ K' from h)])
+      exact hx (by rw [mb_lone_apply, ite_eq_right (show x ∉ K' from h)])
     exact hc.of_isClosed_subset (isClosed_tsupport _)
       ((closure_minimal hsupp hcl).trans fun x hx => hK.2.1 hx)
   · simp only [mb_lone_apply, Subgroup.mul_mem_cancel_left K' hk]
@@ -202,19 +159,19 @@ theorem fixIdem : FixIdem := by
         have h2 : φ m' = φ m := by
           have := (hφ.2 _ hk m).2
           rwa [mul_inv_cancel_left] at this
-        rw [if_pos h1, if_pos hk, h2, mul_comm]
+        rw [ite_eq_left h1, ite_eq_left hk, h2, mul_comm]
       · have h1 : m'⁻¹ * m ∉ L := fun h => hk (by
           have := L.inv_mem h
           rwa [_root_.mul_inv_rev, inv_inv] at this)
-        rw [if_neg h1, if_neg hk, mul_zero]
+        rw [ite_eq_right h1, ite_eq_right hk, mul_zero]
     rw [mconv, hu, mb_hint_coset _ _ hLK, ← mul_assoc, inv_mul_cancel₀ hN, one_mul]
   · have hu : (fun m' => idem L m' * φ (m'⁻¹ * m)) =
         fun m' => if (1 : GLw a w × GLw b w)⁻¹ * m' ∈ L then ((L.relIndex (K2 a b w) : ℕ) : ℂ) * φ m else 0 := by
       funext m'
       rw [hidem, inv_one, one_mul]
       by_cases hk : m' ∈ L
-      · rw [if_pos hk, if_pos hk, (hφ.2 _ (L.inv_mem hk) m).1]
-      · rw [if_neg hk, if_neg hk, zero_mul]
+      · rw [ite_eq_left hk, ite_eq_left hk, (hφ.2 _ (L.inv_mem hk) m).1]
+      · rw [ite_eq_right hk, ite_eq_right hk, zero_mul]
     rw [mconv, hu, mb_hint_coset _ _ hLK, ← mul_assoc, inv_mul_cancel₀ hN, one_mul]
 
 theorem matchBadSOf : MatchBadSOf := by

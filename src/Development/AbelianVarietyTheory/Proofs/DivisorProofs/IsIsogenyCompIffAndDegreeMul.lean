@@ -51,7 +51,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.HTLat GlobalTheory.Published.AbVarRed GlobalTheory.CechPic GlobalTheory.AV GlobalTheory.AV.AbVar
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem GlobalTheory.AV.AbVar.isIsogeny_comp_iff_and_deg_comp : ∀ (K : Type) [Field K] (A B C : AbVar K) (f : A ⟶ B) (g : B ⟶ C),
     A.dim = B.dim → B.dim = C.dim →
@@ -64,7 +63,7 @@ theorem GlobalTheory.AV.AbVar.isIsogeny_comp_iff_and_deg_comp : ∀ (K : Type) [
     · rintro ⟨hfin, hsurj⟩
       have hs2 : Surjective (f.hom.left ≫ g.hom.left) := by rw [← hleft]; exact hsurj
       have hgs : Surjective g.hom.left := Surjective.of_comp f.hom.left g.hom.left
-      have hgf : IsFinite g.hom.left := GlobalTheory.T.isFinite_of_surjective_of_dim_eq' K B C g hBC hgs
+      have hgf : IsFinite g.hom.left := GlobalTheory.AV.AbVar.isFinite_of_surjective_of_dim_eq K B C g hBC hgs
       have hker : Finite (ptMap (f ≫ g)).ker := (GlobalTheory.T.isFinite_iff_finite_ker' K A C (f ≫ g)).1 hfin
       have hle : (ptMap f).ker ≤ (ptMap (f ≫ g)).ker := by
         intro x hx
@@ -82,10 +81,10 @@ theorem GlobalTheory.AV.AbVar.isIsogeny_comp_iff_and_deg_comp : ∀ (K : Type) [
   by_cases h : IsIsogeny f ∧ IsIsogeny g
   · exact (GlobalTheory.T.isogeny_comp_and_degree_mul K A B C f g h.1 h.2).2
   · have h0 : deg (f ≫ g) = 0 := by
-      unfold deg; rw [if_neg (fun h' => h (key.1 h'))]
+      unfold deg; rw [ite_eq_right (fun h' => h (key.1 h'))]
     rw [h0]
     rcases not_and_or.1 h with hf | hg
-    · have : deg f = 0 := by unfold deg; rw [if_neg hf]
+    · have : deg f = 0 := by unfold deg; rw [ite_eq_right hf]
       rw [this, zero_mul]
-    · have : deg g = 0 := by unfold deg; rw [if_neg hg]
+    · have : deg g = 0 := by unfold deg; rw [ite_eq_right hg]
       rw [this, mul_zero]

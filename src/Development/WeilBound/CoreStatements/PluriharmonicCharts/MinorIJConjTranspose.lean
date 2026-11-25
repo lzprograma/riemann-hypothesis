@@ -3,49 +3,6 @@ module
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericBlockMatrixIsBlockDiag
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -65,7 +22,7 @@ theorem exists_selector (R : Type) [CommRing R] (hj : j ≤ N) (i : Fin N) {I' :
       ∀ I, minorIJ h I (stepCols N j i) = if I = I' then 1 else 0 := by
   refine ⟨Matrix.of fun a b => if ∃ s, a = I'.orderEmbOfFin hI.1 s ∧ b = (stepCols N j i).orderEmbOfFin rfl s
     then 1 else 0, fun a b hab => ?_, fun I => ?_⟩
-  · rw [Matrix.of_apply, if_neg]
+  · rw [Matrix.of_apply, ite_eq_right]
     rintro ⟨s, rfl, rfl⟩
     have h1 := hI.2 (I'.orderEmbOfFin_mem hI.1 s)
     have h2 := mem_stepCols_block hj ((stepCols N j i).orderEmbOfFin_mem rfl s)
@@ -77,19 +34,19 @@ theorem exists_selector (R : Type) [CommRing R] (hj : j ≤ N) (i : Fin N) {I' :
       exact ⟨fun _ => h2, fun _ => h1⟩
   · by_cases e : I = I'
     · subst e
-      rw [if_pos rfl, minorIJ, dite_eq_left hI.1]
+      rw [ite_eq_left rfl, minorIJ, dite_eq_left hI.1]
       refine Eq.trans (congrArg Matrix.det ?_) Matrix.det_one
       ext s t
       simp only [Matrix.submatrix_apply, Matrix.of_apply, Matrix.one_apply, EmbeddingLike.apply_eq_iff_eq]
       refine if_congr ⟨?_, ?_⟩ rfl rfl
       · rintro ⟨u, rfl, rfl⟩; rfl
       · rintro rfl; exact ⟨s, rfl, rfl⟩
-    · rw [if_neg e]
+    · rw [ite_eq_right e]
       by_cases c : I.card = (stepCols N j i).card
       · have hs : ¬ I ⊆ I' := fun hs => e (Finset.eq_of_subset_of_card_le hs (by rw [c, hI.1]))
         obtain ⟨a, ha, has⟩ := Finset.not_subset.mp hs
         refine minorIJ_eq_zero_of_row _ ha fun b _ => ?_
-        rw [Matrix.of_apply, if_neg]
+        rw [Matrix.of_apply, ite_eq_right]
         rintro ⟨s, rfl, -⟩
         exact has (I'.orderEmbOfFin_mem hI.1 s)
       · exact minorIJ_of_card_ne _ c
@@ -173,7 +130,7 @@ theorem pot_step (hj : j ≤ N) (i : Fin N) (hi : IsProperStep N j i) {G R h h' 
   have e2 : h'ᴴ * (Rᴴ * G * R) * h' = (R * h')ᴴ * G * (R * h') := by
     simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
   unfold blockPot
-  rw [if_pos hi, if_pos hi, log_detFac hj i hG bG bR hR, e2]
+  rw [ite_eq_left hi, ite_eq_left hi, log_detFac hj i hG bG bR hR, e2]
   push_cast at h2
   linarith
 
@@ -181,7 +138,7 @@ theorem pot_base (hj : j ≤ N) (i : Fin N) (hi : ¬ IsProperStep N j i) {G R : 
     (h h' : Matrix (Fin N) (Fin N) ℂ) (hG : G.PosDef) (bG : IsBlockDiag j G) (bR : IsBlockDiag j R) (hR : R.det ≠ 0) :
     blockPot j i (Rᴴ * G * R) h' = blockPot j i G h + Real.log ‖detFac j i R‖ := by
   unfold blockPot
-  rw [if_neg hi, if_neg hi, log_detFac hj i hG bG bR hR]
+  rw [ite_eq_right hi, ite_eq_right hi, log_detFac hj i hG bG bR hR]
   ring
 
 theorem detFac_map {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (i : Fin N) (A : Matrix (Fin N) (Fin N) R) :

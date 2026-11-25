@@ -259,17 +259,6 @@ end Proj
 
 end RamFun
 
-section ColsRank
-
-open NumberField IsDedekindDomain Formalism.BasicNotions
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-
-
-
-end ColsRank
-
 end Formalism.L2.Col
 end -- clump:auto
 end -- clump:auto
@@ -612,11 +601,11 @@ theorem piKronOn_insert (M : ∀ i, Matrix (α i) (α i) R) (s : Finset ι) (k :
         · rw [Function.update_of_ne hik]
           exact H i (by rw [Finset.mem_insert, not_or]; exact ⟨hik, hi⟩)
     simp only [piKronOn, Matrix.of_apply, Finset.prod_insert hk, Finset.prod_singleton, Function.update_self,
-      if_pos h2, mul_one, Finset.prod_congr rfl h1]
+      ite_eq_left h2, mul_one, Finset.prod_congr rfl h1]
     by_cases h4 : ∀ i, i ∉ insert k s → a i = b i
-    · rw [if_pos h4, if_pos (h3.2 h4)]
+    · rw [ite_eq_left h4, ite_eq_left (h3.2 h4)]
       ring
-    · rw [if_neg h4, if_neg (fun H => h4 (h3.1 H))]
+    · rw [ite_eq_right h4, ite_eq_right (fun H => h4 (h3.1 H))]
       ring
   · intro c _ hc
     by_cases h5 : ∀ i, i ∉ ({k} : Finset ι) → c i = b i
@@ -629,8 +618,8 @@ theorem piKronOn_insert (M : ∀ i, Matrix (α i) (α i) R) (s : Finset ι) (k :
           rw [Function.update_self, H i hk]
         · rw [Function.update_of_ne hik]
           exact h5 i (by simpa using hik)
-      simp [piKronOn, if_neg h6]
-    · simp only [piKronOn, Matrix.of_apply, if_neg h5, mul_zero]
+      simp [piKronOn, ite_eq_right h6]
+    · simp only [piKronOn, Matrix.of_apply, ite_eq_right h5, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -700,7 +689,7 @@ theorem szVec_mul_transpose : szVec G * (szVec G)ᵀ = szGram G := by
       intro x
       by_cases h1 : x = (b i : G i) <;> by_cases h2 : x = 1 <;> by_cases h3 : x = (c i : G i) <;> simp_all
     rw [Finset.sum_congr rfl (fun x _ => e x), Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq']
-    simp only [Finset.mem_univ, if_true, add_left_inj]
+    simp only [Finset.mem_univ, ite_true, add_left_inj]
     split_ifs with h1 h2 h2
     · rfl
     · exact absurd (Subtype.ext h1) h2
@@ -746,19 +735,18 @@ theorem det_szGram_pos : 0 < (szGram G).det := by
 theorem szVec_pt (b c : SzIdx G) : szVec G b c.pt = if b = c then 1 else 0 := by
   dsimp only [szVec, Matrix.of_apply, SzIdx.pt]
   have h1 : ∀ i, ((c i : G i) = 1) ↔ False := fun i => iff_false_intro (c i).2
-  simp only [h1, if_false, sub_zero]
+  simp only [h1, ite_false, sub_zero]
   by_cases hbc : b = c
   · subst hbc
     simp
-  · rw [if_neg hbc]
+  · rw [ite_eq_right hbc]
     obtain ⟨i, hi⟩ : ∃ i, b i ≠ c i := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hbc (funext h)
     apply Finset.prod_eq_zero (Finset.mem_univ i)
     split_ifs with h
     · exact absurd (Subtype.ext h.symm) hi
-    · exact if_neg h
+    · exact ite_eq_right h
 
 theorem sum_szVec (b : SzIdx G) (i : ι) (c : ∀ i, G i) : ∑ g : G i, szVec G b (Pi.mulSingle i g * c) = 0 := by
   simp only [szVec, Matrix.of_apply]
@@ -778,7 +766,7 @@ theorem sum_szVec (b : SzIdx G) (i : ι) (c : ∀ i, G i) : ∑ g : G i, szVec G
     rw [Finset.sum_eq_single (x * (c i)⁻¹)]
     · simp
     · intro g _ hg
-      rw [if_neg (fun h => hg (eq_mul_inv_of_mul_eq h))]
+      rw [ite_eq_right (fun h => hg (eq_mul_inv_of_mul_eq h))]
     · simp
   rw [Finset.sum_congr rfl (fun g _ => key g), ← Finset.sum_mul, Finset.sum_sub_distrib, h1, h1, sub_self, zero_mul]
 
@@ -907,17 +895,6 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K] {S : GSD K}
 
 
 end GSD
-
-section Cols
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m) (hX : X.Ok)
-
-
-
-
-
-
-end Cols
 
 end Formalism.L2.Col
 end -- clump:auto

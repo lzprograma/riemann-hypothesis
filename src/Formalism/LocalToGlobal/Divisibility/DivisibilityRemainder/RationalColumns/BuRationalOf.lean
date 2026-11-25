@@ -103,57 +103,6 @@ namespace Formalism.L2.DIV.RatFullPt
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : MainNotions.G.Inst D L} {Gl : MainNotions.G.LatInst D} {K : MainNotions.G.Consts} {Y : DivX D}
   {cX : ExtraC} {ex : Extra D L hT Gi Gl K Y cX}
 
-private theorem span_of_scaled_dual {K : Type} [Field K] [NumberField K] [StarRing K]
-    {n : ℕ} (H : Matrix (Fin n) (Fin n) K) (M : Submodule (𝓞 K) (Fin n → K))
-    (hfg : M.FG) {c : 𝓞 K} (hc : c ≠ 0)
-    (hdual : ∀ x ∈ dual (hform H) M, c • x ∈ M) :
-    Submodule.span K (M : Set (Fin n → K)) = ⊤ := by
-  rw [eq_top_iff]
-  intro x _
-  obtain ⟨generators, hgen⟩ := hfg
-  obtain ⟨d, hd⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 K))
-    generators (fun y => hform H y x)
-  have hmem : (d : 𝓞 K) • x ∈ dual (hform H) M := by
-    rw [mem_dual_iff]
-    intro y hy
-    rw [← hgen] at hy
-    induction hy using Submodule.span_induction with
-    | mem y hy =>
-        rw [← algebraMap_smul K, LinearMap.map_smul, algebraMap_smul K]
-        exact Submodule.mem_one.mpr (hd y hy)
-    | zero => simp
-    | add y z _ _ hy hz =>
-        rw [map_add, LinearMap.add_apply]
-        exact add_mem hy hz
-    | smul a y _ hy =>
-        obtain ⟨b, hb⟩ := star_algebraMap_ringOfIntegers_mem_range a
-        rw [← algebraMap_smul K a y, LinearMap.map_smulₛₗ₂]
-        change star (algebraMap (𝓞 K) K a) • hform H y ((d : 𝓞 K) • x) ∈ _
-        rw [← hb, algebraMap_smul K]
-        exact Submodule.smul_mem _ _ hy
-  have hcK : algebraMap (𝓞 K) K c ≠ 0 := by
-    simpa only [map_zero] using (IsFractionRing.injective (𝓞 K) K).ne hc
-  have hdK : algebraMap (𝓞 K) K d ≠ 0 :=
-    IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors d.2
-  apply (Submodule.smul_mem_iff _ hdK).mp
-  rw [algebraMap_smul K]
-  apply (Submodule.smul_mem_iff _ hcK).mp
-  rw [algebraMap_smul K]
-  exact Submodule.subset_span (hdual _ hmem)
-
-private theorem full_Lam {K : Type} [Field K] [NumberField K] [StarRing K]
-    {G : Type} [Group G] [Fintype G] {Pl0 : Type} {B : BlockDat K G Pl0}
-    {ℓ : Lvl K G} {Z : Submodule K B.S.Forms} {v0 : InfinitePlace K}
-    (hv0 : IsConjAt v0) {s : ℕ} (h : B.Ok s) (hX : ∀ χ ∈ ℓ.X, IsAbsIrrChar χ) :
-    Submodule.IsFullLattice K (B.abelian₂ ℓ Z) := by
-  have hc : ((Fintype.card G * s : ℕ) : 𝓞 K) ≠ 0 := by
-    exact_mod_cast (Nat.mul_pos (Fintype.card_pos (α := G)) h.good.s_pos).ne'
-  have hLat := B.Mt_lat hv0 h hX
-  have hMt : Submodule.IsFullLattice K (B.Mt ℓ) :=
-    { toIsLattice := hLat
-      span_eq_top := span_of_scaled_dual _ _ hLat.fg hc (B.Mt_dual hv0 h hX) }
-  exact Formalism.L2.DIV.matLat_full (B.Pq ℓ Z) (B.Pq_surj hv0 h hX) (B.Mt ℓ) hMt
-
 private theorem rr_span_eq_top (P : RowSideFamily ex) {s : ℕ} (hOk : P.A3.fam3.Ok3 s)
     (hF : ColFacts P.S1 P.C) :
     Submodule.span D.what₂.LL (P.S1.RR : Set (Fin P.S1.D → D.what₂.LL)) = ⊤ := by
@@ -164,7 +113,7 @@ private theorem rr_span_eq_top (P : RowSideFamily ex) {s : ℕ} (hOk : P.A3.fam3
   have hlocal (t : P.T) :
       Submodule.span D.what₂.LL (localLat t : Set (Fin P.S1.D → D.what₂.LL)) = ⊤ := by
     have hL : Submodule.IsFullLattice D.what₂.LL (side.abelian₂ t) :=
-      full_Lam (ℓ := P.A3.fam3.F.lvl P.Ps P.ψs)
+      BlockDat.Lam_full (ℓ := P.A3.fam3.F.lvl P.Ps P.ψs)
         hOk.ok2.conj (hOk.ok2.what₂ t) hOk.ok2.irr
     exact (Formalism.L2.DIV.matLat_full (P.S1.ι t) (hF.bij t).2 _ hL).span_eq_top
   rw [eq_top_iff]

@@ -288,38 +288,8 @@ theorem HasGrowth.of_eq_integral [MeasurableSpace (archGroup K n)] [BorelSpace (
     {φ ψ : AdelicGLn.AdelicGL K n → ℂ} {N : ℕ}
     (hφ : HasGrowth φ N) (μ : Measure (archGroup K n)) [μ.IsHaarMeasure]
     {D : archGroup K n → ℂ} (hD : Continuous D) (hDc : HasCompactSupport D)
-    (hψ : ∀ g, ψ g = ∫ y, φ (g * infEmb K n y) * D y ∂μ) : HasGrowth ψ N := by
-  obtain ⟨C, hC⟩ := hφ
-  obtain ⟨M, hM⟩ := exists_height_infEmb_le (K := K) (n := n) hDc.isCompact
-  set M' := max M 1
-  have hc0 : 0 ≤ heightConst K n := le_trans zero_le_one one_le_heightConst
-  refine ⟨|C| * (heightConst K n * M') ^ N * ∫ y, ‖D y‖ ∂μ, fun g => ?_⟩
-  rw [hψ]
-  have hb : ∀ y, ‖φ (g * infEmb K n y) * D y‖ ≤
-      |C| * (heightConst K n * M') ^ N * height g ^ N * ‖D y‖ := by
-    intro y
-    by_cases hy : y ∈ tsupport D
-    · rw [norm_mul]
-      refine mul_le_mul_of_nonneg_right ?_ (norm_nonneg _)
-      have hhg := height_pos g
-      calc ‖φ (g * infEmb K n y)‖ ≤ C * height (g * infEmb K n y) ^ N := hC _
-        _ ≤ |C| * height (g * infEmb K n y) ^ N :=
-            mul_le_mul_of_nonneg_right (le_abs_self C) (pow_nonneg (height_pos _).le _)
-        _ ≤ |C| * (heightConst K n * height g * M') ^ N := by
-            refine mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (height_pos _).le ?_ _) (abs_nonneg _)
-            calc height (g * infEmb K n y)
-                ≤ heightConst K n * height g * height (infEmb K n y) := height_mul_le _ _
-              _ ≤ heightConst K n * height g * M' :=
-                  mul_le_mul_of_nonneg_left ((hM y hy).trans (le_max_left _ _))
-                    (mul_nonneg hc0 hhg.le)
-        _ = |C| * (heightConst K n * M') ^ N * height g ^ N := by ring
-    · rw [image_eq_zero_of_notMem_tsupport hy, mul_zero, norm_zero, mul_zero]
-  have hint : Integrable (fun y => ‖D y‖) μ := hD.norm.integrable_of_hasCompactSupport hDc.norm
-  calc ‖∫ y, φ (g * infEmb K n y) * D y ∂μ‖
-      ≤ ∫ y, |C| * (heightConst K n * M') ^ N * height g ^ N * ‖D y‖ ∂μ :=
-        norm_integral_le_of_norm_le (hint.const_mul _) (Eventually.of_forall hb)
-    _ = |C| * (heightConst K n * M') ^ N * (∫ y, ‖D y‖ ∂μ) * height g ^ N := by
-        rw [integral_const_mul]; ring
+    (hψ : ∀ g, ψ g = ∫ y, φ (g * infEmb K n y) * D y ∂μ) : HasGrowth ψ N :=
+  exists_height_bound_of_eq_integral hφ μ hD hDc hψ
 
 theorem hasGrowth_uAction {N : ℕ} (u : UEnv K n) :
     ∀ {φ : AdelicGLn.AdelicGL K n → ℂ} (hφ : IsSmoothKZ φ), HasGrowth φ N →

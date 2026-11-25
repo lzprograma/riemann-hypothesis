@@ -2,46 +2,7 @@ module
 
 public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
 public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -53,23 +14,8 @@ namespace FunctorialResolution.Blowup
 
 theorem map_mem_nonZeroDivisors_of_iso {A B : CommRingCat.{u}} (e : A ≅ B) {x : A}
     (hx : x ∈ nonZeroDivisors A) : e.hom.hom x ∈ nonZeroDivisors B := by
-  obtain ⟨hx1, hx2⟩ := mem_nonZeroDivisors_iff.mp hx
-  have h2 : ∀ z : A, e.inv.hom (e.hom.hom z) = z := by
-    intro z
-    simp
-  have h3 : ∀ y : B, e.hom.hom (e.inv.hom y) = y := by
-    intro y
-    simp
-  have key : ∀ y : B, e.hom.hom x * y = 0 → y = 0 := by
-    intro y hy
-    have h1 : e.inv.hom (e.hom.hom x * y) = 0 := by rw [hy, map_zero]
-    rw [map_mul, h2 x] at h1
-    have h4 := hx1 _ h1
-    rw [← h3 y, h4, map_zero]
-  rw [mem_nonZeroDivisors_iff]
-  refine ⟨key, fun y hy => key y ?_⟩
-  rw [mul_comm]
-  exact hy
+  rw [← MulEquivClass.map_nonZeroDivisors e.commRingCatIsoToRingEquiv]
+  exact Submonoid.mem_map_of_mem e.commRingCatIsoToRingEquiv hx
 
 private theorem exists_affineOpen_le (X : Scheme.{u}) (x : X) (W : X.Opens) (hx : x ∈ W) :
     ∃ U : X.affineOpens, x ∈ (U : X.Opens) ∧ (U : X.Opens) ≤ W := by
@@ -101,15 +47,6 @@ private noncomputable def sectionsIsoPreimage {A B : Scheme.{u}} (e : A ≅ B) (
   inv_hom_id := by
     rw [Scheme.Hom.appLE_comp_appLE]
     exact appLE_eq_id_of_eq_id _ e.hom_inv_id _ _
-
-private theorem isLocallyGeneratedByNonZeroDivisor_comap_id {X : Scheme.{u}} {I : X.IdealSheafData}
-    (hI : IsLocallyGeneratedByNonZeroDivisor I) : IsLocallyGeneratedByNonZeroDivisor (I.comap (𝟙 X)) := by
-  intro x
-  obtain ⟨U, f, hxU, hf, hIspan⟩ := hI x
-  refine ⟨U, f, hxU, hf, ?_⟩
-  rw [Scheme.IdealSheafData.comap_ideal_eq_map_appLE I (𝟙 X) U U le_rfl,
-    appLE_eq_id_of_eq_id (𝟙 X) rfl (U : X.Opens) le_rfl, hIspan]
-  simp
 
 theorem isLocallyGeneratedByNonZeroDivisor_top (X : Scheme.{u}) :
     IsLocallyGeneratedByNonZeroDivisor (⊤ : X.IdealSheafData) := by
@@ -156,7 +93,7 @@ theorem IsBlowupAlongIdealSheaf.hom_ext_of_comp_eq {X X' : Scheme.{u}} {π : X' 
 
 theorem IsBlowupAlongIdealSheaf.isIso_of_isLocallyGeneratedByNonZeroDivisor {X X' : Scheme.{u}} {π : X' ⟶ X} {I : X.IdealSheafData}
     (h : IsBlowupAlongIdealSheaf π I) (hI : IsLocallyGeneratedByNonZeroDivisor I) : IsIso π := by
-  obtain ⟨s, hs, -⟩ := h.2 X (𝟙 X) (isLocallyGeneratedByNonZeroDivisor_comap_id hI)
+  obtain ⟨s, hs, -⟩ := h.2 X (𝟙 X) (by rwa [Scheme.IdealSheafData.comap_id])
   refine ⟨⟨s, ?_, hs⟩⟩
   exact h.hom_ext_of_comp_eq h.1 (by rw [Category.assoc, hs, Category.comp_id]) (Category.id_comp π)
 

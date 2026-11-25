@@ -8,47 +8,7 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishC
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLn
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerDimensionCuspidalGreenDegreeEqOne
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerDimensionHarishChandraInductionMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -73,67 +33,6 @@ theorem entN_one {N : ℕ} (i j : ℕ) (h : i < j) : entN (1 : Mt g N) i j = 0 :
     simp only at this
     omega
   · rfl
-
-private theorem card_filter_Gn_eq_card_filter_Mt_of_unipotent {N : ℕ} (P : Mt g N → Prop) (hU : ∀ M, P M → IsUniUp M) :
-    (Finset.univ.filter fun u : Gn g N => P (u : Mt g N)).card =
-      (Finset.univ.filter fun M : Mt g N => P M).card := by
-  apply Finset.card_bij (fun (u : Gn g N) _ => u.1)
-  · intro u hu
-    simpa using hu
-  · intro u _ v _ h
-    exact Units.ext h
-  · intro M hM
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hM
-    have hdet : M.det = 1 := by
-      rw [Matrix.det_of_isUpperTriangular (fun i j hij => ((hU M hM) i j).1 hij)]
-      exact Finset.prod_eq_one fun i _ => ((hU M hM) i i).2 rfl
-    have hu : IsUnit M := (Matrix.isUnit_iff_isUnit_det M).2 (by rw [hdet]; exact isUnit_one)
-    exact ⟨hu.unit, by simpa using hM, rfl⟩
-
-private theorem card_filter_unipotent_eq_pow_card_free {N : ℕ} (Q : Fin N × Fin N → Prop) (P : Mt g N → Prop)
-    (hP : ∀ M, P M ↔ IsUniUp M ∧ ∀ p : Fin N × Fin N, p.1 < p.2 → Q p → M p.1 p.2 = 0) :
-    (Finset.univ.filter fun M : Mt g N => P M).card =
-      g ^ (Finset.univ.filter fun p : Fin N × Fin N => p.1 < p.2 ∧ ¬ Q p).card := by
-  set s := Finset.univ.filter fun p : Fin N × Fin N => p.1 < p.2 ∧ ¬ Q p with hs
-  have hmem : ∀ p, p ∈ s ↔ p.1 < p.2 ∧ ¬ Q p := fun p => by simp [s]
-  let e : {M : Mt g N // P M} ≃ (s → ZMod g) :=
-    { toFun := fun M p => M.1 p.1.1 p.1.2
-      invFun := fun v => ⟨Matrix.of fun i j => if i = j then 1 else if h : (i, j) ∈ s then v ⟨(i, j), h⟩ else 0, by
-        refine (hP _).2 ⟨fun a b => ⟨fun hab => ?_, fun hab => ?_⟩, fun p hp hq => ?_⟩
-        · have h1 : a ≠ b := ne_of_gt hab
-          have h2 : (a, b) ∉ s := by
-            rw [hmem]
-            intro h
-            exact absurd (lt_trans h.1 hab) (lt_irrefl _)
-          simp [Matrix.of_apply, h1, h2]
-        · simp [Matrix.of_apply, hab]
-        · have h1 : p.1 ≠ p.2 := ne_of_lt hp
-          have h2 : (p.1, p.2) ∉ s := by
-            rw [hmem]
-            exact fun h => h.2 hq
-          simp [Matrix.of_apply, h1, h2]⟩
-      left_inv := fun M => by
-        apply Subtype.ext
-        ext i j
-        obtain ⟨hU, hZ⟩ := (hP M.1).1 M.2
-        by_cases hij : i = j
-        · subst hij
-          simp [Matrix.of_apply, (hU i i).2 rfl]
-        · by_cases hin : (i, j) ∈ s
-          · simp [Matrix.of_apply, hij, hin]
-          · simp only [Matrix.of_apply, hij, hin, if_false, dif_neg, not_false_eq_true]
-            rcases lt_or_gt_of_ne hij with hlt | hgt
-            · have hq : Q (i, j) := by
-                by_contra hq
-                exact hin ((hmem _).2 ⟨hlt, hq⟩)
-              exact (hZ (i, j) hlt hq).symm
-            · exact ((hU i j).1 hgt).symm
-      right_inv := fun v => by
-        funext p
-        have hp := (hmem p.1).1 p.2
-        have h1 : p.1.1 ≠ p.1.2 := ne_of_lt hp.1
-        simp [Matrix.of_apply, h1, p.2] }
-  rw [← Fintype.card_subtype, Fintype.card_congr e, Fintype.card_fun, ZMod.card, Fintype.card_coe]
 
 theorem eU_coeff_one (N : ℕ) (ψ : AddChar (ZMod g) ℂ) :
     (eU g N ψ).coeff 1 = ((g : ℂ) ^ (N * (N - 1) / 2))⁻¹ := by

@@ -1,5 +1,6 @@
 module
 
+import all ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothDefs
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.VolUFactProdMulLe
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.BridgeA
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.DensOn
@@ -77,7 +78,7 @@ open Finset Matrix MeasureTheory Filter Topology Metric
 
 namespace ReciprocityTheory.ChartRestriction.DS.HExp
 
-open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7
+open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7 Formalism.BasicNotions.Examples₂.CD
 
 variable {n : ℕ}
 
@@ -177,16 +178,9 @@ open scoped ENNReal NNReal
 
 namespace ReciprocityTheory.ChartRestriction.DS.HExp
 
-open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7
+open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7 Formalism.BasicNotions.Examples₂.CD
 
 variable {n : ℕ}
-
-theorem gMat_add {ε : Fin n → Bool} (s t : GCo ε) : gMat (s + t) = gMat s + gMat t := by
-  ext a b
-  simp only [gMat, Matrix.add_apply]
-  simp only [kMat, pmat, Prod.fst_add, Prod.snd_add, Pi.add_apply]
-  split_ifs <;> (try simp only [Complex.ofReal_add, star_add, mul_add, neg_add, add_zero]) <;>
-    (try ring)
 
 theorem gMat_smul {ε : Fin n → Bool} (c : ℝ) (s : GCo ε) : gMat (c • s) = (RingHom.id ℝ c) • gMat s := by
   ext a b
@@ -198,7 +192,7 @@ theorem gMat_smul {ε : Fin n → Bool} (c : ℝ) (s : GCo ε) : gMat (c • s) 
 
 def gL (ε : Fin n → Bool) : GCo ε →ₗ[ℝ] Matrix (Fin n) (Fin n) ℂ where
   toFun := gMat
-  map_add' := gMat_add
+  map_add' := ReciprocityTheory.ChartRestriction.DS.OmegaPQAux.gMat_add
   map_smul' := gMat_smul
 
 theorem gL_injective (ε : Fin n → Bool) : Function.Injective (gL ε) := by
@@ -305,7 +299,7 @@ open scoped ENNReal NNReal
 
 namespace ReciprocityTheory.ChartRestriction.DS
 
-open ReciprocityTheory.ChartRestriction.DS.S7 ReciprocityTheory.ChartRestriction.DS.HExp
+open ReciprocityTheory.ChartRestriction.DS.S7 ReciprocityTheory.ChartRestriction.DS.HExp Formalism.BasicNotions.Examples₂.CD
 
 variable {n : ℕ}
 
@@ -322,7 +316,7 @@ theorem haar_exp_density {ε : Fin n → Bool} (μ : Measure (UJ ε)) [μ.IsHaar
   haveI : (volume : Measure (KCo ε)).IsAddHaarMeasure := Measure.prod.instIsAddHaarMeasure _ _
   haveI : (volume : Measure (GCo ε)).IsAddHaarMeasure := Measure.prod.instIsAddHaarMeasure _ _
   have hlamH : lam.IsAddHaarMeasure := eC.isAddHaarMeasure_map volume
-  obtain ⟨c, hc0, hct, hup, hdown⟩ := (ujChart ε).exists_density_unif' inferInstance mV ⟨rfl⟩ _
+  obtain ⟨c, hc0, hct, hup, hdown⟩ := HExp.Chart.exists_density_unif' (ujChart ε) inferInstance mV ⟨rfl⟩ _
     inferInstance inferInstance μ inferInstance lam (by exact hlamH)
   have himg : ∀ S : Set (GCo ε), (ujChart ε).img (eC '' S) = expSet S := by
     intro S
@@ -403,7 +397,7 @@ open Matrix Filter Topology
 
 namespace ReciprocityTheory.ChartRestriction.DS.HPol
 
-open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7
+open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7 Formalism.BasicNotions.Examples₂.CD
 
 variable {n : ℕ}
 
@@ -418,54 +412,24 @@ theorem exp_strict :
   first
   | exact hasStrictFDerivAt_exp_zero
 
-
 variable (n) in
 def logM : Matrix (Fin n) (Fin n) ℂ → Matrix (Fin n) (Fin n) ℂ :=
   (exp_strict (n := n)).localInverse _ _ _
 
-theorem logM_exp : ∀ᶠ X in 𝓝 (0 : Matrix (Fin n) (Fin n) ℂ), logM n (NormedSpace.exp X) = X := by
-  exact (exp_strict (n := n)).eventually_left_inverse
-
-theorem exp_logM : ∀ᶠ h in 𝓝 (1 : Matrix (Fin n) (Fin n) ℂ), NormedSpace.exp (logM n h) = h := by
-  have h := (exp_strict (n := n)).eventually_right_inverse
-  rw [NormedSpace.exp_zero] at h
-  exact h
-
-theorem logM_one : logM n 1 = 0 := by
-  have h := (exp_strict (n := n)).localInverse_apply_image
-  rw [NormedSpace.exp_zero] at h
-  exact h
-
-theorem logM_strict : HasStrictFDerivAt (logM n) (ContinuousLinearMap.id ℝ _) 1 := by
-  have h := (exp_strict (n := n)).to_localInverse
-  rw [NormedSpace.exp_zero] at h
-  exact h
-
 end Log
-
-theorem Jm_inv (ε : Fin n → Bool) : (Jm ε)⁻¹ = Jm ε := by
-  exact Matrix.inv_eq_left_inv (_root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self ε)
-
-theorem Jm_isUnit (ε : Fin n → Bool) : IsUnit (Jm ε) := by
-  exact ⟨⟨Jm ε, Jm ε, _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self ε, _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self ε⟩, rfl⟩
 
 theorem conjT_of_inG {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ} (h : inG ε Y) :
     Yᴴ = Jm ε * (-Y) * (Jm ε)⁻¹ := by
   have hJ := _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self ε
   have h' : Yᴴ * Jm ε + Jm ε * Y = 0 := h
   have h1 : Yᴴ * Jm ε = -(Jm ε * Y) := eq_neg_of_add_eq_zero_left h'
-  rw [Jm_inv]
+  rw [ReciprocityTheory.ChartRestriction.DS.PolarDecomposition.polar_Jinv]
   calc Yᴴ = Yᴴ * Jm ε * Jm ε := by rw [Matrix.mul_assoc, hJ, Matrix.mul_one]
     _ = Jm ε * (-Y) * Jm ε := by rw [h1, Matrix.mul_neg]
 
 theorem exp_inUJ {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ} (h : inG ε Y) :
     inUJ ε (NormedSpace.exp Y) := by
-  have hJ := _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self ε
-  show (NormedSpace.exp Y)ᴴ * Jm ε * NormedSpace.exp Y = Jm ε
-  rw [← Matrix.exp_conjTranspose, conjT_of_inG h, Matrix.exp_conj _ _ (Jm_isUnit ε), Jm_inv,
-    Matrix.mul_assoc (Jm ε * NormedSpace.exp (-Y)) (Jm ε) (Jm ε), hJ, Matrix.mul_one, Matrix.mul_assoc,
-    ← Matrix.exp_add_of_commute _ _ (Commute.neg_left (Commute.refl Y)), neg_add_cancel,
-    NormedSpace.exp_zero, Matrix.mul_one]
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.smd_exp_inUJ_lemma <;> assumption
 
 theorem inG_of_exp {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ} (ℓ : Matrix (Fin n) (Fin n) ℂ → Matrix (Fin n) (Fin n) ℂ)
     (hU : inUJ ε (NormedSpace.exp Y)) (h1 : ℓ (NormedSpace.exp Y) = Y)
@@ -477,8 +441,8 @@ theorem inG_of_exp {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ} (ℓ :
       NormedSpace.exp_zero]
   have key : NormedSpace.exp (Jm ε * (-Yᴴ) * Jm ε) = NormedSpace.exp Y := by
     have e1 : Jm ε * (-Yᴴ) * Jm ε = Jm ε * (-Y)ᴴ * (Jm ε)⁻¹ := by
-      rw [Jm_inv, Matrix.conjTranspose_neg]
-    rw [e1, Matrix.exp_conj _ _ (Jm_isUnit ε), Jm_inv, Matrix.exp_conjTranspose]
+      rw [ReciprocityTheory.ChartRestriction.DS.PolarDecomposition.polar_Jinv, Matrix.conjTranspose_neg]
+    rw [e1, Matrix.exp_conj _ _ (ReciprocityTheory.ChartRestriction.DS.PolarDecomposition.polar_J_unit ε), ReciprocityTheory.ChartRestriction.DS.PolarDecomposition.polar_Jinv, Matrix.exp_conjTranspose]
     calc Jm ε * (NormedSpace.exp (-Y))ᴴ * Jm ε
         = Jm ε * (NormedSpace.exp (-Y))ᴴ * ((NormedSpace.exp Y)ᴴ * Jm ε * NormedSpace.exp Y) := by
           rw [hU']
@@ -608,21 +572,18 @@ open scoped NNReal ENNReal
 
 namespace ReciprocityTheory.ChartRestriction.DS.HPol
 
-open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7
+open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7 Formalism.BasicNotions.Examples₂.CD
 
 variable {n : ℕ}
 
 theorem pmat_zero' (ε : Fin n → Bool) : pmat (0 : PCoord ε → ℂ) = 0 := by
   ext a b; simp [pmat]
 
-theorem kMat_zero' (ε : Fin n → Bool) : kMat (0 : KCo ε) = 0 := by
-  ext a b; simp [kMat]
-
 theorem gMat_fst {ε : Fin n → Bool} (w : KCo ε) : gMat ((w, 0) : GCo ε) = kMat w := by
   simp [gMat, pmat_zero']
 
 theorem gMat_snd {ε : Fin n → Bool} (z : PCoord ε → ℂ) : gMat ((0, z) : GCo ε) = pmat z := by
-  simp [gMat, kMat_zero']
+  simp [gMat, ReciprocityTheory.ChartRestriction.DS.compactMatrix_zero]
 
 def gLin (ε : Fin n → Bool) : GCo ε →ₗ[ℝ] Matrix (Fin n) (Fin n) ℂ where
   toFun := gMat
@@ -636,17 +597,10 @@ def gLin (ε : Fin n → Bool) : GCo ε →ₗ[ℝ] Matrix (Fin n) (Fin n) ℂ w
       Pi.smul_apply, RingHom.id_apply]
     split_ifs <;> simp [Complex.real_smul] <;> ring
 
-theorem inUJ_mul {ε : Fin n → Bool} {g h : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) (hh : inUJ ε h) :
-    inUJ ε (g * h) := by
-  unfold inUJ at *
-  rw [Matrix.conjTranspose_mul]
-  calc hᴴ * gᴴ * Jm ε * (g * h) = hᴴ * (gᴴ * Jm ε * g) * h := by simp only [Matrix.mul_assoc]
-    _ = Jm ε := by rw [hg, hh]
-
 theorem inUJ_pol {ε : Fin n → Bool} (s : GCo ε) :
     inUJ ε (NormedSpace.exp (kMat s.1) * NormedSpace.exp (pmat s.2)) := by
   rw [← gMat_fst, ← gMat_snd]
-  exact inUJ_mul (exp_inUJ (inG_gMat _)) (exp_inUJ (inG_gMat _))
+  exact ReciprocityTheory.ChartRestriction.DS.pact_inUJ_mul (exp_inUJ (inG_gMat _)) (exp_inUJ (inG_gMat _))
 
 def Lm {ε : Fin n → Bool} (s : GCo ε) : GCo ε :=
   cLin ε (logM n (NormedSpace.exp (kMat s.1) * NormedSpace.exp (pmat s.2)))
@@ -677,7 +631,7 @@ theorem prod_strict (ε : Fin n → Bool) :
     funext s; rw [Pi.mul_apply, ek, ep]
   rw [hf] at h
   refine h.congr_fderiv (ContinuousLinearMap.ext fun s => ?_)
-  have e0 : kMat (0 : GCo ε).1 = 0 := kMat_zero' ε
+  have e0 : kMat (0 : GCo ε).1 = 0 := ReciprocityTheory.ChartRestriction.DS.compactMatrix_zero ε
   have e1 : pmat (0 : GCo ε).2 = 0 := pmat_zero' ε
   change NormedSpace.exp (kL 0) * pL s + kL s * NormedSpace.exp (pL 0) = gMat s
   rw [ek, ep, ek, ep, e0, e1, NormedSpace.exp_zero, Matrix.one_mul, Matrix.mul_one, add_comm]
@@ -686,7 +640,7 @@ theorem prod_strict (ε : Fin n → Bool) :
 theorem Lm_strict (ε : Fin n → Bool) :
     HasStrictFDerivAt (Lm (ε := ε)) (ContinuousLinearMap.id ℝ (GCo ε)) 0 := by
   have h0 : (fun s : GCo ε => NormedSpace.exp (kMat s.1) * NormedSpace.exp (pmat s.2)) 0 = 1 := by
-    simp [kMat_zero', pmat_zero']
+    simp [ReciprocityTheory.ChartRestriction.DS.compactMatrix_zero, pmat_zero']
   have hl : HasStrictFDerivAt (logM n) (ContinuousLinearMap.id ℝ _)
       ((fun s : GCo ε => NormedSpace.exp (kMat s.1) * NormedSpace.exp (pmat s.2)) 0) := by
     have h := (exp_strict (n := n)).to_localInverse
@@ -708,7 +662,7 @@ attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebr
 theorem Lm_exp (ε : Fin n → Bool) : ∀ᶠ s in 𝓝 (0 : GCo ε),
     NormedSpace.exp (gMat (Lm s)) = NormedSpace.exp (kMat s.1) * NormedSpace.exp (pmat s.2) := by
   have hP0 : NormedSpace.exp (kMat (0 : GCo ε).1) * NormedSpace.exp (pmat (0 : GCo ε).2) = 1 := by
-    simp [kMat_zero', pmat_zero']
+    simp [ReciprocityTheory.ChartRestriction.DS.compactMatrix_zero, pmat_zero']
   have hP : Tendsto (fun s : GCo ε => NormedSpace.exp (kMat s.1) * NormedSpace.exp (pmat s.2))
       (𝓝 0) (𝓝 1) := by
     have := (prod_strict ε).continuousAt.tendsto
@@ -761,7 +715,7 @@ theorem Lm_zero (ε : Fin n → Bool) : Lm (0 : GCo ε) = 0 := by
   have h := (exp_strict (n := n)).localInverse_apply_image
   rw [NormedSpace.exp_zero] at h
   have hzero : logM n 1 = 0 := h
-  simp [Lm, kMat_zero', pmat_zero', hzero]
+  simp [Lm, ReciprocityTheory.ChartRestriction.DS.compactMatrix_zero, pmat_zero', hzero]
 
 instance borel_gco (ε : Fin n → Bool) : BorelSpace (GCo ε) := Prod.borelSpace
 

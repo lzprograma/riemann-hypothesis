@@ -1,5 +1,6 @@
 module
 
+import all ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousConjProjection
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
 public import Mathlib.Analysis.InnerProductSpace.Trace
 public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
@@ -112,28 +113,7 @@ lemma conjE_apply (T : KType ε Λ) (k : KG ε) (A : T.V →L[ℂ] T.V) :
 
 lemma schur (T : KType ε Λ) (A : T.V →L[ℂ] T.V) (hA : ∀ k, T.op k * A = A * T.op k) :
     ∃ c : ℂ, A = c • (1 : T.V →L[ℂ] T.V) := by
-  by_cases hV : Nontrivial T.V
-  · obtain ⟨c, hc⟩ := Module.End.exists_eigenvalue (A : T.V →ₗ[ℂ] T.V)
-    have hinv : ∀ k : KG ε, ∀ v ∈ Module.End.eigenspace (A : T.V →ₗ[ℂ] T.V) c,
-        ((T.τ k : unitary (T.V →L[ℂ] T.V)) : T.V →L[ℂ] T.V) v ∈
-          Module.End.eigenspace (A : T.V →ₗ[ℂ] T.V) c := by
-      intro k v hv
-      rw [Module.End.mem_eigenspace_iff] at hv ⊢
-      have e := congrArg (fun B : T.V →L[ℂ] T.V => B v) (hA k)
-      simp only [ContinuousLinearMap.mul_apply] at e
-      change A (T.op k v) = c • T.op k v
-      rw [← e]
-      change T.op k ((A : T.V →ₗ[ℂ] T.V) v) = _
-      rw [hv, map_smul]
-    rcases T.irred _ hinv with h | h
-    · obtain ⟨v, hv⟩ := hc.exists_hasEigenvector
-      exact absurd ((Submodule.mem_bot ℂ).mp (h ▸ hv.1)) hv.2
-    · refine ⟨c, ContinuousLinearMap.ext fun v => ?_⟩
-      have hv : v ∈ Module.End.eigenspace (A : T.V →ₗ[ℂ] T.V) c := h ▸ Submodule.mem_top
-      rw [Module.End.mem_eigenspace_iff] at hv
-      simpa using hv
-  · haveI : Subsingleton T.V := not_nontrivial_iff_subsingleton.mp hV
-    exact ⟨0, ContinuousLinearMap.ext fun v => Subsingleton.elim _ _⟩
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.S7.kType_schur_lemma <;> assumption
 
 lemma cont_op (T : KType ε Λ) : Continuous fun k : KG ε => T.op k := continuous_subtype_val.comp T.cont
 

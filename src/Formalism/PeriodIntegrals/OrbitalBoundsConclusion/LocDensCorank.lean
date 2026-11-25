@@ -18,62 +18,11 @@ public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DensInert
 public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
 public import Formalism.PeriodIntegrals.LocDensCorank
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.ResidueEqZeroIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.Valuation.Extension
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
-import Mathlib.RingTheory.Valuation.Integral
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.Development
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.TotallySplit
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.IndepOf, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CardCount, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.FlbHZeroRight, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.FlatBasisOf, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGFR, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.FrIcFree, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ResidueFieldCount, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.FieldCountHolds, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.EulerFactorTwo, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.CongruenceDensity, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.LocDensCorankOfCounts, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocDensCorank
@@ -224,7 +173,7 @@ theorem sat_of (hR : RedData ϖ k r n b Λ) (hϖ : Irreducible ϖ)
       exact hdu.smul_left_cancel.mp h0
     rw [hx0]
     exact zero_mem _
-  push_neg at hall
+  push Not at hall
   obtain ⟨a0, ha0⟩ := hall
   obtain ⟨j, z, hz, hzeq, a1, ha1⟩ :=
     minpow hR hϖ o3 (fun a => ((h a : M.L.O) : E)) (fun a => (h a).2) a0 ha0
@@ -255,7 +204,7 @@ theorem sat_of (hR : RedData ϖ k r n b Λ) (hϖ : Irreducible ϖ)
     have h3 := Submodule.smul_mem (Submodule.span M.L.O (Set.range v)) (⟨_, hmem⟩ : M.L.O)
       (Submodule.subset_span ⟨a, rfl⟩)
     rwa [Subring.smul_def] at h3
-  · push_neg at hjm
+  · push Not at hjm
     rw [show m = j + ((m - j - 1) + 1) by omega, pow_add, mul_smul] at key
     have e1 := (hϖu.pow j).smul_left_cancel.mp key
     have hzs : ∑ a, z a • v a = algebraMap F E (ϖ : F) •
@@ -375,14 +324,6 @@ namespace PI.UnitaryGroupMassFormula.CntFormula
 open Formalism.MainNotions.S Module
 open ValuativeRel
 
-theorem flb_int_mem {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [CommRing E]
-    [Algebra F E] [TopologicalSpace E] (L : Loc.LocE F E) (a : 𝒪[F]) : algebraMap F E a ∈ L.O := by
-  exact (L.O_def _).2 isIntegral_algebraMap
-
-theorem flb_cj_mem {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [CommRing E]
-    [Algebra F E] [TopologicalSpace E] (L : Loc.LocE F E) {x : E} (hx : x ∈ L.O) : L.cj x ∈ L.O := by
-  exact (L.O_def _).2 (((L.O_def x).1 hx).map ((L.cj : E →ₐ[F] E).restrictScalars 𝒪[F]))
-
 theorem flb_pid {E : Type} [CommRing E] (S : Subring E) (p : E) (hp : p ∈ S)
     (hfac : ∀ x ∈ S, x ≠ 0 → ∃ k : ℕ, ∃ u ∈ S, (∃ w ∈ S, u * w = 1) ∧ x = p ^ k * u) :
     IsPrincipalIdealRing S := by
@@ -485,8 +426,7 @@ theorem flb_main {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [C
           Q * Matrix.of (fun k l => H.h (b k) (b l)) = 1 := by
   classical
   haveI : NoZeroDivisors E := ⟨fun {a b} hab => by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     obtain ⟨u, hu⟩ := hE a hne.1
     apply hne.2
     have h2 := congrArg (fun t => (↑u⁻¹ : E) * t) hab
@@ -600,8 +540,8 @@ theorem flb_main {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [C
     intro y hy
     obtain ⟨c, hcO, rfl⟩ := hexpb y hy
     rw [flb_h_sum_right]
-    simp only [hdb, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
-    exact flb_cj_mem M.L (hcO k)
+    simp only [hdb, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+    exact PI.UnitaryGroupMassFormula.CntFormula.fl_cj_mem M.L (hcO k)
   obtain ⟨c', hc'O, hc'⟩ := hexpb d hdΛ
   have hz : ∑ m', (G⁻¹ k m' - c' m') • b m' = 0 := by
     simp only [sub_smul, Finset.sum_sub_distrib]
@@ -616,10 +556,10 @@ theorem flatBasis_of (h1 : FLocO) : FLatBasis := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[F]
   obtain ⟨-, hden0, hfac⟩ := h1 F E M.L hF hc hE ϖ hϖ
   have hnt : Nontrivial E := Module.nontrivial_of_finrank_pos (R := F) (by rw [M.L.rank]; norm_num)
-  refine flb_main M hE hnt ?_ (flb_pid M.L.O _ (flb_int_mem M.L ϖ) hfac) V H Λ hΛ
+  refine flb_main M hE hnt ?_ (flb_pid M.L.O _ (PI.UnitaryGroupMassFormula.CntFormula.fl_int_mem M.L ϖ) hfac) V H Λ hΛ
   intro x
   obtain ⟨c, hc0, hcx⟩ := hden0 x
-  refine ⟨_, flb_int_mem M.L c, ?_, hcx⟩
+  refine ⟨_, PI.UnitaryGroupMassFormula.CntFormula.fl_int_mem M.L c, ?_, hcx⟩
   have hcF : (c : F) ≠ 0 := by exact_mod_cast hc0
   exact (map_ne_zero_iff _ (algebraMap F E).injective).mpr hcF
 
@@ -1187,7 +1127,7 @@ theorem locE_isUnit_or_exists_algEquiv_prod_swap {F E : Type} [Field F] [Valuati
         simp only [Prod.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply]
         rw [← smul_add, hpq, Algebra.algebraMap_eq_smul_one] }
   have ginj : Function.Injective g := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro z hz
     have hz' : z.1 • p + z.2 • q = 0 := hz
     have h1 : z.1 • p = 0 := by

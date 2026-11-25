@@ -151,7 +151,3 @@ theorem isUnit_det {m : ℕ} (h : Pt E m) : IsUnit h.mat.det := by
   exact isUnit_det_of_mem_UH_Hpk h.blocks m h.size
 
 end GlobalTheory.SgLoc.PtAlg
-
-namespace GlobalTheory.SgLoc
-
-end GlobalTheory.SgLoc

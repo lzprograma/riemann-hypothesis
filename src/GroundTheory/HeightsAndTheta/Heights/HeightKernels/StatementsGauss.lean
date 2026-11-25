@@ -100,27 +100,6 @@ def GaussShellSum.Statement : Prop :=
 def GaussConstant.Statement : Prop :=
   ∀ (n : ℕ), 1 ≤ n → √2 ^ n * (2 * gaussShellConst n) ≤ (72 * Real.exp 4 * n) ^ ((n : ℝ) / 2)
 
-abbrev gaussUnit : EuclideanSpace ℝ (Fin 1) := WithLp.toLp 2 (Pi.single 0 1)
-
-theorem gaussUnit_norm : ‖gaussUnit‖ = 1 := by
-  simp [gaussUnit]
-
-theorem mem_gaussLattice_one {x : EuclideanSpace ℝ (Fin 1)} :
-    x ∈ gaussLattice (1 : Matrix (Fin 1) (Fin 1) ℝ) ↔ ∃ a : ℤ, a • gaussUnit = x := by
-  have h : (Set.range fun i : Fin 1 => WithLp.toLp 2 ((1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ
-      Pi.single i 1)) = {gaussUnit} := by
-    rw [Set.range_unique, Matrix.one_mulVec]
-    rfl
-  rw [gaussLattice, h, Submodule.mem_span_singleton]
-
-theorem gaussLattice_one_min : ∀ v ∈ gaussLattice (1 : Matrix (Fin 1) (Fin 1) ℝ), v ≠ 0 →
-    (1 : ℝ) ≤ ‖v‖ := by
-  intro v hv hv0
-  obtain ⟨a, rfl⟩ := mem_gaussLattice_one.1 hv
-  have ha : a ≠ 0 := by rintro rfl; exact hv0 (zero_smul _ _)
-  rw [← Int.cast_smul_eq_zsmul ℝ, norm_smul, gaussUnit_norm, mul_one, Real.norm_eq_abs]
-  exact_mod_cast Int.one_le_abs ha
-
 end
 
 end GroundTheory.Heights₂.Heights

@@ -150,7 +150,7 @@ theorem coeff_int {O : Type} [CommRing O] {bar : O → O} {X : Type} [AddCommGro
     · simp [h']
   simp only [hc] at this
   simp only [Int.cast_ite, Int.cast_one, Int.cast_zero, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true] at this
+    Finset.mem_univ, ite_true] at this
   linarith
 
 theorem exists_cone : ∀ (O : Type) [CommRing O] (bar : O → O) (φ : InvFun O) (X : Type) [AddCommGroup X] [Module O X]

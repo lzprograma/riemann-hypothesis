@@ -35,7 +35,7 @@ theorem exists_proj {E : Type} [Field E] {N n : ℕ} (hN : n + 1 = N) (A : Matri
     simpa [Matrix.mul_apply, Matrix.one_apply] using e
   · funext a
     have e := congrFun (congrFun h (Fin.castSucc a)) (Fin.last n)
-    simp only [Matrix.mul_apply, hBdef, of_apply, Fin.val_last, lt_irrefl, dif_neg, not_false_eq_true] at e
+    simp only [Matrix.mul_apply, hBdef, of_apply, Fin.val_last, lt_irrefl, dite_eq_right, not_false_eq_true] at e
     simpa [mulVec, dotProduct, (Fin.castSucc_lt_last a).ne] using e
 
 theorem cT_ext_unitary {A : Type} [CommRing A] (τ : A →+* A) {N n : ℕ} (I : Matrix (Fin N) (Fin n) A)

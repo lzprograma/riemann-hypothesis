@@ -92,15 +92,7 @@ noncomputable section
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.NodalSeriesPeriods
 
-abbrev Qbar : Type := ↥(algebraicClosure ℚ ℂ)
-
-abbrev Place (p : ℕ) [Fact p.Prime] : Type := Qbar →+* ℂ_[p]
-
 abbrev incl (p : ℕ) [Fact p.Prime] : 𝓞_ℂ_[p] →+* ℂ_[p] := algebraMap 𝓞_ℂ_[p] ℂ_[p]
-
-def IsModel {p : ℕ} [Fact p.Prime] (E : WeierstrassCurve ℂ_[p]) (W : WeierstrassCurve 𝓞_ℂ_[p])
-    (C : WeierstrassCurve.VariableChange ℂ_[p]) : Prop :=
-  C • E = W.map (incl p) ∧ IsUnit W.Δ
 
 section Expansion
 
@@ -827,10 +819,6 @@ theorem thue_normSq (d e : ℕ) (he : d + 1 = 4 * e) (u v : ℤ) :
   push_cast
   linear_combination ((v : ℝ) ^ 2 / 4) * hs + ((v : ℝ) ^ 2 / 4) * he'
 
-theorem thue_norm_zc {q : ℕ} [Fact q.Prime] (a : ℤ_[q]) : ‖zc a‖ = ‖a‖ := by
-  unfold zc
-  rw [norm_algebraMap', PadicInt.padic_norm_e_of_padicInt]
-
 theorem thue_pigeon {q : ℕ} [Fact q.Prime] (a : ℤ_[q]) (k : ℕ) :
     ∃ u v : ℤ, (u ≠ 0 ∨ v ≠ 0) ∧ u ^ 2 ≤ (q : ℤ) ^ k ∧ v ^ 2 ≤ (q : ℤ) ^ k ∧
       ‖(u : ℤ_[q]) + (v : ℤ_[q]) * a‖ ≤ (q : ℝ) ^ (-(k : ℤ)) := by
@@ -853,8 +841,7 @@ theorem thue_pigeon {q : ℕ} [Fact q.Prime] (a : ℤ_[q]) (k : ℕ) :
     refine le_trans ?_ hm2
     apply sq_le_sq' <;> omega
   refine ⟨((x.1 : ℕ) : ℤ) - ((y.1 : ℕ) : ℤ), ((x.2 : ℕ) : ℤ) - ((y.2 : ℕ) : ℤ), ?_, hb _ _, hb _ _, ?_⟩
-  · by_contra h
-    push_neg at h
+  · by_contra! h
     apply hxy
     ext
     · have := h.1; omega
@@ -893,7 +880,7 @@ theorem exists_small_in_prime_pow : ∀ (d q : ℕ) [Fact q.Prime] (ι : ℂ ≃
   · have : ι ((u : ℂ) + (v : ℂ) * wK d) = zc ((u : ℤ_[q]) + (v : ℤ_[q]) * a) := by
       rw [map_add (f := _), map_mul, ha]
       simp [zc]
-    rw [this, thue_norm_zc]
+    rw [this, GlobalTheory.MomOne.MulSeries.norm_zc]
     exact hn
   · rw [Complex.mul_conj, hN, hNe]
     simp
@@ -922,7 +909,6 @@ namespace GlobalTheory.MomOne.MulDegree
 
 section Lattice
 open Module
-
 
 set_option backward.isDefEq.respectTransparency false in
 theorem relIndex_eq_abs_det {ι : Type} [Fintype ι] [DecidableEq ι] (b₁ b₂ : Basis ι ℝ ℂ) {L₁ L₂ : AddSubgroup ℂ}
@@ -1171,7 +1157,7 @@ theorem norm_le_of_bdT (xs : ℂ_[q]⟦X⟧) (k : ℕ) (c : ℕ → ℂ_[q]) (B 
     have h1 := hB (2 * n) (by omega)
 
     rw [← Finset.add_sum_erase _ _ (Finset.mem_range.mpr (Nat.lt_succ_of_le hj)), map_add (f := _), map_sum, mul_assoc,
-    coeff_C_mul, coeff_X_pow_mul', if_pos (by omega), hn, Nat.sub_self, coeff_zero_eq_constantCoeff] at h1
+    coeff_C_mul, coeff_X_pow_mul', ite_eq_left (by omega), hn, Nat.sub_self, coeff_zero_eq_constantCoeff] at h1
     have h2 : ‖∑ l ∈ (Finset.range (k + 1)).erase j, coeff (2 * n) (C (c l) * X ^ (2 * (k - l)) * xs ^ l)‖ ≤ B := by
       refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hB0 ?_
       intro l hl
@@ -1493,22 +1479,12 @@ theorem van_mul {f g : ℂ_[q]⟦X⟧} {a b : ℕ} (hf : Bd 1 f) (hg : Bd 1 g) (
   · rw [mul_comm]
     exact norm_mul_lt_left (hb _ (by omega)) (hf _)
 
-theorem bd_pow {g : ℂ_[q]⟦X⟧} (hg : Bd 1 g) (d : ℕ) : Bd 1 (g ^ d) := by
-  induction d with
-  | zero =>
-    intro n
-    rw [pow_zero, coeff_one]
-    split_ifs <;> simp
-  | succ d ih =>
-    have := ((sup_norm_laws q).1 _ _ _ _ ih hg).2
-    rwa [one_mul, ← pow_succ] at this
-
 theorem van_pow {g : ℂ_[q]⟦X⟧} {r : ℕ} (hg : Bd 1 g) (hr : Van r g) (d : ℕ) : Van (d * r) (g ^ d) := by
   induction d with
   | zero => intro n hn; omega
   | succ d ih =>
     rw [add_mul, one_mul, pow_succ]
-    exact van_mul (bd_pow hg d) hg ih hr
+    exact van_mul (GlobalTheory.MomOne.Triang.bd_one_pow hg d) hg ih hr
 
 theorem van_subst {f g : ℂ_[q]⟦X⟧} {m r : ℕ} (hf : Bd 1 f) (hg : Bd 1 g) (h0 : constantCoeff g = 0)
     (hm : Van m f) (hr : Van r g) : Van (m * r) (f.subst g) := by
@@ -1517,7 +1493,7 @@ theorem van_subst {f g : ℂ_[q]⟦X⟧} {m r : ℕ} (hf : Bd 1 f) (hg : Bd 1 g)
   refine finsum_induction (fun x => ‖x‖ < 1) (by simp) (fun _ _ => norm_add_lt) fun d => ?_
   rw [smul_eq_mul]
   by_cases h : d < m
-  · exact norm_mul_lt_left (hm _ h) (bd_pow hg d n)
+  · exact norm_mul_lt_left (hm _ h) (GlobalTheory.MomOne.Triang.bd_one_pow hg d n)
   · rw [mul_comm]
     exact norm_mul_lt_left (van_pow hg hr d n (hn.trans_le (Nat.mul_le_mul_right r (by omega)))) (hf d)
 
@@ -1629,7 +1605,7 @@ theorem padic_multiplications : ∀ (q : ℕ) [Fact q.Prime] (F : FormalGroup �
       rw [hW]
       linear_combination hT + ((d⁄dX U).subst ℓ : ℂ_[q]⟦X⟧) * hh'
     have := hbd (m + N)
-    rw [e, map_add (f := _), map_add (f := _), coeff_X_pow_mul, coeff_X, if_neg (by omega), coeff_X_pow_mul', if_neg (by omega)] at this
+    rw [e, map_add (f := _), map_add (f := _), coeff_X_pow_mul, coeff_X, ite_eq_right (by omega), coeff_X_pow_mul', ite_eq_right (by omega)] at this
     simpa using this
   have hq1 : ‖(q : ℂ_[q])‖ < 1 := by
     rw [← zc_natCast, norm_zc, PadicInt.norm_p]

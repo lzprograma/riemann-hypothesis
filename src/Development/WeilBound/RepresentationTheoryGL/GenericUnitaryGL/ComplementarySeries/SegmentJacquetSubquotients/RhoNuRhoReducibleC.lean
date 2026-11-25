@@ -465,7 +465,7 @@ theorem bound_main : Bound k := by
     exact hu (hf1.symm.trans h1)
   have hni : ¬ Function.Injective S := fun hi => hns (LinearMap.injective_iff_surjective.1 hi)
   rw [injective_iff_map_eq_zero] at hni
-  push_neg at hni
+  push Not at hni
   obtain ⟨y, hSy, hy0⟩ := hni
   have hAy : A y = μ • (y : IndSp (blk2 d) τ) := by
     have := congrArg Subtype.val hSy
@@ -507,272 +507,12 @@ noncomputable section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.SplitWeil
 
-namespace PositivityTheory.RgGu.NR.Compact
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {d : ℕ}
-
-theorem isOpen_fix {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V]
-    [Module ℂ V] (ρ : Representation ℂ G V) (v : V) (U : Set G) (hU : IsOpen U) (h1 : (1 : G) ∈ U)
-    (hfix : ∀ u ∈ U, ρ u v = v) : IsOpen {g : G | ρ g v = v} := by
-  rw [isOpen_iff_mem_nhds]
-  intro g hg
-  have hgU : (fun x => g * x) '' U ∈ nhds g := by
-    have ho : IsOpen ((fun x => g * x) '' U) := (Homeomorph.mulLeft g).isOpenMap U hU
-    exact ho.mem_nhds ⟨1, h1, mul_one g⟩
-  refine Filter.mem_of_superset hgU ?_
-  rintro _ ⟨u, hu, rfl⟩
-  show ρ (g * u) v = v
-  rw [map_mul, Module.End.mul_apply, hfix u hu]
-  exact hg
-
-def rc (m : Levi k fun _ : Fin 2 => Fin d) : ℝ :=
-  (nabs k (Matrix.GeneralLinearGroup.det (m 0)))⁻¹ * nabs k (Matrix.GeneralLinearGroup.det (m 1))
-
-theorem rc_pos (m : Levi k fun _ : Fin 2 => Fin d) : 0 < rc m := by
-  unfold rc
-  have h0 := nabs_pos' k (Matrix.GeneralLinearGroup.det (m 0))
-  have h1 := nabs_pos' k (Matrix.GeneralLinearGroup.det (m 1))
-  positivity
-
-theorem rc_mul (m m' : Levi k fun _ : Fin 2 => Fin d) : rc (m * m') = rc m * rc m' := by
-  unfold rc
-  simp only [Pi.mul_apply, map_mul, nabs_mul', mul_inv]
-  ring
-
-theorem chi_val (s : ℝ) (m : Levi k fun _ : Fin 2 => Fin d) :
-    ((chi k d s m : ℂˣ) : ℂ) = ((rc m ^ s : ℝ) : ℂ) := by
-  have e : -(s : ℂ) = ((-s : ℝ) : ℂ) := by push_cast; ring
-  simp only [chi, MonoidHom.mul_apply, Units.val_mul, MonoidHom.comp_apply, Pi.evalMonoidHom_apply,
-    detChar_apply]
-  rw [e, val_absPow_ofReal, val_absPow_ofReal, ← Complex.ofReal_mul]
-  congr 1
-  unfold rc
-  have h0 := (nabs_pos' k (Matrix.GeneralLinearGroup.det (m 0))).le
-  have h1 := (nabs_pos' k (Matrix.GeneralLinearGroup.det (m 1))).le
-  rw [Real.mul_rpow (inv_nonneg.2 h0) h1, Real.inv_rpow h0, Real.rpow_neg h0]
-
-theorem rc_of_KO (q : parab k (blk2 d)) (hq : (q : GL (Fin (d + d)) k) ∈ KO k (Fin (d + d))) :
-    rc (leviProj k (blk2 d) q) = 1 := by
-  have hK : ∀ a, leviProj k (blk2 d) q a ∈ KO k (Fin d) := by
-    intro a
-    rw [GlobalTheory.SplitFlip.mem_KO_iff]
-    obtain ⟨h1, h2⟩ := (GlobalTheory.SplitFlip.mem_KO_iff _).1 hq
-    refine ⟨fun i j => ?_, fun i j => ?_⟩
-    · rw [leviProj_apply]; exact h1 _ _
-    · have e : (leviProj k (blk2 d) q a)⁻¹ = leviProj k (blk2 d) q⁻¹ a := by rw [map_inv]; rfl
-      rw [e, leviProj_apply]
-      exact h2 _ _
-  unfold rc
-  rw [GlobalTheory.LGrp.nabs_det_of_mem_KO (hK 0), GlobalTheory.LGrp.nabs_det_of_mem_KO (hK 1)]
-  simp
-
-theorem exists_pw (x : GL (Fin (d + d)) k) :
-    ∃ p : parab k (blk2 d), ∃ w ∈ KO k (Fin (d + d)), x = (p : GL (Fin (d + d)) k) * w := by
-  obtain ⟨u, g, w, hw, rfl⟩ := GlobalTheory.SmGL.UnitInd.exists_iwasawa (blk2 d) x
-  have hg : leviEmb k (blk2 d) g ∈ parab k (blk2 d) :=
-    mem_parab_iff.2 fun _ _ i j hab => by
-      simp [leviEmb, Matrix.blockDiagonal'_apply', hab.ne']
-  exact ⟨⟨(u : GL (Fin (d + d)) k) * leviEmb k (blk2 d) g,
-    mul_mem (unipRad_le_parab k (blk2 d) u.2) hg⟩, w, hw, rfl⟩
-
-def hh (x : GL (Fin (d + d)) k) : ℝ := rc (leviProj k (blk2 d) (Classical.choose (exists_pw x)))
-
-theorem hh_spec (p : parab k (blk2 d)) (w : GL (Fin (d + d)) k) (hw : w ∈ KO k (Fin (d + d))) :
-    hh ((p : GL (Fin (d + d)) k) * w) = rc (leviProj k (blk2 d) p) := by
-  obtain ⟨w', hw', e⟩ := Classical.choose_spec (exists_pw ((p : GL (Fin (d + d)) k) * w))
-  set p' := Classical.choose (exists_pw ((p : GL (Fin (d + d)) k) * w))
-  have hq : ((p'⁻¹ * p : parab k (blk2 d)) : GL (Fin (d + d)) k) ∈ KO k (Fin (d + d)) := by
-    have : ((p'⁻¹ * p : parab k (blk2 d)) : GL (Fin (d + d)) k) = w' * w⁻¹ := by
-      rw [Subgroup.coe_mul, Subgroup.coe_inv, inv_mul_eq_iff_eq_mul, ← mul_assoc, ← e]
-      group
-    rw [this]
-    exact mul_mem hw' (inv_mem hw)
-  have h1 : p = p' * (p'⁻¹ * p) := by group
-  show rc (leviProj k (blk2 d) p') = _
-  conv_rhs => rw [h1, map_mul, rc_mul, rc_of_KO _ hq, mul_one]
-
-theorem hh_pos (x : GL (Fin (d + d)) k) : 0 < hh x := rc_pos _
-
-theorem hh_mul_left (p : parab k (blk2 d)) (x : GL (Fin (d + d)) k) :
-    hh ((p : GL (Fin (d + d)) k) * x) = rc (leviProj k (blk2 d) p) * hh x := by
-  obtain ⟨p', w, hw, rfl⟩ := exists_pw (d := d) x
-  rw [← mul_assoc, ← Subgroup.coe_mul, hh_spec _ _ hw, hh_spec _ _ hw, map_mul, rc_mul]
-
-theorem hh_mul_right (x w : GL (Fin (d + d)) k) (hw : w ∈ KO k (Fin (d + d))) : hh (x * w) = hh x := by
-  obtain ⟨p', w', hw', rfl⟩ := exists_pw (d := d) x
-  rw [mul_assoc, hh_spec _ _ (mul_mem hw' hw), hh_spec _ _ hw']
-
-variable {W : Type} [AddCommGroup W] [Module ℂ W]
-
-def mulFun (a : ℝ) (f : GL (Fin (d + d)) k → W) : GL (Fin (d + d)) k → W := fun x => ((hh x ^ a : ℝ) : ℂ) • f x
-
-theorem mulFun_mem (a : ℝ) (τ₁ τ₂ : Representation ℂ (Levi k fun _ : Fin 2 => Fin d) W)
-    (hrel : ∀ m v, τ₂ m v = ((rc m ^ a : ℝ) : ℂ) • τ₁ m v) (f : IndSp (blk2 d) τ₁) :
-    mulFun a f.1.1 ∈ indSpace (parab k (blk2 d)) ((twist τ₂ (deltaHalf k fun _ : Fin 2 => Fin d)).comp
-      (leviProj k (blk2 d))) := by
-  intro p g
-  show ((hh ((p : GL (Fin (d + d)) k) * g) ^ a : ℝ) : ℂ) • f.1.1 ((p : GL (Fin (d + d)) k) * g) =
-    (deltaHalf k (fun _ : Fin 2 => Fin d) (leviProj k (blk2 d) p) : ℂ) •
-      τ₂ (leviProj k (blk2 d) p) (((hh g ^ a : ℝ) : ℂ) • f.1.1 g)
-  have hf : f.1.1 ((p : GL (Fin (d + d)) k) * g) =
-      (deltaHalf k (fun _ : Fin 2 => Fin d) (leviProj k (blk2 d) p) : ℂ) • τ₁ (leviProj k (blk2 d) p) (f.1.1 g) :=
-    f.1.2 p g
-  rw [hf, hrel, hh_mul_left, Real.mul_rpow (rc_pos _).le (hh_pos _).le]
-  simp only [map_smul, smul_smul, Complex.ofReal_mul]
-  congr 1
-  ring
-
-theorem mulFun_smooth (a : ℝ) (τ₁ τ₂ : Representation ℂ (Levi k fun _ : Fin 2 => Fin d) W)
-    (hrel : ∀ m v, τ₂ m v = ((rc m ^ a : ℝ) : ℂ) • τ₁ m v) (f : IndSp (blk2 d) τ₁) :
-    (⟨mulFun a f.1.1, mulFun_mem a τ₁ τ₂ hrel f⟩ : indSpace _ _) ∈ smoothPart (ind (parab k (blk2 d))
-      ((twist τ₂ (deltaHalf k fun _ : Fin 2 => Fin d)).comp (leviProj k (blk2 d)))) := by
-  have hf2 : IsOpen {g : GL (Fin (d + d)) k | ind (parab k (blk2 d))
-      ((twist τ₁ (deltaHalf k fun _ : Fin 2 => Fin d)).comp (leviProj k (blk2 d))) g f.1 = f.1} := f.2
-  refine isOpen_fix (ind (parab k (blk2 d)) ((twist τ₂ (deltaHalf k fun _ : Fin 2 => Fin d)).comp
-      (leviProj k (blk2 d)))) _ _ (hf2.inter GlobalTheory.SplitFlip.isOpen_KO) ⟨by simp, one_mem _⟩ ?_
-  rintro u ⟨hu1, hu2⟩
-  apply Subtype.ext
-  funext x
-  show ((hh (x * u) ^ a : ℝ) : ℂ) • f.1.1 (x * u) = ((hh x ^ a : ℝ) : ℂ) • f.1.1 x
-  have hf : f.1.1 (x * u) = f.1.1 x := congrFun (congrArg Subtype.val hu1) x
-  rw [hh_mul_right x u hu2, hf]
-
-def mulMap (a : ℝ) (τ₁ τ₂ : Representation ℂ (Levi k fun _ : Fin 2 => Fin d) W)
-    (hrel : ∀ m v, τ₂ m v = ((rc m ^ a : ℝ) : ℂ) • τ₁ m v) : IndSp (blk2 d) τ₁ →ₗ[ℂ] IndSp (blk2 d) τ₂ where
-  toFun f := ⟨⟨mulFun a f.1.1, mulFun_mem a τ₁ τ₂ hrel f⟩, mulFun_smooth a τ₁ τ₂ hrel f⟩
-  map_add' f g := by
-    apply Subtype.ext; apply Subtype.ext; funext x
-    show ((hh x ^ a : ℝ) : ℂ) • (f.1.1 x + g.1.1 x) = ((hh x ^ a : ℝ) : ℂ) • f.1.1 x + ((hh x ^ a : ℝ) : ℂ) • g.1.1 x
-    rw [smul_add]
-  map_smul' c f := by
-    apply Subtype.ext; apply Subtype.ext; funext x
-    show ((hh x ^ a : ℝ) : ℂ) • (c • f.1.1 x) = c • (((hh x ^ a : ℝ) : ℂ) • f.1.1 x)
-    rw [smul_comm]
-
-theorem rel_symm (a : ℝ) (τ₁ τ₂ : Representation ℂ (Levi k fun _ : Fin 2 => Fin d) W)
-    (hrel : ∀ m v, τ₂ m v = ((rc m ^ a : ℝ) : ℂ) • τ₁ m v) :
-    ∀ m v, τ₁ m v = ((rc m ^ (-a) : ℝ) : ℂ) • τ₂ m v := by
-  intro m v
-  rw [hrel, smul_smul, ← Complex.ofReal_mul, ← Real.rpow_add (rc_pos m), neg_add_cancel, Real.rpow_zero,
-    Complex.ofReal_one, one_smul]
-
-def mulEquiv (a : ℝ) (τ₁ τ₂ : Representation ℂ (Levi k fun _ : Fin 2 => Fin d) W)
-    (hrel : ∀ m v, τ₂ m v = ((rc m ^ a : ℝ) : ℂ) • τ₁ m v) : IndSp (blk2 d) τ₁ ≃ₗ[ℂ] IndSp (blk2 d) τ₂ :=
-  { mulMap a τ₁ τ₂ hrel with
-    invFun := mulMap (-a) τ₂ τ₁ (rel_symm a τ₁ τ₂ hrel)
-    left_inv := fun f => by
-      apply Subtype.ext; apply Subtype.ext; funext x
-      show ((hh x ^ (-a) : ℝ) : ℂ) • ((hh x ^ a : ℝ) : ℂ) • f.1.1 x = f.1.1 x
-      rw [smul_smul, ← Complex.ofReal_mul, ← Real.rpow_add (hh_pos x), neg_add_cancel, Real.rpow_zero,
-        Complex.ofReal_one, one_smul]
-    right_inv := fun f => by
-      apply Subtype.ext; apply Subtype.ext; funext x
-      show ((hh x ^ a : ℝ) : ℂ) • ((hh x ^ (-a) : ℝ) : ℂ) • f.1.1 x = f.1.1 x
-      rw [smul_smul, ← Complex.ofReal_mul, ← Real.rpow_add (hh_pos x), add_neg_cancel, Real.rpow_zero,
-        Complex.ofReal_one, one_smul] }
-
-variable (τ : Representation ℂ (Levi k fun _ : Fin 2 => Fin d) W)
-
-theorem relChi (s : ℝ) : ∀ m v, twist τ (chi k d s) m v = ((rc m ^ s : ℝ) : ℂ) • τ m v := by
-  intro m v
-  show ((chi k d s m : ℂˣ) : ℂ) • τ m v = _
-  rw [chi_val]
-
-def E (s : ℝ) : IndSp (blk2 d) τ ≃ₗ[ℂ] IndSp (blk2 d) (twist τ (chi k d s)) :=
-  mulEquiv s τ (twist τ (chi k d s)) (relChi τ s)
-
-def F (s : ℝ) : Representation ℂ (GL (Fin (d + d)) k) (IndSp (blk2 d) τ) where
-  toFun g := (E τ s).symm.toLinearMap ∘ₗ parInd (blk2 d) (twist τ (chi k d s)) g ∘ₗ (E τ s).toLinearMap
-  map_one' := by
-    ext f : 1
-    simp
-  map_mul' g g' := by
-    ext f : 1
-    simp [map_mul]
-
-theorem F_apply (s : ℝ) (g : GL (Fin (d + d)) k) (f : IndSp (blk2 d) τ) (y : GL (Fin (d + d)) k) :
-    (F τ s g f).1.1 y = ((hh y ^ (-s) : ℝ) : ℂ) • ((hh (y * g) ^ s : ℝ) : ℂ) • f.1.1 (y * g) := rfl
-
-def cc (g y : GL (Fin (d + d)) k) : ℝ := hh (y * g) / hh y
-
-theorem cc_left (g : GL (Fin (d + d)) k) (p : parab k (blk2 d)) (y : GL (Fin (d + d)) k) :
-    cc g ((p : GL (Fin (d + d)) k) * y) = cc g y := by
-  unfold cc
-  rw [mul_assoc, hh_mul_left, hh_mul_left, mul_div_mul_left _ _ (rc_pos _).ne']
-
-def K1 (g : GL (Fin (d + d)) k) : Set (GL (Fin (d + d)) k) :=
-  (KO k (Fin (d + d)) : Set _) ∩ (fun w => g⁻¹ * w * g) ⁻¹' (KO k (Fin (d + d)) : Set _)
-
-theorem isOpen_compact_open_subgroup (g : GL (Fin (d + d)) k) : IsOpen (K1 (k := k) g) :=
-  GlobalTheory.SplitFlip.isOpen_KO.inter (GlobalTheory.SplitFlip.isOpen_KO.preimage (by fun_prop))
-
-theorem cc_right (g y w : GL (Fin (d + d)) k) (hw : w ∈ K1 g) : cc g (y * w) = cc g y := by
-  unfold cc
-  have e : y * w * g = y * g * (g⁻¹ * w * g) := by group
-  rw [e, hh_mul_right _ _ hw.2, hh_mul_right _ _ hw.1]
-
-theorem cc_finite (g : GL (Fin (d + d)) k) : (Set.range (cc (k := k) g)).Finite := by
-  apply CompanionTheory.RgGu.NR.Compact.cc_finite
-
-theorem ind_val_sum {σ : Representation ℂ (parab k (blk2 d)) W} {ι : Type} (s : Finset ι) (c : ι → ℂ)
-    (u : ι → smoothPart (ind (parab k (blk2 d)) σ)) (y : GL (Fin (d + d)) k) :
-    (∑ i ∈ s, c i • u i).1.1 y = ∑ i ∈ s, c i • (u i).1.1 y := by
-  simp only [Submodule.coe_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply]
-
-def piece (g : GL (Fin (d + d)) k) (v : ℝ) (f : IndSp (blk2 d) τ) : IndSp (blk2 d) τ :=
-  ⟨⟨fun y => if cc g y = v then f.1.1 (y * g) else 0, by
-      intro p y
-      show (if cc g ((p : GL (Fin (d + d)) k) * y) = v then f.1.1 ((p : GL (Fin (d + d)) k) * y * g) else 0) =
-        ((twist τ (deltaHalf k fun _ : Fin 2 => Fin d)).comp (leviProj k (blk2 d))) p
-          (if cc g y = v then f.1.1 (y * g) else 0)
-      rw [cc_left]
-      split_ifs
-      · rw [mul_assoc]; exact f.1.2 p (y * g)
-      · rw [map_zero]⟩, by
-      have hf2 : IsOpen {x : GL (Fin (d + d)) k | ind (parab k (blk2 d))
-          ((twist τ (deltaHalf k fun _ : Fin 2 => Fin d)).comp (leviProj k (blk2 d))) x f.1 = f.1} := f.2
-      refine isOpen_fix (ind (parab k (blk2 d)) ((twist τ (deltaHalf k fun _ : Fin 2 => Fin d)).comp
-          (leviProj k (blk2 d)))) _ (((fun w => g⁻¹ * w * g) ⁻¹' {x : GL (Fin (d + d)) k | ind (parab k (blk2 d))
-          ((twist τ (deltaHalf k fun _ : Fin 2 => Fin d)).comp (leviProj k (blk2 d))) x f.1 = f.1}) ∩ K1 g)
-        ((hf2.preimage (by fun_prop)).inter (isOpen_compact_open_subgroup g)) ⟨?_, ?_⟩ ?_
-      · show ind _ _ (g⁻¹ * 1 * g) f.1 = f.1
-        rw [mul_one, inv_mul_cancel, map_one]; rfl
-      · show (1 : GL (Fin (d + d)) k) ∈ K1 g
-        exact ⟨one_mem _, by simp⟩
-      rintro w ⟨hu1, hu2⟩
-      apply Subtype.ext
-      funext y
-      show (if cc g (y * w) = v then f.1.1 (y * w * g) else 0) = (if cc g y = v then f.1.1 (y * g) else 0)
-      have hf : f.1.1 (y * g * (g⁻¹ * w * g)) = f.1.1 (y * g) :=
-        congrFun (congrArg Subtype.val (show ind _ _ (g⁻¹ * w * g) f.1 = f.1 from hu1)) (y * g)
-      have e : y * w * g = y * g * (g⁻¹ * w * g) := by group
-      rw [cc_right _ _ _ hu2, e, hf]⟩
-
-theorem expo (g : GL (Fin (d + d)) k) (f : IndSp (blk2 d) τ) :
-    ∃ (m : ℕ) (r : Fin m → ℝ) (u : Fin m → IndSp (blk2 d) τ),
-      ∀ s, F τ s g f = ∑ i, ((Real.exp (r i * s) : ℝ) : ℂ) • u i := by
-  apply CompanionTheory.RgGu.NR.Compact.expo
-
-end PositivityTheory.RgGu.NR.Compact
-
 namespace PositivityTheory.RgGu.NR
 
-open PositivityTheory.RgGu.NR.Compact in
 theorem compact (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] :
-    Compact k := by
-  intro d W _ _ τ
-  refine ⟨KO k (Fin (d + d)), F τ, GlobalTheory.SplitFlip.isOpen_KO, GlobalTheory.SplitFlip.isCompact_KO, ⟨?_, ?_⟩, ?_⟩
-  · intro s x hx
-    ext f : 1
-    apply Subtype.ext; apply Subtype.ext; funext y
-    rw [F_apply, F_apply, hh_mul_right y x hx, smul_smul, smul_smul, ← Complex.ofReal_mul, ← Complex.ofReal_mul,
-      ← Real.rpow_add (hh_pos y), ← Real.rpow_add (hh_pos y)]
-    simp
-  · exact fun g f => expo τ g f
-  · intro s
-    exact ⟨Representation.Equiv.mk (E τ s) fun g => by
-      ext f : 1
-      simp [F]⟩
+    Compact k := fun d W _ _ τ =>
+  let ⟨K₀, F, h1, h2, h3, h4⟩ := CompanionTheory.RgGu.NR.compact k d W τ
+  ⟨K₀, F, h1, h2, ⟨h3.1, h3.2⟩, h4⟩
 
 end PositivityTheory.RgGu.NR
 end -- clump:auto
@@ -912,8 +652,7 @@ def stabG (ρ : Representation ℂ G V) (v : V) : Subgroup G where
 
 theorem nondeg {ρ : Representation ℂ G V} (hi : ρ.IsIrreducible) (C : V →ₗ[ℂ] V →ₛₗ[starRingEnd ℂ] ℂ) (hC0 : C ≠ 0)
     (hCi : ∀ g v w, C (ρ g v) (ρ g w) = C v w) (v : V) (hv : v ≠ 0) : ∃ x, C v x ≠ 0 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   let R : Submodule ℂ V :=
     { carrier := {v | ∀ x, C v x = 0}
       add_mem' := fun {a b} ha hb x => by simp [ha x, hb x]
@@ -1113,36 +852,9 @@ noncomputable section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil
   GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Published
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.RgGu.NR
 
-namespace Model
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-theorem prodIrr_congr {h N : ℕ} {y z : Fin h → IrrGL (k := k)} (e : y = z) (hy : ∑ a, (y a).1 = N) (hz : ∑ a, (z a).1 = N) :
-    Nonempty ((prodIrr y hy).Equiv (prodIrr z hz)) := by
-  subst e
-  exact ⟨Representation.Equiv.refl _⟩
-
-theorem piTensor_twist (x : IrrGL (k := k)) (s : ℝ) :
-    piTensor (fun a : Fin 2 => twist x.rep (detChar (Fin x.1) (absPow k (![-(s : ℂ), (s : ℂ)] a)))) =
-      twist (piTensor fun _ : Fin 2 => x.rep) (chi k x.1 s) := by
-  ext g : 1
-  refine PiTensorProduct.ext (MultilinearMap.ext fun v => ?_)
-  have ht : ∀ {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin n) k) V)
-      (χ : GL (Fin n) k →* ℂˣ) (g : GL (Fin n) k), twist ρ χ g = ((χ g : ℂ) • ρ g) := fun _ _ _ => rfl
-  have ht2 : ∀ (g : Levi k fun _ : Fin 2 => Fin x.1), twist (piTensor fun _ : Fin 2 => x.rep) (chi k x.1 s) g =
-      ((chi k x.1 s g : ℂ) • (piTensor fun _ : Fin 2 => x.rep) g) := fun _ => rfl
-  simp only [LinearMap.compMultilinearMap_apply, piTensor_tprod, ht, ht2, LinearMap.smul_apply]
-  rw [MultilinearMap.map_smul_univ]
-  congr 1
-  simp [chi, Fin.prod_univ_two, Units.val_mul]
-
-end Model
-
-open Model in
 theorem prodModel (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] :
     ProdModel k := by
   apply CompanionTheory.RgGu.NR.prodModel
@@ -1167,193 +879,10 @@ noncomputable section
 
 open Filter Topology Module
 
-namespace PositivityTheory.RgGu.NR.Sig
-
-def qf {n : ℕ} (M : Fin n → Fin n → ℂ) (x y : Fin n → ℂ) : ℂ := ∑ i, ∑ j, x i * (star (y j) * M i j)
-
-theorem cont_qf {n : ℕ} :
-    Continuous fun p : (Fin n → Fin n → ℂ) × (Fin n → ℂ) × (Fin n → ℂ) => qf p.1 p.2.1 p.2.2 := by
-  unfold qf
-  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
-  exact ((continuous_apply i).comp (continuous_fst.comp continuous_snd)).mul
-    ((continuous_star.comp ((continuous_apply j).comp (continuous_snd.comp continuous_snd))).mul
-      ((continuous_apply j).comp ((continuous_apply i).comp continuous_fst)))
-
-theorem qf_smul {n : ℕ} (M : Fin n → Fin n → ℂ) (a : ℂ) (x y : Fin n → ℂ) :
-    qf M (a • x) (a • y) = a * star a * qf M x y := by
-  simp only [qf, Pi.smul_apply, smul_eq_mul, star_mul', Finset.mul_sum]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-
-theorem qf_single {n : ℕ} (M : Fin n → Fin n → ℂ) (i j : Fin n) :
-    qf M (Pi.single i 1) (Pi.single j 1) = M i j := by
-  classical
-  simp [qf, Pi.single_apply]
-
-variable {W : Type} [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
-
-abbrev Sq (W : Type) [AddCommGroup W] [Module ℂ W] := W →ₗ[ℂ] W →ₛₗ[starRingEnd ℂ] ℂ
-
-abbrev ef (W : Type) [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] :
-    W ≃ₗ[ℂ] (Fin (finrank ℂ W) → ℂ) := (Module.finBasis ℂ W).equivFun
-
-def gram (B : Sq W) : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ :=
-  fun i j => B (Module.finBasis ℂ W i) (Module.finBasis ℂ W j)
-
-def mk (M : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ) : Sq W :=
-  LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun v w => qf M (ef W v) (ef W w))
-    (fun v v' w => by simp only [qf, map_add (f := _), Pi.add_apply, add_mul, Finset.sum_add_distrib])
-    (fun c v w => by
-      simp only [qf, map_smul, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, RingHom.id_apply]
-      exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring)
-    (fun v w w' => by
-      simp only [qf, map_add (f := _), Pi.add_apply, star_add, add_mul, mul_add, Finset.sum_add_distrib])
-    (fun c v w => by
-      simp only [qf, map_smul, Pi.smul_apply, smul_eq_mul, star_mul', Finset.mul_sum, starRingEnd_apply]
-      exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring)
-
-theorem mk_apply (M : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ) (v w : W) :
-    mk M v w = qf M (ef W v) (ef W w) := rfl
-
-theorem expand (B : Sq W) (v w : W) : B v w = qf (gram B) (ef W v) (ef W w) := by
-  conv_lhs => rw [← (Module.finBasis ℂ W).sum_equivFun v, ← (Module.finBasis ℂ W).sum_equivFun w]
-
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul,
-  qf, gram, starRingEnd_apply, Finset.mul_sum, ef]
-  rw [Finset.sum_comm]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-
-theorem mk_gram (B : Sq W) : mk (gram B) = B := by
-  ext v w
-  rw [mk_apply, expand]
-
-theorem gram_mk (M : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ) : gram (mk M : Sq W) = M := by
-  funext i j
-  have h : ∀ a, (Module.finBasis ℂ W).equivFun (Module.finBasis ℂ W a) = Pi.single a 1 := fun a => by
-    funext b
-    rw [Module.Basis.equivFun_self]
-    simp [Pi.single_apply, eq_comm]
-  simp only [gram, mk_apply, ef, h]
-  exact qf_single M i j
-
-theorem gram_smul (c : ℂ) (B : Sq W) : gram (c • B) = c • gram B := by
-  funext i j
-  simp [gram]
-
-section Fam
-
-variable {I : Type} (ι : I → I) (T : I → Module.End ℂ W)
-
-def Inv (B : Sq W) : Prop := ∀ i v w, B (T i v) w = B v (T (ι i) w)
-
-def Herm (B : Sq W) : Prop := ∀ v w, B w v = starRingEnd ℂ (B v w)
-
-def Pos (B : Sq W) : Prop := ∀ v, v ≠ 0 → 0 < (B v v).re
-
-variable {ι T}
-
-theorem ker_bot (hsim : ∀ U : Submodule ℂ W, (∀ i, ∀ w ∈ U, T i w ∈ U) → U = ⊥ ∨ U = ⊤) (B : Sq W) (hB : B ≠ 0)
-    (hinv : Inv ι T B) : LinearMap.ker B = ⊥ := by
-  have hst : ∀ i, ∀ w ∈ LinearMap.ker B, T i w ∈ LinearMap.ker B := by
-    intro i w hw
-    rw [LinearMap.mem_ker] at hw ⊢
-    ext u
-    rw [hinv, hw]
-    rfl
-  rcases hsim (LinearMap.ker B) hst with h | h
-  · exact h
-  · exact absurd (LinearMap.ker_eq_top.1 h) hB
-
-theorem inv_sub {B B' : Sq W} (h : Inv ι T B) (h' : Inv ι T B') (c : ℂ) : Inv ι T (B - c • B') := by
-  intro i v w
-  simp only [LinearMap.sub_apply, LinearMap.smul_apply, h i v w, h' i v w]
-
-theorem uniq (hsim : ∀ U : Submodule ℂ W, (∀ i, ∀ w ∈ U, T i w ∈ U) → U = ⊥ ∨ U = ⊤) (B₀ B : Sq W) (h0 : B₀ ≠ 0)
-    (hinv0 : Inv ι T B₀) (hinv : Inv ι T B) : ∃ c : ℂ, B = c • B₀ := by
-  apply CompanionTheory.RgGu.NR.Sig.uniq <;> assumption
-
-theorem real_of {B₀ B : Sq W} (h0 : B₀ ≠ 0) (hh0 : Herm B₀) (hh : Herm B) (c : ℂ) (hc : B = c • B₀) :
-    starRingEnd ℂ c = c := by
-  obtain ⟨v, w, hvw⟩ : ∃ v w, B₀ v w ≠ 0 := by
-    by_contra hn
-    push Not at hn
-    exact h0 (by ext v w; simp [hn])
-  have e1 := hh v w
-  rw [hc] at e1
-  simp only [LinearMap.smul_apply, smul_eq_mul, map_mul, hh0 v w] at e1
-  have hz : starRingEnd ℂ (B₀ v w) ≠ 0 := (map_ne_zero _).2 hvw
-  exact (mul_right_cancel₀ hz e1).symm
-
-theorem pos_of (B : Sq W) (hh : Herm B) (hk : LinearMap.ker B = ⊥) (hsd : ∀ v, 0 ≤ (B v v).re) : Pos B := by
-  apply CompanionTheory.RgGu.NR.Sig.pos_of <;> assumption
-
-end Fam
-
-theorem pos_mk_iff (M : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ) :
-    (∀ v : W, v ≠ 0 → 0 < ((mk M : Sq W) v v).re) ↔ ∀ c, c ≠ 0 → 0 < (qf M c c).re := by
-  constructor
-  · intro h c hc
-    have := h ((ef W).symm c) (((ef W).symm.map_ne_zero_iff).2 hc)
-    rwa [mk_apply, LinearEquiv.apply_symm_apply] at this
-  · intro h v hv
-    rw [mk_apply]
-    exact h _ ((LinearEquiv.map_ne_zero_iff _).2 hv)
-
-theorem pos_open {n : ℕ} (M : Fin n → Fin n → ℂ) (hM : ∀ c : Fin n → ℂ, c ≠ 0 → 0 < (qf M c c).re) :
-    ∀ᶠ M' in 𝓝 M, ∀ c : Fin n → ℂ, c ≠ 0 → 0 < (qf M' c c).re := by
-  apply CompanionTheory.RgGu.NR.Sig.pos_open <;> assumption
-
-theorem mk_smul (a : ℂ) (M : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ) : (mk (a • M) : Sq W) = a • mk M := by
-  ext v w
-  simp only [mk_apply, qf, Pi.smul_apply, smul_eq_mul, LinearMap.smul_apply, Finset.mul_sum]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-
-section Real
-
-variable {I : Type} {ι : I → I} {T : I → Module.End ℂ W}
-
-omit [FiniteDimensional ℂ W] in
-theorem herm_smul {B : Sq W} (h : Herm B) (r : ℝ) : Herm ((r : ℂ) • B) := by
-  intro v w
-  simp only [LinearMap.smul_apply, smul_eq_mul, map_mul, Complex.conj_ofReal, h v w]
-
-omit [FiniteDimensional ℂ W] in
-theorem inv_smul {B : Sq W} (h : Inv ι T B) (c : ℂ) : Inv ι T (c • B) := by
-  intro i v w
-  simp only [LinearMap.smul_apply, h i v w]
-
-theorem normalize (B : Sq W) (hB : B ≠ 0) :
-    ∃ r : ℝ, 0 < r ∧ ‖gram ((r : ℂ) • B)‖ = 1 := by
-  have hg : gram B ≠ 0 := by
-    intro h
-    apply hB
-    rw [← mk_gram B, h]
-    ext v w
-    simp [mk_apply, qf]
-  refine ⟨‖gram B‖⁻¹, inv_pos.2 (norm_pos_iff.2 hg), ?_⟩
-  rw [gram_smul, norm_smul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (inv_pos.2 (norm_pos_iff.2 hg)),
-    inv_mul_cancel₀ (norm_ne_zero_iff.2 hg)]
-
-end Real
-
-
-theorem lim_form {I : Type} (ι : I → I) (T : ℝ → I → Module.End ℂ W)
-    (hc : ∀ (i : I) (w : W) (l : Module.Dual ℂ W), Continuous fun s => l (T s i w))
-    (s : ℕ → ℝ) (p : ℝ) (hs : Tendsto s atTop (𝓝 p)) (B : ℕ → Sq W) (hinv : ∀ k, Inv ι (T (s k)) (B k))
-    (hh : ∀ k, Herm (B k)) (hn : ∀ k, ‖gram (B k)‖ = 1) :
-    ∃ (φ : ℕ → ℕ) (M : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ), StrictMono φ ∧ ‖M‖ = 1 ∧
-      Tendsto (fun k => gram (B (φ k))) atTop (𝓝 M) ∧ Inv ι (T p) (mk M) ∧ Herm (mk M) ∧
-      ∀ v w, Tendsto (fun k => B (φ k) v w) atTop (𝓝 (mk M v w)) := by
-  apply CompanionTheory.RgGu.NR.Sig.lim_form <;> assumption
-
-end PositivityTheory.RgGu.NR.Sig
-
 namespace PositivityTheory.RgGu.NR
 
-open Sig
-
-
-theorem signature : Signature := by
-  apply CompanionTheory.RgGu.NR.signature
+theorem signature : Signature :=
+  CompanionTheory.RgGu.NR.signature
 
 end PositivityTheory.RgGu.NR
 end -- clump:auto
@@ -1372,57 +901,13 @@ open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.SplitWe
 
 namespace PositivityTheory.RgGu.NR
 
-namespace RedC
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-theorem irr_congr {h N : ℕ} {x x' : Fin h → IrrGL (k := k)} (e : x = x') (hd : ∑ a, (x a).1 = N) :
-    ∃ hd' : ∑ a, (x' a).1 = N, ((prodIrr x hd).IsIrreducible ↔ (prodIrr x' hd').IsIrreducible) := by
-  subst e
-  exact ⟨hd, Iff.rfl⟩
-
-theorem irr_tw {h N : ℕ} (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N) (s : ℂ)
-    (hi : (prodIrr x hd).IsIrreducible) : (prodIrr (fun a => (x a).nu s) hd).IsIrreducible :=
-  GlobalTheory.Parabolic.isIrreducible_of_equiv (prodIrrTwistEquiv x hd (absPow k s) (isSmoothChar_absPow s))
-    (isIrreducible_twist hi _)
-
-end RedC
-
-open RedC in
-
 theorem redCl_ofC (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (h1 : SomeRed k) (h2 : CuspUnit k) (h3 : GlobalTheory.BZSeg.CuspPairIrr k) : RedCl k := by
-  apply CompanionTheory.RgGu.NR.redCl_ofC <;> assumption
+    (h1 : SomeRed k) (h2 : CuspUnit k) (h3 : GlobalTheory.BZSeg.CuspPairIrr k) : RedCl k :=
+  CompanionTheory.RgGu.NR.redCl_ofC k h1 h2 h3
 
 theorem rhoNuRho_ofC (h : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k],
-    RedCl k) : PositivityTheory.Pf1.SegRepC.SegTwo.RhoNuRhoReducible := by
-  intro k _ _ _ _ d hd σ hσ hirr
-  set y : IrrGL (k := k) := IrrGL.of σ.ρ σ.smooth σ.irr with hy
-  have hyc : y.IsCusp := IrrGL.isCusp_of.2 ⟨hd, hσ⟩
-  let x : Fin 2 → IrrGL (k := k) := fun a => y.nu ((a : ℕ) : ℂ)
-  have hx1 : ∀ a, (x a).1 = d := fun _ => rfl
-  have hdx : ∑ a, (x a).1 = 2 * d := by
-    simp only [hx1, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
-  let φ : ∀ a : Fin 2, (segTerm σ.ρ 2 a).Equiv (x a).rep := fun a =>
-    (twistEquiv (IrrGL.equivOf σ.ρ σ.smooth σ.irr) _).trans (y.twEquiv _ _)
-  have E1 := multiProdEquiv (consecBlocks 2 d) φ
-  have hdd : ∑ _a : Fin 2, d = 2 * d := by simp
-  have hE : consecBlocks 2 d = stdBlocks (fun _ : Fin 2 => d) hdd := by
-    ext ⟨a, i⟩
-    rw [consecBlocks_val, stdBlocks_val]
-    simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
-    ring
-  have h3 : (prodIrr x hdx).IsIrreducible := by
-    have h4 := GlobalTheory.Parabolic.isIrreducible_of_equiv E1 hirr
-    rw [hE] at h4
-    exact h4
-  have e : x = ![y, y.nu 1] := by
-    funext a
-    fin_cases a
-    · simp [x]
-    · simp [x]
-  obtain ⟨hd', hiff⟩ := RedC.irr_congr e hdx
-  exact h k y hyc (2 * d) hd' (hiff.1 h3)
+    RedCl k) : PositivityTheory.Pf1.SegRepC.SegTwo.RhoNuRhoReducible :=
+  CompanionTheory.RgGu.NR.rhoNuRho_ofC h
 
 end PositivityTheory.RgGu.NR
 end -- clump:auto
@@ -1539,8 +1024,7 @@ theorem norm_chi (d : ℕ) (s : ℝ) (g : Levi k fun _ : Fin 2 => Fin d) :
 theorem someRed_of (h1 : Complementary) (h2 : Compact k) (h3 : Bound k) (h4 : Herm k) (h5 : ProdModel k) :
     SomeRed k := by
   intro x hx hu
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   set d := x.1 with hdd
   have hd2 : ∀ s : ℝ, ∑ a, (![x.nu (-(s : ℂ)), x.nu (s : ℂ)] a).1 = x.1 + x.1 := fun s => by
     simp [Fin.sum_univ_two, IrrGL.nu, IrrGL.tw]

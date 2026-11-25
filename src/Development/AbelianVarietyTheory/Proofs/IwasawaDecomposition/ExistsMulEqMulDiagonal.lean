@@ -137,7 +137,7 @@ theorem _root_.GlobalTheory.SmithBetween.smith_between (R : Type) [CommRing R] [
       rcases hϖ.isUnit_or_isUnit hb with h' | h'
       · exact absurd h' h
       · refine ⟨h'.unit⁻¹, ?_⟩
-        simp only [d, h, if_false, hb]
+        simp only [d, h, ite_false, hb]
         rw [mul_assoc, IsUnit.mul_val_inv, mul_one]
   choose u hu using hu
 

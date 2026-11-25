@@ -1,62 +1,22 @@
 module
 
+import Mathlib.FieldTheory.Relrank
+import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.HodgeComponentFlagDegree
+
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsGenOfIsVBOne
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrIsGenAt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar
-open GlobalTheory.CompanionTheory.Ar (dualMap)
 
 noncomputable section
 
@@ -162,20 +122,7 @@ variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec (CommRingCat.of Ω) 
 
 theorem tens_unit {Λ : Lat ξ Ω} {p : Cpt ξ} {t : Ω} (h : Λ.IsGenAt p t) (n : ℤ) :
     Lat.tens (fun _ : Unit => Λ) (fun _ => n) p = Submodule.span (regAt ξ p) {t ^ n} := by
-  refine le_antisymm (Submodule.span_le.2 ?_) (Submodule.span_le.2 ?_)
-  · rintro _ ⟨s, hs, rfl⟩
-    obtain ⟨u, hu, e⟩ := Flat.ZUnit.exists_of_span_eq (hs ()).1 ((hs ()).2.symm.trans h.2)
-    have hun : (u ^ n) ∈ regAt ξ p := by
-      obtain ⟨m, rfl | rfl⟩ := n.eq_nat_or_neg
-      · simpa using (Flat.ZUnit.pow hu m).2.1
-      · simpa using (Flat.ZUnit.pow (Flat.ZUnit.inv hu) m).2.1
-    have : ∏ i : Unit, s i ^ n = (⟨u ^ n, hun⟩ : regAt ξ p) • t ^ n := by
-      show _ = u ^ n * t ^ n
-      simp [e, mul_zpow]
-    rw [SetLike.mem_coe, this]
-    exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self _)
-  · rintro _ rfl
-    exact Submodule.subset_span ⟨fun _ => t, fun _ => h, by simp⟩
+  apply _root_.PositivityTheory.Xgn.ComponentDegreeAlt.tens_unit_eq <;> assumption
 
 end Tens
 
@@ -228,13 +175,13 @@ theorem exists_extend (hv : AI.I1.IsBlockMap κ v) (c' : ∀ k', J' k') (d' : �
       ((hv.2.2.1 ⟨h.choose, d' h.choose⟩).trans h.choose_spec) ▸ (v ⟨h.choose, d' h.choose⟩).2 else c' k', ?_, ?_⟩
   · intro k
     have h : ∃ k₀, κ k₀ = κ k := ⟨k, rfl⟩
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     rw [hs]
     have : h.choose = k := hv.1 h.choose_spec
     rw [this]
   · intro k' hk
     have : ¬ ∃ k, κ k = k' := hk
-    simp only [dif_neg this]
+    simp only [dite_eq_right this]
 
 variable {Ω Ω' : Type} [Field Ω] [Field Ω'] {i : Ω →+* Ω'} {y : (Σ k, J k) → Ω} {y' : (Σ k, J' k) → Ω'}
 
@@ -346,44 +293,19 @@ theorem finrank_adjoin_pull (fn : Ω₀ →+* Ω) (fn' : Ω₀' →+* Ω') (ψ :
     · rintro ⟨a, rfl⟩
       refine ⟨ψ a, ?_⟩
       exact RingHom.congr_fun hc a
-  have hmem : ∀ x ∈ A, i x ∈ A' := fun x hx => by
-    have : i x ∈ A'.toSubfield := by
-      rw [hQ]
-      exact ⟨x, hx, rfl⟩
-    exact this
-  have hsurj : ∀ x ∈ A', ∃ a ∈ A, i a = x := fun x hx => by
-    have : x ∈ A'.toSubfield := hx
-    rw [hQ] at this
-    obtain ⟨a, ha, rfl⟩ := this
-    exact ⟨a, ha, rfl⟩
-  have hle : ∀ x ∈ A', x ∈ i.fieldRange := fun x hx => by
-    obtain ⟨a, -, rfl⟩ := hsurj x hx
-    exact ⟨a, rfl⟩
-  let g : A' →+* i.fieldRange :=
-    { toFun := fun x => ⟨x.1, hle x.1 x.2⟩
-      map_one' := rfl
-      map_mul' := fun _ _ => rfl
-      map_zero' := rfl
-      map_add' := fun _ _ => rfl }
-  letI := g.toAlgebra
-  haveI : IsScalarTower A' i.fieldRange Ω' := IsScalarTower.of_algebraMap_eq fun _ => rfl
-  let e₀ : A →+* A' :=
-    { toFun := fun x => ⟨i x.1, hmem x.1 x.2⟩
-      map_one' := Subtype.ext (map_one i)
-      map_mul' := fun x y => Subtype.ext (map_mul i x.1 y.1)
-      map_zero' := Subtype.ext (map_zero i)
-      map_add' := fun x y => Subtype.ext (map_add i x.1 y.1) }
-  let e₁ : A ≃+* A' := RingEquiv.ofBijective e₀
-    ⟨fun x y h => Subtype.ext (i.injective (congrArg Subtype.val h)), fun x => by
-      obtain ⟨a, ha, e⟩ := hsurj x.1 x.2
-      exact ⟨⟨a, ha⟩, Subtype.ext e⟩⟩
-  let e₂ : Ω ≃+* i.fieldRange := RingEquiv.ofBijective i.rangeRestrictField
-    ⟨fun x y h => i.injective (congrArg Subtype.val h), fun x => by
-      obtain ⟨a, ha⟩ := x.2
-      exact ⟨a, Subtype.ext ha⟩⟩
-  have h1 : Module.finrank A Ω = Module.finrank A' i.fieldRange :=
-    Algebra.finrank_eq_of_equiv_equiv e₁ e₂ (by ext x; rfl)
-  rw [← (letI : Module.Free i.fieldRange Ω' := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank A' i.fieldRange Ω'), h1, mul_comm]
+  have hle : A'.toSubfield ≤ i.fieldRange := by
+    rw [hQ]
+    rintro _ ⟨x, _, rfl⟩
+    exact ⟨x, rfl⟩
+  have hpull : A'.toSubfield.comap i = A.toSubfield := by
+    rw [hQ]
+    ext x
+    change (∃ y ∈ A.toSubfield, i y = i x) ↔ x ∈ A.toSubfield
+    exact ⟨fun ⟨y, hy, hxy⟩ => i.injective hxy ▸ hy, fun hx => ⟨x, hx, rfl⟩⟩
+  change Module.finrank A'.toSubfield Ω' =
+    Module.finrank i.fieldRange Ω' * Module.finrank A.toSubfield Ω
+  rw [← hpull, Subfield.finrank_comap]
+  exact (Subfield.relfinrank_mul_finrank_top hle).symm.trans (mul_comm _ _)
 
 theorem genericFlag_pull (fn : Ω₀ →+* Ω) (fn' : Ω₀' →+* Ω') (ψ : Ω₀ ≃+* Ω₀') (i : Ω →+* Ω')
     (hc : fn'.comp ψ.toRingHom = i.comp fn) {E F F' : Type} [AddCommGroup E] [Module Ω₀ E] [Module Ω₀' E]

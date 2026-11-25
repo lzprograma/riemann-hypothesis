@@ -181,8 +181,6 @@ section Theta
 
 open Formalism.L2.Theta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7}
 
 abbrev Gf (V : Formalism.BasicNotions.TH.HSp D) := (finHom V).range
@@ -194,8 +192,6 @@ end Theta
 section Comparison₂
 
 open Formalism.L2.Theta
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : Formalism.BasicNotions.D7) {G : Type} [Group G] [Fintype G]
 

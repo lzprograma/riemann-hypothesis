@@ -58,6 +58,7 @@ import Mathlib.Topology.Separation.Connected
 import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FourierJacobiAverage
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterTrivialMatrixLatticeOpenCompactBasis
 
 @[expose] public section
 
@@ -203,14 +204,7 @@ section Local
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
 theorem neBot_punctured : (𝓝[≠] (0 : k)).NeBot := by
-  letI := IsTopologicalAddGroup.rightUniformSpace k
-  haveI := isUniformAddGroup_of_addCommGroup (G := k)
-  letI : (Valued.v (R := k)).RankOne :=
-  { hom' := IsRankLeOne.nonempty.some.emb (R := k).comp MonoidWithZeroHom.ValueGroup₀.embedding
-    strictMono' := IsRankLeOne.nonempty.some.strictMono.comp
-        MonoidWithZeroHom.ValueGroup₀.embedding_strictMono }
-  open scoped Valued in
-  exact NormedField.nhdsNE_neBot (0 : k)
+  apply _root_.GlobalTheory.LinSchurLatt.nhdsNE_neBot' <;> assumption
 
 theorem neBot_units : (Filter.comap (Units.val : kˣ → k) (𝓝 0)).NeBot := by
   haveI := neBot_punctured (k := k)

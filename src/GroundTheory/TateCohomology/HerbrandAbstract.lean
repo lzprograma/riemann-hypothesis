@@ -13,17 +13,10 @@ namespace GroundTheory.GroupCoh
 
 section Card
 
-theorem natCard_eq_ker_mul_range {X Y : Type*} [AddGroup X] [AddGroup Y] (φ : X →+ Y) :
-    Nat.card X = Nat.card φ.ker * Nat.card φ.range := by
-  rw [← AddSubgroup.index_ker φ, AddSubgroup.card_mul_index]
-
 theorem finite_of_exact {X Y Z : Type*} [AddGroup X] [AddGroup Y] [AddGroup Z]
     (d : X →+ Y) (e : Y →+ Z) (h : e.ker = d.range) [Finite X] [Finite Z] : Finite Y := by
-  have h1 : Finite d.range := Finite.of_surjective _ d.rangeRestrict_surjective
-  have h2 : Finite e.ker := by rw [h]; exact h1
-  apply Nat.finite_of_card_ne_zero
-  rw [natCard_eq_ker_mul_range e]
-  exact Nat.mul_ne_zero Nat.card_pos.ne' Nat.card_pos.ne'
+  rw [e.finite_iff_finite_ker_range, h]
+  exact ⟨Finite.of_surjective _ d.rangeRestrict_surjective, inferInstance⟩
 
 theorem natCard_hexagon {X₁ X₂ X₃ X₄ X₅ X₆ : Type*} [AddGroup X₁] [AddGroup X₂] [AddGroup X₃]
     [AddGroup X₄] [AddGroup X₅] [AddGroup X₆]
@@ -31,8 +24,9 @@ theorem natCard_hexagon {X₁ X₂ X₃ X₄ X₅ X₆ : Type*} [AddGroup X₁] 
     (d₆ : X₆ →+ X₁) (e₁ : d₁.ker = d₆.range) (e₂ : d₂.ker = d₁.range) (e₃ : d₃.ker = d₂.range)
     (e₄ : d₄.ker = d₃.range) (e₅ : d₅.ker = d₄.range) (e₆ : d₆.ker = d₅.range) :
     Nat.card X₁ * Nat.card X₃ * Nat.card X₅ = Nat.card X₂ * Nat.card X₄ * Nat.card X₆ := by
-  rw [natCard_eq_ker_mul_range d₁, natCard_eq_ker_mul_range d₂, natCard_eq_ker_mul_range d₃,
-    natCard_eq_ker_mul_range d₄, natCard_eq_ker_mul_range d₅, natCard_eq_ker_mul_range d₆,
+  rw [← AddSubgroup.card_ker_mul_card_range d₁, ← AddSubgroup.card_ker_mul_card_range d₂,
+    ← AddSubgroup.card_ker_mul_card_range d₃, ← AddSubgroup.card_ker_mul_card_range d₄,
+    ← AddSubgroup.card_ker_mul_card_range d₅, ← AddSubgroup.card_ker_mul_card_range d₆,
     e₁, e₂, e₃, e₄, e₅, e₆]
   ring
 
@@ -80,14 +74,13 @@ theorem natCard_kerModRange_eq_of_finite [Finite A] {f g : A →+ A} (hfg : ∀ 
     (hgf : ∀ x, g (f x) = 0) : Nat.card (KerModRange f g) = Nat.card (KerModRange g f) := by
   have h1 := natCard_ker_eq hfg
   have h2 := natCard_ker_eq hgf
-  have h3 := natCard_eq_ker_mul_range f
-  have h4 := natCard_eq_ker_mul_range g
   have hf : 0 < Nat.card f.range := Nat.card_pos
   have hg : 0 < Nat.card g.range := Nat.card_pos
   have key : Nat.card (KerModRange f g) * (Nat.card g.range * Nat.card f.range) =
       Nat.card (KerModRange g f) * (Nat.card g.range * Nat.card f.range) := by
     calc _ = Nat.card f.ker * Nat.card f.range := by rw [h1]; ring
-      _ = Nat.card g.ker * Nat.card g.range := by rw [← h3, ← h4]
+      _ = Nat.card g.ker * Nat.card g.range := by
+        rw [AddSubgroup.card_ker_mul_card_range f, AddSubgroup.card_ker_mul_card_range g]
       _ = _ := by rw [h2]; ring
   exact Nat.eq_of_mul_eq_mul_right (Nat.mul_pos hg hf) key
 

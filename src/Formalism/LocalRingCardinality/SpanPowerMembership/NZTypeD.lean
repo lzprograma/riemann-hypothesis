@@ -2,47 +2,7 @@ module
 
 public import Mathlib.Algebra.Group.End
 public import Mathlib.Algebra.MonoidAlgebra.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Basic.Finite.Prod
 
 @[expose] public section
@@ -89,9 +49,9 @@ theorem tens_single [DecidableEq I] (g : ∀ i, G i) : tens (fun i => (single (g
   simp only [MonoidAlgebra.coeff_single_apply]
   by_cases e : g = h
   · subst e; simp
-  · rw [if_neg e]
+  · rw [ite_eq_right e]
     obtain ⟨i, hi⟩ := Function.ne_iff.mp e
-    exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
+    exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)
 
 theorem commute_of_single {Γ : Type} [Group Γ] (z : MonoidAlgebra k Γ)
     (h : ∀ g : Γ, z * single g 1 = single g 1 * z) (a : MonoidAlgebra k Γ) : z * a = a * z := by
@@ -146,11 +106,11 @@ theorem eSum_mul_tens (b : ∀ i, L i) : eSum E S * tens (fun i => E i (b i)) =
   unfold eSum
   rw [Finset.sum_mul, Finset.sum_eq_single b]
   · split_ifs
-    · rw [tens_mul_tens E hidem horth, if_pos rfl]
+    · rw [tens_mul_tens E hidem horth, ite_eq_left rfl]
     · simp
   · intro a _ hab
     split_ifs
-    · rw [tens_mul_tens E hidem horth, if_neg hab]
+    · rw [tens_mul_tens E hidem horth, ite_eq_right hab]
     · simp
   · intro h; exact absurd (Finset.mem_univ b) h
 
@@ -163,7 +123,7 @@ theorem eSum_idem : eSum E S * eSum E S = eSum E S := by
   refine Finset.sum_congr rfl fun b _ => ?_
   split_ifs with hb
   · have := eSum_mul_tens E S hidem horth b
-    rw [if_pos hb] at this
+    rw [ite_eq_left hb] at this
     exact this
   · simp
 

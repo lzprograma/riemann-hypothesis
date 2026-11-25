@@ -17,53 +17,6 @@ public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CasimirSplitting
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.DecompositionOfTrace
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.StandardDifferential
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Bool
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ENatToNat
-import Std.Tactic.BVDecide.Normalize.Prop
 import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -118,7 +71,7 @@ private theorem hpk_mul_self_lemma_2 (k r : ℕ) : Formalism.QuantumDeterminants
   · simp only [Matrix.one_apply, Fin.ext_iff]
     split_ifs <;> first | rfl | omega | norm_num
   · intro l _ hl
-    rw [if_neg (fun h => hl (Fin.ext h)), zero_mul]
+    rw [ite_eq_right (fun h => hl (Fin.ext h)), zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -357,7 +310,7 @@ theorem addSet_eq_iff {n : ℕ} (μ : Fin n → ℝ) (J I : Finset (Fin n)) (s :
     have hs : s ∉ J := by
       intro hs
       have := congrFun h s
-      simp only [addSet, Pi.add_apply, Pi.single_eq_same, if_pos hs] at this
+      simp only [addSet, Pi.add_apply, Pi.single_eq_same, ite_eq_left hs] at this
       split_ifs at this <;> linarith
     refine ⟨hs, ?_⟩
     rw [addSet_insert μ J s hs] at h
@@ -381,7 +334,7 @@ theorem count : Count := by
   · have h1 : ∀ p ∈ univ.filter (fun p => par p = addSet μ I.1), w p (addSet μ I.1) = 2 := by
       intro p hp
       have hp' := (Finset.mem_filter.1 hp).2
-      rw [← hp', hw, if_neg ((addSet_eq_iff μ p.1.1 I.1 p.2).1 hp').1]
+      rw [← hp', hw, ite_eq_right ((addSet_eq_iff μ p.1.1 I.1 p.2).1 hp').1]
     rw [Finset.sum_congr rfl h1, Finset.sum_const]
     have hc : (univ.filter (fun p => par p = addSet μ I.1)).card = I.1.card := by
       refine Finset.card_bij (fun p _ => p.2) ?_ ?_ ?_
@@ -403,7 +356,7 @@ theorem count : Count := by
     ring
   · refine Finset.sum_eq_zero fun p hp => ?_
     have hp' := (Finset.mem_filter.1 hp).2
-    rw [← hp', hw, if_pos]
+    rw [← hp', hw, ite_eq_left]
     by_contra hs
     refine hν ⟨insert p.2 p.1.1, ?_⟩ ?_
     · rw [Finset.card_insert_of_notMem hs, p.1.2]
@@ -669,14 +622,14 @@ theorem sum_adj {m n : ℕ} (f g : Fin m → Fin n) (hf : StrictMono f) (hg : St
         (-1) ^ (((univ.image g).erase b).filter fun c => c < b).card else 0 := by
   by_cases hb : b ∈ univ.image g
   swap
-  · rw [if_neg (fun h => hb h.1)]
+  · rw [ite_eq_right (fun h => hb h.1)]
     refine sum_eq_zero fun j _ => sum_eq_zero fun i _ => ?_
     rw [single_apply_of_ne, mul_zero]
     rintro ⟨_, rfl⟩
     exact hb (mem_image_of_mem _ (mem_univ _))
   by_cases ha : a ∈ univ.image f
   swap
-  · rw [if_neg (by rintro ⟨_, _, h⟩; exact ha (h ▸ mem_insert_self _ _))]
+  · rw [ite_eq_right (by rintro ⟨_, _, h⟩; exact ha (h ▸ mem_insert_self _ _))]
     refine sum_eq_zero fun j _ => sum_eq_zero fun i _ => ?_
     rw [single_apply_of_ne, mul_zero]
     rintro ⟨rfl, _⟩
@@ -689,11 +642,11 @@ theorem sum_adj {m n : ℕ} (f g : Fin m → Fin n) (hf : StrictMono f) (hg : St
       det_one_submatrix _ _ (hf.comp (Fin.strictMono_succAbove i)) (hg.comp (Fin.strictMono_succAbove j)),
       image_succAbove f hf, image_succAbove g hg]
     by_cases h : (univ.image f).erase (f i) = (univ.image g).erase (g j)
-    · rw [if_pos h, if_pos, card_filter_lt g hg, ← h, card_filter_lt f hf, mul_one, pow_add]
+    · rw [ite_eq_left h, ite_eq_left, card_filter_lt g hg, ← h, card_filter_lt f hf, mul_one, pow_add]
       refine ⟨hb, ?_, ?_⟩
       · rw [← h]; exact notMem_erase _ _
       · rw [← h, insert_erase ha]
-    · rw [if_neg h, if_neg, mul_zero]
+    · rw [ite_eq_right h, ite_eq_right, mul_zero]
       rintro ⟨_, h1, h2⟩
       apply h
       rw [h2, erase_insert h1]
@@ -762,10 +715,10 @@ theorem jW_mul_transpose (n m : ℕ) (J J' : Sub n m) (s s' : Fin n) :
   · have hc : (insert s J.1).card = m + 1 := by rw [Finset.card_insert_of_notMem hs, J.2]
     rw [Finset.sum_eq_single (⟨insert s J.1, hc⟩ : Sub n (m + 1))]
     · by_cases h : s' ∉ J'.1 ∧ insert s J.1 = insert s' J'.1
-      · rw [if_pos ⟨hs, rfl⟩, if_pos h, if_pos ⟨hs, h⟩]
-      · rw [if_neg h, mul_zero, if_neg (fun h' => h h'.2)]
+      · rw [ite_eq_left ⟨hs, rfl⟩, ite_eq_left h, ite_eq_left ⟨hs, h⟩]
+      · rw [ite_eq_right h, mul_zero, ite_eq_right (fun h' => h h'.2)]
     · intro I _ hI
-      rw [if_neg, zero_mul]
+      rw [ite_eq_right, zero_mul]
       rintro ⟨_, h⟩
       exact hI (Subtype.ext h)
     · intro h
@@ -788,28 +741,28 @@ theorem anticomm {n : ℕ} (J J' : Finset (Fin n)) (s s' : Fin n) :
     · by_cases hJ : J = J'
       · subst hJ
         simp [hs, sq]
-      · rw [if_neg (fun h => hs h.1), if_neg (fun h => hJ h.1), if_neg, sub_zero]
+      · rw [ite_eq_right (fun h => hs h.1), ite_eq_right (fun h => hJ h.1), ite_eq_right, sub_zero]
         rintro ⟨h1, h2, h3⟩
         apply hJ
         rw [← Finset.erase_insert h1, h3, Finset.erase_insert h2]
-  · rw [if_neg (fun h : J = J' ∧ s = s' => hss h.2), zero_sub]
+  · rw [ite_eq_right (fun h : J = J' ∧ s = s' => hss h.2), zero_sub]
     by_cases h : s ∈ J' ∧ s' ∉ J'.erase s ∧ J = insert s' (J'.erase s)
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       obtain ⟨h1, h2, h3⟩ := h
       obtain ⟨K, hK, rfl⟩ : ∃ K : Finset (Fin n), s ∉ K ∧ J' = insert s K :=
         ⟨J'.erase s, Finset.notMem_erase _ _, (Finset.insert_erase h1).symm⟩
       rw [Finset.erase_insert hK] at h2 h3 ⊢
       subst h3
-      rw [if_pos ⟨by simp [hss, hK], by simp [Ne.symm hss, h2], Finset.insert_comm _ _ _⟩]
+      rw [ite_eq_left ⟨by simp [hss, hK], by simp [Ne.symm hss, h2], Finset.insert_comm _ _ _⟩]
       rw [Finset.filter_insert, Finset.filter_insert]
       rcases lt_or_gt_of_ne hss with hlt | hlt
-      · rw [if_neg (not_lt.2 hlt.le), if_pos hlt,
+      · rw [ite_eq_right (not_lt.2 hlt.le), ite_eq_left hlt,
           Finset.card_insert_of_notMem (fun h => hK (Finset.mem_filter.1 h).1)]
         ring
-      · rw [if_pos hlt, if_neg (not_lt.2 hlt.le),
+      · rw [ite_eq_left hlt, ite_eq_right (not_lt.2 hlt.le),
           Finset.card_insert_of_notMem (fun h => h2 (Finset.mem_filter.1 h).1)]
         ring
-    · rw [if_neg h, if_neg, neg_zero]
+    · rw [ite_eq_right h, ite_eq_right, neg_zero]
       rintro ⟨h1, h2, h3⟩
       apply h
       have hs : s ∈ J' := by
@@ -899,7 +852,7 @@ theorem jW_er (I I' : BranchingSupport.Sub n (m + 1)) (j : Fin (m + 1)) :
   by_cases hI : I' = I
   · subst hI
     simp
-  · rw [if_neg (fun h => hI (Subtype.ext h)), if_neg hI]
+  · rw [ite_eq_right (fun h => hI (Subtype.ext h)), ite_eq_right hI]
 
 theorem jW_ne (p : BranchingSupport.Sub n m × Fin n) (I : BranchingSupport.Sub n (m + 1)) (h : jW n m p I ≠ 0) :
     ∃ j, (er I j, I.1.orderEmbOfFin I.2 j) = p := by
@@ -916,7 +869,7 @@ theorem jW_ne (p : BranchingSupport.Sub n m × Fin n) (I : BranchingSupport.Sub 
     apply Subtype.ext
     show I.1.erase (I.1.orderEmbOfFin I.2 j) = J.1
     rw [hj, hc.2, Finset.erase_insert hc.1]
-  · exact (h (if_neg hc)).elim
+  · exact (h (ite_eq_right hc)).elim
 
 theorem sum_jW (F : BranchingSupport.Sub n m × Fin n → ℂ) (I : BranchingSupport.Sub n (m + 1)) :
     ∑ p, F p * jW n m p I = ∑ j : Fin (m + 1), (-1) ^ (j : ℕ) * F (er I j, I.1.orderEmbOfFin I.2 j) := by
@@ -926,7 +879,7 @@ theorem sum_jW (F : BranchingSupport.Sub n m × Fin n → ℂ) (I : BranchingSup
     (Finset.univ.image (fun j : Fin (m + 1) => (er I j, I.1.orderEmbOfFin I.2 j)))) ?_]
   · rw [Finset.sum_image (fun a _ b _ hab => hq hab)]
     refine Finset.sum_congr rfl (fun j _ => ?_)
-    rw [jW_er, if_pos rfl, mul_comm]
+    rw [jW_er, ite_eq_left rfl, mul_comm]
   · intro p _ hp
     by_contra hne
     obtain ⟨j, hj⟩ := jW_ne p I (right_ne_zero_of_mul hne)
@@ -962,7 +915,7 @@ theorem first (g : Matrix (Fin n) (Fin n) ℂ) : jW n m * cmp (m + 1) g = (cmp m
       rw [Matrix.mul_apply]
       apply Finset.sum_eq_zero
       intro I'' _
-      simp only [jW, ht, not_true_eq_false, false_and, if_false, zero_mul]
+      simp only [jW, ht, not_true_eq_false, false_and, ite_false, zero_mul]
     have hl := laplace g (Fin.cons t ⇑(J.1.orderEmbOfFin J.2)) 0 J (by
       funext a
       simp only [Fin.succAbove_zero, Fin.cons_succ]) I
@@ -987,11 +940,11 @@ theorem first (g : Matrix (Fin n) (Fin n) ℂ) : jW n m * cmp (m + 1) g = (cmp m
     rw [hl, Matrix.mul_apply, Finset.sum_eq_single K]
     · have hp : ((J, t) : BranchingSupport.Sub n m × Fin n) = (er K i, K.1.orderEmbOfFin K.2 i) := by
         rw [hJK, hi]
-      rw [hp, jW_er, if_pos rfl]
+      rw [hp, jW_er, ite_eq_left rfl]
       rfl
     · intro I'' _ hne
       simp only [jW]
-      rw [if_neg (fun h => hne (Subtype.ext h.2)), zero_mul]
+      rw [ite_eq_right (fun h => hne (Subtype.ext h.2)), zero_mul]
     · intro h
       exact absurd (Finset.mem_univ K) h
 
@@ -1013,11 +966,11 @@ theorem third : (jW n m)ᵀ * jW n m = ((m : ℂ) + 1) • (1 : Matrix (Branchin
   by_cases h : I' = I
   · subst h
     have hc : ∀ j : Fin (m + 1), ((-1 : ℂ)) ^ (j : ℕ) * (if I' = I' then (-1) ^ (j : ℕ) else 0) = 1 :=
-      fun j => by rw [if_pos rfl, h1]
+      fun j => by rw [ite_eq_left rfl, h1]
     rw [Finset.sum_congr rfl (fun j _ => hc j), Finset.sum_const, Finset.card_univ, Fintype.card_fin,
       nsmul_eq_mul, mul_one, Matrix.smul_apply, Matrix.one_apply_eq, smul_eq_mul, mul_one]
     norm_num
-  · simp only [if_neg h, mul_zero, Finset.sum_const_zero, Matrix.smul_apply,
+  · simp only [ite_eq_right h, mul_zero, Finset.sum_const_zero, Matrix.smul_apply,
       Matrix.one_apply_ne (Ne.symm h), smul_zero]
 
 theorem wedgeInt : WedgeInt := by

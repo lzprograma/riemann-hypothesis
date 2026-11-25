@@ -9,48 +9,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearFormRa
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -121,14 +79,14 @@ theorem eI_X' (a : ℕ) (ha : a < p) (h : a < p + ρ) :
 
 private theorem embG_eB_inl_inl_apply_eq_ite (y : B.Mat k ρ) (a : Fin p) (x : U.Ix k p ρ) :
     U.embG k p ρ y (U.eB k p ρ (Sum.inl (Sum.inl a))) (U.eB k p ρ x) = if x = Sum.inl (Sum.inl a) then 1 else 0 := by
-  rcases x with (a' | b') | c' <;> simp [U.embG, Ux6.block3_apply, Matrix.one_apply] <;> (try split_ifs) <;> simp_all
+  rcases x with (a' | b') | c' <;> simp [U.embG, Ux3.block3_apply, Matrix.one_apply] <;> (try split_ifs) <;> simp_all
 
 private theorem embG_mulVec_liftVec_eB_apply (y : B.Mat k ρ) (z : Fin (2 * ρ + k + 1) → ℂ) (x : U.Ix k p ρ) :
     (U.embG k p ρ y *ᵥ liftVec k p ρ z) (U.eB k p ρ x) =
       Sum.elim (Sum.elim (fun _ => 0) (y *ᵥ z)) (fun _ => 0) x := by
   simp only [Matrix.mulVec, dotProduct]
   rw [← Equiv.sum_comp (U.eB k p ρ)]
-  simp only [U.embG, Ux6.block3_apply, liftVec_eB]
+  simp only [U.embG, Ux3.block3_apply, liftVec_eB]
   rcases x with (a | b) | c <;> simp [Fintype.sum_sum_type, Matrix.mulVec, dotProduct, Matrix.one_apply]
 
 theorem ell_embG (z : Fin (2 * ρ + k + 1) → ℂ) (y : B.Mat k ρ) :
@@ -144,7 +102,7 @@ theorem ell_embG (z : Fin (2 * ρ + k + 1) → ℂ) (y : B.Mat k ρ) :
       have hV' : eI k (p + ρ) ⟨(Fin.natAdd p b).val + 1, h'⟩ =
           U.eB k p ρ (Sum.inl (Sum.inr (eI k ρ ⟨b.val + 1, h⟩))) := eI_V' (b.val + 1) h (by simp; omega)
       rw [dite_eq_left h', dite_eq_left h, hV, hV']
-      simp [U.embG, Ux6.block3_apply]
+      simp [U.embG, Ux3.block3_apply]
     · have h' : ¬ (Fin.natAdd p b).val + 1 < p + ρ := by simp; omega
       rw [dite_eq_right h', dite_eq_right h, hV, embG_mulVec_liftVec_eB_apply]
       rfl
@@ -153,7 +111,7 @@ theorem ell_embG (z : Fin (2 * ρ + k + 1) → ℂ) (y : B.Mat k ρ) :
     rw [eI_X a]
     split_ifs with h
     · obtain ⟨x, hx⟩ := (U.eB k p ρ).surjective (eI k (p + ρ) ⟨(Fin.castAdd ρ a).val + 1, h⟩)
-      rw [← hx, embG_eB_inl_inl_apply_eq_ite, if_neg]
+      rw [← hx, embG_eB_inl_inl_apply_eq_ite, ite_eq_right]
       rintro rfl
       have := congrArg Fin.val hx
       simp [U.eB, eI] at this
@@ -164,7 +122,7 @@ private theorem muP_mulVec_liftVec_eB_apply (q : Matrix (Fin p) (Fin p) ℂ) (z 
     (U.muP k p ρ q *ᵥ liftVec k p ρ z) (U.eB k p ρ x) = Sum.elim (Sum.elim (fun _ => 0) z) (fun _ => 0) x := by
   simp only [Matrix.mulVec, dotProduct]
   rw [← Equiv.sum_comp (U.eB k p ρ)]
-  simp only [U.muP, Ux6.block3_apply, liftVec_eB]
+  simp only [U.muP, Ux3.block3_apply, liftVec_eB]
   rcases x with (a | b) | c <;> simp [Fintype.sum_sum_type, Matrix.one_apply]
 
 theorem ell_muP (z : Fin (2 * ρ + k + 1) → ℂ) (hz : inWb k ρ z) (q : Matrix (Fin p) (Fin p) ℂ) :
@@ -181,7 +139,7 @@ theorem ell_muP (z : Fin (2 * ρ + k + 1) → ℂ) (hz : inWb k ρ z) (q : Matri
       have hX' : eI k (p + ρ) ⟨(Fin.castAdd ρ a).val + 1, h'⟩ =
           U.eB k p ρ (Sum.inl (Sum.inl ⟨a.val + 1, h⟩)) := eI_X' (a.val + 1) h h'
       rw [dite_eq_left h', dite_eq_left h, hX']
-      simp [U.muP, Ux6.block3_apply]
+      simp [U.muP, Ux3.block3_apply]
     · rw [dite_eq_right h]
       split_ifs with h'
       · have hρ : 0 < ρ := by simp at h'; omega
@@ -190,7 +148,7 @@ theorem ell_muP (z : Fin (2 * ρ + k + 1) → ℂ) (hz : inWb k ρ z) (q : Matri
           ext
           simp [U.eB, eI] <;> omega
         rw [hV']
-        simp [U.muP, Ux6.block3_apply]
+        simp [U.muP, Ux3.block3_apply]
       · rw [muP_mulVec_liftVec_eB_apply]
         rfl
   · have hb := b.isLt
@@ -204,7 +162,7 @@ theorem ell_muP (z : Fin (2 * ρ + k + 1) → ℂ) (hz : inWb k ρ z) (q : Matri
         have := congrArg Fin.val e
         simp [eI] at this
       rw [hV']
-      simp [U.muP, Ux6.block3_apply, hne]
+      simp [U.muP, Ux3.block3_apply, hne]
     · rw [muP_mulVec_liftVec_eB_apply]
       exact hz _ (Or.inl (by simp [eI]))
 

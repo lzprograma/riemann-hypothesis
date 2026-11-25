@@ -49,8 +49,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain Polynomial UpperTheory.V UpperTheory.V.Z.Gam UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter GroundTheory.Global.SemiLocal
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 
 private theorem equivV {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) :

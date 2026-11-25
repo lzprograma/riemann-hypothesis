@@ -2,47 +2,6 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.MemPolKIff
 public import Mathlib.CategoryTheory.Category.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Presheaf
 
 @[expose] public section
@@ -316,7 +275,7 @@ theorem substS_monomial_of_free (α : L × Fin r →₀ ℕ) (c : K) (h : ∀ x 
   rw [substS_monomial]
   have : (α.prod fun x k => subX sg S A B x ^ k) = α.prod fun x k => (X x : MvPolynomial (L × Fin r) R) ^ k := by
     refine Finset.prod_congr rfl fun x hx => ?_
-    simp only [subX, if_neg (h x hx)]
+    simp only [subX, ite_eq_right (h x hx)]
   rw [this, monomial_eq]
 
 variable (out : L → Prop) [DecidablePred out]
@@ -348,7 +307,7 @@ theorem coeff_substS_eIn_eq_zero (α δ : L × Fin r →₀ ℕ) (hδ : eOut out
       simpa using this
     rw [hγ', Finsupp.mem_support_iff, eIn_apply] at hx
     intro ho
-    rw [if_pos ho] at hx
+    rw [ite_eq_left ho] at hx
     exact hx rfl
   have hv := mem_supported.mp (Subalgebra.mem_toSubring.mp hmem)
   by_contra hne
@@ -370,7 +329,7 @@ theorem substS_monomial_split (hout : ∀ i ∈ S, ¬ out i) (α : L × Fin r �
   conv_lhs => rw [h1, map_mul]
   rw [substS_monomial_of_free ι sg S A B (eOut out α) 1, map_one]
   intro x hx hxS
-  rw [Finsupp.mem_support_iff, eOut_apply, if_neg (hout _ hxS)] at hx
+  rw [Finsupp.mem_support_iff, eOut_apply, ite_eq_right (hout _ hxS)] at hx
   exact hx rfl
 
 theorem coeff_substS_monomial (hout : ∀ i ∈ S, ¬ out i) (α γ : L × Fin r →₀ ℕ) :
@@ -388,7 +347,7 @@ theorem coeff_substS_monomial (hout : ∀ i ∈ S, ¬ out i) (α γ : L × Fin r
     have hle := h1 x
     simp only [eOut_apply, Finsupp.coe_tsub, Pi.sub_apply, Finsupp.coe_zero, Pi.zero_apply] at hx hle ⊢
     split_ifs with ho
-    · simp only [if_pos ho] at hx hle
+    · simp only [ite_eq_left ho] at hx hle
       omega
     · rfl
   · exact absurd (h2 ▸ eOut_le out γ) h1
@@ -421,7 +380,7 @@ theorem coefOut_add (μ : L × Fin r →₀ ℕ) (F G : MvPolynomial (L × Fin r
 theorem coefOut_monomial (μ α : L × Fin r →₀ ℕ) (c : K) :
     coefOut out μ (monomial α c) = if eOut out α = μ then monomial (eIn out α) c else 0 := by
   rw [coefOut_eq_sum out μ (monomial α c) {α} support_monomial_subset, Finset.sum_singleton,
-    coeff_monomial, if_pos rfl]
+    coeff_monomial, ite_eq_left rfl]
 
 theorem coeff_coefOut (μ β : L × Fin r →₀ ℕ) (F : MvPolynomial (L × Fin r) K) :
     (coefOut out μ F).coeff β =
@@ -430,19 +389,19 @@ theorem coeff_coefOut (μ β : L × Fin r →₀ ℕ) (F : MvPolynomial (L × Fi
   | monomial α c =>
     rw [coefOut_monomial]
     by_cases h1 : eOut out α = μ
-    · rw [if_pos h1, coeff_monomial, coeff_monomial]
+    · rw [ite_eq_left h1, coeff_monomial, coeff_monomial]
       have hμ : eOut out μ = μ := by rw [← h1, eOut_eOut]
       by_cases h2 : eIn out α = β
       · have h3 : eOut out β = 0 := by rw [← h2, eOut_eIn]
         have h4 : α = μ + β := by rw [← h1, ← h2, eOut_add_eIn]
-        rw [if_pos h2, if_pos ⟨h3, hμ⟩, if_pos h4]
-      · rw [if_neg h2]
+        rw [ite_eq_left h2, ite_eq_left ⟨h3, hμ⟩, ite_eq_left h4]
+      · rw [ite_eq_right h2]
         split_ifs with h3 h4
         · exfalso; apply h2
           rw [h4, eIn_add, ← hμ, eIn_eOut, zero_add, eIn_eq_self_of_eOut_eq_zero out h3.1]
         · rfl
         · rfl
-    · rw [if_neg h1, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, coeff_monomial]
+    · rw [ite_eq_right h1, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, coeff_monomial]
       split_ifs with h3 h4
       · exfalso; apply h1
         rw [h4, eOut_add, h3.1, h3.2, add_zero]
@@ -456,7 +415,7 @@ theorem eOut_eq_zero_of_mem_support_coefOut {μ β : L × Fin r →₀ ℕ} {F :
     (h : β ∈ (coefOut out μ F).support) : eOut out β = 0 := by
   rw [mem_support_iff, coeff_coefOut] at h
   by_contra h0
-  exact h (if_neg fun hh => h0 hh.1)
+  exact h (ite_eq_right fun hh => h0 hh.1)
 
 theorem sum_mul_coefOut (g : (L × Fin r →₀ ℕ) → MvPolynomial (L × Fin r) K)
     (F : MvPolynomial (L × Fin r) K) :
@@ -467,7 +426,7 @@ theorem sum_mul_coefOut (g : (L × Fin r →₀ ℕ) → MvPolynomial (L × Fin 
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun α hα => ?_
   simp_rw [mul_ite, mul_zero]
-  rw [Finset.sum_ite_eq, if_pos (Finset.mem_image_of_mem _ hα)]
+  rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_image_of_mem _ hα)]
 
 theorem sum_coefOut (F : MvPolynomial (L × Fin r) K) :
     F = ∑ μ ∈ F.support.image (eOut out), monomial μ 1 * coefOut out μ F := by
@@ -504,8 +463,8 @@ theorem valS_coefOut_le (hout : ∀ i ∈ S, ¬ out i) (μ : L × Fin r →₀ �
         rw [coeff_substS_monomial _ sg S _ _ out hout α (μ + β), eOut_add, eIn_add, hμ1, hμ2, hβ, hβ2,
           add_zero, zero_add]
         by_cases h : eOut out α = μ
-        · rw [if_pos h, if_pos h.symm]
-        · rw [if_neg h, if_neg (fun hh => h hh.symm), mul_zero]
+        · rw [ite_eq_left h, ite_eq_left h.symm]
+        · rw [ite_eq_right h, ite_eq_right (fun hh => h hh.symm), mul_zero]
       rw [this]
       exact pge_valS sg S F _
     · rw [hexp]
@@ -516,7 +475,7 @@ theorem valS_coefOut_le (hout : ∀ i ∈ S, ¬ out i) (μ : L × Fin r →₀ �
   · have : coefOut out μ F = 0 := by
       unfold coefOut
       refine Finset.sum_eq_zero fun α hα => ?_
-      rw [if_neg fun h => hμ ⟨α, hα, h⟩]
+      rw [ite_eq_right fun h => hμ ⟨α, hα, h⟩]
     rw [this, map_zero, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, lord_zero]; exact le_top
 
 theorem valS_outside_linear (Φ : MvPolynomial (L × Fin r) K →ₗ[K] MvPolynomial (L × Fin r) K)
@@ -680,11 +639,11 @@ theorem ldeg_single [DecidableEq L] (i : L) (b : Fin r) (k : ℕ) (j : L) :
     rw [Finset.sum_eq_single b]
     · simp
     · intro a _ hab
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro hh; exact hab (Prod.mk.inj hh).2.symm
     · intro hb; exact absurd (Finset.mem_univ b) hb
   · refine Finset.sum_eq_zero fun a _ => ?_
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro hh; exact h (Prod.mk.inj hh).1.symm
 
 def HomD {R : Type} [CommSemiring R] (d : L → ℕ) (G : MvPolynomial (L × Fin r) R) : Prop :=
@@ -782,17 +741,17 @@ theorem coeff_hcomp (d : L → ℕ) (F : MvPolynomial (L × Fin r) K) (β : L ×
   by_cases hβ : β ∈ F.support
   · rw [Finset.sum_eq_single β]
     · split_ifs
-      · rw [coeff_monomial, if_pos rfl]
+      · rw [coeff_monomial, ite_eq_left rfl]
       · rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     · intro α _ hne
       split_ifs
-      · rw [coeff_monomial, if_neg hne]
+      · rw [coeff_monomial, ite_eq_right hne]
       · rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     · intro h; exact absurd hβ h
   · rw [notMem_support_iff.mp hβ, ite_self]
     refine Finset.sum_eq_zero fun α hα => ?_
     split_ifs
-    · rw [coeff_monomial, if_neg]
+    · rw [coeff_monomial, ite_eq_right]
       intro h; exact hβ (h ▸ hα)
     · rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
 
@@ -801,7 +760,7 @@ theorem hcomp_mem_PolK (d : L → ℕ) (F : MvPolynomial (L × Fin r) K) : hcomp
   intro α hα
   rw [mem_support_iff, coeff_hcomp] at hα
   by_contra h
-  exact hα (if_neg h)
+  exact hα (ite_eq_right h)
 
 theorem sum_hcomp (F : MvPolynomial (L × Fin r) K) :
     F = ∑ d ∈ F.support.image (fun α i => ldeg α i), hcomp d F := by
@@ -810,9 +769,9 @@ theorem sum_hcomp (F : MvPolynomial (L × Fin r) K) :
   simp only [coeff_hcomp]
   by_cases hβ : β ∈ F.support
   · rw [Finset.sum_eq_single (fun i => ldeg β i)]
-    · rw [if_pos fun i => rfl]
+    · rw [ite_eq_left fun i => rfl]
     · intro d _ hd
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h; exact hd (funext fun i => (h i).symm)
     · intro h; exact absurd (Finset.mem_image_of_mem _ hβ) h
   · rw [notMem_support_iff.mp hβ]
@@ -996,9 +955,9 @@ theorem vala_X (hV2 : V2 K) (i : L) (a : Fin r) :
     vala sg S (if sg i then 0 else -1) (X (i, a) : MvPolynomial (L × Fin r) K) := by
   have h := (hV2 L sg r S).1 i a
   by_cases hs : sg i = true
-  · rw [if_pos hs] at h ⊢
+  · rw [ite_eq_left hs] at h ⊢
     rw [vala_iff, Int.ceil_zero]; exact h
-  · rw [if_neg hs] at h ⊢
+  · rw [ite_eq_right hs] at h ⊢
     have h1 : ⌈(-1 : ℝ)⌉ = -1 := by
       have := Int.ceil_intCast (R := ℝ) (-1)
       simpa using this
@@ -1038,7 +997,7 @@ theorem prod_choose_single {σ : Type} (α : σ →₀ ℕ) (x : σ) (k : ℕ) (
     rw [Finsupp.single_eq_same]
   · intro y _ hy
     dsimp only
-    rw [Finsupp.single_apply, if_neg (Ne.symm hy), Nat.choose_zero_right, Nat.cast_one]
+    rw [Finsupp.single_apply, ite_eq_right (Ne.symm hy), Nat.choose_zero_right, Nat.cast_one]
   · intro hx
     have h0 : α x = 0 := Finsupp.notMem_support_iff.mp hx
     have hk0 : k = 0 := by omega

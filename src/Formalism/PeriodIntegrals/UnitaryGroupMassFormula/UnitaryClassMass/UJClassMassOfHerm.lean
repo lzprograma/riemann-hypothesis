@@ -16,60 +16,14 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFini
 public import Formalism.PeriodIntegrals.UJClassMass
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjH
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjS
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.SimpleRing.Principal
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.LatticeClassesFiniteRefinement
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.HermSingleLeft
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.Order.CompletePartialOrder
-import Std.Tactic.BVDecide.Normalize.Prop
+import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FinIdx
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PsiInclR, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.SigRTmulOne, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.LSLocA, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.LsLat, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PLatStep, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjA, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.AlgebraMapIntIntAf, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjP, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PPatchF, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.UJClassMassOfOpen, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.UJClassMassOfHerm
@@ -756,13 +710,7 @@ end Split
 theorem crd_int_smul {E : Type} [Field E] [NumberField E] {V : Type} [AddCommGroup V] [Module E V]
     [Module (𝓞 E) V] [IsScalarTower (𝓞 E) E V] {M : ℕ} (b : Module.Basis (Fin M) E V)
     (L0 : Submodule (𝓞 E) V) : ∀ e : E, IsIntegral ℤ e → ∀ x ∈ crdOf b L0, e • x ∈ crdOf b L0 := by
-  intro e he x hx
-  show ∑ i, (e • x) i • b i ∈ L0
-  have : ∑ i, (e • x) i • b i = e • ∑ i, x i • b i := by
-    rw [Finset.smul_sum]
-    simp [smul_smul]
-  rw [this]
-  exact int_smul_mem L0 he hx
+  apply _root_.PI.UnitaryGroupMassFormula.UJClassMass.crd_smul <;> assumption
 
 theorem equivFun_toLin {E : Type} [Field E] {V : Type} [AddCommGroup V] [Module E V] {M : ℕ}
     (b : Module.Basis (Fin M) E V) (A : Matrix (Fin M) (Fin M) E) (v : V) :
@@ -809,22 +757,15 @@ theorem algebraMap_int_intAf (t : 𝓞 F) : algebraMap F (Af F) (algebraMap (�
   exact HeightOneSpectrum.intValuation_le_one w t
 
 theorem finElt (m : 𝓞 F) (hm : m ≠ 0) : {w : HeightOneSpectrum (𝓞 F) | m ∈ w.asIdeal}.Finite := by
-  have hI : Ideal.span {m} ≠ 0 := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
-    exact hm
-  apply (Ideal.finite_factors hI).subset
-  intro w hw
-  show w.asIdeal ∣ Ideal.span {m}
-  rw [Ideal.dvd_iff_le, Ideal.span_singleton_le_iff_mem]
-  exact hw
+  apply _root_.Formalism.L2.G.finite_setOf_mem_asIdeal <;> assumption
 
 theorem evT_compl (X : Set (HeightOneSpectrum (𝓞 F))) : 1 - evT Xᶜ = evT X := by
   apply af_ext
   intro u
   rw [af_sub_apply, af_one_apply, evT_apply, evT_apply]
   by_cases h : u ∈ X
-  · rw [if_neg (fun h' => h' h), if_pos h, sub_zero]
-  · rw [if_pos (show u ∈ Xᶜ from h), if_neg h, sub_self]
+  · rw [ite_eq_right (fun h' => h' h), ite_eq_left h, sub_zero]
+  · rw [ite_eq_left (show u ∈ Xᶜ from h), ite_eq_right h, sub_self]
 
 theorem evT_inv_int (X : Set (HeightOneSpectrum (𝓞 F))) (t : 𝓞 F) (ht : ∀ u ∈ X, t ∉ u.asIdeal) :
     evT X * algebraMap F (Af F) ((algebraMap (𝓞 F) F t)⁻¹) ∈ intAf F := by
@@ -836,18 +777,18 @@ theorem evT_mul_of_subset {X Y : Set (HeightOneSpectrum (𝓞 F))} (hXY : X ⊆ 
   intro u
   rw [af_mul_apply, evT_apply, evT_apply]
   by_cases h : u ∈ X
-  · rw [if_pos h, if_pos (hXY h), mul_one]
-  · rw [if_neg h, zero_mul]
+  · rw [ite_eq_left h, ite_eq_left (hXY h), mul_one]
+  · rw [ite_eq_right h, zero_mul]
 
 theorem evT_split {B S : Set (HeightOneSpectrum (𝓞 F))} (hBS : B ⊆ S) : evT S = evT B + evT (S \ B) := by
   apply af_ext
   intro u
   rw [af_add_apply, evT_apply, evT_apply, evT_apply]
   by_cases h1 : u ∈ B
-  · rw [if_pos (hBS h1), if_pos h1, if_neg (fun h => h.2 h1), add_zero]
+  · rw [ite_eq_left (hBS h1), ite_eq_left h1, ite_eq_right (fun h => h.2 h1), add_zero]
   · by_cases h2 : u ∈ S
-    · rw [if_pos h2, if_neg h1, if_pos ⟨h2, h1⟩, zero_add]
-    · rw [if_neg h2, if_neg h1, if_neg (fun h => h2 h.1), add_zero]
+    · rw [ite_eq_left h2, ite_eq_right h1, ite_eq_left ⟨h2, h1⟩, zero_add]
+    · rw [ite_eq_right h2, ite_eq_right h1, ite_eq_right (fun h => h2 h.1), add_zero]
 
 theorem t_lemma (v : HeightOneSpectrum (𝓞 F)) (m : 𝓞 F) (hm : m ≠ 0) :
     ∃ t : 𝓞 F, t ∉ v.asIdeal ∧
@@ -855,8 +796,7 @@ theorem t_lemma (v : HeightOneSpectrum (𝓞 F)) (m : 𝓞 F) (hm : m ≠ 0) :
   classical
   have hn : ∀ w : HeightOneSpectrum (𝓞 F), ∃ n : ℕ, m ∉ w.asIdeal ^ n := by
     intro w
-    by_contra h
-    push_neg at h
+    by_contra! h
     have hmem : m ∈ ⨅ i, w.asIdeal ^ i := (Submodule.mem_iInf _).2 h
     rw [Ideal.iInf_pow_eq_bot_of_isDomain w.asIdeal w.isPrime.ne_top, Ideal.mem_bot] at hmem
     exact hm hmem
@@ -890,7 +830,7 @@ theorem t_lemma (v : HeightOneSpectrum (𝓞 F)) (m : 𝓞 F) (hm : m ≠ 0) :
       by_cases hmw : m ∈ w.asIdeal
       · have hws : w ∈ s := Finset.mem_insert_of_mem ((Set.Finite.mem_toFinset _).2 hmw)
         have h1 := ht w hws
-        simp only [if_neg hw', sub_zero] at h1
+        simp only [ite_eq_right hw', sub_zero] at h1
         have hle := (HeightOneSpectrum.intValuation_le_pow_iff_mem w t (n w)).2 h1
         have hnot : ¬ w.intValuation m ≤ WithZero.exp (-((n w : ℕ) : ℤ)) :=
           fun h => hn w ((HeightOneSpectrum.intValuation_le_pow_iff_mem w m (n w)).1 h)

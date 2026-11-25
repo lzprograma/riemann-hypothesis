@@ -1,59 +1,13 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.NestedMinorExpansionOneZero
 public import Formalism.HermitianCurvature.StatementQ
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Calculus.LineDeriv.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 
@@ -121,14 +75,7 @@ section
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
 theorem skip_one_eq_succAbove {t : ℕ} (i : Fin (t + 1)) : (skip1 i : Fin t → Fin (t + 1)) = i.succAbove := by
-  funext j
-  apply Fin.ext
-  simp only [skip1]
-  split_ifs with h
-  · rw [Fin.succAbove_of_castSucc_lt _ _ (by rw [Fin.lt_iff_val_lt_val, Fin.coe_castSucc]; exact h)]
-    try rfl
-  · rw [Fin.succAbove_of_le_castSucc _ _ (by rw [Fin.le_iff_val_le_val, Fin.coe_castSucc]; omega)]
-    try rfl
+  apply _root_.PI.QnHermHaar.skip1Fun <;> assumption
 
 theorem skip_two_succAbove_comp_alt {t : ℕ} (b : Fin (t + 2)) (a : Fin (t + 1)) :
     (skip2 (min (b.succAbove a) b) (max (b.succAbove a) b) : Fin t → Fin (t + 2)) =
@@ -158,11 +105,11 @@ theorem sign_pair_succAbove_right {t : ℕ} (b : Fin (t + 1)) (a : Fin t) :
   · rw [Fin.succAbove_of_castSucc_lt _ _ h]
     have h1 : (a : ℕ) < (b : ℕ) := h
     have h' : ((Fin.castSucc a : Fin (t + 1)) : ℕ) < (b : ℕ) := by rw [Fin.coe_castSucc]; exact h1
-    rw [if_pos h', Fin.coe_castSucc]
+    rw [ite_eq_left h', Fin.coe_castSucc]
   · rw [Fin.succAbove_of_le_castSucc _ _ h]
     have h1 : (b : ℕ) ≤ (a : ℕ) := h
     have h' : ¬ (((Fin.succ a : Fin (t + 1)) : ℕ) < (b : ℕ)) := by rw [Fin.val_succ]; omega
-    rw [if_neg h', Fin.val_succ]
+    rw [ite_eq_right h', Fin.val_succ]
     ring
 
 section lists
@@ -323,8 +270,8 @@ open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 theorem Tm_comm {A : Type*} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → Fin n → A) (hE : GlRel E) (u : ℂ)
     {a c d : Fin n} (h1 : a ≠ c) (h2 : d ≠ a) : Tm E u a a * E c d = E c d * Tm E u a a := by
   have h := hE a a c d
-  rw [if_neg h1, if_neg h2, sub_zero, sub_eq_zero] at h
-  simp only [Tm, if_true]
+  rw [ite_eq_right h1, ite_eq_right h2, sub_zero, sub_eq_zero] at h
+  simp only [Tm, ite_true]
   rw [add_mul, mul_add, h, Algebra.commutes]
 
 theorem sum_ne_succAbove {M : Type*} [AddCommMonoid M] {t : ℕ} (p : Fin (t + 1)) (f : Fin (t + 1) → M) :
@@ -417,7 +364,7 @@ variable {H}
 
 theorem hat_apply {T : X → X} (h : H.Good T) (x : H.V) : ((H.hat T x : H.V) : X) = H.N (T x) := by
   unfold HatData.hat
-  rw [dif_pos h] <;> rfl
+  rw [dite_eq_left h] <;> rfl
 
 theorem hat_toV {T : X → X} (h : H.Good T) {x : X} (hx : x ∈ H.G) :
     H.hat T (H.toV x hx) = H.toV (T x) (h.mem x hx) := by
@@ -532,7 +479,7 @@ section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ}
 
@@ -548,7 +495,7 @@ theorem filter_succ : ∀ {r : ℕ} (l : Fin r),
     refine Fin.cases ?_ (fun l' => ?_) l
     · simp [Function.comp_def]
     · have ih := filter_succ l'
-      simp only [Fin.val_zero, Fin.val_succ, Nat.zero_lt_succ, decide_true, if_true, Function.comp_def,
+      simp only [Fin.val_zero, Fin.val_succ, Nat.zero_lt_succ, decide_true, ite_true, Function.comp_def,
         Nat.add_lt_add_iff_right, List.cons_append]
       rw [ih]
       simp
@@ -586,8 +533,8 @@ theorem gam_succ (l : Fin r) (c : Fin r → ℂ) :
       simp
     · have h3 : a.val ≠ l.val := fun h => h1 (Fin.ext h)
       by_cases h2 : a.val < l.val
-      · rw [if_pos (show a.val < l.val + 1 by omega), if_pos h2, if_neg h1, mul_one]
-      · rw [if_neg (show ¬ a.val < l.val + 1 by omega), if_neg h2, if_neg h1, mul_one]
+      · rw [ite_eq_left (show a.val < l.val + 1 by omega), ite_eq_left h2, ite_eq_right h1, mul_one]
+      · rw [ite_eq_right (show ¬ a.val < l.val + 1 by omega), ite_eq_right h2, ite_eq_right h1, mul_one]
   unfold gam
   rw [Finset.prod_congr rfl (fun a _ => key a), Finset.prod_mul_distrib, Finset.prod_ite_eq']
   simp
@@ -615,7 +562,7 @@ section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ}
 
@@ -779,7 +726,7 @@ section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ}
 
@@ -900,14 +847,14 @@ theorem opL_shift (a : Fin r) (j : Fin 6) {f : (Fin r → ℂ) → E} {c c' : Fi
   fin_cases j
   · show pOp a f c = pOp a f c'
     unfold pOp wirt
-    rw [if_pos hc, if_pos hc', hfd, ha]
+    rw [ite_eq_left hc, ite_eq_left hc', hfd, ha]
   · show c a • f c = c' a • f c'
     rw [h0, ha]
   · show (c a)⁻¹ • f c = (c' a)⁻¹ • f c'
     rw [h0, ha]
   · show pbOp a f c = pbOp a f c'
     unfold pbOp wirtBar
-    rw [if_pos hc, if_pos hc', hfd, ha]
+    rw [ite_eq_left hc, ite_eq_left hc', hfd, ha]
   · show star (c a) • f c = star (c' a) • f c'
     rw [h0, ha]
   · show (star (c a))⁻¹ • f c = (star (c' a))⁻¹ • f c'
@@ -921,7 +868,7 @@ section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ}
 
@@ -979,10 +926,10 @@ theorem preserves_sandwich {R : Fn k r E → Fn k r E → Prop} (hR : LinRel R) 
     refine preserves_sandwich hR Y j (fun l hl => h l (Nat.lt_succ_of_lt hl)) ?_ a b
     intro a b
     by_cases hj : j < r
-    · simp only [dif_pos hj]
+    · simp only [dite_eq_left hj]
       exact preserves_operator_mul hR (preserves_transfer_letter_star hR _ (h ⟨j, hj⟩ (Nat.lt_succ_self j)) Y)
         (preserves_operator_mul hR hM (preserves_transfer_letter hR _ (h ⟨j, hj⟩ (Nat.lt_succ_self j)) Y)) a b
-    · simp only [dif_neg hj]
+    · simp only [dite_eq_right hj]
       exact hM a b
 
 end OM
@@ -993,44 +940,13 @@ variable {Wp Wq : Type} [NormedAddCommGroup Wp] [NormedSpace ℂ Wp] [NormedAddC
 
 theorem ff_add {i : Fin (r + 1)} {D : Set (Mx k r)} {J J' : Mx k r → (Wq →L[ℂ] Wp)}
     (h : J ∈ FFl k r z z' π π' i D) (h' : J' ∈ FFl k r z z' π π' i D) : J + J' ∈ FFl k r z z' π π' i D := by
-  obtain ⟨hs, hl, hr, he⟩ := h
-  obtain ⟨hs', hl', hr', he'⟩ := h'
-  refine And.intro ?_ (And.intro ?_ (And.intro ?_ ?_))
-  · intro g₀ hg₀
-    obtain ⟨U, F, hU, hgU, hF, hFe⟩ := hs g₀ hg₀
-    obtain ⟨U', F', hU', hgU', hF', hFe'⟩ := hs' g₀ hg₀
-    refine ⟨U ∩ U', fun g => F g + F' g, hU.inter hU', Set.mem_inter hgU hgU',
-      (hF.mono Set.inter_subset_left).add (hF'.mono Set.inter_subset_right), fun g hg hgl => ?_⟩
-    show J g + J' g = F g + F' g
-    rw [hFe g hg.1 hgl, hFe' g hg.2 hgl]
-  · intro g hg n hn
-    simp only [Pi.add_apply]
-    rw [hl g hg n hn, hl' g hg n hn, smul_add]
-  · intro g hg n hn
-    simp only [Pi.add_apply]
-    rw [hr g hg n hn, hr' g hg n hn, smul_add]
-  · intro g hg x hx x' hx'
-    simp only [Pi.add_apply]
-    rw [he g hg x hx x' hx', he' g hg x hx x' hx', ContinuousLinearMap.add_comp, ContinuousLinearMap.comp_add]
+  intros
+  apply _root_.Formalism.FourierDecayAlt.P.Qx8.FFl_add <;> assumption
 
 theorem ff_smul {i : Fin (r + 1)} {D : Set (Mx k r)} {J : Mx k r → (Wq →L[ℂ] Wp)} (s : ℂ)
     (h : J ∈ FFl k r z z' π π' i D) : s • J ∈ FFl k r z z' π π' i D := by
-  obtain ⟨hs, hl, hr, he⟩ := h
-  refine And.intro ?_ (And.intro ?_ (And.intro ?_ ?_))
-  · intro g₀ hg₀
-    obtain ⟨U, F, hU, hgU, hF, hFe⟩ := hs g₀ hg₀
-    refine ⟨U, fun g => s • F g, hU, hgU, hF.const_smul s, fun g hg hgl => ?_⟩
-    show s • J g = s • F g
-    rw [hFe g hg hgl]
-  · intro g hg n hn
-    simp only [Pi.smul_apply]
-    rw [hl g hg n hn, smul_comm]
-  · intro g hg n hn
-    simp only [Pi.smul_apply]
-    rw [hr g hg n hn, smul_comm]
-  · intro g hg x hx x' hx'
-    simp only [Pi.smul_apply]
-    rw [he g hg x hx x' hx', ContinuousLinearMap.smul_comp, ContinuousLinearMap.comp_smul]
+  intros
+  apply _root_.Formalism.FourierDecayAlt.P.Qx8.FFl_smul <;> assumption
 
 variable {L : Fin (r + 1)} {Dc Dc₀ : (Fin r → ℂ) → Set (Mx k r)}
 
@@ -1169,7 +1085,7 @@ section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ}
 
@@ -1382,7 +1298,7 @@ theorem chainAll_of (hCS : ChainStep) (hR : ResMem) (hRG : ResGFam) (hFO : FamOp
         sandw k r Y l.val (stepOp (Wp := Wp) (Wq := Wq) z z' l Y) := by
       show sandw k r Y (l.val + 1) _ = _
       show sandw k r Y l.val _ = _
-      rw [dif_pos l.isLt]
+      rw [dite_eq_left l.isLt]
       rfl
     rw [e, h2, resG_succ]
     show _ • _ = _ • _
@@ -1400,7 +1316,7 @@ section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ}
 
@@ -1465,7 +1381,7 @@ theorem cutP_eq_iff (Φ Ψ : Fn k r E) :
     by_cases hh : c ∈ OmX r ∧ g ∈ Glev k r L ∧ g ∈ Dc c
     · rw [cutP_on Φ hh.1 hh.2.1 hh.2.2, cutP_on Ψ hh.1 hh.2.1 hh.2.2]
       exact h c hh.1 g hh.2.1 hh.2.2
-    · simp only [cutP, LinearMap.coe_mk, AddHom.coe_mk, if_neg hh]
+    · simp only [cutP, LinearMap.coe_mk, AddHom.coe_mk, ite_eq_right hh]
 
 def mkData (L : Fin (r + 1)) (Dc : (Fin r → ℂ) → Set (Mx k r)) (P : Fn k r E → Prop) (h0 : P 0)
     (hadd : ∀ Φ Ψ, P Φ → P Ψ → P (Φ + Ψ)) (hsmul : ∀ (s : ℂ) Φ, P Φ → P (s • Φ))
@@ -1486,16 +1402,8 @@ variable {Wp Wq : Type} [NormedAddCommGroup Wp] [NormedSpace ℂ Wp] [NormedAddC
 
 theorem ff_congr {i : Fin (r + 1)} {D : Set (Mx k r)} (hD : IsDom k r z z' i D) {J J' : Mx k r → (Wq →L[ℂ] Wp)}
     (h : J ∈ FFl k r z z' π π' i D) (he : ∀ g ∈ Glev k r i ∩ D, J' g = J g) : J' ∈ FFl k r z z' π π' i D := by
-  refine ⟨smooth_congr hD.1 h.1 he, ?_, ?_, ?_⟩
-  · intro g hg n hn
-    rw [he g hg, he _ (dom_left hD hg hn)]
-    exact h.2.1 g hg n hn
-  · intro g hg n hn
-    rw [he g hg, he _ (dom_right hD hg hn)]
-    exact h.2.2.1 g hg n hn
-  · intro g hg a ha b hb
-    rw [he g hg, he _ (dom_uw hD hg ha hb)]
-    exact h.2.2.2 g hg a ha b hb
+  intros
+  apply _root_.Formalism.FourierDecayAlt.P.Qx8.FFl_congr <;> assumption
 
 variable {L : Fin (r + 1)} {Dc : (Fin r → ℂ) → Set (Mx k r)}
 
@@ -1543,7 +1451,7 @@ section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ}
 
@@ -1616,22 +1524,22 @@ theorem sandw_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : �
     by_cases hj : j < r
     · have e : sandw k r Y (j + 1) M = sandw k r Y j (oMul (TLs k ⟨j, hj⟩ Y) (oMul M (TL k ⟨j, hj⟩ Y))) := by
         show sandw k r Y j _ = _
-        rw [dif_pos hj]
+        rw [dite_eq_left hj]
       have g1 := good_oMul hM (good_TL hop ⟨j, hj⟩ Y)
       have g2 := good_oMul (good_TLs hop ⟨j, hj⟩ Y) g1
       obtain ⟨h1, h2⟩ := ih _ g2
       rw [e]
       refine ⟨h1, ?_⟩
       rw [h2, hatM_oMul (good_TLs hop ⟨j, hj⟩ Y) g1, hatM_oMul hM (good_TL hop ⟨j, hj⟩ Y)]
-      simp only [Lp, Rp, dif_pos hj, Matrix.mul_assoc]
+      simp only [Lp, Rp, dite_eq_left hj, Matrix.mul_assoc]
     · have e : sandw k r Y (j + 1) M = sandw k r Y j M := by
         show sandw k r Y j _ = _
-        rw [dif_neg hj]
+        rw [dite_eq_right hj]
       obtain ⟨h1, h2⟩ := ih M hM
       rw [e]
       refine ⟨h1, ?_⟩
       rw [h2]
-      simp only [Lp, Rp, dif_neg hj, Matrix.mul_one, Matrix.one_mul]
+      simp only [Lp, Rp, dite_eq_right hj, Matrix.mul_one, Matrix.one_mul]
 
 theorem vAB_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : ℕ) (b : Fin 2),
     H.Good (crd (cmp (vAB (E := E) r Y j) b)) ∧ H.hat (crd (cmp (vAB (E := E) r Y j) b)) = Rp H Y j b 0 := by
@@ -1651,9 +1559,9 @@ theorem vAB_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : ℕ
           (fun f => Y • (vAB r Y j).1 f + pOp ⟨j, hj⟩ ((vAB r Y j).1 f) - cOp ⟨j, hj⟩ ((vAB r Y j).2 f),
             fun f => ciOp ⟨j, hj⟩ ((vAB r Y j).1 f)) := by
         show (if h : j < r then _ else _) = _
-        rw [dif_pos hj]
+        rw [dite_eq_left hj]
       have hR : Rp H Y (j + 1) = hatM H (TL k ⟨j, hj⟩ Y) * Rp H Y j := by
-        simp only [Rp, dif_pos hj]
+        simp only [Rp, dite_eq_left hj]
       have gT := good_TL hop ⟨j, hj⟩ Y
       rw [hR, ev]
       have key0 : H.Good (crd (cmp ((fun f => Y • (vAB r Y j).1 f + pOp ⟨j, hj⟩ ((vAB r Y j).1 f) -
@@ -1698,9 +1606,9 @@ theorem vAB_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : ℕ
       · exact key1
     · have ev : vAB (E := E) r Y (j + 1) = vAB r Y j := by
         show (if h : j < r then _ else _) = _
-        rw [dif_neg hj]
+        rw [dite_eq_right hj]
       have hR : Rp H Y (j + 1) = Rp H Y j := by
-        simp only [Rp, dif_neg hj, Matrix.one_mul]
+        simp only [Rp, dite_eq_right hj, Matrix.one_mul]
       rw [ev, hR]
       exact ih b
 
@@ -1722,9 +1630,9 @@ theorem vABs_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : �
           (fun f => (vABs r Y j).1 (Y • f - pbOp ⟨j, hj⟩ f) - (vABs r Y j).2 (cbOp ⟨j, hj⟩ f),
             fun f => (vABs r Y j).1 (cbiOp ⟨j, hj⟩ f)) := by
         show (if h : j < r then _ else _) = _
-        rw [dif_pos hj]
+        rw [dite_eq_left hj]
       have hL : Lp H Y (j + 1) = Lp H Y j * hatM H (TLs k ⟨j, hj⟩ Y) := by
-        simp only [Lp, dif_pos hj]
+        simp only [Lp, dite_eq_left hj]
       have gT := good_TLs hop ⟨j, hj⟩ Y
       rw [hL, ev]
       have key0 : H.Good (crd (cmp ((fun f => (vABs r Y j).1 (Y • f - pbOp ⟨j, hj⟩ f) - (vABs r Y j).2 (cbOp ⟨j, hj⟩ f),
@@ -1766,9 +1674,9 @@ theorem vABs_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : �
       · exact key1
     · have ev : vABs (E := E) r Y (j + 1) = vABs r Y j := by
         show (if h : j < r then _ else _) = _
-        rw [dif_neg hj]
+        rw [dite_eq_right hj]
       have hL : Lp H Y (j + 1) = Lp H Y j := by
-        simp only [Lp, dif_neg hj, Matrix.mul_one]
+        simp only [Lp, dite_eq_right hj, Matrix.mul_one]
       rw [ev, hL]
       exact ih a
 
@@ -1814,7 +1722,7 @@ section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem cVv_of (hCA : ChainAll) (hR : ResMem) (hRG : ResGFam) (hFO : FamOps) (hTP : TPreservesFF)
     (hLL : TLinLoc) : CVv := by

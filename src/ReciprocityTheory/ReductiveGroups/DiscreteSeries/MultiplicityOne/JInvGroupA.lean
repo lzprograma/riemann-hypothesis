@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
 
 @[expose] public section
@@ -42,20 +43,11 @@ theorem embWb_mulVec_eq_zero_on_isW (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ
   · have h0 : embWb k r γ i j = 0 := by
       unfold isW at hi hj
       simp only [embWb]
-      rw [dite_eq_right (fun h => hj h.2), if_neg (fun h => h.2 hi)]
+      rw [dite_eq_right (fun h => hj h.2), ite_eq_right (fun h => h.2 hi)]
     rw [h0, zero_mul]
 
 theorem measurable_invM : Measurable (invM : Mt k r → Mt k r) := by
-  have hd : Continuous fun x : Mt k r => (Matrix.of x).det :=
-    Continuous.matrix_det (continuous_id : Continuous fun x : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ => x)
-  have ha : Continuous fun x : Mt k r => (Matrix.of x).adjugate :=
-    Continuous.matrix_adjugate (continuous_id : Continuous fun x : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ => x)
-  have h : (invM : Mt k r → Mt k r) = fun x i j => ((Matrix.of x).det)⁻¹ * (Matrix.of x).adjugate i j := by
-    funext x i j
-    simp only [invM, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.smul_apply, smul_eq_mul]
-  rw [h]
-  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
-  exact hd.measurable.inv.mul ((continuous_apply j).comp ((continuous_apply i).comp ha)).measurable
+  apply _root_.GlobalTheory.SgInf.measurable_invM <;> assumption
 
 section cc
 
@@ -250,12 +242,12 @@ theorem gbar_mem_N (g : Mat k r) (hg : g ∈ Nset k r) : gbar k r γ g ∈ Nset 
     rw [Finset.sum_eq_single i]
     · by_cases hiW : isW k r i
       · obtain ⟨h1, h2⟩ : r ≤ i.val ∧ i.val ≤ r + k := hiW
-        rw [hg3 i i h1 h2 hi, if_pos rfl, one_mul]
+        rw [hg3 i i h1 h2 hi, ite_eq_left rfl, one_mul]
       · rw [hy i hiW, mul_zero]
     · intro l _ hli
       by_cases hl : isW k r l
       · obtain ⟨h1, h2⟩ : r ≤ l.val ∧ l.val ≤ r + k := hl
-        rw [hg3 i l h1 h2 hi, if_neg (Ne.symm hli), zero_mul]
+        rw [hg3 i l h1 h2 hi, ite_eq_right (Ne.symm hli), zero_mul]
       · rw [hy l hl, mul_zero]
     · intro h; exact absurd (Finset.mem_univ i) h
   refine ⟨gbar_mem_GV hG hEG g hg1, ?_, ?_⟩

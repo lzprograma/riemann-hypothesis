@@ -78,9 +78,9 @@ theorem family_dual_holds : FamDual := by
   have hGw : ∀ j, w j ∈ L := fun j => hGi (Sum.inr j)
   have hg1 : ∀ i, vF 𝔭 (a i) ≠ 0 → glueFam K 𝔭 b a π w τ (Sum.inl i) =
       (algebraMap F K (π : F))⁻¹ ^ vF 𝔭 (a i) • (b i + w (τ i)) := fun i hi => by
-    simp only [glueFam, Sum.elim_inl, if_neg hi]
+    simp only [glueFam, Sum.elim_inl, ite_eq_right hi]
   have hg0 : ∀ i, vF 𝔭 (a i) = 0 → glueFam K 𝔭 b a π w τ (Sum.inl i) = b i := fun i hi => by
-    simp only [glueFam, Sum.elim_inl, if_pos hi]
+    simp only [glueFam, Sum.elim_inl, ite_eq_left hi]
   have hGb : ∀ i, b i ∈ L := by
     intro i
     by_cases hi : vF 𝔭 (a i) = 0
@@ -203,10 +203,10 @@ theorem family_dual_holds : FamDual := by
       f (Sum.inl i) • b i + (if vF 𝔭 (a i) ≠ 0 then f (Sum.inl i) • w (τ i) else 0) := by
     intro i
     by_cases hi : vF 𝔭 (a i) = 0
-    · simp only [coef, if_pos hi]
-      rw [hg0 i hi, if_neg (fun h' => h' hi), add_zero]
-    · simp only [coef, if_neg hi]
-      rw [hg1 i hi, if_pos hi, smul_smul, mul_assoc, ← mul_pow, mul_inv_cancel₀ hϖ0, one_pow,
+    · simp only [coef, ite_eq_left hi]
+      rw [hg0 i hi, ite_eq_right (fun h' => h' hi), add_zero]
+    · simp only [coef, ite_eq_right hi]
+      rw [hg1 i hi, ite_eq_left hi, smul_smul, mul_assoc, ← mul_pow, mul_inv_cancel₀ hϖ0, one_pow,
         mul_one, smul_add]
   have hfib : ∑ j, (∑ i ∈ P.filter (fun i => τ i = j), f (Sum.inl i)) • w j =
       ∑ i ∈ P, f (Sum.inl i) • w (τ i) := by
@@ -289,29 +289,29 @@ theorem family_gram_holds : FamGram := by
     by_cases hik : i = k
     · subst hik
       by_cases hi : vF 𝔭 (a i) = 0
-      · rw [if_pos hi, hbn]; exact haS i
-      · rw [if_neg hi, form_smul_smul, key_ii i, star_inv_pow hF, ← pow_add, ← two_mul]
+      · rw [ite_eq_left hi, hbn]; exact haS i
+      · rw [ite_eq_right hi, form_smul_smul, key_ii i, star_inv_pow hF, ← pow_add, ← two_mul]
         exact mem_SP_of_inP hu (hcong i hi)
     · by_cases hi : vF 𝔭 (a i) = 0 <;> by_cases hk : vF 𝔭 (a k) = 0
-      · rw [if_pos hi, if_pos hk, hbo i k hik]; exact (SP K 𝔭).zero_mem
-      · rw [if_pos hi, if_neg hk, form_smul_right, map_add (f := _), hbo i k hik, hbw, add_zero, mul_zero]
+      · rw [ite_eq_left hi, ite_eq_left hk, hbo i k hik]; exact (SP K 𝔭).zero_mem
+      · rw [ite_eq_left hi, ite_eq_right hk, form_smul_right, map_add (f := _), hbo i k hik, hbw, add_zero, mul_zero]
         exact (SP K 𝔭).zero_mem
-      · rw [if_neg hi, if_pos hk, form_smul_left, map_add (f := _), LinearMap.add_apply, hbo i k hik, hwb,
+      · rw [ite_eq_right hi, ite_eq_left hk, form_smul_left, map_add (f := _), LinearMap.add_apply, hbo i k hik, hwb,
           add_zero, mul_zero]
         exact (SP K 𝔭).zero_mem
-      · rw [if_neg hi, if_neg hk, form_smul_smul, key_ik i k hik hi hk, mul_zero]
+      · rw [ite_eq_right hi, ite_eq_right hk, form_smul_smul, key_ik i k hik hi hk, mul_zero]
         exact (SP K 𝔭).zero_mem
   · simp only [glueFam, Sum.elim_inl, Sum.elim_inr]
     by_cases hi : vF 𝔭 (a i) = 0
-    · rw [if_pos hi, hbw]; exact (SP K 𝔭).zero_mem
-    · rw [if_neg hi, form_smul_left, map_add (f := _), LinearMap.add_apply, hbw, zero_add, star_inv_pow hF]
+    · rw [ite_eq_left hi, hbw]; exact (SP K 𝔭).zero_mem
+    · rw [ite_eq_right hi, form_smul_left, map_add (f := _), LinearMap.add_apply, hbw, zero_add, star_inv_pow hF]
       by_cases hj : τ i = l
       · subst hj; rw [hwn1]; exact mem_SP_of_inP hu (hcP i hi)
       · rw [hwo _ _ hj, mul_zero]; exact (SP K 𝔭).zero_mem
   · simp only [glueFam, Sum.elim_inl, Sum.elim_inr]
     by_cases hk : vF 𝔭 (a k) = 0
-    · rw [if_pos hk, hwb]; exact (SP K 𝔭).zero_mem
-    · rw [if_neg hk, form_smul_right, map_add (f := _), hwb, zero_add]
+    · rw [ite_eq_left hk, hwb]; exact (SP K 𝔭).zero_mem
+    · rw [ite_eq_right hk, form_smul_right, map_add (f := _), hwb, zero_add]
       by_cases hj : τ k = j
       · subst hj; rw [hwn1]; exact mem_SP_of_inP hu (hcP k hk)
       · rw [hwo _ _ (Ne.symm hj), mul_zero]; exact (SP K 𝔭).zero_mem
@@ -401,7 +401,7 @@ theorem family_meet_holds : FamMeet := by
         have hc0 : algebraMap F K (c (τ i)) ≠ 0 := by rw [map_ne_zero]; exact hc.2
         have h1 := (mul_eq_zero.1 h0).resolve_right hc0
         refine ⟨-γ (Sum.inr (τ i)), ?_⟩
-        simp only [cf, co, if_neg hi] at h1 ⊢
+        simp only [cf, co, ite_eq_right hi] at h1 ⊢
         rw [map_neg]
         linear_combination -h1
       · intro j _ hj
@@ -416,7 +416,7 @@ theorem family_meet_holds : FamMeet := by
     rw [sub_eq_zero.1 hz0]
     refine Submodule.sum_mem _ fun i _ => ?_
     by_cases he : vF 𝔭 (a i) = 0
-    · have : cf i = algebraMap (𝓞 K) K (γ (Sum.inl i)) := if_pos he
+    · have : cf i = algebraMap (𝓞 K) K (γ (Sum.inl i)) := ite_eq_left he
       rw [this, algebraMap_smul]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
     · obtain ⟨r, hr⟩ := hint i he
@@ -428,10 +428,10 @@ theorem family_meet_holds : FamMeet := by
     · rw [Submodule.span_le]
       rintro _ ⟨i, rfl⟩
       by_cases he : vF 𝔭 (a i) = 0
-      · have : G (Sum.inl i) = b i := by rw [hGl, if_pos he]
+      · have : G (Sum.inl i) = b i := by rw [hGl, ite_eq_left he]
         exact Submodule.subset_span ⟨Sum.inl i, this⟩
       · have e1 : b i = algebraMap (𝓞 F) (𝓞 K) π ^ vF 𝔭 (a i) • G (Sum.inl i) - G (Sum.inr (τ i)) := by
-          rw [hGl, if_neg he, hGr, ← algebraMap_smul K, map_pow, alg_eq, smul_smul, ← mul_pow,
+          rw [hGl, ite_eq_right he, hGr, ← algebraMap_smul K, map_pow, alg_eq, smul_smul, ← mul_pow,
             mul_inv_cancel₀ hπ0, one_pow, one_smul, add_sub_cancel_right]
         rw [e1]
         exact Submodule.sub_mem _ (Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩))
@@ -940,12 +940,12 @@ theorem gluing_vectors_exist : GlueVecsPre := by
   have htpart : ∀ i, vF 𝔭 (a i) ≠ 0 → t (τ i) = algebraMap F K (nF i) := by
     intro i hi
     have hj : ∃ i', vF 𝔭 (a i') ≠ 0 ∧ τ i' = τ i := ⟨i, hi, rfl⟩
-    simp only [t, dif_pos hj]
+    simp only [t, dite_eq_left hj]
     rw [hτ _ _ hj.choose_spec.1 hi hj.choose_spec.2]
   have htnp : ∀ j, (∀ i, vF 𝔭 (a i) ≠ 0 → τ i ≠ j) → t j = 1 := by
     intro j hj
     have : ¬ ∃ i, vF 𝔭 (a i) ≠ 0 ∧ τ i = j := fun ⟨i, hi, e⟩ => hj i hi e
-    simp only [t, dif_neg this]
+    simp only [t, dite_eq_right this]
   let h' : W →ₗ⋆[K] W →ₗ[K] K := (LinearMap.lcomp K K W.subtype).comp (h.comp W.subtype)
   have h'a : ∀ x y : W, h' x y = h x y := fun x y => rfl
   have hsym' : ∀ x y : W, star (h' x y) = h' y x := by

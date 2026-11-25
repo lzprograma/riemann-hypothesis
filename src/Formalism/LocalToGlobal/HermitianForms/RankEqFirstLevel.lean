@@ -49,8 +49,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Forms
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Re
 
 def reGL {a b : ℕ} (h : a = b) (R : Type) [CommRing R] : GL (Fin a) R ≃* GL (Fin b) R :=
@@ -142,11 +140,6 @@ structure ColsTied (D : D7) where
 structure ColsFull {D : D7} (C : ColsTied D) where
   full : Formalism.L2.Herm.FullTied D
   cols_eq : full.cols = C.herm
-
-def ColumnsExtraCompatible {D : D7} {C : ColsTied D} (Fu : ColsFull C) {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L}
-    {Gl : Formalism.MainNotions.G.LatInst D} {K : Formalism.MainNotions.G.Consts} {Y : DivX D} {cX : ExtraC}
-    (ex : Extra D L hT Gi Gl K Y cX) : Prop :=
-  Formalism.L2.Herm.ExtraTied Fu.full ex
 
 end Formalism.L2.Forms
 

@@ -48,8 +48,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -375,7 +373,7 @@ theorem exists_reading (hU : IsClosed (U : Set (Xo.XF c))) {σb : RuleY Y} {σ :
   · simp only [← map_smul, ← map_sum, ← map_sub]
     refine (hh _ _).trans (herm_eq_zero hP hE (fun n hn => ?_) (eV j))
     have := hC k n
-    rw [if_pos hn] at this
+    rw [ite_eq_left hn] at this
     simp [this]
   · refine congrArg (fun M => Matrix.det (Matrix.of M)) (funext fun k => congrArg (Sum.elim · _) (funext fun j => ?_))
     exact congrArg (_ * ·) (hh _ _).symm

@@ -80,19 +80,4 @@ instance compactSpace_quotientGroup {H : Type*} [Group H] [TopologicalSpace H] [
 
 end Quot
 
-namespace ClassFormation
-
-variable [CompactSpace G] [TotallyDisconnectedSpace G] {C : Rep.{u} k G} [IsDiscreteRep C]
-  (F : ClassFormation C) {U V : OpenSubgroup G} (hVU : V ≤ U)
-  [((V : Subgroup G).subgroupOf U).Normal]
-
-end ClassFormation
-
-namespace ClassFormationAt
-
-variable [CompactSpace G] {P : Set Nat.Primes} {C : Rep.{u} k G} [IsDiscreteRep C]
-  (F : ClassFormationAt P C) {U V : OpenSubgroup G} (hVU : V ≤ U)
-
-end ClassFormationAt
-
 end GroundTheory.ProfCoh

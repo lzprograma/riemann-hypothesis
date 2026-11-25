@@ -105,16 +105,16 @@ theorem intSer_of_funEq (f h A B : ℂ_[q]⟦X⟧) (N : ℕ) (hf : constantCoeff
     · simp
   have hPs : Bd 1 (P : ℂ_[q]⟦X⟧) := fun i => by rw [Polynomial.coeff_coe]; exact hPi i
   have hP0 : constantCoeff (P : ℂ_[q]⟦X⟧) = 1 := by
-    rw [← coeff_zero_eq_constantCoeff_apply, Polynomial.coeff_coe, hP, coeff_trunc, if_pos hn,
+    rw [← coeff_zero_eq_constantCoeff_apply, Polynomial.coeff_coe, hP, coeff_trunc, ite_eq_left hn,
       coeff_zero_eq_constantCoeff_apply, hf]
   obtain ⟨Q, hQ⟩ : (X : ℂ_[q]⟦X⟧) ^ n ∣ f - P := by
     rw [X_pow_dvd_iff]
     intro m hm
-    rw [map_sub, Polynomial.coeff_coe, hP, coeff_trunc, if_pos hm, sub_self]
+    rw [map_sub, Polynomial.coeff_coe, hP, coeff_trunc, ite_eq_left hm, sub_self]
   have hX : ∀ g : ℂ_[q]⟦X⟧, coeff n (X ^ n * g) = constantCoeff g := fun g => by
     simpa using coeff_X_pow_mul g n 0
   have hQ0 : constantCoeff Q = coeff n f := by
-    rw [← hX, ← hQ, map_sub, Polynomial.coeff_coe, hP, coeff_trunc, if_neg (lt_irrefl n), sub_zero]
+    rw [← hX, ← hQ, map_sub, Polynomial.coeff_coe, hP, coeff_trunc, ite_eq_right (lt_irrefl n), sub_zero]
   obtain ⟨h', hh'⟩ : (X : ℂ_[q]⟦X⟧) ∣ h := X_dvd_iff.2 hh0
   have h'0 : constantCoeff h' = coeff 1 h := by
     rw [hh', coeff_succ_X_mul, coeff_zero_eq_constantCoeff_apply]

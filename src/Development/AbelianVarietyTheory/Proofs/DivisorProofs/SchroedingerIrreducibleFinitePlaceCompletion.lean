@@ -45,6 +45,7 @@ import Mathlib.Topology.Sheaves.Init
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLagrModelOfIsLin
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergInnerPreserving
 
 @[expose] public section
 
@@ -55,7 +56,6 @@ open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ Num IsTripleOf IsDatumA skewGram mulG colV adjV₁)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model Chars Rep IsTriple Acts SInf At latAtV realAd evI)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.BigDat
 
 noncomputable section
@@ -66,24 +66,7 @@ open ValuativeRel
 
 theorem norm_addChar_eq_one {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (ψ : AddChar k ℂ) (hψ : Continuous ψ) (x : k) : ‖ψ x‖ = 1 := by
-  have hle : ∀ y : k, ‖ψ y‖ ≤ 1 := by
-    intro y
-    have hK : IsCompact ((fun u : k => y * u) '' (𝒪[k] : Set k)) :=
-      (IsNonarchimedeanLocalField.isCompact_closedBall k 1).image (by fun_prop)
-    obtain ⟨C, hC⟩ := (hK.image (continuous_norm.comp hψ)).isBounded.exists_norm_le
-    by_contra h
-    push_neg at h
-    obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt C h
-    have hmem : ‖ψ (y * (n : k))‖ ∈ (fun z => ‖ψ z‖) '' ((fun u : k => y * u) '' (𝒪[k] : Set k)) :=
-      ⟨y * n, ⟨n, natCast_mem _ n, rfl⟩, rfl⟩
-    have h2 := hC _ hmem
-    rw [Real.norm_of_nonneg (norm_nonneg _), mul_comm, ← nsmul_eq_mul, AddChar.map_nsmul_eq_pow, norm_pow] at h2
-    linarith
-  have h1 : ψ x * ψ (-x) = 1 := by rw [← AddChar.map_add_eq_mul, add_neg_cancel, AddChar.map_zero_eq_one]
-  have h2 : ‖ψ x‖ * ‖ψ (-x)‖ = 1 := by rw [← norm_mul, h1, norm_one]
-  have a := hle x
-  have b := hle (-x)
-  nlinarith [norm_nonneg (ψ x), norm_nonneg (ψ (-x))]
+  apply _root_.GlobalTheory.norm_addChar_nonarch <;> assumption
 
 def toCircle {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (ψ : AddChar k ℂ) (hψ : Continuous ψ) : AddChar k Circle where

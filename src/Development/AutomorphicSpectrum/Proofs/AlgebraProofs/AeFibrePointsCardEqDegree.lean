@@ -5,46 +5,7 @@ public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BallAverageFi
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsSigmaCompactConeInter
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MeasurableFibreCountOver
 import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -59,7 +20,7 @@ private theorem ae_fibre_encard_eq {n e : ℕ} (S : Set (EuclideanSpace ℂ (Fin
     ∀ᵐ (π : Fin (e + 1) → Fin n → ℂ), (fibrePts S π).encard = δ := by
   let T : ℝ≥0∞ → ℝ≥0∞ := fun x => if x = (δ : ℝ≥0∞) then 0 else 1
   have hT : Measurable T := Measurable.ite (measurableSet_singleton _) measurable_const measurable_const
-  have hcross := _root_.GlobalTheory.CompanionTheory.Relay.ball_average_fibre_count n e S hss hsc T hT
+  have hcross := _root_.PositivityTheory.Xgn.t_xgz_chow_mahler_e0reduce n e S hss hsc T hT
   have hlhs : ∫⁻ (π : Fin (e + 1) → Fin n → ℂ), matGauss π *
       ∫⁻ (w : EuclideanSpace ℂ (Fin (e + 1))) in Metric.ball 0 1, T (cntOver S π w) = 0 := by
     have hae : (fun π : Fin (e + 1) → Fin n → ℂ => matGauss π *
@@ -69,7 +30,7 @@ private theorem ae_fibre_encard_eq {n e : ℕ} (S : Set (EuclideanSpace ℂ (Fin
       have hz : (fun w => T (cntOver S π w))
           =ᵐ[volume.restrict (Metric.ball (0 : EuclideanSpace ℂ (Fin (e + 1))) 1)] fun _ => 0 := by
         filter_upwards [ae_restrict_of_ae hπ] with w hw
-        simp only [T, hw, if_true]
+        simp only [T, hw, ite_true]
       rw [lintegral_congr_ae hz, lintegral_zero, mul_zero]
     rw [lintegral_congr_ae hae, lintegral_zero]
   rw [hlhs] at hcross
@@ -94,7 +55,7 @@ private theorem ae_fibre_encard_eq {n e : ℕ} (S : Set (EuclideanSpace ℂ (Fin
     (mul_eq_zero.mp hπ).resolve_left hg
   have hc : cntOver S π (firstCoordVec (e + 1)) = (δ : ℝ≥0∞) := by
     by_contra hne
-    simp only [T, hne, if_false, one_ne_zero] at hT0
+    simp only [T, hne, ite_false, one_ne_zero] at hT0
   have hc' : (((fibrePts S π).encard : ℕ∞) : ℝ≥0∞) = ((δ : ℕ∞) : ℝ≥0∞) := by
     rw [ENat.toENNReal_coe]
     exact hc

@@ -255,25 +255,6 @@ theorem exists_eq_frameLattice [IsDomain A] [IsPrincipalIdealRing A] [IsFraction
 
 end Frame
 
-section Dual
-
-variable (A : Type*) {K : Type*} [CommRing A] [Field K] [Algebra A K]
-  {V W : Type*} [AddCommGroup V] [Module K V] [Module A V] [IsScalarTower A K V]
-  [AddCommGroup W] [Module K W] {σ : K →+* K}
-
-variable {A}
-
-end Dual
-
-section LocalDual
-
-variable {O K : Type*} [CommRing O] [IsDedekindDomain O] [Field K] [Algebra O K]
-  [IsFractionRing O K]
-  {V W : Type*} [AddCommGroup V] [Module K V] [Module O V] [IsScalarTower O K V]
-  [AddCommGroup W] [Module K W] [Module O W] [IsScalarTower O K W]
-
-end LocalDual
-
 section Completion
 
 variable {O K : Type*} [CommRing O] [IsDedekindDomain O] [Field K] [Algebra O K]
@@ -343,9 +324,3 @@ theorem hermPairing_separating {G : Matrix (Fin r) (Fin r) E} (hG : G.det ≠ 0)
 end NumberField
 
 end GlobalTheory.LocalLattice
-
-namespace GlobalTheory
-
-open LocalLattice
-
-end GlobalTheory

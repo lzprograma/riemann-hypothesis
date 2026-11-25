@@ -487,34 +487,6 @@ theorem exists_le_maximalIdeal_pow_of_iInf_eq_bot [IsNoetherianRing R] [IsLocalR
 
 end Symbolic
 
-section Extension
-
-variable {R : Type*} [CommRing R] {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀]
-
-variable (v : Valuation R Γ₀) (I : Ideal R) {π : Γ₀}
-
-end Extension
-
-section LocalExtension
-
-open IsLocalRing
-
-variable {R : Type*} [CommRing R] [IsLocalRing R] [IsNoetherianRing R]
-
-section Multiplicative
-
-variable {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀]
-
-end Multiplicative
-
-section Additive
-
-variable {Γ : Type*} [LinearOrderedAddCommMonoidWithTop Γ]
-
-end Additive
-
-end LocalExtension
-
 universe u v w
 
 end GlobalTheory

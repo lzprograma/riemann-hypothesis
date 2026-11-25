@@ -142,27 +142,6 @@ theorem hlat_orth_sum [Fintype γ] [Nonempty γ] (hA : FrameOK A) (hfg : ∀ c, 
 
 end Orth
 
-section GSDOrth
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] (S : GSD K) (h : S.Ok) (hf : S.Free)
-
-
-
-
-end GSDOrth
-
-section GSDOrth2
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {S : GSD K}
-
-end GSDOrth2
-
-section Cols
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end Cols
-
 end Formalism.L2.Col
 end -- clump:auto
 end -- clump:auto
@@ -275,9 +254,9 @@ theorem NC_orth (c c' : (D.mem u).C.cls 0) (hcc : c ≠ c') :
   refine Finset.sum_eq_zero fun c'' _ => ?_
   by_cases h : c'' = c
   · subst h
-    have : tcAt CV v c'' (prjC CV c' y) = 0 := tcAt_eq_zero CV (by rw [co_prjC, if_neg hcc])
+    have : tcAt CV v c'' (prjC CV c' y) = 0 := tcAt_eq_zero CV (by rw [co_prjC, ite_eq_right hcc])
     rw [this, nfAll_zero_left]
-  · have : tcAt CV v c'' (prjC CV c x) = 0 := tcAt_eq_zero CV (by rw [co_prjC, if_neg h])
+  · have : tcAt CV v c'' (prjC CV c x) = 0 := tcAt_eq_zero CV (by rw [co_prjC, ite_eq_right h])
     rw [this, nfAll_zero_right]
 
 theorem injOn_NC (c : (D.mem u).C.cls 0) {W : Type} [AddCommGroup W] [Module D.what₂.LL W]
@@ -362,8 +341,6 @@ theorem muMax_le_class : ∃ c, ((D.fm u).lat 0).muMax ≤ (withL ((D.fm u).lat 
   exact ⟨c, hc⟩
 
 end Rank
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def SlopeMaxClass (D : D7) : Prop :=
   ∀ u (CV : ColVal D u) (c : (D.mem u).C.cls 0), (∃ y : Fin (D.R.N 0) → (D.sp.X 0).V, Formalism.MainNotions.flipTwoThree.ShortAt D u c y) →

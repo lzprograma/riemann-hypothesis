@@ -59,12 +59,6 @@ structure NormalizedCharacterCompatibility (D : D7) (K : NChiData D) : Prop wher
   lamG : ∀ s lam, Read D.nd.plOm.1 (D.ntw.lamG s lam) (algebraMap (D.ntw.O s) (FractionRing (D.ntw.O s)))
     (K.embO s (D.ntw.sideL s lam)) (complexEmbeddingRestrictedToSubfield D) (K.lamH s lam) 0
 
-section rcg
-
-variable (D : D7)
-
-end rcg
-
 theorem frob_exists (D : D7) (P : HeightOneSpectrum (𝓞 D.host.E)) :
     ∃ σ : G D.host.E D.nd.Om, IsFrob (F := D.host.E) (D.nd.plOm.1 P) (normV P) σ :=
   exists_isFrob (D.nd.plOm.2 P)

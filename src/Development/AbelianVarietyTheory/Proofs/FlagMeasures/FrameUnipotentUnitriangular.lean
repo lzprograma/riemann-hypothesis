@@ -125,7 +125,7 @@ theorem linInd : LinearIndependent E g := by
     rw [← hf_sum_left, hc]; simp [hf]
   refine Fin.lastCases ?_ (fun j => ?_) i
   · have h := key (g (Fin.last r))
-    simp only [hg, and_true, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+    simp only [hg, and_true, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
     have hu : IsUnit (-algebraMap F E t) := (t.isUnit.map (algebraMap F E)).neg
     exact (hu.mul_left_eq_zero).1 h
   · have h := key (gs j)
@@ -200,7 +200,7 @@ theorem exists_tri {n : S.GLV} (hn : n ∈ S.Nof g) :
   · simp [hc j i (le_of_lt hij), hij.ne']
   · simp [hc i i le_rfl]
   · simp only [Matrix.of_apply, add_smul, Finset.sum_add_distrib, ← hc' j, ite_smul, one_smul, zero_smul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     simp
 
 end

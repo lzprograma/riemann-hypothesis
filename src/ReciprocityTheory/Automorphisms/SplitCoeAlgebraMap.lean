@@ -64,8 +64,7 @@ theorem SplitPlace.ideal_isPrime (s : SplitPlace L) : s.ideal.IsPrime := by
   · intro x y hxy
     rw [s.split_mem_ideal, s.split_mem_ideal]
     rw [s.split_mem_ideal] at hxy
-    by_contra h
-    push_neg at h
+    by_contra! h
     obtain ⟨h1, h2⟩ := h
     simp only [RingOfIntegers.coe_eq_algebraMap, map_mul] at hxy h1 h2
     exact not_lt.mpr (one_le_mul h1 h2) hxy

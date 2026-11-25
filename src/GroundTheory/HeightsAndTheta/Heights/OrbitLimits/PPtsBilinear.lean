@@ -117,8 +117,8 @@ theorem sheetDensity_sum_left {n : ℕ} (P : Ideal (MRing ι))
     sheetDensity P Ψ φ (fun z => ∑ t, u t z) y w = ∑ t, sheetDensity P Ψ φ (u t) y w := by
   unfold sheetDensity
   by_cases h : ∃ γ, IsSheet P Ψ y w γ
-  · simp only [dif_pos h, Finset.sum_mul]
-  · simp only [dif_neg h, Finset.sum_const_zero]
+  · simp only [dite_eq_left h, Finset.sum_mul]
+  · simp only [dite_eq_right h, Finset.sum_const_zero]
 
 theorem sheetDensity_sum_right {n : ℕ} (P : Ideal (MRing ι))
     (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (n + 1 + 1) → ℂ)) (L : Fin n → HermLine ι)
@@ -128,12 +128,12 @@ theorem sheetDensity_sum_right {n : ℕ} (P : Ideal (MRing ι))
       ∑ t, sheetDensity P Ψ (Fin.cons (u t) (pot L)) g y w := by
   unfold sheetDensity
   by_cases h : ∃ γ, IsSheet P Ψ y w γ
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     have hγ : ∀ᶠ y' in 𝓝 y, DifferentiableAt ℂ h.choose y' ∧ ∀ k, ∃ i, h.choose y' ⟨k, i⟩ ≠ 0 := by
       filter_upwards [h.choose_spec.2] with y' hy'
       exact ⟨hy'.1, hy'.2.1.1⟩
     rw [maDensity_cons_sum L hu hγ, Finset.mul_sum]
-  · simp only [dif_neg h, Finset.sum_const_zero]
+  · simp only [dite_eq_right h, Finset.sum_const_zero]
 
 theorem finsum_mem_sum_comm {α T : Type*} [Fintype T] {S : Set α} (hS : S.Finite) (F : T → α → ℝ) :
     ∑ᶠ w ∈ S, ∑ t, F t w = ∑ t, ∑ᶠ w ∈ S, F t w := by
@@ -171,15 +171,8 @@ theorem integrable_fibreSum (hInt : PtsIntegrableStatement) {P : Ideal (MRing ι
   have hlog : logNorm (HermLine.ofWeight g hg.2) 1 = g := by
     funext z
     simp [logNorm, HermLine.ofWeight, Real.log_exp]
-  have h1 : (1 : MRing ι) ∉ P := fun h => hP.2.1.1.ne_top ((Ideal.eq_top_iff_one P).mpr h)
-  have hm : IsMultiHomog (1 : MRing ι) (fun _ => 0) := by
-    intro m hm k
-    rw [MvPolynomial.support_one] at hm
-    simp only [Finset.mem_singleton] at hm
-    subst hm
-    simp
   have hsec : IsSectionOn P (HermLine.ofWeight g hg.2) 1 :=
-    ⟨fun _ => 0, fun k => by simp [HermLine.ofWeight], hm, h1⟩
+    _root_.ReciprocityTheory.ChartRestriction.G.Geo.isSectionOn_one hP.2.1.1 rfl
   have := hInt K ι P (n + 1) Ψ _ _ 1 hP hΨ hLF hG hsec
   rwa [hpot, hlog] at this
 
@@ -193,7 +186,7 @@ theorem PtsBilinear.proof (hAbs : Inter.PtsAbsIntegrable.Statement) (hMeas : Pts
   intro K _ ι _ P n L T _ u v hP hL hu hv
   unfold ptsIntegral
   by_cases hΨ : ∃ Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (n + 1 + 1) → ℂ), IsGoodProj P Ψ
-  · simp only [dif_pos hΨ]
+  · simp only [dite_eq_left hΨ]
     have hfin := fibreFinite K ι P (n + 1) hΨ.choose hP hΨ.choose_spec
     unfold ptsIntegralAt
     constructor
@@ -209,6 +202,6 @@ theorem PtsBilinear.proof (hAbs : Inter.PtsAbsIntegrable.Statement) (hMeas : Pts
       funext y
       rw [finsum_mem_congr rfl fun w _ => sheetDensity_sum_right P hΨ.choose L hu v y w,
         finsum_mem_sum_comm (hfin y)]
-  · simp only [dif_neg hΨ, Finset.sum_const_zero, and_self]
+  · simp only [dite_eq_right hΨ, Finset.sum_const_zero, and_self]
 
 end GroundTheory.Heights₂.Heights

@@ -18,51 +18,8 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry�
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsConjugateModelExtremalDualParameter
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MatrixLatticeIndexIntegralTranslationInvariance
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedLocalDualPairSwapHermitianAdjoint
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -109,16 +66,16 @@ theorem selE_mul_transpose (a : Fin n' → ℕ) (n : ℕ) :
       have : (i : ℕ) ≠ (b : ℕ) := fun e => hb (Fin.ext e.symm)
       simp [this]
     · intro hn; exact absurd (Finset.mem_univ _) hn
-  · rw [if_neg h, ite_self]
+  · rw [ite_eq_right h, ite_self]
     refine Finset.sum_eq_zero fun p _ => ?_
     have : ¬ ((i : ℕ) = (p : ℕ) ∧ 0 < a i) := fun ⟨e, ha⟩ => h ⟨e ▸ p.isLt, ha⟩
-    rw [if_neg this, zero_mul]
+    rw [ite_eq_right this, zero_mul]
 
 theorem halfSel_add (h2 : (2 : L) ≠ 0) (a : Fin n' → ℕ) (i j : Fin n') :
     halfSel (L := L) a i j + halfSel a j i = 1 := by
   unfold halfSel
   rcases eq_or_ne i j with rfl | hne
-  · simp only [lt_irrefl, false_or, and_false, if_false, if_true]
+  · simp only [lt_irrefl, false_or, and_false, ite_false, ite_true]
     rw [← two_mul, mul_inv_cancel₀ h2]
   have hne' : (i : ℕ) ≠ (j : ℕ) := Fin.val_ne_of_ne hne
   split_ifs <;> first | (exfalso; omega) | simp
@@ -183,7 +140,7 @@ theorem square_diag : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicati
     · exact (Formalism.UG.intL L).zero_mem
   have hErow : ∀ i : Fin n', ¬ ((i : ℕ) < n ∧ 0 < a i) → ∀ p, E i p = 0 := by
     intro i h p; simp only [E, selE, Matrix.of_apply]
-    rw [if_neg]; rintro ⟨e, ha⟩; exact h ⟨e ▸ p.isLt, ha⟩
+    rw [ite_eq_right]; rintro ⟨e, ha⟩; exact h ⟨e ▸ p.isLt, ha⟩
   set A' : Matrix (Fin n') (Fin n') L := E * A * Eᵀ with hA'def
   have hA'i : ∀ i j, A' i j ∈ Formalism.UG.intL L := fun i j =>
     matMul_int (matMul_int hEi hA) (fun p k => hEi k p) i j
@@ -248,10 +205,10 @@ theorem square_diag : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicati
         have e1 : (i = l ∧ j = k) ↔ (j = k ∧ i = l) := and_comm
         have e2 : (j = l ∧ i = k) ↔ (i = k ∧ j = l) := and_comm
         by_cases hP : i = k ∧ j = l <;> by_cases hQ : j = k ∧ i = l
-        · rw [if_pos hP, if_pos hQ, if_pos (e1.2 hQ), if_pos (e2.2 hP), map_add (f := _), hσx, hσy]; ring
-        · rw [if_pos hP, if_neg hQ, if_neg (fun h => hQ (e1.1 h)), if_pos (e2.2 hP), map_add (f := _), hσx, map_zero]; ring
-        · rw [if_neg hP, if_pos hQ, if_pos (e1.2 hQ), if_neg (fun h => hP (e2.1 h)), map_add (f := _), hσy, map_zero]; ring
-        · rw [if_neg hP, if_neg hQ, if_neg (fun h => hQ (e1.1 h)), if_neg (fun h => hP (e2.1 h)), map_add (f := _), map_zero]; ring
+        · rw [ite_eq_left hP, ite_eq_left hQ, ite_eq_left (e1.2 hQ), ite_eq_left (e2.2 hP), map_add (f := _), hσx, hσy]; ring
+        · rw [ite_eq_left hP, ite_eq_right hQ, ite_eq_right (fun h => hQ (e1.1 h)), ite_eq_left (e2.2 hP), map_add (f := _), hσx, map_zero]; ring
+        · rw [ite_eq_right hP, ite_eq_left hQ, ite_eq_left (e1.2 hQ), ite_eq_right (fun h => hP (e2.1 h)), map_add (f := _), hσy, map_zero]; ring
+        · rw [ite_eq_right hP, ite_eq_right hQ, ite_eq_right (fun h => hQ (e1.1 h)), ite_eq_right (fun h => hP (e2.1 h)), map_add (f := _), map_zero]; ring
       have hsmall : ∀ k l, Valued.v (C k l) < 1 := by
         intro k l
         simp only [hCdef, Matrix.add_apply, Matrix.single_apply]
@@ -880,13 +837,11 @@ theorem class_fixed_phase : ∀ (L : Type) [Field L] [CharZero L] [Valued L (Wit
     exact hmemV _
   have hwAll : w ∈ ⨆ c, V c := (iSup_le fun k => le_iSup V _) hwO
   obtain ⟨d, hd⟩ : ∃ d, w ∉ P d := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     obtain ⟨F, hF⟩ := (Submodule.mem_iSup_iff_exists_finset).1 hwAll
     exact hw0 (eq_zero_of_mem_compl hind F w hF hcon)
   obtain ⟨k, hk⟩ : ∃ k : KInt σ (JT : Matrix (Fin n') (Fin n') L), k • QuotientAddGroup.mk x = d := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hd ((iSup_le fun k => le_iSup₂_of_le (f := fun j (_ : j ≠ d) => V j) (k • QuotientAddGroup.mk x) (hcon k) le_rfl) hwO)
   have hsplit : w ∈ V d ⊔ P d := by
     have e := iSup_split_single V d

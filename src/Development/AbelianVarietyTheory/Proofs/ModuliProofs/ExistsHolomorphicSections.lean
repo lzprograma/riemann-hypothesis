@@ -124,7 +124,7 @@ theorem hasDerivAt_line {S : Type*} {J : Type*} [CommRing S] [Fintype J] (φ : S
     simp only [map_mul, eval₂Hom_X', Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     refine (hp.mul hlin).congr_deriv ?_
     rw [Finset.sum_congr rfl fun j _ => key j, Finset.sum_add_distrib, ← Finset.sum_mul]
-    simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true, zero_smul,
+    simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true, zero_smul,
       add_zero, zero_mul]
     ring
 

@@ -11,53 +11,8 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Defin
 public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdeleEquivOfLocal
 public import Mathlib.NumberTheory.Padics.HeightOneSpectrum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.Tactic.Lemma
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.NumberTheory.Padics.Hensel
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.Algebra.Order.Star.Real
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PSplitCongr
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -490,10 +445,10 @@ theorem UpperTheory.Gal.G1.pDefSign :
       have hme : InfinitePlace.mk v.embedding = v := InfinitePlace.mk_embedding v
       by_cases hv : v = InfinitePlace.mk A.τ₀
       · have h1 := ((S.sig v.embedding).1 (by rw [hme]; exact hv)).1
-        rw [hεdef, if_pos hv, one_mul]
+        rw [hεdef, ite_eq_left hv, one_mul]
         exact hp.1 h1
       · have h0 := ((S.sig v.embedding).2 (by rw [hme]; exact hv)).1
-        rw [hεdef, if_neg hv, neg_one_mul, neg_pos]
+        rw [hεdef, ite_eq_right hv, neg_one_mul, neg_pos]
         exact hp.2 (by rw [h0]; exact zero_ne_one)
     have h1 : (((A.H n).map v.embedding)ᵀ * (mat S ↑(B.β⁻¹)).map v.embedding) *
         (mat S ↑B.β * (A.H n)⁻¹).map v.embedding = 1 := by
@@ -1252,8 +1207,7 @@ private lemma pow_neg_three_lt_two_norm_sq (q : ℕ) [hq : Fact q.Prime] :
     norm_num
   · have h1 : ‖(2 : ℤ_[q])‖ = 1 := by
       apply le_antisymm (PadicInt.norm_le_one _)
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       have hd := (PadicInt.norm_int_lt_one_iff_dvd (p := q) 2).1 (by exact_mod_cast hlt)
       have hd' : q ∣ 2 := by exact_mod_cast hd
       exact h ((Nat.prime_dvd_prime_iff_eq hq.out Nat.prime_two).1 hd')
@@ -1278,7 +1232,7 @@ theorem UpperTheory.Gal.G1.pPadicSqFin :
   refine ⟨Fintype.card (ZMod (q ^ 3)), fun u => Fintype.equivFin (ZMod (q ^ 3))
     (if h : ‖u‖ ≤ 1 then PadicInt.toZModPow 3 ⟨u, h⟩ else 0), ?_⟩
   intro u u' hu hu' hk
-  simp only [dif_pos hu.le, dif_pos hu'.le, (Fintype.equivFin _).injective.eq_iff] at hk
+  simp only [dite_eq_left hu.le, dite_eq_left hu'.le, (Fintype.equivFin _).injective.eq_iff] at hk
   obtain ⟨a, ha⟩ : ∃ a : ℤ_[q], (a : ℚ_[q]) = u ∧ PadicInt.toZModPow 3 a =
       PadicInt.toZModPow 3 ⟨u, hu.le⟩ := ⟨⟨u, hu.le⟩, rfl, rfl⟩
   obtain ⟨b, hb⟩ : ∃ b : ℤ_[q], (b : ℚ_[q]) = u' ∧ PadicInt.toZModPow 3 b =
@@ -1396,8 +1350,7 @@ theorem UpperTheory.Gal.G1.pPadicUnitNorm :
     simp only [map_sub, map_mul, map_pow, hx, hy, hDz]
     exact hab'
   have hor : a ≠ 0 ∨ b ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     obtain ⟨ha0, hb0⟩ := hcon
     apply hub
     rw [ha0, hb0] at hab'

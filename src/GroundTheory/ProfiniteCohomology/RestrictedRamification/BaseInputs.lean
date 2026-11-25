@@ -31,43 +31,8 @@ theorem finite_of_exact_of_finite {A B C : Type*} [AddCommGroup A] [AddCommGroup
   exact ((Set.finite_range g).subset hsub).to_subtype
 
 theorem exists_natCast_mem_place (K : FiniteSubfield) {ℓ : ℕ} (hℓ : ℓ.Prime) :
-    ∃ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal := by
-  have hnu : ¬ IsUnit ((ℓ : ℕ) : 𝓞 K.1) := by
-    rintro ⟨u, hu⟩
-    have h : ((ℓ : ℕ) : 𝓞 K.1) * ((u⁻¹ : (𝓞 K.1)ˣ) : 𝓞 K.1) = 1 := by
-      rw [← hu]
-      exact u.mul_inv
-    have hK : ((ℓ : ℕ) : K.1) * (((u⁻¹ : (𝓞 K.1)ˣ) : 𝓞 K.1) : K.1) = 1 := by
-      have := congrArg (algebraMap (𝓞 K.1) K.1) h
-      rwa [map_mul, map_natCast, map_one] at this
-    have hint : IsIntegral ℤ (((u⁻¹ : (𝓞 K.1)ˣ) : 𝓞 K.1) : K.1) :=
-      NumberField.RingOfIntegers.isIntegral_coe _
-    have heq : (((u⁻¹ : (𝓞 K.1)ˣ) : 𝓞 K.1) : K.1) = algebraMap ℚ K.1 (1 / ℓ) := by
-      rw [eq_inv_of_mul_eq_one_right hK]
-      simp
-    rw [heq, isIntegral_algebraMap_iff ] at hint
-    obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
-    have hℓ0 : (ℓ : ℚ) ≠ 0 := by exact_mod_cast hℓ.ne_zero
-    have hy' : ((ℓ * y : ℤ) : ℚ) = 1 := by
-      rw [Int.cast_mul, show ((y : ℤ) : ℚ) = algebraMap ℤ ℚ y from rfl, hy]
-      field_simp
-      norm_cast
-    have h2 : (ℓ : ℤ) * y = 1 := by exact_mod_cast hy'
-    have hunit := Int.eq_one_or_neg_one_of_mul_eq_one h2
-    have hℓ1 : (ℓ : ℤ) ≠ 1 := by exact_mod_cast hℓ.one_lt.ne'
-    have hℓm : (ℓ : ℤ) ≠ -1 := by omega
-    exact hunit.elim hℓ1 hℓm
-  have hne : Ideal.span {((ℓ : ℕ) : 𝓞 K.1)} ≠ ⊤ := fun h => hnu (Ideal.span_singleton_eq_top.1 h)
-  obtain ⟨M, hM, hle⟩ := Ideal.exists_le_maximal _ hne
-  have hℓM : ((ℓ : ℕ) : 𝓞 K.1) ∈ M := hle (Ideal.subset_span rfl)
-  have hMbot : M ≠ ⊥ := by
-    intro h
-    rw [h, Ideal.mem_bot] at hℓM
-    have : ((ℓ : ℕ) : K.1) = 0 := by
-      have := congrArg (algebraMap (𝓞 K.1) K.1) hℓM
-      rwa [map_natCast, map_zero] at this
-    exact hℓ.ne_zero (by exact_mod_cast this)
-  exact ⟨⟨M, hM.isPrime, hMbot⟩, hℓM⟩
+    ∃ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal :=
+  by apply _root_.GroundTheory.ProfCoh.exists_place_above; assumption
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1))) (n ℓ k : ℕ) (hℓ : ℓ.Prime)
   (hnk : n = ℓ ^ k) (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)

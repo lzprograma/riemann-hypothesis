@@ -131,33 +131,11 @@ structure Shifts where
 
 variable {D : D7} (Y : ShimX D.what₂.Tau) {K : Type} [Field K] [NumberField K] [StarRing K] {P : SlopeBoundParameters}
 
-def bZero (W : Wts D.what₂.Tau Y.N) : ℝ := WeightThresholdDefs.bigB0 Y (reWt W.u') W.g
-
-def totalShift (W : Wts D.what₂.Tau Y.N) (A : Shifts) : ℝ :=
-  (∑ p ∈ A.Pe, A.e p * Real.log p) +
-    (∑ p ∈ GlobalTheory.FlagAr.setB Y (bZero Y W), (WeightThresholdDefs.cP p + A.C7 * vDiff D p) * (l1 W.u' + A.Pa) * Real.log p) +
-    (l1 W.u1 + 6 * A.Pinf) / 2
-
 end GlobalTheory.MeanTop
 
 namespace GlobalTheory.MeanTop.Inhab
 
 open Filter Topology
-
-def wts (ι : Type) (N kc p T Dd c0 G V : ℕ) (b : ℝ) : Wts ι N where
-  kc := kc
-  p := p
-  T := T
-  Dd := Dd
-  c0 := c0
-  h0 := ((T : ℤ) + Dd + 1) * G - 1
-  S := ((T : ℝ) + Dd + 1) * G * N
-  eta := 2 * N + c0
-  b := b
-  w := fun _ => ((T : ℝ) + Dd + 1) * V
-  u := fun _ i => (((T : ℤ) + Dd + 1) * G - 1) * ((kc : ℤ) - 1 - (i : ℕ)) -
-    (if kc ≤ (i : ℕ) then ((T : ℤ) + Dd + 1) * V else 0) - (if p ≤ (i : ℕ) then 2 * (N : ℤ) + c0 else 0)
-  u1 := fun _ i => (G : ℤ) * ((kc : ℤ) - 1 - (i : ℕ)) - (if kc ≤ (i : ℕ) then (V : ℤ) else 0)
 
 theorem dividedWeight_unique {ι : Type} {N : ℕ} (W : Wts ι N) (v : ι → Fin N → ℤ) (hk : 1 ≤ W.kc) (hN : W.kc ≤ N) (h : W.IsDiv)
     (h' : Wts.IsDiv { W with u1 := v }) : v = W.u1 := by

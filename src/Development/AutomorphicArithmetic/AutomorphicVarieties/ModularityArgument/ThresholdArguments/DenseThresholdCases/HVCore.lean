@@ -184,8 +184,7 @@ theorem UpperTheory.V.PropA.genLevel :
   have hq : qExp l ≤ cZero l L₀ := hM.2.2.1.mp hmu
   have hP := princGen l (cZero l L₀) hq
   obtain ⟨u, hu, hu'⟩ : ∃ u ∈ KStar.TotallyRealRoots.princ l (cZero l L₀), u ∉ KStar.TotallyRealRoots.princ l (cZero l L₀ + 1) := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have h1 := hP.2.2 1
     rw [Subgroup.relIndex_eq_one.mpr hne, pow_one] at h1
     exact (Fact.out : l.Prime).one_lt.ne h1
@@ -618,7 +617,7 @@ theorem UpperTheory.V.Win.partB :
   intro CK hCK hK l R _ hl2 A hA L₀ _ _ hL₀ hAB J Ct eps A1 hJ hCt heps
   have hmu0 : HasMuQ l L₀ := by
     obtain ⟨ζ, hζ⟩ := exists_isPrimitiveRoot_of_hasMu_of_isAbField A l hA L₀ hL₀
-    exact ⟨ζ, by rw [if_neg hl2]; exact hζ⟩
+    exact ⟨ζ, by rw [ite_eq_right hl2]; exact hζ⟩
   obtain ⟨c, -, hc⟩ := exc l R L₀ hAB
   obtain ⟨L₂, i1, i2, i3, hL₂⟩ := layerex l (jZero l R) Fact.out L₀ hmu0
   have hc0 : 0 ≤ Real.log (2 * ((NumberField.discr L₂).natAbs : ℝ)) := by
@@ -701,7 +700,7 @@ theorem UpperTheory.V.Win.window1 :
           have : U / (2 * B) < u := lt_of_lt_of_le h1 hau
           linarith
         · exact hy3 a (Finset.mem_erase.mpr ⟨hae, ha⟩) u hu1 hu2 hau
-    · push_neg at h
+    · push Not at h
       refine ⟨U / 2, ?_, by linarith, ?_⟩
       · apply div_le_div_of_nonneg_left hU.le (by norm_num)
         have h2 : (1 : ℝ) ≤ 2 ^ n := one_le_pow₀ (by norm_num)
@@ -710,8 +709,7 @@ theorem UpperTheory.V.Win.window1 :
         rw [h4]
         nlinarith
       · intro a ha u hu1 hu2 hau
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         have ha1 : U / (2 * B) < a := by
           rw [div_lt_iff₀ (by positivity)]
           nlinarith
@@ -905,7 +903,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
 open UpperTheory.V.HV (Coef)
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 private theorem coef_isCoef (l : ℕ) [hl : Fact l.Prime] (c : Coef l) : Pa.IsCoef l c.O := by
   obtain ⟨hc, hf, hlm, -, -, -⟩ := UpperTheory.V.abelian₂.dvr_finite l c.O

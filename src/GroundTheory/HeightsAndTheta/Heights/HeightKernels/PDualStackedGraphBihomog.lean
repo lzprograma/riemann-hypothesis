@@ -145,7 +145,7 @@ theorem coeff_C_mul_X_pow_unit {R : Type*} [CommSemiring R] (r : R) (n e : ℕ) 
   rw [C_mul_X_pow_eq_monomial, coeff_monomial]
   by_cases h : n = e
   · simp [h]
-  · rw [if_neg h, if_neg]
+  · rw [ite_eq_right h, ite_eq_right]
     intro h'
     exact h (by simpa using congrArg (fun g : Unit →₀ ℕ => g ()) h')
 

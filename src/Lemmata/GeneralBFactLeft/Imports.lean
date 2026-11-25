@@ -2,9 +2,6 @@ module
 
 public import Mathlib.Algebra.Field.Defs
 public import Mathlib.Data.Fintype.Defs
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Algebra.CharP.Basic
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Algebra.Polynomial.Degree.Defs
@@ -16,59 +13,17 @@ public import Mathlib.FieldTheory.Finite.Basic
 
 namespace Bl.general_b_fact_left
 
-theorem goal1 :
-  ∀ {k : Type} [inst : Field.{0} k] [Fintype.{0} k] (t m e : k),
-  Ne.{1} (HSub.hSub.{0, 0, 0} (HPow.hPow.{0, 0, 0} t 2) (HMul.hMul.{0, 0, 0} 4 m)) 0 →
-    Exists.{1} fun (x : k) ↦
-      Exists.{1} fun (y : k) ↦
-        Eq.{1}
-          (HAdd.hAdd.{0, 0, 0}
-            (HAdd.hAdd.{0, 0, 0} (HPow.hPow.{0, 0, 0} x 2) (HMul.hMul.{0, 0, 0} (HMul.hMul.{0, 0, 0} t x) y))
-            (HMul.hMul.{0, 0, 0} m (HPow.hPow.{0, 0, 0} y 2)))
-          e := by
-  intro k _ _ t m e hd
+open Polynomial in
+theorem goal1 {k : Type} [Field k] [Fintype k] (t m e : k) (hd : t ^ 2 - 4 * m ≠ 0) :
+    ∃ x y : k, x ^ 2 + t * x * y + m * y ^ 2 = e := by
   by_cases hc : ringChar k = 2
-  · have h2 : (2 : k) = 0 := by
-      have := ringChar.Nat.cast_ringChar (R := k)
-      rwa [hc, Nat.cast_ofNat] at this
-    have h4 : (4 : k) = 0 := by
-      have : (4 : k) = 2 * 2 := by norm_num
-      rw [this, h2, zero_mul]
-    rw [h4, zero_mul, sub_zero] at hd
-    have ht : t ≠ 0 := fun h => hd (by rw [h]; ring)
-    by_cases hm : m = 0
-    · refine ⟨1, (e - 1) / t, ?_⟩
-      rw [hm]
-      field_simp
-      ring
-    · obtain ⟨r, hr⟩ := FiniteField.isSquare_of_char_two hc (e / m)
-      refine ⟨0, r, ?_⟩
-      have : r ^ 2 = e / m := by rw [hr]; ring
-      rw [this]
-      field_simp
-      ring
-  · have h2 : (2 : k) ≠ 0 := Ring.two_ne_zero hc
-    have h4 : (4 : k) ≠ 0 := by
-      have : (4 : k) = 2 * 2 := by norm_num
-      rw [this]; exact mul_ne_zero h2 h2
-    set D : k := m - t ^ 2 / 4 with hD
-    have hD0 : D ≠ 0 := by
-      intro h0
-      apply hd
-      have : t ^ 2 - 4 * m = -4 * D := by rw [hD]; field_simp; ring
-      rw [this, h0, mul_zero]
-    have hf : Polynomial.degree (Polynomial.X ^ 2 - Polynomial.C e : Polynomial k) = 2 := by
-      rw [Polynomial.degree_sub_C] <;> rw [Polynomial.degree_X_pow] <;> norm_num
-    have hg : Polynomial.degree (Polynomial.C D * Polynomial.X ^ 2 : Polynomial k) = 2 := by
-      rw [Polynomial.degree_C_mul_X_pow 2 hD0]; rfl
-    obtain ⟨a, b, hab⟩ := FiniteField.exists_root_sum_quadratic hf hg
+  · obtain ⟨x, hx⟩ := FiniteField.isSquare_of_char_two hc e
+    exact ⟨x, 0, by simpa [pow_two] using hx.symm⟩
+  · obtain ⟨a, b, hab⟩ := FiniteField.exists_root_sum_quadratic (f := X ^ 2 - C e)
+      (by rw [degree_sub_C, degree_X_pow] <;> norm_num)
+      (degree_C_mul_X_pow 2 (sub_ne_zero.mpr (sub_ne_zero.mp hd).symm))
       (FiniteField.odd_card_of_char_ne_two hc)
-    simp only [Polynomial.eval_sub, Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_C,
-      Polynomial.eval_mul] at hab
-    refine ⟨a - t * b / 2, b, ?_⟩
-    have key : a ^ 2 + D * b ^ 2 = e := by linear_combination hab
-    rw [← key, hD]
-    field_simp
-    ring
+    simp only [eval_sub, eval_pow, eval_X, eval_C, eval_mul] at hab
+    exact ⟨a - t * b, 2 * b, by linear_combination hab⟩
 
 end Bl.general_b_fact_left

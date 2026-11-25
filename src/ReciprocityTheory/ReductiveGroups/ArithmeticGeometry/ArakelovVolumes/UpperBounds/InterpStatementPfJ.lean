@@ -188,8 +188,7 @@ theorem hgn_of (hU : IsOpen U) (hc : IsPreconnected U) {F : V n → ℂ} (hF : D
     {a : V n} (ha : a ∈ U) (hne : ¬ F =ᶠ[𝓝 a] 0) :
     ∀ W : Set (V n), IsOpen W → W ⊆ U → W.Nonempty → ∃ y ∈ W, F y ≠ 0 := by
   intro W hW hWU hWne
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨y, hy⟩ := hWne
   have hy0 : F =ᶠ[𝓝 y] 0 := Filter.eventually_of_mem (hW.mem_nhds hy) (fun x hx => hcon x hx)
   have hall := ident_preconn hU hc hF (hWU hy) hy0
@@ -213,8 +212,7 @@ theorem iso_zero {f : V n → V n} {f' : V n →L[ℂ] V n} (hf : HasFDerivAt f 
 
 theorem coord_ne_of_det {f : V n → V n} (hn : 1 ≤ n) (hdet : (fderiv ℂ f 0).det ≠ 0) :
     ∃ k : Fin n, ¬ (fun z => f z k) =ᶠ[𝓝 0] 0 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hall : ∀ᶠ z in 𝓝 (0 : V n), ∀ k : Fin n, f z k = 0 := by
     rw [Filter.eventually_all]
     intro k

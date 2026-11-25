@@ -17,62 +17,10 @@ public import GroundTheory.AutomorphicForms.Iwasawa
 public import Mathlib.LinearAlgebra.Eigenspace.Zero
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.JacSemi
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.LocDescOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Mathlib.RingTheory.PiTensorProduct
 import GroundTheory.AutomorphicForms.LocallyProfinite
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.CellStep, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.DistInv, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.DistZero, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CommonEigenvectorExistence, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.EigZero, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.EtaEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.ExistsStab, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.FunInv, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.GLCells, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.GLFacts, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.Imports, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.MemCcMulRight, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.PrAuto, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.PrLeft, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.PrMem, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.PrSurj, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.StabSub, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.ToBorel, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.TracePowAlt, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.OfSupportHolds
@@ -429,8 +377,7 @@ theorem eigZero : EigZero := by
   haveI : Nontrivial (Module.Dual ℂ J) := by
     obtain ⟨y, hy⟩ := exists_ne (0 : J)
     have hex : ∃ g : Module.Dual ℂ J, g y ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hy ((Module.forall_dual_apply_eq_zero_iff ℂ y).1 h)
     obtain ⟨g, hg⟩ := hex
     exact ⟨g, 0, fun h => hg (by simp [h])⟩
@@ -444,8 +391,7 @@ theorem eigZero : EigZero := by
     have := congrArg (fun g : Module.Dual ℂ J => g y) (hl t)
     simpa [LinearMap.dualMap_apply] using this
   obtain ⟨y₀, hy₀⟩ : ∃ y, l y ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hl0 (LinearMap.ext h)
   let am : T →* ℂ :=
     { toFun := a
@@ -467,8 +413,7 @@ theorem eigZero : EigZero := by
       (fun t => Module.End.iSup_maxGenEigenspace_eq_top (ρ t))
     obtain ⟨χ, y, hy, hly⟩ : ∃ (χ : T → ℂ) (y : J),
         y ∈ (⨅ t, Module.End.maxGenEigenspace (ρ t) (χ t) : Submodule ℂ J) ∧ l y ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       have : (⊤ : Submodule ℂ J) ≤ LinearMap.ker l := by
         rw [← htop]
         exact iSup_le fun χ y hy => LinearMap.mem_ker.2 (h χ y hy)
@@ -618,8 +563,7 @@ private theorem ker_isOpen {B : Subgroup G} {χ : B →* ℂˣ} {π : Representa
     {l : V →ₗ[ℂ] ℂ} (hl : l ≠ 0) (hb : ∀ (b : B) (v : V), l (π b v) = (χ b : ℂ) * l v) :
     IsOpen (χ.ker : Set B) := by
   obtain ⟨v₀, hv₀⟩ : ∃ v, l v ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hl (LinearMap.ext h)
   refine Subgroup.isOpen_of_mem_nhds _ (g := 1) ?_
   have h1 : IsOpen ((↑) ⁻¹' {g : G | π g v₀ = v₀} : Set B) := (hπ v₀).preimage continuous_subtype_val
@@ -823,7 +767,7 @@ theorem funInv (hBi : BiInv) (hMem : PrMem) (hLeft : PrLeft) (hAuto : PrAuto) (h
   obtain ⟨f, hf, rfl⟩ := hSurj G B hB μ χ K hKo hKc hBK φ hφ
   by_cases hne : ∃ f ∈ Cc G, ∃ g, pr B μ χ f g ≠ 0
   swap
-  · push_neg at hne
+  · push Not at hne
     have h0 : pr B μ χ f = 0 := funext (hne f hf)
     rw [h0]
     rfl
@@ -1014,17 +958,6 @@ private theorem isClosed_borel : IsClosed (borel E (Fin n) : Set (GL (Fin n) E))
   exact isClosed_iInter fun i => isClosed_iInter fun j => isClosed_iInter fun _ =>
     isClosed_eq (Units.continuous_val.matrix_elem i j) continuous_const
 
-private theorem isClosed_unipB : IsClosed (unipB E (Fin n) : Set (GL (Fin n) E)) := by
-  have : (unipB E (Fin n) : Set (GL (Fin n) E)) =
-      (⋂ i, ⋂ j, ⋂ _ : j < i, {g : GL (Fin n) E | g.val i j = 0}) ∩
-        ⋂ i, {g : GL (Fin n) E | g.val i i = 1} := by
-    ext g
-    simp only [SetLike.mem_coe, mem_unipB, Set.mem_inter_iff, Set.mem_iInter, Set.mem_setOf_eq]
-  rw [this]
-  exact (isClosed_iInter fun i => isClosed_iInter fun j => isClosed_iInter fun _ =>
-    isClosed_eq (Units.continuous_val.matrix_elem i j) continuous_const).inter
-    (isClosed_iInter fun i => isClosed_eq (Units.continuous_val.matrix_elem i i) continuous_const)
-
 private theorem whitChar_sg (σ : E ≃+* E) (ψ : AddChar E Circle) (hψ : ∀ x, ψ (σ x) = ψ x)
     (u u' : unipB E (Fin n)) (h : (u' : GL (Fin n) E) = sg σ u) : whitChar ψ n u' = whitChar ψ n u := by
   have hs : ∑ p : Fin n × Fin n with (p.2 : ℕ) = p.1 + 1, (u' : GL (Fin n) E).val p.1 p.2 =
@@ -1037,7 +970,7 @@ private theorem whitChar_sg (σ : E ≃+* E) (ψ : AddChar E Circle) (hψ : ∀ 
 
 theorem gLFacts : GLFacts := by
   intro E _ _ _ _ n
-  refine ⟨isClosed_borel, isClosed_unipB, ⟨GroundTheory.Automorphic.GLnLocal.integralGL E n,
+  refine ⟨isClosed_borel, GlobalTheory.LocLanglands.InvInt.isClosed_unipB, ⟨GroundTheory.Automorphic.GLnLocal.integralGL E n,
     GroundTheory.Automorphic.GLnLocal.isOpen_integralGL E n, GroundTheory.Automorphic.GLnLocal.isCompact_integralGL E n, fun g => ?_⟩,
     fun ψ hψ => GlobalTheory.Whittaker.isSmoothChar_whitChar hψ, fun σ q hq => ⟨continuous_sg σ (continuous_of_isom σ hq.isom),
       fun g => ?_, fun b hb => ?_, fun ψ hψ u u' h => whitChar_sg σ ψ hψ u u' h⟩⟩
@@ -1377,7 +1310,7 @@ theorem prSurj : PrSurj := by
   refine ⟨fun g => if g ∈ K then c * φ g else 0, ?_, ?_⟩
   · let K' : OpenSubgroup G := ⟨K ⊓ K0, hKo.inter hK0o⟩
     apply GroundTheory.Automorphic.mem_locallyConstantCompactSupport_of_forall_mul_right (R := ℂ) K'
-    · exact HasCompactSupport.intro hKc (fun g hg => if_neg hg)
+    · exact HasCompactSupport.intro hKc (fun g hg => ite_eq_right hg)
     · intro g k hk
       have hk' : k ∈ K ∧ k ∈ K0 := Subgroup.mem_inf.1 hk
       simp only [K.mul_mem_cancel_right hk'.1, hφK0 k hk'.2 g]
@@ -1395,14 +1328,14 @@ theorem prSurj : PrSurj := by
         = ((fun x : B => b0'⁻¹ * x) ⁻¹' S).indicator (fun _ => c * φ (b0 * k0)) := by
       funext b
       by_cases h : ((b:G)⁻¹ * (b0 * k0)) ∈ K
-      · rw [if_pos h, Set.indicator_of_mem ((key b).1 h)]
+      · rw [ite_eq_left h, Set.indicator_of_mem ((key b).1 h)]
         have h1 := hφB b⁻¹ (b0 * k0)
         rw [Subgroup.coe_inv] at h1
         rw [h1]
         have hu : (χ b : ℂ) * (χ b⁻¹ : ℂ) = 1 := by
           rw [← Units.val_mul, ← map_mul, mul_inv_cancel, map_one, Units.val_one]
         linear_combination (c * φ (b0 * k0)) * hu
-      · rw [if_neg h, Set.indicator_of_notMem (fun h' => h ((key b).2 h')), mul_zero]
+      · rw [ite_eq_right h, Set.indicator_of_notMem (fun h' => h ((key b).2 h')), mul_zero]
     simp only [pr]
     rw [hint, integral_indicator_const _ hTm, measureReal_def, measure_preimage_mul]
     rw [hc, Complex.real_smul]
@@ -1562,8 +1495,7 @@ namespace UpperTheory.Gal.LocD
 
 theorem tracePow : TracePow := by
   intro J _ _ _ _ φ hφ k₀
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   set p := φ.charpoly with hp
   have hc : p.coeff 0 ≠ 0 := by
     intro h0
@@ -1590,7 +1522,7 @@ theorem tracePow : TracePow := by
     rw [map_smul, smul_eq_mul]
     by_cases hi : k₀ ≤ i
     · rw [hne i hi, mul_zero]
-    · rw [hQ, mul_pow, Polynomial.coeff_X_pow_mul', if_neg hi, zero_mul]
+    · rw [hQ, mul_pow, Polynomial.coeff_X_pow_mul', ite_eq_right hi, zero_mul]
   rw [hQ1, LinearMap.trace_one] at htr
   exact (Nat.cast_ne_zero.2 (Module.finrank_pos (R := ℂ) (M := J)).ne') htr
 

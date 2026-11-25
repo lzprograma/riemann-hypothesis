@@ -126,7 +126,7 @@ end Kernel
 
 section Inflation
 
-attribute [local instance 2000] Rep.hV2 Submodule.module Submodule.Quotient.module
+attribute [local instance 2000] Submodule.module Submodule.Quotient.module
 
 variable {G : Type} [Group G] {A : Rep ℤ G} (S : Subgroup G) [S.Normal]
 
@@ -190,7 +190,7 @@ theorem exists_cocycle_H0Iso_inv {k : Type} [CommRing k] (A : Rep k G) [IsDiscre
 
 section Cocycles
 
-attribute [local instance 2000] Rep.hV2 Submodule.module Submodule.Quotient.module
+attribute [local instance 2000] Submodule.module Submodule.Quotient.module
 
 theorem exists_cocycle_charH1 (χ : Additive G →ₜ+ QZ) :
     ∃ z : cocycles (Rep.trivial ℤ G (AddCircle (1 : ℚ))) 1,

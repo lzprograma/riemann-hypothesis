@@ -45,14 +45,6 @@ theorem hT_expand (S : HSpace E) (x y : S.V) :
 
 end CSSpace
 
-section CSRecord
-
-open Formalism.BasicNotions Formalism.MainNotions.flipTwoThree
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-end CSRecord
-
 end Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 
 end

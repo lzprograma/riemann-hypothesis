@@ -60,7 +60,6 @@ public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsNsmulIf
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UT
 
 noncomputable section
@@ -71,8 +70,7 @@ theorem exists_sval_ne_zero {R : Type} [CommRing R] [IsDomain R] {D : DegPre R} 
     [Algebra (FractionRing R) F] {K : Type} [Fintype K] {φ : K → ((DegPre.BF D F).left ⟶ D.P.A.left)} {ε : K → ℤ}
     (σ : LB.Sec (LB.LinComb D.P.L φ ε)) (hσ : ¬ ∀ j, σ.f j = 0) (z : (TF (R := R) F).left) {J}
     (hJ : Good D.P.L z J) : ∃ x : TF (R := R) F ⟶ D.P.A, sval σ (lift (𝟙 (TF (R := R) F)) x).left z J ≠ 0 := by
-  by_contra H
-  push_neg at H
+  by_contra! H
   have hsm := D.P.isAb.smooth
   let p : (DegPre.BF D F).left ⟶ Spec (CommRingCat.of F) := (fst (TF (R := R) F) D.P.A).left
   have hp : Smooth p := inferInstanceAs (Smooth (pullback.fst (TF (R := R) F).hom D.P.A.hom))
@@ -269,14 +267,7 @@ theorem exists_twist {S : Scheme.{0}} (A : Over S) [GrpObj A] {L : LB A.left} (h
     {ψ : T ⊗ A ⟶ T ⊗ A} {m : T ⊗ A ⟶ A} {hm : ψ ≫ snd T A = m} {a b : ℤ}
     {α : LB.Gen (LB.LinComb L (K := Fin 2) ![(snd T A).left, m.left] ![a, -b])} (hα : α.IsGen)
     (s : LB.Sec (LPow A L b T)) : ∃ s' : LB.Sec (LPow A L a T), IsTwistPull A L ψ m hm a b α s s' := by
-  have e : ψ.left ≫ (snd T A).left = m.left := by rw [← Over.comp_left, hm]
-  obtain ⟨s', hs'⟩ := exists_sec hL (φ' := fun _ : Fin 1 => (snd T A).left) (ε' := fun _ => a)
-    (fun U _ h => by
-      simp only [Fintype.prod_sum_type, Sum.elim_inl, Sum.elim_inr, Fin.prod_univ_two, Fin.prod_univ_one,
-        e, Matrix.cons_val_zero, Matrix.cons_val_one, zpow_neg, mul_inv_cancel_comm_assoc])
-    (pullMulSec (φ := fun _ : Fin 1 => (snd T A).left) (ε := fun _ => b) s ψ.left α hα)
-  exact ⟨s', ThetaLin.isTwistPull_of_sval A hL hα fun y J hJ =>
-    (hs' _ _ y J hJ).trans ((sval_pullMulSec _ _ α hα _ y hJ).trans (mul_comm _ _))⟩
+  apply GlobalTheory.ThetaPtExist.exists_isTwistPull <;> assumption
 
 section Sym
 

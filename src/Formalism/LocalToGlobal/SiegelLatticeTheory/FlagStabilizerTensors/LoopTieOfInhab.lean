@@ -13,8 +13,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions Form
 
 namespace Formalism.L2.SG.LoopTieOf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y}
@@ -74,9 +72,5 @@ def loopRowsOf (H : TieHyp W hI) (A : AmpDat X) (hV : PvalForm W hI A) (hRR : Ro
   pair_inj := pairInj_of hI _ (FlagOfWord W u) hTI
 
 end AtTermTieOf
-
-section Inhab
-
-end Inhab
 
 end Formalism.L2.SG.LoopTieOf

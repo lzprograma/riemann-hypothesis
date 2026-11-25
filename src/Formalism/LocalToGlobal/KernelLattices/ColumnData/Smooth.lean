@@ -240,17 +240,3 @@ theorem ambOf_eSmooth (hok : s.Ok) (hcc : TaylorLogMetric.IsCurveIdeal D cc) (hÎ
 end AmbE
 
 end Formalism.L2.Ker.Cd
-
-namespace Formalism.L2.Ker
-
-open Formalism.BasicNotions Formalism.L2.Col Formalism.L2.GlobalTheoryTheory.Jets
-
-section OverColDat
-
-variable (d : ColDat)
-
-variable {d} (I : AmbIn d)
-
-end OverColDat
-
-end Formalism.L2.Ker

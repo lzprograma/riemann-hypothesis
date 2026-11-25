@@ -1,5 +1,6 @@
 module
 
+import all ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CoefficientConvolutionOfSubCoefficients
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
 import Mathlib.Tactic.Lemma
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMatMulVec
@@ -24,14 +25,7 @@ variable (ξ : Fin r → E) (τ : X.Ψ)
 private theorem flowMat_mulVec' (s : ℂ) (v : Fin r → ℂ) :
     Matrix.mulVec (X.flowMat ξ τ s) v =
       v - (I * X.c τ * s * hermC τ.1 X.Gm v (emb τ.1 ξ)) • emb τ.1 ξ := by
-  ext a
-  simp only [Matrix.mulVec, dotProduct, flowMat, Matrix.of_apply, sub_mul, Finset.sum_sub_distrib,
-    ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true,
-    Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hermC, emb]
-  congr 1
-  simp only [Finset.mul_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun k _ => ?_
-  ring
+  apply _root_.ReciprocityTheory.ChartRestriction.G.FD.PeriodLatticeMembership.flowmv_lemma_28 <;> assumption
 
 private theorem hermC_sub_const_smul_right (σ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E)
     (w v e : Fin r → ℂ) (k : ℂ) :

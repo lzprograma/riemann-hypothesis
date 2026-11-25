@@ -23,8 +23,6 @@ open scoped ENNReal
 
 namespace Formalism.L2.SG.Pf.OOCore
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Core
 
 variable {D : D7} {X : HidaSetting D} (Y : Full X) (u u' : D.what₂.Word) (ν : X.B.I.Ginf → Measure X.B.I.Ginf)

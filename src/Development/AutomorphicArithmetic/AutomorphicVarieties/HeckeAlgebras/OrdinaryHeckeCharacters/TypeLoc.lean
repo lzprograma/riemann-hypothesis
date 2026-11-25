@@ -10,55 +10,9 @@ public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.FieldTheory.Galois.Infinite
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsIrreducibleIff
 public import Mathlib.RepresentationTheory.Invariants
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -72,11 +26,6 @@ section -- clump:auto
 open Matrix
 
 namespace UpperTheory.V
-
-private def transl (R : Type) [CommRing R] {G : Type} [Group G] (g : G) : (G → R) →ₗ[R] (G → R) where
-  toFun x := fun h => x (g⁻¹ * h)
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
 
 end UpperTheory.V
 
@@ -350,8 +299,7 @@ theorem UpperTheory.le_span_integralValued_of_galoisStable :
       · rw [h0]
         exact Submodule.zero_mem _
       obtain ⟨g0, hg0⟩ : ∃ g, y g ≠ 0 := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact h0 (funext h)
       obtain ⟨x, hx⟩ : ∃ x : X → ℂ, x = (y g0)⁻¹ • y := ⟨_, rfl⟩
       have hxI : x ∈ I := by
@@ -369,7 +317,7 @@ theorem UpperTheory.le_span_integralValued_of_galoisStable :
       by_cases hall : ∀ γ : ℂ ≃ₐ[O] ℂ, (fun g => γ (x g)) = x
       · rw [hyx]
         exact Submodule.smul_mem _ _ (hfix x hxI hall)
-      · push_neg at hall
+      · push Not at hall
         obtain ⟨γ, hγ⟩ := hall
         obtain ⟨d, hd⟩ : ∃ d : X → ℂ, d = (fun g => γ (x g)) - x := ⟨_, rfl⟩
         have hdI : d ∈ I := by
@@ -379,8 +327,7 @@ theorem UpperTheory.le_span_integralValued_of_galoisStable :
           rw [hd]
           exact sub_ne_zero.2 hγ
         obtain ⟨g1, hg1⟩ : ∃ g, d g ≠ 0 := by
-          by_contra h
-          push_neg at h
+          by_contra! h
           exact hd0 (funext h)
         have hdsupp : ∀ g, y g = 0 → d g = 0 := by
           intro g hg
@@ -470,8 +417,7 @@ private theorem avg {Q N : Type} [Group Q] [Fintype Q] [AddCommGroup N] [Module 
   · rintro ⟨i, v, n, h⟩
     refine ⟨∑ g, (LinearMap.toSpanSingleton ℂ N (π g n)) ∘ₗ (LinearMap.proj i) ∘ₗ ξ g⁻¹, fun h0 => h ?_, fun k v => ?_⟩
     · simpa using LinearMap.congr_fun h0 v
-    · set_option synthInstance.maxHeartbeats 100000 in
-        simp only [LinearMap.coe_sum, Finset.sum_apply, LinearMap.comp_apply, LinearMap.toSpanSingleton_apply,
+    · simp only [LinearMap.coe_sum, Finset.sum_apply, LinearMap.comp_apply, LinearMap.toSpanSingleton_apply,
           LinearMap.proj_apply, map_sum, map_smul]
       rw [← Equiv.sum_comp (Equiv.mulLeft k)]
       refine Finset.sum_congr rfl fun g _ => ?_

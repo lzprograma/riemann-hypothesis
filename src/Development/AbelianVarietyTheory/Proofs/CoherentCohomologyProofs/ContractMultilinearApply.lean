@@ -56,15 +56,6 @@ section
 variable {ι : Type*} [Fintype ι] [dι : DecidableEq ι] {R : Type*} [CommSemiring R]
   {X : ι → Type*} [∀ i, AddCommMonoid (X i)] [∀ i, Module R (X i)]
 
-omit [Fintype ι] dι in
-private theorem apply_update (φ : ∀ i, X i →ₗ[R] R) [inst : DecidableEq ι] (x : ∀ i, X i) (k : ι)
-    (y : X k) (i : ι) :
-    φ i (Function.update x k y i) = Function.update (fun i => φ i (x i)) k (φ k y) i := by
-  by_cases h : i = k
-  · subst h
-    simp
-  · simp [Function.update_of_ne h]
-
 def contractMultilinear (φ : ∀ i, X i →ₗ[R] R) (j : ι) : (Π i, X i) →ₘₗ[R] X j where
   toFun x := (∏ i ∈ Finset.univ.erase j, φ i (x i)) • x j
   map_update_add' := by
@@ -73,7 +64,7 @@ def contractMultilinear (φ : ∀ i, X i →ₗ[R] R) (j : ι) : (Π i, X i) →
     have h₂ : k ≠ j → k ∈ @Finset.erase ι dι Finset.univ j := fun h =>
       (@Finset.mem_erase ι dι _ _ _).2 ⟨h, Finset.mem_univ _⟩
     generalize @Finset.erase ι dι Finset.univ j = S at h₁ h₂ ⊢
-    simp only [apply_update]
+    simp only [Function.apply_update (fun i => φ i)]
     by_cases h : k = j
     · subst h
       simp only [Finset.prod_update_of_notMem h₁,
@@ -87,7 +78,7 @@ def contractMultilinear (φ : ∀ i, X i →ₗ[R] R) (j : ι) : (Π i, X i) →
     have h₂ : k ≠ j → k ∈ @Finset.erase ι dι Finset.univ j := fun h =>
       (@Finset.mem_erase ι dι _ _ _).2 ⟨h, Finset.mem_univ _⟩
     generalize @Finset.erase ι dι Finset.univ j = S at h₁ h₂ ⊢
-    simp only [apply_update]
+    simp only [Function.apply_update (fun i => φ i)]
     by_cases h : k = j
     · subst h
       simp only [Finset.prod_update_of_notMem h₁, Function.update_self, RingHom.id_apply]

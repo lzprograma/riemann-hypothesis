@@ -3,52 +3,8 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
 public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import GroundTheory.GlobalFields.TateThesis.AdeleScaling
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -274,9 +230,9 @@ theorem tensor_line {ι : Type} [Fintype ι] [DecidableEq ι] (c : ℝ) (φ : �
   rw [hcol, tensor_apply c φ hφ, hq]
   have hI' : (∀ i, IntF ((t • fun i => ((κ.1⁻¹ : GL ι 𝔸[k]) : Matrix ι ι 𝔸[k]) i i₀) i).2) ↔ IntF t.2 := hI
   by_cases h : IntF t.2
-  · rw [if_pos (hI'.mpr h)]
+  · rw [ite_eq_left (hI'.mpr h)]
     simp [Hr, h]
-  · rw [if_neg (fun h' => h (hI'.mp h'))]
+  · rw [ite_eq_right (fun h' => h (hI'.mp h'))]
     simp [Hr, h]
 
 theorem zeta_ne (c : ℝ) (hc : (Fintype.card (InfinitePlace k) : ℝ) + 1 ≤ c)
@@ -325,7 +281,7 @@ theorem zeta_ne (c : ℝ) (hc : (Fintype.card (InfinitePlace k) : ℝ) + 1 ≤ c
       rfl
     rw [hu, hm, Real.one_rpow, mul_one]
     unfold Hr
-    rw [hs1, if_pos hI1]
+    rw [hs1, ite_eq_left hI1]
     norm_num
   have hpos := (MeasureTheory.integral_pos_iff_support_of_nonneg (fun y => hnn y) hint.re).mpr
     ((Complex.continuous_re.comp hcont).isOpen_support.measure_pos _ ⟨1, h1pos.ne'⟩)
@@ -359,7 +315,7 @@ theorem testSph : TestSph := by
       rw [show infPartPi (0 : ι → 𝔸[k]) i = homeomorphMixedSpace k (0 : 𝔸[k]).1 from rfl, q₀_inf]
       simp
     have hI : ∀ i, IntF ((0 : ι → 𝔸[k]) i).2 := fun i => (mem_intAd_iff 0).mp (Subring.zero_mem _)
-    rw [hq, if_pos hI, sub_zero, Real.smoothTransition.one_of_one_le hc1]
+    rw [hq, ite_eq_left hI, sub_zero, Real.smoothTransition.one_of_one_le hc1]
     simp
   · intro t κ
     rw [tensor_line c φ hφ i₀ κ t, tensor_unit c φ₁ hφ₁ t]

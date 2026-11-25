@@ -17,14 +17,8 @@ open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.Loc
 namespace UpperTheory.TNZ.Grp.P_spPiSub
 
 theorem exists_equiv_of_map_eq {ι κ α : Type*} [Fintype ι] [Fintype κ] (f : ι → α) (g : κ → α)
-    (h : Finset.univ.val.map f = Finset.univ.val.map g) : ∃ e : ι ≃ κ, ∀ i, g (e i) = f i := by
-  have hc : ∀ c, Fintype.card {i // f i = c} = Fintype.card {j // g j = c} := by
-    intro c
-    have h1 := congrArg (Multiset.count c) h
-    rw [Multiset.count_map, Multiset.count_map] at h1
-    rw [Fintype.card_subtype, Fintype.card_subtype]
-    simpa [Finset.card, Finset.filter_val, eq_comm] using h1
-  exact ⟨Equiv.ofFiberEquiv fun c => Fintype.equivOfCardEq (hc c), fun i => Equiv.ofFiberEquiv_map _ i⟩
+    (h : Finset.univ.val.map f = Finset.univ.val.map g) : ∃ e : ι ≃ κ, ∀ i, g (e i) = f i :=
+  GlobalTheory.WeilDeligne.Unram.exists_equiv_of_map_eq h
 
 theorem map_univ_eq_sum {ι α : Type*} [Fintype ι] (φ : ι → α) :
     Finset.univ.val.map φ = ∑ i, ({φ i} : Multiset α) := by
@@ -43,11 +37,3 @@ theorem sum_map_univ {s n : ℕ} {d : Fin s → ℕ} (e : (Σ a, Fin (d a)) ≃ 
     _ = _ := (map_univ_eq_sum _).symm
 
 end UpperTheory.TNZ.Grp.P_spPiSub
-
-namespace UpperTheory.TNZ.Grp
-
-open P_spPiSub
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-end UpperTheory.TNZ.Grp

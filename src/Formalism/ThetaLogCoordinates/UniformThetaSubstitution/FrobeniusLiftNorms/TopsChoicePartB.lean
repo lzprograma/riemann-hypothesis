@@ -1,55 +1,15 @@
 module
 
+import Formalism.EllipticTorsion.EllipticTorsionProofs.NDeriv
+
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
 public import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
 public import Formalism.FormalGroupWitt.FormalGroupWittProofs.IntegralSubstVector
 public import Formalism.GaussJetBounds.GaussJetProofs.LogarithmWeightComparison
 import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Mathlib.Analysis.Normed.Ring.Ultra
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -105,7 +65,7 @@ theorem class_multiplication : ClassMul := by
   intro K ι _ _ pp hh F V h0 hV hF
   rw [inClass_iff h0] at hF ⊢
   obtain ⟨U, hU, h⟩ := hF
-  refine ⟨fun i => U i * V, fun i => Formalism.FG.IntegralSubstitution.integral_mul (hU i) hV, fun M => ?_⟩
+  refine ⟨fun i => U i * V, fun i => Formalism.ELL.SubstitutionCoefficientCongruence.integral_mul (hU i) hV, fun M => ?_⟩
   have e : F * V - clSum pp hh (fun i => U i * V) M = (F - clSum pp hh U M) * V := by
     simp only [clSum, sub_mul, Finset.sum_mul]
     congr 1
@@ -169,7 +129,7 @@ theorem integral_chU {K ι : Type} [NormedField K] [IsUltrametricDist K] {Y : Mv
   have hY' : Integral (-Y) := fun m => by rw [map_neg, norm_neg]; exact hY m
   rw [chT, MvPowerSeries.coeff_C_mul, norm_mul]
   exact mul_le_one₀ (IsUltrametricDist.norm_natCast_le_one K _) (norm_nonneg _)
-    (Formalism.FG.IntegralSubstitution.integral_mul (Formalism.FG.IntegralSubstitution.integral_pow hY' a) (hU _) n)
+    (Formalism.ELL.SubstitutionCoefficientCongruence.integral_mul (Formalism.ELL.SubstitutionCoefficientCongruence.integral_pow hY' a) (hU _) n)
 
 theorem sum_triangle {A : Type} [AddCommMonoid A] (g : ℕ → ℕ → A) (M : ℕ) :
     ∑ i ∈ range M, ∑ b ∈ range (i + 1), g b (i - b) =
@@ -338,10 +298,10 @@ theorem wt_AA (hT : ValTable) {K : Type} [NormedField K] {p : ℕ} (hp : p.Prime
   by_cases hd : d = Finsupp.single x 1 + Finsupp.single y p
   · have hx : d x = (p ^ 2) ^ 0 := by rw [hd]; simp [hxy.symm]
     have hy : d y = p * (p ^ 2) ^ 0 := by rw [hd]; simp [hxy]
-    rw [if_pos hd, coeff_AA_of K hp2 le_rfl hx hy]
+    rw [ite_eq_left hd, coeff_AA_of K hp2 le_rfl hx hy]
     simp only [add_zero, zero_add, pow_one, sub_self, norm_zero]
     positivity
-  · rw [if_neg hd, sub_zero]
+  · rw [ite_eq_right hd, sub_zero]
     by_cases h : MvPowerSeries.coeff d (AA K p x y) = 0
     · rw [h, norm_zero]; positivity
     · obtain ⟨i, j, hij, hx, hy⟩ := coeff_AA_ne_zero h
@@ -461,7 +421,7 @@ theorem RescaleExact_of (hT : ValTable) (hE : ExpIntegral) : RescaleExact := by
         MvPowerSeries.C ((p : K)⁻¹) * MvPowerSeries.C ϖ ^ (p + 1) := by
       rw [← map_pow, ← map_mul, div_eq_inv_mul]
     rw [e1]
-    simp only [a, if_true, Fin.isValue, one_ne_zero, if_false]
+    simp only [a, ite_true, Fin.isValue, one_ne_zero, ite_false]
     ring
   have hR0 : MvPowerSeries.constantCoeff (∑ e : E, MvPowerSeries.subst (a e) (G1 p c c')) = 0 := by
 

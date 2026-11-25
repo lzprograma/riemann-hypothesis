@@ -48,13 +48,6 @@ def qdRatio (p p' : DecoF E n ST SG Q) (γ : Sp E n ≃ₗ[E] Sp E n) (hN : p'.d
 
 end QFr
 
-section QEmpty
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) {K : Type} [Field K]
-
-end QEmpty
-
 end Formalism.L2.Col
 end -- clump:auto
 end -- clump:auto

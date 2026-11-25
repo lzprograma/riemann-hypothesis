@@ -129,7 +129,6 @@ theorem isIntegral_inclusion_cycAway {n N a : ℕ} (hN : N ≠ 0) (h : n ∣ N) 
     · obtain ⟨c, hc⟩ := ha
       let v : cycAway n := ⟨(n : ℂ)⁻¹, Subring.subset_closure (Or.inr rfl)⟩
       have hn' : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hn
-      have hN' : (N : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hN
       have hc' : (n : ℂ) ^ a = N * c := by exact_mod_cast hc
       convert RingHom.isIntegralElem_map (Subring.inclusion (cycAway_le_of_dvd hN h)) (x := (c : cycAway n) * v ^ a)
       refine Subtype.ext ?_

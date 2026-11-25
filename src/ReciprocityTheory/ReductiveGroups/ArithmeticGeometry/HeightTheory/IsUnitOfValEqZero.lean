@@ -42,52 +42,20 @@ theorem wt_nonneg_of_add {a b c : WithTop ℤ} (hb : b ≠ ⊤) (h : a + b = c) 
 section
 variable {F : Type*} [Field F] (v : AddValuation F (WithTop ℤ))
 
-private lemma mem_iff_lemma (y : F) : y ∈ vRing v ↔ 0 ≤ v y := by
-  first
-    | exact Iff.rfl
+theorem val_eq_zero_of_isUnit (x : vRing v) (hx : IsUnit x) : v (x : F) = 0 :=
+  (Valuation.valuationSubring.integers (v : Valuation F _)).isUnit_iff_valuation_eq_one.1 hx
 
-theorem val_eq_zero_of_isUnit (x : vRing v) (hx : IsUnit x) : v (x : F) = 0 := by
-  obtain ⟨y, hy⟩ := hx.exists_right_inv
-  have hxy : (x : F) * (y : F) = 1 := by
-    have h1 := congrArg (fun z : vRing v => (z : F)) hy
-    simpa using h1
-  have h1 : v ((x : F) * (y : F)) = 0 := by
-    rw [hxy, AddValuation.map_one]
-  rw [AddValuation.map_mul] at h1
-  exact wt_add_eq_zero ((mem_iff_lemma v _).1 x.2) ((mem_iff_lemma v _).1 y.2) h1
+theorem isUnit_of_val_eq_zero (x : vRing v) (hx : v (x : F) = 0) : IsUnit x :=
+  (Valuation.valuationSubring.integers (v : Valuation F _)).isUnit_iff_valuation_eq_one.2 hx
 
-theorem isUnit_of_val_eq_zero (x : vRing v) (hx : v (x : F) = 0) : IsUnit x := by
-  have hx0 : (x : F) ≠ 0 := by
-    intro h0
-    rw [h0, AddValuation.map_zero] at hx
-    simp at hx
-  have h2 : v ((x : F)⁻¹) = 0 := by
-    have h3 := AddValuation.map_mul v ((x : F)⁻¹) x
-    rw [inv_mul_cancel₀ hx0, AddValuation.map_one, hx, add_zero] at h3
-    exact h3.symm
-  have hinv : (x : F)⁻¹ ∈ vRing v := (mem_iff_lemma v _).2 (le_of_eq h2.symm)
-  have hmul : x * ⟨(x : F)⁻¹, hinv⟩ = 1 := by
-    apply Subtype.ext
-    show (x : F) * (x : F)⁻¹ = 1
-    exact mul_inv_cancel₀ hx0
-  first
-    | exact IsUnit.of_mul_eq_one _ hmul
-
-theorem mem_max_iff (x : vRing v) : x ∈ maximalIdeal (vRing v) ↔ 0 < v (x : F) := by
-  rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
-  have h0 : 0 ≤ v (x : F) := (mem_iff_lemma v _).1 x.2
-  constructor
-  · intro h
-    exact lt_of_le_of_ne h0 (fun he => h (isUnit_of_val_eq_zero v x he.symm))
-  · intro h hu
-    exact h.ne' (val_eq_zero_of_isUnit v x hu)
+theorem mem_max_iff (x : vRing v) : x ∈ maximalIdeal (vRing v) ↔ 0 < v (x : F) :=
+  Valuation.mem_maximalIdeal_iff F (v : Valuation F _)
 
 theorem residue_ne_zero_iff (x : vRing v) : residue (vRing v) x ≠ 0 ↔ v (x : F) = 0 := by
   rw [Ne, IsLocalRing.residue_eq_zero_iff, mem_max_iff]
-  have h0 : 0 ≤ v (x : F) := (mem_iff_lemma v _).1 x.2
   constructor
   · intro h
-    exact (eq_of_le_of_not_lt h0 h).symm
+    exact (eq_of_le_of_not_lt x.2 h).symm
   · intro h hlt
     rw [h] at hlt
     exact lt_irrefl _ hlt
@@ -108,7 +76,7 @@ theorem val_eval_eq_zero {Ω U σ : Type} [Field Ω] [Field U] [Algebra Ω U]
   letI := ReciprocityTheory.MultiplicativeHeights.residueAlgebra (vRing w) (algebraMap Ω U)
 
   have hc : ∀ β, P.coeff β ∈ (vRing w).comap (algebraMap Ω U) := fun β =>
-    ValuationSubring.mem_comap.2 ((mem_iff_lemma w _).2 (hP β))
+    ValuationSubring.mem_comap.2 (hP β)
   obtain ⟨P₀, hP₀⟩ : ∃ P₀ : MvPolynomial σ ((vRing w).comap (algebraMap Ω U)),
       MvPolynomial.map ((vRing w).comap (algebraMap Ω U)).subtype P₀ = P := by
     first

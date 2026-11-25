@@ -83,9 +83,9 @@ theorem polF_Tm {n : ℕ} (E : Fin n → Fin n → A) (c : ℂ) (a b : Fin n) :
     PolF fun y : ℂ => Tm E (y + c) a b := by
   unfold Tm
   by_cases hab : a = b
-  · simp only [hab, if_true]
+  · simp only [hab, ite_true]
     exact (polF_alg c).add (polF_const _)
-  · simp only [hab, if_false]
+  · simp only [hab, ite_false]
     exact (polF_const _).add (polF_const _)
 
 theorem polF_qdet {n : ℕ} (E : Fin n → Fin n → A) (c : ℂ) : PolF fun y : ℂ => qdet E (y + c) := by
@@ -96,10 +96,8 @@ theorem polF_qdet {n : ℕ} (E : Fin n → Fin n → A) (c : ℂ) : PolF fun y :
   simpa only [add_sub_assoc] using h
 
 theorem eval_map_hom {B : Type*} [Ring B] (f : A →+* B) (p : A[X]) (x : A) :
-    (p.map f).eval (f x) = f (p.eval x) := by
-  induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [Polynomial.map_add (f := _), eval_add, hp, hq, map_add (f := _)]
-  | monomial k a => simp only [map_monomial, eval_monomial, map_mul, map_pow]
+    (p.map f).eval (f x) = f (p.eval x) :=
+  eval_map_apply f x
 
 theorem prod_smul_ofFn {m : ℕ} (s : ℂ) (f : Fin m → A) :
     (List.ofFn fun i => s • f i).prod = s ^ m • (List.ofFn f).prod := by

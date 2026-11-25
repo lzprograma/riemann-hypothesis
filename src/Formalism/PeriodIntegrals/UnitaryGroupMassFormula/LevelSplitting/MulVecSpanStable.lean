@@ -3,48 +3,7 @@ module
 public import Mathlib.Algebra.Algebra.Defs
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Span.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.LinearAlgebra.Span.Basic
 
 @[expose] public section
@@ -58,13 +17,9 @@ variable {O B : Type} [CommRing O] [CommRing B] [Algebra O B] {n r : ℕ}
 
 
 theorem mulVec_span_stable (A : Matrix (Fin n) (Fin n) B) (G : Set (Fin n → B))
-    (hG : ∀ x ∈ G, A.mulVec x ∈ span O G) : ∀ x ∈ span O G, A.mulVec x ∈ span O G := by
-  intro x hx
-  induction hx using Submodule.span_induction with
-  | mem x hx => exact hG x hx
-  | zero => simp
-  | add x y _ _ hx hy => rw [Matrix.mulVec_add]; exact add_mem hx hy
-  | smul a x _ hx => rw [Matrix.mulVec_smul]; exact Submodule.smul_mem _ a hx
+    (hG : ∀ x ∈ G, A.mulVec x ∈ span O G) : ∀ x ∈ span O G, A.mulVec x ∈ span O G :=
+  fun _ hx => (Submodule.span_le (p := (span O G).comap
+    ((Matrix.mulVecLin A).restrictScalars O))).2 hG hx
 
 private theorem sep_lemma' (c v : Fin r → Fin n → B)
     (h : ∀ a b, c b ⬝ᵥ v a = if a = b then 1 else 0) (g : Fin n → B)
@@ -81,15 +36,11 @@ private theorem sep_lemma' (c v : Fin r → Fin n → B)
     simp only [dotProduct_smul, smul_eq_mul, mul_smul]
     rw [← Finset.smul_sum, ← hx]
 
-private theorem units_eq_of_res_eq_of_le_iSup (c v : Fin r → Fin n → B) (h : ∀ a b, c b ⬝ᵥ v a = 0) (g : Fin n → B)
-    (hg : g ∈ span B (Set.range v)) (b : Fin r) : c b ⬝ᵥ g = 0 := by
-  induction hg using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨a', rfl⟩ := hx
-    exact h _ _
-  | zero => simp
-  | add x y _ _ hx hy => rw [dotProduct_add, hx, hy, add_zero]
-  | smul s x _ hx => rw [dotProduct_smul, hx, smul_zero]
+private theorem units_eq_of_res_eq_of_le_iSup (c v : Fin r → Fin n → B)
+    (h : ∀ a b, c b ⬝ᵥ v a = 0) (g : Fin n → B)
+    (hg : g ∈ span B (Set.range v)) (b : Fin r) : c b ⬝ᵥ g = 0 :=
+  (Submodule.span_le (p := LinearMap.ker (dotProductBilin B B (c b)))).2
+    (Set.range_subset_iff.2 fun a => h a b) hg
 
 theorem sep (e f ce cf : Fin r → Fin n → B)
     (hee : ∀ a b, ce b ⬝ᵥ e a = 0)
@@ -108,14 +59,10 @@ theorem sep (e f ce cf : Fin r → Fin n → B)
     Submodule.span_le.mpr hGX (Submodule.span_le_restrictScalars O B GX hx)
   have huB : u ∈ span B (Set.range f) :=
     Submodule.span_le.mpr hGY (Submodule.span_le_restrictScalars O B GY hu)
-  have hwW' : ∀ v ∈ span O GW, ∀ b, ce b ⬝ᵥ v = 0 ∧ cf b ⬝ᵥ v = 0 := by
-    intro v0 hv0 b
-    induction hv0 using Submodule.span_induction with
-    | mem v hv => exact hGW v hv b
-    | zero => simp
-    | add v v' _ _ h1 h2 => simp [dotProduct_add, h1.1, h1.2, h2.1, h2.2]
-    | smul o v _ h1 => simp [dotProduct_smul, h1.1, h1.2]
-  have hwW := hwW' w hw
+  have hwW (b : Fin r) : ce b ⬝ᵥ w = 0 ∧ cf b ⬝ᵥ w = 0 :=
+    (Submodule.span_le (p := LinearMap.ker ((dotProductBilin B B (ce b)).restrictScalars O) ⊓
+      LinearMap.ker ((dotProductBilin B B (cf b)).restrictScalars O))).2
+      (fun v hv => hGW v hv b) hw
   have hceu : ∀ b, ce b ⬝ᵥ u = 0 := by
     intro b
     have h2 : ce b ⬝ᵥ (z - (x + w + u)) = 0 := units_eq_of_res_eq_of_le_iSup ce e hee _ hzy b

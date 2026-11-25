@@ -22,12 +22,6 @@ def IntCoordArInt.Statement : Prop :=
         (fun j => intCoordLine B ⟨A, hBA⟩ (L j)) =
       arInt Q s Ab L
 
-def intCoordSwap : Matrix (Fin 2) (Fin 2) ℤ := !![0, 1; 1, 0]
-
-theorem intCoordSwap_mul_self : intCoordSwap * intCoordSwap = 1 := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [intCoordSwap, Matrix.mul_apply, Fin.sum_univ_two]
-
 end
 
 end GroundTheory.Heights₂.Heights

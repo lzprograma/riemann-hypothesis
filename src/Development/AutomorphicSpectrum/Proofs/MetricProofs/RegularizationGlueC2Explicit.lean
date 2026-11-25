@@ -4,55 +4,7 @@ public import ReciprocityTheory.AnalyticForms.LeviForms.RegGlue
 public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.RegularizedMaxC2ExampleRealLine
 public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
 public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.TendstoLocallyUniformlyOnOfNhds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshRegMax
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.AtlasIndep
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
@@ -461,10 +413,10 @@ theorem reg_glue_explicit [CompactSpace X] [T2Space X] (A B : FinHolAtlas e X) [
     have hG : ContDiffAt ℝ ∞ G y' := by
       refine contDiffAt_pi.2 fun j => ?_
       by_cases hj : j ∈ I
-      · simp only [G, hj, if_true]
+      · simp only [G, hj, ite_true]
         exact (hsm jA (f j) _ (chartBall_isOpen B j _) (hfs j) y' ⟨hyt, hWI j hj hyW⟩).add
           (contDiffAt_const.mul (hsmη jA j y' hyt))
-      · simp only [G, hj, if_false]
+      · simp only [G, hj, ite_false]
         exact ((hsm jA (f k₀) _ (chartBall_isOpen B k₀ _) (hfs k₀) y'
           ⟨hyt, hWI k₀ hk₀I hyW⟩).add (contDiffAt_const.mul (hsmη jA k₀ y' hyt))).sub
           contDiffAt_const
@@ -497,16 +449,16 @@ theorem reg_glue_explicit [CompactSpace X] [T2Space X] (A B : FinHolAtlas e X) [
       have h1 : ContDiffAt ℝ ∞ (th.φ x ∘ (A.chart jA).symm) z :=
         contDiffAt_of_isPotential A th hth x jA ⟨hzt, hz.2.1.2⟩
       by_cases hj : j ∈ I
-      · simp only [P, hj, if_true]
+      · simp only [P, hj, ite_true]
         exact h1.add (hsm jA (f j) _ (chartBall_isOpen B j _) (hfs j) z ⟨hzt, hWI j hj hz.2.1.1⟩)
-      · simp only [P, hj, if_false]
+      · simp only [P, hj, ite_false]
         exact h1.add ((hsm jA (f k₀) _ (chartBall_isOpen B k₀ _) (hfs k₀) z
           ⟨hzt, hWI k₀ hk₀I hz.2.1.1⟩).sub contDiffAt_const)
     have hQs : ∀ j, ∀ z ∈ V, ContDiffAt ℝ ∞ (Q j) z := by
       intro j z hz
       by_cases hj : j ∈ I
-      · simp only [Q, hj, if_true]; exact hsmη jA j z hz.1
-      · simp only [Q, hj, if_false]; exact hsmη jA k₀ z hz.1
+      · simp only [Q, hj, ite_true]; exact hsmη jA j z hz.1
+      · simp only [Q, hj, ite_false]; exact hsmη jA k₀ z hz.1
     have hRs : ∀ z ∈ V, ContDiffAt ℝ ∞ R z := fun z hz =>
       contDiffAt_of_isPotential A Θ hΘ x jA ⟨hz.1, hz.2.2⟩
     have hus : ∀ j, ContDiffOn ℝ 2 (u j) V := by
@@ -530,8 +482,8 @@ theorem reg_glue_explicit [CompactSpace X] [T2Space X] (A B : FinHolAtlas e X) [
           4 * δ * η k₀ ((A.chart jA).symm z) - δ) + C0) := by
         funext j
         by_cases hj : j ∈ I
-        · simp only [u, P, Q, R, hj, if_true, hC0]; ring
-        · simp only [u, P, Q, R, hj, if_false, hC0]; ring
+        · simp only [u, P, Q, R, hj, ite_true, hC0]; ring
+        · simp only [u, P, Q, R, hj, ite_false, hC0]; ring
       rw [hu, htr, hC0]
       ring
     rw [levi_congr heq w]
@@ -564,7 +516,7 @@ theorem reg_glue_explicit [CompactSpace X] [T2Space X] (A B : FinHolAtlas e X) [
       by_cases hj : j ∈ I
       · have := hfp j x jA y' ⟨hyt, ⟨hyth, trivial⟩, hWI j hj hyW⟩ w
         have hPe : P j = (th + LocPot.ofFun (f j)).φ x ∘ (A.chart jA).symm := by
-          funext z; simp only [P, hj, if_true]; rfl
+          funext z; simp only [P, hj, ite_true]; rfl
         rw [hPe]; exact this
       · have := hfp k₀ x jA y' ⟨hyt, ⟨hyth, trivial⟩, hWI k₀ hk₀I hyW⟩ w
         have hg2 : ContDiffAt ℝ 2 ((th + LocPot.ofFun (f k₀)).φ x ∘ (A.chart jA).symm) y' := by
@@ -574,7 +526,7 @@ theorem reg_glue_explicit [CompactSpace X] [T2Space X] (A B : FinHolAtlas e X) [
             ⟨hyt, hWI k₀ hk₀I hyW⟩)).of_le (by norm_cast)
         have hPe : P j = fun z => ((th + LocPot.ofFun (f k₀)).φ x ∘ (A.chart jA).symm) z +
             (-δ) * (fun _ => (1 : ℝ)) z := by
-          funext z; simp only [P, hj, if_false]; show _ = th.φ x _ + f k₀ _ + _; ring
+          funext z; simp only [P, hj, ite_false]; show _ = th.φ x _ + f k₀ _ + _; ring
         rw [hPe, levi_add_smul (-δ) hg2 contDiffAt_const w]
         have h0 : levi (fun _ : Fin e → ℂ => (1 : ℝ)) y' w = 0 := by simp [levi]
         rw [h0]; linarith
@@ -742,8 +694,8 @@ theorem glue_C2_local [T2Space X] (A B : FinHolAtlas e X) [Nonempty (Fin B.n)] (
       else f t k₀ ((A.chart jA).symm z) + 4 * δ t * η k₀ ((A.chart jA).symm z) - δ t := by
     funext j
     by_cases hj : j ∈ I
-    · simp only [u, Q, b, hj, if_true, Function.comp_apply]; ring
-    · simp only [u, Q, b, hj, if_false, Function.comp_apply]; ring
+    · simp only [u, Q, b, hj, ite_true, Function.comp_apply]; ring
+    · simp only [u, Q, b, hj, ite_false, Function.comp_apply]; ring
   simp only [Function.comp_apply]
   rw [hu, hr1]
   ring

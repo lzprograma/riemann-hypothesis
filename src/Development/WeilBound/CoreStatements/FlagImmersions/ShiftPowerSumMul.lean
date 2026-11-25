@@ -3,53 +3,8 @@ module
 public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
 public import Mathlib.CategoryTheory.Category.Basic
 public import Development.WeilBound.CoreStatements.FlagImmersions.FlagDegreeLinearFunctionals
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.FlagImmersions.DegFlPowerSumMul, Development.WeilBound.CoreStatements.FlagImmersions.ShiftPowerSumMul
@@ -116,18 +71,18 @@ theorem degFl_power_sum_mul : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N :
           · rw [ht, Pi.mul_apply, hρτ, Equiv.Perm.mul_apply]
             by_cases hia : (σ τ).symm j = i
             · rw [← hia, hat, Equiv.swap_apply_left]
-              simp only [hab.symm, true_and, and_false, if_true, if_false]
+              simp only [hab.symm, true_and, and_false, ite_true, ite_false]
               omega
             · by_cases hib : (σ τ).symm j' = i
               · rw [← hib, hbt, Equiv.swap_apply_right]
-                simp only [hab, true_and, and_false, if_true, if_false]
+                simp only [hab, true_and, and_false, ite_true, ite_false]
                 omega
               · have h1 : (σ τ) i ≠ j := fun h => hia (by rw [← h, Equiv.symm_apply_apply])
                 have h2 : (σ τ) i ≠ j' := fun h => hib (by rw [← h, Equiv.symm_apply_apply])
                 rw [Equiv.swap_apply_of_ne_of_ne h1 h2]
-                simp only [hia, hib, and_false, if_false]
+                simp only [hia, hib, and_false, ite_false]
           · rw [Pi.mul_apply, hρt t ht, one_mul]
-            simp only [Ne.symm ht, false_and, if_false]
+            simp only [Ne.symm ht, false_and, ite_false]
         have hcond : ∀ σ' : Ψ → Equiv.Perm (Fin N), ∀ a : Fin N, σ' τ a = j →
             (k ≤ permExp σ' (τ, a)) := by
           intro σ' a ha
@@ -140,8 +95,8 @@ theorem degFl_power_sum_mul : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N :
             (X (τ, ((ρ * σ) τ).symm j) ^ k * G).coeff (permExp (ρ * σ)) =
           -((∏ t, ((Equiv.Perm.sign (σ t) : ℤ) : ℝ)) *
             (X (τ, (σ τ).symm j) ^ k * G).coeff (permExp σ))
-        rw [hsign, hsymm, coeff_X_pow_mul_flag_immersions, coeff_X_pow_mul_flag_immersions, if_pos (hcond _ _ hL),
-          if_pos (hcond _ _ hat), hexp, neg_mul]
+        rw [hsign, hsymm, coeff_X_pow_mul_flag_immersions, coeff_X_pow_mul_flag_immersions, ite_eq_left (hcond _ _ hL),
+          ite_eq_left (hcond _ _ hat), hexp, neg_mul]
       have h2 : ∑ σ, F (ρ * σ) = ∑ σ, F σ := Equiv.sum_comp (Equiv.mulLeft ρ) F
       rw [Finset.sum_congr rfl fun σ _ => hanti σ, Finset.sum_neg_distrib] at h2
       change ∑ σ, F σ = 0
@@ -151,7 +106,7 @@ theorem degFl_power_sum_mul : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N :
         rw [hval]
         simp only [Equiv.apply_symm_apply]
         omega
-      rw [coeff_X_pow_mul_flag_immersions, if_neg hlt, mul_zero]
+      rw [coeff_X_pow_mul_flag_immersions, ite_eq_right hlt, mul_zero]
   have hsplit : degFl (pk τ k * G) = (-1) ^ dimFl Ψ N * ∑ j : Fin N, ∑ σ : Ψ → Equiv.Perm (Fin N),
       (∏ t, ((Equiv.Perm.sign (σ t) : ℤ) : ℝ)) *
         (X (τ, (σ τ).symm j) ^ k * G).coeff (permExp σ) := by
@@ -186,14 +141,14 @@ theorem pa_pderiv_pk {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {N : ℕ} (τ σ 
   rw [map_sum]
   by_cases h : σ = τ
   · subst h
-    rw [if_pos rfl, Finset.sum_eq_single i]
+    rw [ite_eq_left rfl, Finset.sum_eq_single i]
     · rw [Derivation.leibniz_pow, pderiv_X_self, smul_eq_mul, mul_one, nsmul_eq_mul,
         ← map_natCast C]
     · intro b _ hb
       rw [Derivation.leibniz_pow, pderiv_X_of_ne (by simp [hb]), smul_zero, smul_zero]
     · intro hi
       exact absurd (Finset.mem_univ i) hi
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun b _ => ?_
     rw [Derivation.leibniz_pow, pderiv_X_of_ne (by simp [Ne.symm h]), smul_zero, smul_zero]
 
@@ -211,14 +166,14 @@ theorem pa_degFl_sum_pderiv {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {N : ℕ} 
   rw [hlin, map_add (f := _), ← hlin, ← hlin, degFl_power_sum_mul Ψ N τ k _ hk, add_zero]
   by_cases h : σ = τ
   · subst h
-    simp only [pa_pderiv_pk, if_true]
+    simp only [pa_pderiv_pk, ite_true]
     have hsum : (∑ i ∈ s, C (k : ℝ) * X (σ, i) ^ (k - 1) * Q : RP Ψ N) =
         (k : ℝ) • ((∑ i ∈ s, X (σ, i) ^ (k - 1)) * Q) := by
       rw [MvPolynomial.smul_eq_C_mul, Finset.sum_mul, Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       ring
     rw [hsum, hlin, map_smul, ← hlin, smul_eq_mul]
-  · simp only [pa_pderiv_pk, if_neg h, zero_mul, Finset.sum_const_zero]
+  · simp only [pa_pderiv_pk, ite_eq_right h, zero_mul, Finset.sum_const_zero]
     rw [hlin, map_zero]
 
 theorem shift_power_sum_mul : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) (j : ℕ) (τ σ : Ψ) (k : ℕ) (Q : RP Ψ N), 1 ≤ k → Sh j σ (pk τ k * Q) = (if σ = τ then k * degFl (pkLow j τ (k - 1) * Q) else 0) ∧ Tot σ (pk τ k * Q) = (if σ = τ ∧ k = 1 then N * degFl Q else 0) := by
@@ -228,20 +183,20 @@ theorem shift_power_sum_mul : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N :
     rfl
   · rw [Tot, pa_degFl_sum_pderiv _ τ σ k Q hk]
     by_cases h : σ = τ
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       rcases Nat.lt_or_ge 1 k with hk2 | hk1
       · have h0 : degFl ((∑ i : Fin N, X (τ, i) ^ (k - 1)) * Q : RP Ψ N) = 0 :=
           degFl_power_sum_mul Ψ N τ (k - 1) Q (by omega)
-        rw [h0, mul_zero, if_neg (by omega)]
+        rw [h0, mul_zero, ite_eq_right (by omega)]
       · have hk' : k = 1 := le_antisymm hk1 hk
         subst hk'
-        rw [if_pos ⟨h, rfl⟩]
+        rw [ite_eq_left ⟨h, rfl⟩]
         have hsum : ((∑ i : Fin N, X (τ, i) ^ (1 - 1)) * Q : RP Ψ N) = (N : ℝ) • Q := by
           simp [MvPolynomial.smul_eq_C_mul]
         rw [hsum, ← pa_degFlL_apply, map_smul, pa_degFlL_apply, smul_eq_mul]
         push_cast
         ring
-    · rw [if_neg h, if_neg (fun h' => h h'.1)]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h h'.1)]
 
 end RootFieldNumerics
 end -- clump:auto

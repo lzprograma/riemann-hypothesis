@@ -18,8 +18,6 @@ open scoped ComplexOrder
 open IsDedekindDomain ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Formalism.L2.Pj Formalism.MainNotions Formalism.BasicNotions Formalism.L2.LamCM ReciprocityTheory.ChartRestriction.G.FD
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {D : D7}
 
 section Part1

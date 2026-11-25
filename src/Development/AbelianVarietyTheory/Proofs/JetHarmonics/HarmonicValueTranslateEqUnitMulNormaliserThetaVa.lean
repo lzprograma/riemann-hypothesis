@@ -53,32 +53,17 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.DVR.QForm Formalism.MainNotions.ModuliIntegralCharts.H1 Formalism.MainNotions.ModuliIntegralCharts.H1.ExpBijectiveUniformisation Formalism.MainNotions.ModuliIntegralCharts.H1.GSt
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.PowGerm GlobalTheory.PtTie
 open ReciprocityTheory.ChartRestriction.G.TB (colM dAct)
 
 namespace GlobalTheory.PtTie
 
 theorem addVal_eq_zero_of_pow_eq_one {F : Type} [Field F] (v : AddValuation F (WithTop ℚ)) (u : F) (m : ℕ) (hm : 0 < m)
-    (hu : u ^ m = 1) : v u = 0 := by
-  have hu0 : u ≠ 0 := by
-    rintro rfl
-    rw [zero_pow hm.ne'] at hu
-    exact zero_ne_one hu
-  have h1 : m • v u = 0 := by rw [← AddValuation.map_pow, hu, AddValuation.map_one]
-  have ht : v u ≠ ⊤ := by rwa [Ne, AddValuation.top_iff]
-  lift v u to ℚ using ht with q hq
-  have h3 : m • q = 0 := by exact_mod_cast h1
-  rw [nsmul_eq_mul] at h3
-  rcases mul_eq_zero.mp h3 with h | h
-  · exact absurd h (by exact_mod_cast hm.ne')
-  · rw [h]; rfl
+    (hu : u ^ m = 1) : v u = 0 := GlobalTheory.ColumnSplit.val_eq_zero_of_pow_eq_one v hm hu
 
 theorem addVal_prod_eq_zero {F : Type} [Field F] (v : AddValuation F (WithTop ℚ)) {K : Type} (s : Finset K) (u : K → F)
     (hu : ∀ i, v (u i) = 0) : v (∏ i ∈ s, u i) = 0 := by

@@ -15,58 +15,7 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCon
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyDvdOfAevalEqZero
 public import GroundTheory.LocalFields.FilteredSurj
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormFiltrationComplete
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.RingTheory.Artinian.Instances
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
 import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
@@ -426,10 +375,10 @@ theorem exists_mul_invol_eq_of_fixed_unit {R : Type} [CommRing R] [Finite R] [Is
     have hzI := hz I
     have hτzI := hτz I
     by_cases h1 : WellOrderingRel I (tI I)
-    · have e1 : r I = x := if_pos h1
+    · have e1 : r I = x := ite_eq_left h1
       have e2 : r (tI I) = 1 := by
         simp only [r, htt]
-        rw [if_neg (asymm_of WellOrderingRel h1), if_pos h1]
+        rw [ite_eq_right (asymm_of WellOrderingRel h1), ite_eq_left h1]
       rw [e1] at hzI
       rw [e2, map_one] at hτzI
       refine ⟨?_, fun hzm => hnot I hx (by simpa using I.asIdeal.sub_mem hzm hzI)⟩
@@ -437,10 +386,10 @@ theorem exists_mul_invol_eq_of_fixed_unit {R : Type} [CommRing R] [Finite R] [Is
       rw [this]
       exact I.asIdeal.add_mem (I.asIdeal.mul_mem_right _ hzI) (I.asIdeal.mul_mem_left _ hτzI)
     · by_cases h2 : WellOrderingRel (tI I) I
-      · have e1 : r I = 1 := by simp only [r]; rw [if_neg h1, if_pos h2]
+      · have e1 : r I = 1 := by simp only [r]; rw [ite_eq_right h1, ite_eq_left h2]
         have e2 : r (tI I) = x := by
           simp only [r, htt]
-          rw [if_pos h2]
+          rw [ite_eq_left h2]
         rw [e1] at hzI
         rw [e2, hxτ] at hτzI
         refine ⟨?_, fun hzm => hnot I isUnit_one (by simpa using I.asIdeal.sub_mem hzm hzI)⟩
@@ -448,7 +397,7 @@ theorem exists_mul_invol_eq_of_fixed_unit {R : Type} [CommRing R] [Finite R] [Is
         rw [this]
         exact I.asIdeal.add_mem (I.asIdeal.mul_mem_right _ hzI) hτzI
       · have hI := hfix_of I h1 h2
-        have e1 : r I = a I := by simp only [r]; rw [if_neg h1, if_neg h2]
+        have e1 : r I = a I := by simp only [r]; rw [ite_eq_right h1, ite_eq_right h2]
         rw [e1] at hzI
         rw [hI, e1] at hτzI
         have haI := ha I hI
@@ -641,7 +590,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 

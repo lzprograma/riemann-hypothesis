@@ -297,7 +297,7 @@ theorem rll_baseLb_eq (h : BasePi ST π) : baseLb E n ST = rll_dLat n (algebraMa
       · subst hi
         dsimp only
         rw [dite_eq_left rfl, map_mul, ht, mul_inv_cancel_left₀ h.coe_ne_zero]
-      · simp only [dif_neg hi]
+      · simp only [dite_eq_right hi]
         exact ((hI _).mp (h1 i hi)).choose_spec
     · intro P hP
       dsimp only
@@ -382,7 +382,7 @@ theorem rll_baseDual_eq (h : BasePi ST π) : baseDual hc n ST = rll_dLat n (star
     intro x y
     show _ = ∑ i, star (x i) * y i
     simp only [Formalism.UG.hform, Matrix.one_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rfl
   have hset : Formalism.BasicNotions.dualSet (hc.sig : E →+* E) (1 : Matrix (Fin n) (Fin n) E) (baseLb E n ST) =
       (rll_dLat n (star (algebraMap (𝓞 E) E π)) : Set (Fin n → E)) := by

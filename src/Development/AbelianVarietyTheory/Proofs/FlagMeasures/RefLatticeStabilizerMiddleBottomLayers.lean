@@ -256,8 +256,6 @@ section -- clump:auto
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 
-theorem _root_.GlobalTheory.T.referenceLattice_mem_of_mem_innerSpan : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (H : HermSpace K V), Formalism.HermitianLatticesTheory.IsCMUnram K → ∀ (r : ℕ) (N : GlobalTheory.DegCnt.NF H r) (L : Submodule (𝓞 K) V), N.F.z ∈ L → ∀ v ∈ N.Ref L, v ∈ N.Wn → v ∈ L := by
-  first | exact @GlobalTheory.DegCnt.NF.ref_mem_of_mem_Wn
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.ReferenceLatticeMemOfMemInnerSpanStatement =====
@@ -620,7 +618,6 @@ theorem smul_le_Wn (N : NF H r) (L : Submodule (𝓞 K) V) (m : ℤ) {v : V}
 
 end GlobalTheory.RowStab
 
-
 open GlobalTheory.RowStab in
 theorem GlobalTheory.RowStab.middle_bottom_layers : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (H : HermSpace K V), Formalism.HermitianLatticesTheory.IsCMUnram K → ∀ (r : ℕ), ∀ (N : NF H r), ∀ L : Submodule (𝓞 K) V, IsUnimodMod H L (uPerp N.F N.F') (II N.F N.F') → N.F.z ∈ L → (∀ s ∈ N.Gam (N.Ref L), (∀ a : Fin r, s (N.F.e a.castSucc) = N.F.e a.castSucc) → ∀ b : Fin r, N.j ≤ b.val → ∃ ρ ∈ ipow N.𝔡 (-((r : ℤ) - b.val)) • (L ⊓ rs (𝓞 K) N.Wn), s (N.ist b) - N.ist b - ρ ∈ II N.F N.F') ∧ (∀ ρ : Fin r → V, (∀ b : Fin r, ρ b ∈ ipow N.𝔡 (-((r : ℤ) - b.val)) • (L ⊓ rs (𝓞 K) N.Wn)) → ∃ s ∈ N.Gam (N.Ref L), (∀ a : Fin r, s (N.F.e a.castSucc) = N.F.e a.castSucc) ∧ ∀ b : Fin r, N.j ≤ b.val → s (N.ist b) - N.ist b - ρ b ∈ II N.F N.F') ∧ (∀ s ∈ N.Gam (N.Ref L), (∀ a : Fin r, s (N.F.e a.castSucc) = N.F.e a.castSucc) → (∀ b : Fin r, N.j ≤ b.val → s (N.ist b) - N.ist b ∈ II N.F N.F') → ∀ a b : Fin r, N.j ≤ a.val → N.j ≤ b.val → H.B (s (N.ist b)) (N.ist a) ∈ ipow N.𝔡 (-((r : ℤ) - a.val) - ((r : ℤ) - b.val)) ∧ H.B (s (N.ist b)) (N.ist a) + star (H.B (s (N.ist a)) (N.ist b)) = 0) ∧ ∀ S : Fin r → Fin r → K, (∀ a b, S a b ∈ ipow N.𝔡 (-((r : ℤ) - a.val) - ((r : ℤ) - b.val)) ∧ S a b + star (S b a) = 0) → ∃ s ∈ N.Gam (N.Ref L), (∀ a : Fin r, s (N.F.e a.castSucc) = N.F.e a.castSucc) ∧ ∀ b : Fin r, N.j ≤ b.val → s (N.ist b) = N.ist b + ∑ a : Fin r, (if N.j ≤ a.val then S a b else 0) • N.F.e a.castSucc := by
   intro K V _ _ _ _ _ _ _ _ H hK r N L hLu hz
@@ -683,8 +680,7 @@ theorem GlobalTheory.RowStab.middle_bottom_layers : ∀ (K V : Type) [Field K] [
         show H.B ρ (N.F'.e a.castSucc) = 0
         by_cases ha : N.j ≤ a.val
         · rw [e'_eq N a ha, map_smulₛₗ, hρX a, smul_zero]
-        · set_option synthInstance.maxHeartbeats 100000 in
-            rw [hρdef, map_sub, LinearMap.sub_apply, hdX' a (lt_of_not_ge ha), map_sum, LinearMap.sum_apply]
+        · rw [hρdef, map_sub, LinearMap.sub_apply, hdX' a (lt_of_not_ge ha), map_sum, LinearMap.sum_apply]
           simp only [map_smul, LinearMap.smul_apply, smul_eq_mul]
           rw [Finset.sum_eq_zero fun a' ha' => by rw [B_e_e' N a a' ((mem_JJ N a').mp ha'), mul_zero], sub_zero]
       · refine Submodule.span_le.mpr ?_
@@ -713,7 +709,7 @@ theorem GlobalTheory.RowStab.middle_bottom_layers : ∀ (K V : Type) [Field K] [
         have := ref_coeff N L a ((mem_JJ N a).mp ha) _ h2
         rwa [map_smul, LinearMap.smul_apply, smul_eq_mul] at this
       have h4 : t • ρ ∈ N.Wn := N.Wn.smul_mem t hρW
-      exact ⟨GlobalTheory.T.referenceLattice_mem_of_mem_innerSpan K V H hK r N L hz _ h3 h4, h4⟩
+      exact ⟨GlobalTheory.DegCnt.NF.ref_mem_of_mem_Wn K V H hK r N L hz _ h3 h4, h4⟩
     · show d - ρ ∈ _
       rw [hρdef, sub_sub_cancel]
       exact Submodule.sum_mem _ fun a ha => Submodule.smul_mem _ _ (e_mem_II N a ((mem_JJ N a).mp ha))
@@ -728,11 +724,11 @@ theorem GlobalTheory.RowStab.middle_bottom_layers : ∀ (K V : Type) [Field K] [
     have hrel : ∀ a b, star (c a b) + c b a + H.B (ρ a) (ρ b) = 0 := by
       intro a b
       rcases lt_trichotomy a b with h | h | h
-      · simp only [c, if_pos h, if_neg (not_lt.mpr h.le), if_neg (ne_of_gt h), star_neg, H.herm]; ring
+      · simp only [c, ite_eq_left h, ite_eq_right (not_lt.mpr h.le), ite_eq_right (ne_of_gt h), star_neg, H.herm]; ring
       · subst h
-        simp only [c, lt_irrefl, if_false, if_true, star_neg, star_mul', H.herm]
+        simp only [c, lt_irrefl, ite_false, ite_true, star_neg, star_mul', H.herm]
         linear_combination (-(H.B (ρ a) (ρ a))) * hw0
-      · simp only [c, if_neg (not_lt.mpr h.le), if_neg (ne_of_gt h), if_pos h, star_zero]; ring
+      · simp only [c, ite_eq_right (not_lt.mpr h.le), ite_eq_right (ne_of_gt h), ite_eq_left h, star_zero]; ring
     have hcI : ∀ a b : Fin r, N.j ≤ a.val → N.j ≤ b.val →
         c a b ∈ ipow N.𝔡 (-((r : ℤ) - a.val) - ((r : ℤ) - b.val)) := by
       intro a b ha hb

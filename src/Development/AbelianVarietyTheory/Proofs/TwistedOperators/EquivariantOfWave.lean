@@ -9,46 +9,7 @@ public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ThetaA
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PlacewiseToAdelicDecompositionForall
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
 import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -57,7 +18,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.Chain.StepVac
 
@@ -124,7 +84,7 @@ theorem ind_mem_of_stable (h : IsBichar χ) (hL : L ≤ X) (hL' : L' ≤ Y) (hLL
     funext t
     by_cases ht : t ∈ K
     · simp [ind, ht, a1 t ht, h0]
-    · rw [ind, if_neg ht, Pi.smul_apply]
+    · rw [ind, ite_eq_right ht, Pi.smul_apply]
       by_cases hz : Φ t = 0
       · rw [a2 t hz, smul_zero]
       · obtain ⟨r, hr, u, hu, e⟩ := hR2' _ (h3 t hz)
@@ -142,8 +102,8 @@ theorem ind_mem_of_stable (h : IsBichar χ) (hL : L ≤ X) (hL' : L' ≤ Y) (hLL
   refine hle (mem_of_finite_cosets (K := K)
     (Submodule.subset_span ⟨0, zero_mem _, 0, zero_mem _, (wave_zero h).symm⟩) hR.toFinset _ (fun t ht => ?_)
     (fun u hu t => ind_add L t (hKL hu)) fun t ht => ?_)
-  · exact hL (by by_contra hh; exact ht (if_neg hh))
-  · obtain ⟨r, hr, u, hu, e⟩ := hR' t (by by_contra hh; exact ht (if_neg hh))
+  · exact hL (by by_contra hh; exact ht (ite_eq_right hh))
+  · obtain ⟨r, hr, u, hu, e⟩ := hR' t (by by_contra hh; exact ht (ite_eq_right hh))
     exact ⟨r, hR.mem_toFinset.2 hr, k • u, ⟨u, hu, rfl⟩, e⟩
 
 theorem equivariant_of_wave {V : Type} [AddCommGroup V] [Module ℂ V] (h : IsBichar χ)
@@ -215,20 +175,7 @@ theorem placeModel_wave (ψ : AddChar (AF D.host.F) ℂ) {e : AE D} (Λ : AddSub
     ∀ x ∈ half S T e, ∀ y ∈ half S T (cA D e),
       Tm (wave (fun x y : WO S T => ψ (symplO S T x y)) (Λ ⊓ half S T e) x y) = heisL S T ψ x (heisL S T ψ y f₀) := by
   intro x hx y hy
-  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
-    refine ⟨?_, ?_, ?_, ?_⟩
-    · intro a b y
-      rw [symplO_add_left, AddChar.map_add_eq_mul]
-    · intro a b y
-      rw [symplO_add_right, AddChar.map_add_eq_mul]
-    · intro y
-      have h := symplO_add_left S T 0 0 y
-      have hz : symplO S T 0 y = 0 := by simpa using h
-      rw [hz, AddChar.map_zero_eq_one]
-    · intro x
-      have h := symplO_add_right S T x 0 0
-      have hz : symplO S T x 0 = 0 := by simpa using h
-      rw [hz, AddChar.map_zero_eq_one]
+  have hb := isBichar_symplO S T ψ
   have s0 := GlobalTheory.isSBHalf_halfInd e Λ
   have s1 : IsSBHalf e Λ fun t => ψ (symplO S T t y) * halfInd e Λ t := by
     obtain ⟨k, hk, hk'⟩ := hden y hy
@@ -294,20 +241,7 @@ theorem placeModel_span_ne {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D �
   have tf : ∀ k : ℕ, 0 < k → Function.Injective fun t : WO S T => k • t := fun k hk a b hab => by
     rw [← inv_smul_nsmul S T hk a, ← inv_smul_nsmul S T hk b]
     exact congrArg _ hab
-  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
-    refine ⟨?_, ?_, ?_, ?_⟩
-    · intro a b y
-      rw [symplO_add_left, AddChar.map_add_eq_mul]
-    · intro a b y
-      rw [symplO_add_right, AddChar.map_add_eq_mul]
-    · intro y
-      have h := symplO_add_left S T 0 0 y
-      have hz : symplO S T 0 y = 0 := by simpa using h
-      rw [hz, AddChar.map_zero_eq_one]
-    · intro x
-      have h := symplO_add_right S T x 0 0
-      have hz : symplO S T x 0 = 0 := by simpa using h
-      rw [hz, AddChar.map_zero_eq_one]
+  have hb := isBichar_symplO S T ψ
   have hw := placeModel_wave ψ Λ hLL' (fun y hy => hden0 y (fY y hy)) hTm
   obtain ⟨h1, k, hk, h2, h3⟩ := hΦ
   have h1' : ∀ t, Φ t ≠ 0 → t ∈ half S T e := fun t ht => (isHalf_iff S T).1 (h1 t ht)

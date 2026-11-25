@@ -118,16 +118,7 @@ private theorem torS_mul_torS_inv_eq_one {μ : ℂ} (hμ : μ ≠ 0) (k r : ℕ)
 private theorem torS_conjTranspose_mul_Hpk_mul_torS_eq_Hpk {μ : ℂ} (hμ : μ ≠ 0) (k r : ℕ) :
     (Formalism.L2.SG.LocWSOf.torS μ k r)ᴴ * Formalism.QuantumDeterminants.Hpk k r * Formalism.L2.SG.LocWSOf.torS μ k r =
       Formalism.QuantumDeterminants.Hpk k r := by
-  ext i j
-  simp only [Formalism.L2.SG.LocWSOf.torS, Matrix.diagonal_conjTranspose, Matrix.mul_diagonal,
-    Matrix.diagonal_mul, Pi.star_apply, Formalism.QuantumDeterminants.Hpk, Fin.ext_iff]
-  have hi := i.isLt
-  have hj := j.isLt
-  split_ifs <;> first
-    | omega
-    | (simp; done)
-    | (rw [show 2 * r + k - (j : ℕ) = (i : ℕ) by omega]; simp [hμ]; done)
-    | (rw [show 2 * r + k - (i : ℕ) = (j : ℕ) by omega]; simp [hμ]; done)
+  apply _root_.Formalism.L2.SG.Pf.Choice.torS_gram <;> assumption
 
 private theorem Qics_mul_Qcs_eq_one (C : Choice X θ) (τ : D.what₂.Tau) : Qics C τ * Qcs C τ = 1 := by
   have hT := C.isT τ
@@ -401,22 +392,6 @@ theorem weil_J (C : Choice X θ) (τ : D.what₂.Tau) {μS ν : Measure (Formali
   exact (lintegral_congr fun x => inner x).trans
     (comap_lint C τ hν0 (fun y => ∫⁻ s, F (fun i j => (Matrix.of s * Matrix.of y) i j) ∂μS))
 
-private theorem measurable_invM' (k r : ℕ) : Measurable (Formalism.FourierDecayAlt.B2.invM (k := k) (r := r)) := by
-  have hdet : Continuous fun x : Formalism.QuantumDeterminants.Mt k r => (Matrix.of x).det := by
-    exact (continuous_id (X := Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)).matrix_det
-  have hadj : Continuous fun x : Formalism.QuantumDeterminants.Mt k r => (Matrix.of x).adjugate := by
-    exact (continuous_id (X := Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)).matrix_adjugate
-  have hinv : Measurable fun x : Formalism.QuantumDeterminants.Mt k r => ((Matrix.of x).det)⁻¹ := hdet.measurable.inv
-  have e : (Formalism.FourierDecayAlt.B2.invM (k := k) (r := r)) =
-      fun x i j => ((Matrix.of x).det)⁻¹ * (Matrix.of x).adjugate i j := by
-    funext x i j
-    show ((Matrix.of x)⁻¹ : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) i j = _
-    rw [Matrix.inv_def, Matrix.smul_apply, smul_eq_mul]
-    first | rw [Ring.inverse_eq_inv']
-  rw [e]
-  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
-  exact hinv.mul ((continuous_apply j).comp ((continuous_apply i).comp hadj)).measurable
-
 theorem inv_comap (C : Choice X θ) (τ : D.what₂.Tau) {μS : Measure (Formalism.QuantumDeterminants.Mt D.R.k D.R.rS)}
     (hS0 : μS {m | Matrix.of m ∉ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS)} = 0)
     (hinv : μS.map Formalism.FourierDecayAlt.B2.invM = μS) :
@@ -431,7 +406,7 @@ theorem inv_comap (C : Choice X θ) (τ : D.what₂.Tau) {μS : Measure (Formali
     exact fun h => hm (mem_range_Tm C τ h)
   have hc : (Tm C τ ∘ fun x => x⁻¹) = Formalism.FourierDecayAlt.B2.invM ∘ Tm C τ := funext fun x => Tm_inv C τ x
   rw [← hE.comap_map ((μS.comap (Tm C τ)).map fun x => x⁻¹), Measure.map_map hE.measurable hinvm, hc,
-    ← Measure.map_map (measurable_invM' D.R.k D.R.rS) hE.measurable, hE.map_comap,
+    ← Measure.map_map (_root_.Formalism.FourierDecayAlt.P.B2x1.invM_meas (k := D.R.k) (r := D.R.rS)) hE.measurable, hE.map_comap,
     Measure.restrict_eq_self_of_ae_mem hae, hinv]
 
 end Formalism.L2.SG.RealObj.EnergyConvJ

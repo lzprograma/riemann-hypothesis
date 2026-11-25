@@ -153,9 +153,6 @@ theorem ContD.mem_iff_le (ϖ : O) (g f : O⟦X⟧) (k : ℕ) :
         exact Ideal.mul_mem_left _ _ (Ideal.subset_span (Set.mem_insert _ _))
       · exact Ideal.subset_span (Set.mem_insert_of_mem _ (Set.mem_singleton _))
 
-theorem ContD.enat_le_of_forall {a b : ℕ∞} (h : ∀ k : ℕ, (k : ℕ∞) ≤ a → (k : ℕ∞) ≤ b) : a ≤ b :=
-  Cont.enat_le_of_forall h
-
 theorem ContD.alg_C (ψ : O⟦X⟧ →ₐ[O] O⟦X⟧) (c : O) : ψ (C c) = C c :=
   ψ.commutes c
 
@@ -288,11 +285,11 @@ theorem PhiData.DESC (f g : O⟦X⟧) (k : ℕ)
 theorem PhiData.cont_phi_phi_eq {g : O⟦X⟧} (hg : IsDist g) (f : O⟦X⟧) :
     cont ϖ (P.φ g) (P.φ f) = cont ϖ g f := by
   apply le_antisymm
-  · apply ContD.enat_le_of_forall
+  · apply Formalism.MainNotions.N.FrobeniusPowerSeries.Cont.enat_le_of_forall
     intro k hk
     rw [← ContD.mem_iff_le] at hk ⊢
     exact P.DESC hϖ f g k hk
-  · apply ContD.enat_le_of_forall
+  · apply Formalism.MainNotions.N.FrobeniusPowerSeries.Cont.enat_le_of_forall
     intro k hk
     rw [← ContD.mem_iff_le] at hk ⊢
     obtain ⟨a, b, hab⟩ := Ideal.mem_span_pair.1 hk

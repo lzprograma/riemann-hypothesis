@@ -135,15 +135,15 @@ theorem coeff_mul_van {τ : Type} {T : Set τ} {f g : MvPowerSeries τ C} (hf : 
       simp only [Finsupp.add_apply, n1, n2, Finsupp.single_apply] at e1 e2
       have t1 : t = w := by
         by_contra hc
-        rw [if_neg hc] at e1
+        rw [ite_eq_right hc] at e1
         omega
       have t2 : t = w' := by
         by_contra hc
-        rw [if_neg hc] at e2
+        rw [ite_eq_right hc] at e2
         omega
       subst t1
       subst t2
-      rw [if_pos rfl] at e1
+      rw [ite_eq_left rfl] at e1
       omega
     simp [hg b hb]
 
@@ -158,7 +158,7 @@ theorem van_pderiv_mvExp {τ : Type} {T : Set τ} {H : MvPowerSeries τ C} (hH :
     · simp
     · intro k _ hk
       rcases k with _ | _ | k
-      · rw [pow_zero, coeff_one, if_neg, zero_div]
+      · rw [pow_zero, coeff_one, ite_eq_right, zero_div]
         intro h
         have := DFunLike.congr_fun h t
         simp at this
@@ -193,7 +193,7 @@ theorem subst_killCompl {τ : Type} {γ : κ → MvPowerSeries τ C} (hγ : ∀ 
       exact ⟨w.2, Prod.ext h1.symm rfl⟩
     obtain ⟨μ, rfl⟩ := this
     rw [map_sub, coeff_embDomain_rename, coeff_killCompl, sub_self]
-  have hz := subst_eq_zero_of_van h0 (fun s (hs : s.1 ≠ 0) => if_neg hs) hv
+  have hz := subst_eq_zero_of_van h0 (fun s (hs : s.1 ≠ 0) => ite_eq_right hs) hv
   rw [subst_sub hS, sub_eq_zero] at hz
   rw [hz, rename_eq_subst, subst_comp_subst_apply (HasSubst.X_comp _) hS]
   congr 1
@@ -247,7 +247,7 @@ theorem subst_pderiv_hAt (X : RawChart C d I κ) {τ : Type} {A : κ → MvPower
   rw [FormalCalc.pderiv_subst hP, Finset.sum_eq_single ((1 : Fin 2), i)]
   · have : pderiv (R := C) ((2 : Fin 3), i) (if ((1 : Fin 2), i).1 = 0 then A ((1 : Fin 2), i).2
         else gp C κ (2 : Fin 3) ((1 : Fin 2), i).2) = 1 := by
-      rw [if_neg (by simp)]
+      rw [ite_eq_right (by simp)]
       exact pderiv_X_self
     rw [this, mul_one, subst_comp_subst_apply hP hS]
     congr 1
@@ -349,10 +349,10 @@ theorem intS_cocycle {X : RawChart C d I κ} {V : VF C} (h : RLaw X V) {τ : Typ
     refine Van.subst {s : Fin 2 × κ | s.1 = 1} (pair_const hA (gp_const 2)) ?_ (h.axes 1)
     rintro ⟨g, x⟩ (hg : g = 1)
     subst hg
-    rw [if_neg (by simp)]
+    rw [ite_eq_right (by simp)]
     intro ν hν
     unfold gp
-    rw [coeff_X, if_neg]
+    rw [coeff_X, ite_eq_right]
     intro e
     exact hν (2, x) (by rw [e]; simp) rfl
   have hAc := formalAdd_const h (gp_const (C := C) (κ := κ) (0 : Fin 3)) (gp_const 1)

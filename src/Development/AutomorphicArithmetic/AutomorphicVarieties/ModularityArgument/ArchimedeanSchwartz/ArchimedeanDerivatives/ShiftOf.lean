@@ -126,11 +126,11 @@ private theorem prod_coord [_root_.NumberField.IsTotallyComplex K] (z : Cinf K) 
       · rw [InfinitePlace.mk_conjugate_eq, w.mk_embedding]
   have h1 : coord w.embedding z = z w := by
     unfold coord
-    rw [InfinitePlace.mk_embedding, if_pos rfl]
+    rw [InfinitePlace.mk_embedding, ite_eq_left rfl]
     rfl
   have h2 : coord (ComplexEmbedding.conjugate w.embedding) z = starRingEnd ℂ (z w) := by
     unfold coord
-    rw [InfinitePlace.mk_conjugate_eq, InfinitePlace.mk_embedding, if_neg hne]
+    rw [InfinitePlace.mk_conjugate_eq, InfinitePlace.mk_embedding, ite_eq_right hne]
     rfl
   rw [hf, Finset.prod_pair hne, h1, h2, Complex.mul_conj, Complex.normSq_eq_norm_sq]
 

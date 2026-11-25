@@ -77,15 +77,7 @@ theorem row_mul {m n r : ℕ} (x : Matrix (Fin m) (Fin r) K) (c : Matrix (Fin r)
 
 theorem range_vecMulLinear_eq {n r : ℕ} (c : Matrix (Fin r) (Fin n) K) :
     LinearMap.range c.vecMulLinear = Submodule.span K (Set.range c) := by
-  apply le_antisymm
-  · rintro _ ⟨v, rfl⟩
-    rw [Matrix.vecMulLinear_apply, Matrix.vecMul_eq_sum]
-    exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
-  · rw [Submodule.span_le]
-    rintro _ ⟨i, rfl⟩
-    refine ⟨Pi.single i 1, ?_⟩
-    ext j
-    simp [Matrix.vecMul, dotProduct, Pi.single_apply]
+  exact _root_.range_vecMulLinear c
 
 theorem span_rows_mul {m n r : ℕ} (x : Matrix (Fin m) (Fin r) K) (c : Matrix (Fin r) (Fin n) K) :
     Submodule.span K (Set.range (x * c)) =
@@ -102,14 +94,9 @@ theorem span_rows_mul {m n r : ℕ} (x : Matrix (Fin m) (Fin r) K) (c : Matrix (
 
 theorem span_rows_eq_top_iff {m r : ℕ} (x : Matrix (Fin m) (Fin r) K) :
     x.rank = r ↔ Submodule.span K (Set.range x) = ⊤ := by
-  rw [Matrix.rank_eq_finrank_span_row]
-  constructor
-  · intro h
-    exact Submodule.eq_top_of_finrank_eq (h.trans (by simp))
-  · intro h
-    have h' : Submodule.span K (Set.range x.row) = ⊤ := h
-    rw [h', finrank_top]
-    simp
+  rw [← Matrix.finrank_span_range_row]
+  exact ⟨fun h => Submodule.eq_top_of_finrank_eq (h.trans (by simp)),
+    fun h => by rw [show Submodule.span K (Set.range x.row) = ⊤ from h, finrank_top]; simp⟩
 
 theorem span_rows_mul_of_rank {m n r : ℕ} (x : Matrix (Fin m) (Fin r) K)
     (c : Matrix (Fin r) (Fin n) K) (hx : x.rank = r) :
@@ -130,7 +117,6 @@ open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -155,27 +141,18 @@ theorem hasSum_average_descend (e : (Σ i, κ i) ≃ X) (a : G → X → ℂ) (h
       (⨍ q, descend Γ (fun g => ∑' x, a g x) q ∂GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ) := by
   classical
   have hsec : Measurable (sec Γ) := measurableEmbedding_sec.measurable
-  have hdescC : ∀ φ : G → ℂ, LeftInv Γ φ → descend Γ φ = φ ∘ sec Γ := by
-    intro φ hφ
+  have hdesc : ∀ {α : Type} (φ : G → α), LeftInv Γ φ → descend Γ φ = φ ∘ sec Γ := by
+    intro α φ hφ
     funext q
     show φ q.out = φ (sec Γ q)
-    apply hφ.eq_of_mk_eq
-    rw [mk_sec]
-    exact Quotient.out_eq q
-  have hdescE : ∀ φ : G → ℝ≥0∞, LeftInv Γ φ → descend Γ φ = φ ∘ sec Γ := by
-    intro φ hφ
-    funext q
-    show φ q.out = φ (sec Γ q)
-    apply hφ.eq_of_mk_eq
-    rw [mk_sec]
-    exact Quotient.out_eq q
+    exact hφ.eq_of_mk_eq (by rw [mk_sec]; exact Quotient.out_eq q)
   have hNm : Measurable (descend Γ fun g => ∑' x, ‖a g x‖ₑ) := by
-    rw [hdescE _ hA]
+    rw [hdesc _ hA]
     exact (Measurable.tsum fun x => (ha x).enorm).comp hsec
   have hFm : ∀ i, AEStronglyMeasurable (descend Γ fun g => ∑' k : κ i, a g (e ⟨i, k⟩))
       (GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ) := by
     intro i
-    rw [hdescC _ (hL i)]
+    rw [hdesc _ (hL i)]
     exact ((Measurable.tsum fun k => ha _).comp hsec).aestronglyMeasurable
   have hbound : ∀ g, ∑' i, ‖∑' k : κ i, a g (e ⟨i, k⟩)‖ₑ ≤ ∑' x, ‖a g x‖ₑ := by
     intro g

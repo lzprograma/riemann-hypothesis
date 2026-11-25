@@ -53,7 +53,6 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartConjMem
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.WeilParts MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.VacInert
 
@@ -65,8 +64,8 @@ theorem exists_pole_idem {E : Type} [Field E] [NumberField E] (z w : FiniteAdele
   let e : FiniteAdeleRing (𝓞 E) E := ⟨fun P => if 1 < Valued.v (z P) then 1 else 0,
     Filter.Eventually.of_forall fun P => by
       by_cases h : 1 < Valued.v (z P)
-      · simp only [if_pos h]; exact one_mem _
-      · simp only [if_neg h]; exact zero_mem _⟩
+      · simp only [ite_eq_left h]; exact one_mem _
+      · simp only [ite_eq_right h]; exact zero_mem _⟩
   have he : ∀ P, e P = if 1 < Valued.v (z P) then 1 else 0 := fun _ => rfl
   have hmul : ∀ (a b : FiniteAdeleRing (𝓞 E) E) P, (a * b) P = a P * b P := fun _ _ _ => rfl
   refine ⟨e, ?_, fun P => ?_, fun h P => ?_, fun f hf hfz => ?_⟩
@@ -84,7 +83,7 @@ theorem exists_pole_idem {E : Type} [Field E] [NumberField E] (z w : FiniteAdele
     · simp
   · have h0 : e P = 0 := by rw [h]; rfl
     by_contra h3
-    rw [he, if_pos (not_le.1 h3)] at h0
+    rw [he, ite_eq_left (not_le.1 h3)] at h0
     exact one_ne_zero h0
   · refine Subtype.ext (funext fun P => ?_)
     change e P * f P = 0
@@ -100,9 +99,6 @@ theorem exists_pole_idem {E : Type} [Field E] [NumberField E] (z w : FiniteAdele
     · simp
 
 variable {D : D7}
-
-theorem conj_int (x : 𝓞 D.host.E) : ∃ y : 𝓞 D.host.E, (y : D.host.E) = D.sp.cm.sig (x : D.host.E) :=
-  ⟨⟨_, (RingOfIntegers.isIntegral_coe x).map (D.sp.cm.sig : D.host.E →+* D.host.E).toIntAlgHom⟩, rfl⟩
 
 theorem finPart_cA (z : AE D) :
     finPart D (cA D z) = sigR (Af D.host.F) D.sp.cm.sig (finPart D z) := by

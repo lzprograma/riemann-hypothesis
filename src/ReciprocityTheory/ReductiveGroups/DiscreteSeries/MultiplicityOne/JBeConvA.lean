@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.IntSOfSIntFin
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
 import Mathlib.Algebra.Order.Star.Real
@@ -33,18 +34,7 @@ theorem bc_gN_mul_le (a b : Mat k r) : gN (a * b) ≤ gN a * gN b := by
 theorem bc_gN_nonneg (g : Mat k r) : 0 ≤ gN g := Real.sqrt_nonneg _
 
 theorem bc_gN_pos_of_ne {g : Mat k r} (hg : g ≠ 0) : 0 < gN g := by
-  obtain ⟨i, j, hij⟩ : ∃ i j, g i j ≠ 0 := by
-    by_contra h
-    push Not at h
-    exact hg (Matrix.ext h)
-  unfold gN
-  apply Real.sqrt_pos.mpr
-  apply lt_of_lt_of_le (Complex.normSq_pos.mpr hij)
-  calc Complex.normSq (g i j) ≤ ∑ j', Complex.normSq (g i j') :=
-        Finset.single_le_sum (fun j' _ => Complex.normSq_nonneg _) (Finset.mem_univ j)
-    _ ≤ ∑ i', ∑ j', Complex.normSq (g i' j') :=
-        Finset.single_le_sum (f := fun i' => ∑ j', Complex.normSq (g i' j'))
-          (fun i' _ => Finset.sum_nonneg fun j' _ => Complex.normSq_nonneg _) (Finset.mem_univ i)
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Lap.S0.IntS.gN_pos_of_ne <;> assumption
 
 theorem bc_gN_zero : gN (0 : Mat k r) = 0 := by
   simp [gN]

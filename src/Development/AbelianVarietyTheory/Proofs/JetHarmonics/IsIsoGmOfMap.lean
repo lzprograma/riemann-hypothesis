@@ -207,7 +207,7 @@ theorem division [CompleteSpace K] (h : PowerSeries K) (d : ℕ) (hd : 0 < d)
     rw [g.eq_X_pow_mul_shift_add_trunc d, add_mul, mul_assoc, map_add (f := _), map_add (f := _),
       PowerSeries.coeff_X_pow_self, Polynomial.coeff_coe,
       Polynomial.coeff_eq_zero_of_degree_lt hdeg, add_zero, PowerSeries.coeff_X_pow_mul',
-      if_pos le_rfl, Nat.sub_self, PowerSeries.coeff_mul] at e
+      ite_eq_left le_rfl, Nat.sub_self, PowerSeries.coeff_mul] at e
     rw [Finset.Nat.antidiagonal_zero, Finset.sum_singleton] at e
     have e2 : PowerSeries.coeff d (((g.trunc d : Polynomial (ball K)) : PowerSeries (ball K)) * q) ∈ I := by
       refine PowerSeries.coeff_mul_mem_ideal_of_coeff_left_mem_ideal' (fun i => ?_) d
@@ -228,7 +228,7 @@ theorem division [CompleteSpace K] (h : PowerSeries K) (d : ℕ) (hd : 0 < d)
   · rw [Polynomial.coeff_map]
     by_cases hn : n < d
     · have := HD.coeff_f_sub_r_mem (i := n) (hord'.symm ▸ hn)
-      rw [map_sub, PowerSeries.coeff_X_pow, if_neg hn.ne, zero_sub, neg_mem_iff,
+      rw [map_sub, PowerSeries.coeff_X_pow, ite_eq_right hn.ne, zero_sub, neg_mem_iff,
         Polynomial.coeff_coe] at this
       exact ((hmem _).1 this).trans_lt hp
     · rw [Polynomial.coeff_eq_zero_of_degree_lt (hdeg.trans_le (by exact_mod_cast not_lt.1 hn))]
@@ -268,7 +268,7 @@ theorem GlobalTheory.ConvSer.exists_root_of_weierstrassDegree : ∀ (K : Type) [
   obtain ⟨q, r, hq, hq0, hr, hrc, e⟩ := DiscRoot.division h d hd ((hB h).1.1 hi) h1 hl
   obtain ⟨x, hx, hx0⟩ := DiscRoot.root_small r d hd hr hrc
   refine ⟨x, hx, ?_⟩
-  obtain ⟨-, hmul, -, -, hP, -, hI, -⟩ := GlobalTheory.T.powerSeriesEvalTsum_unitDisc_properties_alt K x hx
+  obtain ⟨-, hmul, -, -, hP, -, hI, -⟩ := _root_.GlobalTheory.ConvSer.powerSeriesEvalTsum_unitDisc_properties K x hx
   have hq' : Intg q := (hB q).1.2 hq
   have e2 : ((Polynomial.X ^ d - r : Polynomial K) : PowerSeries K) = h * q := by
     rw [Polynomial.coe_sub, Polynomial.coe_pow, Polynomial.coe_X, e]; ring
@@ -306,7 +306,7 @@ theorem exists_torsion_tower (K : Type) [NormedField K] [IsUltrametricDist K] [C
   have hI := intg_nMul_of_intg K F hF p
   set h := nMul F p with hh
   obtain ⟨-, -, hpow, -, -, -, -, -, -, hiff⟩ := _root_.GlobalTheory.BddAlg.bdd_alg K Unit
-  have hev := fun (x : K) (hx : ‖x‖ < 1) => GlobalTheory.T.powerSeriesEvalTsum_unitDisc_properties_alt K x hx
+  have hev := fun (x : K) (hx : ‖x‖ < 1) => _root_.GlobalTheory.ConvSer.powerSeriesEvalTsum_unitDisc_properties K x hx
   have hbdd : ∀ f : PowerSeries K, Intg f → Bdd f := fun f hf => (hpow f 0).2.2 hf
   have hcoef : ∀ n, ‖PowerSeries.coeff n h‖ ≤ 1 := (hiff h).1.1 hI
   have h0 : PowerSeries.coeff 0 h = 0 := by
@@ -325,15 +325,15 @@ theorem exists_torsion_tower (K : Type) [NormedField K] [IsUltrametricDist K] [C
       intro n
       rcases n with _ | n
       · simp [h0c, hc.le]
-      · rw [map_sub, PowerSeries.coeff_C, if_neg (Nat.succ_ne_zero n), sub_zero]
+      · rw [map_sub, PowerSeries.coeff_C, ite_eq_right (Nat.succ_ne_zero n), sub_zero]
         exact hcoef _
     obtain ⟨y, hy, hy0⟩ := _root_.GlobalTheory.ConvSer.exists_root_of_weierstrassDegree K (h - PowerSeries.C c) p hpr.pos hIc (by
-        rw [map_sub, PowerSeries.coeff_C, if_neg hpr.ne_zero, sub_zero]
+        rw [map_sub, PowerSeries.coeff_C, ite_eq_right hpr.ne_zero, sub_zero]
         exact hp) (by
         intro k hk
         rcases k with _ | k
         · simpa [h0, h0c] using hc
-        · rw [map_sub, PowerSeries.coeff_C, if_neg (Nat.succ_ne_zero k), sub_zero]
+        · rw [map_sub, PowerSeries.coeff_C, ite_eq_right (Nat.succ_ne_zero k), sub_zero]
           exact hlt _ hk)
     refine ⟨⟨y, hy⟩, ?_⟩
     obtain ⟨-, hops, hCe, -⟩ := hev y hy
@@ -392,7 +392,7 @@ theorem exists_torsion_tower (K : Type) [NormedField K] [IsUltrametricDist K] [C
   · intro n
     rcases n with _ | m
     · simpa [x0] using hxroot
-    · simp only [Nat.add_sub_cancel, if_neg (Nat.succ_ne_zero _), Function.iterate_succ_apply']
+    · simp only [Nat.add_sub_cancel, ite_eq_right (Nat.succ_ne_zero _), Function.iterate_succ_apply']
       exact hf _
 
 end GlobalTheory.ConvSer
@@ -478,7 +478,7 @@ theorem exists_pow_eq_interpolation {K : Type} [NormedField K] [IsUltrametricDis
   induction k with
   | zero =>
     refine ⟨1, fun a ha => ?_, fun a => ?_, by simp⟩
-    · rw [coeff_one, if_neg (by omega)]
+    · rw [coeff_one, ite_eq_right (by omega)]
     · rw [coeff_one]; split_ifs <;> simp
   | succ k ih =>
     obtain ⟨Q, hQ0, hQ1, hQ2⟩ := ih
@@ -897,7 +897,7 @@ theorem eq_zero_of_ev_vanish : ∀ (K : Type) [NormedField K] [IsUltrametricDist
   intro K _ _ _ G r hr hr1 hmono hG hT H hH hz
   have hS : ∀ (x y : K), ‖x‖ < 1 → ‖y‖ < 1 →
       Intg (shift1 H y) ∧ ev1 (shift1 H y) x = ev H ![x, y] := fun x y hx hy =>
-    (GlobalTheory.T.powerSeriesEvalTsum_unitDisc_properties_alt K x hx).2.2.2.2.2.2.2.2.2.1 H y hy hH
+    (_root_.GlobalTheory.ConvSer.powerSeriesEvalTsum_unitDisc_properties K x hx).2.2.2.2.2.2.2.2.2.1 H y hy hH
   have h1 : ∀ m, ∀ y ∈ G m, shift1 H y = 0 := by
     intro m y hy
     have hy1 := (hG m y hy).2
@@ -944,8 +944,7 @@ namespace GlobalTheory.ConvSer.TowerNorm
 theorem norm_natCast_eq_one {K : Type} [NormedField K] [IsUltrametricDist K] {p : ℕ}
     (hp : p.Prime) (h : ‖(p : K)‖ < 1) {j : ℕ} (hj : ¬ p ∣ j) : ‖(j : K)‖ = 1 := by
   refine le_antisymm (IsUltrametricDist.norm_natCast_le_one K j) ?_
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hc : IsCoprime (p : ℤ) (j : ℤ) :=
     Nat.isCoprime_iff_coprime.2 ((Nat.Prime.coprime_iff_not_dvd hp).2 hj)
   obtain ⟨u, v, huv⟩ := hc
@@ -971,11 +970,11 @@ theorem prod_range_mul (g : ℕ → ℝ) (N b : ℕ) :
 theorem prod_range_ite (f : ℕ → ℝ) (c : ℝ) {M : ℕ} (hM : 0 < M) :
     ∏ j ∈ Finset.range M, (if j = 0 then c else f j) = c * ∏ j ∈ Finset.Ico 1 M, f j := by
   rw [Finset.range_eq_Ico, Finset.prod_eq_prod_Ico_succ_bot hM]
-  simp only [if_true, zero_add]
+  simp only [ite_true, zero_add]
   congr 1
   refine Finset.prod_congr rfl fun j hj => ?_
   have := (Finset.mem_Ico.1 hj).1
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 section
 
@@ -996,7 +995,7 @@ theorem prod_fibre (f : PowerSeries K) (p : ℕ) (hp : 0 < p) (hf : Intg f)
     intro y hy
     obtain ⟨b, hb, rfl⟩ := Finset.mem_image.1 hy
     refine ⟨(hx b hb).1, ?_⟩
-    obtain ⟨-, B2, B3, -⟩ := GlobalTheory.T.powerSeriesEvalTsum_unitDisc_properties_alt K (x b) (hx b hb).1
+    obtain ⟨-, B2, B3, -⟩ := _root_.GlobalTheory.ConvSer.powerSeriesEvalTsum_unitDisc_properties K (x b) (hx b hb).1
     rw [(B2 _ _ ((A3 f 0).2.2 hf) ((A3 _ 0).2.2 hC)).2.1, B3, (hx b hb).2, sub_self])).2
   rw [hcard, Finset.prod_image hinj] at key
   have hz : PowerSeries.coeff 0 (f - PowerSeries.C c) = -c := by
@@ -1033,7 +1032,7 @@ theorem prod_zero_fibre (f : PowerSeries K) (p : ℕ) (hp : 0 < p) (hf : Intg f)
     intro y hy
     obtain ⟨b, hb, rfl⟩ := Finset.mem_image.1 hy
     refine ⟨(hx b hb).1, ?_⟩
-    obtain ⟨-, B2, -, B4, -⟩ := GlobalTheory.T.powerSeriesEvalTsum_unitDisc_properties_alt K (x b) (hx b hb).1
+    obtain ⟨-, B2, -, B4, -⟩ := _root_.GlobalTheory.ConvSer.powerSeriesEvalTsum_unitDisc_properties K (x b) (hx b hb).1
     have e := (B2 _ _ ((A3 _ 0).2.2 hX) ((A3 _ 0).2.2 hI)).2.2
     rw [← hfe, B4, (hx b hb).2.1] at e
     exact (mul_eq_zero.1 e.symm).resolve_left (hx b hb).2.2)).2
@@ -1124,14 +1123,14 @@ theorem tower_norm : ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [Compl
       refine Finset.prod_congr rfl fun a _ => ?_
       by_cases ha : a = 0
       · subst ha
-        rw [if_pos rfl, ← hB, ← one_mul (∏ b ∈ Finset.Ico 1 p, _), ← prod_range_ite _ _ hp.pos]
+        rw [ite_eq_left rfl, ← hB, ← one_mul (∏ b ∈ Finset.Ico 1 p, _), ← prod_range_ite _ _ hp.pos]
         refine Finset.prod_congr rfl fun b _ => ?_
         by_cases hb : b = 0
         · simp [hb]
-        · rw [if_neg hb, zero_add, if_neg (Nat.mul_ne_zero hN.ne' hb), hbot]
-      · rw [if_neg ha, ← hA n a]
+        · rw [ite_eq_right hb, zero_add, ite_eq_right (Nat.mul_ne_zero hN.ne' hb), hbot]
+      · rw [ite_eq_right ha, ← hA n a]
         refine Finset.prod_congr rfl fun b _ => ?_
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
 
 end GlobalTheory.ConvSer.TowerNorm
 end -- clump:auto
@@ -1251,7 +1250,7 @@ theorem exists_iso_multiplicative (K : Type) [NormedField K] [IsUltrametricDist 
     exact tendsto_pow_atTop_nhds_zero_of_lt_one (norm_nonneg _) hn2
   have hgev : ∀ n m j k, P m k = P n j → ev1 (g m : PowerSeries K) (P n j) = ζ m ^ k := by
     intro n m j k h
-    rw [((GlobalTheory.T.powerSeriesEvalTsum_unitDisc_properties_alt K _ (hPlt n j)).2.2.2.2.1 (g m)).2, ← h]
+    rw [((_root_.GlobalTheory.ConvSer.powerSeriesEvalTsum_unitDisc_properties K _ (hPlt n j)).2.2.2.2.1 (g m)).2, ← h]
     exact hgv m k
   obtain ⟨φ, hφI, hφc, hφv⟩ := _root_.GlobalTheory.ConvSer.exists_limit_of_agree_on_points K G ‖t 1‖ hr0 (ht1 1).le hmono hGr hlim
     (fun n => (g n : PowerSeries K))
@@ -1277,7 +1276,7 @@ theorem exists_iso_multiplicative (K : Type) [NormedField K] [IsUltrametricDist 
     · have : P n j = 0 := by
         rw [← hP0 n]
         exact (ho3 n _ _).2 ((Nat.modEq_zero_iff_dvd).2 hj)
-      rw [this, (GlobalTheory.T.powerSeriesEvalTsum_unitDisc_properties_alt K 0 hz).2.2.2.2.2.2.2.2.2.2 φ, hφ0]
+      rw [this, (_root_.GlobalTheory.ConvSer.powerSeriesEvalTsum_unitDisc_properties K 0 hz).2.2.2.2.2.2.2.2.2.2 φ, hφ0]
       obtain ⟨c, rfl⟩ := hj
       rw [pow_mul, hζn, one_pow]
     · rw [hφv n _ ((hmem _ _).2 ⟨j, hj, rfl⟩)]
@@ -1290,7 +1289,7 @@ theorem exists_iso_multiplicative (K : Type) [NormedField K] [IsUltrametricDist 
     rw [hf, map_sub, hφ0]; simp
   have hfP : ∀ n j, ev1 f (P n j) = ζ n ^ j - 1 := by
     intro n j
-    have h := GlobalTheory.T.powerSeriesEvalTsum_unitDisc_properties_alt K _ (hPlt n j)
+    have h := _root_.GlobalTheory.ConvSer.powerSeriesEvalTsum_unitDisc_properties K _ (hPlt n j)
     rw [hf, (h.2.1 φ _ ((bP1 _ 0).2.2 hφI) ((bP1 _ 0).2.2 hC1)).2.1, h.2.2.1, hφP]
   refine ⟨f, hfI, by simpa using hf0, ?_, ?_⟩
   · by_contra hne
@@ -1301,7 +1300,7 @@ theorem exists_iso_multiplicative (K : Type) [NormedField K] [IsUltrametricDist 
       rw [← h]
       congr 1
       exact ((hpt _ (ht1 1)).2.1).symm
-    have he := ((GlobalTheory.T.powerSeriesEvalTsum_unitDisc_properties_alt K _ (ht1 1)).2.2.2.2.2.2.1 f hfI).2.2
+    have he := ((_root_.GlobalTheory.ConvSer.powerSeriesEvalTsum_unitDisc_properties K _ (ht1 1)).2.2.2.2.2.2.1 f hfI).2.2
     rw [hv, hf0, sub_zero] at he
     have hlt2 : ‖ζ 1 - 1‖ < ‖t 1‖ := by
       have : ζ 1 - 1 = (ζ 1 - 1 - PowerSeries.coeff 1 f * t 1) + PowerSeries.coeff 1 f * t 1 := by

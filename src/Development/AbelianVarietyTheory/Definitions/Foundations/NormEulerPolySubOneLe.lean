@@ -3,49 +3,6 @@ module
 public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
 public import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CountableIdealSummableAbsNormRpow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.LocallyUniformLimit
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Module.MultipliableUniformlyOn
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -324,10 +281,10 @@ def heckeL (T : Set (HeightOneSpectrum (𝓞 K))) (χ : HChar K) (s : ℂ) : ℂ
 def zetaOff (T : Set (HeightOneSpectrum (𝓞 K))) (s : ℂ) : ℂ := eulerProd T (fun _ => {1}) s
 
 theorem heckeFam_of_unrAt {χ : HChar K} {w : HeightOneSpectrum (𝓞 K)} (h : χ.UnrAt w) :
-    heckeFam χ w = {χ.val w} := if_pos h
+    heckeFam χ w = {χ.val w} := ite_eq_left h
 
 theorem heckeFam_of_not_unrAt {χ : HChar K} {w : HeightOneSpectrum (𝓞 K)} (h : ¬ χ.UnrAt w) :
-    heckeFam χ w = 0 := if_neg h
+    heckeFam χ w = 0 := ite_eq_right h
 
 theorem locL_heckeFam (χ : HChar K) (w : HeightOneSpectrum (𝓞 K)) (s : ℂ) :
     locL (heckeFam χ) w s = GlobalTheory.CMVal.eulerFactor χ s w := by
@@ -385,9 +342,6 @@ theorem LvTw_eq (c : Fam E) (m : HeightOneSpectrum (𝓞 E) → ℂˣ) (v : Heig
       ((c w).map fun b : ℂˣ => (1 - (b : ℂ) * (m w : ℂ)⁻¹ * npow w (-s))⁻¹).prod := by
   simp [LvTw, Lv, locL_twist]
 
-theorem Lv_add (c c' : Fam E) (v : HeightOneSpectrum (𝓞 F)) (s : ℂ) : Lv (c + c') v s = Lv c v s * Lv c' v s := by
-  simp [Lv, locL_add, Finset.prod_mul_distrib]
-
 theorem hasProd_Lv {S : Set (HeightOneSpectrum (𝓞 F))} {c : Fam E} {s : ℂ} (h : Converges (above E S) c s) :
     HasProd (fun v : {v // v ∉ S} => Lv c v.1 s) (LS S c s) := by
   let f : {w // w ∉ above E S} → {v // v ∉ S} := fun w => ⟨w.1.under (𝓞 F), w.2⟩
@@ -432,15 +386,15 @@ variable (E) in
 def etaL (S : Set (HeightOneSpectrum (𝓞 F))) (k : ℕ) (s : ℂ) : ℂ := eulerProd S (etaFam E k) s
 
 theorem etaFam_of_unram {v : HeightOneSpectrum (𝓞 F)} (h : IsUnram (E := E) v) (k : ℕ) :
-    etaFam E k v = {etaU E v ^ k} := if_pos (Or.inl h)
+    etaFam E k v = {etaU E v ^ k} := ite_eq_left (Or.inl h)
 
 theorem etaFam_add_two_mul (k j : ℕ) : etaFam (F := F) E (k + 2 * j) = etaFam E k := by
   funext v
   have : Even (k + 2 * j) ↔ Even k := by simp [Nat.even_add]
   rw [etaFam, etaFam, pow_add, pow_mul, etaU_sq, one_pow, mul_one]
   by_cases h : IsUnram (E := E) v ∨ Even k
-  · rw [if_pos h, if_pos ((or_congr_right this).2 h)]
-  · rw [if_neg h, if_neg (mt (or_congr_right this).1 h)]
+  · rw [ite_eq_left h, ite_eq_left ((or_congr_right this).2 h)]
+  · rw [ite_eq_right h, ite_eq_right (mt (or_congr_right this).1 h)]
 
 theorem bounded_etaFam (S : Set (HeightOneSpectrum (𝓞 F))) (k : ℕ) : Bounded S (etaFam E k) 1 0 := fun v _ => by
   unfold etaFam

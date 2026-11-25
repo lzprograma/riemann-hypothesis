@@ -65,30 +65,33 @@ theorem trdeg_eq (m : ℕ) : Cardinal.mk (Fin m) = Algebra.trdeg K (ProjField K 
 
 variable [NumberField K] {i : ℕ}
 
-theorem span_dualLattice (F : HermLattice K i) :
-    Submodule.span K (dualLattice F : Set (Fin i → K)) = ⊤ := by
+theorem exists_int_smul_mem (F : HermLattice K i) (v : Fin i → K) :
+    ∃ N : ℤ, N ≠ 0 ∧ (N : K) • v ∈ dualLattice F := by
   classical
-  refine Submodule.eq_top_iff'.mpr fun v => ?_
   obtain ⟨S, hS⟩ := F.fg
   obtain ⟨N, hN, hint⟩ := exists_integral_multiples ℤ ℚ (S.image fun g => v ⬝ᵥ g)
-  have hmem : (N : K) • v ∈ dualLattice F := by
-    intro x hx
-    rw [← hS] at hx
-    induction hx using Submodule.span_induction with
-    | mem g hg =>
-      have hg' := hint _ (Finset.mem_image_of_mem _ hg)
-      rw [smul_dotProduct, Int.cast_smul_eq_zsmul]
-      exact RingHom.mem_range.mpr ((IsIntegralClosure.isIntegral_iff (A := 𝓞 K)).mp hg')
-    | zero => exact ⟨0, by simp⟩
-    | add x y _ _ hx hy =>
-      obtain ⟨a, ha⟩ := hx
-      obtain ⟨c, hc⟩ := hy
-      exact ⟨a + c, by rw [dotProduct_add, map_add (f := _), ha, hc]⟩
-    | smul r x _ hx =>
-      obtain ⟨a, ha⟩ := hx
-      refine ⟨r * a, ?_⟩
-      rw [dotProduct_smul, map_mul, ha]
-      rfl
+  refine ⟨N, hN, fun x hx => ?_⟩
+  rw [← hS] at hx
+  induction hx using Submodule.span_induction with
+  | mem g hg =>
+    have hg' := hint _ (Finset.mem_image_of_mem _ hg)
+    rw [smul_dotProduct, Int.cast_smul_eq_zsmul]
+    exact RingHom.mem_range.mpr ((IsIntegralClosure.isIntegral_iff (A := 𝓞 K)).mp hg')
+  | zero => exact ⟨0, by simp⟩
+  | add x y _ _ hx hy =>
+    obtain ⟨a, ha⟩ := hx
+    obtain ⟨c, hc⟩ := hy
+    exact ⟨a + c, by rw [dotProduct_add, map_add (f := _), ha, hc]⟩
+  | smul r x _ hx =>
+    obtain ⟨a, ha⟩ := hx
+    refine ⟨r * a, ?_⟩
+    rw [dotProduct_smul, map_mul, ha]
+    rfl
+
+theorem span_dualLattice (F : HermLattice K i) :
+    Submodule.span K (dualLattice F : Set (Fin i → K)) = ⊤ := by
+  refine Submodule.eq_top_iff'.mpr fun v => ?_
+  obtain ⟨N, hN, hmem⟩ := exists_int_smul_mem F v
   have hN' : (N : K) ≠ 0 := Int.cast_ne_zero.mpr hN
   have := Submodule.smul_mem (Submodule.span K (dualLattice F : Set (Fin i → K))) (N : K)⁻¹
     (Submodule.subset_span hmem)

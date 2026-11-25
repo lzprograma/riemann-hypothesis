@@ -39,52 +39,6 @@ public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PGenericLinearTrdeg
 public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealDim
 public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealPrime
 public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncidenceGeneric
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -104,9 +58,9 @@ theorem mem_support_fundCycle_iff {F : Type*} [Field F] {n : ℕ} {J : Ideal (Mv
   constructor
   · intro h
     by_contra h'
-    exact h (if_neg h')
+    exact h (ite_eq_right h')
   · intro h
-    rw [if_pos h, localMult_eq_one_of_isRadical hJ h.1]
+    rw [ite_eq_left h, localMult_eq_one_of_isRadical hJ h.1]
     exact one_ne_zero
 
 namespace SectionPerfect
@@ -167,7 +121,7 @@ theorem isChowFormCycle_unique {F : Type} [Field F] {n k : ℕ} {Z : ProjCycle F
   let d : Ideal (MvPolynomial (Fin n) F) → F := fun W =>
     if h : W ∈ Z.support then (hex W h).choose else 1
   have hd : ∀ W ∈ Z.support, d W ≠ 0 ∧ g1 W = C (d W) * g2 W := fun W hW => by
-    simp only [d, dif_pos hW]
+    simp only [d, dite_eq_left hW]
     exact (hex W hW).choose_spec
   have key : ∏ W ∈ Z.support, g1 W ^ Z W =
       C (∏ W ∈ Z.support, d W ^ Z W) * ∏ W ∈ Z.support, g2 W ^ Z W := by
@@ -238,7 +192,7 @@ theorem chowFormSectionPerfect_of (hA : ChowFormSectionAlgClosed.Statement)
     fun W => if h : ∃ g, IsChowForm W e g then h.choose else 1
   have hg : ∀ W ∈ (divCycle I u).support, IsChowForm W e (g W) := fun W hW => by
     have hex := chowFormExists_full F n e W (hWc W hW).1 (hWc W hW).2
-    simp only [g, dif_pos hex]
+    simp only [g, dite_eq_left hex]
     exact hex.choose_spec
 
   let K := AlgebraicClosure F
@@ -391,7 +345,7 @@ theorem chowFormSectionAlgClosed_of (h₅ : SectionOrderAlgClosed.Statement) :
   let g : Ideal (MvPolynomial (Fin n) F) → MvPolynomial (Fin e × Fin n) F :=
     fun W => if h : ∃ g, IsChowForm W e g then h.choose else 1
   have hg : ∀ W ∈ (divCycle I u).support, IsChowForm W e (g W) := fun W hW => by
-    simp only [g, dif_pos (hex W hW)]
+    simp only [g, dite_eq_left (hex W hW)]
     exact (hex W hW).choose_spec
   have hspan : ∀ W ∈ (divCycle I u).support, incIdeal W e = Ideal.span {g W} := fun W hW =>
     (isChowForm_iff_span.mp (hg W hW)).2
@@ -460,18 +414,18 @@ theorem sectionCycleReduced_of (hC : SectionComponents.Statement)
   rw [Finsupp.finsetSum_apply]
   simp only [divCycle, happ]
   by_cases hW : W ∈ relComps (J ⊔ Ideal.span {linForm u})
-  · rw [if_pos hW, hL _ J W (linForm u) hJ hu hW.1
+  · rw [ite_eq_left hW, hL _ J W (linForm u) hJ hu hW.1
       (fun P hP hPW => (hcomp P hP W).2 ⟨hW.1, hPW⟩), Finset.sum_filter]
     refine Finset.sum_congr rfl fun P hP => ?_
     rw [Set.Finite.mem_toFinset] at hP
     by_cases hPW : P ≤ W
-    · rw [if_pos hPW, if_pos ⟨(hcomp P hP W).2 ⟨hW.1, hPW⟩, hW.2⟩]
-    · rw [if_neg hPW, if_neg fun h => hPW ((hcomp P hP W).1 h.1).2]
-  · rw [if_neg hW]
+    · rw [ite_eq_left hPW, ite_eq_left ⟨(hcomp P hP W).2 ⟨hW.1, hPW⟩, hW.2⟩]
+    · rw [ite_eq_right hPW, ite_eq_right fun h => hPW ((hcomp P hP W).1 h.1).2]
+  · rw [ite_eq_right hW]
     symm
     refine Finset.sum_eq_zero fun P hP => ?_
     rw [Set.Finite.mem_toFinset] at hP
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     exact hW ⟨((hcomp P hP W).1 h1).1, h2⟩
 

@@ -13,8 +13,6 @@ open Matrix MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotio
 
 namespace Formalism.L2.SG.Pf.LTL
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Lemmas
 
 open scoped ComplexConjugate

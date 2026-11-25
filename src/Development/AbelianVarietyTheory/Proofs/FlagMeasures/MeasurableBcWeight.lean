@@ -75,10 +75,7 @@ theorem psi_eq_psiGen (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (c : ℂ) :
 alias volUn_pos := _root_.GlobalTheory.UnitaryVolume.volUn_pos
 
 theorem bcWeight_nonneg (k r : ℕ) (T T' : ℝ) (q : (Fin r → ℂ) × ℂ) : 0 ≤ bcWeight k r T T' q := by
-  unfold bcWeight
-  split_ifs with h
-  · exact mul_nonneg (Finset.prod_nonneg fun _ _ => by positivity) (pow_nonneg (sub_nonneg.mpr h) _)
-  · exact le_rfl
+  exact Formalism.FourierDecayAlt.P.B7.boundary_weight_nonneg T T' q
 
 theorem measurable_bcWeight (k r : ℕ) (T T' : ℝ) : Measurable (bcWeight k r T T') := by
   unfold bcWeight

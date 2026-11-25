@@ -13,91 +13,55 @@ public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLif
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjUInvMemGfC
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsThetaSubGAlgDOne
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneParamSubgroupTransposeGramUnitaryDecomposesStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Tactic.NormNum.Parity
 
--- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DerivativePureTensorProduct, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LineSumExistsDerivativeFactor, Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawUnfoldingMellin, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.SquaresAgreeLineDerivativeIsDerivation, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LineKernelProjectionWeyl
-
--- ===== clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DerivativePureTensorProduct =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DerivativePureTensorProduct", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerSkewPlaneUniqueDual\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOneParamSubgroupTransposeGramLieAt\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ArchimedeanProductRuleDerivative\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ArchimedeanThetaFamilyExistsSmooth\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\n\n"}
-section -- clump:auto
 @[expose] public section
 
-section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm GlobalTheory.SquareAgree
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
+open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.WeilM GlobalTheory.LFun
+
 noncomputable section
-namespace GlobalTheory.PureProdRule
-theorem lift_splits_locally : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
-    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
-    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
-    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ),
-    IsInfFam θ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om' →
-    ∀ l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ), (∀ q ∈ l, q.2 ∈ lieAt X q.1) →
-    ∀ f ∈ Γ.M.Pol Bs.ψ Bs.emb, ∀ φ : ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 D.host.F), (Fin a × Fin (a + a') → v.adicCompletion D.host.F) → ℂ,
-    (∀ v, φ v ∈ GlobalTheory.WeilM.SB _) → (∀ᶠ v in Filter.cofinite, φ v = Γ.M.vac v) →
-    ∀ Ψ : Fin l.length → (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
-    (∀ i, Ψ i ∈ algD Γ.M Bs.ψ Bs.emb ∧
-        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) x) (Ψ i x) 0) →
-    ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) x) (∑ i, Ψ i x) 0 := by
+
+namespace GlobalTheory.LineDerivCore
+
+theorem lift_splits_locally_core (hP : _root_.GlobalTheory.FunPr.ThetaLocalInputs) (D : D7) (θ : InfFam D) (X : HSp D)
+    {a a' n : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E)
+    (Wsp : Spc D.host.F D.host.E (a + a')) (Vsp : Spc D.host.F D.host.E n)
+    (M : Model D.sp.cm.sig Vsp Wsp) (χ₁ χ₂ : (AE D)ˣ →* Circle)
+    (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Vsp Wsp)
+    (hJ : Wsp.J = D.host.xi0 • reindex e e X.gramᵀ)
+    (hθ : IsInfFam θ) (hcm : IsCMExt D.host.F D.host.E D.sp.cm.sig) (hstdB : IsStd Bs.ψ)
+    (hM : M.IsGood Bs.ψ) (hweil : M.IsWeil Bs.ψ χ₁ χ₂ om)
+    (l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ)) (hl : ∀ q ∈ l, q.2 ∈ lieAt X q.1)
+    (f : SInf D.host.F (Fin n × Fin (a + a'))) (_hf : f ∈ M.Pol Bs.ψ Bs.emb)
+    (φ : ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 D.host.F), (Fin n × Fin (a + a') → v.adicCompletion D.host.F) → ℂ)
+    (hφ : ∀ v, φ v ∈ GlobalTheory.WeilM.SB _) (hvac : ∀ᶠ v in Filter.cofinite, φ v = M.vac v)
+    (Ψ : Fin l.length → (Fin n × Fin (a + a') → AF D.host.F) → ℂ)
+    (hΨ : ∀ i, Ψ i ∈ algD M Bs.ψ Bs.emb ∧
+        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) (pure f φ) x) (Ψ i x) 0)
+    (x : Fin n × Fin (a + a') → AF D.host.F) :
+    HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) (pure f φ) x) (∑ i, Ψ i x) 0 := by
   classical
-  intro hP D θ X a a' e Bs Γ Xc om om' hJ hθ hTr l hl f hf φ hφ hvac Ψ hΨ x
-  have hline : ∀ i : Fin l.length, ∃ γ ∈ Lines D.sp.cm.sig Γ.W, ∀ t : ℝ,
+  have hline : ∀ i : Fin l.length, ∃ γ ∈ Lines D.sp.cm.sig Wsp, ∀ t : ℝ,
       γ (Multiplicative.ofAdd t) = kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t) := fun i =>
-    GlobalTheory.KapXLine.exists_line D θ X (l.get i).1 (l.get i).2 hθ (hl _ (List.get_mem _ _)) e Γ.W hJ
+    GlobalTheory.KapXLine.exists_line D θ X (l.get i).1 (l.get i).2 hθ (hl _ (List.get_mem _ _)) e Wsp hJ
   choose γ hγ hγt using hline
-  have hT := fun i => _root_.GlobalTheory.ArchFamily.exists_archimedean_theta_family hP Γ.M Bs.ψ Xc.β (Xc.β / Xc.α) om hTr.base.cm hTr.base.std hTr.weil (γ i) (hγ i)
+  have hT := fun i => _root_.GlobalTheory.ArchFamily.exists_archimedean_theta_family hP M Bs.ψ χ₁ χ₂ om hcm hstdB hweil (γ i) (hγ i)
   choose T hTa hTadd hT0 using hT
   have hstd : ∀ᶠ v in Filter.cofinite,
       φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers D.host.F} 1 := by
-    filter_upwards [hvac, hTr.geo.hM.std] with v h1 h2
+    filter_upwards [hvac, hM.std] with v h1 h2
     rw [h1, h2]
-  obtain ⟨r, hR, hpure⟩ : ∃ r : (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
-      (∀ g : SInf D.host.F (Fin a × Fin (a + a')), Rest (evI D.host.F) ⇑g r) ∧
-      ∀ g : SInf D.host.F (Fin a × Fin (a + a')), pure g φ = tens (evI D.host.F) ⇑g r :=
+  obtain ⟨r, hR, hpure⟩ : ∃ r : (Fin n × Fin (a + a') → AF D.host.F) → ℂ,
+      (∀ g : SInf D.host.F (Fin n × Fin (a + a')), Rest (evI D.host.F) ⇑g r) ∧
+      ∀ g : SInf D.host.F (Fin n × Fin (a + a')), pure g φ = tens (evI D.host.F) ⇑g r :=
     ⟨_, fun g => GlobalTheory.ThK.EvUniqInf.rest_pure g φ hφ hstd, fun g => rfl⟩
-  have hlist : ∀ (t : ℝ) (L : List (Fin l.length)) (g : SInf D.host.F (Fin a × Fin (a + a'))),
+  have hlist : ∀ (t : ℝ) (L : List (Fin l.length)) (g : SInf D.host.F (Fin n × Fin (a + a'))),
       (L.map fun i => om (1, γ i (Multiplicative.ofAdd t))).prod (tens (evI D.host.F) ⇑g r) =
         tens (evI D.host.F) ⇑((L.map fun i => T i t).prod g) r := by
     intro t L
@@ -105,13 +69,13 @@ theorem lift_splits_locally : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀
     | nil => intro g; rfl
     | cons i L ih =>
       intro g
-      simp only [List.map_cons, List.prod_cons, Module.End.mul_apply]
+      simp only [List.map_cons, List.prod_cons, mul_apply_eq_comp]
       rw [ih g]
       exact hTa i t _ r (hR _)
-  let κ : GA D X →* UA D.sp.cm.sig Γ.W.J :=
+  let κ : GA D X →* UA D.sp.cm.sig Wsp.J :=
     { toFun := kapX X e hJ, map_one' := GlobalTheory.KapXLine.kapX_one X e hJ,
       map_mul' := GlobalTheory.KapXLine.kapX_mul X e hJ }
-  let H : GA D X →* Module.End ℂ ((Fin a × Fin (a + a') → AF D.host.F) → ℂ) :=
+  let H : GA D X →* Module.End ℂ ((Fin n × Fin (a + a') → AF D.host.F) → ℂ) :=
     (om.comp (MonoidHom.inr _ _)).comp κ
   have hH : ∀ g, H g = om (1, kapX X e hJ g) := fun g => rfl
   have hprod : ∀ t : ℝ, om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) (pure f φ) =
@@ -155,46 +119,28 @@ theorem lift_splits_locally : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀
       refine (this.congr_of_eventuallyEq (Filter.Eventually.of_forall fun t => ?_)).congr_deriv ?_
       · simp only [mul_assoc, mul_inv_cancel₀ hr, mul_one]
       · rw [div_eq_mul_inv]
-    have hcore := _root_.GlobalTheory.ArchProdRule.archimedean_hasDerivAt_prod hP Γ.M Bs.ψ Xc.β (Xc.β / Xc.α) om hTr.base.cm hTr.base.std hTr.weil l.length γ hγ T hTa
+    have hcore := _root_.GlobalTheory.ArchProdRule.archimedean_hasDerivAt_prod hP M Bs.ψ χ₁ χ₂ om hcm hstdB hweil l.length γ hγ T hTa
       hTadd hT0 f (fun j => evI D.host.F (x j)) (fun i => Ψ i x / r x) hc
     refine (hcore.mul_const (r x)).congr_deriv ?_
     rw [Finset.sum_mul]
     exact Finset.sum_congr rfl fun i _ => div_mul_cancel₀ _ hr
-end GlobalTheory.PureProdRule
-end
-end
 
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DerivativePureTensorProduct =====
-
--- ===== clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LineSumExistsDerivativeFactor =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LineSumExistsDerivativeFactor", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerSkewPlaneUniqueDual\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRealmapsIsomorphism\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOneParamSubgroupTransposeGramLieAt\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DerivativePureTensorProduct\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.MemPolarizationStabilizerOfDualPair\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-section
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
-open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
-open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
-open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
-open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-open GlobalTheory.SquareComm GlobalTheory.SquareAgree
-noncomputable section
-namespace GlobalTheory.LineSum
-theorem lineSum_exists_derivative_factor (hP : _root_.GlobalTheory.FunPr.ThetaLocalInputs) (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
-    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
-    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
-    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ)
-    (hθ : IsInfFam θ) (hT : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om') (τ : D.what₂.Tau)
-    (Y : Matrix (Fin X.rank) (Fin X.rank) ℂ) (hY : Y ∈ lieAt X τ) :
-    ∀ ΦD ∈ algD Γ.M Bs.ψ Bs.emb, ∃ Ψ ∈ algD Γ.M Bs.ψ Bs.emb,
+theorem lineSum_exists_derivative_factor_core (hP : _root_.GlobalTheory.FunPr.ThetaLocalInputs) (D : D7) (θ : InfFam D) (X : HSp D)
+    {a a' n : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E)
+    (Wsp : Spc D.host.F D.host.E (a + a')) (Vsp : Spc D.host.F D.host.E n)
+    (M : Model D.sp.cm.sig Vsp Wsp) (χ₁ χ₂ : (AE D)ˣ →* Circle)
+    (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Vsp Wsp)
+    (hJ : Wsp.J = D.host.xi0 • reindex e e X.gramᵀ) (hθ : IsInfFam θ)
+    (hM : M.IsGood Bs.ψ) {p₁ q₁ p₂ q₂ : ℕ}
+    (hPair : GlobalTheory.ThK.IsPair Bs M χ₁ χ₂ om p₁ q₁ p₂ q₂)
+    (τ : D.what₂.Tau) (Y : Matrix (Fin X.rank) (Fin X.rank) ℂ) (hY : Y ∈ lieAt X τ) :
+    ∀ ΦD ∈ algD M Bs.ψ Bs.emb, ∃ Ψ ∈ algD M Bs.ψ Bs.emb,
       ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X τ Y t)) ΦD x) (Ψ x) 0 := by
-  obtain ⟨γ, hγ, hγt⟩ := GlobalTheory.KapXLine.exists_line D θ X τ Y hθ hY e Γ.W hJ
-  obtain ⟨Dop, hDP, hD⟩ := (_root_.GlobalTheory.PolActsPf.polarization_acts_of_isDualPair hP _ _ D.sp.cm.sig Bs _ _ Γ.V Γ.W Γ.M Xc.β (Xc.β / Xc.α) om _ _ _ _
-    (GlobalTheory.ThK.RealUniq.isPair_V hT)).2.2.1 γ hγ
-  have hfun : ∀ Φ : (Fin a × Fin (a + a') → AF D.host.F) → ℂ, ∀ x,
+  obtain ⟨γ, hγ, hγt⟩ := GlobalTheory.KapXLine.exists_line D θ X τ Y hθ hY e Wsp hJ
+  obtain ⟨Dop, hDP, hD⟩ := (_root_.GlobalTheory.PolActsPf.polarization_acts_of_isDualPair hP _ _ D.sp.cm.sig Bs _ _ Vsp Wsp M χ₁ χ₂ om _ _ _ _
+    hPair).2.2.1 γ hγ
+  have hfun : ∀ Φ : (Fin n × Fin (a + a') → AF D.host.F) → ℂ, ∀ x,
       (fun t : ℝ => om (1, kapX X e hJ (oneP θ X τ Y t)) Φ x) = fun t => om (1, γ (Multiplicative.ofAdd t)) Φ x := by
     intro Φ x; funext t; rw [hγt t]
   intro ΦD hΦ
@@ -222,39 +168,36 @@ theorem lineSum_exists_derivative_factor (hP : _root_.GlobalTheory.FunPr.ThetaLo
   | mem Φ hΦ =>
     obtain ⟨f, φ, hf, hSB, hev, rfl⟩ := hΦ
     have hstd : ∀ᶠ v in Filter.cofinite, φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers D.host.F} 1 :=
-      (hev.and hT.geo.hM.std).mono fun v hv => hv.1.trans hv.2
-    refine ⟨GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (Dop f) φ, Submodule.subset_span ⟨Dop f, φ, hDP f hf, hSB, hev, rfl⟩, fun x => ?_⟩
+      (hev.and hM.std).mono fun v hv => hv.1.trans hv.2
+    refine ⟨pure (Dop f) φ, Submodule.subset_span ⟨Dop f, φ, hDP f hf, hSB, hev, rfl⟩, fun x => ?_⟩
     rw [hfun]
     exact ((hD f hf (Dop f)).2 rfl) _ (GlobalTheory.ThK.EvUniqInf.rest_pure f φ hSB hstd) x
-theorem lineSum_product_rule (hpure : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
-    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
-    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
-    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ),
-    IsInfFam θ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om' →
-    ∀ l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ), (∀ q ∈ l, q.2 ∈ lieAt X q.1) →
-    ∀ f ∈ Γ.M.Pol Bs.ψ Bs.emb, ∀ φ : ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 D.host.F), (Fin a × Fin (a + a') → v.adicCompletion D.host.F) → ℂ,
-    (∀ v, φ v ∈ GlobalTheory.WeilM.SB _) → (∀ᶠ v in Filter.cofinite, φ v = Γ.M.vac v) →
-    ∀ Ψ : Fin l.length → (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
-    (∀ i, Ψ i ∈ algD Γ.M Bs.ψ Bs.emb ∧
-        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) x) (Ψ i x) 0) →
-    ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) x) (∑ i, Ψ i x) 0) : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
-    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
-    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
-    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ),
-    IsInfFam θ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om' →
-    ∀ l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ), (∀ q ∈ l, q.2 ∈ lieAt X q.1) →
-    ∀ ΦD ∈ algD Γ.M Bs.ψ Bs.emb, ∀ Ψ : Fin l.length → (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
-    (∀ i, Ψ i ∈ algD Γ.M Bs.ψ Bs.emb ∧
-        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) ΦD x) (Ψ i x) 0) →
-    ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x) (∑ i, Ψ i x) 0 := by
-  intro hP D θ X a a' e Bs Γ Xc om om' hJ hθ hT l hl ΦD hΦD
-  have hex : ∀ (Φ : (Fin a × Fin (a + a') → AF D.host.F) → ℂ), Φ ∈ algD Γ.M Bs.ψ Bs.emb → ∀ i : Fin l.length,
-      ∃ Ψ ∈ algD Γ.M Bs.ψ Bs.emb, ∀ x,
-      HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) Φ x) (Ψ x) 0 :=
-    fun Φ hΦ i => _root_.GlobalTheory.LineSum.lineSum_exists_derivative_factor hP D θ X e Bs Γ Xc om om' hJ hθ hT _ _ (hl _ (List.get_mem l i)) Φ hΦ
-  induction hΦD using Submodule.span_induction with
+
+theorem lineSum_product_rule_core (D : D7) (θ : InfFam D) (X : HSp D)
+    {a a' n : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E)
+    (Wsp : Spc D.host.F D.host.E (a + a')) (Vsp : Spc D.host.F D.host.E n)
+    (M : Model D.sp.cm.sig Vsp Wsp)
+    (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Vsp Wsp)
+    (hJ : Wsp.J = D.host.xi0 • reindex e e X.gramᵀ)
+    (l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ))
+    (hex : ∀ (Φ : (Fin n × Fin (a + a') → AF D.host.F) → ℂ), Φ ∈ algD M Bs.ψ Bs.emb → ∀ i : Fin l.length,
+        ∃ Ψ ∈ algD M Bs.ψ Bs.emb, ∀ x,
+        HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) Φ x) (Ψ x) 0)
+    (hpure : ∀ f ∈ M.Pol Bs.ψ Bs.emb, ∀ φ : ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 D.host.F), (Fin n × Fin (a + a') → v.adicCompletion D.host.F) → ℂ,
+        (∀ v, φ v ∈ GlobalTheory.WeilM.SB _) → (∀ᶠ v in Filter.cofinite, φ v = M.vac v) →
+        ∀ Ψ : Fin l.length → (Fin n × Fin (a + a') → AF D.host.F) → ℂ,
+        (∀ i, Ψ i ∈ algD M Bs.ψ Bs.emb ∧
+            ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) (pure f φ) x) (Ψ i x) 0) →
+        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) (pure f φ) x) (∑ i, Ψ i x) 0)
+    {ΦD : (Fin n × Fin (a + a') → AF D.host.F) → ℂ} (hΦD : ΦD ∈ algD M Bs.ψ Bs.emb)
+    (Ψ : Fin l.length → (Fin n × Fin (a + a') → AF D.host.F) → ℂ)
+    (hΨ : ∀ i, Ψ i ∈ algD M Bs.ψ Bs.emb ∧
+        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) ΦD x) (Ψ i x) 0)
+    (x : Fin n × Fin (a + a') → AF D.host.F) :
+    HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x) (∑ i, Ψ i x) 0 := by
+  induction hΦD using Submodule.span_induction generalizing Ψ x with
   | zero =>
-    intro Ψ hΨ x
     have h0 : ∀ i, Ψ i x = 0 := by
       intro i
       refine ((hΨ i).2 x).unique ?_
@@ -262,7 +205,6 @@ theorem lineSum_product_rule (hpure : _root_.GlobalTheory.FunPr.ThetaLocalInputs
     simp only [h0, Finset.sum_const_zero]
     simpa using hasDerivAt_const (0 : ℝ) (0 : ℂ)
   | add p q hp hq ihp ihq =>
-    intro Ψ hΨ x
     choose Ψp hΨp hdp using hex p (Submodule.span_le.2 (fun _ h => Submodule.subset_span h) hp)
     choose Ψq hΨq hdq using hex q (Submodule.span_le.2 (fun _ h => Submodule.subset_span h) hq)
     have hsplit : ∀ i, Ψ i x = Ψp i x + Ψq i x := by
@@ -281,7 +223,6 @@ theorem lineSum_product_rule (hpure : _root_.GlobalTheory.FunPr.ThetaLocalInputs
     rw [e2, Finset.sum_congr rfl (fun i _ => hsplit i), Finset.sum_add_distrib]
     exact (ihp Ψp (fun i => ⟨hΨp i, hdp i⟩) x).add (ihq Ψq (fun i => ⟨hΨq i, hdq i⟩) x)
   | smul c p hp ihp =>
-    intro Ψ hΨ x
     choose Ψp hΨp hdp using hex p (Submodule.span_le.2 (fun _ h => Submodule.subset_span h) hp)
     have hsplit : ∀ i, Ψ i x = c * Ψp i x := by
       intro i
@@ -298,54 +239,33 @@ theorem lineSum_product_rule (hpure : _root_.GlobalTheory.FunPr.ThetaLocalInputs
     exact (ihp Ψp (fun i => ⟨hΨp i, hdp i⟩) x).const_mul c
   | mem Φ hΦ =>
     obtain ⟨f, φ, hf, hSB, hev, rfl⟩ := hΦ
-    exact hpure hP D θ X e Bs Γ Xc om om' hJ hθ hT l hl f hf φ hSB hev
-theorem lineSum_derivative_sum : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
-    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
-    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
-    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ),
-    IsInfFam θ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om' →
-    ∀ l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ), (∀ q ∈ l, q.2 ∈ lieAt X q.1) →
-    ∀ ΦD ∈ algD Γ.M Bs.ψ Bs.emb, ∀ Φ₁D : (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
-    (∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x) (Φ₁D x) 0) →
-    ∃ Ψ : Fin l.length → (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
-      (∀ i, Ψ i ∈ algD Γ.M Bs.ψ Bs.emb ∧
+    exact hpure f hf φ hSB hev Ψ hΨ x
+
+theorem lineSum_derivative_sum_core (D : D7) (θ : InfFam D) (X : HSp D)
+    {a a' n : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E)
+    (Wsp : Spc D.host.F D.host.E (a + a')) (Vsp : Spc D.host.F D.host.E n)
+    (M : Model D.sp.cm.sig Vsp Wsp)
+    (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Vsp Wsp)
+    (hJ : Wsp.J = D.host.xi0 • reindex e e X.gramᵀ)
+    (l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ))
+    {ΦD : (Fin n × Fin (a + a') → AF D.host.F) → ℂ} {Φ₁D : (Fin n × Fin (a + a') → AF D.host.F) → ℂ}
+    (hex : ∀ i : Fin l.length, ∃ Ψ ∈ algD M Bs.ψ Bs.emb, ∀ x,
+        HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) ΦD x) (Ψ x) 0)
+    (hpr : ∀ Ψ : Fin l.length → (Fin n × Fin (a + a') → AF D.host.F) → ℂ,
+        (∀ i, Ψ i ∈ algD M Bs.ψ Bs.emb ∧
+          ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) ΦD x) (Ψ i x) 0) →
+        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x) (∑ i, Ψ i x) 0)
+    (hΦ₁ : ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x) (Φ₁D x) 0) :
+    ∃ Ψ : Fin l.length → (Fin n × Fin (a + a') → AF D.host.F) → ℂ,
+      (∀ i, Ψ i ∈ algD M Bs.ψ Bs.emb ∧
         ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) ΦD x) (Ψ i x) 0) ∧
       Φ₁D = ∑ i, Ψ i := by
-  intro hP D θ X a a' e Bs Γ Xc om om' hJ hθ hT l hl ΦD hΦD Φ₁D hΦ₁
-  have hex : ∀ i : Fin l.length, ∃ Ψ ∈ algD Γ.M Bs.ψ Bs.emb, ∀ x,
-      HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) ΦD x) (Ψ x) 0 :=
-    fun i => _root_.GlobalTheory.LineSum.lineSum_exists_derivative_factor hP D θ X e Bs Γ Xc om om' hJ hθ hT _ _ (hl _ (List.get_mem l i)) ΦD hΦD
   choose Ψ hΨ hder using hex
   refine ⟨Ψ, fun i => ⟨hΨ i, hder i⟩, ?_⟩
   funext x
   rw [Finset.sum_apply]
-  exact (hΦ₁ x).unique (_root_.GlobalTheory.LineSum.lineSum_product_rule _root_.GlobalTheory.PureProdRule.lift_splits_locally hP D θ X e Bs Γ Xc om om' hJ hθ hT l hl ΦD hΦD Ψ (fun i => ⟨hΨ i, hder i⟩) x)
-end GlobalTheory.LineSum
-end
-end
-
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LineSumExistsDerivativeFactor =====
-
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawUnfoldingMellin =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawUnfoldingMellin", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
-open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
-open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
-open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
-open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-open GlobalTheory.SquareComm GlobalTheory.SquareAgree
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-
-noncomputable section
-
-namespace GlobalTheory.SquareAgree.LineDerFun
+  exact (hΦ₁ x).unique (hpr Ψ (fun i => ⟨hΨ i, hder i⟩) x)
 
 theorem conjugateUnitaryAdelicIso_map_one {D : D7} (V : HSp D) {J : Matrix (Fin V.rank) (Fin V.rank) D.host.E} (c : D.host.E)
     (h : J = c • V.gram) : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.conjU V c h 1 = 1 := by
@@ -368,33 +288,195 @@ theorem algebraicDatum_eq_sum_pureTensors_vacua {F E : Type} [Field F] [NumberFi
   funext x
   simp only [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure, SchwartzMap.smul_apply, smul_eq_mul, Pi.smul_apply, mul_assoc]
 
-end GlobalTheory.SquareAgree.LineDerFun
+theorem lineDerivation_isDerivation_of_datum_core (hP : _root_.GlobalTheory.FunPr.ThetaLocalInputs)
+    (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (W₀ X : HSp D)
+    {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E)
+    (Wsp : Spc D.host.F D.host.E (a + a')) (Vsp : Spc D.host.F D.host.E W₀.rank)
+    (M : Model D.sp.cm.sig Vsp Wsp) (χ₁ χ₂ : (AE D)ˣ →* Circle)
+    (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Vsp Wsp)
+    (ω₀ : WRep W₀ X) (c₀ : Matrix (Fin W₀.rank) (Fin (a + a')) (AE D) ≃+ WO W₀ X)
+    (hJX : Wsp.J = D.host.xi0 • reindex e e X.gramᵀ) (cJ : D.host.E) (hJV : Vsp.J = cJ • W₀.gram)
+    (hθ : IsInfFam θ) (hpsi : Bs.ψ = ψ) (hcm : IsCMExt D.host.F D.host.E D.sp.cm.sig)
+    (hstdB : IsStd Bs.ψ) (hM : M.IsGood Bs.ψ) (hweil : M.IsWeil Bs.ψ χ₁ χ₂ om)
+    (hderPol : ∀ γ ∈ Lines D.sp.cm.sig Wsp, ∃ δ : SInf D.host.F (Fin W₀.rank × Fin (a + a')) →ₗ[ℂ] SInf D.host.F (Fin W₀.rank × Fin (a + a')),
+        ∀ f ∈ M.Pol Bs.ψ Bs.emb, δ f ∈ M.Pol Bs.ψ Bs.emb ∧
+          ActsD (evI D.host.F) (fun t => om (1, γ (Multiplicative.ofAdd t))) f (δ f))
+    (hweil0 : ∀ ΦD Φ, IsDatum M ψ c₀ ΦD Φ → ∀ g h,
+        IsDatum M ψ c₀ (om (GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.conjU W₀ cJ hJV g, kapX X e hJX h) ΦD) (ω₀ (g, h) Φ))
+    (τ : D.what₂.Tau) (Y : Matrix (Fin X.rank) (Fin X.rank) ℂ) (hY : Y ∈ lieAt X τ)
+    (ΦD : (Fin W₀.rank × Fin (a + a') → AF D.host.F) → ℂ) (hΦD : ΦD ∈ algD M Bs.ψ Bs.emb)
+    (Ψ : (Fin W₀.rank × Fin (a + a') → AF D.host.F) → ℂ)
+    (hD : ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJX (oneP θ X τ Y t)) ΦD x) (Ψ x) 0)
+    (Φ Φ' : WO W₀ X → ℂ) (hDat : IsDatum M ψ c₀ ΦD Φ) (hDat' : IsDatum M ψ c₀ Ψ Φ') :
+    IsDer θ X (fun h => ω₀ (1, h)) τ Y Φ Φ' := by
+  obtain ⟨γ, hγ, hγt⟩ := GlobalTheory.KapXLine.exists_line D θ X τ Y hθ hY e Wsp hJX
+  obtain ⟨δ, hδ⟩ := hderPol γ hγ
+  obtain ⟨m, f, φ, hf, rfl⟩ := algebraicDatum_eq_sum_pureTensors_vacua M Bs.ψ Bs.emb hΦD
+  have hstd : ∀ i, ∀ᶠ v in Filter.cofinite,
+      φ i v = Set.indicator {x | ∀ j, x j ∈ v.adicCompletionIntegers D.host.F} 1 :=
+    fun i => ((hf i).2.2.and hM.std).mono fun v h => h.1.trans h.2
+  have hder : ∀ x, HasDerivAt (fun t : ℝ => om (1, γ (Multiplicative.ofAdd t)) (∑ i, pure (f i) (φ i)) x)
+      ((∑ i, pure (δ (f i)) (φ i)) x) 0 := by
+    intro x
+    have e1 : (fun t : ℝ => om (1, γ (Multiplicative.ofAdd t)) (∑ i, pure (f i) (φ i)) x) =
+        fun t => ∑ i, om (1, γ (Multiplicative.ofAdd t)) (pure (f i) (φ i)) x := by
+      funext t
+      rw [map_sum, Finset.sum_apply]
+    rw [e1, Finset.sum_apply]
+    exact HasDerivAt.fun_sum fun i _ =>
+      (hδ _ (hf i).1).2 _ (GlobalTheory.ThK.EvUniqInf.rest_pure (f i) (φ i) (hf i).2.1 (hstd i)) x
+  have hΨe : Ψ = ∑ i, pure (δ (f i)) (φ i) := by
+    funext x
+    have h1 := hD x
+    simp only [← hγt] at h1
+    exact h1.unique (hder x)
+  intro z
+  obtain ⟨u, rfl⟩ := c₀.surjective z
+  have hs : IsStd ψ := hpsi ▸ hstdB
+  have hg : M.IsGood ψ := hpsi ▸ hM
+  have hw : M.IsWeil ψ χ₁ χ₂ om := hpsi ▸ hweil
+  have key := _root_.GlobalTheory.ThetaLineDer.hasDerivAt_theta_sum_along_line hP M ψ χ₁ χ₂ om hcm hs hg hw γ hγ m f (fun i => δ (f i)) φ
+    (fun i => (hf i).2) (fun i => (hδ _ (hf i).1).2) u
+  have e2 : (fun t : ℝ => ω₀ (1, oneP θ X τ Y t) Φ (c₀ u)) = fun t : ℝ =>
+      GlobalTheory.WeilM.thetaSum D.host.F (M.co.rho ψ u (om (1, γ (Multiplicative.ofAdd t)) (∑ i, pure (f i) (φ i)))) := by
+    funext t
+    have h1 := (hweil0 _ Φ hDat 1 (oneP θ X τ Y t)).2 u
+    rw [conjugateUnitaryAdelicIso_map_one, ← hγt t] at h1
+    exact h1.symm
+  rw [e2, ← hDat'.2 u, hΨe]
+  exact key
 
+theorem ker_projection_eq_line_weyl_core (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D)
+    (W₀ X : HSp D) (A₀ : Fr W₀) (B : Fr X) (b : Bool) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E)
+    (Wsp : Spc D.host.F D.host.E (a + a')) (Vsp : Spc D.host.F D.host.E W₀.rank)
+    (M : Model D.sp.cm.sig Vsp Wsp)
+    (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Vsp Wsp)
+    (ω₀ : WRep W₀ X) (c₀ : Matrix (Fin W₀.rank) (Fin (a + a')) (AE D) ≃+ WO W₀ X)
+    (hJX : Wsp.J = D.host.xi0 • reindex e e X.gramᵀ) (hθ : IsInfFam θ) (hψ : IsStd ψ)
+    (halg : ∀ ΦD ∈ algD M Bs.ψ Bs.emb, ∃ Φ ∈ algF ψ θ b A₀ B, IsDatum M ψ c₀ ΦD Φ)
+    (hsumDer : ∀ l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ), (∀ q ∈ l, q.2 ∈ lieAt X q.1) →
+        ∀ ΦD ∈ algD M Bs.ψ Bs.emb, ∀ Φ₁D : (Fin W₀.rank × Fin (a + a') → AF D.host.F) → ℂ,
+        (∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJX ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x) (Φ₁D x) 0) →
+        ∃ Ψ : Fin l.length → (Fin W₀.rank × Fin (a + a') → AF D.host.F) → ℂ,
+          (∀ i, Ψ i ∈ algD M Bs.ψ Bs.emb ∧
+            ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJX (oneP θ X (l.get i).1 (l.get i).2 t)) ΦD x) (Ψ i x) 0) ∧
+          Φ₁D = ∑ i, Ψ i)
+    (hlinDer : ∀ τ, ∀ Y ∈ lieAt X τ, ∀ ΦD ∈ algD M Bs.ψ Bs.emb, ∀ Ψ ∈ algD M Bs.ψ Bs.emb,
+        (∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJX (oneP θ X τ Y t)) ΦD x) (Ψ x) 0) → ∀ Φ Φ',
+        IsDatum M ψ c₀ ΦD Φ → IsDatum M ψ c₀ Ψ Φ' → IsDer θ X (fun h => ω₀ (1, h)) τ Y Φ Φ')
+    {M' : Type*} [AddCommGroup M'] [Module ℂ M'] (L_act : D.what₂.Tau → Matrix (Fin X.rank) (Fin X.rank) ℂ → M' →ₗ[ℂ] M')
+    (p₁ : (WO W₀ X → ℂ) →ₗ[ℂ] M')
+    (heql' : ∀ τ, ∀ Y ∈ lieAt X τ, ∀ Φ ∈ algF ψ θ b A₀ B, ∀ Φ' ∈ algF ψ θ b A₀ B,
+        IsDer θ X (fun h => ω₀ (1, h)) τ Y Φ Φ' → p₁ Φ' = L_act τ Y (p₁ Φ))
+    (γ : Multiplicative ℝ →* UA D.sp.cm.sig Wsp.J) (hγ : γ ∈ Lines D.sp.cm.sig Wsp)
+    (ΦD : (Fin W₀.rank × Fin (a + a') → AF D.host.F) → ℂ) (hΦD : ΦD ∈ algD M Bs.ψ Bs.emb)
+    (Φ₁D : (Fin W₀.rank × Fin (a + a') → AF D.host.F) → ℂ)
+    (hder : ∀ x, HasDerivAt (fun t : ℝ => om (1, γ (Multiplicative.ofAdd t)) ΦD x) (Φ₁D x) 0)
+    (Φ Φ₁ : WO W₀ X → ℂ) (hD : IsDatum M ψ c₀ ΦD Φ) (hD₁ : IsDatum M ψ c₀ Φ₁D Φ₁) (hp : p₁ Φ = 0) :
+    p₁ Φ₁ = 0 := by
+  obtain ⟨l, hl, hγl⟩ := GlobalTheory.T.oneParamSubgroup_transposeGramUnitary_decomposes D θ X e Wsp hJX hθ γ hγ
+  have hder' : ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJX ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x)
+      (Φ₁D x) 0 := by
+    intro x; have := hder x; simp only [hγl] at this; exact this
+  obtain ⟨Ψ, hΨ, hsum⟩ := hsumDer l hl ΦD hΦD Φ₁D hder'
+  have hΦF : Φ ∈ algF ψ θ b A₀ B := by
+    obtain ⟨Φ', hΦ', hD'⟩ := halg ΦD hΦD
+    rwa [IsDatum.fun_eq M ψ c₀ c₀.surjective hD hD']
+  choose Φ' hΦ'F hΦ'D using fun i => halg (Ψ i) (hΨ i).1
+  have hsumD : ∀ s : Finset (Fin l.length), IsDatum M ψ c₀ (∑ i ∈ s, Ψ i) (∑ i ∈ s, Φ' i) := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty => simpa using (CoinvPass.isDatum_zero (M := M) (ψ := ψ) (crd := c₀))
+    | insert a s ha ih =>
+      rw [Finset.sum_insert ha, Finset.sum_insert ha]
+      exact CoinvPass.isDatum_add hψ (hΦ'D a) ih
+  have hΦ₁ : Φ₁ = ∑ i, Φ' i := IsDatum.fun_eq M ψ c₀ c₀.surjective hD₁ (hsum ▸ hsumD Finset.univ)
+  rw [hΦ₁, map_sum]
+  refine Finset.sum_eq_zero fun i _ => ?_
+  have hi := hl _ (List.get_mem l i)
+  rw [heql' _ _ hi Φ hΦF (Φ' i) (hΦ'F i)
+    (hlinDer _ _ hi ΦD hΦD (Ψ i) (hΨ i).1 (hΨ i).2 Φ (Φ' i) hD (hΦ'D i)), hp, map_zero]
 
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawUnfoldingMellin =====
+end GlobalTheory.LineDerivCore
 
--- ===== clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.SquaresAgreeLineDerivativeIsDerivation =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.SquaresAgreeLineDerivativeIsDerivation", "h": "module\n\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerSkewPlaneUniqueDual\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLieDerivativePolynomialFockSeesawStatement\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOneParamSubgroupTransposeGramLieAt\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawUnfoldingMellin\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ThetaSumDifferentiableAlongLine\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
+namespace GlobalTheory.PureProdRule
+theorem lift_splits_locally : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
+    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
+    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ),
+    IsInfFam θ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om' →
+    ∀ l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ), (∀ q ∈ l, q.2 ∈ lieAt X q.1) →
+    ∀ f ∈ Γ.M.Pol Bs.ψ Bs.emb, ∀ φ : ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 D.host.F), (Fin a × Fin (a + a') → v.adicCompletion D.host.F) → ℂ,
+    (∀ v, φ v ∈ GlobalTheory.WeilM.SB _) → (∀ᶠ v in Filter.cofinite, φ v = Γ.M.vac v) →
+    ∀ Ψ : Fin l.length → (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
+    (∀ i, Ψ i ∈ algD Γ.M Bs.ψ Bs.emb ∧
+        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) x) (Ψ i x) 0) →
+    ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) x) (∑ i, Ψ i x) 0 :=
+  fun hP D θ X _ _ e Bs Γ Xc om _ hJ hθ hTr l hl f hf φ hφ hvac Ψ hΨ x =>
+    GlobalTheory.LineDerivCore.lift_splits_locally_core hP D θ X e Bs Γ.W Γ.V Γ.M Xc.β (Xc.β / Xc.α) om hJ hθ hTr.base.cm hTr.base.std hTr.geo.hM hTr.weil l hl f hf φ hφ hvac Ψ hΨ x
+end GlobalTheory.PureProdRule
 
-section
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
-open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
-open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
-open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
-open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-open GlobalTheory.SquareComm GlobalTheory.SquareAgree
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-noncomputable section
+namespace GlobalTheory.LineSum
+theorem lineSum_exists_derivative_factor (hP : _root_.GlobalTheory.FunPr.ThetaLocalInputs) (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
+    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
+    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ)
+    (hθ : IsInfFam θ) (hT : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om') (τ : D.what₂.Tau)
+    (Y : Matrix (Fin X.rank) (Fin X.rank) ℂ) (hY : Y ∈ lieAt X τ) :
+    ∀ ΦD ∈ algD Γ.M Bs.ψ Bs.emb, ∃ Ψ ∈ algD Γ.M Bs.ψ Bs.emb,
+      ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X τ Y t)) ΦD x) (Ψ x) 0 :=
+  GlobalTheory.LineDerivCore.lineSum_exists_derivative_factor_core hP D θ X e Bs Γ.W Γ.V Γ.M Xc.β (Xc.β / Xc.α) om hJ hθ hT.geo.hM (GlobalTheory.ThK.RealUniq.isPair_V hT) τ Y hY
+
+theorem lineSum_product_rule (hpure : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
+    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
+    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ),
+    IsInfFam θ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om' →
+    ∀ l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ), (∀ q ∈ l, q.2 ∈ lieAt X q.1) →
+    ∀ f ∈ Γ.M.Pol Bs.ψ Bs.emb, ∀ φ : ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 D.host.F), (Fin a × Fin (a + a') → v.adicCompletion D.host.F) → ℂ,
+    (∀ v, φ v ∈ GlobalTheory.WeilM.SB _) → (∀ᶠ v in Filter.cofinite, φ v = Γ.M.vac v) →
+    ∀ Ψ : Fin l.length → (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
+    (∀ i, Ψ i ∈ algD Γ.M Bs.ψ Bs.emb ∧
+        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) x) (Ψ i x) 0) →
+    ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) x) (∑ i, Ψ i x) 0) : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
+    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
+    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ),
+    IsInfFam θ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om' →
+    ∀ l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ), (∀ q ∈ l, q.2 ∈ lieAt X q.1) →
+    ∀ ΦD ∈ algD Γ.M Bs.ψ Bs.emb, ∀ Ψ : Fin l.length → (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
+    (∀ i, Ψ i ∈ algD Γ.M Bs.ψ Bs.emb ∧
+        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) ΦD x) (Ψ i x) 0) →
+    ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x) (∑ i, Ψ i x) 0 :=
+  fun hP D θ X _ _ e Bs Γ Xc om om' hJ hθ hT l hl _ hΦD Ψ hΨ x =>
+    GlobalTheory.LineDerivCore.lineSum_product_rule_core D θ X e Bs Γ.W Γ.V Γ.M om hJ l
+      (fun Φ hΦ i => lineSum_exists_derivative_factor hP D θ X e Bs Γ Xc om om' hJ hθ hT _ _ (hl _ (List.get_mem l i)) Φ hΦ)
+      (hpure hP D θ X e Bs Γ Xc om om' hJ hθ hT l hl) hΦD Ψ hΨ x
+
+theorem lineSum_derivative_sum : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (θ : InfFam D) (X : HSp D) {a a' : ℕ} (e : Fin X.rank ≃ Fin (a + a'))
+    (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
+    (Xc : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
+    (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hJ : Γ.W.J = D.host.xi0 • reindex e e X.gramᵀ),
+    IsInfFam θ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om' →
+    ∀ l : List (D.what₂.Tau × Matrix (Fin X.rank) (Fin X.rank) ℂ), (∀ q ∈ l, q.2 ∈ lieAt X q.1) →
+    ∀ ΦD ∈ algD Γ.M Bs.ψ Bs.emb, ∀ Φ₁D : (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
+    (∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x) (Φ₁D x) 0) →
+    ∃ Ψ : Fin l.length → (Fin a × Fin (a + a') → AF D.host.F) → ℂ,
+      (∀ i, Ψ i ∈ algD Γ.M Bs.ψ Bs.emb ∧
+        ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hJ (oneP θ X (l.get i).1 (l.get i).2 t)) ΦD x) (Ψ i x) 0) ∧
+      Φ₁D = ∑ i, Ψ i :=
+  fun hP D θ X _ _ e Bs Γ Xc om om' hJ hθ hT l hl ΦD hΦD _ hΦ₁ =>
+    GlobalTheory.LineDerivCore.lineSum_derivative_sum_core D θ X e Bs Γ.W Γ.V Γ.M om hJ l
+      (fun i => lineSum_exists_derivative_factor hP D θ X e Bs Γ Xc om om' hJ hθ hT _ _ (hl _ (List.get_mem l i)) ΦD hΦD)
+      (lineSum_product_rule _root_.GlobalTheory.PureProdRule.lift_splits_locally hP D θ X e Bs Γ Xc om om' hJ hθ hT l hl ΦD hΦD)
+      hΦ₁
+end GlobalTheory.LineSum
+
 namespace GlobalTheory.SquareAgree.LineDerFun
-end GlobalTheory.SquareAgree.LineDerFun
-open GlobalTheory.SquareAgree.LineDerFun in
-theorem GlobalTheory.SquareAgree.LineDerFun.lineDerivation_isDerivation_of_datum : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (W W₁ X : HSp D) (A : Fr W) (A₁ : Fr W₁)
+
+theorem lineDerivation_isDerivation_of_datum : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (W W₁ X : HSp D) (A : Fr W) (A₁ : Fr W₁)
     (B : Fr X) (α β : (AE D)ˣ →* Circle) (ν : Measure (GA D W)) (𝓕 : Set (GA D W)) (ν₁ : Measure (GA D W₁))
     (𝓕₁ : Set (GA D W₁)) (ωA : WRep W X) (ωB : WRep W₁ X) (e : Fin X.rank ≃ Fin (W.rank + W₁.rank))
     (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig W.rank W₁.rank)
@@ -405,67 +487,15 @@ theorem GlobalTheory.SquareAgree.LineDerFun.lineDerivation_isDerivation_of_datum
     GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ Xc om om' →
     ∀ τ, ∀ Y ∈ lieAt X τ, ∀ ΦD ∈ algD Γ.M Bs.ψ Bs.emb, ∀ Ψ ∈ algD Γ.M Bs.ψ Bs.emb,
     (∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hO.JX (oneP θ X τ Y t)) ΦD x) (Ψ x) 0) → ∀ Φ Φ',
-    IsDatum Γ.M ψ cA ΦD Φ → IsDatum Γ.M ψ cA Ψ Φ' → IsDer θ X (fun h => ωA (1, h)) τ Y Φ Φ' := by
-  intro hP D ψ θ W W₁ X A A₁ B α β ν 𝓕 ν₁ 𝓕₁ ωA ωB e Bs Γ Xc om om' cA cB hθ _ hO hT τ Y hY ΦD hΦD Ψ hΨ hD Φ Φ'
-    hDat hDat'
-  obtain ⟨γ, hγ, hγt⟩ := GlobalTheory.KapXLine.exists_line D θ X τ Y hθ hY e Γ.W hO.JX
-  obtain ⟨δ, hδ⟩ := GlobalTheory.T.exists_lieDerivative_polynomialFock_seesaw Bs Γ Xc om om' hT γ hγ
-  obtain ⟨m, f, φ, hf, rfl⟩ := algebraicDatum_eq_sum_pureTensors_vacua Γ.M Bs.ψ Bs.emb hΦD
-  have hstd : ∀ i, ∀ᶠ v in Filter.cofinite,
-      φ i v = Set.indicator {x | ∀ j, x j ∈ v.adicCompletionIntegers D.host.F} 1 :=
-    fun i => ((hf i).2.2.and hT.geo.hM.std).mono fun v h => h.1.trans h.2
-  have hder : ∀ x, HasDerivAt (fun t : ℝ => om (1, γ (Multiplicative.ofAdd t)) (∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f i) (φ i)) x)
-      ((∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (δ (f i)) (φ i)) x) 0 := by
-    intro x
-    have e1 : (fun t : ℝ => om (1, γ (Multiplicative.ofAdd t)) (∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f i) (φ i)) x) =
-        fun t => ∑ i, om (1, γ (Multiplicative.ofAdd t)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f i) (φ i)) x := by
-      funext t
+    IsDatum Γ.M ψ cA ΦD Φ → IsDatum Γ.M ψ cA Ψ Φ' → IsDer θ X (fun h => ωA (1, h)) τ Y Φ Φ' :=
+  fun hP D ψ θ W _ X _ _ _ _ _ _ _ _ _ ωA _ e Bs Γ Xc om om' cA _ hθ _ hO hT τ Y hY ΦD hΦD Ψ _ hD Φ Φ' hDat hDat' =>
+    GlobalTheory.LineDerivCore.lineDerivation_isDerivation_of_datum_core hP D ψ θ W X e Bs Γ.W Γ.V Γ.M Xc.β (Xc.β / Xc.α) om ωA cA
+      hO.JX 1 hO.JW hθ hO.psi hT.base.cm hT.base.std hT.geo.hM hT.weil
+      (fun γ hγ => GlobalTheory.T.exists_lieDerivative_polynomialFock_seesaw Bs Γ Xc om om' hT γ hγ)
+      hO.weilA τ Y hY ΦD hΦD Ψ hD Φ Φ' hDat hDat'
 
-      rw [map_sum, Finset.sum_apply]
-    rw [e1, Finset.sum_apply]
-    exact HasDerivAt.fun_sum fun i _ =>
-      (hδ _ (hf i).1).2 _ (GlobalTheory.ThK.EvUniqInf.rest_pure (f i) (φ i) (hf i).2.1 (hstd i)) x
-  have hΨe : Ψ = ∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (δ (f i)) (φ i) := by
-    funext x
-    have h1 := hD x
-    simp only [← hγt] at h1
-    exact h1.unique (hder x)
-  intro z
-  obtain ⟨u, rfl⟩ := cA.surjective z
-  have hs : IsStd ψ := hO.psi ▸ hT.base.std
-  have hg : Γ.M.IsGood ψ := hO.psi ▸ hT.geo.hM
-  have hw : Γ.M.IsWeil ψ Xc.β (Xc.β / Xc.α) om := hO.psi ▸ hT.weil
-  have key := _root_.GlobalTheory.ThetaLineDer.hasDerivAt_theta_sum_along_line hP Γ.M ψ Xc.β (Xc.β / Xc.α) om hT.base.cm hs hg hw γ hγ m f (fun i => δ (f i)) φ
-    (fun i => (hf i).2) (fun i => (hδ _ (hf i).1).2) u
-  have e2 : (fun t : ℝ => ωA (1, oneP θ X τ Y t) Φ (cA u)) = fun t : ℝ =>
-      GlobalTheory.WeilM.thetaSum D.host.F (Γ.M.co.rho ψ u (om (1, γ (Multiplicative.ofAdd t)) (∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f i) (φ i)))) := by
-    funext t
-    have h1 := (hO.weilA _ Φ hDat 1 (oneP θ X τ Y t)).2 u
-    rw [conjugateUnitaryAdelicIso_map_one, ← hγt t] at h1
-    exact h1.symm
-  rw [e2, ← hDat'.2 u, hΨe]
-  exact key
-end
-end
+end GlobalTheory.SquareAgree.LineDerFun
 
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.SquaresAgreeLineDerivativeIsDerivation =====
-
--- ===== clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LineKernelProjectionWeyl =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LineKernelProjectionWeyl", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjUInvMemGfC\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsThetaSubGAlgDOne\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneParamSubgroupTransposeGramUnitaryDecomposesStatement\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LineSumExistsDerivativeFactor\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.SquaresAgreeLineDerivativeIsDerivation\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-section
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
-open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
-open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
-open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
-open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-open GlobalTheory.SquareComm GlobalTheory.SquareAgree
-noncomputable section
 namespace GlobalTheory.LineKerW
 theorem ker_projection_eq_line_weyl : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (W W₁ X : HSp D) (A : Fr W) (A₁ : Fr W₁)
     (B : Fr X) (α β : (AE D)ˣ →* Circle) (ν : Measure (GA D W)) (𝓕 : Set (GA D W)) (ν₁ : Measure (GA D W₁))
@@ -479,38 +509,14 @@ theorem ker_projection_eq_line_weyl : _root_.GlobalTheory.FunPr.ThetaLocalInputs
     ∀ Pi rf rl p p', IsMatch ψ θ A A₁ B α β ωA ωB Pi rf rl p p' →
     ∀ γ ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Lines D.sp.cm.sig Γ.W, ∀ ΦD ∈ algD Γ.M Bs.ψ Bs.emb, ∀ Φ₁D ∈ algD Γ.M Bs.ψ Bs.emb,
     (∀ x, HasDerivAt (fun t : ℝ => om (1, γ (Multiplicative.ofAdd t)) ΦD x) (Φ₁D x) 0) → ∀ Φ Φ₁,
-    IsDatum Γ.M ψ cA ΦD Φ → IsDatum Γ.M ψ cA Φ₁D Φ₁ → p Φ = 0 → p Φ₁ = 0 := by
-  intro hP D ψ θ W W₁ X A A₁ B α β ν 𝓕 ν₁ 𝓕₁ ωA ωB e Bs Γ Xc om om' cA cB hθ hT hO hT' Pi rf rl p p' hm γ hγ ΦD hΦD
-    Φ₁D hΦ₁D hder Φ Φ₁ hD hD₁ hp
-  obtain ⟨l, hl, hγl⟩ := GlobalTheory.T.oneParamSubgroup_transposeGramUnitary_decomposes D θ X e Γ.W hO.JX hθ γ hγ
-  have hder' : ∀ x, HasDerivAt (fun t : ℝ => om (1, kapX X e hO.JX ((l.map fun q => oneP θ X q.1 q.2 t).prod)) ΦD x)
-      (Φ₁D x) 0 := by
-    intro x; have := hder x; simp only [hγl] at this; exact this
-  obtain ⟨Ψ, hΨ, hsum⟩ := _root_.GlobalTheory.LineSum.lineSum_derivative_sum hP D θ X e Bs Γ Xc om om' hO.JX hθ hT' l hl ΦD hΦD Φ₁D hder'
-  have hψ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsStd ψ := hO.psi ▸ hT'.base.std
-  have hΦF : Φ ∈ algF ψ θ true A B := by
-    obtain ⟨Φ', hΦ', hD'⟩ := hO.algA' ΦD hΦD
-    rwa [IsDatum.fun_eq Γ.M ψ cA cA.surjective hD hD']
-  choose Φ' hΦ'F hΦ'D using fun i => hO.algA' (Ψ i) (hΨ i).1
-  have hsumD : ∀ s : Finset (Fin l.length), IsDatum Γ.M ψ cA (∑ i ∈ s, Ψ i) (∑ i ∈ s, Φ' i) := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => simpa using (CoinvPass.isDatum_zero (M := Γ.M) (ψ := ψ) (crd := cA))
-    | insert a s ha ih =>
-      rw [Finset.sum_insert ha, Finset.sum_insert ha]
-      exact CoinvPass.isDatum_add hψ (hΦ'D a) ih
-  have hΦ₁ : Φ₁ = ∑ i, Φ' i := IsDatum.fun_eq Γ.M ψ cA cA.surjective hD₁ (hsum ▸ hsumD Finset.univ)
-
-  rw [hΦ₁, map_sum]
-  refine Finset.sum_eq_zero fun i _ => ?_
-  have hi := hl _ (List.get_mem l i)
-  rw [hm.mapA.eql _ _ hi Φ hΦF (Φ' i) (hΦ'F i)
-    (_root_.GlobalTheory.SquareAgree.LineDerFun.lineDerivation_isDerivation_of_datum hP D ψ θ W W₁ X A A₁ B α β ν 𝓕 ν₁ 𝓕₁ ωA ωB e Bs Γ Xc om om' cA cB hθ hT hO hT' _ _ hi ΦD hΦD (Ψ i) (hΨ i).1
-      (hΨ i).2 Φ (Φ' i) hD (hΦ'D i)), hp, map_zero]
+    IsDatum Γ.M ψ cA ΦD Φ → IsDatum Γ.M ψ cA Φ₁D Φ₁ → p Φ = 0 → p Φ₁ = 0 :=
+  fun hP D ψ θ W W₁ X A A₁ B α β ν 𝓕 ν₁ 𝓕₁ ωA ωB e Bs Γ Xc om om' cA cB hθ hT hO hT' Pi rf rl p p' hm γ hγ ΦD hΦD Φ₁D _ hder Φ Φ₁ hD hD₁ hp =>
+    GlobalTheory.LineDerivCore.ker_projection_eq_line_weyl_core D ψ θ W X A B true e Bs Γ.W Γ.V Γ.M om ωA cA
+      hO.JX hθ (hO.psi ▸ hT'.base.std) hO.algA'
+      (_root_.GlobalTheory.LineSum.lineSum_derivative_sum hP D θ X e Bs Γ Xc om om' hO.JX hθ hT')
+      (_root_.GlobalTheory.SquareAgree.LineDerFun.lineDerivation_isDerivation_of_datum hP D ψ θ W W₁ X A A₁ B α β ν 𝓕 ν₁ 𝓕₁ ωA ωB e Bs Γ Xc om om' cA cB hθ hT hO hT')
+      rl p hm.mapA.eql
+      γ hγ ΦD hΦD Φ₁D hder Φ Φ₁ hD hD₁ hp
 end GlobalTheory.LineKerW
-end
-end
 
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LineKernelProjectionWeyl =====
+end

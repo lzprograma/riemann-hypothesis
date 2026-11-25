@@ -14,8 +14,6 @@ namespace Formalism.L2.SG.Pf.NcReal.JX.CovB.CovolumeSpans
 
 open Formalism.L2.SG.HidaSetting Formalism.MainNotions.S Formalism.L2.SG.SplitPrimeNormLemmas.IntG
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : HidaSetting D)
 
 theorem base_lattice_le : X.Lb ≤ (VS D).L0 := by

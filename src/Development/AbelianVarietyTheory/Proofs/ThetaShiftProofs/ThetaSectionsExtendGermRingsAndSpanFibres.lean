@@ -208,7 +208,7 @@ theorem exists_coeff (hA : AnFin A) {N : ℕ} {β : Fin N → SecP t.PP.L (pullb
     refine Fintype.linearIndependent_iffₛ.1 hli _ _ (funext fun v => ?_)
     have := hasVal_unique Φ ((ha (α k) (th k)).hasVal (fib_snd _) fun i => hgv i v) (hv k v)
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.single_apply, ite_mul, _root_.one_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [← this]
     simp only [Finset.sum_mul, Finset.mul_sum, _root_.mul_assoc]
     exact Finset.sum_comm
@@ -224,9 +224,9 @@ theorem exists_coeff (hA : AnFin A) {N : ℕ} {β : Fin N → SecP t.PP.L (pullb
     exact sum_mem fun k _ => mul_mem (hr k _)
       (Conv.halfRing_mono ((hT₂ ⟨(l, k), rfl⟩).trans (le_max_right _ _)) (hTc k l))
   refine ⟨max T₁ T₂, fun α' th' l => if h : th' ∈ A.Theta j α' then ⟨_, haT α' th' h l⟩ else 0,
-    fun α' th' h => by simpa only [dif_pos h] using ha α' th', n, α, th, fun i k => ⟨_, hgT i k⟩, hth, fun i l => ?_⟩
+    fun α' th' h => by simpa only [dite_eq_left h] using ha α' th', n, α, th, fun i k => ⟨_, hgT i k⟩, hth, fun i l => ?_⟩
   apply Subtype.ext
-  simp only [dif_pos (hth _)]
+  simp only [dite_eq_left (hth _)]
   rw [AddSubmonoidClass.coe_finsetSum]
   refine (h₂ i l).trans ?_
   by_cases h : l = i

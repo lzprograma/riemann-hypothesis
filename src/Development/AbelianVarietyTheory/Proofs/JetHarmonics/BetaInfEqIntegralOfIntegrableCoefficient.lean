@@ -72,8 +72,6 @@ namespace GlobalTheory.RegularisedIntegral
 
 open Formalism Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.P.B6
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
   [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq]
 
@@ -170,31 +168,6 @@ theorem coef_continuousOn (H : SqIntegrable D α) {A B : Mat k r → (Wq →L[�
       (Sd_continuousOn D p₀ hp₀).clm_apply h1
     exact hsInner_continuous.continuousAt.comp_continuousWithinAt (h2.prodMk continuousWithinAt_const)
 
-theorem coef_dilate (_H : SqIntegrable D α) (A B : Mat k r → (Wq →L[ℂ] Wp)) {p : SS k r} (hp : D.inSS p) {x y : ℝ}
-    (hx : 0 < x) (hy : 0 < y) :
-    Ph D A B (dilation₂ (x, y) p) =
-      Ph D (fun g => A (aDil k r x * g * (aDil k r y)⁻¹)) (fun g => B (aDil k r x * g * (aDil k r y)⁻¹)) p := by
-  have hax := aDil_mem k r hx
-  have hay := aDil_inv_mem k r hy
-  have mpL : MeasurePreserving (lmulM (aDil k r x)) D.μG D.μG :=
-    ⟨(BesselUnitaryEquiv.continuous_lmulM _).measurable, D.haarG.left _ hax⟩
-  have mpR : MeasurePreserving (rmulF (aDil k r y)⁻¹) D.μG D.μG :=
-    ⟨(continuous_right_multiplication_map _).measurable, D.haarG.right _ hay⟩
-  have eL : MeasurableEmbedding (lmulM (k := k) (r := r) (aDil k r x)) :=
-    (BesselUnitaryEquiv.lmulE _ (WeylGroupFacts.isUnit_of_uh hax)).measurableEmbedding
-  have eR : MeasurableEmbedding (rmulF (aDil k r y)⁻¹) :=
-    (rightMulMeasurableEquiv _ (WeylGroupFacts.isUnit_of_uh hay)).measurableEmbedding
-  unfold Ph
-  rw [← (mpR.comp mpL).integral_comp (eR.comp eL)]
-  refine integral_congr_ae (Eventually.of_forall fun g => ?_)
-  have e : (Matrix.of ((rmulF (aDil k r y)⁻¹ ∘ lmulM (aDil k r x)) g) : Mat k r) =
-      aDil k r x * Matrix.of g * (aDil k r y)⁻¹ := rfl
-  show hsInner (rho D (dilation₂ (x, y) p) A (Matrix.of ((rmulF (aDil k r y)⁻¹ ∘ lmulM (aDil k r x)) g)))
-      (B (Matrix.of ((rmulF (aDil k r y)⁻¹ ∘ lmulM (aDil k r x)) g))) =
-    hsInner (rho D p (fun g => A (aDil k r x * g * (aDil k r y)⁻¹)) (Matrix.of g))
-      (B (aDil k r x * Matrix.of g * (aDil k r y)⁻¹))
-  rw [e, rho_eq, rho_eq, sgs_dil P.dilation_unipotent_weyl_measure D hp hx hy, Sd_dil]
-
 theorem coef_hasDerivAt (H : SqIntegrable D α) {A B A1 B1 : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ}
     (hA : admitted α cA A) (hA1 : admitted α cA A1) (hB : admitted α cB B) (hB1 : admitted α cB B1)
     {p : SS k r} (hp : D.inSS p) {a b : ℝ → Mat k r} {κ : ℝ → ℝ} {t₀ : ℝ} {s : Set ℝ} (hs : s ∈ 𝓝 t₀)
@@ -204,195 +177,25 @@ theorem coef_hasDerivAt (H : SqIntegrable D α) {A B A1 B1 : Mat k r → (Wq →
     (dB : ∀ z ∈ GV k r, ∀ t ∈ s, HasDerivAt (fun t => B (a t * z * b t)) (κ t • B1 (a t * z * b t)) t) :
     HasDerivAt (fun t => Ph D (fun g => A (a t * g * b t)) (fun g => B (a t * g * b t)) p)
       ((κ t₀ : ℂ) * (Ph D (fun g => A1 (a t₀ * g * b t₀)) (fun g => B (a t₀ * g * b t₀)) p +
-        Ph D (fun g => A (a t₀ * g * b t₀)) (fun g => B1 (a t₀ * g * b t₀)) p)) t₀ := by
-  have hα := H.1
-  have ht₀ : t₀ ∈ s := mem_of_mem_nhds hs
-  obtain ⟨hS1, hS2⟩ := inSS_mem D hp
-  have hS1i := WeylGroupFacts.uh_inv hS1
-  have hK0 : 0 ≤ K := le_trans (gN_nonneg _) (hKa t₀ ht₀)
-  have hcA := admissible_constant_nonneg hA
-  have hcB := admissible_constant_nonneg hB
-  obtain ⟨S1, hS1d⟩ : ∃ S1 : Mat k r, S1 = (Matrix.of p.1.2 * Matrix.of p.1.1 : Mat k r)⁻¹ := ⟨_, rfl⟩
-  obtain ⟨S2, hS2d⟩ : ∃ S2 : Mat k r, S2 = (Matrix.of p.2.2 * Matrix.of p.2.1 : Mat k r) := ⟨_, rfl⟩
-  rw [← hS1d] at hS1i
-  rw [← hS2d] at hS2
-  have hsgs : ∀ g : Mat k r, sgs p g = S1 * g * S2 := by
-    intro g; rw [sgs_eq, hS1d, hS2d]
-  obtain ⟨P, hPd⟩ : ∃ P : ℝ, P = (K * K) ^ α := ⟨_, rfl⟩
-  obtain ⟨M, hMd⟩ : ∃ M : ℝ, M = (gN S1⁻¹ * gN S2⁻¹) ^ α := ⟨_, rfl⟩
-  have hP0 : 0 ≤ P := by rw [hPd]; exact Real.rpow_nonneg (mul_nonneg hK0 hK0) _
-  have hM0 : 0 ≤ M := by rw [hMd]; exact Real.rpow_nonneg (mul_nonneg (gN_nonneg _) (gN_nonneg _)) _
-  have hG := haar_ae D.haarG
-
-  have ms2 : ∀ {f : Mat k r → (Wq →L[ℂ] Wp)} {c : ℝ}, admitted α c f → ∀ t ∈ s,
-      AEStronglyMeasurable (fun g : Mt k r => f (a t * sgs p (Matrix.of g) * b t)) D.μG := by
-    intro f c hf t ht
-    have := admissible_ae_strongly_measurable (admissible_two_sided_translate hα (admissible_two_sided_translate hα hf (ha t ht) (hb t ht)) hS1i hS2) D.haarG
-    simpa only [hsgs] using this
-  have ms1 : ∀ {f : Mat k r → (Wq →L[ℂ] Wp)} {c : ℝ}, admitted α c f → ∀ t ∈ s,
-      AEStronglyMeasurable (fun g : Mt k r => f (a t * Matrix.of g * b t)) D.μG := by
-    intro f c hf t ht
-    exact admissible_ae_strongly_measurable (admissible_two_sided_translate hα hf (ha t ht) (hb t ht)) D.haarG
-
-  have b2 : ∀ {f : Mat k r → (Wq →L[ℂ] Wp)} {c : ℝ}, admitted α c f → ∀ g : Mt k r,
-      (Matrix.of g : Mat k r) ∈ GV k r → ∀ t ∈ s,
-      ‖f (a t * sgs p (Matrix.of g) * b t)‖ ≤ c * P * M * gN (Matrix.of g : Mat k r) ^ (-α) := by
-    intro f c hf g hg t ht
-    rw [hsgs, hPd, hMd]
-    exact translated_norm_bound hα hf (ha t ht) (hb t ht) hS1i hS2 hg (hKa t ht) (hKb t ht)
-  have b1 : ∀ {f : Mat k r → (Wq →L[ℂ] Wp)} {c : ℝ}, admitted α c f → ∀ g : Mt k r,
-      (Matrix.of g : Mat k r) ∈ GV k r → ∀ t ∈ s,
-      ‖f (a t * Matrix.of g * b t)‖ ≤ c * P * 1 * gN (Matrix.of g : Mat k r) ^ (-α) := by
-    intro f c hf g hg t ht
-    rw [hPd, mul_one]
-    exact norm_admissible_of_double_translate_le hα hf (ha t ht) (hb t ht) hg (hKa t ht) (hKb t ht)
-  have hm0 : ∀ g : Mt k r, 0 ≤ gN (Matrix.of g : Mat k r) ^ (-α) := fun g => Real.rpow_nonneg (gN_nonneg _) _
-  have key := parametric_derivative_under_integral (μ := D.μG) (Sd D p) (Sd_norm_le D hp)
-    (u := fun t g => A (a t * sgs p (Matrix.of g) * b t)) (v := fun t g => B (a t * Matrix.of g * b t))
-    (u' := fun t g => κ t • A1 (a t * sgs p (Matrix.of g) * b t))
-    (v' := fun t g => κ t • B1 (a t * Matrix.of g * b t))
-    hs (m := fun g => gN (Matrix.of g : Mat k r) ^ (-α)) (C := (1 + K) * (cA + cB) * P * (1 + M))
-    (SqIntegrable.integrable H) (ms2 hA) (ms1 hB) (fun t ht => (ms2 hA1 t ht).const_smul (κ t))
-    (fun t ht => (ms1 hB1 t ht).const_smul (κ t))
-    (by
-      filter_upwards [hG] with g hg t ht
-      have hz : sgs p (Matrix.of g) ∈ GV k r := by
-        rw [hsgs]; exact WeylGroupFacts.uh_mul (WeylGroupFacts.uh_mul hS1i hg) hS2
-      exact dA _ hz t ht)
-    (by
-      filter_upwards [hG] with g hg t ht
-      exact dB _ hg t ht)
-    (by
-      filter_upwards [hG] with g hg t ht
-      have h := b2 hA g hg t ht
-      have h2 := product_bound_monotone_factors_le (e := 1) (K := K) (c₀ := cA + cB) (M := M) zero_le_one (by linarith) hcA
-        (by linarith) hP0 hM0 (by linarith) (hm0 g)
-      linarith)
-    (by
-      filter_upwards [hG] with g hg t ht
-      have h := b1 hB g hg t ht
-      have h2 := product_bound_monotone_factors_le (e := 1) (K := K) (c₀ := cA + cB) (M := M) zero_le_one (by linarith) hcB
-        (by linarith) hP0 zero_le_one (by linarith) (hm0 g)
-      linarith)
-    (by
-      filter_upwards [hG] with g hg t ht
-      have h := b2 hA1 g hg t ht
-      have h2 := product_bound_monotone_factors_le (e := |κ t|) (K := K) (c₀ := cA + cB) (M := M) (abs_nonneg _)
-        (by have := hκ t ht; linarith) hcA (by linarith) hP0 hM0 (by linarith) (hm0 g)
-      rw [norm_smul, Real.norm_eq_abs]
-      exact le_trans (mul_le_mul_of_nonneg_left h (abs_nonneg _)) h2)
-    (by
-      filter_upwards [hG] with g hg t ht
-      have h := b1 hB1 g hg t ht
-      have h2 := product_bound_monotone_factors_le (e := |κ t|) (K := K) (c₀ := cA + cB) (M := M) (abs_nonneg _)
-        (by have := hκ t ht; linarith) hcB (by linarith) hP0 zero_le_one (by linarith) (hm0 g)
-      rw [norm_smul, Real.norm_eq_abs]
-      exact le_trans (mul_le_mul_of_nonneg_left h (abs_nonneg _)) h2)
-  have i1 := coef_integrand_integrable H (admissible_two_sided_translate hα hA1 (ha t₀ ht₀) (hb t₀ ht₀))
-    (admissible_two_sided_translate hα hB (ha t₀ ht₀) (hb t₀ ht₀)) hp
-  have i2 := coef_integrand_integrable H (admissible_two_sided_translate hα hA (ha t₀ ht₀) (hb t₀ ht₀))
-    (admissible_two_sided_translate hα hB1 (ha t₀ ht₀) (hb t₀ ht₀)) hp
-  have e1 : (∫ g : Mt k r, (hsInner (Sd D p (κ t₀ • A1 (a t₀ * sgs p (Matrix.of g) * b t₀)))
-        (B (a t₀ * Matrix.of g * b t₀)) +
-      hsInner (Sd D p (A (a t₀ * sgs p (Matrix.of g) * b t₀))) (κ t₀ • B1 (a t₀ * Matrix.of g * b t₀))) ∂D.μG) =
-      (κ t₀ : ℂ) * (Ph D (fun g => A1 (a t₀ * g * b t₀)) (fun g => B (a t₀ * g * b t₀)) p +
-        Ph D (fun g => A (a t₀ * g * b t₀)) (fun g => B1 (a t₀ * g * b t₀)) p) := by
-    unfold Ph
-    rw [← integral_add i1 i2, ← integral_const_mul]
-    refine integral_congr_ae (Eventually.of_forall fun g => ?_)
-    simp only [rho_eq]
-    rw [← Complex.coe_smul (κ t₀) (A1 _), ← Complex.coe_smul (κ t₀) (B1 _), map_smul, hsInner_smul_left,
-      hsInner_smul_right, Complex.conj_ofReal]
-    ring
-  rw [← e1]
-  have e2 : (fun t => Ph D (fun g => A (a t * g * b t)) (fun g => B (a t * g * b t)) p) =
-      fun t => ∫ g : Mt k r, hsInner (Sd D p (A (a t * sgs p (Matrix.of g) * b t)))
-        (B (a t * Matrix.of g * b t)) ∂D.μG := by
-    funext t
-    unfold Ph
-    simp only [rho_eq]
-  rw [e2]
-  exact key
+        Ph D (fun g => A (a t₀ * g * b t₀)) (fun g => B1 (a t₀ * g * b t₀)) p)) t₀ :=
+  pairing_derivative_of_integrable H.1 (SqIntegrable.integrable H) (coef_integrand_integrable H)
+    hA hA1 hB hB1 hp hs ha hb hKa hKb hκ dA dB
 
 theorem coef_hasDerivAt_right (H : SqIntegrable D α) {A B : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ} (hA : admitted α cA A)
     (hA' : admitted α cA (Rr A)) (hB : admitted α cB B) (hB' : admitted α cB (Rr B)) (dA : DR A) (dB : DR B)
     {p : SS k r} (hp : D.inSS p) {x y : ℝ} (hx : 0 < x) (hy : 0 < y) :
     HasDerivAt (fun y' : ℝ => Ph D A B (dilation₂ (x, y') p))
-      (((-(rr r / y) : ℝ) : ℂ) * (Ph D (Rr A) B (dilation₂ (x, y) p) + Ph D A (Rr B) (dilation₂ (x, y) p))) y := by
-  obtain ⟨K1, hK1, hK1b⟩ := aDil_gN_bound k r (a := y / 2) (b := 2 * y) (by linarith)
-  have hs : Set.Ioo (y / 2) (2 * y) ∈ 𝓝 y := Ioo_mem_nhds (by linarith) (by linarith)
-  have hpos : ∀ t ∈ Set.Ioo (y / 2) (2 * y), 0 < t := fun t ht => by have := ht.1; linarith
-  have hr := rr_pos r
-  have hd : ∀ {f : Mat k r → (Wq →L[ℂ] Wp)}, DR f → ∀ z ∈ GV k r, ∀ t ∈ Set.Ioo (y / 2) (2 * y),
-      HasDerivAt (fun t => f (aDil k r x * z * (aDil k r t)⁻¹))
-        ((-(rr r / t)) • Rr f (aDil k r x * z * (aDil k r t)⁻¹)) t := by
-    intro f df z hz t ht
-    exact curveR f (aDil k r x * z) (hpos t ht)
-      (df _ (WeylGroupFacts.uh_mul (WeylGroupFacts.uh_mul (aDil_mem k r hx) hz) (aDil_inv_mem k r (hpos t ht))))
-  have key := coef_hasDerivAt H hA hA' hB hB' hp (a := fun _ => aDil k r x) (b := fun t => (aDil k r t)⁻¹)
-    (κ := fun t => -(rr r / t)) hs (K := K1 + gN (aDil k r x)⁻¹ + 2 * rr r / y)
-    (fun t _ => aDil_mem k r hx) (fun t ht => aDil_inv_mem k r (hpos t ht))
-    (fun t _ => by
-      have h1 : 0 ≤ 2 * rr r / y := by positivity
-      linarith)
-    (fun t ht => by
-      have h1 : 0 ≤ 2 * rr r / y := by positivity
-      have h2 := gN_nonneg (aDil k r x)⁻¹
-      have h3 := (hK1b t ⟨ht.1.le, ht.2.le⟩).1
-      rw [Matrix.nonsing_inv_nonsing_inv _ (WeylGroupFacts.isUnit_of_uh (aDil_mem k r (hpos t ht)))]
-      linarith)
-    (fun t ht => by
-      have h2 := gN_nonneg (aDil k r x)⁻¹
-      have h3 : |-(rr r / t)| ≤ 2 * rr r / y := by
-        rw [abs_neg, abs_of_pos (div_pos hr (hpos t ht)), div_le_div_iff₀ (hpos t ht) hy]
-        have := ht.1
-        nlinarith
-      linarith)
-    (hd dA) (hd dB)
-  rw [coef_dilate H (Rr A) B hp hx hy, coef_dilate H A (Rr B) hp hx hy]
-  refine key.congr_of_eventuallyEq ?_
-  filter_upwards [hs] with t ht
-  exact coef_dilate H A B hp hx (hpos t ht)
+      (((-(rr r / y) : ℝ) : ℂ) * (Ph D (Rr A) B (dilation₂ (x, y) p) + Ph D A (Rr B) (dilation₂ (x, y) p))) y :=
+  ph_hasDerivAt_y_of_domination ⟨H.1, SqIntegrable.integrable H, coef_integrand_integrable H⟩
+    P.dilation_unipotent_weyl_measure hA hA' hB hB' dA dB hp hx hy
 
 theorem coef_hasDerivAt_left (H : SqIntegrable D α) {A B : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ} (hA : admitted α cA A)
     (hA' : admitted α cA (Ll A)) (hB : admitted α cB B) (hB' : admitted α cB (Ll B)) (dA : DL A) (dB : DL B)
     {p : SS k r} (hp : D.inSS p) {x y : ℝ} (hx : 0 < x) (hy : 0 < y) :
     HasDerivAt (fun x' : ℝ => Ph D A B (dilation₂ (x', y) p))
-      (((-(rr r / x) : ℝ) : ℂ) * (Ph D (Ll A) B (dilation₂ (x, y) p) + Ph D A (Ll B) (dilation₂ (x, y) p))) x := by
-  obtain ⟨K1, hK1, hK1b⟩ := aDil_gN_bound k r (a := x / 2) (b := 2 * x) (by linarith)
-  have hs : Set.Ioo (x / 2) (2 * x) ∈ 𝓝 x := Ioo_mem_nhds (by linarith) (by linarith)
-  have hpos : ∀ t ∈ Set.Ioo (x / 2) (2 * x), 0 < t := fun t ht => by have := ht.1; linarith
-  have hr := rr_pos r
-  have hd : ∀ {f : Mat k r → (Wq →L[ℂ] Wp)}, DL f → ∀ z ∈ GV k r, ∀ t ∈ Set.Ioo (x / 2) (2 * x),
-      HasDerivAt (fun t => f (aDil k r t * z * (aDil k r y)⁻¹))
-        ((-(rr r / t)) • Ll f (aDil k r t * z * (aDil k r y)⁻¹)) t := by
-    intro f df z hz t ht
-    have h := curveL f (z * (aDil k r y)⁻¹) (hpos t ht)
-      (df _ (WeylGroupFacts.uh_mul (aDil_mem k r (hpos t ht)) (WeylGroupFacts.uh_mul hz (aDil_inv_mem k r hy))))
-    simpa only [Matrix.mul_assoc] using h
-  have key := coef_hasDerivAt H hA hA' hB hB' hp (a := fun t => aDil k r t) (b := fun _ => (aDil k r y)⁻¹)
-    (κ := fun t => -(rr r / t)) hs (K := K1 + gN ((aDil k r y)⁻¹)⁻¹ + 2 * rr r / x)
-    (fun t ht => aDil_mem k r (hpos t ht)) (fun t _ => aDil_inv_mem k r hy)
-    (fun t ht => by
-      have h1 : 0 ≤ 2 * rr r / x := by positivity
-      have h2 := gN_nonneg ((aDil k r y)⁻¹)⁻¹
-      have h3 := (hK1b t ⟨ht.1.le, ht.2.le⟩).2
-      linarith)
-    (fun t _ => by
-      have h1 : 0 ≤ 2 * rr r / x := by positivity
-      linarith)
-    (fun t ht => by
-      have h2 := gN_nonneg ((aDil k r y)⁻¹)⁻¹
-      have h3 : |-(rr r / t)| ≤ 2 * rr r / x := by
-        rw [abs_neg, abs_of_pos (div_pos hr (hpos t ht)), div_le_div_iff₀ (hpos t ht) hx]
-        have := ht.1
-        nlinarith
-      linarith)
-    (hd dA) (hd dB)
-  rw [coef_dilate H (Ll A) B hp hx hy, coef_dilate H A (Ll B) hp hx hy]
-  refine key.congr_of_eventuallyEq ?_
-  filter_upwards [hs] with t ht
-  exact coef_dilate H A B hp (hpos t ht) hy
+      (((-(rr r / x) : ℝ) : ℂ) * (Ph D (Ll A) B (dilation₂ (x, y) p) + Ph D A (Ll B) (dilation₂ (x, y) p))) x :=
+  phase_dilation_deriv_x_of_domination ⟨H.1, SqIntegrable.integrable H, coef_integrand_integrable H⟩
+    P.dilation_unipotent_weyl_measure hA hA' hB hB' dA dB hp hx hy
 
 theorem leibnizR_hasDerivAt_right (H : SqIntegrable D α) {l : ℕ} {A B : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ}
     (hA : AdmW α cA (l + 1) 0 A) (hB : AdmW α cB (l + 1) 0 B) {p : SS k r} (hp : D.inSS p) {x y : ℝ}

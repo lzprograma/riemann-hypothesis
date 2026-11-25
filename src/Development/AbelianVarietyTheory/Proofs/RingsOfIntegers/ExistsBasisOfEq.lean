@@ -50,14 +50,10 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValua
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.IntegralCoord
 
@@ -144,16 +140,6 @@ private theorem TF_eq_fractionRing {V : Type} [CommRing V] [IsDomain V] (F : Typ
       ((algebraMap (FractionRing V) F).comp (algebraMap V (FractionRing V))))) := by
   unfold TF
   rw [jFK_eq_fractionRing]
-
-private theorem valuation_nonneg_of_valOver {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] {ϖ : V}
-    (hϖ : Irreducible ϖ) {F : Type} [Field F] [Algebra (FractionRing V) F] {v : AddValuation F (WithTop ℚ)}
-    (hv : ValOver ϖ F v) (e : V) :
-    (0 : WithTop ℚ) ≤ v (algebraMap (FractionRing V) F (algebraMap V (FractionRing V) e)) := by
-  rcases eq_or_ne e 0 with rfl | he
-  · simp
-  · obtain ⟨n, u, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible he hϖ
-    rw [hv _ (n : ℤ) ⟨u, by rw [map_mul, map_pow, zpow_natCast, mul_comm]⟩]
-    exact WithTop.coe_nonneg.2 (by positivity)
 
 private theorem gs_gF_eq_gs_fst_TF {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V]
     {D : DegData V (maximalIdeal V)} {F : Type} [Field F] [Algebra (FractionRing V) F]
@@ -252,6 +238,6 @@ theorem main : TwistBaseChangeStatement → ∀ (V : Type) [CommRing V] [IsDomai
   intro i _
   rw [AddValuation.map_mul]
   calc ((r : ℚ) : WithTop ℚ) = (r : WithTop ℚ) + 0 := (add_zero _).symm
-    _ ≤ v (a' i) + v (fK (e i l)) := add_le_add (hr i) (valuation_nonneg_of_valOver hϖ hv _)
+    _ ≤ v (a' i) + v (fK (e i l)) := add_le_add (hr i) (GC.v_alg_nonneg hϖ hv _)
 
 end GlobalTheory.IntegralCoord

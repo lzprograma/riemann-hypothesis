@@ -1,43 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -46,7 +10,6 @@ noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Mum
 
 namespace GlobalTheory.Mum.CubeStep
@@ -102,12 +65,7 @@ theorem prod_finset_fin_two_ulift_expand {U : Type} [CommMonoid U] (f : ULift.{0
   refine (Fintype.prod_equiv Equiv.ulift f (fun I => f ⟨I⟩) (fun _ => rfl)).trans ?_
   rw [show (Finset.univ : Finset (Finset (Fin 2))) = {∅, {0}, {1}, {0, 1}} by decide,
     Finset.prod_insert (by decide), Finset.prod_insert (by decide), Finset.prod_insert (by decide),
-    Finset.prod_singleton]
-  ac_rfl
-
-end GlobalTheory.Mum.CubeStep
-
-namespace GlobalTheory.Mum.CubeStep
+    Finset.prod_singleton]; ac_rfl
 
 variable {S : Scheme.{0}} {B B' : Over S} [GrpObj B] [IsCommMonObj B] [GrpObj B'] [IsCommMonObj B']
 
@@ -128,34 +86,24 @@ theorem pair_eq {r : ℕ} (pr : Fin r → (B' ⟶ B)) (hpr : ∀ i, IsMonHom (pr
     (∏ k : Fin 4, h (GlobalTheory.PolDeg.lamPts (fst B' B' ≫ pr j) (snd B' B' ≫ pr i) k) ^ Oε k) ^ w *
     (∏ k : Fin 4, ∏ I : ULift.{0} (Finset (Fin 2)),
       h ((psum B' (x2 B') I.down).left ≫ tensφ pr ((i, j), k)) ^ ((-1) ^ (2 - I.down.card) * Oε k)) ^ (-w) := by
-  haveI := hpr i
-  haveI := hpr j
+  have := hpr i; have := hpr j
   refine (prod_zpow_mul (U := U) _ (Sum.elim thε (Sum.elim thε thε)) (-w)).trans ?_
   rw [Fintype.prod_sum_type, Fintype.prod_sum_type]
   simp only [Sum.elim_inl, Sum.elim_inr]
   rw [prod_cub, prod_cub, prod_cub]
-  simp only [prod_finset_fin_two_ulift_expand, Fin.prod_univ_four, GlobalTheory.PolDeg.lamPts, tensφ, Oε, Matrix.cons_val_zero, Matrix.cons_val_one,
-    Matrix.cons_val_two, Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons, groupSchemePartialSum_pair_both, psum0, psum1, psumE]
-  have q2 : (-1 : ℤ) ^ (2 - ({0, 1} : Finset (Fin 2)).card) = 1 := by decide
-  have q0 : (-1 : ℤ) ^ (2 - ({0} : Finset (Fin 2)).card) = -1 := by decide
-  have q1 : (-1 : ℤ) ^ (2 - ({1} : Finset (Fin 2)).card) = -1 := by decide
-  have qe : (-1 : ℤ) ^ (2 - (∅ : Finset (Fin 2)).card) = 1 := by decide
-  simp only [q2, q0, q1, qe, ← Over.comp_left, MonObj.comp_mul, MonObj.mul_comp, MonObj.one_comp, MonObj.comp_one,
+  simp only [prod_finset_fin_two_ulift_expand, Fin.prod_univ_four, GlobalTheory.PolDeg.lamPts, tensφ, Oε,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three, Matrix.head_cons,
+    Matrix.tail_cons, groupSchemePartialSum_pair_both, psum0, psum1, psumE,
+    show (-1 : ℤ) ^ (2 - ({0, 1} : Finset (Fin 2)).card) = 1 by decide,
+    show (-1 : ℤ) ^ (2 - ({0} : Finset (Fin 2)).card) = -1 by decide,
+    show (-1 : ℤ) ^ (2 - ({1} : Finset (Fin 2)).card) = -1 by decide,
+    show (-1 : ℤ) ^ (2 - (∅ : Finset (Fin 2)).card) = 1 by decide,
+    ← Over.comp_left, MonObj.comp_mul, MonObj.mul_comp, MonObj.one_comp, MonObj.comp_one,
     _root_.mul_one, _root_.one_mul]
-  generalize fst B' B' ≫ pr i = a
-  generalize snd B' B' ≫ pr i = b
-  generalize fst B' B' ≫ pr j = c
-  generalize snd B' B' ≫ pr j = d
+  generalize fst B' B' ≫ pr i = a; generalize snd B' B' ≫ pr i = b
+  generalize fst B' B' ≫ pr j = c; generalize snd B' B' ≫ pr j = d
   rw [mul_comm (c * d) a, mul_comm c a, mul_comm d a, mul_comm (c * d) b, mul_comm d b]
-  apply Additive.ofMul.injective
-  simp only [ofMul_mul, ofMul_inv, ofMul_zpow]
-  module
-
-end GlobalTheory.Mum.CubeStep
-
-namespace GlobalTheory.Mum.CubeStep
-
-variable {S : Scheme.{0}} {B B' : Over S} [GrpObj B] [IsCommMonObj B] [GrpObj B'] [IsCommMonObj B']
+  exact Additive.ofMul.injective (by simp only [ofMul_mul, ofMul_inv, ofMul_zpow]; module)
 
 def lamV {T : Over S} {U : Type} [CommGroup U] (h : (T.left ⟶ B.left) → U) (u v : T ⟶ B) : U :=
   ∏ k : Fin 4, h (GlobalTheory.PolDeg.lamPts u v k) ^ Oε k
@@ -218,23 +166,16 @@ theorem cube_step : ∀ {S : Scheme.{0}} {B B' : Over S} [GrpObj B] [IsCommMonOb
           h ((psum B' (x2 B') I.down).left ≫ tensφ pr (p, k)) ^ ((-1) ^ (2 - I.down.card) * Oε k)) ^ (-W p.1 p.2) := by
       rw [Fintype.prod_prod_type, Finset.prod_comm, Fintype.prod_prod_type]
       refine Finset.prod_congr rfl fun p _ => ?_
-      rw [← Finset.prod_zpow]
-      refine Finset.prod_congr rfl fun k _ => ?_
-      rw [← Finset.prod_zpow]
-      refine Finset.prod_congr rfl fun I _ => ?_
-      rw [← zpow_mul]
-      congr 1
-      simp only [tensε]
-      ring
+      rw [← Finset.prod_zpow]; refine Finset.prod_congr rfl fun k _ => ?_
+      rw [← Finset.prod_zpow]; refine Finset.prod_congr rfl fun I _ => ?_
+      rw [← zpow_mul]; congr 1; simp only [tensε]; ring
     refine (Fintype.prod_prod_type _).trans (Eq.trans ?_ ((Fintype.prod_sum_type _).trans (congrArg₂ (· * ·) h1 h2)).symm)
     rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
     exact Finset.prod_congr rfl fun p _ => pair_eq pr hpr (W p.1 p.2) p.1 p.2 h
   obtain ⟨t, ht, hv⟩ := exists_gen L.isLB hfe (GeneratorPullback.finProdGen L.L _ _ (pairGen cb W pr))
     (finProdGen_isGen _ _ _ _ (pairGen_isGen cb W pr))
-  refine ⟨t, ht, fun T ρ z J hJ => ?_⟩
-  refine (hv _ _ z J hJ).trans ((val_finProdGen _ _ _ (pairGen cb W pr) _ _ hJ).trans
-    ((Fintype.prod_prod_type _).trans ?_))
-  refine Finset.prod_congr rfl fun i _ => Finset.prod_congr rfl fun j _ => ?_
+  refine ⟨t, ht, fun T ρ z J hJ => (hv _ _ z J hJ).trans ((val_finProdGen _ _ _ (pairGen cb W pr) _ _ hJ).trans
+    ((Fintype.prod_prod_type _).trans (Finset.prod_congr rfl fun i _ => Finset.prod_congr rfl fun j _ => ?_)))⟩
   dsimp only [pairGen]
   refine (val_zpowGen _ _ _ _ _ _ _ _).trans (congrArg (· ^ (-W i j)) ?_)
   refine ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub cb ρ hJ _ _ _) ((val_mul hJ _ _ _).trans

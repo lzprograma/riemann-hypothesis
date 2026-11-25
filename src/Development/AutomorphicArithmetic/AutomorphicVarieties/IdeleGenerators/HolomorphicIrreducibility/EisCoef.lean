@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ConstSmall
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
 public import Mathlib.Analysis.Calculus.SmoothSeries
 public import Mathlib.Analysis.Normed.Group.Tannery
@@ -68,18 +69,7 @@ namespace UpperTheory.V.Sd
 
 private lemma lk_hasDerivAt (m : ℕ) (x : ℂ) (hx : x ≠ 1) :
     ∃ d : ℂ, HasDerivAt (fun w : ℂ => Lk (m + 1) w) d x ∧ x * d = Lk (m + 2) x := by
-  have hx' : (1 : ℂ) - x ≠ 0 := sub_ne_zero.mpr (Ne.symm hx)
-  have hN := Polynomial.hasDerivAt_aeval (numL (m + 1)) x
-  have hD := ((hasDerivAt_id x).const_sub (1 : ℂ)).pow (m + 1)
-  have h := hN.div hD (pow_ne_zero (m + 1) hx')
-  refine ⟨_, h, ?_⟩
-  have e2 : numL (m + 2) = X * (derivative (numL (m + 1)) * (1 - X) + C ((m : ℤ) + 1) * numL (m + 1)) := by
-    rw [numL.eq_3]
-  simp only [Lk, e2, map_mul, map_add (f := _), map_sub, map_one, Polynomial.aeval_X, Polynomial.aeval_C,
-    id, Nat.add_sub_cancel, Pi.pow_apply]
-  field_simp
-  push_cast
-  ring
+  apply _root_.UpperTheory.V.Sd.lk_deriv <;> assumption
 
 private lemma lk_hasSum_succ (m : ℕ) : ∀ x : ℂ, ‖x‖ < 1 →
     HasSum (fun e : ℕ => ((e : ℂ) + 1) ^ m * x ^ (e + 1)) (Lk (m + 1) x) := by
@@ -392,11 +382,11 @@ private lemma expansion (N k : ℕ) [NeZero N] (hk : 3 ≤ k) (b : ℤ) (hb : (b
     refine (reindex N k hk b z).prod_fiberwise fun m => ?_
     by_cases hm : 0 ≤ m
     · lift m to ℕ using hm
-      simpa only [g, Nat.cast_nonneg, if_true, Int.toNat_natCast] using row N k hk2 b hb z m
+      simpa only [g, Nat.cast_nonneg, ite_true, Int.toNat_natCast] using row N k hk2 b hb z m
     · obtain ⟨m, rfl⟩ : ∃ m' : ℕ, m = -(m' : ℤ) := ⟨(-m).toNat, by omega⟩
       have h := (row N k hk2 (-b) (by simpa using hb) z m).mul_left ((-1) ^ k)
       rw [← (Equiv.neg ℤ).hasSum_iff] at h
-      simp only [g, if_neg hm, neg_neg, Int.toNat_natCast]
+      simp only [g, ite_eq_right hm, neg_neg, Int.toNat_natCast]
       rw [Int.cast_neg] at h
       refine (congrArg (fun F => HasSum F _) (funext fun j => ?_)).mpr (h)
       have : (((N * -(m : ℤ) : ℤ)) : ℂ) * (z : ℂ) + ((b + N * j : ℤ) : ℂ) =
@@ -412,11 +402,11 @@ private lemma expansion (N k : ℕ) [NeZero N] (hk : 3 ≤ k) (b : ℤ) (hb : (b
       simpa [g] using this
     · refine (congrArg (fun F => HasSum F _) (funext fun n => ?_)).mpr (hT1.mul_left ((-1) ^ k))
       have : ¬ (0 : ℤ) ≤ -((n : ℤ) + 1) := by omega
-      simp only [g, if_neg this, neg_neg]
+      simp only [g, ite_eq_right this, neg_neg]
       rfl
   rw [h1.unique h2, add_assoc, ← hasSum_nat_add_iff' 1]
-  simp only [Finset.range_one, Finset.sum_singleton, if_true, pow_zero, smul_eq_mul, mul_one, add_sub_cancel_left,
-    Nat.succ_ne_zero, if_false]
+  simp only [Finset.range_one, Finset.sum_singleton, ite_true, pow_zero, smul_eq_mul, mul_one, add_sub_cancel_left,
+    Nat.succ_ne_zero, ite_false]
   refine (congrArg (fun F => HasSum F _) (funext fun n => ?_)).mpr (hS2.add (hT2.mul_left ((-1) ^ k)))
   rw [← mul_assoc, ← add_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
   congr 1
@@ -436,7 +426,7 @@ theorem UpperTheory.V.Sd.eisCoef :
     (fun τ => by rw [hf]; exact UpperTheory.V.Sd.expansion N k hk b ha τ)
   rw [hf] at h
   refine ⟨(h 0).symm, fun n hn => ?_⟩
-  rw [UpperTheory.V.Af.coef, ← h n, if_neg (by omega)]
+  rw [UpperTheory.V.Af.coef, ← h n, ite_eq_right (by omega)]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisCoef =====

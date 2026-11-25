@@ -5,48 +5,7 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.Unita
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelCore
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.DdTraceCore
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.PsiTrCore
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -62,8 +21,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.Pf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Def
 
 variable {D : D7} (X : HidaSetting D)
@@ -77,8 +34,6 @@ end Def
 end Formalism.L2.SG.Pf
 
 namespace Formalism.L2.SG.Pf.Level
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Proj
 
@@ -476,7 +431,7 @@ theorem hA_f_span (T : Set (Fin D.R.rS)) (y : VA X.B.I)
     rw [Submodule.span_le]
     rintro _ ⟨c, hc, rfl⟩
     show hA X.B.I (incl X.B.I (X.fR b)) (incl X.B.I (X.eR c)) = 0
-    rw [hA_f_e, if_neg (fun h : c = b => hb (h ▸ hc))]
+    rw [hA_f_e, ite_eq_right (fun h : c = b => hb (h ▸ hc))]
   exact this hy
 
 theorem span_repr (y : VA X.B.I)
@@ -520,7 +475,7 @@ theorem coef {C : ℕ} (hC : GoodC X u C) (T : Set (Fin D.R.rS)) (s : VA X.B.I) 
     rw [e1, hs'def, Finset.smul_sum, ← Finset.sum_sub_distrib]
     refine Submodule.sum_mem _ fun b _ => ?_
     by_cases hb : b ∈ T
-    · rw [if_pos hb]
+    · rw [ite_eq_left hb]
       have key : ((C * C : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (hA X.B.I (incl X.B.I (X.fR b)) s • incl X.B.I (X.eR b)) -
           ((C * C : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (hA X.B.I (X.f0 b) s • X.e0 b) =
           hA X.B.I ((C : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (incl X.B.I (X.fR b) - X.f0 b)) s •
@@ -539,7 +494,7 @@ theorem coef {C : ℕ} (hC : GoodC X u C) (T : Set (Fin D.R.rS)) (s : VA X.B.I) 
       · have hm : (C : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (incl X.B.I (X.eR b) - X.e0 b) ∈ mL X.B.I X.B.g := by
           rw [← neg_sub, smul_neg]; exact neg_mem (hC.2.1 b)
         exact intsmul_mem X (unitaryCongruence.hA_int X.B.I (X.vectorsInLattice.1 b).2 hs) (natsmul_mem X _ hm)
-    · rw [if_neg hb, hT b hb]; simp
+    · rw [ite_eq_right hb, hT b hb]; simp
   have hCC : ((C * C : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • s ∈ unitaryCongruence.Mo X.B.I X.B.g (X.e0 '' T) := by
     have e : ((C * C : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • s = ((C * C : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • s' +
         (((C * C : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • s - ((C * C : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • s') := by abel
@@ -882,7 +837,7 @@ theorem hA_f_nxt (a : Fin D.R.rS) :
     hA X.B.I (incl X.B.I (X.fR a)) (incl X.B.I (nxt X.eR (X.zR u) a)) = 0 := by
   unfold nxt
   split_ifs with h
-  · rw [hA_f_e, if_neg]
+  · rw [hA_f_e, ite_eq_right]
     intro h'
     have := congrArg Fin.val h'
     simp at this
@@ -974,7 +929,7 @@ theorem Z_bw {n : X.B.I.Gf} (hn : n ∈ X.NfinU u) (hnK : n ∈ X.B.I.Kset) (i :
     refine unitaryCongruence.Z_add X.B.I X.B.g ?_ (hQ hMo)
     have hne : i ≠ ⟨i.1 + 1, h⟩ := fun h' => by have := congrArg Fin.val h'; simp at this
     have := X.bw_dual i ⟨i.1 + 1, h⟩
-    rwa [if_neg hne, sub_zero] at this
+    rwa [ite_eq_right hne, sub_zero] at this
   · exact unitaryCongruence.Z_zero X.B.I X.B.g
 
 theorem unipotent_in_level_of_psi (hP : PsiDd X) : UnipotentConjugateInLevel X u := by
@@ -1877,8 +1832,6 @@ end Final
 end Formalism.L2.SG.Pf.Level
 
 namespace Formalism.L2.SG.Pf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 export Level (prV prV_apply hT_f_e prV_e prV_f prV_Lb Lb_le projection_preserves_lattice toV crd_toV toV_crd toV_add toV_sub toV_smul toV_sum hE iota_hE prE toV_prE prE_L prA prA_apply incl_sub incl_smul incl_sum prA_incl incl_mem_Lf prA_Lf hA_e_e hA_f_f hA_e_f prA_e prA_f prA_span_e hA_e_prA hA_f_prA prA_fix hfin_fix_sub kset_split_fwd natsmul_eq natsmul_mem intsmul_mem mL_le_Lf bez_vec psi_zero psi_neg psi_zsmul psi_bez GoodC dvd_smul_mL exists_goodC C_e_Lf C_f_Lf mL_pres Z_left Z_right hA_natsmul_left hA_sub_left hA_f_span span_repr key_alg coef xinv_fix_e fix_span span_im_le zR_L fmat_kappa kappa_K cong_e cong_alt hermitian_e_transport_invariant cong_b unipotent_conj_mem_level Iad psi_Iad Iad_mono Iad_mul hermitian_f_lattice_mem_ideal hA_f_Lf ddS_ne coord_dd hA_f_nxt psi_sum psi_B xw_diff Z_term Z_bw levelDec_of_psiDd phWellDef_of_psiDd phi_star hJ_rv rv_mulVec incl_mulVec nxt_rv nxt_incl algebraMap_tens)
 

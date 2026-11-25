@@ -125,18 +125,8 @@ theorem star_intOE {a : I.E} (ha : a ∈ Formalism.UG.intOE I.E) : star a ∈ Fo
   obtain ⟨o, rfl⟩ := ha
   exact ⟨⟨star (o : I.E), (NumberField.RingOfIntegers.isIntegral_coe o).map (starRingEnd I.E).toIntAlgHom⟩, rfl⟩
 
-theorem sigA_mem {a : I.E ⊗[I.F] Af I.F} (ha : a ∈ IntAf I.F I.E) : sigA I a ∈ IntAf I.F I.E := by
-  have hsub : (Set.range (fun x : Formalism.UG.intOE I.E => (x : I.E) ⊗ₜ[I.F] (1 : Af I.F)) ∪
-      Set.range (fun y : Formalism.UG.intAd I.F => (1 : I.E) ⊗ₜ[I.F] (y : Af I.F))) ⊆
-      ((IntAf I.F I.E).comap (sigA I) : Set (I.E ⊗[I.F] Af I.F)) := by
-    rintro _ (⟨x, rfl⟩ | ⟨y, rfl⟩)
-    · show sigA I _ ∈ IntAf I.F I.E
-      rw [sigA_tmul]
-      exact Subring.subset_closure (Or.inl ⟨⟨star (x : I.E), star_intOE I x.2⟩, rfl⟩)
-    · show sigA I _ ∈ IntAf I.F I.E
-      rw [sigA_tmul, star_one]
-      exact Subring.subset_closure (Or.inr ⟨y, rfl⟩)
-  exact Subring.closure_le.2 hsub ha
+theorem sigA_mem {a : I.E ⊗[I.F] Af I.F} (ha : a ∈ IntAf I.F I.E) : sigA I a ∈ IntAf I.F I.E :=
+  by apply _root_.PIW.NormChiNBi.sigA_int; assumption
 
 theorem inclE_mem {a : I.E} (ha : a ∈ Formalism.UG.intOE I.E) :
     Formalism.UG.inclE (F := I.F) (Af I.F) a ∈ IntAf I.F I.E := by
@@ -512,10 +502,10 @@ theorem Afun_mul {x y : I.Gf} (hx : x ∈ I.Kset) (hcx : K2cong I g e0 z0 bw x)
   · exact term_Z I g _ _ (nxt_Z I g e0 f0 z0 hfe hfz a)
       (Me_Q I g e0 f0 hf0 hfe a (e_step I g e0 z0 bw hx hcx a _ (nxt_cong I g e0 z0 bw hcy a)))
   · by_cases h : i.1 + 1 < k
-    · simp only [dif_pos h]
+    · simp only [dite_eq_left h]
       exact term_Z I g _ _ (hbb i _ (fun he => by rw [Fin.ext_iff] at he; simp at he))
         (Mb_Q I g e0 bw bwd hbwd hbe hbb i (b_step I g e0 z0 bw hx hcx i _ (hcy.2.2 ⟨i.1 + 1, h⟩)))
-    · simp only [dif_neg h, sub_self]; exact Z_zero I g
+    · simp only [dite_eq_right h, sub_self]; exact Z_zero I g
 
 theorem Afun_int {x : I.Gf} (hx : x ∈ I.Kset) (he0 : ∀ a, e0 a ∈ I.Lf) (hf0 : ∀ a, f0 a ∈ I.Lf)
     (hz0 : z0 ∈ I.Lf) (hbw : ∀ i, bw i ∈ I.Lf) (hbwd : ∀ i, bwd i ∈ I.Lf) :
@@ -580,11 +570,11 @@ theorem reference_frame_congruences :
     (∀ i j, i ≠ j → ZMod' X.B.I X.B.g (hA X.B.I (X.bwd i) (X.bw j))) := by
   refine ⟨fun a b hab => ?_, fun a => (X.formsAtZero.2 a).2, fun i a => ?_, fun i j hij => ?_⟩
   · have h := (X.gramIntegral b a).2.2
-    rw [if_neg (Ne.symm hab), sub_zero] at h
+    rw [ite_eq_right (Ne.symm hab), sub_zero] at h
     rw [hA_symm X.B.I (X.e0 b)]; exact Z_sig _ _ h
   · rw [hA_symm X.B.I (X.e0 a)]; exact Z_sig _ _ ((X.weightVectorsIntegral i).2.2 a).2.2.1
   · have h := X.bw_dual i j
-    rwa [if_neg hij, sub_zero] at h
+    rwa [ite_eq_right hij, sub_zero] at h
 
 theorem level_subgroup_character_unitary : X.LevelSubgroupCharacter := by
   have hg := modulus_g_ne_zero X

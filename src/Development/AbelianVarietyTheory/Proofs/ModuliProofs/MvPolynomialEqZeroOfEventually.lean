@@ -267,8 +267,7 @@ theorem _root_.GlobalTheory.CountableFibres.exists_independent_ratios :
   have hAn : ∀ a, AnalyticOnNhd ℂ (fun z => θ z a) B := fun a => hO d B _ hB (hdiff a)
   obtain ⟨z₁, hz₁⟩ := hBne
   obtain ⟨a₀, ha₀⟩ : ∃ a₀, θ z₁ a₀ ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact (hfib z₁ hz₁).1 (funext h)
   set U := B ∩ (fun z => θ z a₀) ⁻¹' {0}ᶜ
   have hUo : IsOpen U := (hAn a₀).continuousOn.isOpen_inter_preimage hB isOpen_compl_singleton

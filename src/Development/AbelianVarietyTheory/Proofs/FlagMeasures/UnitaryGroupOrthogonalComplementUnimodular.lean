@@ -131,8 +131,7 @@ theorem exists_qrefl (L : LocE F E) {n : ℕ} {Hm : Matrix (Fin n) (Fin n) E} (h
 theorem exists_skew (L : LocE F E) :
     ∃ (δ : E) (D : F), D ≠ 0 ∧ L.cj δ = -δ ∧ δ * δ = algebraMap F E D := by
   have h1 : ∃ z : E, L.cj z ≠ z := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have hs : Function.Surjective (Algebra.linearMap F E) := fun z => (L.cj_fix z).1 (h z)
     have := LinearMap.finrank_le_finrank_of_surjective hs
     rw [L.rank, Module.finrank_self] at this
@@ -360,8 +359,6 @@ theorem hf_sum_right {ι : Type} (s : Finset ι) (f : ι → Fin n → E) (y : F
   | empty => simp [hf_zero_right]
   | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, _root_.GlobalTheory.HermOrthBasis.hf_add_right, ih]
 
-alias cj_hf := _root_.GlobalTheory.HermOrthBasis.cj_hf
-
 theorem cj_mem_O {t : E} (ht : t ∈ L.O) : L.cj t ∈ L.O := by
   rw [L.O_def] at ht ⊢
   exact ht.map (L.cj.toAlgHom.restrictScalars 𝒪[F])
@@ -448,7 +445,7 @@ theorem of_involution (hH : IsHerm L Hm) (c : (Fin n → E) →+ (Fin n → E))
     exact key h hh
   · exact ⟨_, key h hh, (conjAut L c hs hc).left_inv h⟩
   · obtain ⟨hN, hi, s, hsv⟩ := hg
-    have hN' : L.cj (hf L Hm a a) = hf L Hm a a := cj_hf L Hm hH a a
+    have hN' : L.cj (hf L Hm a a) = hf L Hm a a := GlobalTheory.HermOrthBasis.cj_hf L Hm hH a a
     have e1 : hf L Hm (g a) (g a) = hf L Hm a a := hi a a
     rw [hsv a] at e1
     simp only [_root_.GlobalTheory.HermOrthBasis.hf_add_left, _root_.GlobalTheory.HermOrthBasis.hf_add_right, _root_.GlobalTheory.HermOrthBasis.hf_smul_left, _root_.GlobalTheory.HermOrthBasis.hf_smul_right, map_mul, hN'] at e1
@@ -497,7 +494,7 @@ theorem exists_involution (hH : IsHerm L Hm) {ι : Type} [Fintype ι] (b : ι �
       induction hmem w using Submodule.span_induction with
       | mem _ h =>
         obtain ⟨j, rfl⟩ := h
-        rw [hbi, hbi, cj_hf L Hm hH]
+        rw [hbi, hbi, GlobalTheory.HermOrthBasis.cj_hf L Hm hH]
         by_cases hij : i = j
         · rw [hij]
         · rw [ho i j hij, ho j i (Ne.symm hij)]
@@ -516,7 +513,7 @@ theorem qrefl_inverted : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalS
   have hΓ : IsHermND L Γ := by
     refine ⟨?_, by rwa [Matrix.det_transpose]⟩
     funext i j
-    exact cj_hf L Hm hH.1 _ _
+    exact GlobalTheory.HermOrthBasis.cj_hf L Hm hH.1 _ _
   let φ : (Fin m → E) →ₗ[E] (Fin n → E) := Fintype.linearCombination E x
   have hφ : ∀ s t, hf L Hm (φ s) (φ t) = hf L Γ s t := fun s t => by
     simp only [φ, Fintype.linearCombination_apply, hf_sum_left, hf_sum_right, _root_.GlobalTheory.HermOrthBasis.hf_smul_left,
@@ -548,7 +545,7 @@ theorem qrefl_inverted : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalS
     · exact absurd rfl hij
     · exact hau l
     · show hf L Hm (u k) a = 0
-      rw [← cj_hf L Hm hH.1, hau, map_zero]
+      rw [← GlobalTheory.HermOrthBasis.cj_hf L Hm hH.1, hau, map_zero]
     · show hf L Hm (φ _) (φ _) = 0
       rw [hφ]; exact hw3 k l fun e => hij (by rw [e])
   have hz : IsUnit (gramT L Hm z).det := by
@@ -573,7 +570,7 @@ theorem qrefl_inverted : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalS
       rintro (i | i) (j | j) hij
       · exact hz2 i j fun e => hij (by rw [e])
       · show hf L Hm (z i) (r j) = 0
-        rw [← cj_hf L Hm hH.1, hrz, map_zero]
+        rw [← GlobalTheory.HermOrthBasis.cj_hf L Hm hH.1, hrz, map_zero]
       · exact hrz i j
       · exact hr3 i j fun e => hij (by rw [e]))
   refine ⟨Submodule.span L.O (Set.range (Sum.elim z r)),
@@ -641,24 +638,12 @@ theorem qrefl_mem (L : LocE F E) {n : ℕ} {Hm : Matrix (Fin n) (Fin n) E} (hH :
     rwa [this] at hv
   · rw [hfix v hv]; simp
 
-theorem conj_self {G : Type} [Group G] {H : Subgroup G} {h : G} (hh : h ∈ H) :
-    MulAut.conj h • H = H := by
-  ext y
-  rw [Subgroup.mem_pointwise_smul_iff_inv_smul_mem]
-  simp only [MulAut.smul_def, MulAut.inv_apply, MulAut.conj_symm_apply]
-  constructor
-  · intro hy
-    have := H.mul_mem (H.mul_mem hh hy) (H.inv_mem hh)
-    simpa [mul_assoc] using this
-  · intro hy
-    exact H.mul_mem (H.mul_mem (H.inv_mem hh) hy) hh
-
 variable [IsNonarchimedeanLocalField F] [CharZero F]
 
 theorem inf_stab_smul (L : LocE F E) {n : ℕ} (H : Subgroup ((Fin n → E) ≃ₗ[E] (Fin n → E)))
     {Λ : Submodule L.O (Fin n → E)} (hΛ : IsLat L Λ) {h} (hh : h ∈ H) :
     H ⊓ stabL L (h • Λ) = MulAut.conj h • (H ⊓ stabL L Λ) := by
-  rw [((_root_.GlobalTheory.LatComm.stab_commensurable L Λ Λ hΛ hΛ H).2 h).2, Subgroup.smul_inf, conj_self hh]
+  rw [((_root_.GlobalTheory.LatComm.stab_commensurable L Λ Λ hΛ hΛ H).2 h).2, Subgroup.smul_inf, Subgroup.conj_smul_eq_self_of_mem hh]
 
 theorem comm_conj (L : LocE F E) {n : ℕ} (H : Subgroup ((Fin n → E) ≃ₗ[E] (Fin n → E)))
     {Λ : Submodule L.O (Fin n → E)} (hΛ : IsLat L Λ) : ∀ h ∈ H,

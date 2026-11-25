@@ -6,49 +6,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramDetChang
 public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
 public import Mathlib.LinearAlgebra.Matrix.Permutation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.PicardGroup
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CongruenceFiniteIndex
 
 @[expose] public section
@@ -58,8 +16,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix Polynomial
 open GlobalTheory.BCT GlobalTheory.UnitaryBC Formalism.UG
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.Bc.ArchbcB.B.M4.Kap
 
@@ -166,7 +122,7 @@ theorem ker_conj_diagonal_eq_span (P : GL (Fin n) K) (d : Fin n → K) (S : Fins
     by_cases hj : j = i.1
     · subst hj
       rw [(hd _).2 i.2, zero_mul]
-    · rw [if_neg hj, mul_zero]
+    · rw [ite_eq_right hj, mul_zero]
 
 theorem exists_eigvec (γ : Matrix (Fin n) (Fin n) K) (t : K) (ht : γ.charpoly.eval t = 0) :
     ∃ x : Fin n → K, x ≠ 0 ∧ γ *ᵥ x = t • x := by
@@ -215,10 +171,10 @@ theorem det_submatrix_rev (A : Matrix (Fin n) (Fin n) K) (hA : ∀ i j, j ≠ Fi
     simp only [Matrix.mul_diagonal, Matrix.submatrix_apply, Equiv.Perm.permMatrix, PEquiv.toMatrix_apply,
       Equiv.toPEquiv_apply, Option.mem_def, Option.some.injEq]
     by_cases h : (revOn S hS) i = j
-    · rw [if_pos h, one_mul]
+    · rw [ite_eq_left h, one_mul]
       subst h
       simp [revOn, Fin.rev_rev]
-    · rw [if_neg h, zero_mul]
+    · rw [ite_eq_right h, zero_mul]
       apply hA
       intro hj
       apply h
@@ -232,10 +188,10 @@ theorem det_rev (A : Matrix (Fin n) (Fin n) K) (hA : ∀ i j, j ≠ Fin.rev i �
     simp only [Matrix.mul_diagonal, Equiv.Perm.permMatrix, PEquiv.toMatrix_apply,
       Equiv.toPEquiv_apply, Option.mem_def, Option.some.injEq, Fin.revPerm_apply]
     by_cases h : Fin.rev i = j
-    · rw [if_pos h, one_mul]
+    · rw [ite_eq_left h, one_mul]
       subst h
       rw [Fin.rev_rev]
-    · rw [if_neg h, zero_mul]
+    · rw [ite_eq_right h, zero_mul]
       exact hA i j (fun hj => h hj.symm)
   conv_lhs => rw [e]
   rw [Matrix.det_mul, Matrix.det_permutation, Matrix.det_diagonal]
@@ -310,7 +266,7 @@ theorem kapSign_eq_one_of_vals (hU : Unr E) (w : Pl E) (n : ℕ) (γ : GLw n w) 
   have hUn : ((γ.val.map (cj w))ᵀ) * γ.val = 1 := by
     have h := hγ
     unfold UL at h
-    rw [if_neg hs] at h
+    rw [ite_eq_right hs] at h
     have h2 : cT (cj w) (γ : Matrix (Fin n) (Fin n) (w.adicCompletion E)) * 1 *
         (γ : Matrix (Fin n) (Fin n) (w.adicCompletion E)) = 1 := h
     rw [Matrix.mul_one] at h2
@@ -464,7 +420,7 @@ theorem kapSign_eq_one_of_vals (hU : Unr E) (w : Pl E) (n : ℕ) (γ : GLw n w) 
       ordL_mul' ((map_ne_zero (cj w)).2 hd0) hd0, _root_.Formalism.UG.P.fSatake_ord_of_v (hcj d), hordS S hS]
     obtain ⟨r, hr⟩ := hevenS S hS
     exact Even.neg_one_zpow ⟨ordL d + r, by rw [hr]; ring⟩
-  · push_neg at hS
+  · push Not at hS
     obtain ⟨i, hi, hri⟩ := hS
     have hz : (H.submatrix (fun i : S => i.1) (fun i : S => i.1)).det = 0 := by
       refine Matrix.det_eq_zero_of_row_eq_zero ⟨i, hi⟩ fun j => ?_

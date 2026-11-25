@@ -180,7 +180,7 @@ private theorem chars_of_comm {Γ : Type} [Group Γ] :
       refine LinearMap.ext fun x => ?_
       obtain ⟨y, rfl⟩ := Submodule.mkQ_surjective W x
       have h1 : ρ a (ρ b y) = ρ b (ρ a y) := LinearMap.congr_fun (hc a b) y
-      simp [ρ', Module.End.mul_apply, h1]) hq
+      simp [ρ', h1]) hq
     refine ⟨Fin.cons c0.toHomUnits χ, fun g => ?_⟩
     rw [Fin.prod_univ_succ, GlobalTheory.CuspGL.charpoly_eq_restrict_mul_mapQ W (ρ g) (hW g)]
     simp only [Fin.cons_zero, Fin.cons_succ]

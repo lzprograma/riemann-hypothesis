@@ -239,7 +239,7 @@ theorem fix_torsion_of_fix_conj_rel (bar : O ≃+* O) (I : Ideal O) (hsup : I �
   let e : G → G → A := fun x y => if h : ∃ c, R x y c then h.choose else 1
   have he : ∀ x y, x ^ M = 1 → y ^ M = 1 → R x y (e x y) := fun x y hx hy => by
     have h : ∃ c, R x y c := (R_ex x y hx hy).exists
-    simp only [e, dif_pos h]
+    simp only [e, dite_eq_left h]
     exact h.choose_spec
   have hu : ∀ x y c, x ^ M = 1 → y ^ M = 1 → R x y c → e x y = c := fun x y c hx hy h =>
     (R_ex x y hx hy).unique (he x y hx hy) h
@@ -358,7 +358,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.LN
 
 noncomputable section

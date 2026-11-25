@@ -60,27 +60,6 @@ noncomputable def unitsValuationSES : ShortComplex (Rep ℤ Gal(L/K)) :=
     ext x
     exact ord_unit (K := L) x.toMul)
 
-theorem unitsValuationSES_shortExact : (unitsValuationSES K L).ShortExact := by
-  refine ShortComplex.ShortExact.mk' ?_ ?_ ?_
-  · refine GroundTheory.GroupCoh.shortComplex_exact_of_forall fun x hx => ?_
-    change Additive Lˣ at x
-    change ord ((x.toMul : Lˣ) : L) = 0 at hx
-    have hMem : x.toMul ∈ (unitsIncl L).range := by
-      rwa [ord_eq_zero_iff_mem, unitFiltrationUnits, unitFiltration_zero,
-        ← MonoidHom.range_eq_map] at hx
-    obtain ⟨u, hu⟩ := hMem
-    exact ⟨Additive.ofMul u, Additive.toMul.injective hu⟩
-  · exact (Rep.mono_iff_injective (integerUnitsToUnits K L)).2 fun _ _ h =>
-      Additive.toMul.injective (unitsIncl_injective (K := L) (congrArg Additive.toMul h))
-  · have hSurj : Function.Surjective (unitsOrd (L := L)) := by
-      obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[L]
-      intro n
-      refine ⟨n • Additive.ofMul (uniformizerUnit hϖ), ?_⟩
-      rw [map_zsmul]
-      change n • ord (uniformizerUnit hϖ : L) = n
-      rw [coe_uniformizerUnit, ord_uniformizer hϖ, smul_eq_mul, mul_one]
-    exact (Rep.epi_iff_surjective (unitsValuation K L)).2 hSurj
-
 end GroundTheory.ProfCoh
 end -- clump:auto
 end -- clump:auto

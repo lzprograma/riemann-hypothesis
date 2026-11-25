@@ -201,7 +201,7 @@ def ConvUC : Prop := ForAllC fun K _ _ μ _ μ₂ _ τ₁ τ₂ D d d' A A' =>
 
 def UnitB : Prop := ForAllC fun _ _ _ μ _ _ _ _ _ _ _ _ A A' => UnitAt μ A A'
 
-def ProjExC : Prop := ForAllC fun _ _ _ μ _ _ _ _ _ _ _ _ A A' =>
+def ProjExC : Prop := ForAllC fun _ _ _ _ _ _ _ _ _ _ _ _ A A' =>
   (∃ P, IsOrthogonalProjectionTwoLines A.J A'.J P) ∧ ∀ T : ℝ, 0 ≤ T → ∃ Λ, IsTrunc A.J A'.J T Λ
 
 end UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial

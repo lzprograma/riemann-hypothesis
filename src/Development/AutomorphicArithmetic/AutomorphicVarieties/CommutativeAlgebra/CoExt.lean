@@ -46,12 +46,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
-private theorem co_ext_approx {O R : Type} [CommRing O] [CommRing R] [Algebra O R] (m : Ideal R)
-    (A : Subalgebra O R) (T : Set R) (h0 : ∀ x : R, ∃ a : O, x - algebraMap O R a ∈ m)
-    (hT : ∀ t ∈ T, t ∈ A ∧ t ∈ m) (hm : m ≤ Ideal.span T ⊔ m ^ 2) (N : ℕ) (x : R) :
-    ∃ a ∈ A, x - a ∈ m ^ N :=
-  _root_.UpperTheory.Reformulated.B.LayerApproximation.co_ext_approx m A T h0 hT hm N x
-
 theorem UpperTheory.V.Alg.co_ext :
     ∀ (O : Type) [CommRing O] [IsLocalRing O] (R : Type) [CommRing R] [Algebra O R] [IsCO O R] (B : Type) [CommRing B] [Algebra O B] [IsCO O B] (R' : Type) [CommRing R'] [Algebra O R'] (I : Ideal R') [IsHausdorff I R'] (i : B →ₐ[O] R) (S : Set R), S ⊆ maximalIdeal R → maximalIdeal R ≤ Ideal.span S ⊔ (maximalIdeal B).map i ⊔ maximalIdeal R ^ 2 →
       ∀ f f' : R →ₐ[O] R', (∃ n : ℕ, ∀ x ∈ maximalIdeal R ^ n, f x ∈ I ∧ f' x ∈ I) → f.comp i = f'.comp i → (∀ s ∈ S, f s = f' s) → f = f' := by
@@ -75,8 +69,8 @@ theorem UpperTheory.V.Alg.co_ext :
   ext x
   rw [← sub_eq_zero]
   refine IsHausdorff.haus (I := I) inferInstance _ fun k => ?_
-  obtain ⟨a, ha, h⟩ := co_ext_approx (maximalIdeal R) (AlgHom.equalizer f f') _
-    (IsCO.res_surj (O := O)) hT hm' (n * k) x
+  obtain ⟨a, ha, h⟩ := _root_.UpperTheory.Reformulated.B.LayerApproximation.co_ext_approx
+    (maximalIdeal R) (AlgHom.equalizer f f') _ (IsCO.res_surj (O := O)) hT hm' (n * k) x
   have ha' : f a = f' a := ha
   have : f x - f' x = f (x - a) - f' (x - a) := by rw [map_sub, map_sub, ha']; ring
   rw [SModEq.zero, smul_eq_mul, Ideal.mul_top, this]

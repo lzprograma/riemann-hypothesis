@@ -46,15 +46,6 @@ def Seam.toCar (s : Seam D X) : Cd.Seam (Car.ofRec D) X := ⟨s.iE, s.iT, s.σ�
 
 end Bridge
 
-section OverColDat
-
-variable (d : ColDat)
-
-variable {d}
-
-
-end OverColDat
-
 namespace Test
 
 open Formalism.BasicNotions.Examples₂ Formalism.FrobeniusOrbits

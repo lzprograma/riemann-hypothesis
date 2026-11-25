@@ -131,7 +131,7 @@ theorem eN_eq_zero {N i : ℕ} (h : N ≤ i) : Loc.eN E N i = 0 := by
   funext l
   have := l.2
   simp only [Loc.eN, Pi.zero_apply]
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 theorem r1cond_iff {n c : ℕ} (γ : (Fin (n + c) → E) ≃ₗ[E] (Fin (n + c) → E)) :
     Loc.R1cond E n c γ ↔ ∀ l l' : Fin (n + c), ((n ≤ l.val ∧ l'.val ≤ l.val) ∨ l'.val = n) →
@@ -140,7 +140,7 @@ theorem r1cond_iff {n c : ℕ} (γ : (Fin (n + c) → E) ≃ₗ[E] (Fin (n + c) 
   · rintro ⟨h1, h2, h3⟩ l l' h
     rcases h with ⟨ha, hb⟩ | ha
     · by_cases hl : l'.val < n
-      · rw [if_neg (by rintro rfl; omega)]
+      · rw [ite_eq_right (by rintro rfl; omega)]
         refine h1 0 (Pi.single l' 1) (fun m hm => ?_) l (by simpa using ha)
         rw [Pi.single_eq_of_ne]
         rintro rfl
@@ -157,7 +157,7 @@ theorem r1cond_iff {n c : ℕ} (γ : (Fin (n + c) → E) ≃ₗ[E] (Fin (n + c) 
       refine Finset.sum_eq_zero fun l' _ => ?_
       simp only [Set.mem_setOf_eq] at hl
       by_cases h' : l'.val < n + i
-      · rw [h l l' (Or.inl ⟨by omega, by omega⟩), if_neg (by rintro rfl; omega), zero_mul]
+      · rw [h l l' (Or.inl ⟨by omega, by omega⟩), ite_eq_right (by rintro rfl; omega), zero_mul]
       · rw [hv l' h', mul_zero]
     · by_cases hn : n < n + c
       · have := eN_eq (E := E) (⟨n, hn⟩ : Fin (n + c))
@@ -278,7 +278,7 @@ theorem exists_approx (hι : DenseRange ι) (M : Matrix B B k) {U : Set (Matrix 
     · rfl
   refine ⟨_, by rw [e]; exact hx, fun a b h => ?_⟩
   rw [e]
-  exact if_pos h
+  exact ite_eq_left h
 
 theorem dc_iff (hι : DenseRange ι) {A : Type} [Fintype A] [DecidableEq A] {n c : ℕ} {pos : A → ℕ} (hpos : ∀ a, pos a < n)
     {e : A ⊕ Fin c ≃ Fin (n + c)} (he : IsOrd (yPos pos n) e) (J : Subgroup (GL (A ⊕ Fin c) k)) (hJ : KOne k _ ≤ J)
@@ -380,7 +380,7 @@ theorem par_iff (hq0 : (q : E) ≠ 0) (kj n c : ℕ) (κ : Sp E (n + c) ≃ₗ[E
     · simpa [div_eq_mul_inv] using h' l l' h2 h1
     · simpa using h l l'
   · have := h' l l'
-    rw [if_pos h1, if_neg h2] at this
+    rw [ite_eq_left h1, ite_eq_right h2] at this
     simpa [div_eq_mul_inv] using this
 
 theorem mem_JQ_iff [StarRing E] (hq0 : (q : E) ≠ 0) (kj n c : ℕ) (κ : Sp E (n + c) ≃ₗ[E] Sp E (n + c)) :
@@ -485,7 +485,7 @@ theorem levelAgree : ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (Ch : Chars X 
   have hJ : ∀ g, g ∈ ((W.T s R).lev j (cOf R j) h).J ↔ (reGL o).symm g ∈ (parahoric _ (Fin j × Fin R.t) W.δ W.tame).J :=
     fun g => by rw [← hconj]; rfl
   have hmem : ∀ γ : AutY X R j, phi ι e γ ∈ ((W.T s R).lev j (cOf R j) h).J ↔ γ ∈ Jat (Pr := Pr) cst.sharp j P.1 := fun γ => by
-    rw [hJ, Jat, if_neg hA.nmem]
+    rw [hJ, Jat, ite_eq_right hA.nmem]
     exact mem_par_iff hA.compl W.unif h hn he W.tame γ
   refine ⟨hmem γ, fun hg' => ?_, fun _ γ' g' hg' => ?_⟩
   · obtain ⟨h1, h2⟩ := mem_parahoric.1 ((hJ _).1 hg')
@@ -498,7 +498,7 @@ theorem levelAgree : ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (Ch : Chars X 
     have hv := valuation_det_of_mem_KO hD
     rw [e2] at hv
     have hi := GlobalTheory.SymBridge.ComplRes.intAt_of_v hA.compl hv.le
-    rw [e1, hA.del _ _ hi ((GlobalTheory.SymBridge.ComplRes.v_eq_one_iff_red hA.compl W.unif hi).1 hv) e2, lamRow, if_neg hA.nmem,
+    rw [e1, hA.del _ _ hi ((GlobalTheory.SymBridge.ComplRes.v_eq_one_iff_red hA.compl W.unif hi).1 hv) e2, lamRow, ite_eq_right hA.nmem,
       LocE.lamQB, map_inv₀]
   · obtain ⟨e', he', hg'⟩ := hg'
     obtain rfl : e' = e := Equiv.ext fun a => Fin.ext ((he' a).trans (he a).symm)

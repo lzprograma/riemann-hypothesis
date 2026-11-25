@@ -386,7 +386,7 @@ theorem exists_lower {Y : Model Xo c β} {p : ℕ} (hp : 1 < p) {C : SCF p} {P :
   obtain ⟨u, hu⟩ := (hco a).2.1 r₀ _ hr₀ h.choose_spec
   have hrm : h.choose ∈ maximalIdeal A.R := hu ▸ Ideal.mul_mem_left _ _ (hmem ha)
   have := Real.logb_le_logb_of_le hp' (norm_pos_iff.2 (coord_ne_zero A a _ h.choose_spec)) (h2 _ hrm)
-  simp only [vPsiAt, dif_pos h]
+  simp only [vPsiAt, dite_eq_left h]
   linarith
 
 theorem betaPosDef (Y : Model Xo c β) {p : ℕ} (hp : 1 < p) : BetaPosDef Y p := fun C P A => by

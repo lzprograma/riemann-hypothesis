@@ -14,7 +14,9 @@ import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.Prelims.Exi
 import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.Prelims.HermitianSemidefiniteNullRadicalStatement
 import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.Prelims.IsCompactSupAddSubgroupStatement
 import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.Prelims.IsOpenAdditiveCharacterKernelStatement
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.Prelims.RelIndexOpenCompactNeZeroStatement
+import Mathlib.GroupTheory.Index
+import Mathlib.Topology.Algebra.Group.Defs
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexOpenCompactNeZero
 
 noncomputable section
 
@@ -188,7 +190,7 @@ theorem inv_mulVec_cancel {m : ℕ} (g : G1 k m) (x : V1 k m) : gmat g⁻¹ *ᵥ
 theorem comap_comap_inv {m : ℕ} (g : G1 k m) (A : Sub1 k m) : pre g⁻¹ (pre g A) = A := by
   ext x; simp only [pre, AddSubgroup.mem_comap, LinearMap.toAddMonoidHom_coe, mulVecLin_apply, mulVec_inv_cancel]
 theorem isLat_sup {m : ℕ} {A B : Sub1 k m} (hA : IsLat A) (hB : IsLat B) : IsLat (A ⊔ B) :=
-  ⟨GlobalTheory.T.isCompact_sup_addSubgroup A B hA.1 hB.1, AddSubgroup.isOpen_mono le_sup_left hA.2⟩
+  ⟨GlobalTheory.CompanionTheory.Topology.isCompact_addSubgroup_sup A B hA.1 hB.1, AddSubgroup.isOpen_mono le_sup_left hA.2⟩
 theorem pi_lt_mem_nhds {n : ℕ} {γ : ValueGroupWithZero k} (hγ : γ ≠ 0) :
     Set.univ.pi (fun _ : Fin n => {y : k | valuation k y < γ}) ∈ 𝓝 (0 : Fin n → k) :=
   set_pi_mem_nhds Set.finite_univ fun _ _ => (IsValuativeTopology.hasBasis_nhds_zero' k).mem_of_mem hγ
@@ -207,10 +209,7 @@ theorem exists_ne_one {ψ : Ch k} (hψ1 : ψ ≠ 1) : ∃ x, ψ x ≠ 1 := by
   by_contra hc; push Not at hc; exact hψ1 (AddChar.ext _ _ fun x => by rw [hc x, one_apply])
 theorem exists_lat_mem (n : ℕ) (x : Fin n → k) :
     ∃ A : AddSubgroup (Fin n → k), IsCompact (A : Set (Fin n → k)) ∧ IsOpen (A : Set (Fin n → k)) ∧ x ∈ A :=
-  GlobalTheory.T.exists_compact_open_subgroup_mem n x
-theorem relIndex_ne_zero' {X : Type} [AddCommGroup X] [TopologicalSpace X] [IsTopologicalAddGroup X]
-    (A H : AddSubgroup X) (hA : IsCompact (A : Set X)) (hH : IsOpen (H : Set X)) (hHA : H ≤ A) :
-    H.relIndex A ≠ 0 := GlobalTheory.T.relIndex_open_compact_ne_zero A H hA hH hHA
+  GlobalTheory.CompanionTheory.LatticePoint.exists_compact_open_addSubgroup_mem n x
 theorem apply_eq_zero_of_isotropic {V : Type} [AddCommGroup V] [Module ℂ V] (B : SForm V)
     (hB : ∀ v w, B w v = cJ (B v w)) (hB' : ∀ v, 0 ≤ (B v v).re) (x : V) (hx : (B x x).re = 0) (w : V) : B x w = 0 :=
   GlobalTheory.T.hermitian_semidefinite_null_radical B hB hB' x hx w
@@ -232,15 +231,15 @@ theorem card_smul_sum_eq {M : Type} [AddCommGroup M] [Module ℂ M] {A H H' : Ad
     (hTr' : ∀ a ∈ A, ∃! t, t ∈ T' ∧ a - t ∈ H') (F : X → M) (hF : ∀ a, ∀ h ∈ H, F (a + h) = F a)
     (hF' : ∀ a, ∀ h ∈ H', F (a + h) = F a) : (T'.card : ℂ) • ∑ t ∈ T, F t = (T.card : ℂ) • ∑ t ∈ T', F t := by
   have e1 := sum_congr rfl fun s hs =>
-    GlobalTheory.T.coset_sum_translate_invariant hH hT hTr F hF (hT' s hs)
+    GlobalTheory.CompanionTheory.Transversal.sum_add_eq_sum_of_transversal hH hT hTr F hF (hT' s hs)
   have e2 := sum_congr rfl fun t ht =>
-    GlobalTheory.T.coset_sum_translate_invariant hH' hT' hTr' F hF' (hT t ht)
+    GlobalTheory.CompanionTheory.Transversal.sum_add_eq_sum_of_transversal hH' hT' hTr' F hF' (hT t ht)
   rw [sum_const] at e1 e2; rw [Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul, ← e1, ← e2, Finset.sum_comm]
   exact sum_congr rfl fun _ _ => sum_congr rfl fun _ _ => by rw [add_comm]
 theorem sum_transversal_char {A H : AddSubgroup X} (hHA : H ≤ A) {T : Finset X} (hT : ∀ t ∈ T, t ∈ A)
     (hTr : ∀ a ∈ A, ∃! t, t ∈ T ∧ a - t ∈ H) (χ : X → ℂ) (hχ : ∀ a b, χ (a + b) = χ a * χ b)
     (hH : ∀ h ∈ H, χ h = 1) {a : X} (ha : a ∈ A) (hne : χ a ≠ 1) : ∑ t ∈ T, χ t = 0 := by
-  have key := GlobalTheory.T.coset_sum_translate_invariant hHA hT hTr χ
+  have key := GlobalTheory.CompanionTheory.Transversal.sum_add_eq_sum_of_transversal hHA hT hTr χ
     (fun b h hh => by rw [hχ, hH h hh, mul_one]) ha
   simp only [hχ, ← Finset.sum_mul] at key
   exact (mul_eq_zero.mp (by linear_combination key)).resolve_right (sub_ne_zero.mpr hne)
@@ -512,9 +511,9 @@ theorem conj_psi (y : k) : cJ (pc ψ y) = pc ψ (-y) := by rw [pc, pc, map_neg_e
 theorem isOpen_stabSub (hπ : IsSmooth π) (v : V) : IsOpen (stabSub h π v : Set (V1 k m)) :=
   (hπ v).preimage (continuous_colEl h)
 theorem isOpen_charSub (hψ : Continuous ψ) {n : ℕ} (ξ : Fin n → k) : IsOpen (charSub k ψ ξ : Set (Fin n → k)) :=
-  (GlobalTheory.T.isOpen_additive_character_kernel ψ hψ).preimage (continuous_const.dotProduct continuous_id)
+  (GlobalTheory.CompanionTheory.LocalFieldChar.isOpen_addChar_ker ψ hψ).preimage (continuous_const.dotProduct continuous_id)
 theorem isLat_comap {n : ℕ} (g : G1 k n) {A : Sub1 k n} (hA : IsLat A) : IsLat (pre g A) :=
-  GlobalTheory.T.isCompact_isOpen_comap_mulVecLin (n + 1) _ (Units.isUnit g) A hA.1 hA.2
+  GlobalTheory.CompanionTheory.Dblock.ComapLat.comap_mulVec_compact_open (n + 1) _ (Units.isUnit g) A hA.1 hA.2
 theorem avg_eq {ξ : V1 k m} {A : Sub1 k m} {v : V} {p : Sub1 k m × Finset (V1 k m)} (hp : AvgData ψ h π ξ A v p) :
     avg ψ h π ξ A v = ((p.2.card : ℂ)⁻¹) • ∑ t ∈ p.2, (cJ (pc ψ (ξ ⬝ᵥ t))) • π (cE h t) v := by
   have hd : ∃ p, AvgData ψ h π ξ A v p := ⟨p, hp⟩
@@ -533,8 +532,7 @@ theorem exists_avgData (hψ : Continuous ψ) (hπ : IsSmooth π) (ξ : V1 k m) {
   have ho : IsOpen ((U ⊓ A ⊓ stabSub h π v ⊓ charSub k ψ ξ : Sub1 k m) : Set (V1 k m)) := by
     simp only [AddSubgroup.coe_inf]
     exact ((hU.inter hA.2).inter (isOpen_stabSub h π hπ v)).inter (isOpen_charSub ψ hψ ξ)
-  obtain ⟨T, hT, hTr⟩ := GlobalTheory.T.exists_finite_coset_representatives A _ hA.1 ho
-    (inf_le_left.trans (inf_le_left.trans inf_le_right))
+  obtain ⟨T, hT, hTr⟩ := GlobalTheory.CompanionTheory.OpenSubgroupTransversal.main A _ hA.1 ho
   exact ⟨(_, T), ⟨inf_le_left.trans (inf_le_left.trans inf_le_right), ho,
     fun _ ha => ha.1.2, fun _ ha => ha.2, hT, hTr⟩,
     inf_le_left.trans (inf_le_left.trans inf_le_left)⟩
@@ -577,7 +575,7 @@ theorem avg_eigen (hψ : Continuous ψ) (hπ : IsSmooth π) (ξ : V1 k m) {A : S
       rw [← mul_apply_eq_comp, ← map_mul, ← colEl_add, add_comm y t, show F (t + y) = _ from rfl, smul_smul,
         pc, pc, pc, dotProduct_add, map_add_eq_mul, Circle.coe_mul, map_mul]; congr 1
       linear_combination (-cJ (pc ψ (ξ ⬝ᵥ t))) * conj_circle_mul_self (ψ (ξ ⬝ᵥ y)) : _ = pc ψ (ξ ⬝ᵥ y) • F (t + y)),
-    ← smul_sum, smul_comm, GlobalTheory.T.coset_sum_translate_invariant hp1 hp5 hp6 F
+    ← smul_sum, smul_comm, GlobalTheory.CompanionTheory.Transversal.sum_add_eq_sum_of_transversal hp1 hp5 hp6 F
       (fun a d hd => by simp only [F, pc, dotProduct_add, map_add_eq_mul, hp4 d hd, mul_one, colEl_add,
         map_mul, mul_apply_eq_comp, hp3 d hd]) hy]
 theorem avg_colEl (hψ : Continuous ψ) (hπ : IsSmooth π) (ξ : V1 k m) {A : Sub1 k m} (hA : IsLat A) {a : V1 k m}

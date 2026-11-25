@@ -1,49 +1,8 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
 public import Mathlib.RingTheory.KrullDimension.NonZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -75,7 +34,7 @@ theorem killBlocks_monomial_of_forall (S : Set K) (m : (Σ k, ι k) →₀ ℕ) 
   rw [killBlocks, aeval_monomial, monomial_eq, algebraMap_eq]
   congr 1
   refine Finsupp.prod_congr fun p hp => ?_
-  rw [if_neg (h p hp)]
+  rw [ite_eq_right (h p hp)]
 
 
 omit [Fintype K] [∀ k, Fintype (ι k)] in
@@ -83,7 +42,7 @@ theorem killBlocks_monomial_of_mem (S : Set K) (m : (Σ k, ι k) →₀ ℕ) (c 
     (hp : p ∈ m.support) (hS : p.1 ∈ S) : killBlocks S (monomial m c : MRing ι) = 0 := by
   rw [killBlocks, aeval_monomial, Finsupp.prod]
   refine mul_eq_zero_of_right _ (Finset.prod_eq_zero hp ?_)
-  rw [if_pos hS, zero_pow (Finsupp.mem_support_iff.mp hp)]
+  rw [ite_eq_left hS, zero_pow (Finsupp.mem_support_iff.mp hp)]
 
 theorem killBlocks_of_isMultiHomog (S : Set K) {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) :
     killBlocks S f = f ∨ killBlocks S f = 0 := by
@@ -159,17 +118,17 @@ theorem arithVarZero : ReciprocityTheory.ChartRestriction.G.AI.I2.ArithVarZeroSt
     refine SetLike.lt_iff_le_and_exists.mpr
       ⟨comap_killBlocks_mono hPh fun k hk => Nat.lt_succ_of_lt hk, X ⟨e.symm ⟨n, hn⟩, i⟩, ?_, ?_⟩
     · show killBlocks _ _ ∈ P
-      rw [killBlocks_X, if_pos (by simp [S])]
+      rw [killBlocks_X, ite_eq_left (by simp [S])]
       exact P.zero_mem
     · intro h2
       change killBlocks _ _ ∈ P at h2
-      rw [killBlocks_X, if_neg (by simp [S])] at h2
+      rw [killBlocks_X, ite_eq_right (by simp [S])] at h2
       exact hi h2
   have hall : ∀ f : MRing ι, killBlocks (S m) f = C (constantCoeff f) := by
     intro f
     have : killBlocks (S m) = aeval (0 : (Σ k, ι k) → MRing ι) := by
       refine MvPolynomial.algHom_ext fun p => ?_
-      rw [killBlocks_X, if_pos (by simp [S]), aeval_X]
+      rw [killBlocks_X, ite_eq_left (by simp [S]), aeval_X]
       rfl
     rw [this, aeval_zero, algebraMap_eq]
   have hQm : ∀ f, f ∈ Q m ↔ constantCoeff f = 0 := by
@@ -201,11 +160,11 @@ theorem arithVarZero : ReciprocityTheory.ChartRestriction.G.AI.I2.ArithVarZeroSt
   have hTlt : ∀ n, n ≤ m → T n < T (n + 1) := by
     intro n hn
     dsimp only [T]
-    rw [if_pos hn]
+    rw [ite_eq_left hn]
     rcases hn.lt_or_eq with h | h
-    · rw [if_pos (Nat.succ_le_of_lt h)]
+    · rw [ite_eq_left (Nat.succ_le_of_lt h)]
       exact hstep n h
-    · rw [if_neg (by omega), h]
+    · rw [ite_eq_right (by omega), h]
       exact hstep2
   let g : Fin (m + 2) → PrimeSpectrum.zeroLocus (R := MRing ι) (P : Set (MRing ι)) :=
     fun j => ⟨⟨T j, hTp j⟩, hPT j⟩

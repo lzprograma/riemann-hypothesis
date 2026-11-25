@@ -4,46 +4,7 @@ public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
 public import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
 public import Formalism.LocalRingCardinality.DataKerI
 public import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -693,11 +654,11 @@ theorem posPl_eq (D : D7) (p : ℕ) (b : Bool) (t : HH D) (e : ℕ) :
 theorem isReps_repsPl (X : Inst D L) (p : ℕ) : IsReps D p (repsPl X p) := by
   rintro ⟨β, t⟩
   by_cases hs : IsSg D p
-  · have hst : stepP D p = 2 • hP D p := if_pos hs
+  · have hst : stepP D p = 2 • hP D p := ite_eq_left hs
     have hR : ∀ r : Pl D, r ∈ repsPl X p ↔ r.1 = false ∧ X.bs (2 • hP D p) r.2 = r.2 := by
       intro r
       unfold repsPl
-      rw [if_pos hs, Finset.mem_image]
+      rw [ite_eq_left hs, Finset.mem_image]
       constructor
       · rintro ⟨s, hs', rfl⟩; exact ⟨rfl, by rw [← hst]; exact mem_reps.1 hs'⟩
       · rintro ⟨h1, h2⟩; exact ⟨r.2, mem_reps.2 (by rw [hst]; exact h2), Prod.ext h1.symm rfl⟩
@@ -743,11 +704,11 @@ theorem isReps_repsPl (X : Inst D L) (p : ℕ) : IsReps D p (repsPl X p) := by
         have : t - hP D p = t1 + c • (2 • hP D p) := by
           rw [← he2, add_smul, one_smul, ← mul_smul, mul_comm c 2]; abel
         rw [this, bs_iter, h2]
-  · have hst : stepP D p = hP D p := if_neg hs
+  · have hst : stepP D p = hP D p := ite_eq_right hs
     have hR : ∀ r : Pl D, r ∈ repsPl X p ↔ X.bs (hP D p) r.2 = r.2 := by
       intro r
       unfold repsPl
-      rw [if_neg hs, Finset.mem_union, Finset.mem_image, Finset.mem_image]
+      rw [ite_eq_right hs, Finset.mem_union, Finset.mem_image, Finset.mem_image]
       constructor
       · rintro (⟨s, hs', rfl⟩ | ⟨s, hs', rfl⟩) <;> (rw [← hst]; exact mem_reps.1 hs')
       · intro h2
@@ -851,26 +812,26 @@ theorem liftI_of {X : Inst D L} {K : Consts} {Dx : DivX D} {T : TwForms D} {E : 
   have eF : L.F (i + 1) w = FInert D (i + 1) (D.what₂.places.resChar w) := by
     rw [hF (i + 1) (succ_mem_lifts hi) w]
     unfold Fval FvalP SizeData₂.gTypes
-    rw [if_neg hg, if_neg hr, if_pos ⟨hin, hX2⟩]
+    rw [ite_eq_right hg, ite_eq_right hr, ite_eq_left ⟨hin, hX2⟩]
   have eE : ES L Xe K ce u (i + 1) w = vDG D u w + EatI L K ce (i + 1) (D.what₂.places.resChar w) := by
     unfold ES Eval vDG
-    simp only [if_neg hT, if_neg hg0, if_neg hg1, if_neg hr, if_pos (And.intro hin hX2), if_neg hc]
+    simp only [ite_eq_right hT, ite_eq_right hg0, ite_eq_right hg1, ite_eq_right hr, ite_eq_left (And.intro hin hX2), ite_eq_right hc]
   by_cases hcs : IsCs D (D.what₂.places.resChar w)
   · obtain ⟨h1, h2⟩ := hS _ (ho.2 _ (D.what₂.places.resChar_prime w) hcs.1) hcs hX2 u i hi
     refine (hk hE.dgam u μ w hUs hL i hi _ (fun Lc Lc' => h1 _ (hb.2 u μ w hL hcs i hi (nEven D i) Lc Lc'))).mono ?_
     have hsum := h2 hE.large
-    rw [eF, eE, WeilJacquetShalikaLaw.g0S, if_pos hcs]
+    rw [eF, eE, WeilJacquetShalikaLaw.g0S, ite_eq_left hcs]
     by_cases h0 : i = 0
-    · simp only [if_pos h0]; linarith
-    · simp only [if_neg h0]; linarith
+    · simp only [ite_eq_left h0]; linarith
+    · simp only [ite_eq_right h0]; linarith
   have hI' : (IsResidueClassZero D (D.what₂.places.resChar w) ∧ HEv D (D.what₂.places.resChar w)) ∨ IsSg D (D.what₂.places.resChar w) :=
     hI.imp (fun h => ⟨h.1, ((class_zero_trichotomy h.1).resolve_right (fun h' => h'.elim h.2 hcs))⟩) id
   refine (hk hE.dgam u μ w hUs hL i hi _ (he u μ w hL hI' hX2 i hi)).mono ?_
   have hsum := hs _ (D.what₂.places.resChar_prime w) hI' (i + 1) (succ_mem_lifts hi)
-  rw [eF, eE, WeilJacquetShalikaLaw.g0S, if_neg hcs]
+  rw [eF, eE, WeilJacquetShalikaLaw.g0S, ite_eq_right hcs]
   by_cases h0 : i = 0
-  · simp only [if_pos h0]; linarith
-  · simp only [if_neg h0]; linarith
+  · simp only [ite_eq_left h0]; linarith
+  · simp only [ite_eq_right h0]; linarith
 
 theorem liftC_of {K : Consts} {Dx : DivX D} {T : TwForms D} {E : Ent D} {lev : LevelData D} {Xe : ErrX D}
     {ce : ErrC} {sp C : ℝ} (hk : KForm E Dx T sp) (ho : OrbitParityCond D) (he : EntriesAtC E Dx L C) (hs : ValuationSumBound E L ce C) :
@@ -886,11 +847,11 @@ theorem liftC_of {K : Consts} {Dx : DivX D} {T : TwForms D} {E : Ent D} {lev : L
   have eF : L.F (i + 1) w = FInert D (i + 1) (D.what₂.places.resChar w) := by
     rw [hF (i + 1) (succ_mem_lifts hi) w]
     unfold Fval FvalP SizeData₂.gTypes
-    rw [if_neg hg, if_neg hr, if_pos ⟨Or.inl hc0, hX2⟩]
+    rw [ite_eq_right hg, ite_eq_right hr, ite_eq_left ⟨Or.inl hc0, hX2⟩]
   rw [eF]
   by_cases h0 : i = 0
-  · simp only [if_pos h0]; linarith
-  · simp only [if_neg h0]; linarith
+  · simp only [ite_eq_left h0]; linarith
+  · simp only [ite_eq_right h0]; linarith
 
 theorem liftD_of {K : Consts} {Dx : DivX D} {T : TwForms D} {E : Ent D} {lev : LevelData D} {Xe : ErrX D}
     {ce : ErrC} {sp : ℝ} (hk : KForm E Dx T sp) (hgd : TypePrimeNotDiscriminant D) (he : EntriesAtDiscriminant E Dx) :
@@ -907,15 +868,15 @@ theorem liftD_of {K : Consts} {Dx : DivX D} {T : TwForms D} {E : Ent D} {lev : L
   have eF : L.F (i + 1) w = FRamD D (i + 1) := by
     rw [hF (i + 1) (succ_mem_lifts hi) w]
     unfold Fval FvalP SizeData₂.gTypes
-    rw [if_neg hg, if_pos hd]
+    rw [ite_eq_right hg, ite_eq_left hd]
   have hsup : ∑ t : HH D, ctD D u (i + 1) t ≤
       Finset.univ.sup' ⟨D.u₀, Finset.mem_univ _⟩ fun u : D.what₂.Word => ∑ t : HH D, ctD D u (i + 1) t :=
     Finset.le_sup' (fun u : D.what₂.Word => ∑ t : HH D, ctD D u (i + 1) t) (Finset.mem_univ u)
   rw [eF]
   unfold EatD
   by_cases h0 : i = 0
-  · simp only [if_pos h0]; linarith
-  · simp only [if_neg h0]; linarith
+  · simp only [ite_eq_left h0]; linarith
+  · simp only [ite_eq_right h0]; linarith
 
 theorem sum_shape (D : D7) (f : ℕ → ℝ) (c : ℝ) :
     ∑ j ∈ SizeData₂.lifts D, (f j + (if j = 1 then c else 0)) = (∑ j ∈ SizeData₂.lifts D, f j) + c := by
@@ -955,23 +916,23 @@ theorem entI_of {X : Inst D L} {K : Consts} {Dx : DivX D} {E : Ent D} {ce : ErrC
   intro r hr
   unfold betaI
   by_cases hk : r ∈ kindA D (D.what₂.places.resChar w)
-  · rw [if_pos hk]
+  · rw [ite_eq_left hk]
     have hk' := (Finset.mem_filter.1 hk).2
     have hc0 : IsResidueClassZero D (D.what₂.places.resChar w) ∧ hP D (D.what₂.places.resChar w) ≠ 0 :=
       (hI.resolve_right hk'.1).imp id HEv.ne_zero
     have hr' : r.2 ∈ reps X (D.what₂.places.resChar w) := by
       unfold repsPl at hr
-      rw [if_neg hk'.1, Finset.mem_union, Finset.mem_image, Finset.mem_image] at hr
+      rw [ite_eq_right hk'.1, Finset.mem_union, Finset.mem_image, Finset.mem_image] at hr
       rcases hr with ⟨t, ht, rfl⟩ | ⟨t, ht, rfl⟩
       · exact ht
       · exact ht
     have := hA w hok hc0.1 hc0.2 hX u i hi r.2 hr'
     have e : r = (false, r.2) := Prod.ext hk'.2 rfl
     unfold g0Pl
-    rw [if_pos hk'.2]
+    rw [ite_eq_left hk'.2]
     rw [e]
     exact this
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
     have hbc : r ∈ kindBC D (D.what₂.places.resChar w) := by
       unfold kindBC
       unfold kindA at hk
@@ -991,7 +952,7 @@ theorem nP_eq_one {p : ℕ} (h1 : IsResidueClassZero D p) (h2 : hP D p = 0) : nP
     have h4 : D.host.cls p = PrimeClass.signal := h
     rw [h4] at h3; simp at h3
   unfold nP
-  rw [if_neg hs, h2, addOrderOf_zero]
+  rw [ite_eq_right hs, h2, addOrderOf_zero]
 
 theorem card_Pl (D : D7) : (Fintype.card (Pl D) : ℝ) = (D.R.f : ℝ) := by
   have h : Fintype.card D.R.A = D.R.ord := D.R.card_A
@@ -1093,8 +1054,8 @@ theorem sum_orbA (p j : ℕ) (R : Finset (Pl D)) (hR : IsReps D p R) :
   refine Finset.sum_congr rfl fun r _ => ?_
   by_cases hr : r ∈ kindA D p
   · have hc : ∀ s : ZMod (nP D p), (if orbMap D p r s ∈ kindA D p then FOrb D j p (orbMap D p r s) else 0) = FOrb D j p r :=
-      fun s => by rw [if_pos ((memA_orb p r s).2 hr)]; exact FOrb_step D j p r s.val
-    rw [if_pos hr, Finset.sum_congr rfl (fun s _ => hc s), Finset.sum_const, Finset.card_univ, ZMod.card, nsmul_eq_mul,
+      fun s => by rw [ite_eq_left ((memA_orb p r s).2 hr)]; exact FOrb_step D j p r s.val
+    rw [ite_eq_left hr, Finset.sum_congr rfl (fun s _ => hc s), Finset.sum_const, Finset.card_univ, ZMod.card, nsmul_eq_mul,
       mul_div_cancel_left₀ _ hn]
   · simp [hr, memA_orb]
 
@@ -1119,9 +1080,9 @@ theorem sum_g0Pl (X : Inst D L) (K : Consts) (p j : ℕ) :
   have inj : ∀ b : Bool, Function.Injective (fun t : HH D => ((b, t) : Pl D)) := fun b x y h => (Prod.ext_iff.1 h).2
   unfold repsPl
   by_cases hs : IsSg D p
-  · rw [if_pos hs, Finset.sum_image (fun x _ y _ h => inj false h)]
+  · rw [ite_eq_left hs, Finset.sum_image (fun x _ y _ h => inj false h)]
     exact Finset.sum_congr rfl fun t _ => by simp [g0Pl]
-  · rw [if_neg hs, Finset.sum_union, Finset.sum_image (fun x _ y _ h => inj false h),
+  · rw [ite_eq_right hs, Finset.sum_union, Finset.sum_image (fun x _ y _ h => inj false h),
       Finset.sum_image (fun x _ y _ h => inj true h)]
     · have : ∑ t ∈ reps X p, g0Pl X K p j (true, t) = 0 := Finset.sum_eq_zero fun t _ => by simp [g0Pl]
       rw [this, add_zero]
@@ -1144,7 +1105,7 @@ theorem sumI (X : Inst D L) (K : Consts) (ce : ErrC) : OrbitSumBound X K ce := b
       have h4 : D.host.cls p = PrimeClass.signal := h
       rw [h4] at h3; simp at h3
   have eF : FInert D j p = ∑ r ∈ repsPl X p, FOrb D j p r := by
-    unfold FInert; rw [if_neg hc]; exact sum_orbits D j p _ hR
+    unfold FInert; rw [ite_eq_right hc]; exact sum_orbits D j p _ hR
   have eB : ∑ r ∈ repsPl X p, betaI X K ce j p r = (∑ r ∈ repsPl X p, g0Pl X K p j r) +
       ∑ r ∈ (repsPl X p).filter (fun r => r ∉ kindA D p), (FOrb D j p r - errF L K ce j p r) := by
     rw [Finset.sum_filter, ← Finset.sum_add_distrib]
@@ -1493,8 +1454,8 @@ theorem kform_of_ker (E : KerEnt D Dx T) (Ee : Ent D) (hν : ∀ u i, Ee.nu u i 
             rcases hsp with h | h
             · exact h
             · exact absurd ⟨hi0, h.1⟩ h0
-          rw [if_pos hi0, hs0]; ring
-        · rw [if_neg hi0]; ring
+          rw [ite_eq_left hi0, hs0]; ring
+        · rw [ite_eq_right hi0]; ring
       rw [e]
       have := kgeTw_of E hU hR hUs hL hi hEK (D.chTw u μ).DGam_pos.ne' (fun c => (D.chTw u μ).dvd_DGam i hi.le c) (hK.2 u μ hUs i hi)
       rw [hG.one u u μ] at this

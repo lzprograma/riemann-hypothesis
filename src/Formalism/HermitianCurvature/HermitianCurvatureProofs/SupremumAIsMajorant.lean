@@ -1,51 +1,10 @@
 module
 
 public import Formalism.HermitianCurvature.StatementJ
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -119,7 +78,7 @@ lemma thrP_norm (hF : FrameProducts) (hv : G.v = S6.rd E / 2) (hg : 0 < G.g) (b 
   congr 1
   unfold supA
   rw [hm]
-  simp only [Bool.false_eq_true, if_false]
+  simp only [Bool.false_eq_true, ite_false]
   field_simp
 
 end
@@ -272,14 +231,14 @@ theorem instance_sizes : InstSizes := by
       · exact mul_nonneg (by norm_num) (Real.sqrt_nonneg _)
     · beta_reduce
       by_cases hc : b + s ≤ G.r + 1
-      · rw [Finset.prod_congr rfl fun v _ => (by rw [hszL, if_pos hc] :
+      · rw [Finset.prod_congr rfl fun v _ => (by rw [hszL, ite_eq_left hc] :
           D.szL b s v = thrS G C de de' T T' l b (s + 1) (e v)),
           Equiv.prod_comp e (fun w => thrS G C de de' T T' l b (s + 1) w), hthr b (s + 1) hb (by omega), hfD]
         have hν : S6.nuBlock G.r b ((s + 1 : ℕ) : ℤ) + 1 = S6.nuBlock G.r b s := by
           unfold S6.nuBlock; push_cast; ring
         rw [hν, ← hNL]
         exact mul_le_mul_of_nonneg_right (le_trans (hPle b (s + 1) hb (by omega) (by omega)) h2) hn.le
-      · rw [Finset.prod_congr rfl fun v _ => (by rw [hszL, if_neg hc] :
+      · rw [Finset.prod_congr rfl fun v _ => (by rw [hszL, ite_eq_right hc] :
           D.szL b s v = 2 * thrP G C de de' T T' l b (e v)),
           Equiv.prod_comp e (fun w => 2 * thrP G C de de' T T' l b w), hfD]
         have hν : ((G.r : ℤ) + 2 - b) = s := by

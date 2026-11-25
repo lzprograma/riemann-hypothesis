@@ -116,9 +116,9 @@ theorem exists_matrices {W : Matrix (Fin 8) (Fin 8) ℤ} (hW : IsE8 W) :
   refine ⟨Sum.elim (fun uv => Matrix.single uv.1 uv.2 1)
     (fun c => (W + W.transpose).adjugate * (if c then W else W.transpose)), .inr true, .inr false, ?_, ?_,
     fun u v => ⟨.inl (u, v), rfl⟩⟩
-  · simp only [Sum.elim_inr, if_true]
+  · simp only [Sum.elim_inr, ite_true]
     rw [← Matrix.mul_assoc, Matrix.mul_adjugate, hW.2, one_smul, Matrix.one_mul]
-  · simp only [Sum.elim_inr, Bool.false_eq_true, if_false]
+  · simp only [Sum.elim_inr, Bool.false_eq_true, ite_false]
     rw [← Matrix.mul_assoc, Matrix.mul_adjugate, hW.2, one_smul, Matrix.one_mul]
 
 theorem nonempty_sFam : Out.Laws → Out.Laws2 → (∀ (S : Scheme.{0}) (P : Out.PolAV S) (M : LB P.A.left), M.IsLB → ∃ t : LB.Gen (Theta P.A M), t.IsGen) → ThetaUnifAV → ∀ (h n : ℕ), 1 ≤ h → n.Prime → Odd n → ∃ j₀ : ℕ, ∀ j ≥ j₀, ∀ (o : Type) [CommRing o] (b : TBase o ((n ^ j) ^ 2)) (em : o →+* ℂ), ArBase em → Nonempty (SFam h ((n ^ j) ^ 2) (b.ζ : o)) := by

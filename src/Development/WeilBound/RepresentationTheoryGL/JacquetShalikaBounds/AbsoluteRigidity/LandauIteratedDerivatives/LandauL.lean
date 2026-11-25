@@ -4,51 +4,8 @@ import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GenDirichletHa
 public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.NewtonLow
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LandauSummableOfExpDirichletSeriesEntire
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Complex.LocallyUniformLimit
 public import Mathlib.Analysis.Complex.TaylorSeries
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -57,19 +14,6 @@ noncomputable section
 open Complex Filter Topology
 
 namespace PositivityTheory.RgJS.LandauNonnegativeDirichletSeries
-
-theorem summable_pow {ι : Type} (b μ : ι → ℝ) (hb : ∀ j, 0 ≤ b j) (hμ : ∀ j, 0 ≤ μ j) (a : ℝ)
-    (h : ∀ σ : ℝ, a < σ → Summable (fun j => b j * Real.exp (-(μ j) * σ))) (n : ℕ) (σ : ℝ) (hσ : a < σ) :
-    Summable (fun j => b j * μ j ^ n * Real.exp (-(μ j) * σ)) := by
-  apply GlobalTheory.genDirichlet_summable_pow <;> assumption
-
-theorem hasSum_iteratedDeriv {ι : Type} (b μ : ι → ℝ) (F : ℂ → ℂ)
-    (hb : ∀ j, 0 ≤ b j) (hμ : ∀ j, 0 ≤ μ j) (a : ℝ)
-    (h : ∀ s : ℂ, a < s.re → HasSum (fun j => (b j : ℂ) * Complex.exp (-(μ j : ℂ) * s)) (F s))
-    (n : ℕ) (s : ℂ) (hs : a < s.re) :
-    HasSum (fun j => (b j : ℂ) * (-(μ j : ℂ)) ^ n * Complex.exp (-(μ j : ℂ) * s))
-      (iteratedDeriv n F s) := by
-  apply GlobalTheory.genDirichlet_hasSum_iteratedDeriv <;> assumption
 
 theorem propagate (f g : ℂ → ℂ) (a b : ℝ) (hf : ∀ σ : ℝ, a < σ → AnalyticAt ℂ f σ)
     (hg : ∀ σ : ℝ, a < σ → AnalyticAt ℂ g σ) (he : ∀ σ : ℝ, b < σ → f σ = g σ) :
@@ -107,8 +51,7 @@ theorem propagate (f g : ℂ → ℂ) (a b : ℝ) (hf : ∀ σ : ℝ, a < σ →
   set B := {τ : ℝ | a < τ ∧ ¬ (f =ᶠ[𝓝 (τ : ℂ)] g)} with hB
   have hBne : σ ∈ B := ⟨hσ, hne⟩
   have hBbdd : BddAbove B := ⟨max a b, fun τ hτ => by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hτ.2 (good τ h)⟩
   set γ := sSup B with hγdef
   have hγσ : σ ≤ γ := le_csSup hBbdd hBne
@@ -143,8 +86,7 @@ theorem linL (I : Type) (c l : I → ℝ) (σ₀ σ₁ : ℝ) (F : ℂ → ℂ) 
   have hAbdd : BddBelow A := ⟨σ₀, fun τ hτ => hτ.1.le⟩
   set β := sInf A with hβdef
   have hβσ : σ ≤ β := le_csInf ⟨_, hAne⟩ fun τ hτ => by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hns (mono τ σ h.le hτ.2)
   have hβ0 : σ₀ < β := lt_of_lt_of_le hσ hβσ
   obtain ⟨r, hr, hFr⟩ := (hF β hβ0).exists_ball_analyticOnNhd
@@ -195,7 +137,7 @@ theorem linL (I : Type) (c l : I → ℝ) (σ₀ σ₁ : ℝ) (F : ℂ → ℂ) 
       (iteratedDeriv n F ((s0 : ℝ) : ℂ)) := by
     intro n
     rw [hev.iteratedDeriv_eq n]
-    exact hasSum_iteratedDeriv c l G hc hl β' hGsum n _ (by simpa using hβ's)
+    exact GlobalTheory.genDirichlet_hasSum_iteratedDeriv c l G hc hl β' hGsum n _ (by simpa using hβ's)
   have hj : ∀ i, HasSum (fun n : ℕ => c i * Real.exp (-(l i * s0)) * ((2 * ε * l i) ^ n / n.factorial))
       (c i * Real.exp (-(l i * z))) := by
     intro i

@@ -41,11 +41,6 @@ theorem phi1_tmul (x : ℝ) (e : 𝓞 E) :
 
 variable {Ψ}
 
-theorem conj_mem_iff (hΨ : ∀ σ : E →+* ℂ, σ ∈ Ψ ↔ ComplexEmbedding.conjugate σ ∉ Ψ)
-    (σ : E →+* ℂ) : ComplexEmbedding.conjugate σ ∈ Ψ ↔ σ ∉ Ψ := by
-  rw [hΨ]
-  simp [ComplexEmbedding.conjugate]
-
 alias li1 := _root_.Bl.general_b_fact_third_variant.goal1
 
 theorem two_card (hΨ : ∀ σ : E →+* ℂ, σ ∈ Ψ ↔ ComplexEmbedding.conjugate σ ∉ Ψ) :

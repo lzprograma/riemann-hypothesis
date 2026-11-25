@@ -3,51 +3,8 @@ module
 public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PsiWeightZeroLinearCombination
 public import Mathlib.RingTheory.Henselian
 public import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -229,15 +186,6 @@ variable (k : Type) [Field k] (be : LinearMap.BilinForm ℤ X)
 theorem arcVar_val :
     (arcVar k : FractionRing (PowerSeries k)) = algebraMap (PowerSeries k) _ PowerSeries.X := rfl
 
-theorem arcVar_zpow_injective : Function.Injective fun n : ℤ => arcVar k ^ n := by
-  rw [injective_zpow_iff_not_isOfFinOrder, isOfFinOrder_iff_pow_eq_one]
-  rintro ⟨n, hn, h⟩
-  have h1 : (PowerSeries.X : PowerSeries k) ^ n = 1 :=
-    IsFractionRing.injective (PowerSeries k) (FractionRing (PowerSeries k)) (by
-      rw [map_pow, map_one, ← arcVar_val, ← Units.val_pow_eq_pow_val, h, Units.val_one])
-  have h2 := congrArg PowerSeries.constantCoeff h1
-  simp [hn.ne'] at h2
-
 
 omit [Module.Free ℤ X] [Module.Finite ℤ X] in
 theorem arcExp_eq (y : X) : arcExp k be y = arcVar k ^ (be y y / 2) := rfl
@@ -310,123 +258,25 @@ variable (hs : ∀ y z, be y z = be z y) (hp : ∀ y, y ≠ 0 → 0 < be y y) (h
 instance (O : Type) [Ring O] [Module O X] : Module O (arcData k be hs hp he).toPre.X :=
   inferInstanceAs (Module O X)
 
-theorem arcData_tau_isConst (y z : X) :
-    IsConst ((arcData k be hs hp he).toPre.tau y z) (unitOn (arcVar k ^ (be y z))) :=
-  (tau_isConst (arcExp k be) y z).of_eq (congrArg unitOn (polar_arcExp k be hs he y z))
-
-def arcOAct (O : Type) [Ring O] [StarRing O] [Module O X]
-    (ha : ∀ (a : O) y z, be (a • y) z = be y (star a • z)) : (arcData k be hs hp he).toPre.OAct O :=
-  toricOAct (arcExp k be) O fun a y z => by rw [polar_arcExp k be hs he, polar_arcExp k be hs he, ha]
-
 end ThetaShiftProofs
 
 section Base
-
-theorem left_eq_hom {S : Scheme.{0}} {T : Over S} (x : T ⟶ (zeroPolAV S).A) : x.left = T.hom :=
-  (Category.comp_id _).symm.trans (Over.w x)
 
 variable (q : X → (FractionRing K)ˣ)
 
 def baseMap {K' : Type} [CommRing K'] [IsDomain K'] (f : K →+* K') (q' : X → (FractionRing K')ˣ) :
     (toricPre K' X q').P.A.left ⟶ (toricPre K X q).P.A.left := spMap f
 
-def baseIso {K' : Type} [CommRing K'] [IsDomain K'] (f : K →+* K') (q' : X → (FractionRing K')ˣ) :
-    LB.Iso (toricPre K' X q').P.L ((toricPre K X q).P.L.pull (baseMap q f q')) := ⟨fun _ => 1⟩
-
 variable {K' : Type} [CommRing K'] [IsDomain K']
-
-theorem left_baseMap (f : K →+* K') (q' : X → (FractionRing K')ˣ) {T : Over (Sp K')}
-    (x : T ⟶ (toricPre K' X q').P.A) : x.left ≫ baseMap q f q' = T.hom ≫ spMap f :=
-  congrArg (· ≫ spMap f) (left_eq_hom x)
 
 variable (f : K →+* K') (q' : X → (FractionRing K')ˣ)
 
-theorem end_baseMap (g' : (toricPre K' X q').P.A ⟶ (toricPre K' X q').P.A)
-    (g : (toricPre K X q).P.A ⟶ (toricPre K X q).P.A) :
-    g'.left ≫ baseMap q f q' = baseMap q f q' ≫ g.left :=
-  (left_baseMap q f q' g').trans
-    ((Category.id_comp _).trans ((Category.comp_id _).symm.trans
-      (congrArg (spMap f ≫ ·) (left_eq_hom g).symm)))
-
-theorem valF_gv_unitOn {F : Type} [Field F] {V : (Sp F).Opens} (hV : V = ⊤) (a : Fˣ) :
-    valF (𝟙 (Sp F)) V (gv (unitOn a) V).val = a := by
-  subst hV
-  have h : (⊤ : (Sp F).Opens) ≤ (𝟙 (Sp F) : Sp F ⟶ Sp F) ⁻¹ᵁ ⊤ := le_rfl
-  rw [valF, dite_eq_left h, gv, res_self]
-  have e : Scheme.Hom.appLE (𝟙 (Sp F)) ⊤ ⊤ h = 𝟙 _ := by
-    rw [Scheme.Hom.appLE, Scheme.Hom.id_app]
-    erw [Category.id_comp]
-    exact (Sp F).presheaf.map_id _
-  rw [e]
-  exact (Scheme.ΓSpecIso (CommRingCat.of F)).inv_hom_id_apply (a : F)
-
-theorem valF_one {F : Type} [Field F] {Y : Scheme.{0}} (x : Sp F ⟶ Y) {U : Y.Opens} (h : ⊤ ≤ x ⁻¹ᵁ U) :
-    valF x U 1 = 1 := by
-  rw [valF, dite_eq_left h, map_one, map_one]
-
-theorem genRel_baseIso_iff {F : Type} [Field F] {J : Type} [Fintype J]
-    {pt : J → (Sp F ⟶ (toricPre K' X q').P.A.left)} {pt₀ : J → (Sp F ⟶ (toricPre K X q).P.A.left)} {ε : J → ℤ}
-    {t : LB.Gen (LB.LinComb (toricPre K' X q').P.L pt ε)} {t₀ : LB.Gen (LB.LinComb (toricPre K X q).P.L pt₀ ε)}
-    {a a₀ : Fˣ} (ht : IsConst t (unitOn a)) (ht₀ : IsConst t₀ (unitOn a₀)) (x : F) :
-    GenRel (baseIso q f q') t t₀ x ↔ (∀ j, pt j ≫ baseMap q f q' = pt₀ j) ∧ (a : F) = x * a₀ := by
-  have hc : ∀ (j : J → (toricPre K' X q').P.L.ι) (j₀ : J → (toricPre K X q).P.L.ι) (i : J), ⊤ ≤ pt i ⁻¹ᵁ
-      (LB.div ((toricPre K X q).P.L.pull (baseMap q f q')) (toricPre K' X q').P.L).U (fun _ => j₀ i, j i) :=
-    fun j j₀ i _ _ => ⟨Set.mem_iInter.2 fun _ => trivial, trivial⟩
-  have key : ∀ (j : J → (toricPre K' X q').P.L.ι) (j₀ : J → (toricPre K X q).P.L.ι),
-      (valF (𝟙 (Sp F)) _ (t.s j).val =
-        x * (∏ i, valF (pt i) _ ((baseIso q f q').s (fun _ => j₀ i, j i)).val ^ (-ε i)) *
-          valF (𝟙 (Sp F)) _ (t₀.s j₀).val) ↔ (a : F) = x * a₀ := by
-    intro j j₀
-    have e₁ : valF (𝟙 (Sp F)) _ (t.s j).val = a := by rw [ht j]; exact valF_gv_unitOn (wchart_triv _ _) a
-    have e₂ : valF (𝟙 (Sp F)) _ (t₀.s j₀).val = a₀ := by rw [ht₀ j₀]; exact valF_gv_unitOn (wchart_triv _ _) a₀
-    have e₃ : ∀ i, valF (pt i) _ ((baseIso q f q').s (fun _ => j₀ i, j i)).val = 1 :=
-      fun i => valF_one _ (hc j j₀ i)
-    simp only [e₁, e₂, e₃, one_zpow, Finset.prod_const_one, _root_.mul_one]
-  exact and_congr_right fun _ =>
-    ⟨fun h => (key (fun _ => PUnit.unit) (fun _ => PUnit.unit)).1 (h _ _ (hc _ _)),
-      fun h j j₀ _ => (key j j₀).2 h⟩
-
 variable (F : Type) [Field F] [Algebra (FractionRing K') F] [Algebra (FractionRing K) F]
 
-theorem jFK_spMap
-    (hF : ∀ x, algebraMap (FractionRing K) F (algebraMap K _ x) = algebraMap (FractionRing K') F (algebraMap K' _ (f x))) :
-    (TF (R := K') F).hom ≫ spMap f = (TF (R := K) F).hom := by
-  change (Spec.map _ ≫ Spec.map _) ≫ Spec.map _ = Spec.map _ ≫ Spec.map _
-  rw [← Spec.map_comp, ← Spec.map_comp, ← Spec.map_comp]
-  congr 1
-  ext x
-  exact (hF x).symm
-
-theorem pointF_baseMap
-    (hF : ∀ x, algebraMap (FractionRing K) F (algebraMap K _ x) = algebraMap (FractionRing K') F (algebraMap K' _ (f x)))
-    (b' : TF (R := K') F ⟶ (toricPre K' X q').P.A) (b : TF (R := K) F ⟶ (toricPre K X q).P.A) :
-    b'.left ≫ baseMap q f q' = b.left :=
-  (left_baseMap q f q' b').trans ((jFK_spMap f F hF).trans (left_eq_hom b).symm)
-
-
-theorem genRel_pt_iff
-    (hF : ∀ x, algebraMap (FractionRing K) F (algebraMap K _ x) = algebraMap (FractionRing K') F (algebraMap K' _ (f x)))
-    (t' t : Multiplicative X →* Fˣ) (χ' χ : X) (x : F) :
-    GenRel (baseIso q f q') ((pt q' F t').s χ') ((pt q F t).s χ) x ↔
-      (t' (Multiplicative.ofAdd χ') : F) = x * t (Multiplicative.ofAdd χ) := by
-  refine (genRel_baseIso_iff q f q' (pt_isConst q' F t' χ') (pt_isConst q F t χ) x).trans (and_iff_right fun i => ?_)
-  fin_cases i <;> exact pointF_baseMap q f q' F hF _ _
 
 end Base
 
 section Examples
-
-def twoMul : LinearMap.BilinForm ℤ ℤ := (2 : ℤ) • LinearMap.mul ℤ ℤ
-
-theorem twoMul_apply (a b : ℤ) : twoMul a b = 2 * (a * b) := rfl
-
-theorem arcExp_twoMul (k : Type) [Field k] (n : ℤ) : arcExp k twoMul n = arcVar k ^ (n ^ 2) := by
-  rw [arcExp_eq, twoMul_apply, Int.mul_ediv_cancel_left _ two_ne_zero, sq]
-
-def arcDataInt (k : Type) [Field k] : DegData (PowerSeries k) (Ideal.span {PowerSeries.X}) :=
-  arcData k twoMul (fun a b => by rw [twoMul_apply, twoMul_apply, mul_comm a])
-    (fun a ha => by rw [twoMul_apply]; exact mul_pos two_pos (mul_self_pos.2 ha))
-    (fun a => ⟨a * a, twoMul_apply a a⟩)
 
 end Examples
 

@@ -3,42 +3,7 @@ module
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchActionReadingsCompatible
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -85,21 +50,6 @@ theorem pureA_pt (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (g : (κ →
     (y : κ → Af F) : pureA F f g (pt a y) = f a * g y := by
   simp only [pureA, pt, RingEquiv.apply_symm_apply]
 
-theorem slice_mem {Φ : (κ → AF F) → ℂ} (h : Φ ∈ schA F κ) (a : κ → mixedEmbedding.mixedSpace F) :
-    (fun y => Φ (pt a y)) ∈ SB (κ → Af F) := by
-  induction h using Submodule.span_induction with
-  | mem Φ hΦ =>
-    obtain ⟨f, g, hg, rfl⟩ := hΦ
-    have : (fun y => pureA F f g (pt a y)) = f a • g := by
-      funext y
-      rw [pureA_pt]
-      rfl
-    rw [this]
-    exact Submodule.smul_mem _ _ hg
-  | zero => exact Submodule.zero_mem _
-  | add Φ Ψ _ _ h₁ h₂ => exact Submodule.add_mem _ h₁ h₂
-  | smul c Φ _ h₁ => exact Submodule.smul_mem _ c h₁
-
 omit [Fintype κ] in
 theorem at_iff (z : κ → AF F) : At (evI F) z ↔ ∀ i, (z i).2 = 0 := by
   constructor
@@ -116,29 +66,6 @@ theorem at_iff (z : κ → AF F) : At (evI F) z ↔ ∀ i, (z i).2 = 0 := by
     · show u.2 * (z i).2 = 0
       rw [h i, mul_zero]
 
-theorem rest_of_SB (f : SInf F κ) {g : (κ → Af F) → ℂ} (hg : g ∈ SB (κ → Af F)) :
-    Rest (evI F) f (fun x => g fun i => (x i).2) := by
-  refine ⟨fun x z hz => ?_, Submodule.subset_span ⟨f, g, hg, rfl⟩⟩
-  rw [at_iff] at hz
-  refine congrArg g (funext fun i => ?_)
-  show (x i).2 + (z i).2 = (x i).2
-  rw [hz i, add_zero]
-
-theorem exists_of_rest {f : SInf F κ} (hf : f ≠ 0) {r : (κ → AF F) → ℂ} (hr : Rest (evI F) f r) :
-    ∃ g ∈ SB (κ → Af F), r = fun x => g fun i => (x i).2 := by
-  obtain ⟨a, ha⟩ : ∃ a, f a ≠ 0 := by
-    by_contra h
-    push Not at h
-    exact hf (SchwartzMap.ext h)
-  have key : ∀ x : κ → AF F, r x = r (pt a fun i => (x i).2) := by
-    intro x
-    have h := hr.1 (pt a fun i => (x i).2) (x - pt a fun i => (x i).2) ((at_iff _).2 fun i => sub_self (x i).2)
-    rwa [add_sub_cancel] at h
-  refine ⟨(f a)⁻¹ • fun y => tens (evI F) f r (pt a y), Submodule.smul_mem _ _ (slice_mem hr.2 a), funext fun x => ?_⟩
-  rw [key x]
-  simp only [tens, evI, pt, RingEquiv.apply_symm_apply, Pi.smul_apply, smul_eq_mul]
-  rw [← mul_assoc, inv_mul_cancel₀ ha, one_mul]
-
 theorem eval_adm (x : κ → AF F) : (LinearMap.proj x : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ) ∈ (adeleClass F).adm κ := by
   intro g _
   refine ⟨g (fun i => (x i).2) • (BoundedContinuousFunction.evalCLM ℂ (fun i => evI F (x i))).comp
@@ -151,14 +78,6 @@ theorem eq_of_pureA {f₁ f₂ : SInf F κ} (h : ∀ g ∈ SB (κ → Af F), ∀
   ext a
   have := h g hg (pt a y)
   rwa [pureA_pt, pureA_pt, hy, mul_one, mul_one] at this
-
-theorem pureA_zero (g : (κ → Af F) → ℂ) : pureA F (0 : SInf F κ) g = 0 := by
-  funext x
-  exact zero_mul _
-
-theorem tens_zero (r : (κ → AF F) → ℂ) : tens (evI F) (0 : SInf F κ) r = 0 := by
-  funext x
-  exact zero_mul _
 
 end PositivityTheory.RL.SeminormBoundRestriction
 

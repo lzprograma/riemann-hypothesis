@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SumExtendByZeroLeSum
 public import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
 
 @[expose] public section
@@ -33,19 +34,7 @@ theorem g_coprime_ram (D : D7) (k : Fin 2) (p : ℕ) (hp : p ∈ ({2, D.host.q, 
     exact Nat.mod_eq_of_lt (by omega)
 
 theorem sum_extendByZero_le_sum {p : ℕ} (f : Fin p → ℕ) (m : ℕ) : ∑ i : Fin m, ext0 f i ≤ ∑ i, f i := by
-  unfold ext0
-  have e1 : ∑ i : Fin m, (if h : (i : ℕ) < p then f ⟨i, h⟩ else 0) =
-      ∑ i ∈ Finset.range m, (if h : i < p then f ⟨i, h⟩ else 0) :=
-    Fin.sum_univ_eq_sum_range (fun i => if h : i < p then f ⟨i, h⟩ else 0) m
-  have e2 : ∑ i : Fin p, f i = ∑ i ∈ Finset.range p, (if h : i < p then f ⟨i, h⟩ else 0) := by
-    rw [← Fin.sum_univ_eq_sum_range (fun i => if h : i < p then f ⟨i, h⟩ else 0) p]
-    exact Finset.sum_congr rfl fun i _ => by rw [dite_eq_left i.2]
-  rw [e1, e2, ← Finset.sum_filter_add_sum_filter_not (Finset.range m) (fun i => i < p)]
-  have e3 : ∑ i ∈ (Finset.range m).filter (fun i => ¬ i < p), (if h : i < p then f ⟨i, h⟩ else 0) = 0 :=
-    Finset.sum_eq_zero fun i hi => dif_neg (Finset.mem_filter.mp hi).2
-  rw [e3, add_zero]
-  exact Finset.sum_le_sum_of_subset_of_nonneg
-    (fun i hi => Finset.mem_range.mpr (Finset.mem_filter.mp hi).2) (fun _ _ _ => Nat.zero_le _)
+  apply GlobalTheory.WtSizes.sum_extendByZero_le_sum <;> assumption
 
 
 open Classical in
@@ -65,7 +54,7 @@ theorem DF_wtA_le {D : D7} (T : Top D) (j : ℕ) (w : WeightFamilies.Wt D j) :
   rw [Finset.sum_congr rfl fun τ _ => hsw τ, Finset.sum_comm]
   refine Finset.sum_le_sum fun t _ => ?_
   rw [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq']
-  simp only [Finset.mem_univ, if_true]
+  simp only [Finset.mem_univ, ite_true]
   exact add_le_add (sum_extendByZero_le_sum _ _) (sum_extendByZero_le_sum _ _)
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections

@@ -4,53 +4,8 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThre
 public import Mathlib.RingTheory.AdicCompletion.Basic
 public import Mathlib.RingTheory.LocalRing.ResidueField.Defs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MatGstar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Algebra.Polynomial.Derivative
 
 @[expose] public section
@@ -90,9 +45,6 @@ private theorem quad_root [IsLocalRing R] [IsAdicComplete (maximalIdeal R) R] (a
   refine ⟨c * k, by simp [hc], ?_⟩
   linear_combination c * k ^ 2 * hw0 - (c * (w * k + 1) + b * c * k) * hk
 
-private theorem unit_of_res [IsLocalRing R] {x : R} (h : IsUnit (residue R x)) : IsUnit x :=
-  (residue_ne_zero_iff_isUnit x).1 h.ne_zero
-
 private theorem stageA (s q p u t v w : R) (hw : w ^ 2 * u = 1) :
     !![1, -q * w ^ 2, 0; 0, w, 0; 0, -t * w ^ 2, 1] * !![s, q, p; q, u, t; p, t, v] *
       (!![1, -q * w ^ 2, 0; 0, w, 0; 0, -t * w ^ 2, 1])ᵀ =
@@ -122,7 +74,7 @@ private theorem symm_norm [IsLocalRing R] [IsAdicComplete (maximalIdeal R) R] (h
   have hu : residue R u = 1 := by simpa [Jmat, Fin.rev] using hre 1 1
   have ht : residue R t = 0 := by simpa [Jmat, Fin.rev] using hre 1 2
   have hv : residue R v = 0 := by simpa [Jmat, Fin.rev] using hre 2 2
-  have huu : IsUnit u := unit_of_res (by rw [hu]; exact isUnit_one)
+  have huu : IsUnit u := isUnit_of_map_unit (residue R) u (by rw [hu]; exact isUnit_one)
   obtain ⟨e, he⟩ := h2.exists_right_inv
   obtain ⟨y, hy0, hy⟩ := quad_root u (2 * u) (u - 1) (h2.mul huu) (by simp [hu])
   have hw : (1 + y) ^ 2 * u = 1 := by linear_combination hy
@@ -130,9 +82,9 @@ private theorem symm_norm [IsLocalRing R] [IsAdicComplete (maximalIdeal R) R] (h
   generalize 1 + y = w at hw hw1
   have hA := stageA s q p u t v w hw
   obtain ⟨x, hx0, hx⟩ := quad_root (v - t ^ 2 * w ^ 2) (2 * (p - q * t * w ^ 2)) (s - q ^ 2 * w ^ 2)
-    (h2.mul (unit_of_res (by simp [hp, hq]))) (by simp [hs, hq])
-  obtain ⟨k, hk⟩ := (unit_of_res (x := (p - q * t * w ^ 2) + x * (v - t ^ 2 * w ^ 2))
-    (by simp [hp, hq, hx0])).exists_right_inv
+    (h2.mul (isUnit_of_map_unit (residue R) _ (by simp [hp, hq]))) (by simp [hs, hq])
+  obtain ⟨k, hk⟩ := (isUnit_of_map_unit (residue R)
+    ((p - q * t * w ^ 2) + x * (v - t ^ 2 * w ^ 2)) (by simp [hp, hq, hx0])).exists_right_inv
   have hk1 : residue R k = 1 := by simpa [hp, hq, hx0] using congrArg (residue R) hk
   have hB := stageB _ _ _ x k e hx hk he
   refine ⟨_ * _, ?_, by rw [← hB, ← hA, Matrix.transpose_mul]; simp only [Matrix.mul_assoc]; rfl⟩
@@ -148,7 +100,8 @@ private theorem anti_norm [IsLocalRing R] [IsAdicComplete (maximalIdeal R) R] (h
       (h * !![a, b, 0; d, 0, -b; 0, -d, -a] * (Jmat R 3 * hᵀ * Jmat R 3)) 1 0 = 0 := by
   obtain ⟨e, he⟩ := h2.exists_right_inv
   obtain ⟨y, hy0, hy⟩ := quad_root (-b * e) a d ha hd
-  obtain ⟨k, hk⟩ := (unit_of_res (x := a - b * y) (by simpa [hb] using ha.map (residue R))).exists_right_inv
+  obtain ⟨k, hk⟩ := (isUnit_of_map_unit (residue R) (a - b * y)
+    (by simpa [hb] using ha.map (residue R))).exists_right_inv
   obtain ⟨x, hx0, hx⟩ : ∃ x, residue R x = 0 ∧ x * (a - b * y) = b :=
     ⟨b * k, by simp [hb], by linear_combination b * hk⟩
   clear hk
@@ -244,7 +197,7 @@ theorem UpperTheory.V.U3.exists_normalised :
   have hent : ∀ i j, IsLocalRing.residue R ((r₁ g₁).mat i j) = _ := fun i j => congrFun (congrFun hgm i) j
   obtain ⟨H₂, hH₂, e2, z1, z2⟩ := anti_norm h2 ((r₁ g₁).mat 0 0 - (r₁ g₁).mat 2 2)
     ((r₁ g₁).mat 0 1 - (r₁ g₁).mat 1 2) ((r₁ g₁).mat 1 0 - (r₁ g₁).mat 2 1)
-    (unit_of_res (by
+    (isUnit_of_map_unit (IsLocalRing.residue R) _ (by
       have := hM.Ψg.mul (Ψ g₁)⁻¹.isUnit
       rw [map_sub, hent, hent]
       convert this using 1

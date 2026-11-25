@@ -14,48 +14,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.Resolutio
 import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceComposition
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceIsomorphism
 import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.SequenceIsomorphism
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.BitVec
 
 @[expose] public section
@@ -80,32 +39,13 @@ namespace MaxContactFunctoriality
 def removeUnitIdeals {X : Scheme.{u}} (L : List X.IdealSheafData) : List X.IdealSheafData :=
   L.filter (fun D => @decide (D ≠ ⊤) (Classical.propDecidable _))
 
-private theorem removeUnitIdeals_cons_top {X : Scheme.{u}}
-    (L : List X.IdealSheafData) :
-    removeUnitIdeals ((⊤ : X.IdealSheafData) :: L) = removeUnitIdeals L := by
-  simp [removeUnitIdeals]
-
-private theorem removeUnitIdeals_cons_of_ne_top {X : Scheme.{u}} {D : X.IdealSheafData}
-    (hD : D ≠ ⊤) (L : List X.IdealSheafData) :
-    removeUnitIdeals (D :: L) = D :: removeUnitIdeals L := by
-  simp [removeUnitIdeals, hD]
-
 theorem removeUnitIdeals_map_comap_removeUnitIdeals {X Y : Scheme.{u}} (f : Y ⟶ X) (L : List X.IdealSheafData) :
     removeUnitIdeals (List.map (fun D => D.comap f) (removeUnitIdeals L)) =
       removeUnitIdeals (List.map (fun D => D.comap f) L) := by
-  induction L with
-  | nil => rfl
-  | cons D L ih =>
-    by_cases hD : D = ⊤
-    · subst hD
-      rw [removeUnitIdeals_cons_top, ih]
-      simp only [List.map_cons, Scheme.IdealSheafData.comap_top]
-      rw [removeUnitIdeals_cons_top]
-    · rw [removeUnitIdeals_cons_of_ne_top hD]
-      simp only [List.map_cons]
-      by_cases hD' : D.comap f = ⊤
-      · rw [hD', removeUnitIdeals_cons_top, removeUnitIdeals_cons_top, ih]
-      · rw [removeUnitIdeals_cons_of_ne_top hD', removeUnitIdeals_cons_of_ne_top hD', ih]
+  simp only [removeUnitIdeals, List.filter_map, List.filter_filter]
+  congr 1
+  exact List.filter_congr fun D _ => by
+    by_cases hD : D = ⊤ <;> simp [hD, Scheme.IdealSheafData.comap_top]
 
 noncomputable abbrev smoothPullbackTriple (S : MarkedIdealWithBoundary.{u}) {X' : Scheme.{u}} (q : X' ⟶ S.scheme) :
     MarkedIdealWithBoundary.{u} :=
@@ -176,9 +116,6 @@ theorem reduceAlongHypersurface_isomorphic_of_isMaxContactHypersurface
     (hH'snc : InStrictNormalCrossingPosition S.structMap [H']) :
     (MaxContactReduction.reduceAlongHypersurface hinv T (lowerDimensionalFamily A T) S H).toMarkedSequenceOfBlowups.toSequenceOfBlowups.Isomorphic
       (MaxContactReduction.reduceAlongHypersurface hinv T (lowerDimensionalFamily A T) S H').toMarkedSequenceOfBlowups.toSequenceOfBlowups := by
-  have hsmid : AlgebraicGeometry.Smooth (𝟙 S.scheme) := inferInstance
-  have hflid : AlgebraicGeometry.Flat (𝟙 S.scheme) := inferInstance
-  have hsuid : AlgebraicGeometry.Surjective (𝟙 S.scheme) := inferInstance
   have hft2 : AlgebraicGeometry.LocallyOfFiniteType S.structMap := hv.locallyOfFiniteType
   have hpb : LowerDimReductionPullback.pullbackTriple S (𝟙 S.scheme) = S := by
     simp [LowerDimReductionPullback.pullbackTriple, MarkedIdealWithBoundary.pullbackAlong]
@@ -214,21 +151,11 @@ private theorem dropTrivialBoundary_boundary_eq_removeUnitIdeals (T : MarkedIdea
 
 private theorem removeUnitIdeals_eq_of_sameNontrivialBoundary {X : Scheme.{u}} {L L' : List X.IdealSheafData}
     (hL : MarkedIdealWithBoundary.SameNontrivialBoundary L L') : removeUnitIdeals L = removeUnitIdeals L' := by
-  have hdn : ∀ D : X.IdealSheafData,
-      (@decide (D ≠ ⊤) (Classical.propDecidable _))
-        = !(@decide (D = ⊤) (Classical.propDecidable _)) :=
-    fun D => @decide_not (D = ⊤) (Classical.propDecidable _) (Classical.propDecidable _)
-  have hL' : List.filter (fun D : X.IdealSheafData =>
-        !(@decide (D = ⊤) (Classical.propDecidable _))) L
-      = List.filter (fun D : X.IdealSheafData =>
-        !(@decide (D = ⊤) (Classical.propDecidable _))) L' := hL
-  have h1 : removeUnitIdeals L = List.filter (fun D : X.IdealSheafData =>
-      !(@decide (D = ⊤) (Classical.propDecidable _))) L :=
-    List.filter_congr (fun D _ => hdn D)
-  have h2 : List.filter (fun D : X.IdealSheafData =>
-      !(@decide (D = ⊤) (Classical.propDecidable _))) L' = removeUnitIdeals L' :=
-    List.filter_congr (fun D _ => (hdn D).symm)
-  exact h1.trans (hL'.trans h2)
+  have h : ∀ M : List X.IdealSheafData, removeUnitIdeals M =
+      M.filter (fun D => !@decide (D = ⊤) (Classical.propDecidable _)) := fun _ =>
+    List.filter_congr fun D _ => by by_cases hD : D = ⊤ <;> simp [hD]
+  rw [h L, h L']
+  exact hL
 
 private theorem removeUnitIdeals_map_comap_congr {X Y : Scheme.{u}} (g : X ⟶ Y)
     {L L' : List Y.IdealSheafData}
@@ -456,46 +383,10 @@ theorem smoothPullbackTriple_coverTriple_eq (T : MarkedIdealWithBoundary.{u}) {Y
           congrArg removeUnitIdeals (map_comap_map_comap _ _ _).symm
   exact markedIdealWithBoundary_mk_congr hsm hideal rfl hb
 
-private theorem filter_eq_removeUnitIdeals {X : Scheme.{u}}
-    (p : X.IdealSheafData → Bool) (hp : ∀ D : X.IdealSheafData, p D = true ↔ D ≠ ⊤)
-    (L : List X.IdealSheafData) : L.filter p = removeUnitIdeals L := by
-  induction L with
-  | nil => rfl
-  | cons D L ih =>
-    by_cases hD : D = ⊤
-    · subst hD
-      have hpf : p (⊤ : X.IdealSheafData) = false := by
-        cases hb : p (⊤ : X.IdealSheafData) with
-        | false => rfl
-        | true => exact absurd ((hp ⊤).1 hb) (fun hne => hne rfl)
-      rw [removeUnitIdeals_cons_top]
-      simp [hpf, ih]
-    · have hpt : p D = true := (hp D).2 hD
-      rw [removeUnitIdeals_cons_of_ne_top hD]
-      simp [hpt, ih]
-
 private theorem dropTrivialBoundary_eq_withBoundary_removeUnitIdeals (S : MarkedIdealWithBoundary.{u}) :
     MaxContactReduction.dropTrivialBoundary S = S.withBoundary (removeUnitIdeals S.boundary) := by
   rw [MaxContactReduction.dropTrivialBoundary_def]
-  exact congrArg S.withBoundary
-    (filter_eq_removeUnitIdeals _ (fun D => by simp) S.boundary)
-
-private theorem ne_top_of_mem_removeUnitIdeals {X : Scheme.{u}} (L : List X.IdealSheafData) :
-    ∀ D ∈ removeUnitIdeals L, D ≠ ⊤ := by
-  induction L with
-  | nil =>
-    intro D hD
-    simp [removeUnitIdeals] at hD
-  | cons C L ih =>
-    intro D hD
-    by_cases hC : C = ⊤
-    · subst hC
-      rw [removeUnitIdeals_cons_top] at hD
-      exact ih D hD
-    · rw [removeUnitIdeals_cons_of_ne_top hC] at hD
-      rcases List.mem_cons.1 hD with h1 | h1
-      · subst h1; exact hC
-      · exact ih D h1
+  exact congrArg S.withBoundary (List.filter_congr fun D _ => by by_cases hD : D = ⊤ <;> simp [hD])
 
 private theorem isStrictPullback_coverMarkedSequence_of_eq_of_heq (hinv : ComapIsoInvariance.{u})
     (A : ℕ → PrincipalizationAssignment.{u}) {S₁ S₂ : MarkedIdealWithBoundary.{u}} (hS : S₁ = S₂)
@@ -532,8 +423,6 @@ private theorem isPullback_of_faithfullyFlat_covers {X Y : Scheme.{u}} (h : Y �
   have := hs₂
   have hfc : AlgebraicGeometry.Flat (c₂ ≫ h) :=
     CategoryTheory.MorphismProperty.comp_mem _ c₂ h inferInstance inferInstance
-  have hflfst : AlgebraicGeometry.Flat (Limits.pullback.fst (c₂ ≫ h) c₁) := inferInstance
-  have hsufst : AlgebraicGeometry.Surjective (Limits.pullback.fst (c₂ ≫ h) c₁) := inferInstance
   have hw : IsStrictPullbackBlowupSeq h (s₁.baseChange h) s₁ :=
     isStrictPullbackSequenceOfBlowups_baseChange s₁ h
   refine (IsStrictPullbackBlowupSeq.isPullbackSequenceOfBlowups_withoutIsoBlowups hw).of_isomorphic ?_
@@ -574,7 +463,6 @@ private theorem smooth_pullback_fst_snd_and_surjective_fst {X Y : Scheme.{u}} (h
     AlgebraicGeometry.Smooth (Limits.pullback.fst (c₂ ≫ h) c₁) ∧
       AlgebraicGeometry.Smooth (Limits.pullback.snd (c₂ ≫ h) c₁) ∧
         AlgebraicGeometry.Surjective (Limits.pullback.fst (c₂ ≫ h) c₁) := by
-  have hcc : AlgebraicGeometry.Smooth (c₂ ≫ h) := inferInstance
   exact ⟨inferInstance, inferInstance, inferInstance⟩
 
 private theorem smoothPullbackTriple_eq_dropTrivialBoundary (S : MarkedIdealWithBoundary.{u}) {X' : Scheme.{u}}
@@ -611,7 +499,6 @@ private theorem orderAt_coverTriple_le_mult (hstar0 : _root_.FunctorialResolutio
   have hsm : AlgebraicGeometry.Smooth S.structMap := hv.smooth
   have hft : AlgebraicGeometry.LocallyOfFiniteType S.structMap := hv.locallyOfFiniteType
   have hcz : CharZero S.base := hv.charZero
-  have hnoe : IsNoetherianRing S.base := inferInstance
   have hsmc : AlgebraicGeometry.Smooth (MaxContactCoverData.coverMap S hv) :=
     MaxContactCoverData.smooth_coverMap_of_isAdmissible S hv
   have hs : 1 ≤ MaxContactCoverData.tunedMult S := hcv.one_le_mult
@@ -931,11 +818,11 @@ theorem maxContactPrincipalization_isPullbackBlowupSequence_of_smooth
       (MaxContactCoverData.coverMap (MaxContactReduction.dropTrivialBoundary T) htrimv)
       (MaxContactCoverData.coverMap (dropTrivialBoundaryPullback T qY h E') hpbv)
       hsmc₁ hsmc₂ hsu₁
-    have hbdT : ∀ D ∈ (MaxContactReduction.dropTrivialBoundary T).boundary, D ≠ ⊤ :=
-      boundary_ne_top_of_eq (dropTrivialBoundary_eq_withBoundary_removeUnitIdeals T).symm
-        (fun D hD => ne_top_of_mem_removeUnitIdeals T.boundary D hD)
+    have hbdT : ∀ D ∈ (MaxContactReduction.dropTrivialBoundary T).boundary, D ≠ ⊤ := by
+      rw [dropTrivialBoundary_boundary_eq_removeUnitIdeals]
+      exact fun _ hD => @of_decide_eq_true _ (Classical.propDecidable _) (List.mem_filter.1 hD).2
     have hbdP : ∀ D ∈ (dropTrivialBoundaryPullback T qY h E').boundary, D ≠ ⊤ :=
-      fun D hD => ne_top_of_mem_removeUnitIdeals E' D hD
+      fun _ hD => @of_decide_eq_true _ (Classical.propDecidable _) (List.mem_filter.1 hD).2
     have hmax₁ : MaxOrderEq (MaxContactReduction.dropTrivialBoundary T).ideal (MaxContactReduction.dropTrivialBoundary T).mult :=
       ⟨hypS₁.orderLE, hypS₁.coSupport_nonempty⟩
     have hmax₂ : MaxOrderEq (dropTrivialBoundaryPullback T qY h E').ideal

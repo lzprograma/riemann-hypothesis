@@ -58,8 +58,6 @@ abbrev FnField (P : Ideal (MRing ι)) : Type := FractionRing (MRing ι ⧸ P)
 def genPt (P : Ideal (MRing ι)) : (Σ k, ι k) → FnField P :=
   fun p => algebraMap (MRing ι ⧸ P) (FnField P) (Ideal.Quotient.mk P (X p))
 
-abbrev PBlk (ι : K → Type) (N1 : ℕ) : K ⊕ Unit → Type := Sum.elim ι fun _ => Fin N1
-
 abbrev PluckerBlocks (N1 n : ℕ) : Fin (n - 1) → Type := fun j => {S : Finset (Fin N1) // S.card = j + 1}
 
 def flagMinor {R : Type} [CommRing R] {n N1 : ℕ} (M : Matrix (Fin n) (Fin N1) R) (j : Fin (n - 1))
@@ -72,9 +70,5 @@ def genMat (R : Type) [CommRing R] (n : ℕ) : Matrix (Fin n) (Fin n) (MvPolynom
 def flagDim (n : ℕ) : ℕ := n * (n - 1) / 2
 
 end Bundles
-
-section Inhabitants
-
-end Inhabitants
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Inter

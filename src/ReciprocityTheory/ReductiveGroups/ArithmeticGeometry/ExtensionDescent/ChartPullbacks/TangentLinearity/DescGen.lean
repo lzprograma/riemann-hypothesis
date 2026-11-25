@@ -8,8 +8,6 @@ import Mathlib.AlgebraicGeometry.Sites.Fpqc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry

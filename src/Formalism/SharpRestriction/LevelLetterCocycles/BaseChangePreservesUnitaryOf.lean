@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdSubOfDvdSubX
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HodgeFontaineExactness.OneNotMemFilOne
 public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
 import Formalism.CoboundaryTransfers.GammaStableTransfers.MemCoboundariesOfIsOneCoboundary
@@ -14,50 +15,7 @@ import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocyclePro
 import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.PhiOnto
 import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.UnitLemmaCaseALevelZero
 import Formalism.WindowSums.PowerSeriesRelationList
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -189,7 +147,7 @@ theorem liftb_res_nat (H : Subgroup G) {T T' : LocLat G Qp LL O} (F : LatHom T.L
 
 theorem liftb_res_inj (H : Subgroup G) (hH : H = ⊤) (T : LocLat G Qp LL O) :
     Function.Injective (Formalism.MainNotions.DeltaInvariantLattices.res H T) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro κ
   induction κ using Submodule.Quotient.induction_on with
   | H c =>
@@ -2850,7 +2808,7 @@ theorem hstr_CompleteB (W : LocWach PD LL O v n) [IsAdicComplete (hstrI₀ O PD.
   refine ⟨hstrI O n PD.p, hstr_Q_mem W, hstr_φ_mem W, ?_⟩
   choose r b hb huniq using hfree.2
   have hinj : Function.Injective (hstrSyn W T r b hb) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro c hc
     funext κ
     obtain ⟨i, j⟩ := κ
@@ -2954,7 +2912,7 @@ theorem hstra_abs {A' R D ι₁ ι₂ : Type} [CommRing A'] [CommRing R] [AddCom
     rw [hg, Submodule.coe_sum]
     rfl
   have hinj : Function.Injective g := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro c hc
     have h0 : ∑ j, Θ (fun i => c (j, i)) • b j = 0 := by
       rw [← hgc, hc]
@@ -3006,36 +2964,7 @@ variable {O : Type} [CommRing O]
 
 theorem hstra_algHom_ext (F G : PowerSeries O →ₐ[O] PowerSeries O)
     (hX : F PowerSeries.X = G PowerSeries.X) (hd : PowerSeries.X ∣ F PowerSeries.X) : F = G := by
-  have hpoly : ∀ P : Polynomial O, F (P : PowerSeries O) = G (P : PowerSeries O) := by
-    intro P
-    have h : F.comp (Polynomial.coeToPowerSeries.algHom O) =
-        G.comp (Polynomial.coeToPowerSeries.algHom O) := by
-      apply Polynomial.algHom_ext
-      simp [Polynomial.coeToPowerSeries.algHom_apply, hX]
-    have h2 := DFunLike.congr_fun h P
-    simpa [Polynomial.coeToPowerSeries.algHom_apply] using h2
-  apply AlgHom.ext
-  intro f
-  rw [← sub_eq_zero]
-  ext k
-  have hdiv : (PowerSeries.X : PowerSeries O) ^ (k + 1) ∣ F f - G f := by
-    have hf := PowerSeries.eq_shift_mul_X_pow_add_trunc (k + 1) f
-    set g : PowerSeries O := PowerSeries.mk fun i => PowerSeries.coeff (i + (k + 1)) f with hg
-    have e1 : F f = F g * (F PowerSeries.X) ^ (k + 1) +
-        F ((f.trunc (k + 1) : Polynomial O) : PowerSeries O) := by
-      conv_lhs => rw [hf]
-      rw [map_add (f := _), map_mul, map_pow]
-    have e2 : G f = G g * (G PowerSeries.X) ^ (k + 1) +
-        G ((f.trunc (k + 1) : Polynomial O) : PowerSeries O) := by
-      conv_lhs => rw [hf]
-      rw [map_add (f := _), map_mul, map_pow]
-    have e3 : F f - G f = (F g - G g) * (F PowerSeries.X) ^ (k + 1) := by
-      rw [e1, e2, hpoly, ← hX]
-      ring
-    rw [e3]
-    exact Dvd.dvd.mul_left (pow_dvd_pow_of_dvd hd _) _
-  rw [map_zero]
-  exact (PowerSeries.X_pow_dvd_iff.1 hdiv) k (Nat.lt_succ_self k)
+  apply _root_.GlobalTheory.NB.LT.algHom_ext_X <;> assumption
 
 end HStrA0
 

@@ -7,8 +7,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace
@@ -216,7 +214,7 @@ theorem canon_key (hL : L.IsLB) (φ : K → (Y ⟶ X)) (ε : K → ℤ) (φ' : K
       ∏ k', F (φ' k') ^ ε' k' := by
     rw [← prod_sameSum φ ε φ' ε' hs F]
     refine Finset.prod_congr rfl fun k _ => ?_
-    simp only [F, dif_pos (hsub k)]
+    simp only [F, dite_eq_left (hsub k)]
     rfl
   have key : ∀ k', F (φ' k') * gW L (φ' k') (j1 k') (R φ' j1 (φ' k') ⟨k', rfl⟩)
       (lePI (inf_le_left.trans (lcle φ' ε' j1 k')) (inf_le_left.trans (lcle_R φ' ε' j1 _ _))) =
@@ -225,7 +223,7 @@ theorem canon_key (hL : L.IsLB) (φ : K → (Y ⟶ X)) (ε : K → ℤ) (φ' : K
       gW L (φ' k') (j2 k') (R φ' j2 (φ' k') ⟨k', rfl⟩)
         (lePI (inf_le_right.trans (lcle φ' ε' j2 k')) (inf_le_right.trans (lcle_R φ' ε' j2 _ _))) := by
     intro k'
-    simp only [F, dif_pos (⟨k', rfl⟩ : ∃ c, φ' c = φ' k')]
+    simp only [F, dite_eq_left (⟨k', rfl⟩ : ∃ c, φ' c = φ' k')]
     have h1 : (LB.LinComb L φ' ε').U j1 ⊓ (LB.LinComb L φ' ε').U j2 ≤ φ' k' ⁻¹ᵁ L.U (j1 k') :=
       inf_le_left.trans (lcle φ' ε' j1 k')
     have h2 : (LB.LinComb L φ' ε').U j1 ⊓ (LB.LinComb L φ' ε').U j2 ≤ φ' k' ⁻¹ᵁ L.U (j2 k') :=

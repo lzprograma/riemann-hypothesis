@@ -1079,15 +1079,7 @@ private theorem gr_mul {X Y : Matrix (Fin 3) (Fin 3) R} (hX : GrMat 𝒜 X) (hY 
   rwa [e] at h
 
 private theorem gr_one : GrMat 𝒜 (1 : Matrix (Fin 3) (Fin 3) R) := by
-  intro a b
-  by_cases h : a = b
-  · subst h
-    rw [Matrix.one_apply_eq]
-    have e : wt a a = 0 := by simp [wt]
-    rw [e]
-    exact SetLike.GradedOne.one_mem
-  · rw [Matrix.one_apply_ne h]
-    exact zero_mem _
+  apply _root_.UpperTheory.V.UnitaryThreeInertia.TorStep.grMat_one <;> assumption
 
 private theorem gr_pow {g : GL (Fin 3) R} (hg : GrMat 𝒜 (g : Matrix (Fin 3) (Fin 3) R)) (n : ℕ) :
     GrMat 𝒜 ((g ^ n : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R) := by

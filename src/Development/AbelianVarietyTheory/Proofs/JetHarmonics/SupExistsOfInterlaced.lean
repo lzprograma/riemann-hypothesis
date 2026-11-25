@@ -196,7 +196,7 @@ theorem isFrameOf (hg : IsFrameW k r z g) : Q.IsFrameOf k r [z] (fun a => g *ᵥ
           Fin.ext (by rw [hp]; simp only [eI]; split_ifs <;> omega)
         rw [← e]; exact (hg.2.1 _).1
     have h2 := hf (bvec (bl k r a)) (bvec (piI k r i))
-    rw [hfix, herm_right_bvec, piI_piI, h1, if_neg] at h2
+    rw [hfix, herm_right_bvec, piI_piI, h1, ite_eq_right] at h2
     · refine (mul_eq_zero.1 h2).resolve_left fun h => ?_
       have := epsI_mul_self (k := k) (r := r) (piI k r i)
       rw [h] at this; simp at this
@@ -210,7 +210,7 @@ theorem isFrameOf (hg : IsFrameW k r z g) : Q.IsFrameOf k r [z] (fun a => g *ᵥ
     simp [blockIndex_injective.eq_iff, eq_comm]
   · rw [List.mem_singleton.1 hv, ← hg.2.2]
     refine (hf _ _).trans ?_
-    rw [herm_smul_right, h1, if_neg, mul_zero]
+    rw [herm_smul_right, h1, ite_eq_right, mul_zero]
     intro h
     have := congrArg Fin.val h
     have := a.isLt
@@ -346,10 +346,5 @@ theorem prod_eq {u : ℕ → ℝ} {u₀ : Fin k → ℝ} (hπ : Q.IsType k r z �
   ring
 
 end param
-
-section main
-open PI.BesselPeriodGGP
-
-end main
 
 end GlobalTheory.SupNonzero

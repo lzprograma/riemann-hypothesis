@@ -113,7 +113,7 @@ theorem unit_cols (n l : ℕ) (hl : l ≤ n) (I : Fin (n - l) → Fin n) (hI : F
       ext a t
       simp only [Matrix.submatrix_apply, id, catM]
       split_ifs with ht
-      · simp only [unitM, dif_pos ht, one_smul, Matrix.one_apply]
+      · simp only [unitM, dite_eq_left ht, one_smul, Matrix.one_apply]
         rw [← hπ ⟨t.val, ht⟩]
         have : Fin.castLE hm ⟨t.val, ht⟩ = t := Fin.ext rfl
         simp only [Equiv.apply_eq_iff_eq, this]
@@ -138,14 +138,14 @@ theorem hv_full (A : Type) [CommRing A] (n : ℕ) (μ : Fin n → ℕ) (hμ : An
   let F : ℕ → A := fun m =>
     if h : m ≤ n then (Matrix.of fun i t : Fin m => ∑ a, x a i.val * y a (Fin.castLE h t)).det else 1
   have hF : F 0 = 1 := by
-    simp only [F, Nat.zero_le, dif_pos]
+    simp only [F, Nat.zero_le, dite_eq_left]
     exact Matrix.det_isEmpty
   have hE : ∀ ν : Fin n → ℕ, hvE x y c (fun k => colH ν k.val) (fun k => colH_le ν k.val) =
       ∏ k : Fin c, F (colH ν k.val) := by
     intro ν
     unfold hvE
     refine Finset.prod_congr rfl fun k _ => ?_
-    simp only [F, dif_pos (colH_le ν k.val)]
+    simp only [F, dite_eq_left (colH_le ν k.val)]
   have hμ' : Antitone fun t => μ t - e := fun a b h => by
     have := hμ h
     simp only
@@ -154,7 +154,7 @@ theorem hv_full (A : Type) [CommRing A] (n : ℕ) (μ : Fin n → ℕ) (hμ : An
   rw [hE, hE, BidetPairing.prod_colH hμ c hc F hF, BidetPairing.prod_colH hμ' c hc' F hF]
   have hFn : F n = (Matrix.of fun a i : Fin n => x a i.val).det * y.det := by
     simp only [F]
-    rw [dif_pos le_rfl, ← Matrix.det_transpose (Matrix.of fun a i : Fin n => x a i.val), ← Matrix.det_mul]
+    rw [dite_eq_left le_rfl, ← Matrix.det_transpose (Matrix.of fun a i : Fin n => x a i.val), ← Matrix.det_mul]
     congr 1
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
   rw [Fin.prod_univ_castSucc, Fin.prod_univ_castSucc]
@@ -164,7 +164,7 @@ theorem hv_full (A : Type) [CommRing A] (n : ℕ) (μ : Fin n → ℕ) (hμ : An
     simp
   have hn2 : ∀ (ν : Fin (m + 1) → ℕ) (i : Fin m), nuNext ν i.castSucc = ν i.succ := fun ν i => by
     unfold nuNext
-    rw [dif_pos (by simp)]
+    rw [dite_eq_left (by simp)]
     rfl
   have hexp : ∀ i : Fin m, (μ i.castSucc - e) - (μ i.succ - e) = μ i.castSucc - μ i.succ := fun i => by
     have := he i.castSucc
@@ -214,7 +214,7 @@ theorem highest_vector_mem_odd : HvMemO := by
   have hXg : (Matrix.of fun a t : Fin n => xg a (n - 1 - t.val)) = Matrix.mvPolynomialX (Fin n) (Fin n) K := by
     ext a t
     have := t.isLt
-    simp only [Matrix.of_apply, xg, Matrix.mvPolynomialX_apply, dif_pos (show n - 1 - t.val < n by omega)]
+    simp only [Matrix.of_apply, xg, Matrix.mvPolynomialX_apply, dite_eq_left (show n - 1 - t.val < n by omega)]
     apply congrArg (fun p : Fin n × Fin n => (X p : MvPolynomial (Fin n × Fin n) K).coeff _)
     refine Prod.ext rfl (Fin.ext ?_)
     show n - 1 - (n - 1 - t.val) = t.val
@@ -247,7 +247,7 @@ theorem highest_vector_mem_odd : HvMemO := by
   have hx : ∀ a i, i < n → (fun a i => C (x a i) : Fin n → ℕ → MvPolynomial (Fin n × Fin n) K) a i =
       (fun a i => C (eval (fun v : Fin n × Fin n => x v.1 (n - 1 - v.2.val)) (xg a i))) a i := by
     intro a i hi
-    simp only [xg, dif_pos hi, eval_X]
+    simp only [xg, dite_eq_left hi, eval_X]
     congr 2
     omega
   convert hK using 1

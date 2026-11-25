@@ -18,12 +18,6 @@ open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B ReciprocityTheory
 
 variable {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
-section sm
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-end sm
-
 theorem lie_conj {t X : Mat k r} (ht : t ∈ GV k r) (hX : Formalism.MainNotions.S.InLieHpk k r X) :
     Formalism.MainNotions.S.InLieHpk k r (t⁻¹ * X * t) := by
   have hX' : Xᴴ * Hpk k r + Hpk k r * X = 0 := hX

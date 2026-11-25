@@ -12,53 +12,8 @@ public import Formalism.PieriBlockIdeals.PieriColumnMinors.LastGradedImpliesOneB
 public import Formalism.PieriBlockIdeals.PieriColumnMinors.ProdInitialMinorsMemDetSpan
 public import Formalism.PieriBlockIdeals.PieriColumnMinors.UnitNormBounds
 public import Mathlib.RingTheory.Ideal.Quotient.Index
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
 import Mathlib.LinearAlgebra.PiTensorProduct.Finite
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.RankGapBounds.LargePrimeFactor
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -223,12 +178,6 @@ theorem application_window : ApplicationWindow := by
   push_cast
   linarith
 
-section SizeData₂
-
-open Formalism.RankGapBounds.ChebyshevFactorialBounds
-
-end SizeData₂
-
 section Subquotients
 
 open CategoryTheory CategoryTheory.Limits
@@ -361,7 +310,7 @@ theorem tensor_weight_kill_holds : TensorWeightKill := by
     intro τ
     by_cases h : τ = a
     · subst h
-      simp only [Function.update_self, chainB, if_neg ha]
+      simp only [Function.update_self, chainB, ite_eq_right ha]
       exact hp _
     · rw [Function.update_of_ne h]
       have h1 := hx τ
@@ -379,9 +328,9 @@ theorem chain_monotone_holds : ChainMono := by
   have h1 := hx τ
   simp only [chainB] at h1 ⊢
   by_cases h : τ ∈ s
-  · rw [if_pos (hss h)]
+  · rw [ite_eq_left (hss h)]
     trivial
-  · rw [if_neg h] at h1
+  · rw [ite_eq_right h] at h1
     split_ifs
     · trivial
     · exact h1
@@ -505,7 +454,7 @@ theorem theorem_w_central_of_simple_quotients (hSS : SimpleSubquotOfPower) (hIso
       rw [hc]
       exact hkill _ (hex a)
     have hc : cTau T2 ex c' a = c' a := by
-      simp only [cTau, haT, if_true]
+      simp only [cTau, haT, ite_true]
       omega
     rw [hc]
     let E : Submodule A (⨂[O] τ, Nb τ) :=

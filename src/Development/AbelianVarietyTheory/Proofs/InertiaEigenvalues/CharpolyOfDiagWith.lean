@@ -6,52 +6,7 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffEq
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMatrixFrobenius
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjectiveOfSpan
 public import Mathlib.Algebra.Module.Lattice.Full
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Charpoly.BaseChange
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.Module.Lattice.Basic
 
@@ -302,8 +257,7 @@ theorem mem_NΔl_iff (hr : ∀ a, (∃ b, J b = a) ↔ ∀ δ ∈ W.DelF, W.γ�
     exact ⟨c, by rw [hxa, th_apply]; simp only [hc]⟩
   · rintro ⟨c, rfl⟩
     refine ⟨⟨th_mem_N W T J b i c, fun δ hδ => ?_⟩, th W T J b i c, th_mem_N W T J b i c, ?_⟩
-    · set_option synthInstance.maxHeartbeats 100000 in
-        rw [th_apply, map_sum]
+    · rw [th_apply, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [γD_smulA, γA_single, (hb _).2 δ hδ, (hr _).1 ⟨_, rfl⟩ δ hδ]
     · change (letE i : LetA O n) • th W T J b i c = _
@@ -475,7 +429,7 @@ theorem exists_eta [CharZero LL] {g : W.Gam} (hJ : QFrame W g J) (ζ : LL) (hζ 
     have h1 := congrArg (coeff 0) hE1
     have h2 := congrArg (coeff 1) hE'
     rw [coeff_derivative, coeff_zero_eq_constantCoeff, hE0] at h1
-    rw [coeff_succ_X_mul, coeff_zero_eq_constantCoeff, map_sub, coeff_one, if_neg one_ne_zero] at h2
+    rw [coeff_succ_X_mul, coeff_zero_eq_constantCoeff, map_sub, coeff_one, ite_eq_right one_ne_zero] at h2
     rw [isUnit_iff_constantCoeff, ← h2]
     simp only [Nat.cast_zero, zero_add, mul_one] at h1
     simp [h1]
@@ -522,7 +476,7 @@ theorem diagQuot [IsDomain O] [CharZero LL] (hinj : Function.Injective (algebraM
   have hχ : (1 + (PD.p : LL)) ≠ 0 := by exact_mod_cast (by omega : 1 + PD.p ≠ 0)
   have hX : X - ((PD.p : ℕ) : O⟦X⟧) ≠ 0 := fun h => by
     have := congrArg (coeff 1) h
-    rw [← map_natCast (C : O →+* O⟦X⟧), map_sub, coeff_one_X, coeff_C, if_neg one_ne_zero, sub_zero,
+    rw [← map_natCast (C : O →+* O⟦X⟧), map_sub, coeff_one_X, coeff_C, ite_eq_right one_ne_zero, sub_zero,
       map_zero] at this
     exact one_ne_zero this
   refine ⟨fun x hx => ?_, Module.Free.of_equiv eq.symm, Module.Finite.equiv eq.symm, ?_, ?_, fun nb hnb => ?_⟩

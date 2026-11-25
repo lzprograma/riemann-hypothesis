@@ -244,7 +244,7 @@ theorem eq_of_selfDual_diag : ∀ (κ : Type) [Fintype κ] (d : κ → ℝ), (�
     have h := hx (Pi.single k 1)
     rw [hBl] at h
     simp only [Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true] at h
+      Finset.mem_univ, ite_true] at h
     exact (mul_eq_zero.1 h).resolve_left (hd k)
   obtain ⟨-, hsch⟩ := GlobalTheory.fourier_inversion_haar_symm_form Bl hsymm hnd
     (ENNReal.ofReal (∏ k, √|d k|) • (volume : Measure (κ → ℝ))) inferInstance

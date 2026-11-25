@@ -4,47 +4,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGWave
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LagrangeExtraction
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGCongr
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -205,7 +164,7 @@ theorem wv_step (hSP : SlicePoly p.T F j hj h hh) (hSP' : SlicePoly p.T F j hj h
     dsimp only
     rw [Finset.sum_eq_single (Fin.last j)]
     · rw [Finset.sum_eq_single (Fin.last j)]
-      · rw [if_pos (by simp; omega)]
+      · rw [ite_eq_left (by simp; omega)]
         have z0 : ∀ (y : Wd.Ix (Fin (KB.minusW ys w).length) → B.Mat P.k (P.r - j) → (Wq →L[ℂ] Wp)), DecV y →
             KB.pairJ (p.form j hj w) ys 0 y = 0 := by
           intro y hy
@@ -219,16 +178,16 @@ theorem wv_step (hSP : SlicePoly p.T F j hj h hh) (hSP' : SlicePoly p.T F j hj h
           rw [one_smul, add_zero, map_one, one_mul, ← form_eq p j hj w] at this
           linear_combination -this
         have hA1l : A1 (Fin.last j) = 0 + s • xP p F j hj w h hh s Mo ys := by
-          simp only [hA1, hC1l, hC0l, if_pos, show ((1 : Fin 2) = 0) = False from by decide, if_false,
+          simp only [hA1, hC1l, hC0l, ite_eq_left, show ((1 : Fin 2) = 0) = False from by decide, ite_false,
             onOld_zero, waveG_zero]
           rfl
-        have hD0l' : D0 (Fin.last j) = xM p F j hj w h' hh' ys := by rw [hD0l, if_pos rfl]; rfl
+        have hD0l' : D0 (Fin.last j) = xM p F j hj w h' hh' ys := by rw [hD0l, ite_eq_left rfl]; rfl
         have hD1l' : D1 (Fin.last j) = 0 := by rw [hD1l]; simp
         have dxP : DecV (xP p F j hj w h hh s Mo ys) := by
           have h1 := dA1 (Fin.last j)
           rw [hA1l, zero_add] at h1
           have h2 := nA C0 hC0n (Fin.last j)
-          simp only [hC0l, if_pos] at h2
+          simp only [hC0l, ite_eq_left] at h2
           exact h2
         have dxM : DecV (xM p F j hj w h' hh' ys) := by rw [← hD0l']; exact dD0 _
         simp only [hXdef]
@@ -240,7 +199,7 @@ theorem wv_step (hSP : SlicePoly p.T F j hj h hh) (hSP' : SlicePoly p.T F j hj h
         simp only [Wv]
         ring
       · intro m _ hm
-        rw [if_neg]
+        rw [ite_eq_right]
         have := m.isLt
         have hm' : m.val ≠ j := fun e => hm (Fin.ext (by simp [e]))
         simp; omega
@@ -248,7 +207,7 @@ theorem wv_step (hSP : SlicePoly p.T F j hj h hh) (hSP' : SlicePoly p.T F j hj h
     · intro l _ hl
       apply Finset.sum_eq_zero
       intro m _
-      rw [if_neg]
+      rw [ite_eq_right]
       have := l.isLt
       have := m.isLt
       have hl' : l.val ≠ j := fun e => hl (Fin.ext (by simp [e]))
@@ -259,9 +218,9 @@ theorem wv_step (hSP : SlicePoly p.T F j hj h hh) (hSP' : SlicePoly p.T F j hj h
         ((t : ℂ) ^ (l : ℕ)) * ((t : ℂ) ^ (m : ℕ)) * X l m := by
       intro l m
       rw [Finset.sum_eq_single ⟨l.val + m.val, by omega⟩]
-      · rw [if_pos rfl, pow_add]
+      · rw [ite_eq_left rfl, pow_add]
       · intro q _ hq
-        rw [if_neg, mul_zero]
+        rw [ite_eq_right, mul_zero]
         intro e
         exact hq (Fin.ext e.symm)
       · simp

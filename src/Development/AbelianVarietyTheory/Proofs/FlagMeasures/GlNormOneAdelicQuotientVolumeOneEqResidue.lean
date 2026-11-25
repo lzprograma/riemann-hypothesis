@@ -53,6 +53,7 @@ import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Separation.CompletelyRegular
 import Mathlib.Topology.Sheaves.Init
 public import Mathlib.NumberTheory.NumberField.Completion.InfinitePlace
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFieldUnitMemOpenArchimedeanUnits
 
 @[expose] public section
 
@@ -524,112 +525,7 @@ end Transport
 open InfinitePlace in
 private theorem denseRange_embeddings {E : Type} [Field E] [NumberField E]
     (hE : IsTotallyComplex E) : DenseRange (fun (a : E) (w : InfinitePlace E) => w.embedding a) := by
-  let f := Pi.map (fun w : InfinitePlace E => (Completion.extensionEmbedding w : w.Completion → ℂ))
-  have hf : DenseRange f :=
-    DenseRange.piMap fun w => (Completion.surjective_extensionEmbedding_of_isComplex (hE.isComplex w)).denseRange
-  have hc : Continuous f :=
-    continuous_pi fun w => (Completion.isometry_extensionEmbedding w).continuous.comp (continuous_apply w)
-  have he : (fun (a : E) (w : InfinitePlace E) => w.embedding a) =
-      f ∘ algebraMap E (InfiniteAdeleRing E) := by
-    funext a w
-    change w.embedding a = Completion.extensionEmbedding w (algebraMap E (InfiniteAdeleRing E) a w)
-    rw [InfiniteAdeleRing.algebraMap_apply, Completion.extensionEmbedding_coe]
-    rfl
-  rw [he]
-  exact hf.comp (InfiniteAdeleRing.denseRange_algebraMap E) hc
-
--- The zero lattice has the whole rational general linear group as its stabilizer.
-private theorem covol_bot {E : Type} [Field E] [NumberField E] (hE : IsTotallyComplex E) :
-    covol (autGL E 1 ⊥) (haarGL E 1) {x | 1 ≤ detNorm E 1 x ∧ detNorm E 1 x < Real.exp 1} = 0 := by
-  classical
-  let V := InfinitePlace E → Fin 1 → Fin 1 → ℂ
-  let oneMat : V := fun _ _ _ => 1
-  have hdet : Continuous (fun x : V => detNorm E 1 x) := by
-    simp only [detNorm, Matrix.det_unique]
-    exact continuous_finsetProd _ fun w _ => (show Continuous (fun x : V => x w 0 0) by fun_prop).norm.pow 2
-  have hdet_one : detNorm E 1 oneMat = 1 := by simp [detNorm, Matrix.det_unique, oneMat]
-  obtain ⟨w₀⟩ : Nonempty (InfinitePlace E) := inferInstance
-  have hdet_zero : detNorm E 1 (0 : V) = 0 := by
-    refine Finset.prod_eq_zero (i := w₀) (Finset.mem_univ _) ?_
-    change ‖(Matrix.of (fun _ _ : Fin 1 => (0 : ℂ))).det‖ ^ 2 = 0
-    simp [Matrix.det_unique]
-  have : (volume : Measure (Fin 1 → ℂ)).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
-  have : (volume : Measure (Fin 1 → Fin 1 → ℂ)).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
-  have : (volume : Measure V).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
-  have hsingleton : (volume : Measure V) {oneMat} = 0 := by
-    rw [volume_pi, Measure.pi_singleton]
-    apply Finset.prod_eq_zero (Finset.mem_univ w₀)
-    rw [volume_pi, Measure.pi_singleton]
-    apply Finset.prod_eq_zero (Finset.mem_univ (0 : Fin 1))
-    rw [volume_pi, Measure.pi_singleton]
-    exact Finset.prod_eq_zero (Finset.mem_univ (0 : Fin 1)) (measure_singleton _)
-  apply le_antisymm _ bot_le
-  apply le_of_forall_gt
-  intro ε hε
-  obtain ⟨U, hU, hUo, hUμ⟩ := ({oneMat} : Set V).exists_isOpen_lt_of_lt (μ := volume) (ε / 2) (by
-    rw [hsingleton]
-    exact ENNReal.div_pos hε.ne' ENNReal.ofNat_ne_top)
-  let D : Set V := U ∩ {x | (1 / 2 : ℝ) < detNorm E 1 x}
-  have hDo : IsOpen D := hUo.inter (isOpen_lt continuous_const hdet)
-  have hD1 : oneMat ∈ D := ⟨hU (Set.mem_singleton _), by
-    change (1 / 2 : ℝ) < detNorm E 1 oneMat
-    rw [hdet_one]
-    norm_num⟩
-  have hcov : ∀ x : MatInf E 1, x ∈ {x | 1 ≤ detNorm E 1 x ∧ detNorm E 1 x < Real.exp 1} →
-      ∃ γ ∈ autGL E 1 ⊥, γ * x ∈ D := by
-    intro x hx
-    have hx0 (w : InfinitePlace E) : x w 0 0 ≠ 0 := by
-      intro hw
-      have hz : detNorm E 1 x = 0 :=
-        Finset.prod_eq_zero (i := w) (Finset.mem_univ _) (by simp [Matrix.det_unique, hw])
-      exact zero_lt_one.not_ge (hz ▸ hx.1)
-    let g (z : InfinitePlace E → ℂ) : V := fun w a b => z w * x w a b
-    have hg : Continuous g := by unfold g; fun_prop
-    have h1 : g (fun w => (x w 0 0)⁻¹) = oneMat := by
-      funext w a b
-      rw [Subsingleton.elim a 0, Subsingleton.elim b 0]
-      exact inv_mul_cancel₀ (hx0 w)
-    obtain ⟨a, ha⟩ := (denseRange_embeddings hE).exists_mem_open (hDo.preimage hg)
-      ⟨_, by show g _ ∈ D; rwa [h1]⟩
-    change g (fun w => w.embedding a) ∈ D at ha
-    have ha0 : a ≠ 0 := by
-      rintro rfl
-      have h : g (fun w => w.embedding 0) = 0 := by
-        funext w i j
-        change w.embedding 0 * x w i j = 0
-        rw [map_zero, zero_mul]
-      rw [h] at ha
-      have hpos : (1 / 2 : ℝ) < detNorm E 1 (0 : V) := ha.2
-      rw [hdet_zero] at hpos
-      norm_num at hpos
-    obtain ⟨γ, hγ⟩ := exists_gl_one ha0
-    let aInf : MatInf E 1 := fun w _ _ => w.embedding a
-    refine ⟨aInf, ⟨γ, fun y => ?_, fun w i j => ?_⟩, ?_⟩
-    · rw [mulVec_one, hγ, Submodule.mem_bot, Submodule.mem_bot]
-      exact ⟨fun h => (smul_eq_zero.mp h).resolve_left ha0, fun h => by simp [h]⟩
-    · rw [Subsingleton.elim i 0, Subsingleton.elim j 0, hγ]
-    · have hmul : aInf * x = g (fun w => w.embedding a) := by
-        funext w i j
-        change (Matrix.of (fun _ _ : Fin 1 => w.embedding a) * Matrix.of (x w)) i j = _
-        rw [Subsingleton.elim i 0]
-        simp [Matrix.mul_apply, g]
-      rwa [hmul]
-  calc
-    _ ≤ haarGL E 1 D := iInf_le_of_le D (iInf_le_of_le hDo.measurableSet (iInf_le _ hcov))
-    _ = ∫⁻ x in D, ENNReal.ofReal (detNorm E 1 x)⁻¹ ∂(volume : Measure V) := by
-      change (volume : Measure V).withDensity (fun x : V => ENNReal.ofReal ((detNorm E 1 x)⁻¹ ^ 1)) D = _
-      simp only [pow_one, withDensity_apply _ hDo.measurableSet]
-    _ ≤ ∫⁻ _ in D, (2 : ENNReal) ∂(volume : Measure V) := by
-      apply setLIntegral_mono measurable_const
-      intro x hx
-      rw [← ENNReal.ofReal_ofNat 2]
-      apply ENNReal.ofReal_le_ofReal
-      have hd : (1 / 2 : ℝ) < detNorm E 1 x := hx.2
-      exact (inv_le_comm₀ ((by norm_num : (0 : ℝ) < 1 / 2).trans hd) (by norm_num)).2
-        (by simpa only [one_div] using hd.le)
-    _ < ε := by
-      rw [setLIntegral_const]
-      exact ENNReal.mul_lt_of_lt_div' ((measure_mono (Set.inter_subset_left : D ⊆ U)).trans_lt hUμ)
+  apply _root_.GlobalTheory.UnitsDense.denseRange_embeddings' <;> assumption
 
 theorem glVol_one : ∀ (E : Type) [Field E] [NumberField E], IsTotallyComplex E →
     glVol E 1 = ENNReal.ofReal (dedekindZeta_residue E * Formalism.HermitianLatticesTheory.vInv E ^ Formalism.HermitianLatticesTheory.fDeg E) := by

@@ -21,6 +21,26 @@ namespace GroundTheory.Heights₂.Heights
 
 open MvPolynomial ComplexSets Filter Topology
 
+theorem PrimePlaceBranchExists.exists_nat_ringKrullDim_quotient {n : ℕ}
+    {J : Ideal (MvPolynomial (Fin n) ℂ)} [Nontrivial (MvPolynomial (Fin n) ℂ ⧸ J)] :
+    ∃ e : ℕ, ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = e := by
+  have hle : ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) ≤ (n : ℕ) := by
+    refine (ringKrullDim_quotient_le J).trans ?_
+    rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field]
+    simp
+  have h0 : (0 : WithBot ℕ∞) ≤ ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) :=
+    ringKrullDim_nonneg_of_nontrivial
+  generalize ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = d at h0 hle ⊢
+  induction d using WithBot.recBotCoe with
+  | bot => simp at h0
+  | coe x =>
+    induction x using ENat.recTopCoe with
+    | top =>
+      exfalso
+      simp only [not_le.2 (show ((n : ℕ) : WithBot ℕ∞) < ((⊤ : ℕ∞) : WithBot ℕ∞) from
+        WithBot.coe_lt_coe.2 (ENat.natCast_lt_top n))] at hle
+    | coe e => exact ⟨e, rfl⟩
+
 theorem PrimePlaceBranchExists.proof (hA : NormalModelPointOfPlace.Statement) (hB : NormalModelDisc.Statement)
     (hC : NormalModelProjectionLocallyInjective.Statement) (hO : NormalCurveBranchOrder.Statement) :
     PrimePlaceBranchExists.Statement := by
@@ -31,23 +51,7 @@ theorem PrimePlaceBranchExists.proof (hA : NormalModelPointOfPlace.Statement) (h
     have := curveLocalRing_subsingleton J q h
     rw [ringKrullDim_eq_bot_of_subsingleton] at hdim
     exact absurd hdim (by decide)
-  have hle : ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) ≤ (n : ℕ) := by
-    refine (ringKrullDim_quotient_le J).trans ?_
-    rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field]
-    simp
-  obtain ⟨e, he⟩ : ∃ e : ℕ, ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = e := by
-    have h0 : (0 : WithBot ℕ∞) ≤ ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) :=
-      ringKrullDim_nonneg_of_nontrivial
-    generalize ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = d at h0 hle ⊢
-    induction d using WithBot.recBotCoe with
-    | bot => simp at h0
-    | coe x =>
-      induction x using ENat.recTopCoe with
-      | top =>
-        exfalso
-        simp only [not_le.2 (show ((n : ℕ) : WithBot ℕ∞) < ((⊤ : ℕ∞) : WithBot ℕ∞) from
-          WithBot.coe_lt_coe.2 (ENat.natCast_lt_top n))] at hle
-      | coe e => exact ⟨e, rfl⟩
+  obtain ⟨e, he⟩ := PrimePlaceBranchExists.exists_nat_ringKrullDim_quotient (J := J)
   have hloc : ringKrullDim (curveLocalRing J q) = (e : ℕ) := LocalDimDomain.proof n e J hJ he q hq
   have hdim1 : ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = (1 : ℕ) := by
     rw [he]

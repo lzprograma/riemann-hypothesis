@@ -13,56 +13,14 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FlatHermR
 public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EFam
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraClosureProperties
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteEtaleFunctionFieldIntegralClosureDifferentStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.OneFormMapEqKaehlerDifferentialMap
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsIntegralRBIff
-import Mathlib.Tactic.Basify
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CechHomologyEquivFamStatement
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GenericGermDifferentialFormRestrictAffineOpenStatement
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RiemannFormHermitianLattice
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.Etale.Weakly
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
 
@@ -73,8 +31,6 @@ import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechIsCxOfMono", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.CupPair\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechAndTotalDifferentialAdditiveSquareZero\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Definitions.Divisors.OneFormMapEqKaehlerDifferentialMap\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 open GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
@@ -118,8 +74,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open GlobalTheory.WH GlobalTheory.PD GlobalTheory.W1 GlobalTheory.CechDR KaehlerDifferential
@@ -153,8 +107,8 @@ theorem mapDR_smul_ιMulti {L : Type} [Field L] [Algebra ℂ L] [Algebra K L] [I
 theorem deRhamPullbackAlongSecondMap_smul_iotaMulti_kaehlerD (j2 : K →ₐ[ℂ] K') (b : K) (q : ℕ) (v : Fin q → K) :
     pr2L j2 (b • ExteriorAlgebra.ιMulti K q fun j => D ℂ K (v j)) =
       j2 b • ExteriorAlgebra.ιMulti K' q fun j => D ℂ K' (j2 (v j)) := by
-  letI : Algebra K K' := j2.toRingHom.toAlgebra
-  haveI : IsScalarTower ℂ K K' := IsScalarTower.of_algebraMap_eq fun c => (j2.commutes c).symm
+  let : Algebra K K' := j2.toRingHom.toAlgebra
+  have : IsScalarTower ℂ K K' := IsScalarTower.of_algebraMap_eq fun c => (j2.commutes c).symm
   exact mapDR_smul_ιMulti (L := K') b q v
 
 end J2
@@ -253,17 +207,11 @@ private theorem surj_productMap {Y : Scheme.{0}} [Y.IsSeparated] {A B C : CommRi
       rfl
   rw [hJe] at hJ
   have hs := (IsClosedImmersion.isAffine_surjective_of_isAffine (Spec.map (CommRingCat.ofHom φ))).2
-  have nat := Scheme.ΓSpecIso_inv_naturality (CommRingCat.ofHom φ)
-  intro c
-  obtain ⟨t, ht⟩ := hs ((Scheme.ΓSpecIso C).inv.hom c)
-  refine ⟨(Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).hom.hom t, ?_⟩
-  have h3 := congrArg (fun f => f.hom ((Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).hom.hom t)) nat
-  simp only [CommRingCat.hom_comp, RingHom.comp_apply] at h3
-  have h4 : (Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).inv.hom ((Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).hom.hom t) = t := by
-    simp
-  rw [h4] at h3
-  have h5 := (ConcreteCategory.injective_of_mono_of_preservesPullback (Scheme.ΓSpecIso C).inv)
-  exact h5 (h3.trans ht)
+  have hcomp := (Scheme.ΓSpecIso C).commRingCatIsoToRingEquiv.surjective.comp hs
+  change Function.Surjective ((Spec.map (CommRingCat.ofHom φ)).appTop ≫ (Scheme.ΓSpecIso C).hom) at hcomp
+  rw [Scheme.ΓSpecIso_naturality] at hcomp
+  exact Function.Surjective.of_comp
+    (show Function.Surjective (φ ∘ (Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).hom) from hcomp)
 
 private theorem pb_aff {Y : Scheme.{0}} [Y.IsSeparated] {W1 W2 : Y.Opens} (h1 : IsAffineOpen W1) (h2 : IsAffineOpen W2) :
     IsPullback (Spec.map (Y.presheaf.map (homOfLE (inf_le_left : W1 ⊓ W2 ≤ W1)).op))
@@ -271,7 +219,7 @@ private theorem pb_aff {Y : Scheme.{0}} [Y.IsSeparated] {W1 W2 : Y.Opens} (h1 : 
   have h12 : IsAffineOpen (W1 ⊓ W2) := h1.inf h2
   have ha := h1.map_fromSpec h12 (homOfLE (inf_le_left : W1 ⊓ W2 ≤ W1)).op
   have hb := h2.map_fromSpec h12 (homOfLE (inf_le_right : W1 ⊓ W2 ≤ W2)).op
-  haveI : IsOpenImmersion (Spec.map (Y.presheaf.map (homOfLE (inf_le_right : W1 ⊓ W2 ≤ W2)).op)) := by
+  have : IsOpenImmersion (Spec.map (Y.presheaf.map (homOfLE (inf_le_right : W1 ⊓ W2 ≤ W2)).op)) := by
     have : IsOpenImmersion (Spec.map (Y.presheaf.map (homOfLE (inf_le_right : W1 ⊓ W2 ≤ W2)).op) ≫ h2.fromSpec) := by
       rw [hb]; infer_instance
     exact IsOpenImmersion.of_comp _ h2.fromSpec
@@ -335,7 +283,7 @@ private theorem ringOn_inf {Y : Scheme.{0}} [IsIntegral Y] [Y.IsSeparated] (p' :
 
 private theorem mem_bot_of_int {F K : Type} [CommRing F] [Algebra ℂ F] [Field K] [Algebra ℂ K] [Algebra F K]
     [IsScalarTower ℂ F K] (T : Subalgebra ℂ F) (hT : T ≤ ⊥) {y : K} (hy : IsIntegral T y) : y ∈ (⊥ : Subalgebra ℂ K) := by
-  haveI : Algebra.IsIntegral ℂ T := ⟨fun a => by
+  have : Algebra.IsIntegral ℂ T := ⟨fun a => by
     obtain ⟨c, hc⟩ := Algebra.mem_bot.1 (hT a.2)
     have : a = algebraMap ℂ T c := Subtype.ext hc.symm
     rw [this]
@@ -401,8 +349,8 @@ theorem UpperTheory.etaleCorrespondence_functionField_statement_two :
   have base := UpperTheory.A.isAffCover_join s s' c1 c2 hP hL U _ hU
   have C1 := (UpperTheory.A.isFinCover_pull h1 hK hL g1 hx hU).2
   have C2 := UpperTheory.etaleCorrespondence_functionField_statement_one d Z Y s s' hP c1 c2 h1 h2 hK hL g1 j2 g2 F x U hx hU
-  haveI := UpperTheory.A.isSeparated_of_proj s hP
-  haveI : Y.IsSeparated := UpperTheory.A.isSeparated_of_hom c1
+  have := UpperTheory.A.isSeparated_of_proj s hP
+  have : Y.IsSeparated := UpperTheory.A.isSeparated_of_hom c1
   refine ⟨base.alg, base.affine, base.cover, base.ne, fun S hS y => ?_⟩
   have hcongr : ∀ {W W' : Y.Opens} (_ : W = W') (hW : genericPoint Y ∈ W) (hW' : genericPoint Y ∈ W'),
       UpperTheory.A.ringOn s' hL W hW = UpperTheory.A.ringOn s' hL W' hW' := by
@@ -445,8 +393,6 @@ section -- clump:auto
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR GlobalTheory.PD KaehlerDifferential GlobalTheory.W1 GlobalTheory.W1.Lef
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace UpperTheory.PullbackConnectingMap
@@ -462,11 +408,11 @@ theorem pullC_apply (τ : κ → ι) (φ : E →ₗ[k] E') (c : Finset ι → E)
 
 theorem pullC_inj (τ : κ → ι) (φ : E →ₗ[k] E') (c : Finset ι → E) {s : Finset κ}
     (h : Set.InjOn τ s) : pullC τ φ c s = sortSign τ s • φ (c (s.image τ)) := by
-  rw [pullC_apply, if_pos h]
+  rw [pullC_apply, ite_eq_left h]
 
 theorem pullC_ninj (τ : κ → ι) (φ : E →ₗ[k] E') (c : Finset ι → E) {s : Finset κ}
     (h : ¬ Set.InjOn τ s) : pullC τ φ c s = 0 := by
-  rw [pullC_apply, if_neg h]
+  rw [pullC_apply, ite_eq_right h]
 
 private theorem sortSign_eq_sortSign_erase_mul {α β : Type} [LinearOrder α] [LinearOrder β] (τ : β → α) {s : Finset β}
     {j : β} (hj : j ∈ s) :
@@ -538,7 +484,7 @@ private theorem cubeSign_mul_sortSign_erase_eq_neg_of_collide {α β : Type} [Li
       all_goals first
         | (exfalso; order)
         | simp [h1, h2, h3, hya, lt_asymm h1, lt_asymm h2, lt_asymm h3]
-    rw [Finset.prod_congr rfl pt, Finset.prod_mul_distrib, Finset.prod_ite_eq' s a, if_pos ha]
+    rw [Finset.prod_congr rfl pt, Finset.prod_mul_distrib, Finset.prod_ite_eq' s a, ite_eq_left ha]
     ring
   have eA := sortSign_eq_sortSign_erase_mul τ ha
   have eB := sortSign_eq_sortSign_erase_mul τ hb
@@ -614,8 +560,7 @@ theorem pullC_delta (τ : κ → ι) (φ : E →ₗ[k] E') (c : Finset ι → E)
     rw [pullC_inj τ φ c hinj', map_zsmul, smul_smul, smul_smul, sortSign_mul_cubeSign_image τ hj hinj,
       image_erase_eq_erase_image_of_injOn τ hj hinj]
   · have hcol : ∃ a ∈ s, ∃ b ∈ s, a < b ∧ τ a = τ b := by
-      by_contra hno
-      push_neg at hno
+      by_contra! hno
       apply hinj
       intro x hx y hy hxy
       rcases lt_trichotomy x y with h | h | h
@@ -651,17 +596,17 @@ theorem germ_inj_range (hinst : inst = ffAlg p) (hU : IsAffCover p U B) (a : ℕ
       LinearMap.range (formGermI p a hV hη hinst) = omB ℂ Z.functionField (B s) a := by
   subst hinst
   subst hVs
-  letI := algΓ p
-  letI : Algebra ℂ Z.functionField := ffAlg p
-  letI : Algebra (Sec p (s.inf U)) Z.functionField := (germSec p hη).toAlgebra
-  haveI : IsScalarTower ℂ (Sec p (s.inf U)) Z.functionField := by
+  let := algΓ p
+  let : Algebra ℂ Z.functionField := ffAlg p
+  let : Algebra (Sec p (s.inf U)) Z.functionField := (germSec p hη).toAlgebra
+  have : IsScalarTower ℂ (Sec p (s.inf U)) Z.functionField := by
     refine ⟨fun r b y => ?_⟩
     show germSec p hη (r • b) * y = r • (germSec p hη b * y)
     rw [semiHom_germSec p hη r b, smul_mul_assoc]
     rfl
-  haveI : IsFractionRing (Sec p (s.inf U)) Z.functionField :=
+  have : IsFractionRing (Sec p (s.inf U)) Z.functionField :=
     @functionField_isFractionRing_of_isAffineOpen Z _ (s.inf U) hV ⟨⟨genericPoint Z, hη⟩⟩
-  haveI : Algebra.Smooth ℂ (Sec p (s.inf U)) := by
+  have : Algebra.Smooth ℂ (Sec p (s.inf U)) := by
     have e : s.inf U ≤ p ⁻¹ᵁ ⊤ := by simp
     have h1 := p.smooth_appLE (isAffineOpen_top (Sp ℂ)) hV e
     have hb : Function.Bijective (Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom :=
@@ -702,21 +647,21 @@ theorem cechOpen_eq (s : Finset ι) : cechOpen ⊤ U s = s.inf U := by
 
 theorem gm_inj (hinst : inst = ffAlg p) (hU : IsAffCover p U B) (a : ℕ) (s : Finset ι)
     (hs : s.Nonempty) : letI := algΓ p; Function.Injective (gm p hinst hU a s) := by
-  letI := algΓ p
+  let := algΓ p
   rw [gm_pos hinst hU a hs]
   exact (germ_inj_range hinst hU a hs (cechOpen_eq s) _ _).1
 
 theorem gm_range (hinst : inst = ffAlg p) (hU : IsAffCover p U B) (a : ℕ) (s : Finset ι)
     (hs : s.Nonempty) :
     letI := algΓ p; LinearMap.range (gm p hinst hU a s) = omB ℂ Z.functionField (B s) a := by
-  letI := algΓ p
+  let := algΓ p
   rw [gm_pos hinst hU a hs]
   exact (germ_inj_range hinst hU a hs (cechOpen_eq s) _ _).2
 
 theorem gm_res (hinst : inst = ffAlg p) (hU : IsAffCover p U B) (a : ℕ) (s t : Finset ι) (h : s ⊆ t)
     (hs : s.Nonempty) (y) : letI := algΓ p
     gm p hinst hU a t (Cube.res (cechCube ℂ (Omega p a) ⊤ U) h y) = gm p hinst hU a s y := by
-  letI := algΓ p
+  let := algΓ p
   rw [gm_pos hinst hU a hs, gm_pos hinst hU a (hs.mono h)]
   exact GlobalTheory.T.genericGerm_differentialForm_restrict_affineOpen Z p hinst a _ _ _ _ _ _ _ y
 
@@ -796,9 +741,9 @@ theorem gm_pull (hinst : inst = ffAlg p) (hinst' : inst' = ffAlg p') (hU : IsAff
       (sectionsOn.mapOver (appTop_algebraMap hf) (omegaPull hf a) _ x)) =
       φ (gm p hinst hU a (s.image τ) x) := by
   subst hinst hinst'
-  letI := algΓ p; letI := algΓ p'
-  letI : Algebra ℂ Z.functionField := ffAlg p
-  letI : Algebra ℂ Z'.functionField := ffAlg p'
+  let := algΓ p; let := algΓ p'
+  let : Algebra ℂ Z.functionField := ffAlg p
+  let : Algebra ℂ Z'.functionField := ffAlg p'
   have hne : (s.image τ).Nonempty := hs.image τ
   rw [GenericCoverClass.gm_pos _ hU a hne, GenericCoverClass.gm_pos _ hU' a hs, formGermI_ffAlg, formGermI_ffAlg]
   have hW : IsAffineOpen (cechOpen ⊤ U (s.image τ)) := by
@@ -886,8 +831,8 @@ theorem pullC_isMap (hinst : inst = ffAlg p) (hinst' : inst' = ffAlg p') (hU : I
     rw [pullC_inj τ φ x hinj]
     refine ⟨fun hs => ?_, fun hs => ?_⟩
     · have hmem := (hx (s.image τ)).1 ⟨hne.2 hs.1, by rw [hcard]; exact hs.2⟩
-      letI := algΓ p
-      letI := algΓ p'
+      let := algΓ p
+      let := algΓ p'
       rw [← gm_range p hinst hU a _ (hne.2 hs.1)] at hmem
       obtain ⟨y, hy⟩ := hmem
       apply Submodule.smul_of_tower_mem
@@ -942,7 +887,7 @@ abbrev lift (hc : c ≫ p = p') (a : ℕ) (W : Z.Opens) :
 theorem lift_bijective (hc : c ≫ p = p') (a : ℕ) (W : Z.Opens) :
     letI := algΓ p; letI := algΓ p'
     Function.Bijective (lift p' hc a W) := by
-  letI := algΓ p; letI := algΓ p'
+  let := algΓ p; let := algΓ p'
   show Function.Bijective (sectionsOn.mapOver (appTop_algebraMap hc) (𝟙 _) W)
   rw [sectionsOn.mapOver.eq_1]
   simp only [LinearMap.coe_mk]
@@ -975,13 +920,13 @@ theorem gq_pos (hc : c ≫ p = p') (hinst' : inst' = ffAlg p')
     letI := algΓ p; letI := algΓ p'
     gq p' hc hinst' hU' a s =
       formGermI p' a (pre_affine hU' h) (pre_generic hU' s) hinst' ∘ₗ
-        lift p' hc a (cechOpen ⊤ U s) := dif_pos h
+        lift p' hc a (cechOpen ⊤ U s) := dite_eq_left h
 
 theorem gq_range (hc : c ≫ p = p') (hinst' : inst' = ffAlg p')
     (hU' : IsAffCover p' (fun i => c ⁻¹ᵁ U i) B') (a : ℕ) (s : Finset ι) (h : s.Nonempty) :
     letI := algΓ p
     LinearMap.range (gq p' hc hinst' hU' a s) = omB ℂ Y.functionField (B' s) a := by
-  letI := algΓ p; letI := algΓ p'
+  let := algΓ p; let := algΓ p'
   rw [gq_pos p' hc hinst' hU' a h,
     ← (germ_inj_range hinst' hU' a h (pre_eq s) (pre_affine hU' h) (pre_generic hU' s)).2]
   ext y
@@ -1019,9 +964,9 @@ private theorem mapDR_eq_semiHom_algebraMap_mDR (K L : Type) [Field K] [Field L]
 private theorem isTrDR_trDR (K L : Type) [Field K] [Field L] [Algebra ℂ K] [Algebra ℂ L] [Algebra K L]
     [IsScalarTower ℂ K L] [FiniteDimensional K L] : IsTrDR ℂ K L (trDR ℂ K L) := by
   classical
-  haveI : CharZero K := charZero_of_injective_algebraMap (algebraMap ℂ K).injective
-  haveI : Algebra.IsSeparable K L := inferInstance
-  haveI : Algebra.Etale K L :=
+  have : CharZero K := charZero_of_injective_algebraMap (algebraMap ℂ K).injective
+  have : Algebra.IsSeparable K L := inferInstance
+  have : Algebra.Etale K L :=
     ⟨Algebra.FormallyEtale.of_isSeparable K L, Algebra.FinitePresentation.of_finiteType.mp inferInstance⟩
   let T0 : DR ℂ L →+ DR ℂ K :=
     (DirectSum.toAddMonoid fun j => ((⋀[K]^j (Ω[K⁄ℂ])).subtype.toAddMonoidHom.comp
@@ -1055,7 +1000,7 @@ private theorem isTrDR_trDR (K L : Type) [Field K] [Field L] [Algebra ℂ K] [Al
       rw [algTrace_eq_trace]
   have hex : ∃ T : DR ℂ L →ₗ[ℂ] DR ℂ K, IsTrDR ℂ K L T := ⟨T, hT⟩
   unfold trDR
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 private theorem germSec_secTrace_eq_trace {Z Y : Scheme.{0}} [IsIntegral Z] [IsIntegral Y] (p : Z ⟶ Sp ℂ) (p' : Y ⟶ Sp ℂ)
@@ -1064,32 +1009,32 @@ private theorem germSec_secTrace_eq_trace {Z Y : Scheme.{0}} [IsIntegral Z] [IsI
     {W : Z.Opens} (hW : IsAffineOpen W) (hη : genericPoint Z ∈ W) (hη' : genericPoint Y ∈ c ⁻¹ᵁ W)
     (b : Sec p' (c ⁻¹ᵁ W)) :
     germSec p hη (secTrace p p' hW b) = Algebra.trace Z.functionField Y.functionField (germSec p' hη' b) := by
-  letI : Algebra (Sec p W) (Sec p' (c ⁻¹ᵁ W)) := secAlg p p' c W
-  haveI : Module.Finite (Sec p W) (Sec p' (c ⁻¹ᵁ W)) := c.finite_app W hW
-  haveI : Algebra.Etale (Sec p W) (Sec p' (c ⁻¹ᵁ W)) := by
+  let : Algebra (Sec p W) (Sec p' (c ⁻¹ᵁ W)) := secAlg p p' c W
+  have : Module.Finite (Sec p W) (Sec p' (c ⁻¹ᵁ W)) := c.finite_app W hW
+  have : Algebra.Etale (Sec p W) (Sec p' (c ⁻¹ᵁ W)) := by
     have h := c.etale_appLE hW (hW.preimage c) le_rfl
     rw [Scheme.Hom.appLE_eq_app] at h
     exact h
-  haveI := projective_of_etale (Sec p W) (Sec p' (c ⁻¹ᵁ W))
+  have := projective_of_etale (Sec p W) (Sec p' (c ⁻¹ᵁ W))
   change germSec p hη (algTrace (Sec p W) (Sec p' (c ⁻¹ᵁ W)) b) = _
-  letI : Algebra (Sec p W) Z.functionField := (germSec p hη).toAlgebra
-  letI : Algebra (Sec p' (c ⁻¹ᵁ W)) Y.functionField := (germSec p' hη').toAlgebra
-  letI : Algebra (Sec p W) Y.functionField := ((germSec p' hη').comp (appSec p p' c W)).toAlgebra
-  haveI : IsScalarTower (Sec p W) (Sec p' (c ⁻¹ᵁ W)) Y.functionField :=
+  let : Algebra (Sec p W) Z.functionField := (germSec p hη).toAlgebra
+  let : Algebra (Sec p' (c ⁻¹ᵁ W)) Y.functionField := (germSec p' hη').toAlgebra
+  let : Algebra (Sec p W) Y.functionField := ((germSec p' hη').comp (appSec p p' c W)).toAlgebra
+  have : IsScalarTower (Sec p W) (Sec p' (c ⁻¹ᵁ W)) Y.functionField :=
     IsScalarTower.of_algebraMap_eq (fun _ => rfl)
-  haveI : IsScalarTower (Sec p W) Z.functionField Y.functionField :=
+  have : IsScalarTower (Sec p W) Z.functionField Y.functionField :=
     IsScalarTower.of_algebraMap_eq (fun x => (hg W hη hη' x).symm)
-  haveI : IsFractionRing (Sec p W) Z.functionField :=
+  have : IsFractionRing (Sec p W) Z.functionField :=
     @functionField_isFractionRing_of_isAffineOpen Z _ W hW ⟨⟨genericPoint Z, hη⟩⟩
-  haveI : IsFractionRing (Sec p' (c ⁻¹ᵁ W)) Y.functionField :=
+  have : IsFractionRing (Sec p' (c ⁻¹ᵁ W)) Y.functionField :=
     @functionField_isFractionRing_of_isAffineOpen Y _ (c ⁻¹ᵁ W) (hW.preimage c) ⟨⟨genericPoint Y, hη'⟩⟩
-  haveI : IsDomain (Sec p' (c ⁻¹ᵁ W)) :=
+  have : IsDomain (Sec p' (c ⁻¹ᵁ W)) :=
     Function.Injective.isDomain (algebraMap (Sec p' (c ⁻¹ᵁ W)) Y.functionField)
       (IsFractionRing.injective (Sec p' (c ⁻¹ᵁ W)) Y.functionField)
-  haveI : IsDomain (Sec p W) :=
+  have : IsDomain (Sec p W) :=
     Function.Injective.isDomain (algebraMap (Sec p W) Z.functionField)
       (IsFractionRing.injective (Sec p W) Z.functionField)
-  haveI hloc : IsLocalization (Algebra.algebraMapSubmonoid (Sec p' (c ⁻¹ᵁ W)) (nonZeroDivisors (Sec p W)))
+  have hloc : IsLocalization (Algebra.algebraMapSubmonoid (Sec p' (c ⁻¹ᵁ W)) (nonZeroDivisors (Sec p W)))
       Y.functionField := by
     rw [isLocalization_iff]
     refine ⟨?_, ?_, ?_⟩
@@ -1111,11 +1056,11 @@ private theorem germSec_secTrace_eq_trace {Z Y : Scheme.{0}} [IsIntegral Z] [IsI
       linear_combination (algebraMap _ Y.functionField d) * hz
     · intro x y hxy
       exact ⟨1, by rw [IsFractionRing.injective (Sec p' (c ⁻¹ᵁ W)) Y.functionField hxy]⟩
-  haveI : Algebra.IsPushout (Sec p W) (Sec p' (c ⁻¹ᵁ W)) Z.functionField Y.functionField :=
+  have : Algebra.IsPushout (Sec p W) (Sec p' (c ⁻¹ᵁ W)) Z.functionField Y.functionField :=
     Algebra.isPushout_of_isLocalization (nonZeroDivisors (Sec p W)) Z.functionField _ _
-  haveI : Algebra.IsPushout (Sec p W) Z.functionField (Sec p' (c ⁻¹ᵁ W)) Y.functionField :=
+  have : Algebra.IsPushout (Sec p W) Z.functionField (Sec p' (c ⁻¹ᵁ W)) Y.functionField :=
     Algebra.IsPushout.symm ‹_›
-  haveI : Module.Finite Z.functionField Y.functionField :=
+  have : Module.Finite Z.functionField Y.functionField :=
     Module.Finite.of_isLocalization (Sec p W) (Sec p' (c ⁻¹ᵁ W)) (nonZeroDivisors (Sec p W))
   have key := algTrace_of_isPushout (B := Sec p W) (B' := Sec p' (c ⁻¹ᵁ W)) (C := Z.functionField)
     (C' := Y.functionField) b
@@ -1131,9 +1076,9 @@ theorem gm_trace (hc : c ≫ p = p') (hinst : inst = ffAlg p) (hinst' : inst' = 
     gm p hinst hU a s (sectionsOn.map ℂ (omegaTrace hc a) _ y) =
       trDR ℂ Z.functionField Y.functionField (gq p' hc hinst' hU' a s y) := by
   subst hinst hinst'
-  letI := algΓ p; letI := algΓ p'
-  letI : Algebra ℂ Z.functionField := ffAlg p
-  letI : Algebra ℂ Y.functionField := ffAlg p'
+  let := algΓ p; let := algΓ p'
+  let : Algebra ℂ Z.functionField := ffAlg p
+  let : Algebra ℂ Y.functionField := ffAlg p'
   rw [GenericCoverClass.gm_pos _ hU a hs, gq_pos p' hc rfl hU' a hs, formGermI_ffAlg, formGermI_ffAlg]
   have hW : IsAffineOpen (cechOpen ⊤ U s) := by
     rw [cechOpen_eq]; exact hU.affine _ hs
@@ -1204,8 +1149,8 @@ theorem trL_isMap (hc : c ≫ p = p') (hinst : inst = ffAlg p) (hinst' : inst' =
     intro s
     refine ⟨fun hs => ?_, fun hs => ?_⟩
     · have hmem := (hx s).1 hs
-      letI := algΓ p
-      letI := algΓ p'
+      let := algΓ p
+      let := algΓ p'
       rw [← gq_range p' hc hinst' hU' a s hs.1] at hmem
       obtain ⟨y, hy⟩ := hmem
       show trDR ℂ Z.functionField Y.functionField (x s) ∈ _
@@ -1233,8 +1178,6 @@ section -- clump:auto
 @[expose] public section
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR GlobalTheory.PD KaehlerDifferential GlobalTheory.W1 GlobalTheory.WH
-
-set_option autoImplicit false
 
 section Alg
 
@@ -1284,7 +1227,7 @@ private theorem pullC_mono {τ : κ → ι} (h : StrictMono τ) (φ : E →ₗ[�
   have hsign : sortSign τ s = 1 := by
     unfold sortSign
     refine Finset.prod_eq_one fun a _ => Finset.prod_eq_one fun b _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨hab, hba⟩
     exact lt_asymm (h hab) hba
   simp [pullC, hinj, hsign]
@@ -1327,7 +1270,7 @@ private theorem lift_cocycle (A : Finset (ι ⊕ₗ κ) → Submodule ℂ E) (A'
         simpa using this
       have hne : s.Nonempty ↔ (rgt s).Nonempty := by
         rw [← Finset.card_pos, ← Finset.card_pos, hcard]
-      simp only [et, hl, if_true]
+      simp only [et, hl, ite_true]
       constructor
       · rintro ⟨hsn, hsc⟩
         have hrn := hne.1 hsn
@@ -1385,8 +1328,8 @@ theorem UpperTheory.etaleCorrespondence_family_statement :
         ∃ h : trC (k := ℂ) (K := Z.functionField) (L := Y.functionField) (fun I => bt (uni I ∅)) ∈ (cech fun I => omB ℂ Z.functionField (rB ℂ Z.functionField x I) a).Z p,
           E d Z s _ U (rB ℂ Z.functionField x) hK hU a p (hodgeTrace h1 a p (hodgePull h2 a p ((E d Z s _ U (rB ℂ Z.functionField x) hK hU a p).symm (Submodule.Quotient.mk ⟨b, hb⟩)))) = Submodule.Quotient.mk ⟨_, h⟩ := by
   intro E hP hT d Z Y _ _ s s' _ _ hPr c1 c2 h1 h2 _ _ _ _ instK instL hK hL _ _ g1 j2 g2 F _ _ _ _ _ _ _ x U hx hU hY a p b hb
-  haveI : Smooth s := SmoothOfRelativeDimension.smooth d s
-  haveI : Smooth s' := SmoothOfRelativeDimension.smooth d s'
+  have : Smooth s := SmoothOfRelativeDimension.smooth d s
+  have : Smooth s' := SmoothOfRelativeDimension.smooth d s'
   have hU2 : IsAffCover s' (fun i => c2 ⁻¹ᵁ U i) (R2 x j2) :=
     UpperTheory.etaleCorrespondence_functionField_statement_one d Z Y s s' hPr c1 c2 h1 h2 hK hL g1 j2 g2 F x U hx hU
   have hJ : IsAffCover s' (UpperTheory.A.joinCover c1 c2 U) (fun S => RY x j2 (lft S) (rgt S)) :=

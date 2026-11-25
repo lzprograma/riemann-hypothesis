@@ -1,5 +1,6 @@
 module
 
+import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IntegrableComplexContinuousBoundedSupport
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.IfaceSt
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.ReproCoreStatement
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
@@ -10,6 +11,7 @@ public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.ContinuousBlkWConj
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HermitianMeasures.JSIntFin
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.InHolds
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselSubgroupRepTwistedIsUnitaryRep
 
 @[expose] public section
 
@@ -71,22 +73,8 @@ theorem hasDeriv_curve {n : ℕ} {ε : Fin n → Bool} {f : Matrix (Fin n) (Fin 
     (hf : Formalism.REAL.SmoothOnG ε f) {g X : Matrix (Fin n) (Fin n) ℂ} (hg : Formalism.REAL.inUJ ε g)
     (hX : Formalism.REAL.inG ε X) :
     HasDerivAt (fun t : ℝ => f (g * NormedSpace.exp ((t : ℂ) • X))) (Formalism.REAL.Rd X f g) 0 := by
-  obtain ⟨U, F, hU, hgU, hF, hfF⟩ := hf g hg
-  have hγ := Formalism.REAL.hasDerivAt_mul_exp_smul_zero g X
-  have hγ0 : g * NormedSpace.exp (((0 : ℝ) : ℂ) • X) = g := by simp [NormedSpace.exp_zero]
-  have hFd : DifferentiableAt ℝ F g :=
-    (hF.differentiableOn (by simp)).differentiableAt (hU.mem_nhds hgU)
-  have hcomp : HasDerivAt (fun t : ℝ => F (g * NormedSpace.exp ((t : ℂ) • X)))
-      (fderiv ℝ F g (g * X)) 0 :=
-    hFd.hasFDerivAt.comp_hasDerivAt_of_eq (0 : ℝ) hγ hγ0.symm
-  have hev : (fun t : ℝ => f (g * NormedSpace.exp ((t : ℂ) • X))) =ᶠ[𝓝 0]
-      (fun t : ℝ => F (g * NormedSpace.exp ((t : ℂ) • X))) := by
-    have hmem : ∀ᶠ t : ℝ in 𝓝 0, g * NormedSpace.exp ((t : ℂ) • X) ∈ U :=
-      hγ.continuousAt.preimage_mem_nhds (by rw [hγ0]; exact hU.mem_nhds hgU)
-    filter_upwards [hmem] with t ht
-    exact hfF _ ht (Formalism.REAL.indefinite_unitary_mul_mem ε hg (Formalism.REAL.exp_indefinite_unitary_holds _ ε X hX t))
-  rw [Formalism.REAL.right_derivative_extends _ ε f F U g X hU hgU hg hF hfF hX]
-  exact hcomp.congr_of_eventuallyEq hev
+  intros
+  apply _root_.Formalism.REAL.hasDerivAt_smooth_curve <;> assumption
 
 theorem hasDeriv_curve_at {n : ℕ} {ε : Fin n → Bool} {f : Matrix (Fin n) (Fin n) ℂ → ℂ}
     (hf : Formalism.REAL.SmoothOnG ε f) {g X : Matrix (Fin n) (Fin n) ℂ} (hg : Formalism.REAL.inUJ ε g)
@@ -196,16 +184,9 @@ theorem cont_gp (P x : Mat k r) :
 
 theorem psiGen_cont (z : Fin (2 * r + k + 1) → ℂ) (c : Fin r → ℂ) :
     Continuous (Formalism.MainNotions.S.psiGen k r z c) := by
-  have hell : ∀ a, Continuous fun g : Mat k r => Formalism.MainNotions.S.ellA k r z g a := by
-    intro a
-    unfold Formalism.MainNotions.S.ellA
-    split_ifs
-    · exact continuous_id.matrix_elem _ _
-    · simp only [Matrix.mulVec, dotProduct]
-      exact continuous_finsetSum _ fun j _ => (continuous_id.matrix_elem _ _).mul continuous_const
-  unfold Formalism.MainNotions.S.psiGen
-  exact Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp
-    (Complex.continuous_re.comp (continuous_finsetSum _ fun a _ => continuous_const.mul (hell a)))))
+  first
+    | exact _root_.GlobalTheory.SgInf.PiUnitary.psiGen_continuous
+    | apply _root_.GlobalTheory.SgInf.PiUnitary.psiGen_continuous <;> first | assumption | rfl | infer_instance
 
 variable {u : Fin k → ℝ} {Vp : Type} [NormedAddCommGroup Vp] [InnerProductSpace ℂ Vp] [CompleteSpace Vp]
   {c : Fin r → ℂ} {π : Mat k r → (Vp →L[ℂ] Vp)}

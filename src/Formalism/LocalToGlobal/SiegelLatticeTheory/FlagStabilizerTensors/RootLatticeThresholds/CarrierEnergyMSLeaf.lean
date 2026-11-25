@@ -14,8 +14,6 @@ namespace Formalism.L2.SG.Pf.Carrier.EnergyMS
 
 open Formalism.L2.SG.LocVol Formalism.L2.SG.TypedSets
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def StepGSplit : Prop := ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D), GSplitX X
 
 def TypCount : Prop :=

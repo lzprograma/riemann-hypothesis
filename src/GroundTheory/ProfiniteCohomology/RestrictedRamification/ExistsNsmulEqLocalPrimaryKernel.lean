@@ -31,7 +31,7 @@ theorem qzDiv_zero (ℓ : ℕ) : qzDiv ℓ 0 = 0 := by
 theorem nsmul_qzDiv {ℓ : ℕ} (hℓ : ℓ ≠ 0) (q : QZ) : ℓ • qzDiv ℓ q = q := by
   by_cases hq : q = 0
   · rw [hq, qzDiv_zero, smul_zero]
-  · rw [qzDiv, if_neg hq, QZ.nsmul_mk]
+  · rw [qzDiv, ite_eq_right hq, QZ.nsmul_mk]
     have hℓq : (ℓ : ℚ) ≠ 0 := by exact_mod_cast hℓ
     rw [mul_div_cancel₀ _ hℓq]
     exact (QZ.mk_surjective q).choose_spec

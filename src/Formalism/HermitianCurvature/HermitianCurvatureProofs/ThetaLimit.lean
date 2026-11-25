@@ -1,53 +1,7 @@
 module
 
 public import Formalism.HermitianCurvature.StatementLE
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.Order.Chebyshev
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
@@ -183,16 +137,16 @@ theorem leibniz : Leibniz := by
     have hs := Finset.sum_subset (s₁ := range (m+1)) (s₂ := range (max m d + 1))
       (f := fun q => (ld q φ (B.G ω) : ℂ) * (mkP m (fun q => c q ω a)).coeff q)
       (by intro q hq; simp only [Finset.mem_range] at *; omega)
-      (by intro q _ hq; rw [mkP_coeff, if_neg (by simpa using hq)]; simp)
+      (by intro q _ hq; rw [mkP_coeff, ite_eq_right (by simpa using hq)]; simp)
     rw [← hs]
     refine Finset.sum_congr rfl fun q hq => ?_
-    rw [mkP_coeff, if_pos (Finset.mem_range.mp hq)]
+    rw [mkP_coeff, ite_eq_left (Finset.mem_range.mp hq)]
   have e2 : ∑ p ∈ range (d + 1), (ld p φ (B.G ω) : ℂ) * dS B T u p ω a / p.factorial =
       ∑ q ∈ range (max m d + 1), (ld q φ (B.G ω) : ℂ) * (mkP m (fun q => c q ω a)).coeff q := by
     have hs := Finset.sum_subset (s₁ := range (d+1)) (s₂ := range (max m d + 1))
       (f := fun q => (ld q φ (B.G ω) : ℂ) * (mkP m (fun q => c q ω a)).coeff q)
       (by intro q hq; simp only [Finset.mem_range] at *; omega)
-      (by intro q _ hq; rw [hPP, mkP_coeff, if_neg (by simpa using hq)]; simp)
+      (by intro q _ hq; rw [hPP, mkP_coeff, ite_eq_right (by simpa using hq)]; simp)
     rw [← hs]
     refine Finset.sum_congr rfl fun q hq => ?_
     rw [hdS]
@@ -537,7 +491,7 @@ theorem fatouStep : FatouStep := by
   have hlim : ∀ ω, Tendsto (fun n => th (e n) σ (B.G ω) * LE.sq B wt v ω) atTop (𝓝 (LE.sq B wt v ω)) := by
     intro ω
     have h := (hLim σ 0 (B.G ω) (B.G_pos ω)).comp hte
-    simp only [Function.comp_def, ld_zero' _ _ (B.G_pos ω), if_true] at h
+    simp only [Function.comp_def, ld_zero' _ _ (B.G_pos ω), ite_true] at h
     simpa using h.mul_const (LE.sq B wt v ω)
   have hK0 : 0 ≤ K := by
     refine le_trans (integral_nonneg fun ω => ?_) (hBd 1 one_pos)

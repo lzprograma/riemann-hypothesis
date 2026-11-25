@@ -384,12 +384,6 @@ section Main
 
 variable [TopologicalSpace G] [IsTopologicalGroup G]
 
-theorem eulerChar_subrepresentation_congr {A : Rep.{u} k G} {W W' : Submodule k A} (h : W = W')
-    (hW : ∀ g, W ≤ W.comap (A.ρ g)) (hW' : ∀ g, W' ≤ W'.comap (A.ρ g)) [IsDiscreteRep A] :
-    eulerChar (Rep.subrepresentation A W hW) = eulerChar (Rep.subrepresentation A W' hW') := by
-  subst h
-  rfl
-
 
 omit [TopologicalSpace G] [IsTopologicalGroup G] in
 def subrepresentationTopIso (A : Rep.{u} k G)
@@ -429,13 +423,22 @@ theorem card_pow_le_card_coindRes {H : OpenSubgroup G} [(H : Subgroup G).Normal]
   rw [← Nat.card_fun]
   exact Nat.card_le_card_of_injective _ coindOfFun_injective
 
-theorem eulerChar_coind_res_eq_pow {P : ℕ → Prop} (hPdvd : ∀ m n, m ∣ n → P n → P m)
-    (hPmul : ∀ m n, P m → P n → P (m * n)) (hG : HasFiniteCohomology k G P) (H : OpenSubgroup G)
+theorem coind_res_eq_pow_of_rangeStep {R : Type*} [CommMonoid R] {P : ℕ → Prop}
+    (χ : (A : Rep.{u} k G) → [IsDiscreteRep A] → R)
+    (hiso : ∀ {A B : Rep.{u} k G} [IsDiscreteRep A] [IsDiscreteRep B] [Finite A],
+      P (Nat.card A) → (A ≅ B) → χ A = χ B)
+    (hrange : ∀ {A : Rep.{u} k G} [IsDiscreteRep A] [Finite A] (T : Module.End k A)
+      (hT : ∀ g : G, Commute T (A.ρ g)) (D : Submodule k A) (hD : ∀ g : G, D ≤ D.comap (A.ρ g)),
+      P (Nat.card A) →
+      χ (Rep.subrepresentation A D hD) =
+        χ (Rep.subrepresentation A _ (inf_ker_le_comap T hT D hD)) *
+          χ (Rep.subrepresentation A _ (map_le_comap T hT D hD)))
+    (hPdvd : ∀ m n, m ∣ n → P n → P m) (hPmul : ∀ m n, P m → P n → P (m * n)) (H : OpenSubgroup G)
     [hN : (H : Subgroup G).Normal] [IsCyclic (G ⧸ (H : Subgroup G))] {p a : ℕ} [hp : Fact p.Prime]
     (hcard : Nat.card (G ⧸ (H : Subgroup G)) = p ^ a) (M : Rep.{u} k G) [IsDiscreteRep M]
     [Finite M] (hM : P (Nat.card M)) (hpM : ∀ m : M, p • m = 0) :
-    eulerChar (Rep.coind (H : Subgroup G).subtype (Rep.res (H : Subgroup G).subtype M)) =
-      eulerChar M ^ (p ^ a) := by
+    χ (Rep.coind (H : Subgroup G).subtype (Rep.res (H : Subgroup G).subtype M)) =
+      χ M ^ (p ^ a) := by
   have hQ : Finite (G ⧸ (H : Subgroup G)) :=
     Nat.finite_of_card_ne_zero (by rw [hcard]; exact pow_ne_zero _ hp.out.ne_zero)
   obtain ⟨q, hq⟩ := IsCyclic.exists_generator (α := G ⧸ (H : Subgroup G))
@@ -550,7 +553,17 @@ theorem eulerChar_coind_res_eq_pow {P : ℕ → Prop} (hPdvd : ∀ m n, m ∣ n 
       ((Submodule.toAddSubgroup_le _ _).2 (inf_le_right : D j ⊓ LinearMap.ker T ≤ LinearMap.ker T)) ?_
     change Nat.card (LinearMap.ker T) ≤ Nat.card ↥(D j ⊓ LinearMap.ker T)
     rw [hcard']
-
+  have hpa : 0 < p ^ a := pow_pos hp.out.pos a
+  have hlast : D (p ^ a - 1) = LinearMap.ker T := by
+    refine le_antisymm ?_ ((hfull _ (by omega)).symm.le.trans inf_le_left)
+    intro x hx
+    have hx' : T x ∈ D (p ^ a - 1 + 1) := hDsucc (p ^ a - 1) ▸ Submodule.mem_map_of_mem hx
+    rw [show p ^ a - 1 + 1 = p ^ a by omega, hDN] at hx'
+    exact LinearMap.mem_ker.2 ((Submodule.mem_bot k).1 hx')
+  have hcongr : ∀ {W W' : Submodule k (coindRes H M)} (_ : W = W')
+      (hW : ∀ g, W ≤ W.comap ((coindRes H M).ρ g)) (hW' : ∀ g, W' ≤ W'.comap ((coindRes H M).ρ g)),
+      χ (Rep.subrepresentation _ W hW) = χ (Rep.subrepresentation _ W' hW') := by
+    rintro W _ rfl _ _; rfl
   have hP : P (Nat.card (coindRes H M)) := by
     have hpow : ∀ n, P (Nat.card M ^ n) := fun n => by
       induction n with
@@ -559,9 +572,9 @@ theorem eulerChar_coind_res_eq_pow {P : ℕ → Prop} (hPdvd : ∀ m n, m ∣ n 
         rw [pow_succ]
         exact hPmul _ _ ih hM
     exact hPdvd _ _ (card_coind_dvd H (Rep.res (H : Subgroup G).subtype M)) (hpow _)
-  have hchain : ∀ j ≤ p ^ a, eulerChar (Rep.subrepresentation _ (D 0) (hD 0)) =
-      eulerChar (Rep.subrepresentation _ (LinearMap.ker T) hK) ^ j *
-        eulerChar (Rep.subrepresentation _ (D j) (hD j)) := by
+  have hchain : ∀ j ≤ p ^ a - 1, χ (Rep.subrepresentation _ (D 0) (hD 0)) =
+      χ (Rep.subrepresentation _ (LinearMap.ker T) hK) ^ j *
+        χ (Rep.subrepresentation _ (D j) (hD j)) := by
     intro j
     induction j with
     | zero =>
@@ -569,24 +582,30 @@ theorem eulerChar_coind_res_eq_pow {P : ℕ → Prop} (hPdvd : ∀ m n, m ∣ n 
       simp
     | succ j ih =>
       intro hj
-      rw [ih (by omega), eulerChar_rangeStep T hT (D j) (hD j) hPdvd hG hP,
-        eulerChar_subrepresentation_congr (hfull j (by omega)) _ hK,
-        eulerChar_subrepresentation_congr (hDsucc j) _ (hD (j + 1)), pow_succ]
-      ring
-  have hbot : eulerChar (Rep.subrepresentation _ (D (p ^ a)) (hD (p ^ a))) = 1 := by
-    rw [eulerChar_subrepresentation_congr hDN _ (fun _ => bot_le)]
-    exact eulerChar_eq_one_of_subsingleton _
+      rw [ih (by omega), hrange T hT (D j) (hD j) hP, hcongr (hfull j (by omega)) _ hK,
+        hcongr (hDsucc j) _ (hD (j + 1)), pow_succ, mul_assoc]
   have : IsDiscreteRep (Rep.subrepresentation (coindRes H M) ⊤ (fun _ => le_top)) :=
     isDiscreteRep_subrepresentation (coindRes H M) ⊤ (fun _ => le_top)
-  calc eulerChar (coindRes H M)
-      = eulerChar (Rep.subrepresentation (coindRes H M) ⊤ (fun _ => le_top)) :=
-        (eulerChar_eq_of_iso (subrepresentationTopIso (coindRes H M) (fun _ => le_top))).symm
-    _ = eulerChar (Rep.subrepresentation _ (D 0) (hD 0)) :=
-        eulerChar_subrepresentation_congr hD0.symm _ _
-    _ = eulerChar (Rep.subrepresentation _ (LinearMap.ker T) hK) ^ (p ^ a) :=
-        by rw [hchain (p ^ a) le_rfl, hbot, mul_one]
-    _ = eulerChar M ^ (p ^ a) := by
-        rw [← eulerChar_eq_of_iso (kerShiftIso (H := H) (M := M) hs hgen)]
+  calc χ (coindRes H M)
+      = χ (Rep.subrepresentation (coindRes H M) ⊤ (fun _ => le_top)) :=
+        hiso hP (subrepresentationTopIso (coindRes H M) (fun _ => le_top)).symm
+    _ = χ (Rep.subrepresentation _ (D 0) (hD 0)) := hcongr hD0.symm _ _
+    _ = χ (Rep.subrepresentation _ (LinearMap.ker T) hK) ^ (p ^ a) := by
+        rw [hchain (p ^ a - 1) le_rfl, hcongr hlast _ hK, ← pow_succ,
+          show p ^ a - 1 + 1 = p ^ a by omega]
+    _ = χ M ^ (p ^ a) := by
+        rw [hiso hM (kerShiftIso (H := H) (M := M) hs hgen)]
+
+theorem eulerChar_coind_res_eq_pow {P : ℕ → Prop} (hPdvd : ∀ m n, m ∣ n → P n → P m)
+    (hPmul : ∀ m n, P m → P n → P (m * n)) (hG : HasFiniteCohomology k G P) (H : OpenSubgroup G)
+    [hN : (H : Subgroup G).Normal] [IsCyclic (G ⧸ (H : Subgroup G))] {p a : ℕ} [hp : Fact p.Prime]
+    (hcard : Nat.card (G ⧸ (H : Subgroup G)) = p ^ a) (M : Rep.{u} k G) [IsDiscreteRep M]
+    [Finite M] (hM : P (Nat.card M)) (hpM : ∀ m : M, p • m = 0) :
+    eulerChar (Rep.coind (H : Subgroup G).subtype (Rep.res (H : Subgroup G).subtype M)) =
+      eulerChar M ^ (p ^ a) :=
+  coind_res_eq_pow_of_rangeStep eulerChar (fun _ e => eulerChar_eq_of_iso e)
+    (fun T hT D hD hA => eulerChar_rangeStep T hT D hD hPdvd hG hA)
+    hPdvd hPmul H hcard M hM hpM
 
 theorem eulerChar_res_eq_pow {P : ℕ → Prop} (hPdvd : ∀ m n, m ∣ n → P n → P m)
     (hPmul : ∀ m n, P m → P n → P (m * n)) (hG : HasFiniteCohomology k G P) (H : OpenSubgroup G)

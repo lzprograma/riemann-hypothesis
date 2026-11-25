@@ -116,15 +116,12 @@ structure PkgSplit (P : Par) (l : ℕ) (C1 : ℝ) : Type 1 where
 structure PkgZero (P : Par) (l : ℕ) : Type 1 where
   R : RowFam P l P.d
   Z : Finset P.Pl
-  hZ : IsReps P Z
   ga : P.Pl → Fin 2 → ZMod P.d → ℕ → ℕ
   K : ℕ
   s : ℕ
   nW : ℕ
   T : ℝ
   ν : ℝ
-  T_one : 1 ≤ T
-  w_nonneg : ∀ z, 0 ≤ P.w z
   supp : ∀ z ∈ Z, ∀ g a k, ga z g a k ≠ 0 → 1 ≤ k ∧ k ≤ (R.X z).rkF g a ∧ k ≤ K
   first : ∀ z ∈ Z, ∀ g a, ∑ k ∈ Finset.Icc 1 K, ga z g a k ≤ s * (l - 1)
   what₂ : 2 * K * s * Z.card ≤ nW

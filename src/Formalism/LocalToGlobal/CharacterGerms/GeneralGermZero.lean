@@ -168,7 +168,7 @@ theorem sysK_P {g : Fin 2} (hg : X.CartHyp V g) (S : Sys (RawChart.cart hg)) :
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun c' _ => ?_
     rw [Finset.sum_ite_eq']
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     congr 1
     exact congrFun (S.curve c).2.1 (Sum.inl c')
   · intro t ht j
@@ -208,14 +208,6 @@ theorem sysK_P {g : Fin 2} (hg : X.CartHyp V g) (S : Sys (RawChart.cart hg)) :
     funext i
     exact hQlg i
 
-private theorem v_sum_lemma {K : Type} [Field K] (w : AddValuation K (WithTop ℝ)) {ι : Type} (s : Finset ι)
-    (x : ι → K) (hx : ∀ i ∈ s, (0 : WithTop ℝ) ≤ w (x i)) : (0 : WithTop ℝ) ≤ w (∑ i ∈ s, x i) :=
-  Finset.sum_induction x (fun y => (0 : WithTop ℝ) ≤ w y) (fun a b ha hb => le_trans (le_min ha hb) (AddValuation.map_add w a b))
-    (by
-      show (0 : WithTop ℝ) ≤ w 0
-      rw [AddValuation.map_zero]
-      exact le_top) hx
-
 theorem general_germ_zero
     (hsat : ∀ g, ∃ w : κ → I g → C, (∀ x c, V.Ge 0 (w x c)) ∧
       ∀ c c' : I g, ∑ x, X.u g c x * w x c' = if c = c' then 1 else 0)
@@ -234,7 +226,7 @@ theorem general_germ_zero
     show (0 : WithTop ℝ) ≤ V.v (MvPowerSeries.coeff μ (∑ x, w g x k • P g x))
 
     rw [map_sum]
-    refine v_sum_lemma X F hF0 hFI hadd hlin hexlg V.v _ _ (fun x _ => ?_)
+    refine AddValuation.map_le_sum V.v (fun x _ => ?_)
     have h1 : (0 : WithTop ℝ) ≤ V.v (w g x k) := hw0 g x k
     have h2 : (0 : WithTop ℝ) ≤ V.v (MvPowerSeries.coeff μ (P g x)) := hPI g x μ
     rw [MvPowerSeries.coeff_smul, AddValuation.map_mul]
@@ -262,7 +254,7 @@ theorem general_germ_zero
     show (0 : WithTop ℝ) ≤ V.v (MvPowerSeries.coeff μ (∑ x, w g x k • P₂ g x))
 
     rw [map_sum]
-    refine v_sum_lemma X F hF0 hFI hadd hlin hexlg V.v _ _ (fun x _ => ?_)
+    refine AddValuation.map_le_sum V.v (fun x _ => ?_)
     have h1 : (0 : WithTop ℝ) ≤ V.v (w g x k) := hw0 g x k
     have h2 : (0 : WithTop ℝ) ≤ V.v (MvPowerSeries.coeff μ (P₂ g x)) := hPI₂ g x μ
     rw [MvPowerSeries.coeff_smul, AddValuation.map_mul]

@@ -109,7 +109,7 @@ theorem minusPart_eq_zero_of_raise {σ : Type} (a : TH.Mat p q →ₗ[ℂ] Modul
   intro e
   rw [homogeneousComponent_of_mem (show Φ ∈ homogeneousSubmodule σ ℂ d from hΦ)]
   split_ifs with he
-  · rw [homogeneousComponent_of_mem hm, if_neg (by omega)]
+  · rw [homogeneousComponent_of_mem hm, ite_eq_right (by omega)]
   · simp
 
 theorem raise_of_minusPart {M : Matrix (Ln p q r s) (Ln p q r s) ℂ}
@@ -121,7 +121,7 @@ theorem raise_of_minusPart {M : Matrix (Ln p q r s) (Ln p q r s) ℂ}
 
 theorem isKC_Eab {a b : Ix p q} (hab : sameBlock a b) : IsKC (Eab a b) := by
   intro c d hcd
-  rw [Eab, Matrix.single_apply, if_neg]
+  rw [Eab, Matrix.single_apply, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   exact hcd hab
 
@@ -179,8 +179,7 @@ theorem cJoint_iff (X : ProvA) (μ : Ix p q → ℚ) (μ' : Ix r s → ℚ) (Φ 
     exact ⟨⟨minusPart_eq_zero_of_raise _ hd h1, minusPart_eq_zero_of_raise _ hd h2⟩, h3⟩
   · rintro ⟨hJ, h1, h2⟩
     obtain ⟨d, hd⟩ : ∃ d, homogeneousComponent d Φ ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       apply h1.1
       rw [← sum_homogeneousComponent Φ]
       exact Finset.sum_eq_zero fun d _ => hc d
@@ -236,11 +235,8 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ArchRec
 
-theorem _root_.GlobalTheory.T.fockModel_jointHarmonics_form_normalisation_uniqueness : ∀ (X : ProvA) (p q r s : ℕ) (μ : Ix p q → ℚ) (μ' : Ix r s → ℚ), (∀ Φ, CJoint (fockAct1 p q r s) (fockAct2 p q r s) μ μ' Φ ↔ Φ ∈ (X.fock p q r s).J ∧ IsHW (fockAct1 p q r s) μ Φ ∧ IsHW (fockAct2 p q r s) μ' Φ) ∧ (∀ Φ, CJoint (fockAct1 p q r s) (fockAct2 p q r s) μ μ' Φ → ∃ c : ℝ, 0 < c ∧ JointHW (X.fock p q r s) μ μ' ((c : ℂ) • Φ)) ∧ ∀ Φ Φ', CJoint (fockAct1 p q r s) (fockAct2 p q r s) μ μ' Φ → CJoint (fockAct1 p q r s) (fockAct2 p q r s) μ μ' Φ' → ∃ c : ℂ, Φ' = c • Φ := by
-  first | exact @GlobalTheory.ArchRec.Joint.joint_harmonics
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockModelJointHarmonicsFormNormalisationUniqueneStatement =====

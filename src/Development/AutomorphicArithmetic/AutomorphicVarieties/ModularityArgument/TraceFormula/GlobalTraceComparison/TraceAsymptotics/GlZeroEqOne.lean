@@ -71,7 +71,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DiscSpec GlobalTheory.ResW GlobalTheory.Published
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -282,12 +281,6 @@ theorem finsum_Tj_levi {r s N j : ℕ} (h : r + s = N) (hj : j ≤ N) (F : GL (F
 
 end Local
 
-section Global
-
-variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
-
-end Global
-
 end GlobalTheory.ResW.HeckeCT
 
 end
@@ -495,7 +488,7 @@ private theorem FF_tri (h : a + b = n) (m : GLw a w × GLw b w) (g : GLw n w) (m
   simp only [FF, show (∃ k ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (g * k) m) ↔ _ from ⟨triangular_decomposition_right_translate t t', triangular_decomposition_right_translate t' t⟩]
 
 private theorem FF_bblk (h : a + b = n) (m : GLw a w × GLw b w) (X) : FF h m (GlobalTheory.BCT.blk h w m X) = 1 := by
-  rw [FF, if_pos]
+  rw [FF, ite_eq_left]
   exact ⟨1, one_mem _, by rw [mul_one, bblk_eq]; exact tri_blk_nU m X⟩
 
 private theorem sum_left (h : a + b = n) (m : GLw a w × GLw b w) (f : GLw n w → ℂ)
@@ -521,7 +514,7 @@ private theorem sum_left (h : a + b = n) (m : GLw a w × GLw b w) (f : GLw n w �
     have h1 : FF h m c.out ≠ 0 := right_ne_zero_of_mul hc
     have h2 : ∃ k ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (c.out * k) m := by
       by_contra h3
-      exact h1 (by rw [FF, if_neg h3])
+      exact h1 (by rw [FF, ite_eq_right h3])
     obtain ⟨k, hk, Y, hY⟩ := h2
     have e := tri_of_eq hY
     let X := (m.1⁻¹).val * Y
@@ -581,14 +574,14 @@ private theorem sum_right (h : a + b = n) (m : GLw a w × GLw b w) (A : GLw a w 
       A c₁.out * B c₂.out * FF h m (GlobalTheory.ResW.blk h (c₁.out, c₂.out)) = A m.1 * B m.2 := by
   rw [finsum_eq_single _ ((m.1 : GLw a w) : GLw a w ⧸ GlobalTheory.LFun.KGL w (n := a)),
     finsum_eq_single _ ((m.2 : GLw b w) : GLw b w ⧸ GlobalTheory.LFun.KGL w (n := b))]
-  · rw [FF_blk, if_pos ⟨QuotientGroup.out_eq' _, QuotientGroup.out_eq' _⟩, mul_one, out_inv A hA, out_inv B hB]
+  · rw [FF_blk, ite_eq_left ⟨QuotientGroup.out_eq' _, QuotientGroup.out_eq' _⟩, mul_one, out_inv A hA, out_inv B hB]
   · intro c hc
-    rw [FF_blk, if_neg, mul_zero]
+    rw [FF_blk, ite_eq_right, mul_zero]
     rintro ⟨-, e⟩
     exact hc ((QuotientGroup.out_eq' c).symm.trans e)
   · intro c hc
     refine finsum_eq_zero_of_forall_eq_zero fun c₂ => ?_
-    rw [FF_blk, if_neg, mul_zero]
+    rw [FF_blk, ite_eq_right, mul_zero]
     rintro ⟨e, -⟩
     exact hc ((QuotientGroup.out_eq' c).symm.trans e)
 
@@ -714,13 +707,13 @@ theorem ctT : CtT := by
   rw [sum_conv, Finset.mul_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   by_cases hp : (p.1 : ℕ) + p.2 = j
-  · rw [if_pos hp, cf, if_pos hp]
+  · rw [ite_eq_left hp, cf, ite_eq_left hp]
     by_cases h1 : Tj ℂ a (Ov E w) (unif w) p.1 m.1 = 0
     · simp [h1]
     by_cases h2 : Tj ℂ b (Ov E w) (unif w) p.2 m.2 = 0
     · simp [h2]
     rw [← mul_assoc, term_eq (Nat.lt_succ_iff.1 p.1.2) (Nat.lt_succ_iff.1 p.2.2) m h1 h2]
-  · rw [if_neg hp, cf, if_neg hp]
+  · rw [ite_eq_right hp, cf, ite_eq_right hp]
     simp
 
 end UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm

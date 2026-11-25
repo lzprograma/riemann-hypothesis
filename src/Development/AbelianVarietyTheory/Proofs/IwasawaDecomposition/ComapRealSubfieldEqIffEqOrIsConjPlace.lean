@@ -90,8 +90,7 @@ theorem eq_or_eq_conj (D : D7) (P w : PlE D.host)
   set Q : Ideal (𝓞 D.host.E) :=
     P.asIdeal.comap (IsCMField.ringOfIntegersComplexConj D.host.E : 𝓞 D.host.E →+* 𝓞 D.host.E) with hQ
   have hQp : Q.IsPrime := Ideal.comap_isPrime _ _
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨h1, h2⟩ := hne
   have nle : ∀ I : Ideal (𝓞 D.host.E), I.IsPrime → w.asIdeal ≠ I → ¬ w.asIdeal ≤ I := fun I hI h hle =>
     h (w.isMaximal.eq_of_le hI.ne_top hle)

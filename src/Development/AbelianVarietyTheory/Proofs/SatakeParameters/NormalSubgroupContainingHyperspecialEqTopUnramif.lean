@@ -4,52 +4,6 @@ public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaA
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaB
 public import Formalism.SatakeDualWeyl.StatementF
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryDoubleCosetOfGLintDoubleCoset
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeComb
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertPlaceHeckeDoubleCosetsInverseRepsLabel
@@ -57,7 +11,6 @@ import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCose
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryMemIntegralUnitaryDoubleCosetOfGLnDoubleC
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawa
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeB
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
 import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
@@ -89,12 +42,12 @@ theorem pm_mul {n : ℕ} (f g f' g' : Fin n → L) :
       (fun i => f i * g' i + g i * f' (Fin.rev i)) := by
   ext i k
   simp only [pm, Matrix.mul_apply, Matrix.of_apply, add_mul, Finset.sum_add_distrib, ite_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, Fin.rev_rev]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true, Fin.rev_rev]
   by_cases h1 : k = i <;> by_cases h2 : k = Fin.rev i <;> simp [h1, h2] <;>
     by_cases h3 : i = Fin.rev i <;>
     first
-    | (simp only [if_pos h3, if_pos h3.symm]; ring)
-    | (simp only [if_neg h3, if_neg (Ne.symm h3)]; ring)
+    | (simp only [ite_eq_left h3, ite_eq_left h3.symm]; ring)
+    | (simp only [ite_eq_right h3, ite_eq_right (Ne.symm h3)]; ring)
 
 theorem cT_pm {n : ℕ} (σ : L →+* L) (f g : Fin n → L) :
     cT σ (pm f g) = pm (fun i => σ (f i)) (fun i => σ (g (Fin.rev i))) := by
@@ -104,12 +57,12 @@ theorem cT_pm {n : ℕ} (σ : L →+* L) (f g : Fin n → L) :
     constructor <;> rintro rfl <;> simp
   by_cases h1 : j = i
   · subst h1; by_cases h3 : j = Fin.rev j
-    · rw [if_pos rfl, if_pos rfl, if_pos h3, if_pos h3, ← h3]
-    · rw [if_pos rfl, if_pos rfl, if_neg h3, if_neg h3, map_zero]
-  · rw [if_neg (Ne.symm h1), if_neg h1, map_zero]
+    · rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_left h3, ite_eq_left h3, ← h3]
+    · rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_right h3, ite_eq_right h3, map_zero]
+  · rw [ite_eq_right (Ne.symm h1), ite_eq_right h1, map_zero]
     by_cases h3 : j = Fin.rev i
-    · rw [if_pos (h2.2 h3), if_pos h3, h3]
-    · rw [if_neg (fun h => h3 (h2.1 h)), if_neg h3, map_zero]
+    · rw [ite_eq_left (h2.2 h3), ite_eq_left h3, h3]
+    · rw [ite_eq_right (fun h => h3 (h2.1 h)), ite_eq_right h3, map_zero]
 
 theorem antiJ_pm {n : ℕ} : antiJ L n = pm 0 1 := by
   ext i j
@@ -146,7 +99,7 @@ theorem unip_pm {n : ℕ} (σ : L →+* L) (u : Fin n → L) (h : fIwasawaUn σ 
   refine ⟨fun i j hji => ?_, fun i => ?_⟩
   · rw [fIwasawa_mk_val]
     simp only [pm, Matrix.of_apply, Pi.one_apply]
-    rw [if_neg (ne_of_lt hji), zero_add]
+    rw [ite_eq_right (ne_of_lt hji), zero_add]
     split_ifs with h1
     · by_contra hu
       have := hsupp i hu
@@ -156,7 +109,7 @@ theorem unip_pm {n : ℕ} (σ : L →+* L) (u : Fin n → L) (h : fIwasawaUn σ 
     · rfl
   · rw [fIwasawa_mk_val]
     simp only [pm, Matrix.of_apply, Pi.one_apply]
-    rw [if_pos trivial]
+    rw [ite_eq_left trivial]
     split_ifs with h1
     · have : u i = 0 := by
         by_contra hu
@@ -172,7 +125,7 @@ theorem diagonal_pm {n : ℕ} (d : Fin n → L) : Matrix.diagonal d = pm d 0 := 
   simp only [Matrix.diagonal_apply, pm, Matrix.of_apply, Pi.zero_apply]
   by_cases h : i = j
   · subst h; simp
-  · rw [if_neg h, if_neg (Ne.symm h)]; simp
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]; simp
 
 end GlobalTheory.TorusNormal
 
@@ -296,7 +249,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 open GlobalTheory.Hk3
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.NormalHyp
 
@@ -370,7 +322,7 @@ theorem diag_mem : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative 
   have hunit : ∀ i : Fin n, σ (T i i) * T i.rev i.rev = 1 := by
     intro i
     have := congrFun (congrFun (Formalism.UG.P.fIwasawa_mem_un σ t) i) i.rev
-    rw [Formalism.UG.P.fIwasawa_gram, Formalism.UG.P.fIwasawa_antiJ, if_pos rfl] at this
+    rw [Formalism.UG.P.fIwasawa_gram, Formalism.UG.P.fIwasawa_antiJ, ite_eq_left rfl] at this
     unfold Formalism.UG.P.fIwasawaH at this
     rw [Finset.sum_eq_single i.rev] at this
     · rw [Fin.rev_rev] at this; exact this

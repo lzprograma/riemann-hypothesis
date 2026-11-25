@@ -54,8 +54,6 @@ open Formalism.BasicNotions Formalism.L2.DIV Formalism.IndefR.Links NumberField
 open Formalism.DivisionValues Formalism.IndefR Formalism.IndefR.Bridge Formalism.L2.Theta
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryAtAllPlaces
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.FiniteGroupUnitary
 
 theorem isUnitaryRep_of_norm {G H : Type} [Group G] [NormedAddCommGroup H] [InnerProductSpace ℂ H]

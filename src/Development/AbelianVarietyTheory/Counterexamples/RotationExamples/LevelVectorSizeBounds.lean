@@ -49,7 +49,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult
 open GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues
 namespace GlobalTheory.Survey.LevelVectorSizeBounds
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7}
 
 theorem hookProd_pos (μ : YoungDiagram) : 0 < Formalism.LatticeIndexTer.hookProd μ := by

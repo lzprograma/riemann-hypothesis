@@ -427,7 +427,7 @@ theorem exists_frame_adapted (hn : 0 < n) (p : LocF.PP Lc n) : ∃ (h : GL (Fin 
         rw [Matrix.mulVec, dotProduct, map_sum, Finset.sum_mul, ← Finset.sum_erase (a := ⟨0, hn⟩) _ (by simp [N₀])]
       refine Finset.sum_congr rfl fun d hd => ?_
       have hd' := Finset.ne_of_mem_erase hd
-      simp only [N₀, Matrix.of_apply, true_and, ne_eq, hd', not_false_eq_true, if_true, map_mul, hb]
+      simp only [N₀, Matrix.of_apply, true_and, ne_eq, hd', not_false_eq_true, ite_true, map_mul, hb]
       field_simp
     · intro a _ ha
       simp [N₀, Matrix.mulVec, dotProduct, ha]
@@ -461,11 +461,11 @@ theorem frame_ker_decomp (hn : 0 < n) (p : LocF.PP Lc n) (h : GL (Fin n) Lc.K)
       intro a
       by_cases ha : a = ⟨0, hn⟩
       · subst ha
-        simp only [hdx, if_true] at hy
+        simp only [hdx, ite_true] at hy
         rw [mul_left_cancel₀ Lc.q_ne hy]
         exact y.2
       · have := hs a
-        rwa [hdx, if_neg ha] at this
+        rwa [hdx, ite_eq_right ha] at this
     · intro h3
       rw [mem_std] at h3
       have hs : ∀ a, (d : Matrix (Fin n) (Fin n) Lc.K).mulVec x a ∈ Lc.O := by
@@ -574,7 +574,7 @@ theorem pow_smul_mem_valB_erase : ∀ (D : D7) (u : D.what₂.Word) (X : Ch D u)
   intro D u X i M Co _ w hw hs V v hv p y hy
   obtain ⟨h, hh, z, hz, hy⟩ := hy
   have hhv := hh v
-  rw [if_neg (fun h' => h'.2 hv)] at hhv
+  rw [ite_eq_right (fun h' => h'.2 hv)] at hhv
   obtain ⟨h₁, k, hf, hdec⟩ := frame_ker_decomp (D.R.N_pos i) (p.2 v) (h v) hhv
   let ψ : (M.Lc v).K →+* ℂ := D.what₂.embLL.comp (Co.j w v)
   let φ : (M.Lc v).O →+* ℂ := ψ.comp (M.Lc v).O.subtype
@@ -591,7 +591,7 @@ theorem pow_smul_mem_valB_erase : ∀ (D : D7) (u : D.what₂.Word) (X : Ch D u)
     have : ∀ v', v' = v → Matrix.GeneralLinearGroup.map (D.what₂.embLL.comp (Co.j w v')) (g v') =
         Matrix.GeneralLinearGroup.map ψ (g v) := by
       rintro _ rfl; rfl
-    simp only [PtModel.Coord.mv, hs, if_true]
+    simp only [PtModel.Coord.mv, hs, ite_true]
     exact this _ (Equiv.symm_apply_apply _ _)
   have hmv1 : ∀ τ, τ ≠ X.fm.tauOf w v → Co.mv w (Function.update h v h₁) τ = Co.mv w h τ := by
     intro τ hτ
@@ -660,7 +660,7 @@ theorem pow_smul_mem_valB_erase : ∀ (D : D7) (u : D.what₂.Word) (X : Ch D u)
   refine ⟨Function.update h v h₁, fun v' => ?_, z', hz', by rw [map_smul, hy, ez]⟩
   by_cases hv' : v' = v
   · subst hv'
-    rw [Function.update_self, if_pos ⟨hs, Finset.notMem_erase _ _⟩]
+    rw [Function.update_self, ite_eq_left ⟨hs, Finset.notMem_erase _ _⟩]
     exact hf
   · rw [Function.update_of_ne hv']
     have := hh v'

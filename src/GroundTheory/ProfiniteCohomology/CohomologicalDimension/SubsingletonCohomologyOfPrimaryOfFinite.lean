@@ -20,9 +20,6 @@ open CategoryTheory Limits
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-attribute [-instance] ULift.module
-
 section General
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -479,11 +476,5 @@ theorem cdp_le_iff_forall_simple {p : ℕ} (hp : p.Prime) (n : ℕ) :
   rwa [show n + 1 + j = n + j + 1 by omega] at this
 
 end Criteria
-
-section Strict
-
-variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-
-end Strict
 
 end GroundTheory.ProfCoh

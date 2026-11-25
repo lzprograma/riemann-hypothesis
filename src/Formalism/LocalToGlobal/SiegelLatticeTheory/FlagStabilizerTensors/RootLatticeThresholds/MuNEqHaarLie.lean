@@ -262,7 +262,7 @@ theorem torS_eq (δ : ℝ) :
   simp only [Pi.smul_apply, smul_eq_mul]
   have hI0 : Complex.I ≠ 0 := Complex.I_ne_zero
   by_cases h1 : i.val < r
-  · simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, Formalism.MainNotions.FrameBoundFromBesselTorus.tF, h1, if_true, one_mul]
+  · simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, Formalism.MainNotions.FrameBoundFromBesselTorus.tF, h1, ite_true, one_mul]
     obtain ⟨n, hn⟩ : ∃ n, r = i.val + n := ⟨r - i.val, by omega⟩
     have hn' : r - i.val = n := by omega
     have hIr : Complex.I ^ r = Complex.I ^ i.val * Complex.I ^ n := by rw [← pow_add, ← hn]
@@ -272,7 +272,7 @@ theorem torS_eq (δ : ℝ) :
     rw [div_pow, div_mul_cancel₀ _ (pow_ne_zero _ hI0)]
   · by_cases h2 : r + k < i.val
     · have h2' : ¬ (i.val ≤ r + k) := by omega
-      simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, Formalism.MainNotions.FrameBoundFromBesselTorus.tF, h1, h2, h2', if_true, if_false, one_mul]
+      simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, Formalism.MainNotions.FrameBoundFromBesselTorus.tF, h1, h2, h2', ite_true, ite_false, one_mul]
       obtain ⟨n, hn⟩ : ∃ n, r = (2 * r + k - i.val) + n := ⟨r - (2 * r + k - i.val), by omega⟩
       have hn' : r - (2 * r + k - i.val) = n := by omega
       have hIr : Complex.I ^ r = Complex.I ^ (2 * r + k - i.val) * Complex.I ^ n := by rw [← pow_add, ← hn]
@@ -282,7 +282,7 @@ theorem torS_eq (δ : ℝ) :
       rw [mul_pow]
       field_simp
     · have h2' : i.val ≤ r + k := by omega
-      simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, h1, h2, h2', if_true, if_false]
+      simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, h1, h2, h2', ite_true, ite_false]
       push_cast
       rw [mul_one, inv_mul_cancel₀ (pow_ne_zero _ hI0)]
 
@@ -296,7 +296,7 @@ theorem torS_inv_eq (δ : ℝ) (hδ : 0 < δ) :
   funext i
   simp only [Pi.smul_apply, smul_eq_mul]
   by_cases h1 : i.val < r
-  · simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, Formalism.MainNotions.FrameBoundFromBesselTorus.tF, h1, if_true, one_mul]
+  · simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, Formalism.MainNotions.FrameBoundFromBesselTorus.tF, h1, ite_true, one_mul]
     obtain ⟨n, hn⟩ : ∃ n, r = i.val + n := ⟨r - i.val, by omega⟩
     have hn' : r - i.val = n := by omega
     have hIr : Complex.I ^ r = Complex.I ^ i.val * Complex.I ^ n := by rw [← pow_add, ← hn]
@@ -307,7 +307,7 @@ theorem torS_inv_eq (δ : ℝ) (hδ : 0 < δ) :
     field_simp
   · by_cases h2 : r + k < i.val
     · have h2' : ¬ (i.val ≤ r + k) := by omega
-      simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, Formalism.MainNotions.FrameBoundFromBesselTorus.tF, h1, h2, h2', if_true, if_false, one_mul]
+      simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, Formalism.MainNotions.FrameBoundFromBesselTorus.tF, h1, h2, h2', ite_true, ite_false, one_mul]
       obtain ⟨n, hn⟩ : ∃ n, r = (2 * r + k - i.val) + n := ⟨r - (2 * r + k - i.val), by omega⟩
       have hn' : r - (2 * r + k - i.val) = n := by omega
       have hIr : Complex.I ^ r = Complex.I ^ (2 * r + k - i.val) * Complex.I ^ n := by rw [← pow_add, ← hn]
@@ -321,7 +321,7 @@ theorem torS_inv_eq (δ : ℝ) (hδ : 0 < δ) :
       rw [div_pow, one_pow, mul_pow]
       field_simp
     · have h2' : i.val ≤ r + k := by omega
-      simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, h1, h2, h2', if_true, if_false]
+      simp only [dT, Formalism.MainNotions.FrameBoundFromBesselTorus.tV, h1, h2, h2', ite_true, ite_false]
       push_cast
       rw [star_pow, Complex.star_def, Complex.conj_I, ← Complex.inv_I]
       field_simp

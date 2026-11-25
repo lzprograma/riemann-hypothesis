@@ -53,8 +53,6 @@ open scoped TensorProduct Topology ComplexOrder
 
 namespace GlobalTheory.ThetaIntegrand
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem mem_princ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n : ℕ}
     (β x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) (T : Finset (Pl E))
     (h1 : ∀ i j, (β⁻¹ * x * β).1 i j ∈ Formalism.L2.Herm.intAf F E)

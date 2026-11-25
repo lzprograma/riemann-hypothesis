@@ -58,12 +58,8 @@ namespace GlobalTheory.CrysPrism.ShMem
 
 theorem coeff_iterate_derivative' {R : Type} [CommRing R] (f : R⟦X⟧) (i n : ℕ) :
     coeff n ((PowerSeries.derivative (R := R))^[i] f) = ((n + i).descFactorial i : R) * coeff (n + i) f := by
-  induction i generalizing f with
-  | zero => simp
-  | succ i ih =>
-    rw [Function.iterate_succ_apply, ih, PowerSeries.coeff_derivative, ← add_assoc,
-      Nat.succ_descFactorial_succ]
-    push_cast; ring
+  rw [Nat.add_descFactorial_eq_ascFactorial]
+  exact PowerSeries.coeff_iterate_derivative f i n
 
 theorem charZero_of_ql {l : ℕ} [Fact l.Prime] {K : Type} [NormedField K] [NormedAlgebra ℚ_[l] K] : CharZero K :=
   charZero_of_injective_algebraMap (algebraMap ℚ_[l] K).injective
@@ -86,11 +82,11 @@ theorem eventually_dvd {l : ℕ} [hl : Fact l.Prime] {e : ℕ} [NeZero e] (r : �
   simp only [Set.mem_setOf_eq] at h
   refine ⟨?_, ?_⟩
   · show i < l ^ r
-    by_contra hi; push_neg at hi
+    by_contra hi; push Not at hi
     exact h (Dvd.dvd.mul_left ((Nat.dvd_factorial (pow_pos hl.out.pos r) hi).trans
       (Nat.factorial_dvd_descFactorial _ _)) _)
   · show n < e * l ^ r
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     apply h
     apply Dvd.dvd.mul_right
     apply Nat.dvd_factorial (pow_pos hl.out.pos r)
@@ -119,7 +115,7 @@ theorem coeff_frobS_eq_zero (x : (Wq l a)⟦X⟧) {m : ℕ} (h : ¬ l ∣ m) : c
   have : coeff m (frobS l a x) = if l ∣ m then sigma l a (coeff (m / l) x) else 0 := by
     simp only [frobS, RingHom.comp_apply, coeff_map, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, coeff_expand]
     split_ifs <;> simp
-  rw [this, if_neg h]
+  rw [this, ite_eq_right h]
 
 theorem tendsToZero_crystallinePrismShiftedFrobeniusCoeff {e : ℕ} [NeZero e] (x : (Wq l a)⟦X⟧) : LTo0 l (wSh l a e x) := fun r =>
   (eventually_dvd (l := l) (e := e) r).mono fun p hp => by
@@ -163,9 +159,9 @@ theorem shP_frob_mem : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a] [NeZe
     by_cases hi : i = 0
     · subst hi
       have h0 : wDiff e x (0, n) = 0 := by simp [wDiff]
-      rw [if_pos rfl, coeff_zero_eq_constantCoeff_apply, constantCoeff_sh sh hsh, sub_self, h0]
+      rw [ite_eq_left rfl, coeff_zero_eq_constantCoeff_apply, constantCoeff_sh sh hsh, sub_self, h0]
       simp
-    · rw [if_neg hi, map_zero, sub_zero]
+    · rw [ite_eq_right hi, map_zero, sub_zero]
       apply mul_left_cancel₀ (hD i n)
       rw [hkey, mul_left_comm, mul_div_cancel₀ _ (hD i n)]
       unfold wDiff

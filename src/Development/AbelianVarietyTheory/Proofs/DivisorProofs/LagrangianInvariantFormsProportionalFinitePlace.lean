@@ -1,54 +1,13 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergPreservesSchwartzB
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatLinearFunctional
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergInnerPreserving
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -150,64 +109,6 @@ theorem exists_coord {k : Type} [Field k] {κ : Type} [Fintype κ] (Λ : Submodu
     rw [h4]
     simp
 
-private theorem lc_lemma {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (ψ : AddChar k ℂ) (hψ : Continuous ψ) : IsLocallyConstant ψ := by
-  have hU : {h : k | ‖ψ h - 1‖ < 1 / 2} ∈ nhds (0 : k) := by
-    have hc : Continuous fun h => ‖ψ h - 1‖ := by fun_prop
-    exact (isOpen_lt hc continuous_const).mem_nhds (by simp)
-  obtain ⟨γ, hγ⟩ := IsValuativeTopology.mem_nhds_iff.mp hU
-  have hsub : ∀ z, ValuativeRel.valuation k z < γ → ‖ψ z - 1‖ < 1 / 2 := fun z hz => by
-    have := hγ ⟨z, hz, zero_add z⟩
-    exact this
-  have hnsm : ∀ z, ValuativeRel.valuation k z < γ → ∀ n : ℕ, ValuativeRel.valuation k (n • z) < γ := by
-    intro z hz n
-    induction n with
-    | zero =>
-      rw [zero_smul, map_zero]
-      exact zero_lt_iff.mpr γ.ne_zero
-    | succ n ih =>
-      rw [succ_nsmul]
-      exact (ValuativeRel.valuation k).map_add_lt ih hz
-  have hker : ∀ h, ValuativeRel.valuation k h < γ → ψ h = 1 := by
-    intro h hh
-    by_contra hne
-    have hn : ∀ n : ℕ, ‖ψ h ^ n - 1‖ < 1 / 2 := fun n => by
-      have := hsub _ (hnsm h hh n)
-      rwa [AddChar.map_nsmul_eq_pow] at this
-    have hz : ‖ψ h‖ = 1 := GlobalTheory.norm_addChar_nonarch ψ hψ h
-    have hd : 0 < ‖ψ h - 1‖ := norm_pos_iff.mpr (sub_ne_zero.mpr hne)
-    obtain ⟨N, hN⟩ := exists_nat_gt (4 / ‖ψ h - 1‖)
-    have hNpos : 0 < N := by
-      have : (0:ℝ) < N := lt_trans (by positivity) hN
-      exact_mod_cast this
-    have hre : ∀ i : ℕ, (1:ℝ) / 2 < (ψ h ^ i).re := fun i => by
-      have h1 := hn i
-      have h2 := Complex.abs_re_le_norm (ψ h ^ i - 1)
-      have h3 : (ψ h ^ i - 1).re = (ψ h ^ i).re - 1 := by simp
-      rw [h3] at h2
-      have h4 := (abs_le.mp h2).1
-      linarith
-    have hsum_re : (N:ℝ) / 2 < (∑ i ∈ Finset.range N, ψ h ^ i).re := by
-      rw [Complex.re_sum]
-      have := Finset.sum_lt_sum_of_nonempty (Finset.nonempty_range_iff.mpr hNpos.ne') (fun i _ => hre i)
-      rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul] at this
-      linarith
-    have hbound : ‖∑ i ∈ Finset.range N, ψ h ^ i‖ ≤ 2 / ‖ψ h - 1‖ := by
-      rw [geom_sum_eq hne N, norm_div]
-      gcongr
-      calc ‖ψ h ^ N - 1‖ ≤ ‖ψ h ^ N‖ + ‖(1:ℂ)‖ := norm_sub_le _ _
-        _ = 2 := by rw [norm_pow, hz]; norm_num
-    have hre_le := Complex.re_le_norm (∑ i ∈ Finset.range N, ψ h ^ i)
-    have e1 : 2 / ‖ψ h - 1‖ = (4 / ‖ψ h - 1‖) / 2 := by ring
-    linarith
-  rw [IsLocallyConstant.iff_eventually_eq]
-  intro x
-  apply IsValuativeTopology.mem_nhds_iff.mpr
-  refine ⟨γ, ?_⟩
-  rintro _ ⟨z, hz, rfl⟩
-  show ψ (x + z) = ψ x
-  rw [AddChar.map_add_eq_mul, hker z hz, mul_one]
-
 private theorem isLocallyConstant_hasCompactSupport_comp_linearEquiv {k : Type} [Field k] [TopologicalSpace k] [IsTopologicalRing k]
     {A B : Type} [AddCommGroup A] [Module k A] [TopologicalSpace A] [IsModuleTopology k A]
     [ContinuousAdd A] [ContinuousSMul k A]
@@ -245,7 +146,8 @@ theorem proportional (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] 
   letI : MeasurableSpace k := borel k
   haveI : BorelSpace k := ⟨rfl⟩
   obtain ⟨n, m, e, s, hs, hb⟩ := exists_coord Λ hiso hdim
-  have hlc : IsLocallyConstant ψ := lc_lemma ψ hψ
+  have hlc : IsLocallyConstant ψ :=
+    _root_.SchrodingerSchwartzBruhat.GlobalTheory.CompanionTheory.SchrSB.isLocallyConstant_addChar ψ hψ
   have hn1 : ∀ t, ‖ψ t‖ = 1 := GlobalTheory.norm_addChar_nonarch ψ hψ
   have hce : Continuous e := IsModuleTopology.continuous_of_linearMap e.toLinearMap
   have hcs : Continuous s := IsModuleTopology.continuous_of_linearMap s

@@ -66,10 +66,6 @@ section Tab
 
 variable {X : Fields} (A : Amb X) {a b : ℕ}
 
-def Amb.tabK (Sall : Finset (HeightOneSpectrum (𝓞 X.E))) (cA cB : ℕ) (N : Submodule (𝓞 X.E) (Sp X.E a)) (N' : Submodule (𝓞 X.E) (Sp X.E b))
-    (Ξ : HomE X.E a b → X.K) (m : DVar X.Tau a b →₀ ℕ) : X.K :=
-  latSum (divLat cA (homAt Sall N N')) (mulLat cB (homAt Sall N N')) fun x => Ξ x * A.jetK Sall N N' cB x m
-
 def Amb.thDat (Sall : Finset (HeightOneSpectrum (𝓞 X.E))) (cA cB : ℕ) (N : Submodule (𝓞 X.E) (Sp X.E a)) (N' : Submodule (𝓞 X.E) (Sp X.E b))
     (Ξ : HomE X.E a b → X.K) : VCx X.Tau a b → ℂ := fun z =>
   latSum (divLat cA (homAt Sall N N')) (mulLat cB (homAt Sall N N')) fun x => A.σ₀ (Ξ x) * A.thInd Sall N N' cB x z
@@ -82,11 +78,6 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
   (A : Amb X) (u : Pr.Word) (m2 : ℕ)
-
-def scalK (i : ℕ) {a b : ℕ} (N : Submodule (𝓞 X.E) (Sp X.E a)) (fr : Frs X.E a (rowSG Pr sel mu)) (N' : Submodule (𝓞 X.E) (Sp X.E b))
-    (fr' : Frs X.E b (rowSG Pr sel mu)) : X.K :=
-  muInvDet sel (rowSG Pr sel mu) (mUof Ch mu i) (muAt Ch sel mu cst i) N fr *
-    (muInvDet sel (rowSG Pr sel mu) (mUof Ch mu i) (muAt Ch sel mu cst i) N' fr')⁻¹
 
 end Ne
 

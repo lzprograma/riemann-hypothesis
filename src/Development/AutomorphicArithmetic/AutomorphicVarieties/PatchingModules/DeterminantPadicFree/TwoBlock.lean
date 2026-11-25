@@ -17,59 +17,9 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCh
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.LatInt
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PairedDualFirstOrderDualMatrixSpace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Data.Finsupp.Pointwise
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.AdicCompletion.Completeness
 import Mathlib.RingTheory.AdicCompletion.Noetherian
 
@@ -113,8 +63,7 @@ private theorem pivot {R : Type} [CommRing R] [IsLocalRing R] {ι : Type} [Finty
     ∃ Q : Matrix ι ι R, IsUnit Q.det ∧ IsUnit ((Qᵀ * H * Q) i i) := by
   classical
   obtain ⟨j, hj⟩ : ∃ j, IsUnit (H i j) := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have key : ∑ j, H i j * adjugate H j i = H.det := by
       have := congrFun (congrFun (mul_adjugate H) i) i
       simpa [Matrix.mul_apply] using this
@@ -572,7 +521,7 @@ theorem UpperTheory.V.AlgebraTools.smith_zero_one :
           · exact h
         have : i ∈ S := by simp [S, hai]
         refine ⟨hcu.unit⁻¹, ?_⟩
-        rw [if_pos this, smul_smul, hc]
+        rw [ite_eq_left this, smul_smul, hc]
         congr 1
         rw [mul_comm (a i) c, ← mul_assoc]
         simp
@@ -850,13 +799,13 @@ theorem UpperTheory.V.AlgebraTools.selfdual_ramified :
     by_cases hj : j ∈ S
     · by_cases hi : i ∈ S
       · refine ⟨φ (M i j), ?_⟩
-        simp only [hi, hj, if_true] at h1 ⊢
+        simp only [hi, hj, ite_true] at h1 ⊢
         rw [← h1, ← hsϖ]; ring
       · refine ⟨φ (M j i) * s, ?_⟩
-        simp only [hi, hj, if_true, if_false, map_one, mul_one, one_mul] at h2 ⊢
+        simp only [hi, hj, ite_true, ite_false, map_one, mul_one, one_mul] at h2 ⊢
         rw [h2, map_mul]
     · refine ⟨(if i ∈ S then s else 1) * φ (M i j), ?_⟩
-      simp only [hj, if_false, map_one, mul_one] at h1 ⊢
+      simp only [hj, ite_false, map_one, mul_one] at h1 ⊢
       rw [h1, map_mul]
   choose H' hH' using hH'
   have hH'm : (Matrix.of H').map (algebraMap A' F') = E * H0.map φF * E := by
@@ -886,13 +835,13 @@ theorem UpperTheory.V.AlgebraTools.selfdual_ramified :
       by_cases hi : i ∈ S
       · by_cases hj : j ∈ S
         · refine ⟨φ (R i j), ?_⟩
-          simp only [hi, hj, if_true]
+          simp only [hi, hj, ite_true]
           ring
         · refine ⟨s * φ (T i j), ?_⟩
-          simp only [hi, hj, if_true, if_false, map_one, mul_one] at h1 ⊢
+          simp only [hi, hj, ite_true, ite_false, map_one, mul_one] at h1 ⊢
           rw [h1, ← hsϖ, map_mul]; ring
       · refine ⟨φ (R i j) * (if j ∈ S then s else 1), ?_⟩
-        simp only [hi, if_false, map_one, one_mul, map_mul]
+        simp only [hi, ite_false, map_one, one_mul, map_mul]
     choose X hX using hX
     refine ⟨Matrix.of X, ?_⟩
     have h1 : E * (Matrix.of X).map (algebraMap A' F') = (R.map (algebraMap A F)).map φF * E := by

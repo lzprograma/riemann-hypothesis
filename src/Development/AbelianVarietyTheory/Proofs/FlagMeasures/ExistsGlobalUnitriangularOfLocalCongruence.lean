@@ -475,7 +475,7 @@ theorem loc_cong_approx : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [
         refine ⟨0, zero_mem _, ?_⟩
         simp [ξ, hdiag]
       · refine ⟨o a b, ho a b, ?_⟩
-        simp only [ξ, h1, h2, if_false]
+        simp only [ξ, h1, h2, ite_false]
         exact hξ0 a b
   have hFG : (Ideal.span {(g : 𝓞 E)} • Λ).FG := Submodule.FG.smul (Submodule.fg_span_singleton _) hΛ
   have hmem : ∀ b, A.bc p (x b - ∑ a, ((ξ a b : 𝓞 E) : E) • y a) ∈

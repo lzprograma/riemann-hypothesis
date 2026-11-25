@@ -45,18 +45,18 @@ private theorem mulVec_eN_eq_of_mem_HPar {κ : Type} [CommRing κ] {n r k rS t s
     rw [hk']
     by_cases hik : (i : ℕ) = k
     · have hi2 : i = Fin.castLE hr ⟨k, hkr⟩ := Fin.ext hik
-      rw [if_pos hi2, hi2, ← key]
+      rw [ite_eq_left hi2, hi2, ← key]
       exact s2 _
     · have hi' : i = Fin.castLE hr ⟨i, hir⟩ := Fin.ext rfl
-      rw [if_neg (fun h => hik (by rw [h]; rfl)), hi', ← key]
+      rw [ite_eq_right (fun h => hik (by rw [h]; rfl)), hi', ← key]
       by_cases hrS : rS = 0
       · rcases Nat.lt_or_gt_of_ne hik with h | h
         · exact s3 _ _ h (by simp [hrS])
         · exact s1 _ _ (by simp only [symIdx, Fin.val_mk, hrS]; split_ifs <;> omega)
       · exact s1 _ _ (by simp only [symIdx, Fin.val_mk]; split_ifs <;> omega)
-  · rw [if_neg (fun h => hir (by rw [h]; exact hkr))]
+  · rw [ite_eq_right (fun h => hir (by rw [h]; exact hkr))]
     exact hB _ _ (by
-      simp only [blkOf, Fin.val_mk, if_pos hkr, if_neg hir]
+      simp only [blkOf, Fin.val_mk, ite_eq_left hkr, ite_eq_right hir]
       exact Nat.succ_pos _)
 
 theorem fixE_colLevSym (Ch : Chars X Pr R.m) {m2 : ℕ} (hm : R.m = m2 + 2) : FixE (R := R) (colLevSym Ch) m2 := by
@@ -66,7 +66,7 @@ theorem fixE_colLevSym (Ch : Chars X Pr R.m) {m2 : ℕ} (hm : R.m = m2 + 2) : Fi
   have e1 : ¬ (m2 + 1 + 1 < R.m) := by omega
   have e2 : m2 + 1 + 1 = R.m := by omega
   unfold colLevSym at hw
-  rw [if_neg e0, dite_eq_right e1, dite_eq_left e2] at hw
+  rw [ite_eq_right e0, dite_eq_right e1, dite_eq_left e2] at hw
   exact mulVec_eN_eq_of_mem_HPar _ (by have := R.rank_add_five_le; omega)
     (by
       show R.k + (m2 + 1) * (R.t + 1) = R.k + R.m - 1 + (m2 + 1) * R.t

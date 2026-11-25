@@ -2,60 +2,7 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.AnisoPeelAlt
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.ExistsTraceNeZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -352,10 +299,10 @@ theorem val_recursion (h2 : finrank K L = 2) (hM : IsHerm (Fintype.card K) M)
     rw [h5]
     by_cases hc : hf (Fintype.card K) M (w : Fin n → L) w = a
     · have h6 : a - hf (Fintype.card K) M (w : Fin n → L) w = 0 := by rw [hc, sub_self]
-      rw [if_pos h6, if_pos hc]
+      rw [ite_eq_left h6, ite_eq_left hc]
       norm_num
     · have h6 : a - hf (Fintype.card K) M (w : Fin n → L) w ≠ 0 := sub_ne_zero.2 (Ne.symm hc)
-      rw [if_neg h6, if_neg hc]
+      rw [ite_eq_right h6, ite_eq_right hc]
       push_cast
       ring
   have hprod : ((Finset.univ.filter (fun p : L × (valPerp (Fintype.card K) M W e) =>
@@ -407,7 +354,7 @@ theorem val_main (h2 : finrank K L = 2) (hM : IsHerm (Fintype.card K) M) :
         · exact fun h => h.1
         · rintro rfl
           exact ⟨rfl, h00⟩
-      rw [hs, Set.ncard_singleton, if_pos rfl]
+      rw [hs, Set.ncard_singleton, ite_eq_left rfl]
       simp [valZ]
     · have hs : {v | v ∈ (⊥ : Submodule L (Fin n → L)) ∧ hf (Fintype.card K) M v v = a} =
           (∅ : Set (Fin n → L)) := by
@@ -417,7 +364,7 @@ theorem val_main (h2 : finrank K L = 2) (hM : IsHerm (Fintype.card K) M) :
         rintro rfl
         rw [h00]
         exact fun h => ha0 h.symm
-      rw [hs, Set.ncard_empty, if_neg ha0]
+      rw [hs, Set.ncard_empty, ite_eq_right ha0]
       simp [valN]
   | succ d ih =>
     intro W hW hd a ha
@@ -437,10 +384,10 @@ theorem val_main (h2 : finrank K L = 2) (hM : IsHerm (Fintype.card K) M) :
       exact_mod_cast h
     rw [hfr, hcardL, hih] at hrec
     split_ifs with ha0
-    · rw [if_pos ha0] at hrec
+    · rw [ite_eq_left ha0] at hrec
       have h := valZ_succ (Fintype.card K) d
       linarith
-    · rw [if_neg ha0] at hrec
+    · rw [ite_eq_right ha0] at hrec
       have h := valN_succ (Fintype.card K) d
       linarith
 

@@ -235,10 +235,4 @@ theorem passage_from_levels : PassageFromLevels := by
       linarith
     nlinarith
 
-section Trivial
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df : DefSide Bs}
-
-end Trivial
-
 end Formalism.L2.GlobalTheoryTheory.DivPassage

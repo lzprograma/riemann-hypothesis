@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MixedModelThetaSeriesModerateGrowthStatement
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinTensAlgebraMap
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsDualFamilySelfDualHermitianSpaceStatement
@@ -56,7 +57,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FiniteDimensio
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.L2.Ker Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.Core.Rk GlobalTheory.AdForm
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.LatSign
@@ -81,14 +81,14 @@ theorem toMatrix_smul_eq (S T : HSp D) (hS : S.gram = 1) {n : ℕ} (s s' : Fin n
     intro j; funext a
     have := hd a j
     rw [hS] at this
-    simp only [Matrix.one_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
+    simp only [Matrix.one_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at this
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.single_apply]
     rw [← this]
     refine Finset.sum_congr rfl fun i _ => by ring
   ext a j
   rw [LinearMap.toMatrix'_apply, Matrix.sum_apply]
   simp only [GlobalTheory.LatVac.genMap, Matrix.of_apply, hS, Matrix.one_apply, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, LinearMap.smul_apply, Pi.smul_apply, smul_eq_mul]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true, LinearMap.smul_apply, Pi.smul_apply, smul_eq_mul]
 
   rw [← hd' j, map_sum]
   simp only [map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
@@ -161,35 +161,7 @@ theorem exists_trace_one_xi0_mul_star_eq_of_ccK_eq_top (hc : D.host.ccK = ⊤) :
 
 theorem sum_conj_eq_trace (D : D7) (e : D.host.E) :
     ∑ t, (tauE D t e + starRingEnd ℂ (tauE D t e)) = ((Algebra.trace ℚ D.host.E e : ℚ) : ℂ) := by
-  classical
-  have h1 : ((Algebra.trace ℚ D.host.E e : ℚ) : ℂ) = ∑ σ : D.host.E →+* ℂ, σ e := by
-    have := trace_eq_sum_embeddings (K := ℚ) (L := D.host.E) ℂ (x := e)
-    rw [eq_ratCast] at this
-    rw [this]
-    exact (Fintype.sum_equiv (RingHom.equivRatAlgHom D.host.E ℂ) _ _ fun _ => rfl).symm
-  have hi := GlobalTheory.StdRat.tauE_injective D
-  have hcm := GlobalTheory.StdRat.tauE_cm D
-  have hb : Function.Bijective (Sum.elim (tauE D) fun t => ComplexEmbedding.conjugate (tauE D t)) := by
-    have hc : ∀ σ : D.host.E →+* ℂ, ComplexEmbedding.conjugate (ComplexEmbedding.conjugate σ) = σ :=
-      fun σ => star_star σ
-    constructor
-    · rintro (a | a) (b | b) h <;> simp only [Sum.elim_inl, Sum.elim_inr] at h
-      · rw [hi h]
-      · exact absurd ⟨a, h⟩ ((hcm (tauE D b)).1 ⟨b, rfl⟩)
-      · exact absurd ⟨b, h.symm⟩ ((hcm (tauE D a)).1 ⟨a, rfl⟩)
-      · have := congrArg ComplexEmbedding.conjugate h
-        rw [hc, hc] at this
-        rw [hi this]
-    · intro σ
-      by_cases h : ∃ t, tauE D t = ComplexEmbedding.conjugate σ
-      · obtain ⟨t, ht⟩ := h
-        exact ⟨Sum.inr t, by simp only [Sum.elim_inr]; rw [ht, hc]⟩
-      · obtain ⟨t, ht⟩ := (hcm σ).2 h
-        exact ⟨Sum.inl t, ht⟩
-  have h4 := hb.sum_comp fun σ : D.host.E →+* ℂ => σ e
-  rw [Fintype.sum_sum_type, ← h1] at h4
-  simp only [Sum.elim_inl, Sum.elim_inr, ComplexEmbedding.conjugate_coe_eq] at h4
-  rw [Finset.sum_add_distrib, h4]
+  first | exact _root_.GlobalTheory.MixedTerm.DerLaw.sum_tauE_add_conj | exact @_root_.GlobalTheory.MixedTerm.DerLaw.sum_tauE_add_conj | apply _root_.GlobalTheory.MixedTerm.DerLaw.sum_tauE_add_conj <;> assumption
 
 theorem sum_two_re_eq_trace (D : D7) (e : D.host.E) :
     ∑ t, (((2 * (tauE D t e).re : ℝ)) : ℂ) = ((Algebra.trace ℚ D.host.E e : ℚ) : ℂ) := by

@@ -1,64 +1,15 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.MulVecColOfMul
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCCB
 public import Formalism.HermitianCurvature.StatementB
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Formalism.FormalDegreeBessel.FinalG
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Analysis.SpecialFunctions.PolarCoord
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.Calculus.Deriv.CompMul
 public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
@@ -89,36 +40,13 @@ lemma gv_one : (1 : Mat k r) ∈ GV k r := by
   simp
 
 lemma gv_mul {a b : Mat k r} (ha : a ∈ GV k r) (hb : b ∈ GV k r) : a * b ∈ GV k r := by
-  have ha' : aᴴ * Hpk k r * a = Hpk k r := ha
-  have hb' : bᴴ * Hpk k r * b = Hpk k r := hb
-  show (a * b)ᴴ * Hpk k r * (a * b) = Hpk k r
-  rw [Matrix.conjTranspose_mul]
-  calc bᴴ * aᴴ * Hpk k r * (a * b) = bᴴ * (aᴴ * Hpk k r * a) * b := by simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by rw [ha', hb']
+  apply _root_.PI.StabSplit.GV_mul <;> assumption
 
 lemma gv_inv {a : Mat k r} (ha : a ∈ GV k r) : a⁻¹ ∈ GV k r := by
-  have hg : aᴴ * Hpk k r * a = Hpk k r := ha
-  have hu : IsUnit a.det := by
-    rw [isUnit_iff_ne_zero]
-    intro h0
-    have h1 := congrArg Matrix.det hg
-    rw [Matrix.det_mul, h0, mul_zero] at h1
-    exact (Hdet k r).ne_zero h1.symm
-  have h1 : a * a⁻¹ = 1 := Matrix.mul_nonsing_inv a hu
-  have h2 : (a⁻¹)ᴴ * aᴴ = 1 := by
-    rw [← Matrix.conjTranspose_mul, h1, Matrix.conjTranspose_one]
-  show (a⁻¹)ᴴ * Hpk k r * a⁻¹ = Hpk k r
-  calc (a⁻¹)ᴴ * Hpk k r * a⁻¹ = (a⁻¹)ᴴ * (aᴴ * Hpk k r * a) * a⁻¹ := by rw [hg]
-    _ = ((a⁻¹)ᴴ * aᴴ) * Hpk k r * (a * a⁻¹) := by simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by rw [h1, h2, Matrix.one_mul, Matrix.mul_one]
+  apply _root_.PI.StabSplit.GV_inv <;> assumption
 
 lemma gv_unit {a : Mat k r} (ha : a ∈ GV k r) : IsUnit a.det := by
-  have hg : aᴴ * Hpk k r * a = Hpk k r := ha
-  rw [isUnit_iff_ne_zero]
-  intro h0
-  have h1 := congrArg Matrix.det hg
-  rw [Matrix.det_mul, h0, mul_zero] at h1
-  exact (Hdet k r).ne_zero h1.symm
+  apply _root_.PI.StabSplit.GV_unit <;> assumption
 
 lemma gv_closed : IsClosed (GV k r) := by
   show IsClosed {g : Mat k r | gᴴ * Hpk k r * g = Hpk k r}
@@ -327,10 +255,9 @@ lemma gN_ge_one {k r : ℕ} {g : Mat k r} (hg : g ∈ GV k r) : 1 ≤ gN g := by
       _ ≤ ‖gᴴ‖ * ‖Hpk k r‖ * ‖g‖ := by gcongr; exact norm_mul_le _ _
       _ = ‖g‖ * ‖Hpk k r‖ * ‖g‖ := by rw [Matrix.frobenius_norm_conjTranspose]
   rw [gN_eq_frob]
-  by_contra hlt
-  push_neg at hlt
-  have h3 : ‖g‖ * ‖g‖ < 1 := by nlinarith [norm_nonneg g]
-  nlinarith [mul_pos (sub_pos.mpr h3) hn]
+  by_contra! hlt
+  have h3 : ‖g‖ * ‖g‖ < 1 := by nlinarith only [hlt, norm_nonneg g]
+  linarith only [hn, h2, h3, mul_pos (sub_pos.mpr h3) hn]
 
 end Frob
 
@@ -985,7 +912,7 @@ lemma CC_bdd {A : ℝ} (hA : 0 ≤ A) {f : Mat k r → E} {c : ℝ} (hf : CCle A
   have h2 : 1 ≤ gN g ^ A := Real.one_le_rpow (gN_ge_one hg) hA
   have h3 : dLR [] [] f g = f g := rfl
   rw [h3] at h1
-  nlinarith [mul_nonneg (sub_nonneg.mpr h2) (norm_nonneg (f g))]
+  linarith only [h1, h2, mul_nonneg (sub_nonneg.mpr h2) (norm_nonneg (f g))]
 
 end gen
 
@@ -1488,7 +1415,7 @@ lemma core (hC : FormCoreC) (hAe : AeFromTests) (hFa : FatouParam) (hL : CCLin) 
     have hmem : ∀ t, t ∈ box → InCC A 4 (dilF t x.1) := fun t h =>
       InCC_mono (by norm_num) ⟨_, (hCd t h x.1 c5 hc5).1⟩
     let Φ : ℝ × ℝ → V := fun t => if h : t ∈ box then ⟨dilF t x.1, hmem t h⟩ else x
-    have hΦ : ∀ t, t ∈ box → (Φ t).1 = dilF t x.1 := fun t h => by simp only [Φ, dif_pos h]
+    have hΦ : ∀ t, t ∈ box → (Φ t).1 = dilF t x.1 := fun t h => by simp only [Φ, dite_eq_left h]
     refine ⟨Φ, fun t => (((t.1 * t.2) ^ kap k r : ℝ) : ℂ) * betaInfTau D (τ₀.1 * t.1, τ₀.2 * t.2) x.1 x.1,
       (1, 1), ?_, ?_, ?_, ?_, ?_⟩
     · apply Subtype.ext

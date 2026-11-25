@@ -105,7 +105,7 @@ theorem zhat_inv_mono {z z' : Fin (2 * r + k + 1) → ℂ} (p : Point ℂ (r + 1
     by_cases h : a = permOf p i
     · subst h
       simp [hi]
-    · rw [if_neg h, if_neg (fun e => h (by rw [e, hi])), mul_zero, star_zero]
+    · rw [ite_eq_right h, ite_eq_right (fun e => h (by rw [e, hi])), mul_zero, star_zero]
 
 theorem gf_inv (z z' : Fin (2 * r + k + 1) → ℂ) {g : Mat k r} (hg : g ∈ GG k r) :
     Gf k r z' z g⁻¹ = Gf k r z z' g := by

@@ -2,44 +2,7 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColDef
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -58,21 +21,21 @@ theorem posS_zero : posS X j 0 = ((segStart X.TT j).val : ℤ) := rfl
 theorem posS_succ_lt (a : Fin (2 * segS X.TT j + 1)) (h : (a : ℕ) < 2 * segS X.TT j) :
     posS X j a.succ = ((segStart X.TT j).val : ℤ) +
       ((segDists X.TT j).get (⟨(a : ℕ) / 2, by omega⟩ : Fin (segS X.TT j)) : ℕ) := by
-  simp only [posS, Fin.cons_succ, dif_pos h]
+  simp only [posS, Fin.cons_succ, dite_eq_left h]
 
 theorem posS_succ_ge (a : Fin (2 * segS X.TT j + 1)) (h : ¬ (a : ℕ) < 2 * segS X.TT j) :
     posS X j a.succ = ((segStart X.TT j).val : ℤ) + (segG X.TT j : ℕ) := by
-  simp only [posS, Fin.cons_succ, dif_neg h]
+  simp only [posS, Fin.cons_succ, dite_eq_right h]
 
 theorem lamS_zero : lamS X j 0 = (topStart X j, true) := rfl
 
 theorem lamS_succ_lt (a : Fin (2 * segS X.TT j + 1)) (h : (a : ℕ) < 2 * segS X.TT j) :
     lamS X j a.succ = (topOdd X j ⟨(a : ℕ) / 2, by omega⟩, decide ((a : ℕ) % 2 = 0)) := by
-  simp only [lamS, Fin.cons_succ, dif_pos h]
+  simp only [lamS, Fin.cons_succ, dite_eq_left h]
 
 theorem lamS_succ_ge (a : Fin (2 * segS X.TT j + 1)) (h : ¬ (a : ℕ) < 2 * segS X.TT j) :
     lamS X j a.succ = (topEnd X j, true) := by
-  simp only [lamS, Fin.cons_succ, dif_neg h]
+  simp only [lamS, Fin.cons_succ, dite_eq_right h]
 
 theorem segG_pos' : 0 < segG X.TT j := by
   unfold segG
@@ -283,11 +246,11 @@ theorem phiS_succ (C0 CE1 CE2 : ℝ) (a : Fin (2 * segS X.TT j + 1)) (b : Fin X.
   · rw [lamS_succ_lt X j a h]
     unfold symVar
     simp only [Fin.val_castSucc]
-    rw [dif_pos h]
+    rw [dite_eq_left h]
   · rw [lamS_succ_ge X j a h]
     unfold symVar
     simp only [Fin.val_castSucc]
-    rw [dif_neg h]
+    rw [dite_eq_right h]
     have : (a : ℕ) = 2 * segS X.TT j := by have := a.2; omega
     simp [this]
 

@@ -49,12 +49,10 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.EigenDescent
 
@@ -75,11 +73,5 @@ open Classical in
 def trans (π : X ⟶ Y) (E : ∀ V : Y.Opens, Γ(X, π ⁻¹ᵁ V)ˣ → Prop) (i j : Chart π E) :
     Γ(Y, i.1.1 ⊓ j.1.1)ˣ :=
   if h : ∃ u, pullU π _ u = rat π i.1.2 j.1.2 then h.choose else 1
-
-section Eigen
-
-variable {K : Type} [Field K] {A A' T : Over (Sp K)} [GrpObj A] [GrpObj A']
-
-end Eigen
 
 end GlobalTheory.EigenDescent

@@ -10,60 +10,9 @@ public import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 public import Formalism.PieriBlockIdeals.LemmaWFromLattice
 public import Formalism.PieriBlockIdeals.PieriColumnMinors.HeightDescentMinors
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Lemma
-import Mathlib.RingTheory.LocalProperties.Reduced
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PieriBlockIdeals.PieriColumnMinors.MinorValuationBoundHolds, Formalism.PieriBlockIdeals.WEChain, Formalism.PieriBlockIdeals.PieriColumnMinors.ContentLinkageHolds, Formalism.PieriBlockIdeals.PieriColumnMinors.WeightExchangeBoundHolds, Formalism.PieriBlockIdeals.PieriColumnMinors.WeightExchangeChainHolds, Formalism.PieriBlockIdeals.PieriColumnMinors.RegularCuspidalTrace, Formalism.PieriBlockIdeals.PieriColumnMinors.HeckeLFunctionIdealEulerProduct
@@ -250,7 +199,7 @@ theorem we_msum (Y A Bm X : Multiset ℤ) (lo hi : ℤ) (hYA : Y ≤ A) (hA : A 
       have := Multiset.card_le_card hP
       rw [hPQ] at this
       exact_mod_cast this
-    · push_neg at h
+    · push Not at h
       rw [noMem h _ memQ, noMem h X memX]
   rw [hYs, hBs, abs_le]
   constructor <;> linarith
@@ -827,7 +776,7 @@ theorem unit_series_constant_holds : UnConst := by
     intro h
     have h1 := hinj h
     have h2 := congrArg (coeff 1) h1
-    rw [map_sub, coeff_one_X, coeff_C, if_neg one_ne_zero, sub_zero, map_zero] at h2
+    rw [map_sub, coeff_one_X, coeff_C, ite_eq_right one_ne_zero, sub_zero, map_zero] at h2
     exact one_ne_zero h2
   have huniq : ∀ a b : O⟦X⟧, IsUn l O u a → IsUn l O u b → a = b := by
     intro a b ha hb
@@ -955,7 +904,7 @@ theorem frobenius_diagonal_holds : PhiDiag := by
   · refine ⟨he0, hA.unit, hφ ?_⟩
     rw [IsUnit.unit_spec, map_mul, map_pow, key, ← zpow_natCast, Int.toNat_of_nonneg he0]
   · exfalso
-    push_neg at he0
+    push Not at he0
     have hm : φ p * φ X ^ (-e) = φ A := by
       rw [key, mul_assoc, ← zpow_add₀ hx, add_neg_cancel, zpow_zero, mul_one]
     obtain ⟨m, hm'⟩ : ∃ m : ℕ, -e = (m : ℤ) + 1 := ⟨(-e - 1).toNat, by omega⟩
@@ -980,7 +929,7 @@ theorem theta_diagonal_holds : ThetaDiag := by
       rw [X_dvd_iff, map_sub, constantCoeff_C, sub_self]
     have e : y = C (constantCoeff y) + X * q := by rw [← hq]; ring
     rw [e, hadd, hmul, hC, hX]
-    rw [map_add (f := _), map_add (f := _), coeff_C, if_neg one_ne_zero, zero_add, zero_add]
+    rw [map_add (f := _), map_add (f := _), coeff_C, ite_eq_right one_ne_zero, zero_add, zero_add]
     rw [mul_assoc, e1, e1, map_mul, hcc0]
     simp
   have hc1 : ∀ f q : k⟦X⟧, coeff 1 (f * q) = coeff 1 f * constantCoeff q + constantCoeff f * coeff 1 q := by
@@ -993,7 +942,7 @@ theorem theta_diagonal_holds : ThetaDiag := by
   set V := hV.unit with hVdef
   have hV0 : constantCoeff (V : k⟦X⟧) = 1 := by rw [IsUnit.unit_spec]; simp
   have hV1' : coeff 1 (V : k⟦X⟧) = constantCoeff un := by
-    rw [IsUnit.unit_spec, map_add (f := _), coeff_one, if_neg one_ne_zero, zero_add, mul_comm, e1]
+    rw [IsUnit.unit_spec, map_add (f := _), coeff_one, ite_eq_right one_ne_zero, zero_add, mul_comm, e1]
   have hgs : gamSer 0 un = X * (V : k⟦X⟧) := by rw [gammaSeries_zero_eq, IsUnit.unit_spec]
   have hVcc : ∀ m : ℤ, constantCoeff ((V ^ m : (k⟦X⟧)ˣ) : k⟦X⟧) = 1 := by
     intro m
@@ -1016,7 +965,7 @@ theorem theta_diagonal_holds : ThetaDiag := by
     · have hcc_inv : constantCoeff (((V ^ n)⁻¹ : (k⟦X⟧)ˣ) : k⟦X⟧) = 1 := by
         rw [map_units_inv, Units.val_pow_eq_pow_val, map_pow, hV0, one_pow, inv_one]
       have hinv := hc1 ((V ^ n : (k⟦X⟧)ˣ) : k⟦X⟧) (((V ^ n)⁻¹ : (k⟦X⟧)ˣ) : k⟦X⟧)
-      rw [Units.mul_inv, coeff_one, if_neg one_ne_zero, hcc_inv, Units.val_pow_eq_pow_val, hVn,
+      rw [Units.mul_inv, coeff_one, ite_eq_right one_ne_zero, hcc_inv, Units.val_pow_eq_pow_val, hVn,
         map_pow, hV0, one_pow] at hinv
       rw [zpow_neg, zpow_natCast]
       push_cast
@@ -1049,9 +998,9 @@ theorem theta_diagonal_holds : ThetaDiag := by
     rw [← map_mul, Units.mul_inv, map_one]
   have hww1 : coeff 1 (w : k⟦X⟧) * constantCoeff ((w⁻¹ : (k⟦X⟧)ˣ) : k⟦X⟧) +
       constantCoeff (w : k⟦X⟧) * coeff 1 ((w⁻¹ : (k⟦X⟧)ˣ) : k⟦X⟧) = 0 := by
-    rw [← hc1, Units.mul_inv, coeff_one, if_neg one_ne_zero]
+    rw [← hc1, Units.mul_inv, coeff_one, ite_eq_right one_ne_zero]
   have hC1 : coeff 1 (1 + X * g) = constantCoeff g := by
-    rw [map_add (f := _), coeff_one, if_neg one_ne_zero, zero_add, e1]
+    rw [map_add (f := _), coeff_one, ite_eq_right one_ne_zero, zero_add, e1]
   have hC0 : constantCoeff (1 + X * g) = 1 := by simp
   rw [hc]
   refine ⟨?_, ?_⟩
@@ -1072,7 +1021,7 @@ theorem theta_base_change_holds : ThetaBaseChange := by
       rw [X_dvd_iff, map_sub, constantCoeff_C, sub_self]
     have e : y = C (constantCoeff y) + X * q := by rw [← hq]; ring
     rw [e, hadd, hmul, hC, hX]
-    rw [map_add (f := _), map_add (f := _), coeff_C, if_neg one_ne_zero, zero_add, zero_add]
+    rw [map_add (f := _), map_add (f := _), coeff_C, ite_eq_right one_ne_zero, zero_add, zero_add]
     rw [mul_assoc, e1, e1, map_mul, hcc0]
     simp
   have hc1 : ∀ f q : k⟦X⟧, coeff 1 (f * q) = coeff 1 f * constantCoeff q + constantCoeff f * coeff 1 q := by
@@ -1397,7 +1346,7 @@ theorem sum_tail_le_sum_of_antitone {N : ℕ} (f : Fin N → ℤ) (hf : Antitone
     have hJ0 : J = ∅ := Finset.card_eq_zero.1 (by rw [hJ, hT0, Finset.card_empty])
     rw [hT0, hJ0]
 
-theorem card_filter_le_val_eq_sub (N m : ℕ) (hm : m ≤ N) :
+theorem card_filter_le_val_eq_sub (N m : ℕ) :
     (Finset.univ.filter fun a : Fin N => m ≤ (a : ℕ)).card = N - m := by
   have hm2 : (Finset.univ.filter fun a : Fin N => m ≤ (a : ℕ)).map Fin.valEmbedding =
       Finset.Ico m N := by
@@ -1420,7 +1369,7 @@ theorem weight_exponents_from_inputs : WEFromInputs := by
   have hwt := hW.1.2.2.1
   have hT0 : 0 ≤ ∑ a ∈ Finset.univ.filter (fun a : Fin (k + j + t + q) => k + j + q ≤ (a : ℕ)),
       U' τ a := Finset.sum_nonneg fun a _ => (hH1 τ a).1
-  have hcard := card_filter_le_val_eq_sub (k + j + t + q) (k + j + q) (by omega)
+  have hcard := card_filter_le_val_eq_sub (k + j + t + q) (k + j + q)
   refine weightExchangeFull_holds ι σ k j t q l h F (W.toWData l c σ) U U' bot cst kap
     (fun i => if i = τ then (∑ a ∈ Finset.univ.filter
       (fun a : Fin (k + j + t + q) => k + j + q ≤ (a : ℕ)), U' τ a).toNat else 0) τ Fact.out hsmall
@@ -1429,11 +1378,11 @@ theorem weight_exponents_from_inputs : WEFromInputs := by
   · intro i J hJ
     by_cases hi : i = τ
     · subst hi
-      simp only [if_true]
+      simp only [ite_true]
       rw [Int.toNat_of_nonneg hT0]
       exact sum_tail_le_sum_of_antitone (U' i) (hU' i).antitone _ J (by rw [hJ, hcard]; omega)
     · simpa [hi] using Finset.sum_nonneg fun a _ => (hH1 i a).1
-  · simp only [if_true]
+  · simp only [ite_true]
     rw [Int.toNat_of_nonneg hT0]
 
 end Five

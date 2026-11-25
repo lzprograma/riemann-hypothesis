@@ -20,48 +20,10 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOn
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictIsotropicQuotientWittTowerPropertieStatement
 import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 
@@ -72,8 +34,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition GlobalTheory.OrientedHeis GlobalTheory.FockCompare
 open scoped TensorProduct
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.TwFour
 
@@ -105,8 +65,7 @@ theorem hasSum_coefficients (G : Type) [AddCommGroup G] [TopologicalSpace G] [Is
     simp only [S, hperχ _ γ hγ]
   have horth : ∀ d, d ≠ 0 → ∫ x in 𝓕, χ d x ∂μ = 0 := fun d hd => by
     obtain ⟨x₀, hx₀⟩ : ∃ x₀, χ d x₀ ≠ 1 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       exact hd (hinj d hcon)
     have e := GlobalTheory.HeisOrtho.setIntegral_add_right Γ μ 𝓕 h𝓕 (χ d) (hperχ d) x₀
     simp only [hx, integral_mul_const] at e
@@ -181,7 +140,7 @@ theorem summable_norm_of_lattice {Y : Type} {n : ℕ} (T : Y → ℂ) (ℓ : Y �
     by_cases hk : k = 0
     · simp [g, hk]
     · have hpos : 0 < (k : ℝ) ^ 2 := by positivity
-      simp only [g, hk, if_false, add_zero, sq_abs]
+      simp only [g, hk, ite_false, add_zero, sq_abs]
       exact inv_anti₀ hpos (by linarith)
   let b : (Fin n → ℤ) → ℝ := fun k => ∏ i, g (k i)
   have hb0 : ∀ k, 0 ≤ b k := fun k => Finset.prod_nonneg fun i _ => hg0 _
@@ -248,15 +207,7 @@ variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {V W : HSp D}
 
 theorem heisO_comm (a b : WO V W) (g : WO V W → ℂ) :
     heisO ψ V W a (heisO ψ V W b g) = ψ (symplO V W a b) • heisO ψ V W b (heisO ψ V W a g) := by
-  have h2 : algebraMap D.host.F (AF D.host.F) (1 / 2) * 2 = 1 := by
-    rw [← map_ofNat (algebraMap D.host.F (AF D.host.F)) 2, ← map_mul]; norm_num
-  have e : symplOH V W a b = symplO V W a b + symplOH V W b a := by
-    unfold symplOH
-    rw [symplO_skew a b]
-    have : symplO V W a b = algebraMap D.host.F (AF D.host.F) (1 / 2) * 2 * symplO V W a b := by rw [h2, one_mul]
-    nth_rewrite 2 [this]
-    ring
-  rw [heisO_heisO, heisO_heisO, add_comm b a, smul_smul, ← ψ.map_add_eq_mul, ← e]
+  apply _root_.GlobalTheory.SplitScalar.heisO_comm <;> assumption
 
 theorem integral_dLine_eq_zero (hθ : IsInfFam θ) (hψ : IsStdChar D ψ (-1)) {L : ℝ →+ WO V W} (hL : Formalism.L2.Theta.IsRealDir W V L)
     {X : Type} [TopologicalSpace X] [MeasurableSpace X] [OpensMeasurableSpace X] (ν : Measure X) [IsFiniteMeasure ν]
@@ -438,8 +389,7 @@ theorem exists_coords (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ (-1
     have h3 : Λ.toRatLinearMap = 0 := e.ext fun i => h2 i
     have h4 : ∀ l, Λ l = 0 := fun l => LinearMap.congr_fun h3 l
     obtain ⟨i, j, hij⟩ : ∃ i j, (y - y') i j ≠ 0 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       exact hd (Matrix.ext hcon)
     obtain ⟨_, ⟨g, rfl⟩, hγ⟩ := GlobalTheory.RatAnnih.exists_symplO_eq S T (rat (y - y')) i j ((y - y') i j)⁻¹
     have h5 : symplO S T (rat (y - y')) (rat g) = algebraMap D.host.F (AF D.host.F) 2 := by

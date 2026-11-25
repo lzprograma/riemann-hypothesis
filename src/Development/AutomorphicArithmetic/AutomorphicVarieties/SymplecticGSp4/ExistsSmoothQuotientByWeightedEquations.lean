@@ -153,7 +153,7 @@ private theorem cc_coeff_X [DecidableEq σ] (i j : σ) :
   rw [coeff_X]
   by_cases h : i = j
   · simp [h]
-  · rw [if_neg h, if_neg]
+  · rw [ite_eq_right h, ite_eq_right]
     exact fun h' => h (Finsupp.single_left_injective one_ne_zero h')
 
 private theorem cc_expand [Fintype σ] (g : MvPowerSeries σ E) :
@@ -330,8 +330,7 @@ private theorem exists_columns_det_ne_zero_of_rows_linearIndependent {E τ κ : 
 
 private theorem exists_perm_diag_ne_zero_of_det_ne_zero {E κ : Type} [Field E] [Fintype κ] [DecidableEq κ]
     (M : Matrix κ κ E) (hM : M.det ≠ 0) : ∃ π : Equiv.Perm κ, ∀ k, M (π k) k ≠ 0 := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   apply hM
   rw [Matrix.det_apply]
   refine Finset.sum_eq_zero fun π _ => ?_
@@ -450,7 +449,7 @@ private theorem cc_series {E τ κ Y : Type} [Field E] [Fintype τ] [Fintype κ]
       simp only [hz', Finset.smul_sum, smul_smul]
       rw [Finset.sum_comm]
       simp only [← Finset.sum_smul, h, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq,
-        Finset.mem_univ, if_true]
+        Finset.mem_univ, ite_true]
 
     rw [hzz, map_sum]
     simp [map_smul, hψz]
@@ -704,7 +703,7 @@ private lemma homog_ker {O K σ τ X : Type} [CommRing O] [CommRing K] [Algebra 
 
     rw [map_sub, map_sum]
     simp only [coeff_wcomp]
-    rw [Finset.sum_ite_eq, if_pos hm', sub_self]) n (Nat.lt_succ_self _)
+    rw [Finset.sum_ite_eq, ite_eq_left hm', sub_self]) n (Nat.lt_succ_self _)
 
   rw [map_sub, hf, zero_sub, map_neg, neg_eq_zero, map_sum, map_sum,
   Finset.sum_eq_single_of_mem j (Finset.mem_insert_self _ _)] at h1

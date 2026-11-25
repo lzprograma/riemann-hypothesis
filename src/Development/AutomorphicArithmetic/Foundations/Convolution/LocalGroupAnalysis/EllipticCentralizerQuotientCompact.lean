@@ -3,49 +3,6 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
 import GroundTheory.AutomorphicForms.ReductionCore
 import GroundTheory.AutomorphicForms.ReductionFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -88,7 +45,6 @@ private theorem krylov_det_ne_zero {F : Type*} [Field F] {n : ℕ} {M : Matrix (
   rw [vecMul_krylov] at hc0
   set p : F[X] := ∑ k : Fin n, C (c k) * X ^ (k : ℕ) with hp
   have hpa : aeval M p = ∑ k : Fin n, c k • M ^ (k : ℕ) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp [hp, map_sum, Algebra.smul_def]
   have hdeg : p.degree < n := degree_sum_fin_lt c
   have hp0 : p ≠ 0 := by
@@ -189,12 +145,8 @@ private theorem centralizer_compact_fundamental {G : Type*} [Group G] [Topologic
   choose r hrΓ hr using hr
   have hC : IsCompact (⋃ δ ∈ (fun y : G => y * γ * y⁻¹) '' D ∩ (Γ : Set G), (fun y => r δ * y) '' D) :=
     hfin.isCompact_biUnion fun δ _ => hD.image (by fun_prop)
-  have hZ : IsClosed ((Subgroup.centralizer {γ} : Subgroup G) : Set G) := by
-    have : ((Subgroup.centralizer {γ} : Subgroup G) : Set G) = {x | x * γ = γ * x} := by
-      ext x
-      exact Subgroup.mem_centralizer_singleton_iff
-    rw [this]
-    exact isClosed_eq (by fun_prop) (by fun_prop)
+  have hZ : IsClosed ((Subgroup.centralizer {γ} : Subgroup G) : Set G) :=
+    Set.isClosed_centralizer {γ}
   refine ⟨Subtype.val ⁻¹' _, hZ.isClosedEmbedding_subtypeVal.isCompact_preimage hC, fun t => ?_⟩
   obtain ⟨g, hg, y, hy, hty⟩ := h t
   have ht : (t : G) * γ = γ * t := Subgroup.mem_centralizer_singleton_iff.1 t.2

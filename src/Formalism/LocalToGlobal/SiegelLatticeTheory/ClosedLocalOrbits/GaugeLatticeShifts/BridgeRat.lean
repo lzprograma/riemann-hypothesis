@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.TypedLoc
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOp
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.AdmNPf
@@ -17,8 +18,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
   Formalism.L2.SG.Pf.unitaryCongruence Formalism.L2.SG.NormCut
 
 namespace Formalism.L2.SG.Pf.BridgeRat
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
@@ -71,19 +70,7 @@ theorem hA_hat (A : X.B.I.Gf) (y z : (VS D).V) :
   rw [Formalism.L2.SG.PoincareInHH.Cut.hA_fmat X, Formalism.L2.SG.PoincareInHH.Cut.hA_crd X]
 
 theorem mL_div {m : VA X.B.I} (hm : m ∈ mL X.B.I X.B.g) : ∃ x ∈ X.B.I.Lf, m = (X.B.g : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • x := by
-  unfold mL at hm
-  induction hm using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨x, hx, rfl⟩ := hy
-    exact ⟨x, hx, rfl⟩
-  | zero => exact ⟨0, zero_mem _, (smul_zero _).symm⟩
-  | add a b _ _ ha hb =>
-    obtain ⟨x, hx, rfl⟩ := ha
-    obtain ⟨x', hx', rfl⟩ := hb
-    exact ⟨x + x', add_mem hx hx', (smul_add _ _ _).symm⟩
-  | smul c a _ ha =>
-    obtain ⟨x, hx, rfl⟩ := ha
-    exact ⟨c • x, Submodule.smul_mem _ c hx, smul_comm c _ x⟩
+  apply +allowSynthFailures _root_.Formalism.L2.SG.Pf.TypedLoc.mL_smul <;> assumption
 
 theorem locP_of_InAt (A : X.B.I.Gf) {Λ : Submodule (𝓞 D.host.E) (VS D).V}
     (hlat : ∀ y, y ∈ Λ ↔ hat X A y ∈ X.B.I.Lf) {y : (VS D).V} (hy : InAt X.B.I X.B.g X.B.g (hat X A y))

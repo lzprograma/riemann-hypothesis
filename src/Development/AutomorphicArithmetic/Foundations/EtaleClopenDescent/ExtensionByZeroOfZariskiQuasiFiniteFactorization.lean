@@ -9,52 +9,12 @@ public import Mathlib.AlgebraicGeometry.Normalization
 public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
 public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
 public import Development.EtaleCohomology.EtaleSheaves.CurveThroughGenericPointSpreadsToSmoothProperFamily2
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.ENatToNat
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
@@ -75,7 +35,6 @@ private theorem UpperTheory.integralClosure_finite_of_finiteType_perfect (k : Ty
     [FaithfulSMul B L] [Algebra.EssFiniteType B L] :
     Module.Finite B (integralClosure B L) := by
   letI : Algebra (FractionRing B) L := FractionRing.liftAlgebra B L
-  haveI : IsScalarTower B (FractionRing B) L := FractionRing.isScalarTower_liftAlgebra B L
   haveI : Algebra.EssFiniteType (FractionRing B) L :=
     Algebra.EssFiniteType.of_comp B (FractionRing B) L
   let M := algebraicClosure (FractionRing B) L
@@ -84,23 +43,10 @@ private theorem UpperTheory.integralClosure_finite_of_finiteType_perfect (k : Ty
   haveI : Module.Finite B (integralClosure B M) :=
     GlobalTheory.NormFin.finite_integralClosure_of_perfectField k B (FractionRing B) M
   let g : M →ₐ[B] L := M.val.restrictScalars B
-  have hg : Function.Injective g := Subtype.val_injective
-  let φ : integralClosure B M →ₗ[B] integralClosure B L :=
-    { toFun := fun x => ⟨g x, x.2.map g⟩
-      map_add' := by
-        intro x y
-        ext
-        simp
-      map_smul' := by
-        intro r x
-        ext
-        simp }
-  refine Module.Finite.of_surjective φ ?_
-  rintro ⟨y, hy⟩
-  have hyF : IsIntegral (FractionRing B) y := hy.tower_top
-  let z : M := ⟨y, mem_algebraicClosure_iff'.mpr hyF⟩
-  have hz : IsIntegral B z := (isIntegral_algHom_iff g hg).mp hy
-  exact ⟨⟨z, hz⟩, rfl⟩
+  refine Module.Finite.of_surjective ((g.comp (integralClosure B M).val).codRestrict
+    (integralClosure B L) fun x => x.2.map g).toLinearMap fun y => ?_
+  exact ⟨⟨⟨y, mem_algebraicClosure_iff'.mpr y.2.tower_top⟩,
+    (isIntegral_algHom_iff g Subtype.val_injective).mp y.2⟩, rfl⟩
 
 theorem UpperTheory.module_finite_integralClosure_of_finiteType_perfect :
     ∀ (k : Type) [Field k] [PerfectField k] (A L : Type) [CommRing A] [Algebra k A] [Algebra.FiniteType k A] [Field L] [Algebra A L] [Algebra.EssFiniteType A L], Module.Finite A (integralClosure A L) := by
@@ -227,9 +173,6 @@ private lemma spec_bot {A B : Type} [CommRing A] [IsDomain A] [CommRing B] [IsDo
   apply PrimeSpectrum.ext
   exact Ideal.comap_bot_of_injective f hf
 
-private lemma spec_field {F : Type} [Field F] (z : PrimeSpectrum F) : z = ⊥ :=
-  PrimeSpectrum.ext (Ideal.eq_bot_of_prime _)
-
 private lemma spec_gen {A : Type} [CommRing A] [IsDomain A] (a : PrimeSpectrum A)
     (h : a ⤳ (⊥ : PrimeSpectrum A)) : a = ⊥ :=
   le_bot_iff.1 ((PrimeSpectrum.le_iff_specializes _ _).2 h)
@@ -259,8 +202,8 @@ theorem UpperTheory.exists_specializes_lift_generic_base_change :
         (pullback.snd w (Spec.map (CommRingCat.ofHom (algebraMap R Ω))) ≫
           Spec.map (CommRingCat.ofHom (algebraMap R Ω))).base y'
       rw [pullback.condition]
-    rw [h2, spec_field (pullback.snd w (Spec.map (CommRingCat.ofHom (algebraMap R Ω))) y'),
-      spec_bot _ hinj] at h1
+    rw [h2, Subsingleton.elim (α := PrimeSpectrum Ω)
+      (pullback.snd w (Spec.map (CommRingCat.ofHom (algebraMap R Ω))) y') ⊥, spec_bot _ hinj] at h1
     exact h1
   obtain ⟨z, hz, -⟩ := Scheme.Pullback.exists_preimage_pullback (f := w)
     (g := Spec.map (CommRingCat.ofHom (algebraMap R (FractionRing R)))) x

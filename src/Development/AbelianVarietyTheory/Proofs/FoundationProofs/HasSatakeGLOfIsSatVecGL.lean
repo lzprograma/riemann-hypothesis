@@ -210,7 +210,7 @@ theorem finite_of_triangular (m : ℕ) (B : Subalgebra ℂ (AddMonoidAlgebra ℂ
           have := step 0 (by simp) (by simpa using Finset.sum_nonneg fun i _ => abs_nonneg (ε i)) (by
             intro h0
             have h1 : ε i0 = 0 := by rw [← h0]; rfl
-            simp only [hε, cut, hj0, if_true, Int.sign_eq_zero_iff_zero] at h1
+            simp only [hε, cut, hj0, ite_true, Int.sign_eq_zero_iff_zero] at h1
             rw [h1] at hj0
             simp at hj0
             omega)
@@ -301,13 +301,6 @@ theorem exists_fixed_of_fun (hK : IsOpen (K : Set G)) (hc : IsCommensurated K) {
   exact e
 
 end Induced
-
-section Unitary
-
-variable {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))] [CompleteSpace L] {ϖ : L} {σ : L →+* L} {q n : ℕ}
-  {V : Type} [AddCommGroup V] [Module ℂ V] {π : Representation ℂ (GU σ n) V} {α : Fin (n / 2) → ℂˣ}
-
-end Unitary
 
 section Linear
 

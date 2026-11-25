@@ -208,24 +208,24 @@ noncomputable def toResCoind (B : Rep.{u} k S) : B ⟶ res S.subtype (coind S.su
       intro s x
       by_cases hx : x ∈ S
       · have hsx : (S.subtype s) * x ∈ S := S.mul_mem s.2 hx
-        simp only [LinearMap.pi_apply, dif_pos hx, dif_pos hsx]
+        simp only [LinearMap.pi_apply, dite_eq_left hx, dite_eq_left hsx]
         rw [← Module.End.mul_apply, ← map_mul]
         rfl
       · have hsx : (S.subtype s) * x ∉ S := fun h => hx (by
           simpa using S.mul_mem (S.inv_mem s.2) h)
-        simp only [LinearMap.pi_apply, dif_neg hx, dif_neg hsx, LinearMap.zero_apply, map_zero]),
+        simp only [LinearMap.pi_apply, dite_eq_right hx, dite_eq_right hsx, LinearMap.zero_apply, map_zero]),
     fun s => LinearMap.ext fun b => Subtype.ext (funext fun x => by
       by_cases hx : x ∈ S
       · have hxs : x * (S.subtype s) ∈ S := S.mul_mem hx s.2
         change (if h : x ∈ S then B.ρ ⟨x, h⟩ else 0) (B.ρ s b) =
           (if h : x * (S.subtype s) ∈ S then B.ρ ⟨x * (S.subtype s), h⟩ else 0) b
-        rw [dif_pos hx, dif_pos hxs, ← Module.End.mul_apply, ← map_mul]
+        rw [dite_eq_left hx, dite_eq_left hxs, ← Module.End.mul_apply, ← map_mul]
         rfl
       · have hxs : x * (S.subtype s) ∉ S := fun h => hx (by
           simpa using S.mul_mem h (S.inv_mem s.2))
         change (if h : x ∈ S then B.ρ ⟨x, h⟩ else 0) (B.ρ s b) =
           (if h : x * (S.subtype s) ∈ S then B.ρ ⟨x * (S.subtype s), h⟩ else 0) b
-        rw [dif_neg hx, dif_neg hxs]
+        rw [dite_eq_right hx, dite_eq_right hxs]
         rfl)⟩
 
 
@@ -247,9 +247,9 @@ lemma sum_toResCoind (B : Rep.{u} k S) (b : B) (g : G) :
   refine (Finset.sum_congr rfl fun h _ => toResCoind_apply S B b h).trans ?_
   rw [← Fintype.sum_subtype_add_sum_subtype (fun h : G => h ∈ S)]
   have h0 : ∑ h : {x // ¬ x ∈ S}, (if hh : (h : G) ∈ S then B.ρ ⟨h, hh⟩ b else 0) = 0 :=
-    Finset.sum_eq_zero fun h _ => dif_neg h.2
+    Finset.sum_eq_zero fun h _ => dite_eq_right h.2
   rw [h0, add_zero, Representation.norm, LinearMap.sum_apply]
-  exact Finset.sum_congr (by convert rfl) fun h _ => dif_pos h.2
+  exact Finset.sum_congr (by convert rfl) fun h _ => dite_eq_left h.2
 
 lemma shapiro_comm_zero (B : Rep.{u} k S) :
     (chainsMap S.subtype (toResCoind S B)).f 0 ≫ (tateComplexConnectData (coind S.subtype B)).d₀ =
@@ -403,11 +403,11 @@ lemma sum_coindNormLift (M : Rep.{u} k S) (φ : M.V →ₗ[k] M.V)
   rw [← Fintype.sum_subtype_add_sum_subtype (fun h : G => h ∈ S)]
   have h0 : ∑ h : {y // ¬ y ∈ S},
       (if hh : (h : G) ∈ S then M.ρ ⟨h, hh⟩ (φ (f.1 ((h : G)⁻¹ * x))) else 0) = 0 :=
-    Finset.sum_eq_zero fun h _ => dif_neg h.2
+    Finset.sum_eq_zero fun h _ => dite_eq_right h.2
   rw [h0, add_zero]
   conv_rhs => rw [← hφ (f.1 x)]
   refine Finset.sum_congr (by convert rfl) fun s _ => ?_
-  rw [dif_pos s.2]
+  rw [dite_eq_left s.2]
   congr 2
   exact f.2 s⁻¹ x
 

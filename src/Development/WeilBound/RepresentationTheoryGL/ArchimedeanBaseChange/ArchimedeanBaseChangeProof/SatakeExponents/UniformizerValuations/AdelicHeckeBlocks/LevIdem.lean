@@ -9,43 +9,7 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyNrmLTwConj
 import GroundTheory.GlobalFields.LocalFieldAtPlace
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -93,11 +57,11 @@ theorem fp_ind (hev : ∀ x : Gf E a b, ∀ᶠ i : Slot S in cofinite, i.cp a b 
       rw [hi.1.1, Set.indicator_of_mem (show i.cp a b y ∈ (K2 a b i.pl : Set (GLw a i.pl × GLw b i.pl)) from hi.2),
         hi.1.2])
   by_cases hy : y ∈ levelSub hmul L
-  · rw [if_pos hy]
+  · rw [ite_eq_left hy]
     refine finprod_congr fun i => ?_
     exact Set.indicator_of_mem (show i.cp a b y ∈ (L i : Set (GLw a i.pl × GLw b i.pl)) from
       (mem_levelSub hmul L y).1 hy i) _
-  · rw [if_neg hy]
+  · rw [ite_eq_right hy]
     obtain ⟨i, hi⟩ := not_forall.1 (fun h => hy ((mem_levelSub hmul L y).2 h))
     exact finprod_eq_zero _ i
       (Set.indicator_of_notMem (show i.cp a b y ∉ (L i : Set (GLw a i.pl × GLw b i.pl)) from hi) _) hfin
@@ -148,10 +112,10 @@ theorem index_eq (h2 : HintProd) (hcont : ∀ i : Slot S, Continuous (i.cp a b))
     have := fp_ind hmul hev L (fun _ => 1) (hLe.mono fun i hi => ⟨hi, rfl⟩) x
     rw [finprod_one] at this
     by_cases hx : x ∈ levelSub hmul L
-    · rw [if_pos hx] at this
+    · rw [ite_eq_left hx] at this
       rw [Set.indicator_of_mem (show x ∈ ((levelSub hmul L : Subgroup (Gf E a b)) : Set (Gf E a b)) from hx)]
       exact this
-    · rw [if_neg hx] at this
+    · rw [ite_eq_right hx] at this
       rw [Set.indicator_of_notMem (show x ∉ ((levelSub hmul L : Subgroup (Gf E a b)) : Set (Gf E a b)) from hx)]
       exact this
   have hp' : hint ((Kf E a).prod (Kf E b)) (((levelSub hmul L : Subgroup (Gf E a b)) : Set (Gf E a b)).indicator 1) =
@@ -236,20 +200,20 @@ theorem levs_out {a : ℕ} {w : Pl E} (hw : w ∉ d.T ∪ d.S₀ ∪ d.Bad) :
     d.lev a w = K2 a (n - a) w ∧ d.lev₂ a w = K2 a (n - a) w := by
   simp only [Finset.mem_union, not_or] at hw
   have h' : w ∉ d.S₀ ∪ d.Bad := by simp [hw.1.2, hw.2]
-  exact ⟨by simp only [LocData.lev, if_neg hw.1.1, if_neg h'], by simp only [LocData.lev₂, if_neg h']⟩
+  exact ⟨by simp only [LocData.lev, ite_eq_right hw.1.1, ite_eq_right h'], by simp only [LocData.lev₂, ite_eq_right h']⟩
 
 theorem lev_spec (hd : d.Ok) {a : ℕ} (ha : a ≤ n) (w : Pl E) :
     (IsOpen (d.lev a w : Set (GLw a w × GLw (n - a) w)) ∧ d.lev a w ≤ K2 a (n - a) w) ∧
       ∃ A B, d.lev a w = Subgroup.prod A B := by
   by_cases hT : w ∈ d.T
-  · simp only [LocData.lev, if_pos hT]
+  · simp only [LocData.lev, ite_eq_left hT]
     exact ⟨⟨LocComm.isOpen_iwahori_pair _ _ _, LocComm.iwahori_pair_le_maximal_pair _ _ _⟩, _, _, rfl⟩
   · by_cases hSB : w ∈ d.S₀ ∪ d.Bad
     · obtain ⟨L₁, L₂, e, h1, h2⟩ := hd.L a ha w hSB
-      simp only [LocData.lev, if_neg hT, if_pos hSB, e]
+      simp only [LocData.lev, ite_eq_right hT, ite_eq_left hSB, e]
       refine ⟨⟨?_, Subgroup.prod_mono h1.2.1 h2.2.1⟩, _, _, rfl⟩
       rw [Subgroup.coe_prod]; exact h1.1.prod h2.1
-    · simp only [LocData.lev, if_neg hT, if_neg hSB]
+    · simp only [LocData.lev, ite_eq_right hT, ite_eq_right hSB]
       exact ⟨⟨(GlobalTheory.BCT.StTw2Add.isOpen_isCompact_KK a (n - a) w).1, le_rfl⟩, _, _, rfl⟩
 
 theorem lev₂_spec (hd : d.Ok) {a : ℕ} (ha : a ≤ n) (w : Pl E) :
@@ -257,10 +221,10 @@ theorem lev₂_spec (hd : d.Ok) {a : ℕ} (ha : a ≤ n) (w : Pl E) :
       ∃ A B, d.lev₂ a w = Subgroup.prod A B := by
   by_cases hSB : w ∈ d.S₀ ∪ d.Bad
   · obtain ⟨L₁, L₂, e, h1, h2⟩ := hd.L a ha w hSB
-    simp only [LocData.lev₂, if_pos hSB, e]
+    simp only [LocData.lev₂, ite_eq_left hSB, e]
     refine ⟨⟨?_, Subgroup.prod_mono h1.2.1 h2.2.1⟩, _, _, rfl⟩
     rw [Subgroup.coe_prod]; exact h1.1.prod h2.1
-  · simp only [LocData.lev₂, if_neg hSB]
+  · simp only [LocData.lev₂, ite_eq_right hSB]
     exact ⟨⟨(GlobalTheory.BCT.StTw2Add.isOpen_isCompact_KK a (n - a) w).1, le_rfl⟩, _, _, rfl⟩
 
 theorem position_spec (hd : d.Ok) {S : Set (Pl E)} {a : ℕ} (ha : a ≤ n) (i : Slot S) :
@@ -364,9 +328,9 @@ theorem main (h2 : HintProd) (h3 : Slots) {S : Set (Pl E)} (a : ℕ) (ha : a ≤
       exact finprod_congr fun i => by rw [hsfI i]
     rw [ef, ← hidx]
     by_cases hh : h ∈ levelSub hmul (sL d S a)
-    · rw [if_pos hh, if_pos ⟨rfl, hh⟩, hvol, mul_inv, mul_assoc, inv_mul_cancel₀ (Nat.cast_ne_zero.2 hidx0), mul_one]
-    · rw [if_neg hh, if_neg (fun h' => hh h'.2), mul_zero]
-  · rw [if_neg (fun h' => hxy h'.1)]
+    · rw [ite_eq_left hh, ite_eq_left ⟨rfl, hh⟩, hvol, mul_inv, mul_assoc, inv_mul_cancel₀ (Nat.cast_ne_zero.2 hidx0), mul_one]
+    · rw [ite_eq_right hh, ite_eq_right (fun h' => hh h'.2), mul_zero]
+  · rw [ite_eq_right (fun h' => hxy h'.1)]
     obtain ⟨w, hw⟩ := Function.ne_iff.1 hxy
     have hsame : ∀ i : Slot S, i.pl ∉ d.P → sf ((d.eL a).ent d.P x y) (d.eL a).t i =
         sf (fun w => idem (d.lev a w)) (fun w => idem (d.lev₂ a w)) i := by
@@ -447,8 +411,8 @@ theorem levIdem (h3 : Slots) : LevIdem := by
   refine ⟨((ν.real (Lev6.lvS d S a) : ℝ) : ℂ)⁻¹, inv_mul_cancel₀ hne, fun x y h => ?_⟩
   rw [hf x y h]
   by_cases hc : x = y ∧ h ∈ Lev6.lvS d S a
-  · rw [if_pos hc, if_pos ⟨hc.1, (hm h).2 hc.2⟩]
-  · rw [if_neg hc, if_neg (fun h' => hc ⟨h'.1, (hm h).1 h'.2⟩)]
+  · rw [ite_eq_left hc, ite_eq_left ⟨hc.1, (hm h).2 hc.2⟩]
+  · rw [ite_eq_right hc, ite_eq_right (fun h' => hc ⟨h'.1, (hm h).1 h'.2⟩)]
 
 end PositivityTheory.Rg.BcB.F
 

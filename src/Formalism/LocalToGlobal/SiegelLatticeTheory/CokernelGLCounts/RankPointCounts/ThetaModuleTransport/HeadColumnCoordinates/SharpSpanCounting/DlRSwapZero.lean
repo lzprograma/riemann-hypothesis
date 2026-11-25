@@ -1,44 +1,9 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DetZhatSwapUnit
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.MemPerpSpanIff
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.GraphTransport
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.OmPMemSpan
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumA
 
 @[expose] public section
@@ -48,6 +13,10 @@ noncomputable section
 open ValuativeRel Formalism.MainNotions.S.Loc Formalism.L2.SG.LsDatumA
 
 namespace Formalism.L2.SG.LocalCountModules.LocCntCommon
+
+theorem span_swap {E : Type} [CommRing E] {V : Type} [AddCommGroup V] [Module E V] {r : ℕ} (f f' : Fin (r + 1) → V) :
+    Submodule.span E (Set.range (Sum.elim f' f)) = Submodule.span E (Set.range (Sum.elim f f')) := by
+  rw [Set.Sum.elim_range, Set.Sum.elim_range, Set.union_comm]
 
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
@@ -75,12 +44,7 @@ theorem dl_swap_r (f f' : Fin (r + 1) → V) :
   exact (RingHom.map_det (M.L.cj : E →+* E) _).symm
 
 theorem om_swap (f f' : Fin (r + 1) → V) : H.om' f' f = H.om f f' := by
-  unfold HermSp.om' HermSp.om
-  rw [zhat_swap]
-  refine Finset.sum_congr rfl fun b _ => ?_
-  congr 1
-  rw [Matrix.transpose_map, ← Matrix.adjugate_transpose, Matrix.transpose_apply]
-  exact congrFun (congrFun (RingHom.map_adjugate (M.L.cj : E →+* E) (H.Zhat f f')).symm _) _
+  apply _root_.Formalism.L2.SG.LsDatumA.om'_swap <;> assumption
 
 theorem inv_swap (f f' : Fin (r + 1) → V) (hD : IsUnit (H.Dl f f' (r + 1))) (a b : Fin (r + 1)) :
     (H.Zhat f' f)⁻¹ a b = M.L.cj ((H.Zhat f f')⁻¹ b a) := by
@@ -101,10 +65,6 @@ theorem inv_swap (f f' : Fin (r + 1) → V) (hD : IsUnit (H.Dl f f' (r + 1))) (a
   rw [Matrix.inv_eq_right_inv key]
   rfl
 
-theorem span_swap (f f' : Fin (r + 1) → V) :
-    Submodule.span E (Set.range (Sum.elim f' f)) = Submodule.span E (Set.range (Sum.elim f f')) := by
-  rw [Set.Sum.elim_range, Set.Sum.elim_range, Set.union_comm]
-
 theorem h_omP_swap (f f' : Fin (r + 1) → V) (hD : IsUnit (H.Dl f f' (r + 1))) (u : V) :
     H.h u (omP H f' f) = ∑ a, (H.Zhat f f')⁻¹ (Fin.last r) a * H.h u (f a) := by
   have hDl' : H.Dl f' f (r + 1) = (H.Zhat f' f).det := by
@@ -124,18 +84,6 @@ theorem unit_swap (f f' : Fin (r + 1) → V) (hD : IsUnit (H.Dl f f' (r + 1))) :
     IsUnit (H.Dl f' f (r + 1)) := by
   rw [dl_swap_full]
   exact hD.map (M.L.cj : E →+* E)
-
-theorem dl_r_swap_zero (f f' : Fin (r + 1) → V) (hD0 : H.Dl f f' r = 0) : H.Dl f' f r = 0 := by
-  rw [dl_swap_r, hD0, map_zero]
-
-theorem mkW_decomp' (f f' : Fin (r + 1) → V) (T T' : F) (hF : Formalism.MainNotions.ThinScalesBound.FrameK H f T)
-    (hF' : Formalism.MainNotions.ThinScalesBound.FrameK H f' T') (hD : IsUnit (H.Dl f f' (r + 1))) (hD0 : H.Dl f f' r = 0)
-    (u : ↥(H.perp (H.X f'))) (hu : (u : V) ∈ Submodule.span E (Set.range (Sum.elim f f'))) :
-    H.mkW f' u = H.h u (omP H f' f) • H.mkW f' ⟨f' (Fin.last r), z_mem H f' T' hF'⟩ +
-      (H.h u (f' (Fin.last r)) + algebraMap F E T' * H.h u (omP H f' f)) •
-        H.mkW f' ⟨omP H f' f, omP_mem H f' f (unit_swap H f f' hD)⟩ :=
-  mkW_decomp H f' f T' T hF' hF (unit_swap H f f' hD) (dl_r_swap_zero H f f' hD0) u
-    (by rw [span_swap]; exact hu)
 
 theorem sends_omP' {f₁ f₁' f₂ f₂' : Fin (r + 1) → V} (φ' : H.Wb f₁' ≃ₗ[E] H.Wb f₂')
     (hD₁ : IsUnit (H.Dl f₁ f₁' (r + 1))) (hD₂ : IsUnit (H.Dl f₂ f₂' (r + 1)))

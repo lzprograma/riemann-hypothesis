@@ -17,55 +17,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimitOfModul
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfHeads
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CccoefMono
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGSlice
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.SimpleRing.Principal
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RoomOffGridSymmetric
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -322,7 +276,7 @@ theorem continuous_fsv₂ : Continuous (fun q : ℂ × ℂ => fsv q.1 q.2) := by
   exact Complex.continuous_exp.comp ((continuous_fst.mul continuous_snd).sub
     ((Complex.continuous_conj.comp continuous_fst).mul (Complex.continuous_conj.comp continuous_snd)))
 
-theorem integrable_fsv_mul {φ : ℂ → ℂ} (hφ : Continuous φ) (hi : Integrable φ) (a : ℂ) :
+theorem integrable_fsv_mul {φ : ℂ → ℂ} (hi : Integrable φ) (a : ℂ) :
     Integrable (fun t => fsv a t * φ t) := by
   refine hi.bdd_mul (c := 1) ?_ (Filter.Eventually.of_forall fun t => (norm_fsv a t).le)
   exact (continuous_fsv₂.comp (continuous_const.prodMk continuous_id)).aestronglyMeasurable
@@ -613,7 +567,7 @@ namespace Formalism.FourierDecayAlt.P.PBO
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Wd Formalism.YangianSpanCharacter.T Formalism.FourierDecayAlt.P5
 
-theorem transform_diff3 {φ : ℂ → ℂ} (hφ : Continuous φ) (hi : Integrable φ) (σ s : ℂ) :
+theorem transform_diff3 {φ : ℂ → ℂ} (hi : Integrable φ) (σ s : ℂ) :
     ∫ t, fsv s t * ((fsv σ t - 1) ^ 3 * φ t) =
       (∫ t, fsv (s + 3 * σ) t * φ t) - 3 * (∫ t, fsv (s + 2 * σ) t * φ t) + 3 * (∫ t, fsv (s + σ) t * φ t) -
         ∫ t, fsv s t * φ t := by
@@ -627,10 +581,10 @@ theorem transform_diff3 {φ : ℂ → ℂ} (hφ : Continuous φ) (hi : Integrabl
       rw [fsv_mul_fsv, fsv_mul_fsv, fsv_mul_fsv]; congr 1; ring
     rw [e1, e2, e3]; ring
   simp only [e]
-  have i0 := integrable_fsv_mul hφ hi s
-  have i1 := integrable_fsv_mul hφ hi (s + σ)
-  have i2 := integrable_fsv_mul hφ hi (s + 2 * σ)
-  have i3 := integrable_fsv_mul hφ hi (s + 3 * σ)
+  have i0 := integrable_fsv_mul hi s
+  have i1 := integrable_fsv_mul hi (s + σ)
+  have i2 := integrable_fsv_mul hi (s + 2 * σ)
+  have i3 := integrable_fsv_mul hi (s + 3 * σ)
   have j1 : Integrable (fun t => fsv (s + 3 * σ) t * φ t - 3 * (fsv (s + 2 * σ) t * φ t)) := i3.sub (i2.const_mul 3)
   have j2 : Integrable (fun t => fsv (s + 3 * σ) t * φ t - 3 * (fsv (s + 2 * σ) t * φ t) +
       3 * (fsv (s + σ) t * φ t)) := j1.add (i1.const_mul 3)
@@ -642,8 +596,6 @@ theorem norm_fsv_sub_one_pow (σ t : ℂ) : ‖(fsv σ t - 1) ^ 3‖ ≤ 8 := by
   have : ‖fsv σ t - 1‖ ≤ 2 := (norm_sub_le _ _).trans (by rw [norm_fsv, norm_one]; norm_num)
   calc ‖fsv σ t - 1‖ ^ 3 ≤ 2 ^ 3 := pow_le_pow_left₀ (norm_nonneg _) this 3
     _ = 8 := by norm_num
-
-
 
 theorem decayUnif_of (hRH : KB.RadHead) (hHT : KB.HeadTop) (hWDF : WaveDiffForm) : DecayUnif := by
   intro hP Cb
@@ -776,7 +728,7 @@ theorem decayUnif_of (hRH : KB.RadHead) (hHT : KB.HeadTop) (hWDF : WaveDiffForm)
     have hΨb : ∀ s, ‖∫ t, fsv s t * ((fsv σ t - 1) ^ 3 * φ t)‖ ≤
         (8 * (1 + K) * Real.sqrt (CW * ‖σ‖ ^ 6 * B)) * ((1 + ‖s‖) ^ 3)⁻¹ := by
       intro s
-      rw [transform_diff3 hφc hφi σ s, hφs, hφs, hφs, hφs, ← form_wave_mDiff P p j hj w _ _ hxc hyc s σ]
+      rw [transform_diff3 hφi σ s, hφs, hφs, hφs, hφs, ← form_wave_mDiff P p j hj w _ _ hxc hyc s σ]
       have hA0 : ‖p.form j hj w (mDiff (p.T.bs j) σ w (KB.slv p.T (fun g => cut m g • D.cutF p.T.base χ f ε g) j hj w h hh.2)) (mDiff (p.T.bs j) σ w (KB.slv p.T (fun g => cut m g • D.cutF p.T.base χ f ε g) j hj w h hh.2))‖ ≤ CW * ‖σ‖ ^ 6 :=
         (hC0 m σ hσ2).trans (mul_le_mul_of_nonneg_right hC0W hσ6)
       have hB0' : ‖p.form j hj w (KB.slv p.T (fun g => cut m g • D.cutF p.T.base χ f ε g) j hj w h' hh'.2) (KB.slv p.T (fun g => cut m g • D.cutF p.T.base χ f ε g) j hj w h' hh'.2)‖ ≤ B := by
@@ -832,8 +784,6 @@ namespace Formalism.FourierDecayAlt.P.StandardPairingDecay
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Matrix Filter Topology
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 def OnOldBound : Prop :=
   ∀ (k ρ : ℕ) (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
     [InnerProductSpace ℂ Wq] (Bs : B.RealPlaceData k ρ Wp Wq) (w : List C.Letter) (m : ℕ),
@@ -841,10 +791,6 @@ def OnOldBound : Prop :=
       (x : Wd.Ix (Fin (KB.plusW ys w).length) → B.Mat k ρ → (Wq →L[ℂ] Wp)) (c : ℝ),
       (∀ e, B.CCle (A + 3 * ((m + 1 : ℕ) : ℝ)) m (x e) c) →
       ∀ e, B.CCle A m (KB.onOld (PBO.mDiff Bs σ w) ys x e) (K * ‖σ‖ ^ 3 * c)
-
-theorem plusW_length (ys : List ℝ) (w : List C.Letter) : (KB.plusW ys w).length = ys.length + w.length := by
-  rw [Formalism.FourierDecayAlt.P.PBD.plusW_eq]
-  simp
 
 theorem waveDiffForm_of (hO : OnOldBound) : PBO.WaveDiffForm := by
   intro _hP Cb
@@ -909,7 +855,7 @@ theorem waveDiffForm_of (hO : OnOldBound) : PBO.WaveDiffForm := by
     simp only [D.cutF, hhn]
     rw [smul_comm]
   set w' := KB.plusW ys w with hw'
-  have hw'len : w'.length ≤ N + 3 := by rw [hw', plusW_length]; omega
+  have hw'len : w'.length ≤ N + 3 := by rw [hw', Formalism.FourierDecayAlt.P.PBF.len_plusW]; omega
   have hN₂w : w'.length ≤ N₂ := by omega
   have hc : P.r - j = P.r - D.ptSize h := by rw [hh.2]
   have hQ := fun e => hSQ Cs le_rfl P.k P.r Wp Wq p.T χ (A - 1) N₂ P rfl rfl hk2 hχ hA' ε hε j hj w' hN₂w h hc hh e
@@ -1185,8 +1131,6 @@ namespace Formalism.FourierDecayAlt.P.StandardPairingDecay
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Matrix
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 section one
 
 variable {k ρ : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
@@ -1222,13 +1166,13 @@ theorem waveL_sub_one_ccle (Bs : B.RealPlaceData k ρ Wp Wq) (w : List C.Letter)
       have hp : (3 : ℝ) ^ (l :: w).length = 3 * 3 ^ w.length := by rw [hlen, pow_succ, mul_comm]
       simp only [KB.uInv]
       by_cases he : e 0 = 0
-      · rw [if_pos he]
+      · rw [ite_eq_left he]
         have hxe : x e = x (Fin.cons (0 : Fin 2) (fun a => e a.succ)) := by
           conv_lhs => rw [hce, he]
         refine ⟨JCx2.pd_ccle_mono_c ih0.1 (by rw [hp]; linarith [mul_nonneg h3 hc]), ?_⟩
         rw [hxe]
         exact JCx2.pd_ccle_mono_c ih0.2 (by rw [hp]; linarith [mul_nonneg (mul_nonneg h3 hσ0) hc])
-      · rw [if_neg he]
+      · rw [ite_eq_right he]
         have he1 : e 0 = 1 := by
           rcases Fin.exists_fin_two.1 ⟨e 0, rfl⟩ with h | h
           · exact absurd h he
@@ -1317,8 +1261,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P.StandardPairingDecay
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Matrix
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem bound_on_earlier_region : OnOldBound := by
   intro k ρ Wp Wq _ _ _ _ Bs w m

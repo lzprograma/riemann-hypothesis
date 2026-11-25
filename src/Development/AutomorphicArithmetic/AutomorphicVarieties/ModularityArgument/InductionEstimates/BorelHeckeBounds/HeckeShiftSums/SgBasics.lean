@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
@@ -59,22 +60,9 @@ open scoped ENNReal NumberField.AdeleRing InnerProductSpace ComplexConjugate
 
 namespace UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.SiegelParabolicBlocks
 
-private theorem unip_shape {a b : ℕ} {R : Type} [CommRing R] (X : UPos (a + b) a → R) :
-    (unipMatrix X).submatrix finSumFinEquiv finSumFinEquiv =
-      Matrix.fromBlocks 1 ((unipMatrix X).submatrix finSumFinEquiv finSumFinEquiv).toBlocks₁₂ 0 (1 : Matrix (Fin b) (Fin b) R) := by
-  ext i j
-  rcases i with i | i <;> rcases j with j | j <;>
-    simp [unipMatrix, blockEntry_apply, Matrix.one_apply, Matrix.toBlocks₁₂, Fin.ext_iff] <;> omega
-
 private theorem unip_fill {a b : ℕ} {R : Type} [CommRing R] (B : Matrix (Fin a) (Fin b) R) : ∃ X : UPos (a + b) a → R,
     (unipMatrix X).submatrix finSumFinEquiv finSumFinEquiv = Matrix.fromBlocks 1 B 0 (1 : Matrix (Fin b) (Fin b) R) := by
-  refine ⟨fun p => Matrix.reindex finSumFinEquiv finSumFinEquiv (Matrix.fromBlocks 0 B 0 0) p.1.1 p.1.2, ?_⟩
-  rw [unip_shape]
-  congr 1
-  ext i j
-  have : (Fin.castAdd b i : Fin (a + b)) ≠ Fin.natAdd a j := by
-    simp [Fin.ext_iff]; omega
-  simp [unipMatrix, blockEntry_apply, Matrix.toBlocks₁₂, this]
+  apply _root_.unip_onto <;> assumption
 
 private theorem split_low {R : Type} [CommRing R] (g : GL (Fin (2 + 2)) R)
     (h : (g.val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₂₁ = 0)

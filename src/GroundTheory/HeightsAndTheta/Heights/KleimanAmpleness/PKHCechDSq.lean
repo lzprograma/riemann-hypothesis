@@ -175,14 +175,14 @@ theorem cechD_apply (n : ℕ) (φ : KH.CechC S ι M n) (I : KH.Cell K ι (n + 1)
       KH.cellRes S M X I.1 (φ ⟨X, hX⟩) = KH.cellRes S M Y I.1 (val S M n φ Y) := by
     rintro X _ rfl hX
     unfold val
-    rw [dif_pos hX]
+    rw [dite_eq_left hX]
   by_cases h : (∀ l, (Function.update I.1 k ((I.1 k).erase i) l).Nonempty) ∧
       ∑ l, ((Function.update I.1 k ((I.1 k).erase i) l).card - 1) = n
   · have h' : (∀ l, (rem I.1 ⟨k, i⟩ l).Nonempty) ∧ ∑ l, ((rem I.1 ⟨k, i⟩ l).card - 1) = n := e ▸ h
-    rw [dif_pos h, if_pos h']
+    rw [dite_eq_left h, ite_eq_left h']
     exact congrArg (KH.faceSign I.1 k i • ·) (key _ _ e h)
   · have h' : ¬((∀ l, (rem I.1 ⟨k, i⟩ l).Nonempty) ∧ ∑ l, ((rem I.1 ⟨k, i⟩ l).card - 1) = n) := e ▸ h
-    rw [dite_eq_right h, if_neg h']
+    rw [dite_eq_right h, ite_eq_right h']
     rfl
 
 theorem val_cechD (n : ℕ) (φ : KH.CechC S ι M n) (X : ∀ k, Finset (ι k))
@@ -190,7 +190,7 @@ theorem val_cechD (n : ℕ) (φ : KH.CechC S ι M n) (X : ∀ k, Finset (ι k))
     val S M (n + 1) (KH.cechD S ι M n φ) X = ∑ p ∈ Finset.univ.sigma X,
       if (∀ l, (rem X p l).Nonempty) ∧ ∑ l, ((rem X p l).card - 1) = n then
         sg X p • KH.cellRes S M (rem X p) X (val S M n φ (rem X p)) else 0 :=
-  (dif_pos hX).trans (cechD_apply S M n φ ⟨X, hX⟩)
+  (dite_eq_left hX).trans (cechD_apply S M n φ ⟨X, hX⟩)
 
 def pairTerm (n : ℕ) (φ : KH.CechC S ι M n) (I : ∀ k, Finset (ι k)) (p q : Σ k, ι k) :
     LocalizedModule (KH.cellMon S I) M :=
@@ -201,7 +201,7 @@ theorem pairTerm_self (n : ℕ) (φ : KH.CechC S ι M n) (I : ∀ k, Finset (ι 
     (hI : (∀ l, (I l).Nonempty) ∧ ∑ l, ((I l).card - 1) = n + 1 + 1) {p : Σ k, ι k}
     (hp : p ∈ Finset.univ.sigma I) : pairTerm S M n φ I p p = 0 := by
   unfold pairTerm
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨h1, h2⟩
   rw [rem_self] at h1 h2
   have := deg_rem hI hp h1
@@ -213,8 +213,8 @@ theorem pairTerm_swap (n : ℕ) (φ : KH.CechC S ι M n) (I : ∀ k, Finset (ι 
   unfold pairTerm
   rw [rem_comm I q p]
   by_cases h : (∀ l, (rem (rem I p) q l).Nonempty) ∧ ∑ l, ((rem (rem I p) q l).card - 1) = n
-  · rw [if_pos h, if_pos h, sg_swap I hp hq hpq h.1, neg_zsmul, neg_add_cancel]
-  · rw [if_neg h, if_neg h, add_zero]
+  · rw [ite_eq_left h, ite_eq_left h, sg_swap I hp hq hpq h.1, neg_zsmul, neg_add_cancel]
+  · rw [ite_eq_right h, ite_eq_right h, add_zero]
 
 theorem step (n : ℕ) (φ : KH.CechC S ι M n) (I : ∀ k, Finset (ι k))
     (hI : (∀ l, (I l).Nonempty) ∧ ∑ l, ((I l).card - 1) = n + 1 + 1) {p : Σ k, ι k}
@@ -224,18 +224,18 @@ theorem step (n : ℕ) (φ : KH.CechC S ι M n) (I : ∀ k, Finset (ι k))
       ∑ q ∈ Finset.univ.sigma I, pairTerm S M n φ I p q := by
   by_cases h : (∀ l, (rem I p l).Nonempty) ∧ ∑ l, ((rem I p l).card - 1) = n + 1
   · set_option synthInstance.maxHeartbeats 100000 in
-      rw [if_pos h, val_cechD S M n φ _ h, map_sum, ← Finset.sum_zsmul, sigma_rem,
+      rw [ite_eq_left h, val_cechD S M n φ _ h, map_sum, ← Finset.sum_zsmul, sigma_rem,
         ← Finset.sum_erase (Finset.univ.sigma I) (pairTerm_self S M n φ I hI hp)]
     refine Finset.sum_congr rfl fun q _ => ?_
     unfold pairTerm
     by_cases h' : (∀ l, (rem (rem I p) q l).Nonempty) ∧ ∑ l, ((rem (rem I p) q l).card - 1) = n
-    · rw [if_pos h', if_pos h', map_zsmul, ← mul_zsmul,
+    · rw [ite_eq_left h', ite_eq_left h', map_zsmul, ← mul_zsmul,
         cellRes_comp S M (rem_subset _ q) (rem_subset _ p)]
-    · rw [if_neg h', if_neg h', map_zero, zsmul_zero]
-  · rw [if_neg h]
+    · rw [ite_eq_right h', ite_eq_right h', map_zero, zsmul_zero]
+  · rw [ite_eq_right h]
     refine (Finset.sum_eq_zero fun q _ => ?_).symm
     unfold pairTerm
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h'
     have hne : ∀ l, (rem I p l).Nonempty := fun l => (h'.1 l).mono (rem_subset _ q l)
     exact h ⟨hne, deg_rem hI hp hne⟩

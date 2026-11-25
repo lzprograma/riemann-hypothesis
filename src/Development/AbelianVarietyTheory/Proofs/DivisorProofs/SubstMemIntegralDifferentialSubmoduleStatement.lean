@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationDetEqDoubleSumAdjugateEntry
 public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
 public import Mathlib.RingTheory.MvPowerSeries.Derivative
 import Mathlib.Algebra.Order.Floor.Extended
@@ -53,8 +54,6 @@ section -- clump:auto
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory
@@ -64,16 +63,8 @@ namespace Katz
 theorem derivation_prod_erase {R A ι : Type} [CommRing R] [CommRing A] [Algebra R A]
     [DecidableEq ι] (D : Derivation R A A) (f : ι → A) (S : Finset ι) :
     D (∏ s ∈ S, f s) = ∑ i ∈ S, (∏ s ∈ S.erase i, f s) * D (f i) := by
-  induction S using Finset.induction_on with
-  | empty => simp
-  | insert a S ha ih =>
-    rw [Finset.prod_insert ha, Derivation.leibniz, ih, Finset.sum_insert ha, Finset.erase_insert ha,
-      smul_eq_mul, smul_eq_mul, Finset.mul_sum, add_comm]
-    congr 1
-    refine Finset.sum_congr rfl fun i hi => ?_
-    have hai : a ≠ i := by rintro rfl; exact ha hi
-    rw [Finset.erase_insert_of_ne hai,
-      Finset.prod_insert (fun h => ha (Finset.mem_of_mem_erase h)), mul_assoc]
+  intros
+  apply _root_.GlobalTheory.DetDeriv.derivation_prod <;> assumption
 
 theorem pderiv_prod_pow {R τ σ : Type} [CommRing R] [Fintype σ] [DecidableEq σ]
     (u : σ → MvPowerSeries τ R) (a : σ → ℕ) (j : τ) :
@@ -115,7 +106,7 @@ theorem subst_mem_quasiInt : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [
       intro t
       by_cases ht : t = j
       · subst ht; simp only [Finsupp.single_eq_same]; omega
-      · rw [Finsupp.single_apply, if_neg (Ne.symm ht)]; exact Nat.zero_le _
+      · rw [Finsupp.single_apply, ite_eq_right (Ne.symm ht)]; exact Nat.zero_le _
     set δ := γ - Finsupp.single j 1 with hδ
     have hδγ : δ + Finsupp.single j 1 = γ := tsub_add_cancel_of_le hle
     have hδj : (δ j : Fr p k) + 1 = γ j := by
@@ -159,8 +150,6 @@ section -- clump:auto
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
-theorem _root_.GlobalTheory.T.subst_mem_integralDifferentialSubmodule : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p] [PerfectRing k p] (σ τ : Type) [Finite σ] (u : σ → MvPowerSeries (τ) (Fr p k)) (f : MvPowerSeries (σ) (Fr p k)), (∀ i, constantCoeff (u i) = 0) → (∀ i, u i ∈ intBy p k τ 1) → f ∈ quasiInt p k σ → subst u f ∈ quasiInt p k τ := by
-  first | exact @GlobalTheory.Katz.subst_mem_quasiInt
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstMemIntegralDifferentialSubmoduleStatement =====

@@ -7,43 +7,7 @@ import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IsCombAtIffCoor
 import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IsEigenvectorIffLieBasisCoordinates
 import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieBasisCoordinatesBijectiveTangent
 import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NonemptyLift
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -54,19 +18,6 @@ namespace GlobalTheory.FlagMod.LowRank
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Reg
 open ReciprocityTheory.ChartRestriction.G.PullbackSections (TanM tv mkT tanM_ext tv_mem actR)
-
-section Alg
-
-theorem initSpan_low {R N : Type} [CommRing R] [AddCommGroup N] [Module R N] {m : ℕ} (hm : m ≤ 1) {v v' : Fin m → N}
-    (h : initSpan R v m = initSpan R v' m) (i : ℕ) : initSpan R v i = initSpan R v' i := by
-  rcases i with _ | i
-  · simp [initSpan]
-  · have e : {j : Fin m | (j : ℕ) < i + 1} = {j : Fin m | (j : ℕ) < m} := by
-      ext j; have := j.2; simp only [Set.mem_ofPred_eq]; omega
-    unfold initSpan at h ⊢
-    rw [e, h]
-
-end Alg
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {c : Coeff l}
@@ -98,30 +49,6 @@ theorem initSpan_frVec_top {S : Type} [CommRing S] [Algebra c.F S] (P : FrPt Xo 
 
     rw [← (hco w (htan cv w hw)).unique h4 hw, map_sum]
     simp only [map_smul, LinearEquiv.apply_symm_apply]
-
-def ofFrames (hm : ∀ σ, Dw.mult σ ≤ 1) (F : Frames Y (𝟙 Y.X)) (hF : F.TopEigen) : FlagModel Y where
-  YY := Y.X
-  π := 𝟙 _
-  proper := inferInstance
-  normal := Y.normal
-  flat := by rw [Category.id_comp]; exact Y.flat
-  F := F
-  dense := by
-    have : IsIso (genMap (Y := Y) (𝟙 Y.X)) :=
-      ⟨pullback.lift (pullback.fst _ _) (pullback.snd _ _) (by rw [Category.id_comp, pullback.condition]),
-        by apply pullback.hom_ext <;> simp only [genMap, Category.assoc, pullback.lift_fst, pullback.lift_snd,
-          Category.comp_id, Category.id_comp],
-        by apply pullback.hom_ext <;> simp only [genMap, Category.assoc, pullback.lift_fst, pullback.lift_snd,
-          Category.comp_id, Category.id_comp]⟩
-    exact Y.jQ_dense.preimage (genMap (Y := Y) (𝟙 Y.X)).homeomorph.isOpenMap
-  top := hF
-  rep S _ _ P := by
-    refine ⟨frX P ≫ Y.j, ⟨Category.comp_id _, fun S' _ _ ψ P' hP k z' ez hz hx σ i => ?_⟩,
-      fun z hz => (Category.comp_id _).symm.trans hz.1⟩
-    refine initSpan_low (hm σ) ?_ i
-    rw [hF S' _ (frX_snd P') z' hx k hz σ]
-    exact initSpan_frVec_top P' _ (F.inM hz hx) σ
-  fin K _ _ z := (Set.finite_singleton z).subset fun z' ⟨hx, _⟩ => by simpa using hx
 
 end Red
 

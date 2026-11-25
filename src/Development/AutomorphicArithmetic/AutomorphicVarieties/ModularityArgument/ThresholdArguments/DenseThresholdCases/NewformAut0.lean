@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.NewformTwistNorms.PowEqOneOfKills
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.PolarizedAutomorphicOfAutP
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TUpQuad
@@ -81,32 +82,8 @@ private theorem normV_eq (w : HeightOneSpectrum (𝓞 ℚ)) : normV w = Ideal.ab
   rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]; rfl
 private theorem scale_charpoly {k : Type} [Field k] (φ : k →+* ℂ) (M : Matrix (Fin 2) (Fin 2) k) (c : k) (hc : c ≠ 0)
     (B : Multiset ℂ) (h : (c • M).charpoly.map φ = (B.map fun b => X - C (φ c * b)).prod) :
-    M.charpoly.map φ = (B.map fun b => X - C b).prod := by
-  have hc' : φ c ≠ 0 := by simpa using hc
-  have hcard : B.card = 2 := by
-    have h1 := congrArg natDegree h
-    rw [natDegree_map, Matrix.charpoly_natDegree_eq_dim] at h1
-    have h2 := natDegree_multiset_prod_X_sub_C_eq_card (B.map (φ c * ·))
-    rw [Multiset.map_map] at h2
-    simp only [Function.comp_def, Multiset.card_map] at h2
-    rw [h2] at h1
-    simpa using h1.symm
-  obtain ⟨x, y, rfl⟩ := Multiset.card_eq_two.1 hcard
-  rw [Matrix.charpoly_fin_two] at h ⊢
-  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton, Multiset.prod_cons,
-    Multiset.prod_singleton, Polynomial.map_add, Polynomial.map_sub, Polynomial.map_mul, Polynomial.map_pow, map_X,
-    map_C, Matrix.trace_smul, Matrix.det_smul, smul_eq_mul, map_mul, map_pow, Fintype.card_fin] at h ⊢
-  have e0 := congrArg (eval 0) h
-  have e1 := congrArg (eval 1) h
-  simp only [eval_add, eval_sub, eval_mul, eval_pow, eval_X, eval_C] at e0 e1
-  have hd : φ M.det = x * y := by
-    apply mul_left_cancel₀ (pow_ne_zero 2 hc')
-    linear_combination e0
-  have ht : φ M.trace = x + y := by
-    apply mul_left_cancel₀ hc'
-    linear_combination e0 - e1
-  rw [hd, ht, C_add, C_mul]
-  ring
+    M.charpoly.map φ = (B.map fun b => X - C b).prod :=
+  _root_.GlobalTheory.Ord2.SrcForm.scale_charpoly φ M c hc B h
 end UpperTheory.V.Af.NewformAutomorphy
 open UpperTheory.V.Af.NewformAutomorphy in
 theorem UpperTheory.V.Af.newformAutR_alt :
@@ -171,8 +148,6 @@ open UpperTheory.GalN.V
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial GlobalTheory.GalOfCusp
 open UpperTheory.V.Af
 open scoped Matrix
-namespace UpperTheory.V.Af.NewformAutomorphy
-end UpperTheory.V.Af.NewformAutomorphy
 theorem UpperTheory.GalN.V.newformAut0_alt :
     _root_.UpperTheory.V.Af.Hypotheses' → NewformAut0 := by
   intro P k hk f l hl Ω _ _ _ ι W j hf hW K _ _ _ _ _ _ hK hirr

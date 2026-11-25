@@ -51,7 +51,7 @@ theorem relIndex_glob (A C : ∀ i, Subgroup (H i)) (S : Finset ι) (hS : ∀ i 
       intro i
       by_cases hi : i ∈ S
       · have h1 := hg1 i hi
-        simp only [dif_pos hi] at h1
+        simp only [dite_eq_left hi] at h1
         have h2 := (A i).mul_mem (r ⟨i, hi⟩).2 (Subgroup.mem_inf.1 h1).1
         simpa using h2
       · exact hg2 i hi
@@ -61,7 +61,7 @@ theorem relIndex_glob (A C : ∀ i, Subgroup (H i)) (S : Finset ι) (hS : ∀ i 
     simp only [Φ]
     rw [QuotientGroup.eq, Subgroup.mem_subgroupOf]
     have h1 := hg1 i.1 i.2
-    simp only [dif_pos i.2] at h1
+    simp only [dite_eq_left i.2] at h1
     simpa using (C i).inv_mem (Subgroup.mem_inf.1 h1).2
   let Ψ : ↥(glob π A) ⧸ K → ∀ i : S, ↥(A (i : ι)) ⧸ (C (i : ι)).subgroupOf (A (i : ι)) :=
     Quotient.lift Φ (fun a b hab => (hrel a b).2 (QuotientGroup.leftRel_apply.1 hab))

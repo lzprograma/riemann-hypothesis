@@ -49,8 +49,6 @@ namespace GlobalTheory.TwV.DelA
 open Formalism.BasicNotions NumberField Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Formalism.MainNotions Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F Formalism.L2.KerInert Formalism.UG
 open Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.L2.KerInert.SecondKernelProjection Formalism.L2.KerInert.QuadraticBaseChangeGL3 Formalism.L2.KerInert.SecondKernelDifference
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {p : ℕ} [Fact p.Prime] (X : Sys p) (D : D7) (pos : (Σ v : X.Pl, Fin (X.G.P.n' v)) ≃ D.what₂.Tau)
 
 def posJ : ∀ j, (Σ v : Fin (X.Pj j).nV, Fin ((X.Pj j).n' v)) ≃ D.what₂.Tau

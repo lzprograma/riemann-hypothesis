@@ -142,8 +142,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.LatAdelicBasis
@@ -384,7 +382,6 @@ open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor F
 open GlobalTheory.IndefiniteRowSideFullHecke
 open GlobalTheory.GeoActCompare
 open scoped TensorProduct Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem exists_isLatBasis : ∀ (D : D7) (V : HSp D) (r : ℕ) (hr : V.rank = r),
     ∃ β : GL (Fin r) (EAf D), LatticeBasisLifts.IsLatBasis V hr β := by

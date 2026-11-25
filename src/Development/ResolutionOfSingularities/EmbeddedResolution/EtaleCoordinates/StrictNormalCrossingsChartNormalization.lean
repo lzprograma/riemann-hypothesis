@@ -4,48 +4,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoor
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorSmoothness
 import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -61,29 +20,12 @@ namespace FunctorialResolution.EmbeddedResolution
 private theorem eq_some_and_not_of_bind_ite_eq_some {n : ℕ} (P : Fin n → Prop) [DecidablePred P]
     {o : Option (Fin n)} {j : Fin n}
     (h : o.bind (fun j0 => if P j0 then none else some j0) = some j) : o = some j ∧ ¬ P j := by
-  cases o with
-  | none => simp at h
-  | some j0 =>
-    by_cases hb : P j0
-    · simp [hb] at h
-    · simp [hb] at h
-      subst h
-      exact ⟨rfl, hb⟩
-
-private theorem of_bind_ite_eq_none {n : ℕ} (P : Fin n → Prop) [DecidablePred P]
-    {o : Option (Fin n)} {j : Fin n} (hg : o = some j)
-    (h : o.bind (fun j0 => if P j0 then none else some j0) = none) : P j := by
-  subst hg
-  by_contra hb
-  simp [hb] at h
+  rcases Option.bind_eq_some_iff.1 h with ⟨j0, rfl, h⟩
+  by_cases hp : P j0 <;> simp_all
 
 private theorem eq_top_of_forall_ideal_eq_top {X : Scheme.{u}} (I : X.IdealSheafData)
-    (h : ∀ W : X.affineOpens, I.ideal W = ⊤) : I = ⊤ := by
-  have hfun : I.ideal = (⊤ : X.IdealSheafData).ideal := by
-    funext W
-    have htop : (⊤ : X.IdealSheafData).ideal W = ⊤ := rfl
-    rw [h W, htop]
-  exact Scheme.IdealSheafData.ext hfun
+    (h : ∀ W : X.affineOpens, I.ideal W = ⊤) : I = ⊤ :=
+  Scheme.IdealSheafData.ext (funext h)
 
 private theorem mem_support_iff_forall_notMem_basicOpen {X : Scheme.{u}} (I : X.IdealSheafData)
     {x : ↥X} {U : X.Opens} (hU : IsAffineOpen U) (hx : x ∈ U) :
@@ -93,34 +35,6 @@ private theorem mem_support_iff_forall_notMem_basicOpen {X : Scheme.{u}} (I : X.
     Scheme.IdealSheafData.mem_support_iff_of_mem hx
   rw [h0, Scheme.mem_zeroLocus_iff]
   exact Iff.rfl
-
-private theorem mem_basicOpen_iff_notMem_primeIdealOf {X : Scheme.{u}} {U : X.Opens}
-    (hU : IsAffineOpen U) (f : Γ(X, U)) (x : ↥U) :
-    (x : ↥X) ∈ X.basicOpen f ↔ f ∉ (hU.primeIdealOf x).asIdeal := by
-  have h2 : (AlgebraicGeometry.IsAffineOpen.fromSpec hU).base
-      (AlgebraicGeometry.IsAffineOpen.primeIdealOf hU x) = (x : ↥X) :=
-    AlgebraicGeometry.IsAffineOpen.fromSpec_primeIdealOf hU x
-  have h1 : AlgebraicGeometry.IsAffineOpen.fromSpec hU ⁻¹ᵁ X.basicOpen f
-      = PrimeSpectrum.basicOpen f :=
-    AlgebraicGeometry.IsAffineOpen.fromSpec_preimage_basicOpen hU f
-  constructor
-  · intro hx
-    have hmem : AlgebraicGeometry.IsAffineOpen.primeIdealOf hU x
-        ∈ AlgebraicGeometry.IsAffineOpen.fromSpec hU ⁻¹ᵁ X.basicOpen f := by
-      show (AlgebraicGeometry.IsAffineOpen.fromSpec hU).base
-        (AlgebraicGeometry.IsAffineOpen.primeIdealOf hU x) ∈ X.basicOpen f
-      rw [h2]
-      exact hx
-    rw [h1] at hmem
-    exact (PrimeSpectrum.mem_basicOpen f _).mp hmem
-  · intro hx
-    have hmem : AlgebraicGeometry.IsAffineOpen.primeIdealOf hU x ∈ PrimeSpectrum.basicOpen f :=
-      (PrimeSpectrum.mem_basicOpen f _).mpr hx
-    rw [← h1] at hmem
-    have h3 : (AlgebraicGeometry.IsAffineOpen.fromSpec hU).base
-        (AlgebraicGeometry.IsAffineOpen.primeIdealOf hU x) ∈ X.basicOpen f := hmem
-    rw [h2] at h3
-    exact h3
 
 private theorem mem_support_of_ideal_eq_span_singleton {X : Scheme.{u}} (I : X.IdealSheafData) {x : ↥X}
     {U : X.Opens} (hU : IsAffineOpen U) (hx : x ∈ U) (g : Γ(X, U))
@@ -141,7 +55,7 @@ private theorem mem_primeIdealOf_of_mem_support_of_ideal_eq_span_singleton {X : 
   have h := (mem_support_iff_forall_notMem_basicOpen I hU hx).mp hs g
     (by rw [hI]; exact Ideal.mem_span_singleton_self g)
   by_contra hc
-  exact h ((mem_basicOpen_iff_notMem_primeIdealOf hU g ⟨x, hx⟩).mpr hc)
+  exact h ((hU.mem_basicOpen_iff_notMem_primeIdealOf ⟨x, hx⟩ g).mpr hc)
 
 private theorem subschemeι_base_mem_support_of_subscheme {W : Scheme.{u}} (Z : W.IdealSheafData)
     (z : ↥Z.subscheme) : Z.subschemeι.base z ∈ Z.support := by
@@ -239,7 +153,6 @@ theorem etale_morphismRestrict_comp_map (c : EtaleChart p V n) (f : Y' ⟶ Y) [I
   have h1 : IsOpenImmersion (morphismRestrict f V) :=
     IsOpenImmersion.of_comp (morphismRestrict f V) V.ι
   have h2 : Etale c.map := c.isEtale
-  have h3 : Etale (morphismRestrict f V) := inferInstance
   infer_instance
 
 def EtaleChart.pullbackOpenImmersion (c : EtaleChart p V n) (f : Y' ⟶ Y) [IsOpenImmersion f] :
@@ -322,7 +235,8 @@ theorem exists_etaleChart_coord_mem_primeIdealOf (F : List X.IdealSheafData) (y 
     exact hprod
   have hUt : IsAffineOpen (X.basicOpen t) := hU.basicOpen t
   have hle : X.basicOpen t ≤ U := X.basicOpen_le t
-  have hy' : y ∈ X.basicOpen t := (mem_basicOpen_iff_notMem_primeIdealOf hU t ⟨y, hyU⟩).mpr ht
+  have hy' : y ∈ X.basicOpen t :=
+    (hU.mem_basicOpen_iff_notMem_primeIdealOf ⟨y, hyU⟩ t).mpr ht
   have hbasic_le : ∀ j ∈ notInPrime, X.basicOpen t ≤ X.basicOpen (c.coord j) := by
     intro j hj
     have hsplit : t = c.coord j * ∏ i ∈ notInPrime.erase j, c.coord i := by
@@ -340,7 +254,9 @@ theorem exists_etaleChart_coord_mem_primeIdealOf (F : List X.IdealSheafData) (y 
       by_cases hg : γ i = none
       · exact restrictIdeal_eq_top_of_le _ hle (hA hg)
       · obtain ⟨j0, hj0⟩ := Option.ne_none_iff_exists'.mp hg
-        have hb : j0 ∈ notInPrime := of_bind_ite_eq_none (fun j1 => j1 ∈ notInPrime) hj0 hnone'
+        have hb : j0 ∈ notInPrime := by
+          by_contra hc
+          simp [hj0, hc] at hnone'
         have hideal : (F[i]'hi).ideal ⟨U, hU⟩ = Ideal.span {c.coord j0} := by
           rw [c.ideal_eq_span_coord hU _ _ (hB j0 hj0), Finset.coe_singleton,
             Set.image_singleton]
@@ -364,7 +280,7 @@ theorem exists_etaleChart_coord_mem_primeIdealOf (F : List X.IdealSheafData) (y 
     have hidU : (F[i]'hi).ideal ⟨U, hU⟩ = Ideal.span {c.coord j} := by
       rw [c.ideal_eq_span_coord hU _ _ (hB j hg), Finset.coe_singleton, Set.image_singleton]
     have hynb : y ∉ X.basicOpen (c.coord j) := fun hc =>
-      (mem_basicOpen_iff_notMem_primeIdealOf hU (c.coord j) ⟨y, hyU⟩).mp hc hmemP
+      (hU.mem_basicOpen_iff_notMem_primeIdealOf ⟨y, hyU⟩ (c.coord j)).mp hc hmemP
     have hysup : y ∈ (F[i]'hi).support :=
       mem_support_of_ideal_eq_span_singleton _ hU hyU (c.coord j) hidU hynb
     have hidU' : (F[i]'hi).ideal ⟨X.basicOpen t, hUt⟩
@@ -472,9 +388,8 @@ theorem exists_etaleChart_on_open_of_hasStrictNormalCrossingsWith (q : W ⟶ Spe
       (eq_some_complOrderEmb_of_bind_complInv_eq_some m S (a i') j hjb)
 
 theorem exists_etaleChart_coord_mem_primeIdealOf_on_clopen (q : W ⟶ Spec (CommRingCat.of k)) [Smooth q]
-    (E : List W.IdealSheafData) (_hE : InStrictNormalCrossingPosition q E) (Z : W.IdealSheafData)
+    (E : List W.IdealSheafData) (Z : W.IdealSheafData)
     (hZ : HasStrictNormalCrossingsWith q Z E) (T : Z.subscheme.Opens)
-    (_hTclosed : IsClosed (T : Set ↥Z.subscheme))
     (hcomp : ∀ D ∈ E, ∀ C ∈ irreducibleComponents ↥T.toScheme,
       ¬ ((T.ι ≫ Z.subschemeι).base '' C ⊆ (D.support : Set ↥W)))
     (y : ↥T.toScheme) :

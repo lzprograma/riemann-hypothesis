@@ -54,7 +54,6 @@ open GlobalTheory.PosOne (toOne Covers TriPos)
 open GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage (app HasTensorVal fl opEFJ IsQuotIntFJ RFJ)
 open GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum (IsCO)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.LocGrpIff
@@ -199,7 +198,7 @@ theorem flagFrame_jac (J : JacLev D ρ) (s hh : k) (F₀ : Frame k J.W₀.rank n
     · rfl
     · simp [wlev]
     · simp only [wlev, Sum.map_inr, Sum.elim_inr]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       omega
   · rintro (a | i) (b | j) <;> simp only [Sum.elim_inl, Sum.elim_inr] <;> (try split_ifs) <;> omega
 

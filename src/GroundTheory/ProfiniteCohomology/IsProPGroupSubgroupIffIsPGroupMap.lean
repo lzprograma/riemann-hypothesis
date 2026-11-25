@@ -4,7 +4,6 @@ public import Mathlib.GroupTheory.PGroup
 public import Mathlib.Topology.Algebra.OpenSubgroup
 import Mathlib.Tactic.TypeStar
 public import Mathlib.Topology.Algebra.ClopenNhdofOne
-import Mathlib.Topology.Compactness.Paracompact
 import Mathlib.Topology.Separation.Connected
 
 @[expose] public section
@@ -17,6 +16,9 @@ variable {G : Type*} [Group G] [TopologicalSpace G]
 
 def IsProPGroup (p : ℕ) (G : Type*) [Group G] [TopologicalSpace G] : Prop :=
   ∀ U : OpenNormalSubgroup G, IsPGroup p (G ⧸ (U : Subgroup G))
+
+theorem isProPGroup_bot (p : ℕ) : IsProPGroup p (⊥ : Subgroup G) :=
+  fun U => (IsPGroup.of_bot (p := p) (G := G)).to_quotient (U : Subgroup (⊥ : Subgroup G))
 
 theorem isProPGroup_iff {p : ℕ} :
     IsProPGroup p G ↔ ∀ U : OpenNormalSubgroup G, ∀ g : G, ∃ k : ℕ, g ^ p ^ k ∈ U := by
@@ -85,11 +87,5 @@ theorem isProPGroup_subgroup_iff_isPGroup_map {p : ℕ} {H : Subgroup G} :
       ∀ U : OpenNormalSubgroup G, IsPGroup p (H.map (QuotientGroup.mk' (U : Subgroup G))) := by
   rw [isProPGroup_subgroup_iff]
   exact forall_congr' fun U => (isPGroup_map_mk_iff H (U : Subgroup G)).symm
-
-theorem isProPGroup_bot (p : ℕ) : IsProPGroup p (⊥ : Subgroup G) := by
-  rw [isProPGroup_subgroup_iff]
-  intro U h hh
-  rw [Subgroup.mem_bot.mp hh]
-  exact ⟨0, by simp⟩
 
 end GroundTheory.ProfCoh

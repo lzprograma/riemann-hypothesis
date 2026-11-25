@@ -71,7 +71,7 @@ theorem plusPart_add (U D : Module.End ℂ (MvPolynomial σ ℂ))
     intro d
     have hm := homogeneousComponent_mem d P
     rw [LinearMap.add_apply, map_add (f := _), homogeneousComponent_of_mem (hU d _ hm),
-      homogeneousComponent_of_mem (hD d _ hm), if_pos rfl, if_neg (by omega), add_zero]
+      homogeneousComponent_of_mem (hD d _ hm), ite_eq_left rfl, ite_eq_right (by omega), add_zero]
   unfold plusPart
   simp only [h]
 
@@ -93,7 +93,7 @@ theorem minusPart_add (U D : Module.End ℂ (MvPolynomial σ ℂ))
     intro d
     have hm := homogeneousComponent_mem (d + 2) P
     rw [LinearMap.add_apply, map_add (f := _), homogeneousComponent_of_mem (hU _ _ hm),
-      homogeneousComponent_of_mem (hD _ _ hm), if_neg (by omega), if_pos (by omega), zero_add]
+      homogeneousComponent_of_mem (hD _ _ hm), ite_eq_right (by omega), ite_eq_left (by omega), zero_add]
   unfold minusPart
   simp only [h]
   rw [finsum_eq_sum_of_support_subset (s := Finset.range (P.totalDegree + 1))]
@@ -148,12 +148,12 @@ theorem inner_X_mul [DecidableEq σ] {H : Type} [NormedAddCommGroup H] [InnerPro
     rw [h1, h2, map_smul, inner_smul_right, hι, hι]
     by_cases h : α + Finsupp.single i 1 = β
     · subst h
-      rw [if_pos rfl, if_pos (by simp), prod_factorial_add_single]
+      rw [ite_eq_left rfl, ite_eq_left (by simp), prod_factorial_add_single]
       simp
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       by_cases h0 : β i = 0
       · simp [h0]
-      · rw [if_neg, mul_zero]
+      · rw [ite_eq_right, mul_zero]
         intro h'
         apply h
         rw [h']
@@ -192,13 +192,13 @@ theorem omE_mem_homog {l l' : Ln p q r s} (h : linePos l = linePos l') {d : ℕ}
   refine Submodule.add_mem _ ?_ ?_
   · cases hl : linePos l
     · have hl' : linePos l' = false := h ▸ hl
-      simp only [raiB, lowB, hl, hl', Bool.false_eq_true, if_false]
+      simp only [raiB, lowB, hl, hl', Bool.false_eq_true, ite_false]
       refine Submodule.neg_mem _ ?_
       have := ((isHomogeneous_X ℂ l').mul hP').pderiv (i := l)
       rw [show 1 + d - 1 = d by omega] at this
       exact this
     · have hl' : linePos l' = true := h ▸ hl
-      simp only [raiB, lowB, hl, hl', if_true]
+      simp only [raiB, lowB, hl, hl', ite_true]
       show (X l * pderiv l' P).IsHomogeneous d
       rcases d with _ | d
       · rw [pderiv_eq_zero_of_deg_zero hP', mul_zero]; exact isHomogeneous_zero _ _ _
@@ -234,7 +234,7 @@ theorem omAct_eq_up_add_down {M : Matrix (Ln p q r s) (Ln p q r s) ℂ}
     · have hl' : linePos l' = true := by simpa [hl] using h
       simp [omE, raiB, lowB, hl, hl', hne]
     · have hl' : linePos l' = false := by simpa [hl] using h
-      simp only [omE, raiB, lowB, hl, hl', hne, if_true, if_false, Bool.false_eq_true, add_zero,
+      simp only [omE, raiB, lowB, hl, hl', hne, ite_true, ite_false, Bool.false_eq_true, add_zero,
         zero_smul]
       congr 1
       ext1 P
@@ -344,16 +344,12 @@ theorem fockAct1_eq (Z : Mat p q) : fockAct1 p q r s Z = omAct p q r s (kr1 r s 
 theorem fockAct2_eq (Z : Mat r s) : fockAct2 p q r s Z = omAct p q r s (kr2 p q Z) := rfl
 
 theorem lineMatrixKroneckerLeftFactor_conjTranspose (Z : Mat p q) : kr1 r s Zᴴ = (kr1 r s Z)ᴴ := by
-  ext ⟨a, c⟩ ⟨b, d⟩
-  by_cases h : c = d
-  · subst h; simp [kr1]
-  · simp [kr1, h, Ne.symm h]
+  unfold kr1
+  rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one]
 
 theorem lineMatrixKroneckerRightFactor_conjTranspose (Z : Mat r s) : kr2 p q Zᴴ = (kr2 p q Z)ᴴ := by
-  ext ⟨a, c⟩ ⟨b, d⟩
-  by_cases h : a = b
-  · subst h; simp [kr2]
-  · simp [kr2, h, Ne.symm h]
+  unfold kr2
+  rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one]
 
 theorem lineMatrixKroneckerLeftFactor_eq_zero_of_isKC {Z : Mat p q} (hZ : IsKC Z) (l l' : Ln p q r s) (h : linePos l ≠ linePos l') :
     kr1 r s Z l l' = 0 := by

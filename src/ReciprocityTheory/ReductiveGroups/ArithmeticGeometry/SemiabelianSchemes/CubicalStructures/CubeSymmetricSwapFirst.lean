@@ -130,8 +130,6 @@ section Group
 
 open MonoidalCategory CartesianMonoidalCategory MonObj
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {S : Scheme.{u}} (G : Over S) [GrpObj G] [IsCommMonObj G]
 
 def padd {T : Over S} (a b : T ⟶ G) : T ⟶ G := lift a b ≫ μ[G]

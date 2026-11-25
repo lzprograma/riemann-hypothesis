@@ -3,42 +3,6 @@ module
 public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
 public import Formalism.DegreeFormula.FlagDegFormula
 public import Mathlib.RingTheory.WittVector.Isocrystal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,75 +27,15 @@ structure Geo (F : Type) [Field F] [NumberField F] [StarRing F] where
   Dv : Var → Type
   [dvGrp : ∀ Y, AddCommGroup (Dv Y)]
 
-  Eff : ∀ Y, Dv Y → Prop
-  eff_zero : ∀ Y, Eff Y 0
-  eff_add : ∀ Y a b, Eff Y a → Eff Y b → Eff Y (a + b)
-
   H0 : ∀ Y, Dv Y → Submodule F (Fn Y)
-  degreeZeroCohomology_finiteDimensional : ∀ Y Δ, FiniteDimensional F (H0 Y Δ)
-  mul_mem_riemannRochSpace_add : ∀ Y Δ Δ' (f g : Fn Y), f ∈ H0 Y Δ → g ∈ H0 Y Δ' → f * g ∈ H0 Y (Δ + Δ')
-  riemannRoch_mono : ∀ Y Δ Δ', Eff Y (Δ' - Δ) → H0 Y Δ ≤ H0 Y Δ'
-
-  KY : ∀ Y, Dv Y
 
   Cl : Var → Type
-
-  properCl : ∀ Y, Cl Y → Prop
-
-  subCl : ∀ Y, Cl Y → Cl Y → Prop
 
   supp : ∀ Y, Dv Y → Cl Y
 
   inter : ∀ Y, (Fin (dim Y) → Dv Y) → ℤ
 
-  nef : ∀ Y, Dv Y → Prop
-
-  big : ∀ Y, Dv Y → Prop
-
-  bpf : ∀ Y, Dv Y → Set (Fn Y) → Prop
-
-  phiBir : ∀ Y, Dv Y → Set (Fn Y) → Prop
-
-  phiNoContr : ∀ Y, Dv Y → Set (Fn Y) → Cl Y → Prop
-
   vanishOn : ∀ Y, Dv Y → Fn Y → Cl Y → Prop
-
-  hdim : ∀ Y, ℕ → Dv Y → ℕ
-
-  pts : ∀ Y, (F →+* ℂ) → Type
-  [ptsMeas : ∀ Y σ, MeasurableSpace (pts Y σ)]
-
-  vol : ∀ Y σ, Measure (pts Y σ)
-
-  FnC : ∀ Y, (F →+* ℂ) → Type
-  [fnCRing : ∀ Y σ, CommRing (FnC Y σ)]
-  [fnCAlg : ∀ Y σ, Algebra ℂ (FnC Y σ)]
-
-  cx : ∀ Y σ, Fn Y →+* FnC Y σ
-  cx_smul : ∀ Y σ (a : F) (f : Fn Y), cx Y σ (a • f) = σ a • cx Y σ f
-
-  Met : ∀ Y, (F →+* ℂ) → Dv Y → Type
-
-  mAdd : ∀ Y σ Δ Δ', Met Y σ Δ → Met Y σ Δ' → Met Y σ (Δ + Δ')
-
-  mPow : ∀ Y σ Δ (k : ℕ), Met Y σ Δ → Met Y σ (k • Δ)
-
-  fsMet : ∀ Y σ Δ {k : Type} [Fintype k], (k → FnC Y σ) → Met Y σ Δ
-
-  pn : ∀ Y σ Δ, Met Y σ Δ → FnC Y σ → pts Y σ → ℝ
-
-  pnK : ∀ Y σ Δ, Met Y σ Δ → FnC Y σ → pts Y σ → ℝ
-
-  mSmooth : ∀ Y σ Δ, Met Y σ Δ → Prop
-
-  mPsh : ∀ Y σ Δ, Met Y σ Δ → (pts Y σ → ℝ) → Prop
-
-  redZero : ∀ Y σ, Dv Y → (Fin (dim Y) → FnC Y σ) → Set (pts Y σ) → Prop
-
-  agreeOn : ∀ Y σ, Dv Y → FnC Y σ → FnC Y σ → Set (pts Y σ) → Prop
-
-  resNorm : ∀ Y σ Δ, Met Y σ Δ → ∀ Δs, Met Y σ Δs → (Fin (dim Y) → FnC Y σ) → FnC Y σ →
-    pts Y σ → ℝ
 
   Adl : Var → Type
 
@@ -145,41 +49,7 @@ structure Geo (F : Type) [Field F] [NumberField F] [StarRing F] where
 
   nefA : ∀ Y, Adl Y → Prop
 
-  supInf : ∀ Y, Adl Y → InfinitePlace F → ℕ → Fn Y → ℝ
-
-  supFin : ∀ Y, Adl Y → HeightOneSpectrum (𝓞 F) → ℕ → Fn Y → ℝ
-
-  cutGood : ∀ Y, Cl Y → ∀ (E : Type) [Field E] [NumberField E] [Algebra F E] {n : ℕ},
-    (Fin n → Fn Y) → (Fin (dim Y) → Fin n → 𝓞 E) → Prop
-
-  cutHt : ∀ Y, Adl Y → ∀ (E : Type) [Field E] [NumberField E] [Algebra F E] {n : ℕ},
-    (Fin n → Fn Y) → (Fin (dim Y) → Fin n → 𝓞 E) → ℝ
-
-  cutOrd : ∀ Y (E : Type) [Field E] [NumberField E] [Algebra F E] {n : ℕ},
-    (Fin n → Fn Y) → (Fin (dim Y) → Fin n → 𝓞 E) → Dv Y → Fn Y → ℕ
-
-  resFull : ∀ Y (E : Type) [Field E] [NumberField E] [Algebra F E] {n : ℕ},
-    (Fin n → Fn Y) → (Fin (dim Y) → Fin n → 𝓞 E) → ∀ (M0 : HLat F), (M0.V →ₗ[F] Fn Y) →
-    Adl Y → Prop
-
-  resDeg : ∀ Y (E : Type) [Field E] [NumberField E] [Algebra F E] {n : ℕ},
-    (Fin n → Fn Y) → (Fin (dim Y) → Fin n → 𝓞 E) → ∀ (M0 : HLat F), (M0.V →ₗ[F] Fn Y) →
-    Adl Y → ℝ
-
-  supInf_ofW : ∀ Y (L : Dv Y) (W : HLat F) (ι : W.V →ₗ[F] Fn Y) (v : InfinitePlace F) (τ : ℕ)
-    (f : Fn Y), supInf Y (ofW Y L W ι) v τ f =
-      ⨆ y, Real.sqrt (pn Y v.embedding (τ • L) (mPow Y v.embedding L τ
-        (fsMet Y v.embedding L (fun k : W.ι => ∑ i, (W.X v) i k • cx Y v.embedding (ι (W.b i)))))
-        (cx Y v.embedding f) y)
-
-  supInf_twist : ∀ Y (Lb : Adl Y) ci cf, (Function.support cf).Finite → ∀ (v : InfinitePlace F) (τ : ℕ) (f : Fn Y),
-    supInf Y (twist Y Lb ci cf) v τ f = Real.exp (-((τ : ℝ) * ci v)) * supInf Y Lb v τ f
-  supFin_twist : ∀ Y (Lb : Adl Y) ci cf, (Function.support cf).Finite → ∀ (v : HeightOneSpectrum (𝓞 F)) (τ : ℕ)
-    (f : Fn Y), supFin Y (twist Y Lb ci cf) v τ f = Real.exp (-((τ : ℝ) * cf v)) * supFin Y Lb v τ f
-
-  regOn : ∀ Y σ, Dv Y → FnC Y σ → Set (pts Y σ) → Prop
-
-attribute [instance] Geo.fnField Geo.fnAlg Geo.dvGrp Geo.ptsMeas Geo.fnCRing Geo.fnCAlg
+attribute [instance] Geo.fnField Geo.fnAlg Geo.dvGrp
 
 section Poly
 variable (Tau : Type) [Fintype Tau] (N : ℕ)
@@ -378,11 +248,6 @@ variable (D : D7)
 
 abbrev EmbC : Type := D.what₂.Tau ⊕ D.what₂.Tau
 
-def toGG : EmbC D → D.R.GG
-  | Sum.inl τ => ((D.eTau τ : D.R.Psi) : D.R.GG)
-  | Sum.inr τ => ((D.eTau τ : D.R.Psi) : D.R.GG) * D.R.cc
-
-
 open Classical in
 def ofGG (g : D.R.GG) : EmbC D :=
   if h : g ∈ D.R.Psi then Sum.inl (D.eTau.symm ⟨g, h⟩)
@@ -400,8 +265,6 @@ def frobG (p : ℕ) : D.R.GG :=
       [P.LiesOver (Ideal.span {(p : ℤ)})], IsArithFrobAt ℤ (D.host.sigmaOf g) P
   then h.choose else 1
 
-def frobEmb (p n : ℕ) (σ : EmbC D) : EmbC D := ofGG D (toGG D σ * frobG D p ^ n)
-
 variable (N : ℕ)
 
 def pk (τ : D.what₂.Tau) (k : ℕ) : MvPolynomial (Rt D.what₂.Tau N) ℝ := ∑ i : Fin N, X (τ, i) ^ k
@@ -415,12 +278,6 @@ def collapse : MvPolynomial (Vm D.what₂.Tau N) ℝ →ₐ[ℝ] MvPolynomial (R
     | Sum.inr (_, k) => chTot D N k)
 
 variable {D N}
-
-def chLie (j : ℕ) (k : ℕ) : EmbC D → MvPolynomial (Rt D.what₂.Tau N) ℝ
-  | Sum.inl τ => C ((Nat.factorial k : ℝ)⁻¹) *
-      ∑ i ∈ univ.filter (fun i : Fin N => (i : ℕ) < j), X (τ, i) ^ k
-  | Sum.inr τ => C ((Nat.factorial k : ℝ)⁻¹) *
-      ∑ i ∈ univ.filter (fun i : Fin N => j ≤ (i : ℕ)), (-X (τ, i)) ^ k
 
 variable (D N)
 
@@ -449,37 +306,21 @@ structure DivX (D : D7) : Type 1 where
 
   shv : letI := D.host.cmStar; HSpace D.host.E → Lev → DV.ShimX D.what₂.Tau
 
-  shv_N : letI := D.host.cmStar; ∀ S κ, 2 ≤ S.rank → (shv S κ).N = S.rank
-  shv_lev : letI := D.host.cmStar; ∀ S κ, (shv S κ).lev = levPr κ
 
   PlP : ∀ (p : ℕ) [Fact p.Prime], Type
   [plpFin : ∀ (p : ℕ) [Fact p.Prime], Fintype (PlP p)]
-  plpNe : ∀ (p : ℕ) [Fact p.Prime], Nonempty (PlP p)
   wtP : ∀ (p : ℕ) [Fact p.Prime], PlP p → ℝ
-  divisorWeight_nonneg : ∀ (p : ℕ) [Fact p.Prime] (la : PlP p), 0 ≤ wtP p la
-  divisorWeight_sum : ∀ (p : ℕ) [Fact p.Prime], ∑ la, wtP p la = 1
 
   plP : ∀ (p : ℕ) [Fact p.Prime], PlP p ≃ {w : D.what₂.places.Pl // D.what₂.places.resChar w = p}
 
-  divisorWeight_def : ∀ (p : ℕ) [Fact p.Prime] (la : PlP p),
-    wtP p la = (D.what₂.places.ramIdx (plP p la).1 : ℝ) *
-      (padicValNat p (Ideal.absNorm (D.plEq (plP p la).1).asIdeal) : ℝ) / (Module.finrank ℚ D.what₂.LL : ℝ)
 
   jC : ∀ (p : ℕ) [Fact p.Prime], PlP p → (DV.KW p →+* ℂ)
 
   Mp : letI := D.host.cmStar; ∀ (_S : HSpace D.host.E) (_κ : Lev) (p : ℕ) [Fact p.Prime], PlP p → Type
 
-  md : letI := D.host.cmStar; ∀ (S : HSpace D.host.E) (κ : Lev) (p : ℕ) [Fact p.Prime] (la : PlP p),
-    Mp S κ p la →
-      DV.Mdl D p (shv S κ).N (DV.rkOf (DV.PsiOf D (jC p la)) (shv S κ).N (shv S κ).j)
-
   vdd : ℕ → D.what₂.Tau → ℝ
-  vdd_unram : ∀ p τ, DV.UnramE D p → vdd p τ = 0
 
-  phiFr_unram : letI := D.host.cmStar; ∀ S κ p y x, DV.UnramE D p →
-    (shv S κ).phiFr p y x = (shv S κ).phiDR p y x
 
-  vdd_nonneg : ∀ p τ, 0 ≤ vdd p τ
 
   CurveM : letI := D.host.cmStar; ∀ (S : HSpace D.host.E) (κ : Lev) (p : ℕ) [Fact p.Prime]
     (la : PlP p), Mp S κ p la → Type
@@ -490,10 +331,6 @@ structure DivX (D : D7) : Type 1 where
     (la : PlP p), Mp S κ p la
   htCurve : letI := D.host.cmStar; ∀ (S : HSpace D.host.E) (κ : Lev) (p : ℕ) [Fact p.Prime],
     (shv S κ).CurveHT p ≃ Σ la : PlP p, CurveM S κ p la (htMdl S κ p la)
-  htCurve_deg : letI := D.host.cmStar; ∀ (S : HSpace D.host.E) (κ : Lev) (p : ℕ) [Fact p.Prime]
-    (c : (shv S κ).CurveHT p),
-    degM S κ p (htCurve S κ p c).1 (htMdl S κ p (htCurve S κ p c).1) (htCurve S κ p c).2 =
-      (shv S κ).degHT p c
 
   MjH : ℕ → HLat D.what₂.LL
   MjH_good : ∀ j, (MjH j).Good
@@ -507,8 +344,6 @@ structure DivX (D : D7) : Type 1 where
 
   MjLat_sub : ∀ j, 1 ≤ j → j ≤ D.R.m → ∀ x ∈ (D.what₂.MjLat j).gen, x ∈ Set.range (jM j)
 
-  jM_metric : ∀ j, 1 ≤ j → j ≤ D.R.m → ∀ x, Formalism.HermitianLatticesTheory.cnorm (Formalism.HermitianLatticesTheory.fcoord (MjH j).b (MjH j).X
-    (InfinitePlace.mk D.what₂.embLL) x) = ‖jM j x‖
 
   Qp : D.what₂.Tup → Finset ℕ
 
@@ -516,49 +351,35 @@ structure DivX (D : D7) : Type 1 where
 
   Qp_muAt : ∀ w, D.what₂.places.resChar w ∉ Qp (D.what₂.muAt w)
 
-  Qp_g : ∀ μ, (μ = D.what₂.mu0 ∨ ∃ w, μ = D.what₂.muAt w) → ∀ i, D.host.g i ∉ Qp μ
 
   QPl : D.what₂.Tup → Type
-  [finQ : ∀ μ, Fintype (QPl μ)]
 
   qv : ∀ μ, QPl μ → ℕ
 
-  qv_gt : ∀ μ v, 1 < qv μ v
 
-  qv_char : ∀ μ, (μ = D.what₂.mu0 ∨ ∃ w, μ = D.what₂.muAt w) → ∀ v, ∃ p ∈ Qp μ, p.Prime ∧ qv μ v = p
 
-  nu : ∀ μ, QPl μ → ℕ → ℂ
 
   Comp : ℕ → Type
-  [compFin : ∀ j, Fintype (Comp j)]
 
-  degHH : ∀ j, Comp j → D.what₂.Tau → ℝ
 
   Yv : ∀ j, Comp j → geo.Var
 
-  Ybd : ∀ j c, geo.Cl (Yv j c)
 
   Lw : ∀ j c, (D.what₂.Tau → Fin D.R.r → ℤ) →+ geo.Dv (Yv j c)
 
   iMj : ∀ j c, (MjH j).V →ₗ[D.what₂.LL] geo.Fn (Yv j c)
-  iMj_mem : ∀ j c x, iMj j c x ∈ geo.H0 (Yv j c) (Lw j c (DV.kapW D j))
 
   logLam : ℕ → D.what₂.FT → (D.what₂.LL →+* ℂ) → ℝ
 
   logLam_base : ∀ j σ, logLam j σ D.what₂.embLL = Real.log (D.what₂.lamP D.what₂.mu0 j σ)
 
   kapR : (D.what₂.LL →+* ℂ) → ℝ
-  kapR_pos : ∀ e, 0 < kapR e
 
-  kapR_conj : ∀ e, kapR (NumberField.ComplexEmbedding.conjugate e) = kapR e
 
   Surf : Type
-  surfCh2 : Surf → ℝ
-  surfDegOm : Surf → ℝ
   SurfFp : Type
-  surfFpCh2 : SurfFp → ℝ
 
-attribute [instance] DivX.finQ DivX.compFin DivX.plpFin
+attribute [instance] DivX.plpFin
 
 def DV.HidaSetting (D : D7) (XD : DivX D) (S : letI := D.host.cmStar; HSpace D.host.E) (κ : XD.Lev) : Prop :=
   letI := D.host.cmStar

@@ -1,7 +1,6 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsStabilizerLevi
-import Mathlib.Tactic.TypeStar
 import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Examples
 
 @[expose] public section
@@ -30,7 +29,6 @@ theorem unipCoord_apply (h : HermitianForm F E W) (v : Basis ι E W) (x₀ w₀ 
       (((n : archUnitary h v) : InfinitePlace E → GL ι ℂ) w : Matrix ι ι ℂ) *ᵥ vecAt v w₀ w -
         vecAt v w₀ w :=
   rfl
-
 
 omit [NumberField E] in
 theorem continuous_unipCoord (h : HermitianForm F E W) (v : Basis ι E W) (x₀ w₀ : W) :

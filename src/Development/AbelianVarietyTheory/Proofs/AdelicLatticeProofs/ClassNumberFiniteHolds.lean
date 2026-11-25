@@ -1483,11 +1483,11 @@ theorem res_one' {R A β κ : Type} [CommRing R] [CommRing A] [Algebra R A] [Fin
   ext p q
   simp only [res, Matrix.of_apply, Matrix.one_apply]
   by_cases h : p.1 = q.1
-  · rw [if_pos h, map_one, Matrix.one_apply]
+  · rw [ite_eq_left h, map_one, Matrix.one_apply]
     by_cases h' : p.2 = q.2
-    · rw [if_pos h', if_pos (Prod.ext h h')]
-    · rw [if_neg h', if_neg (fun e => h' (congrArg Prod.snd e))]
-  · rw [if_neg h, map_zero, Matrix.zero_apply, if_neg (fun e => h (congrArg Prod.fst e))]
+    · rw [ite_eq_left h', ite_eq_left (Prod.ext h h')]
+    · rw [ite_eq_right h', ite_eq_right (fun e => h' (congrArg Prod.snd e))]
+  · rw [ite_eq_right h, map_zero, Matrix.zero_apply, ite_eq_right (fun e => h (congrArg Prod.fst e))]
 
 theorem repr_mem {R A β : Type} [CommRing R] [CommRing A] [Algebra R A] [Fintype β] [DecidableEq β]
     (b : Module.Basis β R A) (R₀ : Subring R) (h1 : ∀ i, b.repr 1 i ∈ R₀) (x : A)
@@ -1611,7 +1611,7 @@ theorem classFinite_integralLevel : ∀ (F : Type) [Field F] [NumberField F] (n 
       s = GlobalTheory.ClassFin.emb b (lift s) := by
     intro s hs
     have h := hA.1 s hs
-    simp only [lift, dif_pos h]
+    simp only [lift, dite_eq_left h]
     exact h.choose_spec
   obtain ⟨hemb1, hembmul, -, hembinj⟩ := _root_.GlobalTheory.ClassFin.EmbHom.emb_hom R (FiniteAdeleRing (𝓞 F) F) _ (Fin n) b
   refine ⟨T₀.image lift, ?_, ?_⟩

@@ -1,50 +1,7 @@
 module
 
 public import Formalism.RealPlaceAnalysis.StatementA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -69,22 +26,22 @@ lemma casKHW_term (V : Type) [AddCommGroup V] [Module ℂ V] (n : ℕ) (ε : Fin
     (if ε a = ε b then E a b * E b a else 0) w = ((casKHW_coef ε μ a b : ℝ) : ℂ) • w := by
   unfold casKHW_coef
   by_cases h : ε a = ε b
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     rcases lt_trichotomy a b with hab | rfl | hab
     · have hne : a ≠ b := ne_of_lt hab
-      simp only [hne, if_false, hab, if_true]
+      simp only [hne, ite_false, hab, ite_true]
       have h1 := congrArg (fun T : Module.End ℂ V => T w) (hG a b b a)
-      simp only [if_true, LinearMap.sub_apply, Module.End.mul_apply] at h1
+      simp only [ite_true, LinearMap.sub_apply, Module.End.mul_apply] at h1
       have h0 : E a b w = 0 := hK.2 a b hab h
       rw [h0, map_zero, sub_zero, hK.1 a, hK.1 b] at h1
       rw [Module.End.mul_apply, h1]
       push_cast
       rw [sub_smul]
-    · simp only [if_true, Module.End.mul_apply, hK.1 a, map_smul, smul_smul]
+    · simp only [ite_true, Module.End.mul_apply, hK.1 a, map_smul, smul_smul]
       push_cast; ring_nf
     · have hne : a ≠ b := ne_of_gt hab
       have hnl : ¬ a < b := not_lt_of_gt hab
-      simp only [hne, if_false, hnl]
+      simp only [hne, ite_false, hnl]
       rw [Module.End.mul_apply, hK.2 b a hab h.symm, map_zero]
       simp
   · simp [h]

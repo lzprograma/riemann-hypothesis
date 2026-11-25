@@ -2,47 +2,7 @@ module
 
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.WavePacketL1L2
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ColOfLeftInv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -127,18 +87,18 @@ theorem blockW_mul (h₁ h₂ : Matrix (Fin k) (Fin k) ℂ) :
       exact Finset.sum_congr rfl fun m _ => by rw [blockW_eB, blockW_eB]
     · rw [blockW_in_out hi hj]
       exact (Finset.sum_eq_zero fun m _ => by rw [blockW_in_out (eB_inB m) hj, mul_zero]).symm
-  · rw [blockW_out hi, Finset.sum_eq_single i (fun l _ hl => by rw [blockW_out hi, if_neg (Ne.symm hl), zero_mul])
-      (fun h => absurd (Finset.mem_univ i) h), blockW_out hi, if_pos rfl, one_mul, blockW_out hi]
+  · rw [blockW_out hi, Finset.sum_eq_single i (fun l _ hl => by rw [blockW_out hi, ite_eq_right (Ne.symm hl), zero_mul])
+      (fun h => absurd (Finset.mem_univ i) h), blockW_out hi, ite_eq_left rfl, one_mul, blockW_out hi]
 
 theorem hpk_in_col {i m : Fin (2 * r + k + 1)} (hm : inB k r m) : Hpk k r i m = if i = m then 1 else 0 := by
   unfold inB at hm
   unfold Hpk
   by_cases him : i = m
-  · subst him; rw [if_pos rfl]
-    rw [if_neg (by omega), if_neg (by omega), if_pos ⟨by omega, by omega, rfl⟩, if_neg (by omega)]
-  · rw [if_neg him]
+  · subst him; rw [ite_eq_left rfl]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨by omega, by omega, rfl⟩, ite_eq_right (by omega)]
+  · rw [ite_eq_right him]
     have : i.val ≠ m.val := fun h => him (Fin.ext h)
-    rw [if_neg (by omega), if_neg (by omega), if_neg (by tauto)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by tauto)]
 
 theorem eq_blockW {c : Mx k r} (hc : c ∈ UH (Hpk k r))
     (hfix : ∀ l, ¬ inB k r l → c *ᵥ bvec l = bvec l) : c = blockW k r (ub c) := by
@@ -154,12 +114,12 @@ theorem eq_blockW {c : Mx k r} (hc : c ∈ UH (Hpk k r))
     have e1 := congrFun (congrFun hU l) j
     have e2 : (cᴴ * Hpk k r * c) l j = (Hpk k r * c) l j := by
       rw [Matrix.mul_assoc, Matrix.mul_apply, Finset.sum_eq_single l]
-      · rw [Matrix.conjTranspose_apply, hcol l l hl, if_pos rfl, star_one, one_mul]
+      · rw [Matrix.conjTranspose_apply, hcol l l hl, ite_eq_left rfl, star_one, one_mul]
       · intro m _ hm
-        rw [Matrix.conjTranspose_apply, hcol m l hl, if_neg hm, star_zero, zero_mul]
+        rw [Matrix.conjTranspose_apply, hcol m l hl, ite_eq_right hm, star_zero, zero_mul]
       · intro h; exact absurd (Finset.mem_univ l) h
     have hne : l ≠ j := fun h => hl (h ▸ hj)
-    rw [← e2, e1, hpk_in_col hj, if_neg hne]
+    rw [← e2, e1, hpk_in_col hj, ite_eq_right hne]
   have hoff : ∀ i j, ¬ inB k r i → inB k r j → c i j = 0 := by
     intro i j hi hj
     have hsq : Hpk k r * (Hpk k r * c) = c := by rw [← Matrix.mul_assoc, _root_.WlocSk.UnitaryGroupBasics.hpk_sq, Matrix.one_mul]
@@ -167,18 +127,18 @@ theorem eq_blockW {c : Mx k r} (hc : c ∈ UH (Hpk k r))
     refine Finset.sum_eq_zero fun m _ => ?_
     by_cases hm : inB k r m
     · have hne : i ≠ m := fun h => hi (h ▸ hm)
-      rw [hpk_in_col hm, if_neg hne, zero_mul]
+      rw [hpk_in_col hm, ite_eq_right hne, zero_mul]
     · rw [hHc m j hm hj, mul_zero]
   ext i j
   by_cases hi : inB k r i
   · by_cases hj : inB k r j
     · rw [eq_eB_of_inB hi, eq_eB_of_inB hj, blockW_eB]; rfl
     · have hne : i ≠ j := fun h => hj (h ▸ hi)
-      rw [blockW_in_out hi hj, hcol i j hj, if_neg hne]
+      rw [blockW_in_out hi hj, hcol i j hj, ite_eq_right hne]
   · rw [blockW_out hi]
     by_cases hj : inB k r j
     · have hne : i ≠ j := fun h => hi (h ▸ hj)
-      rw [hoff i j hi hj, if_neg hne]
+      rw [hoff i j hi hj, ite_eq_right hne]
     · exact hcol i j hj
 
 theorem ub_unitary {c : Mx k r} (hc : c ∈ UH (Hpk k r)) (hb : c = blockW k r (ub c)) :
@@ -196,20 +156,20 @@ theorem ub_unitary {c : Mx k r} (hc : c ∈ UH (Hpk k r)) (hb : c = blockW k r (
   rw [Matrix.mul_apply] at e
   rw [sum_block _ (fun l hl => by
     have hne : l ≠ eB k r m' := fun h => hl (h ▸ eB_inB m')
-    rw [hb, blockW_out hl, if_neg hne, mul_zero])] at e
+    rw [hb, blockW_out hl, ite_eq_right hne, mul_zero])] at e
   rw [Matrix.mul_apply]
   have hterm : ∀ t : Fin k, (cᴴ * Hpk k r) (eB k r m) (eB k r t) * c (eB k r t) (eB k r m') =
       (ub c)ᴴ m t * ub c t m' := by
     intro t
     rw [Matrix.mul_apply, Finset.sum_eq_single (eB k r t)]
-    · rw [hpk_in_col (eB_inB t), if_pos rfl, mul_one]; rfl
-    · intro l _ hl; rw [hpk_in_col (eB_inB t), if_neg hl, mul_zero]
+    · rw [hpk_in_col (eB_inB t), ite_eq_left rfl, mul_one]; rfl
+    · intro l _ hl; rw [hpk_in_col (eB_inB t), ite_eq_right hl, mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   simp_rw [hterm] at e
   rw [e]
   by_cases h : m = m'
-  · rw [if_pos (hin.mpr h), if_pos h]
-  · rw [if_neg (fun h' => h (hin.mp h')), if_neg h]
+  · rw [ite_eq_left (hin.mpr h), ite_eq_left h]
+  · rw [ite_eq_right (fun h' => h (hin.mp h')), ite_eq_right h]
 
 theorem piAll_loc (z : Fin (2 * r + k + 1) → ℂ) (u : Fin k → ℝ) (Wp : Type) [NormedAddCommGroup Wp]
     [InnerProductSpace ℂ Wp] (π : Mx k r → (Wp →L[ℂ] Wp)) (hz : inWb k r z) (hT : 0 < Tz k r z)
@@ -260,10 +220,10 @@ theorem piAll_loc (z : Fin (2 * r + k + 1) → ℂ) (u : Fin k → ℝ) (Wp : Ty
       · rw [blockW_in hi hj, Matrix.one_apply, Matrix.one_apply]
         by_cases h : i = j
         · subst h; simp
-        · rw [if_neg h, if_neg]; intro h'; apply h; apply Fin.ext
+        · rw [ite_eq_right h, ite_eq_right]; intro h'; apply h; apply Fin.ext
           have := congrArg Fin.val h'; unfold inB at hi hj; simp at this; omega
       · have hne : i ≠ j := fun h => hj (h ▸ hi)
-        rw [blockW_in_out hi hj, Matrix.one_apply, if_neg hne]
+        rw [blockW_in_out hi hj, Matrix.one_apply, ite_eq_right hne]
     · rw [blockW_out hi, Matrix.one_apply]
   refine ⟨?_, ?_, ?_⟩
   · have := hπ1

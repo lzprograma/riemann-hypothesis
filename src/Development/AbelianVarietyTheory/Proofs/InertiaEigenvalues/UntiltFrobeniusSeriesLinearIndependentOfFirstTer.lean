@@ -166,8 +166,7 @@ theorem exists_strict_max (f d : ℤ → ℝ) (hd : ∀ n, f (n + 1) = f n + d n
     ∃ n₀ : ℤ, ∀ n : ℤ, n ≠ n₀ → f n < f n₀ := by
   obtain ⟨m, hm⟩ := hpos
   have hbdd : ∃ b : ℤ, ∀ z : ℤ, d z < 0 → b ≤ z := ⟨m, fun z hz => by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have := hanti hc
     linarith⟩
   obtain ⟨n₀, hn₀, hmin⟩ := Int.exists_least_of_bdd hbdd hneg
@@ -307,7 +306,7 @@ theorem exists_unique_max_term : ∀ (l : ℕ) [Fact l.Prime] (h : ℕ) (s : ℝ
     exact hn₀ n hn
   by_cases H : ∀ n, d 0 n ≠ 0
   · exact ⟨0, by norm_num, hfin 0 H⟩
-  · push_neg at H
+  · push Not at H
     obtain ⟨n, hn⟩ := H
     exact ⟨1, by norm_num, hfin 1 fun n' hn' => htie n n' hn hn'⟩
 
@@ -383,8 +382,7 @@ namespace GlobalTheory.PSer
 
 theorem norm_sh_le_of_lam_le : ∀ (l : ℕ) [Fact l.Prime] (h : ℕ) (ρ : ℝ) (x : Fl l), 2 ≤ h → 0 ≤ ρ → ρ < 1 → ‖sh x‖ < 1 → (∀ j : ℕ, j < 2 → ‖lam h j x‖ ≤ gam l h j ρ) → ‖sh x‖ ≤ ρ := by
   intro l _ h ρ x h2 hρ0 hρ1 hs1 hlam
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   set s := ‖sh x‖ with hs
   have hs0 : 0 < s := lt_of_le_of_lt hρ0 hlt
   have h1 : 1 ≤ h := le_trans (by norm_num) h2

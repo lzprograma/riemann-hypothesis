@@ -320,17 +320,22 @@ theorem exists_projector (D₀ : Datum H) (G : Matrix (Fin r) (Fin r) E) (φ₀ 
   · rw [hπ', ← map_zero φ₀] at h
     exact (hP3 y).1 (hinj h)
 
-theorem splitLat_of_indefinite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H), (∃ D₁ : Datum H, D₁.p = 1 ∧ D₁.q = 0) → 3 ≤ D.p + D.q → 1 ≤ D.p → 1 ≤ D.q → SplitLat D := by
-  intro E _ _ _ H D h1 h3 hp hq
-  obtain ⟨D₀, ep, eq, Lp, Lm, htop, ho, rp, rm, sp, sm⟩ := _root_.GlobalTheory.CompRat.exists_splitLat_of_signature E H D.p D.q h1
+theorem splitLat_of_isotropic (D D₀ : Datum H) (ep : D₀.p = D.p) (eq : D₀.q = D.q) (hp : 1 ≤ D.p)
+    (Lp Lm : Submodule (𝓞 E) D₀.La) (htop : Lp ⊔ Lm = ⊤) (ho : ∀ a ∈ Lp, ∀ b ∈ Lm, D₀.EF a b = 0)
+    (rp : Module.finrank (𝓞 E) Lp = D₀.p) (rm : Module.finrank (𝓞 E) Lm = D₀.q)
+    (sp : ∀ a ∈ Lp, a ≠ 0 → 0 < H.rt0.im * D₀.EF (H.rt • a) a)
+    (sm : ∀ a ∈ Lm, a ≠ 0 → H.rt0.im * D₀.EF (H.rt • a) a < 0)
+    (G : Matrix (Fin (D.p + D.q)) (Fin (D.p + D.q)) E) (φ₀ : D₀.La →ₗ[𝓞 E] (Fin (D.p + D.q) → E))
+    (hM₀ : Function.Injective φ₀ ∧ Submodule.span E (Set.range φ₀) = ⊤ ∧ (∀ a b, FD.cc (G a b) = G b a) ∧
+      G.det ≠ 0 ∧ ∀ x y, ((D₀.EF x y : ℤ) : ℚ) = Algebra.trace ℚ E ((H.rt : E) * FD.herm G (φ₀ x) (φ₀ y)))
+    (φ : D.La →ₗ[𝓞 E] (Fin (D.p + D.q) → E))
+    (hM : Function.Injective φ ∧ Submodule.span E (Set.range φ) = ⊤ ∧ (∀ a b, FD.cc (G a b) = G b a) ∧
+      G.det ≠ 0 ∧ ∀ x y, ((D.EF x y : ℤ) : ℚ) = Algebra.trace ℚ E ((H.rt : E) * FD.herm G (φ x) (φ y)))
+    (hz : ∃ z : Fin (D.p + D.q) → E, z ≠ 0 ∧ FD.herm G z z = 0) : SplitLat D := by
   have := D.fin
   have := D₀.fin
   have hξ := GlobalTheory.OneSpace.cc_rt H
   have hξ0 := GlobalTheory.OneSpace.rt_ne H
-  obtain ⟨G, φ₀, hM₀⟩ := GlobalTheory.exists_herm_coord_of_datum E H D₀ (H.rt : E) hξ hξ0 (D.p + D.q) (by rw [ep, eq])
-  obtain ⟨φ, hM⟩ := GlobalTheory.model_in_same_space (GlobalTheory.LocalQuad.landherrSt_of_hasseNormSt GlobalTheory.QNorm.hasseNormSt)
-    GlobalTheory.QNorm.hasseNormSt E H D₀ D _ (H.rt : E) G φ₀ ep.symm eq.symm hξ hM₀
-  have hind := indefinite D hp hq G φ hM
   obtain ⟨-, hfg, -, hdual⟩ := rank_integral_selfDual E H D _ _ G φ hξ hM
   obtain ⟨inj₀, span₀, hG, hdet, hEF₀⟩ := hM₀
   obtain ⟨inj, span, -, -, hEF⟩ := hM
@@ -343,7 +348,6 @@ theorem splitLat_of_indefinite : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     refine ⟨fun a => IsCMField.complexConj_apply_apply E a, ⟨(H.rt : E), fun h => hξ0 ?_⟩, hG, hdet⟩
     have h2 : (H.rt : E) = -(H.rt : E) := h.symm.trans hξ
     linear_combination (1 / 2 : E) * h2
-  have hz := GlobalTheory.UTrans.exists_isotropic_of_indefinite E _ _ G (fun _ => rfl) hh h3 hind
   have : Nontrivial Lp := Module.nontrivial_of_finrank_pos (R := 𝓞 E) (by omega)
   obtain ⟨⟨a, ha⟩, ha0⟩ := exists_ne (0 : Lp)
   have hxx : FD.herm G (φ₀ a) (φ₀ a) ≠ 0 := by
@@ -427,5 +431,20 @@ theorem splitLat_of_indefinite : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     refine ⟨c, (π4 _).1 ?_, π5 _ ?_⟩
     · rw [hg', mulVec_smul, e2]
     · rw [hg', mulVec_smul, map_sub, mulVec_sub, mulVec_sub, e2, e, sub_self, smul_zero]
+
+theorem splitLat_of_indefinite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H), (∃ D₁ : Datum H, D₁.p = 1 ∧ D₁.q = 0) → 3 ≤ D.p + D.q → 1 ≤ D.p → 1 ≤ D.q → SplitLat D := by
+  intro E _ _ _ H D h1 h3 hp hq
+  obtain ⟨D₀, ep, eq, Lp, Lm, htop, ho, rp, rm, sp, sm⟩ := _root_.GlobalTheory.CompRat.exists_splitLat_of_signature E H D.p D.q h1
+  have hξ := GlobalTheory.OneSpace.cc_rt H
+  have hξ0 := GlobalTheory.OneSpace.rt_ne H
+  obtain ⟨G, φ₀, hM₀⟩ := GlobalTheory.exists_herm_coord_of_datum E H D₀ (H.rt : E) hξ hξ0 (D.p + D.q) (by rw [ep, eq])
+  obtain ⟨φ, hM⟩ := GlobalTheory.model_in_same_space (GlobalTheory.LocalQuad.landherrSt_of_hasseNormSt GlobalTheory.QNorm.hasseNormSt)
+    GlobalTheory.QNorm.hasseNormSt E H D₀ D _ (H.rt : E) G φ₀ ep.symm eq.symm hξ hM₀
+  have hh : GlobalTheory.UTrans.IsHerm (IsCMField.complexConj E : E →+* E) G := by
+    refine ⟨fun a => IsCMField.complexConj_apply_apply E a, ⟨(H.rt : E), fun h => hξ0 ?_⟩, hM₀.2.2.1, hM₀.2.2.2.1⟩
+    have h2 : (H.rt : E) = -(H.rt : E) := h.symm.trans hξ
+    linear_combination (1 / 2 : E) * h2
+  have hz := GlobalTheory.UTrans.exists_isotropic_of_indefinite E _ _ G (fun _ => rfl) hh h3 (indefinite D hp hq G φ hM)
+  exact splitLat_of_isotropic D D₀ ep eq hp Lp Lm htop ho rp rm sp sm G φ₀ hM₀ φ hM hz
 
 end GlobalTheory.SplitGenus

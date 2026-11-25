@@ -4,10 +4,7 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StImaginaryLat
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.TotallyRealComplex
 public import GroundTheory.AutomorphicForms.HermitianOrthogonal
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Objects
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -24,7 +21,6 @@ theorem im_embedding_algebraMap (σ : E →+* ℂ) (c : F) : (σ (algebraMap F E
   have h := embedding_conj (F := F) σ (algebraMap F E c)
   rw [conj_algebraMap] at h
   exact Complex.conj_eq_iff_im.mp h.symm
-
 
 omit [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 variable (F E) in
@@ -48,7 +44,6 @@ theorem exists_imaginary_integer : ∃ t : 𝓞 E, (t : E) ≠ 0 ∧ conj F E (t
   · change conj F E (y • ζ - conj F E (y • ζ)) = -(y • ζ - conj F E (y • ζ))
     rw [map_sub, conj_conj]
     ring
-
 
 omit [IsTotallyReal F] in
 variable (F E) in

@@ -134,12 +134,4 @@ theorem htI2be_of (h : GenFrEx Xo c)
 
 end Gen
 
-section Rec
-
-variable {D : D7} {T : Top D} (hL : LawsP T)
-
-variable (j : ℕ) [IsCMField D.host.E] [Fintype (Comp (T.Q.Xo j) T.Q.c)]
-
-end Rec
-
 end Formalism.L2.Pj

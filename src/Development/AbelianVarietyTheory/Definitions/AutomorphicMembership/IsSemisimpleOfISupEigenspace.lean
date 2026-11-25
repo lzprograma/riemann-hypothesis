@@ -8,56 +8,10 @@ public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.RingTheory.Coalgebra.IsFrobenius
 public import Mathlib.RingTheory.HopfAlgebra.Basic
 public import Mathlib.RingTheory.TotallySplit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Charpoly.ToMatrix
 public import Mathlib.LinearAlgebra.Eigenspace.Minpoly
 public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -250,73 +204,22 @@ theorem shiftEnd_pow_apply {n : ℕ} (k : ℕ) (v : Fin n → ℂ) (i : Fin n) :
   | succ k ih =>
     rw [pow_succ', End.mul_apply, shiftEnd_apply]
     by_cases h1 : 1 ≤ (i : ℕ)
-    · rw [if_pos h1, ih]
+    · rw [ite_eq_left h1, ih]
       by_cases h2 : k + 1 ≤ (i : ℕ)
-      · rw [if_pos h2, if_pos (by simp only; omega)]
+      · rw [ite_eq_left h2, ite_eq_left (by simp only; omega)]
         congr 2
         simp only; omega
-      · rw [if_neg h2, if_neg (by simp only; omega)]
-    · rw [if_neg h1, if_neg (by omega)]
+      · rw [ite_eq_right h2, ite_eq_right (by simp only; omega)]
+    · rw [ite_eq_right h1, ite_eq_right (by omega)]
 
 theorem isNilpotent_shiftEnd (n : ℕ) : IsNilpotent (shiftEnd n) :=
   ⟨n, LinearMap.ext fun v => funext fun i => by
-    rw [shiftEnd_pow_apply, if_neg (by omega)]; rfl⟩
+    rw [shiftEnd_pow_apply, ite_eq_right (by omega)]; rfl⟩
 
 theorem shiftEnd_ne_zero {n : ℕ} (hn : 2 ≤ n) : shiftEnd n ≠ 0 := by
   intro h0
   have := congrFun (LinearMap.congr_fun h0 (fun _ => 1)) ⟨1, by omega⟩
   simp [shiftEnd_apply] at this
-
-theorem isPurePair_diagEnd_shiftEnd {q : ℝ} (hq : 1 < q) {n : ℕ} (c : Fin n → ℂ)
-    (hc : ∀ i : Fin n, ‖c i‖ = q ^ (((i : ℕ) : ℝ) - ((n : ℝ) - 1) / 2)) :
-    IsPurePair q (diagEnd c) (shiftEnd n) := by
-  classical
-  have hmem : ∀ (j : ℤ) (v : Fin n → ℂ), v ∈ absSpace (diagEnd c) (q ^ ((j : ℝ) / 2)) ↔
-      ∀ i : Fin n, 2 * ((i : ℕ) : ℤ) + 1 - n ≠ j → v i = 0 := by
-    intro j v
-    rw [mem_absSpace_diagEnd]
-    refine forall_congr' fun i => imp_congr_left (not_congr ?_)
-    rw [hc, Real.rpow_right_inj (zero_lt_one.trans hq) hq.ne', ← @Int.cast_inj ℝ]
-    push_cast
-    constructor <;> intro h <;> linarith
-  refine ⟨eq_top_iff.mpr fun v _ => ?_, fun k => ?_⟩
-  · rw [← Finset.univ_sum_single v]
-    refine Submodule.sum_mem _ fun i _ =>
-      Submodule.mem_iSup_of_mem (2 * ((i : ℕ) : ℤ) + 1 - n) ((hmem _ _).mpr fun j hj => ?_)
-    rw [Pi.single_eq_of_ne]
-    rintro rfl
-    exact hj rfl
-  · have e1 : (-(k : ℝ) / 2) = ((-(k : ℤ) : ℤ) : ℝ) / 2 := by push_cast; ring
-    have e2 : ((k : ℝ) / 2) = (((k : ℤ) : ℤ) : ℝ) / 2 := by push_cast; ring
-    rw [e1, e2]
-    refine ⟨fun v hv => ?_, fun v hv v' hv' hvv => ?_, fun v hv => ?_⟩
-    · rw [SetLike.mem_coe, hmem] at hv ⊢
-      intro i hi
-      rw [shiftEnd_pow_apply]
-      split_ifs with hk
-      · exact hv _ (by simp only; omega)
-      · rfl
-    · rw [SetLike.mem_coe, hmem] at hv hv'
-      ext i
-      by_cases hi : 2 * ((i : ℕ) : ℤ) + 1 - n = -(k : ℤ)
-      · have := congrFun hvv ⟨i + k, by omega⟩
-        rw [shiftEnd_pow_apply, shiftEnd_pow_apply, if_pos (by simp), if_pos (by simp)] at this
-        simpa using this
-      · rw [hv i hi, hv' i hi]
-    · rw [SetLike.mem_coe, hmem] at hv
-      refine ⟨fun i => if hi : (i : ℕ) + k < n then v ⟨i + k, hi⟩ else 0, ?_, ?_⟩
-      · rw [SetLike.mem_coe, hmem]
-        intro i hi
-        split_ifs with hk
-        · exact hv _ (by simp only; omega)
-        · rfl
-      · ext i
-        rw [shiftEnd_pow_apply]
-        split_ifs with hk h2
-        · congr 2
-          simp only; omega
-        · exfalso; apply h2; simp only; omega
-        · exact (hv i (by omega)).symm
 
 end Lin
 

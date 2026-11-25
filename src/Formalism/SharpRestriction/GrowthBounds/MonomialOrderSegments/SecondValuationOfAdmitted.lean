@@ -1,45 +1,8 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CgeZeroIffIntegral
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrBase
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExponentFactorialAddSingleOne
 
@@ -82,13 +45,13 @@ theorem br_onLetter {L : Type} {r : ℕ} (i : L) (β : Fin r →₀ ℕ) :
     rw [Finset.sum_eq_single b]
     · simp
     · intro a _ hab
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro h
       exact hab (congrArg Prod.snd h)
     · simp
   · rw [Finsupp.mapDomain_notin_range]
     · refine (Finset.sum_eq_zero fun a _ => ?_).symm
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro h
       exact hj (congrArg Prod.fst h).symm
     · rintro ⟨a, ha⟩
@@ -118,7 +81,7 @@ theorem second_valuation_of_admitted [CharZero (KK O)] (h : Formalism.MainNotion
     cases hs : sg i with
     | true =>
       have := (ha2 i (fun a => β a) F).1 hs
-      simp only [if_true]
+      simp only [ite_true]
       rw [br_absE]
       exact br_wt_sub _ _ _ this
     | false =>
@@ -202,12 +165,7 @@ section BB
 variable {K : Type} [Field K] (v : AddValuation K (WithTop ℚ))
 
 theorem br_vR_mul (x y : K) : vR v (x * y) = vR v x + vR v y := by
-  unfold vR
-  rw [AddValuation.map_mul]
-  generalize v x = a
-  generalize v y = b
-  induction a using WithTop.recTopCoe <;> induction b using WithTop.recTopCoe <;> simp
-  norm_cast
+  apply _root_.Formalism.MainNotions.PlaneGram.vR_mul <;> assumption
 
 theorem br_le_vBB_iff {σ : Type} (t : ℝ) (F : MvPolynomial σ K) :
     ((t : ℝ) : WithTop ℝ) ≤ vBB v F ↔ ∀ α, ((t : ℝ) : WithTop ℝ) ≤
@@ -282,7 +240,6 @@ theorem br_exp_le {p : ℕ} (hp : 2 ≤ p) {r : ℕ} (hr : 1 ≤ r) (a b : ℕ) 
   unfold lg
   have hp1 : (1 : ℝ) < p := by exact_mod_cast hp
   have hr1 : (1 : ℝ) ≤ r := by exact_mod_cast hr
-  have ha0 : (0 : ℝ) ≤ a := Nat.cast_nonneg a
   have hpos : (0 : ℝ) < 2 * (a : ℝ) + r := by linarith
   have hlog0 : 0 ≤ Real.logb p (2 * (a : ℝ) + r) := Real.logb_nonneg hp1 (by linarith)
   have hmono : Real.logb p (2 * (a : ℝ) + r) ≤ Real.logb p (((2 * b : ℕ) : ℝ) + r) := by

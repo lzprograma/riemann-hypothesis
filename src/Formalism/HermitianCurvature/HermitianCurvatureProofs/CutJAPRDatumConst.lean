@@ -1,52 +1,10 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepDatumUnit
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPolyRadialCut
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoFrameLoc
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheSectionStab
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -126,16 +84,16 @@ theorem nu_back (hk : 1 ≤ k) (w s : ℂ) (hw : s * s = w * star w - 1) :
   have h0 := zero_ne_last hk
   rw [nu_mulVec]
   funext i
-  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.single_apply, h0, h0.symm, if_true, if_false]
+  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.single_apply, h0, h0.symm, ite_true, ite_false]
   by_cases hi0 : i = 0
   · subst hi0
-    simp only [h0, if_true, if_false]
+    simp only [h0, ite_true, ite_false]
     ring
   · by_cases hil : i = Fin.last k
     · subst hil
-      simp only [h0.symm, if_true, if_false]
+      simp only [h0.symm, ite_true, ite_false]
       linear_combination -hw
-    · simp only [hi0, hil, if_false]
+    · simp only [hi0, hil, ite_false]
       ring
 
 theorem secB_inv_a (hk : 1 ≤ k) {a b : Fin (k + 1) → ℂ} {T T' : ℝ} (hT : 0 < T) (hT' : 0 < T')
@@ -204,7 +162,7 @@ theorem secB_perp {a b : Fin (k + 1) → ℂ} {T T' : ℝ} (hT' : 0 < T') (hb : 
     have hs : (if (0 : Fin (k + 1)) = Fin.last k then (-1 : ℂ) else 1) ≠ 0 := by split_ifs <;> norm_num
     exact (mul_eq_zero.1 hx0).resolve_left hs
   have cl : (gB k b T' *ᵥ x) (Fin.last k) = 0 := by
-    rw [← form_of_unitary (Hb k) (gB_spec k hT' hb).1, (gB_spec k hT' hb).2, herm_smul_right, herm_Hb_right, if_pos rfl] at hxb
+    rw [← form_of_unitary (Hb k) (gB_spec k hT' hb).1, (gB_spec k hT' hb).2, herm_smul_right, herm_Hb_right, ite_eq_left rfl] at hxb
     have h1 : star ((Real.sqrt T' : ℝ) : ℂ) ≠ 0 := by rw [show star ((Real.sqrt T' : ℝ) : ℂ) = _ from Complex.conj_ofReal _]; exact hne
     have h2 := (mul_eq_zero.1 hxb).resolve_left h1
     exact (mul_eq_zero.1 h2).resolve_left (by norm_num)
@@ -245,14 +203,7 @@ def EE' (k r : ℕ) (z' : Fin (2 * r + k + 1) → ℂ) : Fin (2 * r + k + 1) →
 
 theorem prWv_fix {z x : Fin (2 * r + k + 1) → ℂ} (hx : inWb k r x) (h0 : herm (Hpk k r) x z = 0) :
     SSn.prWv k r z x = x := by
-  have hw : SSn.wbP k r x = x := by
-    funext i
-    unfold SSn.wbP
-    split_ifs with h
-    · rfl
-    · exact (hx i (by omega)).symm
-  unfold SSn.prWv
-  rw [hw, h0, zero_div, zero_smul, add_zero]
+  apply _root_.Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.DU.prWv_fix <;> assumption
 
 theorem prWv_self {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < Tz k r z) : SSn.prWv k r z z = 0 := by
   have hw : SSn.wbP k r z = z := by

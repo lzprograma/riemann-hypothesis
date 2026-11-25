@@ -194,10 +194,10 @@ private lemma exists_conjTranspose_mul_mul_eq_sgn_diagonal {r : ℕ} (A : Matrix
   simp only [Pi.star_apply, Complex.star_def, Complex.conj_ofReal]
   rw [← Complex.ofReal_mul, ← Complex.ofReal_mul, hsq]
   by_cases h : 0 < ev (σ a)
-  · simp only [h, if_true, true_iff] at key ⊢
-    rw [if_pos key]
-  · simp only [h, if_false, one_ne_zero, false_iff] at key ⊢
-    rw [if_neg key]
+  · simp only [h, ite_true, true_iff] at key ⊢
+    rw [ite_eq_left key]
+  · simp only [h, ite_false, one_ne_zero, false_iff] at key ⊢
+    rw [ite_eq_right key]
 
 open NumberField Matrix in
 open scoped nonZeroDivisors in

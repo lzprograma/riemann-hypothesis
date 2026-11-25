@@ -55,27 +55,6 @@ section SlopeTestRemainingChoices
 
 variable {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {E : Type} [Field E] [NumberField E]
 
-private theorem nu_mul (x y : ℂ) : nu ι (x * y) = nu ι x * nu ι y := by
-  simp [nu]
-
-private theorem nu_pow (x : ℂ) (n : ℕ) : nu ι (x ^ n) = nu ι x ^ n := by
-  simp [nu]
-
-private theorem nu_inv (x : ℂ) : nu ι x⁻¹ = (nu ι x)⁻¹ := by
-  simp [nu]
-
-private theorem nu_neg (x : ℂ) : nu ι (-x) = nu ι x := by
-  simp [nu]
-
-private theorem nu_nonneg (x : ℂ) : 0 ≤ nu ι x := norm_nonneg _
-
-private theorem nu_pos {x : ℂ} (hx : x ≠ 0) : 0 < nu ι x :=
-  norm_pos_iff.2 ((map_ne_zero ι.symm).2 hx)
-
-private theorem nu_prod {α : Type*} (s : Finset α) (f : α → ℂ) :
-    nu ι (∏ i ∈ s, f i) = ∏ i ∈ s, nu ι (f i) := by
-  simp [nu, map_prod, norm_prod]
-
 private theorem nu_le_one_iff {w : HeightOneSpectrum (𝓞 E)} {τ : E →+* ℂ} (hτ : τ ∈ Ov ι w)
     (a : E) : nu ι (τ a) ≤ 1 ↔ w.valuation E a ≤ 1 := by
   obtain ⟨u, ψ, h1, h2, h3⟩ := placeHom l ι E τ
@@ -92,8 +71,8 @@ private theorem nu_eq_one {w : HeightOneSpectrum (𝓞 E)} {τ : E →+* ℂ} (h
     simp at ha
   have h1 := (nu_le_one_iff ι hτ a).2 ha.le
   have h2 := (nu_le_one_iff ι hτ a⁻¹).2 (by rw [map_inv₀, ha, inv_one])
-  rw [map_inv₀, nu_inv] at h2
-  have hp := nu_pos ι ((map_ne_zero τ).2 ha0)
+  have hp : 0 < nu ι (τ a) := norm_pos_iff.2 ((map_ne_zero _).2 ((map_ne_zero τ).2 ha0))
+  simp only [nu, map_inv₀, norm_inv] at hp h1 h2 ⊢
   exact le_antisymm h1 ((inv_le_one₀ hp).1 h2)
 
 private theorem exists_place (τ : E →+* ℂ) : ∃ u : HeightOneSpectrum (𝓞 E), τ ∈ Ov ι u := by
@@ -162,12 +141,14 @@ theorem prodNorm : ProdNorm := by
   intro l _ ι E _ _ w
   have hlt : ∀ τ ∈ Ov ι w, 0 < nu ι (τ (unif w : E)) ∧ nu ι (τ (unif w : E)) < 1 := by
     intro τ hτ
-    have hp := nu_pos ι ((map_ne_zero τ).2 (unif w).ne_zero)
+    have hp : 0 < nu ι (τ (unif w : E)) :=
+      norm_pos_iff.2 ((map_ne_zero _).2 ((map_ne_zero τ).2 (unif w).ne_zero))
     refine ⟨hp, ?_⟩
     have h1 : ¬ w.valuation E (unif w : E)⁻¹ ≤ 1 := by
       rw [map_inv₀, _root_.GlobalTheory.CharVal.val_unif, not_le, ← WithZero.exp_neg, neg_neg, ← WithZero.exp_zero]
       exact WithZero.exp_lt_exp.2 one_pos
-    rw [← nu_le_one_iff ι hτ, map_inv₀, nu_inv, not_le] at h1
+    rw [← nu_le_one_iff ι hτ, not_le] at h1
+    simp only [nu, map_inv₀, norm_inv] at hp h1
     exact (one_lt_inv₀ hp).1 h1
   refine ⟨hlt, ?_⟩
   obtain ⟨h, hh, α, h0, hs⟩ := exists_gen w
@@ -179,8 +160,10 @@ theorem prodNorm : ProdNorm := by
         exact WithZero.exp_ne_zero
       rw [map_div₀, map_pow, val_gen w h0 hs, div_self (pow_ne_zero _ hu)]
     have h1 := nu_eq_one ι hτ hv
-    have hp := nu_pos ι ((map_ne_zero τ).2 (unif w).ne_zero)
-    rw [map_div₀, map_pow, div_eq_mul_inv, nu_mul, nu_inv, nu_pow] at h1
+    have hp := norm_pos_iff.2 ((map_ne_zero ι.symm).2 ((map_ne_zero τ).2 (unif w).ne_zero))
+    rw [map_div₀, map_pow] at h1
+    simp only [nu, map_div₀, map_pow, norm_div, norm_pow] at h1 ⊢
+    rw [div_eq_mul_inv] at h1
     exact (mul_inv_eq_one₀ (pow_ne_zero _ hp.ne')).1 h1
   have hoff : ∀ τ ∈ (Finset.univ : Finset (E →+* ℂ)), τ ∉ Ov ι w → nu ι (τ α) = 1 := by
     intro τ _ hτ
@@ -190,19 +173,17 @@ theorem prodNorm : ProdNorm := by
       exact hτ hu
     exact nu_gen_off ι hs hne hu
   have hall : nu ι ((Algebra.norm ℤ α : ℤ) : ℂ) = (∏ τ ∈ Ov ι w, nu ι (τ (unif w : E))) ^ h := by
-    rw [← prod_emb, nu_prod, ← Finset.prod_subset (Finset.subset_univ (Ov ι w)) hoff,
-      Finset.prod_congr rfl hon, Finset.prod_pow]
+    rw [← prod_emb]
+    simp only [nu, map_prod, norm_prod] at hoff hon ⊢
+    rw [← Finset.prod_subset (Finset.subset_univ (Ov ι w)) hoff, Finset.prod_congr rfl hon,
+      Finset.prod_pow]
   have hnorm : (Algebra.norm ℤ α).natAbs = normV w ^ h := by
     rw [← Ideal.absNorm_span_singleton, hs, map_pow]
     rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
   have hN : nu ι ((Algebra.norm ℤ α : ℤ) : ℂ) = nu ι (normV w : ℂ) ^ h := by
-    rw [← nu_pow]
-    rcases Int.natAbs_eq (Algebra.norm ℤ α) with he | he
-    · rw [he, hnorm]
-      simp
-    · rw [he, hnorm]
-      simp [nu_neg]
+    simp only [nu, ← norm_pow, ← map_pow]
+    rcases Int.natAbs_eq (Algebra.norm ℤ α) with he | he <;> (rw [he, hnorm]; simp)
   have hfin := hall.symm.trans hN
-  exact (pow_left_inj₀ (Finset.prod_nonneg fun _ _ => nu_nonneg ι _) (nu_nonneg ι _) hh).1 hfin
+  exact (pow_left_inj₀ (Finset.prod_nonneg fun _ _ => norm_nonneg _) (norm_nonneg _) hh).1 hfin
 
 end UpperTheory.V.Z.Int

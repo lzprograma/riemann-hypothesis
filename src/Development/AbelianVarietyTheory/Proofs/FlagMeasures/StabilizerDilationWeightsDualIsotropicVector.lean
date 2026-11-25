@@ -196,16 +196,16 @@ def pw (k r : ℕ) (i : Fin (2 * r + k + 1)) : ℤ :=
 theorem pw_e (a : Fin r) : pw k r (eI k r a) = (r : ℤ) - a.val := by
   have ha := a.isLt
   unfold pw
-  rw [if_pos (by simp only [eI, Fin.val_mk]; omega)]
+  rw [ite_eq_left (by simp only [eI, Fin.val_mk]; omega)]
   simp only [eI, Fin.val_mk]
 theorem pw_w (a : Fin (k + 1)) : pw k r (wI k r a) = 0 := by
   have ha := a.isLt
   unfold pw
-  rw [if_neg (by simp only [wI, Fin.val_mk]; omega), if_pos (by simp only [wI, Fin.val_mk]; omega)]
+  rw [ite_eq_right (by simp only [wI, Fin.val_mk]; omega), ite_eq_left (by simp only [wI, Fin.val_mk]; omega)]
 theorem stabilizerDilationWeights_dualIsotropicVector (a : Fin r) : pw k r (esI k r a) = -((r : ℤ) - a.val) := by
   have ha := a.isLt
   unfold pw
-  rw [if_neg (by simp only [esI, Fin.val_mk]; omega), if_neg (by simp only [esI, Fin.val_mk]; omega)]
+  rw [ite_eq_right (by simp only [esI, Fin.val_mk]; omega), ite_eq_right (by simp only [esI, Fin.val_mk]; omega)]
   simp only [esI, Fin.val_mk]
   omega
 
@@ -242,29 +242,29 @@ private theorem Hpk_eI_apply (b : Fin r) (p : Fin (2 * r + k + 1)) :
     Hpk k r (eI k r b) p = if p = esI k r b then 1 else 0 := by
   refine Rad.cases3 (P := fun p => Hpk k r (eI k r b) p = if p = esI k r b then 1 else 0) ?_ ?_ ?_ p
   · intro a
-    rw [Rad.H_ee, if_neg (Rad.eI_ne_esI a b)]
+    rw [Rad.H_ee, ite_eq_right (Rad.eI_ne_esI a b)]
   · intro j
-    rw [Rad.H_ew, if_neg (Rad.wI_ne_esI j b)]
+    rw [Rad.H_ew, ite_eq_right (Rad.wI_ne_esI j b)]
   · intro c
     rw [Rad.H_es]
     by_cases h : b = c
     · subst h; simp
     · have h' : esI k r c ≠ esI k r b := fun e => h ((Rad.esI_inj c b).1 e).symm
-      rw [if_neg h, if_neg h']
+      rw [ite_eq_right h, ite_eq_right h']
 
 private theorem Hpk_apply_eI (a : Fin r) (q : Fin (2 * r + k + 1)) :
     Hpk k r q (eI k r a) = if q = esI k r a then 1 else 0 := by
   refine Rad.cases3 (P := fun q => Hpk k r q (eI k r a) = if q = esI k r a then 1 else 0) ?_ ?_ ?_ q
   · intro c
-    rw [Rad.H_ee, if_neg (Rad.eI_ne_esI c a)]
+    rw [Rad.H_ee, ite_eq_right (Rad.eI_ne_esI c a)]
   · intro j
-    rw [Rad.H_we, if_neg (Rad.wI_ne_esI j a)]
+    rw [Rad.H_we, ite_eq_right (Rad.wI_ne_esI j a)]
   · intro c
     rw [Rad.H_se]
     by_cases h : c = a
     · subst h; simp
     · have h' : esI k r c ≠ esI k r a := fun e => h ((Rad.esI_inj c a).1 e)
-      rw [if_neg h, if_neg h']
+      rw [ite_eq_right h, ite_eq_right h']
 
 theorem N_ss {n : Mat k r} (hn : n ∈ Nset k r) (a b : Fin r) (hab : a ≤ b) :
     n (esI k r a) (esI k r b) = if a = b then 1 else 0 := by
@@ -272,14 +272,14 @@ theorem N_ss {n : Mat k r} (hn : n ∈ Nset k r) (a b : Fin r) (hab : a ≤ b) :
   have h1 := hinv.2.1 a (eI k r b) (by show a.val ≤ b.val; exact Fin.le_iff_val_le_val.mp hab)
   have h2 : n⁻¹ (eI k r b) (eI k r a) = star (n (esI k r a) (esI k r b)) := by
     rw [inv_eq_Hpk_mul_conjTranspose_mul_Hpk_of_mem_Nset hn, Matrix.mul_apply, Finset.sum_eq_single (esI k r a)]
-    · rw [Hpk_apply_eI a (esI k r a), if_pos rfl, mul_one, Matrix.mul_apply, Finset.sum_eq_single (esI k r b)]
-      · rw [Hpk_eI_apply b (esI k r b), if_pos rfl, one_mul, Matrix.conjTranspose_apply]
+    · rw [Hpk_apply_eI a (esI k r a), ite_eq_left rfl, mul_one, Matrix.mul_apply, Finset.sum_eq_single (esI k r b)]
+      · rw [Hpk_eI_apply b (esI k r b), ite_eq_left rfl, one_mul, Matrix.conjTranspose_apply]
       · intro p _ hp
-        rw [Hpk_eI_apply b p, if_neg hp, zero_mul]
+        rw [Hpk_eI_apply b p, ite_eq_right hp, zero_mul]
       · intro h
         exact absurd (Finset.mem_univ _) h
     · intro q _ hq
-      rw [Hpk_apply_eI a q, if_neg hq, mul_zero]
+      rw [Hpk_apply_eI a q, ite_eq_right hq, mul_zero]
     · intro h
       exact absurd (Finset.mem_univ _) h
   rw [h2] at h1
@@ -289,7 +289,7 @@ theorem N_ss {n : Mat k r} (hn : n ∈ Nset k r) (a b : Fin r) (hab : a ≤ b) :
   rw [h4]
   by_cases h : a = b
   · subst h; simp
-  · rw [if_neg h, if_neg (fun e => h (h3.1 e)), star_zero]
+  · rw [ite_eq_right h, ite_eq_right (fun e => h (h3.1 e)), star_zero]
 
 theorem N_entry {n : Mat k r} (hn : n ∈ Nset k r) (i j : Fin (2 * r + k + 1)) (h : pw k r i ≤ pw k r j) :
     n i j = (1 : Mat k r) i j := by
@@ -297,18 +297,16 @@ theorem N_entry {n : Mat k r} (hn : n ∈ Nset k r) (i j : Fin (2 * r + k + 1)) 
   refine Rad.cases3 (P := fun j => pw k r i ≤ pw k r j → n i j = (1 : Mat k r) i j) ?_ ?_ ?_ j
   · intro b h
     have hi : b.val ≤ i.val := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       have hir : i.val < r := lt_trans hc b.isLt
-      have hp : pw k r i = (r : ℤ) - i.val := by unfold pw; rw [if_pos hir]
+      have hp : pw k r i = (r : ℤ) - i.val := by unfold pw; rw [ite_eq_left hir]
       rw [hp, pw_e] at h
       omega
     rw [hn.2.1 b i hi, Matrix.one_apply]
   · intro m h
     have hi : r ≤ i.val := by
-      by_contra hc
-      push_neg at hc
-      have hp : pw k r i = (r : ℤ) - i.val := by unfold pw; rw [if_pos hc]
+      by_contra! hc
+      have hp : pw k r i = (r : ℤ) - i.val := by unfold pw; rw [ite_eq_left hc]
       rw [hp, pw_w] at h
       omega
     have hm := m.isLt
@@ -333,7 +331,7 @@ theorem N_entry {n : Mat k r} (hn : n ∈ Nset k r) (i j : Fin (2 * r + k + 1)) 
       rw [N_ss hn a c hac, Matrix.one_apply]
       by_cases hh : a = c
       · subst hh; simp
-      · rw [if_neg hh, if_neg (fun e => hh ((Rad.esI_inj a c).1 e))]
+      · rw [ite_eq_right hh, ite_eq_right (fun e => hh ((Rad.esI_inj a c).1 e))]
 
 noncomputable def ep (m : ℕ) : ℝ := 1 / ((m : ℝ) + 1)
 
@@ -362,12 +360,12 @@ theorem tendsto_DD {n : Mat k r} (hn : n ∈ Nset k r) :
       rw [hn', Matrix.one_apply]
       by_cases hh : i = j
       · subst hh
-        rw [if_pos rfl, mul_one, mul_inv_cancel₀ (zpow_ne_zero _ hne)]
-      · rw [if_neg hh, mul_zero, zero_mul]
+        rw [ite_eq_left rfl, mul_one, mul_inv_cancel₀ (zpow_ne_zero _ hne)]
+      · rw [ite_eq_right hh, mul_zero, zero_mul]
     exact (tendsto_congr hc).2 tendsto_const_nhds
-  · push_neg at hij
+  · push Not at hij
     have hne : i ≠ j := fun e => by subst e; exact lt_irrefl _ hij
-    rw [Matrix.one_apply, if_neg hne]
+    rw [Matrix.one_apply, ite_eq_right hne]
     have hpos : 0 ≤ pw k r i - pw k r j - 1 := by omega
     obtain ⟨d, hd⟩ : ∃ d : ℕ, pw k r i = pw k r j + ((d + 1 : ℕ) : ℤ) := by
       refine ⟨(pw k r i - pw k r j - 1).toNat, ?_⟩
@@ -432,36 +430,36 @@ private theorem DD_eq_uEmb_diagonal_zpow {ε : ℝ} (h : ε ≠ 0) :
       simp only [DD, Matrix.diagonal_apply, Rad.eI_inj, pw_e, hd]
     · intro n
       rw [uEmb_eI_wI_eq_zero]
-      simp only [DD, Matrix.diagonal_apply, Rad.eI_ne_wI, if_false]
+      simp only [DD, Matrix.diagonal_apply, Rad.eI_ne_wI, ite_false]
     · intro b
       rw [UEmb.u_es]
-      simp only [DD, Matrix.diagonal_apply, Rad.eI_ne_esI, if_false]
+      simp only [DD, Matrix.diagonal_apply, Rad.eI_ne_esI, ite_false]
   · intro m j
     refine Rad.cases3 (P := fun j => DD k r ε (wI k r m) j = uEmb k r (Matrix.diagonal d) (wI k r m) j) ?_ ?_ ?_ j
     · intro b
       rw [uEmb_wI_eI_eq_zero]
-      simp only [DD, Matrix.diagonal_apply, Rad.wI_ne_eI, if_false]
+      simp only [DD, Matrix.diagonal_apply, Rad.wI_ne_eI, ite_false]
     · intro n
       rw [uEmb_wI_wI_eq_ite]
       simp only [DD, Matrix.diagonal_apply, Rad.wI_inj, pw_w, zpow_zero]
     · intro b
       rw [uEmb_wI_esI_eq_zero]
-      simp only [DD, Matrix.diagonal_apply, Rad.wI_ne_esI, if_false]
+      simp only [DD, Matrix.diagonal_apply, Rad.wI_ne_esI, ite_false]
   · intro a j
     refine Rad.cases3 (P := fun j => DD k r ε (esI k r a) j = uEmb k r (Matrix.diagonal d) (esI k r a) j) ?_ ?_ ?_ j
     · intro b
       rw [UEmb.u_se]
-      simp only [DD, Matrix.diagonal_apply, Rad.esI_ne_eI, if_false]
+      simp only [DD, Matrix.diagonal_apply, Rad.esI_ne_eI, ite_false]
     · intro n
       rw [uEmb_esI_wI_eq_zero]
-      simp only [DD, Matrix.diagonal_apply, Rad.esI_ne_wI, if_false]
+      simp only [DD, Matrix.diagonal_apply, Rad.esI_ne_wI, ite_false]
     · intro b
       rw [UEmb.u_ss, hDi]
       simp only [DD, Matrix.diagonal_apply, Rad.esI_inj, stabilizerDilationWeights_dualIsotropicVector]
       by_cases hab : a = b
       · subst hab
-        simp only [if_true, hd, star_inv₀, star_ofReal_zpow, _root_.zpow_neg]
-      · simp only [hab, Ne.symm hab, if_false, star_zero]
+        simp only [ite_true, hd, star_inv₀, star_ofReal_zpow, _root_.zpow_neg]
+      · simp only [hab, Ne.symm hab, ite_false, star_zero]
 
 theorem DD_uEmb {ε : ℝ} (h : ε ≠ 0) (β : Fin r → ℕ) (x : UTin β → ℂ) :
     ∃ x', DD k r ε * uEmb k r (upperIn β x) * (DD k r ε)⁻¹ = uEmb k r (upperIn β x') := by
@@ -561,27 +559,27 @@ theorem DD_pTop {ε : ℝ} (h : ε ≠ 0) (j : ℕ) (q : PTop k r j) :
   congr 1
   · funext a i
     by_cases ha : j ≤ a.val
-    · simp only [dif_pos ha]
-    · simp only [dif_neg ha, Pi.zero_apply, mul_zero]
+    · simp only [dite_eq_left ha]
+    · simp only [dite_eq_right ha, Pi.zero_apply, mul_zero]
   · funext a b
     simp only [skewM, Matrix.of_apply]
     by_cases hab : a < b
-    · simp only [dif_pos hab]
+    · simp only [dite_eq_left hab]
       by_cases ha : j ≤ a.val
-      · simp only [dif_pos ha]; ring
-      · simp only [dif_neg ha]; ring
-    · simp only [dif_neg hab]
+      · simp only [dite_eq_left ha]; ring
+      · simp only [dite_eq_right ha]; ring
+    · simp only [dite_eq_right hab]
       by_cases hba : b < a
-      · simp only [dif_pos hba]
+      · simp only [dite_eq_left hba]
         by_cases hb : j ≤ b.val
-        · simp only [dif_pos hb, star_mul', star_ofReal_zpow]; ring
-        · simp only [dif_neg hb, star_zero, neg_zero, mul_zero, zero_mul]
-      · simp only [dif_neg hba]
+        · simp only [dite_eq_left hb, star_mul', star_ofReal_zpow]; ring
+        · simp only [dite_eq_right hb, star_zero, neg_zero, mul_zero, zero_mul]
+      · simp only [dite_eq_right hba]
         have hab' : a = b := le_antisymm (not_lt.mp hba) (not_lt.mp hab)
         subst hab'
         by_cases ha : j ≤ a.val
-        · simp only [dif_pos ha]; push_cast; ring
-        · simp only [dif_neg ha]; push_cast; ring
+        · simp only [dite_eq_left ha]; push_cast; ring
+        · simp only [dite_eq_right ha]; push_cast; ring
 
 theorem DD_range {ε : ℝ} (h : ε ≠ 0) (j : ℕ) (β : Fin r → ℕ) {x : Mat k r} (hx : x ∈ Set.range (rEl k r j β)) :
     DD k r ε * x * (DD k r ε)⁻¹ ∈ Set.range (rEl k r j β) := by
@@ -603,11 +601,11 @@ theorem rEl_ee (j : ℕ) (β : Fin r → ℕ) (q : (UTin β → ℂ) × PTop k r
     · intro a'
       simp only [pTop, pOf, Rad.pEl_ee, Rad.eI_inj]
     · intro m
-      simp only [pTop, pOf, Rad.pEl_we, Rad.wI_ne_eI, if_false]
+      simp only [pTop, pOf, Rad.pEl_we, Rad.wI_ne_eI, ite_false]
     · intro a'
-      simp only [pTop, pOf, Rad.pEl_se, Rad.esI_ne_eI, if_false]
+      simp only [pTop, pOf, Rad.pEl_se, Rad.esI_ne_eI, ite_false]
   simp only [rEl, Matrix.mul_apply, hcol, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, UEmb.u_ee]
+    Finset.mem_univ, ite_true, UEmb.u_ee]
 
 theorem block_of_subset (j : ℕ) {β β' : Fin r → ℕ} (h : Set.range (rEl k r j β) ⊆ Set.range (rEl k r j β'))
     (p : UT r) (hp : β p.1.1 = β p.1.2) : β' p.1.1 = β' p.1.2 := by

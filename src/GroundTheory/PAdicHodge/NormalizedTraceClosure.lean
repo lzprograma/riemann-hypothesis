@@ -72,7 +72,7 @@ variable {E R}
 
 theorem extendToClosure_of_mem {x : ℂ_[p]} (hx : x ∈ closureInCp E) :
     extendToClosure E R x = extendOnClosure E R ⟨x, hx⟩ :=
-  dif_pos hx
+  dite_eq_left hx
 
 theorem isClosed_image_coe (k : IntermediateField ℚ_[p] (PadicAlgCl p))
     [FiniteDimensional ℚ_[p] k] :

@@ -10,51 +10,8 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AnalyticSystem
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.LeviForms.TailCutA
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ReduceModChar
 import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
@@ -296,7 +253,7 @@ theorem sum_unif (A : FinHolAtlas e X) {U : Set X} (hU : IsOpen U) {ι : Type} [
   choose V hV hev using fun i => member_unif A hU (hC2 i) hx hδ
   refine ⟨⋂ i, V i, mem_nhdsWithin_of_mem_nhds (Filter.iInter_mem.2 hV), ?_⟩
   filter_upwards [Filter.eventually_all.2 hev, Ioc_mem_nhdsGT ht₀] with t ht htt y hy
-  rw [if_pos ⟨htt.1, htt.2⟩, Real.dist_eq]
+  rw [ite_eq_left ⟨htt.1, htt.2⟩, Real.dist_eq]
   have hy' : ∀ i, y ∈ V i := Set.mem_iInter.1 hy
   have e1 : cst + ∑ i, c i * ph i y - (cst + ∑ i, c i * phT i t y) = ∑ i, c i * (ph i y - phT i t y) := by
     rw [add_sub_add_left_eq_sub, ← Finset.sum_sub_distrib]
@@ -364,11 +321,11 @@ theorem regular (hC : ConvergenceSignedStatement) {e : ℕ} {τ : Type} (S : AnS
       else cst + ∑ i, c i * S.ph (mm i) x) (bdry S.s)ᶜ := by
     intro t
     by_cases ht : 0 < t ∧ t ≤ S.t₀
-    · simp only [ht, and_self, if_true]
+    · simp only [ht, and_self, ite_true]
       refine continuousOn_const.add (continuousOn_finsetSum _ fun i _ => continuousOn_const.mul ?_)
       exact (continuousOn_of_smoothOn S.A isOpen_univ ((S.reg (mm i)).2.2 t ht.1 ht.2).1).mono
         (Set.subset_univ _)
-    · simp only [ht, if_false]
+    · simp only [ht, ite_false]
       exact continuousOn_const.add (continuousOn_finsetSum _ fun i _ => continuousOn_const.mul
         (continuousOn_of_smoothOn S.A hU (S.sing (mm i)).2.1))
   have hgb : ∀ t y, y ∉ bdry S.s → |(fun x => if 0 < t ∧ t ≤ S.t₀ then cst + ∑ i, c i * S.phT (mm i) t x
@@ -376,9 +333,9 @@ theorem regular (hC : ConvergenceSignedStatement) {e : ℕ} {τ : Type} (S : AnS
       (|cst| + ∑ i, |c i| * (|S.C| + |S.C₅|)) * Real.log (rW S.L S.s y) := by
     intro t y hy
     by_cases ht : 0 < t ∧ t ≤ S.t₀
-    · simp only [ht, and_self, if_true]
+    · simp only [ht, and_self, ite_true]
       exact abs_lin_le c cst _ (fun i => hphT (mm i) t ht.1 ht.2 y hy) (hl y hy)
-    · simp only [ht, if_false]
+    · simp only [ht, ite_false]
       exact abs_lin_le c cst _ (fun i => hph (mm i) y hy) (hl y hy)
   have hlim := sum_unif S.A hU (fun i => S.ph (mm i)) (fun i => S.phT (mm i)) c cst
     (fun i j K hK hKc => ((S.c2 (mm i)) j K hK hKc).1) S.t₀ ht₀
@@ -391,7 +348,7 @@ theorem regular (hC : ConvergenceSignedStatement) {e : ℕ} {τ : Type} (S : AnS
   have e1 : (fun x => if 0 < t ∧ t ≤ S.t₀ then cst + ∑ i, c i * S.phT (mm i) t x
       else cst + ∑ i, c i * S.ph (mm i) x) = fun x => cst + ∑ i, c i * S.phT (mm i) t x := by
     funext x
-    rw [if_pos ⟨ht.1, ht.2⟩]
+    rw [ite_eq_left ⟨ht.1, ht.2⟩]
   rw [e1]
   rfl
 
@@ -448,46 +405,37 @@ theorem _root_.GlobalTheory.CompanionTheory.Relay.analytic_square_regularized_co
   have ht0 : 0 < Q.SW.t₀ := (Q.SW.reg none).1
   let mm : σ × Fin 2 → Option σ := fun i => if i.2 = 0 then some i.1 else if i.1 = a₀ then none else some i.1
   let c : σ × Fin 2 → ℝ := fun i => 1 / 2 * (ε i.1 : ℝ)
-  have hph : ∀ x, 1 / 2 * ∑ a : σ, (ε a : ℝ) * (SY.ph a (Q.q 0 x) + SY.ph a (Q.q 1 x)) = ∑ i : σ × Fin 2, c i * Q.SW.ph (mm i) x := by
-    intro x
+  have hsum : ∀ (F : σ → SY.X → ℝ) (G : Option σ → Q.SW.X → ℝ),
+      (∀ a x, G (some a) x = F a (Q.q 0 x)) → (∀ x, G none x = F a₀ (Q.q 1 x)) →
+      (∀ a ≠ a₀, ∀ x, F a (Q.q 0 x) = F a (Q.q 1 x)) →
+      ∀ x, 1 / 2 * ∑ a : σ, (ε a : ℝ) * (F a (Q.q 0 x) + F a (Q.q 1 x)) =
+        ∑ i : σ × Fin 2, c i * G (mm i) x := by
+    intro F G h0 h1 hb x
     rw [Fintype.sum_prod_type, Finset.mul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [Fin.sum_univ_two]
-    have e0 : Q.SW.ph (mm (a, 0)) x = SY.ph a (Q.q 0 x) := by simp [mm, Q.ph0]
-    have e1 : Q.SW.ph (mm (a, 1)) x = SY.ph a (Q.q 1 x) := by
+    have e0 : G (mm (a, 0)) x = F a (Q.q 0 x) := by simp [mm, h0]
+    have e1 : G (mm (a, 1)) x = F a (Q.q 1 x) := by
       by_cases ha : a = a₀
-      · subst ha
-        simp [mm, Q.ph1]
-      · simp [mm, ha, Q.ph0]
-        exact congrFun (Q.base_ph a ha) x
-    rw [e0, e1]
-    simp only [c]
-    ring
-  have hphT : ∀ t x, 1 / 2 * ∑ a : σ, (ε a : ℝ) * (SY.phT a t (Q.q 0 x) + SY.phT a t (Q.q 1 x)) = ∑ i : σ × Fin 2, c i * Q.SW.phT (mm i) t x := by
-    intro t x
-    rw [Fintype.sum_prod_type, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [Fin.sum_univ_two]
-    have e0 : Q.SW.phT (mm (a, 0)) t x = SY.phT a t (Q.q 0 x) := by simp [mm, Q.phase_some_eq_comp_first_projection]
-    have e1 : Q.SW.phT (mm (a, 1)) t x = SY.phT a t (Q.q 1 x) := by
-      by_cases ha : a = a₀
-      · subst ha
-        simp [mm, Q.phase_none_eq_comp_second_projection]
-      · simp [mm, ha, Q.phase_some_eq_comp_first_projection]
-        exact congrFun (Q.base_phT a ha t) x
+      · subst ha; simp [mm, h1]
+      · simp [mm, ha, h0, hb a ha x]
     rw [e0, e1]
     simp only [c]
     ring
   have hgH : Q.gH = fun x => logNormSec Q.L' Q.v x + (Q.cst + ∑ i, c i * Q.SW.ph (mm i) x) := by
     funext x
     simp only [AnSq.gH]
-    rw [hph]
+    rw [hsum SY.ph Q.SW.ph (fun a x => by simp [Q.ph0]) (fun x => by simp [Q.ph1])
+      (fun a ha x => congrFun (Q.base_ph a ha) x)]
     ring
   have hgT : ∀ t, Q.gT t = fun x => logNormSec Q.L' Q.v x + (Q.cst + ∑ i, c i * Q.SW.phT (mm i) t x) := by
     intro t
     funext x
     simp only [AnSq.gT]
-    rw [hphT]
+    rw [hsum (SY.phT · t) (Q.SW.phT · t)
+      (fun a x => by simp [Q.phase_some_eq_comp_first_projection])
+      (fun x => by simp [Q.phase_none_eq_comp_second_projection])
+      (fun a ha x => congrFun (Q.base_phT a ha t) x)]
     ring
   obtain ⟨hsI, hsE, hsT⟩ := PositivityTheory.Xgp.sq_limit.singular_part hI Q w
   obtain ⟨hrI, hrT⟩ := PositivityTheory.Xgp.sq_limit.regular hCS Q.SW w mm c Q.cst ht0

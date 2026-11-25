@@ -1140,7 +1140,7 @@ theorem onePipe_mul_conjTranspose {j m : ℕ} (Z : Matrix (Fin j) (Fin m) ℂ) :
     Fin.append_right, Matrix.add_apply]
   congr 1
   simp only [Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
-    if_true]
+    ite_true]
   by_cases hab : a = b
   · subst hab; simp
   · simp [hab, Ne.symm hab]
@@ -1320,8 +1320,8 @@ theorem ThetaCharIntegral.proof : ThetaCharIntegral.Statement := by
       by_contra h
       push Not at h
       exact hm (funext h)
-    rw [if_neg hm]
-    exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
+    rw [ite_eq_right hm]
+    exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)
 
 end
 

@@ -336,7 +336,7 @@ theorem sum_char {G : Type} [AddCommGroup G] [Fintype G] (f : G → ℂ) (h0 : f
     ∑ a, f a = if ∀ a, f a = 1 then (Nat.card G : ℂ) else 0 := by
   split_ifs with hf
   · simp [hf]
-  · push_neg at hf
+  · push Not at hf
     obtain ⟨a, ha⟩ := hf
     have e : ∑ b, f b = f a * ∑ b, f b := by
       rw [Finset.mul_sum, ← Equiv.sum_comp (Equiv.addLeft a)]
@@ -398,7 +398,7 @@ theorem card_mul_card_orth [Finite M] (hc : ∀ x y, β x y = β y x) (hz : ∀ 
     rw [Finset.sum_eq_single (0 : X)]
     · simp [hc _ 0, hz]
     · intro x _ hx
-      rw [sum_char (fun y => β y x) (hz _) (fun a b => h2 _ _ _), if_neg]
+      rw [sum_char (fun y => β y x) (hz _) (fun a b => h2 _ _ _), ite_eq_right]
       intro h
       exact hx (Subtype.ext (h4 _ fun y => by rw [hc]; exact h y))
     · simp
@@ -621,7 +621,7 @@ theorem gauss_sign {R : Type} [CommRing R] (σ : R →+* R) (hσ : ∀ a, σ (σ
     rw [e, e', c, ← Nat.card_prod, smul, Nat.card_prod, smul, ← mul_assoc (s _), ssq]
     push_cast
     ring
-  · push_neg at hφ
+  · push Not at hφ
     obtain ⟨x, hxX, hx1⟩ := hφ
     have hx0 : x ≠ 0 := by rintro rfl; exact hx1 (phi_zero h0 h1 h2)
     let f := LinearMap.toSpanSingleton R M x

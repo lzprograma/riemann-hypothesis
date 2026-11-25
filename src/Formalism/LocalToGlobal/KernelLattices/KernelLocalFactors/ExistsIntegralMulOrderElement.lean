@@ -13,6 +13,7 @@ import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFi
 public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
 public import Formalism.LocalToGlobal.Columns.RecLevel
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NarrowJetMoments
 
 @[expose] public section
 
@@ -294,22 +295,7 @@ variable {sel}
 
 theorem qe_nat_notMem (hsel : IsSel X sel) {p : ℕ} (hp : p.Prime) (hS : p ∈ S) {P : HeightOneSpectrum (𝓞 X.E)}
     (hP : P ∈ QE sel (mu : Chr X.F X.E X.K)) : (p : 𝓞 X.E) ∉ P.asIdeal := by
-  intro hi
-  obtain ⟨v, hv, rfl⟩ := (mem_QE sel mu P).mp hP
-  have h1 : ((p : ℕ) : 𝓞 X.F) ∈ v.asIdeal := by
-    rw [← hsel v]
-    show algebraMap (𝓞 X.F) (𝓞 X.E) ((p : ℕ) : 𝓞 X.F) ∈ (sel v).asIdeal
-    rw [map_natCast]
-    exact hi
-  have h2 : plc v ∣ p := by
-    rw [← Ideal.Quotient.eq_zero_iff_mem, map_natCast] at h1
-    exact (ringChar.spec _ _).mp h1
-  have hpp : (plc v).Prime := by
-    have : Finite (𝓞 X.F ⧸ v.asIdeal) := Ideal.finiteQuotientOfFreeOfNeBot v.asIdeal v.ne_bot
-    have : v.asIdeal.IsPrime := v.isPrime
-    exact CharP.char_is_prime (𝓞 X.F ⧸ v.asIdeal) (ringChar (𝓞 X.F ⧸ v.asIdeal))
-  have h3 : plc v = p := (Nat.prime_dvd_prime_iff_eq hpp hp).mp h2
-  exact (mu.good hv).2.2 (h3 ▸ hS)
+  apply _root_.GlobalTheory.Proof.NarrowJetMoments.notMem_of_mem_QE <;> assumption
 
 theorem qe_noConj (hX : X.AbelianUnramifiedExtensionConditions) (hsel : IsSel X sel) : ∀ P ∈ QE sel (mu : Chr X.F X.E X.K), conjPrime₂ P ∉ QE sel (mu : Chr X.F X.E X.K) := by
   intro P hP hP'

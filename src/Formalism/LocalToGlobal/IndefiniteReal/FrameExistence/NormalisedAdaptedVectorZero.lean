@@ -12,8 +12,6 @@ open Formalism.IndefR.Mi IsDedekindDomain NumberField
 
 namespace Formalism.IndefR.Seed.Frm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def betaYOf (βY : ∀ j, GL (Fin (Yc D j).rank) (EAf D)) (j : ℕ) : GL (Fin (D.sp.Y j).rank) (EAf D) :=

@@ -106,19 +106,6 @@ noncomputable def UpperTheory.Reformulated.B.TotalDegreeLinear.sub :
           fun (y : ι × B) ↦
           ∑ j : ι, (MvPolynomial.C : ℂ → MvPolynomial (ι × A ⊕ ι × B) ℂ) (h y.1 j) * MvPolynomial.X (Sum.inr (j, y.2)))
 
-private lemma UpperTheory.Reformulated.B.TotalDegreeLinear.totalDegree_aeval_le {σ τ : Type}
-    (f : σ → MvPolynomial τ ℂ) (hf : ∀ i, (f i).totalDegree ≤ 1) (p : MvPolynomial σ ℂ) :
-    (MvPolynomial.aeval f p).totalDegree ≤ p.totalDegree := by
-  rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_eq]
-  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun d hd => ?_)
-  refine (MvPolynomial.totalDegree_mul _ _).trans ?_
-  rw [MvPolynomial.algebraMap_eq, MvPolynomial.totalDegree_C, zero_add]
-  refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
-  calc ∑ i ∈ d.support, (f i ^ d i).totalDegree
-      ≤ ∑ i ∈ d.support, d i := Finset.sum_le_sum fun i _ =>
-        (MvPolynomial.totalDegree_pow _ _).trans (by simpa using Nat.mul_le_mul_left (d i) (hf i))
-    _ ≤ p.totalDegree := MvPolynomial.le_totalDegree hd
-
 private lemma UpperTheory.Reformulated.B.TotalDegreeLinear.totalDegree_linear_le {ι τ : Type} [Fintype ι]
     (c : ι → ℂ) (v : ι → τ) :
     (∑ j : ι, (MvPolynomial.C (c j) : MvPolynomial τ ℂ) * MvPolynomial.X (v j)).totalDegree ≤ 1 := by
@@ -132,7 +119,7 @@ theorem UpperTheory.Reformulated.B.TotalDegreeLinear.main :
       MvPolynomial.totalDegree ((UpperTheory.Reformulated.B.TotalDegreeLinear.sub g h : UpperTheory.Reformulated.B.TotalDegreeLinear.PV ι A B → UpperTheory.Reformulated.B.TotalDegreeLinear.PV ι A B) p) ≤
         MvPolynomial.totalDegree p := by
   intro ι A B _ g h p
-  refine UpperTheory.Reformulated.B.TotalDegreeLinear.totalDegree_aeval_le _ ?_ p
+  refine PositivityTheory.Rg.Sw.FFTSteps.AsmA.totalDegree_aeval_le _ ?_ p
   rintro (x | y)
   · exact UpperTheory.Reformulated.B.TotalDegreeLinear.totalDegree_linear_le _ _
   · exact UpperTheory.Reformulated.B.TotalDegreeLinear.totalDegree_linear_le _ _
@@ -185,9 +172,6 @@ theorem actP_actP (g h g' h' : Matrix ι ι ℂ) (z : (ι × A) ⊕ (ι × B) �
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun j _ => ?_
     ring
-
-theorem totalDegree_sub_le (g h : Matrix ι ι ℂ) (p : PV ι A B) : (sub g h p).totalDegree ≤ p.totalDegree :=
-  _root_.UpperTheory.Reformulated.B.TotalDegreeLinear.main g h p
 
 theorem continuous_coeff_sub {K : Type} [TopologicalSpace K] (g h : K → Matrix ι ι ℂ) (hg : Continuous g)
     (hh : Continuous h) (p : PV ι A B) : ∀ m, Continuous fun k => AddMonoidAlgebra.coeff (sub (g k) (h k) p) m := by
@@ -284,7 +268,7 @@ theorem avg : Avg := by
       (fun f => Finsupp.equivFunOnFinite.symm (fun s => (f s : ℕ)))).filter (fun m => (m.sum fun _ e => e) ≤ d)
   have hsupp : ∀ k, (F k).support ⊆ S := by
     intro k m hm
-    have hdeg : (m.sum fun _ e => e) ≤ d := (le_totalDegree hm).trans (totalDegree_sub_le _ _ _)
+    have hdeg : (m.sum fun _ e => e) ≤ d := (le_totalDegree hm).trans (PositivityTheory.Rg.Sw.FFTSteps.AsmA.totalDegree_sub_le _ _ _)
     refine Finset.mem_filter.2 ⟨Finset.mem_image.2 ⟨fun s => ⟨m s, Nat.lt_succ_of_le ?_⟩, Finset.mem_univ _, ?_⟩, hdeg⟩
     · exact (Finsupp.le_degree ..).trans hdeg
     · ext s; simp
@@ -489,11 +473,11 @@ theorem act_emb_other (β β' : Bool) (hne : β' ≠ β) (v : Matrix (Rw ε β) 
   rcases x with ⟨i, a⟩ | ⟨i, a⟩
   · have hi : ¬ ε i.1 = β := fun h => hne (i.2.symm.trans h)
     have := sum_blk_other (n := n) β v hi a false false
-    simp only [Bool.false_eq_true, if_false] at this
+    simp only [Bool.false_eq_true, ite_false] at this
     simp [act, emb, jv, this]
   · have hi : ¬ ε i.1 = β := fun h => hne (i.2.symm.trans h)
     have := sum_blk_other (n := n) β v hi a true true
-    simp only [if_true] at this
+    simp only [ite_true] at this
     simpa [act, emb, jv] using this
 
 theorem emb_pair (β : Bool) (a b : Fin n) :
@@ -548,7 +532,7 @@ theorem coeff_inv (v : Matrix (Rw ε true) (Rw ε true) ℂ) (Q : PX m n) (hQ : 
 
   simp only [map_sum, th_prod, coeff_sum_monomial] at h2
   by_cases hμ : μ ∈ (Th ε Q).support
-  · rw [if_pos hμ] at h2
+  · rw [ite_eq_left hμ] at h2
     exact h2.symm
   · have : AddMonoidAlgebra.coeff (Th ε Q) μ = 0 := notMem_support_iff.1 hμ
     rw [this, map_zero]
@@ -728,18 +712,6 @@ theorem actZ_diagonal (a b : ι → ℂ) (z : (ι × A) ⊕ (ι × B) → ℂ) :
   · simp [actZ, diagonal_apply]
   · simp [actZ, diagonal_apply]
 
-theorem differentiable_eval' {σ : Type} (p : MvPolynomial σ ℂ) (f : ℂ → σ → ℂ)
-    (hf : ∀ v, Differentiable ℂ (fun c => f c v)) :
-    Differentiable ℂ (fun c => MvPolynomial.eval (f c) p) := by
-  induction p using MvPolynomial.induction_on with
-  | C a => simp
-  | add p q hp hq =>
-    simp only [map_add (f := _)]
-    exact hp.add hq
-  | mul_X p v hp =>
-    simp only [map_mul, MvPolynomial.eval_X]
-    exact hp.mul (hf v)
-
 theorem eval_inv (p : PV ι A B) (hp : IsInv p) (u : Matrix ι ι ℂ) (hu : u ∈ Matrix.unitaryGroup ι ℂ)
     (z : (ι × A) ⊕ (ι × B) → ℂ) : eval (actZ u (u.map star) z) p = eval z p := by
   rw [← eval_sub, hp u hu]
@@ -754,7 +726,7 @@ theorem eval_diag (p : PV ι A B) (hp : IsInv p) (a : ι → ℝ) (z : (ι × A)
       funext c
       simp only [hF, actZ_diagonal]
     rw [hF']
-    apply differentiable_eval'
+    apply GlobalTheory.PairingInvariants.differentiable_eval
     intro v
     rcases v with x | y
     · simp only [Sum.elim_inl]
@@ -1011,7 +983,7 @@ private theorem lam_eq_prod_kap_pow {ι A B : Type} [Fintype ι] [DecidableEq ι
   classical
   have hP : (0 : ℝ) < ∏ s : Sg ι A B, jr (m s) := Finset.prod_pos fun s _ => jr_pos _
   have h := gip_diag (A := A) (B := B) d (monomial m (1 : ℂ))
-  rw [pos_lemma, support_monomial, if_neg one_ne_zero, Finset.sum_singleton, coeff_monomial, if_pos rfl,
+  rw [pos_lemma, support_monomial, ite_eq_right one_ne_zero, Finset.sum_singleton, coeff_monomial, ite_eq_left rfl,
     Complex.normSq_one, one_mul] at h
   have h3 : gip (C ((∏ s : Sg ι A B, kap d s ^ m s : ℝ) : ℂ) * monomial m (1 : ℂ)) (monomial m (1 : ℂ)) =
       ((∏ s : Sg ι A B, kap d s ^ m s : ℝ) : ℂ) * ((∏ s : Sg ι A B, jr (m s) : ℝ) : ℂ) := by
@@ -1132,21 +1104,13 @@ theorem gs_half (c : ℝ) (x : Fin m → Fin n → ℂ) : gs c x = gs (c / 2) x 
   push_cast
   ring
 
-theorem integrable_gauss1 {c : ℝ} (hc : 0 < c) : Integrable (fun z : ℂ => Real.exp (-(c * ‖z‖ ^ 2))) := by
-  have h := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add (V := ℂ) (b := (c : ℂ)) (by simpa using hc) 0 0
-  refine h.norm.congr (ae_of_all _ fun z => ?_)
-  simp only [zero_mul, add_zero, Complex.norm_exp]
-  norm_cast
-  rw [neg_mul]
-
 theorem exp_sum_sum (c : ℝ) (x : Fin m → Fin n → ℂ) :
     Real.exp (-(c * ∑ a, ∑ i, ‖x a i‖ ^ 2)) = ∏ a, ∏ i, Real.exp (-(c * ‖x a i‖ ^ 2)) := by
   simp only [Finset.mul_sum, ← Finset.sum_neg_distrib, Real.exp_sum]
 
 theorem integrable_gs_row {c : ℝ} (hc : 0 < c) :
     Integrable (fun y : Fin n → ℂ => ∏ i, Real.exp (-(c * ‖y i‖ ^ 2))) := by
-  exact Integrable.fintype_prod (f := fun _ z => Real.exp (-(c * ‖z‖ ^ 2))) (fun _ => integrable_gauss1 hc)
-
+  exact Integrable.fintype_prod (f := fun _ z => Real.exp (-(c * ‖z‖ ^ 2))) (fun _ => PositivityTheory.Rg.Sw.FFTSteps.CA.integrable_gauss_plane hc)
 
 theorem integrable_gs_prod {c : ℝ} (hc : 0 < c) :
     Integrable (fun x : Fin m → Fin n → ℂ => ∏ a, ∏ i, Real.exp (-(c * ‖x a i‖ ^ 2))) := by
@@ -1220,9 +1184,9 @@ theorem integrable_evX_gs (P : PX m n) : ∀ {c : ℝ}, 0 < c → Integrable (fu
     refine (hp hc2).bdd_mul (c := 1 + 1 / (c / 2)) ?_ ?_
     · refine Continuous.aestronglyMeasurable (Continuous.mul ?_ (continuous_gs _))
       by_cases hk : k.2.2 = true
-      · simp only [hk, if_true]
+      · simp only [hk, ite_true]
         fun_prop
-      · simp only [hk, Bool.false_eq_true, if_false]
+      · simp only [hk, Bool.false_eq_true, ite_false]
         fun_prop
     · refine ae_of_all _ fun x => ?_
       have hn : ‖(if k.2.2 = true then star (x k.1 k.2.1) else x k.1 k.2.1)‖ = ‖x k.1 k.2.1‖ := by
@@ -1594,9 +1558,9 @@ theorem stable : Stable := by
     refine congrArg (fun w => eval w p) ?_
     funext v
     rcases v with ⟨i, a⟩ | ⟨i, b⟩
-    · simp only [Function.comp, f, Sum.elim_inl, if_true, u', Matrix.submatrix_apply]
+    · simp only [Function.comp, f, Sum.elim_inl, ite_true, u', Matrix.submatrix_apply]
       exact (Equiv.sum_comp eι (fun l => u () (eι i) l * z ((), true, l, eA a))).symm
-    · simp only [Function.comp, f, Sum.elim_inr, Bool.false_eq_true, if_false, u', Matrix.submatrix_apply,
+    · simp only [Function.comp, f, Sum.elim_inr, Bool.false_eq_true, ite_false, u', Matrix.submatrix_apply,
         Matrix.map_apply]
       exact (Equiv.sum_comp eι (fun l => (starRingEnd ℂ) (u () (eι i) l) * z ((), false, l, eB b))).symm
   obtain ⟨s, hs⟩ := GlobalTheory.invariant_polynomial_eq_aeval_pairings Unit n n le_rfl q hinv
@@ -1606,10 +1570,10 @@ theorem stable : Stable := by
   have hψf : ∀ w, ψF (f w) = X w := by
     rintro (⟨i, a⟩ | ⟨i, b⟩)
     · have h : ∃ a', eA a' = eA a := ⟨a, rfl⟩
-      simp only [f, Sum.elim_inl, ψF, if_true, dif_pos h, Equiv.symm_apply_apply]
+      simp only [f, Sum.elim_inl, ψF, ite_true, dite_eq_left h, Equiv.symm_apply_apply]
       rw [eA.injective h.choose_spec]
     · have h : ∃ b', eB b' = eB b := ⟨b, rfl⟩
-      simp only [f, Sum.elim_inr, ψF, Bool.false_eq_true, if_false, dif_pos h, Equiv.symm_apply_apply]
+      simp only [f, Sum.elim_inr, ψF, Bool.false_eq_true, ite_false, dite_eq_left h, Equiv.symm_apply_apply]
       rw [eB.injective h.choose_spec]
   have hp' : p = aeval ψF q := by
     rw [hq, aeval_rename]
@@ -1619,10 +1583,10 @@ theorem stable : Stable := by
       MvPolynomial (Unit × Bool × Fin n × Fin n) ℂ)) ∈ pairAlg ι A B := by
     rintro ⟨t, a', b'⟩
 
-    simp only [map_sum, map_mul, aeval_X, ψF, Bool.false_eq_true, if_false, if_true]
+    simp only [map_sum, map_mul, aeval_X, ψF, Bool.false_eq_true, ite_false, ite_true]
     by_cases hb : ∃ b, eB b = a'
     · by_cases ha : ∃ a, eA a = b'
-      · simp only [dif_pos hb, dif_pos ha]
+      · simp only [dite_eq_left hb, dite_eq_left ha]
         have : (∑ k : Fin n, (X (Sum.inr (eι.symm k, hb.choose)) : PV ι A B) * X (Sum.inl (eι.symm k, ha.choose))) =
             ∑ i, (X (Sum.inl (i, ha.choose)) : PV ι A B) * X (Sum.inr (i, hb.choose)) := by
           rw [← Equiv.sum_comp eι]
@@ -1630,9 +1594,9 @@ theorem stable : Stable := by
           rw [Equiv.symm_apply_apply, mul_comm]
         rw [this]
         exact Algebra.subset_adjoin ⟨(ha.choose, hb.choose), rfl⟩
-      · simp only [dif_neg ha, mul_zero, Finset.sum_const_zero]
+      · simp only [dite_eq_right ha, mul_zero, Finset.sum_const_zero]
         exact Subalgebra.zero_mem _
-    · simp only [dif_neg hb, zero_mul, Finset.sum_const_zero]
+    · simp only [dite_eq_right hb, zero_mul, Finset.sum_const_zero]
       exact Subalgebra.zero_mem _
   rw [hp', hs, ← AlgHom.comp_apply, comp_aeval]
   clear hs hp'

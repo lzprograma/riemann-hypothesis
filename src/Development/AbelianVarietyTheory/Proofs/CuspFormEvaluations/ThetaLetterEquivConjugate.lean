@@ -6,49 +6,9 @@ public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PushLe
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsEqMulProdMinors
 import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowAddGenericRowAddTerm
 import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.Sl2NonnegWeightOfHighestWeightVector
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CommuteRowOpRightMixedOp
@@ -68,13 +28,13 @@ variable {ι : Type} {σ : ι → ι} {Ψ : ι → Prop} {dim : ι → ℕ} {p q
 theorem halfRowEquiv_of_mem {τ : ι} (h : Ψ τ) (i : Fin (dim τ)) :
     halfRowEquiv hσ hΨ hp hq ⟨τ, i⟩ = (⟨τ, h⟩, Sum.inl (i.cast (hp _ h))) := by
   unfold halfRowEquiv
-  simp only [Equiv.coe_fn_mk, dif_pos h]
+  simp only [Equiv.coe_fn_mk, dite_eq_left h]
 
 theorem halfRowEquiv_invol {τ : ι} (h : Ψ τ) (i : Fin (dim (σ τ))) :
     halfRowEquiv hσ hΨ hp hq ⟨σ τ, i⟩ = (⟨τ, h⟩, Sum.inr (i.cast (hq _ h))) := by
   have hn : ¬ Ψ (σ τ) := fun h' => (hΨ τ).2 h' h
   unfold halfRowEquiv
-  simp only [Equiv.coe_fn_mk, dif_neg hn]
+  simp only [Equiv.coe_fn_mk, dite_eq_right hn]
   exact Prod.ext (Subtype.ext (hσ τ)) rfl
 
 noncomputable def typeLetterEquiv : Formalism.L2.Pj.Letter ι dim n ≃ Var {τ // Ψ τ} p q (Fin n) :=
@@ -111,7 +71,7 @@ theorem rename_lap_one {τ : ι} (h : Ψ τ) (i : Fin (dim τ)) (j : Fin (dim (�
     fun b => typeLetterEquiv_apply hσ hΨ hp hq (halfRowEquiv_invol hσ hΨ hp hq h j) b
   rw [laplacian_apply]
   simp only [Formalism.L2.Pj.lap, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
 
   simp only [LinearMap.sum_apply, LinearMap.comp_apply, Derivation.coeFn_coe, map_sum]
   refine Finset.sum_congr rfl fun b _ => ?_
@@ -322,13 +282,13 @@ theorem HHa_eq_zero_or_rowHighest [CharZero K] [Fintype ι] [Fintype {τ // Ψ �
           rw [Finset.sum_eq_single b]
           · simp
           · intro k _ hk
-            rw [if_neg]
+            rw [ite_eq_right]
             intro h
             exact hk (congrArg (fun x : Formalism.L2.Pj.Letter ι dim n => x.2.2) h).symm
           · simp
         · rw [Finset.sum_eq_zero, add_zero]
           intro k _
-          rw [if_neg]
+          rw [ite_eq_right]
           intro h
           exact hl ⟨k, h⟩
       have hall : ∀ t : K, bind₁ (fun s => X s + ∑ k : Fin n,

@@ -6,43 +6,7 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.Wey
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SharpPoly
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -177,17 +141,17 @@ theorem sharpWt_rat (D : D7) (Tw : TwForms D) (u : D.what₂.Word) (μ : D.what�
   push_cast
   rw [h1, h2', hw, h3]
   unfold DV.nuRow DV.srcPar DV.wSz
-  rw [dif_pos (show 1 ≤ j + 1 ∧ j + 1 ≤ D.R.m by omega), he _ _ (by omega)]
+  rw [dite_eq_left (show 1 ≤ j + 1 ∧ j + 1 ≤ D.R.m by omega), he _ _ (by omega)]
   simp only [Ranks.N]
   by_cases hr : r.1 < D.R.k
-  · rw [dif_pos hr, dif_pos hr]
+  · rw [dite_eq_left hr, dite_eq_left hr]
     simp only [hcToWeightQ, rhoVec]
     push_cast
     ring
   · have hb : (r.1 - D.R.k) / (D.R.t + 1) < D.R.m := by
       have := D.R.blk_lt hj.le r hr
       omega
-    rw [dite_eq_right hr, dite_eq_right hr, dif_pos hb]
+    rw [dite_eq_right hr, dite_eq_right hr, dite_eq_left hb]
     have hdm := Nat.div_add_mod (r.1 - D.R.k) (D.R.t + 1)
     have hrk : (r.1 : ℝ) = D.R.k + (D.R.t + 1) * (((r.1 - D.R.k) / (D.R.t + 1) : ℕ) : ℝ) + (((r.1 - D.R.k) % (D.R.t + 1) : ℕ) : ℝ) := by
       have : r.1 = D.R.k + (D.R.t + 1) * ((r.1 - D.R.k) / (D.R.t + 1)) + (r.1 - D.R.k) % (D.R.t + 1) := by omega
@@ -215,7 +179,7 @@ theorem natW_add_shift {N : ℕ} (l : DomWeight N) (c : ℤ) (r : Fin N) :
     ((l.natW r : ℕ) : ℤ) + (shW l c).detShift = (shW l c).w r := by
   have hN : 0 < N := lt_of_le_of_lt (Nat.zero_le _) r.2
   have hle : l.w ⟨N - 1, by omega⟩ ≤ l.w r := l.anti (show r ≤ ⟨N - 1, by omega⟩ from Fin.mk_le_mk.2 (by omega))
-  simp only [DomWeight.natW, DomWeight.detShift, shW, dif_pos hN]
+  simp only [DomWeight.natW, DomWeight.detShift, shW, dite_eq_left hN]
   rw [Int.toNat_of_nonneg (by omega)]
   ring
 
@@ -263,7 +227,6 @@ theorem formsSharpAt_of_valTied (t : KerEntTied ex) (u : D.what₂.Word) (μ : D
   exact ⟨Q, hQ, hQE⟩
 
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem formsSharpAt_of_pins (t : KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂.Tup) (St : GlobalTheory.TwU.ChainCharts D u μ)
     (A : GlobalTheory.TwU.AdData t u μ St) (dtU : Formalism.L2.Herm.unitaryOneFiniteAdeles D.sp.cm →* D.Dt) (hP : GlobalTheory.TwU.AdPins A dtU)
     (okW : ℕ → D.what₂.places.Pl → Prop)

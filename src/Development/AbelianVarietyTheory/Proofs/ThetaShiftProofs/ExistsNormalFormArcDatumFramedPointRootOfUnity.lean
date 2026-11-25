@@ -87,12 +87,6 @@ namespace ExFr
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {S : Type} [CommRing S] {x : Sp S ⟶ Xo.X} {t' : SAB H (Sp S)} (m : SABMap t' Xo.univ.t x)
 
-theorem one_eq : η[t'.G].left ≫ m.φ = (1 : Over.mk x ⟶ Xo.univ.t.G).left := by
-  rw [one_left_eq]
-  have := m.cm.e_comm
-  rw [m.base] at this
-  exact this
-
 theorem tan_iff (w : epsR S ⟶ t'.G) : IsTanAt x (w.left ≫ m.φ) ↔ IsTangent w := by
   apply GlobalTheory.ArcQ.ExFr.tan_iff
 
@@ -124,37 +118,8 @@ open ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction
 
 variable {R : Type} [CommRing R] [IsDomain R] {D : DegPre R} {T T' : Over (Spec (CommRingCat.of R))}
 
-theorem exists_isAdd (g g' : GtPt D T) : ∃ g'', g.IsAdd g' g'' := by
-  have vv : ∀ χ y J, Good D.P.L y J → val (LB.mulGen D.P.L _ _ _ _ (LB.mulGen D.P.L _ _ _ _ (g.s χ) (g'.s χ))
-      (LB.invGen D.P.L _ _ (DegPre.cubAtT D T (cP D _ χ) g.b g'.b))) (𝟙 T.left) y J =
-      cv g χ y J * cv g' χ y J * (th D y J (cP D _ χ) g.b g'.b)⁻¹ := fun χ y J hJ =>
-    (val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_mul hJ _ _ _)
-      ((val_inv _ _).trans (congrArg (·⁻¹) (val_cubAtT hJ _ _ _))))
-  obtain ⟨g'', hb, hv⟩ := exists_pt (g.b * g'.b) (fun χ => LB.mulGen D.P.L _ _ _ _
-      (LB.mulGen D.P.L _ _ _ _ (g.s χ) (g'.s χ)) (LB.invGen D.P.L _ _ (DegPre.cubAtT D T (cP D _ χ) g.b g'.b)))
-    (fun χ => mulGen_isGen _ _ _ _ _ _ _ (mulGen_isGen _ _ _ _ _ _ _ (g.isGen _) (g'.isGen _))
-      (invGen_isGen _ _ _ _ (pullGen_isGen _ _ _ _ D.cub.isGen _))) (fun χ U _ h => by
-      refine (prod_sum₂ (K := Fin 4 ⊕ Fin 4) (K' := thK) (U := U) _
-        (prod_sum₂ (K := Fin 4) (K' := Fin 4) (U := U) _ (prod_pt g.b χ h) (prod_pt g'.b χ h))
-        (prod_neg _ _ (prod_cub (cP D _ χ) g.b g'.b h))).trans ?_
-      rw [prod_pt, _root_.mul_assoc (cP D _ χ)]
-      apply Additive.ofMul.injective
-      simp only [ofMul_mul, ofMul_inv]
-      abel) (fun y J hJ => by
-      have C : IsCub (th D (T := T) y J) := isCub_cubV D.cub hJ
-      refine (vv 0 y J hJ).trans ?_
-      rw [cv_zero g hJ, cv_zero g' hJ, cPoint_zero, C.face]; simp) (fun χ χ' y J hJ => by
-      have C : IsCub (th D (T := T) y J) := isCub_cubV D.cub hJ
-      have e₁ := congrArg Additive.ofMul (cv_add g hJ χ χ')
-      have e₂ := congrArg Additive.ofMul (cv_add g' hJ χ χ')
-      have e₃ := congrArg Additive.ofMul (C.compat (cP D _ χ) (cP D _ χ') g.b g'.b)
-      refine (congrArg₂ (· * ·) (vv _ y J hJ) rfl).trans (Eq.trans ?_ (congrArg₂ (· * ·) (vv _ y J hJ) (vv _ y J hJ)).symm)
-      rw [cPoint_add]
-      apply Additive.ofMul.injective
-      simp only [ofMul_mul, ofMul_inv] at e₁ e₂ e₃ ⊢
-      linear_combination (norm := abel) e₁ + e₂ - e₃)
-  exact ⟨g'', (TorusModel.isAdd_iff _ _ _).2 ⟨hb, fun χ y J hJ =>
-    (congrArg₂ (· * ·) ((hv χ _ _ y J hJ).trans (vv χ y J hJ)) rfl).trans (inv_mul_cancel_right _ _)⟩⟩
+theorem exists_isAdd (g g' : GtPt D T) : ∃ g'', g.IsAdd g' g'' :=
+  _root_.GlobalTheory.ConstLie.exists_isAdd g g'
 
 theorem exists_isPull (k : T' ⟶ T) (g : GtPt D T) : ∃ g' : GtPt D T', GtPt.IsPull k.left g g' := by
   have vv : ∀ χ y J, Good D.P.L y J → val (LB.pullGen D.P.L _ _ (g.s χ) k.left) (𝟙 _) y J =

@@ -19,13 +19,7 @@ section SlopeTestRemainingChoices
 
 variable {p : ℕ} [hp : Fact p.Prime]
 
-lemma norm_p_eq : ‖(p : ℂ_[p])‖ = (p : ℝ)⁻¹ := by
-  have h : ‖(((p : ℚ_[p]) : ℚ_[p]) : ℂ_[p])‖ = ‖(p : ℚ_[p])‖ := PadicComplex.norm_extends' p _
-  have h2 : (((p : ℚ_[p]) : ℚ_[p]) : ℂ_[p]) = (p : ℂ_[p]) := by
-    simp
-  rw [h2] at h
-  rw [h]
-  exact Padic.norm_p
+lemma norm_p_eq : ‖(p : ℂ_[p])‖ = (p : ℝ)⁻¹ := Formalism.L2.Th1.D.KF.norm_l_eq p
 
 lemma norm_p_pos : 0 < ‖(p : ℂ_[p])‖ := by
   rw [norm_p_eq]

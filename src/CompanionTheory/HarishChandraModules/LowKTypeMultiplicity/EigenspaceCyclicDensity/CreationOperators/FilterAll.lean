@@ -62,16 +62,16 @@ theorem casK_inN {E : Fin n → Fin n → Module.End ℂ V} (hE : KRel ε E) (x 
     refine Finset.sum_congr rfl fun i _ => ?_
     simp [al, sub_smul, apply_ite ((↑) : ℝ → ℂ), ite_smul]
   rw [e, CasK, sum_pos]
-  simp only [if_true, LinearMap.add_apply, LinearMap.sum_apply, Module.End.mul_apply]
+  simp only [ite_true, LinearMap.add_apply, LinearMap.sum_apply, Module.End.mul_apply]
   rw [add_sub_sub_cancel, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases hi : cpt ε i
   · have := LinearMap.congr_fun (hE i.1.1 i.1.2 i.1.2 i.1.1 hi (Eq.symm hi)) x
-    simp only [if_true, LinearMap.sub_apply, Module.End.mul_apply] at this
-    rw [if_pos hi, if_pos hi, if_pos hi, if_pos (Eq.symm hi), ← this, map_smul, two_smul]
+    simp only [ite_true, LinearMap.sub_apply, Module.End.mul_apply] at this
+    rw [ite_eq_left hi, ite_eq_left hi, ite_eq_left hi, ite_eq_left (Eq.symm hi), ← this, map_smul, two_smul]
     simp only [Module.End.mul_apply]
     abel
-  · rw [if_neg hi, if_neg hi, if_neg hi, if_neg fun h => hi h.symm]
+  · rw [ite_eq_right hi, ite_eq_right hi, ite_eq_right hi, ite_eq_right fun h => hi h.symm]
     simp
 
 theorem cok_of (hG : GenCO) : COK := by
@@ -310,13 +310,13 @@ theorem inj_of (hV : VanK) (hP : WtProj) (hS : BdSq) : Inj := by
         rw [e] at hA
         obtain ⟨B, -, hB⟩ := exists_ne_zero_of_sum_ne_zero hA
         by_cases h1 : pot B = N
-        · rw [if_pos h1, zero_sub, neg_ne_zero] at hB
+        · rw [ite_eq_left h1, zero_sub, neg_ne_zero] at hB
           rcases t4 B with h2 | h2
           · simp [h2] at hB
           · have := s4 B _ _ h2.2 A hB
             have := h2.1
             omega
-        · rw [if_neg h1, t3 B h1] at hB
+        · rw [ite_eq_right h1, t3 B h1] at hB
           have hB' : r B A ≠ 0 := by simpa using hB
           have h2 := (hrne B A hB').1
           have h3 := (hr B A hB').1

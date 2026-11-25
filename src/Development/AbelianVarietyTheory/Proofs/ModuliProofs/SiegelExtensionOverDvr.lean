@@ -94,21 +94,4 @@ theorem kTriv_of_lam {S : Scheme.{0}} {A : Over S} [GrpObj A] {L : LB A.left} (h
     rwa [pull_lam, lift_fst_assoc, lift_snd, Category.assoc] at H'))
   exact congrArg (fun q => q.left) (this.trans (MonObj.comp_one i).symm)
 
-section Dvr
-
-variable {V K : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [Field K] [Algebra V K] [IsFractionRing V K]
-
-variable {A : Over (Sp V)} [GrpObj A] {B : Over (Sp K)} [GrpObj B] {ψ : B.left ⟶ A.left}
-
-
-
-end Dvr
-
-section Pol
-
-variable {V K : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [Field K] [Algebra V K] [IsFractionRing V K]
-  {A : Over (Sp V)} [GrpObj A]
-
-end Pol
-
 end GlobalTheory.ThetaExtend

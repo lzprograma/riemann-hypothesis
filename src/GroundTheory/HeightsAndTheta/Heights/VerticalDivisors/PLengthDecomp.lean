@@ -107,7 +107,7 @@ theorem length_eq_sum [Fintype (MaximalSpectrum B)] (hN : IsFiniteLength B N) :
       obtain ⟨m, h1, h2⟩ := step (R := R) (s.step i)
       rw [h1, hi]
       simp_rw [h2, add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have := H (Fin.last _)
   rw [← RelSeries.last, hs_top] at this
   rw [← ((Submodule.topEquiv (R := B) (M := N)).restrictScalars R).length_eq, this]

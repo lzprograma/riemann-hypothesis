@@ -36,7 +36,7 @@ theorem chain_aeval {σ τ : Type} [Fintype σ] (S : MvPolynomial σ C →ₐ[C]
       · simp [h]
     conv_lhs => rw [map_mul S p (X i), Derivation.leibniz, hp]
     simp only [key, smul_eq_mul, add_mul, Finset.sum_add_distrib, ite_mul, zero_mul, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, Finset.mul_sum, mul_assoc]
+      Finset.mem_univ, ite_true, Finset.mul_sum, mul_assoc]
     try ring
 
 theorem pderiv_subG_off {p : MvPolynomial (Fin N × WVO fun o (_ : Fin 2) => IIs r tau o) C} {ℓ : Letter T r n}
@@ -86,8 +86,8 @@ private theorem pderiv_lam_subG_X_eq_ite (inj : Function.Injective fun x : Orb �
         lam r tau plc ((eW r tau N y).1, col) := rfl
     rw [e1, Pi.single_apply]
     by_cases hz : ((eW r tau N y).1, col) = (α0, col0)
-    · rw [if_pos (congrArg (lam r tau plc) hz), if_pos hz, smul_eq_mul, mul_one]
-    · rw [if_neg (fun h' => hz (lam_injective_of_tau_injective plc inj _ _ h')), if_neg hz, smul_zero]
+    · rw [ite_eq_left (congrArg (lam r tau plc) hz), ite_eq_left hz, smul_eq_mul, mul_one]
+    · rw [ite_eq_right (fun h' => hz (lam_injective_of_tau_injective plc inj _ _ h')), ite_eq_right hz, smul_zero]
   simp only [key]
   by_cases ha : (eW r tau N y).1 = α0
   · simp [ha]
@@ -106,7 +106,7 @@ theorem pderiv_subG_lam (inj : Function.Injective fun x : Orb × ZMod 2 => tau x
     refine Finset.sum_eq_zero fun g _ => ?_
     rw [pderiv_lam_subG_X_eq_ite plc inj]
     simp only [Equiv.apply_symm_apply]
-    first | rw [if_neg hα]
+    first | rw [ite_eq_right hα]
     first | exact mul_zero _
   · intro h
     exact absurd (Finset.mem_univ _) h

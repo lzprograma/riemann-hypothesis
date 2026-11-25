@@ -5,46 +5,6 @@ import Aesop.Main
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.PosNear
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -60,9 +20,9 @@ theorem hasProd_compl_of_ne_zero {β : Type} {f : β → ℂ} {p : ℂ} (h : Has
     HasProd ({b | b ∉ S}.mulIndicator f) (p * ∏ b ∈ S, (f b)⁻¹) := by
   classical
   have h2 : HasProd (fun b => if b ∈ S then (f b)⁻¹ else 1)
-      (∏ b ∈ S, (if b ∈ S then (f b)⁻¹ else 1)) := hasProd_prod_of_ne_finset_one fun b hb => if_neg hb
+      (∏ b ∈ S, (if b ∈ S then (f b)⁻¹ else 1)) := hasProd_prod_of_ne_finset_one fun b hb => ite_eq_right hb
   have e : ∏ b ∈ S, (if b ∈ S then (f b)⁻¹ else 1) = ∏ b ∈ S, (f b)⁻¹ :=
-    Finset.prod_congr rfl fun b hb => if_pos hb
+    Finset.prod_congr rfl fun b hb => ite_eq_left hb
   rw [e] at h2
   convert h.mul h2 using 1
   funext b
@@ -93,21 +53,21 @@ theorem rpTail_gen {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E
   by_cases h0 : ∃ v, ∀ Φ : (Fin a → Fin M → Fv F v ⊗[F] E) → ℂ, IsSB Φ → ∫ X, Φ X ∂(m v) = 0
   · exact Or.inl h0
   refine Or.inr fun S => ?_
-  push_neg at h0
+  push Not at h0
   choose g hgSB hg0 using h0
   let Φv : ∀ v : HeightOneSpectrum (𝓞 F), (Fin a → Fin M → Fv F v ⊗[F] E) → ℂ :=
     fun v => if v ∈ S then g v else (latV b v).indicator 1
   have hpure : IsPureFin b (fun Y => ∏ᶠ v, Φv v (projV v Y)) Φv := by
     refine ⟨fun v => ?_, ?_, fun Y => rfl⟩
     · by_cases hv : v ∈ S
-      · simp only [Φv, hv, if_true]; exact hgSB v
-      · simp only [Φv, hv, if_false]; exact PositiveNearLattice.isSB_latV b v a M
+      · simp only [Φv, hv, ite_true]; exact hgSB v
+      · simp only [Φv, hv, ite_false]; exact PositiveNearLattice.isSB_latV b v a M
     · refine Filter.eventually_cofinite.2 (S.finite_toSet.subset fun v hv => ?_)
       by_contra h
-      exact hv (if_neg h)
+      exact hv (ite_eq_right h)
   have hP := (hmult _ Φv hpure).hasProd
   have hne : ∀ v ∈ S, ∫ X, Φv v X ∂(m v) ≠ 0 := fun v hv => by
-    simp only [Φv, hv, if_true]; exact hg0 v
+    simp only [Φv, hv, ite_true]; exact hg0 v
   have h1 := hasProd_compl_of_ne_zero hP S hne
   have hL : ∀ v, MeasurableSet (latV (M := M) (n := a) b v) := fun v =>
     (PositiveNearLattice.isClopen_latV b v a M).isOpen.measurableSet
@@ -120,7 +80,7 @@ theorem rpTail_gen {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E
     funext v
     by_cases hv : v ∈ S
     · simp [Set.mulIndicator, hv]
-    · simp only [Set.mulIndicator, Set.mem_setOf_eq, hv, not_false_eq_true, if_true, Φv, if_false]
+    · simp only [Set.mulIndicator, Set.mem_setOf_eq, hv, not_false_eq_true, ite_true, Φv, ite_false]
       rw [integral_indicator (hL v)]
       simp [Measure.real]
   rw [e] at h1

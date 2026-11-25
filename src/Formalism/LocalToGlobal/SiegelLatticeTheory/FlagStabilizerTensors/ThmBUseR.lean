@@ -14,8 +14,6 @@ namespace Formalism.L2.SG.ThmBUseR
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.ThB Formalism.FourierDecayAlt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Stmt
 
 variable (D : D7)

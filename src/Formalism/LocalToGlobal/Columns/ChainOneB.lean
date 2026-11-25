@@ -134,12 +134,6 @@ def ocbInAt (i : ℕ) (P : HeightOneSpectrum (𝓞 X.E))
     Prop :=
   @ocbIn (𝓞 X.E ⧸ P.asIdeal) (resField P) R.k R.m R.t (cOf R (i + 1)) (R.N (i + 1)) hbar
 
-def NonvanishingGivesLatticeRepresentative (m2 : ℕ) : Prop :=
-  OcbBase Ch sel mu cst m2 → ∀ i, i < m2 → ∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs → ∀ h : AutY X R (i + 1),
-    FiniteSumNonzeroLargeDepth Ch sel mu cst i P 1 h →
-      ∃ ρ ∈ Loc.R1 X.E (R.N (i + 1)) (cOf R (i + 1)), ∃ h₀ ∈ stabL X.E _ (lamYat (Pr := Pr) (R := R) (i + 1) P.1),
-        h = ρ * h₀ ∧ FiniteSumNonzeroLargeDepth Ch sel mu cst i P 1 h₀
-
 def ReductionExistsInLatticeStabilizer (σ : X.K →+* ℂ) (m2 : ℕ) : Prop :=
   OcbBase Ch sel mu cst m2 → ∀ i, i < m2 → ∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs →
     ∀ h₀ ∈ stabL X.E _ (lamYat (Pr := Pr) (R := R) (i + 1) P.1),
@@ -248,9 +242,9 @@ theorem ocbIsRed_one {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum
   rw [h1, h2]
   by_cases hls : l = s
   · subst hls
-    rw [if_pos rfl, if_pos rfl, sub_self, zpow_zero, mul_one]
+    rw [ite_eq_left rfl, ite_eq_left rfl, sub_self, zpow_zero, mul_one]
     exact ⟨⟨1, 1, fun h => P.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 h), by simp⟩, redP_one.symm⟩
-  · rw [if_neg hls, if_neg hls, zero_mul]
+  · rw [ite_eq_right hls, ite_eq_right hls, zero_mul]
     exact ⟨⟨0, 1, fun h => P.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 h), by simp⟩, redP_zero.symm⟩
 
 end Lev

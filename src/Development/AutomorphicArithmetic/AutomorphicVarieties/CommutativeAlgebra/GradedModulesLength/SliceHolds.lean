@@ -104,8 +104,7 @@ private theorem et_unram (O K C : Type) [CommRing O] [Field K] [Algebra O K] [Co
       rwa [Ne, Submodule.Quotient.mk_eq_zero]
     obtain ⟨φ, hφ⟩ : ∃ φ : Module.Dual (C ⧸ m) (Ω[C⁄O] ⧸ m • (⊤ : Submodule C Ω[C⁄O])),
         φ (Submodule.Quotient.mk x) ≠ 0 := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       exact hq ((Module.forall_dual_apply_eq_zero_iff (C ⧸ m) _).mp hall)
     let f : Ω[C⁄O] →ₗ[C] C ⧸ m := (φ.restrictScalars C).comp (m • (⊤ : Submodule C Ω[C⁄O])).mkQ
     let D : Derivation O C (C ⧸ m) := f.compDer (KaehlerDifferential.D O C)

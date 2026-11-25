@@ -1,50 +1,7 @@
 module
 
 public import Formalism.GaussJetBounds.GenLogInverse
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -77,12 +34,11 @@ theorem asmS_integral_sub_one {K : Type u} [NormedField K] {ι : Type} {pi ρ : 
   by_cases hn : n = 0
   · subst hn
     have h00 : coeff 0 (E - 1) = 0 := by
-      rw [map_sub, coeff_zero_eq_constantCoeff_apply, hc, coeff_one, if_pos rfl, sub_self]
+      rw [map_sub, coeff_zero_eq_constantCoeff_apply, hc, coeff_one, ite_eq_left rfl, sub_self]
     rw [h00, norm_zero]
     exact (Real.rpow_pos_of_pos h0 _).le
   · obtain ⟨i, hi⟩ : ∃ i, n i ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hn (Finsupp.ext h)
     have hd : ρ ≤ dot n (fun _ => ρ) := by
       unfold dot Finsupp.sum
@@ -93,7 +49,7 @@ theorem asmS_integral_sub_one {K : Type u} [NormedField K] {ι : Type} {pi ρ : 
           Finset.single_le_sum (f := fun x => (n x : ℝ) * ρ)
             (fun x _ => mul_nonneg (Nat.cast_nonneg _) hρ) hmem
     have hc1 : coeff n (E - 1) = coeff n E := by
-      rw [map_sub, coeff_one, if_neg hn, sub_zero]
+      rw [map_sub, coeff_one, ite_eq_right hn, sub_zero]
     rw [hc1]
     exact (hE n).trans (Real.one_le_rpow_of_pos_of_le_one_of_nonpos h0 h1 (by linarith))
 
@@ -114,8 +70,7 @@ theorem asmS_cc_subst {K : Type u} [Field K] {d : ℕ} [NeZero d] {be : MvPowerS
   · subst hn
     rw [coeff_zero_eq_constantCoeff_apply, hbe0, zero_smul]
   · obtain ⟨s, hs⟩ : ∃ s, n s ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hn (Finsupp.ext h)
     have hp : constantCoeff (n.prod fun s e => a s ^ e) = 0 := by
       simp only [Finsupp.prod, map_prod]
@@ -172,7 +127,7 @@ theorem asmS_diff (hGW : GenLogWeight.{u, 0}) (hGI : GenLogInverse.{u, 0}) (hB :
     rw [← coeff_zero_eq_constantCoeff_apply]
     show letterLog (K := K) l x 0 = 0
     unfold letterLog
-    refine Finset.sum_eq_zero fun e _ => if_neg ?_
+    refine Finset.sum_eq_zero fun e _ => ite_eq_right ?_
     intro h
     have h' := congrArg (fun f : V2 d →₀ ℕ => f (x.1, x.2 - 2 * (e : ZMod d))) h
     simp only [Finsupp.coe_zero, Pi.zero_apply, Finsupp.single_eq_same] at h'
@@ -206,7 +161,7 @@ theorem asmS_diff (hGW : GenLogWeight.{u, 0}) (hGI : GenLogInverse.{u, 0}) (hB :
       · apply hcong
         intro h0
         apply hz
-        rw [map_sub, coeff_one, if_neg hn, h0, sub_zero]
+        rw [map_sub, coeff_one, ite_eq_right hn, h0, sub_zero]
     exact hQ K l d hl hd hde hpi hpi0 K0 hK0 _ hmem n hdiv (hW n)
   exact hLS K l hl hpi (V2 d) _ D hD0 hQ'
 

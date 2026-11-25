@@ -47,7 +47,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 
 noncomputable section
@@ -57,8 +56,6 @@ namespace GlobalTheory.TensorTargetRule
 open GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger
 
 variable {D : D7}
-
-alias heisO_zero' := _root_.GlobalTheory.SplitScalar.heisO_zero
 
 theorem dagger_resT_symm {T A B : HSp D} (d : OrthDec T A B) (S : HSp D) (u : WO S A) (v : WO S B) :
     dagger S T ((d.resT S).symm (u, v)) = (d.resS S).symm (dagger S A u, dagger S B v) := by
@@ -122,8 +119,8 @@ theorem tensorTarget : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar 
       dense := fun f hf => ?_
       om_box := ?_
       om_slice := ?_ }
-  · rw [d.heisO_boxT, AddEquiv.apply_symm_apply, heisO_zero']
-  · rw [d.heisO_boxT, AddEquiv.apply_symm_apply, heisO_zero']
+  · rw [d.heisO_boxT, AddEquiv.apply_symm_apply, GlobalTheory.SplitScalar.heisO_zero]
+  · rw [d.heisO_boxT, AddEquiv.apply_symm_apply, GlobalTheory.SplitScalar.heisO_zero]
   · have h1 := (src.slice_theta (GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.cj (dagger T S) f) ((thd S T f).2 hf)).1 (dagger S B v)
     rw [← thd S A]
     convert h1 using 1

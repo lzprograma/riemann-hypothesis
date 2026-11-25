@@ -22,12 +22,6 @@ private theorem Jm_mul_Jm (ε : Fin n → Bool) : Jm ε * Jm ε = 1 := by
   funext a
   split_ifs <;> norm_num
 
-private theorem Jm_conjTranspose (ε : Fin n → Bool) : (Jm ε)ᴴ = Jm ε := by
-  rw [Jm, Matrix.diagonal_conjTranspose]
-  congr 1
-  funext a
-  split_ifs with h <;> simp [h]
-
 private theorem Jm_inv (ε : Fin n → Bool) : (Jm ε)⁻¹ = Jm ε :=
   Matrix.inv_eq_right_inv (Jm_mul_Jm ε)
 

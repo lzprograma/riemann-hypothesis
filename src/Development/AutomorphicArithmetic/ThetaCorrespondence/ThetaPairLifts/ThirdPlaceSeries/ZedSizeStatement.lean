@@ -21,7 +21,7 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenI
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EntRCloudSub
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LiftLambdaBound
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HostN
-public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.WeightsAtPointStatement
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.WeightsAtPoint
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -351,31 +351,31 @@ theorem _root_.GlobalTheory.degree_ratio_shift_bound : ∀ (Pl : Type) [Fintype 
         (kc : ℝ) * (2 * T / w τ) + ((p - kc : ℕ) : ℝ) * (1 / g1 τ) := by
       rw [← Finset.sum_range_add_sum_Ico _ hkc]
       have e1 : ∑ i ∈ Finset.range kc, c τ i = ∑ i ∈ Finset.range kc, 2 * T / w τ :=
-        Finset.sum_congr rfl fun i hi => by rw [hc, if_pos (Finset.mem_range.1 hi)]
+        Finset.sum_congr rfl fun i hi => by rw [hc, ite_eq_left (Finset.mem_range.1 hi)]
       have e2 : ∑ i ∈ Finset.Ico kc p, c τ i = ∑ i ∈ Finset.Ico kc p, 1 / g1 τ :=
-        Finset.sum_congr rfl fun i hi => by rw [hc, if_neg (not_lt.2 (Finset.mem_Ico.1 hi).1)]
+        Finset.sum_congr rfl fun i hi => by rw [hc, ite_eq_right (not_lt.2 (Finset.mem_Ico.1 hi).1)]
       rw [e1, e2, Finset.sum_const, Finset.sum_const, Finset.card_range, Nat.card_Ico,
         nsmul_eq_mul, nsmul_eq_mul]
     have hinner : ∀ l, ∑ i ∈ Finset.range l, (if i < p ∧ p ≤ l then c τ i else 0) =
         if p ≤ l then ∑ i ∈ Finset.range p, c τ i else 0 := by
       intro l
       by_cases hl : p ≤ l
-      · rw [if_pos hl, ← Finset.sum_range_add_sum_Ico _ hl]
+      · rw [ite_eq_left hl, ← Finset.sum_range_add_sum_Ico _ hl]
         have e1 : ∑ i ∈ Finset.range p, (if i < p ∧ p ≤ l then c τ i else 0) =
             ∑ i ∈ Finset.range p, c τ i :=
-          Finset.sum_congr rfl fun i hi => if_pos ⟨Finset.mem_range.1 hi, hl⟩
+          Finset.sum_congr rfl fun i hi => ite_eq_left ⟨Finset.mem_range.1 hi, hl⟩
         have e2 : ∑ i ∈ Finset.Ico p l, (if i < p ∧ p ≤ l then c τ i else 0) = 0 :=
           Finset.sum_eq_zero fun i hi =>
-            if_neg fun h => absurd h.1 (not_lt.2 (Finset.mem_Ico.1 hi).1)
+            ite_eq_right fun h => absurd h.1 (not_lt.2 (Finset.mem_Ico.1 hi).1)
         rw [e1, e2, add_zero]
-      · rw [if_neg hl]
-        exact Finset.sum_eq_zero fun i _ => if_neg fun h => hl h.2
+      · rw [ite_eq_right hl]
+        exact Finset.sum_eq_zero fun i _ => ite_eq_right fun h => hl h.2
     rw [Finset.sum_congr rfl fun l _ => hinner l, ← Finset.sum_range_add_sum_Ico _ hpN]
     have e3 : ∑ l ∈ Finset.range p, (if p ≤ l then ∑ i ∈ Finset.range p, c τ i else 0) = 0 :=
-      Finset.sum_eq_zero fun l hl => if_neg (not_le.2 (Finset.mem_range.1 hl))
+      Finset.sum_eq_zero fun l hl => ite_eq_right (not_le.2 (Finset.mem_range.1 hl))
     have e4 : ∑ l ∈ Finset.Ico p N, (if p ≤ l then ∑ i ∈ Finset.range p, c τ i else 0) =
         ∑ l ∈ Finset.Ico p N, ∑ i ∈ Finset.range p, c τ i :=
-      Finset.sum_congr rfl fun l hl => if_pos (Finset.mem_Ico.1 hl).1
+      Finset.sum_congr rfl fun l hl => ite_eq_left (Finset.mem_Ico.1 hl).1
     rw [e3, e4, zero_add, Finset.sum_const, Nat.card_Ico, nsmul_eq_mul, hS]
     ring
   have hQ : ∀ τ l, l ∈ Finset.range N →
@@ -506,7 +506,7 @@ theorem rho_div_le : ∀ (ι : Type) [Fintype ι] (N : ℕ) (W : GlobalTheory.Me
   have hbarGap : ∀ τ, g1 ≤ (W.u1 τ a : ℝ) - W.u1 τ b := by
     intro τ
     have e := (hd τ).2 a b hab
-    rw [if_pos hb] at e
+    rw [ite_eq_left hb] at e
     have hG := hbar τ a b hab hb
     have hMi : (0 : ℤ) < (W.T : ℤ) + W.Dd + 1 := by positivity
     have h3 := Int.emod_lt_of_pos (W.u τ a - W.u τ b + (-W.c0 - (2 * (N : ℤ) - 2))) hMi
@@ -597,8 +597,6 @@ noncomputable section
 
 namespace GlobalTheory.CovTop.ZedSz
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts}
   {Y0 : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Y0 cX} {Csz : ℝ}
 
@@ -613,7 +611,7 @@ theorem bar_gap (p : PtAt ex Csz) (i : Fin D.R.m) (P : ParameterChoice' D L) (hi
   have hr : D.R.r = D.R.k + D.R.m - 1 := rfl
   have hk := D.R.m_add_three_le_k
   have h1 := WtShape.sgR_step_low D L P t a (by omega) (by omega)
-  rw [if_pos (by omega)] at hd
+  rw [ite_eq_left (by omega)] at hd
   have c6 : (6 : ℝ) ≤ D.R.r := by exact_mod_cast WtShape.six_le_r D.R
   linarith
 
@@ -747,7 +745,6 @@ open scoped TensorProduct
 
 noncomputable section
 namespace GlobalTheory.CovTop.ZedSz
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts}
   {Y0 : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Y0 cX} {Csz : ℝ}
 theorem zed_size_alt : _root_.GlobalTheory.CovTop.SizeCondition → _root_.GlobalTheory.CovTop.CoversCondition fun Fm x _ ι p i Y PP _ => zed p i PP (⟨uW p i, cZero (Fm.D x ι) ((i : ℕ) + 1), (Fm.D x ι).R.k - 2, lenT p i PP⟩ : WtPar (dat p i)).u₁ * (PP * kap p i) ≤ (Fm.L x ι).sc.b ∧ zed p i PP (⟨uW p i, cZero (Fm.D x ι) ((i : ℕ) + 1), (Fm.D x ι).R.k - 2, lenT p i PP⟩ : WtPar (dat p i)).u₁ ≤ 1 / 2 := by
@@ -767,8 +764,7 @@ theorem zed_size_alt : _root_.GlobalTheory.CovTop.SizeCondition → _root_.Globa
   have hb1 := e1.1
   have hbk := e1.2.2.2.2.2.1
   refine ⟨by linarith, ?_⟩
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have : 1 / 2 * ((Fm.parT x hx ι).PP * kap p i) < _ * ((Fm.parT x hx ι).PP * kap p i) :=
     mul_lt_mul_of_pos_right hc (by linarith)
   linarith

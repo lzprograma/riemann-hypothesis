@@ -2,45 +2,7 @@ module
 
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -66,11 +28,11 @@ theorem det_mul_cols {R : Type} [CommRing R] {N d : ℕ} (M : Matrix (Fin d) (Fi
     symm
     refine Finset.sum_subset (Finset.filter_subset _ _) fun s _ hs => ?_
     have hc : s.card ≠ d := fun hc => hs (by simp [hc])
-    rw [dif_neg hc, zero_mul]
+    rw [dite_eq_right hc, zero_mul]
   rw [h1, Finset.sum_subtype (Finset.univ.filter fun I : Finset (Fin N) => I.card = d)
     (p := fun s : Finset (Fin N) => s.card = d) (fun s => by simp)]
   refine Finset.sum_congr rfl fun s _ => ?_
-  rw [dif_pos s.2, MinorCalc.minorIJ_eq_det B s.1 C d s.2 hC]
+  rw [dite_eq_left s.2, MinorCalc.minorIJ_eq_det B s.1 C d s.2 hC]
   rfl
 
 variable {Ψ : Type} {p q : ℕ}
@@ -116,9 +78,9 @@ theorem sum_aExt_mul {Ω : Type} [Field Ω] {n : Ψ ⊕ Ψ → ℕ} (A : ∀ s, 
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [Finset.sum_eq_single (posOf p q s l)]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
   · intro b _ hb
-    rw [if_neg (Ne.symm hb), map_zero, zero_mul]
+    rw [ite_eq_right (Ne.symm hb), map_zero, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -135,10 +97,10 @@ theorem mem_stepCols_iff (r : Ψ × Fin (p + q)) (a : Fin (p + q)) :
         posOf p q (stepOf Ψ p q r).1 (Fin.castLE (stepOf Ψ p q r).2.2 y) = a := by
   have hr := r.2.2
   by_cases h : (r.2 : ℕ) < p
-  · have e : stepOf Ψ p q r = ⟨.inl r.1, ⟨r.2, h⟩⟩ := dif_pos h
+  · have e : stepOf Ψ p q r = ⟨.inl r.1, ⟨r.2, h⟩⟩ := dite_eq_left h
     rw [e]
     simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [if_pos (by omega)]
+    rw [ite_eq_left (by omega)]
     constructor
     · rintro ⟨h1, h2⟩
       refine ⟨⟨a - q, ?_⟩, Fin.ext ?_⟩
@@ -150,10 +112,10 @@ theorem mem_stepCols_iff (r : Ψ × Fin (p + q)) (a : Fin (p + q)) :
       have hy : (y : ℕ) < (r.2 : ℕ) + 1 := y.2
       show p + q - p ≤ q + (y : ℕ) ∧ q + (y : ℕ) < p + q - p + ((r.2 : ℕ) + 1)
       omega
-  · have e : stepOf Ψ p q r = ⟨.inr r.1, ⟨r.2 - p, by show _ < q; omega⟩⟩ := dif_neg h
+  · have e : stepOf Ψ p q r = ⟨.inr r.1, ⟨r.2 - p, by show _ < q; omega⟩⟩ := dite_eq_right h
     rw [e]
     simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
     constructor
     · intro h1
       refine ⟨⟨a, ?_⟩, Fin.ext rfl⟩
@@ -194,24 +156,11 @@ theorem det_fMat_eq {Ω : Type} [Field Ω] {n : Ψ ⊕ Ψ → ℕ} (A : ∀ s, M
   refine Finset.sum_congr rfl fun I _ => ?_
   congr 1
   by_cases e : I.card = (t.2 : ℕ) + 1
-  · rw [dif_pos e]
+  · rw [dite_eq_left e]
     simp only [coefF]
-    rw [dif_pos e, RingHom.map_det]
+    rw [dite_eq_left e, RingHom.map_det]
     rfl
-  · rw [dif_neg e]
+  · rw [dite_eq_right e]
     simp [coefF, e]
-
-theorem yv_step :
-    ∀ (Ψ : Type) [Fintype Ψ] (p q : ℕ) (Ω : Type) [Field Ω] (n : Ψ ⊕ Ψ → ℕ)
-      (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (K₀ : Type) [Fintype K₀]
-      (J₀ : K₀ → Type) [∀ k, Fintype (J₀ k)] (x₀ : (Σ k, J₀ k) → Ω),
-    ∀ r k, blkF (Ψ := Ψ) (p := p) (q := q) K₀ r = some k → ∀ i : idx J₀ n k,
-      yv A x₀ ⟨k, i⟩ = ∑ I, algebraMap Ω (GenField Ω (rk Ψ p q)) (coefF A ⟨k, i⟩ I) *
-        minorIJ (gMat p q Ω r.1) I (stepCols (p + q) p r.2) := by
-  intro Ψ _ p q Ω _ n A K₀ _ J₀ _ x₀ r k hk i
-  unfold blkF at hk
-  split_ifs at hk with hp
-  obtain rfl := Option.some.inj hk
-  exact det_fMat_eq A r.1 (stepOf Ψ p q r) (stepOf_fst r) _ (mem_stepCols_iff r) i
 
 end GlobalTheory.CompanionTheory.Ar.PB.FMX.BlockEmbeddings

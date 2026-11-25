@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFrobeniusMatrixMulEqEPowOfPeriod
 public import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
 public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.PsCoprimeDvdSub
 public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
@@ -11,55 +12,10 @@ public import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.LevBMemFil
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvBasis
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.EvaluationExpansionAtRoot
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.DistinguishedUnitIdeals.ExistsConstOfInvariantMod
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Formalism.DistinguishedUnitIdeals.Statement
-import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CombineProd, Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PowerSeriesCancelBounded, Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.DetectPt, Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.GradedClassDecomposition, Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.HfracOf, Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.XPowDvdOfComponents, Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMem
@@ -227,15 +183,8 @@ variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
 
 theorem C_dvd_iff_dvd_coeffs (ϖ : O) (f : PowerSeries O) :
     PowerSeries.C ϖ ∣ f ↔ ∀ k, ϖ ∣ PowerSeries.coeff k f := by
-  constructor
-  · rintro ⟨g, rfl⟩ k
-    rw [PowerSeries.coeff_C_mul]
-    exact dvd_mul_right _ _
-  · intro h
-    choose g hg using h
-    refine ⟨PowerSeries.mk g, ?_⟩
-    ext k
-    rw [PowerSeries.coeff_C_mul, PowerSeries.coeff_mk, hg]
+  intros
+  apply _root_.GlobalTheory.BSP.HeightAprime.C_dvd_iff <;> assumption
 
 theorem prime_C_uniformizer {ϖ : O} (hϖ : Irreducible ϖ) : Prime (PowerSeries.C ϖ : PowerSeries O) := by
   have : (Ideal.span {ϖ} : Ideal O).IsPrime := (Ideal.span_singleton_prime hϖ.ne_zero).2 hϖ.prime
@@ -487,7 +436,6 @@ theorem detect_pt {LL D : Type} [Field LL] [AddCommGroup D] [Module LL D] [Finit
             (Submodule.Quotient.mk ⟨g j, fun k _ => hg j k⟩ : GrQ F) =
             (Submodule.mkQ _) (∑ j, PowerSeries.coeff m (a j) •
               (⟨g j, fun k _ => hg j k⟩ : ↥(Submodule.pi Set.univ fun k : ℤ => F (-k)))) := by
-          set_option synthInstance.maxHeartbeats 100000 in
             simp [map_sum]
         rw [hmk, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero, Submodule.mem_comap,
           Submodule.mem_pi]
@@ -550,9 +498,9 @@ theorem graded_class_decomposition (F : ℤ → Submodule LL D)
     rfl
   rw [e2, Finset.sum_pi_single]
   by_cases hi : i ∈ Finset.Ico a b
-  · rw [if_pos hi, sub_self]
+  · rw [ite_eq_left hi, sub_self]
     exact zero_mem _
-  · rw [if_neg hi, sub_zero]
+  · rw [ite_eq_right hi, sub_zero]
     rw [Finset.mem_Ico, not_and_or, not_le, not_lt] at hi
     rcases hi with hi | hi
     · exact ha i hi
@@ -995,8 +943,8 @@ theorem detect [IsFractionRing O LL] (hP4 : LevelMapHodgeFiltration W) (hSat : S
 
   have hd : (baseIdOf hR).d ((baseIdOf hR).Bs.p s ^ e) =
       ∏ s' ∈ Finset.range (s + 1), pS W s' ^ (if s' = s then e else 0) := by
-    rw [map_pow, BaseId.d_p, Finset.prod_eq_single s (fun s' _ hs' => by rw [if_neg hs', pow_zero])
-      (fun hns => absurd (Finset.mem_range.2 (Nat.lt_succ_self s)) hns), if_pos rfl]
+    rw [map_pow, BaseId.d_p, Finset.prod_eq_single s (fun s' _ hs' => by rw [ite_eq_right hs', pow_zero])
+      (fun hns => absurd (Finset.mem_range.2 (Nat.lt_succ_self s)) hns), ite_eq_left rfl]
   have hdl : (baseIdOf hR).d (PowerSeries.C (((PD.p : ℕ) : O) ^ K)) = ((PD.p : ℕ) : LetA O n) ^ K := by
     rw [BaseId.d_C, map_pow, map_natCast]
   have hNΔ : ∀ x : W.DD T, x ∈ W.N T → (∀ δ ∈ W.DelF, W.γD T δ x = x) → x ∈ W.NΔ T :=

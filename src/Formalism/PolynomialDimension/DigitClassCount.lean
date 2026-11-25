@@ -2,52 +2,7 @@ module
 
 public import Formalism.PolynomialDimension.DigitClassSize
 public import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -90,39 +45,12 @@ theorem binomial_ratio_bound : BinomRatio := by
   induction j with
   | zero => simp [div_self (dimPol_pos_real k' al).ne']
   | succ j ih =>
-    have p0 := dimPol_pos_real k' (al + j)
-    have pa := dimPol_pos_real k' al
-    have hrec := dimPol_succ_eq_real k' (al + j)
-    rw [show al + (j + 1) = al + j + 1 by omega, hrec]
-    push_cast at ih ⊢
-    set r : ℝ := (dimPol k' al : ℝ) / dimPol k' (al + j) with hr
-    have hr0 : 0 ≤ r := by positivity
-    have hkey : (dimPol k' al : ℝ) / (dimPol k' (al + j) * ((al : ℝ) + j + 1 + k') / ((al : ℝ) + j + 1))
-        = r * (((al : ℝ) + j + 1) / ((al : ℝ) + j + 1 + k')) := by
-      rw [hr]; field_simp
-    rw [hkey]
-    set t : ℝ := ((al : ℝ) + j + 1) / ((al : ℝ) + j + 1 + k') with ht
-    have hk0 : (0 : ℝ) ≤ k' := by positivity
-    have hj0 : (0 : ℝ) ≤ j := by positivity
-    have ht0 : 0 ≤ t := by positivity
-    have ht1 : t ≤ 1 := by rw [ht, div_le_one (by positivity)]; linarith
-    have h1t : 1 - t ≤ (k' : ℝ) / al := by
-      have : 1 - t = (k' : ℝ) / ((al : ℝ) + j + 1 + k') := by rw [ht]; field_simp; ring
-      rw [this]
-      exact div_le_div_of_nonneg_left hk0 hal' (by linarith)
-    have hexp : 1 - (k' : ℝ) * (j + 1) / al = (1 - (k' : ℝ) * j / al) - k' / al := by ring
-    rw [hexp]
-    by_cases ha : 1 - (k' : ℝ) * j / al ≤ 0
-    · have : (0 : ℝ) ≤ k' / al := by positivity
-      nlinarith [mul_nonneg hr0 ht0]
-    · rw [not_le] at ha
-      set a := 1 - (k' : ℝ) * j / al
-      have ha1 : a ≤ 1 := by
-        have : (0 : ℝ) ≤ k' * j / al := by positivity
-        linarith
-      have h2 : a * t ≤ r * t := mul_le_mul_of_nonneg_right ih ht0
-      have h3 : a * (1 - t) ≤ 1 - t := by nlinarith
-      nlinarith
+    rw [← Nat.add_assoc al j 1, dimPol_succ_eq_real, div_div_eq_mul_div, ← div_mul_div_comm]
+    push_cast
+    refine le_trans ?_ (mul_le_mul_of_nonneg_right ih (by positivity))
+    rw [← mul_div_assoc, le_div_iff₀ (by positivity)]
+    field_simp
+    linarith only [show 0 ≤ (k' : ℝ) * (j + 1) * (k' + 1) by positivity]
 
 theorem binomSeries_gen (k' B : ℕ) (hk : 2 ≤ k') :
     HasSum (fun j : ℕ => (dimPol k' B : ℝ) / dimPol k' (B + j)) (((B : ℝ) + k') / ((k' : ℝ) - 1)) := by
@@ -417,7 +345,7 @@ theorem harmonic_level_count_rec (k' : ℕ) : ∀ A B : ℕ,
     have hle : dimPol k' A * dimPol k' B ≤ dimPol k' (A + 1) * dimPol k' (B + 1) :=
       Nat.mul_le_mul (dimPol_mono k' (by omega)) (dimPol_mono k' (by omega))
     simp only [dimHar, Nat.sub_zero, Nat.add_sub_cancel, Nat.add_eq_zero_iff, one_ne_zero,
-      and_false, or_self, if_false]
+      and_false, or_self, ite_false]
     exact Nat.add_sub_cancel' hle
 
 theorem harmonic_level_count : LevelCount :=

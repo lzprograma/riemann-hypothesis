@@ -76,30 +76,6 @@ open Matrix
 
 variable {k : Type} [Field k] [Finite k] {M a : ℕ}
 
-private theorem ffGram_apply (J : Matrix (Fin M) (Fin M) (k × k))
-    (X : Fin a → Fin M → k × k) (r s : Fin a) :
-    ffGram (swapR k) J X r s = ffH (swapR k) J (X r) (X s) := by
-  first
-  | rfl
-
-private theorem fst_ffGram_eq_V1_mul_map_fst (J : Matrix (Fin M) (Fin M) (k × k)) (X : Fin a → Fin M → k × k)
-    (r s : Fin a) :
-    (V1 X * J.map Prod.fst * (U1 X)ᵀ) r s = (ffGram (swapR k) J X r s).1 := by
-  rw [ffGram_apply, ffH_fst]
-  simp only [Matrix.mul_apply, Matrix.map_apply, Matrix.transpose_apply, V1, U1, Finset.sum_mul]
-  exact Finset.sum_comm
-
-private theorem snd_ffGram_eq_fst_ffGram_swap (J : Matrix (Fin M) (Fin M) (k × k)) (hJ : ∀ i j, (J j i).swap = J i j)
-    (X : Fin a → Fin M → k × k) (r s : Fin a) :
-    (ffGram (swapR k) J X r s).2 = (ffGram (swapR k) J X s r).1 := by
-  rw [ffGram_apply, ffGram_apply, ffH_fst, ffH_snd]
-  conv_lhs => rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl (fun x _ => Finset.sum_congr rfl (fun y _ => ?_))
-  have h := congrArg Prod.fst (hJ x y)
-  rw [Prod.fst_swap] at h
-  rw [h]
-  ring
-
 end FiniteFieldSplitting
 
 end PI.VolStabSW

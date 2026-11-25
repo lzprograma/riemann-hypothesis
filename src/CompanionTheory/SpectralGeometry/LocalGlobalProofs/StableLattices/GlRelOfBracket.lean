@@ -314,7 +314,7 @@ theorem smMod (hL : CompanionTheory.D.DSIC.SmLin) (hB : CompanionTheory.D.DSIC.S
   let d : Matrix (Fin n) (Fin n) ℂ → Module.End ℂ S := fun X => if hX : inG ε X then D X hX else 0
   have hdv : ∀ X, inG ε X → ∀ v : S, (d X v : H) = dsig σ X v := by
     intro X hX v
-    simp only [d, dif_pos hX]
+    simp only [d, dite_eq_left hX]
     rfl
   have dadd : ∀ X Y, inG ε X → inG ε Y → d (X + Y) = d X + d Y := by
     intro X Y hX hY

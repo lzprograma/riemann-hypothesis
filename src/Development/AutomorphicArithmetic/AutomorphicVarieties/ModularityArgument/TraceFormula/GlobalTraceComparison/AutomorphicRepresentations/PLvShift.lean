@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SupportOutFinite
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -113,15 +114,7 @@ private def rEquiv (K : Subgroup G) (u : G) (h₁ : ∀ x ∈ K, u * x * u⁻¹ 
 private theorem fin_supp [TopologicalSpace G] [IsTopologicalGroup G] (K : Subgroup G)
     (hK : IsOpen (K : Set G)) (f : G → ℂ) (hf : HasCompactSupport f) :
     (Function.support fun q : G ⧸ K => f q.out).Finite := by
-  obtain ⟨t, ht⟩ := hf.isCompact.elim_finite_subcover
-    (fun x : G => (fun y => x⁻¹ * y) ⁻¹' (K : Set G))
-    (fun x => hK.preimage (continuous_const.mul continuous_id))
-    (fun x _ => Set.mem_iUnion.2 ⟨x, by simp [K.one_mem]⟩)
-  refine (t.finite_toSet.image (fun x : G => (x : G ⧸ K))).subset ?_
-  intro q hq
-  have hm : q.out ∈ tsupport f := subset_tsupport _ hq
-  obtain ⟨x, hx, hxq⟩ := Set.mem_iUnion₂.1 (ht hm)
-  exact ⟨x, hx, (QuotientGroup.eq.2 hxq).trans (QuotientGroup.out_eq' q)⟩
+  apply _root_.GlobalTheory.TraceLevel.support_out_finite <;> assumption
 
 end SlopeTestRemainingChoices
 

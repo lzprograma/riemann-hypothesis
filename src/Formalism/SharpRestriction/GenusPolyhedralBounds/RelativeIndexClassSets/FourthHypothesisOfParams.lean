@@ -5,46 +5,6 @@ public import Formalism.LocalRingCardinality.DataParamsT
 public import Formalism.SharpRestriction.ElevenLe
 public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
 import Formalism.LocalRingCardinality.HeightBoundGeFourthPowerRank
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -324,9 +284,6 @@ theorem dimY_m (D : D7) : WeightFamilies.dimY D D.R.m = D.R.f * D.R.r.choose 2 :
   rw [Nat.choose_two_right]
   simp [WeightFamilies.dimY, Ranks.sigW, Ranks.r]
 
-theorem baseDegree_at_lift_index (D : D7) : n0 D D.R.m = D.R.r + 2 * g0 D := by
-  simp [n0, Ranks.sigW]
-
 theorem size_apW_m (l g n : ℕ) (hn : Even n) :
     (apW D D.R.m l g n hn).size = D.R.f * sA D.R.r l g + (D.R.f : ℝ) * D.R.r * n + 1 := by
   unfold WeightFamilies.Wt.size
@@ -348,12 +305,9 @@ structure RunN (D : D7) where
   nW : ℕ
   nP : ℕ
   Q0 : ℕ
-  T_pos : 0 < T
   nW_even : Even nW
   even_nP₂ : Even nP
   split : D.R.nV = nP + T * nW
-  nP_le_nW : nP ≤ nW
-  hQ0 : (WeightFamilies.dimY D D.R.m + 2) * nW + 2 * D.R.r ≤ 2 * Q0
 
 namespace RunN
 
@@ -524,40 +478,14 @@ theorem dm_eq (T : ParamsT D L P) : WeightFamilies.dimY D D.R.m = T.Dp := by
   unfold WeightFamilies.dimY Ranks.sigW Ranks.r
   simp [Nat.choose_two_right]
 
-theorem order_le_modulus (T : ParamsT D L P) (S : SizesAt L) (hZ : 10 ^ 60 ≤ zBase L) : T.TO ≤ q0N T := by
-  unfold q0N
-  have hT40 := T.TO_40
-  have hTpos : (0 : ℝ) < (T.TO : ℝ) := by exact_mod_cast (show 0 < T.TO by omega)
-  have hZ' : (1 : ℝ) ≤ zBase L := by
-    have h : (1 : ℝ) ≤ 10 ^ 60 := by norm_num
-    linarith
-  have hPP : 1 ≤ T.PP := by
-    rw [T.PP_eq]
-    exact one_le_mul_of_one_le_of_one_le T.one_le_CP (Real.one_le_rpow hZ' (by linarith [T.eP_ge]))
-  have hbpos : 0 < L.sc.b := by unfold Scale.b; exact Real.exp_pos _
-  have h1 : (T.TO : ℝ) ≤ L.sc.b ^ (1 / 2 : ℝ) := le_trans (le_mul_of_one_le_right hTpos.le hPP) T.TO_PP'
-  have h2 := mul_self_le_mul_self hTpos.le h1
-  rw [← Real.rpow_add hbpos] at h2
-  norm_num at h2
-  have hq : (T.TO : ℝ) ≤ L.sc.b / (T.TO : ℝ) := by
-    rw [le_div_iff₀ hTpos]
-    linarith
-  exact_mod_cast le_trans hq (Nat.le_ceil _)
-
-abbrev runOf (T : ParamsT D L P) (S : SizesAt L) (hZ : 10 ^ 60 ≤ zBase L) : RunN D where
+abbrev runOf (T : ParamsT D L P) (_S : SizesAt L) (_hZ : 10 ^ 60 ≤ zBase L) : RunN D where
   T := T.TO
   nW := T.nWn
   nP := T.nP
   Q0 := q0N T
-  T_pos := by have := T.TO_40; omega
   nW_even := T.nW_even
   even_nP₂ := T.even_nP₂
   split := T.split
-  nP_le_nW := T.nW_lo.2.2
-  hQ0 := by
-    rw [dm_eq T]
-    have := T.TO_nW; have := order_le_modulus T S hZ
-    omega
 
 def Kc0 : KAdm := ⟨1, 1, 1, 1, 1, 1, 1, 1, 2⟩
 

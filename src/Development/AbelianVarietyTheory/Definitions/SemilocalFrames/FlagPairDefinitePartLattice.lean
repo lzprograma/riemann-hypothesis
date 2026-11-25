@@ -7,52 +7,7 @@ public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
 public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusBasic
 public import Formalism.HermitianLattices.HermitianLatticesProofs.MassBasic
 import Formalism.ThetaLiftIndependence.ThetaOrbitSums.LatLiftIndep
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 
 @[expose] public section
 
@@ -244,40 +199,6 @@ def Isometric (H : HermSpace K V) (M M' : Submodule R V) : Prop := ∃ s ∈ iso
 def autCard (H : HermSpace K V) (M : Submodule R V) : ENNReal :=
   (Set.encard {s : V ≃ₗ[K] V | s ∈ isomGrp H ∧ imLat s M = M} : ENat)
 
-def InGenus (H : HermSpace K V) (L M : Submodule R V) : Prop := M ∈ Formalism.HermitianLatticesTheory.genus H.B.flip L
-
-def genusSum (H : HermSpace K V) (L : Submodule R V) (φ : Submodule R V → ENNReal) : ENNReal :=
-  ∑' c : Quot (fun M M' : {M : Submodule R V // InGenus H L M} => Isometric H M.1 M'.1),
-    φ (Quot.out c).1 / autCard H (Quot.out c).1
-
-def genusMass (H : HermSpace K V) (L : Submodule R V) : ENNReal := genusSum H L fun _ => 1
-
-def genusMean (H : HermSpace K V) (L : Submodule R V) (φ : Submodule R V → ENNReal) : ENNReal :=
-  genusSum H L φ / genusMass H L
-
-theorem isometric_equivalence (H : HermSpace K V) : Equivalence (Isometric (R := R) H) := by
-  constructor
-  · intro M
-    exact ⟨1, (isomGrp H).one_mem, Formalism.HermitianLatticesTheory.genusBasic_gmap_one M⟩
-  · rintro M _ ⟨s, hs, rfl⟩
-    exact ⟨s⁻¹, (isomGrp H).inv_mem hs, Formalism.HermitianLatticesTheory.genusBasic_gmap_inv s M⟩
-  · rintro M _ _ ⟨s, hs, rfl⟩ ⟨t, ht, rfl⟩
-    exact ⟨t * s, (isomGrp H).mul_mem ht hs, Formalism.HermitianLatticesTheory.genusBasic_gmap_mul s t M⟩
-
-theorem autCard_eq_of_isometric (H : HermSpace K V) {M M' : Submodule R V} (h : Isometric H M M') :
-    autCard H M = autCard H M' := by
-  have key : ∀ {N N' : Submodule R V}, Isometric H N N' → autCard H N ≤ autCard H N' := by
-    rintro N _ ⟨g, hg, rfl⟩
-    unfold autCard
-    refine ENat.toENNReal_le.2 (Set.encard_le_encard_of_injOn (f := fun a => g * a * g⁻¹) ?_ ?_)
-    · rintro a ⟨ha, haN⟩
-      refine ⟨mul_mem (mul_mem hg ha) (inv_mem hg), ?_⟩
-      unfold imLat at haN ⊢
-      rw [Formalism.HermitianLatticesTheory.genusBasic_gmap_mul, Formalism.HermitianLatticesTheory.genusBasic_gmap_inv, Formalism.HermitianLatticesTheory.genusBasic_gmap_mul, haN]
-    · intro a _ b _ hab
-      simpa using hab
-  exact le_antisymm (key h) (key ((isometric_equivalence H).symm h))
-
 end Genus
 
 section Mass
@@ -288,32 +209,6 @@ variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [M
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
 def IsTraceDef (H : HermSpace K V) : Prop := ∀ x : V, x ≠ 0 → 0 < Algebra.trace ℚ K (H.B x x)
-
-theorem genusSum_eq_sum (H : HermSpace K V) {L : Submodule (𝓞 K) V} {s : Finset (Submodule (𝓞 K) V)}
-    (hs : Formalism.ThetaLiftIndependence.IsClassReps H.B.flip L s) {φ : Submodule (𝓞 K) V → ENNReal}
-    (hφ : ∀ M M', InGenus H L M → Isometric H M M' → φ M = φ M') :
-    genusSum H L φ = ∑ M ∈ s, φ M / autCard H M := by
-  set r := fun M M' : {M : Submodule (𝓞 K) V // InGenus H L M} => Isometric H M.1 M'.1 with hr
-  have hre : Equivalence r := (isometric_equivalence H).comap _
-  have hq : ∀ a b, Quot.mk r a = Quot.mk r b ↔ r a b := fun a b => by
-    rw [Quot.eq, hre.eqvGen_iff]
-  let f : s → Quot r := fun N => Quot.mk r ⟨N.1, hs.1 N.1 N.2⟩
-  have hf : Function.Bijective f := by
-    constructor
-    · intro N N' h
-      have h1 : Isometric H N.1 N'.1 := (hq _ _).1 h
-      obtain ⟨P, -, hP⟩ := hs.2 N'.1 (hs.1 _ N'.2)
-      exact Subtype.ext ((hP N.1 ⟨N.2, h1⟩).trans
-        (hP N'.1 ⟨N'.2, (isometric_equivalence H).refl _⟩).symm)
-    · rintro ⟨M⟩
-      obtain ⟨N, ⟨hN, h⟩, -⟩ := hs.2 M.1 M.2
-      exact ⟨⟨N, hN⟩, (hq _ _).2 h⟩
-  unfold genusSum
-  rw [← (Equiv.ofBijective f hf).tsum_eq, ← Finset.tsum_subtype s (fun M => φ M / autCard H M)]
-  refine tsum_congr fun N => ?_
-  have h : Isometric H (Quot.out (f N)).1 N.1 := (hq _ ⟨N.1, hs.1 N.1 N.2⟩).1 (Quot.out_eq _)
-  show φ (Quot.out (f N)).1 / autCard H (Quot.out (f N)).1 = _
-  rw [hφ _ _ (Quot.out (f N)).2 h, autCard_eq_of_isometric H h]
 
 variable [FiniteDimensional K V]
 
@@ -348,65 +243,10 @@ theorem _root_.GlobalTheory.HermLat.autCard_eq_natCard {H : _root_.Formalism.Her
     rw [hset, ← hfin.cast_ncard_eq, Nat.card_coe_set_eq]
     simp
 
-theorem genusMass_eq {H : HermSpace K V} (hH : IsTraceDef H) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsFullLattice K L) :
-    genusMass H L = ENNReal.ofReal (Formalism.HermitianLatticesTheory.mass H.B.flip L) := by
-  obtain ⟨⟨s, hs⟩, hm, -⟩ :=
-    Formalism.HermitianLatticesTheory.massBasic K V H.B.flip (flip_isSymm H) hH L hL
-  rw [genusMass, genusSum_eq_sum H hs (fun _ _ _ _ => rfl), hm s hs,
-    ENNReal.ofReal_sum_of_nonneg (fun _ _ => by positivity)]
-  refine Finset.sum_congr rfl fun M hM => ?_
-  obtain ⟨-, hpos, he⟩ := autCard_eq_natCard hH (hs.1 M hM).1
-  rw [he, ENNReal.ofReal_inv_of_pos (by exact_mod_cast hpos), ENNReal.ofReal_natCast, one_div]
-
-theorem genusMass_ne_zero {H : HermSpace K V} (hH : IsTraceDef H) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsFullLattice K L) : genusMass H L ≠ 0 := by
-  rw [genusMass_eq hH hL]
-  have hpos :=
-    (Formalism.HermitianLatticesTheory.massBasic K V H.B.flip (flip_isSymm H) hH L hL).2.2
-  exact (ENNReal.ofReal_pos.2 hpos).ne'
-
-theorem genusMass_ne_top {H : HermSpace K V} (hH : IsTraceDef H) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsFullLattice K L) : genusMass H L ≠ ⊤ := by
-  rw [genusMass_eq hH hL]
-  exact ENNReal.ofReal_ne_top
-
-theorem genusMean_one {H : HermSpace K V} (hH : IsTraceDef H) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsFullLattice K L) : genusMean H L (fun _ => 1) = 1 :=
-  ENNReal.div_self (genusMass_ne_zero hH hL) (genusMass_ne_top hH hL)
-
 end Mass
 
 section Examples
 
-
-def ratLine : HermSpace ℚ ℚ where
-  B := LinearMap.mk₂'ₛₗ (RingHom.id ℚ) (starRingEnd ℚ) (fun x y => x * y)
-    (by intros; ring) (by intros; simp; ring) (by intros; ring) (by intros; simp; ring)
-  herm := by intro x y; simp; ring
-  nondeg := by intro x h; simpa using h 1
-
-theorem ratLine_isTraceDef : IsTraceDef ratLine := by
-  intro x hx
-  have : ratLine.B x x = x * x := rfl
-  rw [this]
-  have h : Algebra.trace ℚ ℚ (x * x) = x * x := by
-    have := Algebra.trace_algebraMap (R := ℚ) (S := ℚ) (x * x)
-    simpa using this
-  have h2 := mul_self_pos.2 hx
-  rw [← h] at h2
-  exact h2
-
-theorem ratLine_isLattice :
-    Submodule.IsFullLattice ℚ (1 : Submodule (NumberField.RingOfIntegers ℚ) ℚ) := by
-  refine { toIsLattice := Submodule.IsLattice.of_fg ℚ ?_, span_eq_top := ?_ }
-  · rw [Submodule.one_eq_span]
-    exact Submodule.fg_span_singleton _
-  · rw [eq_top_iff]
-    intro x _
-    have h1 : (1 : ℚ) ∈ Submodule.span ℚ ((1 : Submodule (NumberField.RingOfIntegers ℚ) ℚ) : Set ℚ) :=
-      Submodule.subset_span (Submodule.mem_one.2 ⟨1, map_one _⟩)
-    simpa using Submodule.smul_mem _ x h1
 
 end Examples
 

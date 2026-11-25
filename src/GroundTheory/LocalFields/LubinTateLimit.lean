@@ -69,18 +69,6 @@ instance (k : ℕ) : IsGalois K (unramifiedTower K Ω k) :=
 
 end UnramifiedTower
 
-section MaxUnramified
-
-variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-variable {Ω : Type*} [Field Ω] [ValuativeRel Ω] [TopologicalSpace Ω] [IsValuativeTopology Ω]
-  [Algebra K Ω] [ValuativeExtension K Ω] [Algebra.IsAlgebraic K Ω] [IsSepClosed Ω]
-variable {π : 𝒪[K]} (hπ : Irreducible π) {f : PowerSeries 𝒪[K]}
-
-
-variable [IsGalois K Ω]
-
-end MaxUnramified
-
 end FormalGroup
 
 end GroundTheory.LocalField

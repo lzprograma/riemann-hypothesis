@@ -4,6 +4,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenSE
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.TypeStar
+import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
 
 @[expose] public section
 
@@ -23,26 +24,12 @@ variable {S : Type} [CommRing S] {K : Type} [Fintype K] [LinearOrder K] {ι : K 
   [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)]
 
 theorem isMultiHomog_mul {p q : MRingOver S ι} {a b : K → ℕ} (hp : IsMultiHomog p a)
-    (hq : IsMultiHomog q b) : IsMultiHomog (p * q) (a + b) := by
-  classical
-  intro m hm k
-  obtain ⟨m₁, h₁, m₂, h₂, rfl⟩ := Finset.mem_add.mp (MvPolynomial.support_mul p q hm)
-  simp only [Finsupp.add_apply, Finset.sum_add_distrib, Pi.add_apply, hp m₁ h₁ k, hq m₂ h₂ k]
+    (hq : IsMultiHomog q b) : IsMultiHomog (p * q) (a + b) :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_mul hp hq
 
 theorem isMultiHomog_X (k : K) (i : ι k) :
-    IsMultiHomog (X ⟨k, i⟩ : MRingOver S ι) (fun l => if l = k then 1 else 0) := by
-  classical
-  intro m hm l
-  rw [Finset.mem_singleton.mp (MvPolynomial.support_monomial_subset hm)]
-  by_cases hl : l = k
-  · subst hl
-    simp [Finsupp.single_apply]
-  · have : ∀ j : ι l, (Finsupp.single (⟨k, i⟩ : Σ k, ι k) 1) ⟨l, j⟩ = 0 := by
-      intro j
-      rw [Finsupp.single_apply, if_neg]
-      intro h
-      exact hl (congrArg Sigma.fst h).symm
-    simp [this, hl]
+    IsMultiHomog (X ⟨k, i⟩ : MRingOver S ι) (fun l => if l = k then 1 else 0) :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_X_ite ⟨k, i⟩
 
 theorem cellMon_homog {I : ∀ k, Finset (ι k)} {u : MRingOver S ι} (hu : u ∈ KH.cellMon S I) :
     ∃ e : K → ℕ, IsMultiHomog u e := by

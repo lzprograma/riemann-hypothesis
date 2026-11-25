@@ -243,8 +243,7 @@ private theorem exists_mon (ρ : NRep F 3 K) (P : Ideal K) [hP : P.IsPrime] (h :
   obtain ⟨⟨hP', hM'⟩, hee⟩ := h
   have ex : ∀ {S : Set K}, ¬ Ideal.span S ≤ P → ∃ s ∈ S, s ∉ P := by
     intro S hS
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hS (Ideal.span_le.mpr hc)
   have hmul : ∀ {a b : K}, a ∉ P → b ∉ P → a * b ∉ P := fun ha hb hm =>
     (hP.mem_or_mem hm).elim ha hb
@@ -489,8 +488,7 @@ private theorem norm_lt_of_mem {l : ℕ} [Fact l.Prime] (c : Coef l) (x : c.O) (
     rw [h2, hcast]
     calc _ ≤ ‖((l : ℕ) : Qbar l)‖ * 1 := by gcongr
       _ < 1 := by simpa using hlt
-  by_contra hge
-  push_neg at hge
+  by_contra! hge
   exact absurd h4 (not_lt.mpr (one_le_pow₀ hge))
 
 private theorem map_mem_max {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R]
@@ -693,15 +691,6 @@ section -- clump:auto
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Pr
 
-private theorem xa_norm {l : ℕ} [Fact l.Prime] (c : Coef l) (y : c.O) : ‖(y.1 : PadicAlgCl l)‖ ≤ 1 := by
-  have hz : IsIntegral ℤ_[l] y.1 := (Algebra.IsIntegral.isIntegral (R := ℤ_[l]) y).map c.O.val
-  have hq : IsIntegral ℚ_[l] y.1 := Algebra.IsIntegral.isIntegral _
-  have h0 : ‖(y.1 : PadicAlgCl l)‖ = spectralValue (minpoly ℚ_[l] y.1) := rfl
-  rw [h0, spectralValue_le_one_iff (minpoly.monic hq), ]
-  intro n
-  rw [minpoly.isIntegrallyClosed_eq_field_fractions' ℚ_[l] hz, Polynomial.coeff_map]
-  exact PadicInt.norm_le_one _
-
 private theorem xa_pow {l : ℕ} [Fact l.Prime] (c : Coef l) [Fr.IsCoef l c.O] :
     ∃ e : ℕ, maximalIdeal c.O ^ e ≤ Ideal.span {(l : c.O)} := by
   have hl0 : (l : c.O) ≠ 0 := fun h => by
@@ -725,7 +714,7 @@ private theorem xa_key {l : ℕ} [Fact l.Prime] (c : Coef l) {e : ℕ} (he : max
   have h2 : (((l : c.O) ^ N * y : c.O).1 : PadicAlgCl l) = ((l : ℕ) : PadicAlgCl l) ^ N * y.1 := by
     rw [Subalgebra.coe_mul, Subalgebra.coe_pow, show (((l : c.O)).1 : PadicAlgCl l) = ((l : ℕ) : PadicAlgCl l) from map_natCast c.O.val l]
   rw [h2, norm_mul, norm_pow]
-  exact mul_le_of_le_one_right (by positivity) (xa_norm c y)
+  exact mul_le_of_le_one_right (by positivity) (GlobalTheory.CoefCoord.norm_le_one c y)
 
 private theorem xa_top {l : ℕ} [Fact l.Prime] {Γ : Type} [TopologicalSpace Γ] (u : Γ → PadicAlgCl l)
     (H : ∀ (g₀ : Γ) (ε : ℝ), 0 < ε → ∀ᶠ g in nhds g₀, ‖u g - u g₀‖ < ε) : Continuous u := by
@@ -900,9 +889,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
-
 section
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af
 namespace UpperTheory.V.J
@@ -936,7 +922,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
 
 section

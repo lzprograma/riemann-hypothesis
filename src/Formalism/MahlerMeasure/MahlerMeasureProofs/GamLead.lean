@@ -6,57 +6,6 @@ public import Mathlib.CategoryTheory.Category.Basic
 public import Formalism.MahlerMeasure.FinalM
 import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeBij
 import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelAct
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.LinearAlgebra.Dual.Lemmas
@@ -329,9 +278,9 @@ theorem fk_EE (hr : 1 ≤ r) {a b a' b' : ℕ} {u u' : MvPolynomial σ K} (hu : 
   have P' := F_pow_E_pow hw he hwe u' a' b' _ (euler_w_of_biHom w e hu') (euler_e_of_biHom w e hu') hF' hN'
   have P := F_pow_E_pow hw he hwe u a b _ (euler_w_of_biHom w e hu) (euler_e_of_biHom w e hu) hF hN
   rcases Nat.lt_trichotomy i j with hij | rfl | hij
-  · rw [if_neg (by omega), fk_E_pow, P', fk_smul_right, fk_harm_Epow hw he hwe hF (by omega), mul_zero]
-  · rw [if_pos rfl, fk_E_pow, P', fk_smul_right, Nat.sub_self, pow_zero, Module.End.one_apply]
-  · rw [if_neg (by omega), fk_symm, fk_E_pow, P, fk_smul_right, fk_harm_Epow hw he hwe hF' (by omega),
+  · rw [ite_eq_right (by omega), fk_E_pow, P', fk_smul_right, fk_harm_Epow hw he hwe hF (by omega), mul_zero]
+  · rw [ite_eq_left rfl, fk_E_pow, P', fk_smul_right, Nat.sub_self, pow_zero, Module.End.one_apply]
+  · rw [ite_eq_right (by omega), fk_symm, fk_E_pow, P, fk_smul_right, fk_harm_Epow hw he hwe hF' (by omega),
       mul_zero]
 
 theorem fk_levels (hr : 1 ≤ r) (s : ℕ) (R : Finset ℕ) (u u' : ℕ → MvPolynomial σ K) (c d : ℕ → K)
@@ -350,8 +299,8 @@ theorem fk_levels (hr : 1 ≤ r) (s : ℕ) (R : Finset ℕ) (u u' : ℕ → MvPo
     rw [fk_smul_right, fk_EE hw he hwe hr (hu l hl).1 (hu l hl).2 (hu' l' hl').1 (hu' l' hl').2]
     by_cases h : l = l'
     · subst h; simp
-    · rw [if_neg (by omega), if_neg h, mul_zero]
-  rw [Finset.sum_congr rfl this, Finset.sum_ite_eq, if_pos hl]
+    · rw [ite_eq_right (by omega), ite_eq_right h, mul_zero]
+  rw [Finset.sum_congr rfl this, Finset.sum_ite_eq, ite_eq_left hl]
   ring
 
 theorem decomp (hr : 1 ≤ r) : ∀ (a b : ℕ) (y : MvPolynomial σ K), BiHom w e a b y →
@@ -377,7 +326,7 @@ theorem decomp (hr : 1 ≤ r) : ∀ (a b : ℕ) (y : MvPolynomial σ K), BiHom w
       · by_cases h : l = 0
         · subst h
           exact ⟨by simpa using (biHom_F hw he hwe hy).2 (Or.inr rfl), by simpa using hy, fun _ => le_rfl⟩
-        · simp only [h, if_false]
+        · simp only [h, ite_false]
           exact ⟨map_zero _, biHom_zero _ _, fun h' => absurd rfl h'⟩
     · obtain ⟨b', rfl⟩ : ∃ b', b = b' + 1 := ⟨b - 1, by omega⟩
       have hFy := (biHom_F hw he hwe hy).1
@@ -415,7 +364,7 @@ theorem decomp (hr : 1 ≤ r) : ∀ (a b : ℕ) (y : MvPolynomial σ K), BiHom w
           rwa [Nat.sub_add_cancel hla, Nat.sub_add_cancel hlb] at this
       refine ⟨fun l => if l = 0 then y - tieE w e x else ((κ (l - 1) : K))⁻¹ • wl (l - 1), ?_, fun l hl => ?_⟩
       · rw [Finset.sum_range_succ']
-        simp only [if_true, pow_zero, Module.End.one_apply, Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel]
+        simp only [ite_true, pow_zero, Module.End.one_apply, Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel]
         rw [hEx]
         have : ∀ l ∈ range (a + 1), (tieE w e ^ (l + 1)) (((κ l : K))⁻¹ • wl l) =
             ((κ l : K))⁻¹ • (tieE w e ^ (l + 1)) (wl l) := fun l _ => map_smul _ _ _
@@ -423,10 +372,10 @@ theorem decomp (hr : 1 ≤ r) : ∀ (a b : ℕ) (y : MvPolynomial σ K), BiHom w
         abel
       · by_cases h : l = 0
         · subst h
-          simp only [if_true, Nat.sub_zero]
+          simp only [ite_true, Nat.sub_zero]
           refine ⟨by rw [map_sub, hFEx, sub_self], biHom_sub hy (biHom_E hw he hwe hxB), fun _ => Nat.zero_le _⟩
         · obtain ⟨l', rfl⟩ : ∃ l', l = l' + 1 := ⟨l - 1, by omega⟩
-          simp only [Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel]
+          simp only [Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel]
           have hl' : l' ∈ range (a + 1) := by
             simp only [Finset.mem_range] at hl ⊢; omega
           have hc := hwc l' hl'
@@ -580,7 +529,7 @@ theorem core (hr : 1 ≤ r) (o n z t : ℕ) (ht : t ≤ o) (hon : o < n)
     by_cases h0 : l = 0
     · subst h0; simpa using ⟨(hxx 0 hl).2.1, (hxx 0 hl).1⟩
     · have hl1 : l - 1 ∈ range A := by simp only [Finset.mem_range] at hl ⊢; omega
-      simp only [h0, if_false]
+      simp only [h0, ite_false]
       have hb := (hyy (l - 1) hl1).2
       rw [show A - 1 - (l - 1) = A - l by omega, show Bn - 1 - (l - 1) = Bn - l by omega] at hb
       exact ⟨biHom_add (hxx l hl).2.1 hb, by rw [map_add (f := _), (hxx l hl).1, (hyy (l - 1) hl1).1, add_zero]⟩
@@ -693,7 +642,7 @@ theorem core (hr : 1 ≤ r) (o n z t : ℕ) (ht : t ≤ o) (hon : o < n)
           ((L.factorial * (L.factorial * (o + n + r + z - 1).choose L) : ℕ) : ℝ) := by
         exact_mod_cast Nat.mul_le_mul_left _ hD
       push_cast at this ⊢
-      nlinarith [(Nat.cast_nonneg ((z + L).choose L) : (0:ℝ) ≤ _)]
+      simpa only [mul_assoc] using mul_le_mul_of_nonneg_left this (Nat.cast_nonneg _)
     have hterm : (((z + L).choose L * L.factorial * L.factorial : ℕ) : ℝ) ≤ Kc o z := by
       unfold Kc
       exact Finset.single_le_sum (f := fun L => (((z + L).choose L * L.factorial * L.factorial : ℕ) : ℝ))
@@ -786,7 +735,7 @@ variable {K σ : Type} [Field K] [DecidableEq σ] {r : ℕ} {w e : Fin r → σ}
 theorem biHom_one : BiHom w e 0 0 (1 : MvPolynomial σ K) := by
   classical
   intro m hm
-  rw [show (1 : MvPolynomial σ K) = monomial 0 1 from rfl, support_monomial, if_neg one_ne_zero] at hm
+  rw [show (1 : MvPolynomial σ K) = monomial 0 1 from rfl, support_monomial, ite_eq_right one_ne_zero] at hm
   simp only [Finset.mem_singleton] at hm
   subst hm; simp
 
@@ -821,7 +770,7 @@ theorem biHom_X_of (v : σ) {a b : ℕ} (ha : (∑ c, (Finsupp.single v 1 : σ �
   classical
   intro m hm
   rw [show (X v : MvPolynomial σ K) = monomial (Finsupp.single v 1) 1 from rfl, support_monomial,
-    if_neg one_ne_zero] at hm
+    ite_eq_right one_ne_zero] at hm
   simp only [Finset.mem_singleton] at hm
   subst hm; exact ⟨ha, hb⟩
 
@@ -867,10 +816,10 @@ theorem biHom_fSub (x : Fin (N + 1) × Fin r) :
     intro c1 c2; rw [mul_comm]; exact hp c1 c2
   simp only [fSub]
   by_cases hv : LL.vec i = true <;> by_cases hc : c = ρ
-  · rw [if_pos hv, if_pos hc]; exact biHom_sum _ _ (fun c' _ => hp' c' c')
-  · rw [if_pos hv, if_neg hc]; exact hp ρ c
-  · rw [if_neg hv, if_pos hc]; exact hp ρ ρ
-  · rw [if_neg hv, if_neg hc]; exact biHom_sub (hp ρ c) (hp' c ρ)
+  · rw [ite_eq_left hv, ite_eq_left hc]; exact biHom_sum _ _ (fun c' _ => hp' c' c')
+  · rw [ite_eq_left hv, ite_eq_right hc]; exact hp ρ c
+  · rw [ite_eq_right hv, ite_eq_left hc]; exact hp ρ ρ
+  · rw [ite_eq_right hv, ite_eq_right hc]; exact biHom_sub (hp ρ c) (hp' c ρ)
 
 theorem aeval_fSub_monomial (m : Fin (N + 1) × Fin r →₀ ℕ) :
     aeval (fSub K LL ρ) (monomial m (1 : K)) = ∏ x, fSub K LL ρ x ^ m x := by
@@ -953,7 +902,7 @@ theorem biHom_sq' (m : Fin (N + 1) × Fin r →₀ ℕ) (hm : M.MultiDeg LL m) :
   have h2 := sum_update m (Fin.last N, ρ) (fun _ => 1)
   rw [multidegree_last_weight_sum LL m hm] at h1
   rw [multiDeg_total LL m hm] at h2
-  simp only [if_true, mul_one] at h1 h2
+  simp only [ite_true, mul_one] at h1 h2
   have := biHom_sq (K := K) LL ρ m
   simp only [mul_one] at this
   rwa [show ∑ x, (Finsupp.update m (Fin.last N, ρ) 0) x * (if x.1 = Fin.last N then 1 else 0) =
@@ -985,16 +934,16 @@ theorem pderiv_W_fSub (hv : LL.vec (Fin.last N) = true) (x : Fin (N + 1) × Fin 
     intro h; simp only [wW, Prod.mk.injEq] at h; exact Fin.castSucc_ne_last _ h.1.symm
   simp only [fSub]
   by_cases hvi : LL.vec i = true <;> by_cases hc : c = ρ
-  · rw [if_pos hvi, if_pos hc]
+  · rw [ite_eq_left hvi, ite_eq_left hc]
     have hi : i ≠ Fin.last N := fun h => hx (by rw [h, hc])
 
     rw [map_sum]; refine Finset.sum_eq_zero (fun c' _ => ?_)
     rw [Derivation.leibniz, hXcs c' (fun h => absurd h hi), hXe]; simp
-  · rw [if_pos hvi, if_neg hc, Derivation.leibniz, hXcs c (fun _ => hc), hXe]; simp
+  · rw [ite_eq_left hvi, ite_eq_right hc, Derivation.leibniz, hXcs c (fun _ => hc), hXe]; simp
   · have hi : i ≠ Fin.last N := fun h => hvi (h ▸ hv)
-    rw [if_neg hvi, if_pos hc, Derivation.leibniz, hXcs ρ (fun h => absurd h hi), hXe]; simp
+    rw [ite_eq_right hvi, ite_eq_left hc, Derivation.leibniz, hXcs ρ (fun h => absurd h hi), hXe]; simp
   · have hi : i ≠ Fin.last N := fun h => hvi (h ▸ hv)
-    rw [if_neg hvi, if_neg hc, map_sub, Derivation.leibniz, Derivation.leibniz, hXcs c (fun h => absurd h hi),
+    rw [ite_eq_right hvi, ite_eq_right hc, map_sub, Derivation.leibniz, Derivation.leibniz, hXcs c (fun h => absurd h hi),
       hXcs ρ (fun h => absurd h hi), hXe, hXe]; simp
 
 theorem pderiv_W_sq (hv : LL.vec (Fin.last N) = true) (m : Fin (N + 1) × Fin r →₀ ℕ) :
@@ -1038,7 +987,7 @@ theorem wf_single_add (M : σ →₀ ℕ) (i : σ) (k : ℕ) :
     intro x
     by_cases hx : x = i
     · subst hx
-      simp only [Finsupp.add_apply, Finsupp.single_eq_same, if_true]
+      simp only [Finsupp.add_apply, Finsupp.single_eq_same, ite_true]
       have := Nat.factorial_mul_descFactorial (n := M x + k) (k := k) (by omega)
       rw [Nat.add_sub_cancel] at this
       rw [add_comm k, ← this]; push_cast; ring
@@ -1054,7 +1003,7 @@ theorem fk_Xpow (i : σ) (k : ℕ) (g g' : MvPolynomial σ K) :
   have hs : (X i ^ k * g).support ⊆ g.support.map (addLeftEmbedding (Finsupp.single i k)) := by
     intro M hM
     have := support_mul (X i ^ k) g hM
-    rw [hX, support_monomial, if_neg one_ne_zero] at this
+    rw [hX, support_monomial, ite_eq_right one_ne_zero] at this
     obtain ⟨a, ha, b, hb, rfl⟩ := Finset.mem_add.mp this
     simp only [Finset.mem_singleton] at ha
     subst ha
@@ -1078,10 +1027,10 @@ theorem kill_monomial (M : σ →₀ ℕ) (a : K) :
     congr 1
     refine Finsupp.prod_congr (fun v hv => ?_)
     have : ¬ P v := fun hp => (Finsupp.mem_support_iff.mp hv) (h v hp)
-    rw [if_neg this]
+    rw [ite_eq_right this]
   · push Not at h
     obtain ⟨v, hp, hv⟩ := h
-    rw [Finsupp.prod, Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hv) (by rw [if_pos hp, zero_pow hv]),
+    rw [Finsupp.prod, Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hv) (by rw [ite_eq_left hp, zero_pow hv]),
       mul_zero]
 
 theorem coeff_kill (g : MvPolynomial σ K) (M : σ →₀ ℕ) :
@@ -1121,15 +1070,15 @@ theorem kill_fSub (x : Fin (N + 1) × Fin r) :
   simp only [fSub, cs']
   by_cases hvi : LL.vec i = true <;> by_cases hc : c = ρ
 
-  · rw [if_pos hvi, if_pos hc, map_sum]
-    simp only [map_mul, kill_X, hcs, if_false, he, ite_not]
+  · rw [ite_eq_left hvi, ite_eq_left hc, map_sum]
+    simp only [map_mul, kill_X, hcs, ite_false, he, ite_not]
     rw [Finset.sum_eq_single ρ]
     · subst hc; simp [mul_comm]
     · intro b _ hb; simp [hb]
     · simp
-  · rw [if_pos hvi, if_neg hc]; simp only [map_mul, kill_X, hcs, he, if_false]; simp
-  · rw [if_neg hvi, if_pos hc]; simp only [map_mul, kill_X, hcs, he, if_false]; subst hc; simp
-  · rw [if_neg hvi, if_neg hc]; simp only [map_sub, map_mul, kill_X, hcs, he, if_false]; simp [hc]
+  · rw [ite_eq_left hvi, ite_eq_right hc]; simp only [map_mul, kill_X, hcs, he, ite_false]; simp
+  · rw [ite_eq_right hvi, ite_eq_left hc]; simp only [map_mul, kill_X, hcs, he, ite_false]; subst hc; simp
+  · rw [ite_eq_right hvi, ite_eq_right hc]; simp only [map_sub, map_mul, kill_X, hcs, he, ite_false]; simp [hc]
 
 theorem monomial_eq_prod {σ' : Type} [Fintype σ'] [DecidableEq σ'] (m : σ' →₀ ℕ) :
     (monomial m (1 : K) : MvPolynomial σ' K) = ∏ x, X x ^ m x := by
@@ -1185,8 +1134,8 @@ theorem top_eq_kill (a d : ℕ) (g g' : MvPolynomial (Fin (N + 1 + 1) × Fin r) 
       have h0 : ∑ c ∈ Finset.univ.erase ρ, M (eη (N := N) c) = 0 := by simp only [eη] at h ⊢; omega
       exact (Finset.sum_eq_zero_iff.mp h0) v2 (Finset.mem_erase.mpr ⟨hv2, Finset.mem_univ _⟩)
   by_cases h : M (Fin.last (N + 1), ρ) = d
-  · rw [if_pos (key.mpr h), if_pos (key.mpr h), if_pos h]; ring
-  · rw [if_neg (fun h' => h (key.mp h')), if_neg h]; ring
+  · rw [ite_eq_left (key.mpr h), ite_eq_left (key.mpr h), ite_eq_left h]; ring
+  · rw [ite_eq_right (fun h' => h (key.mp h')), ite_eq_right h]; ring
 
 end frz
 
@@ -1238,8 +1187,8 @@ theorem choose_lim' (S j d : ℕ) (hjd : j ≤ d) :
     Tendsto (fun n : ℕ => ((n + j - S).choose j : ℝ) / (n : ℝ) ^ d) atTop
       (𝓝 (if j = d then 1 / (d.factorial : ℝ) else 0)) := by
   by_cases h : j = d
-  · subst h; rw [if_pos rfl]; exact choose_lim j S j
-  · rw [if_neg h]
+  · subst h; rw [ite_eq_left rfl]; exact choose_lim j S j
+  · rw [ite_eq_right h]
     have h1 := (choose_lim j S j).mul (inv_pow_lim (d - j) (by omega))
     rw [mul_zero] at h1
     refine h1.congr' ?_
@@ -1337,8 +1286,8 @@ theorem leading_vector_add_linked (m : Fin (N + 1) × Fin r →₀ ℕ) (hme : e
       X (Fin.last (N + 1), ρ) ^ (n - LL.total) * gv LL ρ e m := by
   unfold V0 Yh gv
   by_cases h : m (Fin.last N, ρ) = e
-  · rw [if_pos h, if_pos h, h, Nat.sub_self, pow_zero, Module.End.one_apply, map_zero, add_zero]
-  · rw [if_neg h, if_neg h, zero_add, ← Module.End.mul_apply, ← pow_succ',
+  · rw [ite_eq_left h, ite_eq_left h, h, Nat.sub_self, pow_zero, Module.End.one_apply, map_zero, add_zero]
+  · rw [ite_eq_right h, ite_eq_right h, zero_add, ← Module.End.mul_apply, ← pow_succ',
       show m (Fin.last N, ρ) - e - 1 + 1 = m (Fin.last N, ρ) - e by omega, E_pow_X_mul]
 
 theorem frz_shape (hv : LL.vec (Fin.last N) = true) (m : Fin (N + 1) × Fin r →₀ ℕ)
@@ -1352,8 +1301,8 @@ theorem linked_map_leading_vector (hv : LL.vec (Fin.last N) = true) (m : Fin (N 
     tieF (wW (N := N)) eη (V0 (K := K) LL ρ e m n) = X (Fin.last (N + 1), ρ) ^ (n - LL.total) * gF LL ρ e m := by
   unfold V0 gF
   by_cases h : m (Fin.last N, ρ) = e
-  · rw [if_pos h, if_pos h, F_eta_pow ρ _ _ (pderiv_W_sq LL ρ hv m)]
-  · rw [if_neg h, if_neg h, map_zero, mul_zero]
+  · rw [ite_eq_left h, ite_eq_left h, F_eta_pow ρ _ _ (pderiv_W_sq LL ρ hv m)]
+  · rw [ite_eq_right h, ite_eq_right h, map_zero, mul_zero]
 
 theorem m_W_le (m : Fin (N + 1) × Fin r →₀ ℕ) (hm : M.MultiDeg LL m) :
     m (Fin.last N, ρ) ≤ LL.deg (Fin.last N) := by
@@ -1380,14 +1329,14 @@ include hm hme hn
 theorem bihomogeneous_leading_vector : BiHom (wW (N := N)) eη (LL.deg (Fin.last N) - e) (n - e) (V0 (K := K) LL ρ e m n) := by
   unfold V0
   by_cases h : m (Fin.last N, ρ) = e
-  · rw [if_pos h]; have := biHom_Xsq (K := K) LL ρ m hm n hn; rwa [h] at this
-  · rw [if_neg h]; exact biHom_zero _ _
+  · rw [ite_eq_left h]; have := biHom_Xsq (K := K) LL ρ m hm n hn; rwa [h] at this
+  · rw [ite_eq_right h]; exact biHom_zero _ _
 
 theorem biHom_Yh : BiHom (wW (N := N)) eη (LL.deg (Fin.last N) - e - 1) (n - e - 1) (Yh (K := K) LL ρ e m n) := by
   unfold Yh
   by_cases h : m (Fin.last N, ρ) = e
-  · rw [if_pos h]; exact biHom_zero _ _
-  · rw [if_neg h]
+  · rw [ite_eq_left h]; exact biHom_zero _ _
+  · rw [ite_eq_right h]
     have := biHom_E_pow wW_inj eη_inj wW_ne_eη (biHom_Xsq (K := K) LL ρ m hm n hn) (m (Fin.last N, ρ) - e - 1)
     have hS := m_W_le LL ρ m hm
     have hoS := o_le_S LL
@@ -1398,7 +1347,7 @@ theorem Yh_ne : Yh (K := K) LL ρ e m n ≠ 0 → 1 ≤ LL.deg (Fin.last N) - e 
   intro h
   unfold Yh at h
   by_cases h' : m (Fin.last N, ρ) = e
-  · rw [if_pos h'] at h; exact absurd rfl h
+  · rw [ite_eq_left h'] at h; exact absurd rfl h
   · have hS := m_W_le LL ρ m hm
     have hoS := o_le_S LL
     omega
@@ -1420,14 +1369,14 @@ theorem gF_eta_le : ∀ M ∈ (gF (K := K) LL ρ e m).support, M (Fin.last (N + 
   intro M hM
   unfold gF at hM
   by_cases h : m (Fin.last N, ρ) = e
-  · rw [if_pos h] at hM
+  · rw [ite_eq_left h] at hM
     have hb := (biHom_F wW_inj eη_inj wW_ne_eη (biHom_sq' (K := K) LL ρ m hm)).1
     have h2 := (hb M hM).2
     have h3 : M (Fin.last (N + 1), ρ) ≤ ∑ c, M (eη (N := N) c) :=
       Finset.single_le_sum (f := fun c => M (eη (N := N) c)) (fun _ _ => Nat.zero_le _) (Finset.mem_univ ρ)
     simp only [eη] at h2 h3
     omega
-  · rw [if_neg h] at hM; simp at hM
+  · rw [ite_eq_right h] at hM; simp at hM
 
 omit hn hme in
 theorem sq_eta_le (he : m (Fin.last N, ρ) = e) : ∀ M ∈ (sq (K := K) LL ρ m).support, M (Fin.last (N + 1), ρ) ≤ LL.total - e := by
@@ -1529,8 +1478,8 @@ theorem fk_kill_sq (m m' : Fin (N + 1) × Fin r →₀ ℕ) (d : ℕ)
       if Finsupp.update m (Fin.last N, ρ) 0 = Finsupp.update m' (Fin.last N, ρ) 0 then
         (d.factorial : K) * wf (Finsupp.update m (Fin.last N, ρ) 0) else 0 := by
   classical
-  rw [kill_sq, kill_sq, hd, hd', fk_Xpow, support_monomial, if_neg one_ne_zero, Finset.sum_singleton,
-    coeff_monomial, if_pos rfl, coeff_monomial, wf_mapDomain]
+  rw [kill_sq, kill_sq, hd, hd', fk_Xpow, support_monomial, ite_eq_right one_ne_zero, Finset.sum_singleton,
+    coeff_monomial, ite_eq_left rfl, coeff_monomial, wf_mapDomain]
   have h0 : ((Finsupp.update m (Fin.last N, ρ) 0).mapDomain (cs' (N := N))) (Fin.last (N + 1), ρ) = 0 := by
     apply Finsupp.mapDomain_of_notMem_range
     rintro ⟨x, hx⟩
@@ -1542,7 +1491,7 @@ theorem fk_kill_sq (m m' : Fin (N + 1) × Fin r →₀ ℕ) (d : ℕ)
   · have h'' : ¬ ((Finsupp.update m' (Fin.last N, ρ) 0).mapDomain (cs' (N := N)) =
         (Finsupp.update m (Fin.last N, ρ) 0).mapDomain (cs' (N := N))) :=
       fun h' => h (Finsupp.mapDomain_injective cs'_inj h').symm
-    rw [if_neg h'', if_neg h]; ring
+    rw [ite_eq_right h'', ite_eq_right h]; ring
 
 end
 
@@ -1578,7 +1527,7 @@ theorem limit_value (z e : ℕ) (m m' : Fin (N + 1) × Fin r →₀ ℕ) (hm : M
   have hpr : (∏ i, ((LL.deg i).factorial : ℝ)) ≠ 0 :=
     Finset.prod_ne_zero_iff.mpr (fun i _ => by exact_mod_cast Nat.factorial_ne_zero _)
   by_cases h : m (Fin.last N, ρ) = e ∧ m' (Fin.last N, ρ) = e
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have hT : ∑ M ∈ (sq (K := ℝ) LL ρ m).support, (sq LL ρ m).coeff M * (sq LL ρ m').coeff M * wf M *
         (if M (Fin.last (N + 1), ρ) = LL.total - e then 1 / ((LL.total - e).factorial : ℝ) else 0) =
         fk (kill (K := ℝ) (Pη ρ) (sq LL ρ m)) (kill (Pη ρ) (sq LL ρ m')) / ((LL.total - e).factorial : ℝ) := by
@@ -1590,20 +1539,20 @@ theorem limit_value (z e : ℕ) (m m' : Fin (N + 1) × Fin r →₀ ℕ) (hm : M
     rw [hT, fk_kill_sq LL ρ m m' (LL.total - e) (by rw [sum_update_eq LL ρ m hm, h.1])
       (by rw [sum_update_eq LL ρ m' hm', h.2])]
     unfold inMono
-    rw [if_pos h.1, if_pos h.2, fk_monomial, wf_split ρ m, h.1]
+    rw [ite_eq_left h.1, ite_eq_left h.2, fk_monomial, wf_split ρ m, h.1]
     by_cases hq : Finsupp.update m (Fin.last N, ρ) 0 = Finsupp.update m' (Fin.last N, ρ) 0
-    · rw [if_pos hq, if_pos ((update_eq_iff ρ m m' (h.1.trans h.2.symm)).mp hq)]
+    · rw [ite_eq_left hq, ite_eq_left ((update_eq_iff ρ m m' (h.1.trans h.2.symm)).mp hq)]
       push_cast
       field_simp
       ring
-    · rw [if_neg hq, if_neg (fun h' => hq ((update_eq_iff ρ m m' (h.1.trans h.2.symm)).mpr h'))]
+    · rw [ite_eq_right hq, ite_eq_right (fun h' => hq ((update_eq_iff ρ m m' (h.1.trans h.2.symm)).mpr h'))]
       simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have : fk (inMono (K := ℝ) ρ e m) (inMono ρ e m') = 0 := by
       unfold inMono
       by_cases h1 : m (Fin.last N, ρ) = e
-      · rw [if_neg (fun h2 => h ⟨h1, h2⟩), fk_zero_right]
-      · rw [if_neg h1, fk_zero_left]
+      · rw [ite_eq_right (fun h2 => h ⟨h1, h2⟩), fk_zero_right]
+      · rw [ite_eq_right h1, fk_zero_left]
     rw [this]; simp
 
 end
@@ -1659,17 +1608,17 @@ theorem real_mono (hr : 1 ≤ r) (hv : LL.vec (Fin.last N) = true) (z e : ℕ)
         else 0 with hT
   have hf3 : Tendsto (fun n => fk (V0 (K := ℝ) LL ρ e m n) (V0 LL ρ e m' n) / Q n) atTop (𝓝 T) := by
     by_cases h : m (Fin.last N, ρ) = e ∧ m' (Fin.last N, ρ) = e
-    · rw [hT, if_pos h]
+    · rw [hT, ite_eq_left h]
       have := fk_eta_lim i0 S (S - e) (sq (K := ℝ) LL ρ m) (sq (K := ℝ) LL ρ m') (sq_eta_le (K := ℝ) LL ρ e m hm h.1)
       refine this.congr' (Eventually.of_forall (fun n => ?_))
-      simp only [V0, if_pos h.1, if_pos h.2, Q, i0]
+      simp only [V0, ite_eq_left h.1, ite_eq_left h.2, Q, i0]
       rfl
-    · rw [hT, if_neg h]
+    · rw [hT, ite_eq_right h]
       refine tendsto_const_nhds.congr' (Eventually.of_forall (fun n => ?_))
       simp only [V0]
       by_cases h1 : m (Fin.last N, ρ) = e
-      · rw [if_neg (fun h2 => h ⟨h1, h2⟩), fk_zero_right, zero_div]
-      · rw [if_neg h1, fk_zero_left, zero_div]
+      · rw [ite_eq_right (fun h2 => h ⟨h1, h2⟩), fk_zero_right, zero_div]
+      · rw [ite_eq_right h1, fk_zero_left, zero_div]
 
   let f4 : ℕ → ℝ := fun n => (Bf n - kap0 o n z e r * fk (V0 LL ρ e m n) (V0 LL ρ e m' n)) / Q n
   let bd : ℕ → ℝ := fun n =>

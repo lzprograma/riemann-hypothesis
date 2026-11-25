@@ -1,50 +1,12 @@
 module
 
+import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.DimensionNonincreasing
+import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransformOffCenter
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.IsomorphismTransport
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictTransformFlatBaseChange
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupSequence
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.CanonicalPrincipalization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -58,59 +20,20 @@ noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
 
-private theorem cons_take_succ_inj {α : Type*} (j : ℕ) (a b : α) (t₁ t₂ : List α)
-    (h : List.take (j + 1) (a :: t₁) = List.take (j + 1) (b :: t₂)) :
-    a = b ∧ List.take j t₁ = List.take j t₂ :=
-  Eq.mp (List.cons.injEq a (List.take j t₁) b (List.take j t₂)) h
-
-private theorem get_eq_get_of_take_add_one_eq {α : Type*} :
-    ∀ (j : ℕ) (l₁ l₂ : List α), List.take (j + 1) l₁ = List.take (j + 1) l₂ →
-      ∀ (h₁ : j < l₁.length) (h₂ : j < l₂.length), l₁.get ⟨j, h₁⟩ = l₂.get ⟨j, h₂⟩ := by
-  intro j
-  induction j with
-  | zero =>
-    intro l₁ l₂ htake h₁ h₂
-    cases l₁ with
-    | nil => exact absurd h₁ (Nat.not_lt_zero 0)
-    | cons a t₁ =>
-      cases l₂ with
-      | nil => exact absurd h₂ (Nat.not_lt_zero 0)
-      | cons b t₂ => exact (cons_take_succ_inj 0 a b t₁ t₂ htake).1
-  | succ j ih =>
-    intro l₁ l₂ htake h₁ h₂
-    cases l₁ with
-    | nil => exact absurd h₁ (Nat.not_lt_zero (j + 1))
-    | cons a t₁ =>
-      cases l₂ with
-      | nil => exact absurd h₂ (Nat.not_lt_zero (j + 1))
-      | cons b t₂ =>
-        exact ih t₁ t₂ (cons_take_succ_inj (j + 1) a b t₁ t₂ htake).2
-          (Nat.lt_of_succ_lt_succ h₁) (Nat.lt_of_succ_lt_succ h₂)
-
 theorem get_eq_get_of_take_succ_eq {α : Type*} (l₁ l₂ : List α) (j : ℕ)
     (htake : List.take (j + 1) l₁ = List.take (j + 1) l₂)
     (h₁ : j < l₁.length) (h₂ : j < l₂.length) :
-    l₁.get ⟨j, h₁⟩ = l₂.get ⟨j, h₂⟩ :=
-  get_eq_get_of_take_add_one_eq j l₁ l₂ htake h₁ h₂
-
-private theorem nontrivialPart_map_comap {X Y : Scheme.{u}} (f : Y ⟶ X)
-    (l : List X.IdealSheafData) :
-    MarkedIdealWithBoundary.nontrivialPart (l.map fun D => D.comap f) =
-      MarkedIdealWithBoundary.nontrivialPart ((MarkedIdealWithBoundary.nontrivialPart l).map fun D => D.comap f) := by
-  unfold MarkedIdealWithBoundary.nontrivialPart
-  induction l with
-  | nil => simp
-  | cons D l ih =>
-    by_cases hD : D = ⊤
-    · subst hD
-      simp [AlgebraicGeometry.Scheme.IdealSheafData.comap_top, ih]
-    · simp [List.filter_cons, hD, ih]
+    l₁.get ⟨j, h₁⟩ = l₂.get ⟨j, h₂⟩ := by
+  have h := congrArg (·[j]?) htake
+  rw [List.getElem?_take_of_succ, List.getElem?_take_of_succ,
+    List.getElem?_eq_getElem h₁, List.getElem?_eq_getElem h₂] at h
+  exact Option.some.inj h
 
 theorem MarkedIdealWithBoundary.SameNontrivialBoundary.comap {X Y : Scheme.{u}} (f : Y ⟶ X)
     {E E' : List X.IdealSheafData} (h : MarkedIdealWithBoundary.SameNontrivialBoundary E E') :
-    MarkedIdealWithBoundary.SameNontrivialBoundary (E.map fun D => D.comap f) (E'.map fun D => D.comap f) := by
-  rw [MarkedIdealWithBoundary.sameNontrivialBoundary_iff] at h ⊢
-  rw [nontrivialPart_map_comap f E, nontrivialPart_map_comap f E', h]
+    MarkedIdealWithBoundary.SameNontrivialBoundary
+      (E.map fun D => D.comap f) (E'.map fun D => D.comap f) :=
+  h.map (fun D => D.comap f) (Scheme.IdealSheafData.comap_top f)
 
 private theorem nontrivialPart_cons_congr {X : Scheme.{u}} {a : X.IdealSheafData}
     {s t : List X.IdealSheafData}
@@ -175,60 +98,21 @@ theorem MarkedIdealWithBoundary.SameNontrivialBoundary.eraseIdx {X : Scheme.{u}}
   (MarkedIdealWithBoundary.sameNontrivialBoundary_iff _ _).2
     (nontrivialPart_eraseIdx_eq_of_take_succ_eq j E E' ((MarkedIdealWithBoundary.sameNontrivialBoundary_iff _ _).1 h) htake)
 
-theorem surjective_snd_of_isPullback_of_surjective {X Y S S' : Scheme.{u}} (σ : S ⟶ X) (σ' : S' ⟶ Y) (φ : Y ⟶ X)
-    (ψ : S' ⟶ S) [AlgebraicGeometry.Surjective φ] (hpb : IsPullback σ' ψ φ σ) :
-    AlgebraicGeometry.Surjective ψ := by
-  have hφ : AlgebraicGeometry.Surjective φ := inferInstance
-  exact MorphismProperty.IsStableUnderBaseChange.of_isPullback hpb hφ
-
 namespace DivisorReduction
-
-private theorem ker_subschemeι_le_ker_comp {X Y : Scheme.{u}} (h : Y ⟶ X) (D : X.IdealSheafData)
-    (D' : Y.IdealSheafData) (hD : D' = D.comap h) :
-    Scheme.Hom.ker D.subschemeι ≤ Scheme.Hom.ker (D'.subschemeι ≫ h) := by
-  subst hD
-  rw [AlgebraicGeometry.Scheme.IdealSheafData.ker_subschemeι, AlgebraicGeometry.Scheme.Hom.ker_comp,
-    AlgebraicGeometry.Scheme.IdealSheafData.ker_subschemeι]
-  exact AlgebraicGeometry.Scheme.IdealSheafData.le_map_comap D h
-
-theorem exists_subscheme_hom_comp_subschemeι_eq {X Y : Scheme.{u}} (h : Y ⟶ X) (D : X.IdealSheafData)
-    (D' : Y.IdealSheafData) (hD : D' = D.comap h) :
-    ∃ g : D'.subscheme ⟶ D.subscheme,
-      g ≫ D.subschemeι = D'.subschemeι ≫ h ∧
-        ∀ I₀ : X.IdealSheafData,
-          (I₀.comap D.subschemeι).comap g = (I₀.comap h).comap D'.subschemeι := by
-  have hsq : AlgebraicGeometry.IsClosedImmersion.lift D.subschemeι (D'.subschemeι ≫ h)
-      (ker_subschemeι_le_ker_comp h D D' hD) ≫ D.subschemeι = D'.subschemeι ≫ h :=
-    AlgebraicGeometry.IsClosedImmersion.lift_fac ..
-  refine ⟨AlgebraicGeometry.IsClosedImmersion.lift D.subschemeι (D'.subschemeι ≫ h)
-      (ker_subschemeι_le_ker_comp h D D' hD), hsq, fun I₀ => ?_⟩
-  rw [← AlgebraicGeometry.Scheme.IdealSheafData.comap_comp, hsq,
-    AlgebraicGeometry.Scheme.IdealSheafData.comap_comp]
 
 def subschemeMapOfComap {X Y : Scheme.{u}} (h : Y ⟶ X) (D : X.IdealSheafData) (D' : Y.IdealSheafData)
     (hD : D' = D.comap h) : D'.subscheme ⟶ D.subscheme :=
-  (exists_subscheme_hom_comp_subschemeι_eq h D D' hD).choose
+  D'.subschemeMap D h (hD ▸ D.le_map_comap h)
 
 theorem subschemeMapOfComap_comp {X Y : Scheme.{u}} (h : Y ⟶ X) (D : X.IdealSheafData)
     (D' : Y.IdealSheafData) (hD : D' = D.comap h) :
     subschemeMapOfComap h D D' hD ≫ D.subschemeι = D'.subschemeι ≫ h :=
-  (exists_subscheme_hom_comp_subschemeι_eq h D D' hD).choose_spec.1
+  D'.subschemeMap_subschemeι ..
 
 theorem comap_subschemeMapOfComap {X Y : Scheme.{u}} (h : Y ⟶ X) (D : X.IdealSheafData)
     (D' : Y.IdealSheafData) (hD : D' = D.comap h) (I₀ : X.IdealSheafData) :
-    (I₀.comap D.subschemeι).comap (subschemeMapOfComap h D D' hD) = (I₀.comap h).comap D'.subschemeι :=
-  (exists_subscheme_hom_comp_subschemeι_eq h D D' hD).choose_spec.2 I₀
-
-private theorem map_comap_comap_subschemeι {X Y : Scheme.{u}} (h : Y ⟶ X)
-    (D : X.IdealSheafData) (D' : Y.IdealSheafData) (hD : D' = D.comap h)
-    (M : List X.IdealSheafData) :
-    ((M.map fun I => I.comap h).map fun I => I.comap D'.subschemeι)
-      = (M.map fun I => I.comap D.subschemeι).map fun I => I.comap (subschemeMapOfComap h D D' hD) := by
-  induction M with
-  | nil => rfl
-  | cons I t ih =>
-    simp only [List.map_cons]
-    rw [comap_subschemeMapOfComap h D D' hD I, ih]
+    (I₀.comap D.subschemeι).comap (subschemeMapOfComap h D D' hD) = (I₀.comap h).comap D'.subschemeι := by
+  rw [← Scheme.IdealSheafData.comap_comp, subschemeMapOfComap_comp, Scheme.IdealSheafData.comap_comp]
 
 theorem sameNontrivialBoundary_comap_subschemeι {X Y : Scheme.{u}} (h : Y ⟶ X) (D : X.IdealSheafData)
     (D' : Y.IdealSheafData) (hD : D' = D.comap h) (M : List X.IdealSheafData)
@@ -236,445 +120,126 @@ theorem sameNontrivialBoundary_comap_subschemeι {X Y : Scheme.{u}} (h : Y ⟶ X
     (hM : MarkedIdealWithBoundary.SameNontrivialBoundary M' (M.map fun I => I.comap h)) :
     MarkedIdealWithBoundary.SameNontrivialBoundary (M'.map fun I => I.comap D'.subschemeι)
       ((M.map fun I => I.comap D.subschemeι).map fun I => I.comap (subschemeMapOfComap h D D' hD)) := by
-  rw [← map_comap_comap_subschemeι h D D' hD M]
+  have hmap : ((M.map fun I => I.comap h).map fun I => I.comap D'.subschemeι) =
+      (M.map fun I => I.comap D.subschemeι).map fun I =>
+        I.comap (subschemeMapOfComap h D D' hD) := by
+    simp only [List.map_map, Function.comp_def, comap_subschemeMapOfComap]
+  rw [← hmap]
   exact hM.comap D'.subschemeι
 
-def componentsInOrderLocusIdeal {X : Scheme.{u}} (I : X.IdealSheafData) (m : ℕ) (D : X.IdealSheafData) :
-    X.IdealSheafData :=
-  @dite X.IdealSheafData
-    (IsOpen {x : ↥D.subscheme | connectedComponent x ⊆ ⇑D.subschemeι ⁻¹' orderAtLeastLocus I m})
-    (Classical.propDecidable _)
-    (fun hop =>
-      Scheme.Hom.ker
-        (Scheme.Opens.ι
-            ({ carrier := {x : ↥D.subscheme |
-                  connectedComponent x ⊆ ⇑D.subschemeι ⁻¹' orderAtLeastLocus I m},
-                is_open' := hop } : D.subscheme.Opens) ≫
-          D.subschemeι))
-    (fun _ => ⊤)
+/-- The preliminary center depends only on the marked ideal and the chosen boundary divisor. -/
+theorem containedComponentsIdeal_congr (T : MarkedIdealWithBoundary.{u}) (I J : T.scheme.IdealSheafData)
+    (E F : List T.scheme.IdealSheafData) (j k : ℕ) (hj : j < E.length) (hk : k < F.length)
+    (hI : I = J) (hD : E.get ⟨j, hj⟩ = F.get ⟨k, hk⟩) :
+    containedComponentsIdeal (T.withSchemeIdealBoundary T.scheme T.structMap I E) j hj =
+      containedComponentsIdeal (T.withSchemeIdealBoundary T.scheme T.structMap J F) k hk := by
+  let center (K D : T.scheme.IdealSheafData) := containedComponentsIdeal
+    (T.withSchemeIdealBoundary T.scheme T.structMap K [D]) 0 (Nat.zero_lt_succ 0)
+  change center I (E.get ⟨j, hj⟩) = center J (F.get ⟨k, hk⟩)
+  rw [hI, hD]
 
-theorem containedComponentsIdeal_eq_componentsInOrderLocusIdeal (T : MarkedIdealWithBoundary.{u}) (j : ℕ)
-    (hj : j < T.boundary.length) :
-    containedComponentsIdeal T j hj = componentsInOrderLocusIdeal T.ideal T.mult (T.boundary.get ⟨j, hj⟩) := by
-  unfold componentsInOrderLocusIdeal
-  split_ifs with h
-  · exact containedComponentsIdeal_eq_ker T j hj h
-  · exact containedComponentsIdeal_eq_top_of_not_isOpen T j hj h
+theorem isPullback_subschemeMapOfComap (X Y : Scheme.{u}) (h : Y ⟶ X) (D : X.IdealSheafData)
+    (D' : Y.IdealSheafData) (hD : D' = D.comap h) :
+    IsPullback (subschemeMapOfComap h D D' hD) D'.subschemeι D.subschemeι h :=
+  (isPullback_of_isClosedImmersion D'.subschemeι D.subschemeι (subschemeMapOfComap h D D' hD) h
+    (subschemeMapOfComap_comp h D D' hD).symm
+    (by simp [Scheme.IdealSheafData.ker_subschemeι, hD])).flip
 
-structure SmoothPullbackCompatibility : Prop where
-  comap_ne_top : ∀ (X Y : Scheme.{u}) (h : Y ⟶ X) [AlgebraicGeometry.Surjective h]
-    (Z : X.IdealSheafData), Z ≠ ⊤ → Z.comap h ≠ ⊤
-  coSupport_comap : ∀ (T : MarkedIdealWithBoundary.{u}), T.IsAdmissible →
-    ∀ (Y : Scheme.{u}) (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme)
-      [AlgebraicGeometry.Smooth h], h ≫ T.structMap = q →
-      ∀ m : ℕ, orderAtLeastLocus (T.ideal.comap h) m = ⇑h ⁻¹' orderAtLeastLocus T.ideal m
-  isPullback_inducedHom : ∀ (X Y : Scheme.{u}) (h : Y ⟶ X) (D : X.IdealSheafData)
-    (D' : Y.IdealSheafData) (hD : D' = D.comap h),
-      IsPullback (subschemeMapOfComap h D D' hD) D'.subschemeι D.subschemeι h
-  smooth_of_isPullback : ∀ (X Y S S' : Scheme.{u}) (σ : S ⟶ X) (σ' : S' ⟶ Y) (φ : Y ⟶ X)
-    (ψ : S' ⟶ S), IsPullback σ' ψ φ σ → AlgebraicGeometry.Smooth φ → AlgebraicGeometry.Smooth ψ
-  lowerIdealPre_comap : ∀ (T : MarkedIdealWithBoundary.{u}), T.IsAdmissible →
-    ∀ (Y : Scheme.{u}) (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme)
-      [AlgebraicGeometry.Smooth h], h ≫ T.structMap = q →
-      ∀ (E' : List Y.IdealSheafData),
-        MarkedIdealWithBoundary.SameNontrivialBoundary (T.pullbackAlong Y q h).boundary E' →
-        ∀ (j : ℕ) (hj : j < T.boundary.length) (hjE : j < E'.length),
-          List.take (j + 1) E' = List.take (j + 1) (T.pullbackAlong Y q h).boundary →
-          ((T.pullbackAlong Y q h).withBoundary E').IsAdmissible →
-          T.IsOrderBoundedByMult →
-          containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E') j hjE = (containedComponentsIdeal T j hj).comap h →
-            lowerIdealAfterBlowup ((T.pullbackAlong Y q h).withBoundary E') j hjE =
-              (lowerIdealAfterBlowup T j hj).comap h
-  boundaryEquiv_restrictedBoundary_comap : ∀ (T : MarkedIdealWithBoundary.{u}), T.IsAdmissible →
-    ∀ (Y : Scheme.{u}) (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme)
-      [AlgebraicGeometry.Smooth h], h ≫ T.structMap = q →
-      ∀ (E' : List Y.IdealSheafData),
-        MarkedIdealWithBoundary.SameNontrivialBoundary (T.pullbackAlong Y q h).boundary E' →
-        ∀ (j : ℕ) (hj : j < T.boundary.length) (hjE : j < E'.length),
-          List.take (j + 1) E' = List.take (j + 1) (T.pullbackAlong Y q h).boundary →
-          ((T.pullbackAlong Y q h).withBoundary E').IsAdmissible →
-          T.IsOrderBoundedByMult →
-          containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E') j hjE = (containedComponentsIdeal T j hj).comap h →
-            MarkedIdealWithBoundary.SameNontrivialBoundary
-              (List.take (E'.length - 1)
-                ((lowerBoundaryAfterBlowup ((T.pullbackAlong Y q h).withBoundary E') j hjE).eraseIdx j))
-              (List.map (fun D => D.comap h)
-                (List.take (T.boundary.length - 1) ((lowerBoundaryAfterBlowup T j hj).eraseIdx j)))
-  preIdeal_comap : ∀ (T : MarkedIdealWithBoundary.{u}), T.IsAdmissible →
-    ∀ (Y : Scheme.{u}) (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme)
-      [AlgebraicGeometry.Smooth h], h ≫ T.structMap = q →
-      ∀ (E' : List Y.IdealSheafData),
-        MarkedIdealWithBoundary.SameNontrivialBoundary (T.pullbackAlong Y q h).boundary E' →
-        ∀ (j : ℕ) (hj : j < T.boundary.length) (hjE : j < E'.length),
-          List.take (j + 1) E' = List.take (j + 1) (T.pullbackAlong Y q h).boundary →
-          ((T.pullbackAlong Y q h).withBoundary E').IsAdmissible →
-            containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E') j hjE = (containedComponentsIdeal T j hj).comap h
+theorem isAdmissible_of_withBoundary_isAdmissible (S : MarkedIdealWithBoundary.{u})
+    (E : List S.scheme.IdealSheafData) (hBE : MarkedIdealWithBoundary.SameNontrivialBoundary S.boundary E)
+    (hV : (S.withBoundary E).IsAdmissible) : S.IsAdmissible := by
+  have hv : (S.withBoundary S.boundary).IsAdmissible :=
+    MarkedIdealWithBoundary.validOfSameNontrivialBoundary (S.withBoundary E) S.boundary hV hBE.symm
+  rwa [MarkedIdealWithBoundary.withBoundary_self] at hv
 
-def divisorPullbackMap (T : MarkedIdealWithBoundary.{u}) (j : ℕ) (hj : j < T.boundary.length)
-    (I₀ : T.scheme.IdealSheafData) (E₀ : List T.scheme.IdealSheafData) (Y : Scheme.{u})
-    (h : Y ⟶ T.scheme) (D' : Y.IdealSheafData) (hD : D' = (T.boundary.get ⟨j, hj⟩).comap h) :
-    D'.subscheme ⟶ (restrictToBoundaryDivisor T j hj I₀ E₀).scheme :=
-  subschemeMapOfComap h (T.boundary.get ⟨j, hj⟩) D' hD
+private theorem lowerBoundary_erase (T : MarkedIdealWithBoundary.{u}) (j : ℕ) (hj : j < T.boundary.length) :
+    ((lowerBoundaryAfterBlowup T j hj).eraseIdx j).take (T.boundary.length - 1) =
+      (T.boundary.eraseIdx j).map (Blowup.strictTransform (𝟙 _) (containedComponentsIdeal T j hj)) := by
+  simp only [lowerBoundaryAfterBlowup, Scheme.IdealSheafData.comap_id, List.map_id_fun', id_eq]
+  rw [List.eraseIdx_append_of_lt_length (by simpa using hj), List.eraseIdx_map]
+  have hlen := List.length_eraseIdx_of_lt hj
+  rw [← hlen, ← List.length_map (f := Blowup.strictTransform (𝟙 _) (containedComponentsIdeal T j hj))
+    (as := T.boundary.eraseIdx j), List.take_left]
 
-theorem isPullback_divisorPullbackMap (hbc : SmoothPullbackCompatibility.{u}) (T : MarkedIdealWithBoundary.{u}) (j : ℕ)
-    (hj : j < T.boundary.length) (I₀ : T.scheme.IdealSheafData)
-    (E₀ : List T.scheme.IdealSheafData) (Y : Scheme.{u}) (h : Y ⟶ T.scheme)
-    (D' : Y.IdealSheafData) (hD : D' = (T.boundary.get ⟨j, hj⟩).comap h) :
-    IsPullback (divisorPullbackMap T j hj I₀ E₀ Y h D' hD) D'.subschemeι
-      (T.boundary.get ⟨j, hj⟩).subschemeι h :=
-  hbc.isPullback_inducedHom _ _ h _ D' hD
+private theorem lowerBoundary_erase_untwisted (T : MarkedIdealWithBoundary.{u}) (j : ℕ) (hj : j < T.boundary.length) :
+    ((lowerBoundaryWithoutBlowup T).eraseIdx j).take (T.boundary.length - 1) = T.boundary.eraseIdx j := by
+  rw [lowerBoundaryWithoutBlowup_eq, ← List.length_eraseIdx_of_lt hj, List.take_length]
 
-theorem get_eq_comap_get_boundary (T : MarkedIdealWithBoundary.{u}) (j : ℕ) (hj : j < T.boundary.length) (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme) (E' : List Y.IdealSheafData)
-    (hjE : j < E'.length)
-    (htake : List.take (j + 1) E' = List.take (j + 1) (T.pullbackAlong Y q h).boundary) :
-    E'.get ⟨j, hjE⟩ = (T.boundary.get ⟨j, hj⟩).comap h := by
-  have hb : (T.pullbackAlong Y q h).boundary = List.map (fun D => D.comap h) T.boundary :=
-    MarkedIdealWithBoundary.pullbackAlong_boundary T Y q h
-  have htake' : List.take (j + 1) E' =
-      List.take (j + 1) (List.map (fun D : T.scheme.IdealSheafData => D.comap h) T.boundary) := by
-    rw [htake, hb]
-    rfl
-  have hlen : j < (List.map (fun D : T.scheme.IdealSheafData => D.comap h) T.boundary).length := by
-    simpa using hj
-  rw [get_eq_get_of_take_succ_eq E'
-    (List.map (fun D : T.scheme.IdealSheafData => D.comap h) T.boundary) j htake' hjE hlen]
-  simp
+private theorem residualByPow_comap_of_isLocallyGeneratedByNonZeroDivisor {X Y : Scheme.{u}} (g : Y ⟶ X)
+    (A F : X.IdealSheafData) (F' : Y.IdealSheafData) (m : ℕ) (hF' : F' = F.comap g)
+    (hcart : Blowup.IsLocallyGeneratedByNonZeroDivisor F') (hex : ∃ B : X.IdealSheafData, F ^ m * B = A) :
+    residualByPow (A.comap g) F' m = (residualByPow A F m).comap g := by
+  have hdown : F ^ m * residualByPow A F m = A := pow_mul_residualByPow A F m hex
+  have hup : F' ^ m * (residualByPow A F m).comap g = A.comap g := by
+    rw [hF', ← Scheme.IdealSheafData.comap_pow, ← Scheme.IdealSheafData.comap_mul, hdown]
+  have hup2 : F' ^ m * residualByPow (A.comap g) F' m = A.comap g :=
+    pow_mul_residualByPow (A.comap g) F' m ⟨_, hup⟩
+  exact (hcart.pow m).eq_of_mul_eq_mul (hup2.trans hup.symm)
 
-private theorem componentsInOrderLocusIdeal_congr {X : Scheme.{u}} (I : X.IdealSheafData) (m : ℕ)
-    {D D' : X.IdealSheafData} (hD : D = D') :
-    componentsInOrderLocusIdeal I m D = componentsInOrderLocusIdeal I m D' := by
-  rw [hD]
-
-theorem containedComponentsIdeal_withBoundary (T : MarkedIdealWithBoundary.{u}) (j : ℕ) (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme) (E' : List Y.IdealSheafData)
-    (hjE : j < E'.length) (hj' : j < (T.pullbackAlong Y q h).boundary.length)
-    (htake : List.take (j + 1) E' = List.take (j + 1) (T.pullbackAlong Y q h).boundary) :
-    containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E') j hjE =
-      containedComponentsIdeal (T.pullbackAlong Y q h) j hj' := by
-  have hget : E'.get ⟨j, hjE⟩ = ((T.pullbackAlong Y q h).boundary).get ⟨j, hj'⟩ :=
-    get_eq_get_of_take_succ_eq E' ((T.pullbackAlong Y q h).boundary) j htake hjE hj'
-  rw [containedComponentsIdeal_eq_componentsInOrderLocusIdeal ((T.pullbackAlong Y q h).withBoundary E') j hjE,
-    containedComponentsIdeal_eq_componentsInOrderLocusIdeal (T.pullbackAlong Y q h) j hj']
-  exact componentsInOrderLocusIdeal_congr _ _ hget
-
-theorem comap_ne_top_of_surjective (hbc : SmoothPullbackCompatibility.{u}) {X Y : Scheme.{u}} (h : Y ⟶ X)
-    [AlgebraicGeometry.Surjective h] (Z : X.IdealSheafData) (hZ : Z ≠ ⊤) : Z.comap h ≠ ⊤ :=
-  hbc.comap_ne_top _ _ h Z hZ
-
-theorem orderAtLeastLocus_withBoundary_pullbackAlong (hbc : SmoothPullbackCompatibility.{u}) (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible)
-    (Y : Scheme.{u}) (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme)
-    [AlgebraicGeometry.Smooth h] (hq : h ≫ T.structMap = q) (E' : List Y.IdealSheafData)
-    (m : ℕ) :
-    orderAtLeastLocus ((T.pullbackAlong Y q h).withBoundary E').ideal m = ⇑h ⁻¹' orderAtLeastLocus T.ideal m :=
-  hbc.coSupport_comap T hV Y q h hq m
-
-theorem lowerIdealWithoutBlowup_withBoundary (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme) (E' : List Y.IdealSheafData) :
-    lowerIdealWithoutBlowup ((T.pullbackAlong Y q h).withBoundary E') = (lowerIdealWithoutBlowup T).comap h := by
-  have h1 : ((T.pullbackAlong Y q h).withBoundary E').ideal = (T.pullbackAlong Y q h).ideal :=
-    MarkedIdealWithBoundary.withBoundary_ideal (T.pullbackAlong Y q h) E'
-  have h2 : (T.pullbackAlong Y q h).ideal = T.ideal.comap h :=
-    MarkedIdealWithBoundary.pullbackAlong_ideal T Y q h
-  simp [lowerIdealWithoutBlowup, h1, h2]
-  exact AlgebraicGeometry.Scheme.IdealSheafData.comap_id ..
-
-private theorem take_length_sub_one_eraseIdx {α : Type*} (l : List α) (j : ℕ) (hj : j < l.length) :
-    List.take (l.length - 1) (l.eraseIdx j) = l.eraseIdx j := by
-  refine List.take_of_length_le ?_
-  have h2 := List.length_eraseIdx_add_one hj
-  omega
-
-theorem sameNontrivialBoundary_lowerBoundaryWithoutBlowup (T : MarkedIdealWithBoundary.{u}) (j : ℕ) (hj : j < T.boundary.length)
-    (Y : Scheme.{u}) (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme)
-    (E' : List Y.IdealSheafData)
-    (hBE : MarkedIdealWithBoundary.SameNontrivialBoundary (T.pullbackAlong Y q h).boundary E')
-    (htake : List.take (j + 1) E' = List.take (j + 1) (T.pullbackAlong Y q h).boundary)
-    (hjE : j < E'.length) :
-    MarkedIdealWithBoundary.SameNontrivialBoundary
-      (List.take (E'.length - 1)
-        ((lowerBoundaryWithoutBlowup ((T.pullbackAlong Y q h).withBoundary E')).eraseIdx j))
-      (List.map (fun D => D.comap h)
-        (List.take (T.boundary.length - 1) ((lowerBoundaryWithoutBlowup T).eraseIdx j))) := by
-  have hpb : List.map (fun D : T.scheme.IdealSheafData => D.comap h) T.boundary
-      = ((T.pullbackAlong Y q h).boundary : List Y.IdealSheafData) :=
-    (MarkedIdealWithBoundary.pullbackAlong_boundary T Y q h).symm
-  have hBE' : MarkedIdealWithBoundary.SameNontrivialBoundary
-      (List.map (fun D : T.scheme.IdealSheafData => D.comap h) T.boundary) E' :=
-    (MarkedIdealWithBoundary.sameNontrivialBoundary_iff _ _).2
-      ((congrArg (fun l : List Y.IdealSheafData => MarkedIdealWithBoundary.nontrivialPart l) hpb).trans
-        ((MarkedIdealWithBoundary.sameNontrivialBoundary_iff _ _).1 hBE))
-  have htake' : List.take (j + 1) E'
-      = List.take (j + 1) (List.map (fun D : T.scheme.IdealSheafData => D.comap h) T.boundary) :=
-    htake.trans (congrArg (fun l : List Y.IdealSheafData => List.take (j + 1) l) hpb.symm)
-  have hmid : MarkedIdealWithBoundary.nontrivialPart (E'.eraseIdx j)
-      = MarkedIdealWithBoundary.nontrivialPart
-        ((List.map (fun D : T.scheme.IdealSheafData => D.comap h) T.boundary).eraseIdx j) :=
-    (MarkedIdealWithBoundary.sameNontrivialBoundary_iff _ _).1 (hBE'.symm.eraseIdx j htake')
-  have hmap : (List.map (fun D : T.scheme.IdealSheafData => D.comap h) T.boundary).eraseIdx j
-      = List.map (fun D : T.scheme.IdealSheafData => D.comap h) (T.boundary.eraseIdx j) :=
-    List.eraseIdx_map (fun D : T.scheme.IdealSheafData => D.comap h) T.boundary j
-  have hA0 : ((lowerBoundaryWithoutBlowup ((T.pullbackAlong Y q h).withBoundary E')) : List Y.IdealSheafData)
-      = E' :=
-    (lowerBoundaryWithoutBlowup_eq ((T.pullbackAlong Y q h).withBoundary E')).trans
-      (MarkedIdealWithBoundary.withBoundary_boundary (T.pullbackAlong Y q h) E')
-  have hLeq : List.take (E'.length - 1)
-        (((lowerBoundaryWithoutBlowup ((T.pullbackAlong Y q h).withBoundary E')) :
-          List Y.IdealSheafData).eraseIdx j)
-      = E'.eraseIdx j :=
-    (congrArg (fun l : List Y.IdealSheafData =>
-        List.take (E'.length - 1) (l.eraseIdx j)) hA0).trans
-      (take_length_sub_one_eraseIdx E' j hjE)
-  have hCeq : List.take (T.boundary.length - 1) ((lowerBoundaryWithoutBlowup T).eraseIdx j)
-      = T.boundary.eraseIdx j :=
-    (congrArg (fun l : List T.scheme.IdealSheafData =>
-        List.take (T.boundary.length - 1) (l.eraseIdx j)) (lowerBoundaryWithoutBlowup_eq T)).trans
-      (take_length_sub_one_eraseIdx T.boundary j hj)
-  exact (MarkedIdealWithBoundary.sameNontrivialBoundary_iff _ _).2
-    (((congrArg (fun l : List Y.IdealSheafData => MarkedIdealWithBoundary.nontrivialPart l) hLeq).trans
-        (hmid.trans
-          (congrArg (fun l : List Y.IdealSheafData => MarkedIdealWithBoundary.nontrivialPart l) hmap))).trans
-      (congrArg (fun l : List T.scheme.IdealSheafData =>
-          MarkedIdealWithBoundary.nontrivialPart
-            (List.map (fun D : T.scheme.IdealSheafData => D.comap h) l)) hCeq.symm))
-
-theorem isBlowupAlongIdealSheaf_id_comap_containedComponentsIdeal (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
-    (hfacts : DivisorReductionTerminationProperties hres blowupPreservesNoetherian) (j : ℕ)
-    (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (q : Y ⟶ Spec (CommRingCat.of T.base))
-    (h : Y ⟶ T.scheme) (E' : List Y.IdealSheafData)
-    (hV' : ((T.pullbackAlong Y q h).withBoundary E').IsAdmissible) (hj : j < T.boundary.length)
-    (hjE : j < E'.length)
-    (heq : containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E') j hjE = (containedComponentsIdeal T j hj).comap h) :
-    Blowup.IsBlowupAlongIdealSheaf (𝟙 Y) ((containedComponentsIdeal T j hj).comap h) := by
-  rw [← heq]
-  exact hfacts.isBlowup_id_preIdeal _ hV' j hjE
-
-private theorem isStrictPullbackSequenceOfBlowups_of_heq {X' X : Scheme.{u}} (φ : X' ⟶ X) (B : SequenceOfBlowups X)
-    {B₁ B₂ : SequenceOfBlowups X'} (hB : HEq B₁ B₂) (h : IsStrictPullbackBlowupSeq φ B₁ B) :
-    IsStrictPullbackBlowupSeq φ B₂ B := by
-  have hB' : B₁ = B₂ := eq_of_heq hB
-  rw [← hB']
-  exact h
-
-theorem isStrictPullbackBlowupSeq_restrictToDivisor_of_eq_top (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
-    (hfacts : DivisorReductionTerminationProperties hres blowupPreservesNoetherian) (n : ℕ)
-    (L O : PrincipalizationAssignment.{u}) (hL : IsMaxOrderReduction (fun d => d < n) L O) (j : ℕ)
-    (hbc : SmoothPullbackCompatibility.{u}) (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible) (hdim : T.krullDimSucc ≤ n)
-    (hO : T.IsOrderBoundedByMult) (hbal : T.IsBalanced hV.locallyOfFiniteType)
-    (hj : j < T.boundary.length) (hcs : (orderAtLeastLocus T.ideal T.mult).Nonempty) (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme) [AlgebraicGeometry.Smooth h]
-    [AlgebraicGeometry.Surjective h] (hq : h ≫ T.structMap = q) (E' : List Y.IdealSheafData)
-    (hBE : MarkedIdealWithBoundary.SameNontrivialBoundary (T.pullbackAlong Y q h).boundary E')
-    (htake : List.take (j + 1) E' = List.take (j + 1) (T.pullbackAlong Y q h).boundary)
-    (hV' : ((T.pullbackAlong Y q h).withBoundary E').IsAdmissible)
-    (hdim' : ((T.pullbackAlong Y q h).withBoundary E').krullDimSucc ≤ n)
-    (hO' : ((T.pullbackAlong Y q h).withBoundary E').IsOrderBoundedByMult)
-    (hDB' : ((T.pullbackAlong Y q h).withBoundary E').IsBalanced hV'.locallyOfFiniteType)
-    (hjE : j < E'.length)
-    (hcs' : (orderAtLeastLocus ((T.pullbackAlong Y q h).withBoundary E').ideal T.mult).Nonempty)
-    (hZ : containedComponentsIdeal T j hj = ⊤)
-    (hZ' : containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E') j hjE = ⊤) :
-    IsStrictPullbackBlowupSeq
-      (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h (E'.get ⟨j, hjE⟩)
-        (get_eq_comap_get_boundary T j hj Y q h E' hjE htake))
-      (L (restrictToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE)).toSequenceOfBlowups
-      (L (restrictToDivisor T j hj)).toSequenceOfBlowups := by
-  have hD : E'.get ⟨j, hjE⟩ = (T.boundary.get ⟨j, hj⟩).comap h :=
-    get_eq_comap_get_boundary T j hj Y q h E' hjE htake
-  have hpb : IsPullback
-      (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h (E'.get ⟨j, hjE⟩) hD)
-      (E'.get ⟨j, hjE⟩).subschemeι (T.boundary.get ⟨j, hj⟩).subschemeι h :=
-    isPullback_divisorPullbackMap hbc T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h
-      (E'.get ⟨j, hjE⟩) hD
-  have hsm : AlgebraicGeometry.Smooth
-      (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h (E'.get ⟨j, hjE⟩) hD) :=
-    hbc.smooth_of_isPullback T.scheme Y (T.boundary.get ⟨j, hj⟩).subscheme
-      (E'.get ⟨j, hjE⟩).subscheme (T.boundary.get ⟨j, hj⟩).subschemeι
-      (E'.get ⟨j, hjE⟩).subschemeι h
-      (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h (E'.get ⟨j, hjE⟩) hD)
-      hpb.flip inferInstance
-  have hsj : AlgebraicGeometry.Surjective
-      (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h (E'.get ⟨j, hjE⟩) hD) :=
-    surjective_snd_of_isPullback_of_surjective (T.boundary.get ⟨j, hj⟩).subschemeι (E'.get ⟨j, hjE⟩).subschemeι h
-      (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h (E'.get ⟨j, hjE⟩) hD)
-      hpb.flip
-  have hq₀ : (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h
-        (E'.get ⟨j, hjE⟩) hD) ≫ (restrictToDivisor T j hj).structMap
-      = (E'.get ⟨j, hjE⟩).subschemeι ≫ q := by
-    have key : subschemeMapOfComap h (T.boundary.get ⟨j, hj⟩) (E'.get ⟨j, hjE⟩) hD ≫
-        ((T.boundary.get ⟨j, hj⟩).subschemeι ≫ T.structMap)
-          = (E'.get ⟨j, hjE⟩).subschemeι ≫ q := by
-      rw [← Category.assoc, subschemeMapOfComap_comp, Category.assoc, hq]
-    exact key
-  have hideal : ((restrictToDivisor T j hj).ideal).comap
-        (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h (E'.get ⟨j, hjE⟩) hD)
-      = (lowerIdealWithoutBlowup ((T.pullbackAlong Y q h).withBoundary E')).comap
-          (E'.get ⟨j, hjE⟩).subschemeι := by
-    rw [lowerIdealWithoutBlowup_withBoundary T Y q h E']
-    exact comap_subschemeMapOfComap h (T.boundary.get ⟨j, hj⟩) (E'.get ⟨j, hjE⟩) hD (lowerIdealWithoutBlowup T)
-  have hTriple : ((restrictToDivisor T j hj).pullbackAlong (E'.get ⟨j, hjE⟩).subscheme
-        ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-        (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h
-          (E'.get ⟨j, hjE⟩) hD)).withBoundary
-        ((restrictToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary)
-      = restrictToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE :=
-    congrArg
-      (fun J => T.withSchemeIdealBoundary (E'.get ⟨j, hjE⟩).subscheme ((E'.get ⟨j, hjE⟩).subschemeι ≫ q) J
-        ((restrictToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary)) hideal
-  have hBE₀ : MarkedIdealWithBoundary.SameNontrivialBoundary
-      (((restrictToDivisor T j hj).pullbackAlong (E'.get ⟨j, hjE⟩).subscheme
-          ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-          (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h
-            (E'.get ⟨j, hjE⟩) hD)).boundary)
-      ((restrictToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary) := by
-    rw [MarkedIdealWithBoundary.pullbackAlong_boundary]
-    exact (sameNontrivialBoundary_comap_subschemeι h (T.boundary.get ⟨j, hj⟩) (E'.get ⟨j, hjE⟩) hD
-      (List.take (T.boundary.length - 1) ((lowerBoundaryWithoutBlowup T).eraseIdx j))
-      (List.take (E'.length - 1)
-        ((lowerBoundaryWithoutBlowup ((T.pullbackAlong Y q h).withBoundary E')).eraseIdx j))
-      (sameNontrivialBoundary_lowerBoundaryWithoutBlowup T j hj Y q h E' hBE htake hjE)).symm
-  have hValid₀ : (((restrictToDivisor T j hj).pullbackAlong (E'.get ⟨j, hjE⟩).subscheme
-        ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-        (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h
-          (E'.get ⟨j, hjE⟩) hD)).withBoundary
-        ((restrictToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary)).IsAdmissible := by
-    rw [hTriple]
-    exact hfacts.valid_lowerTop ((T.pullbackAlong Y q h).withBoundary E') hV' hO' hDB' j hjE hZ'
-  have hdim₀ : (((restrictToDivisor T j hj).pullbackAlong (E'.get ⟨j, hjE⟩).subscheme
-        ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-        (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h
-          (E'.get ⟨j, hjE⟩) hD)).withBoundary
-        ((restrictToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary)).krullDimSucc < n := by
-    rw [hTriple]
-    exact lt_of_lt_of_le
-      (hfacts.lowerTriple_dim_lt ((T.pullbackAlong Y q h).withBoundary E') hV' hcs' j hjE
-        (lowerIdealWithoutBlowup ((T.pullbackAlong Y q h).withBoundary E'))
-        (lowerBoundaryWithoutBlowup ((T.pullbackAlong Y q h).withBoundary E'))) hdim'
-  have hmain := hL.smooth_pullback_strict (restrictToDivisor T j hj)
-    (hfacts.valid_lowerTop T hV hO hbal j hj hZ)
-    (lt_of_lt_of_le (hfacts.lowerTriple_dim_lt T hV hcs j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T))
-      hdim)
-    (E'.get ⟨j, hjE⟩).subscheme ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-    (divisorPullbackMap T j hj (lowerIdealWithoutBlowup T) (lowerBoundaryWithoutBlowup T) Y h (E'.get ⟨j, hjE⟩) hD)
-    hq₀ ((restrictToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary) hBE₀ hValid₀ hdim₀
-  exact isStrictPullbackSequenceOfBlowups_of_heq _ _ (_root_.FunctorialResolution.EmbeddedResolution.PrincipalizationAssignment.toSequenceOfBlowups_heq_of_eq L hTriple) hmain
-
-theorem isStrictPullbackBlowupSeq_restrictTwistedToDivisor (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
-    (hfacts : DivisorReductionTerminationProperties hres blowupPreservesNoetherian) (n : ℕ)
-    (L O : PrincipalizationAssignment.{u}) (hL : IsMaxOrderReduction (fun d => d < n) L O) (j : ℕ)
-    (hbc : SmoothPullbackCompatibility.{u}) (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible) (hdim : T.krullDimSucc ≤ n)
-    (hO : T.IsOrderBoundedByMult) (hbal : T.IsBalanced hV.locallyOfFiniteType)
-    (hj : j < T.boundary.length) (hcs : (orderAtLeastLocus T.ideal T.mult).Nonempty) (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme) [AlgebraicGeometry.Smooth h]
-    [AlgebraicGeometry.Surjective h] (hq : h ≫ T.structMap = q) (E' : List Y.IdealSheafData)
-    (hBE : MarkedIdealWithBoundary.SameNontrivialBoundary (T.pullbackAlong Y q h).boundary E')
-    (htake : List.take (j + 1) E' = List.take (j + 1) (T.pullbackAlong Y q h).boundary)
-    (hV' : ((T.pullbackAlong Y q h).withBoundary E').IsAdmissible)
-    (hdim' : ((T.pullbackAlong Y q h).withBoundary E').krullDimSucc ≤ n)
-    (hO' : ((T.pullbackAlong Y q h).withBoundary E').IsOrderBoundedByMult)
-    (hDB' : ((T.pullbackAlong Y q h).withBoundary E').IsBalanced hV'.locallyOfFiniteType)
-    (hjE : j < E'.length)
-    (hcs' : (orderAtLeastLocus ((T.pullbackAlong Y q h).withBoundary E').ideal T.mult).Nonempty)
-    (hZ : containedComponentsIdeal T j hj ≠ ⊤)
-    (hZ' : containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E') j hjE =
+theorem lowerIdeal_comap (T : MarkedIdealWithBoundary.{u}) (hT : T.IsAdmissible)
+    (j : ℕ) (hj : j < T.boundary.length) {Y : Scheme.{u}} (q : Y ⟶ Spec (CommRingCat.of T.base))
+    (h : Y ⟶ T.scheme) (E : List Y.IdealSheafData) (k : ℕ) (hk : k < E.length)
+    (hV : ((T.pullbackAlong Y q h).withBoundary E).IsAdmissible)
+    (hZ : containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E) k hk =
       (containedComponentsIdeal T j hj).comap h) :
-    IsStrictPullbackBlowupSeq
-      (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h (E'.get ⟨j, hjE⟩)
-        (get_eq_comap_get_boundary T j hj Y q h E' hjE htake))
-      (L (restrictTwistedToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE)).toSequenceOfBlowups
-      (L (restrictTwistedToDivisor T j hj)).toSequenceOfBlowups := by
-  have hD : E'.get ⟨j, hjE⟩ = (T.boundary.get ⟨j, hj⟩).comap h :=
-    get_eq_comap_get_boundary T j hj Y q h E' hjE htake
-  have hZ'ne : containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E') j hjE ≠ ⊤ := by
-    rw [hZ']
-    exact comap_ne_top_of_surjective hbc h (containedComponentsIdeal T j hj) hZ
-  have hpb : IsPullback
-      (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-        (E'.get ⟨j, hjE⟩) hD)
-      (E'.get ⟨j, hjE⟩).subschemeι (T.boundary.get ⟨j, hj⟩).subschemeι h :=
-    isPullback_divisorPullbackMap hbc T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-      (E'.get ⟨j, hjE⟩) hD
-  have hsm : AlgebraicGeometry.Smooth
-      (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-        (E'.get ⟨j, hjE⟩) hD) :=
-    hbc.smooth_of_isPullback T.scheme Y (T.boundary.get ⟨j, hj⟩).subscheme
-      (E'.get ⟨j, hjE⟩).subscheme (T.boundary.get ⟨j, hj⟩).subschemeι
-      (E'.get ⟨j, hjE⟩).subschemeι h
-      (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-        (E'.get ⟨j, hjE⟩) hD)
-      hpb.flip inferInstance
-  have hsj : AlgebraicGeometry.Surjective
-      (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-        (E'.get ⟨j, hjE⟩) hD) :=
-    surjective_snd_of_isPullback_of_surjective (T.boundary.get ⟨j, hj⟩).subschemeι (E'.get ⟨j, hjE⟩).subschemeι h
-      (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-        (E'.get ⟨j, hjE⟩) hD)
-      hpb.flip
-  have hq₀ : (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-        (E'.get ⟨j, hjE⟩) hD) ≫ (restrictTwistedToDivisor T j hj).structMap
-      = (E'.get ⟨j, hjE⟩).subschemeι ≫ q := by
-    have key : subschemeMapOfComap h (T.boundary.get ⟨j, hj⟩) (E'.get ⟨j, hjE⟩) hD ≫
-        ((T.boundary.get ⟨j, hj⟩).subschemeι ≫ T.structMap)
-          = (E'.get ⟨j, hjE⟩).subschemeι ≫ q := by
-      rw [← Category.assoc, subschemeMapOfComap_comp, Category.assoc, hq]
-    exact key
-  have hideal : ((restrictTwistedToDivisor T j hj).ideal).comap
-        (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-          (E'.get ⟨j, hjE⟩) hD)
-      = (lowerIdealAfterBlowup ((T.pullbackAlong Y q h).withBoundary E') j hjE).comap
-          (E'.get ⟨j, hjE⟩).subschemeι := by
-    rw [hbc.lowerIdealPre_comap T hV Y q h hq E' hBE j hj hjE htake hV' hO hZ']
-    exact comap_subschemeMapOfComap h (T.boundary.get ⟨j, hj⟩) (E'.get ⟨j, hjE⟩) hD (lowerIdealAfterBlowup T j hj)
-  have hTriple : ((restrictTwistedToDivisor T j hj).pullbackAlong (E'.get ⟨j, hjE⟩).subscheme
-        ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-        (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-          (E'.get ⟨j, hjE⟩) hD)).withBoundary
-        ((restrictTwistedToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary)
-      = restrictTwistedToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE :=
-    congrArg
-      (fun J => T.withSchemeIdealBoundary (E'.get ⟨j, hjE⟩).subscheme ((E'.get ⟨j, hjE⟩).subschemeι ≫ q) J
-        ((restrictTwistedToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary)) hideal
-  have hBE₀ : MarkedIdealWithBoundary.SameNontrivialBoundary
-      (((restrictTwistedToDivisor T j hj).pullbackAlong (E'.get ⟨j, hjE⟩).subscheme
-          ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-          (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-            (E'.get ⟨j, hjE⟩) hD)).boundary)
-      ((restrictTwistedToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary) := by
-    rw [MarkedIdealWithBoundary.pullbackAlong_boundary]
-    exact (sameNontrivialBoundary_comap_subschemeι h (T.boundary.get ⟨j, hj⟩) (E'.get ⟨j, hjE⟩) hD
-      (List.take (T.boundary.length - 1) ((lowerBoundaryAfterBlowup T j hj).eraseIdx j))
-      (List.take (E'.length - 1)
-        ((lowerBoundaryAfterBlowup ((T.pullbackAlong Y q h).withBoundary E') j hjE).eraseIdx j))
-      (hbc.boundaryEquiv_restrictedBoundary_comap T hV Y q h hq E' hBE j hj hjE htake hV' hO hZ')).symm
-  have hValid₀ : (((restrictTwistedToDivisor T j hj).pullbackAlong (E'.get ⟨j, hjE⟩).subscheme
-        ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-        (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-          (E'.get ⟨j, hjE⟩) hD)).withBoundary
-        ((restrictTwistedToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary)).IsAdmissible := by
-    rw [hTriple]
-    exact hfacts.valid_lowerPre ((T.pullbackAlong Y q h).withBoundary E') hV' hO' hDB' j hjE hZ'ne
-  have hdim₀ : (((restrictTwistedToDivisor T j hj).pullbackAlong (E'.get ⟨j, hjE⟩).subscheme
-        ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-        (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h
-          (E'.get ⟨j, hjE⟩) hD)).withBoundary
-        ((restrictTwistedToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary)).krullDimSucc < n := by
-    rw [hTriple]
-    exact lt_of_lt_of_le
-      (hfacts.lowerTriple_dim_lt ((T.pullbackAlong Y q h).withBoundary E') hV' hcs' j hjE
-        (lowerIdealAfterBlowup ((T.pullbackAlong Y q h).withBoundary E') j hjE)
-        (lowerBoundaryAfterBlowup ((T.pullbackAlong Y q h).withBoundary E') j hjE)) hdim'
-  have hmain := hL.smooth_pullback_strict (restrictTwistedToDivisor T j hj)
-    (hfacts.valid_lowerPre T hV hO hbal j hj hZ)
-    (lt_of_lt_of_le
-      (hfacts.lowerTriple_dim_lt T hV hcs j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj))
-      hdim)
-    (E'.get ⟨j, hjE⟩).subscheme ((E'.get ⟨j, hjE⟩).subschemeι ≫ q)
-    (divisorPullbackMap T j hj (lowerIdealAfterBlowup T j hj) (lowerBoundaryAfterBlowup T j hj) Y h (E'.get ⟨j, hjE⟩) hD)
-    hq₀ ((restrictTwistedToDivisor ((T.pullbackAlong Y q h).withBoundary E') j hjE).boundary) hBE₀ hValid₀ hdim₀
-  exact isStrictPullbackSequenceOfBlowups_of_heq _ _ (_root_.FunctorialResolution.EmbeddedResolution.PrincipalizationAssignment.toSequenceOfBlowups_heq_of_eq L hTriple) hmain
+    lowerIdealAfterBlowup ((T.pullbackAlong Y q h).withBoundary E) k hk =
+      (lowerIdealAfterBlowup T j hj).comap h := by
+  let S := (T.pullbackAlong Y q h).withBoundary E
+  have hcart := isLocallyGeneratedByNonZeroDivisor_exceptionalIdeal
+    (isBlowupAlongIdealSheaf_id_containedComponentsIdeal S hV k hk)
+  rw [exceptionalIdeal_id] at hcart
+  obtain ⟨B, hB⟩ := exists_mul_pow_containedComponentsIdeal_eq_ideal T hT j hj
+  simp only [lowerIdealAfterBlowup, exceptionalIdeal_id, Scheme.IdealSheafData.comap_id]
+  exact residualByPow_comap_of_isLocallyGeneratedByNonZeroDivisor h T.ideal _ _ T.mult hZ hcart ⟨B, hB⟩
+
+theorem lowerIdeal_eq_of_top (T : MarkedIdealWithBoundary.{u}) (j : ℕ) (hj : j < T.boundary.length)
+    (hZ : containedComponentsIdeal T j hj = ⊤) :
+    lowerIdealAfterBlowup T j hj = lowerIdealWithoutBlowup T := by
+  simp only [lowerIdealAfterBlowup, lowerIdealWithoutBlowup, exceptionalIdeal_id, Scheme.IdealSheafData.comap_id, hZ]
+  simpa only [← Scheme.IdealSheafData.one_eq_top, one_pow, one_mul] using
+    (pow_mul_residualByPow T.ideal ⊤ T.mult ⟨T.ideal, by rw [← Scheme.IdealSheafData.one_eq_top, one_pow, one_mul]⟩)
+
+theorem lowerBoundary_erase_of_top (T : MarkedIdealWithBoundary.{u}) (hT : T.IsAdmissible)
+    (j : ℕ) (hj : j < T.boundary.length) (hZ : containedComponentsIdeal T j hj = ⊤) :
+    ((lowerBoundaryAfterBlowup T j hj).eraseIdx j).take (T.boundary.length - 1) =
+      ((lowerBoundaryWithoutBlowup T).eraseIdx j).take (T.boundary.length - 1) := by
+  rw [lowerBoundary_erase T j hj, lowerBoundary_erase_untwisted T j hj]
+  have := hT.isNoetherian
+  have hst (D : T.scheme.IdealSheafData) :
+      Blowup.strictTransform (𝟙 T.scheme) (containedComponentsIdeal T j hj) D = D := by
+    simpa using strictTransform_comap_of_comap_center_eq_top (𝟙 T.scheme) (containedComponentsIdeal T j hj)
+      D (𝟙 T.scheme) (by simp [hZ])
+  simpa only [List.map_id] using List.map_congr_left (g := id) (fun D _ => hst D)
+
+theorem lowerBoundary_comap (T : MarkedIdealWithBoundary.{u}) (hT : T.IsAdmissible)
+    (j : ℕ) (hj : j < T.boundary.length) {Y : Scheme.{u}} (q : Y ⟶ Spec (CommRingCat.of T.base))
+    (h : Y ⟶ T.scheme) [Flat h] (E : List Y.IdealSheafData) (k : ℕ) (hk : k < E.length)
+    (hV : ((T.pullbackAlong Y q h).withBoundary E).IsAdmissible)
+    (hZ : containedComponentsIdeal ((T.pullbackAlong Y q h).withBoundary E) k hk =
+      (containedComponentsIdeal T j hj).comap h)
+    (hE : MarkedIdealWithBoundary.SameNontrivialBoundary
+      (E.eraseIdx k) ((T.boundary.eraseIdx j).map fun D => D.comap h)) :
+    MarkedIdealWithBoundary.SameNontrivialBoundary
+      (((lowerBoundaryAfterBlowup ((T.pullbackAlong Y q h).withBoundary E) k hk).eraseIdx k).take (E.length - 1))
+      ((((lowerBoundaryAfterBlowup T j hj).eraseIdx j).take (T.boundary.length - 1)).map fun D => D.comap h) := by
+  let Z := containedComponentsIdeal T j hj
+  have hNY : IsNoetherian Y := hV.isNoetherian
+  have hNX := hT.isNoetherian
+  have comm (D : T.scheme.IdealSheafData) :
+      (Blowup.strictTransform (𝟙 _) Z D).comap h = Blowup.strictTransform (𝟙 _) (Z.comap h) (D.comap h) :=
+    comap_strictTransform_of_flat_of_isLocallyNoetherian (𝟙 _) h (𝟙 _) h (IsPullback.id_vert h) Z D
+      (isBlowupAlongIdealSheaf_id_containedComponentsIdeal T hT j hj)
+  rw [lowerBoundary_erase T j hj]
+  change MarkedIdealWithBoundary.SameNontrivialBoundary
+    (((lowerBoundaryAfterBlowup ((T.pullbackAlong Y q h).withBoundary E) k hk).eraseIdx k).take
+      (((T.pullbackAlong Y q h).withBoundary E).boundary.length - 1)) _
+  rw [lowerBoundary_erase _ k hk, hZ]
+  change MarkedIdealWithBoundary.SameNontrivialBoundary
+    ((E.eraseIdx k).map (Blowup.strictTransform (𝟙 Y) (Z.comap h)))
+    (((T.boundary.eraseIdx j).map (Blowup.strictTransform (𝟙 _) Z)).map fun D => D.comap h)
+  simpa only [List.map_map, Function.comp_def, ← comm] using
+    hE.map (Blowup.strictTransform (𝟙 Y) (Z.comap h)) (strictTransform_top ..)
 
 end DivisorReduction
 
 end FunctorialResolution.EmbeddedResolution
-
-end

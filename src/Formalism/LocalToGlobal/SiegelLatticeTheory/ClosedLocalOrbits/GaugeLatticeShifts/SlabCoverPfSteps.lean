@@ -3,6 +3,7 @@ module
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.KExpCut
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.DoubleCosetSingleUnfolding
+import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.IUnfold
 
 @[expose] public section
 
@@ -15,8 +16,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 open Matrix
 
 namespace Formalism.L2.SG.Pf.SlabCoverPf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def GFInfInj : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (s : X.B.I.GA), s ∈ Formalism.MainNotions.LeviCoordinates.rr_GF X.B.I → s.1 = 1 → s = 1
@@ -48,16 +47,7 @@ def PsiDdC : Prop := ∀ (D : D7) (X : HidaSetting D), PsiDd X
 
 theorem hfin_sfin {D : D7} (X : HidaSetting D) (u : D.what₂.Word) (h : Hfin X u) :
     (h : X.B.I.Gf) ∈ SfinU X u := by
-  rw [Formalism.L2.SG.PoincareInHH.Cut.sfin_iff]
-  refine ⟨?_, ?_⟩
-  · intro a
-    have e := h.2 (X.eR a) (by simp [fixSet])
-    try beta_reduce
-    rw [Matrix.sub_mulVec, Matrix.one_mulVec, e, sub_self]
-    exact Submodule.zero_mem _
-  · have e := h.2 (X.zR u) (by simp [fixSet])
-    rw [Matrix.sub_mulVec, Matrix.one_mulVec, e, sub_self]
-    exact Submodule.zero_mem _
+  apply _root_.Formalism.L2.SG.Pf.hfin_sfin <;> assumption
 
 theorem gam_srat {D : D7} (X : HidaSetting D) (u : D.what₂.Word) (γ : X.B.I.GA) (hγ : γ ∈ Gam X u) :
     γ ∈ Srat X u := by

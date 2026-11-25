@@ -59,16 +59,10 @@ theorem UpperTheory.V.Z.Sym.Loc.wCard :
     intro a b
     rw [← MulAction.orbitRel_apply]
     exact Quotient.eq
-  have hstab : ∀ (t : T) (y : Y), MulAction.stabilizer T (t • y) = MulAction.stabilizer T y := by
-    intro t y
-    ext g
-    simp only [MulAction.mem_stabilizer_iff]
-    rw [smul_smul, mul_comm, ← smul_smul]
-    exact (MulAction.injective t).eq_iff
   have hstab' : ∀ a b : Y, a ∈ MulAction.orbit T b →
       MulAction.stabilizer T a = MulAction.stabilizer T b := by
     rintro a b ⟨s, rfl⟩
-    exact hstab s b
+    exact MulAction.stabilizer_smul_eq_right s b
   have hrel : ∀ z : Y, (MulAction.stabilizer T z).relIndex C = (MulAction.orbit C z).ncard := by
     intro z
     rw [← MulAction.index_stabilizer, Subgroup.relIndex]

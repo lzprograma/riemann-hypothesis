@@ -136,12 +136,13 @@ variable {O : Type} [CommRing O] {K : Type} [Field K] [Algebra O K] {Δ τ : K}
 private theorem int_of (a : O) : IsInt O (algebraMap K (Lsq K Δ) (algebraMap O K a)) := by
   rw [← IsScalarTower.algebraMap_apply]; exact isIntegral_algebraMap
 
-private theorem int_star {y : Lsq K Δ} (hy : IsInt O y) : IsInt O (star y) := by
-  let φ : Lsq K Δ →ₐ[O] Lsq K Δ :=
-    { starRingEnd (Lsq K Δ) with
+private theorem int_star {a b : K} {y : QuadraticAlgebra K a b} (hy : IsIntegral O y) :
+    IsIntegral O (star y) := by
+  let φ : QuadraticAlgebra K a b →ₐ[O] QuadraticAlgebra K a b :=
+    { starRingEnd (QuadraticAlgebra K a b) with
       commutes' := fun r => by
-        change star (algebraMap O (Lsq K Δ) r) = _
-        rw [IsScalarTower.algebraMap_apply O K (Lsq K Δ)]
+        change star (algebraMap O (QuadraticAlgebra K a b) r) = _
+        rw [IsScalarTower.algebraMap_apply O K (QuadraticAlgebra K a b)]
         ext <;> simp }
   exact hy.map φ
 
@@ -583,14 +584,8 @@ private theorem normE (hl : IsLoc O Δ) (hτ : τ ∈ (algebraMap O K).range) (u
 private theorem IB_of_int (hl : IsLoc O Δ) (hτ : τ ∈ (algebraMap O K).range) (u : Oˣ)
     (hu : algebraMap O K u = τ ^ 2 - 4) {x : Etau K τ} (hx : IsIntegral O x) : IB O (ofE Δ x) := by
   haveI := hl.frac
-  let φ : Etau K τ →ₐ[O] Etau K τ :=
-    { starRingEnd (Etau K τ) with
-      commutes' := fun r => by
-        change star (algebraMap O (Etau K τ) r) = _
-        rw [IsScalarTower.algebraMap_apply O K (Etau K τ)]
-        ext <;> simp }
   have k : ∀ x : Etau K τ, IsIntegral O x → IsInt O (QuadraticAlgebra.trace (ofE Δ x)) := fun x hx => by
-    have h : IsIntegral O (x + star x) := hx.add (hx.map φ)
+    have h : IsIntegral O (x + star x) := hx.add (int_star hx)
     rw [← algebraMap_trace_eq_add_star] at h
     obtain ⟨a, ha⟩ := IsIntegrallyClosed.isIntegral_iff.mp
       ((isIntegral_algebraMap_iff ).mp h)

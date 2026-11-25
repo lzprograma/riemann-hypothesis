@@ -27,14 +27,6 @@ private lemma genSub_le_of (E : Fin n → Fin n → Module.End ℂ M) (S T : Sub
     (hT : ∀ a b, ∀ v ∈ T, E a b v ∈ T) : genSub E S ≤ T := by
   exact sInf_le ⟨hST, hT⟩
 
-private lemma single_smul_fin (c : Fin n) (r : ℂ) (x : M) :
-    (Pi.single c (r • x) : Fin n → M) = r • Pi.single c x := by
-  funext j
-  by_cases h : j = c
-  · subst h
-    simp
-  · simp [h]
-
 private lemma gen_generic (E : Fin n → Fin n → Module.End ℂ M) (V : Submodule ℂ M)
     (T : Fin n → Fin n → Module.End ℂ (Fin n → M))
     (hT : ∀ a b c m, Pi.single c (E a b m) - T a b (Pi.single c m) ∈
@@ -47,7 +39,7 @@ private lemma gen_generic (E : Fin n → Fin n → Module.End ℂ M) (V : Submod
     { carrier := {m | ∀ x, (Pi.single x m : Fin n → M) ∈ G}
       add_mem' := fun {m m'} hm hm' x => by rw [Pi.single_add]; exact G.add_mem (hm x) (hm' x)
       zero_mem' := fun x => by rw [Pi.single_zero]; exact G.zero_mem
-      smul_mem' := fun r m hm x => by rw [single_smul_fin]; exact G.smul_mem r (hm x) }
+      smul_mem' := fun r m hm x => by rw [Pi.single_smul']; exact G.smul_mem r (hm x) }
   have hVS : V ≤ S := fun v hv x => le_genSub_self T _ (Submodule.mem_pi.2 fun j _ => by
     by_cases h : j = x
     · subst h

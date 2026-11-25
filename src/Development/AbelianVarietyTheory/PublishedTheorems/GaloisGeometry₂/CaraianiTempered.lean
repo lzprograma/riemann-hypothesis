@@ -45,8 +45,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace GlobalTheory.Published
 
 def CaraianiTempered : Prop :=

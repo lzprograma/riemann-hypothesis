@@ -128,7 +128,7 @@ theorem isValChar_nu_twist {T : Type} {L : LevCh D T} {sc : Consts} (G : GridDat
   · obtain rfl : P.under (𝓞 D.host.F) = v := HeightOneSpectrum.ext hP
     obtain ⟨PP, hPP, hu⟩ := Finset.mem_image.1 hv
     have h0 := (hloc0 _ P hP).2 (Finset.notMem_empty _)
-    rw [Model.expIn_condF, if_neg (hu ▸ unipotent_character_trivial_off_S0 PP hPP)] at h0
+    rw [Model.expIn_condF, ite_eq_right (hu ▸ unipotent_character_trivial_off_S0 PP hPP)] at h0
     exact (Model.levelLe_mono ((h0 0).2 le_rfl) (Nat.zero_le 1)).mul (hL.xi_tame t P)
   · obtain rfl : P.under (𝓞 D.host.F) = v := HeightOneSpectrum.ext hP
     have h0 := (hloc0 _ P hP).2 (Finset.notMem_empty _)
@@ -136,8 +136,8 @@ theorem isValChar_nu_twist {T : Type} {L : LevCh D T} {sc : Consts} (G : GridDat
     · exact expAt_mul_unr h0 hr
     · have hS1 := (ram P hr).resolve_right hv
       refine expAt_mul_low h0 (hL.xi_tame t P) ?_
-      rw [Model.expIn_condF, if_pos (G.pl.mem_S0_of_sum_eq.2 (Or.inr hS1)), condExp,
-        if_neg fun (e : P.under (𝓞 D.host.F) = G.pl.v0) => G.ch.basePlace_not_mem_chiGridBadPlaces (e ▸ hS1)]
+      rw [Model.expIn_condF, ite_eq_left (G.pl.mem_S0_of_sum_eq.2 (Or.inr hS1)), condExp,
+        ite_eq_right fun (e : P.under (𝓞 D.host.F) = G.pl.v0) => G.ch.basePlace_not_mem_chiGridBadPlaces (e ▸ hS1)]
       norm_num
 
 end GlobalTheory.SqTop.TwVal

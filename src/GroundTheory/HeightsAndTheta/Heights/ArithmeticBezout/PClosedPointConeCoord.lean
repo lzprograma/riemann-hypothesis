@@ -23,18 +23,14 @@ theorem aeval_cone_of_isHomogeneous {F Ω : Type*} [Field F] [Field Ω] [Algebra
     (y : Fin n → Ω) {p : MvPolynomial (Fin n) F} (hp : p.IsHomogeneous d) :
     aeval (fun j => Polynomial.C (y j) * Polynomial.X) p =
       Polynomial.C (aeval y p) * Polynomial.X ^ d := by
-  classical
-  conv_lhs => rw [p.as_sum]
-  conv_rhs => rw [p.as_sum]
-
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hdeg : ∑ j ∈ m.support, m j = d := by
-    have := hp (mem_support_iff.mp hm)
-    simpa [Finsupp.weight_apply, Finsupp.sum] using this
-  rw [aeval_monomial, aeval_monomial, Finsupp.prod, Finsupp.prod]
-  simp only [mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, hdeg, ← map_pow,
-    ← map_prod, Polynomial.algebraMap_apply, map_mul, mul_assoc]
+  have h := (hp.map (algebraMap F (Polynomial Ω))).eval_smul
+    Polynomial.X (fun j => Polynomial.C (y j))
+  rw [show (Polynomial.X • fun j => Polynomial.C (y j)) =
+      fun j => Polynomial.C (y j) * Polynomial.X from funext fun _ => mul_comm _ _,
+    ← eval₂_eq_eval_map, ← aeval_def] at h
+  rw [h, mul_comm, map_aeval, coe_eval₂Hom, eval₂_eq_eval_map,
+    show Polynomial.C.comp (algebraMap F Ω) = algebraMap F (Polynomial Ω) from
+      RingHom.ext fun _ => rfl]
 
 theorem ClosedPointConeCoord.proof : ClosedPointConeCoord.Statement := by
   intro F _ n I i hI hdim hXi Ω _ _ y hy hyI

@@ -9,50 +9,7 @@ public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.Monomial
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ArithmeticIntersectionMultilinearPolar
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PResAboveCover
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -73,7 +30,7 @@ theorem sum_rc_smul {N : ℕ} {A : Type} [AddCommGroup A] (a : Fin N → A) (i :
     intro k
     unfold rc
     split_ifs <;> simp
-  simp only [h1, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [h1, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   obtain ⟨i, hi⟩ := i
   cases i with
   | zero =>
@@ -88,7 +45,7 @@ theorem sum_rc_smul {N : ℕ} {A : Type} [AddCommGroup A] (a : Fin N → A) (i :
       rw [Finset.sum_eq_single ⟨j, hj⟩]
       · simp
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         exact hb (Fin.ext (by simpa using h))
       · simp
@@ -107,18 +64,18 @@ theorem sum_mul_rc {N : ℕ} (l : Fin N → ℝ) (k : Fin N) :
     intro i
     unfold rc
     split_ifs <;> simp
-  simp only [h1, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [h1, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   congr 1
   split_ifs with h
   · rw [Finset.sum_eq_single ⟨k + 1, h⟩]
     · simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e
       exact hb (Fin.ext e.symm)
     · simp
   · refine Finset.sum_eq_zero fun b _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     intro e
     exact h (e ▸ b.2)
 
@@ -140,7 +97,7 @@ theorem sum_rootC_some {A : Type} [AddCommGroup A] (g : Option (Ψ × Fin N) →
   rw [Fintype.sum_option]
   simp only [rootC, zero_smul, zero_add]
   rw [Fintype.sum_prod_type, Finset.sum_eq_single p.1]
-  · simp only [if_true, hg]
+  · simp only [ite_true, hg]
     exact sum_rc_smul (fun l => a (p.1, l)) p.2
   · intro b _ hb
     simp [hb]
@@ -154,7 +111,7 @@ theorem sum_coef_rootC (M : RootModel Ψ N) (lam : Wt Ψ N) (s : ℝ) (b : Optio
   | some q =>
     simp only [rootC, RootModel.coef, Int.cast_zero, mul_zero, zero_add]
     rw [Fintype.sum_prod_type, Finset.sum_eq_single q.1]
-    · simp only [if_true, neg_mul]
+    · simp only [ite_true, neg_mul]
       have := sum_mul_rc (fun i => lam q.1 i) q.2
       simp only [PB.gapS, Option.elim, PB.gap, PB.gapX]
       rw [Finset.sum_neg_distrib, this]
@@ -229,7 +186,7 @@ theorem word_eq (hL : ReciprocityTheory.ChartRestriction.G.AI.I2.MetricLocalStat
     II M.K M.ι M.P (dimFl Ψ N + 1) (fun r => M.line t (w r)) =
       PB.polar (dimFl Ψ N + 1) (fun v => II M.K M.ι M.P (dimFl Ψ N + 1) fun r => R.Re.line (v r) t)
         (fun r a => (rootC (w r) a : ℝ)) := by
-  have hc := _root_.GlobalTheory.CompanionTheory.Ar.PB.combLine_intersection hL II hII M.K M.ι (Option (Ψ × Fin N)) M.P (dimFl Ψ N + 1)
+  have hc := _root_.PositivityTheory.Xgp.t_re_comb hL II hII M.K M.ι (Option (Ψ × Fin N)) M.P (dimFl Ψ N + 1)
     (fun a => R.Re.line a t) (fun r => rootC (w r)) R.Re.arith (fun a => R.Re.line_smooth a t ht0 ht)
   rw [← hc.2]
   exact hL M.K M.ι (II M.K M.ι) (hII.1 M.K M.ι) M.P _ _ _ R.Re.arith (fun j => smooth_line M t _) hc.1
@@ -297,9 +254,9 @@ theorem arFun_lin (hII : IsFullIntersectionSystem II) (lam : Wt Ψ N) (s t : ℝ
     (fun _ => cS lam s)
   rw [h1, Finset.sum_div]
   refine Finset.sum_congr rfl fun w _ => ?_
-  obtain ⟨hdeg, σ, -, hii⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Top.monoLines_monomial_word II hII.1 M.K M.ι M.P (dimFl Ψ N + 1)
+  obtain ⟨hdeg, σ, -, hii⟩ := _root_.RootFieldNumerics.intersection_monomial_lines II hII.1 M.K M.ι M.P (dimFl Ψ N + 1)
     (Option (Ψ × Fin N)) (M.line t) w M.arith (smooth_line M t)
-  rw [arFun_monomial, RootModel.arMono, if_pos hdeg, hii, prod_cS M lam s w]
+  rw [arFun_monomial, RootModel.arMono, ite_eq_left hdeg, hii, prod_cS M lam s w]
   have hp : ((M.kA : ℝ) ^ ((∑ k, Finsupp.single (w k) 1 : Option (Ψ × Fin N) →₀ ℕ) none)) ≠ 0 :=
     pow_ne_zero _ hk
   field_simp
@@ -363,9 +320,9 @@ theorem exists_lim_arMono (hL : ReciprocityTheory.ChartRestriction.G.AI.I2.Metri
       funext v
       rw [PB.Realis.num]
       field_simp
-    rw [RootModel.arMono, if_pos hm, hw, word_eq hL II hII R t ht.1 ht.2, e]
+    rw [RootModel.arMono, ite_eq_left hm, hw, word_eq hL II hII R t ht.1 ht.2, e]
   · refine ⟨0, ?_⟩
-    simp only [RootModel.arMono, if_neg hm]
+    simp only [RootModel.arMono, ite_eq_right hm]
     exact tendsto_const_nhds
 
 theorem tendsto_arFun (hC : M.Converges II) (F : RPA Ψ N) :

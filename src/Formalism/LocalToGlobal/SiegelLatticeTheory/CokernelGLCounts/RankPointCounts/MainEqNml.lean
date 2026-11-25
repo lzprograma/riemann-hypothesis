@@ -21,8 +21,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.NGCut.NormalInvariants.Gen
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def NmlInvG : Prop :=
   ∀ Cg cb Cw cT CT C0 : ℝ, ∃ C'₀ Cl₀ : ℝ, ∀ C' Cl : ℝ, C'₀ ≤ C' → Cl₀ ≤ Cl →
     ∀ (D : D7) (large₂ : SizeData₂ D) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word),
@@ -157,8 +155,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.Pf.MainEqNml
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : HidaSetting D} (Y : Full X) (u : D.what₂.Word)
 
 def OccTG (c : Set (TauC Y u u)) (γ : PN.Pts D.host.E D.R.rS) (t : TauC Y u u) : Prop :=
@@ -219,7 +215,7 @@ theorem nmlInvG_of (hL : NmlLine) (hI : NmlInt) (hS : NmlSep) : Formalism.L2.SG.
       OccTG Y u c γ (pick ν) ∧ nmlOf Y u u (pick ν) = ν := by
     intro ν hν
     have h := (occ_iffG Y u νL νB ng c γ ν).1 hν
-    simp only [hpick, dif_pos h]
+    simp only [hpick, dite_eq_left h]
     exact h.choose_spec
   refine ⟨J, J', 1, 1, fun ν => (coefA Y u u t0 (pick ν), coefA' Y u u t0 (pick ν)), hJ, hJ', one_ne_zero,
     one_ne_zero, fun ν hν => ?_, fun ν₁ ν₂ h₁ h₂ hκ => ?_, ?_, ?_⟩

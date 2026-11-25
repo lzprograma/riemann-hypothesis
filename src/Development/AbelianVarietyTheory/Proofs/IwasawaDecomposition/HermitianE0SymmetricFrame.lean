@@ -46,7 +46,6 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowsJoi
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.AutomorphicEvaluation Formalism.L2.DIV Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.ConcreteSettingExists MeasureTheory NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.SRe
 open scoped TensorProduct Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.Mem.SymChar
 
@@ -62,23 +61,23 @@ theorem hA_e0_symVec : ∀ (D : D7) (X : HidaSetting D) (kv : Σ k : Fin 2, D.nd
   have hb := b.2
   unfold GlobalTheory.Mem.SymFrame.symVec GlobalTheory.SeeConjRead.flagV
   by_cases h1 : j.1 < D.R.rS
-  · rw [dite_eq_left h1, if_neg (by omega), sub_zero]; exact (X.gramIntegral _ _).1
+  · rw [dite_eq_left h1, ite_eq_right (by omega), sub_zero]; exact (X.gramIntegral _ _).1
   rw [dite_eq_right h1]
   by_cases h2 : j.1 < D.R.rS + D.R.k
-  · rw [dite_eq_left h2, if_neg (by omega), sub_zero]; exact hW _
+  · rw [dite_eq_left h2, ite_eq_right (by omega), sub_zero]; exact hW _
   rw [dite_eq_right h2]
   by_cases h4 : j.1 = D.R.rS + D.R.k
-  · rw [dite_eq_left h4, if_neg (by omega), sub_zero]; exact (X.formsAtZero.2 b).1
+  · rw [dite_eq_left h4, ite_eq_right (by omega), sub_zero]; exact (X.formsAtZero.2 b).1
   rw [dite_eq_right h4]
   by_cases h3 : j.1 < 2 * D.R.rS + D.R.k + 1
   · rw [dite_eq_left h3]
     have h := (X.gramIntegral b ⟨2 * D.R.rS + D.R.k - j.1, by omega⟩).2.2
     by_cases e : j.1 = 2 * D.R.rS + D.R.k - b.1
-    · rw [if_pos e]
-      rwa [if_pos (Fin.ext (by simp only; omega))] at h
-    · rw [if_neg e]
-      rwa [if_neg (fun h' => e (by have := congrArg Fin.val h'; simp only at this; omega))] at h
-  · rw [dite_eq_right h3, if_neg (by omega), sub_zero, hA_zero_right']
+    · rw [ite_eq_left e]
+      rwa [ite_eq_left (Fin.ext (by simp only; omega))] at h
+    · rw [ite_eq_right e]
+      rwa [ite_eq_right (fun h' => e (by have := congrArg Fin.val h'; simp only at this; omega))] at h
+  · rw [dite_eq_right h3, ite_eq_right (by omega), sub_zero, hA_zero_right']
     exact ⟨0, zero_mem _, by simp⟩
 
 end GlobalTheory.Mem.SymChar

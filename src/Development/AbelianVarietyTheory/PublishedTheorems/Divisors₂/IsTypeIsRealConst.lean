@@ -45,8 +45,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open Set Filter Topology Matrix MeasureTheory
@@ -72,12 +70,7 @@ def dzb (a : Fin n) : Alt n := ExteriorAlgebra.ι ℂ (Pi.single (.inr a) 1)
 def bas (n : ℕ) : Module.Basis (Finset (Fin (n + n))) ℂ (Alt n) :=
   ((Pi.basisFun ℂ (Fin n ⊕ Fin n)).reindex finSumFinEquiv).ExteriorAlgebra
 
-def IsType (p q : ℕ) (α : Alt n) : Prop :=
-  ∀ S, (bas n).repr α S ≠ 0 → (S.filter (·.val < n)).card = p ∧ (S.filter (n ≤ ·.val)).card = q
-
 def swap : Alt n →ₐ[ℂ] Alt n := ExteriorAlgebra.map (LinearMap.funLeft ℂ ℂ Sum.swap)
-
-def IsReal (α : Alt n) : Prop := ∀ S, (bas n).repr (swap α) S = conj ((bas n).repr α S)
 
 def pull (L : V n →L[ℂ] V m) : Alt m →ₐ[ℂ] Alt n :=
   ExteriorAlgebra.map (Matrix.toLin' (fromBlocks (of fun b a => L (coordVec b) a) 0 0
@@ -224,17 +217,11 @@ structure IsForm (α : A.Fld) : Prop where
 
   compat : ∀ x x' : A.Pt, x.pt = x'.pt → α x = pull (fderiv ℂ (x'.ch ∘ x.ch.symm) x.crd) (α x')
 
-def IsRealForm (q : ℕ) (α : A.Fld) : Prop := A.IsForm α ∧ ∀ x, IsType q q (α x) ∧ IsReal (α x)
-
 def fn (u : M → ℝ) : A.Fld := fun x => algebraMap ℂ _ (u x.pt)
 
 def del (α : A.Fld) : A.Fld := fun x => delAt (A.loc α x.1.1) x.crd
 
 def dbar (α : A.Fld) : A.Fld := fun x => dbarAt (A.loc α x.1.1) x.crd
-
-def ddc (α : A.Fld) : A.Fld := kappa • A.del (A.dbar α)
-
-def IsExact (α : A.Fld) : Prop := ∃ u w, A.IsForm u ∧ A.IsForm w ∧ α = A.del u + A.dbar w
 
 def pullback (f : M' → M) (α : A.Fld) : A'.Fld := fun x =>
   pull (fderiv ℂ (A.e (A.cover (f x.pt)).choose ∘ f ∘ x.ch.symm) x.crd) (α ⟨(_, f x.pt), (A.cover (f x.pt)).choose_spec⟩)
@@ -257,120 +244,5 @@ theorem isForm_fn {u : M → ℝ} (hu : A.SmoothOn univ fun y => u y) : A.IsForm
   simp [loc, hv, fn, Algebra.algebraMap_eq_smul_one, -Complex.coe_smul]
 
 end HolAtlas
-
-structure HermSeq {M : Type} [TopologicalSpace M] {n : ℕ} (A : HolAtlas M n) (r s : ℕ) where
-
-  κ : Type
-
-  U : κ → Set M
-
-  isOpen : ∀ a, IsOpen (U a)
-
-  cover : ∀ y, ∃ a, y ∈ U a
-
-  g : κ → κ → M → Matrix (Fin r ⊕ Fin s) (Fin r ⊕ Fin s) ℂ
-
-  holo : ∀ a b i j, A.HolOn (U a ∩ U b) fun y => g a b y i j
-
-  tri : ∀ a b, ∀ y ∈ U a ∩ U b, (g a b y).toBlocks₂₁ = 0
-
-  g_self : ∀ a, ∀ y ∈ U a, g a a y = 1
-
-  g_mul : ∀ a b c, ∀ y ∈ U a ∩ U b ∩ U c, g a b y * g b c y = g a c y
-
-  sub : κ → M → Matrix (Fin r) (Fin r) ℂ
-
-  mid : κ → M → Matrix (Fin r ⊕ Fin s) (Fin r ⊕ Fin s) ℂ
-
-  quot : κ → M → Matrix (Fin s) (Fin s) ℂ
-
-  smooth : ∀ a, (∀ i j, A.SmoothOn (U a) fun y => sub a y i j) ∧ (∀ i j, A.SmoothOn (U a) fun y => mid a y i j) ∧
-    ∀ i j, A.SmoothOn (U a) fun y => quot a y i j
-
-  posDef : ∀ a, ∀ y ∈ U a, (sub a y).PosDef ∧ (mid a y).PosDef ∧ (quot a y).PosDef
-
-  trans : ∀ a b, ∀ y ∈ U a ∩ U b, sub b y = chg (g a b y).toBlocks₁₁ (sub a y) ∧ mid b y = chg (g a b y) (mid a y) ∧
-    quot b y = chg (g a b y).toBlocks₂₂ (quot a y)
-
-namespace HermSeq
-
-variable {M M' : Type} [TopologicalSpace M] [TopologicalSpace M'] {n n' r s : ℕ} {A : HolAtlas M n} {A' : HolAtlas M' n'}
-
-def IsPull (T' : HermSeq A' r s) (T : HermSeq A r s) (f : M' → M) : Prop :=
-  ∃ φ : T.κ → T'.κ → M' → Matrix (Fin r ⊕ Fin s) (Fin r ⊕ Fin s) ℂ,
-    (∀ a b i j, A'.HolOn (f ⁻¹' T.U a ∩ T'.U b) fun y => φ a b y i j) ∧
-    ∀ a b y, f y ∈ T.U a → y ∈ T'.U b → (φ a b y).toBlocks₂₁ = 0 ∧
-      (∀ a', f y ∈ T.U a' → T.g a' a (f y) * φ a b y = φ a' b y) ∧
-      (∀ b', y ∈ T'.U b' → φ a b y * T'.g b b' y = φ a b' y) ∧
-      T'.sub b y = chg (φ a b y).toBlocks₁₁ (T.sub a (f y)) ∧ T'.mid b y = chg (φ a b y) (T.mid a (f y)) ∧
-      T'.quot b y = chg (φ a b y).toBlocks₂₂ (T.quot a (f y))
-
-def IsSplit (T : HermSeq A r s) : Prop :=
-  ∀ a, ∃ t : M → Matrix (Fin r) (Fin s) ℂ, (∀ i j, A.HolOn (T.U a) fun y => t y i j) ∧
-    ∀ y ∈ T.U a, chg (fromBlocks 1 (t y) 0 1) (T.mid a y) = fromBlocks (T.sub a y) 0 0 (T.quot a y)
-
-end HermSeq
-
-open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-open GlobalTheory.CxPts GlobalTheory.VB
-open GlobalTheory.VBExt (AdaptedChart)
-
-variable {k : Type} [CommRing k] {X : Scheme.{0}} {p : X ⟶ Sp k} {D : ℕ}
-
-structure IsRegVar (p : X ⟶ Sp k) (D : ℕ) : Prop extends IsArithVar p D where
-
-  regular : ∀ x, IsRegularLocalRing (X.presheaf.stalk x)
-
-namespace IsRegVar
-
-variable (h : IsRegVar p D)
-
-def atlas (σ : k →+* ℂ) : HolAtlas (CxPts p σ) D where
-  ι := AlgChart p σ D
-  e c := c.e
-  cover y := have ⟨R⟩ := RegGenSmooth.genSmooth h.toIsArithVar h.regular σ
-    have ⟨i, hi⟩ := R.cover y
-    ⟨R.chart i, hi⟩
-  holo c c' := c.holo_trans c'
-
-abbrev Fld : Type := ∀ σ, (h.atlas σ).Fld
-
-def IsArForm (q : ℕ) (η : h.Fld) : Prop :=
-  (∀ σ, (h.atlas σ).IsRealForm q (η σ)) ∧ ∀ σ σ' (x : (h.atlas σ).Pt) (x' : (h.atlas σ').Pt),
-    x'.pt.1 = spMap (starRingEnd ℂ) ≫ x.pt.1 →
-    (∀ z ∈ x.ch.source, ∀ z' ∈ x'.ch.source, z'.1 = spMap (starRingEnd ℂ) ≫ z.1 → ∀ a, x'.ch z' a = conj (x.ch z a)) →
-    swap (η σ' x') = (-1 : ℂ) ^ q • η σ x
-
-def integral (η : h.Fld) : ℝ := ∑ᶠ σ, (h.atlas σ).integral (η σ)
-
-theorem smoothOn {σ : k →+* ℂ} {m : Type} {U : Set (CxPts p σ)} {G : CxPts p σ → Matrix m m ℂ}
-    (H : ∀ y ∈ U, MInfAt G y) (i j : m) : (h.atlas σ).SmoothOn U fun y => G y i j := fun c v hv => by
-  have := (H _ hv.2 i j).contDiffAt_chart c (c.e.map_target hv.1)
-  erw [c.e.right_inv hv.1] at this
-  exact this.contDiffWithinAt
-
-def seq {S : ShortComplex X.Modules} (hS : S.ShortExact) {r s : ℕ} {h₁ : VMetric p S.X₁ r} {h₂ : VMetric p S.X₂ (r + s)}
-    {h₃ : VMetric p S.X₃ s} (H₁ : h₁.IsCInf) (H₂ : h₂.IsCInf) (H₃ : h₃.IsCInf) (σ : k →+* ℂ) :
-    HermSeq (h.atlas σ) r s where
-  κ := AdaptedChart S r s
-  U a := ptsIn p σ a.U
-  isOpen _ := isOpen_ptsIn _
-  cover := Met.exists_adapted hS h₁.isVB h₃.isVB
-  g a b := a.tr p σ hS b
-  holo a b i j c := (c.holo _ _).mono fun _ hv => ⟨hv.1, mem_ptsIn_inf.2 ⟨hv.2.2, hv.2.1⟩⟩
-  tri a b y hy := by rw [a.tr_eq hS b hy.1 hy.2, toBlocks_fromBlocks₂₁]
-  g_self a y hy := by rw [AdaptedChart.tr, Chart.tr_self _ hy, submatrix_one_equiv]
-  g_mul a b c y hy := by
-    rw [AdaptedChart.tr, AdaptedChart.tr, submatrix_mul_equiv, Chart.tr_mul _ _ _ hy.1.2 hy.2, AdaptedChart.tr]
-  sub a := (h₁.met σ).G a.sub
-  mid a := (h₂.met σ).gram a.frame
-  quot a := (h₃.met σ).G a.quot
-  smooth a := ⟨h.smoothOn (H₁ σ a.sub), h.smoothOn fun _ => (H₂ σ).gram a.frame, h.smoothOn (H₃ σ a.quot)⟩
-  posDef a y hy := ⟨(h₁.met σ).posDef a.sub y hy, (h₂.met σ).posDef_gram_frame hS a hy, (h₃.met σ).posDef a.quot y hy⟩
-  trans a b y hy := by
-    refine ⟨?_, (h₂.met σ).gram_frame_trans hS a b hy.1 hy.2, ?_⟩ <;> rw [a.tr_eq hS b hy.1 hy.2]
-    exacts [(h₁.met σ).trans a.sub b.sub y hy.1, (h₃.met σ).trans a.quot b.quot y hy.1]
-
-end IsRegVar
 
 end GlobalTheory.CxForm

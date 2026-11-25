@@ -75,14 +75,14 @@ theorem BlowUpFibreDegree.proof (ha : HomLocRingLocal.Statement.{u}) (hb : DivCy
     rw [finsum_eq_if]
     by_cases hc' : W'.comap (liftForm (ι := ι) (J := J) (R := O)) = W
     · by_cases hp : p W'
-      · rw [if_pos hc', if_pos hp]
-      · rw [if_pos hc', if_neg hp]
+      · rw [ite_eq_left hc', ite_eq_left hp]
+      · rw [ite_eq_left hc', ite_eq_right hp]
         have h0 : divCycle (blowUpOf P u) (liftForm x) W' = 0 := by
           unfold divCycle
           rw [dite_eq_right]
           exact fun h => hp ⟨h.1, h.2, hc'⟩
         rw [h0, zero_mul]
-    · rw [if_neg hc', if_neg (fun h => hc' h.2.2)]
+    · rw [ite_eq_right hc', ite_eq_right (fun h => hc' h.2.2)]
   rw [finsum_congr hite, ← finsum_subtype_eq_finsum_cond p,
     ← finsum_comp_equiv e, finsum_eq_sum_of_fintype]
   refine Finset.sum_congr rfl fun 𝔫 _ => ?_

@@ -9,53 +9,9 @@ public import Formalism.EllipticTorsion.EllipticTorsionProofs.WChord
 public import Formalism.EllipticTorsion.EllipticTorsionProofs.ExistsUnitFactor
 public import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsHomDef
 public import Formalism.EllipticTorsion.EllipticTorsionProofs.WSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.EllipticTorsion.EllipticTorsionProofs.WPoint
 import Formalism.EllipticTorsion.EllipticTorsionProofs.WSubst
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.EllipticTorsion.EllipticTorsionProofs.JetsTwo, Formalism.EllipticTorsion.EllipticTorsionProofs.CubeTwo
@@ -155,11 +111,11 @@ theorem coeff_subst_X0_zero (H : MvPowerSeries (Fin 2) K) (e : Fin 2 →₀ ℕ)
   rw [MvPowerSeries.coeff_subst hs, finsum_eq_single _ e]
   · rw [hprod, he, pow_zero, mul_one, MvPowerSeries.coeff_X_pow]
     have : e = Finsupp.single 0 (e 0) := ((eq_single_iff e).2).mpr he
-    rw [if_pos this, smul_eq_mul, mul_one]
+    rw [ite_eq_left this, smul_eq_mul, mul_one]
   · intro d hd
     rw [hprod]
     rcases Nat.eq_zero_or_pos (d 1) with h1 | h1
-    · rw [h1, pow_zero, mul_one, MvPowerSeries.coeff_X_pow, if_neg, smul_zero]
+    · rw [h1, pow_zero, mul_one, MvPowerSeries.coeff_X_pow, ite_eq_right, smul_zero]
       intro h
       apply hd
       have hd' : d = Finsupp.single 0 (d 0) := ((eq_single_iff d).2).mpr h1
@@ -242,7 +198,7 @@ theorem div_diag {W : WeierstrassCurve K} (H : MvPowerSeries (Fin 2) K) (hT : H 
     have hQ'T : Q' ∈ T W := by
       rw [mem_T]; intro e
       have := congrArg (MvPowerSeries.coeff (e + Finsupp.single 1 1)) hQ'
-      rw [MvPowerSeries.X_def, MvPowerSeries.coeff_monomial_mul, if_pos le_add_self,
+      rw [MvPowerSeries.X_def, MvPowerSeries.coeff_monomial_mul, ite_eq_left le_add_self,
         add_tsub_cancel_right, one_mul] at this
       rw [← this]; exact mem_T.mp hH'T _
     exact subst_mem_T_of_mem hQ'T (vec_mem (X_mem_T 0) ((T W).sub_mem (X_mem_T 1) (X_mem_T 0)))

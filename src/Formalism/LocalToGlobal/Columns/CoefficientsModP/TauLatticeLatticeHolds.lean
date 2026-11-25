@@ -2,6 +2,7 @@ module
 
 public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
 public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
 
 @[expose] public section
 
@@ -311,11 +312,6 @@ section H
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ}
 
-theorem du_gLat_mul (g h : GL (Fin n) K) (M : Submodule (𝓞 K) (Fin n → K)) :
-    gLat g (gLat h M) = gLat (g * h) M := by
-  ext x
-  rw [_root_.Formalism.L2.DIV.lc_mem_gLat, _root_.Formalism.L2.DIV.lc_mem_gLat, _root_.Formalism.L2.DIV.lc_mem_gLat, Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_rev]
-
 theorem du_gLat_one (M : Submodule (𝓞 K) (Fin n → K)) : gLat 1 M = M := by
   ext x
   rw [_root_.Formalism.L2.DIV.lc_mem_gLat, inv_one, Units.val_one, Matrix.one_mulVec]
@@ -394,62 +390,13 @@ section ES
 
 variable {E F K : Type} [Field E] [NumberField E] [Field F] [NumberField F] [Field K] [NumberField K] {n : ℕ}
 
-theorem du_tl_comp (ψ : F →+* K) (φ : E →+* F) (L : Submodule (𝓞 E) (Fin n → E)) :
-    du_tl ψ (du_tl φ L) = du_tl (ψ.comp φ) L := by
-  unfold du_tl
-  rw [← du_tl, du_tl_span, Set.image_image]
-  rfl
-
-theorem du_hform (cE : E →+* E) (J : Matrix (Fin n) (Fin n) E) (x y : Fin n → E) :
-    Formalism.UG.hform cE J x y = (J *ᵥ y) ⬝ᵥ du_f cE x := by
-  simp only [Formalism.UG.hform, Matrix.mulVec, dotProduct, du_f, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  ring
-
-theorem du_Lprime (cE : E →+* E) (Jg : GL (Fin n) E) (L L' : Submodule (𝓞 E) (Fin n → E))
-    (hL' : ∀ y, y ∈ L' ↔ ∀ x ∈ L, Formalism.UG.hform cE (Jg : Matrix (Fin n) (Fin n) E) x y ∈ (algebraMap (𝓞 E) E).range) :
-    L' = gLat Jg⁻¹ (dualFr (du_tl cE L)) := by
-  ext y
-  rw [hL', _root_.Formalism.L2.DIV.lc_mem_gLat, inv_inv, du_mem_dualFr_tl]
-  refine forall₂_congr fun x _ => ?_
-  rw [du_hform, Submodule.mem_one, RingHom.mem_range]
-
-theorem du_tl_gLat {ι : Type} (emb : ι → E →+* K) (τ : ι) (γ : GL (Fin n) E) (L : Submodule (𝓞 E) (Fin n → E)) :
-    du_tl (emb τ) (gLat γ L) = gLat (embGL emb γ τ) (du_tl (emb τ) L) :=
-  tauLatG E K ι n emb τ L γ
-
 end ES
 
 theorem tauLatDual_of (hBA : BasisAtEx) : TauLatDual := by
-  intro E K _ _ _ _ _ ι n emb cE τ hstar J L L' hJ hL hL'
-  have hu : IsUnit J := (Matrix.isUnit_iff_isUnit_det J).2 hJ
-  have hJg : (hu.unit : Matrix (Fin n) (Fin n) E) = J := IsUnit.unit_spec hu
-  rw [← hJg] at hL'
-  have e1 := du_Lprime cE hu.unit L L' hL'
-  have e2 : (starRingEnd K).comp (emb τ) = (emb τ).comp cE := RingHom.ext fun x => hstar x
-  rw [e1, du_tauLat_eq, du_tauLat_eq, du_tl_gLat]
-  ext x
-  rw [du_mem_hdualFr, _root_.Formalism.L2.DIV.lc_mem_gLat, du_tl_comp, e2, ← du_tl_comp, du_dualFr_tl hBA _ _ (du_tl_lattice cE L hL),
-    embGL_inv, inv_inv, embGL_coe, hJg]
-  rfl
+  apply _root_.GlobalTheory.TauLat.tauLatDual <;> assumption
 
 theorem roundLat_of (hBA : BasisAtEx) : RoundLat := by
-  intro E K _ _ _ _ ι n emb cE τ hcc Jg L L' hL hJ hL'
-  have e1 := du_Lprime cE Jg L L' hL'
-  have e2 : (((emb τ).comp cE).comp cE) = emb τ := RingHom.ext fun x => by simp [hcc]
-  rw [e1, du_tauLat_eq, du_tauLat_eq, du_tl_gLat (fun τ => (emb τ).comp cE) τ,
-    ← du_dualFr_tl hBA _ _ (du_tl_lattice cE L hL), du_tl_comp, e2, du_gLat_mul]
-  have e3 : invTrK (embGL emb Jg⁻¹) τ * embGL (fun τ => (emb τ).comp cE) Jg⁻¹ τ = 1 := by
-    apply Units.ext
-    have hJ' : Formalism.UG.cT cE (Jg : Matrix (Fin n) (Fin n) E) = (Jg : Matrix (Fin n) (Fin n) E) := hJ
-    have h1 : ((Jg : Matrix (Fin n) (Fin n) E).map (emb τ))ᵀ =
-        (Jg : Matrix (Fin n) (Fin n) E).map ((emb τ).comp cE) := by
-      conv_lhs => rw [← hJ']
-      ext i j
-      simp [Formalism.UG.cT]
-    rw [Units.val_mul, invTrK_coe, embGL_inv, inv_inv, embGL_coe, embGL_coe, h1, ← Matrix.map_mul,
-      ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.map_one _ (map_zero _) (map_one _), Units.val_one]
-  rw [e3, du_gLat_one]
+  apply _root_.GlobalTheory.TauLat.roundLat <;> assumption
 
 theorem dualFrameLattice_holds : DualFrLattice := dualFrLattice_of latticeBasisExists_holds
 

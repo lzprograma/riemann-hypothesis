@@ -48,12 +48,6 @@ open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullH
 
 namespace GlobalTheory.UnitaryAdelicTop
 
-theorem isClosed_UG {A B : Type} [CommRing A] [CommRing B] [Algebra A B] [TopologicalSpace B] [IsTopologicalRing B]
-    [T2Space B] (c : B →ₐ[A] B) (hc : Continuous c) {n : ℕ} (J : Matrix (Fin n) (Fin n) B) :
-    IsClosed (UG c J : Set (GL (Fin n) B)) := by
-  have hv : Continuous fun g : GL (Fin n) B => (g : Matrix (Fin n) (Fin n) B) := Units.continuous_val
-  exact isClosed_eq (((hv.matrix_transpose).matrix_mul continuous_const).matrix_mul (hv.matrix_map hc)) continuous_const
-
 theorem lcsc_UA : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (n : ℕ)
     (J : Matrix (Fin n) (Fin n) E), IsTopologicalGroup (UA σ J) ∧ LocallyCompactSpace (UA σ J) ∧
       SecondCountableTopology (UA σ J) ∧ T2Space (UA σ J) := by

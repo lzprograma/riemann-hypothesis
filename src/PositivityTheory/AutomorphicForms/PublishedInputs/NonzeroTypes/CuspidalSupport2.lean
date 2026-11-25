@@ -35,7 +35,3 @@ theorem twist_twist_inv {d : ℕ} {X : Type} [AddCommGroup X] [Module ℂ X]
   rw [GlobalTheory.SmGL.twist_twist, h, GlobalTheory.SmGL.twist_one]
 
 end UpperTheory.TNZ.CuspidalSupport₂
-
-namespace UpperTheory.TNZ
-
-end UpperTheory.TNZ

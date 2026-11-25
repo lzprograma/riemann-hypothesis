@@ -80,8 +80,8 @@ theorem exists_iso (p q : ι → E) (hp : Orthonormal ℂ p) (hq : Orthonormal �
     change inner ℂ (w p) (w q) = _
     rw [hw p q]
     by_cases hpq : p = q
-    · subst hpq; rw [if_pos rfl, if_pos rfl]
-    · rw [if_neg hpq, if_neg]; intro h; exact hpq (Sum.inl_injective (congrArg Subtype.val h))
+    · subst hpq; rw [ite_eq_left rfl, ite_eq_left rfl]
+    · rw [ite_eq_right hpq, ite_eq_right]; intro h; exact hpq (Sum.inl_injective (congrArg Subtype.val h))
   obtain ⟨bP, hbP⟩ := Orthonormal.exists_orthonormalBasis_extension_of_card_eq hcard (hres _ hp)
   obtain ⟨bQ, hbQ⟩ := Orthonormal.exists_orthonormalBasis_extension_of_card_eq hcard (hres _ hq)
   have hP : ∀ a, bP (Sum.inl a) = p a := fun a => hbP _ ⟨a, rfl⟩
@@ -204,9 +204,9 @@ theorem stab (p : Mat k r) (hp : p ∈ GG k r) (a : Fin r → ℝ) (ha : ∀ b, 
   have hp' : pᴴ * Hpk k r * p = Hpk k r := hp
   have ha0 : ∀ b, (a b : ℂ) ≠ 0 := fun b => by exact_mod_cast (ha b).ne'
   have hwe : ∀ j b, p (wI k r j) (eI k r b) = 0 := fun j b => by
-    rw [h1 b _ (by have := b.2; simp only [wI]; omega), if_neg (wI_ne_eI _ _)]
+    rw [h1 b _ (by have := b.2; simp only [wI]; omega), ite_eq_right (wI_ne_eI _ _)]
   have hse : ∀ j b, p (esI k r j) (eI k r b) = 0 := fun j b => by
-    rw [h1 b _ (by have := b.2; have := j.2; simp only [esI]; omega), if_neg (esI_ne_eI _ _)]
+    rw [h1 b _ (by have := b.2; have := j.2; simp only [esI]; omega), ite_eq_right (esI_ne_eI _ _)]
   have hsw : ∀ j b, p (esI k r b) (wI k r j) = 0 := by
     intro j b
     induction b using WellFoundedLT.induction with
@@ -214,12 +214,12 @@ theorem stab (p : Mat k r) (hp : p ∈ GG k r) (a : Fin r → ℝ) (ha : ∀ b, 
       have := congrFun (congrFun hp' (eI k r b)) (wI k r j)
       simp only [Matrix.mul_apply, sum3, Matrix.conjTranspose_apply] at this
       simp [hwe, hse, H_ee, H_ew, H_es, H_we, H_ww, H_ws, H_se, H_sw, H_ss] at this
-      rw [Finset.sum_eq_single b, h1 b _ le_rfl, if_pos rfl] at this
+      rw [Finset.sum_eq_single b, h1 b _ le_rfl, ite_eq_left rfl] at this
       · simpa [(ha b).ne'] using this
       · intro c _ hc
         rcases lt_or_gt_of_ne hc with h | h
         · rw [ih c h, mul_zero]
-        · rw [h1 b _ h.le, if_neg (by rw [eI_inj]; exact hc)]; simp
+        · rw [h1 b _ h.le, ite_eq_right (by rw [eI_inj]; exact hc)]; simp
       · simp
   let m : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ := Matrix.of fun i j => p (wI k r i) (wI k r j)
   have hm : m ∈ UH (Hb k) := by
@@ -349,7 +349,7 @@ theorem iwasawa : ∀ (k r : ℕ), ∀ g ∈ GG k r, ∃ n ∈ Nset k r, ∃ a :
       obtain ⟨a, ha, rfl⟩ := hx
       have ha' : a.val < b.val := ha
       rw [hgw]
-      exact (bvec_apply _ _).trans (if_neg fun h => by rw [h] at hi; simp only [eI] at hi; omega)
+      exact (bvec_apply _ _).trans (ite_eq_right fun h => by rw [h] at hi; simp only [eI] at hi; omega)
     | zero => simp
     | add x y _ _ h1 h2 => rw [map_add (f := _), PiLp.add_apply, h1, h2, add_zero]
     | smul t x _ h1 => rw [map_smul, PiLp.smul_apply, h1, smul_zero]

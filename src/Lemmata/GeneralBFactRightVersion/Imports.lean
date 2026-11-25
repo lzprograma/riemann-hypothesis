@@ -10,7 +10,7 @@ public import Mathlib.FieldTheory.Minpoly.Basic
 namespace Bl.general_b_fact_right_version
 
 theorem goal1 :
-  ∀ {E Ω : Type} [inst : Field.{0} E] [inst_1 : Field.{0} Ω] [inst_2 : Algebra.{0, 0} E Ω] (σ : AlgEquiv.{0, 0, 0} E Ω Ω)
+  ∀ {E Ω : Type} [Field.{0} E] [Field.{0} Ω] [Algebra.{0, 0} E Ω] (σ : AlgEquiv.{0, 0, 0} E Ω Ω)
   (y : Ω),
   IsIntegral.{0, 0} E y →
     Exists.{1} fun (n : Nat) ↦ And (Ne.{1} n 0) (Eq.{1} (DFunLike.coe.{1, 1, 1} (HPow.hPow.{0, 0, 0} σ n) y) y) := by

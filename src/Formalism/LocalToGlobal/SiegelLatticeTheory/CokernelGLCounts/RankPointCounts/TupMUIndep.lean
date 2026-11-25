@@ -100,7 +100,7 @@ theorem gram_moved (F : FlagG S r T) (F1 F2 : FlagG S r T') (M U : Matrix (Fin (
     intro A hA t a b
     simp only [mul_ite, mul_zero, ite_and]
     rw [Finset.sum_eq_single (Fin.last r), Finset.sum_eq_single (Fin.last r)]
-    · simp only [if_true, upUni_last hA]
+    · simp only [ite_true, upUni_last hA]
       by_cases h1 : a = Fin.last r <;> by_cases h2 : b = Fin.last r <;> simp [h1, h2]
     · intro j _ hj; simp [hj]
     · simp

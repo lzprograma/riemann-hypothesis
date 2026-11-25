@@ -65,11 +65,6 @@ noncomputable section
 namespace GlobalTheory.Hk3.LatModel
 open Classical
 
-section Abstract
-variable {W G : Type} [AddCommGroup W] [Group G]
-
-end Abstract
-
 section Concrete
 variable {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))]
 

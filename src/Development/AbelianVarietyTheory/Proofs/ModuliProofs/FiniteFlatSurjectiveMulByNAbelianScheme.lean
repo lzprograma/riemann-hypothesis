@@ -72,11 +72,7 @@ alias gs_sec_trans := _root_.GlobalTheory.SecPullIso.gs_sec_trans
 
 theorem isUnit_gs_sec {X Z : Scheme.{0}} {H : LB X} (s : LB.Sec H) (p : Z ⟶ X) (z : Z) {k : H.ι}
     (hk : p z ∈ H.U k) : IsUnit (gs p z (H.U k) (s.f k)) ↔ p z ∈ Out.nonzeroLocus s := by
-  refine ⟨fun h => Opens.mem_iSup.2 ⟨k, (isUnit_gs p z _ hk _).1 h⟩, fun h => ?_⟩
-  obtain ⟨k', hk'⟩ := Opens.mem_iSup.1 h
-  have h' : p z ∈ H.U k' := X.basicOpen_le _ hk'
-  rw [gs_sec_trans s p z hk h']
-  exact (Units.isUnit _).mul ((isUnit_gs p z _ h' _).2 hk')
+  exact (GlobalTheory.mem_nonzeroLocus_iff_pull s p z hk).symm
 
 theorem units_mul_pow_mul_inv_cancel {R : Type} [CommRing R] (g h t : Rˣ) (x y : R) (a b : ℕ) :
     (g.val * x) ^ a * (h.val * y) ^ b * ((g ^ a * h ^ b * t)⁻¹).val = x ^ a * y ^ b * (t⁻¹).val := by

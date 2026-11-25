@@ -28,61 +28,10 @@ public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMa
 public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.HighUnits
 public import GroundTheory.ProfiniteCohomology.RealPlaces.GSDefs
 public import GroundTheory.ProfiniteCohomology.RealPlaces.LocalCohomologyIsoHomologyMapNormCochains
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import GroundTheory.ProfiniteCohomology.CoinducedModules.Acyclic
 import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Algebra.ClopenNhdofOne
-import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Topology.Separation.Connected
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.ProfiniteCohomology.CohomologyTwoIntAddEquivQZSymmApply
-import Mathlib.Tactic.Basify
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.Separation.CompletelyRegular
 import GroundTheory.ProfiniteCohomology.Colimit
-import Mathlib.CategoryTheory.EffectiveEpi.Comp
-import Mathlib.CategoryTheory.ExtremalEpi
 import GroundTheory.ProfiniteCohomology.GlobalClassFormation.HighUnitsLocal
 import GroundTheory.ProfiniteCohomology.ClassFormations.HighFormations
 import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalResConj
@@ -427,7 +376,7 @@ theorem IsTopologicalGenerator.exists_hom_zmod_orderOf {σ : G} (hσ : IsTopolog
     change m • Additive.ofMul τ = _
     rw [← ofMul_zpow]
   have hinj : Function.Injective ψ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro k hk
     obtain ⟨m, rfl⟩ := ZMod.intCast_surjective k
     rw [hψ, ← ofMul_one, Additive.ofMul.injective.eq_iff] at hk
@@ -799,7 +748,6 @@ private theorem nsmul_order_of_ker_le {A B C D : Type*}
     have hr := hker _ hz
     rwa [map_nsmul e, e.apply_symm_apply, r.map_nsmul, ht] at hr
 
-set_option maxHeartbeats 8000000 in
 include hℓ hS in
 theorem exists_char_order_gsDecomp (b : ℕ) :
     ∃ χ : Additive Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1) →ₜ+ QZ,
@@ -852,7 +800,6 @@ private theorem char_eq_proj_nsmul {G : Type*} [Group G] [TopologicalSpace G]
     exact hg
   exact Set.eq_univ_iff_forall.mp (eq_univ E hclosed hpow hmul) g
 
-set_option maxHeartbeats 4000000 in
 theorem char_eq_proj_nsmul_of_gsDecomp {ℓ : ℕ} (hℓ : ℓ.Prime) (b : ℕ)
     (χ : Additive Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1) →ₜ+ QZ)
     (hχk : ℓ ^ b • χ = 0) (hB : ∀ h, gsDecomp K S ιs v h = 1 → χ (Additive.ofMul h) = 0)
@@ -881,7 +828,6 @@ private theorem zmod_eq_zero_of_char_eq_nsmul {G : Type*} [Group G] [Topological
   exact (ZMod.val_eq_zero (proj g)).1
     (Nat.eq_zero_of_dvd_of_lt (horder _ hsmul) (ZMod.val_lt (proj g)))
 
-set_option maxHeartbeats 4000000 in
 include hℓ hS in
 theorem proj_unramifiedDegree_eq_zero_of_gsDecomp_eq_one (b : ℕ)
     (g : Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1))
@@ -928,7 +874,6 @@ private theorem exists_range_hom_zmod {G H : Type*} [Group G] [Group H]
     change Multiplicative.ofAdd (ProfiniteInteger.proj n (Multiplicative.toAdd (deg σ))) = _
     rw [hσ, toAdd_ofAdd, map_one]
 
-set_option maxHeartbeats 4000000 in
 include hℓ hS in
 theorem exists_hom_zmod_pow_rangeRestrict_gsDecomp
     (σ : Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1))
@@ -942,7 +887,6 @@ theorem exists_hom_zmod_pow_rangeRestrict_gsDecomp
     (proj_unramifiedDegree_eq_zero_of_gsDecomp_eq_one K S ιs v hℓ hS b) σ hσ
 
 
-set_option maxHeartbeats 4000000 in
 include hℓ hS in
 theorem exists_isPrimePowGenerator_gsDecomp :
     ∃ σ : (gsDecomp K S ιs v).range, IsPrimePowGenerator ℓ σ := by
@@ -959,7 +903,6 @@ instance totallyDisconnectedSpace_range_gsDecomp : TotallyDisconnectedSpace (gsD
   inferInstance
 
 
-set_option maxHeartbeats 4000000 in
 include hℓ hS in
 theorem eq_zero_of_pow_nsmul_cohomology_range_gsDecomp {p : ℕ} (hp : 2 ≤ p)
     (x : cohomology (Rep.res (gsDecomp K S ιs v).range.subtype
@@ -1258,9 +1201,9 @@ theorem mem_divFun_ite (T : Finset I) (f : divFun φ QZ) :
     apply hi
     simp only [hc, ite_self]
   · by_cases hi : i ∈ T
-    · simp only [hi, if_true]
+    · simp only [hi, ite_true]
       exact ⟨IsLocallyConstant.const 0, fun _ _ => rfl⟩
-    · simp only [hi, if_false]
+    · simp only [hi, ite_false]
       exact f.2.2 i
 
 def divFunOutside (T : Finset I) : divFunRep φ QZ ⟶ divFunRep φ QZ :=
@@ -1505,12 +1448,6 @@ noncomputable def sUnitsInflPrimaryEquiv {r : ℕ} (hr : 4 ≤ r) :
   AddEquiv.ofBijective _
     ((isIsoModCoprime_sUnitsInfl K S hℓ hS hr).bijective_primaryComponentMap hℓ (isTorsion_cohomology _ (by omega)))
 
-section Odd
-
-
-
-end Odd
-
 section Real
 
 variable (ι : LocalEmbeddings K)
@@ -1533,12 +1470,6 @@ theorem bijective_realLocalization_comp_primaryComponent {X : Type*} [AddCommGro
   exact ⟨a, congrArg (realLocalization ι (r := r) (by omega)) (congrArg Subtype.val ha)⟩
 
 variable (h2S : ∀ v : HeightOneSpectrum (𝓞 K.1), ((2 : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
-
-noncomputable def gsUnitsRealPrimaryEquiv {r : ℕ} (hr : 4 ≤ r) :
-    AddCommGroup.primaryComponent (cohomology (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) r) 2 ≃+
-      ∀ v : {v : InfinitePlace K.1 // v.IsReal}, localGaloisCohomology K r (.inl v.1) :=
-  AddEquiv.ofBijective _ (bijective_realLocalization_comp_primaryComponent K ι hr (gsUnitsInfl K S r)
-    (isIsoModCoprime_gsUnitsInfl K S Nat.prime_two h2S (by omega)) (isTorsion_cohomology _ (by omega)))
 
 noncomputable def sUnitsRealPrimaryEquiv {r : ℕ} (hr : 4 ≤ r) :
     AddCommGroup.primaryComponent (cohomology (galSUnitsMax K.1 ℚ̄ S) r) 2 ≃+

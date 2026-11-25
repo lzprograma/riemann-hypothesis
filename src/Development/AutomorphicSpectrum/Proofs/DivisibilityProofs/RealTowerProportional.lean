@@ -11,50 +11,7 @@ public import Mathlib.Data.Nat.Choose.Multinomial
 public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PolarizationPolynomialCoeffBound
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
 public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RealTowerGeometricAgreement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -75,7 +32,7 @@ theorem map_monomial_eq_zero {J : Type} [Fintype J] [DecidableEq J] (d : ℕ) (�
       (∀ m : J →₀ ℕ, m.degree = d → AddMonoidAlgebra.coeff Pl m =
         (-1) ^ d * (m.multinomial : ℝ) * Φ (monomial m 1)) ∧
       (∀ m : J →₀ ℕ, m.degree = d → |Φ (monomial m 1)| ≤ |Pl.coeff m|) :=
-    _root_.GlobalTheory.CompanionTheory.Ar.Top.polarisation_functional J d Φ
+    _root_.RootFieldNumerics.polarization_coefficients_bound J d Φ
   have hP : Pl = 0 := MvPolynomial.funext fun c => by rw [hev c, h c, map_zero]
   have h0 := hco m hm
   simp only [hP, AddMonoidAlgebra.coeff_zero] at h0
@@ -165,7 +122,7 @@ theorem geoFun_monomial {Ψ : Type} [Fintype Ψ] {N : ℕ} (M : RootModel Ψ N) 
 
 theorem geoFun_monomial_of_ne {Ψ : Type} [Fintype Ψ] {N : ℕ} (M : RootModel Ψ N) (m : Option (Ψ × Fin N) →₀ ℕ)
     (h : m.degree ≠ dimFl Ψ N) : M.geoFun (monomial m 1) = 0 := by
-  rw [geoFun_monomial, RootModel.geoMono, if_neg h]
+  rw [geoFun_monomial, RootModel.geoMono, ite_eq_right h]
 
 theorem neg_sum_eq_linA {Ψ : Type} [Fintype Ψ] {N : ℕ} (a : Option (Ψ × Fin N) → ℝ) :
     (-∑ x, C (a x) * X x : RPA Ψ N) = linA (fun τ i => a (some (τ, i))) (-a none) := by
@@ -207,7 +164,6 @@ theorem exists_geoFun_eq (hProp : PB.Proportional) (hI : PB.Inputs) (II : Inters
 
 end RealProp
 
-
 open RealProp in
 theorem rootTower_proportional_of_unif : PB.Proportional → PB.Inputs → ∀ II : IntersectionSystem,
     IsFullIntersectionSystem II → ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) [Nonempty Ψ] (T : RootTower Ψ N)
@@ -220,7 +176,7 @@ theorem rootTower_proportional_of_unif : PB.Proportional → PB.Inputs → ∀ I
     obtain ⟨κ, hκ, h⟩ := exists_geoFun_eq hProp hI II hII R hU c
     refine ⟨κ, hκ, ?_, h⟩
     rw [RootTower.vol, h, mul_div_assoc, div_self hrho.ne', mul_one]
-  obtain ⟨Φd, hΦd⟩ := (_root_.GlobalTheory.CompanionTheory.Ar.Top.degFl_Sh_Tot_linear Ψ N).1
+  obtain ⟨Φd, hΦd⟩ := (_root_.RootFieldNumerics.degFl_Sh_Tot_linear_and_degFl_eq_zero_off_dim Ψ N).1
   refine ⟨fun c => ?_, fun B c F => ?_, fun B B' c => ?_⟩
   · obtain ⟨κ, hκ, hv, -⟩ := hvol c
     rw [hv]
@@ -243,7 +199,7 @@ theorem rootTower_proportional_of_unif : PB.Proportional → PB.Inputs → ∀ I
       · simp only [LinearMap.sub_apply, LinearMap.comp_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply,
           hΦd, smul_eq_mul, rename_monomial]
         rw [geoFun_monomial_of_ne _ _ (by rwa [degree_mapDomain_some]),
-          (_root_.GlobalTheory.CompanionTheory.Ar.Top.degFl_Sh_Tot_linear Ψ N).2.2.2 _ _ (isHomogeneous_monomial _ rfl) hm, mul_zero, sub_zero]
+          (_root_.RootFieldNumerics.degFl_Sh_Tot_linear_and_degFl_eq_zero_off_dim Ψ N).2.2.2 _ _ (isHomogeneous_monomial _ rfl) hm, mul_zero, sub_zero]
     have h2 := LinearMap.congr_fun hL F
     simp only [LinearMap.sub_apply, LinearMap.comp_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply,
       hΦd, smul_eq_mul, LinearMap.zero_apply] at h2

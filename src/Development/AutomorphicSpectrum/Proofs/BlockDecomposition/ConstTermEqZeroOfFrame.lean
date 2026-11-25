@@ -210,15 +210,6 @@ private lemma transpose_mul_transpose_mul_map_star_eq {K : Type} [Field K] [Star
     Pᵀ * Jᵀ * P.map star = (Pᴴ * J * P)ᵀ := by
   rw [transpose_mul, transpose_mul, conjTranspose_transpose, Matrix.mul_assoc]
 
-private lemma eq_zero_of_mulVec_eq_zero_of_linearIndependent_col {K : Type} [Field K] {n a : ℕ} {X : Matrix (Fin n) (Fin a) K}
-    (hX : LinearIndependent K X.col) (v : Fin a → K) (h : X *ᵥ v = 0) : v = 0 := by
-  have e : X *ᵥ v = ∑ j, v j • X.col j := by
-    ext i
-    simp [Matrix.mulVec, dotProduct, Matrix.col, Finset.sum_apply, mul_comm]
-  rw [e] at h
-  funext j
-  exact Fintype.linearIndependent_iff.1 hX v h j
-
 theorem exists_isometry_mul_eq (K : Type) [Field K] [StarRing K] (θ : K) (hθ : θ + star θ = 1)
     (n a : ℕ) (J : Matrix (Fin n) (Fin n) K) (X Y : Matrix (Fin n) (Fin a) K) (hJ : Jᴴ = J)
     (hdet : IsUnit J.det) (hX : X.rank = a) (hY : Y.rank = a)
@@ -278,11 +269,9 @@ theorem exists_isometry_mul_eq (K : Type) [Field K] [StarRing K] (θ : K) (hθ :
       intro a b
       rw [transpose_apply, transpose_apply, starRingEnd_apply, ← conjTranspose_apply, hJ]
     have hdT : Jᵀ.det ≠ 0 := by rw [det_transpose]; exact hdet.ne_zero
-    have h0 : ∀ v, X *ᵥ v = 0 ↔ Y *ᵥ v = 0 := by
-      intro v
-      constructor
-      · intro h; rw [eq_zero_of_mulVec_eq_zero_of_linearIndependent_col hXl v h, mulVec_zero]
-      · intro h; rw [eq_zero_of_mulVec_eq_zero_of_linearIndependent_col hYl v h, mulVec_zero]
+    have h0 : ∀ v, X *ᵥ v = 0 ↔ Y *ᵥ v = 0 := fun v =>
+      ((Matrix.mulVec_injective_iff.2 hXl).eq_iff' (mulVec_zero X)).trans
+        ((Matrix.mulVec_injective_iff.2 hYl).eq_iff' (mulVec_zero Y)).symm
     have hXY' : Yᵀ * Jᵀ * Y.map (starRingEnd K) = Xᵀ * Jᵀ * X.map (starRingEnd K) := by
       have e := transpose_mul_transpose_mul_map_star_eq J X
       have e' := transpose_mul_transpose_mul_map_star_eq J Y
@@ -308,7 +297,6 @@ section -- clump:auto
 noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory NumberField Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompanionTheory.ConstTermConj
 

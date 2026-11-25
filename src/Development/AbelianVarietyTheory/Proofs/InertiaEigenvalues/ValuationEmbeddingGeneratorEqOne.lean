@@ -86,8 +86,7 @@ theorem valuation_embedding_generator_eq_one :
     exact (ValuationSubring.mem_nonunits_iff A).mp hpA
   refine le_antisymm ?_ ?_
   · exact (ValuationSubring.valuation_le_one_iff A _).mpr (ringOfIntegers_map_mem_valuationSubring A σ α)
-  · by_contra hlt
-    push_neg at hlt
+  · by_contra! hlt
     have hαQ : α ∈ Q := (hmem α).mpr hlt
     have hspan : P.asIdeal ^ h ≤ Q := by
       rw [← hα, Ideal.span_singleton_le_iff_mem]

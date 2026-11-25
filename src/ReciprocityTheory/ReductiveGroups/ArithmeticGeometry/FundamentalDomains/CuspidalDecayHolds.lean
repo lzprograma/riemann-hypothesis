@@ -167,7 +167,7 @@ theorem cuspidalDecay_holds : CuspidalExponentialDecay (E := E) := by
             refine ⟨hnn v hiso ν x hx hν.2, ?_⟩
             by_contra hcnd
             apply hν.2
-            rw [Data.fj, if_neg hcnd]
+            rw [Data.fj, ite_eq_right hcnd]
     have hPx : ‖P x‖ * X.nfac la x ≤ max Cη 0 * Real.exp (-(Real.pi * c / X.firstMinimumSq x)) * Kf := by
       rcases hnf.eq_or_lt with h0 | hpos
       · rw [← h0, mul_zero]

@@ -65,15 +65,11 @@ theorem card_strictLower (r : ℕ) : Fintype.card {p : Fin r × Fin r // p.2 < p
   simp only [h]
   rw [Fin.sum_univ_eq_sum_range (fun i => i) r, Finset.sum_range_id]
 
-theorem two_mul_card_Psi {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r) :
-    2 * X.Ψ.card = Module.finrank ℚ E := by
-  apply GlobalTheory.TwoLines.two_mul_card_cmType
-
 theorem fdeg_and_nd : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : Data E r),
     fdeg E = X.Ψ.card ∧ nd X = X.Ψ.card * (r * (r - 1) / 2) := by
   intro E _ _ _ r X
   refine ⟨?_, ?_⟩
-  · have h := two_mul_card_Psi X
+  · have h := GlobalTheory.TwoLines.two_mul_card_cmType X
     unfold fdeg
     omega
   · unfold nd

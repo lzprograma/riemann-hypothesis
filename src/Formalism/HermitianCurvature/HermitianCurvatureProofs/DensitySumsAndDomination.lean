@@ -1,48 +1,7 @@
 module
 
 public import Formalism.HermitianCurvature.StatementTC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -84,25 +43,25 @@ theorem domScaleTop : DomScaleTop := by
   · refine ⟨fun t ht => ?_, fun t ht t' ht' hl x hx y hy => ?_, fun S hS hSd => ?_⟩
     · refine psd_congr (k := fun h h' => (lam : ℂ) * (Th i s t h h' - TB.blk (D.Kr i) s t t h h'))
         (fun x _ y _ => ?_) (psd_smul lam hlam (h1 t ht))
-      simp only [TB.blk, hKr, if_pos hi]
+      simp only [TB.blk, hKr, ite_eq_left hi]
       ring
-    · simp only [if_pos hi]
+    · simp only [ite_eq_left hi]
       rw [h2 t ht t' ht' hl x hx y hy]
     · refine psd_congr
         (k := fun h h' => (lam : ℂ) * ((1 + (D.e i : ℂ)) * D.Kr (i - s) h h' - ∑ t ∈ S, Th i s t h h'))
         (fun x _ y _ => ?_) (psd_smul lam hlam (h3 S hS hSd))
       have he2 : D.e i = 0 := by rw [hi]; exact he
-      simp only [hKr, he', if_pos hi, if_neg hne]
+      simp only [hKr, he', ite_eq_left hi, ite_eq_right hne]
       rw [he2, ← Finset.mul_sum]
       push_cast
       ring
   · refine ⟨fun t ht => ?_, fun t ht t' ht' hl x hx y hy => ?_, fun S hS hSd => ?_⟩
     · refine psd_congr (fun x _ y _ => ?_) (h1 t ht)
-      simp only [TB.blk, hKr, if_neg hi]
-    · simp only [if_neg hi]
+      simp only [TB.blk, hKr, ite_eq_right hi]
+    · simp only [ite_eq_right hi]
       exact h2 t ht t' ht' hl x hx y hy
     · refine psd_congr (fun x _ y _ => ?_) (h3 S hS hSd)
-      simp only [hKr, he', if_neg hi, if_neg hne]
+      simp only [hKr, he', ite_eq_right hi, ite_eq_right hne]
 
 theorem recHypScaleTop : RecHypScaleTop := by
   intro hDS hSB E W _ D C₁ C₄ Θ jn H _ _ Vt c c' sd hsd he h hc1 hc2 hc3
@@ -125,12 +84,12 @@ theorem recHypScaleTop : RecHypScaleTop := by
     rw [h0]; simp
   · intro i h1 hi
     by_cases hit : i = D.r + 1
-    · simp only [scaleTop, hit, if_true]
+    · simp only [scaleTop, hit, ite_true]
       constructor
       · linarith
       · have : max sd 1 ≤ 2 := max_le hsd (by norm_num)
         linarith
-    · simp only [scaleTop, hit, if_false]
+    · simp only [scaleTop, hit, ite_false]
       exact a9 i h1 hi
   · intro T
     obtain ⟨Th, hTh⟩ := a10 T
@@ -275,17 +234,12 @@ theorem densChain : DensChain := by
     rw [← Real.exp_sum, Real.exp_le_exp, ← Finset.mul_sum]
     linarith
   have hmain : sd ≤ Real.exp (12 * (f : ℝ) * ((2 : ℝ) ^ (k - 2 * r - 2))⁻¹) := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     obtain ⟨x, hx1, hx2⟩ := exists_between hc
     obtain ⟨S, hS⟩ := hsd x hx2
     linarith [hB S]
   exact ⟨hmain, hmain.trans (hLe f _ (hSize k r f hk))⟩
 
 end Formalism.FourierDecayAlt.P.DensitySumsAndDomination
-
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P
 
 end

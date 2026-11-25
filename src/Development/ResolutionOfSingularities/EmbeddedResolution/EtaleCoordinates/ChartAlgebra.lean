@@ -3,48 +3,7 @@ module
 public import Mathlib.AlgebraicGeometry.AffineSpace
 public import Mathlib.AlgebraicGeometry.Morphisms.Etale
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -112,32 +71,6 @@ theorem chartAlgebra_isScalarTower (hW : IsAffineOpen W) (h : Y ⟶ X) (e : V �
   refine IsScalarTower.of_algebraMap_eq fun a => ?_
   show (h.appLE W V e).hom a = chartEvalHom hW g (algebraMap Γ(X, W) (MvPolynomial n Γ(X, W)) a)
   rw [MvPolynomial.algebraMap_eq, chartEvalHom_C hW h e g hg]
-
-private theorem algebraEtale_congr {R S : Type u} [CommRing R] [CommRing S] {f f' : R →+* S}
-    (h : f = f') (hf : @Algebra.Etale R S _ _ f.toAlgebra) :
-    @Algebra.Etale R S _ _ f'.toAlgebra := by
-  subst h
-  exact hf
-
-private theorem algebraEtale_of_ringHomEtale {R S : Type u} [CommRing R] [CommRing S] (f : R →+* S)
-    (h : RingHom.Etale f) : @Algebra.Etale R S _ _ f.toAlgebra := h
-
-private theorem algebraEtale_comp_equiv {R R' S S' : Type u} [CommRing R] [CommRing R']
-    [CommRing S] [CommRing S'] (eR : R' ≃+* R) (f : R →+* S) (eS : S ≃+* S')
-    (hf : @Algebra.Etale R S _ _ f.toAlgebra) :
-    @Algebra.Etale R' S' _ _ (((eS : S →+* S').comp (f.comp (eR : R' →+* R))).toAlgebra) := by
-  let : Algebra R S := f.toAlgebra
-  have : Algebra.Etale R S := hf
-  let : Algebra R' R := (eR : R' →+* R).toAlgebra
-  let : Algebra R S' := ((eS : S →+* S').comp f).toAlgebra
-  let : Algebra R' S' := ((eS : S →+* S').comp (f.comp (eR : R' →+* R))).toAlgebra
-  have : IsScalarTower R' R S' := IsScalarTower.of_algebraMap_eq fun _ => rfl
-  have : Algebra.Etale R' R' := inferInstance
-  have : Algebra.Etale R' R :=
-    Algebra.Etale.of_equiv (R := R') (A := R') (AlgEquiv.ofRingEquiv (f := eR) fun _ => rfl)
-  have : Algebra.Etale R S' :=
-    Algebra.Etale.of_equiv (R := R) (A := S) (AlgEquiv.ofRingEquiv (f := eS) fun _ => rfl)
-  exact Algebra.Etale.comp R' R S'
 
 private theorem comp_appTop_apply {A B C : Scheme.{u}} (f : A ⟶ B) (k : B ⟶ C) (z : Γ(C, ⊤)) :
     (f ≫ k).appTop.hom z = f.appTop.hom (k.appTop.hom z) :=
@@ -228,11 +161,15 @@ theorem chartAlgebra_etale (hW : IsAffineOpen W) (hV : IsAffineOpen V)
   have hEt : Etale (g ≫ (affineSpaceOpenIsoSpecMvPolynomial hW n).hom) := inferInstance
   have hr : RingHom.Etale (g ≫ (affineSpaceOpenIsoSpecMvPolynomial hW n).hom).appTop.hom :=
     (HasRingHomProperty.iff_of_isAffine (P := @Etale)).mp hEt
-  have hAlg := algebraEtale_of_ringHomEtale _ hr
-  have h2 := algebraEtale_comp_equiv
-    (Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial n Γ(X, W)))).symm.commRingCatIsoToRingEquiv
-    (g ≫ (affineSpaceOpenIsoSpecMvPolynomial hW n).hom).appTop.hom V.topIso.commRingCatIsoToRingEquiv hAlg
-  refine algebraEtale_congr ?_ h2
+  let eR := (Scheme.ΓSpecIso
+    (CommRingCat.of (MvPolynomial n Γ(X, W)))).symm.commRingCatIsoToRingEquiv
+  let eS := V.topIso.commRingCatIsoToRingEquiv
+  have h2 := RingHom.Etale.respectsIso.1 _ eS (RingHom.Etale.respectsIso.2 _ eR hr)
+  suffices heq : eS.toRingHom.comp
+      ((g ≫ (affineSpaceOpenIsoSpecMvPolynomial hW n).hom).appTop.hom.comp eR.toRingHom) =
+      chartEvalHom hW g by
+    change RingHom.Etale (chartEvalHom hW g)
+    rwa [← heq]
   refine MvPolynomial.ringHom_ext (fun a => ?_) (fun j => ?_)
   · have hC : chartEvalHom hW g (MvPolynomial.C a) = chartCoeffHom g a := by simp [chartEvalHom]
     show V.topIso.hom.hom ((g ≫ (affineSpaceOpenIsoSpecMvPolynomial hW n).hom).appTop.hom

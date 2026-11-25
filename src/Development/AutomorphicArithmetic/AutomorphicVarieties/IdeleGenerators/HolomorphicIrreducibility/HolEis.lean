@@ -18,48 +18,8 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsRe
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinSmoothContinuous
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PeriodicIntegralFundamentalDomainInvariant
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.RayClassGroupFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.ENatToNat
 import Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.OneNonUnit
 import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
 
@@ -96,7 +56,7 @@ theorem UpperTheory.eisenstein_norm_eq_abs_pow :
       rw [e0, dist_zero_right, dist_zero_right, Real.norm_of_nonneg (hy w).le] at this
       exact this
     rw [logNorm, h1, logFin_one, sub_zero, logInf, h2]
-    simp only [h3, InfinitePlace.mult, IsTotallyReal.isReal, if_true, Nat.cast_one, one_mul]
+    simp only [h3, InfinitePlace.mult, IsTotallyReal.isReal, ite_true, Nat.cast_one, one_mul]
     rw [← Real.log_prod (fun w _ => (hy w).ne'), Real.rpow_def_of_pos (Finset.prod_pos fun w _ => hy w),
       Complex.ofReal_exp, Complex.ofReal_mul, mul_comm]
   · refine (H.2.1 w).trans ?_
@@ -118,8 +78,7 @@ open UpperTheory.V.Sd.Eis
 private theorem exists_addChar_fourier_coeff_ne_zero_of_ne_zero {α : Type} [AddCommGroup α] [Fintype α] (F : α → ℂ) (hF : F ≠ 0) :
     ∃ ψ : AddChar α ℂ, ∑ a, F a * ψ (-a) ≠ 0 := by
   classical
-  by_contra h
-  push_neg at h
+  by_contra! h
   apply hF
   funext x
   have key : ∑ ψ : AddChar α ℂ, ∑ a, F a * ψ (x - a) = (Fintype.card α : ℂ) * F x := by
@@ -158,19 +117,14 @@ theorem UpperTheory.exists_character_separation :
     rw [inv_out U₀ f₀ hinv t] at this
     exact this
   obtain ⟨ψ, hψ⟩ := exists_addChar_fourier_coeff_ne_zero_of_ne_zero F hF
-  let χ : T →* ℂˣ :=
-    { toFun := fun t => ⟨ψ (Additive.ofMul (QuotientGroup.mk t : T ⧸ U₀)),
-        ψ (-(Additive.ofMul (QuotientGroup.mk t : T ⧸ U₀))),
-        by rw [← AddChar.map_add_eq_mul, add_neg_cancel, AddChar.map_zero_eq_one],
-        by rw [← AddChar.map_add_eq_mul, neg_add_cancel, AddChar.map_zero_eq_one]⟩
-      map_one' := by ext; simp
-      map_mul' := by intro a b; ext; simp [AddChar.map_add_eq_mul] }
+  let χq : (T ⧸ U₀) →* ℂˣ := ψ.toMonoidHom.toHomUnits
+  let χ : T →* ℂˣ := χq.comp (QuotientGroup.mk' U₀)
   have hχval : ∀ t, (((χ t)⁻¹ : ℂˣ) : ℂ) = ψ (-(Additive.ofMul (QuotientGroup.mk t : T ⧸ U₀))) :=
     fun t => rfl
   have hχU₀ : ∀ u ∈ U₀, χ u = 1 := by
     intro u hu
-    ext
-    simp [χ, (QuotientGroup.eq_one_iff u).mpr hu]
+    change χq (QuotientGroup.mk u : T ⧸ U₀) = 1
+    rw [(QuotientGroup.eq_one_iff u).mpr hu, χq.map_one]
   let aV : Subgroup T → (T → ℂ) → ℂ := fun V h =>
     ∑ᶠ q : T ⧸ V, h q.out * (((χ q.out)⁻¹ : ℂˣ) : ℂ)
   have aV_lin : ∀ V : Subgroup T, V.FiniteIndex → ∀ (c : ℂ) (p p' : T → ℂ),
@@ -447,10 +401,10 @@ private theorem core {K : Type} [Field K] (A : ValuationSubring K) (p : Kˣ) (π
       rw [Units.val_mul, aff_val, aff_val]
       ext i j
       fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_succ]
-    rw [if_pos hc, sum1, e, hD, ← add_smul] at this
+    rw [ite_eq_left hc, sum1, e, hD, ← add_smul] at this
     exact (canc h1 this).symm
   · intro hc
-    simp only [if_neg hc, add_zero] at hU
+    simp only [ite_eq_right hc, add_zero] at hU
     by_cases hl : lam = 0
     · exact Or.inl hl
     right

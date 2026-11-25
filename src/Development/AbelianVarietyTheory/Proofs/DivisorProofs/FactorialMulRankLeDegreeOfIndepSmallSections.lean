@@ -122,8 +122,7 @@ theorem rank_le_of_growth_in_radius : ∀ (D : ℕ) (f : ℝ → ℕ → ℝ) (�
     calc ρ * (t - t₁ - 2) * (m : ℝ) ^ (D + 1) = ρ * (m : ℝ) ^ D * ((t - t₁ - 2) * m) := by ring
       _ ≤ ρ * (m : ℝ) ^ D * Real.log Q := mul_le_mul_of_nonneg_left hlog hρm
       _ ≤ f t m := hb
-  by_contra h
-  push_neg at h
+  by_contra! h
   have hd : 0 < ρ - γ := sub_pos.mpr h
   set T := max (max t₀ (t₁ + 2)) ((α + ρ * (t₁ + 2)) / (ρ - γ) + 1) with hTdef
   have hk := key T (le_max_left _ _)

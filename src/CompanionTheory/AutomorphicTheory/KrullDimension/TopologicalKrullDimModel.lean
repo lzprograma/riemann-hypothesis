@@ -11,8 +11,6 @@ import Mathlib.RingTheory.PicardGroup
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry MvPolynomial NumberField

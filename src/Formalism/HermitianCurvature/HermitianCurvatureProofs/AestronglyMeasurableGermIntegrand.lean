@@ -13,46 +13,8 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingV
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightCosetActionMeasurePreserving
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictUpperNeg
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -237,17 +199,7 @@ theorem sgs_GV {Bs : B.RealPlaceData k ρ Wp Wq} {P : B.SS k ρ} (hP : Bs.inSS P
   · exact Formalism.FourierDecayAlt.P.B6.UWset_sub k ρ _ hP.2.2.1
 
 theorem isClosed_inSS (Bs : B.RealPlaceData k ρ Wp Wq) : IsClosed {P : B.SS k ρ | Bs.inSS P} := by
-  have hWc := (Formalism.FourierDecayAlt.P.weyl_subgroup_closed k ρ Bs.z).closed
-  have hWc' := (Formalism.FourierDecayAlt.P.weyl_subgroup_closed k ρ Bs.z').closed
-  have hNc := (Formalism.FourierDecayAlt.P.unipotent_radical_closed k ρ).closed
-  have e : {P : B.SS k ρ | Bs.inSS P} = (fun p : B.SS k ρ => (p.1.1 : B.Mat k ρ)) ⁻¹' (UWset k ρ Bs.z) ∩
-      ((fun p : B.SS k ρ => (p.1.2 : B.Mat k ρ)) ⁻¹' (Nset k ρ) ∩
-        ((fun p : B.SS k ρ => (p.2.1 : B.Mat k ρ)) ⁻¹' (UWset k ρ Bs.z') ∩
-          (fun p : B.SS k ρ => (p.2.2 : B.Mat k ρ)) ⁻¹' (Nset k ρ))) := by
-    ext p; rfl
-  rw [e]
-  exact (hWc.preimage continuous_fst.fst).inter ((hNc.preimage continuous_fst.snd).inter
-    ((hWc'.preimage continuous_snd.fst).inter (hNc.preimage continuous_snd.snd)))
+  apply _root_.Formalism.FourierDecayAlt.P.B6.setting_support_closed <;> assumption
 
 theorem sgs_contOn (Bs : B.RealPlaceData k ρ Wp Wq) (g : B.Mat k ρ) :
     ContinuousOn (fun P : B.SS k ρ => B.sgs P g) {P | Bs.inSS P} := by
@@ -433,7 +385,7 @@ theorem aestronglyMeasurable_germ_integrand (hGS : GaXiSplit) (Bj : B.RealPlaceD
         Matrix.of q.2.1.2 * Matrix.of q.2.1.1 from rfl]
       symm
       convert this using 1
-      simp only [sxL, if_pos (show GoodL Bj σ q.1 from ⟨hh, hν⟩), PsiR, NR, of_levMt, Equiv.apply_symm_apply]
+      simp only [sxL, ite_eq_left (show GoodL Bj σ q.1 from ⟨hh, hν⟩), PsiR, NR, of_levMt, Equiv.apply_symm_apply]
       rfl
     have hpi : B0.π' (Matrix.of (PsiR q.2).1)⁻¹ = Bj.π' (Matrix.of q.2.1.1 : B.Mat k ρ)⁻¹ := by
       simp only [PsiR, of_levMt]

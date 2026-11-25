@@ -3,43 +3,6 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
 public import Mathlib.NumberTheory.Padics.PadicIntegers
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -138,6 +101,36 @@ structure Base (D : Datum p) (R : Type) [CommRing R] where
   comax : ∀ i j, i ≠ j → Ideal.span (Set.range fun x => t i x - t j x) = ⊤
   apart : ∀ i j, i ≠ j → ∀ (k : Type) [Field k] [CharP k p] (β : R →+* k),
     RingHom.ker (β.comp (t i)) ≠ RingHom.ker (β.comp (t j))
+
+section
+
+variable {p : ℕ} [Fact p.Prime] {D : Datum p} {R : Type} [CommRing R]
+
+/-- Comaximal Harris–Taylor characters remain distinct after mapping to a nontrivial ring. -/
+theorem Base.exists_char_separation (b : Base D R) {K : Type*} [Ring K] [Nontrivial K]
+    (β : R →+* K) {i j : Fin D.a} (hij : i ≠ j) :
+    ∃ c : 𝓞 D.F, β (b.t i c) ≠ β (b.t j c) := by
+  by_contra! h
+  have hle : Ideal.span (Set.range fun c => b.t i c - b.t j c) ≤ RingHom.ker β := by
+    rw [Ideal.span_le]
+    rintro _ ⟨c, rfl⟩
+    rw [SetLike.mem_coe, RingHom.mem_ker, map_sub, h c, sub_self]
+  have hone : (1 : R) ∈ Ideal.span (Set.range fun c => b.t i c - b.t j c) := by
+    rw [b.comax i j hij]
+    exact Submodule.mem_top
+  have hzero := hle hone
+  rw [RingHom.mem_ker, map_one] at hzero
+  exact one_ne_zero hzero
+
+theorem Base.injective_char_comp (b : Base D R) {K : Type*} [Ring K] [Nontrivial K]
+    (β : R →+* K) : Function.Injective (fun i => β.comp (b.t i)) := by
+  intro i j h
+  by_contra hij
+  obtain ⟨c, hc⟩ := b.exists_char_separation β hij
+  exact hc (RingHom.congr_fun h c)
+
+end
+
 
 variable {S : Scheme.{0}}
 

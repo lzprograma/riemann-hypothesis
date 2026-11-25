@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AmplitudeOneSideOfGoodLocalData
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
 public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
@@ -101,18 +102,7 @@ theorem urep_irred_of_ds {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerPro
 
 theorem isHaarOn_smul {k r : ℕ} {S : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn S μ) {c : ℝ}
     (hc : 0 < c) : IsHaarOn S (ENNReal.ofReal c • μ) := by
-  obtain ⟨h1, h2, h3, h4⟩ := h
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · have : ENNReal.ofReal c • μ = c.toNNReal • μ := rfl
-    rw [this]; infer_instance
-  · intro h0
-    rcases Measure.ennreal_smul_eq_zero.1 h0 with h | h
-    · exact (ENNReal.ofReal_pos.2 hc).ne' h
-    · exact h2 h
-  · rw [Measure.smul_apply, h3, smul_zero]
-  · intro s hs
-    rw [Measure.map_smul, h4 s hs]
-    exact (continuous_const.matrix_mul (continuous_id (X := Mat k r))).measurable.aemeasurable
+  first | exact _root_.GlobalTheory.AmpSides.isHaarOn_smul | exact @_root_.GlobalTheory.AmpSides.isHaarOn_smul | apply _root_.GlobalTheory.AmpSides.isHaarOn_smul <;> assumption
 
 theorem oneSide_of_bessel {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
     {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]

@@ -16,45 +16,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeIsome
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneSubIdempotentSmulMemLattice
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
 
 @[expose] public section
@@ -66,7 +28,6 @@ open GlobalTheory.SW hiding Level IsSB
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open GlobalTheory.ExportSeries (Base Twist Weight PairRep GLR detChar detFam fockGL harm harmLat IsCoefRing finPt series idem)
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SingleDatum
 
 
@@ -180,150 +141,9 @@ theorem step_pow (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ (-1)) (V
       ψ (symplOH V W (actO V W h k
         (Matrix.of fun a b => e * incA D ((δ : D.host.E) * ι (cSep l • levRep (q b)) a / (l.M : D.host.E))))
         (2 • actO V W h k c₀)) = 1 := by
-  subst hr
-  have hR : ∀ v, v ∈ latR rfl (latG W k) → v ∈ latG W k := by
-    rintro _ ⟨w, hw, rfl⟩; exact hw
-  obtain ⟨m1, m2, m3, -, -, -⟩ := GlobalTheory.MovedLat.moved_lattices D V W ΛV ΛW a1 a2 a3 a4 h k
-  obtain ⟨-, -, m4, -, m5, -⟩ := GlobalTheory.MovedLat.moved_lattices D V W ΛV ΛW a1 a2 a3 a4 1 k
-  rw [show fin V 1 = 1 from map_one _, m5, a5] at m4
-  obtain ⟨-, e', P', he', hP', hs'⟩ := hh
-  have horth := GlobalTheory.T.idempotentSum_conjSum_orthogonal_dvd D e e' P P' bad he he' hbad hP'
-  have hee := GlobalTheory.PlaceDatum.idemSum_mul_self he
-  have hec := he.2
-  have hcc : cA D e * cA D e = cA D e := by rw [← RingHom.map_mul, hee]
-  have f1 := smul_mt_inv V h e' e hs' (by linear_combination e * horth - (e' + cA D e') * (hee + hec))
-  have f2 := smul_mt_inv V h e' (cA D e) hs' (by linear_combination cA D e * horth - (e' + cA D e') * (hcc + hec))
-  have i1 : finPart D e ∈ intAE D := by
-    have := idem_div_mem he 1 fun PP _ => PP.isPrime.one_notMem
-    rwa [show ((1 : 𝓞 D.host.E) : D.host.E) = 1 from rfl, inv_one, RingHom.map_one, mul_one] at this
-  have i2 : finPart D (cA D e) ∈ intAE D := by
-    rw [GlobalTheory.MovedIdem.finPart_cA]; exact GlobalTheory.MovedIdem.sigR_mem_intAE i1
-  have hmove : ∀ f : AE D, finPart D f ∈ intAE D →
-      f • Formalism.L2.Theta.mt V h⁻¹ = f • (1 : Matrix (Fin V.rank) (Fin V.rank) (AE D)) →
-      ∀ x ∈ latO V W (Formalism.L2.Pj.stdLat D.host.E V.rank : Set (Fin V.rank → D.host.E))
-        (Bridge.hLat W (fin W k) : Set (Fin W.rank → D.host.E)) fun _ => True,
-      f • x ∈ latO V W (Bridge.hLat V (fin V h) : Set (Fin V.rank → D.host.E))
-        (Bridge.hLat W (fin W k) : Set (Fin W.rank → D.host.E)) fun _ => True := by
-    intro f hf hf' x hx
-    obtain ⟨x₀, hx₀, rfl⟩ := (m4 x).1 hx
-    refine (m3 _).2 ⟨f • x₀, ?_, ?_⟩
-    · rw [a5]; exact GlobalTheory.LatticeStable.smul_mem_latO D V W _ _ _ f hf _ hx₀
-    · rw [actO_smul V W h k f hf', actO, inv_one, GlobalTheory.AdelicLatMove.mt_one, Matrix.mul_one]
-  obtain ⟨k₀, hk₀, -, hk₁⟩ := hT
-  obtain ⟨-, hMN, hN⟩ := hL
-  have hM0 : (l.M : D.host.E) ≠ 0 := by
-    have : l.M ≠ 0 := by have := l.three_le; omega
-    exact_mod_cast this
-  set ρ : Matrix (Fin W.rank) (Fin V.rank) D.host.E :=
-    Matrix.of fun a b => (δ : D.host.E) * ι (cSep l • levRep (q b)) a / (l.M : D.host.E) with hρ
-  have hy : (Matrix.of fun a b => e * incA D ((δ : D.host.E) * ι (cSep l • levRep (q b)) a / (l.M : D.host.E)) : WO V W) =
-      e • GlobalTheory.LatVac.finTens 1 ρ := by
-    refine GlobalTheory.AdTh.LatOf.eq_of_parts ?_ ?_ <;> ext a b
-    · change infPart D (e * _) = infPart D (e * _)
-      rw [RingHom.map_mul, RingHom.map_mul, GlobalTheory.PlaceDatum.infPart_idemSum he, zero_mul, zero_mul]
-    · change finPart D (e * _) = finPart D (e * _)
-      rw [RingHom.map_mul, RingHom.map_mul]; rfl
-  have hu' : u = GlobalTheory.LatVac.finTens 1 γ :=
-    GlobalTheory.AdTh.LatOf.eq_of_parts (hu.1.trans (infPart_finTens γ).symm) hu.2
-  have hγ' : ∀ a b, γ a b = (δ : D.host.E) * Y q b a := fun a b => by
-    have := congrFun (congrFun hγ b) a
-    rw [Matrix.smul_apply, zsmul_eq_mul] at this
-    exact this
-  have hιm : ∀ z, (finHom W k).1 *ᵥ finVec W (ι z) ∈ latGHat W k := fun z => by
-    have := mulVec_finVec_mem W k 1 (ι z) (hι.2 ▸ LinearMap.mem_range_self ι z)
-    rwa [mul_one] at this
-  have hX : ∀ s : 𝓞 D.host.E, (∀ b, ∃ z : Dw.La, s • (cSep l • levRep (q b)) = l.M • z) →
-      incA D (s : D.host.E) • (Formalism.L2.Theta.mt W k * GlobalTheory.LatVac.finTens (D := D) 1 ρ) ∈
-        latO V W (Formalism.L2.Pj.stdLat D.host.E V.rank : Set (Fin V.rank → D.host.E))
-          (Bridge.hLat W (fin W k) : Set (Fin W.rank → D.host.E)) fun _ => True := by
-    intro s hs
-    rw [smul_moved]
-    refine GlobalTheory.T.finite_adelic_matrix_mem_lattice_of_columns D V W hV k _ (infPart_moved V W k _) fun b => ?_
-    obtain ⟨z, hz⟩ := hs b
-    rw [finPart_moved]
-    convert hιm (δ • z) using 3
-    funext a
-    have := congrFun (congrArg ι hz) a
-    rw [map_smul, map_nsmul, Pi.smul_apply, Pi.smul_apply, nsmul_eq_mul] at this
-    have t2 : (s : D.host.E) * ι (cSep l • levRep (q b)) a = l.M * ι z a := this
-    rw [map_zsmul, Pi.smul_apply, zsmul_eq_mul, Matrix.smul_apply, smul_eq_mul, hρ, Matrix.of_apply]
-    field_simp
-    linear_combination (δ : D.host.E) * t2
-  choose j hj using fun b => (hY q b).2
-  have hU : ∀ s ∈ l.Mb ^ (∑ b, j b + 1), ∃ w ∈ latO V W (Formalism.L2.Pj.stdLat D.host.E V.rank : Set (Fin V.rank → D.host.E))
-      (Bridge.hLat W (fin W k) : Set (Fin W.rank → D.host.E)) fun _ => True, incA D (s : D.host.E) • u = (2 * N) • w := by
-    intro s hs
-    choose v hv hv' using fun b => hj b s (Ideal.pow_le_pow_right
-      ((Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ b)).trans (Nat.le_succ _)) hs)
-    refine ⟨GlobalTheory.LatVac.finTens 1 (Matrix.of fun a b => (δ • v b) a),
-      GlobalTheory.T.finite_adelic_matrix_mem_lattice_of_columns D V W hV k _ (infPart_finTens _) fun b =>
-        finVec_mem W k _ (Submodule.smul_of_tower_mem _ δ (hR _ (hv b))), ?_⟩
-    rw [hu', smul_finTens, ← incA_nat, smul_finTens]
-    congr 1
-    refine Matrix.ext fun a b => ?_
-    have := congrFun (hv' b) a
-    rw [Pi.smul_apply, Pi.smul_apply, nsmul_eq_mul] at this
-    have t2 : (s : D.host.E) * Y q b a = ((2 * N : ℕ) : D.host.E) * v b a := this
-    change (s : D.host.E) * γ a b = ((2 * N : ℕ) : D.host.E) * (δ • v b a)
-    rw [hγ', zsmul_eq_mul, mul_left_comm, t2, mul_left_comm]
-  have h1 : u - Formalism.L2.Theta.mt W k * GlobalTheory.LatVac.finTens (D := D) 1 ρ ∈
-      latO V W (Formalism.L2.Pj.stdLat D.host.E V.rank : Set (Fin V.rank → D.host.E))
-        (Bridge.hLat W (fin W k) : Set (Fin W.rank → D.host.E)) fun _ => True := by
-    refine GlobalTheory.T.finite_adelic_matrix_mem_lattice_of_columns D V W hV k _ ?_ fun b => ?_
-    · rw [Matrix.map_sub _ (RingHom.map_sub _), hu.1, infPart_moved, sub_zero]
-    obtain ⟨a, ha, haq, hYa⟩ := (hY q b).1
-    obtain ⟨z, hz⟩ := sub_sep_mem l (q b) a ha haq
-    obtain ⟨w, hw, hw'⟩ := hmk a ha
-    have hm := zsmul_mem (add_mem (add_mem (finVec_mem W k _ (hR _ hYa)) hw) (hιm z)) δ
-    let fv : (Fin W.rank → D.host.E) →+ (Fin W.rank → Af D.host.F ⊗[D.host.F] D.host.E) :=
-      AddMonoidHom.mk' (finVec W) fun x y => funext fun i => TensorProduct.tmul_add _ _ _
-    have hfv : ∀ x, finVec W x = fv x := fun _ => rfl
-    have e1 : (fun a => finPart D ((u - Formalism.L2.Theta.mt W k * GlobalTheory.LatVac.finTens (D := D) 1 ρ) a b)) =
-        fv (fun a => γ a b) - (finHom W k).1 *ᵥ fv (fun a => ρ a b) := by
-      rw [← hfv, ← hfv, ← finPart_moved, hu']
-      funext a
-      rw [Matrix.sub_apply, RingHom.map_sub]
-      rfl
-    rw [e1]
-    convert hm using 1
-    have hMu : IsUnit ((l.M : ℕ) : Af D.host.F ⊗[D.host.F] D.host.E) := by
-      rw [← map_natCast (Algebra.TensorProduct.includeRight (R := D.host.F) (A := Af D.host.F) (B := D.host.E))]
-      exact (IsUnit.mk0 _ hM0).map _
-    apply hMu.smul_left_cancel.1
-    rw [Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul]
-    have g1 : l.M • (fun a => γ a b) = δ • l.M • Y q b := by
-      funext a
-      change l.M • γ a b = δ • l.M • Y q b a
-      rw [hγ', smul_comm δ, zsmul_eq_mul]
-    have g2 : l.M • (fun a => ρ a b) = δ • (ι a - l.M • ι z) := by
-      rw [← map_nsmul, ← map_sub, ← hz, sub_sub_cancel]
-      funext a
-      simp only [Pi.smul_apply, hρ, Matrix.of_apply, nsmul_eq_mul, zsmul_eq_mul]
-      field_simp
-    have g3 : l.M • (Y q b - (l.M : D.host.E)⁻¹ • mk a) = l.M • Y q b - mk a := by
-      rw [smul_sub, ← Nat.cast_smul_eq_nsmul D.host.E _ (_ • _), smul_smul, mul_inv_cancel₀ hM0, one_smul]
-    have hw2 : l.M • w = fv (mk a) - (finHom W k).1 *ᵥ fv (ι a) := hw'.symm
-    rw [smul_comm l.M δ, smul_add l.M, smul_add l.M, hw2, hfv, hfv, ← map_nsmul fv, g3, smul_sub, ← map_nsmul fv, g1,
-      ← Matrix.mulVec_smul, ← map_nsmul fv, g2]
-    simp only [map_zsmul, map_sub, map_nsmul, Matrix.mulVec_smul, Matrix.mulVec_sub]
-    rw [← smul_sub δ]
-    congr 1
-    abel
-  obtain ⟨w, hw, hw'⟩ := hU _ (Ideal.pow_mem_pow (natCast_mem_Mb l) _)
-  obtain ⟨s, hs, hs0, hsi⟩ := exists_unit_conj l he (fun PP hPP => (hP PP hPP).1) (∑ b, j b)
-  obtain ⟨w₂, hw₂, hw₂'⟩ := hU s hs
-  have hMX := hX l.M fun b => ⟨_, Nat.cast_smul_eq_nsmul _ _ _⟩
-  rw [show ((l.M : 𝓞 D.host.E) : D.host.E) = l.M from map_natCast (algebraMap _ _) _, incA_nat] at hMX
-  rw [← Nat.cast_pow, show ∀ n : ℕ, ((n : 𝓞 D.host.E) : D.host.E) = n from map_natCast (algebraMap _ _), incA_nat] at hw'
-  obtain ⟨c, hc, hc1, hc2⟩ := core ψ V W _ _ (GlobalTheory.LatticeStable.smul_mem_latO D V W _ _ _)
-    (fun x hx y hy => GlobalTheory.LatVac.char_sympl_eq_one hψ m1 m2 hx hy) e hee hec (hmove e i1 f1) (hmove _ i2 f2) N k₀ l.M
-    (nsmul_mem_latO V W _ _ _ N (nsmul_std Λ.La _ hΛ N (hN.trans inf_le_left)))
-    (nsmul_mem_latO V W _ _ _ k₀ (nsmul_std Λ.La _ hΛ k₀ hk₁)) hk₀ l.odd hMN
-    (idem_div_mem he 2 fun PP hPP => (hP PP hPP).2) u _ h1
-    (one_sub_smul_mem_latO_pow V W _ _ e P he _ fun s hs => (hq s hs).imp fun j hj => hX (s ^ j) hj) hMX _ w hw hw' s hs0 hsi w₂ hw₂ hw₂'
-  obtain ⟨c₀, hc₀, rfl⟩ := (m3 c).1 hc
-  rw [hy, actO_smul V W h k e f1]
-  exact ⟨c₀, hc₀, hc1, hc2⟩
+  exact _root_.GlobalTheory.AdTh.MovedDatum.step_of_mem
+    ψ hψ V W hV hr ΛV ΛW a1 a2 a3 a4 a5 l ι hι δ P e he hP bad N h k Λ mk hbad hh hΛ hT hL hmk Y hY q
+    (fun LV LW x hX => one_sub_smul_mem_latO_pow V W LV LW e P he x fun s hs => (hq s hs).imp fun j hj => hX (s ^ j) hj) γ u hγ hu
 
 end Lemmas
 

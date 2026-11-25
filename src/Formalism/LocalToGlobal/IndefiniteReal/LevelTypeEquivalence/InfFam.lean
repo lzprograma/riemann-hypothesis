@@ -3,45 +3,6 @@ module
 public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.BaseSt
 public import Formalism.LocalToGlobal.UnitaryNorms.RealPl
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InfEmbUnique
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -51,8 +12,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open scoped TensorProduct
 
 namespace Formalism.IndefR.Eqv
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section General
 
@@ -272,13 +231,13 @@ theorem archimedean_image_real (y : D.what₂.Tau → ℂ) (τ : D.what₂.Tau) 
     gW D (plW D τ) (preA D y 0) = ((y τ).re : ℂ) := by
   rw [gW_apply]
   dsimp only [preA]
-  rw [if_pos rfl, gW_symm, symm_plW]
+  rw [ite_eq_left rfl, gW_symm, symm_plW]
 
 theorem archimedean_image_imaginary (y : D.what₂.Tau → ℂ) (τ : D.what₂.Tau) :
     gW D (plW D τ) (preA D y 1) = (((y τ).im / (betaT D τ).im : ℝ) : ℂ) := by
   rw [gW_apply]
   dsimp only [preA]
-  rw [if_neg (by decide), gW_symm, symm_plW]
+  rw [ite_eq_right (by decide), gW_symm, symm_plW]
 
 theorem thetaC_splitInv (y : D.what₂.Tau → ℂ) (τ : D.what₂.Tau) : thetaC D τ (splitInv D y) = y τ := by
   rw [splitInv, map_add (f := _), thetaC_tmul, thetaC_tmul, map_one, mul_one, archimedean_image_real, archimedean_image_imaginary,

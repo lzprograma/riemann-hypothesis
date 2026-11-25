@@ -2,50 +2,10 @@ module
 
 public import Formalism.UnipotentAdelicQuotients.CuspidalCharExists
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
 public import Mathlib.FieldTheory.Finite.Extension
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -63,21 +23,21 @@ theorem mem_grUnipBlock_iff {d a : ℕ} (ha : a < d) (u : Gn g d) :
   · intro h
     refine ⟨fun i j hj hi => ?_, ?_, ?_⟩
     · rcases h i j with h1 | h1
-      · rw [h1, if_neg]; rintro rfl; omega
+      · rw [h1, ite_eq_right]; rintro rfl; omega
       · omega
     · ext i j
       have hi := i.2
       have hj := j.2
       have hij : (i : ℕ) < d ∧ (j : ℕ) < d := by omega
       rcases h ⟨i, hij.1⟩ ⟨j, hij.2⟩ with h1 | h1
-      · simp only [tl, entN, dif_pos hij, h1, Units.val_one, Matrix.one_apply, Fin.ext_iff]
+      · simp only [tl, entN, dite_eq_left hij, h1, Units.val_one, Matrix.one_apply, Fin.ext_iff]
       · simp only at h1; omega
     · ext i j
       have hi := i.2
       have hj := j.2
       have hij : a + (i : ℕ) < d ∧ a + (j : ℕ) < d := by omega
       rcases h ⟨a + i, hij.1⟩ ⟨a + j, hij.2⟩ with h1 | h1
-      · simp only [br, entN, dif_pos hij, h1, Units.val_one, Matrix.one_apply, Fin.ext_iff, add_right_inj]
+      · simp only [br, entN, dite_eq_left hij, h1, Units.val_one, Matrix.one_apply, Fin.ext_iff, add_right_inj]
       · simp only at h1; omega
   · rintro ⟨h1, h2, h3⟩ i j
     have hi := i.2
@@ -86,16 +46,16 @@ theorem mem_grUnipBlock_iff {d a : ℕ} (ha : a < d) (u : Gn g d) :
     · by_cases hja : (j : ℕ) < a
       · left
         have := congrFun (congrFun h2 ⟨i, hia⟩) ⟨j, hja⟩
-        simpa only [tl, entN, dif_pos (And.intro hi hj), Units.val_one, Matrix.one_apply, Fin.ext_iff] using this
+        simpa only [tl, entN, dite_eq_left (And.intro hi hj), Units.val_one, Matrix.one_apply, Fin.ext_iff] using this
       · right; omega
     · left
       by_cases hja : (j : ℕ) < a
-      · rw [h1 i j hja (by omega), if_neg]; rintro rfl; omega
+      · rw [h1 i j hja (by omega), ite_eq_right]; rintro rfl; omega
       · have := congrFun (congrFun h3 ⟨i - a, by omega⟩) ⟨j - a, by omega⟩
         have e1 : a + (i - a) = (i : ℕ) := by omega
         have e2 : a + (j - a) = (j : ℕ) := by omega
         have e3 : ((i : ℕ) - a = j - a) ↔ (i : ℕ) = j := by omega
-        simpa only [br, entN, e1, e2, e3, dif_pos (And.intro hi hj), Units.val_one, Matrix.one_apply,
+        simpa only [br, entN, e1, e2, e3, dite_eq_left (And.intro hi hj), Units.val_one, Matrix.one_apply,
           Fin.ext_iff] using this
 
 theorem pow_eq_self_iff {f : (ZMod g)[X]} (hf : Irreducible f) {z : Fbar g} (hz : aeval z f = 0) (n : ℕ) :

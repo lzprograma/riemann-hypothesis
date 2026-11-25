@@ -387,32 +387,6 @@ def FreeSingleHomotopyEquivDiscreteChains : Prop := ∀ (R : Type) [CommRing R],
 
 variable {R : Type} [CommRing R]
 
-theorem cpull_comp {K L M : Cx R} (f : K ⟶ L) (g : L ⟶ M) (I : Cx R) (n : ℤ) (x : CohomologyClass M I n) :
-    cpull (f ≫ g) I n x = cpull f I n (cpull g I n x) := by
-  obtain ⟨x, rfl⟩ := x.mk_surjective
-  refine congrArg CohomologyClass.mk (Cocycle.ext ?_)
-  simp [zcomp, Cochain.ofHom_comp]
-
-theorem cpull_id (K I : Cx R) (n : ℤ) (x : CohomologyClass K I n) : cpull (𝟙 K) I n x = x := by
-  obtain ⟨x, rfl⟩ := x.mk_surjective
-  refine congrArg CohomologyClass.mk (Cocycle.ext ?_)
-  simp [zcomp]
-
-theorem cpull_homotopy {K L : Cx R} {f g : K ⟶ L} (h : Homotopy f g) (I : Cx R) (n : ℤ) (x : CohomologyClass L I n) :
-    cpull f I n x = cpull g I n x := by
-  obtain ⟨x, rfl⟩ := x.mk_surjective
-  change CohomologyClass.mk (zcomp _ x _) = CohomologyClass.mk (zcomp _ x _)
-  rw [← sub_eq_zero, ← CohomologyClass.mk_sub, CohomologyClass.mk_eq_zero_iff]
-  refine ⟨n - 1, by omega, n.negOnePow • (Cochain.ofHomotopy h).comp x.1 (by omega), ?_⟩
-  rw [δ_units_smul, δ_comp _ _ (by omega) 0 (n + 1) n (by omega) (by omega) (by omega), δ_ofHomotopy]
-  simp [zcomp, Cocycle.δ_eq_zero, Cochain.sub_comp, smul_smul, Int.units_mul_self]
-
-theorem cpull_iso_bij {K L : Cx R} (e : HomotopyEquiv K L) (I : Cx R) (n : ℤ) :
-    Function.Bijective (cpull e.hom I n) := by
-  refine Function.bijective_iff_has_inverse.2 ⟨cpull e.inv I n, fun x => ?_, fun x => ?_⟩
-  · rw [← cpull_comp, cpull_homotopy e.homotopyInvHomId, cpull_id]
-  · rw [← cpull_comp, cpull_homotopy e.homotopyHomInvId, cpull_id]
-
 theorem sq_iff {A B C D : Type*} {a : B → D} {b : A → B} {c : C → D} {d : A → C}
     (w : ∀ x, a (b x) = c (d x)) (ha : Function.Bijective a) (hd : Function.Bijective d) :
     (Function.Bijective b ↔ Function.Bijective c) ∧ (Function.Injective b ↔ Function.Injective c) := by
@@ -438,7 +412,7 @@ theorem chains_f {E E' : Spc} (f : E ⟶ E') (n : ℕ) : ((chains R).map f).f (-
   rfl
 
 theorem cpull_isoHom_bij {K L : Cx R} (i : K ≅ L) (I : Cx R) (n : ℤ) : Function.Bijective (cpull i.hom I n) :=
-  cpull_iso_bij (HomotopyEquiv.ofIso i) I n
+  GlobalTheory.EtC.LevelCmp.cpull_bij_of_heq (HomotopyEquiv.ofIso i) I n
 
 theorem pull_eq {E E' : Spc} (f : E ⟶ E') (F : Shv R) (n : ℤ) (x : H R E' F n) :
     pull R f F n x = cpull ((chains R).map f) (res R F) n x := rfl
@@ -453,13 +427,13 @@ theorem LevelIdent_of (hS : FreeSingleHomotopyEquivDiscreteChains) : LateralTheo
     rw [← S.map_comp, ← S.map_comp, chains_f]; simp [g]
   have w1 : ∀ x, cpull (S.map (chainsXIso R E p).hom) (res R F) j (cpull (S.map ((free R).map g)) (res R F) j x) =
       cpull (S.map (((chains R).map f).f (-(p : ℤ)))) (res R F) j (cpull (S.map (chainsXIso R E' p).hom) (res R F) j x) := by
-    intro x; rw [← cpull_comp, ← cpull_comp, sq1]
+    intro x; rw [← GlobalTheory.EtC.ZcFun.cpull_comp, ← GlobalTheory.EtC.ZcFun.cpull_comp, sq1]
   have w2 : ∀ x, cpull (e (E.obj (op (SimplexCategory.mk p)))).hom (res R F) j (pull R (disc.map g) F j x) =
       cpull (S.map ((free R).map g)) (res R F) j (cpull (e (E'.obj (op (SimplexCategory.mk p)))).hom (res R F) j x) := by
-    intro x; rw [pull_eq, ← cpull_comp, ← cpull_comp, he g]
+    intro x; rw [pull_eq, ← GlobalTheory.EtC.ZcFun.cpull_comp, ← GlobalTheory.EtC.ZcFun.cpull_comp, he g]
   obtain ⟨b1, i1⟩ := sq_iff w1 (cpull_isoHom_bij (S.mapIso (chainsXIso R E p)) _ _)
     (cpull_isoHom_bij (S.mapIso (chainsXIso R E' p)) _ _)
-  obtain ⟨b2, i2⟩ := sq_iff w2 (cpull_iso_bij _ _ _) (cpull_iso_bij _ _ _)
+  obtain ⟨b2, i2⟩ := sq_iff w2 (GlobalTheory.EtC.LevelCmp.cpull_bij_of_heq _ _ _) (GlobalTheory.EtC.LevelCmp.cpull_bij_of_heq _ _ _)
   exact ⟨b2.trans b1, i2.trans i1⟩
 
 end LateralTheory.E.LevelIdentPf
@@ -590,7 +564,6 @@ lemma trd (i j : ℕ) :
   simp only [HomologicalComplex.stupidTruncXIso_rfl, HomologicalComplex.stupidTrunc,
     (K.restriction (E M)).extend_d_eq (E M) (i := i) (j := j) rfl rfl,
     Category.assoc, Iso.inv_hom_id, Category.comp_id, HomologicalComplex.restriction_d]
-
 
 open Classical in
 def iotaf (p : ℤ) : (K.stupidTrunc (E M)).X p ⟶ K.X p :=
@@ -978,10 +951,6 @@ noncomputable section
 open GlobalTheory.EtC
 
 namespace LateralTheory.E.CoverIntegralClosure
-
-theorem inj_sub (P : Type) [CommRing P] [IsDomain P] :
-    Function.Injective (algebraMap (integralClosure P (AlgebraicClosure (FractionRing P))) (AlgebraicClosure (FractionRing P))) :=
-  Subtype.val_injective
 
 theorem aic_integralClosure (P : Type) [CommRing P] [IsDomain P] :
     AIC (integralClosure P (AlgebraicClosure (FractionRing P))) := by

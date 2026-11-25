@@ -91,7 +91,6 @@ section -- clump:auto
 @[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix MeasureTheory TensorProduct Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.Whittaker GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocDict
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem _root_.GlobalTheory.T.local_embedding_weil_action_finite_extension : ∀ (E K Ω : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] [Algebra K Ω] [IsAlgClosure K Ω] [Algebra E K] [IsScalarTower E K Ω] (A : ValuationSubring Ω) (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (ι : Ω →ₐ[E] Kbar w), IsLocEmb A w ι → ∀ L : IntermediateField (w.adicCompletion E) (Kbar w), FiniteDimensional (w.adicCompletion E) L → (∀ (σ : Weil h) (g : GalLoc w), Lifts ι g σ → ((∀ z ∈ L, g z = z) ↔ ∀ x : K, (σ : G E Ω) (algebraMap K Ω x) = algebraMap K Ω x)) → L = IntermediateField.adjoin (w.adicCompletion E) (Set.range fun x : K => ι (algebraMap K Ω x)) := by
   first | exact @GlobalTheory.LocDec.eq_adjoin_of_fixing_iff_weil
@@ -107,7 +106,6 @@ section -- clump:auto
 noncomputable section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix MeasureTheory TensorProduct Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.Whittaker GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocDict
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.LocNormGrp
 
@@ -150,20 +148,21 @@ theorem exists_congr_mem {K : Type} [Field K] [NumberField K] (W : HeightOneSpec
   rw [← WithZero.exp_log hc0, WithZero.exp_lt_exp, WithZero.log_exp]
   omega
 
-theorem res_art_eq_art_norm (E E' Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
+theorem chi_locUnit_eq_chi_locUnit_norm (E E' Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
     [Field E'] [NumberField E'] [Algebra E' Ω] [IsAlgClosure E' Ω] [Algebra E E']
     (hφ : ∀ x, RingEquiv.refl Ω (algebraMap E Ω x) = algebraMap E' Ω (algebraMap E E' x))
     (w : HeightOneSpectrum (𝓞 E)) (w' : HeightOneSpectrum (𝓞 E'))
     (hw' : w'.asIdeal.comap (algebraMap (𝓞 E) (𝓞 E')) = w.asIdeal)
-    (N : (w'.adicCompletion E')ˣ →* (w.adicCompletion E)ˣ) (hN : Continuous N)
-    (hNg : ∀ z : E'ˣ, N (Units.map (algebraMap E' (w'.adicCompletion E')).toMonoidHom z) =
-      Units.map (algebraMap E (w.adicCompletion E)).toMonoidHom (Units.map (Algebra.norm E (S := E')) z))
     (art : Ideles E →* Gab E Ω) (art' : Ideles E' →* Gab E' Ω) (ha : IsGlobalArtin art) (ha' : IsGlobalArtin art')
     (ρ : Gab E' Ω →* Gab E Ω) (hρc : Continuous ρ)
     (hρ : ∀ (τ : G E' Ω) (σ : G E Ω), (∀ z, RingEquiv.refl Ω (σ z) = τ (RingEquiv.refl Ω z)) →
       ρ (toAb E' Ω τ) = toAb E Ω σ)
-    (x : (w'.adicCompletion E')ˣ) :
-    ρ (art' (localIdele E' w' x)) = art (localIdele E w (N x)) := by
+    (U : Subgroup (Gab E Ω)) (hU : IsOpen (U : Set (Gab E Ω)))
+    (hML : ∃ ML : ℕ, ∀ z : E'ˣ, w'.valuation E' ((z : E') - 1) ≤ WithZero.exp (-(ML : ℤ)) →
+      QuotientGroup.mk' U (art (locUnit E w (Units.map (Algebra.norm E (S := E')) z))) = 1)
+    (y : E'ˣ) :
+    QuotientGroup.mk' U (ρ (art' (locUnit E' w' y))) =
+      QuotientGroup.mk' U (art (locUnit E w (Units.map (Algebra.norm E (S := E')) y))) := by
   classical
   have hdE : ∀ k : Eˣ, art (diagUnits E k) = 1 := fun k => by
     have hk : diagUnits E k ∈ art.ker := by
@@ -175,69 +174,42 @@ theorem res_art_eq_art_norm (E E' Ω : Type) [Field E] [NumberField E] [Field Ω
       rw [ha'.ker]
       exact Subgroup.le_topologicalClosure _ (Subgroup.mem_sup_left ⟨k, rfl⟩)
     exact hk
-  have hiE : ∀ y ∈ infConn E, art y = 1 := fun y hy => by
-    have hk : y ∈ art.ker := by
+  have hiE : ∀ z ∈ infConn E, art z = 1 := fun z hz => by
+    have hk : z ∈ art.ker := by
       rw [ha.ker]
-      exact Subgroup.le_topologicalClosure _ (Subgroup.mem_sup_right hy)
+      exact Subgroup.le_topologicalClosure _ (Subgroup.mem_sup_right hz)
     exact hk
-  have hiK : ∀ y ∈ infConn E', art' y = 1 := fun y hy => by
-    have hk : y ∈ art'.ker := by
+  have hiK : ∀ z ∈ infConn E', art' z = 1 := fun z hz => by
+    have hk : z ∈ art'.ker := by
       rw [ha'.ker]
-      exact Subgroup.le_topologicalClosure _ (Subgroup.mem_sup_right hy)
+      exact Subgroup.le_topologicalClosure _ (Subgroup.mem_sup_right hz)
     exact hk
-  rw [← div_eq_one]
-  refine GlobalTheory.GabSep.eq_one_of_forall_isOpen_subgroup E Ω _ fun U hU => ?_
   let χ : Gab E Ω →* Gab E Ω ⧸ U := QuotientGroup.mk' U
-  suffices h : χ (ρ (art' (localIdele E' w' x))) = χ (art (localIdele E w (N x))) by
-    have h2 : χ (ρ (art' (localIdele E' w' x)) / art (localIdele E w (N x))) = 1 := by
-      rw [_root_.map_div, h, div_self']
-    exact (QuotientGroup.eq_one_iff _).mp h2
   let ψ1 : Ideles E' →* Gab E Ω ⧸ U := χ.comp (ρ.comp art')
   let ψ2 : Ideles E →* Gab E Ω ⧸ U := χ.comp art
   have hker1 : (ψ1.ker : Set (Ideles E')) = (ρ.comp art') ⁻¹' U := by
-    ext y; simp [ψ1, χ, MonoidHom.mem_ker, QuotientGroup.eq_one_iff]
+    ext z; simp [ψ1, χ, MonoidHom.mem_ker, QuotientGroup.eq_one_iff]
   have hker2 : (ψ2.ker : Set (Ideles E)) = art ⁻¹' U := by
-    ext y; simp [ψ2, χ, MonoidHom.mem_ker, QuotientGroup.eq_one_iff]
+    ext z; simp [ψ2, χ, MonoidHom.mem_ker, QuotientGroup.eq_one_iff]
   have ho1 : IsOpen (ψ1.ker : Set (Ideles E')) := by
     rw [hker1]; exact hU.preimage (hρc.comp ha'.quot.continuous)
   have ho2 : IsOpen (ψ2.ker : Set (Ideles E)) := by
     rw [hker2]; exact hU.preimage ha.quot.continuous
-
-  let f1 : (w'.adicCompletion E')ˣ →* Gab E Ω ⧸ U := ψ1.comp (localIdele E' w')
-  let f2 : (w'.adicCompletion E')ˣ →* Gab E Ω ⧸ U := ψ2.comp ((localIdele E w).comp N)
-  have hf1 : IsOpen (f1.ker : Set (w'.adicCompletion E')ˣ) := by
-    have e : (f1.ker : Set (w'.adicCompletion E')ˣ) = (localIdele E' w') ⁻¹' (ψ1.ker : Set (Ideles E')) := by
-      ext y; simp only [f1, SetLike.mem_coe, MonoidHom.mem_ker, Set.mem_preimage, MonoidHom.comp_apply]
-    rw [e]
-    exact ho1.preimage (GlobalTheory.Mem.UnrAe.continuous_localIdele w')
-  have hf2 : IsOpen (f2.ker : Set (w'.adicCompletion E')ˣ) := by
-    have e : (f2.ker : Set (w'.adicCompletion E')ˣ) = ((localIdele E w).comp N) ⁻¹' (ψ2.ker : Set (Ideles E)) := by
-      ext y; simp only [f2, SetLike.mem_coe, MonoidHom.mem_ker, Set.mem_preimage, MonoidHom.comp_apply]
-    rw [e]
-    exact ho2.preimage ((GlobalTheory.Mem.UnrAe.continuous_localIdele w).comp hN)
-  show f1 x = f2 x
-  refine GlobalTheory.units_adicCompletion_hom_ext E' w' _ f1 f2 hf1 hf2 (fun y => ?_) x
   let NK : E'ˣ →* Eˣ := Units.map (Algebra.norm E (S := E'))
-  have hf2g : ∀ z : E'ˣ, f2 (Units.map (algebraMap E' (w'.adicCompletion E')).toMonoidHom z) =
-      ψ2 (locUnit E w (NK z)) := fun z => by
-    simp only [f2, MonoidHom.comp_apply, locUnit_apply, hNg, NK]
-  rw [hf2g]
-  change ψ1 (locUnit E' w' y) = _
-
   obtain ⟨SE, ME, hvS, hSu, hSc⟩ := GlobalTheory.OpenIdeleCongr.open_subgroup_contains_congr E ψ2.ker ho2 {w}
   have hwSE : w ∈ SE := hvS (Finset.mem_singleton_self w)
   obtain ⟨TSK, hTSK⟩ := GlobalTheory.PlacesOver.places_over_finset E E' SE
   have hWT : w' ∈ TSK := (hTSK w').mpr ⟨w, hwSE, hw'⟩
   obtain ⟨MainNotions, MK, hTS, -, hSKc⟩ := GlobalTheory.OpenIdeleCongr.open_subgroup_contains_congr E' ψ1.ker ho1 TSK
   choose M' hM' using fun v' : HeightOneSpectrum (𝓞 E) => GlobalTheory.NormCompat.NormCont.norm_close_to_one E E' v' ME
-  obtain ⟨ML, hML⟩ := exists_congr_mem w' f2.ker hf2
+  obtain ⟨ML, hML⟩ := hML
   let M'' : ℕ := SE.sup M'
   let m : ℕ := (WithZero.log (w'.valuation E' (y : E'))).natAbs
   let P0 : ℕ := MK + M'' + ML + 1
   obtain ⟨a, hap, hapos⟩ := _root_.GlobalTheory.FinPlaceApproxPos.exists_approx_totally_positive E' TSK (fun u => if u = w' then (y : E') else 1) (P0 + m)
   have haW : w'.valuation E' (a - y) ≤ WithZero.exp (-((P0 : ℤ) + m)) := by
     have := hap w' hWT
-    rw [if_pos rfl] at this
+    rw [ite_eq_left rfl] at this
     exact valuation_le_of_exponent_le w' this (by push_cast; omega)
   have hz : w'.valuation E' (a / y - 1) ≤ WithZero.exp (-(P0 : ℤ)) :=
     valuation_div_sub_one_le w' y.ne_zero le_rfl haW
@@ -251,20 +223,16 @@ theorem res_art_eq_art_norm (E E' Ω : Type) [Field E] [NumberField E] [Field Ω
   have hauy : au = y * zu := by simp [zu]
   have hoth : ∀ u ∈ TSK, u ≠ w' → u.valuation E' (a - 1) ≤ WithZero.exp (-(P0 : ℤ)) := fun u hu hne => by
     have := hap u hu
-    rw [if_neg hne] at this
+    rw [ite_eq_right hne] at this
     exact valuation_le_of_exponent_le u this (by push_cast; omega)
-
   have F1 : ψ1 (locUnit E' w' au) = ψ1 (locUnit E' w' y) := by
     have hm : locUnit E' w' zu ∈ ψ1.ker := hSKc w' (hTS hWT) zu (by
       rw [hzu]; exact valuation_le_of_exponent_le w' hz (by push_cast; omega))
     rw [hauy, map_mul, map_mul, MonoidHom.mem_ker.mp hm, mul_one]
-
   have F2 : ψ2 (locUnit E w (NK au)) = ψ2 (locUnit E w (NK y)) := by
-    have hm : ψ2 (locUnit E w (NK zu)) = 1 := by
-      rw [← hf2g]
-      exact hML zu (by rw [hzu]; exact valuation_le_of_exponent_le w' hz (by push_cast; omega))
+    have hm : ψ2 (locUnit E w (NK zu)) = 1 :=
+      hML zu (by rw [hzu]; exact valuation_le_of_exponent_le w' hz (by push_cast; omega))
     rw [hauy, map_mul, map_mul, map_mul, hm, mul_one]
-
   have F3 : ∀ u ∈ TSK, u ≠ w' → ψ1 (locUnit E' u au) = 1 := fun u hu hne =>
     MonoidHom.mem_ker.mp (hSKc u (hTS hu) au (valuation_le_of_exponent_le u (hoth u hu hne) (by push_cast; omega)))
   have F4 : ∀ v' ∈ SE, v' ≠ w → ψ2 (locUnit E v' (NK au)) = 1 := fun v' hv' hne => by
@@ -277,7 +245,6 @@ theorem res_art_eq_art_norm (E E' Ω : Type) [Field E] [NumberField E] [Field Ω
     exact valuation_le_of_exponent_le u (hoth u huT huW) (by
       have : M' v' ≤ M'' := Finset.le_sup hv'
       push_cast; omega)
-
   have hunitE : ∀ v' ∉ SE, ∀ z, IsUnitAt v' z → ψ2 (localIdele E v' z) = 1 := fun v' hv' z hz =>
     MonoidHom.mem_ker.mp (hSu v' hv' z hz)
   have hchi := fun (v' : HeightOneSpectrum (𝓞 E)) (hv' : v' ∉ SE) (u : HeightOneSpectrum (𝓞 E'))
@@ -285,7 +252,6 @@ theorem res_art_eq_art_norm (E E' Ω : Type) [Field E] [NumberField E] [Field Ω
     _root_.GlobalTheory.ArtinTransport.chi_artin_transport E Ω E' Ω (RingEquiv.refl Ω) hφ art art' ha ha' ρ hρ (Gab E Ω ⧸ U) χ v' u hu (hunitE v' hv')
   obtain ⟨TK, TE, hTK1, hTK2, hTE1, hTE2, hprod⟩ := _root_.GlobalTheory.NormCompat.prod_locUnit_eq_prod_locUnit_norm E E' (Gab E Ω ⧸ U) ψ1 ψ2 SE hunitE
     (fun v' hv' u hu => (hchi v' hv' u hu).1) (fun v' hv' u hu => (hchi v' hv' u hu).2) au
-
   have hPK : (∏ u ∈ TK, ψ1 (locUnit E' u au)) * ψ1 (locUnit E' w' au) = 1 := by
     have hdisj : Disjoint TK TSK := by
       rw [Finset.disjoint_left]
@@ -312,7 +278,57 @@ theorem res_art_eq_art_norm (E E' Ω : Type) [Field E] [NumberField E] [Field Ω
   have key : ψ1 (locUnit E' w' au) = ψ2 (locUnit E w (NK au)) := by
     rw [← hprod] at hPE
     exact mul_left_cancel (hPK.trans hPE.symm)
+  change ψ1 (locUnit E' w' y) = ψ2 (locUnit E w (NK y))
   rw [← F1, key, F2]
+
+theorem res_art_eq_art_norm (E E' Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
+    [Field E'] [NumberField E'] [Algebra E' Ω] [IsAlgClosure E' Ω] [Algebra E E']
+    (hφ : ∀ x, RingEquiv.refl Ω (algebraMap E Ω x) = algebraMap E' Ω (algebraMap E E' x))
+    (w : HeightOneSpectrum (𝓞 E)) (w' : HeightOneSpectrum (𝓞 E'))
+    (hw' : w'.asIdeal.comap (algebraMap (𝓞 E) (𝓞 E')) = w.asIdeal)
+    (N : (w'.adicCompletion E')ˣ →* (w.adicCompletion E)ˣ) (hN : Continuous N)
+    (hNg : ∀ z : E'ˣ, N (Units.map (algebraMap E' (w'.adicCompletion E')).toMonoidHom z) =
+      Units.map (algebraMap E (w.adicCompletion E)).toMonoidHom (Units.map (Algebra.norm E (S := E')) z))
+    (art : Ideles E →* Gab E Ω) (art' : Ideles E' →* Gab E' Ω) (ha : IsGlobalArtin art) (ha' : IsGlobalArtin art')
+    (ρ : Gab E' Ω →* Gab E Ω) (hρc : Continuous ρ)
+    (hρ : ∀ (τ : G E' Ω) (σ : G E Ω), (∀ z, RingEquiv.refl Ω (σ z) = τ (RingEquiv.refl Ω z)) →
+      ρ (toAb E' Ω τ) = toAb E Ω σ)
+    (x : (w'.adicCompletion E')ˣ) :
+    ρ (art' (localIdele E' w' x)) = art (localIdele E w (N x)) := by
+  rw [← div_eq_one]
+  refine GlobalTheory.GabSep.eq_one_of_forall_isOpen_subgroup E Ω _ fun U hU => ?_
+  let χ : Gab E Ω →* Gab E Ω ⧸ U := QuotientGroup.mk' U
+  suffices h : χ (ρ (art' (localIdele E' w' x))) = χ (art (localIdele E w (N x))) by
+    have h2 : χ (ρ (art' (localIdele E' w' x)) / art (localIdele E w (N x))) = 1 := by
+      rw [_root_.map_div, h, div_self']
+    exact (QuotientGroup.eq_one_iff _).mp h2
+  let ψ1 : Ideles E' →* Gab E Ω ⧸ U := χ.comp (ρ.comp art')
+  let ψ2 : Ideles E →* Gab E Ω ⧸ U := χ.comp art
+  have ho1 : IsOpen (ψ1.ker : Set (Ideles E')) := by
+    have : (ψ1.ker : Set (Ideles E')) = (ρ.comp art') ⁻¹' U := by
+      ext y; simp [ψ1, χ, MonoidHom.mem_ker, QuotientGroup.eq_one_iff]
+    rw [this]; exact hU.preimage (hρc.comp ha'.quot.continuous)
+  have ho2 : IsOpen (ψ2.ker : Set (Ideles E)) := by
+    have : (ψ2.ker : Set (Ideles E)) = art ⁻¹' U := by
+      ext y; simp [ψ2, χ, MonoidHom.mem_ker, QuotientGroup.eq_one_iff]
+    rw [this]; exact hU.preimage ha.quot.continuous
+  let f1 : (w'.adicCompletion E')ˣ →* Gab E Ω ⧸ U := ψ1.comp (localIdele E' w')
+  let f2 : (w'.adicCompletion E')ˣ →* Gab E Ω ⧸ U := ψ2.comp ((localIdele E w).comp N)
+  have hf1 : IsOpen (f1.ker : Set (w'.adicCompletion E')ˣ) :=
+    (show (f1.ker : Set (w'.adicCompletion E')ˣ) = (localIdele E' w') ⁻¹' (ψ1.ker : Set (Ideles E')) by
+      ext y; simp [f1]) ▸ ho1.preimage (GlobalTheory.Mem.UnrAe.continuous_localIdele w')
+  have hf2 : IsOpen (f2.ker : Set (w'.adicCompletion E')ˣ) :=
+    (show (f2.ker : Set (w'.adicCompletion E')ˣ) = ((localIdele E w).comp N) ⁻¹' (ψ2.ker : Set (Ideles E)) by
+      ext y; simp [f2]) ▸ ho2.preimage ((GlobalTheory.Mem.UnrAe.continuous_localIdele w).comp hN)
+  obtain ⟨ML, hML⟩ := exists_congr_mem w' f2.ker hf2
+  show f1 x = f2 x
+  refine GlobalTheory.units_adicCompletion_hom_ext E' w' _ f1 f2 hf1 hf2 (fun y => ?_) x
+  have hf2g : ∀ z : E'ˣ, f2 (Units.map (algebraMap E' (w'.adicCompletion E')).toMonoidHom z) =
+      χ (art (locUnit E w (Units.map (Algebra.norm E (S := E')) z))) := fun z => by
+    simp only [f2, ψ2, MonoidHom.comp_apply, locUnit_apply, hNg]
+  rw [hf2g]
+  exact chi_locUnit_eq_chi_locUnit_norm E E' Ω hφ w w' hw' art art' ha ha' ρ hρc hρ U hU
+    ⟨ML, fun z hz => (hf2g z).symm.trans (hML z hz)⟩ y
 
 theorem art_norm_eq_res : ∀ (E K Ω : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] [Algebra K Ω] [IsAlgClosure K Ω] [Algebra E K] [IsScalarTower E K Ω] (art : Neutral.B1.Ideles E →* GlobalTheory.HeckeGal.Gab E Ω) (artK : Neutral.B1.Ideles K →* GlobalTheory.HeckeGal.Gab K Ω), GlobalTheory.HeckeGal.IsGlobalArtin art → GlobalTheory.HeckeGal.IsGlobalArtin artK → ∀ (v : HeightOneSpectrum (𝓞 E)) (W : HeightOneSpectrum (𝓞 K)), W.asIdeal.comap (algebraMap (𝓞 E) (𝓞 K)) = v.asIdeal → ∀ (N : (W.adicCompletion K)ˣ →* (v.adicCompletion E)ˣ), Continuous N → (∀ z : Kˣ, N (Units.map (algebraMap K (W.adicCompletion K)).toMonoidHom z) = Units.map (algebraMap E (v.adicCompletion E)).toMonoidHom (Units.map (Algebra.norm E (S := K)) z)) → ∀ (y : (W.adicCompletion K)ˣ) (τ : G K Ω) (σ : G E Ω), (∀ z, σ z = τ z) → artK (Neutral.B1.localIdele K W y) = GlobalTheory.HeckeGal.toAb K Ω τ → art (Neutral.B1.localIdele E v (N y)) = GlobalTheory.HeckeGal.toAb E Ω σ := by
   intro E K Ω _ _ _ _ _ _ _ _ _ _ _ art artK ha haK v W hW N hN hNg y τ σ hσ hy

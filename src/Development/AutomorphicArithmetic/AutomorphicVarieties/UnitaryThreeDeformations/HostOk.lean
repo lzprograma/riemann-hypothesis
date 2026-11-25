@@ -107,20 +107,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-theorem UpperTheory.Reformulated.B.LocallyConstantOfOpen.ho_locConst :
-    ∀ {Γ A : Type} [inst : Group Γ] [inst_1 : TopologicalSpace Γ]
-    [IsTopologicalGroup Γ] [inst_3 : Group A] (ψ : Γ →* A), IsOpen (↑ψ.ker : Set Γ) → IsLocallyConstant (⇑ψ : Γ → A) := by
-  intro Γ A _ _ _ _ ψ h
-  rw [IsLocallyConstant.iff_exists_open]
-  intro x
-  refine ⟨(fun y => x⁻¹ * y) ⁻¹' (ψ.ker : Set Γ),
-    h.preimage (continuous_const.mul continuous_id), ?_, ?_⟩
-  · change x⁻¹ * x ∈ ψ.ker
-    simp
-  · intro y hy
-    have hy' : ψ (x⁻¹ * y) = 1 := hy
-    rw [map_mul, map_inv, inv_mul_eq_one] at hy'
-    exact hy'.symm
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfOpen =====
@@ -205,7 +191,7 @@ private theorem ho_psi_cont (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure �
     intro h
     rw [← map_natCast (algebraMap ℤ_[l] O)] at h
     exact PadicInt.p_nonunit (IsUnit.of_map _ _ h)
-  refine (_root_.UpperTheory.Reformulated.B.LocallyConstantOfOpen.ho_locConst (r.comp (Chr.Psi l e (Chr.dirG ℚ Ω ψ))) ?_).comp Units.val
+  refine (_root_.UpperTheory.Reformulated.B.LocallyConstantOfKernel.lc_of_ker (r.comp (Chr.Psi l e (Chr.dirG ℚ Ω ψ))) ?_).comp Units.val
   have ho : IsOpen {g : G ℚ Ω | ‖((cycZ ℚ Ω l g : ℤ_[l]ˣ) : ℤ_[l]) - 1‖ < (l : ℝ) ^ (-(n : ℤ) + 1)} :=
     isOpen_lt ((Units.continuous_val.comp (continuous_cycZ ℚ Ω l)).sub continuous_const).norm continuous_const
   have hpos : (0 : ℝ) < (l : ℝ) ^ (-(n : ℤ) + 1) := zpow_pos (by exact_mod_cast (Fact.out : l.Prime).pos) _
@@ -294,7 +280,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.hostFrame_ok :
       teich := fun v hv s hs => ?_ }
   · rw [← hF.π]
     simp only [hη]
-    exact _root_.UpperTheory.Reformulated.B.LocallyConstantOfOpen.ho_locConst _ (ho_dir_open Ω _)
+    exact _root_.UpperTheory.Reformulated.B.LocallyConstantOfKernel.lc_of_ker _ (ho_dir_open Ω _)
   · rw [← hF.π]
     simp only [hΨ]
     exact ho_psi_cont Ω e ψ n

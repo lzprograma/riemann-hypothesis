@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNPsdC
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompactOfParts
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormPosCompactSupport
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockOfCauchySchwarz
@@ -9,46 +10,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsNormBo
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCutInside
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeAtMinusW
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceCompactSupportCoefficient
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
 
 @[expose] public section
@@ -72,19 +33,8 @@ theorem psd_of_rep {α ι H : Type} [Fintype ι] [NormedAddCommGroup H] [InnerPr
   exact Matrix.posSemidef_sum _ fun k _ => (Matrix.posSemidef_gram ℂ _).transpose
 
 theorem psd_smul {α : Type} (Y : Finset α) (k : α → α → ℂ) (a : ℝ) (ha : 0 ≤ a) (hk : TB.PSDOn Y k) :
-    TB.PSDOn Y (fun x y => (a : ℂ) * k x y) := by
-  rw [PBA.psd_iff_qf] at hk ⊢
-  refine ⟨fun x hx y hy => ?_, fun c => ?_⟩
-  · rw [hk.1 x hx y hy, map_mul, Complex.conj_ofReal]
-  · have : PBA.qf Y (fun x y => (a : ℂ) * k x y) c = (a : ℂ) * PBA.qf Y k c := by
-      unfold PBA.qf
-      rw [Finset.mul_sum]
-      refine Finset.sum_congr rfl fun x _ => ?_
-      rw [Finset.mul_sum]
-      refine Finset.sum_congr rfl fun y _ => ?_
-      ring
-    rw [this, Complex.re_ofReal_mul]
-    exact mul_nonneg ha (hk.2 c)
+    TB.PSDOn Y (fun x y => (a : ℂ) * k x y) :=
+  by apply _root_.Formalism.FourierDecayAlt.P.RecursionWithDensities.B1.psd_smul <;> assumption
 
 section top
 
@@ -101,8 +51,8 @@ theorem rr_top_rep (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp))
     unfold KB.Pl.RR D.RRplace
     by_cases hx : D.IsLocPt x (P.r + 1)
     · by_cases hy : D.IsLocPt y (P.r + 1)
-      · rw [dite_eq_left ⟨hx, hy⟩, dite_eq_right (by omega), if_pos rfl, if_pos hw]
-        simp only [hx, hy, if_true, B.hsInner]
+      · rw [dite_eq_left ⟨hx, hy⟩, dite_eq_right (by omega), ite_eq_left rfl, ite_eq_left hw]
+        simp only [hx, hy, ite_true, B.hsInner]
       · rw [dite_eq_right (fun h => hy h.2)]
         simp [hy]
     · rw [dite_eq_right (fun h => hx h.1)]
@@ -114,10 +64,10 @@ theorem rr_top_rep (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp))
     unfold KB.Pl.RR D.RRplace
     by_cases hx : D.IsLocPt x (P.r + 1)
     · by_cases hy : D.IsLocPt y (P.r + 1)
-      · rw [dite_eq_left ⟨hx, hy⟩, dite_eq_right (by omega), if_pos rfl, if_neg hw]
+      · rw [dite_eq_left ⟨hx, hy⟩, dite_eq_right (by omega), ite_eq_left rfl, ite_eq_right hw]
         unfold Top.topOf
         refine Finset.sum_congr rfl fun e _ => Finset.sum_congr rfl fun ρ _ => ?_
-        simp only [hx, hy, if_true, B.hsInner, inner_smul_left, inner_smul_right, Complex.conj_ofReal]
+        simp only [hx, hy, ite_true, B.hsInner, inner_smul_left, inner_smul_right, Complex.conj_ofReal]
         push_cast
         ring
       · rw [dite_eq_right (fun h => hy h.2)]
@@ -140,36 +90,7 @@ theorem gN_psdC (hA : P5.ThmPActualCpt) (hFP : ModuleFormPositivity.FormPosCpt) 
     (hF : ∀ v ε, 0 < ε → KB.CptCoef (p v).T.base (F v ε)) (v : Fin S.f) (ε : ℝ) (hε : 0 < ε) (j : ℕ)
     (hj : j ≤ S.G.r) (w : List C.Letter) (hw : KB.CutWord (D.parOf S v) (S.l + 1) w) (Y : Finset C.LPt) :
     TB.PSDOn Y (KB.gN (PBL.setC S p F) v ε j w) := by
-  have hB' := hB
-  obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, -, -, hv⟩ := hB'
-  obtain ⟨hl0, -, -, -, -⟩ := hv v
-  have hw' : KB.CutWord (D.parOf S v) (p v).l0 w := by rw [hl0]; exact hw
-  have hgpos := PBL.g_pos_of_built hB
-  have hu : ∀ h, PBL.CV ((p v).T.bs j) (PBL.uY S p F v ε j hj w Y h) := by
-    intro h
-    unfold PBL.uY
-    split_ifs
-    · unfold PBL.uB
-      split_ifs with hh
-      · exact PBL.cv_smul _ fun e => Formalism.FourierDecayAlt.P.slice_compact_support_coefficient _ _ (D.parOf S v) (p v) (F v ε) j hj w _
-          ((PBD.isLocPt_toStd_iff _ _ hgpos h 1 j).2 hh) (hF v ε hε) e
-      · exact PBL.cv_zero
-    · exact PBL.cv_zero
-  set c0 : ℝ := 1 / (PBL.ΓS S j * S.sizeAt v w) with hc0
-  have hc0n : 0 ≤ c0 := by
-    have := PBL.gam_pos hB j
-    have := PBL.sizeAt_nonneg S v w
-    positivity
-  have hG := PBL.gram_psd (PBL.CV (S := Fin w.length) ((p v).T.bs j))
-    (fun x y => (c0 : ℂ) * (p v).form j hj w x y) PBL.cv_zero (fun x y hx hy => PBL.cv_add hx hy)
-    (fun c x hx => PBL.cv_smul c hx)
-    (fun x₁ x₂ y c h₁ h₂ hy => by simp only [PBL.form_slC (p v) j hj w x₁ x₂ y c h₁ h₂ hy]; ring)
-    (fun x y₁ y₂ c hx h₁ h₂ => by simp only [PBL.form_srC (p v) j hj w x y₁ y₂ c hx h₁ h₂]; ring)
-    (fun x hx => mul_nonneg (by exact_mod_cast hc0n) (hFP hA _ _ (D.parOf S v) (p v) j hj w hw' x hx))
-    Y (PBL.uY S p F v ε j hj w Y) hu
-  refine PBL.psd_congr (fun x hx y hy => ?_) hG
-  show (c0 : ℂ) * (p v).form j hj w (PBL.uY S p F v ε j hj w Y x) (PBL.uY S p F v ε j hj w Y y) = _
-  rw [PBL.uY_mem S p F v ε j hj w Y x hx, PBL.uY_mem S p F v ε j hj w Y y hy, PBL.gN_uB hB F hF v ε hε j hj w x y]
+  apply _root_.Formalism.FourierDecayAlt.P.PBL.gN_psdC <;> assumption
 
 theorem gramLoc_top_psd (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀)
     (F : ∀ v : Fin S.f, ℝ → B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v))) (v : Fin S.f) (ε : ℝ)

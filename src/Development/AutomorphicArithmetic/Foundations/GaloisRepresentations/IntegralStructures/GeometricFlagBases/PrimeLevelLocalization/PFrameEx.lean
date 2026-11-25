@@ -19,55 +19,16 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PMuStar
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PRepLaws
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ValLeOneOfForall
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MapWopWmap
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
 import GroundTheory.GlobalFields.CompletionAtPlace.Integers
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.MuAlgebraMap, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.MuHomSingle, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PAdQEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PAdTEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PAdTensor, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PEvEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PIntCof, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PJSurj, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PPIntRev, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PVecCoord, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TraceMapUnipotent, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.UptsExt, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PFrameEx
+-- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.MuAlgebraMap, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.MuHomSingle, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PAdQEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PAdTEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PAdTensor, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PEvEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PIntCof, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PJSurj, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PVecCoord, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.UptsExt, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PFrameEx
 
 -- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.MuAlgebraMap =====
 -- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.MuAlgebraMap", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MapWopWmap\n\n"}
@@ -1099,107 +1060,6 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PJSurj =====
 
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PPIntRev =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PPIntRev", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.VecCoord\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.LevRefine\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormLeOneOfIsIntegralInt\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.IsDelNeZeroCoprimeDenominatorsDifferentGenerator\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.UG UpperTheory.Gal.W2.Seed
-open UpperTheory.Gal.CertificateRingHomMap (GUf Gam0 AfQ Plc sim mat comp rat lev ZU)
-open scoped TensorProduct Classical
-
-namespace UpperTheory.Gal.W2.Seed.IntRev
-
-private theorem mem_range_map {R : Type} [CommRing R] (S : Subring R) {m : ℕ} (x : GL (Fin m) R)
-    (h1 : ∀ i j, x.1 i j ∈ S) (h2 : ∀ i j, (x⁻¹).1 i j ∈ S) : x ∈ (GeneralLinearGroup.map S.subtype).range := by
-  refine ⟨⟨Matrix.of fun i j => ⟨_, h1 i j⟩, Matrix.of fun i j => ⟨_, h2 i j⟩, ?_, ?_⟩, rfl⟩
-  · refine Matrix.map_injective S.subtype_injective ?_
-    simp only
-    rw [Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _)]
-    exact x.mul_inv
-  · refine Matrix.map_injective S.subtype_injective ?_
-    simp only
-    rw [Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _)]
-    exact x.inv_mul
-
-variable {E : Type} [Field E] [NumberField E] {p : ℕ} [Fact p.Prime]
-
-private theorem norm_le (τ : E →+* PadicAlgCl p) (x : E)
-    (h : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → w.valuation E x ≤ 1) : ‖τ x‖ ≤ 1 := by
-  have hp : p.Prime := Fact.out
-  obtain ⟨N, -, hNc, hN⟩ := GlobalTheory.HilbertThetaSeries.DenP.exists_away hp x
-  have hint : IsIntegral ℤ ((N : E) * x) := by
-    refine (GlobalTheory.HilbertThetaSeries.DenP.isIntegral_iff_val _).2 fun w => ?_
-    by_cases hw : ((p : ℕ) : 𝓞 E) ∈ w.asIdeal
-    · rw [map_mul, GlobalTheory.HilbertThetaSeries.DenP.val_coprime hNc hw, one_mul]; exact h w hw
-    · exact hN w hw
-  have h1 : ‖τ ((N : E) * x)‖ ≤ 1 := GlobalTheory.CongW.PlaceEmb.norm_int_le τ ⟨_, hint⟩
-  have h3 : ‖(N : ℚ_[p])‖ = 1 := (Padic.norm_natCast_eq_one_iff).2 hNc.symm
-  have h2 : ‖(N : PadicAlgCl p)‖ = 1 := by
-    rw [← h3, ← PadicAlgCl.norm_extends p, map_natCast]
-  rwa [map_mul, map_natCast, norm_mul, h2, one_mul] at h1
-
-variable [IsCMField E] {n : ℕ}
-
-private theorem entry_le (y : Gam0 E n) (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y) ∈ GlobalTheory.LFun.KGL w (n := n))
-    (τ : E →+* PadicAlgCl p) (i j : Fin n) : ‖τ (y.1.1.val i j)‖ ≤ 1 := by
-  refine norm_le τ _ fun w hw => ?_
-  have h1 : (comp w (rat y)).val i j ∈ w.adicCompletionIntegers E := (GlobalTheory.AdelicU.mem_GLint_iff.1 (hy w hw)).1 i j
-  have h2 : (comp w (rat y)).val i j = ((y.1.1.val i j : E) : w.adicCompletion E) := rfl
-  rw [h2, HeightOneSpectrum.mem_adicCompletionIntegers, HeightOneSpectrum.valuedAdicCompletion_eq_valuation'] at h1
-  exact h1
-
-private theorem hyp_inv (y : Gam0 E n) (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y) ∈ GlobalTheory.LFun.KGL w (n := n)) :
-    ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y⁻¹) ∈ GlobalTheory.LFun.KGL w (n := n) := fun w hw => by
-  rw [map_inv, map_inv]; exact inv_mem (hy w hw)
-
-private theorem mult_le (hn : 0 < n) (τ : E →+* PadicAlgCl p) (y : Gam0 E n)
-    (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y) ∈ GlobalTheory.LFun.KGL w (n := n)) :
-    algebraMap ℚ_[p] (PadicAlgCl p) (algebraMap ℚ ℚ_[p] (y.1.2 : ℚ)) ∈ ReciprocityTheory.DiscreteGroups.LocalClassField.Obar p := by
-  have h : (y.1.1.val.map (GlobalTheory.SplitPts.conjE E).toRingHom)ᵀ * y.1.1.val =
-      algebraMap ℚ E y.1.2 • (1 : Matrix (Fin n) (Fin n) E) := y.2.1
-  have h0 := congrArg τ (congrFun (congrFun h ⟨0, hn⟩) ⟨0, hn⟩)
-
-  rw [Matrix.mul_apply, map_sum, Matrix.smul_apply, Matrix.one_apply_eq, smul_eq_mul, mul_one] at h0
-  have e : algebraMap ℚ_[p] (PadicAlgCl p) (algebraMap ℚ ℚ_[p] (y.1.2 : ℚ)) = τ (algebraMap ℚ E y.1.2) := by
-    simp only [eq_ratCast, map_ratCast]
-  rw [e, ← h0]
-  refine sum_mem fun k _ => ?_
-  rw [map_mul]
-  exact mul_mem (ReciprocityTheory.DiscreteGroups.LocalClassField.mem_Obar_iff.2 (entry_le y hy (τ.comp (GlobalTheory.SplitPts.conjE E).toRingHom) k ⟨0, hn⟩))
-    (ReciprocityTheory.DiscreteGroups.LocalClassField.mem_Obar_iff.2 (entry_le y hy τ k ⟨0, hn⟩))
-
-omit [NumberField E] [IsCMField E] in
-private theorem incl_mem (τ : E →+* PadicAlgCl p) (x : E) (hx : ‖τ x‖ ≤ 1) :
-    GlobalTheory.LKRes.inclK p (FwOf τ) 1 (embOf τ x) ∈ GlobalTheory.LKRes.intKQ p (FwOf τ) 1 :=
-  Subring.subset_closure (Or.inl ⟨⟨embOf τ x, ReciprocityTheory.DiscreteGroups.LocalClassField.mem_Obar_iff.2 hx⟩, rfl⟩)
-
-end UpperTheory.Gal.W2.Seed.IntRev
-
-open UpperTheory.Gal.W2.Seed.IntRev in
-theorem UpperTheory.Gal.W2.Seed.pPIntRev :
-    IntConj → PIntRev := by
-  intro _ E _ _ _ A n p _ S y hy
-  have hn : 0 < n := S.facts.pos
-  have hy' := hyp_inv y hy
-  refine Subgroup.mem_prod.2 ⟨mem_range_map _ _ (fun i j => ?_) (fun i j => ?_),
-    (Subgroup.mem_pi _).2 fun k _ => mem_range_map _ _ (fun i j => ?_) (fun i j => ?_)⟩
-  · obtain rfl : i = j := Subsingleton.elim _ _
-    have h := mult_le hn (S.P.iotaP.comp S.P.s) y hy
-    show Matrix.scalar (Fin 1) _ i i ∈ _
-    rw [Matrix.scalar_apply, Matrix.diagonal_apply_eq]
-    exact h
-  · obtain rfl : i = j := Subsingleton.elim _ _
-    have h := mult_le hn (S.P.iotaP.comp S.P.s) y⁻¹ hy'
-    show Matrix.scalar (Fin 1) _ i i ∈ _
-    rw [Matrix.scalar_apply, Matrix.diagonal_apply_eq]
-    exact h
-  · exact incl_mem (S.P.emb k) (y.1.1.val i j) (entry_le y hy (S.P.emb k) i j)
-  · exact incl_mem (S.P.emb k) ((y⁻¹).1.1.val i j) (entry_le y⁻¹ hy' (S.P.emb k) i j)
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PPIntRev =====
-
 -- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PVecCoord =====
 -- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PVecCoord", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.VecCoord\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Lemma\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MapWopWmap\n\n"}
 section -- clump:auto
@@ -1226,7 +1086,7 @@ theorem UpperTheory.Gal.W2.Seed.pVecCoord :
   let vec : ∀ w : Plc E, AfP p ⊗[ℚ] VQ S.D →+ (Fin n → w.adicCompletion E) := fun w =>
     if hw : (p : 𝓞 E) ∉ w.asIdeal then co w hw else 0
   have hvec : ∀ w (hw : (p : 𝓞 E) ∉ w.asIdeal) v i, vec w v i = ev w hw (ν v i) := fun w hw v i => by
-    simp only [vec, dif_pos hw]; rfl
+    simp only [vec, dite_eq_left hw]; rfl
   have hE : ∀ w (hw : (p : 𝓞 E) ∉ w.asIdeal) (c : 𝓞 E), ev w hw ((1 : AfP p) ⊗ₜ[ℚ] (c : E)) = algebraMap (𝓞 E) (w.adicCompletion E) c := by
     intro w hw c
     rw [← T.Φ_E, hev]
@@ -1234,7 +1094,7 @@ theorem UpperTheory.Gal.W2.Seed.pVecCoord :
   have hν4 : ∀ (r : AfP p) (q : ℚ) (y : Fin n → 𝓞 E) i, ν (r ⊗ₜ[ℚ] ((q ⊗ₜ[ℤ] (y : S.D.La) : VQ S.D))) i = (q • r) ⊗ₜ[ℚ] (y i : E) := by
     intro r q y i
     exact (congrArg (fun z => ν z i) (one_tmul_smul_eq_add_of_algebraMap_eq_add (M := S.D.La) r q y)).trans (hν1 _ y i)
-  refine ⟨vec, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨vec, ?_, ?_, ?_, ?_, ?_⟩
   · intro v h
     apply ν.injective
     rw [map_zero]
@@ -1266,10 +1126,6 @@ theorem UpperTheory.Gal.W2.Seed.pVecCoord :
     funext i
     rw [hvec w hw, ν.apply_symm_apply, hev]
     rfl
-  · intro w hw y i
-    rw [hvec w hw, ← hE w hw]
-    congr 1
-    exact hν1 1 y i
   · intro w hw g v
     funext i
     rw [hvec w hw, hν2, T.j_mx, RingHom.map_mulVec]
@@ -1303,249 +1159,6 @@ theorem UpperTheory.Gal.W2.Seed.pVecCoord :
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PVecCoord =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TraceMapUnipotent =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TraceMapUnipotent", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.VecCoord\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Lemma\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MapWopWmap\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.UG UpperTheory.Gal.W2.Seed
-open UpperTheory.Gal.CertificateRingHomMap (GUf Gam0 AfQ Plc sim mat comp rat lev ZU)
-open scoped TensorProduct Classical
-
-private lemma c_re_neg {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (τ : E →+* ℂ)
-    (h : InfinitePlace.mk τ = InfinitePlace.mk A.τ₀) : (τ (A.c : E)).re < 0 := by
-  rcases InfinitePlace.mk_eq_iff.mp h with h | h
-  · rw [h]; exact A.c_neg
-  · have h1 := A.c_neg
-    rw [← h, ComplexEmbedding.conjugate_coe_eq, Complex.conj_re] at h1
-    exact h1
-
-private lemma dg_ne {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) (i : Fin n) :
-    ((A.dg n i : 𝓞 E) : E) ≠ 0 := by
-  have := A.c_ne
-  unfold Arith.dg
-  split_ifs <;> simp [this]
-
-private lemma dg_cj {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) (i : Fin n) :
-    cj E ((A.dg n i : 𝓞 E) : E) = ((A.dg n i : 𝓞 E) : E) := by
-  have h : A.bar (A.dg n i) = A.dg n i := by
-    unfold Arith.dg
-    split_ifs <;> simp [A.c_real]
-  exact (A.bar_eq _).symm.trans (congrArg _ h)
-
-private lemma hd_cj {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) (i : Fin n) :
-    cj E ((A.hd n i : 𝓞 E) : E) = ((A.hd n i : 𝓞 E) : E) := by
-  have h : A.bar (A.hd n i) = A.hd n i := by
-    unfold Arith.hd Arith.dg
-    split_ifs <;> simp [A.c_real]
-  exact (A.bar_eq _).symm.trans (congrArg _ h)
-
-private lemma hd_eq {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) (i : Fin n) :
-    ((A.hd n i : 𝓞 E) : E) = -(A.c : E) * ((A.dg n i : 𝓞 E) : E) := by
-  simp [Arith.hd]
-
-private lemma re_form {n : ℕ} (a : ℂ) (x : Fin n → ℂ) :
-    (star x ⬝ᵥ ((Matrix.diagonal fun _ => a) *ᵥ x)).re = a.re * ∑ i, Complex.normSq (x i) := by
-  simp only [dotProduct, Matrix.mulVec_diagonal, Pi.star_apply, Complex.re_sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  have h : star (x i) * (a * x i) = a * ((Complex.normSq (x i) : ℝ) : ℂ) := by
-    rw [Complex.normSq_eq_conj_mul_self]
-    simp only [Complex.star_def]
-    ring
-  rw [h, Complex.re_mul_ofReal]
-
-private lemma sum_pos' {n : ℕ} {x : Fin n → ℂ} (hx : x ≠ 0) : 0 < ∑ i, Complex.normSq (x i) := by
-  obtain ⟨i, hi⟩ := Function.ne_iff.mp hx
-  exact Finset.sum_pos' (fun j _ => Complex.normSq_nonneg _)
-    ⟨i, Finset.mem_univ _, Complex.normSq_pos.mpr hi⟩
-
-private lemma form_eq {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) (e : E →+* ℂ) :
-    ((A.H n).map e)ᵀ * (Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E)⁻¹).map e =
-      Matrix.diagonal fun _ => -e (A.c : E) := by
-  unfold Arith.H
-  rw [Matrix.diagonal_map (map_zero _), Matrix.diagonal_map (map_zero _), Matrix.diagonal_transpose,
-    Matrix.diagonal_mul_diagonal]
-  congr 1
-  funext i
-  rw [hd_eq, map_mul, map_neg, map_inv₀, mul_assoc, mul_inv_cancel₀ ((map_ne_zero e).2 (dg_ne A n i)), mul_one]
-
-private lemma H_cj {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) :
-    (A.H n).map (cj E) = A.H n := by
-  unfold Arith.H
-  rw [Matrix.diagonal_map (map_zero _)]
-  congr 1
-  funext i
-  exact hd_cj A n i
-
-private abbrev Dm {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) : Matrix (Fin n) (Fin n) E :=
-  Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E)
-
-private lemma H_eq {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) :
-    A.H n = (-(A.c : E)) • Dm A n := by
-  unfold Arith.H
-  ext i j
-  by_cases h : i = j
-  · subst h; simp [hd_eq]
-  · simp [h]
-
-private lemma D_star {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) (M : Matrix (Fin n) (Fin n) E) :
-    Dm A n * (hermStar (A.H n) (A.det_ne n) M).unop = (M.map (cj E))ᵀ * Dm A n := by
-  have hc : -(A.c : E) ≠ 0 := neg_ne_zero.2 A.c_ne
-  have hu : IsUnit (A.H n).det := (A.det_ne n).isUnit
-  have hD : Dm A n = (-(A.c : E))⁻¹ • A.H n := by
-    rw [H_eq, smul_smul, inv_mul_cancel₀ hc, one_smul]
-  rw [hermStar_apply, show (A.H n).map (IsCMField.complexConj E : E →+* E) = A.H n from H_cj A n, hD]
-  rw [smul_mul_assoc, ← Matrix.mul_assoc, ← Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hu, Matrix.one_mul, Matrix.mul_smul]
-
-section
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {A : Arith E} {n p : ℕ} [Fact p.Prime]
-
-private def βS (S : Setup A n p) : S.G.Cˣ :=
-  (⟨Dm A n, Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E)⁻¹, by
-      rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-      congr 1
-      funext i
-      exact mul_inv_cancel₀ (dg_ne A n i), by
-      rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-      congr 1
-      funext i
-      exact inv_mul_cancel₀ (dg_ne A n i)⟩ : (Matrix (Fin n) (Fin n) E)ˣ)
-
-private lemma hU (A : Arith E) (n : ℕ) : IsUnit (Dm A n) := by
-  rw [Matrix.isUnit_iff_isUnit_det, Matrix.det_diagonal]
-  exact (Finset.prod_ne_zero_iff.2 fun i _ => dg_ne A n i).isUnit
-
-private lemma βS_sym (S : Setup A n p) : sh S.G (βS S : S.G.Cˣ) = (βS S : S.G.Cˣ) := by
-  have h := D_star A n (Dm A n)
-  have hD : (Dm A n).map (cj E) = Dm A n := by
-    rw [Matrix.diagonal_map (map_zero _)]
-    congr 1
-    funext i
-    exact dg_cj A n i
-  rw [hD, Matrix.diagonal_transpose] at h
-  exact (hU A n).mul_right_inj.1 h
-
-private lemma βS_pos (S : Setup A n p) (v : InfinitePlace S.G.F) (x : Fin S.G.n → ℂ) (hx : x ≠ 0) :
-    (sigPosH (S.G.gram_herm v) = 1 → 0 < (star x ⬝ᵥ ((S.G.gram v * S.G.psi v (((βS S)⁻¹ : S.G.Cˣ) : S.G.C)) *ᵥ x)).re) ∧
-      (sigPosH (S.G.gram_herm v) ≠ 1 → (star x ⬝ᵥ ((S.G.gram v * S.G.psi v (((βS S)⁻¹ : S.G.Cˣ) : S.G.C)) *ᵥ x)).re < 0) := by
-  have hs : sigPosH (S.G.gram_herm v) = sigPos (A.herm n) v.embedding := rfl
-  have hf : S.G.gram v * S.G.psi v (((βS S)⁻¹ : S.G.Cˣ) : S.G.C) = Matrix.diagonal fun _ => -v.embedding (A.c : E) :=
-    form_eq A n v.embedding
-  have hP := sum_pos' hx
-  rw [hf, re_form, hs, Complex.neg_re]
-  by_cases hm : InfinitePlace.mk v.embedding = InfinitePlace.mk A.τ₀
-  · have hc := c_re_neg A v.embedding hm
-    have h1' := ((S.sig v.embedding).1 hm).1
-    exact ⟨fun _ => mul_pos (neg_pos.2 hc) hP, fun h => absurd h1' h⟩
-  · have hc := A.c_pos v.embedding hm
-    have h0 := ((S.sig v.embedding).2 hm).1
-    refine ⟨fun h => ?_, fun _ => mul_neg_of_neg_of_pos (neg_neg_of_pos hc) hP⟩
-    rw [h0] at h
-    exact absurd h (by norm_num)
-
-private lemma sim_comm {Y Z : Matrix (Fin n) (Fin n) E} {s : E} (hs : s ≠ 0) (h : Y * Z = s • 1) : Z * Y = s • 1 := by
-  have h1 : Y * (s⁻¹ • Z) = 1 := by rw [Matrix.mul_smul, h, smul_smul, inv_mul_cancel₀ hs, one_smul]
-  have h2 := mul_eq_one_comm.1 h1
-  rw [smul_mul_assoc] at h2
-  calc Z * Y = s • (s⁻¹ • (Z * Y)) := by rw [smul_smul, mul_inv_cancel₀ hs, one_smul]
-    _ = s • 1 := by rw [h2]
-
-private lemma alg_mat (q : ℚ) : algebraMap ℚ (Matrix (Fin n) (Fin n) E) q = algebraMap ℚ E q • (1 : Matrix (Fin n) (Fin n) E) := by
-  rw [Algebra.algebraMap_eq_smul_one, algebraMap_smul]
-
-private lemma mem_iff (S : Setup A n p) (y : GL (Fin n) E × ℚˣ) : y ∈ GlobalTheory.LKCx.grp S.G (βS S) ↔ y ∈ Gam0 E n := by
-  have hs (q : ℚˣ) : algebraMap ℚ E q ≠ 0 := by simp
-  have key : (y.1.val * Dm A n) * (hermStar (A.H n) (A.det_ne n) y.1.val).unop =
-      y.1.val * (y.1.val.map (cj E))ᵀ * Dm A n := by
-    rw [Matrix.mul_assoc, D_star, Matrix.mul_assoc]
-  have hg : y ∈ GlobalTheory.LKCx.grp S.G (βS S) ↔
-      (y.1.val * (y.1.val.map (cj E))ᵀ = algebraMap ℚ E y.2 • (1 : Matrix (Fin n) (Fin n) E)) ∧ 0 < (y.2 : ℚ) := by
-    refine and_congr_left' ?_
-    change (y.1.val * Dm A n) * (hermStar (A.H n) (A.det_ne n) y.1.val).unop = algebraMap ℚ (Matrix (Fin n) (Fin n) E) y.2 * Dm A n ↔ _
-    rw [key, alg_mat]
-    exact (hU A n).mul_left_inj
-  have hG : y ∈ Gam0 E n ↔
-      ((y.1.val.map (cj E))ᵀ * y.1.val = algebraMap ℚ E y.2 • (1 : Matrix (Fin n) (Fin n) E)) ∧ 0 < (y.2 : ℚ) := Iff.rfl
-  rw [hg, hG]
-  exact and_congr_left' ⟨sim_comm (hs _), sim_comm (hs _)⟩
-
-private noncomputable def xOf {S : Setup A n p} (T : Tr S) : (AfP p ⊗[ℚ] S.G.C)ˣ :=
-  Units.map (RingHom.toMonoidHom T.μ.symm.toRingHom) (GeneralLinearGroup.map T.Φ T.a)
-
-private noncomputable def xv {S : Setup A n p} (T : Tr S) : AfP p ⊗[ℚ] Matrix (Fin n) (Fin n) E := (xOf T).val
-
-private noncomputable def xiv {S : Setup A n p} (T : Tr S) : AfP p ⊗[ℚ] Matrix (Fin n) (Fin n) E := ((xOf T)⁻¹).val
-
-private lemma traceMap_unipotent {S : Setup A n p} (T : Tr S) : T.μ (xv T) = T.a.val.map T.Φ :=
-  T.μ.apply_symm_apply _
-
-private lemma mu_xi {S : Setup A n p} (T : Tr S) : T.μ (xiv T) = (T.a⁻¹).val.map T.Φ :=
-  T.μ.apply_symm_apply _
-
-private lemma mu_one {S : Setup A n p} (T : Tr S) (M : Matrix (Fin n) (Fin n) E) :
-    T.μ ((1 : AfP p) ⊗ₜ[ℚ] M) = M.map fun e => (1 : AfP p) ⊗ₜ[ℚ] e := by
-  ext i k
-  exact T.mu 1 M i k
-
-private lemma triv_xOf_of_muStar (hM : MuStar) {S : Setup A n p} (T : Tr S) : Triv S.G (AfP p) (βS S : S.G.Cˣ) (xOf T) 1 := by
-  have hst := hM (AfP p) E A n T.μ T.mu (xv T)
-  rw [traceMap_unipotent] at hst
-  have hD : (Dm A n).map (fun e => (1 : AfP p) ⊗ₜ[ℚ] e) =
-      Matrix.diagonal (fun i => (1 : AfP p) ⊗ₜ[ℚ] ((A.dg n i : 𝓞 E) : E)) := by
-    ext i k
-    by_cases h : i = k
-    · subst h; simp
-    · simp [h]
-  have h0 := congrArg (fun M => M.map T.Φ) T.iso.1
-  simp only [Matrix.map_mul] at h0
-  have h1 : ((T.a.val.map T.Φ).map (conjT E (AfP p)))ᵀ *
-      Matrix.diagonal (fun i => (1 : AfP p) ⊗ₜ[ℚ] ((A.dg n i : 𝓞 E) : E)) * T.a.val.map T.Φ = 1 := by
-    have e1 : ((T.a.val.map (conjFin (GlobalTheory.SplitPts.conjE E)))ᵀ).map T.Φ = ((T.a.val.map T.Φ).map (conjT E (AfP p)))ᵀ := by
-      ext i k
-      exact T.Φ_conj _
-    have e2 : (Matrix.diagonal fun i => algebraMap E (Af E) ((A.dg n i : 𝓞 E) : E)).map T.Φ =
-        Matrix.diagonal (fun i => (1 : AfP p) ⊗ₜ[ℚ] ((A.dg n i : 𝓞 E) : E)) := by
-      ext i k
-      by_cases h : i = k
-      · subst h; simp [T.Φ_E]
-      · simp [h]
-    rw [e1, e2, Matrix.map_one _ (map_zero _) (map_one _)] at h0
-    exact h0
-  have h2 : T.a.val.map T.Φ * (((T.a.val.map T.Φ).map (conjT E (AfP p)))ᵀ *
-      Matrix.diagonal (fun i => (1 : AfP p) ⊗ₜ[ℚ] ((A.dg n i : 𝓞 E) : E))) = 1 := mul_eq_one_comm.1 h1
-  have e : xv T * ((1 : AfP p) ⊗ₜ[ℚ] Dm A n) * (starT (hermStar (A.H n) (A.det_ne n)) (AfP p) (xv T)).unop = 1 := by
-    apply T.μ.injective
-    rw [map_mul, map_mul, map_one, traceMap_unipotent, mu_one, hD, Matrix.mul_assoc, hst]
-    exact h2
-  exact e.trans (map_one _).symm
-
-private lemma emb_eq {S : Setup A n p} (T : Tr S) (hx : Triv S.G (AfP p) (βS S : S.G.Cˣ) (xOf T) 1) (y : GL (Fin n) E × ℚˣ)
-    (h : y ∈ GlobalTheory.LKCx.grp S.G (βS S)) (h' : y ∈ Gam0 E n) :
-    GlobalTheory.LKCx.toAfF S.G (βS S) (xOf T) 1 hx ⟨y, h⟩ = T.j (rat ⟨y, h'⟩) := by
-  apply Subtype.ext
-  apply Prod.ext
-  · apply Units.ext
-    apply T.μ.injective
-    refine Eq.trans ?_ (T.j_mx (rat ⟨y, h'⟩)).symm
-    change T.μ (xv T * ((1 : AfP p) ⊗ₜ[ℚ] y.1.val) * xiv T) = _
-    rw [map_mul, map_mul, traceMap_unipotent, mu_xi, mu_one, Units.val_mul, Units.val_mul, Matrix.map_mul, Matrix.map_mul]
-    congr 2
-    ext i k
-    exact (T.Φ_E _).symm
-  · apply Units.ext
-    refine Eq.trans ?_ (T.j_sim (rat ⟨y, h'⟩)).symm
-    exact RingHom.congr_fun (Subsingleton.elim (algebraMap ℚ (AfP p)) (T.ρ.comp (algebraMap ℚ AfQ))) _
-
-end
-theorem UpperTheory.Gal.W2.Seed.pStdForm2 :
-    MuStar → StdForm2 := by
-  intro hM E _ _ _ A n p _ S T
-  have hx := triv_xOf_of_muStar hM T
-  refine ⟨⟨βS S, βS_sym S, ⟨xOf T, 1, hx⟩, βS_pos S⟩, xOf T, hx, fun y => mem_iff S y, fun y h h' => emb_eq T hx y h h'⟩
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TraceMapUnipotent =====
 
 -- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.UptsExt =====
 -- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.UptsExt", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MapWopWmap\n\n"}
@@ -1632,8 +1245,7 @@ theorem intCof_holds : UpperTheory.Gal.Int.Geo.Pl.IntCof := fun E _ _ _ n g => p
 
 theorem frameEx_holds : FrameEx := fun E _ _ _ A n p _ S hn => by
   obtain ⟨T⟩ := trEx_holds E A n p S hn
-  obtain ⟨vec, v1, v2, v3, v4, v5, v6⟩ := vecCoord_holds E A n p S T
-  obtain ⟨B, x, hx, hm, he⟩ := pStdForm2 pMuStar E A n p S T
+  obtain ⟨vec, v1, v2, v3, v5, v6⟩ := vecCoord_holds E A n p S T
   exact ⟨{
     j := T.j
     surj := fun h => ⟨T.sec h, T.j_sec h⟩
@@ -1645,19 +1257,11 @@ theorem frameEx_holds : FrameEx := fun E _ _ _ A n p _ S hn => by
     vec_inj := v1
     vec_hat := v2
     vec_surj := v3
-    vec_in := v4
     vec_act := v5
     vec_mul := v6
     ρ := T.ρ
     ρ_int := T.int
     mult := T.j_sim
-    B := B
-    x := x
-    t := 1
-    hx := hx
-    mem := hm
-    emb1 := he
-    emb2 := fun y _ h' => ⟨fun h => (pPInt E A n p S ⟨y, h'⟩ h).1, fun h => pPIntRev pIntConj E A n p S ⟨y, h'⟩ h⟩
     th := CertificateRingHomMap.th
     th_mat := fun _ => rfl
     th_sim := fun _ => rfl

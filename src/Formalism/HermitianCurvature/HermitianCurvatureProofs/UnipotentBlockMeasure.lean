@@ -3,53 +3,7 @@ module
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.GrowthOfBasic
 public import Formalism.HermitianCurvature.StatementPN
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalVolumePositivity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -61,7 +15,6 @@ open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.PN
 section
 
 open Finset
-open Formalism.FourierDecayAlt
 
 theorem book_constants_pos_of_pos {P : Type} [Fintype P] (B : S3.MassData P) (h : B.Pos) :
     0 < B.Gam1 ∧ 0 < B.μK ∧ 0 < B.μKpp ∧ 0 < B.μSpp ∧ 0 < B.μSpp' ∧ 0 < B.MM ∧ 0 < B.unitLevelVolume ∧
@@ -153,11 +106,7 @@ theorem t_FramePassage : FramePassage := by
   have h1 : (B.c0 * B.c0')⁻¹ * B.IntN = (B.unitLevelVolume / B.volZZ)⁻¹ * ((B.c0 * B.c0')⁻¹ * B.IntC) := by
     rw [hJac]
     field_simp
-  have hpb : 0 < rd ^ (((f * r * (r + 1) * (8 * r + 10) : ℕ) : ℝ) / 3) := Real.rpow_pos_of_pos hrd _
   rw [h1, F1, F2, F3, hexp, div_pow]
-  have h2 : (0 : ℝ) < 2 ^ (f * (r + 1)) := by positivity
-  have h3 : 0 < rd ^ (f * (r + 1)) := by positivity
-  have h4 : 0 < g ^ (f * (r + 1) * (2 * r + 3)) := by positivity
   field_simp
 
 theorem t_NormRe : NormRe := by
@@ -270,8 +219,7 @@ theorem ngen_nonneg (L : LocalNG Cl Nu) (C0 r : ℕ) (hb : L.Basic) (hM : L.Mass
     have h2 := hnn p
     have hpos : 0 < 8 * L.H p ^ (C0 * (r + 1) ^ 2 + 2 * (2 * r + 2)) :=
       mul_pos (by norm_num) (pow_pos (by linarith [hH p]) _)
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     have := mul_neg_of_pos_of_neg hpos hneg
     linarith
   · rw [← hM.1 p hp]
@@ -320,7 +268,6 @@ theorem t_MeanAmpJoint : Formalism.FourierDecayAlt.PN.MeanAmpJoint := by
   intro hS4 _ Cl Nu L C1 C0 r k hb hN hM hU S
   unfold e7
   have hH : ∀ p, 1 ≤ L.H p := hb.2.1
-  have hnn : ∀ p, 0 ≤ L.nn p := hb.2.2.2.2.1
   refine mean hS4 L C0 r (k - 2 * r - 5) _ (fun p => L.H p ^ (C1 * (r + 1) ^ 2))
     (fun p => if p ∈ L.Om then 8 * L.H p ^ (C0 * (r + 1) ^ 2 + 2 * (2 * r + 2)) else 1)
     (fun p => one_le_pow₀ (hH p)) ?_ hb hM hU hN.1 hN.2 ?_ ?_ S
@@ -460,16 +407,6 @@ open Finset
 section
 variable {ι V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [CompleteSpace V]
 
-theorem summable_pairs (a : ι → V) (ha : Summable (fun i => ‖a i‖)) :
-    Summable (fun p : ι × ι => (inner ℂ (a p.1) (a p.2) : ℂ)) := by
-  have hprod : Summable (fun p : ι × ι => ‖a p.1‖ * ‖a p.2‖) :=
-    Summable.mul_of_nonneg (f := fun i => ‖a i‖) (g := fun i => ‖a i‖) ha ha
-      (fun i => norm_nonneg (a i)) (fun i => norm_nonneg (a i))
-  have hb : Summable (fun p : ι × ι => ‖(inner ℂ (a p.1) (a p.2) : ℂ)‖) :=
-    Summable.of_nonneg_of_le (fun p => norm_nonneg _)
-      (fun p => norm_inner_le_norm (𝕜 := ℂ) (a p.1) (a p.2)) hprod
-  exact hb.of_norm
-
 theorem normsq_tsum (a : ι → V) (ha : Summable (fun i => ‖a i‖)) :
     ‖∑' i, a i‖ ^ 2 = ∑' p : ι × ι, (inner ℂ (a p.1) (a p.2) : ℂ).re := by
   apply Formalism.FourierDecayAlt.P.GrowthPolynomialOperator.norm_sq_tsum <;> assumption
@@ -514,9 +451,9 @@ theorem t_ClassSquaresSum : Formalism.FourierDecayAlt.PN.ClassSquaresSum := by
     intro p
     simp only [hF]
     by_cases h : cl p.1 = cl p.2
-    · simp only [Set.indicator, Set.mem_ofPred_eq, h, if_true]
+    · simp only [Set.indicator, Set.mem_ofPred_eq, h, ite_true]
       exact (Complex.abs_re_le_norm _).trans (norm_inner_le_norm _ _)
-    · simp only [Set.indicator, Set.mem_ofPred_eq, h, if_false, norm_zero]
+    · simp only [Set.indicator, Set.mem_ofPred_eq, h, ite_false, norm_zero]
       positivity
   have hGs : Summable G := by
     rw [← hinj.summable_iff hsupp]
@@ -646,12 +583,9 @@ theorem t_SecondBracket : SecondBracket := by
   rw [hinner]
   set σ : ℝ := ∑ y ∈ (T.filter (fun x => x.2.1 = γ)).image (fun x => (x.1, x.2.2)), a2 y.1 γ y.2 with hσ
   have hσ0 : 0 ≤ σ := sum_nonneg (fun y _ => ha2 _ _ _)
-  have hH0 : 0 ≤ Hh γ := by linarith
   have hσ1 : σ ≤ κ2 * Hh γ ^ e7 * (AAre * e1 * Hh γ ^ eN * n γ) := by
     refine le_trans (hmean γ hp _) ?_
     exact mul_le_mul_of_nonneg_left (hmass γ hp) (by positivity)
-  have hNG0 : 0 ≤ NG γ := by linarith
-  have hND0 : 0 ≤ ND γ := by linarith
   have hF : w γ * (Pc * NG γ ^ 6) * Jloc γ ≤ w γ * (Pc * NG γ ^ 6) * (cSt * JB γ) :=
     mul_le_mul_of_nonneg_left (hmeas γ hp) (by positivity)
   have hstep : (w γ * (Pc * NG γ ^ 6) * Jloc γ) * σ ≤
@@ -661,10 +595,8 @@ theorem t_SecondBracket : SecondBracket := by
 
   set Xx : ℝ := NG γ * ND γ with hX
   have hX1 : 1 ≤ Xx := by rw [hX]; nlinarith
-  have hX0 : 0 ≤ Xx := by linarith
   have hNGX : NG γ ≤ Xx := by rw [hX]; nlinarith
   have hHX : Hh γ ≤ gf * Xx := by rw [hX, ← mul_assoc]; exact hheight γ hp
-  have hgf0 : 0 ≤ gf := by linarith
   have hpw : NG γ ^ 6 * (Hh γ ^ e7 * Hh γ ^ eN) ≤ gf ^ Aexp * Xx ^ Aexp := by
     rw [← pow_add]
     calc NG γ ^ 6 * Hh γ ^ (e7 + eN) ≤ Xx ^ 6 * (gf * Xx) ^ (e7 + eN) := by gcongr
@@ -967,7 +899,6 @@ open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.PN
 section
 
 open Finset NumberField
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.PN
 
 lemma pos_facts {P : Type} [Fintype P] (B : S3.MassData P) (h : B.Pos) :
     0 < B.AA ∧ 0 < B.d * B.d' / B.Dstar := by
@@ -1007,10 +938,6 @@ theorem t_RowNGJoint : RowNGJoint := by
   set dd : ℝ := B.d * B.d' / B.Dstar with hdd
   set AAre : ℝ := abelian₂ rd r k f * B.AA with hAAre
   set EX : ℝ := Real.exp (Cn * ((2 * r + 2 : ℕ) : ℝ) ^ 5 * f * Real.log b) with hEX
-  have hS0 : 0 ≤ S := by rw [hS]; positivity
-  have hPc0 : 0 ≤ Pc := by rw [hPc]; positivity
-  have hgA0 : 0 ≤ gA := by rw [hgA]; positivity
-  have hex0 : 0 ≤ ex := by rw [hex]; positivity
   have hF : 0 ≤ S * κ * cSt * e1 * Pc * gA * ex := by positivity
   calc B.Gam1 * (S * (κ * cSt * AAre * e1 * Pc * gA * (ex * Ire)))
       = (S * κ * cSt * e1 * Pc * gA * ex) * (B.Gam1 * AAre * Ire) := by ring

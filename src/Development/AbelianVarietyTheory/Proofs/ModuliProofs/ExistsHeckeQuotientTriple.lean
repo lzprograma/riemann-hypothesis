@@ -161,9 +161,3 @@ theorem dense_image_points {k : Type} [Field k] [IsAlgClosed k] {A B : Over (Sp 
   exact congrArg f.left (pointOfClosedPoint_apply A.hom a ha _)
 
 end GlobalTheory.CechPic
-
-namespace GlobalTheory
-
-open CechPic
-
-end GlobalTheory

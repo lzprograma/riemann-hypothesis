@@ -4,51 +4,7 @@ public import Formalism.HermitianCurvature.StatementLE
 public import Mathlib.LinearAlgebra.Lagrange
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasIterDeriv
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaLimit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeightedL2ConstMul
 
@@ -157,13 +113,9 @@ theorem weighted_L2_add (B : Base) (wt : B.Ω → ℝ) (hw : ∀ ω, 0 ≤ wt ω
 
 theorem weighted_L2_sum (B : Base) (wt : B.Ω → ℝ) (hw : ∀ ω, 0 ≤ wt ω) {I : Type} (s : Finset I) (f : I → B.Ω → ℂ)
     (hf : ∀ i ∈ s, WeightedL2 B wt (f i)) : WeightedL2 B wt (fun ω => ∑ i ∈ s, f i ω) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using weighted_L2_zero B wt
-  | insert a s ha ih =>
-    simp_rw [Finset.sum_insert ha]
-    exact weighted_L2_add B wt hw _ _ (hf a (Finset.mem_insert_self a s))
-      (ih fun i hi => hf i (Finset.mem_insert_of_mem hi))
+  simpa only [← Finset.sum_apply] using
+    Finset.sum_induction f (WeightedL2 B wt) (fun _ _ => weighted_L2_add B wt hw _ _)
+      (weighted_L2_zero B wt) hf
 
 theorem coeff_id (s : Finset ℝ) (d k j : ℕ) (hs : s.card = d + 1) (hk : k ≤ d) :
     ∑ x ∈ s, (Lagrange.basis s id x).coeff j * x ^ k = if j = k then 1 else 0 := by
@@ -196,10 +148,10 @@ theorem extract (N d : ℕ) (grid : Fin N → Finset ℝ) (hg : ∀ a, (grid a).
       simp_rw [h3]
       by_cases h : κ = κ'
       · subst h; simp
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         obtain ⟨a, ha⟩ := Function.ne_iff.1 h
         apply Finset.prod_eq_zero (Finset.mem_univ a)
-        rw [if_neg]; intro hh; exact ha (Fin.ext hh)
+        rw [ite_eq_right]; intro hh; exact ha (Fin.ext hh)
     have h4 : ((if κ = κ' then (1 : ℂ) else 0)) = (((if κ = κ' then (1 : ℝ) else 0) : ℝ) : ℂ) := by
       split_ifs <;> simp
     rw [h4, ← h1]; push_cast; rw [Finset.sum_mul]; apply Finset.sum_congr rfl; intros; ring
@@ -281,9 +233,9 @@ theorem coefIntegrable : CoefIntegrable := by
     rw [hds]
     apply weighted_L2_const_mul
     by_cases hp : p < S.r + 1 + 1
-    · simp only [if_pos hp]
+    · simp only [ite_eq_left hp]
       exact hco (fun _ => ⟨p, hp⟩)
-    · simp only [if_neg hp]
+    · simp only [ite_eq_right hp]
       exact weighted_L2_zero B _
   have he : (fun ω => th ε σ (B.G ω) * LE.sq B (S.d Y) (S.ds Y p) ω) =
       fun ω => ∑ k, (th ε σ (B.G ω) * S.d Y ω k) * ‖S.ds Y p ω k‖ ^ 2 := by
@@ -420,7 +372,7 @@ theorem L2 (hTS : ThetaSmooth) (hTR : ThetaRange) (hTL : ThetaLimit) (hTB : Thet
         _ = _ := mul_one _
     · refine Eventually.of_forall fun ω => ?_
       have h0 := hTL σ p (B.G ω) (B.G_pos ω)
-      rw [if_neg hp] at h0
+      rw [ite_eq_right hp] at h0
       have h1 : Tendsto (fun ε => ((ld p (th ε σ) (B.G ω) : ℝ) : ℂ)) (𝓝[>] 0) (𝓝 ((0:ℝ):ℂ)) :=
         (Complex.continuous_ofReal.tendsto _).comp h0
       simpa using h1.mul_const (h ω)
@@ -453,17 +405,17 @@ theorem domConv : DomConv := by
     intro p _
     by_cases hp : p = 0
     · subst hp
-      simp only [if_true]
+      simp only [ite_true]
       simp_rw [hTZ B S _ σ Y]
       exact (Complex.continuous_ofReal.tendsto _).comp l2
-    · rw [if_neg hp]; exact l3 p hp
+    · rw [ite_eq_right hp]; exact l3 p hp
   have llhs : Tendsto (fun ε => ((|S.P Y| * S.Ath ε σ : ℝ) : ℂ)) (𝓝[>] 0) (𝓝 ((|S.P Y| * S.A0 : ℝ) : ℂ)) :=
     (Complex.continuous_ofReal.tendsto _).comp (l1.const_mul _)
   have heq : (fun ε => ((|S.P Y| * S.Ath ε σ : ℝ) : ℂ)) =ᶠ[𝓝[>] 0]
       fun ε => ∑ p ∈ range (S.r + 2), S.term ε σ Y p := by
     filter_upwards [self_mem_nhdsWithin] with ε hε using hStar ε hε Y hY
   have hfin := tendsto_nhds_unique (llhs.congr' heq) lsum
-  rw [Finset.sum_ite_eq' (range (S.r + 2)) 0, if_pos (by simp)] at hfin
+  rw [Finset.sum_ite_eq' (range (S.r + 2)) 0, ite_eq_left (by simp)] at hfin
   exact_mod_cast hfin.symm
 
 end Formalism.FourierDecayAlt.P.LEx2
@@ -740,13 +692,13 @@ theorem limitA : LimitA := by
     rw [hdS i]
     apply weighted_L2_const_mul
     by_cases hp : p < D + 1
-    · simp only [if_pos hp]; exact heL2 p i
-    · simp only [if_neg hp]; exact weighted_L2_zero B _
+    · simp only [ite_eq_left hp]; exact heL2 p i
+    · simp only [ite_eq_right hp]; exact weighted_L2_zero B _
   refine ⟨fun i => ?_, ?_⟩
   · rw [hdS i]
     by_cases hp : p < D + 1
-    · simp only [if_pos hp]; exact measurable_const.mul (hem p i)
-    · simp only [if_neg hp]; exact measurable_const
+    · simp only [ite_eq_left hp]; exact measurable_const.mul (hem p i)
+    · simp only [ite_eq_right hp]; exact measurable_const
   · have he : LE.sq B (F.dw Y) (dS B (F.gw Y) F.u p) =
         fun ω => ∑ i, F.cw Y i * (F.Wt ω ^ N * ‖dS B (F.gw Y) F.u p ω i‖ ^ 2) := by
       funext ω; unfold LE.sq Fam.dw; apply Finset.sum_congr rfl; intros; ring
@@ -787,7 +739,7 @@ theorem markovTerm : MarkovTerm := by
     fun q ω k => dS_poly B (S.g Y) S.X (S.r + 1) c hc q ω k
   by_cases hp : p < S.r + 1 + 1
   swap
-  · have : S.ds Y p = fun _ _ => 0 := by funext ω k; rw [hdsq, if_neg hp]; simp
+  · have : S.ds Y p = fun _ _ => 0 := by funext ω k; rw [hdsq, ite_eq_right hp]; simp
     have h0 : S.Dn ε σ Y p = 0 := by rw [hDn, this]; simp [LE.sq]
     rw [h0]; positivity
   set w : Fn B (Bool × S.ι) := S.ds Y p with hw
@@ -806,7 +758,7 @@ theorem markovTerm : MarkovTerm := by
         rw [hc s ω k]
         apply Finset.sum_congr rfl
         intro q hq
-        rw [hdsq, if_pos (Finset.mem_range.1 hq)]
+        rw [hdsq, ite_eq_left (Finset.mem_range.1 hq)]
         have : (q.factorial : ℂ) ≠ 0 := by exact_mod_cast q.factorial_ne_zero
         field_simp
       simp_rw [hgs, Finset.mul_sum, Finset.sum_mul, Finset.sum_div, Finset.mul_sum]
@@ -842,7 +794,7 @@ theorem markovTerm : MarkovTerm := by
       constructor <;> linarith)
   rw [hfun, iterDeriv_poly] at hmk
   simp only [Complex.ofReal_zero] at hmk
-  rw [← Polynomial.coeff_zero_eq_eval_zero, Polynomial.coeff_iterate_derivative, mkP_coeff, zero_add, if_pos hp] at hmk
+  rw [← Polynomial.coeff_zero_eq_eval_zero, Polynomial.coeff_iterate_derivative, mkP_coeff, zero_add, ite_eq_left hp] at hmk
   have hval : (p.descFactorial p) • a' p = ((S.Dn ε σ Y p : ℝ) : ℂ) := by
     rw [Nat.descFactorial_self, hDn, ← int_pr_self]
     simp only [a', nsmul_eq_mul]

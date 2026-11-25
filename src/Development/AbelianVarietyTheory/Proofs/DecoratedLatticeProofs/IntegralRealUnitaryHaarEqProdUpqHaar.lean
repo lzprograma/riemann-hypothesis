@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousPsiT
 public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaSourceAction
 import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
@@ -52,35 +53,12 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.PairLift GlobalTheory.Chain.RealIt
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HaarReal
 open Formalism.IndefR.Eqv
 
 theorem continuous_psiT (D : D7) (τ : D.what₂.Tau) : Continuous (psiT D τ) := by
-  have hsum : ∀ x : AE D, psiT D τ x = ∑ c, psiT D τ (algebraMap (AF D.host.F) (AE D) ((basAF D).repr x c)) *
-      psiT D τ (basAF D c) := by
-    intro x
-    conv_lhs => rw [← (basAF D).sum_repr x]
-
-    rw [map_sum]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    rw [Algebra.smul_def, map_mul]
-  have hc : ∀ c, Continuous fun x : AE D => (basAF D).repr x c := fun c =>
-    (continuous_apply c).comp (G5.tensCoordH (basE D) (AF D.host.F)).continuous
-  have halg : Continuous fun a : AF D.host.F => psiT D τ (algebraMap (AF D.host.F) (AE D) a) := by
-    have e : (fun a : AF D.host.F => psiT D τ (algebraMap (AF D.host.F) (AE D) a)) =
-        fun a => thetaC D τ ((fstA D.host.F a) ⊗ₜ[D.host.F] (1 : D.host.E)) := by
-      funext a
-      simp only [psiT, RingHom.comp_apply, Algebra.TensorProduct.algebraMap_apply, infPart,
-        AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul, map_one]
-      rfl
-    rw [e]
-    exact ((isInfFam_thetaC D) τ).2.comp continuous_fst
-  have hfun : (⇑(psiT D τ) : AE D → ℂ) = fun x => ∑ c, psiT D τ (algebraMap (AF D.host.F) (AE D)
-      ((basAF D).repr x c)) * psiT D τ (basAF D c) := funext hsum
-  rw [hfun]
-  exact continuous_finsetSum _ fun c _ => (halg.comp (hc c)).mul continuous_const
+  first | exact _root_.Formalism.IndefR.Eqv.continuous_psiT | exact @_root_.Formalism.IndefR.Eqv.continuous_psiT | apply _root_.Formalism.IndefR.Eqv.continuous_psiT <;> assumption
 
 end GlobalTheory.HaarReal
 

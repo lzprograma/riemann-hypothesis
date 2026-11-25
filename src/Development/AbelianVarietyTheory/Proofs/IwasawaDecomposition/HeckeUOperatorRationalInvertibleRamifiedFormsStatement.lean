@@ -179,7 +179,6 @@ theorem card_annihilator_mul (k W : Type) [Field k] [Fintype k] [AddCommGroup W]
 
 theorem eq_zero_of_hyperplane_sums (k W M : Type) [Field k] [Fintype k] [DecidableEq k]
     [AddCommGroup W] [Module k W] [Finite W] [AddCommGroup M] [Module ℂ M] (ψ : W → M)
-    (_h0 : ψ 0 = 0)
     (h1 : ∀ g : Module.Dual k W, g ≠ 0 → ∑ᶠ x ∈ {x | g x = 1}, ψ x = 0)
     (h2 : ∀ x, ∑ a : kˣ, ψ ((a : k) • x) = 0) (x0 : W) : ψ x0 = 0 := by
   classical
@@ -208,7 +207,7 @@ theorem eq_zero_of_hyperplane_sums (k W M : Type) [Field k] [Fintype k] [Decidab
         Finset.sum_comm]
       refine Finset.sum_eq_zero fun x _ => ?_
       by_cases hx : g x = 0
-      · simp only [hx, if_true]; exact h2 x
+      · simp only [hx, ite_true]; exact h2 x
       · simp [hx]
     · by_cases hg : g = 0
       · subst hg
@@ -241,15 +240,15 @@ theorem eq_zero_of_hyperplane_sums (k W M : Type) [Field k] [Fintype k] [Decidab
     rw [← mul_smul]
     by_cases hx : x = x0
     · subst hx
-      simp only [sub_self, map_zero, Finset.filter_true, Finset.card_univ, if_true, hr]
+      simp only [sub_self, map_zero, Finset.filter_true, Finset.card_univ, ite_true, hr]
       rw [← add_smul]; congr 1; ring
     · have := card_annihilator_mul k W (x - x0) (sub_ne_zero.mpr hx)
-      rw [if_neg hx, add_zero, hN, ← this]
+      rw [ite_eq_right hx, add_zero, hN, ← this]
       congr!
   have D := congrArg (fun m => Fintype.card k • m) B
   simp only [Finset.smul_sum, C] at D
   simp only [smul_zero, Finset.sum_add_distrib, ← Finset.smul_sum, T,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, zero_add] at D
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true, zero_add] at D
   exact hcancel _ _ (Nat.mul_ne_zero (show r ≠ 0 by omega) Fintype.card_ne_zero) D
 
 end GlobalTheory.FiniteRadon
@@ -347,14 +346,6 @@ theorem rel_inj (hs : Function.Surjective res) (ht : res t = 0) (htf : ∀ x : V
     · exact (A y hy).2.symm
     · rw [ho.off y hy, ho'.off y (fun h => hy (B y h).1)]
 
-theorem rel_ne (ht : res t = 0) (htf : ∀ x : V, t • x = 0 → x = 0)
-    (hsat : ∀ s x, res s ≠ 0 → s • x ∈ Λ → x ∈ Λ) (hr : Red res t Λ π) (q : Pr R V k) :
-    ¬ Rel res t Λ π q 0 := by
-  rintro ⟨ho, hk, e, he, h⟩
-  have := ((hk _).1 (mem_of_pi htf hsat hr (te_mem ht ho hk (mem_of_one ho he)) h)).2
-  rw [he] at this
-  exact one_ne_zero this
-
 theorem rel_ex (hs : Function.Surjective res) {q : Pr R V k} (ho : q.Ok res) (hk : q.IsKer Λ) :
     ∃ w, Rel res t Λ π q w := by
   obtain ⟨x, hx⟩ := ho.ne
@@ -389,15 +380,15 @@ theorem eq_zero_of_upSum_of_norm : ∀ (R V k W M : Type) [CommRing R] [AddCommG
   let ψ : W → M := fun w => if h : ∃ q, Rel res t Λ π q w then Φ h.choose else 0
   have ψ1 : ∀ q w, Rel res t Λ π q w → ψ w = Φ q := fun q w h => by
     have h0 : ∃ q, Rel res t Λ π q w := ⟨q, h⟩
-    simp only [ψ, dif_pos h0]
+    simp only [ψ, dite_eq_left h0]
     rw [rel_inj hs ht htf hsat hr h0.choose_spec h]
-  have ψ0 : ∀ w, (¬ ∃ q, Rel res t Λ π q w) → ψ w = 0 := fun w h => dif_neg h
+  have ψ0 : ∀ w, (¬ ∃ q, Rel res t Λ π q w) → ψ w = 0 := fun w h => dite_eq_right h
   let j : Pr R V k → W := fun q => if h : ∃ w, Rel res t Λ π q w then h.choose else 0
   have j1 : ∀ q : Pr R V k, q.Ok res → q.IsKer Λ → Rel res t Λ π q (j q) := fun q ho hk => by
     have h0 : ∃ w, Rel res t Λ π q w := rel_ex hs ho hk
-    simp only [j, dif_pos h0]
+    simp only [j, dite_eq_left h0]
     exact h0.choose_spec
-  have key := _root_.GlobalTheory.FiniteRadon.eq_zero_of_hyperplane_sums k W M ψ (ψ0 _ fun ⟨q, h⟩ => rel_ne ht htf hsat hr q h) (fun g hg => ?_) (fun w => ?_)
+  have key := _root_.GlobalTheory.FiniteRadon.eq_zero_of_hyperplane_sums k W M ψ (fun g hg => ?_) (fun w => ?_)
   · intro q ho hk
     rw [← ψ1 q _ (j1 q ho hk)]
     exact key _
@@ -844,18 +835,13 @@ namespace GlobalTheory.LevelHecke.AboveSum
 
 variable {R V k : Type} [CommRing R] [AddCommGroup V] [Module R V] [Field k]
 
-theorem mem_of_one {res : R →+* k} {q : Pr R V k} (h : q.Ok res) {e : V} (he : q.f e = 1) : e ∈ q.L := by
-  by_contra hn
-  rw [h.off e hn] at he
-  exact zero_ne_one he
-
 theorem smul_mem_ker {res : R →+* k} {q : Pr R V k} {Λ : Submodule R V} (h : q.Ok res) (hk : q.IsKer Λ) {t : R}
     (ht : res t = 0) {e : V} (he : q.f e = 1) : t • e ∈ Λ :=
-  (hk _).2 ⟨q.L.smul_mem _ (mem_of_one h he), by rw [h.smul _ _ (mem_of_one h he), ht, zero_mul]⟩
+  (hk _).2 ⟨q.L.smul_mem _ (GlobalTheory.LevelHecke.UpInj.mem_of_one h he), by rw [h.smul _ _ (GlobalTheory.LevelHecke.UpInj.mem_of_one h he), ht, zero_mul]⟩
 
 theorem sub_mem_ker {res : R →+* k} {q : Pr R V k} {Λ : Submodule R V} (h : q.Ok res) (hk : q.IsKer Λ)
     {e : V} (he : q.f e = 1) {y : V} (hy : y ∈ q.L) {a : R} (ha : res a = q.f y) : y + (-a) • e ∈ Λ := by
-  have he' := mem_of_one h he
+  have he' := GlobalTheory.LevelHecke.UpInj.mem_of_one h he
   refine (hk _).2 ⟨q.L.add_mem hy (q.L.smul_mem _ he'), ?_⟩
   rw [h.add _ hy _ (q.L.smul_mem _ he'), h.smul _ _ he', he, map_neg, ha]
   ring
@@ -866,7 +852,7 @@ theorem le_of_ker {res : R →+* k} (hres : Function.Surjective res) {q q' : Pr 
   obtain ⟨a, ha⟩ := hres (q.f y)
   have h1 := sub_mem_ker h hk he hy ha
   have h2 := (hk' _).1 (Λ.add_mem h1 (Λ.smul_mem a hd))
-  have h3 := mem_of_one h' he'
+  have h3 := GlobalTheory.LevelHecke.UpInj.mem_of_one h' he'
   have e0 : y = (y + (-a) • e + a • (e - e')) + a • e' := by
     rw [smul_sub, neg_smul]; abel
   have h4 := q'.L.smul_mem a h3
@@ -901,7 +887,7 @@ theorem finsum_above : ∀ (R V k W M : Type) [CommRing R] [AddCommGroup V] [Mod
     obtain ⟨-, -, e', h3', h4'⟩ := hq w' hw'
     rw [← hww] at h3'
     have hd : e + (-1 : R) • e' ∈ p.L :=
-      sub_mem_ker h1 h2 h3' (mem_of_one h1 h3) (by rw [map_one, h3])
+      sub_mem_ker h1 h2 h3' (GlobalTheory.LevelHecke.UpInj.mem_of_one h1 h3) (by rw [map_one, h3])
     have e0 : t • e = t • e' + t • (e + (-1 : R) • e') := by
       rw [neg_smul, one_smul, smul_add, smul_neg]; abel
     rw [← h4, ← h4', e0, hred.add _ (smul_mem_ker h1 h2 ht h3') _ (p.L.smul_mem _ hd), hred.smul _ _ hd, ht,
@@ -937,10 +923,6 @@ noncomputable section
 namespace GlobalTheory.LevelIndexCompare
 
 open Formalism.BasicNotions Formalism.MainNotions GlobalTheory.IndefiniteRowSideFullHecke.IndexAtLevelRanks
-
-section General
-
-end General
 
 variable (D : D7) (u : D.what₂.Word)
 
@@ -1231,12 +1213,6 @@ section
 variable {R V k W W' : Type} [CommRing R] [AddCommGroup V] [Module R V] [Field k]
   [AddCommGroup W] [Module k W] [AddCommGroup W'] [Module k W']
 
-theorem mem_loc_map_equiv (res : R →+* k) (g : V ≃ₗ[R] V) (M : Submodule R V) (y : V) :
-    y ∈ loc res (M.map (g : V →ₗ[R] V)) ↔ g.symm y ∈ loc res M := by
-  rw [mem_loc, mem_loc]
-  refine exists_congr fun s => and_congr_right fun _ => ?_
-  rw [Submodule.mem_map_equiv, map_smul]
-
 theorem act_pairOf_value (res : R →+* k) (g : V ≃ₗ[R] V) (M M' : Submodule R V) (pr : M →+ W) (pr' : M' →+ W')
     (φ : Module.Dual k W) (φ' : Module.Dual k W')
     (hs : ∀ (a : R) z, pr (a • z) = res a • pr z) (hs' : ∀ (a : R) z, pr' (a • z) = res a • pr' z)
@@ -1244,7 +1220,7 @@ theorem act_pairOf_value (res : R →+* k) (g : V ≃ₗ[R] V) (M M' : Submodule
     (hm : e ∈ loc res (M'.map (g : V →ₗ[R] V)))
     (h : ∀ (x : M') (hx : t • g x.1 ∈ M), φ' (pr' x) = φ (pr ⟨_, hx⟩)) :
     ((pairOf res M' pr' φ').act g).f e = 1 := by
-  rw [mem_loc_map_equiv] at hm
+  rw [GlobalTheory.LevelHecke.PairToLevel.loc_map] at hm
   obtain ⟨s, hs0, hx⟩ := (mem_loc _ _ _).1 hm
   have e1 : t • g (s • g.symm e) = (s • z : M).1 := by
     rw [map_smul, g.apply_symm_apply, smul_comm, he]; rfl
@@ -1267,7 +1243,7 @@ theorem up_move_incidence : ∀ (D : D7) (u : D.what₂.Word) (A : AtTTied u) (i
   refine ⟨fun y => ?_, (((D.mem u).A.T : ℕ) : D.host.E)⁻¹ • z.1, ?_, ?_⟩
   · rw [Pr.mem_act]
     have h5 := pc_isKer P K v c' ((glE γ).symm y)
-    rw [_root_.GlobalTheory.LevelHecke.loc_lk_eq_loc_cls D u A i hi K v c', ← mem_loc_map_equiv, map_glE, h2] at h5
+    rw [_root_.GlobalTheory.LevelHecke.loc_lk_eq_loc_cls D u A i hi K v c', ← GlobalTheory.LevelHecke.PairToLevel.loc_map, map_glE, h2] at h5
     exact h5
   · refine act_pairOf_value (A.res v) (glE γ) _ _ (P.pr v c) (P.pr v c') _ _ (P.pr_smul v c) (P.pr_smul v c')
       _ z _ he h1 ?_ h4

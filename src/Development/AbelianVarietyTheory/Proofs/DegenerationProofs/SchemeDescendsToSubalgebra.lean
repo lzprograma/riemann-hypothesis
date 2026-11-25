@@ -158,32 +158,26 @@ theorem models_iso [LocallyOfFinitePresentation p] [QuasiSeparated p] [QuasiComp
 
 end Iso
 
-def HasModel {V : Type} [CommRing V] {X : Scheme.{0}} (p : X ⟶ Sp V) : Prop :=
+def HasModel (P Q : MorphismProperty Scheme.{0}) {V : Type} [CommRing V] {X : Scheme.{0}} (p : X ⟶ Sp V) : Prop :=
   ∃ (R : Type) (_ : CommRing R) (f : R →+* V) (X₀ : Scheme.{0}) (p₀ : X₀ ⟶ Sp R) (φ : X ⟶ X₀),
-    Algebra.FiniteType ℤ R ∧ LocallyOfFinitePresentation p₀ ∧ QuasiSeparated p₀ ∧ QuasiCompact p₀ ∧ IsPullback φ p p₀ (spMap f)
+    Algebra.FiniteType ℤ R ∧ P p₀ ∧ Q p₀ ∧ QuasiCompact p₀ ∧ IsPullback φ p p₀ (spMap f)
 
-structure PairModel {S S₀ U T : Scheme.{0}} (f : S ⟶ S₀) (p : U ⟶ S) (a : T ⟶ U) where
-
+structure PairModel (P Q : MorphismProperty Scheme.{0}) {S S₀ U T : Scheme.{0}} (f : S ⟶ S₀) (p : U ⟶ S) (a : T ⟶ U) where
   U₀ : Scheme.{0}
-
   T₀ : Scheme.{0}
-
   p₀ : U₀ ⟶ S₀
-
   a₀ : T₀ ⟶ U₀
-
   φ : U ⟶ U₀
-
   τ : T ⟶ T₀
-  lfp : LocallyOfFinitePresentation p₀
-  qs : QuasiSeparated p₀
+  hP : P p₀
+  hQ : Q p₀
   qc : QuasiCompact p₀
   opn : IsOpenImmersion a₀
   qca : QuasiCompact a₀
   hφ : IsPullback φ p p₀ f
   hτ : IsPullback τ a a₀ φ
 
-attribute [instance] PairModel.lfp PairModel.qs PairModel.qc PairModel.opn PairModel.qca
+attribute [instance] PairModel.qc PairModel.opn PairModel.qca
 
 variable {S S₁ S₀ U T : Scheme.{0}} {f : S ⟶ S₀} {p : U ⟶ S} {a : T ⟶ U}
 
@@ -195,7 +189,8 @@ theorem isPullback_lift {X X₀ : Scheme.{0}} {q : X ⟶ S} {q₀ : X₀ ⟶ S�
   rw [pullback.lift_fst, e]
   exact h
 
-def PairModel.baseChange (M : PairModel f p a) (σ : S ⟶ S₁) (g : S₁ ⟶ S₀) (e : σ ≫ g = f) : PairModel σ p a :=
+def PairModel.baseChange {P Q : MorphismProperty Scheme.{0}} [P.IsStableUnderBaseChange] [Q.IsStableUnderBaseChange]
+    (M : PairModel P Q f p a) (σ : S ⟶ S₁) (g : S₁ ⟶ S₀) (e : σ ≫ g = f) : PairModel P Q σ p a :=
   have w : M.τ ≫ M.a₀ ≫ M.p₀ = ((a ≫ p) ≫ σ) ≫ g := by
     rw [M.hτ.w_assoc, M.hφ.w, Category.assoc, Category.assoc, e]
   let a₁ : pullback (M.a₀ ≫ M.p₀) g ⟶ pullback M.p₀ g :=
@@ -210,8 +205,8 @@ def PairModel.baseChange (M : PairModel f p a) (σ : S ⟶ S₁) (g : S₁ ⟶ S
     a₀ := a₁
     φ := pullback.lift M.φ (p ≫ σ) (by rw [Category.assoc, e, M.hφ.w])
     τ := pullback.lift M.τ ((a ≫ p) ≫ σ) w
-    lfp := inferInstance
-    qs := inferInstance
+    hP := MorphismProperty.IsStableUnderBaseChange.of_isPullback (P := P) (.of_hasPullback M.p₀ g) M.hP
+    hQ := MorphismProperty.IsStableUnderBaseChange.of_isPullback (P := Q) (.of_hasPullback M.p₀ g) M.hQ
     qc := inferInstance
     opn := MorphismProperty.of_isPullback (P := @IsOpenImmersion) h₁ M.opn
     qca := MorphismProperty.of_isPullback (P := @QuasiCompact) h₁ M.qca
@@ -224,13 +219,15 @@ def PairModel.baseChange (M : PairModel f p a) (σ : S ⟶ S₁) (g : S₁ ⟶ S
         · simp only [a₁, Category.assoc, pullback.lift_fst, pullback.lift_fst_assoc, M.hτ.w]
         · simp only [a₁, Category.assoc, pullback.lift_snd] }
 
-theorem PairModel.baseChange_a₀_p₀ (M : PairModel f p a) (σ : S ⟶ S₁) (g : S₁ ⟶ S₀) (e : σ ≫ g = f) :
+theorem PairModel.baseChange_a₀_p₀ {P Q : MorphismProperty Scheme.{0}} [P.IsStableUnderBaseChange]
+    [Q.IsStableUnderBaseChange] (M : PairModel P Q f p a) (σ : S ⟶ S₁) (g : S₁ ⟶ S₀) (e : σ ≫ g = f) :
     (M.baseChange σ g e).a₀ ≫ (M.baseChange σ g e).p₀ = pullback.snd (M.a₀ ≫ M.p₀) g :=
   pullback.lift_snd _ _ _
 
-theorem lfp_of_two {X W : Scheme.{0}} {u : U ⟶ X} {v : W ⟶ X} [IsOpenImmersion u] [IsOpenImmersion v]
-    (hc : ∀ x : X, x ∈ Set.range u ∨ x ∈ Set.range v) (q : X ⟶ S) (hu : LocallyOfFinitePresentation (u ≫ q)) (hv : LocallyOfFinitePresentation (v ≫ q)) :
-    LocallyOfFinitePresentation q := by
+theorem of_two (P : MorphismProperty Scheme.{0}) [IsZariskiLocalAtSource P] {X W : Scheme.{0}}
+    {u : U ⟶ X} {v : W ⟶ X} [IsOpenImmersion u] [IsOpenImmersion v]
+    (hc : ∀ x : X, x ∈ Set.range u ∨ x ∈ Set.range v) (q : X ⟶ S) (hu : P (u ≫ q)) (hv : P (v ≫ q)) :
+    P q := by
   let Y : Bool → Scheme.{0} := fun i => Bool.rec U W i
   let t : ∀ i, Y i ⟶ X := fun i => Bool.rec (motive := fun i => Y i ⟶ X) u v i
   have ht : ∀ i, IsOpenImmersion (t i) := fun i => by cases i <;> assumption
@@ -238,18 +235,17 @@ theorem lfp_of_two {X W : Scheme.{0}} {u : U ⟶ X} {v : W ⟶ X} [IsOpenImmersi
     rcases hc x with ⟨y, hy⟩ | ⟨y, hy⟩
     · exact ⟨false, y, hy⟩
     · exact ⟨true, y, hy⟩)
-  have := HasRingHomProperty.instIsZariskiLocalAtSource (P := @LocallyOfFinitePresentation.{0})
-    (Q := @RingHom.FinitePresentation)
-  refine IsZariskiLocalAtSource.of_openCover (P := @LocallyOfFinitePresentation.{0}) 𝒰 ?_
+  refine IsZariskiLocalAtSource.of_openCover (P := P) 𝒰 ?_
   rintro (_ | _)
   · exact hu
   · exact hv
 
-theorem exists_glued {X W : Scheme.{0}} (q : X ⟶ S) {u : U ⟶ X} {v : W ⟶ X} [IsOpenImmersion u] [IsOpenImmersion v]
+theorem exists_glued {P Q : MorphismProperty Scheme.{0}} [IsZariskiLocalAtSource P]
+    {X W : Scheme.{0}} (q : X ⟶ S) {u : U ⟶ X} {v : W ⟶ X} [IsOpenImmersion u] [IsOpenImmersion v]
     {b : T ⟶ W} (h : IsPullback a b u v) (hc : ∀ x : X, x ∈ Set.range u ∨ x ∈ Set.range v)
-    (M : PairModel f (u ≫ q) a) (N : PairModel f (v ≫ q) b) (e : M.T₀ ≅ N.T₀) (he : M.τ ≫ e.hom = N.τ)
+    (M : PairModel P Q f (u ≫ q) a) (N : PairModel P Q f (v ≫ q) b) (e : M.T₀ ≅ N.T₀) (he : M.τ ≫ e.hom = N.τ)
     (he' : e.hom ≫ N.a₀ ≫ N.p₀ = M.a₀ ≫ M.p₀) [CompactSpace S₀] [QuasiSeparatedSpace S₀] :
-    ∃ (X₀ : Scheme.{0}) (q₀ : X₀ ⟶ S₀) (φ : X ⟶ X₀), LocallyOfFinitePresentation q₀ ∧ QuasiCompact q₀ ∧ IsPullback φ q q₀ f := by
+    ∃ (X₀ : Scheme.{0}) (q₀ : X₀ ⟶ S₀) (φ : X ⟶ X₀), P q₀ ∧ QuasiCompact q₀ ∧ IsPullback φ q q₀ f := by
   have Hp := M.hτ
   have Hq : IsPullback M.τ b (e.hom ≫ N.a₀) N.φ :=
     N.hτ.of_iso (Iso.refl _) e.symm (Iso.refl _) (Iso.refl _) (by simp [← he]) (by simp) (by simp) (by simp)
@@ -263,11 +259,11 @@ theorem exists_glued {X W : Scheme.{0}} (q : X ⟶ S) {u : U ⟶ X} {v : W ⟶ X
   have e3 (w : T) : u (a w) = v (b w) := congrArg (fun g => g w) h.w
   have hcov := pushout_cover M.a₀ (e.hom ≫ N.a₀)
   refine ⟨_, pushout.desc M.p₀ N.p₀ (by rw [Category.assoc, he']), φ, ?_, ?_, ?_⟩
-  · refine lfp_of_two hcov _ ?_ ?_
+  · refine of_two P hcov _ ?_ ?_
     · rw [pushout.inl_desc]
-      infer_instance
+      exact M.hP
     · rw [pushout.inr_desc]
-      infer_instance
+      exact N.hP
   · have : CompactSpace M.U₀ := QuasiCompact.compactSpace_of_compactSpace M.p₀
     have : CompactSpace N.U₀ := QuasiCompact.compactSpace_of_compactSpace N.p₀
     have : CompactSpace (pushout M.a₀ (e.hom ≫ N.a₀) : Scheme.{0}) := by
@@ -308,10 +304,13 @@ theorem finiteType_of_fg {k : Type} [CommRing k] [Algebra k V] (hk : Algebra.Fin
     (hR : R.FG) : Algebra.FiniteType ℤ R :=
   Algebra.FiniteType.trans hk ((Subalgebra.fg_iff_finiteType R).1 hR)
 
-theorem exists_pairModel {p : U ⟶ Sp V} (h : HasModel p) (a : T ⟶ U) [IsOpenImmersion a] [CompactSpace T] :
-    ∃ (R : Type) (_ : CommRing R) (f : R →+* V), Algebra.FiniteType ℤ R ∧ Nonempty (PairModel (spMap f) p a) := by
+theorem exists_pairModel {P Q : MorphismProperty Scheme.{0}} [P.IsStableUnderBaseChange] [Q.IsStableUnderBaseChange]
+    (hQqs : ∀ {A B : Scheme.{0}} {g : A ⟶ B}, Q g → QuasiSeparated g)
+    {p : U ⟶ Sp V} (h : HasModel P Q p) (a : T ⟶ U) [IsOpenImmersion a] [CompactSpace T] :
+    ∃ (R : Type) (_ : CommRing R) (f : R →+* V), Algebra.FiniteType ℤ R ∧ Nonempty (PairModel P Q (spMap f) p a) := by
   classical
-  obtain ⟨k, _, f, X₀, p₀, φ, hk, _, _, _, hφ⟩ := h
+  obtain ⟨k, _, f, X₀, p₀, φ, hk, hPp₀, hQp₀, _, hφ⟩ := h
+  have : QuasiSeparated p₀ := hQqs hQp₀
   letI := f.toAlgebra
   have hφ' : IsPullback φ p p₀ (spMap (algebraMap k V)) := hφ
   obtain ⟨s, O, hO, hs⟩ := exists_preimage_eq (bcDiagram p₀ V) (bcCone p₀ V) (isLimitBcCone p₀ V)
@@ -337,7 +336,9 @@ theorem exists_pairModel {p : U ⟶ Sp V} (h : HasModel p) (a : T ⟶ U) [IsOpen
     exact hr.ge ⟨y, rfl⟩
   refine ⟨R, inferInstance, R.val.toRingHom, finiteType_of_fg hk (Subalgebra.fg_adjoin_finset _),
     ⟨⟨_, O', pullback.snd p₀ _, O'.ι, hφ'.isoPullback.hom ≫ bcMap p₀ R.val, IsOpenImmersion.lift O'.ι _ hle,
-      inferInstance, inferInstance, inferInstance, inferInstance, hqc, ?_, ?_⟩⟩⟩
+      MorphismProperty.IsStableUnderBaseChange.of_isPullback (P := P) (.of_hasPullback p₀ _) hPp₀,
+      MorphismProperty.IsStableUnderBaseChange.of_isPullback (P := Q) (.of_hasPullback p₀ _) hQp₀,
+      inferInstance, inferInstance, hqc, ?_, ?_⟩⟩⟩
   · have h₁ : IsPullback hφ'.isoPullback.hom p (pullback.snd _ _) (𝟙 _) := .of_horiz_isIso ⟨by simp⟩
     simpa using h₁.paste_horiz (isPullback_bcMap p₀ R.val)
   · exact IsOpenImmersion.isPullback _ _ _ _ (IsOpenImmersion.lift_fac _ _ _).symm hr
@@ -357,23 +358,35 @@ theorem exists_common_level {R₁ R₂ : Type} [CommRing R₁] [CommRing R₂] (
   · rw [← Spec.map_comp]
     rfl
 
-theorem hasModel_of_two {X W : Scheme.{0}} (q : X ⟶ Sp V) [QuasiSeparated q] (u : U ⟶ X) (v : W ⟶ X)
+theorem hasModel_of_two {P Q : MorphismProperty Scheme.{0}} [P.IsStableUnderBaseChange] [Q.IsStableUnderBaseChange]
+    [IsZariskiLocalAtSource P]
+    (hPlfp : ∀ {A B : Scheme.{0}} {g : A ⟶ B}, P g → LocallyOfFinitePresentation g)
+    (hQqs : ∀ {A B : Scheme.{0}} {g : A ⟶ B}, Q g → QuasiSeparated g)
+    {X W : Scheme.{0}} (q : X ⟶ Sp V) [QuasiSeparated q] (u : U ⟶ X) (v : W ⟶ X)
     [IsOpenImmersion u] [IsOpenImmersion v] (hc : ∀ x : X, x ∈ Set.range u ∨ x ∈ Set.range v)
-    [CompactSpace U] [CompactSpace W] (hU : HasModel (u ≫ q)) (hW : HasModel (v ≫ q)) : HasModel q := by
+    [CompactSpace U] [CompactSpace W] (hU : HasModel P Q (u ≫ q)) (hW : HasModel P Q (v ≫ q))
+    (hQspread : ∀ {R : Type} [CommRing R] [Algebra R V], Algebra.FiniteType ℤ R →
+      ∀ (X₀ : Scheme.{0}) (q₀ : X₀ ⟶ Sp R) (φ : X ⟶ X₀),
+        P q₀ → QuasiCompact q₀ → IsPullback φ q q₀ (spMap (algebraMap R V)) → HasModel P Q q) :
+    HasModel P Q q := by
   have : QuasiSeparatedSpace X := (quasiSeparated_iff_quasiSeparatedSpace q).mp inferInstance
   have : CompactSpace ↥(pullback u v) := QuasiCompact.compactSpace_of_compactSpace (pullback.fst u v)
-  obtain ⟨R₁, _, f₁, h₁, ⟨M₁⟩⟩ := exists_pairModel hU (pullback.fst u v)
-  obtain ⟨R₂, _, f₂, h₂, ⟨N₁⟩⟩ := exists_pairModel hW (pullback.snd u v)
+  obtain ⟨R₁, _, f₁, h₁, ⟨M₁⟩⟩ := exists_pairModel hQqs hU (pullback.fst u v)
+  obtain ⟨R₂, _, f₂, h₂, ⟨N₁⟩⟩ := exists_pairModel hQqs hW (pullback.snd u v)
   obtain ⟨k, _, f, g₁, g₂, hk, e₁, e₂⟩ := exists_common_level f₁ f₂ h₁ h₂
   letI := f.toAlgebra
-  obtain ⟨M⟩ : Nonempty (PairModel (spMap (algebraMap k V)) (u ≫ q) (pullback.fst u v)) := ⟨M₁.baseChange _ _ e₁⟩
-  obtain ⟨N⟩ : Nonempty (PairModel (spMap (algebraMap k V)) (v ≫ q) (pullback.snd u v)) := ⟨N₁.baseChange _ _ e₂⟩
+  obtain ⟨M⟩ : Nonempty (PairModel P Q (spMap (algebraMap k V)) (u ≫ q) (pullback.fst u v)) := ⟨M₁.baseChange _ _ e₁⟩
+  obtain ⟨N⟩ : Nonempty (PairModel P Q (spMap (algebraMap k V)) (v ≫ q) (pullback.snd u v)) := ⟨N₁.baseChange _ _ e₂⟩
   have hN := N.hτ.paste_vert N.hφ
   rw [← pullback.condition_assoc] at hN
+  have : LocallyOfFinitePresentation M.p₀ := hPlfp M.hP
+  have : LocallyOfFinitePresentation N.p₀ := hPlfp N.hP
+  have : QuasiSeparated M.p₀ := hQqs M.hQ
+  have : QuasiSeparated N.p₀ := hQqs N.hQ
   obtain ⟨R, e, hR, he, he'⟩ := models_iso (p := M.a₀ ≫ M.p₀) (q := N.a₀ ≫ N.p₀)
     (M.hτ.paste_vert M.hφ) hN
   have w := spMap_algHom_comp R.val
-  obtain ⟨X₀, q₀, φ, _, _, hφ⟩ := exists_glued q (IsPullback.of_hasPullback u v) hc
+  obtain ⟨X₀, q₀, φ, hPq₀, hqcq₀, hφ⟩ := exists_glued q (IsPullback.of_hasPullback u v) hc
     (M.baseChange _ _ w) (N.baseChange _ _ w) e (by
       apply pullback.hom_ext
       · refine (Category.assoc _ _ _).trans ?_
@@ -382,14 +395,40 @@ theorem hasModel_of_two {X W : Scheme.{0}} (q : X ⟶ Sp V) [QuasiSeparated q] (
         refine (congrArg _ he).trans ((pullback.lift_snd _ _ _).trans (Eq.trans ?_ (pullback.lift_snd _ _ _).symm))
         simp only [Category.assoc, pullback.condition_assoc])
     (by rw [PairModel.baseChange_a₀_p₀, PairModel.baseChange_a₀_p₀]; exact he)
-  have hRZ := finiteType_of_fg hk hR
-  have : IsNoetherianRing R := Algebra.FiniteType.isNoetherianRing ℤ R
-  have : IsLocallyNoetherian X₀ := LocallyOfFiniteType.isLocallyNoetherian q₀
-  exact ⟨R, inferInstance, R.val.toRingHom, X₀, q₀, φ, hRZ, ‹_›,
-    (quasiSeparated_iff_quasiSeparatedSpace q₀).mpr inferInstance, ‹_›, hφ⟩
+  exact hQspread (finiteType_of_fg hk hR) X₀ q₀ φ hPq₀ hqcq₀ hφ
+
+theorem hasModel_of_affine (P Q : MorphismProperty Scheme.{0}) [P.IsStableUnderBaseChange] [Q.IsStableUnderBaseChange]
+    [IsZariskiLocalAtSource P]
+    (hPlfp : ∀ {A B : Scheme.{0}} {g : A ⟶ B}, P g → LocallyOfFinitePresentation g)
+    (hQqs : ∀ {A B : Scheme.{0}} {g : A ⟶ B}, Q g → QuasiSeparated g)
+    {X : Scheme.{0}} (q : X ⟶ Sp V) [QuasiSeparated q] [QuasiCompact q]
+    (hAff : ∀ (U : X.Opens), IsAffine U → HasModel P Q (U.ι ≫ q))
+    (hQspread : ∀ (S : X.Opens) {R : Type} [CommRing R] [Algebra R V], Algebra.FiniteType ℤ R →
+      ∀ (X₀ : Scheme.{0}) (q₀ : X₀ ⟶ Sp R) (φ : (S : Scheme.{0}) ⟶ X₀),
+        P q₀ → QuasiCompact q₀ → IsPullback φ (S.ι ≫ q) q₀ (spMap (algebraMap R V)) →
+        HasModel P Q (S.ι ≫ q)) :
+    HasModel P Q q := by
+  have : CompactSpace X := QuasiCompact.compactSpace_of_compactSpace q
+  have key : HasModel P Q ((⊤ : X.Opens).ι ≫ q) := by
+    refine compact_open_induction_on (P := fun S => HasModel P Q (S.ι ≫ q)) ⊤ isCompact_univ ?_ ?_
+    · exact hAff ⊥ (isAffineOpen_bot X)
+    · intro S hS W h
+      have : CompactSpace S := isCompact_iff_compactSpace.1 hS
+      refine hasModel_of_two hPlfp hQqs _
+        (X.homOfLE (le_sup_left : S ≤ S ⊔ W.1)) (X.homOfLE (le_sup_right : W.1 ≤ S ⊔ W.1))
+        ?_ ?_ ?_ (hQspread (S ⊔ W.1))
+      · rintro ⟨x, hx | hx⟩
+        · exact Or.inl ⟨⟨x, hx⟩, Subtype.ext (by simp)⟩
+        · exact Or.inr ⟨⟨x, hx⟩, Subtype.ext (by simp)⟩
+      · rwa [Scheme.homOfLE_ι_assoc]
+      · rw [Scheme.homOfLE_ι_assoc]
+        exact hAff W.1 W.2
+  obtain ⟨R, _, f, X₀, p₀, φ, h₁, h₂, h₃, h₄, hφ⟩ := key
+  refine ⟨R, _, f, X₀, p₀, X.topIso.inv ≫ φ, h₁, h₂, h₃, h₄, ?_⟩
+  exact hφ.of_iso X.topIso (Iso.refl _) (Iso.refl _) (Iso.refl _) (by simp) (by simp) (by simp) (by simp)
 
 theorem hasModel_of_isAffine {X : Scheme.{0}} (q : X ⟶ Sp V) [IsAffine X] [LocallyOfFinitePresentation q] :
-    HasModel q := by
+    HasModel (@LocallyOfFinitePresentation) (@QuasiSeparated) q := by
   obtain ⟨ψ, hψ⟩ := Spec.map_surjective (R := CommRingCat.of V) (S := Γ(X, ⊤)) (X.isoSpec.inv ≫ q)
   have h1 : LocallyOfFinitePresentation (Spec.map ψ) := by rw [hψ]; infer_instance
   rw [HasRingHomProperty.Spec_iff (P := @LocallyOfFinitePresentation)] at h1
@@ -425,28 +464,14 @@ theorem hasModel_of_isAffine {X : Scheme.{0}} (q : X ⟶ Sp V) [IsAffine X] [Loc
   · simp
 
 theorem hasModel {X : Scheme.{0}} (q : X ⟶ Sp V) [LocallyOfFinitePresentation q] [QuasiSeparated q]
-    [QuasiCompact q] : HasModel q := by
-  have : CompactSpace X := QuasiCompact.compactSpace_of_compactSpace q
-  have key : HasModel ((⊤ : X.Opens).ι ≫ q) := by
-    refine compact_open_induction_on (P := fun S => HasModel (S.ι ≫ q)) ⊤ isCompact_univ ?_ ?_
-    · have : IsAffine (⊥ : X.Opens) := isAffineOpen_bot X
-      exact hasModel_of_isAffine _
-    · intro S hS W h
-      have : CompactSpace S := isCompact_iff_compactSpace.1 hS
-      have : IsAffine W.1 := W.2
-      refine hasModel_of_two _ (X.homOfLE (le_sup_left : S ≤ S ⊔ W.1)) (X.homOfLE (le_sup_right : W.1 ≤ S ⊔ W.1))
-        ?_ ?_ ?_
-      · rintro ⟨x, hx | hx⟩
-        · exact Or.inl ⟨⟨x, hx⟩, Subtype.ext (by simp)⟩
-        · exact Or.inr ⟨⟨x, hx⟩, Subtype.ext (by simp)⟩
-      · rwa [Scheme.homOfLE_ι_assoc]
-      · exact hasModel_of_isAffine _
-  obtain ⟨R, _, f, X₀, p₀, φ, h₁, h₂, h₃, h₄, hφ⟩ := key
-  refine ⟨R, _, f, X₀, p₀, X.topIso.inv ≫ φ, h₁, h₂, h₃, h₄, ?_⟩
-  exact hφ.of_iso X.topIso (Iso.refl _) (Iso.refl _) (Iso.refl _) (by simp) (by simp) (by simp) (by simp)
+    [QuasiCompact q] : HasModel (@LocallyOfFinitePresentation) (@QuasiSeparated) q := by
+  have := HasRingHomProperty.instIsZariskiLocalAtSource (P := @LocallyOfFinitePresentation.{0})
+    (Q := @RingHom.FinitePresentation)
+  refine hasModel_of_affine (@LocallyOfFinitePresentation) (@QuasiSeparated) (fun h => h) (fun h => h) q
+    (fun U _ => hasModel_of_isAffine (U.ι ≫ q)) fun S R _ _ hR X₀ q₀ φ hPq₀ hqcq₀ hφ => ?_
+  have : IsNoetherianRing R := Algebra.FiniteType.isNoetherianRing ℤ R
+  have : IsLocallyNoetherian X₀ := LocallyOfFiniteType.isLocallyNoetherian q₀
+  exact ⟨R, inferInstance, algebraMap R V, X₀, q₀, φ, hR, hPq₀,
+    (quasiSeparated_iff_quasiSeparatedSpace q₀).mpr inferInstance, hqcq₀, hφ⟩
 
 end GlobalTheory.SpreadScheme
-
-namespace GlobalTheory
-
-end GlobalTheory

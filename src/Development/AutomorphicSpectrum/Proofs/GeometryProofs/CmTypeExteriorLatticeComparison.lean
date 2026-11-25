@@ -23,44 +23,7 @@ import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeVectorB
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GermStalkClosedPointToBaseChange
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOneOfChartGenerators
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
@@ -232,32 +195,18 @@ theorem frame_change : ∀ (X X' : Scheme.{0}) (Ω Ω' : Type) [Field Ω] [Field
       rw [hb.2]
       exact Submodule.subset_span ⟨a, rfl⟩
   have hjb := hj.2 n b hb.1
-  have hT : ∀ a, ∃ t : Fin n → X'.presheaf.stalk p'.1, j (b a) = ∑ k, genMap ξ' p' (t k) • bp k := by
-    intro a
-    have h1 : j (b a) ∈ V p' := by
-      rw [hle]
-      exact Submodule.subset_span ⟨a, rfl⟩
-    rw [hbp.2] at h1
+  have hcoeff : ∀ (v : F) (w : Fin n → F), v ∈ Submodule.span (regAt ξ' p') (Set.range w) →
+      ∃ t : Fin n → X'.presheaf.stalk p'.1, v = ∑ k, genMap ξ' p' (t k) • w k := by
+    intro v w h1
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 h1
     choose t ht using fun k => (c k).2
-    refine ⟨t, ?_⟩
-    rw [← hc]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [ht k]
-    rfl
-  have hS : ∀ k, ∃ t : Fin n → X'.presheaf.stalk p'.1, bp k = ∑ a, genMap ξ' p' (t a) • j (b a) := by
-    intro k
-    have h1 : bp k ∈ V p' := by
-      rw [hbp.2]
-      exact Submodule.subset_span ⟨k, rfl⟩
-    rw [hle] at h1
-    obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 h1
-    choose t ht using fun k => (c k).2
-    refine ⟨t, ?_⟩
-    rw [← hc]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [ht k]
-    rfl
+    exact ⟨t, by rw [← hc]; exact Finset.sum_congr rfl fun k _ => by rw [ht k]; rfl⟩
+  have hT := fun a => hcoeff (j (b a)) bp <| by
+    rw [← hbp.2, hle]
+    exact Submodule.subset_span ⟨a, rfl⟩
+  have hS := fun k => hcoeff (bp k) (fun a => j (b a)) <| by
+    rw [← hle, hbp.2]
+    exact Submodule.subset_span ⟨k, rfl⟩
   choose T hT using hT
   choose S hS using hS
   refine ⟨Matrix.of T, Matrix.of S, ?_, hT, hS⟩

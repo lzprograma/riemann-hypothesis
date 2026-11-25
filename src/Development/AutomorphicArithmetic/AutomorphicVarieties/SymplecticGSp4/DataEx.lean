@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DecInf
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.UnramifiedCocycleIsCoboundaryOfBernoulliUnit
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.DecompSigmaOrd
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcSpKer
@@ -545,18 +546,7 @@ private theorem re_two {Γ M : Type} [Group Γ] [Monoid M] (a b : Γ →* M) :
   · exact ⟨1, fun h1 h2 => absurd ⟨h1, h2⟩ h⟩
 
 private theorem re_unit (l : ℕ) [hl : Fact l.Prime] : ∃ u : ℤ_[l]ˣ, ¬ IsOfFinOrder u := by
-  have hu : IsUnit ((l + 1 : ℕ) : ℤ_[l]) := by
-    rw [PadicInt.isUnit_iff, PadicInt.norm_natCast_eq_one_iff]
-    simp
-  refine ⟨hu.unit, fun h => ?_⟩
-  obtain ⟨n, hn, e⟩ := isOfFinOrder_iff_pow_eq_one.1 h
-  have h1 : ((l + 1 : ℕ) : ℤ_[l]) ^ n = 1 := by
-    have := congrArg Units.val e
-    rwa [Units.val_pow_eq_pow_val, IsUnit.unit_spec, Units.val_one] at this
-  have h2 : (l + 1) ^ n = 1 := by exact_mod_cast h1
-  have h3 := hl.out.pos
-  rw [pow_eq_one_iff_left hn.ne'] at h2
-  omega
+  apply _root_.exists_unit <;> assumption
 
 section
 

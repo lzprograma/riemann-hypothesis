@@ -41,7 +41,7 @@ theorem e_perp_mid (hT : TrHyp F Qm Qim c) (a : Fin r) (j : Fin (2 * r + k + 1))
     have hsum : a.val + j.val ≠ 2 * r + k := by omega
     unfold Formalism.QuantumDeterminants.Hpk
     simp only [Formalism.QuantumDeterminants.eI, hsum, not_lt.mpr hj1, not_le.mpr ha,
-      and_false, false_and, if_false]
+      and_false, false_and, ite_false]
   rw [he, PtRepPf.hJ_smul_left, ← herm_Q hT]
   simp only [Formalism.QuantumDeterminants.herm, Formalism.QuantumDeterminants.bvec,
     ← Pi.single_star, star_one, single_dotProduct, Matrix.mulVec_single_one,

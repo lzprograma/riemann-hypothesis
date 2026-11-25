@@ -115,14 +115,14 @@ theorem rankOne_le_zero (hB : LatDegBasisStatement) {K : Type} [Field K] [Number
       rw [Fin.sum_univ_succ, Fin.sum_univ_succ]
       have h0 : ∀ j : Fin k, t j.succ.succ = 0 := fun j => by
         simp only [t]
-        rw [if_neg (Fin.succ_ne_zero _), if_neg]
+        rw [ite_eq_right (Fin.succ_ne_zero _), ite_eq_right]
         intro h
         exact Fin.succ_ne_zero j (Fin.succ_injective _ h)
       simp only [h0, zero_smul, Finset.sum_const_zero, add_zero]
       have t0 : t 0 = c 1 i := by simp [t]
       have t1 : t (Fin.succ 0) = -(c 0 i) := by
         simp only [t]
-        rw [if_neg (Fin.succ_ne_zero _)]
+        rw [ite_eq_right (Fin.succ_ne_zero _)]
         rfl
       rw [t0, t1]
       funext a

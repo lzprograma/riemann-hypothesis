@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAdicCompleteSpanAlgebraMapOfFreeFinite
 public import Mathlib.RingTheory.AdicCompletion.Basic
 public import Mathlib.RingTheory.Flat.Basic
 public import Mathlib.RingTheory.LocalRing.Defs
@@ -56,18 +57,7 @@ namespace GlobalTheory.FlatComplete
 theorem mem_smul_top_iff_repr {O M ι : Type} [CommRing O] [AddCommGroup M] [Module O M] [Fintype ι]
     (b : Module.Basis ι O M) (J : Ideal O) (x : M) :
     x ∈ J • (⊤ : Submodule O M) ↔ ∀ i, b.repr x i ∈ J := by
-  constructor
-  · intro hx
-    refine Submodule.smul_induction_on (p := fun y => ∀ i, b.repr y i ∈ J) hx ?_ ?_
-    · intro r hr y _ i
-      rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
-      exact J.mul_mem_right _ hr
-    · intro y z hy hz i
-      rw [map_add (f := _), Finsupp.add_apply]
-      exact J.add_mem (hy i) (hz i)
-  · intro h
-    rw [← b.sum_repr x]
-    exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem_smul (h i) Submodule.mem_top
+  first | exact _root_.GlobalTheory.CNorm.mem_smul_top_iff_repr | exact @_root_.GlobalTheory.CNorm.mem_smul_top_iff_repr | apply _root_.GlobalTheory.CNorm.mem_smul_top_iff_repr <;> assumption
 
 theorem isAdicComplete_of_finite_basis {O M ι : Type} [CommRing O] [AddCommGroup M] [Module O M]
     [Fintype ι] (b : Module.Basis ι O M) (J : Ideal O) [hO : IsAdicComplete J O] :

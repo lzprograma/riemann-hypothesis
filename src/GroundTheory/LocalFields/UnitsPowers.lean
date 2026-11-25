@@ -24,13 +24,8 @@ theorem isAdicComplete_integer : IsAdicComplete 𝓂[K] 𝒪[K] := by
 variable {K}
 
 theorem isUnit_unit_add {η : 𝒪[K]ˣ} {x : 𝒪[K]} (hx : x ∈ 𝓂[K]) : IsUnit ((η : 𝒪[K]) + x) := by
-  have h1 : IsUnit (1 + (η⁻¹ : 𝒪[K]ˣ) * x) := by
-    simpa using isUnit_one_sub_self_of_mem_nonunits (-(((η⁻¹ : 𝒪[K]ˣ) : 𝒪[K]) * x))
-      ((IsLocalRing.mem_maximalIdeal _).mp (neg_mem (Ideal.mul_mem_left _ _ hx)))
-  have : (η : 𝒪[K]) + x = η * (1 + (η⁻¹ : 𝒪[K]ˣ) * x) := by
-    rw [mul_add, mul_one, ← mul_assoc, Units.mul_inv, one_mul]
-  rw [this]
-  exact η.isUnit.mul h1
+  rw [← residue_ne_zero_iff_isUnit, map_add, (residue_eq_zero_iff _).mpr hx, add_zero]
+  exact (residue_ne_zero_iff_isUnit _).mpr η.isUnit
 
 alias exists_root_of_dvd := _root_.UpperTheory.Reformulated.B.AdicCompleteRootExistence.exists_root_of_dvd
 

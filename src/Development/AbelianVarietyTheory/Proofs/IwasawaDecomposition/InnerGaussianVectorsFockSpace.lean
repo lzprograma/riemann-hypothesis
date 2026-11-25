@@ -96,7 +96,7 @@ theorem coeff_X_mul_of_notMem (l : σ) (E : MvPowerSeries σ ℂ) {α : σ →�
     (h : α ∉ Set.range fun β : σ →₀ ℕ => β + Finsupp.single l 1) : α l = 0 ∧ coeff α (X l * E) = 0 := by
   have h' : ¬ Finsupp.single l 1 ≤ α := fun hle => h ⟨_, tsub_add_cancel_of_le hle⟩
   refine ⟨by rw [Finsupp.single_le_iff] at h'; omega, ?_⟩
-  rw [X_def, coeff_monomial_mul, if_neg h']
+  rw [X_def, coeff_monomial_mul, ite_eq_right h']
 
 def dil (σ : Type) : Submodule ℂ (MvPowerSeries σ ℂ) where
   carrier := {E | ∀ r : ℝ, 0 ≤ r → r < 1 →
@@ -210,7 +210,7 @@ theorem IsPDer.X_mul {k : σ} {E D : MvPowerSeries σ ℂ} (h : IsPDer k E D) (m
   by_cases hk : k = m
   · subst hk
     rw [coeff_X_mul_add, map_add (f := _), h.coeff_X_mul]; simp; ring
-  rw [if_neg hk, zero_smul, add_zero]
+  rw [ite_eq_right hk, zero_smul, add_zero]
   by_cases hα : α ∈ Set.range fun β : σ →₀ ℕ => β + Finsupp.single m 1
   · obtain ⟨β, rfl⟩ := hα
     simp only
@@ -675,7 +675,7 @@ theorem orthonormal_unitMono (F : Fock σ) : Orthonormal ℂ (unitMono F) := by
   by_cases h : α = β
   · subst h
     have := wt_ne_zero α
-    rw [if_pos rfl, if_pos rfl, ← wt_mul_self]
+    rw [ite_eq_left rfl, ite_eq_left rfl, ← wt_mul_self]
     field_simp
   · simp [h]
 

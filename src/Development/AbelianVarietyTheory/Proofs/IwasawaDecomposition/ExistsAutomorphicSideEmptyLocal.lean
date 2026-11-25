@@ -398,7 +398,6 @@ theorem overPl_unique {w : HeightOneSpectrum (𝓞 L)} {v v' : HeightOneSpectrum
   HeightOneSpectrum.ext (h.symm.trans h')
 
 section
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem locAt_of_split (π : NG.AutRep L n) (s : SplitPlace L) : ∃ x, LocAt π s.w x := by
   obtain ⟨σ, hσ, -⟩ := _root_.GlobalTheory.LocCompSplit.main L n π s
@@ -429,7 +428,6 @@ end GlobalTheory.AutQuot
 namespace GlobalTheory.AutQuot
 
 section
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 variable (D : D7)
 

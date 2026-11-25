@@ -12,50 +12,11 @@ public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFTrueD
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.ExpFactIoExp
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FTDefs
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolFormOfOrthogonality
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockMonomial
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.MemIntPolOfCoeff
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Kummer
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExponentFactorialAddSingleOne
 
@@ -196,9 +157,9 @@ theorem sat_block (x : MvPolynomial (BVar N r D.T.t) (KK O))
     rw [hq', ppi_be, hB, map_sum] at h2
     simp only [ppi_base] at h2
     rw [coeff_sum, Finset.sum_eq_single i0] at h2
-    · rwa [coeff_monomial, if_pos rfl] at h2
+    · rwa [coeff_monomial, ite_eq_left rfl] at h2
     · intro b _ hb
-      rw [coeff_monomial, if_neg]
+      rw [coeff_monomial, ite_eq_right]
       intro he
       obtain ⟨e1, e2⟩ := eExp_inj D he
       exact hb (Subtype.ext (Sigma.ext e1 (heq_of_eq e2)))
@@ -327,13 +288,13 @@ theorem cdeg_le_tdeg (hp : 0 < X.p) (b : SegBlock (segS X.TT j) X.m) (x : X.TT �
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun v _ => ?_
     by_cases h : (symVar C0 CE1 CE2 X j v).1 = x
-    · rw [if_pos h, Finset.sum_eq_single (symVar C0 CE1 CE2 X j v).2]
-      · rw [if_pos (Prod.ext h rfl : symVar C0 CE1 CE2 X j v = (x, (symVar C0 CE1 CE2 X j v).2))]
+    · rw [ite_eq_left h, Finset.sum_eq_single (symVar C0 CE1 CE2 X j v).2]
+      · rw [ite_eq_left (Prod.ext h rfl : symVar C0 CE1 CE2 X j v = (x, (symVar C0 CE1 CE2 X j v).2))]
       · intro c _ hc
-        rw [if_neg (fun e => hc (by rw [e]))]
+        rw [ite_eq_right (fun e => hc (by rw [e]))]
       · intro hh; exact absurd (Finset.mem_univ _) hh
-    · rw [if_neg h]
-      exact Finset.sum_eq_zero fun c _ => if_neg (fun e => h (by rw [e]))
+    · rw [ite_eq_right h]
+      exact Finset.sum_eq_zero fun c _ => ite_eq_right (fun e => h (by rw [e]))
   calc (∑ v ∈ Finset.univ.filter (fun v : BV C0 CE1 CE2 X j => (symVar C0 CE1 CE2 X j v).1 = x), μ0 v)
       = ∑ v : BV C0 CE1 CE2 X j, if (symVar C0 CE1 CE2 X j v).1 = x then μ0 v else 0 := Finset.sum_filter _ _
     _ ≤ ∑ v : BV C0 CE1 CE2 X j, if (symVar C0 CE1 CE2 X j v).1 = x then symLev X.p C0 CE1 CE2 X j v * μ0 v else 0 := by
@@ -448,11 +409,11 @@ theorem ωo_bal (l0 : Fin (X.seg C0 CE1 CE2 j).t) :
         2 * (uTop (X.seg C0 CE1 CE2 j) l : ℕ) + 1 := Nat.min_eq_left (by omega)
     simp only [ωo, ωoL, v0, v1, Fin.val_castSucc]
     by_cases hl : (l : ℕ) = (l0 : ℕ)
-    · rw [if_neg (by simp), if_pos (by simp [hl]), if_pos (by rw [hu, hu]; omega), if_neg (by rw [hu, hu]; omega)]
-    · rw [if_neg (by simp), if_neg (by simp [hl]), if_neg (by rw [hu, hu]; omega), if_neg (by rw [hu, hu]; omega)]
+    · rw [ite_eq_right (by simp), ite_eq_left (by simp [hl]), ite_eq_left (by rw [hu, hu]; omega), ite_eq_right (by rw [hu, hu]; omega)]
+    · rw [ite_eq_right (by simp), ite_eq_right (by simp [hl]), ite_eq_right (by rw [hu, hu]; omega), ite_eq_right (by rw [hu, hu]; omega)]
   · have hi := (uTop (X.seg C0 CE1 CE2 j) l0).2
     simp only [ωo, ωoL, Fin.val_castSucc, Fin.val_last]
-    rw [if_neg (by simp), if_neg (by intro h; have := l0.2; omega), if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by simp), ite_eq_right (by intro h; have := l0.2; omega), ite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem ωp_bal : Balanced X.m (X.seg C0 CE1 CE2 j) (ωp C0 CE1 CE2 X j) (ωpL X j) := by
   refine ⟨fun a c => rfl, fun l => ?_, ?_⟩
@@ -462,7 +423,7 @@ theorem ωp_bal : Balanced X.m (X.seg C0 CE1 CE2 j) (ωp C0 CE1 CE2 X j) (ωpL X
     have v1 : ((finPos (2 * segS X.TT j + 1) (2 * (uTop (X.seg C0 CE1 CE2 j) l : ℕ) + 1) : Fin _) : ℕ) =
         2 * (uTop (X.seg C0 CE1 CE2 j) l : ℕ) + 1 := Nat.min_eq_left (by omega)
     simp only [ωp, ωpL, v0, v1, Fin.val_castSucc]
-    rw [if_neg (by simp), if_neg (by intro h; have := l.2; omega), if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by simp), ite_eq_right (by intro h; have := l.2; omega), ite_eq_right (by omega), ite_eq_right (by omega)]
   · simp only [ωp, ωpL, Fin.val_castSucc, Fin.val_last]
     simp
 
@@ -479,16 +440,16 @@ theorem omB_ωo (b : SegBlock (segS X.TT j) X.m) (l0 : Fin (X.seg C0 CE1 CE2 j).
   have s3 : ∑ a : Fin (2 * segS X.TT j + 1), (segChain X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b).deg a *
       ωoL C0 CE1 CE2 X j l0 (Fin.castSucc a) = b.o (uTop (X.seg C0 CE1 CE2 j) l0) := by
     rw [Finset.sum_eq_single (⟨2 * (uTop (X.seg C0 CE1 CE2 j) l0 : ℕ), by omega⟩ : Fin (2 * segS X.TT j + 1))]
-    · simp only [ωoL, Fin.val_castSucc, if_true, mul_one]
+    · simp only [ωoL, Fin.val_castSucc, ite_true, mul_one]
       rw [segment_chain_degree_even X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b _ (uTop (X.seg C0 CE1 CE2 j) l0) rfl,
-        if_neg (by show ¬ ((X.seg C0 CE1 CE2 j).sigma + (l0 : ℕ) < (X.seg C0 CE1 CE2 j).sigma); omega)]
+        ite_eq_right (by show ¬ ((X.seg C0 CE1 CE2 j).sigma + (l0 : ℕ) < (X.seg C0 CE1 CE2 j).sigma); omega)]
     · intro a _ ha
       simp only [ωoL, Fin.val_castSucc]
-      rw [if_neg (fun h => ha (Fin.ext h)), mul_zero]
+      rw [ite_eq_right (fun h => ha (Fin.ext h)), mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   have s4 : ωoL C0 CE1 CE2 X j l0 (Fin.last _) = 0 := by
     simp only [ωoL, Fin.val_last]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   rw [s1, s2, s3, s4]
   ring
 
@@ -503,15 +464,15 @@ theorem omB_ωp (b : SegBlock (segS X.TT j) X.m) :
   have s3 : ∑ a : Fin (2 * segS X.TT j + 1), (segChain X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b).deg a *
       ωpL X j (Fin.castSucc a) = b.oPlus := by
     rw [Finset.sum_eq_single (⟨2 * segS X.TT j, by omega⟩ : Fin (2 * segS X.TT j + 1))]
-    · simp only [ωpL, Fin.val_castSucc, if_true, mul_one]
+    · simp only [ωpL, Fin.val_castSucc, ite_true, mul_one]
       exact chain_deg_U X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b _ rfl
     · intro a _ ha
       simp only [ωpL, Fin.val_castSucc]
-      rw [if_neg (fun h => ha (Fin.ext h)), mul_zero]
+      rw [ite_eq_right (fun h => ha (Fin.ext h)), mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   have s4 : ωpL X j (Fin.last _) = 0 := by
     simp only [ωpL, Fin.val_last]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   rw [s1, s2, s3, s4]
   ring
 
@@ -542,14 +503,14 @@ theorem lev_of_symVar (v : BV C0 CE1 CE2 X j) (i : Fin (segS X.TT j)) (h : (symV
     symLev X.p C0 CE1 CE2 X j v = (X.seg C0 CE1 CE2 j).P X.p i := by
   rcases v with ⟨a, c⟩ | ⟨l, bo⟩
   · by_cases ha : (a : ℕ) < 2 * segS X.TT j
-    · simp only [symVar, symLev, dif_pos ha] at h ⊢
+    · simp only [symVar, symLev, dite_eq_left ha] at h ⊢
       rw [topOdd_inj X j h]
-    · simp only [symVar, dif_neg ha] at h
+    · simp only [symVar, dite_eq_right ha] at h
       exact absurd h.symm (topOdd_ne_end X j i)
   · by_cases hl : (l : ℕ) < (X.seg C0 CE1 CE2 j).t
-    · simp only [symVar, symLev, dif_pos hl] at h ⊢
+    · simp only [symVar, symLev, dite_eq_left hl] at h ⊢
       rw [topOdd_inj X j h]
-    · simp only [symVar, dif_neg hl] at h
+    · simp only [symVar, dite_eq_right hl] at h
       exact absurd h.symm (topOdd_ne_end X j i)
 
 theorem coarse_dvd (μ : BV C0 CE1 CE2 X j →₀ ℕ) (i : Fin (segS X.TT j)) (β : Bool) (c : Fin (X.m + 1)) :
@@ -573,7 +534,7 @@ theorem coarse_spec (μ : BV C0 CE1 CE2 X j →₀ ℕ) (i : Fin (segS X.TT j)) 
   rw [Finsupp.sum_apply]
   refine Finset.sum_eq_zero fun v _ => ?_
   show (Finsupp.single (symVar C0 CE1 CE2 X j v) (symLev X.p C0 CE1 CE2 X j v * μ v)) ((topOdd X j i, β), 0) = 0
-  rw [Finsupp.single_apply, if_neg]
+  rw [Finsupp.single_apply, ite_eq_right]
   intro h
   rcases v with ⟨a, c⟩ | ⟨l, bo⟩
   · simp only [symVar] at h
@@ -646,15 +607,15 @@ theorem sep (hp : 0 < X.p) (b b' : SegBlock (segS X.TT j) X.m)
     intro i c
     have h1 := ioExp_mod C0 CE1 CE2 X j b hb μ i true c
     have h2 := ioExp_mod C0 CE1 CE2 X j b' hb' μ' i true c
-    rw [he, if_pos rfl] at h1
-    rw [if_pos rfl] at h2
+    rw [he, ite_eq_left rfl] at h1
+    rw [ite_eq_left rfl] at h2
     exact h1.symm.trans h2
   have hry : ∀ i c, b.ry i c = b'.ry i c := by
     intro i c
     have h1 := ioExp_mod C0 CE1 CE2 X j b hb μ i false c
     have h2 := ioExp_mod C0 CE1 CE2 X j b' hb' μ' i false c
-    rw [he, if_neg Bool.false_ne_true] at h1
-    rw [if_neg Bool.false_ne_true] at h2
+    rw [he, ite_eq_right Bool.false_ne_true] at h1
+    rw [ite_eq_right Bool.false_ne_true] at h2
     exact h1.symm.trans h2
   have hrz' : b.rz = b'.rz := funext fun i => funext fun c => hrz i c
   have hry' : b.ry = b'.ry := funext fun i => funext fun c => hry i c
@@ -672,11 +633,11 @@ theorem sep (hp : 0 < X.p) (b b' : SegBlock (segS X.TT j) X.m)
     have v2 := congrArg (fun e => e ((topOdd X j i, false), (0 : Fin (X.m + 1)))) he
     simp only [ioExp, Finsupp.add_apply] at v1 v2
     rw [coarse_spec C0 CE1 CE2 X j μ i true hi, coarse_spec C0 CE1 CE2 X j μ' i true hi, add_zero, add_zero,
-      baseExp_odd, baseExp_odd, if_pos rfl, if_pos rfl, if_pos (⟨hi, rfl⟩ : _ ∧ _), if_pos (⟨hi, rfl⟩ : _ ∧ _),
-      if_pos rfl, if_pos rfl, hrz i 0, hA i] at v1
+      baseExp_odd, baseExp_odd, ite_eq_left rfl, ite_eq_left rfl, ite_eq_left (⟨hi, rfl⟩ : _ ∧ _), ite_eq_left (⟨hi, rfl⟩ : _ ∧ _),
+      ite_eq_left rfl, ite_eq_left rfl, hrz i 0, hA i] at v1
     rw [coarse_spec C0 CE1 CE2 X j μ i false hi, coarse_spec C0 CE1 CE2 X j μ' i false hi, add_zero, add_zero,
-      baseExp_odd, baseExp_odd, if_neg Bool.false_ne_true, if_neg Bool.false_ne_true, if_pos (⟨hi, rfl⟩ : _ ∧ _),
-      if_pos (⟨hi, rfl⟩ : _ ∧ _), if_neg Bool.false_ne_true, if_neg Bool.false_ne_true, hry i 0] at v2
+      baseExp_odd, baseExp_odd, ite_eq_right Bool.false_ne_true, ite_eq_right Bool.false_ne_true, ite_eq_left (⟨hi, rfl⟩ : _ ∧ _),
+      ite_eq_left (⟨hi, rfl⟩ : _ ∧ _), ite_eq_right Bool.false_ne_true, ite_eq_right Bool.false_ne_true, hry i 0] at v2
     have w1 := Nat.eq_of_mul_eq_mul_left hP (Nat.add_left_cancel v1)
     have w2 := Nat.eq_of_mul_eq_mul_left hP (Nat.add_left_cancel v2)
     have a1 := k1.2.1
@@ -755,7 +716,7 @@ theorem orthAt (C0 CE1 CE2 : ℝ) : OrthAt C0 CE1 CE2 := by
   have h0 : AddMonoidAlgebra.coeff (ioBlock (KK O) X.p C0 CE1 CE2 X j b' s') (ioExp C0 CE1 CE2 X j b μ) = 0 := by
     rw [ioBlock_eq_sum C0 CE1 CE2 X j (KK O) b' s', coeff_sum]
     refine Finset.sum_eq_zero fun μ' hμ' => ?_
-    rw [coeff_monomial, if_neg]
+    rw [coeff_monomial, ite_eq_right]
     intro h
     exact hne (sep C0 CE1 CE2 X j hp b' b hb' hb μ' μ (hom_of_ssz C0 CE1 CE2 X j b' mm s' hs' μ' hμ')
       (hom_of_ssz C0 CE1 CE2 X j b mm s hs μ hμ) h).symm

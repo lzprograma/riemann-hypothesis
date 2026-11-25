@@ -10,45 +10,7 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfSt
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
 public import Development.WeilBound.ThetaLifts.LatticeBasics.BoxSec
 import Development.WeilBound.ThetaLifts.LatticeBasics.SliceSeminorm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticChangeOfGoodModelsIntertwines
 
 @[expose] public section
 
@@ -65,26 +27,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
   {κ : Type} [Fintype κ] {m n : ℕ} {A : Spc F E m} {Y : Spc F E n} {B : Base F E} {ψ : AddChar (AF F) ℂ}
 
 theorem theta_inj (hψ : IsStd ψ) {φ : (κ → AF F) → ℂ} (hφ : φ ∈ schA F κ) (h : ∀ w, thetaSum F (schr ψ w φ) = 0) : φ = 0 := by
-  have hn := GlobalTheory.StdCharFromIsStd.norm_psi hψ
-  obtain ⟨a₀, ha₀⟩ := GlobalTheory.StdCharFromIsStd.exists_ne_one hψ
-  have r0 : rt (0 : κ → F) = 0 := funext fun _ => map_zero _
-  funext x
-  have key := GlobalTheory.SchrodingerUniq.coeff_zero_eq_zero (χ := fun (y : κ → AF F) (ξ : κ → F) => ψ (rt ξ ⬝ᵥ y))
-    (c := fun ξ => φ (rt ξ + x)) (fun y ξ => hn _) (fun y y' ξ => by simp only [dotProduct_add, AddChar.map_add_eq_mul])
-    (fun ξ => by simp only [dotProduct_zero, AddChar.map_zero_eq_one])
-    (fun y => by simp only [r0, zero_dotProduct, AddChar.map_zero_eq_one])
-    (fun ξ hξ => by
-      obtain ⟨i, hi⟩ := Function.ne_iff.1 hξ
-      refine ⟨Pi.single i (algebraMap F (AF F) (ξ i)⁻¹ * a₀), ?_⟩
-      rwa [dotProduct_single, ← mul_assoc, ← map_mul, mul_inv_cancel₀ hi, map_one, one_mul])
-    (by convert summable_norm_of_mem_schA F (GlobalTheory.SchwartzTranslate.schA_translate F x hφ) using 1) fun y => by
-      have hb : ψ (⅟(2 : AF F) * (x ⬝ᵥ y)) ≠ 0 := norm_ne_zero_iff.1 (by rw [hn]; exact one_ne_zero)
-      refine (mul_eq_zero.1 (Eq.trans ?_ (h (x, y)))).resolve_left hb
-      rw [← tsum_mul_left, thetaSum]
-      refine tsum_congr fun ξ => ?_
-      simp only [schr, AddChar.map_add_eq_mul]
-      ring
-  simpa [r0] using key
+  intros
+  apply _root_.GlobalTheory.ThetaInj.main <;> assumption
 
 theorem schr_schr (w w' : (κ → AF F) × (κ → AF F)) : ∃ c : ℂ, ∀ φ, schr ψ w (schr ψ w' φ) = c • schr ψ (w + w') φ :=
   ⟨ψ (⅟(2 : AF F) * (w.1 ⬝ᵥ w'.2 - w'.1 ⬝ᵥ w.2)), fun φ => funext fun x => by

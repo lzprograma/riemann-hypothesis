@@ -78,7 +78,7 @@ def zeroEquiv (s : List ℕ) : inType P (0 :: s) ≃ₗ[𝓞 E] inType P s :=
       invFun := fun x => (0, x)
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl
-      left_inv := fun p => Prod.ext (Subsingleton.elim _ _) rfl
+      left_inv := fun _ => Prod.ext (Subsingleton.elim _ _) rfl
       right_inv := fun _ => rfl }
 
 theorem iso_of_perm {s t : List ℕ} (h : s.Perm t) :

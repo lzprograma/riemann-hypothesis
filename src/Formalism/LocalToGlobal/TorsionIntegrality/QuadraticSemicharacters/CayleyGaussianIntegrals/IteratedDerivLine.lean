@@ -43,7 +43,7 @@ theorem lineCoeff' : LineCoeff := by
   rw [finsum_eq_sum_of_support_subset (s := Finset.finsuppAntidiag Finset.univ k)]
   · refine Finset.sum_congr rfl fun d hd => ?_
     rw [Finset.mem_finsuppAntidiag] at hd
-    rw [if_pos hd.1.symm]
+    rw [ite_eq_left hd.1.symm]
   · intro d hd
     simp only [Function.mem_support, ne_eq, ite_eq_right_iff, not_forall] at hd
     obtain ⟨h, -⟩ := hd
@@ -73,7 +73,7 @@ theorem LineUnique_of (h : LineCoeff) : LineUnique := by
     intro S
     rw [MvPolynomial.coeff_sum]
     simp only [MvPolynomial.coeff_monomial]
-    rw [Finset.sum_ite_eq' _ ν, if_pos hν]
+    rw [Finset.sum_ite_eq' _ ν, ite_eq_left hν]
   rw [← hc T, ← hc T']
   exact congrArg (fun R => AddMonoidAlgebra.coeff R ν) hpq
 

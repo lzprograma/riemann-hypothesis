@@ -228,13 +228,6 @@ theorem IsParamVec.unique_of_isSplit (hv : IsSplit (E := E) v) (hx : IsParamVec 
   · exact (hx.isSatVecGL hv he).unique hx'
   · exact absurd hv (not_isSplit_of_isInertAt hw)
 
-theorem hasParam_psFunGL (hv : IsSplit (E := E) v) {e : GLoc σ J v ≃* GL (Fin n) (w.adicCompletion E)}
-    (he : IsSplitChart σ J L h e) (α : Fin n → ℂˣ) :
-    HasParam σ J L h ((psFunGL w α).comp e.toMonoidHom) (Finset.univ.val.map α) := by
-  refine Or.inl ⟨hv, e, he, ?_⟩
-  convert hasSatGL_psFunGL (w := w) α using 1
-  exact MonoidHom.ext fun g => congrArg (psFunGL w α) (e.apply_symm_apply g)
-
 end Param
 
 section Global
@@ -393,7 +386,7 @@ theorem UnrAt.locChar_eq_val (h : UnrAt χ w) {x : (w.adicCompletion E)ˣ} (hx :
   have := h _ h1
   rwa [map_mul, map_inv, mul_inv_eq_one] at this
 
-theorem charFam_of_unrAt (h : UnrAt χ w) : charFam χ w = {val χ w} := if_pos h
+theorem charFam_of_unrAt (h : UnrAt χ w) : charFam χ w = {val χ w} := ite_eq_left h
 
 theorem bounded_charFam (T : Set (HeightOneSpectrum (𝓞 E))) (χ : (AF F ⊗[F] E)ˣ →* Circle) :
     Bounded T (charFam χ) 1 0 := fun w _ => by
@@ -416,8 +409,6 @@ end Characters
 section Record
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 

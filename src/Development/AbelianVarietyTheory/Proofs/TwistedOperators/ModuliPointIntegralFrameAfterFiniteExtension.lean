@@ -71,8 +71,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
-set_option autoImplicit false
-
 
 noncomputable section
 
@@ -278,7 +276,7 @@ theorem exists_intFr {Xo : Moduli D l} {c : Coeff l} (T : CDVR) (io : c.F →+* 
   let _ := io.toAlgebra
   obtain ⟨y₀, -, h0, -, -⟩ := gfp_frPt_gen (Xo := Xo) (c := c) (L := T.Fr) (L' := T.Fr)
     GlobalTheory.lawsFieldsSeparately.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1 (fun _ => rfl) x hx
-    (fun _ i j => if i = j then 1 else 0) (fun _ _ => if_pos rfl) (fun _ _ _ h => if_neg h.ne')
+    (fun _ i j => if i = j then 1 else 0) (fun _ _ => ite_eq_left rfl) (fun _ _ _ h => ite_eq_right h.ne')
   obtain ⟨ub, u, hub, htan, heig, hbas, -⟩ := lieFree Xo c T io G t' x m1 m2 hx y₀.u (h0 ▸ y₀.tan) y₀.eig (h0 ▸ y₀.basis)
   clear h0 y₀
   obtain ⟨w1, g1, r1, -⟩ := m1.lin

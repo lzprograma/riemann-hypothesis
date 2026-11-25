@@ -2,58 +2,14 @@ module
 
 public import Formalism.HermitianCurvature.StatementU
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Topology.UniformSpace.Matrix
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeRulesA1
 
 @[expose] public section
 
@@ -219,37 +175,11 @@ theorem corollary_u2_of_parts_holds : GermExpansionHypothesisFromComponents := b
   rw [← mul_assoc] at h3
   exact h3
 
-private theorem one_le_gN_of_mem_GV {k r : ℕ} (g : B.Mat k r) (hg : g ∈ B.GV k r) : 1 ≤ B.gN g := by
-  letI : NormedAddCommGroup (B.Mat k r) := Matrix.frobeniusNormedAddCommGroup
-  have hH : gᴴ * Hpk k r * g = Hpk k r := hg
-  have hne : Hpk k r ≠ 0 := by
-    intro h0
-    have h00 := congrFun (congrFun h0 ⟨r, by omega⟩) ⟨r, by omega⟩
-    simp [Hpk] at h00
-    try (split_ifs at h00 <;> norm_num at h00)
-  have h1 : ‖Hpk k r‖ ≤ ‖g‖ ^ 2 * ‖Hpk k r‖ := by
-    calc ‖Hpk k r‖ = ‖gᴴ * Hpk k r * g‖ := by rw [hH]
-      _ ≤ ‖gᴴ * Hpk k r‖ * ‖g‖ := Matrix.frobenius_norm_mul _ _
-      _ ≤ ‖gᴴ‖ * ‖Hpk k r‖ * ‖g‖ :=
-        mul_le_mul_of_nonneg_right (Matrix.frobenius_norm_mul _ _) (norm_nonneg _)
-      _ = ‖g‖ ^ 2 * ‖Hpk k r‖ := by rw [Matrix.frobenius_norm_conjTranspose]; ring
-  have hpos : 0 < ‖Hpk k r‖ := norm_pos_iff.2 hne
-  have h2 : 1 ≤ ‖g‖ ^ 2 := by nlinarith
-  have h3 : 1 ≤ ‖g‖ := by nlinarith [norm_nonneg g]
-  have h4 : B.gN g = ‖g‖ := by
-    unfold B.gN
-    rw [Matrix.frobenius_norm_def, Real.sqrt_eq_rpow]
-    congr 1
-    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-    rw [Complex.normSq_eq_norm_sq, Real.rpow_two]
-  rw [h4]
-  exact h3
-
 theorem ccMono : CCMono := by
   intro k ρ E _ _ a AB c mm F hAB hF
   obtain ⟨hck, hb⟩ := hF
   refine ⟨hck, fun u v hu hv hl g hg => le_trans ?_ (hb u v hu hv hl g hg)⟩
-  exact mul_le_mul_of_nonneg_right (Real.rpow_le_rpow_of_exponent_le (one_le_gN_of_mem_GV g hg) hAB) (norm_nonneg _)
+  exact mul_le_mul_of_nonneg_right (Real.rpow_le_rpow_of_exponent_le (_root_.Formalism.FourierDecayAlt.P.SmoothnessOrderArithmetic.one_le_gN hg) hAB) (norm_nonneg _)
 
 section supp
 open Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.P.BetaSesquilinearity
@@ -324,10 +254,7 @@ lemma cont_Dmin (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (l : Fin (r + 2
   exact ((continuous_matrix fun a b => cont_Zhat k r z z' a b).matrix_submatrix _ _).matrix_det
 
 lemma cont_Gf (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) : Continuous (Gf k r z z') := by
-  have h1 := Complex.continuous_normSq.comp (cont_Dmin k r z z' (Fin.last (r + 1)))
-  have h2 := Complex.continuous_normSq.comp (cont_Dmin k r z z' ⟨r, by omega⟩)
-  unfold Gf
-  exact h1.sub (continuous_const.mul h2)
+  exact Formalism.FourierDecayAlt.P.BetaSesquilinearity.Gf_cont z z'
 
 lemma cont_DjU (k j ρ : ℕ) : Continuous (DjU k j ρ) := by
   have h : Continuous (fun g : B.Mat k (j + ρ) => Zh k j ρ g) :=
@@ -409,7 +336,3 @@ theorem phiSuppGOfParts : PhiSuppGOfParts := by
 end supp
 
 end Formalism.FourierDecayAlt.P.Ux8
-
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P

@@ -103,7 +103,7 @@ private theorem blk_inv {R ι κ : Type} [CommRing R] [Fintype ι] [DecidableEq 
     calc h' * E = h' * (E * h) * h' := by rw [mul_assoc, mul_assoc, e1, mul_one]
       _ = E * h' := by rw [h1, ← mul_assoc, e2, one_mul]
   have h3 := congrFun (congrFun h2 a) b
-  rw [hE, Matrix.diagonal_mul, Matrix.mul_diagonal, if_neg (Ne.symm hab), if_pos rfl, mul_zero, one_mul] at h3
+  rw [hE, Matrix.diagonal_mul, Matrix.mul_diagonal, ite_eq_right (Ne.symm hab), ite_eq_left rfl, mul_zero, one_mul] at h3
   exact h3.symm
 
 private theorem map_mul_alg {O R S ι : Type} [CommRing O] [CommRing R] [CommRing S] [Algebra O R] [Algebra O S]

@@ -147,7 +147,7 @@ theorem koszul_finset (s : Finset (Fin n)) :
       rw [map_mul, rename_pairCollapse_pairDiff]
       by_cases hip : i = p
       · simp [hip]
-      · rw [if_neg hip, if_neg hip]
+      · rw [ite_eq_right hip, ite_eq_right hip]
         by_cases hi : i ∈ s
         · rw [hs i hi, rename_pairCollapse_idem]
         · rw [hout i (by rw [Finset.mem_insert, not_or]; exact ⟨hip, hi⟩), map_zero]
@@ -161,7 +161,7 @@ theorem koszul_finset (s : Finset (Fin n)) :
         · subst hip
           simp
         · simp [hip]
-      rw [hrel', hcol, zero_add, Finset.sum_ite_eq', if_pos (Finset.mem_univ p)] at hsplit
+      rw [hrel', hcol, zero_add, Finset.sum_ite_eq', ite_eq_left (Finset.mem_univ p)] at hsplit
       rcases mul_eq_zero.mp hsplit.symm with h | h
       · exact absurd h (pairDiff_ne_zero p)
       · exact h
@@ -184,7 +184,7 @@ theorem koszul_homogeneous {m : ℕ} (G : Fin n → MvPolynomial (Fin n ⊕ Fin 
   obtain ⟨K, hK, hGK⟩ := koszul_finset Finset.univ G
     (fun i h => absurd (Finset.mem_univ i) h) hrel
   refine ⟨fun i j => if m - 1 = 0 then 0 else homogeneousComponent (m - 2) (K i j),
-    fun i j => ?_, fun i j => ?_, fun hm i j => if_pos hm, fun i => ?_⟩
+    fun i j => ?_, fun i j => ?_, fun hm i j => ite_eq_left hm, fun i => ?_⟩
   · split_ifs
     · simp
     · show homogeneousComponent (m - 2) (K i j) = -homogeneousComponent (m - 2) (K j i)
@@ -194,13 +194,13 @@ theorem koszul_homogeneous {m : ℕ} (G : Fin n → MvPolynomial (Fin n ⊕ Fin 
     · exact homogeneousComponent_isHomogeneous _ _
   · have h := congrArg (homogeneousComponent (m - 1)) (hGK i)
 
-    rw [homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).mpr (hG i)), if_pos rfl,
+    rw [homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).mpr (hG i)), ite_eq_left rfl,
     map_sum] at h
     simp only [homogeneousComponent_linear_mul (isHomogeneous_pairDiff _)] at h
     rw [h]
     by_cases hm : m - 1 = 0
     · simp [hm]
-    · simp only [hm, if_false]
+    · simp only [hm, ite_false]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [show m - 1 - 1 = m - 2 by omega]
 
@@ -278,34 +278,18 @@ end Numbers
 
 section Additivity
 
-theorem vNumL_add_of_ratDiv_ne_zero {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
+theorem vNumL_add_of_special {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     {ϖ : O} (hϖ : Irreducible ϖ) {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type}
     [∀ k, Fintype (ι k)] {P : Ideal (MRing ι O)} {e : ℕ} (hP : IsModelOver P (e + 1))
-    {b : K → ℤ} {f g : MRing ι O} (hD : IsVerticalDivisor P ϖ b f g) {W : Ideal (MRing ι O)}
-    (hW : ratDiv P f g W ≠ 0) (a₁ a₂ : K → ℤ) (l : List (K → ℤ)) (hl : e ≤ l.length) :
+    {W : Ideal (MRing ι O)} (hWm : IsMultiHomogIdeal W) (hWp : W.IsPrime) (hPW : P ≤ W)
+    (hϖW : (C ϖ : MRing ι O) ∈ W) (a₁ a₂ : K → ℤ) (l : List (K → ℤ)) (hl : e ≤ l.length) :
     vNumL W ((a₁ + a₂) :: l) = vNumL W (a₁ :: l) + vNumL W (a₂ :: l) := by
-  obtain ⟨bf, bg, hbf, hbg, -⟩ := hD.degrees
-  have hPmh : IsMultiHomogIdeal P := hP.multiProj.multiHomog
   have : P.IsPrime := hP.multiProj.isPrime
-  have hmh : ∀ (h : MRing ι O) (c : K → ℕ), IsMultiHomog h c → divCycle P h W ≠ 0 →
-      IsMultiHomogIdeal W ∧ W.IsPrime ∧ P ≤ W := by
-    intro h c hc hW'
-    unfold divCycle at hW'
-    split_ifs at hW' with hW''
-    · exact ⟨MinimalPrimeMultiHomog.full O K ι _ W (SupSpanMultiHomog.full O K ι P h c hPmh hc)
-        hW''.1, hW''.1.1.1, le_sup_left.trans hW''.1.1.2⟩
-    · exact absurd rfl hW'
   have hϖP : (C ϖ : MRing ι O) ∉ P := by
     intro h
     have h' : ϖ ∈ P.comap (C : O →+* MRing ι O) := h
     rw [hP.noTorsion, Ideal.mem_bot] at h'
     exact hϖ.ne_zero h'
-  have hϖW : (C ϖ : MRing ι O) ∈ W := hD.vertical W hW
-  obtain ⟨hWm, hWp, hPW⟩ : IsMultiHomogIdeal W ∧ W.IsPrime ∧ P ≤ W := by
-    by_cases hWf : divCycle P f W = 0
-    · exact hmh g bg hbg (fun hWg => hW (by simp [ratDiv, hWf, hWg]))
-    · exact hmh f bf hbf hWf
-  have := hWp
   have hlt : P < W := lt_of_le_of_ne hPW (fun h => hϖP (h ▸ hϖW))
   have hdrop := DimStrictDrop.full (MRing ι O) P W hlt
   rw [hP.dim] at hdrop
@@ -323,6 +307,27 @@ theorem vNumL_add_of_ratDiv_ne_zero {O : Type} [CommRing O] [IsDomain O] [IsDisc
     change _ = vNum W (Matrix.vecCons c l.get)
     rw [vNum_vecCons_eq, List.ofFn_get]
   rw [e', e', e', key]
+
+theorem vNumL_add_of_ratDiv_ne_zero {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
+    {ϖ : O} (hϖ : Irreducible ϖ) {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type}
+    [∀ k, Fintype (ι k)] {P : Ideal (MRing ι O)} {e : ℕ} (hP : IsModelOver P (e + 1))
+    {b : K → ℤ} {f g : MRing ι O} (hD : IsVerticalDivisor P ϖ b f g) {W : Ideal (MRing ι O)}
+    (hW : ratDiv P f g W ≠ 0) (a₁ a₂ : K → ℤ) (l : List (K → ℤ)) (hl : e ≤ l.length) :
+    vNumL W ((a₁ + a₂) :: l) = vNumL W (a₁ :: l) + vNumL W (a₂ :: l) := by
+  obtain ⟨bf, bg, hbf, hbg, -⟩ := hD.degrees
+  have hmh : ∀ (h : MRing ι O) (c : K → ℕ), IsMultiHomog h c → divCycle P h W ≠ 0 →
+      IsMultiHomogIdeal W ∧ W.IsPrime ∧ P ≤ W := by
+    intro h c hc hW'
+    unfold divCycle at hW'
+    split_ifs at hW' with hW''
+    · exact ⟨MinimalPrimeMultiHomog.full O K ι _ W (SupSpanMultiHomog.full O K ι P h c hP.multiProj.multiHomog hc)
+        hW''.1, hW''.1.1.1, le_sup_left.trans hW''.1.1.2⟩
+    · exact absurd rfl hW'
+  obtain ⟨hWm, hWp, hPW⟩ : IsMultiHomogIdeal W ∧ W.IsPrime ∧ P ≤ W := by
+    by_cases hWf : divCycle P f W = 0
+    · exact hmh g bg hbg (fun hWg => hW (by simp [ratDiv, hWf, hWg]))
+    · exact hmh f bf hbf hWf
+  exact vNumL_add_of_special hϖ hP hWm hWp hPW (hD.vertical W hW) a₁ a₂ l hl
 
 end Additivity
 

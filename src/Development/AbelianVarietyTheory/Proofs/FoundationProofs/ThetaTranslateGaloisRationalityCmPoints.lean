@@ -17,48 +17,9 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarCo
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GaloisConjTorsionTranslatesOddThetaProduct
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ImaginaryQuadraticFieldStructure
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TaylorConjugateTangentSpacePadZeroColumns
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RingTheory.PiTensorProduct
@@ -113,7 +74,7 @@ theorem embV_sum (D : D7) (T : Tor D) (h0 : ∀ τ, T.emb τ 0 = 0)
     map_sum f _ _
   simp only [embV, e, e2, hmul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
 
-theorem liftM_of_mem (M : IntermediateField ℚ ℂ) {x : ℂ} (h : x ∈ M) : liftM M x = ⟨x, h⟩ := dif_pos h
+theorem liftM_of_mem (M : IntermediateField ℚ ℂ) {x : ℂ} (h : x ∈ M) : liftM M x = ⟨x, h⟩ := dite_eq_left h
 
 theorem sum_smul_comm {V : Type*} [AddCommGroup V] [Module ℂ V] {r s : ℕ} (c : Fin s → ℂ) (k : Fin s → Fin r → ℂ)
     (v : Fin r → V) : ∑ j, c j • ∑ i, k j i • v i = ∑ i, (∑ j, k j i * c j) • v i := by
@@ -277,8 +238,8 @@ theorem exists_top_embedding_eq_on_countable (M : IntermediateField ℚ ℂ) (ρ
     ((M.val : M →+* ℂ).comp k.subtype) ((ρ : M →+* ℂ).comp k.subtype)
   refine ⟨(τ.toRingHom.toRatAlgHom).comp (⊤ : IntermediateField ℚ ℂ).val, fun x hx hxM => ?_⟩
   have h := hτ ⟨⟨x, hxM⟩, Subfield.subset_closure hx⟩
-  have h1 : liftM ⊤ x = ⟨x, IntermediateField.mem_top⟩ := dif_pos IntermediateField.mem_top
-  have h2 : liftM M x = ⟨x, hxM⟩ := dif_pos hxM
+  have h1 : liftM ⊤ x = ⟨x, IntermediateField.mem_top⟩ := dite_eq_left IntermediateField.mem_top
+  have h2 : liftM M x = ⟨x, hxM⟩ := dite_eq_left hxM
   unfold cj
   rw [h1, h2]
   exact h
@@ -597,7 +558,7 @@ theorem sign_eq {p k k' : ℕ} {m m' : ℤ} {q : ℝ} (hp : Odd p) (h : (p : ℝ
 theorem wPh_eq (D : D7) (T : Tor D) {N N' : ℕ} (x : VC D N N') {p k : ℕ} {m : ℤ} (hp : p.Prime) (h2 : p ≠ 2)
     (h : (p : ℝ) ^ k * qH D T x = (m : ℝ)) : wPh D T p x = (-1 : ℂ) ^ m := by
   have hodd : Odd p := hp.odd_of_ne_two h2
-  rw [wPh, if_neg h2]
+  rw [wPh, ite_eq_right h2]
   have hex : ∃ s : ℂ, ∃ (k : ℕ) (m : ℤ), (p : ℝ) ^ k * qH D T x = (m : ℝ) ∧ s = (-1 : ℂ) ^ m :=
     ⟨_, k, m, h, rfl⟩
   obtain ⟨k0, m0, h0, hs⟩ := Classical.epsilon_spec hex
@@ -617,7 +578,7 @@ theorem exp_int_pi (m : ℤ) : Complex.exp ((m : ℂ) * ((Real.pi : ℂ) * Compl
 theorem cj_top_pow (σ : (⊤ : IntermediateField ℚ ℂ) →ₐ[ℚ] ℂ) (z : ℂ) (n : ℕ) :
     cj ⊤ σ (z ^ n) = cj ⊤ σ z ^ n := by
   have hl : ∀ w : ℂ, liftM ⊤ w = (⟨w, IntermediateField.mem_top⟩ : (⊤ : IntermediateField ℚ ℂ)) :=
-    fun w => dif_pos IntermediateField.mem_top
+    fun w => dite_eq_left IntermediateField.mem_top
   simp only [cj]
   rw [hl, hl, ← map_pow]
   congr 1
@@ -625,7 +586,7 @@ theorem cj_top_pow (σ : (⊤ : IntermediateField ℚ ℂ) →ₐ[ℚ] ℂ) (z :
 theorem cj_top_sign (σ : (⊤ : IntermediateField ℚ ℂ) →ₐ[ℚ] ℂ) (m : ℤ) :
     cj ⊤ σ ((-1 : ℂ) ^ m) = (-1 : ℂ) ^ m := by
   have hl : ∀ w : ℂ, liftM ⊤ w = (⟨w, IntermediateField.mem_top⟩ : (⊤ : IntermediateField ℚ ℂ)) :=
-    fun w => dif_pos IntermediateField.mem_top
+    fun w => dite_eq_left IntermediateField.mem_top
   have he : (⟨(-1 : ℂ) ^ m, IntermediateField.mem_top⟩ : (⊤ : IntermediateField ℚ ℂ)) = (-1) ^ m := by
     apply Subtype.ext
     change (-1 : ℂ) ^ m = (⊤ : IntermediateField ℚ ℂ).val ((-1) ^ m)
@@ -851,7 +812,7 @@ theorem translate_level_four : ∀ (D : D7), admG1 D → ∀ (cc : Ideal (𝓞 D
           rw [coordB_nsmul]; push_cast; ring
         rw [this]; exact add_mem hk hk
       have := hU _ h4 (coordB D (tor0 D cc δ) b k z)
-      rw [if_pos h2, one_mul] at this
+      rw [ite_eq_left h2, one_mul] at this
       exact this
     obtain ⟨m, hm⟩ := hint ω hω _ h2t
     have ha : (Hf D (tor0 D cc δ) (4 • ω) t).im = 2 * m := by
@@ -1014,7 +975,7 @@ theorem gal_top (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (hc : Crv D cc 
 
 theorem cj_mul (M : IntermediateField ℚ ℂ) (ρ : M →ₐ[ℚ] ℂ) {a b : ℂ} (ha : a ∈ M) (hb : b ∈ M) :
     cj M ρ (a * b) = cj M ρ a * cj M ρ b := by
-  simp only [cj, TaylorLogMetric.liftM, dif_pos ha, dif_pos hb, dif_pos (M.mul_mem ha hb), ← map_mul]
+  simp only [cj, TaylorLogMetric.liftM, dite_eq_left ha, dite_eq_left hb, dite_eq_left (M.mul_mem ha hb), ← map_mul]
   rfl
 
 theorem cj_neg_one_zpow (M : IntermediateField ℚ ℂ) (ρ : M →ₐ[ℚ] ℂ) (m : ℤ) :
@@ -1023,11 +984,11 @@ theorem cj_neg_one_zpow (M : IntermediateField ℚ ℂ) (ρ : M →ₐ[ℚ] ℂ)
   rcases Int.even_or_odd m with h | h
   · rw [h.neg_one_zpow]
     refine ⟨M.one_mem, ?_⟩
-    simp only [cj, TaylorLogMetric.liftM, dif_pos M.one_mem]
+    simp only [cj, TaylorLogMetric.liftM, dite_eq_left M.one_mem]
     exact map_one ρ
   · rw [h.neg_one_zpow]
     refine ⟨h1, ?_⟩
-    simp only [cj, TaylorLogMetric.liftM, dif_pos h1]
+    simp only [cj, TaylorLogMetric.liftM, dite_eq_left h1]
     have : (⟨-1, h1⟩ : M) = -1 := rfl
     rw [this, map_neg, map_one]
 

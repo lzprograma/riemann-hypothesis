@@ -75,7 +75,7 @@ theorem cmp_at {ε ε' : Pt C 1 dd} (hε : ∀ i, MvPowerSeries.constantCoeff (�
     MvPowerSeries.subst (P2 a b) (FB.expS C (ev (n := 2) ![comp1 ε (pt C dd 0), pt C dd 1] Y.h -
       ev (n := 2) ![pt C dd 0, comp1 ε' (pt C dd 1)] Y.h)) =
       mvExp (hAt Y (mapAt ε a) b - hAt Y a (mapAt ε' b)) := by
-  rw [eval_two_points_eq_subst _ _ _ rfl, eval_two_points_eq_subst _ _ _ rfl, comp_eq_map_at, comp_eq_map_at]
+  rw [eval_two_points_eq_subst _ _ _, eval_two_points_eq_subst _ _ _, comp_eq_map_at, comp_eq_map_at]
   have k0 := cc_pt (C := C) (dd := dd) (0 : Fin 2)
   have k1 := cc_pt (C := C) (dd := dd) (1 : Fin 2)
   have hP := constantCoeff_pair_substitution ha hb

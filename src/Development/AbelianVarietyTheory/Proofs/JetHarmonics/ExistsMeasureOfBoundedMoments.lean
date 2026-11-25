@@ -216,7 +216,7 @@ theorem exists_measure_of_bounded_moments :
       · simp [fwdDiff_binomC]
       · intro m hm
         obtain ⟨i, hi⟩ := Function.ne_iff.mp hm
-        rw [Finset.prod_eq_zero (Finset.mem_univ i) (by rw [fwdDiff_binomC, if_neg hi]), mul_zero]
+        rw [Finset.prod_eq_zero (Finset.mem_univ i) (by rw [fwdDiff_binomC, ite_eq_right hi]), mul_zero]
     calc ‖c n‖ = ‖L.mkContinuous B₀ (hL B₀ hB₀) P‖ := by rw [← hv]; rfl
       _ ≤ _ := ContinuousLinearMap.le_opNorm _ _
       _ ≤ B * 1 := mul_le_mul hμ hP (norm_nonneg _) hB

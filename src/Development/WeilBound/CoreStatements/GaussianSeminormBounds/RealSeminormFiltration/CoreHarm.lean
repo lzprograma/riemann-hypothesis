@@ -1,58 +1,12 @@
 module
 
+import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasGl
 public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDefs
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.KroneckerOneRightSwap
 public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLie
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.ExistsMonomialWeight
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.FockOperatorsKernel
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.RedOps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -93,9 +47,9 @@ theorem mp_hc (A : Module.End ℂ (MvPolynomial σ ℂ)) (P : MvPolynomial σ �
     simp
   unfold minusPart
   rw [map_finsum _ hfin, finsum_eq_single _ d]
-  · rw [hc_hc, if_pos rfl]
+  · rw [hc_hc, ite_eq_left rfl]
   · intro e he
-    rw [hc_hc, if_neg (Ne.symm he)]
+    rw [hc_hc, ite_eq_right (Ne.symm he)]
 
 theorem mp_comm (T A B : Module.End ℂ (MvPolynomial σ ℂ))
     (hT : ∀ e P, homogeneousComponent e (T P) = T (homogeneousComponent e P))
@@ -145,28 +99,8 @@ theorem isPC_Eab {m n : ℕ} {a b : Ix m n} (h : ¬ sameBlock a b) : IsPC (Eab a
 alias sb_iff := _root_.PI.FockOneDegW.Core.side_sb
 
 theorem isPC_brk {m n : ℕ} {a b : Ix m n} (h : sameBlock a b) {Z : Mat m n} (hZ : IsPC Z) :
-    IsPC (Eab a b * Z - Z * Eab a b) := by
-  intro x y hxy
-  rw [sb_iff] at h hxy
-  have hZ' : ∀ u v : Ix m n, u.isLeft = v.isLeft → Z u v = 0 :=
-    fun u v huv => hZ u v ((sb_iff u v).2 huv)
-  have h1 : ∀ k, Eab a b x k * Z k y = 0 := by
-    intro k
-    simp only [Eab, Matrix.single_apply]
-    split_ifs with hh
-    · obtain ⟨rfl, rfl⟩ := hh
-      rw [one_mul]
-      exact hZ' _ _ (h.symm.trans hxy)
-    · rw [zero_mul]
-  have h2 : ∀ k, Z x k * Eab a b k y = 0 := by
-    intro k
-    simp only [Eab, Matrix.single_apply]
-    split_ifs with hh
-    · obtain ⟨rfl, rfl⟩ := hh
-      rw [mul_one]
-      exact hZ' _ _ (hxy.trans h.symm)
-    · rw [mul_zero]
-  simp only [Matrix.sub_apply, Matrix.mul_apply, h1, h2, Finset.sum_const_zero, sub_zero]
+    IsPC (Eab a b * Z - Z * Eab a b) :=
+  _root_.PositivityTheory.KReal.CasGl.pc_ad h hZ
 
 variable {p q r s : ℕ}
 
@@ -339,14 +273,14 @@ theorem jHarmonic_stable_second_action : KSt (units (fockAct2 p q r s)) (jHarm p
 theorem homogeneous_stable_first_action (d : ℕ) : KSt (units (fockAct1 p q r s)) (homog (Ix p q × Ix r s) d) := by
   unfold KSt units
   intro a b hab P hP
-  have hP' : P = homogeneousComponent d P := by rw [homogeneousComponent_of_mem hP, if_pos rfl]
+  have hP' : P = homogeneousComponent d P := by rw [homogeneousComponent_of_mem hP, ite_eq_left rfl]
   rw [hP', ← homogComponent_comm_first_action hab]
   exact homogeneousComponent_mem _ _
 
 theorem homogeneous_stable_second_action (d : ℕ) : KSt (units (fockAct2 p q r s)) (homog (Ix p q × Ix r s) d) := by
   unfold KSt units
   intro a b hab P hP
-  have hP' : P = homogeneousComponent d P := by rw [homogeneousComponent_of_mem hP, if_pos rfl]
+  have hP' : P = homogeneousComponent d P := by rw [homogeneousComponent_of_mem hP, ite_eq_left rfl]
   rw [hP', ← homogComponent_comm_second_action hab]
   exact homogeneousComponent_mem _ _
 
@@ -407,14 +341,14 @@ theorem low_homog (c d : Ix r s) {e : ℕ} {g : Pol p q r s} (hg : g ∈ homog (
     PI.FockOneDegW.lowOp (p := p) (q := q) c d g ∈ homog (Ix p q × Ix r s) e := by
   have h1 : PI.FockOneDegW.lowOp (p := p) (q := q) c d g =
       homogeneousComponent e (PI.FockOneDegW.lowOp (p := p) (q := q) c d g) := by
-    rw [PI.FockOneDegW.RedOps.hc_lowOp, homogeneousComponent_of_mem hg, if_pos rfl]
+    rw [PI.FockOneDegW.RedOps.hc_lowOp, homogeneousComponent_of_mem hg, ite_eq_left rfl]
   rw [h1]
   exact homogeneousComponent_mem _ _
 
 theorem low_homog_small (c d : Ix r s) {e : ℕ} (he : e < 2) {g : Pol p q r s}
     (hg : g ∈ homog (Ix p q × Ix r s) e) : PI.FockOneDegW.lowOp (p := p) (q := q) c d g = 0 := by
   refine hc_ext fun n => ?_
-  rw [PI.FockOneDegW.RedOps.hc_lowOp, homogeneousComponent_of_mem hg, if_neg (by omega), map_zero, map_zero]
+  rw [PI.FockOneDegW.RedOps.hc_lowOp, homogeneousComponent_of_mem hg, ite_eq_right (by omega), map_zero, map_zero]
 
 private theorem omE_add_pderiv_pderiv_eq_X_mul_X_of_not_sameBlock {c d : Ix r s} (hcd : ¬ sameBlock c d) (a : Ix p q) (P : Pol p q r s) :
     omE (a, c) (a, d) P +

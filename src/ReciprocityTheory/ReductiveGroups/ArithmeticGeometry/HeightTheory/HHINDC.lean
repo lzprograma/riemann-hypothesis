@@ -165,8 +165,7 @@ theorem nPa_support (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (a : Ω c) (ha : a ≠
 
 theorem good_of_nPa (h : d.S1) (c : ι) (p : Ideal (KTp K d.D d.N)) (a : Ω c)
     (hn : d.nPa h c p a ≠ 0) : ∃ w, w ∈ d.GoodP c p := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply hn
   simp [nPa, hc]
 

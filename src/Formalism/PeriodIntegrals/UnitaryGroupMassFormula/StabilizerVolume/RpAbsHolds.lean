@@ -4,53 +4,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.MeasureTheory.Integral.Pi
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.RestrProdSt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.KapIntegral, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.RpAbsHolds
@@ -137,7 +91,7 @@ lemma Qm_integral [DecidableEq ι] (hfin : ∀ i, m i (L i) ≠ ⊤) (hT : TailH
     rw [hQ]
     refine ⟨integrable_zero_measure, ?_⟩
     rw [integral_zero_measure]
-    push_neg at h
+    push Not at h
     obtain ⟨i, hiS, hi⟩ := h
     have h0 : m i (L i) = 0 := by
       by_contra h0
@@ -228,7 +182,7 @@ theorem rpAbs_holds : RPAbs := by
     rw [Measure.sum_apply_eq_zero]
     intro S
     apply kap_eval_null hC.compl
-    by_cases hi : i ∈ S <;> simp only [mu, hi, if_true, if_false] <;>
+    by_cases hi : i ∈ S <;> simp only [mu, hi, ite_true, ite_false] <;>
       exact Measure.restrict_le_self.absolutelyContinuous hCm
   · intro f hfi hf
     obtain ⟨T0, hT0⟩ : ∃ T0 : Finset ι, ∀ i ∉ T0, f i = (L i).indicator 1 :=
@@ -278,10 +232,10 @@ theorem rpAbs_holds : RPAbs := by
         (∑ S ∈ T0.powerset, (∏ i ∈ T0, ∫ w, f i w ∂mu m L S i) * ((tl m L T0 : ℝ) : ℂ)) := by
       have h : HasSum (fun S : Finset ι => ∫ x, ∏ᶠ i, f i (x i) ∂kap m L S)
           (∑ S ∈ T0.powerset, ∫ x, ∏ᶠ i, f i (x i) ∂kap m L S) :=
-        hasSum_sum_of_ne_finset_zero (fun S hS => by rw [hI S, if_neg (by simpa using hS)])
+        hasSum_sum_of_ne_finset_zero (fun S hS => by rw [hI S, ite_eq_right (by simpa using hS)])
       convert h using 1
       refine Finset.sum_congr rfl fun S hS => ?_
-      rw [hI S, if_pos (Finset.mem_powerset.1 hS)]
+      rw [hI S, ite_eq_left (Finset.mem_powerset.1 hS)]
     have hval : ∫ x, ∏ᶠ i, f i (x i) ∂(Measure.sum fun S => kap m L S) =
         (∏ i ∈ T0, ∫ w, f i w ∂m i) * ((tl m L T0 : ℝ) : ℂ) := by
       rw [(hasSum_integral_measure hρint).unique hsum, ← Finset.sum_mul]
@@ -301,8 +255,8 @@ theorem rpAbs_holds : RPAbs := by
     have h1 : HasProd (fun i => if i ∈ T0 then ∫ w, f i w ∂m i else 1)
         (∏ i ∈ T0, ∫ w, f i w ∂m i) := by
       convert hasProd_prod_of_ne_finset_one (s := T0)
-        (f := fun i => if i ∈ T0 then ∫ w, f i w ∂m i else 1) (fun i hi => if_neg hi) using 1
-      all_goals first | infer_instance | exact Finset.prod_congr rfl fun i hi => (if_pos hi).symm
+        (f := fun i => if i ∈ T0 then ∫ w, f i w ∂m i else 1) (fun i hi => ite_eq_right hi) using 1
+      all_goals first | infer_instance | exact Finset.prod_congr rfl fun i hi => (ite_eq_left hi).symm
     have h2 : HasProd (fun i => (((({i | i ∉ T0} : Set ι).mulIndicator (am m L) i : ℝ≥0) : ℝ) : ℂ))
         ((tl m L T0 : ℝ) : ℂ) :=
       (hasProd_ind hTail T0).map ((Complex.ofRealHom.toMonoidHom).comp NNReal.toRealHom.toMonoidHom)
@@ -315,8 +269,8 @@ theorem rpAbs_holds : RPAbs := by
         rw [show (1 : W i → ℂ) = fun _ => (1 : ℂ) from rfl, integral_indicator_const _ (hL i)]
         simp [Measure.real]
       rw [hT0 i hi, hind]
-      simp only [hi, if_false, one_mul, Set.mulIndicator_apply, Set.mem_setOf_eq, not_false_eq_true,
-        if_true, am, ENNReal.coe_toNNReal_eq_toReal]
+      simp only [hi, ite_false, one_mul, Set.mulIndicator_apply, Set.mem_setOf_eq, not_false_eq_true,
+        ite_true, am, ENNReal.coe_toNNReal_eq_toReal]
 
 end PI.VolStabS
 end -- clump:auto

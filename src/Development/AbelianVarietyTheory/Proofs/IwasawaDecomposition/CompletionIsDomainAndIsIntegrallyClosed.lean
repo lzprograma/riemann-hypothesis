@@ -759,7 +759,7 @@ theorem exists_primitive_of_aeval_eq_zero {S : Type*} [CommRing S] [IsDomain S] 
   have hc' : ∀ v, v ∉ g.support → g₀.coeff v = 0 := by
     intro v hv
     simp only [g₀, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial]
-    exact Finset.sum_eq_zero fun w hw => if_neg (fun h : w = v => hv (h ▸ hw))
+    exact Finset.sum_eq_zero fun w hw => ite_eq_right (fun h : w = v => hv (h ▸ hw))
   have hgd : g = MvPolynomial.C d * g₀ := by
     ext v
     rw [MvPolynomial.coeff_C_mul]
@@ -771,8 +771,7 @@ theorem exists_primitive_of_aeval_eq_zero {S : Type*} [CommRing S] [IsDomain S] 
       rw [hgd, map_mul] at hg
       simpa using hg
     exact (mul_eq_zero.mp h1).resolve_left (by exact_mod_cast hd0)
-  · by_contra hall
-    push_neg at hall
+  · by_contra! hall
     obtain ⟨l, hl⟩ := (IsPrincipalIdealRing.principal I).principal
     have hdvd : l ∣ g.support.gcd b := Finset.dvd_gcd fun v hv => by
       have := hall v
@@ -803,7 +802,7 @@ theorem exists_quasiFiniteAt_of_not_injective {S : Type*} [CommRing S] [IsDomain
 
   obtain ⟨g, hg0, hg⟩ : ∃ g : MvPolynomial (Fin (n + 1)) ℤ, g ≠ 0 ∧ aeval y g = 0 := by
     rw [injective_iff_map_eq_zero] at hy
-    push_neg at hy
+    push Not at hy
     obtain ⟨g, h1, h2⟩ := hy
     exact ⟨g, h2, h1⟩
   let L := algebraMap S (Localization.AtPrime q)

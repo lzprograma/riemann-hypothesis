@@ -17,64 +17,10 @@ public import Development.EtaleCohomology.DivisorCycles.MatUnitsOf
 public import Development.EtaleCohomology.DivisorCycles.SpecPtPf
 public import Development.EtaleCohomology.DivisorCycles.TangentDegree
 public import Development.EtaleCohomology.DivisorCycles.TangentFieldExtension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.EtaleCohomology.DivisorCycles.ConjugateIdempotents, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PowEig, Development.EtaleCohomology.DivisorCycles.CycleCount2, Development.EtaleCohomology.DivisorCycles.GenSpecProof, Development.EtaleCohomology.DivisorCycles.SumMulSum, Development.EtaleCohomology.DivisorCycles.TangentIndexDvd, Development.EtaleCohomology.DivisorCycles.TorusPtPf, Development.EtaleCohomology.DivisorCycles.UnipotentPartTrivial, Development.EtaleCohomology.DivisorCycles.UnitFactorizationTheorem, Development.EtaleCohomology.DivisorCycles.ZclMulPf, Development.EtaleCohomology.DivisorCycles.FinKey
@@ -293,21 +239,21 @@ theorem IdemConj_of : IdemConj := by
     if h : (L S).card = (M S).card ∧ k ∈ L S then ((L S).equivOfCardEq h.1 ⟨k, h.2⟩ : Fin n) else k
   have hg : ∀ S k (h : (L S).card = (M S).card ∧ k ∈ L S),
       g S k = ((L S).equivOfCardEq h.1 ⟨k, h.2⟩ : Fin n) := fun S k h => by
-    simp only [g, dif_pos h]
+    simp only [g, dite_eq_left h]
   let f : Fin n → Fin n := fun k => if k ∈ Q k then k else g (Q k) k
   have hkL : ∀ k, k ∉ Q k → (L (Q k)).card = (M (Q k)).card ∧ k ∈ L (Q k) :=
     fun k hk => ⟨hLM k, (hL _ _).2 ⟨rfl, hk⟩⟩
   have hfM : ∀ k, k ∉ Q k → f k ∈ Q k ∧ Q (f k) ≠ Q k := by
     intro k hk
-    have e : f k = g (Q k) k := by simp only [f, if_neg hk]
+    have e : f k = g (Q k) k := by simp only [f, ite_eq_right hk]
     rw [e, hg _ _ (hkL k hk), ← hM]
     exact ((L (Q k)).equivOfCardEq (hkL k hk).1 ⟨k, (hkL k hk).2⟩).2
   have hfQ : ∀ k, f k ∈ Q k := by
     intro k
     by_cases hk : k ∈ Q k
-    · simp only [f, if_pos hk]; exact hk
+    · simp only [f, ite_eq_left hk]; exact hk
     · exact (hfM k hk).1
-  have hfix : ∀ k, k ∈ Q k → f k = k := fun k hk => by simp only [f, if_pos hk]
+  have hfix : ∀ k, k ∈ Q k → f k = k := fun k hk => by simp only [f, ite_eq_left hk]
   have hinj : Function.Injective f := by
     intro k k' hkk
     by_cases hk : k ∈ Q k <;> by_cases hk' : k' ∈ Q k'
@@ -321,8 +267,8 @@ theorem IdemConj_of : IdemConj := by
       rw [hkk, hfix k' hk'] at hm
       exact hm.2 (hQ k' k' k hk' hm.1)
     · have hQQ : Q k = Q k' := hQ (f k) k k' (hfQ k) (by rw [hkk]; exact hfQ k')
-      have e1 : f k = g (Q k) k := by simp only [f, if_neg hk]
-      have e2 : f k' = g (Q k) k' := by simp only [f, if_neg hk']; rw [hQQ]
+      have e1 : f k = g (Q k) k := by simp only [f, ite_eq_right hk]
+      have e2 : f k' = g (Q k) k' := by simp only [f, ite_eq_right hk']; rw [hQQ]
       have hk'L : (L (Q k)).card = (M (Q k)).card ∧ k' ∈ L (Q k) :=
         ⟨hLM k, (hL _ _).2 ⟨hQQ.symm, by rw [hQQ]; exact hk'⟩⟩
       rw [e1, e2, hg _ _ (hkL k hk), hg _ _ hk'L] at hkk
@@ -488,7 +434,7 @@ theorem cyc [IsAlgClosed C] [CharZero C] {n : ℕ} (p : Fin n → Mat C N) (y : 
   have hWm : ∀ u ∈ fixSp (p j), y ^ k *ᵥ u ∈ fixSp (p j) := by
     intro u hu; rw [mem_fixSp] at *; rw [Matrix.mulVec_mulVec, ← hcomm, ← Matrix.mulVec_mulVec, hu]
   have hWne : ∃ u ∈ fixSp (p j), u ≠ 0 := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     apply hS.2 j
     refine Matrix.toLin'.injective (LinearMap.ext fun u => ?_)
     rw [Matrix.toLin'_apply, map_zero, LinearMap.zero_apply]
@@ -524,7 +470,7 @@ theorem cyc [IsAlgClosed C] [CharZero C] {n : ℕ} (p : Fin n → Mat C N) (y : 
     have hpj : p j *ᵥ ∑ m ∈ Finset.range k, a m = v := by
       rw [Matrix.mulVec_sum, Finset.sum_eq_single 0]
       · rw [hpa]; simp [ha]
-      · intro m hm hm0; rw [hpa, if_neg]; exact hne m (Nat.pos_of_ne_zero hm0) (Finset.mem_range.mp hm)
+      · intro m hm hm0; rw [hpa, ite_eq_right]; exact hne m (Nat.pos_of_ne_zero hm0) (Finset.mem_range.mp hm)
       · intro h; exact absurd (Finset.mem_range.mpr hk) h
     refine ⟨∑ m ∈ Finset.range k, a m, ?_, ?_, ?_⟩
     · intro h; apply hv0; rw [← hpj, h, Matrix.mulVec_zero]
@@ -532,7 +478,7 @@ theorem cyc [IsAlgClosed C] [CharZero C] {n : ℕ} (p : Fin n → Mat C N) (y : 
       rw [Matrix.mulVec_sum, Finset.sum_congr rfl (fun m _ => hya m), ← Finset.smul_sum]
       congr 1
       rw [hk', Finset.sum_range_succ (fun m => a (m + 1)) k', Finset.sum_range_succ' a k', ← hk', hak]
-    · intro i hi; rw [Matrix.mulVec_sum]; apply Finset.sum_eq_zero; intro m _; rw [hpa, if_neg]
+    · intro i hi; rw [Matrix.mulVec_sum]; apply Finset.sum_eq_zero; intro m _; rw [hpa, ite_eq_right]
       intro h; exact hi ⟨m, by rw [zpow_natCast]; exact h⟩
 
 theorem eigs [IsAlgClosed C] [CharZero C] {n : ℕ} (p : Fin n → Mat C N) (y : Mat C N) (π : Equiv.Perm (Fin n))
@@ -1058,15 +1004,6 @@ theorem ev_prod {ι : Type} (s : Finset ι) (x : Mat C N) (q : ι → MP C N) :
     ev x (∏ c ∈ s, q c) = ∏ c ∈ s, ev x (q c) := by
   simp only [ev, map_prod]
 
-theorem dAt_mul (f g : MP C N) (x Y : Mat C N) :
-    dAt (f * g) x Y = ev x f * dAt g x Y + ev x g * dAt f x Y := by
-  unfold dAt
-  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun p _ => ?_
-  rw [Derivation.leibniz]
-  simp only [ev, smul_eq_mul, map_add (f := _), map_mul]
-  ring
-
 theorem mem_img {Γ : Type} [Group Γ] (ρ : Γ →* GL (Fin N) C) (U : Subgroup Γ) (x : Mat C N) :
     x ∈ img ρ U ↔ ∃ u ∈ U, ((ρ u : GL (Fin N) C) : Mat C N) = x := by
   simp [img, Submonoid.mem_map]
@@ -1143,7 +1080,7 @@ theorem TanIndex_of (hChain : Chain) (hMul : ZclMul) : TanIndex := by
     rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ (γ : Γ ⧸ U)), ← mul_assoc,
       ev_mul, h0, zero_mul]
   have key := hY' _ hF
-  rw [dAt_mul] at key
+  rw [LateralTheory.DivDb.ChainPf.dAt_mul] at key
   have hf1 : ev 1 f = 0 := hf 1 (img ρ U).one_mem
   have hG1 : ev 1 (∏ c, q c) ≠ 0 := by
     rw [ev_prod]; exact Finset.prod_ne_zero_iff.2 fun c _ => hq1 c
@@ -1386,11 +1323,11 @@ lemma p_zT (hp : Sys p) (T : Finset (Fin n)) (i : Fin n) :
 lemma zT_idem (hp : Sys p) (T : Finset (Fin n)) : zT p T * zT p T = zT p T := by
   have h : zT p T * zT p T = ∑ j ∈ T, zT p T * p j := Finset.mul_sum _ _ _
   rw [h]
-  exact Finset.sum_congr rfl fun j hj => by rw [zT_p hp, if_pos hj]
+  exact Finset.sum_congr rfl fun j hj => by rw [zT_p hp, ite_eq_left hj]
 
 lemma zT_orth (hp : Sys p) {T T' : Finset (Fin n)} (hd : Disjoint T T') : zT p T * zT p T' = 0 := by
   conv_lhs => rw [show zT p T' = ∑ j ∈ T', p j from rfl, Finset.mul_sum]
-  exact Finset.sum_eq_zero fun j hj => by rw [zT_p hp, if_neg (Finset.disjoint_right.mp hd hj)]
+  exact Finset.sum_eq_zero fun j hj => by rw [zT_p hp, ite_eq_right (Finset.disjoint_right.mp hd hj)]
 
 lemma decomp (hp : Sys p) (a : Mat C N) : a = ∑ i, ∑ j, p i * a * p j := by
   conv_lhs => rw [← one_mul a, ← mul_one (1 * a), ← sum_p hp]
@@ -1465,18 +1402,18 @@ lemma E_p (hp : Sys p) (hE : MUnits A p E) (i j k : Fin n) :
 lemma E_E_ne (hp : Sys p) (hE : MUnits A p E) {i j k l : Fin n} (hjk : j ≠ k) : E i j * E k l = 0 := by
   have h := hE.2.2.1 k l
   conv_lhs => rw [← h]
-  rw [← mul_assoc, ← mul_assoc, E_p hp hE, if_neg hjk, zero_mul, zero_mul]
+  rw [← mul_assoc, ← mul_assoc, E_p hp hE, ite_eq_right hjk, zero_mul, zero_mul]
 
 lemma zT_E (hp : Sys p) (hE : MUnits A p E) (T : Finset (Fin n)) (i j : Fin n) :
     zT p T * E i j = if i ∈ T then E i j else 0 := by
-  have h : p i * E i j = E i j := by rw [p_E hp hE, if_pos rfl]
+  have h : p i * E i j = E i j := by rw [p_E hp hE, ite_eq_left rfl]
   conv_lhs => rw [← h]
   rw [← mul_assoc, zT_p hp]
   split_ifs <;> simp [h]
 
 lemma E_zT (hp : Sys p) (hE : MUnits A p E) (T : Finset (Fin n)) (i j : Fin n) :
     E i j * zT p T = if j ∈ T then E i j else 0 := by
-  have h : E i j * p j = E i j := by rw [E_p hp hE, if_pos rfl]
+  have h : E i j * p j = E i j := by rw [E_p hp hE, ite_eq_left rfl]
   conv_lhs => rw [← h]
   rw [mul_assoc, p_zT hp]
   split_ifs <;> simp [h]
@@ -1568,12 +1505,12 @@ lemma X_diag (hE : MUnits A p E) (D : {j // j ∈ Bk E r} → C) :
 lemma zT_X (hp : Sys p) (hE : MUnits A p E) (M : Matrix {j // j ∈ Bk E r} {j // j ∈ Bk E r} C) :
     zT p (Bk E r) * X E r M = X E r M := by
   simp only [X, Finset.mul_sum, mul_smul_comm, zT_E hp hE]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by rw [if_pos i.2]
+  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by rw [ite_eq_left i.2]
 
 lemma X_zT (hp : Sys p) (hE : MUnits A p E) (M : Matrix {j // j ∈ Bk E r} {j // j ∈ Bk E r} C) :
     X E r M * zT p (Bk E r) = X E r M := by
   simp only [X, Finset.sum_mul, smul_mul_assoc, E_zT hp hE]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by rw [if_pos j.2]
+  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by rw [ite_eq_left j.2]
 
 lemma Ψ_mul (hp : Sys p) (hE : MUnits A p E) (M M' : Matrix {j // j ∈ Bk E r} {j // j ∈ Bk E r} C) :
     Ψ p E r (M * M') = Ψ p E r M * Ψ p E r M' := by
@@ -1656,7 +1593,7 @@ lemma block (hp : Sys p) (hE : MUnits A p E) (r : Fin n) {v : Mat C N} (hv : v �
       refine Dg_S fun j => ?_
       rw [Matrix.det_diagonal] at hD
       by_cases hj : j ∈ Bk E r
-      · simp only [dd, dif_pos hj]; exact Finset.prod_ne_zero_iff.mp hD _ (Finset.mem_univ _)
+      · simp only [dd, dite_eq_left hj]; exact Finset.prod_ne_zero_iff.mp hD _ (Finset.mem_univ _)
       · simp [dd, hj])
     (fun t => Ψ_trans hp hE t)
     (fun A' B' _ _ hA hB => by

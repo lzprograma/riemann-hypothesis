@@ -171,26 +171,16 @@ private theorem mem_dualLat_span_lemma_2 {C R : Type} [Field C] [CommRing R] [Al
     {X : Type} [Fintype X] (S : Set (X → C)) (u : X → C)
     (h : ∀ f ∈ S, ∃ r : R, algebraMap R C r = ∑ a, u a * f a) :
     u ∈ dualLat (Submodule.span R S) := by
-  let Q : Submodule R (X → C) :=
-    { carrier := {f | ∃ r : R, algebraMap R C r = ∑ a, u a * f a}
-      add_mem' := by
-        rintro f g ⟨r, hr⟩ ⟨s, hs⟩
-        refine ⟨r + s, ?_⟩
-        rw [map_add (f := _), hr, hs, ← Finset.sum_add_distrib]
-        refine Finset.sum_congr rfl fun a _ => ?_
-        simp only [Pi.add_apply]
-        ring
-      zero_mem' := ⟨0, by simp⟩
-      smul_mem' := by
-        rintro c f ⟨r, hr⟩
-        refine ⟨c * r, ?_⟩
-        rw [map_mul, hr, Finset.mul_sum]
-        refine Finset.sum_congr rfl fun a _ => ?_
-        simp only [Pi.smul_apply, Algebra.smul_def]
-        ring }
-  have hle : Submodule.span R S ≤ Q := Submodule.span_le.2 (fun f hf => h f hf)
-  refine (mem_dualLat _ _).2 fun f hf => ?_
-  exact hle hf
+  intro f hf
+  induction hf using Submodule.span_induction with
+  | mem f hf => exact h f hf
+  | zero => exact ⟨0, by simp⟩
+  | add f g _ _ hf hg =>
+    obtain ⟨⟨r, hr⟩, ⟨s, hs⟩⟩ := And.intro hf hg
+    exact ⟨r + s, by simp [hr, hs, mul_add, Finset.sum_add_distrib]⟩
+  | smul c f _ hf =>
+    obtain ⟨r, hr⟩ := hf
+    exact ⟨c * r, by simp [hr, Algebra.smul_def, Finset.mul_sum, mul_left_comm]⟩
 
 private theorem dualLat_cols_lemma_3 {C R : Type} [Field C] [CommRing R] [Algebra R C]
     {X : Type} [Fintype X] [DecidableEq X] (B : Matrix X X C) (hB : IsUnit B.det) :
@@ -288,41 +278,21 @@ private theorem tensor_pair_lemma_6 {C R : Type} [Field C] [CommRing R] [Algebra
     (hx : x ∈ dualLat L) (hy : y ∈ dualLat L) (F : X × X → C) (hF : F ∈ tensorSpan R L) :
     ∃ r : R, algebraMap R C r = ∑ a, ∑ b, F (a, b) * x a * y b := by
   rw [mem_dualLat] at hx hy
-  let Q : Submodule R (X × X → C) :=
-    { carrier := {F | ∃ r : R, algebraMap R C r = ∑ a, ∑ b, F (a, b) * x a * y b}
-      add_mem' := by
-        rintro F G ⟨r, hr⟩ ⟨s, hs⟩
-        refine ⟨r + s, ?_⟩
-        rw [map_add (f := _), hr, hs, ← Finset.sum_add_distrib]
-        refine Finset.sum_congr rfl fun a _ => ?_
-        rw [← Finset.sum_add_distrib]
-        refine Finset.sum_congr rfl fun b _ => ?_
-        simp only [Pi.add_apply]
-        ring
-      zero_mem' := ⟨0, by simp⟩
-      smul_mem' := by
-        rintro c F ⟨r, hr⟩
-        refine ⟨c * r, ?_⟩
-        rw [map_mul, hr, Finset.mul_sum]
-        refine Finset.sum_congr rfl fun a _ => ?_
-        rw [Finset.mul_sum]
-        refine Finset.sum_congr rfl fun b _ => ?_
-        simp only [Pi.smul_apply, Algebra.smul_def]
-        ring }
-  have hle : tensorSpan R L ≤ Q := by
-    show Submodule.span R {F : X × X → C | ∃ g ∈ L, ∃ h ∈ L, F = fun p => g p.1 * h p.2} ≤ Q
-    refine Submodule.span_le.2 ?_
-    rintro _ ⟨g, hg, h, hh, rfl⟩
-    obtain ⟨r, hr⟩ := hx g hg
-    obtain ⟨s, hs⟩ := hy h hh
-    show ∃ t : R, algebraMap R C t = ∑ a, ∑ b, g a * h b * x a * y b
+  change F ∈ Submodule.span R {F : X × X → C | ∃ g ∈ L, ∃ h ∈ L, F = fun p => g p.1 * h p.2} at hF
+  induction hF using Submodule.span_induction with
+  | mem F hF =>
+    obtain ⟨g, hg, h, hh, rfl⟩ := hF
+    obtain ⟨⟨r, hr⟩, ⟨s, hs⟩⟩ := And.intro (hx g hg) (hy h hh)
     refine ⟨r * s, ?_⟩
-    rw [map_mul, hr, hs, Finset.sum_mul]
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun b _ => ?_
-    ring
-  exact hle hF
+    rw [map_mul, hr, hs, Finset.sum_mul_sum]
+    exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
+  | zero => exact ⟨0, by simp⟩
+  | add F G _ _ hF hG =>
+    obtain ⟨⟨r, hr⟩, ⟨s, hs⟩⟩ := And.intro hF hG
+    exact ⟨r + s, by simp [hr, hs, add_mul, Finset.sum_add_distrib]⟩
+  | smul c F _ hF =>
+    obtain ⟨r, hr⟩ := hF
+    exact ⟨c * r, by simp [hr, Algebra.smul_def, Finset.mul_sum, mul_assoc]⟩
 
 private theorem tensor_of_pair_lemma_7 {C R : Type} [Field C] [CommRing R] [Algebra R C]
     {X : Type} [Fintype X] [DecidableEq X] (L : Submodule R (X → C)) (hL : IsLat R L)
@@ -406,9 +376,9 @@ theorem h2 (C R : Type) [Field C] [CommRing R] [Algebra R C] :
     show ∑ a ∈ Finset.univ.filter (fun a : N => (a : N ⧸ K) = c),
       (if a = s (a : N ⧸ K) then t (a : N ⧸ K) else 0) = t c
     rw [Finset.sum_eq_single (s c)]
-    · rw [hs c, if_pos rfl]
+    · rw [hs c, ite_eq_left rfl]
     · intro b hb hne
-      rw [(Finset.mem_filter.1 hb).2, if_neg hne]
+      rw [(Finset.mem_filter.1 hb).2, ite_eq_right hne]
     · intro h
       exact (h (Finset.mem_filter.2 ⟨Finset.mem_univ _, hs c⟩)).elim
   have hP_lat : IsLat R ((dualLat AA.carrier).map (pushQ (R := R) K)) :=

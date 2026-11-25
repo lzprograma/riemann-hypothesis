@@ -54,8 +54,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri FieldCond)
 
 namespace GlobalTheory.RowTest
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
-
 theorem isLattice_pairs {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc) {μ₀ : T} (hL : L.Is μ₀)
     (t : T) (j : ℕ) (hj : j < D.R.m) :
       (Submodule.IsLattice D.host.E (G.latS (.top t j)) ∧ Submodule.IsLattice D.host.E (G.latT (.top t j))) ∧
@@ -165,7 +163,7 @@ theorem cosetDatum_fn {t : T} {p : Pair T} (d : FinDatum G t p) {K : ℕ} {r} {e
     (cosetDatum d K r).fn = (halfCoset e (pairLat G p) K r).indicator 1 := by
   subst he
   unfold cosetDatum
-  rw [dif_pos ⟨hK, h1, h2⟩]
+  rw [dite_eq_left ⟨hK, h1, h2⟩]
 
 theorem isCosetDatum_cosetDatum {t : T} {p : Pair T} (d : FinDatum G t p) {K : ℕ} {r} (hK : 0 < K) (h1 : IsHalf d.e r)
     (h2 : K • r ∈ pairLat G p) : IsCosetDatum K (cosetDatum d K r) :=
@@ -197,7 +195,7 @@ theorem exists_halfCoset_reps {Λ : AddSubgroup (Mx D m n)} (e : AE D) {K : ℕ}
   let C : Mx D m n → Set (Mx D m n) := fun f => {x | IsHalf e x ∧ K • x ∈ Λ ∧ ∃ v ∈ Λ, K • x = f + (K * K) • v}
   let rep : Mx D m n → Mx D m n := fun f => if h : (C f).Nonempty then h.some else 0
   have hrep : ∀ f, (C f).Nonempty → rep f ∈ C f := fun f h => by
-    simp only [rep, dif_pos h]
+    simp only [rep, dite_eq_left h]
     exact h.some_mem
   have hhalf : ∀ {x r w : Mx D m n}, IsHalf e x → IsHalf e r → K • x = K • r + (K * K) • w → IsHalf e w := by
     intro x r w hx hr h i j

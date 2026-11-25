@@ -191,7 +191,7 @@ theorem sd_dual_bases {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) 
       intro j
 
       simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, h, smul_eq_mul, mul_ite, mul_one,
-      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     have h2 : ∀ j, ∃ r : 𝓞 K, algebraMap (𝓞 K) K r = a j := fun j => by
       have := hy (v j) (Submodule.subset_span ⟨j, rfl⟩)
       rw [h1 j] at this
@@ -215,8 +215,6 @@ variable (K : Type) [Field K] [NumberField K] {n : ℕ}
 
 def sdQK (σ : Type) : MvPolynomial σ ℚ →ₗ[ℤ] MvPolynomial σ K :=
   (MvPolynomial.map (algebraMap ℚ K)).toAddMonoidHom.toIntLinearMap
-
-theorem sdQK_apply {σ : Type} (f : MvPolynomial σ ℚ) : sdQK K σ f = MvPolynomial.map (algebraMap ℚ K) f := rfl
 
 theorem sd_word_image (ν : Fin n → ℕ) : nbWord K ν = sdQK K _ '' nbWord ℚ ν := by
   unfold nbWord
@@ -336,13 +334,13 @@ theorem sd_pair (lam : ι → DomWeight n) [DecidableEq (VVIdx lam)] (i j : VVId
   simp only [h]
   by_cases hij : i = j
   · subst hij
-    simp only [if_true]
+    simp only [ite_true]
     exact inv_mul_cancel₀ (Finset.prod_ne_zero_iff.mpr fun τ _ => by
       simpa using sdC_ne (lam τ).natW)
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     obtain ⟨τ, hτ⟩ := Function.ne_iff.mp hij
     have h0 : ∏ x, (algebraMap ℚ K) (if i x = j x then sdC (lam x).natW else 0) = 0 :=
-      Finset.prod_eq_zero (Finset.mem_univ τ) (by rw [if_neg hτ, map_zero])
+      Finset.prod_eq_zero (Finset.mem_univ τ) (by rw [ite_eq_right hτ, map_zero])
     rw [h0, mul_zero]
 
 end Tensor

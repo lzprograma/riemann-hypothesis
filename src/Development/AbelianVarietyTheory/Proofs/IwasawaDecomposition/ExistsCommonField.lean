@@ -70,12 +70,6 @@ theorem exists_gen (M : IntermediateField ℚ ℂ) [FiniteDimensional ℚ M] :
     exact IntermediateField.adjoin_simple_le_iff.2 ⟨x, hx⟩
   exact h1 (IntermediateField.mem_top (x := (⟨z, hz⟩ : M)))
 
-section Host
-
-variable {R : Ranks} (H : Host R)
-
-end Host
-
 
 section PrimesOk
 

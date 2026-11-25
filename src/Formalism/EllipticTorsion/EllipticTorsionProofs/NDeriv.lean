@@ -2,51 +2,8 @@ module
 
 import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.DegreeLeOfMemAntidiagonal
 public import Formalism.EllipticTorsion.Statement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -80,36 +37,6 @@ private theorem coeff_subst_congr_lemma {R : Type*} [CommRing R] {σ : Type*}
       have h1 : x.1.degree < n := by omega
       rw [ih x.1 h1, zero_mul]
 
-theorem coeff_subst_congr {g h : PowerSeries R} {a : MvPowerSeries σ R}
-    (ha : MvPowerSeries.constantCoeff a = 0) (e : σ →₀ ℕ)
-    (hgh : ∀ k ≤ e.degree, coeff k g = coeff k h) :
-    MvPowerSeries.coeff e (g.subst a) = MvPowerSeries.coeff e (h.subst a) := by
-  classical
-  have hs : PowerSeries.HasSubst a := PowerSeries.HasSubst.of_constantCoeff_zero ha
-  rw [PowerSeries.coeff_subst hs, PowerSeries.coeff_subst hs]
-  refine finsum_congr fun k => ?_
-  by_cases hk : k ≤ e.degree
-  · rw [hgh k hk]
-  · rw [coeff_subst_congr_lemma ha k e (by omega), smul_zero, smul_zero]
-
-theorem pderiv_subst_coe (p : Polynomial R) {a : MvPowerSeries σ R}
-    (ha : MvPowerSeries.constantCoeff a = 0) (i : σ) :
-    MvPowerSeries.pderiv (R := R) i ((p : PowerSeries R).subst a) =
-      (derivative (p : PowerSeries R)).subst a * MvPowerSeries.pderiv (R := R) i a := by
-  apply Formalism.L2.Th1.C.IntegralMvPolynomialLemmas.pderiv_subst_coe <;> assumption
-
-theorem degree_le_of_mem_antidiagonal [DecidableEq σ] {d : σ →₀ ℕ} {x : (σ →₀ ℕ) × (σ →₀ ℕ)}
-    (hx : x ∈ Finset.HasAntidiagonal.antidiagonal d) : x.1.degree ≤ d.degree := by
-  rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
-  rw [← hx, map_add (f := _)]
-  exact Nat.le_add_right _ _
-
-theorem pderiv_subst (g : PowerSeries R) {a : MvPowerSeries σ R}
-    (ha : MvPowerSeries.constantCoeff a = 0) (i : σ) :
-    MvPowerSeries.pderiv (R := R) i (g.subst a) =
-      (derivative g).subst a * MvPowerSeries.pderiv (R := R) i a := by
-  apply Formalism.L2.Th1.C.IntegralMvPolynomialLemmas.pderiv_subst <;> assumption
-
 end Chain
 
 section Integral
@@ -138,13 +65,6 @@ theorem integral_pow {F : MvPowerSeries σ K} (hF : Formalism.G.IntegralMv F) (n
   | zero => rw [pow_zero]; exact integral_one
   | succ n ih => rw [pow_succ]; exact integral_mul ih hF
 
-theorem integral_pderiv {F : MvPowerSeries σ K} (hF : Formalism.G.IntegralMv F) (i : σ) :
-    Formalism.G.IntegralMv (MvPowerSeries.pderiv (R := K) i F) := by
-  intro d
-  rw [← mem_unitBall, MvPowerSeries.coeff_pderiv]
-  refine Subring.mul_mem _ (mem_unitBall.2 (hF _)) ?_
-  exact Subring.add_mem _ (natCast_mem _ _) (Subring.one_mem _)
-
 theorem integral_subst {c : PowerSeries K} (hc : ∀ n, ‖coeff n c‖ ≤ 1)
     {f : MvPowerSeries σ K} (hf0 : MvPowerSeries.constantCoeff f = 0)
     (hf : Formalism.G.IntegralMv f) : Formalism.G.IntegralMv (c.subst f) := by
@@ -167,19 +87,5 @@ end Integral
 end Formalism.ELL.SubstitutionCoefficientCongruence
 
 namespace Formalism.ELL
-
-theorem N_partial_derivative : NPderiv := by
-  intro K _ _ _ σ G hG i
-  obtain ⟨f, hf0, hf, rfl⟩ := hG
-  unfold logOnePlus
-  rw [SubstitutionCoefficientCongruence.pderiv_subst _ hf0]
-  refine SubstitutionCoefficientCongruence.integral_mul ?_ (SubstitutionCoefficientCongruence.integral_pderiv hf i)
-  refine SubstitutionCoefficientCongruence.integral_subst ?_ hf0 hf
-  intro n
-  unfold PowerSeries.log
-  rw [PowerSeries.coeff_derivative, PowerSeries.coeff_mk, if_neg (Nat.succ_ne_zero n)]
-  have hn : ((n : K) + 1) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero n
-  rw [map_div₀, map_pow, map_neg, map_one, map_natCast, Nat.cast_succ, div_mul_cancel₀ _ hn,
-    norm_pow, norm_neg, norm_one, one_pow]
 
 end Formalism.ELL

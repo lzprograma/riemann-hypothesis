@@ -2,45 +2,7 @@ module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderPullback
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -56,8 +18,6 @@ private theorem exists_isIso_subschemeι_eq_comp_of_eq_ker {A X : Scheme.{u}} (g
     [IsClosedImmersion g] (I : X.IdealSheafData) (hI : I = g.ker) :
     ∃ φ : I.subscheme ⟶ A, IsIso φ ∧ I.subschemeι = φ ≫ g := by
   subst hI
-  have : Mono g := inferInstance
-  have : Mono (Scheme.Hom.ker g).subschemeι := inferInstance
   have h1 : Scheme.Hom.ker g ≤ Scheme.Hom.ker (Scheme.Hom.ker g).subschemeι :=
     le_of_eq (Scheme.IdealSheafData.ker_subschemeι _).symm
   have h2 : Scheme.Hom.ker (Scheme.Hom.ker g).subschemeι ≤ Scheme.Hom.ker g :=
@@ -71,20 +31,12 @@ private theorem exists_isIso_subschemeι_eq_comp_of_eq_ker {A X : Scheme.{u}} (g
   · rw [← cancel_mono (Scheme.Hom.ker g).subschemeι, Category.assoc, hψ, hφ, Category.id_comp]
   · rw [← cancel_mono g, Category.assoc, hφ, hψ, Category.id_comp]
 
-private theorem iso_inv_base_hom_base_apply {X Y : Scheme.{u}} (e : X ≅ Y) (x : X) :
-    e.inv.base (e.hom.base x) = x := by
-  simp
-
-private theorem iso_hom_base_inv_base_apply {X Y : Scheme.{u}} (e : X ≅ Y) (y : Y) :
-    e.hom.base (e.inv.base y) = y := by
-  simp
-
 private theorem isIso_resLE_iso_hom {X Y : Scheme.{u}} (e : X ≅ Y) (U : Y.Opens) :
     IsIso (e.hom.resLE U ((Opens.map e.hom.base).obj U) le_rfl) := by
   have h1 : U ≤ (Opens.map e.inv.base).obj ((Opens.map e.hom.base).obj U) := by
     intro y hy
     show e.hom.base (e.inv.base y) ∈ U
-    rw [iso_hom_base_inv_base_apply e y]
+    rw [AlgebraicGeometry.Scheme.inv_hom_apply e y]
     exact hy
   refine ⟨e.inv.resLE ((Opens.map e.hom.base).obj U) U h1, ?_, ?_⟩
   · rw [← cancel_mono (Scheme.Opens.ι ((Opens.map e.hom.base).obj U)), Category.assoc,
@@ -101,9 +53,19 @@ theorem orderAtLeastLocus_comap_iso_hom_eq_preimage {X Y : Scheme.{u}} (e : X �
   ext x
   have h1 := orderAt_le_orderAt_comap e.hom J x
   have h2 := orderAt_le_orderAt_comap e.inv (J.comap e.hom) (e.hom.base x)
-  rw [iso_inv_base_hom_base_apply e x, hJ] at h2
+  rw [AlgebraicGeometry.Scheme.hom_inv_apply e x, hJ] at h2
   simp only [Set.mem_preimage, mem_orderAtLeastLocus_iff]
   exact ⟨fun hm => le_trans hm h2, fun hm => le_trans hm h1⟩
+
+/-- Pulling an ideal back along a scheme isomorphism preserves emptiness of the order locus. -/
+theorem orderAtLeastLocus_comap_iso_eq_empty_iff {X Y : Scheme.{u}} (e : X ≅ Y)
+    (J : Y.IdealSheafData) (n : ℕ) :
+    orderAtLeastLocus (J.comap e.hom) n = ∅ ↔ orderAtLeastLocus J n = ∅ := by
+  have hsurj : Function.Surjective (⇑e.hom.base) :=
+    fun y => ⟨e.inv.base y, Scheme.inv_hom_apply e y⟩
+  rw [orderAtLeastLocus_comap_iso_hom_eq_preimage]
+  simpa only [Set.preimage_empty] using
+    (Set.preimage_eq_preimage (s := orderAtLeastLocus J n) (t := ∅) hsurj)
 
 theorem strictTransform_comp_iso_hom {X X₁ Y : Scheme.{u}} (π : X₁ ⟶ X) (e : X ≅ Y)
     (Z D : Y.IdealSheafData) :
@@ -123,7 +85,6 @@ theorem smooth_comap_iso {k : Type u} [Field k] {X Y : Scheme.{u}}
       Limits.pullback.snd e.hom Z.subschemeι ≫ Z.subschemeι ≫ e.inv := by
     rw [← Category.assoc, ← Limits.pullback.condition, Category.assoc, e.hom_inv_id,
       Category.comp_id]
-  have hsnd : IsIso (Limits.pullback.snd e.hom Z.subschemeι) := inferInstance
   have hci : IsClosedImmersion (Limits.pullback.fst e.hom Z.subschemeι) := by
     rw [hsq]; infer_instance
   obtain ⟨φ, hφ, hcomm⟩ :=
@@ -134,7 +95,6 @@ theorem smooth_comap_iso {k : Type u} [Field k] {X Y : Scheme.{u}}
       (φ ≫ Limits.pullback.snd e.hom Z.subschemeι) ≫ Z.subschemeι := by
     rw [hcomm, Category.assoc, Category.assoc, Limits.pullback.condition]
   rw [← Category.assoc, hc2, Category.assoc]
-  have : IsIso (φ ≫ Limits.pullback.snd e.hom Z.subschemeι) := inferInstance
   have : AlgebraicGeometry.Smooth (Z.subschemeι ≫ q) := h
   infer_instance
 
@@ -157,8 +117,6 @@ private theorem etale_resLE_comp_map_of_iso {k : Type u} [Field k] {X Y : Scheme
     AlgebraicGeometry.Etale
       (e.hom.resLE U ((Opens.map e.hom.base).obj U) le_rfl ≫ c.map) := by
   have : IsIso (e.hom.resLE U ((Opens.map e.hom.base).obj U) le_rfl) := isIso_resLE_iso_hom e U
-  have : AlgebraicGeometry.Etale (e.hom.resLE U ((Opens.map e.hom.base).obj U) le_rfl) :=
-    inferInstance
   have : AlgebraicGeometry.Etale c.map := c.isEtale
   infer_instance
 

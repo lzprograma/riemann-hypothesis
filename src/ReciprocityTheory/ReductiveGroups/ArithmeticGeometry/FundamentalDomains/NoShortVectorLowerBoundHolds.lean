@@ -350,8 +350,7 @@ variable [IsCMField E] {r : ℕ} (X : DataX E r)
 
 theorem exists_herm_ne (hr : 0 < r) : ∃ x ∈ X.L', ∃ y ∈ X.L', herm X.Gm x y ≠ 0 := by
   classical
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hcc_add : ∀ a b : E, cc (a + b) = cc a + cc b := fun a b => by
     unfold cc
     exact map_add _ a b

@@ -349,7 +349,7 @@ theorem tailForm_posDef {n : ℕ} (k : Fin n) {u : Matrix (Fin n) (Fin n) ℝ} (
     intro a b hab
     have := hu' a.1 b.1
     have hne : a.1 ≠ b.1 := fun h => (ne_of_lt hab) (Subtype.ext h).symm
-    simp only [hne, if_false, show b.1 < a.1 from hab, if_true, Set.mem_singleton_iff] at this
+    simp only [hne, ite_false, show b.1 < a.1 from hab, ite_true, Set.mem_singleton_iff] at this
     exact this
   have hdet : v.det = 1 := by
     rw [det_of_upperTriangular htri]
@@ -384,11 +384,11 @@ theorem exists_increments {n : ℕ} {d : Fin n → ℝ} {u : Matrix (Fin n) (Fin
     intro m
     induction m with
     | zero => simp [G]
-    | succ m ih => rw [Finset.sum_range_succ, ih]; simp only [G, if_neg (Nat.succ_ne_zero m), Nat.add_sub_cancel]; ring
+    | succ m ih => rw [Finset.sum_range_succ, ih]; simp only [G, ite_eq_right (Nat.succ_ne_zero m), Nat.add_sub_cancel]; ring
   refine ⟨fun k => G k, fun k => ?_, fun m => ?_⟩
   · by_cases h0 : (k : ℕ) = 0
     · have := hs.nonneg k
-      simp only [G, h0, if_true, F, dif_pos (show 0 < n from lt_of_le_of_lt (Nat.zero_le _) k.2)]
+      simp only [G, h0, ite_true, F, dite_eq_left (show 0 < n from lt_of_le_of_lt (Nat.zero_le _) k.2)]
       have e : (⟨0, lt_of_le_of_lt (Nat.zero_le _) k.2⟩ : Fin n) = k := Fin.ext h0.symm
       rw [e]; positivity
     · obtain ⟨j, hj⟩ : ∃ j, (k : ℕ) = j + 1 := ⟨(k : ℕ) - 1, by omega⟩
@@ -397,11 +397,11 @@ theorem exists_increments {n : ℕ} {d : Fin n → ℝ} {u : Matrix (Fin n) (Fin
       have hnn := hs.nonneg ⟨j, hjn⟩
       have hdk : ∀ h, d ⟨j + 1, h⟩ = d k := fun h => congrArg d (Fin.ext hj.symm)
       have hFk : F (j + 1) = d k * 4 ^ (j + 1) := by
-        simp only [F, dif_pos (show j + 1 < n by omega), hdk]
-      have hFj : F j = d ⟨j, hjn⟩ * 4 ^ j := by simp only [F, dif_pos hjn]
+        simp only [F, dite_eq_left (show j + 1 < n by omega), hdk]
+      have hFj : F j = d ⟨j, hjn⟩ * 4 ^ j := by simp only [F, dite_eq_left hjn]
       show 0 ≤ G (k : ℕ)
       rw [hj]
-      simp only [G, if_neg (Nat.succ_ne_zero j), Nat.add_sub_cancel, hFk, hFj, pow_succ]
+      simp only [G, ite_eq_right (Nat.succ_ne_zero j), Nat.add_sub_cancel, hFk, hFj, pow_succ]
       have : (0 : ℝ) ≤ 4 ^ j := by positivity
       nlinarith
   · have hsum : ∑ k : Fin n, (if k ≤ m then G k else 0) = F m := by
@@ -413,7 +413,7 @@ theorem exists_increments {n : ℕ} {d : Fin n → ℝ} {u : Matrix (Fin n) (Fin
         ext x; simp; omega
       rw [h2, htel]
     rw [hsum]
-    simp only [F, dif_pos m.2, Fin.eta]
+    simp only [F, dite_eq_left m.2, Fin.eta]
     field_simp
 
 theorem tail_sum {n : ℕ} (k : Fin n) {u : Matrix (Fin n) (Fin n) ℝ} (hu : u ∈ unip n) (T : Finset (Tail k → ℤ))
@@ -432,13 +432,13 @@ theorem tail_sum {n : ℕ} (k : Fin n) {u : Matrix (Fin n) (Fin n) ℝ} (hu : u 
       rw [tailForm_apply] at this
       rw [this]
       simp [Matrix.sum_apply, vecMulVec_apply, extZ, hi, hj]
-    · simp only [extZ, dif_neg hj, Int.cast_zero, mul_zero]
+    · simp only [extZ, dite_eq_right hj, Int.cast_zero, mul_zero]
       simp only [Finset.sum_const_zero]
       refine (Finset.sum_eq_zero fun m _ => ?_).symm
       split_ifs with hm
       · rw [hlow m j hm hj, mul_zero]
       · rfl
-  · simp only [extZ, dif_neg hi, Int.cast_zero, zero_mul, mul_zero, Finset.sum_const_zero]
+  · simp only [extZ, dite_eq_right hi, Int.cast_zero, zero_mul, mul_zero, Finset.sum_const_zero]
     refine (Finset.sum_eq_zero fun m _ => ?_).symm
     split_ifs with hm
     · rw [hlow m i hm hi, mul_zero, zero_mul]
@@ -490,7 +490,7 @@ theorem gram_mem_cone : ∀ n : ℕ, ∃ S : Finset (Fin n → ℤ), ∀ (d : Fi
   have hmem : extZ k l' ∈ Finset.univ.biUnion fun k => (T k).image (extZ k) :=
     Finset.mem_biUnion.2 ⟨k, Finset.mem_univ _, Finset.mem_image_of_mem _ hl'⟩
   simp_rw [mul_ite, mul_zero, ite_mul, zero_mul]
-  rw [Finset.sum_ite_eq, if_pos hmem]
+  rw [Finset.sum_ite_eq, ite_eq_left hmem]
   ring
 
 end GlobalTheory.SiegelCone

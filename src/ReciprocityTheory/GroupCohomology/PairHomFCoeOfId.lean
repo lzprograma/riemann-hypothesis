@@ -90,10 +90,4 @@ theorem limRep_holds : LimRepStatement.{u} := by
       exact continuous_pi fun m => by exact (y m).2
     exact ⟨⟨x, hxc⟩, fun m => Subtype.ext ((cπ m n _).trans (funext fun g => hx g m))⟩
 
-section ColimAux
-
-variable {R : Type u} [CommRing R] {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-
-end ColimAux
-
 end ReciprocityTheory.Coh

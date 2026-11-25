@@ -13,53 +13,7 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeri
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 public import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Graded
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Algebra.Order.Star.Int
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.EmultiplicityEqValuation, Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.LinkRing, Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
@@ -102,12 +56,10 @@ theorem toZModPow_eq_one_iff (k : ℕ) (x : ℤ_[l]) (hx : x - 1 ≠ 0) :
   rw [h1, ← RingHom.mem_ker, PadicInt.ker_toZModPow, Ideal.mem_span_singleton,
     pow_dvd_iff_le_valuation _ hx]
 
-private theorem prime_natCast_padicInt : Prime (l : ℤ_[l]) := PadicInt.prime_p
-
 theorem factV (hl2 : l ≠ 2) (u : ℤ_[l]) (hu : (u - 1).valuation = 1) (m : ℕ) (hm : m ≠ 0) :
     (u ^ m - 1).valuation = 1 + padicValNat l m := by
   have hl := (Fact.out : l.Prime)
-  have hprime : Prime (l : ℤ_[l]) := prime_natCast_padicInt
+  have hprime : Prime (l : ℤ_[l]) := PadicInt.prime_p
   have hu0 : u - 1 ≠ 0 := by
     intro h
     rw [h, PadicInt.valuation_zero] at hu
@@ -581,7 +533,7 @@ theorem linkRing
         intro ξ hξ
         have hm := hmem s _ (hunitu s) ⟨ξ, hξ⟩
         simp only [f]
-        rw [dif_pos hm, dif_pos hξ]
+        rw [dite_eq_left hm, dite_eq_left hξ]
         have h := hσ s hs x ⟨ξ, hξ⟩ ⟨_, hm⟩ rfl
         rw [hxσ] at h
         exact h.symm
@@ -591,7 +543,7 @@ theorem linkRing
         obtain ⟨j, hj⟩ := exists_toZModPow_eq_of_pow_pred_eq_one om hom hom' s a ha
         have hm := hmem s a (IsUnit.of_pow_eq_one ha hl1.ne') ⟨ξ, hξ⟩
         simp only [f]
-        rw [dif_pos hm, dif_pos hξ]
+        rw [dite_eq_left hm, dite_eq_left hξ]
         have h := hτ s hs j x ⟨ξ, hξ⟩ ⟨_, hm⟩ (by rw [hj])
         rw [hxτ j] at h
         exact h.symm
@@ -601,7 +553,7 @@ theorem linkRing
         refine ⟨x ξ0, ?_⟩
         funext ζ
         have h := hconst ξ0 ξ0.2 ζ ζ.2
-        simp only [f, dif_pos ξ0.2, dif_pos ζ.2] at h
+        simp only [f, dite_eq_left ξ0.2, dite_eq_left ζ.2] at h
         simp only [Pi.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply]
         exact h
       · refine ⟨0, ?_⟩
@@ -851,9 +803,9 @@ def prL (s : ℕ) : LvT hR uZ ιZ T c hΔ ell →+ Amb LL (KsW W s) (Dc W T c) w
     split_ifs <;> simp
 
 theorem prL_of_lt (s : ℕ) (h : s < ell) (e : LvT hR uZ ιZ T c hΔ ell) :
-    prL s e = toA hR T c s (e ⟨s, h⟩ : AmbM hR T c s) := dif_pos h
+    prL s e = toA hR T c s (e ⟨s, h⟩ : AmbM hR T c s) := dite_eq_left h
 
-theorem prL_of_ge (s : ℕ) (h : ¬ s < ell) (e : LvT hR uZ ιZ T c hΔ ell) : prL s e = 0 := dif_neg h
+theorem prL_of_ge (s : ℕ) (h : ¬ s < ell) (e : LvT hR uZ ιZ T c hΔ ell) : prL s e = 0 := dite_eq_right h
 
 theorem prL_smul (s : ℕ) (a : PowerSeries O) (e : LvT hR uZ ιZ T c hΔ ell) :
     prL s (a • e) = HahnSeries.ofPowerSeries ℤ (KsW W s) (rhoL hR c s a) • prL s e := by

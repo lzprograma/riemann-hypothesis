@@ -53,6 +53,7 @@ import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermOverFrameCoordinates
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeadingMinorsProdDenominatorUnitriangularFactors
 
 @[expose] public section
 
@@ -73,35 +74,7 @@ theorem minor_tri (A B Z : Matrix (Fin m) (Fin m) E) (hA : ∀ i j, i < j → A 
     (hB : ∀ i j, j < i → B i j = 0) (hB1 : ∀ i, B i i = 1) {l : ℕ} (hl : l ≤ m) :
     ((A * Z * B).submatrix (Fin.castLE hl) (Fin.castLE hl)).det =
       (Z.submatrix (Fin.castLE hl) (Fin.castLE hl)).det := by
-  set e := Fin.castLE hl with he
-  have hsub : ∀ (X Y : Matrix (Fin m) (Fin m) E),
-      (∀ (i j : Fin l) (p : Fin m), l ≤ (p : ℕ) → X (e i) p * Y p (e j) = 0) →
-      (X * Y).submatrix e e = X.submatrix e e * Y.submatrix e e := by
-    intro X Y hXY
-    ext i j
-    simp only [Matrix.submatrix_apply, Matrix.mul_apply]
-    symm
-    refine Fintype.sum_of_injective e (Fin.castLE_injective hl) _ _ ?_ ?_
-    · intro p hp
-      apply hXY i j p
-      by_contra hlt
-      push_neg at hlt
-      exact hp ⟨⟨p, hlt⟩, rfl⟩
-    · intro p
-      rfl
-  have hdA : (A.submatrix e e).det = 1 := by
-    rw [Matrix.det_of_lowerTriangular (A.submatrix e e)
-      (fun i j hij => hA _ _ (by exact OrderDual.toDual_lt_toDual.1 hij))]
-    simp [hA1]
-  have hdB : (B.submatrix e e).det = 1 := by
-    rw [Matrix.det_of_upperTriangular
-      (show (B.submatrix e e).BlockTriangular id from fun i j hij => hB _ _ (by exact hij))]
-    simp [hB1]
-  rw [hsub (A * Z) B (fun i j p hp => by
-      rw [hB p (e j) (Fin.lt_iff_val_lt_val.2 (lt_of_lt_of_le j.2 hp)), mul_zero]),
-    hsub A Z (fun i j p hp => by
-      rw [hA (e i) p (Fin.lt_iff_val_lt_val.2 (lt_of_lt_of_le i.2 hp)), zero_mul]),
-    Matrix.det_mul, Matrix.det_mul, hdA, hdB, one_mul, mul_one]
+  apply _root_.GlobalTheory.OrbitDenom.det_three <;> assumption
 
 end Mat
 
@@ -318,10 +291,10 @@ theorem term_over (hM : M.OK) (c : Coord P S) (hP : P.RelG (theta M)) (d : Datum
     rw [hLam', _root_.GlobalTheory.HL.CoordTerm.lat_img, trB.2.2.2 d.L']
   have hgA : ∀ a (j : Fin r), hf M.L S.Hm (S.f a) (S.f j.castSucc) = 0 := fun a j => by
     rw [S.gram]
-    exact if_neg fun h => (Fin.castSucc_lt_last j).ne h.2
+    exact ite_eq_right fun h => (Fin.castSucc_lt_last j).ne h.2
   have hgB : ∀ a (j : Fin r), hf M.L S.Hm (S.f' a) (S.f' j.castSucc) = 0 := fun a j => by
     rw [S.gram']
-    exact if_neg fun h => (Fin.castSucc_lt_last j).ne h.2
+    exact ite_eq_right fun h => (Fin.castSucc_lt_last j).ne h.2
   have hfrA : H.IsFrame t.abelian₂ r t.f t.T := by
     rw [hfA, hT]
     exact frame_of c P.A S.f c.f_eq hgA (by simpa using hli.comp Sum.inl Sum.inl_injective) n hnS t.abelian₂

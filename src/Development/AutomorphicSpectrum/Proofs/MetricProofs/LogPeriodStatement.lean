@@ -11,58 +11,13 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ElementaryFact
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentSwapVarietiesArithmetic
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenericFlagElementaryTwist
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.NumberTheory.Height.NumberField
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameChangeUnderFieldMap
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorSumIdentityBaseChange
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 
@@ -124,9 +79,9 @@ theorem exists_upper_transvection_upper : ∀ (N j : ℕ) (ca cb : Fin N) (C : M
     rw [hC'a]
     by_cases ha : C ca ca = 0
     · have hx' := hx ha
-      rw [hs, if_pos ha, ha, neg_neg, inv_mul_cancel₀ hx']
+      rw [hs, ite_eq_left ha, ha, neg_neg, inv_mul_cancel₀ hx']
       simp
-    · rw [hs, if_neg ha]
+    · rw [hs, ite_eq_right ha]
       simpa using ha
   set t : ℂ := C' cb ca / C' ca ca with ht
   set U : Matrix (Fin N) (Fin N) ℂ := Matrix.transvection cb ca (-t) * C' with hU
@@ -159,20 +114,20 @@ theorem exists_upper_transvection_upper : ∀ (N j : ℕ) (ca cb : Fin N) (C : M
   · intro a b hab
     rw [Matrix.transvection, Matrix.add_apply, Matrix.one_apply, Matrix.single_apply]
     have hab' : a ≠ b := fun h => hab (by rw [h])
-    rw [if_neg hab']
+    rw [ite_eq_right hab']
     by_cases h : ca = a ∧ cb = b
     · obtain ⟨rfl, rfl⟩ := h
       exact absurd hblk hab
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       simp
   · intro r c hrc
     change c < r at hrc
     rw [Matrix.transvection, Matrix.add_apply, Matrix.one_apply, Matrix.single_apply,
-      if_neg (ne_of_gt hrc)]
+      ite_eq_right (ne_of_gt hrc)]
     have h : ¬ (ca = r ∧ cb = c) := by
       rintro ⟨rfl, rfl⟩
       exact absurd (lt_trans hrc hlt) (lt_irrefl _)
-    rw [if_neg h]
+    rw [ite_eq_right h]
     simp
   · rw [Matrix.det_transvection_of_ne _ _ hne]
     exact one_ne_zero
@@ -232,42 +187,42 @@ theorem upper_of_steps : ∀ (N j : ℕ) (a b ca cb : Fin N) (C : Matrix (Fin N)
   · obtain ⟨i, hi⟩ : ∃ i : Fin N, (i : ℕ) = c - (N - j) := ⟨⟨(c : ℕ) - (N - j), by omega⟩, rfl⟩
     by_cases hia : i = a
     · have hai : (a : ℕ) = c - (N - j) := by rw [← hia]; exact hi
-      rw [if_pos (by omega)] at hca
+      rw [ite_eq_left (by omega)] at hca
       have hcc : c = ca := Fin.ext (by omega)
       have hrcb : (r : ℕ) ≠ cb := fun h => hne ⟨Fin.ext h, hcc⟩
       refine hv b ⟨by omega, by omega⟩ hba r c ?_ ?_
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
         omega
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
         omega
     · refine hv i ⟨by omega, by omega⟩ hia r c ?_ ?_
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
         omega
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
         omega
   · obtain ⟨i, hi⟩ : ∃ i : Fin N, (i : ℕ) = j + c := ⟨⟨j + (c : ℕ), by omega⟩, rfl⟩
     by_cases hia : i = a
     · have hai : (a : ℕ) = j + c := by rw [← hia]; exact hi
-      rw [if_neg (by omega)] at hca
+      rw [ite_eq_right (by omega)] at hca
       have hcc : c = ca := Fin.ext (by omega)
       have hrcb : (r : ℕ) ≠ cb := fun h => hne ⟨Fin.ext h, hcc⟩
       refine hv b ⟨by omega, by omega⟩ hba r c ?_ ?_
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         omega
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         omega
     · refine hv i ⟨by omega, by omega⟩ hia r c ?_ ?_
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         omega
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         omega
 
 end GlobalTheory.CompanionTheory.Ar.PB.StepShape
@@ -339,26 +294,7 @@ noncomputable section
 namespace GlobalTheory.CompanionTheory.Ar.PB.PlVanish
 
 theorem cols_ne_empty {N j : ℕ} (hj : j ≤ N) (i : Fin N) : stepCols N j i ≠ ∅ := by
-  intro e
-  have hi := i.2
-  by_cases h : (i : ℕ) + 1 ≤ j
-  · have : (⟨N - j, by omega⟩ : Fin N) ∈ stepCols N j i := by
-      simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos h]
-      omega
-    simp [e] at this
-  · have : (⟨0, by omega⟩ : Fin N) ∈ stepCols N j i := by
-      simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg h]
-      omega
-    simp [e] at this
-
-theorem minor_one_ne {N : ℕ} {I J : Finset (Fin N)} (h : I ≠ J) :
-    minorIJ (1 : Matrix (Fin N) (Fin N) ℂ) I J = 0 := by
-  apply GlobalTheory.CompanionTheory.Ar.PB.CovMap.LocImg.FV.minorIJ_one_ne <;> assumption
-
-theorem minor_one_same {N : ℕ} (I : Finset (Fin N)) :
-    minorIJ (1 : Matrix (Fin N) (Fin N) ℂ) I I = 1 := by
-  unfold minorIJ
-  rw [dif_pos rfl, Matrix.submatrix_one _ (I.orderEmbOfFin rfl).injective, Matrix.det_one]
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.CovMap.LocImg.FV.stepCols_ne_empty <;> assumption
 
 theorem det_submatrix_eq_zero {N : ℕ} (C : Matrix (Fin N) (Fin N) ℂ) (S : Finset (Fin N))
     (f : Fin S.card → Fin N) (hf : Function.Injective f)
@@ -402,8 +338,8 @@ theorem quot_vanish : ∀ (N j : ℕ) (i : Fin N) (h₁ h₂ : Matrix (Fin N) (F
   let D : Matrix (Fin S.card) (Fin S.card) ℂ := C.submatrix e e
   have hD : D.det ≠ 0 := by
     have h1 := hq S
-    rw [minor_one_same, mul_one] at h1
-    have h2 : minorIJ C S S = D.det := dif_pos rfl
+    rw [GlobalTheory.CompanionTheory.Ar.PB.CovMap.LocImg.FV.minorIJ_one_same, mul_one] at h1
+    have h2 : minorIJ C S S = D.det := dite_eq_left rfl
     rw [← h2]
     intro h0
     rw [h0, mul_zero] at h1
@@ -430,7 +366,7 @@ theorem quot_vanish : ∀ (N j : ℕ) (i : Fin N) (h₁ h₂ : Matrix (Fin N) (F
       exact Finset.mem_image.2 ⟨u, Finset.mem_univ _, Function.update_self _ _ _⟩)
     have h0 : minorIJ C (Finset.univ.image f) S = 0 := by
       have h1 := hq (Finset.univ.image f)
-      rw [minor_one_ne hI, mul_zero] at h1
+      rw [GlobalTheory.CompanionTheory.Ar.PB.CovMap.LocImg.FV.minorIJ_one_ne hI, mul_zero] at h1
       exact (mul_eq_zero.1 h1).resolve_left hβ
     have h2 := det_submatrix_eq_zero C S f hf h0
     have e2 : D.updateRow u v = C.submatrix f e := by
@@ -625,7 +561,7 @@ theorem step_pl {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {zb : (Σ 
         · subst e; simp
         · simp [e, Ne.symm e]
       · have e : I ≠ I₀ := fun e => hI (e ▸ hI₀)
-        rw [off I hI, if_neg e, mul_zero]
+        rw [off I hI, ite_eq_right e, mul_zero]
     calc _ = ∑ I, (∑ m : ι k, val (vA I₀ ⟨k, m⟩) * val (uA ⟨k, m⟩ I)) * minorIJ A I (stepCols N j p.2) := by
           simp only [Finset.mul_sum, Finset.sum_mul]
           rw [Finset.sum_comm]
@@ -805,7 +741,7 @@ theorem back {τ : Ψ} {a b ca cb : Fin N} {k₀ : K} (hb : (b : ℕ) = a + 1) (
           exact (mul_div_cancel₀ _ hxc).symm
         · rw [hρc, show val ⟨_, _, hv m⟩ = _ from regVal_eq hzb _ (hv m), hzc, div_one, one_mul]
           rfl
-      · push_neg at hkb
+      · push Not at hkb
         obtain ⟨p, hp⟩ := hkb
         obtain ⟨α, hα, hz⟩ := H.2.2 p k hp
         have hUp : (∏ c ∈ stepCols N j p.2, U p.1 c c) ≠ 0 := Finset.prod_ne_zero_iff.2 fun c _ => (hU p.1).2.2 c
@@ -870,7 +806,7 @@ end Flags
 theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Φ : Type) [Field Φ] (y : (Σ k, ι k) → Φ) (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N j : ℕ) (M : FlagModel y Ψ N j) (d : ℕ) (τ : Ψ) (a b : Fin N) (k₀ : K) (ca cb : Fin N), (b : ℕ) = a + 1 → ((b : ℕ) < j ∨ j ≤ (a : ℕ)) → M.blk (τ, a) = some k₀ → (ca : ℕ) = lastCol N j a → (cb : ℕ) = ca + 1 → IsArithVar (mCoordIdeal y) (d + 2) → ∀ (F : FrameData ι Ψ N M.Ω M.blk) (z : (Σ o : Option K, ι (o.getD k₀)) → ℂ), M.IsFrame F → basePart M.blk (fstPt k₀ z) ∈ mcPts (mCoordIdeal M.x) → M.GoodAt F (mCoordIdeal (basePart M.blk (fstPt k₀ z))) → (∀ k, basePart M.blk (fstPt k₀ z) ⟨k, F.c k⟩ = 1) → (z ∈ mcPts (mCoordIdeal (M.wCo (τ, a) k₀ ca cb RatFunc.X)) ↔ ∃ (h : Ψ → Matrix (Fin N) (Fin N) ℂ) (t : ℂ), M.IsFlagOf F (fstPt k₀ z) h ∧ M.IsFlagOf F (sndPt k₀ z) (Function.update h τ (h τ * (1 + Matrix.single cb ca t)))) := by
   intro K _ ι _ Φ _ y Ψ _ _ N j M d τ a b k₀ ca cb hb hab hk hca hcb hy F z hF hzb hG hc
   refine ⟨fun hz => ?_, fun ⟨h, t, H, H'⟩ => back M hb hab hk hca hcb hF hzb hG H H'⟩
-  have hI := (_root_.GlobalTheory.CompanionTheory.Relay.flag_adjacent_swap_varieties_arithmetic K ι Φ y Ψ N j M d τ a b k₀ ca cb hb hab hk hca hcb hy).2.2.2.2 (v₁ k₀)
+  have hI := (_root_.PositivityTheory.Xgp.t_c_w_arith K ι Φ y Ψ N j M d τ a b k₀ ca cb hb hab hk hca hcb hy).2.2.2.2 (v₁ k₀)
     (fun p hp => v₁_ne hp) (v₁_self k₀)
   have hsnd := basePart_snd M hk z
   have z₀ : fstPt k₀ z ∈ mcPts (mCoordIdeal y) :=

@@ -76,7 +76,7 @@ theorem newVar_not_mem_blowUpOf {P : Ideal (MRing ι R)} {u : J → MRing ι R} 
   change ¬ (Polynomial.C (Ideal.Quotient.mk P (u j)) * Polynomial.X = 0)
   intro h0
   have h1 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 1) h0
-  simp only [Polynomial.coeff_C_mul_X, if_true, Polynomial.coeff_zero] at h1
+  simp only [Polynomial.coeff_C_mul_X, ite_true, Polynomial.coeff_zero] at h1
   exact h (Ideal.Quotient.eq_zero_iff_mem.mp h1)
 
 theorem mem_blowUpOf_of_sub {P : Ideal (MRing ι R)} {u : J → MRing ι R} {j j' : J}

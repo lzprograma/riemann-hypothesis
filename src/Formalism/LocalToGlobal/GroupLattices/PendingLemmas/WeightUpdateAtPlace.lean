@@ -56,25 +56,13 @@ theorem can_eq {L L' : P.Tup} (h : ∃ γ : C.Γ, L' = C.smul γ L) : can C L = 
 theorem can_can (L : P.Tup) : can C (can C L) = can C L := by
   exact can_eq C (can_rel C L)
 
-private theorem isLatTup_smul_of_isLatTup (γ : C.Γ) {L : P.Tup} (hL : P.IsLatTup L) : P.IsLatTup (C.smul γ L) := by
-  intro v
-  obtain ⟨g, hg, hLv⟩ := hL v
-  refine ⟨((C.act v γ : GL (Fin (P.m + 1)) (P.Qq v)) : Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) (P.Qq v)) * g, ?_, ?_⟩
-  · rw [Matrix.det_mul]
-    exact (Matrix.isUnits_det_units _).mul hg
-  · show (L v).map _ = _
-    rw [hLv]
-    unfold colSpan
-    rw [Submodule.map_span, ← Set.range_comp]
-    congr 1
-
 theorem can_lat {L : P.Tup} (hL : P.IsLatTup L) : P.IsLatTup (can C L) := by
   obtain ⟨γ, hγ⟩ := can_rel C L
   have hc : C.smul γ⁻¹ L = can C L := by
     conv_lhs => rw [hγ]
     exact lsmul_inv_lsmul C γ (can C L)
   rw [← hc]
-  exact isLatTup_smul_of_isLatTup C γ⁻¹ hL
+  exact LatticeSystems.jd_lat _ γ⁻¹ L hL
 
 def repC (h : C.FinClasses) : Finset P.Tup := by
   classical exact (Classical.choose h).image (can C)
@@ -197,22 +185,6 @@ theorem p_ne_zero_of_place (v : Fin G.P.nV) : (p : G.O) ≠ 0 := by
       (by simpa [map_natCast (G.P.j v), h] using h1))
 
 end Unif
-
-abbrev sysOf {p : ℕ} [Fact p.Prime] (G : GAtP p) (Fl : Fills G) (Lv : Levels Fl) (Ch : Chain Lv)
-    (std : ∀ v, Std p (G.P.n' v) G.P.m Fl.t Fl.mm Fl.c G.P.r (Fl.TT v) (Fl.a v) (Fl.b v) (G.P.lam0 v) (Fl.w v))
-    (hfin : ∀ j c, (Lv.lev j c).FinClasses) (h0 : (p : G.O) ≠ 0) (om : ∀ v, OmBasis p (G.P.n' v)) : Sys p where
-  G := G
-  Fl := Fl
-  Lv := Lv
-  Ch := Ch
-  std := std
-  vp := vpOf G
-  unif := vpOf_irreducible G
-  eO := eOOf G h0
-  eO_spec := eOOf_spec G h0
-  dG := dGOf Lv hfin
-  dG_spec := fun j _ => dG_spec Lv hfin j
-  om := om
 
 theorem update_eq_update_iff {ι : Type} [DecidableEq ι] {β : ι → Type} (u0 : ι) (b : β u0) (A B : ∀ i, β i) :
     Function.update A u0 b = Function.update B u0 b ↔ ∀ u, u ≠ u0 → A u = B u := by

@@ -175,7 +175,7 @@ theorem ideleSymbol_diagonal_neg_one (v₀ : HeightOneSpectrum (𝓞 ℚ)) {n : 
   rw [ideleSymbol_apply_eq_of_forall_notMem L _ ζ {v₀}
       (fun v hv ↦ localSymbol_neg_one_of_ne (by simpa using hv) hζ),
     Finset.prod_singleton, infiniteLocalSymbol_apply_of_pow_eq_one L _ _ hn hζ,
-    extensionEmbeddingOfIsReal_infiniteProj, if_pos (by rw [RationalIdeles.realPart_diagonal]; simp),
+    extensionEmbeddingOfIsReal_infiniteProj, ite_eq_left (by rw [RationalIdeles.realPart_diagonal]; simp),
     map_inv₀, localSymbol_neg_one_self v₀ hζ, inv_inv]
 
 theorem ideleSymbol_diagonal_prime (v₀ v' : HeightOneSpectrum (𝓞 ℚ)) {n : ℕ} {ζ : L}
@@ -184,7 +184,7 @@ theorem ideleSymbol_diagonal_prime (v₀ v' : HeightOneSpectrum (𝓞 ℚ)) {n :
   have hinf : infiniteLocalSymbol L default (infiniteProj default (diagonal ℚ (primeRat v'))) ζ =
       ζ := by
     rw [infiniteLocalSymbol_apply_of_pow_eq_one L _ _ hn hζ, extensionEmbeddingOfIsReal_infiniteProj,
-      if_neg (by rw [RationalIdeles.realPart_diagonal]; simp)]
+      ite_eq_right (by rw [RationalIdeles.realPart_diagonal]; simp)]
   by_cases h : v₀ = v'
   · subst h
     rw [ideleSymbol_apply_eq_of_forall_notMem L _ ζ {v₀}

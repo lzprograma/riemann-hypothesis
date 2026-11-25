@@ -60,8 +60,8 @@ theorem gCauchy : GCauchyStatement := by
       | rfl
   have hdeg : (k : ℝ) = (α.degree : ℝ) := by rw [hk]
   unfold polyDeriv
-  rw [MvPolynomial.support_monomial, if_neg one_ne_zero, Finset.sum_singleton,
-    MvPolynomial.coeff_monomial, if_pos rfl, one_mul]
+  rw [MvPolynomial.support_monomial, ite_eq_right one_ne_zero, Finset.sum_singleton,
+    MvPolynomial.coeff_monomial, ite_eq_left rfl, one_mul]
   rw [← hdeg, ← hcomp]
   exact hc
 

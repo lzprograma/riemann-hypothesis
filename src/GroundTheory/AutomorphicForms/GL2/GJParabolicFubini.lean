@@ -229,10 +229,10 @@ theorem parabolicMk_leviProj_unipCoord (p : blockUpper F n β) :
   ext i j
   rw [coe_parabolicMk, Matrix.add_apply, leviProj_apply]
   rcases lt_trichotomy (β i) (β j) with h | h | h
-  · rw [if_neg (ne_of_lt h), unipMatrix_apply_of_lt _ h, zero_add]
+  · rw [ite_eq_right (ne_of_lt h), unipMatrix_apply_of_lt _ h, zero_add]
     rfl
-  · rw [if_pos h, unipMatrix_apply_of_not_lt _ (by rw [h]; exact lt_irrefl _), add_zero]
-  · rw [if_neg (ne_of_gt h), unipMatrix_apply_of_not_lt _ (not_lt.2 h.le), add_zero]
+  · rw [ite_eq_left h, unipMatrix_apply_of_not_lt _ (by rw [h]; exact lt_irrefl _), add_zero]
+  · rw [ite_eq_right (ne_of_gt h), unipMatrix_apply_of_not_lt _ (not_lt.2 h.le), add_zero]
     exact ((mem_blockUpper F n).1 p.2 h).symm
 
 end ParabolicMk
@@ -320,7 +320,7 @@ theorem continuous_leviProj : Continuous (leviProj F n β) := by
   have : (leviChart β).toFun ∘ leviProj F n β = fun (p : blockUpper F n β) (s : LeviIndex n β) =>
       ((p : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) s.1.1 s.1.2 := by
     funext p s
-    simp only [Function.comp_apply, leviChart_apply, leviProj_apply, if_pos s.2]
+    simp only [Function.comp_apply, leviChart_apply, leviProj_apply, ite_eq_left s.2]
   rw [this]
   exact continuous_pi fun s =>
     (Units.continuous_val.comp continuous_subtype_val).matrix_elem s.1.1 s.1.2
@@ -469,7 +469,7 @@ theorem comap_parabolicMeasure (μ𝔪 : Measure (LeviIndex n β → F))
     simp only [coe_coordEquiv, AddEquiv.symm_apply_apply] at e
     rw [← e]
     funext s
-    rw [leviChart_apply, leviProj_apply, if_pos s.2]
+    rw [leviChart_apply, leviProj_apply, ite_eq_left s.2]
     rfl
   rw [show (fun x : levi F n β => μ𝔫 (Prod.mk x ⁻¹' (parabolicMkHomeomorph β ⁻¹' S))) =
       fun m => G ((leviChart β).toFun m) from funext hslice,

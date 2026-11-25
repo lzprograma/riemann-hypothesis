@@ -203,7 +203,7 @@ theorem cellRank_permGL (w : Equiv.Perm (Fin n)) (a b : ℕ) :
       · have h0 : Xᵀ j = 0 := by
           funext i
           simp only [hX, transpose_apply, submatrix_apply, permGL_apply, Pi.zero_apply]
-          rw [if_neg]
+          rw [ite_eq_right]
           intro hi
           exact h (hi ▸ i.2)
         rw [h0]
@@ -222,7 +222,7 @@ theorem permGL_mem_blockUpper {u : Equiv.Perm (Fin n)} (hu : ∀ x, β (u x) = �
     permGL F u ∈ blockUpper F n β := by
   intro i j hij
   show ((permGL F u : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) i j = 0
-  rw [permGL_apply, if_neg]
+  rw [permGL_apply, ite_eq_right]
   rintro rfl
   rw [hu] at hij
   exact lt_irrefl _ hij

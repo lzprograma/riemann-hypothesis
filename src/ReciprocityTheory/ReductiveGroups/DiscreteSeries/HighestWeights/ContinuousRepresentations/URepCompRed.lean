@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjTransposeSignFormDiagEqSignedSumCol
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
 public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
@@ -17,6 +18,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.RelOpCurve
+import all ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.RelOpCurve
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.URepHom
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.FromHC
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantCompactSpan
@@ -181,15 +183,7 @@ variable {n : ℕ}
 
 theorem entry_eq_zero_of_comm {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ}
     (hY : Y * Jm ε = Jm ε * Y) {a b : Fin n} (hab : ε a ≠ ε b) : Y a b = 0 := by
-  have h := congrFun (congrFun hY a) b
-  simp only [Jm, Matrix.mul_diagonal, Matrix.diagonal_mul] at h
-  cases ha : ε a <;> cases hb : ε b
-  · exact absurd (ha.trans hb.symm) hab
-  · rw [ha, hb] at h; simp only [Bool.false_eq_true, if_false, if_true] at h
-    linear_combination h / 2
-  · rw [ha, hb] at h; simp only [Bool.false_eq_true, if_false, if_true] at h
-    linear_combination -h / 2
-  · exact absurd (ha.trans hb.symm) hab
+  apply _root_.GlobalTheory.PsCo.PcdConjLow.entry_eq_zero_of_commute_signMatrix_diffSign <;> assumption
 
 theorem single_block {ε : Fin n → Bool} {a b : Fin n} (hab : ε a = ε b) :
     ∀ i j, ε i ≠ ε j → Matrix.single a b (1 : ℂ) i j = 0 := by
@@ -425,67 +419,7 @@ theorem KRep.op_curve {ε : Fin n → Bool} (R : KRep ε)
     {X : Matrix (Fin n) (Fin n) ℂ} (hX : inK ε X) (γ : ℝ → KG ε)
     (hγ : ∀ t : ℝ, toMK (γ t) = NormedSpace.exp ((t : ℂ) • X)) (t : ℝ) :
     R.op (γ t) = NormedSpace.exp ((t : ℂ) • R.dτ X) := by
-  set A := R.dτ X with hA
-  have hmulK : ∀ a b : KG ε, toMK (a * b) = toMK a * toMK b := fun a b => rfl
-  have honeK : toMK (1 : KG ε) = 1 := rfl
-  have hγadd : ∀ s u : ℝ, γ (s + u) = γ s * γ u := by
-    intro s u
-    apply onep_KG_ext
-    rw [hmulK, hγ, hγ, hγ, Complex.ofReal_add, add_smul]
-    exact Matrix.exp_add_of_commute _ _ (((Commute.refl X).smul_left _).smul_right _)
-  have hop : ∀ a b : KG ε, R.op (a * b) = R.op a * R.op b := by
-    intro a b
-    simp [KRep.op]
-  have hγ0 : γ 0 = 1 := by
-    apply onep_KG_ext
-    rw [hγ, honeK]
-    simp
-  have hd0 : HasDerivAt (fun t => R.op (γ t)) A 0 := R.hasDeriv X hX γ hγ
-  have hd : ∀ s : ℝ, HasDerivAt (fun t => R.op (γ t)) (R.op (γ s) * A) s := by
-    intro s
-    have h1 : HasDerivAt (fun t => R.op (γ (t - s))) A s :=
-      HasDerivAt.comp_sub_const (f := fun t => R.op (γ t)) s s (by rwa [sub_self])
-    refine (h1.const_mul (R.op (γ s))).congr_of_eventuallyEq ?_
-    filter_upwards with u
-    rw [← hop, ← hγadd, add_sub_cancel]
-  have hE : ∀ s : ℝ, HasDerivAt (fun u : ℝ => NormedSpace.exp (u • -A))
-      (NormedSpace.exp (s • -A) * -A) s := fun s => hasDerivAt_exp_smul_const (-A) s
-  have hcomm : ∀ s : ℝ, Commute A (NormedSpace.exp (s • -A)) := fun s =>
-    (((Commute.refl A).neg_right).smul_right s).exp_right
-  have hh : ∀ s : ℝ, HasDerivAt (fun u => R.op (γ u) * NormedSpace.exp (u • -A)) 0 s := by
-    intro s
-    have := (hd s).mul (hE s)
-    have key : R.op (γ s) * A * NormedSpace.exp (s • -A) +
-        R.op (γ s) * (NormedSpace.exp (s • -A) * -A) = 0 := by
-      rw [mul_assoc, (hcomm s).eq, mul_neg, mul_neg, add_neg_cancel]
-    rw [key] at this
-    exact this
-  have hconst : ∀ u : ℝ, R.op (γ u) * NormedSpace.exp (u • -A) = 1 := by
-    intro u
-    have := is_const_of_deriv_eq_zero (f := fun u => R.op (γ u) * NormedSpace.exp (u • -A))
-      (fun s => (hh s).differentiableAt) (fun s => (hh s).deriv) u 0
-    rw [this]
-    simp [hγ0, KRep.op]
-  have hinv : NormedSpace.exp (t • -A) * NormedSpace.exp (t • A) = 1 := by
-    have hk : ∀ s : ℝ, HasDerivAt (fun u : ℝ => NormedSpace.exp (u • -A) * NormedSpace.exp (u • A))
-        0 s := by
-      intro s
-      have := (hE s).mul (hasDerivAt_exp_smul_const A s)
-      have hcF : Commute (NormedSpace.exp (s • A)) A := ((Commute.refl A).smul_left s).exp_left
-      have key : NormedSpace.exp (s • -A) * -A * NormedSpace.exp (s • A) +
-          NormedSpace.exp (s • -A) * (NormedSpace.exp (s • A) * A) = 0 := by
-        rw [mul_assoc, neg_mul, mul_neg, hcF.eq, neg_add_cancel]
-      rw [key] at this
-      exact this
-    have := is_const_of_deriv_eq_zero
-      (f := fun u : ℝ => NormedSpace.exp (u • -A) * NormedSpace.exp (u • A))
-      (fun s => (hk s).differentiableAt) (fun s => (hk s).deriv) t 0
-    rw [this]
-    simp
-  calc R.op (γ t) = R.op (γ t) * (NormedSpace.exp (t • -A) * NormedSpace.exp (t • A)) := by
-        rw [hinv, mul_one]
-    _ = NormedSpace.exp (t • A) := by rw [← mul_assoc, hconst, one_mul]
-    _ = NormedSpace.exp ((t : ℂ) • A) := by rw [Complex.coe_smul]
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.HW.KRep.rel_op_curve <;> assumption
 
 theorem KRep.op_eq_exp {ε : Fin n → Bool} (R : KRep ε) (k : KG ε) :
     ∃ Y : Matrix (Fin n) (Fin n) ℂ, inK ε Y ∧ R.op k = NormedSpace.exp (R.dτ Y) := by

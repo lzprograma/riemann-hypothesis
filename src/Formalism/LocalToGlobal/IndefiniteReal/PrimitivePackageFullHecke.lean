@@ -101,45 +101,6 @@ namespace Formalism.L2.GlobalTheoryTheory.DivPassage2
 
 open Formalism.L2.Indef Formalism.L2.GlobalTheoryTheory.DivPassage
 
-section Chars
-
-variable {K : Type} [Field K] {Γ : Type} [Group Γ] [Finite Γ]
-
-end Chars
-
-section TP
-
-variable {K : Type} [Field K] {Γ : Type} [Group Γ] [Finite Γ] {n : ℕ}
-
-variable [NumberField K]
-
-end TP
-
-section Norms
-
-open Formalism.HermitianLatticesTheory
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {n : ℕ} (X : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ)
-
-end Norms
-
-section Adj
-
-open Formalism.HermitianLatticesTheory
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {Γ : Type} [Group Γ] [Finite Γ] {n : ℕ}
-  (X : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ)
-
-end Adj
-
-section Lat
-
-open Formalism.HermitianLatticesTheory
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {D0 D1 : ℕ} (A : LevelAmb K D0 D1)
-
-end Lat
-
 section Gen
 
 open Formalism.HermitianLatticesTheory
@@ -160,12 +121,6 @@ theorem rows_gen (hL : A.LatG) {D : ℕ} (ι : Matrix (Fin A.Dg) (Fin D) K) (P :
   exact hx (hinj (by rw [hmem, Matrix.mulVec_zero]))
 
 end Gen
-
-section Triv
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K]
-
-end Triv
 
 end Formalism.L2.GlobalTheoryTheory.DivPassage2
 end -- clump:auto
@@ -616,7 +571,7 @@ lemma charOf_conj {T : Type} [AddCommGroup T] [Module K T] (τ : Representation 
       inv_mul_cancel, map_one, one_mul]
   · have h0 : LinearMap.trace K T = 0 := by
       first
-      | (rw [LinearMap.trace, dif_neg]; rintro ⟨_, ⟨b⟩⟩; exact hf (Module.Finite.of_basis b))
+      | (rw [LinearMap.trace, dite_eq_right]; rintro ⟨_, ⟨b⟩⟩; exact hf (Module.Finite.of_basis b))
     simp [h0]
 
 lemma eS_mul_rho {T V : Type} [AddCommGroup T] [Module K T] [AddCommGroup V] [Module K V]
@@ -1703,8 +1658,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open scoped TensorProduct InnerProductSpace
 
 namespace Formalism.IndefR.Links
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 

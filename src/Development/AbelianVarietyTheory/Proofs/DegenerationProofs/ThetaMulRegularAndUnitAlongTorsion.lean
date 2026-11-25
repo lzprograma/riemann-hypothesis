@@ -46,7 +46,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.ZH ReciprocityTheory.ChartRestriction.G.Out Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 namespace GlobalTheory.ZH.TorsReg
@@ -169,7 +168,7 @@ theorem GlobalTheory.ZH.mul_theta_regular_and_unit : ∀ (o Ω : Type) [CommRing
     obtain ⟨i, rfl⟩ : ∃ i, j = fun _ => i := ⟨j 0, funext fun k => congrArg j (Subsingleton.elim k 0)⟩
     have hi : h w ∈ Q.L.L.U i := by
       by_contra hi
-      refine hv (dif_neg fun hle => hi ?_)
+      refine hv (dite_eq_right fun hle => hi ?_)
       rw [← hxw]
       exact Set.mem_iInter.1 (hle (x := IsLocalRing.closedPoint K) trivial).2 0
     obtain ⟨T, f, e, hT, he0, he1, -, hc, hK⟩ := GlobalTheory.ZH.TorsReg.exists_eq_mul_unit Q hO.ne hσ hE hF hw i hi

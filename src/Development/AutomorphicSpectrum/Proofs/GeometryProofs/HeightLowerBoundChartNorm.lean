@@ -3,48 +3,7 @@ module
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsFormNotInCoordIdeal
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemOfAevalEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -279,17 +238,6 @@ theorem support_finite (w : (Σ k, ι k) → L) (hw : ∀ k, ∃ i, w ⟨k, i⟩
 
 theorem product_formula (κ : L) (hκ : κ ≠ 0) :
     ∑ᶠ v : FinitePlace L, Real.log (v κ) = -∑ σ : L →+* ℂ, Real.log ‖σ κ‖ := by
-  have hmul : (Function.mulSupport fun v : FinitePlace L => v κ).Finite :=
-    FinitePlace.hasFiniteMulSupport hκ
-  have h1 : ∑ᶠ v : FinitePlace L, Real.log (v κ) = Real.log (∏ᶠ v : FinitePlace L, v κ) := by
-    rw [finsum_eq_sum_of_support_subset (s := hmul.toFinset),
-      finprod_eq_prod_of_mulSupport_subset (s := hmul.toFinset) _ (by simp),
-      Real.log_prod (fun v _ => (FinitePlace.pos_iff.2 hκ).ne')]
-    intro v hv
-    simp only [Set.Finite.coe_toFinset, Function.mem_mulSupport]
-    intro h1
-    apply hv
-    simp [h1]
   have h2 : ∑ φ : L →+* ℂ, Real.log ‖φ κ‖ = Real.log |Algebra.norm ℚ κ| := by
     rw [← Real.log_prod (fun φ _ => norm_ne_zero_iff.2 ((map_ne_zero φ).2 hκ))]
     congr 1
@@ -298,7 +246,8 @@ theorem product_formula (κ : L) (hκ : κ ≠ 0) :
     rw [Fintype.prod_equiv (RingHom.equivRatAlgHom L ℂ) (fun φ => ‖φ κ‖) (fun φ => ‖φ κ‖)
       (fun _ => by simp [RingHom.equivRatAlgHom_apply]), ← this]
     rw [eq_ratCast, ← Complex.ofReal_ratCast, Complex.norm_real, Real.norm_eq_abs]
-  rw [h1, h2, FinitePlace.prod_eq_inv_abs_norm hκ]
+  rw [← Real.log_finprod fun _ : FinitePlace L => FinitePlace.pos_iff.2 hκ, h2,
+    FinitePlace.prod_eq_inv_abs_norm hκ]
   push_cast
   rw [Real.log_inv]
 

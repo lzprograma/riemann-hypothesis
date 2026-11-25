@@ -41,30 +41,23 @@ theorem ptEntry_lptOf (hκ : star κ = -κ) : ∀ (L : List (K × ℕ)) (o i j :
     simp only [List.map_cons, List.sum_cons] at ho hi hj
     simp only [lptOf, Formalism.FourierDecayAlt.D.ptEntry, Formalism.MainNotions.S.ptEntry]
     by_cases h1 : i < s ∧ j < s
-    · rw [if_pos h1, if_pos h1]
+    · rw [ite_eq_left h1, ite_eq_left h1]
       by_cases h2 : i + j + 1 = s
-      · rw [if_pos h2, if_pos h2, show Af κ r (o + i) * σ t * Bf κ r (o + j) =
+      · rw [ite_eq_left h2, ite_eq_left h2, show Af κ r (o + i) * σ t * Bf κ r (o + j) =
           (Af κ r (o + i) * Bf κ r (o + j)) * σ t by ring, AB_eq κ r hκ]
         unfold blkF
         have he : (r - (o + i)) + (r - (o + j)) = (r - o) + (r - (o + s - 1)) := by omega
         rw [he]
-      · rw [if_neg h2, if_neg h2, map_zero, mul_zero, zero_mul]
-    · rw [if_neg h1, if_neg h1]
+      · rw [ite_eq_right h2, ite_eq_right h2, map_zero, mul_zero, zero_mul]
+    · rw [ite_eq_right h1, ite_eq_right h1]
       by_cases h3 : s ≤ i ∧ s ≤ j
-      · rw [if_pos h3, if_pos h3, ptEntry_lptOf hκ rest (o + s) (i - s) (j - s) (by omega) (by omega) (by omega)]
+      · rw [ite_eq_left h3, ite_eq_left h3, ptEntry_lptOf hκ rest (o + s) (i - s) (j - s) (by omega) (by omega) (by omega)]
         have e1 : o + s + (i - s) = o + i := by omega
         have e2 : o + s + (j - s) = o + j := by omega
         rw [e1, e2]
-      · rw [if_neg h3, if_neg h3, map_zero, mul_zero, zero_mul]
+      · rw [ite_eq_right h3, ite_eq_right h3, map_zero, mul_zero, zero_mul]
 
 end Pt
-
-section Model
-
-variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-  [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq]
-
-end Model
 
 section PointMat
 
@@ -149,9 +142,9 @@ theorem isXv_eq (v : Fin (2 * r + k + 1) → ℂ) (hv : IsXv v) :
   by_cases h : i.val < r
   · rw [Finset.sum_eq_single ⟨i.val, h⟩]
     · have e : i = Formalism.QuantumDeterminants.eI k r ⟨i.val, h⟩ := Fin.ext rfl
-      rw [if_pos e, ← e]
+      rw [ite_eq_left e, ← e]
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hh
       apply hb
       have hv' := congrArg Fin.val hh
@@ -162,7 +155,7 @@ theorem isXv_eq (v : Fin (2 * r + k + 1) → ℂ) (hv : IsXv v) :
     symm
     apply Finset.sum_eq_zero
     intro a _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hh
     apply h
     rw [hh]
@@ -254,7 +247,7 @@ theorem psiR_of {g : Matrix (Fin n) (Fin n) ℂ} (hg : NLike F g) (gg : ℕ) : F
     unfold Formalism.L2.SG.HidaSetting.rootCoord Formalism.L2.SG.HidaSetting.nxt
     split_ifs with h
     · rw [hg.he, F.fe]
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e; have := congrArg Fin.val e; simp at this
     · rw [hg.hz, F.fz]
   unfold Formalism.L2.SG.HidaSetting.psiR

@@ -2,58 +2,12 @@ module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDerived
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
-import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
-import Mathlib.CategoryTheory.Monoidal.Category
-import Mathlib.CategoryTheory.Monoidal.Mon
-import Mathlib.Topology.Sheaves.Presheaf
 public import ReciprocityTheory.AnalyticForms.MaIntEmpty
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
@@ -96,12 +50,12 @@ theorem logDiff_smul {A B : HermLine J} (hab : B.a = A.a) (c : K → ℂ) (z : (
     (hc : ∀ k, c k ≠ 0) : logDiff A B (fun p => c p.1 * z p) = logDiff A B z := by
   unfold logDiff
   by_cases hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0
-  · rw [if_pos hz, if_pos ((cone_smul_iff c hc z).2 hz), A.smul c z hc, B.smul c z hc, hab]
+  · rw [ite_eq_left hz, ite_eq_left ((cone_smul_iff c hc z).2 hz), A.smul c z hc, B.smul c z hc, hab]
     have hp : (∏ k, ‖c k‖ ^ A.a k) ≠ 0 :=
       Finset.prod_ne_zero_iff.2 fun k _ => zpow_ne_zero _ (norm_ne_zero_iff.2 (hc k))
     rw [Real.log_mul hp (A.pos z hz).ne', Real.log_mul hp (B.pos z hz).ne']
     ring
-  · rw [if_neg hz, if_neg fun h => hz ((cone_smul_iff c hc z).1 h)]
+  · rw [ite_eq_right hz, ite_eq_right fun h => hz ((cone_smul_iff c hc z).1 h)]
 
 theorem logDiff_smooth {A B : HermLine J} (hA : IsSmoothHerm A) (hB : IsSmoothHerm B) :
     ReciprocityTheory.ChartRestriction.G.AI.I2.SmoothFn (logDiff A B) := by
@@ -111,7 +65,7 @@ theorem logDiff_smooth {A B : HermLine J} (hA : IsSmoothHerm A) (hB : IsSmoothHe
       (ContDiffOn.log hB fun z hz => (B.pos z hz).ne')
   refine h1.congr fun z hz => ?_
   unfold logDiff
-  exact if_pos hz
+  exact ite_eq_left hz
 
 theorem step (hLoc : ReciprocityTheory.ChartRestriction.G.AI.I2.MetricLocalStatement)
     (I : Ideal (MRing J) → (n : ℕ) → (Fin n → HermLine J) → ℝ) (hI : IsIntersectionFamily I)
@@ -129,7 +83,7 @@ theorem step (hLoc : ReciprocityTheory.ChartRestriction.G.AI.I2.MetricLocalState
     have e : T.h z = A.h z * Real.exp (-logDiff A B z) := rfl
     rw [e]
     unfold logDiff
-    rw [if_pos hz, neg_sub, Real.exp_sub, Real.exp_log (B.pos z hz), Real.exp_log (A.pos z hz)]
+    rw [ite_eq_left hz, neg_sub, Real.exp_sub, Real.exp_log (B.pos z hz), Real.exp_log (A.pos z hz)]
     have := (A.pos z hz).ne'
     field_simp
   have hTs : IsSmoothHerm T := by
@@ -156,7 +110,7 @@ theorem step (hLoc : ReciprocityTheory.ChartRestriction.G.AI.I2.MetricLocalState
   congr 1
   refine ptsIntegral_congr_on P _ fun z hz => ?_
   unfold logDiff
-  rw [if_pos hz.1]
+  rw [ite_eq_left hz.1]
 
 def toLast {n : ℕ} (p : Fin (n + 1)) : Equiv.Perm (Fin (n + 1)) :=
   (finSuccEquiv' p).trans finSuccEquivLast.symm
@@ -177,7 +131,7 @@ theorem word_snoc (A B X : HermLine J) (n : ℕ) (p : Fin (n + 1)) (q : Fin (n +
   · simp [toLast_self]
   · rw [toLast_succAbove, Fin.snoc_castSucc]
     have hne := Fin.succAbove_ne p j
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     unfold word
     by_cases h : (j : ℕ) < p
     · have : p.succAbove j = j.castSucc := Fin.succAbove_of_castSucc_lt _ _ (by simpa [Fin.lt_def] using h)
@@ -218,7 +172,7 @@ theorem word_step (hLoc : ReciprocityTheory.ChartRestriction.G.AI.I2.MetricLocal
     have hq : q = p ↔ (q : ℕ) = i := by simp [p, Fin.ext_iff]
     by_cases h1 : (q : ℕ) < i
     · have h2 : (q : ℕ) < i + 1 := by omega
-      simp only [p, h1, h2, if_true]
+      simp only [p, h1, h2, ite_true]
     · by_cases h3 : (q : ℕ) = i
       · have h2 : (q : ℕ) < i + 1 := by omega
         simp [p, hq.2 h3]

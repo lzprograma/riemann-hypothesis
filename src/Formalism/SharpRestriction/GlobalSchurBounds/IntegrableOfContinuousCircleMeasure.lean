@@ -3,50 +3,6 @@ module
 public import Formalism.GL3MeanSquares.ConcavityEquidistribution
 public import Formalism.SharpRestriction.GlobalSchurBounds.FlipTwoThree
 public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -72,19 +28,20 @@ private lemma zii_plus0_le {κ : ℕ} (lam : Fin (κ + 1) → ℤ) (h : Antitone
   unfold wt
   exact Finset.single_le_sum (f := plus lam) (fun i _ => zii_plus_nonneg lam h i) (Finset.mem_univ 0)
 
-private lemma zii_log_le {a L v W : ℝ} (ha : 1 ≤ a) (hv : 1 ≤ v) (hL : 1 ≤ L)
-    (hlog : Real.log (a * v) ≤ L) (hW0 : 0 < W) (hW : W ≤ 9 * a ^ 2) : Real.log W ≤ 10 * L := by
+private lemma log_le_mul_of_le (c : ℝ) {k a L v x : ℝ} (hc : 1 ≤ c) (hk : c + 1 ≤ k)
+    (ha : 1 ≤ a) (hv : 1 ≤ v) (hL : 1 ≤ L) (hlog : Real.log (a * v) ≤ L) (hx0 : 0 < x)
+    (hx : x ≤ c * a ^ 2) : Real.log x ≤ k * L := by
   have ha0 : 0 < a := by linarith
-  have h1 : Real.log W ≤ Real.log (9 * a ^ 2) := Real.log_le_log hW0 hW
-  have h2 : Real.log (9 * a ^ 2) = Real.log 9 + 2 * Real.log a := by
-    rw [Real.log_mul (by norm_num) (pow_pos ha0 2).ne', Real.log_pow, Nat.cast_ofNat]
-  have h3 : Real.log 9 ≤ 8 := by
-    have := Real.log_le_sub_one_of_pos (by norm_num : (0:ℝ) < 9)
-    linarith
-  have h4 : Real.log a ≤ L := by
-    have : Real.log a ≤ Real.log (a * v) := Real.log_le_log ha0 (le_mul_of_one_le_right ha0.le hv)
-    linarith
-  linarith
+  have h1 := Real.log_le_log hx0 hx
+  have h2 : Real.log (c * a ^ 2) = Real.log c + 2 * Real.log a := by
+    rw [Real.log_mul (by linarith) (pow_pos ha0 2).ne', Real.log_pow, Nat.cast_ofNat]
+  have h3 := Real.log_le_sub_one_of_pos (by linarith : 0 < c)
+  have h4 := (Real.log_le_log ha0 (le_mul_of_one_le_right ha0.le hv)).trans hlog
+  have h5 : Real.log x ≤ (c - 1) * 1 + 2 * L := by linarith
+  calc
+    Real.log x ≤ (c - 1) * L + 2 * L := h5.trans (by gcongr)
+    _ = (c + 1) * L := by ring
+    _ ≤ k * L := by gcongr
 
 theorem zeta_proposition_second : PropZ_ii := by
   intro C₀ hC
@@ -125,7 +82,7 @@ theorem zeta_proposition_second : PropZ_ii := by
       exact_mod_cast zii_plus0_le (lam ρ) (hanti ρ)
     unfold MeanSquareWeightBound
     by_cases hρ : ρ ∈ TT
-    · rw [if_pos hρ]
+    · rw [ite_eq_left hρ]
       obtain ⟨h1, h2, h3, h4⟩ := hTT ρ hρ
       have hw := hwtp ρ hρ
       have e1 : ((κ:ℝ) + 1) * (bt ρ + S) ≤ ((κ:ℝ) + 1) * (2 * (b' + S)) :=
@@ -134,13 +91,13 @@ theorem zeta_proposition_second : PropZ_ii := by
       have e2 : ((κ:ℝ) + 1) * (b' + S) ≤ a * (2 * a) :=
         mul_le_mul hKa (by linarith) (by linarith) (by linarith)
       have hlog : Real.log ((plus (lam ρ) 0 : ℝ) + (κ:ℝ) + 1) ≤ 10 * L :=
-        zii_log_le ha1 hv1 hL1 hN.log_av (by linarith) (by
+        log_le_mul_of_le 9 (by norm_num) (by norm_num) ha1 hv1 hL1 hN.log_av (by linarith) (by
           have : a * (2 * a) = 2 * a ^ 2 := by ring
           linarith)
       have f1 := mul_le_mul_of_nonneg_right hWb hlogK0
       have f2 := mul_le_mul_of_nonneg_left hlog (sq_nonneg ((κ:ℝ) + 1))
       linarith [f1, f2, hKbS]
-    · rw [if_neg hρ]
+    · rw [ite_eq_right hρ]
       have hw := hwtp' ρ hρ
       have e1 : ((κ:ℝ) + 1 + 3) * S ≤ 4 * (((κ:ℝ) + 1) * (b' + S)) := by
         have hKS : S ≤ ((κ:ℝ) + 1) * S := le_mul_of_one_le_left hS0 hK1
@@ -148,7 +105,7 @@ theorem zeta_proposition_second : PropZ_ii := by
         linarith
       have e2 : ((κ:ℝ) + 1 + 3) * S ≤ (4 * a) * a := mul_le_mul (by linarith) (by linarith) hS0 (by linarith)
       have hlog : Real.log ((plus (lam ρ) 0 : ℝ) + (κ:ℝ) + 1) ≤ 10 * L :=
-        zii_log_le ha1 hv1 hL1 hN.log_av (by linarith) (by
+        log_le_mul_of_le 9 (by norm_num) (by norm_num) ha1 hv1 hL1 hN.log_av (by linarith) (by
           have : (4 * a) * a = 4 * a ^ 2 := by ring
           linarith)
       have f1 := mul_le_mul_of_nonneg_right (hw.trans e1) hlogK0
@@ -174,14 +131,14 @@ theorem zeta_proposition_second : PropZ_ii := by
     have h3 : 0 ≤ C₀ * S * logT := mul_nonneg (mul_nonneg hC hS0) hT0
     have h4 : 0 ≤ S * logT := mul_nonneg hS0 hT0
     by_cases hρ : ρ ∈ TT
-    · rw [if_pos hρ]
+    · rw [ite_eq_left hρ]
       have h := hwt ρ hρ
       have h1 : (wt (lam ρ) : ℝ) / ((κ:ℝ) + 1) ≤ A ρ / ((κ:ℝ) + 1) + S := by
         rw [div_le_iff₀ hK0, add_mul, div_mul_cancel₀ _ hK0.ne']
         linarith
       have h2 := mul_le_mul_of_nonneg_right h1 hT0
       linarith
-    · rw [if_neg hρ]
+    · rw [ite_eq_right hρ]
       have h := hwt' ρ hρ
       have h1 : (wt (lam ρ) : ℝ) / ((κ:ℝ) + 1) ≤ C₀ * S := by
         rw [div_le_iff₀ hK0]
@@ -225,20 +182,6 @@ theorem zeta_proposition_second : PropZ_ii := by
 private lemma positive_part_head_le_weight {κ : ℕ} (lam : Fin (κ + 1) → ℤ) (h : Antitone lam) :
     0 ≤ plus lam 0 ∧ plus lam 0 ≤ wt (plus lam) := ⟨zii_plus_nonneg lam h 0, zii_plus0_le lam h⟩
 
-private lemma ziii_log {a L v x : ℝ} (ha : 1 ≤ a) (hv : 1 ≤ v) (hL : 1 ≤ L)
-    (hlog : Real.log (a * v) ≤ L) (hx0 : 0 < x) (hx : x ≤ 7 * a ^ 2) : Real.log x ≤ 8 * L := by
-  have ha0 : 0 < a := by linarith
-  have h1 : Real.log x ≤ Real.log (7 * a ^ 2) := Real.log_le_log hx0 hx
-  have h2 : Real.log (7 * a ^ 2) = Real.log 7 + 2 * Real.log a := by
-    rw [Real.log_mul (by norm_num) (pow_pos ha0 2).ne', Real.log_pow, Nat.cast_ofNat]
-  have h3 : Real.log 7 ≤ 6 := by
-    have := Real.log_le_sub_one_of_pos (by norm_num : (0:ℝ) < 7)
-    linarith
-  have h4 : Real.log a ≤ L := by
-    have : Real.log a ≤ Real.log (a * v) := Real.log_le_log ha0 (le_mul_of_one_le_right ha0.le hv)
-    linarith
-  linarith
-
 private lemma ziii_place {C₀ K b' S L lkv logT W lst lg U : ℝ} (hC : 0 ≤ C₀) (hK : 1 ≤ K)
     (hlkv : 0 ≤ lkv) (hT : 0 ≤ logT)
     (hW : W ≤ U + 4 * K * (b' + S)) (hlg : lg ≤ 8 * L) (hlst : lst ≤ (2 + C₀) * (b' + S)) :
@@ -268,7 +211,7 @@ private lemma ziii_top {C₀ K a b' S L v logT W p lst At bt : ℝ} (hC : 0 ≤ 
     linarith
   have haa : a ≤ a ^ 2 := le_self_pow₀ (le_trans hb1 hba) two_ne_zero
   have hlg : Real.log (p + K) ≤ 8 * L :=
-    ziii_log (by linarith) hv hL hlog (by linarith) (by
+    log_le_mul_of_le 7 (by norm_num) (by norm_num) (by linarith) hv hL hlog (by linarith) (by
       have : a * (3 * a) = 3 * a ^ 2 := by ring
       linarith)
   have hlst : lst ≤ (2 + C₀) * (b' + S) := by
@@ -295,7 +238,7 @@ private lemma ziii_other {C₀ K a b' S L v logT W p lst : ℝ} (hC : 0 ≤ C₀
   have hKS : (K + 3) * S ≤ 4 * a * a := mul_le_mul hK3 hSa hS (by linarith)
   have haa : a ≤ a ^ 2 := le_self_pow₀ (le_trans hb1 hba) two_ne_zero
   have hlg : Real.log (p + K) ≤ 8 * L :=
-    ziii_log (by linarith) hv hL hlog (by linarith) (by
+    log_le_mul_of_le 7 (by norm_num) (by norm_num) (by linarith) hv hL hlog (by linarith) (by
       have : 4 * a * a = 4 * a ^ 2 := by ring
       linarith)
   have hlst : lst ≤ (2 + C₀) * (b' + S) := by
@@ -358,10 +301,10 @@ theorem zeta_proposition_third : PropZ_iii := by
     rw [add_assoc ((plus (lam ρ) 0 : ℤ) : ℝ) (κ : ℝ) 1]
     by_cases hρ : ρ ∈ TT
     · obtain ⟨hA1, hA2, hbt1, hbt2⟩ := hTT ρ hρ
-      rw [if_pos hρ]
+      rw [ite_eq_left hρ]
       exact ziii_top hC hK1 hKa hb1 hba hS hSb hL hv hN.log_av hT hp0' hpW' hA2 hbt2 (hWT ρ hρ)
         (hlT ρ hρ)
-    · rw [if_neg hρ]
+    · rw [ite_eq_right hρ]
       exact ziii_other hC hK1 hKa hb1 hba hS hSb hL hv hN.log_av hT hp0' hpW' (hWo ρ hρ) (hlo ρ hρ)
   have hsum := Finset.sum_le_sum (s := (Finset.univ : Finset ι)) (fun ρ _ => key ρ)
   have hrhs : ∀ x y : ℝ, ∑ ρ : ι, ((if ρ ∈ TT then x else 0) + y)
@@ -456,8 +399,7 @@ theorem b_nums {D : D7} {T g1 g2 : ℕ} {Cn x b L b' Sc eta : ℝ} (h : Nums D T
     have h2 : Real.log 8 ≤ Real.log (x * b * D.host.v) := Real.log_le_log (by norm_num) h8
     linarith
   have hCn : 0 ≤ Cn := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have : Cn * L < 0 := mul_neg_of_neg_of_pos hc (by linarith)
     linarith [abs_nonneg (dlogL D 1)]
   have hNb : (D.R.N D.R.m : ℝ) ≤ b' := by
@@ -475,8 +417,8 @@ theorem b_lam_eq (D : D7) (u : D.what₂.Word) (j : ℕ) (hj : j ≤ D.R.m) (τ 
   rw [(D.fm u).lam_eq j hj τ i]
   unfold lamLiftN lamCol wJ
   by_cases h : i.1 < D.R.k
-  · rw [dite_eq_left h, if_pos h, dite_eq_left h]
-  · rw [dite_eq_right h, if_neg h, dite_eq_left (D.R.blk_lt hj i h)]
+  · rw [dite_eq_left h, ite_eq_left h, dite_eq_left h]
+  · rw [dite_eq_right h, ite_eq_right h, dite_eq_left (D.R.blk_lt hj i h)]
 
 theorem b_mem_tops (D : D7) (τ : D.what₂.Tau) : τ ∈ tops D ↔ IsTop D τ := by
   classical

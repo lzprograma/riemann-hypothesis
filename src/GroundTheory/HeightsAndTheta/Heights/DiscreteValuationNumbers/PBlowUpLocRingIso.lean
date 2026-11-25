@@ -111,12 +111,7 @@ theorem BlowUpLocRingIso.proof : BlowUpLocRingIso.Statement.{u} := by
   let θ : MRing (extIdx ι J) R ⧸ blowUpOf P u →+* Polynomial (MRing ι R ⧸ P) :=
     Ideal.Quotient.lift (blowUpOf P u) (aeval (blowUpSubst P u)).toRingHom
       (fun a ha => RingHom.mem_ker.mp ha)
-  have hθ : Function.Injective θ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
-    intro a ha
-    obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective a
-    rw [Ideal.Quotient.lift_mk] at ha
-    exact Ideal.Quotient.eq_zero_iff_mem.mpr (RingHom.mem_ker.mpr ha)
+  have hθ : Function.Injective θ := RingHom.lift_injective_of_ker_le_ideal _ _ fun _ h => h
   let I := {t : (Option K → ℕ) × MRing (extIdx ι J) R × MRing (extIdx ι J) R //
     IsMultiHomog t.2.1 t.1 ∧ IsMultiHomog t.2.2 t.1 ∧ t.2.2 ∉ Q}
   have hf : ∀ i : I, θ (Ideal.Quotient.mk (blowUpOf P u) i.1.2.1) =

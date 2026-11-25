@@ -23,60 +23,11 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibra
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.ToZModPowOneEqZeroIff
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.GamGen
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.GroupTheory.Nilpotent
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.FrobEig, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.PhiDvd, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SepChar, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.AlgK, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.DescZRetr, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CharPer, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.GcDiff, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.GcShift, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.PushDiff, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SepPair, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SinFin, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.Nzd, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SinLem, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SinSupp, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.Sinnott, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.HalfSum, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwCoef, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.Nonvan, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.DeltaBij, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.Struct, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.ToKOf
@@ -164,7 +115,7 @@ private theorem UpperTheory.V.FW.phiDvd_nil (k A : Type) [Field k] [CommRing A] 
   by_cases hv : N ≤ Polynomial.rootMultiplicity 0 f
   · exfalso
     exact h (hφ ▸ dvd_mul_of_dvd_left (pow_dvd_pow T hv) _)
-  · push_neg at hv
+  · push Not at hv
     rw [hφ]
     refine ⟨↑hu.unit⁻¹ * T ^ (N - Polynomial.rootMultiplicity 0 f), ?_⟩
     calc T ^ N = T ^ Polynomial.rootMultiplicity 0 f * T ^ (N - Polynomial.rootMultiplicity 0 f) := by
@@ -552,7 +503,7 @@ theorem UpperTheory.V.FW.gcDiff :
       have t0 : t = 0 := by rw [ht, h0, mul_zero]
       rw [t0, ZMod.val_zero] at hvt
       omega
-    rw [hvt, if_neg hs0, sub_zero]
+    rw [hvt, ite_eq_right hs0, sub_zero]
     have e : c * (w + 1) = c * w + c := by ring
     rw [e, key]
     ring
@@ -561,7 +512,7 @@ theorem UpperTheory.V.FW.gcDiff :
       omega
     have ht0 : t = 0 := by rw [htw, hwe, ZMod.natCast_self]
     have hs0 : s = 0 := by rw [hs, ht0, mul_zero]
-    rw [ht0, ZMod.val_zero, if_pos hs0]
+    rw [ht0, ZMod.val_zero, ite_eq_left hs0]
     have e : c * w + c = c * M := by rw [← hwe]; ring
     rw [e, Nat.mul_div_cancel _ hM] at key
     simp only [mul_zero, Nat.zero_div, Nat.cast_zero]
@@ -631,7 +582,7 @@ theorem UpperTheory.V.FW.gcShift :
   rw [hp c, ← sub_mul, ← Int.cast_sub, gauss_count_shift_eq_sum M c s hc F, Int.cast_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun j _ => ?_
   by_cases h : (j : ZMod M) = s
-  · rw [if_pos h, if_pos h, h, mul_comm]
+  · rw [ite_eq_left h, ite_eq_left h, h, mul_comm]
     by_cases h' : c ∣ j <;> simp [h']
   · simp [h]
 end -- clump:auto
@@ -677,8 +628,8 @@ theorem UpperTheory.V.FW.pushDiff :
     rw [Finset.mem_filter, ZMod.castHom_apply, ZMod.cast_natCast h]
     simp
   by_cases hj : (j : ZMod m) = y
-  · rw [if_pos (key.mpr hj), if_pos hj]
-  · rw [if_neg (fun t => hj (key.mp t)), if_neg hj]
+  · rw [ite_eq_left (key.mpr hj), ite_eq_left hj]
+  · rw [ite_eq_right (fun t => hj (key.mp t)), ite_eq_right hj]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.PushDiff =====
@@ -695,8 +646,7 @@ private theorem sep_pair (l : ℕ) [Fact l.Prime] (x y : ℤ_[l]) :
   by_cases h : x = y
   · exact Filter.Eventually.of_forall fun _ _ => h
   · obtain ⟨m, hm⟩ : ∃ m, PadicInt.toZModPow m x ≠ PadicInt.toZModPow m y := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact h (PadicInt.ext_of_toZModPow.mp hc)
     filter_upwards [Filter.eventually_ge_atTop m] with n hn heq
     exfalso
@@ -809,8 +759,7 @@ theorem UpperTheory.V.FW.nzd :
     | succ n ih => rw [succ_nsmul, ← add_assoc, step, ih]
   by_contra hne
   obtain ⟨b, hb⟩ : ∃ b, x.coeff b ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hne (AddMonoidAlgebra.ext (Finsupp.ext fun c => by simp [hc c]))
   have hinj : Function.Injective fun n : ℕ => b + n • a := by
     intro n m hnm
@@ -879,7 +828,7 @@ theorem UpperTheory.V.FW.sinLem :
     rw [Finset.sum_eq_single s] at hcoef
     · simpa using hcoef
     · intro t ht hts
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro he
       rw [← map_nsmul φ, ← map_nsmul φ] at he
       have hmem := (QuotientAddGroup.eq (s := H)).mp he
@@ -932,8 +881,7 @@ private theorem prod_single_eq_single_sum {k A ι : Type} [CommRing k] [AddCommG
 private theorem coeff_monic_poly_sum {k A ι : Type} [CommRing k] [AddCommGroup A]
     (T : Finset ι) (f : ι → AddMonoidAlgebra k A) (a : A) (h : (∑ j ∈ T, f j).coeff a ≠ 0) :
     ∃ j ∈ T, (f j).coeff a ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply h
   rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
   exact Finset.sum_eq_zero hc
@@ -1037,12 +985,12 @@ theorem UpperTheory.V.FW.halfSum :
   · intro x hx
     by_cases h : x ∈ H'
     · simp [h]
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
       exact (hHH' x hx).resolve_left h
   · intro y hy
     by_cases h : y ∈ H
     · simp [h]
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
       exact (hH'H y hy).resolve_left h
   · intro x hx
     by_cases h : x ∈ H'
@@ -1117,7 +1065,7 @@ private theorem half_val {M : ℕ} [NeZero M] (hM : 2 < M) (s : (ZMod M)ˣ) :
     rw [ZMod.natCast_eq_zero_iff] at h5
     have := Nat.le_of_dvd (by norm_num) h5
     omega
-  rw [Units.val_neg, ZMod.neg_val, if_neg hs0]
+  rw [Units.val_neg, ZMod.neg_val, ite_eq_right hs0]
   omega
 
 theorem UpperTheory.V.FW.twCoef :
@@ -1323,7 +1271,7 @@ theorem UpperTheory.V.FW.nonvan :
     intro hd
     have := Nat.le_of_dvd one_pos hd
     omega
-  simp only [hndvd, if_false, sub_zero, mul_one, Nat.cast_one, hΨ, map_one] at hP
+  simp only [hndvd, ite_false, sub_zero, mul_one, Nat.cast_one, hΨ, map_one] at hP
   exact one_ne_zero hP
 end -- clump:auto
 end -- clump:auto

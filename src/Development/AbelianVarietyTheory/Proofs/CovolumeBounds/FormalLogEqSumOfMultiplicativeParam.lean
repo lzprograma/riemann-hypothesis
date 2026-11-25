@@ -107,18 +107,18 @@ theorem coeff_subst_kill (e : ι → κ) {b : κ → MvPowerSeries κ A} (hb0 : 
     by_cases hk : k ∈ Set.range e
     · obtain ⟨i, rfl⟩ := hk
       simp [hb0]
-    · simp only [Pi.smul_apply', hb1 k hk, if_neg hk, one_smul]
+    · simp only [Pi.smul_apply', hb1 k hk, ite_eq_right hk, one_smul]
   rw [hb, ← rescale_eq_subst, coeff_rescale]
   split_ifs with h
   · rw [Finsupp.prod, Finset.prod_eq_one, one_mul]
     intro k hk
-    rw [if_neg, one_pow]
+    rw [ite_eq_right, one_pow]
     rintro ⟨i, rfl⟩
     exact Finsupp.mem_support_iff.mp hk (h i)
   · push Not at h
     obtain ⟨i, hi⟩ := h
     rw [Finsupp.prod, Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hi), zero_mul]
-    rw [if_pos ⟨i, rfl⟩, zero_pow hi]
+    rw [ite_eq_left ⟨i, rfl⟩, zero_pow hi]
 
 theorem ext_of_pderiv_of_subst [IsAddTorsionFree A] (e : ι → κ) {b : κ → MvPowerSeries κ A}
     (hb0 : ∀ i, b (e i) = 0) (hb1 : ∀ k, k ∉ Set.range e → b k = X k)
@@ -126,7 +126,7 @@ theorem ext_of_pderiv_of_subst [IsAddTorsionFree A] (e : ι → κ) {b : κ → 
     (h0 : subst b f = subst b g) : f = g := by
   refine ext_of_pderiv_of_coeff e hD fun α hα => ?_
   have := congrArg (coeff α) h0
-  rwa [coeff_subst_kill e hb0 hb1, coeff_subst_kill e hb0 hb1, if_pos hα, if_pos hα] at this
+  rwa [coeff_subst_kill e hb0 hb1, coeff_subst_kill e hb0 hb1, ite_eq_left hα, ite_eq_left hα] at this
 
 theorem subst_elim_zero_eq_zero_iff [Finite σ] [Finite τ] (f : MvPowerSeries (σ ⊕ τ) A) :
     subst (Sum.elim (fun _ => 0) X : σ ⊕ τ → MvPowerSeries τ A) f = 0 ↔
@@ -139,7 +139,7 @@ theorem subst_elim_zero_eq_zero_iff [Finite σ] [Finite τ] (f : MvPowerSeries (
       hasSubst_of_constantCoeff_zero (by simp)
     have h2 := congrArg (subst (fun j => X (inr j) : τ → MvPowerSeries (σ ⊕ τ) A)) h
     simp [subst_subst hb, subst_sumElim, subst_X hb, subst_zero' hb] at h2
-    rw [← if_pos hα (t := coeff α f) (e := 0), ← hk, h2, map_zero]
+    rw [← ite_eq_left hα (t := coeff α f) (e := 0), ← hk, h2, map_zero]
   · intro h
     have h1 : subst (Sum.elim (fun _ => 0) fun j => X (inr j) :
         σ ⊕ τ → MvPowerSeries (σ ⊕ τ) A) f = 0 := by

@@ -11,61 +11,9 @@ public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothPar
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Pc
 public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.OrthSum
 public import Formalism.LocalRingCardinality.Lemmas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Ring.IsFormallyReal
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.GL3MeanSquares.HookFormulaTorsion.LemmaCTwistRamified, Formalism.LogVandermondeBounds.LogVandermondeProofs.MulSingleMulApplySelf, Formalism.LogVandermondeBounds.GaussOperatorProductFormula, Formalism.SharpRestriction.GlobalSchurBounds.FiniteModelOfAdmissibleTransports
@@ -174,7 +122,7 @@ lemma sum_eps (a t : H) (ha : a ≠ 1) : ∑ c : H, (eps a (c * t) : K) = 0 := b
     · simp [h1]
   rw [show (∑ c : H, (eps a (c * t) : K)) = ∑ h : H, (eps a h : K) from
     Equiv.sum_comp (Equiv.mulRight t) (fun h => (eps a h : K))]
-  simp only [key, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [key, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 lemma sum_bas (a : ι → {c : H // c ≠ 1}) (v : ι) (h : ι → H) :
@@ -195,11 +143,11 @@ lemma bas_avoid (a b : ι → {c : H // c ≠ 1}) :
   unfold bas
   by_cases hab : a = b
   · subst hab
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     refine Finset.prod_eq_one fun w _ => ?_
     unfold eps
     simp
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     have hw : ∃ w, a w ≠ b w := by
       by_contra hcon
       simp only [not_exists, not_not] at hcon
@@ -467,16 +415,8 @@ def Q (Λ : H.Lc) (x : Fin (D.R.N i) → (D.mem u).A.Fv v) : Fn D u i →ₗ[ℂ
 
 end Unf
 
-namespace Unf
-
-end Unf
-
 lemma two_le_N (R : Ranks) (j : ℕ) : 2 ≤ R.N j := by
   have := R.m_add_three_le_k; unfold Ranks.N; omega
-
-namespace Unf
-
-end Unf
 
 variable (D u)
 
@@ -1086,7 +1026,7 @@ lemma entry_le (τ : D.what₂.Tau) (a : Fin (D.R.N 0)) (ha : a.1 ≠ 0) :
       else (((D.fm u).lam 0 τ).w a - ((0 * (D.R.t + 1) / 2 : ℕ) : ℤ)).natAbs)
     (Finset.mem_univ a)
   have h3 := le_trans h2 h1
-  rw [if_neg (fun h => ha h.1)] at h3
+  rw [ite_eq_right (fun h => ha h.1)] at h3
   have e0 : ((0 * (D.R.t + 1) / 2 : ℕ) : ℤ) = 0 := by simp
   rw [e0, sub_zero] at h3
   exact h3

@@ -131,13 +131,13 @@ variable {K : Type} [Field K] [CharZero K]
 theorem prim_prim (e : PowerSeries K) : Formalism.L2.Th1.B.prim (Formalism.L2.Th1.B.prim e) = dblInt e := by
   ext n
   match n with
-  | 0 => rw [Formalism.L2.Th1.B.Ph.coeff_zero_prim, dblInt, PowerSeries.coeff_mk, if_pos (by norm_num)]
+  | 0 => rw [Formalism.L2.Th1.B.Ph.coeff_zero_prim, dblInt, PowerSeries.coeff_mk, ite_eq_left (by norm_num)]
   | 1 =>
     rw [Formalism.L2.Th1.B.Ph.coeff_prim_succ, Formalism.L2.Th1.B.Ph.coeff_zero_prim, zero_div, dblInt,
-      PowerSeries.coeff_mk, if_pos (by norm_num)]
+      PowerSeries.coeff_mk, ite_eq_left (by norm_num)]
   | m + 2 =>
     rw [Formalism.L2.Th1.B.Ph.coeff_prim_succ, Formalism.L2.Th1.B.Ph.coeff_prim_succ, dblInt,
-      PowerSeries.coeff_mk, if_neg (by omega), Nat.add_sub_cancel, div_div]
+      PowerSeries.coeff_mk, ite_eq_right (by omega), Nat.add_sub_cancel, div_div]
     congr 1
     push_cast
     ring

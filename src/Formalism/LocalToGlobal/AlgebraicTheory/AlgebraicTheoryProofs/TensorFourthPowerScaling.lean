@@ -85,8 +85,7 @@ private theorem exists_quadratic_of_mul_mem_lattice (L : PeriodPair) (c : ℂ) (
   · exact absurd h (mul_ne_zero n1 n2)
 private theorem norm_le_one_of_monic_int_quadratic {K : Type} [NormedField K] [IsUltrametricDist K] (x : K) (s t : ℤ)
     (h : x ^ 2 + s * x + t = 0) : ‖x‖ ≤ 1 := by
-  by_contra hx
-  push_neg at hx
+  by_contra! hx
   have hs : ‖(s : K)‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one K s
   have ht : ‖(t : K)‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one K t
   have e : x ^ 2 = -((s : K) * x + t) := by linear_combination h

@@ -35,7 +35,7 @@ theorem chartInv_chartInv {y : Fin (e + 1) → ℂ} (hy : y 0 ≠ 0) : chartInv 
   by_cases hj : j = 0
   · subst hj
     simp [chartInv]
-  · simp only [chartInv, hj, if_false, if_true]
+  · simp only [chartInv, hj, ite_false, ite_true]
     field_simp
 
 theorem swap_mulVec_cons (y : Fin (e + 1) → ℂ) (hy : y 0 ≠ 0) :
@@ -52,7 +52,7 @@ theorem swap_mulVec_cons (y : Fin (e + 1) → ℂ) (hy : y 0 ≠ 0) :
         rw [← Fin.succ_zero_eq_one, Ne, Fin.succ_inj]
         exact Fin.succ_ne_zero _
       simp only [Function.comp_apply, Equiv.swap_apply_of_ne_of_ne h0 h1, Fin.cons_succ, Pi.smul_apply,
-        smul_eq_mul, chartInv, Fin.succ_ne_zero, if_false]
+        smul_eq_mul, chartInv, Fin.succ_ne_zero, ite_false]
       field_simp
 
 theorem hermChartPot_swap (M : Matrix (Fin (e + 1 + 1)) (Fin (e + 1 + 1)) ℂ) (hM : M.PosDef)
@@ -149,15 +149,15 @@ theorem ChartEnergySwapInvariant.proof : ChartEnergySwapInvariant.Statement := b
       filter_upwards [hev] with y' hy'
       rw [logCoord_re y y' hy hy']
       by_cases hj : (j : ℕ) < k
-      · simp only [hΦ, hj, if_true]
+      · simp only [hΦ, hj, ite_true]
         exact hermChartPot_swap M hM y' hy'
-      · simp only [hΦ, hj, if_false]
+      · simp only [hΦ, hj, ite_false]
         exact hermChartPot_swap N hN y' hy'
     have hΦs : ∀ j, ContDiffAt ℝ 2 (Φ j) (chartInv y) := fun j => by
       by_cases hj : (j : ℕ) < k
-      · simp only [hΦ, hj, if_true]
+      · simp only [hΦ, hj, ite_true]
         exact (contDiff_hermChartPot M hM).contDiffAt
-      · simp only [hΦ, hj, if_false]
+      · simp only [hΦ, hj, ite_false]
         exact (contDiff_hermChartPot N hN).contDiffAt
     rw [maDensity_comp_holo _ Φ chartInv (logCoord y) y hΦs (contDiffAt_chartInv hy)
       (contDiffAt_logCoord hy) hΦ', det_fderiv_real ((contDiffAt_chartInv hy).differentiableAt (by norm_num)),

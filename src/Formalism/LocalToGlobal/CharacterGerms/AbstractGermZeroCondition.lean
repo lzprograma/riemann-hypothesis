@@ -91,7 +91,7 @@ theorem intS_invG {σ : Type*} [Fintype σ] (Φ t G : σ → MvPowerSeries σ C)
               · exact absurd rfl hd)]
           rw [Finset.sum_image (fun a _ b _ hab => (Finsupp.single_left_inj one_ne_zero).mp hab)]
           refine Finset.sum_congr rfl fun y' _ => ?_
-          rw [if_pos (by simp), hT]
+          rw [ite_eq_left (by simp), hT]
           simp only [smul_eq_mul]
           rw [Finsupp.prod_single_index (by simp), pow_one]
           rfl
@@ -203,7 +203,7 @@ theorem one_group {σ : Type} [Fintype σ] (t t₂ φ φ₂ : σ → MvPowerSeri
     have hrow : ∀ k, ∑ j, A i j * B j k = (1 : Matrix σ σ C) i k := fun k => by
       rw [← hAB, Matrix.mul_apply]
     simp only [hrow, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
   have hcoeff : ∀ (ψ : σ → MvPowerSeries σ C) j μ,
       MvPowerSeries.coeff μ (∑ k, N j k • ψ k) = ∑ k, N j k * MvPowerSeries.coeff μ (ψ k) := by
     intro ψ j μ
@@ -226,7 +226,7 @@ theorem one_group {σ : Type} [Fintype σ] (t t₂ φ φ₂ : σ → MvPowerSeri
     by_cases hij : i = j
     · subst hij
       simp
-    · rw [if_neg (Ne.symm hij), if_neg hij]
+    · rw [ite_eq_right (Ne.symm hij), ite_eq_right hij]
   obtain ⟨h, hh0, hhs⟩ := Formalism.FG.solve_exists_vector C σ σ (fun j => ∑ k, N j k • φ k)
     (fun j => ∑ k, N j k • φ₂ k) hid (hcc φ₂ hφ0₂)
   have hsub_h : MvPowerSeries.HasSubst h := MvPowerSeries.hasSubst_of_constantCoeff_zero hh0
@@ -281,7 +281,7 @@ theorem one_group {σ : Type} [Fintype σ] (t t₂ φ φ₂ : σ → MvPowerSeri
       by_cases hij : i = j
       · subst hij
         simp
-      · rw [if_neg hij, if_neg]
+      · rw [ite_eq_right hij, ite_eq_right]
         · simp
         · intro h'
           exact hij (Finsupp.single_left_injective one_ne_zero h')
@@ -326,8 +326,7 @@ private theorem cc_subst_lemma {σ τ A : Type} [Finite σ] [CommRing A] (a : σ
   · simp
   · intro e he
     obtain ⟨s, hs⟩ : ∃ s, e s ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact he (Finsupp.ext h)
     rw [map_finsuppProd]
     simp only [map_pow, ha, Finsupp.prod]

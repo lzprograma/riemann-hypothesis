@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
 public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
 public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.RingTheory.Localization.Module
@@ -7,55 +8,14 @@ public import Mathlib.FieldTheory.Finiteness
 public import Mathlib.LinearAlgebra.Dimension.RankNullity
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CountLoc
 public import Formalism.SubspaceCounting.SubspaceCountingProofs.TypeIIDown
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IsLatticeBetween, Formalism.SharpRestriction.GrowthBounds.MultisetValuation.SmulMemLatOf, Formalism.SharpRestriction.GrowthBounds.MultisetValuation.SmulPsiGUp
@@ -113,19 +73,7 @@ theorem psi_apply (g : Matrix (Fin n) (Fin n) Qq) (w : Fin n → W) :
 
 theorem mem_colSpan (G : Matrix (Fin n) (Fin n) Qq) (x : Fin n → Qq) :
     x ∈ colSpan W G ↔ ∃ y : Fin n → W, x = G.mulVec (fun c => algebraMap W Qq (y c)) := by
-  unfold colSpan
-  rw [Submodule.mem_span_range_iff_exists_fun]
-  constructor
-  · rintro ⟨y, rfl⟩
-    refine ⟨y, ?_⟩
-    funext i
-    simp only [Finset.sum_apply, Matrix.mulVec, dotProduct, Algebra.smul_def]
-    exact Finset.sum_congr rfl fun c _ => mul_comm _ _
-  · rintro ⟨y, rfl⟩
-    refine ⟨y, ?_⟩
-    funext i
-    simp only [Finset.sum_apply, Matrix.mulVec, dotProduct, Algebra.smul_def]
-    exact Finset.sum_congr rfl fun c _ => mul_comm _ _
+  apply _root_.Formalism.MainNotions.Pf14.mem_colSpan <;> assumption
 
 theorem range_psi (g : Matrix (Fin n) (Fin n) Qq) : LinearMap.range (psi (W := W) g) = colSpan W g := by
   ext x
@@ -539,7 +487,7 @@ theorem core (p n' : ℕ) (h : Res (p : W) F) (hq : Nat.card F = p ^ n') (N g i 
   have hcardF : Fintype.card F = p ^ n' := by rw [← Nat.card_eq_fintype_card, hq]
   by_cases hx : ∀ y ∈ colSpan W gA, x.mulVec y ∈ colSpan W gB
   swap
-  · push_neg at hx
+  · push Not at hx
     obtain ⟨y0, hy0, hxy0⟩ := hx
     have hL : Nat.card {B1 : Submodule W (Fin (N + g) → Qq) // IsEdge p n' i ⟨B1, colSpan W gB⟩ ∧
         ∀ y ∈ colSpan W gA, x.mulVec y ∈ B1} = 0 :=

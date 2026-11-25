@@ -45,7 +45,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj MvPowerSeries
 open ReciprocityTheory.ChartRestriction.G.Chart
-attribute [local instance] Over.cartesianMonoidalCategory
 namespace GlobalTheory.JetSer
 variable {R : Type} [CommRing R]
 

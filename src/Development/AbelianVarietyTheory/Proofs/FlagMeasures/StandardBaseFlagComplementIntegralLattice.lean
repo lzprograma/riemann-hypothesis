@@ -5,6 +5,7 @@ public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Chart
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLatticeLatIn
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfPerpPerp
 import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
 import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
 import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
@@ -132,7 +133,7 @@ variable {W : Type} [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarT
 
 theorem perp_lattice (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hn : h.Nondegenerate) {Λ : Submodule (𝓞 K) V}
     (hL : Submodule.IsLattice K Λ) (hU : IsUnimodular h Λ)
-    (hW : W →ₗ⋆[K] W →ₗ[K] K) (hsW : hW.IsSymm) (hnW : hW.Nondegenerate) (ι : W →ₗ[K] V)
+    (hW : W →ₗ⋆[K] W →ₗ[K] K) (_ : hW.IsSymm) (hnW : hW.Nondegenerate) (ι : W →ₗ[K] V)
     (hι : ∀ a b, h (ι a) (ι b) = hW a b) (X : Submodule K V) (z : V) (T : ℕ) (hT : T ≠ 0)
     (hXX : ∀ x ∈ X, ∀ y ∈ X, h x y = 0) (hXz : ∀ x ∈ X, h x z = 0) (hXW : ∀ x ∈ X, ∀ w, h x (ι w) = 0)
     (hzW : ∀ w, h z (ι w) = 0) (hzz : h z z = -(T : K)) (hz : z ∈ Λ)
@@ -140,136 +141,19 @@ theorem perp_lattice (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hn : h.
     (hprim : ∀ c : K, ∀ x ∈ X, c • z + x ∈ Λ → ∃ o : 𝓞 K, (o : K) = c)
     (L : Submodule (𝓞 K) W) (hmem : ∀ w, w ∈ L ↔ ∃ x ∈ X, ι w + x ∈ Λ) :
     Submodule.IsFullLattice K L ∧ IsIntegralLat hW L ∧ idxN (dual hW L) L = T ^ Module.finrank ℚ K := by
-  have hT0 : (T : K) ≠ 0 := by exact_mod_cast hT
-  have sw : ∀ {x y : V}, h x y = 0 → h y x = 0 := fun {x y} e => by rw [← hs.eq, e, map_zero]
-  have hint : ∀ x ∈ Λ, ∀ y ∈ Λ, h x y ∈ (1 : Submodule (𝓞 K) K) := fun x hx y hy =>
-    (dualBasic_mem_dual _ _ _).1 (hU.symm ▸ hy : y ∈ dual h Λ) x hx
-  have prod : ∀ (a b : W) (c : K), ∀ x ∈ X, ∀ y ∈ X, h (ι a + x) (ι b + c • z + y) = hW a b := by
-    intro a b c x hx y hy
-    simp [hι, hXX x hx y hy, hXz x hx, hXW x hx, sw (hXW y hy a), sw (hzW a)]
-  have hI : IsIntegralLat hW L := by
-    intro a ha b hb
-    obtain ⟨x, hx, ha⟩ := (hmem a).1 ha
-    obtain ⟨y, hy, hb⟩ := (hmem b).1 hb
-    have := prod a b 0 x hx y hy
-    rw [zero_smul, add_zero] at this
-    exact this ▸ hint _ ha _ hb
-  have hinj : Function.Injective ι := by
-    rw [← LinearMap.ker_eq_bot, eq_bot_iff]
-    intro x hx
-    refine (Submodule.mem_bot _).2 (hnW.2 x fun y => ?_)
-    rw [← hι, LinearMap.mem_ker.1 hx, map_zero]
-  have hL1 : Submodule.IsLattice K (Λ.comap (ι.restrictScalars (𝓞 K))) := by
-    refine ⟨?_, ?_⟩
-    · refine Submodule.fg_of_fg_map_injective (ι.restrictScalars (𝓞 K)) hinj ?_
-      exact Submodule.FG.of_le hL.fg (Submodule.map_comap_le _ _)
-    · intro s hs hli
-      exact (LinearIndependent.iff_fractionRing _ _).mp hli
-  have hle1 : Λ.comap (ι.restrictScalars (𝓞 K)) ≤ L := fun w hw =>
-    (hmem w).2 ⟨0, X.zero_mem, by rw [add_zero]; exact hw⟩
-  letI : Submodule.IsLattice K Λ := hL
-  have hfull : Submodule.IsFullLattice K Λ := ⟨span_eq_top_of_unimodular h hs hn hL hU⟩
-  have hspan : Submodule.span K ((Λ.comap (ι.restrictScalars (𝓞 K)) : Submodule (𝓞 K) W) : Set W) = ⊤ := by
-    apply eq_top_iff.mpr
-    intro w _
-    obtain ⟨s, hs⟩ := GlobalTheory.UnimodQuot.exists_smul_mem hfull (ι w)
-    have hs0 : algebraMap (𝓞 K) K s ≠ 0 :=
-      IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors s.2
-    have hmem' : (s : 𝓞 K) • w ∈ Λ.comap (ι.restrictScalars (𝓞 K)) := by
-      change ι ((s : 𝓞 K) • w) ∈ Λ
-      rw [← algebraMap_smul K, map_smul, algebraMap_smul]
-      exact hs
-    have : (s : 𝓞 K) • w ∈ Submodule.span K ((Λ.comap (ι.restrictScalars (𝓞 K)) : Submodule (𝓞 K) W) : Set W) := Submodule.subset_span hmem'
-    rw [← algebraMap_smul K] at this
-    exact (Submodule.smul_mem_iff _ hs0).1 this
-  letI : Submodule.IsLattice K (Λ.comap (ι.restrictScalars (𝓞 K))) := hL1
-  have hL1full : Submodule.IsFullLattice K (Λ.comap (ι.restrictScalars (𝓞 K))) := ⟨hspan⟩
-  have hst : ∀ r : 𝓞 K, star (algebraMap (𝓞 K) K r) ∈ Set.range (algebraMap (𝓞 K) K) := fun r =>
-    Submodule.mem_one.1 (GlobalTheory.UnimodQuot.star_mem_one (Submodule.mem_one.2 ⟨r, rfl⟩))
-  have hLat : Submodule.IsLattice K L := by
-    refine ⟨?_, ?_⟩
-    · refine Submodule.FG.of_le (dualLattice (𝓞 K) K W hW hsW hnW hst _ hL1full).1.fg fun w hw => ?_
-      exact (dualBasic_mem_dual _ _ _).2 fun y hy => hI y (hle1 hy) w hw
-    · intro s hs hli
-      exact (LinearIndependent.iff_fractionRing _ _).mp hli
-  letI : Submodule.IsLattice K L := hLat
-  letI : Submodule.IsFullLattice K (Λ.comap (ι.restrictScalars (𝓞 K))) := hL1full
-  refine ⟨Submodule.IsFullLattice.of_le K hle1, hI, ?_⟩
-  have dec : ∀ l, (∀ x ∈ X, h x l = 0) → ∃ w, ∃ x ∈ X, l = ι w + (-(h z l) * (T : K)⁻¹) • z + x := by
-    intro l hl
-    obtain ⟨w, x, hx, e⟩ := hdec (l + (h z l * (T : K)⁻¹) • z)
-      (fun x hx => by simp [hl x hx, hXz x hx]) (by simp [hzz]; field_simp; ring)
-    refine ⟨w, x, hx, ?_⟩
-    rw [add_right_comm, ← e, neg_mul, neg_smul]; abel
-  obtain ⟨l0, hl0, h0⟩ := exists_rep h hs hn hL hU (X ⊔ Submodule.span K {z}) ((-(T : K)⁻¹) • h z) (by
-    intro y hy hy'
-    obtain ⟨x, hx, y', hy2, rfl⟩ := Submodule.mem_sup.1 hy'
-    obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hy2
-    obtain ⟨o, ho⟩ := hprim c x hx (by rwa [add_comm])
-    refine Submodule.mem_one.2 ⟨o, ?_⟩
-    have : algebraMap (𝓞 K) K o = c := ho
-    simp [this, hzz, sw (hXz x hx)]
-    field_simp)
-  have h01 : h z l0 = 1 := by
-    rw [← hs.eq, h0 z (Submodule.mem_sup_right (Submodule.mem_span_singleton_self z))]
-    simp [hzz, hT0]
-  obtain ⟨w0, x0, hx0, e0⟩ := dec l0 fun x hx => sw (by
-    rw [h0 x (Submodule.mem_sup_left hx)]; simp [sw (hXz x hx)])
-  rw [h01] at e0
-  rw [idxN_of_gen (w := w0) ?_ (Ideal.span {(T : 𝓞 K)}) ?_ ?_, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply,
-    Ideal.absNorm_span_natCast, RingOfIntegers.rank]
-  · refine (dualBasic_mem_dual _ _ _).2 fun a ha => ?_
-    obtain ⟨x, hx, ha⟩ := (hmem a).1 ha
-    rw [← prod a w0 _ x hx x0 hx0, ← e0]
-    exact hint _ ha _ hl0
-  · intro a
-    have e1 : ∀ x, ι (a • w0) + x = a • l0 + ((algebraMap (𝓞 K) K a * (T : K)⁻¹) • z +
-        (x - algebraMap (𝓞 K) K a • x0)) := by
-      intro x
-      rw [e0, ← algebraMap_smul K a w0, ← algebraMap_smul K a, map_smul]
-      module
-    rw [hmem, Ideal.mem_span_singleton']
-    constructor
-    · rintro ⟨x, hx, e⟩
-      rw [e1, Λ.add_mem_iff_right (Λ.smul_mem a hl0)] at e
-      obtain ⟨o, ho⟩ := hprim _ _ (X.sub_mem hx (X.smul_mem _ hx0)) e
-      refine ⟨o, IsFractionRing.injective (𝓞 K) K ?_⟩
-      have : algebraMap (𝓞 K) K o = _ := ho
-      rw [map_mul, this, map_natCast]
-      field_simp
-    · rintro ⟨o, rfl⟩
-      refine ⟨_, X.smul_mem (algebraMap (𝓞 K) K (o * T)) hx0, ?_⟩
-      rw [e1, sub_self, add_zero, map_mul, map_natCast, mul_assoc, mul_inv_cancel₀ hT0, mul_one, algebraMap_smul]
-      exact Λ.add_mem (Λ.smul_mem _ hl0) (Λ.smul_mem _ hz)
-  · intro w hw
-    obtain ⟨l, hl, h1⟩ := exists_rep h hs hn hL hU (LinearMap.range ι ⊔ X) (h (ι w)) (by
-      intro y hy hy'
-      obtain ⟨_, ⟨a, rfl⟩, x, hx, rfl⟩ := Submodule.mem_sup.1 hy'
-      rw [map_add (f := _), sw (hXW x hx w), add_zero, hι, ← hsW.eq]
-      exact GlobalTheory.UnimodQuot.star_mem_one ((dualBasic_mem_dual _ _ _).1 hw a ((hmem a).2 ⟨x, hx, hy⟩)))
-    obtain ⟨w', x, hx, e⟩ := dec l fun x hx => sw (by
-      rw [h1 x (Submodule.mem_sup_right hx), sw (hXW x hx w)])
-    have hww : w' = w := by
-      refine sub_eq_zero.1 (hnW.2 _ fun a => ?_)
-      have a1 := h1 (ι a) (Submodule.mem_sup_left ⟨a, rfl⟩)
-      have a2 := prod a w' (-(h z l) * (T : K)⁻¹) 0 X.zero_mem x hx
-      rw [← e, add_zero, ← hs.eq, a1, hs.eq, hι] at a2
-      rw [map_sub, a2, sub_self]
-    subst hww
-    obtain ⟨c, hc⟩ := Submodule.mem_one.1 (hint z hz l hl)
-    refine ⟨c, (hmem _).2 ⟨x - algebraMap (𝓞 K) K c • x0, X.sub_mem hx (X.smul_mem _ hx0), ?_⟩⟩
-    have : ι (w' - c • w0) + (x - algebraMap (𝓞 K) K c • x0) = l - c • l0 := by
-      rw [← hc] at e
-      rw [e, e0, ← algebraMap_smul K c w0, ← algebraMap_smul K c, map_sub, map_smul]
-      module
-    rw [this]
-    exact Λ.sub_mem hl (Λ.smul_mem _ hl0)
+  obtain ⟨⟨hfull, hint⟩, ⟨e⟩⟩ := GlobalTheory.Mass.RowPerp.perp_lattice hs hn hnW ι hι X z (T : 𝓞 K)
+    (Nat.cast_ne_zero.mpr hT) (by simpa using hzz) hXX hXz hXW hzW
+    (fun v hv1 hv2 => let ⟨w, x, hx, e⟩ := hdec v hv1 hv2; ⟨w, by rwa [e, add_sub_cancel_left]⟩)
+    hL hU hz (fun c ⟨l, hl, hxl⟩ => hprim c (l - c • z) (by simpa using X.neg_mem hxl) (by simpa using hl))
+    L (fun w => (hmem w).trans ⟨fun ⟨x, hx, hl⟩ => ⟨ι w + x, hl, by simpa using X.neg_mem hx⟩,
+      fun ⟨l, hl, hxl⟩ => ⟨l - ι w, by simpa using X.neg_mem hxl, by simpa using hl⟩⟩)
+  exact ⟨hfull, hint, (Nat.card_congr e.toEquiv).trans (by
+    rw [← Submodule.cardQuot_apply, ← Ideal.absNorm_apply, Ideal.absNorm_span_natCast, RingOfIntegers.rank])⟩
 
 end General
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 open scoped ComplexOrder in

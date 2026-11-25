@@ -71,26 +71,26 @@ theorem Qp_eq (ℓ : ι → R) (s : Finset ι) : ∀ k ≤ s.card,
     rw [Qp_insert ℓ a s ha k]
     by_cases hks : k = s.card + 1
     · subst hks
-      rw [if_pos rfl, Finset.sum_eq_single 0]
-      · rw [ih _ (by omega), if_pos (by omega), Finset.prod_insert ha, Nat.factorial_succ]
+      rw [ite_eq_left rfl, Finset.sum_eq_single 0]
+      · rw [ih _ (by omega), ite_eq_left (by omega), Finset.prod_insert ha, Nat.factorial_succ]
         push_cast
         simp only [Nat.choose_one_right, pow_one]
         push_cast
         ring
       · intro m hm hm0
         have := Finset.mem_range.mp hm
-        rw [ih _ (by omega), if_neg (by omega), mul_zero]
+        rw [ih _ (by omega), ite_eq_right (by omega), mul_zero]
       · intro h; simp at h
-    · rw [if_neg hks]
+    · rw [ite_eq_right hks]
       refine Finset.sum_eq_zero (fun m hm => ?_)
       have hm' : m < k := Finset.mem_range.mp hm
-      rw [ih _ (by omega), if_neg (by omega), mul_zero]
+      rw [ih _ (by omega), ite_eq_right (by omega), mul_zero]
 
 theorem polarization (ℓ : ι → R) (s : Finset ι) :
     (s.card.factorial : R) * ∏ i ∈ s, ℓ i =
       ∑ S ∈ s.powerset, (-1) ^ (s.card - S.card) * (∑ i ∈ S, ℓ i) ^ s.card := by
   have := Qp_eq ℓ s s.card le_rfl
-  rw [if_pos rfl] at this
+  rw [ite_eq_left rfl] at this
   exact this.symm
 
 end Polar
@@ -136,7 +136,7 @@ theorem apol_pow (P : MvPolynomial σ ℝ) (d : ℕ) (hP : P.IsHomogeneous d) (a
   have hdeg : (m.sum fun _ e => e) = d := by
     have := hP (MvPolynomial.mem_support_iff.mp hm)
     simpa [Finsupp.degree, Finsupp.sum, Finsupp.weight_apply] using this
-  rw [coeff_linearCombination_X_pow_of_fintype, if_pos hdeg]
+  rw [coeff_linearCombination_X_pow_of_fintype, ite_eq_left hdeg]
   have hspec := Nat.multinomial_spec m.support m
   have hsum : ∑ i ∈ m.support, m i = d := by simpa [Finsupp.sum] using hdeg
   rw [hsum] at hspec
@@ -170,7 +170,7 @@ theorem linRoot_nuT (t : Ψ × Fin N × Fin N) : Formalism.DegreeFormula.linRoot
     intro y
     rw [Finset.sum_eq_single y]
     · simp
-    · intro b _ hb; rw [if_neg (by simpa using hb)]; simp
+    · intro b _ hb; rw [ite_eq_right (by simpa using hb)]; simp
     · simp
   rw [h, h]
 
@@ -205,13 +205,13 @@ theorem fib_eq (j : ℕ) :
   refine Finset.prod_congr rfl (fun a _ => ?_)
   by_cases ha : a.val < j
   · have ha' : ¬ j ≤ a.val := by omega
-    simp only [ha, ha', if_true, if_false, mul_one]
+    simp only [ha, ha', ite_true, ite_false, mul_one]
     refine Finset.prod_congr rfl (fun b _ => ?_)
     by_cases hb : b.val < j
     · simp [hb]
     · simp [hb]
   · have ha' : j ≤ a.val := by omega
-    simp only [ha, ha', if_true, if_false, one_mul]
+    simp only [ha, ha', ite_true, ite_false, one_mul]
     refine Finset.prod_congr rfl (fun b _ => ?_)
     by_cases hb : j ≤ b.val
     · have hb' : ¬ b.val < j := by omega
@@ -292,10 +292,10 @@ theorem weyl_coeff (j : ℕ) (ν : Ψ → Fin N → ℝ) (n k : ℕ) (hD : Forma
 
   have hcL : PL.coeff k = (D.choose n : ℝ) * degFlL Ψ N (μ ^ n * L ^ k) := by
     rw [hPLdef, Polynomial.finsetSum_coeff, Finset.sum_eq_single n]
-    · rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, if_pos (by omega), mul_one, show D - n = k by omega]
+    · rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, ite_eq_left (by omega), mul_one, show D - n = k by omega]
     · intro m hm hmn
       have := Finset.mem_range.mp hm
-      rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, if_neg (by omega), mul_zero]
+      rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, ite_eq_right (by omega), mul_zero]
     · intro h; exact absurd (Finset.mem_range.mpr (by omega)) h
   have hsplit : ∀ t, F t = (if t ∈ idxS Ψ N j then
       Polynomial.C ((ν t.1 t.2.1 - ν t.1 t.2.2) / ((t.2.2 : ℝ) - t.2.1)) * Polynomial.X else 1) *
@@ -312,15 +312,15 @@ theorem weyl_coeff (j : ℕ) (ν : Ψ → Fin N → ℝ) (n k : ℕ) (hD : Forma
             simp [h1, h2]
           · have h2 : ¬ j ≤ t.2.2.val := by omega
             simp [h1, h2]
-        simp only [hab, hs, and_self, if_true, not_true, and_false, if_false, mul_one, he, sub_self, zero_div,
+        simp only [hab, hs, and_self, ite_true, not_true, and_false, ite_false, mul_one, he, sub_self, zero_div,
           map_zero, zero_add]
       · have h1 : t.2.1.val < j := by
           by_contra h; apply hs; have : (t.2.1 : ℕ) < t.2.2 := hab; constructor <;> intro h' <;> omega
         have h2 : j ≤ t.2.2.val := by
           by_contra h; apply hs; constructor <;> intro _ <;> omega
         have he : eW Ψ N j t.1 t.2.1 - eW Ψ N j t.1 t.2.2 = 1 := by
-          unfold eW; rw [if_neg (by omega), if_pos h2]; norm_num
-        simp only [hab, hs, and_false, if_false, one_mul, not_false_eq_true, and_self, if_true, he]
+          unfold eW; rw [ite_eq_right (by omega), ite_eq_left h2]; norm_num
+        simp only [hab, hs, and_false, ite_false, one_mul, not_false_eq_true, and_self, ite_true, he]
     · simp [hab]
   have hcR : PR.coeff k = (D.factorial : ℝ) *
       ((∏ t ∈ idxS Ψ N j, (ν t.1 t.2.1 - ν t.1 t.2.2) / ((t.2.2 : ℝ) - t.2.1)) *
@@ -340,7 +340,7 @@ theorem weyl_coeff (j : ℕ) (ν : Ψ → Fin N → ℝ) (n k : ℕ) (hD : Forma
         Polynomial.C ((D.factorial : ℝ) * ∏ t ∈ idxS Ψ N j, (ν t.1 t.2.1 - ν t.1 t.2.2) / ((t.2.2 : ℝ) - t.2.1)) *
           (Polynomial.X ^ (idxS Ψ N j).card * Q) := by
       rw [map_mul]; ring
-    rw [e, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow_mul', if_pos hk.le, hk, Nat.sub_self, hQ0]
+    rw [e, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow_mul', ite_eq_left hk.le, hk, Nat.sub_self, hQ0]
     ring
   rw [← hcL, hPLR, hcR]
 

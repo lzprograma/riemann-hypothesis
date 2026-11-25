@@ -37,12 +37,12 @@ theorem RadialPrimitive.proof : RadialPrimitive.Statement := by
     rw [hrt, hconst t ht] at h0
     linarith
   set h : ℝ → ℝ := fun t => if t < t₀ then a 0 else P t / t ^ (e + 1) with hh
-  have hlow : ∀ t, t < t₀ → h t = a 0 := fun t ht => if_pos ht
+  have hlow : ∀ t, t < t₀ → h t = a 0 := fun t ht => ite_eq_left ht
   have hpos : ∀ t, 0 < t → h t = P t / t ^ (e + 1) := by
     intro t ht
     by_cases h1 : t < t₀
     · rw [hlow t h1, hPc t ⟨ht.le, h1.le⟩, mul_div_assoc, div_self (pow_ne_zero _ ht.ne'), mul_one]
-    · exact if_neg h1
+    · exact ite_eq_right h1
   have hlowE : ∀ x, x < t₀ → h =ᶠ[nhds x] fun _ => a 0 := fun x hx =>
     Filter.eventually_of_mem (isOpen_Iio.mem_nhds hx) fun t ht => hlow t ht
   have hposE : ∀ x, 0 < x → h =ᶠ[nhds x] fun t => P t / t ^ (e + 1) := fun x hx =>

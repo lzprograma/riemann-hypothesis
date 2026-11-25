@@ -43,7 +43,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil ValuativeRel IsLocalRing
 open GlobalTheory.FinPl
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -61,7 +60,7 @@ theorem dualPick_dot {m : Type} [Fintype m] [DecidableEq m] (g : m → k) (hg : 
   classical
   have h : ∃ i, g i ≠ 0 := by
     by_contra h'
-    push_neg at h'
+    push Not at h'
     exact hg (funext h')
   unfold dualPick
   rw [dite_eq_left h]

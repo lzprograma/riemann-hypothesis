@@ -71,12 +71,6 @@ theorem add_mem (V : VF C) (g : Fin 2) (hA : X.AddCvSt V) (hu : ∀ g c i, V.Ge 
     rw [Finset.sum_add_distrib, hty, h2 q, h2' q]
     abel
 
-private theorem powerSeries_rescale_smul (a c : C) (f : PowerSeries C) :
-    PowerSeries.rescale a (c • f) = c • PowerSeries.rescale a f := by
-  ext n
-  simp only [PowerSeries.coeff_rescale, PowerSeries.coeff_smul, smul_eq_mul]
-  ring
-
 private theorem alongCv_rescale_eq_rescale_alongCv {σ : Type} [Finite σ] {γ : σ → PowerSeries C}
     (hγ : ∀ i, PowerSeries.constantCoeff (γ i) = 0) (a : C) (f : MvPowerSeries σ C) :
     alongCv (fun i => PowerSeries.rescale a (γ i)) f = PowerSeries.rescale a (alongCv γ f) := by
@@ -123,29 +117,20 @@ theorem neg_mem (V : VF C) (g : Fin 2) (hodd : V.l ≠ 2) (x : ℕ → I g ⊕ J
     isCv_rescale_neg_one V hγ, isCv_rescale_neg_one V hlam, ?_, ?_⟩
   · intro i
     simp only [Pi.neg_apply]
-
-    rw [alongCv_rescale_eq_rescale_alongCv hγ0, hlg i, map_sum]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    rw [tyS_neg_eq_rescale_neg_one_of_odd hl, powerSeries_rescale_smul]
+    rw [alongCv_rescale_eq_rescale_alongCv hγ0, hlg i]
+    simp_rw [tyS_neg_eq_rescale_neg_one_of_odd hl, ← PowerSeries.coe_rescaleAlgHom,
+      AlgHom.coe_toRingHom, map_sum, map_smul]
   · intro q
     simp only [Pi.neg_apply]
     rw [tyS_neg_eq_rescale_neg_one_of_odd hl, hq q, alongCv_rescale_eq_rescale_alongCv hγ0]
-
-    simp only [tyS_neg_eq_rescale_neg_one_of_odd hl, map_add (f := _), map_sub, map_sum, apply_ite ⇑(PowerSeries.rescale (-1 : C)), map_zero,
-    powerSeries_rescale_smul]
+    simp only [tyS_neg_eq_rescale_neg_one_of_odd hl, ← PowerSeries.coe_rescaleAlgHom,
+      AlgHom.coe_toRingHom, map_add (f := _), map_sub, map_sum,
+      apply_ite ⇑(PowerSeries.rescaleAlgHom (-1 : C)), map_zero, map_smul]
 
 theorem sum_mem (V : VF C) (g : Fin 2) (h0 : (0 : ℕ → I g ⊕ JJ I g → C) ∈ X.TySet V g)
     (hadd : ∀ x y, x ∈ X.TySet V g → y ∈ X.TySet V g → x + y ∈ X.TySet V g) {ι : Type} (s : Finset ι)
-    (f : ι → ℕ → I g ⊕ JJ I g → C) (hf : ∀ i ∈ s, f i ∈ X.TySet V g) : ∑ i ∈ s, f i ∈ X.TySet V g := by
-  classical
-  revert hf
-  refine Finset.induction_on s ?_ ?_
-  · intro _
-    rw [Finset.sum_empty]
-    exact h0
-  · intro a s ha ih hf
-    rw [Finset.sum_insert ha]
-    exact hadd _ _ (hf a (Finset.mem_insert_self a s)) (ih fun i hi => hf i (Finset.mem_insert_of_mem hi))
+    (f : ι → ℕ → I g ⊕ JJ I g → C) (hf : ∀ i ∈ s, f i ∈ X.TySet V g) : ∑ i ∈ s, f i ∈ X.TySet V g :=
+  Finset.sum_induction f (· ∈ X.TySet V g) hadd h0 hf
 
 end RawChart
 

@@ -130,7 +130,7 @@ theorem isMultiHomog_rename_none [DecidableEq K] {ι' : Type} [Fintype ι'] {g :
     rw [Fintype.sum_equiv (Fintype.equivFin ι').symm (fun i => m0 ⟨(), (Fintype.equivFin ι').symm i⟩)
       (fun j => m0 ⟨(), j⟩) (fun _ => rfl)]
     have := hg m0 hm0 ()
-    simp only [blockDeg, if_true]
+    simp only [blockDeg, ite_true]
     rw [← this]
   | some k =>
     have hterm : ∀ i, (Finsupp.mapDomain φ m0) ⟨some k, i⟩ = 0 := by

@@ -257,7 +257,7 @@ theorem GrassFibreDegree.proof : GrassFibreDegree.Statement := by
     geoNum_span n p
   rw [GrassmannianLinesProjective.grassIdeal_eq_bot]
   unfold vertR
-  rw [divSupp_eq, finsum_mem_singleton, if_neg (Inter.Conservation.not_horizontal hp hW),
+  rw [divSupp_eq, finsum_mem_singleton, ite_eq_right (Inter.Conservation.not_horizontal hp hW),
     Inter.Conservation.charOf_eq hp hW, bot_sup_eq, ReciprocityTheory.ChartRestriction.G.AI.I1.inh_multAt_self, hg]
   simp
 

@@ -440,8 +440,7 @@ theorem cone_of_integral (hF : F.Ok C₀) (hn : n = 2 ∨ n = 3) (C : Type) [Com
     (fun _ _ ⟨x, hx, hx0⟩ => ⟨x, hrev hx, hx0⟩)
     (fun p => ⟨1, hone p, one_ne_zero⟩)
     (by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       apply hT.1
       change Ideal.span _ ≤ ⊥
       rw [Ideal.span_le]
@@ -449,8 +448,7 @@ theorem cone_of_integral (hF : F.Ok C₀) (hn : n = 2 ∨ n = 3) (C : Type) [Com
       rw [SetLike.mem_coe, Ideal.mem_bot]
       exact hc i j hji _ (hgen g i j))
     (by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       apply hT.2
       change Ideal.span _ ≤ ⊥
       rw [Ideal.span_le]
@@ -467,7 +465,7 @@ theorem cone_of_integral (hF : F.Ok C₀) (hn : n = 2 ∨ n = 3) (C : Type) [Com
       refine artin_rees (maximalIdeal C) (S i j) hy0 (fun x hx => hint j _ (hmul hy hx))
         (fun g => ρ.r g i j) (fun g => hgen g i j) c hc (fun g => ?_)
       rw [hcg g, trace_single_mul, smul_eq_mul]
-    · push_neg at h0
+    · push Not at h0
       have hb : S i j = ⊥ := (Submodule.eq_bot_iff _).2 h0
       have hz : ∀ g, ρ.r g i j = 0 := fun g => h0 _ (hgen g i j)
       refine ⟨by rw [hb]; exact Submodule.fg_bot, fun N => ?_⟩

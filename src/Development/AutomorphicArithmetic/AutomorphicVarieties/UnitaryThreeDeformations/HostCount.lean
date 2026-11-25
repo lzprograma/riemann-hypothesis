@@ -13,69 +13,16 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThre
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GlobalCohomologyFiniteSet
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GlobalEulerCharacteristicRationalsOddPrime
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostLocVan
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
-import Mathlib.Tactic.Basify
 import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.Separation.CompletelyRegular
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.UnitaryThreeReflectionRight
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostOk
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsAbsGaloisFixingSqrtNegOneCyclotomicNeOne, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FinrankGradedPieceAndComplexConjugationInvariant, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FinrankUnramifiedCocyclesEqFinrankInvariants, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LocalEulerCharacteristicRationals, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.SelmerComplexFiniteAndEulerCharacteristic, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HcAvg, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostCount
@@ -211,13 +158,13 @@ private theorem mem_ker_iff {k D : Type} [Field k] [Group D] (η : D →* ℤˣ)
   constructor
   · intro h a b
     have h1 := congrArg (fun Y : Gb (k := k) j => Y.val a b) h
-    simp only [gRep_val, adRep_baseLift_apply, hΨ, _root_.one_zpow, Units.val_one, one_mul, if_neg hne] at h1
+    simp only [gRep_val, adRep_baseLift_apply, hΨ, _root_.one_zpow, Units.val_one, one_mul, ite_eq_right hne] at h1
     exact h1.symm
   · intro h
     apply Subtype.ext
     ext a b
     show ((gRep η Ψ j c) X).val a b = X.val a b
-    rw [gRep_val, adRep_baseLift_apply, hΨ, _root_.one_zpow, Units.val_one, one_mul, if_neg hne]
+    rw [gRep_val, adRep_baseLift_apply, hΨ, _root_.one_zpow, Units.val_one, one_mul, ite_eq_right hne]
     exact (h a b).symm
 
 private theorem ker_one {k : Type} [Field k] (j : ℤ) (K : Submodule k (Gb (k := k) j))
@@ -264,7 +211,7 @@ theorem UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants :
     exact hz X ((hK X).1 hX)
   rcases (show j ≤ -3 ∨ j = -2 ∨ j = -1 ∨ j = 0 ∨ j = 1 ∨ j = 2 ∨ 3 ≤ j by omega)
     with h | rfl | rfl | rfl | rfl | rfl | h
-  · rw [if_neg (by rw [abs_le]; omega)]
+  · rw [ite_eq_right (by rw [abs_le]; omega)]
     apply zero_case
     intro X hA
     have hZ : ∀ a b, wt a b ≠ j → X.val a b = 0 := X.2
@@ -276,7 +223,7 @@ theorem UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants :
     have := a.isLt
     have := b.isLt
     omega
-  · rw [if_neg (by norm_num)]
+  · rw [ite_eq_right (by norm_num)]
     apply zero_case
     intro X hA
     have hZ : ∀ a b, wt a b ≠ -2 → X.val a b = 0 := X.2
@@ -286,7 +233,7 @@ theorem UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants :
     fin_cases a <;> fin_cases b <;> first
       | exact hZ _ _ (by decide)
       | exact half h2 (hA _ _)
-  · rw [if_pos (by norm_num)]
+  · rw [ite_eq_left (by norm_num)]
     refine ker_one _ _ hK (!![0, 0, 0; 1, 0, 0; 0, -1, 0]) ?_ ?_ 1 0 (by simp) ?_
     · show ∀ a b, wt a b ≠ -1 → _ = 0
       intro a b hab
@@ -300,7 +247,7 @@ theorem UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants :
       fin_cases a <;> fin_cases b <;> simp <;> first
         | exact (hZ _ _ (by decide)).symm
         | exact (hXa 2 1).symm
-  · rw [if_pos (by norm_num)]
+  · rw [ite_eq_left (by norm_num)]
     refine ker_one _ _ hK (!![1, 0, 0; 0, 0, 0; 0, 0, -1]) ?_ ?_ 0 0 (by simp) ?_
     · show ∀ a b, wt a b ≠ 0 → _ = 0
       intro a b hab
@@ -315,7 +262,7 @@ theorem UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants :
         | exact (hZ _ _ (by decide)).symm
         | exact (half h2 (hXa 1 1)).symm
         | exact (hXa 2 2).symm
-  · rw [if_pos (by norm_num)]
+  · rw [ite_eq_left (by norm_num)]
     refine ker_one _ _ hK (!![0, 1, 0; 0, 0, -1; 0, 0, 0]) ?_ ?_ 0 1 (by simp) ?_
     · show ∀ a b, wt a b ≠ 1 → _ = 0
       intro a b hab
@@ -329,7 +276,7 @@ theorem UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants :
       fin_cases a <;> fin_cases b <;> simp <;> first
         | exact (hZ _ _ (by decide)).symm
         | exact (hXa 1 2).symm
-  · rw [if_neg (by norm_num)]
+  · rw [ite_eq_right (by norm_num)]
     apply zero_case
     intro X hA
     have hZ : ∀ a b, wt a b ≠ 2 → X.val a b = 0 := X.2
@@ -339,7 +286,7 @@ theorem UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants :
     fin_cases a <;> fin_cases b <;> first
       | exact hZ _ _ (by decide)
       | exact half h2 (hA _ _)
-  · rw [if_neg (by rw [abs_le]; omega)]
+  · rw [ite_eq_right (by rw [abs_le]; omega)]
     apply zero_case
     intro X hA
     have hZ : ∀ a b, wt a b ≠ j → X.val a b = 0 := X.2
@@ -442,7 +389,7 @@ theorem UpperTheory.finrank_unramified_cocycles_eq_finrank_invariants :
     group
   let ev : W →ₗ[k] N := ((LinearMap.proj φ).comp W.subtype).codRestrict N (fun y => hev y.1 y.2)
   have hinj : Function.Injective ev := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro y hy
     have hyφ : y.1 φ = 0 := congrArg Subtype.val hy
     obtain ⟨⟨hcont, hc⟩, h0⟩ := (hW y.1).1 y.2
@@ -892,7 +839,6 @@ theorem UpperTheory.Reformulated.B.Qe18.hc_avg :
     calc ∑ q : D ⧸ N, z q.out = ∑ q : D ⧸ N, z (g • q).out := h1.symm
       _ = ∑ q : D ⧸ N, (z g + ρ g (z q.out)) := Finset.sum_congr rfl fun q _ => h2 q
       _ = (N.index : k) • z g + ρ g (∑ q : D ⧸ N, z q.out) := by
-        set_option synthInstance.maxHeartbeats 100000 in
           rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, hcard, map_sum,
           Nat.cast_smul_eq_nsmul]
   refine ⟨-((N.index : k)⁻¹ • ∑ q : D ⧸ N, z q.out), fun g => ?_⟩
@@ -967,7 +913,7 @@ private theorem hc_tame :
   haveI : Module.Finite k W := by
     let r' : W →ₗ[k] B1 (ρ.comp I.subtype : Representation k I M) := r.codRestrict _ fun z => hr ▸ ⟨z, rfl⟩
     refine Module.Finite.of_injective (r'.prod ((LinearMap.proj φ).comp W.subtype)) ?_
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro z hz
     have z1 := ((hW _).1 z.2).1
     have e1 : r z = 0 := congrArg (fun p => p.1.1) hz
@@ -996,7 +942,7 @@ private theorem hc_scal {k D : Type} [CommRing k] [Group D] (η : D →* ℤˣ) 
     (X : Gb (k := k) j) : gRep η Ψ j g X = ((Ψ g ^ j : kˣ) : k) • X := by
   refine hc_val ?_
   ext a b
-  rw [gRep_val, adRep_baseLift_apply, if_pos hg]
+  rw [gRep_val, adRep_baseLift_apply, ite_eq_left hg]
   show _ = ((Ψ g ^ j : kˣ) : k) * X.val a b
   by_cases h : wt a b = j
   · rw [h]
@@ -1010,7 +956,7 @@ private theorem hc_congr {k D : Type} [CommRing k] [Group D] (η : D →* ℤˣ)
   · refine hc_val ?_
     ext a b
     have h2 : ¬ η g = 1 := by rw [h1]; decide
-    rw [gRep_val, gRep_val, adRep_baseLift_apply, adRep_baseLift_apply, if_neg h2, if_neg (h ▸ h2)]
+    rw [gRep_val, gRep_val, adRep_baseLift_apply, adRep_baseLift_apply, ite_eq_right h2, ite_eq_right (h ▸ h2)]
     by_cases e : wt a b = j
     · rw [e, h']
     · have : X.val b.rev a.rev = 0 := X.2 _ _ (by
@@ -1165,7 +1111,7 @@ private theorem hc_count [Fintype ι] (hF : F.Ok) (hV : F.LocVan) (j : ℤ)
       · simpa using hc_scal F.η F.Ψbar 0 h1 m
       · exact (hc_congr F.η F.Ψbar 0 (h1.trans hF.ηc.symm) (by simp) m).trans h
     rw [e] at g3
-    simp only [show ¬ (0 : ℤ) = -1 by decide, show ¬ ((0 : ℤ) = 1 ∨ (0 : ℤ) = 2) by decide, if_false]
+    simp only [show ¬ (0 : ℤ) = -1 by decide, show ¬ ((0 : ℤ) = 1 ∨ (0 : ℤ) = 2) by decide, ite_false]
     omega
   · have e : F.ZL j F.vl = Z1 (F.gloc j F.vl) := le_antisymm (fun y hy => hy.1) fun y hy =>
       ⟨hy, fun e => (e rfl).elim, fun _ e => (lt_asymm hj e).elim, fun _ e => (hj.ne' e).elim⟩

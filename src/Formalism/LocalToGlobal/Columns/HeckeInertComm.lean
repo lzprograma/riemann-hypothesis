@@ -38,7 +38,7 @@ def HiRel (a : 𝓞 E) (X Y : Submodule (𝓞 E) (Sp E n)) : Prop :=
 theorem HiRel.symm {a : 𝓞 E} {X Y : Submodule (𝓞 E) (Sp E n)} (h : HiRel a X Y) : HiRel a Y X := ⟨h.2, h.1⟩
 
 theorem HiRel.of_ideal {I : Ideal (𝓞 E)} {X Y : Submodule (𝓞 E) (Sp E n)} (h1 : I • X ≤ Y) (h2 : I • Y ≤ X)
-    {a : 𝓞 E} (ha : a ∈ I) : HiRel a X Y := ⟨fun x hx => h1 (Submodule.smul_mem_smul ha hx), fun y hy => h2 (Submodule.smul_mem_smul ha hy)⟩
+    {a : 𝓞 E} (ha : a ∈ I) : HiRel a X Y := ⟨fun _ hx => h1 (Submodule.smul_mem_smul ha hx), fun _ hy => h2 (Submodule.smul_mem_smul ha hy)⟩
 
 theorem hi_quot {α β : 𝓞 E} (hab : α + β = 1) {X X' Y Y' : Submodule (𝓞 E) (Sp E n)}
     (hXX' : HiRel α X X') (hYY' : HiRel α Y Y') (hXY : HiRel β X Y) (hX'Y' : HiRel β X' Y') :
@@ -357,8 +357,7 @@ theorem hi_sup_inert_inert {P Q : HeightOneSpectrum (𝓞 E)} (h : P ≠ Q) (k l
 
 theorem hi_exists_not_mem {I : Ideal (𝓞 E)} {R : HeightOneSpectrum (𝓞 E)} (h : ¬ I ≤ R.asIdeal) :
     ∃ b ∈ I, b ∉ R.asIdeal := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   exact h fun b hb => hc b hb
 
 theorem hi_sameAt_inert {P R : HeightOneSpectrum (𝓞 E)} (hRP : R ≠ P) {s : List ℕ}

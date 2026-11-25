@@ -55,10 +55,10 @@ namespace GlobalTheory.KS
 section Basic
 variable {Y Z : Scheme.{0}}
 
-theorem rsT_of_le {O₀ O : Y.Opens} (h : O ≤ O₀) (s : Γ(Y, O₀)) : rsT s O = resG Y h s := dif_pos h
+theorem rsT_of_le {O₀ O : Y.Opens} (h : O ≤ O₀) (s : Γ(Y, O₀)) : rsT s O = resG Y h s := dite_eq_left h
 
 theorem pbT_of_le (f : Z ⟶ Y) {O₀ : Y.Opens} {O : Z.Opens} (h : O ≤ f ⁻¹ᵁ O₀) (s : Γ(Y, O₀)) :
-    pbT f s O = (f.appLE O₀ O h).hom s := dif_pos h
+    pbT f s O = (f.appLE O₀ O h).hom s := dite_eq_left h
 
 theorem rsT_add {O₀ : Y.Opens} (s t : Γ(Y, O₀)) (O : Y.Opens) : rsT (s + t) O = rsT s O + rsT t O := by
   unfold rsT; split_ifs <;> simp

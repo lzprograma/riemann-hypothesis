@@ -58,6 +58,10 @@ open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestrictio
 
 namespace GlobalTheory.Published
 
+/-- **Extension of homomorphisms of semi-abelian schemes.** Let `S` be a noetherian scheme
+whose local rings are integrally closed domains, and let `U ⊆ S` be a dense open subscheme.
+If `G` and `H` are semi-abelian schemes over `S` (`IsSemiAbelian`), every homomorphism of group
+schemes `G_U → H_U` over `U` extends uniquely to a homomorphism `G → H` over `S`. -/
 def SemiAbelianHomExtension : Prop :=
   ∀ (S : Scheme.{0}) [AlgebraicGeometry.IsNoetherian S], ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme S →
     ∀ (U : S.Opens), Dense (U : Set S) →
@@ -148,12 +152,6 @@ theorem isNormalScheme_dvr : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNorm
 variable {T K}
 
 end Dvr
-
-section Model
-
-open scoped TensorProduct
-
-end Model
 
 end SemiAbelianHomExtension
 

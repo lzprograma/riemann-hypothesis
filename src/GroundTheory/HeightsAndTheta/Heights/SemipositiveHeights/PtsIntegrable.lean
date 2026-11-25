@@ -21,20 +21,24 @@ section PushForward
 
 variable {e : ℕ} {X : Type} [TopologicalSpace X]
 
-theorem pushForward_integrable [CompactSpace X] [T2Space X] (A : FinHolAtlas e X)
+theorem pushForward_integrable_comp [CompactSpace X] [T2Space X] (A : FinHolAtlas e X)
     (Φ : Fin e → LocPot X) (hΦ : ∀ i, IsPotential A (Φ i)) (q : X → Fin e → ℂ) (S : Set X)
     (hS : ∀ j, volume ((A.chart j).target ∩ (A.chart j).symm ⁻¹' S) = 0)
     (hq : ∀ x ∉ S, ∀ j, x ∈ (A.chart j).source →
       AnalyticAt ℂ (q ∘ (A.chart j).symm) (A.chart j x) ∧
         LinearMap.det (fderiv ℂ (q ∘ (A.chart j).symm) (A.chart j x) :
           (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ)) ≠ 0)
-    (hfin : ∀ y, (q ⁻¹' {y} \ S).Finite) (g : X → ℝ) (hg : MIntegrable A Φ g) :
-    Integrable (fun y => ∑ᶠ x ∈ q ⁻¹' {y} \ S, g x * pushDens A Φ q x) := by
+    (hfin : ∀ y, (q ⁻¹' {y} \ S).Finite) (g : X → ℝ) (hg : MIntegrable A Φ g)
+    (F : ℝ → ℝ) (hF_div : ∀ a b, 0 ≤ b → F a / b = F (a / b))
+    (hF_mul : ∀ c r, 0 ≤ c → F (c * r) = c * F r)
+    (hF_int : ∀ {s : Set (Fin e → ℂ)} {f : (Fin e → ℂ) → ℝ},
+      IntegrableOn f s volume → IntegrableOn (F ∘ f) s volume) :
+    Integrable (fun y => ∑ᶠ x ∈ q ⁻¹' {y} \ S, F (g x * pushDens A Φ q x)) := by
   classical
   have hne : Nonempty (ChartPartition A) := existsPartition A
   set Pt := hne.some with hPt
   set hj : Fin A.n → (Fin e → ℂ) → ℝ := fun j u =>
-    Pt.χ j ((A.chart j).symm u) * g ((A.chart j).symm u) * locDens A Φ j u with hhj
+    F (Pt.χ j ((A.chart j).symm u) * g ((A.chart j).symm u) * locDens A Φ j u) with hhj
   set Qj : Fin A.n → (Fin e → ℂ) → (Fin e → ℂ) := fun j => q ∘ (A.chart j).symm with hQj
   set N : Fin A.n → Set (Fin e → ℂ) :=
     fun j => Qj j '' (goodT A q j ∩ (A.chart j).symm ⁻¹' S) with hNdef
@@ -54,19 +58,27 @@ theorem pushForward_integrable [CompactSpace X] [T2Space X] (A : FinHolAtlas e X
     exact ((hfin y).subset inter_subset_right).image _
   have harea : ∀ j, Integrable (fibSum (goodT A q j) (Qj j) (hj j)) := fun j =>
     (area_open (isOpen_goodT A q j) (fun u hu => hu.2)
-      ((integrableOn_chart A Pt Φ g hg j).mono_set fun u hu => hu.1) (hfinj j)).1
+      ((hF_int (integrableOn_chart A Pt Φ g hg j)).mono_set fun u hu => hu.1) (hfinj j)).1
   refine (integrable_finsetSum Finset.univ fun j _ => harea j).congr ?_
   have hNall : ∀ᵐ y, ∀ j, y ∉ N j :=
     ae_all_iff.mpr fun j => measure_eq_zero_iff_ae_notMem.mp (hN j)
   filter_upwards [hNall] with y hy
   have hterm : ∀ j, fibSum (goodT A q j) (Qj j) (hj j) y =
-      ∑ᶠ x ∈ q ⁻¹' {y} \ S, Pt.χ j x * (g x * pushDens A Φ q x) := by
+      ∑ᶠ x ∈ q ⁻¹' {y} \ S, Pt.χ j x * F (g x * pushDens A Φ q x) := by
     intro j
     unfold fibSum
     rw [hfib j y (hy j), finsum_mem_image ((A.chart j).injOn.mono inter_subset_left)]
-    refine (finsum_mem_congr (g := fun x => Pt.χ j x * (g x * pushDens A Φ q x)) rfl
+    refine (finsum_mem_congr (g := fun x => Pt.χ j x * F (g x * pushDens A Φ q x)) rfl
       fun x hx => ?_).trans ?_
-    · exact fib_term A Φ hΦ q S hq Pt g j hx.1 hx.2.2
+    · have hJ : 0 ≤ jacN (Qj j) (A.chart j x) := by unfold jacN; positivity
+      calc hj j (A.chart j x) / jacN (Qj j) (A.chart j x)
+          = F (Pt.χ j ((A.chart j).symm (A.chart j x)) * g ((A.chart j).symm (A.chart j x)) *
+              locDens A Φ j (A.chart j x) / jacN (Qj j) (A.chart j x)) :=
+            hF_div _ _ hJ
+        _ = F (Pt.χ j x * (g x * pushDens A Φ q x)) := by
+            rw [fib_term A Φ hΦ q S hq Pt g j hx.1 hx.2.2]
+        _ = Pt.χ j x * F (g x * pushDens A Φ q x) :=
+            hF_mul _ _ (Pt.nonneg j x)
     · refine finsum_mem_inter_support_eq' _ _ _ fun x hx => ?_
       have hχ : Pt.χ j x ≠ 0 := left_ne_zero_of_mul hx
       have hxs : x ∈ (A.chart j).source := Pt.tsupport_subset j (subset_tsupport _ hχ)
@@ -77,6 +89,18 @@ theorem pushForward_integrable [CompactSpace X] [T2Space X] (A : FinHolAtlas e X
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [← Finset.sum_mul, Pt.sum_eq_one x, one_mul]
+
+theorem pushForward_integrable [CompactSpace X] [T2Space X] (A : FinHolAtlas e X)
+    (Φ : Fin e → LocPot X) (hΦ : ∀ i, IsPotential A (Φ i)) (q : X → Fin e → ℂ) (S : Set X)
+    (hS : ∀ j, volume ((A.chart j).target ∩ (A.chart j).symm ⁻¹' S) = 0)
+    (hq : ∀ x ∉ S, ∀ j, x ∈ (A.chart j).source →
+      AnalyticAt ℂ (q ∘ (A.chart j).symm) (A.chart j x) ∧
+        LinearMap.det (fderiv ℂ (q ∘ (A.chart j).symm) (A.chart j x) :
+          (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ)) ≠ 0)
+    (hfin : ∀ y, (q ⁻¹' {y} \ S).Finite) (g : X → ℝ) (hg : MIntegrable A Φ g) :
+    Integrable (fun y => ∑ᶠ x ∈ q ⁻¹' {y} \ S, g x * pushDens A Φ q x) :=
+  pushForward_integrable_comp A Φ hΦ q S hS hq hfin g hg id
+    (fun _ _ _ => rfl) (fun _ _ _ => rfl) (fun hf => hf)
 
 end PushForward
 

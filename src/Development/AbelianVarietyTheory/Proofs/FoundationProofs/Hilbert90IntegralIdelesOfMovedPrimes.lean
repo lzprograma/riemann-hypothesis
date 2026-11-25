@@ -122,13 +122,13 @@ theorem exists_half (c : E ≃ₐ[ℚ] E) (hcc : c * c = 1) {q : ℕ} (hq : q �
     rw [hinvI, ← hmem, smul_sub] at h2
     rcases @lt_trichotomy _ o P (c • P) with hl | hl | hl
     · left
-      rw [if_pos hl] at h1
-      rw [if_neg (@not_lt_of_gt _ o.toPreorder _ _ hl), smul_zero, sub_zero] at h2
+      rw [ite_eq_left hl] at h1
+      rw [ite_eq_right (@not_lt_of_gt _ o.toPreorder _ _ hl), smul_zero, sub_zero] at h2
       exact ⟨h1, h2⟩
     · exact absurd hl.symm (h P hP hqP)
     · right
-      rw [if_neg (@not_lt_of_gt _ o.toPreorder _ _ hl), sub_zero] at h1
-      rw [if_pos hl, smul_one] at h2
+      rw [ite_eq_right (@not_lt_of_gt _ o.toPreorder _ _ hl), sub_zero] at h1
+      rw [ite_eq_left hl, smul_one] at h2
       exact ⟨h1, h2⟩
   have hrad : a * c • a ∈ (Ideal.span {(q : 𝓞 E)}).radical := by
     rw [Ideal.radical_eq_sInf, Submodule.mem_sInf]
@@ -327,7 +327,7 @@ theorem exists_half_adele (c : E ≃ₐ[ℚ] E) (hcc : c * c = 1) (P : ℕ → P
     intro v
     by_cases hv : P (pr v)
     · obtain ⟨a, r, s, h1, h2⟩ := exists_half c hcc (pr_prime v).ne_zero (h _ (pr_prime v) hv)
-      exact ⟨a, r, s, fun h => absurd hv h, h1, by rw [if_pos hv, h2]⟩
+      exact ⟨a, r, s, fun h => absurd hv h, h1, by rw [ite_eq_left hv, h2]⟩
     · exact ⟨0, 0, 0, fun _ => rfl, by simp, by simp [hv]⟩
   choose a r s h0 h1 h2 using loc
   obtain ⟨a', ha', ha⟩ := exists_asm a

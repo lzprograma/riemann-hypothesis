@@ -186,7 +186,7 @@ theorem lhol_lhol_phiM (μ : Fin n → ℤ) (a b : Fin n) {z : Matrix (Fin n) (F
   have e2 := lhol_phiM_diag μ b hz
   unfold Lhol at e1 e2
   rcases lt_trichotomy a b with h | rfl | h
-  · rw [hlow b a h, casCoef, if_neg h.ne, if_neg (not_lt.mpr h.le)]
+  · rw [hlow b a h, casCoef, ite_eq_right h.ne, ite_eq_right (not_lt.mpr h.le)]
     simp
   · have hev : Lhol (Matrix.single a a (1 : ℂ)) (PhiM μ) =ᶠ[nhds z] fun w => -(μ a : ℂ) * PhiM μ w := by
       filter_upwards [hO.mem_nhds hz] with w hw using lhol_phiM_diag μ a hw
@@ -195,12 +195,12 @@ theorem lhol_lhol_phiM (μ : Fin n → ℤ) (a b : Fin n) {z : Matrix (Fin n) (F
     show fderiv ℂ (Lhol (Matrix.single a a (1 : ℂ)) (PhiM μ)) z _ = _
     rw [hev.fderiv_eq]
     erw [hf]
-    rw [_root_.smul_apply, smul_eq_mul, e1, casCoef, if_pos rfl, if_neg (lt_irrefl a)]
+    rw [_root_.smul_apply, smul_eq_mul, e1, casCoef, ite_eq_left rfl, ite_eq_right (lt_irrefl a)]
     push_cast
     ring
   · rw [lhol_comm (contDiffAt_phiM μ hz) _ _, hlow a b h]
     simp only [Matrix.single_mul_single_same, mul_one, sub_mul, map_sub]
-    rw [e1, e2, casCoef, if_neg h.ne', if_pos h]
+    rw [e1, e2, casCoef, ite_eq_right h.ne', ite_eq_left h]
     push_cast
     ring
 

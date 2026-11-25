@@ -9,64 +9,6 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActPMemLo
 import Formalism.GradedWeylDivisibility.FinalC
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.BideterminantMem
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDlatLemmas
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Algebra.Star.Unitary
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -295,11 +237,6 @@ theorem colLen_le (la : Fin N → ℕ) (c : ℕ) : colLen la c ≤ N :=
 
 abbrev Tableau (la : Fin N → ℕ) : Type := (c : Fin (width la)) → Fin (colLen la c) → Fin N
 
-def IsStandard {la : Fin N → ℕ} (T : Tableau la) : Prop :=
-  (∀ c, StrictMono (T c)) ∧
-    ∀ (c c' : Fin (width la)), c ≤ c' → ∀ (p : ℕ) (h : p < colLen la c) (h' : p < colLen la c'),
-      T c ⟨p, h⟩ ≤ T c' ⟨p, h'⟩
-
 def canon (la : Fin N → ℕ) : Tableau la := fun c => Fin.castLE (colLen_le la c)
 
 def extremal (la : Fin N → ℕ) (R : Type) [CommRing R] : Pol N R := hw R le_rfl la
@@ -414,12 +351,6 @@ theorem dim_eq_card (la : Fin N → ℕ) : dim la = Fintype.card (Idx la) :=
 theorem dim_pos {la : Fin N → ℕ} (hla : Antitone la) : 0 < dim la := by
   have : Nontrivial (nabla la ℂ) := Submodule.nontrivial_iff_ne_bot.mpr (nabla_ne_bot hla)
   exact Module.finrank_pos
-
-section Fields
-
-variable {K L : Type} [Field K] [CharZero K] [Field L] [CharZero L] {la : Fin N → ℕ}
-
-end Fields
 
 abbrev UN (N : ℕ) : Type := Matrix.unitaryGroup (Fin N) ℂ
 
@@ -653,14 +584,6 @@ end Space
 
 def onBasis (la : Fin N → ℕ) : OrthonormalBasis (Idx la) ℂ (Space la) :=
   (stdOrthonormalBasis ℂ (Space la)).reindex (Fintype.equivFinOfCardEq (dim_eq_card la).symm).symm
-
-section Frames
-
-variable {K : Type} [Field K] {la : Fin N → ℕ}
-
-variable [NumberField K]
-
-end Frames
 
 section Lattices
 

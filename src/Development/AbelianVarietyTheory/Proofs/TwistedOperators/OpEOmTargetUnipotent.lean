@@ -52,6 +52,7 @@ import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SecondCountableLocal
 
 @[expose] public section
 
@@ -62,18 +63,7 @@ namespace GlobalTheory.RootEx.TargetUnip
 
 theorem det_eq_one_of_level {k ι : Type*} [Field k] [Fintype ι] [DecidableEq ι] (f : ι → ℕ)
     (M : Matrix ι ι k) (hM : ∀ r s, f s ≤ f r → M r s = (1 : Matrix ι ι k) r s) : M.det = 1 := by
-  have hb : M.BlockTriangular f := by
-    intro r s h
-    rw [hM r s h.le, Matrix.one_apply_ne]
-    rintro rfl
-    exact lt_irrefl _ h
-  rw [hb.det]
-  refine Finset.prod_eq_one fun a _ => ?_
-  have : M.toSquareBlock f a = 1 := by
-    ext i j
-    rw [Matrix.toSquareBlock_def, Matrix.of_apply, hM _ _ (by rw [i.2, j.2])]
-    simp [Matrix.one_apply, Subtype.ext_iff]
-  rw [this, Matrix.det_one]
+  apply _root_.GlobalTheory.RootExSource.det_eq_one_of_unip <;> assumption
 
 variable {k : Type*} [Field k] {n : Type*} [Fintype n] [DecidableEq n] {c : ℕ}
 variable {n' : Type*} [Fintype n'] [DecidableEq n']
@@ -180,13 +170,13 @@ theorem ch_mul_affPt {p : ℕ} {h : GL (n ⊕ Fin c) k} (hh : InN p h) (x₀ : M
   · congr 1
     refine Finset.sum_congr rfl fun j _ => ?_
     by_cases hl : lev (n := n) p (Sum.inr i) < lev (n := n) p (Sum.inr j)
-    · rw [if_pos hl]
+    · rw [ite_eq_left hl]
       simp only [lev, Sum.elim_inr] at hl
       rw [affPt_of_not_free _ _ _ (by simp only [Free, Fin.val_succ]; omega)]
       simp [basePt]
-    · rw [if_neg hl]
+    · rw [ite_eq_right hl]
       simp only [lev, Sum.elim_inr] at hl
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
   · intro r _
     split_ifs with hl
     · simp only [lev, Sum.elim_inr, Sum.elim_inl] at hl

@@ -11,6 +11,7 @@ public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 public import Mathlib.RingTheory.Valuation.ValuationSubring
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsWeierstrassPMulOde
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.WeierstrassPTorsionIntegralAndDistinctMod
+import Development.AbelianVarietyTheory.Proofs.HeightProofs.TorsionIntegralDistinctOfPos
 import Mathlib.Algebra.AffineMonoid.UniqueSums
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -449,7 +450,7 @@ lemma cubic_dvd (W : ValuationSubring ℂ) (h2 : (2 : ℂ)⁻¹ ∈ W) (g₂ g�
   rw [mul_comm _ (Polynomial.map W.subtype (C 4)), ← this]
   simp
 
-theorem weierstrassP_mul_congr_pow : ∀ (L : PeriodPair) (W : ValuationSubring ℂ) (α : ℂ) (p : ℕ), (2 : ℂ)⁻¹ ∈ W → (3 : ℂ)⁻¹ ∈ W → L.g₂ ∈ W → L.g₃ ∈ W → (L.g₂ ^ 3 - 27 * L.g₃ ^ 2)⁻¹ ∈ W → p.Prime → (p : ℂ) ∈ W.nonunits → α ∈ W.nonunits → (∀ l ∈ L.lattice, α * l ∈ L.lattice) → ‖α‖ ^ 2 = p → ∃ a : ℂ, a ∈ W ∧ a⁻¹ ∈ W ∧ a ≠ 0 ∧ L.g₂ - a ^ 2 * L.g₂ ^ p ∈ W.nonunits ∧ L.g₃ - a ^ 3 * L.g₃ ^ p ∈ W.nonunits ∧ ∀ (m : ℕ) (t : ℂ), Odd m → (m : ℂ)⁻¹ ∈ W → (m : ℂ) * t ∈ L.lattice → t ∉ L.lattice → L.weierstrassP (α * t) - a * L.weierstrassP t ^ p ∈ W.nonunits := by
+theorem weierstrassP_mul_congr_pow : ∀ (L : PeriodPair) (W : ValuationSubring ℂ) (α : ℂ) (p : ℕ), (2 : ℂ)⁻¹ ∈ W → (3 : ℂ)⁻¹ ∈ W → L.g₂ ∈ W → L.g₃ ∈ W → (L.g₂ ^ 3 - 27 * L.g₃ ^ 2)⁻¹ ∈ W → p.Prime → (p : ℂ) ∈ W.nonunits → α ∈ W.nonunits → (∀ l ∈ L.lattice, α * l ∈ L.lattice) → ‖α‖ ^ 2 = p → ∃ a : ℂ, a ∈ W ∧ a⁻¹ ∈ W ∧ a ≠ 0 ∧ L.g₂ - a ^ 2 * L.g₂ ^ p ∈ W.nonunits ∧ L.g₃ - a ^ 3 * L.g₃ ^ p ∈ W.nonunits ∧ ∀ (m : ℕ) (t : ℂ), 0 < m → (m : ℂ)⁻¹ ∈ W → (m : ℂ) * t ∈ L.lattice → t ∉ L.lattice → L.weierstrassP (α * t) - a * L.weierstrassP t ^ p ∈ W.nonunits := by
   intro L W α p h2 h3 hg₂ hg₃ hΔ hp hpW hαW hα hN
   have hΔ0 : L.g₂ ^ 3 - 27 * L.g₃ ^ 2 ≠ 0 := TorsionIntegral.disc L
   have h0 : α ≠ 0 := by
@@ -462,12 +463,12 @@ theorem weierstrassP_mul_congr_pow : ∀ (L : PeriodPair) (W : ValuationSubring 
     rw [← map_natCast ρ, residue_eq_zero_iff']
     simpa using hpW
   haveI : CharP (IsLocalRing.ResidueField W) p := (CharP.charP_iff_prime_eq_zero hp).mpr hpk
-  have hcop : ∀ m : ℕ, Odd m → (m : ℂ)⁻¹ ∈ W → p.Coprime m := by
+  have hcop : ∀ m : ℕ, 0 < m → (m : ℂ)⁻¹ ∈ W → p.Coprime m := by
     intro m hm hmW
     rw [hp.coprime_iff_not_dvd, ← CharP.cast_eq_zero_iff (IsLocalRing.ResidueField W) p,
       ← map_natCast ρ]
     apply residue_ne_zero_of_inv_mem
-    · simpa using hm.pos.ne'
+    · simpa using hm.ne'
     · simpa using hmW
   obtain ⟨A, D, hD, hAd, hDd, hev, hode⟩ := exists_weierstrassP_mul_ode L α p h0 hα hN
   obtain ⟨c, A₀, D₀, hc, hA₀, hD₀, hne⟩ := exists_scaling W A D hD
@@ -476,12 +477,12 @@ theorem weierstrassP_mul_congr_pow : ∀ (L : PeriodPair) (W : ValuationSubring 
     have := hα _ h
     rwa [mul_left_comm] at this
 
-  have rel : ∀ (m : ℕ) (t : ℂ), Odd m → (m : ℂ)⁻¹ ∈ W → (m : ℂ) * t ∈ L.lattice →
+  have rel : ∀ (m : ℕ) (t : ℂ), 0 < m → (m : ℂ)⁻¹ ∈ W → (m : ℂ) * t ∈ L.lattice →
       t ∉ L.lattice → ∃ x y : W, (x : ℂ) = L.weierstrassP t ∧ (y : ℂ) = L.weierstrassP (α * t) ∧
         (A₀.map ρ).eval (ρ x) = ρ y * (D₀.map ρ).eval (ρ x) := by
     intro m t hm hmW hmt ht
     have hαt : α * t ∉ L.lattice := fun h => ht (mem_of_mul_mem L h0 hα hN (hcop m hm hmW) hmt h)
-    have T := (TorsionIntegral.torsion_integral_distinct L W m h2 h3 hg₂ hg₃ hΔ hm hmW).1
+    have T := (_root_.GlobalTheory.TorsionIntegralPos.torsion_integral_distinct_of_pos L W m h2 h3 hg₂ hg₃ hΔ hm hmW).1
     refine ⟨⟨_, T t hmt ht⟩, ⟨_, T _ (hmul m t hmt) hαt⟩, rfl, rfl, ?_⟩
     rw [eval_map_apply, eval_map_apply, ← map_mul]
     congr 1
@@ -494,7 +495,7 @@ theorem weierstrassP_mul_congr_pow : ∀ (L : PeriodPair) (W : ValuationSubring 
   have h3n : ∀ n : ℕ, ((3 ^ n : ℕ) : ℂ)⁻¹ ∈ W := fun n => by
     rw [Nat.cast_pow, ← inv_pow]
     exact pow_mem (by simpa using h3) n
-  have hodd : ∀ n : ℕ, Odd (3 ^ n) := fun n => Odd.pow (by decide)
+  have hpos : ∀ n : ℕ, 0 < 3 ^ n := fun n => by positivity
   have hpow : ∀ i j : ℕ, i + 1 ≤ j → ((3 ^ j : ℕ) : ℂ) * (L.ω₁ / 3 ^ (i + 1)) ∈ L.lattice := by
     intro i j hij
     obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hij
@@ -530,8 +531,8 @@ theorem weierstrassP_mul_congr_pow : ∀ (L : PeriodPair) (W : ValuationSubring 
       rw [mul_left_comm, hthird]
       exact hβ3
     refine Function.Injective.of_lt_imp_ne fun i j hij h => ?_
-    have T := (TorsionIntegral.torsion_integral_distinct L W (3 ^ (j + 1)) h2 h3 hg₂ hg₃ hΔ
-      (hodd _) (h3n _)).2 _ _ (hm i _ (by omega)) (fun h => hn i (hns _ _ h))
+    have T := (_root_.GlobalTheory.TorsionIntegralPos.torsion_integral_distinct_of_pos L W (3 ^ (j + 1)) h2 h3 hg₂ hg₃ hΔ
+      (hpos _) (h3n _)).2 _ _ (hm i _ (by omega)) (fun h => hn i (hns _ _ h))
       (hm j _ le_rfl) (fun h => hn j (hns _ _ h)) (by
         rw [← hx, ← hx]
         have : ρ (x i - x j) = 0 := by rw [map_sub]; exact sub_eq_zero.mpr h
@@ -543,7 +544,7 @@ theorem weierstrassP_mul_congr_pow : ∀ (L : PeriodPair) (W : ValuationSubring 
     · convert L.lattice.sub_mem (hns (3 ^ j) _ T) (hm i j hij) using 1
       ring
   choose x y hx hy hxy using fun j : ℕ =>
-    rel (3 ^ (j + 1)) (L.ω₁ / 3 ^ (j + 1)) (hodd _) (h3n _) (hpow j _ le_rfl) (hnot j)
+    rel (3 ^ (j + 1)) (L.ω₁ / 3 ^ (j + 1)) (hpos _) (h3n _) (hpow j _ le_rfl) (hnot j)
   have hxi := dist 1 (by simp) (by simpa using third_notMem L) x (by simpa using hx)
   have hyi := dist α hα hαthird y hy
   let g₂ : W := ⟨L.g₂, hg₂⟩

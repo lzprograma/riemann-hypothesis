@@ -26,9 +26,6 @@ variable (c : Sz.Cfg)
 
 private theorem v_eq_vlast_add_four_mul_Del (i : ℕ) : c.v i = c.vlast + 4 * c.Del * ((c.k : ℝ) - 1 - (i : ℝ)) := rfl
 
-theorem v_sub (i j : ℕ) : c.v i - c.v j = 4 * c.Del * ((j : ℝ) - (i : ℝ)) := by
-  rw [v_eq_vlast_add_four_mul_Del c i, v_eq_vlast_add_four_mul_Del c j]; ring
-
 theorem b_one_le (hOk : c.Ok) : ∀ j : ℕ, 1 ≤ j → j ≤ c.m → c.b 1 ≤ c.b j := by
   intro j
   induction j with
@@ -63,12 +60,12 @@ theorem qfac_ne (hOk : c.Ok) (hb1 : 40 * (c.m : ℝ) * c.k * c.Del ≤ c.b 1) {d
   · subst h1
     have hu : c.u de 1 = c.a := by simp [Formalism.FourierDecayAlt.Sz.Cfg.u]
     have ha := hOk.ha
-    have e := v_sub c 1 l
+    have e := Formalism.FourierDecayAlt.P.Sz4.v_sub c 1 l
     push_cast at e
     have hl0 : 0 ≤ 4 * c.Del * (l : ℝ) := by positivity
     rw [hu]; apply ne_of_gt; linarith
   · by_cases hk : i = c.k
-    · have hu : c.u de i = c.ulast := by rw [Formalism.FourierDecayAlt.Sz.Cfg.u, if_neg h1, if_pos hk]
+    · have hu : c.u de i = c.ulast := by rw [Formalism.FourierDecayAlt.Sz.Cfg.u, ite_eq_right h1, ite_eq_left hk]
       rw [hu]
       cases ht : c.top
       · have hul : c.ulast = c.vlast - 1 / 2 := by simp [Formalism.FourierDecayAlt.Sz.Cfg.ulast, ht]
@@ -89,11 +86,11 @@ theorem qfac_ne (hOk : c.Ok) (hb1 : 40 * (c.m : ℝ) * c.k * c.Del ≤ c.b 1) {d
         rw [hul]
         have hbp := (hOk.htop ht).1
         apply ne_of_lt; linarith
-    · have hu : c.u de i = c.v (i - 1) - 1 / 2 - de (i - 1) * c.Del := by rw [Formalism.FourierDecayAlt.Sz.Cfg.u, if_neg h1, if_neg hk]
+    · have hu : c.u de i = c.v (i - 1) - 1 / 2 - de (i - 1) * c.Del := by rw [Formalism.FourierDecayAlt.Sz.Cfg.u, ite_eq_right h1, ite_eq_right hk]
       rw [hu]
       obtain ⟨j, rfl⟩ : ∃ j, i = j + 1 := ⟨i - 1, by omega⟩
       simp only [Nat.add_sub_cancel]
-      have e := v_sub c j l
+      have e := Formalism.FourierDecayAlt.P.Sz4.v_sub c j l
       have hde := hw1 j
       rcases lt_trichotomy j l with hjl | rfl | hlj
       · have h' : (j : ℝ) + 1 ≤ l := by exact_mod_cast hjl
@@ -140,7 +137,7 @@ theorem P_ne (hOk : c.Ok) (hb1 : 40 * (c.m : ℝ) * c.k * c.Del ≤ c.b 1) {l : 
   by_cases hsk : s < c.k
   · have hlam : c.lam s = c.v s := by simp [Formalism.FourierDecayAlt.Sz.Cfg.lam, hsk]
     rw [hlam]
-    have e := v_sub c s l
+    have e := Formalism.FourierDecayAlt.P.Sz4.v_sub c s l
     rcases lt_trichotomy s l with h | rfl | h
     · have h' : (s : ℝ) + 1 ≤ l := by exact_mod_cast h
       have : 4 * c.Del * 1 ≤ 4 * c.Del * ((l : ℝ) - s) :=
@@ -284,12 +281,6 @@ theorem thrSet_pos {ι : Type} [Fintype ι] (G : Sz.Glob ι) {C : ℝ} (hC : 1 �
 
 variable {D : D7}
 
-theorem gOf_place' (e : InfinitePlace D.host.E ≃ D.what₂.Tau) (w : InfinitePlace D.host.E) :
-    (Formalism.L2.SG.SpectralTiesReal.gOf D e).place w = Formalism.MainNotions.BridgeLemma.cfgOf D (e w) := by
-  simp only [Formalism.FourierDecayAlt.Sz.Glob.place, Formalism.MainNotions.BridgeLemma.cfgOf, Formalism.L2.SG.SpectralTiesReal.gOf]
-  congr 1
-  exact Formalism.MainNotions.BridgeLemma.sza_m_eq D
-
 theorem lOf_succ_le (de de' : ℕ → ℝ) : Formalism.L2.SG.SpectralTiesReal.lOf D de de' + 1 ≤ D.R.k := by
   unfold Formalism.L2.SG.SpectralTiesReal.lOf
   split_ifs with h
@@ -392,11 +383,11 @@ theorem thrSet_pos_at {large₂ : SizeData₂ D} {C0 C' Cl Cg cb Cu cT CT : ℝ}
   have hD11 : (11 / 2 : ℝ) ≤ D.s.Del := by nlinarith
   refine thrSet_pos _ hCA (fun w => ?_) (fun w => ?_) hka (by rw [hN]; positivity) hg ?_ (mul_pos hTp hTp')
   · unfold Sz.Glob.supI
-    rw [gOf_place']
+    rw [Formalism.L2.SG.Pf.SzHypOf.gOf_place]
     exact ThresholdBounds.supI_pos _ (Formalism.MainNotions.BridgeLemma.cfg_ok hD hH (e w)) (first_size_lower_bound hD hH h40 (e w)) hD11
       (Formalism.MainNotions.BridgeLemma.isWord_deOf D u) (Formalism.MainNotions.BridgeLemma.isWord_deOf D u') hl hT hT' hka (pow_pos hg _)
   · unfold Sz.Glob.cutSupLong
-    rw [gOf_place']
+    rw [Formalism.L2.SG.Pf.SzHypOf.gOf_place]
     exact ThresholdBounds.sSup_be_image_cutIntervalLong_pos _ (Formalism.MainNotions.BridgeLemma.cfg_ok hD hH (e w)) (first_size_lower_bound hD hH h40 (e w)) hN1 hN3
       (Formalism.MainNotions.BridgeLemma.isWord_deOf D u) (Formalism.MainNotions.BridgeLemma.isWord_deOf D u') hl hT hT' hka (pow_pos hg _)
   · show 0 < (D.s.Del : ℝ) / 2 - 5 / 2

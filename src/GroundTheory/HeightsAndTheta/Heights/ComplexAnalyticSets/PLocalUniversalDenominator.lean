@@ -316,7 +316,7 @@ theorem LocalUniversalDenominator.fin_case
         obtain ⟨hpI, -, -, hph, -⟩ := hfib p.1 hp.1.1 p.2 hroot
         have hp1 : zpt p.1 p.2 ∈ O' := hp.2.1
         have hp2 : zpt p.1 p.2 ∈ N0 := hp.2.2
-        rw [hΦ, hftil, if_pos hp2, hfFl ⟨⟨⟨hpI, hN0U hp2⟩, hph⟩, hp1⟩]
+        rw [hΦ, hftil, ite_eq_left hp2, hfFl ⟨⟨⟨hpI, hN0U hp2⟩, hph⟩, hp1⟩]
     · have hz₀M : zpt y₀ τ₀ ∈ M := hz₀NM.resolve_left hz₀N
       refine ⟨(W' ×ˢ Set.univ) ∩ (fun p : (Fin d → ℂ) × ℂ => zpt p.1 p.2) ⁻¹' M,
         hzc.isOpen_inter_preimage hGo hM, ⟨⟨hy₀, Set.mem_univ _⟩, hz₀M⟩, fun _ => 0,
@@ -324,7 +324,7 @@ theorem LocalUniversalDenominator.fin_case
       intro p hp _
       have hpM : zpt p.1 p.2 ∈ M := hp.2
       have hpN : zpt p.1 p.2 ∉ N0 := fun hN => Set.disjoint_left.1 hNM hN hpM
-      rw [hΦ, hftil, if_neg hpN, zero_mul]
+      rw [hΦ, hftil, ite_eq_right hpN, zero_mul]
 
   obtain ⟨R, hR⟩ := hbdd.exists_norm_le
   have hτb : ∀ y ∈ W', ∀ τ, (mp.map (eval y)).IsRoot τ → ‖τ‖ ≤ ∑ j, ‖c j‖ * R := by
@@ -444,7 +444,7 @@ theorem LocalUniversalDenominator.fin_case
       ring
     rw [Finset.sum_congr rfl e2, rootSum_single _ K hPdeg hP0
       (fun τ => ftil (zpt (A.mulVec z) τ) * (q.map (eval (A.mulVec z))).eval τ) _ hroot]
-    rw [hzz, hftil, if_pos hzN, mul_assoc, hDq, mul_comm]
+    rw [hzz, hftil, ite_eq_left hzN, mul_assoc, hDq, mul_comm]
 
   refine ⟨GroundTheory.Heights₂.Heights.ComplexSets.pullback A D, fun hD' => hD (hpbI D hD'), Nf, hNfo,
     ⟨hwN0, Metric.mem_ball_self hr⟩, fun x hx => hN0U hx.1, Fs, hFd, ?_⟩

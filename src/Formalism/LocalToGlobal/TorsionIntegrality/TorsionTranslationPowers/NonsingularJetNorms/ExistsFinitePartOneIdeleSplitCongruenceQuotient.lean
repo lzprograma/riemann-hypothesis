@@ -172,7 +172,7 @@ theorem ptOf_some (t : ℂ) (ht : t ∉ L.lattice) :
 
 theorem ptOf_lattice (t : ℂ) (ht : t ∈ L.lattice) : ptOf l L ι t = 0 := by
   unfold ptOf
-  exact dif_neg (fun h => h.1 ht)
+  exact dite_eq_right (fun h => h.1 ht)
 
 theorem ptOf_add_lattice (t ω : ℂ) (hω : ω ∈ L.lattice) : ptOf l L ι (t + ω) = ptOf l L ι t := by
   have h1 : L.weierstrassP (t + ω) = L.weierstrassP t := L.weierstrassP_add_coe t ⟨ω, hω⟩

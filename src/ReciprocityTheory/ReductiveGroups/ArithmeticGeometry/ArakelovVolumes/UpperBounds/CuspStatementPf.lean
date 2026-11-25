@@ -149,17 +149,17 @@ theorem rfac_le (la : Wt X.Ψ r) (hs : 0 ≤ (s τ).im) (hp0 : 0 < X.p0) (hp0r :
       (Real.log (rho X e s x τ ((i : ℕ) + 1)) - Real.log (rho X e s x τ i)) =
       ∑ k ∈ Finset.range r, a k * (L (k + 1) - L k) := by
     rw [← Fin.sum_univ_eq_sum_range (fun k => a k * (L (k + 1) - L k)) r]
-    exact Finset.sum_congr rfl fun i _ => by simp only [a, L, dif_pos i.2]
+    exact Finset.sum_congr rfl fun i _ => by simp only [a, L, dite_eq_left i.2]
   have hgap' : ∀ k, 1 ≤ k → k < r → k ≠ X.p0 → a k ≤ a (k - 1) := by
     intro k hk1 hkr hkp
-    simp only [a, dif_pos hkr, dif_pos (show k - 1 < r by omega)]
+    simp only [a, dite_eq_left hkr, dite_eq_left (show k - 1 < r by omega)]
     have := hgap ⟨k - 1, by omega⟩ ⟨k, hkr⟩ (by simp; omega) hkp
     have : (la τ ⟨k, hkr⟩ : ℝ) ≤ la τ ⟨k - 1, by omega⟩ := by exact_mod_cast this
     linarith
   have hab := abel_bound a L X.p0 r hLle hgap' r (by omega) le_rfl
   rw [hL0, hLr] at hab
   have hpa : a 0 - a (r - 1) ≤ -(1 / 2) := by
-    simp only [a, dif_pos (show 0 < r by omega), dif_pos (show r - 1 < r by omega)]
+    simp only [a, dite_eq_left (show 0 < r by omega), dite_eq_left (show r - 1 < r by omega)]
     have := hpair ⟨0, by omega⟩ ⟨r - 1, by omega⟩ rfl rfl
     have : (la τ ⟨0, by omega⟩ : ℝ) + 1 ≤ la τ ⟨r - 1, by omega⟩ := by exact_mod_cast this
     linarith

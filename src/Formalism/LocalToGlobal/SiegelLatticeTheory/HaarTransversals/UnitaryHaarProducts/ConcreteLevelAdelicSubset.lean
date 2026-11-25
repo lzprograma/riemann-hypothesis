@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FoldingUnfolding.TranslationIndependent
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ExplicitFormulaBoundHolds
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ConstructionA
@@ -8,6 +9,9 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasu
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Algebra.Group.Units
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnitaryPointsDiscreteFundamentalDomain
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FlagClassConstancy.FlagOfInSFRight
 
 @[expose] public section
 
@@ -255,31 +259,7 @@ variable {G : Type*} [Group G]
 
 theorem exists_rightTransversal (Γ S : Subgroup G) (hS : S ≤ Γ) :
     ∃ D : Set G, Formalism.L2.SG.FoldBound.IsRightTransversal Γ S D := by
-  classical
-  let st : Setoid G := QuotientGroup.rightRel S
-  let rep : G → G := fun g => (Quotient.mk st g).out
-  have hrel : ∀ g, g * (rep g)⁻¹ ∈ S := fun g => by
-    have : st (rep g) g := Quotient.mk_out (s := st) g
-    simpa [st, QuotientGroup.rightRel_apply] using this
-  have hmem : ∀ g ∈ Γ, rep g ∈ Γ := fun g hg => by
-    have h1 := hS (hrel g)
-    have := Γ.mul_mem (Γ.inv_mem h1) hg
-    simpa [mul_assoc] using this
-  refine ⟨rep '' Γ, fun x ⟨g, hg, hx⟩ => hx ▸ hmem g hg, fun γ hγ => ?_⟩
-  refine ⟨(⟨γ * (rep γ)⁻¹, hrel γ⟩, ⟨rep γ, γ, hγ, rfl⟩), by simp, ?_⟩
-  rintro ⟨⟨s, hs⟩, ⟨d, hd⟩⟩ hp
-  obtain ⟨g, hg, rfl⟩ := hd
-  simp only at hp
-  have hsγ : γ * (rep g)⁻¹ = s := by rw [← hp]; group
-  have h1 : (Quotient.mk st (rep g) : Quotient st) = Quotient.mk st γ :=
-    Quotient.sound (show QuotientGroup.rightRel S (rep g) γ by rw [QuotientGroup.rightRel_apply, hsγ]; exact hs)
-  have h2 : (Quotient.mk st (rep g) : Quotient st) = Quotient.mk st g := Quotient.out_eq _
-  have hr : rep g = rep γ := by
-    show (Quotient.mk st g).out = (Quotient.mk st γ).out
-    rw [← h2, h1]
-  refine Prod.ext (Subtype.ext ?_) (Subtype.ext hr)
-  show s = γ * (rep γ)⁻¹
-  rw [← hsγ, hr]
+  apply _root_.PI.FoldDCUnfold.W.translation_exists <;> assumption
 
 end Transv
 
@@ -327,23 +307,7 @@ theorem nt_normSq (σ : I.E →+* ℂ) (a : I.E) : ((Complex.normSq (σ a) : ℝ
   rw [map_mul, I.cm.cmUnram.2.1 σ a, Complex.mul_conj]
 
 theorem nt_absEmb (σ : I.E →+* ℂ) : ∃ v : InfinitePlace I.F, ∀ a : I.E, ‖σ a‖ = ‖I.φ v a‖ := by
-  set w := InfinitePlace.mk (σ.comp (algebraMap I.F I.E))
-  refine ⟨w, fun a => ?_⟩
-  obtain ⟨c, hc⟩ := nt_mulStar I a
-  have h1 := nt_normSq I σ a
-  have h2 := nt_normSq I (I.φ w) a
-  rw [← hc] at h1 h2
-  rw [I.φ_over] at h2
-  have h3 : w.embedding c = σ (algebraMap I.F I.E c) := by
-    rcases InfinitePlace.embedding_mk_eq (σ.comp (algebraMap I.F I.E)) with h | h
-    · rw [h]; rfl
-    · rw [h]
-      show starRingEnd ℂ (σ (algebraMap I.F I.E c)) = σ (algebraMap I.F I.E c)
-      rw [← h1, Complex.conj_ofReal]
-  have h4 : Complex.normSq (σ a) = Complex.normSq (I.φ w a) := by
-    exact_mod_cast h1.trans (h3.symm.trans h2.symm)
-  have h5 : ‖σ a‖ ^ 2 = ‖I.φ w a‖ ^ 2 := by rw [Complex.sq_norm, Complex.sq_norm, h4]
-  exact (pow_left_inj₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).1 h5
+  apply _root_.GlobalTheory.RatDiscrete.exists_place <;> assumption
 
 theorem nt_int_eq_zero (a : 𝓞 I.E) (h : ∀ v, ‖I.φ v (a : I.E)‖ < 1) : a = 0 := by
   classical
@@ -791,7 +755,7 @@ theorem trC_nondeg (u : I.E ⊗[I.F] Af I.F) (h : ∀ x : 𝓞 I.E, trC I x u = 
       have := LinearMap.BilinForm.apply_dualBasis_left hB b j i
       rw [Algebra.traceForm_apply, mul_comm] at this
       exact this
-    simp only [e, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true] at h1
+    simp only [e, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h1
     exact h1
   simp [ha]
 
@@ -888,7 +852,6 @@ end T2
 
 section Fold
 
-open MeasureTheory
 
 variable (I : AutInst)
 
@@ -967,17 +930,7 @@ theorem xsp_eq : Xsp F = Xflag F r := by
 variable {Λ F}
 
 theorem nlam_pres {n : S.V ≃ₗ[E] S.V} (hn : n ∈ NLam Λ F) (j : ℕ) : ∀ x ∈ Xflag F j, n x ∈ Xflag F j := by
-  cases j with
-  | zero =>
-    intro x hx
-    rw [xflag_zero, Submodule.mem_bot] at hx ⊢
-    rw [hx, map_zero]
-  | succ j =>
-    intro x hx
-    have h := hn.2.1 j x hx
-    have : n x = x + (n x - x) := by abel
-    rw [this]
-    exact add_mem hx (xflag_mono F j h)
+  apply _root_.PI.InSClassConstW.map_mem_Xflag <;> assumption
 
 theorem nlam_presX {n : S.V ≃ₗ[E] S.V} (hn : n ∈ NLam Λ F) : ∀ x ∈ Xsp F, n x ∈ Xsp F := by
   rw [xsp_eq]; exact nlam_pres hn r
@@ -1101,8 +1054,6 @@ end GinfDisc
 section Terms
 
 open Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp Formalism.L2.SG.TermDef NumberField
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Gen
 
@@ -1383,8 +1334,6 @@ section RO
 
 open NumberField Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp Formalism.L2.SG.HidaSetting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem ratLink_one : RatLink X 1 1 := by
@@ -1398,57 +1347,11 @@ theorem ratLink_one : RatLink X 1 1 := by
 
 theorem ratLink_mul {x₁ x₂ : X.B.I.GA} {n₁ n₂ : (Formalism.MainNotions.S.VS D).V ≃ₗ[D.host.E] (Formalism.MainNotions.S.VS D).V}
     (h₁ : RatLink X x₁ n₁) (h₂ : RatLink X x₂ n₂) : RatLink X (x₁ * x₂) (n₁ * n₂) := by
-  obtain ⟨M₁, hM₁, a₁, b₁, c₁⟩ := h₁
-  obtain ⟨M₂, hM₂, a₂, b₂, c₂⟩ := h₂
-  refine ⟨M₁ * M₂, (Formalism.UG.UJ (starRingEnd X.B.I.E) X.B.I.J).mul_mem hM₁ hM₂, fun v => ?_, ?_, fun y => ?_⟩
-  · have e : uMat ((x₁ * x₂).1 v) = uMat (x₁.1 v) * uMat (x₂.1 v) := by simp [uMat]
-    have hP : X.B.I.P v * (X.B.I.P v)⁻¹ = 1 :=
-      Matrix.mul_nonsing_inv _ ((Matrix.isUnit_iff_isUnit_det _).1 (X.B.I.P_unit v))
-    rw [e, a₁, a₂, Units.val_mul, Matrix.map_mul]
-    simp only [Matrix.mul_assoc]
-    rw [← Matrix.mul_assoc (X.B.I.P v) (X.B.I.P v)⁻¹, hP, Matrix.one_mul]
-  · have e : X.B.I.fmat (x₁ * x₂).2 = X.B.I.fmat x₁.2 * X.B.I.fmat x₂.2 := by simp [AutInst.fmat]
-    rw [e, b₁, b₂, Units.val_mul, Matrix.map_mul]
-  · show X.crd (n₁ (n₂ y)) = _
-    rw [c₁, c₂, Matrix.mulVec_mulVec, Units.val_mul]
+  apply _root_.Formalism.L2.SG.TermOp.Vanish.ratLink_mul <;> assumption
 
 theorem ratLink_inv {x : X.B.I.GA} {n : (Formalism.MainNotions.S.VS D).V ≃ₗ[D.host.E] (Formalism.MainNotions.S.VS D).V}
     (h : RatLink X x n) : RatLink X x⁻¹ n⁻¹ := by
-  obtain ⟨M, hM, a, b, c⟩ := h
-  have hMM : ((M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E)) * ((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) = 1 :=
-    Units.mul_inv M
-  have hMM' : ((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) * (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) = 1 :=
-    Units.inv_mul M
-  refine ⟨M⁻¹, (Formalism.UG.UJ (starRingEnd X.B.I.E) X.B.I.J).inv_mem hM, fun v => ?_, ?_, fun y => ?_⟩
-  · have e1 : uMat (x⁻¹.1 v) * uMat (x.1 v) = 1 := by simp [uMat]
-    have hP : X.B.I.P v * (X.B.I.P v)⁻¹ = 1 :=
-      Matrix.mul_nonsing_inv _ ((Matrix.isUnit_iff_isUnit_det _).1 (X.B.I.P_unit v))
-    have hP' : (X.B.I.P v)⁻¹ * X.B.I.P v = 1 :=
-      Matrix.nonsing_inv_mul _ ((Matrix.isUnit_iff_isUnit_det _).1 (X.B.I.P_unit v))
-    have e2 : uMat (x.1 v) * ((X.B.I.P v)⁻¹ * ((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E).map (X.B.I.φ v) *
-        X.B.I.P v) = 1 := by
-      rw [a v]
-      calc (X.B.I.P v)⁻¹ * (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E).map (X.B.I.φ v) * X.B.I.P v * ((X.B.I.P v)⁻¹ *
-            ((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E).map (X.B.I.φ v) * X.B.I.P v)
-          = (X.B.I.P v)⁻¹ * ((M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E).map (X.B.I.φ v) * (X.B.I.P v * (X.B.I.P v)⁻¹) *
-            ((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E).map (X.B.I.φ v)) * X.B.I.P v := by
-            simp only [Matrix.mul_assoc]
-        _ = (X.B.I.P v)⁻¹ * ((M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) * ((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E)).map
-            (X.B.I.φ v) * X.B.I.P v := by rw [hP, Matrix.mul_one, Matrix.map_mul]
-        _ = 1 := by rw [hMM, Matrix.map_one _ (map_zero _) (map_one _), Matrix.mul_one, hP']
-    calc uMat (x⁻¹.1 v) = uMat (x⁻¹.1 v) * (uMat (x.1 v) * ((X.B.I.P v)⁻¹ *
-          ((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E).map (X.B.I.φ v) * X.B.I.P v)) := by rw [e2, Matrix.mul_one]
-      _ = _ := by rw [← Matrix.mul_assoc, e1, Matrix.one_mul]
-  · have e1 : X.B.I.fmat x⁻¹.2 * X.B.I.fmat x.2 = 1 := by simp [AutInst.fmat]
-    have e2 : X.B.I.fmat x.2 * ((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E).map
-        (Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F)) = 1 := by
-      rw [b, ← Matrix.map_mul, hMM, Matrix.map_one _ (map_zero _) (map_one _)]
-    calc X.B.I.fmat x⁻¹.2 = X.B.I.fmat x⁻¹.2 * (X.B.I.fmat x.2 * ((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E).map
-          (Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F))) := by rw [e2, Matrix.mul_one]
-      _ = _ := by rw [← Matrix.mul_assoc, e1, Matrix.one_mul]
-  · have e : X.crd y = (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) *ᵥ X.crd (n⁻¹ y) := by
-      rw [← c]; congr 1; exact (n.apply_symm_apply y).symm
-    rw [e, Matrix.mulVec_mulVec, hMM', Matrix.one_mulVec]
+  apply _root_.Formalism.L2.SG.TermOp.Vanish.ratLink_inv <;> assumption
 
 variable {u u' : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
   (F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))

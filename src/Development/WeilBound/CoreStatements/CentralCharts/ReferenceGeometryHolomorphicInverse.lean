@@ -57,60 +57,16 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFlag
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptAwayFromPrimes
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorFlag
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.InteriorPointPolarised
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CmTypeLatticeComparison
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeVectorBundle
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenPtSpecializesOfSpecializes
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtIffValueAt
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingularPotentialLogGrowthPsh
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingularWeightMonotoneRegularization
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothFunctionAsDegreeZeroMetric
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.LeviForms.TailCutA
 import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
@@ -164,7 +120,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Da
   {Y : Model (Xo l) c (algebraMap (𝓞 c.F) c.F)} {S : Finset ℕ} {Ω : Type} [Field Ω] [CharZero Ω]
   {K : Type} [Fintype K] {J : K → Type} [∀ k, Fintype (J k)] {y : (Σ k, J k) → Ω}
 
-theorem label_data (hG : Top.Given) (hGl : Top.IsGlobal Xo l c Y) (𝔐 : HodgeCpt Y S y) (Fl : 𝔐.Flag) {n : ℕ}
+theorem label_data (𝔐 : HodgeCpt Y S y) (Fl : 𝔐.Flag) {n : ℕ}
     {Bd : Set ((Σ k, J k) → ℂ)}
     (hBd : ∀ (z : Spec (CommRingCat.of ℂ) ⟶ 𝔐.X) w, CoordsAt 𝔐.ξ y z w → (w ∈ Bd ↔ ¬ 𝔐.Interior z))
     (χ : SncChart (mCoordIdeal y) n Bd) {z₀ : Spec (CommRingCat.of ℂ) ⟶ 𝔐.X} (hz₀ : CoordsAt 𝔐.ξ y z₀ (χ.γ 0))
@@ -191,7 +147,7 @@ theorem label_data (hG : Top.Given) (hGl : Top.IsGlobal Xo l c Y) (𝔐 : HodgeC
     exact Submodule.mem_sup_left h1.2
   let bb : Fin (labelRk D s) → ↥(𝔐.Vgen s ⊔ 𝔐.Vgen s) := fun k => ⟨b k, hmem k⟩
   obtain ⟨a₀, g, Λ, _, L, π, ρ, U, hρ, hρ1, hU, hli, ha, hP⟩ :=
-    _root_.GlobalTheory.CompanionTheory.Ar.FramePeriods.exists_isFramePeriods hG E H D Xo l c Y S Ω K J y 𝔐 hGl s s _ bb n Bd χ 0 cc f hBd (Metric.mem_ball_self one_pos)
+    _root_.GlobalTheory.CompanionTheory.Ar.FramePeriods.exists_isFramePeriods E H D Xo l c Y S Ω K J y 𝔐 s s _ bb n Bd χ 0 cc f hBd (Metric.mem_ball_self one_pos)
       (fun p h1 h2 => frame_sup (𝔐.V s) _ bb p (hb p trivial (hsub p h1 h2))) hdom
   let M : ℕ → (Fin n → ℂ) → ℝ := fun m t =>
     Real.log (leadMinor (HodgeMetric.periodGram L U (HodgeMetric.uncentre 0 ρ π t)) m)
@@ -199,7 +155,7 @@ theorem label_data (hG : Top.Given) (hGl : Top.IsGlobal Xo l c Y) (𝔐 : HodgeC
       (HodgeMetric.periodGram L (fun j => U (Fin.castLE h j)) (HodgeMetric.uncentre 0 ρ π t)).det.re := by
     intro m h
     funext t
-    simp only [M, leadMinor, dif_pos h]
+    simp only [M, leadMinor, dite_eq_left h]
     rfl
   refine ⟨b, M, hflag, hb0, fun t => by simp [M, leadMinor_size_zero], fun m hm => ?_, ?_⟩
   · rw [hM m hm]
@@ -229,7 +185,7 @@ theorem label_data (hG : Top.Given) (hGl : Top.IsGlobal Xo l c Y) (𝔐 : HodgeC
     refine ⟨hi, hfr, Γ, g1, g2, fun m _ => ?_⟩
     rw [e]
 
-theorem root_data (hG : Top.Given) (hGl : Top.IsGlobal Xo l c Y) (𝔐 : HodgeCpt Y S y) (Fl : 𝔐.Flag) {n : ℕ}
+theorem root_data (𝔐 : HodgeCpt Y S y) (Fl : 𝔐.Flag) {n : ℕ}
     {Bd : Set ((Σ k, J k) → ℂ)}
     (hBd : ∀ (z : Spec (CommRingCat.of ℂ) ⟶ 𝔐.X) w, CoordsAt 𝔐.ξ y z w → (w ∈ Bd ↔ ¬ 𝔐.Interior z))
     (χ : SncChart (mCoordIdeal y) n Bd) (xdeg : CMType H × Fin (D.p + D.q) → K → ℤ)
@@ -247,7 +203,7 @@ theorem root_data (hG : Top.Given) (hGl : Top.IsGlobal Xo l c Y) (𝔐 : HodgeCp
     exact ⟨z, hz⟩
   obtain ⟨z₀, hz₀⟩ := pts _ (χ.mem 0 (Metric.mem_ball_self one_pos))
   have hgen : genPt 𝔐.ξ ⤳ centre z₀ := 𝔐.all _
-  choose b M hflag hb0 hM0 hM hev using label_data hG hGl 𝔐 Fl hBd χ hz₀
+  choose b M hflag hb0 hM0 hM hev using label_data 𝔐 Fl hBd χ hz₀
   obtain ⟨cc, f, hdom, hch, -⟩ := exists_basic 𝔐.tie hz₀ hgen ⊤ trivial
   have hcc : ∀ᶠ t in 𝓝 (0 : Fin n → ℂ), ∀ k, χ.γ t ⟨k, cc k⟩ ≠ 0 :=
     eventually_all.2 fun k => (chart_analytic χ _).continuousAt.eventually_ne (hdom.1 k)
@@ -447,7 +403,7 @@ theorem central (h0 : FlatLineGenerator) (h1 : FlatLineGeneratorComponent) (hS :
       obtain ⟨_, s1, e1, -⟩ := v1
       obtain ⟨_, s2, e2, -⟩ := v2
       exact ⟨by simpa using ho, ⟨s1, by simpa using e1⟩, ⟨s2, by simpa using e2⟩⟩
-    obtain ⟨-, hL2, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Flat.lineLat_isVBOn_gen_frames 𝔐.X Ω 𝔐.ξ 𝔐.Li (𝔐.V (.inl τ)) (𝔐.V (.inr τ)) _ _ _ _ Set.univ
+    obtain ⟨-, hL2, -⟩ := _root_.PositivityTheory.Xgn.line_lattice_vector_bundle 𝔐.X Ω 𝔐.ξ 𝔐.Li (𝔐.V (.inl τ)) (𝔐.V (.inr τ)) _ _ _ _ Set.univ
       (exteriorPower.ιMulti Ω _ (Fl.b (.inl τ))) (exteriorPower.ιMulti Ω _ (Fl.b (.inr τ))) hVA hVB haF hbF
       ⟨_, trivial, _, hco _ hp⟩
     have hgn := (hL2 _ trivial _).2 ⟨hd0, hco _ hp⟩
@@ -590,7 +546,7 @@ theorem exists_member (hR : RegGlobalStatement) (R : AnLogRes P ⊤ n) (L : LocP
     obtain ⟨line, l1, l2⟩ := hlines (fun _ => u') (Real.exp (-Real.exp 1)) (fun _ _ _ => hu') fun _ => hcp
     exact ⟨u', fun _ => u', line, C₀, C₀, _, s1, r1, c1, heq, l1, l2, fun _ _ => ⟨p2, p1⟩⟩
   · obtain ⟨B, hB⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Adapt.exists_adaptedAtlas R.A L s m W hL hs snc hn
-    obtain ⟨C₆, hg⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.gradBound_of_local_bounds n R.X R.A B L s nb m W hL hs snc hn hB u hsm fun x => by
+    obtain ⟨C₆, hg⟩ := _root_.PositivityTheory.Xgp.t_c_grad_atlas n R.X R.A B L s nb m W hL hs snc hn hB u hsm fun x => by
       obtain ⟨ψ, a, M, h, ht⟩ := hT x
       obtain ⟨V', c, h1, h2, h3, h4⟩ := local_of_tame hn h ht
       exact ⟨ψ, V', c, h.1, h1, h2, h3, fun x' a b => (h4 x' a b).2⟩
@@ -601,7 +557,7 @@ theorem exists_member (hR : RegGlobalStatement) (R : AnLogRes P ⊤ n) (L : LocP
     have hthc := _root_.GlobalTheory.CompanionTheory.Ar.PB.Cj.pot_conj_pluriharmonic hsys c hspec hcont hanal (fsHerm J d) (Cj.fs_conj d) (potOf R (fsHerm J d)) fun x =>
       ⟨Set.univ, isOpen_univ, trivial, fun _ => 0, fun _ => analyticOnNhd_const,
         fun z _ => (sub_self _).trans Complex.zero_re.symm⟩
-    obtain ⟨C', t', r', c'⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.an_conj_symmetrise n R.X R.A _ L s nb m W hL hs snc hn (hA _ hfs) hΘ c hcont hinv hanal
+    obtain ⟨C', t', r', c'⟩ := _root_.PositivityTheory.Xgp.t_an_conj n R.X R.A _ L s nb m W hL hs snc hn (hA _ hfs) hΘ c hcont hinv hanal
       (fun y => (hcb _ _ (hspec y)).1) (fun y => (hcb _ _ (hspec y)).2) _ u phT C t₀ hth hthc
       (fun y _ => huc _ _ (hspec y)) r c2
     obtain ⟨line, l1, l2⟩ := hlines (fun t y => (phT t y + phT t (c y)) / 2) t' (fun t h0 h1 => (r'.2.2 t h0 h1).1)
@@ -848,7 +804,7 @@ theorem of_local (hI : PB.Inputs) {E : Type} [Field E] [NumberField E] [IsCMFiel
     ∃ A : G.An, (∃ inv : A.Sys.X → A.Re.R.X, ReciprocityTheory.AnForm.M.HoloMap A.Sys.A A.Re.R.A inv ∧
       ∀ x, inv (A.Re.π x) = x) := by
   classical
-  have harith := _root_.GlobalTheory.CompanionTheory.Relay.isArithVar_of_snc_model G.𝔐.X G.Ω G.𝔐.ξ G.K G.J G.y _ G.bd (one_le_dimFl H (by omega)) G.𝔐.tie G.snc
+  have harith := _root_.PositivityTheory.Xgp.t_c_bm_exists_arith G.𝔐.X G.Ω G.𝔐.ξ G.K G.J G.y _ G.bd (one_le_dimFl H (by omega)) G.𝔐.tie G.snc
   obtain ⟨y1, y2, y3⟩ := _root_.GlobalTheory.CompanionTheory.Ar.BdSym.boundary_closed_torus_conj G.𝔐.X G.Ω G.𝔐.ξ G.K G.J G.y (abLocus G.𝔐.t.G) G.bd G.𝔐.tie G.bd_iff
   obtain ⟨R, L, s, nb, m, W, hL, hs, snc, hn, hbd, hrc⟩ := _root_.GlobalTheory.CompanionTheory.Relay.lowerBound_height_on_boundary G.K G.J G.Ω G.y _ G.bd G.snc harith y1 y2 y3
   have hmem : ∀ x, R.lift x x ∈ mcPts (mCoordIdeal G.y) := fun x => R.mem x x (R.mem_U x)
@@ -1076,7 +1032,7 @@ theorem central_chart (h0 : Flat.FlatLineGenerator) (h1 : Flat.FlatLineGenerator
     Real.log_prod fun i _ => (p3 i).ne']
   ring
 
-theorem local_bounds (hG : Top.Given) (h0 : Flat.FlatLineGenerator) (h1 : Flat.FlatLineGeneratorComponent) (hGl : Top.IsGlobal Xo l c Y)
+theorem local_bounds (h0 : Flat.FlatLineGenerator) (h1 : Flat.FlatLineGeneratorComponent)
     (hS : SplitComps Y) (hpq : 1 ≤ D.p + D.q)
     (𝔐 : HodgeCpt Y S y) (Fl : 𝔐.Flag) {n : ℕ} {Bd : Set ((Σ k, J k) → ℂ)}
     (hBd : ∀ (z : Spec (CommRingCat.of ℂ) ⟶ 𝔐.X) w, CoordsAt 𝔐.ξ y z w → (w ∈ Bd ↔ ¬ 𝔐.Interior z))
@@ -1086,7 +1042,7 @@ theorem local_bounds (hG : Top.Given) (h0 : Flat.FlatLineGenerator) (h1 : Flat.F
     Tame χ.a (fun t => -∑ k ∈ Finset.Iic i, Real.log ((hx (τ, k)).h (χ.γ t))) ∧
       (χ.a = 0 → PshAt0 (fun t => -∑ k ∈ Finset.Iic i, Real.log ((hx (τ, k)).h (χ.γ t))) ∧
         ((i : ℕ) + 1 = D.p + D.q → PshAt0 fun t => ∑ k ∈ Finset.Iic i, Real.log ((hx (τ, k)).h (χ.γ t)))) := by
-  obtain ⟨M, F, hM0, hM, hF, hev⟩ := root_data hG hGl 𝔐 Fl hBd χ xdeg e hx hroot hhod hdg
+  obtain ⟨M, F, hM0, hM, hF, hev⟩ := root_data 𝔐 Fl hBd χ xdeg e hx hroot hhod hdg
   refine ⟨?_, fun ha => ?_⟩
   · have hr : ∀ r, Tame χ.a fun t => Real.log ((hx r).h (χ.γ t)) := fun r => by
       have t1 := (hM _ _ (HodgeCpt.rootIdx D r).2.2).1
@@ -1110,8 +1066,8 @@ theorem local_bounds (hG : Top.Given) (h0 : Flat.FlatLineGenerator) (h1 : Flat.F
         have e1 : ∀ k ∈ Finset.Iic i, Real.log ((hx (τ, k)).h (χ.γ t)) = Real.log ‖F (τ, k) t‖ -
             1 / 2 * (M (.inl τ) ((k : ℕ) + 1) t - M (.inl τ) k t) := fun k hk => by
           have hk' : (k : ℕ) < D.p := lt_of_le_of_lt (Fin.le_def.1 (Finset.mem_Iic.1 hk)) hip
-          have e2 : HodgeCpt.rootIdx D (τ, k) = ⟨.inl τ, ⟨k, hk'⟩⟩ := dif_pos hk'
-          have e3 : HodgeCpt.rootSgn D (τ, k) = 1 := if_pos hk'
+          have e2 : HodgeCpt.rootIdx D (τ, k) = ⟨.inl τ, ⟨k, hk'⟩⟩ := dite_eq_left hk'
+          have e3 : HodgeCpt.rootSgn D (τ, k) = 1 := ite_eq_left hk'
           have := ht k
           rw [e2, e3] at this
           simpa using this
@@ -1128,8 +1084,8 @@ theorem local_bounds (hG : Top.Given) (h0 : Flat.FlatLineGenerator) (h1 : Flat.F
           have hk0 : (i : ℕ) < k := Fin.lt_def.1 (Finset.mem_Ioi.1 hk)
           have hk' : ¬ (k : ℕ) < D.p := by omega
           have hk2 := k.2
-          have e2 : HodgeCpt.rootIdx D (τ, k) = ⟨.inr τ, ⟨D.p + D.q - 1 - k, by show _ < D.q; omega⟩⟩ := dif_neg hk'
-          have e3 : HodgeCpt.rootSgn D (τ, k) = -1 := if_neg hk'
+          have e2 : HodgeCpt.rootIdx D (τ, k) = ⟨.inr τ, ⟨D.p + D.q - 1 - k, by show _ < D.q; omega⟩⟩ := dite_eq_right hk'
+          have e3 : HodgeCpt.rootSgn D (τ, k) = -1 := ite_eq_right hk'
           have := ht k
           rw [e2, e3] at this
           have h2 : Real.log ((hx (τ, k)).h (χ.γ t)) = Real.log ‖F (τ, k) t‖ - ((-1 : ℤ) : ℝ) / 2 *
@@ -1160,14 +1116,14 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
 theorem reference_geometry_holomorphic_inverse : Top.Given → Flat.FlatLineGenerator → Flat.FlatLineGeneratorComponent → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (Xo : ∀ l : Tor.Level H, Moduli D l) (l : Tor.Level H) (c : Coeff l) (Y : Model (Xo l) c (algebraMap (𝓞 c.F) c.F)), Top.IsGlobal Xo l c Y → SplitComps Y → 1 ≤ D.p → 1 ≤ D.q → ∀ G : RefGeo Y, ∃ A : G.An, (∃ inv : A.Sys.X → A.Re.R.X, ReciprocityTheory.AnForm.M.HoloMap A.Sys.A A.Re.R.A inv ∧ ∀ x, inv (A.Re.π x) = x) := by
-  intro hG h0 h1 E _ _ _ H D Xo l c Y hGl hS hp hq G
+  intro hG h0 h1 E _ _ _ H D Xo l c Y _ hS hp hq G
   haveI := c.fin
   haveI : NumberField c.F := {}
   choose sing hdeg hhod hconj using _root_.GlobalTheory.CompanionTheory.Ar.HodgeLine.exists_hodgeLine E H D l (Xo l) c _ _ Y ∅ G.Ω G.K G.J G.y G.𝔐 G.Fl G.xdeg G.e
     RingOfIntegers.coe_injective G.lines
   have hI : PB.Inputs := hG.2.2.2.2.2.2.2.2.2.1
   exact An.of_local hI hp hq G sing hdeg hhod hconj fun χ τ i =>
-    An.local_bounds hG h0 h1 hGl hS (by omega) G.𝔐 G.Fl G.bd_iff χ G.xdeg G.e sing G.lines hhod hdeg τ i
+    An.local_bounds h0 h1 hS (by omega) G.𝔐 G.Fl G.bd_iff χ G.xdeg G.e sing G.lines hhod hdeg τ i
 
 end AnalyticReference
 end -- clump:auto

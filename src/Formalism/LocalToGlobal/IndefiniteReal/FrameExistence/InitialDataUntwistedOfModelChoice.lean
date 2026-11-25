@@ -14,8 +14,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace Formalism.IndefR.Seed
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type}
@@ -43,8 +41,6 @@ def LevelsL (L : LevCh D T) (eG : G ≃* G0 L.Pg D.R.r) (F : Face D A3.A) : Prop
       (∀ g, g ∈ (levPOf eG D.what₂.embLL (F.lvl true).P (F.lvl true).ψ).H ↔ reord π g ∈ (PsharpSym L.Pg D.R.r D.R.rS D.R.k ψ0).H) ∧
       ∀ g hg hg', (levPOf eG D.what₂.embLL (F.lvl true).P (F.lvl true).ψ).chi ⟨g, hg⟩ =
         (PsharpSym L.Pg D.R.r D.R.rS D.R.k ψ0).chi ⟨reord π g, hg'⟩
-
-def GrpAt (L : LevCh D T) (F : Face3 D A3) : Prop := ∃ eG : G ≃* G0 L.Pg D.R.r, RecL A3 L eG ∧ LevelsL A3 L eG F.lv2
 
 abbrev BType (L : LevCh D T) (cX : CoefA D.sp.X') (cV : ∀ i, CoefA (Vc D i)) (pl : Pl0 → Pl D.host.E) : Type :=
   Bridge.FamReal D A3.A cX.coef (fun i => (cV i).coef) (fun t => levEnvOf D.sp.X' L.βX (L.datXt t) pl (A3.A.ok t))

@@ -248,7 +248,6 @@ end GlobalTheory.CompanionTheory.LatSpan
 
 noncomputable section
 
-open scoped TensorProduct
 open Module NumberField
 
 namespace GlobalTheory.CompanionTheory.LatSpan
@@ -611,8 +610,6 @@ end PiLocalization₂
 end GlobalTheory.CompanionTheory.LatSpan
 
 noncomputable section
-open scoped TensorProduct
-open Module NumberField
 namespace GlobalTheory.CompanionTheory.LatSpan
 
 section Alg
@@ -633,8 +630,6 @@ end Alg
 end GlobalTheory.CompanionTheory.LatSpan
 
 noncomputable section
-open scoped TensorProduct
-open Module NumberField
 namespace GlobalTheory.CompanionTheory.LatSpan
 open GlobalTheory.IndefiniteRowSideFullHecke.SemilinearExtensionBases GlobalTheory.IndefiniteRowSideFullHecke.FractionalBaseInclusion Formalism.BasicNotions Formalism.IndefR.NX Formalism.IndefR.Arith
 
@@ -766,8 +761,6 @@ end GlobalTheory.CompanionTheory.LatSpan
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH NumberField IsDedekindDomain Formalism.L2 Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Cx Formalism.IndefR.FWT Formalism.IndefR.NX Formalism.L2.Pj
 open Formalism.L2.Rows
-open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompanionTheory.LatSpan
 

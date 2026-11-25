@@ -19,8 +19,6 @@ open CategoryTheory Limits
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section FixedVector
 
 variable {W : Type u} [Group W]

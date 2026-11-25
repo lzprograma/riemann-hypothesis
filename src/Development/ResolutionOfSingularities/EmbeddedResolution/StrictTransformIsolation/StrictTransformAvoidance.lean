@@ -5,50 +5,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongRes
 import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.GenericPointImage
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsOpenImmersion
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -59,9 +16,6 @@ open CategoryTheory AlgebraicGeometry
 noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
-
-private theorem comp_base_apply {A B C : Scheme.{u}} (f : A ⟶ B) (g : B ⟶ C) (x : ↥A) :
-    (f ≫ g).base x = g.base (f.base x) := by simp
 
 namespace EmbeddedBlowupSequence
 
@@ -119,7 +73,6 @@ theorem isOpenImmersion_ι_comp_blowdown (S : EmbeddedBlowupSequence k Y pY) (i 
     AlgebraicGeometry.IsOpenImmersion (U.ι ≫ S.blowdown i) := by
   have : CategoryTheory.IsIso (S.blowdown i ∣_ S.ambientCenterSupportCompl i) :=
     S.isIso_blowdown_restrict_ambientCenterSupportCompl i hi
-  have : AlgebraicGeometry.IsOpenImmersion (S.blowdown i ∣_ S.ambientCenterSupportCompl i) := inferInstance
   have hle : U ≤ (TopologicalSpace.Opens.map (S.blowdown i).base).obj (S.ambientCenterSupportCompl i) := by
     intro x hx
     exact hU hx
@@ -165,7 +118,7 @@ private theorem mem_closure_singleton_of_base_mem {X₀ X₁ : Scheme.{u}}
   have hvx : V.ι.base (⟨x, hx⟩ : ↥V) = x := rfl
   have hvy : V.ι.base (⟨y, hy⟩ : ↥V) = y := rfl
   have h' : (V.ι ≫ π).base (⟨y, hy⟩ : ↥V) ⤳ (V.ι ≫ π).base (⟨x, hx⟩ : ↥V) := by
-    rw [comp_base_apply V.ι π (⟨x, hx⟩ : ↥V), comp_base_apply V.ι π (⟨y, hy⟩ : ↥V), hvx, hvy]
+    rw [Scheme.Hom.comp_apply V.ι π (⟨x, hx⟩ : ↥V), Scheme.Hom.comp_apply V.ι π (⟨y, hy⟩ : ↥V), hvx, hvy]
     exact specializes_iff_mem_closure.mpr h
   have hspec : (⟨y, hy⟩ : ↥V) ⤳ (⟨x, hx⟩ : ↥V) := hoe.isInducing.specializes_iff.mp h'
   have hfin := hspec.map V.ι.base.hom.continuous
@@ -503,12 +456,12 @@ private theorem eq_of_specializes_iso_hom {X B : Scheme.{u}} (e : X ≅ B) (x : 
   have hcont : Continuous ⇑e.inv.base := e.inv.base.hom.continuous
   have h1 : e.inv.base w ⤳ e.inv.base (e.hom.base x) := hw.map hcont
   have h2 : e.inv.base (e.hom.base x) = x := by
-    rw [← comp_base_apply e.hom e.inv x, e.hom_inv_id]
+    rw [← Scheme.Hom.comp_apply e.hom e.inv x, e.hom_inv_id]
     simp
   rw [h2] at h1
   have h3 := h _ h1
   have h4 : e.hom.base (e.inv.base w) = w := by
-    rw [← comp_base_apply e.inv e.hom w, e.inv_hom_id]
+    rw [← Scheme.Hom.comp_apply e.inv e.hom w, e.inv_hom_id]
     simp
   rw [← h4, h3]
 
@@ -723,7 +676,7 @@ private theorem agreesWithComponentsOrderOne_succ {k : Type u} [Field k] [CharZe
     refine FunctorialResolution.EmbeddedResolution.comap_vanishingIdeal_of_isOpenImmersion_of_coe_eq
       (U.ι ≫ (D.toEmbeddedBlowupSequence A).blowdown i) _ _ ?_
     ext y
-    have hcb := comp_base_apply U.ι ((D.toEmbeddedBlowupSequence A).blowdown i) y
+    have hcb := Scheme.Hom.comp_apply U.ι ((D.toEmbeddedBlowupSequence A).blowdown i) y
     have hiff := EmbeddedBlowupSequence.mem_image_strictTransformι_iff_of_notMem_ambientCenter
       (D.toEmbeddedBlowupSequence A) hN i hi' C η hηgen C' hη' (U.ι.base y) (hmemU y)
     constructor
@@ -756,7 +709,7 @@ private theorem agreesWithComponentsOrderOne_succ {k : Type u} [Field k] [CharZe
     have hφp : (U.ι ≫ (D.toEmbeddedBlowupSequence A).blowdown i).base
         (⟨((D.toEmbeddedBlowupSequence A).strictTransformι (i + 1)).base η, hxU⟩ : ↥U)
         = ((D.toEmbeddedBlowupSequence A).strictTransformι i).base (((D.toEmbeddedBlowupSequence A).strictTransformMap i).base η) := by
-      rw [comp_base_apply U.ι ((D.toEmbeddedBlowupSequence A).blowdown i)
+      rw [Scheme.Hom.comp_apply U.ι ((D.toEmbeddedBlowupSequence A).blowdown i)
         (⟨((D.toEmbeddedBlowupSequence A).strictTransformι (i + 1)).base η, hxU⟩ : ↥U)]
       exact hkey.symm
     calc FunctorialResolution.EmbeddedResolution.orderAt ((principalizationOfEmbedding k Y pY D A).ideal (i + 1))

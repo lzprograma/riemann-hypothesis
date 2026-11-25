@@ -2,54 +2,8 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
 public import Mathlib.LinearAlgebra.Vandermonde
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.MvPolynomial.Funext
 public import Mathlib.Topology.MetricSpace.Pseudo.Pi
@@ -208,23 +162,10 @@ lemma prod_dvd_of_primes {ι : Type*} (s : Finset ι) (f : ι → MvPolynomial �
 lemma homogeneousComponent_mul_of_isHomogeneous {Δ : MvPolynomial σ ℝ} {D : ℕ}
     (hΔ : Δ.IsHomogeneous D) (l : MvPolynomial σ ℝ) (n : ℕ) :
     homogeneousComponent (D + n) (Δ * l) = Δ * homogeneousComponent n l := by
-  conv_lhs => rw [← sum_homogeneousComponent l]
-
-  rw [Finset.mul_sum, map_sum]
-  have key : ∀ m, homogeneousComponent (D + n) (Δ * homogeneousComponent m l) =
-      if n = m then Δ * homogeneousComponent n l else 0 := by
-    intro m
-    rw [homogeneousComponent_of_mem (hΔ.mul (homogeneousComponent_isHomogeneous m l))]
-    by_cases h : n = m
-    · subst h; simp
-    · rw [if_neg (by omega), if_neg h]
-  simp_rw [key]
-  rw [Finset.sum_ite_eq]
-  split_ifs with h
-  · rfl
-  · rw [homogeneousComponent_eq_zero, mul_zero]
-    simp only [Finset.mem_range, not_lt] at h
-    omega
+  let _ := MvPolynomial.gradedAlgebra (σ := σ) (R := ℝ)
+  simp_rw [← decomposition.decompose'_apply]
+  exact DirectSum.coe_decompose_mul_add_of_left_mem (homogeneousSubmodule σ ℝ) (j := n) (b := l)
+    ((mem_homogeneousSubmodule D Δ).mpr hΔ)
 
 end General
 
@@ -286,7 +227,7 @@ lemma rename_swap_delta (τ₀ : T) {a b : Fin N} (hab : a ≠ b) :
         simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.vandermonde_apply, map_pow,
           map_neg, rename_X]
         rw [Equiv.swap_apply_of_ne_of_ne (by simp [hτ]) (by simp [hτ])]
-      rw [this, if_neg hτ, one_mul]
+      rw [this, ite_eq_right hτ, one_mul]
   unfold antisymDelta
   simp_rw [delta_factor_eq_det]
   rw [map_prod]
@@ -368,7 +309,7 @@ theorem AntisymDivisible.proof : AntisymDivisible.Statement := by
   have hΔh := isHomogeneous_delta (T := T) (N := N)
   have hP1 : P = antisymDelta T N * homogeneousComponent 1 l := by
     have := homogeneousComponent_mul_of_isHomogeneous hΔh l 1
-    rw [← hl, homogeneousComponent_of_mem hPh, if_pos rfl] at this
+    rw [← hl, homogeneousComponent_of_mem hPh, ite_eq_left rfl] at this
     exact this
   have hΔ0 : antisymDelta T N ≠ 0 := by
     rw [hΔ, Finset.prod_ne_zero_iff]
@@ -402,7 +343,7 @@ theorem AntisymDivisible.proof : AntisymDivisible.Statement := by
     simp only [map_smul, rename_X] at h
     rw [coeff_lin, coeff_lin] at h
     simp only [Equiv.swap_apply_eq_iff, Equiv.swap_apply_left, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true] at h
+      Finset.mem_univ, ite_true] at h
     exact h.symm
   refine ⟨l₁, ⟨?_, ?_⟩, hP1⟩
   · exact homogeneousComponent_isHomogeneous 1 l

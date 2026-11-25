@@ -17,11 +17,7 @@ open Filter Topology Classical
 open scoped TensorProduct
 open Formalism.IndefR.Datum
 
-set_option synthInstance.maxHeartbeats 160000
-
 namespace Formalism.IndefR.Fin.LevelGroupLemmas
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Adeles
 
@@ -38,8 +34,8 @@ theorem evalV_sglS (A : Finset (HeightOneSpectrum (𝓞 F))) (w : HeightOneSpect
   have : ∀ v ∈ A, evalV F w (sglV v (1 : v.adicCompletion F)) = if w = v then 1 else 0 := by
     intro v _
     by_cases h : w = v
-    · subst h; rw [sglV_same, if_pos rfl]
-    · rw [sglV_ne v _ h, if_neg h]
+    · subst h; rw [sglV_same, ite_eq_left rfl]
+    · rw [sglV_ne v _ h, ite_eq_right h]
   rw [Finset.sum_congr rfl this, Finset.sum_ite_eq]
 
 def idemS (A : Finset (HeightOneSpectrum (𝓞 F))) : AF F := pairA F 0 (sglS A)
@@ -69,7 +65,7 @@ theorem idemS_mul_sA {A : Finset (HeightOneSpectrum (𝓞 F))} {v : HeightOneSpe
   apply af_ext; intro w
   rw [map_mul, evalV_sglS, map_zero]
   by_cases h : w = v
-  · subst h; rw [if_neg hv, zero_mul]
+  · subst h; rw [ite_eq_right hv, zero_mul]
   · rw [sglV_ne v _ h, mul_zero]
 
 theorem sA_idem (v : HeightOneSpectrum (𝓞 F)) : IsIdempotentElem (sA v (1 : v.adicCompletion F)) := by

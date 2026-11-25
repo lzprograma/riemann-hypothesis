@@ -5,6 +5,7 @@ public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Stat
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
 import Mathlib.Algebra.Order.Star.Int
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -39,29 +40,8 @@ theorem aeval_eq_zero_of_mem {z : (Σ k, ι k) → Φ} {f : MRing ι O} (hf : f 
 
 theorem pointConeMap_of_homog (z : (Σ k, ι k) → Φ) {f : MRing ι O} {b : K → ℕ} (hf : IsMultiHomog f b) :
     pointConeMap O z f = C (aeval z f) * ∏ k, X k ^ b k := by
-  conv_lhs => rw [f.as_sum]
-  conv_rhs => rw [f.as_sum]
-
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hw : ∀ k, ∑ i : ι k, m ⟨k, i⟩ = b k := by
-    intro k
-    have h1 := congrFun (hf (mem_support_iff.mp hm)) k
-    rw [Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)] at h1
-    rw [← h1, Finset.sum_apply, Fintype.sum_sigma, Finset.sum_eq_single k]
-    · simp [blockWeight]
-    · intro k' _ hk'
-      simp [blockWeight, Ne.symm hk']
-    · simp
-  simp only [pointConeMap, aeval_monomial]
-  rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
-  simp only [mul_pow, Finset.prod_mul_distrib, map_mul, map_prod, map_pow, mul_assoc]
-  have hB : ∏ x : (Σ k, ι k), (X x.1 : MvPolynomial K Φ) ^ m x = ∏ k, X k ^ b k := by
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    show ∏ i : ι k, (X k : MvPolynomial K Φ) ^ m ⟨k, i⟩ = _
-    rw [Finset.prod_pow_eq_pow_sum, hw k]
-  rw [hB, MvPolynomial.algebraMap_apply]
+  classical
+  exact BlockScaling.aeval_cone_block z fun _ hm => BlockScaling.sum_eq_of_isWeightedHomogeneous_single hf hm
 
 theorem mem_of_homog {z : (Σ k, ι k) → Φ} {f : MRing ι O} {b : K → ℕ} (hf : IsMultiHomog f b)
     (h0 : aeval z f = 0) : f ∈ pointIdeal O z := by

@@ -239,8 +239,8 @@ theorem f_eq_rho (h : BasePi ST π) (hP : P ∈ ST) (hov : IsOver v P) {SG Q : F
   have e4 : algebraMap E (P.adicCompletion E) (star (π : E)) * adAt F P (Col2.pullV y z (lastIdx n)) =
       ∑ j, algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E (if j = lastIdx n then cO E π else 0)) *
         adAt F P (Col2.pullV y z j) := by
-    rw [Finset.sum_eq_single (lastIdx n) (fun j _ hj => by rw [if_neg hj, map_zero, map_zero, zero_mul])
-      (fun hh => absurd (Finset.mem_univ _) hh), if_pos rfl]
+    rw [Finset.sum_eq_single (lastIdx n) (fun j _ hj => by rw [ite_eq_right hj, map_zero, map_zero, zero_mul])
+      (fun hh => absurd (Finset.mem_univ _) hh), ite_eq_left rfl]
     rfl
   show Valued.v (adAt F P _ - _) < 1
 
@@ -296,7 +296,6 @@ theorem exists_equiv_level {T f₀ : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F)
 
 end Loc
 
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 theorem dualL_one {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] (hc : CMData F E)
     {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) : Formalism.L2.Forms.dualL (hc.sig : E →+* E) 1 L = Formalism.HermitianLatticesTheory.dual (hStd E n) L := by

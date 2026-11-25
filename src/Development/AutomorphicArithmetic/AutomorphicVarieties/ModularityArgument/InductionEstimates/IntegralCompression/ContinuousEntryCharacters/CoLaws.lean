@@ -165,13 +165,6 @@ omit [Fintype ι] in
 private theorem GG_cmm (C : Co K ι) (x : ι → GL (Fin 2) ℂ) (h : FA K 2) : Commute (GG C x) (fin1 h) := cmm _ h
 
 omit [Fintype ι] in
-private theorem ms_cont (i : ι) : Continuous fun m : GL (Fin 2) ℂ => (Pi.mulSingle i m : ι → GL (Fin 2) ℂ) :=
-  continuous_pi fun j => by
-    by_cases h : j = i
-    · subst h; simpa using continuous_id'
-    · simpa [h] using continuous_const
-
-omit [Fintype ι] in
 private theorem spl (C : Co K ι) (i : ι) (g : G1 K 2) : ∃ a h, g = C.gl i a * h ∧ ∀ b, Commute h (C.gl i b) := by
   obtain ⟨A, u, rfl⟩ := MultiplicityOne.exists_archProj_mul_finProj g
   obtain ⟨x, hx⟩ : ∃ x, archProj K 2 A = GG C x := ⟨_, GG_eq C ⟨A, Subgroup.mem_top _⟩⟩
@@ -229,7 +222,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.coLaws :
     fun i a b => ?_, fun i j hij a b => ?_, fun i a h => cmm _ h, spl C, lst C, blkA C, fun n k h => cmm _ h, dec⟩
   · haveI := hμ.prob
     exact haar _ μ hμ.left hμ.right
-  · exact continuous_archP.comp ((C.Ψ 2).symm.continuous.comp (ms_cont i))
+  · exact continuous_archP.comp
+      ((C.Ψ 2).symm.continuous.comp (continuous_mulSingle (A := fun _ => GL (Fin 2) ℂ) i))
   · rw [gl_eq, gl_eq, gl_eq, Pi.mulSingle_mul, map_mul]
   · rw [gl_eq, gl_eq]
     exact (Pi.mulSingle_commute (f := fun _ => GL (Fin 2) ℂ) hij a b).map (GG C)

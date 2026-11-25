@@ -73,7 +73,7 @@ theorem _root_.GlobalTheory.StepFacNe.chrW_ram {F E : Type} [Field F]
         _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.chrW χ τ x ≠ 1 := by
   have hw := _root_.GlobalTheory.AdelicU.splitPrime_under τ
   unfold _root_.GlobalTheory.LFun.UnrAt at h
-  push_neg at h
+  push Not at h
   obtain ⟨y, hy1, hy2⟩ := h
   unfold _root_.Formalism.L2.Host.IsUnitAt at hy1
   obtain ⟨a, ha⟩ := (_root_.GlobalTheory.LFun.SplitTie.complMap_bijective τ hw).2 (y : _)

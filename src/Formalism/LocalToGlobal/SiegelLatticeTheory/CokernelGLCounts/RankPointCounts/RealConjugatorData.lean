@@ -15,8 +15,6 @@ open scoped ENNReal
 
 namespace Formalism.L2.SG.RealConjugatorData
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def toUJn {n : ℕ} {ε : Fin n → Bool} (M : Matrix (Fin n) (Fin n) ℂ) (hM : Mᴴ * Formalism.REAL.Jm ε * M = Formalism.REAL.Jm ε) :
     Formalism.REAL.UJ ε :=
   ⟨⟨M, Formalism.REAL.Jm ε * Mᴴ * Formalism.REAL.Jm ε,

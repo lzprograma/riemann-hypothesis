@@ -25,61 +25,14 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimura
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.CoefFacts
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.RootCharactersNeOneAtBasepoint
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.SuppMMono
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
 import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
 import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.Separation.CompletelyRegular
 import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Topology.Algebra.ClopenNhdofOne
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
 
@@ -544,7 +497,7 @@ theorem UpperTheory.V.Ws.Gys.ccEx :
         exact j.commutes a
       rw [hj, InfinitePlace.mk_embedding]
   refine ⟨fun w => if hw : w.IsReal then (key w hw).choose else 1, fun w hw => ?_⟩
-  simp only [dif_pos hw]
+  simp only [dite_eq_left hw]
   exact (key w hw).choose_spec
 end -- clump:auto
 end -- clump:auto
@@ -626,8 +579,7 @@ theorem UpperTheory.V.Ws.Gys.locNe :
       ext x
       simp [ReciprocityTheory.Gal.H0, hρ]
     rw [htop, Nat.card_congr Submodule.topEquiv.toEquiv, Nat.card_zmod, pow_one]
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   haveI hz : Subsingleton ↥(ReciprocityTheory.Gal.Z1 ρ) :=
     ⟨fun a b => Subtype.ext ((hne a a.2).trans (hne b b.2).symm)⟩
   haveI hs : Subsingleton (ReciprocityTheory.Gal.H1 ρ) :=
@@ -800,9 +752,9 @@ theorem UpperTheory.V.Ws.Gys.selBig :
   have hloc : ∀ v : S, (if v.1 ∈ S₀ then 1 else 2 * Nat.card M) ≤ Nat.card (gysL S₀ S ρ Av m0 v) := by
     intro v
     by_cases hv : v.1 ∈ S₀
-    · rw [if_pos hv, show gysL S₀ S ρ Av m0 v = ⊥ from if_pos hv]
+    · rw [ite_eq_left hv, show gysL S₀ S ρ Av m0 v = ⊥ from ite_eq_left hv]
       exact Nat.card_pos
-    · rw [if_neg hv, show gysL S₀ S ρ Av m0 v = _ from if_neg hv]
+    · rw [ite_eq_right hv, show gysL S₀ S ρ Av m0 v = _ from ite_eq_right hv]
       have ht := htr v.1 v.2 hv (Av v) (hA v)
       obtain ⟨φ₁, h1, φ₂, h2, a1, a2, g, a3, a4⟩ := locHoms P.loc.lt P.loc.le P.uo F Ω l (Av v) v.1 (hA v)
         (fun h => hv (hS₀ _ h)) (fun g hg => (ht g hg).2)
@@ -860,13 +812,13 @@ theorem UpperTheory.V.Ws.Gys.selMem :
     show f.1 (toGS Ω _ g) = 0
     rw [h2, h1]
   · have h := hloc ⟨v, hS hv⟩
-    rw [show gysL S₀ S ρ Av m0 ⟨v, hS hv⟩ = ⊥ from if_pos hv, Submodule.mem_bot] at h
+    rw [show gysL S₀ S ρ Av m0 ⟨v, hS hv⟩ = ⊥ from ite_eq_left hv, Submodule.mem_bot] at h
     obtain ⟨m, hm⟩ := (mem_coboundaries1 _ _).1 ((Submodule.Quotient.mk_eq_zero _).1 h)
     exact (UpperTheory.V.Ws.Gys.cocConj F Ω R M (ρ.comp (toGS Ω _)) _ hZ v (Av ⟨v, hS hv⟩) A (hA ⟨v, hS hv⟩) hAv).1
       ⟨m, fun g hg => hm ⟨g, hg⟩⟩
   · have h := hloc v
     rw [show gysL S₀ S ρ Av m0 v = ramLine (ρ.comp (locFam S Av v)) ((Ine (F := F) (Av v)).subgroupOf (Dec (F := F) (Av v))) m0
-      from if_neg hv, mem_ramLine] at h
+      from ite_eq_right hv, mem_ramLine] at h
     obtain ⟨f', h1, h2⟩ := h
     obtain ⟨m, hm⟩ := (mem_coboundaries1 _ _).1 ((Submodule.Quotient.eq _).1 h2)
     have hd : g ∈ Dec (F := F) (Av v) := Ine_le_Dec _ hg
@@ -1174,7 +1126,7 @@ theorem UpperTheory.V.Ws.Gys.placesQ :
   let f : ℕ → HeightOneSpectrum (𝓞 T.F) := fun w => if hw : w.Prime then (ex_place T.F hw).choose else v0
   have hf : ∀ w (hw : w.Prime), (w : 𝓞 T.F) ∈ (f w).asIdeal := by
     intro w hw
-    simp only [f, dif_pos hw]
+    simp only [f, dite_eq_left hw]
     exact (ex_place T.F hw).choose_spec
   have himg := hinf.image (f := f) (by
     intro a ha b hb hab

@@ -4,43 +4,7 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriAndMaximalCompactCriteria
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VLtOneOfOrdLEqOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -50,8 +14,6 @@ open NumberField IsDedekindDomain Matrix Polynomial
 open GlobalTheory.BCT GlobalTheory.UnitaryBC PositivityTheory.Rg.Bc.ArchbcB.B PositivityTheory.Rg.BcB.F.MT Formalism.UG
 open PositivityTheory.Rg.BcN.F2 (mconv)
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.CompanionTheory.DcosProduct
 
@@ -109,9 +71,9 @@ theorem hint_coset {K I : Subgroup G} (hIK : I ≤ K) {u : G → ℂ} (z₀ : G)
     constructor
     · rintro ⟨h, -⟩
       have h' : u (z₀ * g) = u z₀ := h z₀
-      rw [hu, hu, inv_mul_cancel, if_pos (one_mem _), inv_mul_cancel_left] at h'
+      rw [hu, hu, inv_mul_cancel, ite_eq_left (one_mem _), inv_mul_cancel_left] at h'
       by_contra hg
-      rw [if_neg hg] at h'
+      rw [ite_eq_right hg] at h'
       exact zero_ne_one h'
     · intro hg
       refine ⟨fun x => ?_, hIK hg⟩
@@ -121,9 +83,9 @@ theorem hint_coset {K I : Subgroup G} (hIK : I ≤ K) {u : G → ℂ} (z₀ : G)
       simp only [this]
   unfold hint
   rw [hR, finsum_eq_single _ (z₀ : G ⧸ I)]
-  · rw [hu, if_pos (QuotientGroup.eq.1 (QuotientGroup.out_eq' _).symm), mul_one]
+  · rw [hu, ite_eq_left (QuotientGroup.eq.1 (QuotientGroup.out_eq' _).symm), mul_one]
   · intro q hq
-    rw [hu, if_neg]
+    rw [hu, ite_eq_right]
     intro h
     apply hq
     rw [← QuotientGroup.out_eq' q]
@@ -139,15 +101,15 @@ theorem hint_conv {K I : Subgroup G} (hIK : I ≤ K) {t t' : G}
     hint K (fun z => (if z ∈ dc I t then (1 : ℂ) else 0) * (if z⁻¹ * m ∈ dc I t' then 1 else 0)) =
       ((I.relIndex K : ℕ) : ℂ)⁻¹ * (if m ∈ dc I (t * t') then 1 else 0) := by
   by_cases hm : m ∈ dc I (t * t')
-  · rw [if_pos hm, mul_one]
+  · rw [ite_eq_left hm, mul_one]
     obtain ⟨i, hi, i', hi', rfl⟩ := hm
     refine hint_coset hIK (i * t) fun z => ?_
     by_cases hz : (i * t)⁻¹ * z ∈ I
     · have h1 : z ∈ dc I t := ⟨i, hi, _, hz, by group⟩
       have h2 : z⁻¹ * (i * (t * t') * i') ∈ dc I t' :=
         ⟨((i * t)⁻¹ * z)⁻¹, inv_mem hz, i', hi', by group⟩
-      rw [if_pos h1, if_pos h2, if_pos hz, one_mul]
-    · rw [if_neg hz]
+      rw [ite_eq_left h1, ite_eq_left h2, ite_eq_left hz, one_mul]
+    · rw [ite_eq_right hz]
       by_cases h1 : z ∈ dc I t
       · by_cases h2 : z⁻¹ * (i * (t * t') * i') ∈ dc I t'
         · exfalso
@@ -163,15 +125,15 @@ theorem hint_conv {K I : Subgroup G} (hIK : I ≤ K) {t t' : G}
           have := inv_mul_mem_of_dc hf hc h1' h2'
           have e : (i * t)⁻¹ * z = t⁻¹ * (i⁻¹ * z) := by group
           rwa [e]
-        · rw [if_neg h2, mul_zero]
-      · rw [if_neg h1, zero_mul]
-  · rw [if_neg hm, mul_zero]
+        · rw [ite_eq_right h2, mul_zero]
+      · rw [ite_eq_right h1, zero_mul]
+  · rw [ite_eq_right hm, mul_zero]
     refine hint_zero K fun z => ?_
     by_cases h1 : z ∈ dc I t
     · by_cases h2 : z⁻¹ * m ∈ dc I t'
       · exact absurd (mem_dc_mul hf h1 h2) hm
-      · rw [if_neg h2, mul_zero]
-    · rw [if_neg h1, zero_mul]
+      · rw [ite_eq_right h2, mul_zero]
+    · rw [ite_eq_right h1, zero_mul]
 
 end Abstract
 
@@ -302,9 +264,9 @@ theorem dcos_mul_eq {a b : ℕ} (w : Pl E) (t : GLw a w) (s : GLw b w) (y : GLw 
   unfold dcos
   by_cases h1 : ∃ x ∈ iwGL a w, ∃ z ∈ iwGL a w, y.1 = x * t * z
   · by_cases h2 : ∃ x ∈ iwGL b w, ∃ z ∈ iwGL b w, y.2 = x * s * z
-    · rw [if_pos h1, if_pos h2, if_pos (key.2 ⟨h1, h2⟩), one_mul]
-    · rw [if_neg h2, if_neg fun h => h2 (key.1 h).2, mul_zero]
-  · rw [if_neg h1, if_neg fun h => h1 (key.1 h).1, zero_mul]
+    · rw [ite_eq_left h1, ite_eq_left h2, ite_eq_left (key.2 ⟨h1, h2⟩), one_mul]
+    · rw [ite_eq_right h2, ite_eq_right fun h => h2 (key.1 h).2, mul_zero]
+  · rw [ite_eq_right h1, ite_eq_right fun h => h1 (key.1 h).1, zero_mul]
 
 theorem dcosMul : DcosMul := by
   intro E _ _ _ w ϖ hϖ a b x x' y y' hx hx' hy hy'

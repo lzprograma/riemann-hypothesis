@@ -3,65 +3,11 @@ module
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.LogDerivativeIdeal
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativesInBlowupCharts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
 namespace FunctorialResolution.EmbeddedResolution
 namespace EtaleCoordinates
-
-private theorem finset_sum_derivation_apply {R : Type*} [CommRing R] {A : Type*} [CommRing A]
-    [Algebra R A] {μ : Type*} (u : Finset μ) (D : μ → Derivation R A A) (x : A) :
-    (∑ j ∈ u, D j) x = ∑ j ∈ u, (D j) x := by
-  classical
-  refine Finset.induction_on u ?_ ?_
-  · simp
-  · intro b t hb ih
-    rw [Finset.sum_insert hb, Finset.sum_insert hb, ← ih]
-    simp
-
-private theorem smul_derivation_apply {R : Type*} [CommRing R] {A : Type*} [CommRing A]
-    [Algebra R A] (a : A) (D : Derivation R A A) (x : A) : (a • D) x = a * D x := by
-  simp
 
 variable (k : Type*) [CommRing k] (ι : Type*) [DecidableEq ι]
   (S : Type*) [CommRing S] [Algebra k S] [Algebra (MvPolynomial ι k) S]
@@ -168,15 +114,16 @@ theorem map_logDerivIdeal_le_span_pow_mul [Fintype ι]
         ∈ logDerivIdeal k (Ideal.span {coord k ι S₁ i}) J₁ := by
       have h := derivation_apply_mem_logDerivIdeal k (Ideal.span {coord k ι S₁ i}) J₁
         ((coord k ι S₁ i) • partialDeriv k ι S₁ i) htanmul hf₁
-      rwa [smul_derivation_apply] at h
+      rwa [smul_apply, smul_eq_mul] at h
     have hDi : D (coord k ι S i) ∈ Ideal.span {coord k ι S i} :=
       (mem_tangentDerivations_span_singleton k (coord k ι S i) D).mp hD
     obtain ⟨a, ha⟩ := Ideal.mem_span_singleton'.mp hDi
     have hDf : φ (D f) = ∑ j : ι, φ (D (coord k ι S j)) * φ (partialDeriv k ι S j f) := by
       have h0 : D f = ∑ j : ι, D (coord k ι S j) * partialDeriv k ι S j f := by
-        conv_lhs => rw [eq_sum_smul_partialDeriv k ι S D]
-        rw [finset_sum_derivation_apply]
-        exact Finset.sum_congr rfl (fun j _ => smul_derivation_apply _ _ _)
+        conv_lhs =>
+          rw [← Derivation.coeFn_coe, eq_sum_smul_partialDeriv k ι S D,
+            Derivation.coe_sum_linearMap, LinearMap.sum_apply]
+        simp only [Derivation.coeFn_coe, smul_apply, smul_eq_mul]
 
       rw [h0, map_sum]
       exact Finset.sum_congr rfl (fun j _ => map_mul φ _ _)

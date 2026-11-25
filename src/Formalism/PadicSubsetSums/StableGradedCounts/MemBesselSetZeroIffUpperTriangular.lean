@@ -3,58 +3,7 @@ module
 public import Formalism.PadicSubsetSums.CentralIdempotents.EigenbasisOfDistinctRoots
 public import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
 public import Lemmata.TwistedIdempotents.TwistedIdem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -420,8 +369,7 @@ theorem desc_invol (τ : Equiv.Perm (Fin N))
       rw [h2, hj0]
     · exfalso
       have hp : ∃ p, p < i ∧ i < τ p := by
-        by_contra hcon
-        push_neg at hcon
+        by_contra! hcon
         have hmaps : ∀ p ∈ Finset.Iio i, τ p ∈ (Finset.Iio i).erase (τ i) := by
           intro p hp
           have hp' : p < i := Finset.mem_Iio.mp hp
@@ -450,8 +398,7 @@ theorem desc_invol (τ : Equiv.Perm (Fin N))
     rcases lt_or_gt_of_ne hne with h1 | h1
     · exfalso
       have hp : ∃ p, i < p ∧ τ p < i := by
-        by_contra hcon
-        push_neg at hcon
+        by_contra! hcon
         have hmaps : ∀ p ∈ Finset.Ioi i, τ p ∈ (Finset.Ioi i).erase (τ i) := by
           intro p hp
           have hp' : i < p := Finset.mem_Ioi.mp hp
@@ -616,9 +563,9 @@ theorem bruhat_step (g : GL (Fin N) K) : ∀ k : ℕ, k ≤ N → ∃ u u' : GL 
     set a : Fin N → K := fun i => if i < r0 then - h i kk / d else 0 with hadef
     set b : Fin N → K := fun c => if kk < c then - h r0 c / d else 0 with hbdef
     have haUT : IsUT (rowOp a r0) := rowOp_isUT a r0 (fun i hi => by
-      simp only [hadef]; rw [if_neg (not_lt.mpr hi)])
+      simp only [hadef]; rw [ite_eq_right (not_lt.mpr hi)])
     have hbUT : IsUT (colOp kk b) := colOp_isUT kk b (fun c hc => by
-      simp only [hbdef]; rw [if_neg (not_lt.mpr hc)])
+      simp only [hbdef]; rw [ite_eq_right (not_lt.mpr hc)])
     refine ⟨utMk _ haUT * u, u' * utMk _ hbUT, ?_, ?_, Function.update p kk r0, ?_⟩
     · rw [Units.val_mul]; exact IsUT.mul haUT hu
     · rw [Units.val_mul]; exact IsUT.mul hu' hbUT
@@ -644,13 +591,13 @@ theorem bruhat_step (g : GL (Fin N) K) : ∀ k : ℕ, k ≤ N → ∃ u u' : GL 
       intro i
       rcases lt_trichotomy i r0 with h1 | h1 | h1
       · simp only [hadef]
-        rw [if_pos h1, if_neg (ne_of_lt h1)]
+        rw [ite_eq_left h1, ite_eq_right (ne_of_lt h1)]
         field_simp
         ring
       · simp only [hadef]
-        rw [if_pos h1, h1, if_neg (lt_irrefl _), zero_mul, add_zero]
+        rw [ite_eq_left h1, h1, ite_eq_right (lt_irrefl _), zero_mul, add_zero]
       · simp only [hadef]
-        rw [if_neg (ne_of_gt h1), if_neg (not_lt.mpr h1.le), hmax i h1, zero_mul, add_zero]
+        rw [ite_eq_right (ne_of_gt h1), ite_eq_right (not_lt.mpr h1.le), hmax i h1, zero_mul, add_zero]
     have F4 : ∀ j : Fin N, (j : ℕ) < k → a (p j) = 0 := by
       intro j hj
       have hne : kk ≠ j := fun h'' => by rw [← h''] at hj; simp [hkk] at hj
@@ -658,8 +605,8 @@ theorem bruhat_step (g : GL (Fin N) K) : ∀ k : ℕ, k ≤ N → ∃ u u' : GL 
       rw [(hp j hj).2.2 kk hne]
       simp
     have F5 : ∀ c, c ≤ kk → b c = 0 := fun c hc => by
-      simp only [hbdef]; rw [if_neg (not_lt.mpr hc)]
-    have F6 : a r0 = 0 := by simp only [hadef]; rw [if_neg (lt_irrefl _)]
+      simp only [hbdef]; rw [ite_eq_right (not_lt.mpr hc)]
+    have F6 : a r0 = 0 := by simp only [hadef]; rw [ite_eq_right (lt_irrefl _)]
     intro j hj
     by_cases hjk : j = kk
     · rw [hjk, Function.update_self]
@@ -667,14 +614,14 @@ theorem bruhat_step (g : GL (Fin N) K) : ∀ k : ℕ, k ≤ N → ∃ u u' : GL 
       · rw [hform, F6, F5 kk le_rfl]
         simpa using hd
       · intro i hi
-        rw [hform, F5 kk le_rfl, mul_zero, add_zero, F3, if_neg hi]
+        rw [hform, F5 kk le_rfl, mul_zero, add_zero, F3, ite_eq_right hi]
       · intro c hc
         rw [hform, F6, zero_mul, zero_mul, add_zero, add_zero]
         rcases lt_or_gt_of_ne hc with h1 | h1
         · rw [F5 c h1.le, mul_zero, add_zero]
           exact F2 c h1
         · simp only [hbdef]
-          rw [if_pos h1]
+          rw [ite_eq_left h1]
           field_simp
           ring
     · have hjlt : (j : ℕ) < k := by
@@ -689,7 +636,7 @@ theorem bruhat_step (g : GL (Fin N) K) : ∀ k : ℕ, k ≤ N → ∃ u u' : GL 
         rw [hform, F5 j hjle, F2 j hjlt, (hp j hjlt).2.1 i hi]
         simp
       · intro c hc
-        rw [hform, F3, if_neg (F1 j hjlt), F4 j hjlt, (hp j hjlt).2.2 c hc]
+        rw [hform, F3, ite_eq_right (F1 j hjlt), F4 j hjlt, (hp j hjlt).2.2 c hc]
         simp
 
 theorem bruhat_exists (g : GL (Fin N) K) : ∃ u u' : GL (Fin N) K,
@@ -787,8 +734,8 @@ theorem flipM_one : flipM (1 : Matrix (Fin N) (Fin N) K) = 1 := by
   rw [flipM_apply, Matrix.one_apply, Matrix.one_apply]
   simp only [Fin.rev_inj]
   by_cases h : i = j
-  · rw [if_pos h, if_pos h.symm]
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_left h, ite_eq_left h.symm]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 
 theorem flipM_flipM (A : Matrix (Fin N) (Fin N) K) : flipM (flipM A) = A := by
   ext i j
@@ -845,13 +792,13 @@ theorem elM_isUT (p q : Fin N) (v : K) (h : p < q) : IsUT (elM p q v) := by
   constructor
   · intro i
     simp only [elM, Matrix.add_apply, Matrix.one_apply_eq, Matrix.of_apply]
-    rw [if_neg, add_zero]
+    rw [ite_eq_right, add_zero]
     rintro ⟨h1, h2⟩
     rw [← h1, ← h2] at h
     exact lt_irrefl _ h
   · intro i j hij
     simp only [elM, Matrix.add_apply, Matrix.one_apply_ne (ne_of_gt hij), Matrix.of_apply, zero_add]
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     rw [← h1, ← h2] at h
     exact lt_asymm h hij
@@ -927,8 +874,8 @@ theorem flip_mono (n : GL (Fin N) K) (π : Equiv.Perm (Fin N)) (t : Fin N → K)
   rw [flipG_val, flipM_apply, hn, hn]
   by_cases hij : i = π j
   · have e1 : Fin.rev i = τ j := by rw [hij, hτv]
-    rw [if_pos hij, e1, hπ (τ j), inv, if_pos rfl, cst]
-  · rw [if_neg hij, if_neg]
+    rw [ite_eq_left hij, e1, hπ (τ j), inv, ite_eq_left rfl, cst]
+  · rw [ite_eq_right hij, ite_eq_right]
     intro h3
     apply hij
     have e2 : j = τ (Fin.rev i) := by rw [hτv, ← h3, Fin.rev_rev]
@@ -965,25 +912,25 @@ theorem mono_not_adm (ψ₀ : AddChar K ℂ) (hψ : ψ₀ ≠ 1) (n : GL (Fin N)
     simp only [Units.val_mul, utMk_val]
     rw [mul_elM, elM_mul, elM_mul, hn, hn, hn, hn]
     have hne : π j ≠ π i := ne_of_gt hlt
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     by_cases hx : x = π i
     · by_cases hc : c = j
-      · rw [if_pos hx, if_pos hc, hc, if_pos rfl, if_pos hx]
-        rw [hx, if_neg hne.symm, hc0]
+      · rw [ite_eq_left hx, ite_eq_left hc, hc, ite_eq_left rfl, ite_eq_left hx]
+        rw [hx, ite_eq_right hne.symm, hc0]
         have htj := ht j
-        simp only [if_true, mul_zero, add_zero, zero_add]
+        simp only [ite_true, mul_zero, add_zero, zero_add]
         field_simp
         ring
       · have : π j ≠ π c := fun h' => hc (π.injective h').symm
-        rw [if_neg hc, if_neg this]
+        rw [ite_eq_right hc, ite_eq_right this]
         simp
-    · rw [if_neg hx, if_neg hx]
+    · rw [ite_eq_right hx, ite_eq_right hx]
       simp
   · intro h
     apply ha0
     have h' := congrArg (fun z : ℂˣ => (z : ℂ)) h
     simp only [Units.val_mul, uniChar_val, Units.val_one, utMk_val] at h'
-    rw [← AddChar.map_add_eq_mul, edgeSum_elM, edgeSum_elM, if_pos hij] at h'
+    rw [← AddChar.map_add_eq_mul, edgeSum_elM, edgeSum_elM, ite_eq_left hij] at h'
     have e : (if (π j : ℕ) = π i + 1 then -c0 else 0) + a = a0 := by
       have e1 : (if (π j : ℕ) = π i + 1 then -c0 else 0) = - (a * s) := by
         rw [hs]

@@ -7,50 +7,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermSelfNeZe
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermSumRight
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermZeroOfTrace
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerFixesTailCoords
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactlySupportedBanachModel
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.HermitianXiOrthogonal
@@ -158,14 +115,14 @@ theorem perp_zero {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < 
     · show herm _ (Bs b) y = 0
       rw [_root_.PI.StabPairsW.herm_swap, hyB, star_zero]
     · show herm _ (Bs b) (Bs b') = 0
-      rw [hB.2.1 b b', if_neg (fun e => hne (by rw [e]))]
+      rw [hB.2.1 b b', ite_eq_right (fun e => hne (by rw [e]))]
   have hfs : ∀ o, herm (Hpk k r) (f o) (f o) ≠ 0 := by
     intro o
     rcases o with _ | _ | b
     · exact hzz
     · exact hyy
     · show herm _ (Bs b) (Bs b) ≠ 0
-      rw [hB.2.1 b b, if_pos rfl]
+      rw [hB.2.1 b b, ite_eq_left rfl]
       exact one_ne_zero
   have hli : LinearIndependent ℂ (fun o => psiW k r (f o)) := by
     rw [Fintype.linearIndependent_iff]
@@ -308,13 +265,13 @@ theorem cp_pow {m : ℕ} (M : Matrix (Fin m) (Fin m) ℂ)
     ext n
     rw [Polynomial.coeff_X_pow]
     rcases lt_trichotomy n m with hn | hn | hn
-    · rw [if_neg hn.ne]
+    · rw [ite_eq_right hn.ne]
       have := h (m - n) (by omega) (by omega)
       rwa [show m - (m - n) = n by omega] at this
-    · rw [if_pos hn, hn]
+    · rw [ite_eq_left hn, hn]
       have := M.charpoly_monic.leadingCoeff
       rwa [Polynomial.leadingCoeff, hdeg] at this
-    · rw [if_neg hn.ne']
+    · rw [ite_eq_right hn.ne']
       apply Polynomial.coeff_eq_zero_of_natDegree_lt
       rw [hdeg]
       exact hn

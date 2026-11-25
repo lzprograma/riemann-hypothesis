@@ -315,7 +315,7 @@ theorem finite_dcoset : ∀ {K : Type} [Field K] [Valued K (WithZero (Multiplica
   rintro c ⟨a, ha, rfl⟩
   refine ⟨F ⟨a, ha⟩, ?_⟩
   have h : ∃ a', F a' = F ⟨a, ha⟩ := ⟨_, rfl⟩
-  simp only [G, dif_pos h]
+  simp only [G, dite_eq_left h]
   exact key ⟨a, ha⟩ h.choose h.choose_spec.symm
 
 end GlobalTheory.SatInd.DCoset

@@ -51,8 +51,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.BCT.TrKer
 open scoped Classical TensorProduct
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 noncomputable section
 
 namespace GlobalTheory.BCT.TrKer
@@ -89,8 +87,7 @@ theorem exists_ne_zero_wsp_intertwining : ∀ (E : Type) [Field E] [NumberField 
     simp only [T, LinearMap.comp_apply, PiTensorProduct.lift.tprod]
     rfl
   obtain ⟨u0, hu0⟩ : ∃ u, F u ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hF0 (MultilinearMap.ext h)
   refine ⟨T, fun h => hu0 ?_, fun w => (PiTensorProduct.lift F w).2, fun x hx w => ?_⟩
   · apply Subtype.ext
@@ -104,7 +101,7 @@ theorem exists_ne_zero_wsp_intertwining : ∀ (E : Type) [Field E] [NumberField 
         (Finset.nodup_toList _)
       have h2 : (Finset.univ.toList.map fun v => s v (y' v)).prod = x := hprod
       rw [h2] at h1
-      simp only [Finset.mem_toList, Finset.mem_univ, if_true] at h1
+      simp only [Finset.mem_toList, Finset.mem_univ, ite_true] at h1
       have h3 : wInf lam x (PiTensorProduct.tprod ℂ u) =
           PiTensorProduct.tprod ℂ (fun v => σ v (y' v) (u v)) := by
         change PiTensorProduct.map _ _ = _

@@ -1,6 +1,7 @@
 module
 
 public import GroundTheory.PAdicHodge.PerfectoidField
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.TruncLogEqOfPowEqZero
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -100,11 +101,11 @@ theorem WittVector.eq_teichmullerSeries_iff (a : ℕ → R) (x : WittVector p R)
   simp_rw [key, ← le_coeff_eq_iff_le_sub_coeff_eq_zero]
   constructor
   · rintro rfl n j hj
-    rw [WittVector.coeff_sum_teichmuller_mul_pow, if_pos (Nat.lt_succ_iff.1 hj),
+    rw [WittVector.coeff_sum_teichmuller_mul_pow, ite_eq_left (Nat.lt_succ_iff.1 hj),
       WittVector.teichmullerSeries_coeff]
   · intro h
     ext j
-    rw [h j j (Nat.lt_succ_self j), WittVector.coeff_sum_teichmuller_mul_pow, if_pos le_rfl,
+    rw [h j j (Nat.lt_succ_self j), WittVector.coeff_sum_teichmuller_mul_pow, ite_eq_left le_rfl,
       WittVector.teichmullerSeries_coeff]
 
 theorem WittVector.dvd_sub_sum_teichmullerSeries (a : ℕ → R) (n : ℕ) :
@@ -182,9 +183,9 @@ See [Bhatt–Morrow–Scholze, *Integral p-adic Hodge theory*
 `R = 𝒪_[ℂ_[p]]`, see [Fontaine, *Le corps des périodes p-adiques*
 (§1.3.3, p. 66, with `K = ℚ_[p]`)][fontaine1994].
 
-TODO: Unify this with `Reformulated.AutPerF.Ainf`. -/
+This is `Reformulated.AutPerF.Ainf` specialized to `normInteger K`. -/
 abbrev AInf (K : Type*) [NontriviallyNormedField K] [IsUltrametricDist K] (p : ℕ) [Fact p.Prime] :=
-  WittVector p (PreTilt (normInteger K) p)
+  Reformulated.AutPerF.Ainf p (normInteger K)
 
 namespace AInf
 

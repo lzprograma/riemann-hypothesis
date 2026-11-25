@@ -25,8 +25,6 @@ theorem reGL_mulVec {a b : ℕ} (h : a = b) {E : Type} [Field E] (M : GL (Fin a)
 
 end Re
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem stdB_mem (D : D7) (B : GL (Fin D.R.k) D.host.E) (hB : Cmp.StdB D B) (x : Fin D.R.k → D.host.E) :
     x ∈ D.sp.crdLat0 (D.sp.X 0).L0 ↔
       ∀ a, ((B⁻¹ : GL (Fin D.R.k) D.host.E).1 *ᵥ x) a ∈ (algebraMap (𝓞 D.host.E) D.host.E).range := by

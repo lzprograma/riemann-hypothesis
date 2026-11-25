@@ -49,8 +49,6 @@ import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
-
 noncomputable section
 
 open TensorProduct

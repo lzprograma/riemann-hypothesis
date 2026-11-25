@@ -63,14 +63,9 @@ def VGeq (w : HeightOneSpectrum (𝓞 K)) (s : ℝ) (z : K) : Prop := z = 0 ∨ 
 theorem VGeq.zero (w : HeightOneSpectrum (𝓞 K)) (s : ℝ) : VGeq w s (0 : K) := Or.inl rfl
 
 private theorem vAdd_le_of_valuation_le {w : HeightOneSpectrum (𝓞 K)} {x y : K} (hx : x ≠ 0) (hy : y ≠ 0)
-    (h : w.valuation K y ≤ w.valuation K x) : vAdd w x ≤ vAdd w y := by
-  have hx' : w.valuation K x ≠ 0 := (Valuation.ne_zero_iff _).mpr hx
-  have hy' : w.valuation K y ≠ 0 := (Valuation.ne_zero_iff _).mpr hy
-  have h' : WithZero.exp (WithZero.log (w.valuation K y)) ≤ WithZero.exp (WithZero.log (w.valuation K x)) := by
-    rwa [WithZero.exp_log hx', WithZero.exp_log hy']
-  have h'' := WithZero.exp_le_exp.mp h'
-  unfold Formalism.BasicNotions.vAdd
-  linarith
+    (h : w.valuation K y ≤ w.valuation K x) : vAdd w x ≤ vAdd w y :=
+  neg_le_neg ((WithZero.log_le_log ((Valuation.ne_zero_iff _).mpr hy)
+    ((Valuation.ne_zero_iff _).mpr hx)).mpr h)
 
 theorem VGeq.add {w : HeightOneSpectrum (𝓞 K)} {s : ℝ} {a b : K} (ha : VGeq w s a) (hb : VGeq w s b) :
     VGeq w s (a + b) := by

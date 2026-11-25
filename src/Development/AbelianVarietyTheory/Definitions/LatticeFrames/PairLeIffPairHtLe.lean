@@ -1,45 +1,6 @@
 module
 
 public import Formalism.LocalRingCardinality.DataArith
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,54 +24,6 @@ def Norming (B M : HLat K) (pr : B.V →ₗ[K] Module.Dual K M.V) : Prop :=
 def Reads (N B A M : HLat K) (Ψ : N.V →ₗ[K] B.V) (Φ : A.V →ₗ[K] Module.Dual K M.V) : Prop :=
   ∃ (e : N.V →ₗ[K] A.V) (pr : B.V →ₗ[K] Module.Dual K M.V),
     IsoAll N A e ∧ Norming B M pr ∧ ∀ x, Φ (e x) = pr (Ψ x)
-
-def PairLe (A M : HLat K) (Φ : A.V →ₗ[K] Module.Dual K M.V) (h : ℝ) : Prop :=
-  ∃ c : InfinitePlace K → ℝ, (∀ v x y, v (Φ x y) ^ 2 ≤ Real.exp (c v) * nrm A v x ^ 2 * nrm M v y ^ 2) ∧
-    (1 / (Formalism.HN.nPl K : ℝ)) * ∑ v, c v ≤ h
-
-def ValLe (N B : HLat K) (Ψ : N.V →ₗ[K] B.V) (h : ℝ) : Prop :=
-  ∃ c : InfinitePlace K → ℝ, (∀ v x, nrm B v (Ψ x) ^ 2 ≤ Real.exp (c v) * nrm N v x ^ 2) ∧
-    (1 / (Formalism.HN.nPl K : ℝ)) * ∑ v, c v ≤ h
-
-theorem nrm_nonneg (A : HLat K) (v : InfinitePlace K) (x : A.V) : 0 ≤ nrm A v x :=
-  Real.sqrt_nonneg _
-
-theorem Norming.nrm_le {B M : HLat K} {pr : B.V →ₗ[K] Module.Dual K M.V} (hn : Norming B M pr) (w : B.V) (v : InfinitePlace K)
-    {C : ℝ} (hC : 0 ≤ C) (h : ∀ y, v (pr w y) ≤ C * nrm M v y) : nrm B v w ≤ C := by
-  obtain ⟨z, hz, hzn⟩ := hn w v
-  have hw := nrm_nonneg B v w
-  have hle := h z
-  rw [hz, hzn] at hle
-  nlinarith
-
-theorem Reads.exists_nrm_le {N B A M : HLat K} {Ψ : N.V →ₗ[K] B.V} {Φ : A.V →ₗ[K] Module.Dual K M.V}
-    (hr : Reads N B A M Ψ Φ) : ∃ e : N.V →ₗ[K] A.V, IsoAll N A e ∧ ∀ x v (C : ℝ), 0 ≤ C →
-      (∀ y, v (Φ (e x) y) ≤ C * nrm M v y) → nrm B v (Ψ x) ≤ C := by
-  obtain ⟨e, pr, he, hn, hΦ⟩ := hr
-  refine ⟨e, he, fun x v C hC hb => hn.nrm_le (Ψ x) v hC fun y => ?_⟩
-  rw [← hΦ x]
-  exact hb y
-
-theorem valLe_of_reads {N B A M : HLat K} {Ψ : N.V →ₗ[K] B.V} {Φ : A.V →ₗ[K] Module.Dual K M.V} {h : ℝ}
-    (hr : Reads N B A M Ψ Φ) (hp : PairLe A M Φ h) : ValLe N B Ψ h := by
-  obtain ⟨c, hc, hmean⟩ := hp
-  obtain ⟨e, he, hbd⟩ := hr.exists_nrm_le
-  refine ⟨c, fun v x => ?_, hmean⟩
-
-  have hs : Real.exp (c v / 2) ^ 2 = Real.exp (c v) := by
-    rw [sq, ← Real.exp_add, add_halves]
-  have hE : 0 ≤ Real.exp (c v / 2) := (Real.exp_pos _).le
-  have hN := nrm_nonneg N v x
-  have key : nrm B v (Ψ x) ≤ Real.exp (c v / 2) * nrm N v x := by
-    refine hbd x v _ (mul_nonneg hE hN) fun y => ?_
-    have h1 := hc v (e x) y
-    rw [he v x, ← hs] at h1
-    have hM := nrm_nonneg M v y
-    have hb : 0 ≤ Real.exp (c v / 2) * nrm N v x * nrm M v y := mul_nonneg (mul_nonneg hE hN) hM
-    nlinarith
-  have hk := nrm_nonneg B v (Ψ x)
-  calc nrm B v (Ψ x) ^ 2 ≤ (Real.exp (c v / 2) * nrm N v x) ^ 2 := by nlinarith
-    _ = Real.exp (c v) * nrm N v x ^ 2 := by rw [mul_pow, hs]
 
 end Generic
 

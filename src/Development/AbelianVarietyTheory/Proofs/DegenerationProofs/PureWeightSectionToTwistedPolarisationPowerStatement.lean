@@ -238,8 +238,8 @@ theorem cb_zero (r : Z ⟶ E.B.left) (z : Z) (j j' : E.ChartIdx) : cb E 0 r z j 
 theorem cb_basis (k) (r : Z ⟶ E.B.left) (z : Z) (j j' : E.ChartIdx) :
     cb E (E.basis k) r z j j' = tr (E.O (E.basis k)).L r z (j k) (j' k) := by
   classical
-  rw [cb, Finset.prod_eq_single k (fun k' _ h => by rw [E.basis.repr_self_apply, if_neg h.symm, zpow_zero])
-    (fun h => absurd (Finset.mem_univ k) h), E.basis.repr_self_apply, if_pos rfl, zpow_one]
+  rw [cb, Finset.prod_eq_single k (fun k' _ h => by rw [E.basis.repr_self_apply, ite_eq_right h.symm, zpow_zero])
+    (fun h => absurd (Finset.mem_univ k) h), E.basis.repr_self_apply, ite_eq_left rfl, zpow_one]
 
 theorem cb_self (χ : E.X) (r : Z ⟶ E.B.left) (z : Z) (j : E.ChartIdx) (h : r z ∈ E.chart j) :
     cb E χ r z j j = 1 :=
@@ -405,7 +405,7 @@ theorem exists_term {w : ∀ l, Γ(Φ.E.B.left, Φ.N₀.U l)} (h : Fam Φ.N₀.U
   · rintro β ⟨l, hl⟩
     by_contra hn
     exact hl ((WtPart.cf_mono (Φ.D.coord (Φ.ch l) (Φ.N₀.U l) (Φ.aff l) (Φ.le l)) β α _).trans
-      (if_neg fun e => hn e.symm))
+      (ite_eq_right fun e => hn e.symm))
 
 theorem mem_locus_term {φ : (Φ.H d).Sec} {w : ∀ l, Γ(Φ.E.B.left, Φ.N₀.U l)} (h : ∀ l : Φ.N₀.ι, φ.f l = term Φ d α l (w l))
     (z : Φ.G.left) (l : Φ.N₀.ι) (hl : Φ.D.q.left z ∈ Φ.N₀.U l) :
@@ -562,9 +562,6 @@ section -- clump:auto
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ZH
-attribute [local instance] SplitExt.free SplitExt.finite MvPolynomial.gradedAlgebra
-theorem _root_.GlobalTheory.T.pureWeightSection_to_twistedPolarisationPower : (∀ (k : Type) [Field k] [IsAlgClosed k] (Φ : FibPre k) (N d : ℕ) (π : Φ.Pol N) (α : Φ.E.X), 1 ≤ N → 1 ≤ d → (∀ φ : (Φ.H d).Sec, Φ.Pure α φ → ∃ s : LB.Sec (Out.twistLB π.PB.A π.PB.L (N * d) (π.c α)), ((∀ j, s.f j = 0) → ∀ l, φ.f l = 0) ∧ ∀ x : Φ.Pt, (⊤ ≤ x.left ⁻¹ᵁ Out.nonzeroLocus φ ↔ ⊤ ≤ (Out.ptSecT π.PB.A (x ≫ Φ.D.q ≫ π.β.hom)).left ⁻¹ᵁ Out.nonzeroLocus s)) ∧ ∀ s : LB.Sec (Out.twistLB π.PB.A π.PB.L (N * d) (π.c α)), ∃ φ : (Φ.H d).Sec, Φ.Pure α φ ∧ ∀ x : Φ.Pt, (⊤ ≤ x.left ⁻¹ᵁ Out.nonzeroLocus φ ↔ ⊤ ≤ (Out.ptSecT π.PB.A (x ≫ Φ.D.q ≫ π.β.hom)).left ⁻¹ᵁ Out.nonzeroLocus s)) := by
-  first | exact @GlobalTheory.ZH.TwSec.pure_sec_twist
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PureWeightSectionToTwistedPolarisationPowerStatement =====

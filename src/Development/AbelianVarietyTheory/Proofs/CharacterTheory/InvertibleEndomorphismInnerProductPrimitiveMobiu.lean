@@ -160,14 +160,14 @@ theorem ipGL_psi_eq (F : Type) [Field F] [Finite F] (V : Type) [AddCommGroup V] 
     rw [Finset.sum_eq_zero (s := Finset.univ.filter fun W : Submodule F V => ¬ (W ≠ ⊤ ∧ ∀ x ∈ W, g x ∈ W)), add_zero,
       Finset.sum_subtype (p := fun W : Submodule F V => W ≠ ⊤ ∧ ∀ x ∈ W, g x ∈ W) _ (by simp)]
     · refine Finset.sum_congr rfl fun W _ => ?_
-      simp only [R, dif_pos W.2]
+      simp only [R, dite_eq_left W.2]
     · intro W hW
-      simp only [R, dif_neg (Finset.mem_filter.mp hW).2]
+      simp only [R, dite_eq_right (Finset.mem_filter.mp hW).2]
   have hW : ∀ W, ∑ g, φ g * (if IsUnit g then star (R W g) else 0) = 0 := by
     intro W
     by_cases h1 : W = ⊤
     · refine Finset.sum_eq_zero fun g _ => ?_
-      have : R W g = 0 := dif_neg (fun h => h.1 h1)
+      have : R W g = 0 := dite_eq_right (fun h => h.1 h1)
       simp [this]
     by_cases h0 : W = ⊥
     · refine Finset.sum_eq_zero fun g _ => ?_
@@ -183,16 +183,16 @@ theorem ipGL_psi_eq (F : Type) [Field F] [Finite F] (V : Type) [AddCommGroup V] 
       by_cases hg : ∀ x ∈ W, g x ∈ W
       · have e : R W (g + h) = R W g := by
           simp only [R]
-          rw [dif_pos ⟨h1, add_preserves hh hg⟩, dif_pos ⟨h1, hg⟩]
+          rw [dite_eq_left ⟨h1, add_preserves hh hg⟩, dite_eq_left ⟨h1, hg⟩]
           congr 1
           ext x
           simp [LinearMap.restrict_apply, hh.2 x x.2]
         simp only [e, isUnit_add_iff hh hg]
-      · have e1 : R W g = 0 := dif_neg (fun H => hg H.2)
-        have e2 : R W (g + h) = 0 := dif_neg (fun H => hg ((add_preserves_iff hh).mp H.2))
+      · have e1 : R W g = 0 := dite_eq_right (fun H => hg H.2)
+        have e2 : R W (g + h) = 0 := dite_eq_right (fun H => hg ((add_preserves_iff hh).mp H.2))
         simp [e1, e2]
     · intro g hg
-      have e1 : R W g = 0 := dif_neg (fun H => hg H.2)
+      have e1 : R W g = 0 := dite_eq_right (fun H => hg H.2)
       simp [e1]
   have hsum : ∀ ψ : Module.End F V → ℂ,
       ipGL φ ψ = ∑ g, φ g * (if IsUnit g then star (ψ g) else 0) := by
@@ -209,7 +209,7 @@ theorem ipGL_psi_eq (F : Type) [Field F] [Finite F] (V : Type) [AddCommGroup V] 
   rw [← h2]
   refine Finset.sum_congr rfl fun g _ => ?_
   by_cases hg : IsUnit g
-  · simp only [if_pos hg, hR g, star_sub, star_sum, ← Finset.mul_sum]
+  · simp only [ite_eq_left hg, hR g, star_sub, star_sum, ← Finset.mul_sum]
     ring
   · simp [hg]
 

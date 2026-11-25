@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FactorizationBoundMonoLattices
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.DensityNumericalFacts
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LocalHypothesisOfGlobal
@@ -30,61 +31,10 @@ public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.ResidueC
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RestOIso
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TensorBoundOfOrderBound
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LpRingIndepOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatticeCountPrimeMonoLevel
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
-import Mathlib.Algebra.Order.Star.Real
 import Formalism.PolynomialDimension.WeylDim
 import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
 import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FinrankLetter
@@ -288,8 +238,7 @@ theorem latRetract : LatRetract := by
     rw [LinearMap.mem_ker] at hF
     by_contra hne
     obtain ⟨i, hi⟩ : ∃ i, b.repr F i ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hne (b.ext_elem (fun j => by simp [h j]))
     obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
     have hϖ0 : algebraMap O K ϖ ≠ 0 := fun h0 =>
@@ -454,8 +403,8 @@ theorem existsIO' : ExistsIO := by
       else 1 := by
     intro s
     by_cases h : s ∈ TT
-    · rw [dif_pos h]
-      have hf : f s = i ⟨s, h⟩ := by simp only [f, dif_pos h]
+    · rw [dite_eq_left h]
+      have hf : f s = i ⟨s, h⟩ := by simp only [f, dite_eq_left h]
       rw [hf]
       have hc : ψ.comp (MvPolynomial.rename (fun v : Bool × α => (s, v))) =
           MvPolynomial.rename (fun v : Bool × α => (((⟨s, h⟩ : TT), v.1), v.2)) := by
@@ -464,16 +413,16 @@ theorem existsIO' : ExistsIO := by
         simp [ψ, h]
       exact congrArg (fun F : MvPolynomial (Bool × α) K →ₐ[K] MvPolynomial ((TT × Bool) × α) K =>
         F (i ⟨s, h⟩ (P s))) hc
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       have hf : f s = (MvPolynomial.aeval (fun _ : α => (0 : MvPolynomial (Bool × α) K))).toLinearMap := by
-        simp only [f, dif_neg h]
+        simp only [f, dite_eq_right h]
       rw [hf, hP s h]
       simp
   rw [Finset.prod_congr rfl fun s _ => key s]
-  rw [← Finset.prod_subset (Finset.subset_univ TT) (fun s _ hs => dif_neg hs)]
+  rw [← Finset.prod_subset (Finset.subset_univ TT) (fun s _ hs => dite_eq_right hs)]
   rw [← Finset.prod_coe_sort TT]
   refine Finset.prod_congr rfl fun s _ => ?_
-  rw [dif_pos s.2]
+  rw [dite_eq_left s.2]
 
 theorem existsPR' : ExistsPR := by
   intro K _ S α _ _ TT pr
@@ -540,9 +489,6 @@ namespace Formalism.MainNotions.flipOneThree.Pf
 
 open Formalism.MainNotions.G Formalism.MainNotions.flipOneThree
 
-theorem kF_nonneg (X : Dat) (K : Cst) (R : RS X.p X.n') (al be : X.TT → ℕ) : 0 ≤ X.kF K R al be :=
-  Real.sInf_nonneg fun _ h => h.1
-
 open Classical in
 theorem kText_nonneg (X : Dat) (K : Cst) (R : RS X.p X.n') (hb : 0 < X.b') (aa bb : X.TT → ℤ) :
     0 ≤ X.kText K R aa bb := by
@@ -550,9 +496,9 @@ theorem kText_nonneg (X : Dat) (K : Cst) (R : RS X.p X.n') (hb : 0 < X.b') (aa b
   have h1 : 0 ≤ (if X.Inside aa bb then
       X.kF K R (fun s => (aa s - X.ccl).toNat) (fun s => (bb s - X.ccl).toNat) else 1) := by
     split_ifs
-    · exact kF_nonneg _ _ _ _ _
+    · exact Formalism.MainNotions.flipOneThree.Pf.kF_nonneg' _ _ _ _ _
     · exact zero_le_one
-  have h2 := kF_nonneg X K R (fun s => (aa s + X.ccl).toNat) (fun s => (bb s + X.ccl).toNat)
+  have h2 := Formalism.MainNotions.flipOneThree.Pf.kF_nonneg' X K R (fun s => (aa s + X.ccl).toNat) (fun s => (bb s + X.ccl).toNat)
   have h3 : 0 ≤ 12 * (X.N : ℝ) * X.k * X.ccl / X.b' := by
     unfold Dat.k
     positivity
@@ -654,55 +600,24 @@ theorem ar4 {n x g d nx y : ℕ} (hx : x < n) (hd : d < n) (hg : g ≤ d) (h1 : 
   rcases mod2 (a := x + g) (n := n) (by omega) with ⟨c1, c2⟩ | ⟨c1, c2⟩ <;>
   rcases mod2 (a := nx + (d - g)) (n := n) (by omega) with ⟨b1, b2⟩ | ⟨b1, b2⟩ <;> omega
 
-theorem cd_le {n a b : ℕ} (hb : b < n) (hab : a ≤ b) : (b + n - a) % n = b - a := by
-  have e : b + n - a = (b - a) + n := by omega
-  rw [e, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]
-
-theorem cd_gt {n a b : ℕ} (ha : a < n) (hab : b < a) : (b + n - a) % n = b + n - a :=
-  Nat.mod_eq_of_lt (by omega)
-
 section
 
 variable {n' : ℕ}
 
-theorem evenTops_mono (TT : Finset (Fin n')) : StrictMono (evenTops TT).get :=
-  (Finset.sortedLT_sort _).strictMono_get
-
 theorem segDists_mono (TT : Finset (Fin n')) (j : Fin (numSeg TT)) : StrictMono (segDists TT j).get :=
   (Finset.sortedLT_sort _).strictMono_get
 
-theorem next_min (TT : Finset (Fin n')) (j : Fin (numSeg TT)) (e : Fin n') (he : e ∈ TT)
-    (hev : Even e.val) (hne : e ≠ segStart TT j) :
-    0 < cdist (segStart TT j) (segNext TT j) ∧
-      cdist (segStart TT j) (segNext TT j) ≤ cdist (segStart TT j) e := by
-  apply Formalism.MainNotions.ColumnSystems.Pf.next_min <;> assumption
-
-theorem segNext_spec (TT : Finset (Fin n')) (j : Fin (numSeg TT)) :
-    segNext TT j ∈ TT ∧ Even (segNext TT j).val :=
-  (mem_evenTops TT _).1 (List.get_mem _ _)
-
 theorem other_even (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) (j : Fin (numSeg TT)) :
     ∃ e ∈ TT, Even e.val ∧ e ≠ segStart TT j := by
-  have hj := j.isLt
-  let j' : Fin (numSeg TT) := if j.val = 0 then ⟨1, by omega⟩ else ⟨0, by omega⟩
-  have hne : j' ≠ j := by
-    intro h
-    have hv : j'.val = j.val := congrArg Fin.val h
-    by_cases h0 : j.val = 0
-    · have e : j'.val = 1 := by simp [j', h0]
-      omega
-    · have e : j'.val = 0 := by simp [j', h0]
-      omega
-  refine ⟨segStart TT j', (segStart_spec TT j').1, (segStart_spec TT j').2, fun h => hne ?_⟩
-  exact (evenTops_mono TT).injective h
+  apply _root_.Formalism.MainNotions.ColumnSystems.Pf.other_start <;> assumption
 
 theorem segG_eq (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) (j : Fin (numSeg TT)) :
     segG TT j = cdist (segStart TT j) (segNext TT j) ∧ 0 < segG TT j ∧ segG TT j < n' := by
   obtain ⟨e, he, hev, hne⟩ := other_even TT h2 j
-  have h := (next_min TT j e he hev hne).1
+  have h := (Formalism.MainNotions.ColumnSystems.Pf.next_min TT j e he hev hne).1
   have e1 : segG TT j = cdist (segStart TT j) (segNext TT j) := by
     unfold segG
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   refine ⟨e1, by omega, ?_⟩
   rw [e1]
   exact Nat.mod_lt _ (segStart TT j).pos
@@ -736,7 +651,7 @@ theorem prev_segPos (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) (j : Fin (numS
           have : x.val + n' - x.val = n' := by omega
           rw [this, Nat.mod_self]
         omega
-      have := (next_min TT j x' hx' hx'e hne).2
+      have := (Formalism.MainNotions.ColumnSystems.Pf.next_min TT j x' hx' hx'e hne).2
       rw [← hx] at this
       omega
   refine ⟨h1, ?_⟩
@@ -779,7 +694,7 @@ theorem odd_in_seg (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) (y : Fin n') (h
     have hge' : cdist x (segNext TT j) ≤ d := by
       rw [← hjx, ← hG]
       omega
-    have hn := segNext_spec TT j
+    have hn := Formalism.MainNotions.ColumnSystems.Pf.next_mem TT j
     have hnx : (x.val + cdist x (segNext TT j)) % n' = (segNext TT j).val :=
       congrArg Fin.val (posAdd_cdist x (segNext TT j))
     have h4 : ((segNext TT j).val + (d - cdist x (segNext TT j))) % n' = y.val := ar4 x.isLt hdn hge' hnx hxy'
@@ -811,7 +726,7 @@ theorem restOddTops : RestOddTops := by
     have h' : segPos TT j i = segPos TT j' i' := h
     have a1 := prev_segPos TT h2 j i
     have a2 := prev_segPos TT h2 j' i'
-    have hj : j = j' := (evenTops_mono TT).injective (by
+    have hj : j = j' := (Formalism.MainNotions.G.TopChoiceBounds.bs_mono TT).injective (by
       show segStart TT j = segStart TT j'
       rw [← a1.2, ← a2.2, h'])
     subst hj
@@ -904,7 +819,6 @@ theorem dens_abs (N : ℕ) (hN : 1 ≤ N) (x1 x2 wa wb e : ℝ) (h1 : 0 ≤ x1) 
   have hu0 : 0 ≤ u := div_nonneg he hwa.le
   have hv0 : 0 ≤ v := div_nonneg he hwb.le
   have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast hN
-  have hs' : (N : ℝ) * x1 + N * x2 + N * u + N * v ≤ 1 / 2 := by nlinarith
   have hp1 : 0 ≤ (N : ℝ) * u := by positivity
   have hp2 : 0 ≤ (N : ℝ) * v := by positivity
   have hp3 : 0 ≤ (N : ℝ) * x1 := by positivity
@@ -955,7 +869,6 @@ theorem dens_abs (N : ℕ) (hN : 1 ≤ N) (x1 x2 wa wb e : ℝ) (h1 : 0 ≤ x1) 
   have hCD : (1 - N * x1) * (1 - N * x2) ≤ (1 - x1) ^ N * (1 - x2) ^ N :=
     mul_le_mul hc hd (by linarith) (le_trans (by linarith) hc)
   have key : (1 + u) ^ N * (1 + v) ^ N ≤ 2 * ((1 - x1) ^ N * (1 - x2) ^ N) := by
-    have hγδ : 0 ≤ (1 - N * x1) * (1 - N * x2) := by nlinarith
     calc (1 + u) ^ N * (1 + v) ^ N
         ≤ (1 + u) ^ N * (1 + v) ^ N *
             (2 * ((1 - N * u) * (1 - N * v) * ((1 - N * x1) * (1 - N * x2)))) :=
@@ -986,8 +899,6 @@ theorem Nexp_le (N Y La : ℝ) (hN : 2 ≤ N) (hY : 1 ≤ Y) (hLa : 8 * Real.log
     rw [← Real.exp_add]; exact Real.exp_le_exp.mpr (by linarith)
   have h4 : N ^ 2 * (1 + 2 * L / 3) ≤ Real.exp (La / 3) :=
     le_trans (mul_le_mul h1 h2 (by linarith) (Real.exp_pos _).le) h3
-  have h5 : N ^ 2 * 1.46 ≤ Real.exp (La / 3) :=
-    le_trans (mul_le_mul_of_nonneg_left (by linarith) (sq_nonneg N)) h4
   have hpos : 0 < Real.exp (La / 3) := Real.exp_pos _
   rw [show -La / 3 = -(La / 3) by ring, Real.exp_neg, ← div_eq_mul_inv, div_le_iff₀ hpos]
   nlinarith
@@ -1015,7 +926,6 @@ def Cst.TM2 (K : Cst) : ℝ := max K.TLP 400
 theorem div_small (x w Yb c : ℝ) (hw : 0 < w) (hYb : 400 ≤ Yb) (h : x * Yb ≤ c * w) : x / w ≤ c / Yb := by
   rw [div_le_div_iff₀ hw (by linarith)]
   linarith
-
 
 theorem threshold_density_facts (K : Cst) (hK : K.Pos) : TransportedAlt K (fun _ => DensityNumericalFacts K) := by
   refine ⟨K.TM2, 1, lt_of_lt_of_le (by norm_num) (le_max_right _ _), one_pos, fun CH hCH _ _ X h => ?_⟩
@@ -1327,7 +1237,6 @@ theorem cb_of {K : Cst} {CH : ℝ} {X : Dat} (B : Base K CH X) : CBoundI 4 X.p X
   have h1 : (0 : ℝ) ≤ (X.TT.card : ℝ) * ((X.m : ℝ) + 1) * Real.logb X.p X.a := by positivity
   have h2 : (0 : ℝ) ≤ (X.TT.card : ℝ) * X.ccl := by positivity
   have h4 : (0 : ℝ) ≤ (X.n' : ℝ) * X.ccl := by positivity
-  have h5 : (0 : ℝ) ≤ (X.cStar : ℝ) := by positivity
   linarith
 
 theorem D0nn_of {K : Cst} (hK : K.Pos) {CH : ℝ} {X : Dat} (B : Base K CH X) : 0 ≤ X.D0 K := by
@@ -1335,7 +1244,6 @@ theorem D0nn_of {K : Cst} (hK : K.Pos) {CH : ℝ} {X : Dat} (B : Base K CH X) : 
   rw [D0_eq_numSeg_mul_add]
   have hCA : 0 < K.CA := hK.2.2.1
   have hk : 0 ≤ X.k := by linarith [B.hk5]
-  have hlg : 0 ≤ lgA X.p X.a X.m := by linarith
   positivity
 
 theorem small_depth_le_large_depth (K : Cst) (X : Dat) : X.D0 K ≤ X.D1 K := by
@@ -1402,10 +1310,8 @@ theorem logl_of {K : Cst} (hK : K.Pos) {CH : ℝ} (hCH : K.TM ≤ CH) {X : Dat} 
   have hT : K.TLP ≤ CH := le_trans (le_max_left _ _) hCH
   have h108 : (108 : ℝ) ≤ CH := le_trans (le_trans (le_max_left _ _) (le_max_left _ _)) hT
   have hYbC : CH ≤ X.Yb := h.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-  have hk5 : (5 : ℝ) ≤ (X.m : ℝ) + 1 := B.hk5
   have hN2 : (2 : ℝ) ≤ (X.TT.card : ℝ) := B.hN2
   have hLa' : 1 ≤ LaI K.C₀ X.N₁ (X.a : ℝ) := le_trans B.hLa1 l1
-  have hl : 0 ≤ Real.log (X.a : ℝ) := by linarith [B.hlog1]
   refine le_trans ?_ h16
   have e1 : (1 : ℝ) ≤ X.Yb / 2 * X.TT.card * LaI K.C₀ X.N₁ (X.a : ℝ) :=
     one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le (by linarith) (by linarith)) hLa'

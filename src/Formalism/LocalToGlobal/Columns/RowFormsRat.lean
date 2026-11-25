@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HasRatBasisOfAct
 public import Formalism.LocalToGlobal.Columns.RowForms
 public import Formalism.LocalToGlobal.Columns.RowFormsGood
 public import Formalism.LocalToGlobal.Columns.ToHLatLemmas
@@ -71,18 +72,7 @@ theorem csum_basis (i : Fin S.dim) (x : Fin S.dim → K) :
 
 theorem repr_mem (R : S.Rat) (hb : S.HasRatBasis) (hdet : S.H.det ≠ 0) (f : S.Forms) (hf : S.IsRat (f : S.Cl → S.V))
     (i : Fin S.dim) : S.basis.repr f i ∈ cmMax K := by
-  set x : Fin S.dim → K := S.basis.equivFun f with hx
-  have hI : S.I x = (f : S.Cl → S.V) := by
-    rw [S.I_apply, hx, LinearEquiv.symm_apply_apply]
-  have h1 : S.H *ᵥ x = fun i => S.csum (S.basis i : S.Cl → S.V) (f : S.Cl → S.V) := by
-    funext i
-    rw [← csum_basis, hI]
-  have h2 : x = S.H⁻¹ *ᵥ fun i => S.csum (S.basis i : S.Cl → S.V) (f : S.Cl → S.V) := by
-    rw [← h1, Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ (isUnit_iff_ne_zero.mpr hdet), Matrix.one_mulVec]
-  show x i ∈ cmMax K
-  rw [h2]
-  show ∑ j, S.H⁻¹ i j * S.csum (S.basis j : S.Cl → S.V) (f : S.Cl → S.V) ∈ cmMax K
-  exact sum_mem fun j _ => mul_mem (rf_inv_entries_mem _ _ (H_mem S R hb) i j) (csum_mem S R _ _ (S.basis_rat hb j) hf)
+  apply GlobalTheory.FormsDescent.repr_mem_of_isRat <;> assumption
 
 theorem actRat_of (R : S.Rat) (hb : S.HasRatBasis) (hdet : S.H.det ≠ 0) {G : Type} [Group G] [Fintype G]
     (r : Representation K G S.Forms)

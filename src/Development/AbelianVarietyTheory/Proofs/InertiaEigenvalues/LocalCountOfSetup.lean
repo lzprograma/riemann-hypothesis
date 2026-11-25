@@ -180,8 +180,7 @@ theorem exists_not_pow {l : ℕ} [Fact l.Prime] (K : IntermediateField ℚ_[l] (
 
 theorem exists_root {Ω : Type} [Field Ω] [IsAlgClosed Ω] (A : ValuationSubring Ω) (u : Ω) {m : ℕ} (hm : 0 < m) :
     ∃ y : Ω, y ^ (m + 1) + y ^ m + u = 0 ∧ 1 ≤ A.valuation y := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   set Q : Polynomial Ω := X ^ (m + 1) + X ^ m + C u with hQ
   have hdeg : Q.natDegree = m + 1 := by
     rw [hQ]; compute_degree!
@@ -225,8 +224,7 @@ theorem norm_le_one {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [NumberFiel
     [IsAlgClosure E Ω] {A : ValuationSubring Ω} {O : Type} [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O]
     (Bw : Formalism.BasicNotions.LocBridge l E Ω (ReciprocityTheory.Gal.Dec A) O) (u : E)
     (hu : A.valuation (algebraMap E Ω u) < 1) : ‖Bw.j (algebraMap E Ω u)‖ ≤ 1 := by
-  by_contra h1
-  push_neg at h1
+  by_contra! h1
   haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed E
   haveI := Bw.Kw.2
   obtain ⟨m, hm, hK⟩ := exists_not_pow Bw.Kw.1 _ (Bw.j_E u) h1
@@ -266,8 +264,7 @@ theorem norm_le_one {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [NumberFiel
     have : w = -(z ^ m * (z + 1)) := by linear_combination hz
     rw [this, norm_neg, norm_mul, norm_pow]
   have hz1 : 1 < ‖z‖ := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     have h5 : ‖z + 1‖ ≤ 1 := (IsUltrametricDist.norm_add_le_max z 1).trans (max_le hle (by simp))
     have h6 : ‖z‖ ^ m ≤ 1 := pow_le_one₀ (norm_nonneg _) hle
     have := mul_le_one₀ h6 (norm_nonneg _) h5
@@ -365,12 +362,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 
 namespace GlobalTheory.LocalConditionCount
 
-theorem norm_lt_one_iff_mem {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω]
-    [IsAlgClosure E Ω] {v : HeightOneSpectrum (𝓞 E)} {A : ValuationSubring Ω} (hA : IsPlaceOver A v)
-    {O : Type} [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O] (Bw : LocBridge l E Ω (Dec (F := E) A) O) (x : 𝓞 E) :
-    ‖Bw.j (algebraMap E Ω (x : E))‖ < 1 ↔ x ∈ v.asIdeal :=
-  _root_.GlobalTheory.NonPowerRoot.norm_lt_one_iff hA Bw x
-
 section Algebra
 
 theorem card_span {O Λ K G ι : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CommRing Λ] [Algebra O Λ]
@@ -404,7 +395,7 @@ theorem card_span {O Λ K G ι : Type} [CommRing O] [IsDomain O] [IsDiscreteValu
       rw [this]
       exact Submodule.sum_mem _ fun i _ => Submodule.subset_span ⟨_, (β i).2, b i, fun _ _ => rfl⟩
   have hinj : Function.Injective Φ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro b hb
     obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
     have hT : Module.IsTorsionBySet O K (IsLocalRing.maximalIdeal O) := fun b a => hK a.1 a.2 b
@@ -538,7 +529,6 @@ theorem B1_le_Z1f (P : LocPrime l) {m : ℕ} (T : ↥Gw →* GL (Fin m) O)
   · simp only [h, map_mul, Module.End.mul_apply, map_sub]
     abel
   · simp [h, Formalism.WeaklyAdmissibleFiltrations.actVB, TensorProduct.sub_tmul]
-
 
 set_option synthInstance.maxHeartbeats 100000 in
 set_option maxHeartbeats 1600000 in
@@ -736,7 +726,7 @@ theorem norm_toLL_lt_one_iff (v : PlE D.host) (hv : v ∈ placesOver D.host.E (X
 theorem mem_iff_not_isUnit (x : Emb bkP i) (e : 𝓞 D.host.E) (n : X.O0 i)
     (h : algebraMap _ _ n = embOf bkP i x e) : e ∈ x.1.1.asIdeal ↔ ¬ IsUnit n := by
   rw [← norm_toLL_lt_one_iff bkP i x.1.1 x.1.2, ← fracEquiv_alg, h, fracEquiv_embOf, GlobalTheory.EmbInj.norm_algHom]
-  exact (norm_lt_one_iff_mem (N.plOm.2 x.1.1) (bkP.br i x.1.1 x.1.2) e).symm
+  exact (GlobalTheory.NonPowerRoot.norm_lt_one_iff (N.plOm.2 x.1.1) (bkP.br i x.1.1 x.1.2) e).symm
 
 theorem exists_int (φ : D.host.E →+* FractionRing (X.O0 i)) (x : 𝓞 D.host.E) :
     ∃ y : X.O0 i, algebraMap (X.O0 i) (FractionRing (X.O0 i)) y = φ (x : D.host.E) :=
@@ -779,7 +769,7 @@ theorem embOf_bijective : Function.Bijective (embOf bkP i) := by
     let Bw := bkP.br i v hv
     let a := Bw.j.comp (algebraMap D.host.E N.Om)
     let b := Bw.LL.1.val.toRingHom.comp ((fracEquiv bkP i v hv).toRingHom.comp φ)
-    have ha := norm_lt_one_iff_mem (N.plOm.2 v) Bw
+    have ha := GlobalTheory.NonPowerRoot.norm_lt_one_iff (N.plOm.2 v) Bw
     have hb (x : 𝓞 D.host.E) : ‖b (x : D.host.E)‖ < 1 ↔ x ∈ v.asIdeal := by
       change ‖((fracEquiv bkP i v hv (φ x) : ↥Bw.LL.1) : PadicAlgCl (X.l i))‖ < 1 ↔ _
       rw [← hf, fracEquiv_alg, norm_toLL_lt_one_iff]
@@ -828,8 +818,6 @@ theorem noInv (h : IsotypicValuationAtRing bkP i s) (v : PlE D.host) (x : Fin D.
       Matrix (Fin D.R.r) (Fin D.R.r) (X.O0 i)).map (algebraMap (X.O0 i) (FractionRing (X.O0 i)))).mulVec x = x) : x = 0 :=
   h.2.2.1 v _ (N.plOm.2 v) x fun g hg => by rw [← Tgl_coe]; exact hx ⟨g, hg⟩
 
-set_option maxHeartbeats 8000000 in
-set_option synthInstance.maxHeartbeats 100000 in
 open Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations in
 theorem h1fDim_eq (h : GalHyp bkP i s) (u : placesOver D.host.E (X.l i)) [Fintype (EmbV bkP i u.1 u.2)] :
     (h1fDim bkP i s u : ℤ) =

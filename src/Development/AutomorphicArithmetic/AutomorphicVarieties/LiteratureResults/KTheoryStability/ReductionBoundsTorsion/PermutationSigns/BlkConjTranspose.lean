@@ -1,52 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -83,10 +38,10 @@ theorem tp_one [DecidableEq ι] : tp q (1 : Matrix ι ι ℂ) = 1 := by
   change (∏ i, (if I i = J i then (1 : ℂ) else 0)) = (if I = J then (1 : ℂ) else 0)
   by_cases h : I = J
   · subst h; simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     obtain ⟨i, hi⟩ : ∃ i, I i ≠ J i := by
       by_contra hc; push Not at hc; exact h (funext hc)
-    exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
+    exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)
 
 theorem sum4 {α β γ δ : Type} [Fintype α] [Fintype β] [Fintype γ] [Fintype δ] (f : α → β → γ → δ → ℂ) :
     ∑ a, ∑ b, ∑ c, ∑ d, f a b c d = ∑ c, ∑ d, ∑ a, ∑ b, f a b c d := by
@@ -131,11 +86,11 @@ theorem blk_mul (d e : W → Matrix (Fin m) (Fin m) ℂ) : blk d * blk e = blk f
   rw [Fintype.sum_prod_type]
   simp only
   by_cases h : x.1 = y.1
-  · rw [if_pos h, Finset.sum_eq_single x.1]
-    · simp only [if_true, h]
+  · rw [ite_eq_left h, Finset.sum_eq_single x.1]
+    · simp only [ite_true, h]
     · intro b _ hb; simp [Ne.symm hb]
     · simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun w _ => Finset.sum_eq_zero fun j _ => ?_
     by_cases h1 : x.1 = w
     · subst h1; simp [h]
@@ -150,8 +105,8 @@ theorem blk_transpose (d : W → Matrix (Fin m) (Fin m) ℂ) : (blk d)ᵀ = blk 
   ext x y
   simp only [blk, of_apply, transpose_apply]
   by_cases h : x.1 = y.1
-  · rw [if_pos h.symm, if_pos h, h]
-  · rw [if_neg (Ne.symm h), if_neg h]
+  · rw [ite_eq_left h.symm, ite_eq_left h, h]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
 
 theorem blk_map_star (d : W → Matrix (Fin m) (Fin m) ℂ) : (blk d).map star = blk fun w => (d w).map star := by
   ext x y
@@ -185,25 +140,15 @@ theorem Mm_herm (a b : Fin N) (ε : Bool) : (Mm a b ε).IsHermitian := by
   have e1 : (j = a ∧ i = b) = (i = b ∧ j = a) := propext and_comm
   have e2 : (j = b ∧ i = a) = (i = a ∧ j = b) := propext and_comm
   simp only [e1, e2]
-  cases ε <;> simp only [Bool.false_eq_true, if_false, if_true] <;> split_ifs <;> simp [Complex.conj_I]
+  cases ε <;> simp only [Bool.false_eq_true, ite_false, ite_true] <;> split_ifs <;> simp [Complex.conj_I]
 
 theorem sd1 (f : Fin N → Fin N → ℂ) (i j : Fin N) :
     ∑ a, ∑ b, (if i = a ∧ j = b then f a b else 0) = f i j := by
-  rw [Finset.sum_eq_single i, Finset.sum_eq_single j]
-  · simp
-  · intro b _ hb; simp [Ne.symm hb]
-  · simp
-  · intro b _ hb; exact Finset.sum_eq_zero fun y _ => by simp [Ne.symm hb]
-  · simp
+  simp [ite_and, Finset.sum_ite_eq]
 
 theorem sd2 (f : Fin N → Fin N → ℂ) (i j : Fin N) :
     ∑ a, ∑ b, (if i = b ∧ j = a then f a b else 0) = f j i := by
-  rw [Finset.sum_eq_single j, Finset.sum_eq_single i]
-  · simp
-  · intro b _ hb; simp [Ne.symm hb]
-  · simp
-  · intro b _ hb; exact Finset.sum_eq_zero fun y _ => by simp [Ne.symm hb]
-  · simp
+  simp [ite_and, Finset.sum_ite_eq]
 
 def MH (k : K L N) : HS L N :=
   mkHS (fun w => if w = k.1 then Mm k.2.1 k.2.2.1 k.2.2.2 else 0) fun w => by
@@ -220,7 +165,7 @@ def c2 (ε : Bool) : ℂ := if ε then Complex.I / 4 else 1 / 4
 
 theorem mat_expand (z : Matrix (Fin N) (Fin N) ℂ) (i j : Fin N) :
     ∑ a, ∑ b, ∑ ε, (c1 ε * z a b + c2 ε * z b a) * Mm a b ε i j = z i j := by
-  simp only [Fintype.sum_bool, c1, c2, Mm, of_apply, if_true, Bool.false_eq_true, if_false, mul_add, mul_sub,
+  simp only [Fintype.sum_bool, c1, c2, Mm, of_apply, ite_true, Bool.false_eq_true, ite_false, mul_add, mul_sub,
     mul_ite, mul_zero, Finset.sum_add_distrib, Finset.sum_sub_distrib, sd1, sd2]
   ring_nf
   rw [Complex.I_sq]
@@ -236,12 +181,7 @@ def lc (k : K L N) (B : Matrix (Ix (InfinitePlace L) N) (Ix (InfinitePlace L) N)
 theorem sum_delta (p p' : Ix (InfinitePlace L) N) (c : ℂ)
     (B : Matrix (Ix (InfinitePlace L) N) (Ix (InfinitePlace L) N) ℂ) :
     ∑ x, ∑ y, (if x = p ∧ y = p' then c else 0) * B x y = c * B p p' := by
-  rw [Finset.sum_eq_single p, Finset.sum_eq_single p']
-  · simp
-  · intro b _ hb; simp [hb]
-  · simp
-  · intro b _ hb; exact Finset.sum_eq_zero fun y _ => by simp [hb]
-  · simp
+  simp [ite_mul, ite_and, Finset.sum_ite_eq']
 
 theorem lc_eq (k : K L N) (B : Matrix (Ix (InfinitePlace L) N) (Ix (InfinitePlace L) N) ℂ) :
     lc k B = c1 k.2.2.2 * B (k.1, k.2.1) (k.1, k.2.2.1) + c2 k.2.2.2 * B (k.1, k.2.2.1) (k.1, k.2.1) := by
@@ -251,11 +191,11 @@ theorem blk_MH (k : K L N) (x y : Ix (InfinitePlace L) N) :
     blk (fun w => mat (MH k) w) x y = if x.1 = y.1 ∧ x.1 = k.1 then Mm k.2.1 k.2.2.1 k.2.2.2 x.2 y.2 else 0 := by
   simp only [blk, MH, mat_mkHS, of_apply]
   by_cases h : x.1 = y.1
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     by_cases h' : x.1 = k.1
-    · rw [if_pos h', if_pos ⟨h, h'⟩]
-    · rw [if_neg h', if_neg (fun hh => h' hh.2)]; rfl
-  · rw [if_neg h, if_neg (fun hh => h hh.1)]
+    · rw [ite_eq_left h', ite_eq_left ⟨h, h'⟩]
+    · rw [ite_eq_right h', ite_eq_right (fun hh => h' hh.2)]; rfl
+  · rw [ite_eq_right h, ite_eq_right (fun hh => h hh.1)]
 
 theorem blk_expand (Z : InfinitePlace L → Matrix (Fin N) (Fin N) ℂ) :
     blk Z = ∑ k : K L N, lc k (blk Z) • blk (fun w => mat (MH k) w) := by
@@ -264,8 +204,8 @@ theorem blk_expand (Z : InfinitePlace L → Matrix (Fin N) (Fin N) ℂ) :
   by_cases h : x.1 = y.1
   · have hb : blk Z x y = Z x.1 x.2 y.2 := by simp [blk, h]
     rw [hb, Fintype.sum_prod_type, Finset.sum_eq_single x.1]
-    · simp only [true_and, if_true, h]
-      simp only [blk, of_apply, if_true, Fintype.sum_prod_type]
+    · simp only [true_and, ite_true, h]
+      simp only [blk, of_apply, ite_true, Fintype.sum_prod_type]
       rw [← h]
       exact (mat_expand (Z x.1) x.2 y.2).symm
     · intro b _ hb
@@ -277,7 +217,7 @@ theorem blk_expand (Z : InfinitePlace L → Matrix (Fin N) (Fin N) ℂ) :
 theorem lc_herm (k : K L N) (Y : HS L N) : lc k (blk fun w => mat Y w) = (coef k Y : ℂ) := by
   rw [lc_eq]
   have hY : mat Y k.1 k.2.2.1 k.2.1 = star (mat Y k.1 k.2.1 k.2.2.1) := ((mat_herm Y k.1).apply _ _).symm
-  simp only [blk, of_apply, if_true, hY, coef, c1, c2]
+  simp only [blk, of_apply, ite_true, hY, coef, c1, c2]
   apply Complex.ext <;> cases k.2.2.2 <;> simp <;> ring
 
 theorem mat_sum {ι : Type} (s : Finset ι) (f : ι → HS L N) (w : InfinitePlace L) :
@@ -290,7 +230,7 @@ theorem herm_decomp (Y : HS L N) : Y = ∑ k : K L N, coef k Y • MH k := by
   ext a b
   have h := congrFun (congrFun (blk_expand (fun w => mat Y w)) (w, a)) (w, b)
   simp only [Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, lc_herm] at h
-  simp only [blk, of_apply, if_true] at h
+  simp only [blk, of_apply, ite_true] at h
   rw [h, mat_sum, Matrix.sum_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp [Complex.real_smul]
@@ -350,7 +290,7 @@ theorem Tm_supp (f : ContinuousMultilinearMap ℝ (fun _ : Fin q => HS L N) ℝ)
     rintro ⟨h1, h2⟩; exact hc (by rw [h1, h2])
   have h2 : ¬(I i = ((κ i).1, (κ i).2.2.1) ∧ J i = ((κ i).1, (κ i).2.1)) := by
     rintro ⟨h1, h2⟩; exact hc (by rw [h1, h2])
-  simp only [gc, if_neg h1, if_neg h2, add_zero]
+  simp only [gc, ite_eq_right h1, ite_eq_right h2, add_zero]
 
 theorem conj_supp (d1 d2 : InfinitePlace L → Matrix (Fin N) (Fin N) ℂ)
     (A : Matrix (Fin q → Ix (InfinitePlace L) N) (Fin q → Ix (InfinitePlace L) N) ℂ)
@@ -379,7 +319,7 @@ theorem blk_E (p p' : Ix (InfinitePlace L) N) (hp : p.1 = p'.1) (x y : Ix (Infin
     by_cases h2 : xw = pw
     · subst h2; simp
     · simp [h2]
-  · rw [if_neg h1, if_neg]
+  · rw [ite_eq_right h1, ite_eq_right]
     rintro ⟨⟨h2, -⟩, h3, -⟩
     exact h1 (h2.trans h3.symm)
 

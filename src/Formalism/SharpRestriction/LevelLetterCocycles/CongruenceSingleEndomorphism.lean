@@ -1,44 +1,10 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TypeSpaceProjectionToPointEigenspaces
 public import Formalism.SharpRestriction.LevelLetterCocycles.LocalCongruenceBound
 public import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Eigenspace.Pi
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -61,21 +27,8 @@ variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {X : T
 
 theorem heckeEig_indep (hsep : ∀ x y : X, x ≠ y → ∃ f ∈ T, f x ≠ f y) :
     iSupIndep (heckeEig T act) := by
-  let F : T → Module.End (FractionRing O) (TensorProduct O (FractionRing O) M) :=
-    fun f => actK T act f
-  have hc : ∀ f g, Commute (F f) (F g) := fun f g => by
-    show actK T act f * actK T act g = actK T act g * actK T act f
-    rw [← map_mul, mul_comm, map_mul]
-  have h := Module.End.independent_iInf_maxGenEigenspace_of_forall_mapsTo F
-    (fun f g φ => Module.End.mapsTo_maxGenEigenspace_of_comm (hc g f) φ)
-  let χ : X → (T → FractionRing O) := fun x f => algebraMap O (FractionRing O) ((f : X → O) x)
-  have hχ : Function.Injective χ := by
-    intro x y hxy
-    by_contra hne
-    obtain ⟨f, hf, hfx⟩ := hsep x y hne
-    exact hfx (IsFractionRing.injective O (FractionRing O) (congrFun hxy ⟨f, hf⟩))
-  refine (h.comp hχ).mono fun x => iInf_mono fun f => ?_
-  exact ((F f).genEigenspace _).monotone le_top
+  intros
+  apply _root_.GlobalTheory.EtaJoin.TypeTieProof.heckeEig_iSupIndep <;> assumption
 
 end Hecke
 

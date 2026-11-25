@@ -57,7 +57,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Hk3 (Core Good IsSF SchurAll TwoSided FixAll EEc Wcc eH IsLab HoweUnram)
 
 noncomputable section
@@ -83,13 +82,13 @@ theorem exists_ix_of_mem_eigAt : ∀ {K : Type} [Field K] [NumberField K] [StarR
   have hSg : ∀ P, Sg ((A3.A.fam.R A3.A.μ0).pl P) = c P := by
     intro P
     have hP : ∃ P', (A3.A.fam.R A3.A.μ0).pl P' = (A3.A.fam.R A3.A.μ0).pl P := ⟨P, rfl⟩
-    simp only [Sg, dif_pos hP]
+    simp only [Sg, dite_eq_left hP]
     rw [hB.pl_inj hP.choose_spec]
   let e : I0 × Ty → K := fun k0 => if hP : ∃ P, (A3.rowI A3.A.μ0).plI P = k0.1 then x (Sum.inr (hP.choose, k0.2)) else 0
   have he : ∀ (P : (A3.rowI A3.A.μ0).PlI) (y : Ty), e ((A3.rowI A3.A.μ0).plI P, y) = x (Sum.inr (P, y)) := by
     intro P y
     have hP : ∃ P', (A3.rowI A3.A.μ0).plI P' = (A3.rowI A3.A.μ0).plI P := ⟨P, rfl⟩
-    simp only [e, dif_pos hP]
+    simp only [e, dite_eq_left hP]
     rw [hD.plI_inj hP.choose_spec]
   have hres : (A3.rowI A3.A.μ0).HasRes3 (Sg, e) x := by
     refine ⟨fun P => ?_, fun k => (he k.1 k.2).symm⟩
@@ -110,10 +109,10 @@ theorem exists_ix_of_mem_eigAt : ∀ {K : Type} [Field K] [NumberField K] [StarR
     refine ⟨fun P0 hP0 => ?_, fun P0 hP0 y => ?_, ?_⟩
     · have hP : ¬ ∃ P, (A3.A.fam.R A3.A.μ0).pl P = P0 := fun ⟨P, hP⟩ => hP0 ⟨P, hP⟩
       show Sg P0 = 1
-      simp only [Sg, dif_neg hP]
+      simp only [Sg, dite_eq_right hP]
     · have hP : ¬ ∃ P, (A3.rowI A3.A.μ0).plI P = P0 := fun ⟨P, hP⟩ => hP0 ⟨P, hP⟩
       show e (P0, y) = 0
-      simp only [e, dif_neg hP]
+      simp only [e, dite_eq_right hP]
     · intro hbot
       have hu0mem : u0 ∈ (A3.A.fam.R A3.A.μ0).inV0 (Lvl.full A3.A.fam.X) ((A3.rowI A3.A.μ0).inertTypeEigenspaceSum (Sg, e)) := by
         rw [BlockDat.mem_goodPart_iff, hu0]

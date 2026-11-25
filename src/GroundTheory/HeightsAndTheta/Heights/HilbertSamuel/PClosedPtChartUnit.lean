@@ -61,7 +61,7 @@ theorem ClosedPtChartUnit.proof : ClosedPtChartUnit.Statement := by
         weightedHomogeneousComponent (NumbersDVR.blockWeight ι) e (g₀ * f) := by
     rw [← hpr, map_add (f := _)]
   have htself : weightedHomogeneousComponent (NumbersDVR.blockWeight ι) e t = t := by
-    rw [weightedHomogeneousComponent_of_mem ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hte'), if_pos rfl]
+    rw [weightedHomogeneousComponent_of_mem ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hte'), ite_eq_left rfl]
   rw [htself] at hcomp
   have hpe : weightedHomogeneousComponent (NumbersDVR.blockWeight ι) e p ∈ P := hPh p hpP e
   by_cases hae : a ≤ e

@@ -28,7 +28,7 @@ theorem sgn_mul_self (J : Finset (Fin n)) (j : Fin n) : Kleiman.Cech.sgn J j * K
   rw [← mul_pow]; norm_num
 
 theorem sgn_singleton (j : Fin n) : Kleiman.Cech.sgn {j} j = 1 := by
-  rw [Kleiman.Cech.sgn, Finset.filter_singleton, if_neg (lt_irrefl j)]; simp
+  rw [Kleiman.Cech.sgn, Finset.filter_singleton, ite_eq_right (lt_irrefl j)]; simp
 
 def cD (f : Finset (Fin n) → M) (J : Finset (Fin n)) : M :=
   ∑ j ∈ J, Kleiman.Cech.sgn J j • f (J.erase j)
@@ -39,13 +39,13 @@ def cH (j₀ : Fin n) (f : Finset (Fin n) → M) (J : Finset (Fin n)) : M :=
 theorem cD_cH_add (j₀ : Fin n) (f : Finset (Fin n) → M) (J : Finset (Fin n)) :
     cD (cH j₀ f) J + cH j₀ (cD f) J = f J := by
   by_cases h₀ : j₀ ∈ J
-  · have hH : cH j₀ (cD f) J = 0 := if_pos h₀
+  · have hH : cH j₀ (cD f) J = 0 := ite_eq_left h₀
     have hrest : ∑ j ∈ J.erase j₀, Kleiman.Cech.sgn J j • cH j₀ f (J.erase j) = 0 := by
       refine Finset.sum_eq_zero fun j hj => ?_
       obtain ⟨hj, -⟩ := Finset.mem_erase.mp hj
-      rw [cH, if_pos (Finset.mem_erase.mpr ⟨Ne.symm hj, h₀⟩), smul_zero]
+      rw [cH, ite_eq_left (Finset.mem_erase.mpr ⟨Ne.symm hj, h₀⟩), smul_zero]
     rw [hH, add_zero, cD, ← Finset.add_sum_erase J _ h₀, hrest, add_zero, cH,
-      if_neg (Finset.notMem_erase j₀ J), Finset.insert_erase h₀, smul_smul, sgn_mul_self, one_smul]
+      ite_eq_right (Finset.notMem_erase j₀ J), Finset.insert_erase h₀, smul_smul, sgn_mul_self, one_smul]
   · have hsum : ∑ j ∈ J, Kleiman.Cech.sgn J j • cH j₀ f (J.erase j) +
         ∑ j ∈ J, Kleiman.Cech.sgn (insert j₀ J) j₀ • Kleiman.Cech.sgn (insert j₀ J) j •
           f ((insert j₀ J).erase j) = 0 := by
@@ -55,9 +55,9 @@ theorem cD_cH_add (j₀ : Fin n) (f : Finset (Fin n) → M) (J : Finset (Fin n))
       have hn : j₀ ∉ J.erase j := fun h => h₀ (Finset.mem_of_mem_erase h)
       have e : insert j₀ (J.erase j) = (insert j₀ J).erase j := (Finset.erase_insert_of_ne (Ne.symm hj₀)).symm
       have s1 : Kleiman.Cech.sgn ((insert j₀ J).erase j) j₀ = Kleiman.Cech.sgn (J.erase j) j₀ := by
-        rw [← e, sgn_insert hn, if_neg (lt_irrefl _)]
+        rw [← e, sgn_insert hn, ite_eq_right (lt_irrefl _)]
       have s2 : Kleiman.Cech.sgn (insert j₀ J) j₀ = Kleiman.Cech.sgn J j₀ := by
-        rw [sgn_insert h₀, if_neg (lt_irrefl _)]
+        rw [sgn_insert h₀, ite_eq_right (lt_irrefl _)]
       have s3 := sgn_insert h₀ j
       have s4 : Kleiman.Cech.sgn J j₀ =
           if j < j₀ then -Kleiman.Cech.sgn (J.erase j) j₀ else Kleiman.Cech.sgn (J.erase j) j₀ := by
@@ -67,10 +67,10 @@ theorem cD_cH_add (j₀ : Fin n) (f : Finset (Fin n) → M) (J : Finset (Fin n))
           Kleiman.Cech.sgn (insert j₀ J) j₀ * Kleiman.Cech.sgn (insert j₀ J) j = 0 := by
         rw [s1, s2, s3, s4]
         rcases lt_or_gt_of_ne hj₀ with h | h
-        · rw [if_neg (lt_asymm h), if_pos h]; ring
-        · rw [if_pos h, if_neg (lt_asymm h)]; ring
-      rw [cH, if_neg hn, e, smul_smul, smul_smul, ← add_smul, hc, zero_smul]
-    have hH : cH j₀ (cD f) J = Kleiman.Cech.sgn (insert j₀ J) j₀ • cD f (insert j₀ J) := if_neg h₀
+        · rw [ite_eq_right (lt_asymm h), ite_eq_left h]; ring
+        · rw [ite_eq_left h, ite_eq_right (lt_asymm h)]; ring
+      rw [cH, ite_eq_right hn, e, smul_smul, smul_smul, ← add_smul, hc, zero_smul]
+    have hH : cH j₀ (cD f) J = Kleiman.Cech.sgn (insert j₀ J) j₀ • cD f (insert j₀ J) := ite_eq_right h₀
     rw [hH]
     unfold cD
     rw [Finset.sum_insert h₀, Finset.erase_insert h₀, smul_add, smul_smul, sgn_mul_self, one_smul,
@@ -137,7 +137,7 @@ theorem proof : Statement := by
     obtain ⟨j, hj⟩ := Finset.card_eq_one.mp J.2
     have e1 : cD (cH j₀ (extZ s)) J.1.1 = extZ s {j₀} := by
       rw [hj, cD, Finset.sum_singleton, Finset.erase_singleton, sgn_singleton, one_smul, cH,
-        if_neg (Finset.notMem_empty _), insert_empty_eq, sgn_singleton, one_smul]
+        ite_eq_right (Finset.notMem_empty _), insert_empty_eq, sgn_singleton, one_smul]
     rw [← extZ_idx s J, ← cD_cH_add j₀ (extZ s) J.1.1, cH_cD_extZ S hj₀U s hds J, add_zero, e1, eb]
   · refine ⟨fun I => cH j₀ (extZ s) I.1.1, fun I _ => ?_, ?_⟩
     · show cH j₀ (extZ s) I.1.1 ∈ G I.1

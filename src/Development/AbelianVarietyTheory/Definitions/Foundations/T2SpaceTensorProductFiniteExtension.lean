@@ -181,7 +181,7 @@ theorem absEw_eq_sq {σ : E →ₐ[F] E} (h : IsCMExt F E σ) {w : InfinitePlace
   have := h.1
   have h1 := congrArg (fun y => ‖infEmb τ y‖₊) (algebraMap_norm_eq h x.1)
   simp only [map_mul, ← infEmb_sigR h τ, nnnorm_mul, RCLike.nnnorm_conj] at h1
-  rw [absEw_apply, InfinitePlace.mult, if_pos (IsTotallyReal.isReal w), pow_one, sq, ← h1,
+  rw [absEw_apply, InfinitePlace.mult, ite_eq_left (IsTotallyReal.isReal w), pow_one, sq, ← h1,
     Algebra.TensorProduct.algebraMap_apply, infEmb_tmul, map_one, mul_one]
   exact NNReal.eq ((InfinitePlace.Completion.isometry_extensionEmbedding w).norm_map_of_map_zero (map_zero _) _).symm
 

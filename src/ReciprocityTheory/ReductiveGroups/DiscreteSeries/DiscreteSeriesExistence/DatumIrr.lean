@@ -21,9 +21,6 @@ def jSm (hP : IsPsiFor ε lam T Ψ) (v₀ : T.V) : T.V →ₗ[ℂ] smD ε (rreg 
   map_add' v v' := Subtype.ext (datumEmbedding_add hP v₀ v v')
   map_smul' c v := Subtype.ext (datumEmbedding_smul hP v₀ c v)
 
-theorem jSm_coe (hP : IsPsiFor ε lam T Ψ) (v₀ v : T.V) :
-    ((jSm hP v₀ v : smD ε (rreg ε)) : L2 ε) = uniformisationL2 ε Ψ v₀ v := rfl
-
 theorem datumV_eq_range (hP : IsPsiFor ε lam T Ψ) (v₀ : T.V) :
     datumV ε Ψ v₀ = LinearMap.range (jSm hP v₀) := by
   ext x

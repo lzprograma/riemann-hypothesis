@@ -2,8 +2,6 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
 public import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -72,7 +70,6 @@ theorem measurable_belowIndicator {h : HermitianForm F E W} {v : Basis ι E W}
     (M : Majorant h v) (y : InfinitePlace E → ι → ℂ) (t : ℝ) :
     Measurable (belowIndicator M y t) :=
   measurable_one.indicator (measurableSet_below M y t)
-
 
 omit [Fintype ι] [DecidableEq ι] in
 theorem vecAt_injective (v : Basis ι E W) : Function.Injective (vecAt v) := by

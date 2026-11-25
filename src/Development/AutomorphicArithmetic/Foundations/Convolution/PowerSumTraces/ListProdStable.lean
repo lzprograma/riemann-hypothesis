@@ -18,49 +18,9 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSum
 public import Development.AutomorphicArithmetic.TwistedTraces.EigenspaceCompLevelProjectionEqInfFixed
 public import Development.AutomorphicArithmetic.TwistedTraces.IwahoriCompactOpenAndIwCosetIndicatorTest
 public import Development.AutomorphicArithmetic.TwistedTraces.TrOnEqMulOfEqSmulOnSubspace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.HeightLe
 import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.IsNormAlong
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.TwistedTraces.EigenspaceInfSphericalLeClosedInvariant, Development.AutomorphicArithmetic.TwistedTraces.ExistsPosConstProdLocalHeckeOperators, Development.AutomorphicArithmetic.TwistedTraces.FiniteDimensionalEigenspaceInfFixedCompactOpen, Development.AutomorphicArithmetic.TwistedTraces.LocalHeckeOperatorMemOfClosedInvariant, Development.AutomorphicArithmetic.TwistedTraces.UiwPowCompEqOfAntitone, Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.ListProdStable
@@ -171,7 +131,7 @@ theorem UpperTheory.exists_pos_const_prod_localHeckeOperators :
           exact one_mem _
         · exact this
       · have := H (w i)
-        rw [if_pos (by simp)] at this
+        rw [ite_eq_left (by simp)] at this
         exact Subgroup.mem_bot.1 this
     · rintro ⟨H1, H2⟩ v
       split_ifs with hv
@@ -216,7 +176,7 @@ theorem UpperTheory.finiteDimensional_eigenspace_inf_fixed_compactOpen :
       intro j e
       obtain rfl := hw e
       rfl
-    simp only [U', dif_pos h]
+    simp only [U', dite_eq_left h]
     exact key _ _
   have hCO' : ∀ v ∈ Finset.univ.image w, CO (U' v) := by
     intro v hv
@@ -365,10 +325,6 @@ private theorem exists_enum {α : Type} (q : α) (S : Finset α) (hq : q ∉ S) 
     rw [Equiv.prod_comp S.equivFin.symm (fun v : S => s v)]
     exact Finset.prod_coe_sort S s
 
-private theorem prj_self {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-    (V : Submodule ℂ H) {v : H} (hv : v ∈ V) : prj V v = v :=
-  Submodule.starProjection_eq_self_iff.2 (Submodule.le_topologicalClosure V hv)
-
 private theorem list_prod_stable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
     (Z : Submodule ℂ H) (l : List (H →L[ℂ] H)) (h : ∀ T ∈ l, ∀ v ∈ Z, T v ∈ Z) : ∀ v ∈ Z, l.prod v ∈ Z := by
   induction l with
@@ -511,7 +467,8 @@ theorem UpperTheory.ConvolutionTheory.C.termF :
     have hRg : Rop μ 𝔣.g v = (κ : ℂ) • ((x : ℂ) • (List.ofFn T).prod v) := by
       have h1 : Rop μ 𝔣.g = RR μ 𝔣.g := rfl
       rw [h1, hRR]
-      simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply, prj_self _ hsph, hO]
+      simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply, prj,
+        Submodule.starProjection_eq_self_iff.2 (Submodule.le_topologicalClosure _ hsph), hO]
     have hc : (List.ofFn Tc).prod = T₀ * (List.ofFn fun i : Fin r => T i.succ).prod := by
       rw [List.ofFn_succ, List.prod_cons]
       rfl

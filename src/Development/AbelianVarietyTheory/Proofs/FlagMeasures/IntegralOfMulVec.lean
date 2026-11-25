@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermInvariantsIndependentOfWitnesses
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetFrameClassProperties
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
@@ -242,17 +244,8 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchim
   [CharZero F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] in
 variable {L : _root_.Formalism.MainNotions.S.Loc.LocE F E} {r k : ℕ} (S : _root_.GlobalTheory.HL.Frames L r k) in
 private lemma mem_frameCls_self (g h : Fin (r + 1) → S.V) : (g, h) ∈ S.frameCls g h := by
-  unfold _root_.GlobalTheory.HL.Frames.frameCls
-  have hint : _root_.GlobalTheory.HL.IsIntM L (1 : Matrix (Fin (r + 1)) (Fin (r + 1)) E) := by
-    unfold _root_.GlobalTheory.HL.IsIntM
-    intro i j
-    by_cases hij : i = j
-    · subst hij; simp [L.O.one_mem]
-    · simp [Matrix.one_apply_ne hij, L.O.zero_mem]
-  refine ⟨1, 1, hint, hint, fun i j hji => ⟨Matrix.one_apply_ne (ne_of_gt hji), Matrix.one_apply_ne (ne_of_gt hji)⟩,
-    fun i => ⟨Matrix.one_apply_eq i, Matrix.one_apply_eq i⟩, fun i j => ⟨0, L.O.zero_mem, by simp⟩, ?_, ?_⟩
-  · intro j; simp [Matrix.one_apply]
-  · intro j; simp [Matrix.one_apply]
+  intros
+  apply _root_.GlobalTheory.HL.FrameClass.refl_mem <;> assumption
 
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
@@ -261,31 +254,8 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchim
 variable {L : _root_.Formalism.MainNotions.S.Loc.LocE F E} {r k : ℕ} (S : _root_.GlobalTheory.HL.Frames L r k) in
 private lemma Mof_le_of_mem_frameCls {g h g' h' : Fin (r + 1) → S.V}
     (hP : (g', h') ∈ S.frameCls g h) : S.Mof g' h' ≤ S.Mof g h := by
-  obtain ⟨A, A', hA, hA', -, -, hdiff, h1, h2⟩ := hP
-  dsimp only at h1 h2
-  obtain ⟨-, -, -, -, -, hth0, -, -⟩ := _root_.GlobalTheory.FrameBasic.main L r k S
-  have hθ : algebraMap F E S.th⁻¹ * algebraMap F E S.th = 1 := by
-    rw [← map_mul, inv_mul_cancel₀ hth0, map_one]
-  choose c hc hcdef using hdiff
-  unfold _root_.GlobalTheory.HL.Frames.Mof
-  rw [Submodule.span_le]
-  rintro v (⟨j, rfl⟩ | ⟨j, rfl⟩)
-  · rw [h1 j]
-    exact Submodule.sum_mem _ fun i _ =>
-      Submodule.smul_mem _ (⟨A i j, hA i j⟩ : L.O) (Submodule.subset_span (Or.inl ⟨i, rfl⟩))
-  · have hsplit : algebraMap F E S.th⁻¹ • (h' j - g' j) =
-        ∑ i, A' i j • (algebraMap F E S.th⁻¹ • (h i - g i)) + ∑ i, c i j • g i := by
-      rw [h1 j, h2 j, ← Finset.sum_sub_distrib, Finset.smul_sum, ← Finset.sum_add_distrib]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      have hci : c i j = algebraMap F E S.th⁻¹ * (A' i j - A i j) := by
-        rw [hcdef, ← mul_assoc, hθ, one_mul]
-      rw [hci]
-      module
-    show algebraMap F E S.th⁻¹ • (h' j - g' j) ∈ _
-    rw [hsplit]
-    refine Submodule.add_mem _ (Submodule.sum_mem _ fun i _ => ?_) (Submodule.sum_mem _ fun i _ => ?_)
-    · exact Submodule.smul_mem _ (⟨A' i j, hA' i j⟩ : L.O) (Submodule.subset_span (Or.inr ⟨i, rfl⟩))
-    · exact Submodule.smul_mem _ (⟨c i j, hc i j⟩ : L.O) (Submodule.subset_span (Or.inl ⟨i, rfl⟩))
+  intros
+  apply _root_.GlobalTheory.HL.WitIndep.Mof_le <;> assumption
 
 
 open ValuativeRel MeasureTheory in

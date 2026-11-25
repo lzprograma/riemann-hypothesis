@@ -3,6 +3,7 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitsBase
 import Mathlib.FieldTheory.KummerPolynomial
 import Mathlib.FieldTheory.Relrank
+import Mathlib.RingTheory.Idempotents
 
 @[expose] public section
 set_option linter.unusedSectionVars false
@@ -211,30 +212,8 @@ private theorem rq_pir {k A : Type*} [Field k] [CommRing A] [Algebra k A] [Finit
     [IsReduced A] (χ : k[X]) (q : ℕ) : IsPrincipalIdealRing (Rq A χ q) := by
   classical
   have : IsArtinianRing A := IsArtinianRing.of_finite k A
-  have : Fintype (MaximalSpectrum A) := Fintype.ofFinite _
-  have hPI : IsPrincipalIdealRing ((I : MaximalSpectrum A) → (A ⧸ I.asIdeal)[X]) := ⟨fun J => by
-    have hsurj : ∀ I : MaximalSpectrum A,
-        Function.Surjective (Pi.evalRingHom (fun I : MaximalSpectrum A => (A ⧸ I.asIdeal)[X]) I) :=
-      fun I y => ⟨Pi.single I y, by simp⟩
-    have hgen : ∀ I : MaximalSpectrum A, ∃ a : (A ⧸ I.asIdeal)[X],
-        J.map (Pi.evalRingHom (fun I : MaximalSpectrum A => (A ⧸ I.asIdeal)[X]) I) = Ideal.span {a} :=
-      fun I => by
-        have := I.isMaximal; let : Field (A ⧸ I.asIdeal) := Ideal.Quotient.field _
-        exact (IsPrincipalIdealRing.principal (R := (A ⧸ I.asIdeal)[X]) _).principal
-    choose g hg using hgen
-    choose h hh he using fun I => (Ideal.mem_map_iff_of_surjective _ (hsurj I)).mp
-      (hg I ▸ Ideal.subset_span rfl)
-    have hgJ : g ∈ J := by
-      have e : g = ∑ I, Pi.single I (1 : (A ⧸ I.asIdeal)[X]) * h I := by
-        funext L; simp only [Finset.sum_apply, Pi.mul_apply]
-        rw [Finset.sum_eq_single L (fun I _ hI => by simp [Ne.symm hI])
-          (fun h => absurd (Finset.mem_univ L) h)]
-        simp only [Pi.single_eq_same, one_mul]; exact (he L).symm
-      rw [e]; exact J.sum_mem fun I _ => J.mul_mem_left _ (hh I)
-    refine ⟨g, le_antisymm (fun x hx => ?_) (Ideal.span_le.2 (Set.singleton_subset_iff.2 hgJ))⟩
-    choose c hc using fun I => Ideal.mem_span_singleton'.mp
-      (hg I ▸ Ideal.mem_map_of_mem (Pi.evalRingHom _ I) hx)
-    exact Ideal.mem_span_singleton'.mpr ⟨c, funext hc⟩⟩
+  have : ∀ I : MaximalSpectrum A, IsPrincipalIdealRing (A ⧸ I.asIdeal)[X] := fun I => by
+    have := I.isMaximal; let : Field (A ⧸ I.asIdeal) := Ideal.Quotient.field _; infer_instance
   have hPI' : IsPrincipalIdealRing ((∀ I : MaximalSpectrum A, A ⧸ I.asIdeal)[X]) :=
     IsPrincipalIdealRing.of_surjective (Polynomial.piEquiv _).symm (Polynomial.piEquiv _).symm.surjective
   have hAX : IsPrincipalIdealRing A[X] :=
@@ -298,33 +277,18 @@ private theorem idem {k S : Type*} [Field k] [CommRing S] [Algebra k S] [FiniteD
   have : Fintype (MaximalSpectrum S) := Fintype.ofFinite _
   set φ := IsArtinianRing.equivPi S
   let σ := (Fintype.equivFin (MaximalSpectrum S)).symm
+  have hc := (CompleteOrthogonalIdempotents.equiv σ).2
+    ((CompleteOrthogonalIdempotents.single _).map φ.symm.toAlgHom.toRingHom)
   refine ⟨Fintype.card (MaximalSpectrum S), fun t => φ.symm (Pi.single (σ t) 1),
-    fun t => ?_, ?_, fun t t' htt => ?_, fun t s => ?_⟩
-  · show _ * _ = _; rw [← map_mul]; congr 1; ext M
-    by_cases h : M = σ t
-    · subst h; simp
-    · simp [h]
-  · apply φ.injective; rw [map_sum, map_one]; simp only [AlgEquiv.apply_symm_apply]
-    rw [Equiv.sum_comp σ (fun M => (Pi.single M 1 : ∀ M : MaximalSpectrum S, S ⧸ M.asIdeal))]
-    exact Finset.univ_sum_single _
-  · rw [← map_mul, show (Pi.single (σ t) 1 * Pi.single (σ t') 1 :
-      ∀ M : MaximalSpectrum S, S ⧸ M.asIdeal) = 0 from funext fun M => by
-        by_cases h1 : M = σ t
-        · subst h1; simp [σ.injective.ne htt]
-        · simp [h1], map_zero]
-  · have := (σ t).isMaximal
-    by_cases ha : φ s (σ t) = 0
-    · left; apply φ.injective; rw [map_mul, AlgEquiv.apply_symm_apply, map_zero]
-      ext M
-      by_cases h1 : M = σ t
-      · subst h1; simp [ha]
-      · simp [h1]
-    · obtain ⟨b, hb⟩ := Ideal.Quotient.exists_inv ha
-      refine Or.inr ⟨φ.symm (Pi.single (σ t) b), φ.injective ?_⟩
-      rw [map_mul, map_mul, AlgEquiv.apply_symm_apply, AlgEquiv.apply_symm_apply]
-      ext M; by_cases h1 : M = σ t
-      · subst h1; simp only [Pi.mul_apply, Pi.single_eq_same, mul_one]; exact hb
-      · simp [h1]
+    hc.idem, hc.complete, fun t t' htt => hc.ortho htt, fun t s => ?_⟩
+  have := (σ t).isMaximal
+  have h : φ (s * φ.symm (Pi.single (σ t) 1)) = Pi.single (σ t) (φ s (σ t)) := by
+    rw [map_mul, AlgEquiv.apply_symm_apply, ← Pi.single_mul_right, mul_one]
+  by_cases ha : φ s (σ t) = 0
+  · exact Or.inl (φ.injective (by rw [h, ha, Pi.single_zero, map_zero]))
+  · obtain ⟨b, hb⟩ := Ideal.Quotient.exists_inv ha
+    refine Or.inr ⟨φ.symm (Pi.single (σ t) b), φ.injective ?_⟩
+    rw [map_mul, h, AlgEquiv.apply_symm_apply, AlgEquiv.apply_symm_apply, ← Pi.single_mul, hb]
 
 private theorem sEps {k R : Type*} [Field k] [CommRing R] [Algebra k R] [IsPrincipalIdealRing R]
     (S : Subalgebra k R) (hS : ∀ r : R, ∃ s ∈ S, IsNilpotent (r - s)) (q : ℕ)
@@ -485,46 +449,25 @@ private theorem sectionEx {k R : Type*} [Field k] [CommRing R] [Algebra k R] [Fi
   let π : (R ⧸ N) ≃ₐ[k] ∀ I : MaximalSpectrum R, R ⧸ I.asIdeal :=
     (IsArtinianRing.quotNilradicalEquivPi R).restrictScalars k
   let Lbar : Fin n → R ⧸ N := fun i => π.symm (fun I => α I i)
-  let σ : ∀ I : MaximalSpectrum R, R ⧸ I.asIdeal → R ⧸ N := fun I z => π.symm (Pi.single I z)
-  have hσpow : ∀ I z, σ I (z ^ (p ^ c)) = σ I z ^ (p ^ c) := fun I z => π.injective <| by
-    simp only [σ, map_pow, AlgEquiv.apply_symm_apply]; funext J
-    by_cases h : J = I
-    · subst h; simp
-    · simp [h, zero_pow hq0.ne']
   let A := Algebra.adjoin k (Set.range (fun b : R ⧸ N => b ^ (p ^ c)) ∪ Set.range Lbar)
-  have he : ∀ I, σ I 1 ∈ A := fun I => by
-    rw [show σ I 1 = σ I 1 ^ (p ^ c) by rw [← hσpow, one_pow]]
-    exact Algebra.subset_adjoin (Or.inl ⟨_, rfl⟩)
-  have hσA : ∀ I z, σ I z ∈ A := fun I z => by
-    have hz : z ∈ Algebra.adjoin k
-        (Set.range (fun b : R ⧸ I.asIdeal => b ^ (p ^ c)) ∪ Set.range (α I)) := hα I ▸ trivial
-    induction hz using Algebra.adjoin_induction with
-    | mem _ hx =>
-      rcases hx with ⟨b, rfl⟩ | ⟨i, rfl⟩
-      · rw [hσpow]; exact Algebra.subset_adjoin (Or.inl ⟨_, rfl⟩)
-      · rw [show σ I (α I i) = σ I 1 * Lbar i from π.injective <| by
-          simp only [σ, Lbar, map_mul, AlgEquiv.apply_symm_apply]; funext J
-          by_cases h : J = I
-          · subst h; simp
-          · simp [h]]
-        exact A.mul_mem (he I) (Algebra.subset_adjoin (Or.inr ⟨i, rfl⟩))
-    | algebraMap a =>
-      rw [show σ I (algebraMap k _ a) = algebraMap k (R ⧸ N) a * σ I 1 from π.injective <| by
-        simp only [σ, map_mul, AlgEquiv.apply_symm_apply, AlgEquiv.commutes]; funext J
-        by_cases h : J = I
-        · subst h; simp
-        · simp [h]]
-      exact A.mul_mem (A.algebraMap_mem a) (he I)
-    | add x y _ _ hx hy =>
-      rw [show σ I (x + y) = σ I x + σ I y by simp only [σ, Pi.single_add, map_add (f := _)]]
-      exact A.add_mem hx hy
-    | mul x y _ _ hx hy =>
-      rw [show σ I (x * y) = σ I x * σ I y by simp only [σ, Pi.single_mul, map_mul]]
-      exact A.mul_mem hx hy
+  have hI : ∀ x I, ∃ a ∈ A, π a I = π x I := fun x I => by
+    let ψ := (Pi.evalAlgHom k _ I).comp π.toAlgHom
+    have hψ : A.map ψ = ⊤ := by
+      rw [AlgHom.map_adjoin, eq_top_iff, ← hα I]
+      refine Algebra.adjoin_mono (Set.union_subset ?_ ?_)
+      · rintro _ ⟨b, rfl⟩
+        exact ⟨π.symm (Pi.single I b) ^ (p ^ c), Or.inl ⟨_, rfl⟩, by simp [ψ]⟩
+      · rintro _ ⟨i, rfl⟩
+        exact ⟨Lbar i, Or.inr ⟨i, rfl⟩, by simp [ψ, Lbar]⟩
+    exact Subalgebra.mem_map.1 (hψ ▸ Algebra.mem_top : π x I ∈ A.map ψ)
   have hAtop : ∀ x : R ⧸ N, x ∈ A := fun x => by
-    rw [show x = ∑ I, σ I (π x I) from π.injective <| by
-      rw [map_sum]; simp only [σ, AlgEquiv.apply_symm_apply]; exact (Finset.univ_sum_single (π x)).symm]
-    exact A.sum_mem fun I _ => hσA I _
+    choose a ha hax using hI x
+    rw [show x = ∑ I, π.symm (Pi.single I 1) * a I from π.injective <| by
+      simp only [map_sum, map_mul, AlgEquiv.apply_symm_apply, ← Pi.single_mul_left, one_mul, hax]
+      exact (Finset.univ_sum_single (π x)).symm]
+    refine A.sum_mem fun I _ => A.mul_mem ?_ (ha I)
+    rw [← ((CompleteOrthogonalIdempotents.single _).idem I).map π.symm |>.pow_eq hq0.ne']
+    exact Algebra.subset_adjoin (Or.inl ⟨_, rfl⟩)
   choose L hL using fun i => Ideal.Quotient.mk_surjective (I := N) (Lbar i)
   let T := Pw k R (p ^ c)
   let S := Algebra.adjoin k ((T : Set R) ∪ Set.range L)

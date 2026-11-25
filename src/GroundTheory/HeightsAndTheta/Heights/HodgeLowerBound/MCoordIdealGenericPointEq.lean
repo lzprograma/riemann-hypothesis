@@ -36,8 +36,4 @@ theorem mcPts_torus {B : Ideal (MRing ι)} (hB : IsMultiHomogIdeal B) {z : (Σ k
 
 end Boundary
 
-section Ample
-
-end Ample
-
 end GroundTheory.Heights₂.Heights.LowerBoundFree.ComponentDataEquivalence

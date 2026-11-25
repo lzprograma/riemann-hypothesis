@@ -81,20 +81,6 @@ theorem finite_of_isCompl [Module.Finite R M] {N N' : Submodule R M} (h : IsComp
 
 end General
 
-section Dedekind
-
-variable {R : Type*} [CommRing R] [IsDedekindDomain R] {M : Type*} [AddCommGroup M] [Module R M]
-
-
-end Dedekind
-
-section PID
-
-variable {R : Type*} [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
-  {M : Type*} [AddCommGroup M] [Module R M]
-
-end PID
-
 section Valuation
 
 variable {R : Type*} [CommRing R] [IsDomain R] [ValuationRing R]

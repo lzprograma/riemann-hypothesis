@@ -37,13 +37,6 @@ open PointsOfFlagModel
 
 variable {H : Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {p : ℕ}
 
-def N3Tower (T : Tower p Xo c) : Prop := (∀ v, N3AtPoints (T.Y v) p) ∧ ∀ n w, N3AtPoints (T.YN n w) p
-
 variable {T : Tower p Xo c}
-
-def lattice₂ (hN : N3Tower T) : ∀ {Z : MdlC}, Pt T Z → LatB E
-  | .xm, y => (Classical.choice (hN.1 y.1 y.2.1 y.2.2)).toLatB
-  | .yy, y => (Classical.choice (hN.1 y.1 y.2.1 y.2.2.1)).toLatB
-  | .xn n, y => (Classical.choice (hN.2 n y.1 y.2.1 y.2.2)).toLatB
 
 end Formalism.L2.Pj

@@ -46,16 +46,6 @@ namespace GlobalTheory.PeriodFormEdge
 
 open ReciprocityTheory.ChartRestriction.G.Out Formalism.L2.Pj IsLocalRing
 
-section Local
-variable {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R]
-
-end Local
-
-section At
-variable {R : Type} [CommRing R] [IsDomain R] {C : Type} [NormedField C]
-
-end At
-
 section Agree
 open AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PsiCoordLocal
 variable {R : Type} [CommRing R] [IsDomain R]

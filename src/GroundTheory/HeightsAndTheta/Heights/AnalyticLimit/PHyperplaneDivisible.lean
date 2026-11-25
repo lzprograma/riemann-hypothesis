@@ -152,18 +152,18 @@ theorem HyperplaneDivisible.proof : HyperplaneDivisible.Statement := by
       filter_upwards [isOpen_ball.mem_nhds (mem_ball_self (half_pos hr))] with z hz
       have hz' : z ∈ ball p r := ball_subset_ball (half_le_self hr.le) hz
       by_cases hzi : z i = 0
-      · simp only [if_pos hzi, coordScale_of_eq_zero i _ hzi, intervalIntegral.integral_const, Fi]
+      · simp only [ite_eq_left hzi, coordScale_of_eq_zero i _ hzi, intervalIntegral.integral_const, Fi]
         simp
-      · rw [if_neg hzi, eq_mul_integral_partial hF h0 hpi hball hz', mul_div_cancel_left₀ _ hzi]
+      · rw [ite_eq_right hzi, eq_mul_integral_partial hF h0 hpi hball hz', mul_div_cancel_left₀ _ hzi]
     · have hproj : AnalyticAt ℂ (fun z : Fin D → ℂ => z i) p :=
         (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin D => ℂ) i).analyticAt p
       refine ((hF p hp).div hproj hpi).congr ?_
       filter_upwards [(isOpen_ne_fun (continuous_apply i) continuous_const).mem_nhds hpi] with z hz
-      simp only [if_neg (show z i ≠ 0 from hz)]
+      simp only [ite_eq_right (show z i ≠ 0 from hz)]
       rfl
   · by_cases hzi : z i = 0
     · simp [hzi, h0 z hz hzi]
-    · simp only [if_neg hzi]
+    · simp only [ite_eq_right hzi]
       rw [mul_div_cancel₀ _ hzi]
 
 end

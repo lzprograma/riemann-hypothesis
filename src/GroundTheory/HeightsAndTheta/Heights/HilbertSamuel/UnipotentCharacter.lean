@@ -58,13 +58,13 @@ theorem LatticeCount.encard_le (B : ShortLatticeBasis La c) (b : ℝ) (x : V) :
   refine Set.encard_le_encard_of_injOn
     (f := fun y : V ↦ if h : y ∈ La then (⟨y + μ, La.add_mem h hμ⟩ : La) else 0) ?_ ?_
   · rintro y ⟨hy, hyb⟩
-    simp only [Set.mem_ofPred_eq, hy, dif_pos, mem_closedBall, dist_zero_right,
+    simp only [Set.mem_ofPred_eq, hy, dite_eq_left, mem_closedBall, dist_zero_right,
       Submodule.vadd_def, vadd_eq_add]
     calc ‖y + μ + x‖ = ‖y + (x + μ)‖ := by congr 1; abel
       _ ≤ ‖y‖ + ‖x + μ‖ := norm_add_le _ _
       _ ≤ b + finrank ℝ V * c := add_le_add hyb hxμ
   · rintro y ⟨hy, -⟩ y' ⟨hy', -⟩ h
-    simp only [hy, hy', dif_pos, Subtype.mk.injEq, add_left_inj] at h
+    simp only [hy, hy', dite_eq_left, Subtype.mk.injEq, add_left_inj] at h
     exact h
 
 end

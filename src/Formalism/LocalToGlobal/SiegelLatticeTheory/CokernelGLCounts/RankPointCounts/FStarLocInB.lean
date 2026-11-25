@@ -369,10 +369,8 @@ theorem ident_trans (φ' : H.Wb t₁.f' ≃ₗ[E] H.Wb f₂')
   have hz := locInA_zhat' H e hiso t₁ hf hf'
   have hd : ∀ l, H.Dl t₁.f f₃' l = H.Dl t₁.f f₂' l := fun l => locInA_dl' H e hiso t₁ hf hf' l
   have hom' : H.om' t₁.f f₃' = e (H.om' t₁.f f₂') := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [Loc.HermSp.om', hz, map_sum, map_smul, hf']
   have hom : H.om t₁.f f₃' = e (H.om t₁.f f₂') := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [Loc.HermSp.om, hz, map_sum, map_smul, hf]
   have h21 : ∀ y ∈ H.Xp t₁.f ⊔ H.Xp f₃', e.symm y ∈ H.Xp t₁.f ⊔ H.Xp f₂' := by
     intro y hy
@@ -493,8 +491,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace LocInB
 
 variable {D : Formalism.BasicNotions.D7}
@@ -563,7 +559,7 @@ theorem locX_move {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (n : (VS D).V ≃�
       intro a
 
       simp only [hπ, map_sub, map_sum, map_smul, smul_eq_mul, hy, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true, hkk, sub_self]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true, hkk, sub_self]
     simp only [orth, Submodule.mem_iInf, LinearMap.mem_ker]
     intro x hx
     change x ∈ Submodule.span D.host.E (Set.range F0.e) at hx

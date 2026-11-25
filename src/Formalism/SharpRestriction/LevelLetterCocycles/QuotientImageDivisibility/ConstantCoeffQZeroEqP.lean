@@ -4,48 +4,7 @@ import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoe
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSAddLeft
 public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
 public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -81,34 +40,9 @@ theorem cc_lev_pi (c : ZMod n) (ζ : LL) (hζ : ∃ j : ℕ, IsPrimitiveRoot ζ 
   rw [map_add (f := _), map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at this
   linear_combination this
 
-theorem cc_lev_q_one (c : ZMod n) : PowerSeries.constantCoeff (W.lev c 1 W.q) = (PD.p : LL) := by
-  have hq : W.q = (fun _ => PowerSeries.mk fun k => PowerSeries.coeff (k + 1) W.q₀) * letπ +
-      (PD.p : LetA O n) := by
-    funext i
-    simp only [LocWach.q, Pi.add_apply, Pi.mul_apply, letπ, Pi.natCast_apply]
-    conv_lhs => rw [PowerSeries.eq_shift_mul_X_add_const W.q₀]
-    rw [Formalism.MainNotions.N.Ln34.CrystallineExponents.constantCoeff_q_zero_eq_p, map_natCast]
-  rw [hq, map_add (f := _), map_mul, map_natCast, map_add (f := _), map_mul,
-    cc_lev_pi W c 1 ⟨0, by rw [pow_zero]; exact IsPrimitiveRoot.one⟩, sub_self, mul_zero, zero_add,
-    map_natCast]
-
 theorem qroot_prim (hs : W.s = 1) (hp : (PD.p : LL) ≠ 0) {c : ZMod n} {ζ : LL}
     (h : Formalism.MainNotions.DeltaInvariantLattices.QRoot W c ζ) : IsPrimitiveRoot ζ PD.p := by
-  obtain ⟨-, ⟨m, hm⟩, hcc⟩ := h
-  rw [Q_eq_q W hs] at hcc
-  have hpr : PD.p.Prime := PD.hp
-  obtain ⟨j, -, hord⟩ := (Nat.dvd_prime_pow hpr).1 (orderOf_dvd_of_pow_eq_one hm)
-  have hprim : IsPrimitiveRoot ζ (PD.p ^ j) := hord ▸ IsPrimitiveRoot.orderOf ζ
-  have hp1 : ζ ^ PD.p = 1 := by
-    by_contra hne
-    exact Formalism.MainNotions.UnusedSlot80.LevR.cc_lev_q W c ζ ⟨j, hprim⟩ hne hcc
-  have hdvd : PD.p ^ j ∣ PD.p ^ 1 := by rw [pow_one]; exact hprim.dvd_of_pow_eq_one _ hp1
-  have hj1 : j ≤ 1 := (Nat.pow_dvd_pow_iff_le_right hpr.one_lt).1 hdvd
-  rcases Nat.le_one_iff_eq_zero_or_eq_one.1 hj1 with rfl | rfl
-  · rw [pow_zero] at hprim
-    obtain rfl := IsPrimitiveRoot.one_right_iff.1 hprim
-    exact absurd (cc_lev_q_one W c ▸ hcc) hp
-  · rwa [pow_one] at hprim
+  apply +allowSynthFailures _root_.Formalism.MainNotions.N.Ln34.CrystallineExponents.qroot_prim <;> assumption
 
 theorem lev_q_eq (c : ZMod n) {ζ : LL} (hζ : IsPrimitiveRoot ζ PD.p) (hp : (PD.p : LL) ≠ 0) :
     ∃ u : PowerSeries LL, PowerSeries.constantCoeff u ≠ 0 ∧
@@ -125,23 +59,15 @@ theorem lev_q_eq (c : ZMod n) {ζ : LL} (hζ : IsPrimitiveRoot ζ PD.p) (hp : (P
     rw [hE'] at this
     simp only [Nat.cast_zero, zero_add, mul_one] at this
     rw [← this, PowerSeries.coeff_zero_eq_constantCoeff_apply, hE0]
-  have hpow : ∀ k : ℕ, PowerSeries.coeff 1 (E ^ k) = k := by
-    intro k
-    induction k with
-    | zero => simp [PowerSeries.coeff_one]
-    | succ k ih =>
-      rw [pow_succ, PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
-      simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add, Nat.sub_zero,
-        Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff_apply, map_pow, hE0, one_pow, hE1, ih]
-      push_cast
-      ring
+  have hpow : ∀ k : ℕ, PowerSeries.coeff 1 (E ^ k) = k := fun k => by
+    rw [PowerSeries.coeff_one_pow, hE1, hE0, one_pow, mul_one, mul_one]
   have hF0 : PowerSeries.constantCoeff (E ^ PD.p - 1) = 0 := by
     rw [map_sub, map_pow, hE0, one_pow, map_one, sub_self]
   obtain ⟨w, hw⟩ := PowerSeries.X_dvd_iff.2 hF0
   have hw0 : PowerSeries.constantCoeff w = (PD.p : LL) := by
     have h1 := congrArg (PowerSeries.coeff 1) hw
     rw [PowerSeries.coeff_succ_X_mul, PowerSeries.coeff_zero_eq_constantCoeff_apply, map_sub,
-      hpow, PowerSeries.coeff_one, if_neg one_ne_zero, sub_zero] at h1
+      hpow, PowerSeries.coeff_one, ite_eq_right one_ne_zero, sub_zero] at h1
     exact h1.symm
   have hne : PowerSeries.constantCoeff (W.lev c ζ letπ) ≠ 0 := by rw [hπ]; exact hζ1
   refine ⟨(W.lev c ζ letπ)⁻¹ * w, ?_, ?_⟩

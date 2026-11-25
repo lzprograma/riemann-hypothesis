@@ -7,50 +7,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddingMap
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UpperMinorOfLevelPoint
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -75,8 +32,8 @@ theorem zfull_conjTranspose (Z : Matrix (Fin j) (Fin j) ℂ) (τ : ℂ) :
   · rw [dite_eq_left ⟨h1.2, h1.1⟩, dite_eq_left h1, Matrix.conjTranspose_apply]
   · rw [dite_eq_right (by tauto), dite_eq_right h1]
     by_cases h2 : a.val = j ∧ b.val = j
-    · rw [if_pos ⟨h2.2, h2.1⟩, if_pos h2]
-    · rw [if_neg (by tauto), if_neg h2, star_zero]
+    · rw [ite_eq_left ⟨h2.2, h2.1⟩, ite_eq_left h2]
+    · rw [ite_eq_right (by tauto), ite_eq_right h2, star_zero]
 
 theorem zfull_mul (Z W : Matrix (Fin j) (Fin j) ℂ) (τ σ : ℂ) :
     zfull Z τ * zfull W σ = zfull (Z * W) (τ * σ) := by
@@ -96,8 +53,8 @@ theorem zfull_one : zfull (1 : Matrix (Fin j) (Fin j) ℂ) 1 = 1 := by
     simp [Fin.ext_iff]
   · rw [dite_eq_right h1]
     by_cases h2 : a.val = j ∧ b.val = j
-    · rw [if_pos h2, if_pos (Fin.ext (by omega))]
-    · rw [if_neg h2, if_neg]
+    · rw [ite_eq_left h2, ite_eq_left (Fin.ext (by omega))]
+    · rw [ite_eq_right h2, ite_eq_right]
       intro h; apply h2; subst h; have := a.isLt; omega
 
 theorem zfull_inv {Z : Matrix (Fin j) (Fin j) ℂ} {τ : ℂ} (hZ : Z.det ≠ 0) (hτ : τ ≠ 0) :
@@ -255,18 +212,18 @@ theorem sum_single_last (a : Fin j → ℂ) :
   rcases p' with p' | p' <;> rcases q' with q' | q'
   · simp only [Matrix.fromBlocks_apply₁₁, Matrix.zero_apply]
     refine Finset.sum_eq_zero fun c _ => ?_
-    rw [if_neg]; intro h; have := congrArg Fin.val h.1; simp at this; omega
+    rw [ite_eq_right]; intro h; have := congrArg Fin.val h.1; simp at this; omega
   · simp only [Matrix.fromBlocks_apply₁₂, Matrix.zero_apply]
     refine Finset.sum_eq_zero fun c _ => ?_
-    rw [if_neg]; intro h; have := congrArg Fin.val h.1; simp at this; omega
+    rw [ite_eq_right]; intro h; have := congrArg Fin.val h.1; simp at this; omega
   · simp only [Matrix.fromBlocks_apply₂₁, Matrix.of_apply]
     rw [Finset.sum_eq_single q']
-    · rw [if_pos]; constructor <;> ext <;> simp
-    · intro c _ hc; rw [if_neg]; intro h; apply hc; have := congrArg Fin.val h.2; ext; simpa using this
+    · rw [ite_eq_left]; constructor <;> ext <;> simp
+    · intro c _ hc; rw [ite_eq_right]; intro h; apply hc; have := congrArg Fin.val h.2; ext; simpa using this
     · simp
   · simp only [Matrix.fromBlocks_apply₂₂, Matrix.zero_apply]
     refine Finset.sum_eq_zero fun c _ => ?_
-    rw [if_neg]; intro h; have := congrArg Fin.val h.2; simp at this; omega
+    rw [ite_eq_right]; intro h; have := congrArg Fin.val h.2; simp at this; omega
 
 theorem sum_single_col (a : Fin j → ℂ) :
     (∑ c : Fin j, a c • Matrix.single c.castSucc (Fin.last j) (1 : ℂ)) =
@@ -281,18 +238,18 @@ theorem sum_single_col (a : Fin j → ℂ) :
   rcases p' with p' | p' <;> rcases q' with q' | q'
   · simp only [Matrix.fromBlocks_apply₁₁, Matrix.zero_apply]
     refine Finset.sum_eq_zero fun c _ => ?_
-    rw [if_neg]; intro h; have := congrArg Fin.val h.2; simp at this; omega
+    rw [ite_eq_right]; intro h; have := congrArg Fin.val h.2; simp at this; omega
   · simp only [Matrix.fromBlocks_apply₁₂, Matrix.of_apply]
     rw [Finset.sum_eq_single p']
-    · rw [if_pos]; constructor <;> ext <;> simp
-    · intro c _ hc; rw [if_neg]; intro h; apply hc; have := congrArg Fin.val h.1; ext; simpa using this
+    · rw [ite_eq_left]; constructor <;> ext <;> simp
+    · intro c _ hc; rw [ite_eq_right]; intro h; apply hc; have := congrArg Fin.val h.1; ext; simpa using this
     · simp
   · simp only [Matrix.fromBlocks_apply₂₁, Matrix.zero_apply]
     refine Finset.sum_eq_zero fun c _ => ?_
-    rw [if_neg]; intro h; have := congrArg Fin.val h.1; simp at this; omega
+    rw [ite_eq_right]; intro h; have := congrArg Fin.val h.1; simp at this; omega
   · simp only [Matrix.fromBlocks_apply₂₂, Matrix.zero_apply]
     refine Finset.sum_eq_zero fun c _ => ?_
-    rw [if_neg]; intro h; have := congrArg Fin.val h.1; simp at this; omega
+    rw [ite_eq_right]; intro h; have := congrArg Fin.val h.1; simp at this; omega
 
 end blk2alg
 
@@ -303,7 +260,7 @@ variable {k r j : ℕ}
 theorem single_last_eq_block_two (b : Fin j) :
     Matrix.single (Fin.last j) b.castSucc (1 : ℂ) = U.blk2 0 0 (Matrix.single 0 b 1) 0 := by
   have := sum_single_last (j := j) (fun c => if c = b then (1 : ℂ) else 0)
-  simp only [ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
+  simp only [ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at this
   rw [this]
   congr 1
   ext u c
@@ -313,7 +270,7 @@ theorem single_last_eq_block_two (b : Fin j) :
 theorem single_column_eq_block_two (b : Fin j) :
     Matrix.single b.castSucc (Fin.last j) (1 : ℂ) = U.blk2 0 (Matrix.single b 0 1) 0 0 := by
   have := sum_single_col (j := j) (fun c => if c = b then (1 : ℂ) else 0)
-  simp only [ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
+  simp only [ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at this
   rw [this]
   congr 1
   ext c u
@@ -401,7 +358,7 @@ theorem adjoint_corner_scaled_single_comm (Z : Matrix (Fin j) (Fin j) ℂ) (hZ :
     Fin.sum_univ_one]
   rw [Finset.sum_eq_single b]
   · have hτ' : star τ ≠ 0 := star_ne_zero.mpr hτ
-    rw [if_pos ⟨rfl, Subsingleton.elim _ _⟩, mul_one, ← Matrix.conjTranspose_nonsing_inv, Matrix.conjTranspose_apply]
+    rw [ite_eq_left ⟨rfl, Subsingleton.elim _ _⟩, mul_one, ← Matrix.conjTranspose_nonsing_inv, Matrix.conjTranspose_apply]
     simp only [map_mul, starRingEnd_apply]
     field_simp
   · intro c _ hc; simp [Ne.symm hc]

@@ -99,7 +99,7 @@ theorem mulLeft_surjective {c : L} (hc : c ≠ 0) : Function.Surjective (AddMono
   fun y => ⟨c⁻¹ * y, by simp [AddMonoidHom.mulLeft, mul_inv_cancel_left₀ hc]⟩
 
 theorem mulLeft_injective {c : L} (hc : c ≠ 0) : Function.Injective (AddMonoidHom.mulLeft c) :=
-  fun x y h => mul_left_cancel₀ hc h
+  fun _ _ h => mul_left_cancel₀ hc h
 
 theorem relIndex_scaledInt {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ σ q) (d : ℕ) :
     (intL L).toAddSubgroup.relIndex (scaledInt (ϖ ^ d)) = q ^ (2 * d) := by

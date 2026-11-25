@@ -13,8 +13,6 @@ namespace Formalism.L2.SG.NormCut
 
 section Phase
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (TR : TypedRed X)
 
 def scOf {u : D.what₂.Word} {rs : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (c : ColSys X u rs) (ρ : c.Cl) :

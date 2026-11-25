@@ -82,8 +82,7 @@ theorem gv_pos_scale (T T' : ℝ) (e : Fin r → Fin n → ℂ) (z z' : Fin n �
   rw [zhat_famSc, gv_scale T T' _ (lamS_last sc)]
   rw [zhat_famSc, gv_scale T T' _ (lamS_last s0)] at h0
   have hpos : 0 < Gv T T' (Zhat ε (fam e z) (fam e z') G) := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h5 : ‖∏ a, lamS r s0 a‖ ^ 4 * Gv T T' (Zhat ε (fam e z) (fam e z') G) ≤ 0 :=
       mul_nonpos_of_nonneg_of_nonpos (by positivity) hc
     linarith
@@ -191,12 +190,12 @@ theorem dframe_loc (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (g : Formalis
   have heA : ∀ y, hJ ε (f (Fin.last r)) y = 0 ∨ True → (∀ a, hJ ε (f a) y = if a = Fin.last r then hJ ε A.z y else 0) →
       ∀ a, hJ ε (A.e a) y = 0 := fun y _ hy a => by
     have h := hy (Fin.castSucc a)
-    rw [hfa, hJ_smul_left, lamS_star, if_neg (Fin.castSucc_ne_last a)] at h
+    rw [hfa, hJ_smul_left, lamS_star, ite_eq_right (Fin.castSucc_ne_last a)] at h
     exact (mul_eq_zero.1 h).resolve_left (lamS_ne hsc _)
   have heB : ∀ y, (∀ b, hJ ε (f' b) y = if b = Fin.last r then hJ ε B.z y else 0) → ∀ a, hJ ε (B.e a) y = 0 :=
     fun y hy a => by
       have h := hy (Fin.castSucc a)
-      rw [hf'a, hJ_smul_left, lamS_star, if_neg (Fin.castSucc_ne_last a)] at h
+      rw [hf'a, hJ_smul_left, lamS_star, ite_eq_right (Fin.castSucc_ne_last a)] at h
       exact (mul_eq_zero.1 h).resolve_left (lamS_ne hsc _)
 
   set x' := xPr Zs Gm f' with hx'
@@ -210,7 +209,7 @@ theorem dframe_loc (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (g : Formalis
         ∑ b, Zs a b * adjugate Zs b (Fin.last r) := Finset.sum_congr rfl fun b _ => mul_comm _ _
     rw [h2, h]
     split_ifs <;> simp
-  have hzx' : hJ ε A.z x' = Zs.det := by have h := hfx' (Fin.last r); rwa [hfL, if_pos rfl] at h
+  have hzx' : hJ ε A.z x' = Zs.det := by have h := hfx' (Fin.last r); rwa [hfL, ite_eq_left rfl] at h
   have hex' : ∀ a, hJ ε (A.e a) x' = 0 := heA x' (Or.inr trivial) fun a => by
     rw [hfx', hzx']
   have hx'x' : hJ ε x' x' = star (adjugate Zs (Fin.last r) (Fin.last r)) *
@@ -229,12 +228,12 @@ theorem dframe_loc (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (g : Formalis
       ∑ a, adjugate Zs (Fin.last r) a * Zs a b from rfl, h]
     by_cases hb : b = Fin.last r
     · subst hb; simp
-    · rw [if_neg hb, if_neg (Ne.symm hb), mul_zero]
+    · rw [ite_eq_right hb, ite_eq_right (Ne.symm hb), mul_zero]
   have hf'x : ∀ b, hJ ε (f' b) (Gi *ᵥ x) = if b = Fin.last r then star Zs.det else 0 := by
     intro b
     rw [hpv, ← hJ_conj, hxf]
     split_ifs <;> simp
-  have hzx : hJ ε B.z (Gi *ᵥ x) = star Zs.det := by have h := hf'x (Fin.last r); rwa [hf'L, if_pos rfl] at h
+  have hzx : hJ ε B.z (Gi *ᵥ x) = star Zs.det := by have h := hf'x (Fin.last r); rwa [hf'L, ite_eq_left rfl] at h
   have hex : ∀ a, hJ ε (B.e a) (Gi *ᵥ x) = 0 := heB _ fun b => by rw [hf'x, hzx]
   have hxx : hJ ε (Gi *ᵥ x) (Gi *ᵥ x) = star (star (adjugate Zs (Fin.last r) (Fin.last r))) *
       star (adjugate Zs (Fin.last r) (Fin.last r)) * (-(A.T : ℂ)) := by
@@ -388,8 +387,6 @@ open NumberField Matrix Formalism.BasicNotions Formalism.MainNotions.S
 namespace Formalism.L2.SG.Pf.Carrier
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj.InfCut.PtRepPf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace DFrameAtPf
 

@@ -91,7 +91,7 @@ theorem norm_le_of_distinct {ι : Type*} (s : Finset ι) (e : ι → ℕ) (u : �
     have hsplit := (hcoeff N).trans (Finset.add_sum_erase s _ hj).symm
     beta_reduce at hsplit
     have hjterm : c j * (if e j ≤ N then coeff (N - e j) (u j) else 0) = c j * constantCoeff (u j) := by
-      rw [if_pos hjN.le, hjN, Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff_apply]
+      rw [ite_eq_left hjN.le, hjN, Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff_apply]
     have hrest : ‖∑ i ∈ s.erase j, c i * (if e i ≤ N then coeff (N - e i) (u i) else 0)‖ ≤ B := by
       refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hB0 fun i hi => ?_
       obtain ⟨hij, his⟩ := Finset.mem_erase.mp hi

@@ -128,8 +128,7 @@ theorem pull_law : ∀ Λ : AddSubgroup ℂ, IsLat Λ → ∀ t₀ : ℂ, 2 * t�
     ring_nf
     simp
   have hne : ∃ z, sgStar Λ z ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have hd := (GlobalTheory.OddTheta.sgStar_laws Λ hΛ).1.2.1
     rw [show sgStar Λ = fun _ => 0 from funext h] at hd
     simp at hd
@@ -234,8 +233,6 @@ theorem i_ofNat (n : ℕ) [n.AtLeastTwo] : ‖(OfNat.ofNat n : K)‖ ≤ 1 := by
   rwa [Nat.cast_ofNat] at this
 
 theorem i_neg {a : K} (ha : ‖a‖ ≤ 1) : ‖-a‖ ≤ 1 := by rwa [norm_neg]
-
-theorem i_one : ‖(1 : K)‖ ≤ 1 := by simp
 
 theorem b_le (W : WeierstrassCurve K) (h1 : ‖W.a₁‖ ≤ 1) (h2 : ‖W.a₂‖ ≤ 1) (h3 : ‖W.a₃‖ ≤ 1)
     (h4 : ‖W.a₄‖ ≤ 1) (h6 : ‖W.a₆‖ ≤ 1) :
@@ -562,9 +559,9 @@ theorem mu_add (D : D7) (p : ℕ) [Fact p.Prime] (cc : Ideal (𝓞 D.host.K)) (�
     (hg : GL3Theta.At D cc δ g) (v ω : ℂ) (hv : InRationalLattice g.abelian₂ v) (hω : ω ∈ g.abelian₂) : mu g (v + ω) = mu g v := by
   obtain ⟨hlat, -⟩ := setup D p cc δ g hg
   by_cases hv0 : v ∈ g.abelian₂
-  · rw [mu, mu, if_pos (add_mem hv0 hω), if_pos hv0]
+  · rw [mu, mu, ite_eq_left (add_mem hv0 hω), ite_eq_left hv0]
   · have h1 : v + ω ∉ g.abelian₂ := fun h => hv0 (by simpa using sub_mem h hω)
-    rw [mu, mu, if_neg h1, if_neg hv0, GlobalTheory.ThetaTransl.cval_norm_periodic D p cc δ g hg v ω hv hω]
+    rw [mu, mu, ite_eq_right h1, ite_eq_right hv0, GlobalTheory.ThetaTransl.cval_norm_periodic D p cc δ g hg v ω hv hω]
     congr 3
     rw [xAt, xAt, hlat.wpF_add_of_mem hω]
 
@@ -572,10 +569,10 @@ theorem mu_two (D : D7) (p : ℕ) [Fact p.Prime] (cc : Ideal (𝓞 D.host.K)) (�
     (hg : GL3Theta.At D cc δ g) (v : ℂ) (hv : InRationalLattice g.abelian₂ v) : mu g (2 * v) = mu g v ^ 4 := by
   by_cases hv0 : v ∈ g.abelian₂
   · have h2 : 2 * v ∈ g.abelian₂ := by rw [two_mul]; exact add_mem hv0 hv0
-    rw [mu, mu, if_pos h2, if_pos hv0, one_pow]
+    rw [mu, mu, ite_eq_left h2, ite_eq_left hv0, one_pow]
   by_cases h2v : 2 * v ∈ g.abelian₂
-  · rw [mu, mu, if_pos h2v, if_neg hv0, mu_two_tors D p cc δ g hg v hv hv0 h2v]
-  · rw [mu, mu, if_neg h2v, if_neg hv0, mu_double D p cc δ g hg v hv hv0 h2v]
+  · rw [mu, mu, ite_eq_left h2v, ite_eq_right hv0, mu_two_tors D p cc δ g hg v hv hv0 h2v]
+  · rw [mu, mu, ite_eq_right h2v, ite_eq_right hv0, mu_double D p cc δ g hg v hv hv0 h2v]
 
 theorem mu_pow_two (D : D7) (p : ℕ) [Fact p.Prime] (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (g : GL3Theta.G1 p)
     (hg : GL3Theta.At D cc δ g) (v : ℂ) (hv : InRationalLattice g.abelian₂ v) (k : ℕ) :
@@ -637,7 +634,7 @@ theorem height_one : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (cc : Ideal (𝓞 D.h
     rcases lt_or_gt_of_ne hab with hlt | hlt
     · exact step a b hlt he
     · exact step b a hlt he.symm
-  rwa [mu, if_neg hv0] at h
+  rwa [mu, ite_eq_right hv0] at h
 
 end GlobalTheory.TorsionHeight
 end -- clump:auto
@@ -668,7 +665,7 @@ theorem int_mulBy_of_closure (g : GL3Theta.G1 p) (hok : g.Ok) {c : ℂ_[p]}
   rintro _ ⟨n, rfl⟩
   show IntegralMv _
   rw [GlobalTheory.SerTransport.mulBy_X]
-  exact intSer_iff.2 ((GlobalTheory.IntDLog.int_dlog p g hok).2.2 n)
+  exact GlobalTheory.CMNormPhi.intSer_iff'.2 ((GlobalTheory.IntDLog.int_dlog p g hok).2.2 n)
 
 theorem neg_one_mem_closure : (-1 : ℂ_[p]) ∈ closure (Set.range (Nat.cast : ℕ → ℂ_[p])) := by
   have h1 : ‖(p : ℂ_[p])‖ < 1 := by
@@ -735,7 +732,7 @@ theorem norm_padicWeierstrassModelAbscissa_twoTorsion_le_one (D : D7) (p : ℕ) 
 
 theorem pull_back_split : ∀ (D : D7), Inp D → ∀ (p : ℕ) [Fact p.Prime] (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (g : GL3Theta.G1 p), GL3Theta.At D cc δ g → ∀ t0, GL3Theta.IsTwoTorsionPointUnkilled D g.abelian₂ t0 → ∀ (y : ℂ) (N : ℕ), 0 < N → (N : ℂ) * y ∈ g.abelian₂ → p ∣ N → SplitIn D p → ∃ h : PowerSeries ℂ_[p], (∀ n, ‖PowerSeries.coeff n h‖ ≤ 1) ∧ g.atU (fun z => U1 g.abelian₂ y (GL3Theta.th0 g.abelian₂ t0) ((N : ℂ) * z)) = h * g.atU (fun z => GL3Theta.th0 g.abelian₂ t0 ((N : ℂ) * z)) := by
   intro D hI p _ cc δ g hg t0 ht0 y N hN hNy _ hsp
-  have hθ := intSer_iff.1 ((GlobalTheory.ThetaParam.theta_param_integral D hI p cc δ g hg t0 ht0).2 hsp).1
+  have hθ := GlobalTheory.CMNormPhi.intSer_iff'.1 ((GlobalTheory.ThetaParam.theta_param_integral D hI p cc δ g hg t0 ht0).2 hsp).1
   have hx0 := norm_padicWeierstrassModelAbscissa_twoTorsion_le_one D p cc δ g hg t0 ht0
   have hht := _root_.GlobalTheory.TorsionHeight.height_one D p cc δ g hg
   obtain ⟨hcc, -, hδ, hΛ, hok⟩ := hg
@@ -759,10 +756,10 @@ theorem pull_back_split : ∀ (D : D7), Inp D → ∀ (p : ℕ) [Fact p.Prime] (
   have hAy : AlgEnt (U1 g.abelian₂ y (GL3Theta.th0 g.abelian₂ t0)) := (hT y ⟨N, hN, hNy⟩).1
   have hA0 : AlgEnt (GL3Theta.th0 g.abelian₂ t0) := by
     have h0 := (hT 0 (rational_lattice_point_zero _)).1
-    rwa [thetaTranslation_zero] at h0
+    rwa [GlobalTheory.ThetaParam.thetaTranslation_zero] at h0
   have hσ : AlgEnt (sgStar g.abelian₂) := by
     have h0 := halg 0 (rational_lattice_point_zero _)
-    rwa [thetaTranslation_zero] at h0
+    rwa [GlobalTheory.ThetaParam.thetaTranslation_zero] at h0
   have hSR := GlobalTheory.EvenTheta.SerRing.series_ring_laws p
   have hTr := GlobalTheory.SerTransport.transport p g
   obtain ⟨hε, hw, hw0, hE, hσU⟩ := GlobalTheory.EvenTheta.DatumBasic.datum_basic p g hok hlat' h2 h3 hdisc
@@ -781,10 +778,10 @@ theorem pull_back_split : ∀ (D : D7), Inp D → ∀ (p : ℕ) [Fact p.Prime] (
   obtain ⟨h, hh, hh0, -, htr⟩ := hTr.2.2.2 hok (N : ℂ) (natCast_mem _ N)
   obtain ⟨m, hm, hm0, -, hmr⟩ := hTr.2.2.2 hok (-1 : ℂ) (neg_mem (one_mem _))
   have hhint : IntSer h := by
-    refine intSer_iff.1 (hh ▸ int_mulBy_of_closure g hok (subset_closure ⟨N, ?_⟩))
+    refine GlobalTheory.CMNormPhi.intSer_iff'.1 (hh ▸ int_mulBy_of_closure g hok (subset_closure ⟨N, ?_⟩))
     rw [lamC_coe _ (natCast_mem _ N)]
     exact (map_natCast g.lam N).symm
-  have hmint : IntSer m := intSer_iff.1 (hm ▸ int_mulBy_of_closure g hok (by
+  have hmint : IntSer m := GlobalTheory.CMNormPhi.intSer_iff'.1 (hm ▸ int_mulBy_of_closure g hok (by
     rw [lamC_neg_one]; exact neg_one_mem_closure))
   obtain ⟨hF, -⟩ := htr _ hAy
   obtain ⟨hTa, hTe⟩ := htr _ hA0
@@ -792,7 +789,7 @@ theorem pull_back_split : ∀ (D : D7), Inp D → ∀ (p : ℕ) [Fact p.Prime] (
   set T := g.atU (fun z => GL3Theta.th0 g.abelian₂ t0 ((N : ℂ) * z)) with hTdef
   have hTint : IntSer T := by rw [hTe]; exact hSR.2.2.2.2.2.1 _ h 1 hθ hhint hh0
   have hT0 : PowerSeries.constantCoeff T = 1 := by
-    rw [hTdef, (hTr.2.2.1 _ hTa).2, mul_zero, hth.2.1, lamC_one]
+    rw [hTdef, (hTr.2.2.1 _ hTa).2, mul_zero, hth.2.1, Formalism.MainNotions.Ext.CutA.lamC_one]
   have hTi : T⁻¹ * T = 1 := PowerSeries.inv_mul_cancel _ (by rw [hT0]; exact one_ne_zero)
   have hTinv := hTint.inv (by rw [hT0, norm_one])
   set F := g.atU (fun z => A ((N : ℂ) * z)) with hFdef
@@ -843,7 +840,7 @@ theorem pull_back_split : ∀ (D : D7), Inp D → ∀ (p : ℕ) [Fact p.Prime] (
         rw [hU, hU, hlat'.sg_law hv, hlat'.sg_law hv, neg_one_mul, hlat'.sg_neg]
         split_ifs <;> ring
       have hq := mul_mem (neg_mem (one_mem Qbar)) (mul_mem hκQ hκQ)
-      rw [e, (atU_smul g hq (atU_sq g hσ).1).2, (atU_sq g hσ).2, hσU, mul_pow]
+      rw [e, (GlobalTheory.ThetaUnit.atU_smul' g hq (atU_sq g hσ).1).2, (atU_sq g hσ).2, hσU, mul_pow]
       refine (int_C ?_).mul (((int_C hε.le).mul int_X).sq.mul hE2)
       rw [lamC_mul _ (neg_mem (one_mem Qbar)) (mul_mem hκQ hκQ), lamC_mul _ hκQ hκQ, lamC_neg_one]
       simp [hκn]
@@ -860,7 +857,7 @@ theorem pull_back_split : ∀ (D : D7), Inp D → ∀ (p : ℕ) [Fact p.Prime] (
       have hh1 := hht _ hqv hv
       have hn : ‖lamC g.lam ((κ * s) * (κ * s))‖ = ‖GlobalTheory.ThetaTransl.cval g (y + t0)‖ ^ 2 := by
         rw [lamC_mul _ hq hq, lamC_mul _ hκQ hsQ, norm_mul, norm_mul, hκn, one_mul, _root_.sq]; rfl
-      rw [e, (atU_smul g (mul_mem hq hq) (hd _ hv hqv).1).2, (hd _ hv hqv).2, mul_left_comm, lineSer, mul_sub,
+      rw [e, (GlobalTheory.ThetaUnit.atU_smul' g (mul_mem hq hq) (hd _ hv hqv).1).2, (hd _ hv hqv).2, mul_left_comm, lineSer, mul_sub,
         ← mul_assoc (PowerSeries.C _), ← map_mul]
       have hp := pow_nonneg (norm_nonneg (GlobalTheory.ThetaTransl.cval g (y + t0))) 2
       refine hE2.mul (((int_C ?_).mul hw).sub ((int_C ?_).mul int_X.sq))
@@ -907,7 +904,7 @@ variable {p : ℕ} [Fact p.Prime]
 
 theorem lamC_natCast (lam : Qbar →+* ℂ_[p]) (n : ℕ) : lamC lam (n : ℂ) = n := by
   have h : (n : ℂ) ∈ Qbar := natCast_mem _ n
-  simp only [lamC, dif_pos h]
+  simp only [lamC, dite_eq_left h]
   rw [← map_natCast lam n]; rfl
 
 theorem iteratedDeriv_scale (G : ℂ → ℂ) (c : ℂ) (n : ℕ) :

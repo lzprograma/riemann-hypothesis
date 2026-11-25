@@ -178,14 +178,14 @@ theorem exists_nilpotent {R : Type*} [CommRing R] {n : ℕ} (u : Matrix (Fin n) 
     rcases (not_lt.1 h).eq_or_lt with rfl | h
     · simp [h1]
     · simp [h0 a b h, Matrix.one_apply_ne h.ne']
-  have hs : ∀ x a b, ¬ a < b → strictOf R n x a b = 0 := fun x a b h => dif_neg h
-  have has : ∀ x, above R n (strictOf R n x) = x := fun x => funext fun p => dif_pos p.2
+  have hs : ∀ x a b, ¬ a < b → strictOf R n x a b = 0 := fun x a b h => dite_eq_right h
+  have has : ∀ x, above R n (strictOf R n x) = x := fun x => funext fun p => dite_eq_left p.2
   let N : Module.End R ({p : Fin n × Fin n // p.1 < p.2} → R) :=
     above R n ∘ₗ LinearMap.mulLeft R (u - 1) ∘ₗ strictOf R n
   have hN : ∀ x, strictOf R n (N x) = (u - 1) * strictOf R n x := fun x => by
     ext a b
     by_cases h : a < b
-    · exact dif_pos h
+    · exact dite_eq_left h
     · rw [hs _ a b h, Matrix.mul_apply]
       refine (Finset.sum_eq_zero fun c _ => ?_).symm
       by_cases hc : a < c

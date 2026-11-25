@@ -13,47 +13,8 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffCo
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSquareMulInfinite
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -202,8 +163,6 @@ section Record
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Links Formalism.L2.JoinChr
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {c : (AE D)ˣ →* Circle}
 
 theorem unrAt_of_unramEverywhere (h : UnramEverywhere D c) (w : HeightOneSpectrum (𝓞 D.host.E)) : UnrAt c w := by
@@ -267,7 +226,7 @@ theorem charFam_eq_of_chrEq (h : ChrEq c χ) : charFam c = heckeFam χ := funext
   by_cases hu : χ.UnrAt w
   · rw [charFam_of_unrAt ((unrAt_iff_of_chrEq h w).2 hu), heckeFam_of_unrAt hu, val_eq_of_chrEq h]
   · rw [heckeFam_of_not_unrAt hu]
-    exact if_neg (mt (unrAt_iff_of_chrEq h w).1 hu)
+    exact ite_eq_right (mt (unrAt_iff_of_chrEq h w).1 hu)
 
 theorem charL_eq_of_chrEq (h : ChrEq c χ) (S : Set (HeightOneSpectrum (𝓞 D.host.F))) :
     charL c S = heckeL (above D.host.E S) χ := funext fun s => by
@@ -565,7 +524,7 @@ theorem IsEta.loc_of_not_mem (h2 : Module.finrank F E = 2) (h : IsEta F E η) {x
   have : Algebra.IsQuadraticExtension F E := { finrank_eq_two' := h2 }
   change Circle.toUnits (η (localIdele F v x)) = -1
   rw [h.eq_normSign, MonoidHom.comp_apply, normSign_localIdele, GlobalTheory.QuadSymbol.eta_eq_neg_one_iff.2 hx]
-  exact Units.ext (congrArg (fun z : Circle => (z : ℂ)) (if_neg (by decide) :
+  exact Units.ext (congrArg (fun z : Circle => (z : ℂ)) (ite_eq_right (by decide) :
     (if (-1 : ℤˣ) = 1 then (1 : Circle) else -1) = -1))
 
 theorem IsEta.unrAt_iff (h2 : Module.finrank F E = 2) (h : IsEta F E η) :
@@ -615,7 +574,7 @@ theorem ResEta.val_mul_val (h2 : Module.finrank F E = 2) (h : ResEta F E μ k) (
     exact ⟨key u, by rintro (rfl | rfl) <;> assumption⟩
   have := h.prod_val h2 (isUnram_of_isSplit h2 hv) fun u hu => by
     rcases key u hu with rfl | rfl <;> assumption
-  rwa [e, Finset.prod_pair hne, etaU, if_pos hv, one_pow] at this
+  rwa [e, Finset.prod_pair hne, etaU, ite_eq_left hv, one_pow] at this
 
 theorem ResEta.val_of_isInertAt (h2 : Module.finrank F E = 2) (h : ResEta F E μ k) (hw : IsInertAt F E v w)
     (hu : UnrAt μ w) : val μ w = (-1) ^ k := by
@@ -627,7 +586,7 @@ theorem ResEta.val_of_isInertAt (h2 : Module.finrank F E = 2) (h : ResEta F E μ
     rw [mem_aboveF, Finset.mem_singleton]
     exact ⟨key u, fun h => h ▸ under_eq_of_isInertAt hw⟩
   have := h.prod_val h2 (isUnram_of_isInertAt hw) fun u h1 => key u h1 ▸ hu
-  rwa [e, Finset.prod_singleton, etaU, if_neg hv] at this
+  rwa [e, Finset.prod_singleton, etaU, ite_eq_right hv] at this
 
 end Eta
 

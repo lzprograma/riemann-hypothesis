@@ -47,7 +47,6 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealLineOfPeriod
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -66,11 +65,11 @@ theorem grpAt_all {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A
       (∀ μ : Measure (rowGrp ch.G j), μ.IsHaarMeasure → μ.IsInvInvariant) ∧
       ∀ μ : Measure ((rowGrp ch.G j).subgroupOf (GfC _)), μ.IsHaarMeasure → μ.IsInvInvariant := by
     by_cases h1 : j + 2 * ((D.R.m - 1 - j) / 2) + 1 = D.R.m
-    · rw [show rowGrp ch.G j = _ from dif_pos h1]
+    · rw [show rowGrp ch.G j = _ from dite_eq_left h1]
       obtain ⟨a, b, c⟩ := (hrest _ _ _).1
       exact ⟨GlobalTheory.jacGrp_isClosed D _ _ _ _, a, b, c⟩
     · have h2 : j + 2 * ((D.R.m - 2 - j) / 2) + 2 = D.R.m := by omega
-      rw [show rowGrp ch.G j = _ from (dif_neg h1).trans (dif_pos h2)]
+      rw [show rowGrp ch.G j = _ from (dite_eq_right h1).trans (dite_eq_left h2)]
       obtain ⟨a, b, c⟩ := (hrest _ _ _).2 _ _ _
       exact ⟨GlobalTheory.BesClosed.besGrp_isClosed D _ _ _ _ _ _ _, a, b, c⟩
   exact

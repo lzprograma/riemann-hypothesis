@@ -1,10 +1,11 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LowVanishFockOfLowVanish
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdeleAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIdeleAt
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumRealPlacesFockVacuumCharacterStatement
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.APlusComm
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
@@ -13,46 +14,8 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockP
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorMaximalCompactBasisSubstitut
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -61,9 +24,9 @@ import Std.Tactic.BVDecide.Normalize.Prop
 noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
-open GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators GlobalTheory.WeilParts GlobalTheory.VacuumCharacter
+open GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators GlobalTheory.WeilParts
+open GlobalTheory.OneMapRef.RealMove (adele_ext det_compAt exists_idele_at finPart_cA hasInfExp_twist)
 open scoped TensorProduct Kronecker ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompactFockAction
 
@@ -153,20 +116,20 @@ theorem detPlus_block {ε : Fin n → Bool} {ε' : Fin m → Bool} {a : Matrix (
       have h2 := hb i l
       simp only [Matrix.add_apply, Matrix.smul_apply, diagonal_mul, kroneckerMap_apply, transpose_apply,
         submatrix_apply, Equiv.prodComm_apply, Prod.swap, blockDiagonal_apply, blockExt, of_apply, diagonal_apply,
-        Prod.mk.injEq, smul_eq_mul, if_true]
+        Prod.mk.injEq, smul_eq_mul, ite_true]
       by_cases h3 : ε j = ε' i
       · by_cases h4 : ε' i = ε k
-        · rw [if_pos h3, if_pos h4, h3]
+        · rw [ite_eq_left h3, ite_eq_left h4, h3]
           cases ε' i <;> simp <;> ring
-        · rw [if_pos h3, h1 (by rw [h3]; exact Ne.symm h4), h3]
+        · rw [ite_eq_left h3, h1 (by rw [h3]; exact Ne.symm h4), h3]
           cases ε' i <;> simp
-      · rw [if_neg h3]
+      · rw [ite_eq_right h3]
         have h5 : (if ε' i = true then (1 : ℂ) else -1) * (if ε j = true then 1 else -1) = -1 := by
           cases h6 : ε j <;> cases h7 : ε' i <;> simp_all
         rw [h5]
         by_cases h4 : j = k
         · subst h4
-          rw [if_neg (Ne.symm h3)]
+          rw [ite_eq_right (Ne.symm h3)]
           by_cases h6 : i = l <;> simp [h6]
           norm_num
         · simp [h4]
@@ -174,8 +137,8 @@ theorem detPlus_block {ε : Fin n → Bool} {ε' : Fin m → Bool} {a : Matrix (
       simp only [submatrix_apply, Equiv.prodComm_apply, Prod.swap, blockDiagonal_apply]
       by_cases h1 : i = i'
       · subst h1
-        rw [if_neg (show ¬ k' = k from fun h => hne (by rw [h])), mul_zero]
-      · rw [if_neg h1, zero_mul]
+        rw [ite_eq_right (show ¬ k' = k from fun h => hne (by rw [h])), mul_zero]
+      · rw [ite_eq_right h1, zero_mul]
     · simp
   unfold detPlus
   rw [e, Matrix.det_mul, Matrix.det_submatrix_equiv_self, Matrix.det_blockDiagonal, Matrix.det_blockDiagonal]
@@ -218,10 +181,10 @@ theorem card_sign (ε : Fin n → Bool) (e : Bool) :
   unfold idx
   push_cast
   cases e
-  · simp only [Bool.false_eq_true, if_false, Finset.sum_div, ← Finset.sum_neg_distrib, ← Finset.sum_add_distrib]
+  · simp only [Bool.false_eq_true, ite_false, Finset.sum_div, ← Finset.sum_neg_distrib, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     cases ε i <;> norm_num
-  · simp only [if_true, Finset.sum_div, ← Finset.sum_add_distrib]
+  · simp only [ite_true, Finset.sum_div, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     cases ε i <;> norm_num
 
@@ -239,30 +202,7 @@ theorem fr_mul_inv : A.fr τ * (A.fr τ)⁻¹ = 1 :=
 theorem inv_mul_fr : (A.fr τ)⁻¹ * A.fr τ = 1 := mul_eq_one_comm.1 (fr_mul_inv A τ)
 
 theorem cart_isCartanInv : IsCartanInv (gramAt D V τ) (A.cart τ) := by
-  have h1 := fr_mul_inv A τ
-  have h2 := inv_mul_fr A τ
-  have hJ := Formalism.REAL.Jm_mul_self (A.ε τ)
-  have hJ' := Formalism.REAL.Jm_conjTranspose (A.ε τ)
-  have hG : gramAt D V τ * A.cart τ = (A.fr τ)ᴴ * A.fr τ := by
-    rw [← A.fr_gram τ]; unfold Fr.cart
-    calc _ = (A.fr τ)ᴴ * (Formalism.REAL.Jm (A.ε τ) * (A.fr τ * (A.fr τ)⁻¹) * Formalism.REAL.Jm (A.ε τ)) * A.fr τ := by
-          simp only [Matrix.mul_assoc]
-      _ = _ := by rw [h1, Matrix.mul_one, hJ, Matrix.mul_one]
-  have hs : A.cart τ * A.cart τ = 1 := by
-    unfold Fr.cart
-    calc _ = (A.fr τ)⁻¹ * (Formalism.REAL.Jm (A.ε τ) * (A.fr τ * (A.fr τ)⁻¹) * Formalism.REAL.Jm (A.ε τ)) * A.fr τ := by
-          simp only [Matrix.mul_assoc]
-      _ = _ := by rw [h1, Matrix.mul_one, hJ, Matrix.mul_one, h2]
-  refine ⟨hs, ?_, ?_⟩
-  · have hGh : (gramAt D V τ)ᴴ = gramAt D V τ := by
-      rw [← A.fr_gram τ]; simp [Matrix.conjTranspose_mul, hJ', Matrix.mul_assoc]
-    have h3 : (A.cart τ)ᴴ * gramAt D V τ = gramAt D V τ * A.cart τ := by
-      have := congrArg Matrix.conjTranspose hG
-      rw [Matrix.conjTranspose_mul, hGh, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose] at this
-      rw [this, hG]
-    rw [h3, Matrix.mul_assoc, hs, Matrix.mul_one]
-  · rw [hG]
-    exact Matrix.PosDef.conjTranspose_mul_self _ (Matrix.mulVec_injective_of_isUnit (A.fr_unit τ))
+  first | exact _root_.GlobalTheory.ChainFr.Model.isCartanInv_cart | exact @_root_.GlobalTheory.ChainFr.Model.isCartanInv_cart | apply _root_.GlobalTheory.ChainFr.Model.isCartanInv_cart <;> assumption
 
 variable {τ} {h : Matrix (Fin V.rank) (Fin V.rank) ℂ}
 
@@ -345,7 +285,7 @@ theorem exists_root_at (hθ : IsInfFam θ) (V : HSp D) {g : GA D V} (hg : g ∈ 
     · rw [h2 ρ e, one_pow]
   · obtain ⟨n', hn', -, h⟩ := hν
     have e : n' = n := by exact_mod_cast hn'.trans hn.symm
-    rw [h θ hθ x hx1 (fun ρ h' => by rw [hx2, if_neg h']), hx2, if_pos rfl, hw, e]
+    rw [h θ hθ x hx1 (fun ρ h' => by rw [hx2, ite_eq_right h']), hx2, ite_eq_left rfl, hw, e]
     simp
 
 theorem exp_int (hθ : IsInfFam θ) (V : HSp D) {ν : (AE D)ˣ →* Circle} (h0 : ResEta D ν 0) {τ : D.what₂.Tau} {a : ℚ}
@@ -385,8 +325,8 @@ theorem exists_root_elt (hθ : IsInfFam θ) {V : HSp D} (A : Fr V) {τ : D.what�
   obtain ⟨w, hw⟩ := IsAlgClosed.exists_pow_nat_eq h.det two_pos
   obtain ⟨x, hx, hv⟩ := exists_root_at hθ V (GlobalTheory.PointAtPlaceHom.atTau_mem V τ ((A.fr τ)⁻¹ * h * A.fr τ)) τ w
     ((pow_eq_one_iff_of_nonneg (norm_nonneg _) two_ne_zero).1 (by rw [← norm_pow, hw, hu]))
-    (hw.trans ((hd τ).trans (by rw [atPl, if_pos rfl])).symm)
-    fun ρ e => (hd ρ).trans (by rw [atPl, if_neg e, Matrix.det_one])
+    (hw.trans ((hd τ).trans (by rw [atPl, ite_eq_left rfl])).symm)
+    fun ρ e => (hd ρ).trans (by rw [atPl, ite_eq_right e, Matrix.det_one])
   refine ⟨x, hx, fun ν c hc => ?_⟩
   rw [hv ν c (2 * c) hc (by push_cast; rfl), ← hw, _root_.zpow_mul]
   simp
@@ -462,9 +402,9 @@ theorem pureTensorO_move (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {τ : D
     funext ⟨ρ, i, j⟩
     by_cases hρ : ρ = τ
     · subst hρ
-      simp only [c, atPl, if_true, Fintype.sum_prod_type, Matrix.map_apply]
+      simp only [c, atPl, ite_true, Fintype.sum_prod_type, Matrix.map_apply]
       rfl
-    · simp only [c, atPl, if_neg hρ]
+    · simp only [c, atPl, ite_eq_right hρ]
       rw [Finset.sum_eq_single (i, j)]
       · simp
       · rintro ⟨a, b⟩ _ hne
@@ -560,8 +500,8 @@ theorem compactFockAll : ∀ D : D7, GlobalTheory.ChainFr.CompactFockAll D := by
   have ik := fun e => signBlockDeterminant_mul_eq_one_of_mul_eq_one e bk (show k * kᴴ = 1 from Matrix.mem_unitaryGroup_iff.1 hk.1)
   simp only [hdp]
   rw [Finset.prod_eq_single τ (fun ρ _ e => by
-      rw [atPl, atPl, if_neg e, if_neg e, Matrix.conjTranspose_one, detPlus_one_one]) (by simp),
-    atPl, atPl, if_pos rfl, if_pos rfl, detPlus_block bh' bk, prod_bool _ fun e => signBlockDeterminant (A.ε τ) e hᴴ,
+      rw [atPl, atPl, ite_eq_right e, ite_eq_right e, Matrix.conjTranspose_one, detPlus_one_one]) (by simp),
+    atPl, atPl, ite_eq_left rfl, ite_eq_left rfl, detPlus_block bh' bk, prod_bool _ fun e => signBlockDeterminant (A.ε τ) e hᴴ,
     prod_bool _ fun e => signBlockDeterminant (B.ε τ) e k, Circle.coe_mul, Circle.coe_inv,
     hxv _ cT (by rw [hcT]; exact hasInfExp_twist hT (e2 τ) _),
     hyv _ cS (by rw [hcS]; exact hasInfExp_twist hS (e2 τ) _), det_eq_signBlockDeterminant_mul_of_isSignBlockMatrix bh, det_eq_signBlockDeterminant_mul_of_isSignBlockMatrix bk,

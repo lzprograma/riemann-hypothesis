@@ -17,7 +17,6 @@ noncomputable section
 universe u
 
 
-set_option maxHeartbeats 400000 in
 set_option synthInstance.maxHeartbeats 200000 in
 theorem ConeVarNumerator.proof (hDZ : DegZeroLocQuot.Statement.{u}) :
     ConeVarNumerator.Statement.{u} := by
@@ -59,15 +58,15 @@ theorem ConeVarNumerator.proof (hDZ : DegZeroLocQuot.Statement.{u}) :
         · exact IsWeightedHomogeneous.mul (hh d) hg'
       · rw [Finset.mem_insert, not_or] at hd
         dsimp only
-        rw [if_neg hd.1, h0 d hd.2, zero_mul]
+        rw [ite_eq_right hd.1, h0 d hd.2, zero_mul]
       · rcases Finset.mem_insert.mp hd with rfl | hd
         · dsimp only
-          rw [if_pos rfl, he]
+          rw [ite_eq_left rfl, he]
           simp only [map_mul]
           rw [mul_div_mul_left _ _ (hne g hgW)]
         · have hdd : d ≠ d₀ := fun e => hd₀ (e ▸ hd)
           dsimp only
-          rw [if_neg hdd, hD d hd]
+          rw [ite_eq_right hdd, hD d hd]
           simp only [map_mul]
           rw [mul_div_mul_right _ _ (hne g' hg'W')]
   obtain ⟨b, g, hn, hg, hgW, hh, h0, hD⟩ := step p.support

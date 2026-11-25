@@ -180,7 +180,7 @@ theorem valOf_eq_hRow : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d]
       have h1 : ∀ w, μ w ≠ 0 → X.OnLf g a a' w := fun w hw => by
         obtain ⟨ν, hν, hν'⟩ := hμ w hw
         exact hl ν hν w hν'
-      exact if_pos fun w hw => h1 w (Finsupp.mem_support_iff.1 hw)
+      exact ite_eq_left fun w hw => h1 w (Finsupp.mem_support_iff.1 hw)
   have hA := Agree.prod (S := S) Finset.univ (fun ρ =>
     Agree.mul (F := rowCopy ρ (gr ρ)) (F' := rowCopy ρ (gr ρ)) (fun _ _ => rfl)
       (agree_rowCopy S ρ _ _ (key ρ)).exp)

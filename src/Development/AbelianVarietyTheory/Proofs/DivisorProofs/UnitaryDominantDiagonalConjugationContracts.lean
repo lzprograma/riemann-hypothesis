@@ -152,7 +152,6 @@ theorem contract : GlobalTheory.SatakeWeyl.Contract := by
     have h3 := hb i l h1 h2
     have h4 : (N (i, l) : ℤ) ≤ (Finset.univ.sup N : ℕ) := by
       exact_mod_cast Finset.le_sup (f := N) (Finset.mem_univ _)
-    have h5 : (0 : ℤ) ≤ (Finset.univ.sup N : ℕ) := Int.natCast_nonneg _
     nlinarith
 
 end GlobalTheory.SatakeWeyl.ContractProof

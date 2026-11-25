@@ -43,8 +43,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.LeTwoMulOfForallSca
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology MeasureTheory MvPolynomial

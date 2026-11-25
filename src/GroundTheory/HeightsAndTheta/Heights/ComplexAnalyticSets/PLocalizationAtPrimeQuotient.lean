@@ -20,21 +20,9 @@ theorem LocalizationAtPrimeQuotient.proof : LocalizationAtPrimeQuotient.Statemen
 
   have hsub : (P.comap (algebraMap Q (Localization T))).primeCompl =
       Algebra.algebraMapSubmonoid Q W.primeCompl := by
-    have hmem : ∀ r : A, Ideal.Quotient.mk I r ∈ P.comap (algebraMap Q (Localization T)) ↔ r ∈ W := by
-      intro r; rw [← hP]; exact Iff.rfl
-    have hIW : I ≤ W := fun r hr => by
-      rw [← hmem, Ideal.Quotient.eq_zero_iff_mem.2 hr]; exact Ideal.zero_mem _
-    ext q
-    obtain ⟨r, rfl⟩ := Ideal.Quotient.mk_surjective q
-    have h1 : Ideal.Quotient.mk I r ∈ (P.comap (algebraMap Q (Localization T))).primeCompl ↔ r ∉ W :=
-      not_congr (hmem r)
-    rw [h1]
-    constructor
-    · intro hr; exact ⟨r, hr, rfl⟩
-    · rintro ⟨r', hr', he⟩ hr
-      apply hr'
-      have : r' - r ∈ I := Ideal.Quotient.eq.1 he
-      simpa using W.add_mem (hIW this) hr
+    subst hP
+    exact (Ideal.map_primeCompl_comap_of_surjective (Ideal.Quotient.mk I)
+      Ideal.Quotient.mk_surjective (P.comap (algebraMap Q (Localization T)))).symm
   have hloc : IsLocalization (Algebra.algebraMapSubmonoid Q W.primeCompl) (Localization.AtPrime P) := by
     have := IsLocalization.isLocalization_isLocalization_atPrime_isLocalization T
       (Localization.AtPrime P) P

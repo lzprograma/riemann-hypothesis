@@ -61,35 +61,6 @@ theorem exists_line_of_add_eq_zero {x₁ y₁ x₂ y₂ x₃ y₃ : F} (h₁ : W
 
 end Line
 
-section Counting
-
-variable {G : Type*} [AddCommGroup G] (H : AddSubgroup G)
-
-end Counting
-
-section DVR
-
-open IsLocalRing
-
-variable {𝒪 : Type*} [CommRing 𝒪] [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪]
-  (K : Type*) [Field K] [Algebra 𝒪 K] [IsFractionRing 𝒪 K] (W : WeierstrassCurve 𝒪)
-
-
-section Origin
-
-variable {π : 𝒪} (hπ : Irreducible π)
-include hπ
-
-
-
-
-
-end Origin
-
-
-
-end DVR
-
 end
 
 end GroundTheory.Arith.Abelian
@@ -235,35 +206,6 @@ def cuspHom : V.toAffine.Point →+ F :=
     (cuspMap_neg V h3 h4 h6 α h1 h2) (cuspMap_triple V h3 h4 h6 α h1 h2))
 
 end Cusp
-
-section Node
-
-variable {F : Type*} [Field F] [DecidableEq F] (V : WeierstrassCurve F) (h3 : V.a₃ = 0)
-  (h4 : V.a₄ = 0) (h6 : V.a₆ = 0) {L : Type*} [Field L] [Algebra F L] (α β : L)
-  (hs : algebraMap F L V.a₁ = -(α + β)) (hp : algebraMap F L V.a₂ = -(α * β))
-
-include h3 h4 h6 hs hp
-
-end Node
-
-section NodeSplit
-
-variable {F : Type*} [Field F] [DecidableEq F] (V : WeierstrassCurve F) (h3 : V.a₃ = 0)
-  (h4 : V.a₄ = 0) (h6 : V.a₆ = 0) (α β : F) (hs : algebraMap F F V.a₁ = -(α + β))
-  (hp : algebraMap F F V.a₂ = -(α * β))
-include h3 h4 h6 hs hp
-
-end NodeSplit
-
-section Torus
-
-variable {F : Type*} [Field F] [DecidableEq F] (V : WeierstrassCurve F) (h3 : V.a₃ = 0)
-  (h4 : V.a₄ = 0) (h6 : V.a₆ = 0) {L : Type*} [Field L] [Algebra F L] (α β : L)
-  (hs : algebraMap F L V.a₁ = -(α + β)) (hp : algebraMap F L V.a₂ = -(α * β)) (σ : L ≃ₐ[F] L)
-
-include h3 h4 h6 hs hp
-
-end Torus
 
 end
 

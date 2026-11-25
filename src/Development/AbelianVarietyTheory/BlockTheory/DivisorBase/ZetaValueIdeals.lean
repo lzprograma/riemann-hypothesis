@@ -124,46 +124,4 @@ theorem LocalBound.mMin_eq {k : ℕ} {z : ClassGroup (𝓞 F) → ℚ} {l : ℕ}
   · exact h.2.2.1 h1 h2
   · exact h.2.1 h1 h2
 
-theorem pir_rat : IsPrincipalIdealRing (𝓞 ℚ) :=
-  IsPrincipalIdealRing.of_surjective Rat.ringOfIntegersEquiv.symm.toRingHom Rat.ringOfIntegersEquiv.symm.surjective
-
-theorem absNorm_span_rat (n : ℕ) : Ideal.absNorm (Ideal.span {(n : 𝓞 ℚ)}) = n := by
-  rw [Ideal.absNorm_span_singleton, show (n : 𝓞 ℚ) = algebraMap ℤ (𝓞 ℚ) (n : ℤ) by simp, Algebra.norm_algebraMap,
-    RingOfIntegers.rank]
-  simp
-
-theorem exists_span_rat (I : Ideal (𝓞 ℚ)) : ∃ n : ℕ, I = Ideal.span {(n : 𝓞 ℚ)} := by
-  haveI := pir_rat
-  obtain ⟨a, rfl⟩ : ∃ a, I = Ideal.span {a} := ⟨_, (IsPrincipalIdealRing.principal I).span_singleton_generator.symm⟩
-  obtain ⟨m, rfl⟩ : ∃ m : ℤ, a = (m : 𝓞 ℚ) := ⟨Rat.ringOfIntegersEquiv a, by
-    apply Rat.ringOfIntegersEquiv.injective; simp⟩
-  refine ⟨m.natAbs, ?_⟩
-  rcases Int.natAbs_eq m with h | h
-  · rw [h]; simp
-  · conv_lhs => rw [h]
-    rw [Int.cast_neg, Ideal.span_singleton_neg, Int.cast_natCast]
-
-theorem isClassZeta_rat (C : ClassGroup (𝓞 ℚ)) : IsClassZeta C riemannZeta := by
-  refine ⟨fun s hs => (differentiableAt_riemannZeta hs).differentiableWithinAt, fun s hs => ?_⟩
-  have hs0 : s ≠ 0 := by rintro rfl; norm_num at hs
-  haveI := pir_rat
-  haveI : Subsingleton (ClassGroup (𝓞 ℚ)) :=
-    (@Fintype.card_le_one_iff_subsingleton _ instFintypeClassGroupOfIsPrincipalIdealRing).1
-      (card_classGroup_eq_one (R := 𝓞 ℚ)).le
-  let g : IdealsIn C → ℕ := fun I => Ideal.absNorm (I.1 : Ideal (𝓞 ℚ))
-  have hg : Function.Injective g := fun I J h => by
-    obtain ⟨n, hn⟩ := exists_span_rat (I.1 : Ideal (𝓞 ℚ))
-    obtain ⟨m, hm⟩ := exists_span_rat (J.1 : Ideal (𝓞 ℚ))
-    simp only [g, hn, hm, absNorm_span_rat] at h
-    exact Subtype.ext (Subtype.ext (by rw [hn, hm, h]))
-  have hr : ∀ n ∉ Set.range g, (n : ℂ) ^ (-s) = 0 := fun n hn => by
-    by_cases h0 : n = 0
-    · simp [h0, hs0]
-    · refine (hn ⟨⟨⟨Ideal.span {(n : 𝓞 ℚ)}, mem_nonZeroDivisors_of_ne_zero ?_⟩, Subsingleton.elim _ _⟩,
-        absNorm_span_rat n⟩).elim
-      simpa using h0
-  refine (hg.hasSum_iff (f := fun n : ℕ => (n : ℂ) ^ (-s)) hr).2 ?_
-  rw [zeta_eq_tsum_one_div_nat_cpow hs]
-  simpa only [Complex.cpow_neg, one_div] using (Complex.summable_one_div_nat_cpow.2 hs).hasSum
-
 end GlobalTheory.IndefiniteRowSideFullHecke.ZetaValueIdeals

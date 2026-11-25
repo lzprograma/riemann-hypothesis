@@ -217,7 +217,7 @@ lemma maj_pos {x : Frame X.Ψ r} (hx : x ∈ X.dom) (τ : X.Ψ) {v : Fin r → �
     simp only [hAdef, Finset.sum_mul]
     rw [Finset.sum_comm]
     simp only [mul_assoc, ← Finset.mul_sum, hmul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, sub_self]
+      Finset.mem_univ, ite_true, sub_self]
   obtain ⟨w, hw⟩ : ∃ w, w = v - X.ppos x τ v := ⟨_, rfl⟩
   have horth' : ∀ a, hermC τ.1 X.Gm w (X.colP x τ a) = 0 := by
     intro a

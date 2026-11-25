@@ -577,7 +577,6 @@ theorem map_casimir {p q : ℕ} {V W : Type} [AddCommGroup V] [Module ℂ V] [Ad
     [Module ℂ W] {a : Mat p q →ₗ[ℂ] Module.End ℂ V} {b : Mat p q →ₗ[ℂ] Module.End ℂ W}
     (f : V →ₗ[ℂ] W) (hf : ∀ Z x, f (a Z x) = b Z (f x)) (x : V) :
     f (casimir a x) = casimir b (f x) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [casimir, LinearMap.sum_apply, map_sum, hf]
 
 theorem exists_isHW {p q : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]

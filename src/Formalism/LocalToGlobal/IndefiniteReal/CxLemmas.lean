@@ -136,13 +136,8 @@ theorem bij_of_map (σ : K →+* ℂ) {m n : ℕ} (M : Matrix (Fin m) (Fin n) K)
 
 private theorem inner_lin_lemma {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E] {n : ℕ}
     (w : Fin n → E) (a b : Fin n → ℂ) :
-    star a ⬝ᵥ (Matrix.gram ℂ w *ᵥ b) = ⟪lin w a, lin w b⟫_ℂ := by
-  simp only [lin_apply, sum_inner, inner_sum, inner_smul_left, inner_smul_right, dotProduct,
-    Matrix.mulVec, Matrix.gram_apply, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  simp only [Pi.star_apply, Complex.star_def]
-  ring
+    star a ⬝ᵥ (Matrix.gram ℂ w *ᵥ b) = ⟪lin w a, lin w b⟫_ℂ :=
+  Matrix.star_dotProduct_gram_mulVec w a b
 
 theorem majAt_gram {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E] {n : ℕ}
     (X : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ) (v : InfinitePlace K) (w : Fin n → E)
@@ -295,7 +290,7 @@ theorem lin_basis {E : Type} [AddCommGroup E] [Module ℂ E] {n : ℕ} (f : (Fin
   apply LinearMap.pi_ext
   intro i x
   simp only [lin, Fintype.linearCombination_apply, Pi.single_apply, ite_smul, zero_smul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [← map_smul]
   congr 1
   ext j

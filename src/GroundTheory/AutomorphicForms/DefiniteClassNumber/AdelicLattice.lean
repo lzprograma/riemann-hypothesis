@@ -131,7 +131,7 @@ theorem vecCoords_stdVec [DecidableEq κ] (a c : ι × κ) :
   simp only [vecCoords, stdVec, Pi.single_apply]
   by_cases hij : j = i
   · subst hij
-    simp only [if_true]
+    simp only [ite_true]
     rw [← Algebra.TensorProduct.basis_apply, Basis.repr_self, Finsupp.single_apply]
     by_cases h : k = l <;> simp [h]
   · have : ¬ (i, k) = (j, l) := fun h => hij (congrArg Prod.fst h).symm
@@ -526,7 +526,7 @@ theorem exists_int_smul_mem_of_forall_isIntegral [DecidableEq κ] (hM : IsUnit (
     rw [← hermTrace_mulVec g⁻¹, mulVec_mulVec, unitaryMat_inv_mul, one_mulVec,
       hermTrace_eq_sum_traceGram (H := H) (b := b) (FinAdele K)] at h
     simp only [vecCoords_stdVec, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true] at h
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h
     convert h using 1
     simp only [mulVec, dotProduct, Matrix.map_apply, A, Matrix.smul_apply, Matrix.transpose_apply,
       smul_eq_mul, map_mul, Finset.mul_sum, cu]

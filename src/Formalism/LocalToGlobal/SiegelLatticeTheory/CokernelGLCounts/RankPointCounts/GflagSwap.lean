@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellGeo
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PairingOmegaPrimeZ
 
@@ -16,18 +17,7 @@ open Formalism.MainNotions.S Formalism.BasicNotions
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ} {T T' : E}
 
 theorem hT_X_X (F : FlagG S r T) {x x' : S.V} (hx : x ∈ F.X) (hx' : x' ∈ F.X) : S.hT x x' = 0 := by
-  have h1 : ∀ a, ∀ y ∈ F.X, S.hT (F.e a) y = 0 := by
-    intro a y hy
-    induction hy using Submodule.span_induction with
-    | mem y hy => obtain ⟨b, rfl⟩ := hy; exact F.e_iso a b
-    | zero => simp
-    | add y z _ _ h1 h2 => simp [map_add (f := _), h1, h2]
-    | smul c y _ h => simp [map_smul, h]
-  induction hx using Submodule.span_induction with
-  | mem x hx => obtain ⟨a, rfl⟩ := hx; exact h1 a x' hx'
-  | zero => simp
-  | add y z _ _ h1 h2 => simp [map_add (f := _), LinearMap.add_apply, h1, h2]
-  | smul c y _ h => simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, h]
+  apply _root_.Formalism.MainNotions.BridgeLemma.geo_X_X <;> assumption
 
 theorem hT_z_X (F : FlagG S r T) {x : S.V} (hx : x ∈ F.X) : S.hT F.z x = 0 := by
   induction hx using Submodule.span_induction with
@@ -110,23 +100,6 @@ private theorem finrank_add_finrank_orth_le (U : Submodule E S.V) :
   rw [hrange, finrank_top, Module.finrank_fin_fun, hker] at this
   omega
 
-private theorem finrank_sup_span_singleton_of_not_mem' (A : Submodule E S.V) {w : S.V} (hw : w ∉ A) :
-    finrank E ↥(A ⊔ Submodule.span E {w}) = finrank E A + 1 := by
-  have hw0 : w ≠ 0 := fun h => hw (h ▸ A.zero_mem)
-  have := Submodule.finrank_sup_add_finrank_inf_eq A (Submodule.span E {w})
-  have hinf : A ⊓ Submodule.span E {w} = ⊥ := by
-    rw [eq_bot_iff]
-    intro u hu
-    obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hu.2
-    rw [Submodule.mem_bot]
-    by_contra hc0
-    have hc : c ≠ 0 := by rintro rfl; exact hc0 (zero_smul _ _)
-    apply hw
-    have := A.smul_mem c⁻¹ hu.1
-    rwa [smul_smul, inv_mul_cancel₀ hc, one_smul] at this
-  rw [hinf, finrank_bot, add_zero, finrank_span_singleton hw0] at this
-  exact this
-
 theorem line (F : FlagG S r T) (hT : T ≠ 0) (H : Submodule E S.V) (hXH : ∀ x ∈ F.X, ∀ h ∈ H, S.hT x h = 0)
     (hzH : ∀ h ∈ H, S.hT F.z h = 0) (hdisj : ∀ x ∈ F.X, x ∈ H → x = 0)
     (hdim : finrank E H + 2 * r + 2 = finrank E S.V) {y0 v : S.V} (hy0 : y0 ∈ Qsp F H)
@@ -158,7 +131,7 @@ theorem line (F : FlagG S r T) (hT : T ≠ 0) (H : Submodule E S.V) (hXH : ∀ x
   have hU : F.X ⊔ Submodule.span E {F.z} ⊔ H = (F.X ⊔ H) ⊔ Submodule.span E {F.z} :=
     sup_right_comm _ _ _
   have hU_fin : finrank E ↥(F.X ⊔ Submodule.span E {F.z} ⊔ H) = r + finrank E H + 1 := by
-    rw [hU, finrank_sup_span_singleton_of_not_mem' _ hzXH, hXH_fin]
+    rw [hU, Submodule.finrank_sup_span_singleton hzXH, hXH_fin]
   have hQ : finrank E (Qsp F H) ≤ r + 1 := by
     have := finrank_add_finrank_orth_le (F.X ⊔ Submodule.span E {F.z} ⊔ H)
     show finrank E (Lat.orth S (F.X ⊔ Submodule.span E {F.z} ⊔ H)) ≤ r + 1
@@ -167,7 +140,7 @@ theorem line (F : FlagG S r T) (hT : T ≠ 0) (H : Submodule E S.V) (hXH : ∀ x
   have hle : F.X ⊔ Submodule.span E {y0} ≤ Qsp F H :=
     sup_le hXQ (by rw [Submodule.span_le, Set.singleton_subset_iff]; exact hy0)
   have hfin2 : finrank E ↥(F.X ⊔ Submodule.span E {y0}) = r + 1 := by
-    rw [finrank_sup_span_singleton_of_not_mem' _ hy0X, hXr]
+    rw [Submodule.finrank_sup_span_singleton hy0X, hXr]
   have heq : F.X ⊔ Submodule.span E {y0} = Qsp F H :=
     Submodule.eq_of_le_of_finrank_le hle (by omega)
   rw [← heq] at hv

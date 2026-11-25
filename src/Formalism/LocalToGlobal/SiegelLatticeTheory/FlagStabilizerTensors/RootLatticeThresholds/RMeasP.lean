@@ -11,6 +11,7 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarP
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.MaximalCompactIsCompact
 import Mathlib.CategoryTheory.Countable
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXPlace
 
 @[expose] public section
 
@@ -34,22 +35,7 @@ theorem rset_matGroup {k r : ℕ} {g₀ : Matrix (Fin (2 * r + k + 1)) (Fin (2 *
 
 theorem isHaarOn_smul' {k r : ℕ} {S : Set (Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)} {μ : Measure (Mt k r)}
     (h : Formalism.MainNotions.S.IsHaarOn S μ) {c : ℝ≥0∞} (h0 : c ≠ 0) (h1 : c ≠ ⊤) : Formalism.MainNotions.S.IsHaarOn S (c • μ) := by
-  unfold Formalism.MainNotions.S.IsHaarOn at h ⊢
-  obtain ⟨hs, hne, hnull, hinv⟩ := h
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · first
-      | (rw [← ENNReal.coe_toNNReal h1, ← ENNReal.smul_def]; infer_instance)
-  · first
-      | (intro hz
-         apply hne
-         have hu := congrArg (fun ν : Measure (Mt k r) => ν Set.univ) hz
-         simp [h0] at hu
-         first
-           | exact hu)
-  · rw [Measure.smul_apply, hnull, smul_zero]
-  · intro s hs'
-    rw [Measure.map_smul, hinv s hs']
-    exact (Formalism.L2.SG.Pf.WFL.measurable_lmulM s).aemeasurable
+  apply _root_.Formalism.L2.SG.Pf.NcReal.JX.isHaarOn_smul <;> assumption
 
 theorem rMeas_exact (D : D7) (W : LocW D.R.k D.R.rS) (hz : inWb D.R.k D.R.rS W.z) (hT : 0 < Tz D.R.k D.R.rS W.z)
     (hz' : inWb D.R.k D.R.rS W.z') (hT' : 0 < Tz D.R.k D.R.rS W.z')

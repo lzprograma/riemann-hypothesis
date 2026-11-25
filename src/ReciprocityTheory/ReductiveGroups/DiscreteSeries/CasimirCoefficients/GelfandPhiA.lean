@@ -21,7 +21,7 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -43,10 +43,8 @@ theorem lhol_mem {X : Matrix (Fin n) (Fin n) ℂ} {F : Matrix (Fin n) (Fin n) �
     (hF : ContDiffOn ℂ ∞ F (OmegaSet n)) : ContDiffOn ℂ ∞ (Lhol X F) (OmegaSet n) := by
   have h1 :=
     ((contDiffOn_infty_iff_fderiv_of_isOpen isOpen_OmegaSet').1 hF).2
-  have h2 : ContDiff ℂ ∞ (fun z : Matrix (Fin n) (Fin n) ℂ => X * z) := by
-    refine contDiff_pi.2 fun a => contDiff_pi.2 fun b => ?_
-    simp only [Matrix.mul_apply]
-    exact ContDiff.sum fun c _ => contDiff_const.mul (contDiff_pi.1 (contDiff_pi.1 contDiff_id c) b)
+  have h2 : ContDiff ℂ ∞ (fun z : Matrix (Fin n) (Fin n) ℂ => X * z) :=
+    (LinearMap.toContinuousLinearMap (LinearMap.mulLeft ℂ X)).contDiff
   exact h1.clm_apply h2.contDiffOn
 
 def ltOp (X : Matrix (Fin n) (Fin n) ℂ) (F : Matrix (Fin n) (Fin n) ℂ → ℂ) :
@@ -124,14 +122,8 @@ private theorem Lhol_commutator_on_OmegaSet {F : Matrix (Fin n) (Fin n) ℂ → 
   have hd := ((h1.differentiableOn (by simp)) z hz).differentiableAt
     (isOpen_OmegaSet'.mem_nhds hz) |>.hasFDerivAt
   have hs := hc.isSymmSndFDerivAt (by first | (simp; done))
-  let LX : Matrix (Fin n) (Fin n) ℂ →L[ℂ] Matrix (Fin n) (Fin n) ℂ := LinearMap.toContinuousLinearMap
-    { toFun := fun w => X * w
-      map_add' := fun a b => Matrix.mul_add X a b
-      map_smul' := fun c a => Matrix.mul_smul X c a }
-  let LY : Matrix (Fin n) (Fin n) ℂ →L[ℂ] Matrix (Fin n) (Fin n) ℂ := LinearMap.toContinuousLinearMap
-    { toFun := fun w => Y * w
-      map_add' := fun a b => Matrix.mul_add Y a b
-      map_smul' := fun c a => Matrix.mul_smul Y c a }
+  let LX := LinearMap.toContinuousLinearMap (LinearMap.mulLeft ℂ X)
+  let LY := LinearMap.toContinuousLinearMap (LinearMap.mulLeft ℂ Y)
   show fderiv ℂ (fun w => fderiv ℂ F w (LY w)) z (X * z) -
       fderiv ℂ (fun w => fderiv ℂ F w (LX w)) z (Y * z) = fderiv ℂ F z ((Y * X - X * Y) * z)
   erw [(hd.clm_apply LY.hasFDerivAt).fderiv, (hd.clm_apply LX.hasFDerivAt).fderiv]

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsHermIsometryGraphModScalarFlagPairIota
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFlagPairLatticeSumDiscriminantEqNormMinor
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
@@ -178,16 +179,7 @@ theorem e_mem (F : FlagD H r) {a : Fin r} {b : ℕ} (h : a.val < b) : F.e a.cast
 omit [NumberField K] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem mem_Xa_succ (F : FlagD H r) (a : Fin r) {x : V} (hx : x ∈ F.Xa (a.val + 1)) :
     ∃ t : K, x - t • F.e a.castSucc ∈ F.Xa a.val := by
-  have : F.Xa (a.val + 1) ≤ F.Xa a.val ⊔ Submodule.span K {F.e a.castSucc} := by
-    refine Submodule.span_le.2 ?_
-    rintro _ ⟨b, hb, rfl⟩
-    rcases Nat.lt_succ_iff_lt_or_eq.1 hb with h | h
-    · exact Submodule.mem_sup_left (e_mem F h)
-    · obtain rfl : b = a := Fin.ext h
-      exact Submodule.mem_sup_right (Submodule.mem_span_singleton_self _)
-  obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 (this hx)
-  obtain ⟨t, rfl⟩ := Submodule.mem_span_singleton.1 hz
-  exact ⟨t, by simpa using hy⟩
+  first | exact _root_.GlobalTheory.ModIdent.exists_coeff | exact @_root_.GlobalTheory.ModIdent.exists_coeff | apply _root_.GlobalTheory.ModIdent.exists_coeff <;> assumption
 
 omit [NumberField K] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem iso_X (F : FlagD H r) {x y : V} (hx : x ∈ F.X) (hy : y ∈ F.X ⊔ Submodule.span K {F.z}) :

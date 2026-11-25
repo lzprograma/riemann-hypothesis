@@ -6,6 +6,7 @@ public import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmAExpand
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PGenericFibreDim
 public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
 public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftDegreePolynomial
 import GroundTheory.HeightsAndTheta.Heights.Intersections.Statements
 
 @[expose] public section
@@ -63,7 +64,7 @@ theorem eq_famExt_of_position (Q : HermLine ι → Prop) (e : Fin 2 → HermLine
       famExt J P n e (fun j => if j ∈ T then w else Pi.single (t j) 1) := by
   induction T using Finset.induction_on generalizing t with
   | empty =>
-    simp only [Finset.notMem_empty, if_false]
+    simp only [Finset.notMem_empty, ite_false]
     exact (famExt_basis e t).symm
   | insert a T ha ih =>
     have hins : ∀ {β : Type} (v : β) (F : Fin 2 → β),
@@ -172,32 +173,8 @@ theorem ZCombLimit.genericFibre {K : Type} [Fintype K] [DecidableEq K] {ι : K �
     {P : Ideal (ReciprocityTheory.ChartRestriction.G.Geo.MRing ι)} {d : ℕ} (hP : IsArithVar P (d + 1)) :
     GroundTheory.Heights₂.Heights.NumbersDVR.IsMultiProjPrime (P.map (MvPolynomial.map (Int.castRingHom ℚ))) ∧
       ringKrullDim (GroundTheory.Heights₂.Heights.NumbersDVR.MRing ι ℚ ⧸ P.map (MvPolynomial.map (Int.castRingHom ℚ))) =
-        ((d + Fintype.card K : ℕ) : WithBot ℕ∞) := by
-  obtain ⟨-, ⟨hPp, ⟨S, hS, hPS⟩, hrel⟩, hhor, hdim⟩ := hP
-  have : P.IsPrime := hPp
-  have hchar : ∀ m : ℤ, (C m : MvPolynomial (Σ k, ι k) ℤ) ∈ P → m = 0 := by
-    intro m hm
-    have h1 : m ∈ P.comap (C : ℤ →+* ReciprocityTheory.ChartRestriction.G.Geo.MRing ι) := hm
-    rw [show P.comap (C : ℤ →+* ReciprocityTheory.ChartRestriction.G.Geo.MRing ι) = ⊥ from hhor, Ideal.mem_bot] at h1
-    exact h1
-  obtain ⟨hqp, hcomap, hform⟩ := ReciprocityTheory.AnForm.R.extQ_spec P hchar
-  have hq : ReciprocityTheory.AnForm.R.extQ P = P.map (MvPolynomial.map (Int.castRingHom ℚ)) := rfl
-  rw [← hq]
-  refine ⟨⟨hqp, ?_, ?_⟩, ?_⟩
-  · rw [GroundTheory.Heights₂.Heights.Bridge.isMultiHomogIdeal_iff]
-    refine ⟨MvPolynomial.map (Int.castRingHom ℚ) '' S, ?_, ?_⟩
-    · rintro _ ⟨f, hf, rfl⟩
-      obtain ⟨b, hb⟩ := hS f hf
-      exact ⟨b, fun m hm k => hb m (MvPolynomial.support_map_subset _ _ hm) k⟩
-    · rw [hq, hPS, Ideal.map_span]
-  · intro k
-    obtain ⟨i, hi⟩ := hrel k
-    refine ⟨i, fun hX => hi ?_⟩
-    rw [← hcomap, Ideal.mem_comap, map_X]
-    exact hX
-  · rw [hdim] at hform
-    refine GroundTheory.Heights₂.Heights.ObjectsChow.GenericFibreDim.eq_natCast_of_add_one_eq (d + Fintype.card K) _ ?_
-    rw [hform, show d + 1 + Fintype.card K = (d + Fintype.card K) + 1 by omega, Nat.cast_succ]
+        ((d + Fintype.card K : ℕ) : WithBot ℕ∞) :=
+  ShiftDegreePolynomial.genericFibre hP
 
 theorem ZCombLimit.proof (hM : MixedNumberPolynomial.Statement.{0}) : ZCombLimit.Statement := by
   classical

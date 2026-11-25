@@ -13,34 +13,17 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Herm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure SymmetricHermitianColumns (D : D7) extends HermColsCh D where
 
   dt : unitaryOneFiniteAdeles D.sp.cm →* D.Dt
-  dt_surj : Function.Surjective dt
 
   dt_ker : ∀ x : unitaryOneFiniteAdeles D.sp.cm, dt x = 1 → (x : GL (Fin 1) (D.host.E ⊗[D.host.F] Af D.host.F)) ∈ IntegralUnitGroup D.sp.cm
-
-  dt_open : letI := tensTopL (F := D.host.F) (E := D.host.E) (Af D.host.F)
-    IsOpen {x : unitaryOneFiniteAdeles D.sp.cm | dt x = 1}
 
   dt_UO : D.UO = ((IntegralUnitGroup D.sp.cm).subgroupOf (unitaryOneFiniteAdeles D.sp.cm)).map dt
 
   dt_rat : ∀ (z : unitary D.host.E) (x : unitaryOneFiniteAdeles D.sp.cm),
     Matrix.GeneralLinearGroup.det (x : GL (Fin 1) (D.host.E ⊗[D.host.F] Af D.host.F)) = unitaryOneRationalAdele D.host.F z →
     D.e1Dt z = dt x
-
-  det0 : ∀ (u : D.what₂.Word) (c : (D.mem u).C.cls 0) (x : unitaryOneFiniteAdeles D.sp.cm),
-    Matrix.GeneralLinearGroup.det (x : GL (Fin 1) (D.host.E ⊗[D.host.F] Af D.host.F)) =
-      Matrix.GeneralLinearGroup.det (((lev0 u).y c : GL (Fin D.R.k) (D.host.E ⊗[D.host.F] Af D.host.F))) →
-    D.detCls u 0 c = dt x
-
-  detI : ∀ (u : D.what₂.Word) (i : ℕ) (h1 : 1 ≤ i) (hm : i ≤ D.R.m) (c : (D.mem u).C.cls i) (x : unitaryOneFiniteAdeles D.sp.cm),
-    Matrix.GeneralLinearGroup.det (x : GL (Fin 1) (D.host.E ⊗[D.host.F] Af D.host.F)) =
-      Matrix.GeneralLinearGroup.det
-        (((cls u i h1 hm (chOf u i c)).y ⟨c, rfl⟩ : GL (Fin (D.sp.X i).rank) (D.host.E ⊗[D.host.F] Af D.host.F))) →
-    D.detCls u i c = dt x
 
 def SymmetricGroupCompatibility (D : D7) (H : HermColsCh D) : Type :=
   ∀ u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
@@ -53,30 +36,23 @@ def SymmetricRelativeDeterminant (D : D7) (H : SymmetricHermitianColumns D) : Pr
 structure SymmetricCompatibleData (D : D7) where
   base : SymmetricHermitianColumns D
   atT : ∀ u, AtT D u (base.vT u) (base.Fv u)
-  vol : VolumeCompatible D
 
 structure FullTiedS (D : D7) extends SymmetricCompatibleData D where
   levelZeroCompatibility : SymmetricLevelZeroData D base.toHermColsCh atT
   g : SymmetricGroupCompatibility D base.toHermColsCh
-  ad : SymmetricAdelicCompatibility D base.toHermColsCh atT
   cof : SymmetricCofactorCompatibility D base.toHermColsCh atT
   piG : PiGConstS D base.toHermColsCh atT levelZeroCompatibility
   stabMap : SymmetricStabilizerMapCompatibility D base.toHermColsCh atT
   fvI : SymmetricResidueFieldLevels D base.toHermColsCh atT
   relDet : SymmetricRelativeDeterminant D base
   std : StdTied D
-  vpos : PositiveVolumeCompatible D
   baseL : SymmetricBaseCompatibility D base.toHermColsCh atT
 
 def FullTiedS.cols {D : D7} (X : FullTiedS D) : ColsHermS D where
   base := X.base.toHermColsCh
   atT := X.atT
   levelZeroCompatibility := X.levelZeroCompatibility
-  ad := X.ad
-  cof := X.cof
   piG := X.piG
-  stabMap := X.stabMap
-  fvI := X.fvI
   std := X.std
   baseL := X.baseL
 
@@ -122,12 +98,6 @@ structure SymmetricExtraCompatibility {D : D7} (X : FullTiedS D) {L : SizeData�
   iw_pos : ∀ u w (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
     haveI : Fact (D.what₂.places.resChar w).Prime := ⟨D.what₂.places.resChar_prime w⟩
     GIwPos u w h (ex.ker u w h)
-
-section Sub
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-
-end Sub
 
 def FullTiedS.to0 {D : D7} (X : FullTiedS D) : Herm0 D := ⟨X.base.lev0, X.g⟩
 

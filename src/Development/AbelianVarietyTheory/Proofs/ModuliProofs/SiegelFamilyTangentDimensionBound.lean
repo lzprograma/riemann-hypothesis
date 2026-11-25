@@ -98,12 +98,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open scoped CategoryTheory.Obj TensorProduct
 open GlobalTheory.ZM
 
-namespace GlobalTheory.ZM.SymmCommutant
-
-
-
-end GlobalTheory.ZM.SymmCommutant
-
 namespace GlobalTheory.ZM
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
@@ -164,7 +158,7 @@ theorem _root_.GlobalTheory.ZM.finrank_symm_commutant_le : ∀ (K : Type) [Field
         intro r x; funext s
         simp [B, Finset.mul_sum, _root_.mul_assoc] }
   have inj : Function.Injective L := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro Θ hΘ0
     have hB : ∀ i j, B Θ i j = 0 := by
       intro i j
@@ -386,7 +380,7 @@ theorem exists_basis_matrixRep [Module.Finite K V] {h : ℕ} (ρ : Matrix (Fin (
     (LinearMap.pi fun u => (e 0 u).codRestrict V₀ fun y => ⟨e 0 u y, by simp [he]⟩)
     (LinearMap.ext fun y => by
       refine (LinearMap.sum_apply _ _ _).trans (Eq.trans (Finset.sum_congr rfl fun u _ => ?_) (hs y))
-      exact (he u 0 0 u y).trans (if_pos rfl))
+      exact (he u 0 0 u y).trans (ite_eq_left rfl))
     (LinearMap.ext fun z => funext fun u => Subtype.ext (by
       show e 0 u ((∑ u, e u 0 ∘ₗ V₀.subtype ∘ₗ LinearMap.proj u : (Fin (n + 1) → V₀) →ₗ[K] V) z) = z u
       simp [he, h₀]))

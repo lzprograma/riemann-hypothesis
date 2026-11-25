@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.TwistedCocycleApplyOne
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlSub
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.OmFacts
@@ -79,22 +80,7 @@ include h1 hm c1 cm hz in
 private theorem tw_U [TopologicalSpace K] (cρ : IsLocallyConstant ρ) (cχ : IsLocallyConstant χ)
     (cz : IsLocallyConstant z) :
     ∃ U : OpenNormalSubgroup K, ∀ g, g ∈ U ↔ ρ g = 1 ∧ χ g = 1 ∧ z g = 0 := by
-  let S : Subgroup K :=
-    { carrier := {g | ρ g = 1 ∧ χ g = 1 ∧ z g = 0}
-      one_mem' := ⟨h1, c1, twisted_cocycle_apply_one ρ z χ h1 c1 hz⟩
-      mul_mem' := fun {a b} ha hb => ⟨by rw [hm, ha.1, hb.1, one_mul], by rw [cm, ha.2.1, hb.2.1, one_mul],
-        by rw [tw_add ρ z χ h1 hm hz ha.1 ha.2.1, ha.2.2, hb.2.2, add_zero]⟩
-      inv_mem' := fun {a} ha => ⟨tw_inv ρ h1 hm ha.1, tw_inv χ c1 cm ha.2.1, by
-        have := tw_add ρ z χ h1 hm hz ha.1 ha.2.1 a⁻¹
-        rw [mul_inv_cancel, twisted_cocycle_apply_one ρ z χ h1 c1 hz, ha.2.2, zero_add] at this
-        exact this.symm⟩ }
-  have hN : S.Normal := ⟨fun u hu g => ⟨by
-      rw [hm, hm, hu.1, mul_one, ← hm, mul_inv_cancel, h1], by
-      rw [cm, cm, hu.2.1, mul_one, ← cm, mul_inv_cancel, c1], by
-      rw [mul_assoc, hz, tw_add ρ z χ h1 hm hz hu.1 hu.2.1, hu.2.2, zero_add, ← hz, mul_inv_cancel,
-        twisted_cocycle_apply_one ρ z χ h1 c1 hz]⟩⟩
-  have hO : IsOpen (S : Set K) := (cρ {1}).inter ((cχ {1}).inter (cz {0}))
-  exact ⟨⟨⟨S, hO⟩, hN⟩, fun g => Iff.rfl⟩
+  apply _root_.tw_U <;> assumption
 
 end Abs
 
@@ -109,30 +95,7 @@ private theorem tw_lc {Γ R : Type} [TopologicalSpace Γ] {n : ℕ} (f : Γ → 
 
 private theorem pow_mem_of_PL (l : ℕ) {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ]
     (H : Subgroup Γ) (V : Set Γ) (hV : IsOpen V) (hle : (PL l H : Set Γ) ⊆ V) : ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ V := by
-  let ι := {U : OpenNormalSubgroup Γ // ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U}
-  haveI : Nonempty ι := ⟨⟨⟨⊤, Subgroup.normal_top⟩, fun h _ => ⟨0, trivial⟩⟩⟩
-  have hd : Directed (· ⊇ ·) fun U : ι => (U.1 : Set Γ) := by
-    intro U U'
-    refine ⟨⟨U.1 ⊓ U'.1, fun h hh => ?_⟩, fun a ha => ha.1, fun a ha => ha.2⟩
-    obtain ⟨e, he⟩ := U.2 h hh
-    obtain ⟨e', he'⟩ := U'.2 h hh
-    refine ⟨e + e', ?_, ?_⟩
-    · rw [pow_add, pow_mul]
-      exact U.1.toSubgroup.pow_mem he _
-    · rw [pow_add, mul_comm, pow_mul]
-      exact U'.1.toSubgroup.pow_mem he' _
-  have hs : Vᶜ ∩ ⋂ U : ι, (U.1 : Set Γ) = ∅ := by
-    refine Set.eq_empty_of_forall_notMem fun a ha => ha.1 (hle ?_)
-    have := Set.mem_iInter.1 ha.2
-    simp only [PL, SetLike.mem_coe, Subgroup.mem_iInf]
-    exact fun U hU => this ⟨U, hU⟩
-  obtain ⟨U, hU⟩ := hV.isClosed_compl.isCompact.elim_directed_family_closed (fun U : ι => (U.1 : Set Γ))
-    (fun U => U.1.toOpenSubgroup.isClosed) (Set.disjoint_iff_inter_eq_empty.mpr hs) hd
-  intro h hh
-  obtain ⟨e, he⟩ := U.2 h hh
-  refine ⟨e, ?_⟩
-  by_contra hn
-  exact Set.disjoint_left.1 hU hn he
+  apply _root_.pow_mem_of_PL <;> assumption
 
 private theorem lc_padic {l : ℕ} [Fact l.Prime] {R : Type} [CommRing R] (f : ℤ_[l] →+* R) (m : ℕ)
     (hl : (l : R) ^ m = 0) : IsLocallyConstant f := by

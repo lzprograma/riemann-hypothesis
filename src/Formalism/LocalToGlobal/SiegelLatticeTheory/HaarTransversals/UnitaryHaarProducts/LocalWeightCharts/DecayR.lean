@@ -9,6 +9,7 @@ import Mathlib.Tactic.Lemma
 import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiPolarDecompositionEquivariance
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.SchurOrthogonalityRelations, Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.UnitMulStar, Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.DecayR
@@ -262,16 +263,7 @@ private theorem mem_UJset_of_mem_Kset_local_weight_charts {ε : Fin n → Bool} 
 
 private theorem conjTranspose_mem_Kset' {ε : Fin n → Bool} {u : Matrix (Fin n) (Fin n) ℂ}
     (hu : u ∈ Formalism.REAL.Kset ε) : uᴴ ∈ Formalism.REAL.Kset ε := by
-  obtain ⟨hU, hc⟩ := hu
-  refine ⟨?_, ?_⟩
-  · refine Matrix.mem_unitaryGroup_iff.2 ?_
-    rw [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_conjTranspose]
-    exact unit_star_mul hU
-  · calc uᴴ * Formalism.REAL.Jm ε = uᴴ * (Formalism.REAL.Jm ε * u) * uᴴ := by
-          simp only [Matrix.mul_assoc, unit_mul_star hU, Matrix.mul_one]
-      _ = uᴴ * (u * Formalism.REAL.Jm ε) * uᴴ := by rw [hc]
-      _ = Formalism.REAL.Jm ε * uᴴ := by
-          simp only [← Matrix.mul_assoc, unit_star_mul hU, Matrix.one_mul]
+  apply _root_.GlobalTheory.Dec.PsiPolarProof.star_mem_K <;> assumption
 
 lemma conj_mem {ε : Fin n → Bool} {u : Matrix (Fin n) (Fin n) ℂ} (hu : u ∈ Formalism.REAL.Kset ε)
     {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ UJset ε) : uᴴ * g * u ∈ UJset ε := by
@@ -632,8 +624,6 @@ theorem reproducing_formula_holds : WlocSk.ReprodG := by
 
 end WlocSk.DecayR
 
-section Check
-end Check
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto

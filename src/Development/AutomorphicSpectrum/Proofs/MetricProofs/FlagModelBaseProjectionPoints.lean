@@ -18,50 +18,8 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverBasePointRegular
 import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -86,30 +44,12 @@ theorem sum_mapDomain_block {κ : K → K'} {v : (Σ k, ι k) → Σ k, ι' k} (
   apply GlobalTheory.CompanionTheory.Ar.PB.CovGraph.RegPhi.sum_mapDomain_block <;> assumption
 
 theorem isMultiHomog_rename_block {κ : K → K'} {v : (Σ k, ι k) → Σ k, ι' k} (hb : IsBlockMap κ v) {f : MRing ι}
-    {b : K → ℕ} (hf : IsMultiHomog f b) : IsMultiHomog (rename v f) (Function.extend κ b 0) := by
-  intro m hm k'
-  rw [support_rename_of_injective hb.2.1, Finset.mem_image] at hm
-  obtain ⟨m₀, hm₀, rfl⟩ := hm
-  rw [sum_mapDomain_block hb.2.2.1, Fintype.sum_sigma]
-  by_cases hk : ∃ k, κ k = k'
-  · obtain ⟨k, rfl⟩ := hk
-    rw [hb.1.extend_apply, Finset.sum_eq_single k]
-    · simpa using hf m₀ hm₀ k
-    · intro k₂ _ hne
-      exact Finset.sum_eq_zero fun i _ => if_neg (hb.1.ne hne)
-    · simp
-  · rw [Function.extend_apply' _ _ _ hk]
-    exact Finset.sum_eq_zero fun k _ => Finset.sum_eq_zero fun i _ => if_neg fun h => hk ⟨k, h⟩
+    {b : K → ℕ} (hf : IsMultiHomog f b) : IsMultiHomog (rename v f) (Function.extend κ b 0) :=
+  _root_.GlobalTheory.CompanionTheory.Ar.PB.CovGraph.RegPhi.isMultiHomog_rename_block hb hf
 
 theorem mConeMap_rename {Ω : Type} [Field Ω] {κ : K → K'} {v : (Σ k, ι k) → Σ k, ι' k} (hb : IsBlockMap κ v)
-    (y : (Σ k, ι' k) → Ω) (g : MRing ι) : mConeMap y (rename v g) = rename κ (mConeMap (y ∘ v) g) := by
-  induction g using MvPolynomial.induction_on with
-  | C a => simp [mConeMap]
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p n hp =>
-    simp only [map_mul, hp, rename_X]
-    congr 1
-    simp [mConeMap, hb.2.2.1 n]
+    (y : (Σ k, ι' k) → Ω) (g : MRing ι) : mConeMap y (rename v g) = rename κ (mConeMap (y ∘ v) g) :=
+  _root_.GlobalTheory.CompanionTheory.Ar.PB.CovGraph.RegPhi.mConeMap_rename hb y g
 
 theorem mConeMap_comp {Ω Ω' : Type} [Field Ω] [Field Ω'] (φ : Ω →+* Ω') (x : (Σ k, ι k) → Ω) (g : MRing ι) :
     mConeMap (φ ∘ x) g = map φ (mConeMap x g) := by
@@ -284,10 +224,10 @@ theorem detFac_one (j : ℕ) (i : Fin N) : detFac j i (1 : Matrix (Fin N) (Fin N
 theorem stepCols_nonempty {j : ℕ} (hj : j ≤ N) (i : Fin N) : (stepCols N j i).Nonempty := by
   by_cases h : (i : ℕ) + 1 ≤ j
   · refine ⟨⟨N - j, by omega⟩, ?_⟩
-    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos h]
+    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_left h]
     omega
   · refine ⟨⟨0, by have := i.2; omega⟩, ?_⟩
-    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg h]
+    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_right h]
     omega
 
 theorem detFac_ne_zero {L : Type} [Field L] {j : ℕ} (hj : j ≤ N) (i : Fin N) {T : Matrix (Fin N) (Fin N) L}
@@ -390,7 +330,7 @@ theorem flag_nonzero {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : 
   by_cases hk : ∀ p, M.blk p ≠ some k
   · obtain ⟨i, hi⟩ := hzb.1 ⟨k, hk⟩
     exact ⟨i, hi⟩
-  · push_neg at hk
+  · push Not at hk
     obtain ⟨p, hp⟩ := hk
     obtain ⟨a, ha, hz⟩ := H.2.2 p k hp
     let val := regVal hzb
@@ -470,7 +410,7 @@ theorem flag_back {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ
       · have e1 : ρ (C ⟨_, _, hv m⟩) = val ⟨_, _, hv m⟩ := eval₂Hom_C _ _ _
         rw [e1, show val ⟨_, _, hv m⟩ = _ from regVal_eq hzb _ (hv m), hzc, div_one, one_mul]
         rfl
-    · push_neg at hk
+    · push Not at hk
       obtain ⟨p, hp⟩ := hk
       obtain ⟨a, ha, hz⟩ := H.2.2 p k hp
       let uA : (Σ k, ι k) → Finset (Fin N) → A := fun q I => ⟨F.u q I, exists_isValueAt hzb (hG.2.1 q I).1⟩
@@ -510,8 +450,7 @@ theorem flag_back {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ
         · show _ = φL _ * algebraMap S L D * φL _
           ring
         · rfl
-      · set_option synthInstance.maxHeartbeats 100000 in
-          rw [map_sum, hz m, inv_mul_cancel_left₀ ha]
+      · rw [map_sum, hz m, inv_mul_cancel_left₀ ha]
         refine Finset.sum_congr rfl fun I _ => ?_
         rw [map_mul, ← minorIJ_map, hρ]
         congr 1
@@ -531,15 +470,22 @@ section Fwd
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Φ : Type} [Field Φ] {y : (Σ k, ι k) → Φ}
   {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {N j : ℕ} (M : FlagModel y Ψ N j)
 
-theorem flag_fwd {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ k, ι k) → ℂ}
-    (hz : z ∈ mcPts (mCoordIdeal y)) (hG : M.GoodAt F (mCoordIdeal (basePart M.blk z)))
-    (hc : ∀ k, basePart M.blk z ⟨k, F.c k⟩ = 1) : ∃ h, M.IsFlagOf F z h := by
-  have hzb := base_mem M hz
+theorem flag_fwd_core {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F)
+    {zb : (Σ k, baseIdx ι M.blk k) → ℂ} (hzb : zb ∈ mcPts (mCoordIdeal M.x))
+    (hG : M.GoodAt F (mCoordIdeal zb))
+    (O : Subring Φ) (val : O →+* ℂ) (hloc : ∀ s : O, val s ≠ 0 → (s : Φ)⁻¹ ∈ O)
+    (hO : ∀ {s}, RegAt M.x (mCoordIdeal zb) s → algebraMap M.Ω Φ s ∈ O)
+    (hOval : ∀ {s} (hs : RegAt M.x (mCoordIdeal zb) s),
+      val ⟨algebraMap M.Ω Φ s, hO hs⟩ = valAt M.x s zb)
+    (keep : Ψ × Fin N → Prop) (zfun : (Σ k, ι k) → ℂ)
+    (hcoord : ∀ p k, keep p → M.blk p = some k →
+      ∃ c : ι k, zfun ⟨k, c⟩ ≠ 0 ∧ y ⟨k, c⟩ ≠ 0 ∧
+        ∀ m : ι k, ∃ hr : y ⟨k, m⟩ / y ⟨k, c⟩ ∈ O, val ⟨_, hr⟩ = zfun ⟨k, m⟩ / zfun ⟨k, c⟩) :
+    ∃ H : Ψ → Matrix (Fin N) (Fin N) ℂ, (∀ τ, IsBlockDiag j (H τ) ∧ (H τ).det ≠ 0) ∧
+      ∀ p k, keep p → M.blk p = some k → ∃ α : ℂ, α ≠ 0 ∧ ∀ m : ι k,
+        zfun ⟨k, m⟩ = α * ∑ I, valAt M.x (F.u ⟨k, m⟩ I) zb * minorIJ (H p.1) I (stepCols N j p.2) := by
   let am := algebraMap M.Ω Φ
-  let O := regRing y z
-  let v : O →+* ℂ := regVal hz
-  obtain ⟨V, hOV, hpl⟩ := _root_.GlobalTheory.CompanionTheory.Ar.ComplexPlace.exists_valuationSubring_place Φ O v (regVal_local hz)
-  have hO : ∀ {s}, RegAt M.x (mCoordIdeal (basePart M.blk z)) s → am s ∈ O := fun hs => ⟨_, val_lift M hz hs⟩
+  obtain ⟨V, hOV, hpl⟩ := _root_.GlobalTheory.CompanionTheory.Ar.ComplexPlace.exists_valuationSubring_place Φ O val hloc
   let Ag : Ψ → Matrix (Fin N) (Fin N) Φ := fun τ => (F.T τ)⁻¹.map am * M.g τ
   have hinvD : ∀ τ, ((F.T τ)⁻¹.map am).det ≠ 0 := fun τ => by
     have : ((F.T τ)⁻¹.map am).det = am ((F.T τ)⁻¹.det) := (RingHom.map_det am _).symm
@@ -558,14 +504,17 @@ theorem flag_fwd {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ 
   have hHB : ∀ τ, IsBlockDiag j (H τ) := fun τ => (hAgB τ).mul (hbB τ)
   let wf : ∀ (p : Ψ × Fin N) (k : K), ι k → Φ := fun p k m =>
     ∑ I, am (F.u ⟨k, m⟩ I) * minorIJ (H p.1) I (stepCols N j p.2)
-  have data : ∀ p, ∃ wc : Φ, wc ∈ V ∧ wc ≠ 0 ∧ wc⁻¹ ∈ V ∧ ∀ k, M.blk p = some k → ∃ c : ι k, z ⟨k, c⟩ ≠ 0 ∧
-      ∀ m, ∃ r, IsValueAt y r z (z ⟨k, m⟩ / z ⟨k, c⟩) ∧ wf p k m = r * wc := by
+  have data : ∀ p, ∃ wc : Φ, wc ∈ V ∧ wc ≠ 0 ∧ wc⁻¹ ∈ V ∧ ∀ k, keep p → M.blk p = some k →
+      ∃ c : ι k, zfun ⟨k, c⟩ ≠ 0 ∧
+        ∀ m, ∃ (r : Φ) (hr : r ∈ O), val ⟨r, hr⟩ = zfun ⟨k, m⟩ / zfun ⟨k, c⟩ ∧ wf p k m = r * wc := by
     intro p
+    by_cases hkp : keep p
+    swap
+    · exact ⟨1, V.one_mem, one_ne_zero, by simpa using V.one_mem, fun k h => absurd h hkp⟩
     cases hp : M.blk p with
-    | none => exact ⟨1, V.one_mem, one_ne_zero, by simpa using V.one_mem, fun k hk => by cases hk⟩
+    | none => exact ⟨1, V.one_mem, one_ne_zero, by simpa using V.one_mem, fun k _ hk => by cases hk⟩
     | some k =>
-      obtain ⟨c, hzc⟩ := hz.1 k
-      have hyc : y ⟨k, c⟩ ≠ 0 := coord_ne hz hzc
+      obtain ⟨c, hzc, hyc, hrat⟩ := hcoord p k hkp hp
       have hdet : am (detFac j p.2 (F.T p.1)) ≠ 0 :=
         (map_ne_zero am).2 (detFac_ne_zero M.j_le p.2 (hF.1 p.1).1 (hF.1 p.1).2)
       have hE : am (∏ k', M.x ⟨k', F.c k'⟩ ^ M.b p k') ≠ 0 := (map_ne_zero am).2 (Finset.prod_ne_zero_iff.2 fun k' _ =>
@@ -585,7 +534,6 @@ theorem flag_fwd {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ 
         (fun I m => am (F.u' I ⟨k, m⟩)) M.j_le (hHB p.1) (hbV p.1) (hbdet p.1) (hbinv p.1)
         (fun I m => hOV _ (hO (hG.2.1 _ I).2)) (fun m I => hOV _ (hO (hG.2.1 _ I).1)) (fun I I' hI hI' => by
           have := congrArg am (hF.2.2.1 p k hp I I' hI hI')
-
           rw [map_sum] at this
           simp only [map_mul] at this
           rw [this]
@@ -594,9 +542,9 @@ theorem flag_fwd {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ 
       have hr : ∀ m, wf p k m = y ⟨k, m⟩ / y ⟨k, c⟩ * wf p k c := fun m => by
         rw [hw, hw]
         field_simp
-      refine ⟨wf p k c, ?_, hwc, ?_, fun k' hk' => ?_⟩
+      refine ⟨wf p k c, ?_, hwc, ?_, fun k' _ hk' => ?_⟩
       · exact sum_mem fun I _ => V.mul_mem _ _ (hOV _ (hO (hG.2.1 _ I).1)) (minorIJ_mem V.toSubring (hbV p.1) I _)
-      · have h1 : y ⟨k, m₀⟩ / y ⟨k, c⟩ ∈ O := ⟨_, isValueAt_ratio hyc hzc⟩
+      · obtain ⟨h1, -⟩ := hrat m₀
         have h2 : (wf p k c)⁻¹ = y ⟨k, m₀⟩ / y ⟨k, c⟩ * (wf p k m₀)⁻¹ := by
           have hm₀' : wf p k m₀ ≠ 0 := hm₀
           rw [hr m₀] at hm₀' ⊢
@@ -605,7 +553,9 @@ theorem flag_fwd {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ 
         rw [h2]
         exact V.mul_mem _ _ (hOV _ h1) hm₀i
       · obtain rfl := Option.some.inj hk'
-        exact ⟨c, hzc, fun m => ⟨_, isValueAt_ratio hyc hzc, hr m⟩⟩
+        exact ⟨c, hzc, fun m => by
+          obtain ⟨hrm, hvrm⟩ := hrat m
+          exact ⟨_, hrm, hvrm, hr m⟩⟩
   choose wc hwV hw0 hwinv hdat using data
   let T : Finset Φ := (Finset.univ.image fun t : Ψ × Fin N × Fin N => H t.1 t.2.1 t.2.2) ∪
     (Finset.univ.image fun τ => (H τ).det) ∪ (Finset.univ.image wc)
@@ -626,7 +576,7 @@ theorem flag_fwd {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ 
   obtain ⟨R, hOR, ψ, hTR, hψ, hinv⟩ := hpl T hTV
   let HR : Ψ → Matrix (Fin N) (Fin N) R := fun τ => Matrix.of fun a c => ⟨H τ a c, hTR _ (hT1 τ a c)⟩
   have hHR : ∀ τ, (HR τ).map R.subtype = H τ := fun τ => by ext a c; rfl
-  refine ⟨fun τ => (HR τ).map ψ, hc, fun τ => ⟨?_, ?_⟩, fun p k hp => ?_⟩
+  refine ⟨fun τ => (HR τ).map ψ, fun τ => ⟨?_, ?_⟩, fun p k hkp hp => ?_⟩
   · intro a c hac
     have h0 : HR τ a c = 0 := Subtype.ext (hHB τ a c hac)
     show ψ (HR τ a c) = 0
@@ -638,35 +588,44 @@ theorem flag_fwd {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ 
     have e3 := congrArg ψ e2
     rw [map_mul, map_one, RingHom.map_det] at e3
     exact left_ne_zero_of_mul_eq_one e3
-  · obtain ⟨c, hzc, hm⟩ := hdat p k hp
+  · obtain ⟨c, hzc, hm⟩ := hdat p k hkp hp
     let wR : R := ⟨wc p, hTR _ (hT3 p)⟩
     have hβ : ψ wR ≠ 0 := by
       have e2 : wR * ⟨(wc p)⁻¹, hinv _ (hT3 p) (hw0 p) (hwinv p)⟩ = 1 := Subtype.ext (mul_inv_cancel₀ (hw0 p))
       have e3 := congrArg ψ e2
       rw [map_mul, map_one] at e3
       exact left_ne_zero_of_mul_eq_one e3
-    refine ⟨z ⟨k, c⟩ / ψ wR, div_ne_zero hzc hβ, fun m => ?_⟩
-    obtain ⟨r, hr, hw⟩ := hm m
+    refine ⟨zfun ⟨k, c⟩ / ψ wR, div_ne_zero hzc hβ, fun m => ?_⟩
+    obtain ⟨r, hr, hvr, hw⟩ := hm m
     let uR : Finset (Fin N) → R := fun I => Subring.inclusion hOR ⟨am (F.u ⟨k, m⟩ I), hO (hG.2.1 _ I).1⟩
-    let rR : R := Subring.inclusion hOR ⟨r, _, hr⟩
+    let rR : R := Subring.inclusion hOR ⟨r, hr⟩
     have e1 : ∑ I, uR I * minorIJ (HR p.1) I (stepCols N j p.2) = rR * wR := Subtype.ext (by
       show R.subtype _ = r * wc p
-
       rw [map_sum]
       simp only [map_mul, ← minorIJ_map, hHR]
       exact hw)
     have e2 := congrArg ψ e1
-
     rw [map_sum] at e2
     simp only [map_mul, ← minorIJ_map] at e2
-    have e3 : ∀ I, ψ (uR I) = valAt M.x (F.u ⟨k, m⟩ I) (basePart M.blk z) := fun I =>
-      (hψ _).trans (regVal_eq hz _ (val_lift M hz (hG.2.1 _ I).1))
-    have e4 : ψ rR = z ⟨k, m⟩ / z ⟨k, c⟩ := (hψ _).trans (regVal_eq hz _ hr)
+    have e3 : ∀ I, ψ (uR I) = valAt M.x (F.u ⟨k, m⟩ I) zb := fun I =>
+      (hψ _).trans (hOval (hG.2.1 _ I).1)
+    have e4 : ψ rR = zfun ⟨k, m⟩ / zfun ⟨k, c⟩ := (hψ _).trans hvr
     simp only [e3] at e2
     rw [e4] at e2
-    show z ⟨k, m⟩ = _ * ∑ I, valAt M.x (F.u ⟨k, m⟩ I) (basePart M.blk z) * minorIJ ((HR p.1).map ψ) I (stepCols N j p.2)
+    show zfun ⟨k, m⟩ = _ * ∑ I, valAt M.x (F.u ⟨k, m⟩ I) zb * minorIJ ((HR p.1).map ψ) I (stepCols N j p.2)
     rw [e2]
     field_simp
+
+theorem flag_fwd {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {z : (Σ k, ι k) → ℂ}
+    (hz : z ∈ mcPts (mCoordIdeal y)) (hG : M.GoodAt F (mCoordIdeal (basePart M.blk z)))
+    (hc : ∀ k, basePart M.blk z ⟨k, F.c k⟩ = 1) : ∃ h, M.IsFlagOf F z h := by
+  obtain ⟨H, hH1, hH2⟩ := flag_fwd_core M hF (base_mem M hz) hG (regRing y z) (regVal hz) (regVal_local hz)
+    (fun hs => ⟨_, val_lift M hz hs⟩) (fun hs => regVal_eq hz _ (val_lift M hz hs))
+    (fun _ => True) z (fun _ k _ _ => by
+      obtain ⟨c, hzc⟩ := hz.1 k
+      have hyc : y ⟨k, c⟩ ≠ 0 := coord_ne hz hzc
+      exact ⟨c, hzc, hyc, fun m => ⟨⟨_, isValueAt_ratio hyc hzc⟩, regVal_eq hz _ (isValueAt_ratio hyc hzc)⟩⟩)
+  exact ⟨H, hc, hH1, fun p k hp => hH2 p k trivial hp⟩
 
 end Fwd
 

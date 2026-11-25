@@ -125,8 +125,7 @@ theorem exists_symm_matrix_mod_subspace :
     have hq : B.mkQ (θ b - ∑ a, β b (θ a) • φ a) ≠ 0 :=
       fun h0 => hx ((Submodule.Quotient.mk_eq_zero B).mp h0)
     obtain ⟨f, hf⟩ : ∃ f : Module.Dual K (V ⧸ B), f (B.mkQ (θ b - ∑ a, β b (θ a) • φ a)) ≠ 0 := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       exact hq ((Module.forall_dual_apply_eq_zero_iff K _).mp hall)
     apply hf
     have hα : B ≤ LinearMap.ker (f.comp B.mkQ) := fun x hx =>

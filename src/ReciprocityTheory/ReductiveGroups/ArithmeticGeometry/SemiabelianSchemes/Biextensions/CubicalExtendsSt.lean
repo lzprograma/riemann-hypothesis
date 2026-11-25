@@ -17,8 +17,6 @@ open MonoidalCategory CartesianMonoidalCategory MonObj
 
 universe u
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 def extendGenSt : Prop :=
   ∀ (V : Type u) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V]
     (K : Type u) [Field K] [Algebra V K] [IsFractionRing V K]

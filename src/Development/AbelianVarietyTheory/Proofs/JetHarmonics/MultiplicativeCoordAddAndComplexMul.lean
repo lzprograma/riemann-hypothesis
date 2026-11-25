@@ -110,8 +110,6 @@ theorem sub_mem_of_germ (M : Mdl q) (hM : M.Ok) (α s t : ℂ) (hα : α ≠ 0) 
   have := sub_mem_of_uw M hM _ _ h1.1 h1.2.1 h2 h3
   simpa using this
 
-alias const_ell := _root_.GlobalTheory.MomOne.hatmul_const_log
-
 theorem bd_w (M : Mdl q) (ℓ : ℂ_[q]⟦X⟧) (h : M.Chart ℓ) : Bd 1 (hat M.ι ℓ M.w) := by
   obtain ⟨-, v, xs, ys, -, -, hys, -, -, hc, -, hw, -⟩ := _root_.GlobalTheory.MomOne.ChartXY.chart_xy q M ℓ h
   apply (sup_norm_laws q).2.2.2.2.2 _ ys 0 1 hys hc
@@ -139,7 +137,7 @@ theorem germ_add (M : Mdl q) (ω : ℂ_[q]) (hM : M.MChart ω) (F : ℂ → ℂ)
   obtain ⟨ψ, hψa, hψe, hψ⟩ := _root_.GlobalTheory.MomOne.Transfer.shift_eq_hat_translate q M ω ζ' p' _ hM h' hEp (han p h.1) hBp
   rw [hT ζ p h, (_root_.GlobalTheory.MomOne.ShiftComp.main q).1 ζ' ζ _ h'.2.1 h.2.1 ⟨1, hB⟩, mul_comm ζ' ζ, ← hT _ t ht] at hψ
   have h1 := (_root_.GlobalTheory.MomOne.ChartXY.chart_xy q M _ hM).1
-  have he := ((TaylorRead.hat_laws q M.ι _ (const_ell ω)).1 _ _ hψa (han t ht.1)).2.2.2 h1 hψ
+  have he := ((TaylorRead.hat_laws q M.ι _ (GlobalTheory.MomOne.SmallTranslate.constantCoeff_chart ω)).1 _ _ hψa (han t ht.1)).2.2.2 h1 hψ
   filter_upwards [hψe, he.filter_mono nhdsWithin_le_nhds] with z e1 e2
   rw [one_mul, ← e2, e1]
   congr 1; ring
@@ -172,7 +170,7 @@ theorem germ_mul (M : Mdl q) (ω : ℂ_[q]) (hM : M.MChart ω) (F : ℂ → ℂ)
   rw [hsub, ((_root_.GlobalTheory.MomOne.ShiftComp.main q).2 ζ n k a _ hζ hk ⟨1, hB⟩).2, ← hT _ t ht,
     ← (_root_.GlobalTheory.MomOne.hat_multiplicative_chart q M.ι ω _ (han t ht.1)).2.2.1 α a hα] at hψ
   have h1 := (_root_.GlobalTheory.MomOne.ChartXY.chart_xy q M _ hM).1
-  have he := ((TaylorRead.hat_laws q M.ι _ (const_ell ω)).1 _ _ hψa
+  have he := ((TaylorRead.hat_laws q M.ι _ (GlobalTheory.MomOne.SmallTranslate.constantCoeff_chart ω)).1 _ _ hψa
     (hmul _ (han t ht.1))).2.2.2 h1 hψ
   filter_upwards [hψe, he.filter_mono nhdsWithin_le_nhds] with z e1 e2
   rw [← mul_add, ← e1, e2]

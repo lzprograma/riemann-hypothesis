@@ -37,10 +37,6 @@ variable [IsAdicComplete (maximalIdeal 𝒪) 𝒪]
   (K : Type*) [Field K] [Algebra 𝒪 K] [IsFractionRing 𝒪 K] (W : WeierstrassCurve 𝒪)
   [(W.map (algebraMap 𝒪 K)).IsElliptic] [DecidableEq K] [DecidableEq (ResidueField 𝒪)]
 
-section Good
-
-end Good
-
 end
 
 end GroundTheory.Arith.Abelian

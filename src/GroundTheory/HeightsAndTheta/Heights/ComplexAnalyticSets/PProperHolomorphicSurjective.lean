@@ -28,14 +28,9 @@ open scoped ENNReal NNReal
 namespace ProperHolomorphicSurjective
 
 theorem analyticOnNhd_of_differentiableOn {k m : ℕ} {U : Set (Fin k → ℂ)} {f : (Fin k → ℂ) → Fin m → ℂ}
-    (hU : IsOpen U) (hf : DifferentiableOn ℂ f U) : AnalyticOnNhd ℂ f U := by
-  refine analyticOnNhd_pi_iff.2 fun j => ?_
-  have hj : DifferentiableOn ℂ (fun t => f t j) U := differentiableOn_pi.1 hf j
-  refine analyticOnNhd_of_continuousOn_of_separately hU hj.continuousOn fun w hw i => ?_
-  have hw : DifferentiableAt ℂ (fun t => f t j) (Function.update w i (w i)) := by
-    rw [Function.update_eq_self]
-    exact (hj w hw).differentiableAt (hU.mem_nhds hw)
-  exact hw.comp (w i) (hasFDerivAt_update w (w i)).differentiableAt
+    (hU : IsOpen U) (hf : DifferentiableOn ℂ f U) : AnalyticOnNhd ℂ f U :=
+  analyticOnNhd_pi_iff.2 fun j =>
+    ReciprocityTheory.AnForm.Osgood.osgood k U (fun t => f t j) hU (differentiableOn_pi.1 hf j)
 
 noncomputable def jac {k : ℕ} (g : (Fin k → ℂ) → Fin k → ℂ) (v : Fin k → ℂ) : ℂ :=
   LinearMap.det (fderiv ℂ g v : (Fin k → ℂ) →ₗ[ℂ] Fin k → ℂ)

@@ -108,31 +108,5 @@ theorem exists_isExp_of_family {D : Datum H} {l : Level H} {Xo : Moduli D l} {σ
   · exact (weilIs_iff n _ _ (spMap_comp f σ).symm k _ _ _ _ c (hq _) (hq _)).1
       ((weilIs_iff m _ _ hy.symm k _ _ _ _ c (hp' _).symm (hp' _).symm).2 (FU.ex_weil i Pe hP k a b c hk hc))
 
-section Comparison₂
-
-variable {D : Datum H} {l : Level H} {Xo : Moduli D l} {g : ℕ} {ty : Fin g → (E →+* ℂ)}
-  {FU : FamilyUnif Xo (algebraMap (KA l) ℂ) ty} {i : Fin FU.n} {Pe : (FU.Di i).La →+ (Fin g → ℂ)}
-  {hP : IsPeriod (FU.Di i) ty Pe}
-
-end Comparison₂
-
-section CMStatement
-
-variable {D : Datum H} {l : Level H} {Xo : Moduli D l} {g : ℕ} {ty : Fin g → (E →+* ℂ)}
-  {FU : FamilyUnif Xo (algebraMap (KA l) ℂ) ty} {i : Fin FU.n} {Pe : (FU.Di i).La →+ (Fin g → ℂ)}
-  {hP : IsPeriod (FU.Di i) ty Pe}
-
-end CMStatement
-
-section Tensor
-
-end Tensor
-
-section TensorStatement
-
-variable {M : Type} [Field M] [NumberField M] {ω : 𝓞 M}
-
-end TensorStatement
-
 end GlobalTheory.CM.ExCompare
 end

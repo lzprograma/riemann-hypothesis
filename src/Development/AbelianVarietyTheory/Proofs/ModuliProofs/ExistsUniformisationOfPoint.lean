@@ -121,7 +121,7 @@ theorem finrank_eigenSub_diagRep {g : ℕ} (ty : Fin g → (E →+* ℂ)) (φ : 
       · exact congrFun h ⟨i, hi⟩
       · exact hz _ z.2 i hi
     · refine ⟨⟨fun i => if h : ty i = φ then w ⟨i, h⟩ else 0, mem_eigenSub.2 fun a => funext fun i => ?_⟩,
-        funext fun i => dif_pos i.2⟩
+        funext fun i => dite_eq_left i.2⟩
       rw [diagRep_apply]
       by_cases hi : ty i = φ
       · simp [hi]

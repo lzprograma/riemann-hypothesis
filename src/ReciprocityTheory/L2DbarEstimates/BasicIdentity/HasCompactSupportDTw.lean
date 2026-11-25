@@ -37,7 +37,7 @@ theorem db_expNeg {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (ph
     db n z j (fun y => (Real.exp (-ph y) : ℂ)) x =
       -((Real.exp (-ph x) : ℂ) * db n z j (fun y => (ph y : ℂ)) x) := by
   by_cases h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source
-  · simp only [db, dif_pos h]
+  · simp only [db, dite_eq_left h]
     obtain ⟨he, hx⟩ := Classical.choose_spec h
     set e := Classical.choose h
     have hzx : z x = e x := he hx
@@ -61,13 +61,13 @@ theorem db_expNeg {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (ph
       ContinuousLinearMap.neg_apply, Complex.ofRealCLM_apply, smul_eq_mul, hex]
     push_cast
     ring
-  · simp [db, dif_neg h]
+  · simp [db, dite_eq_right h]
 
 private theorem d_eq_wd_comp_chart_symm {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (j : Fin n)
     (u : M → ℂ) (e : OpenPartialHomeomorph M (V n)) (he : IsChart n z e) (x : M)
     (hx : x ∈ e.source) : d n z j u x = wd n j (u ∘ e.symm) (z x) := by
   have h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source := ⟨e, he, hx⟩
-  rw [d, dif_pos h]
+  rw [d, dite_eq_left h]
   obtain ⟨he', hx'⟩ := Classical.choose_spec h
   set e' := Classical.choose h
 
@@ -123,7 +123,7 @@ theorem ck_dTw {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : �
 private theorem d_eq_zero_of_eventuallyEq_zero {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (j : Fin n)
     (u : M → ℂ) (x : M) (hu : u =ᶠ[nhds x] 0) : d n z j u x = 0 := by
   by_cases h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source
-  · rw [d, dif_pos h]
+  · rw [d, dite_eq_left h]
     obtain ⟨he, hx⟩ := Classical.choose_spec h
     set e := Classical.choose h
     have hzx : z x = e x := he hx
@@ -139,12 +139,12 @@ private theorem d_eq_zero_of_eventuallyEq_zero {M : Type*} [TopologicalSpace M] 
       exact ht.eventually hu
     simp only [wd, hev.fderiv_eq]
     simp
-  · rw [d, dif_neg h]
+  · rw [d, dite_eq_right h]
 
 private theorem db_eq_zero_of_eventuallyEq_zero {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (j : Fin n)
     (u : M → ℂ) (x : M) (hu : u =ᶠ[nhds x] 0) : db n z j u x = 0 := by
   by_cases h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source
-  · rw [db, dif_pos h]
+  · rw [db, dite_eq_left h]
     obtain ⟨he, hx⟩ := Classical.choose_spec h
     set e := Classical.choose h
     have hzx : z x = e x := he hx
@@ -160,7 +160,7 @@ private theorem db_eq_zero_of_eventuallyEq_zero {M : Type*} [TopologicalSpace M]
       exact ht.eventually hu
     simp only [wdb, hev.fderiv_eq]
     simp
-  · rw [db, dif_neg h]
+  · rw [db, dite_eq_right h]
 
 theorem tsupport_dTw_subset {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (ph : M → ℝ) (j : Fin n) (u : M → ℂ) :
     tsupport (dTw n z ph j u) ⊆ tsupport u := by

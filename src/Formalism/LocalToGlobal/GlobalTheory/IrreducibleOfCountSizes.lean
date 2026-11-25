@@ -18,22 +18,6 @@ namespace Formalism.L2.GlobalTheoryTheory.ConcN
 
 open Formalism Formalism.LFunctionChainParameters Formalism.L2.Col Formalism.L2.GlobalTheoryTheory.FamCol
 
-section Defs
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {I : Type}
-
-def IrrAt {C : ColObj K I} (R : RowArg C) (x ε : ℝ) : Prop :=
-  (1 - LChain6.E7 x ε) * (Fintype.card (R.κ ⊕ R.κ₁) : ℝ) ≤ (Fintype.card R.κ : ℝ)
-
-def CountAt {C : ColObj K I} (R : RowArg C) (εC W₁ W₂ : ℝ) : Prop :=
-  ∃ PP₁ PP₂ D₁ D₂ Dstar : ℝ, 0 ≤ εC ∧ εC < 1 ∧ 0 < Dstar ∧
-    0 ≤ PP₁ ∧ PP₁ ≤ W₁ ∧ 0 ≤ PP₂ ∧ PP₂ ≤ W₂ ∧
-    |(Fintype.card (R.κ ⊕ R.κ₁) : ℝ) - Dstar| ≤ εC * Dstar ∧
-    |D₁ - PP₁ * Dstar| ≤ εC * (PP₁ * Dstar) ∧ |D₂ - PP₂ * Dstar| ≤ εC * (PP₂ * Dstar) ∧
-    (Fintype.card R.κ₁ : ℝ) ≤ D₁ + D₂
-
-end Defs
-
 def NumbersAt (x ε εC C W₁ W₂ : ℝ) : Prop :=
   0 ≤ εC ∧ εC ≤ 1 / 2 ∧ W₁ ≤ x ^ C * Real.exp (-(x ^ (ε / 6))) ∧ W₂ ≤ x ^ C * Real.exp (-(x ^ (ε / 6)))
 
@@ -62,61 +46,14 @@ def WeightNumbersBound : Prop :=
 def EpsilonBoundLargeX : Prop :=
   ∀ c : ℝ, 0 < c → ∀ᶠ x : ℝ in Filter.atTop, ∀ N f : ℕ, 100 ≤ N → x ^ 2 ≤ (f : ℝ) → epsC c N f ≤ 1 / 2
 
-def CountBoundForCompatibleRows {K : Type} [Field K] [NumberField K] [StarRing K] {I : Type} {C : ColObj K I} (R : RowArg C)
-    {k : Type} [Field k] (HH : Type) [AddCommGroup HH] [Module k HH] [FiniteDimensional k HH]
-    (e₁ e₂ : HH →ₗ[k] HH) (εC W₁ W₂ : ℝ) : Prop :=
-  e₁ ∘ₗ e₁ = e₁ ∧ e₂ ∘ₗ e₂ = e₂ ∧ e₁ ∘ₗ e₂ = e₂ ∘ₗ e₁ ∧
-  Module.finrank k HH = Fintype.card (R.κ ⊕ R.κ₁) ∧
-  Module.finrank k (LinearMap.range (e₁ + e₂ - e₁ ∘ₗ e₂)) = Fintype.card R.κ₁ ∧
-  ∃ PP₁ PP₂ Dstar : ℝ, 0 ≤ εC ∧ εC < 1 ∧ 0 < Dstar ∧
-    0 ≤ PP₁ ∧ PP₁ ≤ W₁ ∧ 0 ≤ PP₂ ∧ PP₂ ≤ W₂ ∧
-    |(Module.finrank k HH : ℝ) - Dstar| ≤ εC * Dstar ∧
-    |(Module.finrank k (LinearMap.range e₁) : ℝ) - PP₁ * Dstar| ≤ εC * (PP₁ * Dstar) ∧
-    |(Module.finrank k (LinearMap.range e₂) : ℝ) - PP₂ * Dstar| ≤ εC * (PP₂ * Dstar)
-
 section Rec
 
 open Formalism.BasicNotions Formalism.MainNotions
 
-def CountBoundForCompatibleRowsRecursive (D : D7) {k : Type} [Field k] (HH : Type) [AddCommGroup HH] [Module k HH]
-    [FiniteDimensional k HH] (e₁ e₂ : HH →ₗ[k] HH) (εC W₁ W₂ : ℝ) : Prop :=
-  e₁ ∘ₗ e₁ = e₁ ∧ e₂ ∘ₗ e₂ = e₂ ∧ e₁ ∘ₗ e₂ = e₂ ∘ₗ e₁ ∧
-  Module.finrank k HH = D.what₂.Dall ∧
-  D.what₂.Drows + Module.finrank k (LinearMap.range (e₁ + e₂ - e₁ ∘ₗ e₂)) = D.what₂.Dall ∧
-  ∃ PP₁ PP₂ Dstar : ℝ, 0 ≤ εC ∧ εC < 1 ∧ 0 < Dstar ∧
-    0 ≤ PP₁ ∧ PP₁ ≤ W₁ ∧ 0 ≤ PP₂ ∧ PP₂ ≤ W₂ ∧
-    |(Module.finrank k HH : ℝ) - Dstar| ≤ εC * Dstar ∧
-    |(Module.finrank k (LinearMap.range e₁) : ℝ) - PP₁ * Dstar| ≤ εC * (PP₁ * Dstar) ∧
-    |(Module.finrank k (LinearMap.range e₂) : ℝ) - PP₂ * Dstar| ≤ εC * (PP₂ * Dstar)
-
 def SizesRec (D : D7) (x ε Cs : ℝ) : Prop :=
   ∀ j : Fin 2, SizesAt x ε Cs D.R.f D.R.m D.R.r (D.host.g j) D.host.q D.host.d
 
-def IrreducibleOfCompatibleForms : Prop :=
-  Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.ShareFromCount → Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.BadRankUnion → Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.StretchedExponentialDominance →
-  ∀ (eps Cs c : ℝ), 0 < eps → eps ≤ 1 → 0 < c → ∀ (Fm : FamP eps) (k : Type) [Field k]
-    (HH : ∀ x, Fm.Ix x → Type) [∀ x i, AddCommGroup (HH x i)] [∀ x i, Module k (HH x i)]
-    [∀ x i, FiniteDimensional k (HH x i)] (e₁ e₂ : ∀ x i, HH x i →ₗ[k] HH x i),
-    (∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, SizesRec (Fm.D x i) x Fm.ez Cs ∧
-      CountBoundForCompatibleRowsRecursive (Fm.D x i) (HH x i) (e₁ x i) (e₂ x i) (epsC c (Fm.D x i).R.r (Fm.D x i).R.f)
-        (Wg (Fm.D x i).R.f (Fm.D x i).R.m (Fm.D x i).R.r ((Fm.D x i).host.g 0) (Fm.D x i).host.q (Fm.D x i).host.d)
-        (Wg (Fm.D x i).R.f (Fm.D x i).R.m (Fm.D x i).R.r ((Fm.D x i).host.g 1) (Fm.D x i).host.q (Fm.D x i).host.d)) →
-    LinkIRR Fm
-
 end Rec
-
-section Inputs
-
-open Formalism.BasicNotions Formalism.MainNotions
-
-def CountRec {k : Type} [Field k] (HH : Type) [AddCommGroup HH] [Module k HH] [FiniteDimensional k HH]
-    (e₁ e₂ : HH →ₗ[k] HH) (εC : ℝ) (PP : Fin 2 → ℝ) : Prop :=
-  0 ≤ εC ∧ εC < 1 ∧ ∃ Dstar : ℝ, 0 < Dstar ∧
-    |(Module.finrank k HH : ℝ) - Dstar| ≤ εC * Dstar ∧
-    |(Module.finrank k (LinearMap.range e₁) : ℝ) - PP 0 * Dstar| ≤ εC * (PP 0 * Dstar) ∧
-    |(Module.finrank k (LinearMap.range e₂) : ℝ) - PP 1 * Dstar| ≤ εC * (PP 1 * Dstar)
-
-end Inputs
 
 section AllRowsIn
 

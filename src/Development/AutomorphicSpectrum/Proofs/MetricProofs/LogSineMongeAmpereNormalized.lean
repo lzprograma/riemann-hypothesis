@@ -27,66 +27,14 @@ public import Mathlib.Analysis.Calculus.ContDiff.Operations
 public import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
 import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
 import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
-import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.HeightsAndTheta.Heights.Intersections.PFibreLocal
-import Mathlib.Topology.Algebra.MvPolynomial
 import Aesop.Main
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.MeasureTheory.Measure.RegularityCompacts
-import Mathlib.Topology.UniformSpace.Uniformizable
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Order.CompletePartialOrder
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.ComplexHessianBlockCombination, Development.AutomorphicSpectrum.Proofs.MetricProofs.ComplexHessianTwoPointCombination, Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedDiscriminantLinearFunctional, Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedDiscriminantOneRowExpansion, Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedDiscriminantTwoRowExpansion, Development.AutomorphicSpectrum.Proofs.MetricProofs.RowProductFirstDerivative, Development.AutomorphicSpectrum.Proofs.MetricProofs.SphereMomentPower, Development.AutomorphicSpectrum.Proofs.MetricProofs.SpherePairLogSineMoment, Development.AutomorphicSpectrum.Proofs.MetricProofs.WordCoefficientSecondDerivative, Development.WeilBound.CoreStatements.PluriharmonicCharts.SecondDerivativeOfEventuallyEq, Development.WeilBound.CoreStatements.PluriharmonicCharts.XFibHess, Development.AutomorphicSpectrum.Proofs.MetricProofs.XiPotentialHessianDecomposition, Development.AutomorphicSpectrum.Proofs.MetricProofs.LogSineMongeAmpereNormalized
@@ -458,7 +406,7 @@ theorem exists_functional : ∀ (d : ℕ) (T : Fin 3 → Matrix (Fin d) (Fin d) 
       (d.factorial : ℂ) * Λ (fun t => M (h.choose t)) else 0, fun τ => ?_⟩
     have h : ∃ τ' : Fin d → Option (Fin 3),
         ∑ t, Finsupp.single (τ' t) (1 : ℕ) = ∑ t, Finsupp.single (τ t) (1 : ℕ) := ⟨τ, rfl⟩
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     obtain ⟨π, hπ⟩ := exists_perm_of_sum_single h.choose_spec
     have e : (fun t => M (h.choose t)) = (fun t => M (τ t)) ∘ π :=
       funext fun t => by simp only [Function.comp_apply, hπ]
@@ -552,7 +500,7 @@ theorem extract_one : ∀ (d : ℕ) (T : Fin 3 → Matrix (Fin d) (Fin d) ℂ) (
         ((∑ i, ((c r * n i : ℝ) : ℂ) • T i) + ((v r : ℝ) : ℂ) • H)) =
       e * L (evalW n n (pderiv (some 0) (∏ r, rowW ![c r, 0] (v r)))) := by
   intro d T H L hL c v n e
-  have h1 := ((GlobalTheory.T.mixed_discriminant_cofactor_expansion d).1 (fun r => (c r : ℂ) * e)
+  have h1 := ((PositivityTheory.Xgp.t_fib_mdisc d).1 (fun r => (c r : ℂ) * e)
     (fun r => (∑ i, ((c r * n i : ℝ) : ℂ) • T i) + ((v r : ℝ) : ℂ) • H))
   refine h1.trans ?_
 
@@ -649,12 +597,12 @@ theorem mdisc_extract_two : ∀ (d : ℕ) (T : Fin 3 → Matrix (Fin d) (Fin d) 
   have h1 : ((d + 2).factorial : ℂ) * mdisc (fun r => blk ((u r 0 : ℂ) * e₀) (blk ((u r 1 : ℂ) * e₁) (M r))) =
       ∑ r, ((u r 0 : ℂ) * e₀) * (((d + 1).factorial : ℂ) *
         mdisc fun s => blk ((u (r.succAbove s) 1 : ℂ) * e₁) (M (r.succAbove s))) :=
-    (GlobalTheory.T.mixed_discriminant_cofactor_expansion (d + 1)).1 (fun r => (u r 0 : ℂ) * e₀) (fun r => blk ((u r 1 : ℂ) * e₁) (M r))
+    (PositivityTheory.Xgp.t_fib_mdisc (d + 1)).1 (fun r => (u r 0 : ℂ) * e₀) (fun r => blk ((u r 1 : ℂ) * e₁) (M r))
   have h2 : ∀ r : Fin (d + 2), ((d + 1).factorial : ℂ) *
       mdisc (fun s => blk ((u (r.succAbove s) 1 : ℂ) * e₁) (M (r.succAbove s))) =
       ∑ s, ((u (r.succAbove s) 1 : ℂ) * e₁) * ((d.factorial : ℂ) *
         mdisc fun t => M (r.succAbove (s.succAbove t))) := fun r =>
-    (GlobalTheory.T.mixed_discriminant_cofactor_expansion d).1 (fun s => (u (r.succAbove s) 1 : ℂ) * e₁) (fun s => M (r.succAbove s))
+    (PositivityTheory.Xgp.t_fib_mdisc d).1 (fun s => (u (r.succAbove s) 1 : ℂ) * e₁) (fun s => M (r.succAbove s))
   have h3 : ∀ (r : Fin (d + 2)) (s : Fin (d + 1)),
       (d.factorial : ℂ) * mdisc (fun t => M (r.succAbove (s.succAbove t))) =
       L (∏ t, evalW n₀ n₁ (rowW (u (r.succAbove (s.succAbove t))) (v (r.succAbove (s.succAbove t))))) := by
@@ -700,10 +648,10 @@ theorem prod_fin_ite_lt {R : Type*} [CommMonoid R] (a b : R) (m N : ℕ) (h : m 
   rw [Fin.prod_univ_eq_prod_range (fun i => if i < m then a else b) (m + j),
     Finset.prod_range_add]
   have h1 : (∏ x ∈ Finset.range m, (if x < m then a else b)) = a ^ m := by
-    rw [Finset.prod_congr rfl (fun x hx => if_pos (Finset.mem_range.mp hx))]
+    rw [Finset.prod_congr rfl (fun x hx => ite_eq_left (Finset.mem_range.mp hx))]
     simp
   have h2 : (∏ x ∈ Finset.range j, (if m + x < m then a else b)) = b ^ j := by
-    rw [Finset.prod_congr rfl (fun x _ => if_neg (by omega))]
+    rw [Finset.prod_congr rfl (fun x _ => ite_eq_right (by omega))]
     simp
   rw [h1, h2, Nat.add_sub_cancel_left]
 
@@ -1648,7 +1596,7 @@ theorem fibre_integral_normal : GroundTheory.Heights₂.Heights.Inter.FibreLocal
           simp only [DiagonalFibreFubini.wordCoef]
           split_ifs <;> rfl
         by_cases hr : (r : ℕ) < 2 * k
-        · simp only [hr, if_true, hcoef, hf, Fin.cons_zero]
+        · simp only [hr, ite_true, hcoef, hf, Fin.cons_zero]
           simp
         · simp [hr]
     simp_rw [hpt]

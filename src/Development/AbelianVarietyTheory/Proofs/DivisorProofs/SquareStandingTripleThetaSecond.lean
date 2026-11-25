@@ -74,7 +74,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ Num IsTripleOf IsDatumA IsDatumB incM)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model Chars Rep Acts SInf At piW psiLoc chrW)
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopFlip
 
 noncomputable section
@@ -212,7 +211,7 @@ theorem sympS_ptB (e : Num G i j) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.
     ext a b
     obtain ⟨a | a, rfl⟩ := e.surjective a <;> obtain ⟨b | b, rfl⟩ := e.surjective b <;>
       simp [GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.blk, GlobalTheory.Doubling.blkMat]
-  · rw [if_neg Bool.false_ne_true, one_smul]
+  · rw [ite_eq_right Bool.false_ne_true, one_smul]
     rfl
 
 theorem heisS_ptB (e : Num G i j) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.Geo G i j) (hW : Γ.V'.J = (-1 : D.host.E) • (spW₁ G i j).gram)
@@ -479,7 +478,7 @@ theorem isDatum_linB : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalTheor
     · rw [Set.indicator_of_mem ((hH u).2 hu), Finset.prod_congr rfl fun w hw =>
         (congrArg _ (hco w u).symm).trans ((hv w hw).2 _ ((hh w hw).2.2.2.2 u).1)]
       by_cases hl : ptB e u ∈ homLatB G i j
-      · rw [if_pos ⟨hl, hu⟩, mul_one]
+      · rw [ite_eq_left ⟨hl, hu⟩, mul_one]
         refine Finset.prod_congr rfl fun w hw => Set.indicator_of_mem ?_ _
         exact ⟨(hh w hw).1 _ ((hh w hw).2.2.2.2 u).1, ((hh w hw).2.2.2.2 u).2.2 hl⟩
       · have : ∃ w ∈ locPl G t, ptB e (cA D (atPl w 1) • u) ∉ homLatB G i j := by
@@ -490,10 +489,10 @@ theorem isDatum_linB : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalTheor
           rw [← map_sum, ← hεs]
           exact hu
         obtain ⟨w, hw, hn⟩ := this
-        rw [if_neg fun h' => hl h'.1, mul_zero]
+        rw [ite_eq_right fun h' => hl h'.1, mul_zero]
         refine Finset.prod_eq_zero hw (Set.indicator_of_notMem ?_ _)
         exact fun h' => hn h'.2
-    · rw [Set.indicator_of_notMem (mt (hH u).1 hu), if_neg fun h' => hu h'.2, mul_zero]
+    · rw [Set.indicator_of_notMem (mt (hH u).1 hu), ite_eq_right fun h' => hu h'.2, mul_zero]
   have hR := GlobalTheory.InductLagr.rel_of_vac Γ.M' W.ψ hstd hG (locPl G t) (fun w => w.under (𝓞 D.host.F)) (Good.under_injOn hL G t) _
     (fun w => {u | IsHalf (cA D (atPl w 1)) (ptB e u)}) (fun w => {u | IsHalf (atPl w 1) (ptB e u)})
     (fun w u => linB B t i j w (ptB e u)) I H R (c • f)
@@ -526,10 +525,10 @@ theorem isDatum_linB : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalTheor
     rw [ptE_apply, prodB]
     dsimp only
     by_cases hu : IsHalf (cA D ε) (ptB e u)
-    · rw [if_pos hu]
+    · rw [ite_eq_left hu]
       rw [Set.indicator_of_mem ((hH u).2 hu)]
       exact Finset.prod_congr rfl fun w hw => congrFun (hΨ w hw) _
-    · rw [if_neg hu]
+    · rw [ite_eq_right hu]
       exact Set.indicator_of_notMem (mt (hH u).1 hu) _
   refine ⟨r1, fun u => ?_⟩
   rw [hall T₁ hT₁, ← hg]

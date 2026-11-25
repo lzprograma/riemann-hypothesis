@@ -33,14 +33,9 @@ theorem Γp_mulVec (Γ : Matrix ι ι K) (a y : ι → K) :
     S.Γp Γ a *ᵥ y = Γ *ᵥ y - S.hf Γ a y • (Γ *ᵥ a) := by
   rw [Γp, sub_mulVec, vecMulVec_mulVec_hermitian_block_frames, hf_eq_vecMul]
 
-private theorem vecMul_vecMulVec' (u v x : ι → K) : x ᵥ* vecMulVec u v = (x ⬝ᵥ u) • v := by
-  ext j
-  simp only [vecMul, dotProduct, vecMulVec_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul]
-  exact Finset.sum_congr rfl fun i _ => by ring
-
 theorem vecMul_Γp (Γ : Matrix ι ι K) (a x : ι → K) :
     S.cv x ᵥ* S.Γp Γ a = S.cv x ᵥ* Γ - S.hf Γ x a • (S.cv a ᵥ* Γ) := by
-  rw [Γp, vecMul_sub, vecMul_vecMulVec']
+  rw [Γp, vecMul_sub, Matrix.vecMul_vecMulVec]
   rfl
 
 theorem hf_Γp (Γ : Matrix ι ι K) (a x y : ι → K) :

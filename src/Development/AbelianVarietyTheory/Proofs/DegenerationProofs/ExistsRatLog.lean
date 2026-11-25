@@ -52,7 +52,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR GlobalTheory.ZH GlobalTheory.UT
 open Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 namespace GlobalTheory.NormValuation
@@ -108,7 +107,7 @@ theorem _root_.GlobalTheory.NormValuation.main : ∀ (p : ℕ) [Fact p.Prime] (V
   obtain ⟨r, hexp⟩ : ∃ r : PadicAlgCl p → ℚ, ∀ x, x ≠ 0 → ‖x‖ = ‖π‖ ^ (r x : ℝ) := by
     refine ⟨fun x => if h : x = 0 then 0 else (exists_rat_norm_eq_rpow h).choose / s, ?_⟩
     intro x hx
-    simp only [dif_neg hx]
+    simp only [dite_eq_right hx]
     rw [hs, ← Real.rpow_mul (Nat.cast_nonneg _)]
     push_cast
     rw [mul_div_cancel₀ _ hs0]
@@ -149,7 +148,7 @@ theorem _root_.GlobalTheory.NormValuation.main : ∀ (p : ℕ) [Fact p.Prime] (V
     · simp [hw, hy]
     by_cases hxy : x + y = 0
     · simp [hw, hxy]
-    simp only [hw, if_neg hx, if_neg hy, if_neg hxy]
+    simp only [hw, ite_eq_right hx, ite_eq_right hy, ite_eq_right hxy]
     rw [← WithTop.coe_min, WithTop.coe_le_coe]
     exact hr_add x y hx hy hxy
   have hwmul : ∀ x y, w (x * y) = w x + w y := by
@@ -158,7 +157,7 @@ theorem _root_.GlobalTheory.NormValuation.main : ∀ (p : ℕ) [Fact p.Prime] (V
     · simp [hw, hx]
     by_cases hy : y = 0
     · simp [hw, hy]
-    simp only [hw, if_neg hx, if_neg hy, if_neg (mul_ne_zero hx hy)]
+    simp only [hw, ite_eq_right hx, ite_eq_right hy, ite_eq_right (mul_ne_zero hx hy)]
     rw [hr_mul x y hx hy, WithTop.coe_add]
   let v : AddValuation (PadicAlgCl p) (WithTop ℚ) := AddValuation.of w hw0 hw1 hwadd hwmul
   have hv : ∀ x, v x = w x := fun x => rfl
@@ -188,7 +187,7 @@ theorem _root_.GlobalTheory.NormValuation.main : ∀ (p : ℕ) [Fact p.Prime] (V
       rw [h, norm_zero] at this
       exact zero_ne_one this
     rw [hv]
-    simp only [hw, if_neg hne]
+    simp only [hw, ite_eq_right hne]
     have h2 : ‖algebraMap (FractionRing V) (PadicAlgCl p)
         ((algebraMap V (FractionRing V)) ϖ ^ n * (algebraMap V (FractionRing V)) u)‖ =
           ‖π‖ ^ (n : ℝ) := by
@@ -206,7 +205,7 @@ theorem _root_.GlobalTheory.NormValuation.main : ∀ (p : ℕ) [Fact p.Prime] (V
       · intro h; exact absurd h WithTop.top_ne_coe
       · intro h; exact absurd h.symm (Real.rpow_pos_of_pos hb0 _).ne'
     rw [hv]
-    simp only [hw, if_neg hx, WithTop.coe_eq_coe]
+    simp only [hw, ite_eq_right hx, WithTop.coe_eq_coe]
     rw [hexp x hx]
     constructor
     · rintro rfl; rfl
@@ -216,7 +215,7 @@ theorem _root_.GlobalTheory.NormValuation.main : ∀ (p : ℕ) [Fact p.Prime] (V
     · subst hx
       simp [hv, hw0]
     rw [hv]
-    simp only [hw, if_neg hx]
+    simp only [hw, ite_eq_right hx]
     rw [hexp x hx]
     have h1 := hle (r x : ℝ) 0
     rw [Real.rpow_zero] at h1

@@ -9,59 +9,10 @@ public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Localization.Integer
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.IsWRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -104,7 +55,7 @@ theorem UpperTheory.exists_cover_with_distinct_orbit_representatives :
       · rw [hz] at hζs
         exact ⟨ξ, Finset.mem_erase.2 ⟨hne, hξ⟩, sameOrbit_trans 𝒜 hs hζs⟩
       · exact ⟨ζ, Finset.mem_erase.2 ⟨hz, hζ⟩, hζs⟩
-    · push_neg at hx
+    · push Not at hx
       exact ⟨T, hT, fun ξ h ξ' h' hs => hx ξ h ξ' h' hs⟩
 end -- clump:auto
 end -- clump:auto
@@ -263,7 +214,7 @@ private theorem lin_zA {O : Type} [CommRing O] {σ : Type} [Fintype σ] (wt : σ
   rw [this, Finset.sum_eq_single i]
   · simp [coeff_X]
   · intro b _ hb
-    rw [coeff_X, if_neg, zero_smul]
+    rw [coeff_X, ite_eq_right, zero_smul]
     intro h
     exact hb (Finsupp.single_left_injective one_ne_zero h)
   · simp
@@ -358,7 +309,7 @@ theorem UpperTheory.smoothPt_weightedGradedAlgebra_basePoint :
     refine ⟨(WPres.free O wt).zA i, ?_, fun i' hi => ?_⟩
     · rw [hφ, hz, coeff_index_single_self_X, map_one]
       exact one_ne_zero
-    · rw [hφ, hz, coeff_index_single_X, if_neg hi, map_zero]
+    · rw [hφ, hz, coeff_index_single_X, ite_eq_right hi, map_zero]
   · intro f h0 h1
     refine (UpperTheory.mem_satSq_iff_constantCoeff_and_linearCoeff_eq_zero O σ wt f).2 ⟨by rw [← weightedSeriesOrigin_apply, h0], fun i => hinj ?_⟩
     rw [← hφ, h1, map_zero]
@@ -431,7 +382,7 @@ private theorem span_of_ann {O : Type} [CommRing O] [IsDomain O] {σ : Type} [Fi
     refine Finset.sum_eq_zero fun i _ => ?_
     by_cases hi : p i
     · have h3 := he i
-      simp only [e, hi, if_true] at h3
+      simp only [e, hi, ite_true] at h3
       rw [h3, smul_zero]
     · rw [hw i hi, map_zero, zero_smul]
   rw [Submodule.mem_span_range_iff_exists_fun] at hmem
@@ -641,7 +592,7 @@ theorem coord_count (hM : LemmaM) (hM' : LemmaM') (O : Type) [CommRing O] [IsDom
   have hb0 := hb 0
   simp only [show (1 : ℤ) ≠ -1 by norm_num, show (2 : ℤ) ≠ -1 by norm_num, show (-2 : ℤ) ≠ -1 by norm_num,
     show (0 : ℤ) ≠ -1 by norm_num, show ¬((-2 : ℤ) = 1 ∨ (-2 : ℤ) = 2) by norm_num,
-    show ¬((0 : ℤ) = 1 ∨ (0 : ℤ) = 2) by norm_num, true_or, or_true, if_true, if_false] at hb1 hb2 hbm1 hbm2 hb0
+    show ¬((0 : ℤ) = 1 ∨ (0 : ℤ) = 2) by norm_num, true_or, or_true, ite_true, ite_false] at hb1 hb2 hbm1 hbm2 hb0
   obtain ⟨Q, hQ, hQrel⟩ := exists_weighted_equations_presenting_ker O R W h b f hf hker (Nat.card {i // W.wt i = -1}) (Nat.card {i // W.wt i = -2})
     (Nat.card {i // W.wt i = 1} - 1) (Nat.card {i // W.wt i = 2} - 1) (Nat.card {i // W.wt i = 0})
     (by omega) (by omega) (by omega) (by omega) (by omega) hbz

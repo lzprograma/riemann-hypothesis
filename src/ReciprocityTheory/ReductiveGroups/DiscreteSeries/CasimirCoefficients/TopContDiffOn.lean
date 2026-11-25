@@ -63,7 +63,7 @@ lemma capEntry_ad (E : Fin n → Fin n → 𝒰) (P Q : Matrix (Fin n) (Fin n) �
       ∑ c, ∑ d, (P c a * Q b d) • capEntry E x c d := by
   simp only [capEntry, smul_add, Finset.sum_add_distrib]
   congr 1
-  simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [← Finset.sum_smul]
   have h : ∑ c, P c a * Q b c = (Q * P) b a := by
     rw [Matrix.mul_apply]
@@ -71,7 +71,7 @@ lemma capEntry_ad (E : Fin n → Fin n → 𝒰) (P Q : Matrix (Fin n) (Fin n) �
   rw [h, hQP, Matrix.one_apply]
   by_cases hab : a = b
   · subst hab; simp
-  · rw [if_neg (Ne.symm hab), if_neg hab, zero_smul]
+  · rw [ite_eq_right (Ne.symm hab), ite_eq_right hab, zero_smul]
 
 lemma coef_det (P : Matrix (Fin n) (Fin n) ℂ) (c : Fin n → Fin n) :
     ∑ σ : Equiv.Perm (Fin n), ((Equiv.Perm.sign σ : ℤˣ) : ℤ) • ∏ j, P (c j) (σ j) = (P.submatrix c id).det := by
@@ -104,8 +104,7 @@ theorem capelliC_ad (E : Fin n → Fin n → 𝒰) (hE : GlRelR E) (P Q : Matrix
   have hdet : ∀ c : Fin n → Fin n, ¬ Function.Injective c → (P.submatrix c id).det = 0 := by
     intro c hc
     obtain ⟨i, j, hij, hne⟩ : ∃ i j, c i = c j ∧ i ≠ j := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hc (fun i j hij => h i j hij)
     exact Matrix.det_zero_of_row_eq hne (by ext k; simp [hij])
   have hS : ∀ d : Fin n → Fin n,

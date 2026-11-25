@@ -49,7 +49,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open NumberField IsDedekindDomain
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.CuspRep GlobalTheory.SmGL GlobalTheory.DefiniteBC
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.SphBC
 
@@ -96,7 +95,7 @@ theorem isSpherical_of_isCompAlong_split {E : Type} [Field E] [NumberField E] [I
       rw [htop]; exact ⟨⟨φ, hφ⟩, Submodule.mem_top, rfl⟩
     simp only [fi, LinearMap.range_comp]
     rwa [Submodule.map_iSup] at this
-  have key := GlobalTheory.InertHeckeEigen.mem_of_mem_iSup ((RU E n).comp (locU n w).subtype)
+  have key := GlobalTheory.InvariantSupremum.fixed_mem_of_mem_iSup_range ((RU E n).comp (locU n w).subtype)
     (σ.comp ((cLoc w).comp (locU n w).subtype)) hirr fi hfi
     (((GlobalTheory.LFun.KGL w (n := n)).comap ((cLoc w).comp (locU n w).subtype) : Subgroup (locU n w)) : Set (locU n w)) ⊥
     (fun i v hv => by
@@ -105,7 +104,7 @@ theorem isSpherical_of_isCompAlong_split {E : Type} [Field E] [NumberField E] [I
         exact hv x hk
       rw [hv', map_zero]
       exact Submodule.zero_mem _)
-    (fun z hz _ _ => by rw [(Submodule.mem_bot ℂ).1 hz, map_zero]) φ (fun k hk => hφK k.1 k.2 hk) hmem
+    φ (fun k hk => hφK k.1 k.2 hk) hmem
   exact hφ0 ((Submodule.mem_bot ℂ).1 key)
 
 theorem isSpherical_of_isUnramU : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E],

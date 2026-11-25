@@ -107,20 +107,20 @@ theorem fdS_main {ε : Fin n → Bool} {h : ℝ} (dfun : (Fin n → ℝ) → ℝ
       intro i
       simp only [hc'_def]
       by_cases h : i = s
-      · rw [if_pos h, if_pos h, h]; omega
-      · rw [if_neg h, if_neg h]; rfl
+      · rw [ite_eq_left h, ite_eq_left h, h]; omega
+      · rw [ite_eq_right h, ite_eq_right h]; rfl
     have hc' : Antitone c' := by
       intro i j hij
       simp only [hc'_def]
       rcases eq_or_ne i s with hi | hi <;> rcases eq_or_ne j s with hj | hj
       · rw [hi, hj]
       · have hsj : s < j := lt_of_le_of_ne (hi ▸ hij) (Ne.symm hj)
-        rw [if_neg hj, hbig j hsj]
+        rw [ite_eq_right hj, hbig j hsj]
         exact Nat.zero_le _
       · have h' := hc hij
-        rw [if_pos hj, if_neg hi]
+        rw [ite_eq_left hj, ite_eq_right hi]
         omega
-      · rw [if_neg hj, if_neg hi]
+      · rw [ite_eq_right hj, ite_eq_right hi]
         exact hc hij
     have hsum' : ∑ i, c' i = N := by
       have h' : ∑ i, c i = ∑ i, c' i + 1 := by

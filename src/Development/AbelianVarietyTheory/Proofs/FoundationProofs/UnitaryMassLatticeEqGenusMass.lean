@@ -18,50 +18,8 @@ public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEasy
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEquiv
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsSpan
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.RationalPointsLeHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ReduceModChar
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
 import Formalism.SatakeDualWeyl.KpqSubgroupCompact
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -131,8 +89,7 @@ theorem exists_approx (v : HeightOneSpectrum (𝓞 F)) (d : 𝓞 F) (hd : d ≠ 
   obtain ⟨t, htJ, htP⟩ := SetLike.not_le_iff_exists.1 hJP
   have hb : ∀ w : HeightOneSpectrum (𝓞 F), w ≠ v → ∃ b ∈ v.asIdeal ^ k, b ∉ w.asIdeal := by
     intro w hw
-    by_contra h
-    push_neg at h
+    by_contra! h
     have hle : v.asIdeal ≤ w.asIdeal := Ideal.IsPrime.le_of_pow_le (fun b hb' => h b hb')
     exact hw (HeightOneSpectrum.ext (v.isMaximal.eq_of_le w.isPrime.ne_top hle).symm)
   have hval : ∀ w : HeightOneSpectrum (𝓞 F), w ≠ v → w.intValuation t ≤ w.intValuation d := by
@@ -199,7 +156,7 @@ theorem exists_den {n : ℕ} (Λ : Submodule (𝓞 E) (Fin n → E))
     funext i
     rw [Finset.sum_apply, Pi.smul_apply]
     simp only [Pi.smul_apply, Pi.single_apply, smul_ite, smul_zero, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     simp only [Algebra.smul_def, map_intCast]
     push_cast
     show (m : E) * (m' : E) * x i = ((m' : E) * x i) * (m : E)
@@ -253,12 +210,6 @@ theorem exists_inv_gen (σ : E →ₐ[F] E) (hs : ∀ e, (σ : E →+* E) ((σ :
   · rw [GlobalTheory.LocDict.eps_eq, ← hu0e, key, haO, map_mul]
     ring
 
-private theorem eps_mem_intAd {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
-    [Algebra F E] (v : HeightOneSpectrum (𝓞 F)) :
-    afsplitEps E v ∈ tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F) := by
-  rw [GlobalTheory.LocDict.eps_eq]
-  exact GlobalTheory.LocDict.one_tmul_mem (afsplitI_mem_intAd v 1 (one_mem _))
-
 private theorem inclE_tmul' {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
     [Algebra F E] (ρ : 𝓞 F) (z : E) :
     inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (algebraMap (𝓞 F) E ρ * z) =
@@ -305,7 +256,7 @@ theorem mem_loc_iff : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numb
       change s₁ ∈ Submonoid.closure _ at hs₁
       induction hs₁ using Submonoid.closure_induction with
       | mem s₀ hs₀ => exact GlobalTheory.LocDict.exists_inv_gen σ hs hfix v p hp hpv s₀ hs₀.1 hs₀.2
-      | one => exact ⟨afsplitEps E v, eps_mem_intAd v, by rw [map_one, map_one, mul_one]⟩
+      | one => exact ⟨afsplitEps E v, afsplit_eps_int (F := F) (E := E) (v := v), by rw [map_one, map_one, mul_one]⟩
       | mul a b _ _ ha hb =>
         obtain ⟨u₁, hu₁, e₁⟩ := ha
         obtain ⟨u₂, hu₂, e₂⟩ := hb

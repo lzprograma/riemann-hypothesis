@@ -20,25 +20,10 @@ variable (K : Type*) [Field K] [NumberField K]
 instance secondCountableTopology_adicCompletion (v : HeightOneSpectrum (𝓞 K)) :
     SecondCountableTopology (v.adicCompletion K) := by
   have : Countable K := (Module.finBasis ℚ K).equivFun.injective.countable
-  let O : Set (v.adicCompletion K) := v.adicCompletionIntegers K
-  let U : K → Set (v.adicCompletion K) := fun a => {x | x - algebraMap K _ a ∈ O}
-  have hO : IsOpen O := GroundTheory.Global.isOpen_adicCompletionIntegers v
-  have hU : ∀ a, IsOpen (U a) := fun a => hO.preimage (continuous_id.sub continuous_const)
-  have hSC : ∀ a, SecondCountableTopology (U a) := fun a => by
-    have : SecondCountableTopology O :=
-      inferInstanceAs (SecondCountableTopology (v.adicCompletionIntegers K))
-    let φ : U a → O := fun x => ⟨x.1 - algebraMap K _ a, x.2⟩
-    have he : IsEmbedding ((Subtype.val : O → v.adicCompletion K) ∘ φ) :=
-      (Homeomorph.subRight (algebraMap K (v.adicCompletion K) a)).isEmbedding.comp
-        IsEmbedding.subtypeVal
-    exact ((IsEmbedding.subtypeVal.of_comp_iff).1 he).secondCountableTopology
-  refine secondCountableTopology_of_countable_cover hU ?_
-  refine Set.eq_univ_of_forall fun x => Set.mem_iUnion.2 ?_
-  have hV : IsOpen {y : v.adicCompletion K | x - y ∈ O} :=
-    hO.preimage (continuous_const.sub continuous_id)
-  obtain ⟨a, ha⟩ := (HeightOneSpectrum.denseRange_algebraMap K v).exists_mem_open hV
-    ⟨x, by simp [O, (v.adicCompletionIntegers K).zero_mem]⟩
-  exact ⟨a, ha⟩
+  have : SeparableSpace (v.adicCompletion K) :=
+    ⟨⟨Set.range (algebraMap K _), Set.countable_range _,
+      HeightOneSpectrum.denseRange_algebraMap K v⟩⟩
+  exact UniformSpace.secondCountable_of_separable _
 
 instance secondCountableTopology_finiteAdeleRing :
     SecondCountableTopology (FiniteAdeleRing (𝓞 K) K) := by

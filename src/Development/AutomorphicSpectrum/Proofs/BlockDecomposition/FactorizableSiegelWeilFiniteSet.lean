@@ -139,16 +139,6 @@ theorem isCompact_box (S : Finset (HeightOneSpectrum (𝓞 F))) (C : ∀ v : Hei
 
 end Box
 
-section Main
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E]
-
-variable {d M : ℕ} (b : Module.Basis (Fin d) F E) (S : Finset (HeightOneSpectrum (𝓞 F)))
-  (A : ∀ v : HeightOneSpectrum (𝓞 F), Set (Fin 1 → Fin M → Fv F v ⊗[F] E))
-
-
-end Main
-
 end GlobalTheory.CompanionTheory.Hypotheses₂.OneV.Coef.PureSB
 
 namespace GlobalTheory.CompanionTheory.Hypotheses₂.OneV.Coef
@@ -169,7 +159,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.WhitFree
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 

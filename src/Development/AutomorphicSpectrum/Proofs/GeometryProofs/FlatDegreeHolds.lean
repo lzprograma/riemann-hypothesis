@@ -35,7 +35,6 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.Topology.MetricSpace.Ultra.Basic
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UltrametricDetNormLe
 public import Development.WeilBound.CoreStatements.SesquilinearFractions.DTrans
-public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.ExistsExtensionEmbeddingAlgClosed
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsTransitionMatrixGram
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GramDetNeZeroLocalBasisCofinite
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GramDeterminantLogDifferent
@@ -121,6 +120,30 @@ import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Mathlib.Tactic.Linter.Style
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TangentVectorsBaseChange
 
+section
+@[expose] public section
+
+open NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
+
+namespace GlobalTheory.CompanionTheory.Ar.Fl
+
+theorem exists_comp_eq_of_numberField (k k' A : Type) [Field k] [NumberField k] [Field k']
+    [NumberField k'] [Field A] [CharZero A] [IsAlgClosed A] (f : k →+* k') (j : k →+* A) :
+    ∃ j' : k' →+* A, j'.comp f = j := by
+  let _ : Algebra k k' := f.toAlgebra
+  let _ : Algebra k A := j.toAlgebra
+  have : IsScalarTower ℚ k k' := IsScalarTower.of_algebraMap_eq fun q => by
+    rw [RingHom.algebraMap_toAlgebra, eq_ratCast (algebraMap ℚ k') q, eq_ratCast (algebraMap ℚ k) q,
+      map_ratCast]
+  have : Module.Finite k k' := Module.Finite.of_restrictScalars_finite ℚ k k'
+  have : Algebra.IsAlgebraic k k' := Algebra.IsAlgebraic.of_finite k k'
+  refine ⟨(IsAlgClosed.lift : k' →ₐ[k] A).toRingHom, ?_⟩
+  ext x
+  exact (IsAlgClosed.lift : k' →ₐ[k] A).commutes x
+
+end GlobalTheory.CompanionTheory.Ar.Fl
+end
+
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HermitianLogNormLocalSum, Development.AutomorphicSpectrum.Proofs.AdelicProofs.HermitianMetricLogNormFormula, Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChowlaSelbergPeriod, Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.PointShiftStOfPlaceShiftSt, Development.WeilBound.CoreStatements.SesquilinearFractions.DTransUnit, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PadicNormTransitionDetOne, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameFunctionCmHeight, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsAlt, Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualBasisHermitianSum, Development.WeilBound.CoreStatements.SesquilinearFractions.GGramPush, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeGramInvariantPullback, Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieNormSqBaseChange, Development.AutomorphicSpectrum.Proofs.GeometryProofs.CmPackPeriodProduct, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameFunctionCmNumberField, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameFunctionCmValue, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatDegreeHolds
 
@@ -178,7 +201,7 @@ theorem deg_of_local_formulas : ∀ (k E : Type) [Field k] [NumberField k] [Fiel
   constructor
   · have S1 := _root_.GlobalTheory.CompanionTheory.Ar.Fl.LogNorms.isAdelic_ofElt k ρ hρ
     have S4 := _root_.GlobalTheory.CompanionTheory.Ar.Fl.LogNorms.isAdelic_ofElt k (d : k) hdk
-    have S3 := _root_.GlobalTheory.CompanionTheory.Ar.Fl.finite_logIdeal_ne_zero E (differentIdeal ℤ (𝓞 E)) differentIdeal_ne_bot
+    have S3 := _root_.PositivityTheory.Xgf.logIdeal_support_finite E (differentIdeal ℤ (𝓞 E)) differentIdeal_ne_bot
     refine (((S1.union S4).union S3).union hfin).subset ?_
     rintro ℓ ⟨j, hj⟩
     by_contra h
@@ -205,8 +228,8 @@ theorem deg_of_local_formulas : ∀ (k E : Type) [Field k] [NumberField k] [Fiel
         + ((-(m / e) * (((p : ℝ) + q) / 2)) * (∑ j : E →+* ℂ_[ℓ], logIdeal (j.comp (algebraMap (𝓞 E) E)) (differentIdeal ℤ (𝓞 E)))
         + (((p : ℝ) + q) / 2) * (LogNorms.ofElt (d : k)).finSum ℓ)) := by
       intro ℓ
-      have f1 := _root_.GlobalTheory.CompanionTheory.Ar.Fl.finrank_mul_sum_comp_eq E k ℂ_[ℓ] τ (fun i => Real.log ‖i (t ℓ)‖)
-      have f2 := _root_.GlobalTheory.CompanionTheory.Ar.Fl.finrank_mul_sum_comp_eq E k ℂ_[ℓ] τ
+      have f1 := _root_.PositivityTheory.Xgf.sum_embeddings_base_change E k ℂ_[ℓ] τ (fun i => Real.log ‖i (t ℓ)‖)
+      have f2 := _root_.PositivityTheory.Xgf.sum_embeddings_base_change E k ℂ_[ℓ] τ
         (fun i => logIdeal (i.comp (algebraMap (𝓞 E) E)) (differentIdeal ℤ (𝓞 E)))
       have g1 : ∑ j : E →+* ℂ_[ℓ], (Real.log ‖j (t ℓ)‖ + Real.log ‖j (t' ℓ)‖ + Real.log ‖j a‖) =
           ∑ j : E →+* ℂ_[ℓ], -((p : ℝ) + q) * logIdeal (j.comp (algebraMap (𝓞 E) E)) (differentIdeal ℤ (𝓞 E)) :=
@@ -253,7 +276,7 @@ theorem deg_of_local_formulas : ∀ (k E : Type) [Field k] [NumberField k] [Fiel
         nsmul_eq_mul, hcardC, ← Finset.sum_div]
     have hAτ : ∑ s : k →+* ℂ, Real.log ‖s (τ a)‖ = (m / e) * ∑ s : E →+* ℂ, Real.log ‖s a‖ := by
       rw [div_mul_eq_mul_div, eq_div_iff he, mul_comm]
-      exact _root_.GlobalTheory.CompanionTheory.Ar.Fl.finrank_mul_sum_comp_eq E k ℂ τ (fun i => Real.log ‖i a‖)
+      exact _root_.PositivityTheory.Xgf.sum_embeddings_base_change E k ℂ τ (fun i => Real.log ‖i a‖)
     have hdinf : ∑ s : k →+* ℂ, Real.log ‖s (d : k)‖ = m * Real.log d := by
       simp only [map_natCast, Complex.norm_natCast, Finset.sum_const, Finset.card_univ,
         nsmul_eq_mul, hcardC]
@@ -357,7 +380,7 @@ theorem exists_curve0_hasPeriod : ∀ (E : Type) [Field E] [NumberField E] [IsCM
     have := j.2
     simp only
     omega⟩
-  exact ⟨Z, x, _root_.GlobalTheory.CompanionTheory.Ar.Fl.curve0_z_ne_zero E H ρ Z, hper, hx⟩
+  exact ⟨Z, x, _root_.PositivityTheory.Xgf.curve_z_ne_zero E H ρ Z, hper, hx⟩
 
 end GlobalTheory.CompanionTheory.Ar.Fl
 end -- clump:auto
@@ -369,8 +392,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.PointShiftStOfPlaceShiftSt", "h": "module\n\npublic import Mathlib.Analysis.Normed.Field.Instances\npublic import Mathlib.NumberTheory.NumberField.Basic\npublic import Mathlib.NumberTheory.Padics.Complex\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.LogAbsVpOfNormalised\npublic import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ValuationCoeEqNorm\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -428,7 +449,7 @@ theorem transition_matrix_unique {I : Type} [Fintype I] [DecidableEq I] (e : I �
       calc ∑ n, (c : 𝓞 E) * C m n * sesq D (e n) y = (c : 𝓞 E) * ∑ n, C m n * sesq D (e n) y := by
             rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun n _ => by ring
         _ = 0 := by rw [hC m y, mul_zero]
-    rw [(_root_.GlobalTheory.CompanionTheory.Ar.Fl.Sesq.form_of_datum E H D).2.2.2.2.2.1 z y, h1, map_zero, neg_zero]
+    rw [(_root_.PositivityTheory.Xgf.sesq_sesquilinear_skew_hermitian E H D).2.2.2.2.2.1 z y, h1, map_zero, neg_zero]
   have hzz : z = 0 := (_root_.GlobalTheory.CompanionTheory.Ar.Fl.unimodularity_sesq E H D).1 z hz0
   have hu0 := (Fintype.linearIndependent_iff.1 he) u (by rw [← hz]; exact hzz)
   have : (c : 𝓞 E) * C m k = 0 := by rw [← huv, hu0 k]; simp
@@ -440,7 +461,7 @@ theorem isTransition_of_coefficients {I : Type} [Fintype I] (x e : I → D.La) (
   intro a y
   have hm0 : (m : E) ≠ 0 := by exact_mod_cast hm.ne'
   have h := congrArg (fun z => sesq D z y) (hS a)
-  rw [sesq_sum_smul_left, ← Nat.cast_smul_eq_nsmul (𝓞 E), (_root_.GlobalTheory.CompanionTheory.Ar.Fl.Sesq.form_of_datum E H D).2.2.2.1] at h
+  rw [sesq_sum_smul_left, ← Nat.cast_smul_eq_nsmul (𝓞 E), (_root_.PositivityTheory.Xgf.sesq_sesquilinear_skew_hermitian E H D).2.2.2.1] at h
   apply mul_left_cancel₀ hm0
   have h' : (m : E) * sesq D (x a) y = ∑ b, (S a b : E) * sesq D (e b) y := by simpa using h
   rw [h', Finset.mul_sum]
@@ -570,7 +591,7 @@ theorem flatGen_finNorm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     _root_.GlobalTheory.CompanionTheory.Ar.Fl.exists_cmPoint_locBasis_frames E H D l Xo c g ty FU i Z τ ℓ k inferInstance hty hrt
   have hcard : Fintype.card (Fin D.p ⊕ Fin D.q) = (FU.Di i).p + (FU.Di i).q := by
     simp [(FU.sig i).1, (FU.sig i).2]
-  obtain ⟨T, hT, hgram, hdet, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.transition_matrix_exists E H (FU.Di i) (Fin D.p ⊕ Fin D.q) x e hcard he
+  obtain ⟨T, hT, hgram, hdet, -⟩ := _root_.PositivityTheory.Xgf.exists_transition_matrix_gram E H (FU.Di i) (Fin D.p ⊕ Fin D.q) x e hcard he
   have hT0 : T.det ≠ 0 := hdet hxl.1
   have hge : (gramE (FU.Di i) e).det ≠ 0 := (_root_.GlobalTheory.CompanionTheory.Relay.gram_det_ne_zero_local_basis_cofinite E H (FU.Di i) _ e hcard he).1
   have hconj : (T.map (IsCMField.complexConj E)).det = IsCMField.complexConj E T.det :=
@@ -610,9 +631,9 @@ theorem flatGen_finNorm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     have hφ0 := hline.ne X.K X.β X.y v w hF
     have hφ'0 := hline.ne X.K X.β X.y v' w' hF'
     have horth : ∀ a b, sesq (FU.Di i) (x (.inl a)) (x (.inr b)) = 0 := fun a b =>
-      (_root_.GlobalTheory.CompanionTheory.Ar.PureOrth.sesq_eq_zero_of_opposite_pure E H (FU.Di i) g ty P hP _ _ (hx.1 a) (hx.2 b)).1
-    obtain ⟨hG0, hGlog⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.orthogonalBlock_gram_det_log_norm E H (FU.Di i) D.p D.q x ℓ hxl horth
-    have hzt : (Z true).z ^ D.p ≠ 0 := pow_ne_zero _ (_root_.GlobalTheory.CompanionTheory.Ar.Fl.curve0_z_ne_zero E H _ (Z true))
+      (_root_.PositivityTheory.Xgf.pure_type_lattices_orthogonal E H (FU.Di i) g ty P hP _ _ (hx.1 a) (hx.2 b)).1
+    obtain ⟨hG0, hGlog⟩ := _root_.PositivityTheory.Xgf.local_basis_gram_det_log_norm E H (FU.Di i) D.p D.q x ℓ hxl horth
+    have hzt : (Z true).z ^ D.p ≠ 0 := pow_ne_zero _ (_root_.PositivityTheory.Xgf.curve_z_ne_zero E H _ (Z true))
     have hC : ((φ X.K X.y v w : X.K) : ℂ) * τ T.det = (r : ℂ) * τ (gramE (FU.Di i) (x ∘ Sum.inr)).det := by
       apply mul_right_cancel₀ hzt
       rw [hφ, ← hz]
@@ -709,7 +730,6 @@ section Embeddings
 
 variable {E : Type} [Field E] [NumberField E]
 
-
 open Classical in
 theorem sum_dual_mul (σ τ : E →+* ℂ) :
     ∑ k, σ (HT.dualInt E k) * τ ((RingOfIntegers.basis E k : 𝓞 E) : E) = if τ = σ then 1 else 0 := by
@@ -740,7 +760,7 @@ theorem kappa_form {ε : ℤˣ} {h : D.La → D.La → OK H} {σ : E →+* ℂ} 
     (hh : IsKForm D ε h) (hκ : κ (wK H) = σ (H.w0 : E)) (X Y : D.La) :
     κ (h X Y) = ((ε : ℤ) : ℂ) *
       ∑ τ : E →ₐ[ℚ] ℂ, τ (sesq D X Y) * (τ (H.w0 : E) - 1 + σ (H.w0 : E)) := by
-  obtain ⟨hT, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.Sesq.form_of_datum E H D
+  obtain ⟨hT, -⟩ := _root_.PositivityTheory.Xgf.sesq_sesquilinear_skew_hermitian E H D
   have e1 : h X Y = (((ε : ℤ) * (D.EF (H.w0 • X) Y - D.EF X Y) : ℤ) : OK H) +
       (((ε : ℤ) * D.EF X Y : ℤ) : OK H) * wK H := by
     apply Subtype.ext
@@ -769,7 +789,7 @@ theorem kappa_form {ε : ℤˣ} {h : D.La → D.La → OK H} {σ : E →+* ℂ} 
 theorem sigma_component : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (ε : ℤˣ) (h : D.La → D.La → OK H) (σ : E →+* ℂ) (κ : OK H →+* ℂ) (n : ℕ) (e : Fin n ≃ Module.Free.ChooseBasisIndex ℤ (𝓞 E)) (x y : D.La), IsKForm D ε h → κ (wK H) = σ (H.w0 : E) → ∑ k, ∑ k', σ (HT.dualInt E (e k)) * κ (h (RingOfIntegers.basis E (e k) • x) (RingOfIntegers.basis E (e k') • y)) * starRingEnd ℂ (σ (HT.dualInt E (e k'))) = ((ε : ℤ) : ℂ) * σ ((H.rt : E) * sesq D x y) := by
   classical
   intro E _ _ _ H D ε h σ κ n e x y hh hκ
-  obtain ⟨-, -, -, hL, hR, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.Sesq.form_of_datum E H D
+  obtain ⟨-, -, -, hL, hR, -⟩ := _root_.PositivityTheory.Xgf.sesq_sesquilinear_skew_hermitian E H D
 
   have hform : ∀ a c : 𝓞 E, κ (h (a • x) (c • y)) = ((ε : ℤ) : ℂ) *
       ∑ τ : E →ₐ[ℚ] ℂ, τ (a : E) * starRingEnd ℂ (τ (c : E)) *
@@ -807,7 +827,7 @@ theorem sigma_component : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
   rw [hexp, Finset.sum_eq_single σ.toRatAlgHom]
   · have h1 : S σ.toRatAlgHom = 1 := by
       rw [hS]
-      exact if_pos (RingHom.ext fun _ => rfl)
+      exact ite_eq_left (RingHom.ext fun _ => rfl)
     have h2 : σ (H.rt : E) = 2 * σ (H.w0 : E) - 1 := by
       have h3 := congrArg (fun a : 𝓞 E => σ (algebraMap (𝓞 E) E a)) H.two_weight_eq_one_add_root
       simp only [map_mul, map_add (f := _), map_one, map_ofNat] at h3
@@ -820,7 +840,7 @@ theorem sigma_component : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
   · intro τ _ hτ
     have h0 : S τ = 0 := by
       rw [hS]
-      refine if_neg fun hc => hτ (AlgHom.ext fun z => ?_)
+      refine ite_eq_right fun hc => hτ (AlgHom.ext fun z => ?_)
       exact congrArg (fun f : E →+* ℂ => f z) hc
     rw [h0]
     simp
@@ -1011,11 +1031,11 @@ theorem isComb_pad {G : Over S} [GrpObj G] [IsCommMonObj G] {x : Sp R ⟶ S} {m 
   let U : Fin M → (epsAt x ⟶ G) := fun q => if hq : ∃ j, jj j = q then u hq.choose else 1
   have hU : ∀ j, U (jj j) = u j := fun j => by
     have hq : ∃ j', jj j' = jj j := ⟨j, rfl⟩
-    simp only [U, dif_pos hq]
+    simp only [U, dite_eq_left hq]
     rw [hj hq.choose_spec]
   have hU1 : ∀ q, q ∉ Set.range jj → U q = 1 := fun q hq => by
     simp only [U]
-    exact dif_neg hq
+    exact dite_eq_right hq
   refine ⟨U, fun q => ?_, ?_⟩
   · by_cases hq : q ∈ Set.range jj
     · obtain ⟨j, rfl⟩ := hq
@@ -1075,10 +1095,6 @@ theorem exists_vec {G : Over (Sp R)} [GrpObj G] (σ : R →+* R') (w : epsR R �
   rw [← Category.assoc, spMap_comp_spMap, fst_comp_dualMap, ← spMap_comp_spMap, Category.assoc, ht]
   rfl
 
-theorem mono_alg (K : Type) [Field K] [NumberField K] : Mono (spMap (algebraMap (𝓞 K) K)) := by
-  have : Epi (CommRingCat.ofHom (algebraMap (𝓞 K) K)) := IsLocalization.epi (nonZeroDivisors (𝓞 K)) K
-  exact Scheme.Spec.map_mono (CommRingCat.ofHom _).op
-
 variable {D : Datum H} {l : Level H} {Xo : Moduli D l} {g : ℕ} {ty : Fin g → (E →+* ℂ)}
   {Z : ∀ b : Bool, Curve0 H (sgnRt H b)} {c : Coeff l} {FU : FamilyUnif Xo (algebraMap (KA l) ℂ) ty} {i : Fin FU.n}
   {P : (FU.Di i).La →+ (Fin g → ℂ)} {hP : IsPeriod (FU.Di i) ty P}
@@ -1091,7 +1107,7 @@ theorem exists_lift (X : CMPack Z c FU i hP) (b : Bool) (a : PureType.lat hP (sg
     (hUx : Ux.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (sg X s)) ≫ (X.C b).v.left ≫ (X.ψ b a).left) :
     ∃ U' : epsAt (spMap s) ⟶ X.t.G, U'.left ≫ X.m.φ = spMap (GlobalTheory.CompanionTheory.Ar.dualMap s) ≫ u.left ∧ U'.left ≫ X.m'.φ = Ux.left := by
   obtain ⟨ρ, h1, h2⟩ := hu
-  have hm := mono_alg X.K
+  have hm := PositivityTheory.Xgf.mono_spec_fraction_field X.K
   have hw : ρ ≫ X.t.G.hom = spMap (algebraMap X.K (DualNumber X.K)) := by
     rw [← cancel_mono (spMap (algebraMap (𝓞 X.K) X.K)), Category.assoc, ← X.m'.cart.1.w, ← Category.assoc, h2,
       Category.assoc, Category.assoc, Over.w (X.ψ b a)]
@@ -1455,7 +1471,7 @@ theorem hasInfNorm_value : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
   have hxli : LinearIndependent (𝓞 E) x := hloc.1
   have hcard : Fintype.card (Fin D.p ⊕ Fin D.q) = (FU.Di i).p + (FU.Di i).q := by
     simp [(FU.sig i).1, (FU.sig i).2]
-  obtain ⟨T, hT, hgram, hTdet, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.transition_matrix_exists E H (FU.Di i) _ x e hcard he
+  obtain ⟨T, hT, hgram, hTdet, -⟩ := _root_.PositivityTheory.Xgf.exists_transition_matrix_gram E H (FU.Di i) _ x e hcard he
   have hTne := hTdet hxli
   have hGe := (_root_.GlobalTheory.CompanionTheory.Relay.gram_det_ne_zero_local_basis_cofinite E H (FU.Di i) _ e hcard he).1
   obtain ⟨hfram, hval⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.CMValue.value_on_cmFrame E H D l Xo c g ty FU i Z P hP X x hx U τ φ e ρ T v w hty hτ hU hline he
@@ -1504,8 +1520,8 @@ theorem hasInfNorm_value : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     ext a b
     rcases a with a | a <;> rcases b with b | b
     · rfl
-    · exact (_root_.GlobalTheory.CompanionTheory.Ar.PureOrth.sesq_eq_zero_of_opposite_pure E H (FU.Di i) g ty P hP _ _ (hx.1 a) (hx.2 b)).1
-    · exact (_root_.GlobalTheory.CompanionTheory.Ar.PureOrth.sesq_eq_zero_of_opposite_pure E H (FU.Di i) g ty P hP _ _ (hx.1 b) (hx.2 a)).2
+    · exact (_root_.PositivityTheory.Xgf.pure_type_lattices_orthogonal E H (FU.Di i) g ty P hP _ _ (hx.1 a) (hx.2 b)).1
+    · exact (_root_.PositivityTheory.Xgf.pure_type_lattices_orthogonal E H (FU.Di i) g ty P hP _ _ (hx.1 b) (hx.2 a)).2
     · rfl
   have hdet1 : (gramE (FU.Di i) x).det =
       (gramE (FU.Di i) (x ∘ Sum.inl)).det * (gramE (FU.Di i) (x ∘ Sum.inr)).det := by
@@ -1547,7 +1563,7 @@ theorem hasInfNorm_value : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
       s' (X.β (tauE c (ComplexEmbedding.conjugate τ) ((H.rt : E) * sesq (FU.Di i) (x (.inr a)) (x (.inr a')))))) (fun _ _ => rfl)
   rw [hσ'] at hlΔ
 
-  have hz := _root_.GlobalTheory.CompanionTheory.Ar.Fl.curve0_z_ne_zero E H _ (Z true)
+  have hz := _root_.PositivityTheory.Xgf.curve_z_ne_zero E H _ (Z true)
   have hval2 : ((φ X.K X.y v w : X.K) : ℂ) * τ T.det = (r : ℂ) * τ (gramE (FU.Di i) (x ∘ Sum.inr)).det := by
     apply mul_right_cancel₀ (pow_ne_zero D.p hz)
     rw [hval, ← hrz]
@@ -1623,11 +1639,11 @@ theorem const_algebraic : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     _root_.GlobalTheory.CompanionTheory.Ar.Fl.exists_cmPoint_locBasis_frames E H D l Xo c g ty FU i Z τ ⟨2, Nat.prime_two⟩ τ.toRatAlgHom.fieldRange (finite_fieldRange τ) hty hrt
   have hcard : Fintype.card (Fin D.p ⊕ Fin D.q) = (FU.Di i).p + (FU.Di i).q := by
     simp [(FU.sig i).1, (FU.sig i).2]
-  obtain ⟨T, hT, -, hdet, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.transition_matrix_exists E H (FU.Di i) _ x e hcard he
+  obtain ⟨T, hT, -, hdet, -⟩ := _root_.PositivityTheory.Xgf.exists_transition_matrix_gram E H (FU.Di i) _ x e hcard he
   have hT0 : T.det ≠ 0 := hdet hloc.1
   have horth : ∀ a b, sesq (FU.Di i) (x (.inl a)) (x (.inr b)) = 0 := fun a b =>
-    (_root_.GlobalTheory.CompanionTheory.Ar.PureOrth.sesq_eq_zero_of_opposite_pure E H (FU.Di i) g ty P hP _ _ (hx.1 a) (hx.2 b)).1
-  have hG0 := (_root_.GlobalTheory.CompanionTheory.Ar.Fl.orthogonalBlock_gram_det_log_norm E H (FU.Di i) D.p D.q x ⟨2, Nat.prime_two⟩ hloc horth).1
+    (_root_.PositivityTheory.Xgf.pure_type_lattices_orthogonal E H (FU.Di i) g ty P hP _ _ (hx.1 a) (hx.2 b)).1
+  have hG0 := (_root_.PositivityTheory.Xgf.local_basis_gram_det_log_norm E H (FU.Di i) D.p D.q x ⟨2, Nat.prime_two⟩ hloc horth).1
   obtain ⟨hfm, hval⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.CMValue.value_on_cmFrame E H D l Xo c g ty FU i Z P hP X x hx U τ φ e ρ T v w hty hrt hmem hline he
     hconst hloc.1 hT hfr
   have hφ : φ X.K X.y v w ≠ 0 := hline.ne X.K X.β X.y v w hfm
@@ -1665,7 +1681,7 @@ open Matrix GlobalTheory GlobalTheory.CM
 theorem flatDegree_mean_ext {M k : Type} [Field M] [NumberField M] [Field k] [NumberField k] (f : M →+* k)
     (F : (M →+* ℂ) → ℝ) :
     (∑ s : k →+* ℂ, F (s.comp f)) / Module.finrank ℚ k = (∑ s, F s) / Module.finrank ℚ M := by
-  have h := _root_.GlobalTheory.CompanionTheory.Ar.Fl.finrank_mul_sum_comp_eq M k ℂ f F
+  have h := _root_.PositivityTheory.Xgf.sum_embeddings_base_change M k ℂ f F
   have hM : (Module.finrank ℚ M : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Module.finrank_pos.ne'
   have hk : (Module.finrank ℚ k : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Module.finrank_pos.ne'
   rw [div_eq_div_iff hk hM]

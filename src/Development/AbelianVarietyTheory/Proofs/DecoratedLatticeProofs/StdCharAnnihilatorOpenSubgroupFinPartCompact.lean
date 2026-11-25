@@ -63,16 +63,10 @@ open scoped TensorProduct
 
 namespace GlobalTheory.ConjAutProps
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {V : HSp D}
 
 theorem continuous_conjA (D : D7) : Continuous (cA D) := by
-  have : IsModuleTopology (AF D.host.F) (AE D) := ⟨rfl⟩
-  have : IsTopologicalRing (AE D) := IsModuleTopology.isTopologicalRing (AF D.host.F) (AE D)
-  have := IsModuleTopology.continuous_of_linearMap
-    (Algebra.TensorProduct.map (AlgHom.id (AF D.host.F) (AF D.host.F)) D.sp.cm.sig).toLinearMap
-  exact this
+  exact GlobalTheory.FockCompare.ThetaCont.continuous_conj
 
 end GlobalTheory.ConjAutProps
 
@@ -89,7 +83,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 open scoped ComplexOrder ENNReal NNReal ContDiff
 

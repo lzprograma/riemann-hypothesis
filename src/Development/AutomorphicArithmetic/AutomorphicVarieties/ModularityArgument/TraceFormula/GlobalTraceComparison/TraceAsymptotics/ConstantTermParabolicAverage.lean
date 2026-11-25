@@ -74,8 +74,7 @@ private theorem exists_aff {ι : Type} (x y : ι → ℂ) (i : ι) (h : x i ≠ 
 private theorem sep_one (n : ℕ) (w : Pl E) {A A' : Multiset ℂˣ} (h : A.card = n) (h' : A'.card = n)
     (hne : A' ≠ A) : ∃ e : Ex (Fin (n + 1)), ev1 n w e A = 1 ∧ ev1 n w e A' = 0 := by
   have hex : ∃ j, j ≤ n ∧ satEig (qV E w) n A j ≠ satEig (qV E w) n A' j := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hne (eq_of_satEig_eq (qV_ne_zero w) h h' hc).symm
   obtain ⟨j, hj, hj'⟩ := hex
   exact exists_aff (fun j : Fin (n + 1) => satEig (qV E w) n A j)
@@ -147,5 +146,5 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.rSep :
     refine Finset.prod_eq_zero (Finset.mem_image_of_mem t (Finset.mem_univ j)) ?_
     rw [evaluation_combined_test_function, evaluation_combined_test_function]
     rcases mul_eq_zero.1 (hC j) with h0 | h0
-    · exact mul_eq_zero.2 (Or.inl (Finset.prod_eq_zero (Finset.mem_univ j) (by rw [if_pos rfl]; exact h0)))
-    · exact mul_eq_zero.2 (Or.inr (Finset.prod_eq_zero (Finset.mem_univ j) (by rw [if_pos rfl]; exact h0)))
+    · exact mul_eq_zero.2 (Or.inl (Finset.prod_eq_zero (Finset.mem_univ j) (by rw [ite_eq_left rfl]; exact h0)))
+    · exact mul_eq_zero.2 (Or.inr (Finset.prod_eq_zero (Finset.mem_univ j) (by rw [ite_eq_left rfl]; exact h0)))

@@ -20,46 +20,7 @@ public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClas
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroSplitOfLocal
 public import Formalism.PeriodIntegrals.LengthPoleInLift
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.PoleLengthBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Topology.Sheaves.Presheaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.LenPiU, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGenerators, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanLeBound, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.HasseMemHK, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.HasseOpSmul, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.HasseSmul, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.LenBaseOf, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.UInjOfColumn, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.Assembly, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.LenBaseHolds, Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroBundledOfLengths, Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroBundledOfLift
@@ -236,11 +197,6 @@ abbrev JKo (k : ℕ) : Submodule (Op X la G.N) ↥(HK X la G.w wF) := (JK G la k
 theorem JK_anti {k l : ℕ} (h : k ≤ l) : JK G la l ≤ JK G la k :=
   Submodule.smul_mono_left (Ideal.pow_le_pow_right h)
 
-theorem bcol_sum {N : ℕ} (jj : Fin N) (α : Fin (WeightFamilies.dimY D j) → ℕ) :
-    ((bcol (D := D) (j := j) jj α).sum fun _ n => n) = ∑ i, α i := by
-  rw [Finsupp.sum_fintype _ _ (fun _ => rfl)]
-  simp [bcol, Fintype.sum_prod_type, Fin.sum_univ_succ]
-
 theorem smulOp_HK (o : Op X la G.N) (x : ↥(HK X la G.w wF)) :
     o • x = (@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ o) • x := by
   apply Subtype.ext
@@ -318,7 +274,7 @@ def psi (hHS : HasseSmul) (k : ℕ) : ↥(JKo G la k) →ₗ[Op X la G.N] Vg G l
     funext p
     rw [RingHom.id_apply, Pi.smul_apply, vals_apply, vals_apply]
     split_ifs with h
-    · exact hHS G la k o x x.2 _ (by rw [bcol_sum]; exact Finset.Nat.mem_antidiagonalTuple.1 h) _ _
+    · exact hHS G la k o x x.2 _ (by rw [PoleLengthBounds.THs.bcol_size]; exact Finset.Nat.mem_antidiagonalTuple.1 h) _ _
     · exact (smul_zero o).symm
 
 theorem Fk_eq (T k : ℕ) : Fk G la T k = (JKo G la k).map (toWKo G la (a0 D j T)) := by
@@ -345,7 +301,7 @@ theorem ker_tau_le (hHS : HasseSmul) (hHV : HasseVan) (T k : ℕ) (hk : k < a0 D
   show vals G la k x p = 0
   rw [vals_apply]
   split_ifs with h
-  · exact hHV G la (a0 D j T) x h0 _ (by rw [bcol_sum, Finset.Nat.mem_antidiagonalTuple.1 h]; exact hk) _
+  · exact hHV G la (a0 D j T) x h0 _ (by rw [PoleLengthBounds.THs.bcol_size, Finset.Nat.mem_antidiagonalTuple.1 h]; exact hk) _
   · rfl
 
 def phi (hHS : HasseSmul) (hHV : HasseVan) (T k : ℕ) : ↥(Fk G la T k) →ₗ[Op X la G.N] Vg G la :=
@@ -436,7 +392,7 @@ theorem grBound_of (hTR : TaylorRep) (hTH : TaylorHasse) (hHS : HasseSmul) (hHV 
     intro a _
     refine hUB G la Q S CRm T c hOk hw a.1 _ fun jj => ?_
     have h5 := hTH G la k x' cf hcf jj a.1 a.2 (hasse_mem_HK G la _ x')
-    have h6 := hx'2 (bcol jj a.1) (by rw [bcol_sum, Finset.Nat.mem_antidiagonalTuple.1 a.2]; omega)
+    have h6 := hx'2 (bcol jj a.1) (by rw [PoleLengthBounds.THs.bcol_size, Finset.Nat.mem_antidiagonalTuple.1 a.2]; omega)
       (hasse_mem_HK G la _ x')
     rw [h5] at h6
     exact h6
@@ -593,7 +549,7 @@ theorem aaRep_holds : AARep := by
     let g : (Idx D j G.N →₀ ℕ) × (Idx D j G.N →₀ ℕ) → ↥(HK X la G.w wF) := fun q =>
       if h : hasse X la G.w q.2 (x0 : Lw X la G.w) ∈ HK X la G.w wF then ⟨_, h⟩ else 0
     have hg' : ∀ q : (Idx D j G.N →₀ ℕ) × (Idx D j G.N →₀ ℕ), ∀ hq : (q.2.sum fun _ n => n) ≤ a0 D j T - 1,
-        g q = ⟨_, h1 q.2 hq⟩ := fun q hq => dif_pos (h1 q.2 hq)
+        g q = ⟨_, h1 q.2 hq⟩ := fun q hq => dite_eq_left (h1 q.2 hq)
     let F : (Idx D j G.N →₀ ℕ) → ↥(HK X la G.w wF) := fun β =>
       ∑ q ∈ Finset.HasAntidiagonal.antidiagonal β, @algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (hasseOp X la G.N q.1 o) • g q
     have he : ∀ β : Idx D j G.N →₀ ℕ, (β.sum fun _ n => n) ≤ a0 D j T - 1 →

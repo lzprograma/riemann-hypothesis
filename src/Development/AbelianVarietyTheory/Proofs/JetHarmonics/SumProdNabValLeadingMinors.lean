@@ -48,8 +48,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
 namespace GlobalTheory.CrudeValue
@@ -99,12 +97,7 @@ theorem nabVal_monomial (B : FB R d O) (h : PS k 2 d) (w0 : O) (q : ℕ) (f : PS
   rcases subsingleton_or_nontrivial k with hk | hk
   · exact Subsingleton.elim _ _
   · simp only [FB.nabVal, FB.FK, DpolyOf, MvPolynomial.support_monomial,
-      if_neg (one_ne_zero : (1 : k) ≠ 0), Finset.sum_singleton, MvPolynomial.coeff_monomial,
-      if_true, map_one, one_mul]
+      ite_eq_right (one_ne_zero : (1 : k) ≠ 0), Finset.sum_singleton, MvPolynomial.coeff_monomial,
+      ite_true, map_one, one_mul]
 
 end GlobalTheory.CrudeValue
-
-namespace GlobalTheory
-
-
-end GlobalTheory

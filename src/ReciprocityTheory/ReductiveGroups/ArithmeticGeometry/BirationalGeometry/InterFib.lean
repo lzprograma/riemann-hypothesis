@@ -51,7 +51,7 @@ theorem fibSys_finite {W : Type*} [Fintype W] (r : W → ℕ) (H : W → MvPolyn
       have e : monomial u a = a • monomial u (1 : ℂ) := by rw [smul_monomial, smul_eq_mul, mul_one]
       rw [e, hMdef]
       exact Submodule.smul_mem _ a (Submodule.subset_span ⟨u, (hB u).mpr hall, rfl⟩)
-    · push_neg at hall
+    · push Not at hall
       obtain ⟨i, hi⟩ := hall
       have hle : Finsupp.single i (r i) ≤ u := Finsupp.single_le_iff.mpr hi
       obtain ⟨u', hu'⟩ : ∃ u', u = u' + Finsupp.single i (r i) :=

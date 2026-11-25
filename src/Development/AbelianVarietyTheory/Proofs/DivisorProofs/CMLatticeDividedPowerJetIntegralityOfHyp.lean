@@ -34,64 +34,15 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertEisen
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeValueIntegralityRamifiedOfExpansion
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LipschitzFormulaTotallyRealPoisson
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SzJetConj
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
 import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.SemiChar
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EisensteinWeierstrassValuesLatticeTau
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomogeneityOfIsTauOf
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralJInvariantOfComplexMultiplication
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JTEqAndPowTwelveEqDD
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionPointOfLatticeTauLatticeMembership
-import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -438,7 +389,7 @@ theorem main : ∀ (l : ℕ) [Fact l.Prime] (lam : algebraicClosure ℚ ℂ →+
       convert hA using 1
       push_cast
       ring
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     split_ifs with h43
     · obtain ⟨k, hk⟩ : 4 ∣ d + 1 := by omega
       have h1 := hkey 0 le_rfl (hmulk 0 4 k hk h4p)
@@ -464,7 +415,7 @@ theorem main : ∀ (l : ℕ) [Fact l.Prime] (lam : algebraicClosure ℚ ℂ →+
       have := (hl 1 σ).mp h2s
       norm_num at this
       exact this
-  · rw [if_neg h2]
+  · rw [ite_eq_right h2]
     by_cases h3' : l = 3
     · subst h3'
       have hd3 := h3 rfl
@@ -627,7 +578,7 @@ theorem main : ∀ (l : ℕ) [Fact l.Prime] (lam : algebraicClosure ℚ ℂ →+
       rwa [Nat.cast_pow]
   by_cases hld : l = d
   · subst hld
-    rw [if_neg (by omega), if_pos rfl]
+    rw [ite_eq_right (by omega), ite_eq_left rfl]
     have hnd : ¬ l ∣ 1 + l := by
       intro h
       have : l ∣ 1 := (Nat.dvd_add_left (dvd_refl l)).1 h
@@ -635,10 +586,10 @@ theorem main : ∀ (l : ℕ) [Fact l.Prime] (lam : algebraicClosure ℚ ℂ →+
     have h1 := key (1 + w) (1 + l) (mulStable_one_add hw) hn1 hnd
     refine _root_.GlobalTheory.SzRamified.main l lam w _ _ hd4 hw2 hp ?_
     simpa only [Nat.cast_add, Nat.cast_one] using h1
-  · rw [if_neg hld]
+  · rw [ite_eq_right hld]
     by_cases h3 : l = 3 ∧ d % 3 = 1
     · obtain ⟨rfl, h3⟩ := h3
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       have hnd : ¬ 3 ∣ 1 + d := by omega
       have h1 := key (1 + w) (1 + d) (mulStable_one_add hw) hn1 hnd
       have h2 := key (1 - w) (1 + d) (mulStable_one_sub hw) hn2 hnd
@@ -919,12 +870,12 @@ theorem exists_generator : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
   by_cases h3 : d % 4 = 3
   · have him : ((-1 + Complex.I * (Real.sqrt d : ℝ)) / 2 : ℂ).im = Real.sqrt d / 2 := by simp
     refine ⟨w, (-1 + w) / 2, ⟨(-1 + Complex.I * (Real.sqrt d : ℝ)) / 2, by rw [him]; positivity⟩, hw, hφ,
-      by rw [if_pos h3], fun i => ?_, ⟨one_ne_zero, fun x => (hΛ x).trans (integers_three hd h3 x)⟩, Or.inl ⟨h3, him⟩⟩
+      by rw [ite_eq_left h3], fun i => ?_, ⟨one_ne_zero, fun x => (hΛ x).trans (integers_three hd h3 x)⟩, Or.inl ⟨h3, him⟩⟩
     rw [map_div₀, map_add (f := _), map_neg, map_one, map_ofNat, hφ]
   · have h1 : d % 4 = 1 := by omega
     have him : (Complex.I * (Real.sqrt d : ℝ) : ℂ).im = Real.sqrt d := by simp
     exact ⟨w, w, ⟨Complex.I * (Real.sqrt d : ℝ), by rw [him]; exact hs⟩, hw, hφ,
-      by rw [if_neg h3], hφ, ⟨one_ne_zero, fun x => (hΛ x).trans (integers_one hd h1 x)⟩, Or.inr ⟨h1, him⟩⟩
+      by rw [ite_eq_right h3], hφ, ⟨one_ne_zero, fun x => (hΛ x).trans (integers_one hd h1 x)⟩, Or.inr ⟨h1, him⟩⟩
 
 end GlobalTheory.QuadGenerator
 end -- clump:auto
@@ -1130,7 +1081,7 @@ open GlobalTheory.IndefiniteRowSideFullHecke.ClassZetaValuationBounds (a0)
 namespace GlobalTheory.HilbFam
 
 theorem isIntegral_coord_of_isIntegral (E : Type) [Field E] [NumberField E] [IsCMField E] (θ : E) (D : ℕ)
-    (x : Fin 2 → FR E) (_hD : 0 < D) (hθ : IsIntegral ℤ θ)
+    (x : Fin 2 → FR E) (hθ : IsIntegral ℤ θ)
     (hr : (θ - IsCMField.complexConj E θ) ^ 2 = -(D : E))
     (hu : IsIntegral ℤ ((x 0 : E) * θ + (x 1 : E))) (j : Fin 2) :
     IsIntegral ℤ ((D : FR E) * x j ^ 2) ∧ IsIntegral ℤ ((D : FR E) * x j) := by
@@ -1155,7 +1106,6 @@ theorem isIntegral_coord_of_isIntegral (E : Type) [Field E] [NumberField E] [IsC
     · exact h0
     · exact h1
   have hD' : (D : E) = -r ^ 2 := by rw [hr]; ring
-  have hinj : Function.Injective (algebraMap (FR E) E) := (algebraMap (FR E) E).injective
   have hx : algebraMap (FR E) E (x j) = (x j : E) := rfl
   constructor
   · rw [← (isIntegral_algebraMap_iff (B := E)), map_mul, map_pow, map_natCast, hx, hD']
@@ -1291,7 +1241,7 @@ theorem passl : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (l : ℕ)
       have h' : (M : E) * y' = (D : E)⁻¹ * (((x 0 : FR E) : E) * θ + ((x 1 : FR E) : E)) := by
         rw [← hxy]; field_simp
       rw [h']; ring
-    have h := _root_.GlobalTheory.HilbFam.isIntegral_coord_of_isIntegral E θ D (fun j => (D : FR E)⁻¹ * x j) hD hθ hθD (by rw [hpt]; exact hMint y' hy') j
+    have h := _root_.GlobalTheory.HilbFam.isIntegral_coord_of_isIntegral E θ D (fun j => (D : FR E)⁻¹ * x j) hθ hθD (by rw [hpt]; exact hMint y' hy') j
     refine ⟨h.1, ?_⟩
     have h2 := h.2
     simp only [mul_inv_cancel_left₀ hDF] at h2
@@ -1485,9 +1435,9 @@ theorem val_facts (l d : ℕ) (hl : l.Prime) (hd : d.Prime) (h4 : 4 < d) :
     · refine multiplicity_eq_zero_of_not_dvd fun hh => h ?_
       exact (Nat.prime_dvd_prime_iff_eq hl Nat.prime_two).1 (hl.dvd_of_dvd_pow (n := 2) hh)
   by_cases h3 : d % 4 = 3
-  · simp only [h3, if_true, h1, not_true, and_false, if_false]
+  · simp only [h3, ite_true, h1, not_true, and_false, ite_false]
     split_ifs <;> norm_num
-  · simp only [h3, if_false, not_false_iff, and_true]
+  · simp only [h3, ite_false, not_false_iff, and_true]
     rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (by norm_num) hd.ne_zero, h1, h2]
     split_ifs <;> norm_num
 
@@ -1575,10 +1525,10 @@ theorem core (hjsz : EisExp → ∀ (F : Type) [Field F] [NumberField F] [IsTota
         by_cases h2 : l = 2
         · have hc2 : (1 / 2 : ℝ) ≤ c_vp 𝔣 l := by subst h2; exact hδ2.trans hδc
           have hld : ¬ l = d := by omega
-          simp only [h2, if_true, true_and] at hld ⊢
+          simp only [h2, ite_true, true_and] at hld ⊢
           rw [← h2]
           split_ifs <;> linarith
-        · simp only [h2, if_false, false_and]
+        · simp only [h2, ite_false, false_and]
           split_ifs <;> linarith))
     have hsum : ∑ j, κ (e.symm j) = ∑ i, κ i := Equiv.sum_comp e.symm κ
     have hr : Sz l lam (-(if l = 2 ∧ ¬ d % 4 = 3 then 1 else 0)) (2 * (τ.im : ℝ) / (Real.sqrt d : ℝ) : ℂ) := by

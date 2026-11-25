@@ -45,8 +45,6 @@ import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open Formalism.BasicNotions NumberField
 
 namespace GlobalTheory.WittFracComplex

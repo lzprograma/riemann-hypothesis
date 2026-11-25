@@ -114,7 +114,7 @@ theorem exists_cut {N : ℕ} (φ : Fin (N + 1) → C) :
   · exact (ge_ite _).sub ((div_int (hk0 _ (Finset.mem_univ _))).mul_int (ge_ite _))
   · simp [eq_comm]
   · simp only [sub_mul, Finset.sum_sub_distrib, mul_assoc, ← Finset.mul_sum, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     by_cases h0 : φ k0 = 0
     · have h1 := hk0 (k0.succAbove ν) (Finset.mem_univ _)
       rw [h0, V.v.map_zero, top_le_iff] at h1
@@ -152,7 +152,7 @@ theorem exists_sat_ker {I κ : Type} [Fintype I] [DecidableEq I] (P : Finset I) 
       fun c ν => if c = (P.equivFin.symm ν : I) then 1 else 0, fun c ν => ge_ite _, fun ν ν' => ?_⟩,
       fun ν c hc => ?_, by simp, by simp⟩
     · simp [eq_comm]
-    · refine if_neg ?_
+    · refine ite_eq_right ?_
       rintro rfl
       exact hc (P.equivFin.symm ν).2
   | insert b S hb ih =>
@@ -449,7 +449,7 @@ theorem logInt_frob [CharZero C] {p : ℕ} {f : MvPowerSeries (Fin 2) C} (hL : f
         simp only [smul_eq_mul, map_div₀, map_pow, map_neg, map_one, map_natCast]
         field_simp
     have h2 := mm_add h (mm_neg h1)
-    rw [add_comm, neg_add_cancel_left, PowerSeries.coeff_log, if_neg hl.ne_zero] at h2
+    rw [add_comm, neg_add_cancel_left, PowerSeries.coeff_log, ite_eq_right hl.ne_zero] at h2
     have h3 := coeff_pow_lead hF hF' V.l
     rw [mul_one] at h3
     rw [h3, hc] at h2
@@ -860,7 +860,7 @@ theorem core (H : RLaw X V) {γ γ' : κ → PowerSeries C} (hγ : IsCv V γ) (h
   have g21 : V.Ge 0 ((V.l : C) * coeff (ee (V.l * V.l) V.l) (hAt X a b)) := by
     have := logInt_low hSh' (Submodule.sub_mem _ (trace_ord hl hζ 1 hB1) (ordGe_mono (by omega) hS'o))
       (ee (V.l * V.l) V.l) (by rw [weight_wv, ee_one]; omega)
-    rwa [map_sub, coeff_trace hl hζ, if_pos (by simp), hS'o _ (by rw [weight_wv, ee_one]; omega), sub_zero] at this
+    rwa [map_sub, coeff_trace hl hζ, ite_eq_left (by simp), hS'o _ (by rw [weight_wv, ee_one]; omega), sub_zero] at this
 
   obtain ⟨S, hS0, hSl, hSh, -⟩ := exists_trace H hζi 0 V.l ha hb hai hbi fun z i => rescale_other_powerSeriesInOneOfTwoVariables (by decide) z _
   have hSlo : ∀ i, subst S (X.lg i) ∈ ordGe C (wv 0) (V.l * V.l) := fun i => by
@@ -875,7 +875,7 @@ theorem core (H : RLaw X V) {γ γ' : κ → PowerSeries C} (hγ : IsCv V γ) (h
     rw [this]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [hSl, hsa, hsb, coeff_mul_sep _ (fun e he => coeff_powerSeriesInOneOfTwoVariables_other_ne (by decide) _ e he), coeff_trace hl hζ,
-      if_pos (by simp), ee_left, ee_right, coeff_single_powerSeriesInOneOfTwoVariables, coeff_single_powerSeriesInOneOfTwoVariables]
+      ite_eq_left (by simp), ee_left, ee_right, coeff_single_powerSeriesInOneOfTwoVariables, coeff_single_powerSeriesInOneOfTwoVariables]
     intro e he
     rw [coeff_trace hl hζ, coeff_powerSeriesInOneOfTwoVariables_other_ne (by decide) _ e he]
     simp
@@ -893,9 +893,9 @@ theorem core (H : RLaw X V) {γ γ' : κ → PowerSeries C} (hγ : IsCv V γ) (h
   have key := logInt_frob (p := V.l) hSh
     (Submodule.sub_mem _ (trace_ord hl hζ 0 hB0) (ordGe_mono (by omega) hSo))
     (Submodule.sub_mem _ (trace_ord' hl hζ 0 hB1) (hAt_ord_left H hb hS0 hbo)) (by
-      rw [map_sub, coeff_trace hl hζ, if_pos (by simp), hG, mul_sub, sub_eq_add_neg]
+      rw [map_sub, coeff_trace hl hζ, ite_eq_left (by simp), hG, mul_sub, sub_eq_add_neg]
       exact mm_add (mm_mul mm_l g21) (mm_neg hM))
-  rwa [map_sub, coeff_trace hl hζ, if_pos (by simp), hSo _ (by rw [weight_wv, ee_zero]; omega), sub_zero, hc] at key
+  rwa [map_sub, coeff_trace hl hζ, ite_eq_left (by simp), hSo _ (by rw [weight_wv, ee_zero]; omega), sub_zero, hc] at key
 
 theorem coeff_sg (X : RawChart C d I κ) {γ : κ → PowerSeries C} (hγ : ∀ i, PowerSeries.constantCoeff (γ i) = 0)
     (v : κ → C) (n : ℕ) :
@@ -1076,8 +1076,7 @@ theorem card_add_le {σ : Type} [Fintype σ] (p : σ → Prop) [DecidablePred p]
       rw [h4, h5] at h3
       linear_combination h3
     have h6 : ∀ ν, g (Sum.inl ν) = 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       obtain ⟨ν1, hν1⟩ := hc
       obtain ⟨ν0, -, hmin⟩ := Finset.exists_min_image Finset.univ (fun ν => V.v (g (Sum.inl ν)))
         ⟨ν1, Finset.mem_univ _⟩

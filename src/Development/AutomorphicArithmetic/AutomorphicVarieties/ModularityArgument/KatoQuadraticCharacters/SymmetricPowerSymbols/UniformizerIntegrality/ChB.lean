@@ -92,5 +92,5 @@ theorem UpperTheory.V.Z.Kato.Sym.PT.chB : UpperTheory.V.Z.Kato.Sym.PT.ChB := by
   show lg X (l ^ n) (σ (e (topRoot X M (l ^ n) u))) (e (topRoot X M (l ^ n) u)) = _
   rw [← hc1 σ hσ]
   apply hlg l n hl.ne_zero σ hσ _ _ hθ0
-  simp only [GlobalTheory.NeedB.kum, dif_pos hex]
+  simp only [GlobalTheory.NeedB.kum, dite_eq_left hex]
   exact hex.choose_spec

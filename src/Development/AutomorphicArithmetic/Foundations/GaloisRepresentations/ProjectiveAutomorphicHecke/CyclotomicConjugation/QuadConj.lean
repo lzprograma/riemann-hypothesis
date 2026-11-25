@@ -140,9 +140,6 @@ private def cK {d : ℕ} {x : E} (hd : 0 < d) (hx : x ^ 2 = -(d : E)) : Kx x ≃
   AlgEquiv.ofAlgHom c0 c0 (AlgHom.ext fun a => Subtype.ext (conj_conj' _))
     (AlgHom.ext fun a => Subtype.ext (conj_conj' _))
 
-private theorem cK_coe {d : ℕ} {x : E} (hd : 0 < d) (hx : x ^ 2 = -(d : E)) (a : Kx x) :
-    ((cK hd hx a : Kx x) : E) = conjE E a := rfl
-
 private theorem aut_cases {d : ℕ} {x : E} (hd : 0 < d) (hx : x ^ 2 = -(d : E)) (σ : Kx x ≃ₐ[ℚ] Kx x) :
     σ = 1 ∨ σ = cK hd hx := by
   have hmem : x ∈ IntermediateField.adjoin ℚ {x} := IntermediateField.mem_adjoin_simple_self ℚ x

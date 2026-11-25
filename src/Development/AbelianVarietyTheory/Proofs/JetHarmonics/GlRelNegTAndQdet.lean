@@ -73,9 +73,9 @@ theorem _root_.GlobalTheory.CapelliNegT.glRel_negT_and_qdet :
       unfold _root_.Formalism.REAL.Tm
       by_cases h : a = b
       · subst h
-        simp only [if_true, map_neg]
+        simp only [ite_true, map_neg]
         abel
-      · simp only [h, Ne.symm h, if_false]
+      · simp only [h, Ne.symm h, ite_false]
         abel
     have hneg : ∀ g : Fin n → A, (List.ofFn fun k => -g k).prod = (-1) ^ n * (List.ofFn g).prod := by
       intro g

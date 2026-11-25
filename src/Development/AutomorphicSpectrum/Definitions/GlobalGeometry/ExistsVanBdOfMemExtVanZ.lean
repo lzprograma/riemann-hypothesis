@@ -1,44 +1,8 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.BarCompSubsetClosure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -158,60 +122,12 @@ theorem exists_vanBd_of_mem_extVanZ {la : AllWt.Weight Dw} {f : secZ Xo c (exOf 
   exact ⟨_, pull_inc₀_mem_vanBd hs Z, (sec₀_ruleTop s Z).symm⟩
 
 
-variable (X) in
-theorem exists_one : ∃ s : H0 (flagStr X) (X.LL 0) ⊤, ∀ k y hk, germ k y (memTop y) hk s = 1 := by
-  obtain ⟨s, hs⟩ := exists_of_germs (p := flagStr X) (O := ⊤) (X.F.isLB_LL 0) X.F.U id (fun _ => le_top)
-    (fun _ => le_rfl) (fun y _ => (commonLL X).cover y) (fun _ => 1) fun y k k' h h' => by
-      have := (commonLL X).nsmul 0 0 h h'
-      rw [zero_smul, pow_zero] at this
-      rw [map_one, map_one, mul_one]
-      exact (congrArg Units.val this).symm
-  exact ⟨s, fun k y hk => (hs k y hk).trans (map_one _)⟩
 
 
-variable (X) in
-def oneTop : H0 (flagStr X) (X.LL 0) ⊤ := (exists_one X).choose
-
-theorem germ_oneTop (k : X.F.J) (y : X.YY) (hk : y ∈ X.F.U k) :
-    germ (B := X.LL 0) k y (memTop y) hk (oneTop X) = 1 := (exists_one X).choose_spec k y hk
-
-
-variable (X) in
-theorem ruleTop_oneTop : ruleTop X 0 (oneTop X) = 1 := by
-  refine ruleTop_eq_iff.2 ⟨AllWt.one_mem_secZ, ext_germ fun y hy => ?_⟩
-  obtain ⟨k, hk⟩ := (commonLL X).cover y
-  have h := secOf_mul (X := X) (add_zero 0) ⟨1, AllWt.one_mem_secZ⟩ ⟨_, ruleTop_mem_secZ (oneTop X)⟩
-    ⟨_, ruleTop_mem_secZ (oneTop X)⟩ (one_mul _).symm
-  rw [secOf_ruleTop] at h
-  have h' := (congrArg (germ (B := X.LL 0) k y hy hk) h).trans
-    (((commonLL X).addChart (add_zero 0)).germ_mul _ _ k y hy hk hk hk)
-  have h₁ : germ (B := X.LL 0) k y hy hk (restr le_top (oneTop X)) = 1 :=
-    (germ_restr _ _ _ _ _ _).trans (germ_oneTop k y hk)
-  exact ⟨k, hk, h'.trans ((congrArg (_ * ·) h₁).trans (mul_one _))⟩
-
-
-variable (X) in
-theorem one_mem_extVanZ_iff : (1 : Rul Xo c) ∈ extVanZ X 0 ↔ flagOpen X = ⊤ := by
-  rw [← ruleTop_oneTop X, ruleTop_mem_extVanZ]
-  refine ⟨fun h => top_le_iff.1 fun y _ => by_contra fun hy => ?_, fun h y hy => (hy (h.ge (memTop y))).elim⟩
-  obtain ⟨k, hk⟩ := (commonLL X).cover y
-  exact h y hy k hk ((germ_oneTop k y hk).symm ▸ isUnit_one)
 
 end Flag
 
-def extVan (T : TorFlag Xo c) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) : Submodule c.F (Rul Xo c) :=
-  extVanZ T.X fun i => (ex Dw a n i : ℤ)
-
 variable (T : TorFlag Xo c) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ)
-
-theorem extVan_le_sec : extVan T a n ≤ sec Xo c a n :=
-  (extVanZ_le_secZ T.X _).trans (AllWt.secZ_nat Xo c a n).le
-
-theorem ex_zero : (fun i => (ex Dw 0 0 i : ℤ)) = 0 := by
-  funext i; cases i <;> rfl
-
-theorem one_mem_extVan_iff : (1 : Rul Xo c) ∈ extVan T 0 0 ↔ flagOpen T.X = ⊤ := by
-  rw [extVan, ex_zero, one_mem_extVanZ_iff]
 
 
 end GlobalTheory.CompanionTheory.Ar.OntoDef

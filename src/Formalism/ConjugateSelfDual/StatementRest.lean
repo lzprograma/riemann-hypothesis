@@ -3,45 +3,7 @@ module
 public import Formalism.ConjugateSelfDual.Statement
 public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import Mathlib.NumberTheory.ModularForms.QExpansion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -51,11 +13,6 @@ open NumberField IsDedekindDomain Polynomial Filter
 open scoped ModularForm MatrixGroups
 
 namespace Formalism.ConjugateSelfDual
-
-section places
-variable {F Ω : Type*} [Field F] [NumberField F] [Field Ω] [Algebra F Ω]
-
-end places
 
 section galois
 
@@ -101,18 +58,5 @@ structure CuspSpectrum (F : Type*) [Field F] [NumberField F] (n : ℕ) where
   finite : ∀ (M : ℕ) (w : (F →+* ℂ) → Fin n → ℤ), {π | level π M ∧ wt π = w}.Finite
 
 abbrev SpectrumFamily := ∀ (F : Type) [Field F] [NumberField F] (n : ℕ), CuspSpectrum F n
-
-def IsNormEigenform {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma1 N) k)
-    (χ : DirichletCharacter ℂ N) : Prop :=
-  (∀ γ ∈ CongruenceSubgroup.Gamma0 N, (⇑f ∣[k] (Matrix.SpecialLinearGroup.mapGL ℝ γ)) =
-      χ (((γ : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℤ) : ZMod N) • ⇑f) ∧
-  (UpperHalfPlane.qExpansion 1 f).coeff 1 = 1 ∧
-  (∀ a b : ℕ, Nat.Coprime a b → (UpperHalfPlane.qExpansion 1 f).coeff (a * b) =
-      (UpperHalfPlane.qExpansion 1 f).coeff a * (UpperHalfPlane.qExpansion 1 f).coeff b) ∧
-  (∀ p r : ℕ, p.Prime → ¬ p ∣ N → (UpperHalfPlane.qExpansion 1 f).coeff (p ^ (r + 2)) =
-      (UpperHalfPlane.qExpansion 1 f).coeff p * (UpperHalfPlane.qExpansion 1 f).coeff (p ^ (r + 1)) -
-        χ (p : ZMod N) * (p : ℂ) ^ (k - 1) * (UpperHalfPlane.qExpansion 1 f).coeff (p ^ r)) ∧
-  (∀ p r : ℕ, p.Prime → p ∣ N → (UpperHalfPlane.qExpansion 1 f).coeff (p ^ r) =
-      (UpperHalfPlane.qExpansion 1 f).coeff p ^ r)
 
 end Formalism.ConjugateSelfDual

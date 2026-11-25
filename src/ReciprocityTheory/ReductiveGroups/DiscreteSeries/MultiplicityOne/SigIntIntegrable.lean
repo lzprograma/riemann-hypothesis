@@ -15,7 +15,7 @@ namespace ReciprocityTheory.ChartRestriction.DS.Mult1.TopH
 
 open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2 ReciprocityTheory.ChartRestriction.DS.Mult1
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ} {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
 
@@ -177,14 +177,12 @@ end ReciprocityTheory.ChartRestriction.DS.Mult1.TopH
 
 noncomputable section
 
-open MeasureTheory Matrix
-open scoped InnerProductSpace ENNReal ComplexConjugate
 
 namespace ReciprocityTheory.ChartRestriction.DS.Mult1.TopH
 
 open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2 ReciprocityTheory.ChartRestriction.DS.Mult1
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ} {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
 
@@ -213,9 +211,9 @@ theorem psi_cont (z : Fin (2 * r + k + 1) → ℂ) : Continuous (fun m : Mat k r
       else (m *ᵥ z) (eI k r a)) := by
     refine continuous_finsetSum _ fun a _ => ?_
     by_cases h : (a : ℕ) + 1 < r
-    · simp only [dif_pos h]
+    · simp only [dite_eq_left h]
       exact continuous_id.matrix_elem _ _
-    · simp only [dif_neg h]
+    · simp only [dite_eq_right h]
       show Continuous ((fun v : Fin (2 * r + k + 1) → ℂ => v (eI k r a)) ∘ fun m : Mat k r => m *ᵥ z)
       exact (continuous_apply (eI k r a)).comp (mulVec_cont z)
   exact Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp

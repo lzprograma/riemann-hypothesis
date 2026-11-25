@@ -38,6 +38,7 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.NotMemSpanOfCommute
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatHalfTensorOrthogonalIdempotentsStatement
 
 @[expose] public section
 
@@ -45,7 +46,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.SeeSaw GlobalTheory.LatPair GlobalTheory.SplitWeil
 open GlobalTheory.Unf GlobalTheory.Grow GlobalTheory.FinPl ValuativeRel IsLocalRing GlobalTheory.AdForm
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
 
 namespace GlobalTheory.FinPl.PutIn.Factor
@@ -68,41 +68,7 @@ theorem half_of_idem {m n : ℕ} {b : AE D} (hb : b * b = b) (t : Mx D m n) : Is
 theorem isSBHalf_tens {S T : HSp D} {a b : AE D} {Λ : AddSubgroup (WO S T)} {Φ Ψ : WO S T → ℂ}
     (hab : a * b = 0) (hb : b * b = b) (hbΛ : ∀ u ∈ Λ, b • u ∈ Λ) (hΦ : IsSBHalf a Λ Φ) (hΨ : IsSBHalf b Λ Ψ) :
     IsSBHalf (a + b) Λ (tens b Φ Ψ) := by
-  obtain ⟨sΦ, kΦ, hkΦ, iΦ, fΦ⟩ := hΦ
-  obtain ⟨sΨ, kΨ, hkΨ, iΨ, fΨ⟩ := hΨ
-  have hne : ∀ t, tens b Φ Ψ t ≠ 0 → Φ (t - b • t) ≠ 0 ∧ Ψ (b • t) ≠ 0 := fun t ht => by
-    rw [tens_apply] at ht
-    exact ⟨left_ne_zero_of_mul ht, right_ne_zero_of_mul ht⟩
-  refine ⟨fun t ht => ?_, kΦ * kΨ, Nat.mul_pos hkΦ hkΨ, fun u hu hua t => ?_, fun t ht => ?_⟩
-  · obtain ⟨h1, -⟩ := hne t ht
-    intro i j
-    have h := sΦ _ h1 i j
-    simp only [Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul] at h
-    linear_combination h + (t i j) * hab
-  · have hbu : b • u ∈ Λ := hbΛ u hu
-    have hsub : u - b • u ∈ Λ := Λ.sub_mem hu hbu
-    have hau : IsHalf a (u - b • u) := fun i j => by
-      have e1 := hua i j
-      simp only [Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul]
-      linear_combination e1 - (u i j) * hab - (u i j) * hb + (u i j) * hb
-    have hA : (t + (kΦ * kΨ) • u) - b • (t + (kΦ * kΨ) • u) = (t - b • t) + kΦ • (kΨ • (u - b • u)) := by
-      ext i j
-      simp only [Matrix.sub_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, nsmul_eq_mul, Nat.cast_mul]
-      ring
-    have hB : b • (t + (kΦ * kΨ) • u) = b • t + kΨ • (kΦ • (b • u)) := by
-      ext i j
-      simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, nsmul_eq_mul, Nat.cast_mul]
-      ring
-    rw [tens_apply, tens_apply, hA, hB,
-      iΦ _ (AddSubgroup.nsmul_mem Λ hsub kΨ) (_root_.GlobalTheory.SplitScalar.isHalf_nsmul hau kΨ),
-      iΨ _ (AddSubgroup.nsmul_mem Λ hbu kΦ) (_root_.GlobalTheory.SplitScalar.isHalf_nsmul (half_of_idem hb u) kΦ)]
-  · obtain ⟨h1, h2⟩ := hne t ht
-    have hC : (kΦ * kΨ) • t = kΨ • (kΦ • (t - b • t)) + kΦ • (kΨ • (b • t)) := by
-      ext i j
-      simp only [Matrix.sub_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, nsmul_eq_mul, Nat.cast_mul]
-      ring
-    rw [hC]
-    exact Λ.add_mem (AddSubgroup.nsmul_mem Λ (fΦ _ h1) kΨ) (AddSubgroup.nsmul_mem Λ (fΨ _ h2) kΦ)
+  apply _root_.GlobalTheory.FinPl.PutIn.isSBHalf_tens <;> assumption
 
 
 open GlobalTheory.LocMod.TensorModel in
@@ -124,7 +90,7 @@ theorem isPlaceModel_tensR : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T 
       by_cases h0 : Φ (t - b • t) = 0
       · rw [h0]; ring
       · have e1 : symplO S T t y = symplO S T (t - b • t) y + symplO S T (b • t) y := by
-          rw [← symplO_add_left', sub_add_cancel]
+          rw [← GlobalTheory.LatVac.symplO_add_left, sub_add_cancel]
         rw [e1, symplO_half_zero hab (hΦ.1 _ h0) hy, zero_add]
         ring
     simp only [LinearMap.comp_apply, tensR_apply]
@@ -136,8 +102,8 @@ theorem isPlaceModel_tensR : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T 
       have hiff : (t ∈ Λ' ∧ IsHalf b t) ↔ (t ∈ Λ ∧ IsHalf b t) :=
         ⟨fun h => ⟨(hΛ t h.2).1 h.1, h.2⟩, fun h => ⟨(hΛ t h.2).2 h.1, h.2⟩⟩
       by_cases h : t ∈ Λ ∧ IsHalf b t
-      · rw [if_pos (hiff.2 h), if_pos h]
-      · rw [if_neg (mt hiff.1 h), if_neg h]
+      · rw [ite_eq_left (hiff.2 h), ite_eq_left h]
+      · rw [ite_eq_right (mt hiff.1 h), ite_eq_right h]
     rw [one_smul, hind]
     rfl
 

@@ -3,45 +3,6 @@ module
 public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
 public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModBasic
 public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.LeviCivita
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -456,34 +417,18 @@ theorem fac_bdd {t : ℕ × ℕ × ℕ} (ht : 0 < t.1 ∧ 0 < t.2.2) : IsBounded
 
 theorem Gm_mdiff {m : ℕ} (hm : 0 < m) : MDiff (Gm m) := by
   unfold Gm
-  have key : ∀ s : Finset (ℕ × ℕ × ℕ), s ⊆ Tm m → MDiff (fun τ => ∏ t ∈ s, fac t τ) := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty =>
-      intro _
-      simpa using (mdifferentiable_const : MDiff (fun _ : ℍ => (1 : ℂ)))
-    | insert t s ht ih =>
-      intro hs
-      simp only [Finset.prod_insert ht]
-      exact (fac_mdiff (Tm_pos hm (hs (Finset.mem_insert_self t s)))).mul
-        (ih (fun x hx => hs (Finset.mem_insert_of_mem hx)))
-  exact key _ subset_rfl
+  rw [← Finset.prod_fn]
+  exact Finset.prod_induction fac (fun g : ℍ → ℂ => MDiff g)
+    (fun _ _ ha hb => ha.mul hb) (mdifferentiable_const : MDiff (1 : ℍ → ℂ))
+    fun t ht => fac_mdiff (Tm_pos hm ht)
 
 theorem Gm_bdd {m : ℕ} (hm : 0 < m) : IsBoundedAtImInfty (Gm m) := by
   unfold Gm
-  have key : ∀ s : Finset (ℕ × ℕ × ℕ), s ⊆ Tm m → IsBoundedAtImInfty (fun τ => ∏ t ∈ s, fac t τ) := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty =>
-      intro _
-      simp only [Finset.prod_empty]
-      exact Filter.const_boundedAtFilter atImInfty (1 : ℂ)
-    | insert t s ht ih =>
-      intro hs
-      simp only [Finset.prod_insert ht]
-      exact Filter.BoundedAtFilter.mul (fac_bdd (Tm_pos hm (hs (Finset.mem_insert_self t s))))
-        (ih (fun x hx => hs (Finset.mem_insert_of_mem hx)))
-  exact key _ subset_rfl
+  rw [← Finset.prod_fn]
+  exact Finset.prod_induction fac (fun g : ℍ → ℂ => IsBoundedAtImInfty g)
+    (fun _ _ ha hb => Filter.BoundedAtFilter.mul ha hb)
+    (Filter.const_boundedAtFilter atImInfty (1 : ℂ))
+    fun t ht => fac_bdd (Tm_pos hm ht)
 
 theorem Gm_slash {m : ℕ} (hm : 0 < m) (γ : SL(2, ℤ)) :
     (Gm m) ∣[24 * ((Tm m).card : ℤ)] γ = Gm m := by

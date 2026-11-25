@@ -20,21 +20,13 @@ section Tools
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
 
-private theorem hermSp_h_sum_smul_right {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V)
-    {ι : Type} [Fintype ι] (y : V) (c : ι → E) (x : ι → V) :
-    H.h y (∑ i, c i • x i) = ∑ i, M.L.cj (c i) * H.h y (x i) := by
-
-  rw [H.h_herm (∑ i, c i • x i) y, _root_.Formalism.L2.SG.LsDatumA.h_sum_smul_left, map_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_mul, ← H.h_herm]
-
 theorem gram_recomb {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V) {ι : Type}
     [Fintype ι] (v : ι → V) (A : Matrix ι ι E) :
     H.gram (fun j => ∑ i, A i j • v i) = (A.map M.L.cj)ᵀ * H.gram v * A := by
   ext a b
   simp only [HermSp.gram, Matrix.of_apply, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply]
   rw [_root_.Formalism.L2.SG.LsDatumA.h_sum_smul_left]
-  simp only [hermSp_h_sum_smul_right, Finset.mul_sum, Finset.sum_mul]
+  simp only [h_sum_smul_right, Finset.mul_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => ?_
   ring
 

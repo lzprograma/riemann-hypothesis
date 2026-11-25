@@ -10,47 +10,9 @@ public import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 public import Mathlib.Algebra.Module.FinitePresentation
 public import Mathlib.RingTheory.LocalRing.Module
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 
@@ -245,11 +207,11 @@ theorem inter_isVBOn_of_map : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : 
     (L.inter V).IsVBOn T (Module.finrank Ω V) V ∧
       ∀ p ∈ T, ∃ Q : Submodule (regAt ξ p) E, Disjoint Q (L.inter V p) ∧ Q ⊔ L.inter V p = L p := by
   intro X Ω _ ξ E _ _ L T g s W V W' hVW hL hM
-  have hcoh : L.IsCohOn T := (_root_.GlobalTheory.CompanionTheory.Ar.coh_vb_images_sums_multiples X Ω ξ E E L L T).1 g W hL
+  have hcoh : L.IsCohOn T := (_root_.PositivityTheory.HtPt.Mc.coh_ops X Ω ξ E E L L T).1 g W hL
   have key : ∀ p ∈ T, ∃ (k : ℕ) (e : Fin s → E) (n : Fin k → E), LinearIndependent Ω (cat e n) ∧
       L p = span (regAt ξ p) (Set.range e) ⊔ span (regAt ξ p) (Set.range n) ∧
       (LinearIndependent Ω fun i => V.mkQ (e i)) ∧ (∀ j, n j ∈ V) ∧ span Ω (Set.range n) = V := fun p hp => by
-    have := (_root_.GlobalTheory.CompanionTheory.Ar.regAt_local_mono_frac X Ω ξ).1 p
+    have := (_root_.PositivityTheory.HtPt.Ma.reg_local X Ω ξ).1 p
     obtain ⟨U, hU, b, hbW, hb⟩ := hL p hp
     obtain ⟨U', hU', c, -, hc⟩ := hM p hp
     obtain ⟨hb1, hb2⟩ := hb p hp hU
@@ -263,7 +225,7 @@ theorem inter_isVBOn_of_map : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : 
     have hk : k = Module.finrank Ω V := by
       rw [← hnV, finrank_span_eq_card hnI]; simp
     subst hk
-    obtain ⟨U, hU, h⟩ := _root_.GlobalTheory.CompanionTheory.Ar.frame_spread_near X Ω ξ E L T _ (cat e n) p hcoh hp
+    obtain ⟨U, hU, h⟩ := _root_.PositivityTheory.HtPt.Mc.frame_spread X Ω ξ E L T _ (cat e n) p hcoh hp
       ⟨hf, by rw [span_cat]; exact hP⟩
     refine ⟨U, hU, n, hnV, fun q hq hqU => ⟨hnI, ?_⟩⟩
     obtain ⟨-, h2⟩ := h q hq hqU

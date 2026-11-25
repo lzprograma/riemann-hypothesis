@@ -2,54 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.FourierColumnIndicator
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -279,7 +231,7 @@ theorem eN_of_not {N i : ℕ} (h : ¬ i < N) : Loc.eN E N i = 0 := by
   funext l
   have := l.2
   simp only [Loc.eN, Pi.zero_apply]
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 theorem entB_int {n' c' n c : ℕ} (k₀ : ℕ) {ex' ex : ℕ → ℕ} {x : HomE E (n' + c') (n + c)}
     (h : x ∈ homS (LocE.lamY P (qOf P) n' c' ex') (LocE.lamY P (qOf P) n c ex)) (p p' : ℕ) :
@@ -346,13 +298,13 @@ end Lat
 
 theorem ne_of_ite {α : Type} [Zero α] {p : Prop} {_ : Decidable p} {a : α} (h : (if p then a else 0) ≠ 0) : p := by
   by_contra hp
-  exact h (if_neg hp)
+  exact h (ite_eq_right hp)
 
 theorem ite_eq_ite_zero {α : Type} [Zero α] {p q : Prop} {_ : Decidable p} {_ : Decidable q} {a b : α} (h : p ↔ q)
     (h' : q → a = b) : (if p then a else 0) = if q then b else 0 := by
   by_cases hq : q
-  · rw [if_pos hq, if_pos (h.2 hq), h' hq]
-  · rw [if_neg hq, if_neg (fun hp => hq (h.1 hp))]
+  · rw [ite_eq_left hq, ite_eq_left (h.2 hq), h' hq]
+  · rw [ite_eq_right hq, ite_eq_right (fun hp => hq (h.1 hp))]
 
 section Data
 
@@ -576,10 +528,10 @@ theorem exists_split {V : Type} {n : ℕ} (F : V → Sp E n → K) (h1 : ∀ x y
       rw [← Submodule.Quotient.eq, hmk, Subtype.ext_iff, eq_comm]
     rw [Finset.sum_eq_single ⟨Submodule.Quotient.mk y, y, hy, rfl⟩]
     · dsimp only
-      rw [if_pos ((key _).2 rfl), mul_one, ← h2 x (a _) _ ((key _).2 rfl), add_sub_cancel]
+      rw [ite_eq_left ((key _).2 rfl), mul_one, ← h2 x (a _) _ ((key _).2 rfl), add_sub_cancel]
     · intro i _ hi
       dsimp only
-      rw [if_neg (fun h => hi ((key i).1 h)), mul_zero]
+      rw [ite_eq_right (fun h => hi ((key i).1 h)), mul_zero]
     · intro h
       exact absurd (Finset.mem_univ _) h
   · rw [of_not_not fun h => hy (h1 x y h), Finset.sum_eq_zero]

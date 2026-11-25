@@ -1,49 +1,6 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.SameSign
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -71,7 +28,7 @@ private theorem raiB_apply_of_linePos_eq_true {l : FockH1Action.Ln p q r s}
     FockH1Action.raiB l P = X l * P := by
   first
   | (rw [FockH1Action.raiB, if_pos h]; done)
-  | (rw [FockH1Action.raiB, if_pos h]; rfl)
+  | (rw [FockH1Action.raiB, ite_eq_left h]; rfl)
 
 private theorem lowB_apply_of_linePos_eq_false {l : FockH1Action.Ln p q r s}
     (h : FockH1Action.linePos l = false) (P : FockH1Action.Pol p q r s) :
@@ -79,7 +36,7 @@ private theorem lowB_apply_of_linePos_eq_false {l : FockH1Action.Ln p q r s}
   have h' : ¬ (FockH1Action.linePos l = true) := by simp [h]
   first
   | (rw [FockH1Action.lowB, if_neg h']; done)
-  | (rw [FockH1Action.lowB, if_neg h']; rfl)
+  | (rw [FockH1Action.lowB, ite_eq_right h']; rfl)
 
 theorem omE_pos_neg {l l' : FockH1Action.Ln p q r s} (h1 : FockH1Action.linePos l = true)
     (h2 : FockH1Action.linePos l' = false) (P : FockH1Action.Pol p q r s) :
@@ -87,7 +44,7 @@ theorem omE_pos_neg {l l' : FockH1Action.Ln p q r s} (h1 : FockH1Action.linePos 
   have hne : l ≠ l' := by
     rintro rfl
     simp_all
-  rw [omE_apply, if_neg hne, add_zero, lowB_apply_of_linePos_eq_false h2, raiB_apply_of_linePos_eq_true h1]
+  rw [omE_apply, ite_eq_right hne, add_zero, lowB_apply_of_linePos_eq_false h2, raiB_apply_of_linePos_eq_true h1]
 
 private theorem raiB_apply_of_linePos_eq_false {l : FockH1Action.Ln p q r s}
     (h : FockH1Action.linePos l = false) (P : FockH1Action.Pol p q r s) :
@@ -95,14 +52,14 @@ private theorem raiB_apply_of_linePos_eq_false {l : FockH1Action.Ln p q r s}
   have h' : ¬ (FockH1Action.linePos l = true) := by simp [h]
   first
   | (rw [FockH1Action.raiB, if_neg h']; done)
-  | (rw [FockH1Action.raiB, if_neg h']; rfl)
+  | (rw [FockH1Action.raiB, ite_eq_right h']; rfl)
 
 private theorem lowB_apply_of_linePos_eq_true {l : FockH1Action.Ln p q r s}
     (h : FockH1Action.linePos l = true) (P : FockH1Action.Pol p q r s) :
     FockH1Action.lowB l P = pderiv l P := by
   first
   | (rw [FockH1Action.lowB, if_pos h]; done)
-  | (rw [FockH1Action.lowB, if_pos h]; rfl)
+  | (rw [FockH1Action.lowB, ite_eq_left h]; rfl)
 
 theorem omE_neg_pos {l l' : FockH1Action.Ln p q r s} (h1 : FockH1Action.linePos l = false)
     (h2 : FockH1Action.linePos l' = true) (P : FockH1Action.Pol p q r s) :
@@ -110,14 +67,11 @@ theorem omE_neg_pos {l l' : FockH1Action.Ln p q r s} (h1 : FockH1Action.linePos 
   have hne : l ≠ l' := by
     rintro rfl
     simp_all
-  rw [omE_apply, if_neg hne, add_zero, lowB_apply_of_linePos_eq_true h2, raiB_apply_of_linePos_eq_false h1]
+  rw [omE_apply, ite_eq_right hne, add_zero, lowB_apply_of_linePos_eq_true h2, raiB_apply_of_linePos_eq_false h1]
 
 private theorem mem_homog_iff_isHomogeneous' {σ : Type} {d : ℕ} {P : MvPolynomial σ ℂ} :
     P ∈ FockH1Action.homog σ d ↔ P.IsHomogeneous d := by
   exact mem_homogeneousSubmodule d P
-
-private theorem isHomogeneous_X_complex {σ : Type} (l : σ) : (X l : MvPolynomial σ ℂ).IsHomogeneous 1 := by
-  exact isHomogeneous_X ℂ l
 
 private theorem exists_forall_isHomogeneous_monomial {σ : Type} (u : σ →₀ ℕ) :
     ∃ k : ℕ, ∀ c : ℂ, (monomial u c).IsHomogeneous k := by
@@ -147,7 +101,7 @@ private theorem homogeneousComponent_pderiv_monomial {σ : Type} (l : σ) (e : �
       rw [X, monomial_mul_monomial, huv, mul_one]
     have hu' : (monomial u a).IsHomogeneous (k + 1) := by
       rw [hmul]
-      exact (hk a).mul (isHomogeneous_X_complex l)
+      exact (hk a).mul (isHomogeneous_X ℂ l)
     rw [pderiv_monomial, homogeneousComponent_eq_ite_of_isHomogeneous (hk _), homogeneousComponent_eq_ite_of_isHomogeneous hu']
     by_cases hke : k = e
     · subst hke
@@ -166,15 +120,11 @@ theorem pderiv_homog_zero {σ : Type} (l : σ) {P : MvPolynomial σ ℂ} (h : P.
   rw [← sum_homogeneousComponent (pderiv l P)]
   refine Finset.sum_eq_zero fun e _ => ?_
   rw [homogeneousComponent_pderiv, homogeneousComponent_eq_ite_of_isHomogeneous h,
-    if_neg (show ¬ (0 = e + 1) by omega), map_zero]
-
-private theorem isHomogeneous_zero_complex {σ : Type} (n : ℕ) : (0 : MvPolynomial σ ℂ).IsHomogeneous n :=
-  mem_homog_iff_isHomogeneous'.mp (Submodule.zero_mem _)
+    ite_eq_right (show ¬ (0 = e + 1) by omega), map_zero]
 
 private theorem isHomogeneous_pderiv_of_isHomogeneous_succ {σ : Type} (l : σ) {n : ℕ} {P : MvPolynomial σ ℂ}
     (h : P.IsHomogeneous (n + 1)) : (pderiv l P).IsHomogeneous n := by
-  have hP : homogeneousComponent (n + 1) P = P := by
-    rw [homogeneousComponent_eq_ite_of_isHomogeneous h, if_pos rfl]
+  have hP : homogeneousComponent (n + 1) P = P := homogeneousComponent_eq_self h
   rw [← hP, ← homogeneousComponent_pderiv]
   exact homogeneousComponent_isHomogeneous _ _
 
@@ -183,15 +133,15 @@ theorem X_mul_pderiv_homog {σ : Type} (l l' : σ) {d : ℕ} {P : MvPolynomial �
   cases d with
   | zero =>
     rw [pderiv_homog_zero l' h, mul_zero]
-    exact isHomogeneous_zero_complex 0
+    exact isHomogeneous_zero _ ℂ 0
   | succ n =>
-    have h' := (isHomogeneous_X_complex l).mul (isHomogeneous_pderiv_of_isHomogeneous_succ l' h)
+    have h' := (isHomogeneous_X ℂ l).mul (isHomogeneous_pderiv_of_isHomogeneous_succ l' h)
     rwa [Nat.add_comm 1 n] at h'
 
 theorem pderiv_X_mul_homog {σ : Type} (l l' : σ) {d : ℕ} {P : MvPolynomial σ ℂ}
     (h : P.IsHomogeneous d) : (pderiv l (X l' * P)).IsHomogeneous d := by
   apply isHomogeneous_pderiv_of_isHomogeneous_succ
-  have h' := (isHomogeneous_X_complex l').mul h
+  have h' := (isHomogeneous_X ℂ l').mul h
   rwa [Nat.add_comm 1 d] at h'
 
 theorem blockDiagonalPreservesDegree : KCStep := by
@@ -269,7 +219,7 @@ theorem Rop_raise (M : Matrix (FockH1Action.Ln p q r s) (FockH1Action.Ln p q r s
   refine Submodule.sum_mem _ fun l _ => Submodule.sum_mem _ fun l' _ => ?_
   split_ifs
   · refine Submodule.smul_mem _ _ (mem_homog_iff_isHomogeneous'.mpr ?_)
-    have h := (isHomogeneous_X_complex l).mul ((isHomogeneous_X_complex l').mul (mem_homog_iff_isHomogeneous'.mp hP))
+    have h := (isHomogeneous_X ℂ l).mul ((isHomogeneous_X ℂ l').mul (mem_homog_iff_isHomogeneous'.mp hP))
     rwa [show 1 + (1 + d) = d + 2 by omega] at h
   · exact Submodule.zero_mem _
 
@@ -391,7 +341,7 @@ theorem adjStep_of (hS : PMSplit) (hL : FockLinL) (hR : FockLinR) (hX : FockXAdj
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun l' _ => ?_
   by_cases h : FockH1Action.linePos l = true ∧ FockH1Action.linePos l' = false
-  · rw [if_pos h, if_pos ⟨h.2, h.1⟩, hA l l' h.1 h.2, neg_neg]
-  · rw [if_neg h, if_neg (fun h' => h ⟨h'.2, h'.1⟩), neg_zero]
+  · rw [ite_eq_left h, ite_eq_left ⟨h.2, h.1⟩, hA l l' h.1 h.2, neg_neg]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h ⟨h'.2, h'.1⟩), neg_zero]
 
 end FockRL

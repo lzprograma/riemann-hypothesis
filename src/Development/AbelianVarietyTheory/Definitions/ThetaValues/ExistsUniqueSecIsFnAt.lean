@@ -5,48 +5,8 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionArithmetic
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
 public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterSqEqOneOfSymmetric
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -99,14 +59,6 @@ theorem valAt'_sec {M : LB X} (s : M.Sec) (i j : M.ι) (hi : ⊤ ≤ x ⁻¹ᵁ 
   have hij := (le_preimage_inf x _ _).2 ⟨hi, hj⟩
   rw [← valAt'_res x inf_le_left hij (s.f i), s.compat i j, valAt'_mul x hij,
     valAt'_res x inf_le_right hij]
-
-theorem valAt'_id_top (r : Γ(Sp ℂ, ⊤)) :
-    valAt' (𝟙 (Sp ℂ)) ⊤ r = (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom r := by
-  have e : ∀ k, Scheme.Hom.appLE (𝟙 (Sp ℂ)) ⊤ ⊤ k = 𝟙 _ := fun k => by
-    rw [← Scheme.Hom.id_app]
-    exact (Scheme.Hom.app_eq_appLE (𝟙 (Sp ℂ)) (U := ⊤)).symm
-  rw [valAt', dite_eq_left (show ⊤ ≤ 𝟙 (Sp ℂ) ⁻¹ᵁ ⊤ from fun _ _ => trivial), valAt, e]
-  rfl
 
 end Values
 
@@ -182,9 +134,6 @@ def exAt (z : Fin g → ℂ) : Sp ℂ ⟶ (T ⊗ A).left := (lift p (u.ex z)).le
 theorem exAt_snd (z : Fin g → ℂ) : exAt u p z ≫ (snd T A).left = (u.ex z).left :=
   (Over.comp_left _ _ _ _ _).symm.trans (congrArg CommaMorphism.left (lift_snd p (u.ex z)))
 
-theorem exAt_fst (z : Fin g → ℂ) : exAt u p z ≫ (fst T A).left = p.left :=
-  (Over.comp_left _ _ _ _ _).symm.trans (congrArg CommaMorphism.left (lift_fst p (u.ex z)))
-
 theorem ex_fibreIncl (z : Fin g → ℂ) : (u.ex z).left ≫ (fibreIncl A p).left = exAt u p z := by
   rw [← Over.comp_left, fibreIncl, comp_lift, Category.comp_id, ← Category.assoc,
     toUnit_unique (u.ex z ≫ toUnit A) (𝟙 _), Category.id_comp]
@@ -211,12 +160,6 @@ theorem exAt_hol (U : (T ⊗ A).left.Opens) (f : Γ((T ⊗ A).left, U)) :
   simp only [← ex_fibreIncl]
   refine ⟨h.1, h.2.congr fun z _ => ?_⟩
   exact (valAt'_app (u.ex z).left (fibreIncl A p).left U f).symm
-
-theorem valAt'_liftFun {W : (T ⊗ A).left.Opens} {z : Fin g → ℂ} (hW : ⊤ ≤ exAt u p z ⁻¹ᵁ W)
-    (r : Γ(T.left, ⊤)) : valAt' (exAt u p z) W (liftFun A W r) = valAt' p.left ⊤ r := by
-  refine (valAt'_res (exAt u p z) (U := (fst T A).left ⁻¹ᵁ ⊤) le_top hW _).trans ?_
-  refine (valAt'_app (exAt u p z) (fst T A).left ⊤ r).trans ?_
-  rw [exAt_fst]
 
 theorem valAt'_LPow_g (k : ℤ) (j j' : Fin 1 → L.ι) (z : Fin g → ℂ)
     (hj : ⊤ ≤ exAt u p z ⁻¹ᵁ (LPow A L k T).U j) (hj' : ⊤ ≤ exAt u p z ⁻¹ᵁ (LPow A L k T).U j') :
@@ -285,26 +228,6 @@ variable {u p}
 
 variable (u p)
 
-theorem isFnAt_zero (k : ℤ) : IsFnAt u p k (H1.SectionArithmetic.secZero (LPow A L k T)) 0 := fun j z hj => by
-  rw [Pi.zero_apply, zero_mul, valAt'_eq_valHom _ hj]
-  exact map_zero _
-
-
-variable (A L) in
-def secOfFun (r : Γ(T.left, ⊤)) : LB.Sec (LPow A L 0 T) where
-  f j := liftFun A _ r
-  compat j j' := by
-    have : (LPow A L 0 T).g j j' = 1 := by
-      unfold LPow LB.LinComb
-      dsimp only
-      exact Finset.prod_eq_one fun _ _ => zpow_zero _
-    rw [this, Units.val_one, _root_.one_mul]
-    exact (res_liftHom A _ r).trans (res_liftHom A _ r).symm
-
-theorem isFnAt_secOfFun (r : Γ(T.left, ⊤)) :
-    IsFnAt u p 0 (secOfFun A L r) (fun _ => valAt' p.left ⊤ r) := fun j z hj => by
-  rw [zpow_zero, _root_.mul_one]
-  exact valAt'_liftFun u p hj r
 
 
 
@@ -370,48 +293,10 @@ def basePt : 𝟙_ (Over (Sp ℂ)) ⟶ baseOver (Sp ℂ) := Over.homMk (𝟙 (Sp
 
 instance isIso_basePt : IsIso basePt := inferInstanceAs (IsIso (𝟙 (𝟙_ (Over (Sp ℂ)))))
 
-abbrev IsFnT (k : ℤ) (s : LB.Sec (LPow A L k (baseOver (Sp ℂ)))) (θ : (Fin g → ℂ) → ℂ) : Prop :=
-  IsFnAt u basePt k s θ
-
-abbrev constT (a : ℂ) : Γ((baseOver (Sp ℂ)).left, ⊤) :=
-  (Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom a
-
-abbrev numT (r : Γ((baseOver (Sp ℂ)).left, ⊤)) : ℂ :=
-  (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom r
-
-theorem numT_constT (a : ℂ) : numT (constT a) = a :=
-  (Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv_hom_id_apply a
-
-theorem valAt'_basePt (r : Γ((baseOver (Sp ℂ)).left, ⊤)) : valAt' basePt.left ⊤ r = numT r :=
-  valAt'_id_top r
-
 variable {u}
 
 variable (u)
 
-theorem isFnT_zero (k : ℤ) :
-    IsFnT u k (H1.SectionArithmetic.secZero (LPow A L k (baseOver (Sp ℂ)))) 0 := isFnAt_zero u basePt k
-
-theorem isFnT_const (a : ℂ) : IsFnT u 0 (secOfFun A L (constT a)) (fun _ => a) := by
-  have h := isFnAt_secOfFun u basePt (constT a)
-  rwa [valAt'_basePt, numT_constT] at h
-
 end Base
-
-def zeroUnif : HolUnif (Inh.zeroPolAV (Sp ℂ)).A (Inh.zeroPolAV (Sp ℂ)).L 0 where
-  ex _ := 1
-  ex_add _ _ := (_root_.mul_one _).symm
-  ex_onto x := ⟨0, toUnit_unique _ _⟩
-  Λ := ⊤
-  ker _ := ⟨fun _ => trivial, fun _ => rfl⟩
-  discrete := inferInstance
-  full := by simp
-  hol _ _ := ⟨isOpen_discrete _, differentiableOn_const _⟩
-  fr _ _ := 1
-  fr_hol _ := differentiableOn_const _
-  fr_ne _ _ _ := one_ne_zero
-  fr_compat _ _ _ h := by
-    rw [valAt'_eq_valHom _ h, _root_.mul_one]
-    exact (map_one _).symm
 
 end GlobalTheory.ThetaFn

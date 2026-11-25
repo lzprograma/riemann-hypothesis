@@ -17,8 +17,6 @@ open scoped InnerProductSpace
 
 namespace Formalism.L2.SG.RowsJoinPinned
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def castGA {I I' : Formalism.MainNotions.S.AutInst} (h : I = I') : I.GA ≃ₜ* I'.GA := h ▸ ContinuousMulEquiv.refl I.GA
 
 variable {D : D7}

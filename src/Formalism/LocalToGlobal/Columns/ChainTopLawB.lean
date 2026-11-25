@@ -245,7 +245,7 @@ theorem topLawG_sym (hlaw : CtlPhiLaw) (hX : X.Ok) (hPr : Pr.Ok) {m2 : ℕ} (hm 
     exact congrArg (fun z : X.Kˣ => (z : X.K))
       (ctl_lamXmsym_congr (Ch.psi0 ⟨w.1, hw⟩) (extChi fun s => Ch.chi s ⟨w.1, hw⟩) hrN (by omega) hH'm hH')
   unfold rhoS rhoT PhiTopG
-  simp only [if_pos hw, hsharp, if_true]
+  simp only [ite_eq_left hw, hsharp, ite_true]
   have e1 : psi0P Ch w.1 = Ch.psi0 ⟨w.1, hw⟩ := by
     unfold psi0P
     rw [dite_eq_left hw]

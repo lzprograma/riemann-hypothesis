@@ -10,59 +10,13 @@ public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.
 public import Formalism.ThetaLogCoordinates.JacobiPathWeights.FinalP
 public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.IndexWeightsDominance
 public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.JacobiMinorProof
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.GroupTheory.Nilpotent
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LemmaA2indepOf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -197,7 +151,7 @@ theorem Psi_X_low {j : ℕ} (hj : j ∈ S) (a : Fin n) :
     simp only [Matrix.vecMul, dotProduct, Matrix.map_apply]
     exact Subalgebra.sum_mem _ fun b _ => Subalgebra.mul_mem _ (X_mem_supported.mpr ⟨j, b, hj, rfl⟩)
       (by rw [← algebraMap_eq]; exact Subalgebra.algebraMap_mem _ _)
-  simp only [Psi_apply, genH, rename_X, map_X, sharpHom, aeval_X, if_pos hj]
+  simp only [Psi_apply, genH, rename_X, map_X, sharpHom, aeval_X, ite_eq_left hj]
   split_ifs
   · exact hgen _
   · rw [← Matrix.transpose_map]
@@ -205,7 +159,7 @@ theorem Psi_X_low {j : ℕ} (hj : j ∈ S) (a : Fin n) :
 
 theorem Psi_X_high {j : ℕ} (hj : j ∉ S) (a : Fin n) :
     Psi isVec S (X (j, a) : MvPolynomial (ℕ × Fin n) k) = X (Sum.inl (j, a)) := by
-  simp only [Psi_apply, genH, rename_X, map_X, sharpHom, aeval_X, if_neg hj]
+  simp only [Psi_apply, genH, rename_X, map_X, sharpHom, aeval_X, ite_eq_right hj]
 
 theorem Psi_C (c : k) : Psi (n := n) isVec S (C c) = C (genφ k n c) := by
   simp only [Psi_apply, genH, rename_C, map_C, sharpHom, aeval_C, algebraMap_eq]
@@ -265,13 +219,13 @@ theorem Psi_Gc_low {i : ℕ} (hS : ∀ j, j ∈ S ↔ j < i) (G : MvPolynomial (
 
   simp only [Gc, map_sum]
   exact Subalgebra.sum_mem _ fun e _ =>
-    Psi_low isVec S (fun j a hj => by rw [lowerUnipotent_symm_apply, if_neg ((hS j).not.mp hj)]) _
+    Psi_low isVec S (fun j a hj => by rw [lowerUnipotent_symm_apply, ite_eq_right ((hS j).not.mp hj)]) _
 
 theorem high_zero {i : ℕ} (hS : ∀ j, j ∈ S ↔ j < i) {G : MvPolynomial (ℕ × Fin n) k} {β : ℕ × Fin n →₀ ℕ}
     (hβ : β ∈ G.support.image (highP i)) : ∀ j a, j ∈ S → β (j, a) = 0 := by
   intro j a hj
   obtain ⟨e, _, rfl⟩ := Finset.mem_image.mp hβ
-  rw [highPart_apply, if_pos ((hS j).mp hj)]
+  rw [highPart_apply, ite_eq_left ((hS j).mp hj)]
 
 theorem Psi_decomp {i : ℕ} (hS : ∀ j, j ∈ S ↔ j < i) (G : MvPolynomial (ℕ × Fin n) k) :
     Psi isVec S G = ∑ β ∈ G.support.image (highP i),
@@ -313,13 +267,13 @@ theorem factSplit_valid : FactSplit := by
     have h := (mem_polB.mp hG) e he j
     simp only [highPart_apply]
     by_cases hji : j < i
-    · simp only [if_pos hji, Finset.sum_const_zero]
-      rw [if_neg (by omega)]
-    · simp only [if_neg hji]
+    · simp only [ite_eq_left hji, Finset.sum_const_zero]
+      rw [ite_eq_right (by omega)]
+    · simp only [ite_eq_right hji]
       rw [h]
       by_cases hjN : j < N
-      · rw [if_pos hjN, if_pos ⟨by omega, hjN⟩]
-      · rw [if_neg hjN, if_neg (by omega)]
+      · rw [ite_eq_left hjN, ite_eq_left ⟨by omega, hjN⟩]
+      · rw [ite_eq_right hjN, ite_eq_right (by omega)]
   · intro β hβ
     rw [mem_polB]
     intro e he j
@@ -332,9 +286,9 @@ theorem factSplit_valid : FactSplit := by
     simp only [lowerUnipotent_symm_apply]
     have h := (mem_polB.mp hG) e' he' j
     by_cases hji : j < i
-    · simp only [if_pos hji]
-      rw [h, if_pos (by omega : j < N)]
-    · simp only [if_neg hji, Finset.sum_const_zero]
+    · simp only [ite_eq_left hji]
+      rw [h, ite_eq_left (by omega : j < N)]
+    · simp only [ite_eq_right hji, Finset.sum_const_zero]
   · intro hgood β hβ
     obtain ⟨h1, h2⟩ := hgood
     have hS : ∀ j, j ∈ {j : ℕ | j < i} ↔ j < i := fun j => Iff.rfl
@@ -382,14 +336,14 @@ theorem expand (m : X → σ →₀ ℕ) (hm : Function.Injective m) (F : X → 
     rw [Finset.sum_eq_single y₀]
     · simp
     · intro y _ hy
-      rw [if_neg (hm.ne hy)]
+      rw [ite_eq_right (hm.ne hy)]
     · simp
   · have h0 : AddMonoidAlgebra.coeff (F x) d = 0 := by
       by_contra h
       exact hd (hF x d (mem_support_iff.mpr h))
     rw [h0, map_zero, Finset.sum_eq_zero]
     intro y _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro rfl
     exact hd ⟨y, rfl⟩
 
@@ -477,7 +431,7 @@ theorem basis_of (m : X → σ →₀ ℕ) (hm : Function.Injective m) (F : X �
         have h1 : ∀ z, ∑ x, M⁻¹ y x * M x z = (1 : Matrix X X R) y z := fun z => by
           rw [← hNM, Matrix.mul_apply]
         simp only [h1, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq,
-          Finset.mem_univ, if_true]
+          Finset.mem_univ, ite_true]
       dsimp only
       rw [← key]
       exact Submodule.sum_mem _ fun x _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨x, rfl⟩)

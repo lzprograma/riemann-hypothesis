@@ -87,7 +87,6 @@ theorem classInv_of_unit_trivial : ∀ (E : Type) [Field E] [NumberField E] [IsC
   rw [hS0, GlobalTheory.ClassInv.lamInf_eq hφ hχ α]
   rw [map_mul, map_mul, hfu, mul_one, IdeleModule.modF_mul, IdeleModule.modF_mul, hmu, mul_one, hma, Units.val_mul]
   have hF : ((finPart χ y : ℂˣ) : ℂ) ≠ 0 := Units.ne_zero _
-  have hA : ((finPart χ a : ℂˣ) : ℂ) ≠ 0 := Units.ne_zero _
   have hB : ((χ.inf α : ℂˣ) : ℂ) ≠ 0 := Units.ne_zero _
   have hA' : ((finPart χ a : ℂˣ) : ℂ) = (((χ.inf α : ℂˣ) : ℂ))⁻¹ := eq_inv_of_mul_eq_one_left hAB
   have hn' : ((|((Algebra.norm ℚ (α : E) : ℚ) : ℝ)| : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hn

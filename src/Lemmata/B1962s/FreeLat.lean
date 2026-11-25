@@ -7,18 +7,13 @@ import Mathlib.LinearAlgebra.FreeModule.PID
 
 @[expose] public section
 
-noncomputable def Bl.FreeLattices.FreeLat : Prop :=
-  ∀ (p : ℕ) [Fact (Nat.Prime p)] (σ : Type)
-    (L : Submodule ℤ_[p] (MvPolynomial σ ℚ_[p]))
-    (W : Submodule ℚ_[p] (MvPolynomial σ ℚ_[p])),
-    FiniteDimensional ℚ_[p] W → (∀ x ∈ L, x ∈ W) → L.FG →
-      ∃ (m : ℕ) (f : Fin m → MvPolynomial σ ℚ_[p]),
-        (∀ a, f a ∈ L) ∧ LinearIndependent ℤ_[p] f ∧ Submodule.span ℤ_[p] (Set.range f) = L
-
 namespace Bl.FreeLattices
 
-theorem goal1 : Bl.FreeLattices.FreeLat := by
-  intro p _ σ L W _ _ hL
+/-- A finitely generated lattice of p-adic polynomials has a finite `ℤ_[p]`-basis. -/
+theorem exists_basis_of_fg {p : ℕ} [Fact p.Prime] {σ : Type}
+    {L : Submodule ℤ_[p] (MvPolynomial σ ℚ_[p])} (hL : L.FG) :
+    ∃ (m : ℕ) (f : Fin m → MvPolynomial σ ℚ_[p]),
+      (∀ a, f a ∈ L) ∧ LinearIndependent ℤ_[p] f ∧ Submodule.span ℤ_[p] (Set.range f) = L := by
   have : Module.IsTorsionFree ℤ_[p] (MvPolynomial σ ℚ_[p]) :=
     Module.IsTorsionFree.comap (S := ℚ_[p]) (algebraMap ℤ_[p] ℚ_[p])
       (fun r hr => IsRegular.of_ne_zero (by simpa using hr.ne_zero))

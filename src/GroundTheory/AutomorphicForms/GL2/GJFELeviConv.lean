@@ -151,7 +151,7 @@ theorem integrable_block [NeZero m] (μ : Measure (GL (Fin m) F)) [μ.IsHaarMeas
             push Not at hcon
             have : j * m ≤ (-(A : ℤ) - 1) * m := by nlinarith
             nlinarith
-          simp only [hc, if_pos hj]
+          simp only [hc, ite_eq_left hj]
           refine ENNReal.ofReal_le_ofReal ?_
           rw [hf]
           simp only
@@ -185,7 +185,7 @@ theorem integrable_block [NeZero m] (μ : Measure (GL (Fin m) F)) [μ.IsHaarMeas
         ENNReal.ofReal (B * r ^ (-(A : ℤ) * m)) * ENNReal.ofReal (r ^ (m : ℕ)) ^ k := by
       intro k
       have hk : -(A : ℤ) ≤ (k : ℤ) - A := by linarith [Int.natCast_nonneg k]
-      simp only [hc, if_pos hk]
+      simp only [hc, ite_eq_left hk]
       rw [← ENNReal.ofReal_pow hr'.le, ← ENNReal.ofReal_mul (mul_nonneg hB0 (zpow_nonneg hr0.le _))]
       congr 1
       rw [mul_assoc]

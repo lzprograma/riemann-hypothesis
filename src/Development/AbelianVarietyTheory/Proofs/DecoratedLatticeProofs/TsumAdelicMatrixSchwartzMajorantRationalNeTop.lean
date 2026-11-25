@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicMatrixRealSizeBoundsAlongRealParametrisati
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicMatrixSchwartzMajorantMeasurableRationalShStatement
@@ -48,7 +49,6 @@ import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittSma
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 open scoped ComplexOrder ENNReal NNReal ContDiff Pointwise
 
@@ -60,19 +60,8 @@ variable {D : D7}
 
 theorem realSize_add_le (θ : InfFam D) {m n : ℕ} (x y : Mx D m n) :
     realSize θ (x + y) ≤ realSize θ x + realSize θ y := by
-  unfold realSize
-  rw [← Finset.sum_add_distrib]
-  refine Finset.sum_le_sum fun τ _ => ?_
-  rw [← Finset.sum_add_distrib]
-  refine Finset.sum_le_sum fun i _ => ?_
-  rw [← Finset.sum_add_distrib]
-  refine Finset.sum_le_sum fun j _ => ?_
-  have : Formalism.IndefR.Datum.compAt θ τ (x + y) i j =
-      Formalism.IndefR.Datum.compAt θ τ x i j + Formalism.IndefR.Datum.compAt θ τ y i j := by
-    show θ τ (infPart D (x i j + y i j)) = θ τ (infPart D (x i j)) + θ τ (infPart D (y i j))
-    rw [RingHom.map_add (infPart D), RingHom.map_add (θ τ)]
-  rw [this]
-  exact norm_add_le _ _
+  intros
+  apply _root_.GlobalTheory.RealParamSize.realSize_add_le <;> assumption
 
 theorem maj_le_shift (θ : InfFam D) {m n : ℕ} (K C : Set (Mx D m n)) (N : ℕ) (γ w : Mx D m n)
     (hwC : w ∈ C) (hw : realSize θ w ≤ 1) :
@@ -84,7 +73,7 @@ theorem maj_le_shift (θ : InfFam D) {m n : ℕ} (K C : Set (Mx D m n)) (N : ℕ
       refine ⟨k + w, Set.add_mem_add hk hwC, ?_⟩
       have : γ + w - (k + w) = γ - k := by abel
       rw [this]; exact hk0
-    rw [if_pos hγ, if_pos hbox]
+    rw [ite_eq_left hγ, ite_eq_left hbox]
     have h0 := realSize_nonneg θ γ
     have h1 := realSize_nonneg θ (γ + w)
     have h2 : 1 + realSize θ (γ + w) ≤ 2 * (1 + realSize θ γ) := by
@@ -94,7 +83,7 @@ theorem maj_le_shift (θ : InfFam D) {m n : ℕ} (K C : Set (Mx D m n)) (N : ℕ
     rw [← div_eq_mul_inv, inv_eq_one_div, div_le_div_iff₀ hq hp, one_mul]
     calc (1 + realSize θ (γ + w)) ^ N ≤ (2 * (1 + realSize θ γ)) ^ N := by gcongr
       _ = 2 ^ N * (1 + realSize θ γ) ^ N := by rw [mul_pow]
-  · rw [if_neg hγ]
+  · rw [ite_eq_right hγ]
     have := maj_nonneg θ (K + C) N (γ + w)
     unfold maj at this
     positivity
@@ -112,7 +101,6 @@ theorem realSize_zero {D : D7} (θ : InfFam D) {m n : ℕ} : realSize θ (0 : Mx
   simp only [h, norm_zero, Finset.sum_const_zero]
 
 
-set_option synthInstance.maxHeartbeats 400000 in
 theorem tsum_maj_ne_top : ∀ (D : D7) (θ : InfFam D), IsInfFam θ → ∀ m n : ℕ, ∃ N : ℕ, ∀ K : Set (Mx D m n), IsCompact K →
     (∑' y : ratMx D m n, ENNReal.ofReal (maj θ K N y)) ≠ ⊤ := by
   intro D θ hθ m n

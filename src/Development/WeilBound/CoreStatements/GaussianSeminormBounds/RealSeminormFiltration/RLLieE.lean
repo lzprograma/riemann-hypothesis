@@ -7,50 +7,9 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyCon
 public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.StandardTraceAdelicAddCharLocalComponentNeOne
 import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.EvIHalfTrace
 public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLieD
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
@@ -104,11 +63,11 @@ theorem exists_co : ∃ n : ℕ, Nonempty (Co F κ (Fin n)) := by
 theorem at_pt (y : κ → mixedEmbedding.mixedSpace F) : At (evI F) (SeminormBoundRestriction.pt y 0) := (SeminormBoundRestriction.at_iff _).2 fun _ => rfl
 
 theorem evI_pt (y : κ → mixedEmbedding.mixedSpace F) (z : κ → Af F) : (fun i => evI F (SeminormBoundRestriction.pt y z i)) = y :=
-  funext fun i => RingEquiv.apply_symm_apply _ _
+  funext fun _ => RingEquiv.apply_symm_apply _ _
 
 theorem realAd_one {M : Type} [AddCommGroup M] [Module (AF F) M] {a : M} (h : At (evI F) a) : realAd F 1 • a = a := by
   have := h (1 - realAd F 1) (by
-    rw [← Fock.evIh_apply, map_sub, map_one, Fock.evIh_apply, Fock.evI_realAd, map_one, sub_self])
+    rw [← Fock.evIh_apply, map_sub, map_one, Fock.evIh_apply, PositivityTheory.ThKF0.Lib.evI_realAd, map_one, sub_self])
   rwa [sub_smul, one_smul, sub_eq_zero, eq_comm] at this
 
 theorem pure_mem (f : SInf F κ) {g : (κ → Af F) → ℂ} (hg : g ∈ SB (κ → Af F)) : pureA F f g ∈ schA F κ :=
@@ -165,7 +124,7 @@ theorem vec_add (w w') : c.vec (w + w') = c.vec w + c.vec w' := by
 
 theorem vec_smul (t : ℝ) (w) : c.vec (realAd F t • w) = t • c.vec w := by
   have e : ∀ a : AF F, evI F (realAd F t * a) = t • evI F a := fun a => by
-    rw [Fock.evI_mul, Fock.evI_realAd, Algebra.smul_def]
+    rw [Fock.evI_mul, PositivityTheory.ThKF0.Lib.evI_realAd, Algebra.smul_def]
   refine vec_ext ?_ ?_
   · rw [pPart_smul, pPart_vec, pPart_vec, ← map_smul]
     exact congrArg c.e1 (funext fun i => e _)

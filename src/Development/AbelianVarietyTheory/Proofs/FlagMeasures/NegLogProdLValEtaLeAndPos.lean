@@ -53,28 +53,6 @@ open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheor
 
 namespace GlobalTheory.FlagMeas.LProd
 
-private lemma eventually_abs_le_half_add_of_doubling_bounds (m : ℕ) (x : ℝ) (hx : 1 ≤ x) :
-    1 / (x + 1) ^ (3 + m) + 4 / 2 ^ (3 + m) / ((x + 1) * (x + 1 + 1)) ≤
-      4 / 2 ^ (3 + m) / (x * (x + 1)) := by
-  have hx0 : 0 < x := by linarith
-  have hp : (2 : ℝ) ^ m ≤ (x + 1) ^ m := pow_le_pow_left₀ (by norm_num) (by linarith) m
-  have hp0 : (0 : ℝ) < 2 ^ m := by positivity
-
-  have hdiff : 4 / 2 ^ (3 + m) / (x * (x + 1)) - 4 / 2 ^ (3 + m) / ((x + 1) * (x + 1 + 1)) =
-      1 / (2 ^ m * (x * (x + 1) * (x + 2))) := by
-    rw [pow_add]
-    field_simp
-    ring
-
-  have hcube : x * (x + 1) * (x + 2) ≤ (x + 1) ^ 3 := by nlinarith
-  have hle : 2 ^ m * (x * (x + 1) * (x + 2)) ≤ (x + 1) ^ (3 + m) := by
-    calc 2 ^ m * (x * (x + 1) * (x + 2)) ≤ (x + 1) ^ m * (x + 1) ^ 3 :=
-          mul_le_mul hp hcube (by positivity) (by positivity)
-      _ = (x + 1) ^ (3 + m) := by ring
-  have hterm : 1 / (x + 1) ^ (3 + m) ≤ 1 / (2 ^ m * (x * (x + 1) * (x + 2))) :=
-    one_div_le_one_div_of_le (by positivity) hle
-  linarith
-
 theorem tsum_le (M : ℕ) (hM : 3 ≤ M) :
     (∑' n : ℕ, 1 / ((n : ℝ) + 1) ^ M) ≤ 1 + 2 / 2 ^ M := by
   apply Formalism.FourierDecayAlt.P.Sz2.zeta_sub_one_le <;> assumption

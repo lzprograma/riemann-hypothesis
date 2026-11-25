@@ -271,6 +271,29 @@ theorem isClosed_zeroSet {n : ℕ} (J : Ideal (MvPolynomial (Fin n) ℂ)) : IsCl
   rw [h]
   exact isClosed_biInter fun q _ => isClosed_eq (MvPolynomial.continuous_eval q) continuous_const
 
+theorem sheetSum_le_of_pointwise {n d : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)}
+    {A : Matrix (Fin (d + 1)) (Fin n) ℂ} {y : Fin (d + 1) → ℂ} (hfin : (fibre J A y).Finite)
+    {C : ℝ} {F₁ F₂ : (Fin n → ℂ) → ((Fin (d + 1) → ℂ) → Fin n → ℂ) → ℝ}
+    (hpt : ∀ x ∈ zeroSet J, A *ᵥ x = y → ∀ s, IsSheetAt J A x s → AnalyticAt ℂ s y →
+      F₁ x s ≤ C * F₂ x s) :
+    sheetSum J A F₁ y ≤ C * sheetSum J A F₂ y := by
+  classical
+  unfold sheetSum
+  rw [finsum_mem_eq_finite_toFinset_sum _ hfin, finsum_mem_eq_finite_toFinset_sum _ hfin,
+    Finset.mul_sum]
+  refine Finset.sum_le_sum fun x hx => ?_
+  rw [Set.Finite.mem_toFinset] at hx
+  obtain ⟨hxZ, hxy⟩ := hx
+  subst hxy
+  split_ifs with hsx
+  · obtain ⟨V, hV, hyV, hsd, -, -, -⟩ := hsx.choose_spec
+    have hsa : AnalyticAt ℂ hsx.choose (A *ᵥ x) :=
+      analyticAt_pi_iff.2 fun i =>
+        ReciprocityTheory.AnForm.Osgood.osgood _ V (fun z => hsx.choose z i) hV
+          (differentiableOn_pi.1 hsd i) _ hyV
+    exact hpt x hxZ rfl hsx.choose hsx.choose_spec hsa
+  · simp
+
 end TubeFormComparison
 
 
@@ -284,19 +307,11 @@ theorem TubeFormCompare.proof : TubeFormCompare.Statement := by
     (fun i => Set.inter_subset_left.trans (hZU i)) (fun i => (hφU i).of_le (WithTop.coe_le_coe.2 le_top))
   have hC : 0 ≤ (3 : ℝ) ^ (d + 1) * c ^ d := by positivity
   refine ⟨3 ^ (d + 1) * c ^ d, fun y => ?_⟩
-  unfold tubeDens chartAbsDens sheetSum
-  rw [finsum_mem_eq_finite_toFinset_sum _ (IndefiniteRowSideFullHecke.ComplexSets.fibre_finite hA y),
-    finsum_mem_eq_finite_toFinset_sum _ (IndefiniteRowSideFullHecke.ComplexSets.fibre_finite hA y), Finset.mul_sum]
-  refine Finset.sum_le_sum fun x hx => ?_
-  rw [Set.Finite.mem_toFinset] at hx
-  obtain ⟨hxZ, hxy⟩ := hx
+  unfold tubeDens chartAbsDens
+  refine sheetSum_le_of_pointwise (IndefiniteRowSideFullHecke.ComplexSets.fibre_finite hA y)
+    fun x hxZ hxy s hs hs_an => ?_
   subst hxy
-  split_ifs with hsx
-  swap
-  · simp
-  dsimp only
-  obtain ⟨V, hV, hyV, hsd, hsx', hsec, -⟩ := hsx.choose_spec
-  set s := hsx.choose with hsdef
+  obtain ⟨V, hV, hyV, hsd, hsx', hsec, -⟩ := hs
   set f := (Metric.closedBall (0 : Fin n → ℂ) R).indicator fun x => tubeWeight P (A *ᵥ x) with hfdef
   by_cases hf : f x = 0
   · rw [hf]
@@ -308,9 +323,7 @@ theorem TubeFormCompare.proof : TubeFormCompare.Statement := by
     intro h0
     apply hf
     simp [hfdef, Set.indicator_of_mem hxB, tubeWeight, logAbsSq, h0]
-  have hsa : AnalyticAt ℂ s (A *ᵥ x) :=
-    analyticAt_pi_iff.2 fun i =>
-      ReciprocityTheory.AnForm.Osgood.osgood _ V (fun z => s z i) hV (differentiableOn_pi.1 hsd i) _ hyV
+  have hsa : AnalyticAt ℂ s (A *ᵥ x) := hs_an
   have hφx : ∀ i, ContDiffAt ℝ 2 (φ i) (s (A *ᵥ x)) := fun i => by
     rw [hsx']
     exact ((hφU i).contDiffAt ((hU i).mem_nhds (hZU i hxZ))).of_le (WithTop.coe_le_coe.2 le_top)

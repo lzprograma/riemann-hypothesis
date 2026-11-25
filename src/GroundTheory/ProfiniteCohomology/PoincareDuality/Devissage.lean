@@ -21,8 +21,6 @@ open CategoryTheory MonoidalCategory Limits
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section Helpers
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -65,6 +63,244 @@ theorem dualityMap_δ {S : ShortComplex (Rep.{u} (ULift.{u} ℤ) G)} [IsDiscrete
 
 end Naturality
 
+section AbstractDevissage
+
+variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
+
+structure DualityDevissageData (d n : ℕ) [NeZero n] (D : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep D]
+    (P : ℕ → Prop) (σ : ℕ → ℤ) where
+  H : (M : Rep.{u} (ULift.{u} ℤ) G) → [IsDiscreteRep M] → ℕ → ModuleCat.{u} (ULift.{u} ℤ)
+  Hmap : {M N : Rep.{u} (ULift.{u} ℤ) G} → [IsDiscreteRep M] → [IsDiscreteRep N] →
+    (M ⟶ N) → (k : ℕ) → H M k ⟶ H N k
+  Hδ : {S : ShortComplex (Rep.{u} (ULift.{u} ℤ) G)} → [IsDiscreteRep S.X₁] → [IsDiscreteRep S.X₂] →
+    [IsDiscreteRep S.X₃] → S.ShortExact → (k : ℕ) → H S.X₃ k ⟶ H S.X₁ (k + 1)
+  duality : {r s : ℕ} → r + s = d → (M : Rep.{u} (ULift.{u} ℤ) G) → [IsDiscreteRep M] → [Finite M] →
+    cohomology M r →+ (H (dualRep D M) s →+ ZMod n)
+  nonempty_addEquiv : Nonempty (D ≃+ ZMod n)
+  hσ : ∀ s, σ s = 1 ∨ σ s = -1
+  subsingleton_top : ∀ (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M],
+    (∀ m : M, n • m = 0) → Subsingleton (H M (d + 1))
+  exists_embed : ∀ (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M],
+    (∀ m : M, n • m = 0) →
+    ∃ (W : OpenSubgroup G) (J : Type) (_ : Fintype J)
+      (i : M ⟶ ⨁ fun _ : J => Rep.coind (W : Subgroup G).subtype (zmodRep.{u} (W : Subgroup G) n)),
+      Function.Injective i.hom ∧ ∀ {r s : ℕ} (h : r + s = d), P s →
+        Function.Bijective (duality h
+          (⨁ fun _ : J => Rep.coind (W : Subgroup G).subtype (zmodRep.{u} (W : Subgroup G) n) :
+            Rep.{u} (ULift.{u} ℤ) G))
+  Hmap_comp : ∀ {A B C : Rep.{u} (ULift.{u} ℤ) G} [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C]
+    (f : A ⟶ B) (g : B ⟶ C) (k : ℕ), Hmap (f ≫ g) k = Hmap f k ≫ Hmap g k
+  Hmap_zero : ∀ {A B : Rep.{u} (ULift.{u} ℤ) G} [IsDiscreteRep A] [IsDiscreteRep B] (k : ℕ),
+    Hmap (0 : A ⟶ B) k = 0
+  exact₃ : ∀ {S : ShortComplex (Rep.{u} (ULift.{u} ℤ) G)} [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂]
+    [IsDiscreteRep S.X₃] (hS : S.ShortExact) (k : ℕ) (y : H S.X₃ k),
+    (Hδ hS k).hom y = 0 → ∃ z : H S.X₂ k, (Hmap S.g k).hom z = y
+  exact₁ : ∀ {S : ShortComplex (Rep.{u} (ULift.{u} ℤ) G)} [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂]
+    [IsDiscreteRep S.X₃] (hS : S.ShortExact) (k : ℕ) (z : H S.X₁ (k + 1)),
+    (Hmap S.f (k + 1)).hom z = 0 → ∃ y : H S.X₃ k, (Hδ hS k).hom y = z
+  nsmul_H : ∀ {M : Rep.{u} (ULift.{u} ℤ) G} [IsDiscreteRep M], (∀ m : M, n • m = 0) →
+    ∀ (k : ℕ) (x : H M k), n • x = 0
+  duality_cohomologyMap : ∀ {r s : ℕ} (h : r + s = d)
+    {M N : Rep.{u} (ULift.{u} ℤ) G} [IsDiscreteRep M] [IsDiscreteRep N] [Finite M] [Finite N]
+    (f : M ⟶ N) (x : cohomology M r) (y : H (dualRep D N) s),
+    duality h N ((cohomologyMap f r).hom x) y = duality h M x ((Hmap (dualMap D f) s).hom y)
+  duality_δ : ∀ {S : ShortComplex (Rep.{u} (ULift.{u} ℤ) G)} [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂]
+    [IsDiscreteRep S.X₃] [Finite S.X₁] [Finite S.X₂] [Finite S.X₃] (hS : S.ShortExact)
+    (hT : (dualShortComplex D S).ShortExact) {r s : ℕ} (h₁ : r + 1 + s = d) (h₀ : r + (s + 1) = d)
+    (_ : P s) (q : cohomology S.X₃ r) (y : H (dualRep D S.X₁) s),
+    duality h₁ S.X₁ ((δ hS r (r + 1) rfl).hom q) y =
+      σ s • duality h₀ S.X₃ q ((Hδ hT s).hom y)
+
+namespace DualityDevissageData
+
+variable {d n : ℕ} [NeZero n] {D : Rep.{u} (ULift.{u} ℤ) G} [IsDiscreteRep D]
+  {P : ℕ → Prop} {σ : ℕ → ℤ} (E : DualityDevissageData d n D P σ)
+
+include E in
+theorem finite_D : Finite D :=
+  finite_of_nonempty_addEquiv (n := n) E.nonempty_addEquiv
+
+include E in
+theorem nsmul_D (x : D) : n • x = 0 :=
+  nsmul_eq_zero_of_nonempty_addEquiv E.nonempty_addEquiv x
+
+theorem exists_devissage (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
+    (hM : ∀ m : M, n • m = 0) :
+    ∃ (I Q : Rep.{u} (ULift.{u} ℤ) G) (_ : IsDiscreteRep I) (_ : IsDiscreteRep Q) (_ : Finite I)
+      (_ : Finite Q) (i : M ⟶ I) (p : I ⟶ Q) (w : i ≫ p = 0),
+      (ShortComplex.mk i p w).ShortExact ∧ (∀ x : I, n • x = 0) ∧ (∀ x : Q, n • x = 0) ∧
+      ∀ {r s : ℕ} (h : r + s = d), P s → Function.Bijective (E.duality h I) := by
+  obtain ⟨W, J, _, i, hi, hφ⟩ := E.exists_embed M hM
+  have hnI : ∀ x : ((⨁ fun _ : J => Rep.coind (W : Subgroup G).subtype
+      (zmodRep.{u} (W : Subgroup G) n) : Rep.{u} (ULift.{u} ℤ) G) : Type u), n • x = 0 := by
+    intro x
+    rw [biproduct_eq_sum _ x, Finset.smul_sum]
+    refine Finset.sum_eq_zero fun j _ => ?_
+    rw [← map_nsmul, nsmul_coind_zmodRep_eq_zero W, map_zero]
+  have hmono : Mono i := (Rep.mono_iff_injective i).2 hi
+  let S := ShortComplex.mk i (cokernel.π i) (cokernel.condition i)
+  have hS : S.ShortExact :=
+    ShortComplex.ShortExact.mk' (S.exact_of_g_is_cokernel (cokernelIsCokernel i)) hmono
+      (inferInstance : Epi (cokernel.π i))
+  have hQd : IsDiscreteRep (cokernel i) := isDiscreteRep_X₃_of_shortExact hS
+  have hsurj : Function.Surjective (cokernel.π i).hom :=
+    (Rep.epi_iff_surjective _).1 inferInstance
+  have hQf : Finite ((cokernel i : Rep.{u} (ULift.{u} ℤ) G) : Type u) :=
+    Finite.of_surjective _ hsurj
+  refine ⟨_, cokernel i, inferInstance, hQd, inferInstance, hQf, i, cokernel.π i,
+    cokernel.condition i, hS, hnI, fun x => ?_, hφ⟩
+  obtain ⟨y, rfl⟩ := hsurj x
+  rw [← map_nsmul, hnI, map_zero]
+
+theorem injective_zero (hPd : P d) (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
+    (hM : ∀ m : M, n • m = 0) :
+    Function.Injective (E.duality (Nat.zero_add d) M) := by
+  have := E.finite_D
+  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := E.exists_devissage M hM
+  have hi : Function.Injective i.hom := (Rep.mono_iff_injective i).1 hS.mono_f
+  rw [injective_iff_map_eq_zero]
+  intro x hx
+  have h1 : E.duality (Nat.zero_add d) I ((cohomologyMap i 0).hom x) = 0 := by
+    ext y
+    rw [E.duality_cohomologyMap (Nat.zero_add d) i x y, hx]
+    rfl
+  have h2 : (cohomologyMap i 0).hom x = 0 :=
+    (injective_iff_map_eq_zero _).1 (hI (Nat.zero_add d) hPd).1 _ h1
+  exact (injective_iff_map_eq_zero _).1 (injective_cohomologyMap_zero i hi) x h2
+
+theorem surjective_zero (hPd : P d) (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
+    (hM : ∀ m : M, n • m = 0) :
+    Function.Surjective (E.duality (Nat.zero_add d) M) := by
+  have := E.finite_D
+  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := E.exists_devissage M hM
+  let S := ShortComplex.mk i p w
+  have hT : (dualShortComplex D S).ShortExact :=
+    dualShortComplex_shortExact E.nonempty_addEquiv hS hnI
+  have hsurj : Function.Surjective (E.Hmap (dualMap D i) d).hom := by
+    intro y
+    have : Subsingleton (E.H (dualRep D Q) (d + 1)) :=
+      E.subsingleton_top (dualRep D Q) (nsmul_dualRep_eq_zero E.nsmul_D)
+    exact E.exact₃ hT d y (Subsingleton.elim _ _)
+  intro l
+  obtain ⟨v, hv⟩ := (hI (Nat.zero_add d) hPd).2
+    (l.comp (E.Hmap (dualMap D i) d).hom.toAddMonoidHom)
+  have hpv : (cohomologyMap p 0).hom v = 0 := by
+    apply (injective_iff_map_eq_zero _).1 (E.injective_zero hPd Q hnQ)
+    ext y
+    rw [E.duality_cohomologyMap (Nat.zero_add d) p v y, hv]
+    change l ((E.Hmap (dualMap D p) d ≫ E.Hmap (dualMap D i) d).hom y) = 0
+    rw [← E.Hmap_comp, ← dualMap_comp, w, dualMap_zero, E.Hmap_zero]
+    exact map_zero l
+  obtain ⟨m, hm⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₂ hS 0) v hpv
+  refine ⟨m, ?_⟩
+  ext y
+  obtain ⟨z, rfl⟩ := hsurj y
+  rw [← E.duality_cohomologyMap (Nat.zero_add d) i m z]
+  change E.duality (Nat.zero_add d) I ((cohomologyMap S.f 0).hom m) z = _
+  rw [hm, hv]
+  rfl
+
+theorem bijective_zero (hPd : P d) (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
+    (hM : ∀ m : M, n • m = 0) :
+    Function.Bijective (E.duality (Nat.zero_add d) M) :=
+  ⟨E.injective_zero hPd M hM, E.surjective_zero hPd M hM⟩
+
+theorem injective_succ {r s : ℕ} (h₁ : r + 1 + s = d) (h₀ : r + (s + 1) = d) (hPs : P s)
+    (ih : ∀ (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M], (∀ m : M, n • m = 0) →
+      Function.Bijective (E.duality h₀ M))
+    (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M] (hM : ∀ m : M, n • m = 0) :
+    Function.Injective (E.duality h₁ M) := by
+  have := E.finite_D
+  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := E.exists_devissage M hM
+  let S := ShortComplex.mk i p w
+  have hT : (dualShortComplex D S).ShortExact :=
+    dualShortComplex_shortExact E.nonempty_addEquiv hS hnI
+  rw [injective_iff_map_eq_zero]
+  intro x hx
+  have h1 : E.duality h₁ I ((cohomologyMap i (r + 1)).hom x) = 0 := by
+    ext y
+    rw [E.duality_cohomologyMap h₁ i x y, hx]
+    rfl
+  have hix : (cohomologyMap i (r + 1)).hom x = 0 :=
+    (injective_iff_map_eq_zero _).1 (hI h₁ hPs).1 _ h1
+  obtain ⟨q, hq⟩ :=
+    (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₁ hS r (r + 1) rfl) x hix
+  have hker : ((E.Hmap (dualMap D p) (s + 1)).hom.toAddMonoidHom).ker ≤
+      (E.duality h₀ Q q).ker := by
+    intro z hz
+    obtain ⟨y, hy⟩ := E.exact₁ hT s z hz
+    rw [AddMonoidHom.mem_ker, ← hy]
+    have e := E.duality_δ hS hT h₁ h₀ hPs q y
+    change E.duality h₁ M ((δ hS r (r + 1) rfl).hom q) y = _ at e
+    rw [hq, hx, AddMonoidHom.zero_apply] at e
+    rcases E.hσ s with h | h <;> rw [h] at e <;> simpa using e.symm
+  obtain ⟨ψ, hψ⟩ := zmod_exists_comp_eq_of_ker_le
+    (E.nsmul_H (nsmul_dualRep_eq_zero E.nsmul_D) (s + 1)) _ _ hker
+  obtain ⟨v, hv⟩ := (ih I hnI).2 ψ
+  have hpv : (cohomologyMap p r).hom v = q := by
+    apply (ih Q hnQ).1
+    ext z
+    rw [E.duality_cohomologyMap h₀ p v z, hv, ← hψ]
+    rfl
+  rw [← hq, ← hpv]
+  exact congrArg (fun F => F.hom v) (comp_δ hS r (r + 1) rfl)
+
+theorem surjective_succ {r s : ℕ} (h₁ : r + 1 + s = d) (h₀ : r + (s + 1) = d) (hPs : P s)
+    (ih : ∀ (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M], (∀ m : M, n • m = 0) →
+      Function.Bijective (E.duality h₀ M))
+    (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M] (hM : ∀ m : M, n • m = 0) :
+    Function.Surjective (E.duality h₁ M) := by
+  have := E.finite_D
+  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := E.exists_devissage M hM
+  let S := ShortComplex.mk i p w
+  have hT : (dualShortComplex D S).ShortExact :=
+    dualShortComplex_shortExact E.nonempty_addEquiv hS hnI
+  intro l
+  obtain ⟨v, hv⟩ := (hI h₁ hPs).2 (l.comp (E.Hmap (dualMap D i) s).hom.toAddMonoidHom)
+  have hpv : (cohomologyMap p (r + 1)).hom v = 0 := by
+    apply (injective_iff_map_eq_zero _).1 (E.injective_succ h₁ h₀ hPs ih Q hnQ)
+    ext y
+    rw [E.duality_cohomologyMap h₁ p v y, hv]
+    change l ((E.Hmap (dualMap D p) s ≫ E.Hmap (dualMap D i) s).hom y) = 0
+    rw [← E.Hmap_comp, ← dualMap_comp, w, dualMap_zero, E.Hmap_zero]
+    exact map_zero l
+  obtain ⟨x', hx'⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₂ hS (r + 1)) v hpv
+  set ν := l - E.duality h₁ M x' with hν
+  have hker : ((E.Hδ hT s).hom.toAddMonoidHom).ker ≤ ν.ker := by
+    intro y hy
+    obtain ⟨z, hz⟩ := E.exact₃ hT s y hy
+    rw [AddMonoidHom.mem_ker, ← hz, hν, AddMonoidHom.sub_apply, sub_eq_zero]
+    change l ((E.Hmap (dualMap D i) s).hom z) =
+      E.duality h₁ M x' ((E.Hmap (dualMap D i) s).hom z)
+    rw [← E.duality_cohomologyMap h₁ i x' z]
+    change _ = E.duality h₁ I ((cohomologyMap S.f (r + 1)).hom x') z
+    rw [hx', hv]
+    rfl
+  obtain ⟨ψ, hψ⟩ := zmod_exists_comp_eq_of_ker_le
+    (E.nsmul_H (nsmul_dualRep_eq_zero E.nsmul_D) (s + 1)) _ _ hker
+  obtain ⟨q, hq⟩ := (ih Q hnQ).2 ψ
+  refine ⟨x' + σ s • (δ hS r (r + 1) rfl).hom q, ?_⟩
+  ext y
+  have e := E.duality_δ hS hT h₁ h₀ hPs q y
+  change E.duality h₁ M ((δ hS r (r + 1) rfl).hom q) y = _ at e
+  have hψy : ψ ((E.Hδ hT s).hom y) = ν y := congrArg (fun f => f y) hψ
+  have hσσ : ∀ a : ZMod n, σ s • (σ s • a) = a := fun a => by
+    rcases E.hσ s with h | h <;> rw [h] <;> simp
+  rw [map_add (f := _), map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.smul_apply, e, hq, hσσ]
+  change _ + ψ ((E.Hδ hT s).hom y) = l y
+  rw [hψy, hν, AddMonoidHom.sub_apply, add_sub_cancel]
+
+theorem bijective_succ {r s : ℕ} (h₁ : r + 1 + s = d) (h₀ : r + (s + 1) = d) (hPs : P s)
+    (ih : ∀ (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M], (∀ m : M, n • m = 0) →
+      Function.Bijective (E.duality h₀ M))
+    (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M] (hM : ∀ m : M, n • m = 0) :
+    Function.Bijective (E.duality h₁ M) :=
+  ⟨E.injective_succ h₁ h₀ hPs ih M hM, E.surjective_succ h₁ h₀ hPs ih M hM⟩
+
+end DualityDevissageData
+
+end AbstractDevissage
+
 section Core
 
 variable {Γ : Type u} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ]
@@ -89,9 +325,37 @@ namespace GroupDualityHypotheses
 variable {n : ℕ} [NeZero n] {D : Rep.{u} (ULift.{u} ℤ) Γ} [IsDiscreteRep D]
   {t : cohomology D 2 →+ ZMod n} (H : GroupDualityHypotheses n D t)
 
+def toDevissageData : DualityDevissageData 2 n D (fun s => 1 ≤ s) (fun _ => -1) where
+  H M _ k := cohomology M k
+  Hmap f k := cohomologyMap f k
+  Hδ hS k := δ hS k (k + 1) rfl
+  duality h M _ _ := dualityMap D h t M
+  nonempty_addEquiv := H.nonempty_addEquiv
+  hσ _ := Or.inr rfl
+  subsingleton_top := H.subsingleton_three
+  exists_embed := by
+    intro M _ _ hM
+    obtain ⟨W, J, _, i, hi⟩ := exists_injective_biproduct_coind (n := n) M hM
+    refine ⟨W, J, inferInstance, i, hi, fun h hs =>
+      bijective_dualityMap_biproduct D _ h t fun _ =>
+        bijective_dualityMap_coind D H.nonempty_addEquiv t W (H.bijective_cores W)
+          (H.isPerfectPairing W) h (by omega)⟩
+  Hmap_comp := by intro A B C _ _ _ f g k; exact cohomologyMap_comp f g k
+  Hmap_zero := by intro A B _ _ k; exact cohomologyMap_zero k
+  exact₃ := by intro S _ _ _ hS k; exact (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₃ hS k (k + 1) rfl)
+  exact₁ := by intro S _ _ _ hS k; exact (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₁ hS k (k + 1) rfl)
+  nsmul_H := by intro M _ hM k; exact nsmul_cohomology_eq_zero _ hM k
+  duality_cohomologyMap := by
+    intro r s h M N _ _ _ _ f x y
+    exact dualityMap_cohomologyMap D h t f x y
+  duality_δ := by
+    intro S _ _ _ _ _ _ hS hT r s h₁ h₀ hs q y
+    obtain ⟨rfl, rfl⟩ : r = 0 ∧ s = 1 := by omega
+    simpa using dualityMap_δ (t := t) hS hT q y
+
 include H in
 theorem finite_D : Finite D :=
-  finite_of_nonempty_addEquiv H.nonempty_addEquiv
+  H.toDevissageData.finite_D
 
 omit [NeZero n] in
 include H in
@@ -107,33 +371,9 @@ theorem exists_devissage (M : Rep.{u} (ULift.{u} ℤ) Γ) [IsDiscreteRep M] [Fin
       (ShortComplex.mk i p w).ShortExact ∧ (∀ x : I, n • x = 0) ∧ (∀ x : Q, n • x = 0) ∧
       Function.Bijective (dualityMap D (rfl : 0 + 2 = 2) t I) ∧
       Function.Bijective (dualityMap D (rfl : 1 + 1 = 2) t I) := by
-  obtain ⟨W, J, _, i, hi⟩ := exists_injective_biproduct_coind (n := n) M hM
-  have hφ : ∀ {r s : ℕ} (h : r + s = 2), r ≤ 1 → Function.Bijective (dualityMap D h t
-      (⨁ fun _ : J => Rep.coind (W : Subgroup Γ).subtype (zmodRep.{u} (W : Subgroup Γ) n) :
-        Rep.{u} (ULift.{u} ℤ) Γ)) :=
-    fun h hr => bijective_dualityMap_biproduct D _ h t fun _ =>
-      bijective_dualityMap_coind D H.nonempty_addEquiv t W (H.bijective_cores W)
-        (H.isPerfectPairing W) h hr
-  have hnI : ∀ x : ((⨁ fun _ : J => Rep.coind (W : Subgroup Γ).subtype
-      (zmodRep.{u} (W : Subgroup Γ) n) : Rep.{u} (ULift.{u} ℤ) Γ) : Type u), n • x = 0 := by
-    intro x
-    rw [biproduct_eq_sum _ x, Finset.smul_sum]
-    refine Finset.sum_eq_zero fun j _ => ?_
-    rw [← map_nsmul, nsmul_coind_zmodRep_eq_zero W, map_zero]
-  have hmono : Mono i := (Rep.mono_iff_injective i).2 hi
-  let S := ShortComplex.mk i (cokernel.π i) (cokernel.condition i)
-  have hS : S.ShortExact :=
-    ShortComplex.ShortExact.mk' (S.exact_of_g_is_cokernel (cokernelIsCokernel i)) hmono
-      (inferInstance : Epi (cokernel.π i))
-  have hQd : IsDiscreteRep (cokernel i) := isDiscreteRep_X₃_of_shortExact hS
-  have hsurj : Function.Surjective (cokernel.π i).hom :=
-    (Rep.epi_iff_surjective _).1 inferInstance
-  have hQf : Finite ((cokernel i : Rep.{u} (ULift.{u} ℤ) Γ) : Type u) :=
-    Finite.of_surjective _ hsurj
-  refine ⟨_, cokernel i, inferInstance, hQd, inferInstance, hQf, i, cokernel.π i,
-    cokernel.condition i, hS, hnI, fun x => ?_, hφ rfl (by norm_num), hφ rfl le_rfl⟩
-  obtain ⟨y, rfl⟩ := hsurj x
-  rw [← map_nsmul, hnI, map_zero]
+  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := H.toDevissageData.exists_devissage M hM
+  exact ⟨I, Q, inferInstance, inferInstance, inferInstance, inferInstance, i, p, w, hS, hnI, hnQ,
+    hI rfl (by norm_num), hI rfl le_rfl⟩
 
 end GroupDualityHypotheses
 
@@ -152,141 +392,39 @@ variable (H : GroupDualityHypotheses n D t)
 
 include H in
 theorem injective_zero (M : Rep.{u} (ULift.{u} ℤ) Γ) [IsDiscreteRep M] [Finite M]
-    (hM : ∀ m : M, n • m = 0) : Function.Injective (dualityMap D (rfl : 0 + 2 = 2) t M) := by
-  have := H.finite_D
-  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI0, hI1⟩ := H.exists_devissage M hM
-  have hi : Function.Injective i.hom := (Rep.mono_iff_injective i).1 hS.mono_f
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
-  intro x hx
-  have h1 : dualityMap D (rfl : 0 + 2 = 2) t I ((cohomologyMap i 0).hom x) = 0 := by
-    ext y
-    rw [dualityMap_cohomologyMap D (rfl : 0 + 2 = 2) t i x y, hx]
-    rfl
-  have h2 : (cohomologyMap i 0).hom x = 0 := (injective_iff_map_eq_zero _).1 hI0.1 _ h1
-  exact (injective_iff_map_eq_zero _).1 (injective_cohomologyMap_zero i hi) x h2
+    (hM : ∀ m : M, n • m = 0) : Function.Injective (dualityMap D (rfl : 0 + 2 = 2) t M) :=
+  H.toDevissageData.injective_zero (by norm_num) M hM
 
 
 include H in
 theorem surjective_zero (M : Rep.{u} (ULift.{u} ℤ) Γ) [IsDiscreteRep M] [Finite M]
-    (hM : ∀ m : M, n • m = 0) : Function.Surjective (dualityMap D (rfl : 0 + 2 = 2) t M) := by
-  have := H.finite_D
-  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI0, hI1⟩ := H.exists_devissage M hM
-  let S := ShortComplex.mk i p w
-  have hT : (dualShortComplex D S).ShortExact :=
-    dualShortComplex_shortExact H.nonempty_addEquiv hS hnI
-  have hsurj : Function.Surjective (cohomologyMap (dualMap D i) 2).hom := by
-    intro y
-    have : Subsingleton (cohomology (dualRep D Q) 3) :=
-      H.subsingleton_three (dualRep D Q) (nsmul_dualRep_eq_zero H.nsmul_D)
-    exact (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₃ hT 2 3 rfl) y
-      (Subsingleton.elim _ _)
-  intro l
-  obtain ⟨v, hv⟩ := hI0.2 (l.comp (cohomologyMap (dualMap D i) 2).hom.toAddMonoidHom)
-  have hpv : (cohomologyMap p 0).hom v = 0 := by
-    apply (injective_iff_map_eq_zero _).1 (H.injective_zero Q hnQ)
-    ext y
-    rw [dualityMap_cohomologyMap D (rfl : 0 + 2 = 2) t p v y, hv]
-    change l ((cohomologyMap (dualMap D p) 2 ≫ cohomologyMap (dualMap D i) 2).hom y) = 0
-    rw [← cohomologyMap_comp, ← dualMap_comp, w, dualMap_zero, cohomologyMap_zero]
-    exact map_zero l
-  obtain ⟨m, hm⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₂ hS 0) v hpv
-  refine ⟨m, ?_⟩
-  ext y
-  obtain ⟨z, rfl⟩ := hsurj y
-  rw [← dualityMap_cohomologyMap D (rfl : 0 + 2 = 2) t i m z]
-  change dualityMap D (rfl : 0 + 2 = 2) t I ((cohomologyMap S.f 0).hom m) z = _
-  rw [hm, hv]
-  rfl
+    (hM : ∀ m : M, n • m = 0) : Function.Surjective (dualityMap D (rfl : 0 + 2 = 2) t M) :=
+  H.toDevissageData.surjective_zero (by norm_num) M hM
 
 include H in
 theorem bijective_zero (M : Rep.{u} (ULift.{u} ℤ) Γ) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) : Function.Bijective (dualityMap D (rfl : 0 + 2 = 2) t M) :=
-  ⟨H.injective_zero M hM, H.surjective_zero M hM⟩
+  H.toDevissageData.bijective_zero (by norm_num) M hM
 
 
 include H in
 theorem injective_one (M : Rep.{u} (ULift.{u} ℤ) Γ) [IsDiscreteRep M] [Finite M]
-    (hM : ∀ m : M, n • m = 0) : Function.Injective (dualityMap D (rfl : 1 + 1 = 2) t M) := by
-  have := H.finite_D
-  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI0, hI1⟩ := H.exists_devissage M hM
-  let S := ShortComplex.mk i p w
-  have hT : (dualShortComplex D S).ShortExact :=
-    dualShortComplex_shortExact H.nonempty_addEquiv hS hnI
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
-  intro x hx
-  have h1 : dualityMap D (rfl : 1 + 1 = 2) t I ((cohomologyMap i 1).hom x) = 0 := by
-    ext y
-    rw [dualityMap_cohomologyMap D (rfl : 1 + 1 = 2) t i x y, hx]
-    rfl
-  have hix : (cohomologyMap i 1).hom x = 0 := (injective_iff_map_eq_zero _).1 hI1.1 _ h1
-  obtain ⟨q, hq⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₁ hS 0 1 rfl) x hix
-  have hker : ((cohomologyMap (dualMap D p) 2).hom.toAddMonoidHom).ker ≤
-      (dualityMap D (rfl : 0 + 2 = 2) t Q q).ker := by
-    intro z hz
-    obtain ⟨y, hy⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₁ hT 1 2 rfl) z hz
-    rw [AddMonoidHom.mem_ker]
-    rw [← hy]
-    have e := dualityMap_δ (t := t) hS hT q y
-    change dualityMap D (rfl : 1 + 1 = 2) t M ((δ hS 0 1 rfl).hom q) y = _ at e
-    rw [hq, hx] at e
-    exact neg_eq_zero.1 e.symm
-  obtain ⟨ψ, hψ⟩ := zmod_exists_comp_eq_of_ker_le
-    (nsmul_cohomology_eq_zero _ (nsmul_dualRep_eq_zero H.nsmul_D) 2) _ _ hker
-  obtain ⟨v, hv⟩ := hI0.2 ψ
-  have hpv : (cohomologyMap p 0).hom v = q := by
-    apply H.injective_zero Q hnQ
-    ext z
-    rw [dualityMap_cohomologyMap D (rfl : 0 + 2 = 2) t p v z, hv, ← hψ]
-    rfl
-  rw [← hq, ← hpv]
-  exact congrArg (fun φ => φ.hom v) (comp_δ hS 0 1 rfl)
+    (hM : ∀ m : M, n • m = 0) : Function.Injective (dualityMap D (rfl : 1 + 1 = 2) t M) :=
+  H.toDevissageData.injective_succ (r := 0) (s := 1) rfl rfl le_rfl
+    (fun N _ _ hN => H.bijective_zero N hN) M hM
 
 
 include H in
 theorem surjective_one (M : Rep.{u} (ULift.{u} ℤ) Γ) [IsDiscreteRep M] [Finite M]
-    (hM : ∀ m : M, n • m = 0) : Function.Surjective (dualityMap D (rfl : 1 + 1 = 2) t M) := by
-  have := H.finite_D
-  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI0, hI1⟩ := H.exists_devissage M hM
-  let S := ShortComplex.mk i p w
-  have hT : (dualShortComplex D S).ShortExact :=
-    dualShortComplex_shortExact H.nonempty_addEquiv hS hnI
-  intro l
-  obtain ⟨v, hv⟩ := hI1.2 (l.comp (cohomologyMap (dualMap D i) 1).hom.toAddMonoidHom)
-  have hpv : (cohomologyMap p 1).hom v = 0 := by
-    apply (injective_iff_map_eq_zero _).1 (H.injective_one Q hnQ)
-    ext y
-    rw [dualityMap_cohomologyMap D (rfl : 1 + 1 = 2) t p v y, hv]
-    change l ((cohomologyMap (dualMap D p) 1 ≫ cohomologyMap (dualMap D i) 1).hom y) = 0
-    rw [← cohomologyMap_comp, ← dualMap_comp, w, dualMap_zero, cohomologyMap_zero]
-    exact map_zero l
-  obtain ⟨x', hx'⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₂ hS 1) v hpv
-  set ν := l - dualityMap D (rfl : 1 + 1 = 2) t M x' with hν
-  have hker : ((δ hT 1 2 rfl).hom.toAddMonoidHom).ker ≤ ν.ker := by
-    intro y hy
-    obtain ⟨z, hz⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₃ hT 1 2 rfl) y hy
-    rw [AddMonoidHom.mem_ker, ← hz, hν, AddMonoidHom.sub_apply, sub_eq_zero]
-    change l ((cohomologyMap (dualMap D i) 1).hom z) =
-      dualityMap D (rfl : 1 + 1 = 2) t M x' ((cohomologyMap (dualMap D i) 1).hom z)
-    rw [← dualityMap_cohomologyMap D (rfl : 1 + 1 = 2) t i x' z]
-    change _ = dualityMap D (rfl : 1 + 1 = 2) t I ((cohomologyMap S.f 1).hom x') z
-    rw [hx', hv]
-    rfl
-  obtain ⟨ψ, hψ⟩ := zmod_exists_comp_eq_of_ker_le
-    (nsmul_cohomology_eq_zero _ (nsmul_dualRep_eq_zero H.nsmul_D) 2) _ _ hker
-  obtain ⟨q, hq⟩ := (H.bijective_zero Q hnQ).2 ψ
-  refine ⟨x' - (δ hS 0 1 rfl).hom q, ?_⟩
-  ext y
-  have e := dualityMap_δ (t := t) hS hT q y
-  change dualityMap D (rfl : 1 + 1 = 2) t M ((δ hS 0 1 rfl).hom q) y = _ at e
-  rw [map_sub, AddMonoidHom.sub_apply, e, hq, sub_neg_eq_add]
-  have hψy : ψ ((δ hT 1 2 rfl).hom y) = ν y := congrArg (fun f => f y) hψ
-  change _ + ψ ((δ hT 1 2 rfl).hom y) = l y
-  rw [hψy, hν, AddMonoidHom.sub_apply, add_sub_cancel]
+    (hM : ∀ m : M, n • m = 0) : Function.Surjective (dualityMap D (rfl : 1 + 1 = 2) t M) :=
+  H.toDevissageData.surjective_succ (r := 0) (s := 1) rfl rfl le_rfl
+    (fun N _ _ hN => H.bijective_zero N hN) M hM
 
 include H in
 theorem bijective_one (M : Rep.{u} (ULift.{u} ℤ) Γ) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) : Function.Bijective (dualityMap D (rfl : 1 + 1 = 2) t M) :=
-  ⟨H.injective_one M hM, H.surjective_one M hM⟩
+  H.toDevissageData.bijective_succ (r := 0) (s := 1) rfl rfl le_rfl
+    (fun N _ _ hN => H.bijective_zero N hN) M hM
 
 end GroupDualityHypotheses
 

@@ -122,7 +122,7 @@ theorem toGQ_mul (m m' : Matrix (Fin 2) (Fin 2) ℤ) (hm : 0 < m.det) (hm' : 0 <
     toGQ (m * m') = toGQ m * toGQ m' := by
   have h : 0 < (m * m').det := by rw [Matrix.det_mul]; exact mul_pos hm hm'
   apply Subtype.ext; apply Units.ext
-  simp only [toGQ, h, hm, hm', dif_pos]
+  simp only [toGQ, h, hm, hm', dite_eq_left]
   ext i j
   simp [Matrix.mul_apply]
 

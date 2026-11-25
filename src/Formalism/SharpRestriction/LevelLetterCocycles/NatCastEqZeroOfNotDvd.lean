@@ -2,52 +2,9 @@ module
 
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.RingTheory.Valuation.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -97,26 +54,11 @@ theorem pow_nonneg' {x : K} (hx : 0 ≤ v x) (k : ℕ) : 0 ≤ v (x ^ k) := by
   rw [AddValuation.map_pow]
   exact nsmul_nonneg hx k
 
-private theorem v_finset_sum_nonneg_of_forall {ι : Type*} (s : Finset ι) (f : ι → K)
-    (h : ∀ i ∈ s, 0 ≤ v (f i)) : 0 ≤ v (∑ i ∈ s, f i) :=
-  Finset.sum_induction f (fun y => 0 ≤ v y)
-    (fun a b ha hb => le_trans (le_min ha hb) (v.map_add a b))
-    (by rw [AddValuation.map_zero]; exact le_top) h
-
 theorem geom_nonneg {x : K} (hx : 0 ≤ v x) (k : ℕ) : 0 ≤ v (∑ j ∈ Finset.range k, x ^ j) :=
-  v_finset_sum_nonneg_of_forall v _ _ (fun j _ => pow_nonneg' v hx j)
-
-private theorem v_add_eq_left_of_v_lt {a b : K} (h : v a < v b) : v (a + b) = v a := by
-  apply le_antisymm
-  · have h1 := v.map_add (a + b) (-b)
-    rw [AddValuation.map_neg, add_neg_cancel_right] at h1
-    rcases min_le_iff.1 h1 with h2 | h2
-    · exact h2
-    · exact absurd h2 (not_le.2 h)
-  · exact le_trans (le_min le_rfl h.le) (v.map_add a b)
+  v.map_le_sum fun j _ => pow_nonneg' v hx j
 
 theorem v_x_zero {x : K} (hy : 0 < v (x - 1)) : v x = 0 := by
-  have h1 := v_add_eq_left_of_v_lt v (a := 1) (b := x - 1) (by rw [AddValuation.map_one]; exact hy)
+  have h1 := v.map_add_eq_of_lt_left (x := 1) (y := x - 1) (by rw [AddValuation.map_one]; exact hy)
   rwa [show (1 : K) + (x - 1) = x by ring, AddValuation.map_one] at h1
 
 theorem geom_expand (x : K) (k : ℕ) :
@@ -137,9 +79,9 @@ theorem val_pow_sub_one_coprime {p : ℕ} (hp : p.Prime) (hv : v (p : K) = 1) {x
       v ((x - 1) * ∑ j ∈ Finset.range m, ∑ i ∈ Finset.range j, x ^ i) := by
     rw [hm0, AddValuation.map_mul]
     exact lt_of_lt_of_le hy (le_add_of_nonneg_right
-      (v_finset_sum_nonneg_of_forall v _ _ (fun j _ => geom_nonneg v hx j)))
+      (v.map_le_sum fun j _ => geom_nonneg v hx j))
   have hS : v (∑ j ∈ Finset.range m, x ^ j) = 0 := by
-    rw [geom_expand, v_add_eq_left_of_v_lt v hlt, hm0]
+    rw [geom_expand, v.map_add_eq_of_lt_left hlt, hm0]
   rw [← geom_sum_mul x m, AddValuation.map_mul, hS, zero_add]
 
 private theorem withTop_one_lt_one_add_one : (1 : WithTop ℚ) < 1 + 1 := by
@@ -170,8 +112,7 @@ theorem val_pow_p_sub_one {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) (hv : v (p : 
     · exact h
     · exact absurd ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).1 h) hp2
   have hT : 0 ≤ v (∑ j ∈ Finset.range p, ∑ i ∈ Finset.range j, ∑ l ∈ Finset.range i, x ^ l) :=
-    v_finset_sum_nonneg_of_forall v _ _
-      (fun j _ => v_finset_sum_nonneg_of_forall v _ _ (fun i _ => geom_nonneg v hx i))
+    v.map_le_sum fun j _ => v.map_le_sum fun i _ => geom_nonneg v hx i
   have hinner : 1 ≤ v ((∑ j ∈ Finset.range p, (j : K)) + (x - 1) *
       ∑ j ∈ Finset.range p, ∑ i ∈ Finset.range j, ∑ l ∈ Finset.range i, x ^ l) := by
     refine le_trans (le_min hN ?_) (v.map_add _ _)
@@ -182,7 +123,7 @@ theorem val_pow_p_sub_one {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) (hv : v (p : 
     rw [hv, AddValuation.map_mul]
     exact lt_of_lt_of_le withTop_one_lt_one_add_one (add_le_add hy hinner)
   have hsum : v (∑ j ∈ Finset.range p, x ^ j) = 1 := by
-    rw [geom_expand, hid, v_add_eq_left_of_v_lt v hlt, hv]
+    rw [geom_expand, hid, v.map_add_eq_of_lt_left hlt, hv]
   rw [← geom_sum_mul x p, AddValuation.map_mul, hsum, add_comm]
 
 private theorem withTop_rat_natCast_nonneg (k : ℕ) : (0 : WithTop ℚ) ≤ (k : WithTop ℚ) := by

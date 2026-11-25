@@ -132,7 +132,7 @@ private lemma basechangeProjector_idempotent_action (H : HodgeTateDatum p g v R 
     rw [← Matrix.mulVec_mulVec, map_algebraMap_mulVec_comp, projector_mul_idempotent_action H e hPT w s, h0, Matrix.mulVec_zero]
   unfold btP
   rw [Matrix.add_mulVec, Matrix.sum_mulVec, Finset.sum_congr rfl (fun i _ => hterm i), Finset.sum_ite_eq',
-    if_pos (Finset.mem_univ _), hP, add_zero]
+    ite_eq_left (Finset.mem_univ _), hP, add_zero]
 
 private lemma isHopfApproximable_row (H : HodgeTateDatum p g v R O σ cp) {m : ℕ} (e : Fin m → O)
     (horth : ∀ i j, e i * e j = if i = j then e i else 0) (hPT : ∀ i, H.ρ (e i) * H.P = 0)
@@ -150,7 +150,7 @@ private lemma isHopfApproximable_row (H : HodgeTateDatum p g v R O σ cp) {m : �
       rw [← hrange]
       exact ⟨x, rfl⟩
     obtain ⟨s, hs⟩ := hmem
-    rw [← hs, Matrix.mulVecLin_apply, Matrix.mulVec_mulVec, ← map_mul, horth, if_pos rfl]
+    rw [← hs, Matrix.mulVecLin_apply, Matrix.mulVec_mulVec, ← map_mul, horth, ite_eq_left rfl]
   rcases k with j | j
   · refine isHopfApproximable_congr H Bw (ℓ := fun x => (H.Ht *ᵥ (algebraMap ℤ_[p] R ∘ (Bw *ᵥ x))) j)
       (fun x => ?_) (isHopfApproximable_comp_mulVec H Bw (fun t => (H.Ht *ᵥ (algebraMap ℤ_[p] R ∘ t)) j) (H.h4 j).1)
@@ -272,7 +272,7 @@ theorem restrictedHopfOrderApproximation : RestrictedHopfOrderApproximationState
       norm_num
     have hvdj : v (algebraMap R C dj) = v (algebraMap R C (p : R)) :=
       le_antisymm hcase (by rw [hpc]; exact hdj)
-    have hQ : H.ρ (e w) * H.ρ (e w) = H.ρ (e w) := by rw [← map_mul, horth, if_pos rfl]
+    have hQ : H.ρ (e w) * H.ρ (e w) = H.ρ (e w) := by rw [← map_mul, horth, ite_eq_left rfl]
     obtain ⟨M, hM⟩ := exists_leftInverse_of_range_eq (H.ρ (e w)) hQ Bw hrange hker
     choose sv hsv using fun i => exists_padicPairing_eq_coord H.E H.isUnit_det_E M Bw hM i
     choose χ hχ hχv using fun i => H.h5 hp2 (sv i)
@@ -518,13 +518,13 @@ theorem btP_facts (hS : HodgeTateSetting p v R O σ cp) (H : HodgeTateDatum p g 
   have h2 : ∀ i j, εT i * εT j = if i = j then εT i else 0 := by
     intro i j
     refine Fin.lastCases ?_ (fun i => ?_) i <;> refine Fin.lastCases ?_ (fun j => ?_) j
-    · rw [hTl, ← map_mul, H.projectors.1, if_pos rfl]
-    · rw [hTl, hTc, ← map_mul, hPρ, map_zero, if_neg (Fin.castSucc_lt_last j).ne']
-    · rw [hTl, hTc, ← map_mul, hPT, map_zero, if_neg (Fin.castSucc_lt_last i).ne]
+    · rw [hTl, ← map_mul, H.projectors.1, ite_eq_left rfl]
+    · rw [hTl, hTc, ← map_mul, hPρ, map_zero, ite_eq_right (Fin.castSucc_lt_last j).ne']
+    · rw [hTl, hTc, ← map_mul, hPT, map_zero, ite_eq_right (Fin.castSucc_lt_last i).ne]
     · rw [hTc, hTc, ← map_mul, ← map_mul, horth]
       by_cases hij : i = j
       · subst hij; simp
-      · rw [if_neg hij, if_neg (fun h => hij (Fin.castSucc_injective _ h)), map_zero, map_zero]
+      · rw [ite_eq_right hij, ite_eq_right (fun h => hij (Fin.castSucc_injective _ h)), map_zero, map_zero]
   have h3 : ∑ i, εT i = 1 := by
     rw [Fin.sum_univ_castSucc]
     simp only [hTc, hTl]
@@ -533,13 +533,13 @@ theorem btP_facts (hS : HodgeTateSetting p v R O σ cp) (H : HodgeTateDatum p g 
   have h4 : ∀ i j, εL i * εL j = if i = j then εL i else 0 := by
     intro i j
     refine Fin.lastCases ?_ (fun i => ?_) i <;> refine Fin.lastCases ?_ (fun j => ?_) j
-    · rw [hLl, H.projectors.2.1, if_pos rfl]
-    · rw [hLl, hLc, hPLρ, if_neg (Fin.castSucc_lt_last j).ne']
-    · rw [hLl, hLc, hPL, if_neg (Fin.castSucc_lt_last i).ne]
+    · rw [hLl, H.projectors.2.1, ite_eq_left rfl]
+    · rw [hLl, hLc, hPLρ, ite_eq_right (Fin.castSucc_lt_last j).ne']
+    · rw [hLl, hLc, hPL, ite_eq_right (Fin.castSucc_lt_last i).ne]
     · rw [hLc, hLc, ← map_mul, horth]
       by_cases hij : i = j
       · subst hij; simp
-      · rw [if_neg hij, if_neg (fun h => hij (Fin.castSucc_injective _ h)), map_zero]
+      · rw [ite_eq_right hij, ite_eq_right (fun h => hij (Fin.castSucc_injective _ h)), map_zero]
   have h5 : ∑ i, εL i = 1 := by
     rw [Fin.sum_univ_castSucc]
     simp only [hLc, hLl]
@@ -620,7 +620,7 @@ theorem smith_normal_form_statement : EigenQuotientSmithStatement := by
   have hv := hS.integers
   have hcp : cp ≠ 0 := htd_cp_ne hS
   set ι := algebraMap ℤ_[p] R with hι
-  have hidw : H.ρ (e w) * H.ρ (e w) = H.ρ (e w) := by rw [← map_mul, horth, if_pos rfl]
+  have hidw : H.ρ (e w) * H.ρ (e w) = H.ρ (e w) := by rw [← map_mul, horth, ite_eq_left rfl]
   obtain ⟨L, hLB, hBL⟩ := PullbackHopfOrder.exists_split (H.ρ (e w)) hidw Bw hrange hker
   set B := Bw.map ι with hB
   set εw := (H.ρ (e w)).map ι with hεw
@@ -671,8 +671,8 @@ theorem smith_normal_form_statement : EigenQuotientSmithStatement := by
   set Pw : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) R :=
     fromBlocks (H.ρL (e (π w)))ᵀ 0 0 (H.ρL (e w)) with hPw
   have hidL : ∀ a : O, a * a = a → H.ρL a * H.ρL a = H.ρL a := fun a ha => by rw [← map_mul, ha]
-  have hidwL := hidL (e w) (by rw [horth, if_pos rfl])
-  have hidwbL := hidL (e (π w)) (by rw [horth, if_pos rfl])
+  have hidwL := hidL (e w) (by rw [horth, ite_eq_left rfl])
+  have hidwbL := hidL (e (π w)) (by rw [horth, ite_eq_left rfl])
   have hPwmv : ∀ q, Pw *ᵥ q = Sum.elim ((H.ρL (e (π w)))ᵀ *ᵥ (q ∘ Sum.inl))
       (H.ρL (e w) *ᵥ (q ∘ Sum.inr)) := by
     intro q
@@ -789,7 +789,7 @@ theorem smith_normal_form_statement : EigenQuotientSmithStatement := by
     by_cases hjk : (j : ℕ) = k
     · have hj : j = ⟨k, hrle k⟩ := Fin.ext hjk
       subst hj
-      rw [dif_pos k.isLt]
+      rw [dite_eq_left k.isLt]
       simp [hdj]
     · rw [Pi.smul_apply, Pi.single_eq_of_ne (fun h => hjk (by rw [h])), smul_zero]
       split_ifs with h
@@ -811,7 +811,7 @@ theorem smith_normal_form_statement : EigenQuotientSmithStatement := by
       rw [Finset.sum_eq_single k]
       · simp [hdj]
       · intro b _ hb
-        rw [if_neg (fun h => hb (Fin.ext h)), zero_mul]
+        rw [ite_eq_right (fun h => hb (Fin.ext h)), zero_mul]
       · intro h; exact absurd (Finset.mem_univ k) h
     rw [h1, hDQ]
     have h3 : (P * M') ⟨k, hrle k⟩ = ∑ l, P ⟨k, hrle k⟩ l • (fun i => M (e2.symm l) i) := by
@@ -838,7 +838,7 @@ theorem smith_normal_form_statement : EigenQuotientSmithStatement := by
       have : (cp • (u ∘ ⇑e2)) ∘ ⇑e2.symm = cp • u := by funext y; simp
       rw [this, mulVec_smul, hPP]
     have h4 := congrFun h3 j
-    rw [hDv, dif_pos k.isLt] at h4
+    rw [hDv, dite_eq_left k.isLt] at h4
     simp only [Pi.smul_apply, Pi.single_eq_same, smul_eq_mul, mul_one] at h4
     apply hv.le_of_dvd
     exact ⟨_, h4.symm⟩
@@ -866,7 +866,7 @@ theorem smith_normal_form_statement : EigenQuotientSmithStatement := by
             rw [← hM'D, hM'v, ht, ← mulVec_smul]
             rfl
           have h2 := congrFun h1 j
-          rw [hDv, dif_neg hj, Pi.smul_apply, smul_eq_mul] at h2
+          rw [hDv, dite_eq_right hj, Pi.smul_apply, smul_eq_mul] at h2
           exact (mul_eq_zero.1 h2.symm).resolve_left hcp
         have hPq : P *ᵥ ((q : Fin g ⊕ Fin g → R) ∘ e2.symm) = D *ᵥ s := by
           funext j
@@ -889,7 +889,7 @@ theorem smith_normal_form_statement : EigenQuotientSmithStatement := by
           rw [← hM'D, hM'v]
           congr 1
           exact congrArg (· ∘ e2.symm) ht.symm
-        rw [h1, hDv, dif_pos k.isLt]
+        rw [h1, hDv, dite_eq_left k.isLt]
         exact Ideal.mul_mem_right _ _ (Ideal.subset_span rfl)
     have hsurj : Function.Surjective F := by
       intro z
@@ -903,11 +903,11 @@ theorem smith_normal_form_statement : EigenQuotientSmithStatement := by
         funext j
         rw [hDv]
         split_ifs with h
-        · simp only [Pi.smul_apply, smul_eq_mul, yt, dif_pos h, s, α]
+        · simp only [Pi.smul_apply, smul_eq_mul, yt, dite_eq_left h, s, α]
           rw [← Finset.mul_prod_erase Finset.univ dj (Finset.mem_univ ⟨j, h⟩)]
           simp only [hdj]
           ring
-        · simp [yt, dif_neg h]
+        · simp [yt, dite_eq_right h]
       have hαu : M *ᵥ (Q *ᵥ s) = α • (u ∘ e2) := by
         funext x
         have h1 : M' *ᵥ (Q *ᵥ s) = α • u := by
@@ -922,7 +922,7 @@ theorem smith_normal_form_statement : EigenQuotientSmithStatement := by
       have h1 : ((u ∘ ⇑e2) ∘ ⇑e2.symm) = u := by funext j; simp
       show Ideal.Quotient.mk _ ((P *ᵥ ((u ∘ ⇑e2) ∘ ⇑e2.symm)) ⟨k, hrle k⟩) = z k
       rw [h1, hPP]
-      simp only [yt, dif_pos k.isLt, Fin.eta, y]
+      simp only [yt, dite_eq_left k.isLt, Fin.eta, y]
       exact Ideal.Quotient.mk_out (z k)
     have heq : xMod H e π w ≃ₗ[R] ((k : Fin r) → R ⧸ Ideal.span {dj k}) :=
       (Submodule.quotEquivOfEq _ _ (by rw [hmapT, hker])).trans (F.quotKerEquivOfSurjective hsurj)
@@ -980,7 +980,7 @@ theorem wdetDegree_of_smith_restrict (hS : EigenQuotientSmithStatement) (hR : Re
   intro p _ g C _ _ _ v R _ _ _ O _ _ σ cp hSet H m e π horth hσ hsT hPT hsL hPL w hw d X hd hX
   classical
   have hv := hSet.integers
-  have hidem : e w * e w = e w := by rw [horth, if_pos rfl]
+  have hidem : e w * e w = e w := by rw [horth, ite_eq_left rfl]
   have hρidem : H.ρ (e w) * H.ρ (e w) = H.ρ (e w) := by rw [← map_mul, hidem]
   obtain ⟨r, Bw, hrange, hker⟩ := idem_basis (H.ρ (e w)) hρidem
   obtain ⟨Λ, dj, hΛ, hdjspan, hdjv, hXeq⟩ :=
@@ -1103,8 +1103,7 @@ theorem wdetDegree_of_smith_restrict (hS : EigenQuotientSmithStatement) (hR : Re
       have hlt : (v (algebraMap R C cp) ^ d) ^ (p ^ 0 * (p - 1)) < 1 := by
         refine pow_lt_one₀ zero_le' (pow_lt_one₀ zero_le' ?_ (by omega)) (by simp; omega)
         have h1 := hSet.cp_val
-        by_contra hge
-        push_neg at hge
+        by_contra! hge
         have h2 : 1 ≤ v (algebraMap R C cp) ^ (p - 1) := one_le_pow₀ hge
         rw [h1] at h2
         exact absurd hSet.p_lt (not_lt.2 h2)

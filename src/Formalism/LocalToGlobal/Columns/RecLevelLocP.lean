@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
 public import Formalism.LocalToGlobal.Columns.RecLevelLocT
 import Formalism.LocalToGlobal.Columns.BaseLemmas
 import Mathlib.RingTheory.Henselian
@@ -39,17 +40,7 @@ theorem IsOver.conj {v : HeightOneSpectrum (𝓞 F)} {P : Pl E} (h : IsOver v P)
   rw [Ideal.mem_comap, Ideal.mem_comap, mem_conjP, rll_cO_algebraMap hc]
 
 theorem rll_norm_mem (a : 𝓞 E) : ∃ b : 𝓞 F, algebraMap (𝓞 F) (𝓞 E) b = a * cO E a := by
-  have h1 : star (algebraMap (𝓞 E) E (a * cO E a)) = algebraMap (𝓞 E) E (a * cO E a) := by
-    rw [map_mul, algebraMap_cO, star_mul', star_star, mul_comm]
-  obtain ⟨x, hx⟩ := (hc.fixed _).1 h1
-  have hi : IsIntegral ℤ x := by
-    have h2 : IsIntegral ℤ (algebraMap F E x) := by rw [hx]; exact RingOfIntegers.isIntegral_coe _
-    exact (isIntegral_algebraMap_iff ).1 h2
-  obtain ⟨b, hb⟩ : ∃ b : 𝓞 F, algebraMap (𝓞 F) F b = x := ⟨⟨x, hi⟩, rfl⟩
-  refine ⟨b, ?_⟩
-  apply RingOfIntegers.ext
-  change algebraMap (𝓞 E) E (algebraMap (𝓞 F) (𝓞 E) b) = algebraMap (𝓞 E) E (a * cO E a)
-  rw [← hx, ← hb, ← IsScalarTower.algebraMap_apply, ← IsScalarTower.algebraMap_apply]
+  apply _root_.GlobalTheory.TypeValues.exists_norm <;> assumption
 
 theorem rll_over_cases {v : HeightOneSpectrum (𝓞 F)} {P Q : Pl E} (hP : IsOver v P) (hQ : IsOver v Q) :
     Q = P ∨ Q = conjPrime₂ P := by
@@ -63,7 +54,7 @@ theorem rll_over_cases {v : HeightOneSpectrum (𝓞 F)} {P Q : Pl E} (hP : IsOve
   have hnot : ∀ R : Pl E, R ≠ Q → R ∈ ({Q, P, conjPrime₂ P} : Finset (Pl E)) → a ∉ R.asIdeal := by
     intro R hR hm haR
     have := ha R hm
-    rw [if_neg hR] at this
+    rw [ite_eq_right hR] at this
     exact (Ideal.ne_top_iff_one _).1 R.isPrime.ne_top (by
       have h2 := Ideal.sub_mem _ haR this
       simpa using h2)

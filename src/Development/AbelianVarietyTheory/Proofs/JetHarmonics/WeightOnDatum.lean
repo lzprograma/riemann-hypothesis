@@ -84,7 +84,7 @@ theorem weight_on_datum : ∀ (D : D7) (T : Core D), T.Q.Pins → ∀ (j : ℕ),
     have hmult : (T.Q.Dw j).mult (DV.tauEmb D t) = (D.R.sigW j).1 := by
       unfold Datum.mult
       have hτ' : (DV.tauEmb D t) (T.Q.H.rt : D.host.E) = T.Q.H.rt0 := hτ
-      rw [if_pos hτ', hp]
+      rw [ite_eq_left hτ', hp]
     rw [hmult, (hwt t _).1]
     unfold ext0
     rw [dite_eq_left (by omega)]

@@ -10,50 +10,8 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishC
 public import Mathlib.Data.Matrix.PEquiv
 public import Mathlib.Basic.PEquiv
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCharLab
 
 @[expose] public section
@@ -292,11 +250,6 @@ theorem commute_AB (σ : Fin k ⊕ Fin l ≃ Fin n) (a : MonoidAlgebra ℂ (Gn g
   unfold Commute SemiconjBy
   simp [single_mul_single, inA, inB, par_mul, mul_comm]
 
-theorem isClass_of_isIrr {G : Type} [Group G] {χ : G → ℂ} (h : IsIrr χ) : IsClass χ := by
-  obtain ⟨V, -, hV⟩ := h
-  intro x y
-  rw [← hV, ← hV, FDRep.char_conj]
-
 open MonoidAlgebra in
 theorem irr_vanish (σ : Fin k ⊕ Fin l ≃ Fin n) (χ : Gn g n → ℂ) (α : Gn g k → ℂ) (β : Gn g l → ℂ)
     (hχ : IsIrr χ) (hα : IsIrr α) (hβ : IsIrr β) (h : ip χ (hc k l α β n) = 0) :
@@ -317,7 +270,7 @@ theorem irr_vanish (σ : Fin k ⊕ Fin l ≃ Fin n) (χ : Gn g n → ℂ) (α : 
   refine eq_zero_of_idem _ hi ?_
   rw [(_root_.GlobalTheory.GLq.trIdem _ _ χ).2.2]
   refine mul_eq_zero_of_right _ ?_
-  rw [hc, _root_.GlobalTheory.GLq.FrobRecHC.hcT_adjoint g k l n hn χ _ (isClass_of_isIrr hχ), ip, mul_eq_zero] at h
+  rw [hc, _root_.GlobalTheory.GLq.FrobRecHC.hcT_adjoint g k l n hn χ _ (GlobalTheory.GLq.ResCuspProd.isClass_of_isIrr hχ), ip, mul_eq_zero] at h
   have h' := h.resolve_left (inv_ne_zero (Nat.cast_ne_zero.2 Fintype.card_ne_zero))
   rw [Fintype.sum_prod_type] at h'
   rw [map_zOf, map_zOf, mul_assoc, Finset.sum_mul_sum, Finset.mul_sum, tr_sum]
@@ -386,14 +339,6 @@ theorem comp_alg {G H W : Type} [Group G] [Group H] [AddCommGroup W] [Module ℂ
   | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | smul r x hx => simp only [map_smul, hx]
 
-theorem equiv_alg {G W W' : Type} [Group G] [AddCommGroup W] [Module ℂ W] [AddCommGroup W'] [Module ℂ W']
-    (ρ : Representation ℂ G W) (ρ' : Representation ℂ G W') (T : W →ₗ[ℂ] W') (h : ∀ m, T ∘ₗ ρ m = ρ' m ∘ₗ T)
-    (a : MonoidAlgebra ℂ G) (w : W) : T (ρ.asAlgebraHom a w) = ρ'.asAlgebraHom a (T w) := by
-  induction a using MonoidAlgebra.induction_on with
-  | of m => simpa using LinearMap.congr_fun (h m) w
-  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
-  | smul r x hx => simp only [map_smul, LinearMap.smul_apply, hx]
-
 theorem eN_left {W W' : Type} [AddCommGroup W] [Module ℂ W] [AddCommGroup W'] [Module ℂ W']
     (σ : Fin k ⊕ Fin l ≃ Fin n) (ρ : Representation ℂ (Gn g n) W) (T : W →ₗ[ℂ] W')
     (h : ∀ B, T ∘ₗ ρ (par σ 1 B 1) = T) (w : W) : T (ρ.asAlgebraHom (eN g σ) w) = T w := by
@@ -410,15 +355,6 @@ theorem eN_right {W : Type} [AddCommGroup W] [Module ℂ W]
   simp only [eN, map_sum, Representation.asAlgebraHom_single, LinearMap.sum_apply, LinearMap.smul_apply, h]
   rw [Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ, card_mat, smul_smul, mul_inv_cancel₀ gpow_ne,
     one_smul]
-
-theorem exists_split (a : Fin n → ℤ) (hn : 0 < n) : ∃ (k l : ℕ) (σ : Fin k ⊕ Fin l ≃ Fin n) (M : ℤ), k < n ∧
-    (∀ i, a (σ (.inl i)) < M) ∧ ∀ j, a (σ (.inr j)) = M := by
-  obtain ⟨i₀, -, hi₀⟩ := Finset.exists_max_image Finset.univ a ⟨⟨0, hn⟩, Finset.mem_univ _⟩
-  refine ⟨_, _, (Equiv.sumCongr (Fintype.equivFin _).symm (Fintype.equivFin _).symm).trans
-    (Equiv.sumCompl fun i => a i < a i₀), a i₀, ?_, fun i => ?_, fun j => ?_⟩
-  · simpa using Fintype.card_subtype_lt (p := fun i => a i < a i₀) (x := i₀) (lt_irrefl _)
-  · exact ((Fintype.equivFin {i // a i < a i₀}).symm i).2
-  · exact le_antisymm (hi₀ _ (Finset.mem_univ _)) (not_lt.1 ((Fintype.equivFin {i // ¬ a i < a i₀}).symm j).2)
 
 open MonoidAlgebra in
 theorem step (L : LabelDatum g) (h5 : 5 ≤ g) (hG : Green) (σ : Fin k ⊕ Fin l ≃ Fin n) {W W' : Type}
@@ -475,77 +411,5 @@ theorem step (L : LabelDatum g) (h5 : 5 ≤ g) (hG : Green) (σ : Fin k ⊕ Fin 
   rw [hc, hB, ← hN', ← Module.End.mul_apply, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul,
     ← map_mul, hv]
   simp
-
-theorem vanish (L : LabelDatum g) (h5 : 5 ≤ g) (hG : Green) {W W' : Type}
-    [AddCommGroup W] [Module ℂ W] [AddCommGroup W'] [Module ℂ W'] (T : W →ₗ[ℂ] W') (n : ℕ) :
-    ∀ (ρ : Representation ℂ (Gn g n) W) (ρ' : Representation ℂ (Gn g n) W') (a : Fin n → ℤ),
-    (∀ u : Gn g n, (∀ i j, ¬ a i < a j → (u : Mt g n) i j = (1 : Mt g n) i j) → T ∘ₗ ρ u = T) →
-    (∀ u : Gn g n, (∀ i j, ¬ a j < a i → (u : Mt g n) i j = (1 : Mt g n) i j) → ρ' u ∘ₗ T = T) →
-    (∀ m : Gn g n, (∀ i j, a i ≠ a j → (m : Mt g n) i j = 0) → T ∘ₗ ρ m = ρ' m ∘ₗ T) →
-    ∀ f f' : (ZMod g)[X], f ≠ f' → ∀ w, ρ'.asAlgebraHom (eSerC L n f') (T (ρ.asAlgebraHom (eSerC L n f) w)) = 0 := by
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-  intro ρ ρ' a hU hU' hM f f' hf w
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · rw [equiv_alg ρ ρ' T (fun m => hM m fun i => i.elim0), ← Module.End.mul_apply, ← map_mul,
-      (_root_.GlobalTheory.GLq.eSerC_laws g L h5 hG 0).2.2.1 f' f hf.symm]
-    simp
-  obtain ⟨k, l, σ, M, hk, h₁, h₂⟩ := exists_split a hn
-  have one : ∀ i j, (1 : Mt g n) (σ i) (σ j) = Matrix.fromBlocks (1 : Mt g k) 0 0 (1 : Mt g l) i j := by
-    intro i j
-    simp [Matrix.one_apply]
-  refine step L h5 hG σ ρ ρ' T (eN_left σ ρ T fun B => hU _ fun i j hij => ?_)
-    (fun w => eN_right _ ρ' _ fun B => LinearMap.congr_fun (hU' _ fun i j hij => ?_) w) (fun b w => ?_)
-    (fun f f' hf w => ?_) f f' hf w
-  · obtain ⟨i, rfl⟩ := σ.surjective i
-    obtain ⟨j, rfl⟩ := σ.surjective j
-    rw [par_apply, one]
-    rcases i with i | i <;> rcases j with j | j
-    · simp
-    · exact absurd (h₂ j ▸ h₁ i) hij
-    · simp
-    · simp
-  · obtain ⟨i, rfl⟩ := σ.surjective i
-    obtain ⟨j, rfl⟩ := σ.surjective j
-    rw [one]
-    rcases i with i | i <;> rcases j with j | j
-    · simp [par_val]
-    · simp [par_val]
-    · exact absurd (h₂ i ▸ h₁ j) hij
-    · simp [par_val]
-  · rw [← comp_alg, ← comp_alg]
-    refine equiv_alg _ _ T (fun m => hM (par σ 1 0 m) fun i j hij => ?_) b w
-    obtain ⟨i, rfl⟩ := σ.surjective i
-    obtain ⟨j, rfl⟩ := σ.surjective j
-    rw [par_apply]
-    rcases i with i | i <;> rcases j with j | j
-    · have : i ≠ j := fun h => hij (by rw [h])
-      simp [Matrix.one_apply_ne this]
-    · simp
-    · simp
-    · exact absurd ((h₂ i).trans (h₂ j).symm) hij
-  · rw [← comp_alg, ← comp_alg]
-    refine ih k hk _ _ (fun i => a (σ (.inl i))) (fun u hu => hU (par σ u 0 1) fun i j hij => ?_)
-      (fun u hu => hU' (par σ u 0 1) fun i j hij => ?_) (fun u hu => hM (par σ u 0 1) fun i j hij => ?_) f f' hf w
-    · obtain ⟨i, rfl⟩ := σ.surjective i
-      obtain ⟨j, rfl⟩ := σ.surjective j
-      rw [par_apply, one]
-      rcases i with i | i <;> rcases j with j | j
-      · simpa using hu i j hij
-      all_goals simp
-    · obtain ⟨i, rfl⟩ := σ.surjective i
-      obtain ⟨j, rfl⟩ := σ.surjective j
-      rw [par_apply, one]
-      rcases i with i | i <;> rcases j with j | j
-      · simpa using hu i j hij
-      all_goals simp
-    · obtain ⟨i, rfl⟩ := σ.surjective i
-      obtain ⟨j, rfl⟩ := σ.surjective j
-      rw [par_apply]
-      rcases i with i | i <;> rcases j with j | j
-      · simpa using hu i j hij
-      · simp
-      · simp
-      · exact absurd ((h₂ i).trans (h₂ j).symm) hij
 
 end GlobalTheory.GLq.Opp

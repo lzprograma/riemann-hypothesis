@@ -52,7 +52,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj MvPowerSeries ReciprocityTheory.ChartRestriction.G.Chart ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.JetSer
 open ReciprocityTheory.ChartRestriction.G.Out (rosatiφ rosatiε zero2)
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (LBIso)
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.JetSer
 

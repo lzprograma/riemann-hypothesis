@@ -84,16 +84,19 @@ theorem linearIndependent_logLattice_one {ι : Type*} (b : Basis ι ℤ (logLatt
     rw [mul_eq_zero, or_iff_left h3] at h1
     rw [h1, zero_smul]
 
-theorem cycHerbrand_logLatticeRep_mul_card {σ : L ≃ₐ[K] L} (hσ : ∀ g, g ∈ Subgroup.zpowers σ) :
-    cycHerbrand (logLatticeRep (K := K) (L := L)) σ * Fintype.card (L ≃ₐ[K] L) =
-      cycHerbrand (funPermRep ℤ (L ≃ₐ[K] L) (InfinitePlace L)) σ := by
+theorem exists_logLatticeProd_real_equiv {K L : Type*} [Field K] [Field L] [NumberField L]
+    [Algebra K L] :
+    ∃ e : ℝ ⊗[ℤ] (logLattice L × ℤ) ≃ₗ[ℝ] ℝ ⊗[ℤ] (InfinitePlace L → ℤ),
+      ∀ (g : L ≃ₐ[K] L) y, e ((((logLatticeRep K L).prod
+          (Representation.trivial ℤ (L ≃ₐ[K] L) ℤ)) g).baseChange ℝ y) =
+        (funPermRep ℤ (L ≃ₐ[K] L) (InfinitePlace L) g).baseChange ℝ (e y) := by
   classical
   let bM := Module.Free.chooseBasis ℤ (logLattice L)
   let b := bM.prod (Basis.singleton Unit ℤ)
   let B := Algebra.TensorProduct.basis ℝ b
   let E := (logLatticeProdMap (L := L)).liftBaseChange ℝ
-  let v := Sum.elim (fun i => (bM i : InfinitePlace L → ℝ))
-    (fun _ : Unit => (1 : InfinitePlace L → ℝ))
+  let v := Sum.elim (fun i ↦ (bM i : InfinitePlace L → ℝ))
+    (fun _ : Unit ↦ (1 : InfinitePlace L → ℝ))
   have hEB : ∀ j, E (B j) = v j := by
     intro j
     rw [Algebra.TensorProduct.basis_apply, LinearMap.liftBaseChange_tmul, one_smul]
@@ -120,7 +123,7 @@ theorem cycHerbrand_logLatticeRep_mul_card {σ : L ≃ₐ[K] L} (hσ : ∀ g, g 
   let P := TensorProduct.piScalarRight ℤ ℝ ℝ (InfinitePlace L)
   let e : ℝ ⊗[ℤ] (logLattice L × ℤ) ≃ₗ[ℝ] ℝ ⊗[ℤ] (InfinitePlace L → ℤ) :=
     (LinearEquiv.ofBijective E hbij).trans P.symm
-  have hE : ∀ (g : L ≃ₐ[K] L) y, E ((((logLatticeRep (K := K) (L := L)).prod
+  have hE : ∀ (g : L ≃ₐ[K] L) y, E ((((logLatticeRep K L).prod
       (Representation.trivial ℤ (L ≃ₐ[K] L) ℤ)) g).baseChange ℝ y) =
       funPermRep ℝ (L ≃ₐ[K] L) (InfinitePlace L) g (E y) := by
     intro g y
@@ -130,14 +133,16 @@ theorem cycHerbrand_logLatticeRep_mul_card {σ : L ≃ₐ[K] L} (hσ : ∀ g, g 
       rw [LinearMap.baseChange_tmul, LinearMap.liftBaseChange_tmul, LinearMap.liftBaseChange_tmul,
         map_smul, logLatticeProdMap_comm]
     | add y z hy hz => rw [map_add (f := _), map_add (f := _), hy, hz, map_add (f := _), map_add (f := _)]
-  have he : ∀ (g : L ≃ₐ[K] L) y, e ((((logLatticeRep (K := K) (L := L)).prod
-      (Representation.trivial ℤ (L ≃ₐ[K] L) ℤ)) g).baseChange ℝ y) =
-      (funPermRep ℤ (L ≃ₐ[K] L) (InfinitePlace L) g).baseChange ℝ (e y) := by
-    intro g y
-    apply P.injective
-    simp only [e, LinearEquiv.trans_apply, LinearEquiv.apply_symm_apply]
-    rw [piScalarRight_baseChange_funPermRep, LinearEquiv.apply_symm_apply,
-      LinearEquiv.ofBijective_apply, LinearEquiv.ofBijective_apply, hE]
+  refine ⟨e, fun g y ↦ ?_⟩
+  apply P.injective
+  simp only [e, LinearEquiv.trans_apply, LinearEquiv.apply_symm_apply]
+  rw [piScalarRight_baseChange_funPermRep, LinearEquiv.apply_symm_apply,
+    LinearEquiv.ofBijective_apply, LinearEquiv.ofBijective_apply, hE]
+
+theorem cycHerbrand_logLatticeRep_mul_card {σ : L ≃ₐ[K] L} (hσ : ∀ g, g ∈ Subgroup.zpowers σ) :
+    cycHerbrand (logLatticeRep (K := K) (L := L)) σ * Fintype.card (L ≃ₐ[K] L) =
+      cycHerbrand (funPermRep ℤ (L ≃ₐ[K] L) (InfinitePlace L)) σ := by
+  obtain ⟨e, he⟩ := exists_logLatticeProd_real_equiv (K := K) (L := L)
   rw [← cycHerbrand_eq_of_real_equiv _ _ σ e he,
     cycHerbrand_prod _ _ σ (hasHerbrandQuotient_cycSubOne_of_finite _ hσ)
       (hasHerbrandQuotient_cycSubOne_of_finite _ hσ), cycHerbrand_trivial_int]

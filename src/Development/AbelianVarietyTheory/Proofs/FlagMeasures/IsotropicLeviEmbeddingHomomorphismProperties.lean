@@ -43,6 +43,7 @@ import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructure
 
 @[expose] public section
 
@@ -87,7 +88,7 @@ variable {k r : ℕ} (u : Matrix (Fin r) (Fin r) ℂ) (a b : Fin r) (m n : Fin (
 
 theorem u_ee : uEmb k r u (eI k r a) (eI k r b) = u a b := by
   have h : (eI k r a).val < r ∧ (eI k r b).val < r := ⟨a.2, b.2⟩
-  simp only [uEmb, dif_pos h]
+  simp only [uEmb, dite_eq_left h]
   rfl
 theorem u_em : uEmb k r u (eI k r a) (mI k r n) = 0 := by
   have va : (eI k r a).val = a.val := rfl
@@ -141,149 +142,45 @@ theorem u_ss : uEmb k r u (esI k r a) (esI k r b) = star (u⁻¹ b a) := by
   have h2 : r + k < (esI k r a).val ∧ r + k < (esI k r b).val := by rw [vsa, vsb]; omega
   have e1 : 2 * r + k - (esI k r b).val = b.val := by rw [vsb]; omega
   have e2 : 2 * r + k - (esI k r a).val = a.val := by rw [vsa]; omega
-  simp only [uEmb, dif_neg h1, dif_pos h2]
+  simp only [uEmb, dite_eq_right h1, dite_eq_left h2]
   congr 1
   exact congrArg₂ (fun x y => u⁻¹ x y) (Fin.ext e1) (Fin.ext e2)
 
-theorem h_ee : Hpk k r (eI k r a) (eI k r b) = 0 := by
-  have ha := a.2
-  have hb := b.2
-  have va : (eI k r a).val = a.val := rfl
-  have vb : (eI k r b).val = b.val := rfl
-  simp only [Hpk, Fin.ext_iff, va, vb]
-  split_ifs <;> first | rfl | omega
-theorem h_em : Hpk k r (eI k r a) (mI k r n) = 0 := by
-  have ha := a.2
-  have hn := n.2
-  have va : (eI k r a).val = a.val := rfl
-  have vn : (mI k r n).val = r + n.val := rfl
-  simp only [Hpk, Fin.ext_iff, va, vn]
-  split_ifs <;> first | rfl | omega
-theorem h_es : Hpk k r (eI k r a) (esI k r b) = if a = b then 1 else 0 := by
-  have ha := a.2
-  have hb := b.2
-  have va : (eI k r a).val = a.val := rfl
-  have vsb : (esI k r b).val = 2 * r + k - b.val := rfl
-  simp only [Hpk, Fin.ext_iff, va, vsb]
-  split_ifs <;> first | rfl | omega
-theorem h_me : Hpk k r (mI k r m) (eI k r b) = 0 := by
-  have hm := m.2
-  have hb := b.2
-  have vm : (mI k r m).val = r + m.val := rfl
-  have vb : (eI k r b).val = b.val := rfl
-  simp only [Hpk, Fin.ext_iff, vm, vb]
-  split_ifs <;> first | rfl | omega
-theorem h_ms : Hpk k r (mI k r m) (esI k r b) = 0 := by
-  have hm := m.2
-  have hb := b.2
-  have vm : (mI k r m).val = r + m.val := rfl
-  have vsb : (esI k r b).val = 2 * r + k - b.val := rfl
-  simp only [Hpk, Fin.ext_iff, vm, vsb]
-  split_ifs <;> first | rfl | omega
-theorem h_se : Hpk k r (esI k r a) (eI k r b) = if a = b then 1 else 0 := by
-  have ha := a.2
-  have hb := b.2
-  have vsa : (esI k r a).val = 2 * r + k - a.val := rfl
-  have vb : (eI k r b).val = b.val := rfl
-  simp only [Hpk, Fin.ext_iff, vsa, vb]
-  split_ifs <;> first | rfl | omega
-theorem h_sm : Hpk k r (esI k r a) (mI k r n) = 0 := by
-  have ha := a.2
-  have hn := n.2
-  have vsa : (esI k r a).val = 2 * r + k - a.val := rfl
-  have vn : (mI k r n).val = r + n.val := rfl
-  simp only [Hpk, Fin.ext_iff, vsa, vn]
-  split_ifs <;> first | rfl | omega
-theorem h_ss : Hpk k r (esI k r a) (esI k r b) = 0 := by
-  have ha := a.2
-  have hb := b.2
-  have vsa : (esI k r a).val = 2 * r + k - a.val := rfl
-  have vsb : (esI k r b).val = 2 * r + k - b.val := rfl
-  simp only [Hpk, Fin.ext_iff, vsa, vsb]
-  split_ifs <;> first | rfl | omega
+theorem h_ee : Hpk k r (eI k r a) (eI k r b) = 0 :=
+  Rad.H_ee (a := a) (b := b)
+theorem h_em : Hpk k r (eI k r a) (mI k r n) = 0 :=
+  Rad.H_ew (k := k) (r := r) (a := a) (j := n)
+theorem h_es : Hpk k r (eI k r a) (esI k r b) = if a = b then 1 else 0 :=
+  Rad.H_es (a := a) (b := b)
+theorem h_me : Hpk k r (mI k r m) (eI k r b) = 0 :=
+  Rad.H_we (k := k) (r := r) (i := m) (b := b)
+theorem h_ms : Hpk k r (mI k r m) (esI k r b) = 0 :=
+  Rad.H_ws (k := k) (r := r) (i := m) (b := b)
+theorem h_se : Hpk k r (esI k r a) (eI k r b) = if a = b then 1 else 0 :=
+  Rad.H_se (a := a) (b := b)
+theorem h_sm : Hpk k r (esI k r a) (mI k r n) = 0 :=
+  Rad.H_sw (k := k) (r := r) (a := a) (j := n)
+theorem h_ss : Hpk k r (esI k r a) (esI k r b) = 0 :=
+  Rad.H_ss (a := a) (b := b)
 
-theorem eI_inj : eI k r a = eI k r b ↔ a = b := by
-  constructor
-  · intro h
-    have h' := congrArg Fin.val h
-    exact Fin.ext h'
-  · intro h
-    rw [h]
-theorem mI_inj : mI k r m = mI k r n ↔ m = n := by
-  constructor
-  · intro h
-    have h' : r + m.val = r + n.val := congrArg Fin.val h
-    exact Fin.ext (by omega)
-  · intro h
-    rw [h]
+theorem eI_inj : eI k r a = eI k r b ↔ a = b :=
+  Rad.eI_inj (k := k) a b
+theorem mI_inj : mI k r m = mI k r n ↔ m = n :=
+  Rad.wI_inj (r := r) m n
 theorem esI_inj : esI k r a = esI k r b ↔ a = b := by
-  have va : (eI k r a).val = a.val := rfl
-  have vsa : (esI k r a).val = 2 * r + k - a.val := rfl
-  have vb : (eI k r b).val = b.val := rfl
-  have vsb : (esI k r b).val = 2 * r + k - b.val := rfl
-  constructor
-  · intro h
-    have h' := congrArg Fin.val h
-    rw [vsa, vsb] at h'
-    exact Fin.ext (by omega)
-  · intro h
-    rw [h]
-theorem eI_ne_mI : eI k r a ≠ mI k r m := by
-  have ha := a.2
-  have va : (eI k r a).val = a.val := rfl
-  have vm : (mI k r m).val = r + m.val := rfl
-  intro h
-  have h' := congrArg Fin.val h
-  rw [va, vm] at h'
-  omega
+  apply _root_.GlobalTheory.Amp.Rad.esI_inj <;> assumption
+theorem eI_ne_mI : eI k r a ≠ mI k r m :=
+  Rad.eI_ne_wI a m
 theorem eI_ne_esI : eI k r a ≠ esI k r b := by
-  have ha := a.2
-  have va : (eI k r a).val = a.val := rfl
-  have hb := b.2
-  have vb : (eI k r b).val = b.val := rfl
-  have vsb : (esI k r b).val = 2 * r + k - b.val := rfl
-  intro h
-  have h' := congrArg Fin.val h
-  rw [va, vsb] at h'
-  omega
-theorem mI_ne_esI : mI k r m ≠ esI k r b := by
-  have hm := m.2
-  have vm : (mI k r m).val = r + m.val := rfl
-  have hb := b.2
-  have vb : (eI k r b).val = b.val := rfl
-  have vsb : (esI k r b).val = 2 * r + k - b.val := rfl
-  intro h
-  have h' := congrArg Fin.val h
-  rw [vm, vsb] at h'
-  omega
-theorem mI_ne_eI : mI k r m ≠ eI k r a := by
-  have vm : (mI k r m).val = r + m.val := rfl
-  have ha := a.2
-  have va : (eI k r a).val = a.val := rfl
-  intro h
-  have h' := congrArg Fin.val h
-  rw [vm, va] at h'
-  omega
-theorem esI_ne_eI : esI k r b ≠ eI k r a := by
-  have hb := b.2
-  have vb : (eI k r b).val = b.val := rfl
-  have vsb : (esI k r b).val = 2 * r + k - b.val := rfl
-  have ha := a.2
-  have va : (eI k r a).val = a.val := rfl
-  intro h
-  have h' := congrArg Fin.val h
-  rw [vsb, va] at h'
-  omega
-theorem esI_ne_mI : esI k r b ≠ mI k r m := by
-  have hb := b.2
-  have vb : (eI k r b).val = b.val := rfl
-  have vsb : (esI k r b).val = 2 * r + k - b.val := rfl
-  have hm := m.2
-  have vm : (mI k r m).val = r + m.val := rfl
-  intro h
-  have h' := congrArg Fin.val h
-  rw [vsb, vm] at h'
-  omega
+  apply _root_.GlobalTheory.Amp.Rad.eI_ne_esI <;> assumption
+theorem mI_ne_esI : mI k r m ≠ esI k r b :=
+  Rad.wI_ne_esI m b
+theorem mI_ne_eI : mI k r m ≠ eI k r a :=
+  Rad.wI_ne_eI m a
+theorem esI_ne_eI : esI k r b ≠ eI k r a :=
+  Rad.esI_ne_eI (k := k) b a
+theorem esI_ne_mI : esI k r b ≠ mI k r m :=
+  Rad.esI_ne_wI b m
 
 theorem uEmb_mul (u u' : Matrix (Fin r) (Fin r) ℂ) : uEmb k r (u * u') = uEmb k r u * uEmb k r u' := by
   ext i j

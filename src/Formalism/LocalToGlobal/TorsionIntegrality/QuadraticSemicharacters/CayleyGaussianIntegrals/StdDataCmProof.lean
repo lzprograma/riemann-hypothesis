@@ -36,8 +36,8 @@ theorem semiChar_scale (L : PeriodPair) (c : ℂ) (hc : c ≠ 0) (ω : ℂ) :
     rw [mul_div_assoc, mul_mem_scale]
   unfold Formalism.L2.Th1.F.semiChar
   by_cases h2 : ω / 2 ∈ L.lattice
-  · rw [if_pos h2, if_pos (h.mpr h2)]
-  · rw [if_neg h2, if_neg (fun h3 => h2 (h.mp h3))]
+  · rw [ite_eq_left h2, ite_eq_left (h.mpr h2)]
+  · rw [ite_eq_right h2, ite_eq_right (fun h3 => h2 (h.mp h3))]
 
 theorem th0Char_scale (L : PeriodPair) (c : ℂ) (hc : c ≠ 0) (ω₀ ω : ℂ) :
     Formalism.L2.Th1.F.thetaZeroCharacter (scalePair L c hc) (c * ω₀) (c * ω) = Formalism.L2.Th1.F.thetaZeroCharacter L ω₀ ω := by

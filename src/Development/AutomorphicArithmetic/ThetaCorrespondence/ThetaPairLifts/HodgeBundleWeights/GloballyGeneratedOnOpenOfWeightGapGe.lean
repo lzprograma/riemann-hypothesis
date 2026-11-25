@@ -156,7 +156,6 @@ open GlobalTheory.HSApp
 open GlobalTheory.Cartier GlobalTheory.Discrepancy GlobalTheory.QCoh
 open GlobalTheory.Twist GlobalTheory.SerreCriterion
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory
 namespace IsolatedSec
@@ -345,8 +344,7 @@ theorem exists_sec_of_pull {F E : Type} [Field F] [Field E] [Algebra F E] {Y X :
   have hβ : ∀ β, dfun N V c hVc (e₁ t β) = 0 := fun β =>
     (hδ _).1 (by rw [← nat, ht, map_zero, Finsupp.zero_apply])
   choose θ hθ using fun β => exists_glue N V c hVc hN hcov (e₁ t β) (hβ β)
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨j, hj⟩ : ∃ j, π x ∈ V j := TopologicalSpace.Opens.mem_iSup.1 (by rw [hcov]; trivial)
   have hxj : x ∈ π ⁻¹ᵁ V j ⊓ q ⁻¹ᵁ ⊤ := ⟨hj, trivial⟩
   have hxc : x ∈ (N.pull π).U (fun _ => c j) := hV'c j hxj
@@ -416,7 +414,6 @@ open GlobalTheory.FlagMod (FlagCover)
 open GlobalTheory.FlagTan (dimFlag)
 open GlobalTheory.HSApp
 
-set_option autoImplicit false
 noncomputable section
 open GlobalTheory.Cartier GlobalTheory.Discrepancy GlobalTheory.QCoh
 
@@ -523,7 +520,6 @@ open GlobalTheory.AllWt (Psi wtOf cuspOn latOn normOn petOn GoodOn GoodW bergOn 
 open GlobalTheory.FlagMod (FlagCover)
 open GlobalTheory.FlagTan (dimFlag)
 open GlobalTheory.HSApp
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 namespace GlobalTheory.ModifRefl
 
@@ -561,8 +557,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
@@ -579,7 +573,7 @@ namespace GlobalTheory.HSApp
 theorem gapGe_stdWt {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} (Dw : Datum H) :
     GapGe 1 (GlobalTheory.CompHt.stdWt (Psi H) (Dw.p + Dw.q) : AllWt.Weight Dw) := by
   intro τ k hk
-  simp only [gap, dif_pos hk, GlobalTheory.CompHt.stdWt]
+  simp only [gap, dite_eq_left hk, GlobalTheory.CompHt.stdWt]
   push_cast
   omega
 
@@ -588,7 +582,7 @@ theorem gapGe_sub_smul {E : Type} [Field E] [NumberField E] [IsCMField E] {H : R
     GapGe 0 (b - m • (GlobalTheory.CompHt.stdWt (Psi H) (Dw.p + Dw.q) : AllWt.Weight Dw)) := by
   intro τ k hk
   have h1 := h τ k hk
-  simp only [gap, dif_pos hk, Pi.sub_apply, Pi.smul_apply, GlobalTheory.CompHt.stdWt] at h1 ⊢
+  simp only [gap, dite_eq_left hk, Pi.sub_apply, Pi.smul_apply, GlobalTheory.CompHt.stdWt] at h1 ⊢
   rw [nsmul_eq_mul, nsmul_eq_mul]
   push_cast
   linarith
@@ -651,7 +645,6 @@ section -- clump:auto
 @[expose] public section
 
 section
-set_option autoImplicit false
 noncomputable section
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
@@ -708,7 +701,7 @@ theorem globally_generated_on_open_of_weight_gap_ge : _root_.GlobalTheory.CovTop
   obtain ⟨ω⟩ := GlobalTheory.CompHS.canId_nonempty hP.p5 E H Dw l Xo c TF.Y TF.X Z M (fun K _ _ y => _root_.GlobalTheory.FlagTan.kodaira_spencer_iso_flag_tangent_psi_set hP hG E H Dw l Xo c K y hpq)
   intro y hy
   rw [mem_support_baseIdeal]
-  push_neg
+  push Not
   obtain ⟨g, hgy⟩ := _root_.GlobalTheory.HSApp.exists_canonical_section_ne_zero_at hP hQ.nef hNa hT hL E H Dw l Xo c TF Z hF hD hV la hg y hy
   haveI := hV.1
   haveI : SmoothOfRelativeDimension (dimFlag Dw) (𝟙 (Y₀ TF.X Z) ≫ str₀ TF.X Z) := M.smooth

@@ -14,12 +14,9 @@ namespace GlobalTheory.CompanionTheory.AdelicRealLine
 theorem norm_eq_abs_ringEquiv {F : Type} [Field F] {w : InfinitePlace F} (hw : w.IsReal)
     (x : w.Completion) :
     ‖x‖ = |InfinitePlace.Completion.ringEquivRealOfIsReal hw x| := by
-  have h := (InfinitePlace.Completion.isometryEquivRealOfIsReal hw).dist_eq x 0
-  have h0 : (InfinitePlace.Completion.isometryEquivRealOfIsReal hw) 0 = 0 :=
-    map_zero (InfinitePlace.Completion.ringEquivRealOfIsReal hw)
-  rw [h0, dist_zero_right, dist_zero_right] at h
-  rw [← h, Real.norm_eq_abs]
-  rfl
+  rw [← Real.norm_eq_abs, InfinitePlace.Completion.ringEquivRealOfIsReal_apply]
+  exact ((InfinitePlace.Completion.isometry_extensionEmbeddingOfIsReal hw).norm_map_of_map_zero
+    (map_zero _) x).symm
 
 theorem exists_continuous_real_embedding :
     ∀ (F : Type) [Field F] [NumberField F], IsTotallyReal F →

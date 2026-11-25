@@ -23,6 +23,7 @@ section -- clump:auto
 noncomputable section
 
 open MeasureTheory
+open scoped Formalism.DoubleCosetMeasures
 open scoped ENNReal
 
 namespace Formalism.L2.SG.Pf.NcReal.JX
@@ -83,7 +84,7 @@ theorem card_up : 2 * Fintype.card (UP r) + r = r * r := by
     simp only [key, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
   simp only [Finset.sum_add_distrib] at htot
   rw [h1, h2] at htot
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.sum_const, Finset.card_univ,
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.sum_const, Finset.card_univ,
     Fintype.card_fin, smul_eq_mul, mul_one] at htot
   omega
 

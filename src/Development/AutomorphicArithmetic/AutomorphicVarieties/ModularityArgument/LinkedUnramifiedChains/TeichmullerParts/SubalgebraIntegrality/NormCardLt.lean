@@ -47,7 +47,6 @@ open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj)
 open UpperTheory.V.HV (Coef)
 open UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 open UpperTheory.V.Z.J.D
 
@@ -183,13 +182,13 @@ private theorem exp_core {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {n : �
   have hAne : ∀ k, A k ≠ 0 := by
     intro k
     by_cases h : k < n
-    · simp only [A, dif_pos h]; exact ha _
-    · simp only [A, dif_neg h]; exact one_ne_zero
+    · simp only [A, dite_eq_left h]; exact ha _
+    · simp only [A, dite_eq_right h]; exact one_ne_zero
   have hWn : ∀ k, ‖W k‖ = 1 := by
     intro k
     by_cases h : k < n
-    · simp only [W, dif_pos h]; exact hu _
-    · simp only [W, dif_neg h]; exact norm_one
+    · simp only [W, dite_eq_left h]; exact hu _
+    · simp only [W, dite_eq_right h]; exact norm_one
   have hWne : ∀ k, W k ≠ 0 := fun k => norm_ne_zero_iff.mp (by rw [hWn k]; exact one_ne_zero)
   let T : ℕ → Qbar l := fun k =>
     (∏ i ∈ Finset.range (k + 1), A i) * W k * ∏ i ∈ Finset.range (k + 1), (q : Qbar l) ^ i
@@ -229,7 +228,7 @@ private theorem exp_core {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {n : �
       simp only [ω, Units.val_mk0, U, map_div₀, RingEquiv.symm_apply_apply]
     rw [e1, norm_div, hG _ (Nat.succ_le_of_lt i.isLt), hG _ i.isLt.le, hGs,
       mul_div_cancel_left₀ _ (hGne _)]
-    simp only [A, dif_pos i.isLt]
+    simp only [A, dite_eq_left i.isLt]
   have hsa : StrictAnti (fun i : Fin n => ‖a i‖ * ‖(q : Qbar l)‖ ^ (i : ℕ)) := by
     intro i i' hii
     have h1 : ‖a i'‖ ≤ ‖a i‖ := hanti i i' hii.le
@@ -256,11 +255,11 @@ private theorem exp_core {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {n : �
         · have := Fin.le_iff_val_le_val.mp h
           omega
       · intro i _
-        simp only [A, dif_pos i.isLt]
+        simp only [A, dite_eq_left i.isLt]
     have hR : (∏ i with i ≤ j, (ω i : ℂ) * ((q : ℂ) ^ (i : ℕ))⁻¹) =
         ∏ k ∈ Finset.range (j + 1), (U (k + 1) / U k * ((q : ℂ) ^ k)⁻¹) :=
       prod_le (fun k => U (k + 1) / U k * ((q : ℂ) ^ k)⁻¹) j
-    have hWj : ι (W j) = u j := by simp only [W, dif_pos j.isLt, RingEquiv.apply_symm_apply]
+    have hWj : ι (W j) = u j := by simp only [W, dite_eq_left j.isLt, RingEquiv.apply_symm_apply]
     have hqp : (∏ k ∈ Finset.range (j + 1), (q : ℂ) ^ k) ≠ 0 :=
       Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ hq0'
     have hUj : U ((j : ℕ) + 1) =

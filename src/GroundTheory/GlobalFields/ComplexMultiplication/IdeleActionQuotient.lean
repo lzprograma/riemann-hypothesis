@@ -94,12 +94,12 @@ theorem toLocalQuotients_surjective {I : FractionalIdeal (𝓞 K)⁰ K} (hI : I 
   have hz : ∀ v, Submodule.Quotient.mk (p := localIdeal I v) (z v) = f v := by
     intro v
     by_cases h : f v = 0
-    · simp only [z, h, if_true, Submodule.Quotient.mk_zero]
-    · simp only [z, h, if_false, hy]
+    · simp only [z, h, ite_true, Submodule.Quotient.mk_zero]
+    · simp only [z, h, ite_false, hy]
   have hfin : {v | f v ≠ 0}.Finite :=
     f.support.finite_toSet.subset fun v hv ↦ DFinsupp.mem_support_iff.2 hv
   let a : FiniteAdeleRing (𝓞 K) K := ⟨z, Filter.eventually_cofinite.2 (hfin.subset fun v hv h ↦
-    hv (by simp only [z, h, if_true]; exact (v.adicCompletionIntegers K).zero_mem))⟩
+    hv (by simp only [z, h, ite_true]; exact (v.adicCompletionIntegers K).zero_mem))⟩
   obtain ⟨k, hk⟩ := exists_sub_mem_localIdeal hI a
   refine ⟨k, DFinsupp.ext fun v ↦ ?_⟩
   rw [toLocalQuotients_apply, ← hz v]
@@ -124,7 +124,7 @@ def quotientToLocalQuotients {I : FractionalIdeal (𝓞 K)⁰ K} (hI : I ≠ 0) 
 def quotientEquivLocalQuotients {I : FractionalIdeal (𝓞 K)⁰ K} (hI : I ≠ 0) :
     (K ⧸ (I : Submodule (𝓞 K) K)) ≃ₗ[𝓞 K] DirectSum (HeightOneSpectrum (𝓞 K)) (LocalQuotient I) :=
   LinearEquiv.ofBijective (quotientToLocalQuotients hI) ⟨by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       rintro ⟨a⟩ h
       have h' : toLocalQuotients hI a = 0 := h
       exact (Submodule.Quotient.mk_eq_zero _).2 ((toLocalQuotients_eq_zero_iff hI).1 h'), by

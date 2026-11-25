@@ -253,7 +253,7 @@ theorem proportional_field {F : Type} [Field F] {A : Type} [CommGroup A] [Finite
   have hP0 : ∀ k, P k ≠ 0 := fun k h => by
     obtain ⟨β, hβ, v, hv⟩ := hne k
     have := hP k v β
-    rw [h, if_pos hβ] at this
+    rw [h, ite_eq_left hβ] at this
     exact hv (this.symm.trans (map_zero _))
   have hP1 : ∀ k v, P k (P k v) = P k v := fun k v => hext _ _ fun β => by
     rw [hP, hP]; split_ifs <;> rfl
@@ -263,12 +263,12 @@ theorem proportional_field {F : Type} [Field F] {A : Type} [CommGroup A] [Finite
   have hPΦ : ∀ k h v, P k (Φ (m h) v) = Φ (m h) (P k v) := fun k h v => hext _ _ fun β => by
     rw [hP]
     split_ifs with hβ
-    · have := hΦ h β (v - P k v) (by rw [map_sub, hP, if_pos hβ, sub_self])
+    · have := hΦ h β (v - P k v) (by rw [map_sub, hP, ite_eq_left hβ, sub_self])
       rwa [map_sub, map_sub, sub_eq_zero] at this
-    · exact (hΦ h β _ (by rw [hP, if_neg hβ])).symm
+    · exact (hΦ h β _ (by rw [hP, ite_eq_right hβ])).symm
   have hW : ∀ β, (∃ v, ex β v ≠ 0) → ∀ v ∈ LinearMap.range (P (cl β)), ex β v = 0 → v = 0 := by
     rintro β hβ _ ⟨v, rfl⟩
-    exact h3 β hβ _ fun γ hγ => by rw [hP, if_neg hγ]
+    exact h3 β hβ _ fun γ hγ => by rw [hP, ite_eq_right hγ]
   have hle : ∀ k, Module.finrank F (LinearMap.range (P k)) ≤ n := fun k => by
     obtain ⟨β, rfl, hβ⟩ := hne k
     obtain ⟨b, hb⟩ := hb β
@@ -278,7 +278,7 @@ theorem proportional_field {F : Type} [Field F] {A : Type} [CommGroup A] [Finite
       (injective_iff_map_eq_zero _).2 fun v hv => hinj _ fun β => by
         have h1 : P (cl β) v = 0 := congrArg Subtype.val (congrFun hv (cl β))
         have h2 := hP (cl β) v β
-        rw [h1, if_pos rfl] at h2
+        rw [h1, ite_eq_left rfl] at h2
         exact h2.symm.trans (map_zero _)
     have h1 := LinearMap.finrank_le_finrank_of_injective hi
     rw [Module.finrank_pi_fintype] at h1
@@ -305,10 +305,10 @@ theorem proportional_field {F : Type} [Field F] {A : Type} [CommGroup A] [Finite
   show f₁ (φ v) = _
 
   rw [← hc, LinearMap.sum_apply, map_sum, Finset.sum_eq_single (cl α) (fun l _ hl => by
-  rw [LinearMap.smul_apply, map_smul, (hk _).2 (by rw [hP, if_neg hl.symm]), smul_zero]) (by simp),
+  rw [LinearMap.smul_apply, map_smul, (hk _).2 (by rw [hP, ite_eq_right hl.symm]), smul_zero]) (by simp),
   LinearMap.smul_apply, map_smul]
   congr 1
-  have := (hk (P (cl α) v - v)).2 (by rw [map_sub, hP, if_pos rfl, sub_self])
+  have := (hk (P (cl α) v - v)).2 (by rw [map_sub, hP, ite_eq_left rfl, sub_self])
   rwa [map_sub, sub_eq_zero] at this
 
 theorem proportional {F : Type} [CommRing F] (hF : IsField F) {A : Type} [CommGroup A] [Finite A] {E : Type}
@@ -364,7 +364,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UU
 open ReciprocityTheory.ChartRestriction.G.DVR
 

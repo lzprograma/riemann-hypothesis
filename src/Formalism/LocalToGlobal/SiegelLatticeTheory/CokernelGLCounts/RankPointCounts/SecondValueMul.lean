@@ -101,31 +101,9 @@ theorem rhoA_apply (X : Matrix (Fin (Formalism.MainNotions.LocalModelPeriodLatti
 abbrev sbA : Fin (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1.sum → Fin (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1.sum → Bool :=
   fun x y => Loc.sameBlock a.blocks (x : ℕ) (y : ℕ)
 
-private theorem sameBlock_eq_true_iff_blk_eq {K : Type} [CommRing K] : ∀ (bs : List (Kˣ × ℕ+)) (x y : ℕ),
-    x < (List.map (fun b : Kˣ × ℕ+ => ((b.2 : ℕ+) : ℕ)) bs).sum →
-    y < (List.map (fun b : Kˣ × ℕ+ => ((b.2 : ℕ+) : ℕ)) bs).sum →
-    (Loc.sameBlock bs x y = true ↔
-      Formalism.DoubleCosetMeasures.blk (List.map (fun b : Kˣ × ℕ+ => ((b.2 : ℕ+) : ℕ)) bs) x =
-        Formalism.DoubleCosetMeasures.blk (List.map (fun b : Kˣ × ℕ+ => ((b.2 : ℕ+) : ℕ)) bs) y)
-  | [], x, y, hx, _ => by simp at hx
-  | (u, s) :: bs, x, y, hx, hy => by
-    simp only [List.map_cons, List.sum_cons] at hx hy
-    simp only [Loc.sameBlock, List.map_cons, Formalism.DoubleCosetMeasures.blk]
-    by_cases h1 : x < (s : ℕ) <;> by_cases h2 : y < (s : ℕ)
-    · simp [h1, h2]
-    · have h2' : (s : ℕ) ≤ y := by omega
-      simp [h1, h2, h2']
-      omega
-    · have h1' : (s : ℕ) ≤ x := by omega
-      simp [h1, h2, h1']
-    · have ih := sameBlock_eq_true_iff_blk_eq bs (x - s) (y - s) (by omega) (by omega)
-      have h1' : (s : ℕ) ≤ x := by omega
-      have h2' : (s : ℕ) ≤ y := by omega
-      simp [h1, h2, h1', h2', ih]
-
 theorem sbA_iff (x y : Fin (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1.sum) :
     sbA a x y = true ↔ Formalism.DoubleCosetMeasures.blk (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1 x = Formalism.DoubleCosetMeasures.blk (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1 y := by
-  exact sameBlock_eq_true_iff_blk_eq a.blocks x y x.2 y.2
+  exact Formalism.MainNotions.LocalOrbitGerms.Cls.sameBlock_iff a.blocks x y x.2 y.2
 
 theorem isCoordA : Grp.IsCoord (K := E) (PW (sbA a))
     (Formalism.DoubleCosetMeasures.lowW E (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1 (Formalism.MainNotions.LocalModelPeriodLattices.tr a).2) :=
@@ -192,7 +170,7 @@ theorem va_of_lowW (g : Formalism.DoubleCosetMeasures.lowW E (Formalism.MainNoti
   · simp [Matrix.submatrix_apply, mk]
   · have hne : eA a i ≠ eA a j := (eA a).injective.ne (ne_of_lt hij)
     have hlt : eA a i < eA a j := (eA_lt a).2 hij
-    simp only [Matrix.submatrix_apply, mk, hne, if_false]
+    simp only [Matrix.submatrix_apply, mk, hne, ite_false]
     rw [dite_eq_right]
     intro hp
     exact absurd hp.1 (not_lt.2 hlt.le)
@@ -200,7 +178,7 @@ theorem va_of_lowW (g : Formalism.DoubleCosetMeasures.lowW E (Formalism.MainNoti
     have hs : sbA a (eA a i) (eA a j) = true := by
       simp only [sbA, eA_val]
       exact hsb
-    simp only [Matrix.submatrix_apply, mk, hne, if_false]
+    simp only [Matrix.submatrix_apply, mk, hne, ite_false]
     rw [dite_eq_right]
     intro hp
     have h2 : sbA a (eA a i) (eA a j) = false := hp.2
@@ -482,8 +460,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.CountAt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) {p : PlF D}
 
 def uLo (X : MP p) (h1 : ∀ a b, a < b → X a b = 0) (h2 : ∀ a, X a a = 1) : GLp p :=
@@ -518,8 +494,6 @@ open scoped Classical
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.ProdE Formalism.L2.SG.Pf.ProdEP2Cut
 
 namespace Formalism.L2.SG.Pf.CountAt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) {p : PlF D}
   (a : Loc.Pt (D.s.atP p).Ep (D.R.rS + 1)) (πa : UP p →* UP p)

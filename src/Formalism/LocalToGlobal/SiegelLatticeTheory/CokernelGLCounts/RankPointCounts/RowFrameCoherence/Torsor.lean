@@ -12,8 +12,6 @@ namespace Formalism.L2.SG.Pf.RowForm
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.HidaSetting MeasureTheory
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
   (vR : Term D u u' (X.Fu u) (Y.what₂ u) → ℝ)
   (i0 i0' : ∀ _ : NumberField.InfinitePlace X.B.I.F, Fin D.R.k) (νq : X.B.I.Ginf → Measure X.B.I.Ginf)
@@ -46,7 +44,7 @@ theorem torsor_G_gener (s : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu u
   unfold Formalism.L2.SG.Full.Full.tO Formalism.L2.SG.TermOp.tOf
   dsimp only
   unfold Formalism.L2.SG.TermOp.Gt
-  rw [if_neg (show s.G ≠ 0 from h.2)]
+  rw [ite_eq_right (show s.G ≠ 0 from h.2)]
   exact one_ne_zero
 
 theorem torsor_elig {R : Formalism.L2.SG.TermOp.Rw (Y.what₂ u) (Y.what₂ u') Y.TR} {ρ : ℕ} (s : LiftT X Y u u' κ R ρ) :
@@ -56,7 +54,7 @@ theorem torsor_elig {R : Formalism.L2.SG.TermOp.Rw (Y.what₂ u) (Y.what₂ u') 
   dsimp only at hG
   unfold Formalism.L2.SG.TermOp.Gt at hG
   refine ⟨s.2.2.1, fun h0 => hG ?_⟩
-  exact if_pos (show s.1.G = 0 from h0)
+  exact ite_eq_left (show s.1.G = 0 from h0)
 
 theorem torsor_lam {R : Formalism.L2.SG.TermOp.Rw (Y.what₂ u) (Y.what₂ u') Y.TR} {ρ : ℕ} (s : LiftT X Y u u' κ R ρ) :
     s.1.lam = R.1.1 ∧ s.1.lam' = R.2.1.1 := by
@@ -179,7 +177,7 @@ theorem torsorC_of (hRL : Formalism.L2.SG.DataInst.RowLabel κ) (hI : LiftIotaFr
       unfold clsVec; exact tsum_empty
     have hF0 : ∀ R, liftVal X Y u u' vR i0 i0' νq κ R ρ = 0 := by
       intro R
-      rw [hF R, if_neg]
+      rw [hF R, ite_eq_right]
       rintro ⟨s⟩
       exact hcl ⟨torsor_toCls s⟩
     simp [hF0, hC0]

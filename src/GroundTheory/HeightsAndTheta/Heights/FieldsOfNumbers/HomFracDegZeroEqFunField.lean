@@ -33,10 +33,6 @@ def HasRelDim {F : Type u} [Field F] {K : Type v} [Fintype K] {ι : K → Type w
 end Objects
 
 
-section Examples
-
-end Examples
-
 end
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.FieldNumbers

@@ -2,7 +2,6 @@ module
 
 public import GroundTheory.AutomorphicForms.QuadraticConj
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.Basic
-import Mathlib.Tactic.TypeStar
 import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Examples
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.TotallyRealComplex
 

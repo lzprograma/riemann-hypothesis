@@ -29,8 +29,6 @@ end Flag
 
 section Id
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem ratLink_one : RatLink X 1 1 := by

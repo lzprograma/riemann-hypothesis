@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiscreteSpaceCocycleVanishingPos
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.MemSplitSeqIff
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.StabDirectedSystem
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
@@ -12,52 +13,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureR
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.LinkExactnessStability.ProjectiveRepGroupHomologyPosVanishes
 public import Mathlib.Tactic.Continuity
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.LinkExactnessStability.GroupHomologyMapEqOfInnerConj
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RepresentationTheory.Rep.Iso
 import Mathlib.Tactic.Linter.HaveILetI
@@ -170,7 +126,7 @@ private theorem exists_gl_vecMul_single_eq_and_fixes_single_of_le {R : Type} [Co
   have z1L : z1 L = 0 := by simp [z1, L]
   have z1m : ∀ k : Fin n, m ≤ (k : ℕ) → z1 k = 0 := fun k hk => by
     simp only [z1]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
   obtain ⟨T1, hT1, -, gT1⟩ := transvection_vecMul_and_fixes_single_of_le (m := m) z1 (Pi.single L 1)
     (by rw [single_dotProduct, z1L, mul_zero]) z1m hsL
   set v1 : Fin n → R := v + v L • z1 with hv1
@@ -181,7 +137,7 @@ private theorem exists_gl_vecMul_single_eq_and_fixes_single_of_le {R : Type} [Co
   have c'L : c' L = 0 := by simp [c', L]
   have c'm : ∀ k : Fin n, m ≤ (k : ℕ) → c' k = 0 := fun k hk => by
     simp only [c']
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
   have z2m : ∀ k : Fin n, m ≤ (k : ℕ) → z2 k = 0 := fun k hk => by
     simp only [z2, Pi.smul_apply, hsL k hk, smul_zero]
   obtain ⟨T2, hT2, -, gT2⟩ := transvection_vecMul_and_fixes_single_of_le (m := m) z2 c'
@@ -200,7 +156,7 @@ private theorem exists_gl_vecMul_single_eq_and_fixes_single_of_le {R : Type} [Co
       · simp
     rw [e1, Fin.sum_univ_eq_sum_range F n, ← Finset.sum_subset (s₁ := Finset.range (m - 1)) (s₂ := Finset.range n)
       (by intro k hk; rw [Finset.mem_range] at hk ⊢; exact lt_of_lt_of_le hk (by first | omega))
-      (fun k _ hk => dif_neg (by simp only [Finset.mem_range] at hk; omega)),
+      (fun k _ hk => dite_eq_right (by simp only [Finset.mem_range] at hk; omega)),
       ← Fin.sum_univ_eq_sum_range F (m - 1)]
     apply Finset.sum_congr rfl
     intro i _
@@ -215,7 +171,7 @@ private theorem exists_gl_vecMul_single_eq_and_fixes_single_of_le {R : Type} [Co
   have z3L : z3 L = 0 := by simp [z3, L]
   have z3m : ∀ k : Fin n, m ≤ (k : ℕ) → z3 k = 0 := fun k hk => by
     simp only [z3]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   obtain ⟨T3, hT3, -, gT3⟩ := transvection_vecMul_and_fixes_single_of_le (m := m) z3 (Pi.single L 1)
     (by rw [single_dotProduct, z3L, mul_zero]) z3m hsL
   have s3 : Matrix.mulVec (T3 : Matrix (Fin n) (Fin n) R) v2 = Pi.single L 1 := by
@@ -223,13 +179,13 @@ private theorem exists_gl_vecMul_single_eq_and_fixes_single_of_le {R : Type} [Co
     funext k
     simp only [Pi.add_apply, z3]
     by_cases hk : (k : ℕ) < m - 1
-    · rw [if_pos hk, add_neg_cancel]
+    · rw [ite_eq_left hk, add_neg_cancel]
       have hne : k ≠ L := by
         intro h
         rw [h] at hk
         simp [L] at hk
       simp [hne]
-    · rw [if_neg hk, add_zero]
+    · rw [ite_eq_right hk, add_zero]
       by_cases hk2 : k = L
       · rw [hk2, v2L]
         simp
@@ -811,9 +767,9 @@ theorem padMat_of_isPad {m n : ℕ} (h : m ≤ n) (g : Matrix (Fin n) (Fin n) R)
     have : m ≤ (i : ℕ) := by omega
     simpa using ((hg i i this).1).symm
   · by_cases hj : m ≤ (j : ℕ)
-    · rw [(hg i j hj).1, if_neg h2]
+    · rw [(hg i j hj).1, ite_eq_right h2]
     · have hi : m ≤ (i : ℕ) := by omega
-      rw [(hg j i hi).2, if_neg h2]
+      rw [(hg j i hi).2, ite_eq_right h2]
 
 theorem mem_range_of_isPad {m n : ℕ} (h : m ≤ n) (g : GL (Fin n) R)
     (hg : IsPad R m (g : Matrix (Fin n) (Fin n) R)) (hg' : IsPad R m ((g⁻¹ : GL (Fin n) R) : Matrix (Fin n) (Fin n) R)) :
@@ -946,7 +902,7 @@ def pmU (f g : Fin n → Fin n) (h1 : ∀ k, f (g k) = k) (h2 : ∀ k, g (f k) =
 theorem pm_mulVec (f : Fin n → Fin n) (k : Fin n) :
     pm R f *ᵥ (fun a : Fin n => if a = k then (1 : R) else 0) = fun a => if a = f k then 1 else 0 := by
   funext a
-  simp only [pm, Matrix.mulVec, dotProduct, Matrix.of_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [pm, Matrix.mulVec, dotProduct, Matrix.of_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   by_cases h : a = f k
   · simp [h]
   · simp [h, Ne.symm h]
@@ -955,13 +911,13 @@ theorem vecMul_pm (f g : Fin n → Fin n) (h1 : ∀ k, f (g k) = k) (h2 : ∀ k,
     (fun a : Fin n => if a = k then (1 : R) else 0) ᵥ* pm R g = fun c => if c = f k then 1 else 0 := by
   funext c
   have key : g c = k ↔ c = f k := ⟨fun e => by rw [← e, h1], fun e => by rw [e, h2]⟩
-  simp only [pm, Matrix.vecMul, dotProduct, Matrix.of_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [pm, Matrix.vecMul, dotProduct, Matrix.of_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp only [key]
 
 theorem pm_mul_apply (f g : Fin n → Fin n) (h1 : ∀ k, f (g k) = k) (h2 : ∀ k, g (f k) = k)
     (M : Matrix (Fin n) (Fin n) R) (a c : Fin n) : (pm R f * M) a c = M (g a) c := by
   have key : ∀ b, f b = a ↔ b = g a := fun b => ⟨fun e => by rw [← e, h2], fun e => by rw [e, h1]⟩
-  simp only [pm, Matrix.mul_apply, Matrix.of_apply, ite_mul, one_mul, zero_mul, key, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [pm, Matrix.mul_apply, Matrix.of_apply, ite_mul, one_mul, zero_mul, key, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem mul_pm_apply (f : Fin n → Fin n) (M : Matrix (Fin n) (Fin n) R) (a c : Fin n) :
     (M * pm R f) a c = M a (f c) := by
@@ -1144,19 +1100,7 @@ open CategoryTheory CategoryTheory.Limits GlobalTheory.HomStab GlobalTheory.SeqC
 namespace GlobalTheory.HomStab
 
 theorem altSum_neg_one (p : ℕ) : (∑ i : Fin (p + 1), (-1 : ℤ) ^ (i : ℕ)) = if Even p then 1 else 0 := by
-  induction p with
-  | zero => simp
-  | succ p ih =>
-    rw [Fin.sum_univ_castSucc]
-    simp only [Fin.coe_castSucc, Fin.val_last]
-    rw [ih]
-    rcases Nat.even_or_odd p with hp | hp
-    · have h2 : ¬ Even (p + 1) := by rw [Nat.even_add_one]; exact not_not.mpr hp
-      rw [if_pos hp, if_neg h2, pow_succ, hp.neg_one_pow]
-      norm_num
-    · have h2 : Even (p + 1) := by rw [Nat.even_add_one]; exact Nat.not_even_iff_odd.mpr hp
-      rw [if_neg (Nat.not_even_iff_odd.mpr hp), if_pos h2, pow_succ, hp.neg_one_pow]
-      norm_num
+  apply _root_.GlobalTheory.EtC.DiscRep.asum_even <;> assumption
 
 theorem stab_comp_stab (R : Type) [CommRing R] (a b c : ℕ) (hab : a ≤ b) (hbc : b ≤ c) (hac : a ≤ c) :
     (stab R b c hbc).comp (stab R a b hab) = stab R a c hac := by
@@ -1264,14 +1208,14 @@ theorem firstPage_split : ∀ (R : Type) [CommRing R] (s : ℕ), StableRangeLe R
       ptH (k := ℤ) (stab R (n - p) n (Nat.sub_le _ _)) (stdSeq R n p h) (stab_smul_stdSeq R n p h) q else 0, ?_, ?_⟩
   · intro p q hp
     have h : p ≤ n := by omega
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     exact (_root_.GlobalTheory.HomStab.shapiro_pt ℤ (GL (Fin n) R) (GL (Fin (n - p)) R) (SplitSet R n p)
       (stab R (n - p) n (Nat.sub_le _ _)) (stdSeq R n p h) (stab_smul_stdSeq R n p h)
       (_root_.GlobalTheory.StabSeq.stab_injective_range_eq R n p h).1 (_root_.GlobalTheory.StabSeq.stab_injective_range_eq R n p h).2
       (fun y => _root_.GlobalTheory.HomStab.splitSet_transitive R s hs n p h hp y)).2 q
   · intro p q hp
     have h0 : p ≤ n := by omega
-    simp only [dif_pos hp, dif_pos h0]
+    simp only [dite_eq_left hp, dite_eq_left h0]
     exact _root_.GlobalTheory.HomStab.ptH_comp_hMap_splitD R n p q hp (stab_smul_stdSeq R n (p + 1) hp) (stab_smul_stdSeq R n p h0)
 
 end GlobalTheory.HomStab

@@ -326,10 +326,6 @@ theorem formB_sum_right {ι : Type*} (s : Finset ι) (f : Fin n → D) (g : ι �
 
 end FormB
 
-def closRep {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H))
-    (S : Submodule ℂ H) [S.HasOrthogonalProjection] (g : Matrix (Fin n) (Fin n) ℂ) : S →L[ℂ] S :=
-  S.orthogonalProjectionOnto ∘L σ g ∘L S.subtypeL
-
 theorem trace_nonneg (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] {ε : Fin n → Bool}
     {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {D : Submodule ℂ H} {E : Fin n → Fin n → Module.End ℂ D}
     (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) (hsm : ∀ v : D, IsSmoothVecU ε σ v)
@@ -386,8 +382,8 @@ theorem trace_ge (dual : Bool) {lam lam' : Fin n → ℝ} {H : Type*} [NormedAdd
     {V' : Submodule ℂ D} (hgap' : StdGap ε lam') (hV' : IsKIrrHW ε E (lowK ε lam') V')
     (hc' : ∀ v ∈ V', casimir E v = (casVal lam' : ℂ) • v)
     (hVK' : ∀ k ∈ Kset ε, ∀ v ∈ V', ∃ w ∈ V', (w : H) = σ k v)
-    (hSq : Formalism.MainNotions.S.IsSqIntOn ε (closRep σ (closGen E V)))
-    (hSq' : Formalism.MainNotions.S.IsSqIntOn ε (closRep σ (closGen E V')))
+    (hSq : Formalism.MainNotions.S.IsSqIntOn ε (ReciprocityTheory.ChartRestriction.DS.tfClRep σ (closGen E V)))
+    (hSq' : Formalism.MainNotions.S.IsSqIntOn ε (ReciprocityTheory.ChartRestriction.DS.tfClRep σ (closGen E V')))
     {P : Module.End ℂ (Fin n → D)} (hP : IsGKEndo dual ε σ E (genSub E V) P)
     (hPP : ∀ f ∈ tensSub (genSub E V), P (P f) = P f)
     (hPB : ∀ f ∈ tensSub (genSub E V), ∀ g ∈ tensSub (genSub E V), formB ε (P f) g = formB ε f (P g))
@@ -395,10 +391,10 @@ theorem trace_ge (dual : Bool) {lam lam' : Fin n → ℝ} {H : Type*} [NormedAdd
     {c : ℂ} (hc : ∀ x ∈ genSub E V, ptr P x = c • x)
     {ι : D →ₗ[ℂ] (Fin n → D)} (hι : IsGKEmb dual ε σ E (genSub E V) (genSub E V') ι)
     (hιP : ∀ x ∈ genSub E V', P (ι x) = ι x) {w : closGen E V} (hw : w ≠ 0) {w' : closGen E V'} (hw' : w' ≠ 0) :
-    Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (closRep σ (closGen E V')) w' /
-              Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (closRep σ (closGen E V)) w ≤ c.re ∧
-      (c.re = Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (closRep σ (closGen E V')) w' /
-          Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (closRep σ (closGen E V)) w →
+    Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (ReciprocityTheory.ChartRestriction.DS.tfClRep σ (closGen E V')) w' /
+              Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (ReciprocityTheory.ChartRestriction.DS.tfClRep σ (closGen E V)) w ≤ c.re ∧
+      (c.re = Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (ReciprocityTheory.ChartRestriction.DS.tfClRep σ (closGen E V')) w' /
+          Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (ReciprocityTheory.ChartRestriction.DS.tfClRep σ (closGen E V)) w →
         ∀ f ∈ tensSub (genSub E V), ∃ x ∈ genSub E V', P f = ι x) := by
   rename_i hcas
   have hPB' : ∀ f ∈ tensSub (genSub E V), ∀ g ∈ tensSub (genSub E V),
@@ -406,9 +402,9 @@ theorem trace_ge (dual : Bool) {lam lam' : Fin n → ℝ} {H : Type*} [NormedAdd
         tfFormBH ε (fun c => ((f c : D) : H)) (fun c => ((P g c : D) : H)) := hPB
   obtain ⟨d, hd⟩ := tfClRep_fdeg hgap hσ hD hV hcas hVK hSq
   obtain ⟨d', hd'⟩ := tfClRep_fdeg hgap' hσ hD hV' hc' hVK' hSq'
-  have hfd : Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (closRep σ (closGen E V)) w = d :=
+  have hfd : Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (ReciprocityTheory.ChartRestriction.DS.tfClRep σ (closGen E V)) w = d :=
     fdegOf_of_isFdeg' hd hw
-  have hfd' : Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (closRep σ (closGen E V')) w' = d' :=
+  have hfd' : Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (ReciprocityTheory.ChartRestriction.DS.tfClRep σ (closGen E V')) w' = d' :=
     fdegOf_of_isFdeg' hd' hw'
   rw [hfd, hfd']
   obtain ⟨y0, hy0V, hy00, -⟩ := hV.2.2.2

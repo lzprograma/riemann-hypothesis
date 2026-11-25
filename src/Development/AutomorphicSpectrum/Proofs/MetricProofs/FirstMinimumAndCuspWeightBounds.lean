@@ -8,54 +8,8 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSubla
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeGramDeterminant
 public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.PCuspWeightBound
 public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.PMinkowskiCovolumeBound
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -196,8 +150,7 @@ theorem exists_pos_le_sqrt_normSq : ∃ c : ℝ, 0 < c ∧ ∀ v : Λ, v ≠ 0 �
     linarith
   refine ⟨1 / S, by positivity, fun v hv => ?_⟩
   obtain ⟨i, hi⟩ : ∃ i, R.form v (e i) ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply hv
     apply R.unimod.1
     rw [map_zero]
@@ -255,7 +208,7 @@ theorem eigComp_mem_alt (ρ : 𝓞 E →+* Module.End ℂ (Fin g → ℂ)) (s : 
 
 theorem card_le_of_isNzFamily {σ : Ψ → (𝓞 E →+* ℂ)} {m : ℕ} (hm : R.HasRank σ m) (τ : Ψ)
     {I : Submodule (𝓞 E) Λ} (hI : IsIsoSub R.form I) {r : ℕ} {v : Fin r → Λ} (hv : IsNzFamily I r v) : r ≤ m := by
-  have hli := (_root_.GlobalTheory.CompanionTheory.Relay.isotropic_eigencomponent_conjugate_form E g Λ Ψ R I hI (σ τ)).2 r v hv.2.1 hv.2.2.1
+  have hli := (_root_.LevelTowerAlt.eigen_projection_conjugate_inner E g Λ Ψ R I hI (σ τ)).2 r v hv.2.1 hv.2.2.1
   let w : Fin r → eigSp R.B (σ τ) := fun a => ⟨eigComp R.B (σ τ) (R.P (v a)), eigComp_mem_alt _ _ _⟩
   have hw : LinearIndependent ℂ w := LinearIndependent.of_comp (eigSp R.B (σ τ)).subtype hli
   have := hw.fintype_card_le_finrank
@@ -277,7 +230,7 @@ theorem neg_log_covolume_le {σ : Ψ → (𝓞 E →+* ℂ)} {m : ℕ} (hσ : Is
     -Real.log (R.nz σ I) ≤ Fintype.card Ψ * m * (2 * max 0 (Real.log (1 / R.lam1)) +
         Real.log (2 * Fintype.card Ψ * m * (|(discr E : ℝ)| ^ (1 / (Module.finrank ℚ E : ℝ))))) ∧
       Module.finrank (𝓞 E) I ≤ m := by
-  obtain ⟨⟨r, v, hv⟩, hall⟩ := _root_.GlobalTheory.CompanionTheory.Relay.isotropic_sublattice_covolume_positive E g Λ Ψ R σ I hσ hI hI0
+  obtain ⟨⟨r, v, hv⟩, hall⟩ := _root_.LevelTowerAlt.isotropic_submodule_nonzero_family E g Λ Ψ R σ I hσ hI hI0
   obtain ⟨-, hN, hr⟩ := hall r v hv
   have hrm : r ≤ m := R.card_le_of_isNzFamily hm τ hI hv
   refine ⟨?_, hr ▸ hrm⟩

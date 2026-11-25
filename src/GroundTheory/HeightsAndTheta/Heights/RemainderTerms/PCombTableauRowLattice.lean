@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsComb
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open Finset Comb
@@ -27,7 +25,7 @@ theorem CombTableauRowLattice.proof : CombTableauRowLattice.Statement := by
     if h : p.1.1 = j then ⟨(i, p.1.2), hmem p h⟩ else p
   have hf : ∀ p : youngCells lam, ∀ h : p.1.1 = j, f p = ⟨(i, p.1.2), hmem p h⟩ := by
     intro p h
-    simp only [f, dif_pos h]
+    simp only [f, dite_eq_left h]
   apply Finset.card_le_card_of_injOn f
   · intro p hp
     simp only [Finset.coe_filter, Finset.mem_univ, true_and, Set.mem_ofPred_eq] at hp ⊢

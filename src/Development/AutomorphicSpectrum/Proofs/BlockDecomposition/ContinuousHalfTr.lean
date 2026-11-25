@@ -318,7 +318,6 @@ open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompanionTheory.HermPoisson
 
@@ -364,8 +363,8 @@ theorem ann_gen (P : A → Prop) (hP : ∀ x : A, (∀ t : F, P (algebraMap F A 
     simp only [h2] at h1
     have h4 : ∑ l, B.repr z l * algebraMap F A (if l = k then t else 0) =
         algebraMap F A t * B.repr z k := by
-      rw [Finset.sum_eq_single k (fun l _ hl => by rw [if_neg hl, map_zero, mul_zero])
-        (fun hk => absurd (Finset.mem_univ k) hk), if_pos rfl, mul_comm]
+      rw [Finset.sum_eq_single k (fun l _ hl => by rw [ite_eq_right hl, map_zero, mul_zero])
+        (fun hk => absurd (Finset.mem_univ k) hk), ite_eq_left rfl, mul_comm]
     rwa [h4] at h1
   choose c hc using hak
   refine ⟨∑ k, c k • b k, ?_⟩
@@ -407,7 +406,7 @@ theorem adj_single' (a b : Fin r) (v : AE D) :
   by_cases h : a = l ∧ b = k
   · obtain ⟨rfl, rfl⟩ := h
     simp
-  · rw [if_neg h, if_neg (by tauto), map_zero]
+  · rw [ite_eq_right h, ite_eq_right (by tauto), map_zero]
 
 theorem hE_mem (i j : Fin r) (w : AE D) : hE i j w ∈ hermA D r := by
   change adj (hE i j w) = hE i j w
@@ -425,8 +424,8 @@ theorem rat_single' (a b : Fin r) (e : D.host.E) :
   ext k l
   simp only [rat, Matrix.map_apply, Matrix.single_apply]
   by_cases h : a = k ∧ b = l
-  · rw [if_pos h, if_pos h]
-  · rw [if_neg h, if_neg h, map_zero]
+  · rw [ite_eq_left h, ite_eq_left h]
+  · rw [ite_eq_right h, ite_eq_right h, map_zero]
 
 theorem hE_rat (i j : Fin r) (e : D.host.E) : hE i j (incA D e) ∈ ratMx D r r := by
   refine ⟨Matrix.single j i e + Matrix.single i j (star e), ?_⟩

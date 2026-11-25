@@ -333,15 +333,6 @@ theorem RegularizedMaxConvergenceC2.proof : RegularizedMaxConvergenceC2.Statemen
     rw [e1] at this
     linarith
 
-section System
-
-open ReciprocityTheory.AnForm.M (FinHolAtlas)
-open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Regular (RegChartData)
-
-variable {D : ℕ} {X : Type*} [TopologicalSpace X] {A : FinHolAtlas D X} {R : RegChartData A}
-
-end System
-
 end
 
 end GroundTheory.Heights₂.Heights.AnalyticLimit

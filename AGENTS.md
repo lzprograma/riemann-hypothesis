@@ -65,6 +65,44 @@ removes, renames or moves.>
 
 Drop the part from `---` on if the pull request depends on no other.
 
+## Batches
+
+Most pull requests are merged in batches: someone merges many of them into one branch, builds
+it once and merges the result. If you assemble a batch, these are the rules.
+
+A batch takes open pull requests that change Lean files under `src/`, are not drafts, and merge
+cleanly with `main` and with the pull requests already in the batch. Take them in order of pull
+request number, and merge each one with its own merge commit, so that its commits and their
+authors stay in the history.
+
+Try to include every pull request labelled `batch queue`: a maintainer has approved it for a
+batch. If one can't go in, because it conflicts with `main` or breaks the build, leave it out
+and say why in the batch's description.
+
+Leave out:
+
+- every pull request labelled `deferred` or `awaiting-author`. `deferred` means it should not be
+  merged for now, and `awaiting-author` means a maintainer has asked for changes.
+- any pull request a maintainer has asked to hold, in a review or a comment.
+- pull requests that only change documentation: docstrings, comments or references.
+- pull requests that break a rule under [Do not](#do-not) or
+  [Mistakes we keep seeing](#mistakes-we-keep-seeing).
+
+Check the labels when you put the batch together and again just before it is merged. If a batch
+already contains a pull request that should be left out, take it out before the batch is merged,
+by rebuilding the batch without it or by reverting the merge commit that brought it in.
+
+If a pull request conflicts with `main` or a batch earlier in the queue, you may merge `main` or the earlier batch into its branch when the conflict
+is mechanical, such as one side deleting a file the other edited. Check that the changed files
+still compile and push the merge to the pull request's branch, so that the batch holds nothing
+the pull request doesn't. Otherwise leave it out. Don't settle conflicts in the batch branch.
+
+If the batch fails to build because of how two pull requests combine, you may fix the module in
+a commit on the batch branch. Say in the commit message what you changed and why.
+
+In the batch's description, list the pull requests you left out and the reason for each, so
+that their authors can see what to do next.
+
 ## Do not
 
 - change the Comparator challenge files: `src/Challenge.lean`, `comparator.json`,
@@ -78,6 +116,10 @@ Drop the part from `---` on if the pull request depends on no other.
 - report the results of your own builds or Comparator runs in a pull request. Check that your
   change compiles, but don't write that it builds on your machine; maintainers build pull
   requests themselves.
+- add references to the literature, in docstrings or in `docs/references.bib`. Many of the
+  references agents have added were wrong: the wrong title, no theorem number in a long book, or
+  a result credited to a paper that doesn't prove it. A wrong reference is worse than none. We
+  will say here when we have a way to check them.
 
 ## Mistakes we keep seeing
 

@@ -1,55 +1,7 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
+import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.AevalEqZeroOfHomogeneousComponent
 
 @[expose] public section
 
@@ -70,13 +22,7 @@ def cM (g : Matrix (Fin k) (Fin k) R) : Matrix (Fin k) (Fin k) (MvPolynomial (Fi
 
 lemma sbs_X (A : Matrix (Fin k) (Fin k) (MvPolynomial (Fin k × Fin k) R)) (v : Fin k × Fin k) :
     sbs A (X v) = A v.1 v.2 := by
-  first
-  | simp [sbs]
-
-lemma sbs_C (A : Matrix (Fin k) (Fin k) (MvPolynomial (Fin k × Fin k) R)) (r : R) :
-    sbs A (C r) = C r := by
-  first
-  | simp [sbs]
+  simp [sbs]
 
 lemma sbs_sbs (A B : Matrix (Fin k) (Fin k) (MvPolynomial (Fin k × Fin k) R))
     (p : MvPolynomial (Fin k × Fin k) R) : sbs A (sbs B p) = sbs (B.map (sbs A)) p := by
@@ -103,9 +49,8 @@ lemma cM_map (A : Matrix (Fin k) (Fin k) (MvPolynomial (Fin k × Fin k) R)) (g :
   ext i j
   simp [cM]
 
-lemma cM_mul (g h : Matrix (Fin k) (Fin k) R) : cM (g * h) = cM g * cM h := by
-  first
-  | (unfold cM; exact Matrix.map_mul)
+lemma cM_mul (g h : Matrix (Fin k) (Fin k) R) : cM (g * h) = cM g * cM h :=
+  Matrix.map_mul
 
 lemma cM_one : cM (1 : Matrix (Fin k) (Fin k) R) = 1 := by
   ext i j
@@ -114,14 +59,12 @@ lemma cM_one : cM (1 : Matrix (Fin k) (Fin k) R) = 1 := by
 lemma map_mul_sbs (A M N : Matrix (Fin k) (Fin k) (MvPolynomial (Fin k × Fin k) R)) :
     (M * N).map (sbs A) = M.map (sbs A) * N.map (sbs A) := by
   ext i j
-
   simp [Matrix.mul_apply, _root_.map_sum, _root_.map_mul]
 
 lemma sbs_det (A : Matrix (Fin k) (Fin k) (MvPolynomial (Fin k × Fin k) R)) :
     sbs A (genM R k).det = A.det := by
-  first
-  | simpa [RingHom.mapMatrix_apply, genM_map] using
-      RingHom.map_det (sbs A).toRingHom (PI.OddDualWeyl.genM R k)
+  simpa [RingHom.mapMatrix_apply, genM_map] using
+    RingHom.map_det (sbs A).toRingHom (PI.OddDualWeyl.genM R k)
 
 lemma sbs_adj (A : Matrix (Fin k) (Fin k) (MvPolynomial (Fin k × Fin k) R)) (i j : Fin k) :
     sbs A ((genM R k).adjugate i j) = A.adjugate i j := by
@@ -145,25 +88,12 @@ lemma dualSub_eq : dualSub R k = sbs (dualM R k) := rfl
 
 private theorem sum_support_eq_degree_of_isHomogeneous' {σ : Type*} {p : MvPolynomial σ R} {D : ℕ} (hp : p.IsHomogeneous D)
     {m : σ →₀ ℕ} (hm : m ∈ p.support) : ∑ i ∈ m.support, m i = D := by
-  have h1 := hp (MvPolynomial.mem_support_iff.mp hm)
-  first
-  | simpa [Finsupp.weight_apply, Finsupp.sum] using h1
+  simpa [Finsupp.weight_apply, Finsupp.sum] using hp (MvPolynomial.mem_support_iff.mp hm)
 
 lemma aeval_mul_homog {σ S : Type*} [CommRing S] [Algebra R S] (b : σ → S) (c : S)
     {p : MvPolynomial σ R} {D : ℕ} (hp : p.IsHomogeneous D) :
-    aeval (fun v => c * b v) p = c ^ D * aeval b p := by
-  classical
-  conv_lhs => rw [p.as_sum]
-  conv_rhs => rw [p.as_sum]
-
-  rw [_root_.map_sum, _root_.map_sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hsum := sum_support_eq_degree_of_isHomogeneous' hp hm
-  have hc : ∏ i ∈ m.support, c ^ m i = c ^ D := by
-    rw [Finset.prod_pow_eq_pow_sum, hsum]
-  rw [aeval_monomial, aeval_monomial]
-  simp only [Finsupp.prod, mul_pow, Finset.prod_mul_distrib, hc]
-  ring
+    aeval (fun v => c * b v) p = c ^ D * aeval b p :=
+  _root_.GlobalTheory.Chow.aeval_smul_of_isHomogeneous hp c b
 
 lemma rowAct_homog (g : Matrix (Fin k) (Fin k) R) {p : MvPolynomial (Fin k × Fin k) R} {D : ℕ}
     (hp : p.IsHomogeneous D) : (rowAct R g p).IsHomogeneous D := by
@@ -171,15 +101,8 @@ lemma rowAct_homog (g : Matrix (Fin k) (Fin k) R) {p : MvPolynomial (Fin k × Fi
   have hL : ∀ v : Fin k × Fin k,
       (∑ b : Fin k, C (g v.1 b) * X (b, v.2) : MvPolynomial (Fin k × Fin k) R).IsHomogeneous 1 := by
     intro v
-    apply IsHomogeneous.sum
-    intro b _
-    have hC : IsHomogeneous (C (g v.1 b) : MvPolynomial (Fin k × Fin k) R) 0 := by
-      first | exact isHomogeneous_C _ _
-    have hX : IsHomogeneous (X (b, v.2) : MvPolynomial (Fin k × Fin k) R) 1 := by
-      first | exact isHomogeneous_X _ _
-    have h1 := hC.mul hX
-    rwa [zero_add] at h1
-
+    refine IsHomogeneous.sum _ _ _ fun b _ => ?_
+    simpa only [zero_add] using (isHomogeneous_C _ (g v.1 b)).mul (isHomogeneous_X R (b, v.2))
   rw [p.as_sum, _root_.map_sum]
   apply IsHomogeneous.sum
   intro m hm
@@ -188,14 +111,11 @@ lemma rowAct_homog (g : Matrix (Fin k) (Fin k) R) {p : MvPolynomial (Fin k × Fi
       C (AddMonoidAlgebra.coeff p m) * ∏ i ∈ m.support, (∑ b : Fin k, C (g i.1 b) * X (b, i.2)) ^ m i := by
     rw [PI.OddDualWeyl.rowAct, aeval_monomial, algebraMap_eq, Finsupp.prod]
   rw [hmon]
-  have hC : IsHomogeneous (C (AddMonoidAlgebra.coeff p m) : MvPolynomial (Fin k × Fin k) R) 0 := by
-    first | exact isHomogeneous_C _ _
   have hprod := IsHomogeneous.prod m.support (fun i => (∑ b : Fin k, C (g i.1 b) * X (b, i.2)) ^ m i)
     (fun i => 1 * m i) (fun i _ => (hL i).pow (m i))
-  have h2 := hC.mul hprod
+  have h2 := (isHomogeneous_C _ (AddMonoidAlgebra.coeff p m)).mul hprod
   have hdeg : 0 + ∑ i ∈ m.support, 1 * m i = D := by simp [hsum]
-  rw [hdeg] at h2
-  exact h2
+  rwa [hdeg] at h2
 
 private theorem genM_map_mvPolynomial_map {S : Type*} [CommRing S] (ψ : R →+* S) :
     (PI.OddDualWeyl.genM R k).map (MvPolynomial.map ψ) = PI.OddDualWeyl.genM S k := by
@@ -233,8 +153,7 @@ section Field
 variable {K : Type*} [Field K] {k : ℕ}
 
 lemma det_inv_eq (g : Matrix (Fin k) (Fin k) K) : (g⁻¹).det = (g.det)⁻¹ := by
-  first
-  | rw [Matrix.det_nonsing_inv, Ring.inverse_eq_inv']
+  rw [Matrix.det_nonsing_inv, Ring.inverse_eq_inv']
 
 lemma adj_inv (g : Matrix (Fin k) (Fin k) K) (hd : g.det ≠ 0) : (g⁻¹).adjugate = (g.det)⁻¹ • g := by
   have hu : IsUnit g.det := isUnit_iff_ne_zero.mpr hd
@@ -267,9 +186,8 @@ lemma key_mat (g : Matrix (Fin k) (Fin k) K) (hd : g.det ≠ 0) :
   have h := congrFun (congrFun (adj_key g hd) (Fin.rev j)) i
   simp only [Matrix.mul_apply, Matrix.smul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply,
     smul_eq_mul, PI.OddDualWeyl.dualM, cM] at h ⊢
-  rw [sbs_adj]
-  first
-  | (rw [← h]; exact Finset.sum_congr rfl fun l _ => mul_comm _ _)
+  rw [sbs_adj, ← h]
+  exact Finset.sum_congr rfl fun l _ => mul_comm _ _
 
 lemma dualSub_rowAct (g : Matrix (Fin k) (Fin k) K) (hd : g.det ≠ 0)
     {p p' : MvPolynomial (Fin k × Fin k) K} {M D : ℕ} (hrel : Rel K k M p p') (hp' : p'.IsHomogeneous D) :
@@ -300,9 +218,7 @@ lemma relK (g : Matrix (Fin k) (Fin k) K) (hd : g.det ≠ 0)
     {p p' : MvPolynomial (Fin k × Fin k) K} {M D : ℕ} (hrel : Rel K k M p p') (hp' : p'.IsHomogeneous D)
     (c c' : K) (hc : c' * g.det ^ D * (g.det)⁻¹ ^ M = c) :
     dualSub K k (c' • rowAct K gᵀ p') = (genM K k).det ^ M * (c • rowAct K g⁻¹ p) := by
-  have hs : PI.OddDualWeyl.dualSub K k (c' • PI.OddDualWeyl.rowAct K gᵀ p') = c' • PI.OddDualWeyl.dualSub K k (PI.OddDualWeyl.rowAct K gᵀ p') := by
-    first | exact _root_.map_smul _ _ _
-  rw [hs, dualSub_rowAct g hd hrel hp', ← hc]
+  rw [_root_.map_smul, dualSub_rowAct g hd hrel hp', ← hc]
   simp only [MvPolynomial.smul_eq_C_mul, _root_.map_mul, _root_.map_pow, mul_pow]
   ring
 
@@ -331,8 +247,7 @@ private theorem mem_twisted_weyl_det_iff {O K : Type*} [CommRing O] [Field K] [A
         MvPolynomial.map (algebraMap O K) f = rowAct K g F0) ∧ g.det ^ (-(lam (Fin.last m))) • F0 = F := by
   unfold deltaLTw deltaL
   simp only [Submodule.mem_map, Submodule.mem_comap]
-  first
-  | rfl
+  rfl
 
 theorem twistedWeylStep : GStep := by
   unfold GStep
@@ -348,9 +263,7 @@ theorem twistedWeylStep : GStep := by
     rw [← PI.OddDualWeyl.Red.map_dualSub, h0, _root_.map_mul, _root_.map_pow,
       PI.OddDualWeyl.Red.map_det_genM]
   have hhomK : (MvPolynomial.map (algebraMap O K) f').IsHomogeneous
-      (degW (nuOf (lamStar lam))) := by
-    first
-    | exact (hhom f' hf').map _
+      (degW (nuOf (lamStar lam))) := (hhom f' hf').map _
   have hF0 : rowAct K g⁻¹ (MvPolynomial.map (algebraMap O K) f) = F0 := by
     rw [hfF, PI.OddDualWeyl.Red.rowAct_rowAct, Matrix.mul_nonsing_inv g hg, PI.OddDualWeyl.Red.rowAct_one]
   have hT : gᵀ * (g⁻¹)ᵀ = 1 := by
@@ -367,12 +280,8 @@ theorem twistedWeylStep : GStep := by
     apply PI.OddDualWeyl.Red.relK g hd hrelK hhomK
     rw [hdetT]
     exact PI.OddDualWeyl.Red.zp g.det hd _ _ _ _ hbal
-  · have hC : IsHomogeneous (C ((g⁻¹)ᵀ.det ^ (-(lamStar lam (Fin.last m)))) :
-        MvPolynomial (Fin (m + 1) × Fin (m + 1)) K) 0 := by
-      first | exact isHomogeneous_C _ _
-    have h1 := hC.mul (PI.OddDualWeyl.Red.rowAct_homog gᵀ hhomK)
-    rw [zero_add] at h1
-    rw [MvPolynomial.smul_eq_C_mul]
-    exact h1
+  · rw [MvPolynomial.smul_eq_C_mul]
+    simpa only [zero_add] using
+      (isHomogeneous_C (Fin (m + 1) × Fin (m + 1)) _).mul (PI.OddDualWeyl.Red.rowAct_homog gᵀ hhomK)
 
 end PI.OddDualWeyl

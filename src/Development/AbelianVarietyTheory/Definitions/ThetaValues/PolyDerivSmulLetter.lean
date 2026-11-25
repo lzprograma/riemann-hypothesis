@@ -13,55 +13,9 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
 public import Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.PolyDerivMonomialOne
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsIntegralCc
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HyperbolicFlagDataBasePoint, Development.AbelianVarietyTheory.Definitions.ThetaValues.PolyDerivSmulLetter
@@ -250,14 +204,6 @@ theorem flagData_κ0 : flagData.κ0 = -ii := exists_flagData.choose_spec.2.2.2.2
 theorem emb_ii_eq (τ : flagData.Ψ) : τ.1 ii = Complex.I :=
   mem_cmt.1 (flagData_Ψ ▸ τ.2)
 
-theorem isIso_one : flagData.IsIso ![1, 1] := by
-  refine ⟨?_, ?_, fun h => by simpa using congrFun h 0⟩
-  · rw [flagData_Λ]
-    intro a
-    fin_cases a <;> simpa using isIntegral_one
-  · rw [flagData_Gm, herm_gm]
-    simp
-
 end
 
 end HyperbolicCusp
@@ -297,16 +243,16 @@ theorem per_apply (x : Frame X.Ψ r) (v : Fin r → E) (p : X.Ψ × Fin r) :
       else ((mat x p.1)⁻¹ *ᵥ Data.emb p.1.1 v) p.2 := rfl
 
 theorem per_of_lt (x : Frame X.Ψ r) (v : Fin r → E) (τ : X.Ψ) {a : Fin r} (h : (a : ℕ) < X.p0) :
-    per X x v (τ, a) = hermC τ.1 X.Gm (FD.col (mat x τ) a) (Data.emb τ.1 v) := if_pos h
+    per X x v (τ, a) = hermC τ.1 X.Gm (FD.col (mat x τ) a) (Data.emb τ.1 v) := ite_eq_left h
 
 theorem per_of_le (x : Frame X.Ψ r) (v : Fin r → E) (τ : X.Ψ) {a : Fin r} (h : X.p0 ≤ (a : ℕ)) :
-    per X x v (τ, a) = ((mat x τ)⁻¹ *ᵥ Data.emb τ.1 v) a := if_neg (not_lt.2 h)
+    per X x v (τ, a) = ((mat x τ)⁻¹ *ᵥ Data.emb τ.1 v) a := ite_eq_right (not_lt.2 h)
 
 theorem rowType_of_lt (τ : X.Ψ) {a : Fin r} (h : (a : ℕ) < X.p0) :
-    rowType X (τ, a) = ComplexEmbedding.conjugate τ.1 := if_pos h
+    rowType X (τ, a) = ComplexEmbedding.conjugate τ.1 := ite_eq_left h
 
 theorem rowType_of_le (τ : X.Ψ) {a : Fin r} (h : X.p0 ≤ (a : ℕ)) : rowType X (τ, a) = τ.1 :=
-  if_neg (not_lt.2 h)
+  ite_eq_right (not_lt.2 h)
 
 theorem per_add (x : Frame X.Ψ r) (u v : Fin r → E) :
     per X x (u + v) = per X x u + per X x v := by
@@ -433,11 +379,6 @@ def canFn (a b : Fin g → ℝ) (x : Frame X.Ψ r) (z : Fin g → ℂ) : ℂ :=
   cexp (Real.pi / 2 * ((hMat X bas idx x *ᵥ z) ⬝ᵥ imInv X bas idx x *ᵥ (hMat X bas idx x *ᵥ z))) *
     thetaChar (tauMat X bas idx x) (fun i => (a i : ℂ)) (fun i => (b i : ℂ)) (hMat X bas idx x *ᵥ z)
 
-theorem canFn_zero (a b : Fin g → ℝ) (x : Frame X.Ψ r) :
-    canFn X bas idx a b x 0 =
-      thetaChar (tauMat X bas idx x) (fun i => (a i : ℂ)) (fun i => (b i : ℂ)) 0 := by
-  simp [canFn]
-
 end Periods
 
 section Rows
@@ -512,13 +453,6 @@ def thFr (n : ℕ) (a b : Fin n → Fin g → ℝ) (P : Harm.Poly ℂ X.Ψ q0 X.
 
 variable (n : ℕ) (a b : Fin n → Fin g → ℝ)
 
-theorem thFr_one (x : Frame X.Ψ r) :
-    thFr X hr bas idx n a b 1 x = (hMat X bas idx x).det ^ (n / 2) *
-      ∏ k, thetaChar (tauMat X bas idx x) (fun i => (a k i : ℂ)) (fun i => (b k i : ℂ)) 0 := by
-  rw [thFr, show (1 : Harm.Poly ℂ X.Ψ q0 X.p0 (Fin n)) = MvPolynomial.monomial 0 1 from rfl,
-    I2.polyDeriv_monomial_one, I2.pdTerm_eq_itD]
-  simp [I2.itD_nil, canFn_zero]
-
 end Series
 
 section Diagonal
@@ -537,30 +471,7 @@ theorem rowFac_ne_zero (p : X.Ψ × Fin r) : rowFac X d p ≠ 0 := by
   · exact hd _ _
   · exact inv_ne_zero (hd _ _)
 
-theorem per_rmul_diagFr (x : Frame X.Ψ r) (v : Fin r → E) (p : X.Ψ × Fin r) :
-    per X (rmul x (diagFr X d)) v p = rowFac X d p * per X x v p := by
-  have hm : mat (rmul x (diagFr X d)) p.1 = mat x p.1 * Matrix.diagonal (d p.1) := rfl
-  have hi : (Matrix.diagonal (d p.1))⁻¹ = Matrix.diagonal fun a => (d p.1 a)⁻¹ :=
-    Matrix.inv_eq_left_inv (by simp [diagonal_mul_diagonal, hd])
-  simp only [per, rowFac, hm]
-  split_ifs
-  · simp only [hermC, FD.col, mul_diagonal, Finset.mul_sum]
-    exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
-  · rw [Matrix.mul_inv_rev, ← mulVec_mulVec, hi, mulVec_diagonal]
-
 variable (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (x : Frame X.Ψ r)
-
-theorem perMat_rmul_diagFr (s : Fin g → Fin g ⊕ Fin g) :
-    perMat X bas idx s (rmul x (diagFr X d)) =
-      Matrix.diagonal (fun i => rowFac X d (idx i)) * perMat X bas idx s x := by
-  ext i k
-  rw [diagonal_mul, perMat_apply, perMat_apply, per_rmul_diagFr hd]
-
-theorem hMat_rmul_diagFr : hMat X bas idx (rmul x (diagFr X d)) =
-    hMat X bas idx x * Matrix.diagonal fun i => (rowFac X d (idx i))⁻¹ := by
-  rw [hMat, perMat_rmul_diagFr hd, Matrix.mul_inv_rev, hMat]
-  congr 1
-  exact Matrix.inv_eq_left_inv (by simp [diagonal_mul_diagonal, rowFac_ne_zero hd])
 
 
 omit hd in
@@ -642,8 +553,6 @@ theorem vecLin_bijective : Function.Bijective vecLin := by
 
 def bas : (Fin 2 ⊕ Fin 2 → ℤ) ≃ₗ[ℤ] flagData.Λ := LinearEquiv.ofBijective vecLin vecLin_bijective
 
-theorem isSympl_bas : IsSympl flagData bas := EF_vec
-
 instance : Unique flagData.Ψ :=
   have hne : Nonempty flagData.Ψ := by
     obtain ⟨τ⟩ : Nonempty (E4 →+* ℂ) := inferInstance
@@ -670,53 +579,6 @@ theorem one_mem : one ∈ flagData.dom := fun τ => by
   · simp [lminor, psgn]
   · simp [lminor, psgn, sgn]
   · simp [lminor, psgn, sgn, Finset.prod_range_succ]
-
-theorem per_one (v : Fin 2 → E4) (τ : flagData.Ψ) :
-    per flagData one v (τ, 0) = conj (τ.1 (v 0)) ∧ per flagData one v (τ, 1) = τ.1 (v 1) := by
-  have hm : mat one τ = 1 := rfl
-  rw [per_of_lt _ _ _ _ (by simp [hyperbolicFlagData_base_point]), per_of_le _ _ _ _ (by simp [hyperbolicFlagData_base_point]), hm,
-    flagData_Gm]
-  simp [hermC, FD.col, gm, Data.emb, Fin.sum_univ_two]
-
-theorem perMat_one : perMat flagData bas idx Sum.inl one = 1 ∧
-    perMat flagData bas idx Sum.inr one = I • (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
-  have h0 (m) : per flagData one (bas m) (idx 0) = _ := (per_one (vec m) default).1
-  have h1 (m) : per flagData one (bas m) (idx 1) = _ := (per_one (vec m) default).2
-  constructor <;> ext i k <;> fin_cases i <;> fin_cases k <;> simp [h0, h1, vec, emb_ii_eq]
-
-theorem hMat_one : hMat flagData bas idx one = 1 := by rw [hMat, perMat_one.1, inv_one]
-
-theorem tauMat_one : tauMat flagData bas idx one = I • (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
-  rw [tauMat, hMat_one, perMat_one.2, Matrix.one_mul]
-
-theorem thetaChar_I_ne_zero : thetaChar (I • (1 : Matrix (Fin 2) (Fin 2) ℂ)) 0 0 0 ≠ 0 := by
-  have h1 : Summable fun n : ℤ => Real.exp (-Real.pi * 1 * n ^ 2) := by
-    have := (summable_jacobiTheta₂_term_iff 0 I).2 (by simp)
-    refine (Complex.summable_ofReal.1 (this.congr fun n => ?_))
-    simp only [jacobiTheta₂_term, ofReal_exp]
-    congr 1
-    push_cast
-    linear_combination (Real.pi * n ^ 2 : ℂ) * I_mul_I
-  have h2 : Summable fun n : Fin 2 → ℤ =>
-      Real.exp (-Real.pi * 1 * n 0 ^ 2) * Real.exp (-Real.pi * 1 * n 1 ^ 2) :=
-    (finTwoArrowEquiv ℤ).summable_iff.2
-      (h1.mul_of_nonneg h1 (fun _ => (Real.exp_pos _).le) fun _ => (Real.exp_pos _).le)
-  have h3 := h2.tsum_pos (fun _ => by positivity) 0 (by positivity)
-  have h4 := ofReal_ne_zero.2 h3.ne'
-  rw [ofReal_tsum] at h4
-  convert h4 using 1
-  refine tsum_congr fun n => ?_
-  rw [← Real.exp_add, ofReal_exp]
-  congr 1
-  simp only [add_zero, smul_mulVec, one_mulVec, dotProduct, Fin.sum_univ_two, Pi.smul_apply,
-    smul_eq_mul, Pi.zero_apply, mul_zero]
-  push_cast
-  linear_combination (Real.pi * (n 0 ^ 2 + n 1 ^ 2) : ℂ) * I_mul_I
-
-theorem thFr_one_ne_zero (n : ℕ) : thFr flagData hr bas idx n 0 0 1 one ≠ 0 := by
-  rw [thFr_one, hMat_one, tauMat_one, det_one, one_pow, one_mul]
-  exact Finset.prod_ne_zero_iff.2 fun k _ => by
-    simpa [Pi.zero_def] using thetaChar_I_ne_zero
 
 end Gauss
 

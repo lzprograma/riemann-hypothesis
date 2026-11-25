@@ -24,8 +24,7 @@ theorem exists_delta (σ : E →ₐ[F] E) (hinv : ∀ e, σ (σ e) = e)
     (hfix : ∀ e, σ e = e ↔ e ∈ (algebraMap F E).range) (h2 : Module.finrank F E = 2) :
     ∃ δ : E, σ δ = -δ ∧ δ ≠ 0 := by
   have hex : ∃ e : E, e ∉ (algebraMap F E).range := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have hsurj : Function.Surjective (Algebra.linearMap F E) := fun e => by
       obtain ⟨x, hx⟩ := hne e
       exact ⟨x, hx⟩

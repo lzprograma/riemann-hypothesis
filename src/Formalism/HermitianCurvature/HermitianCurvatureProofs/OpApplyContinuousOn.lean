@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbSplitPt
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
 public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
@@ -17,52 +18,7 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.PolynomialMapProper
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -136,128 +92,16 @@ theorem orbJ_dom : ∃ c₃ : ℝ, ∀ (k r : ℕ) (Wp Wq : Type) [NormedAddComm
       ∀ (F : B.Mat k r → (Wq →L[ℂ] Wp)) (cF : ℝ), 0 ≤ cF →
         (∀ p, Bs.inSS p → ‖F (B.sgs p γ)‖ ≤ cF * B.gN (B.sgs p γ) ^ (-A)) →
         ∀ᵐ p ∂Bs.μSS, ‖θ p • D.orbIntegrand Bs γ F p‖ ≤ cF * maj p := by
-  obtain ⟨c₁, hPP⟩ := Formalism.FourierDecayAlt.P.polynomial_map_proper
-  refine ⟨16 * ((c₁ : ℝ) + 1), ?_⟩
+  obtain ⟨c₃, hc₃⟩ := Formalism.FourierDecayAlt.P.VandermondePolynomialIntegral.orbJ_domL
+  refine ⟨c₃, ?_⟩
   intro k r Wp Wq _ _ _ _ Bs γ w d A hγ hd hZ hpos hA
-  set nn : ℝ := ((2 * r + k + 1 : ℕ) : ℝ) with hnn
-  set bN : ℝ := 4 * ((r : ℝ) * nn + 1) with hbN
-  set c : ℕ := (c₁ + 1) * (r + 1) ^ 2 with hc
-  set M : ℝ := A / c - 2 * bN with hM
-  have hmono : C2.IsMonomial (Zhat k r Bs.z Bs.z' γ) := ⟨w, d, hd, hZ⟩
-  obtain ⟨CP, hCP, -⟩ := hPP k r Bs.z Bs.z' γ (P.Dx2.Rad.std Bs) ⟨hγ, hpos⟩ hmono
-  have hc1 : 1 ≤ c := Nat.one_le_iff_ne_zero.mpr (by positivity)
-  have hcpos : (0 : ℝ) < c := by exact_mod_cast hc1
-  have hnn0 : 0 ≤ nn := by positivity
-  have hrn : 0 ≤ (r : ℝ) * nn := by positivity
-  have hbN0 : 0 ≤ bN := by positivity
-  have hccast : (c : ℝ) = ((c₁ : ℝ) + 1) * ((r : ℝ) + 1) ^ 2 := by rw [hc]; push_cast; ring
-  have hAc : 16 * ((r : ℝ) * nn + 1) ≤ A / c := by
-    rw [le_div_iff₀ hcpos, hccast]
-    calc 16 * ((r : ℝ) * nn + 1) * (((c₁ : ℝ) + 1) * ((r : ℝ) + 1) ^ 2)
-        = 16 * ((c₁ : ℝ) + 1) * ((r : ℝ) + 1) ^ 2 * ((r : ℝ) * nn + 1) := by ring
-      _ ≤ A := hA
-  have hA4 : 4 * bN ≤ A / c := by rw [hbN]; linarith
-  have hk1 : (1 : ℝ) ≤ k := by exact_mod_cast Bs.k_pos
-  have hMR : 2 * ((r : ℝ) + 1) ^ 2 < M := by
-    have hr2 : ((r : ℝ) + 1) ^ 2 ≤ (r : ℝ) * nn + 1 := by
-      rw [hnn]; push_cast
-      have hdiff : (r : ℝ) * (2 * (r : ℝ) + (k : ℝ) + 1) + 1 - ((r : ℝ) + 1) ^ 2 =
-          (r : ℝ) * ((r : ℝ) + (k : ℝ) - 1) := by ring
-      have hnn' : 0 ≤ (r : ℝ) * ((r : ℝ) + (k : ℝ) - 1) :=
-        mul_nonneg (Nat.cast_nonneg r) (by linarith [(Nat.cast_nonneg r : (0 : ℝ) ≤ r)])
-      linarith
-    rw [hM, hbN]; linarith
-  have hM0 : 0 ≤ M := by linarith [sq_nonneg ((r : ℝ) + 1)]
-  have hG : P.Dx2.Rad.Good Bs γ w d := ⟨P.Dx2.Rad.exists_rho Bs hγ hpos hd hZ, P.Dx2.Rad.u_inj Bs hγ hpos hd hZ,
-    fun ρ hρ => P.Dx2.Rad.u_lstg Bs hγ hpos hd hZ hρ⟩
-  have hR := P.Dx2.Rad.haar_good Bs hγ hd hG
-  have := P.Dx2.OrbJ.sigmaF hR
-  have hI := Dx3.intR Bs hγ hd hG hMR
-  set μR := D.muR Bs γ w with hμR
-  set cR : ℝ := ∫ x, B.gN (Matrix.of x) ^ (-M) ∂μR with hcRdef
-  have hone : Matrix.of (Matrix.of.symm (1 : B.Mat k r)) ∈ B.GV k r := by
-    rw [Equiv.apply_symm_apply]
-    exact (P.unitary_group_closed k r).one_mem
-  have hcR : 0 < cR := by
-    have := Dx3.om_pos hR hM0 hI hone
-    simpa only [Dx3.Om, Equiv.apply_symm_apply, mul_one, hcRdef] using this
-  obtain ⟨KW, hKW1, hKW⟩ := Dx3.UW_bound Bs.z Bs.z_mem Bs.T_pos
-  obtain ⟨KW', hKW1', hKW'⟩ := Dx3.UW_bound Bs.z' Bs.z'_mem Bs.T'_pos
-  set K1 := KW * KW' with hK1
-  set Kγ := B.gN γ⁻¹ * B.gN γ with hKγ
-  have hγi : B.gN γ⁻¹ = B.gN γ := (P.norm_of_inverse k r γ hγ).1
-  have hγ1 : 1 ≤ B.gN γ := P.BetaSesquilinearity.gN_ge_one hγ
-  have hKγ0 : 0 < Kγ := by rw [hKγ, hγi]; exact mul_pos (by linarith) (by linarith)
-  set K0 := K1 ^ A * CP ^ (A / c) * Kγ ^ bN / cR with hK0
-  refine ⟨Dx3.cut μR M, fun p => K0 * (B.gN (Matrix.of p.1.2 : B.Mat k r) ^ (-(A / c - 3 * bN)) *
-      B.gN (Matrix.of p.2.2 : B.Mat k r) ^ (-bN)),
-    ⟨Dx3.cut_meas M, Dx3.cut_nonneg μR M, fun p hp => Dx3.cut_norm hR hM0 hI p hp.2.1⟩,
-    (Dx3.maj_int Bs (A / c - 3 * bN) bN (by linarith) le_rfl).const_mul K0, ?_⟩
-  intro F cF hcF hFb
-  filter_upwards [P.Dx2.OrbJ.ae_inSS Bs] with p hp
-  obtain ⟨h1, h2, h3, h4⟩ := hp
-  obtain ⟨ρ, σ, X, hρ, hσ, hnρσ, hσX, hXY, hn'le⟩ := Dx3.geom Bs hγ hpos hCP hmono h2 h4
-  have hN1 : 1 ≤ B.gN (Matrix.of p.1.2 : B.Mat k r) := P.BetaSesquilinearity.gN_ge_one h2.1
-  have hN1' : 1 ≤ B.gN (Matrix.of p.2.2 : B.Mat k r) := P.BetaSesquilinearity.gN_ge_one h4.1
-  have hS1 : 1 ≤ B.gN σ := P.BetaSesquilinearity.gN_ge_one hσ
-  have hg0 : (Matrix.of p.1.2 : B.Mat k r)⁻¹ * γ * Matrix.of p.2.2 ∈ B.GV k r :=
-    Formalism.QuantumDeterminants.WeylGroupFacts.uh_mul (Formalism.QuantumDeterminants.WeylGroupFacts.uh_mul (Formalism.QuantumDeterminants.WeylGroupFacts.uh_inv h2.1) hγ) h4.1
-  have hY1 : 1 ≤ B.gN ((Matrix.of p.1.2 : B.Mat k r)⁻¹ * γ * Matrix.of p.2.2) := P.BetaSesquilinearity.gN_ge_one hg0
-  have hsgs := P.B7.sgs_mem Bs ⟨h1, h2, h3, h4⟩ hγ
-  have hGg : 0 < B.gN (B.sgs p γ) := by linarith [P.BetaSesquilinearity.gN_ge_one hsgs]
-  have hYG : B.gN ((Matrix.of p.1.2 : B.Mat k r)⁻¹ * γ * Matrix.of p.2.2) ≤ K1 * B.gN (B.sgs p γ) := by
-    have hhu : IsUnit (Matrix.of p.1.1 : B.Mat k r).det := (P.unitary_group_closed k r).unit _ h1.1
-    have hh'u : IsUnit (Matrix.of p.2.1 : B.Mat k r).det := (P.unitary_group_closed k r).unit _ h3.1
-    have e : (Matrix.of p.1.2 : B.Mat k r)⁻¹ * γ * Matrix.of p.2.2 =
-        (Matrix.of p.1.1 : B.Mat k r) * B.sgs p γ * (Matrix.of p.2.1 : B.Mat k r)⁻¹ := by
-      simp only [B.sgs, Matrix.mul_assoc]
-      rw [Matrix.mul_nonsing_inv_cancel_left _ _ hhu, Matrix.mul_nonsing_inv _ hh'u, Matrix.mul_one]
-    rw [e]
-    calc B.gN ((Matrix.of p.1.1 : B.Mat k r) * B.sgs p γ * (Matrix.of p.2.1 : B.Mat k r)⁻¹)
-        ≤ B.gN (Matrix.of p.1.1 : B.Mat k r) * B.gN (B.sgs p γ) * B.gN (Matrix.of p.2.1 : B.Mat k r)⁻¹ :=
-          (P.B6.gN_mul_le _ _).trans (mul_le_mul_of_nonneg_right (P.B6.gN_mul_le _ _) (P.B6.gN_nonneg _))
-      _ ≤ KW * B.gN (B.sgs p γ) * KW' := by
-          have a1 := hKW _ h1
-          have a2 := hKW' _ (Formalism.QuantumDeterminants.WeylGroupFacts.uw_inv h3)
-          have s0 := P.B6.gN_nonneg (B.sgs p γ)
-          exact mul_le_mul (mul_le_mul_of_nonneg_right a1 s0) a2 (P.B6.gN_nonneg _)
-            (mul_nonneg (by linarith) s0)
-      _ = K1 * B.gN (B.sgs p γ) := by rw [hK1]; ring
-  have hθ : Dx3.cut μR M p ≤ B.gN (Matrix.of p.1.2 : B.Mat k r) ^ (-M) * B.gN σ ^ M / cR := by
-    have hlow := Dx3.om_lower hR hM0 hI hρ hσ
-    have e : Matrix.of.symm (ρ * σ) = p.1.2 := by rw [← hnρσ]; exact Equiv.symm_apply_apply _ _
-    rw [e] at hlow
-    have hσp : 0 < B.gN σ ^ (-M) := Real.rpow_pos_of_pos (by linarith) _
-    have hpos' : 0 < cR * B.gN σ ^ (-M) := mul_pos hcR hσp
-    unfold Dx3.cut
-    calc B.gN (Matrix.of p.1.2 : B.Mat k r) ^ (-M) / Dx3.Om μR M p.1.2
-        ≤ B.gN (Matrix.of p.1.2 : B.Mat k r) ^ (-M) / (cR * B.gN σ ^ (-M)) :=
-          div_le_div_of_nonneg_left (Real.rpow_nonneg (P.B6.gN_nonneg _) _) hpos' hlow
-      _ = B.gN (Matrix.of p.1.2 : B.Mat k r) ^ (-M) * B.gN σ ^ M / cR := by
-          rw [Real.rpow_neg (P.B6.gN_nonneg σ)]
-          have : 0 < B.gN σ ^ M := Real.rpow_pos_of_pos (by linarith) _
-          field_simp
-  have hθ0 := Dx3.cut_nonneg μR M p
-  have hFv : ‖B.rho Bs p F γ‖ ≤ cF * B.gN (B.sgs p γ) ^ (-A) :=
-    (P.B7.norm_rho_le Bs ⟨h1, h2, h3, h4⟩ F γ).trans (hFb p ⟨h1, h2, h3, h4⟩)
-  have hCP0 : 0 < CP := by
-    by_contra hle'
-    have hle := not_lt.mp hle'
-    have := mul_nonpos_of_nonpos_of_nonneg hle
-      (pow_nonneg (P.B6.gN_nonneg ((Matrix.of p.1.2 : B.Mat k r)⁻¹ * γ * Matrix.of p.2.2)) (c₁ * (r + 1) ^ 2))
-    linarith
-  have hec : c₁ * (r + 1) ^ 2 ≤ c := Nat.mul_le_mul_right _ (Nat.le_succ _)
-  have hXY' : X ≤ CP * B.gN ((Matrix.of p.1.2 : B.Mat k r)⁻¹ * γ * Matrix.of p.2.2) ^ c :=
-    hXY.trans (mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hY1 hec) hCP0.le)
-  have hK10 : 0 < K1 := by rw [hK1]; positivity
-  have hkey := Dx3.key_real hN1 hS1 hσX hY1 hGg hc1 hXY' hn'le hN1' hYG hθ hθ0 hFv (norm_nonneg _) hcR
-    hcF hCP0 hK10 hKγ0 hM hbN0 hA4
-  rw [norm_smul, Real.norm_of_nonneg hθ0]
+  obtain ⟨θ, maj, hθ, -, -, hInt, hMaj⟩ := hc₃ k r Wp Wq Bs γ w d A hγ hd hZ hpos hA
+  refine ⟨θ, maj, hθ, hInt, fun F cF hcF hFb => ?_⟩
+  filter_upwards [P.Dx2.OrbJ.ae_inSS Bs, hMaj F cF hcF hFb] with p hp hbound
+  rw [norm_smul, Real.norm_of_nonneg (hθ.2.1 p)]
   unfold D.orbIntegrand
   rw [norm_smul, P.B7.norm_xi, one_mul]
-  refine hkey.trans (le_of_eq ?_)
-  rw [hK0]
-  ring
+  exact (mul_le_mul_of_nonneg_left (P.B7.norm_rho_le Bs hp F γ) (hθ.2.1 p)).trans hbound
 
 end Formalism.FourierDecayAlt.P.PBE
 
@@ -296,7 +140,7 @@ theorem orbJ_tendsto : ∃ c₃ : ℝ, ∀ (k r : ℕ) (Wp Wq : Type) [NormedAdd
     have hex : ∃ θ', D.IsNormCut Bs γ (D.muR Bs γ w) θ' ∧
         Integrable (fun p => θ' p • D.orbIntegrand Bs γ G p) Bs.μSS := ⟨θ, hθ, hInt G hGm hGb⟩
     unfold D.orbJ
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact P.orbital_integral_indep_choice k r Wp Wq Bs γ (D.muR Bs γ w) hrel hR G _ θ hex.choose_spec.1 hθ
       hex.choose_spec.2 (hInt G hGm hGb)
   have e1 : (fun n => D.orbJ Bs γ (D.muR Bs γ w) (H n)) =
@@ -324,9 +168,9 @@ theorem vecV_tendsto : ∃ c₃ : ℝ, ∀ (k r : ℕ) (Wp Wq : Type) [NormedAdd
   intro k r Wp Wq _ _ _ _ Bs ν' m₀ q A hA H H₀ cF hcF hc hc₀ hb hb₀ hlim
   unfold D.vecV
   by_cases h : D.IsLocPt q (r + 1) ∧ 0 < D.ptG (Tz k r Bs.z * Tz k r Bs.z') r q
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     by_cases h' : ∃ γ ∈ B.GV k r, Zhat k r Bs.z Bs.z' γ = D.ptMatN q (r + 1) ∧ D.IsDFrame Bs ν' m₀ γ
-    · simp only [dif_pos h']
+    · simp only [dite_eq_left h']
       have hγ := h'.choose_spec.1
       have hZ := h'.choose_spec.2.1
       have hGq := P.ptG_spec k r Bs.z Bs.z' q h'.choose h.1 hZ
@@ -338,9 +182,9 @@ theorem vecV_tendsto : ∃ c₃ : ℝ, ∀ (k r : ℕ) (Wp Wq : Type) [NormedAdd
       exact hc₃ k r Wp Wq Bs h'.choose _ _ A hγ hd (hZ.trans hmono) hpos hrel hA H H₀ cF hcF
         (fun n => integrand_aesm' Bs horb (hc n)) (integrand_aesm' Bs horb hc₀)
         (fun n p hp => hb n _ (horb p hp)) (fun p hp => hb₀ _ (horb p hp)) (fun p hp => hlim _ (horb p hp))
-    · simp only [dif_neg h']
+    · simp only [dite_eq_right h']
       exact tendsto_const_nhds
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     exact tendsto_const_nhds
 
 end Formalism.FourierDecayAlt.P.PBE
@@ -349,7 +193,7 @@ namespace Formalism.FourierDecayAlt.P.PBE
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section lin
 
@@ -519,7 +363,7 @@ namespace Formalism.FourierDecayAlt.P.PBE
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section misc
 
@@ -559,9 +403,9 @@ theorem vecV_congrGPos (Bs : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 
     D.vecV Bs ν' m₀ H₁ q = D.vecV Bs ν' m₀ H₂ q := by
   unfold D.vecV
   by_cases hq : D.IsLocPt q (r + 1) ∧ 0 < D.ptG (Tz k r Bs.z * Tz k r Bs.z') r q
-  · simp only [dif_pos hq]
+  · simp only [dite_eq_left hq]
     by_cases h' : ∃ γ ∈ B.GV k r, Zhat k r Bs.z Bs.z' γ = D.ptMatN q (r + 1) ∧ D.IsDFrame Bs ν' m₀ γ
-    · simp only [dif_pos h']
+    · simp only [dite_eq_left h']
       have hγ := h'.choose_spec.1
       have hGq := P.ptG_spec k r Bs.z Bs.z' q h'.choose hq.1 h'.choose_spec.2.1
       have hpos : 0 < Gf k r Bs.z Bs.z' h'.choose := hGq ▸ hq.2
@@ -571,8 +415,8 @@ theorem vecV_congrGPos (Bs : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 
         simp only [D.orbIntegrand, B.rho, one_smul]
         rw [h _ ⟨P.B7.sgs_mem Bs hp hγ, by rw [P.JCx1.needs.gf_sgs Bs hp]; exact hpos⟩])
       rw [e, one_smul]
-    · simp only [dif_neg h']
-  · simp only [dif_neg hq]
+    · simp only [dite_eq_right h']
+  · simp only [dite_eq_right hq]
 
 end cut
 
@@ -633,7 +477,7 @@ namespace Formalism.FourierDecayAlt.P.PBE
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section cutoffs
 
@@ -827,7 +671,7 @@ namespace Formalism.FourierDecayAlt.P.PBE
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem formLimit_top (Cb : ℝ) : ∃ Cc : ℝ, ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par)
@@ -878,12 +722,12 @@ theorem formLimit_top (Cb : ℝ) : ∃ Cc : ℝ, ∀ (Wp Wq : Type) [NormedAddCo
   unfold D.RRplace
   by_cases hab : D.IsLocPt a (P0.r + 1) ∧ D.IsLocPt b (P0.r + 1)
   swap
-  · simp only [dif_neg hab]; exact tendsto_const_nhds
+  · simp only [dite_eq_right hab]; exact tendsto_const_nhds
   have hnle : ¬ (P0.r + 1 ≤ P0.r) := by omega
-  simp only [dif_pos hab, dif_neg hnle, if_true]
+  simp only [dite_eq_left hab, dite_eq_right hnle, ite_true]
   by_cases hw0 : w = []
   · subst hw0
-    simp only [if_true]
+    simp only [ite_true]
     have hthr := thr_arith (P0.r) (2 * (P0.r : ℝ) + P0.k + 1) N (max Cb 0) (max c₁ c₂) 0 0 A hr0 hrX hN0 hCb0
       le_rfl (by positivity) le_rfl (by simp) hA
     obtain ⟨b₀, hb₀⟩ := cutF_inCC p.T.base hχ hfA hε A 0 (by simp)
@@ -892,7 +736,7 @@ theorem formLimit_top (Cb : ℝ) : ∃ Cc : ℝ, ∀ (Wp Wq : Type) [NormedAddCo
       hc₁ P0.k P0.r Wp Wq p.T.base p.ν' p.m₀ q _ A b₀ cut
         (hmono c₁ (le_max_left _ _) A (by linarith [hthr])) hb₀ hFck hcut'
     exact hsInner_tendsto (hva a) (hva b)
-  · simp only [if_neg hw0]
+  · simp only [ite_eq_right hw0]
     unfold Top.topOf
     have hve : ∀ (e : Wd.Ix (Fin w.length)) (q : C.LPt), Tendsto
         (fun n => D.vecV p.T.base p.ν' p.m₀ (p.Θ.Θ w e (fun g => cut n g • D.cutF p.T.base χ f ε g)) q) atTop

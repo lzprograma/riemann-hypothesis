@@ -18,54 +18,8 @@ public import Formalism.GaussJetBounds.GaussJetProofs.PureCrossTermWeight
 public import Formalism.GaussJetBounds.OneLetterRadius
 public import Formalism.GaussJetBounds.Statement
 public import Formalism.IncomingBounds.WeightIdentities
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.TypeStar
 import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
 import Formalism.IncomingBounds.FlowDegreeBounds.ProdRangeEqFactorialMulProdIco
 import Formalism.GaussJetBounds.GaussJetProofs.OneLetterRadiusIdentity
@@ -104,10 +58,10 @@ theorem asmA_odd_hasSum (l : ℕ) (hl : 2 ≤ l) :
   · convert hg using 1
     funext k
     have ho : Odd (2 * k + 1) := odd_two_mul_add_one k
-    simp only [Function.comp, ho, if_true, hr]
+    simp only [Function.comp, ho, ite_true, hr]
     rw [pow_succ, pow_mul, mul_inv, mul_comm, inv_pow]
   · intro x hx
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨k, rfl⟩
     exact hx ⟨k, rfl⟩
 
@@ -115,7 +69,7 @@ theorem asmA_sum_odd_le (l : ℕ) (hl : 2 ≤ l) (N : Finset ℕ) (hN : ∀ n �
     ∑ n ∈ N, ((l : ℝ) ^ n)⁻¹ ≤ gam l := by
   calc ∑ n ∈ N, ((l : ℝ) ^ n)⁻¹
       = ∑ n ∈ N, (if Odd n then ((l : ℝ) ^ n)⁻¹ else 0) :=
-        Finset.sum_congr rfl fun n hn => by rw [if_pos (hN n hn)]
+        Finset.sum_congr rfl fun n hn => by rw [ite_eq_left (hN n hn)]
     _ ≤ gam l := sum_le_hasSum N (fun i _ => by split_ifs <;> positivity) (asmA_odd_hasSum l hl)
 
 theorem asmA_top_core (l : ℕ) (hl : 2 ≤ l) (A : ℝ) (cap h : ℕ → ℝ)
@@ -177,7 +131,7 @@ theorem asmA_top_choice (l : ℕ) (hl : 2 ≤ l) (A : ℝ) (cap h : ℕ → ℝ)
       have hjD : (j : ℕ∞) < D := lt_trans (ENat.coe_lt_coe.mpr hjT) hTs.2.1
       exact hcapj j (hRodd j hj) hjD
         (fun hle => Nat.find_min hS hjT ⟨hRodd j hj, hjD, hle⟩)
-  · push_neg at hS
+  · push Not at hS
     have hcapR : ∀ j ∈ R, (j : ℕ∞) < D → cap j ≤ h j := fun j hj hjD =>
       hcapj j (hRodd j hj) hjD (not_le.mpr (hS j (hRodd j hj) hjD))
     by_cases hDt : D = ⊤
@@ -217,12 +171,12 @@ theorem asmA_top_gen (l : ℕ) (hl : 2 ≤ l) (A : ℝ) (hA : 0 ≤ A) (cap : �
     intro e
     unfold asmA_f asmA_g
     by_cases ho : Odd e
-    · rw [if_pos ho]
+    · rw [ite_eq_left ho]
       split_ifs
       · exact max_le (by linarith [hcap e]) (hx e)
       · exact le_rfl
       · exact hx e
-    · rw [if_neg ho, if_neg (fun h' => ho h'.1), if_neg (fun h' => ho h'.1)]
+    · rw [ite_eq_right ho, ite_eq_right (fun h' => ho h'.1), ite_eq_right (fun h' => ho h'.1)]
   have hgs : HasSum (asmA_g l A) (A * gam l) := by
     have hfun : asmA_g l A = fun i => A * (if Odd i then ((l : ℝ) ^ i)⁻¹ else 0) := by
       funext e
@@ -239,7 +193,7 @@ theorem asmA_top_gen (l : ℕ) (hl : 2 ≤ l) (A : ℝ) (hA : 0 ≤ A) (cap : �
       min (A / (l : ℝ) ^ e) (cap e) ≤ asmA_g l A e - asmA_f l A cap D e := by
     intro e ho he
     unfold asmA_f asmA_g
-    rw [if_pos ho, if_pos ⟨ho, he⟩]
+    rw [ite_eq_left ho, ite_eq_left ⟨ho, he⟩]
     rcases le_total (A / (l : ℝ) ^ e) (cap e) with h1 | h1
     · rw [min_eq_left h1, max_eq_right (by linarith)]
       linarith
@@ -249,8 +203,8 @@ theorem asmA_top_gen (l : ℕ) (hl : 2 ≤ l) (A : ℝ) (hA : 0 ≤ A) (cap : �
     intro e he
     have ho := hDodd e he
     unfold asmA_f asmA_g
-    rw [if_pos ho, if_neg (fun h' => by rw [he] at h'; exact lt_irrefl _ h'.2),
-      if_neg (fun h' => by rw [he] at h'; exact lt_irrefl _ h'.2)]
+    rw [ite_eq_left ho, ite_eq_right (fun h' => by rw [he] at h'; exact lt_irrefl _ h'.2),
+      ite_eq_right (fun h' => by rw [he] at h'; exact lt_irrefl _ h'.2)]
     linarith
   obtain ⟨ε, hε0, hεD, hε⟩ := asmA_top_choice l hl A cap (fun e => asmA_g l A e - asmA_f l A cap D e)
     hcap (fun e => by linarith [hfg e]) hhs R D hR hmin hDv
@@ -273,7 +227,7 @@ theorem asmA_dTop_odd {d : ℕ} [NeZero d] (TT : Finset (ZMod d)) (s : ZMod d) (
     have he : sInf {e' : ℕ | Odd e' ∧ s + (e' : ZMod d) ∈ TT} = e := by exact_mod_cast h
     rw [he] at hm
     exact hm.1
-  · push_neg at hne
+  · push Not at hne
     have htop : dTop d TT s = ⊤ := by
       unfold dTop
       refine iInf_eq_top.mpr fun e' => iInf_eq_top.mpr fun h' => ?_
@@ -332,12 +286,12 @@ theorem asmA_row {d : ℕ} {ι : Type} (l : ℕ) (sig eps : ZMod d → ℝ) (hsi
       (κ i : ℝ) * (gam l - rowRad l sig eps lt isTop spec i) := by
   have hk : (0 : ℝ) ≤ κ i := Nat.cast_nonneg _
   by_cases ht : isTop i = true
-  · rw [if_pos ht, htop ht]
+  · rw [ite_eq_left ht, htop ht]
     simp [rowRad, ht, asmA_cost]
-  · rw [if_neg ht]
+  · rw [ite_eq_right ht]
     have hrr : rowRad l sig eps lt isTop spec i ≤ sig (lt i) + asmA_cost l eps (spec i) := by
       unfold rowRad
-      rw [if_neg ht]
+      rw [ite_eq_right ht]
       rcases hsp : spec i with _ | ⟨s, j⟩
       · simp [asmA_cost]
       · simp only [asmA_cost]
@@ -400,7 +354,7 @@ theorem rowRadiusAssembly : ThmAAssembly := by
           rw [Finset.sum_mul]
           refine Finset.sum_congr rfl fun i hi => ?_
           rw [Finset.mem_filter] at hi
-          rw [hXdef, if_pos hi.2.2, hi.2.1]
+          rw [hXdef, ite_eq_left hi.2.2, hi.2.1]
         rw [e1]
         split_ifs with hsT
         · rw [htopsum s hsT]
@@ -418,7 +372,7 @@ theorem rowRadiusAssembly : ThmAAssembly := by
           rw [Finset.sum_mul]
           refine Finset.sum_congr rfl fun i hi => ?_
           rw [Finset.mem_filter] at hi
-          rw [hXdef, if_neg (by rw [hi.2.2]; exact Bool.false_ne_true), hi.2.1]
+          rw [hXdef, ite_eq_right (by rw [hi.2.2]; exact Bool.false_ne_true), hi.2.1]
         rw [e2, hnonsum s]
     rw [Finset.sum_congr rfl (fun s _ => hs s), Finset.sum_add_distrib, Finset.sum_ite_mem,
       Finset.univ_inter]
@@ -448,7 +402,7 @@ theorem rowRadiusAssembly : ThmAAssembly := by
       rw [Finset.sum_eq_single p0]
       · simp
       · intro p _ hp
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         exact hp (Option.some_injective _ h).symm
       · intro h
@@ -481,7 +435,7 @@ theorem rowRadiusAssembly : ThmAAssembly := by
             rw [← Int.cast_natCast, Int.toNat_of_nonneg hj.le]
           rw [hG]
           dsimp only at hj ⊢
-          simp only [asmA_cost, if_pos hj, hcast]
+          simp only [asmA_cost, ite_eq_left hj, hcast]
       _ = ∑ x ∈ (P.filter (fun p => 0 < p.2)).image (fun p : ZMod d × ℤ => (p.1, p.2.toNat)), G x :=
           (Finset.sum_image hinj).symm
       _ ≤ ∑ x ∈ TT ×ˢ R, G x := by
@@ -550,7 +504,7 @@ theorem rowRadiusAssembly : ThmAAssembly := by
           obtain ⟨-, -, hlt, -, hsz⟩ := hspec i s' j hi
           have hsz' := hsz hj
           rw [hlt] at hsz'
-          simp only [asmA_cost, if_neg (not_lt.mpr hj.le)]
+          simp only [asmA_cost, ite_eq_right (not_lt.mpr hj.le)]
           exact mul_le_mul_of_nonneg_right
             (by exact_mod_cast capacity_le_reachCapacity l d TT nu1 nu2 size s' j hj hodd hsz') (by positivity)
       _ = (Wcap l d TT nu1 nu2 size s : ℝ) *
@@ -596,10 +550,6 @@ universe u
 namespace Formalism.DworkPowerSeriesWeights
 
 open Formalism.IncomingBounds
-
-section Rank
-
-end Rank
 
 section Pure
 
@@ -652,9 +602,9 @@ private theorem frame_coeff_pow_lin {R ι : Type*} [CommSemiring R] [Fintype ι]
   | zero => simp
   | succ B ih =>
     rw [pow_succ, frame_coeff_mul_lin, Finset.sum_eq_single j]
-    · rw [if_pos (by simp), ← Finsupp.single_tsub, Nat.add_sub_cancel, ih, pow_succ, mul_comm]
+    · rw [ite_eq_left (by simp), ← Finsupp.single_tsub, Nat.add_sub_cancel, ih, pow_succ, mul_comm]
     · intro y _ hy
-      rw [if_neg (by simp [Ne.symm hy]), mul_zero]
+      rw [ite_eq_right (by simp [Ne.symm hy]), mul_zero]
     · intro h; exact absurd (Finset.mem_univ j) h
 
 private theorem frame_coeff_two {R ι : Type*} [CommSemiring R] [Fintype ι] [DecidableEq ι]
@@ -675,13 +625,13 @@ private theorem frame_coeff_two {R ι : Type*} [CommSemiring R] [Fintype ι] [De
         by_cases h1 : i = y
         · subst h1; simp [Ne.symm hij]
         · simp [h1]
-      rw [if_pos hmem, hsub, ih, pow_succ]; ring
+      rw [ite_eq_left hmem, hsub, ih, pow_succ]; ring
     · intro y _ hy
       by_cases hcy : c y = 0
       · rw [hcy, zero_mul]
-      · rw [if_neg, mul_zero]
+      · rw [ite_eq_right, mul_zero]
         rw [Finsupp.mem_support_iff, Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply,
-          if_neg (Ne.symm hy), if_neg (Ne.symm (hc y hcy))]
+          ite_eq_right (Ne.symm hy), ite_eq_right (Ne.symm (hc y hcy))]
         simp
     · intro h; exact absurd (Finset.mem_univ i) h
 
@@ -763,7 +713,7 @@ private theorem frame_pure_formula {K : Type u} [Field K] {d N0 N1 : ℕ} [NeZer
       exact he ((frame_prod_hom lt P hPh e hne).symm.trans hwt)
   rw [MvPowerSeries.coeff_subst hsub, finsum_eq_single _
     (Finsupp.single (lt i) A + Finsupp.single (lt j) B)
-    (fun e he => by rw [hterm, if_neg he, smul_zero]), hterm, if_pos rfl, smul_eq_mul]
+    (fun e he => by rw [hterm, ite_eq_right he, smul_zero]), hterm, ite_eq_left rfl, smul_eq_mul]
 
 theorem frame_pure_weight : FramePure.{u} := by
   intro K _ _ _ l d N0 N1 _ hl hpi h0 x hx be hbe s s' hss' k b b' α β
@@ -789,8 +739,8 @@ theorem frame_pure_weight : FramePure.{u} := by
     refine mul_eq_zero_of_right _ (Finset.sum_eq_zero fun ab _ => ?_)
     simp only [frameM, true_and]
     by_cases h1 : b = ab.2
-    · rw [if_pos h1, if_neg (fun h2 => hbb' (h1.trans h2.symm)), hz, mul_zero]
-    · rw [if_neg h1, hz, zero_mul]
+    · rw [ite_eq_left h1, ite_eq_right (fun h2 => hbb' (h1.trans h2.symm)), hz, mul_zero]
+    · rw [ite_eq_right h1, hz, zero_mul]
   · unfold MonoWtGe
     rw [hform b b]
     have hS : (∑ ab : Fin N0 × Fin N1, frameM (N1 := N1) x (s, ab.1, ab.2) (s, ⟨0, h0⟩, b) ^ (l ^ α) *
@@ -799,8 +749,8 @@ theorem frame_pure_weight : FramePure.{u} := by
       rw [Fintype.sum_prod_type]
       refine Finset.sum_congr rfl fun a _ => ?_
       simp only [frameM, true_and]
-      rw [Finset.sum_eq_single b (fun b'' _ hb'' => by rw [if_neg (Ne.symm hb''), hz, zero_mul])
-        (fun h => absurd (Finset.mem_univ b) h), if_pos rfl, if_pos rfl]
+      rw [Finset.sum_eq_single b (fun b'' _ hb'' => by rw [ite_eq_right (Ne.symm hb''), hz, zero_mul])
+        (fun h => absurd (Finset.mem_univ b) h), ite_eq_left rfl, ite_eq_left rfl]
     rw [hS]
     have hsum1 : ∀ (U : Fin N0 → K), (∀ a, ‖U a‖ ≤ 1) → ‖∑ a, U a‖ ≤ ‖(l : K)‖ → ∀ e : ℕ,
         ‖∑ a, U a ^ (l ^ e)‖ ≤ ‖(l : K)‖ := by
@@ -1228,7 +1178,7 @@ theorem jet_rowRad_ge {d : ℕ} {ι : Type} (l : ℕ) (sig eps : ZMod d → ℝ)
     (isTop : ι → Bool) (spec : ι → Option (ZMod d × ℤ)) (i : ι) (hi : isTop i = false) :
     sig (lt i) ≤ rowRad l sig eps lt isTop spec i := by
   unfold rowRad
-  rw [if_neg (by simp [hi])]
+  rw [ite_eq_right (by simp [hi])]
   rcases spec i with _ | ⟨s, j⟩
   · exact le_rfl
   · dsimp only
@@ -1241,12 +1191,12 @@ theorem jet_rowRad_nonneg {d : ℕ} {ι : Type} (l : ℕ) (sig eps : ZMod d → 
     (he : ∀ s, 0 ≤ eps s) (i : ι) : 0 ≤ rowRad l sig eps lt isTop spec i := by
   cases hi : isTop i
   · exact (hs _).trans (jet_rowRad_ge l sig eps lt isTop spec i hi)
-  · unfold rowRad; rw [if_pos hi]; exact he _
+  · unfold rowRad; rw [ite_eq_left hi]; exact he _
 
 theorem jet_rowRad_top {d : ℕ} {ι : Type} (l : ℕ) (sig eps : ZMod d → ℝ) (lt : ι → ZMod d)
     (isTop : ι → Bool) (spec : ι → Option (ZMod d × ℤ)) (i : ι) (hi : isTop i = true) :
     rowRad l sig eps lt isTop spec i = eps (lt i) := by
-  unfold rowRad; rw [if_pos hi]
+  unfold rowRad; rw [ite_eq_left hi]
 
 theorem jet_rowRad_spec {d : ℕ} {ι : Type} (l : ℕ) (sig eps : ZMod d → ℝ) (lt : ι → ZMod d)
     (isTop : ι → Bool) (spec : ι → Option (ZMod d × ℤ)) (i : ι) (hi : isTop i = false)
@@ -1254,7 +1204,7 @@ theorem jet_rowRad_spec {d : ℕ} {ι : Type} (l : ℕ) (sig eps : ZMod d → �
     rowRad l sig eps lt isTop spec i = if 0 < j then max (sig (lt i)) (1 - (l : ℝ) ^ j.toNat * eps s0)
       else max (sig (lt i)) ((l : ℝ) ^ (-j).toNat)⁻¹ := by
   unfold rowRad
-  rw [if_neg (by simp [hi]), hs]
+  rw [ite_eq_right (by simp [hi]), hs]
 
 end Formalism.DworkPowerSeriesWeights
 end -- clump:auto
@@ -1420,7 +1370,7 @@ theorem ThmAJetA_of (hS : LemmaS.{u}) (hR : LemmaRA.{u, 0}) (hA : ThmAAssembly)
     · rw [jet_rowRad_spec l sig eps (fun y : ZV d N0 N1 => y.1) (frameTop TT)
         (fun y => spec (y.1, y.2.1)) (s, k, b) htj hsp]
       rcases lt_trichotomy α β with hαβ | hαβ | hαβ
-      · rw [if_neg (by omega)]
+      · rw [ite_eq_right (by omega)]
         have ht : (-j0).toNat = β - α := by omega
         rw [ht]
         have := R.2.2.1 s0 α (β - α) (max (sig s) ((l : ℝ) ^ (β - α))⁻¹) (by omega)
@@ -1430,7 +1380,7 @@ theorem ThmAJetA_of (hS : LemmaS.{u}) (hR : LemmaRA.{u, 0}) (hA : ThmAAssembly)
         exfalso
         obtain ⟨c, hc⟩ := hab
         omega
-      · rw [if_pos (by omega)]
+      · rw [ite_eq_left (by omega)]
         have ht : j0.toNat = α - β := by omega
         rw [ht]
         have := R.2.1 s0 β (α - β) (max (sig s) (1 - (l : ℝ) ^ (α - β) * eps s0)) (by omega)
@@ -1441,12 +1391,12 @@ theorem ThmAJetA_of (hS : LemmaS.{u}) (hR : LemmaRA.{u, 0}) (hA : ThmAAssembly)
       apply hw
       have hk := hkill s0 hti'.1 s k j0 htj' hjodd hsj hlev1 hlev2 hsp
       by_cases hβα : β ≤ α
-      · rw [if_pos hβα]
-        rw [if_pos (by omega : (0 : ℤ) ≤ j0)] at hk
+      · rw [ite_eq_left hβα]
+        rw [ite_eq_left (by omega : (0 : ℤ) ≤ j0)] at hk
         have ht : j0.toNat = α - β := by omega
         rwa [ht] at hk
-      · rw [if_neg hβα]
-        rw [if_neg (by omega : ¬ (0 : ℤ) ≤ j0)] at hk
+      · rw [ite_eq_right hβα]
+        rw [ite_eq_right (by omega : ¬ (0 : ℤ) ≤ j0)] at hk
         have ht : (-j0).toNat = β - α := by omega
         rwa [ht] at hk
   have hpure : ∀ (i j : ZV d N0 N1) (α β : ℕ), pureMon l i j α β ≤ κ →

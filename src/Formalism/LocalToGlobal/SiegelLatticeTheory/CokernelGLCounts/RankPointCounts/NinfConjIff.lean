@@ -14,8 +14,6 @@ open Matrix
 
 namespace Formalism.L2.SG.CovariantRepresentation
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Mat
 
 variable {n r : ℕ}

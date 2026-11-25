@@ -7,50 +7,6 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.Hi
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.KroneckerOneRightSwap
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.SameBlockOfPosC
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockHarmonicSplitting.ConjTransposeOneKronecker
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -125,18 +81,18 @@ theorem rai_adj (l : Ln p q r s) (P Q : Pol p q r s) :
     fockInner (raiB l P) Q = sgnC l * fockInner P (lowB l Q) := by
   unfold raiB lowB sgnC
   by_cases h : linePos l = true
-  · simp only [h, if_true, one_mul]
+  · simp only [h, ite_true, one_mul]
     exact PI.FHS.fockInner_X_mul l P Q
-  · rw [if_neg h, if_neg h, if_neg h, LinearMap.neg_apply, PI.FHS.fockInner_neg_left, neg_one_mul]
+  · rw [ite_eq_right h, ite_eq_right h, ite_eq_right h, LinearMap.neg_apply, PI.FHS.fockInner_neg_left, neg_one_mul]
     exact congrArg Neg.neg (PI.FHS.fockInner_pderiv l P Q)
 
 theorem low_adj (l : Ln p q r s) (P Q : Pol p q r s) :
     fockInner (lowB l P) Q = sgnC l * fockInner P (raiB l Q) := by
   unfold raiB lowB sgnC
   by_cases h : linePos l = true
-  · simp only [h, if_true, one_mul]
+  · simp only [h, ite_true, one_mul]
     exact PI.FHS.fockInner_pderiv l P Q
-  · rw [if_neg h, if_neg h, if_neg h, LinearMap.neg_apply, PI.FHS.fockInner_neg_right, neg_one_mul, neg_neg]
+  · rw [ite_eq_right h, ite_eq_right h, ite_eq_right h, LinearMap.neg_apply, PI.FHS.fockInner_neg_right, neg_one_mul, neg_neg]
     exact PI.FHS.fockInner_X_mul l P Q
 
 theorem omE_adj_gen (l l' : Ln p q r s) (P Q : Pol p q r s) :
@@ -149,12 +105,12 @@ theorem omE_adj_gen (l l' : Ln p q r s) (P Q : Pol p q r s) :
   · subst h
     have hs : sgnC l * sgnC l = 1 := by
       unfold sgnC; split_ifs <;> simp
-    rw [hs, one_mul, if_pos rfl]
+    rw [hs, one_mul, ite_eq_left rfl]
     simp only [LinearMap.smul_apply, Module.End.one_apply]
     rw [PI.FHS.fockInner_smul_left, PI.FHS.fockInner_smul_right]
     congr 1
     simp [map_ofNat]
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
     simp only [LinearMap.zero_apply]
     rw [PI.FHS.fockInner_zero_left, PI.FHS.fockInner_zero_right, mul_zero]
 
@@ -228,9 +184,9 @@ theorem scalar_of_hw {μ : Ix p q → ℚ} (hμ : ∀ a b, sameBlock a b → μ 
   have hw : HwK (units (fvAct1 p q r s)) μ (show FV p q r s from x) := hwK_of_hwSub.1 hx
   by_cases h : a = b
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact hw.1 a
-  · rw [if_neg h, zero_smul]
+  · rw [ite_eq_right h, zero_smul]
     rcases PI.FockOneDegW.Core.posC_or a b hab h with h1 | h1
     · exact hw.2 a b h1
     · exact low_kill (adjK_of_adjG (adj1 p q r s)) (glK_of_lie hL) hw h1 (hμ a b hab).symm
@@ -259,13 +215,13 @@ theorem mem_polChi_iff (c : ℂ) (x : Pol p q r s) : x ∈ polChi p q r s c ↔
       · rw [h a b hab, smul_smul]
         by_cases e : a = b
         · subst e
-          rw [if_pos rfl, if_pos rfl, mul_comm]
-        · rw [if_neg e, if_neg e, mul_zero]
+          rw [ite_eq_left rfl, ite_eq_left rfl, mul_comm]
+        · rw [ite_eq_right e, ite_eq_right e, mul_zero]
       · have e : a ≠ b := by
           rintro rfl
           exact hab (by cases a <;> trivial)
-        rw [hZ a b hab, if_neg e, zero_smul, zero_smul]
-    simp only [key, ← Finset.sum_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        rw [hZ a b hab, ite_eq_right e, zero_smul, zero_smul]
+    simp only [key, ← Finset.sum_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     congr 1
     simp only [chiTr, Matrix.trace, Matrix.diag_apply, Finset.mul_sum]
 
@@ -276,8 +232,8 @@ theorem mem_polChi_iff_hw (c : ℂ) (c0 : ℚ) (hc : c = c0) (x : Pol p q r s) :
   constructor
   · intro h
     refine (PI.FockOneDegW.Swap.mem_hwSub_iff _ _ _).2 ⟨fun a => ?_, fun a b hab => ?_⟩
-    · rw [h a a (by cases a <;> trivial), if_pos rfl]
-    · rw [h a b (PI.FockOneDegW.Core.posC_sb a b hab), if_neg (PI.FockOneDegW.Core.posC_ne a b hab), zero_smul]
+    · rw [h a a (by cases a <;> trivial), ite_eq_left rfl]
+    · rw [h a b (PI.FockOneDegW.Core.posC_sb a b hab), ite_eq_right (PI.FockOneDegW.Core.posC_ne a b hab), zero_smul]
   · intro h a b hab
     exact scalar_of_hw (μ := fun _ => c0) (fun _ _ _ => rfl) h a b hab
 

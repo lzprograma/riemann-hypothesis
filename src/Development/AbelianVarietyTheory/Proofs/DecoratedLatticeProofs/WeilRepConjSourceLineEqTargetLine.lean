@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FunctionLevelDataOfEqualTuplesZeroIntertwinersStatement
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousKapSymm
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConjugateAdjointDagger
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
@@ -52,7 +53,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 
 noncomputable section
@@ -90,40 +90,7 @@ variable {V V' : HSp D} (I : IsoMat V V')
 
 theorem isThetaFunO_tr (S : HSp D) {ψ : AddChar (AF D.host.F) ℂ} {f : WO S V → ℂ} (hf : IsThetaFunO ψ S V f) :
     IsThetaFunO ψ S V' (I.trW S f) := by
-  have hinf : ∀ w : WO S V', w.map (infPart D) = 0 → ((I.phi S).symm w).map (infPart D) = 0 := fun w h => by
-    show (HMul.hMul I.aQ w).map (infPart D) = 0
-    rw [Matrix.map_mul, h, Matrix.mul_zero]
-  have hfin : ∀ w : WO S V', w.map (finPart D) = 0 → ((I.phi S).symm w).map (finPart D) = 0 := fun w h => by
-    show (HMul.hMul I.aQ w).map (finPart D) = 0
-    rw [Matrix.map_mul, h, Matrix.mul_zero]
-  refine ⟨fun γ w => ?_, ?_, hf.cont.comp (I.continuous_phi_symm S), fun k L hL h0 w => ?_⟩
-  · obtain ⟨w, rfl⟩ := (I.phi S).surjective w
-    have e : ratW V' S γ = I.phi S (ratW V S (I.Q * γ)) := by
-      rw [IsoMat.phi_ratW, ← Matrix.mul_assoc, I.PQ, Matrix.one_mul]
-    rw [e, ← map_add (f := _), I.symplOH_phi]
-    simp only [IsoMat.trW, AddEquiv.symm_apply_apply]
-    exact hf.quasi _ _
-  · obtain ⟨U, hU, e⟩ := hf.level
-    refine ⟨U.map (I.phi S).toAddMonoidHom, ?_, ?_⟩
-    · have e : ((U.map (I.phi S).toAddMonoidHom : AddSubgroup (WO S V')) : Set (WO S V')) = (I.phi S).symm ⁻¹' U := by
-        ext w
-        simp only [AddSubgroup.coe_map, Set.mem_image, Set.mem_preimage, SetLike.mem_coe]
-        constructor
-        · rintro ⟨u, hu, rfl⟩
-          simpa using hu
-        · intro hw
-          exact ⟨_, hw, by simp⟩
-      rw [e]
-      exact hU.preimage (I.continuous_phi_symm S)
-    · rintro _ ⟨u, hu, rfl⟩ h0
-      have h1 : u.map (infPart D) = 0 := by
-        have := hinf _ h0
-        simpa using this
-      show heisO ψ S V' (I.phi S u) (I.trW S f) = I.trW S f
-      rw [I.heisO_trW, e u hu h1]
-  · have := hf.smooth k ((I.phi S).symm.toAddMonoidHom.comp L) ((I.continuous_phi_symm S).comp hL) (fun t => hfin _ (h0 t))
-      ((I.phi S).symm w)
-    simpa [IsoMat.trW] using this
+  first | exact _root_.GlobalTheory.Mem.Isom.IsoMat.isThetaFunO_tr | exact @_root_.GlobalTheory.Mem.Isom.IsoMat.isThetaFunO_tr | apply _root_.GlobalTheory.Mem.Isom.IsoMat.isThetaFunO_tr <;> assumption
 
 theorem isWeilDatumO_tr (S : HSp D) {ψ : AddChar (AF D.host.F) ℂ} {χ χ' : (AE D)ˣ →* Circle}
     {om : GA D S × GA D V →* Module.End ℂ (WO S V → ℂ)}
@@ -251,7 +218,7 @@ theorem trivOnF_of_resEta {χ χ' : (AE D)ˣ →* Circle} {n : ℕ} (h : ResEta 
 
 theorem conj_line : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (L L' S : HSp D) (τ : Matrix (Fin L.rank) (Fin L'.rank) D.host.E), L.rank = L'.rank → τᴴ ⬝ (L.gram ⬝ τ) = (((1 : ℤ) : D.host.E) * (D.host.xi0 * star D.host.xi0)) • L'.gram → ∀ (χz χ χ' : ((AE D)ˣ →* Circle)) (om : Om L S) (om' : Om S L'), IsWeilDatumO ψ L S χz χ om → IsWeilDatumO ψ S L' χ' χz om' → ∀ f, IsThetaFunO ψ L S f → IsThetaFunO ψ S L' (fun w => star (f (GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.ofAdj L S ((rat τ : Mx D L.rank L'.rank) ⬝ w)))) ∧ ∀ h, om' (h, 1) (fun w => star (f (GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.ofAdj L S ((rat τ : Mx D L.rank L'.rank) ⬝ w)))) = fun w => star (om (1, h) f (GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.ofAdj L S ((rat τ : Mx D L.rank L'.rank) ⬝ w))) := by
   intro D ψ L L' S τ hr hg χz χ χ' om om' hom hom' f hf
-  have CA := GlobalTheory.T.weilConjugationAdjointRule_standard_char D ψ hom.std L S
+  have CA := _root_.GlobalTheory.WeilConjAdjoint.conjAdjoint_holds D ψ hom.std L S
   have hW : IsWeilDatumO ψ S L χ χz (conjAdjoint om) := (CA.conj_adjoint χz χ om hom).1
   have hF₁ : IsThetaFunO ψ S L (cj (dagger S L) f) := (CA.theta_dagger f).2 hf
   set I := (isoOf L L' τ hr hg).symm with hI

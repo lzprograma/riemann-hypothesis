@@ -55,8 +55,7 @@ theorem exists_nnPlus_ne {m : ℕ} {M : Type} [AddCommGroup M] [Module ℂ M]
     (E : Fin (m + 1) → Fin (m + 1) → Module.End ℂ M) (hE : GlRel E) (w : ℂ) {v : M} (hv0 : v ≠ 0)
     (hinj : capelliC E (w - 1) v = 0 → v = 0) :
     ∃ y : Fin (m + 1) → ℂ, nnPlus E y w v ≠ 0 := by
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   have hmin : ∀ d c : Fin (m + 1), cminor E d.succAbove c.succAbove (w - 1) v = 0 := by
     intro d c
     have h := congrFun (hall (Pi.single c 1)) d
@@ -66,7 +65,7 @@ theorem exists_nnPlus_ne {m : ℕ} {M : Type} [AddCommGroup M] [Module ℂ M]
     simpa [pow_ne_zero] using h
   have hexp := (capelliExpand (𝒰 := Module.End ℂ M) m E (w - 1) hE).2 0 0
   have happ := LinearMap.congr_fun hexp v
-  simp only [if_true, LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply, hmin, map_zero,
+  simp only [ite_true, LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply, hmin, map_zero,
     smul_zero, Finset.sum_const_zero] at happ
   exact hv0 (hinj happ.symm)
 

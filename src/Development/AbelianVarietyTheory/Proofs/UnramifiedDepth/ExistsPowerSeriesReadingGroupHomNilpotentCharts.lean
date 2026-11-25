@@ -44,14 +44,12 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry TensorProduct Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
 open ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.Be2 GlobalTheory.ChF
 open ReciprocityTheory.ChartRestriction.G.Chart (sp spMap)
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ChF
 
@@ -116,7 +114,7 @@ theorem exists_reads : ∀ (R : Type) [CommRing R] (G : Over (Spec (CommRingCat.
     intro j S _ _ S' _ _ φ a ha
     have h1 : ∀ i, IsNilpotent (a (0, i)) := fun i => ha _
     have h2 : ∀ i, IsNilpotent (φ (a (0, i))) := fun i => (ha _).map φ
-    simp only [c, dif_pos h1, dif_pos h2]
+    simp only [c, dite_eq_left h1, dite_eq_left h2]
     refine congrFun (h'.inj S' (fun j => φ (b S _ h1 j)) (b S' _ h2) (fun j => (hb S _ h1 j).map φ)
       (hb S' _ h2) ?_) j
     rw [← hX, ← h'.nat _ _ φ _ (hb S _ h1), ← hX, ← Category.assoc, h.nat _ _ φ _ h1]
@@ -126,7 +124,7 @@ theorem exists_reads : ∀ (R : Type) [CommRing R] (G : Over (Spec (CommRingCat.
     intro S _ inst a ha
     funext j
     have h1 := hφ j S (fun q => a q.2) (fun q => ha _)
-    simp only [c, dif_pos ha] at h1
+    simp only [c, dite_eq_left ha] at h1
     rw [h1, nv]
     have : (algebraMap R S).toAlgebra = inst := Algebra.algebra_ext _ _ fun _ => rfl
     rw [this]
@@ -141,7 +139,7 @@ theorem exists_reads : ∀ (R : Type) [CommRing R] (G : Over (Spec (CommRingCat.
     rw [← hX, h.zero, h'.zero, MonObj.one_comp])
   have h2 := hφ j R 0 (fun _ => IsNilpotent.zero)
   have h3 : c j R 0 = 0 := by
-    exact (dif_pos h0).trans (congrFun h1 j)
+    exact (dite_eq_left h0).trans (congrFun h1 j)
   have h4 := (Ideal.span_le.2 (by rintro _ ⟨i, rfl⟩; simp) : Ideal.span _ ≤ (⊥ : Ideal R))
     (evBasic_nEval_sub_coeff_mem (φ j) (0 : Fin 1 × Fin d → R) (fun _ => IsNilpotent.zero))
   rw [← h2, h3] at h4

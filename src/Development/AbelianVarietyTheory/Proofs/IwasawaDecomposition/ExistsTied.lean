@@ -46,7 +46,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FunKilled
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.TypeRec.factG
 
 noncomputable section
 namespace GlobalTheory.HeightCounting.Up.RealOfReading
@@ -89,8 +88,8 @@ def realOfRead {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type}
   tpEq := by subst hC; rfl
   recR := by
     subst hC
-    exact ⟨hbase, Y.tied, Y.prtE, Y.prtE0, Y.prtWE, Y.xi, htup,
-      fun w => by rw [Y.muAt w, Y.tupT_tup], Y.isomFin, Y.frameMatch⟩
+    exact ⟨hbase, Y.tied, Y.prtWE, htup,
+      fun w => by rw [Y.muAt w, Y.tupT_tup]⟩
   given := hg
   full := hf
 

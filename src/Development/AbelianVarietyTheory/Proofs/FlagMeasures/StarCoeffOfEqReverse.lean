@@ -66,11 +66,11 @@ theorem star_coeff_of_reverse : ∀ D : D7, (∀ (k : Fin 2) (f : (ZMod (D.host.
   have hψm : ∀ k a, (Formalism.CyclotomicNorms.monicOf a).coeff 0 ≠ 0 → Formalism.CyclotomicNorms.monicOf (ψ k a) = dl (Formalism.CyclotomicNorms.monicOf a) := by
     intro k a ha
     have hd := dl_lab (hlab k a ha)
-    simp only [ψ, if_pos ha]
+    simp only [ψ, ite_eq_left ha]
     exact Formalism.CyclotomicNorms.Sqf.monicOf_coeffs _ hd.1 hd.2.1
   have hψ0 : ∀ k a, (Formalism.CyclotomicNorms.monicOf a).coeff 0 = 0 → ψ k a = a := by
     intro k a ha
-    simp only [ψ, ha, ne_eq, not_true_eq_false, if_false]
+    simp only [ψ, ha, ne_eq, not_true_eq_false, ite_false]
   have hψc : ∀ k a, (Formalism.CyclotomicNorms.monicOf a).coeff 0 ≠ 0 → (Formalism.CyclotomicNorms.monicOf (ψ k a)).coeff 0 ≠ 0 := by
     intro k a ha
     rw [hψm k a ha, (dl_lab (hlab k a ha)).2.2]
@@ -131,7 +131,7 @@ theorem star_coeff_of_reverse : ∀ D : D7, (∀ (k : Fin 2) (f : (ZMod (D.host.
         rw [hS kv.1 (Formalism.CyclotomicNorms.monicOf (a kv)) (Formalism.CyclotomicNorms.Sqf.monic_monicOf _) (hz kv), hΦ, hψm _ _ (hz kv)]
         rfl
       · exact star_zero _
-    · push_neg at hz
+    · push Not at hz
       obtain ⟨kv, h0⟩ := hz
       rw [hzero a kv h0, hzero (Φ a) kv (by rw [hΦ, hψ0 _ _ h0]; exact h0), star_zero]
   have hfin : (Function.support T).Finite := Set.toFinite _

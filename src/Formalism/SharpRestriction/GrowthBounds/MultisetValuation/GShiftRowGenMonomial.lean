@@ -1,53 +1,13 @@
 module
 
+import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.WeylComplementDetCoeffSpan
 public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.GradedWeylDivisibility.FinalC
 import Formalism.GradedWeylDivisibility.FinalD
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.NablaLTwist
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDrowLemmas
 
@@ -86,19 +46,7 @@ theorem gShift_mul {R : Type*} [CommRing R] {n : ℕ}
 
 theorem gShift_one {R : Type*} [CommRing R] {n : ℕ} (δ : ℤ) :
     GShift ht (1 : Polynomial (MvPolynomial (Fin r × Fin n) R)) 0 δ := by
-  intro k
-  rw [Polynomial.coeff_one]
-  split_ifs with h
-  · have hk : k = 0 := by omega
-    subst hk
-    intro d hd
-    rw [MvPolynomial.coeff_one] at hd
-    split_ifs at hd with h0
-    · subst h0
-      simp
-    · exact absurd rfl hd
-  · intro d hd
-    simp at hd
+  apply _root_.Formalism.L2.PairingIndexBounds.Ent.gShift_one <;> assumption
 
 theorem gShift_pow {R : Type*} [CommRing R] {n : ℕ}
     {P : Polynomial (MvPolynomial (Fin r × Fin n) R)} {μ δ : ℤ}
@@ -126,49 +74,13 @@ theorem gShift_prod {R : Type*} [CommRing R] {n : ℕ} {ι : Type*} (s : Finset 
 
 theorem gShift_algebraMap {R : Type*} [CommRing R] {n : ℕ} (c : R) (δ : ℤ) :
     GShift ht (algebraMap R (Polynomial (MvPolynomial (Fin r × Fin n) R)) c) 0 δ := by
-  intro k
-  rw [Polynomial.algebraMap_apply, Polynomial.coeff_C]
-  split_ifs with h
-  · subst h
-    intro d hd
-    rw [MvPolynomial.algebraMap_eq, MvPolynomial.coeff_C] at hd
-    split_ifs at hd with h0
-    · subst h0
-      simp
-    · exact absurd rfl hd
-  · intro d hd
-    simp at hd
+  apply _root_.Formalism.L2.PairingIndexBounds.Ent.gShift_algebraMap <;> assumption
 
 theorem gShift_gen {R : Type*} [CommRing R] {n : ℕ} (a b : Fin r) (v : Fin r × Fin n) :
     GShift ht (Polynomial.C (X v) +
       (if v.1 = b then Polynomial.X * Polynomial.C (X (a, v.2)) else 0) :
         Polynomial (MvPolynomial (Fin r × Fin n) R)) (htW ht n v) (ht a - ht b) := by
-  intro k
-  have hX : ∀ u : Fin r × Fin n, IsWeightedHomogeneous (htW ht n) (X u : MvPolynomial (Fin r × Fin n) R) (ht u.1) :=
-    fun u => isWeightedHomogeneous_X R (htW ht n) u
-  have h0 : ∀ m : ℤ, IsWeightedHomogeneous (htW ht n) (0 : MvPolynomial (Fin r × Fin n) R) m :=
-    fun m d hd => by simp at hd
-  split_ifs with hb
-  · rw [Polynomial.coeff_add, Polynomial.coeff_C, Polynomial.X_mul_C, Polynomial.coeff_C_mul_X]
-    by_cases hk0 : k = 0
-    · subst hk0
-      simp only [↓reduceIte, zero_ne_one, add_zero, Nat.cast_zero, zero_mul]
-      exact hX v
-    · by_cases hk1 : k = 1
-      · subst hk1
-        simp only [one_ne_zero, ↓reduceIte, zero_add, Nat.cast_one, one_mul]
-        convert hX (a, v.2) using 1
-        simp only [htW]
-        rw [hb]
-        ring
-      · rw [if_neg hk0, if_neg hk1, add_zero]
-        exact h0 _
-  · rw [Polynomial.coeff_add, Polynomial.coeff_C, Polynomial.coeff_zero, add_zero]
-    split_ifs with hk0
-    · subst hk0
-      simp only [Nat.cast_zero, zero_mul, add_zero]
-      exact hX v
-    · exact h0 _
+  apply _root_.Formalism.L2.PairingIndexBounds.Ent.gShift_gen <;> assumption
 
 theorem gShift_rowGen_monomial (R : Type*) [CommRing R] {n : ℕ} (a b : Fin r)
     (d : Fin r × Fin n →₀ ℕ) (c : R) :
@@ -192,21 +104,7 @@ theorem g_rowDiv_shift (R : Type*) [CommRing R] {n : ℕ} (H : ℤ) (a b : Fin r
 
 theorem g_weight {n : ℕ} (d : Fin r × Fin n →₀ ℕ) :
     Finsupp.weight (htW ht n) d = ∑ a : Fin r, ht a * ((Finsupp.weight (rowW r n) d a : ℕ) : ℤ) := by
-  refine Finsupp.induction_linear d ?_ ?_ ?_
-  · simp
-  · intro f g hf hg
-    rw [map_add (f := _), hf, hg, ← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [map_add (f := _), Pi.add_apply, Nat.cast_add, mul_add]
-  · intro v k
-    simp only [Finsupp.weight_apply, Finsupp.sum_single_index, zero_smul]
-    rw [Finset.sum_eq_single v.1]
-    · simp [htW, rowW]
-      try ring
-    · intro b _ hb
-      simp [rowW, hb]
-    · intro h
-      exact absurd (Finset.mem_univ _) h
+  apply _root_.Formalism.L2.PairingIndexBounds.Ent.g_weight <;> assumption
 
 theorem g_of_rowW {R : Type*} [CommRing R] {n : ℕ} {f : MvPolynomial (Fin r × Fin n) R} {μ : Fin r → ℕ}
     (hf : IsWeightedHomogeneous (rowW r n) f μ) :
@@ -358,68 +256,7 @@ theorem dl_indep (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O K
     (hinj : Function.Injective (algebraMap O Kf)) (m : ℕ) (lam : Fin (m + 1) → ℤ)
     (g h : Matrix (Fin (m + 1)) (Fin (m + 1)) Kf) (hg : IsUnit g.det)
     (hs : colSpan O g = colSpan O h) : deltaLTw O Kf m lam g ≤ deltaLTw O Kf m lam h := by
-  classical
-  have hcol : ∀ (g h : Matrix (Fin (m + 1)) (Fin (m + 1)) Kf), colSpan O g = colSpan O h →
-      ∃ U : Matrix (Fin (m + 1)) (Fin (m + 1)) O, h = g * U.map (algebraMap O Kf) := by
-    intro g h hs
-    have h1 : ∀ j, ∃ c : Fin (m + 1) → O, ∑ i, c i • (fun a => g a i) = fun a => h a j := by
-      intro j
-      have hm : (fun a => h a j) ∈ colSpan O g := by
-        rw [hs]; exact Submodule.subset_span ⟨j, rfl⟩
-      exact (Submodule.mem_span_range_iff_exists_fun O).1 hm
-    choose c hc using h1
-    refine ⟨fun i j => c j i, ?_⟩
-    ext a j
-    have h2 := congrFun (hc j) a
-    rw [Matrix.mul_apply, ← h2, Finset.sum_apply]
-    apply Finset.sum_congr rfl
-    intro i _
-    show c j i • g a i = g a i * algebraMap O Kf (c j i)
-    rw [Algebra.smul_def, mul_comm]
-  obtain ⟨U, hU⟩ := hcol g h hs
-  obtain ⟨U', hU'⟩ := hcol h g hs.symm
-  have hdU : ∀ V : Matrix (Fin (m + 1)) (Fin (m + 1)) O,
-      (V.map (algebraMap O Kf)).det = algebraMap O Kf V.det :=
-    fun V => (RingHom.map_det (algebraMap O Kf) V).symm
-  have hdet : U.det * U'.det = 1 := by
-    apply hinj
-    have h1 : g.det * (algebraMap O Kf U.det * algebraMap O Kf U'.det) = g.det * 1 := by
-      conv_rhs => rw [mul_one, hU', hU, Matrix.det_mul, Matrix.det_mul, hdU, hdU]
-      ring
-    rw [map_mul, map_one]
-    exact mul_left_cancel₀ hg.ne_zero h1
-  let u : Oˣ := ⟨U.det, U'.det, hdet, by rw [mul_comm]; exact hdet⟩
-  set e : ℤ := lam (Fin.last m) with he
-  have hz : algebraMap O Kf ((u ^ e : Oˣ) : O) = (algebraMap O Kf U.det) ^ e := by
-    calc algebraMap O Kf ((u ^ e : Oˣ) : O)
-        = ((Units.map (algebraMap O Kf : O →* Kf) (u ^ e) : Kfˣ) : Kf) := rfl
-      _ = (((Units.map (algebraMap O Kf : O →* Kf) u) ^ e : Kfˣ) : Kf) := by rw [map_zpow]
-      _ = ((Units.map (algebraMap O Kf : O →* Kf) u : Kfˣ) : Kf) ^ e := Units.val_zpow_eq_zpow_val _ _
-      _ = (algebraMap O Kf U.det) ^ e := rfl
-  have hUne : algebraMap O Kf U.det ≠ 0 := by
-    intro h0
-    have := congrArg (algebraMap O Kf) hdet
-    rw [map_mul, h0, zero_mul, map_one] at this
-    exact zero_ne_one this
-  let UU : GL (Fin (m + 1)) O := Matrix.nonsingInvUnit U u.isUnit
-  intro F hF
-  obtain ⟨F0, hF0, rfl⟩ := hF
-  obtain ⟨f, hf, hfe⟩ := mem_deltaL.1 hF0
-  have hst : rowAct O U f ∈ weyl O (m + 1) (m + 1) le_rfl (nuOf lam) := by
-    have := _root_.Formalism.UG.P.wlocal_global O (m + 1) (m + 1) le_rfl (nuOf lam) UU⁻¹ f hf
-    unfold Formalism.UG.dwAct at this
-    rw [inv_inv] at this
-    exact this
-  refine ⟨(algebraMap O Kf U.det) ^ e • F0,
-    mem_deltaL.2 ⟨((u ^ e : Oˣ) : O) • rowAct O U f, Submodule.smul_mem _ _ hst, ?_⟩, ?_⟩
-  · have h4 : rowAct Kf (U.map (algebraMap O Kf)) (rowAct Kf g F0) = rowAct Kf h F0 := by
-      have h5 := rowActMul Kf (m + 1) (m + 1) (U.map (algebraMap O Kf)) g
-      rw [hU, ← h5]
-      rfl
-    rw [map_smul (rowAct Kf h), ← h4, ← hfe, ← ldtwist_map_rowAct, ← hz, algebraMap_smul]
-    exact (map_smul (mapAlgHom (Algebra.ofId O Kf)).toLinearMap ((u ^ e : Oˣ) : O) (rowAct O U f))
-  · show h.det ^ (-e) • ((algebraMap O Kf U.det) ^ e • F0) = g.det ^ (-e) • F0
-    rw [smul_smul, hU, Matrix.det_mul, hdU, mul_zpow, mul_assoc, ← zpow_add₀ hUne, neg_add_cancel, zpow_zero, mul_one]
+  apply _root_.Formalism.L2.G.Model.dl_indep <;> assumption
 
 theorem dl_pos (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O Kf]
     (hinj : Function.Injective (algebraMap O Kf)) (m r : ℕ) (lam : Fin (m + 1) → ℤ)
@@ -431,12 +268,12 @@ theorem dl_pos (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O Kf]
     rw [Matrix.det_mul]; exact hg.mul (lb_D_det _ _ _ hw)
   unfold Dl0 at hF ⊢
   by_cases hlam : Antitone lam
-  · rw [if_pos hlam] at hF ⊢
+  · rw [ite_eq_left hlam] at hF ⊢
     have h1 : F ∈ deltaLTw O Kf m lam g := (iInf₂_le g ⟨hg, rfl⟩ : _ ≤ deltaLTw O Kf m lam g) hF
     have h2 := dl_P O Kf m r lam hlam w hw g F h1
     exact (le_iInf₂ fun h hh => dl_indep O Kf hinj m lam _ h hgD hh.2 :
       deltaLTw O Kf m lam (g * lb_D (m + 1) r (algebraMap O Kf w)) ≤ _) h2
-  · rw [if_neg hlam] at hF ⊢
+  · rw [ite_eq_right hlam] at hF ⊢
     rw [Submodule.mem_bot] at hF ⊢
     rw [hF, smul_zero]
 

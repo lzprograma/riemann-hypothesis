@@ -71,7 +71,7 @@ theorem exists_uniformizer_finiteEmbedding_mem_idelesOneMod {v : HeightOneSpectr
 
 theorem primeIdealUnit_mem_coprimeIdeals {v : HeightOneSpectrum (𝓞 K)} (hv : ¬ v.asIdeal ∣ 𝔪.ideal) :
     primeIdealUnit v ∈ 𝔪.coprimeIdeals := fun w hw ↦ by
-  rw [count_primeIdealUnit, if_neg]
+  rw [count_primeIdealUnit, ite_eq_right]
   rintro rfl
   exact hv hw
 

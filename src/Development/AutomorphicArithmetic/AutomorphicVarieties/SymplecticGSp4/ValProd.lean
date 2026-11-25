@@ -53,21 +53,6 @@ private theorem val_dvd {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {m n : 
   calc A.valuation (m : Ω) * A.valuation (k : Ω) ≤ A.valuation (m : Ω) * 1 := mul_le_mul' le_rfl hk
     _ < 1 := by rwa [mul_one]
 
-private theorem val_prod {Ω : Type} [Field Ω] (A : ValuationSubring Ω) (S : Finset ℕ)
-    (hA : A.valuation ((∏ p ∈ S, p : ℕ) : Ω) < 1) : ∃ p ∈ S, A.valuation (p : Ω) < 1 := by
-  classical
-  induction S using Finset.induction_on with
-  | empty => simp at hA
-  | insert a S ha ih =>
-    rw [Finset.prod_insert ha, Nat.cast_mul, map_mul] at hA
-    by_cases hp : A.valuation (a : Ω) < 1
-    · exact ⟨a, Finset.mem_insert_self a S, hp⟩
-    · have h1 : A.valuation (a : Ω) = 1 :=
-        le_antisymm (by simpa using A.valuation_le_one (a : A)) (not_lt.mp hp)
-      rw [h1, one_mul] at hA
-      obtain ⟨p, hpS, hp'⟩ := ih hA
-      exact ⟨p, Finset.mem_insert_of_mem hpS, hp'⟩
-
 private theorem vlen_le (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (c : Coef l)
     (N : ℕ) [NeZero N] (e : ℕ) (he : e ≠ 0) (ψ : DirichletCharacter c.O N) (S : Finset ℕ) (hS : ∀ p ∈ S, p.Prime) :
     Vlen Ω c e ψ ≤ Chr.VS l (∏ p ∈ S, p) e (Chr.dirG ℚ Ω ψ) := by
@@ -99,7 +84,12 @@ private theorem vlen_le (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ �
   simp only [Base.ShaU, Base.mem_locSel] at hx ⊢
   intro D hD
   rcases hD with ⟨A, hAS, rfl⟩ | ⟨A, rfl⟩
-  · obtain ⟨p, hpS, hp⟩ := val_prod A S hAS
+  · obtain ⟨p, hpS, hp⟩ : ∃ p ∈ S, A.valuation (p : Ω) < 1 := by
+      by_contra! h
+      refine hAS.ne ?_
+      rw [Nat.cast_prod, map_prod]
+      exact Finset.prod_eq_one fun p hp =>
+        le_antisymm (by simpa using A.valuation_le_one (p : A)) (h p hp)
     by_cases hdvd : p ∣ l * N
     · exact hx (Dec A) (Or.inl ⟨A, val_dvd A hdvd hp, rfl⟩)
     · have pp := hS p hpS

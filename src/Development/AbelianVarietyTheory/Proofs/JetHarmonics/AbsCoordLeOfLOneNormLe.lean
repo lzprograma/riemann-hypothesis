@@ -82,14 +82,14 @@ theorem fdeg_ratio_abs {n : ℕ} (μ : Fin n → ℝ) (s : Fin n) (t : ℝ) (hin
     by_cases has : a = s
     · subst has
       have hbs : b ≠ a := fun h => hne h.symm
-      rw [hμ'a, hμ'a, if_pos rfl, if_neg hbs, if_pos rfl, if_neg hbs]
+      rw [hμ'a, hμ'a, ite_eq_left rfl, ite_eq_right hbs, ite_eq_left rfl, ite_eq_right hbs]
       simp [hr, abs_div]
     · by_cases hbs : b = s
       · subst hbs
-        rw [hμ'a, hμ'a, if_neg has, if_pos rfl, if_neg has, if_pos rfl]
+        rw [hμ'a, hμ'a, ite_eq_right has, ite_eq_left rfl, ite_eq_right has, ite_eq_left rfl]
         simp only [hr, one_mul, add_zero, abs_div]
         rw [abs_sub_comm (μ a) (μ b + t), abs_sub_comm (μ a) (μ b)]
-      · rw [hμ'a, hμ'a, if_neg has, if_neg hbs, if_neg has, if_neg hbs]
+      · rw [hμ'a, hμ'a, ite_eq_right has, ite_eq_right hbs, ite_eq_right has, ite_eq_right hbs]
         have h0 : μ a - μ b ≠ 0 := sub_ne_zero.2 (fun h => hne (hinj h))
         simp only [add_zero, mul_one]
         exact div_self (abs_ne_zero.2 h0)

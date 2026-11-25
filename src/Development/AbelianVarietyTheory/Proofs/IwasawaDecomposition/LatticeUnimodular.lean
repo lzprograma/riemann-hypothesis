@@ -122,19 +122,7 @@ theorem not_dvd_different {p : ℕ} (hp : p.Prime) (h : (placesOver E p).ncard =
 
 end Ideals
 
-section Space
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ} {T : E}
-  {Λ : Submodule (𝓞 E) (Fin S.rank → E)} {F : LFlag S r T}
-
-variable (h : IntFrame (starRingEnd E) S.gram T Λ (coMat S (Formalism.MainNotions.S.Lat.frame F)))
-include h
-
-end Space
-
 section Record
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : D7)
 

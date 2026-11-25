@@ -235,11 +235,6 @@ section -- clump:auto
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.AlgRepEndIrreducible
 open scoped TensorProduct
 
-private def outL {n : ℕ} (w : Fin n → ℂ) : (Fin n → ℂ) →ₗ[ℂ] Matrix (Fin n) (Fin n) ℂ where
-  toFun u := vecMulVec u w
-  map_add' u u' := by ext; simp [vecMulVec_apply, add_mul]
-  map_smul' c u := by ext; simp [vecMulVec_apply, mul_assoc]
-
 private theorem eps_left_mul_eq_det_smul {M : Type} [AddCommGroup M] [Module ℂ M] {n : ℕ}
     (μ : (Π _ : Fin n, Matrix (Fin n) (Fin n) ℂ) →ₘₗ[ℂ] M) (g : Matrix (Fin n) (Fin n) ℂ) :
     eps (fun x => μ fun i => g * x i) = g.det • eps μ := by

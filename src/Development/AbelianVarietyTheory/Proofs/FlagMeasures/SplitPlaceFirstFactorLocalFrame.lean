@@ -258,7 +258,7 @@ theorem local_frame_first_factor : ∀ (F E : Type) [Field F] [NumberField F] [F
       intro i hi
       rw [hfirst]
       simp only [hdual1, mul_add, Finset.sum_add_distrib, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
-        Finset.mem_univ, if_true, Finset.mul_sum]
+        Finset.mem_univ, ite_true, Finset.mul_sum]
       congr 1
       exact Finset.sum_congr rfl fun l _ => by ring
     set R0 : v.adicCompletion F := ∑ i : Fin n, if hi : i.1 + 1 < n then M i ⟨i.1 + 1, hi⟩ else 0 with hR0
@@ -304,12 +304,12 @@ theorem local_frame_first_factor : ∀ (F E : Type) [Field F] [NumberField F] [F
       refine Finset.sum_congr rfl fun x _ => ?_
       by_cases hx : x.1 + 1 < n
       · rw [Finset.sum_eq_single ⟨x.1 + 1, hx⟩]
-        · rw [if_pos ⟨rfl, hx, by omega⟩]
-          simp only [redM, dif_pos (hMint x _)]
+        · rw [ite_eq_left ⟨rfl, hx, by omega⟩]
+          simp only [redM, dite_eq_left (hMint x _)]
           congr 1
           exact Subtype.ext (by simp [hx])
         · intro y _ hy
-          rw [if_neg]
+          rw [ite_eq_right]
           rintro ⟨h1, -, -⟩
           exact hy (Fin.ext h1.symm)
         · intro h
@@ -318,7 +318,7 @@ theorem local_frame_first_factor : ∀ (F E : Type) [Field F] [NumberField F] [F
         · have h0 : (⟨_, hr x⟩ : v.adicCompletionIntegers F) = 0 := Subtype.ext (by simp [hx])
           rw [h0, map_zero]
         · intro y _
-          rw [if_neg]
+          rw [ite_eq_right]
           rintro ⟨h1, h2, -⟩
           omega
     rw [hsup]

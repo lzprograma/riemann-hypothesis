@@ -122,7 +122,7 @@ def idNF (F : Formalism.MainNotions.S.FlagG S r (n : E)) (hT : ((n : ℕ) : E) �
     rw [GlobalTheory.TypeAsm.fv_cast, hfe]
     by_cases h : a = b
     · subst h; simp
-    · rw [if_neg (Ne.symm h), if_neg h]
+    · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
   ist_e' a b ha := absurd ha (Nat.not_lt_zero _)
   normalForm_dual_orthogonal_last b _ := by
     change S.hT (f b) (F.fvec (Fin.last r)) = 0
@@ -194,7 +194,7 @@ theorem idNF_spec (F : Formalism.MainNotions.S.FlagG S r (n : E)) (hT : ((n : �
         rw [map_smul, hfe, smul_eq_mul]
         by_cases h : c = a
         · subst h; simpa using hx
-        · rw [if_neg h, mul_zero]; exact Submodule.zero_mem _
+        · rw [ite_eq_right h, mul_zero]; exact Submodule.zero_mem _
       · intro x hx
         show S.hT (f c) x ∈ (aaF 𝔡 c : Submodule (𝓞 E) E)
         rw [hLf x hx c]; exact Submodule.zero_mem _
@@ -207,7 +207,7 @@ theorem idNF_spec (F : Formalism.MainNotions.S.FlagG S r (n : E)) (hT : ((n : �
     intro a
     refine right_zero ?_
     rintro _ ⟨i, hi, rfl⟩
-    rw [hfe, if_neg]
+    rw [hfe, ite_eq_right]
     rintro rfl; exact lt_irrefl _ (show a.val < a.val from hi)
   have hXcoord : ∀ x ∈ F.X, x = ∑ c, S.hT (f c) x • F.e c := by
     intro x hx
@@ -230,7 +230,7 @@ theorem idNF_spec (F : Formalism.MainNotions.S.FlagG S r (n : E)) (hT : ((n : �
       constructor
       · intro ht
         obtain ⟨y, hy, x, hx, hxy⟩ := Submodule.mem_sup.1 ht
-        have h1 : S.hT (f a) (t • F.e a) = t := by rw [map_smul, hfe, if_pos rfl, smul_eq_mul, mul_one]
+        have h1 : S.hT (f a) (t • F.e a) = t := by rw [map_smul, hfe, ite_eq_left rfl, smul_eq_mul, mul_one]
         rw [← hxy, map_add (f := _), hXa0 a x hx, add_zero] at h1
         rw [← h1]; exact hval a y hy
       · intro ht
@@ -266,7 +266,7 @@ theorem idNF_spec (F : Formalism.MainNotions.S.FlagG S r (n : E)) (hT : ((n : �
   refine ⟨⟨⟨?_, hframe, hframe⟩, fun a t x' hx' h => ⟨x', hx', h, by rw [sub_self]; exact Submodule.zero_mem _⟩⟩, ?_⟩
   · have hsurj : Function.Surjective S.hT := by
       have hinj : Function.Injective S.hT := by
-        set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+        rw [injective_iff_map_eq_zero]
         intro x hx
         exact S.nondeg.1 x (fun y => by rw [hx]; rfl)
       have hbij : Function.Bijective S.hT.rangeRestrict :=
@@ -406,8 +406,6 @@ end Spec
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem fe_of {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ} {e f : Fin r → S.V}
     (hef : ∀ a b, S.hT (e a) (f b) = if a = b then 1 else 0) :
     ∀ a b, S.hT (f a) (e b) = if a = b then 1 else 0 := by
@@ -415,7 +413,7 @@ theorem fe_of {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {
   rw [← S.herm.eq, hef b a]
   by_cases h : a = b
   · subst h; simp
-  · rw [if_neg (Ne.symm h), if_neg h, map_zero]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h, map_zero]
 
 theorem idNFC_holds : GlobalTheory.TypeAsm.IdNFC := by
   intro D large₂ X Y u hStd Λ hΛ

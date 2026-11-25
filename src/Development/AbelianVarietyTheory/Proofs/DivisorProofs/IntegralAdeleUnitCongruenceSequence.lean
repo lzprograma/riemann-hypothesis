@@ -56,8 +56,6 @@ open GlobalTheory GlobalTheory.AV GlobalTheory.AV.AbVar GlobalTheory.PDivGroup G
 open ReciprocityTheory.DiscreteGroups.LocalClassField
 open scoped TensorProduct
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.UnitApprox
@@ -79,7 +77,7 @@ theorem exists_int_approx : ∀ (p : ℕ) [Fact p.Prime] (ε ε' : AfP p), IsInt
     have h : 0 < n ∧ n.Coprime p := ⟨hn, hnp⟩
     have hs := Classical.choose_spec (LaHatMod.exists_int_add_mul n h.1 h.2 ε hε)
     have e : u n = Classical.choose (LaHatMod.exists_int_add_mul n h.1 h.2 ε hε) := by
-      simp only [u, dif_pos h]
+      simp only [u, dite_eq_left h]
     rw [e]; exact hs
   refine ⟨u, ?_, ?_⟩
   · intro n m hn hm hnmp

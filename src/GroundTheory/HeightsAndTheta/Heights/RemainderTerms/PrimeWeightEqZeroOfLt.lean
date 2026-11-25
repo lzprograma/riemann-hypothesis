@@ -6,8 +6,6 @@ import Mathlib.Algebra.Order.Star.Real
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights
 
 namespace RestTerms
@@ -44,7 +42,7 @@ theorem sum_primeWeight_le (B : ℝ) (K : ℕ) :
 theorem primeWeight_eq_zero_of_lt (B : ℝ) (hB : 0 ≤ B) {i : ℕ} (hi : i < ⌊B⌋₊ + 1) :
     primeWeight B i = 0 := by
   unfold primeWeight
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨_, h⟩
   have : (i : ℝ) ≤ B := by
     have := Nat.le_floor_iff hB |>.mp (Nat.lt_succ_iff.mp hi)
@@ -144,10 +142,6 @@ theorem prime_partial_le (B : ℝ) (hB : 0 < B) (K : ℕ) :
 
 end Elem
 
-
-namespace Elem
-
-end Elem
 
 
 end

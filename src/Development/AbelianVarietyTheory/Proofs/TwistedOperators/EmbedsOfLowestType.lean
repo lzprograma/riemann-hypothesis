@@ -4,52 +4,12 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPO
 public import Mathlib.LinearAlgebra.Eigenspace.Minpoly
 public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
 public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Finiteness.Lattice
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -363,7 +323,7 @@ theorem Rep.CK_comm (h : Rep E) {c d : Ix p q} (hcd : sameBlock c d) (x : V) :
     E c d (CK E x) = CK E (E c d x) := by
   have := cas_comm (E c d) (Kc E) c d (fun a b => by
     by_cases hab : sameBlock a b
-    · simp only [Kc, hab, if_true, h.1]
+    · simp only [Kc, hab, ite_true, h.1]
       congr 1
       · split_ifs with h1 h2
         · rfl
@@ -373,7 +333,7 @@ theorem Rep.CK_comm (h : Rep E) {c d : Ix p q} (hcd : sameBlock c d) (x : V) :
         · rfl
         · subst h1; exact absurd (sb_trans hab hcd) h2
         · rfl
-    · simp only [Kc, hab, if_false, mul_zero, zero_mul, sub_self]
+    · simp only [Kc, hab, ite_false, mul_zero, zero_mul, sub_self]
       have e1 : (if d = a then (if sameBlock c b then E c b else 0) else 0) = 0 := by
         split_ifs with h1 h2
         · subst h1; exact absurd (sb_trans (sb_symm hcd) h2) hab
@@ -403,7 +363,7 @@ theorem Rep.EN (h : Rep E) {a b : Ix p q} (hab : sameBlock a b) (c d : Ix p q) (
       · subst h1; simp [Nc, sb_trans hcd hab]
       · rfl
     rw [e1, e2]; simp [Nc, hcd]
-  · simp only [Nc, hcd, if_false]
+  · simp only [Nc, hcd, ite_false]
     rw [h.app]
     congr 2
     · split_ifs with h1 h2
@@ -417,7 +377,7 @@ theorem Rep.EN (h : Rep E) {a b : Ix p q} (hab : sameBlock a b) (c d : Ix p q) (
 
 theorem Rep.adjK (h : Rep E) (a b : Ix p q) (x y : V) : ⟪Kc E a b x, y⟫_ℂ = ⟪x, Kc E b a y⟫_ℂ := by
   by_cases hab : sameBlock a b
-  · simp only [Kc, hab, sb_symm hab, if_true]; exact h.2.1 a b hab x y
+  · simp only [Kc, hab, sb_symm hab, ite_true]; exact h.2.1 a b hab x y
   · have : ¬ sameBlock b a := fun h' => hab (sb_symm h')
     simp [Kc, hab, this]
 
@@ -425,7 +385,7 @@ theorem Rep.adjN (h : Rep E) (a b : Ix p q) (x y : V) : ⟪Nc E a b x, y⟫_ℂ 
   by_cases hab : sameBlock a b
   · simp [Nc, hab, sb_symm hab]
   · have : ¬ sameBlock b a := fun h' => hab (sb_symm h')
-    simp only [Nc, hab, this, if_false]; exact h.2.2 a b hab x y
+    simp only [Nc, hab, this, ite_false]; exact h.2.2 a b hab x y
 
 theorem KSt.Kc {S : Submodule ℂ V} (hS : KSt E S) (a b : Ix p q) {x : V} (hx : x ∈ S) :
     Kc E a b x ∈ S := by
@@ -449,11 +409,11 @@ theorem Hw.CK (h : Rep E) {ν : Ix p q → ℝ} {y : V} (hy : Hw E ν y) :
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   by_cases hab : a = b
   · subst hab
-    simp only [Kc, sb_refl, if_true, hy.1, map_smul, smul_smul, sq, Complex.ofReal_mul]
+    simp only [Kc, sb_refl, ite_true, hy.1, map_smul, smul_smul, sq, Complex.ofReal_mul]
   by_cases h2 : posC a b
-  · simp only [Kc, posC_sb h2, sb_symm (posC_sb h2), if_true, hab, h2, if_false]
+  · simp only [Kc, posC_sb h2, sb_symm (posC_sb h2), ite_true, hab, h2, ite_false]
     rw [hy.brk h, hy.2 a b h2]; simp
-  · simp only [hab, h2, if_false]
+  · simp only [hab, h2, ite_false]
     by_cases h3 : sameBlock b a
     · rcases sb_tri h3 with h4 | h4 | h4
       · exact absurd h4.symm hab
@@ -488,7 +448,7 @@ theorem crude (h : Rep E) {ν : Ix p q → ℝ} {y : V} (hy : Hw E ν y) (hy0 : 
     · have h2 : ¬ sameBlock b a := fun h' => h1.1 (sb_symm h')
       have k1 := e2 a b
       have k2 := e2 b a
-      simp only [Nc, h1.1, h2, if_false] at k1 k2 ⊢
+      simp only [Nc, h1.1, h2, ite_false] at k1 k2 ⊢
       rw [hy.brk h, inner_add_right, Complex.add_re, k1, re_smul] at k2
       nlinarith [sq_nonneg ‖E b a y‖]
     · simp
@@ -615,7 +575,7 @@ theorem NN_mem (h : Rep E) {S : Submodule ℂ V} (hS : KSt E S) (a b c d : Ix p 
   · simp [Nc, hab]
   by_cases hcd : sameBlock c d
   · simp [Nc, hcd]
-  simp only [Nc, hab, hcd, if_false]
+  simp only [Nc, hab, hcd, ite_false]
   rw [h.app, add_sub_cancel_left]
   refine S.sub_mem ?_ ?_
   · split_ifs with h1
@@ -683,10 +643,10 @@ theorem Ph_inv (h : Rep E) (hU : KSt E U) (hπ : IsPr π U) {a b : Ix p q} (hab 
       ⟪u, (if P then v else 0)⟫_ℂ = if P then ⟪u, v⟫_ℂ else 0 := by
         intro P _ u v; split_ifs <;> simp
     simp only [i1, i2]
-    simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [Finset.sum_comm (f := fun c d => if b = c then _ else (0 : ℂ)),
       Finset.sum_comm (f := fun c d => if a = c then _ else (0 : ℂ))]
-    simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 end Filt
 
@@ -718,7 +678,7 @@ theorem dd_eq (h : Rep E) (a b c d : Ix p q) (x : V) :
     Nc E c d (Kc E a b x) - Kc E a b (Nc E c d x) = if sameBlock a b then
       (if d = a then Nc E c b x else 0) - (if b = c then Nc E a d x else 0) else 0 := by
   by_cases hab : sameBlock a b
-  · simp only [Kc, hab, if_true]
+  · simp only [Kc, hab, ite_true]
     rw [h.EN hab]; abel
   · simp [Kc, hab]
 
@@ -739,12 +699,12 @@ theorem Aterm (h : Rep E) (y : V) :
     split_ifs with h1 h2 h3 h3
     · subst h2 h3; simp [Nc, sb_refl]
     all_goals simp
-  simp only [e, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [e, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have e1 : ∀ c d : Ix p q, (∑ a, ∑ b, if d = a then (if sameBlock a b then (1 : ℝ) else 0) *
       ‖π (Nc E c b y)‖ ^ 2 else 0) = ∑ b, (if sameBlock d b then (1 : ℝ) else 0) * ‖π (Nc E c b y)‖ ^ 2 := by
     intro c d
     rw [Finset.sum_comm]
-    simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   simp only [e1]
   have e2 : ∑ c, ∑ d, ∑ b, (if sameBlock d b then (1 : ℝ) else 0) * ‖π (Nc E c b y)‖ ^ 2 =
       ∑ c, ∑ b, (∑ d, if sameBlock d b then (1 : ℝ) else 0) * ‖π (Nc E c b y)‖ ^ 2 := by
@@ -775,7 +735,7 @@ theorem Ph_CK (h : Rep E) (hU : KSt E U) (hπ : IsPr π U) (k : ℕ) (x y : V) :
   simp only [CK, LinearMap.sum_apply, Module.End.mul_apply, map_sum, inner_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   by_cases hab : sameBlock a b
-  · simp only [Kc, hab, sb_symm hab, if_true]
+  · simp only [Kc, hab, sb_symm hab, ite_true]
     rw [Ph_inv h hU hπ (sb_symm hab)]
   · have : ¬ sameBlock b a := fun h' => hab (sb_symm h')
     simp [Kc, hab, this]
@@ -818,7 +778,7 @@ theorem hw_shift (h : Rep E) (hU : KSt E U) (hπ : IsPr π U) {Λ : Ix p q → �
     refine ⟨fun a => ?_, fun a b hab => ?_⟩
     · rw [← hπ.comm h hU (sb_refl a), ← map_smul]
       congr 1
-      simp only [Nc, hns, if_false]
+      simp only [Nc, hns, ite_false]
       rw [h.diag, hy.1, map_smul, ← add_smul]
       congr 1
       split_ifs <;> push_cast <;> ring
@@ -1094,7 +1054,7 @@ theorem casK_eq (ν : Ix p q → ℝ) : casK ν = ∑ a, ν a ^ 2 + ∑ a, ν a 
     by_cases hab : a = b
     · subst hab; simp
     · simp [hab]
-  simp only [e, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [e, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem posC_iff {lam : Ix p q → ℚ} (hl : IsParam lam) {a b : Ix p q} :
     posC a b ↔ sameBlock a b ∧ lam b < lam a := by
@@ -1135,13 +1095,13 @@ theorem numeric {lam : Ix p q → ℚ} (hl : IsParam lam)
   have s1 : ∀ f : Ix p q → ℝ, ∑ a, ν a * f a = ∑ a, L a * f a - f c + f d := by
     intro f
     simp only [hν, add_mul, sub_mul, Finset.sum_add_distrib, Finset.sum_sub_distrib, ite_mul, one_mul,
-      zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, hL]
+      zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, hL]
   have s2 : ∑ a, ν a ^ 2 = ∑ a, L a ^ 2 - 2 * L c + 2 * L d + 2 := by
     have t1 := s1 ν
     have t2 := s1 L
     have t3 := hν c
     have t4 := hν d
-    simp only [hne, hne.symm, if_true, if_false] at t3 t4
+    simp only [hne, hne.symm, ite_true, ite_false] at t3 t4
     simp only [sq]
     have t5 : ∑ a, L a * ν a = ∑ a, ν a * L a := Finset.sum_congr rfl fun a _ => mul_comm _ _
     simp only [hL] at *
@@ -1252,8 +1212,8 @@ theorem main_inner {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
     refine ⟨fun a b c d => ?_, fun a b hab x y => ?_, fun a b hab x y => ?_⟩
     · simp only [hE]
       rw [← hlie, Eab_mul, Eab_mul, map_sub, apply_ite act, apply_ite act, map_zero]
-    · simp only [hE]; rw [hadj, adj_Eab, if_pos hab]
-    · simp only [hE]; rw [hadj, adj_Eab, if_neg hab]; simp
+    · simp only [hE]; rw [hadj, adj_Eab, ite_eq_left hab]
+    · simp only [hE]; rw [hadj, adj_Eab, ite_eq_right hab]; simp
   have toHw : ∀ (μ : Ix p q → ℚ) (x : V), x ∈ hwSub act μ → Hw E (fun a => (μ a : ℝ)) x := by
     intro μ x hx
     simp only [hwSub, wtSub, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker,
@@ -1264,7 +1224,7 @@ theorem main_inner {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
   obtain ⟨W, hW, huW, hWK⟩ := hfin
   haveI : FiniteDimensional ℂ (Low E u) := Submodule.finiteDimensional_of_le
     (Low_le_K huW fun a b hab x hx => hWK _ (fun i j hij => by
-      rw [Eab, Matrix.single_apply, if_neg]
+      rw [Eab, Matrix.single_apply, ite_eq_right]
       rintro ⟨rfl, rfl⟩
       exact hij hab) x hx)
   obtain ⟨π, hπ⟩ := exists_pr (Low E u)
@@ -1305,7 +1265,7 @@ theorem main_inner {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
     by_cases hab : sameBlock a b
     · exact Submodule.mem_iSup_of_mem j (Fil_K h hU j a b hab y hj)
     · have := Fil_N a b hj
-      simp only [Nc, hab, if_false] at this
+      simp only [Nc, hab, ite_false] at this
       exact Submodule.mem_iSup_of_mem (j + 1) this
   refine ⟨fun Q hQ hst huQ => ?_, fun μ => ?_⟩
   · have horth : u ∈ Qᗮ := by
@@ -1481,7 +1441,7 @@ theorem gen_iso_of_lowest_type : admQ7 → admQ8 → ∀ (p q : ℕ) (lam : Ix p
           have h2 : y.2 = 0 := hy.2
           change M'.M.act Z y.2 = 0
           rw [h2, map_zero]⟩) (fun h => hu'.1 h.2)
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro x hx
       have : (x : M.M.V × M'.M.V) ∈ N ⊓ LinearMap.ker (LinearMap.snd ℂ _ _) := ⟨x.2, hx⟩
       rw [h] at this

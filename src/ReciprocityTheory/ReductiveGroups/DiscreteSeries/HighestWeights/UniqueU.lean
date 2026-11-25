@@ -18,8 +18,7 @@ namespace ReciprocityTheory.ChartRestriction.DS.HW
 open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7
 
 lemma uqU_Jm_allTrue (k : ℕ) : Jm (fun _ : Fin k => true) = 1 := by
-  unfold Jm
-  simp
+  exact ReciprocityTheory.ChartRestriction.DS.HW.fh_Jm_allPos
 
 lemma uqU_mem_Kset {k : ℕ} {g : Matrix (Fin k) (Fin k) ℂ} (hg : g ∈ Formalism.MainNotions.S.UJset (Formalism.MainNotions.S.allPos k)) :
     g ∈ Kset (fun _ : Fin k => true) := by

@@ -54,20 +54,15 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct ContDiff
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 
 namespace GlobalTheory.SuperposT
 
 theorem symplOH_zero_left {D : D7} {S T : HSp D} (y : WO S T) : symplOH S T 0 y = 0 := by
-  have h := GlobalTheory.OrientedHeis.symplOH_add_left (S := S) (T := T) 0 0 y
-  rw [add_zero] at h
-  linear_combination -h
+  exact GlobalTheory.MixModel.symplOH_zero_left S T y
 
 theorem symplOH_zero_right {D : D7} {S T : HSp D} (x : WO S T) : symplOH S T x 0 = 0 := by
-  have h := GlobalTheory.OrientedHeis.symplOH_add_right (S := S) (T := T) x 0 0
-  rw [add_zero] at h
-  linear_combination -h
+  exact GlobalTheory.MixModel.symplOH_zero_right S T x
 
 theorem psi_neg_mul {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (s : AF D.host.F) : ψ (-s) * ψ s = 1 := by
   rw [← AddChar.map_add_eq_mul, neg_add_cancel, AddChar.map_zero_eq_one]

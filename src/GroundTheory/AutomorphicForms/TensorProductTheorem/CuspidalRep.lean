@@ -16,8 +16,6 @@ namespace AutomorphicForm
 
 open NumberField MeasureTheory CuspidalSpectrum Polynomial UnitaryAdmissible
 
-attribute [local instance 100] LieRing.ofAssociativeRing
-
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
 theorem exists_compl_centralCuspForms (U : Submodule ℂ (cuspForms K n)) (hU : U ≤ centralCuspForms K n)

@@ -6,42 +6,6 @@ public import Formalism.FrobeniusContraction.HighestWeightResidueAvoids
 public import Formalism.FrobeniusContraction.StatementTop
 public import Formalism.GaloisCohomology.LocalTateDualityK
 public import Mathlib.LinearAlgebra.Charpoly.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -291,34 +255,6 @@ def B3 (emb : ZMod n → (K₀ →ₐ[Qp] LL)) (I : Subgroup G) : Prop :=
     (∀ g ∈ I, μ g = 1) → (∀ g, ρ' g = ((μ g : LLˣ) : LL) • ρ g) →
     IsCrys PD ρ' ∧ ∀ τ a, multV PD ρ' τ a = multV PD ρ τ a
 
-def CrysLit : Prop :=
-  (∀ (μ : G →* LLˣ) (a : (K →ₐ[Qp] LL) → ℤ), Continuous (fun g => ((μ g : LLˣ) : LL)) →
-    IsCrys PD (charRep μ) → (∀ τ b, multV PD (charRep μ) τ b = if b = a τ then 1 else 0) →
-    (IsCrys PD (charRep μ⁻¹) ∧ ∀ τ b, multV PD (charRep μ⁻¹) τ b = if b = -a τ then 1 else 0) ∧
-    ∀ (V : Type) [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
-      [FiniteDimensional LL V] [TopologicalSpace V] [IsModuleTopology LL V]
-      (ρ ρ' : Representation LL G V),
-      (∀ x, Continuous fun g => ρ g x) → IsCrys PD ρ → (∀ g, ρ' g = ((μ g : LLˣ) : LL) • ρ g) →
-      IsCrys PD ρ' ∧ ∀ τ b, multV PD ρ' τ b = multV PD ρ τ (b - a τ)) ∧
-  (∀ (V₀ V₁ V₂ : Type) [AddCommGroup V₀] [Module LL V₀] [Module Qp V₀] [IsScalarTower Qp LL V₀]
-      [FiniteDimensional LL V₀] [AddCommGroup V₁] [Module LL V₁] [Module Qp V₁]
-      [IsScalarTower Qp LL V₁] [FiniteDimensional LL V₁] [AddCommGroup V₂] [Module LL V₂]
-      [Module Qp V₂] [IsScalarTower Qp LL V₂] [FiniteDimensional LL V₂]
-      [TopologicalSpace V₀] [IsModuleTopology LL V₀] [TopologicalSpace V₁] [IsModuleTopology LL V₁]
-      [TopologicalSpace V₂] [IsModuleTopology LL V₂]
-      (ρ₀ : Representation LL G V₀) (ρ₁ : Representation LL G V₁) (ρ₂ : Representation LL G V₂)
-      (ι : V₀ →ₗ[LL] V₁) (π : V₁ →ₗ[LL] V₂),
-      (∀ x, Continuous fun g => ρ₀ g x) → (∀ x, Continuous fun g => ρ₁ g x) →
-      (∀ x, Continuous fun g => ρ₂ g x) →
-      (∀ g x, ι (ρ₀ g x) = ρ₁ g (ι x)) → (∀ g x, π (ρ₁ g x) = ρ₂ g (π x)) →
-      Function.Injective ι → Function.Surjective π → LinearMap.range ι = LinearMap.ker π →
-      IsCrys PD ρ₁ →
-      IsCrys PD ρ₀ ∧ IsCrys PD ρ₂ ∧ ∀ τ a, multV PD ρ₁ τ a = multV PD ρ₀ τ a + multV PD ρ₂ τ a) ∧
-  ∀ (V : Type) [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
-    [FiniteDimensional LL V] [TopologicalSpace V] [IsModuleTopology LL V]
-    (ρ : Representation LL G V), (∀ x, Continuous fun g => ρ g x) → ∀ τ : K →ₐ[Qp] LL,
-    Module.Finite LL ↥(DdRE PD ρ τ) ∧ finrank LL ↥(DdRE PD ρ τ) ≤ finrank LL V
-
 end Lit
 
 end Formalism.MainNotions.tableLineDegreeTwo
@@ -338,41 +274,12 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {LL : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL]
     {O : Type} [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
 
-def invariantLattice (T : LocLat G Qp LL O) : Submodule O ↥T.L.T :=
-  ⨅ g : G, LinearMap.ker (actT T.L g - LinearMap.id)
-
 def fixDD (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) : Submodule O (W.DD T) :=
   LinearMap.ker (W.φD T - LinearMap.id) ⊓ LinearMap.ker (W.γD T W.gamK - LinearMap.id) ⊓
     ⨅ δ ∈ W.DelF, LinearMap.ker (W.γD T δ - LinearMap.id)
 
 abbrev CocΔ (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) : Submodule O (W.DD T × W.DD T) :=
   herrZ1Δ (W.γD T W.gamK) (W.φD T) W.DelF (W.γD T)
-
-def HerrLat (W : LocWach PD LL O v n) : Prop :=
-  (∀ T : LocLat G Qp LL O, Function.Surjective (W.clK T) ∧
-    ∀ p, W.clK T p = 0 ↔ ∃ m : W.DD T, (∀ δ ∈ W.DelF, W.γD T δ m = m) ∧
-      (p : W.DD T × W.DD T) = (W.φD T m - m, W.γD T W.gamK m - m)) ∧
-  W.ClKNat ∧
-  (∀ T : LocLat G Qp LL O, Nonempty (↥(invariantLattice T) ≃ₗ[O] ↥(fixDD W T))) ∧
-  (∀ (T T' : LocLat G Qp LL O) (f : W.DD T →ₗ[W.EE] W.DD T'),
-    (∀ x, f (W.φD T x) = W.φD T' (f x)) → (∀ g x, f (W.γD T g x) = W.γD T' g (f x)) →
-      ∃! F : LatHom T.L T'.L, ∀ x, W.map F x = f x) ∧
-  (∀ (T₀ T₁ T₂ : LocLat G Qp LL O) (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L), IsSESLat (Qp := Qp) (O := O) ι π →
-    Function.Injective (W.map ι) ∧ Function.Surjective (W.map π) ∧
-      ∀ x, W.map π x = 0 ↔ ∃ y, W.map ι y = x) ∧
-  (∃ ψ : W.EE →ₗ[O] W.EE, (∀ a x, ψ (W.φE a * x) = a * ψ x) ∧
-    (∀ g x, ψ (W.γE g x) = W.γE g (ψ x)) ∧
-    (∀ j < PD.p, ∀ a, ψ (algebraMap (LetA O n) W.EE (1 + letπ) ^ j * W.φE a) = if j = 0 then a else 0) ∧
-    ∀ x, ∃ c : Fin PD.p → W.EE, x = ∑ j : Fin PD.p, algebraMap (LetA O n) W.EE (1 + letπ) ^ (j : ℕ) * W.φE (c j)) ∧
-  ∀ T : LocLat G Qp LL O, ∃ ψ : W.DD T →ₗ[O] W.DD T, (∀ x, ψ (W.φD T x) = x) ∧
-    (∀ (a : W.EE) x, ψ (W.φE a • x) = a • ψ x) ∧ ∀ g x, ψ (W.γD T g x) = W.γD T g (ψ x)
-
-def HerrSub (W : LocWach PD LL O v n) : Prop :=
-  ∀ (T : LocLat G Qp LL O) (D' : Submodule W.EE (W.DD T)),
-    (∃ a : ℕ, ∀ x : W.DD T, ((PD.p : ℕ) : W.EE) ^ a • x ∈ D') →
-    (∀ x ∈ D', W.φD T x ∈ D') → (∀ g, ∀ x ∈ D', W.γD T g x ∈ D') →
-    ∃ (T' : LocLat G Qp LL O) (ι : LatHom T'.L T.L), Function.Bijective ι.f ∧
-      LinearMap.range (W.map ι) = D'
 
 def HerrExt (W : LocWach PD LL O v n) {RA RW : Type} [CommRing RA] [CommRing RW] [Algebra O RA]
     [Algebra O RW] {inclR : RA →ₐ[O] RW} {φR : RW →ₐ[O] RW} {gR : G → (RW →ₐ[O] RW)} {πA : RA}
@@ -386,37 +293,6 @@ def HerrExt (W : LocWach PD LL O v n) {RA RW : Type} [CommRing RA] [CommRing RW]
       W.map ι (p : W.DD T × W.DD T).2 = W.γD Tp W.gamK e - e →
       ∃ c : ↥(latticeCocycles T.L), Submodule.Quotient.mk c = W.clK T p ∧
         ∀ g, ι.f ((c : G → T.V) g) = Tp.ρ g (x : Tp.V) - (x : Tp.V)
-
-def Epol (W : LocWach PD LL O v n) : LetA O n := W.π₀ + ((PD.p : ℕ) : LetA O n)
-
-def mulA (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (a : LetA O n) : W.DD T →ₗ[O] W.DD T :=
-  (Formalism.MainNotions.DeltaInvariantLattices.smulA W T a).restrictScalars O
-
-def ENΔ (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) (y : ℕ) :
-    Submodule O (W.DD T) :=
-  ((W.N T).restrictScalars O).comap (mulA W T (Epol W ^ y)) ⊓
-    LinearMap.ker (mulA W T (letE i) - LinearMap.id) ⊓
-    ⨅ δ ∈ W.DelF, LinearMap.ker (W.γD T δ - LinearMap.id)
-
-def EkNΔ (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) (k : ℕ) :
-    Submodule O (W.DD T) :=
-  (ENΔ W T i 0).map (mulA W T (Epol W ^ k))
-
-def SenEig (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) (y k : ℕ) (x : ℤ) :
-    Submodule O (W.DD T) :=
-  ENΔ W T i y ⊓ (EkNΔ W T i k).comap
-    (W.γ T - ((((Formalism.MainNotions.DeltaInvariantLattices.uU W) ^ (-x) : Oˣ)) : O) • LinearMap.id)
-
-def SenLat (W : LocWach PD LL O v n) : Prop :=
-  ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → ∀ (i : ZMod n) (τ : K →ₐ[Qp] LL), Over W.emb i τ →
-    ∀ y k : ℕ,
-      Module.Free O (↥(ENΔ W T i y) ⧸ (EkNΔ W T i k).comap (ENΔ W T i y).subtype) ∧
-      Module.Finite O (↥(ENΔ W T i y) ⧸ (EkNΔ W T i k).comap (ENΔ W T i y).subtype) ∧
-      (∃ F : Finset ℤ, ∀ m ∈ ENΔ W T i y, Polynomial.aeval (W.γ T) (∏ x ∈ F,
-        (Polynomial.X - Polynomial.C ((((Formalism.MainNotions.DeltaInvariantLattices.uU W) ^ (-x) : Oˣ)) : O))) m ∈ EkNΔ W T i k) ∧
-      ∀ x : ℤ, (finrank O (↥(SenEig W T i y k x) ⧸
-          (EkNΔ W T i k).comap (SenEig W T i y k x).subtype) : ℤ) =
-        ∑ j ∈ Finset.Icc (1 - (k : ℤ)) (y : ℤ), multV PD T.ρ τ (x - j)
 
 end Herr
 
@@ -456,15 +332,6 @@ def adm14 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Forma
 
 def adm15 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.DeltaInvariantLattices.Pr2d D HW F
 
-def adm16 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K LL : FinExt l) (hA : CaseA K LL),
-    HerrLat ((HW l).W K 1 LL hA.2.2)
-
-def adm17 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K LL : FinExt l) (hA : CaseA K LL),
-    HerrSub ((HW l).W K 1 LL hA.2.2) ∧
-      HerrExt ((HW l).W K 1 LL hA.2.2) ((F l).E K 1 LL hA.2.2).tie
-
 def adm18 (_D : D7) : Prop := Formalism.GaloisCohomology.LocalTateDualityK ∧ Formalism.GaloisCohomology.LocalEulerCharK
 
 def adm19 (D : D7) : Prop :=
@@ -475,22 +342,14 @@ def adm20 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K LL : FinExt l) (hA : CaseA K LL),
     B3 ((D.loc l).PD K) (O := ↥(OL LL)) ((HW l).W K 1 LL hA.2.2).emb (IK K)
 
-def adm21 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K LL : FinExt l) (hA : CaseA K LL),
-    SenLat ((HW l).W K 1 LL hA.2.2)
-
-def adm22 (D : D7) : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K LL : FinExt l), CaseA K LL →
-    CrysLit ((D.loc l).PD K) (LL := ↥LL.1)
-
 def adm23 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.DeltaInvariantLattices.p1eL D.loc D.locA HW F
 
 def FrobeniusExpansionCongruence (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.DeltaInvariantLattices.p5eL D.loc D.locA HW F
 
 def admitted (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) : Prop :=
   adm1 D HW F ∧ adm2 D HW F ∧ adm3 D HW F Cm ∧ ArchimedeanSignatureMatching D HW F Cm ∧ adm5 D HW F ∧ adm6 D HW F ∧ adm7 D HW F ∧ adm8 D HW F ∧ adm9 D HW F ∧ adm10 D HW F ∧
-    adm11 D HW F ∧ adm12 D HW F ∧ adm13 D HW F ∧ adm14 D HW F ∧ adm15 D HW F ∧ adm16 D HW F ∧ adm17 D HW F ∧ adm18 D ∧ adm19 D ∧
-    adm20 D HW F ∧ adm21 D HW F ∧ adm22 D ∧ adm23 D HW F ∧ FrobeniusExpansionCongruence D HW F
+    adm11 D HW F ∧ adm12 D HW F ∧ adm13 D HW F ∧ adm14 D HW F ∧ adm15 D HW F ∧ adm18 D ∧ adm19 D ∧
+    adm20 D HW F ∧ adm23 D HW F ∧ FrobeniusExpansionCongruence D HW F
 
 def Stmt (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) : Prop := admitted D HW F Cm → aux₃ D HW F
 

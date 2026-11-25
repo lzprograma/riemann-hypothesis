@@ -142,10 +142,6 @@ instance : MulAction (GL (Fin n) F) (Lattice F n) where
 
 def standard : Lattice F n := ⟨standardLattice F n, inferInstance⟩
 
-section MaximalCompact
-
-end MaximalCompact
-
 end Algebraic
 
 section Topological

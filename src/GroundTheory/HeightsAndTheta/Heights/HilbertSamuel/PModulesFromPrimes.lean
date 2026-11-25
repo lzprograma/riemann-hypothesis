@@ -137,7 +137,7 @@ theorem ModulesFromPrimes.proof (hF : MultigradedFiltration.Statement.{u, v})
         refine ⟨max a₁ a₂, C₁ + C₂, fun a ha => ?_⟩
         have e1 := h₁ a (fun k => le_trans (le_max_left _ _) (ha k))
         have e2 := h₂ a (fun k => le_trans (le_max_right _ _) (ha k))
-        rw [ht_def, if_pos ⟨hrel, htop⟩]
+        rw [ht_def, ite_eq_left ⟨hrel, htop⟩]
         simp only [diffStep] at e2
         push_cast at e2
         rw [abs_le] at e1 e2 ⊢
@@ -150,10 +150,10 @@ theorem ModulesFromPrimes.proof (hF : MultigradedFiltration.Statement.{u, v})
         have hsh := (DegLTClosure.full K d (hilbFn (q j)) (hilbFn (q j)) 0 (c j)).2.2.1 hdeg
         obtain ⟨a₀, C, h⟩ := hG K d _ hsh
         refine ⟨a₀, C, fun a ha => ?_⟩
-        rw [ht_def, if_neg (fun h' => htop h'.2)]
+        rw [ht_def, ite_eq_right (fun h' => htop h'.2)]
         simpa [shiftFn] using h a ha
     ·
-      have ht0 : ∀ a, t j a = 0 := fun a => by rw [ht_def, if_neg (fun h' => hrel h'.1)]
+      have ht0 : ∀ a, t j a = 0 := fun a => by rw [ht_def, ite_eq_right (fun h' => hrel h'.1)]
       simp only [IsRelevant, not_forall, not_exists, not_not] at hrel
       obtain ⟨k₀, hk₀⟩ := hrel
       refine ⟨(c j k₀).toNat + 1, 0, fun a ha => ?_⟩
@@ -195,13 +195,13 @@ theorem ModulesFromPrimes.proof (hF : MultigradedFiltration.Statement.{u, v})
     · have hc : IsMultiProjPrime (q j₀) ∧ Module.annihilator (MRing ι F) M ≤ q j₀ ∧
           ringKrullDim (MRing ι F ⧸ q j₀) = ((d + Fintype.card K : ℕ) : WithBot ℕ∞) :=
         ⟨⟨hprime, hhom, htop.1⟩, hann j₀, htop.2⟩
-      rw [dite_eq_left hc, if_pos htop]
+      rw [dite_eq_left hc, ite_eq_left htop]
       have hm := (hmin _ hc.1 hc.2.1 hc.2.2).1
       have hct := hcount (q j₀) hm
       congr 1
       rw [← hct]
       simp
-    · rw [dite_eq_right (fun h => htop ⟨h.1.relevant, h.2.2⟩), if_neg htop, mul_zero]
+    · rw [dite_eq_right (fun h => htop ⟨h.1.relevant, h.2.2⟩), ite_eq_right htop, mul_zero]
   have hfin : (Module.finrank F (piece fun k => (a k : ℤ)) : ℝ) =
       ∑ j, (hilbFn (q j) ((fun k => (a k : ℤ)) - c j) : ℝ) := by
     have := hsum (fun k => (a k : ℤ))

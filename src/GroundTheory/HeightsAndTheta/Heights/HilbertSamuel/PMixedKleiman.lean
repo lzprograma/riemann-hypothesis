@@ -23,7 +23,7 @@ theorem MixedKleiman.atDim_of_steps (hL : MixedKleimanLow.Statement) (hT : Mixed
     rcases lt_or_eq_of_le hj with hj | rfl
     · exact hLow K ι P P0 M A a II hII h1 hP h0 hsM hnM hcM hhM haA hsA hmA hcA j hj
     · have hlist : (fun i : Fin (n + 1) => if (i : ℕ) < n + 1 then M else A) = fun _ => M :=
-        funext fun i => if_pos i.isLt
+        funext fun i => ite_eq_left i.isLt
       rw [hlist]
       rcases Nat.lt_or_ge n 1 with hn | hn
       · obtain rfl : n = 0 := by omega

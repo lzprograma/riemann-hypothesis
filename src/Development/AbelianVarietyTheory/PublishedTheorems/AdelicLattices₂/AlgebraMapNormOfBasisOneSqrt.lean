@@ -304,21 +304,6 @@ theorem exists_sq_real {θ : E} (hθ : cc θ = -θ) :
 
 variable (A : Type*) [CommRing A] [Algebra (maximalRealSubfield E) A]
 
-theorem norm_tmul_add_tmul {θ : E} (h0 : θ ≠ 0) (hθ : cc θ = -θ) {d : maximalRealSubfield E}
-    (hd : (d : E) = θ * θ) (x y : A) :
-    Algebra.norm A (x ⊗ₜ[maximalRealSubfield E] (1 : E) + y ⊗ₜ[maximalRealSubfield E] θ) =
-      x ^ 2 - algebraMap (maximalRealSubfield E) A d * y ^ 2 := by
-  obtain ⟨b, hb0, hb1⟩ := exists_basis_one_imaginary h0 hθ
-  have := norm_of_basis_one_sqrt (Algebra.TensorProduct.basis A b)
-    (by rw [Algebra.TensorProduct.basis_apply, hb0]; rfl) (algebraMap _ A d)
-    (by
-      rw [Algebra.TensorProduct.basis_apply, hb1, Algebra.TensorProduct.tmul_mul_tmul, one_mul, ← hd,
-        ← IsScalarTower.algebraMap_apply]
-      exact (Algebra.TensorProduct.algebraMap_apply' d).symm) x y
-  rwa [Algebra.TensorProduct.basis_apply, Algebra.TensorProduct.basis_apply, hb0, hb1,
-    TensorProduct.smul_tmul', TensorProduct.smul_tmul', smul_eq_mul, smul_eq_mul, mul_one,
-    mul_one] at this
-
 theorem algebraMap_norm_tensor (z : A ⊗[maximalRealSubfield E] E) :
     algebraMap A (A ⊗[maximalRealSubfield E] E) (Algebra.norm A z) =
       z * Algebra.TensorProduct.map (AlgHom.id A A) (IsCMField.complexConj E).toAlgHom z := by

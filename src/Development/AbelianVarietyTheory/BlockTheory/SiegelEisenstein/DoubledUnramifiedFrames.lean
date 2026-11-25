@@ -52,7 +52,6 @@ open GlobalTheory.SymChain (SymData)
 open GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedCharacter (CharUnramAt)
 open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastPair)
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedLocalFrameSequences
 
@@ -231,12 +230,6 @@ structure Tower (s κ t j : ℕ) (H : j + 1 + 1 + 2 * σ = s) where
   dat₂ : IsFockOver ψ X.J.W X.B'.V X.b₁.L X.b₂.L (StepsAll fun i f₀ f => Over ψ (G i).γ₁ (G i).γ₂ X.b₁.L X.b₂.L f₀
     (((G i).S.T (Fin t)).Phi (j + 1) (2 * σ + 1) (by omega)) f) Φ₂
 
-namespace Tower
-
-variable {X} {s κ t j : ℕ} {H : j + 1 + 1 + 2 * σ = s} (Y : X.Tower s κ t j H)
-
-end Tower
-
 end Dbl
 
 structure End (ψ : AddChar (AF D.host.F) ℂ) (X' : HSp D) where
@@ -330,12 +323,6 @@ structure Tower (s κ t : ℕ) where
     (((G i).S.T (Fin t)).Phi s 0 rfl) f) Φ₁
   dat₂ : IsFockOver ψ X.t.J.W X' X.L₁ X.L' (StepsAll fun i f₀ f => Over ψ (G i).γ₁ (G i).F.δ X.L₁ X.L' f₀
     ((G i).S.T (Fin t)).PhiTop f) Φ₂
-
-namespace Tower
-
-variable {X} {s κ t : ℕ} (Y : X.Tower s κ t)
-
-end Tower
 
 end End
 

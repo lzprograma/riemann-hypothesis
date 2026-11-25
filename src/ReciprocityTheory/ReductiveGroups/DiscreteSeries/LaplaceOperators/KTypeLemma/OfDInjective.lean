@@ -47,7 +47,7 @@ theorem Pr_mul (A : Matrix (Fin n) (Fin n) ℂ) : Pr n * A = A.submatrix Fin.rev
   · simp [Pr]
   · intro k _ hk
     simp only [Pr, Matrix.of_apply]
-    rw [if_neg (fun h => hk (by rw [h, Fin.rev_rev]))]
+    rw [ite_eq_right (fun h => hk (by rw [h, Fin.rev_rev]))]
     ring
   · simp
 
@@ -57,7 +57,7 @@ theorem mul_Pr (A : Matrix (Fin n) (Fin n) ℂ) : A * Pr n = A.submatrix id Fin.
   · simp [Pr]
   · intro k _ hk
     simp only [Pr, Matrix.of_apply]
-    rw [if_neg hk]
+    rw [ite_eq_right hk]
     ring
   · simp
 
@@ -215,14 +215,14 @@ theorem glRep_Edd (ε : Fin n → Bool) {E : Fin n → Fin n → Module.End ℂ 
   by_cases hbc : b = c <;> by_cases hda : d = a
   · subst c
     subst d
-    simp only [if_true, Edd_ofD]
+    simp only [ite_true, Edd_ofD]
     rw [← ofD_sub]
     congr 1
     unfold sg
     split_ifs <;> module
   · subst c
     have hda' : ¬ Fin.rev a = Fin.rev d := fun h => hda (Fin.rev_injective h).symm
-    simp only [if_true, if_neg hda, if_neg (Ne.symm hda), LinearMap.zero_apply, Edd_ofD,
+    simp only [ite_true, ite_eq_right hda, ite_eq_right (Ne.symm hda), LinearMap.zero_apply, Edd_ofD,
       zero_sub]
     first
     | (congr 1; unfold sg; split_ifs <;> module)
@@ -231,7 +231,7 @@ theorem glRep_Edd (ε : Fin n → Bool) {E : Fin n → Fin n → Module.End ℂ 
     | (simp only [← ofD_neg, ← ofD_sub, ← ofD_zero]; congr 1; unfold sg; split_ifs <;> module)
   · subst d
     have hbc' : ¬ Fin.rev c = Fin.rev b := fun h => hbc (Fin.rev_injective h).symm
-    simp only [if_true, if_neg hbc, if_neg (Ne.symm hbc), LinearMap.zero_apply, Edd_ofD,
+    simp only [ite_true, ite_eq_right hbc, ite_eq_right (Ne.symm hbc), LinearMap.zero_apply, Edd_ofD,
       zero_sub]
     simp only [← ofD_neg, ← ofD_sub]
     congr 1
@@ -239,7 +239,7 @@ theorem glRep_Edd (ε : Fin n → Bool) {E : Fin n → Fin n → Module.End ℂ 
     split_ifs <;> module
   · have hda' : ¬ Fin.rev a = Fin.rev d := fun h => hda (Fin.rev_injective h).symm
     have hbc' : ¬ Fin.rev c = Fin.rev b := fun h => hbc (Fin.rev_injective h).symm
-    simp only [if_neg hbc, if_neg (Ne.symm hbc), if_neg hda, if_neg (Ne.symm hda), LinearMap.zero_apply]
+    simp only [ite_eq_right hbc, ite_eq_right (Ne.symm hbc), ite_eq_right hda, ite_eq_right (Ne.symm hda), LinearMap.zero_apply]
     simp [ofD_zero]
 
 end Conj

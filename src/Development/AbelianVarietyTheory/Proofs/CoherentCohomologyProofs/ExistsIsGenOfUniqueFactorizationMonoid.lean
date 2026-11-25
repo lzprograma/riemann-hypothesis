@@ -50,8 +50,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Opposite TensorProduct
@@ -169,13 +167,6 @@ def appLinearEquiv (φ : F ≅ G) (V : X.Opens) : Γ(F, V) ≃ₗ[Γ(X, V)] Γ(G
 @[simp] theorem appLinearEquiv_apply (φ : F ≅ G) (V : X.Opens) (s : Γ(F, V)) :
     appLinearEquiv φ V s = φ.hom.app V s := rfl
 
-theorem mod_ext_of_cover {ι : Type*} (W : ι → X.Opens) (hW : ∀ k, W k ≤ V)
-    (hc : V ≤ iSup W) {s t : Γ(F, V)}
-    (h : ∀ k, F.presheaf.map (homOfLE (hW k)).op s = F.presheaf.map (homOfLE (hW k)).op t) :
-    s = t :=
-  TopCat.Sheaf.eq_of_locally_eq' (⟨F.presheaf, F.isSheaf⟩ : TopCat.Sheaf Ab X) W V
-    (fun k => homOfLE (hW k)) hc s t h
-
 theorem exists_mod_of_cover {ι : Type*} (W : ι → X.Opens) (hW : ∀ k, W k ≤ V)
     (hc : V ≤ iSup W) (s : ∀ k, Γ(F, W k))
     (h : ∀ k l, F.presheaf.map (homOfLE (inf_le_left : W k ⊓ W l ≤ W k)).op (s k) =
@@ -214,11 +205,6 @@ theorem repr_eq (he : IsFrame e) (h : V ≤ U) {s : Γ(F, V)} {a : Γ(X, V)}
   rw [← ha]
   exact (he.repr h).apply_symm_apply a
 
-theorem resG_repr (he : IsFrame e) (h : V ≤ U) (h' : W ≤ V) (s : Γ(F, V)) :
-    resG X h' (he.repr h s) = he.repr (h'.trans h) (F.presheaf.map (homOfLE h').op s) := by
-  refine (he.repr_eq _ ?_).symm
-  rw [← QCoh.res_res F h h', ← map_smul_resG, repr_smul]
-
 theorem repr_change (he : IsFrame e) (he' : IsFrame e') (h : V ≤ U) (h' : V ≤ U') (s : Γ(F, V)) :
     he.repr h s = he.repr h (F.presheaf.map (homOfLE h').op e') * he'.repr h' s := by
   conv_lhs => rw [← he'.repr_smul h' s]
@@ -236,11 +222,6 @@ def unit (he : IsFrame e) (he' : IsFrame e') (h : V ≤ U) (h' : V ≤ U') : Γ(
 theorem val_unit (he : IsFrame e) (he' : IsFrame e') (h : V ≤ U) (h' : V ≤ U') :
     (he.unit he' h h' : Γ(X, V)) = he.repr h (F.presheaf.map (homOfLE h').op e') := rfl
 
-theorem resG_unit (he : IsFrame e) (he' : IsFrame e') (h : V ≤ U) (h' : V ≤ U') (h'' : W ≤ V) :
-    resG X h'' (he.unit he' h h' : Γ(X, V)) =
-      he.repr (h''.trans h) (F.presheaf.map (homOfLE (h''.trans h')).op e') := by
-  rw [val_unit, resG_repr, QCoh.res_res]
-
 end IsFrame
 
 end Frames
@@ -253,73 +234,6 @@ abbrev ofFrames (he : ∀ i, IsFrame (e i)) : LB X where
   ι := ι
   U := U
   g i j := (he i).unit (he j) inf_le_left inf_le_right
-
-theorem resG_ofFrames_g (he : ∀ i, IsFrame (e i)) (i j : ι) {W : X.Opens} (h : W ≤ U i ⊓ U j) :
-    resG X h ((ofFrames he).g i j : Γ(X, U i ⊓ U j)) =
-      (he i).repr (h.trans inf_le_left)
-        (F.presheaf.map (homOfLE (h.trans inf_le_right)).op (e j)) :=
-  (he i).resG_unit (he j) _ _ h
-
-theorem ofFrames_isLB (he : ∀ i, IsFrame (e i)) (hU : ⨆ i, U i = ⊤) : (ofFrames he).IsLB := {
-  cover := hU
-  g_self i := Units.ext ((resG_ofFrames_g he i i _).trans ((he i).repr_self _))
-  cocycle i j k := Units.ext <| by
-    rw [Units.val_mul, val_res, val_res, val_res]
-    rw [resG_ofFrames_g, resG_ofFrames_g, resG_ofFrames_g]
-    exact ((he i).repr_change (he j) _ _ _).symm }
-
-def toFramesLinear (he : ∀ i, IsFrame (e i)) (V : X.Opens) :
-    Γ(F, V) →ₗ[Γ(X, V)] Γ(toMod (ofFrames he), V) where
-  toFun s := mkSec (L := ofFrames he) (fun i => (he i).repr (inf_le_right : V ⊓ U i ≤ U i)
-      (F.presheaf.map (homOfLE inf_le_left).op s)) fun i j => by
-    rw [resG_ofFrames_g, IsFrame.resG_repr, IsFrame.resG_repr, QCoh.res_res, QCoh.res_res]
-    exact (he i).repr_change (he j) _ _ _
-  map_add' s t := sec_ext fun i => by
-    simp only [coord_add, map_add (f := _)]
-    rfl
-  map_smul' a s := sec_ext fun i => by
-    simp only [coord_smul, map_smul_resG, map_smul, smul_eq_mul, RingHom.id_apply]
-    rfl
-
-theorem coord_toFramesLinear (he : ∀ i, IsFrame (e i)) (V : X.Opens) (s : Γ(F, V)) (i : ι) :
-    coord (toFramesLinear he V s) i = (he i).repr (inf_le_right : V ⊓ U i ≤ U i)
-      (F.presheaf.map (homOfLE inf_le_left).op s) := rfl
-
-theorem bijective_toFramesLinear (he : ∀ i, IsFrame (e i)) (hU : ⨆ i, U i = ⊤) (V : X.Opens) :
-    Function.Bijective (toFramesLinear he V) := by
-  constructor
-  · intro s t h
-    refine mod_ext_of_cover (fun i => V ⊓ U i) (fun _ => inf_le_left) (le_iSup_inf hU V)
-      fun i => ((he i).repr inf_le_right).injective ?_
-    exact congrArg (fun s => coord s i) h
-  · intro t
-    obtain ⟨s, hs⟩ := exists_mod_of_cover (F := F) (fun i => V ⊓ U i) (fun _ => inf_le_left)
-      (le_iSup_inf hU V)
-      (fun i => coord t i •
-        F.presheaf.map (homOfLE inf_le_right).op (e i)) fun i j => by
-        have hij : V ⊓ U i ⊓ (V ⊓ U j) ≤ U i ⊓ U j := inf_le_inf inf_le_right inf_le_right
-        have h₁ := coord_rel t i j inf_le_left inf_le_right hij
-        rw [resG_ofFrames_g] at h₁
-        rw [map_smul_resG, map_smul_resG, QCoh.res_res, QCoh.res_res]
-        rw [h₁]
-        rw [mul_comm, mul_smul, IsFrame.repr_smul]
-    refine ⟨s, sec_ext fun i => ?_⟩
-    rw [coord_toFramesLinear, hs]
-    exact (he i).repr_eq _ rfl
-
-def ofFramesIso (he : ∀ i, IsFrame (e i)) (hU : ⨆ i, U i = ⊤) : F ≅ toMod (ofFrames he) :=
-  isoOfLinear (fun V => LinearEquiv.ofBijective _ (bijective_toFramesLinear he hU V))
-    fun {V W} h s => sec_ext fun i => by
-      rw [coord_map, LinearEquiv.ofBijective_apply, LinearEquiv.ofBijective_apply,
-        coord_toFramesLinear, coord_toFramesLinear, IsFrame.resG_repr, QCoh.res_res,
-        QCoh.res_res]
-
-theorem exists_toMod_iso (F : X.Modules)
-    (h : ∀ x : X, ∃ (U : X.Opens) (_ : x ∈ U) (e : Γ(F, U)), IsFrame e) :
-    ∃ L : LB X, L.IsLB ∧ Nonempty (toMod L ≅ F) := by
-  choose U hx e he using h
-  have hU : ⨆ x, U x = ⊤ := eq_top_iff.2 fun x _ => Opens.mem_iSup.2 ⟨x, hx x⟩
-  exact ⟨ofFrames he, ofFrames_isLB he hU, ⟨(ofFramesIso he hU).symm⟩⟩
 
 end OfFrames
 
@@ -417,18 +331,6 @@ theorem exists_isGen_iff_isFrame (hL : L.IsLB) :
   obtain ⟨t, ht, -⟩ := (isFrame_ofSec_iff hL σ).1 he
   exact ⟨t, ht⟩
 
-theorem exists_isGen_iff_nonempty_iso (hL : L.IsLB) :
-    (∃ t : LB.Gen L, t.IsGen) ↔ Nonempty (unitMod X ≅ toMod L) := by
-  refine ⟨fun ⟨t, ht⟩ => ⟨unitIso hL t ht⟩, fun ⟨φ⟩ => (exists_isGen_iff_isFrame hL).2 ?_⟩
-  have h : IsFrame (F := unitMod X) (U := ⊤) (1 : Γ(X, ⊤)) := fun V h => by
-    have : (fun a : Γ(X, V) => a • (unitMod X).presheaf.map (homOfLE h).op (1 : Γ(X, ⊤))) =
-        fun a : Γ(X, V) => a := funext fun a => by
-      change a * resG X h 1 = a
-      rw [map_one, mul_one]
-    rw [this]
-    exact Function.bijective_id
-  exact ⟨_, h.app φ⟩
-
 end Hom
 
 section Affine
@@ -445,22 +347,6 @@ theorem isFrame_iff_bijective [F.IsQuasicoherent] (hU : IsAffineOpen U) (e : Γ(
   refine ⟨fun h => ?_, isFrame_of_bijective hU⟩
   have := h U le_rfl
   rwa [QCoh.res_self] at this
-
-theorem exists_isFrame_of_invertible [F.IsQuasicoherent] (hU : IsAffineOpen U)
-    [Module.Invertible Γ(X, U) Γ(F, U)] {x : X} (hx : x ∈ U) :
-    ∃ (V : X.Opens) (_ : x ∈ V) (e : Γ(F, V)), IsFrame e := by
-  obtain ⟨s, hs⟩ := exists_sum_dual_apply_eq_one Γ(X, U) Γ(F, U)
-  have hspan : Ideal.span {a : Γ(X, U) | ∃ (ξ : Module.Dual Γ(X, U) Γ(F, U)) (m : Γ(F, U)),
-      ξ m = a} = ⊤ := by
-    rw [Ideal.eq_top_iff_one, ← hs]
-    exact sum_mem fun p _ => Ideal.subset_span ⟨p.1, p.2, rfl⟩
-  obtain ⟨⟨_, ξ, m, rfl⟩, hxV⟩ := Opens.mem_iSup.1 (hU.self_le_iSup_basicOpen_iff.2 hspan hx)
-  have := hU.isLocalization_basicOpen (ξ m)
-  have := QCoh.isLocalizedModule_resBasicOpen F hU (ξ m)
-  exact ⟨X.basicOpen (ξ m), hxV, QCoh.resBasicOpen F (ξ m) m,
-    isFrame_of_bijective (hU.basicOpen _) (bijective_toSpanSingleton_of_isBaseChange ξ m _
-      (IsLocalizedModule.isBaseChange (.powers (ξ m)) _ _)
-      (IsLocalization.Away.algebraMap_isUnit (ξ m)))⟩
 
 theorem invertible_sections (hL : L.IsLB) (hU : IsAffineOpen U) :
     Module.Invertible Γ(X, U) Γ(toMod L, U) := by
@@ -512,11 +398,6 @@ theorem exists_isGen_of_subsingleton_pic_top [IsAffine X] [Subsingleton (CommRin
     (hL : L.IsLB) : ∃ t : LB.Gen L, t.IsGen :=
   (exists_isGen_iff_isFrame hL).2 (exists_isFrame_of_subsingleton_pic hL (isAffineOpen_top X))
 
-theorem exists_toMod_iso_of_invertible [IsAffine X] (F : X.Modules) [F.IsQuasicoherent]
-    [Module.Invertible Γ(X, ⊤) Γ(F, ⊤)] : ∃ L : LB X, L.IsLB ∧ Nonempty (toMod L ≅ F) :=
-  exists_toMod_iso F fun x =>
-    exists_isFrame_of_invertible (isAffineOpen_top X) (Opens.mem_top x)
-
 end Affine
 
 section Spectrum
@@ -531,18 +412,6 @@ def globalRingEquiv : R ≃+* Γ(Sp R, ⊤) :=
 instance secModuleSp : Module R (LB.Sec L) :=
   Module.compHom (LB.Sec L) (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
 
-theorem spec_smul_top {S : CommRingCat.{0}} (F : (Spec S).Modules) (r : S) (s : Γ(F, ⊤)) :
-    r • s = (show Γ(Spec S, ⊤) from (Scheme.ΓSpecIso S).inv r) • s :=
-  congrArg (fun a : Γ(Spec S, ⊤) => a • s) (resG_self (X := Spec S) le_top _)
-
-
-variable (L) in
-def globalEquivSp :
-    (modulesSpecToSheaf (R := CommRingCat.of R).obj (toMod L)).presheaf.obj (op ⊤) ≃ₗ[R]
-      LB.Sec L where
-  __ := (globalEquiv L).toAddEquiv
-  map_smul' r s := (congrArg (globalEquiv L)
-    (spec_smul_top (S := CommRingCat.of R) (toMod L) r s)).trans ((globalEquiv L).map_smul _ s)
 
 theorem invertible_sec (hL : L.IsLB) : Module.Invertible R (LB.Sec L) :=
   have := invertible_sec_top hL
@@ -562,46 +431,12 @@ theorem exists_isGen_iff_free (hL : L.IsLB) :
   simp only [free_iff_exists_bijective_smul, ← exists_genSec_eq_iff_bijective_sp hL]
   exact ⟨fun ⟨t, ht⟩ => ⟨_, t, ht, rfl⟩, fun ⟨_, t, ht, _⟩ => ⟨t, ht⟩⟩
 
-def tildeSecIso (hL : L.IsLB) :
-    tilde (R := CommRingCat.of R) (ModuleCat.of R (LB.Sec L)) ≅ toMod L :=
-  haveI := isQuasicoherent_toMod hL
-  (tilde.functor (CommRingCat.of R)).mapIso (globalEquivSp L).symm.toModuleIso ≪≫
-    @asIso _ _ _ _ (Scheme.Modules.fromTildeΓ (R := CommRingCat.of R) (toMod L))
-      (Scheme.Modules.isIso_fromTildeΓ_of_isQuasicoherent (R := CommRingCat.of R) (toMod L))
-
-theorem exists_toMod_iso_tilde {S : CommRingCat.{0}} (N : ModuleCat.{0} S)
-    [Module.Invertible S N] : ∃ L : LB (Spec S), L.IsLB ∧ Nonempty (toMod L ≅ tilde N) := by
-  have : Module.Invertible S Γ(tilde N, ⊤) := .congr (tilde.isoTop N).toLinearEquiv
-  have : Module.Invertible Γ(Spec S, ⊤) Γ(tilde N, ⊤) :=
-    invertible_of_ringEquiv (Scheme.ΓSpecIso S).symm.commRingCatIsoToRingEquiv
-      (spec_smul_top (tilde N))
-  exact exists_toMod_iso_of_invertible (tilde N)
-
-
-variable (R) in
-theorem exists_sec_linearEquiv (N : Type*) [AddCommGroup N] [Module R N] [Module.Invertible R N] :
-    ∃ L : LB (Sp R), L.IsLB ∧ Nonempty (LB.Sec L ≃ₗ[R] N) := by
-  obtain ⟨L, hL, ⟨φ⟩⟩ := exists_toMod_iso_tilde (S := CommRingCat.of R)
-    (ModuleCat.of R (CommRing.Pic.mk R N))
-  have ψ := (tilde.fullyFaithfulFunctor (R := CommRingCat.of R)).preimageIso
-    (X := ModuleCat.of R (LB.Sec L)) (Y := ModuleCat.of R (CommRing.Pic.mk R N))
-    (tildeSecIso hL ≪≫ φ)
-  exact ⟨L, hL, ⟨ψ.toLinearEquiv ≪≫ₗ CommRing.Pic.mk.linearEquiv R N⟩⟩
 
 theorem exists_isGen_of_subsingleton_pic [Subsingleton (CommRing.Pic R)] (hL : L.IsLB) :
     ∃ t : LB.Gen L, t.IsGen :=
   haveI := invertible_sec hL
   (exists_isGen_iff_free hL).2 inferInstance
 
-
-variable (R) in
-theorem subsingleton_pic_iff : Subsingleton (CommRing.Pic R) ↔
-    ∀ L : LB (Sp R), L.IsLB → ∃ t : LB.Gen L, t.IsGen := by
-  refine ⟨fun _ _ => exists_isGen_of_subsingleton_pic, fun h =>
-    CommRing.Pic.subsingleton_iff.2 fun N _ _ _ => ?_⟩
-  obtain ⟨L, hL, ⟨ψ⟩⟩ := exists_sec_linearEquiv R N
-  haveI := (exists_isGen_iff_free hL).1 (h L hL)
-  exact .of_equiv ψ
 
 theorem exists_isGen_of_isLocalRing [IsLocalRing R] (hL : L.IsLB) : ∃ t : LB.Gen L, t.IsGen :=
   exists_isGen_of_subsingleton_pic hL

@@ -120,7 +120,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.orthCt :
   obtain ⟨-, -, -, hlv, -, -, -, -, -, -, -, hcpt⟩ := blkLaws (K := K)
   haveI : CompactSpace (KG K (2 + 2)) := isCompact_iff_compactSpace.mp (hcpt (2 + 2)).1
   haveI : LocallyCompactSpace (KG K (2 + 2)) := by
-    set_option synthInstance.maxHeartbeats 400000 in
       infer_instance
   let μ₂ : Measure (G1 K 2) := Measure.haar
   let κ : Measure (KG K (2 + 2)) := Measure.haar
@@ -133,10 +132,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.orthCt :
   haveI : BorelSpace (G1 K 2 × ℝ × KG K (2 + 2)) := Prod.borelSpace
   haveI : BorelSpace (G1 K 2 × G1 K 2 × ℝ × KG K (2 + 2)) := Prod.borelSpace
   haveI : SFinite μ₂ := by
-    set_option synthInstance.maxHeartbeats 400000 in
       infer_instance
   haveI : SFinite κ := by
-    set_option synthInstance.maxHeartbeats 400000 in
       infer_instance
   haveI : SFinite (fd μ₂) := inferInstance
   haveI : SFinite ((unipMeasure K (2 + 2) 2).restrict (unipFundamentalDomain K (2 + 2) 2)) := inferInstance
@@ -203,7 +200,6 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg
 open scoped ENNReal NumberField.AdeleRing InnerProductSpace ComplexConjugate
 open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial
 
-set_option synthInstance.maxHeartbeats 400000 in
 private theorem intD {K : Type} [Field K] [NumberField K] {n : ℕ} (D : TypeDat K n) {E : Type} [NormedAddCommGroup E]
     {h : G1 K n → E} (hh : Continuous h) : Integrable h D.ν := by
   have := D.prob
@@ -235,7 +231,6 @@ private theorem fixClosed {K : Type} [Field K] [NumberField K] {n : ℕ} (D : Ty
   let T : L2 μ →L[ℂ] L2 μ := T₀.mkContinuous _ hb
   refine ⟨LinearMap.eqLocus (T : L2 μ →ₗ[ℂ] L2 μ) LinearMap.id, isClosed_eq T.continuous continuous_id, fun w => Iff.rfl⟩
 
-set_option synthInstance.maxHeartbeats 400000 in
 private theorem fixRep {K : Type} [Field K] [NumberField K] {n : ℕ} (D : TypeDat K n) (μ : Measure (G1 K n))
     [μ.IsHaarMeasure] {v : L2 μ} {Φ : G1 K n → ℂ} (h : IsContRep μ v Φ) {C : ℝ} (hC : ∀ g, ‖Φ g‖ ≤ C)
     (hfix : D.Fix Φ) : D.FixedByTypeProjector μ v := by

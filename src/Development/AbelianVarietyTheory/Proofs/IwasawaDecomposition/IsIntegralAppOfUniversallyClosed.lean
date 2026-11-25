@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModificationLineBundleGlobalSectionsDimPullEq
 public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
 public import Mathlib.AlgebraicGeometry.Properties
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
@@ -241,29 +242,12 @@ theorem isIntegral_of_isIso_comp {A B C D : CommRingCat.{0}} (k : A ⟶ B) (f : 
 
 theorem isIntegral_app_of_universallyClosed {Z₁ Z₂ : Scheme.{0}} (ρ : Z₁ ⟶ Z₂) [UniversallyClosed ρ]
     (U : Z₂.Opens) (hU : IsAffineOpen U) : (ρ.app U).hom.IsIntegral := by
-  have : IsAffine U.toScheme := hU
-  have h := isIntegral_appTop_of_universallyClosed (ρ ∣_ U)
-  rw [morphismRestrict_appTop] at h
-  have e : U.ι ''ᵁ ⊤ = U := by simp
-  rw [ρ.app_eq e, Category.assoc, Category.assoc, ← Functor.map_comp] at h
-  simp only [eqToHom_op, eqToHom_map, eqToHom_trans] at h
-  have hi : ∀ {A B : CommRingCat.{0}} (p : A = B), IsIso (eqToHom p) := fun p => by
-    subst p; rw [eqToHom_refl]; infer_instance
-  refine @isIntegral_of_isIso_comp _ _ _ _ _ _ _ ?_ ?_ h
-  · exact hi _
-  · exact hi _
+  first | exact _root_.GlobalTheory.ModifSections.isIntegral_app | exact @_root_.GlobalTheory.ModifSections.isIntegral_app | apply _root_.GlobalTheory.ModifSections.isIntegral_app <;> assumption
 
 theorem exists_app_eq_of_isIntegralElem {T Z : Scheme.{0}} [GlobalTheory.IsNormalScheme Z] [IsLocallyNoetherian Z]
     (j : T ⟶ Z) [IsOpenImmersion j] (hj : Dense (Set.range j)) (U : Z.Opens)
     (s : Γ(T, j ⁻¹ᵁ U)) (hs : (j.app U).hom.IsIntegralElem s) : ∃ h : Γ(Z, U), j.app U h = s :=
   _root_.GlobalTheory.glue_of_dense_openImmersion j hj U s fun u hu => _root_.GlobalTheory.exists_section_of_isIntegralElem_of_isOpenImmersion j hj U s hs u hu
-
-section Models
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H} {l : Level H}
-  {Xo : Moduli D l} {c : Coeff l}
-
-end Models
 
 end GlobalTheory.GenPush
 end -- clump:auto

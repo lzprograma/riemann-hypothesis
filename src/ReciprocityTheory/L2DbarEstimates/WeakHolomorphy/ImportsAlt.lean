@@ -14,37 +14,22 @@ open scoped ENNReal
 
 theorem ident : IdentStatement := by
   intro n Ω F a hΩ hc hF ha h0 x hx
-  set L : ℂ → V n := fun t => a + t • (x - a) with hL
+  let L : ℂ → V n := fun t => a + t • (x - a)
+  let U := L ⁻¹' Ω
   have hLd : Differentiable ℂ L := (differentiable_const a).add (differentiable_id.smul_const (x - a))
-  have hLc : Continuous L := hLd.continuous
-  set U : Set ℂ := L ⁻¹' Ω with hU
-  have hUo : IsOpen U := hΩ.preimage hLc
-  have hUconv : Convex ℝ U := by
-    intro t1 ht1 t2 ht2 s1 s2 hs1 hs2 hs
-    show L (s1 • t1 + s2 • t2) ∈ Ω
-    have key : L (s1 • t1 + s2 • t2) = s1 • L t1 + s2 • L t2 := by
-      have e : s1 • L t1 + s2 • L t2 = (s1 + s2) • a + (s1 • t1 + s2 • t2) • (x - a) := by
-        simp only [hL, smul_add, add_smul, smul_assoc]
-        abel
-      rw [e, hs, one_smul]
-    rw [key]
-    exact hc ht1 ht2 hs1 hs2 hs
-  have hG : DifferentiableOn ℂ (F ∘ L) U := hF.comp hLd.differentiableOn (fun t ht => ht)
-  have hA : AnalyticOnNhd ℂ (F ∘ L) U := hG.analyticOnNhd hUo
-  have h0U : (0 : ℂ) ∈ U := by
-    show L 0 ∈ Ω
-    simpa [hL] using ha
-  have h1U : (1 : ℂ) ∈ U := by
-    show L 1 ∈ Ω
-    simpa [hL] using hx
-  have hL0 : L 0 = a := by simp [hL]
-  have hev : F ∘ L =ᶠ[𝓝 0] 0 := by
-    have ht : Filter.Tendsto L (𝓝 0) (𝓝 a) := by
-      rw [← hL0]
-      exact hLc.continuousAt.tendsto
-    exact ht.eventually h0
-  have hEq := hA.eqOn_zero_of_preconnected_of_eventuallyEq_zero hUconv.isPreconnected h0U hev
-  have h1 := hEq h1U
-  simpa [hL] using h1
+  suffices h : EqOn (F ∘ L) 0 U by
+    simpa [L] using h (show (1 : ℂ) ∈ U by simpa [U, L] using hx)
+  refine ((hF.comp hLd.differentiableOn (show MapsTo L U Ω from fun _ ht => ht)).analyticOnNhd
+    (hΩ.preimage hLd.continuous)).eqOn_zero_of_preconnected_of_eventuallyEq_zero ?_
+      (show (0 : ℂ) ∈ U by simpa [U, L] using ha) ?_
+  · suffices h : Convex ℝ U from h.isPreconnected
+    intro t ht u hu s r hs hr hsr
+    change L (s • t + r • u) ∈ Ω
+    rw [show L (s • t + r • u) = s • L t + r • L u by
+      calc
+        _ = (s + r) • a + (s • t + r • u) • (x - a) := by simp [L, hsr]
+        _ = _ := by simp only [L, smul_add, add_smul, smul_assoc]; abel]
+    exact hc ht hu hs hr hsr
+  · exact (show Tendsto L (𝓝 0) (𝓝 a) by simpa [L] using hLd.continuous.tendsto 0).eventually h0
 
 end ReciprocityTheory.L2DbarEstimates.C

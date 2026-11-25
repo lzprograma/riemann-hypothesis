@@ -10,15 +10,11 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
 open MeasureTheory Matrix Filter Topology
 open scoped InnerProductSpace
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.SG.Pf.admitted
 
 open Formalism.MainNotions.S Formalism.REAL Formalism.MainNotions.BridgeCPX
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem casScalar_of (h1 : CalculusOnSmoothVectors) (h2 : CasimirProperties) (h3 : SchurSymmetricDense) : CasScalarStatement := by
   intro n ε H _ _ _ σ hσ hirr w hw

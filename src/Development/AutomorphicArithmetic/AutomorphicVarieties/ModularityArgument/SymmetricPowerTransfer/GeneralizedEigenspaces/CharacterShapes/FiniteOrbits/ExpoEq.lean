@@ -47,8 +47,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private theorem det_lt {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     {n : ℕ} (t : Fin n → kˣ) (i : Fin n) :
     Matrix.GeneralLinearGroup.det (leviTorus k (Fin n) t i) = t i := congrFun ((leviTorus k (Fin n)).symm_apply_apply t) i
@@ -61,11 +59,6 @@ private theorem abs_one_eq {k : Type} [Field k] [ValuativeRel k] [TopologicalSpa
   apply eq_inv_of_mul_eq_one_left
   rw [← absPow_add, show (1 : ℂ) + -1 = 0 by ring, h0]
 
-private theorem abs_zero_eq {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] :
-    absPow k 0 = 1 := by
-  ext x
-  simp
-
 theorem UpperTheory.V.Z.Sym.So.expoEq :
     UpperTheory.V.Z.Sym.So.ExpoEq := by
   intro k _ _ _ _ a
@@ -75,7 +68,7 @@ theorem UpperTheory.V.Z.Sym.So.expoEq :
     rfl
   have hZ : ∀ x : kˣ, absPow k 0 x = 1 := by
     intro x
-    rw [abs_zero_eq]
+    rw [GlobalTheory.SmGL.absPow_zero]
     rfl
   refine ⟨?_, ?_, ?_⟩
   · intro d

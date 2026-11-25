@@ -67,25 +67,11 @@ theorem pairV' {a a' : ℕ} {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep �
     IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
   (Check.isPair_of_isTriple h).2
 
-theorem two_le_rank {a a' : ℕ} {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
-    2 ≤ a' ∧ a' < a := by
-  have h1 := h.geo.aBig
-  exact ⟨by omega, h.geo.lt⟩
-
 theorem conj_conj (h : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
   exact τ.injective (by rw [h.2.2.2, h.2.2.2, star_star])
 
 end General
-
-section Grid
-
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil
-  GlobalTheory.StdFrames Formalism.L2.DIV GlobalTheory.FunObj
-
-variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc}
-
-end Grid
 
 end GlobalTheory.ThK.Inhab
 

@@ -99,17 +99,17 @@ theorem blk_hAt (A : LocAt F E n G) (tE : Tau → E →+* LL) (pos : (Σ v : Fin
   apply Units.ext
   ext a b
   by_cases hs : Even s.val
-  · simp only [hs, if_true]
+  · simp only [hs, ite_true]
     show embLL (tPos σ tE pos v s _) = emb (pos ⟨v, s⟩) _
-    rw [tPos_apply, if_pos hs, htE]
+    rw [tPos_apply, ite_eq_left hs, htE]
     rfl
-  · simp only [hs, if_false]
+  · simp only [hs, ite_false]
     have hinv : ((A.B⁻¹ * γ * A.B)⁻¹ : GL (Fin n) E).1 = cT (σ : E →+* E) (A.B⁻¹ * γ * A.B).1 := by
       rw [Matrix.coe_units_inv]
       exact Matrix.inv_eq_left_inv hU
     show embLL (tPos σ tE pos v s _) =
       ((reG G.P A.rk (bc (emb (pos ⟨v, s⟩)) (A.B⁻¹ * γ * A.B)))⁻¹ : GL (Fin (G.P.m + 1)) ℂ).1 b a
-    rw [tPos_apply, if_neg hs, htE, ← map_inv, ← map_inv]
+    rw [tPos_apply, ite_eq_right hs, htE, ← map_inv, ← map_inv]
     show _ = emb (pos ⟨v, s⟩) (((A.B⁻¹ * γ * A.B)⁻¹ : GL (Fin n) E).1 _ _)
     rw [hinv]
     rfl

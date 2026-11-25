@@ -3,49 +3,6 @@ module
 public import Mathlib.AlgebraicGeometry.Group.Affine
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
 public import Mathlib.Algebra.Category.Ring.Epi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -111,33 +68,25 @@ lemma specHom_counit {T : Type} [CommRing T] [Algebra R T] :
   exact Spec.map_comp (CommRingCat.ofHom (Bialgebra.counitAlgHom R Λ).toRingHom)
     (CommRingCat.ofHom (algebraMap R T))
 
-variable {A : Over (Spec (CommRingCat.of R))} [GrpObj A]
-  (i : specOver R Λ ⟶ A) (v : specOver R B ⟶ A) (ρ : B →ₐ[R] B ⊗[R] Λ)
-  (hρ : specHom ρ ≫ v = (specHom includeRight ≫ i) * (specHom includeLeft ≫ v))
-
-include hρ
-
-lemma specHom_comp_coaction {T : Type} [CommRing T] [Algebra R T] (φ : B ⊗[R] Λ →ₐ[R] T) :
-    specHom (φ.comp ρ) ≫ v =
-      (specHom (φ.comp includeRight) ≫ i) * (specHom (φ.comp includeLeft) ≫ v) := by
-  rw [specHom_comp, specHom_comp, specHom_comp, Category.assoc, hρ, comp_mul, Category.assoc,
-    Category.assoc]
-
-lemma coaction_counit [IsMonHom i] [Mono v] (b : B) :
+lemma coaction_counit_of_eq (ρ : B →ₐ[R] B ⊗[R] Λ) (b : B)
+    (h : (Algebra.TensorProduct.lift (AlgHom.id R B)
+      ((Algebra.ofId R B).comp (Bialgebra.counitAlgHom R Λ)) fun _ _ ↦ .all _ _) (ρ b) = b) :
     TensorProduct.rid R B ((Coalgebra.counit (R := R) (A := Λ)).lTensor B (ρ b)) = b := by
-  let φ : B ⊗[R] Λ →ₐ[R] B := Algebra.TensorProduct.lift (AlgHom.id R B)
-    ((Algebra.ofId R B).comp (Bialgebra.counitAlgHom R Λ)) fun _ _ ↦ .all _ _
-  have h := specHom_comp_coaction i v ρ hρ φ
-  rw [lift_comp_includeRight', lift_comp_includeLeft, specHom_counit, Category.assoc,
-    IsMonHom.one_hom, ← Hom.one_def, _root_.one_mul, cancel_mono] at h
-  have h1 : φ (ρ b) = b := congr($(specHom_injective h) b)
-  refine Eq.trans ?_ h1
+  refine Eq.trans ?_ h
   generalize ρ b = z
   induction z with
   | add x y hx hy => simp only [map_add (f := _), hx, hy]
-  | tmul x y => simp [φ, Algebra.smul_def, _root_.mul_comm]
+  | tmul x y => simp [Algebra.smul_def, _root_.mul_comm]
 
-lemma coaction_assoc [IsCommMonObj A] [IsMonHom i] [Mono v] (b : B) :
+lemma coaction_assoc_of_eq (ρ : B →ₐ[R] B ⊗[R] Λ) (b : B)
+    (h : (Algebra.TensorProduct.lift (includeLeft : B →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ))
+        ((Algebra.TensorProduct.lift (includeRight.comp includeLeft : Λ →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ))
+          (includeRight.comp includeRight) fun _ _ ↦ .all _ _).comp
+          (Bialgebra.comulAlgHom R Λ)) fun _ _ ↦ .all _ _) (ρ b) =
+      (Algebra.TensorProduct.lift
+        ((Algebra.TensorProduct.lift (includeLeft : B →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ))
+          (includeRight.comp includeLeft) fun _ _ ↦ .all _ _).comp ρ)
+        (includeRight.comp includeRight) fun _ _ ↦ .all _ _) (ρ b)) :
     TensorProduct.assoc R B Λ Λ (ρ.toLinearMap.rTensor Λ (ρ b)) =
       (Coalgebra.comul (R := R) (A := Λ)).lTensor B (ρ b) := by
   let l : B →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ) := includeLeft
@@ -149,13 +98,6 @@ lemma coaction_assoc [IsCommMonObj A] [IsMonHom i] [Mono v] (b : B) :
   let φ₂ : B ⊗[R] Λ →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ) :=
     Algebra.TensorProduct.lift l ((Algebra.TensorProduct.lift r₁ r₂ fun _ _ ↦ .all _ _).comp
       (Bialgebra.comulAlgHom R Λ)) fun _ _ ↦ .all _ _
-  have h₀ := specHom_comp_coaction i v ρ hρ φ₀
-  have h₁ := specHom_comp_coaction i v ρ hρ φ₁
-  have h₂ := specHom_comp_coaction i v ρ hρ φ₂
-  rw [lift_comp_includeRight', lift_comp_includeLeft] at h₀ h₁ h₂
-  rw [h₀, ← _root_.mul_assoc, _root_.mul_comm (specHom r₂ ≫ i), ← MonObj.mul_comp] at h₁
-  rw [specHom_lift_comul, ← h₁, cancel_mono] at h₂
-  have h : φ₂ (ρ b) = φ₁ (ρ b) := congr($(specHom_injective h₂) b)
   have e₁ (z : B ⊗[R] Λ) :
       TensorProduct.assoc R B Λ Λ (ρ.toLinearMap.rTensor Λ z) = φ₁ z := by
     induction z with
@@ -179,7 +121,11 @@ lemma coaction_assoc [IsCommMonObj A] [IsMonHom i] [Mono v] (b : B) :
       | tmul x y => simp [l, r₁, r₂]
   rw [e₁, e₂, h]
 
-lemma coaction_free [Mono i] [Module.Finite R Λ] :
+lemma surjective_productMap_of_cancel [Module.Finite R Λ] (ρ : B →ₐ[R] B ⊗[R] Λ)
+    (hcancel : ∀ {T : Type} [CommRing T] [Algebra R T] (φ' ψ' : B ⊗[R] Λ →ₐ[R] T),
+      φ'.comp includeLeft = ψ'.comp (includeLeft : B →ₐ[R] B ⊗[R] Λ) →
+      φ'.comp ρ = ψ'.comp ρ →
+      φ'.comp (includeRight : Λ →ₐ[R] B ⊗[R] Λ) = ψ'.comp includeRight) :
     Function.Surjective (productMap (includeLeft : B →ₐ[R] B ⊗[R] Λ) ρ) := by
   let m := productMap (includeLeft : B →ₐ[R] B ⊗[R] Λ) ρ
   have : Epi (CommRingCat.ofHom m.toRingHom) := by
@@ -201,10 +147,7 @@ lemma coaction_free [Mono i] [Module.Finite R Λ] :
       have := hm (1 ⊗ₜ b)
       rw [productMap_right_apply] at this
       exact this
-    have h₃ := specHom_comp_coaction i v ρ hρ φ'
-    rw [h₂, h₁, specHom_comp_coaction i v ρ hρ ψ', mul_left_inj, cancel_mono] at h₃
-    have h₄ := specHom_injective h₃
-    have : φ' = ψ' := Algebra.TensorProduct.ext h₁ h₄.symm
+    have : φ' = ψ' := Algebra.TensorProduct.ext h₁ (hcancel φ' ψ' h₁ h₂)
     ext1
     exact congr(($this).toRingHom)
   refine RingHom.surjective_of_epi_of_finite (CommRingCat.ofHom m.toRingHom) ?_
@@ -216,6 +159,54 @@ lemma coaction_free [Mono i] [Module.Finite R Λ] :
     simp [m]
   rw [this, RingHom.finite_algebraMap]
   infer_instance
+
+variable {A : Over (Spec (CommRingCat.of R))} [GrpObj A]
+  (i : specOver R Λ ⟶ A) (v : specOver R B ⟶ A) (ρ : B →ₐ[R] B ⊗[R] Λ)
+  (hρ : specHom ρ ≫ v = (specHom includeRight ≫ i) * (specHom includeLeft ≫ v))
+
+include hρ
+
+lemma specHom_comp_coaction {T : Type} [CommRing T] [Algebra R T] (φ : B ⊗[R] Λ →ₐ[R] T) :
+    specHom (φ.comp ρ) ≫ v =
+      (specHom (φ.comp includeRight) ≫ i) * (specHom (φ.comp includeLeft) ≫ v) := by
+  rw [specHom_comp, specHom_comp, specHom_comp, Category.assoc, hρ, comp_mul, Category.assoc,
+    Category.assoc]
+
+lemma coaction_counit [IsMonHom i] [Mono v] (b : B) :
+    TensorProduct.rid R B ((Coalgebra.counit (R := R) (A := Λ)).lTensor B (ρ b)) = b := by
+  let φ : B ⊗[R] Λ →ₐ[R] B := Algebra.TensorProduct.lift (AlgHom.id R B)
+    ((Algebra.ofId R B).comp (Bialgebra.counitAlgHom R Λ)) fun _ _ ↦ .all _ _
+  have h := specHom_comp_coaction i v ρ hρ φ
+  rw [lift_comp_includeRight', lift_comp_includeLeft, specHom_counit, Category.assoc,
+    IsMonHom.one_hom, ← Hom.one_def, _root_.one_mul, cancel_mono] at h
+  exact coaction_counit_of_eq ρ b congr($(specHom_injective h) b)
+
+lemma coaction_assoc [IsCommMonObj A] [IsMonHom i] [Mono v] (b : B) :
+    TensorProduct.assoc R B Λ Λ (ρ.toLinearMap.rTensor Λ (ρ b)) =
+      (Coalgebra.comul (R := R) (A := Λ)).lTensor B (ρ b) := by
+  let l : B →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ) := includeLeft
+  let r₁ : Λ →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ) := includeRight.comp includeLeft
+  let r₂ : Λ →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ) := includeRight.comp includeRight
+  let φ₀ : B ⊗[R] Λ →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ) := Algebra.TensorProduct.lift l r₁ fun _ _ ↦ .all _ _
+  let φ₁ : B ⊗[R] Λ →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ) :=
+    Algebra.TensorProduct.lift (φ₀.comp ρ) r₂ fun _ _ ↦ .all _ _
+  let φ₂ : B ⊗[R] Λ →ₐ[R] B ⊗[R] (Λ ⊗[R] Λ) :=
+    Algebra.TensorProduct.lift l ((Algebra.TensorProduct.lift r₁ r₂ fun _ _ ↦ .all _ _).comp
+      (Bialgebra.comulAlgHom R Λ)) fun _ _ ↦ .all _ _
+  have h₀ := specHom_comp_coaction i v ρ hρ φ₀
+  have h₁ := specHom_comp_coaction i v ρ hρ φ₁
+  have h₂ := specHom_comp_coaction i v ρ hρ φ₂
+  rw [lift_comp_includeRight', lift_comp_includeLeft] at h₀ h₁ h₂
+  rw [h₀, ← _root_.mul_assoc, _root_.mul_comm (specHom r₂ ≫ i), ← MonObj.mul_comp] at h₁
+  rw [specHom_lift_comul, ← h₁, cancel_mono] at h₂
+  exact coaction_assoc_of_eq ρ b congr($(specHom_injective h₂) b)
+
+lemma coaction_free [Mono i] [Module.Finite R Λ] :
+    Function.Surjective (productMap (includeLeft : B →ₐ[R] B ⊗[R] Λ) ρ) :=
+  surjective_productMap_of_cancel ρ fun φ' ψ' h₁ h₂ ↦ by
+    have h₃ := specHom_comp_coaction i v ρ hρ φ'
+    rw [h₂, h₁, specHom_comp_coaction i v ρ hρ ψ', mul_left_inj, cancel_mono] at h₃
+    exact (specHom_injective h₃).symm
 
 
 omit hρ in

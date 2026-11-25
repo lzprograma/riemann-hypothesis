@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcBasic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.UnitaryThreeTestFunctionHeckeRelations
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -43,8 +44,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private theorem out_mul {G : Type} [Group G] (U : Subgroup G) (g : G) :
     ∃ i ∈ U, ((g : G ⧸ U)).out = g * i := by
   obtain ⟨h, hh⟩ := QuotientGroup.mk_out_eq_mul U g
@@ -52,20 +51,7 @@ private theorem out_mul {G : Type} [Group G] (U : Subgroup G) (g : G) :
 
 private theorem orb_iff {G : Type} [Group G] (U : Subgroup G) (a : G) (p : G ⧸ U) :
     p ∈ MulAction.orbit U (a : G ⧸ U) ↔ p.out ∈ DC U a := by
-  have key : ∀ u : U, u • (a : G ⧸ U) = (((u : G) * a : G) : G ⧸ U) := fun u => rfl
-  constructor
-  · rintro ⟨u, rfl⟩
-    obtain ⟨i, hi, h⟩ := out_mul U ((u : G) * a)
-    refine ⟨u, u.2, i, hi, ?_⟩
-    dsimp only
-    rw [key, h]
-  · rintro ⟨u, hu, u', hu', h⟩
-    refine ⟨⟨u, hu⟩, ?_⟩
-    dsimp only
-    rw [key, ← QuotientGroup.out_eq' p, h]
-    refine QuotientGroup.eq.mpr ?_
-    rw [inv_mul_cancel_left]
-    exact hu'
+  apply _root_.UpperTheory.V.Z.Sym.So.out_mem_orbit <;> assumption
 
 private theorem dcF_sum {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] (U : Subgroup G) (a : G)
     [Fintype (MulAction.orbit U (a : G ⧸ U))] (φ : G → V) (g : G) :

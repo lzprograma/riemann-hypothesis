@@ -20,8 +20,6 @@ namespace CuspidalSpectrum
 
 open AutomorphicForm Reduction RightCosetSpace UnitaryAdmissible
 
-attribute [local instance 100] LieRing.ofAssociativeRing
-
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
 local notation "Γ₁" => Reduction.rationalGLOne (K := K) (n := n)

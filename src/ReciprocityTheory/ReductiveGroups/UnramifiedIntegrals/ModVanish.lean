@@ -27,8 +27,7 @@ theorem fac_eq_zero_of_smul (t : ℕ × ℕ × ℕ) (τ : ℍ) (γ : SL(2, ℤ))
 private lemma exists_SL2_mul_eq_Tmat_of_det_eq {m : ℕ} (hm : 0 < m) (A B C D : ℤ) (hdet : A * D - B * C = m) :
     ∃ g : SL(2, ℤ), ∃ s ∈ Tm m, 0 < s.2.2 ∧ (g : Matrix (Fin 2) (Fin 2) ℤ) * !![A, B; C, D] = Tmat s := by
   have hAC : A ≠ 0 ∨ C ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h0 : (m : ℤ) = 0 := by rw [← hdet, hc.1, hc.2]; ring
     omega
   obtain ⟨G, hG⟩ : ∃ G : ℕ, G = Int.gcd A C := ⟨_, rfl⟩
@@ -55,8 +54,7 @@ private lemma exists_SL2_mul_eq_Tmat_of_det_eq {m : ℕ} (hm : 0 < m) (A B C D :
   have hdpos : 0 < d := by
     have h2 : 0 < (G : ℤ) * d := by rw [hGd]; exact_mod_cast hm
     have h3 : (0 : ℤ) < G := by exact_mod_cast hGpos
-    by_contra h4
-    push_neg at h4
+    by_contra! h4
     nlinarith
   obtain ⟨q, b, hdiv, hb0, hbd⟩ : ∃ q b : ℤ, d * q + b = x * B + y * D ∧ 0 ≤ b ∧ b < d :=
     ⟨(x * B + y * D) / d, (x * B + y * D) % d,

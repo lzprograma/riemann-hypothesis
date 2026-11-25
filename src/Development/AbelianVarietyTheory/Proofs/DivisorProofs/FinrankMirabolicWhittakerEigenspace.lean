@@ -247,7 +247,7 @@ theorem solve_rec (q : ℕ) (hq : 1 ≤ q) (k : ℕ) (W D : ℕ → ℕ)
   obtain ⟨p, rfl⟩ : ∃ p, q = p + 1 := ⟨q - 1, by omega⟩
   have hg : ∀ l, gam (p + 1) (l + 1) = p * (p + 1) ^ l := by
     intro l
-    simp only [gam, Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel, pow_succ, mul_add, mul_one]
+    simp only [gam, Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel, pow_succ, mul_add, mul_one]
     ring
   have key : ∀ m ≤ k + 1, ∑ a ∈ Finset.range m, W a = ∑ j ∈ Finset.range m, (p + 1) ^ (m - 1 - j) * D j := by
     intro m
@@ -345,8 +345,8 @@ theorem edgeSum_congr (Ed Ed' : Fin n → Fin n → Prop) [DecidableRel Ed] [Dec
   unfold edgeSum
   refine Fintype.sum_equiv σ _ _ fun i => Fintype.sum_equiv σ _ _ fun j => ?_
   rcases h i j with h | h | h
-  · rw [if_pos h.1, if_pos h.2.1, h.2.2]
-  · rw [if_neg h.1, if_neg h.2]
+  · rw [ite_eq_left h.1, ite_eq_left h.2.1, h.2.2]
+  · rw [ite_eq_right h.1, ite_eq_right h.2]
   · rw [h.1, h.2, ite_self, ite_self]
 
 omit [Fintype F] in
@@ -618,12 +618,12 @@ theorem dm_torus_le {a m : Fin n} (ham : a < m)
     · exact div_ne_zero hs ht
     · exact one_ne_zero
   obtain ⟨g, hg, hc⟩ := exists_diag (fun i : Fin n => if i < m then s / t else 1) hd
-  refine dm_conj_le π (hD _ g (fun i hi => if_neg (not_lt.2 hi)) hg) fun u hu => ?_
+  refine dm_conj_le π (hD _ g (fun i hi => ite_eq_right (not_lt.2 hi)) hg) fun u hu => ?_
   refine ⟨⟨mem_unip.2 ⟨fun i j h => ?_, fun i => ?_⟩, fun i j h h' => ?_⟩, ?_⟩
   · rw [hc, unip_lower hu.1 h, mul_zero, zero_mul]
   · rw [hc, unip_diag hu.1, mul_one, inv_mul_cancel₀ (hd i)]
   · rw [hc, hu.2 i j h h', mul_zero, zero_mul]
-  · rw [hc, if_pos ham, if_neg (lt_irrefl m)]
+  · rw [hc, ite_eq_left ham, ite_eq_right (lt_irrefl m)]
     congr 1
     · refine edgeSum_congr _ _ 1 fun i j => ?_
       simp only [Equiv.Perm.coe_one, id]

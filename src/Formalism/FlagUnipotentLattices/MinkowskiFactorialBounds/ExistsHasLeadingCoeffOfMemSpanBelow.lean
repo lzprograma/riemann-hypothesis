@@ -2,57 +2,12 @@ module
 
 public import Formalism.FlagUnipotentLattices.MemOfOrthogonalAnisotropic
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -224,8 +179,7 @@ lemma level_exists (F : FlagD H r) {x : V} (hx : x ∈ F.X) (h0 : x ≠ 0) :
 
 lemma level_lt_of_mem (F : FlagD H r) {x : V} {a : Fin r} {al : K} (h : F.HasLevel x a al) {n : ℕ}
     (hx : x ∈ F.Xa n) : a.val < n := by
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   exact (level_notMem F) h ((Xa_mono F) hlt hx)
 
 private theorem HermSpace_B_add_left (H : Formalism.HermitianLatticeCounting.S6.HermSpace K V) (x y z : V) : H.B (x + y) z = H.B x z + H.B y z := by
@@ -239,9 +193,6 @@ private theorem HermSpace_B_smul_left (H : Formalism.HermitianLatticeCounting.S6
 
 private theorem HermSpace_B_zero_left (H : Formalism.HermitianLatticeCounting.S6.HermSpace K V) (y : V) : H.B 0 y = 0 := by
   rw [map_zero, LinearMap.zero_apply]
-
-private theorem HermSpace_B_neg_left (H : Formalism.HermitianLatticeCounting.S6.HermSpace K V) (x y : V) : H.B (-x) y = -H.B x y := by
-  rw [map_neg, LinearMap.neg_apply]
 
 private theorem HermSpace_B_add_right (H : Formalism.HermitianLatticeCounting.S6.HermSpace K V) (x y z : V) : H.B x (y + z) = H.B x y + H.B x z :=
   map_add _ _ _
@@ -300,7 +251,7 @@ theorem wedgeMapInLieAlgebra : Formalism.HermitianLatticeCounting.S6.Y1 := by
       by_cases hba : b ≤ a
       · rw [hv b hba, zero_smul]
         exact Submodule.zero_mem _
-      · push_neg at hba
+      · push Not at hba
         exact Submodule.smul_mem _ _ ((Xa_mono F) (by have := Fin.lt_iff_val_lt_val.1 hba; omega) hx1)
     · rw [hperp y hy]
       exact Submodule.smul_mem _ _ hxI
@@ -314,12 +265,12 @@ theorem wedgeMapInLieAlgebra : Formalism.HermitianLatticeCounting.S6.Y1 := by
       have h0 : H.B (F.e b.succ) v = 0 := by
         rw [hb1]
         exact hv _ (Fin.le_iff_val_le_val.2 (show b.val + 1 ≤ a.val by omega))
-      rw [h0, if_neg (ne_of_lt hba)]
+      rw [h0, ite_eq_right (ne_of_lt hba)]
       simp
     · subst hba
-      rw [if_pos rfl, mul_comm, ← smul_smul, ← smul_sub]
+      rw [ite_eq_left rfl, mul_comm, ← smul_smul, ← smul_sub]
       exact Submodule.smul_mem _ _ hxa
-    · rw [if_neg (ne_of_gt hba), zero_smul, sub_zero]
+    · rw [ite_eq_right (ne_of_gt hba), zero_smul, sub_zero]
       exact Submodule.smul_mem _ _ ((Xa_mono F) (by have := Fin.lt_iff_val_lt_val.1 hba; omega) hx1)
 
 theorem lastVectorNotMemSup : Formalism.HermitianLatticeCounting.S6.LastVectorNotMemSup := by
@@ -373,8 +324,7 @@ theorem memOfOrthogonalOrthogonal : Formalism.HermitianLatticeCounting.S6.PerpPe
     rw [Ne, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
     exact hwS
   obtain ⟨φ, hφ⟩ : ∃ φ : Module.Dual K (V ⧸ S), φ (S.mkQ w) ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hq ((Module.forall_dual_apply_eq_zero_iff K _).1 h)
   obtain ⟨v, hv⟩ := HermSpace_exists_B_right_eq_linearForm H (φ.comp S.mkQ)
   apply hφ
@@ -1206,7 +1156,7 @@ theorem normalFormZero : Formalism.HermitianLatticeCounting.S6.NFJZero := by
           have h3 := Submodule.sub_mem _ hx1' ((Xa_mono F') (Nat.le_succ n) hxa2)
           rw [sub_sub_cancel] at h3
           exact (Submodule.smul_mem_iff _ hal).1 h3
-      · push_neg at hnr
+      · push Not at hnr
         rw [Xa_of_ge F (a := n + 1) (by omega),
           Xa_of_ge F' (a := n + 1) (by omega), hII]
   have hstep : ∀ a : Fin r, F'.e a.castSucc - c • F.e a.castSucc ∈ F.Xa a.val := by
@@ -1254,12 +1204,11 @@ lemma sig_norm (σ : K →+* ℂ) (hσ : ∀ x : K, σ (star x) = star (σ x)) (
 
 lemma negperp_gen (σ : K →+* ℂ) (h : U →ₗ[K] U →ₗ⋆[K] K) (hσ : ∀ x : K, σ (star x) = star (σ x))
     (herm : ∀ x y : U, star (h x y) = h y x) (A N : Submodule K U)
-    (hN : ∀ n ∈ N, ∀ u ∈ A, h n u = 0) (z₀ : U) (_hz₀ : z₀ ∈ A)
+    (hN : ∀ n ∈ N, ∀ u ∈ A, h n u = 0) (z₀ : U)
     (pos : ∀ w ∈ A, h w z₀ = 0 → w ∉ N → 0 < (σ (h w w)).re)
     (z : U) (hz : z ∈ A) (hzn : (σ (h z z)).re < 0) (w : U) (hw : w ∈ A) (hwz : h w z = 0)
     (hwN : w ∉ N) : 0 < (σ (h w w)).re := by
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   have herm0 : ∀ x y : U, h x y = 0 → h y x = 0 := fun x y hxy => by rw [← herm x y, hxy, star_zero]
   have hzz : h z z ≠ 0 := by
     intro h0
@@ -1333,7 +1282,7 @@ lemma reverseCS_gen (σ : K →+* ℂ) (h : U →ₗ[K] U →ₗ⋆[K] K) (hσ :
   have hwwre : 0 ≤ (σ (h w w)).re := by
     by_cases hwN : w ∈ N
     · rw [hN w hwN w hwA, map_zero, Complex.zero_re]
-    · exact (negperp_gen σ h hσ herm A N hN z₀ hz₀ pos z hz hzn w hwA hwz hwN).le
+    · exact (negperp_gen σ h hσ herm A N hN z₀ pos z hz hzn w hwA hwz hwN).le
   have him_zz := herm_im σ h hσ herm z
   have him_ww := herm_im σ h hσ herm w
   have him_z'z' := herm_im σ h hσ herm z'
@@ -1360,7 +1309,7 @@ lemma reverseCS_gen (σ : K →+* ℂ) (h : U →ₗ[K] U →ₗ⋆[K] K) (hσ :
     have hw0 : h w w = 0 := (mul_eq_zero.1 h0).resolve_left hα
     have hwN : w ∈ N := by
       by_contra hwN
-      have h4 := negperp_gen σ h hσ herm A N hN z₀ hz₀ pos z hz hzn w hwA hwz hwN
+      have h4 := negperp_gen σ h hσ herm A N hN z₀ pos z hz hzn w hwA hwz hwN
       rw [hw0, map_zero, Complex.zero_re] at h4
       exact lt_irrefl _ h4
     refine ⟨β / h z z, ?_⟩
@@ -1506,12 +1455,6 @@ theorem existsNormalForm : Formalism.HermitianLatticeCounting.S6.NormalForm := b
       rfl
   · obtain ⟨j, c, hj, hS⟩ := normalFormMeetNeBot K V H r F F' hμ hrel hm
     exact ⟨j, hj.le, c, nf_full F F' hA hA' j hj.le c hS⟩
-
-section DetBlocks
-
-variable {R : Type} [CommRing R] {n : Type} [Fintype n] [DecidableEq n]
-
-end DetBlocks
 
 theorem eichlerMapIsometry : Formalism.HermitianLatticeCounting.S6.EichlerIsom := by
   intro K V _ _ _ _ H x v c hxx hxv hc

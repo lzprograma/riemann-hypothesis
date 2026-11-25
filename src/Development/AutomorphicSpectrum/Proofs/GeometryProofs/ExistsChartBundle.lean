@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreChartBundle
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.Bundle
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
@@ -7,51 +8,12 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartEx
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIsLocalRingIsFractionRingStalk
 public import Mathlib.RingTheory.Ideal.BigOperators
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
@@ -124,30 +86,7 @@ theorem exists_pow_mul_mem (hT : CoordTie ℤ ξ x) (hc : x c ≠ 0) {f a : Ω} 
 theorem exists_basic (hT : CoordTie ℤ ξ x) (hc : x c ≠ 0) {p : Cpt ξ} (hp : InChart ξ x c p) (V : X.Opens)
     (hV : p.1 ∈ V) : ∃ f ∈ chartRing ℤ x c, unitAt ξ p f ∧
       ∀ q : Cpt ξ, InChart ξ x c q → unitAt ξ q f → q.1 ∈ V := by
-  obtain ⟨U, hU, hmem⟩ := hT.affine c hc
-  have hpU : p.1 ∈ U := (hmem p.1).2 ⟨p.2, hp⟩
-  obtain ⟨s, hsV, hps⟩ := hU.exists_basicOpen_le (V := V) ⟨p.1, hV⟩ hpU
-  have hη : genPt ξ ∈ U := p.2.mem_open U.isOpen hpU
-  obtain ⟨a, ha⟩ : ∃ a, a = (Scheme.stalkClosedPointTo ξ).hom (X.presheaf.germ U (genPt ξ) hη s) := ⟨_, rfl⟩
-  have hUq : ∀ q : Cpt ξ, InChart ξ x c q → q.1 ∈ U := fun q hq => (hmem q.1).2 ⟨q.2, hq⟩
-  have hval : ∀ (q : Cpt ξ) (hq : q.1 ∈ U), genMap ξ q (X.presheaf.germ U q.1 hq s) = a := fun q hq => by
-    rw [ha]
-    exact genMap_germ_eq_stalk_closed ξ q U hq hη s
-  refine ⟨a, (hT.ring c hc a).2 fun q hq => mem_regAt_iff.2 ⟨_, hval q (hUq q hq)⟩, ?_, ?_⟩
-  · have hu : IsUnit (X.presheaf.germ U p.1 hpU s) := (X.mem_basicOpen s p.1 hpU).1 hps
-    obtain ⟨t, ht⟩ := hu.exists_right_inv
-    have h1 : a * genMap ξ p t = 1 := by
-      rw [← hval p hpU, ← map_mul, ht, map_one]
-    have ha0 : a ≠ 0 := left_ne_zero_of_mul_eq_one h1
-    refine ⟨ha0, mem_regAt_iff.2 ⟨_, hval p hpU⟩, mem_regAt_iff.2 ⟨t, ?_⟩⟩
-    exact eq_inv_of_mul_eq_one_right h1
-  · intro q hq hu
-    obtain ⟨h0, -, hi⟩ := hu
-    obtain ⟨t, ht⟩ := mem_regAt_iff.1 hi
-    have hqU := hUq q hq
-    have h1 : X.presheaf.germ U q.1 hqU s * t = 1 := hT.gen.inj q (by
-      rw [map_mul, hval q hqU, ht, map_one, mul_inv_cancel₀ h0])
-    exact hsV ((X.mem_basicOpen s q.1 hqU).2 (isUnit_iff_exists_inv.2 ⟨t, h1⟩))
+  apply _root_.GlobalTheory.CompanionTheory.Ar.TieFrame.exists_basic <;> assumption
 
 theorem exists_cover (hT : CoordTie ℤ ξ x) (hc : x c ≠ 0) (Q : X.Opens → Prop)
     (hQ : ∀ p : Cpt ξ, InChart ξ x c p → ∃ V : X.Opens, p.1 ∈ V ∧ Q V) :

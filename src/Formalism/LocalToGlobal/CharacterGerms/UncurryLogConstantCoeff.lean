@@ -19,21 +19,6 @@ open Formalism.IncomingBounds ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ 
 
 variable {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [CommRing O] [StarRing O] {dd : ℕ}
 
-private theorem cc_subst_lemma {σ τ A : Type} [Finite σ] [CommRing A] (a : σ → MvPowerSeries τ A)
-    (ha : ∀ s, MvPowerSeries.constantCoeff (a s) = 0) (f : MvPowerSeries σ A) :
-    MvPowerSeries.constantCoeff (MvPowerSeries.subst a f) = MvPowerSeries.constantCoeff f := by
-  rw [MvPowerSeries.constantCoeff_subst (MvPowerSeries.hasSubst_of_constantCoeff_zero ha)]
-  rw [finsum_eq_single _ 0]
-  · simp
-  · intro e he
-    obtain ⟨s, hs⟩ : ∃ s, e s ≠ 0 := by
-      by_contra h
-      push_neg at h
-      exact he (Finsupp.ext h)
-    rw [map_finsuppProd]
-    simp only [map_pow, ha, Finsupp.prod]
-    rw [Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hs) (zero_pow hs), smul_zero]
-
 theorem hasSubst_col (col : Fin 2) :
     MvPowerSeries.HasSubst (fun x : Fin dd => (MvPowerSeries.X (col, x) : MvPowerSeries (Fin 2 × Fin dd) C)) := MvPowerSeries.hasSubst_of_constantCoeff_zero (fun _ => by simp)
 
@@ -46,9 +31,8 @@ theorem hasSubst_tau (col : Fin 2) : MvPowerSeries.HasSubst (fun q : Fin 2 × Fi
 
 theorem lawS_const (Y : FBChart C V O dd) (x : Fin 2 × Fin dd) : MvPowerSeries.constantCoeff (lawS Y x) = 0 := by
   unfold lawS
-  rw [cc_subst_lemma (fun q : Fin 2 × Fin dd =>
-    (MvPowerSeries.X (q.1, (x.1, q.2)) : MvPowerSeries (Fin 2 × (Fin 2 × Fin dd)) C)) (fun _ => by simp)]
-  exact Y.B.G.const x.2
+  exact MvPowerSeries.constantCoeff_subst_eq_zero (hasSubst_tau x.1) (fun _ => by simp)
+    (Y.B.G.const x.2)
 
 theorem lawS_int (Y : FBChart C V O dd) (x : Fin 2 × Fin dd) : IntS V (lawS Y x) := by
   unfold lawS
@@ -61,25 +45,14 @@ theorem uncurry_log_constantCoeff (Y : FBChart C V O dd) (j : Fin dd) : MvPowerS
   rw [Finsupp.mapDomain_zero, Y.lg_lin j 0 (by simp)]
   simp
 
-private theorem prod_X_lemma {σ τ A : Type} [CommRing A] (e : σ → τ) (d : σ →₀ ℕ) :
-    (d.prod fun s n => (MvPowerSeries.X (e s) : MvPowerSeries τ A) ^ n) =
-      MvPowerSeries.monomial (d.mapDomain e) 1 := by
-  classical
-  refine Finsupp.induction d ?_ ?_
-  · simp only [Finsupp.prod_zero_index, Finsupp.mapDomain_zero]
-    rfl
-  · intro a b f _ _ ih
-    rw [Finsupp.prod_add_index' (fun _ => pow_zero _) (fun _ _ _ => pow_add _ _ _),
-      Finsupp.prod_single_index (h := fun s n => (MvPowerSeries.X (e s) : MvPowerSeries τ A) ^ n) (pow_zero _), ih, Finsupp.mapDomain_add, Finsupp.mapDomain_single,
-      MvPowerSeries.X_pow_eq, MvPowerSeries.monomial_mul_monomial, mul_one]
-
 private theorem un1_lift_lemma_2 (f : MvPowerSeries (Fin 1 × Fin dd) C) :
     MvPowerSeries.subst (fun i : Fin dd => (MvPowerSeries.X ((0 : Fin 1), i) : MvPowerSeries (Fin 1 × Fin dd) C))
       (un1 f) = f := by
   classical
   ext μ
   rw [MvPowerSeries.coeff_subst (MvPowerSeries.hasSubst_of_constantCoeff_zero (fun _ => by simp))]
-  simp only [prod_X_lemma (Prod.mk (0 : Fin 1)), MvPowerSeries.coeff_monomial]
+  simp only [← MvPowerSeries.monomial_mapDomain_apply_one _ (Prod.mk (0 : Fin 1)),
+    MvPowerSeries.coeff_monomial]
   have hμ : (μ.mapDomain Prod.snd).mapDomain (Prod.mk (0 : Fin 1)) = μ := by
     rw [← Finsupp.mapDomain_comp]
     have hc : (Prod.mk (0 : Fin 1) ∘ (Prod.snd : Fin 1 × Fin dd → Fin dd)) = id := by
@@ -87,11 +60,11 @@ private theorem un1_lift_lemma_2 (f : MvPowerSeries (Fin 1 × Fin dd) C) :
       exact Prod.ext (Subsingleton.elim _ _) rfl
     rw [hc, Finsupp.mapDomain_id]
   rw [finsum_eq_single _ (μ.mapDomain Prod.snd)]
-  · rw [if_pos hμ.symm, smul_eq_mul, mul_one]
+  · rw [ite_eq_left hμ.symm, smul_eq_mul, mul_one]
     show MvPowerSeries.coeff ((μ.mapDomain Prod.snd).mapDomain (fun x : Fin dd => ((0 : Fin 1), x))) f = _
     rw [show (fun x : Fin dd => ((0 : Fin 1), x)) = Prod.mk (0 : Fin 1) from rfl, hμ]
   · intro d hd
-    rw [if_neg, smul_zero]
+    rw [ite_eq_right, smul_zero]
     intro h
     apply hd
     rw [h, ← Finsupp.mapDomain_comp,
@@ -125,10 +98,12 @@ theorem fb_add (Y : FBChart C V O dd) (j : Fin dd) :
   have hadd : ∀ i, MvPowerSeries.constantCoeff (addOf Y.B.G.F (pt C dd 0) (pt C dd 1) i) = 0 := fun i => by
     show MvPowerSeries.constantCoeff (ev (![pt C dd 0, pt C dd 1] : Fin 2 → Pt C 2 dd) (Y.B.G.F i)) = 0
     unfold ev
-    rw [cc_subst_lemma _ (fun p => by
+    have hcz : ∀ p : Fin 2 × Fin dd, MvPowerSeries.constantCoeff
+        ((![pt C dd 0, pt C dd 1] : Fin 2 → Pt C 2 dd) p.1 p.2) = 0 := fun p => by
       rcases p with ⟨a, k⟩
-      fin_cases a <;> simp [pt])]
-    exact Y.B.G.const i
+      fin_cases a <;> simp [pt]
+    exact MvPowerSeries.constantCoeff_subst_eq_zero
+      (MvPowerSeries.hasSubst_of_constantCoeff_zero hcz) hcz (Y.B.G.const i)
   have hF : addOf Y.B.G.F (pt C dd 0) (pt C dd 1) = Y.B.G.F := by
     funext i
     show ev (![pt C dd 0, pt C dd 1] : Fin 2 → Pt C 2 dd) (Y.B.G.F i) = Y.B.G.F i
@@ -171,22 +146,6 @@ theorem lgS_add (Y : FBChart C V O dd) (p : SelfData Y d I0) : LgAdd (lawS Y) (Y
     MvPowerSeries.subst_comp_subst_apply hY0 hτ, MvPowerSeries.subst_comp_subst_apply hY1 hτ]
   simp only [MvPowerSeries.subst_X hτ]
 
-private theorem deg_single_lemma_0 {τ : Type} (c : τ) (n : ℕ) : Finsupp.degree (Finsupp.single c n) = n := by
-  first
-  | exact Finsupp.degree_single c n
-
-private theorem deg_zero_lemma_0 {τ : Type} (d : τ →₀ ℕ) (h : Finsupp.degree d = 0) : d = 0 := by
-  first
-  | exact (Finsupp.degree_eq_zero_iff d).mp h
-
-private theorem deg_map_lemma_6 {α β : Type} (f : α → β) (μ : α →₀ ℕ) :
-    Finsupp.degree (μ.mapDomain f) = Finsupp.degree μ := by
-  classical
-  refine Finsupp.induction μ ?_ ?_
-  · simp
-  · intro a b g _ _ ih
-    rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), ih, Finsupp.mapDomain_single, deg_single_lemma_0, deg_single_lemma_0]
-
 private theorem un1_lift_lemma_4 (h : MvPowerSeries (Fin dd) C) :
     un1 (MvPowerSeries.subst (fun i : Fin dd => (MvPowerSeries.X ((0 : Fin 1), i) : MvPowerSeries (Fin 1 × Fin dd) C))
       h) = h := by
@@ -196,11 +155,12 @@ private theorem un1_lift_lemma_4 (h : MvPowerSeries (Fin dd) C) :
     (MvPowerSeries.subst (fun i : Fin dd => (MvPowerSeries.X ((0 : Fin 1), i) : MvPowerSeries (Fin 1 × Fin dd) C)) h) =
       MvPowerSeries.coeff μ h
   rw [MvPowerSeries.coeff_subst (MvPowerSeries.hasSubst_of_constantCoeff_zero (fun _ => by simp))]
-  simp only [prod_X_lemma (Prod.mk (0 : Fin 1)), MvPowerSeries.coeff_monomial]
+  simp only [← MvPowerSeries.monomial_mapDomain_apply_one _ (Prod.mk (0 : Fin 1)),
+    MvPowerSeries.coeff_monomial]
   rw [finsum_eq_single _ μ]
-  · rw [if_pos rfl, smul_eq_mul, mul_one]
+  · rw [ite_eq_left rfl, smul_eq_mul, mul_one]
   · intro d hd
-    rw [if_neg, smul_zero]
+    rw [ite_eq_right, smul_zero]
     intro h'
     exact hd (Finsupp.mapDomain_injective (Prod.mk_right_injective (0 : Fin 1)) h').symm
 
@@ -233,16 +193,16 @@ theorem lgS_lin (Y : FBChart C V O dd) (p : SelfData Y d I0) (x : Fin 2 × Fin d
   classical
   have hdeg : μ.degree = 0 ∨ μ.degree = 1 := by omega
   rcases hdeg with h0 | h1
-  · rw [deg_zero_lemma_0 μ h0, MvPowerSeries.coeff_zero_eq_constantCoeff_apply,
-      MvPowerSeries.coeff_zero_eq_constantCoeff_apply, lg_self Y p x, cc_subst_lemma _ (fun _ => by simp),
-      uncurry_log_constantCoeff, MvPowerSeries.constantCoeff_X]
+  · rw [(Finsupp.degree_eq_zero_iff μ).mp h0, MvPowerSeries.coeff_zero_eq_constantCoeff_apply,
+      MvPowerSeries.coeff_zero_eq_constantCoeff_apply, lg_self Y p x, MvPowerSeries.constantCoeff_X]
+    exact MvPowerSeries.constantCoeff_subst_eq_zero (hasSubst_col x.1) (fun _ => by simp)
+      (uncurry_log_constantCoeff Y x.2)
   · obtain ⟨c, rfl⟩ : ∃ c, μ = Finsupp.single c 1 := by
       have hne : μ ≠ 0 := by
         rintro rfl
         simp at h1
       obtain ⟨c, hc⟩ : ∃ c, μ c ≠ 0 := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact hne (Finsupp.ext h)
       refine ⟨c, ?_⟩
       have hle : Finsupp.single c 1 ≤ μ := by
@@ -250,8 +210,8 @@ theorem lgS_lin (Y : FBChart C V O dd) (p : SelfData Y d I0) (x : Fin 2 × Fin d
         omega
       have hsplit : μ = Finsupp.single c 1 + (μ - Finsupp.single c 1) := (add_tsub_cancel_of_le hle).symm
       have h2 := congrArg Finsupp.degree hsplit
-      rw [map_add (f := _), deg_single_lemma_0, h1] at h2
-      have h3 : μ - Finsupp.single c 1 = 0 := deg_zero_lemma_0 _ (by omega)
+      rw [map_add (f := _), Finsupp.degree_single, h1] at h2
+      have h3 : μ - Finsupp.single c 1 = 0 := (Finsupp.degree_eq_zero_iff _).mp (by omega)
       rw [h3, add_zero] at hsplit
       exact hsplit
     have hc : ∀ s : Fin dd, MvPowerSeries.constantCoeff
@@ -266,14 +226,15 @@ theorem lgS_lin (Y : FBChart C V O dd) (p : SelfData Y d I0) (x : Fin 2 × Fin d
         MvPowerSeries.subst (fun j : Fin dd => (MvPowerSeries.X ((0 : Fin 1), j) : MvPowerSeries (Fin 1 × Fin dd) C))
           (MvPowerSeries.X x.2 : MvPowerSeries (Fin dd) C) := (MvPowerSeries.subst_X hA x.2).symm
     show MvPowerSeries.coeff (μ'.mapDomain fun x : Fin dd => ((0 : Fin 1), x)) (Y.lg x.2) = _
-    rw [Y.lg_lin x.2 _ (by rw [deg_map_lemma_6]; exact hμ'), hXL]
+    rw [Y.lg_lin x.2 _ (by rw [Finsupp.degree_mapDomain]; exact hμ'), hXL]
     exact congrArg (MvPowerSeries.coeff μ') (un1_lift_lemma_4 (MvPowerSeries.X x.2 : MvPowerSeries (Fin dd) C))
 
 theorem exS_lg (Y : FBChart C V O dd) (p : SelfData Y d I0) (x : Fin 2 × Fin dd) :
     MvPowerSeries.subst (Y.rawSelf p).lg ((Y.rawSelf p).ex x) = (MvPowerSeries.X x : MvPowerSeries (Fin 2 × Fin dd) C) := by
   have hLg0 : ∀ y : Fin 2 × Fin dd, MvPowerSeries.constantCoeff ((Y.rawSelf p).lg y) = 0 := fun y => by
-    rw [lg_self Y p y, cc_subst_lemma _ (fun _ => by simp)]
-    exact uncurry_log_constantCoeff Y y.2
+    rw [lg_self Y p y]
+    exact MvPowerSeries.constantCoeff_subst_eq_zero (hasSubst_col y.1) (fun _ => by simp)
+      (uncurry_log_constantCoeff Y y.2)
   have hLg : MvPowerSeries.HasSubst (Y.rawSelf p).lg := MvPowerSeries.hasSubst_of_constantCoeff_zero hLg0
   have hc : MvPowerSeries.HasSubst
       (fun i : Fin dd => (MvPowerSeries.X (x.1, i) : MvPowerSeries (Fin 2 × Fin dd) C)) := hasSubst_col x.1
@@ -321,7 +282,7 @@ theorem sat_self (Y : FBChart C V O dd) (p : SelfData Y d I0) (g : Fin 2) :
     · subst hcc
       simp only [mul_one]
       have hh := p.gm_hyp (p.ty0 c) (g + 1) g
-      rw [if_neg (by fin_cases g <;> decide)] at hh
+      rw [ite_eq_right (by fin_cases g <;> decide)] at hh
       rw [← hh]
       exact Finset.sum_congr rfl (fun r _ => mul_comm _ _)
     · simp

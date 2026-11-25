@@ -14,8 +14,6 @@ open Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism
 
 namespace Formalism.L2.SG.Pf.SatGramActL
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def ChiNBiAll : Prop := ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D), ChiNBi X
 
 namespace ChiLeft

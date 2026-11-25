@@ -56,11 +56,7 @@ variable {R : Type} [CommRing R] (I : Ideal R)
 
 theorem factorPow_evalₐ {m n : ℕ} (h : m ≤ n) (y : AdicCompletion I R) :
     Ideal.Quotient.factorPow I h (AdicCompletion.evalₐ I n y) = AdicCompletion.evalₐ I m y := by
-  induction y using AdicCompletion.induction_on with
-  | _ x =>
-    simp only [AdicCompletion.evalₐ_mk]
-    rw [← AdicCompletion.Ideal.mk_eq_mk I h x]
-    rfl
+  exact GlobalTheory.ValCompletion.factorPow_evalₐ h y
 
 theorem isUnit_evalₐ (y : AdicCompletion I R) (hy : IsUnit (AdicCompletion.evalₐ I 1 y)) (n : ℕ) :
     IsUnit (AdicCompletion.evalₐ I n y) := by
@@ -68,18 +64,7 @@ theorem isUnit_evalₐ (y : AdicCompletion I R) (hy : IsUnit (AdicCompletion.eva
 
 theorem isUnit_of_evalₐ (y : AdicCompletion I R) (hy : IsUnit (AdicCompletion.evalₐ I 1 y)) :
     IsUnit y := by
-  let f : (n : ℕ) → Localization.Away y →+* R ⧸ I ^ n := fun n =>
-    IsLocalization.Away.lift (g := (AdicCompletion.evalₐ I n).toRingHom) y (isUnit_evalₐ I y hy n)
-  have hf0 : ∀ n x, f n (algebraMap _ _ x) = AdicCompletion.evalₐ I n x := fun n x =>
-    IsLocalization.Away.lift_eq y _ x
-  have hf : ∀ {m n : ℕ} (hle : m ≤ n), (Ideal.Quotient.factorPow I hle).comp (f n) = f m := by
-    intro m n hle
-    refine IsLocalization.ringHom_ext (Submonoid.powers y) (RingHom.ext fun x => ?_)
-    simp only [RingHom.comp_apply, hf0, factorPow_evalₐ]
-  have e : AdicCompletion.liftRingHom I f hf (algebraMap _ _ y) = y :=
-    AdicCompletion.ext_evalₐ fun n => by rw [AdicCompletion.evalₐ_liftRingHom, hf0]
-  rw [← e]
-  exact (IsLocalization.Away.algebraMap_isUnit y).map _
+  first | exact _root_.GlobalTheory.ValCompletion.isUnit_of_evalₐ | exact @_root_.GlobalTheory.ValCompletion.isUnit_of_evalₐ | apply _root_.GlobalTheory.ValCompletion.isUnit_of_evalₐ <;> assumption
 
 end general
 

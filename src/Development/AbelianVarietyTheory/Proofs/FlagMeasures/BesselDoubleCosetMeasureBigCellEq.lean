@@ -99,13 +99,13 @@ def pad (k r : ℕ) : Mb k →ₗ[ℂ] Mat k r where
   map_add' a b := by
     ext i j
     by_cases h : mid k r i ∧ mid k r j
-    · simp only [Matrix.add_apply, Matrix.of_apply, dif_pos h]
-    · simp only [Matrix.add_apply, Matrix.of_apply, dif_neg h, add_zero]
+    · simp only [Matrix.add_apply, Matrix.of_apply, dite_eq_left h]
+    · simp only [Matrix.add_apply, Matrix.of_apply, dite_eq_right h, add_zero]
   map_smul' c a := by
     ext i j
     by_cases h : mid k r i ∧ mid k r j
-    · simp only [Matrix.smul_apply, Matrix.of_apply, dif_pos h, RingHom.id_apply]
-    · simp only [Matrix.smul_apply, Matrix.of_apply, dif_neg h, smul_zero]
+    · simp only [Matrix.smul_apply, Matrix.of_apply, dite_eq_left h, RingHom.id_apply]
+    · simp only [Matrix.smul_apply, Matrix.of_apply, dite_eq_right h, smul_zero]
 
 theorem pad_apply (a : Mb k) (i j : Fin (2 * r + k + 1)) : pad k r a i j = if h : mid k r i ∧ mid k r j then
     a ⟨i.val - r, by have := h.1; omega⟩ ⟨j.val - r, by have := h.2; omega⟩ else 0 := rfl
@@ -114,26 +114,15 @@ theorem emb_eq (a : Mb k) : embWb k r a = pad k r a + embWb k r 0 := by
   ext i j
   rw [Matrix.add_apply, pad_apply]
   by_cases h : mid k r i ∧ mid k r j
-  · rw [dif_pos h, emb_mid _ _ _ h.1 h.2, emb_mid _ _ _ h.1 h.2]; simp
-  · rw [dif_neg h, zero_add]
+  · rw [dite_eq_left h, emb_mid _ _ _ h.1 h.2, emb_mid _ _ _ h.1 h.2]; simp
+  · rw [dite_eq_right h, zero_add]
     by_cases hi : mid k r i
     · have hj : ¬ mid k r j := fun hj => h ⟨hi, hj⟩
       rw [emb_out_col _ _ _ hj, emb_out_col _ _ _ hj]
     · rw [emb_out_row _ _ _ hi, emb_out_row _ _ _ hi]
 
 theorem emb_one : embWb k r 1 = 1 := by
-  ext i j
-  by_cases hi : mid k r i
-  · by_cases hj : mid k r j
-    · rw [emb_mid _ _ _ hi hj, Matrix.one_apply, Matrix.one_apply]
-      have h1 := hi.1; have h2 := hj.1
-      congr 1
-      apply propext
-      rw [Fin.ext_iff, Fin.ext_iff]
-      simp only
-      omega
-    · rw [emb_out_col _ _ _ hj, Matrix.one_apply]
-  · rw [emb_out_row _ _ _ hi, Matrix.one_apply]
+  first | exact _root_.Formalism.FourierDecayAlt.P.B2x3.emb_one | exact @_root_.Formalism.FourierDecayAlt.P.B2x3.emb_one | apply _root_.Formalism.FourierDecayAlt.P.B2x3.emb_one <;> assumption
 
 theorem emb_inj : Function.Injective (embWb k r) := by
   intro a b h
@@ -220,10 +209,10 @@ theorem lieOf_uwb : lieOf (UWb k r) = pad k r '' lieOf (UH (Hb k)) := by
       ext i j
       rw [pad_apply]
       by_cases h : mid k r i ∧ mid k r j
-      · rw [dif_pos h, Matrix.of_apply]
+      · rw [dite_eq_left h, Matrix.of_apply]
         have a1 := h.1.1; have a2 := h.2.1
         congr 1 <;> (apply Fin.ext; simp only [wI]; omega)
-      · rw [dif_neg h]
+      · rw [dite_eq_right h]
         by_cases hi : mid k r i
         · have hj : ¬ mid k r j := fun hj => h ⟨hi, hj⟩
           have := congrFun (congrFun h1 i) j
@@ -256,13 +245,13 @@ def padL (k r : ℕ) : Eu (k + 1) →ₗ[ℝ] Eu (2 * r + k + 1) where
   map_add' a b := by
     ext p
     by_cases h : mid k r p.1 ∧ mid k r p.2.1
-    · simp only [PiLp.add_apply, dif_pos h]
-    · simp only [PiLp.add_apply, dif_neg h, add_zero]
+    · simp only [PiLp.add_apply, dite_eq_left h]
+    · simp only [PiLp.add_apply, dite_eq_right h, add_zero]
   map_smul' c a := by
     ext p
     by_cases h : mid k r p.1 ∧ mid k r p.2.1
-    · simp only [PiLp.smul_apply, dif_pos h, RingHom.id_apply]
-    · simp only [PiLp.smul_apply, dif_neg h, smul_zero]
+    · simp only [PiLp.smul_apply, dite_eq_left h, RingHom.id_apply]
+    · simp only [PiLp.smul_apply, dite_eq_right h, smul_zero]
 
 theorem padL_apply (x : Eu (k + 1)) (p) : padL k r x p = if h : mid k r p.1 ∧ mid k r p.2.1 then
     x (⟨p.1.val - r, by have := h.1; omega⟩, ⟨p.2.1.val - r, by have := h.2; omega⟩, p.2.2) else 0 := rfl
@@ -273,8 +262,8 @@ theorem unrealify_padL (x : Eu (k + 1)) : unrealify (padL k r x) = pad k r (unre
   unfold unrealify
   rw [padL_apply, padL_apply]
   by_cases h : mid k r i ∧ mid k r j
-  · simp only [dif_pos h]
-  · simp only [dif_neg h]; rfl
+  · simp only [dite_eq_left h]
+  · simp only [dite_eq_right h]; rfl
 
 theorem padL_rea (X : Mb k) : padL k r (rea X) = rea (pad k r X) := by
   rw [← rea_unrealify (padL k r (rea X)), unrealify_padL, unrealify_rea]
@@ -289,7 +278,7 @@ theorem norm_padL (x : Eu (k + 1)) : ‖padL k r x‖ = ‖x‖ := by
     simp only [Prod.mk.injEq, wI, Fin.mk.injEq, add_right_inj] at h
     exact Prod.ext (Fin.ext h.1) (Prod.ext (Fin.ext h.2.1) h.2.2)
   · intro p hp
-    rw [padL_apply, dif_neg]
+    rw [padL_apply, dite_eq_right]
     · simp
     · intro h
       apply hp
@@ -297,7 +286,7 @@ theorem norm_padL (x : Eu (k + 1)) : ‖padL k r x‖ = ‖x‖ := by
       refine ⟨(⟨p.1.val - r, by omega⟩, ⟨p.2.1.val - r, by omega⟩, p.2.2), ?_⟩
       refine Prod.ext (Fin.ext ?_) (Prod.ext (Fin.ext ?_) rfl) <;> simp only [wI] <;> omega
   · rintro ⟨a, b, c⟩
-    rw [padL_apply, dif_pos ⟨wI_mid a, wI_mid b⟩]
+    rw [padL_apply, dite_eq_left ⟨wI_mid a, wI_mid b⟩]
     simp [wI]
 
 theorem lieE_uwb : lieE (UWb k r) = (lieE (UH (Hb k))).map (padL k r) := by
@@ -434,7 +423,7 @@ theorem annulus_int (hk : 1 ≤ k) {T T' s : ℝ} (ha : 0 < T * T') (hs : 0 ≤ 
       rw [Complex.normSq_eq_norm_sq, Complex.norm_polarCoord_symm, sq_abs]
     simp only [Pi.one_apply, mul_one, smul_eq_mul, zWeight, hn, ← hadef]
     by_cases h : a ≤ x ^ 2
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       by_cases h' : x ^ 2 ≤ a + s
       · rw [Set.indicator_of_mem, Set.indicator_of_mem, Pi.one_apply, mul_one, ← ENNReal.ofReal_mul hx.le]
         · exact ⟨Real.sqrt_le_iff.2 ⟨hx.le, h⟩, Real.le_sqrt_of_sq_le h'⟩
@@ -445,7 +434,7 @@ theorem annulus_int (hk : 1 ≤ k) {T T' s : ℝ} (ha : 0 < T * T') (hs : 0 ≤ 
           exact h' ((Real.le_sqrt hx.le (by linarith)).1 hh.2)
         · simp only [Set.mem_ofPred_eq, hn]
           rw [abs_of_nonneg (by linarith)]; intro hh; exact h' (by linarith)
-    · rw [if_neg h, Set.indicator_of_notMem (s := Set.Icc _ _)]
+    · rw [ite_eq_right h, Set.indicator_of_notMem (s := Set.Icc _ _)]
       · simp
       · intro hh
         exact h (Real.sqrt_le_iff.1 hh.1).2
@@ -536,7 +525,7 @@ theorem shell_rhs {z z' : Fin (2 * r + k + 1) → ℂ} {μsec : ℂ → Mb k} {�
     rw [lintegral_const, measure_univ, mul_one]
   · have : zWeight k (Tz k r z) (Tz k r z') ζ = 0 := by
       unfold zWeight
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun hle => h (lt_of_le_of_ne hle (Ne.symm hζ))
     simp only [this, ENNReal.ofReal_zero, zero_mul]
 
@@ -557,7 +546,7 @@ theorem herm_last (m : Mat k r) (a b : ℝ) :
       have hj' : j.val ≠ r + k := fun e => hj (Fin.ext (by simp [wI, e]))
       have : Hpk k r (wI k r (Fin.last k)) j = 0 := by
         unfold Hpk
-        rw [if_neg, if_neg, if_neg]
+        rw [ite_eq_right, ite_eq_right, ite_eq_right]
         · exact fun e => hj e.2.2.symm
         · simp only [wI, Fin.val_last]; omega
         · simp only [wI, Fin.val_last]; omega
@@ -874,7 +863,7 @@ theorem isDis_bigCell : ∀ (k r : ℕ) (z z' : (Fin (2 * r + k + 1) → ℂ)) (
       · show bigCell k r q.1 (μsec q.2) (esI k r a) (eI k r a) = q.1 a
         unfold bigCell
         rw [dite_eq_left (show (eI k r a).val < r from a.isLt)]
-        exact if_pos rfl
+        exact ite_eq_left rfl
       · show herm (Hpk k r) (bigCell k r q.1 (μsec q.2) *ᵥ z') z = q.2
         rw [BigCellHermitian.herm_bigCell _ _ hz hz', (hsec.2 q.2 hq.2).2]
     have hσ : SigmaFinite (ρ.map fun q : (Fin r → ℂ) × ℂ => (Matrix.of.symm (bigCell k r q.1 (μsec q.2)) : Mt k r)) := by

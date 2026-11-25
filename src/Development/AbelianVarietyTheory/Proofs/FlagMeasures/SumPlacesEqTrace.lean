@@ -306,17 +306,4 @@ theorem exists_isHaarOn (k r : ℕ) : ∃ μ : Measure (Mt k r), IsHaarOn (UH (H
 
 end Haar
 
-section General
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-
-end General
-
-section Concrete
-
-variable (E : Type) [Field E] [NumberField E]
-
-end Concrete
-
 end GlobalTheory.SnMass.Inhab

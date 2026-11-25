@@ -6,8 +6,6 @@ public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFibreDi
 public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StMaximalCountUnbranched
 public import Mathlib.Algebra.Module.Submodule.Union
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 @[expose] public section

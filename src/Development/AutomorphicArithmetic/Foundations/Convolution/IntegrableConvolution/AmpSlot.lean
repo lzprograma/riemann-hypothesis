@@ -8,44 +8,6 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Integrab
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactCv
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensOp
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmoothAlt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -104,18 +66,11 @@ private lemma smooth_pow {F : Type} [Field F] [NumberField F] [_root_.NumberFiel
     rw [hγ, this]
     rfl
 
-private lemma single_comm {G : Type} [Group G] {k : ℕ} {i j : Fin k} (hij : i ≠ j) (x y : G) :
-    (Pi.mulSingle i x : Fin k → G) * Pi.mulSingle j y = Pi.mulSingle j y * Pi.mulSingle i x :=
-  by
-  have h : Pairwise fun i j : Fin k => ∀ (x : G) (y : G), Commute (Pi.mulSingle i x : Fin k → G) (Pi.mulSingle j y) :=
-    Pi.mulSingle_commute (f := fun _ => G)
-  exact (h hij x y).eq
-
 private lemma position_comm {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     {σ : E ≃ₐ[F] E} {m : ℕ} {D : InfD σ m} {n : ℕ} {s : Fin (m + 1) → archGroup F n →* archGroup E n}
     (hs : IsBlockElement D n s) (hmul : ∀ g h, glueA D n (g * h) = glueA D n g * glueA D n h)
     {i j : Fin (m + 1)} (hij : i ≠ j) (x y : archGroup F n) : s i x * s j y = s j y * s i x := by
-  have hcm := single_comm (G := archGroup F n) hij x y
+  have hcm := (Pi.mulSingle_commute (f := fun _ => archGroup F n) hij x y).eq
   have h1 : s i x * s j y = glueA D n (Pi.mulSingle i x * Pi.mulSingle j y) := by
     rw [hmul, ← hs i x, ← hs j y]
   have h2 : s j y * s i x = glueA D n (Pi.mulSingle j y * Pi.mulSingle i x) := by

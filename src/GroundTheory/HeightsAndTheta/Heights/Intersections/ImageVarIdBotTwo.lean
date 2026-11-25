@@ -26,8 +26,4 @@ def VerticalDegree.Statement : Prop :=
     ∀ (G' : GenFibre v W') (J' : IFamily G'.Φ (fibreIdx ι' κ)), IsFieldIntersection J' →
       (fnDeg v (W'.map (MvPolynomial.map (Int.castRingHom (ZMod p)))) i' : ℤ) = J' (fibreIdeal κ G') 0 Fin.elim0
 
-section Inhabitants
-
-end Inhabitants
-
 end GroundTheory.Heights₂.Heights.Inter

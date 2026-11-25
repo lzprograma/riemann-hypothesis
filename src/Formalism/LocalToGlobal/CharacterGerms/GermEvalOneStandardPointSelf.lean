@@ -8,8 +8,6 @@ public import Formalism.LocalToGlobal.CharacterGerms.RowTiePGmExLem
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -95,13 +93,13 @@ theorem JL_JF {V : VF C} {O : Type} [CommRing O] [StarRing O] (Y : FBChart C V O
     intro g
     rw [pderiv_eval_single (P := pt C (n := 2) dd 0) (fun j => z0_pt 0 j)]
     refine Finset.sum_eq_zero fun j _ => ?_
-    rw [pderiv_pt, if_neg (fun h => absurd (Prod.mk.inj h).1 (by decide)), mul_zero]
+    rw [pderiv_pt, ite_eq_right (fun h => absurd (Prod.mk.inj h).1 (by decide)), mul_zero]
   have hd1 : ∀ g : PS C 1 dd, pderiv (R := C) ((1 : Fin 2), i) (ev (n := 2) ![pt C dd 1] g) =
       ev (n := 2) ![pt C dd 1] (pderiv (R := C) ((0 : Fin 1), i) g) := by
     intro g
     rw [pderiv_eval_single (P := pt C (n := 2) dd 1) (fun j => z0_pt 1 j),
-      Finset.sum_eq_single i (fun j _ hj => by rw [pderiv_pt, if_neg (fun h => hj (Prod.mk.inj h).2), mul_zero])
-        (fun h => absurd (Finset.mem_univ i) h), pderiv_pt, if_pos rfl, mul_one]
+      Finset.sum_eq_single i (fun j _ hj => by rw [pderiv_pt, ite_eq_right (fun h => hj (Prod.mk.inj h).2), mul_zero])
+        (fun h => absurd (Finset.mem_univ i) h), pderiv_pt, ite_eq_left rfl, mul_one]
   rw [map_add (f := _), pderiv_eval_single (P := Y.B.G.F) Y.B.G.const, hd0, hd1, zero_add] at h2
   have h3 := congrArg (ev (n := 1) ![pt C dd 0, 0]) h2
   rw [ev_sum constant_zero_first_then_zero] at h3
@@ -133,7 +131,7 @@ theorem JL_JF {V : VF C} {O : Type} [CommRing O] [StarRing O] (Y : FBChart C V O
       Y.lg_lin k _ (by simp), coeff_X]
     by_cases hki : k = i
     · subst hki; simp
-    · rw [if_neg hki, if_neg (fun h => hki (by
+    · rw [ite_eq_right hki, ite_eq_right (fun h => hki (by
         have := (Finsupp.single_left_inj one_ne_zero).1 h
         exact (Prod.mk.inj this).2.symm)), zero_mul]
   rw [hc]
@@ -220,14 +218,14 @@ theorem JF_const (G : FGLaw C dd) (k i : Fin dd) :
   have h0 : ∀ j, pderiv (R := C) ((0 : Fin 1), i) ((0 : Pt C 1 dd) j) = 0 := fun j => map_zero _
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, h0, mul_zero, Finset.sum_const_zero, zero_add,
     pderiv_pt, pderiv_X] at h
-  rw [Finset.sum_eq_single i (fun x _ hx => by rw [if_neg (by simp [hx]), mul_zero])
-    (fun h' => absurd (Finset.mem_univ i) h'), if_pos rfl, mul_one] at h
+  rw [Finset.sum_eq_single i (fun x _ hx => by rw [ite_eq_right (by simp [hx]), mul_zero])
+    (fun h' => absurd (Finset.mem_univ i) h'), ite_eq_left rfl, mul_one] at h
   have h2 := congrArg constantCoeff h
   rw [constantCoeff_ev hA] at h2
   rw [h2, Pi.single_apply]
   by_cases hki : k = i
   · subst hki; simp
-  · rw [if_neg (fun h' => hki (Prod.mk.inj h').2), if_neg hki, map_zero]
+  · rw [ite_eq_right (fun h' => hki (Prod.mk.inj h').2), ite_eq_right hki, map_zero]
 
 theorem JF_int {V : VF C} {O : Type} [CommRing O] [StarRing O] (Y : FBChart C V O dd) (k i : Fin dd) :
     IntS V (JF Y.B.G k i) := by

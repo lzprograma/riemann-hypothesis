@@ -1,5 +1,6 @@
 module
 
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEmbeddingWeight
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
 public import Mathlib.Order.CompletePartialOrder
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointConjugate
@@ -8,52 +9,13 @@ public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArith
 public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 public import Mathlib.Topology.Algebra.MvPolynomial
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.Geometry.Manifold.StructureGroupoid
 
 @[expose] public section
@@ -173,23 +135,7 @@ theorem orbit_of_prMap_eq {z z' : (Σ k, ι k) → ℂ} (hz : z ∈ nzBlocks K �
   linear_combination (-1 : ℂ) * e
 
 theorem isCompact_unitBlocks : IsCompact (unitBlocks K ι) := by
-  apply Metric.isCompact_of_isClosed_isBounded
-  · have h : unitBlocks K ι = ⋂ k, (fun z : (Σ k, ι k) → ℂ => blockSq z k) ⁻¹' {1} := by
-      ext z
-      simp [unitBlocks]
-    rw [h]
-    exact isClosed_iInter fun k => isClosed_singleton.preimage (blockSq_contDiff (n := 0) k).continuous
-  · rw [Metric.isBounded_iff_subset_closedBall 0]
-    refine ⟨1, fun z hz => ?_⟩
-    rw [mem_closedBall_zero_iff, pi_norm_le_iff_of_nonneg zero_le_one]
-    rintro ⟨k, i⟩
-    have h1 : blockSq z k = 1 := (show ∀ k, blockSq z k = 1 from hz) k
-    have h2 : ‖z ⟨k, i⟩‖ ^ 2 ≤ blockSq z k := by
-      unfold blockSq
-      exact Finset.single_le_sum (f := fun j => ‖z ⟨k, j⟩‖ ^ 2) (fun j _ => by positivity)
-        (Finset.mem_univ i)
-    rw [h1] at h2
-    nlinarith [norm_nonneg (z ⟨k, i⟩)]
+  apply _root_.GroundTheory.Heights₂.Heights.HilbertSamuel.EmbeddingWeight.isCompact_sphere <;> assumption
 
 theorem unitBlocks_subset : unitBlocks K ι ⊆ nzBlocks K ι := by
   intro z hz
@@ -283,47 +229,6 @@ theorem disjoint_image {y : (Σ k, ι k) → Ω} {φ : F →+* Ω} (hO : OverInt
   obtain ⟨c, hc, rfl⟩ := orbit_of_prMap_eq (unitBlocks_subset hzu) (unitBlocks_subset hzu') he.symm
   exact hne ((_root_.GlobalTheory.CompanionTheory.Ar.Flat.existsUnique_ptOver K ι Ω F y φ hO _ hzp'.1).unique (ptOver_smul hzp c hc) hzp')
 
-private theorem exists_smooth_sep_lemma {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] {s t : Set E} (hs : IsClosed s) (ht : IsClosed t) (hd : Disjoint s t) :
-    ∃ f : E → ℝ, ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) f ∧ (∀ᶠ x in 𝓝ˢ s, f x = 1) ∧
-      ∀ᶠ x in 𝓝ˢ t, f x = 0 := by
-  obtain ⟨U, hU, hsU, hUt⟩ := normal_exists_closure_subset hs ht.isOpen_compl hd.subset_compl_right
-  obtain ⟨W, hW, htW, hWU⟩ := normal_exists_closure_subset ht (isClosed_closure (s := U)).isOpen_compl
-    (fun x hx hxU => hUt hxU hx)
-  obtain ⟨g1, hg1s, hg1, hg1r⟩ := (isClosed_closure (s := W)).isOpen_compl.exists_contDiff_support_eq (n := ⊤)
-  obtain ⟨g2, hg2s, hg2, hg2r⟩ := (isClosed_closure (s := U)).isOpen_compl.exists_contDiff_support_eq (n := ⊤)
-  have hnn1 : ∀ x, 0 ≤ g1 x := fun x => (hg1r ⟨x, rfl⟩).1
-  have hnn2 : ∀ x, 0 ≤ g2 x := fun x => (hg2r ⟨x, rfl⟩).1
-  have hpos : ∀ x, g1 x + g2 x ≠ 0 := by
-    intro x
-    by_cases hx : x ∈ closure U
-    · have h1 : x ∈ Function.support g1 := by
-        rw [hg1s]
-        exact fun hxW => hWU hxW hx
-      exact (add_pos_of_pos_of_nonneg (lt_of_le_of_ne (hnn1 x) (Ne.symm h1)) (hnn2 x)).ne'
-    · have h2 : x ∈ Function.support g2 := by
-        rw [hg2s]
-        exact hx
-      exact (add_pos_of_nonneg_of_pos (hnn1 x) (lt_of_le_of_ne (hnn2 x) (Ne.symm h2))).ne'
-  refine ⟨fun x => g1 x / (g1 x + g2 x), hg1.div (hg1.add hg2) hpos, ?_, ?_⟩
-  · filter_upwards [hU.mem_nhdsSet.mpr hsU] with x hx
-    have h2 : g2 x = 0 := by
-      by_contra h
-      have h' : x ∈ Function.support g2 := h
-      rw [hg2s] at h'
-      exact h' (subset_closure hx)
-    have h1 : x ∈ Function.support g1 := by
-      rw [hg1s]
-      exact fun hxW => hWU hxW (subset_closure hx)
-    rw [h2, add_zero, div_self h1]
-  · filter_upwards [hW.mem_nhdsSet.mpr htW] with x hx
-    have h1 : g1 x = 0 := by
-      by_contra h
-      have h' : x ∈ Function.support g1 := h
-      rw [hg1s] at h'
-      exact h' (subset_closure hx)
-    rw [h1, zero_div]
-
 theorem exists_smooth_sep {A E : Type} [Finite A] [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E] (S : A → Set E) (hS : ∀ a, IsClosed (S a))
     (hd : ∀ a b, a ≠ b → Disjoint (S a) (S b)) (t : A → ℝ) :
@@ -339,7 +244,12 @@ theorem exists_smooth_sep {A E : Type} [Finite A] [NormedAddCommGroup E] [Normed
     intro x hxa hx
     obtain ⟨b, hb, hxb⟩ := Set.mem_iUnion₂.mp hx
     exact Set.disjoint_left.mp (hd b a hb) hxb hxa
-  choose f hf hf1 hf0 using fun a => exists_smooth_sep_lemma (hS a) (hT a) (hdis a)
+  have hsep : ∀ a, ∃ f : E → ℝ, ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) f ∧
+      (∀ᶠ x in 𝓝ˢ (S a), f x = 1) ∧ ∀ᶠ x in 𝓝ˢ (T a), f x = 0 := fun a => by
+    obtain ⟨f, h0, h1, -⟩ := exists_contMDiffMap_zero_one_nhds_of_isClosed 𝓘(ℝ, E) (n := ⊤)
+      (hT a) (hS a) (hdis a).symm
+    exact ⟨f, contMDiff_iff_contDiff.mp f.contMDiff, h1, h0⟩
+  choose f hf hf1 hf0 using hsep
   refine ⟨fun x => ∑ b, t b * f b x, ?_, fun a => ?_⟩
   · exact ContDiff.sum fun b _ => contDiff_const.mul (hf b)
   · have h : ∀ᶠ x in 𝓝ˢ (S a), ∀ b, f b x = if b = a then 1 else 0 := by

@@ -65,7 +65,6 @@ open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.Ind
 open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm GlobalTheory.SquareAgree
 
 noncomputable section
@@ -124,8 +123,7 @@ theorem norm_fin {ψ : AddChar (AF F) ℂ} (hc : Continuous ψ) (y : FiniteAdele
     exact mul_mem (HeightOneSpectrum.coe_mem_adicCompletionIntegers v _) (ha v)
   have hle : ∀ a ∈ K, ‖ψ (embFin a)‖ ≤ 1 := by
     intro a ha
-    by_contra h
-    push_neg at h
+    by_contra! h
     obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt M h
     have := hM _ (hKn a ha n)
     rw [hmul, norm_pow] at this

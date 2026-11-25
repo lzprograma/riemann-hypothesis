@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.SatakeParameters.StabCardOfStabTie
 public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
 public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LatticeNormalFormUnipotent
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
@@ -31,56 +32,8 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepD
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TameHeckeCharLocalEqInvTypeCharacter
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormEqOfSplitFactor
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiMapsAndOmegaLaw
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocalUnfoldingIntegrandBoundedSchwartz
@@ -235,7 +188,7 @@ theorem eN_eq_zero {N i : ℕ} (h : N ≤ i) : Loc.eN F N i = 0 := by
   funext l
   unfold Loc.eN
   have := l.2
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
   rfl
 
 theorem sum_eN_apply (g : Fin c → F) (l : Fin (n + c)) :
@@ -243,11 +196,11 @@ theorem sum_eN_apply (g : Fin c → F) (l : Fin (n + c)) :
   rw [Finset.sum_apply]
   simp only [Pi.smul_apply, Loc.eN, smul_eq_mul]
   split_ifs with h
-  · exact Finset.sum_eq_zero fun i _ => by rw [if_neg (by omega), mul_zero]
+  · exact Finset.sum_eq_zero fun i _ => by rw [ite_eq_right (by omega), mul_zero]
   · rw [Finset.sum_eq_single ⟨l.1 - n, by omega⟩]
-    · rw [if_pos (by simp; omega), mul_one]
+    · rw [ite_eq_left (by simp; omega), mul_one]
     · intro b _ hb
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro hl
       exact hb (Fin.ext (by simp; omega))
     · simp
@@ -438,7 +391,7 @@ theorem inX_mem_nfLat_iff {E : Type} [Field E] [NumberField E] [StarRing E] (P :
         rw [h4]
         simp [Loc.eN, Fin.val_inj]
       rw [Pi.add_apply, h2, h2, Finset.sum_apply] at h1
-      simp only [Pi.smul_apply, h3, smul_eq_mul, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, zero_add] at h1
+      simp only [Pi.smul_apply, h3, smul_eq_mul, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, zero_add] at h1
       exact (mul_eq_zero.1 h1.symm).resolve_right (zpow_ne_zero _ hq)
     simp only [hs, zero_smul, Finset.sum_const_zero, add_zero] at h
     rwa [inX_injective h]
@@ -452,7 +405,7 @@ theorem prCat_le_GLint : ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (sharp : B
     have := Subgroup.mem_comap.1 hr
     simpa using this
   unfold Jat at hJ
-  rw [if_neg hP] at hJ
+  rw [ite_eq_right hP] at hJ
   have hk := hJ.1
   have key : ∀ y, y ∈ IndefiniteRowSideFullHecke.SandwichNormalForm.nfLat P (R.N j) (cOf R j) e z ↔ h⁻¹ y ∈ stdAt X.E _ P := by
     intro y
@@ -518,7 +471,7 @@ theorem unfoldingAffineLinearMap_add_eq_add_frM (xj z : (Fin n' → F) →ₗ[F]
   · have e : (fun b : Fin n' => (Pi.single s (1 : F) : Fin (n' + c') → F) (Fin.castAdd c' b)) = 0 := by
       funext b
       have := b.2
-      rw [Pi.single_apply, if_neg]
+      rw [Pi.single_apply, ite_eq_right]
       · rfl
       · intro h
         apply hs
@@ -846,10 +799,10 @@ theorem supSum_range {κ : Type} [CommRing κ] {n a k : ℕ} (hn : k ≤ n) (ha 
     intro i
     by_cases hi : i.val ∈ Finset.range (k - 1)
     · have hi' := Finset.mem_range.1 hi
-      rw [if_pos hi, Finset.sum_eq_single (⟨i.val + 1, by omega⟩ : Fin n), if_pos ⟨rfl, by dsimp only; omega, hi⟩,
+      rw [ite_eq_left hi, Finset.sum_eq_single (⟨i.val + 1, by omega⟩ : Fin n), ite_eq_left ⟨rfl, by dsimp only; omega, hi⟩,
         hf _ (by omega)]
       · intro j _ hj
-        exact if_neg fun h => hj (Fin.ext h.1.symm)
+        exact ite_eq_right fun h => hj (Fin.ext h.1.symm)
       · intro h
         exact absurd (Finset.mem_univ _) h
     · simp [hi]
@@ -864,10 +817,10 @@ variable {E : Type} [Field E]
 
 theorem entB_X (q : ℕ) {k n c i : ℕ} (hn : k ≤ n) (hi : i + 1 < k) (ex : ℕ → ℕ) (x : HomE E (n + c) (n + c)) :
     LocE.entB q k c n c n ex ex x i (i + 1) = Loc.atN (x (Loc.eN E (n + c) (i + 1))) i := by
-  have e1 : LocE.fIdx k c n i = i := if_pos (by omega)
-  have e2 : LocE.fIdx k c n (i + 1) = i + 1 := if_pos hi
-  have e3 : LocE.scE n ex i = 0 := if_pos (by omega)
-  have e4 : LocE.scE n ex (i + 1) = 0 := if_pos (by omega)
+  have e1 : LocE.fIdx k c n i = i := ite_eq_left (by omega)
+  have e2 : LocE.fIdx k c n (i + 1) = i + 1 := ite_eq_left hi
+  have e3 : LocE.scE n ex i = 0 := ite_eq_left (by omega)
+  have e4 : LocE.scE n ex (i + 1) = 0 := ite_eq_left (by omega)
   unfold LocE.entB
   rw [e1, e2, e3, e4]
   simp
@@ -877,15 +830,15 @@ theorem symLevelFrameEntry_superdiag_second_block (q : ℕ) {k n c i : ℕ} (hi 
       (q : E) * Loc.atN (x (Loc.eN E (n + c) (n + i + 1))) (n + i) := by
   have e1 : LocE.fIdx k c n (k + i) = n + i := by
     unfold LocE.fIdx
-    rw [if_neg (by omega), if_pos (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_left (by omega)]
     omega
   have e2 : LocE.fIdx k c n (k + i + 1) = n + i + 1 := by
     unfold LocE.fIdx
-    rw [if_neg (by omega), if_pos (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_left (by omega)]
     omega
   have e3 : LocE.scE n (fun i => i + 1) (n + i + 1) - LocE.scE n (fun i => i + 1) (n + i) = 1 := by
     unfold LocE.scE
-    rw [if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     beta_reduce
     omega
   unfold LocE.entB
@@ -900,13 +853,13 @@ theorem chrG_zero {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
   have hN : R.N 0 = R.k := by simp [Ranks.N]
   have hc : R.r - R.k - 1 = cOf R 0 - 1 := by unfold Ranks.r cOf; omega
   have hl : colLev Ch 0 ⟨P.1, hP⟩ = ⟨HX (𝓞 X.E ⧸ P.1.asIdeal) (R.N 0) R.k R.t 0,
-      lamX (Ch.psi0 ⟨P.1, hP⟩) (extChi fun s => Ch.chi s ⟨P.1, hP⟩) (R.N 0) R.k R.m R.t 0⟩ := if_pos (by omega)
+      lamX (Ch.psi0 ⟨P.1, hP⟩) (extChi fun s => Ch.chi s ⟨P.1, hP⟩) (R.N 0) R.k R.m R.t 0⟩ := ite_eq_left (by omega)
   rw [hl]
   intro hbar g r hr hrg hg
   have hq : (qOf P.1 : X.E) ≠ 0 := GlobalTheory.TopStep.qOf_ne_zero
-  have hp0 : psi0P Ch P.1 = Ch.psi0 ⟨P.1, hP⟩ := dif_pos hP
+  have hp0 : psi0P Ch P.1 = Ch.psi0 ⟨P.1, hP⟩ := dite_eq_left hP
   have hJ := hr.2
-  simp only [Jat, hP, hs, if_true] at hJ
+  simp only [Jat, hP, hs, ite_true] at hJ
   have hst : r ∈ stabL X.E _ (LocE.lamY P.1 (qOf P.1) (R.N 0) (cOf R 0) fun i => i + 1) := by
     have h1 := hJ.1
     simpa using h1
@@ -926,7 +879,7 @@ theorem chrG_zero {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
     rw [lamGen_nil, SX_zero]
     rfl
   refine h4.trans ?_
-  simp only [chiInv, lamRow, hP, hs, if_true, LocE.lamGBS, LocE.lamGvS, inv_one, one_mul, mul_one, Finset.range_zero,
+  simp only [chiInv, lamRow, hP, hs, ite_true, LocE.lamGBS, LocE.lamGvS, inv_one, one_mul, mul_one, Finset.range_zero,
     Finset.prod_empty]
   rw [h2, h3, hp0, reduction_add (GlobalTheory.TopStep.intAt_sum _ fun i _ => hint _ _) ha, AddChar.map_add_eq_mul,
     GlobalTheory.TopStep.reduction_sum₂ _ fun i _ => hint _ _, mul_comm, mul_inv_cancel_right₀ (AddChar.val_isUnit _ _).ne_zero]
@@ -947,7 +900,7 @@ theorem chrG_zero {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
     · exact GlobalTheory.TopStep.reduction_zero
   have h5 := congrFun (hg _ (GlobalTheory.GO.ChRoot.eN_mem (i := i + 1))) ⟨i, hi0⟩
   rw [hv, Matrix.mulVec_single_one] at h5
-  rw [entB_X _ hN.ge hi, he, LinearEquiv.coe_coe, hrg, Loc.atN, dif_pos (by omega), GlobalTheory.QNormal.inX_apply, dif_pos hi0]
+  rw [entB_X _ hN.ge hi, he, LinearEquiv.coe_coe, hrg, Loc.atN, dite_eq_left (by omega), GlobalTheory.QNormal.inX_apply, dite_eq_left hi0]
   exact h5
 
 end GlobalTheory.Proof.levelCharacter_stepZero_typePrime
@@ -975,7 +928,7 @@ theorem parL_self (q kj n c : ℕ) (h : n ≤ kj) : LocE.parL P q kj n c = stdAt
   unfold LocE.parL
   rw [GlobalTheory.CongLevel.mem_sclLat, GlobalTheory.GO.ChRoot.mem_stdAt']
   refine forall_congr' fun l => ?_
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
   simp
 
 theorem lamY_zero (q n c : ℕ) : LocE.lamY P q n c 0 = stdAt E (n + c) P :=
@@ -1002,7 +955,7 @@ theorem zero_level : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X 
   have hN : R.N 0 ≤ R.k + 0 := by rw [Ranks.N_zero]; omega
   have hJ : Jat (Pr := Pr) (R := R) cst.sharp 0 P.1 = stabL X.E _ (stdAt X.E (R.N 0 + cOf R 0) P.1) := by
     unfold Jat
-    rw [if_neg hP]
+    rw [ite_eq_right hP]
     unfold LocE.JQ
     rw [parL_self _ _ _ _ hN, inf_idem]
   have e : ∀ r : AutY X R 0, (MulAut.conj (1 : AutY X R 0)⁻¹).toMonoidHom r = r := by
@@ -1025,7 +978,7 @@ theorem zero_level : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X 
       GlobalTheory.GO.ChRoot.intAt_n1Arg 1 r fun x hx => by rw [one_smul]; exact (h2 x).2 hx
     rw [one_mul] at hint
     unfold chiInv lamRow
-    rw [if_neg hP, hc.psi_int P _ hint, lamQB_empty _ _ _ hN]
+    rw [ite_eq_right hP, hc.psi_int P _ hint, lamQB_empty _ _ _ hN]
     simp
 
 end GlobalTheory.Mem.Col2.IdxExZeroQ
@@ -1102,21 +1055,8 @@ variable {E : Type} [Field E] [NumberField E]
 
 theorem isUnit_of_reduction_mul {K : Type} [Field K] {P : HeightOneSpectrum (𝓞 E)} (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ)
     {a b c : E} (h : redP P c = redP P a * redP P b) : LocE.unitV ξ c = LocE.unitV ξ a * LocE.unitV ξ b := by
-  unfold LocE.unitV
-  by_cases hc : IsUnit (redP P c)
-  · have hab := hc
-    rw [h] at hab
-    have ha : IsUnit (redP P a) := isUnit_of_mul_isUnit_left hab
-    have hb : IsUnit (redP P b) := isUnit_of_mul_isUnit_right hab
-    rw [dite_eq_left ha, dite_eq_left hb, dite_eq_left hc, ← Units.val_mul, ← map_mul]
-    have : hc.unit = ha.unit * hb.unit := Units.ext (by simpa using h)
-    rw [this]
-  · rw [dite_eq_right hc]
-    by_cases ha : IsUnit (redP P a)
-    · by_cases hb : IsUnit (redP P b)
-      · exact absurd (h ▸ ha.mul hb) hc
-      · rw [dite_eq_right hb, mul_zero]
-    · rw [dite_eq_right ha, zero_mul]
+  intros
+  apply _root_.GlobalTheory.SymLevelMul.unitV_mul <;> assumption
 
 variable [StarRing E]
 
@@ -1143,32 +1083,32 @@ theorem block_mul' (P : HeightOneSpectrum (𝓞 E)) (q : ℕ) (hq0 : q ≠ 0) (h
     simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, Loc.eN, hw, smul_eq_mul]
     by_cases hl : kj ≤ l.1 ∧ l.1 < n
     · have hl2 := l.2
-      rw [if_pos hl, zero_add, Finset.sum_eq_single (⟨l.1 - kj, by omega⟩ : Fin (n - kj))]
+      rw [ite_eq_left hl, zero_add, Finset.sum_eq_single (⟨l.1 - kj, by omega⟩ : Fin (n - kj))]
       · have e : kj + (l.1 - kj) = l.1 := by omega
-        simp only [e, if_true, mul_one, Loc.atN]
+        simp only [e, ite_true, mul_one, Loc.atN]
         rw [dite_eq_left hl2]
       · intro u _ hu
-        rw [if_neg, mul_zero]
+        rw [ite_eq_right, mul_zero]
         intro h
         apply hu
         apply Fin.ext
         simp only
         omega
       · simp
-    · rw [if_neg hl, Finset.sum_eq_zero, add_zero]
+    · rw [ite_eq_right hl, Finset.sum_eq_zero, add_zero]
       intro u _
       have := u.2
-      rw [if_neg (by omega), mul_zero]
+      rw [ite_eq_right (by omega), mul_zero]
   have hwp : w ∈ LocE.parL P q kj n c := by
     rw [mem_parL']
     intro i
     by_cases hl : kj ≤ i.1 ∧ i.1 < n
-    · simp only [hw, if_pos hl, mul_zero]
+    · simp only [hw, ite_eq_left hl, mul_zero]
       exact (intSub P).zero_mem
-    · simp only [hw, if_neg hl, zpow_zero, inv_one, one_mul]
+    · simp only [hw, ite_eq_right hl, zpow_zero, inv_one, one_mul]
       exact hvi i
   have hgw := (mem_parL' P q kj n c _).1 ((hp w).2 hwp) ⟨kj + s.1, hs⟩
-  rw [if_pos ⟨by simp, hs0⟩, zpow_one] at hgw
+  rw [ite_eq_left ⟨by simp, hs0⟩, zpow_one] at hgw
   have hqE : (q : E) ≠ 0 := Nat.cast_ne_zero.2 hq0
   have hqi : IntAt P (q : E) := natCast_mem (intSub P) q
   have e1 : g w ⟨kj + s.1, hs⟩ = (q : E) * ((q : E)⁻¹ * g w ⟨kj + s.1, hs⟩) := by
@@ -1222,9 +1162,9 @@ theorem lamQB_mul {K : Type} [Field K] (P : HeightOneSpectrum (𝓞 E)) (q : ℕ
 theorem lamRow_mul : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m) {S : Set ℕ} (mu : Tup X.F X.E X.K S) (sharp : Bool) (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)), P ∉ Pr.vGs → ∀ g ∈ Jat (Pr := Pr) (R := R) sharp j P, ∀ g' ∈ Jat (Pr := Pr) (R := R) sharp j P, lamRow Ch mu sharp j P (g * g').toLinearMap = lamRow Ch mu sharp j P g.toLinearMap * lamRow Ch mu sharp j P g'.toLinearMap := by
   intro X Pr R Ch S mu sharp j P hP g hg g' hg'
   unfold Jat at hg hg'
-  rw [if_neg hP] at hg hg'
+  rw [ite_eq_right hP] at hg hg'
   unfold lamRow
-  rw [if_neg hP, if_neg hP, if_neg hP]
+  rw [ite_eq_right hP, ite_eq_right hP, ite_eq_right hP]
   exact lamQB_mul P (qOf P) (fun h => P.ne_bot (Ideal.absNorm_eq_zero_iff.1 h)) (Ideal.absNorm_mem _) _ _ _ _ hg hg'
 
 end GlobalTheory.TwistRowMul
@@ -1299,7 +1239,7 @@ theorem exists_reps {G ι : Type} [Finite ι] (s : Setoid G) (T : Set G) (Good :
     rintro _ ⟨a, ha, rfl⟩
     have h : ∃ b ∈ T, f b = f a := ⟨a, ha, rfl⟩
     refine ⟨f a, ?_⟩
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     exact congrArg some (Quotient.sound (hf _ h.choose_spec.1 _ ha h.choose_spec.2))
   have key : ∀ c : Quotient.mk s '' T, ∃ h', Quotient.mk s h' = c.1 ∧ Good h' := by
     rintro ⟨_, a, ha, rfl⟩
@@ -1331,7 +1271,7 @@ theorem integrand_funBdd {n' c' n c : ℕ} {psi : E → K} {D N : ℕ} {Psi : Lo
   refine ⟨fun t ht i => ?_, fun t u hu => ?_⟩
   · obtain ⟨⟨l, s⟩, hf⟩ := i
     have h := (intHom_iff _).1 (hPsi.1 _ (left_ne_zero_of_mul ht)) s l
-    rw [LinearMap.smul_apply, Pi.smul_apply, smul_eq_mul, linearMap_unfolding_apply_single, dif_pos hf] at h
+    rw [LinearMap.smul_apply, Pi.smul_apply, smul_eq_mul, linearMap_unfolding_apply_single, dite_eq_left hf] at h
     exact h
   · unfold integrand
     rw [periodXX1_add_smul, hPsi.2 _ _ (intHom_freeMap hu)]
@@ -1375,14 +1315,14 @@ theorem of_intHom_joinCol {n' c' n c : ℕ} (hc' : 1 ≤ c') {x₀ : HomE E n' n
     have h2 := h _ h1 (Fin.castAdd c l)
     have e : atNL E (n' + c') n' (Loc.inX E n' c' v) = 0 := by
       unfold atNL
-      rw [dif_pos hn, LinearMap.proj_apply, inX_apply, dite_eq_right (lt_irrefl _)]
+      rw [dite_eq_left hn, LinearMap.proj_apply, inX_apply, dite_eq_right (lt_irrefl _)]
     change IntAt P (u * Loc.inX E n c (x₀ (LinearMap.funLeft E E (Fin.castAdd c') (Loc.inX E n' c' v)) +
       atNL E (n' + c') n' (Loc.inX E n' c' v) • y) (Fin.castAdd c l)) at h2
     rwa [inX_castAdd, e, zero_smul, add_zero, LastSteps.funLeft_inX] at h2
   · have h2 := h _ (intV_single P ⟨n', hn⟩) (Fin.castAdd c l)
     have e : atNL E (n' + c') n' (Pi.single ⟨n', hn⟩ 1) = 1 := by
       unfold atNL
-      rw [dif_pos hn, LinearMap.proj_apply, Pi.single_eq_same]
+      rw [dite_eq_left hn, LinearMap.proj_apply, Pi.single_eq_same]
     have e' : LinearMap.funLeft E E (Fin.castAdd c') (Pi.single (⟨n', hn⟩ : Fin (n' + c')) (1 : E)) = 0 := by
       funext i
       refine Pi.single_eq_of_ne (fun h => ?_) _
@@ -1427,7 +1367,7 @@ theorem intAt_n1Arg_of_mem (hc : cst.Ok) (hD : P.1 ∉ Pr.vGs → 2 * (R.m - 1) 
   by_cases hP : P.1 ∈ Pr.vGs
   · have hs := hh.1 hP
     unfold lamYat at hs
-    rw [if_pos hP] at hs hκ
+    rw [ite_eq_left hP] at hs hκ
     have hκ' : h⁻¹ * r * h ∈ stabL X.E _ (LocE.lamY P.1 (qOf P.1) (R.N j) (cOf R j) fun i => i + 1) := by
       split_ifs at hκ
       · exact hκ.1
@@ -1435,7 +1375,7 @@ theorem intAt_n1Arg_of_mem (hc : cst.Ok) (hD : P.1 ∉ Pr.vGs → 2 * (R.m - 1) 
     have hr' := mul_mem (mul_mem hs hκ') (inv_mem hs)
     rw [show h * (h⁻¹ * r * h) * h⁻¹ = r by group] at hr'
     exact intAt_pow_mono (hc.D_pos P) (by rw [pow_one]; exact LevFin.intAt_n1Arg_G (qOf_ne_zero _) r hr')
-  · rw [if_neg hP] at hκ
+  · rw [ite_eq_right hP] at hκ
     have hb := hh.2 hP
     have := hD hP
     refine intAt_pow_mono (A := j) (by omega) (GO.ChRoot.intAt_n1Arg _ r fun x hx => ?_)
@@ -1493,7 +1433,7 @@ theorem muAt_one (i : ℕ) : muAt Ch sel mu cst i P 1 = 1 := by
   unfold muAt
   rw [LastSteps.locChar_unit _ _ h1]
   unfold LocE.unitV
-  rw [dif_pos h1, show h1.unit = 1 from Units.ext (TopStep.reduction_one₂), map_one, Units.val_one]
+  rw [dite_eq_left h1, show h1.unit = 1 from Units.ext (TopStep.reduction_one₂), map_one, Units.val_one]
 
 theorem chiTriv_mid (hc : cst.Ok) (hs : cst.sharp = true) (hd : DegOneUnram P.1)
     (hD : P.1 ∉ Pr.vGs → 2 * (R.m - 1) + 1 ≤ cst.D P) {i : ℕ} (hi : i + 3 ≤ R.m)
@@ -1654,23 +1594,8 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks}
 theorem notMem_vGs_of_mem_QE (hX : X.Ok) (hPr : Pr.Ok) {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)}
     (hsel : IsSel X sel) {S : Set ℕ} (hS : ∀ i, Pr.g i ∈ S) (mu : Tup X.F X.E X.K S) {P : HeightOneSpectrum (𝓞 X.E)}
     (hP : P ∈ QE sel (mu : Chr X.F X.E X.K)) : P ∉ Pr.vGs := by
-  classical
-  intro hG
-  obtain ⟨i, hi⟩ : ∃ i, P ∈ Pr.vG i := by
-    unfold Primes.vGs at hG
-    rcases Finset.mem_union.1 hG with h | h
-    exacts [⟨0, h⟩, ⟨1, h⟩]
-  unfold QE at hP
-  split_ifs at hP with h
-  · obtain ⟨v, hv, rfl⟩ := Finset.mem_image.1 hP
-    rw [Set.Finite.mem_toFinset] at hv
-    have hg : GoodPl X.E S v := by_contra fun hg => hv
-      (Subgroup.mem_iInf.1 (Subgroup.mem_iInf.1 (Subgroup.mem_inf.1 mu.2).2 v) hg)
-    have h3 := (ColPeriod.absNorm_eq_of_splitAt hX.rankE hg.1 hg.2.1 (hsel v)).1
-    apply hg.2.2
-    rw [ColPeriod.plc_eq_absNorm hg.2.1.1, ← h3, hPr.vG_norm i _ hi]
-    exact hS i
-  · simp at hP
+  intros
+  apply _root_.GlobalTheory.KFormsCmp.disj <;> assumption
 
 variable {Ch : Chars X Pr R.m} {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ}
   {mu : Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)}
@@ -1811,21 +1736,21 @@ theorem exists_chIdx_of_cst {G : ChGlob X R.m} (hd : ∀ P : rowSG Pr sel mu, De
       boundQ := fun j b P hP => (between_iff hP _).2 ((rep j b P).1.2 hP)
       psiSupp := fun al P x₀ y' hx => by
         by_cases hP : P.1 ∈ Pr.vGs
-        · rw [if_pos hP, pow_one]
+        · rw [ite_eq_left hP, pow_one]
           exact (mem_stdAt_iff _).1 ((LastSteps.joinCol_mem (LastSteps.cOf_pen hm2) (LastSteps.cOf_top hm2) _ _).1
             ((LastSteps.good_omPhi Ch sel mu cst hm2 P hP ((rep _ al P).1.1 hP)).1 _ hx)).2
-        · rw [if_neg hP]
+        · rw [ite_eq_right hP]
           exact (of_intHom_joinCol c1 ((homBdd_mono hM (bl al P)).1 _ hx)).2
       psiInv := fun al P x₀ y' z hz => by
         by_cases hP : P.1 ∈ Pr.vGs
         · have hq := qOf_ne_zero P.1
-          simp only [if_pos hP, pow_zero, inv_one, one_mul] at hz
+          simp only [ite_eq_left hP, pow_zero, inv_one, one_mul] at hz
           have := (LastSteps.good_omPhi Ch sel mu cst hm2 P hP ((rep _ al P).1.1 hP)).2.1 (joinCol x₀ y')
             (joinCol 0 ((qOf P.1 : X.E)⁻¹ • z)) ((LastSteps.joinCol_mem (LastSteps.cOf_pen hm2) (LastSteps.cOf_top hm2) _ _).2
               ⟨fun _ _ => zero_mem _, by rw [smul_inv_smul₀ hq]; exact (mem_stdAt_iff _).2 hz⟩)
           rw [← LastSteps.joinCol_add, smul_zero, add_zero, smul_inv_smul₀ hq] at this
           exact this
-        · rw [if_neg hP] at hz
+        · rw [ite_eq_right hP] at hz
           have := psiAt_add hM (bl al P) x₀ 0 y' z (fun _ _ => by simpa using IntV.zero P.1) hz
           rwa [add_zero] at this
       xiSupp := fun i hi al be P x hx =>

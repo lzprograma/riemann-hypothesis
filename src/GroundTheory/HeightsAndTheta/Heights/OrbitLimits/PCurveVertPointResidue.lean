@@ -113,9 +113,16 @@ end CurveVerticalPointResidue
 
 
 open CurveVerticalPointResidue in
-theorem CurveVertPointResidue.proof (hC : CurveClosedPointChart.Statement) :
-    CurveVertPointResidue.Statement := by
-  intro K _ ι _ Ω _ y s d hP hs hsP W hW
+theorem CurveVertPointResidue.of_single {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
+    {Ω : Type} [Field Ω] (y : (Σ k, ι k) → Ω) (s : MRing ι) (d : K → ℕ)
+    (hP : IsArithVar (mCoordIdeal y) 1) (hs : IsMultiHomog s d) (hsP : s ∉ mCoordIdeal y)
+    (W : Ideal (MRing ι)) (hW : W ∈ divSupp (mCoordIdeal y) s)
+    (hC : ∀ m : Ideal (curveRing y), m.IsMaximal →
+      ∃ c : ∀ k, ι k, (∀ k, y ⟨k, c k⟩ ≠ 0) ∧
+        ∀ p : Σ k, ι k, ∃ a b : curveRing y, b ∉ m ∧
+          (b : Ω) * (y p / y ⟨p.1, c p.1⟩) = a) :
+    (geoNum 0 W Fin.elim0 : ℝ) * Real.log (charOf W) =
+      Real.log (Nat.card (curveRing y ⧸ curvePtIdeal y W)) := by
   classical
   obtain ⟨-, ⟨hPp, hPh, -⟩, -, hPdim⟩ := id hP
   obtain ⟨hWmin, hWrel⟩ := hW
@@ -216,7 +223,7 @@ theorem CurveVertPointResidue.proof (hC : CurveClosedPointChart.Statement) :
   have hmax : (RingHom.ker Θ).IsMaximal :=
     Ideal.Quotient.maximal_of_isField _ (MulEquiv.isField hFF (RingHom.quotientKerEquivRange Θ).toMulEquiv)
 
-  obtain ⟨t, hyt, hrat⟩ := hC K ι Ω y hP (RingHom.ker Θ) hmax
+  obtain ⟨t, hyt, hrat⟩ := hC (RingHom.ker Θ) hmax
   have hgen : ∀ u : Σ k, ι k, Ideal.Quotient.mk J (X u) ∈ Θ.range := by
     rintro ⟨k, u⟩
     obtain ⟨ac, bc, hbc, hc'⟩ := hrat ⟨k, c k⟩
@@ -317,6 +324,10 @@ theorem CurveVertPointResidue.proof (hC : CurveClosedPointChart.Statement) :
   rw [Nat.card_congr eq.toEquiv, hcard, hgeo]
   push_cast
   rw [Real.log_pow]
+
+theorem CurveVertPointResidue.proof (hC : CurveClosedPointChart.Statement) :
+    CurveVertPointResidue.Statement := fun K _ ι _ Ω _ y s d hP hs hsP W hW =>
+  CurveVertPointResidue.of_single y s d hP hs hsP W hW (hC K ι Ω y hP)
 
 end
 

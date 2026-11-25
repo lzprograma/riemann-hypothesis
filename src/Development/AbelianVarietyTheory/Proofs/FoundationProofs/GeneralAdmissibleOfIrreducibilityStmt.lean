@@ -124,14 +124,6 @@ theorem isWild_of_isWildAt {E Ω : Type} [Field E] [NumberField E] [Field Ω] [A
     · simp
     · exact (h1 x hx0).trans_le hx
 
-section Wild
-
-variable {E Ω R : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
-  [CommRing R] [IsLocalRing R] [IsNoetherianRing R] [TopologicalSpace R] [IsTopologicalRing R]
-  {r : ℕ} {A : ValuationSubring Ω} {v : HeightOneSpectrum (𝓞 E)}
-
-end Wild
-
 end GlobalTheory.InertiaTypePrimes
 end -- clump:auto
 end -- clump:auto
@@ -142,23 +134,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-namespace GlobalTheory.TraceFormNondegenerate
-
-theorem eq_zero_of_trace_mul {K : Type} [Field K] {n : ℕ} (X : Matrix (Fin n) (Fin n) K)
-    (h : ∀ Y : Matrix (Fin n) (Fin n) K, Matrix.trace (X * Y) = 0) : X = 0 := by
-  ext i j
-  have hij := h (Matrix.single j i 1)
-  rw [Matrix.trace_mul_single] at hij
-  simpa using hij
-
-theorem span_eq_top_of_trace_eq {Γ K : Type} [Monoid Γ] [Field K] {n : ℕ}
-    (M N : Γ →* Matrix (Fin n) (Fin n) K)
-    (htr : ∀ g : Γ, Matrix.trace (M g) = Matrix.trace (N g))
-    (hN : Submodule.span K (Set.range (⇑N : Γ → Matrix (Fin n) (Fin n) K)) = ⊤) :
-    Submodule.span K (Set.range (⇑M : Γ → Matrix (Fin n) (Fin n) K)) = ⊤ := by
-  apply GlobalTheory.TraceConj.span_top_of_trace_eq <;> assumption
-
-end GlobalTheory.TraceFormNondegenerate
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanEqTopOfTraceEq =====
@@ -335,7 +310,7 @@ theorem admissible_at_of_irreducible_tame {i : Y.Tw} {s : Y.Sig i} {σ : D.what�
   · have hr : Nonempty (Fin D.R.r) := ⟨⟨0, (odd_r D.R).pos⟩⟩
     have h1 := GlobalTheory.BurnsideField.span_mat_eq_top_of_isIrrSub (D.ntypes.rbar σ w)
       ⟨top_ne_bot, fun _ _ _ => trivial, fun W _ hW => hirr W fun g _ => hW g⟩
-    have h2 := _root_.GlobalTheory.TraceFormNondegenerate.span_eq_top_of_trace_eq ((Units.coeHom _).comp ρ)
+    have h2 := _root_.GlobalTheory.TraceConj.span_top_of_trace_eq ((Units.coeHom _).comp ρ)
       (twistM ((Units.coeHom _).comp (D.ntypes.rbar σ w)) η) (fun g => trace_eq_of_charpoly_eq (hcp g)) (by
         rw [eq_top_iff, ← h1, Submodule.span_le]
         rintro _ ⟨g, rfl⟩

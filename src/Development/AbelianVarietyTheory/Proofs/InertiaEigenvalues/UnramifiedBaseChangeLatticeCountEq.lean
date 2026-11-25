@@ -152,8 +152,7 @@ theorem GlobalTheory.UnitLemma.Unr.dual_iff : ∀ (K K' : UQ) (d : ℕ) (φ : K.
   · intro h z₀ hz₀
     by_contra hw
     have hv : val K'.O ((overExt φ B ψ hψ hσ).herm x y z₀) < 0 := by
-      by_contra hle
-      push_neg at hle
+      by_contra! hle
       obtain ⟨b, hb⟩ := mem_range_of_val_nonneg K' _ hle
       exact hw ⟨b, hb⟩
     have hw0 : (overExt φ B ψ hψ hσ).herm x y z₀ ≠ 0 := by

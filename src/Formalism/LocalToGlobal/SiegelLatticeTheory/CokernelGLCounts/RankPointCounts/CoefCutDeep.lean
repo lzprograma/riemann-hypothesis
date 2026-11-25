@@ -39,59 +39,15 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankP
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountHoldsAll
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdEApprox
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupFunHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocalDenominators
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.DiagMulOfBt
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.PtMatIsUnit
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.StabMul
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.IsUpUniMul
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZsVolGrp
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PcIntGen
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupOrb
@@ -127,28 +83,20 @@ theorem act_act (A B : Matrix ι ι E) (v : ι → V) : act A (act B v) = act (B
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun a _ => by rw [mul_comm]
 
-theorem h_sum_left {κ : Type} (s : Finset κ) (f : κ → V) (y : V) : H.h (∑ c ∈ s, f c) y = ∑ c ∈ s, H.h (f c) y := by
-  induction s using Finset.induction_on with
-  | empty => simp only [Finset.sum_empty]; exact H.h_zero_left y
-  | insert c s hc ih => rw [Finset.sum_insert hc, Finset.sum_insert hc, H.h_add_left, ih]
-
 theorem h_right (x y : V) : H.h x y = M.L.cj (H.h y x) := by
   rw [H.h_herm x y, M.L.cj_cj]
 
 theorem h_sum_right {κ : Type} (s : Finset κ) (f : κ → V) (x : V) : H.h x (∑ c ∈ s, f c) = ∑ c ∈ s, H.h x (f c) := by
 
-  rw [h_right, h_sum_left, map_sum]
+  rw [h_right, Formalism.L2.SG.CntLocal.h_sum_left, map_sum]
   exact Finset.sum_congr rfl fun c _ => (h_right H x (f c)).symm
-
-theorem h_smul_right (a : E) (x y : V) : H.h x (a • y) = M.L.cj a * H.h x y := by
-  rw [h_right, H.h_smul_left, map_mul, ← h_right]
 
 theorem gram_act (A : Matrix ι ι E) (v : ι → V) (a b : ι) :
     H.h (act A v b) (act A v a) =
       ((A.map M.L.cj).transpose * Matrix.of (fun c d => H.h (v d) (v c)) * A) a b := by
   simp only [act, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply]
-  rw [h_sum_left]
-  simp only [H.h_smul_left, h_sum_right, h_smul_right, Finset.mul_sum, Finset.sum_mul]
+  rw [Formalism.L2.SG.CntLocal.h_sum_left]
+  simp only [H.h_smul_left, h_sum_right, Formalism.L2.SG.CntLocal.h_smul_right', Finset.mul_sum, Finset.sum_mul]
   exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => by ring
 
 end Act
@@ -168,7 +116,7 @@ variable {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [CommRing 
 
 theorem act_one (v : ι → V) : act (1 : Matrix ι ι E) v = v := by
   funext b
-  simp only [act, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [act, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem o_mul_mem (S : Submodule M.L.O E) {o x : E} (ho : o ∈ M.L.O) (hx : x ∈ S) : o * x ∈ S :=
   S.smul_mem ⟨o, ho⟩ hx
@@ -256,12 +204,6 @@ theorem adj_mem (A : Matrix ι ι E) (hA : ∀ i j, A i j ∈ M.L.O) : ∀ i j, 
   split_ifs
   · rw [Pi.single_apply]; split_ifs; exacts [M.L.O.one_mem, M.L.O.zero_mem]
   · exact hA a b
-
-def cls (ϖ : 𝒪[F]) (abelian₂ : Submodule M.L.O V) (G₀ : Matrix ι ι E) :
-    Set (ι → V ⧸ H.smulLat (algebraMap F E (ϖ : F)) abelian₂) :=
-  Set.range fun v : {v : ι → V // H.Prim abelian₂ v ∧ ∀ a b,
-      H.h (v b) (v a) - G₀ a b ∈ Submodule.span M.L.O {algebraMap F E (ϖ : F)}} =>
-    fun a => Submodule.Quotient.mk (p := H.smulLat (algebraMap F E (ϖ : F)) abelian₂) (v.1 a)
 
 def psi (abelian₂ : Submodule M.L.O V) (c : E) (A : Matrix ι ι E) (hAO : ∀ i j, A i j ∈ M.L.O)
     (x : ι → V ⧸ H.smulLat c abelian₂) : ι → V ⧸ H.smulLat c abelian₂ :=
@@ -404,8 +346,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 open Classical ValuativeRel
 open Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Count
 
 variable {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
@@ -533,8 +473,6 @@ open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Formalism.B
 
 namespace Formalism.L2.SG.Pf.LocalDenominators
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem denF (x : D.host.E) : ∃ d : 𝓞 D.host.F, d ≠ 0 ∧ IsIntegral ℤ (algebraMap D.host.F D.host.E (d : D.host.F) * x) := by
@@ -629,7 +567,7 @@ theorem exists_isLattice_eq_localLattice (Zd : LocDat D) (p : PlF D) (M : Submod
     intro w
     funext j
     simp only [Pi.smul_apply, Finset.sum_apply, smul_eq_mul, Pi.single_apply, mul_ite, mul_one, mul_zero]
-    rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ j), mul_comm]
+    rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ j), mul_comm]
   have hcv : ∀ v : Vp D p, (∀ i, v i ∈ (D.s.atP p).O) → u c • v ∈ M := by
     intro v hv
     rw [hdec v]
@@ -783,8 +721,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 open Classical ValuativeRel
 open Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section SumFr
 
 variable {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
@@ -864,17 +800,17 @@ theorem sumFr_of (hD : TupFun M δ u u' F0 what₂) (hC : RepAtTup M δ u u' F0 
         · rw [hγ']
           exact hD hpre _ w' Z (eligAt_termOf Λ' m' hZ hF') hZ (repIn_termOf Λ' m' hF')
       refine ⟨⟨Λ', m', c'⟩, hS', ?_⟩
-      simp only [dif_pos hS', Set.Finite.mem_toFinset]
+      simp only [dite_eq_left hS', Set.Finite.mem_toFinset]
       exact ⟨F', hF', ⟨hpd, hc⟩, rfl⟩
     · rintro ⟨γ', hγ'S, hO⟩
-      have hO' : O ∈ (horbFin γ' hγ'S).toFinset := by simpa only [dif_pos hγ'S] using hO
+      have hO' : O ∈ (horbFin γ' hγ'S).toFinset := by simpa only [dite_eq_left hγ'S] using hO
       exact hsub γ' hγ'S ((Set.Finite.mem_toFinset _).1 hO')
   have hdisj : ∀ γ₁ ∈ hSfin.toFinset, ∀ γ₂ ∈ hSfin.toFinset, γ₁ ≠ γ₂ →
       Disjoint (if h : γ₁ ∈ S then (horbFin γ₁ h).toFinset else ∅)
         (if h : γ₂ ∈ S then (horbFin γ₂ h).toFinset else ∅) := by
     intro γ₁ h₁ γ₂ h₂ hne12
     rw [Set.Finite.mem_toFinset] at h₁ h₂
-    rw [dif_pos h₁, dif_pos h₂, Finset.disjoint_left]
+    rw [dite_eq_left h₁, dite_eq_left h₂, Finset.disjoint_left]
     intro O hO₁ hO₂
     rw [Set.Finite.mem_toFinset] at hO₁ hO₂
     exact hne12 (orbT_disj ((hlam γ₁ h₁).trans (hlam γ₂ h₂).symm) hO₁ hO₂)
@@ -884,7 +820,7 @@ theorem sumFr_of (hD : TupFun M δ u u' F0 what₂) (hC : RepAtTup M δ u u' F0 
     push_cast
     refine Finset.sum_congr rfl (fun γ' hγ' => ?_)
     have h := (Set.Finite.mem_toFinset hSfin).1 hγ'
-    rw [dif_pos h, hnc γ' h, Set.ncard_eq_toFinset_card _ (horbFin γ' h)]
+    rw [dite_eq_left h, hnc γ' h, Set.ncard_eq_toFinset_card _ (horbFin γ' h)]
   refine ⟨hclsFin.subset hfrSub, ?_⟩
   haveI : Fintype {γ' : TermDef.Term D u u' F0 what₂ //
       (Corank.TermScal D γ γ' ∧ EligAt γ' w') ∧ locT M δ γ' = tupZ M δ u u' Z} := hSfin.fintype
@@ -958,7 +894,7 @@ theorem partnerSumC_of {θ0 : ∀ p, Option ((M p).Cls D.R.rS)}
       exact absurd (hK γ γ'.1 w w' hγ γ'.2.2 γ'.2.1).symm hk
     rw [h0]
     unfold BBG
-    rw [if_neg hk]
+    rw [ite_eq_right hk]
     exact hasSum_zero
   obtain ⟨S, hS⟩ := hU w' hG'
   have hRf := hR γ w hγ
@@ -995,7 +931,7 @@ theorem partnerSumC_of {θ0 : ∀ p, Option ((M p).Cls D.R.rS)}
     (fun g => rfl) hoff (fun p _ => (hL w' hG' p _).1) (fun p _ => (hL w' hG' p _).2.1)
   convert hmain using 1
   unfold BBG
-  rw [if_pos hk]
+  rw [ite_eq_left hk]
   apply finprod_eq_prod_of_mulSupport_subset
   intro p hp
   by_contra hS'
@@ -1016,7 +952,7 @@ theorem fiberCntC_of {L : CntLocal.LocSp D M} {nc : ℝ} (hnc : CntLocal.Formula
       exact absurd γ.2.2.1 hk
     rw [h0]
     unfold BBG
-    rw [if_neg hk, mul_zero]
+    rw [ite_eq_right hk, mul_zero]
     exact hasSum_zero
   obtain ⟨S, hS⟩ := hU w hG
   have hRf := hR γ₀ w₀ hγ₀
@@ -1063,7 +999,7 @@ theorem fiberCntC_of {L : CntLocal.LocSp D M} {nc : ℝ} (hnc : CntLocal.Formula
   have hB : BBG M δ (D.mem u).A.T (D.mem u').A.T w (kind w₀) (thT M δ γ₀) =
       ∏ p ∈ S ∪ hRf.toFinset, BBtop M δ (D.mem u).A.T (D.mem u').A.T p w (thT M δ γ₀ p) := by
     unfold BBG
-    rw [if_pos hk]
+    rw [ite_eq_left hk]
     apply finprod_eq_prod_of_mulSupport_subset
     intro p hp
     by_contra hp'
@@ -1113,7 +1049,7 @@ theorem restricted_of {θ0 : ∀ p, Option ((M p).Cls D.R.rS)}
     have hb' := (h1 p hp1).2 (θ0 p)
     rw [hb] at hb'
     by_contra hne
-    rw [if_neg (Ne.symm hne)] at hb'
+    rw [ite_eq_right (Ne.symm hne)] at hb'
     exact one_ne_zero hb'
   refine ((hR γ w hγ).union (S1 ∪ S2).finite_toSet).subset ?_
   intro p hp
@@ -1181,8 +1117,6 @@ open scoped Classical
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.StabShape
 
 namespace Formalism.L2.SG.Pf.ProdE
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
   (δ : ∀ p : PlF D, (D.s.atP p).Fp) (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1))
@@ -1530,8 +1464,6 @@ namespace PI.NRCW
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat PI.PairValDefs
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem glob_entry (D : D7) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T)
     (n : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hn : n ∈ NLam Λ G) (hXS : XLam Λ G = XS D G.fl) (hz : G.fl.z ∈ Λ)
     (a : Fin (D.R.rS + 1)) (h : a.val + 1 < D.R.rS + 1) :
@@ -1539,8 +1471,8 @@ theorem glob_entry (D : D7) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.hos
   have ha : a.val < D.R.rS := by omega
   have hf : fmat D G n a ⟨a.val + 1, h⟩ =
       G.fl.coefX (n (frame G ⟨a.val + 1, h⟩) - frame G ⟨a.val + 1, h⟩) ⟨a.val, ha⟩ := by
-    simp only [fmat, dif_pos ha]
-    rw [if_neg (by intro e; have := congrArg Fin.val e; simp at this), zero_add]
+    simp only [fmat, dite_eq_left ha]
+    rw [ite_eq_right (by intro e; have := congrArg Fin.val e; simp at this), zero_add]
   rw [hf]
   have hXSΛ : ∀ v, v ∈ XS D G.fl → v ∈ Λ := by
     intro v hv
@@ -1564,7 +1496,7 @@ theorem glob_entry (D : D7) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.hos
         x • (G.fl.e ⟨a.val + 1, hr⟩ + (n (G.fl.e ⟨a.val + 1, hr⟩) - G.fl.e ⟨a.val + 1, hr⟩)) := by
       rw [map_smul]; congr 1; abel
     rw [hsplit, coefX_smul _ (add_mem (e_mem_X _ _) hd), coefX_add _ (e_mem_X _ _) hd, coefX_e,
-      if_neg (by intro e; have := congrArg Fin.val e; simp at this), zero_add] at hc
+      ite_eq_right (by intro e; have := congrArg Fin.val e; simp at this), zero_add] at hc
     have hexp : -((D.R.rS : ℤ) - ((a.val + 1 : ℕ) : ℤ)) - 1 =
         -((D.R.rS : ℤ) - (((⟨a.val, ha⟩ : Fin D.R.rS) : ℕ) : ℤ)) := by
       push_cast; ring
@@ -1619,8 +1551,6 @@ namespace PI.NRCW
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef PI.PairValDefs Matrix IsDedekindDomain
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem normRepMove_of_steps (D : D7) (u u' : D.what₂.Word) (hE : TermEqIff D u u')
     (h1 : StepExp D) (h2 : StepGram D) (h3 : StepGlob D) (h4 : StepLoc D) (h5 : StepTr D) :
     PI.NormRepChange.NormRepMove D u u' := by
@@ -1666,8 +1596,6 @@ open scoped Classical
 namespace PI.NRCW
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat PI.PairValDefs IsDedekindDomain
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem gS_ne_zero (D : D7) : gS D ≠ 0 := by
   show D.host.g 0 * D.host.g 1 ≠ 0
@@ -1757,8 +1685,6 @@ noncomputable section
 
 open scoped Classical
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem norm_representative_move (D : Formalism.BasicNotions.D7) (u u' : D.what₂.Word) (hS : Formalism.L2.SG.TermDef.TermStable D u u') (hE : Formalism.L2.SG.TermDef.TermEqIff D u u') (hF : Formalism.L2.SG.TermDef.TermFun D u u') (hP : Formalism.MainNotions.S.Lat.PrimeHyp D u (Formalism.MainNotions.S.Lat.Tu D u')) (hsig : (Formalism.MainNotions.S.VS D).SigOK) : PI.NormRepChange.NormRepMove D u u' :=
   PI.NRCW.normRepMove_of_steps D u u' hE (PI.NRCW.stepExp D) (PI.NRCW.stepGram D) (PI.NRCW.stepGlob D)
     (PI.NRCW.stepLoc D) (PI.NRCW.stepTr D)
@@ -1779,8 +1705,6 @@ namespace Formalism.L2.SG.Pf.Coef
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut
   Formalism.L2.SG.LsDatumB
 open Classical ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem cutAt_of_deep {D : Formalism.BasicNotions.D7} {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
     {δ : ∀ p : PlF D, (D.s.atP p).Fp} {L : CntLocal.LocSp D M} {u u' : D.what₂.Word}

@@ -60,61 +60,9 @@ public import Development.WeilBound.CoreStatements.HodgeTatePoints.MiTors
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.StightBad
 public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.IsIntegrallyClosedOfDenom
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
-import Mathlib.CategoryTheory.Monoidal.Category
-import Mathlib.CategoryTheory.Monoidal.Mon
-import Mathlib.Topology.Sheaves.Presheaf
 import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.BtExistsBc
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Tactic.ReduceModChar
 import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfFin
 import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfSec
 import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
@@ -124,14 +72,6 @@ import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCubica
 import Development.WeilBound.CoreStatements.HodgeTatePoints.ExistsDenOfOpen
 import Development.WeilBound.CoreStatements.HodgeTatePoints.ExtTensor
 import Development.WeilBound.CoreStatements.HodgeTatePoints.ReBase
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.GroupTheory.FiniteAbelian.Basic
-import Mathlib.RingTheory.AdicCompletion.LocalRing
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Tactic.Basify
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
 import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
 
@@ -216,7 +156,7 @@ theorem exists_tensor_equiv (A : Subalgebra R (X → R)) (B : Subalgebra R (Y �
       exact mul_mem_pspan a.2 b.2
     | add a b ha hb => rw [map_add (f := _)]; exact C.add_mem ha hb
   have hinj : Function.Injective m := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro w hw
     obtain ⟨n, l, b, h⟩ := exists_dual_family (R := R) A
     let c : (A →ₗ[R] R) → A ⊗[R] B →ₗ[R] B := fun l => (TensorProduct.lid R B).toLinearMap ∘ₗ l.rTensor B
@@ -448,19 +388,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-namespace PositivityTheory.HtPt.Htat
-
-open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct in
-open GlobalTheory.CompanionTheory.Ar.BT in
-theorem bt_sub_eq_top : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClosed R] (T : Type) [CommGroup T] [Finite T] (Γ : QFGroup R T) (U : Γ.G.left.Opens), Γ.IsFinOpenSub U → Γ.btOrder U = Γ.btOrder ⊤ :=
-  @_root_.PositivityTheory.HtPt.Htat.HopfOrderEqTop.btOrder_eq_top @hens_normal @PositivityTheory.UnitarySelfGeneration.bt_exists_bc @reg_pull
-
-open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct in
-open GlobalTheory.CompanionTheory.Ar.BT in
-theorem bt_hopf : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClosed R] [IsNoetherianRing R] (T : Type) [CommGroup T] [Finite T] (Γ : QFGroup R T), IsHopfOrder (Γ.btOrder ⊤) :=
-  @_root_.PositivityTheory.HtPt.Htat.HopfOrderTop.btOrder_top_isHopfOrder @hens_normal @PositivityTheory.UnitarySelfGeneration.bt_exists_bc @reg_pull
-
-end PositivityTheory.HtPt.Htat
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfFin =====
@@ -488,19 +415,9 @@ def toPull {Y : Over S'} (g : Over.mk (Y.hom ≫ x) ⟶ G) : Y ⟶ (Over.pullbac
 theorem toPull_fst {Y : Over S'} (g : Over.mk (Y.hom ≫ x) ⟶ G) :
     (toPull x G g).left ≫ pullback.fst G.hom x = g.left := pullback.lift_fst _ _ _
 
-variable {x G} in
-theorem hom_ext_pull {Y : Over S'} {y z : Y ⟶ (Over.pullback x).obj G}
-    (h : y.left ≫ pullback.fst G.hom x = z.left ≫ pullback.fst G.hom x) : y = z := by
-  ext
-  refine pullback.hom_ext h ?_
-  have h1 := Over.w y
-  have h2 := Over.w z
-  simp only [Over.pullback_obj_hom] at h1 h2
-  rw [h1, h2]
-
 theorem toPull_eq {Y : Over S'} (g : Over.mk (Y.hom ≫ x) ⟶ G) :
     toPull x G g = toPull x _ (𝟙 (Over.mk (Y.hom ≫ x))) ≫ (Over.pullback x).map g := by
-  apply hom_ext_pull
+  apply GlobalTheory.CompanionTheory.Ar.BT.Tors.hom_ext_pull
   have h1 : ((Over.pullback x).map g).left ≫ pullback.fst G.hom x = pullback.fst _ x ≫ g.left :=
     pullback.lift_fst _ _ _
   have h2 := toPull_fst x _ (𝟙 (Over.mk (Y.hom ≫ x)))
@@ -521,7 +438,7 @@ def ofPull {Y : Over S'} (y : Y ⟶ (Over.pullback x).obj G) : Over.mk (Y.hom �
     simp [pullback.condition, reassoc_of% h1])
 
 theorem toPull_ofPull {Y : Over S'} (y : Y ⟶ (Over.pullback x).obj G) : toPull x G (ofPull x G y) = y := by
-  apply hom_ext_pull
+  apply GlobalTheory.CompanionTheory.Ar.BT.Tors.hom_ext_pull
   rw [toPull_fst]
   rfl
 
@@ -636,7 +553,6 @@ include hE
 
 theorem sub_eq_top_of : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClosed R] (T : Type) [CommGroup T] [Finite T] (Γ : QFGroup R T) (U : Γ.G.left.Opens), Γ.IsFinOpenSub U → Γ.btOrder U = Γ.btOrder ⊤ :=
   _root_.PositivityTheory.HtPt.Htat.HopfOrderEqTop.btOrder_eq_top @Htat.hens_normal hE @Htat.reg_pull
-
 
 omit hE in
 theorem exists_ind {R T H : Type} [CommRing R] [CommGroup T] [CommGroup H] (K : Subgroup T) (A : Subalgebra R (K → R))
@@ -1233,7 +1149,6 @@ end Ring
 section Unif
 open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.UU GlobalTheory.LN
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem exists_unif {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
     (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V] [IsIntegrallyClosed V] [CharZero V] [IsAlgClosed (FractionRing V)]
@@ -1404,7 +1319,7 @@ theorem map_surjective (Γ₁ : QFGroup R H) (Γ : QFGroup R T) (a : Γ₁.G ⟶
 theorem btOrder_ind [IsIntegrallyClosed R] [Finite T] (Γ : QFGroup R T) (U : Γ.G.left.Opens) (hsub : Γ.IsFinOpenSub U)
     (H : Subgroup T) (hH : ∀ t, t ∈ H ↔ ⊤ ≤ (Γ.pt t).left ⁻¹ᵁ U) :
     Γ.btOrder ⊤ = indOrder H.subtype (resOrder H.subtype (Γ.btOrder ⊤)) := by
-  have htop := PositivityTheory.HtPt.Htat.bt_sub_eq_top R T Γ U hsub
+  have htop := PositivityTheory.UnitarySelfGeneration.bt_sub_eq_top R T Γ U hsub
   obtain ⟨H', A, hH', hA, hAf⟩ := PositivityTheory.HtPt.Twhopf.sub_order R T Γ U hsub
   obtain rfl : H = H' := Subgroup.ext fun t => (hH t).trans (hH' t).symm
   have key : Γ.btOrder U = indOrder H.subtype A := by
@@ -1491,7 +1406,7 @@ theorem exists_struct (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R] [IsNo
   obtain ⟨κ, -, hb⟩ := exists_split p hT H.subtype (QuotientGroup.mk' H) H.subtype_injective
     (QuotientGroup.mk'_surjective H) fun t => (QuotientGroup.eq_one_iff t).trans
       ⟨fun h => ⟨⟨t, h⟩, rfl⟩, fun ⟨m, h⟩ => h ▸ m.2⟩
-  have hAf := PositivityTheory.HtPt.Htat.bt_hopf R H Γf
+  have hAf := PositivityTheory.UnitarySelfGeneration.bt_hopf R H Γf
   have r₁ : resOrder H.subtype (Γ.btOrder ⊤) = Γf.btOrder ⊤ := PositivityTheory.HtPt.Mk.res_bt_order_top @_root_.GlobalTheory.CompanionTheory.Ar.BT.QFGroup.exists_isBaseChange_of_injective R T Γ H Γf u H.subtype hu hcl
   have r₂ : resOrder α (Γf.btOrder ⊤) = muOrder R M :=
     (PositivityTheory.HtPt.Mk.res_bt_order_top @_root_.GlobalTheory.CompanionTheory.Ar.BT.QFGroup.exists_isBaseChange_of_injective R H Γf M ΓM a α hα ha).trans (mu_torus R M ΓM _ p iM hp1 hM).2
@@ -1533,7 +1448,6 @@ section Rep
 open GlobalTheory.CompanionTheory.Ar.GR
 open ReciprocityTheory.ChartRestriction.G.Chart (sp)
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem exists_rep (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V] [IsIntegrallyClosed V] (C : Type) [Field C]
     [Algebra V C] (T : Type) [CommGroup T] [Finite T] (Γ : QFGroup V T) (G : Over (Spec (CommRingCat.of V))) [GrpObj G]
@@ -1779,7 +1693,6 @@ theorem val_facts {C V : Type} [Field C] [IsAlgClosed C] [CharZero C] [CommRing 
 section Core
 open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.CompanionTheory.Ar.GR ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem core (hD : HodgeTateDatumStatement) (hO : OrdinaryCurveStatement) (p : ℕ) [Fact p.Prime] (C : Type) [Field C]
     [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V]
@@ -1817,7 +1730,7 @@ theorem core (hD : HodgeTateDatumStatement) (hO : OrdinaryCurveStatement) (p : �
   obtain ⟨Γ', F, hF⟩ := _root_.GlobalTheory.CompanionTheory.Ar.BT.QFGroup.exists_isBaseChange_of_injective R B ΓB V h hh
   have t₁ := _root_.GlobalTheory.CompanionTheory.Ar.TorBC.isTorsionAlong_baseChange R B ΓB _ _ _ p iB hB V h Γ' F hF
   rw [Category.comp_id] at t₁
-  obtain ⟨i₀, -, t₀⟩ := (_root_.GlobalTheory.CompanionTheory.Ar.torsionAlong_iff_pullback_torsion V B Γ' _ (spMap h) _ P'.A gA p gpA).1 _ t₁
+  obtain ⟨i₀, -, t₀⟩ := (_root_.PositivityTheory.UnitarySelfGeneration.isTorsionAlong_iff_of_isGrpPullback V B Γ' _ (spMap h) _ P'.A gA p gpA).1 _ t₁
   have := P'.isAb.proper
   obtain ⟨Tr, pt, hpt, hTr⟩ := exists_rep V C B Γ' P'.A p i₀ t₀
     (PositivityTheory.HtPt.Mi.torsion_finite V B Γ' _ _ _ p i₀ t₀ inferInstance)
@@ -1831,7 +1744,7 @@ theorem core (hD : HodgeTateDatumStatement) (hO : OrdinaryCurveStatement) (p : �
   have key := PositivityTheory.HtPt.Stight.BadRed.main hD hO p C v V hv hp hc P' Tr (Additive B) pt hpt (Additive M) (Additive Q)
     (fun x => congrArg (fun z => z.1.1) (hT' ((x.toMul, 1), 1))) (fun x => congrArg (fun z => z.2) (hT' (1, x.toMul)))
   rw [eT, mu_eq v hv h hh hmu, int_eq h] at key
-  have hA := PositivityTheory.HtPt.Htat.bt_hopf R _ Γ
+  have hA := PositivityTheory.UnitarySelfGeneration.bt_hopf R _ Γ
   obtain ⟨d, hd, hdf⟩ := hA.full
   obtain ⟨AA, hAA⟩ := PositivityTheory.HtPt.Mk.bt_pgsh V C hv.hom_inj N _
     (PositivityTheory.HtPt.Mh.ext_tensor R _ V _ hA ⟨d, (map_ne_zero_iff h hh).2 hd, hdf⟩).1
@@ -1906,7 +1819,7 @@ theorem PositivityTheory.Xgn.tight_hopf_order_test : GlobalTheory.CompanionTheor
   letI : Algebra (CR O y c') R := g.toAlgebra
   obtain ⟨Γ', F', hF⟩ := _root_.GlobalTheory.CompanionTheory.Ar.BT.QFGroup.exists_isBaseChange_of_injective _ _ P.Γ₁ R g hg
   have t₁ := _root_.GlobalTheory.CompanionTheory.Ar.TorBC.isTorsionAlong_baseChange _ _ P.Γ₁ _ _ _ p P.i₁ P.tors₁ R g Γ' F' hF
-  obtain ⟨i₀, -, t₂⟩ := (_root_.GlobalTheory.CompanionTheory.Ar.torsionAlong_iff_pullback_torsion R _ Γ' _ _ _ t'.G ψ p hpb).1 _ t₁
+  obtain ⟨i₀, -, t₂⟩ := (_root_.PositivityTheory.UnitarySelfGeneration.isTorsionAlong_iff_of_isGrpPullback R _ Γ' _ _ _ t'.G ψ p hpb).1 _ t₁
   have key := core hD hO p C v RC hint hvp hcompl R h hh Dd A' t'.G U _ Γ' i₀ t₂
   rw [(_root_.GlobalTheory.CompanionTheory.Ar.BT.btOrder_baseChange _ _ P.Γ₁ R Γ' F' hF).2, spn_ext, show h.comp (algebraMap (CR O y c') R) = f from hgf] at key
   exact key
@@ -1925,9 +1838,6 @@ open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundl
 open Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open GlobalTheory.CompanionTheory.Ar.Num.FamEx GlobalTheory.CompanionTheory.Ar.BT
 
-
-theorem _root_.GlobalTheory.CompanionTheory.Relay.arith_variety_model_hodge_relay : GlobalTheory.CompanionTheory.Ar.GR.HodgeTateDatumStatement → GlobalTheory.CompanionTheory.Ar.GR.OrdinaryCurveStatement → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (O₀ : Type) [CommRing O₀] (β : O₀ →+* c.F) (Y : Model Xo c β) (S : Finset ℕ) (Ω : Type) [Field Ω] (K : Type) [Fintype K] [DecidableEq K] (J : K → Type) [∀ k, Fintype (J k)] (y : (Σ k, J k) → Ω) (𝔐 : HodgeCpt Y S y) (d : ℕ), IsArithVar (mCoordIdeal y) (d + 1) → 0 < D.p + D.q → ∀ (p : ℕ) [Fact p.Prime], p ∈ S → HT.HTFree 𝔐 p → p ≠ 2 → ¬ (p : ℤ) ∣ NumberField.discr E → ∀ (b : ∀ t, Fin (labelRk D t) → 𝔐.Li), (∀ t, LinearIndependent Ω (b t) ∧ Submodule.span Ω (Set.range (b t)) = 𝔐.Vgen t) → ∀ φ : Equiv.Perm (CMType H ⊕ CMType H), IsFrobLabels c p φ → ∀ (A : Type) [CommRing A] [Algebra A Ω] [IsIntegralClosure A ℤ Ω] (m : Ideal A) [m.IsPrime], (p : A) ∈ m → ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra A O] [IsLocalization.AtPrime O m] [Algebra O Ω] [IsScalarTower A O Ω], ∀ (t₀ : CMType H ⊕ CMType H) (Sg : Type) [Fintype Sg] (e : Sg → CMType H ⊕ CMType H) (φ' : Equiv.Perm Sg) (F : Type) [Field F] [Fintype F] [CharP F p] (pq : (𝓞 E ⧸ Ideal.span {(p : 𝓞 E)}) →+* F) (sc : F →+ (𝓞 E ⧸ Ideal.span {(p : 𝓞 E)})) (w : O) (σ : Sg → F →+* IsLocalRing.ResidueField O), IsOrbit O 𝔐 p φ t₀ e φ' pq w σ → IsSec pq sc → ∀ (G : GenTors 𝔐 p) (c' : ∀ k, J k), mseg y c' ≠ 0 → ∀ (P : ChartPack G O c') (i : ∀ τ, (Fin (labelRk D (e τ)) → Ω) →ₗ[Ω] (Fin (D.p + D.q) → Ω)), (∀ τ : Sg, SeqHyp (CR O y c') (algebraMap O Ω w) (coordLat O y (𝔐.HT p (e τ)) (b (e τ)) c') (dotDual (CR O y c') (coordLat O y (𝔐.HT p (e τ).swap) (b (e τ).swap) c')) (i τ) (qMap P (b (e τ).swap)) ∧ ∀ σE : E →+* Ω, (∀ a : 𝓞 E, σE (a : E) = 𝔐.emb (e τ) a) → DualSeq P σE (𝔐.R p - 2) (coordLat O y (𝔐.HT p (e τ)) (b (e τ)) c') (b (e τ)) (i τ)) → (chartD e b pq sc w P i).Base (CR O y c') p (algebraMap O Ω w) → ∀ (C : Type) [Field C] [Algebra O C] [Algebra Ω C] [IsScalarTower O Ω C] (RC : Subalgebra O C), IsTestPt p (CR O y c') RC → ∀ χ : Sg → F →*₀ C, (∀ τ a (o : O), IsLocalRing.residue O o = σ τ a → χ τ a - algebraMap O C o ∈ RC ∧ ∀ u ∈ RC, u * (χ τ a - algebraMap O C o) ≠ 1) → ∀ [DecidableEq F] [Fintype (GlobalTheory.CompanionTheory.Ar.Num.FamEx.TestPt.NAdd E (D.p + D.q) p)] [DecidableEq (GlobalTheory.CompanionTheory.Ar.Num.FamEx.TestPt.NAdd E (D.p + D.q) p)], ∀ (v : Valuation C NNReal), (∀ c, c ∈ RC ↔ v c ≤ 1) → v (p : C) < 1 → GlobalTheory.CompanionTheory.Ar.GR.IsAbFactor p (GlobalTheory.CompanionTheory.Ar.Num.FamEx.TestPt.testOrd P RC) ∧ GlobalTheory.CompanionTheory.Ar.GR.IsTight v p (GlobalTheory.CompanionTheory.Ar.Num.FamEx.TestPt.testOrd P RC) := by
-  first | exact @PositivityTheory.Xgn.tight_hopf_order_test
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyModelHodgeRelay =====

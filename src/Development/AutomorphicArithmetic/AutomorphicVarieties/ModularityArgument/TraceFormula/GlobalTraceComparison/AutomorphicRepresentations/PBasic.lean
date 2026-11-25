@@ -56,8 +56,6 @@ open UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi DiscreteGroups.T1.G
 
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi
 
-attribute [local instance] borelH
-
 section SlopeTestRemainingChoices
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}

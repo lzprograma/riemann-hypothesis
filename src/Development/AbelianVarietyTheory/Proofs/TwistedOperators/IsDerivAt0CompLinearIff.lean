@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EpsPtScaleZero
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NonemptyUnitAt
 public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.T2SpacePtsOverOfIsSeparated
 public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.UnitFramesGeneratorRatioModulusOne
@@ -57,26 +58,7 @@ namespace GlobalTheory.ThetaWitness
 theorem isDerivAt0_comp_linear_iff {g g' : ℕ} {X : Scheme.{0}} (e : (Fin g → ℂ) → (Sp ℂ ⟶ X))
     (he : IsHolTo Set.univ e) (L : (Fin g' → ℂ) →ₗ[ℂ] (Fin g → ℂ)) (w : Fin g' → ℂ)
     (v : Sp (DualNumber ℂ) ⟶ X) : IsDerivAt0 (fun z => e (L z)) w v ↔ IsDerivAt0 e (L w) v := by
-  have key : spMap (TrivSqZeroExt.fstHom ℂ ℂ ℂ).toRingHom ≫ v = e 0 →
-      ∀ (U : X.Opens) (_ : ⊤ ≤ v ⁻¹ᵁ U) (f : Γ(X, U)), fderiv ℂ (fun z => valAt' (e (L z)) U f) 0 w =
-        fderiv ℂ (fun z => valAt' (e z) U f) 0 (L w) := by
-    intro h0 U hU f
-    have hmem : (0 : Fin g → ℂ) ∈ {b ∈ (Set.univ : Set (Fin g → ℂ)) | ⊤ ≤ e b ⁻¹ᵁ U} := by
-      refine ⟨trivial, ?_⟩
-      rw [← h0]
-      intro x _
-      exact hU (Set.mem_univ _)
-    have hd : DifferentiableAt ℂ (fun z => valAt' (e z) U f) 0 :=
-      ((he U f).2 0 hmem).differentiableAt ((he U f).1.mem_nhds hmem)
-    let L' := LinearMap.toContinuousLinearMap L
-    have hd' : HasFDerivAt (fun z => valAt' (e z) U f) (fderiv ℂ (fun z => valAt' (e z) U f) 0) (L' 0) := by
-      rw [map_zero]; exact hd.hasFDerivAt
-    have := (hd'.comp (0 : Fin g' → ℂ) L'.hasFDerivAt).fderiv
-    exact DFunLike.congr_fun this w
-  unfold IsDerivAt0
-  simp only [map_zero]
-  exact and_congr_right fun h0 => forall_congr' fun U => forall_congr' fun hU => forall_congr' fun f => by
-    rw [key h0 U hU f]
+  first | exact _root_.GlobalTheory.PointUnif.deriv_linear | exact @_root_.GlobalTheory.PointUnif.deriv_linear | apply _root_.GlobalTheory.PointUnif.deriv_linear <;> assumption
 
 theorem ex_eq_of_der {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {S : Scheme.{0}} {t : SAB H S}
     {y₁ y₂ : Sp ℂ ⟶ S} (hy : y₁ = y₂) {D : Datum H} {g₁ g₂ : ℕ} {ty : Fin g₁ → (E →+* ℂ)}

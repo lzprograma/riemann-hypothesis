@@ -16,48 +16,6 @@ namespace Formalism.IndefR.FWT
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.JoinChr Formalism.IndefR.Links
   Formalism.IndefR.Arith Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.L2.Pj
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section Loc
-
-variable {D : D7}
-
-
-end Loc
-
-section Frame
-
-open ReciprocityTheory.ChartRestriction.G.FD
-
-variable {D : D7}
-
-variable {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S)
-
-variable {M}
-
-
-end Frame
-
-section Cut
-
-variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m}
-  (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F)
-
-
-end Cut
-
-section Central
-
-variable {LL Ks : Type} [Field LL] [NumberField LL] [Field Ks] [NumberField Ks] [Algebra Ks LL]
-  {WL : Type} [AddCommGroup WL] [Module LL WL] [Module Ks WL] [IsScalarTower Ks LL WL]
-  [Module (𝓞 LL) WL] [IsScalarTower (𝓞 LL) LL WL] [Module (𝓞 Ks) WL] [IsScalarTower (𝓞 Ks) Ks WL]
-  {W : (LL →+* ℂ) → Type} [∀ σ, NormedAddCommGroup (W σ)] [∀ σ, InnerProductSpace ℂ (W σ)]
-  {G0 : Type} [Group G0] [Fintype G0] (A : FormsL LL Ks WL W G0)
-
-variable {ζ : LLˣ} {z : G0}
-
-end Central
-
 section Mat
 
 open Formalism.IndefR.Cx Formalism.L2.Indef
@@ -85,49 +43,6 @@ theorem principal_form_tensor_expansion (c : Fin (finrank D.what₂.LL (R.toReal
   rw [smul_smul, Complex.ofReal_inv, mul_inv_cancel₀ hnP, one_smul]
 
 end Mat
-
-section CC
-
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H} {l : Level H}
-  {Xo : Moduli Dw l} {c : Coeff l} {n : ℕ} {Vs : Type} [AddCommGroup Vs] [Module c.F Vs]
-  {D : D7} {V : HSp D} {σ0 : c.F →+* ℂ} {r : ℕ} {U : Unf Xo c σ0 r} {dict : GA D V → Σ k, Frame (U.X k).Ψ r}
-  {mu : GA D V → ℂ} {xr : ℝ} {a : (E →+* ℂ) × ℕ → ℕ} {G : Type} [Group G] {act : G → Rul Xo c →ₗ[c.F] Rul Xo c} {Tup : Type}
-  {dδ : Tup → DeltaDat Xo c n} {Cl' : Tup → Type} [∀ t, Fintype (Cl' t)]
-  {w : ∀ t, Cl' t → (Fin n → LevQ Dw (dδ t).l₂) → c.F} {La : ∀ t, Cl' t → GenLat E n} {Nc gam : ∀ t, Cl' t → ℕ}
-  {vol : Tup → c.F} {ep : ∀ t, Cl' t → c.F} {io : Vs →ₗ[c.F] MvPolynomial (LtN Dw n) c.F}
-  {thAd : ∀ t, (Cl' t → Vs) → (AutQ V → ℂ)} {Pl : ∀ t, (Cl' t → Vs) → Prop} {LL : IntermediateField ℚ ℂ}
-  {Cu : Submodule c.F (Rul Xo c)} {cc cc' : U.Comp → ℂ} {ph ph' : ℂ}
-
-
-
-
-end CC
-
-section CCTie
-
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H} {l : Level H}
-  {Xo : Moduli Dw l} {c c' : Coeff l} {hle : c.F ≤ c'.F} {n r : ℕ} {Vs : Type} [AddCommGroup Vs] [Module c'.F Vs]
-  {LL : IntermediateField ℚ ℂ} {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} {σ0' : c'.F →+* ℂ} {D : D7} {V : HSp D}
-  {dict : GA D V → Σ k, Frame ((unfBC hle U σ0').X k).Ψ r} {mu : GA D V → ℂ} {xr : ℝ} {a : (E →+* ℂ) × ℕ → ℕ}
-  {G : Type} [Group G] {act : G → Rul Xo c →ₗ[c.F] Rul Xo c} {act' : G → Rul Xo c' →ₗ[c'.F] Rul Xo c'} {Tup : Type}
-  {dδ : Tup → DeltaDat Xo c' n} {Cl' : Tup → Type} [∀ t, Fintype (Cl' t)]
-  {w : ∀ t, Cl' t → (Fin n → LevQ Dw (dδ t).l₂) → c'.F} {La : ∀ t, Cl' t → GenLat E n} {Nc gam : ∀ t, Cl' t → ℕ}
-  {vol : Tup → c'.F} {ep : ∀ t, Cl' t → c'.F} {io : Vs →ₗ[c'.F] MvPolynomial (LtN Dw n) c'.F}
-  {thAd : ∀ t, (Cl' t → Vs) → (AutQ V → ℂ)} {Pl : ∀ t, (Cl' t → Vs) → Prop} {cc cc' : (unfBC hle U σ0').Comp → ℂ} {ph ph' : ℂ}
-
-end CCTie
-
-section CCDat
-
-variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m}
-  {C : Core D} [Algebra C.Q.c.F D.what₂.LL] {R : RealDat D A C.Q.c.F} {i : Fin D.R.m} {Tp : Type} {tup : Tp → T0}
-  (O : OMDat C R i Tp tup) (κ : WeightFamilies.Wt D ((i : ℕ) + 1))
-
-end CCDat
 
 section Phase
 

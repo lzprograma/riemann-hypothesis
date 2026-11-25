@@ -88,8 +88,8 @@ theorem ocbA_det_unit (hq0 : (q : E) ≠ 0) {n c : ℕ} {h₀ : Sp E (n + c) ≃
     rw [hid, ocbT_bEnt_id a.2]
     by_cases hab : a = b
     · subst hab
-      rw [if_pos rfl, if_pos rfl]
-    · rw [if_neg (fun h => hab (Fin.ext h)), if_neg hab]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
+    · rw [ite_eq_right (fun h => hab (Fin.ext h)), ite_eq_right hab]
   have hI1 : IntAt P (B h₀.toLinearMap).det := ciIntAt_det _ fun a b => ocbT_int_of_stab hq0 hh₀ a.2 b.2
   have hI2 : IntAt P (B h₀.symm.toLinearMap).det := ciIntAt_det _ fun a b => ocbT_int_of_stab hq0 hinv a.2 b.2
   have hd : (LinearEquiv.det h₀ : E) = (B h₀.toLinearMap).det := by
@@ -169,8 +169,8 @@ theorem ocbA_red_exists (hq0 : (q : E) ≠ 0) {n c : ℕ} {h₀ : Sp E (n + c) �
     rw [ocbT_bEnt_id a.2]
     by_cases hab : a = b
     · subst hab
-      rw [if_pos rfl, if_pos rfl, redP_one]
-    · rw [if_neg (fun h => hab (Fin.ext h)), if_neg hab, redP_zero]
+      rw [ite_eq_left rfl, ite_eq_left rfl, redP_one]
+    · rw [ite_eq_right (fun h => hab (Fin.ext h)), ite_eq_right hab, redP_zero]
   have h1 : M h₀.toLinearMap * M h₀.symm.toLinearMap = 1 := by
     rw [hmul _ _ hh₀ hinv, ← hM1]
     congr 1
@@ -206,7 +206,7 @@ theorem reductionExistsInLatticeStabilizer_holds (σ : X.K →+* ℂ) (m2 : ℕ)
   have hlam : lamYat (Pr := Pr) (R := R) (i + 1) P.1 =
       LocE.lamY P.1 (qOf P.1) (R.N (i + 1)) (cOf R (i + 1)) (fun i => i + 1) := by
     unfold lamYat
-    rw [if_pos hP]
+    rw [ite_eq_left hP]
   rw [hlam] at hh₀
   refine ⟨ocbA_red_exists hq0 hh₀, fun hbar hred₀ => ?_⟩
   have hr := ocbRanks_step (R := R) hB.hm hi
@@ -217,7 +217,7 @@ theorem reductionExistsInLatticeStabilizer_holds (σ : X.K →+* ℂ) (m2 : ℕ)
   have hPhi : PhiAt Ch mu cst.sharp i P.1 = LocE.PhiGS (qOf P.1) (psi0P Ch P.1) (chiP Ch P.1) R.k (R.m / 2 - 1)
       (R.k + R.m - 1) R.t (i + 1) (cOf R i) (R.N i) (cOf R (i + 1)) (R.N (i + 1)) := by
     unfold PhiAt
-    rw [if_pos hP, hB.sharp]
+    rw [ite_eq_left hP, hB.sharp]
     rfl
   let Φ : Loc.SF X.E X.K (R.N i + cOf R i) (R.N (i + 1) + cOf R (i + 1)) :=
     LocE.PhiGS (qOf P.1) (psi0P Ch P.1) (chiP Ch P.1) R.k (R.m / 2 - 1) (R.k + R.m - 1) R.t (i + 1) (cOf R i) (R.N i)

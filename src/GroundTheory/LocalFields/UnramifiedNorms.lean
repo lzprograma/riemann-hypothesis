@@ -32,28 +32,16 @@ theorem exists_eq_of_forall_smul_eq [IsGalois K L] {x : 𝒪[L]ˣ}
     (hx : ∀ σ : L ≃ₐ[K] L, σ • x = x) :
     ∃ w : 𝒪[K]ˣ, algebraMap K L ((w : 𝒪[K]) : K) = ((x : 𝒪[L]) : L) := by
   have hfix : ((x : 𝒪[L]) : L) ∈ (⊥ : IntermediateField K L) :=
-    (IsGalois.mem_bot_iff_fixed _).2 fun σ ↦ by
-      have := congrArg (fun u : 𝒪[L]ˣ ↦ ((u : 𝒪[L]) : L)) (hx σ)
-      change σ ((x : 𝒪[L]) : L) = ((x : 𝒪[L]) : L) at this
-      exact this
+    (IsGalois.mem_bot_iff_fixed _).2 fun σ ↦
+      congrArg (fun u : 𝒪[L]ˣ ↦ ((u : 𝒪[L]) : L)) (hx σ)
   obtain ⟨c, hc⟩ := IntermediateField.mem_bot.1 hfix
-  have hc0 : c ≠ 0 := by
-    rintro rfl
-    rw [map_zero] at hc
-    exact (Units.ne_zero x) (by exact_mod_cast hc.symm)
-  have h1 : c ∈ 𝒪[K] := (algebraMap_mem_integer_iff K L c).1 (hc ▸ (x : 𝒪[L]).2)
-  have h2 : c⁻¹ ∈ 𝒪[K] := by
-    refine (algebraMap_mem_integer_iff K L c⁻¹).1 ?_
-    have e : algebraMap K L c⁻¹ = (((x⁻¹ : 𝒪[L]ˣ) : 𝒪[L]) : L) := by
-      rw [map_inv₀, hc, eq_comm, ← mul_eq_one_iff_eq_inv₀ (by exact_mod_cast (Units.ne_zero x))]
-      exact_mod_cast congrArg (fun u : 𝒪[L] ↦ (u : L)) x.inv_mul
-    rw [e]
-    exact (((x⁻¹ : 𝒪[L]ˣ) : 𝒪[L])).2
-  refine ⟨⟨⟨c, h1⟩, ⟨c⁻¹, h2⟩, ?_, ?_⟩, hc⟩
-  · ext
-    simp [hc0]
-  · ext
-    simp [hc0]
+  have hv : valuation K c = 1 := by
+    apply (Valuation.HasExtension.val_map_eq_one_iff (valuation K) (valuation L) c).mp
+    rw [hc, valuation_unit]
+  let a : 𝒪[K] := ⟨c, hv.le⟩
+  have ha : IsUnit a :=
+    (Valuation.integer.integers (valuation K)).isUnit_iff_valuation_eq_one.mpr hv
+  exact ⟨ha.unit, by simpa only [IsUnit.unit_spec] using hc⟩
 
 theorem subsingleton_tateZero_integerUnits [IsGalois K L] [IsUnramified K L] :
     Subsingleton (TateZero (L ≃ₐ[K] L) 𝒪[L]ˣ) := by

@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.Columns.InputsGenus
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
 public import Formalism.LocalToGlobal.Columns.Inputs
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFiniteAdelicPointLatticeEqSelfDual
@@ -124,11 +125,11 @@ open Classical in
 theorem adAt_sig_idem (P w : HeightOneSpectrum (𝓞 E)) : adAt F w (σ (idem F P)) = if conjPrime₂ w = P then 1 else 0 := by
   split_ifs with h
   · have e := valued_sigR hc w (idem F P - 1)
-    rw [map_sub (adAt F (conjPrime₂ w)), adAt_idem, if_pos h, map_one, sub_self, map_zero, Valuation.zero_iff, map_sub,
+    rw [map_sub (adAt F (conjPrime₂ w)), adAt_idem, ite_eq_left h, map_one, sub_self, map_zero, Valuation.zero_iff, map_sub,
       map_sub, map_one, map_one, sub_eq_zero] at e
     exact e
   · have e := valued_sigR hc w (idem F P)
-    rwa [adAt_idem, if_neg h, map_zero, Valuation.zero_iff] at e
+    rwa [adAt_idem, ite_eq_right h, map_zero, Valuation.zero_iff] at e
 
 variable (Q : Finset (HeightOneSpectrum (𝓞 E)))
 
@@ -154,35 +155,8 @@ theorem adAt_glue (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) (z : AfE F E) (a b : 
   · by_cases h' : conjPrime₂ w ∈ Q <;> simp [h, h']
 
 theorem unimodGenus (n : ℕ) [NeZero n] : UnimodGenus hc n := by
-  intro N hN hU
-  have hs : ∀ e, (hc.sig : E →+* E) ((hc.sig : E →+* E) e) = e := fun e => star_star e
-  have hfix : ∀ e : E, hc.sig e = e → ∃ a : F, algebraMap F E a = e := fun e he => (hc.fixed e).1 he
-  let h : (Fin n → E) →ₗ⋆[E] (Fin n → E) →ₗ[E] E := Formalism.UG.CS.formJ (hc.sig : E →+* E) hs 1 1
-  obtain ⟨hsym, hap⟩ := Formalism.UG.P.hermitian_form_symmetry_holds E _ hs (Fin n) 1 1 (map_one _) (by
-    ext i j
-    simp [Formalism.UG.cT, Matrix.one_apply, eq_comm])
-  replace hsym : h.IsSymm := hsym
-  replace hap : ∀ x y, h x y = Formalism.UG.hform (starRingEnd E) 1 x y := fun x y => (hap x y).trans (one_mul _)
-  have he : h = hStd E n := by
-    refine LinearMap.ext fun x => LinearMap.ext fun y => ?_
-    rw [hap, Formalism.UG.hform]
-    show _ = ∑ i, star (x i) * y i
-    simp [Matrix.one_apply, starRingEnd_apply]
-  have hr : ∀ y, (∀ x, h x y = 0) → y = 0 := fun y hy => funext fun i => by
-    have := hy (Pi.single i 1)
-    rwa [he, hStd_single_left] at this
-  have hn : h.Nondegenerate := ⟨fun x hx => hr x fun y => by rw [← hsym.eq, hx, map_zero], hr⟩
-  exact GlobalTheory.Mass.Genus.exists_globLat_eq (J := 1) hs hfix (Module.Finite.iff_fg.2 stdLat_lattice.fg)
-    (by
-      apply top_unique
-      intro v _
-      have hv : v = ∑ i, v i • (Pi.single i (1 : E) : Fin n → E) := by
-        funext j
-        simp [Finset.sum_apply, Pi.single_apply]
-      rw [hv]
-      exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _
-        (Submodule.subset_span (by simpa using single_mem_stdLat (E := E) i 1))) N (GlobalTheory.SelfDualPoint.mem_genus h hc.cmUnram hsym hn stdLat_lattice hN
-      (he ▸ stdLat_unimodular) (he ▸ hU))
+  intros
+  apply _root_.Formalism.L2.Col.unimodGenus_holds <;> assumption
 
 variable {hc Q} {n : ℕ}
 
@@ -336,7 +310,7 @@ theorem exists_modify (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) {x : GL (Fin n) (
     intro w hw i j
 
     rw [Units.val_mul, Matrix.mul_apply, map_sum]
-    simp only [g, map_mul, hG, if_neg hw]
+    simp only [g, map_mul, hG, ite_eq_right hw]
     split_ifs with h
     · have := valued_pullV_le x ((hfr w h (Pi.single j 1)).2 (le_locP w _ (by simpa using single_mem_stdLat (E := E) j 1))) i
 
@@ -351,7 +325,7 @@ theorem exists_modify (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) {x : GL (Fin n) (
     intro w hw i j
 
     rw [mul_inv_rev, inv_inv, Units.val_mul, Matrix.mul_apply, map_sum]
-    simp only [g, Units.inv_mk, map_mul, hG', if_neg hw]
+    simp only [g, Units.inv_mk, map_mul, hG', ite_eq_right hw]
     split_ifs with h
     · refine valued_symm_le (u := fun l => (x : Matrix (Fin n) (Fin n) (AfE F E)) l j) (hfr w h)
         ((carries_globLat x _).2 ((mem_latS_std _).2 fun l => ?_)) i
@@ -371,10 +345,10 @@ theorem exists_modify (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) {x : GL (Fin n) (
       rwa [Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_rev, inv_inv, mul_inv_cancel_right] at this
     · have := mulVec_int i1 h i
       rwa [Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel_right] at this
-  · exact (hG P i j).trans (if_pos hP)
+  · exact (hG P i j).trans (ite_eq_left hP)
 
-  · simp only [pullV, Formalism.L2.Col.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, g, Units.inv_mk, hG', if_neg h,
-    if_neg h']
+  · simp only [pullV, Formalism.L2.Col.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, g, Units.inv_mk, hG', ite_eq_right h,
+    ite_eq_right h']
 
 
 variable (hc) in
@@ -408,16 +382,14 @@ theorem exists_isPtOf_cm (n : ℕ) (ST SG Q : Finset (HeightOneSpectrum (𝓞 E)
     rw [← hN] at hv
     rw [c3 _ (Finset.disjoint_left.1 h2 P.2) (h4 _ (Or.inl P.2)).2.2, ← hd]
     simp only [decoRaw]
-    rw [if_pos (le_locP _ _ hv), e]
+    rw [ite_eq_left (le_locP _ _ hv), e]
     exact hasRes_redA _ ((mem_globLat x v).1 hv i)
   · rw [← hN] at hv
     rw [c3 _ (Finset.disjoint_left.1 h3 P.2) (h4 _ (Or.inr (Or.inl P.2))).2.2, ← hd]
     simp only [decoRaw]
-    rw [if_pos (le_locP _ _ hv)]
+    rw [ite_eq_left (le_locP _ _ hv)]
     exact hasRes_redA _ ((mem_globLat x v).1 hv i)
   · rw [c2 _ P.2, ptFr_of_mem p (Finset.disjoint_right.1 h3 P.2) P.2]
     rfl
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 end GlobalTheory.Mem.Col2.PtExist

@@ -361,7 +361,7 @@ theorem exists_indicator (hA : AllTest Xo c) (U : Set (Xo.XF c)) (hU : IsClopen 
   · funext p y
     exact (hi p y).eq
   · have h := hA S y
-    have e : evR Xo c χ y = h.choose_spec.choose (χ h.choose h.choose_spec.choose_spec.choose) := dif_pos h
+    have e : evR Xo c χ y = h.choose_spec.choose (χ h.choose h.choose_spec.choose_spec.choose) := dite_eq_left h
     rw [e]
     exact ⟨(hi _ _).map _, hmap _ S _ _ y h.choose_spec.choose_spec.choose_spec.1⟩
 
@@ -376,7 +376,7 @@ theorem exists_index {σ : KA l →+* ℂ} {g : ℕ} {ty : Fin g → (E →+* �
     intro i P hP
     have h : ∃ j Q, IsPeriod (F.Di j) ty Q ∧ F.u j Q = F.u i P := ⟨i, P, hP, rfl⟩
     obtain ⟨Q, hQ, e⟩ := h.choose_spec
-    exact (dif_pos h).trans (congrArg _ (F.disj _ _ _ _ hQ hP e))
+    exact (dite_eq_left h).trans (congrArg _ (F.disj _ _ _ _ hQ hP e))
   refine ⟨t, ht, fun m B y hB hs hy b₀ hb₀ => ?_⟩
   obtain ⟨B', i, P, ho, hm, -, hP, hu⟩ := F.lift m B y hB hs hy b₀ hb₀
   have hev : (fun b => t (y b)) =ᶠ[nhds b₀] fun _ => (i : ℕ) :=

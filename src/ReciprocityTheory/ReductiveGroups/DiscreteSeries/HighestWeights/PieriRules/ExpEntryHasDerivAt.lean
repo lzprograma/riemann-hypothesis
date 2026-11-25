@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PieriRules.StdExpEntryHasDerivAt
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PieriRules.KTypeIntDomStatement
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
 public import Mathlib.Analysis.Calculus.Deriv.Star
@@ -73,22 +74,9 @@ theorem continuous_rhoDual (ε : Fin n → Bool) :
 
 section Deriv
 
-attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
-
 theorem exp_entry_hasDerivAt (X : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n) :
     HasDerivAt (fun t : ℝ => (NormedSpace.exp ((t : ℂ) • X)) i j) (X i j) 0 := by
-  have h0 := hasDerivAt_exp_smul_const' (𝕂 := ℝ) X (0 : ℝ)
-  rw [zero_smul, NormedSpace.exp_zero, mul_one] at h0
-  let L : Matrix (Fin n) (Fin n) ℂ →ₗ[ℝ] ℂ :=
-    { toFun := fun M => M i j, map_add' := fun _ _ => rfl, map_smul' := fun _ _ => rfl }
-  have h1 := (LinearMap.toContinuousLinearMap L).hasFDerivAt.comp_hasDerivAt (0 : ℝ) h0
-  have e : (fun t : ℝ => (NormedSpace.exp ((t : ℂ) • X)) i j) =
-      fun t : ℝ => LinearMap.toContinuousLinearMap L (NormedSpace.exp (t • X)) := by
-    funext t
-    rw [Complex.coe_smul]
-    rfl
-  rw [e]
-  exact h1
+  apply ReciprocityTheory.ChartRestriction.DS.HW.std_exp_entry_hasDerivAt <;> assumption
 
 end Deriv
 
@@ -114,13 +102,13 @@ theorem kRel_dualM (ε : Fin n → Bool) : Formalism.REAL.KRel ε (dualM n) := b
   intro a b c d _ _
   simp only [dualM, neg_mul_neg]
   rcases eq_or_ne a d with rfl | hda <;> rcases eq_or_ne c b with rfl | hcb
-  · simp only [Matrix.single_mul_single_same, mul_one, if_true]
+  · simp only [Matrix.single_mul_single_same, mul_one, ite_true]
     abel
   · simp [hcb.symm]
     exact Matrix.single_mul_single_of_ne (h := hcb) ..
   · simp [hda.symm]
     exact Matrix.single_mul_single_of_ne (h := hda) ..
-  · simp only [hda.symm, hcb.symm, if_false, sub_zero]
+  · simp only [hda.symm, hcb.symm, ite_false, sub_zero]
     rw [Matrix.single_mul_single_of_ne (h := hda) .., Matrix.single_mul_single_of_ne (h := hcb) .., sub_zero]
 
 theorem dualM_diag (a : Fin n) :

@@ -52,8 +52,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -72,7 +70,7 @@ def chartUnflat (L : LB X) (φ : K → (Y ⟶ X)) (ε : K → ℤ) (ψ : K' → 
     ChartPull (LB.LinComb L (fun p : K' × K => ψ p.1 ≫ φ p.2) (fun p => ε p.2 * δ p.1))
       (LB.LinComb (LB.LinComb L φ ε) ψ δ) (𝟙 Z) :=
   have le : ∀ j : K' × K → L.ι, LB.wchart L (fun p : K' × K => ψ p.1 ≫ φ p.2) j ≤
-      LB.wchart (LB.LinComb L φ ε) ψ (fun a b => j (a, b)) := fun j y hy =>
+      LB.wchart (LB.LinComb L φ ε) ψ (fun a b => j (a, b)) := fun _ _ hy =>
     Set.mem_iInter.2 fun a => Set.mem_iInter.2 fun b => Set.mem_iInter.1 hy (a, b)
   { idx := fun j a b => j (a, b)
     le := le

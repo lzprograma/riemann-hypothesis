@@ -487,10 +487,10 @@ theorem reversed_unitriangular : ∀ (k : Type) [Field k] (n : ℕ) (A M : Matri
       by_cases hxy : (x : ℕ) + 1 = y
       · have hc : ((Fin.rev y : Fin n) : ℕ) + 1 = (Fin.rev x : Fin n) := by
           simp only [Fin.val_rev]; omega
-        simp only [if_pos hxy, if_pos hc, i3 x y hxy, Ad]
+        simp only [ite_eq_left hxy, ite_eq_left hc, i3 x y hxy, Ad]
       · have hc : ¬ ((Fin.rev y : Fin n) : ℕ) + 1 = (Fin.rev x : Fin n) := by
           simp only [Fin.val_rev]; omega
-        simp only [if_neg hxy, if_neg hc, neg_zero]
+        simp only [ite_eq_right hxy, ite_eq_right hc, neg_zero]
     simp only [e1, Finset.sum_neg_distrib]
     congr 1
     have key : ∀ f : Fin n → Fin n → k, ∑ x : Fin n, ∑ y : Fin n, f (Fin.rev y) (Fin.rev x) = ∑ x : Fin n, ∑ y : Fin n, f x y := by
@@ -540,8 +540,8 @@ theorem reversed_relation_mod : ∀ (F : Type) [Field F] [NumberField F] (v : He
     intro i j
     simp only [Ro, map_add (f := _), map_mul, hg0, zero_mul, add_zero]
     split_ifs <;> simp
-  have hρA : ∀ a c, ρ (Ao a c) = redM F v A a c := fun a c => (show redM F v A a c = ρ (Ao a c) from dif_pos (hA a c)).symm
-  have hρM : ∀ a c, ρ (Mo a c) = redM F v M a c := fun a c => (show redM F v M a c = ρ (Mo a c) from dif_pos (hM a c)).symm
+  have hρA : ∀ a c, ρ (Ao a c) = redM F v A a c := fun a c => (show redM F v A a c = ρ (Ao a c) from dite_eq_left (hA a c)).symm
+  have hρM : ∀ a c, ρ (Mo a c) = redM F v M a c := fun a c => (show redM F v M a c = ρ (Mo a c) from dite_eq_left (hM a c)).symm
   have h := congrArg ρ hE
 
   simp only [map_sum, map_mul, hρR, hρA, hρM] at h
@@ -673,17 +673,17 @@ theorem sum_super_eq {A : Type} [AddCommMonoid A] {n : ℕ} (f : Fin n → Fin n
       ∑ x : Fin n, ∑ y : Fin n, (if (x : ℕ) + 1 = y then f x y else 0) := by
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases hi : i.1 + 1 < n
-  · rw [dif_pos hi, Finset.sum_eq_single ⟨i.1 + 1, hi⟩]
+  · rw [dite_eq_left hi, Finset.sum_eq_single ⟨i.1 + 1, hi⟩]
     · simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hb (Fin.ext h.symm)
     · simp
   · rw [dite_eq_right hi]
     symm
     refine Finset.sum_eq_zero fun y _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     have := y.2
     omega
 
@@ -878,7 +878,7 @@ theorem local_frame_second_factor : ∀ (F E : Type) [Field F] [NumberField F] [
       have := hsR2 l (Fin.rev i)
       rw [Fin.rev_rev] at this
       rw [← this]; ring
-    simp only [hRl, add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hRl, add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     congr 1
     exact Finset.sum_congr rfl fun l _ => by ring
   have hss : sp (supSum (hR cm.sig J (v.adicCompletion F)) b bd y.1) =
@@ -910,15 +910,15 @@ theorem local_frame_second_factor : ∀ (F E : Type) [Field F] [NumberField F] [
       · rfl
       · simp
   rw [hψ sO rO _ hss]
-  have hredA : ∀ x q, redM F v A x q = IsLocalRing.residue (v.adicCompletionIntegers F) (Ao x q) := fun x q => dif_pos (hAint x q)
+  have hredA : ∀ x q, redM F v A x q = IsLocalRing.residue (v.adicCompletionIntegers F) (Ao x q) := fun x q => dite_eq_left (hAint x q)
   have hlam : lamJ ψ (fun _ => 1) n t 0 n (redM F v M) = ψ (∑ x : Fin n, ∑ q : Fin n, (if (x : ℕ) + 1 = q then redM F v M x q else 0)) := by
     simp only [lamJ, Finset.range_zero, Finset.prod_empty, mul_one]
     congr 1
     refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun q _ => ?_
     have hq := q.2
     by_cases h : (x : ℕ) + 1 = q
-    · rw [if_pos h, if_pos ⟨h, hq, by omega⟩]
-    · rw [if_neg h, if_neg (fun h' => h h'.1)]
+    · rw [ite_eq_left h, ite_eq_left ⟨h, hq, by omega⟩]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h h'.1)]
   rw [hlam, hsupM, map_neg]
   congr 2
 

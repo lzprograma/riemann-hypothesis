@@ -109,14 +109,14 @@ theorem edgeLat_of_G {p : ℕ} (G : GAtP p) (v : Fin G.P.nV) (e : Edge (G.P.W v)
         show c⁻¹ • twistVec (G.P.ι v) (G.P.σ v) s
           ((p : G.P.W v) • fun i => (g * Matrix.diagonal dQ) i j) i = (gK * Matrix.diagonal dK) i j
         rw [lb_tw_p, Matrix.mul_diagonal, Matrix.mul_diagonal, smul_eq_mul, hgK, lb_tw_apply]
-        simp only [hdQ, hdK, hj, if_true, map_mul, map_inv₀, map_natCast]
+        simp only [hdQ, hdK, hj, ite_true, map_mul, map_inv₀, map_natCast]
         field_simp
     · apply Submodule.mem_sup_left
       apply Submodule.subset_span
       refine ⟨fun i => g i j, ?_, ?_⟩
       · rw [hsrc]; exact Submodule.subset_span ⟨j, rfl⟩
       · funext i
-        simp only [twistVec, Matrix.mul_diagonal, hdK, hj, if_false, mul_one]
+        simp only [twistVec, Matrix.mul_diagonal, hdK, hj, ite_false, mul_one]
         rfl
 
 section

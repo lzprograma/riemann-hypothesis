@@ -7,47 +7,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstPeelingMinorMe
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignPermutationIdentity
 
 @[expose] public section
@@ -106,7 +65,7 @@ theorem AAx_omit {A : Type} [Ring A] [Algebra ℂ A] (k r m : ℕ) (hm : m + 1 �
   · rw [Finset.sum_image (fun a _ b _ h => hg h)]
     apply Finset.sum_congr rfl
     intro l0 _
-    rw [if_pos]
+    rw [ite_eq_left]
     · rfl
     · intro a b hab; simp only [g, Function.comp_apply, xR, eI]; exact Fin.strictMono_succAbove l0 hab
   · intro c _ hc
@@ -125,8 +84,21 @@ theorem inv_last {m : ℕ} (Z : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ) (hZ : Z.
   rw [Matrix.inv_def, Matrix.smul_apply, Matrix.adjugate_fin_succ_eq_det_submatrix, Fin.succAbove_last, Fin.val_last,
     smul_eq_mul, Ring.inverse_eq_inv']
 
-theorem _root_.Formalism.FourierDecayAlt.P.head_algebra_relations : Formalism.FourierDecayAlt.KB.HeadAlg := by
-  intro A _ _ M _ _ k r m hm z' E La xi Z c u hG hR hZ hc hL hxi hxl
+theorem headAlg_gen (A : Type) [Ring A] [Algebra ℂ A] (M : Type) [AddCommGroup M] [Module ℂ M] (k r m : ℕ)
+    (hm : m + 2 ≤ r) (E : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → A) (La : A →ₗ[ℂ] M)
+    (xi : Fin r → Fin (2 * r + k + 1) → ℂ) (Z : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ) (c c' u : ℂ)
+    (hG : Formalism.REAL.GlRel E)
+    (hR : ∀ (x : A) (p q : Fin (2 * r + k + 1)), p.val < q.val → q.val < r →
+      La (x * E p q) = (if q.val = p.val + 1 then (1 : ℂ) else 0) • La x)
+    (hZ : Z.det ≠ 0) (hc : c ≠ 0)
+    (hL : ∀ (b : Fin (m + 1)) (x : A), La (E (eI k r ⟨m + 1, by omega⟩) (eI k r ⟨b, by omega⟩) * x) =
+      (c' * Z⁻¹ b (Fin.last m)) • La x)
+    (hxi : ∀ (a : Fin (m + 1)) (q : Fin (2 * r + k + 1)), xi ⟨a, by omega⟩ q = if h : q.val < m + 1 then Z a ⟨q, h⟩ else 0)
+    (hxl : ∀ q : Fin (2 * r + k + 1), xi ⟨m + 1, by omega⟩ q = if q.val = m + 1 then c else 0) :
+    (Z.det * c)⁻¹ • La (C3.AAx k r E xi (m + 2) hm u) =
+      Z.det⁻¹ • La (C3.AAx k r E xi (m + 1) (by omega) u *
+          (algebraMap ℂ A (u - ((m + 1 : ℕ) : ℂ)) + E (eI k r ⟨m + 1, by omega⟩) (eI k r ⟨m + 1, by omega⟩))) -
+        (c' * Z.det⁻¹) • La (C3.AAx k r E xi m (by omega) u) := by
   have hxi' : ∀ (a : Fin r) (q : Fin (2 * r + k + 1)) (ha : a.val < m + 1),
       xi a q = if h : q.val < m + 1 then Z ⟨a.val, ha⟩ ⟨q.val, h⟩ else 0 := by
     intro a q ha; have := hxi ⟨a.val, ha⟩ q; simpa using this
@@ -142,7 +114,7 @@ theorem _root_.Formalism.FourierDecayAlt.P.head_algebra_relations : Formalism.Fo
       rw [Matrix.det_succ_row _ (Fin.last (m + 1)), Fin.sum_univ_castSucc, Finset.sum_eq_zero]
       · simp only [Matrix.of_apply, Matrix.submatrix, Fin.succAbove_last, zero_add]
         have h1 : xi (Fin.castLE hm (Fin.last (m + 1))) (xR k r (m + 2) hm (Fin.last (m + 1))) = c := by
-          rw [hxl' _ _ (by simp), if_pos (by simp [xR, eI])]
+          rw [hxl' _ _ (by simp), ite_eq_left (by simp [xR, eI])]
         rw [h1]
         have h2 : (Matrix.of fun i j : Fin (m + 1) => xi (Fin.castLE hm (Fin.castSucc i))
             (xR k r (m + 2) hm (Fin.castSucc j))) = Z := by
@@ -155,12 +127,12 @@ theorem _root_.Formalism.FourierDecayAlt.P.head_algebra_relations : Formalism.Fo
         rw [← two_mul, pow_mul]; norm_num; ring
       · intro j _
         simp only [Matrix.of_apply]
-        rw [hxl' _ _ (by simp), if_neg (by simp [xR, eI]; omega)]
+        rw [hxl' _ _ (by simp), ite_eq_right (by simp [xR, eI]; omega)]
         ring
     · intro a p ha hp
       by_cases ha' : a.val < m + 1
       · rw [hxi' a p ha', dite_eq_right (by omega)]
-      · rw [hxl' a p (by omega), if_neg (by omega)]
+      · rw [hxl' a p (by omega), ite_eq_right (by omega)]
   have hA1 : AAx k r E xi (m + 1) (by omega) u = Z.det • qminor E (xR k r (m + 1) (by omega)) (xR k r (m + 1) (by omega)) u := by
     rw [AAx_head k r E xi (m + 1) (by omega) Z u]
     · intro a p ha hp
@@ -199,10 +171,8 @@ theorem _root_.Formalism.FourierDecayAlt.P.head_algebra_relations : Formalism.Fo
       rw [la_intmul]
       have hne : a (Fin.castSucc (Fin.castSucc l)) ≠ a (Fin.last (m + 1)) := by
         intro h'; have := congrArg Fin.val h'; rw [hav, hav] at this; simp at this; omega
-      rw [tm_offdiag _ _ hne, hR _ _ _ (by simp only [InNp, hav]; simp; omega)]
-      have : dpsiP k r z' (a (Fin.castSucc (Fin.castSucc l))) (a (Fin.last (m + 1))) = 0 := by
-        unfold dpsiP; simp only [hav]; simp; split_ifs <;> first | rfl | omega
-      rw [this, zero_smul, smul_zero]
+      rw [tm_offdiag _ _ hne, hR _ _ _ (by rw [hav, hav]; simp) (by rw [hav]; simp <;> omega),
+        ite_eq_right (by rw [hav, hav]; simp <;> omega), zero_smul, smul_zero]
     rw [Finset.sum_eq_zero (fun l _ => hzero l), zero_add]
     have hlast : La ((((-1 : ℤ) ^ (m + 1 + ((Fin.last (m + 1) : Fin (m + 2)) : ℕ)) : ℤ) : A) *
         (qminor E (a ∘ (Fin.last (m + 1)).succAbove) (a ∘ Fin.castSucc) u *
@@ -221,10 +191,8 @@ theorem _root_.Formalism.FourierDecayAlt.P.head_algebra_relations : Formalism.Fo
         La (qminor E (a ∘ (Fin.castSucc (Fin.last m) : Fin (m + 2)).succAbove) (a ∘ Fin.castSucc) u) := by
       have hne : a (Fin.castSucc (Fin.last m)) ≠ a (Fin.last (m + 1)) := by
         intro h'; have := congrArg Fin.val h'; rw [hav, hav] at this; simp at this
-      rw [tm_offdiag _ _ hne, hR _ _ _ (by simp only [InNp, hav]; simp; omega)]
-      have : dpsiP k r z' (a (Fin.castSucc (Fin.last m))) (a (Fin.last (m + 1))) = 1 := by
-        unfold dpsiP; simp only [hav]; simp; split_ifs <;> first | rfl | omega
-      rw [this, one_smul]
+      rw [tm_offdiag _ _ hne, hR _ _ _ (by rw [hav, hav]; simp) (by rw [hav]; simp <;> omega),
+        ite_eq_left (by rw [hav, hav]; simp), one_smul]
     rw [la_intmul, hmT]
     have h3 : ((((-1 : ℤ) ^ (m + 1 + ((Fin.castSucc (Fin.last m) : Fin (m + 2)) : ℕ))) : ℤ) : ℂ) = -1 := by
       simp only [Fin.val_castSucc, Fin.val_last]
@@ -250,7 +218,7 @@ theorem _root_.Formalism.FourierDecayAlt.P.head_algebra_relations : Formalism.Fo
       simp only [rowsP, Fin.cons_succ]
       rw [hav, succAbove_val]; simp [xR, eI]; omega
   have hQ : La (qminor E (a ∘ (Fin.castSucc (Fin.last m) : Fin (m + 2)).succAbove) (a ∘ Fin.castSucc) u) =
-      ∑ l : Fin (m + 1), ((-1 : ℂ) ^ (m + (l : ℕ)) * (c * Z⁻¹ l (Fin.last m))) •
+      ∑ l : Fin (m + 1), ((-1 : ℂ) ^ (m + (l : ℕ)) * (c' * Z⁻¹ l (Fin.last m))) •
         La (qminor E (xR k r m (by omega)) (xR k r (m + 1) (by omega) ∘ l.succAbove) u) := by
     rw [hrows, Formalism.REAL.quantumMinorRowSkew_holds A _ (m + 1) E rowsP _ (finRotate (m + 1)) u, la_intmul, sign_finRotate]
 
@@ -281,6 +249,14 @@ theorem _root_.Formalism.FourierDecayAlt.P.head_algebra_relations : Formalism.Fo
   congr 1
   have hs : ((-1 : ℂ) ^ (m + (l : ℕ))) * (-1) ^ (m + (l : ℕ)) = 1 := by
     rw [← pow_add, ← two_mul, pow_mul]; norm_num
-  linear_combination (c * Z.det⁻¹ * (Z.submatrix Fin.castSucc l.succAbove).det) * hs
+  linear_combination (c' * Z.det⁻¹ * (Z.submatrix Fin.castSucc l.succAbove).det) * hs
+
+theorem _root_.Formalism.FourierDecayAlt.P.head_algebra_relations : Formalism.FourierDecayAlt.KB.HeadAlg := by
+  intro A _ _ M _ _ k r m hm z' E La xi Z c u hG hR hZ hc hL hxi hxl
+  refine headAlg_gen A M k r m hm E La xi Z c c u hG (fun x p q hpq hqr => ?_) hZ hc hL hxi hxl
+  rw [hR x p q (by simp only [InNp]; omega)]
+  have hd : dpsiP k r z' p q = if q.val = p.val + 1 then 1 else 0 := by
+    unfold dpsiP; split_ifs <;> first | rfl | omega
+  rw [hd]
 
 end Formalism.FourierDecayAlt.P.PBG

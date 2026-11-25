@@ -139,10 +139,8 @@ theorem tensor_ext [Module.Finite R M] [Module.Projective R M] [Module.Finite R 
   pair_bijective.1 (TensorProduct.ext' h)
 
 theorem eq_of_forall_apply [Module.Projective R M] {a b : M}
-    (h : ∀ φ : CartierDual R M, φ a = φ b) : a = b := by
-  obtain ⟨s, hs⟩ := Module.projective_def'.1 ‹Module.Projective R M›
-  have hi : Function.Injective s := LinearMap.injective_of_comp_eq_id _ _ hs
-  exact hi (Finsupp.ext fun i => h (toConv (Finsupp.lapply i ∘ₗ s)))
+    (h : ∀ φ : CartierDual R M, φ a = φ b) : a = b :=
+  Module.eval_apply_injective R (LinearMap.ext fun φ => h (toConv φ))
 
 theorem tensor_eq_of_forall_pair [Module.Finite R M] [Module.Projective R M] [Module.Finite R N]
     [Module.Projective R N] {s t : M ⊗[R] N}
@@ -150,10 +148,8 @@ theorem tensor_eq_of_forall_pair [Module.Finite R M] [Module.Projective R M] [Mo
   refine eq_of_forall_apply (R := R) fun χ => ?_
   obtain ⟨x, hx⟩ := (pair_bijective (R := R) (M := M) (N := N)).2 χ.ofConv
   rw [← hx]
-  clear hx
-  induction x with
-  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
-  | tmul φ ψ => exact h φ ψ
+  exact LinearMap.congr_fun
+    (TensorProduct.ext' (g := (pair R M N).flip s) (h := (pair R M N).flip t) h) x
 
 private def pair₃ : CartierDual R M ⊗[R] (CartierDual R N ⊗[R] CartierDual R P) →ₗ[R]
     M ⊗[R] (N ⊗[R] P) →ₗ[R] R :=
@@ -212,36 +208,29 @@ theorem comul_eq_iff (φ : CartierDual R H) (x : CartierDual R H ⊗[R] CartierD
 instance instCoalgebra : Coalgebra R (CartierDual R H) where
   coassoc := by
     refine LinearMap.ext fun φ => pair₃_ext fun a b c => ?_
-    have h1 (t : CartierDual R H ⊗[R] CartierDual R H) :
-        pair₃ (TensorProduct.assoc R _ _ _ (LinearMap.rTensor _ comul t)) (a ⊗ₜ (b ⊗ₜ c)) =
-          pair R H H t ((a * b) ⊗ₜ c) := by
-      induction t with
-      | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
-      | tmul φ ψ => simp [pair₃_assoc]
-    have h2 (t : CartierDual R H ⊗[R] CartierDual R H) :
-        pair₃ (LinearMap.lTensor _ comul t) (a ⊗ₜ (b ⊗ₜ c)) = pair R H H t (a ⊗ₜ (b * c)) := by
-      induction t with
-      | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
-      | tmul φ ψ => simp [pair₃_tmul]
-    simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, h1, h2, pair_comul_tmul, mul_assoc]
+    have h1 : pair₃.flip (a ⊗ₜ (b ⊗ₜ c)) ∘ₗ (TensorProduct.assoc R _ _ _).toLinearMap ∘ₗ
+        LinearMap.rTensor _ comul = (pair R H H).flip ((a * b) ⊗ₜ c) :=
+      TensorProduct.ext' fun _ _ => by simp [pair₃_assoc]
+    have h2 : pair₃.flip (a ⊗ₜ (b ⊗ₜ c)) ∘ₗ LinearMap.lTensor _ comul =
+        (pair R H H).flip (a ⊗ₜ (b * c)) :=
+      TensorProduct.ext' fun _ _ => by simp [pair₃_tmul]
+    have h1' := LinearMap.congr_fun h1 (comul φ)
+    have h2' := LinearMap.congr_fun h2 (comul φ)
+    simp only [LinearMap.comp_apply, LinearMap.flip_apply, LinearEquiv.coe_coe,
+      pair_comul_tmul] at h1' h2'
+    simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, h1', h2', mul_assoc]
   rTensor_counit_comp_comul := by
     refine LinearMap.ext fun φ => (TensorProduct.lid R _).injective (ext_apply fun a => ?_)
-    have h (t : CartierDual R H ⊗[R] CartierDual R H) :
-        (TensorProduct.lid R _ (LinearMap.rTensor _ counit t)) a = pair R H H t (1 ⊗ₜ a) := by
-      induction t with
-      | add x y hx hy => simp only [map_add (f := _), ofConv_add, LinearMap.add_apply, hx, hy]
-      | tmul φ ψ => simp
-    simp only [LinearMap.comp_apply, h]
-    simp
+    have h : evalAt R H a ∘ₗ (TensorProduct.lid R _).toLinearMap ∘ₗ LinearMap.rTensor _ counit =
+        (pair R H H).flip (1 ⊗ₜ a) :=
+      TensorProduct.ext' fun _ _ => by simp
+    simpa using LinearMap.congr_fun h (comul φ)
   lTensor_counit_comp_comul := by
     refine LinearMap.ext fun φ => (TensorProduct.rid R _).injective (ext_apply fun a => ?_)
-    have h (t : CartierDual R H ⊗[R] CartierDual R H) :
-        (TensorProduct.rid R _ (LinearMap.lTensor _ counit t)) a = pair R H H t (a ⊗ₜ 1) := by
-      induction t with
-      | add x y hx hy => simp only [map_add (f := _), ofConv_add, LinearMap.add_apply, hx, hy]
-      | tmul φ ψ => simp [mul_comm]
-    simp only [LinearMap.comp_apply, h]
-    simp
+    have h : evalAt R H a ∘ₗ (TensorProduct.rid R _).toLinearMap ∘ₗ LinearMap.lTensor _ counit =
+        (pair R H H).flip (a ⊗ₜ 1) :=
+      TensorProduct.ext' fun _ _ => by simp [mul_comm]
+    simpa using LinearMap.congr_fun h (comul φ)
 
 end Coalgebra
 
@@ -328,30 +317,22 @@ instance instHopfAlgebraStruct : HopfAlgebraStruct R (CartierDual R H) where
 instance instHopfAlgebra : HopfAlgebra R (CartierDual R H) where
   mul_antipode_rTensor_comul := by
     refine LinearMap.ext fun φ => ext_apply fun a => ?_
-    have h (x : CartierDual R H ⊗[R] CartierDual R H) (t : H ⊗[R] H) :
-        pair R H H (LinearMap.rTensor _ (antipode R) x) t =
-          pair R H H x (LinearMap.rTensor _ (antipode R) t) := by
-      induction x with
-      | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
-      | tmul φ ψ =>
-        induction t with
-        | add x y hx hy => simp only [map_add (f := _), hx, hy]
-        | tmul a b => simp
-    simp only [LinearMap.comp_apply, mul'_apply, h, pair_comul, mul_antipode_rTensor_comul_apply]
-    simp [Algebra.algebraMap_eq_smul_one, mul_comm]
+    have h : pair R H H ∘ₗ LinearMap.rTensor _ (antipode R) =
+        (pair R H H).compl₂ (LinearMap.rTensor _ (antipode R)) :=
+      TensorProduct.ext' fun _ _ => TensorProduct.ext' fun _ _ => by simp
+    have h' := LinearMap.congr_fun₂ h (comul φ) (comul a)
+    simp only [LinearMap.comp_apply, LinearMap.compl₂_apply, pair_comul,
+      mul_antipode_rTensor_comul_apply] at h'
+    simp [mul'_apply, h', Algebra.algebraMap_eq_smul_one, mul_comm]
   mul_antipode_lTensor_comul := by
     refine LinearMap.ext fun φ => ext_apply fun a => ?_
-    have h (x : CartierDual R H ⊗[R] CartierDual R H) (t : H ⊗[R] H) :
-        pair R H H (LinearMap.lTensor _ (antipode R) x) t =
-          pair R H H x (LinearMap.lTensor _ (antipode R) t) := by
-      induction x with
-      | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
-      | tmul φ ψ =>
-        induction t with
-        | add x y hx hy => simp only [map_add (f := _), hx, hy]
-        | tmul a b => simp
-    simp only [LinearMap.comp_apply, mul'_apply, h, pair_comul, mul_antipode_lTensor_comul_apply]
-    simp [Algebra.algebraMap_eq_smul_one, mul_comm]
+    have h : pair R H H ∘ₗ LinearMap.lTensor _ (antipode R) =
+        (pair R H H).compl₂ (LinearMap.lTensor _ (antipode R)) :=
+      TensorProduct.ext' fun _ _ => TensorProduct.ext' fun _ _ => by simp
+    have h' := LinearMap.congr_fun₂ h (comul φ) (comul a)
+    simp only [LinearMap.comp_apply, LinearMap.compl₂_apply, pair_comul,
+      mul_antipode_lTensor_comul_apply] at h'
+    simp [mul'_apply, h', Algebra.algebraMap_eq_smul_one, mul_comm]
 
 end Hopf
 
@@ -369,13 +350,12 @@ def transpose (f : M →ₗ[R] N) : CartierDual R N →ₗ[R] CartierDual R M :=
 theorem pair_map_transpose (f : M →ₗ[R] N) (g : P →ₗ[R] Q)
     (x : CartierDual R N ⊗[R] CartierDual R Q) (t : M ⊗[R] P) :
     pair R M P (TensorProduct.map (transpose f) (transpose g) x) t =
-      pair R N Q x (TensorProduct.map f g t) := by
-  induction x with
-  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
-  | tmul φ ψ =>
-    induction t with
-    | add x y hx hy => simp only [map_add (f := _), hx, hy]
-    | tmul a b => simp
+      pair R N Q x (TensorProduct.map f g t) :=
+  LinearMap.congr_fun₂
+    (TensorProduct.ext'
+      (g := pair R M P ∘ₗ TensorProduct.map (transpose f) (transpose g))
+      (h := (pair R N Q).compl₂ (TensorProduct.map f g))
+      fun _ _ => TensorProduct.ext' fun _ _ => by simp) x t
 
 theorem transpose_injective {f : M →ₗ[R] N} (hf : Function.Surjective f) :
     Function.Injective (transpose f) := fun φ ψ h => ext_apply fun b => by
@@ -396,13 +376,12 @@ theorem toBidual_bijective [Module.Finite R M] [Module.Projective R M] :
   rw [this]; exact LinearEquiv.bijective _
 
 theorem pair_map_toBidual (t : M ⊗[R] N) (x : CartierDual R M ⊗[R] CartierDual R N) :
-    pair R _ _ (TensorProduct.map (cartierDualToBidual R M) (cartierDualToBidual R N) t) x = pair R M N x t := by
-  induction x with
-  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
-  | tmul φ ψ =>
-    induction t with
-    | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
-    | tmul a b => simp
+    pair R _ _ (TensorProduct.map (cartierDualToBidual R M) (cartierDualToBidual R N) t) x = pair R M N x t :=
+  LinearMap.congr_fun₂
+    (TensorProduct.ext'
+      (g := pair R _ _ ∘ₗ TensorProduct.map (cartierDualToBidual R M) (cartierDualToBidual R N))
+      (h := (pair R M N).flip)
+      fun _ _ => TensorProduct.ext' fun _ _ => by simp) t x
 
 theorem transpose_bijective {f : M →ₗ[R] N} (hf : Function.Bijective f) :
     Function.Bijective (transpose f) :=
@@ -528,15 +507,14 @@ def baseChangeLinear : A ⊗[R] CartierDual R M →ₗ[A] CartierDual A (A ⊗[R
 theorem baseChangeLinear_bijective [Module.Finite R M] [Module.Projective R M] :
     Function.Bijective (baseChangeLinear R A M) := by
   let e : (M →ₗ[R] A) ≃ₗ[A] (A ⊗[R] M →ₗ[A] A) := LinearMap.liftBaseChangeEquiv A
-  have : ⇑(baseChangeLinear R A M) = (toDual A _).symm ∘ e ∘ dualTensorHom R M A ∘
-      TensorProduct.comm R _ _ ∘ LinearEquiv.lTensor A (toDual R M) := by
-    funext x
-    induction x with
-    | add x y hx hy => simp only [Function.comp_apply, map_add (f := _)] at hx hy ⊢; rw [hx, hy]
-    | tmul a φ =>
-      refine WithConv.ext (TensorProduct.AlgebraTensorModule.ext fun b m => ?_)
-      simp [e, mul_comm]
-  rw [this]
+  have h : (baseChangeLinear R A M).restrictScalars R =
+      (toDual A _).symm.toLinearMap.restrictScalars R ∘ₗ e.toLinearMap.restrictScalars R ∘ₗ
+        dualTensorHom R M A ∘ₗ (TensorProduct.comm R _ _).toLinearMap ∘ₗ
+        (LinearEquiv.lTensor A (toDual R M)).toLinearMap.restrictScalars R := by
+    refine TensorProduct.ext' fun a φ => WithConv.ext (TensorProduct.AlgebraTensorModule.ext fun b m => ?_)
+    simp [e, mul_comm]
+  rw [show ⇑(baseChangeLinear R A M) = (toDual A _).symm ∘ e ∘ dualTensorHom R M A ∘
+      TensorProduct.comm R _ _ ∘ LinearEquiv.lTensor A (toDual R M) from congrArg DFunLike.coe h]
   exact (LinearEquiv.bijective _).comp <| (LinearEquiv.bijective _).comp <|
     dualTensorHom_bijective.comp <| (LinearEquiv.bijective _).comp (LinearEquiv.bijective _)
 
@@ -621,14 +599,6 @@ theorem baseChange_map {K : Type*} [Semiring K] [Bialgebra R K] [Module.Finite R
     simp
 
 end BaseChange
-
-section Product
-
-variable (R H K : Type*) [CommSemiring R] [Semiring H] [Bialgebra R H] [Module.Finite R H]
-  [Module.Projective R H] [Semiring K] [Bialgebra R K] [Module.Finite R K] [Module.Projective R K]
-
-
-end Product
 
 section Tensor
 
@@ -732,15 +702,6 @@ def pointsEquiv : (CartierDual R C →ₐ[R] A) ≃ GroupLike A (A ⊗[R] C) whe
 
 end Points
 
-section PointsBialgebra
-
-variable {R H A : Type*} [CommSemiring R] [Semiring H] [Bialgebra R H] [Module.Finite R H]
-  [Module.Projective R H] [CommSemiring A] [Algebra R A]
-
-
-
-end PointsBialgebra
-
 end CartierDual
 
 private theorem tmul_tmul_one_eq {R A M N : Type*} [CommSemiring R] [CommSemiring A] [Algebra R A]
@@ -812,28 +773,6 @@ theorem isPrimitiveElem_iff_mul (a : H) : IsPrimitiveElem R a ↔
 
 end Lie
 
-section LieRing
-
-open TrivSqZeroExt
-
-variable (R H A M : Type*) [CommRing R] [Semiring H] [Bialgebra R H] [Module.Finite R H]
-  [Module.Projective R H] [CommRing A] [Algebra R A] [AddCommGroup M] [Module R M] [Module A M]
-  [Module Aᵐᵒᵖ M] [IsCentralScalar A M] [IsScalarTower R A M] [IsScalarTower R Aᵐᵒᵖ M]
-
-variable {R H A M}
-
-
-
-end LieRing
-
-section MonoidAlgebra
-
-variable (R Γ : Type*) [CommSemiring R]
-
-variable {R Γ}
-
-end MonoidAlgebra
-
 section AddMonoidAlgebra
 
 attribute [local simp] toDual_apply
@@ -861,11 +800,6 @@ theorem counit_addMonoidAlgebra [AddMonoid Γ] [Finite Γ]
     (φ : CartierDual R (AddMonoidAlgebra R Γ)) :
     counit (R := R) φ = addMonoidAlgebraEquiv R Γ φ 0 := by
   rw [addMonoidAlgebraEquiv_apply]; rfl
-
-theorem antipode_addMonoidAlgebra [AddGroup Γ] [Finite Γ]
-    (φ : CartierDual R (AddMonoidAlgebra R Γ)) (γ : Γ) :
-    addMonoidAlgebraEquiv R Γ (antipode R φ) γ = addMonoidAlgebraEquiv R Γ φ (-γ) := by
-  simp [antipode_apply]
 
 end AddMonoidAlgebra
 
@@ -1119,7 +1053,7 @@ theorem pairingMap_pairingBaseChange (u : H ⊗[R] K) (x : A ⊗[R] CartierDual 
       simp only [pairingMap, pairingBaseChange, tmul_add, map_add (f := _), LinearMap.add_apply,
         LinearMap.baseChange_tmul] at hs ht ⊢
       rw [hs, ht]
-    | tmul h k => simp [pairingBaseChange, smul_tmul', ← smul_tmul]
+    | tmul h k => simp [pairingBaseChange, smul_tmul']
 
 variable [Module.Finite R H] [Module.Projective R H] [Module.Finite R K] [Module.Projective R K]
 
@@ -1144,23 +1078,5 @@ theorem IsPerfectBicharacter.baseChange (hu : IsPerfectBicharacter R u) :
   exact LinearEquiv.bijective _
 
 end PairingMap
-
-section Examples
-
-open CartierDual
-
-theorem canonical_zmod_two_ne_one (R : Type*) [CommRing R] [Nontrivial R] :
-    canonical R (AddMonoidAlgebra R (ZMod 2)) ≠ 1 := by
-  intro h
-  have h1 := pairingMap_canonical (R := R) (H := AddMonoidAlgebra R (ZMod 2))
-  rw [h, Algebra.TensorProduct.one_def] at h1
-  have h2 := congr(addMonoidAlgebraEquiv R (ZMod 2)
-    ($h1 ((addMonoidAlgebraEquiv R (ZMod 2)).symm (Pi.single 0 1))) 1)
-  rw [pairingMap_tmul, map_smul, LinearMap.id_apply, AlgEquiv.apply_symm_apply,
-    map_one (addMonoidAlgebraEquiv R (ZMod 2)), AddMonoidAlgebra.one_def,
-    addMonoidAlgebraEquiv_symm_single] at h2
-  simp at h2
-
-end Examples
 
 end GlobalTheory

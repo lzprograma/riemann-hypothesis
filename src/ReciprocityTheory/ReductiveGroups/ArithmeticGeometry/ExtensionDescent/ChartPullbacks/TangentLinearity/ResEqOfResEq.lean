@@ -9,10 +9,9 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.ConstPullback
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.TorusInj
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBCorr
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -46,17 +45,9 @@ lemma pullGen_s_val {φ : K → (Y ⟶ X)} {ε : K → ℤ} (c : LB.Gen (LB.LinC
 lemma res_eq_of_res_eq' {U V W : Y.Opens} (a : Γ(Y, U)ˣ) (b : Γ(Y, V)ˣ) (h1 : W ≤ U) (h2 : W ≤ V)
     (h : res (inf_le_left : U ⊓ V ≤ U) a = res (inf_le_right : U ⊓ V ≤ V) b) :
     res h1 a = res h2 b := by
-  have hW : W ≤ U ⊓ V := le_inf h1 h2
-  have key : ∀ {P : Y.Opens} (hP : U ⊓ V ≤ P) (hQ : W ≤ P) (c : Γ(Y, P)ˣ),
-      res hQ c = res hW (res hP c) := by
-    intro P hP hQ c
-    have e : Y.presheaf.map (homOfLE hQ).op =
-        Y.presheaf.map (homOfLE hP).op ≫ Y.presheaf.map (homOfLE hW).op := by
-      rw [← Functor.map_comp]
-      rfl
-    ext
-    exact congrArg (fun φ => φ.hom c.val) e
-  rw [key inf_le_left h1 a, key inf_le_right h2 b, h]
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.DVR.res_eq_of_res_eq
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.DVR.res_eq_of_res_eq <;> first | assumption | rfl | infer_instance
 
 lemma corr_symm' {K' : Type} [Fintype K'] {φ : K → (Y ⟶ X)} {ε : K → ℤ} {φ' : K' → (Y ⟶ X)}
     {ε' : K' → ℤ} {t : LB.Gen (LB.LinComb L φ ε)} {t' : LB.Gen (LB.LinComb L φ' ε')}

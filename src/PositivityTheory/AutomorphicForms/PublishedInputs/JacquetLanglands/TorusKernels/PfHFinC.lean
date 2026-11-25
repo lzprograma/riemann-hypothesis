@@ -33,7 +33,7 @@ theorem exists_rep {K ι A : Type} [Group K] [TopologicalSpace K] [IsTopological
       smul_mem' := fun c f hf => ⟨hf.1.const_smul c, fun x a => by simp [hf.2, mul_left_comm]⟩ }
   haveI : FiniteDimensional ℂ V := by
     refine Module.Finite.of_injective ((LinearMap.funLeft ℂ ℂ e).comp V.subtype) ?_
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro f hf
     ext x
     obtain ⟨i, a, rfl⟩ := h x

@@ -540,13 +540,8 @@ theorem secCoord_of_local {X : Scheme.{0}} {M : LB X} (hM : M.IsLB) {I : Type} {
 
 theorem span_theta (l1 : Out.Laws) (l2 : Out.Laws2) {o : Type} [CommRing o] {g N' : ℕ} {J : Type} {b : TBase o (N' ^ 2)}
     {K : Type} [Field K] {s : Sp K ⟶ Sp o} (t : TObj g (N' ^ 2) J b s) (n : ℕ) (v : Ix g (N' ^ 2) → K)
-    (h2 : 2 ≤ n) (hn : n ∣ N') (hth : t.HasTh (𝟙 _) v) : Ideal.span (Set.range v) = ⊤ := by
-  by_contra hne
-  obtain ⟨q, hq, hle⟩ := Ideal.exists_le_maximal _ hne
-  have hc := GlobalTheory.coset_of_hasTh l1 l2 o g N' J b (Sp K) s t n K (𝟙 _) v q h2 hn hth hq.isPrime
-  unfold Coset at hc
-  obtain ⟨c, hc⟩ := hc 0
-  exact hc (hle (Ideal.subset_span ⟨_, rfl⟩))
+    (h2 : 2 ≤ n) (hn : n ∣ N') (hth : t.HasTh (𝟙 _) v) : Ideal.span (Set.range v) = ⊤ :=
+  _root_.GlobalTheory.ZM.FamilyScheme.span_theta l1 l2 t n v h2 hn hth
 
 theorem exists_fibData : Out.Laws → Out.Laws2 → ∀ (g : ℕ) (J : Type) [Finite J] (Mat : J → Matrix (Fin (2 * g)) (Fin (2 * g)) ℤ) (κ n : ℕ), n.Prime → Odd n → ∃ j₀ : ℕ, ∀ j ≥ j₀, ∀ (o : Type) [CommRing o] (b : TBase o ((n ^ j) ^ 2)) (R : Type) [CommRing R] (β : o →+* R) (v : Ix g ((n ^ j) ^ 2) → R), ∃ (p : Ix g ((n ^ j) ^ 2) → Ix g ((n ^ j) ^ 2) → R) (Hh : Type) (_ : Finite Hh) (hh : Hh → Ix g ((n ^ j) ^ 2)) (Q : Polynomial ℚ) (d : ℕ), FibData b Mat κ β v (n ^ 2) p hh Q d := by
   intro l1 l2 g J _ Mat κ n hn hodd
@@ -885,7 +880,7 @@ theorem exists_retraction_near_of_unique_point :
   obtain ⟨K, _, _, x, hker, y, hy, hu⟩ := hP q₀ hq₀
   obtain ⟨f, hfk, hfB⟩ := exists_smul_mem_range_of_unique_point R B K x y hy hu
   have hinj : Function.Injective (algebraMap R B) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro a ha
     refine hD a fun p hp _ => ?_
     obtain ⟨K', _, _, x', hker', y', hy', -⟩ := hP p hp
@@ -1761,7 +1756,7 @@ theorem Covered.hasTh_iff (h : Covered Mat κ univ) (h₁ : Out.Laws) (h₂ : Ou
         exact hf (hM.isPrime.mem_of_pow_mem n hn)
       exact (IsLocalization.isPrime_of_isPrime_disjoint (Submonoid.powers f) (Localization.Away f) M
         hM.isPrime hdis).ne_top h2
-    refine _root_.GlobalTheory.ZM.secCoord_of_locally _ Y.de _ Y.th R (z ≫ U.ι) v Y.isLB hspan (fun p => ?_)
+    refine _root_.GlobalTheory.ZM.secCoord_of_locally _ Y.de _ Y.th R (z ≫ U.ι) v hspan (fun p => ?_)
     obtain ⟨f, hf, hsc⟩ := loc p
     refine ⟨Localization.Away f, inferInstance, algebraMap R (Localization.Away f), ?_, ?_, hsc⟩
     · first

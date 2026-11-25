@@ -163,8 +163,8 @@ theorem qsp_entry_int (g : ↥(GLint E n P)) (i j : Fin n) :
     rw [Pi.single_apply]
     show (if l = j then (1 : E) else 0) ∈ (1 : Submodule (𝓞 E) E)
     by_cases h : l = j
-    · rw [if_pos h]; exact Submodule.one_le.1 le_rfl
-    · rw [if_neg h]; exact zero_mem _
+    · rw [ite_eq_left h]; exact Submodule.one_le.1 le_rfl
+    · rw [ite_eq_right h]; exact zero_mem _
   have h2 : g.1 (Pi.single j 1) ∈ stdAt E n P := (g.2 _).2 h1
   obtain ⟨s, hs, hsx⟩ := (qsp_mem_locP P).1 h2
   obtain ⟨a, ha⟩ := Submodule.mem_one.1 (hsx i trivial)

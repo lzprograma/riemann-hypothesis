@@ -155,7 +155,7 @@ theorem gap_or_bounded (μ : Fin n → ℤ) {C : ℤ} (hC : 0 < C) :
   by_contra hcon
   rw [not_or] at hcon
   obtain ⟨hA, hB⟩ := hcon
-  push_neg at hB
+  push Not at hB
   obtain ⟨i, j, hij, hbig⟩ := hB
   obtain ⟨j₀, hj₀, hmin⟩ := Finset.exists_min_image (Finset.univ.filter fun k => β k = β j) μ
     ⟨j, by simp⟩
@@ -164,8 +164,7 @@ theorem gap_or_bounded (μ : Fin n → ℤ) {C : ℤ} (hC : 0 < C) :
   have hk : ∀ t : Fin n, ∃ k, β k = β j ∧ μ k < μ j₀ + ((t : ℕ) + 1 : ℤ) * C ∧
       μ j₀ + ((t : ℕ) + 1 : ℤ) * C < μ k + C := by
     intro t
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     apply hA
     refine ⟨μ j₀ + ((t : ℕ) + 1 : ℤ) * C, β j, ⟨i, hij, ?_⟩, ⟨j₀, hj₀, ?_⟩, fun k hk hlt => hne k hk hlt⟩
     · have ht : ((t : ℕ) + 1 : ℤ) ≤ n := by have := t.2; omega
@@ -180,12 +179,10 @@ theorem gap_or_bounded (μ : Fin n → ℤ) {C : ℤ} (hC : 0 < C) :
     have h4 := hk2 t
     rw [hst] at h1 h2
     have hs : ((s : ℕ) : ℤ) < (t : ℕ) + 1 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       nlinarith
     have ht : ((t : ℕ) : ℤ) < (s : ℕ) + 1 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       nlinarith
     exact Fin.ext (by omega)
   obtain ⟨t, ht⟩ := (Finite.injective_iff_surjective.1 hinj) j₀
@@ -279,6 +276,72 @@ theorem exists_subgroupOf_congruenceSubgroup_subset {U : Set (levi F n β)}
 instance secondCountableTopology_levi : SecondCountableTopology (levi F n β) :=
   inferInstanceAs (SecondCountableTopology (levi F n β : Set (GL (Fin n) F)))
 
+theorem exists_cuspidal_gap_dichotomy {σ : Representation ℂ (levi F n β) W}
+    (hc : IsCuspidal σ) (m : ℕ) (V₂ : Finset W) :
+    ∃ C : ℤ, 0 < C ∧ ∀ μ : Fin n → ℤ,
+      (∀ w ∈ V₂, w ∈ Submodule.span ℂ {y | ∃ u : levi F n β,
+        ⟨Cartan.diagPow F n μ, diagPow_mem_levi μ⟩ * u *
+          (⟨Cartan.diagPow F n μ, diagPow_mem_levi μ⟩ : levi F n β)⁻¹ ∈
+          (congruenceSubgroup F n m).subgroupOf (levi F n β) ∧ ∃ x, y = σ u x - x}) ∨
+      ∃ c : Fin n → ℤ, (∀ i j, β i = β j → c i = c j) ∧ ∀ i, c i ≤ μ i ∧ μ i ≤ c i + n * C := by
+  classical
+  have hU : ∀ S : Finset (Fin n), (∃ i j, β i = β j ∧ i ∈ S ∧ j ∉ S) → ∀ w : W,
+      ∃ U : Finset (levi F n β), (∀ u ∈ U, (u : GL (Fin n) F) ∈ unipotentRadical F n (splitFun S)) ∧
+        w ∈ Submodule.span ℂ {y | ∃ u ∈ U, ∃ x, y = σ u x - x} :=
+    fun S hS w => exists_finset_of_isCuspidal hc hS w
+  choose! Uf hUf1 hUf2 using hU
+  let Uall : Finset (levi F n β) := Finset.univ.biUnion fun S : Finset (Fin n) => V₂.biUnion (Uf S)
+  obtain ⟨t, ht⟩ := exists_pow_mul_mem_of_isCompact F n
+    (((Uall.image fun u : levi F n β => u.1) ∪ (Uall.image fun u : levi F n β => u.1⁻¹) :
+      Finset (GL (Fin n) F)) : Set (GL (Fin n) F)).toFinite.isCompact
+  have hbu : ∀ u ∈ Uall, ∀ i j, (uniformizer F : F) ^ t * (u : GL (Fin n) F) i j ∈ 𝒪[F] :=
+    fun u hu => ht _ (by simp only [Finset.coe_union, Finset.coe_image, Set.mem_union,
+      Set.mem_image, Finset.mem_coe]; exact Or.inl ⟨u, hu, rfl⟩)
+  have hbu' : ∀ u ∈ Uall, ∀ i j,
+      (uniformizer F : F) ^ t * ((u : GL (Fin n) F)⁻¹ : GL (Fin n) F) i j ∈ 𝒪[F] :=
+    fun u hu => ht _ (by simp only [Finset.coe_union, Finset.coe_image, Set.mem_union,
+      Set.mem_image, Finset.mem_coe]; exact Or.inr ⟨u, hu, rfl⟩)
+  set C : ℤ := ((t + m : ℕ) : ℤ) + 1
+  have hC : ((t + m : ℕ) : ℤ) < C := lt_add_one _
+  have hC0 : 0 < C := by positivity
+  refine ⟨C, hC0, fun μ => ?_⟩
+  rcases gap_or_bounded (β := β) μ hC0 with
+    ⟨θ, b, ⟨i, hib, hiθ⟩, ⟨j, hjb, hjθ⟩, hgap⟩ | hbd
+  · left
+    intro w hwV
+    set S : Finset (Fin n) := Finset.univ.filter fun j => β j = b ∧ θ ≤ μ j
+    have hS : ∃ i j, β i = β j ∧ i ∈ S ∧ j ∉ S :=
+      ⟨i, j, hib.trans hjb.symm, by simp [S, hib, hiθ], by simp [S, hjb, not_le.2 hjθ]⟩
+    refine Submodule.span_mono ?_ (hUf2 S hS w)
+    rintro _ ⟨u, hu, x, rfl⟩
+    have huA : u ∈ Uall := Finset.mem_biUnion.2 ⟨S, Finset.mem_univ _,
+      Finset.mem_biUnion.2 ⟨w, hwV, hu⟩⟩
+    have huN := hUf1 S hS w u hu
+    refine ⟨u, Subgroup.mem_subgroupOf.2 ?_, x, rfl⟩
+    exact diagPow_conj_mem_congruenceSubgroup hC (apply_eq_or_gap hgap u.2 huN)
+      (apply_eq_or_gap hgap ((levi F n β).inv_mem u.2)
+        ((unipotentRadical F n _).inv_mem huN)) (hbu u huA) (hbu' u huA)
+  · right
+    let cb : α → ℤ := fun b => if h : ∃ k, β k = b then
+      ((Finset.univ.filter fun k => β k = b).image μ).min' (by
+        obtain ⟨k, hk⟩ := h
+        exact ⟨μ k, Finset.mem_image_of_mem _ (by simp [hk])⟩) else 0
+    have hcb_le : ∀ k, cb (β k) ≤ μ k := by
+      intro k
+      simp only [cb, dif_pos (⟨k, rfl⟩ : ∃ j, β j = β k)]
+      exact Finset.min'_le _ _ (Finset.mem_image_of_mem _ (by simp))
+    have hcb_mem : ∀ j, ∃ k, β k = β j ∧ cb (β j) = μ k := by
+      intro j
+      simp only [cb, dif_pos (⟨j, rfl⟩ : ∃ k, β k = β j)]
+      obtain ⟨k, hk, hkeq⟩ := Finset.mem_image.1
+        (Finset.min'_mem ((Finset.univ.filter fun k => β k = β j).image μ) _)
+      exact ⟨k, (Finset.mem_filter.1 hk).2, hkeq.symm⟩
+    refine ⟨fun j => cb (β j), fun i j h => by simp only [h], fun i => ⟨hcb_le i, ?_⟩⟩
+    obtain ⟨k, hk, hkeq⟩ := hcb_mem i
+    show μ i ≤ cb (β i) + n * C
+    rw [hkeq]
+    exact (hbd i k hk.symm).le
+
 theorem isAdmissible_of_isCuspidal {σ : Representation ℂ (levi F n β) W} [σ.IsIrreducible]
     (hσ : IsSmooth σ) (hc : IsCuspidal σ) : IsAdmissible σ := by
   classical
@@ -349,26 +412,7 @@ theorem isAdmissible_of_isCuspidal {σ : Representation ℂ (levi F n β) W} [σ
     fixedProj_act_of_normalizes hσ (hKMc m) (hKMo m) (hnorm k hk) (hnorm' k hk) y
 
   let V₂ : Finset W := R.image fun r => σ r v
-
-  have hU : ∀ S : Finset (Fin n), (∃ i j, β i = β j ∧ i ∈ S ∧ j ∉ S) → ∀ w : W,
-      ∃ U : Finset (levi F n β), (∀ u ∈ U, (u : GL (Fin n) F) ∈ unipotentRadical F n (splitFun S)) ∧
-        w ∈ Submodule.span ℂ {y | ∃ u ∈ U, ∃ x, y = σ u x - x} :=
-    fun S hS w => exists_finset_of_isCuspidal hc hS w
-  choose! Uf hUf1 hUf2 using hU
-  let Uall : Finset (levi F n β) := Finset.univ.biUnion fun S : Finset (Fin n) => V₂.biUnion (Uf S)
-  obtain ⟨t, ht⟩ := exists_pow_mul_mem_of_isCompact F n
-    (((Uall.image fun u : levi F n β => u.1) ∪ (Uall.image fun u : levi F n β => u.1⁻¹) :
-      Finset (GL (Fin n) F)) : Set (GL (Fin n) F)).toFinite.isCompact
-  have hbu : ∀ u ∈ Uall, ∀ i j, (uniformizer F : F) ^ t * (u : GL (Fin n) F) i j ∈ 𝒪[F] :=
-    fun u hu => ht _ (by simp only [Finset.coe_union, Finset.coe_image, Set.mem_union,
-      Set.mem_image, Finset.mem_coe]; exact Or.inl ⟨u, hu, rfl⟩)
-  have hbu' : ∀ u ∈ Uall, ∀ i j,
-      (uniformizer F : F) ^ t * ((u : GL (Fin n) F)⁻¹ : GL (Fin n) F) i j ∈ 𝒪[F] :=
-    fun u hu => ht _ (by simp only [Finset.coe_union, Finset.coe_image, Set.mem_union,
-      Set.mem_image, Finset.mem_coe]; exact Or.inr ⟨u, hu, rfl⟩)
-  set C : ℤ := ((t + m : ℕ) : ℤ) + 1 with hCdef
-  have hC : ((t + m : ℕ) : ℤ) < C := lt_add_one _
-  have hC0 : 0 < C := by positivity
+  obtain ⟨C, hC0, hdich⟩ := exists_cuspidal_gap_dichotomy hc m V₂
 
   let Nset : Finset (Fin n → ℤ) := Fintype.piFinset fun _ => Finset.Icc 0 (n * C)
   let T₀ : Finset W := (Nset ×ˢ V₂).image fun p =>
@@ -394,72 +438,32 @@ theorem isAdmissible_of_isCuspidal {σ : Representation ℂ (levi F n β) W} [σ
       rw [hgeq, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, hr₂v v hvK,
         hecomm _ hk₁K]
     rw [he]
-    rcases gap_or_bounded (β := β) μ hC0 with
-      ⟨θ, b, ⟨i, hib, hiθ⟩, ⟨j, hjb, hjθ⟩, hgap⟩ | hbd
-    ·
-      set S : Finset (Fin n) := Finset.univ.filter fun j => β j = b ∧ θ ≤ μ j with hSdef
-      have hS : ∃ i j, β i = β j ∧ i ∈ S ∧ j ∉ S :=
-        ⟨i, j, hib.trans hjb.symm, by simp [S, hib, hiθ], by simp [S, hjb, not_le.2 hjθ]⟩
-      have hzero : ((e (σ a (σ r₂ v)) : fixedVectors σ K) : W) = 0 := by
-        have hsp := hUf2 S hS (σ r₂ v)
-        have hker : Submodule.span ℂ {y | ∃ u ∈ Uf S (σ r₂ v), ∃ x, y = σ u x - x} ≤
+    rcases hdich μ with hspan | ⟨c, hcblock, hcbnd⟩
+    · have hzero : ((e (σ a (σ r₂ v)) : fixedVectors σ K) : W) = 0 := by
+        have hker : Submodule.span ℂ {y | ∃ u : levi F n β, a * u * a⁻¹ ∈ K ∧ ∃ x, y = σ u x - x} ≤
             LinearMap.ker ((fixedVectors σ K).subtype ∘ₗ e ∘ₗ σ a) := by
           refine Submodule.span_le.2 ?_
-          rintro _ ⟨u, hu, x, rfl⟩
-          have huA : u ∈ Uall := Finset.mem_biUnion.2 ⟨S, Finset.mem_univ _,
-            Finset.mem_biUnion.2 ⟨σ r₂ v, hwV, hu⟩⟩
-          have huN := hUf1 S hS (σ r₂ v) u hu
-          have hconj : a * u * a⁻¹ ∈ K := by
-            refine Subgroup.mem_subgroupOf.2 ?_
-            have hco : ((a * u * a⁻¹ : levi F n β) : GL (Fin n) F) =
-                Cartan.diagPow F n μ * (u : GL (Fin n) F) * (Cartan.diagPow F n μ)⁻¹ := rfl
-            rw [hco]
-            exact diagPow_conj_mem_congruenceSubgroup hC (apply_eq_or_gap hgap u.2 huN)
-              (apply_eq_or_gap hgap ((levi F n β).inv_mem u.2)
-                ((unipotentRadical F n _).inv_mem huN)) (hbu u huA) (hbu' u huA)
+          rintro _ ⟨u, hconj, x, rfl⟩
           simp only [SetLike.mem_coe, LinearMap.mem_ker, LinearMap.coe_comp, Function.comp_apply,
             Submodule.coe_subtype, map_sub]
           have h1 : σ a (σ u x) = σ (a * u * a⁻¹) (σ a x) := by
             rw [← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul,
               inv_mul_cancel_right]
           rw [h1, fixedProj_apply_act hσ (hKMc m) (hKMo m) hconj, sub_self]
-        have := hker hsp
-        simpa using this
+        simpa using hker (hspan _ hwV)
       rw [hzero, map_zero]
       exact Submodule.zero_mem _
-    ·
-      let cb : α → ℤ := fun b => if h : ∃ k, β k = b then
-        ((Finset.univ.filter fun k => β k = b).image μ).min' (by
-          obtain ⟨k, hk⟩ := h
-          exact ⟨μ k, Finset.mem_image_of_mem _ (by simp [hk])⟩) else 0
-      have hcb_le : ∀ k, cb (β k) ≤ μ k := by
-        intro k
-        simp only [cb, dif_pos (⟨k, rfl⟩ : ∃ j, β j = β k)]
-        exact Finset.min'_le _ _ (Finset.mem_image_of_mem _ (by simp))
-      have hcb_mem : ∀ j, ∃ k, β k = β j ∧ cb (β j) = μ k := by
-        intro j
-        simp only [cb, dif_pos (⟨j, rfl⟩ : ∃ k, β k = β j)]
-        obtain ⟨k, hk, hkeq⟩ := Finset.mem_image.1
-          (Finset.min'_mem ((Finset.univ.filter fun k => β k = β j).image μ) _)
-        exact ⟨k, (Finset.mem_filter.1 hk).2, hkeq.symm⟩
-      let c : Fin n → ℤ := fun j => cb (β j)
-      let ν : Fin n → ℤ := μ - c
+    · let ν : Fin n → ℤ := μ - c
       have hν : ν ∈ Nset := by
         rw [Fintype.mem_piFinset]
         intro j
         rw [Finset.mem_Icc]
-        obtain ⟨k, hk, hkeq⟩ := hcb_mem j
-        have h1 := hcb_le j
-        have h2 := hbd j k hk.symm
-        constructor
-        · show 0 ≤ μ j - cb (β j)
-          linarith
-        · show μ j - cb (β j) ≤ n * C
-          linarith
+        have ⟨hl, hu⟩ := hcbnd j
+        exact ⟨by simp [ν]; omega, by simp [ν]; omega⟩
       have hμ : μ = c + ν := by
         funext j
         simp [ν]
-      have hz := diagPow_mem_center (F := F) (β := β) (c := c) (fun i j h => by simp [c, h])
+      have hz := diagPow_mem_center (F := F) (β := β) (c := c) hcblock
       obtain ⟨lam, hlam⟩ := exists_central_character hσ hz
       have ha : a = ⟨Cartan.diagPow F n c, diagPow_mem_levi c⟩ *
           ⟨Cartan.diagPow F n ν, diagPow_mem_levi ν⟩ := by

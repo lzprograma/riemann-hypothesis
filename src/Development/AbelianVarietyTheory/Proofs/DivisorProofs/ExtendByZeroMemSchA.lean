@@ -130,7 +130,6 @@ def restrS (F : Type) [Field F] [NumberField F] [Fintype κ₁] [Fintype κ] (hj
   SchwartzMap.compCLM ℂ (extL (NumberField.mixedEmbedding.mixedSpace F) hj).hasTemperateGrowth
     ⟨1, 1, fun y => by
       have := norm_le_extL hj y
-      have h0 := norm_nonneg (extL (NumberField.mixedEmbedding.mixedSpace F) hj y)
       simp only [pow_one, one_mul]
       linarith⟩
 

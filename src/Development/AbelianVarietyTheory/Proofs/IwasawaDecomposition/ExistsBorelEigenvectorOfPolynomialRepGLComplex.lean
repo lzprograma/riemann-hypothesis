@@ -346,8 +346,7 @@ theorem exists_isWt_of_isPolyRep : ∀ (n : ℕ) (ι : Type) [Fintype ι] [Decid
     intro D hD
     simpa [T] using hc ⟨D, hD⟩
   obtain ⟨a, ha⟩ : ∃ a, v a ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hv0 (funext h)
   have cancel : ∀ x y : ℂ, x • v = y • v → x = y := by
     intro x y h
@@ -361,7 +360,7 @@ theorem exists_isWt_of_isPolyRep : ∀ (n : ℕ) (ι : Type) [Fintype ι] [Decid
     have e := hc' (diagGLOfNeZero d h) (by rw [diagGLOfNeZero_val]; exact isDiag_diagonal d)
     rw [e]
     congr 1
-    simp only [χ, dif_pos h, e, Pi.smul_apply, smul_eq_mul, mul_div_cancel_right₀ _ ha]
+    simp only [χ, dite_eq_left h, e, Pi.smul_apply, smul_eq_mul, mul_div_cancel_right₀ _ ha]
   have h1 : χ 1 = 1 := by
     have e : diagGLOfNeZero (1 : Fin n → ℂ) (fun _ => one_ne_zero) = 1 := by
       ext1; simp [diagGLOfNeZero_val]
@@ -655,7 +654,7 @@ theorem transvection_weightVec_expansion :
         refine Finset.sum_eq_zero fun b _ => ?_
         rw [Polynomial.coeff_eq_zero_of_natDegree_lt (lt_of_lt_of_le (hK a b) hk), zero_mul]
       rw [hw, mulVec_zero, smul_zero]
-    push_neg at hk
+    push Not at hk
     set d : Fin n → ℂ := fun l => D.val l l with hd_def
     have hDd : D.val = diagonal d := ((isDiag_iff_diagonal_diag _).1 hD).symm
     have hd : ∀ l, d l ≠ 0 := by
@@ -727,12 +726,12 @@ theorem unitriangular_induction_transvection :
       ext i j
       simp only [Units.val_one, Matrix.one_apply]
       rcases lt_trichotomy i j with hij | hij | hij
-      · rw [if_neg hij.ne]
+      · rw [ite_eq_right hij.ne]
         by_contra h
         have : (i, j) ∈ S U := by simp [S, hij, h]
         rw [hS] at this; simp at this
       · subst hij; simp [hd]
-      · rw [if_neg hij.ne']
+      · rw [ite_eq_right hij.ne']
         exact hU hij
     rw [this]; exact h1
   · obtain ⟨p, hp, hmin⟩ := Finset.exists_min_image (S U) (fun p => p.2) hne
@@ -765,13 +764,13 @@ theorem unitriangular_induction_transvection :
       intro x y hxy
       rw [ent, hU hxy]
       simp only [id] at hxy
-      rw [if_neg]; · simp
+      rw [ite_eq_right]; · simp
       rintro ⟨rfl, rfl⟩
       exact absurd (hab.trans hxy) (lt_irrefl _)
     have hd' : ∀ i, U'.val i i = 1 := by
       intro i
       rw [ent, hd]
-      rw [if_neg]; · simp
+      rw [ite_eq_right]; · simp
       rintro ⟨rfl, h⟩
       exact hab.ne h.symm
     have hlt : (S U').card < k := by
@@ -790,7 +789,7 @@ theorem unitriangular_induction_transvection :
           obtain ⟨rfl, rfl⟩ := hqe
           exact hs
         · have := hq.2
-          rw [ent, if_neg hqe, add_zero] at this
+          rw [ent, ite_eq_right hqe, add_zero] at this
           exact this
     have PU' : P U' := ih _ hlt U' hU' hd' rfl
     have PT : P (T s) := htr a b hab s (T s) rfl
@@ -840,7 +839,7 @@ theorem exists_isBEig_of_isPolyRep :
             = ∑ l : Fin n, ((n : ℤ) - ((l : ℕ) : ℤ)) * μ l + k * (((n : ℤ) - ((i : ℕ) : ℤ)) - ((n : ℤ) - ((j : ℕ) : ℤ))) := by
           simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply, smul_eq_mul, mul_add, Finset.sum_add_distrib,
             mul_sub, Finset.sum_sub_distrib, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-            Finset.mem_univ, if_true]
+            Finset.mem_univ, ite_true]
           ring
         rw [key] at this
         nlinarith

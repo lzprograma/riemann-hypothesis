@@ -14,56 +14,9 @@ public import Mathlib.RingTheory.Henselian
 public import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.SqPairLocalOf
 public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
+import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SymplecticPeriodMatrixIntegrality
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairGluing.SqPairGlueMain, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.CmpPair, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SplPlane, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SplOff, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.CmpSplit, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.FiniteAdeleIdempotentOfFMulSelf, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.PairBaseOfLag, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.PlaneIsUnitOfSubOneMem, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.HyperbolicPlane, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.PairDichotomy, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SelCore, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SelMain, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.PairSelection, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.StepGlue, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocCartanPair, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SqPairLocal, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitPairGen
@@ -1207,7 +1160,7 @@ theorem pair_dichotomy : Dichotomy := by
     · simp only [star_mul', star_add, hst, hDis]
       linear_combination hDi
   · right
-    push_neg at hs
+    push Not at hs
     have hcoe : ∀ z : R₀, IsUnit z → IsUnit (z : R) := fun z hz => hz.map R₀.subtype
     have key : ∀ a b : R₀, IsUnit a ∨ IsUnit b → IsUnit ((a : R) + b * θ) := by
       intro a b hab
@@ -1277,8 +1230,7 @@ theorem pair_dichotomy : Dichotomy := by
       haveI : Nontrivial R := nontrivial_of_ne _ _ hne
       haveI : NoZeroDivisors R := by
         refine ⟨fun {x y} hxy => ?_⟩
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         obtain ⟨m, u, hu, rfl⟩ := hval x hc.1
         obtain ⟨n, v, hv, rfl⟩ := hval y hc.2
         have h1 : (ϖ : R) ^ (m + n) * (u * v) = 0 := by
@@ -1366,7 +1318,7 @@ theorem sel_le (σ : R ≃+* R) (ϖ : R) (hϖ0 : ϖ ≠ 0) (hϖ : ¬ IsUnit ϖ) 
     congr 2
     omega
   · exfalso
-    push_neg at hmk
+    push Not at hmk
     have h2 : ϖ ^ (2 * k) • (ϖ ^ (2 * (m - k)) • ((h₁.map σ)ᵀ * A * h₁)) = ϖ ^ (2 * k) • A' := by
       rw [smul_smul, ← pow_add, ← hB]
       congr 2
@@ -1391,26 +1343,8 @@ theorem sel_unit_of_rel (σ : R ≃+* R) {ι : Type} [Fintype ι] [DecidableEq �
 
 theorem sel_comm {ι : Type} [Fintype ι] [DecidableEq ι] {c : R} (hc : c ≠ 0)
     (g h : Matrix ι ι R) (hgh : g * h = c • 1) : h * g = c • 1 := by
-  have hdet : g.det * h.det = c ^ Fintype.card ι := by
-    rw [← Matrix.det_mul, hgh, Matrix.det_smul, Matrix.det_one, mul_one]
-  have hh0 : h.det ≠ 0 := by
-    intro h0
-    rw [h0, mul_zero] at hdet
-    exact pow_ne_zero _ hc hdet.symm
-  have key : (h * g - c • 1) * h = 0 := by
-    rw [Matrix.sub_mul, Matrix.mul_assoc, hgh, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_one,
-      Matrix.one_mul, sub_self]
-  have key2 : h.det • (h * g - c • 1) = 0 := by
-    have e := congrArg (· * h.adjugate) key
-    simp only [Matrix.zero_mul] at e
-    rw [Matrix.mul_assoc, Matrix.mul_adjugate, Matrix.mul_smul, Matrix.mul_one] at e
-    exact e
-  have e0 : h * g - c • 1 = 0 := by
-    ext i j
-    have e := congrFun (congrFun key2 i) j
-    simp only [Matrix.smul_apply, smul_eq_mul, Matrix.zero_apply] at e ⊢
-    exact (mul_eq_zero.mp e).resolve_left hh0
-  exact sub_eq_zero.mp e0
+  intros
+  apply _root_.PositivityTheory.HtPt.Rh.mul_eq_smul_one_symm <;> assumption
 
 theorem sel_inv (σ : R ≃+* R) {ι : Type} [Fintype ι] [DecidableEq ι]
     (A A' h₁ : Matrix ι ι R) (hA' : IsUnit A'.det) {c : R} (hc : c ≠ 0)

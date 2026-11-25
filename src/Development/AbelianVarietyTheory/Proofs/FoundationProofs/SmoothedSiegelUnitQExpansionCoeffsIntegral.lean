@@ -164,7 +164,7 @@ theorem _root_.GlobalTheory.SiegQ.tc_lin (w : ℂ) (e : ℕ) :
         -(w * ((e.descFactorial n : ℂ) * 0 ^ (e - n))) := by
       rw [iteratedDeriv_const_sub hn, iteratedDeriv_neg, iteratedDeriv_const_mul_field,
         iteratedDeriv_pow]
-    rw [_root_.GlobalTheory.SiegQ.tc, h1, if_neg hn.ne']
+    rw [_root_.GlobalTheory.SiegQ.tc, h1, ite_eq_right hn.ne']
     rcases lt_trichotomy n e with h | rfl | h
     · simp [h.ne, Nat.sub_ne_zero_of_lt h]
     · have : (n.factorial : ℂ) ≠ 0 := by exact_mod_cast n.factorial_ne_zero
@@ -196,7 +196,7 @@ theorem Good.inv {F : ℂ → ℂ} (hF : Good R F) (h0 : ∀ z : ℂ, ‖z‖ < 
     · simpa [tc_zero] using hi
     · have h := congrFun hc (n + 1)
       simp only [conv, Finset.Nat.antidiagonal_succ, Finset.sum_cons, Finset.sum_map, tc_zero,
-        Nat.succ_ne_zero, if_false] at h
+        Nat.succ_ne_zero, ite_false] at h
       have h1 := h0 0 (by simp)
       have : tc (fun z => (F z)⁻¹) (n + 1) = -(F 0)⁻¹ * ∑ p ∈ Finset.HasAntidiagonal.antidiagonal n,
           tc F (p.1 + 1) * tc (fun z => (F z)⁻¹) p.2 := by

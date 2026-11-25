@@ -5,48 +5,7 @@ public import Mathlib.Topology.Algebra.Group.OpenMapping
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PushTest
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.QuotAny
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Topology.Baire.LocallyCompactRegular
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
@@ -521,19 +480,6 @@ open scoped ENNReal
 
 namespace UpperTheory.ConvolutionTheory.L1
 
-private theorem prod_ofFn_single {G : Type*} [Monoid G] : ∀ (n : ℕ) (f : Fin n → G) (k : Fin n),
-    (∀ i, i ≠ k → f i = 1) → (List.ofFn f).prod = f k
-  | 0, _, k, _ => k.elim0
-  | n + 1, f, k, h => by
-    rw [List.ofFn_succ, List.prod_cons]
-    cases k using Fin.cases with
-    | zero =>
-      rw [List.prod_eq_one, mul_one]
-      exact List.forall_mem_ofFn_iff.2 fun i => h _ (Fin.succ_ne_zero i)
-    | succ k =>
-      rw [h 0 (Fin.succ_ne_zero k).symm, one_mul,
-        prod_ofFn_single n (fun i => f i.succ) k fun i hi => h _ fun h' => hi (Fin.succ_injective _ h')]
-
 private theorem transport (X Y T : Type) [Group X] [TopologicalSpace X] [IsTopologicalGroup X] [LocallyCompactSpace X]
     [T2Space X] [SecondCountableTopology X] [MeasurableSpace X] [BorelSpace X] [Group T] [MeasurableSpace T]
     [MeasurableInv T] [Group Y] [TopologicalSpace Y] [MeasurableSpace Y] [BorelSpace Y]
@@ -644,8 +590,9 @@ theorem matchSplit :
   · have hs : ∀ j : Fin (m + 1),
         (List.ofFn fun i => D.comp n (j + i) (D.glue n (Pi.mulSingle 0 γ))).prod = γ := by
       intro j
-      rw [prod_ofFn_single _ _ (-j) fun i hi => by
-        rw [h1, Pi.mulSingle_eq_of_ne fun h => hi (eq_neg_of_add_eq_zero_right h)]]
+      rw [List.ofFn_eq_map, List.prod_map_eq_pow_single (-j) _ (fun i hi _ => by
+        rw [h1, Pi.mulSingle_eq_of_ne fun h => hi (eq_neg_of_add_eq_zero_right h)]),
+        List.count_finRange, pow_one]
       rw [h1, add_neg_cancel, Pi.mulSingle_eq_same]
     refine ⟨D.glue n (Pi.mulSingle 0 γ), (h8 _ _).2 ⟨fun k => ?_, by simpa only [zero_add] using hs 0, hs⟩⟩
     rw [h1]

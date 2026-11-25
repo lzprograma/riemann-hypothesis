@@ -20,65 +20,11 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsP
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemCoboundariesOfHerrPairCoboundary
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SmulAdd
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodCoefficientRingPadicIntegersFinExt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PowerSeries.Ideal
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GmultEqZeroOfInj
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapAevalNab
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.BasicDefinitions.ExistsUnique
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -421,19 +367,13 @@ theorem rank_nullity {W : Type} [AddCommGroup W] [Module k W] (A : Submodule k U
   rw [LinearMap.range_domRestrict, LinearMap.ker_domRestrict] at h
   rw [← h, ← Submodule.map_comap_subtype, Submodule.finrank_map_subtype_eq]
 
-theorem finrank_quot (A B : Submodule k U) :
-    finrank k (↥A ⧸ B.submoduleOf A) = finrank k (A.map B.mkQ) := by
-  have h := (LinearMap.quotKerEquivRange (B.mkQ.domRestrict A)).finrank_eq
-  rw [LinearMap.range_domRestrict, LinearMap.ker_domRestrict, Submodule.ker_mkQ] at h
-  exact h
-
 theorem count (T : Module.End k U) (F L N Z S S' : Submodule k U) [FiniteDimensional k S]
     [FiniteDimensional k S'] (hLN : L ≤ N) (hNF : N ≤ F) (hTL : L ≤ L.comap T) (hF' : F ≤ S' ⊔ L)
     (hF : F ≤ S ⊔ F.map T ⊔ L) (he : ∀ x ∈ N, (∃ m : ℕ, (T ^ m) x ∈ L) → T x ∈ L)
     (hZ : ∀ x ∈ Z, x ∈ F ∧ T x ∈ L) :
     finrank k (↥Z ⧸ N.submoduleOf Z) + gmult T N L 0 ≤ finrank k S := by
   unfold gmult
-  rw [finrank_quot, finrank_quot]
+  rw [GlobalTheory.PhiGam.PolarKernel.finrank_quot, GlobalTheory.PhiGam.PolarKernel.finrank_quot]
   rw [map_zero (algebraMap k (Module.End k U)), sub_zero]
   set Tb : (U ⧸ L) →ₗ[k] (U ⧸ L) := L.mapQ L T hTL with hTb
   set h : (U ⧸ L) →ₗ[k] (U ⧸ N) := Submodule.factor hLN with hh
@@ -484,9 +424,6 @@ end lin
 
 variable {k : Type} [Field k] {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X⟧ V] [Module k V]
   [IsScalarTower k⟦X⟧ k⸨X⸩ V] [IsScalarTower k k⸨X⸩ V] [IsScalarTower k k⟦X⟧ V]
-
-theorem vv_ne : vv k ≠ 0 := by
-  unfold vv; exact HahnSeries.single_ne_zero one_ne_zero
 
 alias mem_sh := _root_.GlobalTheory.PhiGam.Window.mem_sh_iff
 
@@ -595,7 +532,7 @@ theorem psi_mem (f ψ : V →ₗ[k] V) (ψ0 : k⸨X⸩ →ₗ[k] k⸨X⸩) (h : 
 theorem main : ∀ {k : Type} [Field k] {l : ℕ} [Fact l.Prime] [CharP k l] (R : RingPG k l) {n : ℕ} [NeZero n] {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X⟧ V] [Module k V] [IsScalarTower k⟦X⟧ k⸨X⸩ V] [IsScalarTower k k⸨X⸩ V] [IsScalarTower k k⟦X⟧ V] [FiniteDimensional k⸨X⸩ V] (D : ModPG R n V), ∀ (ψ : ZMod n → V →ₗ[k] V) (ψ0 : k⸨X⸩ →ₗ[k] k⸨X⸩), (∀ i a x, ψ i (a • D.φ i x) = ψ0 a • x) → (∀ a b, ψ0 (R.φ a * b) = a * ψ0 b) → ψ0 1 = 1 → (∀ i x, ψ i (D.γ i x) = D.γ (i - 1) (ψ i x)) → (∀ a : ℤ, 2 - (l : ℤ) ≤ a → a ≤ 1 → ψ0 '' {x | ∃ b : k⟦X⟧, x = vv k ^ a * (b : k⸨X⸩)} = Set.range (fun b : k⟦X⟧ => (b : k⸨X⸩))) → ∀ (i : ZMod n) (N₀ N : Submodule k⟦X⟧ V) (ws s : ℕ) (w : ℤ), IsLat N₀ → IsLat N → CondC (D.γ (i - 1)) N₀ → CondC (D.γ i) N → 1 ≤ ws → ws + 7 ≤ l → sh ws N ≤ pull (D.φ i) N₀ → pull (D.φ i) N₀ ≤ sh (-w) N → (ws : ℤ) + 2 ≤ l * (s + 3) - w → (∀ a : ℕ, a ≤ s + 1 → sen (D.γ (i - 1)) N₀ (a : k) = 0) → (∀ y ∈ sh (1 - ws) (pull (D.φ i) N₀), ψ i y = 0 → ∃ x ∈ sh (-ws) (pull (D.φ i) N₀), ψ i x = 0 ∧ D.γ i x - x = y) → (∀ x ∈ N, (∃ m : ℕ, ((nab (D.γ i)) ^ m) x ∈ sh (ws + 1) N) → nab (D.γ i) x ∈ sh (ws + 1) N) → ∀ Z : Submodule k V, (∀ x ∈ Z, x ∈ sh (-ws) (pull (D.φ i) N₀) ∧ D.γ i x - x ∈ sh (ws + 2) N) → Module.finrank k (↥Z ⧸ (N.restrictScalars k).submoduleOf Z) + ∑ a ∈ Finset.range (ws + 1), sen (D.γ i) N (a : k) ≤ Module.finrank k⸨X⸩ V := by
   intro k _ l _ _ R n _ V _ _ _ _ _ _ _ _ D ψ ψ0 hψ _ hψ1 _ hP i N₀ N ws s w hN₀ hN hC₀ hC hws hl hb ha hd hs
     hPSI he Z hZ
-  have hv : vv k ≠ 0 := vv_ne
+  have hv : vv k ≠ 0 := GlobalTheory.PhiGam.Window.vv_ne_zero
   have hr := _root_.GlobalTheory.PhiGam.Range.qmult_sh_range R (D.γ i) (D.γ_semi i) N hN hC 0 (ws + 1) 0
   simp only [zero_add, Int.cast_natCast, sh_zero] at hr
   rw [← hr, Nat.cast_succ]
@@ -1179,11 +1116,6 @@ theorem fin_quot {A B : Submodule k U} (h : FiniteDimensional k (A.map B.mkQ)) :
   rw [LinearMap.range_domRestrict, LinearMap.ker_domRestrict, Submodule.ker_mkQ] at e
   exact e.symm.finiteDimensional
 
-theorem gmult_self (T : Module.End k U) (P : Submodule k U) (x : k) : gmult T P P x = 0 := by
-  unfold gmult
-  rw [Submodule.submoduleOf_eq_top.2 inf_le_left]
-  exact Module.finrank_zero_of_subsingleton
-
 end lin
 
 variable {k : Type} [Field k] {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X⟧ V] [Module k V]
@@ -1250,7 +1182,7 @@ theorem shift_of_le {l : ℕ} (R : RingPG k l) {g : V →ₗ[k] V} (hg : Semi R.
   | zero =>
     intro P Q _ _ hle _ _ h
     rw [Nat.cast_zero, sh_zero_eq] at h
-    rw [le_antisymm hle h, qmult, qmult, gmult_self, gmult_self]
+    rw [le_antisymm hle h, qmult, qmult, GlobalTheory.PhiGam.Range.gmult_self, GlobalTheory.PhiGam.Range.gmult_self]
   | succ m ih =>
     intro P Q hP hQ hle cP cQ h
     have hle' : Q ⊔ sh 1 P ≤ P := sup_le hle (sh_one_le P)
@@ -1468,25 +1400,25 @@ theorem sum_resCount {k : Type} [Field k] (U : Multiset ℤ) (w a : ℤ) (L : �
       push_cast
       exact sub_left_inj
     by_cases hp : p u
-    · rw [if_pos hp, Multiset.card_singleton]
+    · rw [ite_eq_left hp, Multiset.card_singleton]
       obtain ⟨ha, hb⟩ := hu.1 hp
       rw [Finset.sum_eq_single (u - a).toNat]
-      · rw [if_pos]
+      · rw [ite_eq_left]
         rw [tr]
         congr 1
         omega
       · intro j _ hj
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hc
         have := (hu.2 (a + j) (by omega) (by have := Finset.mem_range.mp ‹j ∈ Finset.range L›; omega) ((tr j).mp hc)).1
         omega
       · intro hn
         exfalso
         exact hn (Finset.mem_range.mpr (by omega))
-    · rw [if_neg hp, Multiset.card_zero]
+    · rw [ite_eq_right hp, Multiset.card_zero]
       apply Finset.sum_eq_zero
       intro j hj
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hc
       have hj' := Finset.mem_range.mp hj
       exact hp (hu.2 (a + j) (by omega) (by omega) ((tr j).mp hc)).2
@@ -1914,6 +1846,7 @@ theorem exists_independent_admissible_cocycles_residue {Qp K₀ K : Type} [Field
   obtain ⟨L, hL⟩ := hmod E _ _ e (hadm a) he
   exact ⟨E, L, hE, hL⟩
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem resBound_dsum : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharacters.LemmaPsi → ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l} (S : TopSit P),
     S.Real → S.Lem0 S.Γ.W₀ → S.ResBound S.Γ.W₀ S.D.dsum := by
   intro hψ l _ P S hR h0 s c hc hi

@@ -127,13 +127,13 @@ theorem divCycle_apply_of_mem {P W : Ideal (MRing ι)} {s : MRing ι} (h : W ∈
     divCycle P s W = multAt (P ⊔ Ideal.span {s}) W := by
   classical
   simp only [divCycle, Finsupp.ofSupportFinite_coe]
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 theorem divCycle_apply_of_not_mem {P W : Ideal (MRing ι)} {s : MRing ι} (h : W ∉ divSupp P s) :
     divCycle P s W = 0 := by
   classical
   simp only [divCycle, Finsupp.ofSupportFinite_coe]
-  rw [if_neg h]
+  rw [ite_eq_right h]
 
 theorem finsum_divSupp_eq_sum (P : Ideal (MRing ι)) (s : MRing ι) (f : Ideal (MRing ι) → ℝ) :
     ∑ᶠ W ∈ divSupp P s, (multAt (P ⊔ Ideal.span {s}) W : ℝ) * f W =
@@ -210,10 +210,10 @@ theorem Swap.of_cycles (hCut : GeoNumCut.Statement) (hPL2 : SectionSpaceSymmetry
     have hu'W : u' ∉ W := hno W hW
     have : W.IsPrime := hW.1.1.1
     by_cases hh : IsHorizontal W
-    · rw [if_pos hh, if_pos hh, hR W L B' u' (hdiv.1 hh) hL hB' ⟨e', hB'e, hu'e, hu'W⟩,
+    · rw [ite_eq_left hh, ite_eq_left hh, hR W L B' u' (hdiv.1 hh) hL hB' ⟨e', hB'e, hu'e, hu'W⟩,
         show recR I W L B' u' = (∑ᶠ U ∈ divSupp W u', (multAt (W ⊔ Ideal.span {u'}) U : ℝ) * c U) -
           arInt W u' B' L from rfl, finsum_divSupp_eq_sum]
-    · rw [if_neg hh, if_neg hh, sub_zero]
+    · rw [ite_eq_right hh, ite_eq_right hh, sub_zero]
       obtain ⟨hWm, hWp, hWd⟩ := hdiv.2 hh
       have ha : (fun j => ((Fin.snoc L B' : Fin (n + 1) → HermLine ι) j).a) =
           Fin.snoc (fun j => (L j).a) (fun k => (e' k : ℤ)) := by
@@ -237,7 +237,7 @@ theorem Swap.of_cycles (hCut : GeoNumCut.Statement) (hPL2 : SectionSpaceSymmetry
       have hch : charOf U = charOf W :=
         congrArg (fun J : Ideal ℤ => (Submodule.IsPrincipal.generator J).natAbs) hcm
       rw [hc]
-      simp only [if_neg hUh, hch]
+      simp only [ite_eq_right hUh, hch]
       push_cast
       ring
   have hs'W : ∀ W ∈ divSupp P s, s' ∉ W := fun W hW h => hd W hW (mem_divSupp_of_mem hW hsP' h)

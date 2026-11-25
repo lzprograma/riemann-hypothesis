@@ -24,15 +24,15 @@ namespace KTypeIsomorphism
 
 section Gen
 
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] {ε : Fin n → Bool}
-  {lam : Fin n → ℝ} {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {D : Submodule ℂ H}
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {ε : Fin n → Bool}
+  {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {D : Submodule ℂ H}
   {E : Fin n → Fin n → Module.End ℂ D} {V : Submodule ℂ D}
 
-theorem closGen_le_span (hgap : StdGap ε lam) (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E)
-    (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
-    (hVK : ∀ k ∈ Kset ε, ∀ v ∈ V, ∃ w ∈ V, (w : H) = σ k v) {ι : Type*} (y : ι → H)
-    (hy : ∀ i, y i ∈ closGen E V) (hst : ∀ g ∈ UJset ε, ∀ i, ∃ j, σ g (y i) = y j)
-    (hne : ∃ i, y i ≠ 0) :
+private theorem closGen_le_span_of_irreducible
+    (hirr : ∀ S : Submodule ℂ H, S ≤ closGen E V → IsClosed (S : Set H) →
+      (∀ g ∈ UJset ε, ∀ x ∈ S, σ g x ∈ S) → S = ⊥ ∨ S = closGen E V)
+    {ι : Type*} (y : ι → H) (hy : ∀ i, y i ∈ closGen E V)
+    (hst : ∀ g ∈ UJset ε, ∀ i, ∃ j, σ g (y i) = y j) (hne : ∃ i, y i ≠ 0) :
     closGen E V ≤ (Submodule.span ℂ (Set.range y)).topologicalClosure := by
   have hSc : IsClosed ((Submodule.span ℂ (Set.range y)).topologicalClosure : Set H) :=
     Submodule.isClosed_topologicalClosure _
@@ -56,7 +56,7 @@ theorem closGen_le_span (hgap : StdGap ε lam) (hσ : IsURepOn (UJset ε) σ) (h
         (σ g : H →ₗ[ℂ] H) : Submodule ℂ H) : Set H) :=
       hSc.preimage (σ g).continuous
     exact fun x hx => Submodule.topologicalClosure_minimal _ hle hc' hx
-  rcases rigid_irred hgap hσ hD hV hc hVK _ hS hSc hSG with h | h
+  rcases hirr _ hS hSc hSG with h | h
   · exfalso
     obtain ⟨i, hi⟩ := hne
     have : y i ∈ (Submodule.span ℂ (Set.range y)).topologicalClosure :=
@@ -118,17 +118,22 @@ variable {ε : Fin n → Bool} {lam : Fin n → ℝ}
   {σ₂ : Matrix (Fin n) (Fin n) ℂ → (H₂ →L[ℂ] H₂)} {D₂ : Submodule ℂ H₂}
   {E₂ : Fin n → Fin n → Module.End ℂ D₂} {V₂ : Submodule ℂ D₂}
 
-theorem data_unitary_equiv (hgap : StdGap ε lam)
-    (hσ₁ : IsURepOn (UJset ε) σ₁) (hD₁ : IsDerivedOn ε σ₁ D₁ E₁) (hV₁ : IsKIrrHW ε E₁ (lowK ε lam) V₁)
-    (hc₁ : ∀ v ∈ V₁, casimir E₁ v = (casVal lam : ℂ) • v)
-    (hVK₁ : ∀ k ∈ Kset ε, ∀ v ∈ V₁, ∃ w ∈ V₁, (w : H₁) = σ₁ k v) (hV₁0 : V₁ ≠ ⊥)
-    (hσ₂ : IsURepOn (UJset ε) σ₂) (hD₂ : IsDerivedOn ε σ₂ D₂ E₂) (hV₂ : IsKIrrHW ε E₂ (lowK ε lam) V₂)
-    (hc₂ : ∀ v ∈ V₂, casimir E₂ v = (casVal lam : ℂ) • v)
-    (hVK₂ : ∀ k ∈ Kset ε, ∀ v ∈ V₂, ∃ w ∈ V₂, (w : H₂) = σ₂ k v) (hV₂0 : V₂ ≠ ⊥) :
+/-- Equal matrix coefficients extend a map of generating spaces to a unitary intertwiner
+when both generated spaces are stable and irreducible. -/
+theorem KTypeIsomorphism.unitary_equiv_of_matrix_coefficients
+    (hσ₁ : IsURepOn (UJset ε) σ₁) (hσ₂ : IsURepOn (UJset ε) σ₂)
+    (hV₁0 : V₁ ≠ ⊥) (φ : V₁ →ₗ[ℂ] V₂)
+    (huniv : ∀ g ∈ UJset ε, ∀ v v' : V₁,
+      inner ℂ (((φ v' : V₂) : D₂) : H₂) (σ₂ g (((φ v : V₂) : D₂) : H₂)) =
+        inner ℂ ((v' : D₁) : H₁) (σ₁ g ((v : D₁) : H₁)))
+    (hst₁ : ∀ g ∈ UJset ε, ∀ x ∈ closGen E₁ V₁, σ₁ g x ∈ closGen E₁ V₁)
+    (hst₂ : ∀ g ∈ UJset ε, ∀ x ∈ closGen E₂ V₂, σ₂ g x ∈ closGen E₂ V₂)
+    (hirr₁ : ∀ S : Submodule ℂ H₁, S ≤ closGen E₁ V₁ → IsClosed (S : Set H₁) →
+      (∀ g ∈ UJset ε, ∀ x ∈ S, σ₁ g x ∈ S) → S = ⊥ ∨ S = closGen E₁ V₁)
+    (hirr₂ : ∀ S : Submodule ℂ H₂, S ≤ closGen E₂ V₂ → IsClosed (S : Set H₂) →
+      (∀ g ∈ UJset ε, ∀ x ∈ S, σ₂ g x ∈ S) → S = ⊥ ∨ S = closGen E₂ V₂) :
     ∃ U : closGen E₁ V₁ ≃ₗᵢ[ℂ] closGen E₂ V₂, ∀ g ∈ UJset ε, ∀ x y : closGen E₁ V₁,
       (x : H₁) = σ₁ g (y : H₁) → ((U x : closGen E₂ V₂) : H₂) = σ₂ g ((U y : closGen E₂ V₂) : H₂) := by
-  obtain ⟨φ, hφK, hφI⟩ := KTypeIsomorphism.exists_phi hσ₁ hD₁ hV₁ hσ₂ hD₂ hV₂
-  have huniv := rigid_universal hσ₁ hD₁ hV₁ hc₁ hVK₁ hσ₂ hD₂ hV₂ hc₂ hVK₂ hgap φ hφK hφI
   let y₁ : ↥(UJset ε) × ↥V₁ → H₁ := fun p => σ₁ p.1.1 ((p.2 : D₁) : H₁)
   let y₂ : ↥(UJset ε) × ↥V₁ → H₂ := fun p => σ₂ p.1.1 (((φ p.2 : V₂) : D₂) : H₂)
   have split : ∀ g ∈ UJset ε, ∀ g' ∈ UJset ε, ∃ h ∈ UJset ε,
@@ -147,9 +152,9 @@ theorem data_unitary_equiv (hgap : StdGap ε lam)
       UnitaryGroupOfForm.inner_map_map' hσ₂ hg, UnitaryGroupOfForm.inner_map_map' hσ₁ hg]
     exact huniv h hh v' v
   have h₁ : ∀ i, y₁ i ∈ closGen E₁ V₁ := fun p =>
-    closGen_stable hgap hσ₁ hD₁ hV₁ hc₁ hVK₁ p.1.1 p.1.2 _ (UnitaryGroupOfForm.mem_closGen V₁ (p.2 : D₁) p.2.2)
+    hst₁ p.1.1 p.1.2 _ (UnitaryGroupOfForm.mem_closGen V₁ (p.2 : D₁) p.2.2)
   have h₂ : ∀ i, y₂ i ∈ closGen E₂ V₂ := fun p =>
-    closGen_stable hgap hσ₂ hD₂ hV₂ hc₂ hVK₂ p.1.1 p.1.2 _
+    hst₂ p.1.1 p.1.2 _
       (UnitaryGroupOfForm.mem_closGen V₂ ((φ p.2 : V₂) : D₂) (φ p.2).2)
   have hτ₁ : ∀ g (hg : g ∈ UJset ε) (p : ↥(UJset ε) × ↥V₁),
       σ₁ g (y₁ p) = y₁ (⟨g * p.1.1, mul_mem_unitaryJ hg p.1.2⟩, p.2) := by
@@ -172,23 +177,34 @@ theorem data_unitary_equiv (hgap : StdGap ε lam)
     have h' : ((v₀ : D₁) : H₁) = 0 := h
     exact hv₀ (Subtype.ext h')
   have hne₂ : ∃ i, y₂ i ≠ 0 := by
-    refine ⟨(⟨1, one_mem_unitaryJ ε⟩, ⟨v₀, hv₀V⟩), ?_⟩
-    show σ₂ 1 (((φ ⟨v₀, hv₀V⟩ : V₂) : D₂) : H₂) ≠ 0
-    rw [hσ₂.1.1]
-    intro h
-    have h' : (((φ ⟨v₀, hv₀V⟩ : V₂) : D₂) : H₂) = 0 := h
-    have hh := hφI ⟨v₀, hv₀V⟩ ⟨v₀, hv₀V⟩
-    rw [h', inner_zero_left] at hh
-    exact hv₀ (Subtype.ext (inner_self_eq_zero.1 hh.symm))
-  have hd₁ := KTypeIsomorphism.closGen_le_span hgap hσ₁ hD₁ hV₁ hc₁ hVK₁ y₁ h₁
+    obtain ⟨i, hi⟩ := hne₁
+    refine ⟨i, fun hzero => hi ?_⟩
+    have h : inner ℂ (y₁ i) (y₁ i) = 0 := by rw [← hI i i, hzero, inner_zero_left]
+    exact inner_self_eq_zero.mp h
+  have hd₁ := KTypeIsomorphism.closGen_le_span_of_irreducible hirr₁ y₁ h₁
     (fun g hg i => ⟨_, hτ₁ g hg i⟩) hne₁
-  have hd₂ := KTypeIsomorphism.closGen_le_span hgap hσ₂ hD₂ hV₂ hc₂ hVK₂ y₂ h₂
+  have hd₂ := KTypeIsomorphism.closGen_le_span_of_irreducible hirr₂ y₂ h₂
     (fun g hg i => ⟨_, hτ₂ g hg i⟩) hne₂
   obtain ⟨U, hU⟩ := KTypeIsomorphism.gns_extend y₁ y₂ hI (closGen E₁ V₁) (closGen E₂ V₂)
     (Submodule.isClosed_topologicalClosure _) (Submodule.isClosed_topologicalClosure _) h₁ h₂ hd₁ hd₂
   refine ⟨U, fun g hg x y hxy => ?_⟩
   exact KTypeIsomorphism.gns_intertwine y₁ y₂ _ _ h₁ hd₁ U hU (σ₁ g) (σ₂ g)
     (fun p => (⟨g * p.1.1, mul_mem_unitaryJ hg p.1.2⟩, p.2)) (hτ₁ g hg) (hτ₂ g hg)
-    (closGen_stable hgap hσ₁ hD₁ hV₁ hc₁ hVK₁ g hg) x y hxy
+    (hst₁ g hg) x y hxy
+
+theorem data_unitary_equiv (hgap : StdGap ε lam)
+    (hσ₁ : IsURepOn (UJset ε) σ₁) (hD₁ : IsDerivedOn ε σ₁ D₁ E₁) (hV₁ : IsKIrrHW ε E₁ (lowK ε lam) V₁)
+    (hc₁ : ∀ v ∈ V₁, casimir E₁ v = (casVal lam : ℂ) • v)
+    (hVK₁ : ∀ k ∈ Kset ε, ∀ v ∈ V₁, ∃ w ∈ V₁, (w : H₁) = σ₁ k v) (hV₁0 : V₁ ≠ ⊥)
+    (hσ₂ : IsURepOn (UJset ε) σ₂) (hD₂ : IsDerivedOn ε σ₂ D₂ E₂) (hV₂ : IsKIrrHW ε E₂ (lowK ε lam) V₂)
+    (hc₂ : ∀ v ∈ V₂, casimir E₂ v = (casVal lam : ℂ) • v)
+    (hVK₂ : ∀ k ∈ Kset ε, ∀ v ∈ V₂, ∃ w ∈ V₂, (w : H₂) = σ₂ k v) (hV₂0 : V₂ ≠ ⊥) :
+    ∃ U : closGen E₁ V₁ ≃ₗᵢ[ℂ] closGen E₂ V₂, ∀ g ∈ UJset ε, ∀ x y : closGen E₁ V₁,
+      (x : H₁) = σ₁ g (y : H₁) → ((U x : closGen E₂ V₂) : H₂) = σ₂ g ((U y : closGen E₂ V₂) : H₂) := by
+  obtain ⟨φ, hφK, hφI⟩ := KTypeIsomorphism.exists_phi hσ₁ hD₁ hV₁ hσ₂ hD₂ hV₂
+  have huniv := rigid_universal hσ₁ hD₁ hV₁ hc₁ hVK₁ hσ₂ hD₂ hV₂ hc₂ hVK₂ hgap φ hφK hφI
+  exact KTypeIsomorphism.unitary_equiv_of_matrix_coefficients hσ₁ hσ₂ hV₁0 φ huniv
+    (closGen_stable hgap hσ₁ hD₁ hV₁ hc₁ hVK₁) (closGen_stable hgap hσ₂ hD₂ hV₂ hc₂ hVK₂)
+    (rigid_irred hgap hσ₁ hD₁ hV₁ hc₁ hVK₁) (rigid_irred hgap hσ₂ hD₂ hV₂ hc₂ hVK₂)
 
 end ReciprocityTheory.ChartRestriction.DS

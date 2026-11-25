@@ -2,43 +2,9 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FrobeniusFields.ExistsResQ
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
 import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.UnipotentIdempotents.TCont
 import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocA
 
@@ -47,59 +13,6 @@ import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocA
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp UpperTheory.V.Ws.Lk
 open scoped Pointwise
 
-namespace UpperTheory.V.Ws.Lk.BetaCyclotomicPlace
-
-variable (l : ℕ) [hl : Fact l.Prime]
-
-private noncomputable def vQ : HeightOneSpectrum (𝓞 ℚ) where
-  asIdeal := Ideal.span {((l : ℕ) : 𝓞 ℚ)}
-  isPrime := (Ideal.span_singleton_prime (_root_.Formalism.BasicNotions.Examples₂.LB.prime_l l).ne_zero).mpr (_root_.Formalism.BasicNotions.Examples₂.LB.prime_l l)
-  ne_bot := by rw [Ne, Ideal.span_singleton_eq_bot]; exact (_root_.Formalism.BasicNotions.Examples₂.LB.prime_l l).ne_zero
-
-variable {l} {Ω : Type} [Field Ω]
-
-private theorem isPlaceOver_vQ [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (A : ValuationSubring Ω)
-    (hA : A.valuation ((l : ℕ) : Ω) < 1) : IsPlaceOver (F := ℚ) A (vQ l) := by
-  intro x
-  obtain ⟨n, rfl⟩ : ∃ n : ℤ, x = (n : 𝓞 ℚ) :=
-    ⟨Rat.ringOfIntegersEquiv x, by rw [← map_intCast Rat.ringOfIntegersEquiv.symm, Int.cast_id, RingEquiv.symm_apply_apply]⟩
-  have hcast : algebraMap ℚ Ω (((n : 𝓞 ℚ)) : ℚ) = (n : Ω) := by simp
-  rw [hcast]
-  show _ ↔ (n : 𝓞 ℚ) ∈ Ideal.span {((l : ℕ) : 𝓞 ℚ)}
-  rw [Ideal.mem_span_singleton]
-  have hle : ∀ m : ℤ, A.valuation (m : Ω) ≤ 1 := fun m => (A.valuation_le_one_iff _).2 (intCast_mem A m)
-  have hdvd : ((l : ℕ) : 𝓞 ℚ) ∣ (n : 𝓞 ℚ) ↔ (l : ℤ) ∣ n := by
-    rw [show ((l : ℕ) : 𝓞 ℚ) = Rat.ringOfIntegersEquiv.symm (l : ℤ) by simp,
-      show (n : 𝓞 ℚ) = Rat.ringOfIntegersEquiv.symm n by simp, map_dvd_iff]
-  rw [hdvd]
-  constructor
-  · intro hv
-    by_contra hnd
-    have hp : Prime (l : ℤ) := Nat.prime_iff_prime_int.1 hl.out
-    obtain ⟨a, b, hab⟩ := (Irreducible.coprime_iff_not_dvd hp.irreducible).2 hnd
-    have h1 : A.valuation ((a * l + b * n : ℤ) : Ω) < 1 := by
-      push_cast
-      apply lt_of_le_of_lt (A.valuation.map_add _ _)
-      apply max_lt
-      · rw [map_mul]
-        calc A.valuation (a : Ω) * A.valuation ((l : ℕ) : Ω) ≤ 1 * A.valuation ((l : ℕ) : Ω) :=
-              mul_le_mul' (hle a) le_rfl
-          _ < 1 := by rw [one_mul]; exact hA
-      · rw [map_mul]
-        calc A.valuation (b : Ω) * A.valuation (n : Ω) ≤ 1 * A.valuation (n : Ω) := mul_le_mul' (hle b) le_rfl
-          _ < 1 := by rw [one_mul]; exact hv
-    rw [hab] at h1
-    simp at h1
-  · rintro ⟨y, rfl⟩
-    push_cast
-    rw [map_mul]
-    calc A.valuation ((l : ℕ) : Ω) * A.valuation (y : Ω) ≤ A.valuation ((l : ℕ) : Ω) * 1 :=
-          mul_le_mul' le_rfl (hle y)
-      _ < 1 := by rw [mul_one]; exact hA
-
-end UpperTheory.V.Ws.Lk.BetaCyclotomicPlace
-
-open UpperTheory.V.Ws.Lk.BetaCyclotomicPlace in
 theorem UpperTheory.V.Ws.Lk.betaCyc :
     ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (K : IntermediateField ℚ Ω) [NumberField K], Module.finrank ℚ K = 2 → ∀ A₀ : ValuationSubring Ω, A₀.valuation (l : Ω) < 1 → ∀ β : G K Ω →* (PadicAlgCl l)ˣ, (∀ σ ∉ K.fixingSubgroup, ∀ s s' : G K Ω, resQ K s' = σ * resQ K s * σ⁻¹ → β s * β s' = 1) → ∀ U : Subgroup (G K Ω), IsOpen (U : Set (G K Ω)) → (∀ B : ValuationSubring Ω, (∀ x ∈ K, x ∈ B ↔ x ∈ A₀) → ∀ s ∈ U ⊓ Ine (F := K) B, (β s : PadicAlgCl l) ^ 2 = algebraMap ℤ_[l] (PadicAlgCl l) (cycZ K Ω l s : ℤ_[l])) → ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 → ∃ (b : ℤ) (k : ℕ), 0 < k ∧ Odd b ∧ ∀ s ∈ Ine (F := K) A, (β s ^ 2 * cycBar K Ω l s ^ (-b)) ^ k = 1 := by
   intro Ω _ _ _ l _ K _ hK A₀ hA₀ β hconj U hU hcyc A hA
@@ -111,7 +24,9 @@ theorem UpperTheory.V.Ws.Lk.betaCyc :
   have hkpos : 0 < U.index.factorial := Nat.factorial_pos _
   have hval : ∀ t : G K Ω, ((cycBar K Ω l t : (Qbar l)ˣ) : PadicAlgCl l) =
       algebraMap ℤ_[l] (PadicAlgCl l) (cycZ K Ω l t : ℤ_[l]) := fun t => rfl
-  obtain ⟨σ, hσ⟩ := exists_smul_eq_of_isPlaceOver (isPlaceOver_vQ A₀ hA₀) (isPlaceOver_vQ A hA)
+  obtain ⟨σ, hσ⟩ := exists_smul_eq_of_isPlaceOver
+    (_root_.Formalism.BasicNotions.Examples₂.LB.isPlaceOver_vQ A₀ hA₀)
+    (_root_.Formalism.BasicNotions.Examples₂.LB.isPlaceOver_vQ A hA)
   by_cases hσK : σ ∈ K.fixingSubgroup
   · refine ⟨1, U.index.factorial, hkpos, odd_one, ?_⟩
     have hB : ∀ x ∈ K, x ∈ A ↔ x ∈ A₀ := by

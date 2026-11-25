@@ -16,15 +16,9 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
 theorem exists_isOpen_inter_subgroup_eq_one (Γ : Subgroup G) [DiscreteTopology Γ] :
     ∃ W : Set G, IsOpen W ∧ (1 : G) ∈ W ∧ ∀ γ ∈ Γ, γ ∈ W → γ = 1 := by
-  have h1 : IsOpen ({1} : Set Γ) := isOpen_discrete _
-  obtain ⟨W, hW, hWeq⟩ := isOpen_induced_iff.mp h1
-  refine ⟨W, hW, ?_, ?_⟩
-  · have : (1 : Γ) ∈ ((↑) : Γ → G) ⁻¹' W := by rw [hWeq]; rfl
-    simpa using this
-  · intro γ hγ hγW
-    have : (⟨γ, hγ⟩ : Γ) ∈ ((↑) : Γ → G) ⁻¹' W := hγW
-    rw [hWeq] at this
-    simpa using congrArg Subtype.val (Set.mem_singleton_iff.mp this)
+  obtain ⟨W, hW, hWΓ⟩ := isOpen_inter_eq_singleton_of_mem_discrete
+    ((SetLike.isDiscrete_iff_discreteTopology (s := Γ)).mpr ‹_›) Γ.one_mem
+  exact ⟨W, hW, (hWΓ.symm.subset (Set.mem_singleton 1)).1, fun γ hγ hγW ↦ hWΓ.subset ⟨hγW, hγ⟩⟩
 
 variable [LocallyCompactSpace G]
 

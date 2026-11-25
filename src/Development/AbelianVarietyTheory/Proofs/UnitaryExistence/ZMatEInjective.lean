@@ -117,7 +117,7 @@ theorem zMatE_mulVec (X : Data E r) (e : Fin ρ → Fin r → E) (β : Matrix (F
   funext k
   simp only [FJ.zMatE, Matrix.mulVec, dotProduct, Matrix.of_apply, add_mul, Finset.sum_add_distrib,
     Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, herm, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.sum_mul, Finset.mul_sum]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.sum_mul, Finset.mul_sum]
   congr 1
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => ?_

@@ -169,8 +169,7 @@ private lemma false_of_trace_pow_eq_card_add_one_sub {L ι : Type} [Field L] [Ch
 theorem _root_.GlobalTheory.exists_eigenvector_of_trace_eq_add_character :
     ∀ (K L Γ V ι : Type) [Field K] [Field L] [CharZero L] [Group Γ] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Fintype ι] [DecidableEq ι] (φ : K →+* L) (ρ : Representation K Γ V) (σ : Γ →* Matrix ι ι L) (χ : Γ →* Kˣ), ρ.IsSemisimpleRepresentation → (∀ g, φ (LinearMap.trace K V (ρ g)) = (σ g).trace + φ ((χ g : Kˣ) : K)) → ∃ v : V, v ≠ 0 ∧ ∀ g, ρ g v = ((χ g : Kˣ) : K) • v := by
   intro K L Γ V ι _ _ _ _ _ _ _ _ _ φ ρ σ χ hs htr
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hno : ∀ v : V, (∀ g, ρ g v = ((χ g : Kˣ) : K) • v) → v = 0 := fun v hv => by
     by_contra h0
     obtain ⟨g, hg⟩ := hcon v h0

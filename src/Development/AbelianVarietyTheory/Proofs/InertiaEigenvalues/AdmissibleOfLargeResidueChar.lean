@@ -608,10 +608,10 @@ theorem jTil_shift_block : ∀ (l n t : ℕ) (h w η : ZMod n → ℕ) (typ : ZM
       unfold Formalism.WachCohomologyFacts.V2.InWinN
       cases hty : typ a
       · have := hB hty
-        simp only [Bool.false_eq_true, if_false]
+        simp only [Bool.false_eq_true, ite_false]
         constructor <;> omega
       · have := hG hty
-        simp only [if_true]
+        simp only [ite_true]
         constructor <;> omega
     have hy : b + (w a : ℤ) ∈ Formalism.WachCohomologyFacts.Top.GlobalTheory (w a) t := by
       unfold Formalism.WachCohomologyFacts.Top.GlobalTheory
@@ -623,13 +623,13 @@ theorem jTil_shift_block : ∀ (l n t : ℕ) (h w η : ZMod n → ℕ) (typ : ZM
   unfold tableLineDegreeTwo.jTil
   by_cases hbS : (b : ℚ) ∈ S
   · have hn := hboth hbS
-    rw [if_pos (Or.inl hbS), if_neg (by rwa [hwin]), hcS hbS]
+    rw [ite_eq_left (Or.inl hbS), ite_eq_right (by rwa [hwin]), hcS hbS]
     simp
   · rw [hcN hbS]
     by_cases hbl : 0 ≤ b ∧ b ≤ (t : ℤ) - 1
-    · rw [if_pos (Or.inr (hblk.2 hbl)), if_pos (hwin.2 hbl)]
+    · rw [ite_eq_left (Or.inr (hblk.2 hbl)), ite_eq_left (hwin.2 hbl)]
       simp
-    · rw [if_neg (by rintro (h1 | h1); exact hbS h1; exact hbl (hblk.1 h1)), if_neg (by rwa [hwin])]
+    · rw [ite_eq_right (by rintro (h1 | h1); exact hbS h1; exact hbl (hblk.1 h1)), ite_eq_right (by rwa [hwin])]
       simp
 
 end GlobalTheory
@@ -668,10 +668,10 @@ theorem jumps_iff : ∀ (D : D7) (up : Bool) (j : ℕ) (ρ : D.what₂.Tau) (q :
   intro D up j ρ q
   cases up
   · simp only [AdmissibleParameterJ.JJ, AdmissibleParameterJ.JW, AdmissibleParameterJ.Jm, AdmissibleParameterJ.Jp, AdmissibleParameterJ.cloudT, AdmissibleParameterJ.lowT, AdmissibleParameterJ.reflS,
-      Set.mem_union, Set.mem_setOf_eq, Bool.false_eq_true, if_false]
+      Set.mem_union, Set.mem_setOf_eq, Bool.false_eq_true, ite_false]
     rw [reflS_blockJ_iff]
   · simp only [AdmissibleParameterJ.JJ, AdmissibleParameterJ.JW, AdmissibleParameterJ.Jp, AdmissibleParameterJ.cloudT, AdmissibleParameterJ.lowT, AdmissibleParameterJ.blockJ,
-      Set.mem_union, Set.mem_setOf_eq, if_true]
+      Set.mem_union, Set.mem_setOf_eq, ite_true]
 
 end GlobalTheory.UseLoc.JumpBlock
 end -- clump:auto
@@ -783,8 +783,7 @@ theorem dvd_of_not_isUnit (P : LocPrime l) (LL : FinExt l) {lam y : ↥(OL LL)} 
   have hy0' : (y : ↥LL.1) ≠ 0 := fun e => hy0 (Subtype.ext e)
   have hu0 : (y : ↥LL.1) / lam ≠ 0 := div_ne_zero hy0' hl0
   have key : 0 ≤ P.v LL ((y : ↥LL.1) / lam) ∨ 0 ≤ P.v LL ((y : ↥LL.1) / lam)⁻¹ := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     obtain ⟨h1, h2⟩ := hc
     have hs : P.v LL ((y : ↥LL.1) / lam) + P.v LL ((y : ↥LL.1) / lam)⁻¹ = 0 := by
       rw [← AddValuation.map_mul, mul_inv_cancel₀ hu0, AddValuation.map_one]
@@ -856,7 +855,6 @@ theorem charpoly_repV (C : TruncatedSeriesCountingIdentities.CoefExt D i w hw) {
     Matrix.charpoly_toLin' _
   rw [h, Matrix.charpoly_map]
 
-set_option synthInstance.maxHeartbeats 200000 in
 theorem twist_locOC (C : TruncatedSeriesCountingIdentities.CoefExt D i w hw) (θ : Br.G D.nbr i w hw →* (↥(OL C.LL))ˣ) {k : ℕ}
     (M : GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i)) (χ : GE D.nd →* (D.nd.O i)ˣ) (g : Br.G D.nbr i w hw) :
     twistM (locOC C (twistM M χ)) θ g =
@@ -891,8 +889,6 @@ theorem chiT_val (C : TruncatedSeriesCountingIdentities.CoefExt D i w hw) (θ : 
 end Main
 
 
-set_option synthInstance.maxHeartbeats 200000 in
-set_option maxHeartbeats 800000 in
 theorem charpoly_congr : ∀ (D : D7) (i : D.nd.Loc) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))) (ρ : D.nd.X i → (GE D.nd →* GL (Fin D.R.r) (D.nd.O i))) (π : D.nd.X i) (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i)) (C : TruncatedSeriesCountingIdentities.CoefExt D i w hw) (θ : Br.G D.nbr i w hw →* (↥(OL C.LL))ˣ) (lam : ↥(OL C.LL)), Irreducible lam → TruncatedSeriesCountingIdentities.admG3 i r ρ π → ∀ (x : D.nd.X i) (g : Br.G D.nbr i w hw) (k : ℕ), ∃ y : ↥(OL C.LL), (LinearMap.charpoly (repV C (twistM (locOC C (rTwO D.nd i r x)) θ) g) - tableLineDegreeTwo.resPoly (repV C (twistM (locOC C (WpO D.nd i ρ π)) θ)) (chiT C θ) D.R.t g).coeff k = algebraMap (↥(OL C.LL)) (↥C.LL.1) (lam * y) := by
   intro D i r ρ π w hw C θ lam hlam hG3 x g k
   haveI : CharZero ↥C.LL.1 :=
@@ -1033,9 +1029,9 @@ theorem exists_setC : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     rw [hτu a τ hO, ((hW a) ρ π hZ hDec b).2.1]
     obtain ⟨h1, h2⟩ := hU a b
     by_cases hb : ((b : ℤ) : ℚ) ∈ AdmissibleParameterJ.JW D (decide (AdmissibleParameterJ.TypeU D ep (gA a))) (D.nd.j i) (ρA a)
-    · rw [if_pos hb, h1.2 hb]
+    · rw [ite_eq_left hb, h1.2 hb]
       simp
-    · rw [if_neg hb]
+    · rw [ite_eq_right hb]
       have : (U a).count (b + w' a) ≠ 1 := fun e => hb (h1.1 e)
       omega
   have hL6 := GlobalTheory.UseLoc.crys_Wp_rTw D i r ρ π w hw C hGood hZ hG2 hDec
@@ -1283,7 +1279,6 @@ theorem incO_div {l : ℕ} [Fact l.Prime] {LL LL' : FinExt l} (h : LL.1 ≤ LL'.
   rw [hz]
 
 
-set_option synthInstance.maxHeartbeats 400000 in
 theorem exists_intRetraction : ∀ {l : ℕ} [Fact l.Prime] {LL LL' : FinExt l} (h : LL.1 ≤ LL'.1),
     ∃ r : ↥(OL LL') →+ ↥(OL LL), (∀ (a : ↥(OL LL)) (x : ↥(OL LL')), r (incO h a * x) = a * r x) ∧ r 1 = 1 := by
   intro l _ LL LL' h
@@ -1451,7 +1446,6 @@ namespace GlobalTheory.UseLoc
 open Module
 
 set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 4000000 in
 theorem main : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (i : D.nd.Loc) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))) (ρ : D.nd.X i → (GE D.nd →* GL (Fin D.R.r) (D.nd.O i))) (π : D.nd.X i), tableLineDegreeTwo.aux₃ D HW F → tableLineDegreeTwo.adm20 D HW F → AdmissibleParameterJ.ConclusionJa D → GoodR D.nd i r → π ∈ D.nd.Z i → TruncatedSeriesCountingIdentities.admG2 i r ρ π → TruncatedSeriesCountingIdentities.admG3 i r ρ π → TruncatedSeriesCountingIdentities.FamilyContinuous i r → TruncatedSeriesCountingIdentities.SemisimpleDecomposition i r ρ π → TruncatedSeriesCountingIdentities.CyclotomicInertiaImage (D := D) i → 5 ≤ D.nd.l i → D.nd.l i ∉ D.host.small → D.nd.l i ≠ D.host.q → D.nd.l i ≠ D.host.d → (∀ (n : ℕ) [NeZero n] (up : ZMod n → Bool) (τ : ZMod n → D.what₂.Tau), ∃ (h w η : ZMod n → ℕ) (typ : ZMod n → Bool) (U : ZMod n → Multiset ℤ), tableLineDegreeTwo.PositionHyps (D.nd.l i) n D.R.t h w η typ U ∧ ∀ (a : ZMod n) (b : ℤ), ((U a).count (b + w a) = 1 ↔ (b : ℚ) ∈ AdmissibleParameterJ.JW D (up a) (D.nd.j i) (τ a)) ∧ (U a).count (b + w a) ≤ 1) → ∀ w (hw : w ∈ placesOver D.host.E (D.nd.l i)), (LocBound i w hw r Set.univ (WpO D.nd i ρ π) 0 ∧ (∀ c ∈ Finset.Icc 2 D.R.t, ∀ z ∈ cutCoc i w hw r Set.univ (chiRatO D.nd i c), z ∈ BD (Br.locLat D.nbr i w hw (chiRatO D.nd i c))) ∧ ∀ z ∈ cutCoc i w hw r Set.univ (chiRatO D.nd i 1), z ∈ Z1urD (Br.locLat D.nbr i w hw (chiRatO D.nd i 1)) (Br.inert D.nbr i w hw)) := by
   intro D HW F i r ρ π hconds hadm20 hJa hGood hπ hG2 hG3 hCont hDec hEps h5 hsm hq hd hposition w hw
   obtain ⟨C, hA, lam, hlam, θ, h, w', η, typ, U, hS⟩ :=

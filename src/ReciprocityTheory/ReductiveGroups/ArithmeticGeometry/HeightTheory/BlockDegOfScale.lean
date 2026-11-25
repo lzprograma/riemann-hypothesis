@@ -42,8 +42,8 @@ theorem coeff_scaleEquiv {σ : Type*} [Fintype σ] (P : σ → Prop) [DecidableP
 theorem sum_filter_block (b : Fin (D + 1)) (s : TVar D N →₀ ℕ) :
     (∑ v ∈ Finset.univ.filter (fun v : TVar D N => v.1 = b), s v) = ∑ j, s (b, j) := by
   rw [Finset.sum_filter, Fintype.sum_prod_type]
-  refine (Finset.sum_eq_single b (fun c _ hc => Finset.sum_eq_zero fun j _ => if_neg hc)
-    (by simp)).trans (Finset.sum_congr rfl fun j _ => if_pos rfl)
+  refine (Finset.sum_eq_single b (fun c _ hc => Finset.sum_eq_zero fun j _ => ite_eq_right hc)
+    (by simp)).trans (Finset.sum_congr rfl fun j _ => ite_eq_left rfl)
 
 theorem block_deg_of_scale [CharZero K] (b : Fin (D + 1)) (a : ℕ) (F : MvPolynomial (TVar D N) K)
     (hF : ∀ u : Kˣ, scaleEquiv (fun v : TVar D N => v.1 = b) u F = C ((u : K) ^ a) * F) :

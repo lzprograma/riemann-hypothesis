@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsComb
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset Equiv Comb
@@ -51,7 +49,7 @@ theorem CombCfAtStair.proof (h1 : CombCfUpdateZero.Statement) : CombCfAtStair.St
         have := congrFun h i
         show lam i = 0
         omega
-      rw [if_neg hne, latticeWords_eq_empty_of_sum_ne]
+      rw [ite_eq_right hne, latticeWords_eq_empty_of_sum_ne]
       · simp
       · intro hsum
         apply h0
@@ -68,7 +66,7 @@ theorem CombCfAtStair.proof (h1 : CombCfUpdateZero.Statement) : CombCfAtStair.St
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Nat.cast_ite, Nat.cast_zero]
     by_cases hgood : 1 ≤ lam i ∧ Antitone (Function.update lam i (lam i - 1))
-    · rw [if_pos (by omega), if_pos hgood.1]
+    · rw [ite_eq_left (by omega), ite_eq_left hgood.1]
       have hup : Function.update (fun j => lam j + stair m j) i (lam i + stair m i - 1) =
           fun j => Function.update lam i (lam i - 1) j + stair m j := by
         funext j

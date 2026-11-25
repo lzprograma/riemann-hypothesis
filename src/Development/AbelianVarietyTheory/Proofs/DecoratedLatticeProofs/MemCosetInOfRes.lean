@@ -1,5 +1,7 @@
 module
 
+
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiamondOperatorsOnCharts
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
 public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
@@ -55,7 +57,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ProdAbsNormD
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemberRepresentativeMovedAtTwistEqTupleFrames
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.KerEquivFr
 import Mathlib.Tactic.Linter.Style
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.SatakeParameters.SameCosetOfMemCosetIn, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemCosetInOfRes
 
@@ -65,7 +66,6 @@ section -- clump:auto
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix GlobalTheory.TwU GlobalTheory.TwU.AtTrue
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.TwU.AtTrue.Cl
 
@@ -116,9 +116,6 @@ theorem sameCoset_of_mem_cosetIn {X : Fields} {Pr : Primes X} {R : Ranks} {sel :
 
 end GlobalTheory.TwU.AtTrue.Cl
 
-namespace GlobalTheory.TwU.AtTrue.Cl
-
-end GlobalTheory.TwU.AtTrue.Cl
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.SatakeParameters.SameCosetOfMemCosetIn =====
@@ -137,24 +134,7 @@ theorem normal_rep {G D A : Type} [Group G] [MulAction G D] (f : D → A) (pref 
     (d d' : D) (hd : ∀ g : G, f (g • d') = f (g • d)) :
     f (GlobalTheory.Mem.Col2.prefRep pref (Quotient.mk (MulAction.orbitRel G D) d')) =
       f (GlobalTheory.Mem.Col2.prefRep pref (Quotient.mk (MulAction.orbitRel G D) d)) := by
-  have h1 : ∀ (q : D) (g₀ : G), (fun r => ∃ g : G, r = f (g • g₀ • q)) = fun r => ∃ g : G, r = f (g • q) := fun q g₀ => by
-    funext r
-    refine propext ⟨fun ⟨g, e⟩ => ⟨g * g₀, by rw [mul_smul]; exact e⟩, fun ⟨g, e⟩ => ⟨g * g₀⁻¹, by
-      rw [mul_smul, inv_smul_smul]; exact e⟩⟩
-  have h2 : ∀ q : D, f (GlobalTheory.Mem.Col2.prefRep pref (Quotient.mk (MulAction.orbitRel G D) q)) =
-      Classical.epsilon (p := fun r => ∃ g : G, r = f (g • q)) (h := ⟨f q⟩) := fun q => by
-    have hex : ∃ p, Quotient.mk (MulAction.orbitRel G D) p = Quotient.mk (MulAction.orbitRel G D) q ∧ pref p := by
-      obtain ⟨g, hg⟩ := Classical.epsilon_spec (p := fun r => ∃ g : G, r = f (g • q)) ⟨f q, 1, by rw [one_smul]⟩
-      refine ⟨g • q, Quotient.sound ⟨g, rfl⟩, (h _).2 ?_⟩
-      rw [h1]
-      exact hg.symm
-    unfold GlobalTheory.Mem.Col2.prefRep
-    rw [dite_eq_left hex]
-    obtain ⟨g, hg⟩ : ∃ g : G, g • q = hex.choose := Quotient.exact hex.choose_spec.1
-    have h3 := (h _).1 hex.choose_spec.2
-    rw [h3, ← hg, h1]
-  rw [h2, h2]
-  simp only [hd]
+  first | exact _root_.GlobalTheory.Mem.Col2.DiaChart.normal_rep | exact @_root_.GlobalTheory.Mem.Col2.DiaChart.normal_rep | apply _root_.GlobalTheory.Mem.Col2.DiaChart.normal_rep <;> assumption
 
 section Local
 
@@ -196,7 +176,7 @@ def Good (p : PtAt R sel mu cst u j) : Prop :=
 
 theorem mem_cosetIn {p : PtAt R sel mu cst u j} {P : rowSG Pr sel mu} (hP : P.1 ∈ Pr.vGs) {z : Sp X.E (R.N j)} :
     z ∈ cosetIn p P ↔ ∃ y ∈ p.1.2, z - (frsF sel mu p.1.1 P).symm y ∈ stdAt X.E (R.N j) P.1 := by
-  simp only [cosetIn, if_pos hP, pow_zero, inv_one, one_smul, Set.mem_setOf_eq]
+  simp only [cosetIn, ite_eq_left hP, pow_zero, inv_one, one_smul, Set.mem_setOf_eq]
 
 theorem rep_mem (h : j + 1 = R.m) (p : PtAt R sel mu cst u j) (P : rowSG Pr sel mu) :
     (frsF sel mu p.1.1 P).symm (repY p.1.2) ∈ cosetIn p P :=
@@ -293,11 +273,11 @@ theorem exists_pt (h : j + 1 = R.m) (d : ChPt (R := R) sel mu u j) (z : rowSG Pr
       exact nsmul_mem hv _
     have h0 := hd P
     by_cases hP : P.1 ∈ Pr.vGs
-    · simp only [z', if_pos hP, pow_zero, inv_one, one_smul] at h0
+    · simp only [z', ite_eq_left hP, pow_zero, inv_one, one_smul] at h0
       have h2 := GlobalTheory.BaseCosetPt.frsF_mem d P (add_mem (hn 1 _ h0) (TopStep.mem_stdAt.2 (intAt_eN R.k)))
       rw [pow_one, smul_sub, smul_inv_smul₀ hq0, sub_add_cancel, map_smul, LinearEquiv.apply_symm_apply] at h2
       simpa [hP] using h2
-    · simp only [z', if_neg hP] at h0
+    · simp only [z', ite_eq_right hP] at h0
       have h2 := GlobalTheory.BaseCosetPt.frsF_mem d P (add_mem (hn (cst.M + cst.M) _ h0) (hz P hP))
       rw [smul_smul, pow_add, mul_assoc, mul_inv_cancel₀ (pow_ne_zero _ hq0), mul_one, smul_sub, sub_add_cancel, map_smul,
         LinearEquiv.apply_symm_apply] at h2
@@ -313,8 +293,8 @@ theorem exists_pt (h : j + 1 = R.m) (d : ChPt (R := R) sel mu u j) (z : rowSG Pr
       exact ⟨y, hy', rfl⟩⟩
   have hp := key p rfl (by simp [p])
   refine ⟨p, fun P hP => ?_, fun P hP => ?_⟩
-  · simpa only [z', if_pos hP] using hp P
-  · simpa only [z', if_neg hP] using hp P
+  · simpa only [z', ite_eq_left hP] using hp P
+  · simpa only [z', ite_eq_right hP] using hp P
 
 end Local
 
@@ -322,7 +302,6 @@ section True
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.AdForm
 open scoped Classical
-attribute [local instance] GlobalTheory.Mem.Col2.starE
 
 variable {B : Base} {X : PreX B.toPre} {I : TC B X} {u : B.Word} {a : I.ι} {j : ℕ}
 
@@ -469,7 +448,7 @@ theorem repY_mem (hI : I.Ok) (hA : A.Is) (hj : j + 1 = B.R.m) (β : Ch j) (hk : 
   rw [hY] at h3
   have h4 := (mem_locLat _ _ _ _).1 hy P
   have h5 := (mem_locLat _ _ _ _).1 h3 P
-  simp only [if_pos hP, zpow_zero, inv_one, one_smul, _root_.zpow_neg_one, inv_inv, hN] at h4 h5
+  simp only [ite_eq_left hP, zpow_zero, inv_one, one_smul, _root_.zpow_neg_one, inv_inv, hN] at h4 h5
   have h6 : (qOf P.1 : B.fields.E) • f.symm z ∈ stdAt B.fields.E (B.R.N j) P.1 := by
     rw [← hs, map_smul, LinearEquiv.apply_symm_apply, ← add_sub_cancel y z, smul_add]
     refine add_mem h4 ?_
@@ -477,7 +456,7 @@ theorem repY_mem (hI : I.Ok) (hA : A.Is) (hj : j + 1 = B.R.m) (β : Ch j) (hk : 
     exact nsmul_mem h5 _
   have h7 := h2 _ h6
   refine mem_of_sub h0 ?_
-  rw [if_pos hP, pow_zero, inv_one, one_smul]
+  rw [ite_eq_left hP, pow_zero, inv_one, one_smul]
   convert h7 using 1
   show _ = _ • (f _ - _)
   rw [map_smul, LinearEquiv.apply_symm_apply, ← smul_sub, pow_one, inv_smul_smul₀ hq0]

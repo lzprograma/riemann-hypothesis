@@ -150,15 +150,4 @@ theorem eq_decompositionToLocal_arithFrobAt (he : w.asIdeal.ramificationIdx (�
 
 end Frobenius
 
-section InertiaGalois
-
-variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
-  [IsGalois K L]
-  (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L)) [w.asIdeal.LiesOver v.asIdeal]
-  [Algebra (v.adicCompletion K) (w.adicCompletion L)]
-  [ContinuousSMul (v.adicCompletion K) (w.adicCompletion L)]
-  [IsScalarTower K (v.adicCompletion K) (w.adicCompletion L)]
-
-end InertiaGalois
-
 end GroundTheory.Global

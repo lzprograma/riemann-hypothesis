@@ -18,11 +18,6 @@ def RhoNuRhoReducible : Prop :=
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-def revTensor {d : ℕ} (σ : IrrRep (GL (Fin d) k)) :=
-  piTensor fun a : Fin 2 => segTerm σ.ρ 2 a.rev
-
-
-
 end CompanionTheory.Pf1.SegRepC.SegTwo
 
 end

@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.AxiomsFromFamilies
 public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
 public import Mathlib.Analysis.Fourier.FiniteAbelian.Orthogonality
 public import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
@@ -32,55 +33,6 @@ public import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreservin
 public import Formalism.LatticeRigidity.HeightMinimum.SqrtAbsNormLeProd
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GrowthOfBasic
 public import Formalism.LocalRingCardinality.DataHost
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralLatticeRefinementIdentity
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
@@ -121,21 +73,11 @@ theorem psd_zero (F : Finset α) : IsPSD F (fun _ _ => (0 : ℂ)) := by
 
 theorem psd_add {F : Finset α} {k k' : α → α → ℂ} (h : IsPSD F k) (h' : IsPSD F k') :
     IsPSD F (fun x y => k x y + k' x y) := by
-  intro a
-  have : ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * (k x y + k' x y) =
-      ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * k x y + ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * k' x y := by
-    simp only [mul_add, sum_add_distrib]
-  rw [this, Complex.add_im, Complex.add_re, (h a).1, (h' a).1]
-  exact ⟨by simp, add_nonneg (h a).2 (h' a).2⟩
+  apply _root_.Formalism.FourierDecayAlt.P.Jx9.psd_add <;> assumption
 
 theorem psd_sum {ι : Type} {F : Finset α} (s : Finset ι) (k : ι → α → α → ℂ)
     (h : ∀ i ∈ s, IsPSD F (k i)) : IsPSD F (fun x y => ∑ i ∈ s, k i x y) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using psd_zero F
-  | insert i s hi ih =>
-    have := psd_add (h i (mem_insert_self i s)) (ih fun j hj => h j (mem_insert_of_mem hj))
-    exact psd_congr this fun x _ y _ => by rw [sum_insert hi]
+  apply _root_.Formalism.FourierDecayAlt.P.Jx9.psd_sum <;> assumption
 
 end gen
 
@@ -240,11 +182,11 @@ theorem limit_core (hEntry : PSDEntryBound) (hSubseq : BoundedSubseq)
     have e2 : ∀ j, Th j (Quotient.out ((x : K) : K ⧸ R.toAddSubgroup)) = Th j x :=
       fun j => periodic_out R (Th j) (h1 j) x
     by_cases hx : (((x : K) : K ⧸ R.toAddSubgroup), h, h') ∈ T
-    · simp only [dif_pos hx]
+    · simp only [dite_eq_left hx]
       have := hl ⟨_, hx⟩
       simp only [θ, e2] at this
       exact this
-    · simp only [dif_neg hx]
+    · simp only [dite_eq_right hx]
       have hxS : ((x : K) : K ⧸ R.toAddSubgroup) ∉ S := by
         intro hc
         exact hx (by simp only [T, mem_product]; exact ⟨hc, hh, hh'⟩)
@@ -314,12 +256,12 @@ theorem thetaExistsStepOfSteps : Formalism.FourierDecayAlt.A6.ThetaExistenceIndu
   refine ⟨Θ, h1, h2, ⟨Lc, hLo, hLk, h3⟩, h4, h5, h6, ?_⟩
   intro hG x
   by_cases hx : x ∈ R
-  · simp only [if_pos hx]
+  · simp only [ite_eq_left hx]
     refine psd_congr (psd_single hS h1 h2 h3 h5 x) ?_
     intro h hh h' hh'
     simp only [M, hCOne K R ψ hD h (hG h hh), hCOne K R ψ hD h' (hG h' hh')]
     simp
-  · simp only [if_neg hx]
+  · simp only [ite_eq_right hx]
     refine psd_congr (psd_zero F) ?_
     intro h hh h' hh'
     rw [h3 x (fun hc => hx ((hGL hG x).1 hc)) h hh h' hh']
@@ -353,7 +295,7 @@ theorem finsum_swap {I J : Type} (P : I → Prop) [DecidablePred P] (T : J → P
     intro f
     rw [finsum_eq_sum_of_support_subset (s := hP.toFinset)]
     · refine Finset.sum_congr rfl fun q hq => ?_
-      rw [if_pos (by simpa using hq)]
+      rw [ite_eq_left (by simpa using hq)]
     · intro q hq
       by_contra hq'
       have : ¬ P q := by simpa using hq'
@@ -362,7 +304,7 @@ theorem finsum_swap {I J : Type} (P : I → Prop) [DecidablePred P] (T : J → P
     intro f
     rw [finsum_eq_sum_of_support_subset (s := hT.toFinset)]
     · refine Finset.sum_congr rfl fun z hz => ?_
-      rw [if_pos (by simpa using hz)]
+      rw [ite_eq_left (by simpa using hz)]
     · intro z hz
       by_contra hz'
       have : ¬ T z := by simpa using hz'
@@ -616,19 +558,19 @@ theorem root_piece [TopologicalSpace K] (R : Subring K) (ψ : AddChar K ℂ) (m 
     have hc0 : c ≠ 0 := mul_ne_zero hA0 (psi_ne_zero ψ _)
     obtain ⟨hi, he⟩ := ball_piece R m B.toAddSubgroup Λ.toAddSubgroup hΛB (z : K) φ hbij
       (hcos Λ hΛB) _ (fun ξ => c * gaussF ψ B.toAddSubgroup (hessM m (z * t)) ξ) hinv
-      (fun x hx => if_neg hx)
+      (fun x hx => ite_eq_right hx)
       (fun ξ hξ => by
-        have : gaussF ψ B.toAddSubgroup (hessM m (z * t)) ξ = 0 := if_neg hξ
+        have : gaussF ψ B.toAddSubgroup (hessM m (z * t)) ξ = 0 := ite_eq_right hξ
         rw [this, mul_zero])
       (fun ξ hξ => by
         have h1 : ∀ k, (z : K) + φ ξ k - (z : K) ∈ B := fun k => by
           have : φ ξ k ∈ B := hbij.mapsTo hξ k
           simpa using this
         have h2 : gaussF ψ B.toAddSubgroup (hessM m (z * t)) ξ =
-            ψ (Ring.inverse 2 * (ξ ⬝ᵥ (hessM m (z * t) *ᵥ ξ))) := if_pos hξ
+            ψ (Ring.inverse 2 * (ξ ⬝ᵥ (hessM m (z * t) *ᵥ ξ))) := ite_eq_left hξ
         rw [h2]
         simp only []
-        rw [if_pos h1, amp_const Λ₁ A hA z _ (fun k => hBΛ₁ _ (h1 k)), (hval ξ hξ).2, hc, mul_assoc,
+        rw [ite_eq_left h1, amp_const Λ₁ A hA z _ (fun k => hBΛ₁ _ (h1 k)), (hval ξ hξ).2, hc, mul_assoc,
           ← AddChar.map_add_eq_mul, hess_scale, Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul]
         congr 2
         ring)
@@ -703,18 +645,18 @@ theorem Formalism.FourierDecayAlt.P.stationaryPhaseOfSteps : Formalism.FourierDe
     intro x
     by_cases h : ∃ z : Kˣ, z ^ (m + 1) = D' ∧ ∀ k, x k - (z : K) ∈ B.toAddSubgroup
     · obtain ⟨z0, hz0, hx0⟩ := h
-      have h1 : Foff x = 0 := if_pos ⟨z0, hz0, hx0⟩
+      have h1 : Foff x = 0 := ite_eq_left ⟨z0, hz0, hx0⟩
       rw [h1, zero_add, Finset.sum_eq_single z0]
-      · exact (if_pos hx0).symm
+      · exact (ite_eq_left hx0).symm
       · intro z hz hne
-        refine if_neg fun hx => hne ?_
+        refine ite_eq_right fun hx => hne ?_
         exact hsep z z0 (by simpa using hz) hz0 x hx hx0
       · intro hz
         exact absurd (by simpa using hz0) hz
-    · have h1 : Foff x = F x := if_neg h
+    · have h1 : Foff x = F x := ite_eq_right h
       rw [h1, Finset.sum_eq_zero, add_zero]
       intro z hz
-      exact if_neg fun hx => h ⟨z, by simpa using hz, hx⟩
+      exact ite_eq_right fun hx => h ⟨z, by simpa using hz, hx⟩
   have hFoffInv : LatInvN Λ'.toAddSubgroup Foff := by
     intro x l hl
     have h1 : (∃ z : Kˣ, z ^ (m + 1) = D' ∧ ∀ k, (x + l) k - (z : K) ∈ B.toAddSubgroup) ↔
@@ -760,11 +702,11 @@ theorem Formalism.FourierDecayAlt.P.stationaryPhaseOfSteps : Formalism.FourierDe
             modK R (z : K) ^ ((m : ℝ) / 2) : ℝ) : ℂ) *
           ψ (((m + 1 : ℕ) : K) * (z : K) * ((t⁻¹ : Kˣ) : K)) * A (fun _ => (z : K)) := by
     rw [finsum_eq_sum_of_support_subset (s := hfin.toFinset)]
-    · refine Finset.sum_congr rfl fun z hz => if_pos (by simpa using hz)
+    · refine Finset.sum_congr rfl fun z hz => ite_eq_left (by simpa using hz)
     · intro z hz
       simp only [Set.Finite.coe_toFinset, Set.mem_ofPred_eq]
       by_contra h
-      exact hz (if_neg h)
+      exact hz (ite_eq_right h)
   rw [hrhs, Finset.mul_sum]
   refine Finset.sum_congr rfl fun z hz => ?_
   have hz' : z ^ (m + 1) = D' := by simpa using hz
@@ -1039,24 +981,14 @@ variable {X : Type}
 
 theorem psd_congr {F : Finset X} {k k' : X → X → ℂ} (h : ∀ x ∈ F, ∀ y ∈ F, k x y = k' x y)
     (hk : IsPSD F k) : IsPSD F k' := by
-  intro a
-  have : ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * k' x y =
-      ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * k x y :=
-    Finset.sum_congr rfl fun x hx => Finset.sum_congr rfl fun y hy => by rw [h x hx y hy]
-  rw [this]; exact hk a
+  apply _root_.Formalism.FourierDecayAlt.P.PositiveSemidefiniteClosure.psd_congr <;> assumption
 
 theorem psd_zero (F : Finset X) : IsPSD F (fun _ _ => (0 : ℂ)) := by
   intro a; simp
 
 theorem psd_add {F : Finset X} {k k' : X → X → ℂ} (hk : IsPSD F k) (hk' : IsPSD F k') :
     IsPSD F (fun x y => k x y + k' x y) := by
-  intro a
-  have : ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * (k x y + k' x y) =
-      (∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * k x y) +
-        ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * k' x y := by
-    simp only [mul_add, Finset.sum_add_distrib]
-  rw [this, Complex.add_im, Complex.add_re, (hk a).1, (hk' a).1]
-  exact ⟨by simp, add_nonneg (hk a).2 (hk' a).2⟩
+  apply _root_.Formalism.FourierDecayAlt.P.PositiveSemidefiniteClosure.psd_add <;> assumption
 
 theorem psd_sum {ι : Type} (S : Finset ι) {F : Finset X} {k : ι → X → X → ℂ}
     (hk : ∀ i ∈ S, IsPSD F (k i)) : IsPSD F (fun x y => ∑ i ∈ S, k i x y) := by
@@ -1145,7 +1077,7 @@ theorem Formalism.FourierDecayAlt.P.thetaOnDomainOfSteps : Formalism.FourierDeca
   have hτ : ∀ ρ ∈ D.A, ∀ b ∈ D.B, IsShift t (τ (ρ + b)) (ρ + b) := by
     intro ρ hρ b hb
     have hu := (hSh t ht.2 _ (hmem ρ hρ b hb)).1
-    simp only [IsShift, τ, dif_pos hu, inv_inv, IsUnit.unit_spec]
+    simp only [IsShift, τ, dite_eq_left hu, inv_inv, IsUnit.unit_spec]
   have hτmod : ∀ ρ ∈ D.A, ∀ b ∈ D.B,
       modK R (τ (ρ + b) : K) * modK R ((t⁻¹ : Kˣ) : K) = modK R 1 := by
     intro ρ hρ b hb
@@ -1180,11 +1112,11 @@ theorem Formalism.FourierDecayAlt.P.thetaOnDomainOfSteps : Formalism.FourierDeca
   ·
     intro x
     by_cases hx : x ∈ Lc
-    · simpa only [hx, if_true] using hpsd x
-    · simpa only [hx, if_false] using psd_zero F
+    · simpa only [hx, ite_true] using hpsd x
+    · simpa only [hx, ite_false] using psd_zero F
   ·
     intro x hx h _ h' _
-    simp only [hx, if_false]
+    simp only [hx, ite_false]
   ·
     intro t' ht'
     by_cases hx : (t' : K) ∈ Lc
@@ -1193,10 +1125,10 @@ theorem Formalism.FourierDecayAlt.P.thetaOnDomainOfSteps : Formalism.FourierDeca
       intro h _ h' _
       have hu : IsUnit (t' : K) := t'.isUnit
       have hu' : hu.unit = t' := Units.ext rfl
-      simp only [hx, if_true, NsK, dif_pos hu, hu']
+      simp only [hx, ite_true, NsK, dite_eq_left hu, hu']
     · refine psd_congr ?_ (psd_zero F)
       intro h hh h' hh'
-      simp only [hx, if_false, hNs0 t' hx h hh h' hh', sub_zero]
+      simp only [hx, ite_false, hNs0 t' hx h hh h' hh', sub_zero]
   ·
     have hPlat := (hPL K R ψ hD hch D.L₁ D.lat₁).1
     have hRlat : IsLat R.toAddSubgroup := ⟨hD.isOpen, hD.isCompact⟩
@@ -1216,8 +1148,8 @@ theorem Formalism.FourierDecayAlt.P.thetaOnDomainOfSteps : Formalism.FourierDeca
         if (Quotient.out x : K) ∈ Lc then 0 else thx R ψ m cr D.A D.B τ (Quotient.out x) h h') := by
       refine psd_sum _ fun x _ => ?_
       by_cases hx : (Quotient.out x : K) ∈ Lc
-      · simpa only [hx, if_true] using psd_zero F
-      · simpa only [hx, if_false] using hpsd _
+      · simpa only [hx, ite_true] using psd_zero F
+      · simpa only [hx, ite_false] using hpsd _
     refine psd_congr ?_ (psd_add hp1 hp2)
     intro h hh h' hh'
     have hsum := hTS hPG hPD hPL hLF hGRC hCP hKG hN1 hMM K R ψ hD hch m (m + 1) n₀ F Om (Lc : Set K) D
@@ -1233,12 +1165,12 @@ theorem Formalism.FourierDecayAlt.P.thetaOnDomainOfSteps : Formalism.FourierDeca
     refine Finset.sum_congr rfl fun x hx => ?_
     have hxP : (Quotient.out x : K) ∈ perp ψ D.L₁ := hfin.mem_toFinset.1 hx
     by_cases hxL : (Quotient.out x : K) ∈ Lc
-    · simp only [hxP, hxL, if_true, sub_zero]
-    · simp only [hxP, hxL, if_true, if_false, sub_self]
+    · simp only [hxP, hxL, ite_true, sub_zero]
+    · simp only [hxP, hxL, ite_true, ite_false, sub_self]
   ·
     intro x h _ h' _ hne
     by_cases hx : x ∈ Lc
-    · simp only [hx, if_true, thx]
+    · simp only [hx, ite_true, thx]
       have hz : ∀ ρ ∈ D.A, ∀ b ∈ D.B, ∀ b' ∈ D.B,
           uGram R ψ m cr Set.univ h h' (τ (ρ + b)) (τ (ρ + b')) = 0 := by
         intro ρ hρ b hb b' hb'
@@ -1251,7 +1183,7 @@ theorem Formalism.FourierDecayAlt.P.thetaOnDomainOfSteps : Formalism.FourierDeca
         rw [Finset.sum_eq_zero fun b hb => Finset.sum_eq_zero fun b' hb' => by
           rw [hz ρ hρ b hb b' hb', mul_zero], mul_zero]
       rw [this, mul_zero]
-    · simp only [hx, if_false]
+    · simp only [hx, ite_false]
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1365,9 +1297,9 @@ lemma sum_addChar_norm_sq (E : Type) [NormedAddCommGroup E] [InnerProductSpace �
       rw [Finset.sum_comm]
       simp_rw [← Finset.sum_mul, AddChar.sum_apply_eq_ite, sub_eq_zero]
       rw [Finset.sum_eq_single g]
-      · rw [if_pos rfl, normsq_eq_inner]
+      · rw [ite_eq_left rfl, normsq_eq_inner]
       · intro b _ hb
-        rw [if_neg (Ne.symm hb), zero_mul]
+        rw [ite_eq_right (Ne.symm hb), zero_mul]
       · intro h; exact absurd (Finset.mem_univ g) h
     simp_rw [h2]
     rw [Finset.mul_sum]
@@ -1592,12 +1524,12 @@ theorem germExpansionOfTestFunction : Formalism.FourierDecayAlt.A6.GermPhiAssemb
   refine finsum_congr fun z => ?_
   by_cases hz : z ^ (m + 1) = (-1) ^ m * (c * t ^ m)
   · have hZ : 0 < modK R (z : K) := (hMod K R ψ hd z z).1
-    rw [if_pos hz, if_pos (hz.trans hDeq), hAz z hz]
+    rw [ite_eq_left hz, ite_eq_left (hz.trans hDeq), hAz z hz]
     unfold germCoef
     rw [← rpow_half_mul_pow_triangle hZ hm]
     push_cast
     ring
-  · rw [if_neg hz, if_neg (fun h => hz (h.trans hDeq.symm))]
+  · rw [ite_eq_right hz, ite_eq_right (fun h => hz (h.trans hDeq.symm))]
 
 end Formalism.FourierDecayAlt.P
 end -- clump:auto
@@ -1655,11 +1587,6 @@ theorem lattice_average_induction : Formalism.FourierDecayAlt.A5.ThetaExistsStep
   thetaExistsStepOfSteps theta_omega_bound finite_family_truncation_module
     added_block_kernel_support head_size_one_in_GL rootStableExhaustion lattice_family_finite
     posSemidefEntryBound posSemidefClosed boundedSubsequence
-
-theorem lattice_average_lemma_full : Formalism.FourierDecayAlt.A5.LemmaA :=
-  lattice_average_lemma_from_parts second_gram_and_vanishing first_kernel_parseval
-    first_theta_kernel_equality first_theta_equals_first_kernel lattice_average_induction
-    zero_kernel_all_ones added_block_kernel_support added_block_kernel_block_diagonal
 
 end Formalism.FourierDecayAlt.P
 end -- clump:auto
@@ -1744,9 +1671,6 @@ theorem globalCores : Formalism.FourierDecayAlt.PB.GlobalCores :=
 
 end Formalism.FourierDecayAlt.P.HilbertSchmidtNorm
 
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDerivativeHolds =====
@@ -1762,8 +1686,6 @@ open scoped Classical
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.FourierDecayAlt Formalism.L2.SG.HidaSetting Formalism.L2.SG.Full Formalism.L2.SG.PackageTie2
 
 namespace Formalism.L2.SG.TheoremS
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem pbApplied : ∀ C₄ Cthr : ℝ, 1 ≤ C₄ →
     ∃ CA C : ℝ, Cthr ≤ CA ∧ 1 ≤ CA ∧ 0 ≤ C ∧ C ≤ CA ∧

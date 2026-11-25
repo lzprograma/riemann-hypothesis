@@ -1,47 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -70,73 +30,6 @@ theorem _root_.GlobalTheory.EtC.Tr.transfer_spec {Z X : Scheme.{0}} {f : Z ⟶ X
     (h : ∃ t, _root_.GlobalTheory.EtC.Tr.IsTransfer R f t) :
     _root_.GlobalTheory.EtC.Tr.IsTransfer R f (_root_.GlobalTheory.EtC.Tr.transfer R f) :=
   _root_.GlobalTheory.EtC.pick_spec h
-
-theorem isZero_freeSch_of_isEmpty (X : Scheme.{0}) [IsEmpty X] : IsZero (freeSch R X) := by
-  rw [IsZero.iff_id_eq_zero]
-  apply ((sheafificationAdjunction Scheme.etaleTopology.{0} (ModuleCat.{1} (ULift.{1} R))).homEquiv
-    ((freeP R).obj (yoneda.obj X)) (freeSch R X)).injective
-  apply NatTrans.ext
-  funext U
-  apply ModuleCat.hom_ext
-  apply LinearMap.ext
-  intro x
-  rcases isEmpty_or_nonempty U.unop with hU | hU
-  · have hb : (⊥ : Sieve U.unop) ∈ Scheme.etaleTopology U.unop := Scheme.bot_mem_grothendieckTopology U.unop
-    exact Sheaf.isSeparated (freeSch R X) U.unop ⊥ hb _ _ (fun _ _ h => h.elim)
-  · have : IsEmpty (ULift.{1} (U.unop ⟶ X)) :=
-      ⟨fun f => IsEmpty.false (f.down.base (Classical.arbitrary U.unop))⟩
-    have hs : Subsingleton (ULift.{1} (U.unop ⟶ X) →₀ ULift.{1} R) := inferInstance
-    have hx : x = 0 := hs.elim x 0
-    subst hx
-    simp
-
-theorem eq_one_of_isIso_codiag {S : Scheme.{0}} (pt : S) {m : ℕ}
-    (h : IsIso (Sigma.desc (fun _ : Fin m => 𝟙 S) : ∐ (fun _ : Fin m => S) ⟶ S)) : m = 1 := by
-  rcases Nat.lt_trichotomy m 1 with hm | hm | hm
-  · have hm0 : m = 0 := by omega
-    subst hm0
-    have f : S ⟶ (∅ : Scheme.{0}) :=
-      inv (Sigma.desc (fun _ : Fin 0 => 𝟙 S)) ≫ Sigma.desc (fun j : Fin 0 => j.elim0)
-    exact (IsEmpty.false (f pt)).elim
-  · exact hm
-  · exfalso
-    let i : Fin m := ⟨0, by omega⟩
-    let j : Fin m := ⟨1, hm⟩
-    have hij : Sigma.ι (fun _ : Fin m => S) i = Sigma.ι (fun _ : Fin m => S) j :=
-      (cancel_mono (Sigma.desc (fun _ : Fin m => 𝟙 S))).1 (by simp)
-    have hp : Sigma.ι (fun _ : Fin m => S) i pt = Sigma.ι (fun _ : Fin m => S) j pt := by rw [hij]
-    have := congrArg Sigma.fst ((sigmaι_eq_iff (fun _ : Fin m => S) i j pt pt).mp hp)
-    simp [i, j] at this
-
-theorem isTransfer_id (X : Scheme.{0}) : IsTransfer R (𝟙 X) (𝟙 _) := by
-  intro S x m s hs hiso
-  have hsx : ∀ j, s j = x := fun j => by simpa using hs j
-  simp only [Category.comp_id, hsx, Finset.sum_const, Finset.card_univ, Fintype.card_fin]
-  rcases isEmpty_or_nonempty S with hS | hS
-  · exact (isZero_freeSch_of_isEmpty R S).eq_of_src _ _
-  · obtain ⟨pt⟩ := hS
-    have hc : (Sigma.desc (fun j => pullback.lift (s j) (𝟙 S) (by rw [hs j, Category.id_comp])) :
-        ∐ (fun _ : Fin m => S) ⟶ pullback (𝟙 X) x) ≫ pullback.snd _ _ = Sigma.desc (fun _ : Fin m => 𝟙 S) := by
-      apply Sigma.hom_ext; intro j; rw [Sigma.ι_desc_assoc, Sigma.ι_desc]; exact pullback.lift_snd _ _ _
-    have : IsIso (Sigma.desc (fun _ : Fin m => 𝟙 S) : ∐ (fun _ : Fin m => S) ⟶ S) := by
-      rw [← hc]; infer_instance
-    rw [eq_one_of_isIso_codiag pt this, one_smul]
-
-theorem eq_id_of_isTransfer_id {X : Scheme.{0}} {t : freeSch R X ⟶ freeSch R X} (ht : IsTransfer R (𝟙 X) t) : t = 𝟙 _ := by
-  have hcod : IsIso (Sigma.desc (fun _ : Fin 1 => 𝟙 X) : ∐ (fun _ : Fin 1 => X) ⟶ X) :=
-    ⟨⟨Sigma.ι (fun _ : Fin 1 => X) 0, by ext j; fin_cases j; simp, by simp⟩⟩
-  have hc : (Sigma.desc (fun _ : Fin 1 => pullback.lift (𝟙 X) (𝟙 X) (by simp)) :
-      ∐ (fun _ : Fin 1 => X) ⟶ pullback (𝟙 X) (𝟙 X)) ≫ pullback.snd _ _ = Sigma.desc (fun _ : Fin 1 => 𝟙 X) := by
-    apply Sigma.hom_ext; intro j; rw [Sigma.ι_desc_assoc, Sigma.ι_desc]; exact pullback.lift_snd _ _ _
-  have hiso : IsIso (Sigma.desc (fun _ : Fin 1 => pullback.lift (𝟙 X) (𝟙 X) (by simp)) :
-      ∐ (fun _ : Fin 1 => X) ⟶ pullback (𝟙 X) (𝟙 X)) := by
-    rw [← hc] at hcod
-    exact IsIso.of_isIso_comp_right _ (pullback.snd (𝟙 X) (𝟙 X))
-  have := ht X (𝟙 X) 1 (fun _ => 𝟙 X) (fun _ => by simp) hiso
-  simpa using this
-
-theorem transfer_id (X : Scheme.{0}) : transfer R (𝟙 X) = 𝟙 _ :=
-  eq_id_of_isTransfer_id R (transfer_spec R ⟨_, isTransfer_id R X⟩)
 
 end Transfer
 
@@ -198,9 +91,6 @@ theorem _root_.GlobalTheory.EtC.Tr.along_free {X Z : Scheme.{0}} (g : X ⟶ Z)
 
 def trH {Z X : Scheme.{0}} (f : Z ⟶ X) (F : Shv R) (n : ℤ) : H R (sch.obj Z) F n →+ H R (sch.obj X) F n :=
   along R F n (transfer R f)
-
-theorem trH_id (X : Scheme.{0}) (F : Shv R) (n : ℤ) (x : H R (sch.obj X) F n) : trH R (𝟙 X) F n x = x := by
-  rw [trH, transfer_id]; exact along_id R X F n x
 
 end Trace
 

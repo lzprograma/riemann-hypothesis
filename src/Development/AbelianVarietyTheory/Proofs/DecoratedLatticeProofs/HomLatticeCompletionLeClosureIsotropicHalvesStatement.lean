@@ -55,7 +55,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw ValuativeRel IsLocalRing GlobalTheory.FinPl
 open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastKer)
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.HalfGen
@@ -86,7 +85,7 @@ theorem sum_splitIdem_eq {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace
   show evalV D.host.F w (I.map α).sum = evalV D.host.F w (GlobalTheory.FinPlLoc.ePl D P)
   rw [GlobalTheory.FinPlLoc.evalV_ePl, map_list_sum, List.map_map, ← List.sum_toFinset _ h.nodup]
   by_cases hw : P w
-  · rw [if_pos hw]
+  · rw [ite_eq_left hw]
     obtain ⟨j, rfl⟩ := (h.mem w).1 hw
     have hj : ∀ i, evalV D.host.F (p j).v (α i) = if i = j then 1 else 0 := by
       intro i
@@ -94,8 +93,8 @@ theorem sum_splitIdem_eq {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace
       · subst hij; exact hα1 i
       · exact hα0 i _ fun hv => hij (h.inj hv.symm)
     simp only [Function.comp_apply, hj]
-    rw [Finset.sum_ite_eq' , if_pos (List.mem_toFinset.2 (h.all j))]
-  · rw [if_neg hw]
+    rw [Finset.sum_ite_eq' , ite_eq_left (List.mem_toFinset.2 (h.all j))]
+  · rw [ite_eq_right hw]
     refine Finset.sum_eq_zero fun i _ => ?_
     exact hα0 i w fun hv => hw ((h.mem w).2 ⟨i, hv⟩)
 
@@ -150,7 +149,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw ValuativeRel IsLocalRing GlobalTheory.FinPl
 open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastKer)
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.homLatticeCompletion_le_closure_isotropicHalves : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ι : Type) (p : ι → SplitPt D k) (I : List ι) (P : Pl D → Prop), Places p I P → ∀ (S T : HSp D) (LS : Set (Fin S.rank → D.host.E)) (LT : Set (Fin T.rank → D.host.E)), ∀ u ∈ latO S T LS LT P, u ∈ AddSubgroup.closure {x | x ∈ latO S T LS LT P ∧ ∃ e, IsSplitIdem D e ∧ IsHalf e x} := by
   first | exact @GlobalTheory.HalfGen.latO_le_closure_halves

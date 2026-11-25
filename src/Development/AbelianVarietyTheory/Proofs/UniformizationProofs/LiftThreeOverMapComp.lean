@@ -47,27 +47,13 @@ public import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.UnifPreCompare
-
-section General
-
-variable {X₁ X₂ Y Y₁ Y₂ T : Scheme.{0}} {L : LB X₁} {M : LB X₂} {a : Y ⟶ X₁} {b : Y ⟶ X₂}
-  {K : Type} [Fintype K]
-
-variable {w : LB.Iso (L.pull a) (M.pull b)} {ψ : K → (T ⟶ Y)} {ε : K → ℤ}
-  {φ₁ : K → (Y₁ ⟶ X₁)} {s : LB.Gen (LB.LinComb L φ₁ ε)} {f₁ : T ⟶ Y₁}
-  {φ₂ : K → (Y₂ ⟶ X₂)} {t : LB.Gen (LB.LinComb M φ₂ ε)} {f₂ : T ⟶ Y₂}
-
-end General
 
 section Rigid
 
@@ -112,37 +98,5 @@ theorem exists_rigidified (hL : L.IsLB) (hL' : L'.IsLB) (π : X' ⟶ T) (σ : T 
       Category.assoc, hσ, Category.comp_id, _root_.mul_assoc]
 
 end Rigid
-
-section Cube
-
-open GlobalTheory.IndefiniteRowSideFullHecke.SeparatedSymmetricModel
-
-variable {S S' : Scheme.{0}} (p : S' ⟶ S) {G : Over S} {H T : Over S'}
-
-end Cube
-
-section Clauses
-
-open GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.IndefiniteRowSideFullHecke.SeparatedSymmetricModel
-
-variable {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} {D : DegPre R}
-  {G : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G] {e : ℕ}
-
-variable {LG : RigLB G} {g : GtCoord I D e G} {j : CanonicalRigidImages.GtIso D I e G}
-  {w : LB.Iso (LG.L.pull (fstG I e G).left) (D.P.L.pull g.pG.left)}
-  {ph : LB.Iso (LG.L.pull (toG I e G).F) (D.P.L.pull (toB j).F)}
-
-end Clauses
-
-section Main
-
-open GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.IndefiniteRowSideFullHecke.SeparatedSymmetricModel
-
-variable {R : Type} [CommRing R] [IsDomain R] {I : Ideal R}
-  {G : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G]
-
-variable {D : DegData R I} {A : PolAV (Spec (CommRingCat.of (FractionRing R)))} {rA : LB.Gen (A.L.pull (eSec A.A))}
-
-end Main
 
 end GlobalTheory.UnifPreCompare

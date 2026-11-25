@@ -31,8 +31,6 @@ open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Code
 
 theorem relIndex_ne_zero_of_code {G : Type*} [Group G] (H A : Subgroup G) {Q : Type*} [Finite Q] (φ : A → Q)
@@ -147,8 +145,6 @@ noncomputable section
 open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.StabShape
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Fin2
 
@@ -287,8 +283,6 @@ open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Good2
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
@@ -359,8 +353,6 @@ noncomputable section
 open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.StabShape
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Good
 
@@ -441,8 +433,6 @@ noncomputable section
 open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.StabShape
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Good3
 
@@ -562,8 +552,6 @@ open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Split
 
 variable {F K : Type*} [Field F] [CommRing K] [Algebra F K] {r : ℕ}
@@ -675,8 +663,6 @@ noncomputable section
 open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.StabShape
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section CloseAt
 
@@ -809,8 +795,6 @@ open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Main
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
@@ -852,16 +836,16 @@ theorem approx_core (hA : ∀ p, Agree δ M p) (L U : Formalism.L2.SG.PairVal.Ma
     intro i j
     refine ⟨fun hij => ?_, fun hij => ?_⟩
     · have : ¬ (j < i ∧ σ i < σ j) := fun h' => absurd h'.1 (not_lt.2 hij.le)
-      simp only [had, if_neg this]
+      simp only [had, ite_eq_right this]
       exact Matrix.one_apply_ne (ne_of_lt hij)
     · subst hij
       have : ¬ (i < i ∧ σ i < σ i) := fun h' => lt_irrefl _ h'.1
-      simp only [had, if_neg this, Matrix.one_apply_eq]
+      simp only [had, ite_eq_right this, Matrix.one_apply_eq]
   have hpat : ∀ i j, σ j < σ i → a i j = 0 := by
     intro i j hij
     have hne : i ≠ j := fun e => by subst e; exact lt_irrefl _ hij
     have : ¬ (j < i ∧ σ i < σ j) := fun h' => absurd h'.2 (not_lt.2 hij.le)
-    simp only [had, if_neg this]
+    simp only [had, ite_eq_right this]
     exact Matrix.one_apply_ne hne
   have hdet : IsUnit a.det := by rw [ZsVolGrp.det_lo (fun x => (ha x x).2 rfl) (fun x y hxy => (ha x y).1 hxy)]; exact isUnit_one
   obtain ⟨b, hb, hab⟩ := mem_stSet_of_pat w a ha hpat
@@ -875,9 +859,9 @@ theorem approx_core (hA : ∀ p, Agree δ M p) (L U : Formalism.L2.SG.PairVal.Ma
       intro i j
       rw [hgv', Matrix.sub_apply, Matrix.map_apply]
       by_cases hz : j < i ∧ σ i < σ j
-      · simp only [had, if_pos hz]
+      · simp only [had, ite_eq_left hz]
         exact mem_latS.2 (ht1 (i, j) p hp)
-      · simp only [had, if_neg hz]
+      · simp only [had, ite_eq_right hz]
         have e : (D.s.atP p).ιE ((1 : Formalism.L2.SG.PairVal.MatR D) i j) - τ p i j = 0 := by
           rcases lt_trichotomy i j with hij | hij | hij
           · rw [Matrix.one_apply_ne (ne_of_lt hij), map_zero, hτ1 p i j hij, sub_zero]
@@ -894,9 +878,9 @@ theorem approx_core (hA : ∀ p, Agree δ M p) (L U : Formalism.L2.SG.PairVal.Ma
   · intro i j
     rw [hgv']
     by_cases hz : j < i ∧ σ i < σ j
-    · simp only [had, if_pos hz]
+    · simp only [had, ite_eq_left hz]
       exact ht2 (i, j) p hp
-    · simp only [had, if_neg hz]
+    · simp only [had, ite_eq_right hz]
       rw [Matrix.one_apply]
       split_ifs
       · rw [map_one]; exact (D.s.atP p).O.one_mem
@@ -920,8 +904,6 @@ noncomputable section
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
   (δ : ∀ p : PlF D, (D.s.atP p).Fp) (u u' : D.what₂.Word)

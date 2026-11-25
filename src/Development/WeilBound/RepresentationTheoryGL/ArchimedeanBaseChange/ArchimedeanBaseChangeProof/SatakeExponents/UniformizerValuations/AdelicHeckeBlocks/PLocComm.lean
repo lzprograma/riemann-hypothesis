@@ -7,47 +7,9 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasCompa
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
 import GroundTheory.AutomorphicForms.GLnLocal
 import GroundTheory.LocalFields.LocalFourierHaar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Separation.Connected
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingIdentityOf
+import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.PLocOk
 
 @[expose] public section
 
@@ -56,8 +18,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun PositivityTheory.Rg.BcB.F.F5 PositivityTheory.Rg.BcB.F.Eig PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcN.F2 PositivityTheory.Rg.BcB.F.Tail PositivityTheory.Rg.Bc.ArchbcB.B
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F
 
@@ -149,7 +109,7 @@ theorem dcos_supp (t : GLw m w) : ∃ C : Set (GLw m w), IsCompact C ∧ ∀ g �
   refine ⟨(fun p : GLw m w × GLw m w => p.1 * t * p.2) '' ((iwGL m w : Set (GLw m w)) ×ˢ (iwGL m w : Set (GLw m w))),
     (isCompact_iwGL.prod isCompact_iwGL).image hc, fun g hg => ?_⟩
   unfold dcos
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨x, hx, z, hz, e⟩
   exact hg ⟨(x, z), ⟨hx, hz⟩, e.symm⟩
 
@@ -192,12 +152,12 @@ theorem iwahori_pair_le_maximal_pair (a b : ℕ) (w : Pl E) : I2 a b w ≤ K2 a 
 theorem lev_good {a : ℕ} {w : Pl E} (hw : d.Good w) : d.lev a w = K2 a (n - a) w := by
   obtain ⟨-, hT, hS, hB, -⟩ := hw
   have : w ∉ d.S₀ ∪ d.Bad := by simp [hS, hB]
-  simp only [LocData.lev, if_neg hT, if_neg this]
+  simp only [LocData.lev, ite_eq_right hT, ite_eq_right this]
 
 theorem lev₂_good {a : ℕ} {w : Pl E} (hw : d.Good w) : d.lev₂ a w = K2 a (n - a) w := by
   obtain ⟨-, hT, hS, hB, -⟩ := hw
   have : w ∉ d.S₀ ∪ d.Bad := by simp [hS, hB]
-  simp only [LocData.lev₂, if_neg this]
+  simp only [LocData.lev₂, ite_eq_right this]
 
 theorem hecke_hc (hd : d.Ok) {a : ℕ} (ha : a ≤ n) {w : Pl E} (hw : d.Good w) (k : ℕ) :
     IsHecke (K2 a (n - a) w) (d.hc a ha w k) := by
@@ -248,7 +208,7 @@ theorem adj_m {a : ℕ} {ha : a ≤ n} {L : LM d.kap a (n - a)} (hL : d.IsGen a 
   by_cases h : x = y
   · subst h
     simp [lfStar_idem]
-  · rw [if_neg (Ne.symm h), if_neg h, lfStar_zero]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h, lfStar_zero]
 
 theorem generator_first_levi_position {a : ℕ} {ha : a ≤ n} {L : LM d.kap a (n - a)} (hL : d.IsGen a ha L) (w : Pl E) :
     Slot d a ha w (d.lev a w) (L.s w) := by
@@ -291,21 +251,7 @@ theorem sum_diag_left {a : ℕ} {w : Pl E} (M : d.kap w → d.kap w → LF a (n 
     exact absurd (Finset.mem_univ x) h
 
 theorem hecke_qT {a : ℕ} (w : Pl E) (s : Finset (Fin (n / 2))) : IsHecke (I2 a (n - a) w) (d.qT a w s) := by
-  by_cases h : LocData.admitted n a s
-  · have e : d.qT a w s = fun y => ∑ x ∈ (d.c w).support, (d.c w x * (-qh w) ^ (-vRes n a (lOf x) s) *
-        (((I2 a (n - a) w).relIndex (K2 a (n - a) w) : ℕ) : ℂ)) *
-          dc2 w (d.ϖ w) (restr x _ h.2.1) (restr x _ h.2.2) y := by
-      funext y
-      simp only [LocData.qT, dif_pos h, Finsupp.sum]
-    rw [e]
-    exact isHecke_sum _ _ (fun x => d.c w x * (-qh w) ^ (-vRes n a (lOf x) s) *
-        (((I2 a (n - a) w).relIndex (K2 a (n - a) w) : ℕ) : ℂ))
-      (fun x y => dc2 w (d.ϖ w) (restr x _ h.2.1) (restr x _ h.2.2) y) fun x _ => isHecke_pair_double_coset _ _ _
-  · have e : d.qT a w s = 0 := by
-      funext y
-      simp only [LocData.qT, dif_neg h, Pi.zero_apply]
-    rw [e]
-    exact isHecke_zero _
+  apply _root_.PositivityTheory.Rg.BcB.F.LocOk.qT_H <;> assumption
 
 theorem rearr {G : Type} [CommMonoid G] (s p q r t : G) : s * (p * q) * (r * t) = s * q * t * (p * r) := by
   simp only [mul_comm, mul_left_comm]
@@ -315,50 +261,11 @@ theorem rearr' {G : Type} [CommMonoid G] (s p q r t : G) : s * (q * p) * (t * r)
 
 theorem hecke_mac (h3 : LocOpUniformizer E) (hd : d.Ok) {a : ℕ} (ha : a ≤ n) {w : Pl E} (hw : w ∈ d.S₀) {x y : GLw n w}
     (hx : x ∈ d.X w) (hy : y ∈ d.X w) : IsHecke (d.L a w) (d.mac a ha w (d.e w) x y) := by
-  obtain ⟨hO, hle, hnor, hXK, huniq, hHk⟩ := hd.K' w hw
-  obtain ⟨-, hcs, hinv⟩ := (h3 n a (n - a) (Nat.add_sub_of_le ha) w (d.K' w) hO hle hnor (d.X w) hXK huniq).1
-    (d.e w) hHk x hx y hy
-  have hL := fun k (hk : k ∈ d.L a w) => hd.LS a ha w hw k hk
-  have h1 := (hL 1 (one_mem _)).1
-  refine ⟨HasCompactSupport.mono hcs fun m hm h0 => hm (by simp [LocData.mac, phiMu, h0]), fun k hk g => ?_⟩
-  have hk' := hL k hk
-  have p1 : phi3 (Nat.add_sub_of_le ha) w (d.e w) x y (k * g) = phi3 (Nat.add_sub_of_le ha) w (d.e w) x y g := by
-    simpa using hinv k hk'.1 1 h1 g
-  have p2 : phi3 (Nat.add_sub_of_le ha) w (d.e w) x y (g * k) = phi3 (Nat.add_sub_of_le ha) w (d.e w) x y g := by
-    simpa using hinv 1 h1 k hk'.1 g
-  have m1 : d.μ w ((-1) ^ (a * (n - a)) * GeneralLinearGroup.det (k * g).1 ^ (n - a) * GeneralLinearGroup.det (k * g).2 ^ a) =
-      d.μ w ((-1) ^ (a * (n - a)) * GeneralLinearGroup.det g.1 ^ (n - a) * GeneralLinearGroup.det g.2 ^ a) := by
-    have e : (-1) ^ (a * (n - a)) * GeneralLinearGroup.det (k * g).1 ^ (n - a) * GeneralLinearGroup.det (k * g).2 ^ a =
-        ((-1) ^ (a * (n - a)) * GeneralLinearGroup.det g.1 ^ (n - a) * GeneralLinearGroup.det g.2 ^ a) *
-          (GeneralLinearGroup.det k.1 ^ (n - a) * GeneralLinearGroup.det k.2 ^ a) := by
-      simp only [Prod.fst_mul, Prod.snd_mul, map_mul, mul_pow]
-      exact rearr _ _ _ _ _
-    rw [e, map_mul, hk'.2, mul_one]
-  have m2 : d.μ w ((-1) ^ (a * (n - a)) * GeneralLinearGroup.det (g * k).1 ^ (n - a) * GeneralLinearGroup.det (g * k).2 ^ a) =
-      d.μ w ((-1) ^ (a * (n - a)) * GeneralLinearGroup.det g.1 ^ (n - a) * GeneralLinearGroup.det g.2 ^ a) := by
-    have e : (-1) ^ (a * (n - a)) * GeneralLinearGroup.det (g * k).1 ^ (n - a) * GeneralLinearGroup.det (g * k).2 ^ a =
-        ((-1) ^ (a * (n - a)) * GeneralLinearGroup.det g.1 ^ (n - a) * GeneralLinearGroup.det g.2 ^ a) *
-          (GeneralLinearGroup.det k.1 ^ (n - a) * GeneralLinearGroup.det k.2 ^ a) := by
-      simp only [Prod.fst_mul, Prod.snd_mul, map_mul, mul_pow]
-      exact rearr' _ _ _ _ _
-    rw [e, map_mul, hk'.2, mul_one]
-  refine ⟨?_, ?_⟩
-  · simp only [LocData.mac, phiMu, p1, m1]
-  · simp only [LocData.mac, phiMu, p2, m2]
+  apply _root_.GlobalTheory.CompanionTheory.MatchId.mac_hecke <;> assumption
 
 theorem lev_ok (hd : d.Ok) {a : ℕ} (ha : a ≤ n) {w : Pl E} (hw : w ∈ d.P) :
     IsOpen (d.lev a w : Set (GLw a w × GLw (n - a) w)) ∧ d.lev a w ≤ K2 a (n - a) w := by
-  unfold LocData.P at hw
-  by_cases hT : w ∈ d.T
-  · simp only [LocData.lev, if_pos hT]
-    exact ⟨isOpen_iwahori_pair _ _ _, iwahori_pair_le_maximal_pair _ _ _⟩
-  · have hS : w ∈ d.S₀ := (Finset.mem_union.1 hw).resolve_left hT
-    have hSB : w ∈ d.S₀ ∪ d.Bad := Finset.mem_union_left _ hS
-    obtain ⟨L₁, L₂, e, h1, h2⟩ := hd.L a ha w hSB
-    simp only [LocData.lev, if_neg hT, if_pos hSB, e]
-    refine ⟨?_, Subgroup.prod_mono h1.2.1 h2.2.1⟩
-    rw [Subgroup.coe_prod]
-    exact h1.1.prod h2.1
+  apply _root_.GlobalTheory.CompanionTheory.MatchId.lev_ok <;> assumption
 
 theorem hecke_beta (h3 : LocOpUniformizer E) (hd : d.Ok) {a : ℕ} (ha : a ≤ n) {w : Pl E} (hw : w ∈ d.P) (x y : d.kap w) :
     IsHecke (d.lev a w) ((d.betaL a ha).m w x y) := by
@@ -366,7 +273,7 @@ theorem hecke_beta (h3 : LocOpUniformizer E) (hd : d.Ok) {a : ℕ} (ha : a ≤ n
   · have e : d.lev a w = I2 a (n - a) w := by simp [LocData.lev, hT]
     rw [e]
     show IsHecke _ (if w ∈ d.T then d.diag (fun x => d.qT a w x.1.1) x y else _)
-    rw [if_pos hT]
+    rw [ite_eq_left hT]
     unfold LocData.diag
     split_ifs
     · exact hecke_qT d w _
@@ -376,10 +283,10 @@ theorem hecke_beta (h3 : LocOpUniformizer E) (hd : d.Ok) {a : ℕ} (ha : a ≤ n
     have e : d.lev a w = d.L a w := by simp [LocData.lev, hT, hSB]
     rw [e]
     show IsHecke _ (if w ∈ d.T then _ else d.mac a ha w (d.e w) x.1.2 y.1.2)
-    rw [if_neg hT]
+    rw [ite_eq_right hT]
     have hX : ∀ z : d.kap w, z.1.2 ∈ d.X w := fun z => by
       have := z.2
-      simp only [LocData.idx, if_neg hT, if_pos hS] at this
+      simp only [LocData.idx, ite_eq_right hT, ite_eq_left hS] at this
       exact (Finset.mem_product.1 this).2
     exact hecke_mac d h3 hd ha hS (hX x) (hX y)
 

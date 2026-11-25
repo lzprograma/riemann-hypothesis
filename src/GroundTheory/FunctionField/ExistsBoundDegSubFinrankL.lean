@@ -41,23 +41,8 @@ theorem finiteDimensional_map_mkQ_trans {S T U : Submodule R M} (hST : S ≤ T) 
       Submodule.factor_comp_mk]
   have hTU' : T.map S.mkQ ≤ U.map S.mkQ := Submodule.map_mono hTU
   have hker : LinearMap.ker f = (T.map S.mkQ).comap (U.map S.mkQ).subtype := by
-    ext ⟨w, hw⟩
-    simp only [LinearMap.mem_ker, Submodule.mem_comap, Submodule.subtype_apply, f,
-      LinearMap.coe_comp, Function.comp_apply]
-    obtain ⟨m, -, rfl⟩ := Submodule.mem_map.1 hw
-    rw [Submodule.mkQ_apply,
-      show Submodule.factor hST (Submodule.Quotient.mk m) = Submodule.Quotient.mk m from rfl,
-      Submodule.Quotient.mk_eq_zero]
-    constructor
-    · intro hm
-      exact Submodule.mem_map_of_mem hm
-    · intro hm
-      obtain ⟨m', hm', he⟩ := Submodule.mem_map.1 hm
-      have : m' - m ∈ S := (Submodule.Quotient.eq S).1 he
-      have := hST this
-      have h2 : m = m' - (m' - m) := by abel
-      rw [h2]
-      exact T.sub_mem hm' this
+    dsimp only [f]
+    rw [LinearMap.ker_comp, Submodule.factor, Submodule.ker_mapQ, Submodule.comap_id]
   have ek : LinearMap.ker f ≃ₗ[R] T.map S.mkQ :=
     (LinearEquiv.ofEq _ _ hker).trans (Submodule.comapSubtypeEquivOfLe hTU')
   have er : LinearMap.range f ≃ₗ[R] U.map T.mkQ := LinearEquiv.ofEq _ _ hrange
@@ -384,64 +369,46 @@ theorem relSpace_add_single (D : Divisor k K) (P : Place k K) :
   · rw [hrange, ← hGrange]
     omega
 
-theorem relSpace_finrank_of_le_of_deg_lt (n : ℕ) :
-    ∀ {D E : Divisor k K}, D ≤ E → deg (E - D) < n →
-      FiniteDimensional k (relSpace D E) ∧
-        (finrank k (relSpace D E) : ℤ) + finrank k (L E) = deg E - deg D + finrank k (L D) := by
-  classical
-  induction n with
-  | zero =>
-    intro D E hDE hn
-    have := deg_nonneg (sub_nonneg.2 hDE)
-    omega
-  | succ n ih =>
-    intro D E hDE hn
-    by_cases hED : E = D
-    · subst hED
-      have : relSpace E E = ⊥ := Submodule.mkQ_map_self _
-      rw [this]
-      refine ⟨inferInstance, ?_⟩
-      simp
-    obtain ⟨v, hv⟩ : ∃ v, D v < E v := by
-      by_contra h
-      push Not at h
-      exact hED (le_antisymm (Finsupp.le_def.2 h) hDE)
-    set E' := E - Finsupp.single v 1 with hE'
-    have hDE' : D ≤ E' := Finsupp.le_def.2 fun w => by
-      rw [hE', Finsupp.coe_sub, Pi.sub_apply, Finsupp.single_apply]
-      split_ifs with h
-      · subst h; omega
-      · have := Finsupp.le_def.1 hDE w; omega
-    have hn' : deg (E' - D) < n := by
-      have h1 : deg (E' - D) = deg (E - D) - v.deg := by
-        rw [hE', map_sub, map_sub, map_sub, deg_single]; ring
-      have := v.deg_pos
-      omega
-    obtain ⟨hfin', h'⟩ := ih hDE' hn'
-    have hE : E = E' + Finsupp.single v 1 := by rw [hE']; abel
+theorem relSpace_finrank_of_le {D E : Divisor k K} (hDE : D ≤ E) :
+    FiniteDimensional k (relSpace D E) ∧
+      (finrank k (relSpace D E) : ℤ) + finrank k (L E) = deg E - deg D + finrank k (L D) := by
+  refine Divisor.induction_le (P := fun D E => FiniteDimensional k (relSpace D E) ∧
+      (finrank k (relSpace D E) : ℤ) + finrank k (L E) = deg E - deg D + finrank k (L D))
+    (fun E => ?_) (fun D E' v hDE' ih => ?_) hDE
+  · have : relSpace E E = ⊥ := Submodule.mkQ_map_self _
+    rw [this]
+    refine ⟨inferInstance, ?_⟩
+    simp
+  · obtain ⟨hfin', h'⟩ := ih
     obtain ⟨hfin1, h1⟩ := relSpace_add_single E' v
-    rw [← hE] at hfin1 h1
     have hST : A D ⊔ principal k K ≤ A E' ⊔ principal k K := sup_le_sup_right (A_mono hDE') _
-    have hTU : A E' ⊔ principal k K ≤ A E ⊔ principal k K := by
-      refine sup_le_sup_right (A_mono ?_) _
-      rw [hE]
-      exact le_add_single E' v
+    have hTU : A E' ⊔ principal k K ≤ A (E' + Finsupp.single v 1) ⊔ principal k K :=
+      sup_le_sup_right (A_mono (le_add_single E' v)) _
     have e1 : relSpace D E' = (A E' ⊔ principal k K).map (A D ⊔ principal k K).mkQ := rfl
-    have e2 : relSpace E' E = (A E ⊔ principal k K).map (A E' ⊔ principal k K).mkQ := rfl
-    have e3 : relSpace D E = (A E ⊔ principal k K).map (A D ⊔ principal k K).mkQ := rfl
+    have e2 : relSpace E' (E' + Finsupp.single v 1) =
+        (A (E' + Finsupp.single v 1) ⊔ principal k K).map (A E' ⊔ principal k K).mkQ := rfl
+    have e3 : relSpace D (E' + Finsupp.single v 1) =
+        (A (E' + Finsupp.single v 1) ⊔ principal k K).map (A D ⊔ principal k K).mkQ := rfl
     rw [e1] at hfin' h'
     rw [e2] at hfin1 h1
     obtain ⟨hfin, hsum⟩ := finiteDimensional_map_mkQ_trans hST hTU
     rw [e3]
     refine ⟨hfin, ?_⟩
     rw [hsum]
-    have hdeg : deg E = deg E' + v.deg := by rw [hE, map_add (f := _), deg_single, one_mul]
+    have hdeg : deg (E' + Finsupp.single v 1) = deg E' + v.deg := by
+      rw [map_add (f := _), deg_single, one_mul]
     push_cast
     omega
 
+theorem relSpace_finrank_of_le_of_deg_lt (n : ℕ) :
+    ∀ {D E : Divisor k K}, D ≤ E → deg (E - D) < n →
+      FiniteDimensional k (relSpace D E) ∧
+        (finrank k (relSpace D E) : ℤ) + finrank k (L E) = deg E - deg D + finrank k (L D) :=
+  fun hDE _ => relSpace_finrank_of_le hDE
+
 instance finiteDimensional_relSpace {D E : Divisor k K} [Fact (D ≤ E)] :
     FiniteDimensional k (relSpace D E) :=
-  (relSpace_finrank_of_le_of_deg_lt ((deg (E - D)).toNat + 1) (Fact.out : D ≤ E) (by omega)).1
+  (relSpace_finrank_of_le (Fact.out : D ≤ E)).1
 
 theorem finiteDimensional_relSpace_of_le {D E : Divisor k K} (h : D ≤ E) :
     FiniteDimensional k (relSpace D E) :=
@@ -486,55 +453,8 @@ theorem exists_bound_deg_sub_finrank_L :
   obtain ⟨x, hx, hfin⟩ := IsFunctionField.exists_transcendental_finiteDimensional (k := k) (K := K)
   set F := IntermediateField.adjoin k {x} with hF
   set n := finrank F K with hn
-  let b := Module.finBasis F K
   set B : Divisor k K := poleDivisor x with hBdef
-  set C : Divisor k K := ∑ j, poleDivisor (b j) with hCdef
-  have hB : 0 ≤ B := poleDivisor_nonneg x
-  have hC : 0 ≤ C := Finset.sum_nonneg fun j _ => poleDivisor_nonneg _
-  have hCj : ∀ j, (poleDivisor (b j) : Divisor k K) ≤ C := fun j =>
-    Finset.single_le_sum (f := fun j => (poleDivisor (b j) : Divisor k K))
-      (fun j _ => poleDivisor_nonneg _) (Finset.mem_univ j)
-  have key : ∀ l : ℕ, ((l + 1 : ℤ) * n) ≤ finrank k (L (l • B + C)) := by
-    intro l
-    set D : Divisor k K := l • B + C with hD'
-    have hmem : ∀ p : Fin (l + 1) × Fin n, x ^ (p.1 : ℕ) * b p.2 ∈ L D := by
-      rintro ⟨i, j⟩ v
-      rw [map_mul, map_pow]
-      have hx' := valuation_le_exp_poleDivisor x v
-      have hb' := (valuation_le_exp_poleDivisor (b j) v).trans
-        (WithZero.exp_le_exp.2 (Finsupp.le_def.1 (hCj j) v))
-      have hBv : 0 ≤ B v := by simpa using Finsupp.le_def.1 hB v
-      have hil : ((i : ℕ) : ℤ) ≤ l := by exact_mod_cast Nat.lt_succ_iff.1 i.2
-      calc v.valuation x ^ (i : ℕ) * v.valuation (b j)
-          ≤ WithZero.exp (B v) ^ (i : ℕ) * WithZero.exp (C v) :=
-            mul_le_mul' (pow_le_pow_left' hx' _) hb'
-        _ ≤ WithZero.exp (D v) := by
-            rw [← WithZero.exp_nsmul, ← WithZero.exp_add, WithZero.exp_le_exp]
-            simp only [hD', Finsupp.add_apply, Finsupp.smul_apply, nsmul_eq_mul]
-            have := mul_le_mul_of_nonneg_right hil hBv
-            linarith
-    let G : Fin (l + 1) × Fin n → L D := fun p => ⟨x ^ (p.1 : ℕ) * b p.2, hmem p⟩
-    have hli : LinearIndependent k G := by
-      apply LinearIndependent.of_comp (L D).subtype
-      have hb' : LinearIndependent k fun i : Fin (l + 1) =>
-          (IntermediateField.AdjoinSimple.gen k x) ^ (i : ℕ) := by
-        apply LinearIndependent.of_comp F.val.toLinearMap
-        have h := linearIndependent_pow_of_transcendental hx (l + 1)
-        have heq : (F.val.toLinearMap ∘ fun i : Fin (l + 1) =>
-            (IntermediateField.AdjoinSimple.gen k x) ^ (i : ℕ)) =
-            fun i : Fin (l + 1) => x ^ (i : ℕ) := by
-          funext i
-          simp
-        rw [heq]
-        exact h
-      convert linearIndependent_smul hb' b.linearIndependent using 1
-      funext p
-      simp [G, Algebra.smul_def]
-    have hcard := hli.fintype_card_le_finrank
-    simp only [Fintype.card_prod, Fintype.card_fin] at hcard
-    have : ((l + 1 : ℕ) * n : ℕ) ≤ (finrank k (L D) : ℤ) := by exact_mod_cast hcard
-    push_cast at this
-    linarith
+  obtain ⟨C, hC, key⟩ := exists_le_finrank_L_poleDivisor hx
   have hdegB : deg B = n := deg_poleDivisor hx
   have hn1 : 0 < n := Module.finrank_pos
   refine ⟨deg C - n, fun D => ?_⟩
@@ -600,29 +520,8 @@ theorem eq_genusInt_of_le {D E : Divisor k K}
     deg E + 1 - (finrank k (L E) : ℤ) = genusInt k K :=
   le_antisymm (le_genusInt E) (by have := deg_sub_finrank_L_mono h; linarith)
 
-theorem finrank_L_zero_eq_one (hk : algebraicClosure k K = ⊥) :
-    finrank k (L (0 : Divisor k K)) = 1 := by
-  rw [finrank_L_zero, hk, IntermediateField.finrank_bot]
-
-theorem genusInt_nonneg (hk : algebraicClosure k K = ⊥) : 0 ≤ genusInt k K := by
-  have h := le_genusInt (0 : Divisor k K)
-  rw [finrank_L_zero_eq_one hk, map_zero] at h
-  simpa using h
-
-
-variable (k K) in
-noncomputable def genus : ℕ := (genusInt k K).toNat
-
-theorem genus_eq_genusInt (hk : algebraicClosure k K = ⊥) : (genus k K : ℤ) = genusInt k K :=
-  Int.toNat_of_nonneg (genusInt_nonneg hk)
 
 namespace Divisor
-
-theorem riemann_inequality (hk : algebraicClosure k K = ⊥) (D : Divisor k K) :
-    deg D + 1 - (genus k K : ℤ) ≤ finrank k (L D) := by
-  have := le_genusInt D
-  rw [← genus_eq_genusInt hk] at this
-  linarith
 
 theorem exists_mem_A (a : Repartition k K) : ∃ D : Divisor k K, a ∈ A D := by
   classical
@@ -675,19 +574,6 @@ instance finiteDimensional_quotient (D : Divisor k K) :
   have := finiteDimensional_relSpace_of_le (le_sup_left : D ≤ D ⊔ E)
   rw [h] at this
   exact Module.Finite.equiv Submodule.topEquiv
-
-noncomputable def indexOfSpeciality (D : Divisor k K) : ℕ :=
-  finrank k (Repartition k K ⧸ (A D ⊔ principal k K))
-
-theorem indexOfSpeciality_eq_genusInt (D : Divisor k K) :
-    (indexOfSpeciality D : ℤ) = finrank k (L D) - deg D - 1 + genusInt k K := by
-  obtain ⟨E, hE⟩ := exists_eq_genusInt (k := k) (K := K)
-  have h := relSpace_sup_eq_top D hE
-  have hr := finrank_relSpace (le_sup_left : D ≤ D ⊔ E)
-  rw [h, finrank_top] at hr
-  have hE' := eq_genusInt_of_le hE (le_sup_right : E ≤ D ⊔ E)
-  unfold indexOfSpeciality
-  linarith
 
 end Divisor
 

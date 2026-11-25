@@ -42,8 +42,4 @@ variable {E : WeierstrassCurve F} [E.IsElliptic] (ℓ : ℕ) [hℓ : Fact ℓ.Pr
 
 variable {ℓ}
 
-namespace TateCharpoly
-
-end TateCharpoly
-
 end GroundTheory.Arith.Abelian

@@ -31,60 +31,12 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeFiltrat
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.CohHomNatCastZero
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.Point
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobTwistBaseChangeHomApp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Data.Nat.Choose.Multinomial
 import Development.AbelianVarietyTheory.Definitions.Divisors.Pullback1MemHodgeFiltration
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.LinearAlgebra.Eigenspace.Pi
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Lemma
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDeRhamSheaf
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Tactic.Linter.HaveILetI
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
 import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.DualZeroOfSpan, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.Factor, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.KsCore, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.NotLeSpanImage, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.NotMem, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.OrdPull, Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobeniusPullbackDeRhamMapExists, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.PullFrobIter, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.RadicalStalk, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.OrdGen
@@ -104,10 +56,6 @@ section
 variable {p : ℕ} [Fact p.Prime] {k : Type} [Field k] {A₀ : Over (Sp k)} [GrpObj A₀]
   {A' : Over (Sp (DualNumber k))} [GrpObj A'] {i : A₀.left ⟶ A'.left}
 
-private theorem resMor (h : IsGrpPullback A₀ A' (epsRed k) i) :
-    GrpMor (dp0 (DualNumber k)) (𝟙 _) A' (dp0 k) (𝟙 _) A₀ (TrivSqZeroExt.fstHom k k k).toRingHom (epsRed k) i :=
-  GrpMor.of_isGrpPullback (isDPMorphism_of_eq_bot _ rfl _ _) (by simp; rfl) h
-
 private theorem frob_sq (hk : (p : k) = 0) (hT : (p : DualNumber k) = 0) :
     GlobalTheory.VB.frob A₀.left p (cast_left p k hk A₀) ≫ i = i ≫ GlobalTheory.VB.frob A'.left p (cast_left p _ hT A') :=
   GlobalTheory.VB.frob_naturality p (cast_left p _ hT A') i (cast_left p k hk A₀)
@@ -120,31 +68,31 @@ private theorem pow_dual (hk : (p : k) = 0) (r : DualNumber k) :
 
 private theorem res_frob (hk : (p : k) = 0) (hT : (p : DualNumber k) = 0)
     (h : IsGrpPullback A₀ A' (epsRed k) i) (c : primDR A') :
-    (resMor h).pull (frobDR p _ hT A' c) = frobDR p k hk A₀ ((resMor h).pull c) := by
+    (GlobalTheory.CechKS.fibMor h).pull (frobDR p _ hT A' c) = frobDR p k hk A₀ ((GlobalTheory.CechKS.fibMor h).pull c) := by
   have F' := frobMor p _ hT A' (cast_left p _ hT A')
   have F₀ := frobMor p k hk A₀ (cast_left p k hk A₀)
-  have M := F'.comp (resMor h)
-  refine (GrpMor.pull_pull F' (resMor h) M (fun _ ↦ rfl) rfl c).trans
-    (GrpMor.pull_pull (resMor h) F₀ M (fun r ↦ ?_) (frob_sq hk hT) c).symm
+  have M := F'.comp (GlobalTheory.CechKS.fibMor h)
+  refine (GrpMor.pull_pull F' (GlobalTheory.CechKS.fibMor h) M (fun _ ↦ rfl) rfl c).trans
+    (GrpMor.pull_pull (GlobalTheory.CechKS.fibMor h) F₀ M (fun r ↦ ?_) (frob_sq hk hT) c).symm
   simp [TrivSqZeroExt.fst_pow]
 
 private theorem lift_frob (hk : (p : k) = 0) (hT : (p : DualNumber k) = 0)
     (h : IsGrpPullback A₀ A' (epsRed k) i) (c : primDR A') :
     (liftMor (epsDP k) h).pull (frobDR p _ hT A' c) =
-      (constMor A₀).pull (frobDR p k hk A₀ ((resMor h).pull c)) := by
+      (constMor A₀).pull (frobDR p k hk A₀ ((GlobalTheory.CechKS.fibMor h).pull c)) := by
   have F' := frobMor p _ hT A' (cast_left p _ hT A')
   have F₀ := frobMor p k hk A₀ (cast_left p k hk A₀)
   have M := F'.comp (liftMor (epsDP k) h)
-  have N := (resMor h).comp F₀
+  have N := (GlobalTheory.CechKS.fibMor h).comp F₀
   have e₁ := GrpMor.pull_pull F' (liftMor (epsDP k) h) M (fun _ ↦ rfl) rfl c
-  have e₂ := GrpMor.pull_pull (resMor h) F₀ N (fun _ ↦ rfl) rfl c
+  have e₂ := GrpMor.pull_pull (GlobalTheory.CechKS.fibMor h) F₀ N (fun _ ↦ rfl) rfl c
   have e₃ := GrpMor.pull_pull N (constMor A₀) M (fun r ↦ by
-    simp [frobR_apply, pow_dual hk r]) (by simpa using frob_sq hk hT) c
+    simp [pow_dual hk r]) (by simpa using frob_sq hk hT) c
   exact e₁.trans (e₃.symm.trans (congrArg _ e₂.symm))
 
 private theorem res_iter (hk : (p : k) = 0) (hT : (p : DualNumber k) = 0)
     (h : IsGrpPullback A₀ A' (epsRed k) i) (n : ℕ) (c : primDR A') :
-    (resMor h).pull ((frobDR p _ hT A')^[n] c) = (frobDR p k hk A₀)^[n] ((resMor h).pull c) := by
+    (GlobalTheory.CechKS.fibMor h).pull ((frobDR p _ hT A')^[n] c) = (frobDR p k hk A₀)^[n] ((GlobalTheory.CechKS.fibMor h).pull c) := by
   induction n with
   | zero => rfl
   | succ n ih => rw [Function.iterate_succ_apply', Function.iterate_succ_apply', res_frob hk hT h, ih]
@@ -166,7 +114,7 @@ private theorem vanish (hk : (p : k) = 0) (hT : (p : DualNumber k) = 0)
       push (epsDP k) (epsRed k) g₀ d ((liftMor (epsDP k) h).pull ((frobDR p _ hT A')^[n + 1] c)) :=
     (LinearMap.congr_fun (crysToDR_push (epsDP k) h h g₀ g' hg d) _).symm
   have e₂ : (liftMor (epsDP k) h).pull ((frobDR p _ hT A')^[n + 1] c) =
-      (constMor A₀).pull ((frobDR p k hk A₀)^[n + 1] ((resMor h).pull c)) := by
+      (constMor A₀).pull ((frobDR p k hk A₀)^[n + 1] ((GlobalTheory.CechKS.fibMor h).pull c)) := by
     rw [Function.iterate_succ_apply', lift_frob hk hT h, res_iter hk hT h,
       Function.iterate_succ_apply']
   rw [e₁, e₂, corr_push hd g₀, push_apply, hx, map_zero]
@@ -470,8 +418,7 @@ private lemma not_le_span_image {k P : Type*} [Field k] [AddCommGroup P] [Module
     ¬ G ≤ Submodule.span k (A '' G) := by
   intro hle
   obtain ⟨ℓ, hℓ⟩ : ∃ ℓ : Module.Dual k P, ℓ v ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hv0 ((Module.forall_dual_apply_eq_zero_iff k v).1 h)
   let K : Submodule k P := G ⊓ LinearMap.ker ℓ
   have hKG : K < G := by
@@ -663,8 +610,7 @@ private lemma exists_not_mem {k C P : Type*} [Field k] [IsAlgClosed k] [CommRing
   have hvG : v ∈ G := by
     refine (Submodule.mem_iInf _).2 fun c => (Module.End.mem_maxGenEigenspace _ _ _).2 ⟨1, ?_⟩
     simp [hv]
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   have hS : Submodule.span k (Set.range A) ≤ Wd ⊔ H := by
     refine Submodule.span_le.2 ?_
     rintro _ ⟨z, rfl⟩
@@ -1187,8 +1133,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobeniusPullbackDeRhamMapExists", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDeRhamSheafIffAlt\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDeRhamSheaf\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 

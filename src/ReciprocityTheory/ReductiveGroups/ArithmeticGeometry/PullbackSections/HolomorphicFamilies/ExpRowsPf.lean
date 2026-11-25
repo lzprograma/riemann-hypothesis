@@ -11,10 +11,9 @@ import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.RegularLocalRing.Defs
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetC
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetF
+import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EpsPtScaleZero
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -75,35 +74,11 @@ theorem tangent_open_preimage_zero {e : (Fin g → ℂ) → (Sp ℂ ⟶ Y)} {w :
 
 theorem isDerivAt0_unique {e : (Fin g → ℂ) → (Sp ℂ ⟶ Y)} {w : Fin g → ℂ} {v v' : Sp (DualNumber ℂ) ⟶ Y}
     (hv : IsDerivAt0 e w v) (hv' : IsDerivAt0 e w v') : v = v' := by
-  apply hom_ext_of_local
-  · have hc : (spMap (TrivSqZeroExt.fstHom ℂ ℂ ℂ).toRingHom).base (IsLocalRing.closedPoint ℂ) =
-        IsLocalRing.closedPoint (DualNumber ℂ) :=
-      IsLocalRing.comap_closedPoint _
-    have e1 := congrArg (fun φ => φ.base (IsLocalRing.closedPoint ℂ)) (hv.1.trans hv'.1.symm)
-    have e2 : v ((spMap (TrivSqZeroExt.fstHom ℂ ℂ ℂ).toRingHom) (IsLocalRing.closedPoint ℂ)) =
-        v' ((spMap (TrivSqZeroExt.fstHom ℂ ℂ ℂ).toRingHom) (IsLocalRing.closedPoint ℂ)) := e1
-    rw [hc] at e2
-    exact e2
-  · intro U h₁ h₂
-    rw [← cancel_mono (Scheme.ΓSpecIso (CommRingCat.of (DualNumber ℂ))).hom]
-    ext f
-    have hU := tangent_open_preimage_zero hv U h₁
-    · exact (fst_appLE hv U hU h₁ f).trans (fst_appLE hv' U hU h₂ f).symm
-    · exact (hv.2 U h₁ f).trans (hv'.2 U h₂ f).symm
+  apply _root_.GlobalTheory.PointUnif.deriv_unique <;> assumption
 
 theorem isDerivAt0_comp_hom {Y' : Scheme.{0}} {e : (Fin g → ℂ) → (Sp ℂ ⟶ Y)} {w : Fin g → ℂ}
     {v : Sp (DualNumber ℂ) ⟶ Y} (hv : IsDerivAt0 e w v) (φ : Y ⟶ Y') :
-    IsDerivAt0 (fun z => e z ≫ φ) w (v ≫ φ) := by
-  refine ⟨by rw [← Category.assoc, hv.1], fun U h f => ?_⟩
-  have h' : ⊤ ≤ v ⁻¹ᵁ (φ ⁻¹ᵁ U) := h
-  have key := hv.2 (φ ⁻¹ᵁ U) h' (φ.app U f)
-  simp only [← valAt'_comp]
-  rw [← key]
-  have hc : (v ≫ φ).appLE U ⊤ h = φ.app U ≫ v.appLE (φ ⁻¹ᵁ U) ⊤ h' := by
-    first
-    | exact Scheme.Hom.comp_appLE v φ U ⊤ h
-  rw [hc]
-  rfl
+    IsDerivAt0 (fun z => e z ≫ φ) w (v ≫ φ) := GlobalTheory.PointUnif.deriv_comp hv φ
 
 theorem isDerivAt0_smul {e : (Fin g → ℂ) → (Sp ℂ ⟶ Y)} {w : Fin g → ℂ} {v : Sp (DualNumber ℂ) ⟶ Y}
     (hv : IsDerivAt0 e w v) (cc : ℂ) : IsDerivAt0 e (cc • w) (spMap (epsMul cc) ≫ v) := by

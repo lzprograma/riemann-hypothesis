@@ -4,46 +4,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVOfEq
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UpperMinorOfLevelPoint
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
 
 @[expose] public section
@@ -67,25 +27,25 @@ theorem zfull_zb {j : ℕ} (Z : Matrix (Fin j) (Fin j) ℂ) (τ : ℂ) (a b : Fi
   · rw [dite_eq_right h1]
     by_cases ha : a.val < j
     · have hb : ¬ b.val < j := fun hb => h1 ⟨ha, hb⟩
-      rw [dite_eq_left ha, dite_eq_right hb, if_neg (fun h => by omega)]
+      rw [dite_eq_left ha, dite_eq_right hb, ite_eq_right (fun h => by omega)]
     · rw [dite_eq_right ha]
       by_cases h2 : a.val = j ∧ b.val = j
-      · rw [if_pos h2, if_pos (by omega)]
-      · rw [if_neg h2, if_neg (by omega)]
+      · rw [ite_eq_left h2, ite_eq_left (by omega)]
+      · rw [ite_eq_right h2, ite_eq_right (by omega)]
 
 theorem normal_form_x0 : NormalFormsAtBasePoint := by
   intro k r j hj Z τ γ hZ hτ hγ
   refine ⟨fun a p ha => ?_, fun a p ha => ?_⟩
   · rw [upper_minor_of_level_point hj Z τ γ a p ha]
     by_cases hp : p.val < j + 1
-    · rw [dite_eq_left hp, if_pos hp]
+    · rw [dite_eq_left hp, ite_eq_left hp]
       exact zfull_zb Z τ _ _
-    · rw [dite_eq_right hp, if_neg hp]
+    · rw [dite_eq_right hp, ite_eq_right hp]
   · rw [lower_minor_of_level_point hj hZ hτ hγ a p ha]
     by_cases hp : r + k < p.val ∧ 2 * r + k - p.val < j + 1
-    · rw [dite_eq_left hp, if_pos hp]
+    · rw [dite_eq_left hp, ite_eq_left hp]
       exact congrArg star (zfull_zb Z τ _ _)
-    · rw [dite_eq_right hp, if_neg hp]
+    · rw [dite_eq_right hp, ite_eq_right hp]
 
 theorem leading_minors_at_base_point : LeadingMinorsAtBasePoint := by
   intro k r j hj z z' Z τ γ hZ hτ hγ

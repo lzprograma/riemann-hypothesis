@@ -28,25 +28,12 @@ theorem Deco.IsUp.sameAt {d d' : Deco E n ST SG} (hd : d.Ok) {P : ST} (hP : Move
 theorem Deco.IsUp.f_ne {d d' : Deco E n ST SG} {P : ST} {q : 𝓞 E} (h : Deco.IsUp P q d d') {Q : ST}
     (hQ : Q ≠ P) : d'.f Q = d.f Q := by
   obtain ⟨x, _, _, rfl⟩ := h
-  simp only [Deco.up, Function.update, dif_neg hQ]
+  simp only [Deco.up, Function.update, dite_eq_right hQ]
 
 theorem Deco.IsUp.be_eq {d d' : Deco E n ST SG} {P : ST} {q : 𝓞 E} (h : Deco.IsUp P q d d') : d'.be = d.be := by
   obtain ⟨x, _, _, rfl⟩ := h
   rfl
 
 end Moves
-
-section Ops
-
-variable {X : Fields} {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
-  (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) (Λ : LevFam X.E X.K n SG)
-
-end Ops
-
-section Cols
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end Cols
 
 end Formalism.L2.Col

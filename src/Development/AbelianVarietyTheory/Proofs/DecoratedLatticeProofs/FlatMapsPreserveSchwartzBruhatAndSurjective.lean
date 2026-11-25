@@ -104,8 +104,8 @@ theorem continuous_freeMat (p : ℕ) :
     Continuous (freeMat (k := k) (n := n) (n' := n') (c := c) p) := by
   refine continuous_matrix fun r s => ?_
   by_cases h : Free p (r, s)
-  · simp only [freeMat, Matrix.of_apply, dif_pos h]; fun_prop
-  · simp only [freeMat, Matrix.of_apply, dif_neg h]; exact continuous_const
+  · simp only [freeMat, Matrix.of_apply, dite_eq_left h]; fun_prop
+  · simp only [freeMat, Matrix.of_apply, dite_eq_right h]; exact continuous_const
 
 theorem isClosedEmbedding_freeMat (p : ℕ) :
     Topology.IsClosedEmbedding (freeMat (k := k) (n := n) (n' := n') (c := c) p) := by
@@ -440,9 +440,9 @@ theorem continuous_ptCol (p : ℕ) :
     rcases r with r | r <;> rcases s with s | s
     · simp only [colAt, fromBlocks_apply₁₁, Matrix.zero_apply]; exact continuous_const
     · by_cases h : s.val + 1 = p
-      · simp only [colAt, fromBlocks_apply₁₂, Matrix.of_apply, h, if_true]
+      · simp only [colAt, fromBlocks_apply₁₂, Matrix.of_apply, h, ite_true]
         exact continuous_fst.matrix_elem _ _
-      · simp only [colAt, fromBlocks_apply₁₂, Matrix.of_apply, h, if_false]; exact continuous_const
+      · simp only [colAt, fromBlocks_apply₁₂, Matrix.of_apply, h, ite_false]; exact continuous_const
     · simp only [colAt, fromBlocks_apply₂₁, Matrix.zero_apply]; exact continuous_const
     · simp only [colAt, fromBlocks_apply₂₂, Matrix.zero_apply]; exact continuous_const
 
@@ -456,9 +456,9 @@ theorem continuous_ptRow (p : ℕ) :
     · simp only [rowAt, fromBlocks_apply₁₁, Matrix.zero_apply]; exact continuous_const
     · simp only [rowAt, fromBlocks_apply₁₂, Matrix.zero_apply]; exact continuous_const
     · by_cases h : r.val + 1 = p
-      · simp only [rowAt, fromBlocks_apply₂₁, Matrix.of_apply, h, if_true]
+      · simp only [rowAt, fromBlocks_apply₂₁, Matrix.of_apply, h, ite_true]
         exact continuous_fst.matrix_elem _ _
-      · simp only [rowAt, fromBlocks_apply₂₁, Matrix.of_apply, h, if_false]; exact continuous_const
+      · simp only [rowAt, fromBlocks_apply₂₁, Matrix.of_apply, h, ite_false]; exact continuous_const
     · simp only [rowAt, fromBlocks_apply₂₂, Matrix.zero_apply]; exact continuous_const
 
 variable [MeasurableSpace k] [BorelSpace k]

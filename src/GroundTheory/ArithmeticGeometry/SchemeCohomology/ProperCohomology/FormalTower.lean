@@ -98,7 +98,7 @@ lemma shortExact_abSC_quotPow (n : ℕ) : (abSC (quotPowSC I F n)).ShortExact :=
 
 lemma ker_formalβ (n : ℕ) : LinearMap.ker (formalβ I F q n) = formalK I F q n := by
   refine (LinearMap.exact_iff (f := formalα I F q n) (g := formalβ I F q n)).mp ?_
-  refine fun y => ⟨H.exact₂ (n := q) (shortExact_abSC_quotPow I F n) y, ?_⟩
+  refine fun y => ⟨CategoryTheory.Sheaf.H.longSequence_exact₂ (n := q) (shortExact_abSC_quotPow I F n) y, ?_⟩
   rintro ⟨x, rfl⟩
   exact H.map_g_map_f (S := abSC (quotPowSC I F n)) (n := q) x
 

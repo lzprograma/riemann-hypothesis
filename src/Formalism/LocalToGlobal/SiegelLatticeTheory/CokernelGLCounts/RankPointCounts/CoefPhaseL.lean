@@ -66,8 +66,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.LsDatumB Formalism.L2.SG.Pf.LocOrbSumPf Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc
 open Classical ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Simple
 
 variable {K : Type} [CommRing K] {n : ℕ}
@@ -192,11 +190,11 @@ theorem phaseLoc_L (hA : ∀ p, Agree δ M p) {γ : TermDef.Term D u u' F0 what�
     ext a b
     rw [modMat_apply', Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply']
     by_cases hb : b = sgF w a
-    · rw [if_pos hb, if_pos hb, modMat_blk ⟨δ, M, hA⟩]
+    · rw [ite_eq_left hb, ite_eq_left hb, modMat_blk ⟨δ, M, hA⟩]
       simp only [twist, qE, tau0, hR, Ring.inverse_one, mul_one, ite_self, sub_zero, map_mul]
       subst hb
       ring
-    · rw [if_neg hb, if_neg hb, map_zero, mul_zero, zero_mul]
+    · rw [ite_eq_right hb, ite_eq_right hb, map_zero, mul_zero, zero_mul]
   have h1 := PCount.zzp_sgn_ord ⟨δ, M, hA⟩ u u' p hM (ZhatL (lf D F0) F')
   have hdec : CntLocal.ZZP (M := M) δ u u' p (ZhatL (lf D F0) F') * sgnP p =
       (Matrix.diagonal (fun a => algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (cf ⟨δ, M, hA⟩ p a)) *
@@ -233,7 +231,7 @@ theorem phaseLoc_L (hA : ∀ p, Agree δ M p) {γ : TermDef.Term D u u' F0 what�
     exact absurd this (by simp)
   have hg0 : Loc.resChar p ≠ D.host.g 0 := fun h => hres (by simp [h])
   have hg1 : Loc.resChar p ≠ D.host.g 1 := fun h => hres (by simp [h])
-  have hgp : gpart p = 1 := by unfold gpart; rw [if_neg hg0, if_neg hg1]
+  have hgp : gpart p = 1 := by unfold gpart; rw [ite_eq_right hg0, ite_eq_right hg1]
   have hδ : δ p ≠ 0 := (hA p).2.1
   have hu : (D.s.atP p).ιE ((uP p : ℚ) : D.host.E) =
       algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((D.s.atP p).ιF ((uP p : ℚ) : D.host.F)) := by

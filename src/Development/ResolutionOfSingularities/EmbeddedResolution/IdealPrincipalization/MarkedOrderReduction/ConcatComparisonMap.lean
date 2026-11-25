@@ -2,46 +2,7 @@ module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.StrictPullbackBlowupSeq
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -126,7 +87,7 @@ private theorem concatObjIsoRight_hom_of_pos {X : Scheme.{u}} (s : BlowupSequenc
     (t : BlowupSequenceData (s.obj s.length)) (i j : ℕ) (hi : 0 < i) (h : j = s.length + i) :
     (s.concatObjIsoRight t i j h).hom = eqToHom (append_schemeAt_eq_right_of_pos s t hi h) := by
   unfold concatObjIsoRight
-  rw [dif_pos hi, eqToIso.hom]
+  rw [dite_eq_left hi, eqToIso.hom]
 
 private theorem concatObjIsoRight_hom_succ {X : Scheme.{u}} (s : BlowupSequenceData X)
     (t : BlowupSequenceData (s.obj s.length)) (i j : ℕ) (h : j + 1 = s.length + (i + 1)) :
@@ -139,7 +100,7 @@ private theorem concatObjIsoRight_hom_zero {X : Scheme.{u}} (s : BlowupSequenceD
     (s.concatObjIsoRight t 0 j h).hom =
       eqToHom (append_schemeAt_eq_last_of_eq_length s t (show j = s.length by omega)) ≫ t.isoZero.inv := by
   unfold concatObjIsoRight
-  rw [dif_neg (Nat.lt_irrefl 0)]
+  rw [dite_eq_right (Nat.lt_irrefl 0)]
   simp
 
 private theorem blowupMorphism_eq_eqToHom_conj {Y : Scheme.{u}} (d : BlowupSequenceData Y) {a b : ℕ}
@@ -190,14 +151,14 @@ theorem append_center_eq_comap_concatObjIsoRight {X : Scheme.{u}} (s : BlowupSeq
     have hiso : (s.concatObjIsoRight t 0 s.length h).hom =
         eqToHom (append_schemeAt_eq_last_of_eq_length s t rfl) ≫ t.isoZero.inv := by
       unfold concatObjIsoRight
-      rw [dif_neg (Nat.lt_irrefl 0)]
+      rw [dite_eq_right (Nat.lt_irrefl 0)]
       simp
     rw [append_center_length, hiso]
     exact comap_eqToHom_comap_eq _ _ _ _
   · have hj : s.length < j := by omega
     have hiso : s.concatObjIsoRight t i j h = eqToIso (append_schemeAt_eq_right_of_pos s t hi h) := by
       unfold concatObjIsoRight
-      exact dif_pos hi
+      exact dite_eq_left hi
     rw [append_center_of_length_lt s t hj, hiso]
     exact center_comap_eqToHom_congr t (show j - s.length = i by omega) _ _
 
@@ -487,7 +448,7 @@ private theorem concatObjIsoRight_inv_of_pos {X : Scheme.{u}} (s : BlowupSequenc
     (t : BlowupSequenceData (s.obj s.length)) (i j : ℕ) (hi : 0 < i) (h : j = s.length + i) :
     (s.concatObjIsoRight t i j h).inv = eqToHom (append_schemeAt_eq_right_of_pos s t hi h).symm := by
   unfold concatObjIsoRight
-  rw [dif_pos hi, eqToIso.inv]
+  rw [dite_eq_left hi, eqToIso.inv]
 
 private theorem append_blowupMorphism_of_eq_length {X : Scheme.{u}} (s : BlowupSequenceData X)
     (t : BlowupSequenceData (s.obj s.length)) (j : ℕ) (hj : j = s.length)
@@ -522,7 +483,7 @@ private theorem concatComparisonMap_of_le {X' X : Scheme.{u}} (g : X' ⟶ X) (s 
       eqToHom (append_schemeAt_of_le_length s' t' h) ≫ eqToHom (toSequenceOfBlowups_schemeAt s' i).symm ≫
         D.comp i h3 ≫ eqToHom (toSequenceOfBlowups_schemeAt s i) ≫ eqToHom (append_schemeAt_of_le_length s t h2).symm := by
   unfold concatComparisonMap
-  exact dif_pos h
+  exact dite_eq_left h
 
 private theorem concatComparisonMap_of_not_le {X' X : Scheme.{u}} (g : X' ⟶ X) (s : BlowupSequenceData X)
     (t : BlowupSequenceData (s.obj s.length)) (s' : BlowupSequenceData X')
@@ -537,7 +498,7 @@ private theorem concatComparisonMap_of_not_le {X' X : Scheme.{u}} (g : X' ⟶ X)
         D'.comp a pf2 ≫ eqToHom (toSequenceOfBlowups_schemeAt t a) ≫ (s.concatObjIsoRight t a i pf3).inv := by
   subst ha
   unfold concatComparisonMap
-  exact dif_neg h
+  exact dite_eq_right h
 
 private theorem isPullback_concatComparisonMap {X' X : Scheme.{u}} (g : X' ⟶ X) (s : BlowupSequenceData X)
     (t : BlowupSequenceData (s.obj s.length)) (s' : BlowupSequenceData X')
@@ -747,7 +708,7 @@ private theorem append_center_eq_comap_concatComparisonMap {X' X : Scheme.{u}} (
   have hilt : i < s'.length + t'.length := hi
   rw [concatComparisonMap_eq_dite g s t s' t' D D' i hi.le hlen hilt.le]
   by_cases h : i ≤ s'.length
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     rcases h.lt_or_eq with hlt | heq
     · have hs : i < s.length := hlt.trans_eq hlen
       have hlt' : i < s'.toSequenceOfBlowups.length := hlt.trans_eq (toSequenceOfBlowups_length s').symm
@@ -790,7 +751,7 @@ private theorem append_center_eq_comap_concatComparisonMap {X' X : Scheme.{u}} (
         (append_schemeAt_eq_last_of_eq_length s t hlen) D.lastMap _ ?_ _ _ hJ
       rw [StrictPullbackBlowupSeq.lastMap_eq]
       exact eqToHom_trans_comp_comp_eqToHom_trans_eq_assoc _ _ _ _ _ _ _ _
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     have hk1 : i = s'.length + (i - s'.length) := by omega
     have hk2 : i = s.length + (i - s'.length) := by omega
     have hk : i - s'.length < t'.toSequenceOfBlowups.length := by

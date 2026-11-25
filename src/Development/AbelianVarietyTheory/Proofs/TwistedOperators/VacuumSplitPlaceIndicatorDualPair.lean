@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DoubledVacuumEigenvalueEqOneSplitPlace
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdeleCharacterEqOneIntegralUnitsUnramifiedAdelic
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
@@ -204,76 +205,13 @@ theorem dbl_line_coord {σ : E →ₐ[F] E} {n d : ℕ} {X : Spc F E n} {Y : Spc
     (fun i => hloc φd hrest _ i.1.2 _ i.2.2 (hΦt ▸ h1 _ i.1.2 _ i.2.2)) hφd0
   exact ⟨c', by rw [hT, hc', GlobalTheory.VacTransport.tens_smul, ← hΦt]⟩
 
-theorem det_mem_of_keeps {n : ℕ} (w : HeightOneSpectrum (𝓞 E)) (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsFullLattice E)
-    (T : Matrix (Fin n) (Fin n) (w.adicCompletion E)) (hT : ∀ z ∈ latAt w L, T *ᵥ z ∈ latAt w L) :
-    T.det ∈ Formalism.UG.Ov E w := by
-  obtain ⟨k, S, Φ, h1, hS, hΦ⟩ := GlobalTheory.AdelicU.SelfDual.exists_frame L hL
-  set f := algebraMap E (w.adicCompletion E) with hf
-  have hΦw : ∀ z ∈ latAt w L, ∀ j, (Φ.map f *ᵥ z) j ∈ Formalism.UG.Ov E w := by
-    intro z hz j
-    induction hz using Submodule.span_induction with
-    | mem z hz =>
-      obtain ⟨y, hy, rfl⟩ := hz
-      obtain ⟨r, hr⟩ := hΦ y hy j
-      have e : (Φ.map f *ᵥ fun i => f (y i)) j = f ((Φ *ᵥ y) j) := (RingHom.map_mulVec f Φ y j).symm
-      show (Φ.map f *ᵥ fun i => f (y i)) j ∈ _
-      rw [e, ← hr]
-      exact GlobalTheory.AdeleBaseChange.algebraMap_int_mem r w
-    | zero => rw [Matrix.mulVec_zero]; exact zero_mem _
-    | add x y _ _ hx hy => rw [Matrix.mulVec_add]; exact add_mem hx hy
-    | smul c x _ hx =>
-      have e : (Φ.map f *ᵥ (c • x)) j = (c : w.adicCompletion E) * (Φ.map f *ᵥ x) j := by
-        simp [Matrix.mulVec, dotProduct, Finset.mul_sum, Subring.smul_def, mul_left_comm]
-      rw [e]
-      exact mul_mem c.2 hx
-  have h2 : S.map f * Φ.map f = 1 := by
-    rw [← Matrix.map_mul, h1, Matrix.map_one _ (map_zero _) (map_one _)]
-  have e : T = 1 + ((T - 1) * S.map f) * Φ.map f := by
-    rw [Matrix.mul_assoc, h2, Matrix.mul_one, add_sub_cancel]
-  have hent : ∀ i j, (1 + Φ.map f * ((T - 1) * S.map f) : Matrix (Fin k) (Fin k) (w.adicCompletion E)) i j ∈ Formalism.UG.Ov E w := by
-    intro i j
-    have hc : (fun l => f (S l j)) ∈ latAt w L := Submodule.subset_span ⟨_, hS j, rfl⟩
-    have hc' : (T - 1) *ᵥ (fun l => f (S l j)) ∈ latAt w L := by
-      rw [Matrix.sub_mulVec, Matrix.one_mulVec]
-      exact sub_mem (hT _ hc) hc
-    refine add_mem ?_ (hΦw _ hc' i)
-    rw [Matrix.one_apply]
-    split_ifs
-    exacts [one_mem _, zero_mem _]
-  rw [e, Matrix.det_one_add_mul_comm]
-  let m : Matrix (Fin k) (Fin k) (Formalism.UG.Ov E w) := fun i j => ⟨_, hent i j⟩
-  have e3 : (1 + Φ.map f * ((T - 1) * S.map f)) = (Formalism.UG.Ov E w).subtype.mapMatrix m := rfl
-  rw [e3, ← RingHom.map_det]
-  exact m.det.2
-
 theorem chr_det_eq_one {n : ℕ} (Y : Spc F E n) (hL : Y.L.IsFullLattice E) (v : Pl (F := F)) (χ : Chr F E)
     (hχ : ∀ w : HeightOneSpectrum (𝓞 E), w.under (𝓞 F) = v → UnrAt χ w) (t : GL (Fin n) (AE F E))
     (h1 : At (evFin F v) ((t : Matrix (Fin n) (Fin n) (AE F E)) - 1))
     (h2 : ∀ z ∈ GlobalTheory.InertSph.latAt Y v, (t : Matrix (Fin n) (Fin n) (AE F E)) *ᵥ z ∈ GlobalTheory.InertSph.latAt Y v ∧
       ((t⁻¹ : GL (Fin n) (AE F E)) : Matrix (Fin n) (Fin n) (AE F E)) *ᵥ z ∈ GlobalTheory.InertSph.latAt Y v) :
     χ (Matrix.GeneralLinearGroup.det t) = 1 := by
-  rw [GlobalTheory.InertDetChr.eq_ideleAt (GlobalTheory.InertDetChr.at_det_sub_one v t h1), GlobalTheory.LFun.ideleAt_eq_prod_locIdele, map_prod]
-  refine Finset.prod_eq_one fun w _ => ?_
-  have h : w.1.under (𝓞 F) = v := (Formalism.L2.Host.finite_aboveF (L := E) F v).mem_toFinset.1 w.2
-  have key : ∀ s : GL (Fin n) (AE F E), (∀ z ∈ GlobalTheory.InertSph.latAt Y v,
-      (s : Matrix (Fin n) (Fin n) (AE F E)) *ᵥ z ∈ GlobalTheory.InertSph.latAt Y v) →
-      ((Units.map (toCompl h).toMonoidHom (GlobalTheory.Doubling.unitFin F E v (Matrix.GeneralLinearGroup.det s)) :
-        (w.1.adicCompletion E)ˣ) : w.1.adicCompletion E) ∈ Formalism.UG.Ov E w.1 := by
-    intro s hs
-    have e : ((Units.map (toCompl h).toMonoidHom (GlobalTheory.Doubling.unitFin F E v (Matrix.GeneralLinearGroup.det s)) :
-        (w.1.adicCompletion E)ˣ) : w.1.adicCompletion E) =
-        GlobalTheory.InertDetChr.piW' h ((s : Matrix (Fin n) (Fin n) (AE F E)).det) := by
-      rw [Units.coe_map, GlobalTheory.InertDetChr.piW', RingHom.comp_apply, ← Matrix.GeneralLinearGroup.val_det_apply]
-      rfl
-    rw [e, RingHom.map_det]
-    exact det_mem_of_keeps w.1 Y.L hL _ (GlobalTheory.InertDetChr.mulVec_mem_latAt h Y _ hs)
-  have hu : Formalism.L2.Host.IsUnitAt w.1
-      (Units.map (toCompl h).toMonoidHom (GlobalTheory.Doubling.unitFin F E v (Matrix.GeneralLinearGroup.det t))) := by
-    refine (EulerTie.isUnitAt_iff w.1 _).2 ⟨?_, ?_⟩
-    · exact (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).1 (key t fun z hz => (h2 z hz).1)
-    · rw [← map_inv, ← map_inv, ← map_inv]
-      exact (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).1 (key t⁻¹ fun z hz => (h2 z hz).2)
-  exact Circle.ext (congrArg Units.val (hχ w.1 h _ hu))
+  first | exact _root_.GlobalTheory.DblVacSiegelAny.chr_det_eq_one_any | exact @_root_.GlobalTheory.DblVacSiegelAny.chr_det_eq_one_any | apply _root_.GlobalTheory.DblVacSiegelAny.chr_det_eq_one_any <;> assumption
 
 theorem dblFun_eigen_left {σ : E →ₐ[F] E} {B : Base F E} {a a' : ℕ} {G : Geo σ a a'} (hB : B.IsGood σ) (hG : G.IsGood B)
     (v : Pl (F := F)) (hunr : PsiUnr B.ψ v)

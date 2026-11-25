@@ -94,7 +94,7 @@ lemma isClosed_Gr : IsClosed (Gr k r) := by
   have hc : Continuous (fun x : Mat k r => xᴴ * Formalism.QuantumDeterminants.Hpk k r * x) := by fun_prop
   exact isClosed_eq hc continuous_const
 
-alias continuous_of := _root_.Formalism.MainNotions.LowestKTypeMultiplicity.continuous_of
+alias continuous_of := _root_.PI.WUN.continuous_of
 
 lemma measurableSet_Gr : MeasurableSet {x : Formalism.QuantumDeterminants.Mt k r | Matrix.of x ∈ Gr k r} :=
   (isClosed_Gr.preimage continuous_of).measurableSet

@@ -22,8 +22,6 @@ variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Com
 
 section Simple
 
-attribute [local instance 2000] Rep.hV2
-
 
 omit [TotallyDisconnectedSpace G] in
 theorem exists_bijective_hom_of_isProPGroup {p : ℕ} (hp : p.Prime) (hG : IsProPGroup p G)

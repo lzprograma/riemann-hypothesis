@@ -264,18 +264,6 @@ theorem IrrW.lpDim_pos (z : IrrW h) : 0 < z.1.lpDim := by
   rw [WD.lpDim_mk]
   exact finrank_pos
 
-theorem isIrrWD_lpOfChar (χ : Weil h →* ℂˣ) (hχ : IsSmooth χ) : IsIrrWD (WD.lpOfChar h χ hχ) := by
-  refine ⟨1, _, rfl, ?_⟩
-  haveI : IsSimpleModule ℂ (Fin 1 → ℂ) := isSimpleModule_iff_finrank_eq_one.2 (by simp)
-  refine { exists_pair_ne := ⟨⊥, ⊤, fun hbt => ?_⟩, eq_bot_or_eq_top := fun U => ?_ }
-  · exact bot_ne_top (α := Submodule ℂ (Fin 1 → ℂ)) (congrArg Subrepresentation.toSubmodule hbt)
-  · rcases eq_bot_or_eq_top U.toSubmodule with hU | hU
-    · exact Or.inl (Subrepresentation.toSubmodule_injective hU)
-    · exact Or.inr (Subrepresentation.toSubmodule_injective hU)
-
-def IrrW.ofChar (χ : Weil h →* ℂˣ) (hχ : IsSmooth χ) : IrrW h :=
-  ⟨WD.lpOfChar h χ hχ, isIrrWD_lpOfChar χ hχ⟩
-
 
 variable (h) in
 def frobCoset (r : ℕ) : Set (Weil h) := {τ | deg τ = -(r : ℤ)}
@@ -285,15 +273,6 @@ def frobCoset (r : ℕ) : Set (Weil h) := {τ | deg τ = -(r : ℤ)}
 
 
 
-section Artin
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-end Artin
-
-
-variable (h) in
-abbrev VR : Type := IrrW h →₀ ℚ
 
 namespace VR
 
@@ -320,8 +299,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands UpperTheory.Zero.LLC
 open scoped TensorProduct
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.V.Z.Win.Extra
 

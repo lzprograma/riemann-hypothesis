@@ -154,7 +154,7 @@ theorem sub_exists (G : LogFGL v d) {ga ge : Fin d → PowerSeries C} (hg : PTGo
       simp only [K, map_sub, pt_F_lin, pt_coeff_single_X]; ring_nf
     rw [hc] at hα
     have hs : s = Sum.inr b := by
-      by_contra hs; exact hα (if_neg hs)
+      by_contra hs; exact hα (ite_eq_right hs)
     intro x y _ _ t ht
     rw [Finsupp.support_single_ne_zero _ one_ne_zero, Finset.mem_singleton] at ht
     rw [ht, hs]
@@ -177,7 +177,7 @@ theorem sub_exists (G : LogFGL v d) {ga ge : Fin d → PowerSeries C} (hg : PTGo
   have hs : HasSubst (Sum.elim x ge) := hasSubst_of_constantCoeff_zero h0
   have e := hxe b
   simp only [Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, K, subst_sub hs, subst_X hs, Sum.elim_inl] at e
+    Finset.mem_univ, ite_true, K, subst_sub hs, subst_X hs, Sum.elim_inl] at e
   rw [← e]
   show subst (Sum.elim x ge) (G.F b) = _
   ring
@@ -272,7 +272,7 @@ theorem uniform_step [IsAlgClosed C] [CharZero C] (G : LogFGL v d) {p : ℕ} (hp
     · rw [hlg]
       simp [h.1, h.2]
   · refine ⟨ga, fun _ _ _ => rfl, fun a m => ?_⟩
-    rw [if_neg (fun h' => h ⟨h'.1, h'.2.1⟩)]
+    rw [ite_eq_right (fun h' => h ⟨h'.1, h'.2.1⟩)]
 
 theorem exists_divisor {p m : ℕ} (hp : p.Prime) (hm0 : m ≠ 0) (hm : ∀ n, m ≠ p ^ n) :
     ∃ l, 2 ≤ l ∧ ¬ p ∣ l ∧ l ∣ m := by
@@ -311,7 +311,7 @@ theorem exists_pTypical_tangent :
       PowerSeries.coeff m (G.lgCurve (g j).1 a) = 0 := by
     intro l m a h1 h2 h3 j hj
     induction j, hj using Nat.le_induction with
-    | base => rw [hg, hst2, if_pos ⟨h1, h2, h3⟩]
+    | base => rw [hg, hst2, ite_eq_left ⟨h1, h2, h3⟩]
     | succ j hj ih => rw [hg, hst2, ih, ite_self]
   let γ : Fin d → PowerSeries C := fun a =>
     PowerSeries.mk fun m => PowerSeries.coeff m ((g (m + 1)).1 a)
@@ -342,7 +342,7 @@ theorem exists_pTypical_tangent :
   · show PowerSeries.coeff 1 (γ a) = u a
     rw [hγ, hstab 0 (1 + 1) (by omega) a 1 (by omega)]
     show PowerSeries.coeff 1 (PowerSeries.monomial 1 (u a)) = u a
-    rw [PowerSeries.coeff_monomial, if_pos rfl]
+    rw [PowerSeries.coeff_monomial, ite_eq_left rfl]
 
 end
 
@@ -504,7 +504,7 @@ theorem typicalCurves_of_type_of_typical_tangents :
   · have e := hlg a m
     rw [hγt a m hm, mul_zero] at e
     exact (mul_eq_zero.1 e).resolve_left hN0
-  · rw [hlc, if_neg ha]
+  · rw [hlc, ite_eq_right ha]
   · rw [tangent_eq_lc_zero G p (fun b => (hε b).1)]
     funext a
     rw [hlc, ← tangent_eq_lc_zero G p (fun b => (hγ b).1), hγu, Nat.cast_zero, add_zero]

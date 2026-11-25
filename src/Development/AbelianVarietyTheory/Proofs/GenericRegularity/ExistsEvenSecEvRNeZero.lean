@@ -48,8 +48,6 @@ public import Development.AbelianVarietyTheory.Definitions.ThetaValues.IsNullVal
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField Topology ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj GlobalTheory.EtaForm

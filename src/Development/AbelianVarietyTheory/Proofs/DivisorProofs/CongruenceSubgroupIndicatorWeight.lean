@@ -676,7 +676,7 @@ theorem match_principal_congruence_inert : ∀ (E : Type) [Field E] [NumberField
     have := Nat.card_pos (α := IsLocalRing.ResidueField K.O)
     simp at hc; omega
   unfold delta absHalf
-  rw [if_neg hw, hq]
+  rw [ite_eq_right hw, hq]
   exact unit_product_rescale_disjoint_finsets K.q hq0 _ (k * a * b) _
 
 end GlobalTheory.CongMatch

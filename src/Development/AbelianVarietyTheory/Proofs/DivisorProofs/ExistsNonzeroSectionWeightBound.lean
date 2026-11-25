@@ -96,8 +96,6 @@ import Formalism.LocalToGlobal.ProjectiveLattices.HeightF1OfData
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.ThetaSteep
@@ -109,8 +107,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.ThetaConst
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
-
-
 
 theorem phiC_le_valuation (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Geo.Tor.Host E) (Dw : Datum H) (l : Level H)
     (Xo : Moduli Dw l) (c : Coeff l) (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [CharZero V]
@@ -126,7 +122,7 @@ theorem phiC_le_valuation (E : Type) [Field E] [NumberField E] [IsCMField E] (H 
   have hL : Laws := hLL.1
   have hA : AdmBase V (maximalIdeal V) := ⟨inferInstance, inferInstance, inferInstance, hcpl⟩
   have htors := GlobalTheory.UT.torsionIso_of_pelUnif hLL h2 h3 h4 h5 E H V _ hA G P
-  obtain ⟨v, hv, hvv⟩ := GlobalTheory.T.exists_valuation_algebraicClosure_extending_vV V ϖ hϖ
+  obtain ⟨v, hv, hvv⟩ := GlobalTheory.ValClosure.exists_valuation_closure V ϖ hϖ
   let F := AlgebraicClosure (FractionRing V)
   letI : Algebra c.F F := ((algebraMap (FractionRing V) F).comp (algebraMap c.F (FractionRing V))).toAlgebra
   let ψ : FractionRing V →ₐ[c.F] F := { algebraMap (FractionRing V) F with commutes' := fun _ => rfl }
@@ -149,8 +145,8 @@ theorem phiC_le_valuation (E : Type) [Field E] [NumberField E] [IsCMField E] (H 
   choose w hw using hw
   have hvalF : algebraMap (FractionRing V) F val = tauExpr cf xs w :=
     TauValAt.map_eq hR ψ hz hval (tauValAt_self hev' hw)
-  obtain ⟨Φ, w₀, hN, hact, hint⟩ := GlobalTheory.T.exists_fib_normW_of_intSec E H Dw l Xo c V y G S P
-  obtain ⟨th, hth⟩ := GlobalTheory.T.exists_abelianSection_of_universalFibreSection E H Dw l Xo V y.x P.A Φ F z.x hzx z.s
+  obtain ⟨Φ, w₀, hN, hact, hint⟩ := _root_.GlobalTheory.EtaVal.exists_fib_intTh E H Dw l Xo c V y G S P
+  obtain ⟨th, hth⟩ := _root_.GlobalTheory.EtaVal.exists_secA_secTie E H Dw l Xo V y.x P.A Φ F z.x hzx z.s
   obtain ⟨ϑ, hϑ, hν⟩ := GlobalTheory.T.exists_expandsF_nuGe_zero_of_intTh V hcpl ϖ hϖ P.D Q hQ F v hv P.A G.G G.semi P.U w₀ hN.1 th
     (hint F ψ z th hψ hz hth)
   obtain ⟨tr, htr, htra⟩ := _root_.GlobalTheory.EtaVal.fib_points_mulEquiv E H Dw l Xo V y.x P.A Φ F z.x hzx
@@ -175,7 +171,7 @@ theorem phiC_le_valuation (E : Type) [Field E] [NumberField E] [IsCMField E] (H 
   have key : ∀ q : ℚ, (q : ℝ) ≤ Formalism.MainNotions.ModuliIntegralCharts.phiC cj β / (R : ℝ) ^ 4 → ((1 : ℕ) : ℚ) * q ≤ ((vV V val : ℤ) : ℚ) := by
     intro q hq
     have h := RatBound.le_addVal_prod_sum v (G := Unit) cf (fun _ j b => w (xs j b)) q (fun _ j => by
-      refine GlobalTheory.T.le_sum_of_le_phiC_div_sq E cj hcj1 H.w0 hcj2 P.D.toPre.X Q β hβ hQ0 (R ^ 2) (by nlinarith) n
+      refine _root_.GlobalTheory.EtaVal.sum_cosetMin_ge_phiC_div_sq E cj hcj1 H.w0 hcj2 P.D.toPre.X Q β hβ hQ0 (R ^ 2) (by nlinarith) n
         (fun b => (pt (xs j b)).y) (hspan n (fun b => xs j b) (hsp j)) (fun b => v (w (xs j b)))
         (fun b => hb _) q ?_
       rw [Nat.cast_pow, ← pow_mul]; exact hq)
@@ -313,7 +309,6 @@ theorem exists_tied_integral {κ : KeyRule} (hκ : IsKeyRule κ) (hpq : 1 ≤ Dw
   rw [map_mul, map_pow, RingHom.map_det]
   exact h
 
-
 variable (Xo c) in
 theorem exists_key (hpq : 1 ≤ Dw.p + Dw.q) (hg : ∀ p : ℕ, p.Prime → l.GoodAt p) :
     ∃ K : (Rul Xo c)ˣ, (K : Rul Xo c) ∈ AllWt.secZ Xo c ((4 : ℤ) • keyEx Dw) ∧
@@ -378,12 +373,6 @@ theorem val_stalkPt {Y : Scheme.{0}} {k : Type} [CommRing k] {p : Y ⟶ Sp k} {B
     H0.val (Spec.map (CommRingCat.ofHom ψ) ≫ Y.fromSpecStalk y) i hO hj f = ψ (H0.germ i y hy hi f) := by
   rw [H0.val_apply, H0.germ_apply]
   exact evalPt_stalkPt y ψ _ _ _ _
-
-theorem val_restr_pt {k : Type} [CommRing k] {T' : Scheme.{0}} {p : T' ⟶ Sp k} {B : LB T'} {O O' : T'.Opens}
-    (h : O' ≤ O) {R : Type} [CommRing R] (x : Sp R ⟶ T') (i : B.ι) (hO : ⊤ ≤ x ⁻¹ᵁ O) (hO' : ⊤ ≤ x ⁻¹ᵁ O')
-    (hi : ⊤ ≤ x ⁻¹ᵁ B.U i) (f : H0 p B O) : H0.val x i hO' hi (H0.restr h f) = H0.val x i hO hi f :=
-  GlobalTheory.TangentOrigin.evalPt_res x (inf_le_inf_right _ h) (GlobalTheory.FlagMod.le_preimage_inf hO hi)
-    (GlobalTheory.FlagMod.le_preimage_inf hO' hi) _
 
 theorem exists_extension {Y : Scheme.{0}} [IsIntegral Y] [IsLocallyNoetherian Y] (hN : Geo.Tor.IsNormalScheme Y)
     {k : Type} [CommRing k] {p : Y ⟶ Sp k} {B : LB Y} (hB : B.IsLB) {O : Y.Opens} (hO : (O : Set Y).Nonempty)
@@ -478,10 +467,7 @@ theorem exists_centred {Y : Scheme.{0}} (y : Y) [IsDomain (Y.presheaf.stalk y)]
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Geo.Tor.Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {c : Coeff l}
 
-
 variable {Y : Model Xo c (RingHom.id c.F)} (X : FlagCover Y) (Z : Comp Xo c)
-
-
 
 theorem through_point (y : Y₀ X Z) (T : CDVR) (io : c.F →+* T.Fr) (y' : IntFr Xo c T io)
     (g : (Y₀ X Z).presheaf.stalk y →+* T.V)
@@ -552,7 +538,6 @@ theorem mul_mem_vanBd {a b s : AllWt.Weight Dw} (h : a + b = s) (θ : H0 (str₀
   rw [H0.germ_change i _ y _ hi hc, ProdChart.germ_mul _ _ _ t y _ ha hb hc]
   exact Ideal.mul_mem_left _ _ (Ideal.mul_mem_left _ _ (hf y hy _ hb))
 
-
 end Geometry
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
@@ -568,6 +553,5 @@ theorem four_le_expL {L : ℝ} (hL : 10 ≤ L) : 4 ≤ expL L := by
   have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 3 by norm_num)
   push_cast
   linarith
-
 
 end GlobalTheory.ThetaSteep

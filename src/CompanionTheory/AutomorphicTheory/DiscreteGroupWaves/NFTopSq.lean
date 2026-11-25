@@ -26,7 +26,7 @@ noncomputable section
 
 open Classical
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
@@ -60,14 +60,14 @@ theorem ew_top_eq (p : KB.Pl P Wp Wq) (H : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) 
   rw [Complex.re_ofReal_mul, hn, div_one, Fintype.sum_option]
   by_cases hγ : D.IsLocPt γ (P.r + 1)
   · unfold KB.Pl.RR D.RRplace
-    rw [dite_eq_left ⟨hγ, hγ⟩, dite_eq_right (by omega), if_pos rfl]
+    rw [dite_eq_left ⟨hγ, hγ⟩, dite_eq_right (by omega), ite_eq_left rfl]
     by_cases hw : w = []
-    · rw [if_pos hw, hsInner_self_re]
-      simp only [sqW, sqX, if_pos hw, KB.Pl.V]
+    · rw [ite_eq_left hw, hsInner_self_re]
+      simp only [sqW, sqX, ite_eq_left hw, KB.Pl.V]
       simp [sq]
-    · rw [if_neg hw]
+    · rw [ite_eq_right hw]
       unfold Top.topOf
-      simp only [sqW, sqX, if_neg hw, KB.Pl.V, Complex.re_sum, Complex.re_ofReal_mul, hsInner_self_re,
+      simp only [sqW, sqX, ite_eq_right hw, KB.Pl.V, Complex.re_sum, Complex.re_ofReal_mul, hsInner_self_re,
         Fintype.sum_prod_type, Finset.mul_sum, TBB.TTp]
       rw [show (0 : ℝ) ^ 2 * ‖B.hsVec (D.vecV p.T.base p.ν' p.m₀ H γ)‖ ^ 2 = 0 by simp, zero_add]
       refine Finset.sum_congr rfl fun e _ => Finset.sum_congr rfl fun ρ _ => ?_

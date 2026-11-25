@@ -56,33 +56,30 @@ theorem Generated.proof (hE : Extension.Statement.{u, w, w}) : Generated.Stateme
     rw [e2]
     exact T.smul_mem b (Submodule.subset_span hsec)
 
+  let φ : Ω →ₗ[chartRing S x I] Ω :=
+    { toFun := (x i ^ c * ·), map_add' := mul_add _
+      map_smul' := fun b y => by simp only [RingHom.id_apply, chartRing_smul_def]; ring }
+  let TS : Submodule S Ω :=
+    { carrier := T, add_mem' := T.add_mem, zero_mem' := T.zero_mem
+      smul_mem' := fun r z h => by
+        have e : r • z = algebraMap S (chartRing S x I) r • z := by
+          rw [Algebra.smul_def, chartRing_smul_def]; rfl
+        rw [SetLike.mem_coe, e]; exact T.smul_mem _ h }
   have key : ∀ y ∈ M.tilde 0 I, x i ^ c * y ∈ T := by
     intro y hy
-    refine Submodule.span_induction (p := fun y _ => x i ^ c * y ∈ T) ?_ ?_ ?_ ?_ hy
-    · rintro _ ⟨m, s, a, e, hs, hse, hm, hae, rfl⟩
-      refine Submodule.span_induction
-        (p := fun m _ => x i ^ c * ((aeval x s)⁻¹ • m) ∈ T) ?_ ?_ ?_ ?_ (hM a hm)
-      · rintro _ ⟨j, f, e', hf, hee, rfl⟩
-        rw [smul_eq_mul, smul_eq_mul]
-        exact hgenT j f s e e' hs hf hse (by omega)
-      · rw [smul_zero, mul_zero]; exact T.zero_mem
-      · intro m m' _ _ h h'
-        rw [smul_add, mul_add]; exact T.add_mem h h'
-      · intro r m _ h
-        have : x i ^ c * ((aeval x s)⁻¹ • (r • m)) =
-            (algebraMap S (chartRing S x I) r) • (x i ^ c * ((aeval x s)⁻¹ • m)) := by
-          rw [chartRing_smul_def]
-          simp only [smul_eq_mul, Algebra.smul_def]
-          change _ = algebraMap S Ω r * _
-          ring
-        rw [this]; exact T.smul_mem _ h
-    · rw [mul_zero]; exact T.zero_mem
-    · intro y y' _ _ h h'
-      rw [mul_add]; exact T.add_mem h h'
-    · intro b y _ h
-      have : x i ^ c * (b • y) = b • (x i ^ c * y) := by
-        rw [chartRing_smul_def, chartRing_smul_def]; ring
-      rw [this]; exact T.smul_mem b h
+    change y ∈ Submodule.span _ _ at hy
+    refine (Submodule.span_le.mpr ?_ : _ ≤ T.comap φ) hy
+    rintro _ ⟨m, s, a, e, hs, hse, hm, hae, rfl⟩
+    let ψ : Ω →ₗ[S] Ω :=
+      { toFun := fun m => x i ^ c * ((aeval x s)⁻¹ • m)
+        map_add' := fun _ _ => by rw [smul_add, mul_add]
+        map_smul' := fun r m => by
+          simp only [RingHom.id_apply, smul_eq_mul, Algebra.smul_def]; ring }
+    refine (Submodule.span_le.mpr ?_ : _ ≤ TS.comap ψ) (hM a hm)
+    rintro _ ⟨j, f, e', hf, hee, rfl⟩
+    change x i ^ c * ((aeval x s)⁻¹ • _) ∈ T
+    rw [smul_eq_mul, smul_eq_mul]
+    exact hgenT j f s e e' hs hf hse (by omega)
   change Submodule.span _ _ ≤ T
   rw [Submodule.span_le]
   rintro _ ⟨q, hq, y, hy, rfl⟩

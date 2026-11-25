@@ -3,42 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
 public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitIdempotentPrimeProjectionCorrespondence
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
 public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
@@ -60,7 +24,6 @@ open Formalism.UG (IsUnifV qV IsUnramInv GU KU IsInertAt Hecke dosetInd IsCommen
 open Formalism.MainNotions.SchurIrreducible (IsSplit)
 open GlobalTheory.LGrp (IsUnitarisable IsIrrSmooth bcParam)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -103,20 +66,20 @@ theorem compFin_add_cA_eq_one : ∀ {D : D7} (Z : Finset (Pl D.host.E)) (e : AE 
     by_cases hv : v = v0
     · subst hv
       rcases eq_or_eq_comp_conj (isCMExt_host D) τ0 τ with h | h <;> rw [h] at hQτ ⊢
-      · rw [if_pos (hQτ.trans hPP0.symm), if_neg (by rw [hQτ]; exact (splitPrime_comp_ne (isCMExt_host D) τ0).symm),
+      · rw [ite_eq_left (hQτ.trans hPP0.symm), ite_eq_right (by rw [hQτ]; exact (splitPrime_comp_ne (isCMExt_host D) τ0).symm),
           add_zero]
         exact GlobalTheory.EmbChart.compFin_tensAt _ _
-      · rw [if_neg (by rw [hQτ, hPP0]; exact splitPrime_comp_ne (isCMExt_host D) τ0), if_pos hQτ, zero_add,
+      · rw [ite_eq_right (by rw [hQτ, hPP0]; exact splitPrime_comp_ne (isCMExt_host D) τ0), ite_eq_left hQτ, zero_add,
           GlobalTheory.EmbChart.compFin_tensAt, splitIdem_comp]
     · have h1 : Q ≠ PP := fun h => hv (by rw [← hQv, h, hu])
       have h2 : Q ≠ splitPrime (τ0.comp D.sp.cm.sig) := fun h => hv (by rw [← hQv, h]; exact splitPrime_under _)
-      rw [if_neg h1, if_neg h2, add_zero]
+      rw [ite_eq_right h1, ite_eq_right h2, add_zero]
       exact compFin_tensAt_ne (Ne.symm hv) _
   have hsum : compFin D.host.F D.host.E v0 (∑ Q ∈ Z, es Q) = splitIdem (isCMExt_host D) τ0 +
       (if splitPrime (τ0.comp D.sp.cm.sig) ∈ Z then 1 - splitIdem (isCMExt_host D) τ0 else 0) := by
 
     rw [map_sum, Finset.sum_congr rfl key]
-    simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', if_pos hPP]
+    simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', ite_eq_left hPP]
   have hc : compFin D.host.F D.host.E v0 (cA D (∑ Q ∈ Z, es Q)) =
       sigR _ D.sp.cm.sig (compFin D.host.F D.host.E v0 (∑ Q ∈ Z, es Q)) :=
     (GlobalTheory.SplitIdemDict.compFin_cA _).symm
@@ -125,11 +88,11 @@ theorem compFin_add_cA_eq_one : ∀ {D : D7} (Z : Finset (Pl D.host.E)) (e : AE 
   by_cases hP' : splitPrime (τ0.comp D.sp.cm.sig) ∈ Z
   · exfalso
     have hz := congrArg (compFin D.host.F D.host.E v0) hcc
-    rw [map_mul, hc, hsum, if_pos hP', h1, map_one, mul_one, map_zero] at hz
+    rw [map_mul, hc, hsum, ite_eq_left hP', h1, map_one, mul_one, map_zero] at hz
     have h3 := congrArg (fun y => splitProj τ0 y) hz
     simp only [map_one, map_zero] at h3
     exact one_ne_zero h3
-  · rw [if_neg hP', add_zero, sigR_splitIdem, h1]
+  · rw [ite_eq_right hP', add_zero, sigR_splitIdem, h1]
 
 end GlobalTheory.CompFinIdemSum
 

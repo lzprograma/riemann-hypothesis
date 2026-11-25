@@ -22,11 +22,8 @@ variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N : 
   {x : Fin (N + 1) → Ω}
 
 theorem res_mem_chartRing_of_mem_twistMod_zero {I : Chart x} {a : Ω} (ha : a ∈ twistMod S x 0 I) :
-    a ∈ chartRing S x I := by
-  obtain ⟨i, hi⟩ := I.2.1
-  rw [twistMod_eq_span 0 I hi, zpow_zero, Submodule.mem_span_singleton] at ha
-  obtain ⟨c, rfl⟩ := ha
-  rw [chartRing_smul_def, mul_one]; exact c.2
+    a ∈ chartRing S x I :=
+  AmpleTwistLocal.mem_chartRing_of_mem_zero ha
 
 theorem res_mem_twistMod_zero_of_mem_chartRing {I : Chart x} {a : Ω} (ha : a ∈ chartRing S x I) :
     a ∈ twistMod S x 0 I := by

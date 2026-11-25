@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilTransportAdelicSchwartzCmExtension
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
 public import Formalism.LocalToGlobal.IndefiniteReal.DatumF
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffThetaTransformArchimedeanCm
@@ -176,16 +177,7 @@ theorem map_cA_eq (σ : E →ₐ[F] E) {n m : ℕ} (M : Matrix (Fin n) (Fin m) (
 
 theorem memT_of_UG (σ : E →ₐ[F] E) {nT : ℕ} (JT JA : Matrix (Fin nT) (Fin nT) E) (hA : JA = JTᵀ)
     (a : UG (cA σ) (incM F JA)) : (a.1 : GL (Fin nT) (AF F ⊗[F] E)) ∈ HR (AF F) σ JT := by
-  have ha : a.1.1ᵀ * incM F JA * a.1.1.map (cA σ) = incM F JA := a.2
-  show Formalism.UG.cT _ _ * _ * _ = _
-  have := congrArg Matrix.transpose ha
-  simp only [Matrix.transpose_mul, Matrix.transpose_transpose, hA] at this
-  unfold Formalism.UG.cT JR
-  rw [← map_cA_eq]
-  have e : (incM F JTᵀ)ᵀ = incM F JT := by
-    simp [incM, Matrix.transpose_map]
-  rw [e] at this
-  exact (Matrix.mul_assoc _ _ _).trans this
+  apply _root_.GlobalTheory.TransportF.mem_HR_target <;> assumption
 
 theorem keeps_inv_gram (σ : E →ₐ[F] E) {nS : ℕ} (JS JB : Matrix (Fin nS) (Fin nS) E) (ξ₀ : E) (hξ₀ : ξ₀ ≠ 0)
     (ξ : AF F ⊗[F] E) (hB : ξ • incM F JB = incM F (ξ₀ • JS⁻¹)) (b : UG (cA σ) (incM F JB)) :

@@ -50,17 +50,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquili
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Filter Topology MeasureTheory
 
-namespace GlobalTheory.CapelliFoldBound
-
-open Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.P.JCx2
-
-variable {k r : ℕ} (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-  [InnerProductSpace ℂ Wq]
-
-variable {Wp Wq}
-
-end GlobalTheory.CapelliFoldBound
-
 namespace GlobalTheory
 
 open Filter Topology MeasureTheory in

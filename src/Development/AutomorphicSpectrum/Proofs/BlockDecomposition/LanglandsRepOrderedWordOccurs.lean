@@ -9,45 +9,8 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFor
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityTransitiveLe
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentRepJacquetWordMultiplicity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -73,17 +36,6 @@ theorem isCusp_of_mem_decWord (Γ : Segment k) : ∀ w ∈ Cos.decWord Γ, w.IsC
   obtain ⟨a, rfl⟩ := hw
   exact Γ.isCusp_term a
 
-theorem sum_get_decWord (Γ : Segment k) : ∑ a, ((Cos.decWord Γ).get a).1 = Γ.deg := by
-  have hc : ∀ a, ((Cos.decWord Γ).get a).1 = Γ.d := fun a => by
-    have hm := List.get_mem (Cos.decWord Γ) a
-    simp only [Cos.decWord, List.mem_reverse, List.mem_ofFn] at hm
-    obtain ⟨i, hi⟩ := hm
-    show ((List.ofFn Γ.term).reverse.get a).1 = Γ.d
-    rw [← hi]
-    rfl
-  rw [Finset.sum_congr rfl (fun a _ => hc a), Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
-  simp [Cos.decWord, Segment.deg]
-
 theorem nontrivial_of_isIrreducible {G W : Type} [Group G] [AddCommGroup W] [Module ℂ W]
     {σ : Representation ℂ G W} (h : σ.IsIrreducible) : Nontrivial W := by
   by_contra hW
@@ -92,7 +44,7 @@ theorem nontrivial_of_isIrreducible {G W : Type} [Group G] [AddCommGroup W] [Mod
   exact bot_ne_top (Subrepresentation.toSubmodule_injective (Subsingleton.elim _ _) :
     (⊥ : Subrepresentation σ) = ⊤)
 
-theorem wd_wtW_of_isL : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (hA : GlobalTheory.Published.IrreducibleAdmissibleGL), LSocleGL k → LSegJacquet k → ∀ (𝔪 : Multiset (Segment k)) {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), IsL 𝔪 π → ∀ (h : ℕ) (Δ : Fin h → Segment k), IsOrderedForm Δ 𝔪 → Wd π (wtW Δ) := by
+theorem wd_wtW_of_isL : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (_ : GlobalTheory.Published.IrreducibleAdmissibleGL), LSocleGL k → LSegJacquet k → ∀ (𝔪 : Multiset (Segment k)) {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), IsL 𝔪 π → ∀ (h : ℕ) (Δ : Fin h → Segment k), IsOrderedForm Δ 𝔪 → Wd π (wtW Δ) := by
   intro k _ _ _ _ hA hS hJ 𝔪 N V _ _ π hπ h Δ hΔ
   have hmem : ∀ i, Δ i ∈ 𝔪 := fun i => hΔ.1 ▸ Multiset.mem_map_of_mem Δ (Finset.mem_univ i)
   choose x hx using fun i => SumProd.exists_isLSeg_of_isL hπ (hmem i)
@@ -109,7 +61,7 @@ theorem wd_wtW_of_isL : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSp
     GlobalTheory.CompanionTheory.FrobJm.one_le_jm hA (x ∘ Fin.rev) hd π hsm f
       ⟨v, fun h0 => hv (hfinj (h0.trans (map_zero f).symm))⟩
   have hW : ∀ b, ∑ a, ((Cos.decWord (Δ (Fin.rev b))).get a).1 = ((x ∘ Fin.rev) b).1 := fun b =>
-    (sum_get_decWord _).trans (hx (Fin.rev b)).deg_eq
+    (GlobalTheory.CompanionTheory.FineL.sum_decWord _).trans (hx (Fin.rev b)).deg_eq
   have h2 := _root_.GlobalTheory.CompanionTheory.CsStages.jm_mul_prod_jmL_le hA (x ∘ Fin.rev) hd (fun b => Cos.decWord (Δ (Fin.rev b))) π hsm hfl hW
   have h3 : ∀ b, Cos.jmL (Cos.decWord (Δ (Fin.rev b))) ((x ∘ Fin.rev) b).rep = 1 := fun b =>
     (_root_.GlobalTheory.CompanionTheory.FineL.jmL_cusp_word hA hJ (Δ (Fin.rev b)) _ (hx (Fin.rev b)) _ (isCusp_of_mem_decWord _)).1 rfl

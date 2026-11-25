@@ -1,48 +1,8 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.SigIntIntegrable
 public import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.MeasureTheory.Integral.IntegrableOn
 
 @[expose] public section
@@ -72,9 +32,9 @@ theorem psi_cont (z : Fin (2 * r + k + 1) → ℂ) (c : ℂ) :
     (Complex.continuous_re.comp (continuous_const.mul ?_))))
   refine continuous_finsetSum _ fun a _ => ?_
   by_cases h : a.val + 1 < r
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     fun_prop
-  · simp only [dif_neg h, Matrix.mulVec, dotProduct]
+  · simp only [dite_eq_right h, Matrix.mulVec, dotProduct]
     fun_prop
 
 theorem isClosed_UH : IsClosed (Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r) : Set (Mx k r)) := by
@@ -83,17 +43,7 @@ theorem isClosed_UH : IsClosed (Formalism.QuantumDeterminants.UH (Formalism.Quan
     continuous_const
 
 theorem isClosed_UW (z : Fin (2 * r + k + 1) → ℂ) : IsClosed (Formalism.QuantumDeterminants.UWset k r z : Set (Mx k r)) := by
-  have h1 : IsClosed {g : Mx k r | g ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r)} := isClosed_UH
-  have h2 : IsClosed {g : Mx k r | ∀ a : Fin r, g *ᵥ Formalism.QuantumDeterminants.bvec (Formalism.QuantumDeterminants.eI k r a) =
-      Formalism.QuantumDeterminants.bvec (Formalism.QuantumDeterminants.eI k r a) ∧ g *ᵥ Formalism.QuantumDeterminants.bvec (Formalism.QuantumDeterminants.esI k r a) =
-      Formalism.QuantumDeterminants.bvec (Formalism.QuantumDeterminants.esI k r a)} := by
-    simp only [Set.setOf_forall, Set.setOf_and]
-    exact isClosed_iInter fun a =>
-      (isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const).inter
-        (isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const)
-  have h3 : IsClosed {g : Mx k r | g *ᵥ z = z} :=
-    isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const
-  exact h1.inter (h2.inter h3)
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.TopH.uw_closed <;> assumption
 
 theorem aesm_of_contOn {α E : Type*} [TopologicalSpace α] [MeasurableSpace α] [OpensMeasurableSpace α]
     [SecondCountableTopology α] [NormedAddCommGroup E] [SecondCountableTopology E]
@@ -124,9 +74,5 @@ theorem key_bound {A S X Y a : ℝ} (hA : 1 ≤ A) (hX : 1 ≤ X) (hY : 1 ≤ Y)
   nlinarith [mul_le_mul_of_nonneg_left h1 ha.le, mul_nonneg ha.le h2]
 
 end Basic
-
-section Repro
-
-end Repro
 
 end Formalism.FourierDecayAlt.P.MatrixMultiplicationContinuity

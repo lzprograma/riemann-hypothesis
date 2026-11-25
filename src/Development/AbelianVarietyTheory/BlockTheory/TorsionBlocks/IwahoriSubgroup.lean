@@ -122,8 +122,4 @@ theorem mem_iwahoriInt_iff (F : Type) [Field F] [Valued F (WithZero (Multiplicat
   · intro h i j hij
     exact Ideal.Quotient.eq_zero_iff_mem.2 (h i j hij)
 
-theorem self_mem_iwahoriDoubleCoset {F : Type} [Field F] [Valued F (WithZero (Multiplicative ℤ))]
-    {r : ℕ} (t : Matrix (Fin r) (Fin r) F) : t ∈ iwahoriDoubleCoset t :=
-  ⟨1, one_mem _, 1, one_mem _, by simp⟩
-
 end GlobalTheory.IndefiniteRowSideFullHecke.IwahoriSubgroup

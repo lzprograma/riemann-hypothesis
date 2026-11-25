@@ -14,50 +14,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCa
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpPRealInv
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CvRhoOfParts
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactlySupportedBanachModel
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
 import Mathlib.Tactic.TypeStar
@@ -102,7 +59,7 @@ theorem Mr_iota (R0 : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ) (v : 
   have h : ¬ (iota k r l).val ≤ r := by simp only [iota]; omega
   funext j
   simp only [Mr, Matrix.of_apply]
-  rw [dif_neg h]
+  rw [dite_eq_right h]
   congr 2
   simp only [iota]; omega
 
@@ -126,7 +83,7 @@ theorem Mr_perm (R0 : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ) (v : 
   · have e := Equiv.Perm.extendDomain_apply_not_subtype τ (fEq k r) hq
     simp only [e]
     have h : q.val ≤ r := by omega
-    simp [Mr, dif_pos h]
+    simp [Mr, dite_eq_left h]
 
 theorem det_Mr_perm (R0 : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ) (v : Fin (r + k) → Fin (2 * r + k + 1) → ℂ)
     (τ : Equiv.Perm (Fin (r + k))) :
@@ -198,14 +155,14 @@ theorem det_Mr_expand (R0 : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ)
     funext q
     by_cases h : q.val ≤ r
     · have := hρ q
-      simp only [hA, h, if_true, Finset.mem_singleton] at this
+      simp only [hA, h, ite_true, Finset.mem_singleton] at this
       simp [PhiJ, h, this]
-    · simp only [PhiJ, dif_neg h]
+    · simp only [PhiJ, dite_eq_right h]
       congr 1; ext; simp only [iota]; omega
   · intro J _
     funext l
     have h : ¬ (iota k r l).val ≤ r := by simp only [iota]; omega
-    simp only [PhiJ, dif_neg h]
+    simp only [PhiJ, dite_eq_right h]
     congr 1; ext; simp only [iota]; omega
   · intro ρ hρ
     rw [Fintype.mem_piFinset] at hρ
@@ -219,7 +176,7 @@ theorem det_Mr_expand (R0 : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ)
       · have hq : ρ q = J ⟨q.val - r - 1, by omega⟩ := by
           simp only [hJ]; congr 1; ext; simp only [iota]; omega
         rw [Mr_gt _ _ h]
-        simp only [hg, hcf, dif_neg h]
+        simp only [hg, hcf, dite_eq_right h]
         rw [hq]
     rw [e3]
     have e4 := (Matrix.detRowAlternating (n := Fin (2 * r + k + 1)) (R := ℂ)).toMultilinearMap.map_smul_univ cf
@@ -230,7 +187,7 @@ theorem det_Mr_expand (R0 : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ)
     rw [prod_iota cf (fun q h => by simp [hcf, h])]
     refine Finset.prod_congr rfl (fun l _ => ?_)
     have h : ¬ (iota k r l).val ≤ r := by simp only [iota]; omega
-    simp only [hcf, dif_neg h, hJ]
+    simp only [hcf, dite_eq_right h, hJ]
     congr 1; ext; simp only [iota]; omega
 
 theorem det_Mr_sum (R0 : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ)
@@ -256,11 +213,11 @@ theorem det_Mr_sum (R0 : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ)
   refine Finset.sum_congr rfl (fun C _ => ?_)
   have hiff := AAInvW.strictMono_val_iff C
   by_cases hC : StrictMono C
-  · rw [if_pos (hiff.mpr hC), if_pos hC]
+  · rw [ite_eq_left (hiff.mpr hC), ite_eq_left hC]
     congr 1
     rw [AAInvW.det_transpose_apply]
     rfl
-  · rw [if_neg (fun h => hC (hiff.mp h)), if_neg hC]
+  · rw [ite_eq_right (fun h => hC (hiff.mp h)), ite_eq_right hC]
 
 end RInvCB
 
@@ -440,7 +397,7 @@ theorem det_Mr_lower (R0 R0' : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → �
     ext p q
     rw [Matrix.mul_apply]
     simp only [hL, add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     by_cases hp : p.val ≤ r
     · rw [Mr_le _ _ hp, Mr_le _ _ hp, h p hp]
       simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
@@ -450,7 +407,7 @@ theorem det_Mr_lower (R0 R0' : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → �
       · have hi' : i.val ≤ r := by omega
         simp [hp, hi, Mr_le _ _ hi']
       · simp [hi]
-    · simp only [hp, false_and, if_false, Finset.sum_const_zero, add_zero]
+    · simp only [hp, false_and, ite_false, Finset.sum_const_zero, add_zero]
       rw [Mr_gt _ _ hp, Mr_gt _ _ hp]
   have hdet : L.det = 1 := by
     rw [Matrix.det_of_lowerTriangular]
@@ -503,22 +460,22 @@ theorem nset_wv {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {m : Matrix 
   obtain ⟨_, hm2, hm3⟩ := hm
   funext x
   simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, bvec, Pi.single_apply, mul_ite, mul_one,
-    mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   by_cases hx : x.val < p.val
-  · rw [if_pos hx]
+  · rw [ite_eq_left hx]
     have : wv k r z p x = 0 := by
       unfold wv
       split_ifs with h1
       · simp only [bvec, Pi.single_apply]
-        rw [if_neg]; intro he; rw [he] at hx; simp [eI] at hx
+        rw [ite_eq_right]; intro he; rw [he] at hx; simp [eI] at hx
       · exact hz x (Or.inl (by omega))
     rw [this, zero_add]
-  · rw [if_neg hx, add_zero]
+  · rw [ite_eq_right hx, add_zero]
     unfold wv
     split_ifs with h1
     · have := hm2 ⟨p.val, h1⟩ x (by simp; omega)
       simp only [Matrix.mulVec, dotProduct, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       rw [this]
     · simp only [Matrix.mulVec, dotProduct]
       rw [Finset.sum_eq_single x]
@@ -528,7 +485,7 @@ theorem nset_wv {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {m : Matrix 
             by_contra hc
             apply hzx
             exact hz x (by omega)
-          rw [hm3 x x h3.1 h3.2 (by omega), if_pos rfl, one_mul]
+          rw [hm3 x x h3.1 h3.2 (by omega), ite_eq_left rfl, one_mul]
       · intro j _ hj
         by_cases hzj : z j = 0
         · rw [hzj, mul_zero]
@@ -536,7 +493,7 @@ theorem nset_wv {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {m : Matrix 
             by_contra hc
             apply hzj
             exact hz j (by omega)
-          rw [hm3 x j h3.1 h3.2 (by omega), if_neg (Ne.symm hj), zero_mul]
+          rw [hm3 x j h3.1 h3.2 (by omega), ite_eq_right (Ne.symm hj), zero_mul]
       · intro h; exact absurd (Finset.mem_univ x) h
 
 theorem A_uh {z : Fin (2 * r + k + 1) → ℂ} {h m : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
@@ -582,8 +539,8 @@ theorem inverse_alpha_left_minus : RInvAlphaLeftM := by
   rw [star_smul, smul_dotProduct, smul_eq_mul]
   by_cases hi : i.val < p.val
   · have hi' : i.val < r := by omega
-    rw [if_pos hi, if_pos hi, show wv k r z i = bvec i by simp only [wv, dif_pos hi', eI_val i hi']]
-  · rw [if_neg hi, if_neg hi, star_zero, zero_mul, zero_mul]
+    rw [ite_eq_left hi, ite_eq_left hi, show wv k r z i = bvec i by simp only [wv, dite_eq_left hi', eI_val i hi']]
+  · rw [ite_eq_right hi, ite_eq_right hi, star_zero, zero_mul, zero_mul]
 
 namespace RInvCB
 
@@ -596,11 +553,11 @@ theorem sigF_inv (k r : ℕ) : Function.Involutive (sigF k r) := by
   intro q
   unfold sigF
   by_cases h : q.val < r
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     have h' : r - 1 - q.val < r := by omega
-    simp only [dif_pos h']
+    simp only [dite_eq_left h']
     ext; simp; omega
-  · rw [dif_neg h, dif_neg h]
+  · rw [dite_eq_right h, dite_eq_right h]
 
 def C0' (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (g : Q.Mx k r) (p : Fin (2 * r + k + 1)) : Fin (2 * r + k + 1) → ℂ :=
   ginvH k r g *ᵥ wv k r z p
@@ -611,16 +568,16 @@ theorem minor_matrix_permuted_rows (z : Fin (2 * r + k + 1) → ℂ) (g : Q.Mx k
   simp only [Matrix.submatrix_apply, id, Function.Involutive.coe_toPerm]
   by_cases h1 : q.val < r
   · have hq : q.val ≤ r := by omega
-    have hs : (sigF k r q).val < r := by simp only [sigF, dif_pos h1]; omega
+    have hs : (sigF k r q).val < r := by simp only [sigF, dite_eq_left h1]; omega
     rw [Mr_le _ _ hq, Mr_le _ _ (by omega : (sigF k r q).val ≤ r)]
-    simp only [C0, C0', wv, dif_pos h1, dif_pos hs]
+    simp only [C0, C0', wv, dite_eq_left h1, dite_eq_left hs]
     congr 3
     ext; simp [sigF, h1]
   · have e : sigF k r q = q := by simp [sigF, h1]
     rw [e]
     by_cases hq : q.val ≤ r
     · rw [Mr_le _ _ hq, Mr_le _ _ hq]
-      simp only [C0, C0', wv, dif_neg h1]
+      simp only [C0, C0', wv, dite_eq_right h1]
     · rw [Mr_gt _ _ hq, Mr_gt _ _ hq]
 
 theorem beJ_eq' (z : Fin (2 * r + k + 1) → ℂ) (g : Q.Mx k r) (J : Fin (r + k) → Fin (2 * r + k + 1)) :
@@ -650,8 +607,8 @@ theorem inverse_beta_left_positive : RInvBetaLeftP := by
   rw [Matrix.mulVec_smul]
   by_cases hi : i.val < p.val
   · have hi' : i.val < r := by omega
-    simp only [if_pos hi, C0', wv, dif_pos hi', eI_val i hi']
-  · simp only [if_neg hi, zero_smul]
+    simp only [ite_eq_left hi, C0', wv, dite_eq_left hi', eI_val i hi']
+  · simp only [ite_eq_right hi, zero_smul]
 
 end
 
@@ -680,22 +637,8 @@ def e0A (k r : ℕ) (p : Fin (r + k + 1)) : Fin (2 * r + k + 1) := ⟨p.val, by 
 theorem anisotropic_index_injective : Function.Injective (e0A k r) := fun a b h => by
   simp only [e0A, Fin.ext_iff] at h; exact Fin.ext h
 
-theorem sum_embA {a b : ℕ} (f : Fin a → Fin b) (hf : Function.Injective f) (G : Fin b → ℂ)
-    (hG : ∀ q, (∀ p, f p ≠ q) → G q = 0) : ∑ p, G (f p) = ∑ q, G q := by
-  classical
-  calc ∑ p, G (f p) = ∑ q ∈ Finset.univ.map ⟨f, hf⟩, G q := by rw [Finset.sum_map]; rfl
-    _ = ∑ q, G q := Finset.sum_subset (Finset.subset_univ _) (fun q _ hq => hG q (fun p hp => hq (by
-        simp only [Finset.mem_map, Finset.mem_univ, true_and]; exact ⟨p, hp⟩)))
-
 theorem hermitian_form_column_vanishes (j y : Fin (2 * r + k + 1)) (hj : j.val ≤ r + k) (hy : y.val < r) : Hpk k r y j = 0 := by
   unfold Hpk
-  split_ifs <;> first | rfl | (exfalso; omega)
-
-theorem hpk_esI_right (a : Fin r) (y : Fin (2 * r + k + 1)) :
-    Hpk k r y (esI k r a) = if y = eI k r a then 1 else 0 := by
-  have ha := a.isLt
-  unfold Hpk
-  simp only [esI, eI, Fin.ext_iff]
   split_ifs <;> first | rfl | (exfalso; omega)
 
 variable {z' : Fin (2 * r + k + 1) → ℂ} {w m : B.Mat k r}
@@ -715,11 +658,11 @@ theorem m_colA (hm : m ∈ Nset k r) (q i : Fin (2 * r + k + 1)) (hq : q.val < r
 
 theorem mw_colXA (hw : w ∈ UWset k r z') (i q : Fin (2 * r + k + 1)) (hq : q.val < r) : (m * w) i q = m i q := by
   rw [Matrix.mul_apply]
-  simp only [w_colA hw q hq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [w_colA hw q hq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem mw_XA (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r) (i q : Fin (2 * r + k + 1)) (hi : r ≤ i.val)
     (hq : q.val < r) : (m * w) i q = 0 := by
-  rw [mw_colXA hw i q hq, m_colA hm q i hq (by omega), if_neg]
+  rw [mw_colXA hw i q hq, m_colA hm q i hq (by omega), ite_eq_right]
   intro h; subst h; omega
 
 theorem mw_zA (hz' : inWb k r z') (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r) (i : Fin (2 * r + k + 1))
@@ -730,7 +673,7 @@ theorem mw_zA (hz' : inWb k r z') (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r
     by_cases hj : r ≤ j.val ∧ j.val ≤ r + k
     · rw [hm.2.2 i j hj.1 hj.2 hi]
     · rw [hz' j (by omega), mul_zero, mul_zero]
-  simp only [Matrix.mulVec, dotProduct, e, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Matrix.mulVec, dotProduct, e, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem mw_GV (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r) : m * w ∈ B.GV k r := WeylGroupFacts.uh_mul hm.1 hw.1
 
@@ -742,7 +685,7 @@ theorem P_row (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r) (a : Fin r) (j : F
   rw [charpoly_eq_of_isIso hw hm, Matrix.mul_apply]
   refine Finset.sum_congr rfl (fun y _ => ?_)
   rw [Matrix.mul_apply]
-  simp only [_root_.Formalism.FourierDecayAlt.P.Dx2.DF.hpk_esI, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+  simp only [_root_.Formalism.FourierDecayAlt.P.Dx2.DF.hpk_esI, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
     Matrix.conjTranspose_apply]
 
 theorem esI_of (i : Fin (2 * r + k + 1)) (hi : r + k < i.val) :
@@ -760,7 +703,7 @@ theorem inverse_product_block_zero (hw : w ∈ UWset k r z') (hm : m ∈ Nset k 
 theorem P_XX (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r) (a b : Fin r) :
     ((m * w)⁻¹) (esI k r a) (esI k r b) = star ((m * w) (eI k r b) (eI k r a)) := by
   rw [P_row hw hm]
-  simp only [hpk_esI_right, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Formalism.FourierDecayAlt.P.Qx3.hpk_col_es, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem det_inverse_product_block (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r) :
     ((m * w)⁻¹).det = (((m * w)⁻¹).submatrix (e0A k r) (e0A k r)).det := by
@@ -784,7 +727,7 @@ theorem det_inverse_product_block (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r
       have hi' : r + k < i.val := by omega
       show P i i = 1
       rw [← esI_of i hi', hP, P_XX hw hm, mw_colXA hw _ _ (by simp [eI]; omega),
-        m_colA hm _ _ (by simp [eI]; omega) le_rfl, if_pos rfl, star_one]
+        m_colA hm _ _ (by simp [eI]; omega) le_rfl, ite_eq_left rfl, star_one]
     · intro i j hij
       obtain ⟨i, hi⟩ := i
       obtain ⟨j, hj⟩ := j
@@ -793,14 +736,14 @@ theorem det_inverse_product_block (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r
       have hlt : j.val < i.val := hij
       show P i j = 0
       rw [← esI_of i hi', ← esI_of j hj', hP, P_XX hw hm, mw_colXA hw _ _ (by simp [eI]; omega),
-        m_colA hm _ _ (by simp [eI]; omega) (by simp [eI]; omega), if_neg (by simp [eI, Fin.ext_iff]; omega),
+        m_colA hm _ _ (by simp [eI]; omega) (by simp [eI]; omega), ite_eq_right (by simp [eI, Fin.ext_iff]; omega),
         star_zero]
   rw [e1, e2, mul_one]
 
 theorem herm_bvec (z' : Fin (2 * r + k + 1) → ℂ) (x : Fin (2 * r + k + 1)) :
     herm (Hpk k r) (bvec x) z' = (star z' ᵥ* Hpk k r) x := by
   simp only [herm, bvec, Matrix.mulVec, dotProduct, Matrix.vecMul, Pi.single_apply, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem zeta_full (hz' : inWb k r z') (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r) (j : Fin (2 * r + k + 1))
     (hj : j.val ≤ r + k) : ((star z' ᵥ* Hpk k r) ᵥ* (m * w)⁻¹) j = (star z' ᵥ* Hpk k r) j := by
@@ -819,7 +762,7 @@ theorem zeta_fix (hz' : inWb k r z') (hw : w ∈ UWset k r z') (hm : m ∈ Nset 
   have hq : (e0A k r q).val ≤ r + k := by simp [e0A]; omega
   rw [herm_bvec, ← zeta_full hz' hw hm _ hq]
   simp only [Matrix.vecMul, dotProduct, Matrix.submatrix_apply, herm_bvec]
-  refine sum_embA (e0A k r) anisotropic_index_injective (fun x => (star z' ᵥ* Hpk k r) x * ((m * w)⁻¹) x (e0A k r q)) (fun x hx => ?_)
+  refine Formalism.FourierDecayAlt.P.CutMP.InvEig.sum_emb (e0A k r) anisotropic_index_injective (fun x => (star z' ᵥ* Hpk k r) x * ((m * w)⁻¹) x (e0A k r q)) (fun x hx => ?_)
   have : r + k < x.val := by
     by_contra hc
     exact hx ⟨x.val, by omega⟩ (Fin.ext (by simp [e0A]))
@@ -863,8 +806,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.RInvCov
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.P.CapelliWordSumExpansion Formalism.FourierDecayAlt.P.LieDecompositionLocal Formalism.FourierDecayAlt.P.FourTermExpansion
   Formalism.FourierDecayAlt.P.FiniteSumLocalExpansion
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {k r : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
@@ -976,7 +917,6 @@ open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Form
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
-
 open Classical in
 theorem sum_sortM {M : Type*} [AddCommGroup M] [Module ℂ M] {t N : ℕ} (F : (Fin t → Fin N) → M)
     (hF : ∀ (d : Fin t → Fin N) (τ : Equiv.Perm (Fin t)), F (d ∘ τ) = ((Equiv.Perm.sign τ : ℤ) : ℂ) • F d)
@@ -987,9 +927,8 @@ theorem sum_sortM {M : Type*} [AddCommGroup M] [Module ℂ M] {t N : ℕ} (F : (
     Finset.sum_filter]
   refine Finset.sum_congr rfl (fun C _ => ?_)
   by_cases h : StrictMono C
-  · rw [if_pos h, if_pos (show StrictMono fun l => ((C l : Fin N) : ℕ) from h)]
-  · rw [if_neg h, if_neg (show ¬ StrictMono fun l => ((C l : Fin N) : ℕ) from h)]
-
+  · rw [ite_eq_left h, ite_eq_left (show StrictMono fun l => ((C l : Fin N) : ℕ) from h)]
+  · rw [ite_eq_right h, ite_eq_right (show ¬ StrictMono fun l => ((C l : Fin N) : ℕ) from h)]
 
 open Classical in
 theorem collapse2 {M : Type*} [AddCommGroup M] [Module ℂ M] {t N : ℕ}
@@ -1027,7 +966,6 @@ theorem det_cols {t N : ℕ} (S : Matrix (Fin N) (Fin N) ℂ) (b d : Fin t → F
   rfl
 
 variable {k r : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-
 
 open Classical in
 theorem qminor_right (S : Mat k r) (hS : S ∈ GV k r) {t : ℕ} (a b : Fin t → Fin (2 * r + k + 1)) (u : ℂ)
@@ -1152,8 +1090,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.RInvCov
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.P.CapelliWordSumExpansion
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq]
 
@@ -1222,8 +1158,6 @@ end Formalism.FourierDecayAlt.P.CutMP.RInvCov
 namespace Formalism.FourierDecayAlt.P.CutMP
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.B RInvCov
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem jDRInvFn_of (hA : RInvAlphaP) (hB : RInvBetaP) (hBL : RInvBetaLeftP) : JDRInvFn := by
   intro k r Wp Wq _ _ _ _ D Y p hp F hF g hg

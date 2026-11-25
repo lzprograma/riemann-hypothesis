@@ -56,7 +56,6 @@ public import Formalism.SharedLemmas.NormLeOneOfIntegral
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 open Formalism.BasicNotions.Loc
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.PlaceOfEmb
 
@@ -96,8 +95,7 @@ theorem ballIdeal_isPrime (τ : E →+* C) : (ballIdeal τ).IsPrime := by
   · intro a b hab
     change ‖τ ((a : E) * (b : E))‖ < 1 at hab
     rw [map_mul, norm_mul] at hab
-    by_contra h
-    push_neg at h
+    by_contra! h
     rw [mem_ballIdeal, mem_ballIdeal] at h
     have ha : ‖τ (a : E)‖ = 1 := le_antisymm (norm_map_le_one τ a) (not_lt.1 h.1)
     have hb : ‖τ (b : E)‖ = 1 := le_antisymm (norm_map_le_one τ b) (not_lt.1 h.2)

@@ -45,6 +45,7 @@ import Mathlib.Topology.Sheaves.Init
 @[expose] public section
 
 open MeasureTheory Matrix Filter Topology
+open scoped Formalism.DoubleCosetMeasures
 
 noncomputable section
 

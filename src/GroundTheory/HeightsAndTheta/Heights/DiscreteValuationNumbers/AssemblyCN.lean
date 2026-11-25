@@ -118,7 +118,6 @@ namespace BlockAdjoinPrime
 
 variable {R : Type*} [CommRing R] {K : Type*} {ι : K → Type*}
 
-
 open Classical in
 def killB (B : Set K) : MRing ι R →ₐ[R] MRing ι R :=
   by
@@ -147,11 +146,11 @@ theorem killB_monomial (B : Set K) (d : (Σ k, ι k) →₀ ℕ) (a : R) :
   · rw [monomial_eq, algebraMap_eq]
     congr 1
     refine Finsupp.prod_congr fun v hv => ?_
-    rw [if_neg (h v hv)]
+    rw [ite_eq_right (h v hv)]
   · push Not at h
     obtain ⟨v, hv, hB⟩ := h
     rw [Finsupp.prod, Finset.prod_eq_zero hv, mul_zero]
-    rw [if_pos hB, zero_pow (Finsupp.mem_support_iff.mp hv)]
+    rw [ite_eq_left hB, zero_pow (Finsupp.mem_support_iff.mp hv)]
 
 open Classical in
 theorem coeff_killB (B : Set K) (p : MRing ι R) (d : (Σ k, ι k) →₀ ℕ) :
@@ -224,8 +223,8 @@ theorem killB_mem {Q : Ideal (MRing ι R)} (hQ : IsMultiHomogIdeal Q) (B : Set K
         simp only [M, Finset.mem_filter, Finset.mem_image]
         exact ⟨fun h => h.2, fun h => ⟨⟨d, hmem, rfl⟩, h⟩⟩
       by_cases hP : ∀ v ∈ d.support, v.1 ∉ B
-      · rw [if_pos hP, if_pos (hiff.mpr hP)]
-      · rw [if_neg hP, if_neg (fun h => hP (hiff.mp h))]
+      · rw [ite_eq_left hP, ite_eq_left (hiff.mpr hP)]
+      · rw [ite_eq_right hP, ite_eq_right (fun h => hP (hiff.mp h))]
   rw [key]
   exact Q.sum_mem fun m _ => hQ q hq m
 
@@ -345,7 +344,6 @@ instance finiteDimensional [∀ k, Fintype (ι k)] (m : K → ℕ) :
 
 attribute [local instance] MvPolynomial.weightedGradedAlgebra
 
-
 open Classical in
 theorem component_mul {x : MRing ι F} {e : K → ℕ} (hx : IsMultiHomog x e) (y : MRing ι F)
     (m : K → ℕ) :
@@ -393,17 +391,17 @@ theorem CutPieces.proof : CutPieces.Statement := by
       ⟨weightedHomogeneousComponent_mem _ _ _, hI i hi m⟩, y, ?_⟩
     classical
     have h1 := weightedHomogeneousComponent_of_mem (m := m) hf
-    rw [if_pos rfl, map_add (f := _)] at h1
+    rw [ite_eq_left rfl, map_add (f := _)] at h1
     exact h1.symm
   by_cases hem : e ≤ m
-  · rw [if_pos hem]
+  · rw [ite_eq_left hem]
     set A := S m ⊓ I.restrictScalars F
     set B := (S (m - e)).map μ
     have hsup : S m ⊓ (I ⊔ Ideal.span {x}).restrictScalars F = A ⊔ B := by
       apply le_antisymm
       · rintro f ⟨hf, hfI⟩
         obtain ⟨i, hi, y, rfl⟩ := hsplit f hf hfI
-        rw [CutPieces.component_mul hx, if_pos hem]
+        rw [CutPieces.component_mul hx, ite_eq_left hem]
         exact Submodule.add_mem_sup hi
           ⟨_, weightedHomogeneousComponent_mem _ _ _, rfl⟩
       · refine sup_le (inf_le_inf_left _ (Submodule.restrictScalars_mono F le_sup_left)) ?_
@@ -429,12 +427,12 @@ theorem CutPieces.proof : CutPieces.Statement := by
     rw [hinf, h1, h2] at key
     rw [hsup]
     omega
-  · rw [if_neg hem, add_zero]
+  · rw [ite_eq_right hem, add_zero]
     have hsup : S m ⊓ (I ⊔ Ideal.span {x}).restrictScalars F = S m ⊓ I.restrictScalars F := by
       apply le_antisymm
       · rintro f ⟨hf, hfI⟩
         obtain ⟨i, hi, y, rfl⟩ := hsplit f hf hfI
-        rw [CutPieces.component_mul hx, if_neg hem, add_zero]
+        rw [CutPieces.component_mul hx, ite_eq_right hem, add_zero]
         exact hi
       · exact inf_le_inf_left _ (Submodule.restrictScalars_mono F le_sup_left)
     rw [hsup]
@@ -966,22 +964,6 @@ open MvPolynomial
 
 universe u
 
-theorem finite_setOf_weight_blockWeight_eq {K : Type} [Fintype K] [DecidableEq K] (ι : K → Type)
-    [∀ k, Fintype (ι k)] (m : K → ℕ) :
-    {d : (Σ k, ι k) →₀ ℕ | Finsupp.weight (blockWeight ι) d = m}.Finite := by
-  refine ((Set.Finite.pi' fun v : (Σ k, ι k) => Set.finite_le_nat (m v.1)).preimage
-    DFunLike.coe_injective.injOn).subset ?_
-  intro d hd
-  simp only [Set.mem_ofPred_eq] at hd
-  simp only [Set.mem_preimage, Set.mem_ofPred_eq]
-  intro v
-  rw [← hd, Finsupp.weight_apply, Finsupp.sum, Finset.sum_apply]
-  by_cases hv : v ∈ d.support
-  · refine le_trans ?_ (Finset.single_le_sum
-      (f := fun u => (d u • blockWeight ι u) v.1) (fun _ _ => Nat.zero_le _) hv)
-    simp [blockWeight]
-  · simp [Finsupp.notMem_support_iff.mp hv]
-
 theorem mem_of_C_pow_mul_mem {O : Type u} [CommRing O] {K : Type} {ι : K → Type}
     {P : Ideal (MRing ι O)} {ϖ : O} (hP : ∀ x, C ϖ * x ∈ P → x ∈ P) :
     ∀ (n : ℕ) (y : MRing ι O), C (ϖ ^ n) * y ∈ P → y ∈ P := by
@@ -998,7 +980,7 @@ theorem GradedPieceFree.proof : GradedPieceFree.Statement := by
   intro O _ _ _ ϖ hϖ K _ _ ι _ P hP m
   have hfg : (weightedHomogeneousSubmodule O (blockWeight ι) m).FG := by
     rw [weightedHomogeneousSubmodule_eq_finsupp_supported, ← Module.Finite.iff_fg]
-    have := (finite_setOf_weight_blockWeight_eq ι m).to_subtype
+    have := (GroundTheory.Heights₂.Heights.NumbersDVR.finite_blockWeight_eq ι m).to_subtype
     exact Module.Finite.of_basis (basisRestrictSupport O _)
   have hfin : Module.Finite O (gradedPieceR P m) := Module.Finite.iff_fg.mpr (hfg.map _)
   have htf : Module.IsTorsionFree O (gradedPieceR P m) := by
@@ -1047,9 +1029,9 @@ theorem HilbFnCut.proof (h1 : GradedPieceQuot.Statement.{u}) (h2 : CutPieces.Sta
     have hC := h2 F K ι I x e n hI hx hnzd
     have hL : hilbFn (I ⊔ Ideal.span {x}) m =
         (Module.finrank F (gradedPiece (I ⊔ Ideal.span {x}) n) : ℤ) := by
-      unfold hilbFn; rw [if_pos hm]
+      unfold hilbFn; rw [ite_eq_left hm]
     have hM : hilbFn I m = (Module.finrank F (gradedPiece I n) : ℤ) := by
-      unfold hilbFn; rw [if_pos hm]
+      unfold hilbFn; rw [ite_eq_left hm]
     rw [hL, hM, hA, hB]
     by_cases he : e ≤ n
     · have hme : ∀ k, 0 ≤ (m - fun k => (e k : ℤ)) k := by
@@ -1066,9 +1048,9 @@ theorem HilbFnCut.proof (h1 : GradedPieceQuot.Statement.{u}) (h2 : CutPieces.Sta
         omega
       have hN : hilbFn I (m - fun k => (e k : ℤ)) =
           (Module.finrank F (gradedPiece I (n - e)) : ℤ) := by
-        unfold hilbFn; rw [if_pos hme, hq]
+        unfold hilbFn; rw [ite_eq_left hme, hq]
       rw [hN, h1 F K ι I (n - e)]
-      rw [if_pos he] at hC
+      rw [ite_eq_left he] at hC
       rw [hC]
       ring
     · have hme : ¬ ∀ k, 0 ≤ (m - fun k => (e k : ℤ)) k := by
@@ -1080,9 +1062,9 @@ theorem HilbFnCut.proof (h1 : GradedPieceQuot.Statement.{u}) (h2 : CutPieces.Sta
         simp only [Pi.sub_apply, hn] at h1k ⊢
         omega
       have hN : hilbFn I (m - fun k => (e k : ℤ)) = 0 := by
-        unfold hilbFn; rw [if_neg hme]
+        unfold hilbFn; rw [ite_eq_right hme]
       rw [hN]
-      rw [if_neg he] at hC
+      rw [ite_eq_right he] at hC
       rw [hC]
       ring
   · obtain ⟨k, hk⟩ := not_forall.mp hm
@@ -1092,7 +1074,7 @@ theorem HilbFnCut.proof (h1 : GradedPieceQuot.Statement.{u}) (h2 : CutPieces.Sta
       simp only [Pi.sub_apply] at this
       omega
     unfold hilbFn
-    rw [if_neg hm, if_neg hm, if_neg hme, sub_zero]
+    rw [ite_eq_right hm, ite_eq_right hm, ite_eq_right hme, sub_zero]
 
 end GroundTheory.Heights₂.Heights.NumbersDVR
 end -- clump:auto
@@ -1231,7 +1213,7 @@ theorem IntNumAssoc.proof (h1 : PrimeFiltration.Statement.{u})
         rw [e]
         exact hdim
       have hmin := h5 _ J p.1 (n + Fintype.card K) (hl p hpl).2.2 hJ' hbig
-      rw [if_pos (hfin.mem_toFinset.mpr hmin), if_pos hrel]
+      rw [ite_eq_left (hfin.mem_toFinset.mpr hmin), ite_eq_left hrel]
   have hl2 : (l.map fun p => intNum F p.1 bs) = l.map fun p =>
       ∑ W ∈ hfin.toFinset, if p.1 = W then (if IsRelevant W then intNum F W bs else 0) else 0 :=
     List.map_congr_left hp
@@ -1252,7 +1234,7 @@ theorem IntNumAssoc.proof (h1 : PrimeFiltration.Statement.{u})
   rw [IntNumAssoc.list_sum_ite_mul]
   unfold idealCycle
   by_cases hr : IsRelevant W
-  · rw [dite_eq_left ⟨hWm, hr⟩, if_pos hr]
+  · rw [dite_eq_left ⟨hWm, hr⟩, ite_eq_left hr]
     have hcount : multAt J W = (l.map fun p => if p.1 = W then (1 : ℕ∞) else 0).sum := by
       rw [hmult W]
       congr 1
@@ -1261,7 +1243,7 @@ theorem IntNumAssoc.proof (h1 : PrimeFiltration.Statement.{u})
       have := (hl p hpl).1
       exact h3 F K ι J p.1 W (hl p hpl).2.2 hWm
     rw [hcount, IntNumAssoc.list_sum_ite_enat, ENat.toNat_natCast]
-  · rw [dite_eq_right (fun h => hr h.2), if_neg hr]
+  · rw [dite_eq_right (fun h => hr h.2), ite_eq_right hr]
     simp
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

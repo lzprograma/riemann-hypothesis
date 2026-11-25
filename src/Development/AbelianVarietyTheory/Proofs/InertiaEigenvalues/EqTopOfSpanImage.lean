@@ -145,7 +145,7 @@ theorem mem_radical_of_mem {O E : Type} [CommRing O] [IsNoetherianRing O] [CommR
   by_cases h : ∀ k, PowerSeries.coeff k f ∈ J
   · exact key f h
   exfalso
-  push_neg at h
+  push Not at h
   let k := Nat.find h
   have hk : IsUnit (PowerSeries.coeff k f) := (hO _).resolve_right fun ⟨r, hr⟩ =>
     Nat.find_spec h ⟨r, Ideal.mem_span_singleton.2 hr⟩
@@ -178,8 +178,7 @@ theorem map_maximal_ne_top {O E R : Type} [CommRing O] [IsNoetherianRing O] [Com
       (sInf_le ⟨bot_le, hm⟩)
   have hrad : (Ideal.span {(p : E)}).radical ≤ m := hm.isPrime.radical_le_iff.2 hpm
   obtain ⟨i, hi⟩ : ∃ i, a (letE i) ∉ m := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have h1 : ∑ i, (letE i : LetA O n) = 1 := by
       funext k
       simp [letE, Finset.sum_apply, Pi.single_apply]
@@ -300,7 +299,7 @@ theorem ioE_injective : Function.Injective E.ioE := by
     exact not_subsingleton _ ((Module.finrank_eq_zero_iff_of_free O _).1 h1.symm)
   let b := Module.Free.chooseBasis W.EE (W.DD W.one)
   obtain ⟨i⟩ := b.index_nonempty
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   have h1 : x • b i = 0 := by
     apply E.jD_inj

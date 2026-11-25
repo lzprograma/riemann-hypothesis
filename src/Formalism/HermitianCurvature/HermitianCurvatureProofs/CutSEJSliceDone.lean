@@ -9,53 +9,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeibnizClsC
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableOfContinuousOnZero
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SfiniteOfIsHaarOn
 import Mathlib.Algebra.Order.Star.Real
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtFsvSelf
@@ -79,8 +35,6 @@ namespace Formalism.FourierDecayAlt.P.CutSE
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.P5 Formalism.FourierDecayAlt.P5.HerA Formalism.FourierDecayAlt.P5.HerB Formalism.FourierDecayAlt.P5.HerC
   Formalism.FourierDecayAlt.P5.HerD
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 section MeasJ
 
 variable {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [NormedAddCommGroup Wp]
@@ -95,12 +49,12 @@ theorem glueMapS_continuous (l : Fin r) (c : Fin r → ℂ) : Continuous (glueMa
   refine Continuous.prodMk ?_ ?_
   · refine continuous_pi fun m => ?_
     by_cases h : (l.succ : Fin (r + 1)).val ≤ m.val
-    · simp only [glue, h, dif_pos]
+    · simp only [glue, h, dite_eq_left]
       exact (continuous_apply _).comp (continuous_snd.comp continuous_fst)
-    · simp only [glue, h, dif_neg, not_false_eq_true, Function.update_apply]
+    · simp only [glue, h, dite_eq_right, not_false_eq_true, Function.update_apply]
       by_cases hm : m = l
-      · simp only [hm, if_true] <;> fun_prop
-      · simp only [hm, if_false] <;> fun_prop
+      · simp only [hm, ite_true] <;> fun_prop
+      · simp only [hm, ite_false] <;> fun_prop
   · exact continuous_matrix fun i j => by simp only [Matrix.of_apply]; fun_prop
 
 theorem measurableSet_glueMapS_DomR (l : Fin r) (c : Fin r → ℂ) :
@@ -251,9 +205,6 @@ theorem wOp_cons (X : ActualOps k r z z' π π') (l : Fin r) (j : Fin 6) (js : L
     (Ψ : RadSp k r z z' π π') : wOp X l (j :: js) Ψ = X.op l j (wOp X l js Ψ) := by
   simp [wOp, List.map_cons, List.prod_cons]
 
-theorem wOp_nil (X : ActualOps k r z z' π π') (l : Fin r) (Ψ : RadSp k r z z' π π') : wOp X l [] Ψ = Ψ := by
-  simp [wOp]
-
 theorem slice_diffAt (Ψ : RadSp k r z z' π π') (g : Mx k r) {p : Fin r → ℂ} (hp : p ∈ OmX r) :
     DifferentiableAt ℝ (fun c' => (Ψ : Fn k r (Wq →L[ℂ] Wp)) c' g) p :=
   (radSp_regular Ψ g p).1 hp
@@ -356,25 +307,25 @@ theorem nfp_der (b : Bool) (js : List (Fin 6)) (h : NFP X l s Wv js) :
     intro i
     rw [wOp_cons, op_pt]
     cases b
-    · simp only [Bool.false_eq_true, if_false]
+    · simp only [Bool.false_eq_true, ite_false]
       show Formalism.QuantumDeterminants.pbOp l _ p = _
-      unfold Formalism.QuantumDeterminants.pbOp; rw [if_pos hp]
-    · simp only [if_true]
+      unfold Formalism.QuantumDeterminants.pbOp; rw [ite_eq_left hp]
+    · simp only [ite_true]
       show Formalism.QuantumDeterminants.pOp l _ p = _
-      unfold Formalism.QuantumDeterminants.pOp; rw [if_pos hp]
+      unfold Formalism.QuantumDeterminants.pOp; rw [ite_eq_left hp]
   simp only [hR]
   cases b
-  · simp only [Bool.false_eq_true, if_false, mL]
+  · simp only [Bool.false_eq_true, ite_false, mL]
     show Formalism.QuantumDeterminants.pbOp l _ p = _
     unfold Formalism.QuantumDeterminants.pbOp
-    rw [if_pos hp, hW2, Finset.smul_sum, ← Finset.sum_add_distrib]
+    rw [ite_eq_left hp, hW2, Finset.smul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [v]
     module
-  · simp only [if_true, mL]
+  · simp only [ite_true, mL]
     show Formalism.QuantumDeterminants.pOp l _ p = _
     unfold Formalism.QuantumDeterminants.pOp
-    rw [if_pos hp, hW1, Finset.smul_sum, ← Finset.sum_add_distrib]
+    rw [ite_eq_left hp, hW1, Finset.smul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [v]
     module
@@ -526,25 +477,17 @@ variable {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [Normed
   [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp]
   [FiniteDimensional ℂ Wq] {π : Mx k r → (Wp →L[ℂ] Wp)} {π' : Mx k r → (Wq →L[ℂ] Wq)}
 
-theorem dT_lc (X : ActualOps k r z z' π π') (l : Fin r) {Ξ : RadSp k r z z' π π'} (h : Ξ ∈ lcSub k r z z' π π') :
-    dT X l Ξ ∈ lcSub k r z z' π π' := by
-  simp only [dT, Module.End.mul_apply]; exact op_lc X l 2 _ (op_lc X l 0 _ h)
-
-theorem dTb_lc (X : ActualOps k r z z' π π') (l : Fin r) {Ξ : RadSp k r z z' π π'} (h : Ξ ∈ lcSub k r z z' π π') :
-    dTb X l Ξ ∈ lcSub k r z z' π π' := by
-  simp only [dTb, Module.End.mul_apply]; exact op_lc X l 5 _ (op_lc X l 3 _ h)
-
 theorem seven_derivatives_preserve_compact (X : ActualOps k r z z' π π') (l : Fin r) {Ξ : RadSp k r z z' π π'} (h : Ξ ∈ lcSub k r z z' π π')
     (i : Fin 7) : wd7 X l Ξ i ∈ lcSub k r z z' π π' := by
   fin_cases i <;>
     first
     | exact h
-    | exact dT_lc X l h
-    | exact dTb_lc X l h
-    | exact dT_lc X l (dT_lc X l h)
-    | exact dTb_lc X l (dT_lc X l h)
-    | exact dT_lc X l (dTb_lc X l h)
-    | exact dTb_lc X l (dTb_lc X l h)
+    | exact Formalism.FourierDecayAlt.P.CutSE.dT_lc_OuterLeib X l h
+    | exact Formalism.FourierDecayAlt.P.CutSE.dTb_lc_OuterLeib X l h
+    | exact Formalism.FourierDecayAlt.P.CutSE.dT_lc_OuterLeib X l (Formalism.FourierDecayAlt.P.CutSE.dT_lc_OuterLeib X l h)
+    | exact Formalism.FourierDecayAlt.P.CutSE.dTb_lc_OuterLeib X l (Formalism.FourierDecayAlt.P.CutSE.dT_lc_OuterLeib X l h)
+    | exact Formalism.FourierDecayAlt.P.CutSE.dT_lc_OuterLeib X l (Formalism.FourierDecayAlt.P.CutSE.dTb_lc_OuterLeib X l h)
+    | exact Formalism.FourierDecayAlt.P.CutSE.dTb_lc_OuterLeib X l (Formalism.FourierDecayAlt.P.CutSE.dTb_lc_OuterLeib X l h)
 
 theorem pairAt_self_real (μ : Measure (Mt k r)) (Ξ : RadSp k r z z' π π') (p : Fin r → ℂ) :
     pairAt μ Ξ Ξ p = ((‖pairAt μ Ξ Ξ p‖ : ℝ) : ℂ) := by
@@ -892,27 +835,7 @@ private theorem opL_eq_zero_of_eventuallyEq_zero {m : ℕ} {E : Type*} [NormedAd
 
 theorem jsl_wOp_lc (X : ActualOps k r z z' π π') (l : Fin r) (js : List (Fin 6)) :
     ∀ Φ ∈ lcSub k r z z' π π', wOp X l js Φ ∈ lcSub k r z z' π π' := by
-  have hmem : ∀ Ψ : RadSp k r z z' π π', Ψ ∈ lcSub k r z z' π π' ↔ ∀ c ∈ OmX r, LCptAt Ψ c :=
-    fun Ψ => Iff.rfl
-  have hop : ∀ j, ∀ Ψ ∈ lcSub k r z z' π π', X.op l j Ψ ∈ lcSub k r z z' π π' := by
-    intro j Ψ hΨ
-    rw [hmem] at hΨ ⊢
-    intro c hc
-    obtain ⟨U', hU', hcU, K, hK, hKG, h0⟩ := hΨ c hc
-    refine ⟨U', hU', hcU, K, hK, hKG, fun c' hc' g hg hgK => ?_⟩
-    rw [X.op_apply]
-    show opL l j (fun c'' => (Ψ : Fn k r (Wq →L[ℂ] Wp)) c'' g) c' = 0
-    apply opL_eq_zero_of_eventuallyEq_zero
-    filter_upwards [hU'.mem_nhds hc'] with c'' hc''
-    exact h0 c'' hc'' g hg hgK
-  induction js with
-  | nil =>
-    intro Φ hΦ
-    simpa [wOp] using hΦ
-  | cons j js ih =>
-    intro Φ hΦ
-    show X.op l j (wOp X l js Φ) ∈ lcSub k r z z' π π'
-    exact hop j _ (ih Φ hΦ)
+  apply _root_.Formalism.FourierDecayAlt.P.CutSE.wOp_lcJ <;> assumption
 
 theorem jsl_hsInner_self_norm (C : Wq →L[ℂ] Wp) : ‖B.hsInner C C‖ = ‖B.hsVec C‖ ^ 2 := by
   rw [B.hsInner, inner_self_eq_norm_sq_to_K]
@@ -980,12 +903,6 @@ theorem jsl_int_norm_self (μ : Measure (Mt k r)) (i : Fin (r + 1)) (v : RadSp k
   · exact Finset.prod_nonneg fun l _ => by positivity
   · exact integral_nonneg fun g => by positivity
 
-theorem jsl_glue_self (l : Fin r) (c : Fin r → ℂ) (t : ℂ) (c' : Cf r l.succ) :
-    glue l.succ (Function.update c l t) c' l = t := by
-  unfold glue
-  rw [dite_eq_right (by simp [Fin.val_succ])]
-  simp
-
 end JSL
 
 theorem jSL2Loc_of : JSWordNF → JSRadLoc → SpectralL2Locality := by
@@ -1040,7 +957,7 @@ theorem jSL2Loc_of : JSWordNF → JSRadLoc → SpectralL2Locality := by
     intro c' g
     by_cases hxo : glue l.succ (Function.update c l t) c' ∈ OmX P.r
     · have e := hE (Wn Ψ) _ hxo g
-      rw [hΨeq, jsl_glue_self] at e
+      rw [hΨeq, Formalism.FourierDecayAlt.P5.glue_succ_update] at e
       exact e
     · have h0 : ∀ w : RadSp P.k P.r z z' π π',
           (w : Fn P.k P.r (Wq →L[ℂ] Wp)) (glue l.succ (Function.update c l t) c') g = 0 :=

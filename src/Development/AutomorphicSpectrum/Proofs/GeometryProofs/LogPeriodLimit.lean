@@ -16,53 +16,13 @@ import GroundTheory.HeightsAndTheta.Heights.Regularisation.Assembly
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.PLogCoverDescent
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.PPuncturedExpOrder
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.PRiemannExtensionSlices
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
 import Mathlib.CategoryTheory.Monoidal.Category
@@ -161,7 +121,7 @@ theorem form_coords (E : LinearMap.BilinForm ℤ Λ)
   LinearMap.smul_apply, smul_eq_mul, (hE _ _).1, (hE _ _).2.1, (hE _ _).2.2, hba,
   mul_zero, Finset.sum_const_zero, add_zero, zero_add, mul_ite, mul_neg,
   dotProduct]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true, mul_neg, Finset.sum_neg_distrib]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true, mul_neg, Finset.sum_neg_distrib]
   rw [sub_eq_add_neg]
   congr 1
   · exact Finset.sum_congr rfl fun _ _ => by ring
@@ -324,13 +284,13 @@ theorem at_point {n a g : ℕ} {Λ : Type} [AddCommGroup Λ] (L : Flat.LogPeriod
     intro m
     refine ⟨fun i => ?_, fun k hk => ?_⟩
     · have hi : (Fin.castLE L.a_le i).val < a := i.2
-      simp only [hws, hi, if_true]
+      simp only [hws, hi, ite_true]
       by_cases h0 : z (Fin.castLE L.a_le i) = 0
       · simp [h0, hrpos m]
-      · simp only [h0, if_false, Complex.log_re]
+      · simp only [h0, ite_false, Complex.log_re]
         exact Real.log_neg (norm_pos_iff.2 h0) ((hzk _).trans_le hρ)
     · have hk' : ¬ k.val < a := not_lt.2 hk
-      simp only [hws, hk', if_false]
+      simp only [hws, hk', ite_false]
       exact (hzk k).trans_le hρ
   set zs : ℕ → Fin n → ℂ := fun m => expCover a (ws m) with hzs
   have hzs_k : ∀ m k, zs m k = if k.val < a ∧ z k = 0 then ((Real.exp (-(r m)) : ℝ) : ℂ) else z k := by
@@ -356,20 +316,20 @@ theorem at_point {n a g : ℕ} {Λ : Type} [AddCommGroup Λ] (L : Flat.LogPeriod
     intro k
     simp only [hzs_k]
     by_cases h : k.val < a ∧ z k = 0
-    · simp only [h, and_self, if_true]
+    · simp only [h, and_self, ite_true]
       have h1 : Tendsto (fun m => Real.exp (-(r m))) atTop (𝓝 0) :=
         Real.tendsto_exp_atBot.comp (tendsto_neg_atTop_atBot.comp hrtop)
       have h2 := (Complex.continuous_ofReal.tendsto 0).comp h1
       simpa only [Function.comp_def, Complex.ofReal_zero] using h2
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
       exact tendsto_const_nhds
   have hlexp : ∀ j, z (cj j) ≠ 0 → Complex.exp (l j) = z (cj j) := by
     intro j hj
-    simp only [hl, hj, if_false]
+    simp only [hl, hj, ite_false]
     exact Complex.exp_log hj
   have hl0 : ∀ j, z (cj j) = 0 → l j = 0 := by
     intro j hj
-    simp only [hl, hj, if_true]
+    simp only [hl, hj, ite_true]
   have hBsR : Bs.map (fun x : ℤ => (x : ℝ)) =
       ∑ j, if z (cj j) = 0 then (B j).map (fun x : ℤ => (x : ℝ)) else 0 := by
     ext p q
@@ -403,7 +363,7 @@ theorem at_point {n a g : ℕ} {Λ : Type} [AddCommGroup Λ] (L : Flat.LogPeriod
       · simpa using (hB i).dotProduct_mulVec_nonneg v
       · simp
     have h1 := (Finset.sum_eq_zero_iff_of_nonneg hnn).1 h0 j (Finset.mem_univ j)
-    rw [if_pos hj] at h1
+    rw [ite_eq_left hj] at h1
     exact ((hB j).dotProduct_mulVec_zero_iff).1 (by simpa using h1)
   have htm : ∀ m, (-(r m : ℂ)) / (2 * Real.pi * Complex.I) = t m := by
     intro m
@@ -422,9 +382,9 @@ theorem at_point {n a g : ℕ} {Λ : Type} [AddCommGroup Λ] (L : Flat.LogPeriod
     refine Finset.sum_congr rfl fun j _ => ?_
     have hj : (cj j).val < a := j.2
     by_cases h : z (cj j) = 0
-    · simp only [hws, hj, if_true, h, hl, htm m]
+    · simp only [hws, hj, ite_true, h, hl, htm m]
       simp
-    · simp only [hws, hj, if_true, h, hl, if_false]
+    · simp only [hws, hj, ite_true, h, hl, ite_false]
       simp
   have hlower : ∀ v : Fin g → ℝ, Bs.map (fun x : ℤ => (x : ℝ)) *ᵥ v = 0 →
       c * (v ⬝ᵥ v) ≤ v ⬝ᵥ (((σf z).map Complex.im) *ᵥ v) := fun v hv =>
@@ -657,7 +617,7 @@ theorem bounded_on_limit_lattice : ∀ (n a g : ℕ) (Λ : Type) [AddCommGroup �
       funext k
       by_cases hk : k.val < a
       · have := hl ⟨k.val, hk⟩
-        simp only [expCover, hk, if_true, w, dif_pos]
+        simp only [expCover, hk, ite_true, w, dite_eq_left]
         rw [this]
         rfl
       · simp [expCover, hk, w]
@@ -668,7 +628,7 @@ theorem bounded_on_limit_lattice : ∀ (n a g : ℕ) (Λ : Type) [AddCommGroup �
         rw [Complex.norm_exp] at h1
         exact Real.exp_lt_one_iff.1 h1
       · have hk' : ¬ k.val < a := not_lt.2 hk
-        simp only [w, hk', dif_neg, not_false_eq_true]
+        simp only [w, hk', dite_eq_right, not_false_eq_true]
         exact hz1 k
     have h1 := (hb w hw (by rw [hexp]; exact Metric.ball_subset_closedBall (Metric.ball_subset_ball hρρ₁ hz))).1
     rw [hτ w hw, hexp] at h1

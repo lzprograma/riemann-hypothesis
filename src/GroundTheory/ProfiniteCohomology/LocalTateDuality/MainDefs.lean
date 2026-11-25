@@ -34,8 +34,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory IntermediateField
 
-attribute [local instance 2000] Rep.hV2
-
 attribute [local irreducible] localClassFormationOfIsSepClosure
 
 section Pairings
@@ -483,8 +481,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory IntermediateField
 
-attribute [local instance 2000] Rep.hV2
-
 attribute [local irreducible] localClassFormationOfIsSepClosure
 
 variable {K Ksep : Type} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
@@ -507,34 +503,8 @@ theorem natCast_fixedField_ne_zero (hn : (n : K) ≠ 0) (W : Subgroup Gal(Ksep/K
   exact (map_ne_zero_iff _ (algebraMap K (fixedField W)).injective).2 hn
 
 theorem finite_cohomology_one_res_galRootsOfUnity (hn : (n : K) ≠ 0) (U : OpenSubgroup Gal(Ksep/K)) :
-    Finite (cohomology (Rep.res (U : Subgroup Gal(Ksep/K)).subtype (galRootsOfUnity.{0} K Ksep n)) 1) := by
-  let := GroundTheory.LocalField.algebraicValuativeRel K Ksep
-  let := GroundTheory.LocalField.algebraicTopology K Ksep
-  have := GroundTheory.LocalField.algebraicTopology_isValuativeTopology K Ksep
-  have := GroundTheory.LocalField.algebraicValuativeRel_valuativeExtension K Ksep
-  have hfinE : Finite ((fixedField (U : Subgroup Gal(Ksep/K)))ˣ ⧸
-      (powMonoidHom n : (fixedField (U : Subgroup Gal(Ksep/K)))ˣ →* _).range) :=
-    GroundTheory.LocalField.finite_quotient_range_pow (natCast_fixedField_ne_zero hn _)
-  let κ : (fixedField (U : Subgroup Gal(Ksep/K)))ˣ →*
-      Multiplicative (cohomology (Rep.res (U : Subgroup Gal(Ksep/K)).subtype
-        (galRootsOfUnity.{0} K Ksep n)) 1) :=
-    { toFun := fun a => Multiplicative.ofAdd ((δ (kummerSeqOpen_shortExact hn (U : Subgroup Gal(Ksep/K)))
-        0 1 rfl).hom ((H0Iso _).inv.hom (unitsInvariantOpen (U : Subgroup Gal(Ksep/K)) a)))
-      map_one' := by
-        have h := unitsInvariantOpen_pow (U : Subgroup Gal(Ksep/K)) 1 0
-        rw [pow_zero, zero_smul] at h
-        rw [h, map_zero, map_zero, ofAdd_zero]
-      map_mul' := fun a b => by
-        rw [unitsInvariantOpen_mul, map_add (f := _), map_add (f := _), ofAdd_add] }
-  have hle : (powMonoidHom n : (fixedField (U : Subgroup Gal(Ksep/K)))ˣ →* _).range ≤ κ.ker := by
-    rintro _ ⟨b, rfl⟩
-    rw [MonoidHom.mem_ker]
-    change Multiplicative.ofAdd ((δ (kummerSeqOpen_shortExact hn (U : Subgroup Gal(Ksep/K))) 0 1 rfl).hom
-      ((H0Iso _).inv.hom (unitsInvariantOpen (U : Subgroup Gal(Ksep/K)) (b ^ n)))) = 1
-    rw [δ_unitsInvariantOpen_pow_eq_zero hn, ofAdd_zero]
-  refine Finite.of_surjective (fun q => Multiplicative.toAdd (QuotientGroup.lift _ κ hle q)) fun y => ?_
-  obtain ⟨a, rfl⟩ := exists_δ_unitsInvariantOpen_eq hn U y
-  exact ⟨(a : _ ⧸ (powMonoidHom n : (fixedField (U : Subgroup Gal(Ksep/K)))ˣ →* _).range), rfl⟩
+    Finite (cohomology (Rep.res (U : Subgroup Gal(Ksep/K)).subtype (galRootsOfUnity.{0} K Ksep n)) 1) :=
+  by apply _root_.GroundTheory.ProfCoh.finite_cohomology_one_rootsOfUnity_open; assumption
 
 theorem eq_zero_of_forall_cupPairing_zmodMul_eq_zero_left (hn : (n : K) ≠ 0)
     (U : OpenSubgroup Gal(Ksep/K)) (x : cohomology (zmodRep.{0} (U : Subgroup Gal(Ksep/K)) n) 1)
@@ -639,8 +609,6 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory MonoidalCategory IntermediateField GroundTheory.LocalField
 
 universe u
-
-attribute [local instance 2000] Rep.hV2
 
 section Top
 

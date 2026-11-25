@@ -58,96 +58,9 @@ import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraM
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-set_option backward.isDefEq.respectTransparency false
 set_option linter.unusedVariables false
 noncomputable section
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris CrystallineSemistableComparison CrystallineSemistableComparison.B CrystallineSemistableComparison.Pb DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor
-
-namespace GlobalTheory.CompanionTheory.KMVan
-
-section Sc
-
-variable {R : Type} [CommRing R] {C C' : Type 1} [Category.{0} C] [Category.{0} C']
-
-structure Sc (Φ : PDF R C) (Λ : Type) [CommRing Λ] where
-  ρ : ∀ T : C, Λ →+* Φ.A.obj T
-  nat : ∀ {T T' : C} (φ : T ⟶ T') (a : Λ), (Φ.A.map φ).hom (ρ T a) = ρ T' a
-
-variable {Φ : PDF R C} {Λ : Type} [CommRing Λ]
-
-end Sc
-
-end GlobalTheory.CompanionTheory.KMVan
-
-namespace GlobalTheory.CompanionTheory.KMVan
-section Loc
-open TensorProduct
-variable {R : Type} [CommRing R] {C C' : Type 1} [Category.{0} C] [Category.{0} C']
-  {Φ : PDF R C} {Λ : Type} [CommRing Λ]
-
-end Loc
-end GlobalTheory.CompanionTheory.KMVan
-
-namespace GlobalTheory.CompanionTheory.KMVan
-open TensorProduct
-
-end GlobalTheory.CompanionTheory.KMVan
-
-namespace GlobalTheory.CompanionTheory.KMVan
-open TensorProduct
-section D
-variable {R : Type} [CommRing R] {C C' : Type 1} [Category.{0} C] [Category.{0} C']
-  {Φ : PDF R C} {Λ : Type} [CommRing Λ]
-
-end D
-end GlobalTheory.CompanionTheory.KMVan
-
-namespace GlobalTheory.CompanionTheory.KMVan
-open TensorProduct
-section LT
-variable {R : Type} [CommRing R] {C C' : Type 1} [Category.{0} C] [Category.{0} C']
-  {Φ : PDF R C} {Λ : Type} [CommRing Λ]
-
-end LT
-end GlobalTheory.CompanionTheory.KMVan
-
-namespace GlobalTheory.CompanionTheory.KMVan
-section FV
-variable {R : Type} [CommRing R]
-
-end FV
-end GlobalTheory.CompanionTheory.KMVan
-
-namespace GlobalTheory.CompanionTheory.KMVan
-section PS
-open CrystallineSemistableComparison.Pb.Site GlobalTheory.PDA GlobalTheory.CompanionTheory.ChartLocBc
-variable {O R : Type} [CommRing O] [CommRing R] {I : Ideal R} {γ : DividedPowers I} {p : ℕ}
-  {X : Scheme.{0}} {q : X ⟶ Spec (CommRingCat.of O)} {κ : O →+* R ⧸ I}
-
-end PS
-
-section Res
-variable {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] {Φ : PDF R C}
-
-end Res
-
-section Fr
-open CrystallineSemistableComparison.Pb.Site
-variable {O R : Type} [CommRing O] [CommRing R] {I : Ideal R} {γ : DividedPowers I} {p : ℕ}
-  {X : Scheme.{0}} {q : X ⟶ Spec (CommRingCat.of O)} {κ : O →+* R ⧸ I} {V : X.Opens} {d : ℕ}
-
-end Fr
-end GlobalTheory.CompanionTheory.KMVan
-
-namespace GlobalTheory.CompanionTheory.KMVan
-section CL
-open CrystallineSemistableComparison.Pb.Site
-variable {O R : Type} [CommRing O] [CommRing R] {I : Ideal R} {γ : DividedPowers I} {p : ℕ}
-  {X : Scheme.{0}} {q : X ⟶ Spec (CommRingCat.of O)} {κ : O →+* R ⧸ I} {V V' : X.Opens} {d : ℕ}
-
-end CL
-end GlobalTheory.CompanionTheory.KMVan
 
 namespace GlobalTheory.CompanionTheory.KMVan
 section TAU
@@ -171,15 +84,6 @@ theorem evT_nat {T T' : Thick (nlFun γ p X q κ)} (φ : T ⟶ T') (f : Γ(X, �
 
 end TAU
 end GlobalTheory.CompanionTheory.KMVan
-
-namespace GlobalTheory.CompanionTheory.KMVan
-section TAU2
-open CrystallineSemistableComparison.Pb.Site
-variable {O R : Type} [CommRing O] [CommRing R] {I : Ideal R} {γ : DividedPowers I} {p : ℕ}
-  {X : Scheme.{0}} {q : X ⟶ Spec (CommRingCat.of O)} {κ : O →+* R ⧸ I}
-
-end TAU2
-end GlobalTheory.CompanionTheory.KMVan
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -191,7 +95,6 @@ section -- clump:auto
 @[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
-set_option autoImplicit false
 set_option linter.unusedVariables false
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris DividedPowers GlobalTheory.CechDR GlobalTheory.HodgeCoh
 
@@ -334,32 +237,6 @@ theorem cup_h0_normal_coboundary (hF : IsFil Φ Fil) {m : ℕ} {g : CH.Cn (CH.mo
       (CH.mulP Φ.A).cupC (add_zero n) H (h0 y), cup_mem hF (add_zero n) (r := n + 1) (r' := 0) hH (h0_mem_filtration_zero hF y), ?_⟩
     rw [CrystallineSemistableComparison.P.leibniz, sub_neg_eq_add]
 
-theorem cupList_diff_local (hF : IsFil Φ Fil) : ∀ {m : ℕ} (ℓ : Fin m → CH.Cn (CH.modF Φ.A) 1)
-    (α : Fin m → CH.Cn (CH.modF Φ.A) 0), (∀ k, ℓ k ∈ FC (Fil ((1 : ℕ) : ℤ)) 1) → (∀ k, CH.d _ 1 (ℓ k) = 0) →
-    (∀ k, α k ∈ FC (Fil ((1 : ℕ) : ℤ)) 0) →
-    IsBd Fil m (cupListC Φ.A (fun k => ℓ k + CH.d _ 0 (α k)) - cupListC Φ.A ℓ)
-  | 0, _, _, _, _, _ => sub_self _
-  | m + 1, ℓ, α, hℓ, hd, hα => by
-    have ih := cupList_diff_local hF (fun i : Fin m => ℓ i.castSucc) (fun i => α i.castSucc) (fun i => hℓ _)
-      (fun i => hd _) (fun i => hα _)
-    have hl' : ℓ (Fin.last m) + CH.d _ 0 (α (Fin.last m)) ∈ FC (Fil ((1 : ℕ) : ℤ)) 1 :=
-      add_mem (hℓ _) (d_mem (hα _))
-    have hdl' : CH.d (CH.modF Φ.A) 1
-        (ℓ (Fin.last m) + CH.d (CH.modF Φ.A) 0 (α (Fin.last m))) = 0 := by
-      rw [map_add (f := _), hd, CH.d_d, add_zero]
-    have h₁ := bd_cup (m := m) (Fil := Fil) hF ih hl' hdl'
-    rcases h₁ with ⟨H₁, hH₁, e₁⟩
-    let ℓ' : Fin m → CH.Cn (CH.modF Φ.A) 1 := fun i => ℓ i.castSucc
-    have h₂ := cup_d (Φ := Φ) (Fil := Fil) (m := m) (B := cupListC Φ.A ℓ')
-      (a := α (Fin.last m)) hF (cupList_mem hF ℓ' fun i => hℓ i.castSucc)
-      (d_cupList Φ.A ℓ' fun i => hd i.castSucc) (hα (Fin.last m))
-    rcases h₂ with ⟨H₂, hH₂, e₂⟩
-    refine ⟨H₁ + H₂, add_mem hH₁ hH₂, ?_⟩
-    rw [map_add (f := _), ← e₁, ← e₂]
-    change (CH.mulP Φ.A).cupC rfl _ (ℓ (Fin.last m) + CH.d _ 0 (α (Fin.last m))) - (CH.mulP Φ.A).cupC rfl _ (ℓ (Fin.last m)) = _
-    simp only [map_sub, map_add (f := _), LinearMap.sub_apply]
-    abel
-
 
 theorem fm_change (hF : IsFil Φ Fil) {a : ℕ} {u₀ u₀' : ∀ T : C, Φ.A.obj T} {u u' : Fin a → ∀ T : C, Φ.A.obj T}
     (h₀' : Nr Fil u₀') (hu : ∀ k, Nr Fil (u k))
@@ -371,7 +248,7 @@ theorem fm_change (hF : IsFil Φ Fil) {a : ℕ} {u₀ u₀' : ∀ T : C, Φ.A.ob
   set P' := cupListC Φ.A fun k => CH.d (CH.modF Φ.A) 0 (h0 (u' k)) with hP'
   have hα : ∀ k, h0 (u' k) - h0 (u k) ∈ FC (Fil ((1 : ℕ) : ℤ)) 0 := fun k => mem_FC.2 fun t => hz k _
   have hbd : IsBd Fil a (P' - P) := by
-    have := cupList_diff_local hF (fun k => CH.d (CH.modF Φ.A) 0 (h0 (u k))) (fun k => h0 (u' k) - h0 (u k))
+    have := GlobalTheory.CompanionTheory.RepLifts.cupList_diff hF (fun k => CH.d (CH.modF Φ.A) 0 (h0 (u k))) (fun k => h0 (u' k) - h0 (u k))
       (fun k => d_h0_mem_filtration_one (hu k)) (fun k => CH.d_d _ 0 _) hα
     have e : (fun k => CH.d (CH.modF Φ.A) 0 (h0 (u k)) + CH.d (CH.modF Φ.A) 0 (h0 (u' k) - h0 (u k))) =
         fun k => CH.d (CH.modF Φ.A) 0 (h0 (u' k)) := by

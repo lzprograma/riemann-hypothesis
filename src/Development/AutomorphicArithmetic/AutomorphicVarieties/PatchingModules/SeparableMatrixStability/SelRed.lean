@@ -2,45 +2,6 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PairedDualFirstOrderDualMatrixSpace
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProfDefs
 import Mathlib.Tactic.Linter.Style
 
@@ -78,23 +39,11 @@ private theorem adic_map {G : Type} [TopologicalSpace G] (t : A) (u : G → R)
   rw [e]
   exact (hu N).comp _
 
-private theorem mm_mul (M N : Matrix (Fin n) (Fin n) R) : (M * N).map f = M.map f * N.map f :=
-  map_mul f.mapMatrix M N
-
-private theorem mm_add (M N : Matrix (Fin n) (Fin n) R) : (M + N).map f = M.map f + N.map f :=
-  map_add f.mapMatrix M N
-
-private theorem mm_sub (M N : Matrix (Fin n) (Fin n) R) : (M - N).map f = M.map f - N.map f :=
-  map_sub f.mapMatrix M N
-
-private theorem mm_neg (M : Matrix (Fin n) (Fin n) R) : (-M).map f = -M.map f :=
-  map_neg f.mapMatrix M
-
 private theorem dY_map {l : ℕ} [Fact l.Prime] (F : GFrame l) (ρ : F.G₀ → Matrix (Fin n) (Fin n) R)
     (Y : Matrix (Fin n) (Fin n) R) (g : F.G₀) :
     (dY F ρ Y g).map f = dY F (fun g => (ρ g).map f) (Y.map f) g := by
   unfold dY
-  rw [mm_sub, mm_mul, mm_mul]
+  simp only [← AlgHom.mapMatrix_apply, map_sub, map_mul]
 
 end
 
@@ -107,9 +56,10 @@ theorem UpperTheory.V.Pa.sel_map :
       fun v => ?_⟩
     · exact adic_map f t (fun g => z g i j) (h2 i j)
     · beta_reduce
-      rw [h3, mm_add, mm_mul, mm_mul]
+      rw [h3]; simp only [← AlgHom.mapMatrix_apply, map_add, map_mul]
     · beta_reduce
-      rw [h4, mm_neg, Matrix.transpose_map]
+      rw [h4, ← AlgHom.mapMatrix_apply, map_neg]
+      rw [AlgHom.mapMatrix_apply, Matrix.transpose_map]
     · beta_reduce
       rw [h5 u g hg]
       exact Matrix.map_zero _ (map_zero f)
@@ -118,7 +68,7 @@ theorem UpperTheory.V.Pa.sel_map :
       have key : (wi v).map f * ((z ((F.φ v) g)).map f -
             dY F (fun g => (ρ g).map f) (Y.map f) ((F.φ v) g)) * (w v).map f =
           (wi v * (z ((F.φ v) g) - dY F ρ Y ((F.φ v) g)) * w v).map f := by
-        rw [mm_mul, mm_mul, mm_sub, dY_map]
+        rw [← dY_map]; simp only [← AlgHom.mapMatrix_apply, map_mul, map_sub]
       obtain ⟨hl1, hl2⟩ := hloc g
       refine ⟨fun i j hij => ?_, fun hg i => ?_⟩
       · beta_reduce
@@ -127,7 +77,7 @@ theorem UpperTheory.V.Pa.sel_map :
         rw [key, Matrix.map_apply, hl2 hg i, map_zero]
   · rintro ⟨Y, hY, hT, rfl⟩
     refine ⟨Y.map f, hV _ hY, ?_, ?_⟩
-    · rw [← Matrix.transpose_map, hT, mm_neg]
+    · rw [← Matrix.transpose_map, hT]; simp only [← AlgHom.mapMatrix_apply, map_neg]
     · funext g
       exact dY_map f F ρ Y g
 end -- clump:auto
@@ -148,15 +98,6 @@ variable {A X X' : Type} [CommRing A] [CommRing X] [Algebra A X] [CommRing X'] [
 private theorem map_alg (M : Matrix (Fin n) (Fin n) A) :
     (M.map (algebraMap A X)).map f = M.map (algebraMap A X') := by
   ext i j; simp
-
-private theorem map_mul_alg (M N : Matrix (Fin n) (Fin n) X) : (M * N).map f = M.map f * N.map f :=
-  map_mul f.mapMatrix M N
-
-private theorem map_add_one (M : Matrix (Fin n) (Fin n) X) : (1 + M).map f = 1 + M.map f := by
-  rw [Matrix.map_add _ (map_add f), Matrix.map_one _ (map_zero f) (map_one f)]
-
-private theorem map_sub_one (M : Matrix (Fin n) (Fin n) X) : (1 - M).map f = 1 - M.map f := by
-  rw [Matrix.map_sub _ (map_sub f), Matrix.map_one _ (map_zero f) (map_one f)]
 
 private theorem map_epM {g : ℕ} (Z : Fin g → Matrix (Fin n) (Fin n) A) :
     (DD.epM fun j => (Z j).map (algebraMap A X)).map (DD.map g f) = DD.epM fun j => (Z j).map (algebraMap A X') := by
@@ -192,15 +133,18 @@ theorem UpperTheory.V.Pa.sel_red :
   have hρ1 : ∀ g, (k.ρ1 X g).map (DD.map k.g f) = k.ρ1 X' g := by
     intro g
     unfold Kap.ρ1 NP.ρX
-    rw [map_mul_alg, map_add_one, map_epM, map_alg]
+    simp only [← AlgHom.mapMatrix_apply, map_mul, map_add, map_one]
+    simp only [AlgHom.mapMatrix_apply, map_epM, map_alg]
   have hw1 : ∀ v, (k.w1 X v).map (DD.map k.g f) = k.w1 X' v := by
     intro v
     unfold Kap.w1 NP.wX
-    rw [map_mul_alg, map_sub_one, map_epM, map_alg]
+    simp only [← AlgHom.mapMatrix_apply, map_mul, map_sub, map_one]
+    simp only [AlgHom.mapMatrix_apply, map_epM, map_alg]
   have hwi1 : ∀ v, (k.wi1 X v).map (DD.map k.g f) = k.wi1 X' v := by
     intro v
     unfold Kap.wi1 NP.wiX
-    rw [map_mul_alg, map_add_one, map_epM, map_alg]
+    simp only [← AlgHom.mapMatrix_apply, map_mul, map_add, map_one]
+    simp only [AlgHom.mapMatrix_apply, map_epM, map_alg]
   refine ⟨fun z hz => ?_, fun z hz => ?_, fun z hz => ?_, hρ1, fun v => ⟨hw1 v, hwi1 v⟩⟩
   · have hV : ∀ Z ∈ Ev x.A X n x.a, Z.map f ∈ Ev x.A X' n x.a :=
       blk_map f x.a ⊤ ⊥ ⊤ ⊥ (fun _ _ => Submodule.mem_top) (fun y hy => by

@@ -8,49 +8,11 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralF
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ModuliPointIntegralFrameAfterFiniteExtension
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralFrameChangeIntegralInvertibleMatrix
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsCombAtGMulVec
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.BoundedSectionAlgebra
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 
 noncomputable section
@@ -109,8 +71,8 @@ omit [Algebra c.F K] in
 theorem nrmOf_anti (la : HeightOneSpectrum (𝓞 K)) {w w' : EReal} (hw : w ≠ ⊥) (h : w ≤ w') :
     nrmOf la w' ≤ nrmOf la w := by
   by_cases ht : w' = ⊤
-  · rw [ht, nrmOf, if_pos rfl]; exact nrmOf_nonneg _ _
-  rw [nrmOf, nrmOf, if_neg ht, if_neg (ne_top_of_le_ne_top ht h)]
+  · rw [ht, nrmOf, ite_eq_left rfl]; exact nrmOf_nonneg _ _
+  rw [nrmOf, nrmOf, ite_eq_right ht, ite_eq_right (ne_top_of_le_ne_top ht h)]
   exact Real.rpow_le_rpow_of_exponent_le (one_lt_absNorm_real la).le (neg_le_neg (EReal.toReal_le_toReal h hw ht))
 
 structure FinFr (y : FrPt Xo c K) (v : FinitePlace K) : Type 1 where
@@ -164,7 +126,7 @@ def abs : AbsoluteValue F.T.Fr ℝ where
     by_cases hb : b = 0
     · simp [hb, nval_zero, nrmOf]
     rw [nval_mul, nval_of_ne ha, nval_of_ne hb, ← EReal.coe_add]
-    simp only [nrmOf, EReal.coe_ne_top, if_false, EReal.toReal_coe]
+    simp only [nrmOf, EReal.coe_ne_top, ite_false, EReal.toReal_coe]
     rw [neg_add, Real.rpow_add (by linarith)]
   nonneg' a := nrmOf_nonneg _ _
   eq_zero' a := by
@@ -172,7 +134,7 @@ def abs : AbsoluteValue F.T.Fr ℝ where
     by_cases ha : a = 0
     · simp [ha, nval_zero, nrmOf]
     rw [nval_of_ne ha]
-    simp only [nrmOf, EReal.coe_ne_top, if_false, ha, iff_false]
+    simp only [nrmOf, EReal.coe_ne_top, ite_false, ha, iff_false]
     exact (Real.rpow_pos_of_pos (by linarith) _).ne'
   add_le' a b := by
     rcases min_le_iff.1 (nval_add (V := F.T.V) F.e a b) with h | h
@@ -181,45 +143,9 @@ def abs : AbsoluteValue F.T.Fr ℝ where
 
 theorem abs_apply (a : F.T.Fr) : F.abs a = nrmOf v.maximalIdeal (nval F.T.V F.e a) := rfl
 
-theorem abs_φ (a : K) : F.abs (F.φ a) = v a := by
-  by_cases ha : a = 0
-  · simp [ha]
-  have h := nrmOf_smul v.maximalIdeal ha (nval_ne_bot (V := F.T.V) F.e (1 : F.T.Fr))
-  rw [← nval_smul F.lies ha, mul_one, FinitePlace.mk_maximalIdeal, ← abs_apply, ← abs_apply, map_one, mul_one] at h
-  exact h
-
-theorem ofReal_abs (a : F.T.Fr) :
-    ENNReal.ofReal (F.abs a) = normOfOrd (Ideal.absNorm v.maximalIdeal.asIdeal) (nval F.T.V F.e a) := by
-  have h1 := one_lt_absNorm_real v.maximalIdeal
-  by_cases ha : a = 0
-  · rw [ha, map_zero, nval_zero, normOfOrd, EReal.top_mul_coe_of_pos (Real.log_pos h1)]
-    simp
-  rw [abs_apply, nval_of_ne ha, normOfOrd, ← EReal.coe_mul, ← EReal.coe_neg, EReal.exp_coe]
-  simp only [nrmOf, EReal.coe_ne_top, if_false, EReal.toReal_coe]
-  rw [Real.rpow_def_of_pos (by linarith)]
-  congr 2
-  ring
-
 def nrm (f : Rul Xo c) : ℝ := F.abs (evI F.pt f)
 
-def fac (e : Ix Dw → ℤ) : ℝ := F.abs ((∏ i, F.t i ^ e i : F.T.Frˣ) : F.T.Fr)
-
-theorem fac_pos (e : Ix Dw → ℤ) : 0 < F.fac e := F.abs.pos (Units.ne_zero _)
-
-theorem fac_add (e e' : Ix Dw → ℤ) : F.fac (e + e') = F.fac e * F.fac e' := by
-  simp only [fac, Pi.add_apply, zpow_add, Finset.prod_mul_distrib, Units.val_mul, map_mul]
-
-theorem nrm_eq {e : Ix Dw → ℤ} {f : Rul Xo c} (hf : f ∈ secZ Xo c e) : F.nrm f = F.fac e * v (evR Xo c f y) := by
-  let _ := F.io.toAlgebra
-  rw [← F.abs_φ, fac, ← map_mul, ← F.tri.evR_eq hf]
-  rfl
-
-def latMax (C : Submodule c.F (Rul Xo c)) : ℝ := ⨆ w : supLat C, F.nrm w.1
-
 variable {ι : Type} [Fintype ι]
-
-def wedgeNrm (s : ι → RulK Xo c K) : ℝ≥0∞ :=
-  normOfOrd (Ideal.absNorm v.maximalIdeal.asIdeal) (wedgeOrd (psiSet H) F.e F.φ F.pt s)
 
 end FinFr
 
@@ -228,29 +154,6 @@ end Fin
 section Primes
 
 variable {K : Type} [Field K] [NumberField K]
-
-def primeWt (S : Finset ℕ) (b : ℕ → ℝ) (v : FinitePlace K) : ℝ := ∑ p ∈ S, b p * -Real.log (v (p : K))
-
-theorem finite_support_log {a : K} (ha : a ≠ 0) : (Function.support fun v : FinitePlace K => Real.log (v a)).Finite :=
-  (FinitePlace.hasFiniteMulSupport ha).subset fun v hv h => hv (by simp only at h ⊢; rw [h, Real.log_one])
-
-theorem finsum_log_natCast {p : ℕ} (hp : p ≠ 0) :
-    ∑ᶠ v : FinitePlace K, Real.log (v (p : K)) = -(Module.finrank ℚ K * Real.log p) := by
-  have h0 : (p : K) ≠ 0 := Nat.cast_ne_zero.2 hp
-  rw [← Real.log_finprod fun v : FinitePlace K => FinitePlace.pos_iff.2 h0, FinitePlace.prod_eq_inv_abs_norm h0,
-    show (p : K) = algebraMap ℚ K p from (map_natCast _ p).symm, Algebra.norm_algebraMap]
-  simp
-
-theorem finsum_primeWt {S : Finset ℕ} (hS : 0 ∉ S) (b : ℕ → ℝ) :
-    (∑ᶠ v, primeWt (K := K) S b v) / (Module.finrank ℚ K : ℝ) = ∑ p ∈ S, b p * Real.log p := by
-  have h0 : ∀ p ∈ S, p ≠ 0 := fun p hp e => hS (e ▸ hp)
-  have hn : (Module.finrank ℚ K : ℝ) ≠ 0 := Nat.cast_ne_zero.2 Module.finrank_pos.ne'
-  unfold primeWt
-  rw [finsum_sum_comm S (fun v p => b p * -Real.log (v (p : K))) fun p hp => (finite_support_log (K := K) (a := p) (Nat.cast_ne_zero.2 (h0 p hp))).subset
-    fun v hv e => hv (by simp only at e ⊢; rw [e, neg_zero, mul_zero]), Finset.sum_div]
-  refine Finset.sum_congr rfl fun p hp => ?_
-  rw [← mul_finsum, finsum_neg_distrib, finsum_log_natCast (h0 p hp)]
-  field_simp
 
 variable [Algebra c.F K] {y : FrPt Xo c K} {v : FinitePlace K} (F : FinFr y v)
 
@@ -272,8 +175,8 @@ abbrev baseEmb (τ : K →+* ℂ) : c.F →+* ℂ := goodOf c (τ.comp (algebraM
 variable (c) in
 def goodHom (τ : K →+* ℂ) : K →ₐ[c.F] CAt (baseEmb c τ) :=
   if h : GoodEmb c (τ.comp (algebraMap c.F K)) then
-    ⟨τ, fun a => (DFunLike.congr_fun (if_pos h : baseEmb c τ = _) a).symm⟩
-  else ⟨(starRingEnd ℂ).comp τ, fun a => (DFunLike.congr_fun (if_neg h : baseEmb c τ = _) a).symm⟩
+    ⟨τ, fun a => (DFunLike.congr_fun (ite_eq_left h : baseEmb c τ = _) a).symm⟩
+  else ⟨(starRingEnd ℂ).comp τ, fun a => (DFunLike.congr_fun (ite_eq_right h : baseEmb c τ = _) a).symm⟩
 
 theorem norm_goodHom (τ : K →+* ℂ) (a : K) : ‖toC (goodHom c τ a)‖ = ‖τ a‖ := by
   unfold goodHom
@@ -327,7 +230,7 @@ theorem fac_add {G G' : WTZ E} (hG : Even G.2) (hG' : Even G'.2) : F.fac x (G + 
 theorem nrm_eq {G : WTZ E} {f : Rul Xo c} (hf : f ∈ secZ Xo c (exZ Dw G)) :
     F.nrm x G f = F.fac x G * ‖τ (evR Xo c f y)‖ := by
   haveI : IsLocalRing (CAt (baseEmb c τ)) := inferInstanceAs (IsLocalRing ℂ)
-  have e : rdU (U (baseEmb c τ)) f F.k F.z.1 = toC (evR Xo c f ((U (baseEmb c τ)).un F.k F.z)) := dif_pos F.z.2
+  have e : rdU (U (baseEmb c τ)) f F.k F.z.1 = toC (evR Xo c f ((U (baseEmb c τ)).un F.k F.z)) := dite_eq_left F.z.2
   have e' : ∀ a b : CAt (baseEmb c τ), ‖toC (a * b)‖ = ‖toC a‖ * ‖toC b‖ := fun a b => norm_mul (toC a) (toC b)
   show _ * (‖rdU (U (baseEmb c τ)) f F.k F.z.1‖ * FD.Data.nfac _ _ _) = _
   rw [e, F.tri.evR_eq hf, e', norm_goodHom, fac]
@@ -376,23 +279,9 @@ variable {r : ℕ} (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (x : ℝ) {D : Fo
 
 
 
-def WtPar.tauWt : AllWt.Weight Dw := (dimFlag Dw + 3) • P.u₁ - P.uc
-
 section At
 
 variable {K : Type} [Field K] [NumberField K] [Algebra c.F K] (y : FrPt Xo c K)
-
-def TauBd (m : ℕ) (τ : Rul Xo c) (t : FinitePlace K → ℝ) (A : (K →+* ℂ) → ℝ) : Prop :=
-  (∀ v (F : FinFr y v), F.nrm τ ≤ Real.exp (t v) * F.latMax (Cusp Z U P.u₁) ^ (m * (dimFlag Dw + 3))) ∧
-    ∀ ρ : K →+* ℂ, Nonempty (InfFr U y ρ) ∧ ∀ F : InfFr U y ρ,
-      bergCusp U x V dict Z (wtOf Dw P.u₁ 0) (ρ.comp (algebraMap c.F K)) F.pt ≠ ⊤ ∧
-      F.nrm x (wtOf Dw (m • P.tauWt) 0) τ ≤ A ρ *
-        √(bergCusp U x V dict Z (wtOf Dw P.u₁ 0) (ρ.comp (algebraMap c.F K)) F.pt).toReal ^ (m * (dimFlag Dw + 3))
-
-def TauPtAt (X : ℝ) : Prop :=
-  ∃ (m : ℕ) (τ : Rul Xo c) (t : FinitePlace K → ℝ) (A : (K →+* ℂ) → ℝ), 1 ≤ m ∧
-    τ ∈ secZ Xo c (exOf Dw (m • P.tauWt) 0) ∧ evR Xo c τ y ≠ 0 ∧ (Function.support t).Finite ∧ (∀ ρ, 0 < A ρ) ∧
-    TauBd U x V dict Z P y m τ t A ∧ (∑ᶠ v, t v) / (Module.finrank ℚ K : ℝ) + meanLog K A ≤ m * X
 
 variable {U x V dict Z P y}
 

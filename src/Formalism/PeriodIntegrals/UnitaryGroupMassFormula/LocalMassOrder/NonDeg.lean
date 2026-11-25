@@ -5,48 +5,10 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.D
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.IsTopRingTens
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.LatCpt
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.SelfDualMeasureSFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Sheaves.Init
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IsClosedCongruenceSubgroup
 
 @[expose] public section
 
@@ -79,30 +41,10 @@ section HR
 variable (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (v : HeightOneSpectrum (𝓞 F))
 
 theorem continuous_sigR : Continuous (sigR (Fv F v) σ) := by
-  let f : (Fv F v ⊗[F] E) →ₗ[Fv F v] (Fv F v ⊗[F] E) :=
-    TensorProduct.AlgebraTensorModule.map (LinearMap.id) σ.toLinearMap
-  have hf : ∀ x, f x = sigR (Fv F v) σ x := by
-    intro x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a b => simp [f, sigR]
-    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
-  have : Continuous f := IsModuleTopology.continuous_of_linearMap f
-  exact (funext hf) ▸ this
+  apply _root_.PI.LocMassTypM.continuous_sigR <;> assumption
 
 theorem isClosed_HR : IsClosed (HR (Fv F v) σ J : Set (GL (Fin n) (Fv F v ⊗[F] E))) := by
-  have := LocMassOrdSF.t2_tensor_product (F := F) (E := E) (Fv F v)
-  have hset : (HR (Fv F v) σ J : Set (GL (Fin n) (Fv F v ⊗[F] E))) =
-      {g : GL (Fin n) (Fv F v ⊗[F] E) | Formalism.UG.cT (sigR (Fv F v) σ)
-        (g : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) * JR (Fv F v) J *
-        (g : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) = JR (Fv F v) J} := rfl
-  rw [hset]
-  have hv : Continuous (fun g : GL (Fin n) (Fv F v ⊗[F] E) =>
-      (g : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E))) := Units.continuous_val
-  refine isClosed_eq ?_ continuous_const
-  refine Continuous.matrix_mul (Continuous.matrix_mul ?_ continuous_const) hv
-  unfold Formalism.UG.cT
-  exact (hv.matrix_map (continuous_sigR σ v)).matrix_transpose
+  apply _root_.PI.LocMassTypM.isClosed_HR <;> assumption
 
 end HR
 

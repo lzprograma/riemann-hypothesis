@@ -56,7 +56,6 @@ open AlgebraicGeometry CategoryTheory NumberField IsDedekindDomain IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj
 open ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
 open GlobalTheory.CharDepth TensorProduct
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CharDepth
 
@@ -80,7 +79,7 @@ theorem exists_addValuation_mul_log {C : Type} [Field C] (v : Valuation C NNReal
     · simp [hx]
     by_cases hy : y = 0
     · simp [hy]
-    simp only [if_neg hx, if_neg hy, if_neg hxy]
+    simp only [ite_eq_right hx, ite_eq_right hy, ite_eq_right hxy]
     rcases le_max_iff.1 (v.map_add x y) with h | h
     · exact min_le_of_left_le (hmono _ _ hxy hx h)
     · exact min_le_of_right_le (hmono _ _ hxy hy h)
@@ -89,7 +88,7 @@ theorem exists_addValuation_mul_log {C : Type} [Field C] (v : Valuation C NNReal
     · simp [hx]
     by_cases hy : y = 0
     · simp [hy]
-    simp only [if_neg hx, if_neg hy, if_neg (mul_ne_zero hx hy)]
+    simp only [ite_eq_right hx, ite_eq_right hy, ite_eq_right (mul_ne_zero hx hy)]
     rw [map_mul, NNReal.coe_mul, Real.log_mul (hpos x hx).ne' (hpos y hy).ne', mul_add, WithTop.coe_add]
 
 theorem ValExt.exists_addValuation {T : CDVR} {p : ℕ} [Fact p.Prime] (X : ValExt T p) (e : ℕ) (he : 0 < e) :

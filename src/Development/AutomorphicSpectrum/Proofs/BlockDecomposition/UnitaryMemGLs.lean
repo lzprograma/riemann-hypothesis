@@ -3,56 +3,9 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.DiscreteSeriesTopClasses.IsInvOne
 public import Mathlib.Analysis.Matrix.Normed
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DifferentiableAtOfSmooth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Bool
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.IsMultZero
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -72,8 +25,6 @@ namespace GlobalTheory.CompanionTheory.RCalc
 
 open PositivityTheory.RgTw (Mat G)
 open PositivityTheory.RgBcC
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ} {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
@@ -119,7 +70,7 @@ theorem Pw_bracket {T : Fin n → Fin n → A}
     simp only [Pw]
     rw [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
     simp only [e, hT, ih, sub_mul, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib, ite_mul, mul_ite, zero_mul,
-      mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     have s1 : (∑ x, if x = a then T c b * Pw T m x d else 0) = T c b * Pw T m a d := by simp
     have s2 : (∑ x, if b = x then T c x * Pw T m a d else 0) = T c b * Pw T m a d := by simp
     by_cases h1 : b = c <;> by_cases h2 : d = a <;> simp [h1, h2, Finset.sum_const_zero] <;> abel
@@ -129,7 +80,7 @@ theorem trPw_central {T : Fin n → Fin n → A}
     (m : ℕ) (a b : Fin n) : Commute (T a b) (∑ c, Pw T m c c) := by
   have : T a b * ∑ c, Pw T m c c - (∑ c, Pw T m c c) * T a b = 0 := by
     rw [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
-    simp only [Pw_bracket hT, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [Pw_bracket hT, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     simp
   exact sub_eq_zero.mp this
 
@@ -227,7 +178,7 @@ theorem D_single (hs : ∀ (r : ℝ) X, D ((r : ℂ) • X) = (r : ℂ) • D X)
     congr 1
     apply Complex.ext <;> simp
   rw [e, map_add (f := _), hs, hs]
-  simp only [Tc, TX, eps, if_true, Bool.false_eq_true, if_false]
+  simp only [Tc, TX, eps, ite_true, Bool.false_eq_true, ite_false]
   have hz : z = (z.re : ℂ) + (z.im : ℂ) * Complex.I := (Complex.re_add_im z).symm
   have hc : conj z = (z.re : ℂ) - (z.im : ℂ) * Complex.I := by
     apply Complex.ext <;> simp
@@ -255,10 +206,10 @@ theorem TX_expand (hs : ∀ (r : ℝ) X, D ((r : ℂ) • X) = (r : ℂ) • D X
   have hI : Complex.I * Complex.I = -1 := Complex.I_mul_I
   generalize X a b = z
   cases s
-  · simp only [eps, cs, Bool.false_eq_true, if_false]
+  · simp only [eps, cs, Bool.false_eq_true, ite_false]
     generalize conj z = w
     match_scalars <;> first | linear_combination (z / 2) * hI | linear_combination (-w / 2) * hI
-  · simp only [eps, cs, if_true, RingHom.id_apply]
+  · simp only [eps, cs, ite_true, RingHom.id_apply]
     generalize conj z = w
     match_scalars <;> first | linear_combination (-z / 2) * hI | linear_combination (w / 2) * hI
 

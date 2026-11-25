@@ -4,6 +4,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThre
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonEx
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonMap
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TriCanon
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TriCanon
 public import Mathlib.NumberTheory.Padics.Complex
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GrInternal
@@ -156,25 +157,7 @@ private theorem tor_conj_apply {R : Type} [CommRing R] (t : Rˣ) (X : Matrix (Fi
 
 private theorem unit_diff {O : Type} [CommRing O] (p : Oˣ) (hp : IsUnit ((p : O) ^ 2 - 1)) (a b : Fin 3)
     (hab : a ≠ b) : IsUnit (((p ^ wt1 a : Oˣ) : O) - ((p ^ wt1 b : Oˣ) : O)) := by
-  have h1 : IsUnit ((p : O) - 1) :=
-    isUnit_of_mul_isUnit_left (y := (p : O) + 1) (by convert hp using 1; ring)
-  have e : (p : O) * ((p⁻¹ : Oˣ) : O) = 1 := p.mul_inv
-  have h2 : IsUnit ((1 : O) - ((p⁻¹ : Oˣ) : O)) := by
-    convert h1.mul (p⁻¹).isUnit using 1
-    linear_combination (-1 : O) * e
-  have h3 : IsUnit ((p : O) - ((p⁻¹ : Oˣ) : O)) := by
-    convert hp.mul (p⁻¹).isUnit using 1
-    linear_combination (-(p : O)) * e
-  have w0 : wt1 0 = 1 := rfl
-  have w1 : wt1 1 = 0 := rfl
-  have w2 : wt1 2 = -1 := rfl
-  have k : ∀ c : Fin 3, c = 0 ∨ c = 1 ∨ c = 2 := by decide
-  rcases k a with rfl | rfl | rfl <;> rcases k b with rfl | rfl | rfl <;>
-    simp only [w0, w1, w2, zpow_one, zpow_zero, _root_.zpow_neg_one, Units.val_one] <;>
-    first
-    | exact absurd rfl hab
-    | assumption
-    | rwa [← neg_sub, IsUnit.neg_iff]
+  apply _root_.UpperTheory.V.UnitaryThreeInertia.tc_unit <;> assumption
 
 private theorem red_diag {O R D : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R]
     [Group D] {η : D →* ℤˣ} {Ψ : D →* Oˣ} {r : D →* GG (m := 3) (R := R)} (hr : Red η Ψ r) {x : D}
@@ -511,7 +494,7 @@ private theorem cob_lie {K Γ : Type} [CommRing K] [Group Γ] (r : Γ →* GG (m
   have e : ∀ X, cob r X g * (r g).mat = X * (r g).mat - (r g).mat * X := fun X => by
     show (X - (r g).adFun X) * _ = _
     unfold GG.adFun GG.mat
-    rw [if_pos hg, Matrix.sub_mul, Matrix.mul_assoc, Units.inv_mul, Matrix.mul_one]
+    rw [ite_eq_left hg, Matrix.sub_mul, Matrix.mul_assoc, Units.inv_mul, Matrix.mul_one]
   rw [e, Matrix.smul_mul, Matrix.mul_smul, Matrix.sub_apply, Matrix.smul_apply, Matrix.smul_apply,
     Matrix.diagonal_mul, Matrix.mul_diagonal, wt]
   simp only [smul_eq_mul, Int.cast_sub]

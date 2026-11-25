@@ -63,19 +63,7 @@ open NumberField
 
 theorem exists_nat_mul_integral {E : Type} [Field E] [NumberField E] (a : E) :
     ∃ d : ℕ, 0 < d ∧ IsIntegral ℤ ((d : E) * a) := by
-  have hz : IsAlgebraic ℤ a := IsFractionRing.isAlgebraic_iff ℤ ℚ E |>.mpr (.of_finite ℚ a)
-  obtain ⟨y, hy, hint⟩ := hz.exists_integral_multiple
-  refine ⟨y.natAbs, Int.natAbs_pos.mpr hy, ?_⟩
-  rw [zsmul_eq_mul] at hint
-  rcases Int.natAbs_eq y with h | h
-  · have : ((y.natAbs : ℕ) : E) = (y : E) := by
-      conv_rhs => rw [h]
-      simp
-    rw [this]; exact hint
-  · have : ((y.natAbs : ℕ) : E) = -(y : E) := by
-      conv_rhs => rw [h]
-      simp
-    rw [this, neg_mul]; exact hint.neg
+  first | exact _root_.GlobalTheory.AlgDirMom.exists_nat_mul_isIntegral | exact @_root_.GlobalTheory.AlgDirMom.exists_nat_mul_isIntegral | apply _root_.GlobalTheory.AlgDirMom.exists_nat_mul_isIntegral <;> assumption
 
 theorem main : ∀ {E : Type} [inst : Field E] [NumberField E] {r : ℕ}
     (Λ : Submodule (NumberField.RingOfIntegers E) (Fin r → E)),

@@ -103,7 +103,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -274,7 +273,6 @@ private theorem hat_cosetInd_box_vecMul_KO_eq_mulVec {k : Type} [Field k] [Valua
   simp only [Set.indicator_apply, Set.mem_setOf_eq]
   rw [← hiff z]
 
-
 open MeasureTheory ValuativeRel Matrix in
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 variable {n : Type} [Fintype n] [DecidableEq n] in
@@ -364,10 +362,7 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.StepData GlobalTheory.SplitWeil ValuativeRel
-
-
 
 noncomputable section
 namespace GlobalTheory.TwPlaces
@@ -467,14 +462,6 @@ theorem xiTop_mem_SB {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] 
 
 section Steps
 
-variable {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {L : SizeData₂ (I.rec7 l Z)}
-  {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts}
-  {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX} {W : RealPack ex} {u : B.Word}
-  {a : GeoAll W u} {t : W.P.T} (J : QJ a t) (i : Fin J.r)
-
-variable {J i}
-
-
 theorem even_ranks (R : Ranks) (j : ℕ) (h : j + 2 < R.m) :
     Even (R.N j + Formalism.L2.Col.cOf R j + (R.N (j + 1 + 1) + Formalism.L2.Col.cOf R (j + 1 + 1))) := by
   obtain ⟨c, hc⟩ : ∃ c, R.m = j + 3 + c := ⟨R.m - (j + 3), by omega⟩
@@ -483,7 +470,6 @@ theorem even_ranks (R : Ranks) (j : ℕ) (h : j + 2 < R.m) :
   rw [e1, e2]
   show Even (R.k + j * (R.t + 1) + (c + 2) + (R.k + (j + 1 + 1) * (R.t + 1) + c))
   exact ⟨R.k + (j + 1) * (R.t + 1) + c + 1, by ring⟩
-
 
 end Steps
 
@@ -503,8 +489,6 @@ open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTh
 open scoped TensorProduct Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.tupleCharacter_at_basePointDetRoot_rootOfUnity : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (a : I.ι) (Ch₀ : ℕ → Type) (A : TwDat I l Z u a Ch₀), A.Is → ∀ j, j < B.R.m → ∀ i, i ≤ B.R.m → ∀ β, ∃ n : ℕ, 0 < n ∧ A.chr (j + 1) (A.xr i β) ^ n = 1 := by
-  first | exact @GlobalTheory.CharRoot.chr_xr_pow_eq_one
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TupleCharacterAtBasePointDetRootRootOfUnityStatement =====
@@ -514,13 +498,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.true_geometry_row_pair_value_alt : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {L : SizeData₂ (I.rec7 l Z)} {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX} (W : _root_.GlobalTheory.MiS.RealPackAlt ex), _root_.GlobalTheory.Fam.AllFamilyConditions W → ∀ (u : B.Word) (a : _root_.GlobalTheory.Fam.GeometricFamily W u), a.Is → a.True → (∀ r s, (a.g.oT B.R.m rfl).iA r s = if r.val = s.val then 1 else 0) → ∀ t (J : _root_.GlobalTheory.Fam.QuadraticExtensionData a t), J.Reads → ∀ i (hm : (J.G i).s + 1 + 1 ≤ B.R.m) (γ : J.Ch₀ ((J.G i).s + 1 + 1)) (e : GlobalTheory.StepData.Ix (Fin B.R.k ⊕ Fin ((J.G i).s + 1)) (Fin B.R.t) ((J.G i).s + 2) ⊕ Unit ≃ Fin (B.R.N ((J.G i).s + 1 + 1))), GlobalTheory.SymBridge.IsOrd (Sum.elim GlobalTheory.SymBridge.zPos fun _ => B.R.N B.R.m - 1) e → ∀ r b, (ofSplit (J.G i).q).pr (baseFr J.A (J.P i) ((J.G i).s + 1 + 1) hm γ r (e b)) = (J.G i).FM.β r b := by
   intro B X I l Z L hT Gi Gl Kc Yd cX ex W hW u a ha hat hiA t J hJ i hm γ e he r b
@@ -584,13 +565,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.ChartQuot
 open GlobalTheory.FinPl GlobalTheory.FinPlLoc ValuativeRel
 variable {D : D7}
@@ -657,8 +635,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ChrQuotChartFreeStatement =====
@@ -668,13 +644,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.QTw.JoinFrames
 theorem movedAt_alt : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {L : SizeData₂ (I.rec7 l Z)} {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX} (W : _root_.GlobalTheory.MiS.RealPackAlt ex), _root_.GlobalTheory.Fam.AllFamilyConditions W → ∀ (u : B.Word) (a : _root_.GlobalTheory.Fam.GeometricFamily W u), a.Is → a.True → ∀ t (J : _root_.GlobalTheory.Fam.QuadraticExtensionData a t), J.Reads → ∀ i, MovedAt J.A (J.P i) (J.E i) (J.hψ i) (J.sg i) (J.π i) :=
   fun W hW u a ha _ t J hJ i => _root_.GlobalTheory.Fam.QuadraticExtensionData.Reads.movedAt W hW u a ha t J hJ i
@@ -689,8 +662,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MovedAtStatement =====
@@ -700,13 +671,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.StepData GlobalTheory.SplitWeil ValuativeRel
 
 noncomputable section
@@ -798,7 +766,7 @@ theorem facAt_s_sgnAt_mul_of_moveAt (hW : _root_.GlobalTheory.Fam.AllFamilyCondi
   refine Eq.symm ?_
   refine (congrArg₂ (((J.G i).T (J.E i).δ (J.E i).tame (J.E i).η).xiPen _ _) h2 h5.symm).trans ((h6 _).trans ((h3 _ _ _).trans ?_))
   refine (congrArg (c * ·) hA).trans ?_
-  simp only [locXi, dif_neg (show ¬ (J.G i).s + 2 < B.R.m by omega), dif_pos hs, _root_.GlobalTheory.TwPlaces.sgnAt_alt]
+  simp only [locXi, dite_eq_right (show ¬ (J.G i).s + 2 < B.R.m by omega), dite_eq_left hs, _root_.GlobalTheory.TwPlaces.sgnAt_alt]
   ring
 theorem facAt_s_succ_inv_of_moveAt (hW : _root_.GlobalTheory.Fam.AllFamilyConditions W) (ha : a.Is) (haT : a.True)
     (hiA : ∀ r s, (a.g.oT B.R.m rfl).iA r s = if r.val = s.val then 1 else 0) (hJ : J.Reads) (hj : (J.G i).s + 1 + 1 ≤ B.R.m) (e')
@@ -828,8 +796,8 @@ theorem facAt_s_succ_inv_of_moveAt (hW : _root_.GlobalTheory.Fam.AllFamilyCondit
     rw [← hJ.M i] at hA
     refine Eq.trans ?_ (hA.trans ?_)
     · exact congrArg _ (h5.symm.trans rfl)
-    · simp only [locXi, dif_neg (show ¬ (J.G i).s + 1 + 2 < B.R.m by omega), dif_neg (show ¬ (J.G i).s + 1 + 2 = B.R.m by omega),
-        dif_pos hs]
+    · simp only [locXi, dite_eq_right (show ¬ (J.G i).s + 1 + 2 < B.R.m by omega), dite_eq_right (show ¬ (J.G i).s + 1 + 2 = B.R.m by omega),
+        dite_eq_left hs]
       rfl
   · obtain ⟨r, rfl⟩ := e'.surjective n
     have h6 := hmem r
@@ -874,13 +842,13 @@ theorem exists_roots_of_unity_signs_facAt (hW : _root_.GlobalTheory.Fam.AllFamil
     rw [h, zero_pow hn.ne'] at h1
     exact zero_ne_one h1
   let C : ∀ j, J.Ch₀ j → ℂ := fun j β => if h : j = (J.G i).s + 1 then c (h ▸ β) else 1
-  have hC : ∀ β, C ((J.G i).s + 1) β = c β := fun β => dif_pos rfl
+  have hC : ∀ β, C ((J.G i).s + 1) β = c β := fun β => dite_eq_left rfl
   have hCr : ∀ j β, ∃ n : ℕ, 0 < n ∧ C j β ^ n = 1 := fun j β => by
     by_cases h : j = (J.G i).s + 1
     · subst h
       rw [hC]
       exact hc β
-    · exact ⟨1, one_pos, by simp only [C, dif_neg h, one_pow]⟩
+    · exact ⟨1, one_pos, by simp only [C, dite_eq_right h, one_pow]⟩
   refine ⟨fun j β => if h : j + 1 < B.R.m then _root_.GlobalTheory.TwPlaces.sgnAt_alt J i j (by omega) β (B.R.N (j + 1) + Formalism.L2.Col.cOf B.R (j + 1)) else (C j β)⁻¹,
     fun j β => if h : j + 2 < B.R.m then _root_.GlobalTheory.TwPlaces.sgnAt_alt J i (j + 1) (by omega) β (B.R.N j + Formalism.L2.Col.cOf B.R j) else C (j + 1) β,
     fun j β => ?_, fun j β => ?_, fun j hj β => ?_, fun j hj α γ => ?_⟩
@@ -894,22 +862,22 @@ theorem exists_roots_of_unity_signs_facAt (hW : _root_.GlobalTheory.Fam.AllFamil
     · exact hCr _ β
   · beta_reduce
     by_cases h : j + 2 < B.R.m
-    · rw [dif_pos h, dif_pos (show j + 1 + 1 < B.R.m from h)]
+    · rw [dite_eq_left h, dite_eq_left (show j + 1 + 1 < B.R.m from h)]
       exact _root_.GlobalTheory.TwPlaces.sgnAt_mul_eq_one_of_even_add hJ _ _ _ (even_ranks B.R j h)
-    · rw [dif_neg h, dif_neg (show ¬ j + 1 + 1 < B.R.m from h)]
+    · rw [dite_eq_right h, dite_eq_right (show ¬ j + 1 + 1 < B.R.m from h)]
       obtain rfl : j = (J.G i).s := by omega
       rw [hC]
       exact mul_inv_cancel₀ (hc0 β)
   · beta_reduce
     rcases lt_trichotomy (j + 2) B.R.m with h | h | h
-    · rw [dif_pos h, dif_pos (show j + 1 < B.R.m by omega)]
+    · rw [dite_eq_left h, dite_eq_left (show j + 1 < B.R.m by omega)]
       exact _root_.GlobalTheory.TwPlaces.facAt_sgnAt_mul_sgnAt hW ha haT hJ hm j ((J.G i).s - (j + 1)) (by omega) hj _ α γ
     · obtain rfl : j = (J.G i).s := by omega
-      rw [dif_neg (show ¬ (J.G i).s + 2 < B.R.m by omega), dif_pos (show (J.G i).s + 1 < B.R.m by omega), hC]
+      rw [dite_eq_right (show ¬ (J.G i).s + 2 < B.R.m by omega), dite_eq_left (show (J.G i).s + 1 < B.R.m by omega), hC]
       exact _root_.GlobalTheory.TwPlaces.facAt_s_sgnAt_mul_of_moveAt hW ha haT hJ hm hj e he α γ _ (hc' _)
     · obtain rfl : j = (J.G i).s + 1 := by omega
-      rw [dif_neg (show ¬ (J.G i).s + 1 + 2 < B.R.m by omega), dif_neg (show ¬ (J.G i).s + 1 + 1 < B.R.m by omega), hC]
-      have h1 : C ((J.G i).s + 1 + 1) (J.ι _ γ) = 1 := dif_neg (by omega)
+      rw [dite_eq_right (show ¬ (J.G i).s + 1 + 2 < B.R.m by omega), dite_eq_right (show ¬ (J.G i).s + 1 + 1 < B.R.m by omega), hC]
+      have h1 : C ((J.G i).s + 1 + 1) (J.ι _ γ) = 1 := dite_eq_right (by omega)
       rw [h1, mul_one]
       exact _root_.GlobalTheory.TwPlaces.facAt_s_succ_inv_of_moveAt hW ha haT hiA hJ hj e he α γ _ (hc0 _) (hc' _)
 theorem exists_disjoint_places_isIdemSum (hW : _root_.GlobalTheory.Fam.AllFamilyConditions W) (ha : a.Is) (haT : a.True) (hJ : J.Reads) {e₀ : AE (I.rec7 l Z)}
@@ -946,7 +914,7 @@ theorem ratDatum_add_twist_places_alt : ∀ {B : GlobalTheory.Mem.Base} {X : Pre
   have hm := B.R.two_le_m
   obtain ⟨hP⟩ := hW.tr.pins
   have hc : ∀ j, j < B.R.m → ∀ i, i ≤ B.R.m → ∀ β, ∃ n : ℕ, 0 < n ∧ ((J.A.chr (j + 1) (J.A.xr i β) : ℂ)) ^ n = 1 :=
-    fun j hj i hi β => rou_circle (GlobalTheory.T.tupleCharacter_at_basePointDetRoot_rootOfUnity I hW.tr.ok hP l Z u _ J.Ch₀ J.A hJ.is j hj i hi β)
+    fun j hj i hi β => rou_circle (GlobalTheory.CharRoot.chr_xr_pow_eq_one I hW.tr.ok hP l Z u _ J.Ch₀ J.A hJ.is j hj i hi β)
   have c1 : ∀ j, j < B.R.m → ∀ α : J.Ch j, ∃ n : ℕ, 0 < n ∧
       ((∏ i, σ i j (J.ι j α)) * (J.A.chr (j + 1) (J.A.xr j (J.ι j α)) : ℂ)) ^ n = 1 :=
     fun j hj α => rou_mul (rou_prod _ _ fun i _ => hσ i j _) (hc j hj j hj.le _)
@@ -1000,8 +968,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RatDatumAddTwistPlacesStatement =====
@@ -1011,13 +977,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.Fam
 theorem xi_eq_xiOff_mul_join_alt : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {L : SizeData₂ (I.rec7 l Z)} {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX} (W : _root_.GlobalTheory.MiS.RealPackAlt ex), _root_.GlobalTheory.Fam.AllFamilyConditions W → ∀ (u : B.Word) (a : _root_.GlobalTheory.Fam.GeometricFamily W u), a.Is → a.True → ∀ t (J : _root_.GlobalTheory.Fam.QuadraticExtensionData a t), J.Reads → ∀ j (hj : j + 1 ≤ B.R.m) α γ z, J.A.xi j hj (J.ι j α) (J.ι (j + 1) γ) z = xiOff J.A j hj (J.ι j α) (J.ι (j + 1) γ) z * ∏ i, B.embLL (locXi J.A j (J.ι j α) (J.ι (j + 1) γ) (J.P i) (homOf I l Z j hj z)) := by
   intro B X I l Z L hT Gi Gl Kc Yd cX ex W hW u a _ _ t J hJ j hj α γ z
@@ -1052,8 +1015,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.XiEqXiOffMulJoinStatement =====
@@ -1063,13 +1024,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
 namespace GlobalTheory.Fam
 theorem QuadraticExtensionData.dat_exists : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {L : SizeData₂ (I.rec7 l Z)} {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX} (W : _root_.GlobalTheory.MiS.RealPackAlt ex), _root_.GlobalTheory.Fam.AllFamilyConditions W → ∀ (u : B.Word) (a : _root_.GlobalTheory.Fam.GeometricFamily W u), a.Is → a.True → (∀ r s, (a.g.oT B.R.m rfl).iA r s = if r.val = s.val then 1 else 0) → ∃ C : ℕ → ℂ, (∀ j, j < B.R.m → C j ≠ 0) ∧ ∀ t (J : _root_.GlobalTheory.Fam.QuadraticExtensionData a t), J.Reads → ∃ s ζ ρ, J.Dat C s ζ ρ := by
@@ -1083,8 +1041,8 @@ theorem QuadraticExtensionData.dat_exists : ∀ {B : GlobalTheory.Mem.Base} {X :
   let k : ℕ → ℂ := fun j => if h : j + 1 < B.R.m then (hstep j h).choose else 1
   have hk : ∀ j, ∃ n : ℕ, 0 < n ∧ k j ^ n = 1 := fun j => by
     by_cases h : j + 1 < B.R.m
-    · simp only [k, dif_pos h]; exact (hstep j h).choose_spec.1
-    · simp only [k, dif_neg h]; exact ⟨1, one_pos, by simp⟩
+    · simp only [k, dite_eq_left h]; exact (hstep j h).choose_spec.1
+    · simp only [k, dite_eq_right h]; exact ⟨1, one_pos, by simp⟩
   let cc : ℕ → ℂ := fun j => c0 * ∏ i ∈ Finset.range j, k i
   have hcc : ∀ j, ∃ n : ℕ, 0 < n ∧ cc j ^ n = 1 := fun j =>
     _root_.GlobalTheory.TwPlaces.rou_mul hc0 (datRoot_prod _ _ fun i _ => hk i)
@@ -1092,7 +1050,7 @@ theorem QuadraticExtensionData.dat_exists : ∀ {B : GlobalTheory.Mem.Base} {X :
   have hs0 : ∀ α, s 0 α = 1 := fun _ => rfl
   have hsS : ∀ j γ, j < B.R.m → s (j + 1) γ = cc j * Bf j γ := fun j γ h => by
     show (if j < B.R.m then cc j * Bf j γ else 1) = _
-    rw [if_pos h]
+    rw [ite_eq_left h]
   have hsA : ∀ j, j < B.R.m → ∀ α, s j α * Af j α = cc j := by
     intro j
     induction j with
@@ -1100,7 +1058,7 @@ theorem QuadraticExtensionData.dat_exists : ∀ {B : GlobalTheory.Mem.Base} {X :
     | succ j ih =>
       intro hj γ
       rw [hsS j γ (by omega)]
-      have hk' : k j = (hstep j hj).choose := by simp only [k, dif_pos hj]
+      have hk' : k j = (hstep j hj).choose := by simp only [k, dite_eq_left hj]
       have := (hstep j hj).choose_spec.2 γ
       calc cc j * Bf j γ * Af (j + 1) γ = cc j * (Bf j γ * Af (j + 1) γ) := by ring
         _ = cc j * k j := by rw [hk', ← this]
@@ -1115,7 +1073,7 @@ theorem QuadraticExtensionData.dat_exists : ∀ {B : GlobalTheory.Mem.Base} {X :
       · rw [hsS j γ h]; exact _root_.GlobalTheory.TwPlaces.rou_mul (hcc j) (hB j h γ)
       · refine ⟨1, one_pos, ?_⟩
         show (if j < B.R.m then cc j * Bf j γ else 1) ^ 1 = 1
-        rw [if_neg h, one_pow]
+        rw [ite_eq_right h, one_pow]
   refine ⟨s, fun j α γ => s j α * (s (j + 1) γ)⁻¹ * (p j α * q j γ), fun _ => 1, hsroot, hs0,
     fun _ => ⟨1, one_pos, one_pow 1⟩, fun j hj α γ => ⟨?_, ?_⟩⟩
   · have h1 := hD e₀ he₀ j hj α γ _ _ (hC t J hR e₀ he₀ j hj α γ)
@@ -1152,8 +1110,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.DatExistsStatement", "h": "module\n\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FamilyConstants\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.QuadraticExtensionData\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.DatExists\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Definitions.LatticeFrames.MiStarOfMid\n\n"}
 section -- clump:auto
 @[expose] public section
-
-
 
 end -- clump:auto
 end -- clump:auto

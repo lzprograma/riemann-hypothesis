@@ -120,9 +120,6 @@ namespace VSys
 variable {O : Type} [CommRing O] {bar : O → O} {q s : ℕ} {W : Matrix (Fin s) (Fin s) ℤ} {N₁ : ℕ} {A : Type} [CommRing A]
   [IsLocalRing A] (Φ : VSys bar q W N₁ A)
 
-theorem qW_nonneg (y : Φ.Y) (i : Fin (Φ.m y)) (μ : Fin s → Φ.X y) : 0 ≤ qW W (Φ.δ y i) μ :=
-  GlobalTheory.Poinc.qW_nonneg Φ.posW (Φ.bal y i).1 (Φ.nonneg y i) μ
-
 def monoT (y : Φ.Y) {l : ℕ} (a : Fin l × Fin s → Φ.X y) : Φ.V y := ∏ i, mono W (Φ.t y) (Φ.δ y) fun v => a (i, v)
 
 def coefT (y : Φ.Y) {l : ℕ} (a : Fin l × Fin s → Φ.X y) (c : Fin l → Φ.Q) : Φ.V y := ∏ i, Φ.u y (fun v => a (i, v)) (c i)

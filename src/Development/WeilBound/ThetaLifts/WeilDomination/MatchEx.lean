@@ -3,44 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
 public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 public import Development.WeilBound.ThetaLifts.ConeHypotheses.IsLocallyConstantFinprodEvalV
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -129,14 +92,14 @@ theorem partner_of_big (hK : KCoinv) (hM : IsMatched B G X om om' R Rf) {Φ} (h�
   let φ₀ : Fin m → ∀ v : Pl F, (Fin a' × Fin (a + a') → Fv F v) → ℂ := fun i v => if v ∈ T then χ i v else G.M'.vac v
   let φ' : Fin m → ∀ v : Pl F, (Fin a' × Fin (a + a') → Fv F v) → ℂ := fun i => Function.update (φ₀ i) B.v₁ (ζ i)
   have fam₀ : ∀ i, Fam G.M' (φ₀ i) := fun i => by
-    refine ⟨fun v => ?_, T.eventually_cofinite_notMem.mono fun v hv => if_neg hv⟩
+    refine ⟨fun v => ?_, T.eventually_cofinite_notMem.mono fun v hv => ite_eq_right hv⟩
     by_cases hv : v ∈ T
-    · simp only [φ₀, if_pos hv]; exact hχ i v
-    · simp only [φ₀, if_neg hv]; exact (hM.triple.geo.hM'.vac v).1
+    · simp only [φ₀, ite_eq_left hv]; exact hχ i v
+    · simp only [φ₀, ite_eq_right hv]; exact (hM.triple.geo.hM'.vac v).1
   have fam' : ∀ i, Fam G.M' (φ' i) := fun i => (fam₀ i).update B.v₁ (hζ i).1
   have out' : ∀ i, ∀ v ∉ T, φ' i v = G.M'.vac v := fun i v hv => by
     have hne : v ≠ B.v₁ := fun e => hv (e ▸ h1)
-    simp only [φ', Function.update_of_ne hne, φ₀, if_neg hv]
+    simp only [φ', Function.update_of_ne hne, φ₀, ite_eq_right hv]
   refine ⟨∑ i, pure (f' i) (φ' i), Submodule.sum_mem _ fun i _ => Submodule.subset_span
     ⟨f' i, φ' i, (fam' i).1, (fam' i).2, by simp only [φ', Function.update_self]; exact hζ i, rfl⟩, ?_⟩
   refine ⟨T, hXT, m, m, f, φ, f', φ', fun i => ⟨(hfφ i).1, (hfφ i).2.1, hout i⟩,
@@ -148,7 +111,7 @@ theorem partner_of_big (hK : KCoinv) (hM : IsMatched B G X om om' R Rf) {Φ} (h�
   by_cases hv : v = B.v₁
   · subst hv
     simp only [φ', Function.update_self, eζ]
-  · simp only [φ', Function.update_of_ne hv, φ₀, if_pos hvT, eχ]
+  · simp only [φ', Function.update_of_ne hv, φ₀, ite_eq_left hvT, eχ]
 
 theorem partner_of_small (hM : IsMatched B G X om om' R Rf) {Φ'} (hΦ' : Φ' ∈ PolData B G.M') :
     ∃ Φ, PolMatch B G X R Rf Φ Φ' := by
@@ -168,15 +131,15 @@ theorem partner_of_small (hM : IsMatched B G X om om' R Rf) {Φ'} (hΦ' : Φ' �
   let φ : Fin m → ∀ v : Pl F, (Fin a × Fin (a + a') → Fv F v) → ℂ := fun i v => if v ∈ T then χ i v else G.M.vac v
   have hφ : ∀ i v, φ i v ∈ SB _ := fun i v => by
     by_cases hv : v ∈ T
-    · simp only [φ, if_pos hv]; exact hχ i v
-    · simp only [φ, if_neg hv]; exact (hM.triple.geo.hM.vac v).1
-  refine ⟨∑ i, pure (f i) (φ i), T, hXT, m, m, f, φ, f', φ', fun i => ⟨hf i, hφ i, fun v hv => if_neg hv⟩,
+    · simp only [φ, ite_eq_left hv]; exact hχ i v
+    · simp only [φ, ite_eq_right hv]; exact (hM.triple.geo.hM.vac v).1
+  refine ⟨∑ i, pure (f i) (φ i), T, hXT, m, m, f, φ, f', φ', fun i => ⟨hf i, hφ i, fun v hv => ite_eq_right hv⟩,
     fun i => ⟨(hfφ i).1, (hfφ i).2.1, hout i⟩, rfl, rfl, ?_⟩
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [ef i]
   congr 2
   funext ⟨v, hvT⟩
-  simp only [φ, if_pos hvT, eχ]
+  simp only [φ, ite_eq_left hvT, eχ]
 
 theorem match_of_polMatch (hM : IsMatched B G X om om' R Rf) {Φ Φ'} (hS : Φ' ∈ G.M'.So B.ψ B.τ₁)
     (h : PolMatch B G X R Rf Φ Φ') : Φ ∈ PolData B G.M ∧ Φ' ∈ PolData B G.M' ∧ Match B G X R Rf Φ Φ' := by

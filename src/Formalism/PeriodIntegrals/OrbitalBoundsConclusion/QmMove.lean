@@ -4,50 +4,7 @@ public import Formalism.PeriodIntegrals.QmDefs
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovariantVectorMove.MoveOperatorCovariance
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -277,7 +234,7 @@ theorem stepV (hy : ∀ a b c, E a b * y c - y c * E a b = if a = c then -y b el
       Fv E y a b w (p + 1) τ σ q = Fv E y a b w p τ σ q := by
     intro τ σ q h1 h2
     have e1 : ((q : ℕ) < p + 1) ↔ ((q : ℕ) < p) := by omega
-    simp only [Fv, if_neg h1, if_neg h2, e1]
+    simp only [Fv, ite_eq_right h1, ite_eq_right h2, e1]
   have htk : ∀ τ σ, (List.ofFn (Fv E y a b w p (τ * s) σ)).take p =
       (List.ofFn (Fv E y a b w p τ σ)).take p :=
     fun τ σ => take_ofFn_congr _ _ p (fun k hk => hoff τ σ k (by omega) (by omega))
@@ -307,8 +264,8 @@ theorem stepV (hy : ∀ a b c, E a b * y c - y c * E a b = if a = c then -y b el
       (fun k h1 h2 => (hoff2 τ σ k h1 h2).trans (hoff τ σ k h1 h2).symm), htk, hdr]
     congr 1
     congr 2
-    simp only [Fv, Equiv.Perm.mul_apply, hsp, hsp1, if_true, if_neg n1, if_pos n2, if_neg n3, n4,
-      if_neg n1.symm]
+    simp only [Fv, Equiv.Perm.mul_apply, hsp, hsp1, ite_true, ite_eq_right n1, ite_eq_left n2, ite_eq_right n3, n4,
+      ite_eq_right n1.symm]
     exact midV E y hy _ _ (by push_cast; ring) _ _ _
 
 theorem Pv_zero (τ : Equiv.Perm (Fin (m + 1))) :
@@ -322,7 +279,7 @@ theorem Pv_zero (τ : Equiv.Perm (Fin (m + 1))) :
       fun k : Fin m => Tm E (w - (k : ℂ)) (a (σ k)) (b (τ k.succ)) := by
     funext k
     simp only [Fv, Fin.val_succ]
-    rw [if_neg (by omega), if_neg (by omega), Nat.add_sub_cancel, extN_lt] <;> rfl
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), Nat.add_sub_cancel, extN_lt] <;> rfl
   rw [hf, hg, ← mul_assoc, ← mul_assoc, icomm]
 
 theorem Pv_last (τ : Equiv.Perm (Fin (m + 1))) :
@@ -336,7 +293,7 @@ theorem Pv_last (τ : Equiv.Perm (Fin (m + 1))) :
       fun k : Fin m => Tm E (w - 1 - (k : ℂ)) (a (σ k)) (b (τ k.castSucc)) := by
     funext k
     simp only [Fv, Fin.val_castSucc]
-    rw [if_neg (by have := k.isLt; omega), if_pos k.isLt, extN_lt] <;> rfl
+    rw [ite_eq_right (by have := k.isLt; omega), ite_eq_left k.isLt, extN_lt] <;> rfl
   rw [hf, hg]
   exact (mul_assoc _ _ _).symm
 

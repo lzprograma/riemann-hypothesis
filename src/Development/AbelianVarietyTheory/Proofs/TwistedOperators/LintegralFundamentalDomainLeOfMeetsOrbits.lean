@@ -56,8 +56,8 @@ open scoped Pointwise
 theorem lintegral_fundamentalDomain_le_of_meets_orbits
     {G : Type} [Group G] [MeasurableSpace G] [MeasurableMul G] (Γ : Subgroup G) [Countable Γ]
     (ν : Measure G) [ν.IsMulLeftInvariant] {𝓕 S : Set G}
-    (h𝓕 : IsFundamentalDomain Γ 𝓕 ν) (_hS : MeasurableSet S)
-    (hmeet : ∀ g, ∃ γ ∈ Γ, γ * g ∈ S) {f : G → ℝ≥0∞} (_hf : Measurable f)
+    (h𝓕 : IsFundamentalDomain Γ 𝓕 ν)
+    (hmeet : ∀ g, ∃ γ ∈ Γ, γ * g ∈ S) {f : G → ℝ≥0∞}
     (hinv : ∀ γ ∈ Γ, ∀ g, f (γ * g) = f g) :
     ∫⁻ g in 𝓕, f g ∂ν ≤ ∫⁻ g in S, f g ∂ν := by
   have hsub : 𝓕 ⊆ ⋃ γ : Γ, γ • S ∩ 𝓕 := by

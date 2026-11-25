@@ -118,8 +118,7 @@ theorem smallIdeal_isPrime {l : ℕ} [Fact (Nat.Prime l)] {E : Type} [Field E]
     simp
   · rw [mem_smallIdeal, mem_smallIdeal]
     rw [mem_smallIdeal] at hxy
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have h1 := norm_map_le_one c x
     have h2 := norm_map_le_one c y
     have e : ((x * y : 𝓞 E) : E) = (x : E) * (y : E) := map_mul (algebraMap (𝓞 E) E) x y

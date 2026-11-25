@@ -23,7 +23,7 @@ theorem twTQ_HQ_entry {κ : Type} [CommRing κ] {n r b : ℕ} {M : GL (Fin n) κ
   apply hM
   show coarse r [b] a.1 < coarse r [b] l.1
   unfold coarse
-  simp only [blkIdx, if_pos ha, if_neg (not_lt.2 hl)]
+  simp only [blkIdx, ite_eq_left ha, ite_eq_right (not_lt.2 hl)]
   omega
 
 def twInit {n : ℕ} (x : Sp E n) : Sp E (n - 1) := fun i => x ⟨i.1, by have := i.2; omega⟩
@@ -48,20 +48,20 @@ theorem twPar_block {n r : ℕ} (hr : r < n) (H : Sp E n ≃ₗ[E] Sp E n) (h' :
   have hxI : ∀ l, IntAt P (x l) := fun l => by
     have := hx l
     by_cases hl : r ≤ l.1 ∧ l.1 < n
-    · rw [if_pos hl, zpow_one] at this
+    · rw [ite_eq_left hl, zpow_one] at this
       have e : x l = (qOf P : E) * ((qOf P : E)⁻¹ * x l) := by field_simp
       rw [e]; exact (ciIntAt_q (P := P) (q := qOf P)).mul this
-    · rw [if_neg hl] at this; simpa using this
+    · rw [ite_eq_right hl] at this; simpa using this
   have hxD : ∀ l : Fin n, r ≤ l.1 → IntAt P ((qOf P : E)⁻¹ * x l) := fun l hl => by
     have := hx l
-    rw [if_pos ⟨hl, l.2⟩, zpow_one] at this
+    rw [ite_eq_left ⟨hl, l.2⟩, zpow_one] at this
     exact this
   intro l
   rw [hH]
   by_cases hl : l.1 < n - 1
   · rw [dite_eq_left hl]
     by_cases hDl : r ≤ l.1
-    · rw [if_pos ⟨hDl, l.2⟩, zpow_one]
+    · rw [ite_eq_left ⟨hDl, l.2⟩, zpow_one]
       rw [twApply_coordE h' (twInit x) ⟨l.1, hl⟩, Finset.mul_sum]
       apply twIntAt_sum
       intro a
@@ -82,7 +82,7 @@ theorem twPar_block {n r : ℕ} (hr : r < n) (H : Sp E n ≃ₗ[E] Sp E n) (h' :
         by_cases hj : j = a
         · subst hj; simp only [Pi.single_eq_same]; exact ⟨1, 1, one_notMem P, by simp⟩
         · rw [Pi.single_eq_of_ne hj]; exact ⟨0, 1, one_notMem P, by simp⟩
-    · rw [if_neg (fun h => hDl h.1), zpow_zero, inv_one, one_mul]
+    · rw [ite_eq_right (fun h => hDl h.1), zpow_zero, inv_one, one_mul]
       exact hint (twInit x) (fun i => hxI _) ⟨l.1, hl⟩
   · rw [dite_eq_right hl]
     exact hx l
@@ -159,19 +159,19 @@ theorem mem_kOne_of_block {n r c : ℕ} (hr : r < n) (G : ↥(GLint E n P)) (g' 
       refine ⟨fun i => ?_, ?_⟩
       · have := h ⟨i.1, by have := i.2; omega⟩
         unfold kOneLastExponents at this
-        rw [if_neg (show ¬ (i.1 + 1 = n) by have := i.2; omega)] at this
+        rw [ite_eq_right (show ¬ (i.1 + 1 = n) by have := i.2; omega)] at this
         simpa [twInit] using this
       · have := h (twLastI hn)
-        have e : kOneLastExponents n c (twLastI hn).1 = (c : ℤ) := by unfold kOneLastExponents twLastI; rw [if_pos (by simp; omega)]
+        have e : kOneLastExponents n c (twLastI hn).1 = (c : ℤ) := by unfold kOneLastExponents twLastI; rw [ite_eq_left (by simp; omega)]
         rw [e] at this
         exact this
     · rintro ⟨h1, h2⟩ l
       unfold kOneLastExponents
       by_cases hl : l.1 + 1 = n
-      · rw [if_pos hl]
+      · rw [ite_eq_left hl]
         have e : l = twLastI hn := Fin.ext (by unfold twLastI; simp; omega)
         rw [e]; exact h2
-      · rw [if_neg hl]
+      · rw [ite_eq_right hl]
         simpa [twInit] using h1 ⟨l.1, by have := l.2; omega⟩
   have hX : ∀ (x : Sp E n), x ∈ LocE.sclLat P (qOf P) n (twistedLevelExponent n c) ↔
       (∀ i, IntAt P (((qOf P : E) ^ (c : ℤ))⁻¹ * twInit x i)) ∧ IntAt P (x (twLastI hn)) := by
@@ -182,19 +182,19 @@ theorem mem_kOne_of_block {n r c : ℕ} (hr : r < n) (G : ↥(GLint E n P)) (g' 
       refine ⟨fun i => ?_, ?_⟩
       · have := h ⟨i.1, by have := i.2; omega⟩
         unfold twistedLevelExponent at this
-        rw [if_neg (show ¬ (i.1 + 1 = n) by have := i.2; omega)] at this
+        rw [ite_eq_right (show ¬ (i.1 + 1 = n) by have := i.2; omega)] at this
         simpa [twInit] using this
       · have := h (twLastI hn)
-        have e : twistedLevelExponent n c (twLastI hn).1 = 0 := by unfold twistedLevelExponent twLastI; rw [if_pos (by simp; omega)]
+        have e : twistedLevelExponent n c (twLastI hn).1 = 0 := by unfold twistedLevelExponent twLastI; rw [ite_eq_left (by simp; omega)]
         rw [e, zpow_zero, inv_one, one_mul] at this
         exact this
     · rintro ⟨h1, h2⟩ l
       unfold twistedLevelExponent
       by_cases hl : l.1 + 1 = n
-      · rw [if_pos hl]
+      · rw [ite_eq_left hl]
         have e : l = twLastI hn := Fin.ext (by unfold twLastI; simp; omega)
         rw [e]; simpa using h2
-      · rw [if_neg hl]
+      · rw [ite_eq_right hl]
         simpa [twInit] using h1 ⟨l.1, by have := l.2; omega⟩
   refine ⟨hJ, fun x => ?_, fun x => ?_, fun w hw => ?_⟩
   · show Gm x ∈ _ ↔ x ∈ _

@@ -1,47 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 
 @[expose] public section
 
@@ -55,18 +15,6 @@ private theorem unf_meas_strip : MeasurableSet strip := by
   unfold strip
   exact (measurableSet_le measurable_const UpperHalfPlane.continuous_re.measurable).inter
     (measurableSet_lt UpperHalfPlane.continuous_re.measurable measurable_const)
-
-private theorem unf_meas_smul (γ : SL(2, ℤ)) : Measurable (fun z : ℍ => γ • z) := by
-  refine Continuous.measurable ?_
-  rw [UpperHalfPlane.isOpenEmbedding_coe.isEmbedding.continuous_iff]
-  have h : (UpperHalfPlane.coe ∘ fun z : ℍ => γ • z) = fun z : ℍ =>
-      (((algebraMap ℤ ℝ (γ 0 0) : ℂ) * z + (algebraMap ℤ ℝ (γ 0 1) : ℂ)) /
-      ((algebraMap ℤ ℝ (γ 1 0) : ℂ) * z + (algebraMap ℤ ℝ (γ 1 1) : ℂ))) :=
-    funext fun z => UpperHalfPlane.coe_specialLinearGroup_apply γ z
-  rw [h]
-  refine Continuous.div₀ (by fun_prop) (by fun_prop) fun z => ?_
-  have := UpperHalfPlane.denom_ne_zero (Matrix.SpecialLinearGroup.mapGL ℝ γ) z
-  simpa [UpperHalfPlane.denom] using this
 
 private theorem unf_countable : Countable SL(2, ℤ) := @Subtype.countable (Matrix (Fin 2) (Fin 2) ℤ) (show Countable (Fin 2 → Fin 2 → ℤ) from inferInstance) _
 
@@ -84,7 +32,9 @@ private theorem hasSum_integral_fd_smul_eq_two_integral {E : Type*} [NormedAddCo
   rw [hU, two_smul, integral_add_measure hfi hfi, ← two_smul ℝ] at h1
   convert h1 using 1
   funext γ
-  rw [integral_map (UpperTheory.V.Af.Rs.unf_meas_smul γ).aemeasurable hfm.aestronglyMeasurable]
+  rw [integral_map (φ := fun z : ℍ => γ • z)
+    (continuous_const_smul (Matrix.SpecialLinearGroup.mapGL ℝ γ)).measurable.aemeasurable
+    hfm.aestronglyMeasurable]
 
 open UpperTheory.V.Af.Rs in
 theorem UpperTheory.V.Af.Rs.unfold :
@@ -114,8 +64,9 @@ theorem UpperTheory.V.Af.Rs.unfold :
   have hint : ∀ c : {γ // g γ = x},
       Integrable (fun z => f (c.1 • z)) (volume.restrict ModularGroup.fd) := by
     intro c
-    refine Integrable.mono (hΦ x)
-      ((hfm.comp_measurable (unf_meas_smul c.1)).aestronglyMeasurable) (ae_of_all _ fun z => ?_)
+    refine Integrable.mono (hΦ x) ((hfm.comp_measurable
+      ((continuous_const_smul (Matrix.SpecialLinearGroup.mapGL ℝ c.1)).measurable :
+        Measurable fun z : ℍ => c.1 • z)).aestronglyMeasurable) (ae_of_all _ fun z => ?_)
     have hrow : row c.1 = x := congrArg Subtype.val c.2
     rw [hfγ]
     split_ifs
@@ -129,9 +80,9 @@ theorem UpperTheory.V.Af.Rs.unfold :
     obtain ⟨γ0, ⟨h0row, h0s⟩, huniq⟩ := hR.2 z x
     have hg0 : g γ0 = x := Subtype.ext h0row
     rw [tsum_eq_single ⟨γ0, hg0⟩]
-    · rw [hfγ, if_pos h0s, h0row]
+    · rw [hfγ, ite_eq_left h0s, h0row]
     · intro c hc
-      rw [hfγ, if_neg]
+      rw [hfγ, ite_eq_right]
       intro hs
       apply hc
       exact Subtype.ext (huniq c.1 ⟨congrArg Subtype.val c.2, hs⟩)

@@ -2,51 +2,7 @@ module
 
 public import Development.WeilBound.ThetaLifts.LatticeBasics.RegOfBound
 public import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyEqOfIsPreconnected
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -57,12 +13,6 @@ open Filter Topology Set GlobalTheory.Cont GlobalTheory.ThK.Dbl
 namespace PositivityTheory.SiegelWeilFormula.Khead
 
 variable {X : Type} [TopologicalSpace X] {h : X → ℝ}
-
-private theorem regOn_mono {g : ℂ → X → ℂ} {S T : Set ℂ} (hg : An.RegOn h g S) (hT : T ⊆ S) :
-    An.RegOn h g T := by
-  obtain ⟨C, N, hC⟩ := hg.grow
-  exact ⟨fun x => (hg.hol x).mono hT, hg.cont.mono (prod_mono hT subset_rfl),
-    ⟨C, N, fun s hs x => hC s (hT hs) x⟩⟩
 
 private theorem regOn_congr {g G : ℂ → X → ℂ} {S : Set ℂ} (hg : An.RegOn h g S)
     (he : ∀ s ∈ S, ∀ x, G s x = g s x) : An.RegOn h G S := by
@@ -93,13 +43,13 @@ private theorem exists_local_regularization_of_reg_right_half {g : ℂ → X →
   by_cases hz : t < z.re
   · obtain ⟨S, hS, hR⟩ := hr z hz
     obtain ⟨ρ, hρ, hsub⟩ := Metric.mem_nhds_iff.mp hS
-    exact ⟨0, g, ρ, hρ, regOn_mono hR hsub, fun s _ _ x => by simp⟩
+    exact ⟨0, g, ρ, hρ, hR.mono hsub, fun s _ _ x => by simp⟩
   · obtain ⟨k, H, ⟨S, hS, hR⟩, hev⟩ := hp z
     obtain ⟨ρ1, hρ1, hsub⟩ := Metric.mem_nhds_iff.mp hS
     rw [eventually_nhdsWithin_iff, Metric.eventually_nhds_iff] at hev
     obtain ⟨ε, hε, hE⟩ := hev
     refine ⟨k, H, min ρ1 ε, lt_min hρ1 hε,
-      regOn_mono hR ((Metric.ball_subset_ball (min_le_left _ _)).trans hsub), fun s hs hne x => ?_⟩
+      hR.mono ((Metric.ball_subset_ball (min_le_left _ _)).trans hsub), fun s hs hne x => ?_⟩
     exact hE (lt_of_lt_of_le (Metric.mem_ball.mp hs) (min_le_right _ _)) (hne.resolve_right hz) x
 
 theorem strip (h1 : ∀ x, 1 ≤ h x) {g : ℂ → X → ℂ}
@@ -156,13 +106,13 @@ theorem strip (h1 : ∀ x, 1 ≤ h x) {g : ℂ → X → ℂ}
         exact tendsto_nhds_unique (c1.tendsto.mono_left nhdsWithin_le_nhds)
           ((c2.tendsto.mono_left nhdsWithin_le_nhds).congr' hev)
     · have hsz : s ≠ z := fun h' => hsF (h' ▸ hz)
-      simp only [G, hsF, if_false]
+      simp only [G, hsF, ite_false]
       rw [hEq z s hs (Or.inl hsz) x, hpq z hz s]
       ring
   have hright : ∀ s : ℂ, t < s.re → ∀ x, G s x = p.eval s * g s x := by
     intro s hs x
     by_cases hsF : s ∈ F
-    · simp only [G, hsF, if_true]
+    · simp only [G, hsF, ite_true]
       rw [hEq s s (Metric.mem_ball_self (hρ s)) (Or.inr hs) x, hpq s hsF s]
       ring
     · simp [G, hsF]
@@ -193,7 +143,9 @@ theorem strip (h1 : ∀ x, 1 ≤ h x) {g : ℂ → X → ℂ}
     · obtain ⟨S, hS, hR⟩ := hr s hst
       refine ⟨S ∩ Metric.ball s 1 ∩ rightOf t,
         inter_mem (inter_mem hS (Metric.ball_mem_nhds s one_pos)) (hRopen.mem_nhds hst), ?_⟩
-      exact regOn_congr (regOn_polynomial_mul_of_subset_ball (S := S ∩ Metric.ball s 1 ∩ rightOf t) (regOn_mono hR fun w hw => hw.1.1) s 1 (fun w hw => hw.1.2) p)
+      exact regOn_congr
+        (regOn_polynomial_mul_of_subset_ball (S := S ∩ Metric.ball s 1 ∩ rightOf t)
+          (hR.mono fun w hw => hw.1.1) s 1 (fun w hw => hw.1.2) p)
         fun w hw x => hright w hw.2 x
     · have hs1 := hs.resolve_right hst
       obtain ⟨r, hr0, hmem⟩ := mem_iUnion₂.mp hs1

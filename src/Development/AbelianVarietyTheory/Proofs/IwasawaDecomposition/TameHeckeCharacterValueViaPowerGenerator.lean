@@ -116,7 +116,7 @@ theorem inf_mul_val_pow : ∀ (L : Type) [Field L] [NumberField L] (χ : HChar L
     Finset.prod_eq_one (fun w hw => locK_eq_one (hT w hw) k (h1 w hw)), mul_one]
   congr 1
   rw [finprod_eq_single _ v]
-  · rw [finprod_eq_if, if_pos hv, ordF_eq_count, hk, FractionalIdeal.count_pow, FractionalIdeal.count_self, mul_one,
+  · rw [finprod_eq_if, ite_eq_left hv, ordF_eq_count, hk, FractionalIdeal.count_pow, FractionalIdeal.count_self, mul_one,
       zpow_natCast]
   · intro w hw
     rw [ordF_eq_count, hk, FractionalIdeal.count_pow, FractionalIdeal.count_maximal_coprime L w (Ne.symm hw), mul_zero,

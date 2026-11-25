@@ -76,9 +76,9 @@ theorem sum_orb (S : A → Prop) (Rp : Finset A) (hex : ∀ a, S a → ∃! a0, 
   refine Finset.sum_congr rfl (fun b hb => ?_)
   obtain ⟨a0, ⟨h0, hγ⟩, huniq⟩ := hex b (hB b hb)
   rw [Finset.sum_eq_single a0]
-  · rw [if_pos hγ]
+  · rw [ite_eq_left hγ]
   · intro c hc hne
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hne (huniq c ⟨hc, h⟩)
   · intro h

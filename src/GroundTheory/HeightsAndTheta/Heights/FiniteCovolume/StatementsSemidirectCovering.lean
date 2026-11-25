@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.MeasureTheory.Group.Measure
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 

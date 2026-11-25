@@ -18,56 +18,12 @@ public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
 public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TraceHermNondegenerate
 import Mathlib.Algebra.Order.Star.Real
@@ -127,7 +83,7 @@ theorem exists_linearEquiv_comp_eq_and_apply_eq [FiniteDimensional K V] {E E' : 
   have hEf (x) : E' (f x) = E x := by
     rw [hf, map_add (f := _), hs1', LinearMap.mem_ker.mp (e (π x)).2, add_zero]
   have hinj : Function.Injective f := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     have h0 : E x = 0 := by rw [← hEf, hx, map_zero]
     rw [hf, h0, map_zero, zero_add, ZeroMemClass.coe_eq_zero, map_eq_zero_iff _ e.injective] at hx
@@ -443,11 +399,11 @@ theorem adjugate_isHomogeneous {σ : Type*} (M : Matrix (Fin p) (Fin p) (MvPolyn
     (fun i => if i = b then 0 else d) (fun i j => by
       by_cases hi : i = b
       · subst hi
-        rw [updateRow_self, if_pos rfl, Pi.single_apply]
+        rw [updateRow_self, ite_eq_left rfl, Pi.single_apply]
         split_ifs
         · exact isWeightedHomogeneous_one _ _
         · exact isWeightedHomogeneous_zero _ _ _
-      · rw [updateRow_ne hi, if_neg hi]; exact hM i j)
+      · rw [updateRow_ne hi, ite_eq_right hi]; exact hM i j)
   change IsWeightedHomogeneous 1 _ _
   convert this using 1
   rw [Finset.sum_ite, Finset.sum_const_zero, zero_add, Finset.sum_const, Finset.filter_ne',
@@ -778,7 +734,7 @@ private theorem perpVec_apply_eq_zero {R V : Type} [CommRing R] [AddCommGroup V]
 
   simp only [perpVec, ← hMdef, map_sub, map_smul, map_sum, Pi.sub_apply, Pi.smul_apply,
   Finset.sum_apply, smul_eq_mul, hrow, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-  if_true]
+  ite_true]
   ring
 
 theorem exists_short_harmonic_family_few_columns (hfg : Λ.FG)
@@ -1116,7 +1072,7 @@ theorem mem_iff_herm_of_unimod {n : ℕ} {Λ : GenLat E n} (h : Λ.Unimod) (x : 
     intro y
 
     simp only [FD.herm, FD.cc, Matrix.one_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, map_sum, map_mul,
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, map_sum, map_mul,
     IsCMField.complexConj_apply_apply]
   rw [h x]
   refine forall₂_congr fun y _ => ?_
@@ -1152,14 +1108,14 @@ theorem injective_embF_inPsi {H : Host E} {l : Level H} (c : Coeff l) :
   have hf : (if b then ComplexEmbedding.conjugate τ else τ) =
       (if b' then ComplexEmbedding.conjugate τ' else τ') := RingHom.ext hx
   cases b <;> cases b'
-  · simp only [Bool.false_eq_true, if_false] at hf
+  · simp only [Bool.false_eq_true, ite_false] at hf
     subst hf
     rfl
-  · simp only [Bool.false_eq_true, if_false, if_true] at hf
+  · simp only [Bool.false_eq_true, ite_false, ite_true] at hf
     exact absurd ⟨hτ', by rw [← hf]; exact hτ⟩ (not_inPsi_and_conjugate H τ')
-  · simp only [Bool.false_eq_true, if_false, if_true] at hf
+  · simp only [Bool.false_eq_true, ite_false, ite_true] at hf
     exact absurd ⟨hτ, by rw [hf]; exact hτ'⟩ (not_inPsi_and_conjugate H τ)
-  · simp only [if_true] at hf
+  · simp only [ite_true] at hf
     have h2 := (ComplexEmbedding.involutive_conjugate E).injective hf
     subst h2
     rfl

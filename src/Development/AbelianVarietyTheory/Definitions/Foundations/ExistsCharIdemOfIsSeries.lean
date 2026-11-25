@@ -2,46 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -49,11 +9,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 noncomputable section
 open Polynomial Classical
 namespace GlobalTheory.BadShare.Basic
-
-section Central
-variable {G : Type} [Group G] [Fintype G]
-
-end Central
 
 variable {g : ℕ} [Fact g.Prime] {N : ℕ}
 
@@ -93,13 +48,13 @@ theorem sum_ite_entN (M : Matrix (Fin N) (Fin N) (ZMod g)) (a : Fin N) (c : ℕ)
   · rw [Finset.sum_eq_single ⟨c, h.2⟩]
     · simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hbc
       exact hb (Fin.ext hbc)
     · simp
   · apply Finset.sum_eq_zero
     intro b _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hbc
     exact h ⟨a.isLt, hbc ▸ b.isLt⟩
 
@@ -127,9 +82,9 @@ private theorem sum_range_eq_sum_split_of_last_eq_zero {R : Type} [AddCommMonoid
     ∑ i ∈ Finset.range N, F i = ∑ i ∈ Finset.range (s - 1), f i + (if 1 ≤ s then f (s + k) else 0) +
       ∑ i ∈ Finset.range (s - 1), f (s + k + 1 + i) + ∑ a ∈ Finset.range (k - 1), f (s + a) := by
   have pos : ∀ i, i + 1 ≠ s → ¬(0 < k ∧ i + 1 = s + k) → F i = f i := fun i h1 h2 => by
-    rw [hF, if_pos ⟨h1, h2⟩]
+    rw [hF, ite_eq_left ⟨h1, h2⟩]
   have neg : ∀ i, ¬(i + 1 ≠ s ∧ ¬(0 < k ∧ i + 1 = s + k)) → F i = 0 := fun i h => by
-    rw [hF, if_neg h]
+    rw [hF, ite_eq_right h]
   subst hN
   rcases s with _ | t <;> rcases k with _ | j
   · rw [show 0 + 2 * 0 + 1 = 1 from rfl, Finset.sum_range_one, pos 0 (by omega) (by omega)]
@@ -137,7 +92,7 @@ private theorem sum_range_eq_sum_split_of_last_eq_zero {R : Type} [AddCommMonoid
   · rw [show j + 1 + 2 * 0 + 1 = j + 1 + 1 by omega, Finset.sum_range_succ, Finset.sum_range_succ,
       neg j (by omega), pos (j + 1) (by omega) (by omega), show f (j + 1) = 0 by simpa using hf]
     simp only [Nat.zero_sub, Finset.range_zero, Finset.sum_empty, Nat.add_sub_cancel, zero_add, add_zero]
-    rw [if_neg (by omega), zero_add]
+    rw [ite_eq_right (by omega), zero_add]
     refine Finset.sum_congr rfl (fun i hi => ?_)
     rw [Finset.mem_range] at hi
     exact pos i (by omega) (by omega)
@@ -145,7 +100,7 @@ private theorem sum_range_eq_sum_split_of_last_eq_zero {R : Type} [AddCommMonoid
       Finset.sum_range_succ, Finset.sum_range_succ, neg t (by omega), pos (t + 1) (by omega) (by omega),
       pos (t + 1 + 1 + t) (by omega) (by omega), show f (t + 1 + 1 + t) = 0 by
         rw [show t + 1 + 1 + t = 0 + 2 * (t + 1) + 1 - 1 by omega]; exact hf]
-    rw [Nat.add_sub_cancel, if_pos (by omega), Nat.zero_sub, Finset.range_zero, Finset.sum_empty]
+    rw [Nat.add_sub_cancel, ite_eq_left (by omega), Nat.zero_sub, Finset.range_zero, Finset.sum_empty]
     have e1 : ∑ i ∈ Finset.range t, F i = ∑ i ∈ Finset.range t, f i :=
       Finset.sum_congr rfl (fun i hi => pos i (by simp at hi; omega) (by omega))
     have e2 : ∑ i ∈ Finset.range t, F (t + 1 + 1 + i) = ∑ i ∈ Finset.range t, f (t + 1 + 0 + 1 + i) :=
@@ -158,7 +113,7 @@ private theorem sum_range_eq_sum_split_of_last_eq_zero {R : Type} [AddCommMonoid
       pos (t + 1 + j + 1) (by omega) (by omega), pos (t + 1 + j + 1 + 1 + t) (by omega) (by omega),
       show f (t + 1 + j + 1 + 1 + t) = 0 by
         rw [show t + 1 + j + 1 + 1 + t = j + 1 + 2 * (t + 1) + 1 - 1 by omega]; exact hf]
-    rw [Nat.add_sub_cancel, Nat.add_sub_cancel, if_pos (by omega)]
+    rw [Nat.add_sub_cancel, Nat.add_sub_cancel, ite_eq_left (by omega)]
     have e1 : ∑ i ∈ Finset.range t, F i = ∑ i ∈ Finset.range t, f i :=
       Finset.sum_congr rfl (fun i hi => pos i (by simp at hi; omega) (by simp at hi; omega))
     have e2 : ∑ i ∈ Finset.range j, F (t + 1 + i) = ∑ i ∈ Finset.range j, f (t + 1 + i) :=
@@ -198,20 +153,20 @@ theorem sum_edge_eq_phiJ (ψ : AddChar (ZMod g) ℂ) (hψ : ψ ≠ 1) (s k : ℕ
   have e2 : ∑ i ∈ Finset.range N, (if i + 1 = s then entN M i (s + k) else 0) =
       if 1 ≤ s then entN M (s - 1) (s + k) else 0 := by
     rcases s with _ | t
-    · rw [if_neg (by omega)]
-      exact Finset.sum_eq_zero (fun i _ => if_neg (by omega))
-    · rw [if_pos (by omega), Nat.add_sub_cancel]
+    · rw [ite_eq_right (by omega)]
+      exact Finset.sum_eq_zero (fun i _ => ite_eq_right (by omega))
+    · rw [ite_eq_left (by omega), Nat.add_sub_cancel]
       simp only [Nat.add_right_cancel_iff]
-      rw [Finset.sum_ite_eq' (Finset.range N) t, if_pos (Finset.mem_range.mpr (by omega))]
+      rw [Finset.sum_ite_eq' (Finset.range N) t, ite_eq_left (Finset.mem_range.mpr (by omega))]
   have e3 : ∑ i ∈ Finset.range (s - 1), entN M (s + k + 1 + i) (s + k + 1 + i + 1) =
       ∑ i ∈ Finset.range (s - 1), entN M (s + k + 1 + i) (s + k + 2 + i) :=
     Finset.sum_congr rfl (fun i _ => by rw [show s + k + 1 + i + 1 = s + k + 2 + i by omega])
   rw [e2, e3]
   unfold phiJ
   by_cases hs : 1 ≤ s
-  · simp only [if_pos hs]
+  · simp only [ite_eq_left hs]
     abel
-  · simp only [if_neg hs]
+  · simp only [ite_eq_right hs]
     abel
 
 

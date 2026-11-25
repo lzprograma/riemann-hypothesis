@@ -27,8 +27,6 @@ namespace Formalism.L2.SG.Pf.ScalarFramePf
 open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc
 open PI.ScalarPairDr.W (mem_orth hT_swap orth_orth fvec_castSucc fvec_last mem_orth_Xplus hT_smul_left)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section ScalOm
 
 variable {D : D7} (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
@@ -53,12 +51,12 @@ theorem hT_om_X (u v : Fin (D.R.rS + 1) → (VS D).V) {w : (VS D).V} (hw : w ∈
     rcases eq_or_ne b (Fin.last _) with hb | hb
     · subst hb
       simp
-    · rw [if_neg (Ne.symm hb), if_neg hb, smul_zero]
+    · rw [ite_eq_right (Ne.symm hb), ite_eq_right hb, smul_zero]
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun D.host.E).1 hw
 
   rw [map_sum]
   refine Finset.sum_eq_zero fun b _ => ?_
-  rw [map_smul, om_pair, if_neg (Fin.castSucc_ne_last b), smul_zero]
+  rw [map_smul, om_pair, ite_eq_right (Fin.castSucc_ne_last b), smul_zero]
 
 theorem scal_om (F : LFlag (D.sp.Y 0) D.R.rS T) (F' F'' : LFlag (D.sp.Y 0) D.R.rS T') (β : (VS D).V ≃ₗ[D.host.E] (VS D).V)
     (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) (hz'' : F''.zt = F''.fl.z) (hT0' : T' ≠ 0)
@@ -96,7 +94,7 @@ theorem scal_om (F : LFlag (D.sp.Y 0) D.R.rS T) (F' F'' : LFlag (D.sp.Y 0) D.R.r
     rcases eq_or_ne b (Fin.last _) with hb | hb
     · subst hb
       simp
-    · rw [if_neg (Ne.symm hb), if_neg hb, smul_zero]
+    · rw [ite_eq_right (Ne.symm hb), ite_eq_right hb, smul_zero]
   have om_decomp (u v : Fin (D.R.rS + 1) → (VS D).V) :
       Gom u v - star (GDl u v D.R.rS) • u (Fin.last _) ∈ Xs (S := VS D) u := by
     unfold Gom
@@ -149,7 +147,7 @@ theorem scal_om (F : LFlag (D.sp.Y 0) D.R.rS T) (F' F'' : LFlag (D.sp.Y 0) D.R.r
     · rw [hu', map_add (f := _), map_smul, F'.fl.z_orth b, smul_zero, add_zero, hT_swap,
         hom1X _ (Submodule.subset_span ⟨b, rfl⟩), star_zero]
     · have h1 := q1 (Fin.last _)
-      rw [if_pos rfl, hfl'] at h1
+      rw [ite_eq_left rfl, hfl'] at h1
       rw [hu', map_add (f := _), map_smul, hz'z', hT_swap, h1, smul_eq_mul]
       field_simp
       ring
@@ -191,10 +189,10 @@ theorem scal_om (F : LFlag (D.sp.Y 0) D.R.rS T) (F' F'' : LFlag (D.sp.Y 0) D.R.r
       PI.ScalarPairDr.W.hT_add_left, q2]
     induction b using Fin.lastCases with
     | last =>
-      rw [if_pos rfl, hfl'', hT_X_alt F''.fl hx''X, ← hβz, hiso, ← hfl', q1, if_pos rfl]
+      rw [ite_eq_left rfl, hfl'', hT_X_alt F''.fl hx''X, ← hβz, hiso, ← hfl', q1, ite_eq_left rfl]
       ring
     | cast b =>
-      rw [if_neg (Fin.castSucc_ne_last b), hfc'', hT_X_X F''.fl hx''X (Submodule.subset_span ⟨b, rfl⟩),
+      rw [ite_eq_right (Fin.castSucc_ne_last b), hfc'', hT_X_X F''.fl hx''X (Submodule.subset_span ⟨b, rfl⟩),
         show F''.fl.e b = β (β.symm (F''.fl.e b)) from (β.apply_symm_apply _).symm, hiso,
         hom1X _ (hXm' _ (Submodule.subset_span ⟨b, rfl⟩))]
       ring
@@ -225,8 +223,6 @@ namespace Formalism.L2.SG.Pf.ScalarFramePf
 open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc
 open PI.ScalarPairDr.W (mem_orth hT_swap orth_orth finrank_orth fvec_castSucc fvec_last mem_orth_span
   mem_ThPairs)
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section GF
 

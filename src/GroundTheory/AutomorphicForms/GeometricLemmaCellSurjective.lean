@@ -101,7 +101,7 @@ theorem bumpFun_apply {x : GL (Fin n) F} {K : Subgroup (GL (Fin n) F)} {v : W}
   unfold bumpFun
   have h : ∃ p' : blockUpper F n β, ∃ k' ∈ K,
       (p : GL (Fin n) F) * x * k = (p' : GL (Fin n) F) * x * k' := ⟨p, k, hk, rfl⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨k', hk', he⟩ := h.choose_spec
   set p' := h.choose
   have hmem : ((p'⁻¹ * p : blockUpper F n β) : GL (Fin n) F) ∈
@@ -663,7 +663,7 @@ theorem cellJacquetMap_surjective (hσ : IsSmooth σ) :
       (integralGL F n).mul_mem ht2 (congruenceSubgroup_le F n j₀ hr2)⟩
   have hlj : ∀ t (ht : t ∈ T), lj ⟨t, (hT t ht).1⟩ ≤ J := by
     intro t ht
-    have : jj t = lj ⟨t, (hT t ht).1⟩ := dif_pos (hT t ht).1
+    have : jj t = lj ⟨t, (hT t ht).1⟩ := dite_eq_left (hT t ht).1
     rw [← this]
     exact (Finset.le_sup ht).trans (le_max_right _ _)
 

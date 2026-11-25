@@ -1,0 +1,89 @@
+name: technical debt
+
+# Comments on a pull request with how it changes the technical debt in src/, like the technical
+# debt part of Mathlib's PR summary comment. scripts/technical-debt-metrics.py does the counting
+# and says which counters it keeps and why.
+#
+# It counts only the lines the pull request adds and removes, so it downloads the commits, the
+# trees and the changed files, never the whole tree. It comments once some counter changes, and
+# edits that comment on later pushes. It runs on every pull request, not only those that change
+# src/, so that the comment is corrected when a later push drops the pull request's src/ changes.
+#
+# pull_request_target lets the token comment on pull requests from forks. Nothing from the pull
+# request is checked out or run: the script comes from the base branch, and the pull request's
+# files are only read as git objects.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash   # with pipefail, unlike the default
+
+concurrency:
+  group: technical-debt-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: trusted
+          sparse-checkout: scripts/technical-debt-metrics.py
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Count the changes in technical debt
+        id: debt
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git init -q pr
+          git -C pr remote add origin "https://github.com/$GITHUB_REPOSITORY"
+          # A blobless fetch; `git diff` then downloads the changed files in one request.
+          git -C pr fetch -q --no-tags --filter=blob:none origin "$BASE" "$HEAD"
+          (cd pr && python3 ../trusted/scripts/technical-debt-metrics.py pr_summary "$BASE" "$HEAD") > summary.md
+          cat summary.md
+
+      - name: Post or update the comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          CHANGED: ${{ steps.debt.outputs.changed }}
+        run: |
+          api="repos/$GITHUB_REPOSITORY/issues/$PR"
+          current=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq .head.sha)
+          if [[ "$current" != "$HEAD" ]]; then
+            echo "The PR head has moved to $current; the run for that head comments."
+            exit 0
+          fi
+
+          marker='<!-- technical-debt -->'
+          comment=$(gh api --paginate "$api/comments" \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$marker\"))) | .id" |
+            tail -n 1)
+          if [[ -z "$comment" && "$CHANGED" != true ]]; then
+            echo "No technical debt counter changes, and there is no comment to update."
+            exit 0
+          fi
+          {
+            printf '%s\n### Technical debt\n\n' "$marker"
+            cat summary.md
+            printf '\nThe counters are explained in `scripts/technical-debt-metrics.py`. To count them locally, run `scripts/technical-debt-metrics.py pr_summary`.\n'
+          } > comment.md
+          if [[ -n "$comment" ]]; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$comment" -F body=@comment.md --silent
+          else
+            gh api --method POST "$api/comments" -F body=@comment.md --silent
+          fi

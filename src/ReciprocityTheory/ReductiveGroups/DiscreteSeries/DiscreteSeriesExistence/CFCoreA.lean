@@ -58,11 +58,11 @@ theorem lowWord_wt (hE : IsGlRep E) {μ : Fin n → ℝ} {y : M} (hy : ∀ a, E 
     by_cases hac : a = c <;> by_cases had : a = d
     · subst hac; subst had; simp
     · subst hac
-      simp only [if_neg had, if_neg (Ne.symm had), LinearMap.zero_apply, sub_zero]
+      simp only [ite_eq_right had, ite_eq_right (Ne.symm had), LinearMap.zero_apply, sub_zero]
       push_cast
       module
     · subst had
-      simp only [if_neg hac, LinearMap.zero_apply, zero_sub]
+      simp only [ite_eq_right hac, LinearMap.zero_apply, zero_sub]
       push_cast
       module
     · simp [hac, had, Ne.symm had]

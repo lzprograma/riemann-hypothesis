@@ -40,12 +40,25 @@ end CurveVerticalPointInjective
 
 
 open CurveVerticalPointInjective in
-theorem CurveVertPointInj.proof (hCh : CurveVertPointChart.Statement) : CurveVertPointInj.Statement := by
-  intro K _ ι _ Ω _ y s d hA hs hsP W hW W' hW' hWW'
+theorem CurveVertPointInj.of_single {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
+    {Ω : Type} [Field Ω] (y : (Σ k, ι k) → Ω) (s : MRing ι) (d : K → ℕ)
+    (hA : IsArithVar (mCoordIdeal y) 1) (hs : IsMultiHomog s d)
+    (W : Ideal (MRing ι)) (hW : W ∈ divSupp (mCoordIdeal y) s)
+    (W' : Ideal (MRing ι)) (hW' : W' ∈ divSupp (mCoordIdeal y) s)
+    (hWW' : curvePtIdeal y W = curvePtIdeal y W')
+    (hCh : ∀ (W₀ : Ideal (MRing ι)), W₀ ∈ divSupp (mCoordIdeal y) s →
+      ∀ (c : ∀ k, ι k), (∀ k, (X ⟨k, c k⟩ : MRing ι) ∉ W₀) →
+        (curvePtIdeal y W₀).IsMaximal ∧
+        (∀ p : Σ k, ι k, ∃ a b : curveRing y, b ∉ curvePtIdeal y W₀ ∧
+          (b : Ω) * (y p / y ⟨p.1, c p.1⟩) = a) ∧
+        ∀ (e : K → ℕ) (g : MRing ι), IsMultiHomog g e →
+          (g ∈ W₀ ↔ ∃ a b : curveRing y, a ∈ curvePtIdeal y W₀ ∧ b ∉ curvePtIdeal y W₀ ∧
+            (b : Ω) * aeval y g = a * ∏ k, y ⟨k, c k⟩ ^ e k)) :
+    W = W' := by
   choose c hc using hW.2
   choose c' hc' using hW'.2
-  obtain ⟨hmax, hrat, hform⟩ := hCh K ι Ω y s d hA hs hsP W hW c hc
-  obtain ⟨-, -, hform'⟩ := hCh K ι Ω y s d hA hs hsP W' hW' c' hc'
+  obtain ⟨hmax, hrat, hform⟩ := hCh W hW c hc
+  obtain ⟨-, -, hform'⟩ := hCh W' hW' c' hc'
   have hyc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k =>
     coord_ne_zero y _ fun h => hc k (le_sup_left.trans hW.1.1.2 h)
   choose a' b' hb' hab' using fun k => hrat ⟨k, c' k⟩
@@ -72,5 +85,9 @@ theorem CurveVertPointInj.proof (hCh : CurveVertPointChart.Statement) : CurveVer
         _ = (a * ∏ k, (a' k : Ω) ^ e k) * ∏ k, y ⟨k, c k⟩ ^ e k := by
             simp_rw [hab'', mul_pow, Finset.prod_mul_distrib]; ring
   exact le_antisymm (hW.1.2 ⟨hW'.1.1.1, hW'.1.1.2⟩ hle) hle
+
+theorem CurveVertPointInj.proof (hCh : CurveVertPointChart.Statement) : CurveVertPointInj.Statement :=
+  fun K _ ι _ Ω _ y s d hA hs hsP W hW W' hW' hWW' =>
+    CurveVertPointInj.of_single y s d hA hs W hW W' hW' hWW' (hCh K ι Ω y s d hA hs hsP)
 
 end GroundTheory.Heights₂.Heights.Targets

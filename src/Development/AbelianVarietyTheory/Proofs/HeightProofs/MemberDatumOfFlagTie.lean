@@ -56,8 +56,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.BesselCompare
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def co (B : HSp D) (v : B.V) : Fin B.rank → D.host.E := fun k => B.frame.repr v k
@@ -259,18 +257,18 @@ theorem isBesVal_unique (ψ : AddChar (AF D.host.F) ℂ) {A B : HSp D} {ι : A.V
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases hi : i.1 + 1 = b.ρ
   · have : i.succ = Fin.last b.ρ := Fin.ext hi
-    rw [this, Fin.snoc_last, h2', hA_add, hA_coeff B e f ef, hA_vec, zf, if_pos hi, Finset.sum_eq_zero]
+    rw [this, Fin.snoc_last, h2', hA_add, hA_coeff B e f ef, hA_vec, zf, ite_eq_left hi, Finset.sum_eq_zero]
     · rw [map_zero, zero_add, zero_add]
     · intro j _
       have := j.2
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
   · have hlt : i.1 + 1 < b.ρ := by have := i.2; omega
     have : i.succ = Fin.castSucc (⟨i.1 + 1, hlt⟩ : Fin b.ρ) := Fin.ext rfl
-    rw [this, Fin.snoc_castSucc, h1', hA_add, hA_coeff B e f ef, hA_vec, ef, if_neg hi,
-      if_neg (fun h => by have : i.1 + 1 = i.1 := congrArg Fin.val h; omega), Finset.sum_eq_single (⟨i.1 + 1, hlt⟩ : Fin b.ρ)]
-    · rw [if_pos rfl, map_zero, zero_add, add_zero]
+    rw [this, Fin.snoc_castSucc, h1', hA_add, hA_coeff B e f ef, hA_vec, ef, ite_eq_right hi,
+      ite_eq_right (fun h => by have : i.1 + 1 = i.1 := congrArg Fin.val h; omega), Finset.sum_eq_single (⟨i.1 + 1, hlt⟩ : Fin b.ρ)]
+    · rw [ite_eq_left rfl, map_zero, zero_add, add_zero]
     · intro j _ hj
-      rw [if_neg (fun h => hj (Fin.ext h))]
+      rw [ite_eq_right (fun h => hj (Fin.ext h))]
     · exact fun h => absurd (Finset.mem_univ _) h
 
 theorem besChar_eq_valOf (ψ : AddChar (AF D.host.F) ℂ) {A B : HSp D} {ι : A.V →ₗ[D.host.E] B.V} (b : BesDat A B ι)
@@ -379,13 +377,6 @@ theorem exists_rep (B : HSp D) (l : B.V →ₗ[D.host.E] D.host.E) : ∃ v, ∀ 
   simp only [Matrix.vecMul, dotProduct] at this
   rw [← Finset.sum_mul, map_smul, smul_eq_mul, ← this, mul_comm]
   simp [co]
-
-section Ties
-
-variable {X : ThetaX D} {T : ThetaTied D X} {Wl : WeilTied D X T}
-  {piT : D.what₂.Word → 𝓞 D.host.E} {piG : Fin 2 → 𝓞 D.host.E}
-
-end Ties
 
 theorem isAniso_iff (A : HSp D) : IsAniso A ↔ ∀ v : A.V, A.hD v v = 0 → v = 0 := by
   constructor

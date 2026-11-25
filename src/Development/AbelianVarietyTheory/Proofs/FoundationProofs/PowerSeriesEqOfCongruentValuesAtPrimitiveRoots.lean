@@ -219,10 +219,10 @@ theorem tval_mul_le (l : ℕ) [Fact l.Prime] (P Q : PowerSeries (Qbar l)) (N : �
       refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun p _ => ?_
       rw [norm_mul]
       exact mul_le_one₀ (norm_coeff_trunc_le _ _ hP _) (norm_nonneg _) (norm_coeff_trunc_le _ _ hQ _)
-  · rw [Polynomial.coeff_sub, PowerSeries.coeff_trunc, if_pos hn, PowerSeries.coeff_mul, Polynomial.coeff_mul, sub_eq_zero]
+  · rw [Polynomial.coeff_sub, PowerSeries.coeff_trunc, ite_eq_left hn, PowerSeries.coeff_mul, Polynomial.coeff_mul, sub_eq_zero]
     refine Finset.sum_congr rfl fun p hp => ?_
     have := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
-    rw [PowerSeries.coeff_trunc, PowerSeries.coeff_trunc, if_pos (by omega), if_pos (by omega)]
+    rw [PowerSeries.coeff_trunc, PowerSeries.coeff_trunc, ite_eq_left (by omega), ite_eq_left (by omega)]
 
 theorem exists_factor (l : ℕ) [Fact l.Prime] : ∃ R : Polynomial (Qbar l),
     ((Polynomial.X + 1) ^ l - 1 : Polynomial (Qbar l)) = Polynomial.X * R ∧ R.coeff 0 = (l : Qbar l) := by
@@ -236,12 +236,12 @@ theorem exists_factor (l : ℕ) [Fact l.Prime] : ∃ R : Polynomial (Qbar l),
 theorem polyPow_coeff_lt {l : ℕ} [Fact l.Prime] {k n : ℕ} (h : n < k) :
     ((((Polynomial.X + 1) ^ l - 1 : Polynomial (Qbar l))) ^ k).coeff n = 0 := by
   obtain ⟨R, hR, -⟩ := exists_factor l
-  rw [hR, mul_pow, Polynomial.coeff_X_pow_mul', if_neg (by omega)]
+  rw [hR, mul_pow, Polynomial.coeff_X_pow_mul', ite_eq_right (by omega)]
 
 theorem polyPow_coeff_self {l : ℕ} [Fact l.Prime] (k : ℕ) :
     ((((Polynomial.X + 1) ^ l - 1 : Polynomial (Qbar l))) ^ k).coeff k = (l : Qbar l) ^ k := by
   obtain ⟨R, hR, h0⟩ := exists_factor l
-  rw [hR, mul_pow, Polynomial.coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, Polynomial.coeff_zero_eq_eval_zero,
+  rw [hR, mul_pow, Polynomial.coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self, Polynomial.coeff_zero_eq_eval_zero,
     Polynomial.eval_pow, ← Polynomial.coeff_zero_eq_eval_zero, h0]
 
 theorem norm_term_le {l : ℕ} [Fact l.Prime] (B : PowerSeries (Qbar l)) (hB : ∀ n, ‖B.coeff n‖ ≤ 1) (k n : ℕ) :
@@ -267,7 +267,7 @@ theorem tval_compPow_le (l : ℕ) [Fact l.Prime] (B : PowerSeries (Qbar l)) (N M
       rw [Polynomial.coeff_C_mul]; exact norm_term_le B hB k n
   · have h1 : n < N := lt_of_lt_of_le hn (min_le_left _ _)
     have h3 : n < M := lt_of_lt_of_le hn (min_le_right _ _)
-    rw [Polynomial.coeff_sub, PowerSeries.coeff_trunc, if_pos h1, compPow, PowerSeries.coeff_mk,
+    rw [Polynomial.coeff_sub, PowerSeries.coeff_trunc, ite_eq_left h1, compPow, PowerSeries.coeff_mk,
       Polynomial.finsetSum_coeff, sub_eq_zero]
     simp only [Polynomial.coeff_C_mul]
     refine Finset.sum_subset (Finset.range_mono (by omega)) fun k _ hk => ?_

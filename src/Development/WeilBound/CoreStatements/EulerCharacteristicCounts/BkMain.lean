@@ -67,27 +67,5 @@ theorem le_of_growth {q a b C : ℕ} (hq : 2 ≤ q) (h : ∀ r : ℕ, q ^ (r * a
   have h5 : C < q ^ C := Nat.lt_pow_self (by omega)
   omega
 
-theorem growth_le {q a h h' n m C C' : ℕ} (hq : 2 ≤ q)
-    (H : ∀ r : ℕ, ∃ x x' y : ℕ, x ≤ C * q ^ (r * h) ∧ x' ≤ C' * q ^ (r * h') ∧ q ^ (r * a) ≤ y ∧
-      y = x * x' * q ^ (r * n * m)) : a ≤ h + h' + n * m := by
-  refine le_of_growth (C := C * C') hq fun r => ?_
-  obtain ⟨x, x', y, hx, hx', hy, e⟩ := H r
-  rw [Nat.mul_assoc r] at e
-  calc q ^ (r * a) ≤ y := hy
-    _ = x * x' * q ^ (r * (n * m)) := e
-    _ ≤ (C * q ^ (r * h)) * (C' * q ^ (r * h')) * q ^ (r * (n * m)) :=
-        Nat.mul_le_mul_right _ (Nat.mul_le_mul hx hx')
-    _ = C * C' * q ^ (r * (h + h' + n * m)) := by
-        rw [Nat.mul_add, Nat.mul_add, pow_add, pow_add]; ring
-
-theorem stable_pow {G : Type} [Group G] {LL O V : Type} [Field LL] [CommRing O] [Algebra O LL]
-    [AddCommGroup V] [Module LL V] [Module O V] [IsScalarTower O LL V] {ρ : Representation LL G V}
-    (L : Lattice (O := O) ρ) (ϖ : O) (r : ℕ) :
-    StableSub L (Ideal.span {ϖ ^ r} • ⊤ : Submodule O ↥L.T) := by
-  intro g x hx
-  have h := Submodule.mem_map_of_mem (f := actT L g) hx
-  rw [Submodule.map_smul''] at h
-  exact Submodule.smul_mono le_rfl le_top h
-
 
 end PositivityTheory.LocalTateOrthogonality.Bk

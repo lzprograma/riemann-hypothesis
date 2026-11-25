@@ -56,8 +56,6 @@ namespace GlobalTheory.AbLaw.Cube
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {S : Scheme.{0}} {A : Over S} [GrpObj A]
 
 theorem corr_of_val_section {X : Scheme.{0}} {L : LB X} (hL : L.IsLB) {Y : Over S}
@@ -113,12 +111,10 @@ theorem IsNormalised.pull {t : LB.Gen (Theta A L)} (ht : IsNormalised t) {T : Ov
   rw [← Over.comp_left, comp_lift, comp_lift, ha, hb, hc]
   exact ht y J hJ
 
-def cubicalOfNormalised (hG : GlobalFnsSt) (hA : IsAbelianScheme A) (M : RigLB A) (t : LB.Gen (Theta A M.L))
-    (ht : t.IsGen) (hn : IsNormalised t) : CubicalStr A M :=
-  have s₁ := (hG _ _ hA).2
-  have s₂ := surj_tensor hG hA s₁
-  have s₃ := surj_tensor hG hA s₂
-  have s₄ := surj_tensor hG hA s₃
+def cubicalOfNormalised_of (s₂ : Function.Surjective (A ⊗ A).hom.appTop.hom)
+    (s₃ : Function.Surjective (A ⊗ A ⊗ A).hom.appTop.hom)
+    (s₄ : Function.Surjective (A ⊗ A ⊗ A ⊗ A).hom.appTop.hom)
+    (M : RigLB A) (t : LB.Gen (Theta A M.L)) (ht : t.IsGen) (hn : IsNormalised t) : CubicalStr A M :=
   { t := t
     isGen := ht
     face := fun i => by
@@ -175,6 +171,14 @@ def cubicalOfNormalised (hG : GlobalFnsSt) (hA : IsAbelianScheme A) (M : RigLB A
       apply Additive.ofMul.injective
       simp only [_root_.mul_assoc (x4 A 0), ofMul_mul, ofMul_inv]
       abel }
+
+def cubicalOfNormalised (hG : GlobalFnsSt) (hA : IsAbelianScheme A) (M : RigLB A) (t : LB.Gen (Theta A M.L))
+    (ht : t.IsGen) (hn : IsNormalised t) : CubicalStr A M :=
+  have s₁ := (hG _ _ hA).2
+  have s₂ := surj_tensor hG hA s₁
+  have s₃ := surj_tensor hG hA s₂
+  have s₄ := surj_tensor hG hA s₃
+  cubicalOfNormalised_of s₂ s₃ s₄ M t ht hn
 
 theorem cubical_unique (hG : GlobalFnsSt) (hA : IsAbelianScheme A) {M : RigLB A} (c c' : CubicalStr A M) :
     LB.Gen.Corr M.L _ _ _ _ c.t c'.t :=

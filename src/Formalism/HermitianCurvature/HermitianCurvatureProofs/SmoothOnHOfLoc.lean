@@ -18,57 +18,13 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteO
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeRulePsi
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictMonoSnoc
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangularFactorMiddleRow
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeadingTermIdentity
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorsCommuteTranslations
 import Mathlib.Algebra.Order.Star.Real
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterStabilizerEqOne, Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixFirstLineZero, Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixRightTranslate, Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothOnHOfLoc
@@ -114,7 +70,7 @@ theorem character_stabilizer_eq_one {z' : Fin (2 * r + k + 1) → ℂ} (hz' : in
     refine Finset.sum_eq_zero fun a _ => ?_
     split_ifs with h
     · rw [hcol]
-      rw [if_neg]
+      rw [ite_eq_right]
       intro he
       have := congrArg Fin.val he
       simp [eI] at this
@@ -371,8 +327,8 @@ theorem nf_top (z z' : Fin (2 * r + k + 1) → ℂ) (hz' : inWb k r z') (hT' : h
       have := a.isLt
       have := a'.isLt
       unfold Hpk
-      rw [if_neg (fun h => by simp only [eI] at h; omega), if_neg (fun h => by simp only [eI] at h; omega),
-        if_neg (fun h => by simp only [eI] at h; omega)])
+      rw [ite_eq_right (fun h => by simp only [eI] at h; omega), ite_eq_right (fun h => by simp only [eI] at h; omega),
+        ite_eq_right (fun h => by simp only [eI] at h; omega)])
 
   have hn0u : n0 ∈ UH (Hpk k (i0 + s'' + 1)) := hn0.1
   have hxi : ∀ (a : Fin (i0 + s'' + 1)) (p : Fin (2 * (i0 + s'' + 1) + k + 1)),
@@ -391,14 +347,14 @@ theorem nf_top (z z' : Fin (2 * r + k + 1) → ℂ) (hz' : inWb k r z') (hT' : h
     by_cases hp : p.val < i0 + s'' + 1
     ·
       have htau : WeylGroupFacts.tau k _ p = esI k _ ⟨p.val, hp⟩ := by
-        ext; rw [tau_val, if_pos (Or.inl hp)]; simp [esI]
+        ext; rw [tau_val, ite_eq_left (Or.inl hp)]; simp [esI]
       have hsg : WeylGroupFacts.sgn k _ p = 1 := sgn_one _ (by omega)
       rw [htau, hsg, one_mul, hsame _ (by simp [esI]; omega), hyS, star_star]
       by_cases hpi : p.val = i0
-      · rw [if_neg (by omega)]
+      · rw [ite_eq_right (by omega)]
         exact zb_last_row i0 _ hh t (by omega) a.val p.val ha (by omega) hpi
-      · rw [if_pos ⟨hp, hpi⟩]
-    · rw [if_neg (by omega)]
+      · rw [ite_eq_left ⟨hp, hpi⟩]
+    · rw [ite_eq_right (by omega)]
       have hle : (WeylGroupFacts.tau k _ p).val ≤ i0 + s'' + 1 + k := by
         rw [tau_val]; split_ifs <;> omega
       rw [hz0 _ hle]
@@ -463,17 +419,17 @@ theorem ptMatN_zb (h : C.LPt) (s : ℕ) (t : ℂ) (n : ℕ) (hn : n = D.ptSize h
   have ha := a.isLt
   have hb := b.isLt
   by_cases h1 : a.val < D.ptSize h
-  · rw [dif_pos h1]
+  · rw [dite_eq_left h1]
     by_cases h2 : b.val < D.ptSize h
-    · rw [if_pos ⟨h1, h2⟩, dif_pos h2]
-    · rw [if_neg (fun h => h2 h.2), if_neg (fun h => by omega), dif_neg h2]
-  · rw [dif_neg h1, if_neg (fun h => h1 h.1)]
+    · rw [ite_eq_left ⟨h1, h2⟩, dite_eq_left h2]
+    · rw [ite_eq_right (fun h => h2 h.2), ite_eq_right (fun h => by omega), dite_eq_right h2]
+  · rw [dite_eq_right h1, ite_eq_right (fun h => h1 h.1)]
     by_cases h2 : D.ptSize h ≤ b.val
-    · rw [if_pos ⟨by omega, h2⟩]
+    · rw [ite_eq_left ⟨by omega, h2⟩]
       by_cases h3 : a.val - D.ptSize h + (b.val - D.ptSize h) + 1 = s
-      · rw [if_pos ⟨by omega, by omega, h3⟩, if_pos ⟨h2, by omega, by omega, h3⟩]
-      · rw [if_neg (fun h => h3 h.2.2), if_neg (fun h => h3 h.2.2.2)]
-    · rw [if_neg (fun h => h2 h.2), if_neg (fun h => h2 h.1)]
+      · rw [ite_eq_left ⟨by omega, by omega, h3⟩, ite_eq_left ⟨h2, by omega, by omega, h3⟩]
+      · rw [ite_eq_right (fun h => h3 h.2.2), ite_eq_right (fun h => h3 h.2.2.2)]
+    · rw [ite_eq_right (fun h => h2 h.2), ite_eq_right (fun h => h2 h.1)]
 
 end entries
 
@@ -540,7 +496,7 @@ theorem top_poly (hD : IsOpen D) (z z' yb : Fin (2 * r + k + 1) → ℂ) (i0 s :
     simp only
     rw [hlast, hE, hDi0, hB u]
 
-    simp only [map_add (f := _), map_sum, Finset.sum_range_succ, dif_neg (lt_irrefl i0)]
+    simp only [map_add (f := _), map_sum, Finset.sum_range_succ, dite_eq_right (lt_irrefl i0)]
     have hm : ∀ (c : ℂ) (X : Module.End ℂ (VS k r 0 D E)),
         La hD K hK x₁ (algebraMap ℂ (Module.End ℂ (VS k r 0 D E)) c * X) = c • La hD K hK x₁ X := by
       intro c X
@@ -550,7 +506,7 @@ theorem top_poly (hD : IsOpen D) (z z' yb : Fin (2 * r + k + 1) → ℂ) (i0 s :
       rw [← mul_one (algebraMap ℂ _ c), hm, La_one hD K hK x₁ hx₁]
     rw [ha, Finset.sum_range (fun l => u ^ l • if hl : l < i0 then ((-1 : ℂ) ^ (s - 1) * t⁻¹) •
       ((hh.det)⁻¹ • La hD K hK x₁ (B ⟨l, hl⟩)) else ((-1 : ℂ) ^ (s - 1) * t⁻¹) • K x₁)]
-    simp only [hm, dif_pos (Fin.isLt _), Fin.eta]
+    simp only [hm, dite_eq_left (Fin.isLt _), Fin.eta]
     rw [smul_add, smul_add, Finset.smul_sum, Finset.smul_sum, add_comm]
     congr 1
     · apply Finset.sum_congr rfl
@@ -588,8 +544,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P.VandermondePolynomialIntegral
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 def KrAA : Prop :=
   ∀ (k r : ℕ) (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]

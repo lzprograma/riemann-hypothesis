@@ -6,49 +6,10 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
 public import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
 public import Formalism.CyclotomicNorms.StatementTW
 public import Formalism.PadicSubsetSums.CentralIdempotents.CentralIdempotentIntegral
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.FieldTheory.Galois.Profinite
 import Mathlib.RingTheory.Invariant.Profinite
 import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.LatticeVariant, Formalism.SharpRestriction.LevelLetterCocycles.LinearIndependentSmulOfNeZero
@@ -109,31 +70,6 @@ namespace Formalism.MainNotions.LatticeVariant
 
 open Formalism.IrreducibleCountingLemmas.TW
 
-section GT
-
-open Formalism.CyclotomicNorms (vl)
-open Formalism.MainNotions.BlochKatoReduction.Gen (nval)
-
-end GT
-
-section Cons
-
-open Formalism.MainNotions.IntegralHeckeForms (IsLatIn)
-open scoped TensorProduct
-
-variable {D : Formalism.BasicNotions.D7} {N : Formalism.BasicNotions.NData D.R D.host D.what₂}
-  {X : Formalism.BasicNotions.NTw D.R D.host D.what₂ D.LL0 N} {Y : Formalism.BasicNotions.NExp D.R D.host D.what₂ D.LL0 N X}
-
-end Cons
-
-section Open
-
-open Formalism.MainNotions.BlochKatoReduction.Gen (SetHyp PsiOk partAT partC partD)
-
-variable (D : Formalism.BasicNotions.D7) (bkP : Formalism.MainNotions.BlochKatoReduction.BK D) (N0 : D.ntw.Tw → ℕ)
-
-end Open
-
 section Lattice
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
@@ -177,139 +113,6 @@ def Pack.v : ℝ := sIdx (X.l i) p.B p.Th + (p.c : ℝ) * p.S.card
 
 end Lattice
 
-section Asm0
-
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
-open Formalism.MainNotions.IntegralHeckeForms (HkIdx hkO TwOK T3 IsLatIn sIdx specU)
-open Formalism.MainNotions.BlochKatoReduction.Gen (nval)
-open scoped TensorProduct
-
-variable {D : Formalism.BasicNotions.D7} {N : NData D.R D.host D.what₂}
-  {X : NTw D.R D.host D.what₂ D.LL0 N} {Y : NExp D.R D.host D.what₂ D.LL0 N X}
-
-end Asm0
-
-section Chain
-
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
-open Formalism.MainNotions.IntegralHeckeForms (HkIdx hkO)
-open scoped TensorProduct
-
-variable {D : Formalism.BasicNotions.D7}
-
-variable {N : NData D.R D.host D.what₂} {X : NTw D.R D.host D.what₂ D.LL0 N}
-
-variable (Y : NExp D.R D.host D.what₂ D.LL0 N X)
-
-variable {Y}
-
-
-
-end Chain
-
-section CrdAll
-
-open scoped TensorProduct
-
-section Coord
-
-variable {O Fm : Type} [CommRing O] [AddCommGroup Fm] [Module O Fm]
-
-variable {B : Submodule O Fm} {d : ℕ} (β : Module.Basis (Fin d) O B)
-  (Λ : Type) [CommRing Λ] [Algebra O Λ]
-
-
-variable {Λ}
-
-end Coord
-
-section Free
-
-open Formalism.IrreducibleCountingLemmas.TW (relLen)
-open Formalism.MainNotions.IntegralHeckeForms (IsLatIn)
-open Formalism.MainNotions.BlochKatoReduction.Gen (nval)
-
-variable {R W : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] [AddCommGroup W] [Module R W]
-
-variable {d : ℕ} {e : Fin d → W}
-
-end Free
-
-section BaseCh
-
-variable {O Fm : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [AddCommGroup Fm] [Module O Fm]
-  {B : Submodule O Fm} {d : ℕ} (β : Module.Basis (Fin d) O B)
-  (R' : Type) [CommRing R'] [IsDomain R'] [Algebra O R']
-
-end BaseCh
-
-section Det
-
-open Formalism.MainNotions.IntegralHeckeForms (IsLatIn)
-open Formalism.MainNotions.BlochKatoReduction.Gen (nval)
-
-variable {O Fm : Type} [CommRing O] [AddCommGroup Fm] [Module O Fm]
-  {B : Submodule O Fm} {d : ℕ} (β : Module.Basis (Fin d) O B)
-
-variable {Λ : Type} [CommRing Λ] [Algebra O Λ] [Module.Flat O Λ]
-
-end Det
-
-section Det2
-
-open Formalism.MainNotions.IntegralHeckeForms (IsLatIn)
-open Formalism.MainNotions.BlochKatoReduction.Gen (nval)
-
-variable {O Fm : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [AddCommGroup Fm] [Module O Fm]
-  {B : Submodule O Fm} {d : ℕ} (β : Module.Basis (Fin d) O B)
-
-end Det2
-
-end CrdAll
-
-section Alg
-
-open Polynomial
-
-variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
-  [IsAlgClosed (IsLocalRing.ResidueField O)]
-
-end Alg
-
-section Asm1
-
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
-open Formalism.MainNotions.IntegralHeckeForms (HkIdx hkO TwOK T3 IsLatIn sIdx specU)
-open Formalism.MainNotions.BlochKatoReduction.Gen (nval)
-open scoped TensorProduct
-open Classical
-
-variable {D : Formalism.BasicNotions.D7} {N : NData D.R D.host D.what₂}
-  {X : NTw D.R D.host D.what₂ D.LL0 N} {Y : NExp D.R D.host D.what₂ D.LL0 N X}
-  {i : X.Tw} {j : ℕ} {b : Bool} (p : Pack Y i j b)
-
-variable {n : ℕ} (β : Module.Basis (Fin n) (X.O i) p.B)
-
-variable (es : Fin n ≃ ↥p.S)
-
-end Asm1
-
-section K4
-
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
-open Formalism.MainNotions.IntegralHeckeForms (HkIdx hkO TwOK T3 IsLatIn sIdx specU)
-open Formalism.MainNotions.BlochKatoReduction.Gen (nval)
-open scoped TensorProduct
-open Classical
-
-variable {D : Formalism.BasicNotions.D7} {N : NData D.R D.host D.what₂}
-  {X : NTw D.R D.host D.what₂ D.LL0 N} {Y : NExp D.R D.host D.what₂ D.LL0 N X}
-  {i : X.Tw} {j : ℕ} {b : Bool} (p : Pack Y i j b)
-
-variable {n : ℕ} (β : Module.Basis (Fin n) (X.O i) p.B)
-
-end K4
-
 section Asm2
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
@@ -328,44 +131,6 @@ variable {n : ℕ} (β : Module.Basis (Fin n) (X.O i) p.B) (es : Fin n ≃ ↥p.
 def Pack.x (a : Y.Dat i j b) : Y.Fm i j b := ((X.l i : X.O i) ^ p.c) • p.A (Y.th i j b a)
 
 end Asm2
-
-section Asm3
-
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
-open Formalism.MainNotions.IntegralHeckeForms (HkIdx hkO TwOK T3 IsLatIn sIdx specU)
-open Formalism.MainNotions.BlochKatoReduction.Gen (nval)
-open scoped TensorProduct
-open Classical
-
-variable {D : Formalism.BasicNotions.D7} {N : NData D.R D.host D.what₂}
-  {X : NTw D.R D.host D.what₂ D.LL0 N} {Y : NExp D.R D.host D.what₂ D.LL0 N X}
-  {i : X.Tw} {j : ℕ} {b : Bool} (p : Pack Y i j b) {n : ℕ} (β : Module.Basis (Fin n) (X.O i) p.B)
-  (es : Fin n ≃ ↥p.S)
-
-end Asm3
-
-section Fin
-
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
-open Formalism.MainNotions.IntegralHeckeForms (HkIdx hkO TwOK T3 IsLatIn sIdx specU)
-open Formalism.MainNotions.BlochKatoReduction.Gen (psiAt nval SetHyp PsiOk partA partAT partC partD)
-open scoped TensorProduct
-
-variable {D : Formalism.BasicNotions.D7} {N : NData D.R D.host D.what₂}
-  {X : NTw D.R D.host D.what₂ D.LL0 N} {Y : NExp D.R D.host D.what₂ D.LL0 N X}
-
-
-end Fin
-
-section Asm4
-
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
-
-variable {D : Formalism.BasicNotions.D7} {N : NData D.R D.host D.what₂}
-  {X : NTw D.R D.host D.what₂ D.LL0 N} {Y : NExp D.R D.host D.what₂ D.LL0 N X}
-  {i : X.Tw} {j : ℕ} {b : Bool} (p : Pack Y i j b)
-
-end Asm4
 
 section FrobAll
 
@@ -519,7 +284,7 @@ theorem exists_mul_integral {x : Ω} (hx : A.valuation x ≤ 1) :
         intro h0
         have h1 : g = C (g.coeff 0) := eq_C_of_natDegree_le_zero (le_of_eq h0)
         have h2 : g.coeff j = 0 := by
-          rw [h1, coeff_C, if_neg (by rw [h0] at hjd; exact hjd)]
+          rw [h1, coeff_C, ite_eq_right (by rw [h0] at hjd; exact hjd)]
         rw [h2] at hj
         simp at hj
       let y : integralClosure R Ω := ⟨(c : Ω) * x, hint⟩
@@ -751,12 +516,6 @@ theorem exists_isFrob {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebr
 end Frob5
 
 end FrobAll
-
-section Final
-
-open Formalism.BasicNotions
-
-end Final
 
 end Formalism.MainNotions.LatticeVariant
 

@@ -26,22 +26,22 @@ theorem fe_self (i : Fin n) : fe G i i = 0 := by simp [fe]
 
 theorem fe_tri (hU : CcUm G) (i l j : Fin n) : fe G i j ≤ fe G i l + fe G l j := by
   by_cases hij : G.bl j < G.bl i
-  · have e1 : fe G i j = cc G.μ (G.bl j) (G.bl i) := if_pos hij
+  · have e1 : fe G i j = cc G.μ (G.bl j) (G.bl i) := ite_eq_left hij
     rw [e1]
     rcases le_or_gt (G.bl l) (G.bl j) with hlj | hjl
-    · have e2 : fe G i l = cc G.μ (G.bl l) (G.bl i) := if_pos (lt_of_le_of_lt hlj hij)
+    · have e2 : fe G i l = cc G.μ (G.bl l) (G.bl i) := ite_eq_left (lt_of_le_of_lt hlj hij)
       rw [e2]
       exact le_add_right (G.ball _ _ _ _ hlj hij le_rfl)
     · rcases le_or_gt (G.bl i) (G.bl l) with hil | hli
-      · have e3 : fe G l j = cc G.μ (G.bl j) (G.bl l) := if_pos hjl
+      · have e3 : fe G l j = cc G.μ (G.bl j) (G.bl l) := ite_eq_left hjl
         rw [e3]
         exact le_add_left (G.ball _ _ _ _ le_rfl hij hil)
-      · have e2 : fe G i l = cc G.μ (G.bl l) (G.bl i) := if_pos hli
-        have e3 : fe G l j = cc G.μ (G.bl j) (G.bl l) := if_pos hjl
+      · have e2 : fe G i l = cc G.μ (G.bl l) (G.bl i) := ite_eq_left hli
+        have e3 : fe G l j = cc G.μ (G.bl j) (G.bl l) := ite_eq_left hjl
         rw [e2, e3]
         have := (hU (G.bl j) (G.bl l) (G.bl i)).2.2
         omega
-  · have e1 : fe G i j = 0 := if_neg hij
+  · have e1 : fe G i j = 0 := ite_eq_right hij
     omega
 
 def S (hU : CcUm G) : Subalgebra 𝒪[k] (Matrix (Fin n) (Fin n) 𝒪[k]) where
@@ -113,17 +113,17 @@ theorem step_Jinv : JacquetInverseProp G := by
     by_cases hab : G.bl b < G.bl a
     · obtain ⟨y, hy, hyx⟩ := hJ a b hab
       have hy' : y = (h : Matrix (Fin n) (Fin n) 𝒪[k]) a b := hinj hyx
-      have e1 : fe G a b = cc G.μ (G.bl b) (G.bl a) := if_pos hab
+      have e1 : fe G a b = cc G.μ (G.bl b) (G.bl a) := ite_eq_left hab
       rw [e1, ← hy']
       exact hy
-    · have e1 : fe G a b = 0 := if_neg hab
+    · have e1 : fe G a b = 0 := ite_eq_right hab
       rw [e1, pow_zero, Ideal.one_eq_top]
       exact Submodule.mem_top
   have hi := inv_mem G hU h hmem
   refine ⟨⟨h⁻¹, (map_inv _ h)⟩, fun i j hij => ?_⟩
   refine ⟨((h⁻¹ : GL (Fin n) 𝒪[k]) : Matrix (Fin n) (Fin n) 𝒪[k]) i j, ?_, ?_⟩
   · have := hi i j
-    have e1 : fe G i j = cc G.μ (G.bl j) (G.bl i) := if_pos hij
+    have e1 : fe G i j = cc G.μ (G.bl j) (G.bl i) := ite_eq_left hij
     rwa [e1] at this
   · rw [← map_inv]
     rfl

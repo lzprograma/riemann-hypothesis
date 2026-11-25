@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ScalarStabilizers.Trzero
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPosNatMemOpenAdeleSubgroup
@@ -169,20 +170,7 @@ private theorem absF_pos (y : (Af F)ˣ) : 0 < absF y := by
 
 private theorem infGL_scalar (ρ : (TR.Rinf F)ˣ) :
     TR.infGL F 2 (Matrix.GeneralLinearGroup.scalar (Fin 2) ρ) = Matrix.GeneralLinearGroup.scalar (Fin 2) (TR.infId F ρ) := by
-  have h1 : TR.pInf F (TR.infId F ρ).val = ρ.val := by
-    change TR.pInf F (1 - TR.sInf F 1 + TR.sInf F _) = _
-    have h : ∀ x, TR.pInf F (TR.sInf F x) = x := fun x => (TR.infEq F).symm_apply_apply x
-    simp [h]
-  have h2 : pFin F (TR.infId F ρ).val = 1 := by
-    change (1 : Af F) - 0 + 0 = 1
-    simp
-  refine TR.ga_ext ?_ ?_
-  · rw [TR.pInf_infGL]
-    refine Units.ext (Matrix.ext fun i j => ?_)
-    fin_cases i <;> fin_cases j <;> simp [Matrix.GeneralLinearGroup.scalar, Matrix.GeneralLinearGroup.map, h1]
-  · rw [TR.pFin_infGL]
-    refine Units.ext (Matrix.ext fun i j => ?_)
-    fin_cases i <;> fin_cases j <;> simp [Matrix.GeneralLinearGroup.scalar, Matrix.GeneralLinearGroup.map, h2]
+  apply _root_.infGL_scalar <;> assumption
 
 private theorem norm_inf {k : ℕ} {c : Pl F → ℕ} {ω : HChar F} (hω : IsOfFinOrder ω) {φ : TR.Sm F 2} (hφ : IsHol k c ω φ)
     {c₀ a} (he : HasExp φ.1 k c₀ a) (ha : ∀ 𝔪, 𝔪 ≠ ⊥ → a 𝔪 = 0) (yf : (Af F)ˣ) (h : GL (Fin 2) (TR.Rinf F))

@@ -36,13 +36,8 @@ theorem quotPart_eq_gradedPiece {F : Type} [Field F] {K : Type} [Fintype K] [Dec
 
 theorem isMultiHomog_one {S : Type} [CommRing S] {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] :
     IsMultiHomog (1 : MRingOver S ι) 0 := by
-  intro d hd k
   classical
-  rw [mem_support_iff, coeff_one] at hd
-  split_ifs at hd with h
-  · subst h
-    simp
-  · exact absurd rfl hd
+  exact (Bridge.isMultiHomog_iff 1 0).mp (isWeightedHomogeneous_one S _)
 
 theorem MultiSerre.proof (hS : ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH.TheoremSStatement) (hI : SectionMapInj.Statement) :
     MultiSerre.Statement := by
@@ -93,7 +88,7 @@ theorem MultiSerre.proof (hS : ReciprocityTheory.ChartRestriction.G.ArakelovGeom
     rw [cechBc, Submodule.comap_bot, Submodule.ker_subtype]
   have e2 : cechHc ι (quotPart F V) m 0 ≃ₗ[F] Z := Submodule.quotEquivOfEqBot _ hbot
   have hm0 : ∀ k, 0 ≤ m k := fun k => le_trans (by omega) (hk k)
-  rw [e2.finrank_eq, ← (LinearEquiv.ofBijective φ ⟨hinj, hsurj⟩).finrank_eq, NumbersDVR.hilbFn, if_pos hm0,
+  rw [e2.finrank_eq, ← (LinearEquiv.ofBijective φ ⟨hinj, hsurj⟩).finrank_eq, NumbersDVR.hilbFn, ite_eq_left hm0,
     quotPart_eq_gradedPiece V m hm0]
 
 end

@@ -4,41 +4,6 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
 public import Formalism.SharpRestriction.CuspSpanNormBounds.AdmissibleBoundsFromSource
 public import Formalism.SharpRestriction.ParConsts
 public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -171,12 +136,6 @@ theorem count_rows_class_of_count_class (n₀ : ℕ) (A C c cb : ℝ) (hp : Coun
 
 end Count
 
-section Family
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-
-end Family
-
 abbrev PLev : ∀ I : AutInst, Measure I.Gf → ℕ → (I.Gf → ℂ) → Prop := fun I μf g₀ e => I.IsLevelCharIdem μf g₀ e
 
 end CountE
@@ -191,25 +150,19 @@ namespace AutInst
 
 variable (I : AutInst)
 
-structure RedDatum (g₁ g₂ : ℕ) : Type 1 where
+structure RedDatum : Type 1 where
   G₁ : Type
   G₂ : Type
   [grp₁ : Group G₁]
   [grp₂ : Group G₂]
-  [fin₁ : Fintype G₁]
-  [fin₂ : Fintype G₂]
   red : I.Gf → G₁ × G₂
-  red_mul : ∀ x ∈ I.Kset, ∀ y ∈ I.Kset, red (x * y) = red x * red y
-  red_surj : ∀ a : G₁ × G₂, ∃ x ∈ I.Kset, red x = a
-  red_fib₁ : ∀ x ∈ I.Kset, ∀ y ∈ I.Kset, ((red x).1 = (red y).1 ↔ x⁻¹ * y ∈ I.Kg g₁)
-  red_fib₂ : ∀ x ∈ I.Kset, ∀ y ∈ I.Kset, ((red x).2 = (red y).2 ↔ x⁻¹ * y ∈ I.Kg g₂)
 
-attribute [instance] RedDatum.grp₁ RedDatum.grp₂ RedDatum.fin₁ RedDatum.fin₂
+attribute [instance] RedDatum.grp₁ RedDatum.grp₂
 
 
 open Classical in
 def IsCountIdem (μf : Measure I.Gf) (g₀ : ℕ) (e : I.Gf → ℂ) : Prop :=
-  ∃ (a b p : ℕ) (R : I.RedDatum (g₀ ^ a) (p ^ b)) (f₀ : MonoidAlgebra ℂ R.G₁) (z ε₂ : MonoidAlgebra ℂ R.G₂),
+  ∃ (a b p : ℕ) (R : I.RedDatum) (f₀ : MonoidAlgebra ℂ R.G₁) (z ε₂ : MonoidAlgebra ℂ R.G₂),
     p.Prime ∧ p ≠ g₀ ∧ IsCharIdemFin f₀ ∧ (∀ x ∈ I.Kset, f₀.coeff (R.red x).1 ≠ 0 → I.UnipMod g₀ x) ∧
     IsCharIdemFin ε₂ ∧ z * z = z ∧ (∀ y : MonoidAlgebra ℂ R.G₂, z * y = y * z) ∧
     ∀ x, e x = if x ∈ I.Kset then

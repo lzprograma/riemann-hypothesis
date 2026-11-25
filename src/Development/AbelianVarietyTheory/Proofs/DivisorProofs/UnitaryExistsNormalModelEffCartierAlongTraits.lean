@@ -97,8 +97,6 @@ open Classical
 
 noncomputable section
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.UPoinc.GoodRedU
 
 theorem subsingleton_lattice_of_range_subset : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (C : UCompact Xo c) (X₁ : USetup C) (Y : RatModel X₁.o₁ X₁.Ω₁) (U₀ : Y.Z.Opens) (EE : Y.Lat X₁.S.J) (out : ZHOut X₁.ρ Y U₀ EE), X₁.S.admitted Y U₀ → ∀ (T : UTrait Xo c) (ξ : Sp T.V ⟶ Y.Z), Set.range ξ ⊆ (U₀ : Set Y.Z) → (∃ ξ₀ : Sp (FractionRing T.V) ⟶ U₀.toScheme, ξ₀ ≫ U₀.ι = jK T.V ≫ ξ ∧ X₁.Lies (ξ₀ ≫ out.u₀) T.y) → Subsingleton T.P.D.toPre.X := by
@@ -281,41 +279,9 @@ theorem GlobalTheory.UPoinc.UGlue.glue (hgood : ∀ (E : Type) [Field E] [Number
       ∃ (W : X.Opens) (hx : x ∈ W) (s : Γ(X, W)), (X.presheaf.germ W x hx).hom s = f x ∧
         ∀ (η : X) (hη : η ∈ W), ringKrullDim (X.presheaf.stalk η) = 1 →
           Associated ((X.presheaf.germ W η hη).hom s) (f η) := by
-    obtain ⟨W₀, hx₀, s₀, hs₀⟩ := X.presheaf.exists_germ_eq (f x)
-    obtain ⟨⟨W, hW⟩, hx, hle⟩ := EffCartierData.exists_affine_le hx₀
-    let s : Γ(X, W) := resG X hle s₀
-    have hs : (X.presheaf.germ W x hx).hom s = f x := (Cartier.germ_resG hle _ hx _).trans hs₀
-    let B : Set X := {η | ∃ hη : η ∈ W, ringKrullDim (X.presheaf.stalk η) = 1 ∧
-      ¬ Associated ((X.presheaf.germ W η hη).hom s) (f η)}
-    have hgen : ∀ {V : X.Opens} {y : X}, y ∈ V → genericPoint X ∈ V := fun {V y} hy =>
-      ((genericPoint_spec X).mem_open_set_iff V.isOpen).mpr ⟨y, trivial, hy⟩
-    have hB : B.Finite := by
-      rcases B.eq_empty_or_nonempty with h | ⟨η₀, -, h₀, -⟩
-      · rw [h]; exact Set.finite_empty
-      have hs0 : s ≠ 0 := fun e => h0 (by rw [← hs, e, map_zero])
-      have hb : genericPoint X ∈ X.basicOpen s := by
-        rw [X.mem_basicOpen s _ (hgen hx)]
-        have : (X.presheaf.germ W _ (hgen hx)).hom s ≠ 0 := fun e =>
-          hs0 (germ_injective_of_isIntegral X _ (hgen hx) (e.trans (map_zero _).symm))
-        exact (IsUnit.mk0 (G₀ := X.functionField) _ this)
-      refine (GlobalTheory.Poinc.TraitGlue.finite_dim_one hW (U ⊓ X.basicOpen s) (hgen hx) ⟨hne η₀ h₀, hb⟩).subset ?_
-      rintro η ⟨h1, h2, h3⟩
-      refine ⟨h1, h2, fun h4 => h3 ?_⟩
-      exact (associated_one_iff_isUnit.2 ((X.mem_basicOpen s η h1).1 h4.2)).trans
-        (associated_one_iff_isUnit.2 (hU η h4.1 h2)).symm
-    have hcl : IsClosed (⋃ η ∈ B, closure ({η} : Set X)) := hB.isClosed_biUnion fun _ _ => isClosed_closure
-    let W' : X.Opens := W ⊓ ⟨_, hcl.isOpen_compl⟩
-    have hx' : x ∈ W' := by
-      refine ⟨hx, fun hm => ?_⟩
-      obtain ⟨η, ⟨h1, h2, h3⟩, h4⟩ := Set.mem_iUnion₂.1 hm
-      have h5 : η ⤳ x := specializes_iff_mem_closure.2 h4
-      refine h3 ?_
-      rw [← GlobalTheory.Poinc.TraitGlue.specializes_germ h5 hx h1, hs]
-      exact hc η h5 h2
-    refine ⟨W', hx', resG X inf_le_left s, (Cartier.germ_resG _ _ hx' _).trans hs, fun η hη h1 => ?_⟩
-    rw [Cartier.germ_resG]
-    by_contra hn
-    exact hη.2 (Set.mem_iUnion₂.2 ⟨η, ⟨hη.1, h1, hn⟩, subset_closure rfl⟩)
+    first
+    | exact _root_.GlobalTheory.Poinc.TraitGlue.exists_spread
+    | apply _root_.GlobalTheory.Poinc.TraitGlue.exists_spread <;> assumption
 
   have exists_of_germs {X : Scheme.{0}} [IsIntegral X] [IsLocallyNoetherian X]
       (hX : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme X) (U : X.Opens)
@@ -355,45 +321,9 @@ theorem GlobalTheory.UPoinc.UGlue.glue (hgood : ∀ (E : Type) [Field E] [Number
     exact ((hc x η hη h1).symm.isUnit (hU η (hη.mem_open U.isOpen hxU) h1)).dvd
 
   have exists_effCartier_of_orders : ∀ (X : Scheme.{0}) [IsIntegral X] [IsLocallyNoetherian X], ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme X → ∀ (U : X.Opens) (R : ATrait X → ℕ → Prop), (∀ (T : ATrait X) (a : ℕ), Set.range T.ξ ⊆ U → R T a → a = 0) → (∀ η : X, ringKrullDim (X.presheaf.stalk η) = 1 → ∃ (T : ATrait X) (a e : ℕ), T.CentredAt η e ∧ T.GenIn U ∧ R T a) → (∀ x : X, ∃ f : X.presheaf.stalk x, ∀ (T : ATrait X) (h : T.ξ (closedPoint T.V) ⤳ x) (a : ℕ), T.GenIn U → R T a → T.HasOrd h f a) → ∃ D : EffCartierData X, (∀ x ∈ D.idealSheaf.support, x ∉ U) ∧ ∀ (T : ATrait X) (a : ℕ), T.GenIn U → R T a → idlAlong D.idealSheaf T.ξ = Ideal.span {T.ϖ ^ a} := by
-    intro X _ _ hX U R hR hT hf
-    have hf' : ∀ x : X, ∃ f : X.presheaf.stalk x, f ≠ 0 ∧ ∀ (T : ATrait X) (h : T.ξ (closedPoint T.V) ⤳ x) (a : ℕ),
-        T.GenIn U → R T a → T.HasOrd h f a := by
-      intro x
-      obtain ⟨f, hf⟩ := hf x
-      by_cases h0 : f = 0
-      · refine ⟨1, one_ne_zero, fun T h a h1 h2 => ?_⟩
-        have := hf T h a h1 h2
-        rw [h0, ATrait.HasOrd, map_zero, map_zero, Ideal.span_singleton_eq_span_singleton] at this
-        exact absurd (this.eq_zero_iff.1 rfl) (pow_ne_zero _ T.irr.ne_zero)
-      · exact ⟨f, h0, hf⟩
-    choose f h0 hf using hf'
-    have hself : ∀ (T : ATrait X) (a : ℕ), T.GenIn U → R T a →
-        Ideal.span {(Scheme.stalkClosedPointTo T.ξ).hom (f _)} = Ideal.span {T.ϖ ^ a} := by
-      intro T a h1 h2
-      have := hf _ T specializes_rfl a h1 h2
-      rwa [ATrait.HasOrd, TopCat.Presheaf.stalkSpecializes_refl, CommRingCat.hom_id, RingHom.id_apply] at this
-    obtain ⟨D, hD, hD'⟩ := exists_of_germs hX U f (fun η hη h1 => by
-        obtain ⟨T, a, e, ⟨rfl, -⟩, h2, h3⟩ := hT η h1
-        have ha : a = 0 := hR T a (by
-          rintro _ ⟨p, rfl⟩
-          exact ((IsLocalRing.specializes_closedPoint p).map T.ξ.continuous).mem_open U.isOpen hη) h3
-        have := hself T a h2 h3
-        rw [ha, pow_zero, Ideal.span_singleton_one, Ideal.span_singleton_eq_top] at this
-        exact isUnit_of_map_unit _ _ this)
-      (fun η h1 => by
-        obtain ⟨T, a, e, -, h2, -⟩ := hT η h1
-        obtain ⟨p⟩ : Nonempty (Sp (FractionRing T.V)) := inferInstanceAs (Nonempty (PrimeSpectrum _))
-        exact ((genericPoint_spec X).mem_open_set_iff U.isOpen).mpr ⟨_, trivial, h2 ⟨p, rfl⟩⟩) h0
-      (fun x η h h1 => by
-        obtain ⟨T, a, e, ⟨rfl, -⟩, h2, h3⟩ := hT η h1
-        have := GlobalTheory.Poinc.TraitGlue.valuationRing_stalk hX _ h1
-        have e1 := Ideal.span_singleton_eq_span_singleton.1 (hf x T h a h2 h3)
-        have e2 := Ideal.span_singleton_eq_span_singleton.1 (hself T a h2 h3)
-        exact GlobalTheory.Poinc.TraitGlue.associated_of_map (Scheme.stalkClosedPointTo T.ξ).hom (e1.trans e2.symm)
-          (e1.ne_zero_iff.2 (pow_ne_zero _ T.irr.ne_zero)))
-    refine ⟨D, hD, fun T a h1 h2 => ?_⟩
-    rw [idlAlong, hD', Ideal.map_span, Set.image_singleton]
-    exact hself T a h1 h2
+    first
+    | exact _root_.GlobalTheory.Poinc.TraitGlue.exists_effCartier_of_orders
+    | apply _root_.GlobalTheory.Poinc.TraitGlue.exists_effCartier_of_orders <;> assumption
   refine Exists.elim (exists_effCartier_of_orders Y.Z hN U₀
     (fun A a => ∃ (T : UTrait Xo c) (ξ : Sp T.V ⟶ Y.Z), A = toA T ξ ∧ (∃ ξ₀ : Sp (FractionRing T.V) ⟶ U₀.toScheme,
       ξ₀ ≫ U₀.ι = jK T.V ≫ ξ ∧ X₁.Lies (ξ₀ ≫ out.u₀) T.y) ∧ (a : ℝ) = ι * φ.evalZ T.be) ?_ ?_ ?_) fun D ⟨hD, hord⟩ => ?_
@@ -530,7 +460,7 @@ theorem exists_nat_comb_of_infinite {O : Type} [CommRing O] {bar : O → O} {φ 
     set_option synthInstance.maxHeartbeats 100000 in
       simp only [map_nsmul, map_add (f := _), map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.add_apply,
       Finset.sum_apply', Finsupp.smul_apply, Finsupp.single_apply, nsmul_eq_mul] at this
-    rw [Finset.sum_eq_zero fun j _ => by rw [if_neg (ho j).symm]; simp] at this
+    rw [Finset.sum_eq_zero fun j _ => by rw [ite_eq_right (ho j).symm]; simp] at this
     have hk' : (k : ℤ) ≠ 0 := by exact_mod_cast hk0.ne'
     exact (mul_eq_zero.1 this).resolve_left hk'
   have hp : ∀ n ∈ s, ∀ j, 0 ≤ (n : ℤ) * bb.repr B' (Sum.inl j) + bb.repr B₀ (Sum.inl j) := by
@@ -541,7 +471,7 @@ theorem exists_nat_comb_of_infinite {O : Type} [CommRing O] {bar : O → O} {φ 
     set_option synthInstance.maxHeartbeats 100000 in
       simp only [map_nsmul, map_add (f := _), map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.add_apply,
       Finset.sum_apply', Finsupp.smul_apply, Finsupp.single_apply, nsmul_eq_mul, Sum.inl.injEq] at this
-    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
+    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at this
     have hk' : (0 : ℤ) < k := by exact_mod_cast hk0
     have h2 : (0 : ℤ) ≤ k * ((n : ℤ) * bb.repr B' (Sum.inl j) + bb.repr B₀ (Sum.inl j)) := by
       push_cast at this ⊢; rw [this]; positivity
@@ -559,8 +489,7 @@ theorem exists_nat_comb_of_infinite {O : Type} [CommRing O] {bar : O → O} {φ 
   have hL : ∀ j, 0 ≤ bb.repr B' (Sum.inl j) := fun j => by
     have e1 := hp n₁ hn₁ j
     have e2 := hM (Sum.inl j)
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     have : (bb.repr B₀ (Sum.inl j)) ≤ M := by omega
     have : (n₁ : ℤ) * bb.repr B' (Sum.inl j) ≤ - n₁ := by nlinarith
     omega
@@ -668,8 +597,7 @@ theorem exists_finite_cones : ∀ (O : Type) [CommRing O] (bar : O → O) (φ : 
       linarith
     obtain ⟨m, γ, k, cf, hγ, hk, hcf, hkβ⟩ := GlobalTheory.Poinc.Cover.exists_cone O bar φ Y hF _ hβs hβp
     have hγd : ∀ y, y ≠ 0 → 0 < ∑ j, γ j y y := fun y hy => by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       have h0 : ∀ j, γ j y y = 0 := fun j => le_antisymm ((Finset.single_le_sum (fun j _ => hγ.nonneg j y)
         (Finset.mem_univ j)).trans hcon) (hγ.nonneg j y)
       have h1 := LinearMap.congr_fun₂ hkβ y y
@@ -827,7 +755,7 @@ theorem finite_minimiser_systems_upTo_aut : ∀ (O : Type) [CommRing O] (bar : O
     · omega
     · omega
   have hmem : μ ∈ T i := by
-    simp only [T, dif_pos hPi]
+    simp only [T, dite_eq_left hPi]
     refine Classical.choose_spec (_root_.GlobalTheory.Poinc.MinSysLat.finite_minimiser_systems_lat Y n N eb i.1.val _ (fun j x y => (hPi.1.mem j).1 x y)
       (fun j y => hPi.1.nonneg j y) hPi.2) (pull e.toLinearMap b) k cf hk hcf ?_ μ h1 h2
     ext a c
@@ -1295,9 +1223,9 @@ theorem GlobalTheory.UPoinc.exists_uLocTuples_theta : ∀ (E : Type) [Field E] [
     exact left_ne_zero_of_mul_eq_one h1.symm
   have hpow : ∀ cl, M.val y (e cl ^ m₁) = M.val y (e cl) ^ m₁ := by
     intro cl
-    have := GlobalTheory.T.integralModel_value_prod_zpow_localUnits M y z₀ hsp (Finset.univ : Finset Unit) (fun _ => e cl) (fun _ => (m₁ : ℤ)) fun _ => hunit cl
+    have := _root_.GlobalTheory.Poinc.RatModel.val_prod_zpow M y z₀ hsp (Finset.univ : Finset Unit) (fun _ => e cl) (fun _ => (m₁ : ℤ)) fun _ => hunit cl
     simpa using this
-  choose v w hvw using fun cl => GlobalTheory.T.fractionRing_eq_uniformiser_zpow_mul_unit T.irr (M.val y (e cl)) (hvne cl)
+  choose v w hvw using fun cl => _root_.GlobalTheory.DVR.fractionRing_eq_zpow_mul_unit T.irr (M.val y (e cl)) (hvne cl)
   have hϖ0 : algebraMap T.V (FractionRing T.V) T.ϖ ≠ 0 :=
     (map_ne_zero_iff _ (IsFractionRing.injective T.V (FractionRing T.V))).2 T.irr.ne_zero
   have hunitK : ∀ (a : T.Vˣ) (k : ℤ), algebraMap T.V (FractionRing T.V) ((a ^ k : T.Vˣ) : T.V) =
@@ -1338,7 +1266,7 @@ theorem GlobalTheory.UPoinc.exists_uLocTuples_theta : ∀ (E : Type) [Field E] [
   have hval : ∀ ν, M.val y (∏ cl, e cl ^ ((m₁ : ℤ) * ν cl)) = algebraMap T.V (FractionRing T.V) T.ϖ ^ Ev ν *
       algebraMap T.V (FractionRing T.V) ((∏ cl, w cl ^ ((m₁ : ℤ) * ν cl) : T.Vˣ) : T.V) := by
     intro ν
-    rw [GlobalTheory.T.integralModel_value_prod_zpow_localUnits M y z₀ hsp _ _ _ fun cl => hunit cl]
+    rw [_root_.GlobalTheory.Poinc.RatModel.val_prod_zpow M y z₀ hsp _ _ _ fun cl => hunit cl]
     simp only [hvw, mul_zpow, Finset.prod_mul_distrib, ← zpow_mul, ← hunitK]
     rw [hzs, Units.coe_prod, map_prod]
   have hprodO : ∀ ν : (Fin n → ZMod X₁.S.N) → ℤ, (∏ cl, e cl ^ ((m₁ : ℤ) * ν cl)) ∈ M.O z₀ := by
@@ -1387,7 +1315,6 @@ open scoped CategoryTheory.Obj
 open GlobalTheory.UPoinc
 open GlobalTheory
 open Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 

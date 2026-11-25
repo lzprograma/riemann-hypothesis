@@ -116,19 +116,10 @@ theorem hasDerivAt_average {G H : Type} [Group G] [TopologicalSpace G] [IsTopolo
   simpa only [ha0, inv_one, one_mul] using hder.2
 
 theorem expU_zero {n : ℕ} {ε : Fin n → Bool} : expU (0 : gLie ε) = 1 := by
-  apply Subtype.ext
-  apply Units.ext
-  refine (uMat_expU _).trans ?_
-  simp
+  exact GlobalTheory.SobolevBound.expU_zero
 
 theorem expU_add {n : ℕ} {ε : Fin n → Bool} (X : gLie ε) (a b : ℝ) :
-    expU ((a + b) • X) = expU (a • X) * expU (b • X) := by
-  apply Subtype.ext
-  apply Units.ext
-  refine (uMat_expU _).trans ?_
-  refine Eq.trans ?_ (congrArg₂ (· * ·) (uMat_expU (a • X)).symm (uMat_expU (b • X)).symm)
-  rw [Submodule.coe_smul, Submodule.coe_smul, Submodule.coe_smul, add_smul]
-  exact Matrix.exp_add_of_commute _ _ (((Commute.refl _).smul_left a).smul_right b)
+    expU ((a + b) • X) = expU (a • X) * expU (b • X) := GlobalTheory.SobolevBound.expU_add X a b
 
 theorem expU_inv {n : ℕ} {ε : Fin n → Bool} (X : gLie ε) (t : ℝ) : (expU (t • X))⁻¹ = expU ((-t) • X) := by
   refine inv_eq_of_mul_eq_one_right ?_

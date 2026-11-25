@@ -75,7 +75,7 @@ theorem exists_bound_schwartzBruhatTensor (φ : 𝓢(mixedSpace K, ℂ))
   unfold schwartzBruhatTensor
   by_cases hb : (b : FiniteAdeleRing (𝓞 K) K) ∈ idealFiniteAdeles L
   · have hfz : finiteZetaBound L σ b = finiteModule (ofFinite b) ^ σ := by
-      rw [finiteZetaBound, if_pos hb]
+      rw [finiteZetaBound, ite_eq_left hb]
     rw [hfz, ideleModule_rpow_eq, norm_mul]
     have hgM : ‖g (x : 𝔸[K]).2‖ ≤ max M 0 := (hM _).trans (le_max_left _ _)
     have hfm : 0 ≤ finiteModule (ofFinite b) ^ σ := by

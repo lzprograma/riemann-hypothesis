@@ -100,8 +100,8 @@ theorem _root_.GlobalTheory.TestLat.SlopeModel.sumGram_posDef (lam : ι → _roo
     intro a b
     rw [hentry, hentry]
     by_cases h : (e a).1 = (e b).1
-    · rw [if_pos h.symm, if_pos h, star_mul', hDstar, _root_.Formalism.L2.DIV.ps_nfL_symm]
-    · rw [if_neg (Ne.symm h), if_neg h, star_zero]
+    · rw [ite_eq_left h.symm, ite_eq_left h, star_mul', hDstar, _root_.Formalism.L2.DIV.ps_nfL_symm]
+    · rw [ite_eq_right (Ne.symm h), ite_eq_right h, star_zero]
   intro x hx
   rcases isEmpty_or_nonempty C with hC | hC
   · exact absurd (funext fun a => (hC.false (e a).1).elim) hx
@@ -137,7 +137,7 @@ theorem _root_.GlobalTheory.TestLat.SlopeModel.sumGram_posDef (lam : ι → _roo
       enter [2, c, 2, i, 2]
       rw [← e.symm.sum_comp, Fintype.sum_prod_type]
     simp only [Equiv.apply_symm_apply, ite_mul, zero_mul, Finset.sum_ite_irrel,
-      Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [hW, Finset.mul_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
 
@@ -153,8 +153,7 @@ theorem _root_.GlobalTheory.TestLat.SlopeModel.sumGram_posDef (lam : ι → _roo
       simp
     · exact (_root_.Formalism.L2.DIV.ps_nfL_pos lam _ hc).le
   · obtain ⟨a, ha⟩ : ∃ a, x a ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hx (funext h)
     refine ⟨(e a).1, Finset.mem_univ _, _root_.Formalism.L2.DIV.ps_nfL_pos lam _ ?_⟩
     intro h0

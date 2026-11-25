@@ -55,10 +55,7 @@ import Development.AbelianVarietyTheory.Definitions.Degenerations.SepticCharacte
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UT GlobalTheory.LN GlobalTheory.Ex GlobalTheory.OneBasis
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -134,8 +131,7 @@ theorem exists_basis_dvr {W W' : Type} [CommRing W] [IsDomain W] [IsDiscreteValu
   let e := Module.finBasis W W'
   have hs : ∀ y, y = ∑ k, io (e.repr y k) * e k := fun y => (e.sum_repr y).symm
   have hk : ∃ k, IsUnit (e.repr 1 k) := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible W
     have hd : ∀ k, ϖ ∣ e.repr 1 k := fun k => by
       rw [← Ideal.mem_span_singleton, ← hϖ.maximalIdeal_eq]; exact h k

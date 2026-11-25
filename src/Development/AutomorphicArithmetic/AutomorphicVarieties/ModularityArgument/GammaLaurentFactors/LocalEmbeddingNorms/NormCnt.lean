@@ -179,15 +179,6 @@ private theorem exists_eta [IsGalois K L] (hl : (Module.finrank K L).Prime) :
   have h2 := mem_unitFiltrationUnits_zero_iff_valued.1 (inv_mem hx)
   exact (Submonoid.mem_units_iff _ _).2 ⟨h1.le, h2.le⟩
 
-private theorem loc_pow (η : HChar K) (j : ℕ) (x : (v.adicCompletion K)ˣ) : (η ^ j).loc v x = η.loc v x ^ j := by
-  induction j with
-  | zero => simp [HChar.loc]
-  | succ j ih =>
-    simp only [HChar.loc, MonoidHom.comp_apply] at ih ⊢
-    rw [pow_succ]
-    change (η ^ j).1 (Neutral.B1.localIdele K v x) * η.1 (Neutral.B1.localIdele K v x) = _
-    rw [ih, pow_succ]
-
 end UpperTheory.V.Z.Gam
 
 theorem UpperTheory.V.Z.Gam.normCnt :
@@ -216,7 +207,8 @@ theorem UpperTheory.V.Z.Gam.normCnt :
   have e : ∀ j : ℕ, IsUnram (θ * (η ^ j).loc v) ↔
       ∀ x ∈ unitFiltrationUnits (v.adicCompletion K) 0, θ x * η.loc v x ^ j = 1 := fun j => by
     rw [unr_iff]
-    simp only [MonoidHom.mul_apply, loc_pow]
+    simp only [MonoidHom.mul_apply, HChar.loc, MonoidHom.comp_apply,
+      Subgroup.coe_pow, MonoidHom.pow_apply]
   have hs : w.1.asIdeal.ramificationIdx (𝓞 K) * ∑ w' : PlacesOver L v, fdeg w' = Module.finrank K L := by
     rw [← sum_ef v, Finset.mul_sum]
     exact Finset.sum_congr rfl fun w' _ => by rw [(gal_e w w').1]

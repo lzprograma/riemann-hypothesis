@@ -19,55 +19,12 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramLocSetCA
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralBoundOfParts
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositivityBoundOfActual
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockOfChoices
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCutInside
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeStandardCompact
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGWave
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftLocalBuiltPlaces, Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftLocalPositiveCompactSupport, Formalism.HermitianCurvature.HermitianCurvatureProofs.ThresholdsPositive, Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockKWave, Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockKWaveC, Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveLocalBuiltPlaces, Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveLocalPositiveCompactSupport, Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompactOfLeaves
@@ -141,7 +98,7 @@ theorem thr_lift (hCc : 28 * Real.exp 1 ≤ Cc) (hB : KB.IsLeadingFormSetting Cb
   rw [hdec] at h
   refine ⟨lamLift_nonneg hB b s v, ?_⟩
   show lamLift S b s v ≤ (if b + s ≤ S.G.r + 1 then _ else _)
-  rw [if_pos hbs]
+  rw [ite_eq_left hbs]
   unfold lamLift
   exact h
 
@@ -407,7 +364,6 @@ end
 
 end Formalism.FourierDecayAlt.P.PBL
 
-
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P.PBL Formalism.FourierDecayAlt.P.LiftDegreeLemmas in
 theorem Formalism.FourierDecayAlt.P.lift_local_compact_support_route : Formalism.FourierDecayAlt.P.PBL.LiftLocBC := by
   intro hA hSS hDL hFP Cb Cc E _ _ _ Wp Wq _ _ _ _ _ _ S p f χ A₀ hCc hB
@@ -506,7 +462,7 @@ theorem supA_pos (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀) (v : Fin S.f
   refine lt_of_lt_of_le hcore (PBL.core_le_supA hB v one y ?_)
   cases one
   · simpa using hyI
-  · simp only [if_true]
+  · simp only [ite_true]
     rw [← PBL.ntop_eq_N']
     exact hy1
 
@@ -569,9 +525,6 @@ open scoped ComplexConjugate ComplexOrder
 noncomputable section
 
 open Classical
-
-theorem prod_ofFn_map {K : ℕ} (f : Fin K → ℝ) (g : ℝ → ℝ) : ((List.ofFn f).map g).prod = ∏ b, g (f b) := by
-  rw [List.map_ofFn, List.prod_ofFn]; rfl
 
 section blockK
 
@@ -736,7 +689,7 @@ theorem blockK_waveC (hA : P5.ThmPActualCpt) (hPSC : StandardPairingDecay.PStdC)
     have hnorm : ‖κ‖ = Λ * T ^ K * (1 / (ΓS S j * S.sizeAt v a)) := by
       rw [hκ, Complex.norm_real, Real.norm_eq_abs, abs_mul, abs_mul, abs_div, abs_of_pos (lam_div_theta grid hinj n).1,
         (lam_div_theta grid hinj n).2, abs_of_nonneg (pow_nonneg hT0.le K), abs_of_nonneg (by positivity : (0:ℝ) ≤ c0)]
-    rw [hnorm, hQd, hcp, hcm, sizeAt_plusW, sizeAt_minusW, prod_ofFn_map, prod_ofFn_map, prod_ofFn_map]
+    rw [hnorm, hQd, hcp, hcm, sizeAt_plusW, sizeAt_minusW, Formalism.FourierDecayAlt.P.LiftDegreeLemmas.prod_ofFn_map', Formalism.FourierDecayAlt.P.LiftDegreeLemmas.prod_ofFn_map', Formalism.FourierDecayAlt.P.LiftDegreeLemmas.prod_ofFn_map']
     exact ratio_bound (fun b => grid b (n b)) (S.P v) qv Λ T (ΓS S j) (S.sizeAt v a)
       (Real.exp 1 * J.supA S.G S.de S.de' S.T S.T' S.l (decide (j = 0)) (S.pl v)) Xc hΓ hsa
       (fun b => hqpos _ (hmem b)) (fun b => (hPne b).1) (fun b => (hPne b).2)
@@ -835,19 +788,11 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {Wp Wq : InfinitePla
   {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl (D.parOf S v) (Wp (S.pl v)) (Wq (S.pl v))}
   {f : ∀ v : Fin S.f, B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v))} {χ : ℝ → ℝ} {A₀ : ℝ}
 
-theorem glob_pos (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀) : 0 < S.G.g ∧ 0 < S.G.ka := by
-  refine ⟨by unfold Sz.Glob.g; exact_mod_cast Nat.mul_pos hB.1 hB.2.1, ?_⟩
-  unfold Sz.Glob.ka; rw [S.hv]; have := PBD.rd_pos' E; positivity
-
 theorem lenI_pos (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀) (v : Fin S.f) : 0 < S.G.lenI := by
-  have hGo := hB.2.2.2.2.2.2.2.2.2.2.1
-  have h := (hGo v).1
-  rw [len_eq] at h
-  have : (0 : ℝ) < 6 * (S.Ntop : ℝ) ^ 3 + 6 * S.Ntop := by have := PBD.ntop_ge S; positivity
-  linarith
+  apply _root_.Formalism.FourierDecayAlt.P.LiftDegreeLemmas.lenI_pos' <;> assumption
 
 theorem xw_nonneg (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀) (i : ℕ) (v : Fin S.f) : 0 ≤ Xw S i v := by
-  obtain ⟨hg, hk⟩ := glob_pos hB
+  obtain ⟨hg, hk⟩ := Formalism.FourierDecayAlt.P.LiftDegreeLemmas.glob_pos' hB
   have hl := lenI_pos hB v
   have hN : (0 : ℝ) ≤ S.G.N := by unfold Sz.Glob.N; positivity
   have hA := supA_nonneg S hg hk v (decide (i = 1 ∧ 0 + 1 = 1))
@@ -858,7 +803,7 @@ theorem xw_nonneg (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀) (i : ℕ) (
 theorem thr_wave (hCc : 28 * Real.exp 1 ≤ Cc) (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀) :
     JC.HidaCurvatureBarriers S (fun i v => Xw S i v) := by
   intro i hi1 _ v
-  obtain ⟨hg, hk⟩ := glob_pos hB
+  obtain ⟨hg, hk⟩ := Formalism.FourierDecayAlt.P.LiftDegreeLemmas.glob_pos' hB
   have hl := lenI_pos hB v
   have hCA : Cc ≤ S.CA := hB.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   have hN : (0:ℝ) ≤ S.G.N := by unfold Sz.Glob.N; positivity
@@ -885,7 +830,7 @@ theorem xw_K (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀) (v : Fin S.f) (j
     (hl1 : ∀ b, ∑ i, |F7.lagCo (grid b) i| ≤ (28 * (S.Ntop : ℝ) / (S.cutHi v - S.cutLo v)) ^ (2 * j)) :
     (∏ b, ∑ i, |F7.lagCo (grid b) i|) * (((S.g : ℝ) * lamS S j) / (2 * Real.pi)) ^ K *
       (Real.exp 1 * J.supA S.G S.de S.de' S.T S.T' S.l (decide (j = 0)) (S.pl v)) ^ K ≤ (Xw S (j + 1) v) ^ K := by
-  obtain ⟨hg, hk⟩ := glob_pos hB
+  obtain ⟨hg, hk⟩ := Formalism.FourierDecayAlt.P.LiftDegreeLemmas.glob_pos' hB
   rw [T_eq S hg j]
   have hdec : decide (j + 1 = 1 ∧ 0 + 1 = 1) = decide (j = 0) := by
     by_cases h : j = 0 <;> simp [h]
@@ -952,7 +897,6 @@ def WaveLocBPCpt : Prop :=
         (∀ v ε, 0 < ε → KB.CptCoef (p v).T.base (F v ε)) → ∀ v, KB.WaveLoc (setC S p F) v fun i => X i v
 
 end Formalism.FourierDecayAlt.P.PBL
-
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P.PBL in
 theorem Formalism.FourierDecayAlt.P.wave_local_compact_support_route : Formalism.FourierDecayAlt.P.PBL.WaveLocBC := by
@@ -1026,13 +970,13 @@ theorem liftLocB_of_cpt (hDL : KB.DegLift) : P5.ThmPActualCpt → LiftLocB := by
   · intro b s v
     beta_reduce
     by_cases h : 1 ≤ b ∧ 1 ≤ s ∧ b + s ≤ S.G.r + 1
-    · rw [if_pos h]; exact (hΛ0 b s h.1 h.2.1 h.2.2 v).1
-    · rw [if_neg h]
+    · rw [ite_eq_left h]; exact (hΛ0 b s h.1 h.2.1 h.2.2 v).1
+    · rw [ite_eq_right h]
   · intro b s hb hs hbs v
     beta_reduce
-    rw [if_pos ⟨hb, hs, hbs⟩]; exact (hΛ0 b s hb hs hbs v).2
+    rw [ite_eq_left ⟨hb, hs, hbs⟩]; exact (hΛ0 b s hb hs hbs v).2
   · intro F hF v b s hb hs hbs
-    have h : (if 1 ≤ b ∧ 1 ≤ s ∧ b + s ≤ S.G.r + 1 then Λ0 b s v else 0) = Λ0 b s v := if_pos ⟨hb, hs, hbs⟩
+    have h : (if 1 ≤ b ∧ 1 ≤ s ∧ b + s ≤ S.G.r + 1 then Λ0 b s v else 0) = Λ0 b s v := ite_eq_left ⟨hb, hs, hbs⟩
     simp only [h]
     exact hl F hF v b s hb hs hbs
 

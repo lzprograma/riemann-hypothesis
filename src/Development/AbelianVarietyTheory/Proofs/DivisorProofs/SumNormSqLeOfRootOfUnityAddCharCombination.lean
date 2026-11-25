@@ -159,7 +159,6 @@ theorem exists_integral_coeffs_sum_norm_sq_le_of_rootOfUnity : ∀ {ι Q : Type}
       norm_pow, Complex.norm_natCast, f, a, hψ]
     simp_rw [hρr]
     rw [← Finset.mul_sum, mul_pow]
-    have hNk : (0 : ℝ) < (N : ℝ) ^ k := by positivity
     have hQr : (Fintype.card Q : ℝ) = (N : ℝ) ^ k := by exact_mod_cast hQ
     have hιr : (Fintype.card ι : ℝ) ≤ (N : ℝ) ^ k := by exact_mod_cast hι
     calc (((N : ℝ) ^ k)⁻¹) ^ 2 * (∑ q, ‖f q‖) ^ 2

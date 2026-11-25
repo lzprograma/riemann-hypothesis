@@ -44,12 +44,8 @@ theorem actM_mem_layer_of_inK {V : Submodule ℂ D} (hE : IsGlRep E) (hV : IsKSt
 
 theorem actM_pow_mem_layer_of_inK {V : Submodule ℂ D} (hE : IsGlRep E) (hV : IsKStableSub ε E V)
     {Z : Matrix (Fin n) (Fin n) ℂ} (hZ : inK ε Z) {k : ℕ} {x : D} (hx : x ∈ layer ε E V k) (m : ℕ) :
-    ((actM E Z) ^ m) x ∈ layer ε E V k := by
-  induction m with
-  | zero => simpa using hx
-  | succ m ih =>
-    rw [pow_succ', Module.End.mul_apply]
-    exact actM_mem_layer_of_inK hE hV hZ ih
+    ((actM E Z) ^ m) x ∈ layer ε E V k :=
+  Module.End.pow_apply_mem_of_forall_mem m (fun _ => actM_mem_layer_of_inK hE hV hZ) x hx
 
 theorem exists_norm_actM_pow_le_of_inK {V : Submodule ℂ D} (hE : IsGlRep E)
     (hV : IsKStableSub ε E V) (hVf : FiniteDimensional ℂ V) {Z : Matrix (Fin n) (Fin n) ℂ}
@@ -58,28 +54,19 @@ theorem exists_norm_actM_pow_le_of_inK {V : Submodule ℂ D} (hE : IsGlRep E)
   haveI : FiniteDimensional ℂ (layer ε E V k) := finiteDimensional_layer hVf k
   let T : layer ε E V k →ₗ[ℂ] layer ε E V k :=
     (actM E Z).restrict (fun x hx => actM_mem_layer_of_inK hE hV hZ hx)
-  let T' := LinearMap.toContinuousLinearMap T
+  let T' := Module.End.toContinuousLinearMap (layer ε E V k) T
   refine ⟨‖T'‖, norm_nonneg _, fun x hx m => ?_⟩
-  have hpow : ∀ m : ℕ, ((actM E Z) ^ m) x = (((T ^ m) ⟨x, hx⟩ : layer ε E V k) : D) := by
-    intro m
-    induction m with
-    | zero => rfl
-    | succ m ih =>
-      rw [pow_succ', Module.End.mul_apply, ih, pow_succ', Module.End.mul_apply]
-      rfl
-  have hnorm : ∀ (m : ℕ) (y : layer ε E V k), ‖(T ^ m) y‖ ≤ ‖T'‖ ^ m * ‖y‖ := by
-    intro m
-    induction m with
-    | zero => intro y; simp
-    | succ m ih =>
-      intro y
-      rw [pow_succ', Module.End.mul_apply]
-      calc ‖T ((T ^ m) y)‖ = ‖T' ((T ^ m) y)‖ := rfl
-        _ ≤ ‖T'‖ * ‖(T ^ m) y‖ := T'.le_opNorm _
-        _ ≤ ‖T'‖ * (‖T'‖ ^ m * ‖y‖) := by gcongr; exact ih y
-        _ = ‖T'‖ ^ (m + 1) * ‖y‖ := by ring
-  rw [hpow]
-  exact hnorm m ⟨x, hx⟩
+  rcases m with _ | m
+  · simp
+  · have hpow : ((actM E Z) ^ (m + 1)) x = (((T' ^ (m + 1)) ⟨x, hx⟩ : layer ε E V k) : D) := by
+      have e : T' ^ (m + 1) = Module.End.toContinuousLinearMap (layer ε E V k) (T ^ (m + 1)) :=
+        (map_pow (Module.End.toContinuousLinearMap (layer ε E V k)) T (m + 1)).symm
+      rw [e, Module.End.pow_restrict]; rfl
+    rw [hpow]
+    calc ‖(T' ^ (m + 1)) ⟨x, hx⟩‖
+        ≤ ‖T' ^ (m + 1)‖ * ‖(⟨x, hx⟩ : layer ε E V k)‖ := (T' ^ (m + 1)).le_opNorm _
+      _ ≤ ‖T'‖ ^ (m + 1) * ‖x‖ :=
+        mul_le_mul_of_nonneg_right (norm_pow_le' T' m.succ_pos) (norm_nonneg _)
 
 theorem exp_inK_apply_mem_closure (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E)
     {V : Submodule ℂ D} (hVf : FiniteDimensional ℂ V) (hVK : IsKStableSub ε E V)

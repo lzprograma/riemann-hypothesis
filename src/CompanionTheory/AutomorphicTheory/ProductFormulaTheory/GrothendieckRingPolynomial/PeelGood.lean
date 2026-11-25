@@ -44,8 +44,6 @@ noncomputable section
 
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult Zc Zc.Cos CompanionTheory.Exh GlobalTheory.CompanionTheory.ExhGood
 
-
-
 namespace CompanionTheory.Groth.ClsOfF
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -112,39 +110,9 @@ theorem peelGood (HS : ∀ (𝔪 : Multiset (Segment k)) (h N : ℕ) (x : Fin h 
   obtain ⟨e⟩ := hsoc.equiv_of_embeds x.2.rep.irr ⟨F.comp f, hF.comp hf⟩
   exact hπL.of_equiv e.symm
 
-theorem exh_at (hM : MidP k) (hR : RefineP k) (hS : SwapP k) (hC : CuspEmbP k) (hP : SuppP k) (hJ : JuxtP k)
-    (hL : LinkP k) (hm : MinP k) (hG : Zc.PeelGoodP k) (x : IrrGL (k := k)) : ∃ 𝔪 : Multiset (Segment k), IsL 𝔪 x.rep := by
-  suffices H : ∀ n : ℕ, ∀ x : IrrGL (k := k), x.1 = n → ∃ 𝔪 : Multiset (Segment k), IsL 𝔪 x.rep from H _ x rfl
-  intro n
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-    intro x hn
-    rcases Nat.eq_zero_or_pos n with h0 | hpos
-    · exact GlobalTheory.LocGL.exh_le_one x (by omega)
-    obtain ⟨l, hl, hx⟩ := hC x
-    have hne : l ≠ [] := by
-      rintro rfl
-      obtain ⟨hd, -⟩ := hx
-      simp at hd
-      omega
-    obtain ⟨ρ, hρ, hmin⟩ := hm l hne hl
-    obtain ⟨A, B, rfl⟩ := List.append_of_mem hρ
-    obtain ⟨Γ, c, y, e, hc, hy⟩ := move_left hM hR hS hJ hL x ρ A
-      (fun a ha => ⟨hl a (List.mem_append_left _ ha), by simpa using hmin a (List.mem_append_left _ ha) 1 one_pos⟩)
-      (Segment.single ρ (hl ρ hρ)) ρ B rfl (single_spec (hl ρ hρ)).2.1 (by simpa using hx)
-    obtain ⟨hd, f, hf⟩ := id hy
-    have hdeg : Γ.deg = c.1 := hc.deg_eq
-    have hpos' : 0 < Γ.deg := Nat.mul_pos Γ.len_pos Γ.d_pos
-    have hd2 : c.1 + y.1 = x.1 := (Fin.sum_univ_two fun a => ([c, y].get a).1).symm.trans hd
-    obtain ⟨𝔫, h𝔫⟩ := ih y.1 (by omega) y rfl
-    refine ⟨_, hG x [c, y].get hd Γ 𝔫 hc h𝔫 ⟨f, hf⟩ fun Δ' hΔ' hp => ?_⟩
-    obtain ⟨j, hj, ej⟩ := hp.2
-    exact hmin _ (hP x c y _ 𝔫 hl hx hy h𝔫 Δ' hΔ') j hj (e.symm.trans ej)
-
 end CompanionTheory.Groth.ClsOfF
 
 namespace CompanionTheory.Groth
-
 
 open ClsOfF in
 theorem cls_of (hZ : GlobalTheory.Published.SegmentRepresentation) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]

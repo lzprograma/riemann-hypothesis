@@ -98,7 +98,7 @@ lemma wpF_eq (z : ℂ) : wpF Λ z = L.weierstrassP z := by
   · refine Eq.trans (tsum_congr fun w ↦ ?_) (tsum_subtype_congr (p := fun w ↦ w ∈ Λ ∧ w ≠ 0)
       (q := fun w ↦ w ∈ L.lattice)
       (fun w ↦ if w = 0 then 0 else 1 / (z - w) ^ 2 - 1 / w ^ 2) fun w hw ↦ ?_)
-    · rw [if_neg w.2.2]
+    · rw [ite_eq_right w.2.2]
     · have : w ≠ 0 := by rintro rfl; simp at hw
       simp [h, this]
   · simp

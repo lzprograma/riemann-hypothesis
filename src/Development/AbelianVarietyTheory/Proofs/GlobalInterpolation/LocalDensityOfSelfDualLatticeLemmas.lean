@@ -709,8 +709,8 @@ theorem card_fibre {t n : k} (hD : t ^ 2 - 4 * n ≠ 0) {η : ℝ}
       = Fintype.card k - η + if c = 0 then η * Fintype.card k else 0 := by
   have hz := card_zero hD h1 h2
   by_cases hc : c = 0
-  · rw [if_pos hc, hc, hz]
-  rw [if_neg hc, card_fibre_eq hD hc, add_zero]
+  · rw [ite_eq_left hc, hc, hz]
+  rw [ite_eq_right hc, card_fibre_eq hD hc, add_zero]
   have tot := Finset.card_eq_sum_card_fiberwise (s := (univ : Finset (k × k))) (t := univ)
     (f := fun p : k × k => p.1 ^ 2 + t * p.1 * p.2 + n * p.2 ^ 2) (fun _ _ => mem_univ _)
   rw [← Finset.add_sum_erase _ _ (mem_univ (0 : k)),
@@ -1109,7 +1109,7 @@ theorem localDensity_of_selfDualLatticeLemmas (H : SelfDualLatticeActions.SelfDu
     (by simpa only [map_sub, map_mul, map_pow, map_ofNat] using
       (hD.map (IsLocalRing.residue (v.adicCompletionIntegers F))).ne_zero)
     (SelfDualUnramifiedPlaces.eta F E v)
-    (fun h => if_neg fun hf => hfield.1 hf h) (fun h => if_pos (hfield.2 h)) M
+    (fun h => ite_eq_right fun hf => hfield.1 hf h) (fun h => ite_eq_left (hfield.2 h)) M
   have a4 := GlobalTheory.ResidueBoxVolume.measureReal_residueBox F v _ μ _ e {x | ∑ i : Fin M, (x (i, 0) ^ 2 +
     IsLocalRing.residue _ t * x (i, 0) * x (i, 1) + IsLocalRing.residue _ n * x (i, 1) ^ 2) ≠ 0}
   rw [card_residue] at hcount a4

@@ -20,6 +20,7 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLattic
 import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RightRegularIsometricMultiplicative
 import Mathlib.Tactic.TypeStar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.QuotRaw
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ExistsBox, Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ProdExactHolds, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXPS
@@ -44,8 +45,7 @@ theorem exists_box_alt (μ : ∀ i, Measure (α i)) [∀ i, SigmaFinite (μ i)] 
     ∃ S : ∀ i, Set (α i), (∀ i, MeasurableSet (S i)) ∧ (∀ i, μ i (S i) ≠ 0) ∧ ∀ i, μ i (S i) ≠ ∞ := by
   have key : ∀ i, ∃ s : Set (α i), MeasurableSet s ∧ μ i s ≠ 0 ∧ μ i s ≠ ∞ := by
     intro i
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hne i
     have hz : ∀ n, μ i (spanningSets (μ i) n) = 0 := fun n => by
       by_contra h0
@@ -157,8 +157,6 @@ open scoped ENNReal
 namespace Formalism.L2.SG.RealObj.InfCut.ProductExactness
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem sf_smul {β : Type*} [MeasurableSpace β] (μ : Measure β) [SigmaFinite μ] (c : ℝ≥0∞) (hc : c ≠ ∞) :
     SigmaFinite (c • μ) := by
@@ -330,8 +328,6 @@ namespace Formalism.L2.SG.Pf.NcReal.JX
 open Formalism.QuantumDeterminants Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.WFL Formalism.L2.SG.Pf
   Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates Formalism.L2.SG.RealObj.InfCut
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 theorem isFrameJ_of {r k : ℕ} {ε : Fin (2 * r + k + 1) → Bool} {e f : Fin r → Fin (2 * r + k + 1) → ℂ}
@@ -342,24 +338,7 @@ theorem isFrameJ_of {r k : ℕ} {ε : Fin (2 * r + k + 1) → Bool} {e f : Fin r
     (hew : ∀ c a, hJ ε (e c) (wf a) = 0) (hfw : ∀ c a, hJ ε (f c) (wf a) = 0)
     (hez : ∀ a, hJ ε (e a) z = 0) (hfz : ∀ a, hJ ε (f a) z = 0) (hzz : hJ ε z z = -(T : ℂ))
     (hzw : ∀ a, hJ ε z (wf a) = 0) : IsFrameJ ε e f wf (z0v T z) := by
-  have hl : ∀ (x y : Fin (2 * r + k + 1) → ℂ) (c : ℂ), hJ ε (c • x) y = star c * hJ ε x y := by
-    intro x y c
-    simp [Formalism.L2.SG.HidaSetting.hJ]
-  have hr : ∀ (x y : Fin (2 * r + k + 1) → ℂ) (c : ℂ), hJ ε x (c • y) = c * hJ ε x y := by
-    intro x y c
-    simp [Formalism.L2.SG.HidaSetting.hJ, Matrix.mulVec_smul]
-  have hsc : star ((((Real.sqrt T)⁻¹ : ℝ)) : ℂ) = (((Real.sqrt T)⁻¹ : ℝ) : ℂ) := Complex.conj_ofReal _
-  have key : ((Real.sqrt T)⁻¹ * ((Real.sqrt T)⁻¹ * -T) : ℝ) = -1 := by
-    rw [← mul_assoc, ← mul_inv, ← sq, Real.sq_sqrt hT.le, mul_neg, inv_mul_cancel₀ hT.ne']
-  refine ⟨hee, hff, hef, ?_, ?_, ?_, hww, hew, hfw, ?_⟩
-  · intro a
-    rw [Formalism.L2.SG.Pf.WFL.z0v, hr, hez, mul_zero]
-  · intro a
-    rw [Formalism.L2.SG.Pf.WFL.z0v, hr, hfz, mul_zero]
-  · rw [Formalism.L2.SG.Pf.WFL.z0v, hl, hr, hzz, hsc]
-    exact_mod_cast key
-  · intro a
-    rw [Formalism.L2.SG.Pf.WFL.z0v, hl, hzw, mul_zero]
+  apply _root_.Formalism.L2.SG.Pf.WFL.isFrameJ_of <;> assumption
 
 theorem hLoc_eq {n r : ℕ} (ε : Fin n → Bool) (e f : Fin r → Fin n → ℂ) (z : Fin n → ℂ) :
     Formalism.L2.SG.Pf.NcReal.HLoc ε e f z = Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates.HLoc ε e f z := by
@@ -517,7 +496,7 @@ theorem placeSplit_of (hJG : JacGauge) (hC : CovolRef) : PlaceSplit := by
     intro κ0 dd hddT hκ0
     rw [pi_smul_factors _ dd hddT, pi_smul_factors _ _ (fun v => ENNReal.mul_ne_top
       (by split_ifs <;> simp [hκ0]) (hddT v)), smul_smul, Finset.prod_mul_distrib]
-    simp only [Finset.prod_ite_eq', Finset.mem_univ, if_true]
+    simp only [Finset.prod_ite_eq', Finset.mem_univ, ite_true]
   have hmuN : X.muN u = Measure.pi (fun v => cN v • refNX X u v) := by
     have he : ProductExactness.muNv X u = fun v => d v • refNX X u v := funext hd
     rw [hN, he]

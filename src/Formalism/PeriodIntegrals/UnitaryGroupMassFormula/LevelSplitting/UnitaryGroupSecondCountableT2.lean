@@ -3,46 +3,6 @@ module
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.RatVMemSpan
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -96,10 +56,10 @@ theorem mem_spanR_iff {m : ℕ} (Y D : Fin m → Fin n → E)
       symm
       unfold projD
       rw [Finset.sum_eq_single a0]
-      · rw [if_pos ha0, covR_ratV, hD, if_pos rfl, map_one, one_smul]
+      · rw [ite_eq_left ha0, covR_ratV, hD, ite_eq_left rfl, map_one, one_smul]
       · intro a _ hne
         split_ifs
-        · rw [covR_ratV, hD, if_neg (Ne.symm hne), map_zero, zero_smul]
+        · rw [covR_ratV, hD, ite_eq_right (Ne.symm hne), map_zero, zero_smul]
         · exact zero_smul _ _
       · intro h
         exact absurd (Finset.mem_univ _) h
@@ -136,11 +96,11 @@ theorem dual_frame_pairing (hJ : IsHermND σ J) (hinv : ∀ x, σ (σ x) = x) {r
   | last =>
     induction a' using Fin.lastCases with
     | last =>
-      simp only [dualFrameAlt, F0, Fin.snoc_last, hE_smul_left, hc, if_true]
+      simp only [dualFrameAlt, F0, Fin.snoc_last, hE_smul_left, hc, ite_true]
       rw [hP.2.2.2.2.2.1, ← map_mul, inv_mul_cancel₀ (neg_ne_zero.2 hP.2.2.2.2.2.2), map_one]
     | cast j =>
       simp only [dualFrameAlt, F0, Fin.snoc_last, Fin.snoc_castSucc, hP.2.2.2.2.1 j]
-      rw [if_neg (fun h => Fin.castSucc_ne_last j h.symm)]
+      rw [ite_eq_right (fun h => Fin.castSucc_ne_last j h.symm)]
   | cast i =>
     induction a' using Fin.lastCases with
     | last =>

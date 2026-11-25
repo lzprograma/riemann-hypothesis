@@ -44,8 +44,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries TensorProduct
@@ -111,7 +109,6 @@ structure IsHom (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R)
 def IsCoc (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R) (c : MvPowerSeries (Fin d ⊕ Fin d) R) :
     Prop := cob2 μ c = 0 ∧ swap c = c
 
-set_option autoImplicit false in
 open MvPowerSeries TensorProduct in
 variable {R : Type} [CommRing R] {d e : ℕ} {τ : Type} in
 theorem _root_.GlobalTheory.Katz.formalCoboundary_add {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R} (h : ∀ i, constantCoeff (μ i) = 0)
@@ -127,7 +124,6 @@ theorem _root_.GlobalTheory.Katz.formalCoboundary_add {μ : Fin d → MvPowerSer
     _root_.GlobalTheory.Katz.inR, subst_add hμ, subst_add hL, subst_add hR]
   abel
 
-set_option autoImplicit false in
 open MvPowerSeries TensorProduct in
 variable {R : Type} [CommRing R] {d e : ℕ} {τ : Type} in
 theorem _root_.GlobalTheory.Katz.formalCoboundary_smul {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R} (h : ∀ i, constantCoeff (μ i) = 0)
@@ -157,7 +153,6 @@ def lift (f : MvPowerSeries σ k) : MvPowerSeries σ (Fr p k) :=
 theorem coeff_lift (f : MvPowerSeries σ k) (α : σ →₀ ℕ) : coeff α (lift p f) =
     algebraMap (WittVector p k) (Fr p k) (WittVector.teichmuller p (coeff α f)) := rfl
 
-set_option autoImplicit false in
 open MvPowerSeries TensorProduct in
 variable (p : ℕ) [Fact p.Prime] {k : Type} [Field k] [CharP k p] {σ : Type} {d : ℕ} in
 theorem _root_.GlobalTheory.Katz.constantCoeff_lift {f : MvPowerSeries σ k}
@@ -263,21 +258,14 @@ def ev (n : ℕ) : MvPowerSeries (Fin d) k →ₐ[k] G.A n := evA k (c.x n) (c.n
 def x₂ (n : ℕ) : Fin d ⊕ Fin d → G.A n ⊗[k] G.A n :=
   Sum.elim (fun i => c.x n i ⊗ₜ 1) (fun i => 1 ⊗ₜ c.x n i)
 
-set_option autoImplicit false in
 open MvPowerSeries TensorProduct in
 variable {k : Type} [CommRing k] {σ : Type} [Finite σ] in
 variable {p d e : ℕ} {G H : _root_.GlobalTheory.PDivGroup p k} (c : _root_.GlobalTheory.Katz.Chart G d) in
 theorem _root_.GlobalTheory.Katz.Chart.nil₂ (n : ℕ) (i : Fin d ⊕ Fin d) :
     IsNilpotent (c.x₂ n i) := by
   rcases i with i | i
-  · obtain ⟨m, hm⟩ := c.nil n i
-    exact ⟨m, by
-      simp only [_root_.GlobalTheory.Katz.Chart.x₂, Sum.elim_inl]
-      rw [Algebra.TensorProduct.tmul_pow, hm, one_pow, TensorProduct.zero_tmul]⟩
-  · obtain ⟨m, hm⟩ := c.nil n i
-    exact ⟨m, by
-      simp only [_root_.GlobalTheory.Katz.Chart.x₂, Sum.elim_inr]
-      rw [Algebra.TensorProduct.tmul_pow, hm, one_pow, TensorProduct.tmul_zero]⟩
+  · exact (c.nil n i).map (Algebra.TensorProduct.includeLeft (R := k) (S := k) (B := G.A n))
+  · exact (c.nil n i).map (Algebra.TensorProduct.includeRight (R := k) (A := G.A n))
 
 def ev₂ (n : ℕ) : MvPowerSeries (Fin d ⊕ Fin d) k →ₐ[k] G.A n ⊗[k] G.A n :=
   evA k (c.x₂ n) (c.nil₂ n)

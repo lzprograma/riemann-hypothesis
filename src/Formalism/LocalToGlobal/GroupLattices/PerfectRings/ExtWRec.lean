@@ -1,5 +1,8 @@
 module
 
+
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormLeOneOfIsIntegralInt
+import Formalism.SharpRestriction.InertJacobiLevels.ExtraVal
 public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.CharZeroWittQuadratic
 public import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 public import Mathlib.NumberTheory.NumberField.Norm
@@ -9,7 +12,6 @@ import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Presheaf
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExtWEx, Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExtWRec
 
@@ -28,18 +30,7 @@ variable {p : ℕ} [hp : Fact p.Prime] {n : ℕ} {LL : Type} [Field LL] [NumberF
 
 theorem dvd_of_mem {R : Type*} [CommRing R] (I : Ideal R) (hI : I ≠ ⊤) {q M : ℕ} (hq : q.Prime) (h1 : (q : R) ∈ I)
     (h2 : (M : R) ∈ I) : q ∣ M := by
-  by_contra h
-  have hc : Nat.Coprime q M := (Nat.Prime.coprime_iff_not_dvd hq).2 h
-  have hb := Nat.gcd_eq_gcd_ab q M
-  simp only [hc.gcd_eq_one, Nat.cast_one] at hb
-  apply hI
-  rw [Ideal.eq_top_iff_one]
-  have e : (1 : R) = (q : R) * ((Nat.gcdA q M : ℤ) : R) + (M : R) * ((Nat.gcdB q M : ℤ) : R) := by
-    have := congrArg (fun z : ℤ => (z : R)) hb
-    push_cast at this
-    exact this
-  rw [e]
-  exact I.add_mem (I.mul_mem_right _ h1) (I.mul_mem_right _ h2)
+  apply +allowSynthFailures _root_.GlobalTheory.CongW.PlaceEmb.dvd_of_natCast_mem <;> assumption
 
 theorem p_inv_not_integral : ¬ IsIntegral (OO p n) ((p : Om p n)⁻¹) := by
   intro h
@@ -84,8 +75,7 @@ theorem exists_emb (w : HeightOneSpectrum (𝓞 LL)) (hw : (p : 𝓞 LL) ∈ w.a
   classical
   haveI : CharZero (Om p n) :=
     charZero_of_injective_algebraMap (algebraMap (KO p n) (Om p n)).injective
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   let τ0 : LL →ₐ[ℚ] Om p n := (by
     refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
     solve_by_elim* (maxDepth := 2) only [*,
@@ -102,8 +92,7 @@ theorem exists_emb (w : HeightOneSpectrum (𝓞 LL)) (hw : (p : 𝓞 LL) ∈ w.a
     apply HeightOneSpectrum.ext
     exact ((w.isMaximal).eq_of_le (placeOf σ.toRingHom).isPrime.ne_top hle).symm
   obtain ⟨e, hew, hen⟩ : ∃ e ∈ w.asIdeal, ∀ σ : LL →ₐ[ℚ] Om p n, e ∉ placeIdeal σ.toRingHom := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hav (fun x hx => by
       obtain ⟨σ, hσ⟩ := h x hx
       exact Set.mem_biUnion (Finset.mem_coe.2 (Finset.mem_univ σ)) hσ)
@@ -198,20 +187,7 @@ theorem val_nonneg_iff (w : D.what₂.places.Pl) (x : D.what₂.LL) :
 
 theorem resChar_mem (w : D.what₂.places.Pl) :
     ((D.what₂.places.resChar w : ℕ) : 𝓞 D.what₂.LL) ∈ (D.plEq w).asIdeal := by
-  rw [← IsDedekindDomain.HeightOneSpectrum.valuation_lt_one_iff_mem (K := D.what₂.LL)]
-  suffices hs : (D.plEq w).valuation D.what₂.LL ((D.what₂.places.resChar w : ℕ) : D.what₂.LL) < 1 by
-    first | exact_mod_cast hs | simpa using hs
-  have hp : ((D.what₂.places.resChar w : ℕ) : D.what₂.LL) ≠ 0 :=
-    Nat.cast_ne_zero.2 (D.what₂.places.resChar_prime w).ne_zero
-  have hv : (D.plEq w).valuation D.what₂.LL ((D.what₂.places.resChar w : ℕ) : D.what₂.LL) ≠ 0 :=
-    (Valuation.ne_zero_iff _).2 hp
-  have h1 := D.what₂.places.val_resChar w
-  rw [D.val_eq w _ hp, vAdd] at h1
-  have h2 : -WithZero.log ((D.plEq w).valuation D.what₂.LL ((D.what₂.places.resChar w : ℕ) : D.what₂.LL)) =
-      ((D.what₂.places.ramIdx w : ℕ) : ℤ) := WithTop.coe_inj.1 h1
-  have hpos := D.what₂.places.ramIdx_pos w
-  rw [← WithZero.exp_log hv, ← WithZero.exp_zero, WithZero.exp_lt_exp]
-  omega
+  apply _root_.Formalism.MainNotions.Inhab.resChar_mem <;> assumption
 
 variable (w : D.what₂.places.Pl) [Fact (D.what₂.places.resChar w).Prime] (n : ℕ)
 

@@ -82,10 +82,10 @@ theorem IsBichar.map_sub_left (hc : IsBichar c) (b b' : B) (a : A) : c (b - b') 
 end bichar
 
 theorem ind_of_mem {S : Set A} {t : A} (h : t ∈ S) : ind (k := k) S t = 1 := by
-  unfold ind; exact if_pos h
+  unfold ind; exact ite_eq_left h
 
 theorem ind_of_not_mem {S : Set A} {t : A} (h : t ∉ S) : ind (k := k) S t = 0 := by
-  unfold ind; exact if_neg h
+  unfold ind; exact ite_eq_right h
 
 theorem gen_apply (c : B → A → k) (A₀ : AddSubgroup A) (a : A) (b : B) (t : A) :
     gen c A₀ a b t = c b (t + a) * ind (A₀ : Set A) (t + a) := rfl
@@ -238,11 +238,11 @@ def eFam (A₀ : AddSubgroup A) (i : (A ⧸ A₀) × (Multiplicative A₀ →* k
 
 theorem eFam_of_mem (A₀ : AddSubgroup A) (i : (A ⧸ A₀) × (Multiplicative A₀ →* k)) (t : A) (h : t + i.1.out ∈ A₀) :
     eFam A₀ i t = i.2 (Multiplicative.ofAdd ⟨t + i.1.out, h⟩) := by
-  unfold eFam; exact dif_pos h
+  unfold eFam; exact dite_eq_left h
 
 theorem eFam_of_not_mem (A₀ : AddSubgroup A) (i : (A ⧸ A₀) × (Multiplicative A₀ →* k)) (t : A) (h : t + i.1.out ∉ A₀) :
     eFam A₀ i t = 0 := by
-  unfold eFam; exact dif_neg h
+  unfold eFam; exact dite_eq_right h
 
 theorem out_sub_mem (A₀ : AddSubgroup A) (a : A) : a - (QuotientAddGroup.mk a : A ⧸ A₀).out ∈ A₀ := by
   obtain ⟨h, hh⟩ := QuotientAddGroup.mk_out_eq_add A₀ a
@@ -275,7 +275,7 @@ theorem eFam_li (A₀ : AddSubgroup A) : LinearIndependent k (eFam (k := k) A₀
       · subst hq
         have hm : ((Multiplicative.toAdd x : A₀) : A) - q.out + q.out ∈ A₀ := by
           rw [sub_add_cancel]; exact (Multiplicative.toAdd x).2
-        rw [if_pos rfl, eFam_of_mem A₀ (q, χ) _ hm]
+        rw [ite_eq_left rfl, eFam_of_mem A₀ (q, χ) _ hm]
         congr 2
         apply Subtype.ext
         simp
@@ -287,7 +287,7 @@ theorem eFam_li (A₀ : AddSubgroup A) : LinearIndependent k (eFam (k := k) A₀
           have e : ((Multiplicative.toAdd x : A₀) : A) - q₀.out + q.out - ((Multiplicative.toAdd x : A₀) : A)
               = q.out - q₀.out := by abel
           rwa [e] at this
-        rw [if_neg hq, eFam_of_not_mem A₀ (q, χ) _ hm, mul_zero]
+        rw [ite_eq_right hq, eFam_of_not_mem A₀ (q, χ) _ hm, mul_zero]
     · rintro ⟨q, χ⟩ h ⟨q', χ'⟩ h' hh
       rw [Finset.mem_coe, Finset.mem_filter] at h h'
       simp only at hh
@@ -331,7 +331,7 @@ theorem W_eq_wFam (c : B → A → k) (hc : IsBichar c) (WA : A → T →ₗ[k] 
   have hex : ∃ b', chi c hc A₀ b' = chi c hc A₀ b := ⟨b, rfl⟩
   have hw : wFam c hc WA WB A₀ θ ((QuotientAddGroup.mk a : A ⧸ A₀), chi c hc A₀ b)
       = WA (QuotientAddGroup.mk a : A ⧸ A₀).out (WB hex.choose θ) := by
-    unfold wFam; exact dif_pos hex
+    unfold wFam; exact dite_eq_left hex
   have hb' : ∀ s ∈ A₀, c hex.choose s = c b s := by
     intro s hs
     have := DFunLike.congr_fun hex.choose_spec (Multiplicative.ofAdd (⟨s, hs⟩ : A₀))

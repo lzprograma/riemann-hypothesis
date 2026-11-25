@@ -140,8 +140,8 @@ theorem main : ∀ (I : AutInst) (xf : I.Gf) (a : ℕ) (j : Fin a → ℕ) (S : 
     exact hiso s hs y hy
   obtain ⟨F, hF1, hF2⟩ : ∃ F : ℕ → Submodule (𝓞 I.E) (Fin I.n → I.E),
       (∀ b, b ≤ a → F b = G b) ∧ ∀ b c, a < b → c = 2 * a + 1 - b → F b = perpIn I x (G c) :=
-    ⟨fun b => if b ≤ a then G b else perpIn I x (G (2 * a + 1 - b)), fun b hb => if_pos hb,
-      fun b c hb hc => hc ▸ if_neg (by omega)⟩
+    ⟨fun b => if b ≤ a then G b else perpIn I x (G (2 * a + 1 - b)), fun b hb => ite_eq_left hb,
+      fun b c hb hc => hc ▸ ite_eq_right (by omega)⟩
   have hFm : Monotone F := by
     refine monotone_nat_of_le_succ fun b => ?_
     rcases lt_trichotomy b a with h | rfl | h

@@ -249,7 +249,7 @@ theorem smul_D_psi : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebr
       refine hψ.sub _ _ (fun j => ?_) (fun r hr => ?_)
       · simp [dn]
       · have h2 : ¬ ((p ^ L : ℕ) : ℤ) ∣ r := by simpa using hr
-        exact if_neg h2
+        exact ite_eq_right h2
     rw [h1]
     exact D.map_algebraMap _
   let E : Lau p →+ KaehlerDifferential (O0 p) (integralClosure (O0 p) Ω) :=

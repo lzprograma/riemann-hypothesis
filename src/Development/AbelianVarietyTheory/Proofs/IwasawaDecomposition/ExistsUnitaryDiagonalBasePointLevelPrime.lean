@@ -54,13 +54,6 @@ section General
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [StarRing E]
 
-private lemma mem_divs_iff' {E : Type} [Field E] [NumberField E] {π : 𝓞 E} {P : HeightOneSpectrum (𝓞 E)}
-    (h : P ∈ divs π) : π ∈ P.asIdeal := by
-  unfold divs at h
-  split_ifs at h with hf
-  · simpa using h
-  · simp at h
-
 private lemma false_of_mem_of_conj_mem_of_isCoprime {E : Type} [Field E] [NumberField E] [StarRing E] {π : 𝓞 E} (hcp : IsCoprime π (cO E π))
     (P : HeightOneSpectrum (𝓞 E)) (h1 : π ∈ P.asIdeal) (h2 : cO E π ∈ P.asIdeal) : False := by
   obtain ⟨u, v, h⟩ := hcp
@@ -73,15 +66,9 @@ private lemma valued_algebraMap_int_le_one' {E : Type} [Field E] [NumberField E]
   erw [HeightOneSpectrum.valuedAdicCompletion_eq_valuation, HeightOneSpectrum.valuation_of_algebraMap]
   exact HeightOneSpectrum.intValuation_le_one P r
 
-private lemma valued_algebraMap_eq_one_of_not_mem {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum (𝓞 E)) (r : 𝓞 E)
-    (hr : r ∉ P.asIdeal) : Valued.v (algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E r)) = 1 := by
-  erw [HeightOneSpectrum.valuedAdicCompletion_eq_valuation, HeightOneSpectrum.valuation_of_algebraMap]
-  have h2 : ¬ P.intValuation r < 1 := fun h => hr ((HeightOneSpectrum.intValuation_lt_one_iff_mem P r).1 h)
-  exact le_antisymm (HeightOneSpectrum.intValuation_le_one P r) (not_lt.1 h2)
-
 private lemma valued_inv_algebraMap_le_one_of_not_mem {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum (𝓞 E)) (r : 𝓞 E)
     (hr : r ∉ P.asIdeal) : Valued.v (algebraMap E (P.adicCompletion E) ((algebraMap (𝓞 E) E r)⁻¹)) ≤ 1 := by
-  rw [map_inv₀, map_inv₀, valued_algebraMap_eq_one_of_not_mem P r hr, inv_one]
+  rw [map_inv₀, map_inv₀, Neutral.B1.valued_algebraMap_eq_one E P r hr, inv_one]
 
 private lemma mem_RInt_of_valued_le_one {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (y : AfE F E)
     (h : ∀ P : HeightOneSpectrum (𝓞 E), Valued.v (adAt F P y) ≤ 1) : y ∈ RInt F E :=
@@ -92,7 +79,7 @@ theorem exists_unit (hc : Formalism.BasicNotions.CMData F E) {π : 𝓞 E} (h0 :
       (∀ P ∈ divs π, adAt F P a' = algebraMap E _ (algebraMap (𝓞 E) E (cO E π))) ∧
       ∀ w : HeightOneSpectrum (𝓞 E), π * cO E π ∉ w.asIdeal → adAt F w a = 1 := by
   classical
-  have hmem : ∀ {P : HeightOneSpectrum (𝓞 E)}, P ∈ divs π → π ∈ P.asIdeal := fun h => mem_divs_iff' h
+  have hmem : ∀ {P : HeightOneSpectrum (𝓞 E)}, P ∈ divs π → π ∈ P.asIdeal := fun h => decoFin_mem_of_mem_divs h
   have hQ : ∀ P ∈ divs π, conjPrime₂ P ∉ divs π := by
     intro P hP hP'
     exact false_of_mem_of_conj_mem_of_isCoprime hcp P (hmem hP) ((mem_conjP P π).1 (hmem hP'))
@@ -137,7 +124,7 @@ theorem exists_unit (hc : Formalism.BasicNotions.CMData F E) {π : 𝓞 E} (h0 :
       exact valued_inv_algebraMap_le_one_of_not_mem P π (fun h => false_of_mem_of_conj_mem_of_isCoprime hcp P h ((mem_conjP P π).1 (hmem hw')))
     · rw [map_one]
   · intro P hP
-    rw [ha', if_pos hP]
+    rw [ha', ite_eq_left hP]
   · intro w hw
     rw [ha]
     split_ifs with h2 h3
@@ -238,16 +225,15 @@ theorem exists_base (hc : Formalism.BasicNotions.CMData F E) {π : 𝓞 E} {T : 
     unfold HasRes
     by_cases hj : j = r
     · subst hj
-      rw [Matrix.diagonal_apply_eq, if_pos rfl]
-      simp only [d', if_pos hr]
+      rw [Matrix.diagonal_apply_eq, ite_eq_left rfl]
+      simp only [d', ite_eq_left hr]
       rw [hP P.1 P.2]
       exact ⟨cO E π, rfl, by rw [sub_self, map_zero]; exact zero_lt_one⟩
-    · rw [Matrix.diagonal_apply_ne _ (Ne.symm hj), if_neg hj, map_zero]
+    · rw [Matrix.diagonal_apply_ne _ (Ne.symm hj), ite_eq_right hj, map_zero]
       exact ⟨0, map_zero _, by rw [map_zero, map_zero, sub_self, map_zero]; exact zero_lt_one⟩
 
 end General
 
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 theorem exists_kStd : ∀ {B : Base} (X : PreX B.toPre), (B.primes X).Ok → ∀ (u : B.Word) (n : ℕ), ∃ k : GA B n, (∃ p : DecoF B.fields.E n ∅ ∅ ∅, PtOf k p ∧ p.deco.1.N = stdLat B.fields.E n) ∧ (∀ v : HeightOneSpectrum (𝓞 B.host.F), (B.T u : 𝓞 B.host.F) ∉ v.asIdeal → bc (prV (E := B.host.E) v) k = 1) ∧ ∀ (P : (B.primes X).vT u) (r j : Fin n), r.1 + 1 = n → HasRes P.1 (adAt B.host.F P.1 ((k⁻¹ : GA B n).1 r j)) (if j = r then Ideal.Quotient.mk P.1.asIdeal (B.fields.conjO (X.piT u)) else 0) := by
   intro B X hX u n

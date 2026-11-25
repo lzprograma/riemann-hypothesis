@@ -50,8 +50,6 @@ open GlobalTheory.NormSum (Pair Tup minorPol ratG intG)
 
 namespace GlobalTheory.NormDict
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ t0 : ℂ} {Q : ℕ}
 
 structure Frame (P : Pair D cc δ t0 Q) where

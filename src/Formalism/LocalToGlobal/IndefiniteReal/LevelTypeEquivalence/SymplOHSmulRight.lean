@@ -14,8 +14,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.Eqv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {S T : HSp D}
 
 theorem eInf_mul_eFin : eInf D * eFin D = 0 := by

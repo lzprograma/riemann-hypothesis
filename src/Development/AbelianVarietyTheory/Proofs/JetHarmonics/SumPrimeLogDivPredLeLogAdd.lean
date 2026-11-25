@@ -133,17 +133,9 @@ private lemma mul_sum_prime_log_div_le_log_factorial_add (N : ℕ) :
       exact ⟨Nat.lt_succ_of_le ((hp.1.dvd_factorial).1 hp.2.1), hp.1⟩
     · intro i _
       simp
-  have htheta : ∑ p ∈ P, Real.log p ≤ N * Real.log 4 := by
-    rw [← Real.log_prod (fun p hp => by
-      have := (Finset.mem_filter.1 hp).2.pos
-      positivity), ← Real.log_pow]
-    apply Real.log_le_log
-    · exact Finset.prod_pos fun p hp => by
-        have := (Finset.mem_filter.1 hp).2.pos
-        positivity
-    · have h := primorial_le_four_pow N
-      have h' : ((primorial N : ℕ) : ℝ) ≤ ((4 ^ N : ℕ) : ℝ) := by exact_mod_cast h
-      simpa [primorial, hP, Nat.cast_prod] using h'
+  have htheta : ∑ p ∈ P, Real.log p ≤ N * Real.log 4 :=
+    (Chebyshev.theta_eq_sum_primesLE_log N).symm.trans_le
+      ((Chebyshev.theta_le_log4_mul_x (Nat.cast_nonneg N)).trans_eq (mul_comm _ _))
   rw [Finset.mul_sum, hfac]
   calc ∑ p ∈ P, (N : ℝ) * (Real.log p / p)
       ≤ ∑ p ∈ P, (((N.factorial).factorization p : ℝ) * Real.log p + Real.log p) := by

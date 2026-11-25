@@ -206,7 +206,7 @@ theorem TaylorMvTens4_of (hU : LineUnique) (hL : TaylorLine) : TaylorMvTens4 := 
   rw [hL _ _ (hA a) v, lineRestr_block, hL n θ hθ]
   rfl
 
-theorem TaylorMvInj_of (_hU : LineUnique) (hL : TaylorLine) : TaylorMvInj := by
+theorem TaylorMvInj_of (hL : TaylorLine) : TaylorMvInj := by
   intro n _ _ F G hF hG h
   funext v
   have hF' : AnalyticOnNhd ℂ (fun t : ℂ => F (t • v)) Set.univ := fun t _ =>
@@ -260,7 +260,7 @@ theorem taylorMvMul : TaylorMvMul := TaylorMvMul_of _root_.Formalism.L2.Th1.H.li
 theorem taylorMvComp : TaylorMvComp := TaylorMvComp_of _root_.Formalism.L2.Th1.H.lineUnique' _root_.Formalism.L2.Th1.H.taylorLine'
 theorem taylorMvProd : TaylorMvProd := TaylorMvProd_of _root_.Formalism.L2.Th1.H.lineUnique' _root_.Formalism.L2.Th1.H.taylorLine'
 theorem taylorMvTens4 : TaylorMvTens4 := TaylorMvTens4_of _root_.Formalism.L2.Th1.H.lineUnique' _root_.Formalism.L2.Th1.H.taylorLine'
-theorem taylorMvInj : TaylorMvInj := TaylorMvInj_of _root_.Formalism.L2.Th1.H.lineUnique' _root_.Formalism.L2.Th1.H.taylorLine'
+theorem taylorMvInj : TaylorMvInj := TaylorMvInj_of _root_.Formalism.L2.Th1.H.taylorLine'
 
 theorem quadraticSemicharacter_identity_reformulated₂ : quadraticSemicharacterIdentityReformulated₂ := quadraticSemicharacters_of_productThetaMem product_theta_mem'
 theorem quadraticSemicharacters_fact : quadraticSemicharacterIdentity :=

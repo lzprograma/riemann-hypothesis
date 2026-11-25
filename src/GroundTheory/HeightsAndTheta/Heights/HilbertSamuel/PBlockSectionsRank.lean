@@ -6,7 +6,6 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlock
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionsRank
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenericFibre
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import Mathlib.RingTheory.SimpleRing.Principal
 
 @[expose] public section
 
@@ -53,7 +52,7 @@ theorem fst_eq_of_mem_support {f : MRing ι} {k₀ : K} {n : ℕ} (hf : IsMultiH
     {c : (Σ k, ι k) →₀ ℕ} (hc : AddMonoidAlgebra.coeff f c ≠ 0) {p : Σ k, ι k} (hp : p ∈ c.support) : p.1 = k₀ := by
   by_contra hne
   have h := hf c (mem_support_iff.mpr hc) p.1
-  rw [blockDeg, if_neg hne, Finset.sum_eq_zero_iff] at h
+  rw [blockDeg, ite_eq_right hne, Finset.sum_eq_zero_iff] at h
   exact (Finsupp.mem_support_iff.mp hp) (h p.2 (Finset.mem_univ _))
 
 theorem isHomogeneous_of_blockDeg {f : MRing ι} {k₀ : K} {n : ℕ} (hf : IsMultiHomog f (blockDeg k₀ n)) :
@@ -61,7 +60,7 @@ theorem isHomogeneous_of_blockDeg {f : MRing ι} {k₀ : K} {n : ℕ} (hf : IsMu
   intro c hc
   have h := hf c (mem_support_iff.mpr hc)
   rw [Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp), Fintype.sum_sigma]
-  simp only [Pi.one_apply, smul_eq_mul, mul_one, h, blockDeg, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Pi.one_apply, smul_eq_mul, mul_one, h, blockDeg, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem isHomogeneous_fwd (k₀ : K) (N : Matrix (ι k₀) (Ix (Fin r)) ℤ) {f : MRing ι} {n : ℕ}
     (hf : IsMultiHomog f (blockDeg k₀ n)) : (fwd k₀ N f).IsHomogeneous n := by
@@ -151,33 +150,6 @@ theorem secM_eq (h : IsBlockImage y k₀ M N x) (n : ℕ) :
   rw [hset, Submodule.span_eq]
 
 end Values
-
-theorem exists_blockBasis {K : Type} {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω] [CharZero Ω]
-    (y : (Σ k, ι k) → Ω) (k₀ : K) :
-    ∃ (r : ℕ) (M : Matrix (Ix (Fin r)) (ι k₀) ℤ) (N : Matrix (ι k₀) (Ix (Fin r)) ℤ) (x : Ix (Fin r) → Ω),
-      IsBlockImage y k₀ M N x ∧ LinearIndependent ℤ x := by
-  set W : Submodule ℤ Ω := Submodule.span ℤ (Set.range fun i : ι k₀ => y ⟨k₀, i⟩) with hW
-  have : Module.Finite ℤ W := Module.Finite.span_of_finite ℤ (Set.finite_range _)
-  set b := (Module.Free.chooseBasis ℤ W).reindex (Fintype.equivFin _) with hb
-  have hc : ∀ j, ∃ c : ι k₀ → ℤ, ∑ i, c i • y ⟨k₀, i⟩ = (b j : Ω) := fun j =>
-    (Submodule.mem_span_range_iff_exists_fun ℤ).mp (b j).2
-  choose c hc using hc
-  refine ⟨_, fun j i => c j.2 i, fun i j => b.repr ⟨y ⟨k₀, i⟩, Submodule.subset_span (Set.mem_range_self i)⟩ j.2,
-    fun j => (b j.2 : Ω), ⟨fun j => ?_, fun i => ?_⟩, ?_⟩
-  · show (b j.2 : Ω) = ∑ i, (c j.2 i : Ω) * y ⟨k₀, i⟩
-    rw [← hc j.2]
-    simp [zsmul_eq_mul]
-  · have h2 := congrArg Subtype.val (b.sum_repr ⟨y ⟨k₀, i⟩, Submodule.subset_span (Set.mem_range_self i)⟩)
-    simp only [Submodule.coe_sum, Submodule.coe_smul] at h2
-    show y ⟨k₀, i⟩ = ∑ j : Ix (Fin _),
-      ((b.repr ⟨y ⟨k₀, i⟩, Submodule.subset_span (Set.mem_range_self i)⟩ j.2 : ℤ) : Ω) * (b j.2 : Ω)
-    conv_lhs => rw [← h2]
-    simp [Fintype.sum_sigma, zsmul_eq_mul]
-  · have h1 := b.linearIndependent.map' W.subtype (Submodule.ker_subtype W)
-    refine h1.comp (fun j : Ix (Fin _) => j.2) ?_
-    rintro ⟨⟨⟩, a⟩ ⟨⟨⟩, a'⟩ h
-    cases h
-    rfl
 
 end BlockSectionsRank
 

@@ -7,12 +7,12 @@ import Mathlib.RingTheory.Localization.Submodule
 
 namespace Bl.NatMulIsIntegral
 
-theorem goal1 :
-  ∀ {E : Type} [inst : Field.{0} E] [NumberField.{0} E] {n : Nat}
-  {L : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} E) (Fin n → E)} {z : Fin n → E},
-  Membership.mem.{0, 0} (Submodule.span.{0, 0} E (SetLike.coe.{0, 0} L)) z →
-    Exists.{1} fun (N : Nat) ↦ And (LT.lt.{0} 0 N) (Membership.mem.{0, 0} L (HSMul.hSMul.{0, 0, 0} N z)) := by
-  intro E _ _ n L z hz
+theorem goal1 {E V : Type} [Field E] [NumberField E] [AddCommGroup V]
+    [Module E V] [Module (NumberField.RingOfIntegers E) V]
+    [IsScalarTower (NumberField.RingOfIntegers E) E V]
+    {L : Submodule (NumberField.RingOfIntegers E) V} {z : V}
+    (hz : z ∈ Submodule.span E (L : Set V)) :
+    ∃ N : ℕ, 0 < N ∧ N • z ∈ L := by
   let M := Algebra.algebraMapSubmonoid (NumberField.RingOfIntegers E) (nonZeroDivisors ℤ)
   obtain ⟨y, hy, s, hzs⟩ := (IsLocalization.mem_span_iff (M := M)).mp hz
   have hclear : (s : NumberField.RingOfIntegers E) • z = y := by

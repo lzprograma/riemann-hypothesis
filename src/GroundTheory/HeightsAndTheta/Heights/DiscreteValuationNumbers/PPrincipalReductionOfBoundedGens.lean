@@ -142,7 +142,7 @@ variable {I}
 theorem cls_of_mem {n : ℕ} {x : A} (h : x ∈ I ^ n) :
     cls I n x = toFC I ⟨monomial n x, reesAlgebra.monomial_mem.2 h⟩ := by
   classical
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem cls_mul {m n : ℕ} {x y : A} (hx : x ∈ I ^ m) (hy : y ∈ I ^ n) :
     cls I m x * cls I n y = cls I (m + n) (x * y) := by
@@ -329,7 +329,7 @@ theorem exists_common_radical {e : ℕ} (he : ∀ n : ℕ, (I ^ n).spanFinrank �
       ∑ i ∈ Finset.range (e + 1), r i * (a ^ q) ^ i * (b ^ p) ^ (e - i) := by
     rw [← Fin.sum_univ_eq_sum_range (fun i => r i * (a ^ q) ^ i * (b ^ p) ^ (e - i))]
     refine Finset.sum_congr rfl fun i _ => ?_
-    simp only [r, dif_pos i.2, Fin.eta]
+    simp only [r, dite_eq_left i.2, Fin.eta]
     ring
   have hrelF : cls I (p * q) (a ^ q) ^ 0 * ∑ i ∈ Finset.range (e + 1), algebraMap A (FibreCone I) (r i) *
       cls I (p * q) (a ^ q) ^ i * cls I (p * q) (b ^ p) ^ (e - i) = 0 := by
@@ -342,7 +342,7 @@ theorem exists_common_radical {e : ℕ} (he : ∀ n : ℕ, (I ^ n).spanFinrank �
     · exact Or.inl ((IsLocalRing.notMem_maximalIdeal.1 h).map _)
   have hex : ∃ i ≤ e, IsUnit (algebraMap A (FibreCone I) (r i)) := by
     refine ⟨i0, Nat.lt_succ_iff.mp i0.2, ?_⟩
-    have : r i0 = c i0 := by simp only [r, dif_pos i0.2, Fin.eta]
+    have : r i0 = c i0 := by simp only [r, dite_eq_left i0.2, Fin.eta]
     rw [this]
     exact (IsLocalRing.notMem_maximalIdeal.1 hi0).map _
   obtain ⟨D', s, -, h1, h2⟩ := exists_radical_of_relation (cls I (p * q) (a ^ q))

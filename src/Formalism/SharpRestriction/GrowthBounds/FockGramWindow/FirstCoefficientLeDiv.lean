@@ -4,42 +4,6 @@ public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.CoarseC
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.DimYOvr
 import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.KappaZeroNonneg
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SegDistsLtG
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -65,8 +29,6 @@ theorem cap_le' {s r p : ℕ} (S : SegData s) (b : SegBlock s r) (B : ℝ) (hB :
       unfold coarseA
       exact (Nat.div_le_self _ _).trans (Nat.sub_le _ _)
     have hcR : (coarseA p S b i : ℝ) ≤ B := (Nat.cast_le.mpr hc).trans (hB i)
-    have h0 : (0 : ℝ) ≤ B := (Nat.cast_nonneg _).trans (hB i)
-    have hoe : (0 : ℝ) ≤ (oEff S b i : ℝ) := Nat.cast_nonneg _
     split_ifs <;> linarith
   · simp
 
@@ -87,8 +49,6 @@ theorem first_coefficient_le_div : (((X.S C0 CE1 CE2).A0 X.p : ℤ) : ℝ) ≤ X
     have : X.p ^ 1 ≤ X.p ^ segG X.L.TT X.j := Nat.pow_le_pow_right hp1 (segG_pos _ _)
     rw [pow_one] at this
     exact_mod_cast this
-  have hQ25 : (25 : ℝ) ≤ ((X.S C0 CE1 CE2).Qj X.p : ℝ) := hp25.trans hQ
-  have ha0 : (0 : ℝ) ≤ X.L.a := Nat.cast_nonneg _
   have hE := hS.E0
   have ha : (((X.S C0 CE1 CE2).a : ℕ) : ℝ) = X.L.a := rfl
   rw [ha, div_le_div_iff₀ (by linarith) (by norm_num)]
@@ -125,7 +85,6 @@ theorem oplus_le_a (b : SegBlock X.s X.r) (a : Fin X.s → ℕ) (hK : Kept X.p X
   have hkb : ((X.L.m : ℝ) + 1) * X.L.b' ≤ X.L.a / 4 := hS.kb
   have hs : 2 * (X.s : ℝ) + 2 ≤ X.L.m := by exact_mod_cast hF.s_le
   have hsb : (X.s : ℝ) * X.L.b' ≤ X.L.a / 8 := by nlinarith
-  have hLa0 : 0 ≤ X.L.La C0 := hF.La0
   have hLa4 : 4 * X.L.La C0 < (X.L.m : ℝ) + 1 := hS.La4
   have hc1 : X.L.La C0 / ((X.L.m : ℝ) + 1) ≤ 1 / 4 := by
     rw [div_le_iff₀ (by positivity)]
@@ -133,7 +92,6 @@ theorem oplus_le_a (b : SegBlock X.s X.r) (a : Fin X.s → ℕ) (hK : Kept X.p X
   have hq : 4 / (X.L.p : ℝ) ^ 2 ≤ 4 / 625 := by
     gcongr
     nlinarith
-  have hq0 : 0 ≤ 4 / (X.L.p : ℝ) ^ 2 := by positivity
   have hPpos : ∀ i, (0 : ℝ) < (SegData.P X.p (X.S C0 CE1 CE2) i : ℝ) := fun i => by
     exact_mod_cast twoPow_pos C0 CE1 CE2 X i
   have hg := geo_lemma hS X.s (X.L.p : ℝ) (by linarith)
@@ -155,9 +113,6 @@ theorem oplus_le_a (b : SegBlock X.s X.r) (a : Fin X.s → ℕ) (hK : Kept X.p X
       = 2 * (X.L.a : ℝ) * ∑ i, 1 / (SegData.P X.p (X.S C0 CE1 CE2) i : ℝ) := by
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl (fun i _ => by ring)
-  have hT0 : 0 ≤ ∑ i, 1 / (SegData.P X.p (X.S C0 CE1 CE2) i : ℝ) :=
-    Finset.sum_nonneg (fun i _ => (one_div_pos.mpr (hPpos i)).le)
-  have ha0 : (0 : ℝ) ≤ X.L.a := Nat.cast_nonneg _
   have hT : ∑ i, 2 * (X.L.a : ℝ) / (SegData.P X.p (X.S C0 CE1 CE2) i : ℝ) ≤ 2 * X.L.a * (25 / 24) := by
     rw [hTe]
     exact mul_le_mul_of_nonneg_left (hg.trans hgeo) (by positivity)
@@ -202,7 +157,7 @@ theorem a_mem_win : X.L.a ∈ X.winA := by
 
 end Deg
 
-theorem eps_num (Y D1 κ q h x0l fl E : ℝ) (hY : 1 ≤ Y) (hκ : 0 < κ) (hD : κ ≤ D1) (hq0 : 0 ≤ q) (hq : q ≤ 1 / (2 * Y))
+theorem eps_num (Y D1 κ q h x0l fl E : ℝ) (hY : 1 ≤ Y) (hκ : 0 < κ) (hD : κ ≤ D1) (hq : q ≤ 1 / (2 * Y))
     (hh0 : 0 ≤ h) (hh : h ≤ κ) (hx : x0l ≤ κ) (hfl : fl ≤ D1) (hE : Y * D1 ≤ E) :
     q + (x0l + fl + q * h) / E ≤ 5 / Y := by
   have hD1 : 0 < D1 := lt_of_lt_of_le hκ hD

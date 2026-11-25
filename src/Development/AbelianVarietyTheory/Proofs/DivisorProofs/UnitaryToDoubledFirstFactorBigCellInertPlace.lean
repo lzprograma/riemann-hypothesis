@@ -42,6 +42,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvTwoSmulMemAdelicLatticeAtFinitePlace
 
 @[expose] public section
 
@@ -78,20 +79,7 @@ theorem half_mem (v : Pl (F := F)) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) : evFin F v
 
 theorem half_smul_mem {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
     ∀ z ∈ GlobalTheory.InertSph.latAt W v, (⅟(2 : AF F)) • z ∈ GlobalTheory.InertSph.latAt W v := by
-  intro z hz
-  unfold GlobalTheory.InertSph.latAt at hz ⊢
-  induction hz using AddSubgroup.closure_induction with
-  | mem x hx =>
-    obtain ⟨a, ha, hai, y, hy, rfl⟩ := hx
-    refine AddSubgroup.subset_closure ⟨⅟2 * a, fun u hu => ?_, ?_, y, hy, ?_⟩
-    · have := ha u hu
-      simp only [smul_eq_mul] at this ⊢
-      rw [mul_left_comm, this, mul_zero]
-    · rw [map_mul]; exact mul_mem (half_mem v h2) hai
-    · rw [smul_smul]
-  | zero => rw [smul_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
-  | neg x _ hx => rw [smul_neg]; exact neg_mem hx
+  apply _root_.GlobalTheory.InertSph.invTwo_smul_mem_latAt <;> assumption
 
 def Keeps {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (X : Matrix (Fin d) (Fin d) (AE F E)) : Prop :=
   ∀ z ∈ GlobalTheory.InertSph.latAt W v, X *ᵥ z ∈ GlobalTheory.InertSph.latAt W v

@@ -127,7 +127,7 @@ theorem not_surjective_of_isIrreducible [π.IsIrreducible] (hπ : IsSmooth π)
     if hz : z ∈ Subgroup.center (GL (Fin n) F) then (hc z hz).choose else 0
   have hωτ : ∀ z (hz : z ∈ Subgroup.center (GL (Fin n) F)), ∀ w,
       τ ⟨z, center_le_levi β hz⟩ w = ω z • w := fun z hz w => by
-    simp only [ω, dif_pos hz]
+    simp only [ω, dite_eq_left hz]
     exact (hc z hz).choose_spec w
   exact not_surjective_of_le_parabolicInd hπ hsc hβ (hasCentralChar_parabolicInd hωτ) A p
 

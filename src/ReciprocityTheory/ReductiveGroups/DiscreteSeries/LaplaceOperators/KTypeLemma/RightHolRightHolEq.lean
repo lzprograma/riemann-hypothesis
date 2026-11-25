@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiCasA
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferStatement
 public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
@@ -59,15 +60,8 @@ private theorem contDiffOn_inv_det_ne_zero' {m : ℕ} {k : WithTop ℕ∞} :
 
 private theorem contDiff_lead_k_type {k : WithTop ℕ∞} (i : ℕ) :
     ContDiff ℂ k (fun z : Matrix (Fin n) (Fin n) ℂ => lead i z) := by
-  by_cases h : i ≤ n
-  · simp only [lead, dif_pos h]
-    have hs : ContDiff ℂ k
-        (fun z : Matrix (Fin n) (Fin n) ℂ => z.submatrix (Fin.castLE h) (Fin.castLE h)) :=
-      contDiff_pi.2 fun a => contDiff_pi.2 fun b =>
-        contDiff_pi.1 (contDiff_pi.1 contDiff_id (Fin.castLE h a)) (Fin.castLE h b)
-    exact contDiff_det_k_type.comp hs
-  · simp only [lead, dif_neg h]
-    exact contDiff_const
+  intros
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.S7.contDiff_lead <;> assumption
 
 private theorem det_ne_zero_of_mem_omegaP {z : Matrix (Fin n) (Fin n) ℂ} (hz : z ∈ OmegaP n) : z.det ≠ 0 := by
   rcases Nat.eq_zero_or_pos n with rfl | hn

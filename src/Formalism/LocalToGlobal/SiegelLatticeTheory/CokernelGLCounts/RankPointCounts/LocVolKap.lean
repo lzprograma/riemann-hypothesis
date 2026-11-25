@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.GlueHoldsVar
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
 
@@ -44,15 +45,7 @@ theorem sc_smul_mem {n : ℕ} (Λ : Set (Fin n → E)) (d : Fv F v) (hd : d ∈ 
 
 theorem natCast_not_mem (c g : ℕ) (hcg : Nat.Coprime c g) (hg : (g : 𝓞 F) ∈ v.asIdeal) :
     (c : 𝓞 F) ∉ v.asIdeal := by
-  intro hc
-  have hz := Nat.gcd_eq_gcd_ab c g
-  rw [Nat.Coprime.gcd_eq_one hcg] at hz
-  have key := congrArg (Int.cast : ℤ → 𝓞 F) hz
-  push_cast at key
-  have h1 : (1 : 𝓞 F) ∈ v.asIdeal := by
-    rw [key]
-    exact add_mem (Ideal.mul_mem_right _ _ hc) (Ideal.mul_mem_right _ _ hg)
-  exact v.isPrime.ne_top ((Ideal.eq_top_iff_one _).mpr h1)
+  apply _root_.PI.UnitaryGroupMassFormula.ScXuExists.Gl.not_mem_of_coprime <;> assumption
 
 theorem inv_natCast_mem (c : ℕ) (hc : (c : 𝓞 F) ∉ v.asIdeal) :
     (c : Fv F v)⁻¹ ∈ v.adicCompletionIntegers F ∧ (c : Fv F v) ≠ 0 := by

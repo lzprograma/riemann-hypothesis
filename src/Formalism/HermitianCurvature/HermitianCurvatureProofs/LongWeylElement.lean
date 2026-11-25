@@ -8,53 +8,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeisenbergLe
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianLeviVectorBaseOrthogonal
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -97,22 +52,18 @@ theorem levPos_inj (k r' : ℕ) : Function.Injective (levPos k 1 r') := by
 
 theorem lev_mm (k r' : ℕ) (g : Mat k r') (s t : Fin (2 * r' + k + 1)) :
     ιLev k 1 r' g (levPos k 1 r' s) (levPos k 1 r' t) = g s t := by
-  have hs := s.isLt
-  have ht := t.isLt
-  have h3 : s.val ≤ 2 * r' + k := by omega
-  have h4 : t.val ≤ 2 * r' + k := by omega
-  simp [ιLev, levPos, h3, h4]
+  apply _root_.Formalism.FourierDecayAlt.P.B2x9.lev_mid <;> assumption
 
 theorem lev_mn (k r' : ℕ) (g : Mat k r') (p q : Fin (2 * (1 + r') + k + 1)) (hp : mid k r' p) (hq : ¬ mid k r' q) :
     ιLev k 1 r' g p q = 0 := by
   have hp' : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1 := hp
   have hq' : ¬ (1 ≤ q.val ∧ q.val < 2 * r' + k + 1 + 1) := hq
-  simp only [ιLev, dif_pos hp', dif_neg hq']
+  simp only [ιLev, dite_eq_left hp', dite_eq_right hq']
 
 theorem lev_n (k r' : ℕ) (g : Mat k r') (p q : Fin (2 * (1 + r') + k + 1)) (hp : ¬ mid k r' p) :
     ιLev k 1 r' g p q = if p = q then 1 else 0 := by
   have hp' : ¬ (1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1) := hp
-  simp only [ιLev, dif_neg hp']
+  simp only [ιLev, dite_eq_right hp']
 
 theorem lev_one (k r' : ℕ) : ιLev k 1 r' 1 = 1 := by
   ext p q
@@ -137,7 +88,6 @@ end PartL
 
 section PartW
 
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
 
 variable {k r' : ℕ}
 
@@ -186,7 +136,7 @@ lemma lev_out_col (g : Mat k r') (p q : Fin (2 * (1 + r') + k + 1)) (hq : q.val 
     show ¬ (1 ≤ q.val ∧ q.val < 2 * r' + k + 1 + 1)
     omega
   by_cases hp : mid k r' p
-  · rw [lev_mn k r' g p q hp hq', if_neg]
+  · rw [lev_mn k r' g p q hp hq', ite_eq_right]
     rintro rfl
     exact hq' hp
   · exact lev_n k r' g p q hp
@@ -194,7 +144,7 @@ lemma lev_out_col (g : Mat k r') (p q : Fin (2 * (1 + r') + k + 1)) (hq : q.val 
 lemma lev_mid (g : Mat k r') (p q : Fin (2 * (1 + r') + k + 1)) (hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1)
     (hq : 1 ≤ q.val ∧ q.val < 2 * r' + k + 1 + 1) :
     ιLev k 1 r' g p q = g ⟨p.val - 1, by omega⟩ ⟨q.val - 1, by omega⟩ := by
-  simp only [ιLev, dif_pos hp, dif_pos hq]
+  simp only [ιLev, dite_eq_left hp, dite_eq_left hq]
 
 theorem t_w0comm : WeylElementCommutesLevelOne := by
   intro k r' c g
@@ -229,14 +179,14 @@ theorem t_bigcellrec : BigCellRec := by
   have hi := i.isLt
   have hj := j.isLt
   by_cases h0 : i.val = 0
-  · rw [if_pos h0, lev_out_row _ (iL k r') j (Or.inr rfl)]
+  · rw [ite_eq_left h0, lev_out_row _ (iL k r') j (Or.inr rfl)]
     simp only [bigCell, esI, iL, a0, Fin.ext_iff, h0]
     split_ifs <;> first | rfl | (exfalso; omega) | (simp only [mul_one, mul_zero]; done) | (exact matrix_apply_congr_of_eq _ (by omega) (by omega)) | (simp only [mul_one]; congr 3 <;> (try dsimp only [Fin.val_mk, Fin.coe_natAdd] at *) <;> first | omega | (ext; simp only; omega)) | (congr 3 <;> (try dsimp only [Fin.val_mk, Fin.coe_natAdd] at *) <;> first | omega | (ext; simp only [Fin.coe_natAdd, Fin.val_mk]; omega))
   · by_cases hL : i.val = 2 * (1 + r') + k
-    · rw [if_neg h0, if_pos hL, lev_out_row _ (iZ k r') j (Or.inl rfl)]
+    · rw [ite_eq_right h0, ite_eq_left hL, lev_out_row _ (iZ k r') j (Or.inl rfl)]
       simp only [bigCell, esI, iZ, a0, Fin.ext_iff, hL]
       split_ifs <;> first | rfl | (exfalso; omega) | (simp only [mul_one, mul_zero]; done) | (exact matrix_apply_congr_of_eq _ (by omega) (by omega)) | (simp only [mul_one]; congr 3 <;> (try dsimp only [Fin.val_mk, Fin.coe_natAdd] at *) <;> first | omega | (ext; simp only [Fin.coe_natAdd, Fin.val_mk]; omega)) | (congr 3 <;> (try dsimp only [Fin.val_mk, Fin.coe_natAdd] at *) <;> first | omega | (ext; simp only [Fin.coe_natAdd, Fin.val_mk]; omega))
-    · rw [if_neg h0, if_neg hL]
+    · rw [ite_eq_right h0, ite_eq_right hL]
       have hmi : 1 ≤ i.val ∧ i.val < 2 * r' + k + 1 + 1 := by omega
       by_cases hmj : 1 ≤ j.val ∧ j.val < 2 * r' + k + 1 + 1
       · rw [lev_mid _ i j hmi hmj]
@@ -262,7 +212,6 @@ end PartW
 
 section PartU
 
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
 
 variable {k r' : ℕ}
 
@@ -274,7 +223,7 @@ lemma not_mid_iff (p : Fin (2 * (1 + r') + k + 1)) : ¬ mid k r' p ↔ p = iZ k 
 lemma lev_col_n (g : Mat k r') (p q : Fin (2 * (1 + r') + k + 1)) (hq : ¬ mid k r' q) :
     ιLev k 1 r' g p q = if p = q then 1 else 0 := by
   by_cases hp : mid k r' p
-  · rw [lev_mn k r' g p q hp hq, if_neg]
+  · rw [lev_mn k r' g p q hp hq, ite_eq_right]
     rintro rfl
     exact hq hp
   · exact lev_n k r' g p q hp
@@ -296,14 +245,14 @@ lemma Hpk_eq (k r' : ℕ) : Hpk k (1 + r') = w0 k r' 1 * ιLev k 1 r' (Hpk k r')
   have hi := i.isLt
   have hj := j.isLt
   by_cases h0 : i.val = 0
-  · rw [if_pos h0, lev_out_row (Hpk k r') (iL k r') j (Or.inr rfl)]
+  · rw [ite_eq_left h0, lev_out_row (Hpk k r') (iL k r') j (Or.inr rfl)]
     simp only [Hpk, iL, Fin.ext_iff, h0]
     split_ifs <;> first | rfl | (exfalso; omega)
   · by_cases hL : i.val = 2 * (1 + r') + k
-    · rw [if_neg h0, if_pos hL, lev_out_row (Hpk k r') (iZ k r') j (Or.inl rfl)]
+    · rw [ite_eq_right h0, ite_eq_left hL, lev_out_row (Hpk k r') (iZ k r') j (Or.inl rfl)]
       simp only [Hpk, iZ, Fin.ext_iff, hL]
       split_ifs <;> first | rfl | (exfalso; omega)
-    · rw [if_neg h0, if_neg hL]
+    · rw [ite_eq_right h0, ite_eq_right hL]
       have hmi : mid k r' i := by
         show 1 ≤ i.val ∧ i.val < 2 * r' + k + 1 + 1
         omega
@@ -311,7 +260,7 @@ lemma Hpk_eq (k r' : ℕ) : Hpk k (1 + r') = w0 k r' 1 * ιLev k 1 r' (Hpk k r')
       · obtain ⟨s, rfl⟩ := (mid_iff k r' i).1 hmi
         obtain ⟨t, rfl⟩ := (mid_iff k r' j).1 hmj
         rw [lev_mm, Formalism.FourierDecayAlt.P.B2x4.Hpk_levPos]
-      · rw [lev_col_n (Hpk k r') i j hmj, if_neg (fun h => by subst h; exact hmj hmi)]
+      · rw [lev_col_n (Hpk k r') i j hmj, ite_eq_right (fun h => by subst h; exact hmj hmi)]
         have hj' : ¬ (1 ≤ j.val ∧ j.val < 2 * r' + k + 1 + 1) := hmj
         simp only [Hpk, Fin.ext_iff]
         split_ifs <;> first | rfl | (exfalso; omega)
@@ -320,8 +269,6 @@ lemma long_weyl_element_sq_one (k r' : ℕ) : w0 k r' 1 * w0 k r' 1 = 1 := by
   ext i j
   rw [weylMatrix_mul_apply]
   simp only [w0_apply_eq_ite_first_index]
-  have hi := i.isLt
-  have hj := j.isLt
   simp only [iL, iZ, Matrix.one_apply, Fin.ext_iff, Fin.val_mk, star_one, inv_one, one_mul]
   split_ifs <;> first | rfl | (exfalso; omega)
 
@@ -394,7 +341,6 @@ lemma fin_cases' (a : Fin (1 + r')) : a = a0 r' ∨ ∃ a' : Fin r', a = Fin.nat
     omega
 
 lemma Hpk_Z (q : Fin (2 * (1 + r') + k + 1)) : Hpk k (1 + r') (iZ k r') q = if q = iL k r' then 1 else 0 := by
-  have hq := q.isLt
   simp only [Hpk, iZ, iL, Fin.ext_iff, Fin.val_mk]
   split_ifs <;> first | rfl | (exfalso; omega)
 
@@ -406,9 +352,9 @@ lemma Hpk_L (q : Fin (2 * (1 + r') + k + 1)) : Hpk k (1 + r') (iL k r') q = if q
 lemma row_of_col {m : ℕ} (g H : Matrix (Fin m) (Fin m) ℂ) (i₀ j : Fin m)
     (hc : ∀ p, g p i₀ = if p = i₀ then 1 else 0) : (gᴴ * H * g) i₀ j = (H * g) i₀ j := by
   rw [Matrix.mul_assoc, Matrix.mul_apply, Finset.sum_eq_single i₀]
-  · rw [Matrix.conjTranspose_apply, hc i₀, if_pos rfl, star_one, one_mul]
+  · rw [Matrix.conjTranspose_apply, hc i₀, ite_eq_left rfl, star_one, one_mul]
   · intro m _ hm
-    rw [Matrix.conjTranspose_apply, hc m, if_neg hm, star_zero, zero_mul]
+    rw [Matrix.conjTranspose_apply, hc m, ite_eq_right hm, star_zero, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -446,10 +392,10 @@ theorem uWbRec : Formalism.FourierDecayAlt.B2.UWbRec := by
           rfl
         · rw [lev_mn k r' _ p q hp hq]
           rcases (not_mid_iff q).1 hq with rfl | rfl
-          · rw [cZ, if_neg]
+          · rw [cZ, ite_eq_right]
             rintro rfl
             exact hq hp
-          · rw [cL, if_neg]
+          · rw [cL, ite_eq_right]
             rintro rfl
             exact hq hp
       · rw [lev_n k r' _ p q hp]
@@ -489,7 +435,6 @@ end PartU
 
 section PartF
 
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
 
 variable {k r : ℕ}
 
@@ -509,19 +454,16 @@ lemma emb_out_row (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * 
 
 lemma emb_mid (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : midW k r q) (hj : midW k r j) :
     embWb k r μ q j = μ ⟨q.val - r, by have := hq; omega⟩ ⟨j.val - r, by have := hj; omega⟩ := by
-  simp only [embWb, dif_pos (show (r ≤ q.val ∧ q.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k) from ⟨hq, hj⟩)]
+  simp only [embWb, dite_eq_left (show (r ≤ q.val ∧ q.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k) from ⟨hq, hj⟩)]
 
 lemma bc_mid_col (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1)) (hj : midW k r j) :
     bigCell k r c μ i j = if hi : midW k r i then μ ⟨i.val - r, by have := hi; omega⟩ ⟨j.val - r, by have := hj; omega⟩
       else 0 := by
-  have h1 := hj.1
   have h2 := hj.2
-  simp only [bigCell, dif_neg (show ¬ j.val < r by omega), dif_pos h2]
+  simp only [bigCell, dite_eq_right (show ¬ j.val < r by omega), dite_eq_left h2]
 
 lemma bc_mid_row_out (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
     (hi : midW k r i) (hj : ¬ midW k r j) : bigCell k r c μ i j = 0 := by
-  have h1 := hi.1
-  have h2 := hi.2
   have hj' : ¬ (r ≤ j.val ∧ j.val ≤ r + k) := hj
   simp only [bigCell, esI, Fin.ext_iff]
   split_ifs <;> first | rfl | (exfalso; omega)
@@ -534,9 +476,6 @@ lemma bc_out_col (c : Fin r → ℂ) (μ ν : Matrix (Fin (k + 1)) (Fin (k + 1))
 
 lemma bc_one_mid (c : Fin r → ℂ) (i j : Fin (2 * r + k + 1)) (hi : midW k r i) (hj : midW k r j) :
     bigCell k r c 1 i j = if i = j then 1 else 0 := by
-  have h1 := hi.1
-  have h2 := hi.2
-  have h3 := hj.1
   have h4 := hj.2
   simp only [bigCell, Matrix.one_apply, Fin.ext_iff]
   split_ifs <;> first | rfl | (exfalso; omega)
@@ -549,46 +488,46 @@ theorem t_bigcellfactor : BigCellFactor := by
     by_cases hj : midW k r j
     · rw [Finset.sum_eq_single i]
       · by_cases hi : midW k r i
-        · rw [bc_one_mid c i i hi hi, if_pos (rfl : i = i), one_mul, emb_mid μ i j hi hj, bc_mid_col c μ i j hj,
-            dif_pos hi]
-        · rw [emb_out_row μ i j hi, if_neg (fun h => by subst h; exact hi hj), mul_zero, bc_mid_col c μ i j hj,
-            dif_neg hi]
+        · rw [bc_one_mid c i i hi hi, ite_eq_left (rfl : i = i), one_mul, emb_mid μ i j hi hj, bc_mid_col c μ i j hj,
+            dite_eq_left hi]
+        · rw [emb_out_row μ i j hi, ite_eq_right (fun h => by subst h; exact hi hj), mul_zero, bc_mid_col c μ i j hj,
+            dite_eq_right hi]
       · intro m _ hm
         by_cases hm' : midW k r m
         · by_cases hi : midW k r i
-          · rw [bc_one_mid c i m hi hm', if_neg (Ne.symm hm), zero_mul]
-          · rw [bc_mid_col c 1 i m hm', dif_neg hi, zero_mul]
-        · rw [emb_out_row μ m j hm', if_neg (fun h => by subst h; exact hm' hj), mul_zero]
+          · rw [bc_one_mid c i m hi hm', ite_eq_right (Ne.symm hm), zero_mul]
+          · rw [bc_mid_col c 1 i m hm', dite_eq_right hi, zero_mul]
+        · rw [emb_out_row μ m j hm', ite_eq_right (fun h => by subst h; exact hm' hj), mul_zero]
       · intro h
         exact absurd (Finset.mem_univ _) h
     · rw [Finset.sum_eq_single j]
-      · rw [emb_out_col μ j j hj, if_pos (rfl : j = j), mul_one, bc_out_col c 1 μ i j hj]
+      · rw [emb_out_col μ j j hj, ite_eq_left (rfl : j = j), mul_one, bc_out_col c 1 μ i j hj]
       · intro m _ hm
-        rw [emb_out_col μ m j hj, if_neg hm, mul_zero]
+        rw [emb_out_col μ m j hj, ite_eq_right hm, mul_zero]
       · intro h
         exact absurd (Finset.mem_univ _) h
   · ext i j
     rw [Matrix.mul_apply]
     by_cases hj : midW k r j
     · rw [Finset.sum_eq_single j]
-      · rw [bc_one_mid c j j hj hj, if_pos (rfl : j = j), mul_one, bc_mid_col c μ i j hj]
+      · rw [bc_one_mid c j j hj hj, ite_eq_left (rfl : j = j), mul_one, bc_mid_col c μ i j hj]
         by_cases hi : midW k r i
-        · rw [emb_mid μ i j hi hj, dif_pos hi]
-        · rw [emb_out_row μ i j hi, dif_neg hi, if_neg (fun h => by subst h; exact hi hj)]
+        · rw [emb_mid μ i j hi hj, dite_eq_left hi]
+        · rw [emb_out_row μ i j hi, dite_eq_right hi, ite_eq_right (fun h => by subst h; exact hi hj)]
       · intro m _ hm
         by_cases hm' : midW k r m
-        · rw [bc_one_mid c m j hm' hj, if_neg hm, mul_zero]
-        · rw [bc_mid_col c 1 m j hj, dif_neg hm', mul_zero]
+        · rw [bc_one_mid c m j hm' hj, ite_eq_right hm, mul_zero]
+        · rw [bc_mid_col c 1 m j hj, dite_eq_right hm', mul_zero]
       · intro h
         exact absurd (Finset.mem_univ _) h
     · rw [Finset.sum_eq_single i]
       · by_cases hi : midW k r i
         · rw [bc_mid_row_out c 1 i j hi hj, mul_zero, bc_mid_row_out c μ i j hi hj]
-        · rw [emb_out_col μ i i hi, if_pos (rfl : i = i), one_mul, bc_out_col c 1 μ i j hj]
+        · rw [emb_out_col μ i i hi, ite_eq_left (rfl : i = i), one_mul, bc_out_col c 1 μ i j hj]
       · intro m _ hm
         by_cases hm' : midW k r m
         · rw [bc_mid_row_out c 1 m j hm' hj, mul_zero]
-        · rw [emb_out_col μ i m hm', if_neg (Ne.symm hm), zero_mul]
+        · rw [emb_out_col μ i m hm', ite_eq_right (Ne.symm hm), zero_mul]
       · intro h
         exact absurd (Finset.mem_univ _) h
 

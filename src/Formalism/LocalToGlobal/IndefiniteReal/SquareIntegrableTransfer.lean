@@ -11,8 +11,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace Formalism.IndefR.AutomorphicEvaluation
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {S : D.what₂.Tau → SPar}
 
 section Pieces
@@ -26,10 +24,6 @@ def SquareIntegrableTransfer : Prop :=
     MemLp F 2 (μ.restrict 𝓕) →
       MemLp (fun x => F (ι.symm x * t)) 2 (muX X) ∧
         ∫ x, ‖F (ι.symm x * t)‖ ^ 2 ∂(muX X) = c * ∫ x in 𝓕, ‖F x‖ ^ 2 ∂μ
-
-def RphFix : Prop :=
-  ∀ T ∈ E, ∀ hF : MemLp (fun x => ev M v₀ T (ι.symm x * t)) 2 (muX X),
-    X.Rph (star (hF.toLp _)) = star (hF.toLp _)
 
 def EvalIntoT : Prop :=
   ∀ T ∈ E, ∃ F : EEC X G, ((F : L2X X) =ᵐ[muX X] fun x => ev M v₀ T (ι.symm x * t)) ∧

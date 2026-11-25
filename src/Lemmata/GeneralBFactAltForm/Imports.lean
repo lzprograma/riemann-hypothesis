@@ -10,9 +10,9 @@ universe u_1 u_2 u_3
 namespace Bl.general_b_fact_alt_form
 
 theorem goal1 :
-  ∀ {R : Type u_1} {F : Type u_2} {X : Type u_3} [inst : CommRing.{u_1} R] [IsDomain.{u_1} R] [inst_2 : Field.{u_2} F]
-  [inst_3 : Algebra.{u_1, u_2} R F] [IsFractionRing.{u_1, u_2} R F] [inst_5 : AddCommGroup.{u_3} X]
-  [inst_6 : Module.{u_2, u_3} F X] [inst_7 : Module.{u_1, u_3} R X] [IsScalarTower.{u_1, u_2, u_3} R F X]
+  ∀ {R : Type u_1} {F : Type u_2} {X : Type u_3} [CommRing.{u_1} R] [IsDomain.{u_1} R] [Field.{u_2} F]
+  [Algebra.{u_1, u_2} R F] [IsFractionRing.{u_1, u_2} R F] [AddCommGroup.{u_3} X]
+  [Module.{u_2, u_3} F X] [Module.{u_1, u_3} R X] [IsScalarTower.{u_1, u_2, u_3} R F X]
   (S : Submodule.{u_1, u_3} R X) {x : X},
   Membership.mem.{u_3, u_3} (Submodule.span.{u_2, u_3} F (SetLike.coe.{u_3, u_3} S)) x →
     Exists.{u_1 + 1} fun (d : R) ↦

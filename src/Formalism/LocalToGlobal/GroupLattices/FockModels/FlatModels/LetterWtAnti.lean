@@ -6,6 +6,7 @@ public import Formalism.LocalToGlobal.GroupLattices.FockModels.EdgePlane
 import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
 public import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.EdgeLatOfG
 import Mathlib.Algebra.Order.Star.Int
+import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TwoLatLeTwoSp
 
 @[expose] public section
 
@@ -19,16 +20,7 @@ open Formalism.MainNotions.G Formalism.GradedWeylDivisibility
 open Formalism.MainNotions.G.LatticeSystems (la_tw lb_D la_tw_det lb_D_det H0_eq_twisted_nabla la_indep)
 
 theorem letterWt_anti (m d : ℕ) (vec : Bool) : Antitone (letterWt m d vec) := by
-  intro i j hij
-  cases vec <;> simp only [letterWt, Bool.false_eq_true, ↓reduceIte]
-  · by_cases hi : i = Fin.last m
-    · have hj : j = Fin.last m := le_antisymm (Fin.le_last j) (hi ▸ hij)
-      simp [hi, hj]
-    · by_cases hj : j = Fin.last m <;> simp [hi, hj]
-  · by_cases hj : j = 0
-    · have hi : i = 0 := le_antisymm (hj ▸ hij) (Fin.zero_le i)
-      simp [hi, hj]
-    · by_cases hi : i = 0 <;> simp [hi, hj]
+  apply _root_.Formalism.MainNotions.flipOneThree.Pf.letterWt_anti <;> assumption
 
 theorem mem_scale2 {O Kf X : Type} [CommRing O] [Field Kf] [Algebra O Kf] [AddCommGroup X] [Module Kf X]
     [Module O X] [IsScalarTower O Kf X] (Vs : Submodule Kf X) (T : Submodule O X) (a b : Kf) (ha : a ≠ 0)
@@ -125,7 +117,7 @@ theorem flatHH : Formalism.MainNotions.ColumnSystems.FlatHH := by
     have hA : (Avec (fun x : TT × Bool => x.2) (Formalism.MainNotions.ColumnSystems.hhDegs TT aT bT) : ℤ) = AHH TT aT bT := by
       unfold Avec AHH Formalism.MainNotions.ColumnSystems.hhDegs
       rw [Fintype.sum_prod_type]
-      simp only [Fintype.sum_bool, if_true, Bool.false_eq_true, if_false, add_zero]
+      simp only [Fintype.sum_bool, ite_true, Bool.false_eq_true, ite_false, add_zero]
       push_cast
       rw [← Finset.sum_coe_sort TT]
     have h2 := mem_scale2 (O := O) (VHH (m := m) Kf TT aT bT)
@@ -183,7 +175,7 @@ theorem flatTop : FlatTop := by
     unfold VS Vsp
     congr 1
     funext s
-    rw [hlam s, if_pos (letterWt_anti _ _ _)]
+    rw [hlam s, ite_eq_left (letterWt_anti _ _ _)]
   obtain ⟨Θ0, hΘ0⟩ := gen_equiv hS m hm vec d (fun x => la_tw ι σ x.val h) (fun x => la_tw_det _ _ _ _ hh)
   let Θ : ↥((Pol (KK O) (ι := Fin n') (m + 1) d).restrictScalars O) ≃ₗ[O] ↥(Vsp Kf lam0) :=
     Θ0.trans ((LinearEquiv.ofEq _ _ hV).restrictScalars O)

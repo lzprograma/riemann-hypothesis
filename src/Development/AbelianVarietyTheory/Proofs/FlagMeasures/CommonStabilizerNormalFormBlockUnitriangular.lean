@@ -83,11 +83,11 @@ theorem isNormal0_iff {β : Fin r → ℕ} {g : Mat k r} (z' : Fin (2 * r + k + 
 
 theorem pTop_self (q : PTop k r r) : pTop k r r q = 1 := by
   have h1 : (fun a : Fin r => if h : r ≤ a.val then q.1 ⟨a, h⟩ else 0) = 0 :=
-    funext fun a => dif_neg (not_le.2 a.2)
+    funext fun a => dite_eq_right (not_le.2 a.2)
   have h2 : (fun p : UT r => if h : r ≤ p.1.1.val then q.2.1 ⟨p, h⟩ else 0) = 0 :=
-    funext fun p => dif_neg (not_le.2 p.1.1.2)
+    funext fun p => dite_eq_right (not_le.2 p.1.1.2)
   have h3 : (fun a : Fin r => if h : r ≤ a.val then q.2.2 ⟨a, h⟩ else 0) = 0 :=
-    funext fun a => dif_neg (not_le.2 a.2)
+    funext fun a => dite_eq_right (not_le.2 a.2)
   have hs : skewM (0 : UT r → ℂ) (0 : Fin r → ℝ) = 0 := by
     ext a b
     simp only [skewM]

@@ -4,7 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsStab
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulusMatrix
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PGramAtData
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -37,7 +36,6 @@ theorem hyperbolic_at_place (h : HermitianForm F E W) (v : Basis ι E W) {x₀ w
   · rw [hForm, ← HermAtPlace.proof h v w, h1, map_zero]
   · rw [hForm, ← HermAtPlace.proof h v w, h2, map_zero]
   · rw [hForm, ← HermAtPlace.proof h v w, h3, map_one]
-
 
 omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem archUnitary_at_place {h : HermitianForm F E W} {v : Basis ι E W} (g : archUnitary h v)
@@ -137,7 +135,6 @@ theorem heisPoint_val (hp : IsHyperbolicPair h x₀ w₀) (p : HeisCoord h v x�
     (w : InfinitePlace E) :
     ((((heisPoint hp p : unipRadical h v x₀) : archUnitary h v) : InfinitePlace E → GL ι ℂ) w :
       Matrix ι ι ℂ) = heisMatAt h v x₀ p.1 p.2 w := rfl
-
 
 omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem unipRadical_at_place (n : unipRadical h v x₀) (w : InfinitePlace E) :

@@ -3,44 +3,6 @@ module
 public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 import Formalism.LocalToGlobal.Columns.CoefColLemmas
 import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -52,8 +14,6 @@ open Formalism.IndefR.Links (PolF)
 open scoped TensorProduct
 
 namespace GlobalTheory.ExportSeries
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {m n : ℕ}
 
@@ -80,8 +40,8 @@ theorem fockSubst_one (p : D.what₂.Tau → ℕ) : fockSubst (m := m) p (1 : GL
   refine MvPolynomial.algHom_ext fun v => ?_
   rw [fockSubst, aeval_X, AlgHom.id_apply]
   split_ifs
-  · rw [Finset.sum_eq_single v.2.2 (fun b _ hb => by simp [Matrix.one_apply, Ne.symm hb]) (by simp)]; simp
-  · rw [Finset.sum_eq_single v.2.2 (fun b _ hb => by simp [Matrix.one_apply, hb]) (by simp)]; simp
+  · rw [Finset.sum_eq_single v.2.2 (fun b _ hb => by simp [Ne.symm hb]) (by simp)]; simp
+  · rw [Finset.sum_eq_single v.2.2 (fun b _ hb => by simp [hb]) (by simp)]; simp
 
 theorem fockSubst_mul (p : D.what₂.Tau → ℕ) (u u' : GLR D n) :
     fockSubst (m := m) p (u * u') = (fockSubst p u).comp (fockSubst p u') := by
@@ -278,14 +238,6 @@ def Weight.first (D : D7) (n : ℕ) (p q : D.what₂.Tau → ℕ) (c : D.what₂
     have : i.val ≤ j.val := hij
     dsimp only
     split_ifs <;> omega⟩
-
-theorem Weight.first_good {p q : D.what₂.Tau → ℕ} (c : D.what₂.Tau → ℤ) (hp : ∀ τ, 0 < p τ) (h : ∀ τ, p τ + q τ ≤ n) :
-    (Weight.first D n p q c).Good := by
-  refine ⟨h, ?_⟩
-  intro τ i
-  have := hp τ
-  simp only [Weight.first]
-  split_ifs <;> omega
 
 end GlobalTheory.ExportSeries
 

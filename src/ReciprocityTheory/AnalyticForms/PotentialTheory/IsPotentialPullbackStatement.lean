@@ -78,12 +78,6 @@ def MIntEqStatement : Prop :=
     (P : ChartPartition A) (Φ : Fin e → LocPot X), (∀ i, IsPotential A (Φ i)) →
     ∀ g : X → ℝ, MIntegrable A Φ g → mInt A Φ g = integralWith A P Φ g
 
-def MIntAtlasIndepStatement : Prop :=
-  ∀ {e : ℕ} {X : Type} [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    (A B : FinHolAtlas e X), A.Compatible B → ∀ Φ : Fin e → LocPot X,
-    (∀ i, IsPotential A (Φ i)) → ∀ g : X → ℝ, MIntegrable A Φ g →
-      MIntegrable B Φ g ∧ mInt A Φ g = mInt B Φ g
-
 def MIntegrableContStatement : Prop :=
   ∀ {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e X) (Φ : Fin e → LocPot X),
     (∀ i, IsPotential A (Φ i)) → ∀ g : X → ℝ, Continuous g → MIntegrable A Φ g

@@ -48,8 +48,6 @@ open scoped TensorProduct ContDiff ComplexOrder Topology
 
 namespace GlobalTheory.FockCompare.ThetaCont
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {θ : InfFam D} {σ : (D.what₂.Tau → ℂ) →+ AE D}
 
 theorem infPart_eq_zero (h : Chart θ σ) (a : AE D) (ha : ∀ τ, θ τ (infPart D a) = 0) : infPart D a = 0 := by

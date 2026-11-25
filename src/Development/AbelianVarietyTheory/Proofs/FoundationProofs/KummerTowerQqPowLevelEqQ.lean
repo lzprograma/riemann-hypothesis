@@ -138,21 +138,17 @@ theorem zeta_ne (T : Tower p Ω) (n : ℕ) : T.ζ n ≠ 0 := (T.prim n).ne_zero 
 theorem int_zeta_inv (T : Tower p Ω) (n : ℕ) : IsInt (p := p) (T.ζ n)⁻¹ :=
   int_of_pow (ppow_pos n) (by rw [inv_pow, (T.prim n).pow_eq_one, inv_one]; exact int_one)
 
-alias kummerTower_qq_pow_level_eq_q := _root_.GlobalTheory.K5.Basic.qq_pow
-
 theorem isUnit_qO : IsUnit (qO p) := by
   refine IsUnit.map _ (IsUnit.of_mul_eq_one (HahnSeries.single (-1 : ℤ) (1 : ℤ_[p])) ?_)
   rw [HahnSeries.single_mul_single]; simp
 
 theorem int_qq (T : Tower p Ω) (n : ℕ) : IsInt (p := p) (T.qq n) :=
-  int_of_pow (ppow_pos n) (by rw [kummerTower_qq_pow_level_eq_q]; exact int_alg _)
-
-alias qq_ne := _root_.GlobalTheory.K5.Basic.qq_ne_zero
+  int_of_pow (ppow_pos n) (by rw [GlobalTheory.K5.Basic.qq_pow]; exact int_alg _)
 
 theorem int_qq_inv (T : Tower p Ω) (n : ℕ) : IsInt (p := p) (T.qq n)⁻¹ := by
   refine int_of_pow (ppow_pos (p := p) n) ?_
   obtain ⟨w, hw⟩ := (isUnit_qO (p := p))
-  rw [inv_pow, kummerTower_qq_pow_level_eq_q, ← hw]
+  rw [inv_pow, GlobalTheory.K5.Basic.qq_pow, ← hw]
   refine int_congr (int_alg (↑w⁻¹ : O0 p)) ?_
   exact inv_eq_of_mul_eq_one_right (by rw [← map_mul]; simp)
 

@@ -679,12 +679,12 @@ theorem setIntegral_fourier_mul_char {ψ : AddChar K Circle} (hψ : Continuous �
     · have ht : IsTrivialOn (ψ.mulShift (x + z)) (addCharConductor ψ - k) := by
         rw [isTrivialOn_mulShift_iff_mem hψ hψ1]
         simpa using hxz
-      rw [if_pos ht, Set.indicator_of_mem (show x + z ∈ (valBall K k : Set K) from hxz),
+      rw [ite_eq_left ht, Set.indicator_of_mem (show x + z ∈ (valBall K k : Set K) from hxz),
         add_sub_cancel_right, mul_comm]
     · have ht : ¬ IsTrivialOn (ψ.mulShift (x + z)) (addCharConductor ψ - k) := by
         rw [isTrivialOn_mulShift_iff_mem hψ hψ1]
         simpa using hxz
-      rw [if_neg ht, Set.indicator_of_notMem (show x + z ∉ (valBall K k : Set K) from hxz),
+      rw [ite_eq_right ht, Set.indicator_of_notMem (show x + z ∉ (valBall K k : Set K) from hxz),
         mul_zero]
   rw [hB, integral_integral_swap hG]
   simp only [hinner]

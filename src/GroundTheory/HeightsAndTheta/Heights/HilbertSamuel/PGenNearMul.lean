@@ -118,118 +118,50 @@ theorem cellRes_locMul (hW : W ≤ Module.annihilator (MRingOver S ι) M) {J I :
       GenTwistGenerated.cellRes_mk h, locMul_mk]
     rfl
   · unfold KH.cellRes
-    rw [dif_neg h]
+    rw [dite_eq_right h]
     simp only [LinearMap.zero_apply, map_zero]
 
 theorem act_mem (hW : W ≤ Module.annihilator (MRingOver S ι) M) {𝓜 : (K → ℤ) → Submodule S M}
     (h𝓜 : KH.IsMGraded S ι 𝓜) {c e : K → ℤ} {a : MRingOver S ι ⧸ W} (ha : a ∈ KH.quotPart S W c) {m : M}
-    (hm : m ∈ 𝓜 e) : act hW a m ∈ 𝓜 (e + c) := by
-  induction ha using Submodule.span_induction with
-  | mem a ha =>
-    obtain ⟨q, ⟨hc, hq⟩, rfl⟩ := ha
-    rw [act_mk]
-    have := h𝓜.2 _ e q m hq hm
-    convert this using 2
+    (hm : m ∈ 𝓜 e) : act hW a m ∈ 𝓜 (e + c) :=
+  (Submodule.span_le.mpr (by
+    rintro _ ⟨q, ⟨hc, hq⟩, rfl⟩
+    rw [SetLike.mem_coe, Submodule.mem_comap, LinearMap.restrictScalars_apply,
+      LinearMap.flip_apply, act_mk]
+    convert h𝓜.2 _ e q m hq hm using 2
     funext k
-    simp [hc k]
-  | zero => rw [map_zero, LinearMap.zero_apply]; exact zero_mem _
-  | add a₁ a₂ _ _ h₁ h₂ => rw [map_add (f := _), LinearMap.add_apply]; exact add_mem h₁ h₂
-  | smul s a _ h => rw [act_smulS]; exact Submodule.smul_mem _ s h
+    simp [hc k]) :
+    KH.quotPart S W c ≤ (𝓜 (e + c)).comap (((act hW).flip m).restrictScalars S)) ha
 
 theorem locMul_mem (hW : W ≤ Module.annihilator (MRingOver S ι) M) {𝓜 : (K → ℤ) → Submodule S M}
     (h𝓜 : KH.IsMGraded S ι 𝓜) {d n : K → ℤ} {T : Submonoid (MRingOver S ι)}
     {x : LocalizedModule T (MRingOver S ι ⧸ W)} {y : LocalizedModule T M}
     (hx : x ∈ KH.locPart ι (KH.quotPart S W) T n) (hy : y ∈ KH.locPart ι 𝓜 T d) :
-    locMul T hW x y ∈ KH.locPart ι 𝓜 T (d + n) := by
-  induction hx using Submodule.span_induction with
-  | mem x hx =>
-    induction hy using Submodule.span_induction with
-    | mem y hy =>
-      obtain ⟨a, s, e, hs, ha, rfl⟩ := hx
-      obtain ⟨m, t, e', ht, hm, rfl⟩ := hy
-      rw [locMul_mk]
-      refine Submodule.subset_span ⟨_, s * t, e + e', by simpa using GenTwistGenerated.isMultiHomog_mul hs ht,
-        ?_, rfl⟩
-      have := act_mem hW h𝓜 ha hm
-      convert this using 2
+    locMul T hW x y ∈ KH.locPart ι 𝓜 T (d + n) :=
+  (Submodule.span_le.mpr (by
+    rintro _ ⟨a, s, e, hs, ha, rfl⟩
+    rw [SetLike.mem_coe, Submodule.mem_comap, LinearMap.restrictScalars_apply,
+      LinearMap.flip_apply]
+    refine (Submodule.span_le.mpr (by
+      rintro _ ⟨m, t, e', ht, hm, rfl⟩
+      rw [SetLike.mem_coe, Submodule.mem_comap, LinearMap.restrictScalars_apply, locMul_mk]
+      refine Submodule.subset_span ⟨_, s * t, e + e',
+        by simpa using GenTwistGenerated.isMultiHomog_mul hs ht, ?_, rfl⟩
+      convert act_mem hW h𝓜 ha hm using 2
       funext k
       simp only [Pi.add_apply, Nat.cast_add]
-      ring
-    | zero => rw [map_zero]; exact zero_mem _
-    | add y₁ y₂ _ _ h₁ h₂ => rw [map_add]; exact add_mem h₁ h₂
-    | smul c y _ h => rw [(locMul_smulS T hW c x y).2]; exact Submodule.smul_mem _ c h
-  | zero => rw [map_zero, LinearMap.zero_apply]; exact zero_mem _
-  | add x₁ x₂ _ _ h₁ h₂ => rw [map_add (f := _), LinearMap.add_apply]; exact add_mem h₁ h₂
-  | smul c x _ h => rw [(locMul_smulS T hW c x y).1]; exact Submodule.smul_mem _ c h
+      ring) :
+      KH.locPart ι 𝓜 T d ≤
+        (KH.locPart ι 𝓜 T (d + n)).comap ((locMul T hW _).restrictScalars S)) hy) :
+    KH.locPart ι (KH.quotPart S W) T n ≤
+      (KH.locPart ι 𝓜 T (d + n)).comap (((locMul T hW).flip y).restrictScalars S)) hx
 
 theorem cechD_zero_apply_uniform (I : KH.Cell K ι 1) :
     ∃ J₁ J₂ : KH.Cell K ι 0, ∃ σ : ℤ, (σ = 1 ∨ σ = -1) ∧
       ∀ (N : Type) [AddCommGroup N] [Module (MRingOver S ι) N] (f : KH.CechC S ι N 0),
         KH.cechD S ι N 0 f I = σ • (KH.cellRes S N J₁.1 I.1 (f J₁) - KH.cellRes S N J₂.1 I.1 (f J₂)) := by
-  classical
-  have hne : ∀ k, (I.1 k).Nonempty := I.2.1
-  have hsum : ∑ k, ((I.1 k).card - 1) = 1 := I.2.2
-  obtain ⟨k₀, -, hk₀⟩ := Finset.exists_ne_zero_of_sum_ne_zero (s := Finset.univ)
-    (f := fun k => (I.1 k).card - 1) (by rw [hsum]; exact one_ne_zero)
-  have hle : ∀ k, (I.1 k).card - 1 ≤ 1 := fun k =>
-    (Finset.single_le_sum (f := fun k => (I.1 k).card - 1) (fun _ _ => Nat.zero_le _)
-      (Finset.mem_univ k)).trans hsum.le
-  have hpos : ∀ k, 1 ≤ (I.1 k).card := fun k => Finset.card_pos.mpr (hne k)
-  have hcard₀ : (I.1 k₀).card = 2 := by have := hle k₀; have := hpos k₀; omega
-  have hother : ∀ l, l ≠ k₀ → (I.1 l).card = 1 := by
-    intro l hl
-    have h2 := Finset.sum_le_sum_of_subset (f := fun k => (I.1 k).card - 1) (Finset.subset_univ {l, k₀})
-    rw [Finset.sum_pair hl] at h2
-    have h3 := h2.trans hsum.le
-    have := hpos l
-    omega
-  obtain ⟨x, y, hxy, hI⟩ := Finset.card_eq_two.mp hcard₀
-  have hface : ∀ i ∈ I.1 k₀, (∀ l, (Function.update I.1 k₀ ((I.1 k₀).erase i) l).Nonempty) ∧
-      ∑ l, ((Function.update I.1 k₀ ((I.1 k₀).erase i) l).card - 1) = 0 := by
-    intro i hi
-    have hc : ((I.1 k₀).erase i).card = 1 := by rw [Finset.card_erase_of_mem hi, hcard₀]
-    refine ⟨fun l => ?_, Finset.sum_eq_zero fun l _ => ?_⟩
-    · by_cases hl : l = k₀
-      · subst hl; rw [Function.update_self]; exact Finset.card_pos.mp (by omega)
-      · rw [Function.update_of_ne hl]; exact hne l
-    · by_cases hl : l = k₀
-      · subst hl; rw [Function.update_self, hc]; rfl
-      · rw [Function.update_of_ne hl, hother l hl]; rfl
-  have hx : x ∈ I.1 k₀ := by rw [hI]; simp
-  have hy : y ∈ I.1 k₀ := by rw [hI]; simp
-  have hsign : KH.faceSign I.1 k₀ y = -KH.faceSign I.1 k₀ x := by
-    unfold KH.faceSign
-    rcases lt_or_gt_of_ne hxy with h | h
-    · have e₁ : ((I.1 k₀).filter (· < x)).card = 0 := by
-        rw [hI]; simp [Finset.filter_insert, Finset.filter_singleton, h.not_gt]
-      have e₂ : ((I.1 k₀).filter (· < y)).card = 1 := by
-        rw [hI]; simp [Finset.filter_insert, Finset.filter_singleton, h]
-      rw [e₁, e₂, add_comm 1, pow_succ, zero_add]; ring
-    · have e₁ : ((I.1 k₀).filter (· < x)).card = 1 := by
-        rw [hI]; simp [Finset.filter_insert, Finset.filter_singleton, h]
-      have e₂ : ((I.1 k₀).filter (· < y)).card = 0 := by
-        rw [hI]; simp [Finset.filter_insert, Finset.filter_singleton, h.not_gt]
-      rw [e₁, e₂, add_comm 1, pow_succ, zero_add]; ring
-  refine ⟨⟨_, hface x hx⟩, ⟨_, hface y hy⟩, KH.faceSign I.1 k₀ x,
-    by unfold KH.faceSign; exact neg_one_pow_eq_or ℤ _, fun N _ _ f => ?_⟩
-  change (∑ k : K, ∑ i ∈ I.1 k, _ :
-    KH.CechC S ι N 0 →ₗ[MRingOver S ι] LocalizedModule (KH.cellMon S I.1) N) f = _
-  rw [Finset.sum_eq_single k₀, Finset.sum_eq_add_of_mem x y hx hy hxy, dite_eq_left (hface x hx),
-    dite_eq_left (hface y hy)]
-  · rw [hsign, LinearMap.add_apply]
-    change KH.faceSign I.1 k₀ x • (KH.cellRes S N _ I.1 (f _)) +
-      (-KH.faceSign I.1 k₀ x) • (KH.cellRes S N _ I.1 (f _)) = _
-    rw [neg_smul, ← sub_eq_add_neg]
-    exact (zsmul_sub _ _ _).symm
-  · intro i hi hne'
-    have : i = x ∨ i = y := by rw [hI] at hi; simpa using hi
-    tauto
-  · intro l _ hl
-    refine Finset.sum_eq_zero fun i hi => dif_neg fun h => ?_
-    have := (h.1 l)
-    rw [Function.update_self, ← Finset.card_pos, Finset.card_erase_of_mem hi, hother l hl] at this
-    omega
-  · intro h; exact absurd (Finset.mem_univ k₀) h
+  obtain ⟨J₁, J₂, -, -, σ, hσ, hd⟩ := GenTwistGenerated.cechD_zero_apply_uniform.{0} (S := S) I
+  exact ⟨J₁, J₂, σ, hσ, hd⟩
 
 def prodCochain (hW : W ≤ Module.annihilator (MRingOver S ι) M) (u : KH.CechC S ι (MRingOver S ι ⧸ W) 0)
     (z : KH.CechC S ι M 0) : KH.CechC S ι M 0 :=
@@ -286,31 +218,25 @@ theorem exists_div (hW : W ≤ Module.annihilator (MRingOver S ι) M) {𝓜 : (K
     (hNh : IsMultiHomog N fun k => (-n k).toNat) {x : LocalizedModule (KH.cellMon S I) M}
     (hx : x ∈ KH.locPart ι 𝓜 (KH.cellMon S I) (d + n)) :
     ∃ y ∈ KH.locPart ι 𝓜 (KH.cellMon S I) d,
-      locMul _ hW (LocalizedModule.mk (Ideal.Quotient.mk W P) ⟨N, hN⟩) y = x := by
-  induction hx using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨m, s, e, hs, hm, rfl⟩ := hx
-    refine ⟨LocalizedModule.mk (N • m) (⟨P, hP⟩ * s), Submodule.subset_span ⟨N • m, ⟨P, hP⟩ * s,
-      (fun k => (n k).toNat) + e, by simpa using GenTwistGenerated.isMultiHomog_mul hPh hs, ?_, rfl⟩, ?_⟩
-    · have := h𝓜.2 _ _ N m hNh hm
-      convert this using 2
+      locMul _ hW (LocalizedModule.mk (Ideal.Quotient.mk W P) ⟨N, hN⟩) y = x :=
+  (Submodule.span_le.mpr (by
+    rintro _ ⟨m, s, e, hs, hm, rfl⟩
+    rw [SetLike.mem_coe, Submodule.mem_map]
+    refine ⟨LocalizedModule.mk (N • m) (⟨P, hP⟩ * s),
+      Submodule.subset_span ⟨N • m, ⟨P, hP⟩ * s, (fun k => (n k).toNat) + e,
+        by simpa using GenTwistGenerated.isMultiHomog_mul hPh hs, ?_, rfl⟩, ?_⟩
+    · convert h𝓜.2 _ _ N m hNh hm using 2
       funext k
       have := Int.toNat_sub_toNat_neg (n k)
       simp only [Pi.add_apply, Nat.cast_add]
       omega
-    · rw [locMul_mk, act_mk]
+    · rw [LinearMap.restrictScalars_apply, locMul_mk, act_mk]
       refine LocalizedModule.mk_eq.mpr ⟨1, ?_⟩
       simp only [Submonoid.smul_def, Submonoid.coe_mul, one_smul, smul_smul]
       congr 1
-      ring
-  | zero => exact ⟨0, zero_mem _, map_zero _⟩
-  | add x₁ x₂ _ _ h₁ h₂ =>
-    obtain ⟨y₁, hy₁, e₁⟩ := h₁
-    obtain ⟨y₂, hy₂, e₂⟩ := h₂
-    exact ⟨y₁ + y₂, add_mem hy₁ hy₂, by rw [map_add (f := _), e₁, e₂]⟩
-  | smul c x _ h =>
-    obtain ⟨y, hy, e⟩ := h
-    exact ⟨c • y, Submodule.smul_mem _ c hy, by rw [(locMul_smulS _ hW c _ y).2, e]⟩
+      ring) :
+    KH.locPart ι 𝓜 (KH.cellMon S I) (d + n) ≤ (KH.locPart ι 𝓜 (KH.cellMon S I) d).map
+      ((locMul _ hW (LocalizedModule.mk (Ideal.Quotient.mk W P) ⟨N, hN⟩)).restrictScalars S)) hx
 
 end GenNearMul
 

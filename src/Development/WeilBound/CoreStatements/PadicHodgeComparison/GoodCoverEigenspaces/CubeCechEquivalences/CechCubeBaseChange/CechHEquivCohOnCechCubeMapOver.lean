@@ -4,47 +4,6 @@ public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSi
 public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfAcyclic
 public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CubeCechEquivalences.CechCubeBaseChange.BcSumSingle
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
 import Mathlib.Tactic.Linter.HaveILetI
@@ -78,7 +37,7 @@ theorem sortSign_insert (τ : κ → ι) {s : Finset κ} {x : κ} (hx : x ∉ s)
     sortSign τ (insert x s) = sortSign τ s * invSign τ s x := by
   unfold sortSign invSign
   rw [Finset.prod_insert hx]
-  simp only [Finset.prod_insert hx, Finset.prod_mul_distrib, lt_irrefl, false_and, if_false,
+  simp only [Finset.prod_insert hx, Finset.prod_mul_distrib, lt_irrefl, false_and, ite_false,
     one_mul]
   ring
 
@@ -140,9 +99,9 @@ theorem injOn_erase_swap (τ : κ → ι) {t : Finset κ} {a b : κ} (hab : a �
     (by rw [val, val, e])
   by_cases h1 : u = a <;> by_cases h2 : w = a
   · rw [h1, h2]
-  · simp only [h1, h2, if_true, if_false] at this
+  · simp only [h1, h2, ite_true, ite_false] at this
     exact absurd this.symm hw.2
-  · simp only [h1, h2, if_true, if_false] at this
+  · simp only [h1, h2, ite_true, ite_false] at this
     exact absurd this hu.2
   · simpa [h1, h2] using this
 
@@ -196,11 +155,11 @@ def total : (∀ s, A.obj s) →ₛₗ[σ] ∀ t, B.obj t where
 
 theorem total_of_inj (X : ∀ s, A.obj s) {t : Finset κ} (h : Set.InjOn τ (t : Set κ)) :
     P.total X t = sortSign τ t • P.app t (X (t.image τ)) :=
-  if_pos (Finset.card_image_iff.2 h)
+  ite_eq_left (Finset.card_image_iff.2 h)
 
 theorem total_of_not (X : ∀ s, A.obj s) {t : Finset κ} (h : ¬ Set.InjOn τ (t : Set κ)) :
     P.total X t = 0 :=
-  if_neg fun e => h (Finset.card_image_iff.1 e)
+  ite_eq_right fun e => h (Finset.card_image_iff.1 e)
 
 theorem totalD_total (X : ∀ s, A.obj s) (t : Finset κ) :
     Cube.totalD B (P.total X) t = P.total (Cube.totalD A X) t := by
@@ -528,8 +487,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry Opposite ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PD GlobalTheory.HodgeCoh GlobalTheory.CechDR
@@ -538,7 +495,7 @@ namespace PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC
 
 theorem sortSign_id' {ι : Type} [LinearOrder ι] (t : Finset ι) : sortSign (id : ι → ι) t = 1 := by
   unfold sortSign
-  refine Finset.prod_eq_one fun a _ ↦ Finset.prod_eq_one fun b _ ↦ if_neg ?_
+  refine Finset.prod_eq_one fun a _ ↦ Finset.prod_eq_one fun b _ ↦ ite_eq_right ?_
   rintro ⟨h₁, h₂⟩
   exact lt_asymm h₁ h₂
 

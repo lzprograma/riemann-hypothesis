@@ -55,8 +55,6 @@ open GlobalTheory.MixModel
 open GlobalTheory.BesselChar (superSum)
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.MixPer
 
 variable {D : D7}

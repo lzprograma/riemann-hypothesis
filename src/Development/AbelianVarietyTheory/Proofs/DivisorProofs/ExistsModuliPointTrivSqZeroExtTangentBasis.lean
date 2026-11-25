@@ -45,7 +45,6 @@ import Mathlib.Tactic.ReduceModChar
 open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open AlgebraicGeometry CategoryTheory
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.TanBasis
 

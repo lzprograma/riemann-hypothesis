@@ -107,7 +107,7 @@ theorem cap_step_col : ∀ (M Wp : Type) [AddCommGroup M] [Module ℂ M] [AddCom
       · simp
       · simp only [Fin.cons_succ, Fin.succ_ne_zero, iff_false]
         exact fun h => ha0 ⟨k, h⟩
-    rw [← hi, Formalism.REAL.Tm, if_neg hne, zero_add, hl]
+    rw [← hi, Formalism.REAL.Tm, ite_eq_right hne, zero_add, hl]
     simp only [hiff]
   have key : l (Formalism.REAL.qminor E (Fin.cons a0 a' : Fin (t + 1) → Fin n)
       (Fin.cons b0 b' : Fin (t + 1) → Fin n) u v) = p • l (Formalism.REAL.qminor E a' b' (u - 1) v) := by
@@ -123,7 +123,7 @@ theorem cap_step_col : ∀ (M Wp : Type) [AddCommGroup M] [Module ℂ M] [AddCom
       simpa using this
     · intro j _ hj
       rw [Module.End.mul_apply, Module.End.intCast_apply, map_zsmul, Module.End.mul_apply,
-        Fin.cons_zero, hT, if_neg hj, zero_smul, smul_zero]
+        Fin.cons_zero, hT, ite_eq_right hj, zero_smul, smul_zero]
     · simp
   rw [hσ, hτ, Formalism.REAL.quantumMinorRowSkew_holds, Formalism.REAL.quantumMinorColSkew_holds _ _ _ E hE,
     Module.End.mul_apply, Module.End.mul_apply, Module.End.intCast_apply,
@@ -165,7 +165,7 @@ theorem quantumMinor_columnSteps_partial (M Wp : Type) [AddCommGroup M] [Module 
     intro _ t a b ht ha hb
     obtain rfl : t = k := ht
     have h1 : a = w := funext fun i => Fin.ext (by rw [ha, hw])
-    have h2 : b = w := funext fun i => Fin.ext (by rw [hb, hw, if_pos i.isLt])
+    have h2 : b = w := funext fun i => Fin.ext (by rw [hb, hw, ite_eq_left i.isLt])
     refine ⟨1, by simp, fun u v => ?_⟩
     simp [h1, h2]
   | succ j ih =>
@@ -210,7 +210,7 @@ theorem quantumMinor_columnSteps_partial (M Wp : Type) [AddCommGroup M] [Module 
         · have h0 := (hq i).2
           have hi : (a i).val ≠ r + (k + j) := fun h' => h (Fin.ext (by rw [h', hal]))
           have hi2 := ha i
-          rw [hbl, if_neg (by omega), if_neg (by omega)] at h0
+          rw [hbl, ite_eq_right (by omega), ite_eq_right (by omega)] at h0
           rw [norm_eq_zero.1 h0])
     refine ⟨e * p (a (Fin.last _)) (b (Fin.last _)) * c, ?_, fun u v => ?_⟩
     · have h0 := (hq (Fin.last _)).2
@@ -219,7 +219,7 @@ theorem quantumMinor_columnSteps_partial (M Wp : Type) [AddCommGroup M] [Module 
       rcases Nat.eq_zero_or_pos j with rfl | hj0
       · simp
         intro h; omega
-      · rw [if_pos (by omega), if_neg (by omega), if_neg (by omega)]
+      · rw [ite_eq_left (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
         simp
     · rw [heu, hcu, smul_smul]
       congr 4
@@ -233,7 +233,7 @@ theorem qminor_column_chain : ∀ (M Wp : Type) [AddCommGroup M] [Module ℂ M] 
     (fun j : Fin (r + k) => (⟨r + j.val, by omega⟩ : Fin (2 * r + k + 1)))
     (fun j : Fin (r + k) => (⟨if j.val < k then r + j.val else r + j.val + 1,
       by split_ifs <;> omega⟩ : Fin (2 * r + k + 1))) (Nat.add_comm _ _) (fun _ => rfl) (fun _ => rfl)
-  rw [if_neg (by omega)] at h
+  rw [ite_eq_right (by omega)] at h
   exact h
 
 end GlobalTheory
@@ -312,7 +312,7 @@ theorem cof_eigen {M : Type} [NormedAddCommGroup M] [InnerProductSpace ℂ M] {m
         split_ifs
         · rw [Module.algebraMap_end_apply]
         · rw [LinearMap.zero_apply]
-      simp only [h2, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [h2, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       rw [neg_eq_iff_eq_neg] at h1
       rw [h1, ← neg_smul, ← add_smul]
       congr 1
@@ -322,9 +322,9 @@ theorem cof_eigen {M : Type} [NormedAddCommGroup M] [InnerProductSpace ℂ M] {m
     have h3 : ∑ l, (if i = l then qdet E (Y + (m : ℂ) / 2) else 0) (x l) =
         (Y + (mu t : ℂ)) • (∏ r ∈ univ.erase t, (Y + (mu r : ℂ))) • x i := by
       rw [Finset.sum_eq_single i]
-      · rw [if_pos rfl, hu, hq, smul_smul, Finset.mul_prod_erase _ (fun r => Y + (mu r : ℂ)) (Finset.mem_univ t)]
+      · rw [ite_eq_left rfl, hu, hq, smul_smul, Finset.mul_prod_erase _ (fun r => Y + (mu r : ℂ)) (Finset.mem_univ t)]
       · intro l _ hl
-        rw [if_neg (Ne.symm hl), LinearMap.zero_apply]
+        rw [ite_eq_right (Ne.symm hl), LinearMap.zero_apply]
       · simp
     rw [← h3]
     simp only [← qComatrix (Module.End ℂ M) m E hE (Y + (m : ℂ) / 2) i, LinearMap.sum_apply]
@@ -432,20 +432,20 @@ theorem qminor_row_step_under_functional : ∀ (M Wp : Type) [AddCommGroup M] [M
       rw [hk]
       exact ⟨fun h => hB (by simpa using h), fun h => by subst h; rfl⟩
     unfold Formalism.REAL.Tm
-    rw [if_neg hne, zero_add, ← hk, hl k x]
+    rw [ite_eq_right hne, zero_add, ← hk, hl k x]
     simp only [hiff]
 
   rw [hq u, quantum_minor_row_expansion.1 (Module.End ℂ M) n t E hE, LinearMap.smul_apply, map_smul, LinearMap.sum_apply,
   map_sum, Fin.sum_univ_succ, Finset.sum_eq_zero, add_zero, mul_smul]
   · congr 1
     have h0 := key 0
-    simp only [Fin.cons_zero, if_true] at h0
+    simp only [Fin.cons_zero, ite_true] at h0
     simp only [Fin.val_zero, pow_zero, Int.cast_one, one_mul, Module.End.mul_apply, Fin.cons_zero, h0,
       Fin.succAbove_zero]
     rfl
   · intro j _
     rw [← zsmul_eq_mul, LinearMap.smul_apply, map_zsmul, Module.End.mul_apply, Fin.cons_zero, key,
-      if_neg (Fin.succ_ne_zero j), zero_smul, smul_zero]
+      ite_eq_right (Fin.succ_ne_zero j), zero_smul, smul_zero]
 
 end GlobalTheory
 end -- clump:auto
@@ -535,15 +535,15 @@ theorem quantumMinor_row_removal_chain (M Wp : Type) [AddCommGroup M] [Module �
           (by simp only; omega)
         rw [h1]
         by_cases hc : b j = ⟨r + k, by omega⟩
-        · rw [if_pos hc, hc]
-        · rw [if_neg hc]
+        · rw [ite_eq_left hc, hc]
+        · rw [ite_eq_right hc]
           have hc' : (b j).val ≠ r + k := fun h' => hc (Fin.ext h')
-          rw [if_neg (by simp only; omega), if_neg (by simp only; omega)] at h2
+          rw [ite_eq_right (by simp only; omega), ite_eq_right (by simp only; omega)] at h2
           rw [norm_eq_zero.mp h2])
     refine ⟨_, ?_, hl⟩
     obtain ⟨-, h2⟩ := h ⟨i, by omega⟩ ⟨r + k, by omega⟩ (by rw [Fin.lt_def]; simp only; omega)
           (by simp only; omega)
-    rw [if_neg (by simp only; omega), if_pos (Or.inl ⟨by simp only; omega, rfl⟩)] at h2
+    rw [ite_eq_right (by simp only; omega), ite_eq_left (Or.inl ⟨by simp only; omega, rfl⟩)] at h2
     rw [norm_mul, he, h2, one_mul]
   | succ d ih =>
     intro i t a b hi ht ha hb
@@ -602,14 +602,14 @@ theorem quantumMinor_row_removal_chain (M Wp : Type) [AddCommGroup M] [Module �
           (by simp only; omega)
         rw [h1]
         by_cases hc : b j = ⟨i + 1, by omega⟩
-        · rw [if_pos hc, hc]
-        · rw [if_neg hc]
+        · rw [ite_eq_left hc, hc]
+        · rw [ite_eq_right hc]
           have hc' : (b j).val ≠ i + 1 := fun h' => hc (Fin.ext h')
-          rw [if_neg (by simp only; omega), if_neg (by simp only; omega)] at h2
+          rw [ite_eq_right (by simp only; omega), ite_eq_right (by simp only; omega)] at h2
           rw [norm_eq_zero.mp h2])
     obtain ⟨-, h2⟩ := h ⟨i, by omega⟩ ⟨i + 1, by omega⟩ (by rw [Fin.lt_def]; simp only; omega)
           (by simp only; omega)
-    rw [if_pos (by simp only; exact ⟨trivial, by omega⟩)] at h2
+    rw [ite_eq_left (by simp only; exact ⟨trivial, by omega⟩)] at h2
     refine ⟨e * p ⟨i, by omega⟩ ⟨i + 1, by omega⟩ * c, ?_, fun u v => ?_⟩
     · rw [norm_mul, norm_mul, he, h2, hc, one_mul, one_mul]
     · rw [hl, hcl, smul_smul]
@@ -747,9 +747,9 @@ theorem capelli_projector_entry_value : ∀ (M Wp : Type) [NormedAddCommGroup M]
     · simp
   by_cases hr : r = 0
   · refine ⟨D⁻¹ * N, ?_, ?_⟩
-    · rw [norm_mul, norm_inv, hDn, hNn, if_pos hr]; ring
+    · rw [norm_mul, norm_inv, hDn, hNn, ite_eq_left hr]; ring
     · intro v y hy hs
-      rw [if_pos hr]
+      rw [ite_eq_left hr]
       have h := hcof v y hy hs (Fin.last _)
       subst hr
       have hm : Formalism.REAL.qminor E (Fin.succAbove (Fin.last (2 * 0 + k))) (Fin.succAbove (Fin.last (2 * 0 + k))) (-(mu s : ℂ) + ((2 * 0 + k : ℕ) : ℂ) / 2) = Formalism.REAL.qminor E (fun i : Fin k => (⟨0 + i.val, by omega⟩ : Fin (2 * 0 + k + 1)))
@@ -770,11 +770,11 @@ theorem capelli_projector_entry_value : ∀ (M Wp : Type) [NormedAddCommGroup M]
     obtain ⟨c1, hc1, h1⟩ := _root_.GlobalTheory.RowChain.chain_rows M Wp k r E l p τ hk hE hp hr1
     obtain ⟨c2, hc2, h2⟩ := _root_.GlobalTheory.qminor_column_chain M Wp k r E l p τ hk hE hp hr1
     refine ⟨D⁻¹ * ((-1 : ℂ) ^ (2 * r + k) * (c1 * (c2 * N))), ?_, ?_⟩
-    · rw [norm_mul, norm_inv, norm_mul, norm_mul, norm_mul, hDn, hNn, if_neg hr, hc1, hc2, norm_pow]
+    · rw [norm_mul, norm_inv, norm_mul, norm_mul, norm_mul, hDn, hNn, ite_eq_right hr, hc1, hc2, norm_pow]
       simp only [norm_neg, norm_one, one_pow]
       ring
     · intro v y hy hs
-      rw [if_neg hr]
+      rw [ite_eq_right hr]
       have h := hcof v y hy hs 0
       have e : (-(mu s : ℂ) + ((2 * r + k : ℕ) : ℂ) / 2) - (r : ℂ) = -(mu s : ℂ) + (k : ℂ) / 2 := by
         push_cast; ring

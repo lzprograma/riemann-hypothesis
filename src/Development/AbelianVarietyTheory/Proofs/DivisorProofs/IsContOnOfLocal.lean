@@ -105,9 +105,9 @@ theorem isContOn_of_local [Fintype κ] [LocallyCompactSpace (AdeleRing (𝓞 F) 
     intro j
     ext x
     rw [hsx, hf, Finset.sum_apply, Finset.sum_eq_single j]
-    · rw [pureA_adeleJoin, hgy j j, if_pos rfl, mul_one]
+    · rw [pureA_adeleJoin, hgy j j, ite_eq_left rfl, mul_one]
     · intro i _ hij
-      rw [pureA_adeleJoin, hgy i j, if_neg hij, mul_zero]
+      rw [pureA_adeleJoin, hgy i j, ite_eq_right hij, mul_zero]
     · intro h
       exact absurd (Finset.mem_univ j) h
 

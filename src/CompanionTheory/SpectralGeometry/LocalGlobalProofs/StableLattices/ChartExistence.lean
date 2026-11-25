@@ -99,7 +99,7 @@ theorem smooth_coeffs {P V : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
     fun i => (B i).contDiff.comp_contDiffOn hc, fun t ht => ?_⟩
   rw [← hM, hc' t ht]
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 

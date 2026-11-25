@@ -327,19 +327,21 @@ theorem FibreDegreeSum.intNum_eq_cycEval (K : Type) [Fintype K] [DecidableEq K] 
     rw [RingHom.ext_int (Int.castRingHom O) (algebraMap ℤ O)]
     exact IsLocalization.injective O 𝔭.primeCompl_le_nonZeroDivisors
   have : CharZero (FractionRing O) := WeightedDegree.charZero_fractionRing O hinjO
+  have hmap : ∀ (F : Type) {E : Type} [Field F] [Field E] [Algebra F E] (W : Ideal (MRing ι ℤ))
+      (g : O →+* E), (W.map φ).map (MvPolynomial.map g) =
+        (W.map (MvPolynomial.map (Int.castRingHom F))).map (MvPolynomial.map (algebraMap F E)) := by
+    intro F E _ _ _ W g
+    rw [Ideal.map_map, Ideal.map_map]
+    congr 1
+    refine RingHom.ext fun x ↦ ?_
+    change MvPolynomial.map _ (MvPolynomial.map _ x) = MvPolynomial.map _ (MvPolynomial.map _ x)
+    rw [MvPolynomial.map_map, MvPolynomial.map_map]
+    exact congrArg (fun h ↦ MvPolynomial.map h x) (RingHom.ext_int _ _)
   have hgen : gNum P' a = intNum ℚ (P.map (MvPolynomial.map (Int.castRingHom ℚ))) a := by
-    have hcomp : genFib P' = (P.map (MvPolynomial.map (Int.castRingHom ℚ))).map
-        (MvPolynomial.map (algebraMap ℚ (FractionRing O))) := by
-      unfold genFib
-      rw [Ideal.map_map, Ideal.map_map]
-      congr 1
-      refine RingHom.ext fun x ↦ ?_
-      change MvPolynomial.map _ (MvPolynomial.map _ x) = MvPolynomial.map _ (MvPolynomial.map _ x)
-      rw [MvPolynomial.map_map, MvPolynomial.map_map]
-      exact congrArg (fun g ↦ MvPolynomial.map g x) (RingHom.ext_int _ _)
-    unfold gNum
-    rw [hcomp]
-    exact (FieldNumbers.IntNumBaseChange.intersectionNumber_baseChange.1 ℚ (FractionRing O) K ι _).2 e a
+    unfold gNum genFib
+    rw [hmap ℚ P _]
+    exact (FieldNumbers.IntNumBaseChange.intersectionNumber_baseChange.1
+      ℚ (FractionRing O) K ι _).2 e a
 
   have : CharP (IsLocalRing.ResidueField O) p :=
     (CharP.charP_iff_prime_eq_zero hp).mpr (by
@@ -349,20 +351,11 @@ theorem FibreDegreeSum.intNum_eq_cycEval (K : Type) [Fintype K] [DecidableEq K] 
   let : Algebra (ZMod p) (IsLocalRing.ResidueField O) :=
     (ZMod.castHom (dvd_refl p) (IsLocalRing.ResidueField O)).toAlgebra
   have hspec : ∀ W : Ideal (MRing ι ℤ), vNum (W.map φ) a =
-      intNum (ZMod p) (W.map (MvPolynomial.map (Int.castRingHom (ZMod p)))) a := by
-    intro W
-    have hcomp : specialIdeal (W.map φ) = (W.map (MvPolynomial.map (Int.castRingHom (ZMod p)))).map
-        (MvPolynomial.map (algebraMap (ZMod p) (IsLocalRing.ResidueField O))) := by
-      unfold specialIdeal
-      rw [Ideal.map_map, Ideal.map_map]
-      congr 1
-      refine RingHom.ext fun x ↦ ?_
-      change MvPolynomial.map _ (MvPolynomial.map _ x) = MvPolynomial.map _ (MvPolynomial.map _ x)
-      rw [MvPolynomial.map_map, MvPolynomial.map_map]
-      exact congrArg (fun g ↦ MvPolynomial.map g x) (RingHom.ext_int _ _)
-    unfold vNum
-    rw [hcomp]
-    exact (FieldNumbers.IntNumBaseChange.intersectionNumber_baseChange.1 (ZMod p) (IsLocalRing.ResidueField O) K ι _).2 e a
+      intNum (ZMod p) (W.map (MvPolynomial.map (Int.castRingHom (ZMod p)))) a := fun W ↦ by
+    unfold vNum specialIdeal
+    rw [hmap (ZMod p) W _]
+    exact (FieldNumbers.IntNumBaseChange.intersectionNumber_baseChange.1 (ZMod p)
+      (IsLocalRing.ResidueField O) K ι _).2 e a
 
   have hWdisj : ∀ W ∈ (P ⊔ Ideal.span {(C (p : ℤ) : MRing ι ℤ)}).minimalPrimes,
       Disjoint (M : Set (MRing ι ℤ)) W := by

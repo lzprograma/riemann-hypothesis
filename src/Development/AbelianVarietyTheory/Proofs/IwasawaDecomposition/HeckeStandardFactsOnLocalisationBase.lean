@@ -113,7 +113,7 @@ theorem mem_range_of_roots {K : Type} [Field K] {O : Type} [CommRing O] [IsDomai
     have hd : df a ∣ c := Finset.dvd_prod_of_mem _ (Multiset.mem_toFinset.2 ha)
     obtain ⟨e, he⟩ := hd
     have h1 : IsIntegral ℤ ((df a : ℂ) * a) := by
-      simp only [df, dif_pos hroot]
+      simp only [df, dite_eq_left hroot]
       exact (hr a hroot).choose_spec.2
     have : (c : ℂ) * a = (e : ℂ) * ((df a : ℂ) * a) := by
       rw [show c = df a * e from he]; push_cast; ring

@@ -48,8 +48,6 @@ public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 noncomputable section
 
 namespace GlobalTheory.FlatShiftPf
@@ -96,7 +94,7 @@ theorem flatAt_shift {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)
       dV.mixS W ψ μS 𝓕S f (x ⬝ u.1.1 + x ⬝ N)
     exact Check.mixS_heis_extX dV μS 𝓕S f (x ⬝ N) (x ⬝ u.1.1)
   simp_rw [hs, hpt]
-  have hinv := (GlobalTheory.T.haar_adelicUpperUnitriangular_entry_translate_invariant D ρ νU hν).2.2 N (fun i j h => hN i j (not_lt.1 h))
+  have hinv := (_root_.GlobalTheory.UnitTransl.haar_val_add_invariant D ρ νU hν).2.2 N (fun i j h => hN i j (not_lt.1 h))
   calc ∫ u, K (u.1.1 + N) ∂νU = ∫ m, K (m + N) ∂(νU.map (fun u : UX D ρ => u.1.1)) :=
         ((measEmb_val ρ).integral_map (fun m => K (m + N))).symm
     _ = ∫ m, K m ∂((νU.map (fun u : UX D ρ => u.1.1)).map (fun m => m + N)) :=

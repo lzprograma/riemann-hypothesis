@@ -228,8 +228,6 @@ theorem uni_inv {k : ℕ} {O : Type} [CommRing O] {ξ : Matrix (Fin k) (Fin k) O
 
 end Grp
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem TEqv_equivalence (D : D7) (Λ : LatV D) {T T' : D.host.E} (F : Fg D T) :
     Equivalence (TEqv D Λ F (T' := T')) := by
   refine ⟨fun F' => ?_, fun {F₁ F₂} h => ?_, fun {F₁ F₂ F₃} h h' => ?_⟩

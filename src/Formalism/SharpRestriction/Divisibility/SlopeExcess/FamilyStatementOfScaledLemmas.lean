@@ -2,42 +2,6 @@ module
 
 public import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
 public import Formalism.HarderNarasimhan.ShiftInvariance
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -46,13 +10,6 @@ noncomputable section
 open NumberField Module Formalism.BasicNotions Formalism.MainNotions.PrimeDegreeVariant
 
 namespace Formalism.MainNotions.DIV.Proofs.ScaledLatticeNorms
-
-section Norms
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K]
-  {V ι : Type} [AddCommGroup V] [Module K V] [Fintype ι] [DecidableEq ι]
-
-end Norms
 
 section Lat
 
@@ -70,16 +27,6 @@ theorem mu_le_muMax (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ
   unfold Formalism.HN.muDef Formalism.HN.muMaxDef; linarith
 
 end Lat
-
-section Level
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] [NumberField.IsTotallyComplex K]
-
-end Level
-
-section Reals
-
-end Reals
 
 section Zero
 
@@ -117,14 +64,6 @@ theorem scaled_lattice_nonzero_holds (D : D7) : Formalism.MainNotions.PrimeDegre
   nlinarith [mul_le_mul_of_nonneg_left (hk 0) hf, mul_le_mul_of_nonneg_left (hk 1) hf]
 
 end Zero
-
-section Main
-
-attribute [local instance] Formalism.MainNotions.PrimeDegreeVariant.finiteLevelGroupFintype
-
-variable {D : D7} {X : BaseLevelRowSide D}
-
-end Main
 
 end Formalism.MainNotions.DIV.Proofs.ScaledLatticeNorms
 

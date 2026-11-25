@@ -252,14 +252,7 @@ theorem beta_coefficients : BeCoef := by
   rfl
 
 theorem X_mul_lU {K : Type} [Field K] [CharZero K] (f : PowerSeries K) (hf : PowerSeries.constantCoeff f = 0) :
-    PowerSeries.X * Formalism.L2.Th1.B.lU f = f := by
-  ext n
-  cases n with
-  | zero => rw [PowerSeries.coeff_zero_X_mul, PowerSeries.coeff_zero_eq_constantCoeff_apply, hf]
-  | succ n =>
-    rw [PowerSeries.coeff_succ_X_mul]
-    unfold Formalism.L2.Th1.B.lU
-    rw [PowerSeries.coeff_mk]
+    PowerSeries.X * Formalism.L2.Th1.B.lU f = f := Formalism.L2.Th1.B.Ph.X_mul_lU hf
 
 theorem integral_ps {K : Type} [NormedField K] {f : PowerSeries K}
     (h : ∀ k, ‖PowerSeries.coeff k f‖ ≤ 1) : Integral (f : MvPowerSeries Unit K) := by

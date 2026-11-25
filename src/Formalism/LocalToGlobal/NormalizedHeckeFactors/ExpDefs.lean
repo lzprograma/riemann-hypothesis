@@ -169,7 +169,7 @@ theorem supSum_tv {R : Type} [CommRing R] (hr : 2 ≤ r) (c : R) : supSum r (tv 
   rw [Finset.sum_eq_single (⟨0, by omega⟩ : Fin r), Finset.sum_eq_single (⟨1, by omega⟩ : Fin r)]
   · simp [tv, Matrix.transvection, Fin.ext_iff]
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply hb
     ext
@@ -199,9 +199,9 @@ theorem tvAt_apply [DecidableEq ι] (hr : 2 ≤ r) (x y : ι) :
   unfold tvAt
   by_cases h : y = x
   · subst h
-    rw [Pi.mulSingle_eq_same, if_pos rfl]
+    rw [Pi.mulSingle_eq_same, ite_eq_left rfl]
     rfl
-  · rw [Pi.mulSingle_eq_of_ne h, if_neg h]
+  · rw [Pi.mulSingle_eq_of_ne h, ite_eq_right h]
     simp
 
 theorem tvAt_mem [DecidableEq ι] (hr : 2 ≤ r) (x : ι) : tvAt (p := p) hr x ∈ Uup p r := by
@@ -216,9 +216,9 @@ theorem stdVal_tvAt [DecidableEq ι] {K : Type} [Field K] (θ : ∀ x, Multiplic
     (hr : 2 ≤ r) (x : ι) : stdVal p r θ (tvAt hr x) = θ x (Multiplicative.ofAdd 1) := by
   simp only [stdVal]
   rw [Finset.prod_eq_single x]
-  · rw [tvAt_apply, if_pos rfl, supSum_tv]
+  · rw [tvAt_apply, ite_eq_left rfl, supSum_tv]
   · intro y _ hy
-    rw [tvAt_apply, if_neg hy, supSum_one, ofAdd_zero, map_one]
+    rw [tvAt_apply, ite_eq_right hy, supSum_one, ofAdd_zero, map_one]
   · intro h
     exact absurd (Finset.mem_univ x) h
 

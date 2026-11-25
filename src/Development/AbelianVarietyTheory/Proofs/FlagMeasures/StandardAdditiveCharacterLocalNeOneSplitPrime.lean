@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeUnimodular
 import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceFirstFactorLocalFrame
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
 public import Mathlib.Algebra.AffineMonoid.Basic
@@ -61,47 +62,7 @@ namespace GlobalTheory.St.G.PsiLoc
 
 theorem not_dvd_different {E : Type} [Field E] [NumberField E] {p : ℕ} (hp : p.Prime) (h : SplitsIn E p)
     (P : Ideal (𝓞 E)) [hP : P.IsPrime] (hm : (p : 𝓞 E) ∈ P) : ¬ P ∣ differentIdeal ℤ (𝓞 E) := by
-  intro hdvd
-  have hp0 : (p : ℤ) ≠ 0 := by exact_mod_cast hp.ne_zero
-  have hmax : (Ideal.span {(p : ℤ)}).IsMaximal :=
-    ((Ideal.span_singleton_prime hp0).2 (Nat.prime_iff_prime_int.1 hp)).isMaximal
-      (by simpa using hp0)
-  have hlies : ∀ Q : Ideal (𝓞 E), Q.IsPrime → (p : 𝓞 E) ∈ Q →
-      Q.LiesOver (Ideal.span {(p : ℤ)}) := by
-    intro Q hQ hpQ
-    constructor
-    refine hmax.eq_of_le (Ideal.comap_ne_top _ hQ.ne_top) ?_
-    rw [Ideal.span_le, Set.singleton_subset_iff]
-    show algebraMap ℤ (𝓞 E) (p : ℤ) ∈ Q
-    simpa using hpQ
-  haveI := hlies P hP hm
-  have hnorm := Ideal.absNorm_eq_pow_inertiaDeg' P hp
-  have hne1 : Ideal.absNorm P ≠ 1 := by
-    rw [Ne, Ideal.absNorm_eq_one_iff]; exact hP.ne_top
-  have hf : (Ideal.span {(p : ℤ)}).inertiaDeg' P ≠ 0 := by
-    intro h0; rw [h0, pow_zero] at hnorm; exact hne1 hnorm
-  have h1 : p ∣ Ideal.absNorm P := by rw [hnorm]; exact dvd_pow_self p hf
-  have h2 : Ideal.absNorm P ∣ (discr E).natAbs := by
-    rw [← NumberField.absNorm_differentIdeal E (𝓞 E)]; exact map_dvd Ideal.absNorm hdvd
-  have h3 : (p : ℤ) ∣ discr E := Int.natCast_dvd.2 (h1.trans h2)
-  refine GlobalTheory.SplitEmbSep.not_dvd_discr_of_split hp E ?_ h3
-  have hset : Ideal.primesOver (Ideal.span {(p : ℤ)}) (𝓞 E) =
-      (fun w : HeightOneSpectrum (𝓞 E) => w.asIdeal) '' placesOver E p := by
-    ext Q
-    constructor
-    · rintro ⟨hQ, hQl⟩
-      have hpQ : (p : 𝓞 E) ∈ Q := by
-        have : (p : ℤ) ∈ Q.under ℤ := hQl.over ▸ Ideal.mem_span_singleton_self _
-        simpa [Ideal.under] using this
-      have hQbot : Q ≠ ⊥ := by
-        rintro rfl
-        rw [Ideal.mem_bot] at hpQ
-        exact hp.ne_zero (by exact_mod_cast hpQ)
-      exact ⟨⟨Q, hQ, hQbot⟩, hpQ, rfl⟩
-    · rintro ⟨w, hw, rfl⟩
-      exact ⟨w.isPrime, hlies _ w.isPrime hw⟩
-  unfold SplitsIn at h
-  rw [hset, Set.ncard_image_of_injective _ (fun a b hab => HeightOneSpectrum.ext hab), h]
+  apply _root_.GlobalTheory.IntTerm.Conv.not_dvd_different <;> assumption
 
 theorem exists_eq_mul {E : Type} [Field E] [NumberField E] {p : ℕ} (hp : p.Prime) (h : SplitsIn E p)
     (x : 𝓞 E) (hx : ∀ y : 𝓞 E, ∃ n : ℤ, (n : ℚ) = Algebra.trace ℚ E ((p : E)⁻¹ * x * y)) :
@@ -229,10 +190,9 @@ end GlobalTheory.St.G.PsiLoc
 
 
 open GlobalTheory.St.G.PsiLoc in
-theorem GlobalTheory.St.G.psi_local_ne_one : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] (cm : CMData F E) (psi : E ⊗[F] Ad F → ℂ), (∀ x y, psi (x + y) = psi x * psi y) → (∀ x ∈ OAd F E, psi x = 1) → (∀ x : E, psi (inclE (F := F) (Ad F) x) * Complex.exp (2 * Real.pi * Complex.I * ((Algebra.trace ℚ E x : ℚ) : ℂ)) = 1) → ∀ (p : ℕ), p.Prime → SplitsIn E p → ∀ (v : HeightOneSpectrum (𝓞 F)), (p : 𝓞 F) ∈ v.asIdeal → ∀ e ∈ intV E v, e * e = e → e ≠ 0 → ∃ a ∈ intV E v, psi (Formalism.UG.P.afsplitIE v (algebraMap F (E ⊗[F] v.adicCompletion F) ((p : F)⁻¹) * (e * a))) ≠ 1 := by
+theorem GlobalTheory.St.G.psi_local_ne_one : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] (_ : CMData F E) (psi : E ⊗[F] Ad F → ℂ), (∀ x y, psi (x + y) = psi x * psi y) → (∀ x ∈ OAd F E, psi x = 1) → (∀ x : E, psi (inclE (F := F) (Ad F) x) * Complex.exp (2 * Real.pi * Complex.I * ((Algebra.trace ℚ E x : ℚ) : ℂ)) = 1) → ∀ (p : ℕ), p.Prime → SplitsIn E p → ∀ (v : HeightOneSpectrum (𝓞 F)), (p : 𝓞 F) ∈ v.asIdeal → ∀ e ∈ intV E v, e * e = e → e ≠ 0 → ∃ a ∈ intV E v, psi (Formalism.UG.P.afsplitIE v (algebraMap F (E ⊗[F] v.adicCompletion F) ((p : F)⁻¹) * (e * a))) ≠ 1 := by
   intro F E _ _ _ _ _ _ cm psi hadd hint hrat p hp hsp v hv e he hee hne
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hne
   have hprops := GlobalTheory.St.G.IntAd.integral_adeles_properties F E
   have hp0 : (p : E) ≠ 0 := by exact_mod_cast hp.ne_zero

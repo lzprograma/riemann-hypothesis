@@ -110,7 +110,7 @@ theorem sum_castLE {M : Type*} [AddCommMonoid M] {k m : ℕ} (hk : k ≤ m) (f :
 theorem prod_pow_ite {k m : ℕ} (hk : k ≤ m) (c : Fin m → ℂ) :
     ∏ i, c i ^ (if (i : ℕ) < k then 1 else 0) = ∏ i : Fin k, c (Fin.castLE hk i) :=
   (Fintype.prod_of_injective (Fin.castLE hk) (Fin.castLE_injective hk) _ _
-    (fun i hi => by rw [if_neg (not_lt.2 (not_range_castLE hk i hi)), pow_zero])
+    (fun i hi => by rw [ite_eq_right (not_lt.2 (not_range_castLE hk i hi)), pow_zero])
     fun i => by simp).symm
 
 def block (hn : n ≤ N) {k : ℕ} (hk : k ≤ n) : Matrix (Fin k) (Fin k) (MvPolynomial (Fin N × Fin n) ℂ) :=
@@ -442,7 +442,7 @@ theorem differentiable_rowSubst {k : ℕ} {κ : Type} {F : Type} [NormedAddCommG
 
 theorem totalDegree_rowSubst_le {k : ℕ} {κ : Type} (g : Matrix (Fin k) (Fin k) ℂ)
     (P : MvPolynomial (Fin k × κ) ℂ) : (rowSubst g P).totalDegree ≤ P.totalDegree :=
-  totalDegree_aeval_le _ (fun _ => totalDegree_finsetSum_le fun _ _ =>
+  GlobalTheory.AevalTotalDegreeLinear.totalDegree_aeval_le_of_linear _ (fun _ => totalDegree_finsetSum_le fun _ _ =>
     (totalDegree_mul _ _).trans (by rw [totalDegree_C, totalDegree_X])) P
 
 theorem fischer_conj {k : ℕ} {κ : Type} (P Q : MvPolynomial (Fin k × κ) ℂ) :
@@ -592,7 +592,7 @@ theorem exists_bilinear {G G' H H' P : Type} [AddCommGroup H] [Module ℂ H] [Ad
   let ev : 𝓗 →ₗ[ℂ] P := (LinearMap.applyₗ v₀).comp 𝓗.subtype
   have hev : ∀ A : 𝓗, ev A = (A : H →ₗ[ℂ] P) v₀ := fun _ => rfl
   have hinj : Function.Injective ev := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro A hA
     rcases hirr (LinearMap.ker (A : H →ₗ[ℂ] P)) (fun g hg v hv => by
       rw [LinearMap.mem_ker] at hv ⊢
@@ -741,8 +741,6 @@ alias mem_iff := _root_.GlobalTheory.ConjTwist.mem_U_iff
 
 alias map_star_map_star := _root_.GlobalTheory.ConjugateType.map_star_star
 
-alias map_star_mem := _root_.GlobalTheory.ConjTwist.map_star_mem
-
 theorem inv_transpose {k : ℕ} {g : Matrix (Fin k) (Fin k) ℂ} (hg : g ∈ UJset (allPos k)) :
     (g⁻¹)ᵀ = g.map star := by
   rw [Matrix.inv_eq_left_inv ((mem_iff g).1 hg)]
@@ -863,7 +861,7 @@ theorem exists_local_contraction : ∀ (N n : ℕ) (hn : n ≤ N) (ν : Fin N �
     have hiso : inner ℂ (σ g u) (σ g (I P v)) = inner ℂ u (I P v) :=
       (LinearIsometry.mk (σ g : H →ₗ[ℂ] H) (hσ.2.1 g hg)).inner_map_map u (I P v)
     rw [hiso, hI, hI, inv_transpose hg, fischer_smul_left,
-      ← fischer_subst2_unitary hh (map_star_mem hg) P, ← hΨ h hh _ (map_star_mem hg), hπJ]
+      ← fischer_subst2_unitary hh (GlobalTheory.ConjTwist.map_star_mem hg) P, ← hΨ h hh _ (GlobalTheory.ConjTwist.map_star_mem hg), hπJ]
     simp only [map_star_map_star, det_map_star, ContinuousLinearMap.smul_apply, LinearMap.map_smulₛₗ,
       map_smul, LinearMap.smul_apply, fischer_smul_right, map_zpow₀, starRingEnd_apply, star_star]
     rw [star_det hh, _root_.inv_zpow', neg_neg]

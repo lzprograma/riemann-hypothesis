@@ -15,6 +15,82 @@ open scoped NumberField.AdeleRing ENNReal NNReal Pointwise nonZeroDivisors
 
 noncomputable section
 
+theorem exists_forall_add_eq_of_locallyConstant_compactSupport {G : Type*} [AddCommGroup G]
+    [TopologicalSpace G] [IsTopologicalAddGroup G] {ι : Type*} (H : ι → AddSubgroup G)
+    (hopen : ∀ i, IsOpen (H i : Set G))
+    (hbasis : ∀ {W : Set G}, W ∈ 𝓝 (0 : G) → ∃ i, (H i : Set G) ⊆ W)
+    {f : G → ℂ} (hloc : IsLocallyConstant f) (hcomp : HasCompactSupport f) :
+    ∃ i : ι, ∀ x, ∀ h ∈ H i, f (x + h) = f x := by
+  have hloc' : ∀ x : G, ∃ j : ι, ∀ h ∈ H j, f (x + h) = f x := fun x ↦ by
+    have h1 : ∀ᶠ h in 𝓝 (0 : G), f (x + h) = f x :=
+      ((continuous_const_add x).tendsto' 0 x (add_zero x)).eventually (hloc.eventually_eq x)
+    obtain ⟨j, hj⟩ := hbasis h1
+    exact ⟨j, fun h hh ↦ hj hh⟩
+  choose J hJ using hloc'
+  obtain ⟨t, ht⟩ := hcomp.isCompact.elim_finite_subcover
+    (fun x ↦ x +ᵥ (H (J x) : Set G)) (fun x ↦ (hopen (J x)).vadd x)
+    (fun x _ ↦ Set.mem_iUnion.mpr ⟨x, by
+      rw [Set.mem_vadd_set_iff_neg_vadd_mem, vadd_eq_add, neg_add_cancel]
+      exact zero_mem _⟩)
+  have hW : (⋂ x ∈ t, (H (J x) : Set G)) ∈ 𝓝 (0 : G) :=
+    (biInter_finset_mem t).mpr fun x _ ↦ (hopen (J x)).mem_nhds (zero_mem _)
+  obtain ⟨i, hi⟩ := hbasis hW
+  have hmain : ∀ x ∈ tsupport f, ∀ h ∈ H i, f (x + h) = f x := by
+    intro x hx h hh
+    obtain ⟨x₀, hx₀t, hxx₀⟩ := Set.mem_iUnion₂.mp (ht hx)
+    rw [Set.mem_vadd_set_iff_neg_vadd_mem, vadd_eq_add, neg_add_eq_sub, SetLike.mem_coe] at hxx₀
+    have hh' : h ∈ H (J x₀) := Set.mem_iInter₂.mp (hi hh) x₀ hx₀t
+    have e1 := hJ x₀ (x - x₀) hxx₀
+    have e2 := hJ x₀ (x + h - x₀) (by
+      have : x + h - x₀ = (x - x₀) + h := by abel
+      rw [this]
+      exact add_mem hxx₀ hh')
+    rw [add_sub_cancel] at e1 e2
+    rw [e1, e2]
+  refine ⟨i, fun x h hh ↦ ?_⟩
+  by_cases hx : x ∈ tsupport f
+  · exact hmain x hx h hh
+  · by_cases hxh : x + h ∈ tsupport f
+    · have := hmain (x + h) hxh (-h) (neg_mem hh)
+      rw [add_neg_cancel_right] at this
+      exact this.symm
+    · rw [image_eq_zero_of_notMem_tsupport hx, image_eq_zero_of_notMem_tsupport hxh]
+
+theorem exists_eq_sum_indicator_of_forall_add_eq {G : Type*} [AddCommGroup G] [TopologicalSpace G]
+    [IsTopologicalAddGroup G] (H : AddSubgroup G) (hopen : IsOpen (H : Set G))
+    {f : G → ℂ} (hcomp : HasCompactSupport f) (hinv : ∀ x, ∀ h ∈ H, f (x + h) = f x)
+    (ind : G → G → ℂ) (hind₁ : ∀ a x, x - a ∈ H → ind a x = 1)
+    (hind₀ : ∀ a x, x - a ∉ H → ind a x = 0) :
+    ∃ s : Finset G, f = ∑ a ∈ s, f a • ind a := by
+  classical
+  have hind : ∀ a x, ind a x = if x - a ∈ H then 1 else 0 := fun a x ↦ by
+    split_ifs with h
+    · exact hind₁ a x h
+    · exact hind₀ a x h
+  have : DiscreteTopology (G ⧸ H) := QuotientAddGroup.discreteTopology hopen
+  have hS : ((QuotientAddGroup.mk : G → G ⧸ H) '' tsupport f).Finite :=
+    (hcomp.isCompact.image continuous_quotient_mk').finite_of_discrete
+  have hmk : ∀ a x : G, x - a ∈ H ↔ (QuotientAddGroup.mk x : G ⧸ H) = QuotientAddGroup.mk a := by
+    intro a x
+    rw [QuotientAddGroup.eq, ← neg_mem_iff, neg_sub, sub_eq_neg_add]
+  have hinj : Set.InjOn (fun q : G ⧸ H ↦ q.out) ↑hS.toFinset :=
+    fun q _ q' _ h ↦ by simpa using congrArg (QuotientAddGroup.mk (s := H)) h
+  refine ⟨hS.toFinset.image fun q ↦ q.out, ?_⟩
+  rw [Finset.sum_image hinj]
+  funext x
+  rw [Finset.sum_apply]
+  simp only [Pi.smul_apply, smul_eq_mul, hind, mul_ite, mul_one, mul_zero, hmk,
+    QuotientAddGroup.out_eq']
+  rw [Finset.sum_ite_eq]
+  split_ifs with hx
+  · have hq := QuotientAddGroup.out_eq' (s := H) (QuotientAddGroup.mk x)
+    rw [← hmk] at hq
+    have := hinv x (Quotient.out (QuotientAddGroup.mk x : G ⧸ H) - x) hq
+    rw [add_sub_cancel] at this
+    exact this.symm
+  · exact image_eq_zero_of_notMem_tsupport fun hx' ↦ hx ((Set.Finite.mem_toFinset hS).mpr
+      ⟨x, hx', rfl⟩)
+
 variable {K : Type*} [Field K] [NumberField K]
 
 theorem isOpen_idealFiniteAdeles (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
@@ -105,74 +181,19 @@ theorem cosetIndicator_mem_finiteSchwartzBruhat (I : (FractionalIdeal (𝓞 K)�
 
 theorem exists_forall_add_eq_of_mem_finiteSchwartzBruhat {f : 𝔸ᶠ[K] → ℂ}
     (hf : f ∈ finiteSchwartzBruhat K) :
-    ∃ I : (FractionalIdeal (𝓞 K)⁰ K)ˣ, ∀ x, ∀ h ∈ idealFiniteAdeles I, f (x + h) = f x := by
-  have hloc : ∀ x : 𝔸ᶠ[K], ∃ J : (FractionalIdeal (𝓞 K)⁰ K)ˣ,
-      ∀ h ∈ idealFiniteAdeles J, f (x + h) = f x := by
-    intro x
-    have h1 : ∀ᶠ h in 𝓝 (0 : 𝔸ᶠ[K]), f (x + h) = f x :=
-      ((continuous_const_add x).tendsto' 0 x (add_zero x)).eventually (hf.1.eventually_eq x)
-    obtain ⟨J, hJ⟩ := exists_idealFiniteAdeles_subset h1
-    exact ⟨J, fun h hh ↦ hJ hh⟩
-  choose J hJ using hloc
-  obtain ⟨t, ht⟩ := hf.2.isCompact.elim_finite_subcover
-    (fun x ↦ x +ᵥ (idealFiniteAdeles (J x) : Set 𝔸ᶠ[K]))
-    (fun x ↦ (isOpen_idealFiniteAdeles (J x)).vadd x)
-    (fun x _ ↦ Set.mem_iUnion.mpr ⟨x, mem_vadd_idealFiniteAdeles.mpr (by simp)⟩)
-  have hW : (⋂ x ∈ t, (idealFiniteAdeles (J x) : Set 𝔸ᶠ[K])) ∈ 𝓝 (0 : 𝔸ᶠ[K]) :=
-    (biInter_finset_mem t).mpr fun x _ ↦
-      (isOpen_idealFiniteAdeles (J x)).mem_nhds (zero_mem _)
-  obtain ⟨I, hI⟩ := exists_idealFiniteAdeles_subset hW
-  have hmain : ∀ x ∈ tsupport f, ∀ h ∈ idealFiniteAdeles I, f (x + h) = f x := by
-    intro x hx h hh
-    obtain ⟨x₀, hx₀t, hxx₀⟩ := Set.mem_iUnion₂.mp (ht hx)
-    rw [mem_vadd_idealFiniteAdeles] at hxx₀
-    have hh' : h ∈ idealFiniteAdeles (J x₀) := Set.mem_iInter₂.mp (hI hh) x₀ hx₀t
-    have e1 := hJ x₀ (x - x₀) hxx₀
-    have e2 := hJ x₀ (x + h - x₀) (by
-      have : x + h - x₀ = (x - x₀) + h := by abel
-      rw [this]
-      exact add_mem hxx₀ hh')
-    rw [add_sub_cancel] at e1 e2
-    rw [e1, e2]
-  refine ⟨I, fun x h hh ↦ ?_⟩
-  by_cases hx : x ∈ tsupport f
-  · exact hmain x hx h hh
-  · by_cases hxh : x + h ∈ tsupport f
-    · have := hmain (x + h) hxh (-h) (neg_mem hh)
-      rw [add_neg_cancel_right] at this
-      exact this.symm
-    · rw [image_eq_zero_of_notMem_tsupport hx, image_eq_zero_of_notMem_tsupport hxh]
+    ∃ I : (FractionalIdeal (𝓞 K)⁰ K)ˣ, ∀ x, ∀ h ∈ idealFiniteAdeles I, f (x + h) = f x :=
+  exists_forall_add_eq_of_locallyConstant_compactSupport idealFiniteAdeles
+    isOpen_idealFiniteAdeles exists_idealFiniteAdeles_subset hf.1 hf.2
 
 theorem exists_eq_sum_cosetIndicator {f : 𝔸ᶠ[K] → ℂ} (hf : f ∈ finiteSchwartzBruhat K) :
     ∃ (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (s : Finset 𝔸ᶠ[K]),
       f = ∑ a ∈ s, f a • cosetIndicator I a := by
-  classical
   obtain ⟨I, hI⟩ := exists_forall_add_eq_of_mem_finiteSchwartzBruhat hf
-  let H := idealFiniteAdeles I
-  have : DiscreteTopology (𝔸ᶠ[K] ⧸ H) := QuotientAddGroup.discreteTopology (isOpen_idealFiniteAdeles I)
-  have hS : ((QuotientAddGroup.mk : 𝔸ᶠ[K] → 𝔸ᶠ[K] ⧸ H) '' tsupport f).Finite :=
-    (hf.2.isCompact.image continuous_quotient_mk').finite_of_discrete
-  have hmk : ∀ a x : 𝔸ᶠ[K], x - a ∈ idealFiniteAdeles I ↔
-      (QuotientAddGroup.mk x : 𝔸ᶠ[K] ⧸ H) = QuotientAddGroup.mk a := by
-    intro a x
-    rw [QuotientAddGroup.eq, ← neg_mem_iff, neg_sub, sub_eq_neg_add]
-  have hinj : Set.InjOn (fun q : 𝔸ᶠ[K] ⧸ H ↦ q.out) ↑hS.toFinset :=
-    fun q _ q' _ h ↦ by simpa using congrArg (QuotientAddGroup.mk (s := H)) h
-  refine ⟨I, hS.toFinset.image fun q ↦ q.out, ?_⟩
-  rw [Finset.sum_image hinj]
-  funext x
-  rw [Finset.sum_apply]
-  simp only [Pi.smul_apply, smul_eq_mul, cosetIndicator_apply, mul_ite, mul_one, mul_zero, hmk,
-    QuotientAddGroup.out_eq']
-  rw [Finset.sum_ite_eq]
-  split_ifs with hx
-  · have hq := QuotientAddGroup.out_eq' (s := H) (QuotientAddGroup.mk x)
-    rw [← hmk] at hq
-    have := hI x (Quotient.out (QuotientAddGroup.mk x : 𝔸ᶠ[K] ⧸ H) - x) hq
-    rw [add_sub_cancel] at this
-    exact this.symm
-  · exact image_eq_zero_of_notMem_tsupport fun hx' ↦ hx ((Set.Finite.mem_toFinset hS).mpr
-      ⟨x, hx', rfl⟩)
+  obtain ⟨s, hs⟩ := exists_eq_sum_indicator_of_forall_add_eq (idealFiniteAdeles I)
+    (isOpen_idealFiniteAdeles I) hf.2 hI (cosetIndicator I)
+    (fun a x h ↦ by simp [cosetIndicator_apply, h])
+    (fun a x h ↦ by simp [cosetIndicator_apply, h])
+  exact ⟨I, s, hs⟩
 
 theorem finiteSchwartzBruhat_eq_span :
     finiteSchwartzBruhat K = Submodule.span ℂ

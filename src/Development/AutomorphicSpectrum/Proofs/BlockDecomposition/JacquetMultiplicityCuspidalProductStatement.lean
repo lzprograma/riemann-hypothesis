@@ -14,47 +14,8 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.Irr
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GeometricLemmaCellOneBlockSwapEquiv
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParIndJacPlacing
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -266,16 +227,16 @@ theorem cell_bij {α β : Type} [Fintype α] [LinearOrder α] [Fintype β] [Line
       Nonempty ((cellFunctor f g (piTensor ρ)).Equiv (piTensor fun j => ρ (e j))) := by
   have hrz : ∀ i j, j ≠ e.symm i → b.1 i j = 0 := by
     intro i j hj
-    rw [hb, if_neg fun h => hj (by rw [← h, Equiv.symm_apply_apply])]
+    rw [hb, ite_eq_right fun h => hj (by rw [← h, Equiv.symm_apply_apply])]
   have hcz : ∀ j i, i ≠ e j → b.1 i j = 0 := by
     intro j i hi
-    rw [hb, if_neg fun h => hi h.symm]
+    rw [hb, ite_eq_right fun h => hi h.symm]
   have hrf : ∀ i, b.1 i (e.symm i) = d i := by
     intro i
-    rw [hb, if_pos (e.apply_symm_apply i)]
+    rw [hb, ite_eq_left (e.apply_symm_apply i)]
   have hcf : ∀ j, b.1 (e j) j = d (e j) := by
     intro j
-    rw [hb, if_pos rfl]
+    rw [hb, ite_eq_left rfl]
   let f : ∀ i, (Σ j, Fin (b.1 i j)) ≃ Fin (d i) := fun i =>
     GlobalTheory.OneBlockCell.valEquiv (e.symm i) (hrf i) (fun j hj => hrz i j hj)
   let g : ∀ j, (Σ i, Fin (b.1 i j)) ≃ Fin (d (e j)) := fun j =>
@@ -423,7 +384,7 @@ def IsPermCell {l c : ℕ} (x : Fin l → IrrGL (k := k)) (y : Fin c → IrrGL (
 def permMatrix {l c : ℕ} (x : Fin l → IrrGL (k := k)) (y : Fin c → IrrGL (k := k)) (e : Fin c ≃ Fin l)
     (h : ∀ a, y a = x (e a)) : SizeMatrix (fun i => Fin (x i).1) (fun j => Fin (y j).1) :=
   ⟨fun i j => if e j = i then (x i).1 else 0, fun i => by
-    rw [Finset.sum_eq_single (e.symm i) (fun j _ hj => if_neg fun h' => hj (by rw [← h', e.symm_apply_apply]))
+    rw [Finset.sum_eq_single (e.symm i) (fun j _ hj => ite_eq_right fun h' => hj (by rw [← h', e.symm_apply_apply]))
       (by simp)]
     simp, fun j => by
     rw [Finset.sum_ite_eq]
@@ -464,9 +425,9 @@ theorem card_permCell {l c : ℕ} (x : Fin l → IrrGL (k := k)) (y : Fin c → 
   · intro e he e' he' H
     refine Equiv.ext fun j => ?_
     have h2 := congrArg (fun b : SizeMatrix (fun i => Fin (x i).1) (fun j => Fin (y j).1) => b.1 (e j) j) H
-    simp only [permMatrix, if_true] at h2
+    simp only [permMatrix, ite_true] at h2
     by_contra hne
-    rw [if_neg (Ne.symm hne)] at h2
+    rw [ite_eq_right (Ne.symm hne)] at h2
     exact (hxc (e j)).1.ne' h2
   · intro b hb
     obtain ⟨e, he, hb⟩ := (Finset.mem_filter.1 hb).2

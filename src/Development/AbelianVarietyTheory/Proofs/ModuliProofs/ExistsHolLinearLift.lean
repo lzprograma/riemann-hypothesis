@@ -119,9 +119,9 @@ theorem exists_hol_rep {O : Type} [CommRing O] {B : Set (Fin m → ℂ)} (hB : I
         rw [h1 _ b hb, LinearMap.add_apply, (he b hb).1.1, h1 _ b hb, h1 _ b hb, act.add, MonObj.comp_mul], map_add (f := _)]
   choose F hF using key
   refine ⟨fun b => if hb : b ∈ B then F b hb else F b₀ hb₀, fun b hb a z => ?_, fun a i j => ?_⟩
-  · simp only [dif_pos hb, hF, LinearMap.toMatrix'_mulVec, h1 a b hb]
+  · simp only [dite_eq_left hb, hF, LinearMap.toMatrix'_mulVec, h1 a b hb]
   · refine (differentiableOn_pi.1 (h2 a (Pi.single j 1)) i).congr fun b hb => ?_
-    simp only [dif_pos hb, hF, LinearMap.toMatrix'_apply]
+    simp only [dite_eq_left hb, hF, LinearMap.toMatrix'_apply]
 
 def HasForm {La : Type} [AddCommGroup La] (EF : LinearMap.BilinForm ℤ La) (P : La → (Fin g → ℂ)) : Prop :=
   ∃ Hm : Matrix (Fin g) (Fin g) ℂ, Hm.IsHermitian ∧ (∀ z : Fin g → ℂ, z ≠ 0 → 0 < (hermForm Hm z z).re) ∧

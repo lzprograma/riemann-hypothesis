@@ -1014,7 +1014,7 @@ theorem leaf_of (hC : Core) (hP : GrowPHolds) : Leaf := by
     rw [Ne, LinearEquiv.map_eq_zero_iff]; exact hφ0
   obtain ⟨V, p, hV, hpV, hpe, hp0⟩ :=
     hC E N (tw U (-w)) hU'st hU'A hU'P _ ⟨φ, hφU, rfl⟩ hφ'A2 hφ'0
-  have hUle : ∀ ψ ∈ U, ψ ∈ tw (tw U (-w)) w := fun ψ hψ => ⟨_, ⟨ψ, hψ, rfl⟩, mulChi_absC_neg' N w ψ⟩
+  have hUle : ∀ ψ ∈ U, ψ ∈ tw (tw U (-w)) w := fun ψ hψ => ⟨_, ⟨ψ, hψ, rfl⟩, PositivityTheory.Rg.Rs.ChordArithmetic.mulChi_absC_cancel N w ψ⟩
   refine ⟨.leaf V w, twMap N w p, Or.inr ⟨hN, hV, re_tw hz⟩, hN,
     fun o ψ hψ => twMap_equiv hU'st hpe o ψ (hUle ψ hψ), fun ψ hψ => twMap_mem hpV ψ (hUle ψ hψ), ?_⟩
   rw [twMap_apply, Ne, LinearEquiv.map_eq_zero_iff]
@@ -1236,7 +1236,7 @@ theorem memInd2_tw_iff {W₁ : Submodule ℂ (Sm E r)} {W₂ : Submodule ℂ (Sm
       ∃ φ, (MemInd2 W₁ W₂ φ ∧ φ ∈ GlobalTheory.DiscSpec.finVec (cptRep E (r + s))) ∧ mulChi (r + s) (Model.absC E z) φ = ψ := by
   constructor
   · rintro ⟨h, hK⟩
-    refine ⟨mulChi (r + s) (Model.absC E (-z)) ψ, ⟨?_, Trees.mulChi_mem_finVec _ hK⟩, ParabolicProjection.mulChi_absC_neg' _ z ψ⟩
+    refine ⟨mulChi (r + s) (Model.absC E (-z)) ψ, ⟨?_, Trees.mulChi_mem_finVec _ hK⟩, PositivityTheory.Rg.Rs.ChordArithmetic.mulChi_absC_cancel _ z ψ⟩
     have h2 := memInd2_tw (-z) h
     rwa [tw_tw, tw_tw, add_neg_cancel, tw_zero', tw_zero'] at h2
   · rintro ⟨φ, ⟨hφ, hK⟩, rfl⟩
@@ -1263,7 +1263,7 @@ theorem space_twT (z : ℂ) {N : ℕ} (t : Tr E N) : (twT z t).space = tw t.spac
     by_cases hM : M = 0
     · subst hM
       simp only [twT, Tr.space, tw_zero_dim]
-    · simp only [twT, if_neg hM, Tr.space]
+    · simp only [twT, ite_eq_right hM, Tr.space]
       rw [tw_tw]
   | @node r s t₁ t₂ ih₁ ih₂ =>
     simp only [twT, Tr.space]
@@ -1276,7 +1276,7 @@ theorem good_twT {z : ℂ} (hz : z.re = 0) {N : ℕ} (t : Tr E N) (ht : t.Good) 
     · subst hM
       simp only [twT]
       exact Or.inl ⟨rfl, hV, hw⟩
-    · simp only [twT, if_neg hM.ne']
+    · simp only [twT, ite_eq_right hM.ne']
       exact Or.inr ⟨hM, hV, by rw [Complex.add_re, hw, hz, add_zero]⟩
   | @node r s t₁ t₂ ih₁ ih₂ =>
     exact ⟨ih₁ ht.1, ih₂ ht.2⟩
@@ -1397,7 +1397,7 @@ theorem hyp_tw {N : ℕ} {τ : E →+* ℂ} {U : Submodule ℂ (Sm E N)} (hU : H
     change mulChi N (Model.absC E w) φ ∈ W'
     rw [← e]
     change mulChi N (Model.absC E w) (mulChi N (Model.absC E (-w)) ψ) ∈ W'
-    rw [ParabolicProjection.mulChi_absC_neg']
+    rw [PositivityTheory.Rg.Rs.ChordArithmetic.mulChi_absC_cancel]
     exact hψ
   · rintro _ ⟨φ, hφ, rfl⟩ r hr hrN c hc
     have h := expTw_holds E N φ w (haut φ hφ) r hr hrN c hc
@@ -1420,7 +1420,7 @@ theorem core (h1 : SliceU) (h2 : Blocks) (h3 : Leaf) (h4 : Node) (h6 : TwConc) (
   intro U hN hU φ hφ hne
   by_cases hneg : ∀ r, 0 < r → r < N → ∀ c ∈ Exp r φ.1, pE E N r c < 0
   · exact h3 E N τ hN U hU φ hφ hneg hne
-  push_neg at hneg
+  push Not at hneg
   obtain ⟨r, hr, hrN, c, hc, hc0⟩ := hneg
   have hc0' : pE E N r c = 0 := le_antisymm (hU.2.2.1 φ hφ r hr hrN c hc) hc0
   obtain ⟨s, rfl⟩ : ∃ s, N = r + s := ⟨N - r, by omega⟩
@@ -1454,8 +1454,7 @@ theorem core (h1 : SliceU) (h2 : Blocks) (h3 : Leaf) (h4 : Node) (h6 : TwConc) (
   obtain ⟨T, hT, hTφ⟩ := h1 E r s hr hs (tw U w) hU'.1 hU'.2.1 hsplit hU'.2.2.2.2.2 _ hφ' _ hc'
   obtain ⟨J, P, W₁, W₂, hW, hP, hsum, hind⟩ := h2 E r s τ hr hs (tw U w) hU' hsplit _ T hT hpc'
   obtain ⟨j, hj, hPj⟩ : ∃ j ∈ J, P j (T (mulChi (r + s) (Model.absC E w) φ)) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hTφ
     rw [← hsum _ hφ']
     exact Finset.sum_eq_zero hcon
@@ -1535,8 +1534,7 @@ theorem separation_of_six_inputs (h1 : SliceU) (h2 : Blocks) (h3 : Leaf) (h4 : N
   obtain ⟨S, hSty, hSU, hSmin⟩ := hS
 
   obtain ⟨φ, hφS, hne⟩ : ∃ φ ∈ S, φ ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hbot : _root_.GlobalTheory.CuspRep.IsStable (⊥ : Submodule ℂ (Sm E N)) := by
       intro o ψ hψ
       rw [Submodule.mem_bot] at hψ ⊢
@@ -1781,7 +1779,7 @@ theorem sliceU_of_noLog2 (hNL : NoLog) : SliceU := by
   choose! Cs Gs hsum hGeig using hdec
   obtain ⟨τs, a, ha⟩ := SliceUB2.lagrange (insert c (S.biUnion Cs)) c
   have ha1 : ∑ t ∈ τs, a t * Complex.exp (c * t) = 1 := by
-    rw [ha c (Finset.mem_insert_self _ _), if_pos rfl]
+    rw [ha c (Finset.mem_insert_self _ _), ite_eq_left rfl]
 
   obtain ⟨T, hT⟩ := exists_strictHenselian_absolutely_closed_local_ring U hU.2 r τs a
   have hTval : ∀ ψ ∈ U, ∀ g, (T ψ).1 g = ∑ t ∈ τs, a t * An.ctn r ψ.1 (aT E (r + s) r t * g) := by

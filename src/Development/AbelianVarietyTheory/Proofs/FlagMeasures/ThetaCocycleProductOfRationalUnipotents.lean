@@ -43,6 +43,7 @@ import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocOf
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
 import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexBStable
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeSpanEInfToO, Development.AbelianVarietyTheory.Proofs.FlagMeasures.ThetaCocycleProductOfRationalUnipotents
@@ -92,13 +93,8 @@ section -- clump:auto
 
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.FourierDecayAlt Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.SnFam
 open scoped Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
-
-namespace GlobalTheory.DcosetCompl
-
-end GlobalTheory.DcosetCompl
 
 namespace GlobalTheory.DcosetCompl
 
@@ -116,14 +112,7 @@ theorem xa_eq_x_of_le {T : E} (F : Formalism.MainNotions.S.FlagG S r T) {j : ℕ
   · rintro ⟨i, rfl⟩; exact ⟨i, lt_of_lt_of_le i.2 hj, rfl⟩
 
 theorem z_mem_orth {T : E} (F : Formalism.MainNotions.S.FlagG S r T) : F.z ∈ orth S F.X := by
-  rw [_root_.Formalism.MainNotions.LatticeGluingRadicals.a_mem_orth]
-  intro y hy
-  have : F.X ≤ LinearMap.ker (S.hT.flip F.z) := by
-    unfold Formalism.MainNotions.S.FlagG.X
-    rw [Submodule.span_le]
-    rintro _ ⟨i, rfl⟩
-    simp [F.z_orth i]
-  simpa using this hy
+  apply _root_.Formalism.L2.SG.Pf.StabilizerIndexVolumes.z_mem_orth <;> assumption
 
 theorem map_eq_of_sub_mem (g : S.V ≃ₗ[E] S.V) (X : Submodule E S.V) (h : ∀ x ∈ X, g x - x ∈ X) :
     X.map (g : S.V →ₗ[E] S.V) = X := by

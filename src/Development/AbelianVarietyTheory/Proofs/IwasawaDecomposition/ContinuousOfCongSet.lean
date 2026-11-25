@@ -47,6 +47,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAfMemIntUIff
 
 @[expose] public section
 
@@ -285,17 +286,7 @@ theorem map_inertAt {ξ : HChar E} (ht : ∀ P, ξ.TameAt P) {v : HeightOneSpect
 
 theorem afIso_one_tmul {a : FiniteAdeleRing (𝓞 F) F} {k : F} {P : HeightOneSpectrum (𝓞 E)}
     (h : a (P.under (𝓞 F)) = algebraMap F _ k) : afIso F E (1 ⊗ₜ[F] a) P = algebraMap E _ (algebraMap F E k) := by
-  have h1 : ∀ n : ℕ, Valued.v (afIso F E (1 ⊗ₜ[F] a) P - algebraMap E _ (algebraMap F E k)) ≤ WithZero.exp (-(n : ℤ)) :=
-    fun n => (GlobalTheory.AdeleBaseChange.exists_finiteAdele_baseChange_equiv F E).choose_spec.2.2.2 a k P n
-      (by rw [h, sub_self, map_zero]; exact zero_le')
-  by_contra hne
-  have h0 : Valued.v (afIso F E (1 ⊗ₜ[F] a) P - algebraMap E _ (algebraMap F E k)) ≠ 0 := by
-    rw [Valuation.ne_zero_iff]
-    exact sub_ne_zero.2 hne
-  have h2 := h1 (1 - WithZero.log (Valued.v (afIso F E (1 ⊗ₜ[F] a) P - algebraMap E _ (algebraMap F E k)))).toNat
-  conv_lhs at h2 => rw [← WithZero.exp_log h0]
-  rw [WithZero.exp_le_exp] at h2
-  omega
+  apply _root_.GlobalTheory.Mem.ReadTwist.afIso_one_tmul <;> assumption
 
 
 variable (F E) in

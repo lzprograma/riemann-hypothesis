@@ -202,7 +202,7 @@ theorem polyImg_freeVar (j0 : Fin (N + 1)) (x : Fin N → Ω) (s : SVar D N) :
     polyImg j0 x (freeVar j0 s) = X s := by
   rcases s with ⟨⟨⟩⟩ | ⟨i, k⟩
   · show polyImg j0 x (0, j0) = _
-    rw [polyImg_same, if_pos rfl]
+    rw [polyImg_same, ite_eq_left rfl]
   · exact polyImg_succAbove j0 x i k
 
 theorem sum_polyImg (j0 : Fin (N + 1)) (v : Fin (N + 1) → Ω) (x : Fin N → Ω) (hv : v j0 ≠ 0)
@@ -217,12 +217,12 @@ theorem sum_polyImg (j0 : Fin (N + 1)) (v : Fin (N + 1) → Ω) (x : Fin N → �
 theorem sum_polyImg_succ (j0 : Fin (N + 1)) (v : Fin (N + 1) → Ω) (x : Fin N → Ω) (hv : v j0 ≠ 0)
     (hx : ∀ k, x k = v (j0.succAbove k) / v j0) (i : Fin D) :
     ∑ j, polyImg j0 x (i.succ, j) * C (v j) = 0 := by
-  rw [sum_polyImg j0 v x hv hx, polyImg_same, if_neg (Fin.succ_ne_zero i), neg_add_cancel, mul_zero]
+  rw [sum_polyImg j0 v x hv hx, polyImg_same, ite_eq_right (Fin.succ_ne_zero i), neg_add_cancel, mul_zero]
 
 theorem sum_polyImg_zero (j0 : Fin (N + 1)) (v : Fin (N + 1) → Ω) (x : Fin N → Ω) (hv : v j0 ≠ 0)
     (hx : ∀ k, x k = v (j0.succAbove k) / v j0) :
     ∑ j, polyImg (D := D) j0 x (0, j) * C (v j) ≠ 0 := by
-  rw [sum_polyImg j0 v x hv hx, polyImg_same, if_pos rfl]
+  rw [sum_polyImg j0 v x hv hx, polyImg_same, ite_eq_left rfl]
   intro h
   have := congrArg (eval (Sum.elim (fun _ => (1 : Ω)) (fun _ => 0))) h
   simp [hv] at this
@@ -276,7 +276,7 @@ theorem exists_maps (j0 : Fin (N + 1)) (v : Fin (N + 1) → Ω) (x : Fin N → �
     rintro ⟨i, j⟩
     rcases Fin.eq_self_or_eq_succAbove j0 j with rfl | ⟨k, rfl⟩
     · refine Fin.cases ?_ (fun i => ?_) i
-      · rw [polyImg_same, if_pos rfl, hX]; rfl
+      · rw [polyImg_same, ite_eq_left rfl, hX]; rfl
       · have h1 := congrArg β₀ (sum_polyImg_succ j v x hv hx i)
         have h2 := hrel i
 

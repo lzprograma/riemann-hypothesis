@@ -6,48 +6,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOf
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCsdOfCharOfRes
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GlRelNegTAndQdet
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
 
 @[expose] public section
@@ -68,9 +26,9 @@ theorem phi_mul_apply (M : Matrix (Fin a) (Fin a) R) (i j : Fin a) :
     (GlobalTheory.Tw.Phi a R * M * (GlobalTheory.Tw.Phi a R)ᵀ) i j = (-1) ^ ((i : ℕ) + j) * M i.rev j.rev := by
   have h : ∀ (k : Fin a) (f : Fin a → R), ∑ l, GlobalTheory.Tw.Phi a R k l * f l = (-1) ^ (k : ℕ) * f k.rev := fun k f => by
     rw [Finset.sum_eq_single k.rev]
-    · rw [GlobalTheory.Tw.Phi, Matrix.of_apply, if_pos (by rw [Fin.val_rev]; omega)]
+    · rw [GlobalTheory.Tw.Phi, Matrix.of_apply, ite_eq_left (by rw [Fin.val_rev]; omega)]
     · intro l _ hl
-      rw [GlobalTheory.Tw.Phi, Matrix.of_apply, if_neg (fun h => hl (Fin.ext (by rw [Fin.val_rev]; omega))), zero_mul]
+      rw [GlobalTheory.Tw.Phi, Matrix.of_apply, ite_eq_right (fun h => hl (Fin.ext (by rw [Fin.val_rev]; omega))), zero_mul]
     · simp
   rw [Matrix.mul_apply]
   simp only [Matrix.transpose_apply, mul_comm _ (GlobalTheory.Tw.Phi a R j _)]
@@ -409,14 +367,14 @@ theorem thetaGL_unip (h : r + s = a) (c : R →+* R) (x : BlockIx a r → R) :
   have hj := j.2
   simp only [Matrix.sub_apply, Matrix.add_apply, nilM, Matrix.of_apply, Matrix.one_apply, Fin.rev_inj]
   by_cases h1 : (i : ℕ) < s ∧ s ≤ (j : ℕ)
-  · rw [dite_eq_left h1, dite_eq_left (by simp only [Fin.val_rev]; omega), if_neg (fun e => by subst e; omega),
-      if_neg (fun e => by subst e; omega), zero_sub, zero_add]
+  · rw [dite_eq_left h1, dite_eq_left (by simp only [Fin.val_rev]; omega), ite_eq_right (fun e => by subst e; omega),
+      ite_eq_right (fun e => by subst e; omega), zero_sub, zero_add]
     rfl
   · rw [dite_eq_right h1, dite_eq_right (by simp only [Fin.val_rev]; omega), sub_zero, add_zero]
     by_cases h2 : i = j
     · subst h2
-      rw [if_pos rfl, map_one, mul_one, Even.neg_one_pow ⟨_, rfl⟩]
-    · rw [if_neg h2, if_neg (Ne.symm h2), map_zero, mul_zero]
+      rw [ite_eq_left rfl, map_one, mul_one, Even.neg_one_pow ⟨_, rfl⟩]
+    · rw [ite_eq_right h2, ite_eq_right (Ne.symm h2), map_zero, mul_zero]
 
 theorem blockMap_blockMap (h : r + s = a) (h' : s + r = a) (c : R →+* R) (hc : ∀ x, c (c x) = x) (x : BlockIx a r → R) :
     blockMap h' c (blockMap h c x) = x := by

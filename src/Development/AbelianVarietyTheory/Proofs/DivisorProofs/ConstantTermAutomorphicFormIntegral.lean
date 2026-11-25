@@ -195,8 +195,8 @@ theorem chart_integral (φ : GA E a → ℂ) (g : GA E a) :
     chart (fun g => ∫ x, φ (unip x * g) ∂ν) g = fun y => ∫ x, chart φ (unip x * g) y ∂ν := by
   funext y
   by_cases h : IsUnit (Matrix.of y)
-  · simp only [chart, dif_pos h, mul_assoc]
-  · simp only [chart, dif_neg h, integral_zero]
+  · simp only [chart, dite_eq_left h, mul_assoc]
+  · simp only [chart, dite_eq_right h, integral_zero]
 
 theorem Good.hasFDerivAt {φ : Sm E a} (h : Good φ) (g : GA E a) {y : Lie E a} (hy : y ∈ invSet E a) :
     HasFDerivAt (chart (fun g => ∫ x, φ.1 (unip x * g) ∂ν) g) (∫ x, fderiv ℝ (chart φ.1 (unip x * g)) y ∂ν) y := by

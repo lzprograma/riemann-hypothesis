@@ -7,8 +7,6 @@ import ReciprocityTheory.DualLattices.FrobEqOfLe
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -32,14 +30,6 @@ theorem card_sigma_fst {d : ℕ} [NeZero d] (m : ZMod d → ℕ) (a : ZMod d) :
       exact ⟨i, rfl⟩
     · rintro ⟨j, hj⟩
       exact (congrArg Sigma.fst hj).symm
-
-section CH
-
-open ReciprocityTheory.PGsh.Up CharacteristicFromRanks ValuationFitting
-
-variable {C : Type} [Field C]
-
-end CH
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable {Xo : Moduli Dw l} {c : Coeff l} [StarRing (𝓞 E)]
@@ -67,17 +57,5 @@ theorem rankHyp_ofLab {C3 : IntChart T io y} {ι : T.Fr →+* C} {Y : FBChart C 
     exact Finset.filter_congr (fun _ _ => Iff.rfl)
 
 end Rank
-
-section Named
-
-variable (Xo c)
-
-end Named
-
-section Top
-
-variable {T : CDVR} {io : c.F →+* T.Fr} {y : IntFr Xo c T io} {Orb : Type} {d : ℕ} [NeZero d]
-
-end Top
 
 end Formalism.L2.FormalSeriesBounds

@@ -53,8 +53,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection (Blocks)
 
 namespace GlobalTheory.ChainTw
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 variable {D : D7}
 
 structure Twist (D : D7) where

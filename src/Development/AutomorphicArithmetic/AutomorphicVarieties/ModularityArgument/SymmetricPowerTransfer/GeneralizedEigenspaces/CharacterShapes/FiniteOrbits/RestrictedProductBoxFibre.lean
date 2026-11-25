@@ -45,8 +45,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Sym.So
 
 section Box
@@ -86,9 +84,6 @@ private theorem out_mem_doubleCoset_and_out_inv_mul_mem_doubleCoset {A : Type} [
   rw [mul_inv_rev, mul_assoc]
   exact mul_mem_doubleCoset_of_mem_of_mem_doubleCoset h2 (inv_mem c.2)
 
-private theorem quotientGroup_coe_out_eq_self {A : Type} [Group A] (W : Subgroup A) (y : A ⧸ W) :
-    ((Quotient.out y : A) : A ⧸ W) = y := Quotient.out_eq y
-
 theorem UpperTheory.V.Z.Sym.So.uFBox :
     UpperTheory.V.Z.Sym.So.UFBox := by
   intro I G _ Gv _ K U P S _ a ha
@@ -115,7 +110,7 @@ theorem UpperTheory.V.Z.Sym.So.uFBox :
       have h1' : ∀ v ∈ S, ∃ u ∈ U v, ∃ u' ∈ U v, P.p v g = u * P.p v c * u' :=
         fun v hv => mem_doubleCoset_iff_exists_eq_mul_mul.1 (h1 v hv)
       choose! u hu u' hu' hg using h1'
-      obtain ⟨w, hw⟩ := glue (fun v => if v ∈ S then u v else 1) (fun v hv => if_neg hv)
+      obtain ⟨w, hw⟩ := glue (fun v => if v ∈ S then u v else 1) (fun v hv => ite_eq_right hv)
       refine mem_doubleCoset_iff_exists_eq_mul_mul.2 ⟨w, ?_, c⁻¹ * w⁻¹ * g, ?_, by group⟩
       · rw [hB]
         intro v
@@ -156,7 +151,7 @@ theorem UpperTheory.V.Z.Sym.So.uFBox :
       simp only [map_mul]
       group
     · rintro _ ⟨u1, rfl⟩ _ ⟨u2, rfl⟩ h12
-      refine (quotientGroup_coe_out_eq_self _ _).symm.trans ((QuotientGroup.eq.2 ?_).trans (quotientGroup_coe_out_eq_self _ _))
+      refine (QuotientGroup.out_eq' _).symm.trans ((QuotientGroup.eq.2 ?_).trans (QuotientGroup.out_eq' _))
       rw [hB]
       intro v
       rw [map_mul, map_inv]
@@ -178,16 +173,16 @@ theorem UpperTheory.V.Z.Sym.So.uFBox :
         obtain ⟨y, hy, -⟩ := (hloc v hv (P.p v g)).1 (hgl v hv)
         exact ⟨_, hy⟩
       choose! z hz1 hz2 using hl
-      obtain ⟨w, hw⟩ := glue (fun v => if v ∈ S then z v else 1) (fun v hv => if_neg hv)
+      obtain ⟨w, hw⟩ := glue (fun v => if v ∈ S then z v else 1) (fun v hv => ite_eq_right hv)
       have hw1 : w ∈ DC (P.box U) a := (key a ha w).2
-        ⟨fun v hv => by rw [hw, if_pos hv]; exact hz1 v hv,
-         fun v hv => by rw [hw, if_neg hv]; exact one_mem _⟩
+        ⟨fun v hv => by rw [hw, ite_eq_left hv]; exact hz1 v hv,
+         fun v hv => by rw [hw, ite_eq_right hv]; exact one_mem _⟩
       have hw2 : w⁻¹ * g ∈ DC (P.box U) b := (key b hb _).2
-        ⟨fun v hv => by rw [map_mul, map_inv, hw, if_pos hv]; exact hz2 v hv,
-         fun v hv => by rw [map_mul, map_inv, hw, if_neg hv, inv_one, one_mul]; exact hgN v hv⟩
+        ⟨fun v hv => by rw [map_mul, map_inv, hw, ite_eq_left hv]; exact hz2 v hv,
+         fun v hv => by rw [map_mul, map_inv, hw, ite_eq_right hv, inv_one, one_mul]; exact hgN v hv⟩
       refine ⟨(w : G ⧸ P.box U), out_mem_doubleCoset_and_out_inv_mul_mem_doubleCoset hw1 hw2, ?_⟩
       rintro y ⟨hy1, hy2⟩
-      refine (quotientGroup_coe_out_eq_self _ _).symm.trans (QuotientGroup.eq.2 ?_)
+      refine (QuotientGroup.out_eq' _).symm.trans (QuotientGroup.eq.2 ?_)
       rw [hB]
       intro v
       rw [map_mul, map_inv]
@@ -197,13 +192,13 @@ theorem UpperTheory.V.Z.Sym.So.uFBox :
       · have hb2 := hb1.1 v hv
         rw [map_mul, map_inv] at hb2
         have hz2' := hz2 v hv
-        rw [← if_pos (c := v ∈ S) (t := z v) (e := 1) hv, ← hw v] at hz2'
+        rw [← ite_eq_left (c := v ∈ S) (t := z v) (e := 1) hv, ← hw v] at hz2'
         have hz1' := hz1 v hv
-        rw [← if_pos (c := v ∈ S) (t := z v) (e := 1) hv, ← hw v] at hz1'
+        rw [← ite_eq_left (c := v ∈ S) (t := z v) (e := 1) hv, ← hw v] at hz1'
         have e := ((hloc v hv (P.p v g)).1 (hgl v hv)).unique
           (out_mem_doubleCoset_and_out_inv_mul_mem_doubleCoset (ha1.1 v hv) hb2) (out_mem_doubleCoset_and_out_inv_mul_mem_doubleCoset hz1' hz2')
         exact QuotientGroup.eq.1 e
-      · rw [hw, if_neg hv]
+      · rw [hw, ite_eq_right hv]
         exact mul_mem (inv_mem (ha1.2 v hv)) (one_mem _)
     · intro y hy1 hy2
       refine (key _ hab g).2 ⟨fun v hv => ?_, fun v hv => ?_⟩

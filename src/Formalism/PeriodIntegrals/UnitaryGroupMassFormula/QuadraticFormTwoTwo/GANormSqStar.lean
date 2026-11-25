@@ -2,48 +2,6 @@ module
 
 public import Formalism.HermitianCurvature.StatementQ
 public import Formalism.FormalDegreeBessel.FinalG
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -55,8 +13,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.Q.LieAlgebraWeightVectors
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {k r : ℕ}
 
@@ -74,7 +30,7 @@ private theorem gA_mulVec {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) :
       have hij : i ≠ j := fun h => hji h.symm
       have h0 : Hpk k r i j = 0 := by
         simp only [Hpk]
-        rw [if_neg (by omega), if_neg (by omega), if_neg (fun h => hij h.2.2)]
+        rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (fun h => hij h.2.2)]
       rw [h0, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ i) h
@@ -93,15 +49,15 @@ private theorem gA_term {x : Fin (2 * r + k + 1) → ℂ} (hx : inWb k r x) (i :
       rw [Complex.normSq_eq_conj_mul_self, starRingEnd_apply]
     have hH : Hpk k r i i = if i.val = r + k then -1 else 1 := by
       simp only [Hpk]
-      rw [if_neg (by omega), if_neg (by omega), if_pos ⟨hi.1, hi.2, trivial⟩]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨hi.1, hi.2, trivial⟩]
     rw [hH]
     by_cases hl : i = gAlast k r
     · have hv : i.val = r + k := by rw [hl]; rfl
-      rw [if_pos hv, if_pos hl, show star (x i) * (-1 * x i) = -(star (x i) * x i) by ring, e]
+      rw [ite_eq_left hv, ite_eq_left hl, show star (x i) * (-1 * x i) = -(star (x i) * x i) by ring, e]
       push_cast
       ring
     · have hv : i.val ≠ r + k := fun h => hl (Fin.ext h)
-      rw [if_neg hv, if_neg hl, one_mul, e]
+      rw [ite_eq_right hv, ite_eq_right hl, one_mul, e]
       simp
 
 private theorem gA_self {x : Fin (2 * r + k + 1) → ℂ} (hx : inWb k r x) :

@@ -49,7 +49,6 @@ import Mathlib.Topology.Sheaves.Init
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 noncomputable section
@@ -82,8 +81,8 @@ theorem continuous_upSum {X : Type} [TopologicalSpace X] {ρ : ℕ} {T : X → M
   unfold upSum
   refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   by_cases h : j.1 = i.1 + 1
-  · simp only [h, if_true]; exact (continuous_apply j).comp ((continuous_apply i).comp hT)
-  · simp only [h, if_false]; exact continuous_const
+  · simp only [h, ite_true]; exact (continuous_apply j).comp ((continuous_apply i).comp hT)
+  · simp only [h, ite_false]; exact continuous_const
 
 theorem continuous_psiFlag {ψ : AddChar (AF D.host.F) ℂ} (hψ : Continuous ψ) {S S₀ : HSp D} {ρ : ℕ}
     (d : HypDec S S₀ ρ) : Continuous (psiFlag ψ d) := by
@@ -149,7 +148,7 @@ theorem upSum_rat {ρ : ℕ} (M : Matrix (Fin ρ) (Fin ρ) D.host.E) :
 
 theorem psiE_incA {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ) (t : D.host.E) : psiE ψ (incA D t) = 1 := by
   rw [psiE, show Algebra.trace (AF D.host.F) (AE D) (incA D t) =
-    algebraMap D.host.F (AF D.host.F) (Algebra.trace D.host.F D.host.E t) from GlobalTheory.AnisoMean.trace_one_tmul (AF D.host.F) t]
+    algebraMap D.host.F (AF D.host.F) (Algebra.trace D.host.F D.host.E t) from GlobalTheory.SymplecticOrthogonalSesquilinear.trace_one_tmul (AF D.host.F) t]
   exact hψ.2.2.1 _
 
 theorem psiFlag_rat {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ) {S S₀ : HSp D} {ρ : ℕ}

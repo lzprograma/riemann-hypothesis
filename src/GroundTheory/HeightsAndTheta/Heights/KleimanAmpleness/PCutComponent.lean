@@ -64,22 +64,7 @@ theorem CutComponent.proof (hZ : CutZeroNotLe.Statement.{u, w}) (hE : CutNonempt
       exact hJq (Ideal.mem_sup_right hfZ)
   refine ⟨qq, hq, hqp, hhom, hW.le.trans hppq, ⟨j, hj⟩, ?_⟩
 
-  rw [← WithBot.coe_one, ← WithBot.coe_natCast] at hup
-  generalize ringKrullDim (Poly k N ⧸ qq) = D at hup hlo ⊢
-  induction D using WithBot.recBotCoe with
-  | bot => exact absurd hlo (by simp)
-  | coe D =>
-    induction D using ENat.recTopCoe with
-    | top =>
-      rw [← WithBot.coe_add, WithBot.coe_le_coe, top_add] at hup
-      exact absurd hup (by simp)
-    | coe m =>
-      rw [← WithBot.coe_add, WithBot.coe_le_coe] at hup
-      have h1 : n + 1 ≤ m := by exact_mod_cast hlo
-      have h2 : ((m + 1 : ℕ) : ℕ∞) ≤ ((n + 1 + 1 : ℕ) : ℕ∞) := by exact_mod_cast hup
-      have h3 := Nat.cast_le.mp h2
-      have : m = n + 1 := by omega
-      subst this
-      rfl
+  exact le_antisymm
+    (ENat.WithBot.add_le_add_one_right_iff.mp (hup.trans_eq (Nat.cast_succ (n + 1)))) hlo
 
 end GroundTheory.Heights₂.Heights.Kleiman

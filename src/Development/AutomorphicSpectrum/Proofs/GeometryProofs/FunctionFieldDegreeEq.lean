@@ -16,70 +16,14 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFFCurve
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LocalComponentsSurjective
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Finiteness.Quotient
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
 import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
-import Mathlib.Topology.Sheaves.Presheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
 import Development.AutomorphicSpectrum.Statements.GeometryStatements.ExistsAlgPtOff
 import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveVertPointResidue
-import Mathlib.Algebra.MvPolynomial.Nilpotent
-import Mathlib.RingTheory.LocalProperties.Reduced
-import Mathlib.Tactic.TypeStar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
 import GroundTheory.HeightsAndTheta.Heights.Intersections.PrimeComplMapLeNonZeroDivisorsQuot
 import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
@@ -264,7 +208,6 @@ theorem deg_eq_of_surjective (B : Type) [CommRing B] [Algebra k B] [Algebra B K]
   rw [Place.deg, ← hker]
   exact (Ideal.quotientKerAlgEquivOfSurjective hs).toLinearEquiv.finrank_eq.symm
 
-
 omit [IsFunctionField k K] in
 theorem deg_ofHeightOneSpectrum (B : Type) [CommRing B] [IsDedekindDomain B] [Algebra B K]
     [IsFractionRing B K] [Algebra k B] [IsScalarTower k B K]
@@ -306,8 +249,7 @@ private theorem length_quotient_pow_eq_mul_inertiaDeg {A B : Type} [CommRing A] 
     simp
   | succ n ih =>
     obtain ⟨a, ha, hna⟩ : ∃ a ∈ P ^ n, a ∉ P ^ (n + 1) := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact (Ideal.pow_succ_lt_pow hP n).not_ge h
     let φ : (B ⧸ P) →ₗ[B] (B ⧸ P ^ (n + 1)) :=
       Submodule.mapQ P (P ^ (n + 1)) (LinearMap.mulLeft B a) (by
@@ -365,93 +307,14 @@ private theorem length_quotient_pow_eq_mul_inertiaDeg {A B : Type} [CommRing A] 
     push_cast
     ring
 
-private theorem valuation_eq_of_isEquiv_of_uniformizers {K : Type} [Field K]
-    (v w : Valuation K (WithZero (Multiplicative ℤ))) (h : v.IsEquiv w)
-    (π : K) (hπ : v π = WithZero.exp (-1)) (ρ : K) (hρ : w ρ = WithZero.exp (-1)) :
-    v = w := by
-  have key : ∀ x y : K, v x = v y → w x = w y := fun x y hxy => (Valuation.IsEquiv.eq_iff h).mp hxy
-  have hπ0 : π ≠ 0 := by
-    rintro rfl
-    rw [map_zero] at hπ
-    exact WithZero.exp_ne_zero hπ.symm
-  have hexp : ∀ (c : ℤ) (a : ℤ), (WithZero.exp c) ^ a = WithZero.exp (a * c) := by
-    intro c a
-    rw [← WithZero.exp_zsmul, smul_eq_mul]
-  have hvπ : ∀ a : ℤ, v (π ^ a) = WithZero.exp (-a) := by
-    intro a
-    rw [map_zpow₀, hπ, hexp]
-    ring_nf
-  have hwπ0 : w π ≠ 0 := (Valuation.ne_zero_iff w).mpr hπ0
-  have hwπ : w π = WithZero.exp (WithZero.log (w π)) := (WithZero.exp_log hwπ0).symm
-  have hρ0 : ρ ≠ 0 := by
-    rintro rfl
-    rw [map_zero] at hρ
-    exact WithZero.exp_ne_zero hρ.symm
-  have hvρ : v ρ = WithZero.exp (WithZero.log (v ρ)) :=
-    (WithZero.exp_log ((Valuation.ne_zero_iff v).mpr hρ0)).symm
-  have h1 : w ρ = w (π ^ (-WithZero.log (v ρ))) := key _ _ (by rw [hvπ, neg_neg]; exact hvρ)
-  rw [hρ, map_zpow₀, hwπ, hexp, WithZero.exp_inj] at h1
-  have hc : WithZero.log (w π) = 1 ∨ WithZero.log (w π) = -1 := by
-    have hm : WithZero.log (w π) * WithZero.log (v ρ) = 1 := by linear_combination h1
-    exact Int.eq_one_or_neg_one_of_mul_eq_one hm
-  have hc' : WithZero.log (w π) = -1 := by
-    rcases hc with hc | hc
-    · exfalso
-      have hle : v π ≤ v 1 := by
-        rw [hπ, map_one, ← WithZero.exp_zero, WithZero.exp_le_exp]
-        norm_num
-      have hle' := (h π 1).mp hle
-      rw [hwπ, hc, map_one, ← WithZero.exp_zero, WithZero.exp_le_exp] at hle'
-      norm_num at hle'
-    · exact hc
-  ext x
-  by_cases hx : x = 0
-  · simp [hx]
-  have hvx : v x = WithZero.exp (WithZero.log (v x)) :=
-    (WithZero.exp_log ((Valuation.ne_zero_iff v).mpr hx)).symm
-  have h2 : w x = w (π ^ (-WithZero.log (v x))) := key _ _ (by rw [hvπ, neg_neg]; exact hvx)
-  rw [h2, map_zpow₀, hwπ, hexp, hc', hvx, WithZero.log_exp]
-  ring_nf
-
-private theorem place_valuation_valuationSubring_eq_ring {k K : Type} [Field k] [Field K] [Algebra k K]
-    [IsFunctionField k K] (v : Place k K) : v.valuation.valuationSubring = v.ring := by
-  ext x
-  rw [Valuation.mem_valuationSubring_iff]
-  by_cases hx : x = 0
-  · simp only [hx, map_zero, zero_le', true_iff]
-    exact v.ring.zero_mem
-  · rw [← v.ord_nonneg_iff hx, Place.ord]
-    have hne : v.valuation x ≠ 0 := (Valuation.ne_zero_iff _).mpr hx
-    conv_lhs => rw [← WithZero.exp_log hne]
-    rw [← WithZero.exp_zero, WithZero.exp_le_exp]
-    omega
-
-private theorem ofHeightOneSpectrum_valuation_eq {k K B : Type} [Field k] [Field K] [Algebra k K]
-    [IsFunctionField k K] [CommRing B] [IsDedekindDomain B] [Algebra B K] [IsFractionRing B K]
-    (hk : ∀ c : k, algebraMap k K c ∈ (algebraMap B K).range) (P : HeightOneSpectrum B) :
-    (Place.ofHeightOneSpectrum B hk P).valuation = P.valuation K := by
-  set v := Place.ofHeightOneSpectrum B hk P with hv
-  obtain ⟨π, hπ⟩ := v.exists_ord_eq_one
-  have hπ0 : π ≠ 0 := by
-    rintro rfl
-    rw [v.ord_zero] at hπ
-    exact zero_ne_one hπ
-  obtain ⟨ρ, hρ⟩ := P.valuation_exists_uniformizer K
-  refine valuation_eq_of_isEquiv_of_uniformizers _ _ ?_ π ?_ ρ hρ
-  · rw [Valuation.isEquiv_iff_valuationSubring, place_valuation_valuationSubring_eq_ring,
-      ← HeightOneSpectrum.valuationSubringAtPrime_eq_valuationSubring]
-  · have hne : v.valuation π ≠ 0 := (Valuation.ne_zero_iff _).mpr hπ0
-    rw [← WithZero.exp_log hne, WithZero.exp_inj]
-    rw [Place.ord] at hπ
-    omega
-
 private theorem ofHeightOneSpectrum_ord_eq_count {k K B : Type} [Field k] [Field K] [Algebra k K]
     [IsFunctionField k K] [CommRing B] [IsDedekindDomain B] [Algebra B K] [IsFractionRing B K]
     (hk : ∀ c : k, algebraMap k K c ∈ (algebraMap B K).range) (P : HeightOneSpectrum B)
     (b : B) (hb : b ≠ 0) :
     (Place.ofHeightOneSpectrum B hk P).ord (algebraMap B K b) =
       ((Associates.mk P.asIdeal).count (Associates.mk (Ideal.span {b})).factors : ℤ) := by
-  rw [Place.ord, ofHeightOneSpectrum_valuation_eq, HeightOneSpectrum.valuation_of_algebraMap,
+  rw [Place.ord, Place.valuation_ofHeightOneSpectrum B hk P,
+    HeightOneSpectrum.valuation_of_algebraMap,
     HeightOneSpectrum.intValuation_if_neg _ hb, WithZero.log_exp, neg_neg]
 
 private theorem length_quotient_eq_sum_count_mul_inertiaDeg {A B : Type} [CommRing A] [IsLocalRing A] [CommRing B]
@@ -694,19 +557,17 @@ theorem length_places (A B : Type) [CommRing A] [IsDomain A] [Algebra k A] [Alge
     ext v
     constructor
     · rintro ⟨h1, _⟩
-      have hA' : ∀ a : A, algebraMap A K a ∈ v.ring := by
-        intro a
-        rw [← place_valuation_valuationSubring_eq_ring v]
-        exact h1 a
+      have hA' : ∀ a : A, algebraMap A K a ∈ v.ring :=
+        fun a => (v.valuation_le_one_iff _).1 (h1 a)
       have hB' : ∀ b : B, algebraMap B K b ∈ v.ring := algebraMap_mem_place_ring_of_isIntegral v hA'
       exact ⟨Place.center B v hB', Place.ofHeightOneSpectrum_center B hk v hB'⟩
     · rintro ⟨P, rfl⟩
       refine ⟨fun a => ?_, fun a ha => ?_⟩
       · simp only [φ]
-        rw [ofHeightOneSpectrum_valuation_eq, IsScalarTower.algebraMap_apply A B K]
+        rw [Place.valuation_ofHeightOneSpectrum B hk P, IsScalarTower.algebraMap_apply A B K]
         exact HeightOneSpectrum.valuation_le_one _ _
       · simp only [φ]
-        rw [ofHeightOneSpectrum_valuation_eq, IsScalarTower.algebraMap_apply A B K,
+        rw [Place.valuation_ofHeightOneSpectrum B hk P, IsScalarTower.algebraMap_apply A B K,
           HeightOneSpectrum.valuation_lt_one_iff_mem]
         have h2 : a ∈ P.asIdeal.comap (algebraMap A B) := by
           rw [hover P]
@@ -755,8 +616,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj
 
-theorem _root_.GlobalTheory.CompanionTheory.Relay.length_formula_sum_valuations : ∀ (k K A : Type) [Field k] [Field K] [Algebra k K] [GroundTheory.FunctionField.IsFunctionField k K] [CommRing A] [IsDomain A] [Algebra k A] [Algebra A K] [IsScalarTower k A K] [IsLocalRing A] [IsNoetherianRing A] [IsFractionRing A K] [Algebra.EssFiniteType k A], ¬ IsField A → ∀ f : A, f ≠ 0 → (((Module.length A (A ⧸ Ideal.span {f})).toNat * Module.finrank k (IsLocalRing.ResidueField A) : ℕ) : ℤ) = ∑ᶠ v ∈ {v : GroundTheory.FunctionField.Place k K | (∀ a : A, v.valuation (algebraMap A K a) ≤ 1) ∧ ∀ a ∈ IsLocalRing.maximalIdeal A, v.valuation (algebraMap A K a) < 1}, (v.deg : ℤ) * v.ord (algebraMap A K f) := by
-  first | exact @PositivityTheory.HtPt.Plen.len_places
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LengthFormulaSumValuations =====
@@ -819,7 +678,6 @@ include hc in
 theorem prod_valuation_pos (e : B → ℕ) : 0 < ∏ k, v.valuation (w ⟨k, c k⟩) ^ e k := by
   rw [← valuation_prod]
   exact zero_lt_iff.2 ((Valuation.ne_zero_iff _).2 (prod_ne_zero hc e))
-
 
 include hc hle in
 theorem valuation_aeval_le {g : MRing J} {e : B → ℕ} (hg : IsMultiHomog g e) :
@@ -1012,7 +870,6 @@ theorem theta_surjective (hPW : P ≤ W) {c : ∀ k, J k} (hc : ∀ k, (X ⟨k, 
   have h3 : theta hPW c hc u = residue _ x * theta hPW c hc v := by
     simp only [theta, RingHom.comp_apply, h1, map_mul]
   rw [map_mul, h3, mul_assoc, mul_comm (theta hPW c hc v), h2, mul_one]
-
 
 omit [P.IsPrime] [W.IsPrime] in
 def chartHom {K : Type} [Field K] (w : (Σ k, J k) → K) (c : ∀ k, J k) : MRing J →+* chartRingZ w c :=
@@ -1439,7 +1296,7 @@ theorem local_term (w : (Σ k, J k) → K) (hbir : Birational w) (k : B) (c : J 
       obtain ⟨g, hg⟩ := hF.mul_inv_cancel hf0
       exact IsUnit.of_mul_eq_one _ hg
     exact ((isUnit_iff hVW f hs ht (hc' k) hy).1 hu) hxW
-  have key := _root_.GlobalTheory.CompanionTheory.Relay.length_formula_sum_valuations (ZMod p) K (locRing (mCoordIdeal w) W) hnf f hf0
+  have key := _root_.PositivityTheory.HtPt.Plen.len_places (ZMod p) K (locRing (mCoordIdeal w) W) hnf f hf0
   have hset : {v : Place (ZMod p) K | (∀ a : locRing (mCoordIdeal w) W, v.valuation (algebraMap _ K a) ≤ 1) ∧
       ∀ a ∈ maximalIdeal (locRing (mCoordIdeal w) W), v.valuation (algebraMap _ K a) < 1} =
       {v : Place (ZMod p) K | Dom v w W} := by

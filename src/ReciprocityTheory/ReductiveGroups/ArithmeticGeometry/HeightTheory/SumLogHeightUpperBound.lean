@@ -278,7 +278,7 @@ theorem hupsTw_coeff_coeff {σ R : Type*} [CommRing R] (w : σ → ℕ) (p : MvP
   simp only [apply_ite (AddMonoidAlgebra.coeff · s), MvPolynomial.coeff_monomial, MvPolynomial.coeff_zero]
   rw [Finset.sum_eq_single s]
   · by_cases h : hupsWt w s = j
-    · rw [if_pos h.symm, if_pos h, if_pos rfl]
+    · rw [ite_eq_left h.symm, ite_eq_left h, ite_eq_left rfl]
     · simp [h, Ne.symm h]
   · intro t _ hts
     simp [hts]
@@ -290,7 +290,7 @@ theorem hupsTw_ne_zero {σ R : Type*} [CommRing R] (w : σ → ℕ) {p : MvPolyn
     {s : σ →₀ ℕ} (hs : s ∈ p.support) : (hupsTw w p).coeff (hupsWt w s) ≠ 0 := by
   intro h
   have e := hupsTw_coeff_coeff w p (hupsWt w s) s
-  rw [h, MvPolynomial.coeff_zero, if_pos rfl] at e
+  rw [h, MvPolynomial.coeff_zero, ite_eq_left rfl] at e
   exact (MvPolynomial.mem_support_iff.mp hs) e.symm
 
 theorem hupsTw_hom {σ R : Type*} [CommRing R] (w : σ → ℕ) {p : MvPolynomial σ R} {a : ℕ}
@@ -322,7 +322,7 @@ theorem hups_hom_of_mul {σ R : Type*} [CommRing R] [IsDomain R] (w : σ → ℕ
   have h4 := congrArg (fun q => q.coeff (hupsWt w s0 + a)) h3
   simp only [Polynomial.coeff_X_pow_mul, Polynomial.coeff_C_mul_X_pow] at h4
   by_contra hne
-  rw [if_neg hne] at h4
+  rw [ite_eq_right hne] at h4
   exact hupsTw_ne_zero w hs0 h4
 
 theorem hups_deg_of_mul {σ R : Type*} [CommRing R] [IsDomain R] (w : σ → ℕ)
@@ -625,7 +625,7 @@ theorem hups_qnorm_eq {K : Type} [Field K] [NumberField K] {D N : ℕ} (σ : K �
       rw [hP, MvPolynomial.coeff_sum, Fintype.sum_eq_single m]
       · simp
       · intro m' hm'
-        rw [MvPolynomial.coeff_monomial, if_neg]
+        rw [MvPolynomial.coeff_monomial, ite_eq_right]
         exact fun h => hm' (Subtype.ext h)
     have hPS : P.support ⊆ S := by
       intro s hs
@@ -633,7 +633,7 @@ theorem hups_qnorm_eq {K : Type} [Field K] [NumberField K] {D N : ℕ} (σ : K �
       rw [MvPolynomial.mem_support_iff, hP, MvPolynomial.coeff_sum] at hs
       apply hs
       refine Finset.sum_eq_zero fun m _ => ?_
-      rw [MvPolynomial.coeff_monomial, if_neg]
+      rw [MvPolynomial.coeff_monomial, ite_eq_right]
       exact fun h' => h (h' ▸ m.2)
     have hPV := hmulV P hPS
     have hadm : XHom n (Fσ * P) ∧ UDegLE n' (Fσ * P) :=
@@ -693,7 +693,7 @@ theorem polyOf_coeff {κ : Type} (S : Finset (κ →₀ ℕ)) (p : Fin S.card �
   rw [Finset.sum_eq_single j]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hb (mS_injective S h)
   · intro h
@@ -850,7 +850,7 @@ theorem log_relIndex_le {κ : Type} [Fintype κ] [DecidableEq κ] (G₀ : MvPoly
   set b := bG G S e with hbdef
   set Φ := phiB b with hΦdef
   have hΦ : Function.Injective Φ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro p hp
     have hli := linInd_bG G hG' S T e hST
     rw [Fintype.linearIndependent_iff] at hli
@@ -1213,7 +1213,7 @@ theorem up_siegel (hd : d.AxH 𝒜) (F1 : MvPolynomial (_root_.ReciprocityTheory
     rw [hQ, MvPolynomial.coeff_sum, Fintype.sum_eq_single i]
     · simp
     · intro j hj
-      rw [MvPolynomial.coeff_monomial, if_neg]
+      rw [MvPolynomial.coeff_monomial, ite_eq_right]
       intro h
       exact hj (e.symm.injective (Subtype.ext h))
   have hQs : Q.support ⊆ upMono d.D d.N d.n96 d.n96' := by
@@ -1222,7 +1222,7 @@ theorem up_siegel (hd : d.AxH 𝒜) (F1 : MvPolynomial (_root_.ReciprocityTheory
     rw [MvPolynomial.mem_support_iff, hQ, MvPolynomial.coeff_sum] at hs
     apply hs
     refine Finset.sum_eq_zero fun i _ => ?_
-    rw [MvPolynomial.coeff_monomial, if_neg]
+    rw [MvPolynomial.coeff_monomial, ite_eq_right]
     exact fun h' => h (h' ▸ (e.symm i).2)
   have hQKs : (mapK Q).support ⊆ upMono d.D d.N d.n96 d.n96' :=
     (MvPolynomial.support_map_subset _ _).trans hQs

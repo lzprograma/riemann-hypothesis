@@ -118,11 +118,11 @@ theorem sT_sA (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) (
   | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | single p v =>
     obtain ⟨w, c⟩ := p
-    rw [sA_single, dif_pos hab, map_add (f := _), map_add (f := _), sT_Bc, wOp_adLW E hE, sT_single, sT_single]
+    rw [sA_single, dite_eq_left hab, map_add (f := _), map_add (f := _), sT_Bc, wOp_adLW E hE, sT_single, sT_single]
     clear hE
     by_cases hcb : c = b
-    on_goal 1 => subst hcb; rw [if_pos rfl, sT_single]
-    on_goal 2 => rw [if_neg hcb, map_zero, add_zero]
+    on_goal 1 => subst hcb; rw [ite_eq_left rfl, sT_single]
+    on_goal 2 => rw [ite_eq_right hcb, map_zero, add_zero]
     all_goals
       funext d
       simp only [Pi.add_apply, _root_.ReciprocityTheory.ChartRestriction.DS.Lap.LemK.vk_tensV_apply, LinearMap.sub_apply, Module.End.mul_apply,
@@ -141,14 +141,14 @@ theorem sθ_sA (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) 
   | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]; abel
   | single p v =>
     obtain ⟨w, c⟩ := p
-    rw [sA_single, dif_pos rfl, map_add (f := _), map_add (f := _), sθ_Bc, wOp_adLW EM hEM, sθ_single, sθ_single]
+    rw [sA_single, dite_eq_left rfl, map_add (f := _), map_add (f := _), sθ_Bc, wOp_adLW EM hEM, sθ_single, sθ_single]
     have hl : ℓ ((E a a).restrict (fun v hv => hV a a rfl v hv) v) = ((Λ a : ℝ) : ℂ) * ℓ v :=
       hℓ a v _ rfl
     rw [hl]
     clear hl hℓ hEM
     by_cases hca : c = a
-    on_goal 1 => subst hca; rw [if_pos rfl, sθ_single]
-    on_goal 2 => rw [if_neg hca, map_zero, add_zero]
+    on_goal 1 => subst hca; rw [ite_eq_left rfl, sθ_single]
+    on_goal 2 => rw [ite_eq_right hca, map_zero, add_zero]
     all_goals
       funext d
       simp only [Pi.add_apply, Pi.smul_apply, _root_.ReciprocityTheory.ChartRestriction.DS.Lap.LemK.vk_tensV_apply, LinearMap.sub_apply, Module.End.mul_apply, hφ,
@@ -188,8 +188,8 @@ theorem sA_comm_sES (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End �
   rintro ⟨w, c⟩ v
   simp only [Module.End.mul_apply]
 
-  rw [sES_single, map_sum, sA_single, dif_pos hab, map_add (f := _), map_add (f := _), sES_Bc, sES_single]
-  simp only [sA_single, dif_pos hab, adLW_cons, map_add (f := _), Bc_adL, Finset.sum_add_distrib]
+  rw [sES_single, map_sum, sA_single, dite_eq_left hab, map_add (f := _), map_add (f := _), sES_Bc, sES_single]
+  simp only [sA_single, dite_eq_left hab, adLW_cons, map_add (f := _), Bc_adL, Finset.sum_add_distrib]
   by_cases hcb : c = b
   · subst hcb
     simp [sES_single, Finset.sum_sub_distrib, Finset.sum_ite_eq']
@@ -367,7 +367,7 @@ theorem eV_rel (hE : IsGlRep E) (a b c d : Fin n) (hab : ε a = ε b) (hcd : ε 
   refine LinearMap.ext fun v => Subtype.ext ?_
   have kv := LinearMap.congr_fun (hE a b c d) (v : M)
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at kv
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, Submodule.coe_sub, eV_coe, if_pos hab, if_pos hcd]
+  simp only [LinearMap.sub_apply, Module.End.mul_apply, Submodule.coe_sub, eV_coe, ite_eq_left hab, ite_eq_left hcd]
   rw [kv]
   rcases em (b = c) with h1 | h1 <;> rcases em (d = a) with h2 | h2
   · simp [h1, h2, eV_coe, had h1, hcb h2]
@@ -400,7 +400,7 @@ theorem Gm_rel (a b c d : Fin n) :
   rintro ⟨w, c0⟩ v
   simp only [LinearMap.sub_apply, Module.End.mul_apply, Gm_single]
   by_cases h1 : c0 = d <;> by_cases h2 : c0 = b <;>
-    simp only [h1, h2, if_true, if_false, map_zero, Gm_single] <;> (try split_ifs) <;> subst_vars <;>
+    simp only [h1, h2, ite_true, ite_false, map_zero, Gm_single] <;> (try split_ifs) <;> subst_vars <;>
     (try simp only [Gm_single, map_zero, sub_zero, zero_sub]) <;> (try split_ifs) <;> subst_vars <;> simp_all
 
 theorem Dm_Fm (a b c d : Fin n) : Dm V a b * Fm V ε E hV c d = Fm V ε E hV c d * Dm V a b := by

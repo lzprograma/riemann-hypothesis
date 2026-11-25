@@ -69,14 +69,6 @@ theorem range_of_isPullback {P X Y Z : Scheme.{0}} {a : P ⟶ X} {b : P ⟶ Y} {
     refine ⟨h.isoPullback.inv q, ?_⟩
     rw [← Scheme.Hom.comp_apply, h.isoPullback_inv_fst, hq₁]
 
-theorem mul_left_pre {S : Scheme.{0}} {G : Over S} [GrpObj G] {T T' : Over S} (k : T'.left ⟶ T.left)
-    (hk : k ≫ T.hom = T'.hom) (x y : T ⟶ G) (x' y' : T' ⟶ G) (hx : x'.left = k ≫ x.left)
-    (hy : y'.left = k ≫ y.left) : (x' * y').left = k ≫ (x * y).left := by
-  have ex : x' = Over.homMk k hk ≫ x := by ext; simp [hx]
-  have ey : y' = Over.homMk k hk ≫ y := by ext; simp [hy]
-  rw [ex, ey, ← MonObj.comp_mul, Over.comp_left]
-  rfl
-
 theorem isGrpPullback_id_of_loc {S : Scheme.{0}} {A A' : Over S} [GrpObj A] [GrpObj A'] (φ : A.left ⟶ A'.left) [IsIso φ]
     (w : φ ≫ A'.hom = A.hom)
     (h : ∀ p : S, ∃ (W : Scheme.{0}) (x : W ⟶ S) (B : Over W) (_ : GrpObj B) (a : B.left ⟶ A.left),

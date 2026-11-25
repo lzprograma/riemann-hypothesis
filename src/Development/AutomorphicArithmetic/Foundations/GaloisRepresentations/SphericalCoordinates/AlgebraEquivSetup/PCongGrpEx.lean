@@ -5,40 +5,6 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKO
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -51,7 +17,6 @@ open GlobalTheory.Cong (Apart)
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc comp lev GLw IsCen mat sim)
 open UpperTheory.Gal.Int.Geo UpperTheory.Gal.Int.Geo.Pl UpperTheory.Gal.Spc
 open scoped TensorProduct Classical
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.Gal.W2.Seed
 
@@ -123,30 +88,19 @@ private def congGrp (N : ℕ) (w : Plc E) : Subgroup (GL (Fin n) (w.adicCompleti
   mul_mem' := fun {x y} hx hy => ⟨cong_mul hx.1 hy.1, by rw [_root_.mul_inv_rev]; exact cong_mul hy.2 hx.2⟩
   inv_mem' := fun {x} hx => ⟨hx.2, by simpa using hx.1⟩
 
-private theorem isOpen_ball {w : Plc E} {c : w.adicCompletion E} (hc : c ≠ 0) :
-    IsOpen {x : w.adicCompletion E | Valued.v x ≤ Valued.v c} := by
-  have h0 : IsOpen ((w.adicCompletionIntegers E : Set (w.adicCompletion E))) :=
-    Valued.isOpen_valuationSubring _
-  have h1 : {x : w.adicCompletion E | Valued.v x ≤ Valued.v c} =
-      (fun x => c⁻¹ * x) ⁻¹' (w.adicCompletionIntegers E : Set (w.adicCompletion E)) := by
-    ext x
-    have hv : Valued.v c ≠ 0 := (Valuation.ne_zero_iff _).2 hc
-    simp only [Set.mem_setOf_eq, Set.mem_preimage, SetLike.mem_coe, HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 E) E w,
-      map_mul, map_inv₀]
-    rw [inv_mul_le_iff₀ (zero_lt_iff.2 hv), mul_one]
-  rw [h1]
-  exact h0.preimage (continuous_const.mul continuous_id)
-
 private theorem isOpen_cong {N : ℕ} (hN : 0 < N) (w : Plc E) :
     IsOpen {y : GL (Fin n) (w.adicCompletion E) | Cong1 N w y} := by
-  have hc : (N : w.adicCompletion E) ≠ 0 := fun h => vN_ne_zero hN w (by rw [h, map_zero])
   have e : {y : GL (Fin n) (w.adicCompletion E) | Cong1 N w y} =
       ⋂ i, ⋂ k, (fun y : GL (Fin n) (w.adicCompletion E) => (y.val - 1) i k) ⁻¹'
-        {x | Valued.v x ≤ Valued.v (N : w.adicCompletion E)} := by
+        {x : w.adicCompletion E |
+          Valued.v.restrict x ≤ Valued.v.restrict (N : w.adicCompletion E)} := by
     ext y
     simp [Cong1]
   rw [e]
-  refine isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun k => (isOpen_ball hc).preimage ?_
+  have hball : IsOpen {x : w.adicCompletion E |
+      Valued.v.restrict x ≤ Valued.v.restrict (N : w.adicCompletion E)} :=
+    Valued.isOpen_closedBall (w.adicCompletion E) (by simpa using vN_ne_zero hN w)
+  refine isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun k => hball.preimage ?_
   exact ((Units.continuous_val.sub continuous_const).matrix_elem i k)
 
 private theorem isOpen_congGrp {N : ℕ} (hN : 0 < N) (w : Plc E) :

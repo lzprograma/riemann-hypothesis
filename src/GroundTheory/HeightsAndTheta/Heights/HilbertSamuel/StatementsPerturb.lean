@@ -29,12 +29,6 @@ def AmpleOfGenTwist.Statement : Prop :=
     IsMultiHomogIdeal V → KH.GeneratedV S V α → 1 ≤ p →
     KH.AmpleV S V ((q : ℤ) • α + fun _ => (p : ℤ))
 
-section Inhabitants
-
-open ProjLine
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

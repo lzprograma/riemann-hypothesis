@@ -1,51 +1,6 @@
 module
 
 public import Formalism.MahlerMeasure.IsFrozenInv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -129,7 +84,7 @@ lemma ev_monomial (ρ : Fin r) (m : Fin (N + 1) × Fin r →₀ ℕ) (a : ℚ_[p
     rw [hlast, mul_one, MvPolynomial.monomial_eq, Finsupp.prod_fintype _ _ (fun _ => pow_zero _),
       Fintype.prod_prod_type]
     simp only [res_apply, MvPolynomial.algebraMap_eq]
-  · push_neg at h
+  · push Not at h
     obtain ⟨c, hc, hc0⟩ := h
     rw [Finset.prod_eq_zero (Finset.mem_univ c) (by simp [hc, hc0]), mul_zero, mul_zero]
 
@@ -142,10 +97,10 @@ lemma coeff_ev (ρ : Fin r) (n : ℕ) (F : MvPolynomial (Fin (N + 1) × Fin r) �
   rw [map_sum, MvPolynomial.coeff_sum]
   simp only [ev_monomial]
   rw [Finset.sum_eq_single (ext n ρ m')]
-  · rw [if_pos (fun c hc => by rw [ext_last, if_neg hc]), res_ext, MvPolynomial.coeff_monomial, if_pos rfl]
+  · rw [ite_eq_left (fun c hc => by rw [ext_last, ite_eq_right hc]), res_ext, MvPolynomial.coeff_monomial, ite_eq_left rfl]
   · intro m hm hne
     split_ifs with hcond
-    · rw [MvPolynomial.coeff_monomial, if_neg]
+    · rw [MvPolynomial.coeff_monomial, ite_eq_right]
       intro hres
       apply hne
       have heq : m = ext n ρ (res m) := by
@@ -153,12 +108,12 @@ lemma coeff_ev (ρ : Fin r) (n : ℕ) (F : MvPolynomial (Fin (N + 1) × Fin r) �
         refine Fin.lastCases ?_ (fun j => ?_) i
         · by_cases hc : c = ρ
           · subst hc
-            rw [ext_last, if_pos rfl, ← hF m hm, Finset.sum_eq_single c]
+            rw [ext_last, ite_eq_left rfl, ← hF m hm, Finset.sum_eq_single c]
             · intro b _ hb
               exact hcond b hb
             · intro h
               exact absurd (Finset.mem_univ c) h
-          · rw [ext_last, if_neg hc, hcond c hc]
+          · rw [ext_last, ite_eq_right hc, hcond c hc]
         · rw [ext_castSucc, res_apply]
       rw [heq, hres]
     · simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
@@ -368,8 +323,7 @@ theorem vanish (LL : Letters N) (n : ℕ) (ρ : Fin r) (G : MvPolynomial (Fin (N
     by_contra h
     exact Nat.find_min hex hν ⟨ν, rfl, h⟩
   obtain ⟨c, hcρ, hc⟩ : ∃ c, c ≠ ρ ∧ m (Fin.last N, c) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hm
     apply h0
     simp only [kk]
@@ -383,7 +337,7 @@ theorem vanish (LL : Letters N) (n : ℕ) (ρ : Fin r) (G : MvPolynomial (Fin (N
     refine Finset.sum_lt_sum (fun c' hc' => ?_) ⟨c, Finset.mem_erase.2 ⟨hcρ, Finset.mem_univ _⟩, ?_⟩
     · rw [hval c' (Finset.ne_of_mem_erase hc')]
       exact Nat.sub_le _ _
-    · rw [hval c hcρ, if_pos rfl]
+    · rw [hval c hcρ, ite_eq_left rfl]
       omega
   have hG' : ∀ ν, kk ρ ν = kk ρ m' → AddMonoidAlgebra.coeff G ν = 0 := fun ν hν => hmin ν (hν ▸ hmk ▸ hlt)
   have hc0 := congrArg (AddMonoidAlgebra.coeff · m') (hinv c hcρ)
@@ -391,10 +345,10 @@ theorem vanish (LL : Letters N) (n : ℕ) (ρ : Fin r) (G : MvPolynomial (Fin (N
     Finsupp.zero_apply] at hc0
   rw [Fin.sum_univ_castSucc, Finset.sum_eq_zero (fun i _ => ?_), zero_add] at hc0
   · have hl : ((Fin.last N : Fin (N + 1)) : ℕ) < N + 1 := (Fin.last N).isLt
-    rw [if_pos hl] at hc0
+    rw [ite_eq_left hl] at hc0
     simp only [snoc_vec_last, Bool.false_eq_true, ↓reduceIte, LinearMap.neg_apply, LinearMap.comp_apply,
       LinearMap.mulLeft_apply, MvPolynomial.coeff_neg, neg_eq_zero] at hc0
-    rw [MvPolynomial.coeff_X_mul', if_pos (by simp [hm'])] at hc0
+    rw [MvPolynomial.coeff_X_mul', ite_eq_left (by simp [hm'])] at hc0
     erw [MvPolynomial.coeff_pderiv] at hc0
     have e1 : m' - Finsupp.single (Fin.last N, ρ) 1 + Finsupp.single (Fin.last N, c) 1 = m := by
       rw [hm', add_tsub_cancel_right,
@@ -411,7 +365,7 @@ theorem vanish (LL : Letters N) (n : ℕ) (ρ : Fin r) (G : MvPolynomial (Fin (N
     · exact hm h
     · exact hc (by exact_mod_cast h)
   · have hci : ((Fin.castSucc i : Fin (N + 1)) : ℕ) < N + 1 := (Fin.castSucc i).isLt
-    rw [if_pos hci]
+    rw [ite_eq_left hci]
     split_ifs
     · simp only [LinearMap.comp_apply, LinearMap.mulLeft_apply]
       exact coeff_X_pderiv_castSucc ρ G m' hG' i c ρ
@@ -435,12 +389,12 @@ lemma eq_ext_res (n : ℕ) (ρ : Fin r) (m : Fin (N + 1) × Fin r →₀ ℕ)
   refine Fin.lastCases ?_ (fun j => ?_) i
   · by_cases hc : c = ρ
     · subst hc
-      rw [ext_last, if_pos rfl, ← hrow, Finset.sum_eq_single c]
+      rw [ext_last, ite_eq_left rfl, ← hrow, Finset.sum_eq_single c]
       · intro b _ hb
         exact hZ b hb
       · intro h
         exact absurd (Finset.mem_univ c) h
-    · rw [ext_last, if_neg hc, hZ c hc]
+    · rw [ext_last, ite_eq_right hc, hZ c hc]
   · rw [ext_castSucc, res_apply]
 
 lemma mem_IntPol_iff {σ : Type} (x : MvPolynomial σ ℚ_[p]) :

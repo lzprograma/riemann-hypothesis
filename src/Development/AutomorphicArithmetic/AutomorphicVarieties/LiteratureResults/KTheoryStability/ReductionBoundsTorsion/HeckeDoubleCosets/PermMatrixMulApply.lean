@@ -2,56 +2,8 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeckeDoubleCosets.PHeckeFormal
 public import Mathlib.LinearAlgebra.Matrix.Permutation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -131,8 +83,8 @@ theorem mem_Gq_iff (N : ℕ) (π : 𝓞 L) (hπ : π ≠ 0) (γ : Gm L N) :
   constructor
   · rintro ⟨δ, h⟩ i j hj hi
     have e := congrArg (fun g : GL (Fin N) L => (g : Matrix (Fin N) (Fin N) L) i j) h
-    simp only [Units.val_mul, qel_coe, Matrix.mul_diagonal, Matrix.diagonal_mul, hj, hi, if_true,
-      if_false, toK_coe, one_mul] at e
+    simp only [Units.val_mul, qel_coe, Matrix.mul_diagonal, Matrix.diagonal_mul, hj, hi, ite_true,
+      ite_false, toK_coe, one_mul] at e
     rw [Ideal.mem_span_singleton']
     refine ⟨(δ : Matrix (Fin N) (Fin N) (𝓞 L)) i j, algebraMap_inj ?_⟩
     rw [map_mul]
@@ -151,13 +103,13 @@ theorem mem_Gq_iff (N : ℕ) (π : 𝓞 L) (hπ : π ≠ 0) (γ : Gm L N) :
       ext i j
       simp only [Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, M, Matrix.of_apply]
       by_cases hj : (j : ℕ) = 0 <;> by_cases hi : (i : ℕ) = 0
-      · rw [dite_eq_right (by tauto), if_neg (by tauto), if_pos hj, if_pos hi, mul_comm]
-      · rw [dite_eq_left ⟨hj, hi⟩, if_pos hj, if_neg hi, one_mul]
+      · rw [dite_eq_right (by tauto), ite_eq_right (by tauto), ite_eq_left hj, ite_eq_left hi, mul_comm]
+      · rw [dite_eq_left ⟨hj, hi⟩, ite_eq_left hj, ite_eq_right hi, one_mul]
         have hs := Classical.choose_spec (hd i j ⟨hj, hi⟩)
         calc _ = algebraMap (𝓞 L) L (Classical.choose (hd i j ⟨hj, hi⟩) * π) := by rw [map_mul]
           _ = _ := by rw [hs]
-      · rw [dite_eq_right (by tauto), if_pos ⟨hi, hj⟩, if_neg hj, if_pos hi, mul_one, map_mul]
-      · rw [dite_eq_right (by tauto), if_neg (by tauto), if_neg hj, if_neg hi, mul_one, one_mul]
+      · rw [dite_eq_right (by tauto), ite_eq_left ⟨hi, hj⟩, ite_eq_right hj, ite_eq_left hi, mul_one, map_mul]
+      · rw [dite_eq_right (by tauto), ite_eq_right (by tauto), ite_eq_right hj, ite_eq_right hi, mul_one, one_mul]
     have hdet : M.det = (γ : Matrix (Fin N) (Fin N) (𝓞 L)).det := by
       apply algebraMap_inj
       have e := congrArg Matrix.det hM
@@ -215,7 +167,7 @@ theorem finite_cosets (N : ℕ) (π : 𝓞 L) (hπ : Prime π) :
         ((b⁻¹ : Gm L (N + 1)) : Matrix (Fin (N + 1)) (Fin (N + 1)) (𝓞 L)) l 0 = 0 := by
       have := congrFun (congrFun (Units.mul_inv b) i) 0
       rw [Matrix.mul_apply] at this
-      rw [this, Matrix.one_apply, if_neg]
+      rw [this, Matrix.one_apply, ite_eq_right]
       exact fun h => hi (by rw [h]; rfl)
     have hmem : ∀ l, ((a⁻¹ : Gm L (N + 1)) : Matrix (Fin (N + 1)) (Fin (N + 1)) (𝓞 L)) l 0 -
         ((b⁻¹ : Gm L (N + 1)) : Matrix (Fin (N + 1)) (Fin (N + 1)) (𝓞 L)) l 0 ∈ Ideal.span {π} := fun l =>
@@ -250,7 +202,7 @@ theorem pIndex : PIndex := by
       rw [Equiv.swap_apply_eq_iff, Equiv.swap_apply_left] at this
       exact hne this
     have := h ((Equiv.swap 0 k) j) 0 rfl hk0
-    rw [Units.val_mul, permU_coe, permU_inv_coe, permMatrix_mul_apply, if_pos] at this
+    rw [Units.val_mul, permU_coe, permU_inv_coe, permMatrix_mul_apply, ite_eq_left] at this
     · exact one_not_mem_span hπ this
     · simp [Equiv.swap_apply_self]
   have := Nat.card_le_card_of_injective g hg
@@ -332,7 +284,7 @@ theorem exists_clear (n : ℕ) (hn : 1 ≤ n) (I : Ideal R) (hI : I.IsMaximal) (
     rw [Finset.sum_eq_single z]
     · simp [z, hi]
     · intro b _ hb
-      rw [if_neg, zero_mul]
+      rw [ite_eq_right, zero_mul]
       exact fun h => hb (Fin.ext h.1)
     · simp
   have e2 : (U *ᵥ W) i = W i * t := by
@@ -379,7 +331,7 @@ theorem pLow : PLow := by
         (Fin.castAdd r i') (Fin.natAdd n b) *
         ((c⁻¹ : Gm L (n + r)) : Matrix (Fin (n + r)) (Fin (n + r)) (𝓞 L)) (Fin.natAdd n b) z0 = 0 := by
       refine Finset.sum_eq_zero fun b _ => ?_
-      rw [stab_apply, dite_eq_right (by simp), if_neg (fun h => by have := congrArg Fin.val h; simp at this; omega),
+      rw [stab_apply, dite_eq_right (by simp), ite_eq_right (fun h => by have := congrArg Fin.val h; simp at this; omega),
         zero_mul]
     rw [e, add_zero]
     have := hc' i' hi'
@@ -389,7 +341,7 @@ theorem pLow : PLow := by
     rfl
   | right i' =>
     refine Ideal.add_mem _ (Ideal.sum_mem _ fun b _ => ?_) (Ideal.sum_mem _ fun b _ => ?_)
-    · rw [stab_apply, dite_eq_right (by simp), if_neg (fun h => by have := congrArg Fin.val h; simp at this; omega),
+    · rw [stab_apply, dite_eq_right (by simp), ite_eq_right (fun h => by have := congrArg Fin.val h; simp at this; omega),
         zero_mul]
       exact Submodule.zero_mem _
     · exact Ideal.mul_mem_left _ _ (hc b)

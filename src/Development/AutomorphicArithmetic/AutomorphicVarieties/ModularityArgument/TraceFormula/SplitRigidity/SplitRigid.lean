@@ -91,7 +91,7 @@ theorem UpperTheory.V.Z.Tf.GOne.crossUp :
   obtain ⟨M, hM⟩ := isCompact_Icc.exists_bound_of_continuousOn hc
   refine ⟨M, fun σ h1 h2 => ?_⟩
   have h3 := hM σ ⟨h1.le, h2⟩
-  rw [hFe σ h1, if_neg hxy, one_mul, Complex.norm_exp] at h3
+  rw [hFe σ h1, ite_eq_right hxy, one_mul, Complex.norm_exp] at h3
   linarith [Real.add_one_le_exp (∑' p, lterm q (A x) (A y) σ p).re]
 end -- clump:auto
 end -- clump:auto
@@ -109,7 +109,7 @@ theorem UpperTheory.V.Z.Tf.GOne.logTwo :
     ExtId → LogTwo := by
   intro hE W q X d A hS x
   obtain ⟨F, hFa, hFe⟩ := hE W q X d A hS x x
-  simp only [if_true] at hFe
+  simp only [ite_true] at hFe
   have hq : ∀ w, (0 : ℝ) < q w := fun w => by exact_mod_cast lt_of_lt_of_le two_pos (hS.primes.two w)
   have hne : ∀ σ : ℝ, 1 < σ → (σ : ℂ) - 1 ≠ 0 := fun σ h => sub_ne_zero.2 (by exact_mod_cast h.ne')
   have h1 : F 1 ≠ 0 := by
@@ -587,9 +587,9 @@ theorem UpperTheory.V.Z.Tf.SR.splitRigid_of (hSh : ShareBd) (hAS : AbsShare) (hT
       rw [hFe σ hσ]
       by_cases hxy : x = y
       · subst hxy
-        rw [if_pos rfl, if_pos rfl]
+        rw [ite_eq_left rfl, ite_eq_left rfl]
         rfl
-      · rw [if_neg (fun h => hxy (Subtype.ext (by simpa using h))), if_neg hxy]
+      · rw [ite_eq_right (fun h => hxy (Subtype.ext (by simpa using h))), ite_eq_right hxy]
         rfl
   let I : Set (Off E S) := {w | ¬ IsSplitAt w.1}
   have hx₀ : ∀ w : Off E S, π.HasSat w.1 (Finset.univ.val.map (α x₀ w)) := fun w => by
@@ -671,11 +671,11 @@ theorem UpperTheory.V.Z.Tf.SR.shareBd :
       obtain ⟨C, hC⟩ := hLog W q X d A hS (z i)
       refine ⟨C, fun σ a b => ?_⟩
       have := (abs_le.1 (hC σ a b)).2
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       linarith
     · obtain ⟨C, hC⟩ := hCross W q X d A hS (z i) (z j) (fun h => e (hz h))
       refine ⟨C, fun σ a b => ?_⟩
-      rw [if_neg e]
+      rw [ite_eq_right e]
       linarith [hC σ a b]
   choose D hD using bound
   have hMpos : (0 : ℝ) < M := by exact_mod_cast hM

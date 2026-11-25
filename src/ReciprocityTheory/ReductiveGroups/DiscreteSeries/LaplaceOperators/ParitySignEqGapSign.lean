@@ -7,50 +7,6 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleySignature
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.IfaceSt
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.TransportInt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Lemma
-import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.InterlacingWalks.GlueSt, ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.InterlacingWalks.InterlacesULt, ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.InterlacingWalks.RsParLamMinus, ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.InterlacingWalks.WalkEnds, ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.InterlacingWalks.Walk, ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.InterlacingWalks.ParEpsQOf, ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.GapLapStepGapStatement, ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.GapStep, ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ParitySignEqGapSign
@@ -172,7 +128,7 @@ theorem parEps_adj {k r : ℕ} (a : Fin (2 * r + k + 1)) (ha : a.val + 1 < 2 * r
   have h1 : a.val < k - 1 := by omega
   have hl : parEps k r a = true := by
     show (if a.val < k - 1 then true else decide ((a.val - (k - 1)) % 2 = 0)) = true
-    rw [if_pos h1]
+    rw [ite_eq_left h1]
   have hr : parEps k r ⟨a.val + 1, ha⟩ = true := by
     show (if a.val + 1 < k - 1 then true else decide ((a.val + 1 - (k - 1)) % 2 = 0)) = true
     split
@@ -184,7 +140,7 @@ theorem parEps_adj {k r : ℕ} (a : Fin (2 * r + k + 1)) (ha : a.val + 1 < 2 * r
 theorem lowPt_at {k r : ℕ} (u : Fin k → ℝ) (v : Fin (k - 1) → ℝ) (b : Fin (2 * r + 2) → ℝ)
     (i : ℕ) (x : ℝ) (hin : i < 2 * r + k + 1) : lowPt k r u v b i x ⟨i, hin⟩ = x := by
   show (if i = i then x else walkPar k r u v b (i + 1) ⟨i, hin⟩) = x
-  rw [if_pos rfl]
+  rw [ite_eq_left rfl]
 
 theorem lowPt_lt {k r : ℕ} {u : Fin k → ℝ} {v : Fin (k - 1) → ℝ} {b : Fin (2 * r + 2) → ℝ}
     (i : ℕ) (x : ℝ) (hi : i < k) (a : Fin (2 * r + k + 1)) (ha : a.val < i) :
@@ -192,7 +148,7 @@ theorem lowPt_lt {k r : ℕ} {u : Fin k → ℝ} {v : Fin (k - 1) → ℝ} {b : 
   have h1 : a.val ≠ i := by omega
   have h2 : a.val < i + 1 ∧ a.val < k := ⟨by omega, by omega⟩
   show (if a.val = i then x else walkPar k r u v b (i + 1) a) = _
-  rw [if_neg h1]
+  rw [ite_eq_right h1]
   show (if h : a.val < i + 1 ∧ a.val < k then u ⟨a.val, h.2⟩ - 1 / 2 else parLam k r v b a) = _
   rw [dite_eq_left h2]
 
@@ -202,7 +158,7 @@ theorem lowPt_gt {k r : ℕ} {u : Fin k → ℝ} {v : Fin (k - 1) → ℝ} {b : 
   have h1 : a.val ≠ i := by omega
   have h2 : ¬ (a.val < i + 1 ∧ a.val < k) := fun h' => absurd h'.1 (by omega)
   show (if a.val = i then x else walkPar k r u v b (i + 1) a) = _
-  rw [if_neg h1]
+  rw [ite_eq_right h1]
   show (if h : a.val < i + 1 ∧ a.val < k then u ⟨a.val, h.2⟩ - 1 / 2 else parLam k r v b a) = _
   rw [dite_eq_right h2]
 
@@ -219,9 +175,9 @@ theorem walkPar_add {k r : ℕ} (u : Fin k → ℝ) (v : Fin (k - 1) → ℝ) (b
     show (if h : i < i + 1 ∧ i < k then u ⟨i, h.2⟩ - 1 / 2 else parLam k r v b ⟨i, hin⟩) + c = _
     rw [dite_eq_left h2]
   · have hne : a ≠ ⟨i, hin⟩ := fun h => ha (congrArg Fin.val h)
-    rw [Pi.single_apply, if_neg hne, mul_zero, add_zero]
+    rw [Pi.single_apply, ite_eq_right hne, mul_zero, add_zero]
     show _ = (if a.val = i then _ else walkPar k r u v b (i + 1) a)
-    rw [if_neg ha]
+    rw [ite_eq_right ha]
 
 theorem lowPt_sub {k r : ℕ} (u : Fin k → ℝ) (v : Fin (k - 1) → ℝ) (b : Fin (2 * r + 2) → ℝ)
     (i : ℕ) (hin : i < 2 * r + k + 1) (y : ℝ) :
@@ -233,10 +189,10 @@ theorem lowPt_sub {k r : ℕ} (u : Fin k → ℝ) (v : Fin (k - 1) → ℝ) (b :
   · obtain rfl : a = ⟨i, hin⟩ := Fin.ext ha
     rw [lowPt_at, lowPt_at, Pi.single_eq_same]
   · have hne : a ≠ ⟨i, hin⟩ := fun h => ha (congrArg Fin.val h)
-    rw [Pi.single_apply, if_neg hne, sub_zero]
+    rw [Pi.single_apply, ite_eq_right hne, sub_zero]
     show (if a.val = i then y else walkPar k r u v b (i + 1) a) =
       (if a.val = i then y - 1 else walkPar k r u v b (i + 1) a)
-    rw [if_neg ha, if_neg ha]
+    rw [ite_eq_right ha, ite_eq_right ha]
 
 theorem lowPt_bot {k r : ℕ} (u : Fin k → ℝ) (v : Fin (k - 1) → ℝ) (b : Fin (2 * r + 2) → ℝ)
     (i : ℕ) (hi : i < k) (hin : i < 2 * r + k + 1) :
@@ -462,7 +418,7 @@ open ReciprocityTheory.ChartRestriction.DS
 def rsExt {N : ℕ} (f : Fin N → ℝ) (x : ℕ) : ℝ := if h : x < N then f ⟨x, h⟩ else 0
 
 theorem rsExt_mk {N : ℕ} (f : Fin N → ℝ) (x : ℕ) (h : x < N) : f ⟨x, h⟩ = rsExt f x := by
-  rw [rsExt, dif_pos h]
+  rw [rsExt, dite_eq_left h]
 
 def rsG (B : ℕ → ℝ) (t j m q : ℕ) : ℝ :=
   if q < j then -B q else if q = j then -B q - (j : ℝ) * t + m else -B q - (q : ℝ) * t
@@ -509,20 +465,20 @@ theorem rsG_step (B : ℕ → ℝ) (h : ℝ) (t j m q N : ℕ) (hm : m ≤ j * t
   have e1 : ((q : ℝ) + 1) * t = (q : ℝ) * t + t := by ring
   unfold rsG
   rcases lt_trichotomy (q + 1) j with h1 | h1 | h1
-  · rw [if_pos h1, if_pos (show q < j by omega)]
+  · rw [ite_eq_left h1, ite_eq_left (show q < j by omega)]
     constructor <;> linarith
-  · rw [if_neg (show ¬ q + 1 < j by omega), if_pos h1, if_pos (show q < j by omega)]
+  · rw [ite_eq_right (show ¬ q + 1 < j by omega), ite_eq_left h1, ite_eq_left (show q < j by omega)]
     constructor <;> linarith
   · rcases Nat.lt_or_ge j q with h2 | h2
-    · rw [if_neg (show ¬ q + 1 < j by omega), if_neg (show q + 1 ≠ j by omega),
-        if_neg (show ¬ q < j by omega), if_neg (show q ≠ j by omega)]
+    · rw [ite_eq_right (show ¬ q + 1 < j by omega), ite_eq_right (show q + 1 ≠ j by omega),
+        ite_eq_right (show ¬ q < j by omega), ite_eq_right (show q ≠ j by omega)]
       push_cast
       have hqt : (0 : ℝ) ≤ (q : ℝ) * t := by positivity
       constructor <;> linarith
     · have hqj : q = j := by omega
       have hqt : (q : ℝ) * t = (j : ℝ) * t := by rw [hqj]
-      rw [if_neg (show ¬ q + 1 < j by omega), if_neg (show q + 1 ≠ j by omega),
-        if_neg (show ¬ q < j by omega), if_pos hqj]
+      rw [ite_eq_right (show ¬ q + 1 < j by omega), ite_eq_right (show q + 1 ≠ j by omega),
+        ite_eq_right (show ¬ q < j by omega), ite_eq_left hqj]
       push_cast
       constructor <;> linarith
 
@@ -548,12 +504,12 @@ theorem rsF_step (k r : ℕ) (U B : ℕ → ℝ) (h : ℝ) (t j m x : ℕ) (hk :
       (k - 1 ≤ x → h ≤ rsF k U B t j m x - rsF k U B t j m (x + 1)) := by
   by_cases hx1 : x + 1 < k
   · have hx0 : x < k := by omega
-    rw [rsF, rsF, if_pos hx1, if_pos hx0]
+    rw [rsF, rsF, ite_eq_left hx1, ite_eq_left hx0]
     exact ⟨by linarith [hUlt x hx1], fun h' => absurd h' (by omega)⟩
   · by_cases hx0 : x < k
     · have hxk : x = k - 1 := by omega
       have e : x + 1 - (k - 1) = 1 := by omega
-      rw [rsF, rsF, if_neg hx1, if_pos hx0, e]
+      rw [rsF, rsF, ite_eq_right hx1, ite_eq_left hx0, e]
       have hle := rsG_le B t j m 1 hm
       have hb01 : B 0 < B 1 := hBlt 0 (by omega)
       have hg01 : h ≤ B 1 - B 0 := hBgap 0 (by omega)
@@ -564,7 +520,7 @@ theorem rsF_step (k r : ℕ) (U B : ℕ → ℝ) (h : ℝ) (t j m x : ℕ) (hk :
         linarith
     · have hq : x - (k - 1) + 1 < 2 * r + 2 := by omega
       have e : x + 1 - (k - 1) = x - (k - 1) + 1 := by omega
-      rw [rsF, rsF, if_neg hx1, if_neg hx0, e]
+      rw [rsF, rsF, ite_eq_right hx1, ite_eq_right hx0, e]
       obtain ⟨h1, h2⟩ := rsG_step B h t j m (x - (k - 1)) (2 * r + 2) hm hBlt hBgap hq
       exact ⟨h1, fun _ => h2⟩
 
@@ -573,7 +529,7 @@ theorem rsParLam_minus (k r : ℕ) (v : Fin (k - 1) → ℝ) (b : Fin (2 * r + 2
     parLam k r v b a = -rsExt b (a.val - (k - 1)) := by
   have h1 : ¬ a.val < k - 1 := by omega
   have h2 : a.val - (k - 1) < 2 * r + 2 := by have := a.isLt; omega
-  simp only [parLam, rsExt, dif_neg h1, dif_pos h2]
+  simp only [parLam, rsExt, dite_eq_right h1, dite_eq_left h2]
 
 private lemma strictAnti_lt_of_succ_lt (g : ℕ → ℝ) (n : ℕ) (hg : ∀ x, x + 1 < n → g (x + 1) < g x) :
     ∀ x y, x < y → y < n → g y < g x := by
@@ -659,7 +615,7 @@ theorem raiseStep : RaiseStepStatement := by
     apply hne
     have e1 : parEps k r x = true := by
       show (if x.val < k - 1 then true else decide ((x.val - (k - 1)) % 2 = 0)) = true
-      rw [if_pos (show x.val < k - 1 by omega)]
+      rw [ite_eq_left (show x.val < k - 1 by omega)]
     have e2 : parEps k r y = true := by
       show (if y.val < k - 1 then true else decide ((y.val - (k - 1)) % 2 = 0)) = true
       split_ifs with h1
@@ -684,13 +640,13 @@ theorem raiseStep : RaiseStepStatement := by
     · obtain ⟨z1, hz1⟩ := hhalf ⟨x.val, hx⟩ x
       refine ⟨z1 + z2, ?_⟩
       show rsF k (rsExt u) (rsExt b) t j m x.val - _ = _
-      rw [rsF, if_pos hx, ← rsExt_mk u x.val hx, Int.cast_add]
+      rw [rsF, ite_eq_left hx, ← rsExt_mk u x.val hx, Int.cast_add]
       linarith
     · obtain ⟨z3, hz3⟩ := rsG_int (rsExt b) t j m (x.val - (k - 1))
       have hl := rsParLam_minus k r v b x (by omega)
       refine ⟨z3 + z2, ?_⟩
       show rsF k (rsExt u) (rsExt b) t j m x.val - _ = _
-      rw [rsF, if_neg hx, hz3, Int.cast_add]
+      rw [rsF, ite_eq_right hx, hz3, Int.cast_add]
       linarith
   have key : ∀ m, m ≤ j * t → P (rsPt k r u b t j m) := by
     intro m
@@ -714,7 +670,7 @@ theorem raiseStep : RaiseStepStatement := by
           (⟨i.val, by omega⟩ : Fin (2 * r + k + 1)) < ⟨j + k - 1, by omega⟩)
         have hv : rsPt k r u b t j m ⟨i.val, by omega⟩ = u i - 1 / 2 := by
           show rsF k (rsExt u) (rsExt b) t j m i.val = u i - 1 / 2
-          rw [rsF, if_pos i.isLt, ← rsExt_mk u i.val i.isLt]
+          rw [rsF, ite_eq_left i.isLt, ← rsExt_mk u i.val i.isLt]
         linarith
   have := key (j * t) le_rfl
   rwa [rsPt_top] at this

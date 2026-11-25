@@ -77,8 +77,6 @@ structure CartHyp (V : VF C) (g : Fin 2) : Prop where
 
   Fm : ∀ x ∈ X.TySet V g, Fs V.l x ∈ X.TySet V g
 
-  sumV : ∀ y : ℕ → ℕ → I g ⊕ JJ I g → C, (∀ s, y s ∈ X.TySet V g) → sumV y ∈ X.TySet V g
-
   t2 : ∀ x ∈ X.TySet V g, ∀ s, (∀ i < s, x i = 0) → ∀ n, V.Ge 0 (x s n)
 
   t3 : ∀ ζ : JJ I g → C, (∀ q, V.Ge 0 (ζ q)) → const0 (Sum.elim 0 ζ) ∈ X.TySet V g
@@ -98,7 +96,6 @@ def cart {V : VF C} {g : Fin 2} (H : X.CartHyp V g) : Cart V d (I g) (JJ I g) wh
   teich_mem := H.teich
   V_mem := H.Vm
   F_mem := H.Fm
-  sumV_mem := H.sumV
   t2 := H.t2
   t3 := H.t3
   t4 := H.t4
@@ -135,7 +132,7 @@ theorem hLf_leaf (g : Fin 2) (a a' : ZMod d) (μ : WV I →₀ ℕ)
   by_contra hn
   apply h
   show (if ∀ w ∈ μ.support, X.OnLf g a a' w then MvPowerSeries.coeff μ X.hRow else 0) = 0
-  rw [if_neg hn]
+  rw [ite_eq_right hn]
 
 structure RankHyp : Prop where
   big_compl : ∀ g a, X.big (1 - g) a ↔ ¬ X.big g a

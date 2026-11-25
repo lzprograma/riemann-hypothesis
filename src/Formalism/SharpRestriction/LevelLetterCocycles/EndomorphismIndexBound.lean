@@ -6,53 +6,10 @@ public import Formalism.CharacterColumnKernels.StatementN
 public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthQuotSmulRangeFree
 public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
 public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Lemma
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.Tactic.TypeStar
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.CharacterColumnKernels.CharacterColumnKernelLengthBound, Formalism.CharacterColumnKernels.IdempotentNormalForms.CharacterColumnKernelLengthBound, Formalism.CharacterColumnKernels.StatementNG, Formalism.CharacterColumnKernels.IdempotentNormalForms.SumIteLe, Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
@@ -442,7 +399,7 @@ theorem len_le (hsep : ∀ x y : X, x ≠ y → ∃ f ∈ T, f x ≠ f y)
     refine iSup₂_le fun x hx => ?_
     intro v hv
     rw [LinearMap.mem_ker, LinearMap.sub_apply, hvx x _ v hv, hfun S x,
-      if_pos (Finset.mem_coe.mp hx)]
+      ite_eq_left (Finset.mem_coe.mp hx)]
     simp
   have hBle : VS T (actK T act).toRingHom ((S : Set X)ᶜ) ≤
       LinearMap.ker (actK T act (∑ x ∈ S, e x)) := by
@@ -450,7 +407,7 @@ theorem len_le (hsep : ∀ x y : X, x ≠ y → ∃ f ∈ T, f x ≠ f y)
     refine iSup₂_le fun x hx => ?_
     intro v hv
     have hx' : x ∉ S := fun h => hx (Finset.mem_coe.mpr h)
-    rw [LinearMap.mem_ker, hvx x _ v hv, hfun S x, if_neg hx']
+    rw [LinearMap.mem_ker, hvx x _ v hv, hfun S x, ite_eq_right hx']
     simp
   have hPA' : ∀ v, actK T act (∑ x ∈ S, e x) v ∈ VS T (actK T act).toRingHom (S : Set X) := by
     intro v
@@ -536,12 +493,12 @@ theorem vcc_ne_top (hsep : ∀ x y : X, x ≠ y → ∃ f ∈ T, f x ≠ f y) (Z
     funext y
     have hy : y.1 ≠ π := fun h => y.2 (by rw [Finset.mem_coe, h]; exact hπ)
     show (e : X → O) y.1 = 0
-    rw [he, if_neg (by simpa using hy)]
+    rw [he, ite_eq_right (by simpa using hy)]
   have hle : vcc T (Z : Set X) π ≤ IsDiscreteValuationRing.addVal O ((e : X → O) π) := by
     unfold Formalism.NG.vcc
     exact iInf₂_le e heI
   intro htop
-  rw [htop, top_le_iff, he, if_pos (Finset.mem_singleton_self π)] at hle
+  rw [htop, top_le_iff, he, ite_eq_left (Finset.mem_singleton_self π)] at hle
   exact hC ((IsDiscreteValuationRing.addVal_eq_top_iff).mp hle)
 
 theorem addVal_int (l : ℕ) [Fact l.Prime] (hl : ¬ IsUnit (l : O)) (A : ℤ) (hA : A ≠ 0) :

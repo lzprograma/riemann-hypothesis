@@ -29,7 +29,7 @@ def xiZ (ξ : kˣ →* Kˣ) (a : k) : K := if h : IsUnit a then ((ξ h.unit : K�
 
 theorem xiZ_unit (ξ : kˣ →* Kˣ) (u : kˣ) : xiZ ξ (u : k) = ((ξ u : Kˣ) : K) := by
   unfold xiZ
-  rw [dif_pos u.isUnit, IsUnit.unit_of_val_units]
+  rw [dite_eq_left u.isUnit, IsUnit.unit_of_val_units]
 
 theorem xiZ_mul (ξ : kˣ →* Kˣ) (a b : k) : xiZ ξ (a * b) = xiZ ξ a * xiZ ξ b := by
   by_cases ha : IsUnit a
@@ -39,10 +39,10 @@ theorem xiZ_mul (ξ : kˣ →* Kˣ) (a b : k) : xiZ ξ (a * b) = xiZ ξ a * xiZ 
       rw [← Units.val_mul, xiZ_unit, xiZ_unit, xiZ_unit, map_mul, Units.val_mul]
     · have h : ¬ IsUnit (a * b) := fun h => hb (isUnit_of_mul_isUnit_right h)
       unfold xiZ
-      rw [dif_neg h, dif_neg hb, mul_zero]
+      rw [dite_eq_right h, dite_eq_right hb, mul_zero]
   · have h : ¬ IsUnit (a * b) := fun h => ha (isUnit_of_mul_isUnit_left h)
     unfold xiZ
-    rw [dif_neg h, dif_neg ha, zero_mul]
+    rw [dite_eq_right h, dite_eq_right ha, zero_mul]
 
 def LLz (r : ℕ) {a b : ℕ} (M : Matrix (Fin a) (Fin b) k) : Prop := ∀ i j, r ≤ i.1 → j.1 < r → M i j = 0
 
@@ -91,9 +91,9 @@ theorem phiZ_law (ξ : kˣ →* Kˣ) {r a b : ℕ} (ha : r ≤ a) (hb : r ≤ b)
       exact (hA.mul ha h).mul hb hB
   unfold phiZ
   by_cases h : LLz r M
-  · rw [if_pos h, if_pos (hiff.2 h), tl_mul ha hb hb _ _ hB, tl_mul ha ha hb _ _ h, Matrix.det_mul, Matrix.det_mul, xiZ_mul, xiZ_mul]
+  · rw [ite_eq_left h, ite_eq_left (hiff.2 h), tl_mul ha hb hb _ _ hB, tl_mul ha ha hb _ _ h, Matrix.det_mul, Matrix.det_mul, xiZ_mul, xiZ_mul]
     ring
-  · rw [if_neg h, if_neg (mt hiff.1 h), mul_zero]
+  · rw [ite_eq_right h, ite_eq_right (mt hiff.1 h), mul_zero]
 
 theorem det_LLz {r d : ℕ} (A : Matrix (Fin (r + d)) (Fin (r + d)) k) (hA : LLz r A) :
     A.det = (A.submatrix (Fin.castAdd d) (Fin.castAdd d)).det * (A.submatrix (Fin.natAdd r) (Fin.natAdd r)).det := by
@@ -266,7 +266,7 @@ theorem phiQ_eq {q : ℕ} (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : 
       LocE.entB q k₀ 0 n' 0 n 0 0 x p p' = x (Pi.single ⟨p', hp'⟩ 1) ⟨p, hp⟩ := fun p p' hp hp' => entB_inB q k₀ n' n 0 0 x hp hp'
   unfold LocE.PhiQ
   by_cases hI : ∀ s l, IntAt P (x (Pi.single s 1) l)
-  · rw [if_pos hI]
+  · rw [ite_eq_left hI]
     have hC1 : ∀ p p', p < n + 0 → p' < n' + 0 → IntAt P (LocE.entB q k₀ 0 n' 0 n 0 0 x p p') := fun p p' hp hp' => by
       rw [hent p p' hp hp']
       exact hI _ _
@@ -282,15 +282,15 @@ theorem phiQ_eq {q : ℕ} (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : 
         exact ciIntAt_div hq hu (hI _ _) (h ⟨p, hp2⟩ ⟨p', hp''⟩ hp1 hp')
     unfold phiZ
     by_cases hL : LLz r (redMQ P x)
-    · rw [if_pos ⟨hC1, hC2.2 hL⟩, if_pos hL]
+    · rw [ite_eq_left ⟨hC1, hC2.2 hL⟩, ite_eq_left hL]
       have hmat : (Matrix.of fun s t : Fin r => LocE.entB q k₀ 0 n' 0 n 0 0 x s.1 t.1) =
           Matrix.of fun s t : Fin r => x (Pi.single (Fin.castLE hn' t) 1) (Fin.castLE hn s) := by
         ext s t
         exact hent _ _ _ _
       rw [hmat, unitV_eq, redP_det (Matrix.of fun s t : Fin r => x (Pi.single (Fin.castLE hn' t) 1) (Fin.castLE hn s)) fun s t => hI _ _]
       exact congrArg (fun N => xiZ ξ (Matrix.det N)) (Matrix.ext fun _ _ => rfl)
-    · rw [if_neg (fun h => hL (hC2.1 h.2)), if_neg hL]
-  · rw [if_neg hI, if_neg]
+    · rw [ite_eq_right (fun h => hL (hC2.1 h.2)), ite_eq_right hL]
+  · rw [ite_eq_right hI, ite_eq_right]
     intro h
     exact hI fun s l => by
       have h1 := h.1 l.1 s.1 l.2 s.2
@@ -344,16 +344,16 @@ theorem jq_LLz {q : ℕ} (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hq0 : (q : E
     intro l
     rw [ciInX_apply]
     by_cases hl : l.1 < n
-    · rw [dif_pos hl]
+    · rw [dite_eq_left hl]
       by_cases hlj : (⟨l.1, hl⟩ : Fin n) = j
       · have h2 : ¬ (kj ≤ l.1 ∧ l.1 < n) := by
           have h3 : l.1 = j.1 := congrArg Fin.val hlj
           omega
-        rw [if_neg h2, hlj, Pi.single_eq_same, zpow_zero, inv_one, one_mul]
+        rw [ite_eq_right h2, hlj, Pi.single_eq_same, zpow_zero, inv_one, one_mul]
         exact ciIntAt_one
       · rw [Pi.single_eq_of_ne hlj, mul_zero]
         exact ciIntAt_zero
-    · rw [dif_neg hl, mul_zero]
+    · rw [dite_eq_right hl, mul_zero]
       exact ciIntAt_zero
   have h2 := (hr.2 _).2 h1
   rw [hrg] at h2
@@ -363,7 +363,7 @@ theorem jq_LLz {q : ℕ} (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hq0 : (q : E
   beta_reduce at h3
   rw [ciInX_castAdd] at h3
   have h4 : (kj ≤ (Fin.castAdd c i).1 ∧ (Fin.castAdd c i).1 < n) := ⟨hi, i.2⟩
-  rw [if_pos h4, zpow_one, inv_mul_eq_div] at h3
+  rw [ite_eq_left h4, zpow_one, inv_mul_eq_div] at h3
   exact (ciRed_of_div hq hq0 h3).2
 
 theorem lamQB_eq (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {kj r n c d : ℕ} (hkj : kj = r) (hn : n = r + d) {g : Sp E n ≃ₗ[E] Sp E n}
@@ -439,9 +439,9 @@ theorem ftY_moveQ (hcst : cst.Ok) (w : rowSG Pr sel mu) (hw : w.1 ∉ Pr.vGs) (h
         exact h j) ((hk _).2 (ciSingle_mem i))
       simpa using this
   unfold ftY
-  rw [if_neg hw, if_neg hw]
+  rw [ite_eq_right hw, ite_eq_right hw]
   by_cases hI : ∀ i : Fin n, IntAt w.1 ((qOf w.1 : X.E) ^ cst.M * η (Pi.single i 1))
-  · rw [if_pos (hiff.2 hI), if_pos hI]
+  · rw [ite_eq_left (hiff.2 hI), ite_eq_left hI]
     have hL : ∀ v ∈ stdAt X.E n w.1, IntAt w.1 ((qOf w.1 : X.E) ^ cst.M * η v) := by
       intro v hv
       have := intAt_linear_form_on_std w.1 (((qOf w.1 : X.E) ^ cst.M) • η) (fun j => by
@@ -477,7 +477,7 @@ theorem ftY_moveQ (hcst : cst.Ok) (w : rowSG Pr sel mu) (hw : w.1 ∉ Pr.vGs) (h
       exact heps.mul h2
     · refine hqD _ ?_
       exact (hqn _).mul ((hqn _).mul (heps.mul h1))
-  · rw [if_neg (mt hiff.1 hI), if_neg hI]
+  · rw [ite_eq_right (mt hiff.1 hI), ite_eq_right hI]
 
 end FtYQ
 
@@ -492,25 +492,16 @@ theorem prod_uSG_dite {α M : Type} [CommMonoid M] {A B : Finset α} (hd : ∀ P
   have e0 : ∀ w : {w // w ∈ A ∪ B}, (if h : w.1 ∈ A then f ⟨w.1, h⟩ else g ⟨w.1, (Finset.mem_union.mp w.2).resolve_left h⟩) = F w.1 := by
     intro w
     by_cases h : w.1 ∈ A
-    · simp only [F, dif_pos h]
-    · simp only [F, dif_neg h, dif_pos ((Finset.mem_union.mp w.2).resolve_left h)]
-  have e1 : ∀ w : {w // w ∈ A}, f w = F w.1 := fun w => by simp only [F, dif_pos w.2]
-  have e2 : ∀ P : {P // P ∈ B}, g P = F P.1 := fun P => by simp only [F, dif_neg (hd P.1 P.2), dif_pos P.2]
+    · simp only [F, dite_eq_left h]
+    · simp only [F, dite_eq_right h, dite_eq_left ((Finset.mem_union.mp w.2).resolve_left h)]
+  have e1 : ∀ w : {w // w ∈ A}, f w = F w.1 := fun w => by simp only [F, dite_eq_left w.2]
+  have e2 : ∀ P : {P // P ∈ B}, g P = F P.1 := fun P => by simp only [F, dite_eq_right (hd P.1 P.2), dite_eq_left P.2]
   rw [Fintype.prod_congr _ _ e0, Fintype.prod_congr _ _ e1, Fintype.prod_congr _ _ e2]
   rw [Finset.univ_eq_attach, Finset.univ_eq_attach, Finset.univ_eq_attach, Finset.prod_attach (A ∪ B) F, Finset.prod_attach A F,
     Finset.prod_attach B F]
   exact Finset.prod_union (Finset.disjoint_left.2 fun a ha hb => hd a hb ha)
 
 end ProdU
-
-section InvQ
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) {u : Pr.Word}
-
-
-end InvQ
 
 section Cp2Q
 
@@ -534,7 +525,7 @@ theorem frsF_smulQ {j : ℕ} (p : ChPt (R := R) sel mu u j)
   · refine ⟨((g.2.2 : GLQ X.E (R.N j) (QE sel (mu : Chr X.F X.E X.K))) ⟨w.1, (Finset.mem_union.mp w.2).resolve_left hw⟩)⁻¹, ?_,
       fun h => absurd h hw, fun _ => rfl⟩
     unfold frsF
-    rw [dif_neg hw, dif_neg hw]
+    rw [dite_eq_right hw, dite_eq_right hw]
     rfl
 
 

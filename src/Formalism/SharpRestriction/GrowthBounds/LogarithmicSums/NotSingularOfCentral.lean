@@ -2,48 +2,8 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.Conclusion1OfGainBoundAll
 public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.TsumTruncatedShiftLe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -115,7 +75,6 @@ theorem fill_ge_one (P : ParameterChoice' D L) (X : Inst D L) (b : HH D → ℤ)
 theorem kaJ_nonneg (j : ℕ) (hj : j ∈ SizeData₂.lifts D) : 0 ≤ kaJ D j := by
   have hj1 : 1 ≤ j := (Finset.mem_Icc.mp hj).1
   have hjr : (1 : ℝ) ≤ (j : ℝ) := by exact_mod_cast hj1
-  have ht : (0 : ℝ) ≤ (D.R.t : ℝ) := by positivity
   unfold kaJ
   apply div_nonneg _ (by norm_num)
   have hm : 0 ≤ (2 * (j : ℝ) - 1) * ((D.R.t : ℝ) + 1) := mul_nonneg (by linarith) (by linarith)
@@ -230,7 +189,6 @@ theorem Pr_nonneg (P : ParameterChoice' D L) (X : Inst D L) (K : Consts) (hK : K
   obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, hPr1, hPr2⟩ := hK
   obtain ⟨hk, hNm, hSc, hw500, h5, hw1, hw2, hab⟩ := basics P
   have hη := L.etaSz_pos
-  have hb' := sc_b'_nonneg L.sc
   have hNm0 : 0 ≤ Nm D := by unfold Nm; exact Nat.cast_nonneg _
   have hcG : 0 ≤ cG L := by unfold cG; linarith
   have hbase : 0 ≤ L.sc.w'' D.R.n + L.etaSz + cG L + Nm D := by linarith
@@ -450,7 +408,6 @@ theorem g_zero_ge_ask_sum (P : ParameterChoice' D L) (X : Inst D L) (K : Consts)
   apply Finset.sum_le_sum
   intro s hs
   obtain ⟨ha1, ha2, ha3, _, _⟩ := a_bounds P a b hW s (mem_TT_of_topsOn X p t0 s hs)
-  have ha := sc_one_lt_a L.sc
   have hask : askP X a b p j s = ∑' e : ℕ, if Odd e ∧ ¬ Excl D p s e then
       max 0 ((a s : ℝ) / (p : ℝ) ^ e - fill X b j (partner D p s e)) else 0 := by
     unfold askP
@@ -483,7 +440,6 @@ theorem noop (P : ParameterChoice' D L) (X : Inst D L) (K : Consts) (hK : K.Nonn
     intro j hj
     have hlo := lo_ge_cp P K hK Ce C bo hN p hp
     have hdl := sum_dl_add_ep_le X K hK Ce C bo hCe hN p hp h9
-    have hep : (0 : ℝ) ≤ (X.ep p : ℝ) := by positivity
     rw [← sum_reps X p]
     have hper : ∀ t0 ∈ reps X p, ∑ s ∈ topsOn X p t0, (askP X a b p j s - lo K L C bo p) ≤
         max (g0 X K a b p j t0) 0 + dl X K p t0 := by
@@ -524,7 +480,6 @@ theorem gain_bounds (P : ParameterChoice' D L) (X : Inst D L) (K : Consts) (hK :
     0 ≤ gainP X K a b p j ∧ gainP X K a b p j ≤ 4 * (D.host.TT.card : ℝ) * L.sc.a / (p : ℝ) := by
   have hp0 : (0 : ℝ) < p := by exact_mod_cast hp.pos
   have ha : 0 ≤ L.sc.a := le_trans zero_le_one (sc_one_lt_a L.sc).le
-  have hT : (0 : ℝ) ≤ (D.host.TT.card : ℝ) := Nat.cast_nonneg _
   have hR : 0 ≤ 4 * (D.host.TT.card : ℝ) * L.sc.a / (p : ℝ) := by positivity
   unfold gainP
   split_ifs with hc
@@ -752,7 +707,6 @@ theorem gain_bound_at_of_star (P : ParameterChoice' D L) (X : Inst D L) (K : Con
     have h3 := sum_dl_add_ep_le X K hK Ce C bo hCe hN p hp (h9 p hp hpX'')
     have h4 : ∑ t0 ∈ V, dl X K p t0 ≤ ∑ t0 ∈ reps X p, dl X K p t0 :=
       Finset.sum_le_sum_of_subset_of_nonneg (VV_subset_reps X K a b p) (fun t0 _ _ => dl_nonneg X K hK p hp t0)
-    have hep : (0 : ℝ) ≤ (X.ep p : ℝ) := Nat.cast_nonneg _
     have h5 : (X.ep p : ℝ) + (D.R.m : ℝ) * ∑ t0 ∈ V, dl X K p t0 ≤ (D.R.m : ℝ) * fl D L.sc C p := by
       have h6 : (D.R.m : ℝ) * (∑ t0 ∈ V, dl X K p t0 + (X.ep p : ℝ)) ≤ (D.R.m : ℝ) * fl D L.sc C p :=
         mul_le_mul_of_nonneg_left (by linarith) hm0

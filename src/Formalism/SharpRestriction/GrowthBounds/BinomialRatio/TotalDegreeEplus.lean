@@ -1,45 +1,10 @@
 module
 
+import all Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairLift
+import Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptFin
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Presheaf
 
@@ -66,20 +31,7 @@ theorem toNat_addVal_mul {a b : O} (ha : a ≠ 0) (hb : b ≠ 0) :
 
 private theorem vO_eq_addVal_div_ramE_of_ne_zero (p : ℕ) {z : O} (hz : z ≠ 0) :
     vO p z = ((((IsDiscreteValuationRing.addVal O z).toNat : ℚ) / (ramE p O : ℚ) : ℚ) : WithTop ℚ) := by
-  have hz' : algebraMap O (KK O) z ≠ 0 := by
-    intro h
-    exact hz ((IsFractionRing.to_map_eq_zero_iff).mp h)
-  have hspec := Classical.choose_spec (IsLocalization.surj (nonZeroDivisors O) (algebraMap O (KK O) z))
-  simp only [vO, vK, ordW, if_neg hz']
-  generalize Classical.choose (IsLocalization.surj (nonZeroDivisors O) (algebraMap O (KK O) z)) = ab at hspec ⊢
-  rw [← map_mul] at hspec
-  have hmul : z * (ab.2 : O) = ab.1 := IsFractionRing.injective O (KK O) hspec
-  have hb : (ab.2 : O) ≠ 0 := nonZeroDivisors.coe_ne_zero ab.2
-  rw [← hmul, toNat_addVal_mul hz hb]
-  simp only [WithTop.map_coe]
-  congr 1
-  push_cast
-  ring
+  apply _root_.Formalism.MainNotions.ColumnSystems.Pf.vO_eq_addVal_div_ramE_of_ne_zero' <;> assumption
 
 theorem vK_alg_nonneg (p : ℕ) (o : O) : (0 : WithTop ℚ) ≤ vK p (algebraMap O (KK O) o) := by
   by_cases ho : o = 0
@@ -117,9 +69,9 @@ theorem finrank_pi_supp {K β V : Type*} [Field K] [AddCommGroup V] [Module K V]
     { toFun := fun x b => ⟨(x : β → V) b, x.2 b (Set.mem_univ _)⟩
       invFun := fun y => ⟨fun b => if hb : b ∈ F then (y ⟨b, hb⟩ : V) else 0, fun b _ => by
         by_cases hb : b ∈ F
-        · simp only [dif_pos hb]
+        · simp only [dite_eq_left hb]
           exact (y ⟨b, hb⟩).2
-        · simp only [dif_neg hb]
+        · simp only [dite_eq_right hb]
           exact Submodule.zero_mem _⟩
       map_add' := fun x y => by
         funext b
@@ -132,7 +84,7 @@ theorem finrank_pi_supp {K β V : Type*} [Field K] [AddCommGroup V] [Module K V]
         funext b
         by_cases hb : b ∈ F
         · simp [hb]
-        · simp only [dif_neg hb]
+        · simp only [dite_eq_right hb]
           exact (hz _ b hb (x.2 b (Set.mem_univ _))).symm
       right_inv := fun y => by
         funext b
@@ -235,36 +187,7 @@ def degBound (D : BlockData N) : ℕ :=
 
 theorem gens_totalDegree [NeZero r] (D : BlockData N) (j : Fin D.T.t → ℕ) (jp : ℕ) (hl : D.LevelOK j jp)
     (x : MvPolynomial (BVar N r D.T.t) (KK O)) (hx : x ∈ D.gens O (r := r) j jp) : x.totalDegree ≤ degBound D := by
-  obtain ⟨y, hy, g, hg, rfl⟩ := hx
-  have hy1 : y.totalDegree ≤ ∑ a, D.LL.deg a := by
-    have h1 : y ∈ chPol (KK O) r (D.lettersAt j jp) := hy.1.1
-    refine (totalDegree_chPol _ y h1).trans (Finset.sum_le_sum fun a _ => ?_)
-    show D.LL.deg a - _ - _ ≤ D.LL.deg a
-    omega
-  have hg1 : g.totalDegree ≤ D.B := (totalDegree_xi _ _ g hg).trans (Nat.sub_le _ _)
-  have hE : (∏ i, D.Ehat O (r := r) i ^ j i).totalDegree ≤ ∑ i, D.LL.deg (D.letterAt (D.T.pos i)) * 2 := by
-    refine (totalDegree_finsetProd _ _).trans (Finset.sum_le_sum fun i _ => ?_)
-    refine (totalDegree_pow _ _).trans ?_
-    exact Nat.mul_le_mul (hl.1 i).1 (totalDegree_Ehat D i)
-  have hP : (D.Eplus O (r := r) ^ jp).totalDegree ≤ D.B * 2 := by
-    refine (totalDegree_pow _ _).trans ?_
-    exact Nat.mul_le_mul (le_trans hl.2 (min_le_right _ _)) (totalDegree_Eplus D)
-  have hZ : (∏ i, (X (scalZ N r D.T.t (Fin.castSucc i)) : MvPolynomial (BVar N r D.T.t) (KK O)) ^ D.T.z i).totalDegree ≤
-      ∑ i, D.T.z i := by
-    refine (totalDegree_finsetProd _ _).trans (Finset.sum_le_sum fun i _ => ?_)
-    refine (totalDegree_pow _ _).trans ?_
-    rw [totalDegree_X, mul_one]
-  have hX : ((X (scalZ N r D.T.t (Fin.last D.T.t)) : MvPolynomial (BVar N r D.T.t) (KK O)) ^ D.zPlus).totalDegree ≤
-      D.zPlus := by
-    refine (totalDegree_pow _ _).trans ?_
-    rw [totalDegree_X, mul_one]
-  have hr : (rename (chainEmb N r D.T.t) y).totalDegree ≤ ∑ a, D.LL.deg a := (totalDegree_rename_le _ _).trans hy1
-  unfold degBound
-  refine (totalDegree_mul _ _).trans (Nat.add_le_add ?_ hg1)
-  refine (totalDegree_mul _ _).trans (Nat.add_le_add ?_ hr)
-  refine (totalDegree_mul _ _).trans (Nat.add_le_add ?_ hX)
-  refine (totalDegree_mul _ _).trans (Nat.add_le_add ?_ hZ)
-  exact (totalDegree_mul _ _).trans (Nat.add_le_add hE hP)
+  apply _root_.Formalism.MainNotions.G.CountingStatementReduction.gens_totalDegree_le <;> assumption
 
 theorem spanSSZ_le [NeZero r] (D : BlockData N) :
     Submodule.span (KK O) ((D.SSZ O (r := r) : Submodule O (MvPolynomial (BVar N r D.T.t) (KK O))) :
@@ -309,8 +232,8 @@ theorem finrank_segLat (p r : ℕ) [NeZero r] (S : SegData s) (aTop : Fin s → 
   have hmemF : ∀ b, b ∈ F ↔ Kept p r S aTop b := fun b => by rw [hF, Set.Finite.mem_toFinset]; rfl
   let M : SegBlock s r → Submodule (KK O) (MvPolynomial (BVar (2 * s + 1) r S.t) (KK O)) :=
     fun b => if Kept p r S aTop b then Vb O p r S aTop aPlus m b else ⊥
-  have hM1 : ∀ b, Kept p r S aTop b → M b = Vb O p r S aTop aPlus m b := fun b hb => if_pos hb
-  have hM0 : ∀ b, ¬ Kept p r S aTop b → M b = ⊥ := fun b hb => if_neg hb
+  have hM1 : ∀ b, Kept p r S aTop b → M b = Vb O p r S aTop aPlus m b := fun b hb => ite_eq_left hb
+  have hM0 : ∀ b, ¬ Kept p r S aTop b → M b = ⊥ := fun b hb => ite_eq_right hb
   have h1 : Module.finrank O (segLat O p r S aTop aPlus m) =
       Module.finrank (KK O) (Submodule.pi Set.univ M) := by
     apply finrank_lattice
@@ -319,10 +242,10 @@ theorem finrank_segLat (p r : ℕ) [NeZero r] (S : SegData s) (aTop : Fin s → 
       show x b ∈ M b
       by_cases hb : Kept p r S aTop b
       · rw [hM1 b hb]
-        simp only [if_pos hb] at hxb
+        simp only [ite_eq_left hb] at hxb
         exact hxb.1
       · rw [hM0 b hb]
-        simp only [if_neg hb] at hxb
+        simp only [ite_eq_right hb] at hxb
         exact hxb
     · intro v hv
       obtain ⟨sd, hsd⟩ := IsLocalization.exist_integer_multiples_of_finset (nonZeroDivisors O)
@@ -333,14 +256,14 @@ theorem finrank_segLat (p r : ℕ) [NeZero r] (S : SegData s) (aTop : Fin s → 
       show ((sd : O) • v) b ∈ (if Kept p r S aTop b then blockLat O p r S aTop aPlus m b else ⊥ : Submodule O _)
       by_cases hb : Kept p r S aTop b
       · rw [hM1 b hb] at hvb
-        rw [if_pos hb]
+        rw [ite_eq_left hb]
         refine ⟨?_, ?_⟩
         · exact ((Vb O p r S aTop aPlus m b).restrictScalars O).smul_mem (sd : O) hvb
         · refine smul_mem_bbSpec p _ (v b) (sd : O) fun μ hμ => hsd _ ?_
           rw [Finset.mem_biUnion]
           exact ⟨b, (hmemF b).2 hb, Finset.mem_image_of_mem _ hμ⟩
       · rw [hM0 b hb, Submodule.mem_bot] at hvb
-        rw [if_neg hb, Submodule.mem_bot]
+        rw [ite_eq_right hb, Submodule.mem_bot]
         show (sd : O) • v b = 0
         rw [hvb, smul_zero]
   rw [h1, finrank_pi_supp M F (fun b hb => hM0 b (fun h => hb ((hmemF b).2 h)))
@@ -350,13 +273,13 @@ theorem finrank_segLat (p r : ℕ) [NeZero r] (S : SegData s) (aTop : Fin s → 
   unfold segRank
   rw [finsum_eq_sum_of_support_subset (s := F)]
   · refine Finset.sum_congr rfl fun b hb => ?_
-    rw [hM1 b ((hmemF b).1 hb), if_pos ((hmemF b).1 hb)]
+    rw [hM1 b ((hmemF b).1 hb), ite_eq_left ((hmemF b).1 hb)]
     rfl
   · intro b hb
     rw [Function.mem_support] at hb
     rw [Finset.mem_coe, hmemF]
     by_contra h
-    exact hb (if_neg h)
+    exact hb (ite_eq_right h)
 
 end Seg
 

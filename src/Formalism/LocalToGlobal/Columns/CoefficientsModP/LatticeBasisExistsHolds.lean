@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeHasBasisAtEveryFinitePlace
 public import Formalism.LocalToGlobal.Columns.AlgebraMapMemMaximalIdealPowIff
 public import Formalism.LocalToGlobal.Divisibility.CoefMod
 public import Formalism.LocalToGlobal.Columns.LocWLemmas
@@ -88,60 +89,13 @@ variable {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarT
 theorem mem_localized_iff_mem_baseChange (w : HeightOneSpectrum (𝓞 K)) (L : Submodule (𝓞 K) V) (x : V) :
     x ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal L ↔ x ∈ atW w L := mem_atW_iff.symm
 
-theorem localized_eq_of_baseChange_eq (w : HeightOneSpectrum (𝓞 K)) {A B : Submodule (𝓞 K) V} (h : atW w A = atW w B) :
-    Formalism.HermitianLatticesTheory.localization₂ w.asIdeal A = Formalism.HermitianLatticesTheory.localization₂ w.asIdeal B := by
-  rw [← atW_restrictScalars, ← atW_restrictScalars, h]
-
-theorem lc_atW_span (w : HeightOneSpectrum (𝓞 K)) (S : Set V) :
-    atW w (Submodule.span (𝓞 K) S) = Submodule.span (Ow w) S :=
-  Submodule.span_span_of_tower (𝓞 K) (Ow w) S
-
-theorem lc_exists_basis (w : HeightOneSpectrum (𝓞 K)) {A : Submodule (𝓞 K) V} (hfg : A.FG)
-    (hsp : Submodule.span K (A : Set V) = ⊤) :
-    ∃ (κ : Type) (_ : Fintype κ) (bK : Module.Basis κ K V),
-      Formalism.HermitianLatticesTheory.localization₂ w.asIdeal A = Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (Submodule.span (𝓞 K) (Set.range bK)) := by
-  obtain ⟨κ, hκ, b, bK, hb⟩ := exists_basis_atW w hfg hsp
-  refine ⟨κ, hκ, bK, localized_eq_of_baseChange_eq w ?_⟩
-  rw [lc_atW_span]
-  have h1 : Set.range bK = (atW w A).subtype '' Set.range b := by
-    rw [← Set.range_comp]
-    congr 1
-    funext i
-    exact hb i
-  rw [h1, ← Submodule.map_span, b.span_eq, Submodule.map_top, Submodule.range_subtype]
-
 end Gen
 
 theorem latticeBasisExists_holds :
     ∀ (K : Type) [Field K] [NumberField K] (n : ℕ)
       (M : Submodule (𝓞 K) (Fin n → K)), Submodule.IsFullLattice K M →
       ∀ w : HeightOneSpectrum (𝓞 K), ∃ B : GL (Fin n) K, IsBasisAt w M B := by
-  intro K _ _ n M hM w
-  letI : Submodule.IsFullLattice K M := hM
-  obtain ⟨κ, hκ, bK, hb⟩ := lc_exists_basis w hM.fg Submodule.IsFullLattice.span_eq_top
-  have hcard : Fintype.card κ = n := by
-    rw [← Module.finrank_eq_card_basis bK, Module.finrank_fin_fun]
-  let e : κ ≃ Fin n := Fintype.equivFinOfCardEq hcard
-  let b' : Module.Basis (Fin n) K (Fin n → K) := bK.reindex e
-  let B : GL (Fin n) K :=
-    ⟨(Pi.basisFun K (Fin n)).toMatrix b', b'.toMatrix (Pi.basisFun K (Fin n)),
-      Module.Basis.toMatrix_mul_toMatrix_flip _ _, Module.Basis.toMatrix_mul_toMatrix_flip _ _⟩
-  refine ⟨B, ?_⟩
-  unfold IsBasisAt
-  rw [hb]
-  congr 2
-  ext x
-  constructor
-  · rintro ⟨i, rfl⟩
-    refine ⟨e i, ?_⟩
-    funext a
-    show (Pi.basisFun K (Fin n)).toMatrix b' a (e i) = bK i a
-    simp [Module.Basis.toMatrix_apply, b']
-  · rintro ⟨j, rfl⟩
-    refine ⟨e.symm j, ?_⟩
-    funext a
-    show bK (e.symm j) a = (Pi.basisFun K (Fin n)).toMatrix b' a j
-    simp [Module.Basis.toMatrix_apply, b']
+  apply +allowSynthFailures _root_.GlobalTheory.LatBasisAt.basisAtEx <;> assumption
 
 end BasisAt
 

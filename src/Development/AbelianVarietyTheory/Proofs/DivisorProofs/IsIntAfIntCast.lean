@@ -46,9 +46,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.AV GlobalTheory.AV.AbVar GlobalTheory.PDivGroup GlobalTheory.Dieu GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKGeo GlobalTheory.LKRes
 open ReciprocityTheory.DiscreteGroups.LocalClassField
 open scoped TensorProduct CategoryTheory.Obj CategoryTheory.MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -153,7 +150,3 @@ theorem inAf_mem (D : Datum p) (z : D.La) : inAf D z ∈ LaHat D :=
   AddSubgroup.subset_closure ⟨1, z, isIntAf_one, rfl⟩
 
 end GlobalTheory.LKGeo.MultScale
-
-namespace GlobalTheory.LKGeo
-
-end GlobalTheory.LKGeo

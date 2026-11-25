@@ -308,8 +308,7 @@ theorem HasRes.excl {Sg Sg' : Pl0 → K[X]} (hne : ∃ P : B.Pl, Sg (B.pl P) ≠
 
 theorem exists_of_partF_ne_bot {Sg : Pl0 → K[X]} (h : B.partF Sg ≠ ⊥) :
     ∃ x, B.HasRes Sg x ∧ Col.Occurs B.op x := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply h
   unfold partF Col.eigSum
   refine le_antisymm (iSup₂_le fun x hx => ?_) bot_le
@@ -338,7 +337,7 @@ theorem resSet_finite (hc : Col.PairComm B.op) (X : Finset (G → K)) : (B.resSe
     if h : Sg ∈ B.resSet X then (hex Sg h).choose else 0
   have hf : ∀ Sg (h : Sg ∈ B.resSet X), B.HasRes Sg (f Sg) ∧ Col.Occurs B.op (f Sg) := by
     intro Sg h
-    simp only [f, dif_pos h]
+    simp only [f, dite_eq_left h]
     exact (hex Sg h).choose_spec
   refine Set.Finite.of_injOn (f := f) (t := (F : Set (B.Pl × ℕ → K))) ?_ ?_ F.finite_toSet
   · intro Sg h
@@ -356,7 +355,7 @@ theorem resSet_finite (hc : Col.PairComm B.op) (X : Finset (G → K)) : (B.resSe
 theorem mem_ixFin (hc : Col.PairComm B.op) (X : Finset (G → K)) (Sg : Pl0 → K[X]) :
     Sg ∈ B.ixFin X ↔ Sg ∈ B.resSet X := by
   unfold ixFin
-  rw [dif_pos (B.resSet_finite hc X)]
+  rw [dite_eq_left (B.resSet_finite hc X)]
   exact Set.Finite.mem_toFinset _
 
 theorem part_indep (hc : Col.PairComm B.op) {ι : Type} (Sg : ι → Pl0 → K[X])
@@ -508,7 +507,7 @@ theorem sameTypes_self {v0 : InfinitePlace K} (hv0 : IsConjAt v0) {s : ℕ} (h :
   have hSg : ∀ P, Sg (B.pl P) = c P := by
     intro P
     have hP : ∃ P', B.pl P' = B.pl P := ⟨P, rfl⟩
-    simp only [Sg, dif_pos hP]
+    simp only [Sg, dite_eq_left hP]
     rw [h.pl_inj hP.choose_spec]
   have hres : B.HasRes Sg i.1 := by
     intro P
@@ -518,7 +517,7 @@ theorem sameTypes_self {v0 : InfinitePlace K} (hv0 : IsConjAt v0) {s : ℕ} (h :
   rw [B.mem_ixFin h.comm]
   refine ⟨fun P0 hP0 => ?_, ?_⟩
   · have hP : ¬ ∃ P, B.pl P = P0 := fun ⟨P, hP⟩ => hP0 ⟨P, hP⟩
-    simp only [Sg, dif_neg hP]
+    simp only [Sg, dite_eq_right hP]
   · obtain ⟨u0, hu0⟩ := B.exists_vE_of_fix (Lvl.full ℓ.X) hψA
     intro hbot
     have hu0mem : u0 ∈ B.inV0 (Lvl.full ℓ.X) (B.partF Sg) := by
@@ -538,11 +537,6 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] 
 theorem good_part_coordinates_mono {W W' : Submodule K B.S.Forms} (hW : W ≤ W') : B.inV0 ℓ W ≤ B.inV0 ℓ W' := by
   unfold inV0 coord
   exact Submodule.comap_mono (Submodule.map_mono hW)
-
-theorem equivFun_op (i : B.Pl × ℕ) (f : B.S.Forms) :
-    B.S.basis.equivFun (B.op i f) = (B.opMat i).mulVec (B.S.basis.equivFun f) := by
-  unfold opMat
-  simp only [Basis.equivFun_apply, LinearMap.toMatrix_mulVec_repr]
 
 theorem equivFun_act (g : G) (f : B.S.Forms) :
     B.S.basis.equivFun (B.r g f) = (B.S.actMat B.r g).mulVec (B.S.basis.equivFun f) := by
@@ -608,8 +602,7 @@ theorem sep_of_mem_ixFin {X : Finset (G → K)} {Sg Sg' : Pl0 → K[X]} (h : Sg 
   split_ifs at h h' with hf
   · rw [Set.Finite.mem_toFinset] at h h'
     simp only [resSet, Set.mem_setOf_eq] at h h'
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply hne
     funext P0
     by_cases hP : P0 ∈ Set.range B.pl
@@ -704,7 +697,7 @@ theorem sum_partPr (t : Bs.Tup) (hi : iSupIndep (Df.Qp t)) (ht : (⨆ p, Df.Qp t
       LinearMap.toMatrix' ((Df.Qp t p).subtype ∘ₗ Submodule.projectionOnto _ _ (hc p)) := by
     intro p
     unfold partPr
-    rw [dif_pos (hc p)]
+    rw [dite_eq_left (hc p)]
 
   simp_rw [hp, ← map_sum]
   rw [← LinearMap.toMatrix'_id]

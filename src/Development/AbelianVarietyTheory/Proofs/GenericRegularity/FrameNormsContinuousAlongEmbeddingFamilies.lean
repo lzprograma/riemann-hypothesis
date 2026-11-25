@@ -89,7 +89,7 @@ theorem abs_fn_frBor (hU : ∀ σ, Formalism.L2.PjFree.GoodEmb c σ → Formalis
   · have hg : Formalism.L2.PjFree.GoodEmb c ((starRingEnd ℂ).comp σ) := by
       have := Formalism.L2.PjFree.goodEmb_goodOf c σ
       unfold Formalism.L2.PjFree.goodOf at this
-      rwa [if_neg hσ] at this
+      rwa [ite_eq_right hσ] at this
     obtain ⟨z, hz⟩ := exists_frMap_along (conjAlg σ) y
     obtain ⟨z', hz'⟩ := exists_frMap_along (conjAlg σ) y'
     have hb' := frBorBC _ _ (conjAlg σ) t y y' z z' hb hz hz'

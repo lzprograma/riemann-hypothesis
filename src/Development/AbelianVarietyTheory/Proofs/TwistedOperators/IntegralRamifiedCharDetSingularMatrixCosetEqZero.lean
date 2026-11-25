@@ -53,7 +53,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Form
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest Formalism.IndefR.WeilFull GlobalTheory.RowClaim
 open MeasureTheory GlobalTheory.SplitFlip GlobalTheory.SplitWeil
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open ValuativeRel Formalism.L2.Host
 
 namespace GlobalTheory.CosetVanish
@@ -62,12 +61,11 @@ theorem integral_coset_singular_eq_zero : ∀ {k : Type} [Field k] [ValuativeRel
   intro k _ _ _ _ _ _ A' _ _ μ _ ν z hν c x hx
   classical
   obtain ⟨u, hu1, hνu⟩ : ∃ u : kˣ, valuation k (u : k) = 1 ∧ ν u ≠ 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hν fun y hy => h y hy
   obtain ⟨w0, hw0, hw0x⟩ := (Matrix.exists_vecMul_eq_zero_iff (M := x)).2 hx
   obtain ⟨j, hj⟩ : ∃ j, w0 j ≠ 0 := by
-    by_contra h; push_neg at h; exact hw0 (funext h)
+    by_contra h; push Not at h; exact hw0 (funext h)
   haveI : Nonempty A' := ⟨j⟩
   obtain ⟨i₀, hi₀⟩ := Finite.exists_max (fun i => valuation k (w0 i))
   have hwi₀ : w0 i₀ ≠ 0 := by

@@ -58,12 +58,6 @@ structure RowArg {K : Type} [Field K] [NumberField K] [StarRing K] {I : Type} (C
 
 attribute [instance] RowArg.indexWFirst RowArg.indexWSecond RowArg.indexWThird RowArg.indexWFourth RowArg.firstRealIndex RowArg.secondRealIndex RowArg.firstRationalIndex RowArg.secondRationalIndex
 
-section Fam
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {I : Type}
-
-end Fam
-
 structure Pt (I : Type) where
   K : Type
   [i1 : Field K]
@@ -75,39 +69,6 @@ structure Pt (I : Type) where
   R : RowArg C
 
 attribute [instance] Pt.i1 Pt.i2 Pt.i3 Pt.i4
-
-section Family
-
-open Formalism.D5 Formalism.RankGapBounds.WeightedMeanData Formalism.LFunctionChainParameters.WeightedSlopeBounds Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.ThickSetMeanBounds Formalism.LFunctionChainParameters.LErr Formalism.LFunctionChainParameters.LChain
-  Formalism.LFunctionChainParameters.LChain2
-
-variable {H : Type} [AddCommGroup H] [Fintype H] [DecidableEq H] {W : H → Type} [∀ u0, Fintype (W u0)] {m : ℕ}
-
-end Family
-
-section Rec
-
-
-
-end Rec
-
-section Conc
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Ch : Chars X Pr R.m}
-
-end Conc
-
-section Dat
-
-end Dat
-
-section ConcNum
-
-open Formalism.D5 Formalism.RankGapBounds.WeightedMeanData Formalism.LFunctionChainParameters.WeightedSlopeBounds Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.LErr Formalism.LFunctionChainParameters.LChain2
-
-variable {H : Type} [AddCommGroup H] [Fintype H] [DecidableEq H]
-
-end ConcNum
 
 end Formalism.L2.GlobalTheoryTheory.FamCol
 

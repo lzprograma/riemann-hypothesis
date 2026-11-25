@@ -721,8 +721,6 @@ section Chart
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.NTheta GlobalTheory.SplitHecke
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {e : AE D} {v : HeightOneSpectrum (𝓞 D.host.F)} {π : AE D →+* Fv D.host.F v}
 
 def chartEmb (hπ : Chart e v π) : D.host.E →ₐ[D.host.F] Fv D.host.F v :=

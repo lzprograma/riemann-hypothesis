@@ -64,10 +64,4 @@ theorem eq_χQ_of_cyc (χ' : GQ l →* ℚ_[l]ˣ)
   rw [norm_neg]
   exact max_le ha h2
 
-section W
-
-variable {LL : FinExt l}
-
-end W
-
 end Formalism.L2.LocGap.Gal

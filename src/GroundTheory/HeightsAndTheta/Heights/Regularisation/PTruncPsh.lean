@@ -60,13 +60,13 @@ theorem trunc_psh_le (j : Fin R.N) {V : Set (Fin D → ℂ)} (hV : IsOpen V)
     · rfl
   refine ⟨isPsh_congr heq hext, fun y hy => ?_⟩
   by_cases hA : y ∈ coordDiv (R.S j)
-  · simp only [RegChartData.trunc, limsupExt, if_pos hA]
+  · simp only [RegChartData.trunc, limsupExt, ite_eq_left hA]
     have := ReciprocityTheory.AnForm.A.PlurisubharmonicExtension.nebot_diff (S := R.S j) (R.chart j).open_target (hVt hy)
     refine limsup_le_of_le (isCoboundedUnder_le_of_le _ fun v => le_max_right (R.u j v) (-K)) ?_
     filter_upwards [mem_nhdsWithin_of_mem_nhds (hV.mem_nhds hy), self_mem_nhdsWithin]
       with v hv hvt
     exact max_le_max (hB v ⟨hv, hvt.2⟩) le_rfl
-  · simp only [RegChartData.trunc, limsupExt, if_neg hA]
+  · simp only [RegChartData.trunc, limsupExt, ite_eq_right hA]
     exact max_le_max (hB y ⟨hy, hA⟩) le_rfl
 
 end RegChartData

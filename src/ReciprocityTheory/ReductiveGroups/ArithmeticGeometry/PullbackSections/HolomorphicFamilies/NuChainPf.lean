@@ -28,8 +28,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValua
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace Opposite
@@ -124,14 +122,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
   CartesianMonoidalCategory MonObj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace ReciprocityTheory.ChartRestriction.G.DVR
 
@@ -149,7 +143,7 @@ theorem snd_app_eq_zero {X T S : Scheme.{0}} (p : X ⟶ S) (t : T ⟶ S) (W : X.
   refine TopCat.Presheaf.section_ext (CategoryTheory.Limits.pullback t p).sheaf _ _ _ fun y hy => ?_
   have hy' : CategoryTheory.Limits.pullback.snd t p y ∈ W := hy
   have := h y hy'
-  simp only [gs, dif_pos hy'] at this
+  simp only [gs, dite_eq_left hy'] at this
   erw [this]
   exact (map_zero _).symm
 
@@ -258,13 +252,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace ReciprocityTheory.ChartRestriction.G.DVR
 
@@ -285,7 +275,7 @@ def SecBDvdSt : Prop :=
 
 theorem isUnit_gs_pow {X Y : Scheme.{0}} (f : Y ⟶ X) (y : Y) (U : X.Opens) (h : f y ∈ U) (u : Γ(X, U)ˣ) (k : ℕ) :
     IsUnit (gs f y U (u.val ^ k)) := by
-  simp only [gs, dif_pos h]
+  simp only [gs, dite_eq_left h]
   exact ((u.isUnit.pow k).map _).map _
 
 theorem dvd_of_eq_sum {P : Scheme.{0}} {x : P} {W : P.Opens} (hmem : x ∈ W) {κ : Type} {S : Finset κ}
@@ -296,7 +286,7 @@ theorem dvd_of_eq_sum {P : Scheme.{0}} {x : P} {W : P.Opens} (hmem : x ∈ W) {�
   rw [gs_fsum (𝟙 P) x W hx]
   refine Finset.dvd_sum fun i hi => ?_
   have hm : gs (𝟙 P) x W (a i * b i) = gs (𝟙 P) x W (a i) * gs (𝟙 P) x W (b i) := by
-    simp only [gs, dif_pos hx, map_mul]
+    simp only [gs, dite_eq_left hx, map_mul]
   rw [hm]
   exact (h i hi).mul_right _
 
@@ -420,8 +410,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.DVR.TG
@@ -466,7 +454,7 @@ def vK (hϖ : Irreducible ϖ) : AddValuation (FractionRing V) (WithTop ℚ) :=
       · simp [hy]
       by_cases hxy : x + y = 0
       · simp [hxy]
-      simp only [hx, hy, hxy, if_false]
+      simp only [hx, hy, hxy, ite_false]
       have hπ : algebraMap V (FractionRing V) ϖ ≠ 0 :=
         (map_ne_zero_iff _ (IsFractionRing.injective V (FractionRing V))).mpr hϖ.ne_zero
       have key : ∀ {a b : FractionRing V}, a ≠ 0 → b ≠ 0 → a + b ≠ 0 → valE hϖ a ≤ valE hϖ b →
@@ -508,7 +496,7 @@ def vK (hϖ : Irreducible ϖ) : AddValuation (FractionRing V) (WithTop ℚ) :=
       by_cases hy : y = 0
       · simp [hy]
       have hxy : x * y ≠ 0 := mul_ne_zero hx hy
-      simp only [hx, hy, hxy, if_false]
+      simp only [hx, hy, hxy, ite_false]
       rw [hasVal_unique hϖ (hasVal_valE hϖ hxy) (hasVal_mul (hasVal_valE hϖ hx) (hasVal_valE hϖ hy) hϖ)]
       push_cast
       rfl)
@@ -523,7 +511,7 @@ lemma valOver_vK (hϖ : Irreducible ϖ) : ValOver ϖ (FractionRing V) (vK hϖ) :
     refine mul_ne_zero (zpow_ne_zero _ hπ) ?_
     exact (map_ne_zero_iff _ (IsFractionRing.injective V (FractionRing V))).mpr u.ne_zero
   change vK hϖ c = _
-  simp only [vK, AddValuation.of_apply, if_neg hc0]
+  simp only [vK, AddValuation.of_apply, ite_eq_right hc0]
   rw [hasVal_unique hϖ (hasVal_valE hϖ hc0) hc]
 
 end ReciprocityTheory.ChartRestriction.G.DVR.TG
@@ -537,17 +525,12 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem secScal_cast {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] {Y : Scheme.{0}} (h : Y ⟶ G.left)
     (k : ℕ) {L1 L2 : RigLB G} (e : L1 = L2)

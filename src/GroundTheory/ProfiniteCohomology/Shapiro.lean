@@ -8,6 +8,7 @@ public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientT
 public import GroundTheory.ProfiniteCohomology.CoinducedModules.Acyclic
 public import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
 public import GroundTheory.ProfiniteCohomology.InflationRestriction.Coinduced
+import GroundTheory.ProfiniteCohomology.Characters
 
 @[expose] public section
 
@@ -298,16 +299,7 @@ theorem cohomologyRes_eq_coindUnit_shapiroMap (n : ℕ) :
 omit [CompactSpace G] in
 private theorem cohomologyMap_nsmul {B : Rep.{u} k G} [IsDiscreteRep B] (f : A ⟶ B) (m n : ℕ) :
     cohomologyMap (m • f) n = m • cohomologyMap f n := by
-  have h : cochainsMap (m • f) = m • cochainsMap f := by
-    induction m with
-    | zero =>
-      rw [zero_smul, zero_smul]
-      exact cochainsMap_zero
-    | succ m ih =>
-      rw [succ_nsmul, succ_nsmul, ← ih]
-      ext i c : 3
-      rfl
-  rw [cohomologyMap, h]
+  rw [cohomologyMap, cochainsMap_nsmul]
   exact (HomologicalComplex.homologyFunctor (ModuleCat k) (ComplexShape.up ℕ) n).map_nsmul
 
 noncomputable def cohomologyCores (n : ℕ) :

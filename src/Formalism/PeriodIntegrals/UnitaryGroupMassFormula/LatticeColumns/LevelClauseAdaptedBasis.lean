@@ -5,46 +5,6 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.I
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.HModelAllOf
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.FirstProjMkVecEqMulVec
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.SecondProjWeightVectorZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.SecondProjMulVecZero, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.LevelClauseAdaptedBasis
@@ -91,7 +51,7 @@ theorem key_coord (X : HidaSetting D) (p : TypX X) (θ : TpX X p ≃ₐ[FpX X p]
   rw [Pi.sub_apply, hEmb_mulVec_wI_apply]
   simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, Pi.single_apply, Sum.inr.injEq, Sum.inl.injEq,
     mul_sub, mul_ite, mul_one, mul_zero, Finset.sum_sub_distrib, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   simp only [mul_left_comm _ ((gOf p : ℕ) : FpX X p) _, ← Finset.mul_sum]
   ring
 
@@ -256,7 +216,7 @@ theorem bwd_coords (hW : WClause X hb u p θ Q) (x : KvH X u p.1) (Bo : Matrix (
         rw [hF, Finset.mem_filter]
         intro h
         exact absurd h.2 (not_lt.2 hij)
-      rw [if_neg hn]
+      rw [ite_eq_right hn]
       have h3 := inG_add (inG_sub (hcol j0 hij) hG1) (hG2 (wI j0))
       convert h3 using 1
       simp only [Matrix.map_apply, hal]
@@ -265,7 +225,7 @@ theorem bwd_coords (hW : WClause X hb u p θ Q) (x : KvH X u p.1) (Bo : Matrix (
         rw [hF, Finset.mem_filter]
         exact ⟨Finset.mem_univ _, lt_of_not_ge hij⟩
       have hne : j0 ≠ i := fun h => hij (h ▸ le_rfl)
-      rw [if_pos hm, if_neg hne]
+      rw [ite_eq_left hm, ite_eq_right hne]
       have h3 := inG_add (inG_sub (inG_zero (X := X) (p := p)) hG1) (hG2 (wI j0))
       convert h3 using 1
       simp only [Matrix.map_apply, hal]
@@ -439,7 +399,7 @@ theorem beta_iff (X : HidaSetting D) (hb : AdBridgeIso X.B.I) (u : D.what₂.Wor
     refine ⟨fun a b hba => ?_, fun a => ?_⟩
     · have := (key a b).1 (hcol b a hba.le)
       have hne : a ≠ b := ne_of_gt (show b < a from hba)
-      rw [if_neg hne] at this
+      rw [ite_eq_right hne] at this
       simpa using this
     · have := (key a a).1 (hcol a a le_rfl)
       simpa using this
@@ -447,8 +407,8 @@ theorem beta_iff (X : HidaSetting D) (hb : AdBridgeIso X.B.I) (u : D.what₂.Wor
     refine bwd_col (hLB := hLB) (hε := theta_eps_one (hθ := hθ) (hW := hW) (i := i)) (hW := hW)
       (x := x) (hYc := hYc) (i := i) (hcol := fun j hij => (key j i).2 ?_)
     rcases hij.lt_or_eq with h | h
-    · rw [if_neg h.ne']; simpa using hU h
-    · subst h; rw [if_pos rfl]; simpa using hD i
+    · rw [ite_eq_right h.ne']; simpa using hU h
+    · subst h; rw [ite_eq_left rfl]; simpa using hD i
 
 theorem level_clause_adapted_basis : DClauseAll := by
   intro D X hb hK u _ hL p θ hθ Q l _ hy1 _ hLB hW ψ hform π hπk x B hB

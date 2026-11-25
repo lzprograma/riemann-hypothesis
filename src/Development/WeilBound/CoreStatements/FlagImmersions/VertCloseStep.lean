@@ -22,56 +22,11 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSmoothHerm
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLocalRep
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionOrderAtPoint
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagLabelBasesExist
 import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -118,7 +73,7 @@ theorem mem_divSupp_of_memZ {V W : Ideal (MRing ι)} (hV : V.IsPrime) {f g : MRi
     (hQ.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self g))) hgV hQW).ge
 
 theorem divCycle_eq_zero_of_not_memZ {V W : Ideal (MRing ι)} {f : MRing ι} (h : f ∉ W) : divCycle V f W = 0 := by
-  rw [divCycle_applyZ, if_neg fun h2 => h (mem_of_mem_divSuppZ h2)]
+  rw [divCycle_applyZ, ite_eq_right fun h2 => h (mem_of_mem_divSuppZ h2)]
 
 theorem divCycle_mulZ {V : Ideal (MRing ι)} (hV : V.IsPrime) {f g : MRing ι}
     (hf : f ∉ V) (hg : g ∉ V) (W : Ideal (MRing ι)) :
@@ -131,25 +86,25 @@ theorem divCycle_mulZ {V : Ideal (MRing ι)} (hV : V.IsPrime) {f g : MRing ι}
     have key := locLen_mul hV hf g ⟨W, hWp⟩
     have hfin := locLen_ne_top h.1
     rw [key] at hfin
-    rw [if_pos h, multAt_eqZ _ _ hWp, key]
+    rw [ite_eq_left h, multAt_eqZ _ _ hWp, key]
     by_cases hfW : f ∈ W <;> by_cases hgW : g ∈ W
-    · rw [if_pos (mem_divSupp_of_memZ hV hf h hfW), if_pos (mem_divSupp_of_memZ hV hg h hgW),
+    · rw [ite_eq_left (mem_divSupp_of_memZ hV hf h hfW), ite_eq_left (mem_divSupp_of_memZ hV hg h hgW),
         multAt_eqZ _ _ hWp, multAt_eqZ _ _ hWp, ENat.toNat_add (WithTop.add_ne_top.mp hfin).1
           (WithTop.add_ne_top.mp hfin).2, add_comm]
-    · rw [if_pos (mem_divSupp_of_memZ hV hf h hfW), if_neg fun h2 => hgW (mem_of_mem_divSuppZ h2),
+    · rw [ite_eq_left (mem_divSupp_of_memZ hV hf h hfW), ite_eq_right fun h2 => hgW (mem_of_mem_divSuppZ h2),
         multAt_eqZ _ _ hWp, locLen_quot_eq_zero _ hgW, zero_add, add_zero]
-    · rw [if_neg fun h2 => hfW (mem_of_mem_divSuppZ h2), if_pos (mem_divSupp_of_memZ hV hg h hgW),
+    · rw [ite_eq_right fun h2 => hfW (mem_of_mem_divSuppZ h2), ite_eq_left (mem_divSupp_of_memZ hV hg h hgW),
         multAt_eqZ _ _ hWp, locLen_quot_eq_zero (V := V) (g := f) _ hfW, add_zero, zero_add]
     · exact absurd (hWp.mem_or_mem (mem_of_mem_divSuppZ h)) (by tauto)
-  · rw [if_neg h, if_neg fun h2 => h (mem_divSupp_of_memZ hV hfg h2
+  · rw [ite_eq_right h, ite_eq_right fun h2 => h (mem_divSupp_of_memZ hV hfg h2
         (W.mul_mem_right _ (mem_of_mem_divSuppZ h2))),
-      if_neg fun h2 => h (mem_divSupp_of_memZ hV hfg h2 (W.mul_mem_left _ (mem_of_mem_divSuppZ h2)))]
+      ite_eq_right fun h2 => h (mem_divSupp_of_memZ hV hfg h2 (W.mul_mem_left _ (mem_of_mem_divSuppZ h2)))]
 
 theorem pow_not_memZ {V : Ideal (MRing ι)} (hV : V.IsPrime) {f : MRing ι} (hf : f ∉ V) (n : ℕ) : f ^ n ∉ V :=
   fun h => hf (hV.mem_of_pow_mem n h)
 
 theorem divCycle_oneZ (V W : Ideal (MRing ι)) : divCycle V 1 W = 0 := by
-  rw [divCycle_applyZ, if_neg]
+  rw [divCycle_applyZ, ite_eq_right]
   intro h
   exact h.1.1.1.ne_top ((Ideal.eq_top_iff_one _).2 (mem_of_mem_divSuppZ h))
 
@@ -182,11 +137,11 @@ theorem divCycle_le_of_rel {V W : Ideal (MRing ι)} (hV : V.IsPrime) {a b u : MR
     have hVW : V ≤ W := le_sup_left.trans h.1.1.2
     have haW : a ∈ W := SectionOrderAtPoint.mem_of_rel hWp (mem_of_mem_divSuppZ h) hu c (hVW hrel)
     have h' := mem_divSupp_of_memZ hV ha h haW
-    rw [divCycle_applyZ, divCycle_applyZ, if_pos h, if_pos h', multAt_eqZ _ _ hWp, multAt_eqZ _ _ hWp]
+    rw [divCycle_applyZ, divCycle_applyZ, ite_eq_left h, ite_eq_left h', multAt_eqZ _ _ hWp, multAt_eqZ _ _ hWp]
     exact ENat.toNat_le_toNat
       (SectionOrderAtPoint.locLen_le_of_rel hV ha hb ⟨W, hWp⟩ hVW hu c hrel (locLen_ne_top h.1))
       (locLen_ne_top h'.1)
-  · rw [divCycle_applyZ, if_neg h]
+  · rw [divCycle_applyZ, ite_eq_right h]
     exact Nat.zero_le _
 
 variable {Ω : Type} [Field Ω]
@@ -221,7 +176,7 @@ theorem chart_form (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (hc : ∀ k, y �
     refine ⟨fun k => if k = p.1 then 1 else 0, up _ _ ⟨X p, LowerBoundFree.isMultiHomog_X_single p, ?_⟩⟩
     rw [Finset.prod_eq_single p.1 (fun k _ hk => by simp [hk]) (by simp)]
     have := hc p.1
-    simp only [aeval_X, if_true, pow_one]
+    simp only [aeval_X, ite_true, pow_one]
     field_simp
   | algebraMap r =>
     exact ⟨0, up _ _ ⟨C r, LocalRep.isMultiHomog_C r, by simp⟩⟩
@@ -292,10 +247,6 @@ theorem div_le_of_integral (y : (Σ k, ι k) → Ω) (hP : (mCoordIdeal y).IsPri
     simp only [map_prod, map_pow, aeval_X]
     linear_combination ((∏ k, y ⟨k, c k⟩ ^ e k) * aeval y b ^ n) * hp
 
-theorem X_mem_iff (y : (Σ k, ι k) → Ω) (q : Σ k, ι k) : (X q : MRing ι) ∈ mCoordIdeal y ↔ y q = 0 := by
-  show mConeMap y (X q) = 0 ↔ _
-  simp [mConeMap, X_ne_zero]
-
 theorem C_not_mem {P : Ideal (MRing ι)} (hP : IsHorizontal P) {n : ℤ} (hn : n ≠ 0) : (C n : MRing ι) ∉ P := by
   intro h
   have h2 : n ∈ P.comap (C : ℤ →+* MRing ι) := h
@@ -312,13 +263,13 @@ theorem half_bound (y : (Σ k, ι k) → Ω) (hP : (mCoordIdeal y).IsPrime) (hH 
   classical
   by_cases h : W ∈ divSupp (mCoordIdeal y) g
   swap
-  · rw [divCycle_applyZ _ _ g, if_neg h]
+  · rw [divCycle_applyZ _ _ g, ite_eq_right h]
     simp
   have hWp := h.1.1.1
   have hVW : mCoordIdeal y ≤ W := le_sup_left.trans h.1.1.2
   choose c hcW using h.2
   have hcP : ∀ k, (X ⟨k, c k⟩ : MRing ι) ∉ mCoordIdeal y := fun k hk => hcW k (hVW hk)
-  have hc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k hk => hcP k ((X_mem_iff y _).2 hk)
+  have hc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k hk => hcP k ((GlobalTheory.CompanionTheory.Ar.Top.LineUnit.X_mem_mCoordIdeal_iff y _).2 hk)
   have hmP : (C (m : ℤ) : MRing ι) ∉ mCoordIdeal y := C_not_mem hH (by exact_mod_cast hm.ne')
   have hint : IsIntegral (chartRingZ y c) ((m : Ω) * (u * ∏ k, y ⟨k, c k⟩ ^ (-((df k : ℤ) - dg k))) ^ q) := by
     refine GlobalTheory.CompanionTheory.Ar.ChartVal.isIntegral_of_forall_valuationSubring Subtype.val_injective _
@@ -365,7 +316,7 @@ theorem charOf_dvd {W : Ideal (MRing ι)} {n : ℕ} (h : (C (n : ℤ) : MRing ι
 theorem div_const_off {P W : Ideal (MRing ι)} {m : ℕ} (hm : 0 < m)
     (h : ¬ ((charOf W).Prime ∧ charOf W ∣ m)) : divCycle P (C (m : ℤ)) W = 0 := by
   classical
-  rw [divCycle_applyZ, if_neg]
+  rw [divCycle_applyZ, ite_eq_right]
   intro hW
   have hd := charOf_dvd (mem_of_mem_divSuppZ hW)
   refine h ⟨PB.prime_charOf_of_ne_zero hW.1.1.1 fun h0 => ?_, hd⟩
@@ -452,7 +403,7 @@ theorem div_eq_of_unit {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype 
     have := divCycle_congrZ huv W
     rwa [divCycle_mulZ hP (fun h => hu (hW'.2.1 h)) hfP, divCycle_mulZ hP (fun h => hv (hW'.2.1 h)) hgP,
       divCycle_eq_zero_of_not_memZ hu, divCycle_eq_zero_of_not_memZ hv, zero_add, zero_add] at this
-  · rw [divCycle_applyZ, divCycle_applyZ, if_neg fun h => hW (Or.inl h), if_neg fun h => hW (Or.inr h)]
+  · rw [divCycle_applyZ, divCycle_applyZ, ite_eq_right fun h => hW (Or.inl h), ite_eq_right fun h => hW (Or.inr h)]
 
 theorem exists_forms {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
     (y : (Σ k, ι k) → Ω) (hB : Birational y) (hy : ∀ k, ∃ i, y ⟨k, i⟩ ≠ 0) (a : K → ℤ) {u : Ω} (hu : u ≠ 0) :

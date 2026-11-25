@@ -43,8 +43,6 @@ import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField Formalism.MainNotions.ShortIntervalPrimes
@@ -190,52 +188,5 @@ open GlobalTheory.RayZeta
 end GlobalTheory.Published
 
 namespace GlobalTheory.RayZeta
-
-theorem absNorm_span_rat (n : ℕ) : Ideal.absNorm (Ideal.span {(n : 𝓞 ℚ)}) = n := by
-  rw [Ideal.absNorm_span_natCast, RingOfIntegers.rank]
-  simp
-
-theorem exists_span_rat (I : Ideal (𝓞 ℚ)) : ∃ n : ℕ, I = Ideal.span {(n : 𝓞 ℚ)} := by
-  have : IsPrincipalIdealRing (𝓞 ℚ) :=
-    IsPrincipalIdealRing.of_surjective Rat.ringOfIntegersEquiv.symm.toRingHom Rat.ringOfIntegersEquiv.symm.surjective
-  obtain ⟨a, rfl⟩ : ∃ a, I = Ideal.span {a} := ⟨_, (IsPrincipalIdealRing.principal I).span_singleton_generator.symm⟩
-  obtain ⟨m, rfl⟩ : ∃ m : ℤ, a = (m : 𝓞 ℚ) := ⟨Rat.ringOfIntegersEquiv a, by
-    apply Rat.ringOfIntegersEquiv.injective; simp⟩
-  refine ⟨m.natAbs, ?_⟩
-  rcases Int.natAbs_eq m with h | h
-  · rw [h]; simp
-  · conv_lhs => rw [h]
-    rw [Int.cast_neg, Ideal.span_singleton_neg, Int.cast_natCast]
-
-theorem coprimeTo_span_rat (N n : ℕ) :
-    CoprimeTo ℚ (Ideal.span {(N : 𝓞 ℚ)}) (Ideal.span {(n : 𝓞 ℚ)}) ↔ n ≠ 0 ∧ n.Coprime N := by
-  rw [CoprimeTo, ← Ideal.isCoprime_iff_sup_eq, Ideal.isCoprime_span_singleton_iff, ← Nat.isCoprime_iff_coprime]
-  refine and_congr (by simp) ⟨fun h => ?_, fun h => ?_⟩
-  · simpa using h.map Rat.ringOfIntegersEquiv.toRingHom
-  · simpa using h.map (Int.castRingHom (𝓞 ℚ))
-
-theorem isRayL_rat_one (N : ℕ) [NeZero N] :
-    IsRayL (Ideal.span {(N : 𝓞 ℚ)}) (fun _ => 1) (DirichletCharacter.LFunctionTrivChar N) := by
-  refine ⟨fun s hs => (DirichletCharacter.differentiableAt_LFunction _ s (.inl hs)).differentiableWithinAt, fun s hs => ?_⟩
-  let g : {I : Ideal (𝓞 ℚ) // CoprimeTo ℚ (Ideal.span {(N : 𝓞 ℚ)}) I} → ℕ := fun I => Ideal.absNorm I.1
-  have hg : Function.Injective g := fun I J h => by
-    obtain ⟨n, hn⟩ := exists_span_rat I.1
-    obtain ⟨m, hm⟩ := exists_span_rat J.1
-    simp only [g, hn, hm, absNorm_span_rat] at h
-    exact Subtype.ext (by rw [hn, hm, h])
-  have hr : ∀ n ∉ Set.range g, LSeries.term (fun n : ℕ => (1 : DirichletCharacter ℂ N) n) s n = 0 := fun n hn => by
-    by_cases h0 : n = 0
-    · simp [h0]
-    · have : ¬ n.Coprime N := fun hc => hn ⟨⟨_, (coprimeTo_span_rat N n).2 ⟨h0, hc⟩⟩, absNorm_span_rat n⟩
-      rw [LSeries.term_of_ne_zero h0, MulChar.map_nonunit _ (by rwa [ZMod.isUnit_iff_coprime]), zero_div]
-  have := (hg.hasSum_iff hr).2 (DirichletCharacter.LSeriesSummable_of_one_lt_re (1 : DirichletCharacter ℂ N) hs).hasSum
-  rw [DirichletCharacter.LFunctionTrivChar, DirichletCharacter.LFunction_eq_LSeries _ hs, LSeries]
-  convert this using 2 with I
-  obtain ⟨I, hI⟩ := I
-  obtain ⟨n, rfl⟩ := exists_span_rat I
-  have h := (coprimeTo_span_rat N n).1 hI
-  simp only [g, Function.comp, absNorm_span_rat]
-  rw [LSeries.term_of_ne_zero h.1, MulChar.one_apply ((ZMod.isUnit_iff_coprime _ _).2 h.2), Complex.cpow_neg]
-  simp
 
 end GlobalTheory.RayZeta

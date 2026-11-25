@@ -1,51 +1,7 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.MirabolicGenerators.SideUnfold
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -169,19 +125,10 @@ private lemma exists_GL_mulVec_single_eq_of_ne_zero (m : ι) (v : ι → k) (hv 
     funext r
     simp [Matrix.mulVec, Matrix.vecMulVec, dotProduct, Pi.single_apply, mul_comm]
   have hunit : IsUnit (1 + Matrix.vecMulVec (v - Pi.single m 1) (Pi.single m 1) : Matrix ι ι k) := by
-    rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
-    intro h0
-    obtain ⟨x, hx0, hx⟩ := Matrix.exists_mulVec_eq_zero_iff.2 h0
-    rw [hact] at hx
-    have hxm : x m = 0 := by
-      have e := congrFun hx m
-      simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply, Pi.single_eq_same, smul_eq_mul,
-        Pi.zero_apply] at e
-      have e2 : x m * v m = 0 := by linear_combination e
-      exact (mul_eq_zero.1 e2).resolve_right hv
-    apply hx0
-    funext r
-    simpa [hxm] using congrFun hx r
+    rw [Matrix.isUnit_iff_isUnit_det, Matrix.vecMulVec_eq Unit,
+      Matrix.det_one_add_replicateCol_mul_replicateRow, single_one_dotProduct,
+      Pi.sub_apply, Pi.single_eq_same, add_sub_cancel]
+    exact hv.isUnit
   refine ⟨hunit.unit, ?_, ?_⟩
   · rw [IsUnit.unit_spec, hact]
     simp
@@ -203,7 +150,7 @@ lemma exists_inv_mulVec_eq (i : ι) {ξ : ι → k} (hξ : ξ ≠ 0) :
         rw [Pi.add_apply, Pi.single_eq_same, Pi.single_eq_of_ne hji.symm, add_zero]
         exact one_ne_zero)
     obtain ⟨G₁, hG₁, hG₁'⟩ := exists_GL_mulVec_single_eq_of_ne_zero j (ξ - Pi.single i 1 : ι → k)
-      (by simp [Pi.single_apply, hji, hj])
+      (by simp [hji, hj])
     refine ⟨(G₁ * G₂)⁻¹, ?_⟩
     rw [inv_inv, Units.val_mul, ← Matrix.mulVec_mulVec, hG₂, Matrix.mulVec_add, hG₁, hG₁' i hji.symm]
     abel

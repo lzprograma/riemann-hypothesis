@@ -15,7 +15,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open scoped TensorProduct InnerProductSpace
 
 namespace Formalism.IndefR.Links
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 

@@ -81,8 +81,8 @@ theorem spread_le_sumA {E : Type} [Field E] [NumberField E] [IsCMField E] {H : R
     rw [← hρ]; exact Function.leftInverse_invFun (GlobalTheory.AllWt.relab_injective σ) ρ
   have e2 : Function.invFun (relab c σ) (conjEmb τ.1) = conjEmb ρ := by
     rw [← hρ, ← GlobalTheory.AllWt.relab_conj]; exact Function.leftInverse_invFun (GlobalTheory.AllWt.relab_injective σ) _
-  have m1 : Dw.mult ρ = Dw.p := by rw [Datum.mult, if_pos hρΨ]
-  have m2 : Dw.mult (conjEmb ρ) = Dw.q := by rw [Datum.mult, if_neg (GlobalTheory.AllWt.conj_not_mem ⟨ρ, hρΨ⟩)]
+  have m1 : Dw.mult ρ = Dw.p := by rw [Datum.mult, ite_eq_left hρΨ]
+  have m2 : Dw.mult (conjEmb ρ) = Dw.q := by rw [Datum.mult, ite_eq_right (GlobalTheory.AllWt.conj_not_mem ⟨ρ, hρΨ⟩)]
   rw [e1, e2]
   have hn : ((n / 2 : ℕ) : ℝ) + ((n / 2 : ℕ) : ℝ) ≤ n := by
     have : n / 2 + n / 2 ≤ n := by omega

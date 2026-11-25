@@ -5,44 +5,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.CMInst
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.FrameStd
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatAdapted
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemiAlg
 
 @[expose] public section
 
@@ -97,23 +60,11 @@ theorem rational_vector_in_complement {r : ℕ} (P : Frame E n r) (x : Fin n →
 
 theorem stabilizer_fixes_isotropic_e {r : ℕ} (P : Frame E n r) {h : HA R σ J} (hh : h ∈ Hsub R σ J P) (a : Fin r) :
     lin R σ J h (ratV (F := F) R (P.e a)) = ratV (F := F) R (P.e a) := by
-  have hfix : h • ratTup (F := F) R (tupH P) = ratTup (F := F) R (tupH P) := hh
-  have h1 : lin R σ J h (ratTup (F := F) R (tupH P) (Fin.castAdd r (Fin.castSucc a))) =
-      ratTup (F := F) R (tupH P) (Fin.castAdd r (Fin.castSucc a)) := congrFun hfix _
-  have e1 : ratTup (F := F) R (tupH P) (Fin.castAdd r (Fin.castSucc a)) = ratV (F := F) R (P.e a) := by
-    funext i
-    simp [ratTup, tupH, F0, ratV]
-  rwa [e1] at h1
+  apply _root_.PI.LevelKSplit.W.SemiA.H_fix_e <;> assumption
 
 theorem stabilizer_fixes_isotropic_f {r : ℕ} (P : Frame E n r) {h : HA R σ J} (hh : h ∈ Hsub R σ J P) (a : Fin r) :
     lin R σ J h (ratV (F := F) R (P.f a)) = ratV (F := F) R (P.f a) := by
-  have hfix : h • ratTup (F := F) R (tupH P) = ratTup (F := F) R (tupH P) := hh
-  have h1 : lin R σ J h (ratTup (F := F) R (tupH P) (Fin.natAdd (r + 1) a)) =
-      ratTup (F := F) R (tupH P) (Fin.natAdd (r + 1) a) := congrFun hfix _
-  have e1 : ratTup (F := F) R (tupH P) (Fin.natAdd (r + 1) a) = ratV (F := F) R (P.f a) := by
-    funext i
-    simp [ratTup, tupH, F0, ratV]
-  rwa [e1] at h1
+  apply _root_.PI.LevelKSplit.W.SemiA.H_fix_f <;> assumption
 
 theorem stabilizer_fixes_span {r : ℕ} (P : Frame E n r) {h : HA R σ J} (hh : h ∈ Hsub R σ J P) (Y : Fin r → Fin n → E)
     (hY : ∀ a, lin R σ J h (ratV (F := F) R (Y a)) = ratV (F := F) R (Y a))

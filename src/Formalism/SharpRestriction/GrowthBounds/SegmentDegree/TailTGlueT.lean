@@ -4,46 +4,6 @@ public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.AtypicalPath
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NegDminusLeMu
 public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeRename
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.WindowSmall
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DplusLeBeA, Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TailTGlueT
@@ -144,7 +104,7 @@ theorem sp_iff (H : HypT N n0 r K LL B od bb a La p) (μ : Fin (N + 1) → Fin (
       · exact ⟨B i, fun _ => rfl, (hs i i.2).1 hi⟩
       · obtain ⟨d, hd'⟩ := ((hs i i.2).2 (by omega)).1
         refine ⟨d, fun h => absurd h hi, ?_⟩
-        rw [if_pos (H.vec_true_of_late i (by omega))]
+        rw [ite_eq_left (H.vec_true_of_late i (by omega))]
         exact hd'
     choose dd hdd using hex
     exact ⟨dd, ⟨⟨μ, h0, fun t => hd t (by have := t.2; omega), fun i => (hdd i).2⟩, rfl⟩, fun i hi => (hdd i).1 hi,
@@ -168,13 +128,13 @@ theorem vp_le_dplus {s : ℕ} {μ : Fin (N + 1) → Fin (r + K) → ℤ} (h : VP
     rw [hd]
     cases hv : LL.vec ⟨t, htN⟩ with
     | true =>
-      rw [if_pos hv] at hst
+      rw [ite_eq_left hv] at hst
       have h' : μ ⟨t + 1, ht⟩ m ≤ μ ⟨t, by omega⟩ m + (B ⟨t, htN⟩ : ℤ) := strip_le_add hst m
-      simp only [if_true]
+      simp only [ite_true]
       push_cast
       linarith
     | false =>
-      rw [if_neg (by simp [hv])] at hst
+      rw [ite_eq_right (by simp [hv])] at hst
       have h' : μ ⟨t + 1, ht⟩ m ≤ μ ⟨t, by omega⟩ m := hst.1 m
       simp
       linarith
@@ -183,8 +143,8 @@ theorem dplus_le_beA' (t : ℕ) (ht : t ≤ n0) : dplus LL B t ≤ beA n0 B := b
   unfold dplus beA
   refine Finset.sum_le_sum fun l _ => ?_
   by_cases hl : l.val < t ∧ LL.vec l = true
-  · rw [if_pos hl, if_pos (by omega)]
-  · rw [if_neg hl]; exact Nat.zero_le _
+  · rw [ite_eq_left hl, ite_eq_left (by omega)]
+  · rw [ite_eq_right hl]; exact Nat.zero_le _
 
 theorem vp_le {s : ℕ} {μ : Fin (N + 1) → Fin (r + K) → ℤ} (h : VP LL n0 B s μ) :
     ∀ (t : ℕ) (ht : t < N + 1), t ≤ s → ∀ m, μ ⟨t, ht⟩ m ≤ (beA n0 B : ℤ) := by
@@ -268,12 +228,12 @@ theorem tailT_glueT (t : ℕ) (ht : t ≤ r) (be : ℤ) (τ : Fin (K + t) → �
   funext l
   have hl := l.2
   have h1 : (r - t) + l.val < r + K := by omega
-  simp only [tailT, glueT, dif_pos h1]
+  simp only [tailT, glueT, dite_eq_left h1]
   simp
 
 theorem tailT_apply (t : ℕ) (ht : t ≤ r) (la : Fin (r + K) → ℤ) (l : Fin (K + t)) :
     tailT t la l = la ⟨(r - t) + l.val, by have := l.2; omega⟩ := by
-  unfold tailT; rw [dif_pos]
+  unfold tailT; rw [dite_eq_left]
 
 section
 variable {n0 : ℕ} {LL : Letters (Fin N)} {B : Fin N → ℕ} {od : Fin N → Fin N} {bb : Fin N → ℝ} {a La : ℝ} {p : ℕ}
@@ -309,7 +269,7 @@ theorem Af_fiber (hfin : (SAll (r := r) (K := K) LL n0 B).Finite) (s : ℕ) (hs 
     refine ⟨hq, fun t ht => ?_⟩
     by_cases e : t = (⟨s, hs⟩ : Fin N).succ
     · subst e
-      rw [Function.update_apply, if_pos rfl]
+      rw [Function.update_apply, ite_eq_left rfl]
       exact h'
     · rw [Function.update_of_ne e]
       apply h
@@ -340,7 +300,7 @@ theorem Af_step (H : HypT N n0 r K LL B od bb a La p) (hfin : (SAll (r := r) (K 
   refine ⟨by rw [← hP]; exact P.dom _, fun hlt => ?_, fun hge => ⟨⟨dd ⟨s, hs⟩, ?_⟩, fun m hm => hpa.head _ m hge hm⟩⟩
   · rwa [← hpa.degs _ hlt]
   · have hv : LL.vec ⟨s, hs⟩ = true := H.vec_true_of_late _ (Nat.le_add_right_of_le hge)
-    rwa [if_pos hv] at hstep
+    rwa [ite_eq_left hv] at hstep
 
 
 open Classical in

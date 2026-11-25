@@ -117,7 +117,6 @@ private theorem cocycle_add_eq {A : Type} [AddCommGroup A] {a b b' c c' d : A}
   abel
 
 set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 4000000 in
 theorem exists_level_cocycle (f : (Fin 2 → galUnramifiedOutside K.1 ℚ̄ S) →
       Additive (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) (hf : IsLocallyConstant f)
     (hcoc : ∀ u : Fin 3 → galUnramifiedOutside K.1 ℚ̄ S,
@@ -239,7 +238,6 @@ theorem ordEmb_eq_ordPlace (N : FiniteSubfield) [Fact (K ≤ N)]
 
 
 set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 4000000 in
 theorem coboundary_iff_of_level (N : FiniteSubfield) [Fact (K ≤ N)] [Normal K.1 N.1]
     (he : (placeOfEmbedding ι N).1.asIdeal.ramificationIdx (𝓞 K.1) = 1)
     (c : Gal(N.1/K.1) × Gal(N.1/K.1) → N.1ˣ) (hc : IsMulCocycle₂ c)

@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.PhiSub
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.IsDualPair
 public import Mathlib.Algebra.Module.ZMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
@@ -68,37 +69,8 @@ open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual Reci
 
 private theorem phi_sub (l : ℕ) {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ]
     (hΦ : PhiCond (Γ := Γ) l) (H : Subgroup Γ) (hH : IsOpen (H : Set Γ)) : PhiCond (Γ := H) l := by
-  intro K hK
-  have hK' : IsOpen ((K.map H.subtype : Subgroup Γ) : Set Γ) := by
-    rw [Subgroup.coe_map]
-    exact hH.isOpenMap_subtype_val _ hK
-  haveI := hΦ _ hK'
-  let e : K ≃* K.map H.subtype := K.equivMapOfInjective H.subtype H.subtype_injective
-  have hc : Continuous (e.symm : K.map H.subtype → K) := by
-    have hind : Topology.IsInducing (fun k : K => ((k : H) : Γ)) :=
-      Topology.IsInducing.subtypeVal.comp Topology.IsInducing.subtypeVal
-    rw [hind.continuous_iff]
-    have hfun : (fun k : K => ((k : H) : Γ)) ∘ e.symm = fun γ : K.map H.subtype => (γ : Γ) := by
-      funext γ
-      have h1 := K.coe_equivMapOfInjective_apply H.subtype H.subtype_injective (e.symm γ)
-      simp only [Function.comp_apply]
-      rw [← H.coe_subtype, ← h1]
-      simp [e]
-    rw [hfun]
-    exact continuous_subtype_val
-  refine Finite.of_injective
-    (β := {ψ : (K.map H.subtype) →* Multiplicative (ZMod l) // IsOpen (ψ.ker : Set (K.map H.subtype))})
-    (fun φ => ⟨φ.1.comp e.symm.toMonoidHom, ?_⟩) ?_
-  · have hk : ((φ.1.comp e.symm.toMonoidHom).ker : Set (K.map H.subtype)) = e.symm ⁻¹' (φ.1.ker : Set K) := by
-      ext γ
-      exact Iff.rfl
-    rw [hk]
-    exact φ.2.preimage hc
-  · intro φ φ' h
-    apply Subtype.ext
-    ext k
-    have h2 := congrArg (fun ψ => ψ.1 (e k)) h
-    simpa using h2
+  intros
+  apply _root_.UpperTheory.V.Pa.Det.phiSub <;> assumption
 
 private theorem finite_addMonoidHom_zmod_of_finite (l : ℕ) [Fact l.Prime] (M : Type) [AddCommGroup M] [Finite M] :
     Finite (M →+ ZMod l) := by

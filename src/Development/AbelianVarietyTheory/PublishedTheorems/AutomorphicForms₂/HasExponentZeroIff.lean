@@ -133,8 +133,6 @@ section Galois
 
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne GlobalTheory.HeckeGal ReciprocityTheory.Neutral.Bridge.HCFR Neutral.B1
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 variable {Ω : Type} [Field Ω] {A : ValuationSubring Ω}
 
 structure IsLocalArtin {E : Type} [Field E] [NumberField E] [Algebra E Ω] [IsAlgClosure E Ω]

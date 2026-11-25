@@ -22,48 +22,7 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Generali
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchProd
 public import GroundTheory.GlobalFields.KummerTheory.Splitting
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 import GroundTheory.GlobalFields.Adele.Topology
 import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.HeightLe
 import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.IsNormAlong
@@ -75,13 +34,9 @@ import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKern
 import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
 import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.G1St
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Data.Finset.Finsupp
 import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
-import Mathlib.RingTheory.Henselian
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.LocUnit, Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocHeightDiagPowLe, Development.AutomorphicArithmetic.AdelicGluing.FactorizableFinprodEqAwayFinprodMulLocalFactor, Development.AutomorphicArithmetic.AdelicGluing.RhoFCompOfinOfLeftInvariant, Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.SmoothStar, Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.SumSmulApply, Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LinearMapCompEqOnSmulOfEq, Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.UnitSplit, Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.GmOfBcfl
@@ -186,7 +141,7 @@ theorem UpperTheory.ConvolutionTheory.GM.htTot :
   have hC : (∏ᶠ (w : HeightOneSpectrum (𝓞 E)) (_ : AdeleBaseChange.below F w = q),
         locHeight (finAt w (g : AdelicGLn.AdelicGL E n))) ≤
       locHeight (Cartan.diagPow (w₀.1.adicCompletion E) n ν) ^ j := by
-    rw [finprod_eq_single _ w₀.1 ?_, finprod_eq_if, if_pos (hbelow _ w₀.2)]
+    rw [finprod_eq_single _ w₀.1 ?_, finprod_eq_if, ite_eq_left (hbelow _ w₀.2)]
     · obtain ⟨a, ha, b, hb, e⟩ := h2
       rw [e]
       refine (locHeight_mul_le_of_ultrametric _ _).trans ?_
@@ -237,16 +192,16 @@ private theorem finprod_split_at {α : Type*} (a : α → ℂ) (ha : (Function.m
   have hA : (Function.mulSupport fun v => if v = q then (1 : ℂ) else a v).Finite := by
     refine ha.subset fun v hv => ?_
     by_cases h : v = q
-    · exact absurd (if_pos h) hv
+    · exact absurd (ite_eq_left h) hv
     · intro h0
-      exact hv ((if_neg h).trans h0)
+      exact hv ((ite_eq_right h).trans h0)
   have hB : (Function.mulSupport fun v => if v = q then a q else (1 : ℂ)).Finite := by
     refine (Set.finite_singleton q).subset fun v hv => ?_
     by_contra h
-    exact hv (if_neg h)
+    exact hv (ite_eq_right h)
   have hq : (∏ᶠ v, if v = q then a q else (1 : ℂ)) = a q := by
-    rw [finprod_eq_single _ q fun v hv => if_neg hv]
-    exact if_pos rfl
+    rw [finprod_eq_single _ q fun v hv => ite_eq_right hv]
+    exact ite_eq_left rfl
   rw [← hq, ← finprod_mul_distrib hA hB]
   refine finprod_congr fun v => ?_
   by_cases h : v = q
@@ -568,11 +523,11 @@ theorem UpperTheory.ConvolutionTheory.GM.sideF : SideF := by
   have hrl : Free q r := fun y z => finprod_congr fun v => by
     by_cases hv : v = q
     · simp [hv]
-    · simp only [hv, if_false, cf_mul, cfl v hv, one_mul]
+    · simp only [hv, ite_false, cf_mul, cfl v hv, one_mul]
   have hrr : ∀ y z, r (z * AdelicGLn.localEmbedding q y) = r z := fun y z => finprod_congr fun v => by
     by_cases hv : v = q
     · simp [hv]
-    · simp only [hv, if_false, cf_mul, cfl v hv, mul_one]
+    · simp only [hv, ite_false, cf_mul, cfl v hv, mul_one]
   obtain ⟨W, hWo, hWi⟩ := UpperTheory.exists_open_subgroup_rightInvariant_finiteAdelicGL F n eg hegc
 
   let St : Subgroup (AdelicGLn.FiniteAdelicGL F n) :=
@@ -764,7 +719,6 @@ private theorem twKQ_int (θ : Twist μ) (f : TG K n) (Z : ℝ) (h : ∀ x, Z < 
   obtain ⟨C, hC, hcov⟩ := UpperTheory.exists_compact_fundamental_set_of_height_le K n Z
   obtain ⟨M, hM⟩ := hC.exists_bound_of_continuousOn (twK_cont θ f).continuousOn
   have hm : AEStronglyMeasurable (twKQ θ f) (quotientMeasure (Gam K n) μ) := by
-    set_option synthInstance.maxHeartbeats 200000 in
       exact hc.aestronglyMeasurable
   refine Integrable.of_bound hm (max M 0) (Eventually.of_forall fun y => ?_)
   change ‖twK θ f (Quotient.out y)‖ ≤ _
@@ -1097,8 +1051,7 @@ theorem UpperTheory.ConvolutionTheory.L1.unitSplit :
       exact Set.indicator_of_mem (hg u) _
     · rw [Set.indicator_of_notMem hg]
       obtain ⟨u, hu⟩ : ∃ u : PlacesOver E v, GM.cmp u g ∉ GLnLocal.integralGL (u.1.adicCompletion E) n := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact hg h
       exact Finset.prod_eq_zero (Finset.mem_univ u) (Set.indicator_of_notMem hu _)
   have e2 : cvAll mF m (fun i g => (GLnLocal.integralGL ((w i).1.adicCompletion E) n : Set (GL (Fin n) ((w i).1.adicCompletion E))).indicator (1 : GL (Fin n) ((w i).1.adicCompletion E) → ℂ)

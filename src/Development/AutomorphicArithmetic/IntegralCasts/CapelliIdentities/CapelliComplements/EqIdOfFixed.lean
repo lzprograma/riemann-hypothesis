@@ -1,51 +1,6 @@
 module
 
 public import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -71,19 +26,9 @@ private lemma ne_id_of_cm {F E : Type} [Field F] [NumberField F] [Field E] [Numb
 private lemma eq_id_of_fix {F E : Type} [Field F] [Field E] [Algebra F E]
     (hd : Module.finrank F E = 2) (σ : E →ₐ[F] E) {x : E} (hx : σ x = x)
     (hno : ∀ t : F, algebraMap F E t ≠ x) (y : E) : σ y = y := by
-  have hli : LinearIndependent F ![(1 : E), x] := by
-    rw [LinearIndependent.pair_iff]
-    intro s t hst
-    by_cases ht : t = 0
-    · subst ht
-      simp only [zero_smul, add_zero, smul_eq_zero, one_ne_zero, or_false] at hst
-      exact ⟨hst, rfl⟩
-    · exfalso
-      apply hno (-(s / t))
-      have h1 : t • x = -(s • (1 : E)) := eq_neg_of_add_eq_zero_right hst
-      have h2 : x = t⁻¹ • -(s • (1 : E)) := by
-        rw [← h1, smul_smul, inv_mul_cancel₀ ht, one_smul]
-      rw [h2, Algebra.algebraMap_eq_smul_one, smul_neg, smul_smul, neg_smul, div_eq_inv_mul]
+  have hli : LinearIndependent F ![(1 : E), x] :=
+    (LinearIndependent.pair_iff' one_ne_zero).2 fun t ht =>
+      hno t ((Algebra.algebraMap_eq_smul_one t).trans ht)
   have hc : Fintype.card (Fin 2) = Module.finrank F E := by simp [hd]
   let b := basisOfLinearIndependentOfCardEqFinrank hli hc
   have heq : σ.toLinearMap = (LinearMap.id : E →ₗ[F] E) := by
@@ -95,8 +40,8 @@ private lemma eq_id_of_fix {F E : Type} [Field F] [Field E] [Algebra F E]
   exact LinearMap.congr_fun heq y
 
 theorem goal1 :
-  ∀ {F E : Type} [inst : Field.{0} F] [inst_1 : NumberField.{0} F] [inst_2 : Field.{0} E] [inst_3 : NumberField.{0} E]
-  [inst_4 : Algebra.{0, 0} F E] {σ : AlgHom.{0, 0, 0} F E E},
+  ∀ {F E : Type} [Field.{0} F] [NumberField.{0} F] [Field.{0} E] [NumberField.{0} E]
+  [Algebra.{0, 0} F E] {σ : AlgHom.{0, 0, 0} F E E},
   HeckeCharacterZeroLocus.SiegelWeilU.IsCMExt F E σ →
     ∀ {x : E},
       Eq.{1} (DFunLike.coe.{1, 1, 1} σ x) x →

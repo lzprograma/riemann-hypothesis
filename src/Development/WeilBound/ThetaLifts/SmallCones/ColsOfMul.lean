@@ -189,14 +189,15 @@ theorem IsFr.levi (h : IsFr c ε J J₁ ι x y A') (hcc : ∀ a, c (c a) = a) {t
   · rw [c1]
     simp
 
-private theorem fr_mulVec_sum_elim (u : e → R) (s t : R) :
+omit [DecidableEq d] [DecidableEq e] in
+theorem fr_mulVec (u : e → R) (s t : R) :
     fr ι x y *ᵥ Sum.elim u ![s, t] = ι *ᵥ u + s • x + t • y := by
   ext i
   simp [fr, Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Fin.sum_univ_two] <;> ring
 
 private theorem eq_of_iota_mulVec_add_smul_eq (h : IsFr c ε J J₁ ι x y A') {u u' : e → R} {s t s' t' : R}
     (e1 : ι *ᵥ u + s • x + t • y = ι *ᵥ u' + s' • x + t' • y) : u = u' ∧ s = s' ∧ t = t' := by
-  rw [← fr_mulVec_sum_elim, ← fr_mulVec_sum_elim] at e1
+  rw [← fr_mulVec, ← fr_mulVec] at e1
   have h2 := congrArg (fun v => A' *ᵥ v) e1
   simp only [Matrix.mulVec_mulVec, h.inv2, Matrix.one_mulVec] at h2
   exact ⟨funext fun j => by simpa using congrFun h2 (Sum.inl j), by simpa using congrFun h2 (Sum.inr 0),
@@ -267,11 +268,6 @@ theorem IsFr.ext (h : IsFr c ε J J₁ ι x y A') {m m' : Matrix d d R} (h1 : m 
   calc m = m * (fr ι x y * A') := by rw [h.inv1, Matrix.mul_one]
     _ = m' * (fr ι x y * A') := by rw [← Matrix.mul_assoc, hf, Matrix.mul_assoc]
     _ = m' := by rw [h.inv1, Matrix.mul_one]
-
-omit [DecidableEq d] [DecidableEq e] in
-theorem fr_mulVec (u : e → R) (s t : R) : fr ι x y *ᵥ Sum.elim u ![s, t] = ι *ᵥ u + s • x + t • y := by
-  ext i
-  simp [fr, Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Fin.sum_univ_two] <;> ring
 
 theorem IsFr.span (h : IsFr c ε J J₁ ι x y A') (z : d → R) : ∃ (u : e → R) (s t : R), z = ι *ᵥ u + s • x + t • y := by
   refine ⟨fun j => (A' *ᵥ z) (Sum.inl j), (A' *ᵥ z) (Sum.inr 0), (A' *ᵥ z) (Sum.inr 1), ?_⟩

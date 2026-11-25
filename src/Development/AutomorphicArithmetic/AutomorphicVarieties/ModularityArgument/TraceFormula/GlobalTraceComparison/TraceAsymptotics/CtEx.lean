@@ -128,17 +128,6 @@ private lemma mem_intMat {a b : ℕ} {w : Pl E} (X : Multiplicative (Matrix (Fin
       simpa using hx i j
   · exact fun h => Subgroup.subset_closure h
 
-private lemma avg_const {H : Type} [Group H] (c : ℂ) : avg (fun _ : H => c) = c := by
-  have h : rStab (fun _ : H => c) = ⊤ := by
-    ext k
-    simp [rStab]
-  unfold avg
-  rw [h, Subgroup.index_top]
-  haveI : Subsingleton (H ⧸ (⊤ : Subgroup H)) := QuotientGroup.subsingleton_quotient_top
-  haveI : Unique (H ⧸ (⊤ : Subgroup H)) := ⟨⟨QuotientGroup.mk 1⟩, fun _ => Subsingleton.elim _ _⟩
-  rw [finsum_unique]
-  simp
-
 private lemma hint_zero {H : Type} [Group H] (K : Subgroup H) : hint K (fun _ : H => (0 : ℂ)) = 0 := by
   simp [hint]
 
@@ -319,7 +308,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.ctUnit :
         rfl
       · rw [Set.indicator_of_notMem (show _ ∉ (KGL w (n := n) : Set (GLw n w)) from fun h' => hy (hiff.1 h')),
           Set.indicator_of_notMem (show _ ∉ (KGL w (n := n) : Set (GLw n w)) from hy)]
-    rw [hf, avg_const]
+    rw [hf, GlobalTheory.IwRed.avg_const]
   simp only [hconj]
   by_cases hm : m ∈ K2 a b w
   · have hu : (fun X : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)) =>
@@ -374,8 +363,8 @@ private theorem prod_lt {R : Type} [CommMonoid R] (p : R) (j : ℕ) :
   | succ n ih =>
     rw [Finset.prod_range_succ, ih]
     by_cases h : n < j
-    · rw [if_pos h, min_eq_left h.le, min_eq_left (Nat.succ_le_of_lt h), pow_succ]
-    · rw [if_neg h, mul_one, min_eq_right (not_lt.1 h), min_eq_right (by omega)]
+    · rw [ite_eq_left h, min_eq_left h.le, min_eq_left (Nat.succ_le_of_lt h), pow_succ]
+    · rw [ite_eq_right h, mul_one, min_eq_right (not_lt.1 h), min_eq_right (by omega)]
 
 private theorem det_diagJ {L : Type} [Field L] (n : ℕ) (p : L) {i : ℕ} (hi : i ≤ n) : (diagJ n p i).det = p ^ i := by
   rw [diagJ, det_diagonal, Fin.prod_univ_eq_prod_range (fun k => if k < i then p else 1) n, prod_lt, min_eq_right hi]
@@ -662,10 +651,6 @@ section -- clump:auto
 
 noncomputable section
 
-namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm
-
-end UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm
-
 theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.satSum :
     UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.SatSum := by
   intro q a b hq B₁ B₂ c₁ c₂ h₁ h₂ j
@@ -679,7 +664,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.satSum :
     intro i hi
     have hs : i.1 + i.2 = j := (Finset.mem_filter.1 hi).2
     have hsc : (j : ℂ) = (i.1 : ℂ) + i.2 := by exact_mod_cast hs.symm
-    rw [if_pos hs, _root_.GlobalTheory.SphGal.satEig_map_mul, _root_.GlobalTheory.SphGal.satEig_map_mul]
+    rw [ite_eq_left hs, _root_.GlobalTheory.SphGal.satEig_map_mul, _root_.GlobalTheory.SphGal.satEig_map_mul]
     have e : ((j : ℂ) * (((a + b : ℕ) : ℂ) - j) - i.1 * (a - i.1) - i.2 * (b - i.2)) / 2 =
         (((i.1 : ℂ)) * ((b : ℂ) - i.2) + ((i.2 : ℂ)) * ((a : ℂ) - i.1)) / 2 := by
       rw [hsc]; push_cast; ring

@@ -23,11 +23,9 @@ namespace FibreTranscendence
 
 theorem aeval_red {L : Type} [Field L] (p : ℕ) [Fact p.Prime] [Algebra (ZMod p) L] {J : Type} (y : J → L)
     (g : MvPolynomial J ℤ) :
-    aeval y (MvPolynomial.map (Int.castRingHom (ZMod p)) g) = aeval y g := by
-  induction g using MvPolynomial.induction_on with
-  | C a => simp
-  | add f g hf hg => simp only [map_add (f := _), hf, hg]
-  | mul_X f i hf => simp only [map_mul, hf, map_X, aeval_X]
+    aeval y (MvPolynomial.map (Int.castRingHom (ZMod p)) g) = aeval y g :=
+  hom_eq_hom ((aeval y).toRingHom.comp (MvPolynomial.map (Int.castRingHom (ZMod p))))
+    (aeval y).toRingHom (RingHom.ext_int _ _) (fun _ => by simp) g
 
 theorem aeval_mem_adjoin {L : Type} [Field L] (p : ℕ) [Fact p.Prime] [Algebra (ZMod p) L] {J : Type} (y : J → L)
     (g : MvPolynomial J ℤ) : aeval y g ∈ IntermediateField.adjoin (ZMod p) (Set.range y) := by
@@ -101,12 +99,10 @@ theorem FibreTranscendenceDegreeAlt.proof (hE : EvalKerKrullDim.Statement) : Fib
         refine Subfield.closure_le.2 (Set.union_subset ?_ ?_)
         · rintro _ ⟨c, rfl⟩
           obtain ⟨f, g, -, rfl⟩ := G'.gen c
-          have key : ∀ f : MRing ι, algebraMap G'.Φ G'.Φ' (aeval G'.x f) = aeval G'.x' (rename v f) := by
-            intro f
-            induction f using MvPolynomial.induction_on with
-            | C a => simp
-            | add f g hf hg => simp only [map_add (f := _), hf, hg]
-            | mul_X f i hf => simp only [map_mul, hf, aeval_X, rename_X, G'.compat]
+          have key : ∀ f : MRing ι, algebraMap G'.Φ G'.Φ' (aeval G'.x f) = aeval G'.x' (rename v f) :=
+            hom_eq_hom ((algebraMap G'.Φ G'.Φ').comp (aeval G'.x).toRingHom)
+              ((aeval G'.x').toRingHom.comp (rename v).toRingHom) (RingHom.ext_int _ _)
+              fun i => by simp [G'.compat]
           rw [map_div₀, key, key]
           exact div_mem (aeval_mem_adjoin p _ _) (aeval_mem_adjoin p _ _)
         · rintro _ ⟨q, rfl⟩

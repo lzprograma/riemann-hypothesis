@@ -1,54 +1,10 @@
 module
 
 public import Formalism.GradedWeylDivisibility.StatementA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.MvPolynomial.Funext
 
 @[expose] public section
@@ -125,7 +81,7 @@ theorem lhwline_rowGen_eq (a b : Fin r) (g : MvPolynomial (Fin r × Fin n) K)
     rw [h0, Polynomial.coeff_C_zero]
   · have h1 := h k hk
     simp only [rowDiv] at h1
-    rw [h1, Polynomial.coeff_C, if_neg (by omega)]
+    rw [h1, Polynomial.coeff_C, ite_eq_right (by omega)]
 
 def lhwline_RInv (φ : (Fin r × Fin n → K) → K) : Prop :=
   ∀ (x : Fin r × Fin n → K) (a b : Fin r) (t : K), a < b → φ (lhwline_rowOp a b t x) = φ x
@@ -232,7 +188,7 @@ theorem lhwline_step_apply (p : Fin r) (q : Fin n) (x : Fin r × Fin n → K) (a
       (if q < j then -(x (p, j) / x (p, q)) *
         (if p < a then x (a, q) + -(x (a, q) / x (p, q)) * x (p, q) else x (a, q)) else 0) := by
   simp only [highestWeightLineUpdate, lhwline_mcol, lhwline_mrow, Finset.mem_filter, Finset.mem_univ,
-    true_and, lt_self_iff_false, if_false]
+    true_and, lt_self_iff_false, ite_false]
   split_ifs <;> ring
 
 end LHwlineElim
@@ -258,11 +214,11 @@ theorem lhwline_step_cleared (k : ℕ) (hr : k < r) (hn : k < n) (y : Fin r × F
     rcases lt_or_gt_of_ne (Ne.symm haj) with hj | hj
     · have h1 : y (⟨k, hr⟩, j) = 0 := hy _ j (by simp only [Fin.val_mk]; omega) (Or.inr hj)
       simp [h1, show ¬ k < j.val by omega]
-    · simp only [lt_self_iff_false, if_false, if_pos hj]
+    · simp only [lt_self_iff_false, ite_false, ite_eq_left hj]
       field_simp
       ring
   · have hj : j.val ≤ k := by omega
-    simp only [if_pos ha, if_neg (show ¬ k < j.val by omega), add_zero]
+    simp only [ite_eq_left ha, ite_eq_right (show ¬ k < j.val by omega), add_zero]
     rcases lt_or_eq_of_le hj with hj | hj
     · have h1 : y (a, j) = 0 := hy a j haj (Or.inr hj)
       have h2 : y (⟨k, hr⟩, j) = 0 := hy _ j (by simp only [Fin.val_mk]; omega) (Or.inr hj)
@@ -488,7 +444,7 @@ theorem lhwline_mnu_apply (hn : n ≤ r) (ν : Fin n → ℕ) (a : Fin r) (j : F
         rw [← (Prod.mk.inj h').1, Fin.coe_castLE]
       simp [this, h]
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h'
     exact hb (Prod.mk.inj h').2
   · simp

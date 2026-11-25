@@ -1,49 +1,11 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR KaehlerDifferential GlobalTheory.W1
 
-set_option autoImplicit false
 noncomputable section
 namespace UpperTheory.TanRes
 
@@ -62,17 +24,17 @@ private theorem Wit.loc {B B' : Type} [CommRing B] [CommRing B'] [Algebra ℂ B]
     {d : ℕ} {τ₁ τ₂ : Fin d → B} {A : Matrix (Fin d) (Fin d) ℂ} (h : Wit d e τ₁ τ₂ A) :
     Wit d e' (fun l => algebraMap B B' (τ₁ l)) (fun l => algebraMap B B' (τ₂ l)) A := by
   obtain ⟨φ, hs, h1, h2, hk⟩ := h
-  letI mB' : Module B' (Fin d → ℂ) := Module.compHom _ e'
-  letI mB : Module B (Fin d → ℂ) := Module.compHom _ e
+  let mB' : Module B' (Fin d → ℂ) := Module.compHom _ e'
+  let mB : Module B (Fin d → ℂ) := Module.compHom _ e
   have smulB' : ∀ (b : B') (x : Fin d → ℂ), b • x = e' b • x := fun _ _ => rfl
   have smulB : ∀ (b : B) (x : Fin d → ℂ), b • x = e b • x := fun _ _ => rfl
-  haveI : IsScalarTower B B' (Fin d → ℂ) := ⟨fun b b' x => by
+  have : IsScalarTower B B' (Fin d → ℂ) := ⟨fun b b' x => by
     rw [Algebra.smul_def, smulB', smulB', smulB, map_mul, he, mul_smul]⟩
-  haveI : IsScalarTower ℂ B' (Fin d → ℂ) := ⟨fun a b' x => by
+  have : IsScalarTower ℂ B' (Fin d → ℂ) := ⟨fun a b' x => by
     rw [Algebra.smul_def, smulB', smulB', map_mul, hc, mul_smul]⟩
   let φB : Ω[B⁄ℂ] →ₗ[B] (Fin d → ℂ) :=
     { toFun := φ, map_add' := φ.map_add, map_smul' := fun b ω => hs b ω }
-  haveI hl := KaehlerDifferential.isLocalizedModule_map ℂ B B' M
+  have hl := KaehlerDifferential.isLocalizedModule_map ℂ B B' M
   have hbc := IsLocalizedModule.isBaseChange M B' (KaehlerDifferential.map ℂ ℂ B B')
   let φ' : Ω[B'⁄ℂ] →ₗ[B'] (Fin d → ℂ) := hbc.lift φB
   have hφ' : ∀ ω, φ' (KaehlerDifferential.map ℂ ℂ B B' ω) = φ ω := fun ω => hbc.lift_eq φB ω
@@ -102,8 +64,8 @@ private theorem Wit.equiv {B B' : Type} [CommRing B] [CommRing B'] [Algebra ℂ 
     (e : B →+* ℂ) (e' : B' →+* ℂ) (he : ∀ b, e' (ρ b) = e b) (hc : ∀ a : ℂ, e' (algebraMap ℂ B' a) = a)
     {d : ℕ} {τ₁ τ₂ : Fin d → B} {A : Matrix (Fin d) (Fin d) ℂ} (h : Wit d e τ₁ τ₂ A) :
     Wit d e' (fun l => ρ (τ₁ l)) (fun l => ρ (τ₂ l)) A := by
-  letI : Algebra B B' := ρ.toAlgHom.toRingHom.toAlgebra
-  haveI : IsScalarTower ℂ B B' := .of_algebraMap_eq fun a => (ρ.commutes a).symm
+  let : Algebra B B' := ρ.toAlgHom.toRingHom.toAlgebra
+  have : IsScalarTower ℂ B B' := .of_algebraMap_eq fun a => (ρ.commutes a).symm
   have : IsLocalization (⊥ : Submonoid B) B := IsLocalization.self bot_le
   have : IsLocalization (⊥ : Submonoid B) B' :=
     IsLocalization.isLocalization_of_algEquiv (S := B) (⊥ : Submonoid B)
@@ -245,10 +207,10 @@ private theorem shrink {d : ℕ} {c1 c2 : Y ⟶ Z} (h1 : c1 ≫ s = s') (h2 : c2
   have hV₂ : Y.basicOpen g ≤ c2 ⁻¹ᵁ Z.basicOpen f := fun x hx => (hg hx).2.2
   refine ⟨Z.basicOpen f, Y.basicOpen g, hV₁, hV₂, fun l => Sec.res s hU₂ (t l), hf, fun x hx => (hg hx).1,
     hy₂, hU.basicOpen f, hV.basicOpen g, ?_⟩
-  letI : Algebra (Sec s' V) (Sec s' (Y.basicOpen g)) := (Sec.res s' hVV).toRingHom.toAlgebra
-  haveI : IsScalarTower ℂ (Sec s' V) (Sec s' (Y.basicOpen g)) :=
+  let : Algebra (Sec s' V) (Sec s' (Y.basicOpen g)) := (Sec.res s' hVV).toRingHom.toAlgebra
+  have : IsScalarTower ℂ (Sec s' V) (Sec s' (Y.basicOpen g)) :=
     .of_algebraMap_eq fun a => ((Sec.res s' hVV).commutes a).symm
-  haveI : IsLocalization (Submonoid.powers (show Sec s' V from g)) (Sec s' (Y.basicOpen g)) :=
+  have : IsLocalization (Submonoid.powers (show Sec s' V from g)) (Sec s' (Y.basicOpen g)) :=
     hV.isLocalization_basicOpen g
   have he : ∀ b : Sec s' V, evS y hy₂ (algebraMap (Sec s' V) (Sec s' (Y.basicOpen g)) b) = evS y hy b := fun b => by
     rw [evS_apply, evS_apply]

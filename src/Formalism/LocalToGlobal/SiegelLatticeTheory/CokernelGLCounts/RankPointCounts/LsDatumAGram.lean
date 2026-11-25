@@ -126,12 +126,12 @@ private theorem det_sub_cornerM (N : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (t : 
     intro j
     ext a b
     simp only [Matrix.submatrix_apply, Matrix.sub_apply, cornerM, Matrix.of_apply, Fin.succAbove_last]
-    rw [if_neg (fun h => (Fin.castSucc_lt_last a).ne h.1), sub_zero]
+    rw [ite_eq_right (fun h => (Fin.castSucc_lt_last a).ne h.1), sub_zero]
   have hrow : ∀ k : Fin r, (N - cornerM t : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (Fin.last r) k.castSucc =
       N (Fin.last r) k.castSucc := by
     intro k
     simp only [Matrix.sub_apply, cornerM, Matrix.of_apply]
-    rw [if_neg (fun h => (Fin.castSucc_lt_last k).ne h.2), sub_zero]
+    rw [ite_eq_right (fun h => (Fin.castSucc_lt_last k).ne h.2), sub_zero]
   rw [Matrix.det_succ_row (N - cornerM t) (Fin.last r), Matrix.det_succ_row N (Fin.last r),
     Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
   simp only [hsub, hrow, hP]

@@ -123,7 +123,7 @@ private lemma exists_re_trace_orthonormal_gLie {n : ℕ} (ε : Fin n → Bool) :
   have hΦ : ∀ X Y, inner ℝ (Φ X) (Φ Y) = ((X * Yᴴ).trace).re := by
     intro X Y
     rw [PiLp.inner_apply]
-    simp only [hΦapp, Fintype.sum_prod_type, Fintype.sum_bool, if_true, Bool.false_eq_true, if_false,
+    simp only [hΦapp, Fintype.sum_prod_type, Fintype.sum_bool, ite_true, Bool.false_eq_true, ite_false,
       Matrix.trace, Matrix.diag, Matrix.mul_apply, Matrix.conjTranspose_apply, Complex.re_sum,
       Complex.mul_re, Complex.star_def, Complex.conj_re, Complex.conj_im]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_

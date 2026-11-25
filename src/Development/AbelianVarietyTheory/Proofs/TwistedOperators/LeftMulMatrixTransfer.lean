@@ -77,45 +77,7 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E]
 def sharp (c : E ≃ₐ[F] E) (r : ℕ) (P : E[X]) : E[X] :=
   C (c (P.coeff 0))⁻¹ * reflect r (P.map (c : E →+* E))
 
-def IsPPol (c : E ≃ₐ[F] E) (r : ℕ) (P : E[X]) : Prop :=
-  P.Monic ∧ Irreducible P ∧ P.natDegree = r ∧ P.coeff 0 ≠ 0 ∧ P = sharp c r P
-
 variable {c : E ≃ₐ[F] E} {r : ℕ} {P : E[X]}
-
-theorem isUnit_root (hP : IsPPol c r P) : IsUnit (AdjoinRoot.root P) := by
-  haveI : Fact (Irreducible P) := ⟨hP.2.1⟩
-  refine Ne.isUnit fun h => hP.2.2.2.1 ?_
-  have h1 := AdjoinRoot.eval₂_root P
-  rw [h, eval₂_at_zero] at h1
-  exact (map_eq_zero_iff _ (AdjoinRoot.of P).injective).1 h1
-
-def alpha (hP : IsPPol c r P) : (AdjoinRoot P)ˣ := (isUnit_root hP).unit
-
-theorem eval₂_conj_inv (hP : IsPPol c r P) :
-    P.eval₂ ((AdjoinRoot.of P).comp (c : E →+* E)) ((alpha hP)⁻¹ : (AdjoinRoot P)ˣ) = 0 := by
-  rw [← eval₂_map]
-  letI : Invertible (((alpha hP)⁻¹ : (AdjoinRoot P)ˣ) : AdjoinRoot P) := Units.invertible _
-  have hd : (P.map (c : E →+* E)).natDegree ≤ r := hP.2.2.1 ▸ natDegree_map_le
-  rw [← eval₂_reflect_eq_zero_iff _ _ r _ hd]
-  have h1 : ⅟(((alpha hP)⁻¹ : (AdjoinRoot P)ˣ) : AdjoinRoot P) = AdjoinRoot.root P := rfl
-  have h2 : reflect r (P.map (c : E →+* E)) = C (c (P.coeff 0)) * P := by
-    have hne : c (P.coeff 0) ≠ 0 := by simpa using hP.2.2.2.1
-    conv_rhs => rw [hP.2.2.2.2]
-    rw [← hP.2.2.2.2]
-    conv_rhs => arg 2; rw [hP.2.2.2.2]
-    rw [sharp, ← mul_assoc, ← C_mul, mul_inv_cancel₀ hne, C_1, one_mul]
-  rw [h1, h2, eval₂_mul, AdjoinRoot.eval₂_root, mul_zero]
-
-def starL (hP : IsPPol c r P) : AdjoinRoot P →ₐ[F] AdjoinRoot P :=
-  { AdjoinRoot.lift ((AdjoinRoot.of P).comp (c : E →+* E))
-      (((alpha hP)⁻¹ : (AdjoinRoot P)ˣ) : AdjoinRoot P) (eval₂_conj_inv hP) with
-    commutes' := fun a => by
-      have h : algebraMap F (AdjoinRoot P) a = AdjoinRoot.of P (algebraMap F E a) := rfl
-      rw [h]
-      simp }
-
-def Lplus (hP : IsPPol c r P) : Subalgebra F (AdjoinRoot P) :=
-  AlgHom.equalizer (starL hP) (AlgHom.id F (AdjoinRoot P))
 
 variable (k : Type) [Field k] [Algebra F k]
 
@@ -124,18 +86,6 @@ variable (k : Type) [Field k] [Algebra F k]
     (AlgHom.id F k)).toRingHom.toAlgebra
 
 attribute [local instance] algLk
-
-def starLk (hP : IsPPol c r P) : AdjoinRoot P ⊗[F] k →+* AdjoinRoot P ⊗[F] k :=
-  sigR (starL hP) k
-
-def inclPlus (hP : IsPPol c r P) : Lplus hP ⊗[F] k →+* AdjoinRoot P ⊗[F] k :=
-  (Algebra.TensorProduct.map (Lplus hP).val (AlgHom.id F k)).toRingHom
-
-def trLk (P : E[X]) : AdjoinRoot P ⊗[F] k →ₗ[F] E ⊗[F] k :=
-  TensorProduct.map ((Algebra.trace E (AdjoinRoot P)).restrictScalars F) LinearMap.id
-
-def hx (hP : IsPPol c r P) (x : (Lplus hP ⊗[F] k)ˣ) (y y' : AdjoinRoot P ⊗[F] k) : E ⊗[F] k :=
-  trLk k P (inclPlus k hP x * y * starLk k hP y')
 
 variable {k}
 
@@ -246,62 +196,11 @@ theorem exists_cyclic {A : Type} [CommRing A] [IsArtinianRing A] {r : ℕ}
 
 end Cyclic
 
-section Transfer
-
-variable {R S A B : Type} [CommRing R] [CommRing S] [CommRing A] [CommRing B] [Algebra R S]
-  [Algebra A B] {ι : Type} [Fintype ι] [DecidableEq ι]
-
-end Transfer
-
 section Forms
 
 variable {A : Type} [CommRing A] {r : ℕ} (σ : A →+* A)
 
-theorem hform_eq (J : Matrix (Fin r) (Fin r) A) (x y : Fin r → A) :
-    hform σ J x y = (σ ∘ x) ⬝ᵥ (J *ᵥ y) := by
-  simp [hform, dotProduct, Matrix.mulVec, Finset.mul_sum, mul_assoc]
-
-theorem hform_mulVec (J g : Matrix (Fin r) (Fin r) A) (x y : Fin r → A) :
-    hform σ J (g *ᵥ x) (g *ᵥ y) = hform σ (cT σ g * J * g) x y := by
-  have h2 : σ ∘ (g *ᵥ x) = (g.map σ) *ᵥ (σ ∘ x) := by
-    funext i; simp [Matrix.mulVec, dotProduct]
-  rw [hform_eq, hform_eq, h2, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, cT,
-    Matrix.dotProduct_mulVec _ (g.map σ)ᵀ, Matrix.vecMul_transpose]
-
-theorem hform_single (J : Matrix (Fin r) (Fin r) A) (i j : Fin r) :
-    hform σ J (Pi.single i 1) (Pi.single j 1) = J i j := by
-  simp [hform, Pi.single_apply, apply_ite σ]
-
-theorem mem_UJ_iff (J : Matrix (Fin r) (Fin r) A) (g : GL (Fin r) A) :
-    g ∈ UJ σ J ↔ ∀ x y, hform σ J ((g : Matrix (Fin r) (Fin r) A) *ᵥ x)
-      ((g : Matrix (Fin r) (Fin r) A) *ᵥ y) = hform σ J x y := by
-  show cT σ (g : Matrix (Fin r) (Fin r) A) * J * g = J ↔ _
-  constructor
-  · intro h x y; rw [hform_mulVec, h]
-  · intro h; ext i j
-    rw [← hform_single σ (_ * J * _), ← hform_mulVec, h, hform_single]
-
 end Forms
-
-section Core
-
-variable {A B : Type} [CommRing A] [CommRing B] [Algebra A B] {r : ℕ}
-
-variable {σ : A →+* A} {τ : B →+* B} {α : B} {b : Module.Basis (Fin r) A B}
-  {J : Matrix (Fin r) (Fin r) A}
-
-end Core
-
-section Concrete
-
-open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialInclusion
-
-attribute [local instance] algLk
-
-variable {F E : Type} [Field F] [Field E] [Algebra F E] {c : E ≃ₐ[F] E} {r : ℕ} {P : E[X]}
-  (k : Type) [Field k] [Algebra F k]
-
-end Concrete
 
 end GlobalTheory.ClassParam
 end -- clump:auto

@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.GaloisLiftMemFirstOrderDeformations
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PairedDualFirstOrderDualMatrixSpace
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.RhoHom
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SecondSelmerSpanBoundAtAllLevels
@@ -24,64 +25,12 @@ public import Mathlib.Order.Filter.Ultrafilter.Basic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.CocFin
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.LcOfAdic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchedSupportCompletions
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.PowerSeries.Ideal
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Topology.Separation.Connected
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import Mathlib.RingTheory.PowerSeries.Inverse
 
@@ -152,47 +101,7 @@ private theorem bd_mul_mem {A X : Type} [CommRing A] [CommRing X] [Algebra A X] 
 
 private theorem bd_rho_mem {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} {x : NP F n} (k : Kap x) (X : Type)
     [CommRing X] [Algebra x.A X] (g : F.G₀) : k.ρ1 X g ∈ W1 n x.A X k.g x.a := by
-  have hC : ∀ c : x.A, algebraMap x.A (DD X k.g) c = DD.C (algebraMap x.A X c) := fun _ => rfl
-  have hK : ∀ m (i j : Fin n), ((i : ℕ) < x.a ↔ (j : ℕ) < x.a) → k.κ m g i j = 0 := by
-    intro m i j hd
-    have hm := (k.mem m).1 g
-    simp only [Od, blkMat, Submodule.mem_mk, AddSubmonoid.mem_mk, AddSubsemigroup.mem_mk,
-      Set.mem_setOf_eq, Submodule.mem_bot] at hm
-    exact (hm i j).1 hd
-  have hR : ∀ i j : Fin n, ¬((i : ℕ) < x.a ↔ (j : ℕ) < x.a) → (mat x.ρ) g i j = 0 := by
-    intro i j hd
-    have hm := x.blk g
-    simp only [Ev, blkMat, Submodule.mem_mk, AddSubmonoid.mem_mk, AddSubsemigroup.mem_mk,
-      Set.mem_setOf_eq, Submodule.mem_bot] at hm
-    exact (hm i j).2 hd
-  apply bd_mul_mem
-  · rw [bd_mem_iff]
-    intro i j
-    by_cases hij : i = j
-    · subst hij
-      refine ⟨?_, ?_, fun _ => ?_, fun hd => absurd Iff.rfl hd⟩
-      · funext m
-        simp [DD.epM, DD.add_ep', DD.one_ep']
-      · simp [DD.epM, DD.add_eta, DD.one_eta]
-      · funext m
-        simp [DD.epM, DD.add_ep, DD.one_ep, hK m i i Iff.rfl]
-    · refine ⟨?_, ?_, fun hd => ?_, fun hd => ?_⟩
-      · funext m
-        simp [DD.epM, Matrix.one_apply_ne hij]
-      · simp [DD.epM, Matrix.one_apply_ne hij]
-      · funext m
-        simp [DD.epM, Matrix.one_apply_ne hij, hK m i j hd]
-      · simp [DD.epM, Matrix.one_apply_ne hij]
-  · rw [bd_mem_iff]
-    intro i j
-    simp only [NP.ρX, Matrix.map_apply, hC]
-    refine ⟨?_, ?_, fun _ => ?_, fun hd => ?_⟩
-    · funext m
-      exact DD.C_ep' _ m
-    · exact DD.C_eta _
-    · funext m
-      exact DD.C_ep _ m
-    · rw [DD.C_a, hR i j hd, map_zero]
+  apply _root_.galois_lift_mem_first_order_deformations <;> assumption
 
 private theorem bd_epM_mul {X : Type} [CommRing X] {g n : ℕ} (Z Z' : Fin g → Matrix (Fin n) (Fin n) X) :
     DD.epM Z * DD.epM Z' = 0 := by
@@ -1413,8 +1322,7 @@ private theorem power_series_exists_ultrafilter_limit {K : Type} [Field K] [Fini
     ∃ c0 : PowerSeries K, ∀ j, ∀ᶠ m in (U : Filter ℕ), (PowerSeries.X : PowerSeries K) ^ j ∣ c m - c0 := by
   have hv : ∀ i : ℕ, ∃ v : K, {m | PowerSeries.coeff i (c m) = v} ∈ (U : Filter ℕ) := by
     intro i
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     have hall : ∀ v : K, {m | PowerSeries.coeff i (c m) = v}ᶜ ∈ U := fun v =>
       Ultrafilter.compl_mem_iff_notMem.2 (hno v)
     have hinter : (⋂ v : K, {m | PowerSeries.coeff i (c m) = v}ᶜ) ∈ (U : Filter ℕ) :=
@@ -1472,8 +1380,7 @@ theorem UpperTheory.V.Pa.secondCohomologyBound_of_boundaryBound :
   choose c0 hc0 using fun i : Fin (k.g + 1) => power_series_exists_ultrafilter_limit U (fun m => cm m i)
   choose idx hidx using hcu
   have hi0 : ∃ i0, ∀ᶠ m in (U : Filter ℕ), idx m = i0 := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     have hinter : ∀ᶠ m in (U : Filter ℕ), ∀ i, ¬ idx m = i :=
       Filter.eventually_all.2 fun i => by simpa using hno i
     obtain ⟨m, hm⟩ := hinter.exists

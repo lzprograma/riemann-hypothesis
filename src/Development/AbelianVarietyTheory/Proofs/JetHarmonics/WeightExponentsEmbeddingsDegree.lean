@@ -89,18 +89,18 @@ theorem wtA_tauEmb {D : D7} {Q : Par D} (hp : Q.PinHost) {j : ℕ} (w : WeightFa
     wtA w (DV.tauEmb D t, i) = ext0 (w.aP t) i := by
   classical
   rw [wtA_apply, Finset.sum_eq_single t]
-  · rw [if_pos rfl, if_neg (tauEmb_ne_conj hp t t), add_zero]
+  · rw [ite_eq_left rfl, ite_eq_right (tauEmb_ne_conj hp t t), add_zero]
   · intro s _ hs
-    rw [if_neg fun h => hs (tauEmb_injective D h).symm, if_neg (tauEmb_ne_conj hp t s), add_zero]
+    rw [ite_eq_right fun h => hs (tauEmb_injective D h).symm, ite_eq_right (tauEmb_ne_conj hp t s), add_zero]
   · intro h; exact absurd (Finset.mem_univ t) h
 
 theorem wtA_conj {D : D7} {Q : Par D} (hp : Q.PinHost) {j : ℕ} (w : WeightFamilies.Wt D j) (t : D.what₂.Tau) (i : ℕ) :
     wtA w (ComplexEmbedding.conjugate (DV.tauEmb D t), i) = ext0 (w.aM t) i := by
   classical
   rw [wtA_apply, Finset.sum_eq_single t]
-  · rw [if_pos rfl, if_neg (tauEmb_ne_conj hp t t).symm, zero_add]
+  · rw [ite_eq_left rfl, ite_eq_right (tauEmb_ne_conj hp t t).symm, zero_add]
   · intro s _ hs
-    rw [if_neg (tauEmb_ne_conj hp s t).symm, if_neg fun h =>
+    rw [ite_eq_right (tauEmb_ne_conj hp s t).symm, ite_eq_right fun h =>
       hs (tauEmb_injective D ((ComplexEmbedding.involutive_conjugate _).injective h)).symm, add_zero]
   · intro h; exact absurd (Finset.mem_univ t) h
 
@@ -125,10 +125,10 @@ theorem DF_wtA {D : D7} {Q : Par D} (hQ : Q.Pins) {j : ℕ} (hj : InR D j) (w : 
   rw [Finset.sum_congr rfl fun τ _ => hsw τ, Finset.sum_comm]
   refine Finset.sum_congr rfl fun t _ => ?_
   rw [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq']
-  simp only [Finset.mem_univ, if_true]
+  simp only [Finset.mem_univ, ite_true]
   have ht := hQ.1.2.2.2 t
   have hc : ¬ ComplexEmbedding.conjugate (DV.tauEmb D t) (Q.H.rt : D.host.E) = Q.H.rt0 := not_inPsi_conj hQ.1 t
-  rw [hs _ (by rw [Datum.mult, if_pos ht, hp]), hs _ (by rw [Datum.mult, if_neg hc, hq])]
+  rw [hs _ (by rw [Datum.mult, ite_eq_left ht, hp]), hs _ (by rw [Datum.mult, ite_eq_right hc, hq])]
 
 theorem weight_exponents : ∀ (D : D7) (Q : Par D), Q.Pins → ∀ j, InR D j → ∀ w : WeightFamilies.Wt D j, DF (Q.Dw j) (wtA w) = WeightAlgebra.DF w ∧ Function.Injective (DV.tauEmb D) ∧ (∀ τ, InPsi Q.H τ ↔ ∃ t, τ = DV.tauEmb D t) ∧ (∀ τ, ¬ InPsi Q.H τ ↔ ∃ t, τ = ComplexEmbedding.conjugate (DV.tauEmb D t)) ∧ ∀ t i, wtA w (DV.tauEmb D t, i) = ext0 (w.aP t) i ∧ wtA w (ComplexEmbedding.conjugate (DV.tauEmb D t), i) = ext0 (w.aM t) i := by
   intro D Q hQ j hj w

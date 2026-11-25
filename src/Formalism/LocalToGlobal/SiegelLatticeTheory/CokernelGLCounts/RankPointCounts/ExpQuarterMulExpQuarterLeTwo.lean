@@ -13,8 +13,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.
 
 namespace Formalism.L2.SG.KappaOffDiagonal.PgLe
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem finrank_F {D : D7} (X : HidaSetting D) : Module.finrank ℚ X.B.I.F = D.R.f := by
   have e1 : Module.finrank ℚ X.B.I.E = Module.finrank ℚ D.host.E :=
     (X.ιE.toRatAlgEquiv).toLinearEquiv.finrank_eq

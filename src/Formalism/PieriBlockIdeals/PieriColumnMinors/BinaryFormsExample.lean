@@ -4,51 +4,6 @@ public import Formalism.PieriBlockIdeals.LemmaDSkeletonUnit
 public import Formalism.PieriBlockIdeals.PieriColumnMinors.Symmetrization
 public import Mathlib.LinearAlgebra.Eigenspace.Basic
 public import Formalism.PieriBlockIdeals.PieriColumnMinors.DividedPowerZeroZeroVector
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -179,7 +134,7 @@ theorem sum_diagFirst_eq_smul {k R P M : Type*} [CommRing k] [AddCommGroup M] [M
     simp only [unitFirst_apply_formula]
     rw [Finset.sum_ite_eq]
     simp
-  simp only [diagX, if_true, Finset.sum_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply,
+  simp only [diagX, ite_true, Finset.sum_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply,
     LinearMap.sum_apply, Pi.sub_apply, Pi.smul_apply, Finset.sum_sub_distrib]
   rw [Finset.sum_comm, Finset.sum_congr rfl fun j _ => h1 j]
   simp [sub_smul, mul_smul, Nat.cast_smul_eq_nsmul]
@@ -530,7 +485,7 @@ theorem depthPart_eq_sum_positionGenerators {k R P M : Type*} [CommRing k] [AddC
   · intro a ha
     have ha' : a < j := by simpa using ha
     exact ⟨⟨a, by omega⟩, Finset.mem_coe.2 (Finset.mem_filter.2 ⟨Finset.mem_univ _, ha'⟩), rfl⟩
-  · intro a _; simp only [factorGenerator, dif_pos a.2, Fin.eta]
+  · intro a _; simp only [factorGenerator, dite_eq_left a.2, Fin.eta]
 
 theorem casimir_jucys_murphy_holds : CasimirJM := by
   intro k R P M _ _ _ _ _ _ EM n j
@@ -540,7 +495,7 @@ theorem casimir_jucys_murphy_holds : CasimirJM := by
   simp only [depthPart_eq_sum_positionGenerators EM n (j.val + 1) j.2, depthPart_eq_sum_positionGenerators EM n j.val j.2.le]
   rw [h, ← jucysMurphy_eq_sum_position_products]
   congr 1
-  simp only [factorGenerator, dif_pos j.2, Fin.eta]
+  simp only [factorGenerator, dite_eq_left j.2, Fin.eta]
   exact casimir_on_tensor_holds k R P M n j
 
 theorem coeff_list_prod_X_sub_C_apply_eigen {K Y : Type*} [CommRing K] [AddCommGroup Y] [Module K Y] (z : Y) :
@@ -638,7 +593,7 @@ theorem path_bounds_and_shapePoly {q n : ℕ} (κ : ℕ → Fin q → ℕ) (ρ :
     · have := h1 b
       rw [hb b]
       split_ifs <;> omega
-    · simp only [hb, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    · simp only [hb, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       omega
     · have hf : Finset.univ.filter (fun j : Fin n => j.val < m + 1) =
           insert (⟨m, hm⟩ : Fin n) (Finset.univ.filter (fun j : Fin n => j.val < m)) := by

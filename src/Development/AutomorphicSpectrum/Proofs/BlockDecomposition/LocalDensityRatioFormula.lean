@@ -3,48 +3,6 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
 public import GroundTheory.GlobalFields.TateThesis.DegreeOnePrimes
 public import GroundTheory.GlobalFields.TateThesis.NonvanishingPrimes
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Log.Summable
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
 
@@ -75,8 +33,8 @@ theorem rv_eq (v : HeightOneSpectrum (𝓞 F)) (e : ℝ) (s : Fv F v) :
   unfold rv Ge
   refine tsum_congr fun i => ?_
   by_cases h : s ≠ 0 ∧ Valued.v s ≤ ((Multiplicative.ofAdd (-(i : ℤ)) : Multiplicative ℤ) : WithZero (Multiplicative ℤ))
-  · rw [if_pos h, if_pos h]
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_left h, ite_eq_left h]
+  · rw [ite_eq_right h, ite_eq_right h]
 
 theorem ge_iff (v : HeightOneSpectrum (𝓞 F)) (i : ℕ) (s : Fv F v) :
     Ge v i s ↔ s ≠ 0 ∧ Valued.v s ≤ WithZero.exp (-(i : ℤ)) := Iff.rfl
@@ -110,7 +68,7 @@ theorem summable_ge (v : HeightOneSpectrum (𝓞 F)) (e : ℝ) (s : Fv F v) :
   obtain ⟨N, hN⟩ := exists_not_ge s
   refine summable_of_hasFiniteSupport ((Set.finite_Iic N).subset fun i hi => ?_)
   by_contra h
-  exact hi (if_neg (hN i (not_le.1 h)))
+  exact hi (ite_eq_right (hN i (not_le.1 h)))
 
 
 open Classical in
@@ -136,9 +94,9 @@ theorem rv_form {v : HeightOneSpectrum (𝓞 F)} (s : Fv F v) :
         exact not_not.1 (Nat.find_min hex (by omega))
     refine ⟨Nat.find hex - 1, key, fun e => ?_⟩
     rw [rv_eq, tsum_eq_sum (s := Finset.range (Nat.find hex - 1 + 1))]
-    · refine Finset.sum_congr rfl fun i hi => if_pos ((key i).2 (by simpa [Nat.lt_succ_iff] using hi))
+    · refine Finset.sum_congr rfl fun i hi => ite_eq_left ((key i).2 (by simpa [Nat.lt_succ_iff] using hi))
     · intro i hi
-      refine if_neg fun h => hi ?_
+      refine ite_eq_right fun h => hi ?_
       simpa [Nat.lt_succ_iff] using (key i).1 h
   · left
     refine ⟨h0, fun e => ?_⟩
@@ -217,8 +175,8 @@ theorem rv_congr {v : HeightOneSpectrum (𝓞 F)} (e : ℝ) {s s' : Fv F v} (h :
 open Classical in
 theorem rv_zero (v : HeightOneSpectrum (𝓞 F)) (s : Fv F v) : rv v 0 s = if Ge v 0 s then 1 else 0 := by
   rcases rv_form s with ⟨h, h'⟩ | ⟨n, hn, h'⟩
-  · rw [h', if_neg h]
-  · rw [h', if_pos ((hn 0).2 (Nat.zero_le n)), Finset.sum_range_succ']
+  · rw [h', ite_eq_right h]
+  · rw [h', ite_eq_left ((hn 0).2 (Nat.zero_le n)), Finset.sum_range_succ']
     simp
 
 theorem ge_shift {v : HeightOneSpectrum (𝓞 F)} {u : (Fv F v)ˣ} (hu : Valued.v (u : Fv F v) = WithZero.exp (1 : ℤ))
@@ -240,9 +198,9 @@ theorem rv_rec {v : HeightOneSpectrum (𝓞 F)} {u : (Fv F v)ˣ} (hu : Valued.v 
   congr 1
   refine tsum_congr fun i => ?_
   by_cases h : Ge v (i + 1) s
-  · rw [if_pos h, if_pos ((ge_shift hu i s).1 h)]
+  · rw [ite_eq_left h, ite_eq_left ((ge_shift hu i s).1 h)]
     ring
-  · rw [if_neg h, if_neg (fun h' => h ((ge_shift hu i s).2 h'))]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h ((ge_shift hu i s).2 h'))]
     ring
 
 theorem ge_pow {v : HeightOneSpectrum (𝓞 F)} {u : (Fv F v)ˣ} (hu : Valued.v (u : Fv F v) = WithZero.exp (1 : ℤ))
@@ -260,8 +218,8 @@ theorem rv_one_series {v : HeightOneSpectrum (𝓞 F)} {u : (Fv F v)ˣ} (hu : Va
   refine tsum_congr fun k => ?_
   rw [rv_zero]
   by_cases h : Ge v k s
-  · rw [if_pos h, if_pos ((ge_pow hu k s).1 h), one_pow]
-  · rw [if_neg h, if_neg fun h' => h ((ge_pow hu k s).2 h')]
+  · rw [ite_eq_left h, ite_eq_left ((ge_pow hu k s).1 h), one_pow]
+  · rw [ite_eq_right h, ite_eq_right fun h' => h ((ge_pow hu k s).2 h')]
 
 open Classical in
 theorem summable_rv_shift {v : HeightOneSpectrum (𝓞 F)} {u : (Fv F v)ˣ} (hu : Valued.v (u : Fv F v) = WithZero.exp (1 : ℤ))
@@ -269,8 +227,8 @@ theorem summable_rv_shift {v : HeightOneSpectrum (𝓞 F)} {u : (Fv F v)ˣ} (hu 
   refine (summable_ge v 1 s).congr fun k => ?_
   rw [rv_zero]
   by_cases h : Ge v k s
-  · rw [if_pos h, if_pos ((ge_pow hu k s).1 h), one_pow]
-  · rw [if_neg h, if_neg fun h' => h ((ge_pow hu k s).2 h')]
+  · rw [ite_eq_left h, ite_eq_left ((ge_pow hu k s).1 h), one_pow]
+  · rw [ite_eq_right h, ite_eq_right fun h' => h ((ge_pow hu k s).2 h')]
 
 theorem exists_inv_uniformizer (v : HeightOneSpectrum (𝓞 F)) :
     ∃ u : (Fv F v)ˣ, Valued.v (u : Fv F v) = WithZero.exp (1 : ℤ) ∧ Valued.v ((u⁻¹ : (Fv F v)ˣ) : Fv F v) = WithZero.exp (-1 : ℤ) := by
@@ -548,13 +506,13 @@ def wT (e : HeightOneSpectrum (𝓞 F) → ℝ) (S : Finset (HeightOneSpectrum (
   if ∃ hv : v ∉ S, (⟨v, hv⟩ : Off S) ∈ T then rv v (e v) else rv v 0
 
 theorem wT_mem {T : Finset (Off S)} {x : Off S} (h : x ∈ T) : wT e S T x.1 = rv x.1 (e x.1) :=
-  if_pos ⟨x.2, h⟩
+  ite_eq_left ⟨x.2, h⟩
 
 theorem wT_not {T : Finset (Off S)} {x : Off S} (h : x ∉ T) : wT e S T x.1 = rv x.1 0 :=
-  if_neg fun ⟨_, h'⟩ => h h'
+  ite_eq_right fun ⟨_, h'⟩ => h h'
 
 theorem wT_empty (v : HeightOneSpectrum (𝓞 F)) : wT e S ∅ v = rv v 0 :=
-  if_neg fun ⟨_, h'⟩ => by simp at h'
+  ite_eq_right fun ⟨_, h'⟩ => by simp at h'
 
 theorem good_wT (he : ∀ v, e v = 1 ∨ e v = -1) (T : Finset (Off S)) : Good (wT e S T) := by
   intro v

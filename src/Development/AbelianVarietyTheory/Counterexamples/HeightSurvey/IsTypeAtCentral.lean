@@ -48,13 +48,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.TypeAtTest
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section Rep
-variable {n : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-
-end Rep
-
 variable {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D)
 
 theorem isTypeAt_zero {τ : D.what₂.Tau} {S : SPar} : IsTypeAt θ V τ S 0 ↔

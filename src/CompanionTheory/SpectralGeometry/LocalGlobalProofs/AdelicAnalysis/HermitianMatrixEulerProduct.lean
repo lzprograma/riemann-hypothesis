@@ -52,11 +52,11 @@ def coordOf (b : Module.Basis (Fin d) F E) (S : Matrix (Fin n) (Fin n) (R ⊗[F]
 
 theorem psi_lt (σ : E →ₐ[F] E) (b : Module.Basis (Fin d) F E) (x : Idx n d → R) {a c : Fin n}
     (h : a < c) : psi R σ b x a c = offE R b x ⟨(a, c), h⟩ := by
-  simp only [psi, HaarCoord.hermMat, dif_pos h]
+  simp only [psi, HaarCoord.hermMat, dite_eq_left h]
 
 theorem psi_gt (σ : E →ₐ[F] E) (b : Module.Basis (Fin d) F E) (x : Idx n d → R) {a c : Fin n}
     (h : c < a) : psi R σ b x a c = sigR R σ (offE R b x ⟨(c, a), h⟩) := by
-  simp only [psi, HaarCoord.hermMat, dif_neg (not_lt_of_gt h), dif_pos h]
+  simp only [psi, HaarCoord.hermMat, dite_eq_right (not_lt_of_gt h), dite_eq_left h]
 
 theorem psi_eq (σ : E →ₐ[F] E) (b : Module.Basis (Fin d) F E) (x : Idx n d → R) (a : Fin n) :
     psi R σ b x a a = x (Sum.inl a) ⊗ₜ[F] (1 : E) := by

@@ -15,53 +15,7 @@ public import Formalism.FormalGroupLog.FormalGroupLogProofs.ConstantCoeffSubstOf
 public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.RestrictSecondZeroInVarOne
 public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.AtVariableWeierstrassDerivative
 import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.LogarithmEquivalence
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.PderivZeroZeroWeierstrassDifference
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.EvalSecondZeroAtVariableZero
 import Mathlib.Tactic.Linter.Style
 import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementF
@@ -162,28 +116,18 @@ variable {K : Type} [Field K] [CharZero K]
 
 local notation "A3" => MvPowerSeries (Fin 3) K
 
-theorem cc_psubst {ι : Type} {u : MvPowerSeries ι K} (hu : MvPowerSeries.constantCoeff u = 0)
-    {f : PowerSeries K} (hf : PowerSeries.constantCoeff f = 0) :
-    MvPowerSeries.constantCoeff (PowerSeries.subst u f) = 0 :=
-  PowerSeries.constantCoeff_subst_eq_zero hu _ hf
-
-theorem psubst_fExp {ι : Type} {u : MvPowerSeries ι K} (hu : MvPowerSeries.constantCoeff u = 0)
-    {f : PowerSeries K} (hf : PowerSeries.constantCoeff f = 0) :
-    PowerSeries.subst u (fExp f) = fExp (PowerSeries.subst u f) :=
-  Formalism.L2.Th1.B.subst_fExp (ι := Unit) (φ := fun _ => u) (fun _ => hu) hf
-
 theorem subst_sigma {ι : Type} (P : PowerSeries K) {u : MvPowerSeries ι K}
     (hu : MvPowerSeries.constantCoeff u = 0) :
     PowerSeries.subst u (sigma P) = u * fExp (PowerSeries.subst u (sigS P)) := by
   have hs := PowerSeries.HasSubst.of_constantCoeff_zero hu
-  rw [sigma, PowerSeries.subst_mul hs, PowerSeries.subst_X hs, psubst_fExp hu (_root_.Formalism.L2.Th1.B.Add0.sigS_cc P)]
+  rw [sigma, PowerSeries.subst_mul hs, PowerSeries.subst_X hs, Formalism.L2.Th1.B.ParO.psubst_fExp hu (_root_.Formalism.L2.Th1.B.Add0.sigS_cc P)]
 
 theorem subst_sgStar {ι : Type} (s2 : K) (P : PowerSeries K)
     {u : MvPowerSeries ι K} (hu : MvPowerSeries.constantCoeff u = 0) :
     PowerSeries.subst u (sgStar s2 P) =
       PowerSeries.subst u (sigma P) * fExp (-(MvPowerSeries.C (s2 / 2) * u ^ 2)) := by
   have hs := PowerSeries.HasSubst.of_constantCoeff_zero hu
-  rw [sgStar, PowerSeries.subst_mul hs, psubst_fExp hu (by simp)]
+  rw [sgStar, PowerSeries.subst_mul hs, Formalism.L2.Th1.B.ParO.psubst_fExp hu (by simp)]
   congr 2
   rw [← PowerSeries.coe_substAlgHom hs, map_neg, map_mul, map_pow, PowerSeries.substAlgHom_X,
     PowerSeries.coe_substAlgHom hs, PowerSeries.subst_C]
@@ -346,9 +290,9 @@ theorem eval_last_zero_exp_parallelogram {f : PowerSeries K} (hf : PowerSeries.c
 theorem fsE_cc {f : PowerSeries K} (hf : PowerSeries.constantCoeff f = 0) :
     MvPowerSeries.constantCoeff (fsE f) = 0 := by
   simp only [fsE, evalSumThree, evalDiffThree, at1, map_add (f := _), map_sub, map_mul]
-  rw [cc_psubst (by simp) hf, cc_psubst (by simp) hf, cc_psubst (by simp) hf,
-    cc_psubst (by simp) hf, cc_psubst (by simp) hf, cc_psubst (by simp) hf,
-    cc_psubst (by simp) hf]
+  rw [Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf, Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf, Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf,
+    Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf, Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf, Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf,
+    Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf]
   simp
 
 theorem ne_zero_of_pd {f : A3} (i : Fin 3) (h : pd i f = 1) : f ≠ 0 := by
@@ -382,8 +326,8 @@ theorem fExp_ne_zero {f : A3} (hf : MvPowerSeries.constantCoeff f = 0) : fExp f 
 theorem constantCoeff_parallelogram_defect {f : PowerSeries K} (hf : PowerSeries.constantCoeff f = 0) :
     MvPowerSeries.constantCoeff (par0 f) = 0 := by
   simp only [par0, atS, atD, at1, map_add (f := _), map_sub, map_mul]
-  rw [cc_psubst (by simp) hf, cc_psubst (by simp) hf, cc_psubst (by simp) hf,
-    cc_psubst (by simp) hf]
+  rw [Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf, Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf, Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf,
+    Formalism.L2.Th1.B.Add1.cc_psubst (by simp) hf]
   simp
 
 theorem emb_cc (j k : Fin 3) {h : MvPowerSeries (Fin 2) K}
@@ -514,12 +458,12 @@ theorem FrobStick_of (hL : FrobStickLog) : FrobStick := by
   intro K _ _ g2 g3 P hP
   have h := hL K g2 g3 P hP
   have c0 : ∀ x : Fin 3, MvPowerSeries.constantCoeff
-      (at1 x (sigS P) : MvPowerSeries (Fin 3) K) = 0 := fun x => cc_psubst (by simp) (_root_.Formalism.L2.Th1.B.Add0.sigS_cc P)
+      (at1 x (sigS P) : MvPowerSeries (Fin 3) K) = 0 := fun x => Formalism.L2.Th1.B.Add1.cc_psubst (by simp) (_root_.Formalism.L2.Th1.B.Add0.sigS_cc P)
   have c3 : ∀ x : Fin 3, MvPowerSeries.constantCoeff
       (3 * at1 x (sigS P) : MvPowerSeries (Fin 3) K) = 0 := fun x => by rw [map_mul, c0, mul_zero]
-  have cS : MvPowerSeries.constantCoeff (evalSumThree (sigS P)) = 0 := cc_psubst (by simp) (_root_.Formalism.L2.Th1.B.Add0.sigS_cc P)
+  have cS : MvPowerSeries.constantCoeff (evalSumThree (sigS P)) = 0 := Formalism.L2.Th1.B.Add1.cc_psubst (by simp) (_root_.Formalism.L2.Th1.B.Add0.sigS_cc P)
   have cD : ∀ j k : Fin 3, MvPowerSeries.constantCoeff (evalDiffThree j k (sigS P)) = 0 :=
-    fun j k => cc_psubst (by simp) (_root_.Formalism.L2.Th1.B.Add0.sigS_cc P)
+    fun j k => Formalism.L2.Th1.B.Add1.cc_psubst (by simp) (_root_.Formalism.L2.Th1.B.Add0.sigS_cc P)
   have cE : MvPowerSeries.constantCoeff (fsE (sigS P)) = 0 := fsE_cc (_root_.Formalism.L2.Th1.B.Add0.sigS_cc P)
   have key : fExp (at1 0 (sigS P)) ^ 3 * fExp (at1 1 (sigS P)) ^ 3 * fExp (at1 2 (sigS P)) ^ 3 *
         fExp (fsE (sigS P)) =
@@ -630,7 +574,6 @@ theorem tau_derivative_rule_holds : TauRule := by
   simp only [pd, Derivation.leibniz, map_sub, Derivation.leibniz_pow, smul_eq_mul, nsmul_eq_mul] at x00 x11 x01 x10 e0 e1 p0 p1 ⊢
   rw [x00, x11, x01, x10]
   linear_combination (MvPowerSeries.X 0 - MvPowerSeries.X 1) * (MvPowerSeries.X 0 ^ 2 - MvPowerSeries.X 1 ^ 2) * (-e0 + e1 + U * p0 - U * p1)
-
 
 theorem core {R : Type} [CommRing R] (a b c Xa Ya Xb Yb Xc Yc h g3 : R)
     (Ca : Ya ^ 2 = 4 * Xa ^ 3 - 2 * h * a ^ 4 * Xa - g3 * a ^ 6)
@@ -1316,8 +1259,8 @@ theorem eq_X_sq_mul_quotient {w : PowerSeries K} (h0 : constantCoeff w = 0) (h1 
   ext n
   rw [coeff_X_pow_mul']
   by_cases h : 2 ≤ n
-  · rw [if_pos h, divByXSq, coeff_mk, Nat.sub_add_cancel h]
-  · rw [if_neg h]
+  · rw [ite_eq_left h, divByXSq, coeff_mk, Nat.sub_add_cancel h]
+  · rw [ite_eq_right h]
     have : n = 0 ∨ n = 1 := by omega
     rcases this with rfl | rfl
     · rw [coeff_zero_eq_constantCoeff_apply, h0]

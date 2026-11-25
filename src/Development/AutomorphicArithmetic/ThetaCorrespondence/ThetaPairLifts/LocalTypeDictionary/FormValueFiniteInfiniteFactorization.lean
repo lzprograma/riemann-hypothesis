@@ -29,51 +29,10 @@ import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkMapInitMinor
 import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
 import Formalism.LocalToGlobal.Divisibility.ProjLemmas
 import Formalism.SharpRestriction.Divisibility.LiftErrorLocal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardFiniteSubgroupGLIntDvd
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryRationalConjIntersectionCardDvdInvariant
 import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinCongMemLevEnv
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
@@ -327,7 +286,7 @@ private theorem herm_eq_csumAt (hb : S.HasRatBasis) (z : Fin S.dim → K) :
     star (fun i => σ (z i)) ⬝ᵥ (S.H.map σ).mulVec (fun i => σ (z i)) =
       csumAt S σ (S.basis.equivFun.symm z : S.Forms) (S.basis.equivFun.symm z : S.Forms) := by
   have hr : ∀ i, S.IsRat (S.basis i : S.Cl → S.V) := by
-    have : S.basis = hb.choose := by unfold CSD.basis; exact dif_pos hb
+    have : S.basis = hb.choose := by unfold CSD.basis; exact dite_eq_left hb
     rw [this]
     exact hb.choose_spec
   rw [Module.Basis.equivFun_symm_apply, Submodule.coe_sum]
@@ -554,7 +513,6 @@ private theorem idemOf_mem (h : R.grp_record) (g : Γ) : (idemOf A.X).coeff g �
     simp only [MonoidAlgebra.coeff_mul_single_apply, MonoidAlgebra.coeff_single_mul_apply, inv_inv, mul_one, one_mul] at this
     rw [he, he, map_mul eR, map_mul eR, this]
 
-
 private theorem herm_eq (F : Face D A) (hc : GlobalTheory.Hk3.Core R F) (t : T) (σ : D.what₂.LL →+* ℂ)
     (x : Fin ((A.fam.R t).nV (A.fam.lvl F.P0 F.ψ0)) → D.what₂.LL) :
     (Nat.card (A.fam.lvl F.P0 F.ψ0).P : ℝ) *
@@ -579,7 +537,6 @@ private theorem herm_eq (F : Face D A) (hc : GlobalTheory.Hk3.Core R F) (t : T) 
     h1.trans (congrArg _ h2)
   have hN : (Nat.card (A.fam.lvl F.P0 F.ψ0).P : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Nat.card_pos.ne'
   rw [h3, ← Complex.re_ofReal_mul, Complex.ofReal_natCast, mul_inv_cancel_left₀ hN]
-
 
 private theorem value_nonneg_and_norm_bound (ch : Choice R) (large₂ : SizeData₂ D) (F : Face D A) (hS : HidaSetting large₂ R F) (t : T) (σ : D.what₂.LL →+* ℂ)
     (f : (A.MtildeCSD t).Forms) :
@@ -633,7 +590,6 @@ end Main
 
 end GlobalTheory.FormNorm
 
-
 open GlobalTheory.FormNorm in
 theorem _root_.GlobalTheory.T.baseTupleGoodForm_values_bounded_by_classSum : BigC fun {D} {_} _ _ {_} {_} {A} {_} _ _ _ {R} F ch _ _ => ∀ (σ : D.what₂.LL →+* ℂ) (x : Fin ((A.fam.R A.μ0).nV (A.fam.lvl F.P0 F.ψ0)) → D.what₂.LL),
   0 ≤ (star (fun i => σ (x i)) ⬝ᵥ (((A.fam.R A.μ0).HV (A.fam.lvl F.P0 F.ψ0)).map σ).mulVec fun i => σ (x i)).re ∧ ∀ y,
@@ -661,7 +617,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SumSize.GamSize
 
@@ -861,8 +816,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.FormVal
 
 theorem bigC_and {Q Q' : ChQ} (h : BigC Q) (h' : BigC Q') : BigC fun F ch C b => Q F ch C b ∧ Q' F ch C b := by
@@ -888,7 +841,6 @@ theorem bigC_mono {Q Q' : ChQ} (h : BigC Q) (hQ : ∀ {D : D7} {Γ : Type} [Grou
   refine ⟨c, fun ε C hC => ?_⟩
   obtain ⟨x, h⟩ := h ε C hC
   exact ⟨x, fun D large₂ e hx Γ _ _ Pl0 T A Ks _ _ _ R F s ch i j k => hQ F ch C large₂.sc.b (h D large₂ e hx Γ Pl0 T A Ks R F s ch i j k)⟩
-
 
 theorem form_fin_inf_of (h1 : BigC fun {D} {_} _ _ {_} {_} {A} {_} _ _ _ {R} F ch _ _ => ∀ (t : _) (w : PlL D), ∀ x ∈ (A.fam.R t).Mt (A.fam.lvl F.P0 F.ψ0), ∀ y,
   InLat _ w 0 (latAt ch.S.toGridChoice (.grid 0 D.R.m) y) (rowVal ch.S.toGridChoice (ch.S.formC t (R.jX t (formOf F t x)) y))) (h2 : BigC fun {D} {_} _ _ {_} {_} {A} {_} _ _ _ {R} F ch _ _ => ∀ (σ : D.what₂.LL →+* ℂ) (x : Fin ((A.fam.R A.μ0).nV (A.fam.lvl F.P0 F.ψ0)) → D.what₂.LL),
@@ -920,7 +872,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FormFinVal
 
@@ -967,10 +918,6 @@ private theorem funEquiv_nabK (lam : ι → DomWeight n) (M : ι → Submodule (
     exact congrArg (·⁻¹) (funext fun τ => invTr_invTr (B τ))
   rw [map_smul, funEquiv_rhoK, e] at h1
   exact h1
-
-private theorem funEquiv_mapVV {K : Type} [Field K] (φ : K →+* ℂ) (lam : ι → DomWeight n) (F : VV K lam) :
-    funEquiv lam (mapVV φ lam F) = mapVV φ _ (funEquiv lam F) :=
-  ((isFunForm_iff_eq lam _ _).1 (GlobalTheory.BrRat.isFunForm_map φ lam (isFunForm_funEquiv lam F))).symm
 
 end Lat
 
@@ -1106,7 +1053,7 @@ private theorem inLat_value {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)} {Λ :
     rfl
   rw [hr, MvPolynomial.rename_id_apply] at hU
   obtain rfl : U = mapVV D.what₂.embLL lam' v := Subtype.ext hU
-  rw [(isFunForm_iff_eq _ _ _).1 ((SumModel.readOK lam').1 _), funEquiv_mapVV, TestFunctionNorms.GlobalTheory.CompanionTheory.TestVal.rhoVr_mapVV]
+  rw [(isFunForm_iff_eq _ _ _).1 ((SumModel.readOK lam').1 _), GlobalTheory.FormNorm.funEquiv_mapVV, TestFunctionNorms.GlobalTheory.CompanionTheory.TestVal.rhoVr_mapVV]
   refine TestFunctionNorms.GlobalTheory.CompanionTheory.TestVal.inLat_of_mem _ w ?_
   have e1 : Formalism.UG.CS.globLat (finG V y) Λ = Bridge.hLat V ((finHom V).rangeRestrict y.1) := globLat_eq hβ y.1
   have e2 := TestFunctionNorms.GlobalTheory.CompanionTheory.TestVal.comap_eq_map fr 1 (Bridge.hLat V ((finHom V).rangeRestrict y.1))
@@ -1119,7 +1066,6 @@ private theorem inLat_value {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)} {Λ :
 end Ad
 
 end GlobalTheory.FormFinVal
-
 
 open GlobalTheory.FormFinVal in
 theorem _root_.GlobalTheory.T.integralGoodForm_values_mem_scaledDualWeylLattice : BigC fun {D} {_} _ _ {_} {_} {A} {_} _ _ _ {R} F ch _ _ => ∀ (t : _) (w : PlL D), ∀ x ∈ (A.fam.R t).Mt (A.fam.lvl F.P0 F.ψ0), ∀ y,
@@ -1161,7 +1107,6 @@ section
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.FormVal
 theorem form_value_eq_finite_mul_infinite : _root_.GlobalTheory.FunPr.ThetaLocalInputs → FinFormK ∧ InfFormK := fun _ =>
   form_fin_inf_of GlobalTheory.T.integralGoodForm_values_mem_scaledDualWeylLattice GlobalTheory.T.baseTupleGoodForm_values_bounded_by_classSum GlobalTheory.T.kernelLossBound_nonneg_and_level_card_le_exp

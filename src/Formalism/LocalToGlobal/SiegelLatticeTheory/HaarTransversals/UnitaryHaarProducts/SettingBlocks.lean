@@ -14,8 +14,6 @@ open Matrix
 
 namespace Formalism.L2.SG.SplitPrimeNormLemmas
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 abbrev gD : ℕ := D.host.g 0 * D.host.g 1
@@ -356,10 +354,6 @@ def MExists : Prop :=
     (Bu : AutomorphicBundle A P Rf) (Pi : RepresentationData A L) (Mu : MuBlocks A L) (Wb : WBlk A L Bu Pi Mu),
     ∃ Mb : MBlk A L, ∃ hb : Formalism.L2.SG.AdBridge.AdBridgeIso A.I,
       (mk A L P Rf Xu Bu Pi Mu Wb Mb).MeasTie hb
-
-end Formalism.L2.SG.SplitPrimeNormLemmas
-
-namespace Formalism.L2.SG.SplitPrimeNormLemmas
 
 end Formalism.L2.SG.SplitPrimeNormLemmas
 

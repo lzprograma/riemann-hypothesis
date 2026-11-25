@@ -335,25 +335,10 @@ noncomputable section
 
 namespace GlobalTheory.SiegDist
 
-lemma ee_add (a b : ℂ) : ee (a + b) = ee a * ee b := by
-  unfold ee; rw [← Complex.exp_add]; ring_nf
-
 lemma ee_int_mul (n : ℤ) (z : ℂ) : ee (n * z) = ee z ^ n := by
   unfold ee; rw [← Complex.exp_int_mul]; ring_nf
 
-lemma ee_nat_mul (n : ℕ) (z : ℂ) : ee (n * z) = ee z ^ n := by
-  unfold ee; rw [← Complex.exp_nat_mul]; ring_nf
-
 lemma ee_ne_zero (z : ℂ) : ee z ≠ 0 := Complex.exp_ne_zero _
-
-lemma norm_ee_lt_one (τ : ℍ) : ‖ee (τ : ℂ)‖ < 1 := by
-  unfold ee
-  rw [Complex.norm_exp]
-  have h : (2 * Real.pi * Complex.I * (τ : ℂ)).re = -(2 * Real.pi * τ.im) := by
-    simp [Complex.mul_re, Complex.mul_im]
-  rw [h, ← Real.exp_zero, Real.exp_lt_exp]
-  have := mul_pos Real.pi_pos τ.im_pos
-  linarith
 
 lemma ee_eq_one (u v : ℚ) (τ : ℍ) (h : ee ((u : ℂ) * τ + v) = 1) : u = 0 ∧ ∃ k : ℤ, v = k := by
   unfold ee at h
@@ -384,14 +369,14 @@ theorem sg_distribution : ∀ (c m : ℕ) (x : Fin 2 → ℚ) (τ : ℍ), admitt
       = cth c (ee (τ : ℂ)) (ee ((((x 0 : ℂ) + a) * τ + x 1) / m) * ee ((b : ℂ) / m)) := by
     intro a b
     unfold sg
-    rw [← ee_add]
+    rw [← GlobalTheory.Sieg.Model.ee_add]
     congr 2
     simp [pt]
     field_simp
     ring
   have hpow : ∀ a : ℕ, ee ((((x 0 : ℂ) + a) * τ + x 1) / m) ^ m = ee (pt x τ) * ee (τ : ℂ) ^ a := by
     intro a
-    rw [← ee_nat_mul, ← ee_nat_mul, ← ee_add]
+    rw [← GlobalTheory.Sieg.Model.ee_nat_mul, ← GlobalTheory.Sieg.Model.ee_nat_mul, ← GlobalTheory.Sieg.Model.ee_add]
     congr 1
     simp only [pt]
     field_simp
@@ -399,7 +384,7 @@ theorem sg_distribution : ∀ (c m : ℕ) (x : Fin 2 → ℚ) (τ : ℍ), admitt
   have hND : ∀ n : ℤ, ee (τ : ℂ) ^ n * ee (pt x τ) ^ c ≠ 1 := by
     intro n h
     have h' : ee ((((n : ℚ) + c * x 0 : ℚ) : ℂ) * τ + ((c * x 1 : ℚ) : ℂ)) = 1 := by
-      rw [← h, ← ee_int_mul, ← ee_nat_mul, ← ee_add]
+      rw [← h, ← ee_int_mul, ← GlobalTheory.Sieg.Model.ee_nat_mul, ← GlobalTheory.Sieg.Model.ee_add]
       congr 1; simp only [pt]; push_cast; ring
     obtain ⟨h0, k, hk⟩ := ee_eq_one _ _ τ h'
     apply hnot
@@ -416,9 +401,9 @@ theorem sg_distribution : ∀ (c m : ℕ) (x : Fin 2 → ℚ) (τ : ℍ), admitt
         apply Finset.prod_congr rfl
         intro a _
         simp_rw [hsplit a]
-        rw [_root_.GlobalTheory.Sieg.prod_cth_mul_ee c m _ _ hc1 hc6 hm hcm (norm_ee_lt_one τ) hq0 (ee_ne_zero _) (hD1 a), hpow a]
+        rw [_root_.GlobalTheory.Sieg.prod_cth_mul_ee c m _ _ hc1 hc6 hm hcm (GlobalTheory.Sieg.Model.norm_ee_lt_one τ) hq0 (ee_ne_zero _) (hD1 a), hpow a]
     _ = cth c (ee (τ : ℂ)) (ee (pt x τ)) :=
-        _root_.GlobalTheory.Sieg.prod_cth_mul_pow c m _ _ hc1 hc6 hm hcm (norm_ee_lt_one τ) hq0 (ee_ne_zero _) hND
+        _root_.GlobalTheory.Sieg.prod_cth_mul_pow c m _ _ hc1 hc6 hm hcm (GlobalTheory.Sieg.Model.norm_ee_lt_one τ) hq0 (ee_ne_zero _) hND
     _ = sg c x τ := rfl
 
 end GlobalTheory.SiegDist
@@ -450,8 +435,6 @@ lemma isAdmissibleSmoothingFactor_divided_indices (c m : ℕ) (x : Fin 2 → ℚ
   refine ⟨⟨m * k - c * a, ?_⟩, ⟨m * l - c * b, ?_⟩⟩
   · push_cast; rw [hk]; field_simp; ring
   · push_cast; rw [hl]; field_simp; ring
-
-alias isOpen_Hs' := _root_.GlobalTheory.KZ.SiegelModel.isOpen_Hs
 
 theorem siegel_distribution : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (T : Tower Ω ε)
     (c : ℕ) (m : ℕ) (x : Fin 2 → ℚ), admitted c x → 0 < m → Nat.Coprime c m →

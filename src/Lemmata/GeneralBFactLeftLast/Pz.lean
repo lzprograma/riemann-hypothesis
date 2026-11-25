@@ -10,11 +10,6 @@ namespace Bl.general_b_fact_left_last
 
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 
-private lemma pz {T : End K V} {x : V} {k m : ℕ} (hkm : k ≤ m) (hx : (T ^ k) x = 0) :
-    (T ^ m) x = 0 := by
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hkm
-  rw [show k + d = d + k from Nat.add_comm k d, pow_add, mul_apply_eq_comp, hx, map_zero]
-
 theorem goal1 {A B : End K V} (h : Commute A B) {a b : K} {x : V}
     (hA : x ∈ A.maxGenEigenspace a) (hB : x ∈ B.maxGenEigenspace b) :
     x ∈ (A * B).maxGenEigenspace (a * b) := by
@@ -37,7 +32,8 @@ theorem goal1 {A B : End K V} (h : Commute A B) {a b : K} {x : V}
   rcases le_or_gt k m with hkm | hkm
   · have hC : Commute ((A - a • 1) ^ m) (B ^ m * (a ^ (k + l - m) • (B - b • 1) ^ (k + l - m))) :=
       (hNB.pow_pow m m).mul_right ((hNM.pow_pow m (k + l - m)).smul_right _)
-    rw [mul_assoc, hC.eq, mul_apply_eq_comp, pz hkm hk, map_zero]
-  · rw [mul_apply_eq_comp, LinearMap.smul_apply, pz (by omega) hl, smul_zero, map_zero]
+    rw [mul_assoc, hC.eq, mul_apply_eq_comp, pow_map_zero_of_le hkm hk, map_zero]
+  · rw [mul_apply_eq_comp, LinearMap.smul_apply, pow_map_zero_of_le (by omega) hl, smul_zero,
+      map_zero]
 
 end Bl.general_b_fact_left_last

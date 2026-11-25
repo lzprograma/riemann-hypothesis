@@ -48,7 +48,6 @@ noncomputable section
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.GtCoordCompare
 
@@ -81,19 +80,6 @@ theorem isGen_one : (LB.oneGen L (Y := Y)).IsGen :=
 
 end Refine
 
-section Present
-
-variable {S : Scheme.{0}}
-
-
-end Present
-
-section Data
-
-variable {R : Type} [CommRing R] [IsDomain R] (I : Ideal R) (D : DegPre R) (e : ℕ)
-
-end Data
-
 section
 
 variable {P G B : Scheme.{0}} (q : G ⟶ B) (a p : P ⟶ G)
@@ -113,15 +99,5 @@ theorem gm_res_pull_top {X Y Z : Scheme.{0}} (r : Z ⟶ Y) (z : Z) (f : Y ⟶ X)
     (hz : r z ∈ V) (h : V ≤ f ⁻¹ᵁ ⊤) (c : Γ(X, ⊤)ˣ) :
     gm r z V (res h (pullU f ⊤ c)) = gm (r ≫ f) z ⊤ c :=
   (gm_res r z h hz _).trans (gm_pull r f z ⊤ trivial c)
-
-section Datum
-
-variable {S : Scheme.{0}}
-
-variable {E : SplitExt S} {G : Over S} [GrpObj G] (d : E.GtDatum G)
-
-attribute [local instance] SplitExt.free SplitExt.finite
-
-end Datum
 
 end GlobalTheory.GtCoordCompare

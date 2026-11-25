@@ -31,8 +31,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
   {σ : E →ₐ[F] E}
 
 theorem exists_moved (hcm : IsCMExt F E σ) : ∃ c : E, σ c ≠ c := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   obtain ⟨-, htc, -, hconj⟩ := hcm
   obtain ⟨w⟩ : Nonempty (InfinitePlace E) := inferInstance
   have hc : w.IsComplex := htc.isComplex w
@@ -99,8 +98,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem exists_aniso (hcm : IsCMExt F E σ) {n : ℕ} (T : Matrix (Fin (n + 1)) (Fin (n + 1)) E)
     (hT : ∀ a b, σ (T b a) = T a b) (hdet : T.det ≠ 0) :
     ∃ (x : Fin (n + 1) → E) (t : F), t ≠ 0 ∧ hE σ T x x = algebraMap F E t := by
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   have hinv : ∀ y, σ (σ y) = y := by
     intro y
     obtain ⟨w⟩ : Nonempty (InfinitePlace E) := inferInstance

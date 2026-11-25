@@ -65,7 +65,6 @@ end ReciprocityTheory.ChartRestriction.DS
 
 noncomputable section
 
-open Finset
 
 namespace ReciprocityTheory.ChartRestriction.DS
 

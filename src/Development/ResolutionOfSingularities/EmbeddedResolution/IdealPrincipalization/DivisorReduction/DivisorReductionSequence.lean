@@ -7,45 +7,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrin
 public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -524,14 +486,14 @@ theorem containedComponentsIdeal_eq_ker (T : MarkedIdealWithBoundary.{u}) (j : �
             ⟨{x : ↥(T.boundary.get ⟨j, hj⟩).subscheme |
                 connectedComponent x ⊆
                   ⇑(T.boundary.get ⟨j, hj⟩).subschemeι ⁻¹' orderAtLeastLocus T.ideal T.mult}, h⟩ ≫
-          (T.boundary.get ⟨j, hj⟩).subschemeι) := dif_pos h
+          (T.boundary.get ⟨j, hj⟩).subschemeι) := dite_eq_left h
 
 theorem containedComponentsIdeal_eq_top_of_not_isOpen (T : MarkedIdealWithBoundary.{u}) (j : ℕ) (hj : j < T.boundary.length)
     (h : ¬ IsOpen {x : ↥(T.boundary.get ⟨j, hj⟩).subscheme |
       connectedComponent x ⊆
         ⇑(T.boundary.get ⟨j, hj⟩).subschemeι ⁻¹' orderAtLeastLocus T.ideal T.mult}) :
     containedComponentsIdeal T j hj = ⊤ := by
-  exact dif_neg h
+  exact dite_eq_right h
 
 noncomputable def restrictToBoundaryDivisor (T : MarkedIdealWithBoundary.{u}) (j : ℕ) (hj : j < T.boundary.length)
     (I₀ : T.scheme.IdealSheafData) (E₀ : List T.scheme.IdealSheafData) : MarkedIdealWithBoundary.{u} :=
@@ -579,7 +541,7 @@ theorem liftSeqFromDivisor_eq_toMarkedSequence (hres : FunctorialResolution.Blow
           hres hno hpr)).toMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary hmk).toMarkedSequenceOfBlowups := by
   have h1 : (restrictToBoundaryDivisor T j hj I₀ E₀).krullDimSucc < T.krullDimSucc ∧
       AlgebraicGeometry.IsNoetherian T.scheme := ⟨hdim, inferInstance⟩
-  exact (dif_pos h1).trans ((dif_pos hpr).trans (dif_pos hmk))
+  exact (dite_eq_left h1).trans ((dite_eq_left hpr).trans (dite_eq_left hmk))
 
 noncomputable def divisorReductionSeq (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
     (hno : BlowupPreservesNoetherian.{u}) (T : MarkedIdealWithBoundary.{u})
@@ -609,7 +571,7 @@ theorem divisorReductionSeq_eq_empty_of_orderAtLeastLocus_eq_empty (hres : Funct
     (hj : j < T.boundary.length) (hcs : orderAtLeastLocus T.ideal T.mult = (∅ : Set ↥T.scheme)) :
     divisorReductionSeq hres hno T alg j = emptyMarkedSequenceOfBlowups T.structMap T.ideal T.mult T.boundary := by
   unfold divisorReductionSeq
-  rw [dif_pos hj, if_pos hcs]
+  rw [dite_eq_left hj, ite_eq_left hcs]
 
 theorem divisorReductionSeq_eq_liftSeqFromDivisor_of_eq_top (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
     (hno : BlowupPreservesNoetherian.{u}) (T : MarkedIdealWithBoundary.{u})
@@ -620,7 +582,7 @@ theorem divisorReductionSeq_eq_liftSeqFromDivisor_of_eq_top (hres : FunctorialRe
       liftSeqFromDivisor hres hno T alg j hj (T.ideal.comap (𝟙 T.scheme))
         (T.boundary.map (fun D => D.comap (𝟙 T.scheme))) id := by
   unfold divisorReductionSeq
-  rw [dif_pos hj, if_neg hcs, if_pos hZ]
+  rw [dite_eq_left hj, ite_eq_right hcs, ite_eq_left hZ]
 
 theorem divisorReductionSeq_eq_liftSeqFromDivisor_prepend (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
     (hno : BlowupPreservesNoetherian.{u}) (T : MarkedIdealWithBoundary.{u})
@@ -636,7 +598,7 @@ theorem divisorReductionSeq_eq_liftSeqFromDivisor_prepend (hres : FunctorialReso
           [Blowup.exceptionalIdeal (𝟙 T.scheme) (containedComponentsIdeal T j hj)])
         (BlowupSequenceData.prepend (containedComponentsIdeal T j hj) hb) := by
   unfold divisorReductionSeq
-  rw [dif_pos hj, if_neg hcs, if_neg hZ, dif_pos hb]
+  rw [dite_eq_left hj, ite_eq_right hcs, ite_eq_right hZ, dite_eq_left hb]
 
 end DivisorReduction
 

@@ -9,52 +9,8 @@ import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelLiftBasics.LevelGr
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelTransfer.ExpLz
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelTransfer.LzConjTranspose
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelTransfer.SecondCapelliMinorLevel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.Matrix.MeasurableSpace
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -66,8 +22,6 @@ namespace Formalism.FourierDecayAlt.P.JCTx5
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 section typ
 
 variable {k i r' : ℕ}
@@ -77,22 +31,9 @@ theorem liftVec_inj {v w : Fin (2 * r' + k + 1) → ℂ} (h : liftVec k i r' v =
   have hjl := j.isLt
   have hj := congrFun h ⟨j.val + i, by omega⟩
   have hc : i ≤ j.val + i ∧ j.val + i < 2 * r' + k + 1 + i := ⟨Nat.le_add_left _ _, by omega⟩
-  simp only [liftVec, dif_pos hc] at hj
+  simp only [liftVec, dite_eq_left hc] at hj
   first
     | simpa using hj
-
-private theorem levPos_injective : Function.Injective (levPos k i r') := by
-  intro a b h
-  apply Fin.ext
-  have h' := congrArg Fin.val h
-  simp only [levPos, Fin.val_mk] at h'
-  omega
-
-private theorem liftVec_apply_levPos (x : Fin (2 * r' + k + 1) → ℂ) (j : Fin (2 * r' + k + 1)) :
-    liftVec k i r' x (levPos k i r' j) = x j := by
-  have hj := j.isLt
-  have hj' : (j : ℕ) ≤ 2 * r' + k := by omega
-  simp [liftVec, levPos, hj']
 
 private theorem liftVec_apply_eq_zero_of_not_mem_range (x : Fin (2 * r' + k + 1) → ℂ) (p : Fin (2 * (i + r') + k + 1))
     (hp : p ∉ Set.range (levPos k i r')) : liftVec k i r' x p = 0 := by
@@ -110,26 +51,11 @@ private theorem liftVec_dotProduct_eq_dotProduct_levPos (x : Fin (2 * r' + k + 1
     liftVec k i r' x ⬝ᵥ w = x ⬝ᵥ (fun j => w (levPos k i r' j)) := by
   unfold dotProduct
   symm
-  apply Fintype.sum_of_injective (levPos k i r') levPos_injective
+  apply Fintype.sum_of_injective (levPos k i r') PIQnLT.lev_inj
   · intro p hp
     simp only [liftVec_apply_eq_zero_of_not_mem_range x p hp, zero_mul]
   · intro j
-    simp only [liftVec_apply_levPos]
-
-private theorem hpk_levPos_levPos (j q : Fin (2 * r' + k + 1)) :
-    Hpk k (i + r') (levPos k i r' j) (levPos k i r' q) = Hpk k r' j q := by
-  obtain ⟨jv, hjv⟩ := j
-  obtain ⟨qv, hqv⟩ := q
-  simp only [Hpk, levPos, Fin.ext_iff, Fin.val_mk]
-  have e1 : (jv + i < i + r' ∧ jv + i + (qv + i) = 2 * (i + r') + k) ↔ (jv < r' ∧ jv + qv = 2 * r' + k) := by
-    omega
-  have e2 : (qv + i < i + r' ∧ jv + i + (qv + i) = 2 * (i + r') + k) ↔ (qv < r' ∧ jv + qv = 2 * r' + k) := by
-    omega
-  have e3 : (i + r' ≤ jv + i ∧ jv + i ≤ i + r' + k ∧ jv + i = qv + i) ↔ (r' ≤ jv ∧ jv ≤ r' + k ∧ jv = qv) := by
-    omega
-  have e4 : (jv + i = i + r' + k) ↔ (jv = r' + k) := by
-    omega
-  simp only [e1, e2, e3, e4]
+    simp only [PIQnLT.liftVec_lev]
 
 private theorem hpk_levPos_apply_eq_zero_of_outside (j : Fin (2 * r' + k + 1)) (q : Fin (2 * (i + r') + k + 1))
     (hq : ¬(i ≤ q.val ∧ q.val < 2 * r' + k + 1 + i)) :
@@ -142,7 +68,7 @@ private theorem hpk_mulVec_liftVec_apply_levPos (x : Fin (2 * r' + k + 1) → �
     (Hpk k (i + r') *ᵥ liftVec k i r' x) (levPos k i r' j) = (Hpk k r' *ᵥ x) j := by
   simp only [Matrix.mulVec]
   rw [dotProduct_comm, liftVec_dotProduct_eq_dotProduct_levPos]
-  simp only [hpk_levPos_levPos]
+  simp only [PIQnLT.hpk_lev]
   exact dotProduct_comm _ _
 
 private theorem star_liftVec (y : Fin (2 * r' + k + 1) → ℂ) :
@@ -150,14 +76,6 @@ private theorem star_liftVec (y : Fin (2 * r' + k + 1) → ℂ) :
   funext p
   simp only [liftVec, Pi.star_apply]
   split_ifs <;> simp
-
-private theorem herm_hpk_liftVec_liftVec (x y : Fin (2 * r' + k + 1) → ℂ) :
-    herm (Hpk k (i + r')) (liftVec k i r' x) (liftVec k i r' y) = herm (Hpk k r') x y := by
-  unfold herm
-  rw [star_liftVec, liftVec_dotProduct_eq_dotProduct_levPos]
-  congr 1
-  funext j
-  exact hpk_mulVec_liftVec_apply_levPos x j
 
 private theorem herm_bvec_liftVec_eq_zero_of_outside (y : Fin (2 * r' + k + 1) → ℂ) (q : Fin (2 * (i + r') + k + 1))
     (hq : ¬(i ≤ q.val ∧ q.val < 2 * r' + k + 1 + i)) :
@@ -172,7 +90,7 @@ private theorem herm_bvec_liftVec_eq_zero_of_outside (y : Fin (2 * r' + k + 1) �
 private theorem liftVec_apply_of_mid (x : Fin (2 * r' + k + 1) → ℂ) (p : Fin (2 * (i + r') + k + 1))
     (hp : i ≤ p.val ∧ p.val < 2 * r' + k + 1 + i) : liftVec k i r' x p = x ⟨p.val - i, by omega⟩ := by
   simp only [liftVec]
-  rw [dif_pos hp]
+  rw [dite_eq_left hp]
 
 private theorem bvec_eq_liftVec_bvec_of_mid (q : Fin (2 * (i + r') + k + 1)) (hq : i ≤ q.val ∧ q.val < 2 * r' + k + 1 + i) :
     bvec q = liftVec k i r' (bvec (⟨q.val - i, by omega⟩ : Fin (2 * r' + k + 1))) := by
@@ -189,8 +107,8 @@ theorem unitB_lift {m : ℕ} (Bs : Fin m → Fin (2 * r' + k + 1) → ℂ) (a b 
   simp only [Matrix.of_apply]
   by_cases hp : i ≤ p.val ∧ p.val < 2 * r' + k + 1 + i
   · by_cases hq : i ≤ q.val ∧ q.val < 2 * r' + k + 1 + i
-    · rw [dif_pos hp, dif_pos hq, liftVec_apply_of_mid _ p hp, bvec_eq_liftVec_bvec_of_mid q hq, herm_hpk_liftVec_liftVec]
-    · rw [dif_pos hp, dite_eq_right hq, herm_bvec_liftVec_eq_zero_of_outside _ q hq, mul_zero]
+    · rw [dite_eq_left hp, dite_eq_left hq, liftVec_apply_of_mid _ p hp, bvec_eq_liftVec_bvec_of_mid q hq, PI.QnLevBasicsW.herm_lift]
+    · rw [dite_eq_left hp, dite_eq_right hq, herm_bvec_liftVec_eq_zero_of_outside _ q hq, mul_zero]
   · rw [dite_eq_right hp]
     have h0 : liftVec k i r' (Bs a) p = 0 := by
       simp only [liftVec]
@@ -247,11 +165,11 @@ theorem frame_lift {m : ℕ} (z : Fin (2 * r' + k + 1) → ℂ) (Bs : Fin m → 
       exact h1 a _ (show p.val - i < r' ∨ r' + k < p.val - i by omega)
     · simp only [liftVec]
       rw [dite_eq_right hm]
-  · simp only [herm_hpk_liftVec_liftVec]
+  · simp only [PI.QnLevBasicsW.herm_lift]
     exact h2 a b
   · simp only [List.mem_singleton] at hv
     subst hv
-    simp only [herm_hpk_liftVec_liftVec]
+    simp only [PI.QnLevBasicsW.herm_lift]
     exact h3 a z (List.mem_singleton_self z)
 
 theorem continuous_ιLev : Continuous (ιLev k i r') := by
@@ -265,7 +183,7 @@ theorem continuous_ιLev : Continuous (ιLev k i r') := by
 theorem uw_onto (z : Fin (2 * r' + k + 1) → ℂ) (g : Mx k (i + r')) (hg : g ∈ UWset k (i + r') (liftVec k i r' z)) :
     ∃ y ∈ UWset k r' z, ιLev k i r' y = g := by
   have hG : g ∈ Glev k (i + r') ⟨i, by omega⟩ := ⟨hg.1, fun a _ => hg.2.1 a⟩
-  rw [QnGlevImageW.glevImage_of PI.QnLevBasicsW.level_group_homomorphism PI.QnLevBasicsW.level_group_unitary_hermitian k i r'] at hG
+  rw [QnGlevImageW.glevImage_of PI.QnLevBasicsW.level_group_unitary_hermitian k i r'] at hG
   obtain ⟨y, hy, rfl⟩ := hG
   refine ⟨y, ⟨hy, fun a => ?_, ?_⟩, rfl⟩
   · have ha := a.isLt
@@ -387,24 +305,14 @@ theorem projL_embL (x : Mt k 0) : projL k r' (embL k r' x) = x := by
   have hq' : (q : ℕ) ≤ k := by omega
   simp [projL, embL, ιLev, levPos, hp', hq']
 
-theorem glev_closed (k r : ℕ) (i : Fin (r + 1)) : IsClosed (Glev k r i) := by
-  unfold Glev
-  simp only [Set.setOf_and, Set.setOf_forall, Set.setOf_mem_eq]
-  refine IsClosed.inter ?_ (isClosed_iInter fun a => isClosed_iInter fun _ => IsClosed.inter ?_ ?_)
-  · unfold UH
-    first
-      | exact isClosed_eq (by fun_prop) continuous_const
-  all_goals first
-    | exact isClosed_eq (by fun_prop) continuous_const
-
 theorem glev_measurable (k r : ℕ) (i : Fin (r + 1)) : @MeasurableSet (Mt k r) _ (Glev k r i) := by
   first
-    | exact (glev_closed k r i).measurableSet
+    | exact (QnRdSkewW.glev_closed k r i).measurableSet
 
 theorem haar_glev (μ0 : Measure (Mt k 0)) (h0 : Formalism.FourierDecayAlt.B.IsHaarOn (Formalism.FourierDecayAlt.B.GV k 0) μ0) :
     Formalism.FourierDecayAlt.B.IsHaarOn (Glev k r' (Fin.last r')) (μ0.map (embL k r')) := by
   have hU : Glev k r' (Fin.last r') = ιLev k r' 0 '' UH (Hpk k 0) :=
-    QnGlevImageW.glevImage_of PI.QnLevBasicsW.level_group_homomorphism PI.QnLevBasicsW.level_group_unitary_hermitian k r' 0
+    QnGlevImageW.glevImage_of PI.QnLevBasicsW.level_group_unitary_hermitian k r' 0
   have hm : Measurable (embL k r') := continuous_embL.measurable
   have hhom := PI.QnLevBasicsW.level_group_homomorphism k r' 0
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
@@ -520,7 +428,7 @@ theorem rho_bounds (hOK : P.OK) (ρ : M.Ty P) (i : ℕ) (hi1 : 1 ≤ i) (hi2 : i
       | exact Nat.lt_succ_iff.mp hw
   have hv : ((ρ ⟨i - 1, by omega⟩ : ℕ) : ℝ) ≤ ((⌊P.hi i - P.lo i⌋₊ : ℕ) : ℝ) := by exact_mod_cast hv'
   unfold M.rho
-  rw [dif_pos ⟨hi1, hi2⟩]
+  rw [dite_eq_left ⟨hi1, hi2⟩]
   constructor
   · linarith
   · linarith
@@ -660,9 +568,9 @@ theorem levelsActualBuilt : Formalism.FourierDecayAlt.JCT.LevelsActualBuilt := b
     have hpt : ((W.1 v).get a).2 ∈ (S.G.place (S.pl v)).cutI S.l := by
       rw [List.get_eq_getElem]
       by_cases hp : ((W.1 v)[a.val]'a.isLt).1 = true
-      · rw [if_pos hp] at hn
+      · rw [ite_eq_left hp] at hn
         exact (hin _ hn).1
-      · rw [if_neg hp] at hn
+      · rw [ite_eq_right hp] at hn
         have := (hin _ hn).2
         simpa using this
     apply hOn v

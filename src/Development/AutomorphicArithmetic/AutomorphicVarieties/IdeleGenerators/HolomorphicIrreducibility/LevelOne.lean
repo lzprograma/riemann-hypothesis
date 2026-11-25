@@ -1,44 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
 
@@ -52,15 +15,6 @@ namespace UpperTheory.V.Sd
 private def GoodWt (k : ℕ) : Prop :=
   ∃ f : ModularForm 𝒮ℒ (k : ℤ), coef f 0 = 1 ∧ ∀ n, ∃ c : ℤ, coef f n = c
 
-private lemma bern4 : bernoulli 4 = -1 / 30 := by
-  rw [bernoulli_eq_bernoulli'_of_ne_one (by norm_num), bernoulli'_four]
-  norm_num
-
-private lemma bern6 : bernoulli 6 = 1 / 42 := by
-  have h5 : bernoulli' 5 = 0 := bernoulli'_eq_zero_of_odd (by decide) (by norm_num)
-  rw [bernoulli_eq_bernoulli'_of_ne_one (by norm_num), bernoulli'_def]
-  norm_num [Finset.sum_range_succ, h5, Nat.choose, bernoulli'_four, bernoulli'_three, bernoulli'_two]
-
 private lemma good0 : GoodWt 0 := by
   refine ⟨(1 : ModularForm 𝒮ℒ 0), ?_, fun n => ?_⟩
   · simp [coef, qExpansion_one]
@@ -72,7 +26,7 @@ private lemma good4 : GoodWt 4 := by
   · exact EisensteinSeries.E_qExpansion_coeff_zero _ (by decide)
   · refine ⟨if n = 0 then 1 else 240 * (ArithmeticFunction.sigma 3 n : ℤ), ?_⟩
     unfold coef
-    rw [EisensteinSeries.E_qExpansion_coeff _ (by decide), bern4]
+    rw [EisensteinSeries.E_qExpansion_coeff _ (by decide), bernoulli_four]
     split_ifs
     · simp
     · push_cast; ring
@@ -82,7 +36,7 @@ private lemma good6 : GoodWt 6 := by
   · exact EisensteinSeries.E_qExpansion_coeff_zero _ (by decide)
   · refine ⟨if n = 0 then 1 else -504 * (ArithmeticFunction.sigma 5 n : ℤ), ?_⟩
     unfold coef
-    rw [EisensteinSeries.E_qExpansion_coeff _ (by decide), bern6]
+    rw [EisensteinSeries.E_qExpansion_coeff _ (by decide), bernoulli_six]
     split_ifs
     · simp
     · push_cast; ring

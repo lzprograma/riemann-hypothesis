@@ -204,10 +204,10 @@ theorem exists_point_translate_pure : (∀ (k : Type) [Field k] (Φ : FibPre k) 
     rw [hv] at key
     have key2 := congrArg (Scheme.ΓSpecIso (CommRingCat.of k)).hom.hom key
     refine Eq.trans ?_ (Eq.trans key2 (Eq.trans ((map_mul _ _ _)) ?_))
-    · exact dif_pos hx'
+    · exact dite_eq_left hx'
     · congr 1
       · exact Iso.inv_hom_id_apply _ _
       · symm
-        exact dif_pos hx
+        exact dite_eq_left hx
 
 end GlobalTheory.TorusTranslate

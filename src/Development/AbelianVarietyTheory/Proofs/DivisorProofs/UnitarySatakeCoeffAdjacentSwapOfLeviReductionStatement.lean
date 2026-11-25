@@ -171,7 +171,6 @@ theorem isBlockDatum_emb {n i : ℕ} (h : 2 * i + 4 ≤ n) : IsBlockDatum (emb n
 
 theorem coeffSwap (H : LeviStep) (HI : IndexFour) (HC : CartanFour) : CoeffSwap := by
   intro L _ _ _ ϖ σ q n m hU hm hn h hh a i j hij t t' ht ht'
-  have hj := j.2
   have h4 : 2 * i.val + 4 ≤ n := by omega
   have hq : q ≠ 0 := by
     have := hU.2.2.2.2.2.1
@@ -227,8 +226,6 @@ section -- clump:auto
 
 open Formalism.UG GlobalTheory.SatakeWeyl
 
-theorem _root_.GlobalTheory.T.unitarySatakeCoeff_adjacentSwap_of_leviReduction : GlobalTheory.SatakeWeyl.LeviStep → GlobalTheory.SatakeWeyl.IndexFour → GlobalTheory.SatakeWeyl.CartanFour → GlobalTheory.SatakeWeyl.CoeffSwap := by
-  first | exact @GlobalTheory.SatakeWeyl.Swap.coeffSwap
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitarySatakeCoeffAdjacentSwapOfLeviReductionStatement =====

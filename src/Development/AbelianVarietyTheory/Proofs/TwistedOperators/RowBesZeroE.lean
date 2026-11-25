@@ -63,7 +63,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SeeSaw.Model
 
@@ -99,7 +98,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.IndefR Formalism.IndefR.Links GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.ChiGrid GlobalTheory.Unf
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.RowUnf
 
@@ -125,14 +123,14 @@ def jacDec {σ : ℕ} (d : HermitianOrthogonalExtensionData A B c ε) (h : c = 2
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2
     simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_castLE, Matrix.zero_apply]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   e'e' := by
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2
     have hi : (i : ℕ) + 1 ≤ c := by omega
     have hj : (j : ℕ) + 1 ≤ c := by omega
     simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_rev, Fin.val_castLE, Matrix.zero_apply]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   e'e := by
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2
@@ -168,7 +166,7 @@ theorem coreMat_gram {σ : ℕ} (d : HermitianOrthogonalExtensionData A B c (-1)
   have hNN : (midCol d h)ᴴ * B.gram * midCol d h = (GlobalTheory.SeeSaw.Model.nLine D).gram := by
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => (?_ : _ = (-1 : D.host.E)).trans (nLine_gram i j).symm)
     simp only [submatrix_apply, antiDiagonalSignGramMatrix]
-    rw [if_pos (by omega), if_true]
+    rw [ite_eq_left (by omega), ite_true]
   have key : (Matrix.fromCols (frameMat B A d.ι) (midCol d h))ᴴ * B.gram * Matrix.fromCols (frameMat B A d.ι) (midCol d h) =
       Matrix.fromBlocks A.gram 0 0 (GlobalTheory.SeeSaw.Model.nLine D).gram := by
     rw [conjTranspose_fromCols_eq_fromRows_conjTranspose, fromRows_mul, fromRows_mul_fromCols, frameMat_isom,
@@ -186,7 +184,7 @@ theorem coreMat_perp {σ k : ℕ} (d : HermitianOrthogonalExtensionData A B c ε
     rw [conjTranspose_fromCols_eq_fromRows_conjTranspose, fromRows_mul, fromRows_mul, perp_sub]
     rw [show (midCol d h)ᴴ * B.gram * d.a.submatrix id f = 0 from (gram_sub' d _ _).trans (Matrix.ext fun i j => by
       simp only [submatrix_apply, antiDiagonalSignGramMatrix, Matrix.zero_apply]
-      rw [if_neg (by have := hf j; omega)])]
+      rw [ite_eq_right (by have := hf j; omega)])]
     exact fromRows_zero
   refine Matrix.ext fun i j => ?_
   exact congrFun (congrFun key _) j
@@ -199,14 +197,14 @@ def besDec {σ : ℕ} (d : HermitianOrthogonalExtensionData A B c (-1)) (h : c =
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2
     simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_castLE, Matrix.zero_apply]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   e'e' := by
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2
     have hi : (i : ℕ) + 1 ≤ c := by omega
     have hj : (j : ℕ) + 1 ≤ c := by omega
     simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_rev, Fin.val_castLE, Matrix.zero_apply]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   e'e := by
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2

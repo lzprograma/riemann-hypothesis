@@ -236,10 +236,10 @@ theorem induced_of_slice (B : HLat K) (hB : B.Good) (hB0 : B.L ≠ ⊥)
     rw [hs]
     refine Finset.sum_congr rfl fun g _ => ?_
     rw [Finset.sum_eq_single g]
-    · rw [horth, if_pos rfl, hm]
+    · rw [horth, ite_eq_left rfl, hm]
       rfl
     · intro h _ hgh
-      rw [horth, if_neg (Ne.symm hgh)]
+      rw [horth, ite_eq_right (Ne.symm hgh)]
     · simp
   ·
     ext x
@@ -562,12 +562,12 @@ theorem restriction_rational_form (Tf : Forms0 D u) (hS : Formalism.MainNotions.
   · rw [(D.fm u).Fi_zero, mem_forms_level_zero_iff Tf hS]
     intro c
     by_cases hc : S c
-    · simp only [hc, if_true]; exact h0 c
-    · simp only [hc, if_false]; exact (levelZeroValues Tf).zero_mem
+    · simp only [hc, ite_true]; exact h0 c
+    · simp only [hc, ite_false]; exact (levelZeroValues Tf).zero_mem
   · by_cases hc : S c
-    · simp only [hc, if_true]; exact hr.2 c
+    · simp only [hc, ite_true]; exact hr.2 c
     · refine ⟨0, zero_mem _, fun z => ?_⟩
-      simp only [hc, if_false, map_zero, Pi.zero_apply]
+      simp only [hc, ite_false, map_zero, Pi.zero_apply]
 
 theorem lattice_level_zero_ne_bot (Tf : Forms0 D u) (hS : Formalism.MainNotions.product_first_zeroth_parts.admS D u) : ((D.fm u).lat 0).L ≠ ⊥ := by
   intro h0
@@ -700,7 +700,7 @@ theorem slice_map_bijective (hS : Formalism.MainNotions.product_first_zeroth_par
         have h1 := class_rep_group_elem_spec Tf hE (t2sAc Tf hE g⁻¹ c)
         rw [h, ← group_action_mul, mul_inv_cancel, map_one, t2sRep_ac] at h1
         exact hc h1.symm
-      simp only [hne, if_false, map_zero]
+      simp only [hne, ite_false, map_zero]
     refine ⟨fun g => ⟨_, hmem g⟩, ?_⟩
     apply (D.fm u).emb_inj 0
     funext c
@@ -827,8 +827,7 @@ theorem slice_summands_orthogonal (hS : Formalism.MainNotions.product_first_zero
     exact group_rep_majorant_isometry hI Tf hE g v _ _
   · apply hO
     intro c
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     obtain ⟨hx, hy⟩ := hc
     have key : ∀ (k : ∀ w, t2sG D u w) (z : t2sW Tf hE),
         (D.fm u).emb 0 (t2sRho Tf hE k (z : ((D.fm u).lat 0).V)) c ≠ 0 →

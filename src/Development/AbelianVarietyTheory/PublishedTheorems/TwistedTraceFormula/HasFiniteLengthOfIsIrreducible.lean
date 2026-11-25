@@ -156,12 +156,6 @@ theorem InductionContragredient.nonempty_equiv (h : InductionContragredient k) (
   obtain ⟨Φ, -⟩ := h _ _ _ e Measure.haar W ρ hρ
   exact ⟨Φ⟩
 
-section Two
-
-variable {a b : Type} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b]
-
-end Two
-
 end SmGL
 
 end GlobalTheory

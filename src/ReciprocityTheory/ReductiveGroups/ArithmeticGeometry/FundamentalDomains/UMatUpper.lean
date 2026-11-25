@@ -41,7 +41,7 @@ lemma uMat_upper (G : Matrix (Fin n) (Fin n) ℂ) : (uMat G).BlockTriangular id 
   intro i j hij
   simp only [id] at hij
   simp only [uMat, Matrix.of_apply]
-  rw [if_neg (ne_of_gt hij), dif_neg (not_lt.2 hij.le)]
+  rw [ite_eq_right (ne_of_gt hij), dite_eq_right (not_lt.2 hij.le)]
 
 lemma uMat_term (G : Matrix (Fin n) (Fin n) ℂ) (c m j : Fin n) :
     uMat G j c * G j m = (if j = c then G c m else 0) +
@@ -69,14 +69,14 @@ lemma uT_G_zero (G : Matrix (Fin n) (Fin n) ℂ) (c : Fin n) (hdet : (blk G c).d
   have hmain : ((uMat G)ᵀ * G) c m = G c m + ∑ j : Fin n, g j := by
     rw [Matrix.mul_apply]
     simp only [Matrix.transpose_apply, uMat_term, Finset.sum_add_distrib, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     rfl
   have hA : ∑ j' : Fin c, g (Fin.castLE c.isLt.le j') =
       -∑ j' : Fin c, Matrix.vecMul (rowc G c) (blk G c)⁻¹ j' * G (Fin.castLE c.isLt.le j') m := by
     rw [← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun j' _ => ?_
     have h : Fin.castLE c.isLt.le j' < c := j'.isLt
-    simp only [g, dif_pos h]
+    simp only [g, dite_eq_left h]
     exact neg_mul _ _
   have hB : ∑ j : Fin n, g j = ∑ j' : Fin c, g (Fin.castLE c.isLt.le j') := by
     rw [show (∑ j' : Fin c, g (Fin.castLE c.isLt.le j')) =
@@ -88,7 +88,7 @@ lemma uT_G_zero (G : Matrix (Fin n) (Fin n) ℂ) (c : Fin n) (hdet : (blk G c).d
     have hjc : ¬ j < c := by
       intro hlt
       exact hj (Finset.mem_map.2 ⟨⟨j, hlt⟩, Finset.mem_univ _, Fin.ext rfl⟩)
-    simp only [g, dif_neg hjc]
+    simp only [g, dite_eq_right hjc]
   have k2 : ∑ j' : Fin c, Matrix.vecMul (rowc G c) (blk G c)⁻¹ j' * G (Fin.castLE c.isLt.le j') m =
       G c m := key ⟨m, hm⟩
   rw [hmain, hB, hA, k2]

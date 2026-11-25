@@ -6,45 +6,7 @@ public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceHeckeOperatorScalarOnSpherical
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevel
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitExEveryDatum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
 
 @[expose] public section
@@ -95,12 +57,12 @@ theorem finsum_cosets_eq {G W : Type} [Group G] [AddCommGroup W] (J U : Subgroup
   refine finsum_mem_eq_of_bijOn e ⟨?_, ?_, ?_⟩ ?_
   · rintro c ⟨x, hx, rfl⟩
     have hc : ∃ y ∈ Dset, (y : G ⧸ J) = (x : G ⧸ J) := ⟨x, hx, rfl⟩
-    simp only [e, dif_pos hc]
+    simp only [e, dite_eq_left hc]
     exact ⟨_, hc.choose_spec.1, rfl⟩
   · rintro c ⟨x, hx, rfl⟩ c' ⟨x', hx', rfl⟩ h
     have hc : ∃ y ∈ Dset, (y : G ⧸ J) = (x : G ⧸ J) := ⟨x, hx, rfl⟩
     have hc' : ∃ y ∈ Dset, (y : G ⧸ J) = (x' : G ⧸ J) := ⟨x', hx', rfl⟩
-    simp only [e, dif_pos hc, dif_pos hc'] at h
+    simp only [e, dite_eq_left hc, dite_eq_left hc'] at h
     rw [QuotientGroup.eq] at h
     show (x : G ⧸ J) = (x' : G ⧸ J)
     rw [← hc.choose_spec.2, ← hc'.choose_spec.2, QuotientGroup.eq]
@@ -108,16 +70,16 @@ theorem finsum_cosets_eq {G W : Type} [Group G] [AddCommGroup W] (J U : Subgroup
   · rintro d ⟨x, hx, rfl⟩
     have hc : ∃ y ∈ Dset, (y : G ⧸ J) = (x : G ⧸ J) := ⟨x, hx, rfl⟩
     refine ⟨(x : G ⧸ J), ⟨x, hx, rfl⟩, ?_⟩
-    simp only [e, dif_pos hc]
+    simp only [e, dite_eq_left hc]
     rw [QuotientGroup.eq]
     have h1 := hc.choose_spec.2
     rw [QuotientGroup.eq] at h1
     exact (hJU _ hc.choose_spec.1 _ hx).1 h1
   · rintro c ⟨x, hx, rfl⟩
     have hc : ∃ y ∈ Dset, (y : G ⧸ J) = (x : G ⧸ J) := ⟨x, hx, rfl⟩
-    have he : e x = (hc.choose : G ⧸ U) := by simp only [e, dif_pos hc]
+    have he : e x = (hc.choose : G ⧸ U) := by simp only [e, dite_eq_left hc]
     have hd : ∃ y ∈ Dset, (y : G ⧸ U) = e x := ⟨_, hc.choose_spec.1, he.symm⟩
-    simp only [φ, ψ, dif_pos hc, dif_pos hd]
+    simp only [φ, ψ, dite_eq_left hc, dite_eq_left hd]
     apply hF _ hc.choose_spec.1 _ hd.choose_spec.1
     rw [← QuotientGroup.eq, hd.choose_spec.2, he]
 

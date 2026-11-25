@@ -901,8 +901,7 @@ lemma cmp_zero {Y Y' : Type*} [MeasurableSpace Y] [MeasurableSpace Y'] (μ : Mea
     simp only [S, Set.mem_iInter, Set.mem_setOf_eq]
     constructor
     · intro hy
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       obtain ⟨n, hn⟩ := exists_nat_one_div_lt (div_pos hne hr)
       have hlt : r / ((n : ℝ) + 1) < Real.sqrt (ρ' y) := by
         calc r / ((n : ℝ) + 1) = r * (1 / ((n : ℝ) + 1)) := by ring
@@ -966,7 +965,7 @@ lemma cmp_right {X Y Y' : Type*} [MeasurableSpace X] [MeasurableSpace Y] [Measur
       refine h _ (Real.sqrt_nonneg _) ?_
       calc Real.sqrt (r ^ 2 - σ x) ≤ Real.sqrt (r ^ 2) := Real.sqrt_le_sqrt (by linarith [σ0 x])
         _ = r := Real.sqrt_sq hr
-    · push_neg at hx
+    · push Not at hx
       rw [section_empty ρ ρ0 (σ x) r hr hx]
       simp
   rw [Measure.prod_apply hS, Measure.prod_apply hS']
@@ -1090,8 +1089,7 @@ lemma tendsto_of_two_sided {f : ℝ → ENNReal} {l : Filter ℝ} {L : ENNReal}
   · intro l hl
     obtain ⟨n, hn⟩ := ((hsq l (ne_top_of_lt hl)).eventually (gt_mem_nhds hl)).exists
     filter_upwards [h (t n) (ht1 n) (httop n)] with x hx
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have : t n * t n * f x ≤ t n * t n * l := by gcongr
     exact absurd (hn.trans_le (hx.2.trans this)) (lt_irrefl _)
   · intro u hu

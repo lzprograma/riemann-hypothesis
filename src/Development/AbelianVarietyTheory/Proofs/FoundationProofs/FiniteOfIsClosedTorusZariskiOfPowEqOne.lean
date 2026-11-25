@@ -330,13 +330,4 @@ theorem finite_of_isClosed_torusZariski_of_pow_eq_one [Module.Finite ℤ X] {n :
 
 end Torus
 
-section Coordinates
-
-open AddMonoidAlgebra
-
-variable {R : Type*} [CommRing R] {X : Type*} [AddCommGroup X] {ι : Type*}
-
-
-end Coordinates
-
 end GlobalTheory

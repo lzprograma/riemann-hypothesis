@@ -10,6 +10,7 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.TypeStar
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -33,23 +34,8 @@ theorem aeval_mul_of_homog {R : Type*} [CommRing R] [Algebra ℤ R] (t : ι → 
     {G : MvPolynomial (Coord n) ℤ} {b : ι → ℕ} (hG : IsWeightedHomogeneous (coordDeg n) G b) :
     aeval (fun p ↦ t p.1 * z p) G = aeval z G * ∏ k, t k ^ b k := by
   classical
-  conv_lhs => rw [G.as_sum]
-  conv_rhs => rw [G.as_sum]
-
-  rw [map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm ↦ ?_
-  have hmb : ∀ k, ∑ i, m ⟨k, i⟩ = b k := fun k ↦ by
-    rw [← weight_coordDeg_apply, hG (mem_support_iff.mp hm)]
-  rw [aeval_monomial, aeval_monomial, mul_assoc]
-  congr 1
-  rw [Finsupp.prod_fintype _ _ (fun _ ↦ pow_zero _), Finsupp.prod_fintype _ _ (fun _ ↦ pow_zero _)]
-  simp_rw [mul_pow]
-  rw [Finset.prod_mul_distrib, mul_comm]
-  congr 1
-  rw [Fintype.prod_sigma]
-  refine Finset.prod_congr rfl fun k _ ↦ ?_
-  rw [← hmb k]
-  exact Finset.prod_pow_eq_pow_sum Finset.univ (fun i ↦ m ⟨k, i⟩) (t k)
+  rw [mul_comm]
+  exact BlockScaling.eval₂_mul_block_left (algebraMap ℤ R) t z fun _ hm => BlockScaling.sum_eq_of_isWeightedHomogeneous_single hG hm
 
 def homDeg (F : MvPolynomial (Coord n) ℤ) : ι → ℕ :=
   fun k ↦ F.support.sup fun m ↦ Finsupp.weight (coordDeg n) m k
@@ -199,15 +185,21 @@ theorem genPt_ne_zero {p : Coord n} (hp : (X p : MvPolynomial (Coord n) ℤ) ∉
 
 end Generic
 
-theorem proof : Statement := by
-  intro ι _ _ _ n A x s hx hs V hV c hc
+theorem mem_chartPoint_iff {ι : Type} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {n : ι → ℕ} {A : Heights.HermLine n} {x : Cone n (AlgebraicClosure ℚ)}
+    {s : MvPolynomial (Coord n) ℤ} (hs : Geo.IsSectionOn (orbitIdeal x) A.toGeo s)
+    {V : Ideal (MvPolynomial (Coord n) ℤ)} [V.IsPrime]
+    (hV : V ∈ Geo.divSupp (orbitIdeal x) s) (c : ∀ k, Fin (n k + 1))
+    (hc : ∀ k, (X ⟨k, c k⟩ : MvPolynomial (Coord n) ℤ) ∉ V) :
+    (∀ f ∈ V, ∀ b, weightedHomogeneousComponent (coordDeg n) b f ∈ V) ∧
+    (∀ k, flatCone x ⟨k, c k⟩ ≠ 0) ∧
+    (∀ k, genPt V ⟨k, c k⟩ ≠ 0) ∧
+    ∀ F, chartEval x c F ∈ chartPoint x c V ↔ aeval (dehomCoords (genPt V) c) F = 0 := by
+  classical
   obtain ⟨hVmin, -⟩ := hV
-  have : V.IsPrime := hVmin.1.1
   have hPV : orbitIdeal x ≤ V := le_sup_left.trans hVmin.1.2
-  have hsV : s ∈ V := hVmin.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self s))
-  obtain ⟨a, -, hsa, hsP⟩ := hs
+  obtain ⟨a, -, hsa, -⟩ := hs
   have hsa' : IsWeightedHomogeneous (coordDeg n) s a := (geoMultiHomog_iff s a).mp hsa
-
   have hVh : ∀ f ∈ V, ∀ b, weightedHomogeneousComponent (coordDeg n) b f ∈ V := by
     have hJ : NumbersDVR.IsMultiHomogIdeal (ι := blockIdx n) (orbitIdeal x ⊔ Ideal.span {s}) := by
       intro f hf b
@@ -216,25 +208,20 @@ theorem proof : Statement := by
       exact Submodule.add_mem_sup (OrbitCurve.weightedHomogeneousComponent_mem_orbitIdeal x hp b)
         (NumbersDVR.isMultiHomogIdeal_span_singleton (e := a) hsa' t ht b)
     exact NumbersDVR.MinimalPrimeMultiHomog.proof ℤ ι (blockIdx n) _ V hJ hVmin
-
   have hxc : ∀ k, flatCone x ⟨k, c k⟩ ≠ 0 := by
     intro k h0
     refine hc k (hPV ?_)
     rw [orbitIdeal, Geo.mCoordIdeal, RingHom.mem_ker, Geo.mConeMap, aeval_X]
     simp [h0]
   have hyc : ∀ k, genPt V ⟨k, c k⟩ ≠ 0 := fun k ↦ genPt_ne_zero V (hc k)
-
   have hVzero : ∀ f ∈ V, aeval (dehomCoords (genPt V) c) f = 0 := by
     intro f hf
-    classical
-
     rw [← sum_weightedHomogeneousComponent (w := coordDeg n) f,
-    finsum_eq_sum _ (weightedHomogeneousComponent_finsupp f), map_sum]
+      finsum_eq_sum _ (weightedHomogeneousComponent_finsupp f), map_sum]
     refine Finset.sum_eq_zero fun b _ ↦ ?_
     exact (aeval_dehomCoords_of_homog (genPt V) c
       (weightedHomogeneousComponent_isWeightedHomogeneous b f)).trans
       (mul_eq_zero_of_left ((aeval_genPt_eq_zero_iff V _).mpr (hVh f hf b)) _)
-
   have hker : ∀ F, chartEval x c F = 0 → aeval (dehomCoords (genPt V) c) F = 0 := by
     intro F hF
     rw [chartEval_eq_zero_iff] at hF
@@ -244,24 +231,27 @@ theorem proof : Statement := by
       hPV (mem_orbitIdeal_of_aeval_eq_zero x (isWeightedHomogeneous_homogenize c F) hH)
     exact (aeval_dehomCoords (genPt V) c hyc F).trans
       (mul_eq_zero_of_left ((aeval_genPt_eq_zero_iff V _).mpr hHV) _)
+  refine ⟨hVh, hxc, hyc, fun F ↦ ⟨fun hF ↦ ?_, fun hF ↦ ?_⟩⟩
+  · obtain ⟨v, hv, hvF⟩ :=
+      (Ideal.mem_map_iff_of_surjective _ (chartEval_surjective x c)).mp hF
+    have h1 := hker (F - v) (by rw [map_sub, hvF, sub_self])
+    rwa [map_sub, hVzero v hv, sub_zero] at h1
+  · have hF' := (aeval_dehomCoords (genPt V) c hyc F).symm.trans hF
+    have hH := (aeval_genPt_eq_zero_iff V _).mp
+      ((mul_eq_zero.mp hF').resolve_right (prod_inv_pow_ne_zero _ c hyc _))
+    have e : chartEval x c (homogenize c F) = chartEval x c F :=
+      map_homogenize c (chartEval x c).toRingHom (chartEval_X_chart x c hxc) F
+    rw [← e]
+    exact Ideal.mem_map_of_mem _ hH
 
-  have hmem : ∀ F, chartEval x c F ∈ chartPoint x c V ↔
-      aeval (dehomCoords (genPt V) c) F = 0 := by
-    intro F
-    constructor
-    · intro hF
-      obtain ⟨v, hv, hvF⟩ :=
-        (Ideal.mem_map_iff_of_surjective _ (chartEval_surjective x c)).mp hF
-      have h1 := hker (F - v) (by rw [map_sub, hvF, sub_self])
-      rwa [map_sub, hVzero v hv, sub_zero] at h1
-    · intro hF
-      have hF' := (aeval_dehomCoords (genPt V) c hyc F).symm.trans hF
-      have hH := (aeval_genPt_eq_zero_iff V _).mp
-        ((mul_eq_zero.mp hF').resolve_right (prod_inv_pow_ne_zero _ c hyc _))
-      have e : chartEval x c (homogenize c F) = chartEval x c F :=
-        map_homogenize c (chartEval x c).toRingHom (chartEval_X_chart x c hxc) F
-      rw [← e]
-      exact Ideal.mem_map_of_mem _ hH
+theorem proof : Statement := by
+  intro ι _ _ _ n A x s hx hs V hV c hc
+  have : V.IsPrime := hV.1.1.1
+  obtain ⟨-, hxc, hyc, hmem⟩ := mem_chartPoint_iff hs hV c hc
+  obtain ⟨hVmin, -⟩ := hV
+  have hsV : s ∈ V := hVmin.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self s))
+  obtain ⟨a, -, hsa, hsP⟩ := hs
+  have hsa' : IsWeightedHomogeneous (coordDeg n) s a := (geoMultiHomog_iff s a).mp hsa
   have hprime : (chartPoint x c V).IsPrime := by
     refine ⟨fun htop ↦ ?_, fun {u v} huv ↦ ?_⟩
     · have h1 : chartEval x c 1 ∈ chartPoint x c V := by rw [htop]; exact Submodule.mem_top

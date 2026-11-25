@@ -15,46 +15,7 @@ import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformC
 import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChartComputations
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupIsoOffCenter
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -68,25 +29,6 @@ private theorem presheaf_map_eq {X : Scheme.{u}} {A B : (X.Opens)ᵒᵖ} (f g : 
     X.presheaf.map f = X.presheaf.map g := by
   have h : f = g := Quiver.Hom.unop_inj (Subsingleton.elim f.unop g.unop)
   rw [h]
-
-private theorem idealSheafData_mul_le_mul {Y : Scheme.{u}} {A B C D : Y.IdealSheafData}
-    (h1 : A ≤ B) (h2 : C ≤ D) : A * C ≤ B * D := by
-  refine Scheme.IdealSheafData.le_def.mpr fun U => ?_
-  rw [Scheme.IdealSheafData.ideal_mul, Scheme.IdealSheafData.ideal_mul]
-  exact Ideal.mul_mono (Scheme.IdealSheafData.le_def.mp h1 U)
-    (Scheme.IdealSheafData.le_def.mp h2 U)
-
-private theorem idealSheafData_mul_le_left {Y : Scheme.{u}} (A B : Y.IdealSheafData) :
-    A * B ≤ A := by
-  refine Scheme.IdealSheafData.le_def.mpr fun U => ?_
-  rw [Scheme.IdealSheafData.ideal_mul]
-  exact Ideal.mul_le.mpr fun r hr s _ => Ideal.mul_mem_right _ _ hr
-
-private theorem idealSheafData_pow_le_pow_of_le {Y : Scheme.{u}} (A : Y.IdealSheafData) {i j : ℕ}
-    (h : j ≤ i) : A ^ i ≤ A ^ j := by
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
-  calc A ^ (j + d) = A ^ j * A ^ d := by rw [pow_add]
-    _ ≤ A ^ j := idealSheafData_mul_le_left _ _
 
 private theorem appLE_ι_bijective {Y : Scheme.{u}} (V : Y.Opens)
     (e : (⊤ : V.toScheme.Opens) ≤ V.ι ⁻¹ᵁ V) :
@@ -173,15 +115,14 @@ theorem derivIdealSheaf_pow_succ_mul_le (k : Type u) [Field k] [CharZero k] {Y :
     (F J : Y.IdealSheafData) (n : ℕ) :
     derivIdealSheaf k q (F ^ (n + 1) * J) ≤ F ^ n * derivIdealSheaf k q J := by
   refine le_trans (derivIdealSheaf_mul_le k q (F ^ (n + 1)) J) (sup_le ?_ ?_)
-  · exact idealSheafData_mul_le_mul (idealSheafData_pow_le_pow_of_le F (Nat.le_succ n)) le_rfl
+  · exact mul_le_mul_of_nonneg_right (pow_le_pow_of_le_one bot_le le_top (Nat.le_succ n)) bot_le
   · calc J * derivIdealSheaf k q (F ^ (n + 1))
         ≤ J * (F ^ n * derivIdealSheaf k q F) :=
-          idealSheafData_mul_le_mul le_rfl (derivIdealSheaf_pow_succ_le k q F n)
+          mul_le_mul_of_nonneg_left (derivIdealSheaf_pow_succ_le k q F n) bot_le
       _ = F ^ n * (J * derivIdealSheaf k q F) := mul_left_comm _ _ _
       _ ≤ F ^ n * derivIdealSheaf k q J :=
-          idealSheafData_mul_le_mul le_rfl
-            (le_trans (idealSheafData_mul_le_left J (derivIdealSheaf k q F))
-              (le_derivIdealSheaf k q J))
+          mul_le_mul_of_nonneg_left
+            (le_trans (mul_le_of_le_one_right bot_le le_top) (le_derivIdealSheaf k q J)) bot_le
 
 theorem derivIdealSheafIterate_pow_mul_le (k : Type u) [Field k] [CharZero k] {Y : Scheme.{u}}
     (q : Y ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth q]
@@ -222,7 +163,6 @@ theorem exists_affineOpen_comap_derivIdealSheafIterate_eq (k : Type u) [Field k]
       = X₁.homOfLE hVW ≫ (AlgebraicGeometry.morphismRestrict π W ≫ W.ι) := by
     rw [morphismRestrict_ι, ← Category.assoc, Scheme.homOfLE_ι]
   have : IsOpenImmersion ((V : X₁.Opens).ι ≫ π) := by rw [hfac]; infer_instance
-  have : AlgebraicGeometry.Smooth ((V : X₁.Opens).ι ≫ π) := inferInstance
   have hcomp : ∀ A : X.IdealSheafData,
       A.comap ((V : X₁.Opens).ι ≫ π) = (A.comap π).comap (V : X₁.Opens).ι := by
     intro A

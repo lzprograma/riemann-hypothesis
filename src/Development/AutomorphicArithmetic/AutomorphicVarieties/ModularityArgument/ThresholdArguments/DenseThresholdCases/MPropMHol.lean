@@ -647,7 +647,7 @@ private theorem step [IsTotallyReal F] (S : Subring ℂ) (ω : HChar F) (hS : �
       fun m => S.add_mem (g5 m) (S.mul_mem (S.neg_mem hyS) (div_mem S g5 _ _)), fun w hw => ?_, fun w hw => ?_⟩
     · rintro ⟨w, hw, hP⟩
       rcases Finset.mem_insert.1 hw with rfl | hw
-      · rw [hy, if_pos hP]
+      · rw [hy, ite_eq_left hP]
         ring
       · rw [g3 ⟨w, hw, hP⟩]
         ring
@@ -656,7 +656,7 @@ private theorem step [IsTotallyReal F] (S : Subring ℂ) (ω : HChar F) (hS : �
     · rcases Finset.mem_insert.1 hw with rfl | hw
       · apply rel_same
         have := g7 w hv
-        rw [chi_prime, if_pos hc] at this
+        rw [chi_prime, ite_eq_left hc] at this
         rw [hy]
         split_ifs
         · rwa [mul_one, add_comm]
@@ -691,11 +691,11 @@ theorem UpperTheory.V.Sd.emix :
   rw [chi_prime, Nat.sub_self, pow_zero, mul_one]
   by_cases hw : ((l : ℕ) : 𝓞 F) ∈ w.asIdeal
   · have := g6 w ((hT w).2 hw) m hm
-    simp only [levL, hw, if_true, one_ne_zero, if_false]
+    simp only [levL, hw, ite_true, one_ne_zero, ite_false]
     convert this
   · have := g7 w (fun h => hw ((hT w).1 h)) m hm
     rw [chi_prime] at this
-    simp only [levL, hw, if_false]
+    simp only [levL, hw, ite_false]
     rw [this]
     split_ifs <;> simp
 end -- clump:auto
@@ -768,12 +768,6 @@ namespace UpperTheory.V.Br
 section Aff
 variable {R : Type} [CommRing R]
 
-private theorem cm_aff_mul (y y' : Rˣ) (x x' : R) : aff y x * aff y' x' = aff (y * y') (y * x' + x) := by
-  ext i j; fin_cases i <;> fin_cases j <;> simp [aff, Matrix.mul_apply, Fin.sum_univ_succ]
-
-private theorem cm_aff_one : aff (1 : Rˣ) (0 : R) = 1 := by
-  ext i j; fin_cases i <;> fin_cases j <;> simp [aff]
-
 private theorem cm_scalar_comm (y : Rˣ) (g : GL (Fin 2) R) :
     g * Matrix.GeneralLinearGroup.scalar (Fin 2) y = Matrix.GeneralLinearGroup.scalar (Fin 2) y * g := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [Matrix.GeneralLinearGroup.scalar, Matrix.mul_apply, Fin.sum_univ_succ, mul_comm]
@@ -815,8 +809,8 @@ private theorem cm_arch {ψ : GA F 2 → ℂ} {k : ℕ} (h : ∀ (u : TR.Rinf F)
     have h3 := HasDerivAt.comp_sub_const t t (by rw [sub_self]; exact h2)
     refine h3.congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => ?_)
     beta_reduce
-    rw [← mul_assoc, ← map_mul, cm_aff_mul, ← hz]; simp
-  rw [h1, h0, cm_aff_one, map_one, one_mul, hg, mul_zero] at this
+    rw [← mul_assoc, ← map_mul, co_aff_mul, ← hz]; simp
+  rw [h1, h0, UpperTheory.V.Sd.aff_one, map_one, one_mul, hg, mul_zero] at this
   exact this
 
 end UpperTheory.V.Br
@@ -916,12 +910,6 @@ namespace UpperTheory.V.Br.CuspStabilizer
 section Aff
 variable {R S : Type} [CommRing R] [CommRing S]
 
-private theorem aff_mul (y y' : Rˣ) (x x' : R) : aff y x * aff y' x' = aff (y * y') (y * x' + x) := by
-  ext i j; fin_cases i <;> fin_cases j <;> simp [aff, Matrix.mul_apply, Fin.sum_univ_succ]
-
-private theorem aff_one : aff (1 : Rˣ) (0 : R) = 1 := by
-  ext i j; fin_cases i <;> fin_cases j <;> simp [aff]
-
 private theorem corner_aff (s : R →ₙ+* S) (y : Rˣ) (x : R) : cornerGL 2 s (aff y x) = aff (Units.map (corner s) y) (s x) := by
   ext i j
   change (1 : Matrix (Fin 2) (Fin 2) S) i j - s ((1 : Matrix (Fin 2) (Fin 2) R) i j) + s (aff y x i j) = _
@@ -990,7 +978,7 @@ private theorem mem_stab {M : ℕ} {g : GA F 2} {u : Ideles F}
   fun Z hZ t => ⟨fun h => by simpa only [mul_inv_cancel_right] using h2 Z hZ _ h, h1 Z hZ t⟩
 
 private theorem stab_fin {M : ℕ} (hM : 1 ≤ M) (g : GA F 2) : (stab M g).FiniteIndex := by
-  have am : ∀ t u : Ideles F, aff (t * u) (0 : Ad F) = aff u 0 * aff t 0 := fun t u => by rw [aff_mul, mul_comm]; simp
+  have am : ∀ t u : Ideles F, aff (t * u) (0 : Ad F) = aff u 0 * aff t 0 := fun t u => by rw [co_aff_mul, mul_comm]; simp
   have h1 : ∀ a : Fˣ, ∀ Z : Set (GA F 2), Moves M Z → ∀ t, aff t 0 * g ∈ Z → aff (t * diagUnits F a) 0 * g ∈ Z :=
     fun a Z hZ t h => by rw [am, mul_assoc]; exact hZ.rat a _ h
   have h2 : ∀ y : (TR.Rinf F)ˣ, (∀ v, 0 < y.val v) → ∀ Z : Set (GA F 2), Moves M Z → ∀ t, aff t 0 * g ∈ Z →
@@ -1019,7 +1007,7 @@ private theorem stab_fin {M : ℕ} (hM : 1 ≤ M) (g : GA F 2) : (stab M g).Fini
     refine mem_stab (h3 u hu) ?_
     rw [← map_inv]
     refine h3 _ ?_
-    have e : aff u⁻¹ (0 : Af F) = (aff u 0)⁻¹ := eq_inv_of_mul_eq_one_left (by rw [aff_mul]; simp [aff_one])
+    have e : aff u⁻¹ (0 : Af F) = (aff u 0)⁻¹ := eq_inv_of_mul_eq_one_left (by rw [co_aff_mul]; simp [aff_one])
     have := (KLev F 2 M).inv_mem hu
     rw [e]
     simpa only [mul_inv_rev, inv_inv, mul_assoc] using this
@@ -1048,7 +1036,7 @@ theorem UpperTheory.V.Br.cuspSet :
   obtain ⟨h, hh⟩ := QuotientGroup.mk_out_eq_mul ((KLev F 2 M).subgroupOf (KLev F 2 1)) ⟨u, hu⟩
   have h2 := hZ.lev _ ((KLev F 2 M).inv_mem h.2) _ (h1 (s, QuotientGroup.mk ⟨u, hu⟩) y)
   have h3 := hZ.cent z _ (hZ.unip x _ (hZ.rot θ (Unitary.toUnits (rot θ)) rfl _ h2))
-  have e1 : aff y x = aff 1 x * aff y 0 := by rw [aff_mul]; simp
+  have e1 : aff y x = aff 1 x * aff y 0 := by rw [co_aff_mul]; simp
   convert h3 using 1
   simp only [b, hh, e1, mul_assoc, map_mul, Subgroup.coe_mul, map_inv]
   rw [TR.infGL_comm]
@@ -1177,27 +1165,12 @@ private noncomputable def eps (s : InfinitePlace F → ℤˣ) : TR.Kinf F 2 :=
     fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_succ, Matrix.star_apply]
     rcases Int.units_eq_one_or (s v) with h | h <;> simp [h]⟩
 
-private theorem real_dec {a b c d : ℝ} (h1 : a * a + b * b = 1) (h2 : a * c + b * d = 0) (h3 : c * c + d * d = 1) :
-    ∃ (s : ℤˣ) (t : ℝ), a = Real.cos t ∧ b = Real.sin t ∧ c = -((s : ℤ) * Real.sin t) ∧ d = (s : ℤ) * Real.cos t := by
-  have hn : ‖(⟨a, b⟩ : ℂ)‖ = 1 := by
-    rw [Complex.norm_def, Complex.normSq_mk, h1, Real.sqrt_one]
-  have h0 : (⟨a, b⟩ : ℂ) ≠ 0 := fun h => by simp [h] at hn
-  have ha : a = Real.cos (Complex.arg ⟨a, b⟩) := by rw [Complex.cos_arg h0, hn, div_one]
-  have hb : b = Real.sin (Complex.arg ⟨a, b⟩) := by rw [Complex.sin_arg, hn, div_one]
-  have hc : c = -((a * d - b * c) * b) := by linear_combination (-c) * h1 + a * h2
-  have hd : d = (a * d - b * c) * a := by linear_combination (-d) * h1 + b * h2
-  have hs : (a * d - b * c) * (a * d - b * c) = 1 := by
-    linear_combination (c * c + d * d) * h1 + h3 - (a * c + b * d) * h2
-  rcases mul_self_eq_one_iff.1 hs with h | h
-  · exact ⟨1, _, ha, hb, by rw [← hb]; simpa [h] using hc, by rw [← ha]; simpa [h] using hd⟩
-  · exact ⟨-1, _, ha, hb, by rw [← hb]; simpa [h] using hc, by rw [← ha]; simpa [h] using hd⟩
-
 omit [NumberField F] in
 private theorem dec (x : TR.Kinf F 2) : ∃ s θ, x = eps s * rot θ := by
   have h := Matrix.mem_unitaryGroup_iff.1 x.2
   have e : ∀ i j v, x.1 i 0 v * x.1 j 0 v + x.1 i 1 v * x.1 j 1 v = (1 : Matrix (Fin 2) (Fin 2) (TR.Rinf F)) i j v := fun i j v => by
     rw [← h]; simp [Matrix.mul_apply, Fin.sum_univ_succ, Matrix.star_apply]
-  choose s θ h1 h2 h3 h4 using fun v => real_dec (a := x.1 0 0 v) (b := x.1 0 1 v) (c := x.1 1 0 v) (d := x.1 1 1 v)
+  choose s θ h1 h2 h3 h4 using fun v => UpperTheory.V.Br.CuspStabilizer.real_dec (a := x.1 0 0 v) (b := x.1 0 1 v) (c := x.1 1 0 v) (d := x.1 1 1 v)
     (by simpa using e 0 0 v) (by simpa using e 0 1 v) (by simpa using e 1 1 v)
   refine ⟨s, θ, ?_⟩
   ext i j v
@@ -1297,9 +1270,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
-
 section
 theorem UpperTheory.V.Sd.holomorphic_finite_of_printed_hida :
     _root_.UpperTheory.V.Af.HypothesesH' → UpperTheory.V.Sd.HolFin := fun _ => UpperTheory.V.Br.holFin0
@@ -1312,9 +1282,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.THolLift", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.DelSerre\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ExistsIdele\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ExpInj\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ExpUnique\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HolLin\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.THolFin\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\n\n"}
 section -- clump:auto
 @[expose] public section
-
-
-
 
 section
 noncomputable section
@@ -1352,11 +1319,11 @@ private def fT {K : Type} [Field K] (w : Pl F) (e : K) : Module.End K (Idx F →
       v ⟨h.choose, fun h0 => 𝔪.2 (by rw [h.choose_spec, h0, Ideal.mul_bot])⟩ else 0
   map_add' c d := by
     funext n
-    by_cases h : ∃ 𝔫, n.1 = w.asIdeal * 𝔫 <;> simp only [h, dif_pos, dif_neg, not_false_eq_true, Pi.add_apply] <;> ring
+    by_cases h : ∃ 𝔫, n.1 = w.asIdeal * 𝔫 <;> simp only [h, dite_eq_left, dite_eq_right, not_false_eq_true, Pi.add_apply] <;> ring
   map_smul' a c := by
     funext n
     by_cases h : ∃ 𝔫, n.1 = w.asIdeal * 𝔫 <;>
-      simp only [h, dif_pos, dif_neg, not_false_eq_true, Pi.smul_apply, smul_eq_mul, RingHom.id_apply] <;> ring
+      simp only [h, dite_eq_left, dite_eq_right, not_false_eq_true, Pi.smul_apply, smul_eq_mul, RingHom.id_apply] <;> ring
 open Classical in
 omit [NumberField F] in
 private theorem fT_apply {K : Type} [Field K] (w : Pl F) (e : K) (v : Idx F → K) (𝔪 : Idx F) :
@@ -1427,7 +1394,7 @@ private theorem Phi_hkS {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {k : �
   rw [fT_Phi ι φ h, Phi_eq ι (hkS hk1 c hω w φ) hd]
 private theorem Phi_inj {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {k : ℕ} (hk1 : 1 ≤ k) (c : Pl F → ℕ) {ω : HChar F}
     (hω : IsOfFinOrder ω) : Function.Injective (Phi ι k c ω) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro φ h0
   obtain ⟨_, h⟩ := cf_spec φ
   refine Subtype.ext (expInj F k hk1 c ω hω φ.1 φ.2.1 _ _ h fun 𝔪 h𝔪 => ?_)
@@ -1526,9 +1493,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
-
 section
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Polynomial GlobalTheory.CuspRep GlobalTheory.HeckeGal
   GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published UpperTheory.V.Base UpperTheory.V.Sd
@@ -1591,15 +1555,6 @@ private theorem norm_val (ι : Qbar l ≃+* ℂ) {η : HChar F} (h : IsOfFinOrde
   have e2 : ‖ι.symm (η.1 x : ℂˣ)‖ ^ m = 1 := by
     rw [← norm_pow, ← map_pow, ← Units.val_pow_eq_pow_val, e1, Units.val_one, map_one, norm_one]
   exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) hm.ne').1 e2
-private theorem chiI_prime (ω : HChar F) (c : Pl F → ℕ) (w : Pl F) :
-    chiI ω c w.asIdeal = if c w = 0 then ((ω.val w : ℂˣ) : ℂ) else 0 := by
-  classical
-  rw [chiI, finprod_eq_single _ w]
-  · rw [ordI, Associates.count_self w.associates_irreducible, pow_one]
-  · intro v hv
-    rw [ordI, Associates.count_eq_zero_of_ne v.associates_irreducible w.associates_irreducible, pow_zero]
-    intro e
-    exact hv (HeightOneSpectrum.ext (associated_iff_eq.1 (Associates.mk_eq_mk_iff_associated.1 e)))
 private theorem gal_of (hA : GlobalTheory.Published.GlobalArtinReciprocity) (ι : Qbar l ≃+* ℂ) {η₁ η₂ : HChar F} (h₁ : IsOfFinOrder η₁)
     (h₂ : IsOfFinOrder η₂) {S : Set (Pl F)} (hS : S.Finite)
     (h : ∀ w ∉ S, η₁.UnrAt w ∧ η₂.UnrAt w ∧ (‖ι.symm (η₁.val w : ℂˣ) - 1‖ < 1 ∨ ‖ι.symm (η₂.val w : ℂˣ) - 1‖ < 1))
@@ -1644,12 +1599,12 @@ theorem UpperTheory.V.Z.Bc.propMHolZ_alt :
     by_cases h : ((l : ℕ) : 𝓞 F) ∈ w.asIdeal
     · exact Or.inl (Ideal.dvd_iff_le.2 ((Ideal.span_singleton_le_iff_mem _).2 h))
     · refine Or.inr fun hu => hw ?_
-      rw [levL, if_neg h]
+      rw [levL, ite_eq_right h]
       exact Nat.le_zero.1 ((hc w).2 fun x hx _ => hu x hx)
   have hL0 : ∀ w, levL l c w = 0 → ((l : ℕ) : 𝓞 F) ∉ w.asIdeal ∧ c w = 0 := fun w hw => by
     by_cases h : ((l : ℕ) : 𝓞 F) ∈ w.asIdeal
-    · rw [levL, if_pos h] at hw; exact absurd hw one_ne_zero
-    · rw [levL, if_neg h] at hw; exact ⟨h, hw⟩
+    · rw [levL, ite_eq_left h] at hw; exact absurd hw one_ne_zero
+    · rw [levL, ite_eq_right h] at hw; exact ⟨h, hw⟩
   have nval : ∀ {η : HChar F}, IsOfFinOrder η → ∀ w, ‖ι.symm (η.val w : ℂˣ)‖ = 1 := fun h w => norm_val ι h _
   have hpow : ∀ w : Pl F, ((l : ℕ) : 𝓞 F) ∉ w.asIdeal → ‖(normV w : Qbar l) ^ k - 1‖ < 1 := fun w hw =>
     pow_cong (mt (dvd_normV w).1 hw) hkd'
@@ -1674,9 +1629,9 @@ theorem UpperTheory.V.Z.Bc.propMHolZ_alt :
         · have h0 : h.choose ≠ ⊥ := fun h0 => h𝔪 (by rw [h.choose_spec, h0, Ideal.mul_bot])
           exact ⟨aint _ h0, ha' _ h0⟩
         · simp
-      rw [hkCoef, chiI_prime, Nat.sub_self, pow_zero, mul_one] at e
+      rw [hkCoef, UpperTheory.V.Sd.chi_prime, Nat.sub_self, pow_zero, mul_one] at e
       have e' := congrArg ι.symm e
-      rw [hkCoef, chiI_prime, Nat.add_sub_cancel]
+      rw [hkCoef, UpperTheory.V.Sd.chi_prime, Nat.add_sub_cancel]
       split_ifs at e' ⊢ with h0
       · have h4 := sm_mul (nval hω w).le (sm_add (sm_mul (le_of_cong (hpow w (hL0 w h0).1) norm_one.le) h3.2)
           (sm_mul h3.1 (hpow w (hL0 w h0).1)))
@@ -1695,7 +1650,7 @@ theorem UpperTheory.V.Z.Bc.propMHolZ_alt :
     obtain ⟨u₁, u₂, e⟩ := hu w h0
     refine ⟨u₁, u₂, ?_⟩
     have h1 := hlam w
-    rw [e, eisT, if_neg (hL0 w h0).1, if_pos (hL0 w h0).2, HChar.val_mul] at h1
+    rw [e, eisT, ite_eq_right (hL0 w h0).1, ite_eq_left (hL0 w h0).2, HChar.val_mul] at h1
     have h2 := sm_sub (sm_mul (nval f₂ w).le (hpow w (hL0 w h0).1)) h1
     have h3 : ‖ι.symm (η₁.val w : ℂˣ) - 1‖ * ‖ι.symm (η₂.val w : ℂˣ) - 1‖ < 1 := by
       rw [← norm_mul]
@@ -1713,8 +1668,8 @@ theorem UpperTheory.V.Z.Bc.propMHolZ_alt :
     · exact e ▸ hlam w
     · rw [e, map_mul, map_pow, map_natCast, ← Nat.cast_pow] at h2
       exact absurd h2 (sm_mul (nval f₂ w).le (norm_nat_lt (dvd_pow ((dvd_normV w).2 hw) hk0.ne'))).ne
-  have e₁ : eisT l (η₁ * η₂) c P v = ((η₁ * η₂).val v : ℂˣ) := by rw [eisT, if_pos hvl, if_pos hvP]
-  have e₂ : eisT l (η₁ * η₂) c P v' = 1 := by rw [eisT, if_pos hvl', if_neg hvQ]
+  have e₁ : eisT l (η₁ * η₂) c P v = ((η₁ * η₂).val v : ℂˣ) := by rw [eisT, ite_eq_left hvl, ite_eq_left hvP]
+  have e₂ : eisT l (η₁ * η₂) c P v' = 1 := by rw [eisT, ite_eq_left hvl', ite_eq_right hvQ]
   have a₁ := hab v hvl (by rw [e₁]; exact nval hω v)
   have a₂ := hab v' hvl' (by rw [e₂, map_one, norm_one])
   rw [e₁] at a₁

@@ -3,50 +3,6 @@ module
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -103,19 +59,19 @@ theorem trunc_mul (k : Fin r) (A C : Matrix (Fin r) (Fin r) R) (hC : Up C) :
   simp only [trunc, of_apply, Matrix.mul_apply]
   by_cases hi : i ≤ k
   · by_cases hj : j ≤ k
-    · simp only [hi, hj, and_self, if_true, true_and, and_true]
+    · simp only [hi, hj, and_self, ite_true, true_and, and_true]
       refine Finset.sum_congr rfl fun l _ => ?_
       by_cases hl : l ≤ k
       · simp [hl]
       · have h1 : j < l := lt_of_le_of_lt hj (not_le.1 hl)
         simp [hl, hC l j h1, h1.ne']
     · have hij : i ≠ j := fun e => hj (e ▸ hi)
-      simp only [hi, hj, and_false, if_false, true_and, hij]
+      simp only [hi, hj, and_false, ite_false, true_and, hij]
       refine (Finset.sum_eq_zero fun l _ => ?_).symm
       by_cases hl : l = j
       · subst hl; simp [hj, hij]
       · simp [hl]
-  · simp only [hi, false_and, if_false]
+  · simp only [hi, false_and, ite_false]
     rw [Finset.sum_eq_single i]
     · simp [hi]
     · intro l _ hl; simp [Ne.symm hl]
@@ -144,7 +100,7 @@ theorem exists_lu (A : Matrix (Fin r) (Fin r) F) (h : ∀ k, (trunc k A).det ≠
   have hup : ∀ l k, k < l → x k l = 0 := by
     intro l k hkl
     have := congrFun (hx k) l
-    simp only [mulVec, dotProduct, trunc, of_apply, not_le.2 hkl, false_and, if_false] at this
+    simp only [mulVec, dotProduct, trunc, of_apply, not_le.2 hkl, false_and, ite_false] at this
     rw [Finset.sum_eq_single l] at this
     · simpa [hkl.ne'] using this
     · intro b _ hb; simp [Ne.symm hb]

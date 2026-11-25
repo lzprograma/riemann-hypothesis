@@ -62,7 +62,6 @@ open GlobalTheory.FinPl.ExtZero (colFun rowFun)
 open scoped TensorProduct
 
 noncomputable section
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FinPl.BoxDatum
 

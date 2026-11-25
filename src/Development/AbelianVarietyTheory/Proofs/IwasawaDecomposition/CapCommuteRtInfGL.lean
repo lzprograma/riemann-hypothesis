@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovariantHatPairReindex.QnCovHat2OfLin
 public import Formalism.RealPlaceAnalysis.StatementE
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousConjFin
@@ -115,46 +116,6 @@ theorem prod_ofFn_adjacent : ∀ (m : ℕ) (i : Fin m) (g₁ g₂ g₃ g₄ : Fi
 
 open Formalism.REAL
 
-theorem two_rel {n : ℕ} (E : Fin n → Fin n → A) (hE : GlRel E) (y : ℂ) (a b c d : Fin n) :
-    Tm E (y + 1) a d * Tm E y c b + Tm E (y + 1) a b * Tm E y c d =
-      Tm E (y + 1) c d * Tm E y a b + Tm E (y + 1) c b * Tm E y a d := by
-  have h1 := hE a b c d
-  have h2 := hE a d c b
-  have key : ∀ (x : ℂ) (p q : Fin n), Tm E x p q = (if p = q then x else 0) • (1 : A) + E p q := by
-    intro x p q
-    unfold Tm
-    split_ifs <;> simp [Algebra.algebraMap_eq_smul_one]
-  have h1' : E a b * E c d = E c d * E a b + (if c = b then (1 : ℂ) else 0) • E a d
-      - (if a = d then (1 : ℂ) else 0) • E c b := by
-    rw [sub_eq_iff_eq_add'] at h1
-    rw [h1, add_sub_assoc]
-    congr 2
-    · by_cases h : b = c
-      · simp [h]
-      · simp [h, Ne.symm h]
-    · by_cases h : d = a
-      · simp [h]
-      · simp [h, Ne.symm h]
-  have h2' : E a d * E c b = E c b * E a d + (if c = d then (1 : ℂ) else 0) • E a b
-      - (if a = b then (1 : ℂ) else 0) • E c d := by
-    rw [sub_eq_iff_eq_add'] at h2
-    rw [h2, add_sub_assoc]
-    congr 2
-    · by_cases h : d = c
-      · simp [h]
-      · simp [h, Ne.symm h]
-    · by_cases h : b = a
-      · simp [h]
-      · simp [h, Ne.symm h]
-  have k2 : ∀ (x : ℂ) (p q : Fin n), (if p = q then x else 0) = x * (if p = q then 1 else 0) := by
-    intro x p q
-    split_ifs <;> simp
-  simp only [key]
-  rw [k2 (y + 1) a d, k2 (y + 1) a b, k2 (y + 1) c d, k2 (y + 1) c b, k2 y a d, k2 y a b,
-    k2 y c d, k2 y c b]
-  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, one_mul, mul_one, h1', h2']
-  module
-
 theorem cast_sign_mul {n : ℕ} (σ : Equiv.Perm (Fin n)) (x : A) :
     (((Equiv.Perm.sign σ : ℤˣ) : ℤ) : A) * x = (((Equiv.Perm.sign σ : ℤˣ) : ℤ) : ℂ) • x := by
   rw [Int.cast_smul_eq_zsmul, zsmul_eq_mul]
@@ -165,54 +126,11 @@ theorem eq_zero_of_eq_neg {x : A} (h : x = -x) : x = 0 := by
   have : x = (2 : ℂ)⁻¹ • ((2 : ℂ) • x) := by rw [smul_smul]; simp
   rw [this, h2, smul_zero]
 
-theorem qminor_swap_adjacent {n m : ℕ} (E : Fin n → Fin n → A) (hE : GlRel E)
-    (a b : Fin (m + 1) → Fin n) (u : ℂ) (i : Fin m) :
-    qminor E a (b ∘ Equiv.swap i.castSucc i.succ) u = - qminor E a b u := by
-  rw [← add_eq_zero_iff_eq_neg]
-  set s := Equiv.swap i.castSucc i.succ with hs
-  let G : Equiv.Perm (Fin (m + 1)) → A := fun σ =>
-    (List.ofFn fun k : Fin (m + 1) => Tm E (u - (k : ℂ)) (a (σ k)) (b (s k))).prod +
-    (List.ofFn fun k : Fin (m + 1) => Tm E (u - (k : ℂ)) (a (σ k)) (b k)).prod
-  have hne : i.castSucc ≠ i.succ := (Fin.castSucc_lt_succ (i := i)).ne
-  have hG : ∀ σ, G σ = G (σ * s) := by
-    intro σ
-    apply prod_ofFn_adjacent m i
-    · intro k h1 h2
-      simp [hs, Equiv.swap_apply_of_ne_of_ne h1 h2]
-    · have hu : u - ((i.castSucc : ℕ) : ℂ) = (u - ((i.succ : ℕ) : ℂ)) + 1 := by
-        simp only [Fin.val_castSucc, Fin.val_succ]; push_cast; ring
-      simp only [hs, Equiv.Perm.mul_apply, Equiv.swap_apply_left, Equiv.swap_apply_right, hu]
-      exact two_rel E hE _ _ _ _ _
-  have h1 : qminor E a (b ∘ s) u + qminor E a b u =
-      ∑ σ : Equiv.Perm (Fin (m + 1)), (((Equiv.Perm.sign σ : ℤˣ) : ℤ) : A) * G σ := by
-    simp only [qminor, G, mul_add, Finset.sum_add_distrib, Function.comp]
-  rw [h1]
-  apply eq_zero_of_eq_neg
-  rw [← Finset.sum_neg_distrib]
-  refine (Equiv.sum_comp (Equiv.mulRight s) _).symm.trans (Finset.sum_congr rfl fun σ _ => ?_)
-  simp only [Equiv.coe_mulRight, ← hG]
-  simp [hs, Equiv.Perm.sign_swap hne]
-
 theorem qminor_comp_perm {n t : ℕ} (E : Fin n → Fin n → A) (hE : GlRel E)
     (a : Fin t → Fin n) (u : ℂ) (τ : Equiv.Perm (Fin t)) (b : Fin t → Fin n) :
     qminor E a (b ∘ τ) u = (((Equiv.Perm.sign τ : ℤˣ) : ℤ) : ℂ) • qminor E a b u := by
-  cases t with
-  | zero =>
-    rw [Subsingleton.elim τ 1]; simp
-  | succ m =>
-    have hτ : τ ∈ Submonoid.closure
-        (Set.range fun i : Fin m => Equiv.swap i.castSucc i.succ) := by
-      rw [Equiv.Perm.mclosure_swap_castSucc_succ]; trivial
-    induction hτ using Submonoid.closure_induction generalizing b with
-    | mem x hx =>
-      obtain ⟨i, rfl⟩ := hx
-      have hne : i.castSucc ≠ i.succ := (Fin.castSucc_lt_succ (i := i)).ne
-      rw [qminor_swap_adjacent E hE]
-      simp [Equiv.Perm.sign_swap hne]
-    | one => simp
-    | mul x y _ _ hx hy =>
-      rw [Equiv.Perm.coe_mul, ← Function.comp_assoc, hy, hx, smul_smul]
-      simp [mul_comm]
+  intros
+  apply _root_.PI.QnCovHat2W.qminor_col_alt <;> assumption
 
 theorem qminor_eq_zero {n t : ℕ} (E : Fin n → Fin n → A) (hE : GlRel E)
     (a : Fin t → Fin n) (u : ℂ) (b : Fin t → Fin n) (hb : ¬ Function.Injective b) :

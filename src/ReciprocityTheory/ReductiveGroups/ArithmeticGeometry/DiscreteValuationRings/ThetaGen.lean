@@ -4,8 +4,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
@@ -32,11 +30,5 @@ def IsTheta (U : Unif I D A G) (ϑ : H0 U.LG.L 1) : Prop :=
 
 def NonzeroOnSpecial (U : Unif I D A G) (σ : H0 U.LG.L 1) : Prop :=
   ∃ j, ((fstG (maximalIdeal R) 0 G).left.app _).hom (σ.f j) ≠ 0
-
-end ReciprocityTheory.ChartRestriction.G.DVR
-
-namespace ReciprocityTheory.ChartRestriction.G.DVR
-
-open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out IsLocalRing
 
 end ReciprocityTheory.ChartRestriction.G.DVR

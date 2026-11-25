@@ -100,7 +100,7 @@ theorem casimir_tensV {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E
     Module.End.mul_apply, Pi.add_apply, Pi.smul_apply, diagOp_coord, eeV_coord, tensV_coord, map_add,
     Module.End.one_apply]
   simp only [apply_ite (E _ _), map_zero, Finset.sum_add_distrib, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   have key : ∀ g : Fin n → Fin n → M, (∑ i, ∑ j, if x = i then g i j else 0) = ∑ j, g x j := by
     intro g
     rw [Finset.sum_eq_single x (fun i _ hi => by simp [Ne.symm hi]) (by simp)]
@@ -117,7 +117,7 @@ theorem casimir_tensVd {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep 
     Module.End.mul_apply, Pi.add_apply, Pi.smul_apply, diagOp_coord, eeVd_coord, tensVd_coord, map_sub,
     Module.End.one_apply]
   simp only [apply_ite (E _ _), map_zero, Finset.sum_sub_distrib, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   have key : ∀ g : Fin n → Fin n → M, (∑ i, ∑ j, if x = i then g i j else 0) = ∑ j, g x j := by
     intro g
     rw [Finset.sum_eq_single x (fun i _ hi => by simp [Ne.symm hi]) (by simp)]
@@ -132,10 +132,10 @@ theorem eeV_comm {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E) (a 
 
   simp only [Module.End.mul_apply, tensV_coord, eeV_coord, map_sum, map_add (f := _), isGlRep_apply_swap hE a b]
   simp only [apply_ite (E _ _), map_zero, Finset.sum_add_distrib, Finset.sum_sub_distrib,
-    Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   by_cases h : x = a
-  · subst h; simp only [if_true]; abel
-  · simp only [h, if_false, Finset.sum_const_zero, sub_zero, add_zero]
+  · subst h; simp only [ite_true]; abel
+  · simp only [h, ite_false, Finset.sum_const_zero, sub_zero, add_zero]
 
 theorem eeVd_comm {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E) (a b : Fin n) :
     tensVd E a b * eeVd E = eeVd E * tensVd E a b := by
@@ -143,11 +143,11 @@ theorem eeVd_comm {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E) (a
 
   simp only [Module.End.mul_apply, tensVd_coord, eeVd_coord, map_sum, map_neg, map_sub, isGlRep_apply_swap hE a b]
   simp only [apply_ite (E _ _), map_zero, Finset.sum_add_distrib, Finset.sum_sub_distrib,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   by_cases h : x = b
-  · subst h; simp only [if_true]; abel
+  · subst h; simp only [ite_true]; abel
   · have h' : ¬ b = x := fun e => h e.symm
-    simp only [h, h', if_false, Finset.sum_const_zero, sub_zero, zero_sub]
+    simp only [h, h', ite_false, Finset.sum_const_zero, sub_zero, zero_sub]
     abel
 
 end ReciprocityTheory.ChartRestriction.DS

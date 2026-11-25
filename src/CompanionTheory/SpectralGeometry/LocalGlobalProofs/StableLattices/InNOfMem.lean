@@ -68,7 +68,7 @@ theorem HH_comm {E : Fin n → Fin n → Module.End ℂ V} (hE : GlRel E) (a b :
       · subst h; simp
       · simp [h, Ne.symm h]
   rw [HH, Finset.sum_mul, Finset.mul_sum, ← Finset.sum_sub_distrib]
-  simp only [h, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_smul]
+  simp only [h, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true, sub_smul]
 
 def adH (E : Fin n → Fin n → Module.End ℂ V) : Module.End ℂ (Module.End ℂ V) :=
   LinearMap.mulLeft ℂ (HH E) - LinearMap.mulRight ℂ (HH E)

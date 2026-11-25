@@ -119,24 +119,7 @@ theorem fixed_iff (s : F' ≃ₐ[F] F') (hs : ∀ t : F' ≃ₐ[F] F', t ∈ Sub
     rw [← IntermediateField.mem_bot, ← IsGalois.fixedField_top, IntermediateField.mem_fixedField_iff]
     intro t _
     obtain ⟨k, rfl⟩ := Subgroup.mem_zpowers_iff.1 (hs t)
-    have h1 : ∀ m : ℕ, (s ^ m) x = x := by
-      intro m
-      induction m with
-      | zero => simp
-      | succ m ih => rw [pow_succ, AlgEquiv.mul_apply, hx, ih]
-    have h2 : ∀ m : ℕ, (s⁻¹ ^ m) x = x := by
-      intro m
-      induction m with
-      | zero => simp
-      | succ m ih =>
-        rw [pow_succ, AlgEquiv.mul_apply]
-        have : s⁻¹ x = x := by
-          conv_lhs => rw [← hx]
-          exact s.symm_apply_apply x
-        rw [this, ih]
-    cases k with
-    | ofNat m => simpa using h1 m
-    | negSucc m => rw [zpow_negSucc, ← inv_pow]; exact h2 (m + 1)
+    exact MulAction.mem_fixedBy_zpow (α := F') (g := s) hx k
   · rintro ⟨a, rfl⟩
     exact s.commutes a
 

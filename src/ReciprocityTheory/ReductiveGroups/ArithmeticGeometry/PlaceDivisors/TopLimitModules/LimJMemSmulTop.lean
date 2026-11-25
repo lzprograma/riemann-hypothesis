@@ -7,8 +7,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries
@@ -36,8 +34,7 @@ theorem limJ_mk_eq_iff {σ : Type} (k : ℕ) (P Q : MvPolynomial σ T) :
     have := h x hmem
     omega
   · intro h x hx
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_sub, h x hlt, sub_self] at hx
     exact hx rfl
 
@@ -50,11 +47,5 @@ theorem limJ_tt_eq_iff {σ : Type} [Finite σ] (k : ℕ) (f g : MvPowerSeries σ
   rw [MvPowerSeries.coeff_truncTotal _ hx, MvPowerSeries.coeff_truncTotal _ hx]
 
 end Jets
-
-section Limits
-
-variable {O : Type} [CommRing O] (p : ℕ) [IsAdicComplete (Ideal.span {(p : O)}) O]
-
-end Limits
 
 end ReciprocityTheory.ChartRestriction.G.Pdiv.TL

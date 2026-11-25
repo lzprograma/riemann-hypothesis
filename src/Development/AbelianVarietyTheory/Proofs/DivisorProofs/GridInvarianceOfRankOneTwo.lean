@@ -3,51 +3,6 @@ module
 public import Mathlib.Algebra.Algebra.Defs
 public import Mathlib.Algebra.Ring.Rat
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -144,7 +99,7 @@ variable {N : ℕ} {D : ℕ → ℕ → Module.End ℚ W}
 lemma comm_off (hD : GlRel N D) {a b c d : ℕ} (ha : a < N) (hb : b < N) (hc : c < N) (hd : d < N)
     (hbc : b ≠ c) (hda : d ≠ a) : Commute (D a b) (D c d) := by
   have := hD a b c d ha hb hc hd
-  rw [if_neg hbc, if_neg hda, sub_zero] at this
+  rw [ite_eq_right hbc, ite_eq_right hda, sub_zero] at this
   exact sub_eq_zero.mp this
 
 lemma diag_comm (hD : GlRel N D) {c i j : ℕ} (hc : c < N) (hi : i < N) (hj : j < N) :
@@ -312,9 +267,9 @@ lemma fill (hD : GlRel N D) (x : W) (hZ : ∀ c < N, D c c x = 0) (hup : ∀ k, 
       have e : c + (n + 1) + 1 = c + n + 1 + 1 := by omega
       rw [e] at hc ⊢
       have e1 := hD c (c + n + 1) (c + n + 1) (c + n + 1 + 1) (by omega) (by omega) (by omega) hc
-      rw [if_pos rfl, if_neg (by omega), sub_zero] at e1
+      rw [ite_eq_left rfl, ite_eq_right (by omega), sub_zero] at e1
       have e2 := hD (c + n + 1 + 1) (c + n + 1) (c + n + 1) c hc (by omega) (by omega) (by omega)
-      rw [if_pos rfl, if_neg (by omega), sub_zero] at e2
+      rw [ite_eq_left rfl, ite_eq_right (by omega), sub_zero] at e2
       constructor
       · rw [← e1, LinearMap.sub_apply, Module.End.mul_apply, Module.End.mul_apply, hup _ hc, ih1, map_zero,
           map_zero, sub_zero]

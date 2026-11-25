@@ -14,61 +14,12 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsD
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsAdicCompletionMapOfFg
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRingHomExtendIsAdicCompletionMap
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDeltaRingHomOfDenseDeltaCommuteLocus
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Presheaf
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsAdicCompleteOfPowLe
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemBallOfGaugeLt
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Mathlib.Data.Finsupp.Pointwise
-import Mathlib.Order.Grade
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.AffineMonoid.UniqueSums
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BasisOfCongrBasisModNilpotentIdeal, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TriangularSystemMonomialProductsBasis, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DigitMonomialsBasisEnvelopeModPow, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdicTopologicalBasisOfLevelBases, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDeltaRingStructureQuotientSpan, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaRingStructureDeltaFrobeniusComm, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MvPolynomialDeltaSupportedLinearModPrime, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismaticEnvelopeRelationTriangular, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EnvRingExists
@@ -173,7 +124,7 @@ theorem Led.monomial (m : MonomialOrder.{0, 0} σ) (γ : σ →₀ ℕ) :
     Led m (MvPolynomial.monomial γ (1 : R)) γ := by
   classical
   refine ⟨?_, MonomialOrder.degree_monomial_le _⟩
-  rw [MvPolynomial.coeff_monomial, if_pos rfl]
+  rw [MvPolynomial.coeff_monomial, ite_eq_left rfl]
   exact isUnit_one
 
 theorem Led.one (m : MonomialOrder.{0, 0} σ) : Led m (1 : MvPolynomial σ R) 0 := by
@@ -238,7 +189,7 @@ theorem led_tri {l : ℕ} (hl : 2 ≤ l) (i : ℕ) (v : Rˣ) {a b : MvPolynomial
         apply_eq_zero_of_supported ha (MvPolynomial.mem_support_iff.2 hc) hj
       refine ⟨fun j hj => ?_, ?_⟩
       · have h := hd j hj.le
-        rwa [Finsupp.tsub_apply, Finsupp.single_apply, if_neg hj.ne, Nat.sub_zero] at h
+        rwa [Finsupp.tsub_apply, Finsupp.single_apply, ite_eq_right hj.ne, Nat.sub_zero] at h
       · have h := hd i le_rfl
         rw [Finsupp.tsub_apply, Finsupp.single_eq_same] at h
         omega
@@ -254,7 +205,7 @@ theorem led_tri {l : ℕ} (hl : 2 ≤ l) (i : ℕ) (v : Rˣ) {a b : MvPolynomial
       have h' := hb0 _ h i le_rfl
       rw [Finsupp.single_eq_same] at h'
       omega
-    rw [MvPolynomial.coeff_add, MvPolynomial.coeff_add, hmon, MvPolynomial.coeff_monomial, if_pos rfl,
+    rw [MvPolynomial.coeff_add, MvPolynomial.coeff_add, hmon, MvPolynomial.coeff_monomial, ite_eq_left rfl,
       h1, h2, add_zero, add_zero]
     exact v.isUnit
   · rw [MonomialOrder.degree_le_iff]
@@ -263,7 +214,7 @@ theorem led_tri {l : ℕ} (hl : 2 ≤ l) (i : ℕ) (v : Rˣ) {a b : MvPolynomial
     · rw [hce]
     · have hc' := MvPolynomial.mem_support_iff.1 hc
       rw [MvPolynomial.coeff_add, MvPolynomial.coeff_add, hmon, MvPolynomial.coeff_monomial,
-        if_neg (Ne.symm hce), zero_add] at hc'
+        ite_eq_right (Ne.symm hce), zero_add] at hc'
       by_cases hA : (a * MvPolynomial.X i).coeff c = 0
       · rw [hA, zero_add] at hc'
         have h := hb0 c hc'
@@ -552,7 +503,7 @@ theorem GlobalTheory.digitMonomials_basis_mod_pow : ∀ (l : ℕ) [Fact l.Prime]
       intro y
       by_cases h : y = 0
       · simp [sec, h]
-      · simp only [sec, h, if_false]; exact Function.surjInv_eq _ y
+      · simp only [sec, h, ite_false]; exact Function.surjInv_eq _ y
     refine ⟨g.mapRange sec hsec0, ?_⟩
     have hmap : π ((g.mapRange sec hsec0).sum fun α a => MvPolynomial.monomial α.1 a) =
         g.sum fun α a => MvPolynomial.monomial α.1 a := by
@@ -745,16 +696,16 @@ theorem GlobalTheory.BSP.exists_topBasis_of_levels (A : Type) [CommRing A] (L : 
         simp [RingHom.comp_apply, map_mul]
       have e2 : ∑ k ∈ F, (i.comp s) (C x k) * i (m k) =
           ∑ k ∈ F ∪ c.support, (i.comp s) (if k ∈ F then C x k else 0) * i (m k) := by
-        rw [← Finset.sum_subset Finset.subset_union_left (fun k _ hk => by rw [if_neg hk, map_zero, zero_mul])]
-        exact Finset.sum_congr rfl fun k hk => by rw [if_pos hk]
+        rw [← Finset.sum_subset Finset.subset_union_left (fun k _ hk => by rw [ite_eq_right hk, map_zero, zero_mul])]
+        exact Finset.sum_congr rfl fun k hk => by rw [ite_eq_left hk]
       have e3 : x - ∑ k ∈ F, (i.comp s) (C x k) * i (m k) = (x - i (lsum s m c)) +
           ∑ k ∈ F ∪ c.support, (i.comp s) (c k - if k ∈ F then C x k else 0) * i (m k) := by
         rw [e2, e1]; simp only [map_sub, sub_mul, Finset.sum_sub_distrib]; ring
       rw [e3]
       refine add_mem hc (Ideal.sum_mem _ fun k _ => Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ ?_))
       by_cases hk : k ∈ F
-      · rw [if_pos hk]; exact hC x k n c hc
-      · rw [if_neg hk, sub_zero]
+      · rw [ite_eq_left hk]; exact hC x k n c hc
+      · rw [ite_eq_right hk, sub_zero]
         have := add_mem (hC x k n c hc) (hF k hk)
         simpa using this
     complete := by rw [← Ideal.map_map]; exact hc.complete
@@ -1160,7 +1111,6 @@ theorem GlobalTheory.BSP.envRing_exists : ∀ (l : ℕ) [Fact l.Prime] (A : Type
     intro a
     show iQ (mk (MvPolynomial.C (D.δ a))) = DQ.δ (iQ (mk (MvPolynomial.C a)))
     rw [← polyDelta_C, hDL, hDQ]
-  set_option synthInstance.maxHeartbeats 200000 in
   have hrel : DQ.δ ((iQ.comp s) p + (iQ.comp s) d * iQ (mk (MvPolynomial.X 0))) = 0 := by
     show DQ.δ (iQ (mk (MvPolynomial.C p)) + iQ (mk (MvPolynomial.C d)) * iQ (mk (MvPolynomial.X 0))) = 0
     have h0 : mk (envRel D d p 0) = 0 := Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.subset_span ⟨0, rfl⟩)

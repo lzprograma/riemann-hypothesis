@@ -100,8 +100,7 @@ theorem _root_.GlobalTheory.UnitaryTheta.isPosHerm_formV (D : _root_.Formalism.B
     simp only [← Complex.ofReal_sum, ← Complex.ofReal_div, Complex.ofReal_re]
     refine div_pos ?_ h
     obtain ⟨τ, i, j, hz⟩ : ∃ τ i j, z τ i j ≠ 0 := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       exact hz (funext fun τ => funext fun i => funext fun j => hne τ i j)
     refine Finset.sum_pos' (fun _ _ => Finset.sum_nonneg fun _ _ =>
       Finset.sum_nonneg fun _ _ => Complex.normSq_nonneg _) ⟨τ, Finset.mem_univ _, ?_⟩

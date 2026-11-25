@@ -20,53 +20,10 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTy
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelLatticesFormSelfDualTriples
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaFunctionsAllLevelsClosure
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilRepresentationCommHeisenbergIntertwiner
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.TypeStar
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
@@ -124,8 +81,6 @@ theorem exists_int_smul_mem {K : Type u_1} {V : Type u_2} [Field K] [NumberField
       rw [← algebraMap_smul K r (m • x), hr, smul_comm (d • c) m x, smul_assoc, mul_comm, mul_smul]
     rw [key]
     exact L.smul_mem r hmx
-
-alias main := _root_.GlobalTheory.IntegerScalarIntegral.exists_int_smul_mem
 
 end GlobalTheory.IntegerScalarIntegral
 end -- clump:auto
@@ -756,11 +711,11 @@ theorem mu_eq_sign : ∀ (D : D7) (T : Tor D) (N N' : ℕ) (A₁ A₂ A₃ : Add
   let χ : Fin r → 𝓞 D.host.E → ℂ := fun i s => ch D (φ i s)
   have χadd : ∀ i a b, χ i (a + b) = χ i a * χ i b := fun i a b => by simp only [χ, map_add (f := _), ch_add]
   have hYX : ∀ i a a', bc D T (Y i a') (X i a) = χ i (a' * sgO D a) := fun i a a' => by
-    rw [bc_eq, hH, if_pos rfl]
+    rw [bc_eq, hH, ite_eq_left rfl]
   have hYX' : ∀ i j a a', i ≠ j → bc D T (Y i a') (X j a) = 1 := fun i j a a' h => by
-    rw [bc_eq, hH, if_neg h, ch_zero]
+    rw [bc_eq, hH, ite_eq_right h, ch_zero]
   have hXY' : ∀ i j a a', i ≠ j → bc D T (X j a) (Y i a') = 1 := fun i j a a' h => by
-    rw [bc_eq, ← Hf_conj, hH, if_neg h, map_zero, ch_zero]
+    rw [bc_eq, ← Hf_conj, hH, ite_eq_right h, map_zero, ch_zero]
   have χP : ∀ i, ∀ a ∈ P, χ i a = 1 := fun i a ha => by
     have := hYX i 1 a
     rw [map_one (sgO D), mul_one] at this
@@ -843,7 +798,7 @@ theorem mu_eq_sign : ∀ (D : D7) (T : Tor D) (N N' : ℕ) (A₁ A₂ A₃ : Add
       refine forall_congr' fun i => ?_
       rw [← u, ← v, eq_comm, Ideal.Quotient.eq, Pi.sub_apply]
     by_cases h : e₃ q₃ = e₂ q₂
-    · rw [if_pos (hiff.2 h), if_pos h]
+    · rw [ite_eq_left (hiff.2 h), ite_eq_left h]
       have wx : x = sumHom X (a₂ q₂) + (x - sumHom X (a₂ q₂)) := by abel
       have wy : y = sumHom Y (a₃ q₃) + (y - sumHom Y (a₃ q₃)) := by abel
       rw [wy, bc_add_left, n₂.2.1 _ v2 _ x2, mul_one, wx, bc_add_right, n₃.2.1 _ (mY _) _ u3, mul_one,
@@ -856,10 +811,10 @@ theorem mu_eq_sign : ∀ (D : D7) (T : Tor D) (N N' : ℕ) (A₁ A₂ A₃ : Add
       have w : a₃ q₃ i * sgO D (a₂ q₂ i) = t * sgO D t +
           ((a₃ q₃ i - t) * sgO D (a₂ q₂ i) + t * sgO D (a₂ q₂ i - t)) := by rw [map_sub]; ring
       rw [w, χadd, χP i _ (P.add_mem (P.mul_mem_right _ t3) (P.mul_mem_left _ (hσ _ t2))), mul_one]
-    · rw [if_neg (mt hiff.1 h), if_neg h]
+    · rw [ite_eq_right (mt hiff.1 h), ite_eq_right h]
   rw [finsum_congr key, finsum_comp_equiv (Equiv.prodCongr e₃ e₂) (f := F), finsum_eq_sum_of_fintype,
     Fintype.sum_prod_type_right] at hμ
-  simp only [F, Finset.sum_ite_eq', Finset.mem_univ, if_true] at hμ
+  simp only [F, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at hμ
   simp only [finsum_eq_sum_of_fintype] at hmG
   rw [← Fintype.piFinset_univ, ← Finset.prod_univ_sum (fun _ => Finset.univ)
     (fun i (t : 𝓞 D.host.E ⧸ P) => χ i (Quotient.out t * sgO D (Quotient.out t)))] at hμ
@@ -1199,9 +1154,6 @@ theorem mul_int {t e : D.host.E} (ht : t ∈ Iid D cc) (he : IntE D e) : t * e �
   rw [mul_comm, ← Algebra.smul_def]
   exact Submodule.smul_mem _ _ ht
 
-theorem int_hE {L : Lat D n} (hL : SD D L) {x y : Fin n → D.host.E} (hx : x ∈ L) (hy : y ∈ L) :
-    IntE D (hE D x y) := (((sd_iff D L).1 hL).2.2 x).1 hx y hy
-
 theorem pair_cv (t : D.host.E) (y w : Fin n → D.host.E) : ∑ j, (t • cv D y) j * w j = t * hE D w y := by
   simp only [cv, hE, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
   exact Finset.sum_congr rfl fun j _ => by ring
@@ -1213,7 +1165,7 @@ theorem pair_mem {L : Lat D n} (hL : SD D L) {r w : Fin n → D.host.E} (hr : r 
     obtain ⟨t, ht, y, hy, rfl⟩ := hv
     change ∑ j, (t • cv D y) j * w j ∈ _
     rw [pair_cv]
-    exact mul_int ht (int_hE hL hw hy)
+    exact mul_int ht (GlobalTheory.TriangleColumns.sd_int hL hw hy)
   | zero => simp
   | add u v _ _ hu hv =>
     simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib]
@@ -1389,16 +1341,16 @@ theorem triDat_rows : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), cc �
     rw [sum_Row] at ha
     have h1 := pair_mem hA ((Pt_mem hδ hA _).1 ha i) bA
     rw [pair_cv, hE_add_left, mul_add] at h1
-    have h2 := sub_mem h1 (mul_int (hat (a i)) (int_hE hB bB bB))
+    have h2 := sub_mem h1 (mul_int (hat (a i)) (GlobalTheory.TriangleColumns.sd_int hB bB bB))
     rw [add_sub_cancel_left, smul_mul_assoc] at h2
     refine hq (hE D x b) (fun h => hθ (conj_hE D x b ▸ h.conj)) (fun p hpP => ?_) _ h2
-    rw [hsm]; exact int_hE hB (mB (hp p hpP).2) bB
+    rw [hsm]; exact GlobalTheory.TriangleColumns.sd_int hB (mB (hp p hpP).2) bB
   · intro a ha i
     rw [sum_Row] at ha
     have h1 := pair_mem hB ((Pt_mem hδ hB _).1 ha i) bB
     rw [pair_cv, smul_mul_assoc] at h1
     refine hq (hE D b x) hθ (fun p hpP => ?_) _ h1
-    rw [hsm]; exact int_hE hC (mC (hp p hpP).1) bC
+    rw [hsm]; exact GlobalTheory.TriangleColumns.sd_int hC (mC (hp p hpP).1) bC
 
 end GlobalTheory.TriangleRows
 end -- clump:auto
@@ -1506,8 +1458,8 @@ theorem cT_tv (D : D7) {n : ℕ} (μ : D.host.E) (w : Fin n → D.host.E) :
   simp only [cT, tv, Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply,
     Matrix.vecMulVec_apply, smul_eq_mul, map_add, map_mul, conj_conj, Matrix.one_apply]
   by_cases h : i = j
-  · subst h; simp only [if_true, map_one]; ring
-  · rw [if_neg h, if_neg (Ne.symm h), map_zero]; ring
+  · subst h; simp only [ite_true, map_one]; ring
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h), map_zero]; ring
 
 theorem tv_unitary (D : D7) {n : ℕ} (μ : D.host.E) (w : Fin n → D.host.E)
     (h : μ + D.host.conj μ + μ * D.host.conj μ * hE D w w = 0) : tv D μ w * cT D (tv D μ w) = 1 := by
@@ -1639,8 +1591,6 @@ theorem moves_unique {D : D7} {n : ℕ} {g : GL (Fin n) (AE D)} {L L' : Lat D n}
     L = L' := by
   ext x; rw [h x, h' x]
 
-alias sd_of_moves := _root_.GlobalTheory.WeilInter.sd_of_moves
-
 theorem moves_one (D : D7) (n : ℕ) : Moves D ((1 : GA D n) : GL (Fin n) (AE D)) (stdL D n) := by
   obtain ⟨Lt, h1, h2, -⟩ := exists_lattice_of_adelic_point D n
   rw [← h2]; exact (h1 1).1
@@ -1733,7 +1683,7 @@ theorem core (hσ : σ * σ = 1) (hnz : e0 ≠ 0) (he0 : e0 ∈ ThSp D T (Λ (st
       Iop D T (Λ B) (Λ C) (Iop D T (Λ A) (Λ B) e) = σ • Iop D T (Λ A) (Λ C) e) :
     ∀ (h : GA D n) L, SuppInert D (h : GL (Fin n) (AE D)) → Moves D (h : GL (Fin n) (AE D)) L →
       ω h e0 = σ ^ lenQ D (stdL D n) L • Iop D T (Λ (stdL D n)) (Λ L) e0 := by
-  have hsd0 : SD D (stdL D n) := sd_of_moves (moves_one D n)
+  have hsd0 : SD D (stdL D n) := GlobalTheory.WeilInter.sd_of_moves (moves_one D n)
   have hwd : ∀ (h₁ h₂ : GA D n) L, SuppInert D (h₁ : GL (Fin n) (AE D)) → SuppInert D (h₂ : GL (Fin n) (AE D)) →
       Moves D (h₁ : GL (Fin n) (AE D)) L → Moves D (h₂ : GL (Fin n) (AE D)) L → ω h₂ e0 = ω h₁ e0 := by
     intro h₁ h₂ L s₁ s₂ m₁ m₂
@@ -1755,14 +1705,14 @@ theorem core (hσ : σ * σ = 1) (hnz : e0 ≠ 0) (he0 : e0 ∈ ThSp D T (Λ (st
       Moves D (h : GL (Fin n) (AE D)) B → ∃ k : GA D n, SuppInert D (k : GL (Fin n) (AE D)) ∧
         Moves D (k : GL (Fin n) (AE D)) (nbr D B x) ∧ ω h e0 = σ • Iop D T (Λ (nbr D B x)) (Λ B) (ω k e0) := by
     intro q P B x h hq hi hP hqP hx sh mh
-    have hB := sd_of_moves mh
+    have hB := GlobalTheory.WeilInter.sd_of_moves mh
     obtain ⟨g, w, sg, hw, mC, mA, htr⟩ := exists_move hq hi hP hqP hB hx
     obtain ⟨g₂, -, sg₂, -, mA₂, -⟩ := exists_move hq hi hP hqP hB hw
     have mhA := mA₂ h mh
     have shA := suppInert_mul sg₂ sh
     set hA := g₂ * h
-    have hAsd := sd_of_moves mhA
-    have hCsd := sd_of_moves (mC h mh)
+    have hAsd := GlobalTheory.WeilInter.sd_of_moves mhA
+    have hCsd := GlobalTheory.WeilInter.sd_of_moves (mC h mh)
     obtain ⟨w0, -, hw0⟩ := _root_.GlobalTheory.TraceOne.exists_trace_one D q hq
     have eA := hth hA _ mhA
     have hIA := hI _ _ hAsd hB _ eA
@@ -1790,7 +1740,7 @@ theorem core (hσ : σ * σ = 1) (hnz : e0 ≠ 0) (he0 : e0 ∈ ThSp D T (Λ (st
     by_cases hL : stdL D n = L
     · subst hL
       rw [pow_zero, one_smul, hII _ hsd0 _ he0, hwd 1 h _ (suppInert_one D n) sh (moves_one D n) mh, hone]
-    · obtain ⟨P, q, x, -, -, -, -, -, hlen⟩ := _root_.GlobalTheory.NearerNeighbour.exists_nearer D n _ L hsd0 (sd_of_moves mh) hL
+    · obtain ⟨P, q, x, -, -, -, -, -, hlen⟩ := _root_.GlobalTheory.NearerNeighbour.exists_nearer D n _ L hsd0 (GlobalTheory.WeilInter.sd_of_moves mh) hL
       omega
   | succ k ih =>
     intro sh mh
@@ -1798,7 +1748,7 @@ theorem core (hσ : σ * σ = 1) (hnz : e0 ≠ 0) (he0 : e0 ∈ ThSp D T (Λ (st
       intro hL
       rw [← hL, lenQ, Submodule.comap_subtype_self, Module.length_eq_zero] at hl
       simp at hl
-    obtain ⟨P, q, x, hP, hq, hqP, hx0, hx, hlen⟩ := _root_.GlobalTheory.NearerNeighbour.exists_nearer D n _ L hsd0 (sd_of_moves mh) hL
+    obtain ⟨P, q, x, hP, hq, hqP, hx0, hx, hlen⟩ := _root_.GlobalTheory.NearerNeighbour.exists_nearer D n _ L hsd0 (GlobalTheory.WeilInter.sd_of_moves mh) hL
     have hi : InertQ D q := by
       by_contra hi
       obtain ⟨s, hs, h1, -⟩ := eqAt_of_moves hq mh (sh q hq hi)
@@ -1822,7 +1772,7 @@ theorem core (hσ : σ * σ = 1) (hnz : e0 ≠ 0) (he0 : e0 ∈ ThSp D T (Λ (st
       · exact le_sup_of_le_right (le_inf le_sup_left fun y hy => hy.1)
       · exact le_sup_of_le_left (le_inf ((Submodule.span_singleton_le_iff_mem _ _).2 hx0) le_sup_right)
       · exact (((sd_iff D _).1 hsd0).2.2 y).1 hy.1 x hx0
-    rw [hg, ih g _ (by omega) sg mg, Iop_smul, hbet _ _ _ hsd0 (sd_of_moves mg) (sd_of_moves mh) hbt _ he0 hnz,
+    rw [hg, ih g _ (by omega) sg mg, Iop_smul, hbet _ _ _ hsd0 (GlobalTheory.WeilInter.sd_of_moves mg) (GlobalTheory.WeilInter.sd_of_moves mh) hbt _ he0 hnz,
       smul_smul, pow_succ']
 
 end Core
@@ -1851,8 +1801,8 @@ theorem GlobalTheory.InertSign.vacuum_inert : ∀ D : D7, odd3 D := by
   obtain ⟨d1, d2, d3⟩ := _root_.GlobalTheory.DistLa.dist_La D cc δ N N'
   have huni := GlobalTheory.theta_translation_intertwiner_unitary D cc δ hc N N'
   have hline := GlobalTheory.ThetaLine.theta_line D (GlobalTheory.InducedType.induced_type D).1 cc δ hc N N'
-  have s0 : SD D (stdL D N) := sd_of_moves (moves_one D N)
-  have s0' : SD D (stdL D N') := sd_of_moves (moves_one D N')
+  have s0 : SD D (stdL D N) := GlobalTheory.WeilInter.sd_of_moves (moves_one D N)
+  have s0' : SD D (stdL D N') := GlobalTheory.WeilInter.sd_of_moves (moves_one D N')
   have m1 : Moves D ((1 * 1 : GA D N) : GL (Fin N) (AE D)) (stdL D N) := by rw [one_mul]; exact moves_one D N
   have m1' : Moves D ((1 * 1 : GA D N') : GL (Fin N') (AE D)) (stdL D N') := by rw [one_mul]; exact moves_one D N'
   have i1 : IntG D ((1 : GA D N) : GL (Fin N) (AE D)) := by
@@ -1904,8 +1854,8 @@ theorem GlobalTheory.InertSign.vacuum_inert : ∀ D : D7, odd3 D := by
     (fun _ _ _ a b c d => hdist _ _ _ (hK s0 a) (hK s0 b) (hK s0 c) (d1 _ _ _ _ a c d))
     (fun P A B C a b c d => htr _ _ _ (hK s0 d.1) (hK s0 d.2.1) (hK s0 d.2.2.1) P N a b c
       (_root_.GlobalTheory.TriangleColumns.triDat_of_tri D cc δ hc.1.1 hδ N N' P a A B C d)) g' L₁' sg' mg'
-  have sL := sd_of_moves mg
-  have sL' := sd_of_moves mg'
+  have sL := GlobalTheory.WeilInter.sd_of_moves mg
+  have sL' := GlobalTheory.WeilInter.sd_of_moves mg'
   have h1 : W.Om g g' e0 = W.Om 1 g' (W.Om g 1 e0) := by rw [← W.mul 1 g g' 1 e0 he0T, one_mul, mul_one]
   have hI1 := (huni _ _ (hK s0 s0') (hK sL s0') e0 he0).2.1
   have h2 := _root_.GlobalTheory.WeilInter.om_iop D cc δ hc hδ N N' e0 W 1 1 g g' 1 1 _ _ _ _ _ _ _ _ (moves_one D N) (moves_one D N') m1

@@ -4,54 +4,9 @@ public import Formalism.LocalRingCardinality.DataHost
 public import Formalism.SatakeDualWeyl.Statement
 public import Mathlib.RingTheory.Henselian
 public import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.DedekindDomain.Factorization
 
 @[expose] public section
@@ -488,61 +443,6 @@ def adelT : FiniteAdeleRing (𝓞 H.F) H.F :=
   ⟨fun v => adelTv H v, Filter.eventually_cofinite.2 ((adel_finite_d H).subset (fun v hv => by
     by_contra h
     exact hv ((adelSTv_spec H v).1 h).2))⟩
-
-theorem adel_key : adelS H * adelS H + adelS H * adelT H +
-    ((adelNd H : ℤ) : FiniteAdeleRing (𝓞 H.F) H.F) * (adelT H * adelT H) = -1 := by
-  refine RestrictedProduct.ext _ _ fun v => ?_
-  have h := (adelSTv_spec H v).2
-  first
-  | (change adelSv H v * adelSv H v + adelSv H v * adelTv H v
-        + ((adelNd H : ℤ) : v.adicCompletion H.F) * (adelTv H v * adelTv H v) = -1
-     exact h)
-
-theorem adel_hom_key {A B : Type*} [CommRing A] [CommRing B] (f : A →+* B) (S T : A) (N : ℤ)
-    (h : S * S + S * T + (N : A) * (T * T) = -1) :
-    f S * f S + f S * f T + (N : B) * (f T * f T) = -1 := by
-  have h' := congrArg f h
-  simpa using h'
-
-theorem adel_alg {B : Type*} [CommRing B] (τ : B →+* B) (s t u : B) (N : ℤ)
-    (hs : τ s = s) (ht : τ t = t) (hτu : τ u = 1 - u) (hu : u * (1 - u) = N)
-    (hk : s * s + s * t + (N : B) * (t * t) = -1) : τ (s + u * t) * (s + u * t) = -1 := by
-  rw [map_add (f := _), map_mul, hs, ht, hτu]
-  linear_combination hk + t * t * hu
-
-theorem exists_adelic_neg_one (σ : H.E →ₐ[H.F] H.E) (hσ : ∀ x, σ x = H.conj x) :
-    ∃ y : H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F,
-      Formalism.UG.sigR σ (FiniteAdeleRing (𝓞 H.F) H.F) y * y = -1 := by
-  have hL : ∀ x : H.E, Formalism.UG.sigR σ (FiniteAdeleRing (𝓞 H.F) H.F)
-      ((Algebra.TensorProduct.includeLeftRingHom :
-        H.E →+* H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F) x)
-      = (Algebra.TensorProduct.includeLeftRingHom :
-        H.E →+* H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F) (σ x) := by
-    intro x
-    simp [Formalism.UG.sigR, Algebra.TensorProduct.includeLeftRingHom_apply, Algebra.TensorProduct.map_tmul]
-  have hR : ∀ a : FiniteAdeleRing (𝓞 H.F) H.F, Formalism.UG.sigR σ (FiniteAdeleRing (𝓞 H.F) H.F)
-      ((Algebra.TensorProduct.includeRight :
-        FiniteAdeleRing (𝓞 H.F) H.F →ₐ[H.F] H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F).toRingHom a)
-      = (Algebra.TensorProduct.includeRight :
-        FiniteAdeleRing (𝓞 H.F) H.F →ₐ[H.F] H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F).toRingHom a := by
-    intro a
-    simp [Formalism.UG.sigR, Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.map_tmul]
-  have key := adel_hom_key (Algebra.TensorProduct.includeRight :
-    FiniteAdeleRing (𝓞 H.F) H.F →ₐ[H.F] H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F).toRingHom _ _ _ (adel_key H)
-  have hu : (Algebra.TensorProduct.includeLeftRingHom :
-        H.E →+* H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F) (adelTheta H)
-      * (1 - (Algebra.TensorProduct.includeLeftRingHom :
-        H.E →+* H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F) (adelTheta H))
-      = ((adelNd H : ℤ) : H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F) := by
-    rw [← map_one (Algebra.TensorProduct.includeLeftRingHom :
-        H.E →+* H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F), ← map_sub, ← map_mul, adelic_theta_mul_one_sub, map_intCast]
-  have hτu : Formalism.UG.sigR σ (FiniteAdeleRing (𝓞 H.F) H.F)
-      ((Algebra.TensorProduct.includeLeftRingHom :
-        H.E →+* H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F) (adelTheta H))
-      = 1 - (Algebra.TensorProduct.includeLeftRingHom :
-        H.E →+* H.E ⊗[H.F] FiniteAdeleRing (𝓞 H.F) H.F) (adelTheta H) := by
-    rw [hL, hσ, adelic_theta_conj, map_sub, map_one]
-  exact ⟨_, adel_alg _ _ _ _ _ (hR _) (hR _) hτu hu key⟩
 
 end Adele
 

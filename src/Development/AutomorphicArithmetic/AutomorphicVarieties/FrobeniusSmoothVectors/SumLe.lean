@@ -36,58 +36,8 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSm
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrRes
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ZeroOfNeg
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ZpowWNe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LcMatrix
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -687,7 +637,7 @@ private theorem ns_coeff {O σ : Type} [CommRing O] [DecidableEq σ] (s t : σ) 
   by_cases h : t = s
   · subst h
     simp
-  · rw [if_neg h, if_neg]
+  · rw [ite_eq_right h, ite_eq_right]
     intro hle
     have := hle t
     simp [Ne.symm h] at this
@@ -837,7 +787,7 @@ private theorem small {O : Type} [CommRing O] [IsLocalRing O] (h2 : IsUnit (2 : 
     intro u v
     obtain ⟨a, ha, hya⟩ := hco ⟨ε v, hεK v⟩
     have h0 : ∑ w, (a w - if w = v then 1 else 0) • ε w = 0 := by
-      simp only [sub_smul, Finset.sum_sub_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      simp only [sub_smul, Finset.sum_sub_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       rw [← hya]
       exact sub_self _
     have hmem := hind _ h0 u
@@ -1085,7 +1035,7 @@ theorem UpperTheory.Reformulated.B.PowerSeriesMemSpanIndexedVariables.ep_odd_spa
     have h2 : (MvPowerSeries.X (e a) : MvPowerSeries σ O) ∣ f - g := by
       rw [MvPowerSeries.X_dvd_iff]
       intro n hn
-      rw [map_sub, hg, if_pos hn, sub_self]
+      rw [map_sub, hg, ite_eq_left hn, sub_self]
     have h3 : f - g ∈ Ideal.span
         (Set.range fun (i : ι) ↦ (MvPowerSeries.X (e i) : MvPowerSeries σ O)) :=
       Ideal.mem_of_dvd _ h2 (Ideal.subset_span ⟨a, rfl⟩)
@@ -1127,7 +1077,7 @@ theorem UpperTheory.V.Fr.ep_odd :
   · rw [Ideal.span_le]
     rintro _ ⟨i, rfl⟩
     refine Ideal.subset_span ⟨MvPowerSeries.X (.inr i), fun n hn => ?_, rfl⟩
-    rw [MvPowerSeries.coeff_X, if_neg]
+    rw [MvPowerSeries.coeff_X, ite_eq_right]
     rintro rfl
     apply hn
     simp [Finsupp.weight_single, Space.Loc.par]
@@ -1229,8 +1179,8 @@ theorem UpperTheory.Reformulated.B.Qf39.ev_decomp :
     intro i m
     rw [MvPowerSeries.X_def, MvPowerSeries.coeff_monomial_mul, one_mul]
     by_cases hle : Finsupp.single i 1 ≤ m
-    · rw [if_pos hle, hh, tsub_add_cancel_of_le hle]
-    · rw [if_neg hle, if_neg]
+    · rw [ite_eq_left hle, hh, tsub_add_cancel_of_le hle]
+    · rw [ite_eq_right hle, ite_eq_right]
       intro hi
       exact hle (Finsupp.single_le_iff.2 (Nat.one_le_iff_ne_zero.2 (hc₂ m i hi)))
   refine ⟨h, ?_, fun i => ?_⟩
@@ -1249,7 +1199,7 @@ theorem UpperTheory.Reformulated.B.Qf39.ev_decomp :
     have hji : j = i := by
       by_contra hji
       exact hc₂ _ j hj (Finsupp.single_eq_of_ne hji)
-    rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hh, zero_add, if_pos (hji ▸ hj)]
+    rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hh, zero_add, ite_eq_left (hji ▸ hj)]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EvDecomp =====
@@ -1269,9 +1219,6 @@ private theorem ev_max {O : Type} [CommRing O] [IsLocalRing O] {R : Type} [CommR
 private theorem ev_sg_map {O A B : Type} [CommRing O] [CommRing A] [CommRing B] [Algebra O A] [Algebra O B]
     (f : A →ₐ[O] B) (j : ZMod 2) : f (sg A j) = sg B j := by
   simp [sg]
-
-private theorem ev_sg_sq (A : Type) [CommRing A] (j : ZMod 2) : sg A j * sg A j = 1 := by
-  rw [sg, ← mul_pow]; simp
 
 theorem UpperTheory.V.Fr.ep_vars :
     ∀ (O : Type) [CommRing O] [IsLocalRing O] [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O) O], IsUnit (2 : O) → ∀ (R : Type) [CommRing R] [Algebra O R] [IsCO O R] (σ : R →ₐ[O] R), (∀ y, σ (σ y) = y) → ∃ (a g : ℕ) (p : MvPowerSeries (Fin a ⊕ Fin g) O →ₐ[O] R), Function.Surjective p ∧ (∀ s, p (MvPowerSeries.X s) ∈ maximalIdeal R) ∧ (∀ j, (wtPart O (Space.Loc.par a g) j).map p.toLinearMap = evp σ j) ∧ IsHomog O (Space.Loc.par a g) (RingHom.ker p) ∧ ∀ h ∈ RingHom.ker p, ∀ s, MvPowerSeries.coeff (Finsupp.single s 1) h ∈ maximalIdeal O := by
@@ -1340,7 +1287,7 @@ theorem UpperTheory.V.Fr.ep_vars :
     refine ⟨_, wcomp_mem O _ j y, ?_⟩
     show p _ = p y
     refine h2R.mul_left_cancel ?_
-    rw [hw, h1, ← mul_assoc, ev_sg_sq, one_mul, two_mul]
+    rw [hw, h1, ← mul_assoc, sg_mul_self_eq_one, one_mul, two_mul]
   · have h1 : p f = 0 := hf
     show p _ = 0
     refine h2R.mul_left_cancel ?_
@@ -1565,9 +1512,6 @@ private theorem neg_one_zpow_sg (K : Type) [CommRing K] (j : ℤ) :
 private theorem map_sg {K K' : Type} [CommRing K] [CommRing K'] (f : K →+* K') (j : ZMod 2) :
     f (sg K j) = sg K' j := by simp [sg]
 
-private theorem sg_sq (K : Type) [CommRing K] (j : ZMod 2) : sg K j * sg K j = 1 := by
-  rw [sg, ← mul_pow]; simp
-
 section
 
 variable {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsLocalRing O] {F : Frame l (ResidueField O)}
@@ -1675,7 +1619,7 @@ private theorem ex_tauA : ∃ τ : S.A →ₐ[O] S.A,
   · rw [e1, map_mul, e1, ← mul_assoc]
     have := map_sg (τA : S.A →+* S.A) (pw i j)
     rw [RingHom.coe_coe] at this
-    rw [this, sg_sq, one_mul]
+    rw [this, sg_mul_self_eq_one, one_mul]
   · rw [map_add (f := _), map_add (f := _), qa, qb]
   · rw [map_mul, map_mul, qa, qb]
   · rw [e1, pw, ← neg_one_zpow_sg]
@@ -1724,10 +1668,6 @@ open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem sg_zero (R : Type) [CommRing R] : sg R 0 = 1 := by simp [sg]
 
-private theorem sg_one (R : Type) [CommRing R] : sg R 1 = -1 := by
-  show (-1 : R) ^ (1 : ZMod 2).val = -1
-  rw [show (1 : ZMod 2).val = 1 from rfl, pow_one]
-
 theorem UpperTheory.V.Fr.ep_ee :
     ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] {F : Frame l (ResidueField O)} {C₀ : ℕ}, F.Ok C₀ → ∀ S : Space O F 3, ∀ (x : Ideal S.A) (L : S.Loc x), S.u.ee ≤ x → ∀ σ, L.IsInv σ → L.ρ.ee = Ideal.span (evp σ 1 : Set L.R) := by
   intro l _ O _ _ _ _ F C₀ hF S x L hx σ hσ
@@ -1768,7 +1708,7 @@ theorem UpperTheory.V.Fr.ep_ee :
   · refine Ideal.span_le.mpr ?_
     intro y hy
     have hy' : σ y = sg L.R 1 * y := hy
-    rw [sg_one] at hy'
+    rw [sg1] at hy'
     have hIm : L.ρ.ee ≤ maximalIdeal L.R := by
       unfold NRep.ee
       refine Ideal.span_le.mpr ?_
@@ -1796,7 +1736,7 @@ theorem UpperTheory.V.Fr.ep_ee :
           rcases Int.even_or_odd (w 3 i - w 3 j) with h | h
           · rw [hpw0 i j h, sg_zero, one_mul] at he'
             rw [he']
-          · rw [hpw i j h, sg_one] at he'
+          · rw [hpw i j h, sg1] at he'
             have hm : L.ρ.r g i j ∈ L.ρ.ee := Ideal.subset_span ⟨g, i, j, h, rfl⟩
             rw [he', Ideal.Quotient.eq]
             have hc : -1 * L.ρ.r g i j - L.ρ.r g i j = (-2) * L.ρ.r g i j := by ring

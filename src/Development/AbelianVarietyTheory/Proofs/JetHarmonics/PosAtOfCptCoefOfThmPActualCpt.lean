@@ -89,19 +89,6 @@ theorem form_nonneg_of_cptCoef (hXi : B.XiExists) (hP : P5.ThmPActualCpt) {Wp Wq
   rw [e]
   exact mul_nonneg (by exact_mod_cast hC.le) hpos'
 
-theorem posAt_of_cptCoef_of_xiExists (hXi : B.XiExists) : P5.ThmPActualCpt → ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (N : ℕ), (∀ y, 0 ≤ nn y) → KB.CptCoef p.T.base F → TBB.PosAt p nn F Y N := by
-  intro hA Wp Wq _ _ _ _ _ _ P p nn F Y N hnn hF
-  refine Formalism.FourierDecayAlt.P.TBBx3.posAt_of_forms p nn F Y N hnn ?_
-  intro j w h hj hw _
-  by_cases hh : D.IsLocPt h j
-  · rw [PBL.rr_eq_form p F j hj w h h hh hh]
-    have h0 := form_nonneg_of_cptCoef hXi hA P p j hj w hw.1 _
-      (fun e => Formalism.FourierDecayAlt.P.slice_compact_support_coefficient Wp Wq P p F j hj w h hh hF e)
-    exact (Complex.nonneg_iff.1 h0).1
-  · unfold KB.Pl.RR D.RRplace
-    rw [dite_eq_right (fun h1 => hh h1.1)]
-    simp
-
 theorem formPosCpt_of_xiExists (hXi : B.XiExists) : PBL.FormPosCpt :=
   fun hP _ _ _ _ _ _ _ _ P p j hj w hc x hx => form_nonneg_of_cptCoef hXi hP P p j hj w hc x hx
 

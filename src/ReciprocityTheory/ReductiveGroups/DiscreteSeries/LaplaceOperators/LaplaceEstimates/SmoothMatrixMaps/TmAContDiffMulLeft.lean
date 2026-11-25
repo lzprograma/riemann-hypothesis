@@ -1,7 +1,10 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.PsiDatumStatement
-public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TmASmSum
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.Calculus.ContDiff.Defs
+public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.Analysis.Calculus.ContDiff.Operations
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IntegrableComplexContinuousBoundedSupport
 import Mathlib.Tactic.TypeStar
@@ -65,11 +68,7 @@ theorem tmA_eword_left (x : Matrix (Fin n) (Fin n) ℂ) (f : Matrix (Fin n) (Fin
       simp only [Formalism.REAL.Eab, Formalism.REAL.Ec, Formalism.REAL.Rd, Matrix.mul_assoc]
 
 theorem tmA_inUJ_mul {x g : Matrix (Fin n) (Fin n) ℂ} (hx : Formalism.REAL.inUJ ε x) (hg : Formalism.REAL.inUJ ε g) :
-    Formalism.REAL.inUJ ε (x * g) := by
-  unfold Formalism.REAL.inUJ at *
-  rw [Matrix.conjTranspose_mul,
-    show gᴴ * xᴴ * Formalism.REAL.Jm ε * (x * g) = gᴴ * (xᴴ * Formalism.REAL.Jm ε * x) * g by
-      simp only [Matrix.mul_assoc], hx, hg]
+    Formalism.REAL.inUJ ε (x * g) := Formalism.REAL.indefinite_unitary_mul_mem ε hx hg
 
 theorem tmA_inv_eq {x : Matrix (Fin n) (Fin n) ℂ} (hx : Formalism.REAL.inUJ ε x) :
     x⁻¹ = Formalism.REAL.Jm ε * xᴴ * Formalism.REAL.Jm ε := by

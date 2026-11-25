@@ -3,8 +3,6 @@ module
 public import Mathlib.Algebra.Field.Defs
 public import Mathlib.Algebra.Module.Pi
 public import Mathlib.LinearAlgebra.Span.Defs
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.TypeStar
 
 @[expose] public section
@@ -30,8 +28,8 @@ def rhoA (a : A) : (A → k) →ₗ[k] (A → k) where
 
 def rhoB (c : B → A → k) (b : B) : (A → k) →ₗ[k] (A → k) where
   toFun Φ t := c b t * Φ t
-  map_add' Φ Ψ := by funext t; simp [mul_add]
-  map_smul' r Φ := by funext t; simp [smul_eq_mul]; ring
+  map_add' Φ Ψ := funext fun t => mul_add (c b t) (Φ t) (Ψ t)
+  map_smul' r Φ := funext fun t => mul_left_comm (c b t) r (Φ t)
 
 def ind (S : Set A) : A → k := by classical exact fun t => if t ∈ S then 1 else 0
 

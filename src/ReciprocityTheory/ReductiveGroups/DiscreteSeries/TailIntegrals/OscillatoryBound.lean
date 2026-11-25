@@ -193,12 +193,12 @@ theorem beta_bound (hL : SLOW) {p m : ℕ} (e : Fin (p + 2) → ℝ) {γ : ℝ} 
     · rw [Fin.succ_zero_eq_one', ← ENNReal.ofReal_mul (Real.rpow_nonneg hd1.le _),
         ← Real.rpow_add hd1, hfac]
       congr 2
-      simp only [ht, Fin.succ_zero_eq_one', if_true]
+      simp only [ht, Fin.succ_zero_eq_one', ite_true]
       ring
     · refine Finset.prod_congr rfl (fun j _ => ?_)
       rw [hfac]
       congr 2
-      simp only [ht, Fin.succ_ne_zero, if_false]
+      simp only [ht, Fin.succ_ne_zero, ite_false]
       ring
   have hR : ∀ β : ℝ,
       ENNReal.ofReal (Lsq (tailPt (a, a'', u, β)) 1 ^ ((-2 + (γ / 2 - e 0)) / 2)) *
@@ -275,7 +275,7 @@ theorem beta_bound (hL : SLOW) {p m : ℕ} (e : Fin (p + 2) → ℝ) {γ : ℝ} 
     have h2 := he1 i.succ
     split_ifs <;> linarith
   have hT : ∑ i, t i ≤ γ / 2 - e 0 + ∑ i : Fin (p + 1), s0N (p + 1) m i.succ := by
-    simp only [ht, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [ht, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     have : ∑ i : Fin (p + 1), (s0N (p + 1) m i.succ - e i.succ) ≤
         ∑ i : Fin (p + 1), s0N (p + 1) m i.succ :=
       Finset.sum_le_sum (fun i _ => by linarith [he i.succ])
@@ -552,7 +552,7 @@ lemma exponentCondition_neg {p : ℕ} (e : Fin (p + 2) → ℝ) {α : ℝ} (he :
   unfold ReciprocityTheory.ChartRestriction.DS.Xi.CHCond
   refine ⟨⟨fun l => ?_, fun l _ => ?_⟩, ?_⟩
   · have h0 : (0 : Fin (p + 1)) ∈ Finset.Iic l := by simp
-    rw [hsum, if_pos h0]
+    rw [hsum, ite_eq_left h0]
     linarith [hS (Finset.Iic l), hN Finset.univ]
   · have h0 : (0 : Fin (p + 1)) ∈ Finset.Iic l := by simp
     have h0' : (0 : Fin (p + 1)) ∉ Finset.Ioi l := by simp [Finset.mem_Ioi]
@@ -562,7 +562,7 @@ lemma exponentCondition_neg {p : ℕ} (e : Fin (p + 2) → ℝ) {α : ℝ} (he :
     have hAB : ∑ j ∈ Finset.Iic l, e j.succ + ∑ j ∈ Finset.Ioi l, e j.succ ≤
         ∑ j : Fin (p + 1), e j.succ := by
       rw [← Finset.sum_union hdis]; exact hS _
-    rw [hsum, hsum, if_pos h0, if_neg h0']
+    rw [hsum, hsum, ite_eq_left h0, ite_eq_right h0']
     linarith [hN (Finset.Iic l), hN (Finset.Ioi l)]
   · show 0 < α + 2 * ∑ i : Fin (p + 1), -e i.succ
     rw [Finset.sum_neg_distrib]

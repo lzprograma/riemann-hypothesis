@@ -56,12 +56,6 @@ def DualStackedExcLinPrimeLe.Statement : Prop :=
       ∀ P : Ideal (MRing (stackedBlocks T)), P.IsPrime → stackedBase b' a ≤ P → IsRelevant P →
         linPrime α M ≤ P
 
-namespace DualStackedExcResidueExample
-
-open DualTopSimpleSubExample DualStackedExcExample
-
-end DualStackedExcResidueExample
-
 end
 
 end GroundTheory.Heights₂.Heights

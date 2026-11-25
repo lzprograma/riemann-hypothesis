@@ -8,7 +8,7 @@ public import Mathlib.FieldTheory.Finite.Basic
 namespace Bl.general_b_fact_second_bis
 
 theorem goal1 :
-  ∀ {g : Nat} [hg : Fact (Nat.Prime g)] (c : Formalism.CyclotomicNorms.Fbar g),
+  ∀ {g : Nat} [Fact (Nat.Prime g)] (c : Formalism.CyclotomicNorms.Fbar g),
   Eq.{1} (HPow.hPow.{0, 0, 0} c g) c →
     Membership.mem.{0, 0}
       (Set.range.{0, 1} (DFunLike.coe.{1, 1, 1} (Algebra.algebraMap.{0, 0} (ZMod g) (Formalism.CyclotomicNorms.Fbar g)))) c := by

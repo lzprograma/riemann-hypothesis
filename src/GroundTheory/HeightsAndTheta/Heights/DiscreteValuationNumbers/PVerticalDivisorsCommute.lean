@@ -29,12 +29,7 @@ theorem ratDiv_support_finite (h4 : DivCycleFiniteSupport.Statement.{u}) {O : Ty
 
 theorem lt_natCast_of_add_one_le {x : WithBot ℕ∞} {n : ℕ} (h : x + 1 ≤ (n : WithBot ℕ∞)) :
     x < (n : WithBot ℕ∞) := by
-  induction x with
-  | bot => exact WithBot.bot_lt_coe _
-  | coe e =>
-    have h' : e + 1 ≤ (n : ℕ∞) := by exact_mod_cast h
-    have h'' : e < (n : ℕ∞) := (ENat.add_one_le_iff' (ENat.natCast_ne_top n)).mp h'
-    exact_mod_cast h''
+  exact ENat.WithBot.add_one_le_natCast_iff.mp h
 
 theorem VerticalDivisorsCommute.proof (h1 : CutByEffectiveDivisor.Statement.{u})
     (h2 : Representative.Statement.{u}) (h3 : IntNumAddFirst.Statement.{u})
@@ -133,7 +128,7 @@ theorem VerticalDivisorsCommute.proof (h1 : CutByEffectiveDivisor.Statement.{u})
         by_cases hW : ratDiv P f' g' W = 0
         · simp [hW]
         · beta_reduce
-          rw [if_pos (hD'.vertical W hW)]
+          rw [ite_eq_left (hD'.vertical W hW)]
 
 end
 

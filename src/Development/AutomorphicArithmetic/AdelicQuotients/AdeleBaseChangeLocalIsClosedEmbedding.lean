@@ -2,45 +2,6 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
 import GroundTheory.GlobalFields.CompletionAtPlace.Integers
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -58,14 +19,6 @@ private theorem ce_reindex {V : Type*} {A : V → Type*} [∀ v, TopologicalSpac
   obtain rfl : φ = id := funext h
   exact (Homeomorph.refl _).isClosedEmbedding
 
-private theorem ce_piMap {V : Type*} {A B : V → Type*} [∀ v, TopologicalSpace (A v)] [∀ v, TopologicalSpace (B v)]
-    (ι : ∀ v, A v → B v) (h : ∀ v, IsClosedEmbedding (ι v)) :
-    IsClosedEmbedding (fun (x : ∀ v, A v) (v : V) => ι v (x v)) :=
-  IsClosedEmbedding.of_continuous_injective_isClosedMap
-    (continuous_pi fun v => (h v).continuous.comp (continuous_apply v))
-    (fun _ _ e => funext fun v => (h v).injective (congrFun e v))
-    (IsProperMap.pi_map fun v => (h v).isProperMap).isClosedMap
-
 private theorem ce_pi {V W : Type*} (c : W → V) (hc : Function.Surjective c) {A : V → Type*} {B : W → Type*}
     [∀ v, TopologicalSpace (A v)] [∀ w, TopologicalSpace (B w)] [∀ w, T2Space (B w)]
     (ι : ∀ w, A (c w) → B w) (h : ∀ w, IsClosedEmbedding (ι w)) :
@@ -74,16 +27,14 @@ private theorem ce_pi {V W : Type*} (c : W → V) (hc : Function.Surjective c) {
   refine ce_of_comp (g := fun (y : ∀ w, B w) (v : V) => y (s v))
     (continuous_pi fun w => (h w).continuous.comp (continuous_apply _))
     (continuous_pi fun v => continuous_apply _) ?_
-  exact (ce_piMap (fun v => ι (s v)) fun v => h (s v)).comp (ce_reindex (A := A) (fun v => c (s v)) hs)
+  exact (IsClosedEmbedding.piMap fun v => h (s v)).comp
+    (ce_reindex (A := A) (fun v => c (s v)) hs)
 
 private theorem ce_gl {R S : Type*} [CommRing R] [CommRing S] [TopologicalSpace R] [TopologicalSpace S]
     [IsTopologicalRing R] [IsTopologicalRing S] [T2Space R] [T2Space S] (n : ℕ) (f : R →+* S) (hf : IsClosedEmbedding f) :
-    IsClosedEmbedding (mapGL n f) := by
-  have h1 : IsClosedEmbedding (fun (x : Fin n → R) (j : Fin n) => f (x j)) := ce_piMap (fun _ => f) fun _ => hf
-  have hM : IsClosedEmbedding (f.mapMatrix.toMonoidHom : Matrix (Fin n) (Fin n) R → Matrix (Fin n) (Fin n) S) :=
-    ce_piMap (fun _ => fun (x : Fin n → R) (j : Fin n) => f (x j)) fun _ => h1
-  exact @IsClosedEmbedding.units_map (Matrix (Fin n) (Fin n) R) (Matrix (Fin n) (Fin n) S)
-    _ _ _ _ _ _ f.mapMatrix.toMonoidHom hM
+    IsClosedEmbedding (mapGL n f) :=
+  @IsClosedEmbedding.units_map (Matrix (Fin n) (Fin n) R) (Matrix (Fin n) (Fin n) S)
+    _ _ _ _ _ _ f.mapMatrix.toMonoidHom hf.matrix_map
 
 section
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]

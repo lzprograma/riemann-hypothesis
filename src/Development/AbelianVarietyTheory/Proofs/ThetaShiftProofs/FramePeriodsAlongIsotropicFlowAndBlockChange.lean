@@ -66,7 +66,7 @@ lemma perFr_mem (x : Frame X.Ψ r) (v : Fin r → E) (τ : X.Ψ) (i : ℕ) :
     perFr X x v τ.1 i =
       if hi : X.p0 + i < r then ((mat x τ)⁻¹.mulVec (Data.emb τ.1 v)) ⟨X.p0 + i, hi⟩ else 0 := by
   unfold perFr
-  rw [dif_pos τ.2]
+  rw [dite_eq_left τ.2]
 
 lemma perFr_conj (x : Frame X.Ψ r) (v : Fin r → E) (τ : X.Ψ) (i : ℕ) (j : Fin r)
     (hj : (j : ℕ) = X.p0 - 1 - i) :
@@ -77,7 +77,7 @@ lemma perFr_conj (x : Frame X.Ψ r) (v : Fin r → E) (τ : X.Ψ) (i : ℕ) (j :
   have h2 : conjEmb (conjEmb τ.1) ∈ X.Ψ := by rw [hcc]; exact τ.2
   have h3 : X.p0 - 1 - i < r := hj ▸ j.2
   unfold perFr
-  rw [dite_eq_right h1, dif_pos h2, dif_pos h3]
+  rw [dite_eq_right h1, dite_eq_left h2, dite_eq_left h3]
   have key : ∀ (σ : E →+* ℂ) (hσ : σ ∈ X.Ψ), σ = τ.1 →
       hermC σ X.Gm (FD.col (mat x ⟨σ, hσ⟩) ⟨X.p0 - 1 - i, h3⟩) (Data.emb σ v) =
         hermC τ.1 X.Gm (FD.col (mat x τ) j) (Data.emb τ.1 v) := by
@@ -209,7 +209,7 @@ lemma block_change (x : Frame X.Ψ r) (hx : x ∈ X.dom)
   · have hlt : ∀ k : Fin (r - X.p0), X.p0 + k < r := fun k => by have := k.2; omega
     have hidx : ∀ k : Fin (r - X.p0), (⟨X.p0 + k, hlt k⟩ : Fin r) = blockEquiv X (.inr k) :=
       fun k => Fin.ext (blockEquiv_inr X k).symm
-    simp only [perFr_mem, dif_pos (hlt _), hidx]
+    simp only [perFr_mem, dite_eq_left (hlt _), hidx]
     rw [hm, Matrix.mul_inv_rev, inv_eq_right_inv (hone τ), ← mulVec_mulVec, blk_mulVec_inr]
   · have hr : ∀ (y : Frame X.Ψ r) (k : Fin X.p0), perFr X y v (conjEmb τ.1) k =
         hermC τ.1 X.Gm (X.colP y τ k.rev) (Data.emb τ.1 v) := fun y k =>

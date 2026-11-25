@@ -1,6 +1,8 @@
 module
 
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalLab
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionIsoOfGroupPullbackGeneric
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -38,7 +40,6 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
 import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
-
 @[expose] public section
 
 noncomputable section
@@ -58,21 +59,7 @@ theorem exists_mulEquiv_points {S S' : Scheme.{0}} {G' : Over S'} [GrpObj G'] {G
     {f : S' ⟶ S} {F : G'.left ⟶ G.left} (hF : IsGrpPullback G' G f F) {X : Scheme.{0}} (t : X ⟶ S') (g : X ⟶ S)
     (hg : t ≫ f = g) :
     ∃ e : (Over.mk t ⟶ G') ≃* (Over.mk g ⟶ G), ∀ z, (e z).left = z.left ≫ F := by
-  subst hg
-  let m : (Over.mk t ⟶ G') → (Over.mk (t ≫ f) ⟶ G) := fun z => Over.homMk (z.left ≫ F) (by
-    have h : z.left ≫ G'.hom = t := Over.w z
-    show (z.left ≫ F) ≫ G.hom = t ≫ f
-    rw [Category.assoc, hF.1.w, ← Category.assoc, h])
-  have hm : ∀ z, (m z).left = z.left ≫ F := fun _ => rfl
-  have hmul : ∀ x y, m (x * y) = m x * m y := fun x y =>
-    Over.OverMorphism.ext ((hm _).trans (hF.2 (Over.mk t) x y (m x) (m y) (hm x) (hm y)).symm)
-  have hinj : Function.Injective m := fun x y h => by
-    refine Over.OverMorphism.ext (hF.1.hom_ext ?_ ((Over.w x).trans (Over.w y).symm))
-    rw [← hm, ← hm, h]
-  have hsurj : Function.Surjective m := fun z =>
-    ⟨Over.homMk (hF.1.lift z.left t (Over.w z)) (hF.1.lift_snd _ _ _),
-      Over.OverMorphism.ext ((hm _).trans (hF.1.lift_fst _ _ _))⟩
-  exact ⟨MulEquiv.ofBijective (MonoidHom.mk' m hmul) ⟨hinj, hsurj⟩, hm⟩
+  apply _root_.GlobalTheory.GroupBplus.Aff.exists_mulEquiv_points_of_isGrpPullback <;> assumption
 
 theorem eq_id_of_frac {A K : Type} [CommRing A] [Field K] (φ : A →+* K) (h : ∀ x, ∃ a b, x = φ a / φ b)
     (u : Sp K ⟶ Sp K) (hu : u ≫ spMap φ = spMap φ) : u = 𝟙 _ := by
@@ -172,37 +159,5 @@ theorem exists_label_action {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω]
   · have e₁ := h₁ x w hw
     subst e₁
     exact hinj (Over.OverMorphism.ext (h₂ x _ hw').symm)
-
-theorem exists_galLab : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (W : Matrix (Fin 8) (Fin 8) ℤ) (Z : Scheme.{0}) (i : F.X ⟶ Z) (X₁ : Setup F W i), 1 ≤ g → 3 ≤ n → Odd n → IsOpenImmersion i → IsE8 W → ThetaInt F W i → IsProjOver X₁.M.s → ∀ (ε₁ : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)), IsDiagEnd F W X₁.ρ.P X₁.u ε₁ → ∀ (D : Deep X₁ ε₁) (σ : D.X.Ω₁ ≃ₐ[X₁.Ω₁] D.X.Ω₁), ∃ a : D.X.S.Gam ≃+ D.X.S.Gam, D.GalLab σ a ∧ ∀ x, a (D.lab x) = D.lab x := by
-  intro g n F W Z i X₁ _ _ _ _ _ _ _ ε₁ _ D σ
-  obtain ⟨P₀, a₁, a₂, ε₀, h₁, h₂, l₁, l₂, hε, hpt⟩ := D.same
-  have hs : spMap (σ : D.X.Ω₁ →+* D.X.Ω₁) ≫ spMap ((algebraMap X₁.Ω₁ D.X.Ω₁).comp X₁.S.R.val.toRingHom) =
-      spMap ((algebraMap X₁.Ω₁ D.X.Ω₁).comp X₁.S.R.val.toRingHom) :=
-    (spMap_comp _ _).symm.trans (congrArg spMap (RingHom.ext fun y => σ.commutes _))
-  obtain ⟨t, ht₁, ht₂⟩ : ∃ t : P₀.A.left ⟶ P₀.A.left, t ≫ a₁ = a₁ ∧
-      t ≫ P₀.A.hom = P₀.A.hom ≫ spMap (σ : D.X.Ω₁ →+* D.X.Ω₁) :=
-    ⟨h₁.1.lift a₁ (P₀.A.hom ≫ spMap (σ : D.X.Ω₁ →+* D.X.Ω₁)) (by rw [Category.assoc, hs, h₁.1.w]),
-      h₁.1.lift_fst _ _ _, h₁.1.lift_snd _ _ _⟩
-  have ht : IsGrpPullback P₀.A P₀.A (spMap (σ : D.X.Ω₁ →+* D.X.Ω₁)) t := h₁.cancel (h₁.congr hs.symm ht₁.symm) ht₂
-  have lt : LBIso (P₀.L.pull t) (X₁.ρ.P.L.pull a₁) :=
-    l₁.chartPull (Geo.Tor.chartPullPull P₀.L t t rfl)
-      (chartPullSame X₁.ρ.P.L (fun _ => a₁) (fun _ => a₁) _ t fun _ => ht₁.symm)
-  obtain ⟨a, ha, ha'⟩ := exists_label_action D.X.ρ h₂ (σ : D.X.Ω₁ →+* D.X.Ω₁) σ.surjective ht
-  refine ⟨a, ⟨P₀, a₂, t, ε₀, h₂, ht, l₂,
-    LBIso.trans P₀.isLB (pull_isLB X₁.ρ.P.isLB _) (pull_isLB P₀.isLB _) l₁ lt.symm, fun E => ⟨(hε E).2, ?_⟩, ha⟩,
-    fun x => ?_⟩
-  · refine h₁.1.hom_ext ?_ ?_
-    · rw [Category.assoc, Category.assoc, ht₁, (hε E).1, ← Category.assoc, ht₁]
-    · rw [Category.assoc, Category.assoc, ht₂, Over.w (ε₀ E), ← Category.assoc, Over.w (ε₀ E), ht₂]
-  · obtain ⟨w, hw₁, hw₂⟩ := hpt x
-    refine ha' _ w hw₂ (h₁.1.hom_ext ?_ ?_)
-    · rw [Category.assoc, Category.assoc, ht₁, hw₁, ← Category.assoc, hs]
-    · have hw : w ≫ P₀.A.hom = 𝟙 _ := by
-        refine eq_id_of_frac D.X.S.R.val.toRingHom (fun y => ?_) _ ?_
-        · obtain ⟨c, hc, d, hd, rfl⟩ := D.X.S.frac y
-          exact ⟨⟨c, hc⟩, ⟨d, hd⟩, rfl⟩
-        · rw [Category.assoc, ← h₂.1.w, ← Category.assoc, hw₂, Category.assoc]
-          exact (congrArg _ (Over.w (D.X.ρ.pt _))).trans (Category.comp_id _)
-      rw [Category.assoc, Category.assoc, ht₂, hw, ← Category.assoc, hw, Category.id_comp, Category.comp_id]
 
 end GlobalTheory.Poinc.GalAct

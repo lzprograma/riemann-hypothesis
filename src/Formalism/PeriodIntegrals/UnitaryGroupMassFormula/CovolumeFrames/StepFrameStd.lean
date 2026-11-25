@@ -2,51 +2,9 @@ module
 
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.LevelIntersectParabolic
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovolumeFrames.StepGramH
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NilpotentVolumeOne.LinearIndependentFrameWithNormal, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovolumeFrames.StepFrameStd
@@ -71,7 +29,7 @@ theorem coord_zero_of_row {n : ℕ} (G : Matrix (Fin n) (Fin n) E) (v : Fin n �
     (hrow : ∀ j, G k j = if j = i then d else 0) : v i = 0 := by
   have h := congrFun hv k
   simp only [Matrix.mulVec, dotProduct, hrow, Pi.zero_apply, ite_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
   exact (mul_eq_zero.mp h).resolve_left hd
 
 end Alg
@@ -137,7 +95,7 @@ theorem row_f (hP : P.IsStd σ J T)
     induction k using Fin.lastCases with
     | last =>
       simp only [gramE, tupH_alt, tupH_f]
-      rw [h5 a, if_neg (iz_ne_ie a)]
+      rw [h5 a, ite_eq_right (iz_ne_ie a)]
     | cast c =>
       rw [← hT1]
       simp only [gramE, tupH_e, tupH_f]
@@ -145,10 +103,10 @@ theorem row_f (hP : P.IsStd σ J T)
       by_cases hca : c = a
       · subst hca
         simp
-      · rw [if_neg hca, if_neg (fun h => hca (ie_inj h)), map_zero]
+      · rw [ite_eq_right hca, ite_eq_right (fun h => hca (ie_inj h)), map_zero]
   | right b =>
     simp only [gramE, tupH_f]
-    rw [h2 a b, if_neg (if_ne_ie b a)]
+    rw [h2 a b, ite_eq_right (if_ne_ie b a)]
 
 theorem herm_wCell_last_mul_mulVec_eq_of_inWb (hP : P.IsStd σ J T)
     (hT1 : ∀ i j, σ (gramE σ J (tupH P) j i) = gramE σ J (tupH P) i j) :
@@ -166,11 +124,11 @@ theorem herm_wCell_last_mul_mulVec_eq_of_inWb (hP : P.IsStd σ J T)
     | cast c =>
       rw [← hT1]
       simp only [gramE, tupH_e, tupH_alt]
-      rw [h4 c, map_zero, if_neg (fun h => iz_ne_ie c h.symm)]
+      rw [h4 c, map_zero, ite_eq_right (fun h => iz_ne_ie c h.symm)]
   | right b =>
     rw [← hT1]
     simp only [gramE, tupH_alt, tupH_f]
-    rw [h5 b, map_zero, if_neg (if_ne_iz b)]
+    rw [h5 b, map_zero, ite_eq_right (if_ne_iz b)]
 
 theorem row_e (hP : P.IsStd σ J T) (a : Fin r) :
     ∀ j, gramE σ J (tupH P) (Fin.castAdd r (Fin.castSucc a)) j =
@@ -182,17 +140,17 @@ theorem row_e (hP : P.IsStd σ J T) (a : Fin r) :
     induction k using Fin.lastCases with
     | last =>
       simp only [gramE, tupH_e, tupH_alt]
-      rw [h4 a, if_neg (fun h => if_ne_iz a h.symm)]
+      rw [h4 a, ite_eq_right (fun h => if_ne_iz a h.symm)]
     | cast c =>
       simp only [gramE, tupH_e]
-      rw [h1 a c, if_neg (fun h => if_ne_ie a c h.symm)]
+      rw [h1 a c, ite_eq_right (fun h => if_ne_ie a c h.symm)]
   | right b =>
     simp only [gramE, tupH_e, tupH_f]
     rw [h3 a b]
     by_cases hab : a = b
     · subst hab
       simp
-    · rw [if_neg hab, if_neg (fun h => hab (if_inj h).symm)]
+    · rw [ite_eq_right hab, ite_eq_right (fun h => hab (if_inj h).symm)]
 
 theorem det_gram_tupH_ne_zero (hP : P.IsStd σ J T)
     (hT1 : ∀ i j, σ (gramE σ J (tupH P) j i) = gramE σ J (tupH P) i j) :

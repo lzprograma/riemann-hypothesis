@@ -2,7 +2,6 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Objects
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsComplementForm
-import Mathlib.Tactic.TypeStar
 import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Examples
 
 @[expose] public section

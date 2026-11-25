@@ -1,50 +1,7 @@
 module
 
 public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.RowS
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -88,7 +45,7 @@ theorem rowS_mm (hm : m + 1 < a) (x : V ι a m) : rowS hm x (mm hm) = x (t0 hm) 
 
 theorem rowT_mm (hm : m + 1 < a) (x : V ι a m) : rowT hm x (mm hm) = (x (t0 hm))⁻¹ := by
   unfold rowT
-  rw [dite_eq_left (by simp [mm]), if_pos (by simp [mm])]
+  rw [dite_eq_left (by simp [mm]), ite_eq_left (by simp [mm])]
 
 theorem rowT_ne (hm : m + 1 < a) (x : V ι a m) {j : Fin a} (hj : j ≠ mm hm) :
     rowT hm x j = -(rowS hm x j * (x (t0 hm))⁻¹) := by
@@ -131,8 +88,8 @@ theorem sI_mul_sM (hm : m + 1 < a) {x : V ι a m} (hx : x ∈ O ι hm) :
     simp only [Matrix.updateRow_self]
     by_cases hj : j = mm hm
     · subst hj
-      rw [if_pos rfl, add_zero, rowT_mm, rowS_mm, Matrix.one_apply_eq, mul_comm, hi1]
-    · rw [if_neg hj, rowT_mm, rowT_ne hm x hj, Matrix.one_apply_ne (Ne.symm hj)]
+      rw [ite_eq_left rfl, add_zero, rowT_mm, rowS_mm, Matrix.one_apply_eq, mul_comm, hi1]
+    · rw [ite_eq_right hj, rowT_mm, rowT_ne hm x hj, Matrix.one_apply_ne (Ne.symm hj)]
       ring
   · rw [Matrix.updateRow_ne hi, Matrix.one_apply_ne hi, zero_mul, zero_add]
     split_ifs with hj
@@ -149,8 +106,8 @@ theorem sM_mul_sI (hm : m + 1 < a) {x : V ι a m} (hx : x ∈ O ι hm) :
     simp only [Matrix.updateRow_self]
     by_cases hj : j = mm hm
     · subst hj
-      rw [if_pos rfl, add_zero, rowT_mm, rowS_mm, Matrix.one_apply_eq, hi1]
-    · rw [if_neg hj, rowS_mm, rowT_ne hm x hj, Matrix.one_apply_ne (Ne.symm hj)]
+      rw [ite_eq_left rfl, add_zero, rowT_mm, rowS_mm, Matrix.one_apply_eq, hi1]
+    · rw [ite_eq_right hj, rowS_mm, rowT_ne hm x hj, Matrix.one_apply_ne (Ne.symm hj)]
       linear_combination (-(rowS hm x j)) * hi1
   · rw [Matrix.updateRow_ne hi, Matrix.one_apply_ne hi, zero_mul, zero_add]
     split_ifs with hj
@@ -221,7 +178,7 @@ theorem mir_mul (hm : m + 1 < a) {h : GL (Fin a) (ι → ℂ)} (hh : GlobalTheor
   rw [Units.val_mul, uM_inv_val hm hx, of_sI, mul_upd]
   by_cases hk : k = mm hm
   · subst hk
-    rw [rowT_mm, if_pos rfl, add_zero, e0]
+    rw [rowT_mm, ite_eq_left rfl, add_zero, e0]
     by_cases hi : i = mm hm
     · subst hi; rw [hi1, Matrix.one_apply_eq]
     · have h2 : m + 1 ≤ (i : ℕ) := by
@@ -230,7 +187,7 @@ theorem mir_mul (hm : m + 1 < a) {h : GL (Fin a) (ι → ℂ)} (hh : GlobalTheor
           omega
         · simp [mm] at h1
       rw [hh i (mm hm) (Or.inl h2), Matrix.one_apply_ne hi, zero_mul]
-  · rw [if_neg hk, rowT_ne hm _ hk, rowS_xi hm hh, e0]
+  · rw [ite_eq_right hk, rowT_ne hm _ hk, rowS_xi hm hh, e0]
     by_cases hi : i = mm hm
     · subst hi
       rw [Matrix.one_apply_ne (Ne.symm hk)]

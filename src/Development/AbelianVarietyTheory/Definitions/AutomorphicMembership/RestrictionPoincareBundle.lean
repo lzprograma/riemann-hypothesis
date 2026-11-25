@@ -2,7 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ToNatLengthEqRangeAddRange
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PullbackAndTensorModule
-public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsGrpPullbackAbVarModel
 public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsRigidifiedIso
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniformBaseChange.PullGt
 import Mathlib.Algebra.Order.Floor.Extended
@@ -201,51 +200,6 @@ instance setoid : Setoid (FLB i) := ⟨Iso, Iso.refl, Iso.symm, Iso.trans⟩
 
 variable {Y Y' : Scheme.{0}} (q : ∀ e, X e ⟶ Y) (hq : ∀ e, i e ≫ q (e + 1) = q e)
 
-def ofPull (L : LB Y) (hL : L.IsLB) : FLB i :=
-  have hU : ∀ e (a : PUnit → L.ι), (L.pull (q e)).U a = i e ⁻¹ᵁ (L.pull (q (e + 1))).U a := fun e a => by
-    ext x
-    refine mem_pull.trans (Iff.trans ?_ (mem_pull (F := q (e + 1)) (x := i e x)).symm)
-    rw [← hq e]; rfl
-  { ι := PUnit → L.ι
-    U e := (L.pull (q e)).U
-    g e := (L.pull (q e)).g
-    isLB e := pull_isLB hL (q e)
-    U_eq := hU
-    g_eq e a b := (eq_res_pullU_iff _ _ _ _).2 fun x hx => by
-      refine (gm_pull_g L (q e) (𝟙 _) x a b hx.1 hx.2).trans
-        (Eq.trans ?_ (gm_pull_g L (q (e + 1)) (i e) x a b ((hU e a).le hx.1) ((hU e b).le hx.2)).symm)
-      rw [Category.id_comp, hq] }
-
-theorem iso_of_chartPull {L M : FLB i} {A B : LB Y} (a : L.ι → A.ι) (b : M.ι → B.ι)
-    (la : ∀ e k, L.U e k ≤ q e ⁻¹ᵁ A.U (a k)) (lb : ∀ e k, M.U e k ≤ q e ⁻¹ᵁ B.U (b k))
-    (ga : ∀ e (x : X e) k l, x ∈ L.U e k → x ∈ L.U e l → gm (𝟙 _) x _ (L.g e k l) = gm (q e) x _ (A.g (a k) (a l)))
-    (gb : ∀ e (x : X e) k l, x ∈ M.U e k → x ∈ M.U e l → gm (𝟙 _) x _ (M.g e k l) = gm (q e) x _ (B.g (b k) (b l)))
-    (hq : ∀ e, i e ≫ q (e + 1) = q e) (h : LBIso A B) : L.Iso M := by
-  obtain ⟨w, hw⟩ := h
-  have le : ∀ e (p : M.ι × L.ι), M.U e p.1 ⊓ L.U e p.2 ≤ q e ⁻¹ᵁ (B.U (b p.1) ⊓ A.U (a p.2)) := fun e p y hy =>
-    ⟨lb e _ hy.1, la e _ hy.2⟩
-  have v : ∀ e {Z : Scheme.{0}} (f : Z ⟶ X e) (z : Z) (p : M.ι × L.ι), f z ∈ M.U e p.1 ⊓ L.U e p.2 →
-      gm f z (M.U e p.1 ⊓ L.U e p.2) (res (le e p) (pullU (q e) _ (w.s (b p.1, a p.2)))) =
-      gm (f ≫ q e) z (B.U (b p.1) ⊓ A.U (a p.2)) (w.s (b p.1, a p.2)) := fun e Z f z p hp =>
-    (gm_res f z _ hp _).trans (gm_pull f (q e) z _ (le e p hp) _)
-  refine ⟨fun e => ⟨fun p => res (le e p) (pullU (q e) _ (w.s (b p.1, a p.2)))⟩,
-    fun e => (isGen_iso_iff _).2 fun x p r hp hr => ?_, (compat_iff _).2 fun e p x hx => ?_⟩
-  · refine (v e _ x p hp).trans (Eq.trans ?_ (congrArg₂ (· * ·) (congrArg₂ (fun s t => s * t⁻¹)
-      (gb e x _ _ hp.1 hr.1) (ga e x _ _ hp.2 hr.2)) (v e _ x r hr)).symm)
-    rw [Category.id_comp]
-    have hm : q e x ∈ B.U (b p.1) ⊓ A.U (a p.2) ⊓ (B.U (b r.1) ⊓ A.U (a r.2)) := ⟨le e p hp, le e r hr⟩
-    have := congrArg (gm (q e) x (B.U (b p.1) ⊓ A.U (a p.2) ⊓ (B.U (b r.1) ⊓ A.U (a r.2))))
-      (hw (b p.1, a p.2) (b r.1, a r.2))
-    exact (gm_res _ x _ hm _).symm.trans (this.trans ((map_mul _ _ _).trans (congrArg₂ (· * ·)
-      (gm_div A B (q e) x (b p.1, a p.2) (b r.1, a r.2) hm) (gm_res _ x _ hm _))))
-  · refine (v e _ x p hx).trans (Eq.trans ?_ (v (e + 1) _ x p ⟨M.mem_succ hx.1, L.mem_succ hx.2⟩).symm)
-    rw [Category.id_comp, hq]
-
-theorem ofPull_iso {A B : LB Y} (hA : A.IsLB) (hB : B.IsLB) (h : LBIso A B) : (ofPull q hq A hA).Iso (ofPull q hq B hB) :=
-  iso_of_chartPull q (fun J => J ⟨⟩) (fun J => J ⟨⟩) (fun _ _ _ hx => mem_pull.1 hx) (fun _ _ _ hx => mem_pull.1 hx)
-    (fun e x k l hk hl => (Geo.Tor.chartPullPull A (q e) (q e) rfl).g x k l hk hl)
-    (fun e x k l hk hl => (Geo.Tor.chartPullPull B (q e) (q e) rfl).g x k l hk hl) hq h
-
 end FLB
 
 
@@ -275,31 +229,11 @@ instance small_quotient : Small.{0} (Quotient (FLB.setoid (i := i))) := by
 variable (i) in
 def FPic : Type := Shrink.{0} (Quotient (FLB.setoid (i := i)))
 
-def fcls (L : FLB i) : FPic i := equivShrink _ (Quotient.mk _ L)
-
-theorem fcls_eq_iff {L M : FLB i} : fcls L = fcls M ↔ L.Iso M :=
-  (equivShrink _).injective.eq_iff.trans (Quotient.eq (r := FLB.setoid))
-
 def level (e : ℕ) (c : FPic i) : SmallPic (X e) :=
   Quotient.lift (s := FLB.setoid) (fun L : FLB i => smallCls (L.lb e) (L.isLB e))
     (fun _ _ h => (smallCls_eq_iff _ _).2 (h.elim fun u hu => ⟨u e, hu.1 e⟩)) ((equivShrink _).symm c)
 
-theorem level_fcls (e : ℕ) (L : FLB i) : level e (fcls L) = smallCls (L.lb e) (L.isLB e) := by
-  rw [level, fcls, Equiv.symm_apply_apply]; rfl
-
 variable {Y Y' : Scheme.{0}} (q : ∀ e, X e ⟶ Y) (hq : ∀ e, i e ≫ q (e + 1) = q e)
-
-def fpull (c : SmallPic Y) : FPic i :=
-  Quotient.lift (s := CechPic.setoid Y) (fun A => fcls (FLB.ofPull q hq A.1 A.2))
-    (fun A B h => fcls_eq_iff.2 (FLB.ofPull_iso q hq A.2 B.2 h)) (smallPicEquiv Y c)
-
-theorem fpull_smallCls (L : LB Y) (hL : L.IsLB) : fpull q hq (smallCls L hL) = fcls (FLB.ofPull q hq L hL) := by
-  rw [fpull, smallPicEquiv_smallCls]; rfl
-
-theorem level_fpull (e : ℕ) (c : SmallPic Y) : level e (fpull q hq c) = smallPull (q e) c := by
-  obtain ⟨L, hL, rfl⟩ := smallCls_surj c
-  rw [fpull_smallCls, level_fcls, smallPull_smallCls _ _ (pull_isLB hL _)]
-  rfl
 
 section Projective
 
@@ -337,44 +271,10 @@ section Classes
 
 variable {S S' : Scheme.{0}} (G : Over S) [GrpObj G] [IsCommMonObj G]
 
-def IsRigCls (c : SmallPic G.left) : Prop := smallPull (eSec G) c = 0
-
-def IsSymCls (c : SmallPic G.left) : Prop := smallPull (GrpObj.inv (X := G)).left c = c
-
-def IsPrincipalCls (c : SmallPic G.left) : Prop :=
-  ∃ (L : LB G.left) (hL : L.IsLB), smallCls L hL = c ∧ Out.RelAmple G L ∧ Out.KTriv G L
-
-def RigPic : Type := {c : SmallPic G.left // IsRigCls G c}
-
 variable {G}
 
 
-omit [GrpObj G] [IsCommMonObj G] in
-theorem smallCls_eq_zero_iff {X : Scheme.{0}} {L : LB X} (hL : L.IsLB) : smallCls L hL = 0 ↔ ∃ t : LB.Gen L, t.IsGen :=
-  (smallPicEquiv X).symm.map_eq_zero_iff.trans (cls_eq_zero_iff hL)
 
-
-omit [GrpObj G] [IsCommMonObj G] in
-theorem smallPull_comp {X Y Z : Scheme.{0}} (g : Z ⟶ Y) (f : Y ⟶ X) (c : SmallPic X) :
-    smallPull (g ≫ f) c = smallPull g (smallPull f c) := by
-  simp [smallPull, pull_comp]
-
-
-omit [IsCommMonObj G] in
-theorem isRigCls_iff {L : LB G.left} (hL : L.IsLB) : IsRigCls G (smallCls L hL) ↔ Out.Rigidified G L := by
-  rw [IsRigCls, smallPull_smallCls _ hL (pull_isLB hL _), smallCls_eq_zero_iff]; rfl
-
-def rigCls (L : RigLB G) : RigPic G := ⟨smallCls L.L L.isLB, (isRigCls_iff L.isLB).2 ⟨L.rig, L.rigGen⟩⟩
-
-def IsBiextCls (P : RigPic (G ⊗ G)) : Prop := ∃ L : RigLB (G ⊗ G), rigCls L = P ∧ Nonempty (IsBiext G L.L)
-
-def diagCls (w : G ⟶ G) (P : RigPic (G ⊗ G)) : SmallPic G.left := smallPull (lift (𝟙 G) w).left P.1
-
-theorem isRigCls_diagCls (w : G ⟶ G) [IsMonHom w] (P : RigPic (G ⊗ G)) : IsRigCls G (diagCls w P) := by
-  have e : η[G] ≫ lift (𝟙 G) w = η[G ⊗ G] := by
-    apply CartesianMonoidalCategory.hom_ext <;> simp
-  rw [IsRigCls, diagCls, ← smallPull_comp, eSec, ← Over.comp_left, e]
-  exact P.2
 
 variable {G' : Over S'} [GrpObj G'] [IsCommMonObj G'] {f : S' ⟶ S} {φ : G'.left ⟶ G.left} (h : IsGrpPullback G' G f φ)
 
@@ -390,31 +290,6 @@ omit [IsCommMonObj G] [IsCommMonObj G'] in
   congrArg (fun q => q.left) (lift_snd (pushHom h _ (fst G' G')) (pushHom h _ (snd G' G')))
 
 
-omit [GrpObj G] [IsCommMonObj G] in
-theorem sq_hom_ext {T : Scheme.{0}} {a b : T ⟶ (G ⊗ G).left} (h₁ : a ≫ (fst G G).left = b ≫ (fst G G).left)
-    (h₂ : a ≫ (snd G G).left = b ≫ (snd G G).left) : a = b := pullback.hom_ext h₁ h₂
-
-theorem eSec_sqMap : eSec (G' ⊗ G') ≫ sqMap h = f ≫ eSec (G ⊗ G) := by
-  have e : η[G'].left ≫ φ = f ≫ η[G].left := (cubeMapOf h).e_comm
-  refine sq_hom_ext ?_ ?_
-  · rw [Category.assoc, sqMap_fst, eSec, eSec, ← Over.comp_left_assoc, Category.assoc, ← Over.comp_left,
-      IsMonHom.one_hom, IsMonHom.one_hom, e]
-  · rw [Category.assoc, sqMap_snd, eSec, eSec, ← Over.comp_left_assoc, Category.assoc, ← Over.comp_left,
-      IsMonHom.one_hom, IsMonHom.one_hom, e]
-
-def sqPull (P : RigPic (G ⊗ G)) : RigPic (G' ⊗ G') :=
-  ⟨smallPull (sqMap h) P.1, by
-    rw [IsRigCls, ← smallPull_comp, eSec_sqMap]
-    exact (smallPull_comp _ _ _).trans ((congrArg _ P.2).trans (map_zero _))⟩
-
-theorem smallPull_diagCls {w : G ⟶ G} {w' : G' ⟶ G'} (hw : w'.left ≫ φ = φ ≫ w.left) (P : RigPic (G ⊗ G)) :
-    smallPull φ (diagCls w P) = diagCls w' (sqPull h P) := by
-  refine (smallPull_comp _ _ _).symm.trans (Eq.trans (congrArg (smallPull · P.1) ?_) (smallPull_comp _ _ _))
-  refine sq_hom_ext ?_ ?_
-  · rw [Category.assoc, Category.assoc, sqMap_fst, ← Over.comp_left, ← Over.comp_left_assoc, lift_fst, lift_fst]
-    simp
-  · rw [Category.assoc, Category.assoc, sqMap_snd, ← Over.comp_left, ← Over.comp_left_assoc, lift_snd, lift_snd, hw]
-
 end Classes
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
@@ -423,20 +298,7 @@ namespace tens
 
 variable {X X' : Scheme.{0}} (t : SAB H X) (Λ : Unim E)
 
-def ppCls : SmallPic (tens t Λ).G.left := smallCls (tens t Λ).PP.L (tens t Λ).PP.isLB
-
-def poiCls : RigPic ((tens t Λ).G ⊗ (tens t Λ).G) := rigCls (poi t Λ)
-
-def diag (P : RigPic ((tens t Λ).G ⊗ (tens t Λ).G)) : SmallPic (tens t Λ).G.left := diagCls ((tens t Λ).act.act H.w0) P
-
-theorem diag_poiCls : diag t Λ (poiCls t Λ) = ppCls t Λ :=
-  (smallPull_smallCls _ _ (pull_isLB (poi t Λ).isLB _)).trans ((smallCls_eq_iff _ _).2 (pp_iso_pull t Λ).symm)
-
 variable {t} {t' : SAB H X'} {f : X' ⟶ X} (m : SABMap t' t f)
-
-theorem smallPull_diag (P : RigPic ((tens t Λ).G ⊗ (tens t Λ).G)) :
-    smallPull (map Λ m).φ (diag t Λ P) = diag t' Λ (sqPull (map Λ m).cart P) :=
-  smallPull_diagCls _ ((map Λ m).act H.w0) P
 
 end tens
 
@@ -448,24 +310,6 @@ variable {S S' : Scheme.{0}} {O : Type} [CommRing O] {M : Type} [AddCommGroup M]
   [GrpObj A₁] [IsCommMonObj A₁] [GrpObj A₁'] [IsCommMonObj A₁']
   {a : OAct O G} {a' : OAct O G'} {b : OAct O A} {b' : OAct O A'} {a₁ : OAct O G₁} {a₁' : OAct O G₁'} {b₁ : OAct O A₁}
   {b₁' : OAct O A₁'}
-
-theorem mapRight_comm (t : IsTensor A b G a M) (t' : IsTensor A' b' G' a' M) (t₁ : IsTensor A₁ b₁ G₁ a₁ M)
-    (t₁' : IsTensor A₁' b₁' G₁' a₁' M) {f : S' ⟶ S} {φ : G₁.left ⟶ G.left} {φ' : G₁'.left ⟶ G'.left} {ψ : A₁.left ⟶ A.left}
-    {ψ' : A₁'.left ⟶ A'.left} (hψ : IsGrpPullback A₁ A f ψ) (hψ' : IsGrpPullback A₁' A' f ψ')
-    (hm : ∀ m, (t₁.tmul m).left ≫ ψ = φ ≫ (t.tmul m).left) (hm' : ∀ m, (t₁'.tmul m).left ≫ ψ' = φ' ≫ (t'.tmul m).left)
-    {q : G ⟶ G'} (hq : IsLinearHom a a' q) {q₁ : G₁ ⟶ G₁'} (hq₁ : IsLinearHom a₁ a₁' q₁) (e : q₁.left ≫ φ' = φ ≫ q.left) :
-    (t₁.mapRight t₁' hq₁).left ≫ ψ' = ψ ≫ (t.mapRight t' hq).left := by
-  have key : ∀ y : A₁ ⟶ A₁, pushHom hψ' A₁ (y ≫ t₁.mapRight t₁' hq₁) = pushHom hψ A₁ y ≫ t.mapRight t' hq := fun y => by
-    refine t₁.induction_on (P := fun y => pushHom hψ' A₁ (y ≫ t₁.mapRight t₁' hq₁) =
-      pushHom hψ A₁ y ≫ t.mapRight t' hq) y (by simp) (fun m x => Over.OverMorphism.ext ?_)
-      (fun y z hy hz => by rw [MonObj.mul_comp, map_mul, map_mul, MonObj.mul_comp, hy, hz])
-    rw [Category.assoc, IsTensor.tmul_mapRight]
-    change (x.left ≫ _ ≫ _) ≫ ψ' = ((x.left ≫ _) ≫ ψ) ≫ _
-    simp only [Category.assoc]
-    rw [hm', reassoc_of% e, reassoc_of% hm, ← Over.comp_left _ _ _ (t.tmul m), IsTensor.tmul_mapRight, Over.comp_left]
-  have e := congrArg (fun q => q.left) (key (𝟙 A₁))
-  rw [Category.id_comp] at e
-  exact e.trans (congrArg (· ≫ _) (Category.id_comp ψ))
 
 end MapRight
 
@@ -480,23 +324,6 @@ variable {R : Type} [CommRing R] (I : Ideal R) (e : ℕ)
 @[reassoc] theorem thickMap_snd (G : Over (Sp R)) :
     thickMap R I e G ≫ pullback.snd G.hom (thick R I (e + 1)) = pullback.snd G.hom (thick R I e) ≫ thickTrans R I e :=
   pullback.lift_snd _ _ _
-
-theorem isGrpPullback_thickMap (G : Over (Sp R)) [GrpObj G] :
-    IsGrpPullback (thickObj R I e G) (thickObj R I (e + 1) G) (thickTrans R I e) (thickMap R I e G) :=
-  (isGrpPullback_pullback G (thick R I (e + 1))).cancel
-    ((isGrpPullback_pullback G (thick R I e)).congr (Out.thickTrans_comp R I e).symm (thickMap_fst I e G).symm)
-    (thickMap_snd I e G)
-
-theorem map_thickMap {G G' : Over (Sp R)} (u : G ⟶ G') :
-    ((Over.pullback (thick R I e)).map u).left ≫ thickMap R I e G' =
-      thickMap R I e G ≫ ((Over.pullback (thick R I (e + 1))).map u).left := by
-  have h₁ : ∀ e, ((Over.pullback (thick R I e)).map u).left ≫ pullback.fst _ _ = pullback.fst _ _ ≫ u.left :=
-    fun _ => pullback.lift_fst _ _ _
-  have h₂ : ∀ e, ((Over.pullback (thick R I e)).map u).left ≫ pullback.snd _ _ = pullback.snd _ _ :=
-    fun _ => pullback.lift_snd _ _ _
-  apply pullback.hom_ext
-  · rw [Category.assoc, thickMap_fst, h₁, Category.assoc, h₁, thickMap_fst_assoc]
-  · rw [Category.assoc, thickMap_snd, reassoc_of% h₂, Category.assoc, h₂, thickMap_snd]
 
 end Thick
 
@@ -517,22 +344,6 @@ def qTens (e : ℕ) : thickObj R I e (tens t Λ).G ⟶ thickObj R I e (abTens U 
   ((tens.isTensor t Λ).pullback (thick R I e)).mapRight ((Λ.isTensor (abPartAct U)).pullback (thick R I e))
     (isLinearHom_q U e)
 
-theorem q_thickMap (e : ℕ) : (U.U.gt e).q.left ≫ thickMap R I e _ = thickMap R I e _ ≫ (U.U.gt (e + 1)).q.left := by
-  apply pullback.hom_ext
-  · rw [Category.assoc, thickMap_fst, Category.assoc]
-    exact (U.U.gt_q e).symm
-  · have h₁ : (U.U.gt e).q.left ≫ pullback.snd _ _ = pullback.snd _ _ := Over.w (U.U.gt e).q
-    have h₂ : (U.U.gt (e + 1)).q.left ≫ pullback.snd _ _ = pullback.snd _ _ := Over.w (U.U.gt (e + 1)).q
-    rw [Category.assoc, thickMap_snd, reassoc_of% h₁, Category.assoc, h₂, thickMap_snd]
-
-theorem qTens_thickMap (e : ℕ) : (qTens U Λ e).left ≫ thickMap R I e _ = thickMap R I e _ ≫ (qTens U Λ (e + 1)).left :=
-  mapRight_comm ((tens.isTensor t Λ).pullback (thick R I (e + 1))) ((Λ.isTensor (abPartAct U)).pullback (thick R I (e + 1)))
-    ((tens.isTensor t Λ).pullback (thick R I e)) ((Λ.isTensor (abPartAct U)).pullback (thick R I e))
-    (isGrpPullback_thickMap I e (tens t Λ).G) (isGrpPullback_thickMap I e (abTens U Λ))
-    (fun m => by rw [IsTensor.pullback_tmul, IsTensor.pullback_tmul]; exact map_thickMap I e _)
-    (fun m => by rw [IsTensor.pullback_tmul, IsTensor.pullback_tmul]; exact map_thickMap I e _)
-    (isLinearHom_q U (e + 1)) (isLinearHom_q U e) (q_thickMap U e)
-
 end Unif
 
 section Point
@@ -549,8 +360,6 @@ abbrev bPt : Over (Sp ↥(intO ↥C.S)) := (Over.pullback (spMap A.f)).obj (abTe
 abbrev gtLev (e : ℕ) : Over (Sp (↥(intO ↥C.S) ⧸ defIdeal A ^ (e + 1))) := thickObj _ (defIdeal A) e (gPt A Λ)
 
 abbrev bLev (e : ℕ) : Over (Sp (↥(intO ↥C.S) ⧸ defIdeal A ^ (e + 1))) := thickObj _ (defIdeal A) e (bPt A Λ)
-
-abbrev gtTrans (e : ℕ) : (gtLev A Λ e).left ⟶ (gtLev A Λ (e + 1)).left := thickMap _ (defIdeal A) e (gPt A Λ)
 
 def levToDat (G : Over (Sp A.R)) (e : ℕ) : (thickObj _ (defIdeal A) e ((Over.pullback (spMap A.f)).obj G)).left ⟶
     (thickObj A.R (maximalIdeal A.R) e G).left := hMap (φ := A.f) (hφ := le_rfl) G _ (𝟙 _)
@@ -573,39 +382,8 @@ def prLev (e : ℕ) : gtLev A Λ e ⟶ bLev A Λ e :=
     (prLev A Λ e).left ≫ levToDat A _ e = levToDat A _ e ≫ (qTens A.U Λ e).left :=
   (isGrpPullback_levToDat A (abTens A.U Λ) e).1.lift_fst _ _ _
 
-def prPt (e : ℕ) : (gtLev A Λ e).left ⟶ (bPt A Λ).left := (prLev A Λ e).left ≫ pullback.fst _ _
-
-theorem prPt_fst (e : ℕ) : prPt A Λ e ≫ pullback.fst _ _ = levToDat A _ e ≫ (qTens A.U Λ e).left ≫ pullback.fst _ _ := by
-  rw [prPt, Category.assoc, ← levToDat_fst, prLev_levToDat_assoc]
-
-theorem prPt_hom (e : ℕ) : prPt A Λ e ≫ (bPt A Λ).hom = pullback.fst _ _ ≫ (gPt A Λ).hom := by
-  have h : (prLev A Λ e).left ≫ pullback.snd _ _ = pullback.snd _ _ := Over.w (prLev A Λ e)
-  rw [prPt, Category.assoc, pullback.condition, pullback.condition, reassoc_of% h]
-
-theorem gtTrans_prPt (e : ℕ) : gtTrans A Λ e ≫ prPt A Λ (e + 1) = prPt A Λ e := by
-  apply pullback.hom_ext
-  · have h : gtTrans A Λ e ≫ levToDat A _ (e + 1) = levToDat A _ e ≫ thickMap _ _ e _ := Out.PullGtPf.hMap_thick _ _ _
-    rw [Category.assoc, prPt_fst, prPt_fst, reassoc_of% h, ← reassoc_of% qTens_thickMap, thickMap_fst]
-  · exact (Category.assoc _ _ _).trans ((congrArg _ (prPt_hom A Λ (e + 1))).trans
-      ((thickMap_fst_assoc _ _ _ _).trans (prPt_hom A Λ e).symm))
-
-abbrev GtPic : Type := FPic (X := fun e => (gtLev A Λ e).left) (gtTrans A Λ)
-
-def prPullPt (M : SmallPic (bPt A Λ).left) : GtPic A Λ := fpull (prPt A Λ) (gtTrans_prPt A Λ) M
-
-def completePt (L : SmallPic (gPt A Λ).left) : GtPic A Λ :=
-  fpull (fun _ => pullback.fst _ _) (fun e => thickMap_fst _ e _) L
-
 variable {X : Scheme.{0}} {π : X ⟶ Y.X} {t : SAB H X} (m : SABMap t Y.t π) (z : Sp ↥(intO ↥C.S) ⟶ X) (hz : z ≫ π = P.yt)
 
-
-include hz in
-theorem isGrpPullback_gPt_base : IsGrpPullback (gPt A Λ) (tens Y.t Λ).G (z ≫ π) (pullback.fst _ _ ≫ (tens.map Λ A.m).φ) :=
-  ((isGrpPullback_pullback _ (spMap A.f)).comp (tens.map Λ A.m).cart).congr (A.fac.trans hz.symm) rfl
-
-def gPtTo : (gPt A Λ).left ⟶ (tens t Λ).G.left :=
-  (tens.map Λ m).cart.1.lift (pullback.fst _ _ ≫ (tens.map Λ A.m).φ) ((gPt A Λ).hom ≫ z)
-    (by rw [(isGrpPullback_gPt_base A Λ z hz).1.w, Category.assoc])
 
 end Point
 
@@ -614,10 +392,6 @@ section Generic
 variable {Dw : Datum H} {Xo : ∀ l : Level H, Moduli Dw l} {p : ℕ} {W : ValuationSubring ℂ} {Y : LocalSystem Xo p W}
   {i₀ : Idx H p} (Z : Mdl Y i₀)
 
-def Mdl.tQ : SAB H Z.genO.toScheme := (Geo.Tor.exists_sab Z.genO.ι Z.t).choose
-
-def Mdl.tQMap : SABMap Z.tQ Z.t Z.genO.ι := (Geo.Tor.exists_sab Z.genO.ι Z.t).choose_spec.some
-
 end Generic
 
 section Record
@@ -625,28 +399,6 @@ section Record
 open Formalism.BasicNotions Formalism.MainNotions GlobalTheory.ShFam
 
 variable {D : D7} {A : Amb D} {N j : ℕ} {S : Sig A N j} {κ : Lv A} {p : ℕ}
-
-def thbTrue (ct : At S κ p) : ThbSt ct (uniTrue ct) where
-  LBG Λ := SmallPic (tens ct.Xm.t Λ).G.left
-  LBGq Λ := SmallPic (tens ct.Xm.tQ Λ).G.left
-  resQ {Λ} := smallPull (tens.map Λ ct.Xm.tQMap).φ
-  PPq Λ := tens.ppCls ct.Xm.tQ Λ
-  symmG := IsSymCls _
-  rigG := IsRigCls _
-  LBGt y Λ := GtPic (ct.dat y) Λ
-  LBB y Λ := SmallPic (bPt (ct.dat y) Λ).left
-  resGt {Λ} L y := completePt (ct.dat y) Λ (smallPull (gPtTo (ct.dat y) Λ ct.Xm.tMap y.z y.z_π) L)
-  prPull {y Λ} := prPullPt (ct.dat y) Λ
-  principal := IsPrincipalCls _
-  StrictHenselianAcyclic Λ := RigPic ((tens ct.Xm.t Λ).G ⊗ (tens ct.Xm.t Λ).G)
-  squareRootLineBundle Λ := RigPic ((tens ct.Xm.tQ Λ).G ⊗ (tens ct.Xm.tQ Λ).G)
-  res2 {Λ} := sqPull (tens.map Λ ct.Xm.tQMap).cart
-  PoiQ Λ := tens.poiCls ct.Xm.tQ Λ
-  biext := IsBiextCls
-  dg {Λ} := tens.diag ct.Xm.t Λ
-  dgq {Λ} := tens.diag ct.Xm.tQ Λ
-  dg_res {Λ} P := tens.smallPull_diag Λ ct.Xm.tQMap P
-  PPq_def Λ := (tens.diag_poiCls ct.Xm.tQ Λ).symm
 
 variable (ct : At S κ p) (Λ : (uniTrue ct).Unim)
 

@@ -57,7 +57,7 @@ private theorem cob_of_coord {H k₀ k : Type} [Field k₀] [Field k] [Algebra k
     refine (Module.forall_dual_apply_eq_zero_iff k₀ (z g)).1 fun φ => ?_
     obtain ⟨m, hm⟩ := h φ
     rw [hm g, ha g, one_mul, sub_self]
-  · push_neg at ha
+  · push Not at ha
     obtain ⟨g₀, hg₀⟩ := ha
     have hne : a g₀ - 1 ≠ 0 := sub_ne_zero.2 hg₀
     refine ⟨(a g₀ - 1)⁻¹ • z g₀, fun g => ?_⟩

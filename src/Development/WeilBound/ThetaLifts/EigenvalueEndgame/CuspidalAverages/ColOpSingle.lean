@@ -4,53 +4,8 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinet
 public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
 public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.KeyThree
 import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.LeSuccIff, Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.ColOpSingle
@@ -190,7 +145,7 @@ theorem piv_eq (h : IsUnif ϖ) (a : Fin n) (i : Fin d) (e e' : Fin n → Fin d �
     · intro hY
       refine ⟨fun x y => (hY x y).mono h (by rw [he]; split_ifs <;> omega), ?_⟩
       have := hY a i
-      rw [he, if_pos ⟨rfl, rfl⟩] at this
+      rw [he, ite_eq_left ⟨rfl, rfl⟩] at this
       exact ((le_succ_iff h).1 this).2
     · rintro ⟨hY, hn⟩ x y
       rw [he]
@@ -216,7 +171,7 @@ theorem move (h : IsUnif ϖ) (l : (Matrix (Fin n) (Fin d) k → ℂ) →ₗ[ℂ]
       l (fun Y => (Piv ϖ a i e).indicator 1 (Y + t • δ Y)) = l ((Piv ϖ a i e).indicator 1)) :
     l ((Piv ϖ a i e').indicator 1) = (GlobalTheory.SplitWeil.resCard k : ℂ) * l ((Piv ϖ a i e).indicator 1) := by
   set w := e' x₀ y₀ - e' a i with hw
-  have hai : e a i = e' a i := by rw [he, if_neg hne, add_zero]
+  have hai : e a i = e' a i := by rw [he, ite_eq_right hne, add_zero]
   have ht : ∀ ρ, Le ϖ 0 ρ → Le ϖ w (-(ρ * (ϖ : k) ^ w)) := fun ρ hρ => by
     have := (le_mul_iff (val_zpow w)).2 hρ
     rw [zero_add] at this
@@ -254,7 +209,7 @@ theorem move (h : IsUnif ϖ) (l : (Matrix (Fin n) (Fin d) k → ℂ) →ₗ[ℂ]
       refine ⟨⟨this, hp⟩, ?_⟩
       rw [← le_mul_iff h5, hent h6, add_comm 1]
       have := hZ x₀ y₀
-      rwa [he, if_pos ⟨rfl, rfl⟩] at this
+      rwa [he, ite_eq_left ⟨rfl, rfl⟩] at this
     · rintro ⟨⟨hY, hp⟩, h7⟩
       obtain ⟨h5, h6⟩ := hd _ hp
       rw [← le_mul_iff h5, hent h6, add_comm 1] at h7
@@ -309,7 +264,7 @@ theorem what₂ (h : IsUnif ϖ) (hl : LeftLaw ξ l) (a : Fin n) (i : Fin d) (p :
       by_cases hx : x = a' <;> by_cases hy : y = i <;> simp [ex, hx, hy, ha, hT1]
     · intro Y hY x y
       by_cases hx : x = a'
-      · simp only [Matrix.of_apply, if_pos hx]
+      · simp only [Matrix.of_apply, ite_eq_left hx]
         refine (hY a y).mono h ?_
         by_cases hy : y = i <;> simp [ex, hx, hy, hT1, hb]
       · simpa [hx] using Le.zero _
@@ -350,7 +305,7 @@ theorem cols (h : IsUnif ϖ) (hψ : ∀ x, Le ϖ c x → ψ x = 1) (hl : ColLaw 
       by_cases hx : x = a <;> by_cases hy : y = j <;> simp [ex, hx, hy, hj, hU1]
     · intro Y hY x y
       by_cases hy : y = j
-      · simp only [Matrix.of_apply, if_pos hy]
+      · simp only [Matrix.of_apply, ite_eq_left hy]
         refine (hY x i₀).mono h ?_
         have := hb j
         by_cases hx : x = a <;> simp [ex, hx, hy, hU1]
@@ -389,7 +344,7 @@ theorem scale (h : IsUnif ϖ) (hl : LeftLaw ξ l) (a : Fin n) (i : Fin d) (p : �
       rw [Function.update_self, mul_comm, ← le_mul_iff hv]
       by_cases hy : y = i <;> simp [ex, hy]
     · by_cases hy : y = i <;> simp [ex, hy, hx]
-  · simp only [ex, Matrix.diagonal_mul, Function.update_self, map_mul, true_or, if_true]
+  · simp only [ex, Matrix.diagonal_mul, Function.update_self, map_mul, true_or, ite_true]
     rw [zpow_add_one₀ (u_pos ϖ).ne', mul_comm, mul_left_inj' (u_pos ϖ).ne']
 
 theorem trace (h : IsUnif ϖ) (hi : i₀ ≠ i₁) (a : Fin n) (p : ℤ) (β γ γ' : Fin d → ℤ) (h1 : ∀ y, y ≠ i₁ → γ' y = γ y)
@@ -583,10 +538,10 @@ theorem locTwo_of (H : LocSupp) : LocTwo := by
   refine Set.indicator_eq_indicator (forall₂_congr fun a b => ?_) rfl
   rw [torus, Matrix.mul_diagonal, ← le_zero_iff (ϖ := ϖ)]
   by_cases h0 : b = i₀
-  · simp only [if_pos h0, Finset.mem_univ, if_true]
+  · simp only [ite_eq_left h0, Finset.mem_univ, ite_true]
     rw [← le_mul_iff (e := -(m : ℤ)) (val_zpow m), neg_add_cancel, zpow_natCast]
   · by_cases h1 : b = i₁
-    · simp only [if_neg h0, bs, if_pos h1]
+    · simp only [ite_eq_right h0, bs, ite_eq_left h1]
       rw [← le_mul_iff (e := (m : ℤ)) (val_zpow (-m)), add_neg_cancel, zpow_neg, zpow_natCast]
     · simp [h0, h1, bs]
 

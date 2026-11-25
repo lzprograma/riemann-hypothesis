@@ -31,8 +31,8 @@ theorem vertR_eq_finsum (P : Ideal (MRing ι)) {n : ℕ} (L : Fin n → HermLine
   refine finsum_congr fun W => ?_
   simp only [Set.indicator, divCycle, Finsupp.ofSupportFinite_coe, vertWeight]
   by_cases hW : W ∈ divSupp P s
-  · rw [if_pos hW, if_pos hW]
-  · rw [if_neg hW, if_neg hW, Nat.cast_zero, zero_mul]
+  · rw [ite_eq_left hW, ite_eq_left hW]
+  · rw [ite_eq_right hW, ite_eq_right hW, Nat.cast_zero, zero_mul]
 
 theorem finite_support (P : Ideal (MRing ι)) {n : ℕ} (L : Fin n → HermLine ι) (s : MRing ι) :
     (Function.support fun W => (divCycle P s W : ℝ) * vertWeight L W).Finite :=
@@ -55,10 +55,10 @@ theorem vertR_sub (P : Ideal (MRing ι)) {n : ℕ} (L : Fin n → HermLine ι) (
     · by_cases hWE : W = E
       · subst hWE
         have hR : (divCycle P s₂ W : ℝ) = divCycle P s₁ W + 1 := by exact_mod_cast hE
-        rw [if_pos rfl, hR]
+        rw [ite_eq_left rfl, hR]
         ring
-      · rw [if_neg hWE, hW W hWh hWE, sub_self]
-  rw [finsum_congr hpt, finsum_eq_single _ E (fun W hW => if_neg hW), if_pos rfl]
+      · rw [ite_eq_right hWE, hW W hWh hWE, sub_self]
+  rw [finsum_congr hpt, finsum_eq_single _ E (fun W hW => ite_eq_right hW), ite_eq_left rfl]
   simp [vertWeight, hhor]
 
 end StackedGraphFibre

@@ -136,7 +136,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensiona
 private theorem contDiff_finsum_lattice_translate (Λ : Submodule ℤ E) [DiscreteTopology Λ] (φ : E → ℝ)
     (hφ : HasCompactSupport φ) (hs : ContDiff ℝ ∞ φ) :
     ContDiff ℝ ∞ fun z => ∑ᶠ l : Λ, φ (z + l) :=
-  contDiff_finsum_of_locallyFinite_support (fun l => hs.comp (contDiff_id.add contDiff_const))
+  contDiff_finsum_of_locallyFinite_support (fun _ => hs.comp (contDiff_id.add contDiff_const))
     (_root_.GlobalTheory.PeriodicPartition.locallyFinite_support_translate Λ φ hφ)
 
 open Complex Matrix in

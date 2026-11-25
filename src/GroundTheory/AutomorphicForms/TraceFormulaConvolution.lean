@@ -83,33 +83,7 @@ theorem finite_setOf_mem_of_isCompact [IsTopologicalGroup G] {C : Set G} (hC : I
   have hcl : IsClosed (Γ : Set G) := Subgroup.isClosed_of_discrete
   exact (hcl.isClosedEmbedding_subtypeVal.isProperMap.isCompact_preimage hC).finite_of_discrete
 
-section Kernel
-
-variable (μ : Measure G) [μ.IsMulLeftInvariant] [IsFiniteMeasureOnCompacts μ]
-
-variable [CompactSpace (RightCosetSpace Γ)]
-
-end Kernel
-
-section Operator
-
-variable (μ : Measure G) [μ.IsMulLeftInvariant] [μ.IsMulRightInvariant] [IsFiniteMeasureOnCompacts μ]
-  [CompactSpace (RightCosetSpace Γ)]
-
-end Operator
-
 end RightCosetSpace
-
-section TotallyDisconnected
-
-variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G]
-  [T2Space G] [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G]
-
-variable (μ : Measure G) [μ.IsMulLeftInvariant] [IsFiniteMeasureOnCompacts μ]
-
-variable [TotallyDisconnectedSpace G]
-
-end TotallyDisconnected
 
 namespace RightCosetSpace
 

@@ -41,15 +41,15 @@ def dataOf (h : GenFrEx Xo c)
   wde := wtZ ude.1 ude.2
   ord Z v := ordC (δ Z v) v
   nrm Z := nrmC fn (yP Z)
-  M := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun Z => Algebra.toModule
+  M := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun _ => Algebra.toModule
     Submodule.span (𝓞 c.F) (valG h uka '' MR)
-  WW := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun Z => Algebra.toModule
+  WW := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun _ => Algebra.toModule
     Submodule.span (𝓞 c.F) (Set.range fun k => valG h uL (wR k))
-  Thp := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun Z => Algebra.toModule
+  Thp := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun _ => Algebra.toModule
     Submodule.span (𝓞 c.F) (Set.range fun k => valG h uF (thpR k))
-  Th0 := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun Z => Algebra.toModule
+  Th0 := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun _ => Algebra.toModule
     Submodule.span (𝓞 c.F) (Set.range fun k => valG h uF0 (th0R k))
-  Thk := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun Z => Algebra.toModule
+  Thk := letI : ∀ Z : Comp Xo c, Module (𝓞 c.F) (AC Z) := fun _ => Algebra.toModule
     Submodule.span (𝓞 c.F) (Set.range fun k => valG h uka (thkR k))
   w k := valG h uL (wR k)
   jc := jc

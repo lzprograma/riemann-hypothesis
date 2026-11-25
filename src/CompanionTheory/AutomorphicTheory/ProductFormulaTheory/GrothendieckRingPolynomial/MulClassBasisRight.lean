@@ -11,8 +11,6 @@ noncomputable section
 
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult GlobalTheory.ProdReorder
 
-
-
 namespace CompanionTheory.Groth
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -25,7 +23,7 @@ theorem class_congr_equiv {N : ℕ} {V W : Type} [AddCommGroup V] [Module ℂ V]
   obtain ⟨φ⟩ := φ
   unfold cl0
   by_cases h : HasFiniteLength π
-  · rw [dif_pos h, dif_pos (h.of_equiv φ)]
+  · rw [dite_eq_left h, dite_eq_left (h.of_equiv φ)]
     exact clsGL_congr φ _ _
   · rw [dite_eq_right h, dite_eq_right (fun h' => h (h'.of_equiv φ.symm))]
 
@@ -36,7 +34,7 @@ theorem class_induced_cast {r t N : ℕ} (h : r + t = N) {W : Type} [AddCommGrou
   rfl
 
 theorem class_of_chosen_rep (x : IrrGL (k := k)) : cl0 (IrrGL.rep x) = sg x := by
-  exact (dif_pos x.2.rep.hasFiniteLength).trans ((clsGL_irr x.2.rep x.2.rep.hasFiniteLength).trans
+  exact (dite_eq_left x.2.rep.hasFiniteLength).trans ((clsGL_irr x.2.rep x.2.rep.hasFiniteLength).trans
     (congrArg (fun c => Finsupp.single (⟨x.1, c⟩ : IrrGL (k := k)) (1 : ℤ)) x.2.cl_rep))
 
 theorem mulR_sg (x y : IrrGL (k := k)) : mulR (sg x) (sg y) = cl0 (prod₂ (IrrGL.rep x) (IrrGL.rep y)) := by

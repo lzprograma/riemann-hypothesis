@@ -2,45 +2,6 @@ module
 
 public import Formalism.CharacterColumnKernels.StatementRho
 public import Formalism.WachLatticeTwists.HodgeTateChains.InvariantsCohomologyData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.WachLatticeTwists.CoprimeLiftBounds.Statement
 
 @[expose] public section
@@ -60,16 +21,6 @@ def QuotShape {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {
     (π : (Hc ⧸ F.comap Hc.subtype) →ₗ[O] Cy),
     Function.Injective ι ∧ Function.Exact ι π ∧ ∃ c0 : Cy, ∀ y : Cy, ∃ a : O, y = a • c0
 
-section Defs
-variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
-  {A T' G : Type} [Ring A] [Algebra O A] [CommRing T'] [Algebra T' A] [Group G]
-
-end Defs
-
-def HZeroHypotheses {ℓ : ℕ} [Fact ℓ.Prime] (D : InvariantsCohomologyData ℓ) (w : ℤ_[ℓ]ˣ) (m : ℕ) (U : Finset ℤ) : Prop :=
-  1 ≤ m ∧ (ℓ = 2 → 2 ≤ m) ∧ PadicInt.valuation ((w : ℤ_[ℓ]) - 1) = m ∧ 0 ∉ U ∧ U.Nonempty ∧
-  D.piece.Inputs w U 0 ∧ D.Union ∧ D.Flat ∧ D.LES ∧ D.Inv
-
 structure HZeroRowPlaceData (ℓ : ℕ) [Fact ℓ.Prime] (O : Type) [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] (d : Type) (Mrow : Type) [AddCommGroup Mrow] [Module O Mrow] where
 
@@ -85,15 +36,6 @@ structure HZeroRowPlaceData (ℓ : ℕ) [Fact ℓ.Prime] (O : Type) [CommRing O]
   inc : Mrow →ₗ[O] Cs
 
 attribute [instance] HZeroRowPlaceData.gCs HZeroRowPlaceData.mCs
-
-def HZeroTorsionLengthOnePlace : Prop :=
-  ∀ (ℓ : ℕ) [Fact ℓ.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
-    (d : Type) [Fintype d] (Mrow : Type) [AddCommGroup Mrow] [Module O Mrow]
-    (B : HZeroRowPlaceData ℓ O d Mrow) (w : ℤ_[ℓ]ˣ) (m : ℕ) (U : Finset ℤ),
-    HZeroHypotheses B.D w m U → Function.Injective B.inc →
-    Submodule.torsion O B.Cs ≤ LinearMap.range B.con →
-    ∃ H : Submodule O (d → KO O), (∀ x ∈ H, ((ℓ : O) ^ c0 ℓ m U) • x = 0) ∧
-      Module.length O (Submodule.torsion O Mrow) ≤ Module.length O H
 
 def StatBKbConv : Prop :=
   ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]

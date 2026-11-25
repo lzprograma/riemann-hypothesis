@@ -61,8 +61,6 @@ noncomputable section
 open scoped Matrix NNReal Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.Pj GlobalTheory.AutomorphicL2Unitary GlobalTheory.Doubling GlobalTheory.Cont
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.StdUnn.PolesModel
 
 open GlobalTheory.StdUnn GlobalTheory.StdUnn.HeightExists GlobalTheory.Eis

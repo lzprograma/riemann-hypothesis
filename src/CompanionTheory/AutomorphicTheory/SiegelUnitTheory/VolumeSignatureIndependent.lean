@@ -49,8 +49,6 @@ namespace CompanionTheory.HU
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.StandardLattice Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def SiegelOneAll : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E),
     Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsCMExt F E σ → ∀ (M : ℕ) (J : Matrix (Fin M) (Fin M) E),
@@ -494,12 +492,12 @@ theorem GlobalTheory.CompanionTheory.SW.QTie.fib_eq_gramFib : ∀ (F E : Type) [
     if IsUnit (OneHerm.hermHalf R σ S) then fib (OneHerm.hermHalf R σ S) else 0
   have hm'u : ∀ s : R, IsUnit s → m' (hermScal R σ s) = fib s := by
     intro s hs
-    simp only [m', OneHerm.hermHalf_hermScal R hσ, hs, if_true]
+    simp only [m', OneHerm.hermHalf_hermScal R hσ, hs, ite_true]
   have hm' : IsGramFib R σ J 1 μ (ν.map (hermScal R σ)) m' := by
     refine ⟨?_, ?_, ?_⟩
     · intro S
       by_cases hS : IsUnit (OneHerm.hermHalf R σ S)
-      · have : m' S = fib (OneHerm.hermHalf R σ S) := by simp only [m', hS, if_true]
+      · have : m' S = fib (OneHerm.hermHalf R σ S) := by simp only [m', hS, ite_true]
         rw [this]
         refine measure_mono_null ?_ (hf1 (OneHerm.hermHalf R σ S))
         intro X hX hX'
@@ -511,7 +509,7 @@ theorem GlobalTheory.CompanionTheory.SW.QTie.fib_eq_gramFib : ∀ (F E : Type) [
         · change IsUnit (gramR R σ J X).det
           rw [hgf X, hdet, ← hq, hqX]
           exact hS
-      · have : m' S = 0 := by simp only [m', hS, if_false]
+      · have : m' S = 0 := by simp only [m', hS, ite_false]
         rw [this]
         rfl
     · intro φ hφ
@@ -531,7 +529,7 @@ theorem GlobalTheory.CompanionTheory.SW.QTie.fib_eq_gramFib : ∀ (F E : Type) [
       obtain ⟨hi, hcont⟩ := hf3 φ hφ hφc (Set.subset_univ _)
       refine ⟨fun S hS => ?_, ?_⟩
       · have hS' : IsUnit (OneHerm.hermHalf R σ S) := (hdet S).mp hS
-        have : m' S = fib (OneHerm.hermHalf R σ S) := by simp only [m', hS', if_true]
+        have : m' S = fib (OneHerm.hermHalf R σ S) := by simp only [m', hS', ite_true]
         rw [this]
         exact hi _ hS'
       · have hmaps : Set.MapsTo (OneHerm.hermHalf R σ) {S : HermR R σ 1 | IsUnit (S : Matrix (Fin 1) (Fin 1) (R ⊗[F] E)).det} {c | IsUnit c} :=
@@ -539,7 +537,7 @@ theorem GlobalTheory.CompanionTheory.SW.QTie.fib_eq_gramFib : ∀ (F E : Type) [
         refine (hcont.comp (OneHerm.continuous_hermHalf R σ).continuousOn hmaps).congr ?_
         intro S hS
         have hS' : IsUnit (OneHerm.hermHalf R σ S) := (hdet S).mp hS
-        have : m' S = fib (OneHerm.hermHalf R σ S) := by simp only [m', hS', if_true]
+        have : m' S = fib (OneHerm.hermHalf R σ S) := by simp only [m', hS', ite_true]
         simp only [this, Function.comp]
   have := GlobalTheory.CompanionTheory.SW.GramFib.fibre_unique F E σ hσ M J hJ R hR 1 μ (ν.map (hermScal R σ)) m hμ hν' hm m' hm'
     (hermScal R σ c)

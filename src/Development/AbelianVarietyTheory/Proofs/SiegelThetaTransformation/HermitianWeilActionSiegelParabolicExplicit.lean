@@ -5,50 +5,9 @@ public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.QuadCocycle
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHEqThSDictionary
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.CStarAlgebra.CStarMatrix
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -62,12 +21,6 @@ noncomputable section
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {Ψ : Finset (E →+* ℂ)} {n N : ℕ}
 
-
-open Matrix Complex NumberField Filter Topology in
-open scoped ComplexConjugate ComplexOrder Real in
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {Ψ : Finset (E →+* ℂ)} {n N : ℕ} in
-private lemma isIntegral_int_natCast {E : Type} [Field E] (k : ℕ) : IsIntegral ℤ (k : E) := by
-  simpa using isIntegral_algebraMap (R := ℤ) (A := E) (x := (k : ℤ))
 
 open Matrix Complex NumberField Filter Topology in
 open scoped ComplexConjugate ComplexOrder Real in
@@ -103,8 +56,7 @@ private lemma map_trace_mul_mul_ccT_eq_trace_conjTranspose {E : Type} [Field E] 
     (τ : E →+* ℂ) (M P : Matrix (Fin n) (Fin N) E) (β : Matrix (Fin N) (Fin N) E) :
     τ (M * β * _root_.GlobalTheory.SW.ccT P).trace = (M.map τ * β.map τ * (P.map τ)ᴴ).trace := by
   rw [← _root_.GlobalTheory.SW.HAct.map_ccT, ← Matrix.map_mul, ← Matrix.map_mul]
-
-  simp only [Matrix.trace, Matrix.diag, map_sum, Matrix.map_apply]
+  exact AddMonoidHom.map_trace τ _
 
 open Matrix Complex NumberField Filter Topology in
 open scoped ComplexConjugate ComplexOrder Real in
@@ -178,11 +130,10 @@ theorem _root_.GlobalTheory.SW.Parab.isSB_chiH (hΨ : _root_.GlobalTheory.SW.IsT
     set t : E := 2 * (y * ((d : E) • β) * _root_.GlobalTheory.SW.ccT ((R : E) • x)).trace +
       2 * ((R : E) ^ 2 * d) * (y * ((d : E) • β) * _root_.GlobalTheory.SW.ccT y).trace with ht
     have htI : IsIntegral ℤ t := by
+      have h2I : IsIntegral ℤ (2 : E) := by simpa using isIntegral_natCast (R := ℤ) (B := E) 2
       refine IsIntegral.add ?_ ?_
-      · exact (by simpa using isIntegral_int_natCast (E := E) 2 : IsIntegral ℤ (2 : E)).mul
-          (isIntegral_trace_mul_mul_ccT_of_intM hy hdβ' hRx)
-      · exact ((by simpa using isIntegral_int_natCast (E := E) 2 : IsIntegral ℤ (2 : E)).mul
-          (((isIntegral_int_natCast R).pow 2).mul (isIntegral_int_natCast d))).mul
+      · exact h2I.mul (isIntegral_trace_mul_mul_ccT_of_intM hy hdβ' hRx)
+      · exact (h2I.mul (((isIntegral_natCast R).pow 2).mul (isIntegral_natCast d))).mul
           (isIntegral_trace_mul_mul_ccT_of_intM hy hdβ' hy)
     obtain ⟨m, hm⟩ := exists_int_sum_embeddings_eq_of_isIntegral t htI
     have hsum : ∑ τ : Ψ, τ.1 ((x + ((2 * R * d : ℕ) : E) • y) * β *
@@ -348,13 +299,7 @@ private lemma transH_chiH_mul_comp_of_toBlocks₂₁_eq_zero {E : Type} [Field E
     _root_.GlobalTheory.SW.TransH Ψ γ φ (fun x => (∏ τ : Ψ, τ.1 γ.toBlocks₂₂.det ^ n) *
       _root_.GlobalTheory.SW.chiH Ψ (-(γ.toBlocks₁₂ * _root_.GlobalTheory.SW.ccT γ.toBlocks₁₁)) x *
         φ (x * γ.toBlocks₁₁)) := by
-  have hdetA : IsUnit γ.toBlocks₁₁.det := by
-    have h := (_root_.GlobalTheory.SW.HAct.group_part hγ).1
-    have hγ' : γ = fromBlocks γ.toBlocks₁₁ γ.toBlocks₁₂ 0 γ.toBlocks₂₂ := by
-      rw [← h0]
-      exact (fromBlocks_toBlocks γ).symm
-    rw [hγ', det_fromBlocks_zero₂₁] at h
-    exact (IsUnit.mul_iff.1 h).1
+  have hdetA : IsUnit γ.toBlocks₁₁.det := (isUnit_det_diag_blocks_of_lower_zero hγ h0).1
   set A := γ.toBlocks₁₁ with hA
   set B := γ.toBlocks₁₂ with hB
   set D := γ.toBlocks₂₂ with hD

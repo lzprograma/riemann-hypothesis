@@ -56,8 +56,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
@@ -66,19 +64,7 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.G
 
 open scoped nonZeroDivisors
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.TorusRM.TransFrame
-
-private theorem differentiableOn_finprod {E κ : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {S : Set E}
-    (s : Finset κ) (φ : κ → E → ℂ) (h : ∀ k, DifferentiableOn ℂ (φ k) S) :
-    DifferentiableOn ℂ (fun z => ∏ k ∈ s, φ k z) S := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using differentiableOn_const (1 : ℂ)
-  | insert a s ha ih =>
-    simp only [Finset.prod_insert ha]
-    exact (h a).mul ih
 
 section
 
@@ -104,8 +90,7 @@ def holCombUnif (hF : ∀ k, Differentiable ℂ (F k)) (h : ∀ k z, u'.ex (F k 
     hol := u.hol
     fr := fun (j : K → L'.ι) z => ∏ k, u'.fr (j k) (F k z) ^ ε k
     fr_hol := fun j => by
-      refine differentiableOn_finprod Finset.univ
-        (fun k (z : Fin g → ℂ) => u'.fr (j k) (F k z) ^ ε k) fun k => ?_
+      refine CanTh.differentiableOn_prod_fun Finset.univ fun k _ => ?_
       refine DifferentiableOn.zpow ?_ (Or.inl fun z hz => u'.fr_ne _ _ (hc j z hz k))
       exact (u'.fr_hol (j k)).comp (hF k).differentiableOn fun z hz => hc j z hz k
     fr_ne := fun j z hz => Finset.prod_ne_zero_iff.2 fun k _ => zpow_ne_zero _ (u'.fr_ne _ _ (hc j z hz k))
@@ -275,7 +260,7 @@ theorem transUnif_factor (u : HolUnif A M g) {Hm : Matrix (Fin g) (Fin g) ℂ} {
   have e3 := hF.2.2 l (J PUnit.unit ⟨{0, 1}⟩) (z + w) c3
   rw [transUnif_fr, transUnif_fr, prod_ulift_finset_fin_two_eq, prod_ulift_finset_fin_two_eq]
   simp only [shiftVec, expo]
-  simp only [Finset.notMem_empty, if_false, Finset.mem_singleton, Finset.mem_insert, Finset.card_empty,
+  simp only [Finset.notMem_empty, ite_false, Finset.mem_singleton, Finset.mem_insert, Finset.card_empty,
     Finset.card_singleton]
   norm_num
   rw [e1, e3, add_dotProduct, show z + l + w = z + w + l by abel]
@@ -287,8 +272,6 @@ theorem transUnif_factor (u : HolUnif A M g) {Hm : Matrix (Fin g) (Fin g) ℂ} {
           Real.pi / 2 * ((l : Fin g → ℂ) ⬝ᵥ Hm.mulVec (star (l : Fin g → ℂ)))) := by
     rw [← Complex.exp_add]; ring_nf
   rw [hexp]
-  have nE := Complex.exp_ne_zero (Real.pi * (z ⬝ᵥ Hm.mulVec (star (l : Fin g → ℂ))) +
-          Real.pi / 2 * ((l : Fin g → ℂ) ⬝ᵥ Hm.mulVec (star (l : Fin g → ℂ))))
   field_simp
 
 end GlobalTheory.TorusRM.TransFrame

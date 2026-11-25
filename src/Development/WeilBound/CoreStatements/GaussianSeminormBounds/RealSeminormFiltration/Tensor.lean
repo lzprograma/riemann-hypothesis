@@ -91,7 +91,7 @@ private lemma spectrum_nonempty_of_countable_rank {V : Type} [AddCommGroup V] [_
     rw [Cardinal.mk_complex] at h1
     exact absurd (h1.trans hV) (not_le.mpr Cardinal.aleph0_lt_continuum)
   rw [linearIndependent_iff'] at hdep
-  push_neg at hdep
+  push Not at hdep
   obtain ⟨s, m, hm, i, hi, hmi⟩ := hdep
   let q : ℂ → ℂ[X] := fun a => ∏ j ∈ s.erase a, (X - C j)
   let p : ℂ[X] := ∑ a ∈ s, C (m a) * q a
@@ -258,7 +258,7 @@ theorem schur_countable {B V : Type} [Ring B] [Algebra ℂ B] [AddCommGroup V] [
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
   have hev : Function.Injective ev := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro T hT
     by_contra h0
     exact hv ((LinearMap.injective_of_ne_zero h0) (by rw [map_zero]; exact hT))

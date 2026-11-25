@@ -156,7 +156,7 @@ theorem famN_flow (e : X.Ψ → Fin r → ℂ) (s : X.Ψ → ℂ) (x : Frame X.�
       hermC τ.1 X.Gm (fun d => x τ d (Fin.castLE h a)) (e τ)) * e τ c
   unfold Data.flowMatV hermC
   simp only [Matrix.of_apply, sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [sub_eq_add_neg]
   congr 1
   simp only [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_neg_distrib]

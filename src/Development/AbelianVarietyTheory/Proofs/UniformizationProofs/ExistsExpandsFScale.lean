@@ -49,14 +49,10 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace MonoidalCategory
   CartesianMonoidalCategory MonObj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ExpFieldCompare
 
@@ -122,12 +118,10 @@ theorem comb_iff (X : Submodule R (V₀ × ∀ j, P₀ j))
       choose m hm using hr
       refine (hE _ _).2 ⟨r, nonZeroDivisors.coe_ne_zero r, ∑ i, m i • x i,
         Submodule.sum_mem _ fun i _ => X.smul_mem _ (hx i), ?_, fun j => ?_⟩
-      · set_option synthInstance.maxHeartbeats 100000 in
-          rw [Finset.smul_sum, Prod.fst_sum, map_sum]
+      · rw [Finset.smul_sum, Prod.fst_sum, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [Prod.smul_fst, map_smulₛₗ, hm, smul_smul, Algebra.smul_def]
-      · set_option synthInstance.maxHeartbeats 100000 in
-          rw [hw', Finset.smul_sum, Prod.snd_sum, Finset.sum_apply, map_sum]
+      · rw [hw', Finset.smul_sum, Prod.snd_sum, Finset.sum_apply, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [Prod.smul_snd, Pi.smul_apply, map_smulₛₗ, hm, smul_smul, Algebra.smul_def]
     · simp only [hw']

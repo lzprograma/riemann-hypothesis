@@ -7,52 +7,8 @@ import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -99,8 +55,8 @@ theorem IsPol.up {d : ℕ} {f : ℂ → X} (hf : IsPol d f) : IsPol (d + 1) f :=
   obtain ⟨c, h⟩ := hf
   refine ⟨fun s => if s < d then c s else 0, fun u => ?_⟩
   rw [Finset.sum_range_succ, h u]
-  simp only [lt_irrefl, if_false, smul_zero, add_zero]
-  exact Finset.sum_congr rfl (fun s hs => by rw [if_pos (Finset.mem_range.mp hs)])
+  simp only [lt_irrefl, ite_false, smul_zero, add_zero]
+  exact Finset.sum_congr rfl (fun s hs => by rw [ite_eq_left (Finset.mem_range.mp hs)])
 
 theorem IsPol.shift {d : ℕ} {f : ℂ → X} (hf : IsPol d f) : IsPol (d + 1) (fun u => u • f u) := by
   obtain ⟨c, h⟩ := hf
@@ -190,8 +146,8 @@ private theorem shift_sum_lemma {W : Type} [AddCommGroup W] [Module ℂ W] (d : 
 private theorem ite_sum_lemma_2 {W : Type} [AddCommGroup W] [Module ℂ W] (d : ℕ) (b : ℕ → W) (u : ℂ) :
     ∑ s ∈ Finset.range (d + 1), u ^ s • (if s < d then b s else 0) = ∑ s ∈ Finset.range d, u ^ s • b s := by
   rw [Finset.sum_range_succ]
-  simp only [lt_irrefl, if_false, smul_zero, add_zero]
-  exact Finset.sum_congr rfl (fun s hs => by rw [if_pos (Finset.mem_range.mp hs)])
+  simp only [lt_irrefl, ite_false, smul_zero, add_zero]
+  exact Finset.sum_congr rfl (fun s hs => by rw [ite_eq_left (Finset.mem_range.mp hs)])
 
 private theorem coeff_sum_lemma_3 {W : Type} [AddCommGroup W] [Module ℂ W] (d : ℕ) (P : ℂ[X])
     (hP : P.natDegree < d + 1) (Y : W) (u : ℂ) :
@@ -227,7 +183,7 @@ theorem ch_abstract {W : Type} [AddCommGroup W] [Module ℂ W] (G : Submodule �
   have hg : ∀ i ∈ Finset.range d, (if i < d then A i ((K ^ (i + 1)) X) else 0) =
       shiftC (fun t => A t ((K ^ (i + 1)) X)) (i + 1) := by
     intro i hi
-    rw [if_pos (Finset.mem_range.mp hi)]
+    rw [ite_eq_left (Finset.mem_range.mp hi)]
     rfl
   rw [Finset.sum_congr rfl hg, ← Finset.sum_sub_distrib,
     Finset.sum_range_sub' (fun i => shiftC (fun t => A t ((K ^ i) X)) i)]
@@ -329,7 +285,7 @@ theorem comat (hE : GlRel E) (u : ℂ) (X : Fin (N + 1) → V) (i : Fin (N + 1))
 
   rw [← Finset.smul_sum, ← map_sum]
   congr 2
-  simp only [Tm_apply, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true, Pi.add_apply,
+  simp only [Tm_apply, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Pi.add_apply,
     Pi.smul_apply, EE_apply]
 
 theorem detCov (hE : GlRel E) {m : Fin (N + 1) → ℂ} {v : V} (hv : v ∈ CapSp E m) {X : Fin (N + 1) → V}

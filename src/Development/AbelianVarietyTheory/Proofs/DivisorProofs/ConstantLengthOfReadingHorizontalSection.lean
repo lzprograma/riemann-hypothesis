@@ -50,8 +50,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemCon
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.BdryUnit
@@ -272,8 +270,8 @@ theorem rdU_eq_mul_horizGen {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (hσ : Good
     (by rw [(F.Di (ik k)).rank, (F.sig _).1, (F.sig _).2, add_comm])
   obtain ⟨κ, -, hκ⟩ := hh σ hσ g _ (PeriodRowsCompare.isTypeFn_letters c σ hσ e) F (ik k)
     (x₀ ∘ finSumFinEquiv) (hx₀.comp _ finSumFinEquiv.injective)
-  have hp : Dw.p = Dw.mult τ.1 := (if_pos τ.2).symm
-  have hq : Dw.q = Dw.mult (conjEmb τ.1) := (if_neg (conj_not_mem τ)).symm
+  have hp : Dw.p = Dw.mult τ.1 := (ite_eq_left τ.2).symm
+  have hq : Dw.q = Dw.mult (conjEmb τ.1) := (ite_eq_right (conj_not_mem τ)).symm
   let ε : Fin Dw.q ⊕ Fin Dw.p ≃ Fin r :=
     ((Equiv.sumCongr Fin.revPerm (Equiv.refl _)).trans finSumFinEquiv).trans (finCongr (by omega))
   have hε₁ : ∀ b, (ε (.inl b) : ℕ) = Dw.q - 1 - b := fun b => by simp [ε]; omega
@@ -289,7 +287,7 @@ theorem rdU_eq_mul_horizGen {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (hσ : Good
   obtain ⟨P, hP, hPer, hx, hder, -⟩ := hper k y
   obtain ⟨a, ha⟩ := exists_matches Y V τ (U.un k y) hy
   have hval : rdU U f k y = sig (CAt σ) (algebraMap c.F (CAt σ)) a := by
-    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, y.2, dif_pos]
+    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, y.2, dite_eq_left]
     haveI : IsLocalRing (CAt σ) := inferInstanceAs (IsLocalRing ℂ)
     exact hr (CAt σ) _ (FlagTan.fromTest_of_isLocalRing (S := CAt σ) _) a ha
   refine ⟨hval ▸ (show IsUnit (M := ℂ) _ from hn _ _ a).ne_zero, ?_⟩
@@ -341,14 +339,14 @@ theorem rdU_eq_mul_horizGen {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (hσ : Good
         rw [show (⟨_, hb⟩ : Fin r) = ε (.inl b) from Fin.ext (by rw [hε₁]; simp only [hp0])]
         rfl
       unfold perFr
-      rw [dite_eq_right hnot, dif_pos (hcc.symm ▸ hτ)]
-      exact (dif_pos hb).trans (key _ hcc _))
+      rw [dite_eq_right hnot, dite_eq_left (hcc.symm ▸ hτ)]
+      exact (dite_eq_left hb).trans (key _ hcc _))
     (fun a b => by
       rw [hP, Equiv.apply_symm_apply]
       have hb : (U.X k).p0 + b < r := by have := b.2; omega
       unfold perFr
-      rw [dif_pos hτ]
-      refine (dif_pos hb).trans ?_
+      rw [dite_eq_left hτ]
+      refine (dite_eq_left hb).trans ?_
       rw [show ε (.inr b) = (⟨_, hb⟩ : Fin r) from Fin.ext (by rw [hε₂]; simp only [hp0])]
       rfl)
     (x₀ ∘ finSumFinEquiv)

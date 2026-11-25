@@ -412,7 +412,7 @@ theorem _root_.GlobalTheory.per_move :
         · rw [show (_root_.ReciprocityTheory.ChartRestriction.G.FD.mat b (idx k).1)⁻¹ (idx k).2 c = 0 from _root_.GlobalTheory.PerMove.bor_inv_tri hb _ (by
             simp only [id_eq, Fin.lt_def]; omega), zero_mul, zero_mul]
         · rfl
-    · simp only [h, coeff, Matrix.of_apply, if_true]
+    · simp only [h, coeff, Matrix.of_apply, ite_true]
       split_ifs
       · rfl
       · exact _root_.GlobalTheory.PerMove.bor_inv_diag hb _ _

@@ -203,44 +203,6 @@ theorem exact_of_homotopy {f : A →ₗ[R] B} {g : B →ₗ[R] C} (hfg : g ∘�
 
 end LinearAlgebra
 
-section Comparison
-
-open CategoryTheory Category Limits
-
-set_option backward.isDefEq.respectTransparency false
-
-variable {C D : Type*} [Category* C] [Category* D]
-
-section ShortComplex
-
-variable [HasZeroMorphisms C] [HasZeroMorphisms D] (F : C ⥤ D) [F.PreservesZeroMorphisms]
-
-variable [PreservesColimitsOfShape WalkingParallelPair F]
-
-end ShortComplex
-
-section Complex
-
-variable [HasZeroMorphisms C] [HasZeroMorphisms D] [CategoryWithHomology C]
-  [CategoryWithHomology D] (F : C ⥤ D) [F.PreservesZeroMorphisms] {ι : Type*} {c : ComplexShape ι}
-
-variable [PreservesColimitsOfShape WalkingParallelPair F]
-
-end Complex
-
-end Comparison
-
-section Homotopy
-
-open CategoryTheory Category Limits
-
-set_option backward.isDefEq.respectTransparency false
-
-variable {C D : Type*} [Category* C] [Category* D] [Preadditive C] [Preadditive D]
-  [CategoryWithHomology C] [CategoryWithHomology D] {ι : Type*} {c : ComplexShape ι}
-
-end Homotopy
-
 section Modules
 
 open CategoryTheory Category Limits
@@ -262,26 +224,5 @@ theorem isZero_homology_extendScalars_iff (S : Type w) [CommRing S] [inst : Alge
   rfl
 
 end Modules
-
-section Explicit
-
-open CategoryTheory Category Limits ChangeOfRings
-
-universe u
-
-variable {R : Type u} [CommRing R] (S : Type u) [CommRing S] [Algebra R S]
-  {ι : Type*} {c : ComplexShape ι}
-
-end Explicit
-
-section Main
-
-open CategoryTheory Category Limits
-
-universe u
-
-variable {R : Type u} [CommRing R]
-
-end Main
 
 end GlobalTheory

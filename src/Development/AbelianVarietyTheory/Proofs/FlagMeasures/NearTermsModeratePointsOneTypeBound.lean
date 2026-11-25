@@ -1186,7 +1186,6 @@ theorem inner_pt (w : InfinitePlace I.E) (y z : Fin I.n → I.E) :
   have hc := I.cm.cmUnram.2.1
   have h1 : w.embedding (Formalism.UG.hform (starRingEnd I.E) I.J y z) =
       star (fun i => w.embedding (y i)) ⬝ᵥ (I.J.map w.embedding *ᵥ fun i => w.embedding (z i)) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [Formalism.UG.hform, map_sum, map_mul, dotProduct, Matrix.mulVec, Matrix.map_apply, Pi.star_apply,
       Finset.mul_sum, starRingEnd_apply, hc, mul_assoc]
   rw [sg, inner_opM, hf, h1, ← frm_pt I x w y, ← frm_pt I x w z, Matrix.star_mulVec,
@@ -1288,13 +1287,13 @@ theorem block_count (a : ℕ) (G : ℕ → Submodule (𝓞 I.E) (Fin I.n → I.E
     intro w
     by_cases h : q + p = 2 * a
     · obtain ⟨U, h1, h2⟩ := GlobalTheory.exists_submodule_skew_block_finrank_le I.n (E w)
-      refine ⟨U, by rw [dimB, if_pos h, ← hE w p]; exact h1, fun γ hγ => ?_⟩
+      refine ⟨U, by rw [dimB, ite_eq_left h, ← hE w p]; exact h1, fun γ hγ => ?_⟩
       have hp : 2 * a - q = p := by omega
       simp only [blk, E', hp]
       refine h2 _ fun u hu z hz => sp_skew I x w _ (A := G (p + 1)) ?_ u hu.1 z hz.1
       exact fun s hs y hy => (hadj γ hγ γ₀ hγ₀).2 p p (by omega) (by omega) (by omega) s hs y hy
     · obtain ⟨U, h1, h2⟩ := GlobalTheory.exists_real_submodule_block_finrank_le I.n (E w) (E' w)
-      exact ⟨U, by rw [dimB, if_neg h, ← hE w p, ← hE w (2 * a - q)]; exact h1, fun γ _ => h2 _⟩
+      exact ⟨U, by rw [dimB, ite_eq_right h, ← hE w p, ← hE w (2 * a - q)]; exact h1, fun γ _ => h2 _⟩
   choose U hU1 hU2 using hU
   have hnorm : ∀ w φ, ‖blk w φ‖ ≤ ‖op I x w φ‖ := by
     intro w φ
@@ -1437,7 +1436,7 @@ theorem exists_chain (a : ℕ) (j : Fin a → ℕ) (τ : Fin a → ℝ) (h : Has
   have hanti : ∀ p q, p ≤ q → perpIn I x (S' q) ≤ perpIn I x (S' p) := fun p q h =>
     (hp _ _ (hsat _) (hsat _) (hS'm h)).2.2.2.1
   let τ' : ℕ → ℝ := fun p => if h : p < a then τ ⟨p, h⟩ else 1
-  have hτ' : ∀ i : Fin a, τ' i = τ i := fun i => dif_pos i.2
+  have hτ' : ∀ i : Fin a, τ' i = τ i := fun i => dite_eq_left i.2
   have hτ0 : ∀ p, 0 < τ' p := fun p => by
     simp only [τ']; split_ifs with h
     · exact (hSi _).1
@@ -1449,39 +1448,39 @@ theorem exists_chain (a : ℕ) (j : Fin a → ℕ) (τ : Fin a → ℝ) (h : Has
   refine ⟨fun p => if p ≤ a then S' p else perpIn I x (S' (2 * a + 1 - p)),
     fun p => if p < a then τ' p else if p = a then 2 else (τ' (2 * a - p))⁻¹,
     ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, by simp⟩
-  · simp only [Nat.zero_le, if_true]
+  · simp only [Nat.zero_le, ite_true]
     rw [← hS0]; exact congrArg S (Fin.ext (by simp))
   · intro p q h
     by_cases h1 : q ≤ a
-    · simp only [if_pos h1, if_pos (h.trans h1)]; exact hS'm h
+    · simp only [ite_eq_left h1, ite_eq_left (h.trans h1)]; exact hS'm h
     · by_cases h2 : p ≤ a
-      · simp only [if_neg h1, if_pos h2]
+      · simp only [ite_eq_right h1, ite_eq_left h2]
         exact ((hS'm h2).trans hiso).trans (hanti _ _ (by omega))
-      · simp only [if_neg h1, if_neg h2]
+      · simp only [ite_eq_right h1, ite_eq_right h2]
         exact hanti _ _ (by omega)
   · intro p
     by_cases h1 : p ≤ a
-    · simp only [if_pos h1]; exact hsat _
-    · simp only [if_neg h1]; exact (hp _ _ (hsat _) (hsat _) le_rfl).1
+    · simp only [ite_eq_left h1]; exact hsat _
+    · simp only [ite_eq_right h1]; exact (hp _ _ (hsat _) (hsat _) le_rfl).1
   · intro p hpa
     by_cases h1 : p ≤ a
-    · simp only [if_pos h1, if_neg (show ¬ 2 * a + 1 - p ≤ a by omega)]
+    · simp only [ite_eq_left h1, ite_eq_right (show ¬ 2 * a + 1 - p ≤ a by omega)]
       rw [show 2 * a + 1 - (2 * a + 1 - p) = p by omega]
-    · simp only [if_neg h1, if_pos (show 2 * a + 1 - p ≤ a by omega)]
+    · simp only [ite_eq_right h1, ite_eq_left (show 2 * a + 1 - p ≤ a by omega)]
       exact (hp _ _ (hsat _) (hsat _) le_rfl).2.2.1.symm
   · intro p hpa
     rcases lt_trichotomy p a with h1 | rfl | h1
-    · simp only [if_pos h1, if_pos (show p + 1 ≤ a by omega)]; exact hLe p h1
-    · simp only [lt_irrefl, if_false, if_true, if_neg (show ¬ p + 1 ≤ p by omega)]
+    · simp only [ite_eq_left h1, ite_eq_left (show p + 1 ≤ a by omega)]; exact hLe p h1
+    · simp only [lt_irrefl, ite_false, ite_true, ite_eq_right (show ¬ p + 1 ≤ p by omega)]
       rw [show 2 * p + 1 - (p + 1) = p by omega, hS'a, (hd _ (by norm_num)).2]
       norm_num
-    · simp only [if_neg h1.not_gt, if_neg h1.ne', if_neg (show ¬ p + 1 ≤ a by omega)]
+    · simp only [ite_eq_right h1.not_gt, ite_eq_right h1.ne', ite_eq_right (show ¬ p + 1 ≤ a by omega)]
       rw [show 2 * a + 1 - (p + 1) = 2 * a - p by omega, hLt _ (by omega), (hd _ (hτ0 _)).2]
   · intro p hpa
     rcases lt_trichotomy p a with h1 | rfl | h1
-    · simp only [if_pos h1, if_pos h1.le, if_neg h1.ne]; exact hLt p h1
-    · simp only [le_rfl, if_true]; exact hS'a
-    · simp only [if_neg h1.not_gt, if_neg h1.ne', if_neg h1.not_ge]
+    · simp only [ite_eq_left h1, ite_eq_left h1.le, ite_eq_right h1.ne]; exact hLt p h1
+    · simp only [le_rfl, ite_true]; exact hS'a
+    · simp only [ite_eq_right h1.not_gt, ite_eq_right h1.ne', ite_eq_right h1.not_ge]
       rw [show 2 * a + 1 - p = 2 * a - p + 1 by omega, hLe _ (by omega), (hd _ (hτ0 _)).1]
   · intro p
     have := hτ0 p
@@ -1490,10 +1489,10 @@ theorem exists_chain (a : ℕ) (j : Fin a → ℕ) (τ : Fin a → ℝ) (h : Has
     split_ifs <;> positivity
   · intro i
     have hi := i.2
-    refine ⟨by simp only [if_pos hi, hτ'], ?_, ?_⟩
-    · simp only [if_neg (show ¬ 2 * a - i < a by omega), if_neg (show ¬ 2 * a - i = a by omega)]
+    refine ⟨by simp only [ite_eq_left hi, hτ'], ?_, ?_⟩
+    · simp only [ite_eq_right (show ¬ 2 * a - i < a by omega), ite_eq_right (show ¬ 2 * a - i = a by omega)]
       rw [show 2 * a - (2 * a - i) = i by omega, hτ']
-    · simp only [if_pos (show i + 1 ≤ a by omega), if_pos hi.le]
+    · simp only [ite_eq_left (show i + 1 ≤ a by omega), ite_eq_left hi.le]
       rw [hS's, hS'c, hj]
 
 theorem mem_lowSet (de : ℝ) (hde : 0 < de) (hde' : de < 1 / 4) (a : ℕ)
@@ -1560,7 +1559,7 @@ theorem near_count : ∀ (I : AutInst) (x : I.GA) (de : ℝ), 0 < de → de < 1 
   obtain ⟨hfin, hcard⟩ := core_count I x a G h0 hmono hsat
     (fun p hp y => by rw [hperp p hp, mem_perpIn, htop]) hrk htop t ht
     (fun q hq N h1 h2 => by
-      rw [hLt q (by omega), if_neg hq.ne] at h1 ⊢
+      rw [hLt q (by omega), ite_eq_right hq.ne] at h1 ⊢
       exact (hst _ (ht q)).2.2.2.2.2.2.2.1 N h1 h2)
     (fun p hp hne => by
       rw [hLe p hp] at hne ⊢
@@ -1569,12 +1568,12 @@ theorem near_count : ∀ (I : AutInst) (x : I.GA) (de : ℝ), 0 < de → de < 1 
     if h : g ∈ I.GFset then (h.choose : GL (Fin I.n) I.E) else 0
   have hmap : Set.MapsTo e (nearSet I x de) (lowSet I x a G de) := fun g hg => by
     have hs := hg.1.choose_spec
-    simp only [e, dif_pos hg.1]
+    simp only [e, dite_eq_left hg.1]
     exact mem_lowSet I x de hde hde' a G t ht hta hLe hLt g hg _ hs.1 hs.2.1 hs.2.2
   have hinj : Set.InjOn e (nearSet I x de) := fun g hg g' hg' h => by
     have hs := hg.1.choose_spec
     have hs' := hg'.1.choose_spec
-    simp only [e, dif_pos hg.1, dif_pos hg'.1] at h
+    simp only [e, dite_eq_left hg.1, dite_eq_left hg'.1] at h
     refine Prod.ext (funext fun v => Subtype.ext (Units.ext ?_)) (Subtype.ext (Units.ext ?_))
     · exact (hs.2.1 v).trans (h ▸ (hs'.2.1 v).symm)
     · exact hs.2.2.trans (h ▸ hs'.2.2.symm)
@@ -1630,7 +1629,7 @@ theorem near_count : ∀ (I : AutInst) (x : I.GA) (de : ℝ), 0 < de → de < 1 
     have hk' := k.2
     have := hτ i
     have := hτ k
-    rw [dimB, dimB, if_neg (by omega), if_neg (by omega), r1, r2, r2, (hti i).1, (hti k).1, (hti k).2.1,
+    rw [dimB, dimB, ite_eq_right (by omega), ite_eq_right (by omega), r1, r2, r2, (hti i).1, (hti k).1, (hti k).2.1,
       div_inv_eq_mul]
     refine mul_le_mul (pow_le_pow_ratio hde (by positivity) ?_ _) (pow_le_pow_ratio hde (by positivity) ?_ _)
       (by positivity) (by positivity)
@@ -1640,7 +1639,7 @@ theorem near_count : ∀ (I : AutInst) (x : I.GA) (de : ℝ), 0 < de → de < 1 
       linarith
   · have hi := i.2
     have := hτ i
-    rw [dimB, dimB, if_neg (by omega), if_pos (by omega), r2, r3, (hti i).1, hta, (hti i).2.1,
+    rw [dimB, dimB, ite_eq_right (by omega), ite_eq_left (by omega), r2, r3, (hti i).1, hta, (hti i).2.1,
       div_inv_eq_mul]
     refine mul_le_mul (pow_le_pow_ratio hde (by positivity) (by linarith) _)
       (pow_le_pow_ratio hde (by positivity) (by nlinarith) _) (by positivity) (by positivity)
@@ -1868,7 +1867,7 @@ theorem near_terms_one_type : GlobalTheory.FlagMeas.FlagMeasureBound → GlobalT
           by_cases hk : GlobalTheory.FlagMeas.kapBd B.I.E p q j ≤ 0
           · rw [ENNReal.ofReal_of_nonpos hk, mul_zero, zero_mul]
             positivity
-          · push_neg at hk
+          · push Not at hk
             have hvol : 0 ≤ (B.I.muA B.μf B.fund).toReal := ENNReal.toReal_nonneg
             rw [← ENNReal.ofReal_toReal hfin, ← ENNReal.ofReal_mul hvol,
               ← ENNReal.ofReal_mul (mul_nonneg hvol hk.le)]

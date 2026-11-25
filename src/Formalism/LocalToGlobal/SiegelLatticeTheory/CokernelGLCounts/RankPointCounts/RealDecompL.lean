@@ -85,7 +85,7 @@ theorem ker_triv (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (T T' : ℝ) (hG :
     have e2 := congrFun e i
     rw [hv] at e2
     simp only [Matrix.mulVec, dotProduct, Pi.smul_apply, smul_eq_mul, mul_ite, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true] at e2
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true] at e2
     exact e2.symm
   have hβ := key Z β _ hZβ
   have hα := key Zᴴ α _ hZα
@@ -123,13 +123,13 @@ theorem ker_triv (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (T T' : ℝ) (hG :
     have hβ' : (Z.submatrix Fin.castSucc Fin.castSucc) *ᵥ (fun b => β (Fin.castSucc b)) = 0 := by
       funext a
       have h := h1 (Fin.castSucc a)
-      rw [if_neg (Fin.castSucc_lt_last a).ne, zero_add, Fin.sum_univ_castSucc, hbL, mul_zero,
+      rw [ite_eq_right (Fin.castSucc_lt_last a).ne, zero_add, Fin.sum_univ_castSucc, hbL, mul_zero,
         add_zero] at h
       simpa [Matrix.mulVec, dotProduct] using h
     have hα' : (Z.submatrix Fin.castSucc Fin.castSucc)ᴴ *ᵥ (fun b => α (Fin.castSucc b)) = 0 := by
       funext a
       have h := h2 (Fin.castSucc a)
-      rw [if_neg (Fin.castSucc_lt_last a).ne, add_zero, Fin.sum_univ_castSucc, haL, mul_zero,
+      rw [ite_eq_right (Fin.castSucc_lt_last a).ne, add_zero, Fin.sum_univ_castSucc, haL, mul_zero,
         add_zero] at h
       simpa [Matrix.mulVec, dotProduct, Matrix.conjTranspose_apply] using h
     have e3 := Matrix.eq_zero_of_mulVec_eq_zero hm hβ'
@@ -249,8 +249,6 @@ section Glob
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries NumberField
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word)
 
 theorem zhatO_inj {r : ℕ} {Z Z' : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ} (h : ZhatO Z = ZhatO Z') : Z = Z' := by
@@ -304,8 +302,6 @@ namespace Formalism.L2.SG.Pf.RowForm.RealDecompL
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Mat
 
 variable {r : ℕ}
@@ -338,17 +334,17 @@ private theorem sub_zhatOM {K : Type*} [CommRing K] (Z : Matrix (Fin (r + 1)) (F
 private theorem lead_zhatOM {E : Type} [Field E] [NumberField E] [StarRing E]
     (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) {l : ℕ} (h : l ≤ r + 1) :
     leadMinorE (ZhatOM Z) l = leadMinorE Z l * sgnP E r l h := by
-  simp only [leadMinorE, dif_pos h, sub_zhatOM Z h, Matrix.det_mul, Matrix.det_diagonal, sgnP]
+  simp only [leadMinorE, dite_eq_left h, sub_zhatOM Z h, Matrix.det_mul, Matrix.det_diagonal, sgnP]
 
 private theorem dl_zhatO (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) {l : ℕ} (h : l ≤ r + 1) :
     RealObj.Dl (RealObj.ZhatO Z) l = RealObj.Dl Z l * sgnP ℂ r l h := by
   have e : RealObj.ZhatO Z = ZhatOM Z := rfl
-  simp only [RealObj.Dl, dif_pos h, e, sub_zhatOM Z h, Matrix.det_mul, Matrix.det_diagonal, sgnP]
+  simp only [RealObj.Dl, dite_eq_left h, e, sub_zhatOM Z h, Matrix.det_mul, Matrix.det_diagonal, sgnP]
 
 private theorem dl_map {E : Type} [Field E] [NumberField E] [StarRing E] (ψ : E →+* ℂ)
     (A : Matrix (Fin (r + 1)) (Fin (r + 1)) E) {l : ℕ} (h : l ≤ r + 1) :
     RealObj.Dl (A.map ψ) l = ψ (leadMinorE A l) := by
-  simp only [RealObj.Dl, leadMinorE, dif_pos h, Matrix.submatrix_map, RingHom.map_det, RingHom.mapMatrix_apply]
+  simp only [RealObj.Dl, leadMinorE, dite_eq_left h, Matrix.submatrix_map, RingHom.map_det, RingHom.mapMatrix_apply]
 
 private theorem famSc_one' {n : ℕ} (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) : RealObj.famSc 1 e z = RealObj.fam e z := by
   funext a
@@ -502,7 +498,7 @@ private theorem frame_fvec (t : TermOp.GTerm X u u' (X.Fu u) (X.Fu u') what₂ r
     t.frame.fl.fvec b = t.lin ((X.Fu u').fvec b) := by
   have hiso : t.lin ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT := t.rep.2.2.1
   unfold TermOp.GTerm.frame TermOp.mapLF
-  rw [dif_pos hiso]
+  rw [dite_eq_left hiso]
   exact snoc_comp t.lin (X.Fu u').e (X.Fu u').z b
 
 private theorem phi_embS (v : InfinitePlace X.B.I.F) (y : D.host.E) :
@@ -622,7 +618,7 @@ theorem liftDecompC_of_atSome (κ : TermDef.Term D u u' (X.Fu u) (Y.what₂ u) �
   intro R ρ s hs
   obtain ⟨hex, hall⟩ := realDecompC_of X Y u u' hAt s.1 hs
     (realDecomp_G_ne (s := s.1) (h := s.2.1))
-  exact ⟨hex, hall _ (by simpa [RealObj.gamW, dif_pos hex] using hex.choose_spec)⟩
+  exact ⟨hex, hall _ (by simpa [RealObj.gamW, dite_eq_left hex] using hex.choose_spec)⟩
 
 end Main
 
@@ -642,7 +638,7 @@ theorem gv_eq_embedding (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) (hγ
     have e1 := dl_zhatO (RealObj.ZX X u u' 1 γ v) h
     rw [hγ v, hptC, dl_map _ _ h] at e1
     have hD : leadMinorE (ptMat w) l = LocalSplitGroups.Dmin w l := by
-      unfold leadMinorE LocalSplitGroups.Dmin; simp only [dif_pos h]
+      unfold leadMinorE LocalSplitGroups.Dmin; simp only [dite_eq_left h]
     rw [hD] at e1
     have hs := localSign_sq ℂ D.R.rS l h
     have e2 : RealObj.Dl (RealObj.ZX X u u' 1 γ v) l = embS D (X.pl v) (LocalSplitGroups.Dmin w l) * sgnP ℂ D.R.rS l h := by
@@ -682,7 +678,7 @@ theorem gx_pos_of (γ : X.B.I.Ginf) (v : InfinitePlace X.B.I.F) (sc : ℝ) (hsc 
   have hDl : ∀ l (hl : l ≤ D.R.rS + 1), RealObj.Dl (RealObj.ZX X u u' sc γ v) l =
       (∏ b : Fin l, ((sc : ℂ) ^ (D.R.rS - b.1))⁻¹) ^ 2 * RealObj.Dl (RealObj.ZX X u u' 1 γ v) l := by
     intro l hl
-    simp only [RealObj.Dl, dif_pos hl, hsub l hl, Matrix.det_mul, Matrix.det_diagonal]
+    simp only [RealObj.Dl, dite_eq_left hl, hsub l hl, Matrix.det_mul, Matrix.det_diagonal]
     ring
   have hP1 : ∏ b : Fin (D.R.rS + 1), ((sc : ℂ) ^ (D.R.rS - b.1))⁻¹ =
       ∏ b : Fin D.R.rS, ((sc : ℂ) ^ (D.R.rS - b.1))⁻¹ := by
@@ -709,11 +705,11 @@ theorem liftGPosC_of (κ : TermDef.Term D u u' (X.Fu u) (Y.what₂ u) → ℕ)
   have hex := (realDecompC_of X Y u u' hAt s.1 hs hG).1
   have hγ : RealObj.IsPtRep X u u' (PairVal.ptOf s.1.toTerm)
       (RealObj.gamW X u u' (PairVal.ptOf s.1.toTerm)) := by
-    simpa [RealObj.gamW, dif_pos hex] using hex.choose_spec
+    simpa [RealObj.gamW, dite_eq_left hex] using hex.choose_spec
   have hw : s.1.toTerm.atPt (PairVal.ptOf s.1.toTerm) := by
     obtain ⟨w, hw⟩ := hAt s.1.toTerm hG hs
     have hx : ∃ w, s.1.toTerm.atPt w ∧ s.1.toTerm.relevant := ⟨w, hw, hs⟩
-    simpa [PairVal.ptOf, dif_pos hx] using hx.choose_spec.1
+    simpa [PairVal.ptOf, dite_eq_left hx] using hx.choose_spec.1
   have hT := hTP s.1.toTerm _ hw (X.pl v)
   have he := congrArg Complex.re (gv_eq_embedding X u u' (PairVal.ptOf s.1.toTerm) _ hγ v)
   rw [Complex.ofReal_re] at he

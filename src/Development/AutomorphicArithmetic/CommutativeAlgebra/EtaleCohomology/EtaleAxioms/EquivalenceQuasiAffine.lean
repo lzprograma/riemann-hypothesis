@@ -17,56 +17,13 @@ public import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 public import Development.EtaleCohomology.EtaleSheaves.EtAICPf
 public import Development.EtaleCohomology.EtaleSheaves.LeafMVVanishPf
 public import Development.EtaleCohomology.EtaleSheaves.ProjFPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.Linter.Style
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
@@ -181,7 +138,7 @@ private theorem core (T C : Type) [CommRing T] [IsDomain T] [IsIntegrallyClosed 
     (IsIdempotentElem.iff_eq_one_of_isUnit (IsLocalization.Away.algebraMap_isUnit (c j))).1
       (hidem.map _)
   have hinj : Function.Injective ψ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro a ha
     obtain ⟨x, rfl⟩ := hsurj a
     rw [hψ] at ha
@@ -228,10 +185,6 @@ open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTh
 
 namespace LateralTheory.E.DescentPf
 
-theorem res_comp {R : Type} [CommRing R] {F : Shv R} {W V U : Scheme.{0}} (h : W ⟶ V) (g : V ⟶ U) (x : Sec F U) :
-    Sec.res (h ≫ g) x = Sec.res h (Sec.res g x) := by
-  simp [Sec.res]
-
 theorem val_smul {q : ℕ} [NeZero q] (i : ℤ) {U : Scheme.{0}} (c : ZMod q) (x : Sec (tw q i) U) :
     c.val • x = (ULift.up c : ULift.{1} (ZMod q)) • x := by
   rw [← Nat.cast_smul_eq_nsmul (ULift.{1} (ZMod q))]
@@ -247,7 +200,7 @@ theorem Descent_of (hAC : LateralTheory.E.LCBijPf.TwGenNZAC) : LateralTheory.E.L
       Sec.res (h ≫ g) y = c.val • twGen i ((gam ζ).map (h ≫ g).appTop.hom) := by
     intro V W g h c hc
     have hs : ∀ x : Sec (tw q i) V, Sec.res h (c.val • x) = c.val • Sec.res h x := fun x => map_nsmul _ _ x
-    rw [res_comp, hc, hs, LateralTheory.E.LCBijPf.twGen_res]
+    rw [LateralTheory.E.LCMapPf.res_comp, hc, hs, LateralTheory.E.LCBijPf.twGen_res]
     rfl
   have huniq : ∀ {V1 V2 : Scheme.{0}} (g1 : V1 ⟶ Spec (CommRingCat.of B)) (g2 : V2 ⟶ Spec (CommRingCat.of B))
       (c1 c2 : ZMod q), Sec.res g1 y = c1.val • twGen i ((gam ζ).map g1.appTop.hom) →
@@ -308,7 +261,7 @@ theorem Descent_of (hAC : LateralTheory.E.LCBijPf.TwGenNZAC) : LateralTheory.E.L
   · intro V k hk
     obtain ⟨W, h, k', hk', rfl⟩ := hk
     obtain ⟨x⟩ := hk'
-    rw [res_comp, res_comp]
+    rw [LateralTheory.E.LCMapPf.res_comp, LateralTheory.E.LCMapPf.res_comp]
     congr 1
     rw [hc x]
     obtain ⟨φ, hφ⟩ := Spec.map_surjective (g x)
@@ -699,8 +652,7 @@ theorem glue : LateralTheory.E.FinEtSectionPf.Glue := by
     refine hidem.eq_zero_of_isNilpotent ((nilpotent_iff_mem_prime).2 fun J hJ => ?_)
     obtain ⟨q, hq⟩ := hsurj ⟨J, hJ⟩
     have : ∃ j, e j ∉ q.asIdeal := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       exact q.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 (he.complete ▸ Ideal.sum_mem _ fun j _ => hall j))
     obtain ⟨j, hj⟩ := this
     have hq' : q ∈ Set.range (PrimeSpectrum.comap (algebraMap C (Localization.Away (e j)))) := by
@@ -739,8 +691,6 @@ theorem glue : LateralTheory.E.FinEtSectionPf.Glue := by
   simp only [RingHom.toMonoidHom_eq_coe, OneHom.toFun_eq_coe, MonoidHom.toOneHom_coe,
     MonoidHom.coe_coe, RingHom.coe_comp, Function.comp_apply, hΦ]
   simp
-
-theorem Glue_of (_hL : LateralTheory.E.t_E1Cut.EtLift) (_hA : LateralTheory.E.t_E1Cut.EtAIC) : LateralTheory.E.FinEtSectionPf.Glue := glue
 
 end LateralTheory.E.Gluing₂
 end -- clump:auto
@@ -870,7 +820,6 @@ noncomputable section
 open CategoryTheory Limits Opposite
 
 namespace LateralTheory.E.LocDiagPf
-
 
 open Classical in
 def g {S : Type} [CommRing S] (p : PrimeSpectrum S) (s : Finset p.asIdeal.primeCompl) : S :=
@@ -1625,8 +1574,7 @@ theorem cover_mem {S : Type} [CommRing S] (f g : S) (hfg : Ideal.span {f, g} = �
   refine (Scheme.ofArrows_mem_precoverage_iff (P := @Etale) (f := ι f g)).2 ⟨fun pt => ?_, fun b => inferInstance⟩
   let p : PrimeSpectrum S := pt
   have hp : f ∉ p.asIdeal ∨ g ∉ p.asIdeal := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have : Ideal.span {f, g} ≤ p.asIdeal := by
       rw [Ideal.span_le]; intro z hz
       rcases hz with rfl | hz
@@ -1828,7 +1776,6 @@ theorem prim_isPrimitiveRoot (z : Prim q L) : IsPrimitiveRoot z.1 q := by
   rw [Polynomial.aeval_def, Polynomial.eval₂_eq_eval_map, Polynomial.map_cyclotomic] at h
   exact Polynomial.isRoot_cyclotomic_iff.1 h
 
-
 open Classical in
 def lg (q : ℕ) (z x : L) : ZMod q := if h : ∃ n : ℕ, z ^ n = x then (h.choose : ZMod q) else 0
 
@@ -1839,7 +1786,6 @@ theorem lg_pow {z : L} (hz : IsPrimitiveRoot z q) (n : ℕ) : lg q z (z ^ n) = n
   have h2 := h.choose_spec
   have h3 := ((hz.isOfFinOrder (NeZero.ne q)).pow_eq_pow_iff_modEq).1 h2
   rwa [← hz.eq_orderOf] at h3
-
 
 open Classical in
 def fv (q : ℕ) (i : ℤ) (z x : L) : ZMod q :=

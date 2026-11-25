@@ -51,8 +51,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Set Filter Topology
@@ -193,9 +191,9 @@ theorem exists_mul_eq_of_polynomial_growth : ∀ (Y : Scheme.{0}) (p : Y ⟶ Sp 
   let s (z : (Fin d → ℂ) × ℂ) : CxPts p (RingHom.id ℂ) :=
     if hz : z ∈ Z then ofHom hV (χ z hz) (hχc z hz) else y₀
   have hsV (z) (hz : z ∈ Z) : s z ∈ ptsIn p (RingHom.id ℂ) V := by
-    simp only [s, dif_pos hz]; exact ofHom_mem _ _ _
+    simp only [s, dite_eq_left hz]; exact ofHom_mem _ _ _
   have hsv (z) (hz : z ∈ Z) (b) : ev p (RingHom.id ℂ) V b (s z) = χ z hz b := by
-    simp only [s, dif_pos hz]; exact ev_ofHom _ _ _ b
+    simp only [s, dite_eq_left hz]; exact ev_ofHom _ _ _ b
   obtain ⟨K, M, hK⟩ := exists_sum_norm_le j.toRingHom hfin.to_isIntegral u
   obtain ⟨-, t, ht⟩ := FiniteCoverGrowth.integral_and_rational_of_polynomial_growth
     isConnected_and_dense_compl_hypersurface exists_mvPolynomial_of_poly_bound_off_hypersurface

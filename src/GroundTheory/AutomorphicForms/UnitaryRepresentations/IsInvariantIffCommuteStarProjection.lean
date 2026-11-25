@@ -148,10 +148,6 @@ structure Equiv where
   map_apply' : ∀ (g : G) (v : H), toLinearIsometryEquiv (π g v) = σ g (toLinearIsometryEquiv v)
 
 
-namespace Equiv
-
-end Equiv
-
 
 variable (π) in
 def IsIrreducible : Prop :=

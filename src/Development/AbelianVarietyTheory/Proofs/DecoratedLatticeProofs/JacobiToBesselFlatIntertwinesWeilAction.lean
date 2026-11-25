@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagUnipotentRadicalSurjectsUnitriangularCharact
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.QuasiOfFam
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleMixedModelValueAtZeroEquivariant
@@ -55,7 +56,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 noncomputable section
@@ -65,21 +65,7 @@ namespace GlobalTheory.Unf.FlatComm
 variable {D : D7}
 
 theorem besselAnisotropicEmbedding_fixes_basePoint {σ : ℕ} (B : BesLev D σ) (h : GA D B.A) : mt B.V (embA B.d B.o h) ⬝ x0 B = x0 B := by
-  have h1 : mt B.V (embA B.d B.o h) ⬝ B.d.jX = B.d.jX := B.d.wittDecomp_anisotropicEmbedding_inclX _
-  have h2 : mt B.V (embA B.d B.o h) *ᵥ (B.d.j0 *ᵥ ratV (vecB B.o B.ζ)) = B.d.j0 *ᵥ ratV (vecB B.o B.ζ) := by
-    have e1 : mt B.V (embA B.d B.o h) ⬝ B.d.j0 = B.d.j0 ⬝ mt B.V₀ (B.o.emb (h, 1)) := B.d.wittDecomp_anisotropicEmbedding_inclAnisotropic _
-    have e2 := B.o.emb_jB h 1
-    rw [mt_one, Matrix.mul_one] at e2
-    rw [vecB, ratV_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, e1, Matrix.mul_assoc]
-    exact congrArg (fun M => (B.d.j0 ⬝ M) *ᵥ ratV B.ζ) e2
-  funext k j
-  refine Fin.lastCases ?_ (fun i => ?_) j
-  · have := congrFun h2 k
-    simp only [x0, xLast, Matrix.mul_apply, Matrix.of_apply, Fin.snoc_last]
-    exact this
-  · have := congrFun (congrFun h1 k) i
-    simp only [x0, xLast, Matrix.mul_apply, Matrix.of_apply, Fin.snoc_castSucc]
-    exact this
+  first | exact _root_.GlobalTheory.Unf.FB.UniRad.besselAnisotropicEmbedding_fixes_basePoint | exact @_root_.GlobalTheory.Unf.FB.UniRad.besselAnisotropicEmbedding_fixes_basePoint | apply _root_.GlobalTheory.Unf.FB.UniRad.besselAnisotropicEmbedding_fixes_basePoint <;> assumption
 
 theorem continuous_psiUni {ψ : AddChar (AF D.host.F) ℂ} (hψ : Continuous ψ) (ρ : ℕ) :
     Continuous fun u : UX D ρ => psiUni ψ u.1 := by

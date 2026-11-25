@@ -25,10 +25,4 @@ variable (K : Type) [Field K] [NumberField K] [StarRing K] {n : ℕ}
 
 end Defs
 
-section Cols
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end Cols
-
 end Formalism.L2.Col

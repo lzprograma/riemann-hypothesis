@@ -78,7 +78,7 @@ theorem locK_int_mem (χ : HChar L) (Λ : Subgroup ℂˣ) (S : Finset (HeightOne
     (fun v _ => v.prime) (fun v _ w _ h h' => h (HeightOneSpectrum.ext h')) (fun v => if v.1 = P then b else 1)
   have h1 : P.intValuation (a - b) ≤ WithZero.exp (-((n + 1 : ℕ) : ℤ)) := by
     have h1 := ha P hP
-    rw [if_pos rfl] at h1
+    rw [ite_eq_left rfl] at h1
     exact (P.intValuation_le_pow_iff_mem _ _).2 h1
   have h2 : P.intValuation a = P.intValuation b := by
     refine Valuation.map_eq_of_sub_lt _ (h1.trans_lt ?_)
@@ -94,7 +94,7 @@ theorem locK_int_mem (χ : HChar L) (Λ : Subgroup ℂˣ) (S : Finset (HeightOne
     have h := TypeValues.productRule χ S hu (Units.mk0 _ ha0)
     rw [hi, one_mul, Finset.prod_eq_single_of_mem P hP (fun v hvS hvP => TypeValues.locK_eq_one (ht v) _ a rfl (by
       have h1 := ha v hvS
-      rw [if_neg hvP] at h1
+      rw [ite_eq_right hvP] at h1
       exact Ideal.pow_le_self (Nat.succ_ne_zero n) h1))] at h
     rw [eq_inv_of_mul_eq_one_left h]
     refine Λ.inv_mem (finprod_induction (· ∈ Λ) Λ.one_mem (fun _ _ => Λ.mul_mem) fun v => ?_)
@@ -144,7 +144,6 @@ end General
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT
   Formalism.L2.Col GlobalTheory.RationalValues
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem char_mem {D : D7} (c : (AE D)ˣ →* Circle) (χ : HChar D.host.E) (h : ChrEq c χ) {n : ℕ} (hn : 0 < n)
     (ho : χ.OrderDvd n) (M : Subfield ℂ) (hM : ∀ P k, ((χ.locK P k : ℂˣ) : ℂ) ∈ M) (x : (AE D)ˣ) : ((c x : Circle) : ℂ) ∈ M := by

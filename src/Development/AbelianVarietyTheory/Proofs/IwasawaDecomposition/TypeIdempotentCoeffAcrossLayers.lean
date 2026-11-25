@@ -294,9 +294,9 @@ theorem eSerC_ne_zero : ∀ (g : ℕ) [Fact g.Prime] (L : LabelDatum g), Green �
   have h : zOf ρ * eSerC L n f = zOf ρ := by
     unfold eSerC
     rw [finsum_mem_eq_finite_toFinset_sum _ hfin, Finset.mul_sum, Finset.sum_eq_single ρ]
-    · rw [(_root_.GlobalTheory.GLq.ZOrth.zorth _ ρ ρ hρ hρ).1, if_pos rfl]
+    · rw [(_root_.GlobalTheory.GLq.ZOrth.zorth _ ρ ρ hρ hρ).1, ite_eq_left rfl]
     · intro b hb hne
-      rw [(_root_.GlobalTheory.GLq.ZOrth.zorth _ ρ b hρ (hfin.mem_toFinset.mp hb).1).1, if_neg hne.symm]
+      rw [(_root_.GlobalTheory.GLq.ZOrth.zorth _ ρ b hρ (hfin.mem_toFinset.mp hb).1).1, ite_eq_right hne.symm]
     · intro hb
       exact absurd (hfin.mem_toFinset.mpr ⟨hρ, hl⟩) hb
   rw [← h, he, mul_zero]

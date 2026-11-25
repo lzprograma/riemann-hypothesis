@@ -60,9 +60,9 @@ theorem logF_eq : logF p = Formalism.L2.Th1.CM.ltLog ℂ_[p] p := by
     set j0 := Nat.find h
     have hn : n = p ^ (2 * j0) := by rw [hj, ← pow_mul]
     rw [Finset.sum_eq_single j0]
-    · rw [if_pos hn]
+    · rw [ite_eq_left hn]
     · intro j _ hne
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h'
       exact hne (hinj (h'.symm.trans hn))
     · intro hj0
@@ -74,7 +74,7 @@ theorem logF_eq : logF p = Formalism.L2.Th1.CM.ltLog ℂ_[p] p := by
       omega
   · apply Finset.sum_eq_zero
     intro j _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h'
     exact h ⟨j, by rw [h', pow_mul]⟩
 

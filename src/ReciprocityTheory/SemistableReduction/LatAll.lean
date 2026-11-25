@@ -231,8 +231,8 @@ theorem approxB_split {K : Type} [Field K] [NumberField K] {r p : ℕ} (hp : p �
       ∑ k : {j : Fin r // ¬ (j : ℕ) < p}, g k.1 • T (v (a0 (e k))) = 0 := by
     rw [← hg, ← Fintype.sum_subtype_add_sum_subtype (fun j : Fin r => (j : ℕ) < p)]
     congr 1
-    · exact Finset.sum_congr rfl fun k _ => by simp only [dif_pos k.2]
-    · exact Finset.sum_congr rfl fun k _ => by simp only [dif_neg k.2]; rfl
+    · exact Finset.sum_congr rfl fun k _ => by simp only [dite_eq_left k.2]
+    · exact Finset.sum_congr rfl fun k _ => by simp only [dite_eq_right k.2]; rfl
   have hBorth : ∀ k' : ApproxPosIdx r p,
       S.h (l k'.1) (∑ k : {j : Fin r // ¬ (j : ℕ) < p}, g k.1 • T (v (a0 (e k)))) = 0 := by
     intro k'
@@ -341,10 +341,10 @@ theorem approxBasis_holds (hG : ApproxGraphStatement) : ApproxStatement := by
   obtain ⟨la, hla⟩ : ∃ la : Fin r → Fin r → K, la = fun j : Fin r => if h : (j : ℕ) < p then l0 j
       else Δ • v (a ⟨j, h⟩) - ∑ k', coef (v (a ⟨j, h⟩)) k' • l0 k'.1 := ⟨_, rfl⟩
   have hla_pos : ∀ (j : Fin r) (h : (j : ℕ) < p), la j = l0 j := fun j h => by
-    rw [hla]; simp only [dif_pos h]
+    rw [hla]; simp only [dite_eq_left h]
   have hla_neg : ∀ (j : Fin r) (h : ¬ (j : ℕ) < p), la j =
       Δ • v (a ⟨j, h⟩) - ∑ k', coef (v (a ⟨j, h⟩)) k' • l0 k'.1 := fun j h => by
-    rw [hla]; simp only [dif_neg h]
+    rw [hla]; simp only [dite_eq_right h]
   have hli' : LinearIndependent K la := by rw [hla]; exact hli
   have horth' : ∀ (k : Fin r), (k : ℕ) < p → ∀ j : Fin r, ¬ (j : ℕ) < p →
       S.h (l0 k) (la j) = 0 := fun k hk j hj => by
@@ -677,7 +677,7 @@ theorem bwp_ext_poly {σ : Type*} [Fintype σ] [DecidableEq σ] (k : ℕ) (g D :
       refine Finset.sum_congr rfl (fun c hc => ?_)
       rw [Polynomial.eval_mul, Polynomial.eval_C, ← hQ _ c (ht c hc)]
       congr 1
-      simp only [Pc, dif_neg (hSz c hc)]
+      simp only [Pc, dite_eq_right (hSz c hc)]
       rw [← hP _ _ (hSz c hc) t (by rw [add_right_comm]; exact ht c hc), add_right_comm]
     have hbad : ∀ S : Finset ℂ, (∀ c ∈ S, D (z + c • w) ≠ 0) →
         {t : ℂ | ∃ c ∈ S, D ((z + t • e) + c • w) = 0}.Finite := by
@@ -985,7 +985,7 @@ theorem exists_entire_of_finite_growth (f : ℂ → ℂ) (B : Set ℂ) (A : ℝ)
     ∃ g : ℂ → ℂ, Differentiable ℂ g ∧ ∀ t ∉ B, g t = f t := by
   classical
   let g : ℂ → ℂ := fun t => if t ∈ B then limUnder (𝓝[≠] t) f else f t
-  refine ⟨g, fun c => ?_, fun t ht => if_neg ht⟩
+  refine ⟨g, fun c => ?_, fun t ht => ite_eq_right ht⟩
   by_cases hc : c ∈ B
   · have hU : IsOpen (B \ {c})ᶜ := (hB.sdiff).isClosed.isOpen_compl
     set s : Set ℂ := (B \ {c})ᶜ ∩ ball c 1 with hs
@@ -1018,7 +1018,7 @@ theorem exists_entire_of_finite_growth (f : ℂ → ℂ) (B : Set ℂ) (A : ℝ)
   · have hO : IsOpen Bᶜ := hB.isClosed.isOpen_compl
     refine (hf.differentiableAt (hO.mem_nhds hc)).congr_of_eventuallyEq ?_
     filter_upwards [hO.mem_nhds hc] with t ht
-    exact if_neg ht
+    exact ite_eq_right ht
 
 theorem onePolyGrowth_holds : OnePolyGrowthStatement := by
   intro f B A k hB hf hb

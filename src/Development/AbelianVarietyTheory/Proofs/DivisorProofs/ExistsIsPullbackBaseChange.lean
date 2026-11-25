@@ -50,8 +50,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.Cha
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
@@ -60,8 +58,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap)
 open ReciprocityTheory.ChartRestriction.G.Semi (IsAbelianScheme mulN)
 open GlobalTheory.DeRham (spOver spOver_comp)
 open scoped CategoryTheory.Obj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.AbelianPDiv
 

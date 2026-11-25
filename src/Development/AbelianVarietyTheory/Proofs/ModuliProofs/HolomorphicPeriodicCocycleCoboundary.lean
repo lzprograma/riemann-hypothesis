@@ -276,22 +276,6 @@ private theorem mem_intLattice_iff {n : ℕ} (x : EuclideanSpace ℝ (Fin n)) :
   · rintro ⟨ν, rfl⟩ i
     exact ⟨ν i, by simp⟩
 
-private theorem mem_intLattice_dual_iff {n : ℕ} (x : EuclideanSpace ℝ (Fin n)) :
-    x ∈ LinearMap.BilinForm.dualSubmodule (innerₗ (EuclideanSpace ℝ (Fin n)))
-      (Submodule.span ℤ (Set.range (EuclideanSpace.basisFun (Fin n) ℝ).toBasis)) ↔
-      ∃ ν : Fin n → ℤ, x = WithLp.toLp 2 fun k => (ν k : ℝ) := by
-  simp only [LinearMap.BilinForm.mem_dualSubmodule, Submodule.mem_one, innerₗ_apply_apply]
-  constructor
-  · intro h
-    choose m hm using fun k => h ((EuclideanSpace.basisFun (Fin n) ℝ).toBasis k)
-      (Submodule.subset_span ⟨k, rfl⟩)
-    refine ⟨m, ?_⟩
-    ext k
-    simpa [EuclideanSpace.inner_single_right] using (hm k).symm
-  · rintro ⟨ν, rfl⟩ y hy
-    obtain ⟨μ, rfl⟩ := (mem_intLattice_iff y).1 hy
-    exact ⟨∑ k, μ k * ν k, by simp [PiLp.inner_apply]⟩
-
 theorem exists_rapid_fourierSeries_of_int_periodic :
     ∀ (n : ℕ) (w : (Fin n → ℝ) → ℂ), ContDiff ℝ ∞ w →
       (∀ (ν : Fin n → ℤ) x, w (x + fun k => (ν k : ℝ)) = w x) →
@@ -564,7 +548,7 @@ theorem _root_.GlobalTheory.fourier_coeff_eq_zero_of_tsum_eq_zero_fin :
     by_cases hνμ : ν = μ
     · subst hνμ; simp
     · obtain ⟨k, hk⟩ := Function.ne_iff.mp hνμ
-      rw [if_neg hνμ, Finset.prod_eq_zero (Finset.mem_univ k) (by simp [sub_eq_zero, hk]), mul_zero]
+      rw [ite_eq_right hνμ, Finset.prod_eq_zero (Finset.mem_univ k) (by simp [sub_eq_zero, hk]), mul_zero]
   have hsum : ∀ x, ∑' ν, G ν x = 0 := by
     intro x
     have hx := h x
@@ -782,9 +766,9 @@ theorem torus_elliptic_system_solvable : ∀ (n m : ℕ) (p : Fin m → Fin n �
     have hn : 0 < ‖(2 * π * I : ℂ)‖ := norm_pos_iff.2 h2pi
     have hS : 0 ≤ ∑ a, C a := Finset.sum_nonneg fun a _ => hC0 a
     by_cases h : ν = 0
-    · simp only [d, dif_pos h, norm_zero, zero_mul]
+    · simp only [d, dite_eq_left h, norm_zero, zero_mul]
       positivity
-    · simp only [d, dif_neg h]
+    · simp only [d, dite_eq_right h]
       rw [norm_div, norm_mul (2 * π * I : ℂ), div_mul_eq_mul_div]
       have h1 := Finset.single_le_sum (f := C) (fun a _ => hC0 a) (Finset.mem_univ (α ν h))
       have h2 := hα ν h
@@ -804,8 +788,8 @@ theorem torus_elliptic_system_solvable : ∀ (n m : ℕ) (p : Fin m → Fin n �
     rw [h0, add_sub_cancel_left]
     refine tsum_congr fun ν => ?_
     by_cases h : ν = 0
-    · simp only [d, dif_pos h, if_pos h, mul_zero, zero_mul]
-    · simp only [d, dif_neg h, if_neg h]
+    · simp only [d, dite_eq_left h, ite_eq_left h, mul_zero, zero_mul]
+    · simp only [d, dite_eq_right h, ite_eq_right h]
       have h2 : (∑ k, p (α ν h) k * (ν k : ℂ)) ≠ 0 := by
         intro h0
         have := hα ν h

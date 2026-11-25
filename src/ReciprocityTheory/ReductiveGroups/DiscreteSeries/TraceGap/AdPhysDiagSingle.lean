@@ -36,11 +36,11 @@ theorem adPhys_diag_single (s : Fin n → ℂ) (x : Fin n × Fin n) :
     adPhys ε (Matrix.diagonal s) (Pi.single x 1) = modeChar ε s x • Pi.single x (1 : ℂ) := by
   funext y
   simp only [adPhys, Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct, Pi.single_apply, mul_ite, mul_one,
-    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, Pi.smul_apply, smul_eq_mul]
+    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Pi.smul_apply, smul_eq_mul]
   by_cases h : y = x
   · subst h
     by_cases hy : IsPhys ε y <;> simp [adMat, modeChar, hy]
-  · simp only [h, if_false]
+  · simp only [h, ite_false]
     obtain ⟨y1, y2⟩ := y
     obtain ⟨x1, x2⟩ := x
     simp only [adMat, Matrix.diagonal_apply]

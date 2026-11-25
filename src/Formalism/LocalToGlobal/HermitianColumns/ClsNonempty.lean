@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Herm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def Ad0 (D : D7) (H : HermCols D) (u : D.what₂.Word) (c c' : (D.mem u).C.cls 0) (γ : GX D 0)
     (v : (D.mem u).A.vT) : Prop :=
   AdStep D.sp.cm.sig D.sp.gram0 (H.lev0 u).U ((H.lev0 u).y c) ((H.lev0 u).y c')

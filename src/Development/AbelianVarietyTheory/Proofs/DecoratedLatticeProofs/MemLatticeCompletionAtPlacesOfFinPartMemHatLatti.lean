@@ -45,7 +45,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel
 open IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -89,8 +88,8 @@ theorem cut_finPart (P : Pl D → Prop) (u : AE D) (hu : u ∈ idAt D P) : cut P
         evalV D.host.F w (GlobalTheory.SelfDualAt.indP P) ⊗ₜ[D.host.F] (1 : D.host.E) := rfl
     rw [hc, GlobalTheory.SelfDualAt.evalV_indP]
     by_cases hw : P w
-    · rw [if_pos hw, ← Algebra.TensorProduct.one_def, one_mul, sub_self]
-    · rw [if_neg hw, TensorProduct.zero_tmul, zero_mul, sub_zero, hoff w hw]
+    · rw [ite_eq_left hw, ← Algebra.TensorProduct.one_def, one_mul, sub_self]
+    · rw [ite_eq_right hw, TensorProduct.zero_tmul, zero_mul, sub_zero, hoff w hw]
   unfold cut
   rw [hcut]
   exact (Formalism.IndefR.Fin.LevelGroupLemmas.Lat.eq_lift_of_infPart u hinf).symm
@@ -115,7 +114,7 @@ theorem mem_latV_of_hatL : ∀ (D : D7) (S : HSp D) (L : Lat S) (P : Pl D → Pr
       · rw [one_mul]; exact ha v
       · rw [zero_mul]; exact zero_mem _
     · intro v hv
-      rw [map_mul, GlobalTheory.SelfDualAt.evalV_indP, if_neg hv, zero_mul]
+      rw [map_mul, GlobalTheory.SelfDualAt.evalV_indP, ite_eq_right hv, zero_mul]
     · funext i
       show cut P (a ⊗ₜ[D.host.F] x i) = _
       rw [cut_tmul, one_mul]

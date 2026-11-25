@@ -29,6 +29,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityA
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.TruncKer
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.HeckeP
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.HeckeP
 public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtTw
 public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.TraceKer
 public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.TwAdj
@@ -40,11 +41,13 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSum
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.CixOf
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IdempotentTraces.CoreInd
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IdempotentTraces.CoreInd
 public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.Ci
 public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.GmOfBcfl
 public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CoreLift
 public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.LiftAll
 public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.LiftStep
+import all Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.LiftStep
 public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.BcflUnit
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -201,22 +204,7 @@ open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial UpperTheory.V.Z.Invariant
 private theorem norm_of_split {K M : Type} [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M]
     (w : HeightOneSpectrum (𝓞 M)) (h : GM.Split M (w.under (𝓞 K))) :
     Formalism.ConjugateSelfDual.normV w = Formalism.ConjugateSelfDual.normV (w.under (𝓞 K)) := by
-  haveI hl : w.asIdeal.LiesOver (w.under (𝓞 K)).asIdeal := ⟨rfl⟩
-  have := w.isMaximal
-  have := (w.under (𝓞 K)).isMaximal
-  have hs : Function.Surjective (completionMap (w.under (𝓞 K)) w) := h ⟨w, hl⟩
-  have h1 : w.asIdeal.ramificationIdx (𝓞 K) * w.asIdeal.inertiaDeg (𝓞 K) = 1 := by
-    rw [← finrank_eq_ramificationIdx_mul_inertiaDeg M (w.under (𝓞 K)) w]
-    have hb : Function.Bijective (Algebra.linearMap ((w.under (𝓞 K)).adicCompletion K) (w.adicCompletion M)) :=
-      ⟨(completionMap (w.under (𝓞 K)) w).injective, hs⟩
-    rw [← (LinearEquiv.ofBijective _ hb).finrank_eq, Module.finrank_self]
-  have nv {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F)) :
-      Formalism.ConjugateSelfDual.normV v = Ideal.absNorm v.asIdeal := by
-    rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]
-    rfl
-  rw [nv, nv]
-  rw [← Ideal.absNorm_relNorm (𝓞 K) (𝓞 M) w.asIdeal,
-    Ideal.relNorm_eq_pow_of_isMaximal w.asIdeal (w.under (𝓞 K)).asIdeal, Nat.eq_one_of_mul_eq_one_left h1, pow_one]
+  apply _root_.normV_split <;> assumption
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.sysOf :
     SysOf := by
@@ -430,7 +418,7 @@ private theorem exAt {E : Type} [Field E] [NumberField E] [_root_.NumberField.Is
   choose m hm using fun τ => ((Dp.parEx E n hn μ V hV).1 τ).exists
   refine ⟨m, fun w => if hw : ∃ B, SSat μ V w B then hw.choose else 0, hm, fun w hw => ?_⟩
   have hx := h w hw
-  simp only [dif_pos hx]
+  simp only [dite_eq_left hx]
   exact hx.choose_spec
 
 end SlopeTestRemainingChoices
@@ -581,18 +569,7 @@ private theorem pow_loc {K : Type} [Field K] [NumberField K] {χ : HChar K} {s :
 
 private theorem pow_val {K : Type} [Field K] [NumberField K] {χ : HChar K} {s : ℂ} (h : IsPow χ s)
     (v : HeightOneSpectrum (𝓞 K)) : χ.UnrAt v ∧ ((χ.val v : ℂˣ) : ℂ) = (normV v : ℂ) ^ (-s) := by
-  refine ⟨fun x hx => Units.ext ?_, ?_⟩
-  · have hx' : Valued.v (x : v.adicCompletion K) = 1 := hx
-    rw [pow_loc h, FinitePlace.norm_def, hx']
-    simp
-  · have hx' : Valued.v ((atFin v (unif v) : (v.adicCompletion K)ˣ) : v.adicCompletion K) = WithZero.exp (-1 : ℤ) :=
-      unif_spec v
-    refine (pow_loc h v (atFin v (unif v))).trans ?_
-    rw [FinitePlace.norm_def, hx', WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero]
-    have e' : normV v = Ideal.absNorm v.asIdeal := by
-      rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
-    rw [WithZero.log_exp, e', zpow_neg_one, NNReal.coe_inv, Complex.ofReal_inv, NNReal.coe_natCast, Complex.ofReal_natCast,
-      Complex.inv_cpow _ _ (by rw [Complex.natCast_arg]; exact Real.pi_ne_zero.symm), Complex.cpow_neg]
+  apply _root_.pow_val <;> assumption
 
 private theorem absC_pow (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (s : ℂ) : IsPow (GlobalTheory.CuspRep.Model.absC E s) s := by
   obtain ⟨b, hb⟩ := GlobalTheory.AbsTwist.exists_eq_mul_log_module (F := E) (GlobalTheory.Mem.Chr.CharModel.logNorm E)
@@ -804,37 +781,11 @@ open scoped ENNReal NumberField.AdeleRing InnerProductSpace ComplexConjugate
 private theorem map_inv_self {G : Type} [Group G] [MeasurableSpace G] [MeasurableMul₂ G] [MeasurableInv G]
     (ν : Measure G) [IsProbabilityMeasure ν] (U : Subgroup G) (hs : ∀ᵐ k ∂ν, k ∈ U)
     (hi : ∀ k ∈ U, MeasurePreserving (k * ·) ν ν) : ν.map (fun k => k⁻¹) = ν := by
-  refine Measure.ext_of_lintegral _ fun φ hφ => ?_
-  rw [lintegral_map hφ measurable_inv]
-  have h1 : ∫⁻ k, ∫⁻ h, φ (k⁻¹ * h) ∂ν ∂ν = ∫⁻ h, φ h ∂ν := by
-    have : ∀ᵐ k ∂ν, ∫⁻ h, φ (k⁻¹ * h) ∂ν = ∫⁻ h, φ h ∂ν :=
-      hs.mono fun k hk => (hi _ (U.inv_mem hk)).lintegral_comp hφ
-    rw [lintegral_congr_ae this, lintegral_const, measure_univ, mul_one]
-  have h2 : ∫⁻ h, ∫⁻ k, φ (k⁻¹ * h) ∂ν ∂ν = ∫⁻ k, φ k⁻¹ ∂ν := by
-    have : ∀ᵐ h ∂ν, ∫⁻ k, φ (k⁻¹ * h) ∂ν = ∫⁻ k, φ k⁻¹ ∂ν := hs.mono fun h hh => by
-      rw [← (hi _ (U.inv_mem hh)).lintegral_comp (f := fun k => φ k⁻¹) (hφ.comp measurable_inv)]
-      simp
-    rw [lintegral_congr_ae this, lintegral_const, measure_univ, mul_one]
-  rw [← h1, ← h2]
-  exact (lintegral_lintegral_swap (f := fun k h => φ (k⁻¹ * h))
-    (hφ.comp (measurable_fst.inv.mul measurable_snd)).aemeasurable).symm
+  apply _root_.map_inv_self <;> assumption
 
 private theorem hecke_star {K : Type} [Field K] [NumberField K] {n : ℕ} (D : TypeDat K n) (f : CC K n)
     (hf : D.Hecke f) : D.Hecke (CuspidalProjection.ccStar f) := by
-  haveI := D.prob
-  have hm := map_inv_self D.ν D.U D.supp D.inv
-  have hI : ∀ φ : G1 K n → ℂ, ∫ k, φ k⁻¹ ∂D.ν = ∫ k, φ k ∂D.ν := fun φ => by
-    have := integral_map_equiv (μ := D.ν) (MeasurableEquiv.inv (G1 K n)) φ
-    rw [show (Measure.map (MeasurableEquiv.inv (G1 K n)) D.ν) = D.ν from hm] at this
-    exact this.symm
-  intro g
-  constructor
-  · rw [CuspidalProjection.ccStar_apply, ← (hf g⁻¹).2, ← integral_conj, ← hI]
-    refine integral_congr_ae (D.supp.mono fun k hk => ?_)
-    simp [D.star k hk, mul_comm]
-  · rw [CuspidalProjection.ccStar_apply, ← (hf g⁻¹).1, ← integral_conj, ← hI]
-    refine integral_congr_ae (D.supp.mono fun k hk => ?_)
-    simp [D.star k hk, mul_comm]
+  apply _root_.hecke_star <;> assumption
 
 private theorem ae_q {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n)) [μ.IsHaarMeasure]
     {p : RightCosetSpace (Gam K n) → Prop} (hp : MeasurableSet {y | p y}) (h : ∀ᵐ x ∂μ, p (mk (Gam K n) x)) :
@@ -869,7 +820,6 @@ private theorem alg {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] 
 
 private theorem sfinite_of_finite {X : Type} [MeasurableSpace X] (ν : Measure X) [IsFiniteMeasure ν] : SFinite ν := inferInstance
 
-set_option maxHeartbeats 1000000 in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.famTr :
     ForAllC fun K _ _ μ _ _ _ _ _ D _ _ A A' => ∀ (θ : Twist μ) (a g : CC K (2 + 2)) (P : L2 μ →L[ℂ] L2 μ), IsOrthogonalProjectionTwoLines A.J A'.J P → θ.U ∘L P = P ∘L θ.U →
       (∀ (T : ℝ) (Λ : L2 μ →L[ℂ] L2 μ), 0 ≤ T → IsTrunc A.J A'.J T Λ → θ.U ∘L Λ = Λ ∘L θ.U) →
@@ -879,7 +829,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.famTr :
           trace (Λ ∘L (Rop μ f ∘L θ.U) ∘L P ∘L Λ) = ∫ y, w y ∂quotientMeasure (Gam K (2 + 2)) μ ∧
           (∀ y, Om T (Quotient.out y) → w y = ⟪P (kv μ a (Quotient.out y)), M (P (kv μ (CuspidalProjection.ccStar g) (θ.e (Quotient.out y))))⟫_ℂ) ∧
           ∀ y, ¬ Om T (Quotient.out y) → ‖w y‖ ≤ C * (qht (Quotient.out y : G1 K (2 + 2)) ^ N')⁻¹ * ‖M‖ := by
-  set_option synthInstance.maxHeartbeats 200000 in
     intro K _ _ _ μ _ μ₂ _ τ₁ τ₂ hp D d d' A A' θ a g P hP hUP hUΛ ha hDa hg hDg N'
     classical
     haveI := Reduction.isFiniteMeasure_quotientMeasure (K := K) (n := 2 + 2) μ
@@ -941,12 +890,12 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.famTr :
     have k₂m : StronglyMeasurable k₂ := StronglyMeasurable.ite om m1 m2
     have k₂b : ∀ y, ‖k₂ y‖ ≤ max (‖P‖ * (C₄ * (C₃ * (C₅ * Real.exp (N₅ * T)) ^ c) ^ N₄)) B₂ := fun y => by
       by_cases hy : Om T (Quotient.out y : G1 K (2 + 2))
-      · simp only [k₂, if_pos hy]
+      · simp only [k₂, ite_eq_left hy]
         refine le_trans ?_ (le_max_left _ _)
         refine (P.le_opNorm _).trans (mul_le_mul_of_nonneg_left ((b₄ _).trans (mul_le_mul_of_nonneg_left
           (pow_le_pow_left₀ (q0 _).le ((hθ _).trans (mul_le_mul_of_nonneg_left
           (pow_le_pow_left₀ (q0 _).le ((hb T _ hT).1 hy) _) hC₃)) _) hC₄)) (norm_nonneg _))
-      · simp only [k₂, if_neg hy]
+      · simp only [k₂, ite_eq_right hy]
         exact (hB₂ _).trans (le_max_right _ _)
     have bae : ∀ φ, (ContinuousLinearMap.adjoint (P ∘L Rop μ g ∘L θ.U ∘L Λ) φ : RightCosetSpace (Gam K (2 + 2)) → ℂ)
         =ᵐ[quotientMeasure (Gam K (2 + 2)) μ] fun y => ⟪k₂ y, φ⟫_ℂ := fun φ => by
@@ -964,9 +913,9 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.famTr :
         exact hx h
       filter_upwards [t1, t2, t3, t4, t5 (ContinuousLinearMap.adjoint θ.U (Rop μ s (P φ)))] with y u1 u2 u3 u4 u5
       by_cases hy : Om T (Quotient.out y : G1 K (2 + 2))
-      · simp only [k₂, if_pos hy]
+      · simp only [k₂, ite_eq_left hy]
         rw [e2, u5 hy, u3, u4, kvout, hsa]
-      · simp only [k₂, if_neg hy]
+      · simp only [k₂, ite_eq_right hy]
         rw [e3, ContinuousLinearMap.comp_apply, u1, u2, lout]
     refine ⟨isTraceClass_comp kHS (hBHS.comp_left M), fun y => ⟪k T (Quotient.out y), M (k₂ y)⟫_ℂ, ?_, ?_, fun y hy => ?_, fun y hy => ?_⟩
     · refine Integrable.of_bound (km.inner (M.continuous.comp_stronglyMeasurable k₂m)).aestronglyMeasurable
@@ -975,8 +924,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.famTr :
         (mul_le_mul_of_nonneg_left (k₂b y) (norm_nonneg _))) (norm_nonneg _) ((norm_nonneg _).trans (hB₁ 1)))
     · exact traceKer _ _ M _ _ k₂ (MemLp.of_bound km.aestronglyMeasurable _ (Filter.Eventually.of_forall fun y => hB₁ _))
         (MemLp.of_bound k₂m.aestronglyMeasurable _ (Filter.Eventually.of_forall k₂b)) kHS hBHS kae bae
-    · simp only [k₂, if_pos hy, kO T _ hy]
-    · simp only [k₂, if_neg hy]
+    · simp only [k₂, ite_eq_left hy, kO T _ hy]
+    · simp only [k₂, ite_eq_right hy]
       have z0 := q0 (Quotient.out y)
       have z1 := kb T _ hT hy
       have z2 : ‖l T (θ.e (Quotient.out y))‖ ≤ C₂ * (C₃ * qht (Quotient.out y : G1 K (2 + 2)) ^ c) ^ N₂ :=
@@ -1098,7 +1047,6 @@ private theorem intEst' {X : Type} [MeasurableSpace X] (ν : Measure X) [IsFinit
     (fun x hx => h2 x ((hh x).1 hx))
   rwa [integral_add hc hw, ← sub_sub] at this
 
-set_option maxHeartbeats 800000 in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.kernX :
     KernX := by
   intro K _ _ _ μ _ μ₂ _ τ₁ τ₂ hp D d d' A A' θ a g P hP hθ hΛθ ha haD hg hgD
@@ -1121,7 +1069,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.kernX :
       ⟪UpperTheory.ConvolutionTheory.K.kv μ a (Quotient.out y), M (UpperTheory.ConvolutionTheory.K.kv μ (CuspidalProjection.ccStar g) (θ.e (Quotient.out y)))⟫_ℂ := by
     funext y
     rw [twKQ, twK, kerId K (2 + 2) μ f a g M hf]
-  set_option synthInstance.maxHeartbeats 400000 in
   have est := intEst' (quotientMeasure (Gam K (2 + 2)) μ) _ (twKQ θ f) _ w
     (C1 * C0 ^ N1 * Real.exp ((N0 * N1 : ℕ) * T) * ‖M ∘L (1 - Pc μ - P)‖) ((C2 + C3) * Real.exp (-(N' * T)) * ‖M‖)
     (omMeas (K := K) T).2.2 hi hw (by rw [hk]; exact (ker_cont μ θ a _ M).aestronglyMeasurable) (by positivity) (by positivity)

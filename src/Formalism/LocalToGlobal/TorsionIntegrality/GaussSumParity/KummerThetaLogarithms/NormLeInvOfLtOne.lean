@@ -66,45 +66,13 @@ section Normed
 
 variable {K : Type} [NormedField K] [IsUltrametricDist K]
 
-private lemma norm_finset_sum_le_one_of_norm_le_one {ι : Type} (s : Finset ι) (f : ι → K) (hf : ∀ i ∈ s, ‖f i‖ ≤ 1) :
-    ‖∑ i ∈ s, f i‖ ≤ 1 := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha]
-    exact (IsUltrametricDist.norm_add_le_max _ _).trans
-      (max_le (hf a (Finset.mem_insert_self a s))
-        (ih fun i hi => hf i (Finset.mem_insert_of_mem hi)))
-
-private lemma norm_natCast_le_one_kummer_theta_logarithms (n : ℕ) : ‖(n : K)‖ ≤ 1 := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    push_cast
-    exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ih (by simp))
-
-private lemma int_lemma_3 (z : ℤ) : ‖(z : K)‖ ≤ 1 := by
-  rcases Int.eq_nat_or_neg z with ⟨n, rfl | rfl⟩
-  · exact_mod_cast norm_natCast_le_one_kummer_theta_logarithms n
-  · rw [Int.cast_neg, norm_neg]
-    exact_mod_cast norm_natCast_le_one_kummer_theta_logarithms n
-
 theorem norm_eval_le (Q : Polynomial ℤ) {x : K} (hx : ‖x‖ ≤ 1) :
     ‖Polynomial.eval₂ (Int.castRingHom K) x Q‖ ≤ 1 := by
   rw [Polynomial.eval₂_eq_sum_range]
-  apply norm_finset_sum_le_one_of_norm_le_one
-  intro i _
-  have hc : ‖(Int.castRingHom K) (Q.coeff i)‖ ≤ 1 := by
-    rw [eq_intCast]
-    exact int_lemma_3 _
-  have hp : ‖x ^ i‖ ≤ 1 := by
-    rw [norm_pow]
-    first
-    | exact pow_le_one₀ (norm_nonneg _) hx
-  rw [norm_mul]
-  first
-  | exact mul_le_one₀ hc (norm_nonneg _) hp
+  refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun i _ => ?_
+  rw [norm_mul, eq_intCast]
+  exact mul_le_one₀ (IsUltrametricDist.norm_intCast_le_one K _) (norm_nonneg _)
+    (by rw [norm_pow]; exact pow_le_one₀ (norm_nonneg _) hx)
 
 theorem norm_le_inv_of_lt_one {l : ℕ} (hl : 1 < l)
     (hval : ∀ a : K, a ≠ 0 → ∃ k : ℤ, ‖a‖ = (l : ℝ) ^ k) {y : K} (hy : ‖y‖ < 1) :
@@ -115,8 +83,7 @@ theorem norm_le_inv_of_lt_one {l : ℕ} (hl : 1 < l)
   rw [hk] at hy ⊢
   have hl' : (1 : ℝ) < l := by exact_mod_cast hl
   have hk' : k < 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h1 : (1 : ℝ) ≤ (l : ℝ) ^ k := by
       first
       | exact one_le_zpow₀ hl'.le hc

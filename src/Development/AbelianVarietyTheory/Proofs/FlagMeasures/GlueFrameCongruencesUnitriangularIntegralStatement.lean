@@ -62,7 +62,6 @@ section -- clump:auto
 
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.HL GlobalTheory.LocOver
 open scoped Pointwise ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FrameGlue
 
@@ -111,7 +110,7 @@ theorem GlobalTheory.FrameGlue.glue : ∀ {E : Type} [Field E] [NumberField E] [
   let ξP : HeightOneSpectrum (𝓞 E) → Matrix (Fin (r + 1)) (Fin (r + 1)) (𝓞 E) := fun P =>
     if h : (g : 𝓞 E) ∈ P.asIdeal then Classical.choose (hloc P h) else 0
   have hξP : ∀ P (h : (g : 𝓞 E) ∈ P.asIdeal), ξP P = Classical.choose (hloc P h) := by
-    intro P h; simp only [ξP, dif_pos h]
+    intro P h; simp only [ξP, dite_eq_left h]
   have hcrt : ∀ a b : Fin (r + 1), ∃ y : 𝓞 E, ∀ P (hP : P ∈ hfin.toFinset),
       y - ξP P a b ∈ P.asIdeal ^ e P := by
     intro a b
@@ -136,7 +135,7 @@ theorem GlobalTheory.FrameGlue.glue : ∀ {E : Type} [Field E] [NumberField E] [
     · by_cases hab : a = b
       · subst hab; simp [ξ, hdiag]
       · have := hy a b P hPs
-        simp only [ξ, hba, hab, if_false]
+        simp only [ξ, hba, hab, ite_false]
         rw [← neg_sub]; exact (Ideal.neg_mem_iff _).2 this
   set L := Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Ideal.span {(g : 𝓞 E)} • Λ) with hL
   have key : ∀ (x : 𝓞 E) (v : S.V), ((x : E)) • v = x • v := fun x v => algebraMap_smul E x v
@@ -172,7 +171,6 @@ section -- clump:auto
 
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.HL GlobalTheory.LocOver
 open scoped Pointwise ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 end -- clump:auto
 end -- clump:auto

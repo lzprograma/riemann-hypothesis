@@ -52,7 +52,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.ExistsChosenExtremalVector
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.WeilParts GlobalTheory.VecInv
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ChrOff
 
@@ -187,15 +186,15 @@ theorem unrOff_of_unrAt : ∀ (D : D7) (c : (AE D)ˣ →* Circle) (χ : Formalis
       exact hone _ P f3 (comp_conj_idem ι h1 h2 f1 hcj)
   have key := hprod x hx1 S (fun P => if ι (finPart D (x : AE D)) P = 1 then 1 else k P) (fun P hP => by
     by_cases h : ι (finPart D (x : AE D)) P = 1
-    · rw [if_pos h, h, Units.val_one, map_one, map_one, map_one, sub_self, map_zero]
+    · rw [ite_eq_left h, h, Units.val_one, map_one, map_one, map_one, sub_self, map_zero]
       exact ⟨rfl, zero_le⟩
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       exact ⟨(hS P hP).1, (hS P hP).2.1⟩) hS'
   apply Subtype.ext
   refine key.trans (Finset.prod_eq_one fun P hP => ?_)
   by_cases h : ι (finPart D (x : AE D)) P = 1
-  · rw [if_pos h, map_one, Units.val_one]
-  · rw [if_neg h]
+  · rw [ite_eq_left h, map_one, Units.val_one]
+  · rw [ite_eq_right h]
     have a' : Valued.v (ι (finPart D (x : AE D)) P) = P.valuation D.host.E (k P : D.host.E) := (hS P hP).1
     rw [hv P] at a'
     have hun : Formalism.L2.Host.IsUnitAt P (Formalism.L2.Host.atFin P (k P)) := by

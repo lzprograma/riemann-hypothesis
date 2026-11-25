@@ -1,62 +1,16 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsResOfTameAt
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNatCongrOfAbsNormPrime
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
 import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Formalism.LocalToGlobal.Columns.BaseLemmas
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.Automorphisms.PlaceA
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -185,37 +139,8 @@ end ZMod
 theorem locK_congr {L : Type} [Field L] [NumberField L] (χ : HChar L) (w : HeightOneSpectrum (𝓞 L)) (ht : χ.TameAt w)
     (x x' : Lˣ) (y y' : 𝓞 L) (hx : (x : L) = y) (hx' : (x' : L) = y') (hy : y' ∉ w.asIdeal)
     (hyy : y - y' ∈ w.asIdeal) : χ.locK w x = χ.locK w x' := by
-  have hv' : w.valuation L (y' : L) = 1 := (HeightOneSpectrum.valuation_eq_one_iff_notMem w).2 hy
-  have hlt : w.valuation L ((y - y' : 𝓞 L) : L) < 1 := (HeightOneSpectrum.valuation_lt_one_iff_mem w _).2 hyy
-  have hy0 : (y' : L) ≠ 0 := hx' ▸ x'.ne_zero
-  have e : ((x * x'⁻¹ : Lˣ) : L) - 1 = ((y - y' : 𝓞 L) : L) * (y' : L)⁻¹ := by
-    rw [Units.val_mul, Units.val_inv_eq_inv_val, hx, hx']
-    push_cast
-    field_simp
-  have h1 : w.valuation L (((x * x'⁻¹ : Lˣ) : L) - 1) < 1 := by
-    rw [e, map_mul, map_inv₀, hv', inv_one, mul_one]
-    exact hlt
-  have h2 : Valued.v (((atFin w (x * x'⁻¹) : (w.adicCompletion L)ˣ) : w.adicCompletion L) - 1) < 1 := by
-    have h3 : ((atFin w (x * x'⁻¹) : (w.adicCompletion L)ˣ) : w.adicCompletion L) - 1
-        = algebraMap L (w.adicCompletion L) (((x * x'⁻¹ : Lˣ) : L) - 1) := by
-      rw [map_sub, map_one]
-      rfl
-    rw [h3, ReciprocityTheory.Aut.adic_valued_algebraMap]
-    exact h1
-  have h4 : IsUnitAt w (atFin w (x * x'⁻¹)) := by
-    have := Valuation.map_eq_of_sub_lt Valued.v (x := (1 : w.adicCompletion L))
-      (y := ((atFin w (x * x'⁻¹) : (w.adicCompletion L)ˣ) : w.adicCompletion L)) (by rwa [map_one])
-    rwa [map_one] at this
-  have h5 : χ.locK w (x * x'⁻¹) = 1 := by
-    refine ht _ h4 ?_
-    generalize Valued.v (((atFin w (x * x'⁻¹) : (w.adicCompletion L)ˣ) : w.adicCompletion L) - 1) = g at h2
-    by_cases hg : g = 0
-    · rw [hg]; exact zero_le
-    · rw [← WithZero.exp_log hg] at h2 ⊢
-      rw [← WithZero.exp_zero, WithZero.exp_lt_exp] at h2
-      rw [WithZero.exp_le_exp]
-      omega
-  rwa [map_mul, map_inv, mul_inv_eq_one] at h5
+  intros
+  apply _root_.GlobalTheory.TameResidue.locK_eq_of_congr <;> assumption
 
 theorem absNorm_span_of_mul_eq {K : Type} [Field K] [NumberField K] (h2 : Module.finrank ℚ K = 2) {p : ℕ} (hp : p.Prime)
     {a b : 𝓞 K} (hab : a * b = p) (ha : ¬ IsUnit a) (hb : ¬ IsUnit b) : Ideal.absNorm (Ideal.span {b}) = p := by

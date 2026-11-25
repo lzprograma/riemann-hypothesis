@@ -48,8 +48,6 @@ open scoped TensorProduct DirectSum Classical
 
 namespace GlobalTheory.AutFinLit
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Compact
 
 variable {K : Type} [Group K] [TopologicalSpace K]
@@ -61,10 +59,6 @@ variable {D : D7}
 def IsMaxCompactInf (V : HSp D) (K : Subgroup (GA D V)) : Prop :=
   (∀ k ∈ K, k ∈ GinfC V) ∧ IsCompact (K : Set (GA D V)) ∧
     ∀ K' : Subgroup (GA D V), (∀ k ∈ K', k ∈ GinfC V) → IsCompact (K' : Set (GA D V)) → K ≤ K' → K' = K
-
-abbrev LieC (V : HSp D) : Type := ⨁ τ : D.what₂.Tau, ℂ ⊗[ℝ] LieAt V τ
-
-abbrev Env (V : HSp D) : Type := UniversalEnvelopingAlgebra ℂ (LieC V)
 
 end GlobalTheory.AutFinLit
 

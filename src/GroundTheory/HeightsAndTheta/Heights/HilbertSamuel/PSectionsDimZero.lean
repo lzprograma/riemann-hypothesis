@@ -143,7 +143,7 @@ theorem mem_valueSpan (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (hc : ∀ k, y
   have hdeg : ∀ k, blockDeg m' k = d k := by
     intro k
     have h1 : blockDeg m' k = blockDeg m k + (d k - blockDeg m k) := by
-      simp only [blockDeg, hm', Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      simp only [blockDeg, hm', Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     have := hm k
     omega
   have hextra : ∏ p, rt y c p ^ (if p.2 = c p.1 then d p.1 - blockDeg m p.1 else 0) = 1 := by
@@ -159,7 +159,7 @@ theorem mem_valueSpan (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (hc : ∀ k, y
     simp only [hm', pow_add, Finset.prod_mul_distrib, hextra, mul_one]
   refine Submodule.subset_span ⟨monomial m' 1, ?_, ?_⟩
   · intro e he k
-    rw [support_monomial, if_neg one_ne_zero, Finset.mem_singleton] at he
+    rw [support_monomial, ite_eq_right one_ne_zero, Finset.mem_singleton] at he
     rw [he]
     exact hdeg k
   · rw [aeval_monomial_int, Int.cast_one, one_mul, monVal_eq y c hc, hval]

@@ -341,8 +341,6 @@ def IotaRowC : Prop :=
 
 section Rec
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : HidaSetting D} {Y : Full X} {u u' : D.what₂.Word}
 
 open Formalism.L2.SG.TermTieOf in
@@ -453,7 +451,7 @@ theorem representative_s0_eq (q : RP Y u u') :
   have hT := Th_move hn₁ hn₂ hm₁ hm₂ hf₁ hz₁ hf₂ hz₂ (lift_F q.l1) (lift_frame q.l1) hL₂ hsF (hs_frame q.l1) hβ
     (beta_Xsp q.l1 q.l2) (τ := 1) (fun x hx => hx) (fun x _ => by simp)
   unfold s0T
-  rw [if_pos ⟨hl, hl'⟩, E1, hB]
+  rw [ite_eq_left ⟨hl, hl'⟩, E1, hB]
   unfold Lat.s0
   exact congrArg (fun q : ℕ => D.R.k - q) ((congrArg (fun M : Submodule D.host.E (VS D).V => Module.finrank D.host.E M)
     hT).trans (LinearEquiv.finrank_map_eq n₁ _))
@@ -549,8 +547,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
   Formalism.L2.SG.PackageTie2 Formalism.L2.SG.Full
 
 namespace Formalism.L2.SG.Pf.FinXP
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem star_Gflag {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ} (n m : ℕ)
     (F : FlagG S r (n : E)) (F' : FlagG S r (m : E)) : star (Gflag F F') = Gflag F F' := by

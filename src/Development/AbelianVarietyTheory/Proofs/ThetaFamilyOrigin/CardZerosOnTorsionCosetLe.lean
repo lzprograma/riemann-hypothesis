@@ -389,7 +389,7 @@ theorem eq_zero_of_not_mem [IsIntegral X] (hL : L.IsLB)
 
 end SectionRing
 
-theorem card_fibre_zeros_le {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}} [IsIntegral X]
+theorem card_fibre_zeros_le_of_growth_aux {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}} [IsIntegral X]
     (p : X ⟶ Sp K) {L : LB X} (hL : L.IsLB) {R : Type} [CommRing R] [IsDomain R] [Algebra K R]
     {𝒜 : ℕ → Submodule K R} [GradedAlgebra 𝒜] (Φ : ∀ e : ℕ, (lbPow L e).Sec ≃ 𝒜 e)
     (ρ : ∀ j : PUnit → L.ι, R →+* Γ(X, (lbPow L 0).U j))
@@ -397,7 +397,7 @@ theorem card_fibre_zeros_le {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}
     (hρ : ∀ j e (s : (lbPow L e).Sec), ρ j (Φ e s) = s.f j)
     (hInt : ∀ (T : Type) [CommRing T] [IsDomain T] [Algebra K T] (𝒜 : ℕ → Submodule K T) [GradedAlgebra 𝒜] (m : ℕ) (x : Fin m → T), (∀ i, x i ∈ 𝒜 1) → (∃ i, x i ≠ 0) → ∀ (d : ℕ), ∀ s ∈ 𝒜 d, (∀ i, ∃ n : ℕ, s * x i ^ n ∈ Algebra.adjoin K (Set.range x)) → IsIntegral (Algebra.adjoin K (Set.range x)) s)
     (hBez : ∀ (T : Type) [CommRing T] [IsDomain T] [Algebra K T] (𝒜 : ℕ → Submodule K T) [GradedAlgebra 𝒜] (m g N d a : ℕ) (x : Fin m → T) (s : T) (F : Set T), 1 ≤ g → (∀ i, x i ∈ 𝒜 1) → Module.Finite (Algebra.adjoin K (Set.range x)) T → ringKrullDim T = (g + 1 : ℕ) → (∀ e, 1 ≤ e → Module.finrank K (𝒜 e) ≤ (N * e) ^ g) → s ∈ 𝒜 d → s ≠ 0 → (∀ f ∈ F, f ∈ 𝒜 a) → (∃ Φ : Set (T →ₐ[K] K), Φ.Finite ∧ ∀ φ : T →ₐ[K] K, (∃ i, φ (x i) ≠ 0) → (∀ f ∈ F, φ f = 0) → ∃ ψ ∈ Φ, (∃ c : K, ∀ (e : ℕ), ∀ y ∈ 𝒜 e, φ y = c ^ e * ψ y)) → ∀ (n : ℕ) (φ : Fin n → (T →ₐ[K] K)), (∀ j, ∃ i, φ j (x i) ≠ 0) → (∀ j, φ j s = 0 ∧ ∀ f ∈ F, φ j f = 0) → (∀ j j', (∃ c : K, ∀ (e : ℕ), ∀ y ∈ 𝒜 e, φ j' y = c ^ e * φ j y) → j = j') → n ≤ N ^ g * g.factorial * d * a ^ (g - 1))
-    {m g N d a : ℕ} (hg : 1 ≤ g) (hN : 1 ≤ N) (s : Fin m → (lbPow L N).Sec)
+    {m g N B d a : ℕ} (hg : 1 ≤ g) (hN : 1 ≤ N) (s : Fin m → (lbPow L N).Sec)
     (hcov : ⨆ i, Out.nonzeroLocus (s i) = ⊤) (haff : ∀ i, IsAffineOpen (Out.nonzeroLocus (s i)))
     (r : ∀ i, Fin m → Γ(X, Out.nonzeroLocus (s i)))
     (hr : ∀ i j k, resG X (inf_le_right : Out.nonzeroLocus (s i) ⊓ (lbPow L N).U k ≤ _) ((s j).f k) =
@@ -405,8 +405,8 @@ theorem card_fibre_zeros_le {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}
     (hgen : ∀ i (f : Γ(X, Out.nonzeroLocus (s i))), ∃ F : MvPolynomial (Fin m) K,
       f = MvPolynomial.eval₂ (constHom p _) (r i) F)
     (hdim : ∀ U : X.Opens, IsAffineOpen U → (U : Set X).Nonempty → ringKrullDim Γ(X, U) = g)
-    (hspan : ∀ n, 1 ≤ n → ∃ b : Fin (n ^ g) → (lbPow L n).Sec, ∀ t : (lbPow L n).Sec,
-      ∃ c : Fin (n ^ g) → K, ∀ j, t.f j = ∑ i, constFn p _ (c i) * (b i).f j)
+    (hspan : ∀ e, 1 ≤ e → ∃ n ≤ (B * e) ^ g, ∃ b : Fin n → (lbPow L (N * e)).Sec,
+      ∀ t : (lbPow L (N * e)).Sec, ∃ c : Fin n → K, ∀ j, t.f j = ∑ i, constFn p _ (c i) * (b i).f j)
     {Pt : Type} (pt : Pt → (Sp K ⟶ X)) (hpt : ∀ z, pt z ≫ p = 𝟙 _) (hinj : Function.Injective pt)
     (hsurj : ∀ z : Sp K ⟶ X, z ≫ p = 𝟙 _ → ∃ w, pt w = z)
     (ν : Pt → Pt) (b : Pt) (hfin : {z | ν z = b}.Finite)
@@ -414,7 +414,7 @@ theorem card_fibre_zeros_le {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}
       ⊤ ≤ pt z ⁻¹ᵁ Out.nonzeroLocus h' ↔ ⊤ ≤ pt (ν z) ⁻¹ᵁ Out.nonzeroLocus h)
     (u : (lbPow L (N * d)).Sec) (hu : ∃ j, u.f j ≠ 0) :
     Nat.card {z : Pt // ν z = b ∧ ¬ ⊤ ≤ pt z ⁻¹ᵁ Out.nonzeroLocus u} ≤
-      N ^ g * g.factorial * d * a ^ (g - 1) := by
+      B ^ g * g.factorial * d * a ^ (g - 1) := by
   choose ev hev hevr using fun z => exists_ev p Φ ρ hL hρc hρ (pt z) (hpt z)
   letI alg : ∀ i, Algebra K Γ(X, Out.nonzeroLocus (s i)) := fun i => (constHom p _).toAlgebra
   have hgen' : ∀ i, Function.Surjective (MvPolynomial.aeval (r i) : MvPolynomial (Fin m) K →ₐ[K] _) :=
@@ -461,7 +461,7 @@ theorem card_fibre_zeros_le {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}
     change ev (ν z) (x j - _ • x i₀) ≠ 0 ↔ _
     rw [map_sub, map_smul, smul_eq_mul, sub_ne_zero]
   have : Nonempty (Out.nonzeroLocus (s i₀)) := ⟨⟨_, hη⟩⟩
-  have key := card_zeros_le 𝒜 hInt hBez (d := d) (a := a) hg hN x (fun j => (Φ N (s j)).2)
+  have key := card_zeros_le_of_growth_aux 𝒜 hInt hBez (B := B) (d := d) (a := a) hg hN x (fun j => (Φ N (s j)).2)
     (fun e y hy i => ?_) (r i₀) i₀ (hch i₀ hη).1 (fun h => hi₀ (by rw [h, map_zero])) (hgen' i₀)
     (hch i₀ hη).2.1 (hdim _ (haff i₀) ⟨_, hη⟩) (fun e he => ?_) (Φ _ u) (Subtype.prop _) (fun h => ?_)
     (fun j => (Φ _ (h' j) : R)) (fun j => Subtype.prop _) ev hcov' (fun v i hv h => ?_) hsep
@@ -474,8 +474,9 @@ theorem card_fibre_zeros_le {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}
     · refine ⟨1, 0, MvPolynomial.isHomogeneous_zero _ _ _, ?_⟩
       rw [show x i = 0 from eq_zero_of_not_mem Φ ρ hL hρ (s i) hi]
       simp
-  · obtain ⟨c, hc⟩ := hspan (N * e) (Nat.mul_pos hN he)
-    exact finrank_le_of_span p Φ ρ hL hρc hρ _ _ c hc
+  · obtain ⟨n, hn, c, hc⟩ := hspan e he
+    obtain ⟨h1, h2⟩ := finrank_le_of_span p Φ ρ hL hρc hρ _ _ c hc
+    exact ⟨h1, h2.trans hn⟩
   · obtain ⟨j, hj⟩ := hu
     exact hj ((hρ j _ u).symm.trans ((congrArg (ρ j) h).trans (map_zero _)))
   · have hi : genericPoint X ∈ Out.nonzeroLocus (s i) := by
@@ -496,6 +497,36 @@ theorem card_fibre_zeros_le {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}
     · rw [show ν z = b from h, inv_mul_cancel_right₀ hi₀]
     · rw [h j]
       ring
+
+theorem card_fibre_zeros_le {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}} [IsIntegral X]
+    (p : X ⟶ Sp K) {L : LB X} (hL : L.IsLB) {R : Type} [CommRing R] [IsDomain R] [Algebra K R]
+    {𝒜 : ℕ → Submodule K R} [GradedAlgebra 𝒜] (Φ : ∀ e : ℕ, (lbPow L e).Sec ≃ 𝒜 e)
+    (ρ : ∀ j : PUnit → L.ι, R →+* Γ(X, (lbPow L 0).U j))
+    (hρc : ∀ j a, ρ j (algebraMap K R a) = constFn p _ a)
+    (hρ : ∀ j e (s : (lbPow L e).Sec), ρ j (Φ e s) = s.f j)
+    (hInt : ∀ (T : Type) [CommRing T] [IsDomain T] [Algebra K T] (𝒜 : ℕ → Submodule K T) [GradedAlgebra 𝒜] (m : ℕ) (x : Fin m → T), (∀ i, x i ∈ 𝒜 1) → (∃ i, x i ≠ 0) → ∀ (d : ℕ), ∀ s ∈ 𝒜 d, (∀ i, ∃ n : ℕ, s * x i ^ n ∈ Algebra.adjoin K (Set.range x)) → IsIntegral (Algebra.adjoin K (Set.range x)) s)
+    (hBez : ∀ (T : Type) [CommRing T] [IsDomain T] [Algebra K T] (𝒜 : ℕ → Submodule K T) [GradedAlgebra 𝒜] (m g N d a : ℕ) (x : Fin m → T) (s : T) (F : Set T), 1 ≤ g → (∀ i, x i ∈ 𝒜 1) → Module.Finite (Algebra.adjoin K (Set.range x)) T → ringKrullDim T = (g + 1 : ℕ) → (∀ e, 1 ≤ e → Module.finrank K (𝒜 e) ≤ (N * e) ^ g) → s ∈ 𝒜 d → s ≠ 0 → (∀ f ∈ F, f ∈ 𝒜 a) → (∃ Φ : Set (T →ₐ[K] K), Φ.Finite ∧ ∀ φ : T →ₐ[K] K, (∃ i, φ (x i) ≠ 0) → (∀ f ∈ F, φ f = 0) → ∃ ψ ∈ Φ, (∃ c : K, ∀ (e : ℕ), ∀ y ∈ 𝒜 e, φ y = c ^ e * ψ y)) → ∀ (n : ℕ) (φ : Fin n → (T →ₐ[K] K)), (∀ j, ∃ i, φ j (x i) ≠ 0) → (∀ j, φ j s = 0 ∧ ∀ f ∈ F, φ j f = 0) → (∀ j j', (∃ c : K, ∀ (e : ℕ), ∀ y ∈ 𝒜 e, φ j' y = c ^ e * φ j y) → j = j') → n ≤ N ^ g * g.factorial * d * a ^ (g - 1))
+    {m g N d a : ℕ} (hg : 1 ≤ g) (hN : 1 ≤ N) (s : Fin m → (lbPow L N).Sec)
+    (hcov : ⨆ i, Out.nonzeroLocus (s i) = ⊤) (haff : ∀ i, IsAffineOpen (Out.nonzeroLocus (s i)))
+    (r : ∀ i, Fin m → Γ(X, Out.nonzeroLocus (s i)))
+    (hr : ∀ i j k, resG X (inf_le_right : Out.nonzeroLocus (s i) ⊓ (lbPow L N).U k ≤ _) ((s j).f k) =
+      resG X inf_le_left (r i j) * resG X inf_le_right ((s i).f k))
+    (hgen : ∀ i (f : Γ(X, Out.nonzeroLocus (s i))), ∃ F : MvPolynomial (Fin m) K,
+      f = MvPolynomial.eval₂ (constHom p _) (r i) F)
+    (hdim : ∀ U : X.Opens, IsAffineOpen U → (U : Set X).Nonempty → ringKrullDim Γ(X, U) = g)
+    (hspan : ∀ n, 1 ≤ n → ∃ b : Fin (n ^ g) → (lbPow L n).Sec, ∀ t : (lbPow L n).Sec,
+      ∃ c : Fin (n ^ g) → K, ∀ j, t.f j = ∑ i, constFn p _ (c i) * (b i).f j)
+    {Pt : Type} (pt : Pt → (Sp K ⟶ X)) (hpt : ∀ z, pt z ≫ p = 𝟙 _) (hinj : Function.Injective pt)
+    (hsurj : ∀ z : Sp K ⟶ X, z ≫ p = 𝟙 _ → ∃ w, pt w = z)
+    (ν : Pt → Pt) (b : Pt) (hfin : {z | ν z = b}.Finite)
+    (hpull : ∀ h : (lbPow L N).Sec, ∃ h' : (lbPow L (N * a)).Sec, ∀ z,
+      ⊤ ≤ pt z ⁻¹ᵁ Out.nonzeroLocus h' ↔ ⊤ ≤ pt (ν z) ⁻¹ᵁ Out.nonzeroLocus h)
+    (u : (lbPow L (N * d)).Sec) (hu : ∃ j, u.f j ≠ 0) :
+    Nat.card {z : Pt // ν z = b ∧ ¬ ⊤ ≤ pt z ⁻¹ᵁ Out.nonzeroLocus u} ≤
+      N ^ g * g.factorial * d * a ^ (g - 1) :=
+  card_fibre_zeros_le_of_growth_aux p hL Φ ρ hρc hρ hInt hBez (B := N) hg hN s hcov haff r hr hgen hdim
+    (fun e he => ⟨(N * e) ^ g, le_rfl, hspan (N * e) (Nat.mul_pos hN he)⟩)
+    pt hpt hinj hsurj ν b hfin hpull u hu
 
 theorem finite_pow_eq {G : Type} [CommGroup G] {k : ℕ} (h : Nat.card {x : G // x ^ k = 1} ≠ 0) (b : G) :
     {x : G | x ^ k = b}.Finite := by

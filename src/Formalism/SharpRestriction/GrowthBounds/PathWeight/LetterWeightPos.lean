@@ -1,49 +1,9 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.JointTypeLatticeSaturated
 public import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -76,7 +36,7 @@ theorem weighted_component_mul_lowest {f g : MvPolynomial σ R} {a b : ℕ}
     · simp [h2]
     have e1 := hf x.1 (mem_support_iff.2 h1)
     have e2 := hg x.2 (mem_support_iff.2 h2)
-    rw [if_pos (by omega), if_pos (by omega)]
+    rw [ite_eq_left (by omega), ite_eq_left (by omega)]
   · symm
     refine Finset.sum_eq_zero fun x hx => ?_
     rw [coeff_weightedHomogeneousComponent, coeff_weightedHomogeneousComponent]
@@ -100,16 +60,7 @@ theorem weighted_component_prod_lowest {ι : Type*} (s : Finset ι) (f : ι → 
     (∀ m ∈ (∏ c ∈ s, f c).support, ∑ c ∈ s, o c ≤ Finsupp.weight wt m) ∧
     weightedHomogeneousComponent wt (∑ c ∈ s, o c) (∏ c ∈ s, f c) =
       ∏ c ∈ s, weightedHomogeneousComponent wt (o c) (f c) := by
-  induction s using Finset.induction_on with
-  | empty =>
-    refine ⟨fun m _ => by simp, ?_⟩
-    simp only [Finset.sum_empty, Finset.prod_empty]
-    exact (isWeightedHomogeneous_one R wt).weightedHomogeneousComponent_same
-  | insert c s hc ih =>
-    obtain ⟨ih1, ih2⟩ := ih fun c' hc' => hf c' (Finset.mem_insert_of_mem hc')
-    have h0 := hf c (Finset.mem_insert_self c s)
-    rw [Finset.sum_insert hc, Finset.prod_insert hc, Finset.prod_insert hc]
-    exact ⟨support_weight_mul_lower wt h0 ih1, by rw [weighted_component_mul_lowest wt h0 ih1, ih2]⟩
+  apply _root_.Formalism.MainNotions.LemmaBAlt.low_prod <;> assumption
 
 end Low
 
@@ -174,7 +125,7 @@ theorem substitution_rename_lift (w : O) (hn : Even n') (g : Matrix (Fin k) (Fin
       have h1 : (LLT n').vec (rho F j k v).1 = true := by simp [LLT, rho, hE']
       have h2 : (LLs F j).vec v.1 = true := by simp [LLs, hE]
 
-      rw [if_pos h1, if_pos h2, map_sum]
+      rw [ite_eq_left h1, ite_eq_left h2, map_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [map_mul, rename_C]
       split_ifs <;> simp [rho]
@@ -182,7 +133,7 @@ theorem substitution_rename_lift (w : O) (hn : Even n') (g : Matrix (Fin k) (Fin
       have h1 : ¬ (LLT n').vec (rho F j k v).1 = true := by simp [LLT, rho, hE']
       have h2 : ¬ (LLs F j).vec v.1 = true := by simp [LLs, hE]
 
-      rw [if_neg h1, if_neg h2, map_sum]
+      rw [ite_eq_right h1, ite_eq_right h2, map_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [map_mul, rename_C]
       split_ifs <;> simp [rho]
@@ -216,14 +167,14 @@ theorem normal_iff_letter_column (hn : Even n') (v : Fin (Mj F j) × Fin (r + K)
     have h2 : (LLs F j).toLetters.vec v.1 = true := by simp [LLs, hE]
     have h3 : IsNormal r (rho F j (r + K) v) ↔ r ≤ v.2.val := by
       show (if Even (posOf n' (eL F j v.1)).val then r ≤ v.2.val else v.2.val < r) ↔ _
-      rw [if_pos hE']
+      rw [ite_eq_left hE']
     rw [h3, h2]
     simp
   · have hE' : ¬ Even (posOf n' (eL F j v.1)).val := fun h => hE ((posOf_even hn _).1 h)
     have h2 : (LLs F j).toLetters.vec v.1 = false := by simp [LLs, hE]
     have h3 : IsNormal r (rho F j (r + K) v) ↔ v.2.val < r := by
       show (if Even (posOf n' (eL F j v.1)).val then r ≤ v.2.val else v.2.val < r) ↔ _
-      rw [if_neg hE']
+      rw [ite_eq_right hE']
     rw [h3, h2]
     simp
 
@@ -232,8 +183,8 @@ theorem symbol_weight_factor (hn : Even n') (v : Fin (Mj F j) × Fin (r + K)) :
       omL F j p v.1 * normalVariableWeight n' (r + K) r (rho F j (r + K) v) := by
   unfold symWt normalVariableWeight
   by_cases hN : IsNormal r (rho F j (r + K) v)
-  · rw [if_pos ((normal_iff_letter_column F j K hn v).2 hN), if_pos hN, mul_one]
-  · rw [if_neg (fun h => hN ((normal_iff_letter_column F j K hn v).1 h)), if_neg hN, mul_zero]
+  · rw [ite_eq_left ((normal_iff_letter_column F j K hn v).2 hN), ite_eq_left hN, mul_one]
+  · rw [ite_eq_right (fun h => hN ((normal_iff_letter_column F j K hn v).1 h)), ite_eq_right hN, mul_zero]
 
 variable (O : Type) [CommRing O]
 

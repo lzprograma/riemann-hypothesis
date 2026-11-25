@@ -42,6 +42,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.GaussA
 
 @[expose] public section
 
@@ -58,15 +59,7 @@ theorem isUnit_of_isUniUp {N : ℕ} {M : Mt g N} (hM : IsUniUp M) : IsUnit M := 
   simp [(hM _ _).2 rfl]
 
 theorem card_lt_pairs (N : ℕ) : Fintype.card {p : Fin N × Fin N // p.1 < p.2} = N * (N - 1) / 2 := by
-  rw [Fintype.card_subtype, Finset.card_filter, Fintype.sum_prod_type, Finset.sum_comm]
-  have hb : ∀ b : Fin N, (∑ a : Fin N, if a < b then 1 else 0) = (b : ℕ) := by
-    intro b
-    rw [← Finset.card_filter, ← Fin.card_Iio b]
-    congr 1
-    ext a
-    simp
-  simp only [hb]
-  rw [Fin.sum_univ_eq_sum_range (fun i => i) N, Finset.sum_range_id]
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.gaussB_card_lt <;> assumption
 
 def ofUpper {N : ℕ} (f : {p : Fin N × Fin N // p.1 < p.2} → ZMod g) : Mt g N :=
   fun a b => if h : a < b then f ⟨(a, b), h⟩ else if a = b then 1 else 0
@@ -74,7 +67,7 @@ def ofUpper {N : ℕ} (f : {p : Fin N × Fin N // p.1 < p.2} → ZMod g) : Mt g 
 theorem isUniUp_ofUpper {N : ℕ} (f : {p : Fin N × Fin N // p.1 < p.2} → ZMod g) : IsUniUp (ofUpper f) := by
   intro a b
   refine ⟨fun hba => ?_, fun hab => ?_⟩
-  · simp only [ofUpper, dif_neg (not_lt.mpr hba.le), if_neg hba.ne']
+  · simp only [ofUpper, dite_eq_right (not_lt.mpr hba.le), ite_eq_right hba.ne']
   · subst hab
     simp [ofUpper]
 
@@ -93,10 +86,10 @@ theorem card_uniUp (N : ℕ) :
         funext a b
         show ofUpper _ a b = (u : Mt g N) a b
         rcases lt_trichotomy a b with hab | rfl | hab
-        · simp only [ofUpper, dif_pos hab]
-        · simp only [ofUpper, dif_neg (lt_irrefl a)]
+        · simp only [ofUpper, dite_eq_left hab]
+        · simp only [ofUpper, dite_eq_right (lt_irrefl a)]
           exact ((hu a a).2 rfl).symm
-        · simp only [ofUpper, dif_neg (not_lt.mpr hab.le), if_neg hab.ne']
+        · simp only [ofUpper, dite_eq_right (not_lt.mpr hab.le), ite_eq_right hab.ne']
           exact ((hu a b).1 hab).symm
       right_inv := by
         intro f
@@ -104,7 +97,7 @@ theorem card_uniUp (N : ℕ) :
         dsimp only
         rw [IsUnit.unit_spec]
         show ofUpper f p.1.1 p.1.2 = f p
-        simp only [ofUpper, dif_pos p.2] }
+        simp only [ofUpper, dite_eq_left p.2] }
   rw [Fintype.card_congr e, Fintype.card_fun, ZMod.card, card_lt_pairs]
 
 theorem eU_coeff (ψ : AddChar (ZMod g) ℂ) (N : ℕ) (u : Gn g N) :
@@ -126,7 +119,7 @@ theorem sum_br (i n : ℕ) (M : Mt g n) :
   have h2 : j + 1 < n - i := by omega
   have hbr : entN (br i (n - i) M) j (j + 1) = entN M (i + j) (i + (j + 1)) := by
     conv_lhs => unfold entN
-    rw [dif_pos ⟨h1, h2⟩]
+    rw [dite_eq_left ⟨h1, h2⟩]
     rfl
   rw [hbr, add_assoc]
 
@@ -153,21 +146,21 @@ theorem der_eq_sum : ∀ (g : ℕ) [Fact g.Prime] (ψ : AddChar (ZMod g) ℂ) (i
       have hv0 : ((isUnit_of_isUniUp hU).unit : Mt g (n - i)) = br i (n - i) (x : Mt g n) :=
         IsUnit.unit_spec _
       rw [Finset.sum_eq_single (isUnit_of_isUniUp hU).unit]
-      · rw [if_pos (by rw [hv0]; exact hU), if_pos ⟨hP, ht, hv0.symm⟩, if_pos ⟨⟨hP, hU⟩, ht⟩, hv0, sum_br,
+      · rw [ite_eq_left (by rw [hv0]; exact hU), ite_eq_left ⟨hP, ht, hv0.symm⟩, ite_eq_left ⟨⟨hP, hU⟩, ht⟩, hv0, sum_br,
           mul_comm]
       · intro v _ hv
-        refine mul_eq_zero_of_right _ (if_neg ?_)
+        refine mul_eq_zero_of_right _ (ite_eq_right ?_)
         rintro ⟨-, -, hb⟩
         exact hv (Units.ext (hb.symm.trans hv0.symm))
       · intro hv
         exact absurd (Finset.mem_univ _) hv
-    · rw [if_neg hx]
+    · rw [ite_eq_right hx]
       refine Finset.sum_eq_zero fun v _ => ?_
       by_cases hv : IsUniUp (v : Mt g (n - i))
-      · refine mul_eq_zero_of_right _ (if_neg ?_)
+      · refine mul_eq_zero_of_right _ (ite_eq_right ?_)
         rintro ⟨hP, ht, hb⟩
         exact hx ⟨⟨hP, by rw [hb]; exact hv⟩, ht⟩
-      · rw [if_neg hv, zero_mul]
+      · rw [ite_eq_right hv, zero_mul]
   simp only [der, wh, tr, res, eU_coeff]
   calc _ = ∑ v : Gn g (n - i), ((g : ℂ) ^ (i * (n - i)))⁻¹ * ((g : ℂ) ^ ((n - i) * (n - i - 1) / 2))⁻¹ *
         ∑ x : Gn g n, (if IsUniUp (v : Mt g (n - i)) then

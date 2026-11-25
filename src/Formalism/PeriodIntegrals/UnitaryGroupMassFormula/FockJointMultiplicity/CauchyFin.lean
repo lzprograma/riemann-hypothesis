@@ -7,52 +7,8 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultipl
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.CauchyHW
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.EqZeroOfFockInnerSelfRe
 public import Mathlib.RingTheory.Derivation.Lie
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.PiTensorProduct
 
@@ -525,14 +481,14 @@ theorem cd_mono_factor {m : ℕ} (ι : Fin m × Fin m → σ) (hι : Function.In
   · obtain ⟨v, hv, hvo⟩ := hoff
     have h1 : (e.prod fun v k => killS (offD ι) v ^ k) = 0 := by
       refine Finset.prod_eq_zero hv ?_
-      simp only [killS, if_pos hvo]
+      simp only [killS, ite_eq_left hvo]
       exact zero_pow (Finsupp.mem_support_iff.mp hv)
     have h2 : (e.prod fun v k => diagOne' ι v ^ k) = 0 := by
       refine Finset.prod_eq_zero hv ?_
-      simp only [diagOne', if_pos hvo]
+      simp only [diagOne', ite_eq_left hvo]
       exact zero_pow (Finsupp.mem_support_iff.mp hv)
     rw [h1, h2, mul_zero]
-  · push_neg at hoff
+  · push Not at hoff
     have hsum : ∀ i, ∑ k : Fin m, e (ι (i, k)) = e (ι (i, i)) := by
       intro i
       rw [Finset.sum_eq_single i]
@@ -545,12 +501,12 @@ theorem cd_mono_factor {m : ℕ} (ι : Fin m × Fin m → σ) (hι : Function.In
     have hL : (e.prod fun v k => killS (offD ι) v ^ k) = ∏ v ∈ e.support, (X v : MvPolynomial σ ℂ) ^ e v := by
       unfold Finsupp.prod
       refine Finset.prod_congr rfl fun v hv => ?_
-      simp only [killS, if_neg (hoff v hv)]
+      simp only [killS, ite_eq_right (hoff v hv)]
     have hR : (e.prod fun v k => diagOne' ι v ^ k) =
         ∏ v ∈ e.support, (if (∃ i k, ι (i, k) = v ∧ (i : ℕ) = k) then 1 else (X v : MvPolynomial σ ℂ) ^ e v) := by
       unfold Finsupp.prod
       refine Finset.prod_congr rfl fun v hv => ?_
-      simp only [diagOne', if_neg (hoff v hv)]
+      simp only [diagOne', ite_eq_right (hoff v hv)]
       split_ifs <;> simp
     have hsplit : ∏ v ∈ e.support, (X v : MvPolynomial σ ℂ) ^ e v =
         (∏ v ∈ e.support, if (∃ i k, ι (i, k) = v ∧ (i : ℕ) = k) then (X v : MvPolynomial σ ℂ) ^ e v else 1) *
@@ -630,7 +586,7 @@ theorem diagonal_image_block_free : HypFree := by
         · exact h2 ⟨i, k, rfl, hik⟩
         · exact h1 ⟨i, k, rfl, hik⟩
       rw [MvPolynomial.support_X, Finset.mem_singleton] at he
-      rw [he, Finsupp.single_apply, if_neg hne]
+      rw [he, Finsupp.single_apply, ite_eq_right hne]
   induction P using MvPolynomial.induction_on
   next a =>
     rw [MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq]

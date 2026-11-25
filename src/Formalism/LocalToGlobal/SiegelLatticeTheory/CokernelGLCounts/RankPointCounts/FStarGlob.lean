@@ -18,8 +18,6 @@ open Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
@@ -99,7 +97,7 @@ theorem starGlob (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (hC 
     intro a b
     by_cases hab : a ≠ Fin.last D.R.rS ∨ b ≠ Fin.last D.R.rS
     · exact (FsLA.gram_fvec_zero F₃ a b hab).trans (FsLA.gram_fvec_zero F0 a b hab).symm
-    · push_neg at hab
+    · push Not at hab
       rw [hab.1, hab.2]
       exact (FsLA.gram_fvec_last F₃).trans (FsLA.gram_fvec_last F0).symm
   have k2 : ∀ a b, (VS D).hT (h a) (F₂.fvec b) = (VS D).hT (f a) (f₁ b) := by
@@ -115,7 +113,7 @@ theorem starGlob (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (hC 
     intro a b
     by_cases hab : a ≠ Fin.last D.R.rS ∨ b ≠ Fin.last D.R.rS
     · exact (FsLA.gram_fvec_zero F₂ a b hab).trans (hf1a a b hab).symm
-    · push_neg at hab
+    · push Not at hab
       rw [hab.1, hab.2]
       exact (FsLA.gram_fvec_last F₂).trans hf1b.symm
   have hGr : FsLA.gram (VS D) uu' uu' = FsLA.gram (VS D) uu uu := by

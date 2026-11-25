@@ -63,8 +63,6 @@ open Formalism.DivisionValues (vw lw)
 
 namespace GlobalTheory.CompanionTheory.FinDen
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Val
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
@@ -197,11 +195,11 @@ theorem deltaForm_eq_sum (x g : A) (hf : {γ : Γ | x⁻¹ * ((ι γ)⁻¹ * g) 
   unfold deltaForm
   rw [finsum_eq_sum_of_support_subset _ (s := hf.toFinset) ?_]
   · refine Finset.sum_congr rfl fun γ hγ => ?_
-    exact if_pos (hf.mem_toFinset.1 hγ)
+    exact ite_eq_left (hf.mem_toFinset.1 hγ)
   · intro γ hγ
     rw [Function.mem_support] at hγ
     by_contra h
-    exact hγ (if_neg (fun h' => h (hf.mem_toFinset.2 h')))
+    exact hγ (ite_eq_right (fun h' => h (hf.mem_toFinset.2 h')))
 
 theorem deltaForm_sum {J : Type} (x g : A) (hf : {γ : Γ | x⁻¹ * ((ι γ)⁻¹ * g) ∈ U}.Finite) (s : Finset J) (a : J → K) (v : J → M) :
     deltaForm ι U ρ x (∑ i ∈ s, a i • v i) g = ∑ i ∈ s, a i • deltaForm ι U ρ x (v i) g := by
@@ -364,13 +362,13 @@ theorem core_loss (ch : Choice R) {t : T} {w : PlL D} {Φ : ch.G.Datum} (hS : ch
     (fun j a => {v | InLat _ w a (latAt ch.S.toGridChoice (.top j) (ch.S.ptTop c j)) v})
     (fun j => if h : j < D.R.m then ch.S.Z.kkMap 1 (d.1 ⟨j, h⟩) (ch.S.ptTop c j) (ch.S.ptTop c (j + 1)) else 0) D.R.m aT
     (fun j hj a u hu => by
-      simp only [dif_pos hj]
+      simp only [dite_eq_left hj]
       exact hT β d hO c ⟨j, hj⟩ a u hu) 0 _ (hΨ (ch.S.ptTop c 0)) D.R.m le_rfl
   have hrow := chainTo_loss (V := fun i => VV ℂ (wt ch.G (.grid i D.R.m)))
     (fun i a => {v | InLat _ w a (latAt ch.S.toGridChoice (.grid i D.R.m) (ch.S.ptRow c i)) v})
     (fun i => if h : i < D.R.m then ch.S.Z.kkMap 1 (d.2 ⟨i, h⟩) (ch.S.ptRow c i) (ch.S.ptRow c (i + 1)) else 0) D.R.m aR
     (fun i hi a u hu => by
-      simp only [dif_pos hi]
+      simp only [dite_eq_left hi]
       exact hR β d hO c ⟨i, hi⟩ a u hu) aF _ (hF (ch.S.ptRow c 0)) D.R.m le_rfl
   have e' : ch.S.ptTop c D.R.m = finEmb ch.G.sp.topDec (ch.S.ptRow c D.R.m) := by
     simp [GridChoice.ptTop]
@@ -395,8 +393,6 @@ open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunOb
 open Formalism.DivisionValues (vw lw)
 
 namespace GlobalTheory.CompanionTheory.FinDen
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Test
 
@@ -423,7 +419,7 @@ theorem gam_ne {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U
   have e : S.ptTop c 0 = (c.1 ⟨0, hm⟩).out := by
     unfold GridChoice.ptTop
     rw [Function.update_of_ne hm.ne]
-    exact dif_pos hm
+    exact dite_eq_left hm
   rw [e]
   intro h3
   apply h2

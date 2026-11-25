@@ -3,52 +3,6 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OrthogonalProjectorMulEmbeddingColumns
 public import Mathlib.Analysis.InnerProductSpace.GramMatrix
 public import Mathlib.NumberTheory.NumberField.Discriminant.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OrthogonalProjectorMulVecSmul, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OrthogonalProjectorMulVecConjugate
@@ -117,9 +71,7 @@ theorem projectedVector_add (b : Fin k → Fin r → K) (q q' : Fin r → K) :
 theorem projectedVector_zero (b : Fin k → Fin r → K) : hpv b 0 = 0 := by
   have e : hReF (fun σ : K →+* ℂ => hPm σ b *ᵥ fun l => σ ((0 : Fin r → K) l)) = 0 := by
     funext p
-    simp only [hReF, Pi.zero_apply, map_zero]
-    rw [show (fun _ : Fin r => (0 : ℂ)) = 0 from rfl, mulVec_zero]
-    split_ifs <;> simp
+    simp [hReF, show (fun _ : Fin r => (0 : ℂ)) = 0 from rfl, mulVec_zero]
   simp only [hpv, hRe, e, WithLp.toLp_zero]
 
 noncomputable def hpvHom (b : Fin k → Fin r → K) : (Fin r → K) →+ EuclideanSpace ℝ (hIdx K r) where
@@ -202,23 +154,18 @@ theorem embeddingColumns_conjugate (σ : K →+* ℂ) (b : Fin k → Fin r → K
   ext l j
   simp [hBm, NumberField.ComplexEmbedding.conjugate_coe_eq]
 
-private lemma map_star_inv {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) :
-    A⁻¹.map (starRingEnd ℂ) = (A.map (starRingEnd ℂ))⁻¹ := by
-  have h : ∀ M : Matrix (Fin n) (Fin n) ℂ, M.map (starRingEnd ℂ) = Mᴴᵀ := by
-    intro M
-    ext i j
-    simp [conjTranspose_apply]
-  rw [h, h, ← transpose_nonsing_inv, conjTranspose_nonsing_inv]
-
 theorem orthogonalProjector_conjugate (σ : K →+* ℂ) {b : Fin k → Fin r → K} (hb : LinearIndependent K b) :
     hPm (conjugate σ) b = (hPm σ b).map (starRingEnd ℂ) := by
+  have hst : ∀ M : Matrix (Fin k) (Fin k) ℂ, M.map (starRingEnd ℂ) = Mᴴᵀ := fun M => by
+    ext; simp [conjTranspose_apply]
   unfold hPm
-  rw [embeddingColumns_conjugate σ b]
-  have h1 : ((hBm σ b).map (starRingEnd ℂ))ᴴ = (hBm σ b)ᴴ.map (starRingEnd ℂ) := by
-    ext i j
-    simp [conjTranspose_apply]
-  rw [h1, ← Matrix.map_mul, ← map_star_inv, Matrix.map_sub _ (map_sub _),
-    Matrix.map_one _ (map_zero _) (map_one _), Matrix.map_mul, Matrix.map_mul]
+  rw [embeddingColumns_conjugate σ b, ← conjTranspose_map (starRingEnd ℂ : ℂ → ℂ) fun _ => rfl,
+    ← Matrix.map_mul]
+  conv_rhs =>
+    rw [Matrix.map_sub _ (map_sub _), Matrix.map_one _ (map_zero _) (map_one _),
+      Matrix.map_mul, Matrix.map_mul]
+  rw [hst ((hBm σ b)ᴴ * hBm σ b), hst ((hBm σ b)ᴴ * hBm σ b)⁻¹,
+    ← transpose_nonsing_inv, conjTranspose_nonsing_inv]
 
 theorem orthogonalProjector_mulVec_conjugate (σ : K →+* ℂ) {b : Fin k → Fin r → K} (hb : LinearIndependent K b)
     (x : Fin r → K) :
@@ -236,11 +183,7 @@ theorem conj_sum_projected_inner (b : Fin k → Fin r → K) (hb : LinearIndepen
         (star (hPm σ b *ᵥ fun l => σ (x l)) ⬝ᵥ (hPm σ b *ᵥ fun l => σ (y l))) := by
 
   rw [map_sum]
-  have hinv : Function.Involutive (NumberField.ComplexEmbedding.conjugate (K := K)) := by
-    intro σ
-    ext z
-    simp
-  refine Fintype.sum_bijective _ hinv.bijective _ _ (fun σ => ?_)
+  refine Fintype.sum_bijective _ (involutive_conjugate K).bijective _ _ (fun σ => ?_)
   rw [orthogonalProjector_mulVec_conjugate σ hb x, orthogonalProjector_mulVec_conjugate σ hb y,
     NumberField.ComplexEmbedding.conjugate_coe_eq, NumberField.ComplexEmbedding.conjugate_coe_eq]
 

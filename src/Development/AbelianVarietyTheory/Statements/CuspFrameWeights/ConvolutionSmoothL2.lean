@@ -47,16 +47,6 @@ noncomputable section
 
 namespace GlobalTheory.Dec
 
-def AutFinite : Prop :=
-  ∀ (I : AutInst) (g : ℕ), 1 ≤ g →
-    ∀ (N : InfinitePlace I.F → ℕ → ℕ) (c : ∀ v m, Fin (N v m) → ℂ)
-      (W : Type) [NormedAddCommGroup W] [InnerProductSpace ℂ W] [FiniteDimensional ℂ W] (τ : Kinf I → (W →L[ℂ] W)),
-      IsURep τ →
-      FiniteDimensional ℂ (Submodule.span ℂ {f : I.GA → ℂ | IsSmoothMG I g f ∧
-        (∀ v m x, (zOp I v m)^[N v m] f x = ∑ i, c v m i * (zOp I v m)^[i.val] f x) ∧
-        ∃ L : W →ₗ[ℂ] (I.GA → ℂ), (∀ (k : Kinf I) w x, L (τ k w) x = L w (x * (fun v => (k v : UJ (I.ε v)), 1))) ∧
-          f ∈ LinearMap.range L})
-
 def CoefCusp : Prop :=
   ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)), IsSqIntIrr ε σ → ∀ u v : H, IsKFin ε σ u → IsKFin ε σ v →
     ∀ W, IsIsoC ε W → ∀ ν : Measure (UJ ε), IsHaarSub (NW ε W) ν → ∀ x y : UJ ε,

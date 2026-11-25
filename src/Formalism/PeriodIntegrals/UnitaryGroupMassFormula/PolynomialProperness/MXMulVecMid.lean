@@ -2,51 +2,6 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.TauDefs
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -91,7 +46,7 @@ def midF (k r : ℕ) (x y : Fin (2 * r + k + 1) → ℂ) : ℂ :=
 theorem sig_eI (k r : ℕ) (t : Fin r) : GBasic.sig k r (eI k r t) = esI k r t := by
   have h : (eI k r t).val < r ∨ r + k < (eI k r t).val := Or.inl t.isLt
   unfold GBasic.sig
-  rw [if_pos h]
+  rw [ite_eq_left h]
   rfl
 
 theorem sig_esI (k r : ℕ) (t : Fin r) : GBasic.sig k r (esI k r t) = eI k r t := by
@@ -101,7 +56,7 @@ theorem sig_esI (k r : ℕ) (t : Fin r) : GBasic.sig k r (esI k r t) = eI k r t 
     show r + k < 2 * r + k - t.val
     omega
   unfold GBasic.sig
-  rw [if_pos h]
+  rw [ite_eq_left h]
   apply Fin.ext
   show 2 * r + k - (2 * r + k - t.val) = t.val
   omega
@@ -111,7 +66,7 @@ theorem herm_coords (k r : ℕ) (x y : Fin (2 * r + k + 1) → ℂ) :
   have hmul : ∀ i, (Hpk k r *ᵥ x) i = GBasic.sgn k r i * x (GBasic.sig k r i) := by
     intro i
     simp only [Matrix.mulVec, dotProduct, GBasic.Hpk_eq, ite_mul, zero_mul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
   have hsplit : ∀ i : Fin (2 * r + k + 1),
       star (y i) * (GBasic.sgn k r i * x (GBasic.sig k r i)) =
         (if i.val < r then star (y i) * x (GBasic.sig k r i) else 0) +
@@ -121,20 +76,20 @@ theorem herm_coords (k r : ℕ) (x y : Fin (2 * r + k + 1) → ℂ) :
     by_cases h1 : i.val < r
     · have hs : GBasic.sgn k r i = 1 := by
         unfold GBasic.sgn
-        rw [if_neg (show ¬ (i.val = r + k) by omega)]
-      rw [if_pos h1, if_neg (show ¬ (r + k < i.val) by omega),
-        if_neg (show ¬ (r ≤ i.val ∧ i.val ≤ r + k) by omega), hs]
+        rw [ite_eq_right (show ¬ (i.val = r + k) by omega)]
+      rw [ite_eq_left h1, ite_eq_right (show ¬ (r + k < i.val) by omega),
+        ite_eq_right (show ¬ (r ≤ i.val ∧ i.val ≤ r + k) by omega), hs]
       ring
     · by_cases h2 : r + k < i.val
       · have hs : GBasic.sgn k r i = 1 := by
           unfold GBasic.sgn
-          rw [if_neg (show ¬ (i.val = r + k) by omega)]
-        rw [if_neg h1, if_pos h2, if_neg (show ¬ (r ≤ i.val ∧ i.val ≤ r + k) by omega), hs]
+          rw [ite_eq_right (show ¬ (i.val = r + k) by omega)]
+        rw [ite_eq_right h1, ite_eq_left h2, ite_eq_right (show ¬ (r ≤ i.val ∧ i.val ≤ r + k) by omega), hs]
         ring
       · have hs : GBasic.sig k r i = i := by
           unfold GBasic.sig
-          rw [if_neg (show ¬ (i.val < r ∨ r + k < i.val) by omega)]
-        rw [if_neg h1, if_neg h2, if_pos (show r ≤ i.val ∧ i.val ≤ r + k by omega), hs]
+          rw [ite_eq_right (show ¬ (i.val < r ∨ r + k < i.val) by omega)]
+        rw [ite_eq_right h1, ite_eq_right h2, ite_eq_left (show r ≤ i.val ∧ i.val ≤ r + k by omega), hs]
         ring
   have hA : (∑ i : Fin (2 * r + k + 1), if i.val < r then star (y i) * x (GBasic.sig k r i) else 0)
       = star (pX k r y) ⬝ᵥ qX k r x := by
@@ -142,7 +97,7 @@ theorem herm_coords (k r : ℕ) (x y : Fin (2 * r + k + 1) → ℂ) :
     · intro i hi
       by_cases h : i.val < r
       · exact absurd (Fin.ext rfl : eIe k r ⟨i.val, h⟩ = i) (hi _)
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
     · simp only [dotProduct, pX, qX, Pi.star_apply, eIe_apply]
       apply Finset.sum_congr rfl
       intro t _
@@ -160,7 +115,7 @@ theorem herm_coords (k r : ℕ) (x y : Fin (2 * r + k + 1) → ℂ) :
         rw [esIe_apply, esI_val]
         show 2 * r + k - (2 * r + k - i.val) = i.val
         omega
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
     · simp only [dotProduct, pX, qX, Pi.star_apply, esIe_apply]
       apply Finset.sum_congr rfl
       intro t _
@@ -265,7 +220,7 @@ theorem mX_mulVec_esI (k r : ℕ) (vX : Matrix (Fin r) (Fin r) ℂ) (x : Fin (2 
 theorem mX_mulVec_mid (k r : ℕ) (vX : Matrix (Fin r) (Fin r) ℂ) (x : Fin (2 * r + k + 1) → ℂ)
     (i : Fin (2 * r + k + 1)) (h1 : r ≤ i.val) (h2 : i.val ≤ r + k) : (mX k r vX *ᵥ x) i = x i := by
   simp only [Matrix.mulVec, dotProduct, mX_mid k r vX i _ h1 h2, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem pX_mX (k r : ℕ) (vX : Matrix (Fin r) (Fin r) ℂ) (x : Fin (2 * r + k + 1) → ℂ) :
     pX k r (mX k r vX *ᵥ x) = vX *ᵥ pX k r x := by
@@ -321,10 +276,10 @@ theorem mxFacts : MXFacts := by
       by_cases hi : i.val < r
       · rw [dite_eq_left hi, dite_eq_left (show (eI k r a).val < r from a.isLt)]
         by_cases hia : i = eI k r a
-        · rw [if_pos hia]
+        · rw [ite_eq_left hia]
           subst hia
           exact hU2 a
-        · rw [if_neg hia]
+        · rw [ite_eq_right hia]
           apply hU1
           have hne : i.val ≠ a.val := fun h => hia (Fin.ext h)
           show a.val < i.val
@@ -339,14 +294,14 @@ theorem mxFacts : MXFacts := by
         by_cases hi2 : r + k < i.val
         · have ha := a.isLt
           rw [dite_eq_left hi2, dite_eq_right (show ¬ (r + k < (eI k r a).val) by show ¬ (r + k < a.val); omega),
-            if_neg hne]
+            ite_eq_right hne]
         · rw [dite_eq_right hi2]
     · intro i j hj1 hj2 hi
       unfold mX
       rw [dite_eq_right (show ¬ (i.val < r) by omega)]
       by_cases hi2 : r + k < i.val
       · rw [dite_eq_left hi2, dite_eq_right (show ¬ (r + k < j.val) by omega),
-          if_neg (show i ≠ j from fun h => by rw [h] at hi2; omega)]
+          ite_eq_right (show i ≠ j from fun h => by rw [h] at hi2; omega)]
       · rw [dite_eq_right hi2]
   · intro p
     funext i

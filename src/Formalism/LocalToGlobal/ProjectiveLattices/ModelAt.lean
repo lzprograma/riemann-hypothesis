@@ -26,7 +26,7 @@ def PartIAt (Xo : Moduli Dw l) (c : Coeff l) : Prop :=
 theorem exists_lieElement_middleBlockPart (c : Coeff l) (la : HeightOneSpectrum (𝓞 c.F)) :
     ∃ W : ValuationSubring ℂ, (∀ x : 𝓞 c.F, x ∈ la.asIdeal → (((algebraMap (𝓞 c.F) c.F x : c.F) : ℂ)) ∈ W.nonunits) ∧
       ∀ x : c.F, (x : ℂ) ∈ W → la.valuation c.F x ≤ 1 := by
-  set V := (la.valuation c.F).valuationSubring with hVdef
+  set V := (la.valuation c.F).valuationSubring
   let g : V →+* ℂ := c.F.val.toRingHom.comp V.subtype
   have hg : Function.Injective g := fun a b h => Subtype.ext (c.F.val.injective h)
   let e : V ≃+* g.range := RingEquiv.ofBijective g.rangeRestrict ⟨fun a b h => hg (congrArg (fun z : g.range => (z : ℂ)) h),
@@ -36,42 +36,16 @@ theorem exists_lieElement_middleBlockPart (c : Coeff l) (la : HeightOneSpectrum 
   have hnon : ∀ y : V, y ∈ IsLocalRing.maximalIdeal V → g y ∈ W.nonunits := fun y hy =>
     hIW ⟨e y, Ideal.mem_map_of_mem _ hy, rfl⟩
   refine ⟨W, fun x hx => ?_, fun x hx => ?_⟩
-  · have hxV : algebraMap (𝓞 c.F) c.F x ∈ V := by
-      rw [hVdef, Valuation.mem_valuationSubring_iff, HeightOneSpectrum.valuation_of_algebraMap]
-      exact la.intValuation_le_one x
-    have hxm : (⟨_, hxV⟩ : V) ∈ IsLocalRing.maximalIdeal V := by
-      rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
-      intro hu
-      obtain ⟨w, hw⟩ := isUnit_iff_exists_inv.1 hu
-      have h1 : la.valuation c.F (algebraMap (𝓞 c.F) c.F x) < 1 := by
-        rw [HeightOneSpectrum.valuation_of_algebraMap]; exact (la.intValuation_lt_one_iff_mem x).2 hx
-      have h2 : la.valuation c.F ((w : V) : c.F) ≤ 1 := w.2
-      have h3 := congrArg (fun z : V => la.valuation c.F (z : c.F)) hw
-      simp only [MulMemClass.coe_mul, OneMemClass.coe_one, map_mul, map_one] at h3
-      have h4 : la.valuation c.F (algebraMap (𝓞 c.F) c.F x) * la.valuation c.F ((w : V) : c.F) < 1 :=
-        lt_of_lt_of_le (mul_lt_one_of_nonneg_of_lt_one_left zero_le h1 h2) le_rfl
-      rw [h3] at h4
-      exact lt_irrefl _ h4
-    exact hnon _ hxm
-  · by_contra hv
-    push_neg at hv
+  · have hx1 : la.valuation c.F (algebraMap (𝓞 c.F) c.F x) < 1 := by
+      rw [HeightOneSpectrum.valuation_of_algebraMap]
+      exact (la.intValuation_lt_one_iff_mem x).2 hx
+    exact hnon ⟨_, (Valuation.mem_valuationSubring_iff (la.valuation c.F) _).2 hx1.le⟩
+      ((Valuation.mem_maximalIdeal_iff _ (la.valuation c.F)).2 hx1)
+  · by_contra! hv
     have hx0 : x ≠ 0 := by rintro rfl; simp at hv
-    have hiV : x⁻¹ ∈ V := by
-      rw [hVdef, Valuation.mem_valuationSubring_iff, map_inv₀]
-      exact (inv_lt_one_of_one_lt₀ hv).le
-    have him : (⟨x⁻¹, hiV⟩ : V) ∈ IsLocalRing.maximalIdeal V := by
-      rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
-      intro hu
-      obtain ⟨w, hw⟩ := isUnit_iff_exists_inv.1 hu
-      have h1 : (w : c.F) = x := by
-        have := congrArg (fun z : V => (z : c.F)) hw
-        simp only [MulMemClass.coe_mul, OneMemClass.coe_one] at this
-        field_simp at this
-        exact this
-      have h2 : la.valuation c.F ((w : V) : c.F) ≤ 1 := w.2
-      rw [h1] at h2
-      exact absurd h2 (not_le.2 hv)
-    have h5 := hnon _ him
+    have hi1 : la.valuation c.F x⁻¹ < 1 := by rw [map_inv₀]; exact inv_lt_one_of_one_lt₀ hv
+    have hiV : x⁻¹ ∈ V := (Valuation.mem_valuationSubring_iff (la.valuation c.F) _).2 hi1.le
+    have h5 := hnon ⟨x⁻¹, hiV⟩ ((Valuation.mem_maximalIdeal_iff _ (la.valuation c.F)).2 hi1)
     rw [ValuationSubring.mem_nonunits_iff] at h5
     have h6 := (ValuationSubring.valuation_le_one_iff W _).2 hx
     have h7 : g ⟨x⁻¹, hiV⟩ = ((x : ℂ))⁻¹ := by

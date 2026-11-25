@@ -3,6 +3,7 @@ module
 public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestTail
 import Mathlib.RingTheory.RegularLocalRing.Defs
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -20,24 +21,6 @@ open ReciprocityTheory.ChartRestriction.G.AI.I1 (isMultiHomog_mul isMultiHomog_a
 namespace ResidueMap
 
 variable {F : Type} [Field F] {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
-
-
-omit [Fintype K] in
-theorem isMultiHomog_sub {f g : MRingOver F ι} {a : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g a) :
-    IsMultiHomog (f - g) a := by
-  classical
-  intro m hm k
-  rcases Finset.mem_union.mp (MvPolynomial.support_sub _ f g hm) with h | h
-  exacts [hf m h k, hg m h k]
-
-
-omit [Fintype K] in
-theorem isMultiHomog_C (r : F) : IsMultiHomog (C r : MRingOver F ι) 0 := by
-  classical
-  intro m hm k
-  have hm0 : m = 0 := Finset.mem_singleton.mp (MvPolynomial.support_monomial_subset hm)
-  subst hm0
-  simp
 
 
 omit [Fintype K] in
@@ -71,23 +54,8 @@ variable {Ω : Type} [Field Ω] [Algebra F Ω]
 
 theorem mConeMapOver_of_isMultiHomog (y : (Σ k, ι k) → Ω) {g : MRingOver F ι} {d : K → ℕ}
     (hg : IsMultiHomog g d) :
-    mConeMapOver F y g = MvPolynomial.C (aeval y g) * ∏ k, (MvPolynomial.X k : MvPolynomial K Ω) ^ d k := by
-  classical
-  conv_lhs => rw [g.as_sum]
-  conv_rhs => rw [g.as_sum]
-
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hX : ∏ p : (Σ k, ι k), (MvPolynomial.X p.1 : MvPolynomial K Ω) ^ m p = ∏ k, MvPolynomial.X k ^ d k := by
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    show ∏ i, (MvPolynomial.X k : MvPolynomial K Ω) ^ m ⟨k, i⟩ = _
-    rw [Finset.prod_pow_eq_pow_sum, hg m hm k]
-  simp only [mConeMapOver, aeval_monomial]
-  rw [Finsupp.prod_fintype _ _ (fun i => by simp), Finsupp.prod_fintype _ _ (fun i => by simp)]
-  simp only [mul_pow, Finset.prod_mul_distrib, hX, map_mul, map_prod, map_pow,
-    MvPolynomial.algebraMap_apply]
-  ring
+    mConeMapOver F y g = MvPolynomial.C (aeval y g) * ∏ k, (MvPolynomial.X k : MvPolynomial K Ω) ^ d k :=
+  BlockScaling.aeval_cone_block y hg
 
 theorem mem_mIdealOver_iff (y : (Σ k, ι k) → Ω) {g : MRingOver F ι} {d : K → ℕ} (hg : IsMultiHomog g d) :
     g ∈ mIdealOver F y ↔ aeval y g = 0 := by
@@ -115,7 +83,7 @@ theorem wd {y : (Σ k, ι k) → Ω} {y' : (Σ k, ι k) → K'} (hle : mIdealOve
   rw [div_eq_div_iff hg' hg₂']
   have h2 : IsMultiHomog (f₂ * g) (n + n₂) := by
     rw [add_comm]; exact isMultiHomog_mul hf₂ hg
-  have hp := isMultiHomog_sub (isMultiHomog_mul hf hg₂) h2
+  have hp := Bridge.isMultiHomog_sub (isMultiHomog_mul hf hg₂) h2
   have h0 := vanish hle hp (by rw [map_sub, map_mul, map_mul, h, sub_self])
   rw [map_sub, map_mul, map_mul, sub_eq_zero] at h0
   exact h0
@@ -141,7 +109,7 @@ def locR {y : (Σ k, ι k) → Ω} {y' : (Σ k, ι k) → K'} (hle : mIdealOver 
       isMultiHomog_mul hg hg₂, by rw [map_mul]; exact mul_ne_zero hg' hg₂', ?_⟩
     rw [div_add_div _ _ (ne_zero_of hle hg hg') (ne_zero_of hle hg₂ hg₂'), map_add (f := _), map_mul, map_mul, map_mul]
     ring
-  algebraMap_mem' r := ⟨C r, 1, 0, isMultiHomog_C r, isMultiHomog_one, by simp, by simp⟩
+  algebraMap_mem' r := ⟨C r, 1, 0, Bridge.isMultiHomog_C r, isMultiHomog_one, by simp, by simp⟩
 
 theorem exists_of_mem {y : (Σ k, ι k) → Ω} {y' : (Σ k, ι k) → K'} {hle : mIdealOver F y ≤ mIdealOver F y'}
     {x : Ω} (hx : x ∈ locR hle) :
@@ -165,7 +133,7 @@ def sigma {y : (Σ k, ι k) → Ω} {y' : (Σ k, ι k) → K'} (hle : mIdealOver
   map_one' := by
     rw [sigmaFun_eq hle 1 isMultiHomog_one isMultiHomog_one (by simp) (by simp)]; simp
   map_zero' := by
-    rw [sigmaFun_eq hle 0 (isMultiHomog_C (0 : F)) isMultiHomog_one (by simp) (by simp)]; simp
+    rw [sigmaFun_eq hle 0 (Bridge.isMultiHomog_C (0 : F)) isMultiHomog_one (by simp) (by simp)]; simp
   map_mul' x x' := by
     obtain ⟨f, g, n, hf, hg, hg', hx⟩ := exists_of_mem x.2
     obtain ⟨f₂, g₂, n₂, hf₂, hg₂, hg₂', hx₂⟩ := exists_of_mem x'.2
@@ -188,7 +156,7 @@ def sigma {y : (Σ k, ι k) → Ω} {y' : (Σ k, ι k) → K'} (hle : mIdealOver
     ring
   commutes' r := by
     show sigmaFun hle (algebraMap F (locR hle) r) = _
-    rw [sigmaFun_eq hle _ (isMultiHomog_C r) isMultiHomog_one (by simp) (by simp)]; simp
+    rw [sigmaFun_eq hle _ (Bridge.isMultiHomog_C r) isMultiHomog_one (by simp) (by simp)]; simp
 
 theorem sigma_apply {y : (Σ k, ι k) → Ω} {y' : (Σ k, ι k) → K'} (hle : mIdealOver F y ≤ mIdealOver F y')
     (x : locR hle) : sigma hle x = sigmaFun hle x := rfl

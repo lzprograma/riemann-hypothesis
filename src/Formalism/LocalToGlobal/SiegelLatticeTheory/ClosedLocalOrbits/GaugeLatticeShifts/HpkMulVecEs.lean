@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentLeviRadicalCoordsHomeomorph
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacExGoodOfN
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GNonneg
@@ -103,12 +104,7 @@ theorem Hpk_es (a b : Fin r) :
 
 theorem Hpk_mulVec_es (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
     (Formalism.QuantumDeterminants.Hpk k r *ᵥ v) (Formalism.QuantumDeterminants.esI k r a) = v (Formalism.QuantumDeterminants.eI k r a) := by
-  have ha := a.isLt
-  rw [Formalism.QuantumDeterminants.gn_Hpk_mulVec, dite_eq_left (Or.inr (by simp only [Formalism.QuantumDeterminants.esI]; omega))]
-  congr 1
-  apply Fin.ext
-  simp only [Formalism.QuantumDeterminants.esI, Formalism.QuantumDeterminants.eI]
-  omega
+  apply _root_.GlobalTheory.Amp.NCoord.H_es <;> assumption
 
 theorem Hpk_mulVec_e (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
     (Formalism.QuantumDeterminants.Hpk k r *ᵥ v) (Formalism.QuantumDeterminants.eI k r a) = v (Formalism.QuantumDeterminants.esI k r a) := by
@@ -142,8 +138,8 @@ theorem hyp_gram {n r : ℕ} (ε : Fin n → Bool) (x y : Fin r → Fin n → �
     intro a b
     rw [hJ_conj, hxy]
     by_cases h : b = a
-    · rw [if_pos h, if_pos h.symm]; simp
-    · rw [if_neg h, if_neg (Ne.symm h)]; simp
+    · rw [ite_eq_left h, ite_eq_left h.symm]; simp
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]; simp
   intro i j
   unfold hypG
   refine Fin.addCases (fun a => ?_) (fun a => ?_) i <;>

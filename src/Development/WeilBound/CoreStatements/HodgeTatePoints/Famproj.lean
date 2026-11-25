@@ -6,57 +6,8 @@ public import Mathlib.RingTheory.DedekindDomain.Factorization
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.Hcptgen
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLev
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.HodgeTatePoints.FamprojAlg, Development.WeilBound.CoreStatements.HodgeTatePoints.Famproj
@@ -129,7 +80,6 @@ theorem exists_smul_mem (m : Ideal A) [hm : m.IsPrime] (R : Subring Ω)
     refine ⟨t' * t, fun h => (hm.mem_or_mem h).elim ht' ht, ?_⟩
     rw [mul_smul, key, smul_comm]
     exact M.smul_mem _ hy'
-
 
 omit [Algebra A Ω] [Module Ω V] [IsScalarTower A Ω V] in
 theorem exists_smul_le (m : Ideal A) [hm : m.IsPrime] {M N : Submodule A V} (hM : M.FG)
@@ -327,26 +277,7 @@ private theorem integralBasis_repr_eq_trace_mul_dualInt (z : E) (k : Module.Free
 
   rw [Finset.sum_mul, map_sum]
   simp only [smul_mul_assoc, map_smul, hd, smul_eq_mul, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
-
-private theorem coe_mul_dualInt_eq_sum (a : 𝓞 E) (j : Module.Free.ChooseBasisIndex ℤ (𝓞 E)) :
-    (a : E) * dualInt E j = ∑ l, ((RingOfIntegers.basis E).repr (a * RingOfIntegers.basis E l) j : E) *
-      dualInt E l := by
-  classical
-  set db := (Algebra.traceForm ℚ E).dualBasis (traceForm_nondegenerate ℚ E) (integralBasis E)
-  have hdb : ∀ l, dualInt E l = db l := fun l => rfl
-  conv_lhs => rw [← db.sum_repr ((a : E) * dualInt E j)]
-  apply Finset.sum_congr rfl
-  intro l _
-  rw [LinearMap.BilinForm.dualBasis_repr_apply, Algebra.traceForm_apply, ← hdb]
-  have ht : Algebra.trace ℚ E ((a : E) * dualInt E j * integralBasis E l) =
-      ((RingOfIntegers.basis E).repr (a * RingOfIntegers.basis E l) j : ℚ) := by
-    rw [show (a : E) * dualInt E j * integralBasis E l = ((a : E) * integralBasis E l) * dualInt E j by ring,
-      ← integralBasis_repr_eq_trace_mul_dualInt, integralBasis_apply, show (a : E) = algebraMap (𝓞 E) E a from rfl, ← map_mul,
-      integralBasis_repr_apply]
-    simp
-  rw [ht, Algebra.smul_def]
-  simp
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 private theorem rho_mul_eigProj' {K L : Type} [Field K] [AddCommGroup L] [Module K L]
     (ρ : 𝓞 E →+* Module.End K L) (σ : E →+* K) (a : 𝓞 E) :
@@ -376,7 +307,7 @@ private theorem rho_mul_eigProj' {K L : Type} [Field K] [AddCommGroup L] [Module
         apply Finset.sum_congr rfl
         intro j _
 
-        rw [← map_mul, coe_mul_dualInt_eq_sum, map_sum]
+        rw [← map_mul, GlobalTheory.CompanionTheory.Ar.HT.ProjEig.mul_dualInt_eq, map_sum]
         simp only [map_mul, map_intCast]
     _ = σ (a : E) • eigProj ρ σ := by
         unfold eigProj
@@ -631,7 +562,6 @@ theorem exists_label {l : Level H} (c : Coeff l) {Ω : Type} [Field Ω] (j : c.F
       rw [← H.bar_eq, bar_bar]
 
 end
-
 
 theorem family_proj : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (S : Finset ℕ) (Ω : Type) [Field Ω] (K : Type) [Fintype K] (J : K → Type) [∀ k, Fintype (J k)] (y : (Σ k, J k) → Ω) (𝔐 : HodgeCpt Y S y) (p : ℕ) [Fact p.Prime] (hpS : p ∈ S) (hpq : 0 < D.p + D.q) (o : Type) [CommRing o] [Algebra o Ω] (ho : ∀ x : Ω, x ∈ (algebraMap o Ω).range ↔ ∃ (a : ℤ) (b : ℕ), ¬ p ∣ b ∧ x = (a : Ω) / (b : Ω)) (Dc : ∀ s : {s : ∀ k, J k // mseg y s ≠ 0}, HTChart (chartRing o (mseg y) s.1) Ω (cmConj E) p (𝔐.R p) (D.p + D.q) (Module.Dual Ω 𝔐.Li)), IsHTFamily 𝔐 p o Dc → HTFree 𝔐 p → (∀ s, Module.Projective (chartRing o (mseg y) s.1) (Dc s).om' ∧ ∀ σ : E →+* Ω, Module.Projective (chartRing o (mseg y) s.1) ((Dc s).omHT σ)) ∧ (∀ σ : E →+* Ω, ∃ d : Ω, ∀ s : {s : ∀ k, J k // mseg y s ≠ 0}, ∃ ds : chartRing o (mseg y) s.1, (ds : Ω) = d ∧ GeneratesDiff σ ds) ∧ ∃ κ : Ω, IsCp p κ ∧ ∀ s : {s : ∀ k, J k // mseg y s ≠ 0}, κ ∈ chartRing o (mseg y) s.1 := by
   intro E _ _ _ H D l Xo c O _ β Y S Ω _ K _ J _ y 𝔐 p hp hpS hpq o _ _ ho Dc hF hfree

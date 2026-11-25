@@ -65,8 +65,8 @@ section -- clump:auto
 @[expose] public section
 
 theorem UpperTheory.Reformulated.B.CoproductGeometry.cop_geom :
-    ∀ {R κ : Type} [inst : CommRing R] [IsNoetherianRing R]
-    [inst_2 : NormedField κ] [IsUltrametricDist κ] (m : Ideal R) (y : R →+* κ),
+    ∀ {R κ : Type} [CommRing R] [IsNoetherianRing R]
+    [NormedField κ] [IsUltrametricDist κ] (m : Ideal R) (y : R →+* κ),
     (∀ (x : R), ‖(y : R → κ) x‖ ≤ (1 : ℝ)) →
       (∀ x ∈ m, ‖(y : R → κ) x‖ < (1 : ℝ)) →
         ∃ a < (1 : ℝ), (0 : ℝ) ≤ a ∧ ∀ (n : ℕ), ∀ x ∈ m ^ n, ‖(y : R → κ) x‖ ≤ a ^ n := by

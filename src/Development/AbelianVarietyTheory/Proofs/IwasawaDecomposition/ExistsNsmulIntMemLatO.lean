@@ -1,6 +1,9 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntAEMulMem
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelPointSmulIntegralOfFourierCoeffNeZero
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddNsmulResidueAssoc
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsGaloisConjugatesHeckeCharTrivialOnRealIdel
@@ -59,7 +62,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -157,33 +159,8 @@ theorem natCast_mul_eq_zero (n : ℕ) (z : AE D) (hn : 0 < n) (h : n * z = 0) : 
 
 theorem splitIdem_eq_or {a b : AE D} (ha : IsSplitIdem D a) (hb : IsSplitIdem D b) (hab : a * cA D b = 0)
     (hba : b * cA D a = 0) : a = b ∨ a * b = 0 := by
-  obtain ⟨h1, h2, v, ε, ⟨α, rfl, ha1, ha0⟩, h3⟩ := ha
-  obtain ⟨h1', h2', v', ε', ⟨α', rfl, hb1, hb0⟩, h3'⟩ := hb
-  by_cases hv : v = v'
-  · left
-    subst hv
-    have : α = α' := by
-      refine RestrictedProduct.ext _ _ fun w => ?_
-      change evalV D.host.F w α = evalV D.host.F w α'
-      by_cases hw : w = v
-      · rw [hw, ha1, hb1]
-      · rw [ha0 w hw, hb0 w hw]
-    subst this
-    have h4 : a + cA D a = b + cA D b := h3.trans h3'.symm
-    linear_combination (a + b) * h4 - h1 - h2 + hab - hba + h1' + h2'
-  · right
-    have : α * α' = 0 := by
-      refine RestrictedProduct.ext _ _ fun w => ?_
-      change evalV D.host.F w (α * α') = evalV D.host.F w 0
-      rw [map_mul, map_zero]
-      by_cases hw : w = v
-      · rw [hb0 w (hw ▸ hv), mul_zero]
-      · rw [ha0 w hw, zero_mul]
-    have h5 : pairA D.host.F 0 α * pairA D.host.F 0 α' = 0 := Prod.ext (mul_zero _) this
-    have h4 : (a + cA D a) * (b + cA D b) = 0 := by rw [h3, h3', ← map_mul, h5, map_zero]
-    have e1 : a = a * (a + cA D a) := by rw [mul_add, h1, h2, add_zero]
-    have e2 : b = b * (b + cA D b) := by rw [mul_add, h1', h2', add_zero]
-    rw [e1, e2, mul_mul_mul_comm, h4, mul_zero]
+  intros
+  apply _root_.GlobalTheory.PlaceModelSum.eq_or_mul_eq_zero <;> assumption
 
 theorem isIdemAt_inj {e : AE D} {P Q : Formalism.L2.DIV.Pl D.host.E} (hP : Formalism.L2.NTheta.IsIdemAt e P)
     (hQ : Formalism.L2.NTheta.IsIdemAt e Q) : P = Q := by
@@ -240,7 +217,7 @@ theorem finPart_mem_intAE {w : AE D} (hw : toEAf D w ∈ Formalism.L2.Herm.intAf
     | one => rw [map_one]; exact AddSubgroup.subset_closure ⟨1, one_mem (Formalism.UG.intAd D.host.F), 1, rfl⟩
     | add a b _ _ ha hb => rw [map_add]; exact add_mem ha hb
     | neg a _ ha => rw [map_neg]; exact neg_mem ha
-    | mul a b _ _ ha hb => rw [map_mul]; exact GlobalTheory.HeckeConj.mul_mem_intAE D ha hb
+    | mul a b _ _ ha hb => rw [map_mul]; exact GlobalTheory.IntegralAdeleProducts.intAE_mul_mem (F := D.host.F) (E := D.host.E) ha hb
   have := key _ hw
   rwa [show c (toEAf D w) = finPart D w from
     (Algebra.TensorProduct.comm D.host.F (Af D.host.F) D.host.E).symm_apply_apply _] at this
@@ -428,7 +405,7 @@ theorem placeModel_unique {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ
       obtain ⟨k, hk, hky⟩ := hmul y (half_infPart (infPart_cA hinf) hy)
       have hne : ∀ t, ψ (symplO S T t y) * halfInd a Λ t ≠ 0 → t ∈ Λ ⊓ half S T a := fun t ht => by
         by_contra hn
-        rw [halfInd_eq_ind, ind, if_neg hn, mul_zero] at ht
+        rw [halfInd_eq_ind, ind, ite_eq_right hn, mul_zero] at ht
         exact ht rfl
       refine ⟨fun t ht => (isHalf_iff S T).2 (hne t ht).2, k, hk, fun u hu hu' t => ?_,
         fun t ht => nsmul_mem (hne t ht).1 k⟩
@@ -498,7 +475,7 @@ theorem isSBHalf_of_red (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submod
   have hne : ∀ t : WO S T, (if IsHalf a t ∧ IsIntM (G t) then ω (fun PP => redM PP (G t)) else 0) ≠ 0 →
       IsHalf a t ∧ IsIntM (G t) := fun t ht => by
     by_contra h
-    exact ht (if_neg h)
+    exact ht (ite_eq_right h)
   refine ⟨fun t ht => (hne t ht).1, n * (k₄ * k₂) * (k₁ * k₃), by positivity, fun u hu hu' t => ?_, fun t ht => ?_⟩
   · have hi : IsIntM ((k₄ * k₂) • k₁ • G (k₃ • u)) := isIntM_nsmul (h₁ _ (by rw [map_toEAf_nsmul]; exact h₃ u hu)) _
     have e : G (t + (n * (k₄ * k₂) * (k₁ * k₃)) • u) = G t + n • (k₄ * k₂) • k₁ • G (k₃ • u) := by
@@ -511,9 +488,9 @@ theorem isSBHalf_of_red (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submod
     beta_reduce
     rw [e]
     by_cases ht : IsHalf a t ∧ IsIntM (G t)
-    · rw [if_pos ht, if_pos ⟨hh.2 ht.1, hI.2 ht.2⟩]
+    · rw [ite_eq_left ht, ite_eq_left ⟨hh.2 ht.1, hI.2 ht.2⟩]
       exact hω _ _ fun PP hPP => redM_add_nsmul PP (hP PP hPP) ht.2 hi
-    · rw [if_neg ht, if_neg fun h => ht ⟨hh.1 h.1, hI.1 h.2⟩]
+    · rw [ite_eq_right ht, ite_eq_right fun h => ht ⟨hh.1 h.1, hI.1 h.2⟩]
   · obtain ⟨h1, h2⟩ := hne t ht
     have := h₄ (k₂ • t) (half_infPart hinf (nsmul_mem ((isHalf_iff S T).1 h1) _))
       (by rw [map_toEAf_nsmul]; exact h₂ t h2)
@@ -524,16 +501,7 @@ theorem omegaQ_congr {a b : ℕ} (Q : Finset (Formalism.L2.DIV.Pl D.host.E)) (r 
     (ξ : ∀ PP : Formalism.L2.DIV.Pl D.host.E, (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ) (k : ℤ)
     {y y' : ∀ PP : Formalism.L2.DIV.Pl D.host.E, Matrix (Fin b) (Fin a) (Formalism.L2.DIV.kP PP)} (h : ∀ PP ∈ Q, y PP = y' PP) :
     omegaQ Q r ξ k y = omegaQ Q r ξ k y' := by
-  have hiff : (∀ PP ∈ Q, LowZero r (y PP) ∧ IsUnit (topL r (y PP)).det) ↔
-      ∀ PP ∈ Q, LowZero r (y' PP) ∧ IsUnit (topL r (y' PP)).det :=
-    forall_congr' fun PP => forall_congr' fun hPP => by rw [h PP hPP]
-  unfold omegaQ
-  by_cases h1 : ∀ PP ∈ Q, LowZero r (y PP) ∧ IsUnit (topL r (y PP)).det
-  · rw [dite_eq_left h1, dite_eq_left (hiff.1 h1)]
-    refine Finset.prod_congr rfl fun PP _ => ?_
-    congr 3
-    exact Units.ext (by rw [IsUnit.unit_spec, IsUnit.unit_spec, h PP.1 PP.2])
-  · rw [dite_eq_right h1, dite_eq_right fun h2 => h1 (hiff.2 h2)]
+  apply _root_.GlobalTheory.HatInt.omegaQ_congr <;> assumption
 
 theorem omegaK_congr {a b : ℕ} (Pg : Finset (Formalism.L2.DIV.Pl D.host.E))
     {y y' : ∀ PP : Formalism.L2.DIV.Pl D.host.E, Matrix (Fin b) (Fin a) (Formalism.L2.DIV.kP PP)} (h : ∀ PP ∈ Pg, y PP = y' PP) :
@@ -542,8 +510,8 @@ theorem omegaK_congr {a b : ℕ} (Pg : Finset (Formalism.L2.DIV.Pl D.host.E))
     forall_congr' fun PP => forall_congr' fun hPP => by rw [h PP hPP]
   unfold omegaK
   by_cases h1 : ∀ PP ∈ Pg, LowZero a (y PP) ∧ topL a (y PP) = 1
-  · rw [if_pos h1, if_pos (hiff.1 h1)]
-  · rw [if_neg h1, if_neg fun h2 => h1 (hiff.2 h2)]
+  · rw [ite_eq_left h1, ite_eq_left (hiff.1 h1)]
+  · rw [ite_eq_right h1, ite_eq_right fun h2 => h1 (hiff.2 h2)]
 
 end GlobalTheory.PlaceVec
 

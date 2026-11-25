@@ -27,7 +27,7 @@ theorem coeff_tyS_pow (a : ℕ → C) (s : ℕ) : PowerSeries.coeff (l ^ s) (tyS
   rw [PowerSeries.coeff_mk]
   have hinj : ∀ t, l ^ t = l ^ s ↔ t = s := fun t => (Nat.pow_right_injective hl).eq_iff
   simp only [hinj]
-  rw [Finset.sum_ite_eq', if_pos]
+  rw [Finset.sum_ite_eq', ite_eq_left]
   have hs : s < l ^ s := Nat.lt_pow_self (by omega)
   exact Finset.mem_range.2 (by omega)
 
@@ -35,7 +35,7 @@ omit hl in
 theorem coeff_tyS_of_ne (a : ℕ → C) (m : ℕ) (hm : ∀ s, l ^ s ≠ m) : PowerSeries.coeff m (tyS l a) = 0 := by
   unfold tyS
   rw [PowerSeries.coeff_mk]
-  exact Finset.sum_eq_zero fun s _ => if_neg (hm s)
+  exact Finset.sum_eq_zero fun s _ => ite_eq_right (hm s)
 
 theorem tyS_eq (a : ℕ → C) (f : PowerSeries C) (h1 : ∀ s, PowerSeries.coeff (l ^ s) f = a s)
     (h2 : ∀ m, (∀ s, l ^ s ≠ m) → PowerSeries.coeff m f = 0) : tyS l a = f := by
@@ -43,7 +43,7 @@ theorem tyS_eq (a : ℕ → C) (f : PowerSeries C) (h1 : ∀ s, PowerSeries.coef
   by_cases h : ∃ s, l ^ s = m
   · obtain ⟨s, rfl⟩ := h
     rw [coeff_tyS_pow hl, h1]
-  · push_neg at h
+  · push Not at h
     rw [coeff_tyS_of_ne a m h, h2 m h]
 
 omit hl in
@@ -84,49 +84,13 @@ theorem alongCv_repar {σ : Type} [Finite σ] {γ : σ → PowerSeries C}
 theorem alongCv_zero {σ : Type} [Finite σ] {f : MvPowerSeries σ C} (hf : MvPowerSeries.constantCoeff f = 0) :
     alongCv (fun _ : σ => (0 : PowerSeries C)) f = 0 := by
   unfold alongCv
-  have ha : MvPowerSeries.HasSubst (fun _ : σ => (0 : PowerSeries C)) :=
-    MvPowerSeries.hasSubst_of_constantCoeff_zero (fun _ => map_zero _)
-  refine MvPowerSeries.ext fun e => ?_
-  rw [MvPowerSeries.coeff_subst ha, map_zero]
-  apply finsum_eq_zero_of_forall_eq_zero
-  intro d
-  by_cases hd : d = 0
-  · subst hd
-    simp [hf]
-  · obtain ⟨s, hs⟩ : ∃ s, d s ≠ 0 := by
-      by_contra h
-      push_neg at h
-      exact hd (Finsupp.ext h)
-    have h0 : (d.prod fun _ e => (0 : PowerSeries C) ^ e) = 0 :=
-      Finset.prod_eq_zero (Finsupp.mem_support_iff.2 hs) (zero_pow hs)
-    simp only [h0, map_zero, smul_zero]
+  exact MvPowerSeries.subst_zero_of_constantCoeff_zero hf
 
 end Repar
 
 namespace RawChart
 
 variable {d : ℕ} {I : Fin 2 → Type} [∀ g, Fintype (I g)] {κ : Type} [Fintype κ] (X : RawChart C d I κ)
-
-private theorem ge_zero_lemma (V : VF C) : V.Ge 0 (0 : C) := by
-  change ((0 : ℝ) : WithTop ℝ) ≤ V.v 0
-  rw [AddValuation.map_zero]
-  exact le_top
-
-private theorem ge_mul_lemma_2 (V : VF C) {a b : C} (ha : V.Ge 0 a) (hb : V.Ge 0 b) : V.Ge 0 (a * b) := by
-  change ((0 : ℝ) : WithTop ℝ) ≤ V.v (a * b)
-  rw [AddValuation.map_mul]
-  have h := add_le_add (show ((0 : ℝ) : WithTop ℝ) ≤ V.v a from ha) (show ((0 : ℝ) : WithTop ℝ) ≤ V.v b from hb)
-  simpa using h
-
-private theorem ge_zero_pow' (V : VF C) {a : C} (ha : V.Ge 0 a) (n : ℕ) : V.Ge 0 (a ^ n) := by
-  induction n with
-  | zero =>
-    change ((0 : ℝ) : WithTop ℝ) ≤ V.v (a ^ 0)
-    rw [pow_zero, AddValuation.map_one]
-    simp
-  | succ n ih =>
-    rw [pow_succ]
-    exact ge_mul_lemma_2 V ih ha
 
 theorem TySet_repar {V : VF C} {g : Fin 2} (τ : PowerSeries C) (hτ : PowerSeries.constantCoeff τ = 0)
     (hint : ∀ f : PowerSeries C, (∀ n, V.Ge 0 (PowerSeries.coeff n f)) →
@@ -156,25 +120,17 @@ theorem TySet_repar {V : VF C} {g : Fin 2} (τ : PowerSeries C) (hτ : PowerSeri
     refine Finset.sum_congr rfl fun c _ => ?_
     split_ifs <;> simp
 
-private theorem coeff_subst_smul_X (c : C) (f : PowerSeries C) (n : ℕ) :
-    PowerSeries.coeff n (PowerSeries.subst (c • (PowerSeries.X : PowerSeries C)) f) = c ^ n * PowerSeries.coeff n f := by
-  rw [PowerSeries.coeff_subst' (PowerSeries.HasSubst.of_constantCoeff_zero' (by simp [PowerSeries.smul_eq_C_mul])),
-    finsum_eq_single _ n]
-  · rw [smul_pow, PowerSeries.coeff_smul, PowerSeries.coeff_X_pow_self, smul_eq_mul]
-    ring
-  · intro d hd
-    rw [smul_pow, PowerSeries.coeff_smul, PowerSeries.coeff_X_pow, if_neg (Ne.symm hd), smul_zero, smul_zero]
-
 theorem teich_mem (V : VF C) (g : Fin 2) (c : C) (hc : V.Ge 0 c) (x : ℕ → I g ⊕ JJ I g → C)
     (hx : x ∈ X.TySet V g) : teich V.l c x ∈ X.TySet V g := by
   have hl := V.l_prime.two_le
   refine X.TySet_repar (c • PowerSeries.X) (by simp [PowerSeries.smul_eq_C_mul]) (fun f hf n => ?_) hx (fun m => ?_)
-  · rw [coeff_subst_smul_X]
-    exact ge_mul_lemma_2 V (ge_zero_pow' V hc n) (hf n)
+  · rw [← PowerSeries.rescale_eq_subst, PowerSeries.coeff_rescale]
+    exact VF.Ge.mul_int (VF.Ge.pow hc n) (hf n)
   · refine tyS_eq hl _ _ (fun s => ?_) (fun k hk => ?_)
-    · rw [coeff_subst_smul_X, coeff_tyS_pow hl]
+    · rw [← PowerSeries.rescale_eq_subst, PowerSeries.coeff_rescale, coeff_tyS_pow hl]
       rfl
-    · rw [coeff_subst_smul_X, coeff_tyS_of_ne _ _ hk, mul_zero]
+    · rw [← PowerSeries.rescale_eq_subst, PowerSeries.coeff_rescale, coeff_tyS_of_ne _ _ hk,
+        mul_zero]
 
 end RawChart
 
@@ -183,7 +139,7 @@ theorem coeff_subst_X_pow {l : ℕ} (hl : 0 < l) (f : PowerSeries C) (q : ℕ) :
   rw [PowerSeries.coeff_subst' (PowerSeries.HasSubst.of_constantCoeff_zero' (by simp [hl.ne'])), finsum_eq_single _ q]
   · rw [← pow_mul, PowerSeries.coeff_X_pow_self, smul_eq_mul, mul_one]
   · intro d hd
-    rw [← pow_mul, PowerSeries.coeff_X_pow, if_neg, smul_zero]
+    rw [← pow_mul, PowerSeries.coeff_X_pow, ite_eq_right, smul_zero]
     intro h
     exact hd (Nat.eq_of_mul_eq_mul_left hl h).symm
 
@@ -192,7 +148,7 @@ theorem coeff_subst_X_pow_of_not_dvd {l : ℕ} (hl : 0 < l) (f : PowerSeries C) 
   rw [PowerSeries.coeff_subst' (PowerSeries.HasSubst.of_constantCoeff_zero' (by simp [hl.ne']))]
   apply finsum_eq_zero_of_forall_eq_zero
   intro d
-  rw [← pow_mul, PowerSeries.coeff_X_pow, if_neg, smul_zero]
+  rw [← pow_mul, PowerSeries.coeff_X_pow, ite_eq_right, smul_zero]
   rintro rfl
   exact hm (dvd_mul_right l d)
 
@@ -210,7 +166,7 @@ theorem V_mem (V : VF C) (g : Fin 2) (x : ℕ → I g ⊕ JJ I g → C) (hx : x 
       rw [coeff_subst_X_pow hl0]
       exact hf q
     · rw [coeff_subst_X_pow_of_not_dvd hl0 _ _ hd]
-      exact ge_zero_lemma V
+      exact VF.Ge.zero 0
   · refine tyS_eq hl _ _ (fun s => ?_) (fun k hk => ?_)
     · cases s with
       | zero =>
@@ -266,13 +222,13 @@ theorem const_mem_type_set_of_nonneg (hlg : ∀ i, MvPowerSeries.constantCoeff (
       simp [PowerSeries.coeff_X, hm1]
   refine ⟨fun _ => 0, fun q => ζ q • PowerSeries.X, ?_, ?_, ?_, ?_⟩
   · intro i
-    exact ⟨map_zero _, fun n => by simpa using ge_zero_lemma V⟩
+    exact ⟨map_zero _, fun _ => by simpa using VF.Ge.zero (V := V) 0⟩
   · intro q
     refine ⟨by simp, fun n => ?_⟩
     rw [PowerSeries.coeff_smul, PowerSeries.coeff_X]
     split_ifs
     · simpa using hζ q
-    · simpa using ge_zero_lemma V
+    · simpa using VF.Ge.zero (V := V) 0
   · intro i
     rw [alongCv_zero (hlg i)]
     simp [hinl]
@@ -285,9 +241,9 @@ theorem zero_mem (hlg : ∀ i, MvPowerSeries.constantCoeff (X.lg i) = 0)
     (V : VF C) (g : Fin 2) : (0 : ℕ → I g ⊕ JJ I g → C) ∈ X.TySet V g := by
   refine ⟨fun _ => 0, fun _ => 0, ?_, ?_, ?_, ?_⟩
   · intro i
-    exact ⟨map_zero _, fun n => by simpa using ge_zero_lemma V⟩
+    exact ⟨map_zero _, fun _ => by simpa using VF.Ge.zero (V := V) 0⟩
   · intro q
-    exact ⟨map_zero _, fun n => by simpa using ge_zero_lemma V⟩
+    exact ⟨map_zero _, fun _ => by simpa using VF.Ge.zero (V := V) 0⟩
   · intro i
     rw [alongCv_zero (hlg i)]
     simp [tyS_zero]

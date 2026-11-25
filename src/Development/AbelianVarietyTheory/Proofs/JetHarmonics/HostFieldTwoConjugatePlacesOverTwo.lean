@@ -17,6 +17,7 @@ public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInject
 public import Development.AutomorphicArithmetic.CMTraceForms.CmDatumDiscriminantDepthBounds
 public import Formalism.LocalRingCardinality.HostCls
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+import GroundTheory.GlobalFields.SemilocalAlgebras.NormTrace
 import Mathlib.Algebra.AffineMonoid.Basic
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -79,6 +80,8 @@ import Formalism.LocalToGlobal.Divisibility.Numbers
 import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
 import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthCond
 import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ExampleSatisfiesConditionsAtFive
+import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.OneAddZeta21PowSevenAddPowFourteenEqZero
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.CMTraceForms.DiscrCMDatumEqProdPlaces, Development.AutomorphicArithmetic.CMTraceForms.ExistsPrimitiveOrthogonalIdempotentsSumEqOfNoeth, Development.AutomorphicArithmetic.CMTraceForms.ExistsSplitIdempotentOfSplitAt, Development.AutomorphicArithmetic.CMTraceForms.TraceFormDecompositionCMDatum, Development.AutomorphicArithmetic.CMTraceForms.SplitPlacesDiscriminantDepthOfSplitAt, Development.AbelianVarietyTheory.Proofs.JetHarmonics.HostFieldTwoConjugatePlacesOverTwo
@@ -133,9 +136,6 @@ private theorem sig_sig (x : ℤ_[p] ⊗[ℤ] R) : sig p R (sig p R x) = x := by
   | zero => simp
   | tmul a b => simp [sig]
   | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
-
-private def sigEquiv : (ℤ_[p] ⊗[ℤ] R) ≃ₐ[ℤ_[p]] (ℤ_[p] ⊗[ℤ] R) :=
-  AlgEquiv.ofAlgHom (sig p R) (sig p R) (AlgHom.ext sig_sig) (AlgHom.ext sig_sig)
 
 variable {s : ℕ} (w : Fin s → Place p R)
 
@@ -252,23 +252,6 @@ private theorem det_linearForms_basis_change {A M O κ : Type} [CommRing A] [Add
     rw [map_smul, Algebra.smul_def]
   rw [key, Matrix.det_mul, Matrix.det_transpose, RingHom.map_det, RingHom.mapMatrix_apply]
 
-private theorem det_blockDiagonal'_eq_prod_det {s : ℕ} {m : Fin s → Type} [∀ i, Fintype (m i)] [∀ i, DecidableEq (m i)]
-    {O : Type} [CommRing O] (d : ∀ i, Matrix (m i) (m i) O) :
-    (Matrix.blockDiagonal' d).det = ∏ i, (d i).det := by
-  rw [(Matrix.blockTriangular_blockDiagonal' d).det_fintype]
-  refine Finset.prod_congr rfl fun k _ => ?_
-  let e : m k ≃ {x : (Σ i, m i) // x.1 = k} :=
-    { toFun := fun a => ⟨⟨k, a⟩, rfl⟩
-      invFun := fun x => cast (congrArg m x.2) x.1.2
-      left_inv := fun a => rfl
-      right_inv := by
-        rintro ⟨⟨i, a⟩, rfl⟩
-        rfl }
-  rw [← Matrix.det_submatrix_equiv_self e]
-  congr 1
-  ext a b
-  simp [Matrix.toSquareBlock_def, Matrix.blockDiagonal'_apply, e]
-
 private theorem valuation_intCast_eq_pow_padicValInt {C : Type} [Field C] [CharZero C] {v : Valuation C NNReal} {O : Type}
     [CommRing O] [Algebra O C] (hv : v.Integers O) (p : ℕ) [hp : Fact p.Prime]
     (hpO : ¬ IsUnit (p : O)) (a : ℤ) (ha : a ≠ 0) :
@@ -336,7 +319,6 @@ private theorem discr_CMDatum_eq_prod_places_lemma_6 {p : ℕ} [Fact p.Prime] {R
       LinearMap.inr_apply]
     rw [hsplit, map_zero, zero_add, hs]
 
-
 open UpperTheory.PlacesDiscr in
 theorem UpperTheory.discr_CMDatum_eq_prod_places :
     ∀ (E : Type) [Field E] [NumberField E] [StarRing (𝓞 E)] (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C], v.Integers O → ∀ [Fact (¬ IsUnit (p : O))] [Algebra ℤ_[p] O]
@@ -392,8 +374,7 @@ theorem UpperTheory.discr_CMDatum_eq_prod_places :
       Sum.elim (fun a => (t k.1 a : 𝓞 E →+* O)) (fun a => (t k.1 a : 𝓞 E →+* O).comp (starRingEnd (𝓞 E))) k.2
     have hsurj : ∀ τ : 𝓞 E →+* O, ∃ k, ρ k = τ := by
       intro τ
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       have he0 : ∀ i, tauExt τ (w i).e = 0 := by
         intro i
         rcases eq_zero_or_one_of_idempotent_integers hv (tauExt τ (w i).e) (by rw [← map_mul, (w i).idem]) with h | h
@@ -490,7 +471,7 @@ theorem UpperTheory.discr_CMDatum_eq_prod_places :
           rw [tauExt_comp_star_eq_tauExt_sig, UpperTheory.PlacesDiscr.sig_sig]
           exact hz2 _ i (hE i b) j hij (B j a)
     have hdetN : (Matrix.of fun m k => tauExt (ρ k) (γs m)).det = ∏ i, ((A i).det * (A i).det) := by
-      rw [hblock, det_blockDiagonal'_eq_prod_det]
+      rw [hblock, GroundTheory.Global.SemiLocal.det_blockDiagonal']
       simp only [Matrix.det_fromBlocks_zero₂₁]
     have hcι : Fintype.card (Module.Free.ChooseBasisIndex ℤ (𝓞 E))
         = Fintype.card (Σ i : Fin s, (Fin (w i).n ⊕ Fin (w i).n)) := by
@@ -683,30 +664,6 @@ namespace UpperTheory.Depth.SplitIdem
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-private theorem cmHost_bar_halfIntegerGenerator (H : Host E) : H.bar H.w0 = 1 - H.w0 := by
-  have hsq : H.bar H.rt ^ 2 = H.rt ^ 2 := by rw [← map_pow, H.rt_sq]; simp
-  have hrt : H.bar H.rt = -H.rt := by
-    rcases sq_eq_sq_iff_eq_or_eq_neg.1 hsq with h | h
-    · exfalso
-      have h1 : IsCMField.complexConj E (H.rt : E) = (H.rt : E) := by rw [← H.bar_eq, h]
-      obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
-      have h2 := IsCMField.complexEmbedding_complexConj E τ (H.rt : E)
-      rw [h1] at h2
-      have h3 : τ (H.rt : E) ^ 2 = -(H.d : ℂ) := by
-        rw [← map_pow]
-        have := congrArg (fun a : 𝓞 E => τ (a : E)) H.rt_sq
-        simpa using this
-      have h4 : (τ (H.rt : E)).im = 0 := Complex.conj_eq_iff_im.1 h2.symm
-      have h5 := congrArg Complex.re h3
-      simp [sq, h4] at h5
-      have : (0 : ℝ) < H.d := by exact_mod_cast H.d_prime.pos
-      nlinarith [mul_self_nonneg (τ (H.rt : E)).re]
-    · exact h
-  apply mul_left_cancel₀ (by norm_num : (2 : 𝓞 E) ≠ 0)
-  have := congrArg H.bar H.two_weight_eq_one_add_root
-  rw [map_mul, map_add (f := _), map_one, hrt, map_ofNat] at this
-  linear_combination this + H.two_weight_eq_one_add_root
-
 private theorem exists_root_two (k : ℕ) : ∃ β γ : ℤ_[2], β * β = β - 2 * k ∧ γ * (1 - 2 * β) = 1 := by
   have h2 : ‖(2 : ℤ_[2])‖ < 1 := by
     have := PadicInt.norm_p (p := 2)
@@ -810,7 +767,7 @@ theorem UpperTheory.exists_splitIdempotent_of_splitAt :
       unfold sig
       rw [Algebra.TensorProduct.map_tmul]
       rfl
-    rw [h1, UpperTheory.Depth.SplitIdem.cmHost_bar_halfIntegerGenerator, map_sub, map_one]
+    rw [h1, _root_.GlobalTheory.HostModel.cmHost_bar_halfIntegerGenerator, map_sub, map_one]
   have hsum : ι γ * (j H.w0 - ι β) + sig p (𝓞 E) (ι γ * (j H.w0 - ι β)) = 1 := by
     rw [map_mul, map_sub, hsι, hsι, hsj]
     linear_combination hγ'
@@ -869,98 +826,8 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.G
 
 namespace UpperTheory.TraceSumEquivalence
 
-private theorem exists_equiv (E : Type) [Field E] [NumberField E] (C : Type) [Field C] [CharZero C]
-    (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] (hv : v.Integers O) :
-    ∃ Φ : (E →ₐ[ℚ] C) ≃ (𝓞 E →+* O), ∀ σ (y : 𝓞 E), algebraMap O C (Φ σ y) = σ (y : E) := by
-  classical
-  have hinj : Function.Injective (algebraMap O C) := hv.hom_inj
-  have hmem : ∀ (σ : E →ₐ[ℚ] C) (y : 𝓞 E), σ (y : E) ∈ (algebraMap O C).range := by
-    intro σ y
-    have hi : IsIntegral ℤ (σ (y : E)) :=
-      (RingOfIntegers.isIntegral_coe y).map σ.toRingHom.toIntAlgHom
-    have hi' : IsIntegral O (σ (y : E)) := hi.tower_top
-    obtain ⟨z, hz⟩ := hv.exists_of_le_one (hv.isIntegral_iff_v_le_one.mp hi')
-    exact ⟨z, hz⟩
-  let e : O ≃+* (algebraMap O C).range :=
-    RingEquiv.ofLeftInverse (Function.leftInverse_invFun hinj)
-  have he : ∀ z, algebraMap O C (e.symm z) = z := by
-    intro z
-    obtain ⟨a, ha⟩ := z.2
-    show algebraMap O C (Function.invFun (algebraMap O C) z) = z
-    exact Function.invFun_eq ⟨a, ha⟩
-  let F : (E →ₐ[ℚ] C) → (𝓞 E →+* O) := fun σ =>
-    e.symm.toRingHom.comp ((σ.toRingHom.comp (algebraMap (𝓞 E) E)).codRestrict _ (hmem σ))
-  have hF : ∀ σ (y : 𝓞 E), algebraMap O C (F σ y) = σ (y : E) := fun σ y => he _
-  have hFi : Function.Injective F := by
-    intro σ τ h
-    have h1 : σ.toRingHom.comp (algebraMap (𝓞 E) E) = τ.toRingHom.comp (algebraMap (𝓞 E) E) := by
-      ext y
-      have := congrArg (fun φ : 𝓞 E →+* O => algebraMap O C (φ y)) h
-      simp only [hF] at this
-      exact this
-    have h2 : σ.toRingHom = τ.toRingHom :=
-      IsLocalization.ringHom_ext (nonZeroDivisors (𝓞 E)) h1
-    exact AlgHom.coe_ringHom_injective h2
-  have hFs : Function.Surjective F := by
-    intro τ
-    let g : 𝓞 E →+* C := (algebraMap O C).comp τ
-    have hg : Function.Injective g := by
-      rw [RingHom.injective_iff_ker_eq_bot]
-      apply Ideal.eq_bot_of_comap_eq_bot (R := ℤ)
-      change Ideal.comap (algebraMap ℤ (𝓞 E)) (RingHom.ker g) = ⊥
-      rw [RingHom.comap_ker]
-      have : g.comp (algebraMap ℤ (𝓞 E)) = Int.castRingHom C := RingHom.ext_int _ _
-      rw [this]
-      exact (RingHom.injective_iff_ker_eq_bot _).mp Int.cast_injective
-    refine ⟨(IsFractionRing.lift hg : E →+* C).toRatAlgHom, ?_⟩
-    ext y
-    apply hinj
-    rw [hF]
-    exact IsFractionRing.lift_algebraMap hg y
-  exact ⟨Equiv.ofBijective F ⟨hFi, hFs⟩, hF⟩
-
-private theorem trace_eq_sum (E : Type) [Field E] [NumberField E] (p : ℕ) [Fact p.Prime] (C : Type)
-    [Field C] [IsAlgClosed C] [CharZero C] (O : Type) [CommRing O] [Algebra O C]
-    [Algebra ℤ_[p] O] (Φ : (E →ₐ[ℚ] C) ≃ (𝓞 E →+* O))
-    (hΦ : ∀ σ (y : 𝓞 E), algebraMap O C (Φ σ y) = σ (y : E)) (x : ℤ_[p] ⊗[ℤ] 𝓞 E) :
-    algebraMap O C (algebraMap ℤ_[p] O (LinearMap.trace ℤ_[p] _ (LinearMap.mulLeft ℤ_[p] x))) =
-      ∑ σ : E →ₐ[ℚ] C, algebraMap O C (tauExt (Φ σ) x) := by
-  classical
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | add a b ha hb =>
-    have hadd : LinearMap.mulLeft ℤ_[p] (a + b) = LinearMap.mulLeft ℤ_[p] a + LinearMap.mulLeft ℤ_[p] b := by
-      ext z
-      simp [add_mul]
-    rw [hadd, map_add (f := _), map_add (f := _), map_add (f := _), ha, hb, ← Finset.sum_add_distrib]
-    simp [map_add (f := _)]
-  | tmul c y =>
-    have h0 : (c ⊗ₜ[ℤ] y : ℤ_[p] ⊗[ℤ] 𝓞 E) = c • ((1 : ℤ_[p]) ⊗ₜ[ℤ] y) := by
-      rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
-    have h1 : LinearMap.mulLeft ℤ_[p] (c ⊗ₜ[ℤ] y : ℤ_[p] ⊗[ℤ] 𝓞 E) =
-        c • (Algebra.lmul ℤ (𝓞 E) y).baseChange ℤ_[p] := by
-      rw [Algebra.baseChange_lmul, h0]
-      ext z
-      simp
-    have h2 : LinearMap.trace ℤ_[p] _ (LinearMap.mulLeft ℤ_[p] (c ⊗ₜ[ℤ] y : ℤ_[p] ⊗[ℤ] 𝓞 E)) =
-        c * ((Algebra.trace ℤ (𝓞 E) y : ℤ) : ℤ_[p]) := by
-      rw [h1, map_smul, LinearMap.trace_baseChange, smul_eq_mul, Algebra.trace_apply]
-      simp
-    have h3 : ∑ σ : E →ₐ[ℚ] C, σ (y : E) = (((Algebra.trace ℤ (𝓞 E) y : ℤ) : ℚ) : C) := by
-      rw [Algebra.coe_trace_int, ← eq_ratCast (algebraMap ℚ C), trace_eq_sum_embeddings]
-    rw [h2]
-    simp only [tauExt, Algebra.TensorProduct.lift_tmul, map_mul]
-    have h4 : ∀ σ : E →ₐ[ℚ] C, algebraMap O C ((Φ σ).toIntAlgHom y) = σ (y : E) := fun σ => hΦ σ y
-    simp only [h4, Algebra.ofId_apply, ← Finset.mul_sum, h3, map_intCast, Rat.cast_intCast]
-
 end UpperTheory.TraceSumEquivalence
 
-
-open UpperTheory.TraceSumEquivalence in
-theorem UpperTheory.trace_form_decomposition_CMDatum :
-    ∀ (E : Type) [Field E] [NumberField E] (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C], v.Integers O → ∀ [Algebra ℤ_[p] O] (e : ℤ_[p] ⊗[ℤ] 𝓞 E), e * e = e →
-      Nonempty (Fin (Module.finrank ℤ_[p] (LinearMap.range (LinearMap.mulLeft ℤ_[p] e))) ≃ Emb (O := O) e) ∧ Nat.card (𝓞 E →+* O) = Module.finrank ℚ E := by
-  apply GlobalTheory.EmbCount.card_emb
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.CMTraceForms.TraceFormDecompositionCMDatum =====
@@ -976,29 +843,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.G
 namespace UpperTheory.Depth.SplitPl
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
-
-private theorem exists_inPsi (H : Host E) : ∃ τ : E →+* ℂ, τ (H.rt : E) = H.rt0 := by
-  obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
-  have hE : (H.rt : E) ^ 2 = -(H.d : E) := by
-    have := congrArg (algebraMap (𝓞 E) E) H.rt_sq
-    simpa using this
-  have h : τ (H.rt : E) ^ 2 = -(H.d : ℂ) := by rw [← map_pow, hE]; simp
-  rcases sq_eq_sq_iff_eq_or_eq_neg.1 (h.trans H.sqrt_neg_disc_sq.symm) with h1 | h1
-  · exact ⟨τ, h1⟩
-  · refine ⟨ComplexEmbedding.conjugate τ, ?_⟩
-    rw [ComplexEmbedding.conjugate_coe_eq, h1]
-    have hre := congrArg Complex.re H.sqrt_neg_disc_sq
-    have him := congrArg Complex.im H.sqrt_neg_disc_sq
-    simp [pow_two] at hre him
-    have hd : (0 : ℝ) < H.d := by exact_mod_cast H.d_prime.pos
-    have h0 : H.rt0.re = 0 := by
-      by_contra hne
-      have : H.rt0.im = 0 := by
-        have : H.rt0.re * H.rt0.im = 0 := by linarith
-        exact (mul_eq_zero.1 this).resolve_left hne
-      rw [this] at hre
-      nlinarith [mul_self_nonneg H.rt0.re]
-    apply Complex.ext <;> simp [h0]
 
 private theorem existsUnique_one {A O : Type} [CommRing A] [CommRing O] [IsDomain O] {F : Type} [FunLike F A O]
     [RingHomClass F A O] (φ : F) {s : ℕ} (g : Fin s → A) (h1 : ∀ i, g i * g i = g i)
@@ -1030,12 +874,12 @@ theorem UpperTheory.splitPlaces_discriminantDepth_of_splitAt :
   intro C _ _ _ v O _ _ hv _ _ τO hinj hrt
   haveI : IsDomain O := hv.hom_inj.isDomain (algebraMap O C)
   haveI : CharZero O := (algebraMap O C).charZero
-  obtain ⟨τ₀, hτ₀⟩ := exists_inPsi H
+  obtain ⟨τ₀, hτ₀⟩ := _root_.GlobalTheory.HostModel.exists_embedding_rt_eq H
   have hpos : 0 < Module.finrank ℚ E := Module.finrank_pos
   have hsq : ∀ σ : 𝓞 E →+* O, σ H.rt ^ 2 = -(H.d : O) := fun σ => by
     rw [← map_pow, H.rt_sq]; simp
   have hsurj : Function.Surjective τO := by
-    have hc := (UpperTheory.trace_form_decomposition_CMDatum E p C v O hv 0 (by simp)).2
+    have hc := (GlobalTheory.EmbCount.card_emb E p C v O hv 0 (by simp)).2
     haveI : Finite (𝓞 E →+* O) := Nat.finite_of_card_ne_zero (by omega)
     refine (hinj.bijective_of_nat_card_le ?_).2
     rw [hc, Nat.card_eq_fintype_card, Embeddings.card E ℂ]
@@ -1091,7 +935,7 @@ theorem UpperTheory.splitPlaces_discriminantDepth_of_splitAt :
     rw [← map_sum, hsum, hs]
   obtain ⟨hn, hvd⟩ := UpperTheory.discr_CMDatum_eq_prod_places E p C v O hv s w horth hone hcross
   have t : ∀ i, Fin (w i).n ≃ Emb (O := O) (w i).e := fun i =>
-    (UpperTheory.trace_form_decomposition_CMDatum E p C v O hv (g i) (hg i).1).1.some
+    (GlobalTheory.EmbCount.card_emb E p C v O hv (g i) (hg i).1).1.some
   obtain ⟨vdi, hv1, hv2⟩ := hvd t
   have hup : ∀ (x y : ℤ_[p] ⊗[ℤ] 𝓞 E) (σ : 𝓞 E →+* O), x * y = x → σ ∈ Emb (O := O) x → σ ∈ Emb (O := O) y := by
     intro x y σ hxy hx

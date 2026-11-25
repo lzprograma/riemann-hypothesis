@@ -2,46 +2,6 @@ module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LinQRawRange
 public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -52,8 +12,6 @@ namespace Formalism.MainNotions.S.LocalSplitGroups
 open NumberField IsDedekindDomain Formalism.MainNotions.S ValuativeRel
 open scoped BigOperators ComplexOrder
 open Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : Formalism.BasicNotions.D7)
 
@@ -132,13 +90,6 @@ def detNrmP (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) {n : ℕ} (h :
   match modPt δ T T' p h with
   | some a => (M p).detMod a
   | none => 0
-
-def ptApp {n : ℕ} (h : Point D.host.E n) (t : D.host.E) (ht : t ≠ 0) (s : ℕ) (hs : 1 ≤ s) :
-    Point D.host.E (n + s) :=
-  ⟨h.1 ++ [(t, s)], fun b hb => by
-    rcases List.mem_append.1 hb with hb | hb
-    · exact h.2.1 b hb
-    · simp at hb; subst hb; exact ⟨ht, hs⟩, by simp [h.2.2]⟩
 
 def Dmin {n : ℕ} (w : Point D.host.E n) (l : ℕ) : D.host.E :=
   if hl : l ≤ n then ((ptMat w).submatrix (Fin.castLE hl) (Fin.castLE hl)).det else 0

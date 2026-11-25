@@ -10,51 +10,7 @@ public import Mathlib.RingTheory.Kaehler.TensorProduct
 public import Mathlib.LinearAlgebra.DFinsupp
 public import Mathlib.RingTheory.IsTensorProduct
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormLaws
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBaseChangeEquiv, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExteriorPowerSplit, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KaehlerPushoutSplit, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorEquivBaseChangeTensor, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PiCongrRightSingle
@@ -312,39 +268,30 @@ theorem exists_retraction (K A B R : Type) [CommRing K] [CommRing A] [CommRing B
       (∀ x, r (KaehlerDifferential.mapBaseChange K A R x) = x) ∧
       (∀ y, r (KaehlerDifferential.mapBaseChange K B R y) = 0) := by
   let e := KaehlerDifferential.tensorKaehlerEquiv K B A R
-  refine ⟨e.symm.toLinearMap ∘ₗ KaehlerDifferential.map K B R R, ?_, ?_⟩
-  · intro x
-    have key : KaehlerDifferential.map K B R R (KaehlerDifferential.mapBaseChange K A R x) = e x := by
-      induction x with
-      | add x y hx hy => simp only [map_add (f := _), hx, hy]
-      | tmul s w =>
-        have hw : w ∈ Submodule.span A (Set.range (KaehlerDifferential.D K A)) := by
-          rw [KaehlerDifferential.span_range_derivation]; trivial
-        induction hw using Submodule.span_induction generalizing s with
-        | mem w hw =>
-          obtain ⟨a, rfl⟩ := hw
-          simp [e, KaehlerDifferential.mapBaseChange_tmul, KaehlerDifferential.map_D]
-        | zero => simp
-        | add u v _ _ hu hv => simp only [tmul_add, map_add (f := _), hu, hv]
-        | smul a u _ hu =>
-          rw [← TensorProduct.smul_tmul]
-          exact hu _
-    simp [key]
-  · intro y
-    induction y with
-    | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
-    | tmul s w =>
-      have hw : w ∈ Submodule.span B (Set.range (KaehlerDifferential.D K B)) := by
-        rw [KaehlerDifferential.span_range_derivation]; trivial
-      induction hw using Submodule.span_induction generalizing s with
-      | mem w hw =>
-        obtain ⟨b, rfl⟩ := hw
-        simp [KaehlerDifferential.mapBaseChange_tmul, KaehlerDifferential.map_D]
-      | zero => simp
-      | add u v _ _ hu hv => simp only [tmul_add, map_add (f := _), hu, hv, add_zero]
-      | smul b u _ hu =>
-        rw [← TensorProduct.smul_tmul]
-        exact hu _
+  let r := e.symm.toLinearMap ∘ₗ KaehlerDifferential.map K B R R
+  have hA : r ∘ₗ KaehlerDifferential.mapBaseChange K A R = LinearMap.id := by
+    apply TensorProduct.AlgebraTensorModule.curry_injective
+    apply LinearMap.ext
+    intro s
+    apply LinearMap.ext_on (KaehlerDifferential.span_range_derivation K A)
+    rintro _ ⟨a, rfl⟩
+    have key : KaehlerDifferential.map K B R R
+        (KaehlerDifferential.mapBaseChange K A R (s ⊗ₜ KaehlerDifferential.D K A a)) =
+        e (s ⊗ₜ KaehlerDifferential.D K A a) := by
+      simp [e, KaehlerDifferential.mapBaseChange_tmul, KaehlerDifferential.map_D]
+    change e.symm (KaehlerDifferential.map K B R R
+      (KaehlerDifferential.mapBaseChange K A R (s ⊗ₜ KaehlerDifferential.D K A a))) = _
+    rw [key, LinearEquiv.symm_apply_apply]
+    rfl
+  have hB : r ∘ₗ KaehlerDifferential.mapBaseChange K B R = 0 := by
+    apply TensorProduct.AlgebraTensorModule.curry_injective
+    apply LinearMap.ext
+    intro s
+    apply LinearMap.ext_on (KaehlerDifferential.span_range_derivation K B)
+    rintro _ ⟨b, rfl⟩
+    change r (KaehlerDifferential.mapBaseChange K B R (s ⊗ₜ KaehlerDifferential.D K B b)) = 0
+    simp [r, KaehlerDifferential.mapBaseChange_tmul, KaehlerDifferential.map_D]
+  exact ⟨r, fun x => LinearMap.congr_fun hA x, fun y => LinearMap.congr_fun hB y⟩
 
 theorem range_sup_range (K A B R : Type) [CommRing K] [CommRing A] [CommRing B] [CommRing R]
     [Algebra K A] [Algebra K B] [Algebra K R] [Algebra A R] [Algebra B R]
@@ -421,8 +368,6 @@ section -- clump:auto
 @[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.Onto
-
-set_option autoImplicit false
 
 namespace GlobalTheory.CompanionTheory.OmKun
 

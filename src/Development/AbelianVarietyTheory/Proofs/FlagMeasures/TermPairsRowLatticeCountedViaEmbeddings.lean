@@ -163,7 +163,6 @@ open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotio
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals
 
 namespace GlobalTheory.TypeAsm.FibCard
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Main
 variable {D : D7} {X : HidaSetting D}
@@ -207,7 +206,6 @@ end Main
 end GlobalTheory.TypeAsm.FibCard
 
 namespace GlobalTheory.TypeAsm.FibCard
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 section Main2
 variable {D : D7} {X : HidaSetting D}
 
@@ -255,7 +253,6 @@ end Main2
 end GlobalTheory.TypeAsm.FibCard
 
 namespace GlobalTheory.TypeAsm.FibCard
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem fibCardC : FibCardC := by
   intro D large₂ X Y u hStd t₀ s hs
@@ -405,9 +402,6 @@ theorem isotropicSpan_first_le_framePairSpace {F G : FlagD H r} {x : V} (hx : x 
 theorem isotropicSpan_second_le_framePairSpace {F G : FlagD H r} {x : V} (hx : x ∈ G.X) : x ∈ V0 F G :=
   Submodule.mem_sup_left (Submodule.mem_sup_right hx)
 
-theorem lastVector_first_mem_framePairSpace (F G : FlagD H r) : F.z ∈ V0 F G :=
-  Submodule.mem_sup_right (Submodule.subset_span (by simp))
-
 theorem lastVector_second_mem_framePairSpace (F G : FlagD H r) : G.z ∈ V0 F G :=
   Submodule.mem_sup_right (Submodule.subset_span (by simp))
 
@@ -451,7 +445,7 @@ theorem core (F G₁ G₂ : FlagD H r) (γ n n' a : V ≃ₗ[K] V)
         · change n F.z ∈ V0 F G₂
           have : n F.z = F.z + (n F.z - F.z) := by abel
           rw [this]
-          exact Submodule.add_mem _ (lastVector_first_mem_framePairSpace F G₂) (isotropicSpan_first_le_framePairSpace (hnP _ hzP))
+          exact Submodule.add_mem _ (GlobalTheory.ModIdent.lastVector_mem_jointSpan_left F G₂) (isotropicSpan_first_le_framePairSpace (hnP _ hzP))
         · change n (G₁.z) ∈ V0 F G₂
           have hx0 : n' F.z - F.z ∈ F.X := hn'P _ hzP
           have hz2 : G₂.z = n (γ F.z) + n (γ (n' F.z - F.z)) := by
@@ -516,7 +510,6 @@ end GlobalTheory.TypeAsm.InjProof
 
 namespace GlobalTheory.TypeAsm.InjProof
 open Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Obj
 variable {D : D7} {X : HidaSetting D}
@@ -555,7 +548,6 @@ end GlobalTheory.TypeAsm.InjProof
 
 namespace GlobalTheory.TypeAsm.InjProof
 open Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem injC : InjC := by
   intro D large₂ X Y u hStd W HW hEmb t₁ t₂ hN hlam hEqv h hH₁ hH₂
@@ -650,7 +642,6 @@ section -- clump:auto
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.KappaEndpoints Formalism.L2.SG.RowsConc GlobalTheory.TypeAsm GlobalTheory.TypeAsm.PerRow
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.TypeAsm.PerRow
 
@@ -736,10 +727,7 @@ section -- clump:auto
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.KappaEndpoints Formalism.L2.SG.RowsConc GlobalTheory.TypeAsm GlobalTheory.TypeAsm.PerRow
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.sum_pairs_definiteIsometry_le_frameClasses : ∀ (D : D7) (large₂ : SizeData₂ D) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word), Std D large₂ → ∀ (W : Submodule D.host.E (VS D).V) (HW : Formalism.HermitianLatticeCounting.S6.HermSpace D.host.E W), GlobalTheory.DegAsm.IsEmb (F0 X u) HW W.subtype → ∀ (Λ : Submodule (𝓞 D.host.E) (VS D).V) (h : GTu Y u → (W ≃ₗ[D.host.E] W)), (∀ t ∈ relSet Y u, GlobalTheory.DegAsm.IsH (F0 X u) (Ft t) W.subtype t.lin (h t)) → ∀ (Sf : Finset (GTu Y u × GTu Y u)), (∀ p ∈ Sf, p ∈ (Y.tO u u).allPairs (relSet Y u) ∧ p.1.lam = Λ) → (∀ p ∈ Sf, ∀ q ∈ Sf, h p.1 * (h p.2)⁻¹ = h q.1 * (h q.2)⁻¹) → ∑ p ∈ Sf, wRow D (X.Fu u) p.1.lam' * (omT p.1 * omT p.2) ≤ (∑ b ∈ Sf.image (fun p => frCls Λ p.1), clsOm Y u Λ b) * ∑ b ∈ Sf.image (fun p => frCls Λ p.2), clsOm Y u Λ b := by
-  first | exact @GlobalTheory.TypeAsm.PerRow.sum_pairs_le_classes_pf
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumPairsDefiniteIsometryLeFrameClassesStatement =====
@@ -981,7 +969,6 @@ open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.KappaEndpoints Formalism.L2.SG.RowsConc
 namespace GlobalTheory.TypeAsm.PerRow
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem sum_le_encard_fibres {α Θ : Type} (S : Finset α) (xf yf : α → ℕ) (Φ : α → Θ) (Tr : ℕ → ℕ → Set Θ) (f : α → ℝ)
     (B₁ B₂ : ℕ → ℝ) (R₁ R₂ : Finset ℕ) (hf : ∀ a ∈ S, 0 ≤ f a)
@@ -990,27 +977,6 @@ theorem sum_le_encard_fibres {α Θ : Type} (S : Finset α) (xf yf : α → ℕ)
     ENNReal.ofReal (∑ a ∈ S, f a) ≤
       ∑ x ∈ R₁, ∑ y ∈ R₂, (((Tr x y).encard : ℕ∞) : ℝ≥0∞) * ENNReal.ofReal (B₁ x * B₂ y) :=
   _root_.GlobalTheory.sum_fibre_two_index_bound α Θ S xf yf Φ Tr f B₁ B₂ R₁ R₂ hf hR hB
-
-theorem sum_pairs_le_classes (D : D7) (large₂ : SizeData₂ D) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word) (hS : Std D large₂)
-    (W : Submodule D.host.E (VS D).V) (HW : Formalism.HermitianLatticeCounting.S6.HermSpace D.host.E W)
-    (he : GlobalTheory.DegAsm.IsEmb (F0 X u) HW W.subtype) (Λ : Submodule (𝓞 D.host.E) (VS D).V) (h : GTu Y u → (W ≃ₗ[D.host.E] W))
-    (hh : ∀ t ∈ relSet Y u, GlobalTheory.DegAsm.IsH (F0 X u) (Ft t) W.subtype t.lin (h t)) (Sf : Finset (GTu Y u × GTu Y u))
-    (hSf : ∀ p ∈ Sf, p ∈ (Y.tO u u).allPairs (relSet Y u) ∧ p.1.lam = Λ)
-    (hη : ∀ p ∈ Sf, ∀ q ∈ Sf, h p.1 * (h p.2)⁻¹ = h q.1 * (h q.2)⁻¹) :
-    ∑ p ∈ Sf, wRow D (X.Fu u) p.1.lam' * (omT p.1 * omT p.2) ≤
-      (∑ b ∈ Sf.image (fun p => frCls Λ p.1), clsOm Y u Λ b) * ∑ b ∈ Sf.image (fun p => frCls Λ p.2), clsOm Y u Λ b :=
-  GlobalTheory.T.sum_pairs_definiteIsometry_le_frameClasses D large₂ X Y u hS W HW he Λ h hh Sf hSf hη
-
-theorem sum_classes_le (D : D7) (large₂ : SizeData₂ D) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word) (hS : Std D large₂)
-    (W : Submodule D.host.E (VS D).V) (HW : Formalism.HermitianLatticeCounting.S6.HermSpace D.host.E W)
-    (he : GlobalTheory.DegAsm.IsEmb (F0 X u) HW W.subtype) (Λ : Submodule (𝓞 D.host.E) (VS D).V) (j x : ℕ) (δ : ℕ → D.host.E)
-    (d : Submodule (𝓞 D.host.E) W × Submodule (𝓞 D.host.E) (W × W)) (N : GTu Y u → GlobalTheory.DegCnt.NF (HV D) D.R.rS)
-    (A : Finset (GTu Y u)) (hne : A.Nonempty)
-    (hA : ∀ t ∈ A, t ∈ relSet Y u ∧ t.lam = Λ ∧ jT t = j ∧ labT t = δ ∧ AdT t (N t) ∧ (N t).IsTerm (gS D) Λ ∧
-      (N t).gI (gS D) Λ = x ∧ GlobalTheory.DegAsm.datOf (F0 X u) (Ft t) W.subtype (gS D) Λ = d) :
-    ∑ b ∈ A.image (frCls Λ), clsOm Y u Λ b ≤
-      GlobalTheory.DegAsm.datBd D.host.E D.R.k D.R.rS (k2Del D j δ) (DbL D j δ) (NT D u) x :=
-  GlobalTheory.T.sum_frameClassWeights_le_datumBound D large₂ X Y u hS W HW he Λ j x δ d N A hne hA
 
 theorem termData (D : D7) (large₂ : SizeData₂ D) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word) (hS : Std D large₂)
     (W : Submodule D.host.E (VS D).V) (HW : Formalism.HermitianLatticeCounting.S6.HermSpace D.host.E W)
@@ -1125,7 +1091,7 @@ theorem perRowC : PerRowC := by
           GlobalTheory.DegAsm.datBd D.host.E D.R.k D.R.rS (k2Del D j' δ') (DbL D j' δ') (NT D u) ((N a.1).gI (gS D) Λ) *
           GlobalTheory.DegAsm.datBd D.host.E D.R.k D.R.rS (k2Del D j'' δ'') (DbL D j'' δ'') (NT D u) ((N a.2).gI (gS D) Λ) := by
       intro Sf hmem haf
-      have h1 := sum_pairs_le_classes D large₂ X Y u hS W HW he Λ h (fun t ht => (hNh t ht).2.2.2.2.2.2.2.2.2.2.2.2.1) Sf
+      have h1 := GlobalTheory.TypeAsm.PerRow.sum_pairs_le_classes_pf D large₂ X Y u hS W HW he Λ h (fun t ht => (hNh t ht).2.2.2.2.2.2.2.2.2.2.2.2.1) Sf
         (fun p hp => ⟨(hS' p (hmem p hp).1).1, (hS' p (hmem p hp).1).2.1⟩)
         (fun p hp q hq => ((hmem p hp).2.2.2.1).trans ((hmem q hq).2.2.2.1).symm)
       have hA1 : ∀ t ∈ Sf.image Prod.fst, t ∈ relSet Y u ∧ t.lam = Λ ∧ jT t = j' ∧ labT t = δ' ∧ AdT t (N t) ∧
@@ -1149,8 +1115,8 @@ theorem perRowC : PerRowC := by
         obtain ⟨b1, b2, -⟩ := hNh q.2 hpa.2.1
         rw [hl2] at b2
         exact ⟨hpa.2.1, hl2, hj2, hd2, b1, b2, c5, c2⟩
-      have h2 := sum_classes_le D large₂ X Y u hS W HW he Λ j' _ δ' _ N (Sf.image Prod.fst) ⟨a.1, Finset.mem_image_of_mem _ haf⟩ hA1
-      have h3 := sum_classes_le D large₂ X Y u hS W HW he Λ j'' _ δ'' _ N (Sf.image Prod.snd) ⟨a.2, Finset.mem_image_of_mem _ haf⟩ hA2
+      have h2 := GlobalTheory.TypeAsm.PerRow.sum_clsOm_le_datBd D large₂ X Y u hS W HW he Λ j' _ δ' _ N (Sf.image Prod.fst) ⟨a.1, Finset.mem_image_of_mem _ haf⟩ hA1
+      have h3 := GlobalTheory.TypeAsm.PerRow.sum_clsOm_le_datBd D large₂ X Y u hS W HW he Λ j'' _ δ'' _ N (Sf.image Prod.snd) ⟨a.2, Finset.mem_image_of_mem _ haf⟩ hA2
       rw [Finset.image_image] at h2 h3
       have n2 : 0 ≤ ∑ b ∈ Sf.image (fun p => frCls Λ p.2), clsOm Y u Λ b :=
         Finset.sum_nonneg fun b _ => clsOm_nonneg Y u Λ hK b

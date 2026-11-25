@@ -68,7 +68,7 @@ theorem UpperTheory.V.Z.Sym.Loc.sumShift : UpperTheory.V.Z.Sym.Loc.SumShift := b
     exact hsMul O K Δ L _ a b hτ a.ne_zero b.ne_zero
   have hone : hs (τ ^ 2 - 4) ((1 : Kˣ) : K) = 1 := by
     unfold hs
-    rw [if_pos]
+    rw [ite_eq_left]
     exact ⟨1, 0, by simp⟩
   have hsq : ∀ a : Kˣ, hs (τ ^ 2 - 4) (a : K) * hs (τ ^ 2 - 4) (a : K) = 1 := by
     intro a
@@ -137,10 +137,10 @@ theorem UpperTheory.V.Z.Sym.Loc.sumShift : UpperTheory.V.Z.Sym.Loc.SumShift := b
       exact (hmk _ _).1 (by simp)
     constructor
     · rw [finsum_eq_single _ (t0 : Kˣ ⧸ NE τ)]
-      · rw [hfx, if_pos h0]
+      · rw [hfx, ite_eq_left h0]
       · intro q hq'
-        rw [hfx, if_neg (hq q hq')]
+        rw [hfx, ite_eq_right (hq q hq')]
     · rw [finsum_eq_single _ (t0 : Kˣ ⧸ NE τ)]
-      · rw [hfx, if_pos h0, h0]
+      · rw [hfx, ite_eq_left h0, h0]
       · intro q hq'
-        rw [hfx, if_neg (hq q hq'), mul_zero]
+        rw [hfx, ite_eq_right (hq q hq'), mul_zero]

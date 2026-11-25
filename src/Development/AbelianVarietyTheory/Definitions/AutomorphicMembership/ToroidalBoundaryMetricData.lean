@@ -3,50 +3,10 @@ module
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrictPosOfExists
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.L2DbarEstimates.LeviForms.EventuallyDifferentiableAtOfContDiffAt
 import ReciprocityTheory.L2DbarEstimates.LeviForms.LogNormSq
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -56,8 +16,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestric
 open scoped ComplexOrder
 
 namespace GlobalTheory.ShFam
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section Manifold
 
@@ -86,24 +44,6 @@ theorem isOpen_not_liesIn (C : Closeds Y) : IsOpen {y : CxPts p σ | ¬ LiesIn y
   have : {y : CxPts p σ | ¬ LiesIn y C} = ptsIn p σ C.compl := Set.ext fun y => (mem_ptsIn (y := y) (U := C.compl)).symm
   exact this ▸ isOpen_ptsIn _
 
-namespace IsDivNorm
-
-variable {R : AnRead p σ d} {C : Closeds Y} {n : CxPts p σ → ℝ} (h : IsDivNorm R C n)
-include h
-
-end IsDivNorm
-
-theorem isDivNorm_of_eqn [IsAffine Y] (R : AnRead p σ d) {C : Closeds Y} {t : Γ(Y, ⊤)}
-    (h : (Scheme.IdealSheafData.vanishingIdeal C).ideal ⟨⊤, isAffineOpen_top Y⟩ = Ideal.span {t}) :
-    IsDivNorm R C fun y => ‖ev p σ ⊤ t y‖ / √(1 + ‖ev p σ ⊤ t y‖ ^ 2) := by
-  have hp : ∀ y, 0 < 1 + ‖ev p σ ⊤ t y‖ ^ 2 := fun y => by positivity
-  refine ⟨fun y => ⟨by positivity, ?_⟩, fun y => ⟨⟨⊤, isAffineOpen_top Y⟩, t,
-    fun z => Real.log (1 + ‖ev p σ ⊤ t z‖ ^ 2), mem_ptsIn_top, h, fun i => ?_, fun z _ => ?_⟩⟩
-  · exact (div_le_one (Real.sqrt_pos.2 (hp y))).2 (Real.le_sqrt_of_sq_le (by linarith))
-  · exact (contDiffOn_const.add ((GlobalTheory.ChartGlue.contDiffOn_real (GlobalTheory.ChartGlue.isOpen_over _ (isOpen_ptsIn _))
-      (R.holoOn_ev ⊤ t i)).norm_sq ℂ)).log fun _ _ => (hp _).ne'
-  · rw [div_pow, Real.sq_sqrt (hp z).le, Real.exp_neg, Real.exp_log (hp z), div_eq_mul_inv]
-
 abbrev ChartForm (p : Y ⟶ Sp k) (σ : k →+* ℂ) (d : ℕ) : Type := AlgChart p σ d → CxPts p σ → (Fin d → ℂ) → ℝ
 
 def ddcForm (f : CxPts p σ → ℝ) : ChartForm p σ d := fun c y ξ => c.levi f y ξ / Real.pi
@@ -113,32 +53,6 @@ def IsPotential (R : AnRead p σ d) (a : ChartForm p σ d) (W : Set (CxPts p σ)
 
 def IsKaehlerForm (R : AnRead p σ d) (a : ChartForm p σ d) : Prop :=
   (∀ y, ∃ W φ, y ∈ W ∧ IsPotential R a W φ) ∧ ∀ c : AlgChart p σ d, ∀ y ∈ c.e.source, ∀ ξ, ξ ≠ 0 → 0 < a c y ξ
-
-theorem ddcForm_coord (c : AlgChart p σ d) (j : Fin d) {y : CxPts p σ} (hy : y ∈ c.e.source) (ξ : Fin d → ℂ) :
-    ddcForm (fun z => Complex.normSq (c.e z j)) c y ξ = Complex.normSq (ξ j) / Real.pi := by
-  have hg : ContDiffAt ℂ 2 (fun v : ReciprocityTheory.L2DbarEstimates.V d => v j) (c.e y) :=
-    (EuclideanSpace.proj j : ReciprocityTheory.L2DbarEstimates.V d →L[ℂ] ℂ).contDiff.contDiffAt
-  have e := ReciprocityTheory.L2DbarEstimates.leviV_normSq_comp hg ξ
-  have e1 : ∀ a, ReciprocityTheory.L2DbarEstimates.wd d a (fun v : ReciprocityTheory.L2DbarEstimates.V d => v j) (c.e y) = if j = a then 1 else 0 := fun a => by
-    have : (fun v : ReciprocityTheory.L2DbarEstimates.V d => v j) =
-        ((EuclideanSpace.proj j : ReciprocityTheory.L2DbarEstimates.V d →L[ℂ] ℂ).restrictScalars ℝ) := rfl
-    rw [ReciprocityTheory.L2DbarEstimates.wd, this, ContinuousLinearMap.fderiv]
-    by_cases h : j = a
-    · simp [ReciprocityTheory.L2DbarEstimates.bas, h]
-    · simp [ReciprocityTheory.L2DbarEstimates.bas, h]
-  have e2 : ∑ a, ReciprocityTheory.L2DbarEstimates.wd d a (fun v : ReciprocityTheory.L2DbarEstimates.V d => v j) (c.e y) * ξ a = ξ j := by simp [e1]
-  rw [e2] at e
-  refine congrArg (· / Real.pi) (Eq.trans (congrArg Complex.re (Eq.trans ?_ e)) (Complex.ofReal_re _))
-  refine ReciprocityTheory.L2DbarEstimates.leviV_congr (Filter.eventually_of_mem (c.e.open_target.mem_nhds (c.e.map_source hy))
-    fun v hv => ?_) ξ
-  simp only [c.e.right_inv hv]
-
-theorem isKaehlerForm_ddcForm {R : AnRead p σ d} {φ : CxPts p σ → ℝ} (h : R.SmoothOn Set.univ φ)
-    (hp : ∀ y, ∃ c : AlgChart p σ d, y ∈ c.e.source ∧ ∀ ξ, ξ ≠ 0 → 0 < ddcForm φ c y ξ) : IsKaehlerForm R (ddcForm φ) :=
-  ⟨fun _ => ⟨_, φ, Set.mem_univ _, isOpen_univ, h, fun _ _ _ _ _ => rfl⟩, fun c y hy ξ hξ => by
-    obtain ⟨c', hy', h'⟩ := hp y
-    rw [ddcForm, AlgChart.levi_trans hy hy' (h.contDiffAt_two isOpen_univ hy' trivial)]
-    exact h' _ (AlgChart.dtrans_ne_zero hy hy' hξ)⟩
 
 def IsConjMap (m : CxPts p σ' → CxPts p σ) : Prop := ∀ z, (m z).1 = spMap (starRingEnd ℂ) ≫ z.1
 

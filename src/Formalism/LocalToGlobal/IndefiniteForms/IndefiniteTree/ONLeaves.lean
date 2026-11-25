@@ -244,8 +244,7 @@ theorem row_ne_zero (n : ℕ) (h : GL (Fin (n + 1)) k) :
 theorem exists_row (n : ℕ) (v : Fin (n + 1) → k) (hv : v ≠ 0) :
     ∃ g : GL (Fin (n + 1)) k, (g : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.last n) = v := by
   obtain ⟨p, hp⟩ : ∃ p, v p ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hv (funext hcon)
   let σ : Equiv.Perm (Fin (n + 1)) := Equiv.swap p (Fin.last n)
   let M : Matrix (Fin (n + 1)) (Fin (n + 1)) k := fun i j =>
@@ -513,14 +512,14 @@ theorem part2 (w : HeightOneSpectrum (𝓞 K)) (g₁ g₂ a : ℕ) (h1 : g₁.Pr
   simp only [← Nat.padicValNat_def, pv_prime _ _ hp h1, pv_prime _ _ hp h2]
   by_cases e1 : plc w = g₁
   · have e2 : plc w ≠ g₂ := fun e => h12 (e1.symm.trans e)
-    rw [if_pos e1, if_neg e2, if_pos (Or.inl e1)]
+    rw [ite_eq_left e1, ite_eq_right e2, ite_eq_left (Or.inl e1)]
     push_cast
     ring
   · by_cases e2 : plc w = g₂
-    · rw [if_neg e1, if_pos e2, if_pos (Or.inr e2)]
+    · rw [ite_eq_right e1, ite_eq_left e2, ite_eq_left (Or.inr e2)]
       push_cast
       ring
-    · rw [if_neg e1, if_neg e2, if_neg (not_or.mpr ⟨e1, e2⟩)]
+    · rw [ite_eq_right e1, ite_eq_right e2, ite_eq_right (not_or.mpr ⟨e1, e2⟩)]
       push_cast
       ring
 
@@ -624,12 +623,6 @@ theorem card_Pm (hG : IsLevelGroups kf n Pm Uv) (v : ι) :
     Nat.card (Pm v) = Nat.card (Uv v) * ∏ i ∈ Finset.Ico 1 (n + 1), (Fintype.card (kf v) ^ i - 1) := by
   rw [card_Uv_uni hG v, ← _root_.PI.MirabolicIndex₂.mirabIndex (kf v) n]
   exact Nat.card_congr (Equiv.subtypeEquivRight (hG.1 v))
-
-theorem index_Uv (hG : IsLevelGroups kf n Pm Uv) (v : ι) :
-    (Uv v).index = ∏ i ∈ Finset.Ico 1 (n + 1), (Fintype.card (kf v) ^ i - 1) := by
-  have h1 := Subgroup.card_mul_index (Uv v)
-  rw [card_Pm hG v] at h1
-  exact Nat.eq_of_mul_eq_mul_left Nat.card_pos h1
 
 theorem card_piU : Nat.card (Subgroup.pi Set.univ Uv) = ∏ v, Nat.card (Uv v) := by
   rw [← Nat.card_pi]
@@ -770,12 +763,6 @@ theorem leafUnip_of (O : OnObj S (∀ v, Pm v) c) (fN : ℕ) (hG : IsLevelGroups
 
 end Discharge
 
-section Builder
-
-variable {Bs : DefBase K} {Df : DefSide Bs} {S : IndefData Df} {c : OnConst}
-
-end Builder
-
 section Groups
 
 def mirabSub (k : Type) [Field k] [Fintype k] (n : ℕ) : Subgroup (GL (Fin (n + 1)) k) where
@@ -865,13 +852,6 @@ attribute [local instance] cycKC
 variable (v0 : InfinitePlace KC) (Tw0 : Finset (HeightOneSpectrum (𝓞 KC)))
 
 end ToyLevel
-
-section NotProjectiveExample
-
-variable (K)
-variable (v0 : InfinitePlace K) (Tw0 : Finset (HeightOneSpectrum (𝓞 K)))
-
-end NotProjectiveExample
 
 end Formalism.L2.Indef.Tree
 end -- clump:auto

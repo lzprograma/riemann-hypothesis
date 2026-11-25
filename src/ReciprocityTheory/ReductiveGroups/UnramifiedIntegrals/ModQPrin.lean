@@ -32,7 +32,7 @@ theorem qExp_AA_pow (n : ℕ) : qExpansion 1 (fun τ => AA τ ^ n) = aC ^ n := b
     rw [this, qExpansion_mul (isMF_AA.pow n).analytic isMF_AA.analytic, ih, pow_succ, aC_eq]
 
 theorem aC_coeff_zero : PowerSeries.coeff 0 aC = 1 := by
-  have h4 : PowerSeries.coeff 0 e4Z = 1 := by rw [e4Z, PowerSeries.coeff_mk, if_pos rfl]
+  have h4 : PowerSeries.coeff 0 e4Z = 1 := by rw [e4Z, PowerSeries.coeff_mk, ite_eq_left rfl]
   rw [aC, aZ, PowerSeries.coeff_map]
   simp [pow_succ, PowerSeries.coeff_mul, h4]
 

@@ -5,8 +5,6 @@ import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.FlagBasic
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights
 
 namespace RestTerms

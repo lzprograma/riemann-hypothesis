@@ -61,7 +61,7 @@ theorem adjoint_mem_CapSp_subA : ∀ (V₁ : Type) [NormedAddCommGroup V₁] [In
     · simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
       rcases hx with hx | hx
       · exact hB.2.2 _ x (by simp [hx])
-      · rw [hx, hB.2.1, if_neg (Fin.castSucc_lt_last a).ne]
+      · rw [hx, hB.2.1, ite_eq_right (Fin.castSucc_lt_last a).ne]
   have hlie := GlobalTheory.intertwiner_EB_of_stabiliser V₂ V₁ (n + 1) r n z (B (Fin.last n)) π₂ π₁ T
     (fun a : Fin n => B a.castSucc) h₂ h₁ hB' (fun h hh he w => by
       have := congrArg (fun S : V₂ →L[ℂ] V₁ => S w) (hT h hh he)

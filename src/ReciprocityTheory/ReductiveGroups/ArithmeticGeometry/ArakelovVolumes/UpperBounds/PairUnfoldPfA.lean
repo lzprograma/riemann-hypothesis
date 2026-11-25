@@ -32,9 +32,13 @@ theorem gramE {γ : GL (Fin r) E} (hγ : γ ∈ X.Γ) :
     Matrix.map_apply, Finset.sum_mul]
   exact Finset.sum_comm
 
-instance countGL : Countable (GL (Fin r) E) := by
-  have : Countable E := Finsupp.Countable.of_moduleFinite (R := ℚ) (M := E)
-  have : Countable (Matrix (Fin r) (Fin r) E) := inferInstanceAs (Countable (Fin r → Fin r → E))
+/-- Stated for a finite `ℚ`-algebra rather than a number field: with a `[Field E]` binder the instance
+matches `GL (Fin r) R` for every ring `R` and, on adelic `GL`, fails only after an exhaustive `Field`
+search. -/
+instance countGL {R : Type} [CommRing R] [Algebra ℚ R] [Module.Finite ℚ R] :
+    Countable (GL (Fin r) R) := by
+  have : Countable R := Finsupp.Countable.of_moduleFinite (R := ℚ) (M := R)
+  have : Countable (Matrix (Fin r) (Fin r) R) := inferInstanceAs (Countable (Fin r → Fin r → R))
   exact Function.Injective.countable Units.val_injective
 
 theorem mat_lact (γ : GL (Fin r) E) (x : Frame X.Ψ r) (τ : X.Ψ) :
@@ -170,21 +174,6 @@ theorem T_meas (hFF : MeasurableSet FF) : MeasurableSet (T D FF) := by
   rw [hT]
   exact hU.measurableSet.inter (hg hFF)
 
-private lemma rmul_mem_Bor {b b' : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) (hb' : b' ∈ Bor X.Ψ r) :
-    rmul b b' ∈ Bor X.Ψ r := by
-  have h1' : ∀ τ : X.Ψ, (mat b τ).det ≠ 0 ∧ ∀ a c : Fin r, c < a → b τ a c = 0 := hb
-  have h2' : ∀ τ : X.Ψ, (mat b' τ).det ≠ 0 ∧ ∀ a c : Fin r, c < a → b' τ a c = 0 := hb'
-  show ∀ τ : X.Ψ, (mat (rmul b b') τ).det ≠ 0 ∧ ∀ a c : Fin r, c < a → rmul b b' τ a c = 0
-  intro τ
-  obtain ⟨d1, t1⟩ := h1' τ
-  obtain ⟨d2, t2⟩ := h2' τ
-  have ht : (mat b τ * mat b' τ).BlockTriangular id :=
-    Matrix.BlockTriangular.mul (fun a c h => t1 a c h) (fun a c h => t2 a c h)
-  refine ⟨?_, fun a c h => ht h⟩
-  show (mat b τ * mat b' τ).det ≠ 0
-  rw [Matrix.det_mul]
-  exact mul_ne_zero d1 d2
-
 private lemma inv_mat_apply_mem_bor {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) :
     (fun τ a c => (mat b τ)⁻¹ a c) ∈ Bor X.Ψ r := by
   have h1' : ∀ τ : X.Ψ, (mat b τ).det ≠ 0 ∧ ∀ a c : Fin r, c < a → b τ a c = 0 := hb
@@ -197,11 +186,6 @@ private lemma inv_mat_apply_mem_bor {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) :
     Matrix.blockTriangular_inv_of_blockTriangular (fun a c h => t1 a c h)
   refine ⟨?_, fun a c h => ht h⟩
   exact ((mat b τ).isUnit_nonsing_inv_det (isUnit_iff_ne_zero.mpr d1)).ne_zero
-
-private lemma rmul_rmul_assoc (x b b' : Frame X.Ψ r) : rmul (rmul x b) b' = rmul x (rmul b b') := by
-  funext τ
-  show mat x τ * mat b τ * mat b' τ = mat x τ * (mat b τ * mat b' τ)
-  exact Matrix.mul_assoc _ _ _
 
 private lemma rmul_rmul_inv_mat {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) (x : Frame X.Ψ r) :
     rmul (rmul x b) (fun τ a c => (mat b τ)⁻¹ a c) = x := by
@@ -218,15 +202,15 @@ theorem T_rmul {x b : Frame X.Ψ r} (hx : x ∈ X.dom) (hb : b ∈ Bor X.Ψ r) :
     obtain ⟨hzO, hbO, hs⟩ := D.split _ hd hΔ
     have hx' : x = rmul (cpt X x0 (D.zOf (rmul x b)))
         (rmul (D.bOf (rmul x b)) (fun τ a c => (mat b τ)⁻¹ a c)) := by
-      rw [← rmul_rmul_assoc (X := X), ← hs, rmul_rmul_inv_mat (X := X) hb]
-    obtain ⟨hΔx, hzx, -⟩ := D.uniq _ hzO _ (rmul_mem_Bor (X := X) hbO (inv_mat_apply_mem_bor (X := X) hb))
+      rw [← ExtFPf.rmul_assoc X, ← hs, rmul_rmul_inv_mat (X := X) hb]
+    obtain ⟨hΔx, hzx, -⟩ := D.uniq _ hzO _ (ExtFPf.mul_mem X hbO (inv_mat_apply_mem_bor (X := X) hb))
     rw [← hx'] at hΔx hzx
     exact ⟨hx, hΔx, by rw [hzx]; exact hF⟩
   · rintro ⟨-, hΔ, hF⟩
     obtain ⟨hzO, hbO, hs⟩ := D.split _ hx hΔ
     have hxb : rmul x b = rmul (cpt X x0 (D.zOf x)) (rmul (D.bOf x) b) := by
-      rw [← rmul_rmul_assoc (X := X), ← hs]
-    obtain ⟨hΔ', hz', -⟩ := D.uniq _ hzO _ (rmul_mem_Bor (X := X) hbO hb)
+      rw [← ExtFPf.rmul_assoc X, ← hs]
+    obtain ⟨hΔ', hz', -⟩ := D.uniq _ hzO _ (ExtFPf.mul_mem X hbO hb)
     rw [← hxb] at hΔ' hz'
     exact ⟨ReciprocityTheory.ChartRestriction.G.FD.OrthogonalFrameDomain.rmul_mem_dom X hx hb, hΔ', by rw [hz']; exact hF⟩
 
@@ -274,8 +258,8 @@ theorem ae_unique (hFF : IsFundSet X x0 FF) :
 
     have h3 : cpt X x0 z'' = lact (γ'⁻¹ * γ) (rmul (cpt X x0 z')
         (rmul b (fun τ a c => (mat b'' τ)⁻¹ a c))) := by
-      rw [← rmul_rmul_inv_mat (X := X) hb'' (cpt X x0 z''), ← hx, rmul_lact, rmul_rmul_assoc (X := X)]
-    have hB := rmul_mem_Bor (X := X) hb (inv_mat_apply_mem_bor (X := X) hb'')
+      rw [← rmul_rmul_inv_mat (X := X) hb'' (cpt X x0 z''), ← hx, rmul_lact, ExtFPf.rmul_assoc X]
+    have hB := ExtFPf.mul_mem X hb (inv_mat_apply_mem_bor (X := X) hb'')
     have hzz := hinj z' hz' z'' hz'' _ hδΓ _ hB h3
     subst hzz
 

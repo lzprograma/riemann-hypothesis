@@ -3,46 +3,6 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.IsSliceMap
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieOneLMemZalg
 public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PExpFin
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UfamConst
 
 @[expose] public section
@@ -66,20 +26,20 @@ theorem blockL_apply (E : Type) [Field E] (r s : ℕ) (i j : Fin (r + s)) (w : I
   rw [e]
   by_cases hij : i = j
   · subst hij
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     by_cases hi : (i : ℕ) < r
-    · rw [if_pos hi, Finset.sum_eq_single (⟨i, hi⟩ : Fin r)]
+    · rw [ite_eq_left hi, Finset.sum_eq_single (⟨i, hi⟩ : Fin r)]
       · have : Fin.castAdd s (⟨i, hi⟩ : Fin r) = i := Fin.ext rfl
         simp [this]
       · intro b _ hb
         have : Fin.castAdd s b ≠ i := fun h => hb (Fin.ext (show (b : ℕ) = i from congrArg Fin.val h))
         simp [this]
       · simp
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
       refine Finset.sum_eq_zero fun k _ => ?_
       have : Fin.castAdd s k ≠ i := fun h => hi (by rw [← h]; exact k.2)
       simp [this]
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     refine Finset.sum_eq_zero fun k _ => ?_
     have : ¬ (Fin.castAdd s k = i ∧ Fin.castAdd s k = j) := fun h => hij (h.1.symm.trans h.2)
     simp [this]
@@ -101,13 +61,13 @@ theorem hasDerivAt_aInf (E : Type) [Field E] [NumberField E] (r s : ℕ) :
     · simp [aInf, hij]
   rw [e]
   by_cases hij : i = j
-  · simp only [if_pos hij]
+  · simp only [ite_eq_left hij]
     by_cases hi : (i : ℕ) < r
-    · simp only [if_pos hi]
+    · simp only [ite_eq_left hi]
       simpa using (Complex.ofRealCLM.hasDerivAt (x := (0 : ℝ))).cexp
-    · simp only [if_neg hi]
+    · simp only [ite_eq_right hi]
       simpa using hasDerivAt_const (0 : ℝ) (1 : ℂ)
-  · simp only [if_neg hij]
+  · simp only [ite_eq_right hij]
     exact hasDerivAt_const _ _
 
 theorem lie_blockL (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) :

@@ -58,13 +58,13 @@ private theorem sum_inv_mulVec_smul_col_of_det_ne_zero {R : Type} [CommRing R] {
     (hij : (i : ℕ) < g ∧ (j : ℕ) = i + g) : ∑ l, c l * (Out.stdSymp g l j : R) = c i := by
   rw [Finset.sum_eq_single i]
   · unfold Out.stdSymp
-    rw [if_pos hij]
+    rw [ite_eq_left hij]
     simp
   · intro l _ hl
     have h1 : ¬ ((l : ℕ) < g ∧ (j : ℕ) = l + g) := fun h => hl (Fin.ext (by omega))
     have h2 : ¬ ((j : ℕ) < g ∧ (l : ℕ) = j + g) := by omega
     unfold Out.stdSymp
-    rw [if_neg h1, if_neg h2]
+    rw [ite_eq_right h1, ite_eq_right h2]
     simp
   · simp
 
@@ -73,13 +73,13 @@ private theorem sum_mul_stdSymp_eq_neg_of_eq_add {R : Type} [CommRing R] {g : �
   rw [Finset.sum_eq_single i]
   · have h1 : ¬ ((i : ℕ) < g ∧ (j : ℕ) = i + g) := by omega
     unfold Out.stdSymp
-    rw [if_neg h1, if_pos hij]
+    rw [ite_eq_right h1, ite_eq_left hij]
     simp
   · intro l _ hl
     have h1 : ¬ ((l : ℕ) < g ∧ (j : ℕ) = l + g) := by omega
     have h2 : ¬ ((j : ℕ) < g ∧ (l : ℕ) = j + g) := fun h => hl (Fin.ext (by omega))
     unfold Out.stdSymp
-    rw [if_neg h1, if_neg h2]
+    rw [ite_eq_right h1, ite_eq_right h2]
     simp
   · simp
 

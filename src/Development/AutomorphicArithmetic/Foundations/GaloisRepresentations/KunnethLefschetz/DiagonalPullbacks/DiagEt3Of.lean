@@ -22,53 +22,8 @@ public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSur
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BlowBC
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.LineUnitCm
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PRingL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveRes
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -1095,7 +1050,7 @@ open CategoryTheory Limits AlgebraicGeometry MvPolynomial CrystallineSemistableC
 
 namespace UpperTheory.Gal.KunnethLefschetz.G
 
-private theorem stdC (A : Type) [CommRing A] (D : ℕ) :
+theorem stdC (A : Type) [CommRing A] (D : ℕ) :
     (MvPolynomial.C : A →+* MvPolynomial (Fin D) A).IsStandardSmoothOfRelativeDimension D := by
   let P₀ : Algebra.Presentation A (MvPolynomial (Fin D) A) (Fin D) Empty :=
     { __ := Algebra.Generators.mvPolynomial A (Fin D)
@@ -1262,7 +1217,7 @@ private theorem std_pres {R B : Type} [CommRing R] [CommRing B] (f : R →+* B) 
   rw [e]
   exact RingHom.isStandardSmoothOfRelativeDimension_respectsIso.1 _ _ (stdC R d)
 
-private theorem etale_chart {A E B : Type} [CommRing A] [CommRing E] [CommRing B] {D : ℕ}
+theorem etale_chart {A E B : Type} [CommRing A] [CommRing E] [CommRing B] {D : ℕ}
     (p : A →+* E) (ψ : E →+* B) (s : Fin D → E) (y : Fin D → B) (j : Fin D)
     (hφ : (eval₂Hom p s).Etale)
     (surj : Function.Surjective (eval₂Hom ψ y))
@@ -1289,8 +1244,8 @@ private theorem etale_chart {A E B : Type} [CommRing A] [CommRing E] [CommRing B
   have gXj : g (X j) = ψ (s j) := by rw [hgd, eval₂Hom_X', Function.update_self]
   have σC : ∀ x, σ (MvPolynomial.C x) = MvPolynomial.C x := fun x => by rw [hσd, eval₂Hom_C]
   have σX : ∀ k, k ≠ j → σ (X k) = X k * X j := fun k hk => by
-    rw [hσd, eval₂Hom_X', if_neg hk]
-  have σXj : σ (X j) = X j := by rw [hσd, eval₂Hom_X', if_pos rfl]
+    rw [hσd, eval₂Hom_X', ite_eq_right hk]
+  have σXj : σ (X j) = X j := by rw [hσd, eval₂Hom_X', ite_eq_left rfl]
   have mem1 : (X j - 1 : MvPolynomial (Fin D) E) ∈ RingHom.ker f := by
     rw [ker]; exact Ideal.subset_span (Set.mem_insert _ _)
   have mem2 : ∀ k, (MvPolynomial.C (s k) - MvPolynomial.C (s j) * X k : MvPolynomial (Fin D) E) ∈
@@ -1376,7 +1331,7 @@ private theorem etale_chart {A E B : Type} [CommRing A] [CommRing E] [CommRing B
     RingHom.isStableUnderCobaseChange_toMorphismProperty_iff.2 RingHom.Etale.isStableUnderBaseChange
   exact (RingHom.toMorphismProperty @RingHom.Etale).of_isPushout hpo hφ
 
-private theorem ofPts {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ)
+theorem ofPts {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ)
     (H : ∀ x : X, ∃ O : X.Opens, x ∈ O ∧ SmoothOfRelativeDimension n (O.ι ≫ f)) :
     SmoothOfRelativeDimension n f := by
   have hL : IsZariskiLocalAtSource (@SmoothOfRelativeDimension.{0} n) :=
@@ -1386,7 +1341,7 @@ private theorem ofPts {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ)
   refine (IsZariskiLocalAtSource.iff_of_iSup_eq_top (P := @SmoothOfRelativeDimension n) O ?_).2 hO
   exact top_le_iff.1 fun x _ => TopologicalSpace.Opens.mem_iSup.2 ⟨x, hx x⟩
 
-private theorem chart {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ) {U : Y.Opens} {V : X.Opens}
+theorem chart {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ) {U : Y.Opens} {V : X.Opens}
     (hU : IsAffineOpen U) (hV : IsAffineOpen V) (e : V ≤ f ⁻¹ᵁ U)
     (h : RingHom.IsStandardSmoothOfRelativeDimension n (f.appLE U V e).hom) :
     SmoothOfRelativeDimension n (V.ι ≫ f) := by
@@ -1410,8 +1365,7 @@ private theorem dim_unique {X Y : Scheme.{0}} (f : X ⟶ Y) {a b : ℕ} (x : X)
   haveI : Nonempty V := ⟨⟨x, hx⟩⟩
   obtain ⟨m, hm⟩ := Ideal.exists_maximal Γ(X, V)
   obtain ⟨t, ht, htm⟩ : ∃ t ∈ s, t ∉ m := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hm.ne_top (top_le_iff.1 (hs ▸ Ideal.span_le.2 hc))
   have h1 := hl t ht
   have h0 : (algebraMap Γ(X, V) (Localization.Away t)).IsStandardSmoothOfRelativeDimension 0 :=

@@ -9,48 +9,10 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvRFrMapOfIs
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteFinrankLineBundleSectionsFiniteEtale
 import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LeastOrderBoundOfOrdTieTriv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -89,7 +51,7 @@ def remGaps (a : ℕ) (n : ℤ) (v : Fin N → ℤ) : Fin N → ℤ := ofGaps a 
 
 theorem gap_eq (v : Fin N → ℤ) {i j : Fin N} (h : (j : ℕ) = i + 1) : gap v i = v i - v j := by
   have := j.2
-  rw [gap, dif_pos (by omega)]
+  rw [gap, dite_eq_left (by omega)]
   exact congrArg (fun x => v i - v x) (Fin.ext h.symm)
 
 theorem ofGaps_anchor (g : ℕ → ℤ) (i : Fin N) : ofGaps i g i = 0 := sub_self _
@@ -101,7 +63,7 @@ theorem ofGaps_gap (v : Fin N → ℤ) (a i : Fin N) : ofGaps a (gap v) i = v i 
   have key : ∀ (n : ℕ) (h : n < N), ∑ k ∈ Finset.range n, gap v k = v ⟨0, by omega⟩ - v ⟨n, h⟩ := fun n => by
     induction n with
     | zero => simp
-    | succ n ih => intro h; rw [Finset.sum_range_succ, ih (by omega), gap, dif_pos h]; ring
+    | succ n ih => intro h; rw [Finset.sum_range_succ, ih (by omega), gap, dite_eq_left h]; ring
   rw [ofGaps, key a a.2, key i i.2]
   ring
 
@@ -182,7 +144,7 @@ theorem uMinus_eq (τ : Psi H) {a : Fin (Dw.p + Dw.q)} (h : (a : ℕ) = P.a) (i 
 
 theorem gap_uMinus_sub_kap (τ : Psi H) {k : ℕ} (h : k + 1 < Dw.p + Dw.q) : gap ((P.uMinus - FlagTan.kap Dw) τ) k =
     gap (P.u τ) k + if k + 1 = Dw.p then -P.c₀ - (2 * ((Dw.p + Dw.q : ℕ) : ℤ) - 2) else 2 := by
-  simp only [gap, dif_pos h, uMinus, hodgeWt, CompHt.barWt, FlagTan.kap, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+  simp only [gap, dite_eq_left h, uMinus, hodgeWt, CompHt.barWt, FlagTan.kap, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
   split_ifs <;> push_cast <;> omega
 
 end WtPar

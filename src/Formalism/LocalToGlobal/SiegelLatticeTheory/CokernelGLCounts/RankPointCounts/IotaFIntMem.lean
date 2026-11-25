@@ -189,15 +189,15 @@ theorem approx_lo (S : Finset (HeightOneSpectrum (𝓞 F))) (c : 𝓞 F) (hc : c
     fun p hp a b => ?_, fun p hp a b => ?_⟩
   · simp [not_lt.2 hab.le, hab.ne]
   · by_cases hba : b < a
-    · simp only [hba, if_true]; exact hxS (a, b) p hp
+    · simp only [hba, ite_true]; exact hxS (a, b) p hp
     · refine ⟨0, zero_mem _, ?_⟩
       rcases eq_or_ne a b with rfl | hab
       · simp [hg1 p hp a]
       · have hlt : a < b := lt_of_le_of_ne (not_lt.1 hba) hab
         simp [hba, hab, hg0 p hp a b hlt]
   · by_cases hba : b < a
-    · simp only [hba, if_true]; exact hxO (a, b) p hp
-    · simp only [hba, if_false]
+    · simp only [hba, ite_true]; exact hxO (a, b) p hp
+    · simp only [hba, ite_false]
       split_ifs
       · rw [map_one]; exact one_mem _
       · rw [map_zero]; exact zero_mem _

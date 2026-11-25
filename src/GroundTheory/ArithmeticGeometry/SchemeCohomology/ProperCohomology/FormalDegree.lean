@@ -141,12 +141,12 @@ lemma reesCoef_reesInc (n k : ℕ) (g : Γ(idealPow I F n, V)) :
 lemma reesDeg_reesInc (n : ℕ) (g : Γ(idealPow I F n, V)) :
     reesDeg I hF hV n (reesInc I hF hV n g) = g := by
   apply idealPowι_app_injective I n
-  rw [idealPowι_reesDeg, reesCoef_reesInc, if_pos rfl]
+  rw [idealPowι_reesDeg, reesCoef_reesInc, ite_eq_left rfl]
 
 lemma reesDeg_reesInc_of_ne {n k : ℕ} (h : n ≠ k) (g : Γ(idealPow I F n, V)) :
     reesDeg I hF hV k (reesInc I hF hV n g) = 0 := by
   apply idealPowι_app_injective I k
-  rw [idealPowι_reesDeg, reesCoef_reesInc, if_neg h, map_zero]
+  rw [idealPowι_reesDeg, reesCoef_reesInc, ite_eq_right h, map_zero]
 
 end Sections
 

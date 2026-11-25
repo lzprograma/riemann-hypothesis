@@ -535,16 +535,6 @@ section Rec
 variable {D : D7} {B : WeightFamilies.Prov D} {P : ModuliIntegralCharts.Prov D} {j : ℕ} (X : PJ D B P j) (la : HeightOneSpectrum (𝓞 B.KO))
   (N : ℕ) {wL : WeightFamilies.Wt D j} (w : Fin N → B.Cusp j wL)
 
-theorem range_aeval {k : ℕ} (Pw : MvPolynomial (Fin N) B.KO) (hPw : Pw.IsHomogeneous k) {m : ℕ} {y : X.Forms}
-    (hy : y ∈ LinearMap.range (X.inc (addL (wt0 D j) wL m))) :
-    y * MvPolynomial.aeval (fun i => X.inc wL (w i)) Pw ∈ LinearMap.range (X.inc (addL (wt0 D j) wL (m + k))) := by
-  apply _root_.GlobalTheory.SecPoint.range_aeval <;> assumption
-
-theorem exists_ratio {Ω : Type} [Field Ω] [Algebra B.KO Ω] (gF : X.Forms →ₐ[B.KO] Ω)
-    (hB : CurveLoc.BirAt X N w gF) (hk : ∃ k, gF (X.inc wL (w k)) ≠ 0) (a : Ω) :
-    ∃ (m : ℕ) (p q : B.Cusp j (addL (wt0 D j) wL m)), gF (X.inc _ p) ≠ 0 ∧ a * gF (X.inc _ p) = gF (X.inc _ q) := by
-  apply _root_.GlobalTheory.SecPoint.exists_ratio <;> assumption
-
 def evK {F : Type} [Field F] (ev : Rp X la N →+* F) : Kp X la N →+* F :=
   ev.comp (algebraMap (Kp X la N) (Rp X la N))
 
@@ -605,7 +595,7 @@ theorem cross {F : Type} [Field F] (ev : Rp X la N →+* F) (hu : IsUnit (ev (se
     τ (gF (X.inc u G)) * ev (emb X la N (X.inc u G')) = τ (gF (X.inc u G')) * ev (emb X la N (X.inc u G)) := by
   by_cases h0 : gF (X.inc u G') = 0
   · rw [ha u G' h0, h0, map_zero, zero_mul, mul_zero]
-  obtain ⟨m, p, q, hp, hpq⟩ := exists_ratio X N w gF hB (exists_ne X la N w gF ev hu τ σ hc)
+  obtain ⟨m, p, q, hp, hpq⟩ := GlobalTheory.SecPoint.exists_ratio X N w gF hB (exists_ne X la N w gF ev hu τ σ hc)
     (gF (X.inc u G) / gF (X.inc u G'))
   obtain ⟨H1, hH1⟩ := X.inc_mul u _ G p
   obtain ⟨H2, hH2⟩ := X.inc_mul u _ G' q
@@ -855,7 +845,7 @@ theorem sep {Ω : Type} [Field Ω] [Algebra B.KO Ω] (gF : (xplus X E hM).Forms 
     obtain ⟨b, hb1, hb2⟩ := att_lift h gF htr τ σ hσ hb hc h' τ' σ' hσ' hb' hc' heq x
     rw [← pos_iff_mem h x a hx, ← pos_iff_mem h' x a hx, hb1, hb2, heq]
   obtain ⟨a, ha, ha'⟩ := exists_sep _ _ (val_one h gF htr τ σ hσ hb hc) (val_one h' gF htr τ' σ' hσ' hb' hc') hv
-  obtain ⟨m, p, q, hp, hpq⟩ := exists_ratio (xplus X E hM) G.N G.w gF hB
+  obtain ⟨m, p, q, hp, hpq⟩ := GlobalTheory.SecPoint.exists_ratio (xplus X E hM) G.N G.w gF hB
     (exists_ne (xplus X E hM) la G.N G.w gF h.ev h.s0 τ σ hc) a
   have hpq' : a * gF (X.inc _ p) = gF (X.inc _ q) := hpq
   have e1 : h.ev (emb (xplus X E hM) la G.N (X.inc _ p)) = _ := hc m _ (emb_mem_Vw (xplus X E hM) la G.N _ p)

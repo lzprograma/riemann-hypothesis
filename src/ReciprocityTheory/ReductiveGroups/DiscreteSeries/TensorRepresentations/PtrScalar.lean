@@ -106,7 +106,7 @@ theorem ptr_comm {dual : Bool} (hE : IsGlRep E) (hA : IsGKEndo dual ε σ E (gen
       rw [h1, map_sub, h2, Pi.sub_apply, tensV_coord]
       split_ifs <;> simp
     simp only [key, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, add_sub_cancel_right]
+      Finset.mem_univ, ite_true, add_sub_cancel_right]
   · have key : ∀ c, A (Pi.single c (E a b x)) c = E a b (A (Pi.single c x) c) -
         (if c = b then A (Pi.single c x) a else 0) + (if a = c then A (Pi.single b x) c else 0) := by
       intro c
@@ -118,7 +118,7 @@ theorem ptr_comm {dual : Bool} (hE : IsGlRep E) (hA : IsGKEndo dual ε σ E (gen
       rw [h1, map_add (f := _), h2, Pi.add_apply, tensVd_coord]
       split_ifs <;> simp
     simp only [key, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, sub_add_cancel]
+      Finset.mem_univ, ite_true, sub_add_cancel]
 
 theorem tpsc_kDiag (dual : Bool) (k : Matrix (Fin n) (Fin n) ℂ) (f : Fin n → H) (c : Fin n) :
     kDiag dual σ k f c = ∑ d, tpscK dual k c d • σ k (f d) := rfl

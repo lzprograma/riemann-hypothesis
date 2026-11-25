@@ -49,22 +49,10 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.Discrepancy GlobalTheory.FieldPair
 open scoped TensorProduct
 
-set_option autoImplicit false
-
 namespace GlobalTheory.FieldPair
 
-theorem eq_of_choose_eq_one_of_pos {r D : ℕ} (hD : 0 < D) (h : r.choose D = 1) : D = r := by
-  rcases lt_trichotomy D r with hlt | heq | hgt
-  · obtain ⟨d, rfl⟩ : ∃ d, D = d + 1 := ⟨D - 1, by omega⟩
-    obtain ⟨s, rfl⟩ : ∃ s, r = s + 1 := ⟨r - 1, by omega⟩
-    rw [Nat.choose_succ_succ] at h
-    have h1 := Nat.choose_pos (show d ≤ s by omega)
-    have h2 := Nat.choose_pos (show d + 1 ≤ s by omega)
-    rw [Nat.succ_eq_add_one] at h
-    omega
-  · exact heq
-  · rw [Nat.choose_eq_zero_of_lt hgt] at h
-    exact absurd h zero_ne_one
+theorem eq_of_choose_eq_one_of_pos {r D : ℕ} (hD : 0 < D) (h : r.choose D = 1) : D = r :=
+  ((Nat.choose_eq_one_iff.mp h).resolve_left hD.ne').symm
 
 theorem trBasis_of_isFreeGen_dForm : ∀ {L : Type} [Field L] (cL : ℂ →+* L) (Q : Subring L)
     (hQ : IsLocModel cL Q) (D : ℕ) (x : Fin D → Q), 0 < D →

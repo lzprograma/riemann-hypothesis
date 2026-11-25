@@ -10,6 +10,7 @@ import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.Cayley
 import Formalism.SharpRestriction.GlobalSchurBounds.StandardIntegralLatticeExists
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
+import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.NormInter
 
 @[expose] public section
 
@@ -109,7 +110,7 @@ theorem form_flat (A : ℝ) (a b : ℕ) (x y : DVar X.Tau a b → ℂ) :
     matH (hSc X.Tau a b A⁻¹) x y = formV A D.what₂.Tau a b (s.flatV a b x) (s.flatV a b y) := by
   have hL : (matH (hSc X.Tau a b A⁻¹)) x y = ∑ k, x k * conj (y k) * ((A⁻¹ : ℝ) : ℂ) := by
     simp only [Formalism.L2.Th1.H.matH, LinearMap.mk₂'ₛₗ_apply, Formalism.L2.AlgTh.hSc, Matrix.diagonal_apply, mul_ite, ite_mul,
-      mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     exact Finset.sum_congr rfl fun k _ => by ring
   rw [hL]
   simp only [formV, LinearMap.mk₂'ₛₗ_apply]
@@ -129,7 +130,7 @@ theorem isom_flat (A : ℝ) (a b : ℕ) :
 theorem matH_hSc (sc : ℝ) (a b : ℕ) (x y : DVar X.Tau a b → ℂ) :
     matH (hSc X.Tau a b sc) x y = (sc : ℂ) * ∑ k, x k * conj (y k) := by
   simp only [Formalism.L2.Th1.H.matH, LinearMap.mk₂'ₛₗ_apply, Formalism.L2.AlgTh.hSc, Matrix.diagonal_apply, mul_ite, ite_mul,
-    mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.mul_sum]
+    mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.mul_sum]
   exact Finset.sum_congr rfl fun k _ => by ring
 
 theorem herm_hSc (sc : ℝ) (a b : ℕ) : IsHerm (matH (hSc X.Tau a b sc)) := by
@@ -186,7 +187,7 @@ theorem La_theta {x : TaylorLogMetric.VC D a b} (hx : x ∈ TaylorLogMetric.La D
   induction hx using AddSubgroup.closure_induction with
   | mem x hx =>
     obtain ⟨w, hw, A, hA, rfl⟩ := hx
-    refine AddSubgroup.subset_closure ⟨cmTheta 1 D.host.d * w, Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.lam_theta hw, A, hA, ?_⟩
+    refine AddSubgroup.subset_closure ⟨cmTheta 1 D.host.d * w, GlobalTheory.FourthRootStd.lam_theta hw, A, hA, ?_⟩
     rw [smul_smul]
   | zero => rw [smul_zero]; exact zero_mem _
   | add x y _ _ h1 h2 => rw [smul_add]; exact add_mem h1 h2
@@ -207,17 +208,7 @@ theorem theta_laF {b₀ : ℤ} (hb : Odd b₀) {x : DVar X.Tau a b → ℂ} (hx 
   exact zsmul_mem hx' k
 
 theorem odd_of_cmOK {a₀ : ℕ} {b₀ c₀ : ℤ} {d : ℕ} (h : CmOK a₀ b₀ c₀ d) : Odd b₀ := by
-  obtain ⟨h1, -, h3, -⟩ := h
-  rcases Int.even_or_odd b₀ with ⟨k, hk⟩ | hb
-  · exfalso
-    have e1 : (4 : ℤ) * a₀ * c₀ = 4 * ((a₀ : ℤ) * c₀) := by ring
-    have e2 : b₀ ^ 2 = 4 * (k * k) := by rw [hk]; ring
-    rw [e1, e2] at h1
-    have h4 : (d : ℤ) % 8 = 7 := by exact_mod_cast h3
-    generalize (a₀ : ℤ) * c₀ = f at h1
-    generalize k * k = e at h1
-    omega
-  · exact hb
+  apply _root_.Formalism.L2.AlgTh.ImageLatticeRepresentatives.odd_b <;> assumption
 
 theorem al_eq_La (hcc : TaylorLogMetric.IsCurveIdeal D cc) (hδ : TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ) (hA : TaylorLogMetric.admitted D a b L L') :
     ∀ x ∈ TaylorLogMetric.La D B.tor L L', TaylorLogMetric.al D B.tor x =

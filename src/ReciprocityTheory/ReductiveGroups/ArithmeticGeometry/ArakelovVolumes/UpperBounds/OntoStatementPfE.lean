@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfC
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
 import Mathlib.Algebra.Order.Star.Real
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfS
@@ -25,17 +26,7 @@ theorem chi_norm (la : Wt X.Ψ r) {γ : GL (Fin r) E} (hγ : γ ∈ X.Γ) : ‖X
   exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) hn.ne').mp h1
 
 theorem bchar_ne (la : Wt X.Ψ r) {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) : bchar la b ≠ 0 := by
-  have hb' : ∀ τ : X.Ψ, (mat b τ).det ≠ 0 ∧ ∀ a c : Fin r, c < a → b τ a c = 0 := hb
-  unfold bchar
-  rw [Finset.prod_ne_zero_iff]
-  intro τ _
-  rw [Finset.prod_ne_zero_iff]
-  intro i _
-  have hd := (hb' τ).1
-  have hbt : (mat b τ).BlockTriangular id := fun a c hca => (hb' τ).2 a c hca
-  rw [Matrix.det_of_upperTriangular hbt, Finset.prod_ne_zero_iff] at hd
-  have hi := hd i (Finset.mem_univ _)
-  exact zpow_ne_zero _ hi
+  apply ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf.bchar_ne <;> assumption
 
 
 open Classical in
@@ -114,9 +105,9 @@ theorem nfac_cont (la : Wt X.Ψ r) : ContinuousOn (fun z => X.nfac la (cpt X x0 
     refine continuous_pi fun τ => continuous_pi fun a => continuous_pi fun b => ?_
     unfold nmat
     by_cases h : b < a
-    · simp only [h, dif_pos]
+    · simp only [h, dite_eq_left]
       fun_prop
-    · simp only [h, dif_neg, not_false_eq_true]
+    · simp only [h, dite_eq_right, not_false_eq_true]
       exact continuous_const
   have hc : Continuous fun z : V (nd X) => cpt X x0 z := by
     refine continuous_pi fun τ => ?_

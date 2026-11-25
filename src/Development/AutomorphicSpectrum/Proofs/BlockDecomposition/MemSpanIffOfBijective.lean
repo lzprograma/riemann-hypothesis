@@ -16,46 +16,6 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUn
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsComplNonZeroDivisor
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfOfIsCompl
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 
@@ -67,7 +27,6 @@ import Mathlib.Tactic.Linter.Style
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry Polynomial DividedPowers GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
 open TensorProduct
 
@@ -231,7 +190,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry Polynomial DividedPowers GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
 open TensorProduct
 
@@ -414,8 +372,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
-
 open CategoryTheory AlgebraicGeometry DividedPowers GroundTheory.PAdicHodge GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.PAlg CrystallineSemistableComparison.B
 
 namespace GlobalTheory.CompanionTheory.TowerEx
@@ -429,7 +385,7 @@ theorem compl_factor {E S B : Type} [CommRing E] [CommRing S] [CommRing B] {π :
   let q : E ⧸ Ideal.span {π} →+* S ⧸ Ideal.span {g π} := Ideal.quotientMap _ g hle
   have hqm : ∀ x, q (Ideal.Quotient.mk _ x) = Ideal.Quotient.mk _ (g x) := fun x => Ideal.quotientMap_mk
   have hinj : Function.Injective q := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective x
     rw [hqm, Ideal.Quotient.eq_zero_iff_mem] at hx
@@ -633,8 +589,8 @@ theorem mem_span_iff_of_bijective {R₁ R₂ : Type} [CommRing R₁] [CommRing R
 theorem exists_kappa {O : Type} [CommRing O] (κ : O →+* OC l) :
     ∃ κf : O →+* Ob l ⧸ Ideal.span {pFlat l}, ∀ (o : O) (w : Ainf l),
       Ideal.Quotient.mk (Ideal.span {pFlat l}) (w.coeff 0) = κf o ↔ theta0 l w - κ o ∈ Ideal.span {(l : OC l)} := by
-  have hb := (RL.base_acr (base l) (isBase_base)).1.2
-  have hm := RL.u_mod (base l)
+  have hb := (_root_.GlobalTheory.CompanionTheory.BaseAcris.main (base l) (isBase_base)).1.2
+  have hm := _root_.GlobalTheory.CompanionTheory.Untilt.sharp_map_surjective_ker (base l)
   obtain ⟨κf, hκ⟩ := exists_factor (base l).aToU1 hm.1 (Ideal.span {pFlat l}) hm.2
     ((Ideal.Quotient.mk (Ideal.span {(l : (base l).U) ^ 1})).comp ((base l).oC.comp κ))
   refine ⟨κf, fun o w => ?_⟩
@@ -686,7 +642,7 @@ theorem tower_ex {O : Type} [CommRing O] {F : Fn O} (κ : O →+* OC l) {d : ℕ
     { A := S, s := (g.comp (algebraMap L.D X.E)).comp L.i, perf := ⟨hS.bij⟩, compl := hc.compl, tf := hnz }
   have hJ : EtLift (Ideal.span {(l : A.U) ^ 1}) :=
     GlobalTheory.CompanionTheory.EtaleLift.etLift_of_isAdicComplete _ (by rw [pow_one]; exact A.completeU)
-  obtain ⟨c, gT, h1, h2, h3, h4⟩ := core hl.ne_zero s.et L X hc hJ (S := A.A) A.aToU1 (RL.u_mod A).2 A.sharp A.sharpMap_eq
+  obtain ⟨c, gT, h1, h2, h3, h4⟩ := core hl.ne_zero s.et L X hc hJ (S := A.A) A.aToU1 (_root_.GlobalTheory.CompanionTheory.Untilt.sharp_map_surjective_ker A).2 A.sharp A.sharpMap_eq
     (A.oC.comp κ) (fun o x hx => by
       have h := (hκf o (WittVector.teichmuller l x)).1 (by rwa [WittVector.teichmuller_coeff_zero])
       exact aToU1_s_eq_mk_oC_of_theta0_sub_mem A x (κ o) h)

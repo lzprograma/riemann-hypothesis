@@ -8,52 +8,12 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsAux
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
 public import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
 import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -62,15 +22,6 @@ namespace GlobalTheory.NormalFramesLevels
 open GlobalTheory.IndefiniteRowSideFullHecke.ChainMatrices GlobalTheory.StdFrames Formalism.IndefR.Mi
 
 variable {D : D7}
-
-def normalFrameVectorSequences (D : D7) : ∀ j : ℕ, (ℕ → (D.sp.Y j).V) × (ℕ → (D.sp.Y j).V) × (D.sp.Y j).V
-  | 0 => (fun i => if h : i < D.R.rS then D.sp.hypE ⟨i, h⟩ else 0,
-      fun i => if h : i < D.R.rS then D.sp.hypF ⟨i, h⟩ else 0, D.sp.zm)
-  | j + 1 => if h : j + 1 < D.R.m then
-      (Classical.choose (GlobalTheory.StandardGramVectors.exists_auxiliaryHyperbolicVectors D (j + 1) h),
-        Classical.choose (Classical.choose_spec (GlobalTheory.StandardGramVectors.exists_auxiliaryHyperbolicVectors D (j + 1) h)),
-        Classical.choose (Classical.choose_spec (Classical.choose_spec (GlobalTheory.StandardGramVectors.exists_auxiliaryHyperbolicVectors D (j + 1) h))))
-    else (0, 0, 0)
 
 theorem crdLat_eq_l0X (V : HSp D) : Formalism.L2.Herm.crdLat V V.L0 = l0X V := by
   ext x
@@ -143,11 +94,11 @@ theorem nfScal_kap (j : ℕ) (hb : 0 < bI D j) (i : ℕ) :
   | succ i ih =>
     simp only [nfScal, ih, kap]
     by_cases h1 : i + 1 = bI D j
-    · rw [if_pos h1, if_neg (by omega), if_pos (by omega), mul_one]
-    · rw [if_neg h1, one_mul]
+    · rw [ite_eq_left h1, ite_eq_right (by omega), ite_eq_left (by omega), mul_one]
+    · rw [ite_eq_right h1, one_mul]
       by_cases h2 : bI D j ≤ i
-      · rw [if_pos h2, if_pos (by omega)]
-      · rw [if_neg h2, if_neg (by omega)]
+      · rw [ite_eq_left h2, ite_eq_left (by omega)]
+      · rw [ite_eq_right h2, ite_eq_right (by omega)]
 
 theorem sgT_ne {j : ℕ} : sgT D j ≠ 0 := by
   have hT : (D.sp.T : D.host.E) ≠ 0 := by
@@ -175,7 +126,7 @@ theorem shape_betaYOf {T : Type} (L : LevCh D T) (γ : ∀ j, GL (Fin (D.sp.X j)
     (hj : j ≤ D.R.m) (hs : ShapeY L (min j D.R.m) (γ _) (E _) (Ev _) (z _) (βY j)) :
     ShapeY L j (γ j) (E j) (Ev j) (z j) (Seed.Frm.betaYOf βY j) := by
   unfold Seed.Frm.betaYOf
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
   exact shape_cast L γ E Ev z (min j D.R.m) j (Nat.min_eq_left hj) _ (βY j) hs
 
 end GlobalTheory.NormalFramesLevels
@@ -196,7 +147,7 @@ theorem transport_betaYOf (Pg : Finset (Pl D.host.E)) (W : HSp D) (βW : GL (Fin
     (βY : ∀ j, GL (Fin (Yc D j).rank) (EAf D)) (ht : Transport Pg W (Yc D 0) βW (βY 0)) :
     Transport Pg W (D.sp.Y 0) βW (Seed.Frm.betaYOf βY 0) := by
   unfold Seed.Frm.betaYOf
-  rw [dif_pos (Nat.zero_le _)]
+  rw [dite_eq_left (Nat.zero_le _)]
   exact transport_cast Pg W βW (min 0 D.R.m) (Nat.zero_min _) (by rw [Nat.zero_min]) (βY 0) ht
 
 section Gen
@@ -268,13 +219,13 @@ theorem vertexAt_of_transport (Pg : Finset (Pl D.host.E)) (j : ℕ) (hr : (D.sp.
     refine ⟨hmem, ?_⟩
     ext a b
     unfold redM
-    rw [dif_pos (hmem a b), Matrix.one_apply]
+    rw [dite_eq_left (hmem a b), Matrix.one_apply]
     by_cases hab : a = b
-    · rw [if_pos hab]
+    · rw [ite_eq_left hab]
       subst hab
       convert hres using 2
       simp
-    · rw [if_neg hab]
+    · rw [ite_eq_right hab]
       convert map_zero (Formalism.L2.DIV.resS D.host.F PP) using 2
       simp [hab]
 
@@ -298,7 +249,7 @@ theorem xMat_eq (j : ℕ) : xMat (D := D) j = ratM (frameMat (D.sp.Y j) (D.sp.X 
 theorem colX_eq (j : ℕ) (γ : GL (Fin (D.sp.X j).rank) (Ef D)) (n : ℕ) (h : n < (D.sp.X j).rank)
     (r : Fin (D.sp.Y j).rank) : colX D j γ n r = (xMat (D := D) j).mulVec (fun i => γ.val i ⟨n, h⟩) r := by
   unfold colX
-  rw [dif_pos h, xMat_eq]
+  rw [dite_eq_left h, xMat_eq]
   simp only [mulM, Matrix.mul_apply, Matrix.mulVec, dotProduct]
 
 end GlobalTheory.NormalFramesLevels
@@ -313,12 +264,6 @@ theorem hT_swap {j : ℕ} (x y : (D.sp.Y j).V) {c : D.host.E} (h : (D.sp.Y j).hT
     (D.sp.Y j).hT x y = c := by
   rw [← (D.sp.Y j).herm.eq y x, h]
   exact hc
-
-end GlobalTheory.NormalFramesLevels
-
-namespace GlobalTheory.NormalFramesLevels
-
-open GlobalTheory.IndefiniteRowSideFullHecke.ChainMatrices GlobalTheory.StdFrames Formalism.IndefR.Mi
 
 end GlobalTheory.NormalFramesLevels
 

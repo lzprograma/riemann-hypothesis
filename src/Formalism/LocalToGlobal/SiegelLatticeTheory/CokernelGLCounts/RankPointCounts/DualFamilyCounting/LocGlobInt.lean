@@ -12,8 +12,6 @@ noncomputable section
 
 namespace Formalism.L2.SG.Pf.Cnt.DualityBasisChange
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem mem_integer_iff_vle {K : Type} [Field K] [ValuativeRel K] (x : K) : x ∈ 𝒪[K] ↔ x ≤ᵥ 1 := by
   rw [Valuation.mem_integer_iff]
   exact (Valuation.vle_one_iff (v := valuation K)).symm

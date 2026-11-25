@@ -4,45 +4,7 @@ public import Formalism.PolynomialDimension.WeylDim
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
 public import Formalism.PolynomialDimension.MultinomialDepth.WeylDimPosOfAntitone
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FinrankTensor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -58,11 +20,11 @@ theorem hwt_apply (m A B : ℕ) (i : Fin (m + 2)) :
   induction i using Fin.cases with
   | zero => simp
   | succ j =>
-    rw [Fin.cons_succ, if_neg (Fin.succ_ne_zero j)]
+    rw [Fin.cons_succ, ite_eq_right (Fin.succ_ne_zero j)]
     induction j using Fin.lastCases with
     | last => simp [Fin.succ_last]
     | cast j =>
-      rw [Fin.snoc_castSucc, if_neg]
+      rw [Fin.snoc_castSucc, ite_eq_right]
       intro h
       have := congrArg Fin.val h
       simp at this
@@ -73,7 +35,7 @@ theorem cov_apply (m : ℕ) (d : ℤ) (i : Fin (m + 2)) :
       if i = Fin.last (m + 1) then 0 else d := by
   induction i using Fin.cases with
   | zero =>
-    rw [Fin.cons_zero, if_neg]
+    rw [Fin.cons_zero, ite_eq_right]
     intro h
     have := congrArg Fin.val h
     simp at this
@@ -82,7 +44,7 @@ theorem cov_apply (m : ℕ) (d : ℤ) (i : Fin (m + 2)) :
     induction j using Fin.lastCases with
     | last => simp [Fin.succ_last]
     | cast j =>
-      rw [Fin.snoc_castSucc, if_neg]
+      rw [Fin.snoc_castSucc, ite_eq_right]
       intro h
       have := congrArg Fin.val h
       simp at this
@@ -109,7 +71,7 @@ theorem prod_tops {n' : ℕ} (TT : Finset (Fin n')) (f : TT → ℚ) :
     rw [dite_eq_right hs]
   rw [h1, ← Finset.prod_attach, Finset.univ_eq_attach]
   refine Finset.prod_congr rfl fun s _ => ?_
-  rw [dif_pos s.2]
+  rw [dite_eq_left s.2]
 
 theorem flatW_dom {n' : ℕ} (m : ℕ) {TT : Finset (Fin n')} (A B : TT → ℕ) : IsDominant (flatW (m + 1) A B) := by
   intro s i j hij
@@ -127,7 +89,7 @@ theorem lamAt_flat {n' : ℕ} (m : ℕ) {TT : Finset (Fin n')} (A B : TT → ℕ
     weylDim (m + 2) (lamAt (flatW (m + 1) A B) s) =
       if h : s ∈ TT then (dimHar (m + 1) (A ⟨s, h⟩) (B ⟨s, h⟩) : ℚ) else 1 := by
   by_cases hs : s ∈ TT
-  · rw [dif_pos hs]
+  · rw [dite_eq_left hs]
     unfold lamAt
     split_ifs with he
     · have : flatW (m + 1) A B s = hwt m (A ⟨s, hs⟩) (B ⟨s, hs⟩) := by
@@ -138,10 +100,10 @@ theorem lamAt_flat {n' : ℕ} (m : ℕ) {TT : Finset (Fin n')} (A B : TT → ℕ
     · have : (fun i : Fin (m + 1 + 1) => -flatW (m + 1) A B s i.rev) = hwt m (B ⟨s, hs⟩) (A ⟨s, hs⟩) := by
         funext i
         rw [hwt_apply]
-        simp only [flatW, hs, dif_pos]
+        simp only [flatW, hs, dite_eq_left]
         by_cases h0 : i = 0
         · subst h0
-          rw [Fin.rev_zero, if_neg (last_ne_zero' m)]
+          rw [Fin.rev_zero, ite_eq_right (last_ne_zero' m)]
           simp
         · by_cases hl : i = Fin.last (m + 1)
           · subst hl
@@ -155,7 +117,7 @@ theorem lamAt_flat {n' : ℕ} (m : ℕ) {TT : Finset (Fin n')} (A B : TT → ℕ
               intro h
               apply h0
               rw [← Fin.rev_rev i, h, Fin.rev_last]
-            rw [if_neg h1, if_neg h2, if_neg h0, if_neg hl, neg_zero]
+            rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right h0, ite_eq_right hl, neg_zero]
       rw [this, weylDim_hwt_eq, dimHar_comm]
   · rw [dite_eq_right hs]
     have : lamAt (flatW (m + 1) A B) s = fun _ => (0 : ℤ) := by
@@ -182,7 +144,7 @@ theorem finrank_letter (D : Formalism.BasicNotions.D7) (h3 : Formalism.MainNotio
     | true =>
       have hnu : nuOf (letterWt (m + 1) d true) = fun i => if i = 0 then d else 0 := by
         funext i
-        simp only [nuOf, letterWt, if_true, if_neg (last_ne_zero' m), sub_zero]
+        simp only [nuOf, letterWt, ite_true, ite_eq_right (last_ne_zero' m), sub_zero]
         split_ifs <;> simp
       have hanti : Antitone (nuOf (letterWt (m + 1) d true)) := by
         rw [hnu]
@@ -201,16 +163,16 @@ theorem finrank_letter (D : Formalism.BasicNotions.D7) (h3 : Formalism.MainNotio
     | false =>
       have hnu : nuOf (letterWt (m + 1) d false) = fun i => if i = Fin.last (m + 1) then 0 else d := by
         funext i
-        simp only [nuOf, letterWt, Bool.false_eq_true, if_false, if_true]
+        simp only [nuOf, letterWt, Bool.false_eq_true, ite_false, ite_true]
         split_ifs <;> simp
       have hanti : Antitone (nuOf (letterWt (m + 1) d false)) := by
         rw [hnu]
         intro i j hij
         simp only
         by_cases hj : j = Fin.last (m + 1)
-        · rw [if_pos hj]; exact Nat.zero_le _
+        · rw [ite_eq_left hj]; exact Nat.zero_le _
         · have hi : i ≠ Fin.last (m + 1) := fun h => hj (le_antisymm (Fin.le_last _) (h ▸ hij))
-          rw [if_neg hj, if_neg hi]
+          rw [ite_eq_right hj, ite_eq_right hi]
       rw [finrank_weyl D h3 K _ _ hanti, ← weylDim_cov]
       congr 1
       funext i
@@ -230,10 +192,10 @@ theorem restDims_of (D : Formalism.BasicNotions.D7) (h3 : Formalism.MainNotions.
     rw [Fintype.prod_bool]
     unfold hhWt
     rw [finrank_letter D h3, finrank_letter D h3]
-    have hA : ex A s.val = A s := by unfold ex; rw [dif_pos s.2]
-    have hB : ex B s.val = B s := by unfold ex; rw [dif_pos s.2]
+    have hA : ex A s.val = A s := by unfold ex; rw [dite_eq_left s.2]
+    have hB : ex B s.val = B s := by unfold ex; rw [dite_eq_left s.2]
     unfold hhDeg
-    simp only [if_true, Bool.false_eq_true, if_false, hA, hB]
+    simp only [ite_true, Bool.false_eq_true, ite_false, hA, hB]
     split_ifs
     · rfl
     · exact mul_comm _ _

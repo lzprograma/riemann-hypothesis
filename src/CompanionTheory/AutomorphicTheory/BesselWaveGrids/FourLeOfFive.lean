@@ -515,7 +515,7 @@ private theorem exists_ge_four_fifths_pow_qw_eq_mul_of_far_letters {S : Type} (q
             linarith
         rw [e, List.length_cons, pow_succ]
         exact mul_le_mul ht hf (by norm_num) ht0
-      · simp only [Formalism.FourierDecayAlt.Wd.qw, hp, if_true, heq, hpt]
+      · simp only [Formalism.FourierDecayAlt.Wd.qw, hp, ite_true, heq, hpt]
         push_cast
         ring
     · refine ⟨t * ((y - d + 1 - y) / (y - d + 1 - y - 1)), ?_, ?_⟩

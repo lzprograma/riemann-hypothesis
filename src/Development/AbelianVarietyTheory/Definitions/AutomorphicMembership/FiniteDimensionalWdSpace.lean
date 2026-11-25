@@ -2,46 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalLetter
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFrobeniusSemisimplification
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -203,10 +163,10 @@ def wdPst : WD h :=
 variable {P ρ}
 
 theorem wdPst_of_isPst (hV : IsPst P ρ) :
-    wdPst P ι Bw h hj ρ = haveI := hV.finite; WD.mk (wdRep P ι Bw h hj ρ) := dif_pos hV
+    wdPst P ι Bw h hj ρ = haveI := hV.finite; WD.mk (wdRep P ι Bw h hj ρ) := dite_eq_left hV
 
 theorem wdPst_of_not_isPst (hV : ¬ IsPst P ρ) : wdPst P ι Bw h hj ρ = trivWD h (finrank ↥LL.1 V) :=
-  dif_neg hV
+  dite_eq_right hV
 
 theorem lpDim_wdPst (hV : IsPst P ρ) : (wdPst P ι Bw h hj ρ).lpDim = finrank ℂ (WDSpace P ι ρ) := by
   have := hV.finite
@@ -282,9 +242,9 @@ variable {P r}
 
 theorem wdAt_of_isPstAt (hr : IsPstAt P Bw r) : ∃ LL' r', IsModel Bw r LL' r' ∧ IsPst P (Bw.repE LL' r') ∧
     wdAt P ι Bw h hj r = wdPst P ι Bw h hj (Bw.repE LL' r') :=
-  ⟨_, _, hr.choose_spec.choose_spec.1, hr.choose_spec.choose_spec.2, dif_pos hr⟩
+  ⟨_, _, hr.choose_spec.choose_spec.1, hr.choose_spec.choose_spec.2, dite_eq_left hr⟩
 
-theorem wdAt_of_not_isPstAt (hr : ¬ IsPstAt P Bw r) : wdAt P ι Bw h hj r = trivWD h a := dif_neg hr
+theorem wdAt_of_not_isPstAt (hr : ¬ IsPstAt P Bw r) : wdAt P ι Bw h hj r = trivWD h a := dite_eq_right hr
 
 end At
 
@@ -313,7 +273,7 @@ def jumpsW (τ : E →+* Om l) : Multiset ℤ :=
 
 theorem isJumpsW_jumpsW {τ : E →+* Om l} (hJ : ∃ J, IsJumpsW P pl br r τ J) :
     IsJumpsW P pl br r τ (jumpsW P pl br r τ) := by
-  rw [jumpsW, dif_pos hJ]; exact hJ.choose_spec
+  rw [jumpsW, dite_eq_left hJ]; exact hJ.choose_spec
 
 theorem isCrysW_iff {w : HeightOneSpectrum (𝓞 E)} (hw : w ∈ placesOver E l) :
     IsCrysW P pl br r w ↔ IsCrysAt P (br w hw) (resDec pl r w) := ⟨fun ⟨_, h⟩ => h, fun h => ⟨hw, h⟩⟩

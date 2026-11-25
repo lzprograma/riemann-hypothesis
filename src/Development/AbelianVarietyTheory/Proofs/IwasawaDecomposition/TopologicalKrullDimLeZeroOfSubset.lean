@@ -51,8 +51,6 @@ import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKr
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Opposite NumberField IsDedekindDomain
@@ -176,12 +174,6 @@ theorem interNum_eq_sum_length (hf : IsProjOver f) (hL : L.IsLB) (c : X → L.ι
 
 end Sheaf
 
-section Algebra
-
-variable {K R : Type} [Field K] [CommRing R]
-
-end Algebra
-
 section BaseChange
 
 variable {k K : Type} [Field k] [Field K] {X X' : Scheme.{0}} {f : X ⟶ Sp k} {f' : X' ⟶ Sp K} {π : X' ⟶ X}
@@ -194,18 +186,5 @@ theorem ringKrullDim_stalk {d : ℕ} (h : SmoothOfRelativeDimension d f') {z : X
   exact (ringKrullDim_eq_of_ringEquiv (RingEquiv.quotientBot _)).symm.trans this
 
 end BaseChange
-
-section Count
-
-variable {K : Type} [Field K] [IsAlgClosed K] {X : Scheme.{0}} {f : X ⟶ Sp K} {L : LB X}
-
-end Count
-
-section Cut
-
-variable {F : Type} [Field F] (Y : Var F) {Δ : Y.Dv} {n : ℕ} (b : Fin n → Y.H0 Δ)
-
-
-end Cut
 
 end GlobalTheory.CutDegree

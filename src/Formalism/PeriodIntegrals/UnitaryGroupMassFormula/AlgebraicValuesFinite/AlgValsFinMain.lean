@@ -11,49 +11,7 @@ public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
 public import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
 public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AlgebraicValuesFinite.InvMemUFin
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AlgebraicValuesFinite.ValuedAtFin
 import Mathlib.Tactic.Linter.Style
 
@@ -195,14 +153,14 @@ theorem assemble : Assemble L := by
     obtain ⟨kv, hkv⟩ := hk v
     have h1 : ∀ u, u ∉ ({v} : Finset (HeightOneSpectrum (𝓞 L))) → ordF u kv = 0 := by
       intro u hu
-      rw [hkv u, if_neg (fun h' => hu (Finset.mem_singleton.mpr h'))]
+      rw [hkv u, ite_eq_right (fun h' => hu (Finset.mem_singleton.mpr h'))]
     have h2 : ∀ u ∈ ({v} : Finset (HeightOneSpectrum (𝓞 L))), χ.UnrAt u := by
       intro u hu
       rw [Finset.mem_singleton.mp hu]
       exact hv
     obtain ⟨r, hr, e⟩ := hKey χ s m hm kv {v} h1 h2
     refine ⟨_, prod_mem_compo m (kv : L), _, hz r hr, ?_⟩
-    rw [Finset.prod_singleton, hkv v, if_pos rfl, zpow_natCast] at e
+    rw [Finset.prod_singleton, hkv v, ite_eq_left rfl, zpow_natCast] at e
     rw [← mul_assoc]
     exact e
   let C : IntermediateField ℚ ℂ := compo L ⊔ IntermediateField.adjoin ℚ S
@@ -224,7 +182,7 @@ theorem assemble : Assemble L := by
       have h1 : ∀ u, u ∉ ({v, hex.choose} : Finset (HeightOneSpectrum (𝓞 L))) → ordF u k = 0 := by
         intro u hu
         simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hu
-        rw [hkk u, if_neg hu.1, if_neg hu.2, sub_zero]
+        rw [hkk u, ite_eq_right hu.1, ite_eq_right hu.2, sub_zero]
       have h2 : ∀ u ∈ ({v, hex.choose} : Finset (HeightOneSpectrum (𝓞 L))), χ.UnrAt u := by
         intro u hu
         simp only [Finset.mem_insert, Finset.mem_singleton] at hu

@@ -13,6 +13,7 @@ import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.MemGoodPrimesOfNoExceptional
+import Formalism.LocalToGlobal.Columns.StdLatUnimodular
 
 @[expose] public section
 
@@ -29,24 +30,10 @@ section Red
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {P : HeightOneSpectrum (𝓞 E)}
 
 private theorem intAt_mul_columns {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a * b) := by
-  obtain ⟨r, s, hs, h⟩ := ha
-  obtain ⟨r', s', hs', h'⟩ := hb
-  refine ⟨r * r', s * s', fun hm => ?_, ?_⟩
-  · rcases P.isPrime.mem_or_mem hm with h1 | h1
-    · exact hs h1
-    · exact hs' h1
-  · simp only [map_mul]
-    linear_combination (algebraMap (𝓞 E) E s' * b) * h + (algebraMap (𝓞 E) E r) * h'
+  apply _root_.Formalism.L2.Col.IntAt.mul <;> assumption
 
 private theorem intAt_add_columns {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a + b) := by
-  obtain ⟨r, s, hs, h⟩ := ha
-  obtain ⟨r', s', hs', h'⟩ := hb
-  refine ⟨r * s' + s * r', s * s', fun hm => ?_, ?_⟩
-  · rcases P.isPrime.mem_or_mem hm with h1 | h1
-    · exact hs h1
-    · exact hs' h1
-  · simp only [map_add (f := _), map_mul]
-    linear_combination (algebraMap (𝓞 E) E s') * h + (algebraMap (𝓞 E) E s) * h'
+  apply _root_.Formalism.L2.Col.IntAt.add <;> assumption
 
 private theorem intAt_zero_columns : IntAt P (0 : E) :=
   ⟨0, 1, fun h => P.isPrime.ne_top ((Ideal.eq_top_iff_one _).mpr h), by simp⟩
@@ -121,10 +108,10 @@ theorem entB_zero_eq_atN {k₀ n' n : ℕ} (z : HomE E (n' + 0) (n + 0)) {p p' :
     split_ifs <;> omega
   have h1 : LocE.scE n' (fun i => i + 1) p' = 0 := by
     unfold LocE.scE
-    rw [if_pos hp']
+    rw [ite_eq_left hp']
   have h2 : LocE.scE n (fun i => i + 1) p = 0 := by
     unfold LocE.scE
-    rw [if_pos hp]
+    rw [ite_eq_left hp]
   unfold LocE.entB
   rw [hf, hf, h1, h2, sub_self, zpow_zero, mul_one]
 
@@ -265,7 +252,7 @@ theorem ctl_mem_JGsym (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ)
     by_contra hne
     have h := hpat l l' (fun e => by rw [e] at hl; omega) hne
     unfold slAllowY at h
-    rw [if_pos (by omega)] at h
+    rw [ite_eq_left (by omega)] at h
     exact h.2.2 ⟨hl, hl'⟩
 
 end FinalTheorems
@@ -586,13 +573,13 @@ theorem ctl_lamGBS_lamJ {K k' : Type} [Field K] [Field k'] (e : (𝓞 E ⧸ P.as
     · refine Finset.sum_congr rfl fun i hi => ?_
       rw [Finset.mem_range] at hi
       by_cases hc : i + 1 < r ∧ i + 1 ≠ k₀
-      · rw [if_pos ⟨hc.1, (hS i hc.1).2 hc.2⟩, if_pos hc, dite_eq_left (show i + 1 < n by omega)]
+      · rw [ite_eq_left ⟨hc.1, (hS i hc.1).2 hc.2⟩, ite_eq_left hc, dite_eq_left (show i + 1 < n by omega)]
         unfold ctlE
         rw [dite_eq_left ⟨by omega, by omega⟩]
-      · rw [if_neg hc, if_neg (fun h => hc ⟨h.1, (hS i h.1).1 h.2⟩)]
+      · rw [ite_eq_right hc, ite_eq_right (fun h => hc ⟨h.1, (hS i h.1).1 h.2⟩)]
     · intro i _ hi
       rw [Finset.mem_range] at hi
-      rw [if_neg (fun h => by omega)]
+      rw [ite_eq_right (fun h => by omega)]
   · rw [map_prod]
     refine Finset.prod_congr rfl fun i hi => ?_
     have hi' := Finset.mem_range.1 hi
@@ -630,14 +617,14 @@ theorem ctl_lamJ_TL {k' : Type} [Field k'] (ψ : AddChar k' ℂ) (χ : ℕ → M
       have := y.2
       simp only [Fin.val_last] at h
       omega
-    simp only [hlast, if_false, Finset.sum_const_zero, add_zero]
+    simp only [hlast, ite_false, Finset.sum_const_zero, add_zero]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [Fin.sum_univ_castSucc]
     have hl2 : ¬ (((Fin.castSucc x : Fin (N' + 1)) : ℕ) + 1 = ((Fin.last N' : Fin (N' + 1)) : ℕ) ∧
         ((Fin.last N' : Fin (N' + 1)) : ℕ) < a ∧ ((Fin.last N' : Fin (N' + 1)) : ℕ) ≠ skip) := by
       simp only [Fin.val_last]
       omega
-    rw [if_neg hl2, add_zero]
+    rw [ite_eq_right hl2, add_zero]
     simp only [Fin.coe_castSucc]
     rfl
   · refine Finset.prod_congr rfl fun i hi => ?_

@@ -3,6 +3,7 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.ObjPol
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.TypeStar
+import Mathlib.RingTheory.Localization.Finiteness
 
 @[expose] public section
 
@@ -26,26 +27,8 @@ private lemma clear_den {O K V : Type*} [CommRing O] [IsDomain O] [Field K] [Alg
     [IsFractionRing O K] [AddCommGroup V] [Module K V] [Module O V] [IsScalarTower O K V]
     (D : Submodule O V) (S : Set V) (hS : S ⊆ D) (y : V) (hy : y ∈ Submodule.span K S) :
     ∃ o : O, o ≠ 0 ∧ o • y ∈ D := by
-  induction hy using Submodule.span_induction with
-  | mem x hx => exact ⟨1, one_ne_zero, by simpa using hS hx⟩
-  | zero => exact ⟨1, one_ne_zero, by simp⟩
-  | add x z _ _ hx hz =>
-    obtain ⟨a, ha, hax⟩ := hx
-    obtain ⟨b, hb, hbz⟩ := hz
-    refine ⟨a * b, mul_ne_zero ha hb, ?_⟩
-    rw [smul_add]
-    apply D.add_mem
-    · simpa [mul_comm a b, mul_smul] using D.smul_mem b hax
-    · simpa [mul_smul] using D.smul_mem a hbz
-  | smul c x _ hx =>
-    obtain ⟨o, ho, hox⟩ := hx
-    obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective O c
-    have hbK : algebraMap O K b ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hb
-    refine ⟨o * b, mul_ne_zero ho (nonZeroDivisors.ne_zero hb), ?_⟩
-    have hq : algebraMap O K b * (algebraMap O K a / algebraMap O K b) = algebraMap O K a := by
-      field_simp
-    rw [mul_smul, ← algebraMap_smul K b, smul_smul, hq, algebraMap_smul, smul_comm o a x]
-    exact D.smul_mem a hox
+  obtain ⟨t, ht⟩ := multiple_mem_span_of_mem_localization_span (nonZeroDivisors O) K S y hy
+  exact ⟨t, nonZeroDivisors.ne_zero t.2, (Submodule.span_le.mpr hS) ht⟩
 
 open Formalism.MainNotions.G in
 theorem goal1

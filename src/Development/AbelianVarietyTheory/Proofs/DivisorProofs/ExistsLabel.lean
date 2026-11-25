@@ -185,7 +185,6 @@ lemma killed_eq_image {d : ℕ} [NeZero d] {s e : ℕ} (h : s * e = d) :
     killed d s = (Finset.range s).image fun j => ((e * j : ℕ) : ZMod d) := by
   have hd : 0 < d := Nat.pos_of_ne_zero (NeZero.ne d)
   have hs : 0 < s := Nat.pos_of_mul_pos_right (h ▸ hd)
-  have he : 0 < e := Nat.pos_of_mul_pos_left (h ▸ hd)
   ext x
   rw [mem_killed, Finset.mem_image]
   constructor
@@ -393,7 +392,7 @@ theorem dvd_of_period_of_dvd_sum_powersetCard (q d : ℕ) (a : ℕ → ℤ) (hq 
     · intro I
       by_cases hI : I ∈ O
       · simp [hI]
-      simp only [hI, if_false]
+      simp only [hI, ite_false]
       by_cases hc : I.card = s
       swap
       · simp [hh, hc]
@@ -403,7 +402,7 @@ theorem dvd_of_period_of_dvd_sum_powersetCard (q d : ℕ) (a : ℕ → ℤ) (hq 
       have hle := Finset.card_le_card hsub
       rw [Finset.card_vadd_finset, card_killed he'.symm, hc] at hle
       rcases hle.lt_or_eq with hlt | heq
-      · simp only [hh, hc, if_true]
+      · simp only [hh, hc, ite_true]
         refine ih _ hlt e' _ he'.symm ?_
         have hmem : (e' : ZMod d) +ᵥ I = I := by
           refine (mem_iff_mem_killed (AddAction.stabilizer (ZMod d) I) _).mpr ?_
@@ -427,7 +426,7 @@ theorem dvd_of_period_of_dvd_sum_powersetCard (q d : ℕ) (a : ℕ → ℤ) (hq 
       obtain ⟨g, rfl⟩ : I ∈ O := (Finset.mem_filter.mp hI).2
       change h (g +ᵥ killed d s) = _
       rw [hhinv]
-      simp only [hh, card_killed hse, if_true, hk]
+      simp only [hh, card_killed hse, ite_true, hk]
   have hsplit : ∑ I, h I = ∑ I, (if I ∈ O then h I else 0) + ∑ I, (if I ∈ O then 0 else h I) := by
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun I _ => ?_
@@ -606,8 +605,7 @@ theorem exists_regular_exponent_of_sum_sq_eq :
     ((Nat.modEq_iff_dvd' h1.le).2 dvd_rfl).symm
   generalize q ^ d - 1 = N at *
   obtain ⟨k, hk⟩ : ∃ k, a k ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     simp [h] at hsum
     omega
   refine ⟨k, hk, fun i hi hid hki => ?_⟩
@@ -669,7 +667,6 @@ theorem exists_regular_exponent_of_sum_sq_eq :
   rw [heq, hs] at hle2
   push_cast at hle2
   have he' : (0 : ℤ) < e := by exact_mod_cast he
-  have hs' : (2 : ℤ) ≤ s := by exact_mod_cast hs2
   have := le_of_mul_le_mul_left hle2 he'
   nlinarith
 
@@ -1011,11 +1008,11 @@ theorem moebius_affine_finrank (K : Type) [Field K] [Finite K] (U : Type) [AddCo
       rw [Finset.sum_eq_single (⟨⊥, bot_le⟩ : {B : Submodule K U // B ≤ A})]
       · simp
       · intro B _ hB
-        exact if_neg fun e => hB (Subtype.ext e)
+        exact ite_eq_right fun e => hB (Subtype.ext e)
       · intro h
         exact absurd (Finset.mem_univ _) h) ⊤
   haveI : Nontrivial U := Module.nontrivial_of_finrank_pos hU
-  rw [key, if_neg top_ne_bot, zero_add, finrank_top, oneValue, if_neg hU.ne']
+  rw [key, ite_eq_right top_ne_bot, zero_add, finrank_top, oneValue, ite_eq_right hU.ne']
 
 end GlobalTheory.CuspGL
 end -- clump:auto
@@ -1040,15 +1037,6 @@ theorem finrank_comap_of_surjective {F V U : Type} [Field F] [AddCommGroup V] [M
     (Submodule.comapSubtypeEquivOfLe (LinearMap.ker_le_comap π)).finrank_eq] at h
   omega
 
-theorem additive_pow {F : Type} [Field F] {s : F[X] → ℂ} (hs : IsAdditive s) {f : F[X]} (hf : f.Monic)
-    (j : ℕ) : s (f ^ j) = j * s f := by
-  induction j with
-  | zero =>
-    have := hs 1 1 monic_one monic_one
-    rw [mul_one] at this
-    simpa using this
-  | succ j ih => rw [pow_succ, hs _ _ (hf.pow j) hf, ih]; push_cast; ring
-
 theorem additive_restrict {F V : Type} [Field F] [AddCommGroup V] [Module F V] [FiniteDimensional F V]
     {s : F[X] → ℂ} (hs : IsAdditive s) {g : Module.End F V} {f : F[X]} {m : ℕ} (hf : f.Monic)
     (hi : Irreducible f) (hc : LinearMap.charpoly g = f ^ m) (A : Submodule F V) (hA : ∀ x ∈ A, g x ∈ A) :
@@ -1060,7 +1048,7 @@ theorem additive_restrict {F V : Type} [Field F] [AddCommGroup V] [Module F V] [
     eq_of_monic_of_associated (LinearMap.charpoly_monic _) (hf.pow j) hj
   have h3 := LinearMap.charpoly_natDegree (g.restrict hA)
   rw [h2, hf.natDegree_pow] at h3
-  rw [h2, additive_pow hs hf, ← h3]
+  rw [h2, GlobalTheory.CuspGL.IsAdditive.map_pow_monic hs hf, ← h3]
   push_cast; ring
 
 theorem eq_top_of_nilpotent {F V : Type} [Field F] [AddCommGroup V] [Module F V] (N : Module.End F V)
@@ -1196,7 +1184,7 @@ theorem psi_primary : ∀ (F : Type) [Field F] [Finite F] (V : Type) [AddCommGro
             (fun W => W ≤ (A.restrictScalars F).comap π ∧ ∀ x ∈ W, g x ∈ W)) (by simp) P]
         refine Finset.sum_subset (fun W => by simp; tauto) fun W hW hW' => ?_
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hW hW'
-        exact dif_neg fun h => hW' ⟨hW, h⟩
+        exact dite_eq_right fun h => hW' ⟨hW, h⟩
       rw [h4, ← h5, h1]
       push_cast at h2
       field_simp
@@ -1208,7 +1196,7 @@ theorem psi_primary : ∀ (F : Type) [Field F] [Finite F] (V : Type) [AddCommGro
       · simp only [Finset.mem_filter, Finset.mem_univ, true_and, Φ]
         rw [Submodule.top_coe, Set.image_univ, hsurj.range_eq, Submodule.span_univ]
       · simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hW
-        exact dif_neg fun h => hW' (nak W h hW)
+        exact dite_eq_right fun h => hW' (nak W h hW)
     rw [h1]
     simp only [P]
     rw [dite_eq_left htop, ← psi_conj F s _ _ Submodule.topEquiv]

@@ -1,50 +1,9 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.CasimirTensVd
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.VermaConeA
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -178,13 +137,13 @@ theorem vc_genV (E : Fin n → Fin n → Module.End ℂ M) (lam : Fin n → ℝ)
       ∑ d ∈ univ.filter (fun d => t < d), tensV E t d (Pi.single d φ) := by
   funext e
   rw [Pi.sub_apply, vc_eeV_single, Finset.sum_apply]
-  simp only [vc_tensV_single, Pi.add_apply, if_true, Pi.smul_apply, Pi.single_apply]
+  simp only [vc_tensV_single, Pi.add_apply, ite_true, Pi.smul_apply, Pi.single_apply]
   rw [Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.sum_const]
   rcases lt_trichotomy e t with h | rfl | h
   · simp [h.ne, hlow t e h, not_lt.mpr h.le]
   · have hc : (univ.filter fun d : Fin n => e < d).card = n - 1 - e := by
       rw [filter_lt_eq_Ioi, Fin.card_Ioi]
-    simp only [if_true, lt_irrefl, Finset.mem_filter, Finset.mem_univ, true_and, if_false, zero_add, hc, hd]
+    simp only [ite_true, lt_irrefl, Finset.mem_filter, Finset.mem_univ, true_and, ite_false, zero_add, hc, hd]
     rw [← Nat.cast_smul_eq_nsmul ℂ, ← sub_smul]
     congr 1
     have he : 1 + (e : ℕ) ≤ n := by have := e.isLt; omega
@@ -200,13 +159,13 @@ theorem vc_genVd (E : Fin n → Fin n → Module.End ℂ M) (lam : Fin n → ℝ
       -∑ d ∈ univ.filter (fun d => d < t), tensVd E d t (Pi.single d φ) := by
   funext e
   rw [Pi.sub_apply, vc_eeVd_single, Pi.neg_apply, Finset.sum_apply]
-  simp only [vc_tensVd_single, Pi.sub_apply, if_true, Pi.smul_apply, Pi.single_apply]
+  simp only [vc_tensVd_single, Pi.sub_apply, ite_true, Pi.smul_apply, Pi.single_apply]
   rw [Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_const]
   rcases lt_trichotomy e t with h | rfl | h
   · simp [h.ne, h]
   · have hc : (univ.filter fun d : Fin n => d < e).card = e := by
       rw [filter_gt_eq_Iio, Fin.card_Iio]
-    simp only [if_true, lt_irrefl, Finset.mem_filter, Finset.mem_univ, true_and, if_false, zero_sub, hc, hd,
+    simp only [ite_true, lt_irrefl, Finset.mem_filter, Finset.mem_univ, true_and, ite_false, zero_sub, hc, hd,
       neg_neg]
     rw [← Nat.cast_smul_eq_nsmul ℂ, ← neg_smul, ← sub_smul]
     congr 1

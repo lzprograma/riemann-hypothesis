@@ -4,50 +4,9 @@ public import Formalism.LocalRingCardinality.DataTheta
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousOfDense
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotTrivialAndTwist
 public import Mathlib.RingTheory.Derivation.Lie
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.BesselHermitianTheta.NoncompactGapAtLeastRange
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoverTensorHom, Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OscActMonomialOfUnique
@@ -215,7 +174,7 @@ theorem unitOp_inr_inr (i j : Fin Q) (f : OscPol P Q) :
     unitOp (.inr i) (.inr j) f = -(X (.inr j) * pderiv (.inr i) f) - if i = j then (1 / 2 : ℂ) • f else 0 := by
   by_cases h : i = j
   · subst h
-    simp only [unitOp, rai, low, Sum.isLeft_inr, Bool.false_eq_true, if_false, if_true]
+    simp only [unitOp, rai, low, Sum.isLeft_inr, Bool.false_eq_true, ite_false, ite_true]
     change -(pderiv (.inr i) ((X (.inr i) : OscPol P Q) * f)) + (1 / 2 : ℂ) • f = _
     rw [Derivation.leibniz, pderiv_X_self, smul_eq_mul, smul_eq_mul, mul_one]
     module
@@ -264,12 +223,12 @@ theorem inner_X_mul (h : IsFockIP ι) (l : σ) (f g : MvPolynomial σ ℂ) :
       simp only [map_smul, inner_smul_left, inner_smul_right, h _ _, ← FockSeq.mfact_cast]
       by_cases hβ : Finsupp.single l 1 + α = β
       · subst hβ
-        rw [if_pos rfl, if_pos (by simp), add_comm, mfact_add_single]
+        rw [ite_eq_left rfl, ite_eq_left (by simp), add_comm, mfact_add_single]
         simp; ring
-      · rw [if_neg hβ]
+      · rw [ite_eq_right hβ]
         by_cases h0 : β l = 0
         · simp [h0]
-        · rw [if_neg]
+        · rw [ite_eq_right]
           · simp
           · rintro rfl
             apply hβ

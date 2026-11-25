@@ -9,56 +9,12 @@ public import Mathlib.RingTheory.Henselian
 public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.RingTheory.Valuation.RamificationGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G.{u_1, u_2} :
-    (F : Type u_1) → (Ω : Type u_2) → [inst : Field F] → [inst_1 : Field Ω] → [Algebra F Ω] → Type u_2 :=
+    (F : Type u_1) → (Ω : Type u_2) → [Field F] → [Field Ω] → [Algebra F Ω] → Type u_2 :=
     fun (F : Type u_1) (Ω : Type u_2) [Field F] [Field Ω] [Algebra F Ω] ↦ Gal(Ω/F)
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.Qbar :
@@ -68,36 +24,36 @@ import Mathlib.Topology.Sheaves.Init
 noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.Dec.{u_1, u_2} :
     {F : Type u_1} →
       {Ω : Type u_2} →
-        [inst : Field F] →
-          [inst_1 : Field Ω] → [inst_2 : Algebra F Ω] → ValuationSubring Ω → Subgroup (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G F Ω) :=
+        [Field F] →
+          [Field Ω] → [Algebra F Ω] → ValuationSubring Ω → Subgroup (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G F Ω) :=
     fun {F : Type u_1} {Ω : Type u_2} [Field F] [Field Ω] [Algebra F Ω] (A : ValuationSubring Ω) ↦
       ValuationSubring.decompositionSubgroup F A
 
 noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.cycZ.{u_1, u_2} :
     (F : Type u_1) →
       (Ω : Type u_2) →
-        [inst : Field F] →
-          [inst_1 : Field Ω] →
-            [inst_2 : Algebra F Ω] → (l : ℕ) → [inst_3 : Fact (Nat.Prime l)] → UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G F Ω →* ℤ_[l]ˣ :=
+        [Field F] →
+          [Field Ω] →
+            [Algebra F Ω] → (l : ℕ) → [Fact (Nat.Prime l)] → UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G F Ω →* ℤ_[l]ˣ :=
     fun (F : Type u_1) (Ω : Type u_2) [Field F] [Field Ω] [Algebra F Ω] (l : ℕ) [Fact (Nat.Prime l)] ↦
       (cyclotomicCharacter Ω l).comp (MulSemiringAction.toRingAut (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G F Ω) Ω)
 
 noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.FreeRatios :
-    {κ ι : Type} → [inst : Field κ] → (ι → κˣ) → Prop :=
+    {κ ι : Type} → [Field κ] → (ι → κˣ) → Prop :=
     fun {κ ι : Type} [Field κ] (α : ι → κˣ) ↦ ∀ (i j : ι), i ≠ j → ∀ (m : ℕ), (0 : ℕ) < m → α i ^ m ≠ α j ^ m
 
 noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.mat :
-    {H k : Type} → [inst : Group H] → [inst_1 : CommRing k] → {n : ℕ} → (H →* GL (Fin n) k) → H →* Matrix (Fin n) (Fin n) k :=
+    {H k : Type} → [Group H] → [CommRing k] → {n : ℕ} → (H →* GL (Fin n) k) → H →* Matrix (Fin n) (Fin n) k :=
     fun {H k : Type} [Group H] [CommRing k] {n : ℕ} (r : H →* GL (Fin n) k) ↦
       (Units.coeHom (Matrix (Fin n) (Fin n) k)).comp r
 
 noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.FreeAt :
     (l : ℕ) →
-      [inst : Fact (Nat.Prime l)] →
+      [Fact (Nat.Prime l)] →
         {F Ω : Type} →
-          [inst_1 : Field F] →
-            [inst_2 : Field Ω] →
-              [inst_3 : Algebra F Ω] → {n : ℕ} → (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G F Ω →* GL (Fin n) (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.Qbar l)) → Prop :=
+          [Field F] →
+            [Field Ω] →
+              [Algebra F Ω] → {n : ℕ} → (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G F Ω →* GL (Fin n) (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.Qbar l)) → Prop :=
     fun (l : ℕ) [Fact (Nat.Prime l)] {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] {n : ℕ}
         (r : UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G F Ω →* GL (Fin n) (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.Qbar l)) ↦
       ∀ (A : ValuationSubring Ω),
@@ -115,12 +71,12 @@ noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.FreeAt :
 
 noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.galEmb :
     (k E Ω : Type) →
-      [inst : Field k] →
-        [inst_1 : Field E] →
-          [inst_2 : Field Ω] →
-            [inst_3 : Algebra k Ω] →
-              [inst_4 : Algebra E Ω] →
-                [inst_5 : Algebra k E] → [IsScalarTower k E Ω] → UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G E Ω →* UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G k Ω :=
+      [Field k] →
+        [Field E] →
+          [Field Ω] →
+            [Algebra k Ω] →
+              [Algebra E Ω] →
+                [Algebra k E] → [IsScalarTower k E Ω] → UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G E Ω →* UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G k Ω :=
     fun (k E Ω : Type) [Field k] [Field E] [Field Ω] [Algebra k Ω] [Algebra E Ω] [Algebra k E] [IsScalarTower k E Ω] ↦
       AlgEquiv.restrictScalarsHom k
 
@@ -171,8 +127,8 @@ private theorem UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.exists_pow_
   rfl
 
 theorem UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.freeRes :
-    ∀ {Ω : Type} [inst : Field Ω] [inst_1 : CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [inst_3 : Fact (Nat.Prime l)] (L : Type)
-      [inst_4 : Field L] [inst_5 : NumberField L] [inst_6 : Algebra L Ω] [IsAlgClosure L Ω]
+    ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact (Nat.Prime l)] (L : Type)
+      [Field L] [NumberField L] [Algebra L Ω] [IsAlgClosure L Ω]
       (W : UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G ℚ Ω →* GL (Fin (2 : ℕ)) (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.Qbar l)),
       UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.FreeAt l W → UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.FreeAt l (W.comp (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.galEmb ℚ L Ω)) := by
   intro Ω _ _ _ l _ L _ _ _ _ W hW A hA

@@ -94,8 +94,6 @@ section D
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem hermE_symm {D : D7} {r : ℕ} (β : PositivityTheory.GramSchwartzFunctions.HermE D r) (a b : Fin r) :
     D.sp.cm.sig (β.1 b a) = β.1 a b := by
   have h := congrFun (congrFun β.2 a) b

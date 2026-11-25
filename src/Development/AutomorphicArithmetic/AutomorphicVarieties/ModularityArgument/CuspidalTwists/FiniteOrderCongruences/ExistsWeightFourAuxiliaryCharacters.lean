@@ -232,16 +232,6 @@ open scoped Matrix
 
 namespace UpperTheory.V.Cu2
 
-private theorem cls_one {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (N : ℕ) [NeZero N] (s : G ℚ Ω)
-    (hs : ∀ ζ : Ω, ζ ^ N = 1 → s ζ = ζ) : UpperTheory.V.Chr.cls ℚ Ω N s = 1 := by
-  have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
-  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot Ω N
-  have h := UpperTheory.V.Chr.cls_spec N s ζ hζ.pow_eq_one
-  rw [hs ζ hζ.pow_eq_one] at h
-  have h2 : ζ ^ ((UpperTheory.V.Chr.cls ℚ Ω N s : (ZMod N)ˣ) : ZMod N).val = ζ ^ (1 : ZMod N).val := by
-    rw [← h, ZMod.val_one_eq_one_mod, ← pow_eq_pow_mod 1 hζ.pow_eq_one, pow_one]
-  exact Units.ext (ZMod.val_injective N (hζ.pow_inj (ZMod.val_lt _) (ZMod.val_lt _) h2))
-
 private theorem comm_le {Γ M : Type} [Group Γ] [Monoid M] (f : Γ →* M) (h : ∀ a b, f a * f b = f b * f a) :
     commutator Γ ≤ f.ker := by
   rw [commutator_def, Subgroup.commutator_le]

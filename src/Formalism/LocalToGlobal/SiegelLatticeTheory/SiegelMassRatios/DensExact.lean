@@ -49,18 +49,9 @@ def DensSplitDisplay : Prop :=
 
 private theorem prod_range_sub_eq_prod_Ico (f : ℕ → ℝ) : ∀ (k N : ℕ), k ≤ N →
     ∏ i ∈ range k, f (N - i) = ∏ j ∈ Ico (N + 1 - k) (N + 1), f j := by
-  intro k
-  induction k with
-  | zero => intro N _; simp
-  | succ k ih =>
-    intro N hN
-    rw [prod_range_succ, ih N (by omega)]
-    have h1 : N + 1 - (k + 1) < N + 1 := by omega
-    rw [prod_eq_prod_Ico_succ_bot h1]
-    have e1 : N + 1 - (k + 1) + 1 = N + 1 - k := by omega
-    have e2 : N + 1 - (k + 1) = N - k := by omega
-    rw [e1, e2]
-    ring
+  intro k N hN
+  rw [← Nat.Ico_zero_eq_range]
+  exact prod_Ico_reflect f 0 (m := k) (n := N) (by omega)
 
 theorem densSplitDisplay_holds : DensSplitDisplay := by
   intro q n m c _ hmc

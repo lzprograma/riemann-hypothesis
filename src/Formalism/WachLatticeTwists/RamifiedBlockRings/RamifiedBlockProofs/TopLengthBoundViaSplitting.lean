@@ -13,56 +13,7 @@ public import Formalism.CharacterColumnKernels.IdempotentNormalForms.BlockRhoFul
 public import Formalism.CharacterColumnKernels.IdempotentNormalForms.ColKerChiOne
 public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerSmulLe
 public import Formalism.CharacterColumnKernels.IdempotentNormalForms.GlobalConcreteOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -483,8 +434,8 @@ lemma blockTrivAbs {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRin
   classical
   let A : ∀ w, Submodule O (H1z (resRep ρM (D w))) := fun w =>
     if hw : w ∈ what₂ then Classical.choose (hrows w hw) else F w
-  have hA : ∀ w (hw : w ∈ what₂), A w = Classical.choose (hrows w hw) := fun w hw => dif_pos hw
-  have hA' : ∀ w, w ∉ what₂ → A w = F w := fun w hw => dif_neg hw
+  have hA : ∀ w (hw : w ∈ what₂), A w = Classical.choose (hrows w hw) := fun w hw => dite_eq_left hw
+  have hA' : ∀ w, w ∉ what₂ → A w = F w := fun w hw => dite_eq_right hw
   have hFA : ∀ w, F w ≤ A w := by
     intro w
     by_cases hw : w ∈ what₂
@@ -508,9 +459,9 @@ lemma blockTrivAbs {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRin
         if w ∈ what₂ then lenRow w else 0 := by
       intro w _
       by_cases hwr : w ∈ what₂
-      · rw [if_pos hwr, hA w hwr]
+      · rw [ite_eq_left hwr, hA w hwr]
         exact (Classical.choose_spec (hrows w hwr)).2.1
-      · rw [if_neg hwr, hA' w hwr, Submodule.comap_subtype_self, Module.length_eq_zero]
+      · rw [ite_eq_right hwr, hA' w hwr, Submodule.comap_subtype_self, Module.length_eq_zero]
     calc Module.length O S ≤ _ := h2
       _ ≤ s + ∑ w ∈ what₂ ∪ cols, (if w ∈ what₂ then lenRow w else 0) :=
           add_le_add hsel (Finset.sum_le_sum hterm)
@@ -572,12 +523,12 @@ theorem blockChiCFull_of (hK : StatColKerChiC.{u₁, u₂, u₃, u₄, u₅}) :
     by_cases hwl : w ∈ lrows
     · obtain ⟨B, h1, h2, h3⟩ := hl w hwl
       refine ⟨B, h1, h2.trans ?_, h3⟩
-      simp only [lenRow, if_pos hwl]
+      simp only [lenRow, ite_eq_left hwl]
       exact le_self_add
     · have hwq : w ∈ qs := (Finset.mem_union.mp hw).resolve_left hwl
       obtain ⟨B, h1, h2, h3⟩ := hq w hwq
       refine ⟨B, h1, h2.trans ?_, h3⟩
-      simp only [lenRow, if_neg hwl, if_pos hwq, zero_add, le_refl]
+      simp only [lenRow, ite_eq_right hwl, ite_eq_left hwq, zero_add, le_refl]
   have hkerEq : LinearMap.ker Ψ = kerY (O := O) (M := d → KO O) r χ E e₁ δ
       (fun l => D (colIdx l)) (fun l => j (colIdx l)) Kc k0 :=
     colPsiKer O A T' G (d → KO O) r χ E e₁ δ ι (fun l => D (colIdx l)) (fun l => j (colIdx l))
@@ -630,12 +581,12 @@ theorem blockChiOneFull_of (hK : StatColKerChiOne.{u₁, u₂, u₃, u₄, u₅}
     by_cases hwl : w ∈ lrows
     · obtain ⟨B, h1, h2, h3⟩ := hl w hwl
       refine ⟨B, h1, h2.trans ?_, h3⟩
-      simp only [lenRow, if_pos hwl]
+      simp only [lenRow, ite_eq_left hwl]
       exact le_self_add
     · have hwq : w ∈ qs := (Finset.mem_union.mp hw).resolve_left hwl
       obtain ⟨B, h1, h2, h3⟩ := hq w hwq
       refine ⟨B, h1, h2.trans ?_, h3⟩
-      simp only [lenRow, if_neg hwl, if_pos hwq, zero_add, le_refl]
+      simp only [lenRow, ite_eq_right hwl, ite_eq_left hwq, zero_add, le_refl]
   have hB : ∀ x ∈ coB1 ρM, x = 0 := by
     rintro _ ⟨v, rfl⟩
     funext g
@@ -702,7 +653,7 @@ lemma sum_range_ite_le_add_sum_Ioo (t : ℕ) (a : ℕ∞) (Sha : ℕ → ℕ∞)
         have hne : e + 1 ≠ 1 := by
           have := (mem_Ioo.1 he).1
           omega
-        rw [if_neg hne, Nat.add_sub_cancel]
+        rw [ite_eq_right hne, Nat.add_sub_cancel]
 
 lemma collectAlt (t : ℕ) (ht : 1 ≤ t) (L : Fin (t + 1) → ℕ∞) (S : Finset (Fin (t + 1))) (v : ℕ∞)
     (what₂ cols qs : Finset ℕ) (lenRow vζ h0 : ℕ → ℕ∞) (e' j deg : ℕ → ℕ) (Sha : ℕ → ℕ∞)
@@ -732,7 +683,7 @@ lemma collectAlt (t : ℕ) (ht : 1 ≤ t) (L : Fin (t + 1) → ℕ∞) (S : Fins
     intro i
     by_cases hi : (i : ℕ) = 0
     · have hs : i.succ = ⟨1, by omega⟩ := Fin.ext (by simp [hi])
-      rw [if_pos (by omega), hs]
+      rw [ite_eq_left (by omega), hs]
       refine (hL1.trans ?_)
       rw [hB]
       calc vhE + C1 + eO * (cB : ℕ∞) * ∑ w ∈ what₂, ((deg w : ℕ∞) + 2) +
@@ -740,7 +691,7 @@ lemma collectAlt (t : ℕ) (ht : 1 ≤ t) (L : Fin (t + 1) → ℕ∞) (S : Fins
           ≤ vhE + C1 + eO * (cB : ℕ∞) * ∑ w ∈ what₂, ((deg w : ℕ∞) + 2) +
             4 * ((cols.card : ℕ∞) + 1) * vδ + ∑ w ∈ qs, vζ w + (cols.card : ℕ∞) * H0 := le_self_add
         _ = _ := by ring
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       have h2 : 2 ≤ ((i.succ : Fin (t + 1)) : ℕ) := by simp [Fin.val_succ]; omega
       refine (hLc i.succ h2).trans_eq ?_
       rw [hB, Fin.val_succ]

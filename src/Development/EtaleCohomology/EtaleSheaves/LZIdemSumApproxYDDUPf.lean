@@ -1,51 +1,8 @@
 module
 
 public import Development.EtaleCohomology.EtaleSheaves.LZIdemSumApprox
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -330,55 +287,45 @@ theorem LZIdemSumApprox_of : LateralTheory.E.IdempotentLiftingAlt.LZIdemSumAppro
       exact hTC s (hLC s hs') A' φ hφ
         (fun a ha => hrange (Or.inl (Or.inr (Set.mem_iUnion₂.mpr ⟨s, hs', ha⟩))))
     · show Algebra.adjoin A' ((B' : Set K) ∪ {t⁻¹}) = Algebra.adjoin A' ((C' : Set K) ∪ {t})
-      apply le_antisymm
-      · apply Algebra.adjoin_le
+      have hadj : ∀ (t₁ t₂ : K) (S₁ S₂ : List K) (f₁ f₂ : K → K) (n₁ n₂ : K → ℕ), t₂ * t₁ = 1 →
+          (∀ x ∈ S₁, x = f₁ x * t₁ ^ n₁ x) → (∀ x ∈ S₂, x = f₂ x * t₂ ^ n₂ x) →
+          Algebra.adjoin A' ((Algebra.adjoin A'
+              ((t₁ :: (S₁ ++ S₂.map f₂)).toFinset : Set K) : Set K) ∪ {t₂}) ≤
+            Algebra.adjoin A' ((Algebra.adjoin A'
+              ((t₂ :: (S₂ ++ S₁.map f₁)).toFinset : Set K) : Set K) ∪ {t₁}) := by
+        intro t₁ t₂ S₁ S₂ f₁ f₂ n₁ n₂ htm hf₁ hf₂
+        have mem2 : ∀ {z}, z ∈ t₂ :: (S₂ ++ S₁.map f₁) →
+            z ∈ Algebra.adjoin A' ((t₂ :: (S₂ ++ S₁.map f₁)).toFinset : Set K) := fun hz =>
+          Algebra.subset_adjoin (by simpa using hz)
+        apply Algebra.adjoin_le
         rintro x (hx | hx)
-        · refine (Algebra.adjoin_le ?_ : B' ≤ _) hx
+        · refine (Algebra.adjoin_le ?_ :
+              Algebra.adjoin A' ((t₁ :: (S₁ ++ S₂.map f₂)).toFinset : Set K) ≤ _) hx
           intro y hy
-          have hy' : y ∈ LB := by simpa using hy
+          have hy' : y ∈ t₁ :: (S₁ ++ S₂.map f₂) := by simpa using hy
           rcases List.mem_cons.mp hy' with rfl | hy'
           · exact sa (Or.inr rfl)
           rcases List.mem_append.mp hy' with hy' | hy'
-          · obtain ⟨_, h2⟩ := hnc y (hBD y (hBc y hy'))
-            rw [h2]
-            exact mul_mem (sa (Or.inl (memC' _
-              (List.mem_cons.mpr (Or.inr (List.mem_append.mpr (Or.inr (List.mem_map.mpr ⟨y, hy', rfl⟩))))))))
+          · rw [hf₁ y hy']
+            exact mul_mem (sa (Or.inl (mem2 (List.mem_cons.mpr
+              (Or.inr (List.mem_append.mpr (Or.inr (List.mem_map.mpr ⟨y, hy', rfl⟩))))))))
               (pow_mem (sa (Or.inr rfl)) _)
           · obtain ⟨c, hcm, rfl⟩ := List.mem_map.mp hy'
-            obtain ⟨_, h2⟩ := hnb c (hCD c (hCc c hcm))
-            have key : c * t ^ nn c = nb c := by
-              calc c * t ^ nn c = (nb c * t⁻¹ ^ nn c) * t ^ nn c := by rw [← h2]
-                _ = nb c := by rw [inv_pow, mul_assoc, inv_mul_cancel₀ (pow_ne_zero _ ht0), mul_one]
+            have key : c * t₁ ^ n₂ c = f₂ c := by
+              calc c * t₁ ^ n₂ c = (f₂ c * t₂ ^ n₂ c) * t₁ ^ n₂ c := by rw [← hf₂ c hcm]
+                _ = f₂ c * (t₂ * t₁) ^ n₂ c := by rw [mul_assoc, ← mul_pow]
+                _ = f₂ c := by rw [htm, one_pow, mul_one]
             rw [← key]
-            exact mul_mem (sa (Or.inl (memC' _
-              (List.mem_cons.mpr (Or.inr (List.mem_append.mpr (Or.inl hcm)))))))
+            exact mul_mem
+              (sa (Or.inl (mem2 (List.mem_cons.mpr (Or.inr (List.mem_append.mpr (Or.inl hcm)))))))
               (pow_mem (sa (Or.inr rfl)) _)
         · rw [Set.mem_singleton_iff.mp hx]
-          exact sa (Or.inl (memC' _ (List.mem_cons.mpr (Or.inl rfl))))
-      · apply Algebra.adjoin_le
-        rintro x (hx | hx)
-        · refine (Algebra.adjoin_le ?_ : C' ≤ _) hx
-          intro y hy
-          have hy' : y ∈ LC := by simpa using hy
-          rcases List.mem_cons.mp hy' with rfl | hy'
-          · exact sa (Or.inr rfl)
-          rcases List.mem_append.mp hy' with hy' | hy'
-          · obtain ⟨_, h2⟩ := hnb y (hCD y (hCc y hy'))
-            rw [h2]
-            exact mul_mem (sa (Or.inl (memB' _
-              (List.mem_cons.mpr (Or.inr (List.mem_append.mpr (Or.inr (List.mem_map.mpr ⟨y, hy', rfl⟩))))))))
-              (pow_mem (sa (Or.inr rfl)) _)
-          · obtain ⟨b, hbm, rfl⟩ := List.mem_map.mp hy'
-            obtain ⟨_, h2⟩ := hnc b (hBD b (hBc b hbm))
-            have key : b * t⁻¹ ^ mc b = nc b := by
-              calc b * t⁻¹ ^ mc b = (nc b * t ^ mc b) * t⁻¹ ^ mc b := by rw [← h2]
-                _ = nc b := by rw [inv_pow, mul_assoc, mul_inv_cancel₀ (pow_ne_zero _ ht0), mul_one]
-            rw [← key]
-            exact mul_mem (sa (Or.inl (memB' _
-              (List.mem_cons.mpr (Or.inr (List.mem_append.mpr (Or.inl hbm)))))))
-              (pow_mem (sa (Or.inr rfl)) _)
-        · rw [Set.mem_singleton_iff.mp hx]
-          exact sa (Or.inl (memB' _ (List.mem_cons.mpr (Or.inl rfl))))
+          exact sa (Or.inl (mem2 (List.mem_cons.mpr (Or.inl rfl))))
+      exact le_antisymm
+        (hadj t t⁻¹ Bc Cc nc nb mc nn (inv_mul_cancel₀ ht0)
+          (fun y hy => (hnc y (hBD y (hBc y hy))).2) (fun c hc' => (hnb c (hCD c (hCc c hc'))).2))
+        (hadj t⁻¹ t Cc Bc nb nc nn mc (mul_inv_cancel₀ ht0)
+          (fun y hy => (hnb y (hCD y (hCc y hy))).2) (fun b hb' => (hnc b (hBD b (hBc b hb'))).2))
   have inBc : ∀ x ∈ Bc, x ∈ LB := fun x hx => List.mem_cons.mpr (Or.inr (List.mem_append.mpr (Or.inl hx)))
   have inCc : ∀ x ∈ Cc, x ∈ LC := fun x hx => List.mem_cons.mpr (Or.inr (List.mem_append.mpr (Or.inl hx)))
   have hpair : IdemPair B' C' t e f := by

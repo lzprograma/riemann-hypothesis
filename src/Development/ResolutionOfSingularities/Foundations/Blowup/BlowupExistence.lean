@@ -5,47 +5,7 @@ public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlo
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupOpenCover
 import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
 public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
@@ -152,9 +112,6 @@ theorem exists_isBlowupAlongIdealSheaf_of_isAffine (X : Scheme.{u}) [IsAffine X]
   rwa [← Scheme.IdealSheafData.comap_comp, Iso.hom_inv_id,
     Scheme.IdealSheafData.comap_id] at h2
 
-private theorem comp_base_apply {A B C : Scheme.{u}} (u : A ⟶ B) (z : B ⟶ C) (p : A) :
-    (u ≫ z).base p = z.base (u.base p) := by simp
-
 private theorem ι_base_mem {X : Scheme.{u}} (U : X.Opens) (v : U.toScheme) :
     U.ι.base v ∈ U := by
   have h : U.ι.base v ∈ Set.range ⇑U.ι.base := Set.mem_range_self v
@@ -237,7 +194,7 @@ private theorem blowupOver_inf_preimage {X Z : Scheme.{u}} {I : X.IdealSheafData
     IsBlowupAlongIdealSheafOver I (S ⊓ T) ((z ⁻¹ᵁ T).ι ≫ z) := by
   refine ⟨?_, ?_, ?_⟩
   · rintro _ ⟨p, rfl⟩
-    rw [comp_base_apply]
+    rw [Scheme.Hom.comp_apply]
     refine TopologicalSpace.Opens.mem_inf.mpr ⟨hz.1 (Set.mem_range_self _), ?_⟩
     exact ι_base_mem (z ⁻¹ᵁ T) p
   · exact isLocallyGeneratedByNonZeroDivisor_comap_openImmersion_comp I _ z hz.2.1
@@ -249,7 +206,7 @@ private theorem blowupOver_inf_preimage {X Z : Scheme.{u}} {I : X.IdealSheafData
       rw [Scheme.Opens.range_ι]
       rintro _ ⟨p, rfl⟩
       show z.base (a.base p) ∈ T
-      rw [← comp_base_apply, ha]
+      rw [← Scheme.Hom.comp_apply, ha]
       exact (TopologicalSpace.Opens.mem_inf.mp (hr (Set.mem_range_self p))).2
     refine ⟨IsOpenImmersion.lift _ a hra, ?_, ?_⟩
     · show IsOpenImmersion.lift (z ⁻¹ᵁ T).ι a hra ≫ ((z ⁻¹ᵁ T).ι ≫ z) = y
@@ -389,7 +346,7 @@ private theorem isLocallyGeneratedByNonZeroDivisor_comap_overlapPullbackMap {X :
 private theorem overlapPullbackMap_base_mem_inf_left {X : Scheme.{u}} (I : X.IdealSheafData)
     (i j k : X.affineOpens) (p : ↥(pullback (overlapInclusion I i j) (overlapInclusion I i k))) :
     (tripleOverlapToBase I i j k).base p ∈ ((i : X.Opens) ⊓ (j : X.Opens)) := by
-  rw [overlapPullbackMap_eq, comp_base_apply]
+  rw [overlapPullbackMap_eq, Scheme.Hom.comp_apply]
   exact (blowupOver_overlapMap I i j).1 (Set.mem_range_self _)
 
 private theorem overlapPullbackMap_base_mem_inf_right {X : Scheme.{u}} (I : X.IdealSheafData)
@@ -399,7 +356,7 @@ private theorem overlapPullbackMap_base_mem_inf_right {X : Scheme.{u}} (I : X.Id
       = pullback.snd (overlapInclusion I i j) (overlapInclusion I i k) ≫ overlapToBase I i k := by
     rw [overlapPullbackMap_eq, overlapMap_eq, overlapMap_eq, ← Category.assoc,
       ← Category.assoc, pullback.condition]
-  rw [h, comp_base_apply]
+  rw [h, Scheme.Hom.comp_apply]
   exact (blowupOver_overlapMap I i k).1 (Set.mem_range_self _)
 
 private theorem range_overlapPullbackMap_subset_source {X : Scheme.{u}} (I : X.IdealSheafData)
@@ -567,7 +524,7 @@ private theorem gluedIncl_comp_gluedProj {X : Scheme.{u}} (I : X.IdealSheafData)
 private theorem gluedProj_base_gluedIncl {X : Scheme.{u}} (I : X.IdealSheafData)
     (i : X.affineOpens) (v : localBlowup I i) :
     (gluedBlowupProjection I).base ((localBlowupToGlued I i).base v) = (localBlowupToBase I i).base v := by
-  rw [← comp_base_apply, gluedIncl_comp_gluedProj]
+  rw [← Scheme.Hom.comp_apply, gluedIncl_comp_gluedProj]
 
 private theorem mem_range_gluedIncl_of_mem {X : Scheme.{u}} (I : X.IdealSheafData) (i : X.affineOpens)
     (p : gluedBlowup I) (hp : (gluedBlowupProjection I).base p ∈ (i : X.Opens)) :
@@ -583,7 +540,7 @@ private theorem mem_range_gluedIncl_of_mem {X : Scheme.{u}} (I : X.IdealSheafDat
   have hcb : (overlapTransition I j i ≫ overlapInclusion I i j ≫ localBlowupToGlued I i).base v
       = (overlapInclusion I j i ≫ localBlowupToGlued I j).base v := by
     rw [overlapTrans_comp_gluedIncl I j i]
-  rw [comp_base_apply, comp_base_apply, comp_base_apply] at hcb
+  rw [Scheme.Hom.comp_apply, Scheme.Hom.comp_apply, Scheme.Hom.comp_apply] at hcb
   refine ⟨(overlapInclusion I i j).base ((overlapTransition I j i).base v), ?_⟩
   rw [hcb, hv]
   exact hy
@@ -628,7 +585,7 @@ private theorem isLocallyGeneratedByNonZeroDivisor_comap_preimageAffineOpenToBas
 private theorem range_preimageAffineOpenToBase_subset {X W : Scheme.{u}} (g : W ⟶ X) (i : X.affineOpens) :
     Set.range ⇑(preimageAffineOpenToBase g i).base ⊆ ((i : X.Opens) : Set X) := by
   rintro _ ⟨p, rfl⟩
-  rw [preimageAffineOpenToBase_eq, comp_base_apply]
+  rw [preimageAffineOpenToBase_eq, Scheme.Hom.comp_apply]
   exact ι_base_mem (preimageAffineOpen g i) p
 
 private noncomputable def localBlowupLift {X W : Scheme.{u}} (I : X.IdealSheafData) (g : W ⟶ X)
@@ -676,13 +633,13 @@ private theorem liftChart_pullback_condition {X W : Scheme.{u}} (I : X.IdealShea
   have hrx : Set.range ⇑(pullback.fst (preimageAffineOpen g x).ι (preimageAffineOpen g y).ι ≫ preimageAffineOpenToBase g x).base
       ⊆ ((x : X.Opens) : Set X) := by
     rintro _ ⟨p, rfl⟩
-    rw [comp_base_apply]
+    rw [Scheme.Hom.comp_apply]
     exact range_preimageAffineOpenToBase_subset g x (Set.mem_range_self _)
   have hry : Set.range ⇑(pullback.fst (preimageAffineOpen g x).ι (preimageAffineOpen g y).ι ≫ preimageAffineOpenToBase g x).base
       ⊆ ((y : X.Opens) : Set X) := by
     rw [hxy]
     rintro _ ⟨p, rfl⟩
-    rw [comp_base_apply]
+    rw [Scheme.Hom.comp_apply]
     exact range_preimageAffineOpenToBase_subset g y (Set.mem_range_self _)
   rw [← Category.assoc, ← Category.assoc]
   refine comp_gluedIncl_eq_of_comp_localBlowupMap I x y
@@ -714,7 +671,7 @@ private theorem eq_liftGlued_of_comp_eq {X W : Scheme.{u}} (I : X.IdealSheafData
   have hr : Set.range ⇑((preimageAffineOpen g i).ι ≫ b).base ⊆ Set.range ⇑(localBlowupToGlued I i).base := by
     rintro _ ⟨p, rfl⟩
     refine mem_range_gluedIncl_of_mem I i _ ?_
-    rw [← comp_base_apply, Category.assoc, hb]
+    rw [← Scheme.Hom.comp_apply, Category.assoc, hb]
     exact range_preimageAffineOpenToBase_subset g i (Set.mem_range_self p)
   have := isOpenImmersion_gluedIncl I i
   have hc : IsOpenImmersion.lift (localBlowupToGlued I i) ((preimageAffineOpen g i).ι ≫ b) hr ≫ localBlowupToGlued I i

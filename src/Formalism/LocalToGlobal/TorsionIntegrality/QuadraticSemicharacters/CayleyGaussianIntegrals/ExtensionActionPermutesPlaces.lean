@@ -73,7 +73,7 @@ theorem formNormEquiv : FormNorm := by
       inv_mul_cancel₀ (norm_ne_zero_iff.2 hw)]
   by_cases hV : ∃ v : V, v ≠ 0
   swap
-  · push_neg at hV
+  · push Not at hV
     refine ⟨1, 1, one_pos, one_pos, fun z => ?_⟩
     rw [hV z]; simp
   obtain ⟨v, hv⟩ := hV

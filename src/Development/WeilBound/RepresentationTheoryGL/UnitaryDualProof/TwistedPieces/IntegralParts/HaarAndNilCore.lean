@@ -408,18 +408,15 @@ open PositivityTheory.RgUd.T.Nil.Orb.Oasm
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n : ℕ}
 local instance t2Local : T2Space k := t2Space k
 
+private def killsS : Submodule ℂ (LF k n) where
+  carrier := {η | Kills η UU}
+  add_mem' hx hy f hf := by simp [hx f hf, hy f hf]
+  zero_mem' _ _ := by simp
+  smul_mem' _ _ hx f hf := by simp [hx f hf]
+
 private theorem kills_aevalH (t : kˣ) {ξ : LF k n} (hξ : Kills ξ UU) (Q : ℂ[X]) :
-    Kills (aeval (pullH (n := n) t) Q ξ) UU := by
-  have hk1 : ∀ {η}, Kills η UU → Kills (pullH (n := n) t η) UU := fun h _ hf => h _ (comp_hom_mem t hf)
-  induction Q using Polynomial.induction_on' with
-  | add p q hp hq => intro f hf; simp [hp f hf, hq f hf]
-  | monomial m a =>
-    intro f hf
-    have key : ∀ m : ℕ, Kills (((pullH (n := n) t) ^ m : Module.End ℂ _) ξ) UU := fun m => by
-      induction m with
-      | zero => simpa using hξ
-      | succ m ih => rw [pow_succ', Module.End.mul_eq_comp, LinearMap.comp_apply]; exact hk1 ih
-    simp [aeval_monomial, key m f hf]
+    Kills (aeval (pullH (n := n) t) Q ξ) UU :=
+  PositivityTheory.RgUd.T.Nil.Asm.aeval_mem killsS (pullH t) (fun _ hη _ hf => hη _ (comp_hom_mem t hf)) Q ξ hξ
 
 private theorem main_ind {Z : SubMat k n} (h4 : Orb.StepModH k) (hZ : CR Z) (t : kˣ) (mm : Sp k n → ℂ)
     (s : Finset (Sp k n)) (hs : ∀ p ∈ s, p.2 ≠ 0 ∧ ∃ (K L : Subgroup (GL (Fin n) k)) (g : GL (Fin n) k),
@@ -523,7 +520,7 @@ private theorem orbQ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
       let ⟨K, L, g, hgG, hact, hK, hKo, hKc, hLo, hLKK, hLn1, hLn2, hmod⟩ := hKLg p hp
       ⟨(hs p hp).2.2.1, K, L, g, hgG, hact, hK, hKo, hKc, hLo, hLKK, hLn1, hLn2, by rw [hmod]⟩)
     s.card s le_rfl subset_rfl (NB Z ×ˢ univ) hclNB
-    (fun h hh q hq => let h' := action_mem_orbit_closure hZ (zero_mem Z) hh (q := q) ⟨hq.1.1, by simpa using hq.1.2⟩
+    (fun h hh q hq => let h' := action_mem_orbit_closure (zero_mem Z) hh (q := q) ⟨hq.1.1, by simpa using hq.1.2⟩
       ⟨⟨h'.1, by simpa using h'.2⟩, mem_univ _⟩)
     (fun q hq => ⟨⟨fun b hb => by
         show b * ((t : k) • q.1) = (t : k) • q.1 * b
@@ -620,12 +617,7 @@ theorem nilCore (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNo
     (fun g hg f hf => hinv g hg f ⟨hf.1, subset_univ _⟩)
   have ha3 : Kills ((a.map Ao).prod (𝓕 ξ)) UU := fun f hf => by
     rw [← hag a f ⟨hf.1, subset_univ _⟩]; exact (hF3 _ (hbo_supp a)).mp ha2 f hf
-  let K : Submodule ℂ (LF k m) :=
-    { carrier := {η | Kills η UU}
-      add_mem' := fun hx hy f hf => by simp [hx f hf, hy f hf]
-      zero_mem' := fun _ _ => by simp
-      smul_mem' := fun _ _ hx f hf => by simp [hx f hf] }
-  have hmain : 𝓕 ξ ∈ K := bez2 K (pullH t) (pullH t⁻¹)
+  have hmain : 𝓕 ξ ∈ killsS := bez2 killsS (pullH t) (pullH t⁻¹)
     (LinearMap.ext fun η => LinearMap.ext fun f => by
       change η ((f ∘ hom t) ∘ hom t⁻¹) = η f; congr 1; funext p; simp [hom_hom_inv])
     (LinearMap.ext fun η => LinearMap.ext fun f => by

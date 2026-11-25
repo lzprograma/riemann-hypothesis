@@ -23,8 +23,6 @@ open scoped TensorProduct ComplexOrder
 
 namespace Formalism.IndefR.Fin
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def PlaceLatDualIv (D : D7) : Prop :=
   ∀ (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T : HSp D)
     (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)),
@@ -66,33 +64,17 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.IndefR.Datum
 open scoped TensorProduct
 
-
-
 namespace Formalism.IndefR.Fin.PDB
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
 theorem exists_nat_eq_mul {K : Type} [Field K] [NumberField K] (b : 𝓞 K) (hb : b ≠ 0) :
-    ∃ m : ℕ, 1 ≤ m ∧ ∃ c : 𝓞 K, (m : 𝓞 K) = b * c := by
-  refine ⟨Ideal.absNorm (Ideal.span {b}), ?_, ?_⟩
-  · have : Ideal.absNorm (Ideal.span {b}) ≠ 0 := by
-      rw [Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]; exact hb
-    omega
-  · obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 (Ideal.absNorm_mem (Ideal.span {b}))
-    exact ⟨c, by rw [← hc, mul_comm]⟩
+    ∃ m : ℕ, 1 ≤ m ∧ ∃ c : 𝓞 K, (m : 𝓞 K) = b * c :=
+  _root_.Formalism.IndefR.Fin.PDA.exists_nat_eq_mul b hb
 
 theorem exists_nat_mul_mem {K : Type} [Field K] [NumberField K] (e : K) :
-    ∃ m : ℕ, 1 ≤ m ∧ (m : K) * e ∈ (algebraMap (𝓞 K) K).range := by
-  obtain ⟨⟨a, b⟩, h⟩ := IsLocalization.surj (nonZeroDivisors (𝓞 K)) e
-  obtain ⟨m, hm, c, hc⟩ := exists_nat_eq_mul (b : 𝓞 K) (nonZeroDivisors.ne_zero b.2)
-  refine ⟨m, hm, a * c, ?_⟩
-  have h1 : (m : K) = algebraMap (𝓞 K) K b * algebraMap (𝓞 K) K c := by
-    rw [← map_mul, ← hc, map_natCast]
-  simp only at h
-  rw [map_mul, h1, ← h]
-  ring
+    ∃ m : ℕ, 1 ≤ m ∧ (m : K) * e ∈ (algebraMap (𝓞 K) K).range :=
+  _root_.Formalism.IndefR.Fin.PDA.exists_nat_mul_mem e
 
 theorem exists_nat_mul_intAf {F : Type} [Field F] [NumberField F] (t : Af F) :
     ∃ m : ℕ, 1 ≤ m ∧ (m : Af F) * t ∈ intAf F := by
@@ -314,26 +296,6 @@ section Sandwich
 variable {S T : HSp D} {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)}
   {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
 
-lemma intAf_mul' {a a' : Af D.host.F} (ha : a ∈ intAf D.host.F) (ha' : a' ∈ intAf D.host.F) :
-    a * a' ∈ intAf D.host.F := fun w => by rw [map_mul]; exact mul_mem (ha w) (ha' w)
-
-lemma intAE_mul' {z z' : Af D.host.F ⊗[D.host.F] D.host.E} (hz : z ∈ intAE D) (hz' : z' ∈ intAE D) :
-    z * z' ∈ intAE D := by
-  induction hz using AddSubgroup.closure_induction with
-  | mem x hx =>
-    obtain ⟨a, ha, o, rfl⟩ := hx
-    induction hz' using AddSubgroup.closure_induction with
-    | mem y hy =>
-      obtain ⟨a', ha', o', rfl⟩ := hy
-      rw [Algebra.TensorProduct.tmul_mul_tmul]
-      exact AddSubgroup.subset_closure ⟨a * a', intAf_mul' ha ha', o * o', by push_cast; rfl⟩
-    | zero => rw [mul_zero]; exact zero_mem _
-    | add y y' _ _ hy hy' => rw [mul_add]; exact add_mem hy hy'
-    | neg y _ hy => rw [mul_neg]; exact neg_mem hy
-  | zero => rw [zero_mul]; exact zero_mem _
-  | add x x' _ _ hx hx' => rw [add_mul]; exact add_mem hx hx'
-  | neg x _ hx => rw [neg_mul]; exact neg_mem hx
-
 def IntF (y : AE D) : Prop := y * fI D = y ∧ finPart D y ∈ intAE D
 
 lemma intF_zero : IntF (0 : AE D) := ⟨zero_mul _, by rw [map_zero]; exact zero_mem _⟩
@@ -345,7 +307,7 @@ lemma intF_neg {y : AE D} (h : IntF y) : IntF (-y) :=
   ⟨by rw [neg_mul, h.1], by rw [map_neg]; exact neg_mem h.2⟩
 
 lemma intF_mul {y y' : AE D} (h : IntF y) (h' : IntF y') : IntF (y * y') :=
-  ⟨by rw [mul_assoc, h'.1], by rw [map_mul]; exact intAE_mul' h.2 h'.2⟩
+  ⟨by rw [mul_assoc, h'.1], by rw [map_mul]; exact Formalism.IndefR.Fin.intAE_mul h.2 h'.2⟩
 
 lemma intF_sum {ι : Type*} (s : Finset ι) (f : ι → AE D) (h : ∀ i ∈ s, IntF (f i)) : IntF (∑ i ∈ s, f i) :=
   Finset.sum_induction _ IntF (fun _ _ => intF_add) intF_zero h
@@ -391,14 +353,8 @@ lemma exists_nat_intF {y : AE D} (hy : y * fI D = y) : ∃ k : ℕ, 0 < k ∧ In
   exact ⟨k, hk, by rw [smul_mul_assoc, hy], by rw [map_nsmul]; exact h⟩
 
 lemma uniform_nat {ι : Type*} [Fintype ι] (P : ι → ℕ → Prop) (hP : ∀ i k m, P i k → P i (m * k))
-    (h : ∀ i, ∃ k, 0 < k ∧ P i k) : ∃ k, 0 < k ∧ ∀ i, P i k := by
-  classical
-  choose k hk hPk using h
-  refine ⟨∏ i, k i, Finset.prod_pos fun i _ => hk i, fun i => ?_⟩
-  rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ i)]
-  exact hP i _ _ (hPk i)
-
-
+    (h : ∀ i, ∃ k, 0 < k ∧ P i k) : ∃ k, 0 < k ∧ ∀ i, P i k :=
+  _root_.Formalism.IndefR.Fin.PDA.uniform_nat P hP h
 
 lemma lower (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) :
     ∃ c : ℕ, 0 < c ∧ ∀ Z : WO S T, (∀ i j, IntF (Z i j)) → c • Z ∈ latAll S T ΛS ΛT := by
@@ -511,8 +467,6 @@ lemma matrix_denom {m n : ℕ} (G : Matrix (Fin m) (Fin n) D.host.E) :
 lemma intF_gen {α : Af D.host.F} (hα : α ∈ intAf D.host.F) (o : 𝓞 D.host.E) :
     IntF (pairA D.host.F 0 α ⊗ₜ[D.host.F] ((o : 𝓞 D.host.E) : D.host.E)) :=
   ⟨by rw [tmul_fI]; rfl, AddSubgroup.subset_closure ⟨α, hα, o, rfl⟩⟩
-
-
 
 lemma upper (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) :
     ∃ c : ℕ, 0 < c ∧ ∀ t ∈ latAll S T ΛS ΛT, ∀ i j, IntF ((c • t) i j) := by

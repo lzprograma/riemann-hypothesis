@@ -3,49 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.CubeTrivialisationOnUniformisingSpace
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
 public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -69,21 +27,21 @@ lemma valueRules : ValueRules := by
   refine ⟨h1, fun U h => ?_, fun U V h f hV => ?_, fun Y φ U f => ?_, fun U f => ?_,
     fun p hp U a h => ?_⟩
   · exact ⟨(Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom.comp (x.appLE U ⊤ h).hom,
-      fun f => by simp only [valAt', dif_pos h, valAt]; rfl⟩
+      fun f => by simp only [valAt', dite_eq_left h, valAt]; rfl⟩
   · have hU : ⊤ ≤ x ⁻¹ᵁ U := fun p hp => h (hV hp)
-    simp only [valAt', dif_pos hV, dif_pos hU, valAt]
+    simp only [valAt', dite_eq_left hV, dite_eq_left hU, valAt]
     congr 1
     exact congr($(Scheme.Hom.map_appLE x hV (homOfLE h).op).hom f)
   · by_cases h : ⊤ ≤ x ⁻¹ᵁ φ ⁻¹ᵁ U
     · have h' : ⊤ ≤ (x ≫ φ) ⁻¹ᵁ U := h
-      simp only [valAt', dif_pos h, dif_pos h', valAt]
+      simp only [valAt', dite_eq_left h, dite_eq_left h', valAt]
       congr 1
     · have h' : ¬ ⊤ ≤ (x ≫ φ) ⁻¹ᵁ U := h
-      simp only [valAt', dif_neg h, dif_neg h']
+      simp only [valAt', dite_eq_right h, dite_eq_right h']
   · by_cases h : ⊤ ≤ x ⁻¹ᵁ U
     · have e : (Sp ℂ).basicOpen ((x.appLE U ⊤ h).hom f) = x ⁻¹ᵁ X.basicOpen f := by
         rw [Scheme.basicOpen_appLE, top_inf_eq]
-      simp only [valAt', dif_pos h, valAt]
+      simp only [valAt', dite_eq_left h, valAt]
       rw [← e]
       generalize (x.appLE U ⊤ h).hom f = s
       obtain ⟨a, rfl⟩ : ∃ a : ℂ, (Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom a = s :=
@@ -97,9 +55,9 @@ lemma valueRules : ValueRules := by
         exact k (x := (default : PrimeSpectrum ℂ)) trivial
       · intro k
         exact (Scheme.basicOpen_of_isUnit _ ((isUnit_iff_ne_zero.2 k).map _)).ge
-    · simp only [valAt', dif_neg h, ne_eq, not_true, iff_false]
+    · simp only [valAt', dite_eq_right h, ne_eq, not_true, iff_false]
       exact fun k => h fun p hp => X.basicOpen_le f (k hp)
-  · simp only [valAt', dif_pos h, valAt, constFn]
+  · simp only [valAt', dite_eq_left h, valAt, constFn]
     have := congr($(Scheme.Hom.appLE_comp_appLE x p ⊤ U ⊤ (fun _ _ => trivial) h).hom
       ((Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom a))
     simp only [hp, CommRingCat.hom_comp, RingHom.comp_apply] at this

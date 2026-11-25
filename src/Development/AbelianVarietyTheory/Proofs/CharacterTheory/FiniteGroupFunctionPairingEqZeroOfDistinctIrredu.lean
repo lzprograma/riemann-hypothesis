@@ -67,7 +67,7 @@ theorem pair_eq_zero_of_isIrrChar_ne : ∀ (G : Type) [Group G] [Finite G] (a b 
     rintro ⟨φ⟩
     exact hab (by rw [ha', hb', Representation.char_iso φ])
   have h := Representation.char_orthonormal ρ σ
-  rw [if_neg hne] at h
+  rw [ite_eq_right hne] at h
   unfold pair
   rw [finsum_eq_sum_of_fintype, ha', hb']
   simpa using h

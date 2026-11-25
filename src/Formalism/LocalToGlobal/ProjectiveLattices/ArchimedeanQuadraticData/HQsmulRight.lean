@@ -5,8 +5,6 @@ import Mathlib.RingTheory.PiTensorProduct
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj.FundamentalDomainD5

@@ -31,56 +31,8 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.EmbeddingTraceSu
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ScRefExists
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ScXuExists
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HCReprodM
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SplitPrimeCounts.LsSetresSplit
 import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
@@ -679,11 +631,11 @@ theorem tensU_basis (p : Idx Vl) : tensU (fun i => bas Vl i (p i)) = EuclideanSp
   rw [tensU_apply, PiLp.single_apply]
   by_cases hqp : q = p
   · subst hqp
-    simp only [if_true]
+    simp only [ite_true]
     refine Finset.prod_eq_one fun i _ => ?_
     rw [inner_self_eq_norm_sq_to_K, (bas Vl i).orthonormal.1 (q i)]
     simp
-  · rw [if_neg hqp]
+  · rw [ite_eq_right hqp]
     obtain ⟨i, hi⟩ : ∃ i, q i ≠ p i := by
       by_contra hne
       push Not at hne
@@ -797,10 +749,6 @@ open Matrix NumberField
 namespace PI.ScPiBuildW.Rv
 
 open PI.ScPiExists
-
-lemma phi_star (I : Formalism.MainNotions.S.AutInst) (v : InfinitePlace I.F) (a : I.E) :
-    I.φ v (star a) = star (I.φ v a) := by
-  exact I.cm.cmUnram.2.1 (I.φ v) a
 
 lemma hJ_rv (I : Formalism.MainNotions.S.AutInst) (v : InfinitePlace I.F) (x y : Fin I.n → I.E) :
     hJ (I.ε v) (rv I v x) (rv I v y) = I.φ v (Formalism.UG.hform (starRingEnd I.E) I.J x y) := by
@@ -980,8 +928,7 @@ private theorem pos_of_vanish_lemma_2 (ε : Fin n → Bool) {r : ℕ} (σ : Fin 
     (hw : w ≠ 0) : 0 < (hJ ε w w).re := by
   rw [hJ_self_re]
   obtain ⟨i, hi⟩ : ∃ i, w i ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hw (funext h)
   have hεi : ε i = true := by
     cases hj : ε i
@@ -989,7 +936,7 @@ private theorem pos_of_vanish_lemma_2 (ε : Fin n → Bool) {r : ℕ} (σ : Fin 
       exact (hi (by rw [← hk]; exact hw0 k)).elim
     · rfl
   calc (0 : ℝ) < (if ε i then (1 : ℝ) else -1) * Complex.normSq (w i) := by
-        rw [if_pos hεi, one_mul]
+        rw [ite_eq_left hεi, one_mul]
         exact Complex.normSq_pos.mpr hi
     _ ≤ ∑ j, (if ε j then (1 : ℝ) else -1) * Complex.normSq (w j) :=
         Finset.single_le_sum (fun j _ => nonneg_term_lemma ε σ hσ w hw0 j) (Finset.mem_univ i)
@@ -1038,7 +985,7 @@ theorem pos_of_perp (ε : Fin n → Bool) {r : ℕ} (σ : Fin (r + 1) → Fin n)
     rw [hv, hJ_sum_smul_left, Complex.re_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hJ_sum_smul_right]
-    simp only [hG, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hG, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     exact re_star_mul_mul _ _
   have hterm : ∀ k, Complex.normSq (g k) * (D k).re ≤ 0 := by
     intro k
@@ -1135,14 +1082,14 @@ theorem gs_step (ε : Fin n → Bool) {r k : ℕ} (hn : n = 2 * r + k + 1) (σ :
   refine ⟨Fin.cons ((((Real.sqrt s)⁻¹ : ℝ) : ℂ) • y) w, ?_, ?_⟩
   · intro a b
     refine Fin.cases ?_ (fun a' => ?_) a <;> refine Fin.cases ?_ (fun b' => ?_) b
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
       simp only [Fin.cons_zero, hJ_smul_left, hJ_smul_right]
       rw [mul_left_comm]
       exact hμ
-    · rw [if_neg (Fin.succ_ne_zero b').symm]
+    · rw [ite_eq_right (Fin.succ_ne_zero b').symm]
       simp only [Fin.cons_zero, Fin.cons_succ, hJ_smul_left, hJ_conj ε (w b') y, hwy, star_zero,
         mul_zero]
-    · rw [if_neg (Fin.succ_ne_zero a')]
+    · rw [ite_eq_right (Fin.succ_ne_zero a')]
       simp only [Fin.cons_zero, Fin.cons_succ, hJ_smul_right, hwy, mul_zero]
     · simp only [Fin.cons_succ, Fin.succ_inj]
       exact hwo a' b'
@@ -1281,10 +1228,6 @@ theorem chkScPsiExists (h : PI.ScPsiExists.Target) (D : Formalism.BasicNotions.D
 
 end Formalism.L2.SG.Closed.ScPsi
 
-namespace Formalism.L2.SG.Closed.ScGap
-
-end Formalism.L2.SG.Closed.ScGap
-
 namespace Formalism.L2.SG.Closed.ScMu
 
 noncomputable section
@@ -1292,8 +1235,6 @@ noncomputable section
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.SplitPrimeNormLemmas
 open scoped InnerProductSpace TensorProduct Classical ENNReal
 open Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace ChkScMu
 
@@ -1349,8 +1290,6 @@ noncomputable section
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.SplitPrimeNormLemmas
 open scoped InnerProductSpace TensorProduct Classical ENNReal
 open Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace ChkScRef
 
@@ -1420,8 +1359,6 @@ noncomputable section
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.SplitPrimeNormLemmas
 open scoped InnerProductSpace TensorProduct Classical ENNReal
 open Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace ChkScXu
 
@@ -1508,8 +1445,6 @@ noncomputable section
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.SplitPrimeNormLemmas
 open scoped InnerProductSpace TensorProduct Classical ENNReal
 open Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace ChkScPi
 
@@ -1642,8 +1577,6 @@ theorem BunExists_holds (D : D7) : BunExists D :=
 
 theorem CoefWeightedLoc_holds [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] : CoefWeightedLoc := Fact.out
 
-
-theorem WlocExists_holds : WlocExists := scWlocExists Formalism.L2.SG.HCReprodM.hcReprodDSm
 
 end Formalism.L2.SG.Closed
 end -- clump:auto

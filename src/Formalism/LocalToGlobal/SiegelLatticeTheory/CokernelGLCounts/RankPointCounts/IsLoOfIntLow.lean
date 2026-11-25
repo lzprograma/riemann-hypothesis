@@ -81,11 +81,11 @@ theorem sign_transpose_twisted (s e : K) (cf : Fin (r + 1) → K) (Z : Matrix (F
   have hs := sgn_sq' (R := K) r
   by_cases hij : i = Fin.last r ∧ j = Fin.last r
   · obtain ⟨rfl, rfl⟩ := hij
-    rw [if_pos ⟨rfl, rfl⟩]
+    rw [ite_eq_left ⟨rfl, rfl⟩]
     simp only [Fin.val_last, Nat.sub_self, pow_zero]
     ring
   · have hji : ¬ (j = Fin.last r ∧ i = Fin.last r) := fun h => hij ⟨h.2, h.1⟩
-    rw [if_neg hij, if_neg hji]
+    rw [ite_eq_right hij, ite_eq_right hji]
     linear_combination (s * cf i * cf j * Z i j * (-1 : K) ^ (r - j.val)) * hs i
 
 theorem theta_move (cf cfi : Fin (r + 1) → K) (A : Matrix (Fin (r + 1)) (Fin (r + 1)) K) :
@@ -119,8 +119,6 @@ section Place
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut
   Formalism.L2.SG.LsDatumB Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.TupGlob
 open Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D)
 
@@ -290,8 +288,6 @@ section BadL
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut
   Formalism.L2.SG.LsDatumB Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.TupGlob
 open Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D)
 

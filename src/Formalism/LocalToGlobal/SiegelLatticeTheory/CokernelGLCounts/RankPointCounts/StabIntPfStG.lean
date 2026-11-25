@@ -34,10 +34,10 @@ theorem ptMat_mul_mono : ptMat p * mono (pinv p) (fun a => (cv p a)⁻¹) = 1 :=
   rw [mul_mono_apply _ (pinv_pinv p)]
   by_cases h : a = b
   · subst h
-    simp only [mono, if_true, Matrix.one_apply_eq]
+    simp only [mono, ite_true, Matrix.one_apply_eq]
     rw [cv_pinv]; exact mul_inv_cancel₀ (cv_ne p a)
   · have hne : pinv p b ≠ pinv p a := fun e => h (pinv_inj p e).symm
-    simp only [mono, hne, if_false, zero_mul, Matrix.one_apply_ne h]
+    simp only [mono, hne, ite_false, zero_mul, Matrix.one_apply_ne h]
 
 theorem ptMat_inv : (ptMat p)⁻¹ = mono (pinv p) (fun a => (cv p a)⁻¹) :=
   Matrix.inv_eq_right_inv (ptMat_mul_mono p)

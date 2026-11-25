@@ -20,7 +20,7 @@ def inclusionAlt : Matrix (Fin (n + 1)) (Fin n) R := of fun a b => if a = Fin.ca
 theorem extendOne_mul_inclusion (g : Matrix (Fin n) (Fin n) R) : blk1 g * inclusionAlt = inclusionAlt * g := by
   ext i j
   simp only [Matrix.mul_apply, inclusionAlt, of_apply, mul_ite, mul_one, mul_zero, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   induction i using Fin.lastCases with
   | last =>
     have hne : ∀ x : Fin n, ¬ (Fin.last n = Fin.castSucc x) := fun x hx => (Fin.castSucc_lt_last x).ne' hx
@@ -90,7 +90,7 @@ theorem ext_general {E : Type} [Field E] (φ : E →+* R) {N : ℕ} (hN : n + 1 
     ext a b
     change (∑ k : Fin (n + 1), B a k * inclusionAlt k b) = A a b
     simp only [hBdef, inclusionAlt, of_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, Fin.coe_castSucc, b.isLt, dif_pos]
+      Finset.mem_univ, ite_true, Fin.coe_castSucc, b.isLt, dite_eq_left]
   have hBz : B *ᵥ Pi.single (Fin.last n) 1 = z := by
     rw [Matrix.mulVec_single_one]
     funext a

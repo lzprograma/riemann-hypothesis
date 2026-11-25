@@ -1,44 +1,6 @@
 module
 
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmBpAtEqOfShiftR
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBP
 
 @[expose] public section
@@ -49,7 +11,7 @@ open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.TBB Formalism.QuantumDe
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 def uPlus (u : ℕ → ℝ) (l n₀ : ℕ) : ℕ → ℝ := fun i => if i = l + 1 then u i + n₀ else u i
 
@@ -113,11 +75,11 @@ theorem okPlus (P : M.Par) (l n₀ : ℕ) (hOK : P.OK) (hu : P.u = P.u') (hl1 : 
   · obtain ⟨n, hn⟩ := hOK.int_u' i hi
     by_cases h : i = l + 1
     · refine ⟨n + n₀, ?_⟩
-      simp only [shP, uPlus, if_pos h]
+      simp only [shP, uPlus, ite_eq_left h]
       push_cast
       linarith
     · refine ⟨n, ?_⟩
-      simp only [shP, uPlus, if_neg h]
+      simp only [shP, uPlus, ite_eq_right h]
       exact hn
   · have hg := hOK.gap i hi
     simp only [Formalism.FourierDecayAlt.M.Par.lo, Formalism.FourierDecayAlt.M.Par.hi, shP, uPlus] at hg ⊢
@@ -125,13 +87,13 @@ theorem okPlus (P : M.Par) (l n₀ : ℕ) (hOK : P.OK) (hu : P.u = P.u') (hl1 : 
     simp only [max_self, min_self] at hg
     by_cases h1 : i = l
     · subst h1
-      simp only [if_true, show ¬ (i = i + 1) by omega, if_false]
+      simp only [ite_true, show ¬ (i = i + 1) by omega, ite_false]
       exact key _ _ _ _ (by linarith) (by linarith) (by linarith) (by linarith)
     · by_cases h2 : i = l + 1
       · subst h2
-        simp only [show ¬ (l + 1 + 1 = l + 1) by omega, if_false, if_true]
+        simp only [show ¬ (l + 1 + 1 = l + 1) by omega, ite_false, ite_true]
         exact key _ _ _ _ (by linarith) (by linarith) (by linarith) (by linarith)
-      · simp only [show ¬ (i + 1 = l + 1) by omega, if_false, if_neg h2]
+      · simp only [show ¬ (i + 1 = l + 1) by omega, ite_false, ite_eq_right h2]
         exact key _ _ _ _ (by linarith) (by linarith) (by linarith) (by linarith)
 
 theorem okMinus (P : M.Par) (l n₀ : ℕ) (hOK : P.OK) (hu : P.u = P.u') (hl1 : 1 ≤ l) (hlk : l < P.k)
@@ -148,11 +110,11 @@ theorem okMinus (P : M.Par) (l n₀ : ℕ) (hOK : P.OK) (hu : P.u = P.u') (hl1 :
   · obtain ⟨n, hn⟩ := hOK.int_u' i hi
     by_cases h : i = l
     · refine ⟨n - n₀, ?_⟩
-      simp only [shP, uMinus, if_pos h]
+      simp only [shP, uMinus, ite_eq_left h]
       push_cast
       linarith
     · refine ⟨n, ?_⟩
-      simp only [shP, uMinus, if_neg h]
+      simp only [shP, uMinus, ite_eq_right h]
       exact hn
   · have hg := hOK.gap i hi
     simp only [Formalism.FourierDecayAlt.M.Par.lo, Formalism.FourierDecayAlt.M.Par.hi, shP, uMinus] at hg ⊢
@@ -160,13 +122,13 @@ theorem okMinus (P : M.Par) (l n₀ : ℕ) (hOK : P.OK) (hu : P.u = P.u') (hl1 :
     simp only [max_self, min_self] at hg
     by_cases h1 : i = l
     · subst h1
-      simp only [if_true, show ¬ (i + 1 = i) by omega, if_false]
+      simp only [ite_true, show ¬ (i + 1 = i) by omega, ite_false]
       exact key _ _ _ _ (by linarith) (by linarith) (by linarith) (by linarith)
     · by_cases h2 : i + 1 = l
       · subst h2
-        simp only [show ¬ (i = i + 1) by omega, if_false, if_true]
+        simp only [show ¬ (i = i + 1) by omega, ite_false, ite_true]
         exact key _ _ _ _ (by linarith) (by linarith) (by linarith) (by linarith)
-      · simp only [if_neg h1, if_neg h2]
+      · simp only [ite_eq_right h1, ite_eq_right h2]
         exact key _ _ _ _ (by linarith) (by linarith) (by linarith) (by linarith)
 
 end

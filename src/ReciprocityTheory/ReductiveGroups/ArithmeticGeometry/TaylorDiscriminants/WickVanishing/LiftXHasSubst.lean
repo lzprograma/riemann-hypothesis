@@ -7,8 +7,6 @@ import Std.Tactic.BVDecide.Normalize.Bool
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ

@@ -32,9 +32,9 @@ theorem hpk_row (i m : Fin (2 * r + k + 1)) :
 theorem hpk_mul_apply (A : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
     (i j : Fin (2 * r + k + 1)) : (Hpk k r * A) i j = sgn k r i * A (tau k r i) j := by
   rw [Matrix.mul_apply, Finset.sum_eq_single (tau k r i)]
-  · rw [hpk_row, if_pos rfl]
+  · rw [hpk_row, ite_eq_left rfl]
   · intro m _ hm
-    rw [hpk_row, if_neg hm, zero_mul]
+    rw [hpk_row, ite_eq_right hm, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -89,36 +89,22 @@ theorem gr_isClosed : IsClosed (Gr k r) := by
   exact isClosed_singleton.preimage
     (((continuous_id.matrix_conjTranspose).matrix_mul continuous_const).matrix_mul continuous_id)
 
-theorem opn_nonneg (M : Mat k r) : 0 ≤ opn M := norm_nonneg _
+section
+open scoped Matrix.Norms.L2Operator
 
-theorem opn_mul (A B : Mat k r) : opn (A * B) ≤ opn A * opn B := by
-  unfold opn
-  rw [map_mul]
-  exact norm_mul_le _ _
+theorem opn_nonneg (M : Mat k r) : 0 ≤ opn M := norm_nonneg M
 
-theorem opn_conjTranspose (A : Mat k r) : opn Aᴴ = opn A := by
-  unfold opn
-  rw [← Matrix.star_eq_conjTranspose, map_star, norm_star]
+theorem opn_mul (A B : Mat k r) : opn (A * B) ≤ opn A * opn B := norm_mul_le A B
 
-local instance instAlgCLM (n : ℕ) :
-    Algebra ℂ (EuclideanSpace ℂ (Fin n) →L[ℂ] EuclideanSpace ℂ (Fin n)) := ContinuousLinearMap.algebra
+theorem opn_conjTranspose (A : Mat k r) : opn Aᴴ = opn A := norm_star A
 
-theorem opn_continuous : Continuous (fun M : Mat k r => opn M) := by
-  unfold opn
-  letI : SMul ℂ (Mat k r) := (Pi.module _ _ ℂ).toSMul
-  letI : Module ℂ (Mat k r) := Pi.module _ _ ℂ
-  letI : Module ℂ (EuclideanSpace ℂ (Fin (2 * r + k + 1)) →L[ℂ]
-      EuclideanSpace ℂ (Fin (2 * r + k + 1))) := ContinuousLinearMap.module
-  letI : ContinuousSMul ℂ (Mat k r) := ⟨by
-    apply continuous_pi; intro i
-    apply continuous_pi; intro j
-    exact continuous_fst.mul ((continuous_apply j).comp ((continuous_apply i).comp continuous_snd))⟩
-  let f : Mat k r →ₗ[ℂ] (EuclideanSpace ℂ (Fin (2 * r + k + 1)) →L[ℂ]
-      EuclideanSpace ℂ (Fin (2 * r + k + 1))) :=
-    (Matrix.toEuclideanCLM (n := Fin (2 * r + k + 1)) (𝕜 := ℂ)).toAlgEquiv.toLinearEquiv.toLinearMap
-  have h : Continuous f := ContinuousLinearMap.continuous_of_continuous_uncurry f
-    Matrix.continuous_uncurry_toEuclideanCLM
-  exact continuous_norm.comp h
+theorem opn_continuous : Continuous (fun M : Mat k r => opn M) :=
+  continuous_norm (E := Mat k r)
+
+theorem opn_pos {g : Mat k r} (hg : g ∈ Gr k r) : 0 < opn g :=
+  show 0 < ‖g‖ from norm_pos_iff.mpr ((Matrix.isUnit_iff_isUnit_det g).2 (gr_isUnit hg)).ne_zero
+
+end
 
 theorem opn_inv_le {g : Mat k r} (hg : g ∈ Gr k r) :
     opn g⁻¹ ≤ opn (Hpk k r) * opn (Hpk k r) * opn g := by
@@ -134,17 +120,6 @@ theorem opn_le_mul_inv (y : Mat k r) {t : Mat k r} (ht : t ∈ Gr k r) :
     rw [Matrix.mul_assoc, Matrix.mul_nonsing_inv _ (gr_isUnit ht), Matrix.mul_one]
   calc opn y = opn (y * t * t⁻¹) := by rw [← this]
     _ ≤ _ := opn_mul _ _
-
-theorem opn_pos {g : Mat k r} (hg : g ∈ Gr k r) : 0 < opn g := by
-  rcases (opn_nonneg g).lt_or_eq with h | h
-  · exact h
-  · exfalso
-    have h1 : opn (1 : Mat k r) ≤ opn g * opn g⁻¹ := by
-      rw [← Matrix.mul_nonsing_inv _ (gr_isUnit hg)]; exact opn_mul _ _
-    rw [← h, zero_mul] at h1
-    have h2 : opn (1 : Mat k r) = 1 := by
-      unfold opn; rw [map_one]; exact norm_one
-    linarith
 
 theorem nilradical_half_sum_nonneg : 0 ≤ N1H k r := by unfold N1H; positivity
 

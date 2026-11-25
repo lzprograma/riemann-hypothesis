@@ -31,7 +31,7 @@ namespace CompanionTheory.D.gk.FinalFormK
 open PI CompanionTheory.D.Upq.ModEx CompanionTheory.D.Upq.Sm CompanionTheory.D.gk.Poul CompanionTheory.Zuck BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData
 open PI.UpqRep (InLieHpk)
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem dense_sm' {n : ℕ} {G : Set (Mat n)} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] {σ : Mat n → (H →L[ℂ] H)} (hG : IsMatGroup G) (θ : Mat n →L[ℝ] Mat n)
@@ -111,7 +111,7 @@ theorem etaleClosed_point_lifts_simple_roots_monic : Lift := by
   intro k r X T f hX ⟨C, Ws, hW, hb⟩ hf
   let t : X.1.ι → X.2.R.H → T.R.H := fun c v =>
     if hv : IsSm (GG k r) X.2.R.σ v then f (Pi.single c ⟨v, hv⟩) else 0
-  have ht : ∀ c (v : X.2.R.smSub), t c v = f (Pi.single c v) := fun c v => dif_pos v.2
+  have ht : ∀ c (v : X.2.R.smSub), t c v = f (Pi.single c v) := fun c v => dite_eq_left v.2
   have htw : TwInt (GG k r) (InLieHpk k r) X.2.R.σ T.R.σ (fun g c d => X.1.ρ g d c) t :=
     { lin := fun c => ⟨fun v w hv hw => by
           rw [ht c ⟨v, hv⟩, ht c ⟨w, hw⟩, ← map_add (f := _), ← Pi.single_add]
@@ -435,7 +435,7 @@ theorem injectivity_induction : InjStep := by
             (⟪w, X.2.R.σ g.mat w⟫_ℂ * ⟪w, X.2.R.σ (g⁻¹).mat (x d)⟫_ℂ) := fun d => by
         rw [← h2, Matrix.mul_apply, Finset.sum_mul]
         exact Finset.sum_congr rfl fun b _ => by ring
-      simp only [h3, Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [h3, Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     have h2 := hS w w w (x c)
     simp only [h1] at h2
     rw [integral_finsetSum _ fun b _ => (h0 b).1] at h2

@@ -1,52 +1,7 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Descent
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.JointEigenspace
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -58,6 +13,22 @@ open scoped InnerProductSpace
 namespace PositivityTheory.RgHe3
 
 open ReciprocityTheory.ChartRestriction.DS
+
+private theorem commute_E_casimir_of_isGlRep {n : ℕ} {M : Type}
+    [NormedAddCommGroup M] [InnerProductSpace ℂ M]
+    {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E) (c d : Fin n) :
+    Commute (E c d) (casimir E) := by
+  have key : ∀ a b, E c d * (E a b * E b a) - E a b * E b a * E c d =
+      ((if d = a then E c b else 0) - (if b = c then E a d else 0)) * E b a +
+        E a b * ((if d = b then E c a else 0) - (if a = c then E b d else 0)) := by
+    intro a b
+    rw [← hE c d a b, ← hE c d b a]
+    noncomm_ring
+  show E c d * casimir E = casimir E * E c d
+  rw [← sub_eq_zero, casimir, Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
+  simp only [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib, key]
+  simp [sub_mul, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib, ite_mul,
+    mul_ite]
 
 namespace CompactOperatorsAlt
 
@@ -93,7 +64,7 @@ theorem glRep_diag {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E) (
   by_cases hca : c = a
   · subst hca
     rfl
-  · rw [if_neg hca, if_neg (Ne.symm hca), sub_zero] at h
+  · rw [ite_eq_right hca, ite_eq_right (Ne.symm hca), sub_zero] at h
     exact sub_eq_zero.mp h
 
 theorem sum_adj (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) :
@@ -119,27 +90,15 @@ theorem Qop_eq (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) 
     intro b
     split_ifs with h
     · subst h
-      simp only [adjSign, if_true, one_smul]
+      simp only [adjSign, ite_true, one_smul]
       abel
     · simp
-  simp only [key, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [key, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem comm_casimir_casimirK {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E) (ε : Fin n → Bool) :
-    Commute (casimirK ε E) (casimir E) := by
-  have hc : ∀ c d, Commute (E c d) (casimir E) := by
-    intro c d
-    have key : ∀ a b, E c d * (E a b * E b a) - E a b * E b a * E c d =
-        ((if d = a then E c b else 0) - (if b = c then E a d else 0)) * E b a +
-          E a b * ((if d = b then E c a else 0) - (if a = c then E b d else 0)) := by
-      intro a b
-      rw [← hE c d a b, ← hE c d b a]
-      noncomm_ring
-    show E c d * casimir E = casimir E * E c d
-    rw [← sub_eq_zero, casimir, Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
-    simp only [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib, key]
-    simp [sub_mul, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib, ite_mul,
-      mul_ite]
-  exact Commute.sum_left _ _ _ fun a _ => Commute.sum_left _ _ _ fun b _ => (hc a b).mul_left (hc b a)
+    Commute (casimirK ε E) (casimir E) :=
+  Commute.sum_left _ _ _ fun a _ => Commute.sum_left _ _ _ fun b _ =>
+    (commute_E_casimir_of_isGlRep hE a b).mul_left (commute_E_casimir_of_isGlRep hE b a)
 
 theorem comm_Qop {E : Fin n → Fin n → Module.End ℂ M} (ε : Fin n → Bool) (μ : Fin n → ℝ)
     (A : Module.End ℂ M) (hA1 : Commute A (casimirK ε E)) (hA2 : Commute A (casimir E)) (hA3 : ∀ a, Commute A (E a a)) :
@@ -175,21 +134,6 @@ def Aop (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) : Optio
   | some c => E c c
 
 end CompactOperatorsAlt
-
-private theorem commute_E_casimir_of_isGlRep {n : ℕ} {M : Type} [NormedAddCommGroup M] [InnerProductSpace ℂ M]
-    {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E) (c d : Fin n) :
-    Commute (E c d) (casimir E) := by
-  have key : ∀ a b, E c d * (E a b * E b a) - E a b * E b a * E c d =
-      ((if d = a then E c b else 0) - (if b = c then E a d else 0)) * E b a +
-        E a b * ((if d = b then E c a else 0) - (if a = c then E b d else 0)) := by
-    intro a b
-    rw [← hE c d a b, ← hE c d b a]
-    noncomm_ring
-  show E c d * casimir E = casimir E * E c d
-  rw [← sub_eq_zero, casimir, Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
-  simp only [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib, key]
-  simp [sub_mul, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib, ite_mul,
-    mul_ite]
 
 private theorem commute_E_diag_E_mul_E_of_isGlRep {n : ℕ} {M : Type} [NormedAddCommGroup M] [InnerProductSpace ℂ M]
     {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E) (c a b : Fin n) :
@@ -316,8 +260,7 @@ theorem comp_proof : SqId → Comp := by
       exact heig χ (some a)
     · rw [real_of_eigen (hsa _) (heig χ none) (hne χ hχ)]
       exact heig χ none
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hlt : ∀ χ ∈ s, S * ‖c χ‖ ^ 2 < qf E μ (c χ) := fun χ hχ => hcon _ _ _ (hgood χ hχ)
   have hsne : s.Nonempty := by
     rw [Finset.nonempty_iff_ne_empty]

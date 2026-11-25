@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAutomorphicSideEmptyLocal
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SpanRangeEqTopOfIsIrreducible
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroWeightTensorIntertwiningAutRep
@@ -365,8 +366,7 @@ private lemma isot_factor {G H W W' X Y : Type} [Group G] [Group H] [AddCommGrou
     Isot κ' τ := by
   obtain ⟨w0, hw0⟩ := _root_.exists_ne (0 : W)
   obtain ⟨φ, hφ⟩ : ∃ φ : Module.Dual ℂ W, φ w0 ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hw0 ((Module.forall_dual_apply_eq_zero_iff ℂ w0).1 hcon)
   let p : X →ₗ[ℂ] Y := (TensorProduct.lid ℂ Y).toLinearMap ∘ₗ
     (TensorProduct.map φ LinearMap.id) ∘ₗ f.symm.toLinearMap
@@ -870,7 +870,7 @@ private theorem span_pi {I : Type} [Finite I] {M : I → Type} [∀ i, AddCommGr
   have hm : S.mkQ.compMultilinearMap (PiTensorProduct.mapMultilinear ℂ M M) = 0 := by
     refine MultilinearMap.ext_of_span_eq_top (g := fun i (x : H i) => ρ i x) h fun y => ?_
     obtain ⟨x, hx, hx'⟩ := hx y Finset.univ
-    simp only [Finset.mem_univ, if_true] at hx'
+    simp only [Finset.mem_univ, ite_true] at hx'
     refine (Submodule.Quotient.mk_eq_zero S).2 (Submodule.subset_span ⟨⟨x, hx⟩, ?_⟩)
     simp only [hx']
     rfl
@@ -1283,27 +1283,8 @@ theorem UpperTheory.Reformulated.B.Ra6.irr_iff :
     ρ.IsIrreducible ↔
       Nontrivial W ∧
         ∀ (N : Submodule ℂ W), (∀ (g : G), ∀ v ∈ N, ((ρ : G → W →ₗ[ℂ] W) g : W → W) v ∈ N) → N = ⊥ ∨ N = ⊤ := by
-  intro G W _ _ _ ρ
-  constructor
-  · intro h
-    have h' : IsSimpleOrder (Subrepresentation ρ) := h
-    refine ⟨?_, fun N hN => ?_⟩
-    · have hne : (⊥ : Submodule ℂ W) ≠ ⊤ := fun e =>
-        (bot_ne_top (α := Subrepresentation ρ)) (Subrepresentation.toSubmodule_injective e)
-      exact (Submodule.nontrivial_iff ℂ).mp ⟨⊥, ⊤, hne⟩
-    · rcases h'.eq_bot_or_eq_top ⟨N, fun g v hv => hN g v hv⟩ with e | e
-      · exact Or.inl (congrArg Subrepresentation.toSubmodule e)
-      · exact Or.inr (congrArg Subrepresentation.toSubmodule e)
-  · rintro ⟨hW, h⟩
-    have hne : (⊥ : Subrepresentation ρ) ≠ ⊤ := fun e =>
-      (bot_ne_top (α := Submodule ℂ W)) (congrArg Subrepresentation.toSubmodule e)
-    have h' : IsSimpleOrder (Subrepresentation ρ) :=
-      { exists_pair_ne := ⟨⊥, ⊤, hne⟩
-        eq_bot_or_eq_top := fun σ =>
-          (h σ.toSubmodule fun g v hv => σ.apply_mem_toSubmodule g hv).imp
-            (fun e => Subrepresentation.toSubmodule_injective e)
-            (fun e => Subrepresentation.toSubmodule_injective e) }
-    exact h'
+  intros
+  apply _root_.GlobalTheory.SubrepTopBot.main <;> assumption
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IrrIff =====

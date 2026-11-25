@@ -26,7 +26,7 @@ namespace CompanionTheory.D.gk.Poul
 
 open PI CompanionTheory.D.Upq.ModEx CompanionTheory.D.Upq.Sm CompanionTheory.D.gk.admitted CompanionTheory.D.gk.admitted.Gard
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {G : Set (Mat n)} {hG : IsMatGroup G}
 

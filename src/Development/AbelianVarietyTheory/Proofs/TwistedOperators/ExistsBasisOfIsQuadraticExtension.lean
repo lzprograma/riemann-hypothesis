@@ -48,6 +48,7 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.HermitianHassePrincipleHolds
 
 @[expose] public section
 
@@ -62,20 +63,7 @@ theorem exists_basis_of_isQuadraticExtension (K L : Type) [Field K] [CharZero K]
 
 theorem exists_completion_hom_real {K : Type} [Field K] (σ : K →+* ℝ) :
     ∃ (w : InfinitePlace K) (f : w.Completion →+* ℝ), ∀ x : K, f (algebraMap K w.Completion x) = σ x := by
-  have hφ : ComplexEmbedding.IsReal (Complex.ofRealHom.comp σ) := by
-    rw [ComplexEmbedding.isReal_iff]
-    ext x
-    simp
-  have hw : (InfinitePlace.mk (Complex.ofRealHom.comp σ)).IsReal := InfinitePlace.isReal_mk_iff.2 hφ
-  refine ⟨_, InfinitePlace.Completion.extensionEmbeddingOfIsReal hw, fun x => ?_⟩
-  have he := InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw
-    ((WithAbs.equiv _).symm x)
-  rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
-    Algebra.algebraMap_self_apply]
-  refine Eq.trans he ?_
-  apply Complex.ofReal_injective
-  rw [InfinitePlace.embedding_of_isReal_apply, InfinitePlace.embedding_mk_eq_of_isReal hφ]
-  simp
+  apply _root_.GlobalTheory.HermGlobal.exists_real_extension <;> assumption
 
 theorem normTheorem : ∀ (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
     [Algebra.IsQuadraticExtension K L], NormTheorem K L := by

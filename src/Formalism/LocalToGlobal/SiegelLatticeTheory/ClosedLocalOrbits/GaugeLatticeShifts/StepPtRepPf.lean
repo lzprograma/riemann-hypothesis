@@ -19,8 +19,6 @@ open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting
 
 namespace PtRepPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem hJ_crd (v : InfinitePlace X.B.I.F) (x y : (VS D).V) :
@@ -81,7 +79,7 @@ theorem real_point_representative_diagonal : _root_.Formalism.L2.SG.RealObj.InfC
   have hloc := fun v => locMain (frU X u v) (frU X u' v) rfl (i0 v) (ZhatO (ptC X v w)) (hw v) sc hsc
   choose g hgZ φ hφ hD using hloc
   have hω : ∀ v, hJ (X.B.I.ε v) (X.wfr u' v (i0 v)) (X.wfr u' v (i0 v)) = 1 := fun v => by
-    rw [X.wfr_on, if_pos rfl]
+    rw [X.wfr_on, ite_eq_left rfl]
   refine ⟨g, fun v => ?_, 1, fun v => rotU (X.B.I.ε v) (X.wfr u' v (i0 v)) (hω v) (φ v) (hφ v), ?_, ?_, ?_⟩
   · show ZhatO (Zhat (X.B.I.ε v) (frm X u 1 v) (frm X u' 1 v) (uMat (g v))) = ptC X v w
     simp only [frm, famSc_one]

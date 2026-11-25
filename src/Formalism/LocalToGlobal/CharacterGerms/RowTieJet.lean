@@ -219,35 +219,8 @@ theorem rtj_mfact_embDomain (e : σ ↪ τ) (m : σ →₀ ℕ) : mfact (Finsupp
   unfold mfact
   exact Finsupp.prod_embDomain (g := fun (_ : τ) (k : ℕ) => k.factorial)
 
-private theorem coeff_embDomain_rename_character_germs (e : σ ↪ τ) (F : MvPowerSeries σ K) (d : σ →₀ ℕ) :
-    MvPowerSeries.coeff (Finsupp.embDomain e d) (MvPowerSeries.rename e F) = MvPowerSeries.coeff d F := by
-  rw [MvPowerSeries.coeff_rename, Finset.sum_eq_single_of_mem d]
-  · simp [Finsupp.embDomain_eq_mapDomain]
-  · intro y hy hne
-    exfalso
-    apply hne
-    simp only [Set.Finite.mem_toFinset, Set.mem_preimage, Set.mem_singleton_iff, Finsupp.embDomain_eq_mapDomain] at hy
-    exact Finsupp.mapDomain_injective e.injective hy
-
-private theorem coeff_rename_eq_zero_of_ne_embDomain (e : σ ↪ τ) (F : MvPowerSeries σ K) (x : τ →₀ ℕ)
-    (hx : ∀ d, Finsupp.embDomain e d ≠ x) : MvPowerSeries.coeff x (MvPowerSeries.rename e F) = 0 := by
-  rw [MvPowerSeries.coeff_rename]
-  refine Finset.sum_eq_zero fun y hy => ?_
-  simp only [Set.Finite.mem_toFinset, Set.mem_preimage, Set.mem_singleton_iff] at hy
-  exact absurd (by rw [Finsupp.embDomain_eq_mapDomain]; exact hy) (hx y)
-
 theorem rtj_jet_rename (e : σ ↪ τ) (P : MvPolynomial σ K) (F : MvPowerSeries σ K) :
     jetAt0 (MvPolynomial.rename e P) (MvPowerSeries.rename e F) = jetAt0 P F := by
-  have hkey : ∀ d : σ →₀ ℕ, MvPowerSeries.coeff (Finsupp.embDomain e d) (MvPowerSeries.rename e F) =
-      MvPowerSeries.coeff d F := by
-    intro d
-    rw [MvPowerSeries.coeff_rename, Finset.sum_eq_single_of_mem d]
-    · simp [Finsupp.embDomain_eq_mapDomain]
-    · intro y hy hne
-      exfalso
-      apply hne
-      simp only [Set.Finite.mem_toFinset, Set.mem_preimage, Set.mem_singleton_iff, Finsupp.embDomain_eq_mapDomain] at hy
-      exact Finsupp.mapDomain_injective e.injective hy
   have hsupp : (MvPolynomial.rename e P).support ⊆ P.support.image (Finsupp.embDomain e) := by
     intro m hm
     obtain ⟨u, hu, hne⟩ := MvPolynomial.coeff_rename_ne_zero (⇑e) P m (MvPolynomial.mem_support_iff.mp hm)
@@ -259,7 +232,8 @@ theorem rtj_jet_rename (e : σ ↪ τ) (P : MvPolynomial σ K) (F : MvPowerSerie
     exact Finsupp.embDomain_injective e h)]
   unfold jetAt0
   refine Finset.sum_congr rfl fun d _ => ?_
-  rw [MvPolynomial.coeff_rename_embDomain, rtj_mfact_embDomain, hkey]
+  rw [MvPolynomial.coeff_rename_embDomain, rtj_mfact_embDomain,
+    MvPowerSeries.coeff_embDomain_rename]
 
 theorem rtj_serIn_rename (e : σ ↪ τ) (F : MvPowerSeries σ K) :
     rtjSerIn (Set.range e) (MvPowerSeries.rename e F) := by
@@ -287,22 +261,21 @@ theorem rtj_degree_embDomain (e : σ ↪ τ) (μ : σ →₀ ℕ) : (Finsupp.emb
 theorem rtj_rename_mvExp (e : σ ↪ τ) (L : MvPowerSeries σ K) :
     MvPowerSeries.rename e (mvExp L) = mvExp (MvPowerSeries.rename e L) := by
   ext x
-  by_cases hx : ∃ d, Finsupp.embDomain e d = x
+  by_cases hx : x ∈ Set.range (Finsupp.mapDomain e)
   · obtain ⟨d, rfl⟩ := hx
-    rw [coeff_embDomain_rename_character_germs]
+    rw [← Finsupp.embDomain_eq_mapDomain, MvPowerSeries.coeff_embDomain_rename]
     change (∑ k ∈ Finset.range (Finsupp.degree d + 1), MvPowerSeries.coeff d (L ^ k) / (k.factorial : K)) =
       ∑ k ∈ Finset.range (Finsupp.degree (Finsupp.embDomain e d) + 1),
         MvPowerSeries.coeff (Finsupp.embDomain e d) ((MvPowerSeries.rename e L) ^ k) / (k.factorial : K)
     rw [rtj_degree_embDomain]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [← map_pow, coeff_embDomain_rename_character_germs]
-  · push_neg at hx
-    rw [coeff_rename_eq_zero_of_ne_embDomain e _ x hx]
+    rw [← map_pow, MvPowerSeries.coeff_embDomain_rename]
+  · rw [MvPowerSeries.coeff_rename_eq_zero _ _ hx]
     change (0 : K) = ∑ k ∈ Finset.range (Finsupp.degree x + 1),
         MvPowerSeries.coeff x ((MvPowerSeries.rename e L) ^ k) / (k.factorial : K)
     symm
     refine Finset.sum_eq_zero fun k _ => ?_
-    rw [← map_pow, coeff_rename_eq_zero_of_ne_embDomain e _ x hx, zero_div]
+    rw [← map_pow, MvPowerSeries.coeff_rename_eq_zero _ _ hx, zero_div]
 
 theorem rtj_mvExp_zero : mvExp (0 : MvPowerSeries σ K) = 1 := by
   ext m

@@ -143,11 +143,4 @@ noncomputable def kummerExtensionGalEquiv :
 
 end Main
 
-section Converse
-
-variable (K : Type*) [Field K] (n : ℕ) [NeZero n] [HasEnoughRootsOfUnity K n]
-variable (Ω : Type*) [Field Ω] [Algebra K Ω]
-
-end Converse
-
 end GroundTheory.Global

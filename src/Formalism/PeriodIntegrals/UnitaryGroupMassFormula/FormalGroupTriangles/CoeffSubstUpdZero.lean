@@ -1,45 +1,7 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.SubstMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -88,13 +50,13 @@ theorem prod_upd_zero (k : σ) (d : σ →₀ ℕ) :
     (d.prod fun s e => (upd k (0 : MvPowerSeries σ K) s) ^ e) =
       if d k = 0 then MvPowerSeries.monomial d 1 else 0 := by
   by_cases h : d k = 0
-  · rw [if_pos h, MvPowerSeries.monomial_one_eq]
+  · rw [ite_eq_left h, MvPowerSeries.monomial_one_eq]
     refine Finsupp.prod_congr fun s hs => ?_
     have hsk : s ≠ k := by
       rintro rfl
       exact (Finsupp.mem_support_iff.1 hs) h
     rw [upd_ne _ hsk]
-  · rw [if_neg h, Finsupp.prod]
+  · rw [ite_eq_right h, Finsupp.prod]
     refine Finset.prod_eq_zero (i := k) (Finsupp.mem_support_iff.2 h) ?_
     try dsimp only
     rw [upd_self, zero_pow h]
@@ -104,7 +66,7 @@ theorem coeff_subst_upd_zero (k : σ) (f : MvPowerSeries σ K) (m : σ →₀ �
   have ha := hasSubst_upd k (t := (0 : MvPowerSeries σ K)) (map_zero _)
   rw [MvPowerSeries.coeff_subst ha, finsum_eq_single _ m]
   · try dsimp only
-    rw [prod_upd_zero, if_pos hm, MvPowerSeries.coeff_monomial_same, smul_eq_mul, mul_one]
+    rw [prod_upd_zero, ite_eq_left hm, MvPowerSeries.coeff_monomial_same, smul_eq_mul, mul_one]
   · intro d hd
     try dsimp only
     rw [prod_upd_zero]

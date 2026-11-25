@@ -5,8 +5,6 @@ import Mathlib.Algebra.Order.Star.Rat
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset Equiv Comb
@@ -51,7 +49,7 @@ theorem CombStripSum.proof (h1 : CombCfAtStair.Statement) (h2 : CombSortShift.St
       have e3 : ∀ k, l k = Function.update l i (l i - q) k + if k = i then q else 0 := by
         intro k
         by_cases hk : k = i
-        · subst hk; simp only [Function.update_self, if_true]; omega
+        · subst hk; simp only [Function.update_self, ite_true]; omega
         · simp [hk]
       have e2 : ∑ k, l k = ∑ k, Function.update l i (l i - q) k + q := by
         rw [Finset.sum_congr rfl (fun k _ => e3 k), Finset.sum_add_distrib, Finset.sum_ite_eq']
@@ -88,12 +86,12 @@ theorem CombStripSum.proof (h1 : CombCfAtStair.Statement) (h2 : CombSortShift.St
     refine Finset.sum_congr rfl fun i _ => ?_
     by_cases hqi : q ≤ l i
     · by_cases hinj : Function.Injective (Function.update l i (l i - q))
-      · rw [if_pos hqi, if_pos ⟨hqi, hinj⟩, (hμs i ⟨hqi, hinj⟩).2.1]
-      · rw [if_pos hqi, if_neg (fun h => hinj h.2)]
+      · rw [ite_eq_left hqi, ite_eq_left ⟨hqi, hinj⟩, (hμs i ⟨hqi, hinj⟩).2.1]
+      · rw [ite_eq_left hqi, ite_eq_right (fun h => hinj h.2)]
         simp only [Function.Injective, not_forall] at hinj
         obtain ⟨a, b, hab, hne⟩ := hinj
         rw [cf_eq_zero_of_eq hAlt hne hab, abs_zero]
-    · rw [if_neg hqi, if_neg (fun h => hqi h.1)]
+    · rw [ite_eq_right hqi, ite_eq_right (fun h => hqi h.1)]
   rw [hsum_eq]
   have hcard : ∑ i ∈ S, (latticeWords n (μ i)).card ≤ (latticeWords (n + q) lam).card := by
     rw [← Finset.card_sigma]

@@ -26,59 +26,8 @@ public import Mathlib.MeasureTheory.Function.LocallyIntegrable
 public import Mathlib.Analysis.Calculus.Deriv.ZPow
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IdThmA
 public import Mathlib.Analysis.Calculus.FDeriv.Mul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Linter.Style
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFactsA
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiCasA
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IdThmB, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InfRightA, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ByParts, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DerivG, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiM, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiPart, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.TauPart, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LowMinusUpExpand, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InfRight, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsMInfNhd
@@ -333,8 +282,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 theorem kByParts {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -558,9 +505,9 @@ lemma contDiff_lead (i : ℕ) : ContDiff ℂ 1 (fun z : Matrix (Fin n) (Fin n) �
     | fun_prop
   unfold lead
   by_cases h : i ≤ n
-  · simp only [dif_pos h, Matrix.det_apply, Matrix.submatrix_apply, Units.smul_def, zsmul_eq_mul]
+  · simp only [dite_eq_left h, Matrix.det_apply, Matrix.submatrix_apply, Units.smul_def, zsmul_eq_mul]
     exact ContDiff.sum fun σ _ => contDiff_const.mul (contDiff_prod fun j _ => he _ _)
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     exact contDiff_const
 
 lemma contDiffAt_phiM (μ : Fin n → ℤ) {z : Matrix (Fin n) (Fin n) ℂ} (hz : z ∈ OmegaSet n) :
@@ -578,35 +525,15 @@ lemma continuousOn_fderiv_phiM (μ : Fin n → ℤ) : ContinuousOn (fderiv ℂ (
 lemma continuousOn_phiM (μ : Fin n → ℤ) : ContinuousOn (PhiM μ) (OmegaSet n) := by
   exact fun z hz => (contDiffAt_phiM μ hz).continuousAt.continuousWithinAt
 
-lemma continuous_toMK' : Continuous fun k : KG ε => toMK k := by
-  first
-    | fun_prop
-
-lemma continuous_toMK_inv : Continuous fun k : KG ε => toMK k⁻¹ := by
-  exact continuous_toMK'.comp continuous_inv
-
-lemma continuous_P (T : KType ε Λ) : Continuous fun k : KG ε => T.op k * projW T * T.op k⁻¹ := by
-  have hop : Continuous fun k : KG ε => T.op k := continuous_subtype_val.comp T.cont
-  exact (hop.mul continuous_const).mul (hop.comp continuous_inv)
-
 private lemma toMK_conjTranspose_mul_self (k : KG ε) : (toMK k)ᴴ * toMK k = 1 := by
   have h : toM (k : UJ ε) ∈ Kset ε := k.2
   obtain ⟨hU, -⟩ := h
   first
   | exact Unitary.star_mul_self_of_mem hU
 
-lemma toMK_inv_eq (k : KG ε) : toMK k⁻¹ = (toMK k)ᴴ := by
-  have hu : star (toMK k) * toMK k = 1 := toMK_conjTranspose_mul_self k
-  have hv : toMK k * toMK k⁻¹ = 1 := by
-    first
-    | exact Units.mul_inv _
-  calc toMK k⁻¹ = (star (toMK k) * toMK k) * toMK k⁻¹ := by rw [hu, Matrix.one_mul]
-    _ = star (toMK k) * (toMK k * toMK k⁻¹) := by rw [Matrix.mul_assoc]
-    _ = (toMK k)ᴴ := by rw [hv, Matrix.mul_one]; rfl
-
 lemma conj_mem_omega {x : Matrix (Fin n) (Fin n) ℂ} (hx : x.PosDef) (k : KG ε) :
     toMK k⁻¹ * x * toMK k ∈ OmegaSet n := by
-  rw [toMK_inv_eq]
+  rw [ReciprocityTheory.ChartRestriction.DS.S7.Ps1.toMK_inv_eq]
   have hinj : Function.Injective (toMK k).mulVec := fun v w h => by
     have h2 := congrArg (toMK k)ᴴ.mulVec h
     simpa [Matrix.mulVec_mulVec, toMK_conjTranspose_mul_self] using h2
@@ -614,7 +541,7 @@ lemma conj_mem_omega {x : Matrix (Fin n) (Fin n) ℂ} (hx : x.PosDef) (k : KG ε
   show ∀ i : Fin n, lead ((i : ℕ) + 1) ((toMK k)ᴴ * x * toMK k) ≠ 0
   intro i
   unfold lead
-  rw [dif_pos (show (i : ℕ) + 1 ≤ n from i.isLt)]
+  rw [dite_eq_left (show (i : ℕ) + 1 ≤ n from i.isLt)]
   first
   | exact (hP.submatrix (Fin.castLE_injective _)).det_pos.ne'
 
@@ -652,14 +579,14 @@ def Ek (T : KType ε Λ) (μ : Fin n → ℤ) (x : Matrix (Fin n) (Fin n) ℂ)
 
 lemma continuous_B (A : Matrix (Fin n) (Fin n) ℂ) : Continuous fun k : KG ε => toMK k⁻¹ * A * toMK k := by
   first
-    | exact (continuous_toMK_inv.matrix_mul continuous_const).matrix_mul continuous_toMK'
+    | exact (ReciprocityTheory.ChartRestriction.DS.S7.Ps1.continuous_toMK_inv.matrix_mul continuous_const).matrix_mul ReciprocityTheory.ChartRestriction.DS.S7.Ps1.continuous_toMK'
 
 lemma continuous_Gint (T : KType ε Λ) (μ : Fin n → ℤ) {x : Matrix (Fin n) (Fin n) ℂ}
     (hx : x.PosDef) : Continuous (Gint T μ x) := by
   have hphi : Continuous fun k : KG ε => PhiM μ (toMK k⁻¹ * x * toMK k) :=
     (continuousOn_phiM μ).comp_continuous (continuous_B x) (fun k => conj_mem_omega hx k)
   show Continuous fun k => PhiM μ (toMK k⁻¹ * x * toMK k) • (T.op k * projW T * T.op k⁻¹)
-  exact hphi.smul (continuous_P T)
+  exact hphi.smul (ReciprocityTheory.ChartRestriction.DS.S7.Ps1.continuous_P T)
 
 lemma continuous_DkL (T : KType ε Λ) (μ : Fin n → ℤ) {x : Matrix (Fin n) (Fin n) ℂ} (hx : x.PosDef)
     (Y : Matrix (Fin n) (Fin n) ℂ) : Continuous fun k => DkL T μ x k Y := by
@@ -673,7 +600,7 @@ lemma continuous_DkL (T : KType ε Λ) (μ : Fin n → ℤ) {x : Matrix (Fin n) 
   have harg : Continuous fun k : KG ε => toMK k⁻¹ * x * toMK k * Y - Y * (toMK k⁻¹ * x * toMK k) :=
     (hB.matrix_mul continuous_const).sub (continuous_const.matrix_mul hB)
   simp only [DkL_apply]
-  exact ((hd.clm_apply harg).smul (continuous_P T)).add
+  exact ((hd.clm_apply harg).smul (ReciprocityTheory.ChartRestriction.DS.S7.Ps1.continuous_P T)).add
     (hphi.smul ((hop.mul continuous_const).mul (hop.comp continuous_inv)))
 
 lemma continuous_Ek (T : KType ε Λ) (μ : Fin n → ℤ) {x : Matrix (Fin n) (Fin n) ℂ} (hx : x.PosDef)
@@ -888,8 +815,7 @@ private theorem lead_add_smul_mul_of_isLowerTri {X z : Matrix (Fin n) (Fin n) �
     refine Fintype.sum_of_injective e (Fin.castLE_injective hi) _ _ ?_ (fun r => rfl)
     intro c hc
     have hc' : (i : ℕ) + 1 ≤ c := by
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       exact hc ⟨⟨c, hlt⟩, Fin.ext rfl⟩
     have hlt : e p < c := by
       show (p : ℕ) < c
@@ -903,14 +829,14 @@ private theorem lead_add_smul_mul_of_isLowerTri {X z : Matrix (Fin n) (Fin n) �
       show (p : ℕ) < q
       exact hpq'
     exact hzero _ _ hlt
-  simp only [lead, dif_pos hi]
+  simp only [lead, dite_eq_left hi]
   rw [hAz, hsub, Matrix.det_mul, Matrix.det_of_lowerTriangular _ htri]
   congr 1
   rw [← Fin.prod_univ_eq_prod_range (fun a => 1 + t * (if h : a < n then X ⟨a, h⟩ ⟨a, h⟩ else 0))]
   refine Finset.prod_congr rfl fun p _ => ?_
   have hp : (p : ℕ) < n := lt_of_lt_of_le p.2 hi
   have hep : (⟨(p : ℕ), hp⟩ : Fin n) = e p := Fin.ext rfl
-  simp only [dif_pos hp, hep, Matrix.submatrix_apply, hA, Matrix.add_apply, Matrix.one_apply_eq,
+  simp only [dite_eq_left hp, hep, Matrix.submatrix_apply, hA, Matrix.add_apply, Matrix.one_apply_eq,
     Matrix.smul_apply, smul_eq_mul]
 
 private theorem lead_add_smul_mul_of_isUpperTri {X z : Matrix (Fin n) (Fin n) ℂ} (hX : IsUpperTri X) (t : ℂ)
@@ -932,8 +858,7 @@ private theorem lead_add_smul_mul_of_isUpperTri {X z : Matrix (Fin n) (Fin n) �
     refine Fintype.sum_of_injective e (Fin.castLE_injective hi) _ _ ?_ (fun r => rfl)
     intro c hc
     have hc' : (i : ℕ) + 1 ≤ c := by
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       exact hc ⟨⟨c, hlt⟩, Fin.ext rfl⟩
     have hlt : e q < c := by
       show (q : ℕ) < c
@@ -946,14 +871,14 @@ private theorem lead_add_smul_mul_of_isUpperTri {X z : Matrix (Fin n) (Fin n) �
       show (q : ℕ) < p
       exact hpq
     exact hzero _ _ hlt
-  simp only [lead, dif_pos hi]
+  simp only [lead, dite_eq_left hi]
   rw [hAz, hsub, Matrix.det_mul, Matrix.det_of_upperTriangular htri, mul_comm]
   congr 1
   rw [← Fin.prod_univ_eq_prod_range (fun a => 1 + t * (if h : a < n then X ⟨a, h⟩ ⟨a, h⟩ else 0))]
   refine Finset.prod_congr rfl fun p _ => ?_
   have hp : (p : ℕ) < n := lt_of_lt_of_le p.2 hi
   have hep : (⟨(p : ℕ), hp⟩ : Fin n) = e p := Fin.ext rfl
-  simp only [dif_pos hp, hep, Matrix.submatrix_apply, hA, Matrix.add_apply, Matrix.one_apply_eq,
+  simp only [dite_eq_left hp, hep, Matrix.submatrix_apply, hA, Matrix.add_apply, Matrix.one_apply_eq,
     Matrix.smul_apply, smul_eq_mul]
 
 lemma fderiv_phiM_lower (μ : Fin n → ℤ) {z X : Matrix (Fin n) (Fin n) ℂ} (hz : z ∈ OmegaSet n)
@@ -1026,8 +951,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 def upPart (B : Matrix (Fin n) (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ :=
@@ -1045,10 +968,10 @@ lemma decomp_up (B : Matrix (Fin n) (Fin n) ℂ) :
   simp only [Matrix.add_apply, Matrix.smul_apply, lowMinusUp, upPart, diagPart, Matrix.of_apply,
     Matrix.diagonal_apply, smul_eq_mul]
   rcases lt_trichotomy a b with h | rfl | h
-  · rw [if_neg (lt_asymm h), if_pos h, if_pos h, if_neg h.ne]
+  · rw [ite_eq_right (lt_asymm h), ite_eq_left h, ite_eq_left h, ite_eq_right h.ne]
     ring
   · simp
-  · rw [if_pos h, if_neg (lt_asymm h), if_neg h.ne']
+  · rw [ite_eq_left h, ite_eq_right (lt_asymm h), ite_eq_right h.ne']
     ring
 
 lemma decomp_low (B : Matrix (Fin n) (Fin n) ℂ) :
@@ -1057,10 +980,10 @@ lemma decomp_low (B : Matrix (Fin n) (Fin n) ℂ) :
   simp only [Matrix.add_apply, Matrix.neg_apply, Matrix.smul_apply, lowMinusUp, lowPart, diagPart,
     Matrix.of_apply, Matrix.diagonal_apply, smul_eq_mul]
   rcases lt_trichotomy a b with h | rfl | h
-  · rw [if_neg (lt_asymm h), if_pos h, if_neg (lt_asymm h), if_neg h.ne]
+  · rw [ite_eq_right (lt_asymm h), ite_eq_left h, ite_eq_right (lt_asymm h), ite_eq_right h.ne]
     ring
   · simp
-  · rw [if_pos h, if_pos h, if_neg h.ne']
+  · rw [ite_eq_left h, ite_eq_left h, ite_eq_right h.ne']
     ring
 
 lemma single_eq_smul (a b : Fin n) (c : ℂ) :
@@ -1207,8 +1130,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 variable {ε : Fin n → Bool} {lam : Fin n → ℝ}
@@ -1229,18 +1150,18 @@ lemma lowMinusUp_expand {B : Matrix (Fin n) (Fin n) ℂ} (hB : IsBlock ε B) :
     | simp only [Matrix.sum_apply, Matrix.smul_apply, Matrix.single_apply, smul_eq_mul, mul_ite,
         mul_one, mul_zero]
   rw [hsum]
-  rw [Finset.sum_eq_single i (fun a _ ha => Finset.sum_eq_zero fun b _ => if_neg fun h => ha h.1)
+  rw [Finset.sum_eq_single i (fun a _ ha => Finset.sum_eq_zero fun b _ => ite_eq_right fun h => ha h.1)
     (fun h => absurd (Finset.mem_univ i) h)]
   by_cases hj : ε j = ε i ∧ j ≠ i
-  · rw [Finset.sum_eq_single j (fun b _ hb => if_neg fun h => hb h.2)
+  · rw [Finset.sum_eq_single j (fun b _ hb => ite_eq_right fun h => hb h.2)
       (fun h => (h (Finset.mem_filter.2 ⟨Finset.mem_univ _, hj⟩)).elim)]
-    rw [if_pos ⟨rfl, rfl⟩]
+    rw [ite_eq_left ⟨rfl, rfl⟩]
     simp only [lowMinusUp, Matrix.of_apply]
     rcases lt_trichotomy j i with h | h | h
     · simp [h]
     · exact absurd h hj.2
     · simp [h, not_lt.2 h.le]
-  · rw [Finset.sum_eq_zero fun b hb => if_neg fun h => hj (by
+  · rw [Finset.sum_eq_zero fun b hb => ite_eq_right fun h => hj (by
       obtain ⟨-, rfl⟩ := h
       exact (Finset.mem_filter.1 hb).2)]
     simp only [lowMinusUp, Matrix.of_apply]
@@ -1256,7 +1177,7 @@ lemma isBlock_single {a b : Fin n} (h : ε b = ε a) : IsBlock ε (Matrix.single
   · obtain ⟨rfl, rfl⟩ := h'
     exact absurd h.symm hne
   · first
-    | rw [Matrix.single_apply, if_neg h']
+    | rw [Matrix.single_apply, ite_eq_right h']
 
 lemma scal (μ : Fin n → ℤ) (hμ : IsMu lam μ) (B : Matrix (Fin n) (Fin n) ℂ) :
     2 * ∑ a, (μ a : ℂ) * B a a =
@@ -1354,14 +1275,14 @@ lemma Ssum_eq (T : KType ε Λ) (μ : Fin n → ℤ) (x A : Matrix (Fin n) (Fin 
       intro a b
       by_cases h : ε b = ε a ∧ b ≠ a
       · have h' : ε a = ε b ∧ a ≠ b := ⟨h.1.symm, Ne.symm h.2⟩
-        rw [if_pos h, if_pos h, if_pos h']
+        rw [ite_eq_left h, ite_eq_left h, ite_eq_left h']
         rcases lt_or_gt_of_ne h.2 with hab | hab
-        · simp only [if_pos hab, if_neg (not_lt.2 hab.le)]
+        · simp only [ite_eq_left hab, ite_eq_right (not_lt.2 hab.le)]
           ring
-        · simp only [if_pos hab, if_neg (not_lt.2 hab.le)]
+        · simp only [ite_eq_left hab, ite_eq_right (not_lt.2 hab.le)]
           ring
       · have h' : ¬ (ε a = ε b ∧ a ≠ b) := fun h' => h ⟨h'.1.symm, Ne.symm h'.2⟩
-        rw [if_neg h, if_neg h, if_neg h', add_zero]
+        rw [ite_eq_right h, ite_eq_right h, ite_eq_right h', add_zero]
     simp only [hsplit, Finset.sum_add_distrib]
     conv_lhs => arg 2; rw [Finset.sum_comm]
     rw [← two_mul]
@@ -1411,7 +1332,7 @@ lemma pt (T : KType ε (lowK ε lam)) (μ : Fin n → ℤ) (hμ : IsMu lam μ) {
       _ = Jm ε * (toMK k⁻¹ * A * toMK k) := by rw [hk2]; simp only [Matrix.mul_assoc]
   have hBb : IsBlock ε (toMK k⁻¹ * A * toMK k) := (kfa_comm_iff_block ε _).mp hBJ
   have hBh : (toMK k⁻¹ * A * toMK k)ᴴ = toMK k⁻¹ * A * toMK k := by
-    rw [InfKA.toMK_inv_eq]; simp [Matrix.conjTranspose_mul, hAh, Matrix.mul_assoc]
+    rw [ReciprocityTheory.ChartRestriction.DS.S7.Ps1.toMK_inv_eq]; simp [Matrix.conjTranspose_mul, hAh, Matrix.mul_assoc]
   have hdB : T.dτ (toMK k⁻¹ * A * toMK k) = T.op k⁻¹ * T.dτ A * T.op k := by
     have h := dtau_conj T k⁻¹ hA
     rw [inv_inv] at h
@@ -1480,8 +1401,6 @@ open scoped ComplexOrder ContDiff ENNReal
 namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 

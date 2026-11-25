@@ -56,8 +56,6 @@ open Formalism.L2.Host (HChar)
 open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTheory.RowTest
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 noncomputable section
 
 namespace GlobalTheory.frameChangeUnitDeterminant
@@ -120,13 +118,8 @@ variable {D : D7}
 
 local notation "OO" => Formalism.L2.Herm.intAf D.host.F D.host.E
 
-private theorem det_int {k : ℕ} {N : Matrix (Fin k) (Fin k) (EAf D)} (hN : IsIntM N) : N.det ∈ OO := by
-  let A : Matrix (Fin k) (Fin k) OO := fun i j => ⟨N i j, hN i j⟩
-  have eA : N.det = ((A.det : OO) : EAf D) := by
-    rw [show N = (OO).subtype.mapMatrix A from rfl]
-    exact (RingHom.map_det (OO).subtype A).symm
-  rw [eA]
-  exact A.det.2
+private theorem det_int {k : ℕ} {N : Matrix (Fin k) (Fin k) (EAf D)} (hN : IsIntM N) : N.det ∈ OO :=
+  GlobalTheory.Harm.det_mem_of_forall_mem _ _ hN
 
 private theorem isUnitDet_unique {e : AE D} {k : ℕ} {N : Matrix (Fin k) (Fin k) (EAf D)} {x x' : (AE D)ˣ}
     (h : IsUnitDet e N x) (h' : IsUnitDet e N x') : x = x' :=
@@ -297,15 +290,15 @@ private theorem stdFst_change_frames : ∀ {D : D7} (ν : (AE D)ˣ →* Circle) 
       rwa [Matrix.mul_assoc, hkk, Matrix.mul_one] at this
     by_cases hc : IsIntM (frMapO A WW βA' βW' y) ∧
         ∀ i j, A.rank ≤ i.1 → GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.InId I (frMapO A WW βA' βW' y i j)
-    · rw [if_pos ⟨hh, hc⟩, if_pos ⟨hh', hI.2 hc.1, hR.2 hc.2⟩, ← mul_assoc, ← Circle.coe_mul, mul_inv_cancel,
+    · rw [ite_eq_left ⟨hh, hc⟩, ite_eq_left ⟨hh', hI.2 hc.1, hR.2 hc.2⟩, ← mul_assoc, ← Circle.coe_mul, mul_inv_cancel,
         Circle.coe_one, one_mul]
-    · rw [if_neg fun h => hc h.2, if_neg fun h => hc ⟨hI.1 h.2.1, hR.1 h.2.2⟩, mul_zero]
+    · rw [ite_eq_right fun h => hc h.2, ite_eq_right fun h => hc ⟨hI.1 h.2.1, hR.1 h.2.2⟩, mul_zero]
   · have hh' : ¬ IsHalf e (HMul.hMul (mt WW k⁻¹) (y : Matrix (Fin WW.rank) (Fin A.rank) (AE D)) : Mx D WW.rank A.rank) :=
       fun h => hh (by
         have := half_mul (mt WW k) h
         rwa [← Matrix.mul_assoc, ← GlobalTheory.AdelicLatMove.mt_mul, mul_inv_cancel, GlobalTheory.AdelicLatMove.mt_one,
           Matrix.one_mul] at this)
-    rw [if_neg fun h => hh h.1, if_neg fun h => hh' h.1, mul_zero]
+    rw [ite_eq_right fun h => hh h.1, ite_eq_right fun h => hh' h.1, mul_zero]
 
 end GlobalTheory.frameChangeUnitDeterminant
 

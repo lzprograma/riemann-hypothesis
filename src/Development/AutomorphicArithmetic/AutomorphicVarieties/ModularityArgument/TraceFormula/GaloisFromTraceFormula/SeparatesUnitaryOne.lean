@@ -90,7 +90,7 @@ theorem UpperTheory.V.Z.Tf.GaloisFromTraceFormula.unitary_one_characters_separat
       simp only [Fin.val_zero, GlobalTheory.LFun.ConjPlace.satEig_zero, one_mul, Nat.sub_zero] at this
       refine mul_left_cancel₀ hs₁ ?_
       linear_combination this
-  · push_neg at hz
+  · push Not at hz
     obtain ⟨p, hp⟩ := hz
     refine ⟨_, U1.step (-(ev2 a b w (dEx p) B₁ B₂)⁻¹) p, ?_⟩
     have e : ev2 a b w (Ex.add Ex.one (Ex.smul (-(ev2 a b w (dEx p) B₁ B₂)⁻¹) (dEx p))) B₁ B₂ =

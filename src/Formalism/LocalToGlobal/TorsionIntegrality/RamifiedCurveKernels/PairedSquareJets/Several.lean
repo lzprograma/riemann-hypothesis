@@ -244,13 +244,13 @@ theorem jetsIn1_rest {K : Type} [Field K] [CharZero K] {R : Subring K} {l linv p
   by_cases h2 : k = 2
   · subst h2
     have : jet l ph 2 - ((Nat.factorial 2 : ℕ) : K) * (jet l ph 2 / 2 * if 2 = 2 then 1 else 0) = 0 := by
-      simp only [Nat.factorial, if_true]
+      simp only [Nat.factorial, ite_true]
       push_cast
       field_simp
       ring
     rw [this]
     exact R.zero_mem
-  · rw [if_neg h2, mul_zero, mul_zero, sub_zero]
+  · rw [ite_eq_right h2, mul_zero, mul_zero, sub_zero]
     rcases Nat.eq_zero_or_pos k with hk | hk
     · subst hk
       have : jet l ph 0 = 0 := h0

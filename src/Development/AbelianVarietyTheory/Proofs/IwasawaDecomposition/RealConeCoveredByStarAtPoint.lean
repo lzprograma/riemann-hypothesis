@@ -3,42 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MinkowskiWeylOrthantConeIntegralConstraints
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsStrictIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HomExtNormalSt
 
@@ -123,8 +87,6 @@ end GlobalTheory.StarCover
 namespace GlobalTheory.StarCover
 open GlobalTheory.MinkWeylReal
 
-alias toReal_apply' := _root_.GlobalTheory.PolFan.toReal_apply
-
 theorem comb_apply {X : Type} [AddCommGroup X] {m : ℕ} (r : Fin m → ℝ) (γ : Fin m → LinearMap.BilinForm ℤ X)
     (x y : X) : (∑ j, r j • toReal (γ j)) x y = ∑ j, r j * (γ j x y : ℝ) := by
   simp [LinearMap.sum_apply]
@@ -153,7 +115,7 @@ theorem star_cover : ∀ (X : Type) [AddCommGroup X] (m : ℕ) (γ : Fin m → L
   have hcomb : ∀ r : Fin m → ℝ, (∑ j, r j • castR (u j)) = fun k => ∑ j, r j * (γ j (p k).1 (p k).2 : ℝ) :=
     fun r => by funext k; simp [castR, u, Finset.sum_apply]
   have hv_app : ∀ x y, (v x y : ℝ) = ∑ j, c j * (γ j x y : ℝ) := fun x y => by
-    rw [← toReal_apply', hvc, comb_apply]
+    rw [← GlobalTheory.PolFan.toReal_apply, hvc, comb_apply]
   have hB_app : ∀ x y, B x y = ∑ j, t j * (γ j x y : ℝ) := fun x y => by rw [hBt, comb_apply]
   set Ev : Fin n → ℝ := ∑ j, c j • castR (u j) with hEv
   set EB : Fin n → ℝ := ∑ j, t j • castR (u j) with hEB
@@ -170,7 +132,7 @@ theorem star_cover : ∀ (X : Type) [AddCommGroup X] (m : ℕ) (γ : Fin m → L
     by_contra hno
     rw [Finset.not_nonempty_iff_eq_empty, Finset.filter_eq_empty_iff] at hno
     have hneg : (-1 : ℝ) • Ev ∈ rcone T := (hA _).mpr fun a ha => by
-      rw [dotR_smul]; have := hno ha; push_neg at this; linarith
+      rw [dotR_smul]; have := hno ha; push Not at this; linarith
     obtain ⟨r, hr, hrEq⟩ := exists_of_mem_rcone_image u _ hneg
     have hzero : ∀ x y, ∑ j, (r j + c j) * (γ j x y : ℝ) = 0 := hp _ fun k => by
       have := congrFun hrEq k
@@ -204,7 +166,7 @@ theorem star_cover : ∀ (X : Type) [AddCommGroup X] (m : ℕ) (γ : Fin m → L
     · have := hamin a' (Finset.mem_filter.mpr ⟨ha', hpos⟩)
       rw [le_div_iff₀ hpos] at this
       linarith
-    · push_neg at hpos; nlinarith [hAB a' ha']
+    · push Not at hpos; nlinarith [hAB a' ha']
   have hB'a : dotR a (EB - ts • Ev) = 0 := by
     rw [dotR_sub, dotR_smul, hts]; field_simp; ring
   obtain ⟨d, hd, hdEq⟩ := exists_of_mem_rcone_image u _ hB'T
@@ -270,7 +232,7 @@ theorem star_cover : ∀ (X : Type) [AddCommGroup X] (m : ℕ) (γ : Fin m → L
     have k1 := key x y
     rw [hexp (x, y)] at k1
     rw [hB_app]
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, toReal_apply', hv_app, comb_apply]
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, GlobalTheory.PolFan.toReal_apply, hv_app, comb_apply]
     linarith
 
 end GlobalTheory.StarCover

@@ -30,9 +30,9 @@ theorem coeff_coeffMap (δ : Derivation K Ω Ω) (P : MvPolynomial σ Ω) (n : �
   rw [coeff_sum]
   by_cases h : n ∈ P.support
   · rw [Finset.sum_eq_single n]
-    · rw [coeff_monomial, if_pos rfl]
+    · rw [coeff_monomial, ite_eq_left rfl]
     · intro b _ hb
-      rw [coeff_monomial, if_neg hb]
+      rw [coeff_monomial, ite_eq_right hb]
     · intro hn
       exact absurd h hn
   · have h0 : AddMonoidAlgebra.coeff P n = 0 := by
@@ -40,7 +40,7 @@ theorem coeff_coeffMap (δ : Derivation K Ω Ω) (P : MvPolynomial σ Ω) (n : �
       exact h (mem_support_iff.mpr hc)
     rw [h0, map_zero]
     refine Finset.sum_eq_zero fun b hb => ?_
-    rw [coeff_monomial, if_neg]
+    rw [coeff_monomial, ite_eq_right]
     rintro rfl
     exact h hb
 

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BorelWeilFlagModelDetInverseIsAmpleLocal
 public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFlagFrame
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
@@ -24,47 +25,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulipointL
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoversOfHalves
 public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralFramedPointBaseChangeStable
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ModuliPointIntegralFrameAfterFiniteExtension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Formalism.LocalToGlobal.ProjectiveLattices.ErealAddIInf
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
 import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
 import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
@@ -77,9 +38,7 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalSystemB
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalSystemModelMap
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsCombAtGMulVec
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.SemiAbelianDvrExtensionsIsoCompatible
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
 import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAffineLieBasisBaseChange
 import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfB
@@ -98,8 +57,6 @@ import Mathlib.Algebra.Azumaya.Basic
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartStatementHolds", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.AlgebraicGeometry.Modules.Sheaf\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFlagFrame\nimport Formalism.LocalToGlobal.ProjectiveLattices.ErealAddIInf\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -145,17 +102,7 @@ theorem det_mul_expand {V : Type} [inst : CommRing V] {m g : ℕ}
     (M : Matrix (Fin m) (Fin g) V) (C : Matrix (Fin g) (Fin m) V) :
     Matrix.det (M * C) =
       ∑ J : Fin m → Fin g, (∏ i : Fin m, M i (J i)) * Matrix.det (Matrix.submatrix C J id) := by
-  classical
-  have h : (M * C : Matrix (Fin m) (Fin m) V) = fun i => ∑ k : Fin g, M i k • C k := by
-    ext i j
-    simp [Matrix.mul_apply, Finset.sum_apply]
-  let f : (Fin m → Fin m → V) →ₘₗ[V] V := Matrix.detRowAlternating.toMultilinearMap
-  have hf : ∀ A : Matrix (Fin m) (Fin m) V, Matrix.det A = f A := fun A => rfl
-
-  rw [hf, h, f.map_sum (fun i k => M i k • C k)]
-  refine Finset.sum_congr rfl fun J _ => ?_
-  rw [f.map_smul_univ (fun i => M i (J i)) (fun i => C (J i)), hf, smul_eq_mul]
-  rfl
+  apply _root_.GlobalTheory.DeterminantProductExpansion.det_mul_expand <;> assumption
 
 end GlobalTheory.DeterminantExpansion
 end -- clump:auto
@@ -167,14 +114,11 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open NumberField IsDedekindDomain
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct NNReal
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Pdiv ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
 open Formalism.L2.Pj GlobalTheory.HTLat GlobalTheory.HTLat.OmegaRank GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.CompHt GlobalTheory.FlatCore GlobalTheory.LineNorm
-attribute [local instance] Over.cartesianMonoidalCategory
 attribute [local instance] algPadicInt algPadicField towerPadic factPadic GlobalTheory.PadicComplexHost.isAdicComplete
 open GlobalTheory.FlatModel
 
@@ -183,7 +127,6 @@ namespace GlobalTheory.HeightOneCompletion
 open IsLocalRing
 
 
-set_option autoImplicit false in
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry in
 open NumberField IsDedekindDomain in
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct NNReal in
@@ -230,14 +173,11 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open NumberField IsDedekindDomain
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct NNReal
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Pdiv ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
 open Formalism.L2.Pj GlobalTheory.HTLat GlobalTheory.HTLat.OmegaRank GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.CompHt GlobalTheory.FlatCore GlobalTheory.LineNorm
-attribute [local instance] Over.cartesianMonoidalCategory
 attribute [local instance] algPadicInt algPadicField towerPadic factPadic GlobalTheory.PadicComplexHost.isAdicComplete
 open GlobalTheory.FlatModel
 
@@ -274,7 +214,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 open CategoryTheory Limits AlgebraicGeometry NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
 open Formalism.L2.Pj GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.FlatCore GlobalTheory.LineNorm GlobalTheory.FlatModel
@@ -354,7 +293,7 @@ theorem exists_nat_mul_mem : ∀ (A : Type) [CommRing A] [IsDomain A] [IsIntegra
       refine ⟨n ^ k, pow_pos hn0 k, ?_⟩
       rw [hu, map_mul, map_natCast, Nat.cast_pow, Units.mul_left_dvd]
       exact (pow_dvd_pow_of_dvd hd k).mul_right _
-    · push_neg at hn
+    · push Not at hn
       obtain ⟨T, iT, h1, h2⟩ := GlobalTheory.HeightOneCompletion.exists_cdvr_of_height_eq_one A p hp
       have hα : Function.Injective (iT.comp (algebraMap A L)) := h1.comp hinj
       have hα' : Function.Injective ((algebraMap T.V T.Fr).comp (iT.comp (algebraMap A L))) :=
@@ -411,7 +350,6 @@ section Tan
 
 open MonObj
 open ReciprocityTheory.ChartRestriction.G.PullbackSections (TanM tv actR)
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {X : Scheme.{0}}
   {t : SAB H X} {S : Type} [CommRing S] {x : Sp S ⟶ X} {m : ℕ} {v : Fin m → (Sp (DualNumber S) ⟶ t.G.left)}
@@ -454,194 +392,6 @@ theorem comb_vecMul (hv : ∀ i, IsTanAtG t x (v i)) {n : ℕ} {q : Fin n → (S
 end Tan
 
 
-open GlobalTheory.LocM.BaseMdl in
-
-theorem exists_change {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
-    {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F}
-    (Y : Model Xo c β) {R : Type} [CommRing R] {ξ : Sp R ⟶ Y.X} {g : ℕ}
-    {e : Fin g → (Sp (DualNumber R) ⟶ Y.t.G.left)} (he : IsTanBasis Y.t ξ e) {σ : E →+* ℂ}
-    {U : Matrix (Fin g) (Fin g) R} {L : Type} [CommRing L] [Algebra c.F L] {φ : R →+* L} {y : FrPt Xo c L}
-    {M : Matrix (Fin (Dw.mult σ)) (Fin g) L} {C : Matrix (Fin g) (Fin (Dw.mult σ)) L}
-    (h : IsFrameCoord Y ξ e U φ y σ M C) {k : Type} [Field k] [Algebra c.F k] {ι : L →ₐ[c.F] k} {y' z : FrPt Xo c k}
-    (hm : FrMap ι y y') (hzy : z.x = y'.x) (hz : GlobalTheory.AllWt.ptF z ≫ Y.j = spMap (ι.toRingHom.comp φ) ≫ ξ)
-    {M' : Matrix (Fin (Dw.mult σ)) (Fin g) k} {C' : Matrix (Fin g) (Fin (Dw.mult σ)) k}
-    (h' : IsFrameCoord Y ξ e U (ι.toRingHom.comp φ) z σ M' C') :
-    ∃ a : Matrix (Fin (Dw.mult σ)) (Fin (Dw.mult σ)) k, (∀ i, IsCombAt y'.x (y'.u σ) (a i) (z.u σ i)) ∧
-      M' = a * M.map ι ∧ C' * a = C.map ι := by
-  have hx : GlobalTheory.AllWt.ptF z ≫ pullback.fst _ _ = y'.x := (pullback.lift_fst _ _ _).trans hzy
-  have hz' : GlobalTheory.AllWt.ptF z ≫ Y.jQ ≫ pullback.fst _ _ = spMap (ι.toRingHom.comp φ) ≫ ξ := hz
-  have hpt : GlobalTheory.AllWt.ptF z = spMap ι.toRingHom ≫ GlobalTheory.AllWt.ptF y := by
-    apply pullback.hom_ext
-    · rw [hx, hm.1, Category.assoc, GlobalTheory.AllWt.ptF, pullback.lift_fst]
-    · rw [Category.assoc, GlobalTheory.AllWt.ptF, GlobalTheory.AllWt.ptF, pullback.lift_snd, pullback.lift_snd]
-      simp only [spMap, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
-      congr 2
-      exact ι.comp_algebraMap.symm
-  choose a ha using fun i => (y'.basis σ (z.u σ i) (hzy ▸ z.tan σ i) (z.eig σ i)).exists
-  choose w hw1 hw2 hw3 using (fun i => h.1 i)
-  choose w' hw1' hw2' hw3' using (fun i => h'.1 i)
-  have hbt := (isTanBasis_bc he (ι.toRingHom.comp φ)).1
-  have hq2 : ∀ j, (spMap (dualMap ι.toRingHom) ≫ w j) ≫ Y.oF.t.G.hom =
-      spMap (algebraMap k (DualNumber k)) ≫ GlobalTheory.AllWt.ptF z := fun j => by
-    rw [Category.assoc, hw1, hpt, ← Category.assoc, ← Category.assoc]
-    congr 1
-    simp only [spMap, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
-    congr 2
-    ext s <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
-  have hq1 : (fun j => (spMap (dualMap ι.toRingHom) ≫ w j) ≫ Y.m0.toSABMap.φ) = y'.u σ := funext fun j => by
-    rw [Category.assoc, hw2, hm.2.1]
-  have hq3 : ∀ j, IsCombAtG Y.t (spMap (ι.toRingHom.comp φ) ≫ ξ) (bcV Y.t (ι.toRingHom.comp φ) e) (M.map ι j)
-      ((spMap (dualMap ι.toRingHom) ≫ w j) ≫ Y.m.φ) := fun j => by
-    have := GlobalTheory.LocM.Cht.FlagBase.isCombAtG_bc Y.t ι.toRingHom (hw3 j)
-    rw [sp_sp] at this
-    rw [← bcV_bcV, Category.assoc]
-    exact this
-  have hM : M' = Matrix.of a * M.map ι := by
-    ext1 i
-    refine funext_iff.1 ?_
-    have h1 : IsCombAtG Y.oF.t (GlobalTheory.AllWt.ptF z) (fun j => spMap (dualMap ι.toRingHom) ≫ w j) (a i) (w' i) :=
-      (comb_push Y.m0.toSABMap hq2 (a i) (hw1' i)).2 (by rw [hq1, hw2', hx]; exact ha i)
-    have h2 := comb_vecMul hbt hq3 (hz' ▸ (comb_push Y.m hq2 (a i) (hw1' i)).1 h1)
-    exact (he.2 k _ _ (tan_of_comb hbt h2)).unique (hw3' i) h2
-  refine ⟨Matrix.of a, ha, hM, ?_⟩
-  haveI : CharZero k := charZero_of_injective_algebraMap (algebraMap c.F k).injective
-  have hδ : ((discr E : ℤ) : k) ≠ 0 := Int.cast_ne_zero.2 (discr_ne_zero E)
-  have e1 : C.map ι * M.map ι = U.map (ι.toRingHom.comp φ) := by
-    rw [← Matrix.map_mul (f := ι), h.2.1, Matrix.map_map]; rfl
-  have e2 : M.map ι * C.map ι = ((discr E : ℤ) : k) • 1 := by
-    rw [← Matrix.map_mul (f := ι), h.2.2]
-    ext i j
-    by_cases hij : i = j <;> simp [hij]
-  have e3 : C' * Matrix.of a * M.map ι = C.map ι * M.map ι := by rw [Matrix.mul_assoc, ← hM, h'.2.1, e1]
-  have e4 := congrArg (· * C.map ι) e3
-  simp only [Matrix.mul_assoc (C' * Matrix.of a), Matrix.mul_assoc (C.map ι), e2, Matrix.mul_smul, Matrix.mul_one] at e4
-  exact smul_right_injective _ hδ e4
-
-theorem value_map : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (Y : Model Xo c (algebraMap (𝓞 c.F) c.F)) (R : Type) [CommRing R] (ξ : Sp R ⟶ Y.X) (g : ℕ) (e : Fin g → (Sp (DualNumber R) ⟶ Y.t.G.left)), IsTanBasis Y.t ξ e → ∀ (Z : Comp Xo c) (f : Rul Xo c) (σ₁ σ₂ : E →+* ℂ), DetLaw Z f σ₁ σ₂ → ∀ (U₁ U₂ : Matrix (Fin g) (Fin g) R) (L : Type) [CommRing L] [IsLocalRing L] [Algebra c.F L] (φ : R →+* L) (y : FrPt Xo c L), GlobalTheory.AllWt.ptF y ≫ Y.j = spMap φ ≫ ξ → LiesOn Z y → ∀ (M₁ : Matrix (Fin (Dw.mult σ₁)) (Fin g) L) (C₁ : Matrix (Fin g) (Fin (Dw.mult σ₁)) L) (M₂ : Matrix (Fin (Dw.mult σ₂)) (Fin g) L) (C₂ : Matrix (Fin g) (Fin (Dw.mult σ₂)) L), IsFrameCoord Y ξ e U₁ φ y σ₁ M₁ C₁ → IsFrameCoord Y ξ e U₂ φ y σ₂ M₂ C₂ → ∀ (k : Type) [Field k] [Algebra c.F k] (ι : L →ₐ[c.F] k) (ψ : R →+* k), (∀ a, ψ a = ι (φ a)) → ∀ z : FrPt Xo c k, GlobalTheory.AllWt.ptF z ≫ Y.j = spMap ψ ≫ ξ → ∀ (M₁' : Matrix (Fin (Dw.mult σ₁)) (Fin g) k) (C₁' : Matrix (Fin g) (Fin (Dw.mult σ₁)) k) (M₂' : Matrix (Fin (Dw.mult σ₂)) (Fin g) k) (C₂' : Matrix (Fin g) (Fin (Dw.mult σ₂)) k), IsFrameCoord Y ξ e U₁ ψ z σ₁ M₁' C₁' → IsFrameCoord Y ξ e U₂ ψ z σ₂ M₂' C₂' → ∀ (I : Fin (Dw.mult σ₁) → Fin g) (J : Fin (Dw.mult σ₂) → Fin g), evR Xo c f z * (M₁'.submatrix id I).det * (C₂'.submatrix J id).det = ι (evR Xo c f y * (M₁.submatrix id I).det * (C₂.submatrix J id).det) := by
-  intro E _ _ _ H Dw l Xo c Y R _ ξ g e he Z f σ₁ σ₂ hL U₁ U₂ L _ _ _ φ y hy hyZ M₁ C₁ M₂ C₂ h₁ h₂ k _ _ ι ψ hψ z hz
-    M₁' C₁' M₂' C₂' h₁' h₂' I J
-  obtain rfl : ψ = ι.toRingHom.comp φ := RingHom.ext hψ
-  obtain ⟨y', hm⟩ := GlobalTheory.FlagTan.exists_frMap ι y
-  have := isPreimmersion_j Y
-  have hpt : GlobalTheory.AllWt.ptF y' = spMap ι.toRingHom ≫ GlobalTheory.AllWt.ptF y := by
-    apply pullback.hom_ext
-    · rw [Category.assoc, GlobalTheory.AllWt.ptF, GlobalTheory.AllWt.ptF, pullback.lift_fst, pullback.lift_fst, hm.1]
-    · rw [Category.assoc, GlobalTheory.AllWt.ptF, GlobalTheory.AllWt.ptF, pullback.lift_snd, pullback.lift_snd]
-      simp only [spMap, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
-      congr 2
-      exact ι.comp_algebraMap.symm
-  have hzy0 : GlobalTheory.AllWt.ptF z = GlobalTheory.AllWt.ptF y' := by
-    rw [← cancel_mono Y.j, hz, hpt, Category.assoc, hy, sp_sp]
-  have hzy : z.x = y'.x := by
-    have := congrArg (· ≫ pullback.fst _ _) hzy0
-    simpa only [GlobalTheory.AllWt.ptF, pullback.lift_fst] using this
-  have hy'Z : LiesOn Z y' := fun s => by
-    rw [hpt, Scheme.Hom.comp_apply]
-    exact hyZ _
-  obtain ⟨a₁, ha₁, hM₁, -⟩ := exists_change Y he h₁ hm hzy hz h₁'
-  obtain ⟨a₂, ha₂, -, hC₂⟩ := exists_change Y he h₂ hm hzy hz h₂'
-  have k1 := hL.2 k z y' hy'Z hzy a₁ a₂ ha₁ ha₂
-  rw [GlobalTheory.FlagTan.evR_frMap hL.1 hm] at k1
-  have k2 : (M₁'.submatrix id I).det = a₁.det * ι (M₁.submatrix id I).det := by
-    rw [hM₁, AlgHom.map_det, ← Matrix.det_mul]; rfl
-  have k3 : ι (C₂.submatrix J id).det = (C₂'.submatrix J id).det * a₂.det := by
-    rw [AlgHom.map_det, ← Matrix.det_mul]
-    congr 1
-    ext i j
-    exact (congrFun (congrFun hC₂ (J i)) j).symm
-  rw [map_mul, map_mul, k2, k3]
-  linear_combination (ι (M₁.submatrix id I).det * (C₂'.submatrix J id).det) * k1
-
-
-open GlobalTheory.ModelFrameCompare MonObj in
-
-theorem images_eigenBasis {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
-    {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} (Y : Model Xo c (algebraMap (𝓞 c.F) c.F))
-    (σ : E →+* ℂ) (T : CDVR) (io : c.F →+* T.Fr) (y₀ : IntFr Xo c T io) (xV : Sp T.V ⟶ Y.X)
-    (yy : Sp T.Fr ⟶ Xo.XF c) (hxV : yy ≫ Y.j = spMap (algebraMap T.V T.Fr) ≫ xV)
-    (hpt : letI := io.toAlgebra; GlobalTheory.AllWt.ptF y₀.1 = yy) :
-    ∃ v : Fin (Dw.mult σ) → (Sp (DualNumber T.V) ⟶ Y.t.G.left), (∀ j, IsTanAtG Y.t xV (v j)) ∧
-      (∀ u : Sp (DualNumber T.V) ⟶ Y.t.G.left, IsTanAtG Y.t xV u →
-        (∀ (a : 𝓞 E) (z : T.V), algebraMap T.V T.Fr z = io (embK c σ a) →
-          u ≫ (Y.t.act.act a).left = spMap (epsMul z) ≫ u) →
-        ∃ cf : Fin (Dw.mult σ) → T.V, IsCombAtG Y.t xV v cf u) ∧
-      ∀ (cf : Fin (Dw.mult σ) → T.V) (u : Sp (DualNumber T.V) ⟶ Y.t.G.left)
-        (w : Sp (DualNumber T.Fr) ⟶ Y.oF.t.G.left), IsCombAtG Y.t xV v cf u →
-        w ≫ Y.m.φ = spMap (dualMap (algebraMap T.V T.Fr)) ≫ u →
-        (letI := io.toAlgebra; IsCombAt y₀.1.x (y₀.1.u σ) (fun j => algebraMap T.V T.Fr (cf j))
-          (w ≫ Y.m0.toSABMap.φ)) := by
-  let _ := io.toAlgebra
-  obtain ⟨G₂, ⟨m⟩⟩ : ∃ G : SAB H (Sp T.V), Nonempty (SABMap G Y.t xV) := by
-    obtain ⟨PP', cub, sym, adj, prim, m, -⟩ := ReciprocityTheory.ChartRestriction.G.Geo.Tor.sabPull ReciprocityTheory.ChartRestriction.G.Out.CubePf.cubePull xV Y.t
-    exact ⟨_, ⟨m⟩⟩
-  obtain ⟨t₂, n₀, n₂, m', -, h2⟩ := GlobalTheory.ThetaFrameCheck.genFibre_tied Xo c T _ _ Y xV yy hxV G₂ m
-  obtain ⟨n₁, hn₁⟩ := sabComp pullCubComp E H _ _ _ Xo.univ.t Y.oF.t t₂ _ yy Y.m0.toSABMap m'
-  obtain ⟨G, t', m1, m2, ⟨ub, ht, he, hb, hl⟩, -⟩ := y₀.2.2
-  have hx : y₀.1.x = yy ≫ pullback.fst _ _ := by
-    rw [← hpt]
-    exact (pullback.lift_fst _ _ _).symm
-  obtain ⟨m1', hm1'⟩ := exists_sabMap_congr m1 hx
-  obtain ⟨k, n, hk1, hk2⟩ := GlobalTheory.sab_extensions_iso E H Dw l Xo T.V T.Fr _ G G₂ t' t₂ m1' m2 n₁ n₂
-  obtain ⟨nm, hnm⟩ := sabComp pullCubComp E H _ _ _ Y.t G₂ G xV (𝟙 _) m n
-  obtain ⟨q₀, hq₀⟩ := exists_sabMap_congr nm (Category.id_comp xV)
-  rw [hnm] at hq₀
-  obtain ⟨B, hB, hBt, hBe, hBc⟩ := GlobalTheory.FactorDepth.Extension.exists_tanEquiv q₀
-  refine ⟨fun j => (B (ub σ j)).left, fun j => (hBt _).2 (ht σ j), ?_, ?_⟩
-  · intro u hu hue
-    obtain ⟨w', hw'⟩ := B.surjective (ovT hu)
-    have e : u = (B w').left := by rw [hw']; rfl
-    subst e
-    obtain ⟨cf, hcf, -⟩ := hb σ w' ((hBt _).1 hu) fun a z hz => (hBe _ a z).1 (hue a z hz)
-    exact ⟨cf, (hBc _ _ cf w').2 hcf⟩
-  · intro cf u w hc hw
-    have h3 := GlobalTheory.LocM.Cht.FlagBase.isCombAtG_bc Y.t (algebraMap T.V T.Fr) hc
-    obtain ⟨q, hq⟩ := sabComp pullCubComp E H _ _ _ Y.t Y.oF.t t₂ _ yy Y.m m'
-    choose u' hu1 hu2 using hl σ
-    have hov : ∀ j, u' j ≫ t'.G.hom = spMap (algebraMap T.Fr (DualNumber T.Fr)) := by
-      intro j
-      apply spMap_frac_cancel (V := T.V)
-      rw [Category.assoc, ← m2.cart.1.w, ← Category.assoc, hu2, Category.assoc, Over.w (ub σ j), spMap_comp',
-        ← dualMap_comp_alg, ← spMap_comp']
-      rfl
-    have hov' : ∀ j, (u' j ≫ k.φ) ≫ t₂.G.hom = spMap (algebraMap T.Fr (DualNumber T.Fr)) ≫ 𝟙 _ := by
-      intro j
-      rw [Category.assoc, k.cart.1.w, ← Category.assoc, hov]
-    have hvec : ∀ j, spMap (dualMap (algebraMap T.V T.Fr)) ≫ (B (ub σ j)).left = (u' j ≫ k.φ) ≫ q.φ := by
-      intro j
-      rw [hB, hq₀, hq, ← Category.assoc, ← hu2, Category.assoc, ← Category.assoc m2.φ, hk2]
-      simp only [Category.assoc, h2]
-    have hpt' : spMap (algebraMap T.V T.Fr) ≫ xV = 𝟙 _ ≫ yy ≫ Y.jQ ≫ pullback.fst _ _ := by
-      rw [Category.id_comp, ← hxV]; rfl
-    have h4 : IsCombAtG Y.t (𝟙 _ ≫ yy ≫ Y.jQ ≫ pullback.fst _ _) (fun j => (u' j ≫ k.φ) ≫ q.φ)
-        (fun j => algebraMap T.V T.Fr (cf j)) (w ≫ Y.m.φ) := by
-      rw [← hpt', hw]
-      simpa only [hvec] using h3
-    obtain ⟨w₂, hw₂, hc₂⟩ := isCombAtG_reflect q (𝟙 _) (fun j => u' j ≫ k.φ) hov' h4
-    have hw₂' : w₂ ≫ m'.φ = w := by
-      refine Y.m.cart.1.hom_ext ?_ ?_
-      · rw [Category.assoc, ← hq, hw₂]
-      · have := isPreimmersion_j Y
-        have hmono : Mono Y.j := inferInstance
-        have e2 : w₂ ≫ t₂.G.hom = spMap (algebraMap T.Fr (DualNumber T.Fr)) ≫ 𝟙 _ := by
-          obtain ⟨uu, -, hh⟩ := hc₂
-          rw [← hh]; exact Over.w _
-        have e1 : u ≫ Y.t.G.hom = spMap (algebraMap T.V (DualNumber T.V)) ≫ xV := by
-          obtain ⟨uu, -, hh⟩ := hc
-          rw [← hh]; exact Over.w _
-        rw [Category.assoc, m'.cart.1.w, ← Category.assoc, e2, Category.comp_id]
-        apply hmono.right_cancellation
-        have e3 : spMap (dualMap (algebraMap T.V T.Fr)) ≫ spMap (algebraMap T.V (DualNumber T.V)) ≫ xV =
-            spMap (algebraMap T.Fr (DualNumber T.Fr)) ≫ yy ≫ Y.j := by
-          rw [← Category.assoc, spMap_comp', dualMap_comp_alg, ← spMap_comp', Category.assoc, hxV]
-        show (spMap _ ≫ yy) ≫ Y.j = w ≫ Y.oF.t.G.hom ≫ Y.jQ ≫ pullback.fst _ _
-        rw [← Y.m.cart.1.w, ← Category.assoc w, hw, Category.assoc (spMap _) u, e1, e3, Category.assoc]
-    have h5 := isCombAtG_push n₁ (𝟙 _) hc₂
-    have hv5 : (fun j => (u' j ≫ k.φ) ≫ n₁.φ) = y₀.1.u σ := by
-      funext j
-      rw [Category.assoc, hk1, hm1', hu1]
-    rw [hv5, hn₁, ← Category.assoc w₂, hw₂', Category.id_comp, ← hx] at h5
-    exact h5
-
 end GlobalTheory.FlatDenom
 
 end
@@ -654,8 +404,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
@@ -663,7 +411,6 @@ open NumberField IsDedekindDomain
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct NNReal
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Pdiv ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
 open Formalism.L2.Pj GlobalTheory.HTLat GlobalTheory.HTLat.OmegaRank GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.CompHt GlobalTheory.FlatCore GlobalTheory.LineNorm
-attribute [local instance] Over.cartesianMonoidalCategory
 attribute [local instance] algPadicInt algPadicField towerPadic factPadic GlobalTheory.PadicComplexHost.isAdicComplete
 open GlobalTheory.FlatModel
 
@@ -692,14 +439,11 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open NumberField IsDedekindDomain
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct NNReal
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Pdiv ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
 open Formalism.L2.Pj GlobalTheory.HTLat GlobalTheory.HTLat.OmegaRank GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.CompHt GlobalTheory.FlatCore GlobalTheory.LineNorm
-attribute [local instance] Over.cartesianMonoidalCategory
 attribute [local instance] algPadicInt algPadicField towerPadic factPadic GlobalTheory.PadicComplexHost.isAdicComplete
 open GlobalTheory.FlatModel
 
@@ -724,8 +468,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField
@@ -734,8 +476,6 @@ open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G.Chart (tvec IsUnivChart sp fB)
 
 namespace GlobalTheory.LineNorm
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {X : Scheme.{0}} (t : SAB H X)
 
@@ -813,7 +553,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 open CategoryTheory Limits AlgebraicGeometry NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
 open Formalism.L2.Pj GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.FlatCore GlobalTheory.LineNorm GlobalTheory.FlatModel

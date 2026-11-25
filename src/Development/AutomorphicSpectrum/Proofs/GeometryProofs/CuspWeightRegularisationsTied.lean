@@ -46,85 +46,31 @@ public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PMollifierLowe
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspIntersectionLimit
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.CpRegPhRegOfNonneg
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsRegularizationOfHodgeMetric
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreLatticeLinearEquiv
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFlagXdeg
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.CuspWeightInvariantUnderIsometry
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Order.CompletePartialOrder
 import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshExt
 import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshMoll
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
-import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
-import Mathlib.CategoryTheory.Monoidal.Category
-import Mathlib.CategoryTheory.Monoidal.Mon
-import Mathlib.Topology.Sheaves.Presheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodD
 import Development.WeilBound.CoreStatements.PlurisubharmonicCones.VerticalFactorSmoothLine
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.RegMaxReindex
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspIntersectionPositive
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeMetricFrameProperties
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.WeilBound.CoreStatements.PlurisubharmonicCones.RiemannLatticeConjugateCusp, Development.AutomorphicSpectrum.Proofs.MetricProofs.CuspWeightInvariantUnderConjugation, Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionSystemWeightLeft, Development.WeilBound.CoreStatements.PlurisubharmonicCones.NonemptyComponentModel, Development.WeilBound.CoreStatements.PlurisubharmonicCones.LimsupAddTendsto, Development.WeilBound.CoreStatements.PlurisubharmonicCones.PotentialChartsRegularBound, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsConjInvariantMollifier, Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsConjInvariantMollifier, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsCutoffFamilySymmetric, Development.WeilBound.CoreStatements.PlurisubharmonicCones.TiedSettingSymmetricCharts, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsRegularizationSetting, Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspWeightRegularisationsTied
+-- Members: Development.WeilBound.CoreStatements.PlurisubharmonicCones.RiemannLatticeConjugateCusp, Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionSystemWeightLeft, Development.WeilBound.CoreStatements.PlurisubharmonicCones.NonemptyComponentModel, Development.WeilBound.CoreStatements.PlurisubharmonicCones.LimsupAddTendsto, Development.WeilBound.CoreStatements.PlurisubharmonicCones.PotentialChartsRegularBound, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsConjInvariantMollifier, Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsConjInvariantMollifier, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsCutoffFamilySymmetric, Development.WeilBound.CoreStatements.PlurisubharmonicCones.TiedSettingSymmetricCharts, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsRegularizationSetting, Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspWeightRegularisationsTied
 
 -- ===== clump member: Development.WeilBound.CoreStatements.PlurisubharmonicCones.RiemannLatticeConjugateCusp =====
--- clump-header: {"m": "Development.WeilBound.CoreStatements.PlurisubharmonicCones.RiemannLatticeConjugateCusp", "h": "module\n\npublic import Development.WeilBound.CoreStatements.PlurisubharmonicCones.EmbEquivSymmApply\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
+-- clump-header: {"m": "Development.WeilBound.CoreStatements.PlurisubharmonicCones.RiemannLatticeConjugateCusp", "h": "module\n\npublic import Development.WeilBound.CoreStatements.PlurisubharmonicCones.EmbEquivSymmApply\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductConjugate\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -190,12 +136,6 @@ theorem conjB_star (ρ : 𝓞 E →+* Module.End ℂ (Fin g → ℂ)) (a : 𝓞 
   show star (ρ a (star (star x))) = _
   rw [star_star]
 
-theorem dot_conj (H : Matrix (Fin g) (Fin g) ℂ) (z w : Fin g → ℂ) :
-    z ⬝ᵥ H.map (starRingEnd ℂ) *ᵥ star w = conj (star z ⬝ᵥ H *ᵥ star (star w)) := by
-
-  simp only [dotProduct, mulVec, map_sum, map_mul, Matrix.map_apply, Pi.star_apply, Complex.star_def,
-  Complex.conj_conj]
-
 def conjLat (R : RiemLat E g Λ) : RiemLat E g Λ where
   free := R.free
   fin := R.fin
@@ -208,11 +148,11 @@ def conjLat (R : RiemLat E g Λ) : RiemLat E g Λ where
   Hm := R.Hm.map (starRingEnd ℂ)
   herm := R.herm.map _ fun _ => rfl
   pos z hz := by
-    rw [dot_conj, Complex.conj_re]
+    rw [GlobalTheory.CompanionTheory.Ar.HodgeConj.form_conj, Complex.conj_re]
     exact R.pos (star z) (star_ne_zero.2 hz)
   im x y := by
     show (star (R.P x) ⬝ᵥ R.Hm.map (starRingEnd ℂ) *ᵥ star (star (R.P y))).im = ((-(R.form x y) : ℤ) : ℝ)
-    rw [dot_conj]
+    rw [GlobalTheory.CompanionTheory.Ar.HodgeConj.form_conj]
     simp only [star_star (R.P x), star_star (R.P y)]
     rw [Complex.conj_im, R.im, Int.cast_neg]
   B := conjB R.B
@@ -222,7 +162,7 @@ def conjLat (R : RiemLat E g Λ) : RiemLat E g Λ where
 
 theorem conjLat_ip (R : RiemLat E g Λ) (x y : Fin g → ℂ) : (conjLat R).ip (star x) (star y) = conj (R.ip x y) := by
   show star y ⬝ᵥ R.Hm.map (starRingEnd ℂ) *ᵥ star (star x) = conj (y ⬝ᵥ R.Hm *ᵥ star x)
-  rw [dot_conj]
+  rw [GlobalTheory.CompanionTheory.Ar.HodgeConj.form_conj]
   simp only [star_star x, star_star y]
 
 omit [IsCMField E] in
@@ -249,21 +189,8 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.WeilBound.CoreStatements.PlurisubharmonicCones.RiemannLatticeConjugateCusp =====
 
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.CuspWeightInvariantUnderConjugation =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.MetricProofs.CuspWeightInvariantUnderConjugation", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames\npublic import Development.WeilBound.CoreStatements.PlurisubharmonicCones.RiemannLatticeConjugateCusp\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.Regular
-
-theorem _root_.GlobalTheory.CompanionTheory.Relay.cusp_weight_invariant_under_conjugation : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (g : ℕ) (Λ : Type) [AddCommGroup Λ] [Module (𝓞 E) Λ] (Ψ : Type) [Fintype Ψ] (R : RiemLat E g Λ) (σ : Ψ → (𝓞 E →+* ℂ)), IsCMFam σ → R.cuspW (fun τ => (starRingEnd ℂ).comp (σ τ)) = R.cuspW σ ∧ ∃ R' : RiemLat E g Λ, (∀ v, R'.P v = star (R.P v)) ∧ R'.Hm = R.Hm.map (starRingEnd ℂ) ∧ (∀ a x, R'.B a (star x) = star (R.B a x)) ∧ R'.cuspW (fun τ => (starRingEnd ℂ).comp (σ τ)) = R.cuspW σ := by
-  first | exact @LevelTowerAlt.riemann_lattice_conjugate_cusp
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.CuspWeightInvariantUnderConjugation =====
-
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionSystemWeightLeft =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionSystemWeightLeft", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentres\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ConjugatePointSameCentre\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBound\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspVolumeMiddle\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreLatticeBaseChangeConj\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.InteriorPointLatticeData\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NormalSchemeCoordsInjective\npublic import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.CuspWeightInvariantUnderConjugation\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreLatticeLinearEquiv\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFlagXdeg\nimport Development.AutomorphicSpectrum.Proofs.MetricProofs.CuspWeightInvariantUnderIsometry\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
+-- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionSystemWeightLeft", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentres\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ConjugatePointSameCentre\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBound\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspVolumeMiddle\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreLatticeBaseChangeConj\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.InteriorPointLatticeData\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NormalSchemeCoordsInjective\npublic import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames\npublic import Development.WeilBound.CoreStatements.PlurisubharmonicCones.RiemannLatticeConjugateCusp\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreLatticeLinearEquiv\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFlagXdeg\nimport Development.AutomorphicSpectrum.Proofs.MetricProofs.CuspWeightInvariantUnderIsometry\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -295,7 +222,7 @@ theorem IsWeightAt.unique {Or : CptOrigin Y S₀ Dc Hd} {z : Sp ℂ ⟶ Or.𝔐.
     valAt_eq Or.𝔐.tie.gen (Or.𝔐.all _) (hL' τ a) (hL τ a)
   subst hσ
   obtain ⟨φ, h1, h2, h3, -⟩ := GlobalTheory.CompanionTheory.Ar.Cusp.FibreUnique.exists_linearEquiv_of_fibreLatVec E H Or.𝔐.X Or.𝔐.t z g' g Λ' Λ R' R Empty _ _ _ hF' hF
-  exact (_root_.GlobalTheory.CompanionTheory.Relay.cusp_weight_invariant_under_isometry E g' Λ' (CMType H) R' σ' g Λ R φ (isCMFam_of_labVal Or hL) h1 h2 h3).1.symm ▸ rfl
+  exact (_root_.LevelTowerAlt.riemann_lattice_isometry_transport E g' Λ' (CMType H) R' σ' g Λ R φ (isCMFam_of_labVal Or hL) h1 h2 h3).1.symm ▸ rfl
 
 theorem IsWeightAt.nonneg {Or : CptOrigin Y S₀ Dc Hd} {z : Sp ℂ ⟶ Or.𝔐.X} {x : ℝ} (h : IsWeightAt Or z x) : 0 ≤ x := by
   obtain ⟨g, Λ, i₁, i₂, R, σ, -, -, rfl⟩ := h
@@ -317,7 +244,7 @@ theorem exists_isWeightAt (hG : Top.Given) (Or : CptOrigin Y S₀ Dc Hd) {z : Sp
 theorem IsWeightAt.conj {Or : CptOrigin Y S₀ Dc Hd} {z : Sp ℂ ⟶ Or.𝔐.X} {x : ℝ} (h : IsWeightAt Or z x) :
     IsWeightAt Or (spMap (starRingEnd ℂ) ≫ z) x := by
   obtain ⟨g, Λ, i₁, i₂, R, σ, hF, hL, rfl⟩ := h
-  obtain ⟨-, R', hP, hH, hB, hW⟩ := _root_.GlobalTheory.CompanionTheory.Relay.cusp_weight_invariant_under_conjugation E g Λ (CMType H) R σ (isCMFam_of_labVal Or hL)
+  obtain ⟨-, R', hP, hH, hB, hW⟩ := _root_.LevelTowerAlt.riemann_lattice_conjugate_cusp E g Λ (CMType H) R σ (isCMFam_of_labVal Or hL)
   have hF' : FibreLat Or.𝔐.t (spMap (starRingEnd ℂ) ≫ z) R' :=
     (GlobalTheory.CompanionTheory.Ar.Cusp.FibreMove.fibreLat_move E H Or.𝔐.X Or.𝔐.X Or.𝔐.t Or.𝔐.t (𝟙 _) g Λ R R' z).2 hP hH
       (fun a x => by simpa using hB a (star x)) hF
@@ -355,10 +282,10 @@ theorem exists_cuspWeight : Top.Given → ∀ (E : Type) [Field E] [NumberField 
   let U : ((Σ k, J k) → ℂ) → ℝ := fun w => if h : ∃ x, HasWeight Or w x then h.choose else 0
   have hU : ∀ {w x}, HasWeight Or w x → U w = x := fun {w x} h => by
     have hex : ∃ x, HasWeight Or w x := ⟨x, h⟩
-    simp only [U, dif_pos hex]
+    simp only [U, dite_eq_left hex]
     exact hex.choose_spec.unique h
   have hU0 : ∀ {w}, (¬ ∃ x, HasWeight Or w x) → U w = 0 := fun {w} h => by
-    simp only [U, dif_neg h]
+    simp only [U, dite_eq_right h]
   have hw : ∀ {z : Sp ℂ ⟶ Or.𝔐.X} {w} {g : ℕ} {Λ : Type} [AddCommGroup Λ] [Module (𝓞 E) Λ] (R : RiemLat E g Λ)
       {σ : CMType H → (𝓞 E →+* ℂ)}, CoordsAt Or.𝔐.ξ Dc.y z w → Or.𝔐.Interior z → FibreLat Or.𝔐.t z R →
       Or.𝔐.LabVal z Or.sm σ → HasWeight Or w (R.cuspW σ) := by
@@ -506,7 +433,7 @@ theorem cxModel_of_res {P : Ideal (MRing J)} {d : ℕ} (R : AnLogRes P ⊤ d) (h
   have hproj : ∀ z ∈ mcPts P, ReciprocityTheory.ChartRestriction.G.Geo.SameOrbit (R.lift (proj z) (proj z)) z := by
     intro z hz
     have h := hex z hz
-    simp only [proj, dif_pos h]
+    simp only [proj, dite_eq_left h]
     exact h.choose_spec
   have hproj_eq : ∀ z ∈ mcPts P, ∀ x, ReciprocityTheory.ChartRestriction.G.Geo.SameOrbit (R.lift x x) z → proj z = x := by
     intro z hz x hx
@@ -779,11 +706,7 @@ open GroundTheory.Heights₂.Heights.Regular
 
 theorem continuousAt_of_holoOn {n : ℕ} {X : Type} [TopologicalSpace X] {A : FinHolAtlas n X} {U : Set X}
     {g : X → ℂ} (hg : A.HoloOn U g) {x : X} (hx : x ∈ U) : ContinuousAt g x := by
-  obtain ⟨i, hi⟩ := A.cover x
-  have h1 := (hg i (A.chart i x) ⟨(A.chart i).map_source hi, by simp [(A.chart i).left_inv hi, hx]⟩).continuousAt
-  refine (h1.comp ((A.chart i).continuousAt hi)).congr ?_
-  filter_upwards [(A.chart i).open_source.mem_nhds hi] with y hy
-  simp [(A.chart i).left_inv hy]
+  apply _root_.LevelTowerAlt.continuousAt_of_holoOn <;> assumption
 
 theorem limsup_invol {X : Type} [TopologicalSpace X] {σ : X → X} (hσ : Continuous σ) (hi : ∀ x, σ (σ x) = x)
     {Y : Set X} (hY : ∀ x ∈ Y, σ x ∈ Y) {g : X → ℝ} (hg : ∀ x ∈ Y, g (σ x) = g x) (x : X) :
@@ -1010,8 +933,8 @@ theorem ph_conj (hL : LogHom D ref.a w) (hr : IsConjInvariantH ref) (hO : ConjOf
   rw [← cj_proj M hz]
   unfold ph
   by_cases h : M.proj z ∈ Yo M
-  · rw [if_pos h, if_pos ((hY _).2 h), hg _ h]
-  · rw [if_neg h, if_neg fun h' => h ((hY _).1 h'),
+  · rw [ite_eq_left h, ite_eq_left ((hY _).2 h), hg _ h]
+  · rw [ite_eq_right h, ite_eq_right fun h' => h ((hY _).1 h'),
       limsup_invol (continuous_cj M) hi (fun x hx => (hY x).2 hx) hg]
 
 end LevelTowerAlt.Bdd
@@ -1043,14 +966,14 @@ theorem LevelTowerAlt.potential_charts_regular_bound : ∀ (K : Type) [Fintype K
       (fun v hv => (hloc j v hv).1.continuousWithinAt)
       (_root_.GlobalTheory.CompanionTheory.AnForm.PshLocal.isPsh_of_locally _ _ _ ((P.chart j).open_target.sdiff (ReciprocityTheory.AnForm.A.PlurisubharmonicExtension.coordDiv_closed _))
         fun v hv => (hloc j v hv).2)
-      (fun v hv => if_pos ((symm_mem_Yo M P hA j hv.1).2 hv.2)) fun v hv hS => ?_
+      (fun v hv => ite_eq_left ((symm_mem_Yo M P hA j hv.1).2 hv.2)) fun v hv hS => ?_
     show ph M ref w ((P.chart j).symm v) = _
     unfold ph
-    rw [if_neg fun h => (symm_mem_Yo M P hA j hv).1 h hS, ← map_nhds_Yo M P hA j hv]
+    rw [ite_eq_right fun h => (symm_mem_Yo M P hA j hv).1 h hS, ← map_nhds_Yo M P hA j hv]
     rfl
   · show ph M ref w (M.proj z) = _
     unfold ph
-    rw [if_pos ((proj_mem_Yo M hz.2).2 hz.1.2), relative_weight_projection M hL hz.1]
+    rw [ite_eq_left ((proj_mem_Yo M hz.2).2 hz.1.2), relative_weight_projection M hL hz.1]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.WeilBound.CoreStatements.PlurisubharmonicCones.PotentialChartsRegularBound =====
@@ -1434,7 +1357,7 @@ theorem _root_.GlobalTheory.CompanionTheory.Relay.exists_regularization_setting 
   intro K _ J _ II Ψ _ Ω _ _ W _ _ D Hd M w hL hP hC hB hO
   obtain ⟨ref, hra, hrs, hrc⟩ := GlobalTheory.CompanionTheory.Relay.exists_smooth_conj_invariant_metric K J Hd.aMu
   obtain ⟨P, S, κ, hth, had, -, hsym, -⟩ :=
-    GlobalTheory.CompanionTheory.Relay.exists_potential_charts_with_radii K J II Ψ Ω W D M ref (fun _ _ => 1) hrs hrc fun _ _ => one_pos
+    _root_.LevelTowerAlt.exists_potential_charts K J II Ψ Ω W D M ref (fun _ _ => 1) hrs hrc fun _ _ => one_pos
   obtain ⟨B, rfl, hph, hcj⟩ := _root_.LevelTowerAlt.potential_charts_regular_bound K J II Ψ Ω W D M ref w P S hrs hth had (hra ▸ hL) hP hC hB
   obtain ⟨ρ, hρ⟩ := GlobalTheory.CompanionTheory.Relay.exists_conj_invariant_mollifier D.n
   obtain ⟨cut, Cη, hcut, hcc⟩ := GlobalTheory.CompanionTheory.Relay.exists_cutoff_family_symmetric K J II Ψ Ω W D M _ κ hsym
@@ -1469,9 +1392,9 @@ theorem _root_.GlobalTheory.CompanionTheory.Relay.cusp_weight_regularisations_ti
   obtain ⟨U, hU, h0, hT, hC, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cusp.WeightEx.exists_cuspWeight hG E H D Xo l c Y II K J Ω W Dc Hd S₀ Or
   obtain ⟨hp1, -, hp2, hc2⟩ := _root_.GlobalTheory.CompanionTheory.Relay.cusp_intersection_positive hG E H D Xo l c Y II K J Ω W Dc Hd S₀ Or U hU
   obtain ⟨hb, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cusp.CorrBdd.corr_bdd hG E H D Xo l c Y II K J Ω W Dc Hd S₀ Or U hU
-  obtain ⟨-, -, hL, hO⟩ := GlobalTheory.CompanionTheory.Relay.hodge_metric_frame_properties K J II (CMType H) Ω W Dc Hd
+  obtain ⟨-, -, hL, hO⟩ := _root_.LevelTowerAlt.mu_frame_norm_line K J II (CMType H) Ω W Dc Hd
   obtain ⟨M⟩ := _root_.LevelTowerAlt.nonempty_component_model K J II (CMType H) Ω W Dc
-  obtain ⟨S, hS⟩ := _root_.GlobalTheory.CompanionTheory.Relay.exists_regularization_of_hodge_metric K J II (CMType H) Ω W Dc Hd M hp1
+  obtain ⟨S, hS⟩ := _root_.LevelTowerAlt.exists_tied_regular_setting K J II (CMType H) Ω W Dc Hd M hp1
   obtain ⟨S', hS', hJ⟩ := _root_.GlobalTheory.CompanionTheory.Relay.exists_regularization_setting K J II (CMType H) Ω W Dc Hd M (corrW Hd U)
     (fun z hz a ha => by
       have := hL z hz a ha

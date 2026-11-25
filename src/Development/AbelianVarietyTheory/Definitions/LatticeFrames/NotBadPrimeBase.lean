@@ -52,7 +52,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.Fam
 
@@ -286,34 +285,6 @@ abbrev pk := W.Q.Rl.toRealDat
 
 abbrev lvP : LevelP (pk W).Pg D.R.r ℂ := (pk W).levR W.Q.F.lv2 true
 
-def LevAt (u : D.what₂.Word) (μ : D.what₂.Tup) (x : GA D D.sp.X') (J : Set (GA D D.sp.X')) (χ : GA D D.sp.X' → ℂ) : Prop :=
-  (μ = D.what₂.mu0 → LevG (W.R.T.cols.forms u).clsP.toG x J χ) ∧ ∀ h : μ ≠ D.what₂.mu0, LevG (W.R.T.tw.pt.cls u μ h) x J χ
-
-def Reads (u : D.what₂.Word) (j : SmT (pk W).MX →ₗ[ℂ] (FrP D → ℂ)) (x : GA D D.sp.X') (μ : D.what₂.Tup) (G : D.what₂.Amb μ)
-    (f : SmT (pk W).MX →ₗ[ℂ] (GA D D.sp.X' → ℂ)) : Prop :=
-  (∀ h : μ = D.what₂.mu0, ReadsG (W.R.T.cols.forms u).clsP.toG (W.R.T.cols.forms u).valP.eW j x
-    ((D.eMt u).symm (Eq.rec (motive := fun ν _ => D.what₂.Amb ν) G h)) f) ∧
-  ∀ h : μ ≠ D.what₂.mu0, ReadsG (W.R.T.tw.pt.cls u μ h) (W.R.T.tw.pt.val u μ h).eW j x ((D.eMtTw u μ).symm G) f
-
-def topOf (t : W.P.T) (F : Fin ((W.Q.F.fc (cxW W).zs).Df1.nV t) → D.what₂.LL) : SmT (pk W).MX →ₗ[ℂ] (GA D D.sp.X' → ℂ) :=
-  (pk W).cX.toMap (pk W).prX (((pk W).HX t).e ((pk W).jX t (W.Q.F.eV (cxW W).zs t F)))
-
-def TopReadAt (u : D.what₂.Word) (j : SmT (pk W).MX →ₗ[ℂ] (FrP D → ℂ)) (x : GA D D.sp.X') : Prop :=
-  GlobalTheory.Core.Rk.Top.IsJ u (pk W).MX j ∧ x ∈ GfC D.sp.X' ∧ ∀ t : W.P.T,
-    LevAt W u (W.P.I.tup t) x (levS _ (pk W).βX (datXP (pk W) (lvP W) t)) (levChi _ (pk W).βX (datXP (pk W) (lvP W) t)) ∧
-    ∀ (F : Fin ((W.P.A3.side3 W.P.Ps W.P.ψs W.P.Zs).nV t) → D.what₂.LL) (F' : Fin ((W.Q.F.fc (cxW W).zs).Df1.nV t) → D.what₂.LL),
-      HEq F F' → Reads W u j x (W.P.I.tup t) (W.P.I.jA t ((rV0 D W.P.A3.A W.P.Ps W.P.ψs t).mulVec F)) (topOf W t F')
-
-def tailOf (u : D.what₂.Word) (j : SmT (pk W).MX →ₗ[ℂ] (FrP D → ℂ)) (x : GA D D.sp.X') (μ : D.what₂.Tup)
-    (ψ : (D.chTw u μ).cls D.R.m → (D.chTw u μ).Y D.R.m → ℂ) (f : SmT (pk W).MX →ₗ[ℂ] (GA D D.sp.X' → ℂ)) : ℂ :=
-  if h : ∃ G, Reads W u j x μ G f then
-    if h0 : μ = D.what₂.mu0 then
-      (D.mem u).P.Ptil (Eq.rec (motive := fun C _ => C.cls D.R.m → C.Y D.R.m → ℂ)
-        (Eq.rec (motive := fun ν _ => (D.chTw u ν).cls D.R.m → (D.chTw u ν).Y D.R.m → ℂ) ψ h0) (D.memberColumns_twistedChain_base u))
-        ((D.eMt u).symm (Eq.rec (motive := fun ν _ => D.what₂.Amb ν) h.choose h0))
-    else (D.PTw u μ).Ptil ψ ((D.eMtTw u μ).symm h.choose)
-  else 0
-
 structure FamCh (u : D.what₂.Word) where
   g : Geo D
   j : SmT (pk W).MX →ₗ[ℂ] (FrP D → ℂ)
@@ -323,12 +294,6 @@ structure FamCh (u : D.what₂.Word) where
 variable {W} {u : D.what₂.Word} (f : FamCh W u)
 
 abbrev FamCh.c : Comm D := commOf (pk W) u f.g
-
-abbrev FamCh.B : Base f.c := baseOf (pk W) (lvP W) u f.g
-
-abbrev FamCh.t (t : W.P.T) : Tup f.c :=
-  tupOf (pk W) (lvP W) u f.g t (f.row t) (f.col t) fun ψ F => tailOf W u f.j f.g.bT (W.P.I.tup t) ψ F.1
-
 
 end Real
 

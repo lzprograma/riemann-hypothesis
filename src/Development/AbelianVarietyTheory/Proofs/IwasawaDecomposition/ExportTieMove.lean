@@ -72,9 +72,6 @@ open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
 
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.TwInputs.Move.RatUp
 
 variable {D : D7} (r : Rest D)
@@ -202,7 +199,6 @@ theorem datum_dn {s g P} (d : (setupUp r ρ).IsDatum ((i)) ((j)) b s g P) : ρ.I
     have c := (le_of_eq a) ((by exact (d.mem :)) : ((by exact (P :))) ∈ _)
     exact (by exact (c :))⟩
 
-
 omit h in
 variable (r) in
 def rdUp (rd : Rd ρ D.nexp i j b) : Rd (setupUp r ρ) (overD D r).nexp ((i)) ((j)) b := (rd)
@@ -269,9 +265,6 @@ open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
 
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 noncomputable section
 
 namespace GlobalTheory.TwInputs.Move
@@ -326,8 +319,6 @@ theorem extremalVector_mem_lowestKType (X : RealSide D) {j : Fin D.R.m}
     X.geo.v₀ j (sg0 D X.A3.A) τ ∈ lowT (model X j) τ :=
   (hv.1 τ).2.1
 
-
-
 theorem harm_move (h : CopyTw D D' ι e) {ρ : Setup D.ntw} {ρ' : Setup D'.ntw} (hs : SameSetup ρ ρ') (i : D.ntw.Tw)
     (i' : D'.ntw.Tw) (hi : HEq i i') (j : Fin D.R.m) (b : Bool) (P : PolF D (Wc D j).rank (Vc D j).rank)
     (P' : PolF D' (Wc D' (h.cm j)).rank (Vc D' (h.cm j)).rank) (hP : HEq P P') (x : GLR D (Vc D j).rank)
@@ -370,7 +361,6 @@ theorem VV_le_span (h : CopyTw D D' ι e) (j : Fin D.R.m) :
   refine (le_of_eq (baseChangeSpace_holds _ _ ι _ _ (FWT.lamV D j)).2.symm).trans (Submodule.span_mono ?_)
   rintro _ ⟨P, hP, rfl⟩
   exact ⟨P, hP, HEq.rfl⟩
-
 
 theorem scale_fwd (h : CopyTw D D' ι e) {X : RealSide D} {X' : RealSide D'} (m : RealMove X X' ι) {ρ : Setup D.ntw}
     {ρ' : Setup D'.ntw} (hs : SameSetup ρ ρ')
@@ -444,7 +434,6 @@ theorem scale_fwd (h : CopyTw D D' ι e) {X : RealSide D} {X' : RealSide D'} (m 
       ring
   intro F'
   exact key F' (VV_le_span h j F'.2) F'.2
-
 
 theorem scale_bwd (h : CopyTw D D' ι e) {X : RealSide D} {X' : RealSide D'} (m : RealMove X X' ι) {ρ : Setup D.ntw}
     {ρ' : Setup D'.ntw} (hs : SameSetup ρ ρ')
@@ -539,77 +528,9 @@ open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
 
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 noncomputable section
 
 namespace GlobalTheory.TwInputs.Move
-
-
-
-private theorem heckeTie_of_same_aux {D D' : D7} (hR : D.R = D'.R) (hH : HEq D.host D'.host) (hsp : HEq D.sp D'.sp)
-    {Tw Tw' : Type} (hTw : Tw = Tw') {S0 : Tw → Finset (PlE D.host)} {S0' : Tw' → Finset (PlE D'.host)} (hS0 : HEq S0 S0')
-    {Fm : Tw → ℕ → Bool → Type} {Fm' : Tw' → ℕ → Bool → Type} (hFm : HEq Fm Fm')
-    {hkF : ∀ i j b (_ : ℕ), PlE D.host → Fm i j b → Fm i j b} {hkF' : ∀ i j b (_ : ℕ), PlE D'.host → Fm' i j b → Fm' i j b} (hhkF : HEq hkF hkF')
-    {i : Tw} {i' : Tw'} (hi : HEq i i') {j : Fin D.R.m} {j' : Fin D'.R.m} (hj : (j : ℕ) = j') {b : Bool}
-    {mu : (AE D)ˣ →* Circle} {mu' : (AE D')ˣ →* Circle} (hmu : HEq mu mu')
-    {levK : Subgroup (GA D (Wc D j))} {levK' : Subgroup (GA D' (Wc D' j'))} (hlev : HEq levK levK')
-    (r : Fm i ((j : ℕ) + 1) b → (GA D (Wc D j) → ℂ))
-    (r' : Fm' i' ((j' : ℕ) + 1) b → (GA D' (Wc D' j') → ℂ))
-    (hR' : ∀ (f : Fm i ((j : ℕ) + 1) b) (f' : Fm' i' ((j' : ℕ) + 1) b), HEq f f' → HEq (r' f') (r f))
-    (ht : ∀ k P, (1 ≤ k ∧ k ≤ D.R.r ∧ Formalism.BasicNotions.IsSplitPl D.host P ∧ P ∉ S0 i) →
-      ∀ f, (∃ g, ∀ α R₀ z, (Links.IsHeckeAt (Wc D j) P k α ∧ Bridge.IsDC levK α R₀ ∧ IsDetAt (idemAt P) (Wc D j) α z) →
-        r g = fun x => (((mu z : Circle) : ℂ)⁻¹ * (((normV P : ℕ) : ℂ) ^ (k * ((Vc D j).rank / 2)))⁻¹) * ∑ γ ∈ R₀, r f (x * γ)) →
-      ∀ α R₀ z, (Links.IsHeckeAt (Wc D j) P k α ∧ Bridge.IsDC levK α R₀ ∧ IsDetAt (idemAt P) (Wc D j) α z) →
-        r (hkF i ((j : ℕ) + 1) b k P f) = fun x => (((mu z : Circle) : ℂ)⁻¹ * (((normV P : ℕ) : ℂ) ^ (k * ((Vc D j).rank / 2)))⁻¹) * ∑ γ ∈ R₀, r f (x * γ)) :
-    ∀ k P, (1 ≤ k ∧ k ≤ D'.R.r ∧ Formalism.BasicNotions.IsSplitPl D'.host P ∧ P ∉ S0' i') →
-      ∀ f, (∃ g, ∀ α R₀ z, (Links.IsHeckeAt (Wc D' j') P k α ∧ Bridge.IsDC levK' α R₀ ∧ IsDetAt (idemAt P) (Wc D' j') α z) →
-        r' g = fun x => (((mu' z : Circle) : ℂ)⁻¹ * (((normV P : ℕ) : ℂ) ^ (k * ((Vc D' j').rank / 2)))⁻¹) * ∑ γ ∈ R₀, r' f (x * γ)) →
-      ∀ α R₀ z, (Links.IsHeckeAt (Wc D' j') P k α ∧ Bridge.IsDC levK' α R₀ ∧ IsDetAt (idemAt P) (Wc D' j') α z) →
-        r' (hkF' i' ((j' : ℕ) + 1) b k P f) = fun x => (((mu' z : Circle) : ℂ)⁻¹ * (((normV P : ℕ) : ℂ) ^ (k * ((Vc D' j').rank / 2)))⁻¹) * ∑ γ ∈ R₀, r' f (x * γ) := by
-  cases D'
-  dsimp only at hR hH hsp
-  subst hR hTw
-  cases hH; cases hsp; cases hS0; cases hFm; cases hhkF; cases hi
-  obtain rfl : j = j' := Fin.ext hj
-  cases hmu; cases hlev
-  obtain rfl : r' = r := funext fun x => eq_of_heq (hR' x x HEq.rfl)
-  exact ht
-
-theorem heckeTie_of_same {D D' : D7} {N : NData D.R D.host D.what₂} {N' : NData D'.R D'.host D'.what₂}
-    {X : NTw D.R D.host D.what₂ D.LL0 N} {X' : NTw D'.R D'.host D'.what₂ D'.LL0 N'}
-    {Y : NExp D.R D.host D.what₂ D.LL0 N X} {Y' : NExp D'.R D'.host D'.what₂ D'.LL0 N' X'}
-    (h1 : GlobalTheory.TwistChoice.SameGalois N N') (h2 : GlobalTheory.TwistChoice.TwistDataAgreeAcrossCoefficients X X') (h3 : GlobalTheory.TwistChoice.SameForms Y Y')
-    (hsp : HEq D.sp D'.sp) {ρ : Setup X} {ρ' : Setup X'} {i : X.Tw} {i' : X'.Tw} (hi : HEq i i')
-    {j : Fin D.R.m} {j' : Fin D'.R.m} (hj : (j : ℕ) = j') {b : Bool}
-    (hmu : HEq (ρ.B i j b).mu (ρ'.B i' j' b).mu) (hlev : HEq (ρ.levK i j b) (ρ'.levK i' j' b))
-    (r : Rd ρ Y i j b) (r' : Rd ρ' Y' i' j' b)
-    (hR : ∀ (f : Y.Fm i ((j : ℕ) + 1) b) (f' : Y'.Fm i' ((j' : ℕ) + 1) b), HEq f f' → HEq (r' f') (r f))
-    (ht : HeckeTie r) : HeckeTie r' := by
-  have hkF_heq : HEq (fun (i : X.Tw) (j : ℕ) (b : Bool) (k : ℕ) (P : PlE D.host) => (Y.hkF i j b k P : Y.Fm i j b → Y.Fm i j b))
-      (fun (i : X'.Tw) (j : ℕ) (b : Bool) (k : ℕ) (P : PlE D'.host) => (Y'.hkF i j b k P : Y'.Fm i j b → Y'.Fm i j b)) := by
-    have key : ∀ {R R' : Ranks} (hR : R = R') {H : Host R} {H' : Host R'} (hH : HEq H H')
-        {Tw Tw' : Type} (hTw : Tw = Tw') {O : Tw → Type} {O' : Tw' → Type}
-        {crO : ∀ i, CommRing (O i)} {crO' : ∀ i, CommRing (O' i)}
-        {Fm : Tw → ℕ → Bool → Type} {Fm' : Tw' → ℕ → Bool → Type}
-        {acgFm : ∀ i j b, AddCommGroup (Fm i j b)} {acgFm' : ∀ i j b, AddCommGroup (Fm' i j b)}
-        {modFmK : ∀ i j b, Module (FractionRing (O i)) (Fm i j b)} {modFmK' : ∀ i j b, Module (FractionRing (O' i)) (Fm' i j b)}
-        {hkF : ∀ i j b (_ : ℕ), PlE H → Module.End (FractionRing (O i)) (Fm i j b)}
-        {hkF' : ∀ i j b (_ : ℕ), PlE H' → Module.End (FractionRing (O' i)) (Fm' i j b)},
-        HEq O O' → HEq crO crO' → HEq Fm Fm' → HEq acgFm acgFm' → HEq modFmK modFmK' → HEq hkF hkF' →
-        HEq (fun i j b k P => (hkF i j b k P : Fm i j b → Fm i j b))
-          (fun i j b k P => (hkF' i j b k P : Fm' i j b → Fm' i j b)) := by
-      intro R R' hR H H' hH Tw Tw' hTw O O' crO crO' Fm Fm' acgFm acgFm' modFmK modFmK' hkF hkF' hO hcrO hFm hacg hmod hhk
-      subst hR hTw; cases hH; cases hO; cases hcrO; cases hFm; cases hacg; cases hmod; cases hhk; rfl
-    exact key h1.R h1.host (eq_of_heq h2.Tw) h2.O h2.crO h3.Fm h3.acgFm h3.modFmK h3.hkF
-  have ht' := heckeTie_of_same_aux h1.R h1.host hsp (eq_of_heq h2.Tw) h2.S0 h3.Fm hkF_heq hi hj hmu hlev r r' hR
-    (fun k P hkP f ⟨g, hg⟩ α R₀ z ⟨d1, d2, d3⟩ => by
-      have h1 := ht k P hkP f ⟨g, fun α R₀ z d => (hg α R₀ z ⟨d.1, d.2, d.3⟩).trans (funext fun x => (ρ.hecke_apply ..).symm)⟩ α R₀ z ⟨d1, d2, d3⟩
-      exact h1.trans (funext fun x => ρ.hecke_apply ..))
-  intro k P hkP f ⟨g, hg⟩ α R₀ z d
-  exact (ht' k P hkP f ⟨g, fun α R₀ z ⟨d1, d2, d3⟩ => (hg α R₀ z ⟨d1, d2, d3⟩).trans (funext fun x => ρ'.hecke_apply ..)⟩ α R₀ z ⟨d.1, d.2, d.3⟩).trans
-    (funext fun x => (ρ'.hecke_apply ..).symm)
 
 theorem heckeTie_move_of_pin : ∀ {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyTw D D' ι e) {ρ : Setup D.ntw} {ρ' : Setup D'.ntw},
     (∀ (i : D.ntw.Tw) (i' : D'.ntw.Tw), HEq i i' → ∀ (j : Fin D.R.m) (b : Bool),
@@ -617,15 +538,34 @@ theorem heckeTie_move_of_pin : ∀ {D D' : D7} {ι : D.what₂.LL →+* D'.what�
     ∀ (rd : Rds D.nexp ρ) (rd' : Rds D'.nexp ρ'), RdRel h rd rd' → ∀ (i : D.ntw.Tw) (i' : D'.ntw.Tw), HEq i i' →
       ∀ (j : Fin D.R.m) b, HeckeTie (rd i j b) → HeckeTie (rd' i' (h.cm j) b) := by
   intro D D' ι e h ρ ρ' hB rd rd' hr i i' hi j b ht
+  obtain ⟨hmu, hlev⟩ := hB i i' hi j b
   have hR : ∀ (f : D.nexp.Fm i ((j : ℕ) + 1) b) (f' : D'.nexp.Fm i' ((h.cm j : ℕ) + 1) b), HEq f f' →
       HEq (rd' i' (h.cm j) b f') (rd i j b f) := fun f f' hf => by
     have h1 : h.fmCast hi ((j : ℕ) + 1) b f = f' := eq_of_heq ((h.fmCast_heq hi _ b f).trans hf)
     rw [← h1]
     exact hr i i' hi j b f
-  exact heckeTie_of_same h.gal h.set h.frm h.sp hi (h.cm_val j).symm (hB i i' hi j b).1 (hB i i' hi j b).2
-    (rd i j b) (rd' i' (h.cm j) b) hR ht
-
-
+  have hj : (j : ℕ) = h.cm j := rfl
+  generalize h.cm j = j' at hj hmu hlev hR ⊢
+  clear hB hr
+  obtain ⟨r, rfl⟩ := h.exists_rest
+  cases hi
+  obtain rfl : j = j' := Fin.ext hj
+  have e0 : ∀ x, rd' i j b x = rd i j b x := fun x => eq_of_heq (hR x x HEq.rfl)
+  have hmu' : (ρ'.B i j b).mu = (ρ.B i j b).mu := eq_of_heq hmu.symm
+  have hlev' : ρ'.levK i j b = ρ.levK i j b := eq_of_heq hlev.symm
+  have hk : ∀ k P R z F, ρ'.hecke i j b k P R z F = ρ.hecke i j b k P R z F := fun k P R z F =>
+    funext fun x =>
+      (ρ'.hecke_apply i j b k P R z F x).trans
+        ((congrArg (fun m : (AE D)ˣ →* Circle =>
+            (((m z : Circle) : ℂ)⁻¹ * (((normV P : ℕ) : ℂ) ^ (k * ((Vc D j).rank / 2)))⁻¹) * ∑ γ ∈ R, F (x * γ)) hmu').trans
+          (ρ.hecke_apply i j b k P R z F x).symm)
+  have hd : ∀ k P α R z, ρ'.IsHeckeDatum i j b k P α R z ↔ ρ.IsHeckeDatum i j b k P α R z := fun k P α R z =>
+    ⟨fun d => ⟨d.1, hlev' ▸ d.2, d.3⟩, fun d => ⟨d.1, hlev'.symm ▸ d.2, d.3⟩⟩
+  have ha : ∀ k P f g, HeckeAt (rd' i j b) k P f g ↔ HeckeAt (rd i j b) k P f g := fun k P f g =>
+    ⟨fun hg α R z d => (e0 g).symm.trans ((hg α R z ((hd k P α R z).2 d)).trans ((hk k P R z _).trans (congrArg _ (e0 f)))),
+      fun hg α R z d => (e0 g).trans ((hg α R z ((hd k P α R z).1 d)).trans ((hk k P R z _).symm.trans (congrArg _ (e0 f).symm)))⟩
+  intro k P hkP f hf
+  exact (ha k P f _).2 (ht k P hkP f (by obtain ⟨g, hg⟩ := hf; exact ⟨g, (ha k P f g).1 hg⟩))
 
 theorem SameData.mu_levK {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyTw D D' ι e)
     {ρ : Setup D.ntw} {ρ' : Setup D'.ntw} (hs : SameData ρ ρ') (i : D.ntw.Tw) (i' : D'.ntw.Tw) (hi : HEq i i')
@@ -662,9 +602,6 @@ open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
 
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.TwInputs.Move
 
 theorem isExtremalVector_of_realSideBaseChange : ∀ {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyTw D D' ι e) {X : RealSide D} {X' : RealSide D'} (m : RealMove X X' ι), (∀ j, FWT.IsChosenExtremalVector X.R.toRealDat j (sg0 D X.A3.A) (X.geo.v₀ j _)) →
@@ -687,9 +624,6 @@ open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ
 open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
-
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -720,7 +654,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingRelationTransferIdentity =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsClassSystem =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsClassSystem", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SignAtBasePlaceEqEmbedding\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsClassSystem", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SignAtBasePlaceEqEmbedding\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSameData\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -730,215 +664,66 @@ open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
 
-
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 noncomputable section
 
 namespace GlobalTheory.TwInputs.Move
 
-structure SameGeo (D D' : D7) : Prop where
-  R : D.R = D'.R
-  host : HEq D.host D'.host
-  sp : HEq D.sp D'.sp
-  Tau : D.what₂.Tau = D'.what₂.Tau
-  instTau : HEq D.what₂.instTau D'.what₂.instTau
-  eTau : HEq D.eTau D'.eTau
-  hc : HEq D.hc D'.hc
+variable {D : D7} (r : Rest D)
 
-theorem CopyTw.sameGeo {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyTw D D' ι e) :
-    SameGeo D D' := ⟨h.gal.R, h.gal.host, h.sp, h.Tau, h.instTau, h.eTau, h.hc⟩
+theorem twistUp_good {A : Type} [CommGroup A] {t : Twist D A} (g : t.Good) : (twistUp r t).Good :=
+  ⟨g.1, g.2, g.3, g.4, g.5, g.6⟩
 
-scoped macro "geo_cases " h:ident _D:ident D':ident : tactic =>
-  `(tactic| (
-    obtain ⟨a1, a2, a3, a4, a5, a6, a7⟩ := $h
-    cases $D':ident with | mk R' host' sp' vol' volp' rows' eTau' hc' => ?_
-    dsimp only at a1 a2 a3 a4 a5 a6 a7
-    subst a1; subst a2; subst a3
-    cases rows'
-    dsimp only at a4 a5 a6 a7
-    subst a4; subst a5; subst a6; subst a7))
+theorem twistDn_good {A : Type} [CommGroup A] {t : Twist (overD D r) A} (g : t.Good) : (twistDn r t).Good :=
+  ⟨g.1, g.2, g.3, g.4, g.5, g.6⟩
 
-variable {D D' : D7}
-
-structure RecipRel {Ω Ω' : Type} [Field Ω] [Algebra D.host.E Ω] [Field Ω'] [Algebra D'.host.E Ω'] (a : Recip D Ω) (a' : Recip D' Ω') :
-    Prop where
-  κ : HEq a.κ a'.κ
-  art : HEq a.art a'.art
-
-structure TwistRel {A : Type} [CommGroup A] (t : Twist D A) (t' : Twist D' A) : Prop where
-  Q : HEq t.Q t'.Q
-  chi : HEq t.chi t'.chi
-  res : HEq t.res t'.res
-
-structure FrameRel {S T : HSp D} {S' T' : HSp D'} (F : Frame S T) (F' : Frame S' T') : Prop where
-  ψ : HEq F.ψ F'.ψ
-  θ : HEq F.θ F'.θ
-  sT : HEq F.sT F'.sT
-  BS : HEq F.BS F'.BS
-  BT : HEq F.BT F'.BT
-  ΛS : HEq F.ΛS F'.ΛS
-  ΛT : HEq F.ΛT F'.ΛT
-  βS : HEq F.βS F'.βS
-  βT : HEq F.βT F'.βT
-  f₀ : HEq F.f₀ F'.f₀
-
-structure TypeRel {r r' : ℕ} (G : TypeDat D r) (G' : TypeDat D' r') : Prop where
-  Pg : HEq G.Pg G'.Pg
-  P : HEq G.P G'.P
-  mu : HEq G.mu G'.mu
-
-structure WeightRel {n n' : ℕ} (w : Weight D n) (w' : Weight D' n') : Prop where
-  p : HEq w.p w'.p
-  q : HEq w.q w'.q
-  ap : HEq w.ap w'.ap
-  am : HEq w.am w'.am
-  c : HEq w.c w'.c
-  lam : HEq w.lam w'.lam
-
-structure BaseRel {S T : HSp D} {S' T' : HSp D'} (B : Base S T) (B' : Base S' T') : Prop where
-  F : FrameRel B.F B'.F
-  G : TypeRel B.G B'.G
-  de : TwistRel B.de B'.de
-  w : WeightRel B.w B'.w
-  mu0 : HEq B.mu0 B'.mu0
-  eta : HEq B.eta B'.eta
-
-theorem TwistRel.good (h : SameGeo D D') {A : Type} [CommGroup A] {t : Twist D A} {t' : Twist D' A} (r : TwistRel t t')
-    (g : t.Good) : t'.Good := by
-  geo_cases h D D'
-  obtain ⟨Q, chi, res⟩ := t
-  obtain ⟨Q', chi', res'⟩ := t'
-  obtain ⟨r1, r2, r3⟩ := r
-  cases r1; cases r2; cases r3
-  exact ⟨g.1, g.2, g.3, g.4, g.5, g.6⟩
-
-scoped macro "base_cases " r:ident _B:ident B':ident : tactic =>
-  `(tactic| (
-    obtain ⟨hr', ⟨_, _, _, _, _, _, _, _, _, _⟩, ⟨_, _, _⟩, ⟨_, _, _⟩, ⟨_, _, _, _, _, _⟩, _, _⟩ := $B'
-    obtain ⟨⟨f1, f2, f3, f4, f5, f6, f7, f8, f9, f10⟩, ⟨g1, g2, g3⟩, ⟨d1, d2, d3⟩, ⟨w1, w2, w3, w4, w5, w6⟩, m1, m2⟩ := $r
-    dsimp only at f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 g1 g2 g3 d1 d2 d3 w1 w2 w3 w4 w5 w6 m1 m2
-    subst f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 g1 g2 g3 d1 d2 d3 w1 w2 w3 w4 w5 w6 m1 m2))
-
-theorem BaseRel.good (h : SameGeo D D') {S T : HSp D} {S' T' : HSp D'} (hS : HEq S S') (hT : HEq T T') {B : Base S T}
-    {B' : Base S' T'} (r : BaseRel B B') (g : B.Good) : B'.Good := by
-  have gd := r.de.good h g.de
-  geo_cases h D D'
-  subst hS; subst hT
-  base_cases r B B'
+theorem baseUp_good {S T : HSp D} {B : Base S T} (g : B.Good) : (baseUp r B).Good := by
+  have gd := twistUp_good r g.de
   have v := g.frame.vac.2
   refine ⟨g.even, g.odd, ⟨g.frame.1, g.frame.2, g.frame.3, g.frame.4, g.frame.5, g.frame.6, g.frame.7, g.frame.8, g.frame.vac.1, ?_⟩,
     gd, ⟨g.places.1, g.places.2, g.places.3⟩, ⟨g.wt.1, g.wt.2⟩, g.sig, g.sigOK, g.eta, g.hecke, g.real, g.unram, g.tame, g.inf⟩
   exact ⟨v.1, ⟨v.2.1, v.2.2, v.2.3, v.2.4⟩, v.3, v.4, v.5⟩
 
-theorem BaseRel.isWeil (h : SameGeo D D') {S T : HSp D} {S' T' : HSp D'} (hS : HEq S S') (hT : HEq T T') {B : Base S T}
-    {B' : Base S' T'} (r : BaseRel B B') {ν : (AE D)ˣ →* Circle} {ν' : (AE D')ˣ →* Circle} (hν : HEq ν ν')
-    {ω : PairRep S T} {ω' : PairRep S' T'} (hω : HEq ω ω') (g : B.IsWeil ν ω) : B'.IsWeil ν' ω' := by
-  geo_cases h D D'
-  subst hS; subst hT
-  base_cases r B B'
-  subst hν; subst hω
+theorem baseUp_isWeil {S T : HSp D} {B : Base S T} {ν : (AE D)ˣ →* Circle} {ω : PairRep S T}
+    (g : B.IsWeil ν ω) : (baseUp r B).IsWeil (D := overD D r) ν ω := by
   refine ⟨g.1, g.2, g.3, g.4, g.5, fun p f a => ?_, fun x y w f a => g.7 x y w f ⟨a.1, a.2, a.3, a.4⟩,
     fun x hx y hy f a => g.8 x hx y hy f ⟨a.1, a.2, a.3, a.4⟩, fun f a => g.9 f ⟨a.1, a.2, a.3, a.4⟩,
     fun μ F h1 h2 p f a => g.10 μ F h1 h2 p f ⟨a.1, a.2, a.3, a.4⟩, fun e he x y h1 h2 z w h3 h4 => ?_⟩
   · have b := g.6 p f ⟨a.1, a.2, a.3, a.4⟩
     exact ⟨b.1, b.2, b.3, b.4⟩
-  · obtain ⟨r, hr, h5⟩ := g.11 e he x y h1 h2 z w h3 h4
-    exact ⟨r, hr, fun l h6 f a => h5 l (fun u hu f a => h6 u hu f ⟨a.1, a.2, a.3, a.4⟩) f ⟨a.1, a.2, a.3, a.4⟩⟩
+  · obtain ⟨r0, hr, h5⟩ := g.11 e he x y h1 h2 z w h3 h4
+    exact ⟨r0, hr, fun l h6 f a => h5 l (fun u hu f a => h6 u hu f ⟨a.1, a.2, a.3, a.4⟩) f ⟨a.1, a.2, a.3, a.4⟩⟩
 
-theorem BaseRel.adm (h : SameGeo D D') {S T : HSp D} {S' T' : HSp D'} (hS : HEq S S') (hT : HEq T T') {B : Base S T}
-    {B' : Base S' T'} (r : BaseRel B B') {Q : Finset (Pl D.host.E)} {Q' : Finset (Pl D'.host.E)} (hQ : HEq Q Q')
-    (g : B'.admitted Q') : B.admitted Q := by
-  geo_cases h D D'
-  subst hS; subst hT
-  base_cases r B B'
-  subst hQ
-  exact ⟨⟨g.1.1, g.1.2, g.1.3⟩, g.2⟩
+theorem baseUp_adm {S T : HSp D} {B : Base S T} {Q : Finset (Pl D.host.E)}
+    (g : (baseUp r B).admitted Q) : B.admitted Q :=
+  ⟨⟨g.1.1, g.1.2, g.1.3⟩, g.2⟩
 
-theorem BaseRel.isClassSystem (h : SameGeo D D') {S T : HSp D} {S' T' : HSp D'} (hS : HEq S S') (hT : HEq T T') {B : Base S T}
-    {B' : Base S' T'} (r : BaseRel B B') {t : Twist D Circle} {t' : Twist D' Circle} (ht : TwistRel t t') {I I' : Type} (hI : I = I')
-    {y : I → GA D S} {y' : I' → GA D' S'} (hy : HEq y y') (g : IsClassSystem S (B.levJ t) y) :
-    IsClassSystem S' (B'.levJ t') y' := by
-  geo_cases h D D'
-  subst hS; subst hT
-  base_cases r B B'
-  obtain ⟨Q, chi, res⟩ := t
-  obtain ⟨Q', chi', res'⟩ := t'
-  obtain ⟨r1, r2, r3⟩ := ht
-  cases r1; cases r2; cases r3
-  subst hI; subst hy
-  exact ⟨g.1, g.2, g.3⟩
+theorem baseUp_isClassSystem {S T : HSp D} {B : Base S T} {t : Twist (overD D r) Circle} {I : Type}
+    {y : I → GA D S} (g : IsClassSystem S (B.levJ (twistDn r t)) y) :
+    IsClassSystem (D := overD D r) S ((baseUp r B).levJ t) y :=
+  ⟨g.1, g.2, g.3⟩
 
-theorem BaseRel.isBaseFrame (h : SameGeo D D') {S T : HSp D} {S' T' : HSp D'} (hS : HEq S S') (hT : HEq T T') {B : Base S T}
-    {B' : Base S' T'} (r : BaseRel B B') :
-    (Lev.IsBaseFrame S B.F.βS B.F.ΛS 1 → Lev.IsBaseFrame S' B'.F.βS B'.F.ΛS 1) ∧
-    (Lev.IsBaseFrame T B.F.βT B.F.ΛT 1 → Lev.IsBaseFrame T' B'.F.βT B'.F.ΛT 1) ∧
-    ((∀ P ∈ B.G.Pg, ∃ k, P ∈ placesOver D.host.E (D.host.g k)) → ∀ P ∈ B'.G.Pg, ∃ k, P ∈ placesOver D'.host.E (D'.host.g k)) := by
-  geo_cases h D D'
-  subst hS; subst hT
-  base_cases r B B'
-  exact ⟨id, id, id⟩
+theorem baseUp_isBaseFrame {S T : HSp D} (B : Base S T) :
+    (Lev.IsBaseFrame S B.F.βS B.F.ΛS 1 → Lev.IsBaseFrame (D := overD D r) S (baseUp r B).F.βS (baseUp r B).F.ΛS 1) ∧
+    (Lev.IsBaseFrame T B.F.βT B.F.ΛT 1 → Lev.IsBaseFrame (D := overD D r) T (baseUp r B).F.βT (baseUp r B).F.ΛT 1) ∧
+    ((∀ P ∈ B.G.Pg, ∃ k, P ∈ placesOver D.host.E (D.host.g k)) →
+      ∀ P ∈ (baseUp r B).G.Pg, ∃ k, P ∈ placesOver (overD D r).host.E ((overD D r).host.g k)) :=
+  ⟨id, id, id⟩
 
-theorem SameGeo.symm (h : SameGeo D D') : SameGeo D' D :=
-  ⟨h.R.symm, h.host.symm, h.sp.symm, h.Tau.symm, h.instTau.symm, h.eTau.symm, h.hc.symm⟩
-
-theorem SameGeo.spaces (h : SameGeo D D') {j : Fin D.R.m} {j' : Fin D'.R.m} (hj : (j : ℕ) = j') :
-    HEq (Vc D j) (Vc D' j') ∧ HEq (Wc D j) (Wc D' j') ∧ (Vc D j).rank = (Vc D' j').rank ∧ (Wc D j).rank = (Wc D' j').rank ∧
-    HEq (fun τ => aPl D j ((Wc D j).sig (tauE D τ)).1 τ) (fun τ => aPl D' j' ((Wc D' j').sig (tauE D' τ)).1 τ) ∧
-    HEq (fun τ => aMi D j ((Wc D j).sig (tauE D τ)).1 ((Wc D j).sig (tauE D τ)).2 τ)
-      (fun τ => aMi D' j' ((Wc D' j').sig (tauE D' τ)).1 ((Wc D' j').sig (tauE D' τ)).2 τ) := by
-  geo_cases h D D'
-  cases Fin.ext hj
-  exact ⟨HEq.rfl, HEq.rfl, rfl, rfl, HEq.rfl, HEq.rfl⟩
-
-theorem SameModel.cart_onb (h : SameGeo D D') {V : HSp D} {V' : HSp D'} (hV : HEq V V') {P : D.what₂.Tau → SPar}
-    {P' : D'.what₂.Tau → SPar} {M : Mult.DSModel V P} {M' : Mult.DSModel V' P'} (r : SameModel M M') :
+theorem cart_onb_over {V : HSp D} {P : D.what₂.Tau → SPar} {P' : (overD D r).what₂.Tau → SPar}
+    {M : Mult.DSModel V P} {M' : Mult.DSModel (D := overD D r) V P'} (hm : SameModel M M') :
     HEq (cart M) (cart M') ∧ HEq (onb M) (onb M') := by
-  have h1 := r.ε
-  have h2 := r.fr
-  clear r
-  geo_cases h D D'
-  subst hV
+  have h1 := hm.ε
+  have h2 := hm.fr
   cases M; cases M'
   dsimp only at h1 h2
   subst h1; subst h2
   exact ⟨HEq.rfl, HEq.rfl⟩
 
-theorem SameGeo.chrEq (h : SameGeo D D') {c : (AE D)ˣ →* Circle} {c' : (AE D')ˣ →* Circle} (hc : HEq c c')
-    {χ : Formalism.L2.Host.HChar D.host.E} {χ' : Formalism.L2.Host.HChar D'.host.E} (hχ : HEq χ χ') (g : ChrEq c χ) : ChrEq c' χ' := by
-  geo_cases h D D'
-  subst hc; subst hχ
+theorem chrEq_over {c : (AE D)ˣ →* Circle} {c' : (AE (overD D r))ˣ →* Circle} (hc : HEq c c')
+    {χ : Formalism.L2.Host.HChar D.host.E} {χ' : Formalism.L2.Host.HChar (overD D r).host.E} (hχ : HEq χ χ')
+    (g : ChrEq (D := D) c χ) : ChrEq (D := overD D r) c' χ' := by
+  cases hc; cases hχ
   exact g
-
-section Setup
-
-variable {N : NData D.R D.host D.what₂} {N' : NData D'.R D'.host D'.what₂}
-  {X : NTw D.R D.host D.what₂ D.LL0 N} {X' : NTw D'.R D'.host D'.what₂ D'.LL0 N'}
-
-structure SetupRel (ρ : Setup X) (ρ' : Setup X') : Prop where
-  rc : RecipRel ρ.rc ρ'.rc
-  ch : HEq ρ.ch ρ'.ch
-  bad : HEq ρ.bad ρ'.bad
-  e : HEq ρ.e ρ'.e
-  ek : HEq ρ.ek ρ'.ek
-  B : ∀ i i', HEq i i' → ∀ (j : Fin D.R.m) (j' : Fin D'.R.m), (j : ℕ) = j' → ∀ b, BaseRel (ρ.B i j b) (ρ'.B i' j' b)
-  om : HEq ρ.om ρ'.om
-  Cl : ∀ i i', HEq i i' → ∀ (j : Fin D.R.m) (j' : Fin D'.R.m), (j : ℕ) = j' → ∀ b t t', TwistRel t t' →
-    ρ.Cl i j b t = ρ'.Cl i' j' b t'
-  rep : ∀ i i', HEq i i' → ∀ (j : Fin D.R.m) (j' : Fin D'.R.m), (j : ℕ) = j' → ∀ b t t', TwistRel t t' →
-    HEq (ρ.rep i j b t) (ρ'.rep i' j' b t')
-  β : HEq ρ.β ρ'.β
-  eG : ∀ i i', HEq i i' → ∀ (j : Fin D.R.m) (j' : Fin D'.R.m), (j : ℕ) = j' → ∀ b, HEq (ρ.eG i j b) (ρ'.eG i' j' b)
-
-end Setup
-
-theorem TwistRel.eq {A : Type} [CommGroup A] {t t' : Twist D A} (r : TwistRel t t') : t = t' := by
-  obtain ⟨Q, chi, res⟩ := t
-  obtain ⟨Q', chi', res'⟩ := t'
-  obtain ⟨r1, r2, r3⟩ := r
-  cases r1; cases r2; cases r3
-  rfl
 
 end GlobalTheory.TwInputs.Move
 
@@ -958,142 +743,15 @@ open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
 
-
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 noncomputable section
 
 namespace GlobalTheory.TwInputs.Move
-
-variable {D D' : D7}
-
-theorem exists_setupRel (h : SameGeo D D') {N : NData D.R D.host D.what₂} {N' : NData D'.R D'.host D'.what₂}
-    {X : NTw D.R D.host D.what₂ D.LL0 N} {X' : NTw D'.R D'.host D'.what₂ D'.LL0 N'}
-    (h1 : GlobalTheory.TwistChoice.SameGalois N N') (h2 : GlobalTheory.TwistChoice.TwistDataAgreeAcrossCoefficients X X') (ρ : Setup X) :
-    ∃ ρ' : Setup X', SetupRel ρ ρ' := by
-  obtain ⟨gR, ghost, gsp, gTau, ginstTau, geTau, ghc⟩ := h
-  cases D'
-  dsimp only at gR ghost gsp gTau ginstTau geTau ghc
-  subst gR; subst ghost; subst gsp
-  cases ‹Rows.Data D.R›
-  dsimp only at gTau ginstTau geTau ghc
-  subst gTau; subst ginstTau; subst geTau; subst ghc
-  obtain ⟨a1, a2, a3, nOm, ninstOm, nalgOm, nplOm, nPlG⟩ := h1
-  obtain ⟨xcc, xTw, xl, xO0, xcrO0, xalgO0, xtopO0, xO, xcrO, xalgO, xOk, xcrOk, xalgOk, xzk, xpD, xchi1, xSig, xfinSig, xjS, xside, xrhoS, xS0, xhEig, xLam, xsideL, xRCG, xgrpRCG, xfinRCG, xart, xth⟩ := h2
-  dsimp only at a1 a2 a3
-  subst a3
-  cases N'
-  dsimp only at nOm ninstOm nalgOm nplOm nPlG
-  subst nOm; subst ninstOm; subst nalgOm; subst nplOm; subst nPlG
-  cases X'
-  dsimp only at xcc xTw xl xO0 xcrO0 xalgO0 xtopO0 xO xcrO xalgO xOk xcrOk xalgOk xzk xpD
-  dsimp only at xchi1 xSig xfinSig xjS xside xrhoS xS0 xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth
-  subst xcc xTw xl xO0 xcrO0 xalgO0 xtopO0 xO xcrO xalgO xOk xcrOk xalgOk xzk xpD
-  subst xchi1 xSig xfinSig xjS xside xrhoS xS0 xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth
-  obtain ⟨rc, ch, bad, e, ek, B, om, Cl, rep, β, eG⟩ := ρ
-  rename_i fin
-  refine ⟨@Setup.mk _ _ _ ⟨rc.κ, rc.art⟩ ch bad e ek
-    (fun i j b => ⟨(B i j b).hr, ⟨(B i j b).F.ψ, (B i j b).F.θ, (B i j b).F.sT, (B i j b).F.BS, (B i j b).F.BT, (B i j b).F.ΛS,
-      (B i j b).F.ΛT, (B i j b).F.βS, (B i j b).F.βT, (B i j b).F.f₀⟩, ⟨(B i j b).G.Pg, (B i j b).G.P, (B i j b).G.mu⟩,
-      ⟨(B i j b).de.Q, (B i j b).de.chi, (B i j b).de.res⟩,
-      ⟨(B i j b).w.p, (B i j b).w.q, (B i j b).w.ap, (B i j b).w.am, (B i j b).w.c, (B i j b).w.lam⟩, (B i j b).mu0, (B i j b).eta⟩)
-    om (fun i j b t => Cl i j b ⟨t.Q, t.chi, t.res⟩) (fun i j b t => fin i j b ⟨t.Q, t.chi, t.res⟩)
-    (fun i j b t => rep i j b ⟨t.Q, t.chi, t.res⟩) β eG,
-    ⟨.rfl, .rfl⟩, .rfl, .rfl, .rfl, .rfl, ?_, .rfl, ?_, ?_, .rfl, ?_⟩
-  · intro i i' hi j j' hj b
-    cases hi; cases Fin.ext hj
-    exact ⟨⟨.rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl⟩, ⟨.rfl, .rfl, .rfl⟩, ⟨.rfl, .rfl, .rfl⟩,
-      ⟨.rfl, .rfl, .rfl, .rfl, .rfl, .rfl⟩, .rfl, .rfl⟩
-  · rintro i i' hi j j' hj b ⟨_, _, _⟩ ⟨_, _, _⟩ ⟨r1, r2, r3⟩
-    cases hi; cases Fin.ext hj; cases r1; cases r2; cases r3
-    rfl
-  · rintro i i' hi j j' hj b ⟨_, _, _⟩ ⟨_, _, _⟩ ⟨r1, r2, r3⟩
-    cases hi; cases Fin.ext hj; cases r1; cases r2; cases r3
-    exact HEq.rfl
-  · intro i i' hi j j' hj b
-    cases hi; cases Fin.ext hj
-    exact HEq.rfl
-
-theorem RecipRel.good (h : SameGeo D D') {Ω Ω' : Type} [i1 : Field Ω] [i2 : Algebra D.host.E Ω] [i1' : Field Ω']
-    [i2' : Algebra D'.host.E Ω'] (hΩ : Ω = Ω') (h1 : HEq i1 i1') (h2 : HEq i2 i2') {a : Recip D Ω} {a' : Recip D' Ω'}
-    (r : RecipRel a a') (g : a.Good) : a'.Good := by
-  obtain ⟨gR, ghost, gsp, gTau, ginstTau, geTau, ghc⟩ := h
-  cases D'
-  dsimp only at gR ghost gsp gTau ginstTau geTau ghc
-  subst gR; subst ghost; subst gsp
-  cases ‹Rows.Data D.R›
-  dsimp only at gTau ginstTau geTau ghc
-  subst gTau; subst ginstTau; subst geTau; subst ghc
-  subst hΩ; subst h1; subst h2
-  obtain ⟨κ, art⟩ := a
-  obtain ⟨κ', art'⟩ := a'
-  obtain ⟨r1, r2⟩ := r
-  cases r1; cases r2
-  exact ⟨g.1, g.2, g.3, g.4⟩
-
-theorem SetupRel.good_of (h : SameGeo D D') {N : NData D.R D.host D.what₂} {N' : NData D'.R D'.host D'.what₂}
-    {X : NTw D.R D.host D.what₂ D.LL0 N} {X' : NTw D'.R D'.host D'.what₂ D'.LL0 N'}
-    (h1 : GlobalTheory.TwistChoice.SameGalois N N') (h2 : GlobalTheory.TwistChoice.TwistDataAgreeAcrossCoefficients X X') (hδ : HEq X.delta X'.delta)
-    (he : ∀ i i', HEq i i' → ∀ b x', ∃ x, HEq (sideEmb X i b x) (sideEmb X' i' b x') ∧ embLL0 D x = embLL0 D' x')
-    {ρ : Setup X} {ρ' : Setup X'} (r : SetupRel ρ ρ') (g : ρ.Good) : ρ'.Good := by
-  have grc := r.rc.good h (eq_of_heq h1.Om) h1.instOm h1.algOm g.rc
-  have h0 := h
-  obtain ⟨gR, ghost, gsp, gTau, ginstTau, geTau, ghc⟩ := h
-  cases D'
-  dsimp only at gR ghost gsp gTau ginstTau geTau ghc
-  subst gR; subst ghost; subst gsp
-  cases ‹Rows.Data D.R›
-  dsimp only at gTau ginstTau geTau ghc
-  subst gTau; subst ginstTau; subst geTau; subst ghc
-  obtain ⟨a1, a2, a3, nOm, ninstOm, nalgOm, nplOm, nPlG⟩ := h1
-  obtain ⟨xcc, xTw, xl, xO0, xcrO0, xalgO0, xtopO0, xO, xcrO, xalgO, xOk, xcrOk, xalgOk, xzk, xpD, xchi1, xSig, xfinSig, xjS, xside, xrhoS, xS0, xhEig, xLam, xsideL, xRCG, xgrpRCG, xfinRCG, xart, xth⟩ := h2
-  dsimp only at a1 a2 a3
-  subst a3
-  cases N'
-  dsimp only at nOm ninstOm nalgOm nplOm nPlG
-  subst nOm; subst ninstOm; subst nalgOm; subst nplOm; subst nPlG
-  cases X'
-  dsimp only at xcc xTw xl xO0 xcrO0 xalgO0 xtopO0 xO xcrO xalgO xOk xcrOk xalgOk xzk xpD
-  dsimp only at xchi1 xSig xfinSig xjS xside xrhoS xS0 xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth
-  subst xcc xTw xl xO0 xcrO0 xalgO0 xtopO0 xO xcrO xalgO xOk xcrOk xalgOk xzk xpD
-  subst xchi1 xSig xfinSig xjS xside xrhoS xS0 xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth
-  dsimp only at hδ
-  subst hδ
-  obtain ⟨⟨κ', art'⟩, ch', bad', e', ek', B', om', Cl', rep', β', eG'⟩ := ρ'
-  obtain ⟨⟨r1, r2⟩, r3, r4, r5, r6, r7, r8, r9, r10, -, -⟩ := r
-  dsimp only at r1 r2 r3 r4 r5 r6 r8
-  subst r1 r2 r3 r4 r5 r6 r8
-  refine ⟨grc, fun i => ⟨(g.ch i).1, (g.ch i).2⟩, g.bad_ne, g.goodSetup_bad_mem_badPlaces, g.goodSetup_badPlaces_conj, g.goodSetup_placesOverTwo_subset, g.goodSetup_count_eq_zero_off_badPlaces, fun i b x' => ?_, g.ek_e,
-    fun i j b => (r7 i i .rfl j j rfl b).good h0 .rfl .rfl (g.base i j b),
-    fun i j b => ((r7 i i .rfl j j rfl b).isBaseFrame h0 .rfl .rfl).1 (g.latS i j b),
-    fun i j b => ((r7 i i .rfl j j rfl b).isBaseFrame h0 .rfl .rfl).2.1 (g.latT i j b),
-    fun i j b => ((r7 i i .rfl j j rfl b).isBaseFrame h0 .rfl .rfl).2.2 (g.Pg i j b), fun i j b => ?_, fun i j b t ht => ?_,
-    fun i j b t ht ha => ?_⟩
-  · obtain ⟨x, h3, h4⟩ := he i i .rfl b x'
-    exact (congrArg (ρ.e i b) (eq_of_heq h3).symm).trans ((g.e_LL0 i b x).trans h4)
-  · have t := (r7 i i .rfl j j rfl b).de
-    rw [g.delta i j b] at t
-    exact TwistRel.eq ⟨t.1.symm, t.2.symm, t.3.symm⟩
-  · exact (r7 i i .rfl j j rfl b).isWeil h0 .rfl .rfl .rfl .rfl
-      (g.weil i j b ⟨t.Q, t.chi, t.res⟩ (TwistRel.good h0.symm ⟨.rfl, .rfl, .rfl⟩ ht))
-  · exact (r7 i i .rfl j j rfl b).isClassSystem h0 .rfl .rfl (t := ⟨t.Q, t.chi, t.res⟩) ⟨.rfl, .rfl, .rfl⟩
-      (r9 i i .rfl j j rfl b _ t ⟨.rfl, .rfl, .rfl⟩) (r10 i i .rfl j j rfl b _ t ⟨.rfl, .rfl, .rfl⟩)
-      (g.classes i j b ⟨t.Q, t.chi, t.res⟩ (TwistRel.good h0.symm ⟨.rfl, .rfl, .rfl⟩ ht)
-        ((r7 i i .rfl j j rfl b).adm h0 .rfl .rfl .rfl ha))
 
 theorem val_move {T T' : Type} {n n' : ℕ} (hT : T = T') (hn : n = n') {a : T → GL (Fin n) ℂ} {a' : T' → GL (Fin n') ℂ}
     {c : T → Matrix (Fin n) (Fin n) ℂ} {c' : T' → Matrix (Fin n') (Fin n') ℂ} (ha : HEq a a') (hc : HEq c c')
     (g : ∀ τ, (a τ).val = c τ) (τ : T') : (a' τ).val = c' τ := by
   subst hT hn ha hc
   exact g τ
-
-theorem mem_move {R R' : Ranks} {H : Host R} {H' : Host R'} (hR : R = R') (hH : HEq H H') {T T' : Type} (hT : T = T')
-    {p : T → Finset (Pl H.E)} {p' : T' → Finset (Pl H'.E)} {c : T → Set (Pl H.E)} {c' : T' → Set (Pl H'.E)} (hp : HEq p p')
-    (hc : HEq c c') {i : T} {i' : T'} (hi : HEq i i') {P : Pl H.E} {P' : Pl H'.E} (hP : HEq P P') (g : P ∈ p i → P ∈ c i) :
-    P' ∈ p' i' → P' ∈ c' i' := by
-  subst hR; subst hH; subst hT hp hc hi hP
-  exact g
 
 theorem grp_move {R R' : Ranks} {H : Host R} {H' : Host R'} {L L' : Fin 2 → Type} (hR : R = R') (hH : HEq H H') (hL : L = L')
     {r r' : ℕ} (e : r = R.r) (e' : r' = R'.r) {A B : Finset (Pl H.E)} {A' B' : Finset (Pl H'.E)} (hA : HEq A A') (hB : HEq B B')
@@ -1107,73 +765,65 @@ theorem grp_move {R R' : Ranks} {H : Host R} {H' : Host R'} {L L' : Fin 2 → Ty
   subst hR; subst hH; subst hL e e' hA hB hu hc
   exact g
 
-theorem heq_app {T T' A : Type} (hT : T = T') {f : T → A} {f' : T' → A} (hf : HEq f f') {i : T} {i' : T'} (hi : HEq i i') :
-    f i = f' i' := by
-  subst hT hf hi
-  rfl
+theorem setupUp_good {D : D7} (r : Rest D) {ι : D.what₂.LL →+* (overD D r).what₂.LL} {e : ↥(overD D r).LL0 ≃+* ↥D.LL0}
+    (h : CopyTw D (overD D r) ι e) {ρ : Setup D.ntw} (g : ρ.Good) : (setupUp r ρ).Good := by
+  have grc : (setupUp r ρ).rc.Good := ⟨g.rc.1, g.rc.2, g.rc.3, g.rc.4⟩
+  refine ⟨grc, fun i => ⟨(g.ch i).1, (g.ch i).2⟩, g.bad_ne, g.goodSetup_bad_mem_badPlaces,
+    g.goodSetup_badPlaces_conj, g.goodSetup_placesOverTwo_subset, g.goodSetup_count_eq_zero_off_badPlaces,
+    fun i b x' => ?_, g.ek_e,
+    fun i j b => baseUp_good r (g.base i j b),
+    fun i j b => (baseUp_isBaseFrame r (ρ.B i j b)).1 (g.latS i j b),
+    fun i j b => (baseUp_isBaseFrame r (ρ.B i j b)).2.1 (g.latT i j b),
+    fun i j b => (baseUp_isBaseFrame r (ρ.B i j b)).2.2 (g.Pg i j b),
+    fun i j b => ?_, fun i j b t ht => ?_, fun i j b t ht ha => ?_⟩
+  · have h3 := eq_of_heq (h.sideEmb_heq (i := i) (i' := i) .rfl b x')
+    have h4 := h.embLL0_eq x'
+    exact (congrArg (ρ.e i b) h3.symm).trans ((g.e_LL0 i b (e x')).trans h4)
+  · apply SameTwist.eq
+    dsimp only [setupUp, baseUp]
+    rw [g.delta i j b]
+    exact ⟨.rfl, .rfl, .rfl⟩
+  · exact baseUp_isWeil r (g.weil i j b (twistDn r t) (twistDn_good r ht))
+  · exact baseUp_isClassSystem r (g.classes i j b (twistDn r t) (twistDn_good r ht) (baseUp_adm r ha))
 
-variable {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0}
-
-theorem SetupRel.good (h : CopyTw D D' ι e) {ρ : Setup D.ntw} {ρ' : Setup D'.ntw} (r : SetupRel ρ ρ') (g : ρ.Good) : ρ'.Good :=
-  r.good_of h.sameGeo h.gal h.set h.delta (fun _ _ hi b x => ⟨e x, h.sideEmb_heq hi b x, h.embLL0_eq x⟩) g
-
-theorem SetupRel.realPin (h : CopyTw D D' ι e) {X : RealSide D} {X' : RealSide D'} (m : RealMove X X' ι) {ρ : Setup D.ntw}
-    {ρ' : Setup D'.ntw} (r : SetupRel ρ ρ') (p : RealPin X.R X.cG ρ) : RealPin X'.R X'.cG ρ' := by
-  have G := h.sameGeo
-  have back : ∀ (i' : D'.ntw.Tw) (j' : Fin D'.R.m), ∃ i : D.ntw.Tw, ∃ j : Fin D.R.m, HEq i i' ∧ (j : ℕ) = j' :=
-    fun i' j' => ⟨cast h.Tw_eq.symm i', Fin.cast (congrArg Ranks.m h.gal.R).symm j', cast_heq _ _, rfl⟩
+theorem setupUp_realPin {D : D7} (r : Rest D) {ι : D.what₂.LL →+* (overD D r).what₂.LL} {e : ↥(overD D r).LL0 ≃+* ↥D.LL0}
+    (_h : CopyTw D (overD D r) ι e) {X : RealSide D} {X' : RealSide (overD D r)} (m : RealMove X X' ι)
+    {ρ : Setup D.ntw} (p : RealPin X.R X.cG ρ) : RealPin X'.R X'.cG (setupUp r ρ) := by
   have chain : ∀ {A A' : Type} {a c : A} {a' c' : A'}, HEq a a' → a = c → HEq c c' → a' = c' :=
     fun h1 h2 h3 => eq_of_heq (h1.symm.trans ((heq_of_eq h2).trans h3))
   constructor
   case deltaPl =>
-    intro i' t' P' h1 h2
-    obtain ⟨t, P, h3, h4⟩ := m.Q i' t' P' h1 h2
-    exact mem_move h.gal.R h.gal.host h.Tw_eq h.set.pD r.ch (cast_heq h.Tw_eq.symm i') h4 (p.deltaPl _ t P h3) h2
+    intro i t' P' h1 h2
+    obtain ⟨t, P, h3, h4⟩ := m.Q i t' P' h1 h2
+    cases h4
+    exact p.deltaPl i t _ h3 h2
   all_goals
-    intro i' j' b
-    obtain ⟨i, j, hi, hj⟩ := back i' j'
-    have q := r.B i i' hi j j' hj b
-    obtain ⟨hV, hW, rV, rW, hp, hm⟩ := G.spaces hj
-  · exact chain q.F.ψ (p.psi i j b) m.ψ
-  · exact chain q.F.θ (p.inf i j b) m.θ
-  · exact chain q.F.sT (p.cartT i j b) ((m.MW j j' hj).cart_onb G hW).1
-  · exact val_move h.Tau rV q.F.BS (m.BV j j' hj) (p.onbS i j b)
-  · exact chain q.F.BT (p.onbT i j b) ((m.MW j j' hj).cart_onb G hW).2
-  · exact chain q.F.ΛS (p.latS i j b) (m.ΛV j j' hj)
-  · exact chain q.F.ΛT (p.latT i j b) (m.ΛW j j' hj)
-  · exact chain q.F.βS (p.frS i j b) (m.βV j j' hj)
-  · exact chain q.F.βT (p.frT i j b) (m.βW j j' hj)
-  · exact chain q.F.f₀ (p.vac i j b) (m.vacP j j' hj)
-  · exact chain q.G.Pg (p.Pg i j b) m.Pg
-  · exact grp_move h.gal.R h.gal.host (eq_of_heq h.gal.PlG) (FWT.rank_Wc j) (FWT.rank_Wc j') q.G.Pg m.Pg
-      (r.eG i i' hi j j' hj b) m.cG (p.grp i j b)
-  · exact chain q.mu0 (p.mu0 i j b) (hj ▸ m.mu0 j)
+    intro i j b
+    have q := sameBase_up r (ρ.B i j b)
+    have hMW := cart_onb_over r (m.MW j j rfl)
+  · exact chain q.ψ (p.psi i j b) m.ψ
+  · exact chain q.θ (p.inf i j b) m.θ
+  · exact chain q.sT (p.cartT i j b) hMW.1
+  · exact val_move rfl rfl q.BS (m.BV j j rfl) (p.onbS i j b)
+  · exact chain q.BT (p.onbT i j b) hMW.2
+  · exact chain q.ΛS (p.latS i j b) (m.ΛV j j rfl)
+  · exact chain q.ΛT (p.latT i j b) (m.ΛW j j rfl)
+  · exact chain q.βS (p.frS i j b) (m.βV j j rfl)
+  · exact chain q.βT (p.frT i j b) (m.βW j j rfl)
+  · exact chain q.f₀ (p.vac i j b) (m.vacP j j rfl)
+  · exact chain q.Pg (p.Pg i j b) m.Pg
+  · exact grp_move rfl .rfl rfl (FWT.rank_Wc j) (FWT.rank_Wc (D := overD D r) j) q.Pg m.Pg .rfl m.cG (p.grp i j b)
+  · exact chain q.mu0 (p.mu0 i j b) (m.mu0 j)
   · exact chain q.eta (p.eta i j b) m.eta
-  · exact G.chrEq q.de.chi (heq_app h.Tw_eq h.set.l hi ▸ m.delAt _) (p.delta i j b)
-  · exact congrFun (chain q.w.ap (funext (p.ap i j b)) hp)
-  · exact congrFun (chain q.w.am (funext (p.am i j b)) hm)
+  · exact chrEq_over r q.de.chi (m.delAt _) (p.delta i j b)
+  · exact congrFun (chain q.ap (funext (p.ap i j b)) .rfl)
+  · exact congrFun (chain q.am (funext (p.am i j b)) .rfl)
 
-theorem BaseRel.sameBase {S T : HSp D} {S' T' : HSp D'} {B : Base S T} {B' : Base S' T'} (r : BaseRel B B') : SameBase B B' :=
-  ⟨r.F.1, r.F.2, r.F.3, r.F.4, r.F.5, r.F.6, r.F.7, r.F.8, r.F.9, r.F.10, r.G.1, r.G.2, r.G.3, ⟨r.de.1, r.de.2, r.de.3⟩,
-    r.w.1, r.w.2, r.w.3, r.w.4, r.w.5, r.w.6, r.mu0, r.eta⟩
-
-theorem SameBase.baseRel {S T : HSp D} {S' T' : HSp D'} {B : Base S T} {B' : Base S' T'} (r : SameBase B B') : BaseRel B B' :=
-  ⟨⟨r.ψ, r.θ, r.sT, r.BS, r.BT, r.ΛS, r.ΛT, r.βS, r.βT, r.f₀⟩, ⟨r.Pg, r.P, r.mu⟩, ⟨r.de.1, r.de.2, r.de.3⟩,
-    ⟨r.p, r.q, r.ap, r.am, r.c, r.lam⟩, r.mu0, r.eta⟩
-
-theorem setupRel_iff_sameData {ρ : Setup D.ntw} {ρ' : Setup D'.ntw} : SetupRel ρ ρ' ↔ SameData ρ ρ' :=
-  ⟨fun r => ⟨r.rc.1, r.rc.2, r.ch, r.bad, r.e, r.ek, fun i i' hi j j' hj b => (r.B i i' hi j j' hj b).sameBase, r.om,
-      fun i i' hi j j' hj b t t' ht => ⟨r.Cl i i' hi j j' hj b t t' ⟨ht.1, ht.2, ht.3⟩, r.rep i i' hi j j' hj b t t' ⟨ht.1, ht.2, ht.3⟩⟩,
-      r.β, r.eG⟩,
-    fun r => ⟨⟨r.κ, r.art⟩, r.ch, r.bad, r.e, r.ek, fun i i' hi j j' hj b => (r.B i i' hi j j' hj b).baseRel, r.om,
-      fun i i' hi j j' hj b t t' ht => (r.Cl i i' hi j j' hj b t t' ⟨ht.1, ht.2, ht.3⟩).1,
-      fun i i' hi j j' hj b t t' ht => (r.Cl i i' hi j j' hj b t t' ⟨ht.1, ht.2, ht.3⟩).2, r.β, r.eG⟩⟩
-
-theorem setup_move_data : ∀ {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyTw D D' ι e) {X : RealSide D} {X' : RealSide D'} (m : RealMove X X' ι) (ρ : Setup D.ntw), ρ.Good → RealPin X.R X.cG ρ →
+theorem setup_move_data : ∀ {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0}, CopyTw D D' ι e → ∀ {X : RealSide D} {X' : RealSide D'}, RealMove X X' ι → ∀ (ρ : Setup D.ntw), ρ.Good → RealPin X.R X.cG ρ →
     ∃ ρ' : Setup D'.ntw, SameData ρ ρ' ∧ ρ'.Good ∧ RealPin X'.R X'.cG ρ' := by
   intro D D' ι e h X X' m ρ g p
-  obtain ⟨ρ', r⟩ := exists_setupRel h.sameGeo h.gal h.set ρ
-  exact ⟨ρ', setupRel_iff_sameData.1 r, r.good h g, r.realPin h m p⟩
+  obtain ⟨r, rfl⟩ := h.exists_rest
+  exact ⟨setupUp r ρ, sameData_up r ρ, setupUp_good r h g, setupUp_realPin r h m p⟩
 
 end GlobalTheory.TwInputs.Move
 
@@ -1192,9 +842,6 @@ open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ
 open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
-
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.TwInputs.Move
 
@@ -1217,9 +864,6 @@ open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ
 open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
-
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -1261,18 +905,9 @@ theorem vecAt_up {S T : HSp D} (B : Base S T) (Q φ) :
   dsimp only [ExportSeries.Base.locFn, baseUp, twistUp]
   exact vec_up r B (B.de.Q ∪ Q) (B.locFn Q φ)
 
-private theorem series_eq {S T : HSp D} (B : Base S T) :
-    @series (overD D r) S T (baseUp r B).F = @series D S T B.F := by
-  funext ω f g
-  refine LinearMap.ext fun P => funext fun x => ?_
-  delta series thetaKO
-  refine congrArg (fun v : WO S T → ℂ => ω (g, x) v 0) ?_
-  dsimp only [Frame.fock, pureTensorO, aPlusAll, aPlus, crea, Datum.dRho, baseUp]
-  rfl
-
 theorem series_up {S T : HSp D} (B : Base S T) (ω : PairRep S T) (Q φ h) :
     series (baseUp r B).F ω ((baseUp r B).vecAt Q φ) h = series B.F ω (B.vecAt Q φ) h := by
-  rw [vecAt_up r B, series_eq r B]
+  rw [vecAt_up r B, GlobalTheory.TwInputs.Move.RatUp.series_up r B]
 
 theorem theta_up {S T : HSp D} (B : Base S T) (ω : PairRep S T) (h : GA D S) :
     (baseUp r B).theta ((ω)) ((h)) = (B.theta ω h) :=
@@ -1285,7 +920,7 @@ theorem vecFlat_up {S T : HSp D} (B : Base S T) (ψ : Twist D Circle) :
 theorem gen_up {S T : HSp D} (B : Base S T) (ω : PairRep S T) (ψ : Twist D Circle) :
     (baseUp r B).gen ((ω)) (twistUp r ψ) = (B.gen ω ψ) := by
   delta ExportSeries.Base.gen
-  rw [vecFlat_up r B, series_eq r B]
+  rw [vecFlat_up r B, GlobalTheory.TwInputs.Move.RatUp.series_up r B]
   rfl
 
 theorem genSet_up {S T : HSp D} (B : Base S T) (ω : PairRep S T) (ψ : Twist D Circle) (h P) :
@@ -1307,13 +942,13 @@ theorem xiCoef_up {S T : HSp D} (B : Base S T) {C : Type} [AddCommGroup C] [Fint
     (P : PolF D T.rank S.rank) :
     (baseUp r B).xiCoef ((ω)) (univUp r u) ((Q)) ((Φ)) ((h)) ((P)) = (B.xiCoef ω u Q Φ h P) := by
   delta ExportSeries.Base.xiCoef ExportSeries.Base.xi
-  rw [vecFam_up r B, series_eq r B]
+  rw [vecFam_up r B, GlobalTheory.TwInputs.Move.RatUp.series_up r B]
   rfl
 
 theorem classSum_up {S T : HSp D} (B : Base S T) (ω : PairRep S T) (ψ : Twist D Circle) {I : Type} [Fintype I] (h : I → GA D S) :
     (baseUp r B).classSum (I := I) ω (twistUp r ψ) h = B.classSum ω ψ h := by
   delta ExportSeries.Base.classSum
-  rw [vecFlat_up r B, series_eq r B]
+  rw [vecFlat_up r B, GlobalTheory.TwInputs.Move.RatUp.series_up r B]
   dsimp only [ExportSeries.Base.levJ, baseUp, twistUp]
   rfl
 
@@ -1351,18 +986,6 @@ section Setup
 
 variable (ρ : Setup D.ntw) (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool)
 
-theorem liftSetupOverExtendedData_theta_eq : (setupUp r ρ).theta ((i)) ((j)) b = (ρ.theta i j b) := by
-  funext h
-  delta Setup.theta
-  dsimp only [setupUp]
-  exact congrArg DFunLike.coe (theta_up r (ρ.B i j b) (ρ.om i j b 1) h)
-
-theorem liftSetupOverExtendedData_gens_eq : (setupUp r ρ).gens ((i)) ((j)) b = (ρ.gens i j b) := by
-  funext k Q ψ h P
-  delta Setup.gens Setup.tw
-  dsimp only [setupUp]
-  exact genSet_up r (ρ.B i j b) (ρ.om i j b 1) (ρ.tw i b k Q ψ) h P
-
 theorem liftSetupOverExtendedData_classSum_eq : (setupUp r ρ).sum ((i)) ((j)) b = (ρ.sum i j b) := by
   funext k Q ψ
   delta Setup.sum Setup.tw
@@ -1374,20 +997,6 @@ private theorem univOf_up (Q : Finset (Pl D.host.E)) (M : ℕ) :
       univUp r (univOf D.nexp i Q M ρ.rc) := by
   dsimp only [setupUp, univOf, univUp, coord, Recip.pull, Recip.sym, resOf, IsResAt]
   rfl
-
-theorem liftSetupOverExtendedData_xi_eq : (setupUp r ρ).xi ((i)) ((j)) b (overD D r).nexp = (ρ.xi i j b D.nexp) := by
-  funext Q M h P
-  let Q₀ := admissibleConjugatePairPlaces (overD D r).ntw i Q M
-  let u := univOf D.nexp i Q₀ M ρ.rc
-  let ω := ρ.om i j b 1
-  let Φ := ExportSeries.Base.univFam u (ρ.β j)
-  have atFam := xiCoef_up r (ρ.B i j b) ω u (half (ρ.ch i) Q₀) Φ h P
-  delta Setup.xi
-  rw [univOf_up r ρ i Q₀ M]
-  dsimp only [setupUp, ω, Φ, u, Q₀, univUp, ExportSeries.Base.univFam,
-    admissibleConjugatePairPlaces, Formalism.MainNotions.NAdm.AdmQ,
-    Formalism.MainNotions.NAdm.TWSet] at atFam ⊢
-  exact atFam
 
 private theorem twistOf_up (ρ : Setup D.ntw) (i : D.ntw.Tw) (b : Bool) (k : ℕ) (Q : Finset (Pl D.host.E))
     (ψ : G D.host.E D.nd.Om →* (D.ntw.Ok i k)ˣ) :
@@ -1443,19 +1052,18 @@ def cellUp {hρ : ρ.Good} (hρ' : (setupUp r ρ).Good) {rd : Rd ρ D.nexp i j b
   U_eq := t.U_eq
   psiU_eq := t.psiU_eq
   dat := by rewrite [liftSetupOverExtendedData_isDatum_eq ρ i j b hc]; exact t.dat
-  dat_onto := by rewrite [liftSetupOverExtendedData_isDatum_eq ρ i j b hc, liftSetupOverExtendedData_theta_eq r ρ i j b]; exact t.dat_onto
+  dat_onto := by rewrite [liftSetupOverExtendedData_isDatum_eq ρ i j b hc, GlobalTheory.TwInputs.Move.RatUp.se_theta r ρ i j b]; exact t.dat_onto
   lev_iff := t.lev_iff
-  th_eq := by rewrite [liftSetupOverExtendedData_theta_eq r ρ i j b]; exact t.th_eq
-  thPsi_iff := by rewrite [liftSetupOverExtendedData_gens_eq r ρ i j b]; exact t.thPsi_iff
-  thU_eq := by rewrite [liftSetupOverExtendedData_xi_eq r ρ i j b]; exact t.thU_eq
-  thU_off := by rewrite [liftSetupOverExtendedData_xi_eq r ρ i j b]; exact t.thU_off
+  th_eq := by rewrite [GlobalTheory.TwInputs.Move.RatUp.se_theta r ρ i j b]; exact t.th_eq
+  thPsi_iff := by rewrite [GlobalTheory.TwInputs.Move.RatUp.se_gens r ρ i j b]; exact t.thPsi_iff
+  thU_eq := by rewrite [GlobalTheory.TwInputs.Move.RatUp.se_xi r ρ i j b]; exact t.thU_eq
+  thU_off := by rewrite [GlobalTheory.TwInputs.Move.RatUp.se_xi r ρ i j b]; exact t.thU_off
   rdV_inj := t.rdV_inj
   mtLat_iff := by rewrite [liftSetupOverExtendedData_integralForms_eq ρ i j b hc]; exact t.mtLat_iff
   thP_eq := by rewrite [liftSetupOverExtendedData_classSum_eq r ρ i j b]; exact t.thP_eq
 
 theorem cellUp_rdV {hρ : ρ.Good} (hρ' : (setupUp r ρ).Good) {rd : Rd ρ D.nexp i j b} (t : CellTie hρ D.nexp rd) :
     HEq t.rdV (cellUp r hc hρ' t).rdV := HEq.rfl
-
 
 end Cell
 
@@ -1476,9 +1084,6 @@ open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ
 open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
-
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -1520,8 +1125,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.HeightCounting GlobalTheory.TwInputs.Move GlobalTheory.HeightCounting.SideCopy
 open Formalism.L2.DIV Formalism.L2.Theta
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 noncomputable section
 
@@ -1561,8 +1164,6 @@ end
 theorem infG_eta {D : D7} {cf : CharFrame D} (hcs : CharSide D cf) (t : D.what₂.Tau) :
     D.naut.infG D.naut.etaT (Formalism.L2.Host.embPsi D.host (D.eTau t)) = {(((1 / 2 : ℚ)) : ℂ)} :=
   (hcs.infG D.naut.etaT (fun _ => 1 / 2) (by rw [hcs.etaT]; exact ⟨fun _ => 1, fun _ => by norm_num, cf.isEta.inf⟩) (D.eTau t)).1
-
-
 
 open Classical in
 theorem core (D : D7) (r : Rest D) (X : NExpTied D) (hpl : HEq D.naut.plGw (overD D r).naut.plGw)
@@ -1643,8 +1244,6 @@ theorem core (D : D7) (r : Rest D) (X : NExpTied D) (hpl : HEq D.naut.plGw (over
       (rhoW_hw := hhw)
       (rhoW_wt := hwt), HEq.refl X.tauG, fun i j b k Q ψ h1 h2 hA => ⟨HEq.rfl, HEq.rfl, fun _ _ _ _ _ hR => hR⟩⟩
 
-
-
 theorem expTied_copy : ∀ {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0}, CopyAll D D' ι e → ∀ {cf : CharFrame D} {cf' : CharFrame D'}, SameFrame cf cf' → CharSide D cf → CharSide D' cf' → ∀ X : NExpTied D, ∃ X' : NExpTied D', (TauTrue X → TauTrue X') ∧ ∀ (i : D.ntw.Tw) (i' : D'.ntw.Tw), HEq i i' → ∀ (j : ℕ) (b : Bool) (k : ℕ) (Q : Finset (PlE D.host)) (Q' : Finset (PlE D'.host)), HEq Q Q' → ∀ (ψ : G D.host.E D.nd.Om →* (D.ntw.Ok i k)ˣ) (ψ' : G D'.host.E D'.nd.Om →* (D'.ntw.Ok i' k)ˣ), HEq ψ ψ' → ∀ (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (h2' : j ≤ D'.R.m) (hA' : NX.AdmTw D' i' k Q' ψ'), ∃ hA : NX.AdmTw D i k Q ψ, HEq (X.mtV i j b k Q ψ h1 h2 hA).QP (X'.mtV i' j b k Q' ψ' h1 h2' hA').QP ∧ HEq (X.mtV i j b k Q ψ h1 h2 hA).DP (X'.mtV i' j b k Q' ψ' h1 h2' hA').DP ∧ ∀ (ε : FractionRing (D.ntw.Ok i k) →+* ℂ) (ε' : FractionRing (D'.ntw.Ok i' k) →+* ℂ), HEq ε ε' → ∀ (V V' : Type) [aV : AddCommGroup V] [mV : Module ℂ V] [aV' : AddCommGroup V'] [mV' : Module ℂ V'], V = V' → HEq aV aV' → HEq mV mV' → ∀ (r : D.nexp.MtV i j b k Q ψ → Formalism.AUTREP.GAf D.host.E D.R.nV → V) (r' : D'.nexp.MtV i' j b k Q' ψ' → Formalism.AUTREP.GAf D'.host.E D'.R.nV → V'), HEq r r' → GlobalTheory.HeightCounting.Reads X i j b k Q ψ h1 h2 hA ε V r → GlobalTheory.HeightCounting.Reads X' i' j b k Q' ψ' h1 h2' hA' ε' V' r' := by
   intro D D' ι e h cf cf' _ hcs hcs' X
   obtain ⟨r, rfl⟩ := h.cp.exists_rest
@@ -1687,10 +1286,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links IsDedekindDomain NumberField GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.HeightCounting
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-
-
 
 namespace GlobalTheory.SerVec
 
@@ -1811,38 +1406,35 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.HeightCounting GlobalTheory.TwInputs.Move GlobalTheory.HeightCounting.SideCopy
 open Formalism.L2.DIV Formalism.L2.Theta
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 namespace GlobalTheory.HeightCounting.SideCopy.LamCopy
-
-
 
 theorem lam_copy : ∀ {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0}, CopyAll D D' ι e → ∀ {cf : CharFrame D} {cf' : CharFrame D'}, SameFrame cf cf' → (∃ Z : GlobalTheory.LamTie.LamDat D, Z.Ok ∧ Z.Teich ∧ Z.C = cf ∧ Z.q0 = AbsolutelyIrreducibleSpan.q0 D ∧ GlobalTheory.LamTie.IsLamTieFull D.ntw Z) → ∃ Z : GlobalTheory.LamTie.LamDat D', Z.Ok ∧ Z.Teich ∧ Z.C = cf' ∧ Z.q0 = AbsolutelyIrreducibleSpan.q0 D' ∧ GlobalTheory.LamTie.IsLamTieFull D'.ntw Z := by
   rintro D D' ι e h cf cf' ⟨f1, f2, f3, f4⟩ ⟨⟨C, q, w0, c, chi⟩, hOk, hT, rfl, hq, hF⟩
   obtain ⟨r, rfl⟩ := h.cp.exists_rest
+  have hlam0 : ∀ l j a,
+      GlobalTheory.LamTie.LamDat.lam0 (D := overD D r) ⟨cf', q, w0, c, chi⟩ l j a =
+      GlobalTheory.LamTie.LamDat.lam0 (D := D) ⟨C, q, w0, c, chi⟩ l j a := by
+    cases C; cases cf'
+    dsimp only at f1 f2 f3 f4
+    subst f1; subst f2; subst f3; subst f4
+    intro l j a; rfl
   have he : ∀ x : ↥(overD D r).LL0, (overD D r).what₂.embLL (x : (overD D r).what₂.LL) = D.what₂.embLL (e x : D.what₂.LL) :=
     fun x => (h.cp.embLL0_eq x).symm
-  have hinW1 := h.cp.inW1
-  have hemb0 := h.cp.emb0
-  have hjL := h.jL
-  have hs2 := h.s2
-  have hlamG := h.lamG
-  have hXv := h.Xv
-  have hqs := h.qs
-  clear h ι
-  cases r
-  rename RestX _ _ _ _ => rx
-  cases rx
-  dsimp only [overD, overX] at hjL hs2 hlamG hXv hqs
-  cases hjL; cases hs2; cases hlamG; cases hXv; cases hqs
-  cases C; cases cf'
-  dsimp only at f1 f2 f3 f4
-  subst f1; subst f2; subst f3; subst f4
-  refine ⟨⟨_, q, w0, c, chi⟩, ⟨hOk.places, hOk.aux, hOk.big⟩, hT, rfl, hq, fun i hi => ?_⟩
-  obtain ⟨t0, j, t1, t2⟩ := hF i ((hinW1 i i HEq.rfl).2 hi)
-  refine ⟨t0, j, fun x => ?_, t2⟩
-  exact (congrArg j (he x)).trans ((t1 (e x)).trans (congrArg (GlobalTheory.ToricDenom.toBar _ i) (eq_of_heq (hemb0 i i HEq.rfl x))))
+  have hjL : (overD D r).ntw.jL = D.ntw.jL := (eq_of_heq h.jL).symm
+  have hs2 : (overD D r).ntw.s2 = D.ntw.s2 := (eq_of_heq h.s2).symm
+  have hXv : (overD D r).ntw.Xv = D.ntw.Xv := (eq_of_heq h.Xv).symm
+  have hLam : ∀ i j lam ja a s,
+      GlobalTheory.LamTie.IsLam D.ntw ⟨C, q, w0, c, chi⟩ i j lam ja a s →
+      GlobalTheory.LamTie.IsLam (overD D r).ntw ⟨cf', q, w0, c, chi⟩ i j lam ja a s := by
+    intro i j lam ja a s ⟨h1, ⟨h2a, h2b, h2c⟩, h3⟩
+    exact ⟨hjL ▸ h1, ⟨hs2 ▸ h2a, h2b, h2c⟩, fun P hP => hXv ▸ (hlam0 (D.ntw.l i) ja a).symm ▸ h3 P hP⟩
+  refine ⟨⟨cf', q, w0, c, chi⟩, ⟨hOk.places, hOk.aux, hOk.big⟩, hT, rfl, hq, fun i hi => ?_⟩
+  obtain ⟨t0, j, t1, t2, t3⟩ := hF i ((h.cp.inW1 i i HEq.rfl).2 hi)
+  refine ⟨t0, j, fun x => (congrArg j (he x)).trans ((t1 (e x)).trans
+      (congrArg (GlobalTheory.ToricDenom.toBar _ i) (eq_of_heq (h.cp.emb0 i i HEq.rfl x)))),
+    fun lam => let ⟨ja, a, s, hl, ht⟩ := t2 lam; ⟨ja, a, s, hLam _ _ _ _ _ _ hl, (hlam0 (D.ntw.l i) ja a).symm ▸ ht⟩,
+    fun ja a s b hs hs' => let ⟨lam, hb, hl, ht⟩ := t3 ja a s b hs hs'; ⟨lam, hb, hLam _ _ _ _ _ _ hl, (hlam0 (D.ntw.l i) ja a).symm ▸ ht⟩⟩
 
 end GlobalTheory.HeightCounting.SideCopy.LamCopy
 end -- clump:auto
@@ -1862,8 +1454,6 @@ open Formalism.L2.Host (embLL0 CharFrame)
 open GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open scoped TensorProduct
 
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open Formalism.L2 (NExpTied)
 open Formalism.AUTREP (GAf)
 open GlobalTheory.HeightCounting GlobalTheory.HeightCounting.SideCopy GlobalTheory.TwInputs.Move.Forms

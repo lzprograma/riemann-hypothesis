@@ -360,11 +360,6 @@ theorem first_index_eq_of_unfolded (k : U.Comp) : (U.X k).p0 = r - j := by
 def cmEquiv (T : Tau ≃ {τ : E →+* ℂ // τ (H.rt : E) = H.rt0}) (k : U.Comp) : Tau ≃ (U.X k).Ψ :=
   T.trans (Equiv.subtypeEquivRight fun τ => ((hU.2.1 k).2 τ).symm)
 
-def letterAt (hσ : GoodEmb c σ) :
-    {τ : E →+* ℂ // τ (H.rt : E) = H.rt0} ≃ {τ : E →+* ℂ // τ (H.rt : E) = H.rt0} :=
-  (Equiv.ofBijective _ (GlobalTheory.Relab.relab_good E H l c σ hσ).1).subtypeEquiv
-    fun τ => ((GlobalTheory.Relab.relab_good E H l c σ hσ).2.1 τ).symm
-
 variable [Fintype Tau] (hr : 0 < r) (T : Tau ≃ {τ : E →+* ℂ // τ (H.rt : E) = H.rt0})
   (B : ∀ k, BdData Tau j (r - j) (gammaU (U.X k) (le_of_isUnf U hU e) (cmEquiv U hU T k))) (s : U.Comp → Tau → ℂˣ)
 

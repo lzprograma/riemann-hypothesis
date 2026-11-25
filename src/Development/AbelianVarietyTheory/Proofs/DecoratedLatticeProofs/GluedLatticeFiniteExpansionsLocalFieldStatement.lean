@@ -88,12 +88,10 @@ theorem finsum_char (χ : AddChar 𝓀[k] ℂ) (hχ : χ ≠ 1) (L : Submodule �
     push_cast
     rfl
   · obtain ⟨f₁, hf₁⟩ : ∃ f₁ : Module.Dual 𝓀[k] (Red L), f₁ z ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hz ((Module.forall_dual_apply_eq_zero_iff 𝓀[k] z).1 h)
     obtain ⟨a, ha⟩ : ∃ a, χ a ≠ 1 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hχ (by ext a; rw [h a, AddChar.one_apply])
     set g : Module.Dual 𝓀[k] (Red L) := (-(a * (f₁ z)⁻¹)) • f₁
     have hg : g z = -a := by simp [g, hf₁]
@@ -140,7 +138,7 @@ theorem term_pos (q : Unif k) (χ : AddChar 𝓀[k] ℂ) (P : Pair k n') {L : Su
 theorem term_neg (q : Unif k) (χ : AddChar 𝓀[k] ℂ) (P : Pair k n') {L : Submodule 𝒪[k] (n → k)}
     {x₀ : Matrix n n' k} (h0 : ¬ ∀ z ∈ P.ker, x₀ *ᵥ z ∈ L) (f : Module.Dual 𝓀[k] (Red L)) :
     term q χ 1 P L f x₀ = 0 := by
-  rw [term, dif_neg h0]
+  rw [term, dite_eq_right h0]
 
 
 open Classical in
@@ -165,12 +163,12 @@ theorem datum_expand (q : Unif k) (χ : AddChar 𝓀[k] ℂ) (hχ : χ ≠ 1) (L
       · exact absurd h1.2 h2
       · exact absurd ⟨h0, h2⟩ h1
       · rw [mul_zero]
-    · rw [datum, if_neg, finsum_eq_zero_of_forall_eq_zero fun f => by rw [dif_neg hy, mul_zero], mul_zero]
+    · rw [datum, ite_eq_right, finsum_eq_zero_of_forall_eq_zero fun f => by rw [dite_eq_right hy, mul_zero], mul_zero]
       rintro ⟨-, h2⟩
       apply hy
       have h3 := sub_mem (L.smul_mem q.1 h2) (h0 _ (Pair.smul_mem_ker q.mem_max P.hasVal_vec.mem))
       rwa [smul_add, q.smul_inv_smul, ← mulVec_smul, add_sub_cancel_right] at h3
-  · rw [datum, if_neg fun h => h0 h.1, finsum_eq_zero_of_forall_eq_zero fun f => by rw [term_neg q χ P h0, zero_mul],
+  · rw [datum, ite_eq_right fun h => h0 h.1, finsum_eq_zero_of_forall_eq_zero fun f => by rw [term_neg q χ P h0, zero_mul],
       mul_zero]
 
 end GlobalTheory.GluedExp
@@ -193,14 +191,14 @@ theorem glued_col (q : Unif k) (χ : AddChar 𝓀[k] ℂ) (hχ : χ ≠ 1) (L : 
   congr 2
   · rw [term_zero, tensCol, vecInd]
     by_cases hy : (fun i => x i (Sum.inr 0)) ∈ L
-    · rw [dite_eq_left hy, if_pos hy, LinearMap.zero_apply, neg_zero, AddChar.map_zero_eq_one]
-    · rw [dif_neg hy, if_neg hy]
+    · rw [dite_eq_left hy, ite_eq_left hy, LinearMap.zero_apply, neg_zero, AddChar.map_zero_eq_one]
+    · rw [dite_eq_right hy, ite_eq_right hy]
   · rw [← finsum_ofDual L (fun Q => tensCol (latInd P.ker Q.ker + mainDatum q χ 1 P Q) (charInd χ Q) x)]
     refine finsum_congr fun f => ?_
     rw [term_ne_zero, tensCol, charInd, vecInd, ofDual_lat]
     by_cases hy : (fun i => x i (Sum.inr 0)) ∈ L
-    · rw [dite_eq_left hy, if_pos hy, mul_one, (ofDual_hasVal L f ⟨_, hy⟩).ev_eq]
-    · simp only [dif_neg hy, if_neg hy, mul_zero]
+    · rw [dite_eq_left hy, ite_eq_left hy, mul_one, (ofDual_hasVal L f ⟨_, hy⟩).ev_eq]
+    · simp only [dite_eq_right hy, ite_eq_right hy, mul_zero]
 
 theorem glued_sum (q : Unif k) (χ : AddChar 𝓀[k] ℂ) (hχ : χ ≠ 1) (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k]
     (P : Pair k n') :
@@ -229,7 +227,7 @@ theorem glued_sum (q : Unif k) (χ : AddChar 𝓀[k] ℂ) (hχ : χ ≠ 1) (L : 
     · exact absurd (h2 _ P.hasVal_vec.mem) h1
     · rw [mul_zero]
   · rw [finsum_eq_zero_of_forall_eq_zero (term_neg q χ P h0), latInd,
-      if_neg (fun h => h0 fun z hz => h z (P.ker_le hz)), mul_zero]
+      ite_eq_right (fun h => h0 fun z hz => h z (P.ker_le hz)), mul_zero]
 
 
 open Classical in
@@ -262,10 +260,10 @@ theorem finsum_lifts (q : Unif k) (L : Submodule 𝒪[k] (n → k)) (η : n → 
       if h : InDual L (q.1 • η) then A (exists_lifts h).choose else 0 := by
   split_ifs with h
   · rw [finsum_eq_single _ (exists_lifts h).choose fun f hf => by
-      rw [if_neg fun h' => hf (lifts_unique h' (exists_lifts h).choose_spec), mul_zero],
-      if_pos (exists_lifts h).choose_spec, mul_one]
+      rw [ite_eq_right fun h' => hf (lifts_unique h' (exists_lifts h).choose_spec), mul_zero],
+      ite_eq_left (exists_lifts h).choose_spec, mul_one]
   · exact finsum_eq_zero_of_forall_eq_zero fun f => by
-      rw [if_neg fun h' => h (inDual_of_lifts h'), mul_zero]
+      rw [ite_eq_right fun h' => h (inDual_of_lifts h'), mul_zero]
 
 
 open Classical in
@@ -342,7 +340,7 @@ theorem glued_row (q : Unif k) (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattic
       · rw [smul_dotProduct] at hs
         change (s : k) = (q.1 : k) * (η ⬝ᵥ y) at hs
         rw [hs, Unif.inv, ← mul_assoc, inv_mul_cancel₀ q.ne_zero, one_mul]
-  · rw [dif_neg hD, if_neg]
+  · rw [dite_eq_right hD, ite_eq_right]
     intro h
     apply hD
     intro y hy
@@ -407,32 +405,7 @@ section -- clump:auto
 open GlobalTheory.FinPl GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData ValuativeRel IsLocalRing Matrix
 
 theorem _root_.GlobalTheory.T.gluedLattice_finite_expansions_localField : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (n n' : Type) [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] (q : Unif k) (χ : AddChar 𝓀[k] ℂ), χ ≠ 1 → ∀ (Λ : Submodule 𝒪[k] (n → k)) [Λ.IsFullLattice k], (∀ P : Pair k n', latInd (gluedS q 1 P.ker P.vec) Λ = ((resCard k : ℂ) ^ Fintype.card n)⁻¹ • (tensCol (latInd P.ker Λ) (vecInd Λ) + ∑ Q ∈ withLat Λ, tensCol (latInd P.ker Q.ker + mainDatum q χ 1 P Q) (charInd χ Q)) ∧ latInd P.ker Λ + ∑ Q ∈ withLat Λ, (latInd P.ker Q.ker + mainDatum q χ 1 P Q) = ((resCard k : ℂ) ^ Fintype.card n) • latInd P.lat Λ) ∧ (∀ R : Pair k n', latInd Λ (gluedS q 1 R.ker R.vec) = tensRow (latInd Λ R.ker) (dualInd Λ) + ∑ Q ∈ withLat Λ, tensRow (phiOne Q R) (cosetInd q Q.lat Q.red)) ∧ ∀ (L : Submodule 𝒪[k] (n' → k)) [L.IsFullLattice k], latInd Λ (lastKer L) = tensRow (latInd Λ L) (dualInd Λ) ∧ latInd Λ (lastPair q L).lat = tensRow (latInd Λ L) (dualInd Λ + ∑ Q ∈ withLat Λ, cosetInd q Q.lat Q.red) := by
-  intro k _ _ _ _ n n' _ _ _ _ q χ hχ Λ _
-  refine ⟨fun P => ⟨GlobalTheory.GluedExp.glued_col q χ hχ Λ P,
-    GlobalTheory.GluedExp.glued_sum q χ hχ Λ P⟩, GlobalTheory.GluedExp.glued_row q Λ, ?_⟩
-  intro L _
-  have hlast : latInd Λ (lastPair q L).lat =
-      tensRow (latInd Λ L) (dualInd Λ + ∑ Q ∈ withLat Λ, cosetInd q Q.lat Q.red) := by
-    classical
-    funext x
-    rw [tensRow, GlobalTheory.GluedExp.coset_total, latInd, latInd, ite_zero_mul_ite_zero, mul_one]
-    have hm (v : n' ⊕ Fin 1 → k) :
-        v ∈ (lastPair q L).lat ↔ v ∘ Sum.inl ∈ L ∧ q.1 • v (Sum.inr 0) ∈ 𝒪[k] := by
-      rw [Pair.mem_lat_iff]
-      simp only [GlobalTheory.LastSteps.lastPair_hasVal]
-      constructor
-      · rintro ⟨a, h, s, hs, -⟩
-        exact ⟨h, hs ▸ s.2⟩
-      · rintro ⟨h, hs⟩
-        exact ⟨_, h, ⟨_, hs⟩, rfl, rfl⟩
-    refine if_congr ⟨fun h => ⟨fun y hy => ((hm _).1 (h y hy)).1, fun y hy => ?_⟩,
-      fun h y hy => (hm _).2 ⟨h.1 y hy, ?_⟩⟩ rfl rfl
-    · rw [smul_dotProduct]
-      exact ((hm _).1 (h y hy)).2
-    · have hη := h.2 y hy
-      rw [smul_dotProduct] at hη
-      exact hη
-  exact ⟨GlobalTheory.GluedExp.last_ker Λ L, hlast⟩
+  first | exact _root_.GlobalTheory.GluedExp.finite_expansions | exact @_root_.GlobalTheory.GluedExp.finite_expansions | apply _root_.GlobalTheory.GluedExp.finite_expansions <;> assumption
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GluedLatticeFiniteExpansionsLocalFieldStatement =====

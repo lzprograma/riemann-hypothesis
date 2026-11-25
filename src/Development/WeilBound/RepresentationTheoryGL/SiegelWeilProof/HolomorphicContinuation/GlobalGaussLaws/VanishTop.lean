@@ -105,8 +105,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace PositivityTheory.Rg.Sw.Glob
 
 theorem convRight_of (hE : EisStrong) : ConvRight := by
@@ -429,10 +427,6 @@ namespace PositivityTheory.Rg.Sw.Glob.DenseP
 
 variable {n : ℕ}
 
-theorem inG_nUh {b : Matrix (Fin n) (Fin n) ℂ} (hb : bᴴ = b) : InG (nU b) := by
-  simp only [InG, nU, JJ, Matrix.fromBlocks_conjTranspose, Matrix.fromBlocks_multiply, hb]
-  simp
-
 theorem inG_mL {A : Matrix (Fin n) (Fin n) ℂ} (hA : IsUnit A.det) : InG (fromBlocks A 0 0 (A⁻¹)ᴴ) := by
   have h1 : Aᴴ * (A⁻¹)ᴴ = 1 := by
     rw [← Matrix.conjTranspose_mul, Matrix.nonsing_inv_mul _ hA, Matrix.conjTranspose_one]
@@ -452,7 +446,7 @@ theorem hpart_herm (A : Matrix (Fin n) (Fin n) ℂ) : (hpart A)ᴴ = hpart A := 
 theorem hpart_of_herm {b : Matrix (Fin n) (Fin n) ℂ} (hb : bᴴ = b) : hpart b = b := by
   rw [hpart, hb, ← two_smul ℂ b, smul_smul]; norm_num
 
-def nuE (A : Matrix (Fin n) (Fin n) ℂ) : GR n := mkGR (nU (hpart A)) (inG_nUh (hpart_herm A))
+def nuE (A : Matrix (Fin n) (Fin n) ℂ) : GR n := mkGR (nU (hpart A)) (PositivityTheory.Rg.Sw.LVs.ts_inG_nU (hpart_herm A))
 
 theorem continuous_hpart : Continuous (hpart (n := n)) := by
   have h : Continuous fun A : Matrix (Fin n) (Fin n) ℂ => A + Aᴴ :=
@@ -483,7 +477,7 @@ def mlE (A : Matrix (Fin n) (Fin n) ℂ) : GR n :=
 
 theorem mlE_of {A : Matrix (Fin n) (Fin n) ℂ} (h : IsUnit A.det) :
     mlE A = mkGR (fromBlocks A 0 0 (A⁻¹)ᴴ) (inG_mL h) := by
-  unfold mlE; exact dif_pos h
+  unfold mlE; exact dite_eq_left h
 
 theorem isOpen_unitDet : IsOpen {A : Matrix (Fin n) (Fin n) ℂ | IsUnit A.det} := by
   have : {A : Matrix (Fin n) (Fin n) ℂ | IsUnit A.det} = (fun A : Matrix (Fin n) (Fin n) ℂ => A.det) ⁻¹' {z | z ≠ 0} :=
@@ -569,8 +563,6 @@ open scoped Matrix TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum
 open GlobalTheory.StdUnn
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace PositivityTheory.Rg.Sw.Glob.DenseP
 
 open Formalism.IndefR.Eqv (psiT psiT_inclR)
@@ -646,9 +638,6 @@ theorem reidx_mul (a b : M2 n) : Glob.reidx (a * b) = Glob.reidx a * Glob.reidx 
 theorem reidx_one : Glob.reidx (1 : M2 n) = 1 := by
   simp [Glob.reidx, Matrix.submatrix_one_equiv]
 
-theorem reidx_conjTranspose (a : M2 n) : Glob.reidx aᴴ = (Glob.reidx a)ᴴ := by
-  simp [Glob.reidx, Matrix.conjTranspose_submatrix]
-
 theorem inG_JJc : InG (JJ n) := by
   simp only [InG, JJ, Matrix.fromBlocks_conjTranspose, Matrix.fromBlocks_multiply]
   simp
@@ -670,7 +659,7 @@ theorem ratPt_of (τ : D.what₂.Tau) (u : Matrix (Fin (n + n)) (Fin (n + n)) D.
     show Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) u * Jst D n * u = Jst D n
     have key : (Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) u * Jst D n * u).map (tauE D τ) =
         (Jst D n).map (tauE D τ) := by
-      rw [Matrix.map_mul, Matrix.map_mul, cT_map_tauE, Jst_map, hu, ← reidx_conjTranspose, ← reidx_mul, ← reidx_mul, hM]
+      rw [Matrix.map_mul, Matrix.map_mul, cT_map_tauE, Jst_map, hu, ← PositivityTheory.Rg.Sw.Glob.reidx_ct, ← reidx_mul, ← reidx_mul, hM]
     exact Matrix.map_injective (tauE D τ).injective key
   refine ⟨GlobalTheory.AdelicU.ratEmb D.sp.cm.sig (Jst D n) ⟨U, hU⟩, ?_, ?_⟩
   · show _ ∈ GlobalTheory.AdelicU.ratPts D.sp.cm.sig (Jst D n)
@@ -710,7 +699,7 @@ theorem gens_mem (τ : D.what₂.Tau) (h : GR n) (hh : IsNElt h ∨ IsMElt h ∨
     h ∈ (gam D n τ).topologicalClosure := by
   rcases hh with ⟨b, hb, e⟩ | ⟨A, hA, e⟩ | e
   · have hh : h = nuE b := by
-      rw [mkGR_ext (inG_nUh (hpart_herm b)) (show mR h = nU (hpart b) by rw [hpart_of_herm hb]; exact e)]; rfl
+      rw [mkGR_ext (PositivityTheory.Rg.Sw.LVs.ts_inG_nU (hpart_herm b)) (show mR h = nU (hpart b) by rw [hpart_of_herm hb]; exact e)]; rfl
     rw [hh]
     refine closure_mono ?_ (nuE_mem_closure (tauE D τ) (denseRange_tauE τ) b)
     rintro _ ⟨e', rfl⟩
@@ -718,7 +707,7 @@ theorem gens_mem (τ : D.what₂.Tau) (h : GR n) (hh : IsNElt h ∨ IsMElt h ∨
         hpart (e'.map (tauE D τ)) := by
       rw [map_smul_E, Matrix.map_add _ (map_add (tauE D τ)), cT_map_tauE, map_inv₀, map_ofNat, hpart, one_div]
     obtain ⟨γ, hγ, he⟩ := ratPt_of τ (blk4 1 ((2 : D.host.E)⁻¹ • (e' + Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) e')) 0 1)
-      (nU (hpart (e'.map (tauE D τ)))) (inG_nUh (hpart_herm _)) (by
+      (nU (hpart (e'.map (tauE D τ)))) (PositivityTheory.Rg.Sw.LVs.ts_inG_nU (hpart_herm _)) (by
         rw [block_matrix_map, map0, map1, hβ]
         rfl)
     exact ⟨γ, hγ, he⟩
@@ -775,8 +764,6 @@ open Matrix Topology
 open scoped Matrix TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum
 open GlobalTheory.StdUnn
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace PositivityTheory.Rg.Sw.Glob
 
@@ -836,8 +823,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace PositivityTheory.Rg.Sw.Glob
 
 theorem gIauto_of (hT : PositivityTheory.PfSWUS.ThetaAuto) (hM : TensMem) : GIauto := by
@@ -869,8 +854,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace PositivityTheory.Rg.Sw.Glob
 
@@ -921,8 +904,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace PositivityTheory.Rg.Sw.Glob
 
 variable {D : D7} {n : ℕ}
@@ -955,7 +936,7 @@ theorem linSec_of : ThLin → LinSec := by
   have hm : ∀ P, tens θ τ fr (fP (cLoc l τ) P) Ψ ∈ schwartzA θ V.rank n ∧
       tens θ τ fr (fP (cLoc l τ) P) Ψ ∈ fockA θ V n l s :=
     fun P => tensMem D n V θ l s τ ε fr c.hθ hl0 c.hs c.hfr Ψ hΨ P
-  have hphi : ∀ P, phiS θ τ fr (cLoc l τ) Ψ P = ⟨_, (hm P).1⟩ := fun P => dif_pos (hm P).1
+  have hphi : ∀ P, phiS θ τ fr (cLoc l τ) Ψ P = ⟨_, (hm P).1⟩ := fun P => dite_eq_left (hm P).1
   have hadd : ∀ P Q, phiS θ τ fr (cLoc l τ) Ψ (P + Q) = phiS θ τ fr (cLoc l τ) Ψ P + phiS θ τ fr (cLoc l τ) Ψ Q := by
     intro P Q
     rw [hphi, hphi, hphi]
@@ -1048,8 +1029,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace PositivityTheory.Rg.Sw.Glob
 
@@ -1209,8 +1188,6 @@ open scoped Matrix TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum
 open GlobalTheory.StdUnn
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace PositivityTheory.Rg.Sw.Glob
 
 open EmbP
@@ -1279,10 +1256,10 @@ theorem sEmb : SEmb := by
   obtain rfl := eq_thetaC D hθ
   refine ⟨iota τ, continuous_iota τ, fun y => ⟨?_, fun τ' hτ' => ?_, ?_⟩⟩
   · have e := psi_atMN D τ τ (reidx (mR y))
-    rw [if_pos rfl] at e
+    rw [ite_eq_left rfl] at e
     exact e
   · have e := psi_atMN D τ τ' (reidx (mR y))
-    rw [if_neg hτ'] at e
+    rw [ite_eq_right hτ'] at e
     exact e
   · exact fin_atMN D τ (reidx (mR y))
 
@@ -1304,8 +1281,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace PositivityTheory.Rg.Sw.Glob
 
@@ -1363,8 +1338,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
 open MvPolynomial
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace PositivityTheory.Rg.Sw.Glob.IInvH
 
 variable {D : D7} {m n : ℕ}
@@ -1397,7 +1370,7 @@ theorem xyC_single (a b a' : Fin m) (r : ℂ) (i : Fin n) (β : Bool) :
   by_cases h : a' = a
   · subst h
     simp only [xyC, Matrix.smul_apply, Matrix.single_apply, true_and, smul_eq_mul, mul_ite, mul_one,
-      mul_zero, if_true]
+      mul_zero, ite_true]
     rw [Finset.sum_eq_single b]
     · simp
     · intro x _ hx
@@ -1436,7 +1409,7 @@ theorem hOp_eq (ε : Fin m → Bool) (c : ℝ) (a b : Fin m) (P : PX m n) :
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [ite_mul, zero_mul, mul_ite, mul_zero, add_mul, mul_add]
   rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp only [map_neg, map_one, map_mul, map_sub]
   ring
 
@@ -1459,8 +1432,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace PositivityTheory.Rg.Sw.Glob.IInvH
 
 variable {D : D7} {m n : ℕ}
@@ -1471,7 +1442,7 @@ theorem isUe_zRe (ε : Fin m → Bool) (a b : Fin m) : IsUe ε (zRe ε a b) := b
   simp only [Matrix.add_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.conjTranspose_apply,
     Matrix.zero_apply, zRe, Matrix.smul_apply, Matrix.sub_apply, smul_eq_mul, Matrix.single_apply, star_mul', star_sub, e1]
   by_cases h1 : a = i <;> by_cases h2 : b = j <;> by_cases h3 : b = i <;> by_cases h4 : a = j <;>
-    simp only [h1, h2, h3, h4, and_true, true_and, and_false, false_and, if_true, if_false, mul_zero, zero_mul, sub_zero,
+    simp only [h1, h2, h3, h4, and_true, true_and, and_false, false_and, ite_true, ite_false, mul_zero, zero_mul, sub_zero,
       add_zero, mul_one, star_one, star_zero, sgn_star] <;>
     (try subst_vars) <;> unfold sgn <;> split_ifs <;>
     first | (exfalso; tauto) | (simp only [star_one, star_zero]; ring)
@@ -1483,7 +1454,7 @@ theorem isUe_zIm (ε : Fin m → Bool) (a b : Fin m) : IsUe ε (zIm ε a b) := b
   simp only [Matrix.add_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.conjTranspose_apply,
     Matrix.zero_apply, zIm, Matrix.smul_apply, Matrix.add_apply, smul_eq_mul, Matrix.single_apply, star_mul', star_add, e2]
   by_cases h1 : a = i <;> by_cases h2 : b = j <;> by_cases h3 : b = i <;> by_cases h4 : a = j <;>
-    simp only [h1, h2, h3, h4, and_true, true_and, and_false, false_and, if_true, if_false, mul_zero, zero_mul, add_zero, mul_one, star_one, star_zero, sgn_star] <;>
+    simp only [h1, h2, h3, h4, and_true, true_and, and_false, false_and, ite_true, ite_false, mul_zero, zero_mul, add_zero, mul_one, star_one, star_zero, sgn_star] <;>
     (try subst_vars) <;> unfold sgn <;> split_ifs <;>
     first | (exfalso; tauto) | (simp only [star_one, star_zero]; ring)
 

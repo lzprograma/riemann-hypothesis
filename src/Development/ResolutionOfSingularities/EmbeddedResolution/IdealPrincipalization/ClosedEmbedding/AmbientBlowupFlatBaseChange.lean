@@ -12,49 +12,10 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.Resolutio
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.IsoBlowupRemovalBaseChange
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceIsomorphism
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
 import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceComposition
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.RemoveIsoBlowupsComparison, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.IsoBlowupRemoval, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.AmbientBlowupFlatBaseChange
@@ -224,8 +185,6 @@ theorem strictTransform_isIso_comp {A B C : Scheme.{u}} [IsLocallyNoetherian B]
     [IsLocallyNoetherian C] (e : C ⟶ B) [IsIso e] (π : B ⟶ A) (Z D : A.IdealSheafData)
     (_hπ : Blowup.IsBlowupAlongIdealSheaf π Z) :
     Blowup.strictTransform (e ≫ π) Z D = (Blowup.strictTransform π Z D).comap e := by
-  have : QuasiCompact (strictTransformι (e ≫ π) Z D) := inferInstance
-  have : QuasiCompact (strictTransformι (e ≫ π) Z D ≫ e) := inferInstance
   obtain ⟨φ, hφiso, hφfac⟩ := exists_isIso_strictTransformOpens_of_isIso e π Z D
   have := hφiso
   have hker : (strictTransformι (e ≫ π) Z D ≫ e).ker
@@ -254,7 +213,6 @@ namespace FunctorialResolution.EmbeddedResolution
 
 private theorem imageIdealSheaf_top {S X : Scheme.{u}} (σ : S ⟶ X) :
     _root_.FunctorialResolution.Blowup.schemeImageIdeal σ (⊤ : S.IdealSheafData) = ⊤ := by
-  have hemp : IsEmpty ↥(⊤ : S.IdealSheafData).subscheme := inferInstance
   have hqc : QuasiCompact ((⊤ : S.IdealSheafData).subschemeι ≫ σ) := by
     constructor
     intro U _ _
@@ -468,50 +426,6 @@ open CategoryTheory AlgebraicGeometry CategoryTheory.Limits
 noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
-
-theorem isStrictPullbackBlowupSeq_ambientBlowupSequence_of_flat
-    (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
-    (hno : BlowupPreservesNoetherian.{u})
-    {X Y S S' : Scheme.{u}} (ι : S ⟶ X) (ι' : S' ⟶ Y) (h : Y ⟶ X) (h' : S' ⟶ S)
-    [AlgebraicGeometry.IsClosedImmersion ι] [AlgebraicGeometry.IsClosedImmersion ι']
-    [AlgebraicGeometry.Flat h]
-    [AlgebraicGeometry.IsNoetherian X] [AlgebraicGeometry.IsNoetherian Y]
-    (hsq : IsPullback ι' h' h ι)
-    (s : BlowupSequenceData S) (s' : BlowupSequenceData S')
-    (hs : s.CentersContainNoComponent) (hs' : s'.CentersContainNoComponent)
-    (hpb : IsStrictPullbackBlowupSeq h' s'.toSequenceOfBlowups s.toSequenceOfBlowups) :
-    IsStrictPullbackBlowupSeq h (ambientBlowupSequence ι' s' hres hno hs').toSequenceOfBlowups
-      (ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups := by
-  have hstrict : IsStrictPullbackBlowupSeq h
-      (((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).baseChange h)
-      ((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups) :=
-    isStrictPullbackSequenceOfBlowups_baseChange ((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups) h
-  have hN : ∀ i : ℕ, i ≤ ((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).length →
-      AlgebraicGeometry.IsLocallyNoetherian (((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).schemeAt i) := by
-    intro i hi
-    have : AlgebraicGeometry.IsNoetherian (((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).schemeAt i) :=
-      isNoetherian_ambientBlowupSequence_schemeAt ι s hres hno hs i hi
-    infer_instance
-  have hN' : ∀ i : ℕ, i ≤ (((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).baseChange h).length →
-      AlgebraicGeometry.IsLocallyNoetherian
-        ((((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).baseChange h).schemeAt i) := by
-    intro i hi
-    have : AlgebraicGeometry.IsNoetherian
-        ((((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).baseChange h).schemeAt i) :=
-      isNoetherian_schemeAt
-        (((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).baseChange h) i hi
-    infer_instance
-  have hpushTb : IsPushforwardBlowupSeq ι' s'.toSequenceOfBlowups
-      (((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).baseChange h) :=
-    IsPushforwardBlowupSeq.of_flat_isPullback ι ι' h h' hsq s.toSequenceOfBlowups
-      ((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups) s'.toSequenceOfBlowups
-      (((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).baseChange h) hN hN'
-      (isPushforwardBlowupSeq_ambientBlowupSequence ι s hres hno hs) hpb hstrict
-  have hequiv : ((((ambientBlowupSequence ι s hres hno hs).toSequenceOfBlowups).baseChange h)).Isomorphic
-      ((ambientBlowupSequence ι' s' hres hno hs').toSequenceOfBlowups) :=
-    IsPushforwardBlowupSeq.isomorphic ι' hpushTb
-      (isPushforwardBlowupSeq_ambientBlowupSequence ι' s' hres hno hs')
-  exact IsStrictPullbackBlowupSeq.of_isomorphic_pullback hstrict hequiv
 
 theorem isPullbackBlowupSequence_ambientBlowupSequence_of_flat
     (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})

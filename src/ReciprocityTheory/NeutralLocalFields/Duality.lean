@@ -1,6 +1,7 @@
 module
 
 public import ReciprocityTheory.NeutralLocalFields.Reciprocity
+public import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
 public import Formalism.ConjugateSelfDual.Statement
 public import Mathlib.NumberTheory.Cyclotomic.CyclotomicCharacter
 public import Mathlib.NumberTheory.Padics.Complex
@@ -11,51 +12,7 @@ public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 public import Mathlib.Topology.Instances.ZMod
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 public import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -71,7 +28,6 @@ set_option linter.unusedVariables false
 
 noncomputable section
 
-open Representation
 
 variable {R : Type*} [CommRing R]
 variable {G : Type*} [Group G] [TopologicalSpace G]
@@ -82,92 +38,57 @@ section ContMaps
 
 variable (R M)
 
-def contMaps (X : Type*) [TopologicalSpace X] : Submodule R (X → M) where
-  carrier := {f | Continuous f}
-  zero_mem' := continuous_const
-  add_mem' hf hg := hf.add hg
-  smul_mem' c _ hf := hf.const_smul c
+abbrev contMaps (X : Type*) [TopologicalSpace X] : Submodule R (X → M) :=
+  ReciprocityTheory.Gal.contMaps R M X
 
 variable {R M}
 
 end ContMaps
 
-def ContAction (rho : Representation R G M) : Prop :=
-  Continuous (fun p : G × M => rho p.1 p.2)
+abbrev ContAction (rho : Representation R G M) : Prop :=
+  ReciprocityTheory.Gal.ContAction rho
 
 variable (rho : Representation R G M)
 
-def H0 : Submodule R M := rho.invariants
+abbrev H0 : Submodule R M := ReciprocityTheory.Gal.H0 rho
 
-theorem mem_riemannRochSpace_iff_regularAt_everywhere (m : M) : m ∈ H0 rho ↔ ∀ g, rho g m = m := Iff.rfl
+theorem mem_riemannRochSpace_iff_regularAt_everywhere (m : M) : m ∈ H0 rho ↔ ∀ g, rho g m = m :=
+  ReciprocityTheory.Gal.mem_riemannRochSpace_iff_regularAt_everywhere rho m
 
-def Z1 : Submodule R (G → M) where
-  carrier := {f | Continuous f ∧ ∀ g h, f (g * h) = f g + rho g (f h)}
-  zero_mem' := ⟨continuous_const, fun g h => by simp⟩
-  add_mem' := fun {f f'} hf hf' => ⟨hf.1.add hf'.1, fun g h => by
-    simp only [Pi.add_apply, hf.2, hf'.2, map_add (f := _)]; abel⟩
-  smul_mem' c f hf := ⟨hf.1.const_smul c, fun g h => by
-    simp only [Pi.smul_apply, hf.2, map_smul, smul_add]⟩
+abbrev Z1 : Submodule R (G → M) := ReciprocityTheory.Gal.Z1 rho
 
-def d0 : M →ₗ[R] (G → M) := LinearMap.pi fun g => rho g - LinearMap.id
+abbrev d0 : M →ₗ[R] (G → M) := ReciprocityTheory.Gal.d0 rho
 
-def Bd1 : Submodule R (G → M) := LinearMap.range (d0 rho)
+abbrev Bd1 : Submodule R (G → M) := ReciprocityTheory.Gal.B1 rho
 
-theorem mem_contCoboundaries1 (f : G → M) : f ∈ Bd1 rho ↔ ∃ m, ∀ g, f g = rho g m - m := by
-  constructor
-  · rintro ⟨m, rfl⟩; exact ⟨m, fun g => rfl⟩
-  · rintro ⟨m, hm⟩; exact ⟨m, funext fun g => (hm g).symm⟩
+theorem mem_contCoboundaries1 (f : G → M) : f ∈ Bd1 rho ↔ ∃ m, ∀ g, f g = rho g m - m :=
+  ReciprocityTheory.Gal.mem_coboundaries1 rho f
 
-abbrev H1 := Z1 rho ⧸ (Bd1 rho).comap (Z1 rho).subtype
+abbrev H1 := ReciprocityTheory.Gal.H1 rho
 
-def Z2 : Submodule R (G × G → M) where
-  carrier := {f | Continuous f ∧
-    ∀ g h k, rho g (f (h, k)) - f (g * h, k) + f (g, h * k) - f (g, h) = 0}
-  zero_mem' := ⟨continuous_const, fun g h k => by simp⟩
-  add_mem' := fun {f f'} hf hf' => ⟨hf.1.add hf'.1, fun g h k => by
-    have e1 := hf.2 g h k; have e2 := hf'.2 g h k
-    simp only [Pi.add_apply, map_add (f := _)]
-    calc _ = (rho g (f (h, k)) - f (g * h, k) + f (g, h * k) - f (g, h)) +
-          (rho g (f' (h, k)) - f' (g * h, k) + f' (g, h * k) - f' (g, h)) := by abel
-      _ = 0 := by rw [e1, e2, add_zero]⟩
-  smul_mem' c f hf := ⟨hf.1.const_smul c, fun g h k => by
-    have e := hf.2 g h k
-    simp only [Pi.smul_apply, map_smul]
-    rw [← smul_sub, ← smul_add, ← smul_sub, e, smul_zero]⟩
+abbrev Z2 : Submodule R (G × G → M) := ReciprocityTheory.Gal.Z2 rho
 
-def d1 : (G → M) →ₗ[R] (G × G → M) where
-  toFun c p := rho p.1 (c p.2) - c (p.1 * p.2) + c p.1
-  map_add' c c' := by
-    funext p; simp only [Pi.add_apply, map_add (f := _)]; abel
-  map_smul' r c := by
-    funext p; simp only [Pi.smul_apply, map_smul, RingHom.id_apply, smul_sub, smul_add]
+abbrev d1 : (G → M) →ₗ[R] (G × G → M) := ReciprocityTheory.Gal.d1 rho
 
-def Bd2 : Submodule R (G × G → M) := (contMaps R M G).map (d1 rho)
+abbrev Bd2 : Submodule R (G × G → M) := ReciprocityTheory.Gal.B2 rho
 
 theorem mem_contCoboundaries2 (f : G × G → M) :
-    f ∈ Bd2 rho ↔ ∃ c : G → M, Continuous c ∧ d1 rho c = f := Iff.rfl
+    f ∈ Bd2 rho ↔ ∃ c : G → M, Continuous c ∧ d1 rho c = f :=
+  ReciprocityTheory.Gal.separated_dvr_second_cohomology_mem rho f
 
-abbrev H2 := Z2 rho ⧸ (Bd2 rho).comap (Z2 rho).subtype
+abbrev H2 := ReciprocityTheory.Gal.H2 rho
 
-def Cn (rho : Representation R G M) (n : ℕ) : Submodule R ((Fin n → G) → M) := contMaps R M (Fin n → G)
+abbrev Cn (rho : Representation R G M) (n : ℕ) : Submodule R ((Fin n → G) → M) :=
+  ReciprocityTheory.Gal.Cn rho n
 
-def dn (n : ℕ) : ((Fin n → G) → M) →ₗ[R] ((Fin (n + 1) → G) → M) where
-  toFun f g := rho (g 0) (f fun i => g i.succ) + Finset.univ.sum fun j : Fin (n + 1) =>
-    (-1 : R) ^ ((j : ℕ) + 1) • f (Fin.contractNth j (· * ·) g)
-  map_add' f f' := by
-    funext g
-    simp [Finset.sum_add_distrib, add_add_add_comm]
-  map_smul' r f := by
-    funext g
-    simp [Finset.smul_sum, ← smul_assoc, mul_comm r]
+abbrev dn (n : ℕ) : ((Fin n → G) → M) →ₗ[R] ((Fin (n + 1) → G) → M) :=
+  ReciprocityTheory.Gal.dn rho n
 
-def Zn (n : ℕ) : Submodule R ((Fin n → G) → M) := Cn rho n ⊓ LinearMap.ker (dn rho n)
+abbrev Zn (n : ℕ) : Submodule R ((Fin n → G) → M) := ReciprocityTheory.Gal.Zn rho n
 
-def Bn : (n : ℕ) → Submodule R ((Fin n → G) → M)
-  | 0 => ⊥
-  | n + 1 => (Cn rho n).map (dn rho n)
+abbrev Bn (n : ℕ) : Submodule R ((Fin n → G) → M) := ReciprocityTheory.Gal.Bn rho n
 
-abbrev Hn (n : ℕ) := Zn rho n ⧸ (Bn rho n).comap (Zn rho n).subtype
+abbrev Hn (n : ℕ) := ReciprocityTheory.Gal.Hn rho n
 
 section Restriction
 
@@ -176,76 +97,19 @@ variable {H : Type*} [Group H] [TopologicalSpace H] (phi : H →* G)
 variable (hphi : Continuous phi)
 include hphi
 
-def restrictCocycles1 : Z1 rho →ₗ[R] Z1 (rho.comp phi) where
-  toFun f := ⟨f.1 ∘ phi, f.2.1.comp hphi, fun g h => by
-    simp only [Function.comp_apply, map_mul, MonoidHom.coe_comp]
-    exact f.2.2 _ _⟩
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
+abbrev restrictCocycles1 : Z1 rho →ₗ[R] Z1 (rho.comp phi) :=
+  ReciprocityTheory.Gal.restrictCocycles1 rho phi hphi
 
-def resH1 : H1 rho →ₗ[R] H1 (rho.comp phi) :=
-  Submodule.mapQ _ _ (restrictCocycles1 rho phi hphi) fun f hf => by
-    obtain ⟨m, hm⟩ := (mem_contCoboundaries1 rho _).1 hf
-    exact (mem_contCoboundaries1 _ _).2 ⟨m, fun h => hm (phi h)⟩
+abbrev resH1 : H1 rho →ₗ[R] H1 (rho.comp phi) :=
+  ReciprocityTheory.Gal.resH1 rho phi hphi
 
-def restrictCocycles2 : Z2 rho →ₗ[R] Z2 (rho.comp phi) where
-  toFun f := ⟨fun p => f.1 (phi p.1, phi p.2), f.2.1.comp (hphi.prodMap hphi), fun g h k => by
-    simp only [map_mul, MonoidHom.coe_comp, Function.comp_apply]
-    exact f.2.2 _ _ _⟩
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
+abbrev restrictCocycles2 : Z2 rho →ₗ[R] Z2 (rho.comp phi) :=
+  ReciprocityTheory.Gal.restrictCocycles2 rho phi hphi
 
-def resH2 : H2 rho →ₗ[R] H2 (rho.comp phi) :=
-  Submodule.mapQ _ _ (restrictCocycles2 rho phi hphi) fun f hf => by
-    obtain ⟨c, hc, hcf⟩ := (mem_contCoboundaries2 rho _).1 hf
-    refine (mem_contCoboundaries2 _ _).2 ⟨c ∘ phi, hc.comp hphi, ?_⟩
-    funext p
-    have e := congrFun hcf (phi p.1, phi p.2)
-    simp only [Submodule.coe_subtype] at e
-    change _ = f.1 (phi p.1, phi p.2)
-    rw [← e]
-    simp [d1]
+abbrev resH2 : H2 rho →ₗ[R] H2 (rho.comp phi) :=
+  ReciprocityTheory.Gal.resH2 rho phi hphi
 
 end Restriction
-
-section Map
-
-variable {M' : Type*} [AddCommGroup M'] [Module R M'] [TopologicalSpace M']
-  [IsTopologicalAddGroup M'] [ContinuousConstSMul R M']
-  (rho' : Representation R G M') (u : M →ₗ[R] M') (hu : Continuous u)
-  (hequiv : ∀ g m, u (rho g m) = rho' g (u m))
-include hu hequiv
-
-end Map
-
-section Pair
-
-variable {G' : Type*} [Group G'] [TopologicalSpace G']
-  {M' : Type*} [AddCommGroup M'] [Module R M'] [TopologicalSpace M']
-  [IsTopologicalAddGroup M'] [ContinuousConstSMul R M']
-  (rho' : Representation R G' M') (phi : G' →* G) (hphi : Continuous phi)
-  (u : M →ₗ[R] M') (hu : Continuous u) (hcompat : ∀ g m, u (rho (phi g) m) = rho' g (u m))
-include hphi hu hcompat
-
-end Pair
-
-section MapPair
-
-variable {M' : Type*} [AddCommGroup M'] [Module R M'] [TopologicalSpace M']
-  [IsTopologicalAddGroup M'] [ContinuousConstSMul R M']
-  (rho' : Representation R G M') (u : M →ₗ[R] M') (hu : Continuous u)
-  (hequiv : ∀ g m, u (rho g m) = rho' g (u m))
-
-end MapPair
-
-section RestrictionN
-
-variable {H : Type*} [Group H] [TopologicalSpace H] (phi : H →* G)
-
-variable (hphi : Continuous phi)
-include hphi
-
-end RestrictionN
 
 section Tate
 
@@ -265,7 +129,6 @@ section Coh
 
 noncomputable section
 
-open Representation
 
 variable {R : Type*} [CommRing R]
 variable {G : Type*} [Group G] [TopologicalSpace G]
@@ -273,26 +136,6 @@ variable {M : Type*} [AddCommGroup M] [Module R M] [TopologicalSpace M]
   [IsTopologicalAddGroup M] [ContinuousConstSMul R M]
 
 variable (rho : Representation R G M)
-
-section Cup
-
-variable {M' : Type*} [AddCommGroup M'] [Module R M'] [TopologicalSpace M']
-  [IsTopologicalAddGroup M'] [ContinuousConstSMul R M']
-  {P : Type*} [AddCommGroup P] [Module R P] [TopologicalSpace P]
-  [IsTopologicalAddGroup P] [ContinuousConstSMul R P]
-  (rho' : Representation R G M') (rhoP : Representation R G P)
-  (b : M →ₗ[R] M' →ₗ[R] P) (hb : Continuous fun p : M × M' => b p.1 p.2)
-  (hbe : ∀ g x y, b (rho g x) (rho' g y) = rhoP g (b x y))
-
-section CupZ11
-
-include hb hbe
-
-end CupZ11
-
-include hb hbe
-
-end Cup
 
 section Local
 
@@ -320,21 +163,6 @@ end
 
 end Coh
 
-section NatCoh
-
-variable {R : Type*} [CommRing R] {G : Type*} [Group G] [TopologicalSpace G]
-  {M : Type*} [AddCommGroup M] [Module R M] [TopologicalSpace M]
-  [IsTopologicalAddGroup M] [ContinuousConstSMul R M]
-  {M' : Type*} [AddCommGroup M'] [Module R M'] [TopologicalSpace M']
-  [IsTopologicalAddGroup M'] [ContinuousConstSMul R M']
-  (rho : Representation R G M) (rho' : Representation R G M') (u : M →ₗ[R] M') (hu : Continuous u)
-  (hequiv : ∀ g m, u (rho g m) = rho' g (u m))
-
-variable {I : Type*} {Dl : I → Type*} [∀ i, Group (Dl i)] [∀ i, TopologicalSpace (Dl i)]
-  (phis : ∀ i, Dl i →* G) (hphis : ∀ i, Continuous (phis i))
-
-end NatCoh
-
 instance (priority := 100) continuousConstSMul_of_discrete {R M : Type*} [SMul R M]
     [TopologicalSpace M] [DiscreteTopology M] : ContinuousConstSMul R M :=
   ⟨fun _ => continuous_of_discreteTopology⟩
@@ -355,31 +183,6 @@ def charRep (χ : Γ →* Rˣ) : Representation R Γ R where
 
 end Coeff
 
-section Cup
-
-variable {R : Type*} [CommRing R] [TopologicalSpace R] [DiscreteTopology R]
-  {Γ : Type*} [Group Γ] {M : Type*} [AddCommGroup M] [Module R M]
-  [TopologicalSpace M] [DiscreteTopology M]
-
-variable {D : Type*} [Group D] [TopologicalSpace D]
-  (χ : Γ →* Rˣ) (rho : Representation R Γ M) (φ : D →* Γ)
-
-end Cup
-
-section NatMaps
-
-variable {R : Type*} [CommRing R] [TopologicalSpace R] [DiscreteTopology R]
-  {Γ : Type*} [Group Γ] [TopologicalSpace Γ] (χ : Γ →* Rˣ)
-  {M : Type*} [AddCommGroup M] [Module R M] [TopologicalSpace M] [DiscreteTopology M]
-  {M' : Type*} [AddCommGroup M'] [Module R M'] [TopologicalSpace M'] [DiscreteTopology M']
-  (rho : Representation R Γ M) (rho' : Representation R Γ M') (u : M →ₗ[R] M')
-  (hequiv : ∀ g m, u (rho g m) = rho' g (u m))
-
-variable {I : Type*} {Dl : I → Type*} [∀ i, Group (Dl i)] [∀ i, TopologicalSpace (Dl i)]
-  (phis : ∀ i, Dl i →* Γ) (hphis : ∀ i, Continuous (phis i))
-
-end NatMaps
-
 section Cyc
 
 variable (K L : Type*) [Field K] [Field L] [Algebra K L] [IsAlgClosed L] [CharZero L]
@@ -389,18 +192,6 @@ def cycN : (L ≃ₐ[K] L) →* (ZMod n)ˣ :=
   (modularCyclotomicCharacter L (HasEnoughRootsOfUnity.natCard_rootsOfUnity L n)).comp
     (MulSemiringAction.toRingAut (L ≃ₐ[K] L) L)
 
-
-variable {K L n} in
-theorem cycN_spec (σ : L ≃ₐ[K] L) (ζ : L) (h : ζ ^ n = 1) :
-    σ ζ = ζ ^ ((cycN K L n σ : ZMod n)).val := by
-  have hz : ζ ≠ 0 := by
-    rintro rfl
-    simp [NeZero.ne n] at h
-  have ht : Units.mk0 ζ hz ∈ rootsOfUnity n L := by
-    rw [mem_rootsOfUnity]; ext; simp [h]
-  have := modularCyclotomicCharacter.spec L (HasEnoughRootsOfUnity.natCard_rootsOfUnity L n)
-    (MulSemiringAction.toRingAut (L ≃ₐ[K] L) L σ) ht
-  simpa [cycN] using this
 
 end Cyc
 
@@ -599,17 +390,6 @@ variable (inv : ∀ i : S ⊕ InfinitePlace F, H2 ((charRep D.chi).comp (locHom 
 
 end PTMapsAll
 
-section PTFam
-
-variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω]
-  {S : Finset (HeightOneSpectrum (𝓞 F))} {n : ℕ} [NeZero n] (D : GData F Ω S n)
-
-variable {M : Type} [AddCommGroup M] [Module (ZMod n) M] [TopologicalSpace M] [DiscreteTopology M]
-  (rho : Representation (ZMod n) (GS Ω (S : Set (HeightOneSpectrum (𝓞 F)))) M)
-  (hrho : ContAction rho)
-
-end PTFam
-
 section LubinTate
 
 variable (p : ℕ) [Fact p.Prime] (K : IntermediateField ℚ_[p] (PadicAlgCl p))
@@ -641,12 +421,6 @@ def resCard (π : OK p K) : ℕ := Nat.card (OK p K ⧸ Ideal.span {π})
 
 end LubinTate
 
-section FGL
-
-variable {R : Type} [CommRing R]
-
-end FGL
-
 section Division
 
 variable {p : ℕ} [Fact p.Prime] {K : IntermediateField ℚ_[p] (PadicAlgCl p)}
@@ -655,14 +429,6 @@ def ltPoly (π : OK p K) : Polynomial (PadicAlgCl p) :=
   Polynomial.X ^ resCard π + Polynomial.C (π : PadicAlgCl p) * Polynomial.X
 
 end Division
-
-section LTRecip
-
-open ValuativeRel
-
-variable (K : Type) [Field K] [ValuativeRel K] [TopologicalSpace K]
-
-end LTRecip
 
 
 section Hecke
@@ -682,10 +448,5 @@ def embC (σ : K →+* ℂ) : (InfinitePlace.mk σ).Completion →+* ℂ := by
     else (starRingEnd ℂ).comp (InfinitePlace.Completion.extensionEmbedding _)
 
 end Hecke
-
-theorem contAction_trivial {R G M : Type*} [CommRing R] [Group G] [TopologicalSpace G]
-    [AddCommGroup M] [Module R M] [TopologicalSpace M] :
-    ContAction (Representation.trivial R G M) :=
-  continuous_snd
 
 end Neutral.B1

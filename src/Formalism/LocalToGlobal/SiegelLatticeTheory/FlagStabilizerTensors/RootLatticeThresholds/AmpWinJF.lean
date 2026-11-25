@@ -17,28 +17,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf.AmpWinJF
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section Defs
-
-variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y} (hI : SIso D.s (sOf hF)) {θ : ℝ} (C : Choice X θ)
-  (hB : WuBessel C) (u u' : D.what₂.Word)
-
-end Defs
-
-section Main
-
-variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y} (hI : SIso D.s (sOf hF)) {θ : ℝ} (C : Choice X θ)
-  (hB : WuBessel C) (u u' : D.what₂.Word)
-
-end Main
-
-section Pts
-
-variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y} (hI : SIso D.s (sOf hF)) (u u' : D.what₂.Word)
-
-end Pts
-
 section Pin
 
 variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y} (hI : SIso D.s (sOf hF)) {θ : ℝ} (C : Choice X θ)

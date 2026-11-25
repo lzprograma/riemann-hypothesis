@@ -194,12 +194,6 @@ theorem compare_right_of_sum_bound {q : ℕ} [NeZero q] (χ : DirichletCharacter
       (wt_nonneg (hw d))) N).trans (mul_le_of_le_one_right (by positivity)
         (by simpa [b] using wt_le_one (hw 0)))
 
-theorem compare_right {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {α ε : ℝ}
-    (hα : 0 < α) (hε : 0 < ε) :
-    ‖LFunction χ (1 + ε) * ((α⁻¹ : ℝ) : ℂ) - ∑' d : ℕ, χ ((d + 1 : ℕ) : ZMod q) *
-      (((((d + 1 : ℕ) : ℝ) ^ (-ε) * (Real.exp (((d + 1 : ℕ) : ℝ) * α) - 1)⁻¹ : ℝ)) : ℂ)‖ ≤ q := by
-  exact compare_right_of_sum_bound χ (char_sum_bound χ hχ) hα hε
-
 theorem compare_one_of_sum_bound {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {B α : ℝ}
     (hB : ∀ N, ‖∑ n ∈ Finset.range N, χ ((n + 1 : ℕ) : ZMod q)‖ ≤ B)
     (hα : 0 < α) :
@@ -219,12 +213,6 @@ theorem compare_one_of_sum_bound {q : ℕ} [NeZero q] (χ : DirichletCharacter �
     simpa using (hc.tendsto 0).mono_left (nhdsWithin_le_nhds (s := Set.Ioi 0))
   · filter_upwards [self_mem_nhdsWithin] with ε hε d using term_norm_le χ hε d
   · filter_upwards [self_mem_nhdsWithin] with ε hε using compare_right_of_sum_bound χ hB hα hε
-
-theorem compare_one {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {α : ℝ}
-    (hα : 0 < α) :
-    ‖LFunction χ 1 * ((α⁻¹ : ℝ) : ℂ) - ∑' d : ℕ, χ ((d + 1 : ℕ) : ZMod q) *
-      (((Real.exp (((d + 1 : ℕ) : ℝ) * α) - 1)⁻¹ : ℝ) : ℂ)‖ ≤ q := by
-  exact compare_one_of_sum_bound χ hχ (char_sum_bound χ hχ) hα
 
 /-- A totient-sensitive lower bound for the value at one of a nonprincipal real character. -/
 theorem inv_totient_le_norm_LFunction_one {q : ℕ} [NeZero q]

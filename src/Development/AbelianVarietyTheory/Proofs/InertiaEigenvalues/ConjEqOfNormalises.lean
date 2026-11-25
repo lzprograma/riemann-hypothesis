@@ -323,8 +323,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formal
 open GlobalTheory.HeckeScalarSph GlobalTheory.SphLabelOps
 open scoped TensorProduct
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
 
 theorem exists_scalar (π : NG.FinTyp L n) (s : SplitPlace L) : ∃ R : GAf L n → Finset (GAf L n),

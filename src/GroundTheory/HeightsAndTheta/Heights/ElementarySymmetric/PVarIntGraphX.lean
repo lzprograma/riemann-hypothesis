@@ -65,16 +65,6 @@ section -- clump:auto
 
 set_option maxSynthPendingDepth 1
 
-namespace GroundTheory.Heights₂.Heights
-
-theorem IntegralIndep.closed : IntegralIndep.Statement :=
-  IntegralIndep.proof
-    (PosPartIndep.proof
-      (SheetOnlyNull.proof IndefiniteRowSideFullHecke.ComplexSets.FiniteMapOpen.proof
-        IndefiniteRowSideFullHecke.ComplexSets.CriticalImageNull.proof)
-      PosPartLocal.proof PosPartSplit.proof)
-
-end GroundTheory.Heights₂.Heights
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PIntegralIndep =====
@@ -299,7 +289,6 @@ theorem chartAbsDens_congr_zeroSet {m : ℕ} {K : Ideal (MvPolynomial (Fin m) �
 
 end VarIntGraph
 
-
 open VarIntGraph in
 theorem VarIntGraphInt.proof (hI : IntegralIndep.Statement) : VarIntGraphInt.Statement := by
   classical
@@ -355,7 +344,7 @@ open GroundTheory.Heights₂.Heights (varInt SmoothNear localMult linEval linFor
 open GroundTheory.Heights₂.Heights.ComplexSets (zeroSet)
 
 theorem VarIntGraphInt.closed : VarIntGraphInt.Statement :=
-  VarIntGraphInt.proof GroundTheory.Heights₂.Heights.IntegralIndep.closed
+  VarIntGraphInt.proof GroundTheory.Heights₂.Heights.IntegralIndep.full
 
 theorem VarIntGraphCompact.proof (hI : VarIntGraphInt.Statement)
     (hM : GroundTheory.Heights₂.Heights.ChartMassCompact.Statement) : VarIntGraphCompact.Statement := by

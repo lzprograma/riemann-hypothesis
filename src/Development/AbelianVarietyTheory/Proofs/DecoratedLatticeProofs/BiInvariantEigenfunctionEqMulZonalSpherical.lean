@@ -16,56 +16,12 @@ public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SatakeTrivialRangeBound
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanAntitone
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsParahoricAndIntegralGLDoubleCosetReps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
 import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.VolumeFlatSection
@@ -76,7 +32,7 @@ import Mathlib.Tactic.Linter.Style
 import Mathlib.Topology.Algebra.Group.Units
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CardValLt, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalField, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalFieldStatement, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PosIffLtCard, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrder, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrderStatement, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBorelSphericalFunction, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SatakeSubsetSum, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumBorelSphericalDoubleCosetRepsMul, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumBorelSphericalOverDiagonalDoubleCosetReps, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntBiInvariant, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntEig, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntOneEqOne, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiInvariantEigenfunctionEqMulZonalSpherical
+-- Members: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CardValLt, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalField, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PosIffLtCard, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrder, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBorelSphericalFunction, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SatakeSubsetSum, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumBorelSphericalDoubleCosetRepsMul, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumBorelSphericalOverDiagonalDoubleCosetReps, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntBiInvariant, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntEig, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntOneEqOne, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiInvariantEigenfunctionEqMulZonalSpherical
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CardValLt =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CardValLt", "h": "module\n\npublic import Mathlib.Data.Finset.Card\npublic import Mathlib.Data.Fintype.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
@@ -344,108 +300,6 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalField =====
 
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalFieldStatement =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalFieldStatement", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalField\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound GlobalTheory.ParHecke
-
-theorem _root_.GlobalTheory.T.cartan_decomposition_dominance_local_field :
-    ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-      (N : ℕ) (ϖ : kˣ), valuation k (ϖ : k) = uniformizer k →
-      ∀ (μ ν : Fin N → ℤ), Antitone μ → Antitone ν → ∀ n : ℕ, n ≤ N → ∀ g : GL (Fin N) k,
-      (∃ κ ∈ KO k (Fin N), ∃ κ' ∈ KO k (Fin N),
-        g = κ * GlobalTheory.GLDoubling.torusElt (k := k) (n := Fin N) ϖ
-          (indic (Finset.univ.filter fun i : Fin N => (i : ℕ) < n)) * κ') →
-      (∃ κ ∈ KO k (Fin N), ∃ κ' ∈ KO k (Fin N),
-        GlobalTheory.GLDoubling.torusElt (k := k) (n := Fin N) ϖ μ * g =
-          κ * GlobalTheory.GLDoubling.torusElt (k := k) (n := Fin N) ϖ ν * κ') →
-      ∑ i, ν i = ∑ i, μ i + n ∧ ∀ j : ℕ,
-        ∑ i ∈ Finset.univ.filter (fun i : Fin N => (i : ℕ) < j), ν i ≤
-          ∑ i ∈ Finset.univ.filter (fun i : Fin N => (i : ℕ) < j),
-            (μ i + indic (Finset.univ.filter fun i : Fin N => (i : ℕ) < n) i) := by
-  intro k _ _ _ _ N ϖ hϖ μ ν hμ _ n hn g hg hmain
-  let ε := indic (Finset.univ.filter fun i : Fin N => (i : ℕ) < n)
-  let T := GlobalTheory.GLDoubling.torusElt (k := k) (n := Fin N) ϖ
-  change ∃ κ ∈ KO k (Fin N), ∃ κ' ∈ KO k (Fin N), g = κ * T ε * κ' at hg
-  change ∃ κ ∈ KO k (Fin N), ∃ κ' ∈ KO k (Fin N), T μ * g = κ * T ν * κ' at hmain
-  obtain ⟨κ, hκ, κ', hκ', rfl⟩ := hg
-  obtain ⟨κ₁, hκ₁, κ₂, hκ₂, hdecomp⟩ := hmain
-  have hϖ₀ : 0 < valuation k (ϖ : k) := zero_lt_iff.2 ((Valuation.ne_zero_iff _).2 ϖ.ne_zero)
-  have hϖ₁ : valuation k (ϖ : k) < 1 := hϖ ▸ uniformizer_lt_one
-  have hT (e : Fin N → ℤ) : (T e).1 = diagonal (fun i => (ϖ : k) ^ e i) :=
-    GlobalTheory.GLDoubling.val_torusElt ..
-  have hsum : ∑ i, ν i = ∑ i, μ i + ∑ i, ε i := by
-    have hdet (e : Fin N → ℤ) : valuation k (T e).1.det = valuation k (ϖ : k) ^ ∑ i, e i := by
-      rw [hT, det_diagonal, GlobalTheory.CartanDom.val_torus_prod]
-    have h := congrArg (fun x : GL (Fin N) k => valuation k x.1.det) hdecomp
-    simp only [Units.val_mul, det_mul, map_mul] at h
-    rw [hdet, hdet, GlobalTheory.CartanDom.KO_det hκ, GlobalTheory.CartanDom.KO_det hκ',
-      GlobalTheory.CartanDom.KO_det hκ₁, GlobalTheory.CartanDom.KO_det hκ₂] at h
-    simp only [hdet, mul_one, one_mul] at h
-    rw [← zpow_add₀ hϖ₀.ne'] at h
-    exact le_antisymm ((zpow_le_zpow_iff_right_of_lt_one₀ hϖ₀ hϖ₁).1 h.le)
-      ((zpow_le_zpow_iff_right_of_lt_one₀ hϖ₀ hϖ₁).1 h.ge)
-  have hε : Antitone ε := GlobalTheory.CartanDom.indic_antitone N n
-  have hcard : ∑ i, ε i = n := GlobalTheory.CartanDom.sum_indic N n hn
-  refine ⟨hsum.trans (congrArg ((∑ i, μ i) + ·) hcard), fun j => ?_⟩
-  let tail := Finset.univ.filter (fun i : Fin N => ¬ (i : ℕ) < j)
-  have htail : (∑ i ∈ tail, μ i) + (∑ i ∈ tail, ε i) ≤ ∑ i ∈ tail, ν i := by
-    by_cases hj : j < N
-    swap
-    · have hempty : tail = ∅ := by
-        ext i
-        simp [tail]
-        omega
-      simp [hempty]
-    let I := {i : Fin N // ¬ (i : ℕ) < j}
-    have hA (f h : I → Fin N) :
-        valuation k (((T ε).1 * κ'.1).submatrix f h).det ≤
-          valuation k (ϖ : k) ^ (∑ i ∈ tail, ε i) * 1 := by
-      rw [hT]
-      exact GlobalTheory.CartanDom.tail_diag ϖ hϖ ε hε j hj κ'.1 1
-        (fun f h => GlobalTheory.CartanDom.val_det_le_one _
-          (fun a b => GlobalTheory.CartanDom.KO_int hκ' (f a) (h b))) f h
-    have hB (f h : I → Fin N) :
-        valuation k ((κ * T ε * κ').1.submatrix f h).det ≤
-          valuation k (ϖ : k) ^ (∑ i ∈ tail, ε i) * 1 := by
-      rw [Units.val_mul, Units.val_mul, mul_assoc]
-      exact GlobalTheory.CartanDom.minor_int_mul _ _ _ (GlobalTheory.CartanDom.KO_int hκ) hA f h
-    have hC (f h : I → Fin N) :
-        valuation k ((T μ * (κ * T ε * κ')).1.submatrix f h).det ≤
-          valuation k (ϖ : k) ^ (∑ i ∈ tail, μ i) *
-            (valuation k (ϖ : k) ^ (∑ i ∈ tail, ε i) * 1) := by
-      rw [Units.val_mul (T μ), hT]
-      exact GlobalTheory.CartanDom.tail_diag ϖ hϖ μ hμ j hj _ _ hB f h
-    have hνdecomp : T ν = κ₁⁻¹ * (T μ * (κ * T ε * κ')) * κ₂⁻¹ := by
-      rw [hdecomp]
-      group
-    have hD (f h : I → Fin N) :
-        valuation k ((T ν).1.submatrix f h).det ≤
-          valuation k (ϖ : k) ^ (∑ i ∈ tail, μ i) *
-            (valuation k (ϖ : k) ^ (∑ i ∈ tail, ε i) * 1) := by
-      rw [hνdecomp, Units.val_mul, Units.val_mul]
-      exact GlobalTheory.CartanDom.minor_mul_int _ _ _ (GlobalTheory.CartanDom.KO_int (inv_mem hκ₂))
-        (GlobalTheory.CartanDom.minor_int_mul _ _ _ (GlobalTheory.CartanDom.KO_int (inv_mem hκ₁)) hC) f h
-    have h := hD Subtype.val Subtype.val
-    rw [hT, submatrix_diagonal _ _ Subtype.val_injective, det_diagonal] at h
-    simp only [Function.comp_apply] at h
-    rw [GlobalTheory.CartanDom.val_torus_prod, mul_one, ← zpow_add₀ hϖ₀.ne'] at h
-    have hle := (zpow_le_zpow_iff_right_of_lt_one₀ hϖ₀ hϖ₁).1 h
-    rwa [← Finset.sum_subtype tail (fun i => by simp [tail]) ν] at hle
-  have hνsplit := Finset.sum_filter_add_sum_filter_not Finset.univ (fun i : Fin N => (i : ℕ) < j) ν
-  have hμsplit := Finset.sum_filter_add_sum_filter_not Finset.univ (fun i : Fin N => (i : ℕ) < j) μ
-  have hεsplit := Finset.sum_filter_add_sum_filter_not Finset.univ (fun i : Fin N => (i : ℕ) < j) ε
-  change ∑ i ∈ Finset.univ.filter (fun i : Fin N => (i : ℕ) < j), ν i ≤
-    ∑ i ∈ Finset.univ.filter (fun i : Fin N => (i : ℕ) < j), (μ i + ε i)
-  rw [Finset.sum_add_distrib]
-  dsimp only [tail] at htail
-  linarith
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalFieldStatement =====
-
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PosIffLtCard =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PosIffLtCard", "h": "module\n\npublic import Mathlib.Data.Finset.Card\npublic import Mathlib.Data.Fintype.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Mathlib.Order.Interval.Finset.Defs\npublic import Mathlib.Order.Interval.Finset.Fin\n\n"}
 section -- clump:auto
@@ -509,10 +363,10 @@ theorem psum_succ {N : ℕ} (ν : Fin N → ℤ) (i : Fin N) : psum ν (i + 1) =
 
 theorem pot_lt {N : ℕ} {μ ν : Fin N → ℤ} (h : ∀ j, psum μ j ≤ psum ν j) (hne : μ ≠ ν) : pot μ < pot ν := by
   obtain ⟨i, hi⟩ : ∃ i, μ i ≠ ν i := by
-    by_contra h'; push_neg at h'; exact hne (funext h')
+    by_contra h'; push Not at h'; exact hne (funext h')
   have hiN := i.isLt
   have : ∃ j ∈ Finset.range (N + 1), psum μ j < psum ν j := by
-    by_contra h'; push_neg at h'
+    by_contra h'; push Not at h'
     have e1 : psum μ i = psum ν i := le_antisymm (h _) (h' _ (Finset.mem_range.2 (by omega)))
     have e2 : psum μ (i + 1) = psum ν (i + 1) := le_antisymm (h _) (h' _ (Finset.mem_range.2 (by omega)))
     rw [psum_succ, psum_succ, e1] at e2
@@ -530,8 +384,7 @@ theorem pos_iff_lt {N : ℕ} {e : Fin N → ℤ} (ha : Antitone e) (i : Fin N) :
 
 theorem nonneg_of_dom {N : ℕ} {ν e : Fin N → ℤ} (hν : Antitone ν) (he : ∀ i, 0 ≤ e i)
     (hle : ∀ j, psum ν j ≤ psum e j) (hsum : ∑ i, ν i = ∑ i, e i) (i : Fin N) : 0 ≤ ν i := by
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   have sν := Finset.sum_filter_add_sum_filter_not Finset.univ (fun j : Fin N => (j : ℕ) < i) ν
   have se := Finset.sum_filter_add_sum_filter_not Finset.univ (fun j : Fin N => (j : ℕ) < i) e
   have tν : ∑ j ∈ Finset.univ.filter (fun j : Fin N => ¬ (j : ℕ) < i), ν j < 0 := by
@@ -617,7 +470,7 @@ theorem vanish_dominant {N : ℕ} {ϖ : kˣ} {c : ℕ → ℂ} {h : GL (Fin N) k
   by_cases hzero : ∀ i, e i = 0
   · have : e = fun _ => 0 := funext hzero
     rw [this, torusElt_zero', h1]
-  push_neg at hzero
+  push Not at hzero
   obtain ⟨i₀, hi₀⟩ := hzero
   have hi₀pos : 0 < e i₀ := lt_of_le_of_ne (he i₀) (Ne.symm hi₀)
   obtain ⟨n₀, hn₀⟩ : ∃ n₀, n₀ = (Finset.univ.filter fun j => 0 < e j).card := ⟨_, rfl⟩
@@ -641,7 +494,7 @@ theorem vanish_dominant {N : ℕ} {ϖ : kˣ} {c : ℕ → ℂ} {h : GL (Fin N) k
     apply pot_lt
     · intro j; unfold psum
       exact Finset.sum_le_sum fun i _ => by simp only [hμdef, hind]; split_ifs <;> omega
-    · intro hh; have := congrFun hh i₀; simp only [hμdef, hind, if_pos hi₀pos] at this; omega
+    · intro hh; have := congrFun hh i₀; simp only [hμdef, hind, ite_eq_left hi₀pos] at this; omega
   have hμv := IH μ hμa hμ0 hμlt
   have hTe : torusElt k (Fin N) ϖ e = torusElt k (Fin N) ϖ μ * torusElt k (Fin N) ϖ (indic s) := by
     rw [← torusElt_add']; congr 1; funext i; exact (hμe i).symm
@@ -679,8 +532,8 @@ theorem vanish_dominant {N : ℕ} {ϖ : kˣ} {c : ℕ → ℂ} {h : GL (Fin N) k
       if h (torusElt k (Fin N) ϖ μ * g) = h (torusElt k (Fin N) ϖ e) then h (torusElt k (Fin N) ϖ e) else 0 := by
     intro g hg
     rcases hterm g hg with h0 | h0
-    · rw [h0, if_neg (Ne.symm hx)]
-    · rw [if_pos h0]; exact h0
+    · rw [h0, ite_eq_right (Ne.symm hx)]
+    · rw [ite_eq_left h0]; exact h0
   rw [Finset.sum_congr rfl hite, Finset.sum_ite, Finset.sum_const_zero, add_zero, Finset.sum_const,
     nsmul_eq_mul] at hsum
   have hcard : (R.filter fun g => h (torusElt k (Fin N) ϖ μ * g) = h (torusElt k (Fin N) ϖ e)).card ≠ 0 :=
@@ -711,179 +564,6 @@ end -- clump:auto
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrder =====
-
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrderStatement =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrderStatement", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrder\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound GlobalTheory.ParHecke
-open GlobalTheory.ZonalInduct (pot pot_lt pot_nonneg pos_iff_lt psum nonneg_of_dom) in
-
-theorem _root_.GlobalTheory.T.cartan_decomposition_dominance_order :
-    ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-      (N : ℕ) (ϖ : kˣ) (c : ℕ → ℂ), c N ≠ 0 →
-    (∀ x : GL (Fin N) k, ∃ ν : Fin N → ℤ, Antitone ν ∧
-      ∃ κ ∈ KO k (Fin N), ∃ κ' ∈ KO k (Fin N),
-        x = κ * GlobalTheory.GLDoubling.torusElt k (Fin N) ϖ ν * κ') →
-    (∀ (μ ν : Fin N → ℤ), Antitone μ → Antitone ν → ∀ n : ℕ, n ≤ N → ∀ g : GL (Fin N) k,
-      (∃ κ ∈ KO k (Fin N), ∃ κ' ∈ KO k (Fin N),
-        g = κ * GlobalTheory.GLDoubling.torusElt k (Fin N) ϖ
-          (indic (Finset.univ.filter fun i : Fin N => (i : ℕ) < n)) * κ') →
-      (∃ κ ∈ KO k (Fin N), ∃ κ' ∈ KO k (Fin N),
-        GlobalTheory.GLDoubling.torusElt k (Fin N) ϖ μ * g =
-          κ * GlobalTheory.GLDoubling.torusElt k (Fin N) ϖ ν * κ') →
-      ∑ i, ν i = ∑ i, μ i + n ∧ ∀ j : ℕ,
-        ∑ i ∈ Finset.univ.filter (fun i : Fin N => (i : ℕ) < j), ν i ≤
-          ∑ i ∈ Finset.univ.filter (fun i : Fin N => (i : ℕ) < j),
-            (μ i + indic (Finset.univ.filter fun i : Fin N => (i : ℕ) < n) i)) →
-    (∀ g : GL (Fin N) k, ∃ R, IsRepsK g R) →
-    ∀ h : GL (Fin N) k → ℂ,
-      (∀ κ ∈ KO k (Fin N), ∀ m, h (κ * m) = h m ∧ h (m * κ) = h m) →
-      (∀ (s : Finset (Fin N)) R,
-        IsRepsK (GlobalTheory.GLDoubling.torusElt k (Fin N) ϖ (indic s)) R →
-          ∀ m, ∑ g ∈ R, h (m * g) = c s.card * h m) →
-      h 1 = 0 → ∀ m, h m = 0 := by
-  intro k _ _ _ _ N ϖ c hc hcart hdom hex h hK hT h1 m
-  let torus := GlobalTheory.GLDoubling.torusElt k (Fin N) ϖ
-  have torus_add (a b : Fin N → ℤ) : torus (a + b) = torus a * torus b := by
-    apply Units.ext
-    simp only [torus, Units.val_mul, GlobalTheory.GLDoubling.val_torusElt, diagonal_mul_diagonal]
-    congr 1; funext i; simp [zpow_add₀ (Units.ne_zero ϖ)]
-  have torus_zero : torus (fun _ => 0) = 1 := by
-    apply Units.ext
-    rw [GlobalTheory.GLDoubling.val_torusElt]; simp
-  have torus_one_comm (g : GL (Fin N) k) :
-      g * torus (fun _ => 1) = torus (fun _ => 1) * g := by
-    apply Units.ext
-    rw [Units.val_mul, Units.val_mul, GlobalTheory.GLDoubling.val_torusElt]
-    ext i j; simp [Matrix.diagonal_mul, Matrix.mul_diagonal, mul_comm]
-  have vanish_of_shift (j : ℕ) (m : GL (Fin N) k)
-      (hm : h (m * torus (fun _ => (j : ℤ))) = 0) : h m = 0 := by
-    induction j generalizing m with
-    | zero => simpa [torus_zero] using hm
-    | succ j ih =>
-      apply ih
-      have hz : indic (Finset.univ : Finset (Fin N)) = fun _ => 1 := funext fun i => by simp [indic]
-      obtain ⟨R, hR⟩ := hex (torus (indic Finset.univ))
-      set z := torus (fun _ => 1) with hzdef
-      set m' := m * torus (fun _ => (j : ℤ))
-      have hsplit : torus (fun _ => ((j + 1 : ℕ) : ℤ)) = torus (fun _ => (j : ℤ)) * z := by
-        rw [hzdef, ← torus_add]; congr 1
-      have hm' : h (m' * z) = 0 := by rw [← hm, hsplit, mul_assoc]
-      have key := hT Finset.univ R hR m'
-      have hterm : ∀ g ∈ R, h (m' * g) = 0 := by
-        intro g hg
-        obtain ⟨κ, hκ, κ', hκ', rfl⟩ := hR.1 g hg
-        rw [hz] at *
-        have e : m' * (κ * z * κ') = (m' * z) * (κ * κ') := by
-          rw [torus_one_comm]
-          simp only [mul_assoc]
-        rw [e, (hK _ (mul_mem hκ hκ') _).2, hm']
-      rw [Finset.sum_eq_zero hterm, Finset.card_univ, Fintype.card_fin] at key
-      exact (mul_eq_zero.1 key.symm).resolve_left hc
-  have vanish_dominant :
-      ∀ n : ℕ, ∀ e : Fin N → ℤ, Antitone e → (∀ i, 0 ≤ e i) → pot e ≤ n → h (torus e) = 0 := by
-    intro n
-    refine Nat.strong_induction_on n ?_
-    intro n ih e ha he hpot
-    have IH : ∀ ν : Fin N → ℤ, Antitone ν → (∀ i, 0 ≤ ν i) → pot ν < pot e →
-        h (torus ν) = 0 := by
-      intro ν hν hν0 hlt
-      have h0 := pot_nonneg hν0
-      exact ih (pot ν).toNat (by omega) ν hν hν0 (by omega)
-    by_cases hzero : ∀ i, e i = 0
-    · have : e = fun _ => 0 := funext hzero
-      rw [this, torus_zero, h1]
-    push Not at hzero
-    obtain ⟨i₀, hi₀⟩ := hzero
-    have hi₀pos : 0 < e i₀ := lt_of_le_of_ne (he i₀) (Ne.symm hi₀)
-    obtain ⟨n₀, hn₀⟩ : ∃ n₀, n₀ = (Finset.univ.filter fun j => 0 < e j).card := ⟨_, rfl⟩
-    have key : ∀ i, 0 < e i ↔ (i : ℕ) < n₀ := fun i => hn₀ ▸ pos_iff_lt ha i
-    have hn₀N : n₀ ≤ N := by rw [hn₀]; exact (Finset.card_le_univ _).trans (by simp)
-    obtain ⟨s, hs⟩ : ∃ s : Finset (Fin N), s = Finset.univ.filter fun i : Fin N => (i : ℕ) < n₀ := ⟨_, rfl⟩
-    have hind : ∀ i, indic s i = if 0 < e i then 1 else 0 := by
-      intro i; simp only [indic, hs, Finset.mem_filter, Finset.mem_univ, true_and, ← key]
-    have hscard : s.card = n₀ := by
-      rw [hn₀]; congr 1; rw [hs]; ext i; simp [key]
-    set μ : Fin N → ℤ := fun i => e i - indic s i with hμdef
-    have hμe : ∀ i, μ i + indic s i = e i := fun i => by simp [hμdef]
-    have hμa : Antitone μ := by
-      intro i j hij
-      have := ha hij; have hi := he i; have hj := he j
-      simp only [hμdef, hind]
-      split_ifs <;> omega
-    have hμ0 : ∀ i, 0 ≤ μ i := by
-      intro i; have := he i; simp only [hμdef, hind]; split_ifs <;> omega
-    have hμlt : pot μ < pot e := by
-      apply pot_lt
-      · intro j; unfold psum
-        exact Finset.sum_le_sum fun i _ => by simp only [hμdef, hind]; split_ifs <;> omega
-      · intro hh; have := congrFun hh i₀; simp only [hμdef, hind, ite_eq_left hi₀pos] at this; omega
-    have hμv := IH μ hμa hμ0 hμlt
-    have hTe : torus e = torus μ * torus (indic s) := by
-      rw [← torus_add]; congr 1; funext i; exact (hμe i).symm
-    have hsumind : ∑ i, indic s i = (n₀ : ℤ) := by
-      rw [← hscard]; simp [indic]
-    obtain ⟨R, hR⟩ := hex (torus (indic s))
-    have hsum := hT s R hR (torus μ)
-    rw [hμv, mul_zero] at hsum
-    have hterm : ∀ g ∈ R, h (torus μ * g) = 0 ∨
-        h (torus μ * g) = h (torus e) := by
-      intro g hg
-      obtain ⟨ν, hν, κ1, hκ1, κ2, hκ2, hx⟩ := hcart (torus μ * g)
-      have hval : h (torus μ * g) = h (torus ν) := by
-        rw [hx, mul_assoc, (hK κ1 hκ1 _).1, (hK κ2 hκ2 _).2]
-      obtain ⟨κ, hκ, κ', hκ', hgeq⟩ := hR.1 g hg
-      have hd := hdom μ ν hμa hν n₀ hn₀N g ⟨κ, hκ, κ', hκ', by rw [← hs]; exact hgeq⟩ ⟨κ1, hκ1, κ2, hκ2, hx⟩
-      simp only [← hs] at hd
-      obtain ⟨hd1, hd2⟩ := hd
-      have hle : ∀ j, psum ν j ≤ psum e j := by
-        intro j; have := hd2 j; simp only [hμe] at this; exact this
-      have hsumeq : ∑ i, ν i = ∑ i, e i := by
-        rw [hd1, ← hsumind, ← Finset.sum_add_distrib]; simp only [hμe]
-      have hν0 := nonneg_of_dom hν he hle hsumeq
-      by_cases hνe : ν = e
-      · right; rw [hval, hνe]
-      · left; rw [hval]; exact IH ν hν hν0 (pot_lt hle hνe)
-    obtain ⟨g₁, ⟨hg₁R, hg₁K⟩, -⟩ := hR.2 1 (one_mem _)
-    have hg₁ : h (torus μ * g₁) = h (torus e) := by
-      have e1 : torus μ * g₁ =
-          torus e * (g₁⁻¹ * (1 * torus (indic s)))⁻¹ := by
-        rw [hTe]; group
-      rw [e1, (hK _ (inv_mem hg₁K) _).2]
-    by_contra hx
-    have hite : ∀ g ∈ R, h (torus μ * g) =
-        if h (torus μ * g) = h (torus e) then h (torus e) else 0 := by
-      intro g hg
-      rcases hterm g hg with h0 | h0
-      · rw [h0, ite_eq_right (Ne.symm hx)]
-      · rw [ite_eq_left h0]; exact h0
-    rw [Finset.sum_congr rfl hite, Finset.sum_ite, Finset.sum_const_zero, add_zero, Finset.sum_const,
-      nsmul_eq_mul] at hsum
-    have hcard : (R.filter fun g => h (torus μ * g) = h (torus e)).card ≠ 0 :=
-      Finset.card_ne_zero.2 ⟨g₁, Finset.mem_filter.2 ⟨hg₁R, hg₁⟩⟩
-    rcases mul_eq_zero.1 hsum with hc0 | hc0
-    · exact hcard (by exact_mod_cast hc0)
-    · exact hx hc0
-  obtain ⟨ν, hν, κ, hκ, κ', hκ', rfl⟩ := hcart m
-  rw [mul_assoc, (hK κ hκ _).1, (hK κ' hκ' _).2]
-  change h (torus ν) = 0
-  let j := (∑ i, |ν i|).toNat
-  apply vanish_of_shift j
-  rw [← torus_add]
-  refine vanish_dominant (pot (ν + fun _ => (j : ℤ))).toNat (ν + fun _ => (j : ℤ))
-    ?_ ?_ (Int.self_le_toNat _)
-  · intro a b hab; simp only [Pi.add_apply]; linarith [hν hab]
-  · intro i; simp only [Pi.add_apply]
-    have h1' : |ν i| ≤ ∑ i, |ν i| :=
-      Finset.single_le_sum (f := fun i => |ν i|) (fun i _ => abs_nonneg _) (Finset.mem_univ i)
-    have h2 := neg_abs_le (ν i)
-    have h3 := Int.self_le_toNat (∑ i, |ν i|)
-    omega
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrderStatement =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBorelSphericalFunction =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBorelSphericalFunction", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed\nimport Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.VolumeFlatSection\nimport Development.AbelianVarietyTheory.Definitions.Foundations.IsIwasawaOfIsCompact\nimport Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell\nimport Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam\n\n"}
@@ -1260,8 +940,7 @@ private theorem irreducible_of_valuation_eq_uniformizer {ϖ : kˣ}
       exact congrArg (fun x : 𝒪[k] => valuation k (x : k)) hab.symm
     have ha : valuation k (a : k) ≤ 1 := a.2
     have hb : valuation k (b : k) ≤ 1 := b.2
-    by_contra h
-    push_neg at h
+    by_contra! h
     have ha' := le_uniformizer_iff.mpr (lt_of_le_of_ne ha h.1)
     have hb' := le_uniformizer_iff.mpr (lt_of_le_of_ne hb h.2)
     have h1 : uniformizer k ≤ uniformizer k * uniformizer k := hv.symm.le.trans (mul_le_mul' ha' hb')
@@ -1634,7 +1313,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntOneEqOne =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiInvariantEigenfunctionEqMulZonalSpherical =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiInvariantEigenfunctionEqMulZonalSpherical", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne\npublic import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SatakeTrivialRangeBound\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanAntitone\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalFieldStatement\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrderStatement\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBorelSphericalFunction\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsParahoricAndIntegralGLDoubleCosetReps\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SatakeSubsetSum\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumBorelSphericalDoubleCosetRepsMul\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumBorelSphericalOverDiagonalDoubleCosetReps\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntBiInvariant\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntEig\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntOneEqOne\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiInvariantEigenfunctionEqMulZonalSpherical", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne\npublic import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SatakeTrivialRangeBound\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanAntitone\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceLocalField\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanDecompositionDominanceOrder\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBorelSphericalFunction\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsParahoricAndIntegralGLDoubleCosetReps\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SatakeSubsetSum\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumBorelSphericalDoubleCosetRepsMul\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumBorelSphericalOverDiagonalDoubleCosetReps\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntBiInvariant\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntEig\npublic import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ZonalIntOneEqOne\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1675,8 +1354,8 @@ theorem eq_mul_zonalInt : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
     rw [_root_.GlobalTheory.ZonalSum.sum_mul_eq k N _ ψ hψ hγ _ R hR m, _root_.GlobalTheory.BorelCosetSum.sum_cosets_eq k N ϖ hϖ _ ψ hψ hγ s R hR,
       _root_.GlobalTheory.SatakeSubsetSum.satake_subset_sum (resCard k) N (by omega) α s.card, mul_comm]
   have hcN : genVal (resCard k) 0 N (Finset.univ.val.map α) N ≠ 0 := genVal_top_ne_zero _ N α
-  have key := GlobalTheory.T.cartan_decomposition_dominance_order k N ϖ (fun n => genVal (resCard k) 0 N (Finset.univ.val.map α) n) hcN
-    (_root_.GlobalTheory.SortedCartan.cartan_antitone k N ϖ hϖ) (GlobalTheory.T.cartan_decomposition_dominance_local_field k N ϖ hϖ) (fun g => (_root_.GlobalTheory.ParHeckeReps.exists_reps_both k Unit (Fin N)).2 g)
+  have key := _root_.GlobalTheory.ZonalInduct.zonal_vanish k N ϖ (fun n => genVal (resCard k) 0 N (Finset.univ.val.map α) n) hcN
+    (_root_.GlobalTheory.SortedCartan.cartan_antitone k N ϖ hϖ) (_root_.GlobalTheory.CartanDom.cartan_dominance k N ϖ hϖ) (fun g => (_root_.GlobalTheory.ParHeckeReps.exists_reps_both k Unit (Fin N)).2 g)
     (fun m => f m - f 1 * zonalInt μK ψ m)
     (fun κ hκ m => ⟨by rw [(hf κ hκ m).1, (hωb κ hκ m).1], by rw [(hf κ hκ m).2, (hωb κ hκ m).2]⟩)
     (fun s R hR m => by

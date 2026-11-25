@@ -58,13 +58,9 @@ open scoped TensorProduct ComplexConjugate ComplexOrder Classical ENNReal
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.VacuumCharacterDeterminant
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 abbrev Fam (D : D7) (m n : ℕ) : Type := D.what₂.Tau → Matrix (Fin m) (Fin n) ℂ
-
-def realOf (θ : InfFam D) {m n : ℕ} (z : Fam D m n) : Mx D m n := ∑ τ, lineAt θ τ (z τ) 1
 
 section Forms
 
@@ -73,29 +69,7 @@ variable (S T : HSp D)
 def hAt (τ : D.what₂.Tau) (x y : Matrix (Fin T.rank) (Fin S.rank) ℂ) : ℂ :=
   Matrix.trace ((gramAt D S τ)⁻¹ * yᴴ * gramAt D T τ * x)
 
-def efR (x y : Fam D T.rank S.rank) : ℝ :=
-  -∑ τ, 2 * (tauE D τ D.host.xi0 * hAt S T τ (x τ) (y τ)).re
-
-def cxJ (s : Fam D T.rank T.rank) (x : Fam D T.rank S.rank) : Fam D T.rank S.rank :=
-  fun τ => cplxO 1 (s τ) (x τ)
-
-def hermH (s : Fam D T.rank T.rank) (x y : Fam D T.rank S.rank) : ℂ :=
-  (efR S T (cxJ S T s x) y : ℂ) + Complex.I * (efR S T x y : ℂ)
-
 end Forms
-
-section Moved
-
-variable (θ : InfFam D) (S T : HSp D)
-
-def movS (sT : Fam D T.rank T.rank) (g : GA D T) : Fam D T.rank T.rank :=
-  fun τ => compAt θ τ (mt T g) * sT τ * compAt θ τ (mt T g⁻¹)
-
-def frameFn (sT : Fam D T.rank T.rank) (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) (f : WO S T → ℂ)
-    (g : GA D T) (z : Fam D T.rank S.rank) : ℂ :=
-  Complex.exp (Real.pi * hermH S T (movS θ T sT g) z z / 2) * om (1, g) f (realOf θ z)
-
-end Moved
 
 section Canon
 

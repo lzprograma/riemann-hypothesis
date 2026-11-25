@@ -666,7 +666,7 @@ private theorem totDisc_quot {G : Type} [Group G] [TopologicalSpace G] [IsTopolo
       rw [← hcl]
       exact hgN
     rw [Subgroup.mem_sInf] at hnot
-    push_neg at hnot
+    push Not at hnot
     obtain ⟨K, ⟨hKo, hNK⟩, hgK⟩ := hnot
     have hNK' : N ≤ K := hNK
     have hpre : (QuotientGroup.mk : G → G ⧸ N) ⁻¹' ((QuotientGroup.mk : G → G ⧸ N) '' (K : Set G)) = K := by

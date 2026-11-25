@@ -3,49 +3,7 @@ module
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MonLNegMul
 public import Mathlib.Tactic.ENatToNat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -56,7 +14,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.CompanionTheory.SurjectionOntoH4
 open CrystallineSemistableComparison.Onto
@@ -99,8 +56,7 @@ theorem monomial_mem_exceptional_ideal {K : Type} [Field K] {n d : ℕ} (S : Fin
     (hg : g ∈ (cone S : AddSubmonoid (Gam n d))) (ht : 1 ≤ tdeg g) : mon K g hg ∈ I0 n K S := by
   have hex : ∃ k, (S = ∅ ∨ k ∈ S) ∧ (k ∈ S ∨ 1 ≤ g (Sum.inr k)) := by
     by_cases hS : S = ∅
-    · by_contra hno
-      push_neg at hno
+    · by_contra! hno
       have hsum : ∑ j, g (Sum.inr j) ≤ 0 := Finset.sum_nonpos fun j _ => by
         have := (hno j (Or.inl hS)).2
         omega
@@ -131,7 +87,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open CrystallineSemistableComparison.Onto GlobalTheory.CompanionTheory.SurjectionOntoH4 GlobalTheory.CompanionTheory.SurjectionOntoH4.LaurentD
 
@@ -169,7 +124,7 @@ theorem sub_count_nonneg {a : ℕ} {f : Fin a → E n d} (hf : Function.Injectiv
     obtain ⟨i, rfl⟩ := h
     rw [count_self hf]
     omega
-  · push_neg at h
+  · push Not at h
     rw [count_none h]
     omega
 
@@ -271,7 +226,7 @@ theorem case_empty {a : ℕ} (g : Gam n d) (D : {D : Finset (E n d) // D.card = 
   by_cases h : ∃ i k, enumD D i = Sum.inr k
   · obtain ⟨i, k, hk⟩ := h
     exact Or.inr ⟨i, k, Or.inl rfl, by rw [hk]⟩
-  · push_neg at h
+  · push Not at h
     left
     rw [tdeg_sub, tdeg_sum]
     have h0 : ∀ i, tdeg (oneE (enumD D i) : Gam n d) = 0 := by
@@ -317,7 +272,7 @@ theorem term_chart {S : Finset (Fin d)} {k : Fin d} (hk : k ∈ S) {a : ℕ} (g 
     by_cases h : ∃ i, f i = Sum.inr k
     · obtain ⟨i, hi⟩ := h
       exact Or.inr ⟨i, k, Or.inr hk, by rw [hi]; simp [wv]⟩
-    · push_neg at h
+    · push Not at h
       left
       rw [ht, count_none h, sub_zero]
       exact hg.2
@@ -344,9 +299,9 @@ theorem dl_eq (k : Fin d) (e : E n d) : (dl e : Ω[Lr K n d⁄K]) = lam K (wv k 
     rfl
   · by_cases h : j = k
     · subst h
-      simp only [wv, eps, if_true, add_zero]
+      simp only [wv, eps, ite_true, add_zero]
       rfl
-    · simp only [wv, eps, if_neg h, if_true]
+    · simp only [wv, eps, ite_eq_right h, ite_true]
       rw [← lam_add]
       have h2 : ratE k j + oneE (Sum.inr k) = (oneE (Sum.inr j) : Gam n d) := by simp [ratE]
       rw [h2]
@@ -369,7 +324,7 @@ theorem expand {R M X : Type} [CommRing R] [AddCommGroup M] [Module R M] {a : �
       (exteriorPower.ιMulti R a (M := M)).map_coord_zero i (by simp [Finset.piecewise, hi, he])
     rw [h2, smul_zero]
     exact Q.zero_mem
-  · push_neg at h0
+  · push Not at h0
     have h2 : s.piecewise (fun i => F (f i)) m' = fun i => F (if i ∈ s then f i else x₀) := by
       funext i
       by_cases hi : i ∈ s

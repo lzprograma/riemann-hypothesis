@@ -50,6 +50,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSStageUnconditional
 
 @[expose] public section
 
@@ -61,23 +62,7 @@ open Formalism.BasicNotions NumberField IsDedekindDomain GlobalTheory.Mem
 
 theorem ncard_primesOver_eq (E : Type) [Field E] [NumberField E] (l : ℕ) (hl : l.Prime) :
     ((Ideal.span {(l : ℤ)}).primesOver (𝓞 E)).ncard = (placesOver E l).ncard := by
-  symm
-  apply Set.ncard_congr (fun v _ => v.asIdeal)
-  · intro v hv
-    refine ⟨v.isPrime, ⟨?_⟩⟩
-    have hm : (Ideal.span {(l : ℤ)}).IsMaximal :=
-      Ideal.IsPrime.isMaximal ((Ideal.span_singleton_prime (by exact_mod_cast hl.ne_zero)).2 (Nat.prime_iff_prime_int.1 hl)) (by simpa using hl.ne_zero)
-    refine hm.eq_of_le (Ideal.IsPrime.ne_top (Ideal.IsPrime.under ℤ v.asIdeal)) ?_
-    rw [Ideal.span_singleton_le_iff_mem]
-    simpa [Ideal.under, placesOver] using hv
-  · intro a b _ _ h; exact HeightOneSpectrum.ext h
-  · rintro P ⟨hP, hP'⟩
-    have hmem : ((l:ℕ) : 𝓞 E) ∈ P := by
-      have : (l:ℤ) ∈ P.under ℤ := by rw [← hP'.over]; exact Ideal.mem_span_singleton_self _
-      simpa [Ideal.under] using this
-    refine ⟨⟨P, hP, ?_⟩, hmem, rfl⟩
-    rintro rfl
-    exact hl.ne_zero (by simpa using hmem)
+  apply _root_.GlobalTheory.Mem.SpectralModel.ncard_primesOver <;> assumption
 
 theorem conjF_ne_id (B : Base) : B.toPre.conjF ≠ AlgHom.id _ _ := by
   letI := B.host.cmStar
@@ -104,22 +89,7 @@ theorem exists_locAt_split_iff (B : Base) (h2 : Module.finrank B.host.F B.host.E
 
 theorem nonempty_conj_embedding (EE : Type) [NormedAddCommGroup EE] [InnerProductSpace ℂ EE] (d D : ℕ) (h : d ≤ D)
     (b : OrthonormalBasis (Fin d) ℂ EE) : Nonempty (EE →ₗᵢ⋆[ℂ] EuclideanSpace ℂ (Fin D)) := by
-  let e := EuclideanSpace.basisFun (Fin D) ℂ
-  have ho : Orthonormal ℂ (fun i : Fin d => e (Fin.castLE h i)) := e.orthonormal.comp _ (Fin.castLE_injective h)
-  let f : EE →ₛₗ[starRingEnd ℂ] EuclideanSpace ℂ (Fin D) :=
-    { toFun := fun x => ∑ i, (inner ℂ x (b i)) • e (Fin.castLE h i)
-      map_add' := by intro x y; simp [add_smul, Finset.sum_add_distrib]
-      map_smul' := by intro c x; simp [Finset.smul_sum, smul_smul, mul_comm] }
-  refine ⟨⟨f, fun x => ?_⟩⟩
-  have h1 : inner ℂ (f x) (f x) = ∑ i, (starRingEnd ℂ) (inner ℂ x (b i)) * inner ℂ x (b i) :=
-    ho.inner_sum _ _ _
-  have h2 := b.sum_inner_mul_inner x x
-  have h3 : inner ℂ (f x) (f x) = inner ℂ x x := by
-    rw [h1, ← h2]; refine Finset.sum_congr rfl fun i _ => ?_
-    rw [inner_conj_symm, mul_comm]
-  rw [inner_self_eq_norm_sq_to_K, inner_self_eq_norm_sq_to_K] at h3
-  have h4 : ‖f x‖^2 = ‖x‖^2 := by exact_mod_cast h3
-  exact (pow_left_inj₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).1 h4
+  apply GlobalTheory.Mem.SpectralModel.exists_conjIsom <;> assumption
 
 theorem exists_innerProductSpace (V : Type) [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (ip : V → V → ℂ)
     (hs : ∀ x y, (starRingEnd ℂ) (ip y x) = ip x y) (hp : ∀ x, x ≠ 0 → 0 < (ip x x).re)

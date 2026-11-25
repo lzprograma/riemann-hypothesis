@@ -1,47 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.ObjPol
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -96,11 +55,11 @@ theorem matrixSubst_comp (φ : R →+* B) (m1 m1' m2 m2' : Matrix (Fin n) (Fin n
       rw [RingHom.comp_apply, matrixSubst_X, matrixSubst_X]
       by_cases hS : v.1 ∈ S
       · by_cases hv : LL.vec v.1 = true
-        · rw [if_pos hS, if_pos hv, if_pos hS, if_pos hv, map_sum]
+        · rw [ite_eq_left hS, ite_eq_left hv, ite_eq_left hS, ite_eq_left hv, map_sum]
           have h1 : ∀ b : Fin n, matrixSubst LL S (RingHom.id B) m1 m1' (C (m2 b v.2) * X (v.1, b)) =
               ∑ a : Fin n, C (m1 a b * m2 b v.2) * X (v.1, a) := by
             intro b
-            rw [map_mul, matrixSubst_C, matrixSubst_X, if_pos hS, if_pos hv, Finset.mul_sum]
+            rw [map_mul, matrixSubst_C, matrixSubst_X, ite_eq_left hS, ite_eq_left hv, Finset.mul_sum]
             refine Finset.sum_congr rfl fun a _ => ?_
             rw [RingHom.id_apply, map_mul]; ring
           simp only [h1]
@@ -108,11 +67,11 @@ theorem matrixSubst_comp (φ : R →+* B) (m1 m1' m2 m2' : Matrix (Fin n) (Fin n
           refine Finset.sum_congr rfl fun a _ => ?_
 
           rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
-        · rw [if_pos hS, if_neg hv, if_pos hS, if_neg hv, map_sum]
+        · rw [ite_eq_left hS, ite_eq_right hv, ite_eq_left hS, ite_eq_right hv, map_sum]
           have h1 : ∀ b : Fin n, matrixSubst LL S (RingHom.id B) m1 m1' (C (m2' v.2 b) * X (v.1, b)) =
               ∑ a : Fin n, C (m2' v.2 b * m1' b a) * X (v.1, a) := by
             intro b
-            rw [map_mul, matrixSubst_C, matrixSubst_X, if_pos hS, if_neg hv, Finset.mul_sum]
+            rw [map_mul, matrixSubst_C, matrixSubst_X, ite_eq_left hS, ite_eq_right hv, Finset.mul_sum]
             refine Finset.sum_congr rfl fun a _ => ?_
             rw [RingHom.id_apply, map_mul]; ring
           simp only [h1]
@@ -120,7 +79,7 @@ theorem matrixSubst_comp (φ : R →+* B) (m1 m1' m2 m2' : Matrix (Fin n) (Fin n
           refine Finset.sum_congr rfl fun a _ => ?_
 
           rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
-      · rw [if_neg hS, if_neg hS, matrixSubst_X, if_neg hS]
+      · rw [ite_eq_right hS, ite_eq_right hS, matrixSubst_X, ite_eq_right hS]
   exact congrArg (fun f => f F) this
 
 theorem map_matrixSubst (φ : R →+* B) (ψ : B →+* B') (m m' : Matrix (Fin n) (Fin n) B)

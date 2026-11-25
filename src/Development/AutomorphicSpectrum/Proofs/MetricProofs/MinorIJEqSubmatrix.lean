@@ -3,51 +3,8 @@ module
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericBlockMatrixIsBlockDiag
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.SemistableReduction.SemiContractA
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
@@ -403,7 +360,7 @@ theorem sum_xi (T : Fin N → ℝ) (a b : Fin N) (hb : (b : ℕ) = a + 1) (T0 : 
     have e1 : ((i : ℕ) = a + 1) ↔ i = b := by rw [Fin.ext_iff, hb]
     have hcoef : (xiCoef () a ((), i) : ℝ) =
         (if (i : ℕ) + 1 = a then 1 else 0) + (if i = b then 1 else 0) - (if i = a then 2 else 0) := by
-      simp only [xiCoef, if_true, e1]
+      simp only [xiCoef, ite_true, e1]
       push_cast
       rfl
     rw [hcoef]
@@ -420,24 +377,24 @@ theorem sum_xi (T : Fin N → ℝ) (a b : Fin N) (hb : (b : ℕ) = a + 1) (T0 : 
           have := congrArg Fin.val e
           have := congrArg Fin.val c2
           omega
-        simp only [if_neg c1, if_pos c2, if_neg n3]
+        simp only [ite_eq_right c1, ite_eq_left c2, ite_eq_right n3]
         rw [c2]
         ring
       · by_cases c3 : i = a
-        · simp only [if_neg c1, if_neg c2, if_pos c3]
+        · simp only [ite_eq_right c1, ite_eq_right c2, ite_eq_left c3]
           rw [c3]
           ring
-        · simp only [if_neg c1, if_neg c2, if_neg c3]
+        · simp only [ite_eq_right c1, ite_eq_right c2, ite_eq_right c3]
           ring
-  simp only [e, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [e, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   congr 2
   by_cases ha : (a : ℕ) = 0
   · rw [hz ha]
     simp
   · rw [Finset.sum_eq_single (⟨(a : ℕ) - 1, by have := a.2; omega⟩ : Fin N)]
-    · rw [if_pos (by simp; omega)]
+    · rw [ite_eq_left (by simp; omega)]
     · intro i _ hi
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hi (Fin.ext (by simp; omega))
     · simp
@@ -450,28 +407,28 @@ theorem steps {N j : ℕ} {a b ca cb : Fin N} (hj : j ≤ N) (hb : (b : ℕ) = a
       ((a : ℕ) = 0 ∨ (a : ℕ) = j → (ca : ℕ) = lo) ∧ lo ≤ ca := by
   unfold lastCol at hca
   rcases hcase with h | h
-  · rw [if_pos (by omega)] at hca
+  · rw [ite_eq_left (by omega)] at hca
     refine ⟨N - j, fun c => ?_, fun c => ?_, fun i hi hij c => ?_, fun _ => ?_, by omega⟩
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       omega
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       omega
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       omega
     · omega
-  · rw [if_neg (by omega)] at hca
+  · rw [ite_eq_right (by omega)] at hca
     refine ⟨0, fun c => ?_, fun c => ?_, fun i hi hij c => ?_, fun _ => ?_, by omega⟩
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       omega
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       omega
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       omega
     · omega
 
@@ -523,7 +480,7 @@ theorem norm_three_steps : ∀ (N j : ℕ) (a b ca cb : Fin N) (G h : Matrix (Fi
   have hmo : 0 < minorIJ G (omIdx N j) (omIdx N j) := minor_pos hGp _
   have hdf : ∀ i : Fin N, (j ≤ (i : ℕ) + 1 ↔ j ≤ (a : ℕ)) → (i : ℕ) + 1 ≠ N → detFac j i G = g := fun i h1 h2 => by
     unfold detFac
-    rw [if_neg h2, mul_one, hgdef]
+    rw [ite_eq_right h2, mul_one, hgdef]
     simp only [h1]
   let T : Fin N → ℝ := fun i => blockPot j i G (h * (1 + Matrix.single cb ca t)) + if IsProperStep N j i then 0 else
     Real.log ‖if (i : ℕ) + 1 = j then (if (a : ℕ) < j then minorIJ h (wIdx N j) (wIdx N j) else 1)
@@ -533,9 +490,9 @@ theorem norm_three_steps : ∀ (N j : ℕ) (a b ca cb : Fin N) (G h : Matrix (Fi
         (minorIJ ((1 + Matrix.single cb ca t)ᴴ * H * (1 + Matrix.single cb ca t)) (stepCols N j i) (stepCols N j i)).re := by
     intro i hp hd
     show blockPot j i G (h * (1 + Matrix.single cb ca t)) + _ = _
-    rw [if_pos hp, add_zero]
+    rw [ite_eq_left hp, add_zero]
     unfold blockPot
-    rw [if_pos hp, hd, hU]
+    rw [ite_eq_left hp, hd, hU]
   have Ta : T a = (1 / 2) * Real.log g.re + (1 / 2) * Real.log (minorIJ H C C * herm2 (schurPlane H C ca cb) ![1, t] ![1, t]).re := by
     have hp : IsProperStep N j a := ⟨by omega, by omega⟩
     rw [hprop a hp (hdf a (by omega) hp.2), hSa, f1]
@@ -543,9 +500,9 @@ theorem norm_three_steps : ∀ (N j : ℕ) (a b ca cb : Fin N) (G h : Matrix (Fi
     by_cases hp : IsProperStep N j b
     · rw [hprop b hp (hdf b (by have := hp.1; omega) hp.2), hSb, f2]
     · show blockPot j b G (h * (1 + Matrix.single cb ca t)) + _ = _
-      rw [if_neg hp]
+      rw [ite_eq_right hp]
       unfold blockPot
-      rw [if_neg hp, add_zero, ← z2', ← hSb]
+      rw [ite_eq_right hp, add_zero, ← z2', ← hSb]
       rcases hcase with hW | hO
       · have hbj : (b : ℕ) + 1 = j := by
           by_contra hne
@@ -554,13 +511,13 @@ theorem norm_three_steps : ∀ (N j : ℕ) (a b ca cb : Fin N) (G h : Matrix (Fi
           ext c
           have := c.2
           simp only [stepCols, wIdx, Finset.mem_filter, Finset.mem_univ, true_and]
-          rw [if_pos (by omega)]
+          rw [ite_eq_left (by omega)]
           omega
         have hg1 : g = 1 := by
-          rw [hgdef, if_neg (by omega)]
+          rw [hgdef, ite_eq_right (by omega)]
         have hd : detFac j b G = minorIJ G (wIdx N j) (wIdx N j) := by
           unfold detFac
-          rw [if_pos (by omega)]
+          rw [ite_eq_left (by omega)]
           split_ifs with hbN
           · have : omIdx N j = ∅ := by
               ext c
@@ -570,7 +527,7 @@ theorem norm_three_steps : ∀ (N j : ℕ) (a b ca cb : Fin N) (G h : Matrix (Fi
           · rw [mul_one]
         have hq := minor_pos hH (wIdx N j)
         rw [hHdef, minor_gram (MinorCalc.support_wIdx hG) (MinorCalc.support_wIdx hh)] at hq
-        rw [if_pos hbj, if_pos (by omega), hd, hSw, hHdef, minor_gram (MinorCalc.support_wIdx hG)
+        rw [ite_eq_left hbj, ite_eq_left (by omega), hd, hSw, hHdef, minor_gram (MinorCalc.support_wIdx hG)
           (MinorCalc.support_wIdx hh), log_gram hmw hq, hg1]
         simp
       · have hbN : (b : ℕ) + 1 = N := by
@@ -580,16 +537,16 @@ theorem norm_three_steps : ∀ (N j : ℕ) (a b ca cb : Fin N) (G h : Matrix (Fi
           ext c
           have := c.2
           simp only [stepCols, omIdx, Finset.mem_filter, Finset.mem_univ, true_and]
-          rw [if_neg (by omega)]
+          rw [ite_eq_right (by omega)]
           omega
         have hg1 : g = minorIJ G (wIdx N j) (wIdx N j) := by
-          rw [hgdef, if_pos hO]
+          rw [hgdef, ite_eq_left hO]
         have hd : detFac j b G = minorIJ G (wIdx N j) (wIdx N j) * minorIJ G (omIdx N j) (omIdx N j) := by
           unfold detFac
-          rw [if_pos (by omega), if_pos hbN]
+          rw [ite_eq_left (by omega), ite_eq_left hbN]
         have hq := minor_pos hH (omIdx N j)
         rw [hHdef, minor_gram (MinorCalc.support_omIdx hG) (MinorCalc.support_omIdx hh)] at hq
-        rw [if_neg (by omega), hd, hSo, hHdef, minor_gram (MinorCalc.support_omIdx hG)
+        rw [ite_eq_right (by omega), hd, hSo, hHdef, minor_gram (MinorCalc.support_omIdx hG)
           (MinorCalc.support_omIdx hh), hg1, re_mul_of_pos hmw, Real.log_mul (re_pos hmw).ne' (re_pos hmo).ne',
           ← log_gram hmo hq]
         ring
@@ -612,9 +569,9 @@ theorem norm_three_steps : ∀ (N j : ℕ) (a b ca cb : Fin N) (G h : Matrix (Fi
         by_contra hne
         exact hp ⟨hne, by omega⟩
       show blockPot j i G (h * (1 + Matrix.single cb ca t)) + _ = _
-      rw [if_neg hp, if_pos hij, if_neg (by omega)]
+      rw [ite_eq_right hp, ite_eq_left hij, ite_eq_right (by omega)]
       unfold blockPot
-      rw [if_neg hp, hdf i (by omega) (by omega), hz1 (Or.inr (by omega))]
+      rw [ite_eq_right hp, hdf i (by omega) (by omega), hz1 (Or.inr (by omega))]
       simp
   · intro h0
     have hg1 : g = 1 := by

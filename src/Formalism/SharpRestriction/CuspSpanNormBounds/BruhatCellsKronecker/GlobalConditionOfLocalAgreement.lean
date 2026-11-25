@@ -1,50 +1,8 @@
 module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.Valuation.Extension
-import Mathlib.RingTheory.Valuation.Integral
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.CuspSpanNormBounds.ChainLength
 
 @[expose] public section
@@ -155,21 +113,13 @@ theorem cmul (a b : 𝓞 F) : ((a * b : 𝓞 F) : F) = (a : F) * (b : F) := by
   | rfl
   | push_cast; ring
 
-private theorem vle_iff_valuation_le (x y : A.Fp) : (x ≤ᵥ y) ↔ valuation A.Fp x ≤ valuation A.Fp y := by
-  first
-  | exact Valuation.Compatible.vle_iff_le x y
-
-private theorem mem_valuationSubring_iff_valuation_le_one (x : A.Fp) : x ∈ 𝒪[A.Fp] ↔ valuation A.Fp x ≤ 1 := by
-  first
-  | exact Valuation.mem_integer_iff _ _
-
 theorem val_iff (a b : F) : valuation A.Fp (A.ιF a) ≤ valuation A.Fp (A.ιF b) ↔ p.valuation F a ≤ p.valuation F b := by
-  exact (vle_iff_valuation_le A _ _).symm.trans (A.val a b)
+  exact (Valuation.Compatible.vle_iff_le (v := valuation A.Fp) _ _).symm.trans (A.val a b)
 
 theorem mem_OF_iff (a : F) : A.ιF a ∈ 𝒪[A.Fp] ↔ p.valuation F a ≤ 1 := by
   have h := val_iff A a 1
   simp only [map_one] at h
-  rw [mem_valuationSubring_iff_valuation_le_one A]
+  rw [Valuation.mem_integer_iff]
   exact h
 
 theorem val_eq_one (a : 𝓞 F) (ha : a ∉ p.asIdeal) : p.valuation F (a : F) = 1 := by
@@ -225,7 +175,7 @@ theorem scal_iff (S : Set A.Ep) (hS : ∀ b ∈ 𝒪[A.Fp], ∀ z ∈ S, algebra
       algebraMap A.Fp A.Ep c * z ∈ S → algebraMap A.Fp A.Ep c' * z ∈ S := by
     intro c c' hc hv h
     have hu : c' / c ∈ 𝒪[A.Fp] := by
-      (rw [mem_valuationSubring_iff_valuation_le_one A, map_div₀, ← hv, div_self ((Valuation.ne_zero_iff _).2 hc)])
+      rw [Valuation.mem_integer_iff, map_div₀, ← hv, div_self ((Valuation.ne_zero_iff _).2 hc)]
     have h2 := hS _ hu _ h
     have e : c' / c * c = c' := by field_simp
     rwa [← mul_assoc, ← map_mul, e] at h2
@@ -291,7 +241,7 @@ theorem int_iff (hinv : ∀ x, sig (sig x) = x) (hfix : ∀ x : E, sig x = x →
     rw [map_mul, A.compat] at hzO
     have hv : valuation A.Fp (A.ιF (a : F)) = 1 := vFp_eq_one A _ (val_eq_one a ha)
     have hinvO : (A.ιF (a : F))⁻¹ ∈ 𝒪[A.Fp] := by
-      (rw [mem_valuationSubring_iff_valuation_le_one A, map_inv₀, hv, inv_one])
+      rw [Valuation.mem_integer_iff, map_inv₀, hv, inv_one]
     have hne : A.ιF (a : F) ≠ 0 := by
       intro h0
       rw [h0, map_zero] at hv
@@ -639,7 +589,7 @@ theorem gpart_none (p : PlF D) (h : (D.s.atP p).split = none) : gpart p = 1 := b
     rw [← D.s_split p, h]; simp
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at h1
   unfold gpart
-  rw [if_neg h1.1, if_neg h1.2]
+  rw [ite_eq_right h1.1, ite_eq_right h1.2]
 
 theorem gpart_some (p : PlF D) (sg) (h : (D.s.atP p).split = some sg) : gpart p = Loc.resChar p := by
   have h1 : Loc.resChar p ∈ ({D.host.g 0, D.host.g 1} : Finset ℕ) := by
@@ -860,14 +810,6 @@ theorem laIsPeriod_of (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model
   rw [loc_iff δ M p (hA p) c hc0 hcv ν s t, k1, k2]
 
 end Rec2
-
-section Rec3
-
-open Formalism.MainNotions.S.LocalSplitGroups Formalism.MainNotions.JointEigenvalueBoundsFromAnyDatum Formalism.MainNotions.LocalModelPeriodLattices
-
-variable {D : Formalism.BasicNotions.D7}
-
-end Rec3
 
 end Formalism.MainNotions.BridgeLemma
 

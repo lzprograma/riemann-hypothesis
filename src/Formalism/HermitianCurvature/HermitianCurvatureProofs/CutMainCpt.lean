@@ -34,57 +34,12 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRateLowe
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimZeroNPf
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGDegLift
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorIsomorphismCompactSupport
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfHeads
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OmLongContinuousOn
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Algebra.Order.Star.Real
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseCutoffIsTruncation
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CcCoefMMono
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
@@ -96,7 +51,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormPosCompac
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSumLeOfForm
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGWaveMain
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeStandardCompact
-import Mathlib.Topology.Sheaves.Presheaf
 import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatticeSumOfCompactCoefficientPositivity
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -115,35 +69,6 @@ open scoped ComplexConjugate InnerProductSpace
 noncomputable section
 
 open Classical
-
-theorem gl_isLocPt_snoc {a : C.LPt} {j m : ℕ} (ha : D.IsLocPt a j) (hm : 1 ≤ m) {c : ℂ} (hc : c ≠ 0) :
-    D.IsLocPt (a ++ [(m, c)]) (j + m) := by
-  refine ⟨fun x hx => ?_, ?_⟩
-  · rcases List.mem_append.1 hx with hx | hx
-    · exact ha.1 x hx
-    · simp only [List.mem_singleton] at hx
-      subst hx
-      exact ⟨hm, hc⟩
-  · rw [← ha.2]
-    simp [D.ptSize, List.map_append, List.sum_append]
-
-theorem gl_fsv (σ z : ℂ) : P5.fsv σ z = G.psi (-U.betaU) (1 * σ * z) := by
-  rw [TBBx1.fsv_eq]
-  unfold G.psi U.betaU Formalism.QuantumDeterminants.cStd
-  congr 1
-  simp only [Complex.mul_re, Complex.mul_im, Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im,
-    Complex.re_ofNat, Complex.im_ofNat, Complex.one_re, Complex.one_im]
-  push_cast
-  ring
-
-section vec
-
-variable {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-
-theorem gl_inner_self (u : H) : ⟪u, u⟫_ℂ = ((‖u‖ ^ 2 : ℝ) : ℂ) := by
-  rw [inner_self_eq_norm_sq_to_K]; push_cast; rfl
-
-end vec
 
 end
 
@@ -166,15 +91,6 @@ noncomputable section
 
 open Classical
 
-def GLFibre : Prop :=
-  P5.ThmPActual → ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq)
-    (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (N : ℕ) (Cb : ℝ),
-    KB.InDDplus2 P p.l0 p.T.base Cb p.Θ → KB.CptCoef p.T.base F → (∀ y, 0 < nn y) →
-    ∀ j, j + 1 ≤ P.r → ∀ w, TBB.AdmW P p.l0 Y w → w.length ≤ N → ∀ a b : C.LPt, D.IsLocPt a j → D.IsLocPt b j →
-      Integrable (fun c : ℂ => TBB.NP p nn F (j + 1) w (a ++ [(1, c)]) (b ++ [(1, c)])) ∧
-      ∫ c : ℂ, TBB.NP p nn F (j + 1) w (a ++ [(1, c)]) (b ++ [(1, c)]) = TBB.NP p nn F j w a b
-
 end
 
 end Formalism.FourierDecayAlt.P.CutBP
@@ -196,93 +112,6 @@ noncomputable section
 
 open Classical
 
-theorem nPt_append_one (P : M.Par) (TT : ℝ) (a : C.LPt) (j : ℕ) (ha : D.IsLocPt a j) (hj : j + 1 ≤ P.r) (c : ℂ) :
-    TBB.nPt P.k P.r TT (a ++ [(1, c)]) = TBB.nPt P.k P.r TT a * KB.levW P (j + 1) c := by
-  let GG := D.ptGG TT (a ++ [(1, c)])
-  let GG' := D.ptGG TT a
-  have happend : ∀ (l : C.LPt) (b : ℕ), b + D.ptSize l = j + 1 →
-      C.nAux P.k P.r GG (fun _ _ => 1) b (l ++ [(1, c)]) =
-        C.nAux P.k P.r GG' (fun _ _ => 1) b l * KB.levW P (j + 1) c := by
-    intro l
-    induction l with
-    | nil =>
-      intro b hb
-      change b + 0 = j + 1 at hb
-      rw [Nat.add_zero] at hb
-      subst b
-      have htop : j + 1 ≠ P.r + 1 := by omega
-      have hexp : C.Mlev P.k P.r (j + 1) + 1 - 3 = C.Mlev P.k P.r (j + 1) - 2 := by ring
-      simp only [List.nil_append, C.nAux, KB.levW, Nat.add_sub_cancel, htop, false_and,
-        if_false, Nat.cast_one, one_mul, mul_one, hexp]
-    | cons x l ih =>
-      rcases x with ⟨s, t⟩
-      intro b hb
-      change b + (s + D.ptSize l) = j + 1 at hb
-      have htop : b + s - 1 ≠ P.r + 1 := by omega
-      simp only [List.cons_append, C.nAux, htop, false_and, if_false, ih (b + s) (by omega), mul_assoc]
-  exact happend a 1 (by rw [ha.2, Nat.add_comm])
-
-theorem nPt_nonneg_loc (P : M.Par) (TT : ℝ) (a : C.LPt) (j : ℕ) (ha : D.IsLocPt a j) (hj : j ≤ P.r) :
-    0 ≤ TBB.nPt P.k P.r TT a := by
-  have hnonneg : ∀ (l : C.LPt) (b : ℕ), b + D.ptSize l ≤ P.r + 1 →
-      0 ≤ C.nAux P.k P.r (D.ptGG TT a) (fun _ _ => 1) b l := by
-    intro l
-    induction l with
-    | nil =>
-      intro b _
-      simp [C.nAux]
-    | cons x l ih =>
-      rcases x with ⟨s, t⟩
-      intro b hb
-      change b + (s + D.ptSize l) ≤ P.r + 1 at hb
-      have htop : b + s - 1 ≠ P.r + 1 := by omega
-      simp only [C.nAux, htop, false_and, if_false, one_mul]
-      exact mul_nonneg (zpow_nonneg (norm_nonneg _) _) (ih (b + s) (by omega))
-  exact hnonneg a 1 (by rw [ha.2]; omega)
-
-theorem levW_nonneg_low (P : M.Par) (j : ℕ) (hj : j + 1 ≤ P.r) (c : ℂ) : 0 ≤ KB.levW P (j + 1) c := by
-  simp only [KB.levW]
-  rw [if_neg (by omega)]
-  exact zpow_nonneg (norm_nonneg _) _
-
-theorem glFibre : GLFibre := by
-  intro hA Wp Wq _ _ _ _ _ _ P p nn F Y N Cb hCb hF hnn j hj w hw hN a b ha hb
-  have hPS : KB.PStd := Formalism.FourierDecayAlt.P.standard_pairing_of_heads Formalism.FourierDecayAlt.P.radial_head Formalism.FourierDecayAlt.P.head_top
-  have hjr : j ≤ P.r := by omega
-  obtain ⟨φ, -, hφi, hφ, hφs⟩ := hPS hA Wp Wq P p F j hjr w a b ha hb Cb hCb hF hw.1
-  set K : ℝ := Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) a) * Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) b) /
-    TBB.normC nn w with hK
-  have hae : (fun c => TBB.NP p nn F (j + 1) w (a ++ [(1, c)]) (b ++ [(1, c)])) =ᵐ[volume]
-      fun c => (K : ℂ) * φ c := by
-    filter_upwards [Formalism.FourierDecayAlt.P.TBBx1.ae_ne_zero] with c hc
-    rw [hφ c hc]
-    unfold TBB.NP
-    rw [nPt_append_one P _ a j ha hj c, nPt_append_one P _ b j hb hj c,
-      Real.sqrt_mul (nPt_nonneg_loc P _ a j ha hjr), Real.sqrt_mul (nPt_nonneg_loc P _ b j hb hjr)]
-    have hl := Real.mul_self_sqrt (levW_nonneg_low P j hj c)
-    rw [hK]
-    have : Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) a) * Real.sqrt (KB.levW P (j + 1) c) *
-        (Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) b) * Real.sqrt (KB.levW P (j + 1) c)) / TBB.normC nn w =
-        Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) a) * Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) b) / TBB.normC nn w *
-          KB.levW P (j + 1) c := by
-      calc _ = Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) a) * Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) b) /
-              TBB.normC nn w * (Real.sqrt (KB.levW P (j + 1) c) * Real.sqrt (KB.levW P (j + 1) c)) := by ring
-        _ = _ := by rw [hl]
-    rw [this]
-    push_cast
-    ring
-  refine ⟨(hφi.const_mul (K : ℂ)).congr hae.symm, ?_⟩
-  rw [integral_congr_ae hae, integral_const_mul]
-  have h0 := hφs 0
-  simp only [P5.fsv, zero_mul, map_zero, sub_zero, Complex.exp_zero, one_mul,
-    Formalism.FourierDecayAlt.P.PBASM.waveG_zero_eq_self] at h0
-  rw [h0]
-  unfold TBB.NP
-  congr 1
-  unfold KB.Pl.RR D.RRplace
-  rw [dite_eq_left ⟨ha, hb⟩, dite_eq_left hjr]
-  rfl
-
 end
 
 end Formalism.FourierDecayAlt.P.CutBP
@@ -300,63 +129,6 @@ namespace Formalism.FourierDecayAlt.P.CutBP.GLG
 open Formalism.FourierDecayAlt
 
 noncomputable section
-
-theorem zpow_two_nat (x : ℝ) (e : ℤ) (n : ℕ) (he : e = 2 * (n : ℤ)) : x ^ e = (x ^ n) ^ 2 := by
-  subst he
-  rw [show (2 * (n : ℤ)) = ((2 * n : ℕ) : ℤ) by push_cast; ring, zpow_natCast, pow_mul']
-
-theorem nPt_block {P : M.Par} (TT : ℝ) (b m : ℕ) (hb : 1 ≤ b) (hi : b + (m + 2) - 1 ≤ P.r) (h : C.LPt)
-    (hh : D.ptSize h = b - 1) (t c : ℂ) :
-    TBB.nPt P.k P.r TT (h ++ [(m + 1, t), (1, c)]) =
-      C.nAux P.k P.r 0 (fun _ _ => 1) 1 h *
-        ((‖t‖ ^ ((m + 1) * (U.Mlev P.k (P.r - (b + (m + 2) - 1)) + m))) ^ 2 *
-          (‖c‖ ^ (U.Mlev P.k (P.r - (b + (m + 2) - 1)) - 2)) ^ 2) := by
-  have e : h ++ [(m + 1, t), (1, c)] = (h ++ [(m + 1, t)]) ++ [(1, c)] := by simp
-  have hs1 : D.ptSize (h ++ [(m + 1, t)]) = b - 1 + (m + 1) := by
-    simp only [D.ptSize, List.map_append, List.sum_append, List.map_cons, List.map_nil, List.sum_cons,
-      List.sum_nil] at hh ⊢
-    omega
-  unfold TBB.nPt
-  rw [e, PBD.weight_product_append, PBD.weight_product_append, PBD.weight_product_indep_of_real_parameter P.k P.r _ 0 _ h 1 le_rfl (by omega), hs1, hh]
-  simp only [C.nAux, one_mul, mul_one]
-  rw [if_neg (by omega), if_neg (by omega), mul_assoc]
-  congr 2
-  · apply zpow_two_nat
-    unfold C.Mlev U.Mlev
-    have e1 : 1 + (b - 1) + (m + 1) - 1 = b + m := by omega
-    rw [e1]
-    push_cast [Nat.cast_sub (show b + (m + 2) - 1 ≤ P.r from hi), Nat.cast_sub (show b + m ≤ P.r + 1 by omega)]
-    rw [Nat.cast_sub (show 1 ≤ b + (m + 2) by omega)]
-    push_cast
-    ring
-  · apply zpow_two_nat
-    unfold C.Mlev U.Mlev
-    have e1 : 1 + (b - 1 + (m + 1)) + 1 - 1 = b + (m + 2) - 1 := by omega
-    rw [e1]
-    have h3 : 2 ≤ P.k + 2 * (P.r - (b + (m + 2) - 1)) + 3 := by omega
-    push_cast [Nat.cast_sub h3, Nat.cast_sub hi]
-    rw [Nat.cast_sub (show 1 ≤ b + (m + 2) by omega)]
-    push_cast
-    ring
-
-theorem nPt_long {P : M.Par} (TT : ℝ) (b m : ℕ) (hb : 1 ≤ b) (hi : b + (m + 2) - 1 ≤ P.r) (h : C.LPt)
-    (hh : D.ptSize h = b - 1) (z : ℂ) :
-    TBB.nPt P.k P.r TT (h ++ [(m + 2, z)]) =
-      C.nAux P.k P.r 0 (fun _ _ => 1) 1 h * (‖z‖ ^ ((m + 2) * (U.Mlev P.k (P.r - (b + (m + 2) - 1)) + m - 1))) ^ 2 := by
-  unfold TBB.nPt
-  rw [PBD.weight_product_append, PBD.weight_product_indep_of_real_parameter P.k P.r _ 0 _ h 1 le_rfl (by omega), hh]
-  simp only [C.nAux, one_mul, mul_one]
-  rw [if_neg (by omega)]
-  congr 1
-  apply zpow_two_nat
-  unfold C.Mlev U.Mlev
-  have e1 : 1 + (b - 1) + (m + 2) - 1 = b + (m + 2) - 1 := by omega
-  rw [e1]
-  have h3 : 1 ≤ P.k + 2 * (P.r - (b + (m + 2) - 1)) + 3 + m := by omega
-  push_cast [Nat.cast_sub h3, Nat.cast_sub hi]
-  rw [Nat.cast_sub (show 1 ≤ b + (m + 2) by omega)]
-  push_cast
-  ring
 
 end
 
@@ -379,171 +151,6 @@ noncomputable section
 
 open Classical
 
-private theorem isLocPt_and_ptG_pos_of_vec_ne_zero {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-    (p : KB.Pl P Wp Wq) (G : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Q : C.LPt) (hQ : p.V G Q ≠ 0) :
-    D.IsLocPt Q (P.r + 1) ∧ 0 < D.ptG (TBB.TTp p) P.r Q := by
-  by_contra hn
-  exact hQ (by unfold KB.Pl.V D.vecV; exact dif_neg hn)
-
-private theorem vecV_eq_zero_of_not_isLocPt {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-    (p : KB.Pl P Wp Wq) (G : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Q : C.LPt) (hQ : ¬ D.IsLocPt Q (P.r + 1)) :
-    D.vecV p.T.base p.ν' p.m₀ G Q = 0 := by
-  unfold D.vecV
-  exact dif_neg fun hh => hQ hh.1
-
-private theorem hsInner_zero_left_right_and_hsVec_zero {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq] (X : Wq →L[ℂ] Wp) :
-    B.hsInner 0 X = 0 ∧ B.hsInner X 0 = 0 ∧ B.hsVec (0 : Wq →L[ℂ] Wp) = 0 := by
-  have h0 : B.hsVec (0 : Wq →L[ℂ] Wp) = 0 := by
-    unfold B.hsVec
-    rfl
-  unfold B.hsInner
-  rw [h0]
-  exact ⟨inner_zero_right _, inner_zero_left _, rfl⟩
-
-private theorem rr_succ_eq_ite_hsInner_else_leading {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-    (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (w : List C.Letter) (Q Q' : C.LPt) :
-    p.RR F (P.r + 1) w Q Q' =
-      if w = [] then B.hsInner (p.V F Q) (p.V F Q')
-      else Top.topOf P p.l0 p.T p.ν' p.m₀ p.Θ p.TP F w Q Q' := by
-  unfold KB.Pl.RR D.RRplace
-  by_cases hl : D.IsLocPt Q (P.r + 1) ∧ D.IsLocPt Q' (P.r + 1)
-  · rw [dite_eq_left hl, dif_neg (by omega), if_pos rfl]
-    rfl
-  · rw [dif_neg hl]
-    have hz : ∀ G : B.Mat P.k P.r → (Wq →L[ℂ] Wp),
-        D.vecV p.T.base p.ν' p.m₀ G Q = 0 ∨ D.vecV p.T.base p.ν' p.m₀ G Q' = 0 := by
-      intro G
-      rcases not_and_or.mp hl with h | h
-      · exact Or.inl (vecV_eq_zero_of_not_isLocPt p G Q h)
-      · exact Or.inr (vecV_eq_zero_of_not_isLocPt p G Q' h)
-    split_ifs with hw
-    · rcases hz F with h | h
-      · show (0 : ℂ) = B.hsInner (D.vecV p.T.base p.ν' p.m₀ F Q) (D.vecV p.T.base p.ν' p.m₀ F Q')
-        rw [h, (hsInner_zero_left_right_and_hsVec_zero _).1]
-      · show (0 : ℂ) = B.hsInner (D.vecV p.T.base p.ν' p.m₀ F Q) (D.vecV p.T.base p.ν' p.m₀ F Q')
-        rw [h, (hsInner_zero_left_right_and_hsVec_zero _).2.1]
-    · unfold Top.topOf
-      symm
-      refine Finset.sum_eq_zero fun e _ => Finset.sum_eq_zero fun ρ _ => ?_
-      rcases hz (p.Θ.Θ w e F) with h | h
-      · rw [h, ContinuousLinearMap.comp_zero, (hsInner_zero_left_right_and_hsVec_zero _).1, mul_zero]
-      · rw [h, ContinuousLinearMap.comp_zero, (hsInner_zero_left_right_and_hsVec_zero _).2.1, mul_zero]
-
-theorem top_level_gram : TopGram1 := by
-  intro Wp Wq _ _ _ _ _ _ P p nn F w Cb hCb hF hw hnn
-  have hnc : 0 < TBB.normC nn w := by
-    unfold TBB.normC
-    apply List.prod_pos
-    intro a ha
-    obtain ⟨l, -, rfl⟩ := List.mem_map.mp ha
-    exact hnn l.2
-  by_cases hw0 : w = []
-  · subst hw0
-    refine ⟨Unit, inferInstance, fun _ => 1 / TBB.normC nn [], fun _ => F,
-      fun _ => GermRateSplit.hsLE (ContinuousLinearMap.id ℂ Wp), fun _ => by positivity, fun _ => hF, ?_⟩
-    intro Q Q'
-    rw [TBB.NP, rr_succ_eq_ite_hsInner_else_leading, if_pos rfl, Fintype.sum_unique, GermRateSplit.hsLE_apply, GermRateSplit.hsLE_apply,
-      inner_smul_left, inner_smul_right, Complex.conj_ofReal]
-    simp only [ContinuousLinearMap.id_comp, List.length_nil, omT, pow_zero, Real.sqrt_one, mul_one]
-    unfold B.hsInner
-    push_cast
-    ring
-  · have hT : ∀ e : Wd.Ix (Fin w.length), ∃ F', KB.CptCoef p.T.base F' ∧
-        (∀ g ∈ C6.domL p.T.base ∅, p.Θ.Θ w e F g = F' g) ∧ ∀ a, p.V (p.Θ.Θ w e F) a = p.V F' a :=
-      fun e => Formalism.FourierDecayAlt.P.theta_compact_support Wp Wq P p F w e Cb hCb hF hw
-    choose G hG _ hGV using hT
-    refine ⟨Wd.Ix (Fin w.length) × M.Ty P, inferInstance,
-      fun i => √(Top.cW P p.l0 w i.1 i.2).re * √(Top.cW P p.l0 w i.1 i.2).re / TBB.normC nn w,
-      fun i => G i.1, fun i => GermRateSplit.hsLE (p.TP.E i.2), fun i => by positivity, fun i => hG i.1, ?_⟩
-    intro Q Q'
-    rw [TBB.NP, rr_succ_eq_ite_hsInner_else_leading, if_neg hw0]
-    unfold Top.topOf
-    rw [Fintype.sum_prod_type, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun e _ => ?_
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun ρ _ => ?_
-    have hV : ∀ a, D.vecV p.T.base p.ν' p.m₀ (p.Θ.Θ w e F) a = p.V (G e) a := hGV e
-    rw [hV, hV, GermRateSplit.hsLE_apply, GermRateSplit.hsLE_apply, inner_smul_left, inner_smul_right,
-      Complex.conj_ofReal]
-    have key : ∀ R : C.LPt, p.V (G e) R ≠ 0 →
-        √(TBB.nPt P.k P.r (TBB.TTp p) R) *
-            Top.dH P p.l0 (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') w R e ρ =
-          omT p w.length R * √(Top.cW P p.l0 w e ρ).re := by
-      intro R hR
-      have hpos := (isLocPt_and_ptG_pos_of_vec_ne_zero p (G e) R hR).2
-      have hwp : 0 ≤ Top.wPt (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') P.r R :=
-        div_nonneg (Complex.normSq_nonneg _) hpos.le
-      unfold Top.dH omT
-      rw [Real.sqrt_mul (pow_nonneg hwp _)]
-      unfold TBB.TTp
-      ring
-    by_cases hz : p.V (G e) Q = 0 ∨ p.V (G e) Q' = 0
-    · rcases hz with h | h
-      · rw [h, ContinuousLinearMap.comp_zero, (hsInner_zero_left_right_and_hsVec_zero _).1, (hsInner_zero_left_right_and_hsVec_zero (0 : Wq →L[ℂ] Wp)).2.2,
-          inner_zero_right]
-        simp
-      · rw [h, ContinuousLinearMap.comp_zero, (hsInner_zero_left_right_and_hsVec_zero _).2.1, (hsInner_zero_left_right_and_hsVec_zero (0 : Wq →L[ℂ] Wp)).2.2,
-          inner_zero_left]
-        simp
-    · push Not at hz
-      have hreal : √(TBB.nPt P.k P.r (TBB.TTp p) Q) * √(TBB.nPt P.k P.r (TBB.TTp p) Q') /
-            TBB.normC nn w *
-            (Top.dH P p.l0 (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') w Q e ρ *
-              Top.dH P p.l0 (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') w Q' e ρ) =
-          √(Top.cW P p.l0 w e ρ).re * √(Top.cW P p.l0 w e ρ).re / TBB.normC nn w *
-            (omT p w.length Q' * omT p w.length Q) := by
-        rw [div_mul_eq_mul_div,
-          show √(TBB.nPt P.k P.r (TBB.TTp p) Q) * √(TBB.nPt P.k P.r (TBB.TTp p) Q') *
-              (Top.dH P p.l0 (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') w Q e ρ *
-                Top.dH P p.l0 (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') w Q' e ρ) =
-              (√(TBB.nPt P.k P.r (TBB.TTp p) Q) *
-                Top.dH P p.l0 (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') w Q e ρ) *
-              (√(TBB.nPt P.k P.r (TBB.TTp p) Q') *
-                Top.dH P p.l0 (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') w Q' e ρ) by ring,
-          key Q hz.1, key Q' hz.2]
-        ring
-      unfold B.hsInner
-      have hc := congrArg (fun x : ℝ => (x : ℂ) *
-        inner ℂ (B.hsVec ((p.TP.E ρ).comp (p.V (G e) Q'))) (B.hsVec ((p.TP.E ρ).comp (p.V (G e) Q)))) hreal
-      push_cast at hc ⊢
-      linear_combination hc
-
-private theorem continuousAt_omT_append_last_of_ptG_pos {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-    (p : KB.Pl P Wp Wq) (N m : ℕ) (h : C.LPt) (c0 : ℂ) (hc0 : c0 ≠ 0)
-    (hG : 0 < D.ptG (TBB.TTp p) P.r (h ++ [(m, c0)])) :
-    ContinuousAt (fun c : ℂ => omT p N (h ++ [(m, c)])) c0 := by
-  have hgg : (fun c : ℂ => (D.ptGG (TBB.TTp p) (h ++ [(m, c)]), c)) =
-      fun c => (Complex.normSq c - TBB.TTp p, c) := by
-    funext c
-    simp [D.ptGG, D.ptLast]
-  have hn : ContinuousAt (fun c : ℂ => TBB.nPt P.k P.r (TBB.TTp p) (h ++ [(m, c)])) c0 := by
-    have h1 := (LastBlockContinuity.continuousOn_weight_product P.k P.r (fun _ _ => 1) (fun _ _ => one_pos) m h 1).continuousAt
-      (x := (D.ptGG (TBB.TTp p) (h ++ [(m, c0)]), c0))
-      ((isOpen_univ.prod isOpen_compl_singleton).mem_nhds ⟨trivial, hc0⟩)
-    have h2 : ContinuousAt (fun c : ℂ => (D.ptGG (TBB.TTp p) (h ++ [(m, c)]), c)) c0 := by
-      rw [hgg]
-      exact ((Complex.continuous_normSq.sub continuous_const).prodMk continuous_id).continuousAt
-    exact h1.comp (f := fun c : ℂ => (D.ptGG (TBB.TTp p) (h ++ [(m, c)]), c)) h2
-  have hw : ContinuousAt (fun c : ℂ => Top.wPt (TBB.TTp p) P.r (h ++ [(m, c)])) c0 := by
-    unfold Top.wPt
-    exact (Complex.continuous_normSq.comp (LastBlockContinuity.ptMatN_cont h m (P.r + 1)).matrix_det).continuousAt.div
-      (LastBlockContinuity.ptG_cont (TBB.TTp p) P.r h m).continuousAt hG.ne'
-  unfold omT
-  exact (hn.sqrt).mul ((hw.pow N).sqrt)
-
-theorem top_level_Y_continuity : YCont := by
-  intro Wp Wq _ _ _ _ _ _ P p F' hF N m h hh hm hsz c0 hc0
-  have hc0' : c0 ≠ 0 := hc0
-  have hA := LastBlockContinuity.smulV_continuousAt P p F' hF h hh m hm hsz (fun c => omT p N (h ++ [(m, c)]))
-    (ContinuousLinearMap.id ℂ Wp) c0 hc0' (fun hG => continuousAt_omT_append_last_of_ptG_pos p N m h c0 hc0' hG)
-  simp only [ContinuousLinearMap.id_comp] at hA
-  exact hA.continuousWithinAt
-
 end
 
 end Formalism.FourierDecayAlt.P.CutBP.GT
@@ -565,72 +172,6 @@ noncomputable section
 
 open Classical
 
-section place
-
-variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-  [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-
-theorem np_top_two (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (a a' : C.LPt)
-    (ha : D.IsLocPt a P.r) (ha' : D.IsLocPt a' P.r) (w : List C.Letter) (c : ℂ) :
-    ((√(C.nAux P.k P.r 0 (fun _ _ => 1) 1 a) * √(C.nAux P.k P.r 0 (fun _ _ => 1) 1 a') / TBB.normC nn w : ℝ) : ℂ) *
-        ((KB.levW P (P.r + 1) c : ℂ) * p.RR F (P.r + 1) w (a ++ [(1, c)]) (a' ++ [(1, c)])) =
-      TBB.NP p nn F (P.r + 1) w (a ++ [(1, c)]) (a' ++ [(1, c)]) := by
-  set A := C.nAux P.k P.r 0 (fun _ _ => 1) 1 a with hAdef
-  set A' := C.nAux P.k P.r 0 (fun _ _ => 1) 1 a' with hA'def
-  have hA : 0 ≤ A := TBBx5.weighted_auxiliary_norm_nonneg P P.r le_rfl a ha
-  have hA' : 0 ≤ A' := TBBx5.weighted_auxiliary_norm_nonneg P P.r le_rfl a' ha'
-  have hn : ∀ (b : C.LPt), D.IsLocPt b P.r → TBB.nPt P.k P.r (TBB.TTp p) (b ++ [(1, c)]) =
-      C.nAux P.k P.r 0 (fun _ _ => 1) 1 b *
-        C.nAux P.k P.r (D.ptGG (TBB.TTp p) (b ++ [(1, c)])) (fun _ _ => 1) (1 + P.r) [(1, c)] := by
-    intro b hb
-    unfold TBB.nPt
-    rw [Formalism.FourierDecayAlt.P.PBD.weight_product_append, hb.2,
-      Formalism.FourierDecayAlt.P.PBD.weight_product_indep_of_real_parameter P.k P.r _ 0 (fun _ _ => 1) b 1 le_rfl (by rw [hb.2]; omega)]
-  unfold TBB.NP
-  rw [hn a ha, hn a' ha']
-  by_cases hc2 : Complex.normSq c ≤ Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z'
-  · have h0 : p.RR F (P.r + 1) w (a ++ [(1, c)]) (a' ++ [(1, c)]) = 0 :=
-      Formalism.FourierDecayAlt.P.PBD.rrTop_zero P p.l0 p.T p.ν' p.m₀ p.Θ p.TP (M.sgn P p.l0) F w a (a' ++ [(1, c)]) c ha.2 hc2
-    rw [h0]
-    simp
-  · push Not at hc2
-    have hT : Tz P.k P.r p.T.base.z = P.T := p.hP.2.2.2.1
-    have hT' : Tz P.k P.r p.T.base.z' = P.T' := p.hP.2.2.2.2.1
-    have hlast : ∀ b : C.LPt, D.ptGG (TBB.TTp p) (b ++ [(1, c)]) = Complex.normSq c - TBB.TTp p := by
-      intro b
-      simp [D.ptGG, D.ptLast]
-    have hTT : TBB.TTp p = P.T * P.T' := by
-      unfold TBB.TTp
-      rw [hT, hT']
-    have hfac : ∀ b : C.LPt, C.nAux P.k P.r (D.ptGG (TBB.TTp p) (b ++ [(1, c)])) (fun _ _ => 1) (1 + P.r) [(1, c)] =
-        KB.levW P (P.r + 1) c := by
-      intro b
-      rw [hlast, hTT]
-      rw [hT, hT'] at hc2
-      simp only [C.nAux, KB.levW, B2.zWeight, if_pos hc2.le]
-      rw [if_pos ⟨by omega, trivial⟩]
-      simp
-    have hlev : 0 ≤ KB.levW P (P.r + 1) c := by
-      rw [← hfac a, hlast]
-      simp only [C.nAux]
-      rw [if_pos ⟨by omega, trivial⟩]
-      have : 0 ≤ Complex.normSq c - TBB.TTp p := by
-        unfold TBB.TTp; linarith
-      simpa using pow_nonneg this _
-    rw [hfac a, hfac a', Real.sqrt_mul hA, Real.sqrt_mul hA']
-    have hs : √(KB.levW P (P.r + 1) c) * √(KB.levW P (P.r + 1) c) = KB.levW P (P.r + 1) c :=
-      Real.mul_self_sqrt hlev
-    have : √A * √(KB.levW P (P.r + 1) c) * (√A' * √(KB.levW P (P.r + 1) c)) / TBB.normC nn w =
-        √A * √A' / TBB.normC nn w * KB.levW P (P.r + 1) c := by
-      have e : √A * √(KB.levW P (P.r + 1) c) * (√A' * √(KB.levW P (P.r + 1) c)) / TBB.normC nn w =
-          √A * √A' / TBB.normC nn w * (√(KB.levW P (P.r + 1) c) * √(KB.levW P (P.r + 1) c)) := by ring
-      rw [e, hs]
-    rw [this]
-    push_cast
-    ring
-
-end place
-
 end
 
 end Formalism.FourierDecayAlt.P.CutBP.GT
@@ -651,71 +192,6 @@ open scoped ComplexConjugate InnerProductSpace
 noncomputable section
 
 open Classical
-
-theorem norm_sum_le_of_gram' {ι κ I : Type} [Fintype I] {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-    {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℂ W] (v : ι → H) (c : I → ℝ) (hc : ∀ i, 0 ≤ c i)
-    (Y : I → ι → W) (J : Finset κ) (P : κ → ι)
-    (hk : ∀ j ∈ J, ∀ l ∈ J, ⟪v (P j), v (P l)⟫_ℂ = ∑ i, (c i : ℂ) * ⟪Y i (P j), Y i (P l)⟫_ℂ) (a : κ → ℂ) :
-    ‖∑ j ∈ J, a j • v (P j)‖ ≤ ∑ i, √(c i) * ‖∑ j ∈ J, a j • Y i (P j)‖ := by
-  set u := ∑ j ∈ J, a j • v (P j) with hu
-  set y : I → W := fun i => ∑ j ∈ J, a j • Y i (P j) with hy
-  have hinner : ⟪u, u⟫_ℂ = ∑ i, (c i : ℂ) * ⟪y i, y i⟫_ℂ := by
-    have e1 : ⟪u, u⟫_ℂ = ∑ j ∈ J, ∑ l ∈ J, ∑ i,
-        (c i : ℂ) * (conj (a j) * (a l * ⟪Y i (P j), Y i (P l)⟫_ℂ)) := by
-      show ⟪∑ j ∈ J, a j • v (P j), ∑ j ∈ J, a j • v (P j)⟫_ℂ = _
-      rw [sum_inner]
-      simp_rw [inner_sum, inner_smul_left, inner_smul_right]
-      refine Finset.sum_congr rfl fun j hj => Finset.sum_congr rfl fun l hl => ?_
-      rw [hk j hj l hl, Finset.mul_sum, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      ring
-    have e2 : ∑ i, (c i : ℂ) * ⟪y i, y i⟫_ℂ = ∑ i, ∑ j ∈ J, ∑ l ∈ J,
-        (c i : ℂ) * (conj (a j) * (a l * ⟪Y i (P j), Y i (P l)⟫_ℂ)) := by
-      refine Finset.sum_congr rfl fun i _ => ?_
-      show (c i : ℂ) * ⟪∑ j ∈ J, a j • Y i (P j), ∑ j ∈ J, a j • Y i (P j)⟫_ℂ = _
-      rw [sum_inner]
-      simp_rw [inner_sum, inner_smul_left, inner_smul_right, Finset.mul_sum]
-    rw [e1, e2]
-    calc _ = ∑ j ∈ J, ∑ i, ∑ l ∈ J, (c i : ℂ) * (conj (a j) * (a l * ⟪Y i (P j), Y i (P l)⟫_ℂ)) :=
-          Finset.sum_congr rfl fun j _ => Finset.sum_comm
-      _ = _ := Finset.sum_comm
-  have hsq : ∀ {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E] (x : E), ‖⟪x, x⟫_ℂ‖ = ‖x‖ ^ 2 := by
-    intro E _ _ x
-    rw [inner_self_eq_norm_sq_to_K]
-    simp
-  have hle : ‖u‖ ^ 2 ≤ ∑ i, (√(c i) * ‖y i‖) ^ 2 := by
-    rw [← hsq u, hinner]
-    refine (norm_sum_le _ _).trans (le_of_eq (Finset.sum_congr rfl fun i _ => ?_))
-    rw [norm_mul, hsq, mul_pow, Real.sq_sqrt (hc i), Complex.norm_real, Real.norm_of_nonneg (hc i)]
-  have hsum : ∑ i, (√(c i) * ‖y i‖) ^ 2 ≤ (∑ i, √(c i) * ‖y i‖) ^ 2 :=
-    Finset.sum_sq_le_sq_sum_of_nonneg fun i _ => mul_nonneg (Real.sqrt_nonneg _) (norm_nonneg _)
-  have hnn : 0 ≤ ∑ i, √(c i) * ‖y i‖ :=
-    Finset.sum_nonneg fun i _ => mul_nonneg (Real.sqrt_nonneg _) (norm_nonneg _)
-  calc ‖u‖ = √(‖u‖ ^ 2) := (Real.sqrt_sq (norm_nonneg _)).symm
-    _ ≤ √((∑ i, √(c i) * ‖y i‖) ^ 2) := Real.sqrt_le_sqrt (hle.trans hsum)
-    _ = ∑ i, √(c i) * ‖y i‖ := Real.sqrt_sq hnn
-
-section place
-
-variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-  [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] {I : Type} [Fintype I]
-
-theorem cvec_utT (p : KB.Pl P Wp Wq) (N : ℕ) (c : I → ℝ) (Fi : I → B.Mat P.k P.r → (Wq →L[ℂ] Wp))
-    (L : I → (Wq →L[ℂ] Wp) →L[ℂ] HS Wp Wq) (s : ℕ) (h : C.LPt) (x : ℂ) (hx : x ≠ 0) (cc : ℂ) :
-    PBK.cvec s (utT p N c Fi L s h) x cc = vecT p N c Fi L ((h ++ [(s - 1, x⁻¹)]) ++ [(1, cc)]) := by
-  have hx' : x ^ (s - 1) ≠ 0 := pow_ne_zero _ hx
-  have hn : ‖x‖ ^ (s - 1) ≠ 0 := pow_ne_zero _ (norm_ne_zero_iff.mpr hx)
-  rw [PBK.cvec, utT, smul_smul, mul_div_cancel₀ cc hx', ← Complex.ofReal_mul, inv_mul_cancel₀ hn,
-    Complex.ofReal_one, one_smul]
-  simp
-
-theorem inner_vecT_np (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (w : List C.Letter)
-    (c : I → ℝ) (Fi : I → B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (L : I → (Wq →L[ℂ] Wp) →L[ℂ] HS Wp Wq)
-    (hV : VecHyp p nn F w c Fi L) (Q Q' : C.LPt) :
-    ⟪vecT p w.length c Fi L Q, vecT p w.length c Fi L Q'⟫_ℂ = TBB.NP p nn F (P.r + 1) w Q' Q := by
-  rw [inner_vecT p w.length c hV.hc Fi L Q Q', hV.gram Q' Q]
-
-end place
 
 end
 
@@ -745,125 +221,8 @@ variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace �
   {p : KB.Pl P Wp Wq} {nn : ℝ → ℝ} {F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)} {w : List C.Letter} {c : I → ℝ}
   {Fi : I → B.Mat P.k P.r → (Wq →L[ℂ] Wp)} {L : I → (Wq →L[ℂ] Wp) →L[ℂ] HS Wp Wq}
 
-theorem vecT_cont (hV : VecHyp p nn F w c Fi L) {h : C.LPt} (hh : ∀ q ∈ h, 1 ≤ q.1 ∧ q.2 ≠ 0) {m : ℕ}
-    (hm : 1 ≤ m) (hsz : D.ptSize h + m = P.r + 1) :
-    ContinuousOn (fun z : ℂ => vecT p w.length c Fi L (h ++ [(m, z)])) {0}ᶜ := by
-  have hcomp : ∀ i, ContinuousOn (fun z : ℂ =>
-      ((√(c i) * omT p w.length (h ++ [(m, z)]) : ℝ) : ℂ) • L i (p.V (Fi i) (h ++ [(m, z)]))) {0}ᶜ := by
-    intro i
-    have := ((L i).continuous.comp_continuousOn (hV.cont i m h hh hm hsz)).const_smul ((√(c i) : ℝ) : ℂ)
-    refine this.congr fun z _ => ?_
-    show _ = (((√(c i) : ℝ) : ℂ)) • L i ((omT p w.length (h ++ [(m, z)]) : ℂ) • p.V (Fi i) (h ++ [(m, z)]))
-    rw [map_smul, smul_smul, Complex.ofReal_mul]
-  exact (PiLp.continuous_toLp 2 _).comp_continuousOn (continuousOn_pi.2 hcomp)
-
-theorem norm_vecT_sq (hV : VecHyp p nn F w c Fi L) (Q : C.LPt) :
-    ‖vecT p w.length c Fi L Q‖ ^ 2 = (TBB.NP p nn F (P.r + 1) w Q Q).re := by
-  rw [← inner_self_eq_norm_sq (𝕜 := ℂ), inner_vecT p w.length c hV.hc Fi L Q Q, hV.gram Q Q]
-  rfl
-
-def gT (p : KB.Pl P Wp Wq) (N : ℕ) (c : I → ℝ) (Fi : I → B.Mat P.k P.r → (Wq →L[ℂ] Wp))
-    (L : I → (Wq →L[ℂ] Wp) →L[ℂ] HS Wp Wq) (s : ℕ) (h : C.LPt) (u : ℂ) : HT I Wp Wq :=
-  ((Real.pi ^ (s - 1) * ((s : ℝ) * ‖u‖ ^ (s - 1))⁻¹ : ℝ) : ℂ) • vecT p N c Fi L (h ++ [(s, u)])
-
-theorem gT_cont (hV : VecHyp p nn F w c Fi L) {b s : ℕ} (hb : 1 ≤ b) (hs : 2 ≤ s) (hbs : b + s = P.r + 2) {h : C.LPt}
-    (hh : D.IsLocPt h (b - 1)) : ContinuousOn (gT p w.length c Fi L s h) {0}ᶜ := by
-  have hv := vecT_cont hV hh.1 (m := s) (by omega) (by rw [hh.2]; omega)
-  have hsc : ContinuousOn
-      (fun u : ℂ => (((Real.pi ^ (s - 1) * ((s : ℝ) * ‖u‖ ^ (s - 1))⁻¹ : ℝ)) : ℂ)) {0}ᶜ := by
-    refine Complex.continuous_ofReal.comp_continuousOn (continuousOn_const.mul ?_)
-    refine ContinuousOn.inv₀ (continuousOn_const.mul (continuous_norm.continuousOn.pow _)) fun u hu => ?_
-    exact mul_ne_zero (Nat.cast_ne_zero.mpr (by omega)) (pow_ne_zero _ (norm_ne_zero_iff.mpr hu))
-  exact hsc.smul hv
-
-theorem btT_eq_piecewise (s : ℕ) (h : C.LPt) :
-    btT p w.length c Fi L s h = ({0}ᶜ : Set ℂ).piecewise (gT p w.length c Fi L s h) (fun _ => 0) := by
-  funext u
-  by_cases hu : u = 0
-  · simp [btT, Set.piecewise, hu]
-  · simp [btT, gT, Set.piecewise, hu]
-
 end place
 
-
-theorem field_measurability : FieldMeas := by
-  intro P Wp Wq _ _ _ _ _ _ I _ p nn F w c Fi L hV b s hb hs hbs h hh
-  rw [btT_eq_piecewise]
-  letI : MeasurableSpace (HT I Wp Wq) := borel _
-  haveI : BorelSpace (HT I Wp Wq) := ⟨rfl⟩
-  exact ((gT_cont hV hb hs hbs hh).measurable_piecewise continuousOn_const
-    (measurableSet_singleton 0).compl).stronglyMeasurable
-
-theorem field_locality : FieldLoc := by
-  intro P Wp Wq _ _ _ _ _ _ I _ p nn F w c Fi L hV b s hb hs hbs h hh K hK h0
-  have hsub : K ⊆ {0}ᶜ := fun z hz hz0 => h0 (by rwa [Set.mem_singleton_iff.mp hz0] at hz)
-  have hg := (gT_cont hV hb hs hbs hh).mono hsub
-  refine ContinuousOn.integrableOn_compact hK ?_
-  have hc : ContinuousOn
-      (fun z => ‖(((s : ℝ) * ‖z‖ ^ (s - 1) : ℝ) : ℂ) • gT p w.length c Fi L s h z‖ ^ 2) K := by
-    have h1 : ContinuousOn (fun z : ℂ => ((((s : ℝ) * ‖z‖ ^ (s - 1) : ℝ)) : ℂ)) K :=
-      Complex.continuous_ofReal.comp_continuousOn
-        (continuousOn_const.mul (continuous_norm.continuousOn.pow _))
-    exact (h1.smul hg).norm.pow 2
-  refine hc.congr fun z hz => ?_
-  have hz0 : z ≠ 0 := fun e => h0 (e ▸ hz)
-  simp only [PBK.bz, btT, gT, hz0, if_false]
-
-theorem field_supremum : FieldSup := by
-  intro P Wp Wq _ _ _ _ _ _ I _ p nn F w c Fi L hV b s hb hs hbs h hh x hx
-  set a : C.LPt := h ++ [(s - 1, x⁻¹)] with ha
-  have hloc : D.IsLocPt a P.r := by
-    refine ⟨fun q hq => ?_, ?_⟩
-    · rcases List.mem_append.mp hq with hq | hq
-      · exact hh.1 q hq
-      · rw [List.mem_singleton.mp hq]
-        exact ⟨show 1 ≤ s - 1 by omega, show x⁻¹ ≠ 0 from inv_ne_zero hx⟩
-    · have := hh.2
-      simp [ha, D.ptSize] at this ⊢
-      omega
-  have hx' : x ^ (s - 1) ≠ 0 := pow_ne_zero _ hx
-  have hn : ‖x‖ ^ (s - 1) ≠ 0 := pow_ne_zero _ (norm_ne_zero_iff.mpr hx)
-  have hcv : ∀ cc, PBK.cvec s (utT p w.length c Fi L s h) x cc = vecT p w.length c Fi L (a ++ [(1, cc)]) := by
-    intro cc
-    rw [PBK.cvec, utT, smul_smul, mul_div_cancel₀ cc hx', ← Complex.ofReal_mul, inv_mul_cancel₀ hn,
-      Complex.ofReal_one, one_smul]
-    simp [ha]
-  rw [← PBK.integral_norm_cvec_sq s (utT p w.length c Fi L s h) x hx]
-  simp_rw [hcv, norm_vecT_sq hV]
-  rw [TBB.Ew, hV.fibre a a hloc hloc]
-  exact integral_re (hV.int a hloc)
-
-theorem field_mem_unitary : FieldMemU := by
-  intro P Wp Wq _ _ _ _ _ _ I _ p nn F w c Fi L hV b s hb hs hbs h hh x hx
-  set a : C.LPt := h ++ [(s - 1, x⁻¹)] with ha
-  have hloc : D.IsLocPt a P.r := by
-    refine ⟨fun q hq => ?_, ?_⟩
-    · rcases List.mem_append.mp hq with hq | hq
-      · exact hh.1 q hq
-      · rw [List.mem_singleton.mp hq]
-        exact ⟨show 1 ≤ s - 1 by omega, show x⁻¹ ≠ 0 from inv_ne_zero hx⟩
-    · have := hh.2
-      simp [ha, D.ptSize] at this ⊢
-      omega
-  have hx' : x ^ (s - 1) ≠ 0 := pow_ne_zero _ hx
-  have hn : ‖x‖ ^ (s - 1) ≠ 0 := pow_ne_zero _ (norm_ne_zero_iff.mpr hx)
-  have hcv : ∀ cc, PBK.cvec s (utT p w.length c Fi L s h) x cc = vecT p w.length c Fi L (a ++ [(1, cc)]) := by
-    intro cc
-    rw [PBK.cvec, utT, smul_smul, mul_div_cancel₀ cc hx', ← Complex.ofReal_mul, inv_mul_cancel₀ hn,
-      Complex.ofReal_one, one_smul]
-    simp [ha]
-  refine (PBK.memLp_cvec s (utT p w.length c Fi L s h) x hx).2 ?_
-  have hfun : PBK.cvec s (utT p w.length c Fi L s h) x = fun cc => vecT p w.length c Fi L (a ++ [(1, cc)]) :=
-    funext hcv
-  rw [hfun]
-  have hcont := vecT_cont hV hloc.1 (m := 1) le_rfl (by rw [hloc.2])
-  have hmeas : AEStronglyMeasurable (fun cc => vecT p w.length c Fi L (a ++ [(1, cc)])) volume := by
-    have := hcont.aestronglyMeasurable (μ := volume) (measurableSet_singleton (0 : ℂ)).compl
-    first
-      | rwa [restrict_compl_singleton] at this
-  refine (memLp_two_iff_integrable_sq_norm hmeas).2 ?_
-  refine ((hV.int a hloc).re).congr (Filter.Eventually.of_forall fun cc => ?_)
-  exact (norm_vecT_sq hV _).symm
 
 section place
 
@@ -930,66 +289,6 @@ open scoped ComplexConjugate ENNReal
 
 noncomputable section
 
-theorem rr_congr_below {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-    (p : KB.Pl P Wp Wq) {F F₂ : B.Mat P.k P.r → (Wq →L[ℂ] Wp)} (hF : KB.CptCoef p.T.base F)
-    (hE : ∀ g ∈ B.GV P.k P.r, F g = F₂ g) (i : ℕ) (hi : i ≤ P.r) (hi1 : 1 ≤ i) (w : List C.Letter)
-    (a b : C.LPt) : p.RR F i w a b = p.RR F₂ i w a b := by
-  by_cases hl : D.IsLocPt a i ∧ D.IsLocPt b i
-  · unfold KB.Pl.RR D.RRplace
-    rw [dite_eq_left hl, dite_eq_left hl, dite_eq_left hi, dite_eq_left hi]
-    have hU : ∀ (e : Wd.Ix (Fin w.length)), ∀ g ∈ B.GV P.k P.r,
-        D.uwG P.k P.r p.T.base.z p.T.base.z' F₂ i hi w e g = D.uwG P.k P.r p.T.base.z p.T.base.z' F i hi w e g :=
-      fun e g hg => (Formalism.FourierDecayAlt.P.CutEXUw.uwG_congrG p.T.base.z p.T.base.z' i hi isOpen_univ
-        (fun x _ hx => (hE x hx).symm) w e g (Set.mem_univ _) hg)
-    have hS : ∀ (q : C.LPt), D.IsLocPt q i → ∀ (e : Wd.Ix (Fin w.length)),
-        ∀ γ ∈ B.GV P.k (P.r - D.ptSize q),
-        D.sliceAt P.k P.r p.T.base.z p.T.base.z' (D.uwG P.k P.r p.T.base.z p.T.base.z' F i hi w e) q γ =
-          D.sliceAt P.k P.r p.T.base.z p.T.base.z' (D.uwG P.k P.r p.T.base.z p.T.base.z' F₂ i hi w e) q γ := by
-      intro q hq e γ hγ
-      have h1 := Formalism.FourierDecayAlt.P.PBG.sliceAt_lincomb P.k P.r Wp Wq p.T F hF i hi hi1 q hq ({()} : Finset Unit)
-        (fun _ => 1) (fun _ => w) (fun _ => e) (D.uwG P.k P.r p.T.base.z p.T.base.z' F₂ i hi w e)
-        (fun g hg _ => by simp [hU e g hg]) γ hγ
-      simp only [Finset.sum_singleton, one_smul] at h1
-      exact h1.symm
-    refine Formalism.FourierDecayAlt.P.PBG.formLev_congrGV p.T _ _ w _ _ _ _ (fun e g hg => ?_) (fun e g hg => ?_)
-    · simp only [D.castF]
-      exact hS a hl.1 e _ (Formalism.FourierDecayAlt.P.PBE.castM_GV _ hg)
-    · simp only [D.castF]
-      exact hS b hl.2 e _ (Formalism.FourierDecayAlt.P.PBE.castM_GV _ hg)
-  · rw [PBL.rr_zero_of_not p F i w a b hl, PBL.rr_zero_of_not p F₂ i w a b hl]
-
-theorem rank_below_compact : RRBelowCpt := by
-  intro Wp Wq _ _ _ _ _ _ P p F hF i hi w hw h h' m hm hsz hsz'
-  have hi1 : 1 ≤ i := by omega
-  have hF0 := hF
-  obtain ⟨hs, -, ⟨δ, hδ, hG⟩⟩ := hF
-  have heq : ∀ g ∈ B.GV P.k P.r, D.cutF p.T.base Formalism.FourierDecayAlt.P.Topx2.chi0 F δ g = F g :=
-    cutF_eq_on_gv p.T.base Formalism.FourierDecayAlt.P.Topx2.base_cutoff_is_truncation hG hδ le_rfl
-  obtain ⟨Cs, -, hSQ⟩ := Formalism.FourierDecayAlt.P.LastBlockContinuity.sliceContQ
-  have hk2 : 2 ≤ P.k := p.hl.2.2
-  set N : ℕ := w.length with hN
-  set A₀ : ℝ := Cs * ((P.r : ℝ) + 1) ^ 4 * ((N : ℝ) * (2 * (P.r : ℝ) + P.k + 1) ^ 2 + (2 * (P.r : ℝ) + P.k + 1) ^ 3)
-    with hA₀
-  set M : ℕ := 3 * (11 * (N * (2 * P.r + P.k + 1) ^ 2 + (2 * P.r + P.k + 1) ^ 3) + 5) with hM
-  obtain ⟨εn, hn⟩ := Formalism.FourierDecayAlt.P.PBG.nice_of_cpt p.T.base hF0
-  obtain ⟨cF, hcF⟩ := hn.2.1 A₀ M
-  have hcut : ContinuousOn (fun cc : ℂ × ℂ => p.RR (D.cutF p.T.base Formalism.FourierDecayAlt.P.Topx2.chi0 F δ) i w
-      (h ++ [(m, cc.1)]) (h' ++ [(m, cc.2)])) (({0}ᶜ : Set ℂ) ×ˢ ({0}ᶜ : Set ℂ)) := by
-    refine Formalism.FourierDecayAlt.P.LastBlockContinuity.rrBelow_cont P p Formalism.FourierDecayAlt.P.Topx2.chi0 δ F i hi w N le_rfl h h' m hm hsz hsz' ?_ ?_
-    · intro hh t0 ht0
-      obtain ⟨ε', hε', H⟩ := hSQ Cs le_rfl P.k P.r Wp Wq p.T Formalism.FourierDecayAlt.P.Topx2.chi0 A₀ N P rfl rfl hk2
-        Formalism.FourierDecayAlt.P.Topx2.base_cutoff_is_truncation le_rfl δ hδ i hi w le_rfl h m (Formalism.FourierDecayAlt.P.LastBlockContinuity.hc_app h m hsz) hh hm hsz t0 ht0
-      exact ⟨ε', hε', fun e => H e F cF hs hcF⟩
-    · intro hh t0 ht0
-      obtain ⟨ε', hε', H⟩ := hSQ Cs le_rfl P.k P.r Wp Wq p.T Formalism.FourierDecayAlt.P.Topx2.chi0 A₀ N P rfl rfl hk2
-        Formalism.FourierDecayAlt.P.Topx2.base_cutoff_is_truncation le_rfl δ hδ i hi w le_rfl h' m (Formalism.FourierDecayAlt.P.LastBlockContinuity.hc_app h' m hsz') hh hm hsz' t0 ht0
-      exact ⟨ε', hε', fun e => H e F cF hs hcF⟩
-  refine hcut.congr fun cc _ => ?_
-  exact rr_congr_below p hF0 (fun g hg => (heq g hg).symm) i hi hi1 w _ _
-
-theorem germ_continuity_all_levels : GermContAll := germContAll_of rank_below_compact
-
 end
 
 end Formalism.FourierDecayAlt.P.CutBP
@@ -1047,13 +346,13 @@ theorem _root_.Formalism.FourierDecayAlt.P.TBBx3.head_continuity_at_zero_of_stan
           KB.levW P (P.r + 1) c := by
         rw [hlast, hTT]
         rw [hT, hT'] at hc2
-        simp only [C.nAux, KB.levW, B2.zWeight, if_pos hc2.le]
-        rw [if_pos ⟨by omega, trivial⟩]
+        simp only [C.nAux, KB.levW, B2.zWeight, ite_eq_left hc2.le]
+        rw [ite_eq_left ⟨by omega, trivial⟩]
         simp
       have hlev : 0 ≤ KB.levW P (P.r + 1) c := by
         rw [← hfac, hlast]
         simp only [C.nAux]
-        rw [if_pos ⟨by omega, trivial⟩]
+        rw [ite_eq_left ⟨by omega, trivial⟩]
         have : 0 ≤ Complex.normSq c - TBB.TTp p := by
           unfold TBB.TTp; linarith
         simpa using pow_nonneg this _
@@ -1063,7 +362,7 @@ theorem _root_.Formalism.FourierDecayAlt.P.TBBx3.head_continuity_at_zero_of_stan
   · have hfac : C.nAux P.k P.r (D.ptGG (TBB.TTp p) (h ++ [(1, c)])) (fun _ _ => 1) (1 + j) [(1, c)] =
         KB.levW P (j + 1) c := by
       simp only [C.nAux, KB.levW]
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       have e : 1 + j + 1 - 1 = j + 1 := by omega
       rw [e]
       simp only [one_mul, mul_one, Nat.cast_one]
@@ -1071,7 +370,7 @@ theorem _root_.Formalism.FourierDecayAlt.P.TBBx3.head_continuity_at_zero_of_stan
       ring
     have hlev : 0 ≤ KB.levW P (j + 1) c := by
       simp only [KB.levW]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       exact zpow_nonneg (norm_nonneg _) _
     rw [hfac, Real.mul_self_sqrt (mul_nonneg hA hlev)]
     push_cast

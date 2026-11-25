@@ -16,55 +16,6 @@ public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeil
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.PartCharInv
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterInvariantAdelicFormEqMulEvalZero
 import Aesop.Main
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyNormFinLeOne
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
@@ -73,7 +24,6 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenSe
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqMulApplyZero
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceFormMapSurjective
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -232,37 +182,6 @@ theorem norm_iteratedFDeriv_B_le (β : (κ'' → W) → ℝ) (hβ : ContDiff ℝ
   calc _ ≤ ‖iteratedFDeriv ℝ i β (L x)‖ * 1 := mul_le_mul_of_nonneg_left hp (norm_nonneg _)
     _ = _ := mul_one _
 
-private theorem differentiable_integral_Ioc_of_contDiff {V E : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
-    [FiniteDimensional ℝ V] [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    (G : V × ℝ → E) (hG : ContDiff ℝ 1 G) :
-    Differentiable ℝ (fun x => ∫ s in Ioc (0 : ℝ) 1, G (x, s)) := by
-  intro x₀
-  have hK : IsCompact (Metric.closedBall x₀ 1 ×ˢ Icc (0 : ℝ) 1) :=
-    (isCompact_closedBall x₀ 1).prod isCompact_Icc
-  have hGd : Continuous (fderiv ℝ G) := hG.continuous_fderiv one_ne_zero
-  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hGd.continuousOn
-  have hGc : Continuous G := hG.continuous
-  have hd : ∀ p, HasFDerivAt G (fderiv ℝ G p) p := fun p =>
-    (hG.differentiable (by simp) p).hasFDerivAt
-  refine (hasFDerivAt_integral_of_dominated_of_fderiv_le (𝕜 := ℝ)
-    (μ := volume.restrict (Ioc (0 : ℝ) 1))
-    (F := fun x s => G (x, s))
-    (F' := fun x s => (fderiv ℝ G (x, s)).comp (ContinuousLinearMap.inl ℝ V ℝ))
-    (bound := fun _ => C * ‖ContinuousLinearMap.inl ℝ V ℝ‖)
-    (Metric.closedBall_mem_nhds x₀ one_pos) ?_ ?_ ?_ ?_ ?_ ?_).differentiableAt
-  · exact Filter.Eventually.of_forall fun x =>
-      (hGc.comp (Continuous.prodMk continuous_const continuous_id)).aestronglyMeasurable
-  · exact ((hGc.comp (Continuous.prodMk continuous_const continuous_id)).integrableOn_Icc).mono_set
-      Ioc_subset_Icc_self
-  · exact ((hGd.comp (Continuous.prodMk continuous_const continuous_id)).clm_comp
-      continuous_const).aestronglyMeasurable
-  · refine ae_restrict_of_forall_mem measurableSet_Ioc fun s hs x hx => ?_
-    refine (ContinuousLinearMap.opNorm_comp_le _ _).trans ?_
-    exact mul_le_mul_of_nonneg_right (hC _ ⟨hx, Ioc_subset_Icc_self hs⟩) (norm_nonneg _)
-  · exact (continuous_const.integrableOn_Icc).mono_set Ioc_subset_Icc_self
-  · exact Filter.Eventually.of_forall fun s x _ =>
-      (hd (x, s)).comp x (hasFDerivAt_prodMk_left x s)
-
 theorem near_schwartz (h : SchwartzMap (κ' ⊕ κ'' → W) ℂ) (β : (κ'' → W) → ℝ) (hβ : ContDiff ℝ ∞ β)
     (hβc : HasCompactSupport β) :
     ∃ g : SchwartzMap (κ' ⊕ κ'' → W) ℂ, ∀ x, g x = (β (x ∘ Sum.inr) : ℂ) * ∫ s in Ioc (0 : ℝ) 1, h (Ain s x) := by
@@ -277,7 +196,10 @@ theorem near_schwartz (h : SchwartzMap (κ' ⊕ κ'' → W) ℂ) (β : (κ'' →
           pder m (fun p : (κ' ⊕ κ'' → W) × ℝ => h (Ain p.2 p.1)) (x, s)
       from funext (hIF m)]
     set_option synthInstance.maxSize 256 in
-    exact differentiable_integral_Ioc_of_contDiff _ ((contDiff_pder m hc).of_le (by exact_mod_cast le_top))
+    exact (ContDiff.parametric_integral (f := fun x s =>
+        pder m (fun p : (κ' ⊕ κ'' → W) × ℝ => h (Ain p.2 p.1)) (x, s))
+      isCompact_Icc Ioc_subset_Icc_self measure_Ioc_lt_top.ne
+      ((contDiff_pder m hc).of_le (by exact_mod_cast le_top))).differentiable one_ne_zero
   have hB : ContDiff ℝ ∞ (fun y : κ' ⊕ κ'' → W => (β (y ∘ Sum.inr) : ℂ)) := by
     have hL : ContDiff ℝ ∞ (fun y : κ' ⊕ κ'' → W => y ∘ Sum.inr) :=
       contDiff_pi.2 fun j => by
@@ -492,78 +414,6 @@ open MeasureTheory Set Filter Topology Complex
 
 namespace PositivityTheory.SiegelWeilFormula.Ald.PCI
 
-theorem kills_linear_mul {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V]
-    (T : SchwartzMap V ℂ →L[ℂ] ℂ) (L : V →L[ℝ] ℝ)
-    (hT : ∀ (t : ℝ) (f f' : SchwartzMap V ℂ), (∀ x, f' x = Complex.exp (Complex.I * ((t • L) x : ℂ)) * f x) →
-      T f' = T f)
-    (f g : SchwartzMap V ℂ) (hg : ∀ x, g x = (L x : ℂ) * f x) : T g = 0 := by
-  obtain ⟨s, C, -, hC⟩ := Seminorm.bound_of_continuous (schwartz_withSeminorms ℂ V ℂ)
-    ((normSeminorm ℂ ℂ).comp (T : SchwartzMap V ℂ →ₗ[ℂ] ℂ)) (continuous_norm.comp T.continuous)
-  let B : ℕ × ℕ → ℝ := fun m => 3 * 2 ^ m.2 * (1 + ‖L‖) ^ (m.2 + 2) *
-    (2 ^ (m.1 + 2) * ((Finset.Iic (m.1 + 2, m.2)).sup
-      fun (q : ℕ × ℕ) => SchwartzMap.seminorm ℂ q.1 q.2) f)
-  have hB0 : ∀ m, 0 ≤ B m := by
-    intro m
-    have := apply_nonneg ((Finset.Iic (m.1 + 2, m.2)).sup
-      fun (q : ℕ × ℕ) => SchwartzMap.seminorm ℂ q.1 q.2) f
-    positivity
-  have hS : 0 ≤ ∑ m ∈ s, B m := Finset.sum_nonneg fun m _ => hB0 m
-  have hK : 0 ≤ (C : ℝ) * ∑ m ∈ s, B m := mul_nonneg C.2 hS
-  have key : ∀ t : ℝ, 0 < t → t ≤ 1 → ‖T g‖ ≤ t * ((C : ℝ) * ∑ m ∈ s, B m) := by
-    intro t ht0 ht1
-    have hG := GlobalTheory.CharFormDeriv.hasTemperateGrowth_char L t
-    let M : SchwartzMap V ℂ := SchwartzMap.smulLeftCLM ℂ (fun x : V => cexp (I * ↑t * ↑(L x))) f
-    have hM : ∀ x, M x = cexp (I * ↑t * ↑(L x)) * f x := by
-      intro x
-      simp [M, SchwartzMap.smulLeftCLM_apply_apply hG]
-    have hTM : T M = T f := by
-      apply hT t f M
-      intro x
-      rw [hM x]
-      simp [mul_assoc]
-    let u : SchwartzMap V ℂ := (t : ℂ)⁻¹ • M - I • g - (t : ℂ)⁻¹ • f
-    have hu : ∀ x, u x = GlobalTheory.CharFormDeriv.rem t (L x) * f x := by
-      intro x
-      simp only [u, SchwartzMap.sub_apply, SchwartzMap.smul_apply, smul_eq_mul, hM x, hg x,
-        GlobalTheory.CharFormDeriv.rem]
-      ring
-    have hTu : T u = -I * T g := by
-      simp only [u, map_sub, map_smul, hTM, smul_eq_mul]
-      ring
-    have hbound := GlobalTheory.CharFormDeriv.seminorm_rem_mul_le L f u ht0.ne'
-      (by rw [abs_of_pos ht0]; exact ht1) hu
-    have h1 : (s.sup (schwartzSeminormFamily ℂ V ℂ)) u ≤ t * ∑ m ∈ s, B m := by
-      apply Seminorm.finset_sup_apply_le (mul_nonneg ht0.le hS)
-      intro m hm
-      have := hbound m.1 m.2
-      rw [abs_of_pos ht0] at this
-      calc schwartzSeminormFamily ℂ V ℂ m u = SchwartzMap.seminorm ℂ m.1 m.2 u := rfl
-        _ ≤ t * B m := this
-        _ ≤ t * ∑ m ∈ s, B m := by
-          gcongr
-          exact Finset.single_le_sum (fun i _ => hB0 i) hm
-    have h2 := hC u
-    have h3 : ‖T u‖ ≤ (C : ℝ) * (s.sup (schwartzSeminormFamily ℂ V ℂ)) u := h2
-    rw [hTu, norm_mul, norm_neg, Complex.norm_I, one_mul] at h3
-    calc ‖T g‖ ≤ (C : ℝ) * (s.sup (schwartzSeminormFamily ℂ V ℂ)) u := h3
-      _ ≤ (C : ℝ) * (t * ∑ m ∈ s, B m) := by gcongr
-      _ = t * ((C : ℝ) * ∑ m ∈ s, B m) := by ring
-  have h0 : ‖T g‖ ≤ 0 := by
-    by_contra hpos
-    push_neg at hpos
-    have hD : 0 < 2 * ((C : ℝ) * ∑ m ∈ s, B m + 1) := by positivity
-    have ht := key (min 1 (‖T g‖ / (2 * ((C : ℝ) * ∑ m ∈ s, B m + 1))))
-      (lt_min one_pos (div_pos hpos hD)) (min_le_left _ _)
-    have hle : min 1 (‖T g‖ / (2 * ((C : ℝ) * ∑ m ∈ s, B m + 1))) * ((C : ℝ) * ∑ m ∈ s, B m)
-        ≤ ‖T g‖ / 2 := by
-      calc _ ≤ ‖T g‖ / (2 * ((C : ℝ) * ∑ m ∈ s, B m + 1)) * ((C : ℝ) * ∑ m ∈ s, B m) :=
-            mul_le_mul_of_nonneg_right (min_le_right _ _) hK
-        _ ≤ ‖T g‖ / 2 := by
-          rw [div_mul_eq_mul_div, div_le_div_iff₀ hD (by norm_num)]
-          nlinarith
-    linarith
-  exact norm_le_zero_iff.mp h0
-
 variable {W : Type} [NormedAddCommGroup W] [NormedSpace ℝ W] [FiniteDimensional ℝ W] {κ' κ'' : Type} [Fintype κ']
   [Fintype κ'']
 
@@ -576,7 +426,7 @@ theorem arch_part (T : SchwartzMap (κ' ⊕ κ'' → W) ℂ →L[ℂ] ℂ)
     ContinuousLinearMap.pi fun j => ContinuousLinearMap.proj (Sum.inr j)
   have hres : ∀ i, T (gg i) = 0 := by
     intro i
-    refine kills_linear_mul T ((L i).comp P) ?_ (hh i) (gg i) ?_
+    refine GlobalTheory.CharFormDeriv.charForm_kills_linear_mul T ((L i).comp P) ?_ (hh i) (gg i) ?_
     · intro t f₁ f₂ h
       apply hT (t • L i) f₁ f₂
       intro x

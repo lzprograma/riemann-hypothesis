@@ -363,19 +363,19 @@ theorem locSB_of (hW : WittLocT) (hI : IntWittAE) : LocSB := by
   have hCo : ∀ v, IsClopen (C v) ∧ IsCompact (C v) := by
     intro v
     by_cases h : latV b v ∩ LT v = KY v
-    · simp only [C, if_pos h]
+    · simp only [C, ite_eq_left h]
       exact ⟨PI.VolStabS.PositiveNearLattice.isClopen_latV b v a n, PI.VolStabS.PositiveNearLattice.isCompact_latV b v a n⟩
-    · simp only [C, if_neg h]
+    · simp only [C, ite_eq_right h]
       exact ⟨hC'o v, hC'c v⟩
   refine ⟨_, b, C, fun v => ?_, fun v => (hCo v).1.isOpen.measurableSet, fun v => ?_, ?_⟩
   · exact ⟨(LocallyConstant.indicator (LocallyConstant.const _ (1 : ℂ)) (hCo v).1).isLocallyConstant,
       HasCompactSupport.intro' (hCo v).2 (hCo v).1.isClosed fun Y hY => Set.indicator_of_notMem hY _⟩
   · by_cases h : latV b v ∩ LT v = KY v
-    · simp only [C, if_pos h]
+    · simp only [C, ite_eq_left h]
       exact h
-    · simp only [C, if_neg h]
+    · simp only [C, ite_eq_right h]
       exact hC'eq v
   · filter_upwards [hgood] with v hv
-    simp only [C, if_pos hv]
+    simp only [C, ite_eq_left hv]
 
 end Formalism.L2.SG.Pf.NcS.LocSBPf

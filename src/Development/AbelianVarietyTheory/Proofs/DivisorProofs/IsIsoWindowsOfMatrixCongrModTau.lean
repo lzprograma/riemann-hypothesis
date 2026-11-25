@@ -133,7 +133,7 @@ theorem isNil_kron {B O ι : Type} [CommRing B] [CommRing O] [IsLocalRing O] [Fi
       · simp [hm, Function.iterate_fixed (map_zero σ)]
     rw [h2] at h1
     simp only [Matrix.mulVec, dotProduct, Pi.single_apply, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true] at h1
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h1
     exact (IsLocalRing.mem_maximalIdeal _).2 h1
   refine ⟨n, fun v x => ?_⟩
   rw [kron_iter]

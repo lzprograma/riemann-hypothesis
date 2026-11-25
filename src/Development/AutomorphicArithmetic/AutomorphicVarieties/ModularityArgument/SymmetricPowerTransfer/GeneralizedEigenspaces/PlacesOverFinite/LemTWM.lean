@@ -1,5 +1,7 @@
 module
 
+import PositivityTheory.AutomorphicForms.PublishedInputs.RealGaloisRepresentations.IwahoriSphericalTransfer.FinrankAdjoinSqrtNegOne
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusSignCompatibility
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.EqOneOfMemLev
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HilbertClassFieldOfGlobalArtinReciprocity
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdicIntegersCompact.IsCompactAdicCompletionIntegers
@@ -62,10 +64,6 @@ import Mathlib.Topology.Algebra.Ring.Compact
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHeckeCharTrivOnRealSubfieldInfinityType
-
--- `rulesCommRing` is a high-priority instance on a Pi-type abbrev; it makes searches for
--- `CommRing ?R` with unknown `R` explode.
-attribute [-instance] Formalism.L2.Pj.rulesCommRing
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.AwayTriv, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.Descend, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.FrobSplit, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.GlueExt, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.InfTriv, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.Kron, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.LevPow, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.LocProd, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.SplitIso, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.PhiPart, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.UnrAE, Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.VerGroup, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.PlacesOverFinite.LemTWM
@@ -201,33 +199,12 @@ private theorem exists_above {F L Ω : Type} [Field F] [NumberField F] [Field L]
 
 private theorem normV_under' {K K' : Type} [Field K] [NumberField K] [Field K'] [NumberField K'] [Algebra K K']
     (w : HeightOneSpectrum (𝓞 K')) : normV w = normV (w.under (𝓞 K)) ^ w.asIdeal.inertiaDeg (𝓞 K) := by
-  have : w.asIdeal.LiesOver (w.under (𝓞 K)).asIdeal := ⟨rfl⟩
-  have := w.isMaximal
-  have := (w.under (𝓞 K)).isMaximal
-  rw [show normV w = Ideal.absNorm w.asIdeal by
-        rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply],
-      show normV (w.under (𝓞 K)) = Ideal.absNorm (w.under (𝓞 K)).asIdeal by
-        rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]]
-  rw [← Ideal.absNorm_relNorm (𝓞 K) (𝓞 K') w.asIdeal,
-    Ideal.relNorm_eq_pow_of_isMaximal w.asIdeal (w.under (𝓞 K)).asIdeal, map_pow]
+  intros
+  apply _root_.GlobalTheory.RealGal.AttRes.normV_eq_pow <;> assumption
 
 private theorem normV_le {K : Type} [Field K] [NumberField K] (w : HeightOneSpectrum (𝓞 K)) {q : ℕ} (hq : 1 < q)
     (h : ∀ x : 𝓞 K, x - x ^ q ∈ w.asIdeal) : normV w ≤ q := by
-  have := w.isMaximal
-  letI : Field (𝓞 K ⧸ w.asIdeal) := Ideal.Quotient.field _
-  have : Finite (𝓞 K ⧸ w.asIdeal) := Ideal.finiteQuotientOfFreeOfNeBot _ w.ne_bot
-  letI := Fintype.ofFinite (𝓞 K ⧸ w.asIdeal)
-  have e : normV w = Fintype.card (𝓞 K ⧸ w.asIdeal) := Nat.card_eq_fintype_card
-  rw [e]
-  by_contra hlt
-  refine Polynomial.X_pow_sub_X_ne_zero (R := 𝓞 K ⧸ w.asIdeal) hq
-    (Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' _ Finset.univ (fun y _ => ?_) ?_)
-  · obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
-    have := Ideal.Quotient.eq.2 (h x)
-    rw [map_pow] at this
-    rw [eval_sub, eval_pow, eval_X, ← this, sub_self]
-  · rw [Polynomial.natDegree_X_pow_sub_X hq, Finset.card_univ]
-    exact not_le.1 hlt
+  apply _root_.normV_le <;> assumption
 
 private theorem two_of_sum {ι : Type} [Fintype ι] (f : ι → ℕ) (hf : ∀ i, 0 < f i) (hs : ∑ i, f i = 2) (a : ι)
     (ha : f a = 1) : ∃ b, b ≠ a ∧ f b = 1 ∧ ∀ c, c = a ∨ c = b := by
@@ -940,7 +917,7 @@ theorem UpperTheory.V.Af.Tw.unrAE :
   intro v hv
   simp only [Set.mem_setOf_eq] at hv
   unfold UpperTheory.V.Af.Tw.Unr at hv
-  push_neg at hv
+  push Not at hv
   obtain ⟨w, rfl, he⟩ := hv
   refine ⟨w, ?_, rfl⟩
   have hle : Ideal.map (algebraMap (𝓞 F) (𝓞 L)) (HeightOneSpectrum.under (𝓞 F) w).asIdeal ≤
@@ -975,8 +952,7 @@ theorem UpperTheory.V.Af.Tw.verGroup :
   have hnorm : R.Normal := Subgroup.normal_of_index_eq_two hidx
   have hsq : ∀ g, g ∉ R → g * g ∈ R := fun g _ => (hmem g g).mpr Iff.rfl
   obtain ⟨g0, hg0⟩ : ∃ g0 : Γ, g0 ∉ R := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have htop : R = ⊤ := eq_top_iff.mpr fun x _ => hcon x
     rw [htop, Subgroup.index_top] at hidx
     exact absurd hidx (by norm_num)
@@ -1012,8 +988,8 @@ theorem UpperTheory.V.Af.Tw.verGroup :
     rw [e1, kmul _ (R.mul_mem hc hx') _ (R.inv_mem hc), kmul _ hc _ hx', kinv _ hc,
       mul_inv_cancel_comm]
   let f : Γ → B := fun γ => if γ ∈ R then k γ * k (g0 * γ * g0⁻¹) else k (γ * γ)
-  have fin : ∀ γ, γ ∈ R → f γ = k γ * k (g0 * γ * g0⁻¹) := fun γ h => if_pos h
-  have fout : ∀ γ, γ ∉ R → f γ = k (γ * γ) := fun γ h => if_neg h
+  have fin : ∀ γ, γ ∈ R → f γ = k γ * k (g0 * γ * g0⁻¹) := fun γ h => ite_eq_left h
+  have fout : ∀ γ, γ ∉ R → f γ = k (γ * γ) := fun γ h => ite_eq_right h
   have fmul : ∀ x y, f (x * y) = f x * f y := by
     intro x y
     by_cases hx : x ∈ R <;> by_cases hy : y ∈ R
@@ -1086,24 +1062,6 @@ open GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V.Af UpperTheory.V
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele (ideleMap adeleMap finiteCompletionMap ideleConj IsCMExtension)
 open GlobalTheory.Mem.Chr (unitIdl)
 
-private theorem loc_self {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) (x : (v.adicCompletion K)ˣ) :
-    (localIdele K v x).val.2 v = x := by
-  classical
-  exact Function.update_self v (x : v.adicCompletion K) (fun w : HeightOneSpectrum (𝓞 K) => (1 : w.adicCompletion K))
-
-private theorem loc_ne {K : Type} [Field K] [NumberField K] {v w : HeightOneSpectrum (𝓞 K)} (h : w ≠ v)
-    (x : (v.adicCompletion K)ˣ) : (localIdele K v x).val.2 w = 1 := by
-  classical
-  exact Function.update_of_ne h (x : v.adicCompletion K) (fun w : HeightOneSpectrum (𝓞 K) => (1 : w.adicCompletion K))
-
-private theorem loc_unit {K : Type} [Field K] [NumberField K] {v : HeightOneSpectrum (𝓞 K)}
-    {x : (v.adicCompletion K)ˣ} (hx : IsUnitAt v x) : localIdele K v x ∈ unitIdl K := fun w => by
-  by_cases h : w = v
-  · subst h
-    rw [loc_self]
-    exact hx
-  · rw [_root_.loc_ne h, map_one]
-
 private theorem lev_one {K : Type} [Field K] [NumberField K] {a : Ideles K} : a ∈ lev K 1 ↔ a ∈ unitIdl K :=
   ⟨fun h => h.1, fun h => ⟨h, fun v => by
     rw [Nat.cast_one, map_one]
@@ -1111,7 +1069,7 @@ private theorem lev_one {K : Type} [Field K] [NumberField K] {a : Ideles K} : a 
 
 private theorem loc_lev {K : Type} [Field K] [NumberField K] {l : ℕ} {v : HeightOneSpectrum (𝓞 K)}
     (hv : ((l : ℕ) : 𝓞 K) ∉ v.asIdeal) {x : (v.adicCompletion K)ˣ} (hx : IsUnitAt v x) : localIdele K v x ∈ lev K l :=
-  ⟨loc_unit hx, fun w => by
+  ⟨GlobalTheory.Mem.Chr.AntiExist.loc_mem hx, fun w => by
     by_cases h : w = v
     · subst h
       have e : Valued.v (l : w.adicCompletion K) = 1 := by
@@ -1119,8 +1077,8 @@ private theorem loc_lev {K : Type} [Field K] [NumberField K] {l : ℕ} {v : Heig
           ← map_natCast (algebraMap (𝓞 K) K)]
         exact (HeightOneSpectrum.valuation_eq_one_iff_notMem w).2 hv
       rw [e]
-      exact Valuation.map_sub_le _ (loc_unit hx w).le (map_one _).le
-    · rw [_root_.loc_ne h, sub_self, map_zero]
+      exact Valuation.map_sub_le _ (GlobalTheory.Mem.Chr.AntiExist.loc_mem hx w).le (map_one _).le
+    · rw [_root_.GlobalTheory.Mem.Chr.AntiExist.loc_ne h, sub_self, map_zero]
       exact zero_le⟩
 
 private theorem isDiv_qbar (l : ℕ) [Fact l.Prime] : KStar.Choice.IsDiv (Qbar l)ˣ := fun n hn a => by
@@ -1198,9 +1156,9 @@ private theorem ideleExt_of (hG : Glue) (hP : LevPow) (hK : Kron) (hΦ : PhiPart
   · have e : ∀ w, z.val.2 w = 1 := fun w => by rw [hz]; rfl
     rw [hV z ⟨fun w => by rw [e, map_one], fun w => by rw [e, sub_self, map_zero]; exact zero_le⟩,
       p3 z fun w _ _ => e w, map_one]
-  · rw [hV _ (loc_lev hw hx), p3 _ fun u hu _ => _root_.loc_ne (by rintro rfl; exact hw hu) x, map_one]
-  · have hu := loc_unit hx
-    rw [h4 _ hu, MonoidHom.comp_apply, p3 _ fun u _ hu' => _root_.loc_ne (by rintro rfl; exact hw hu') x, map_one, one_mul]
+  · rw [hV _ (loc_lev hw hx), p3 _ fun u hu _ => _root_.GlobalTheory.Mem.Chr.AntiExist.loc_ne (by rintro rfl; exact hw hu) x, map_one]
+  · have hu := GlobalTheory.Mem.Chr.AntiExist.loc_mem hx
+    rw [h4 _ hu, MonoidHom.comp_apply, p3 _ fun u _ hu' => _root_.GlobalTheory.Mem.Chr.AntiExist.loc_ne (by rintro rfl; exact hw hu') x, map_one, one_mul]
     exact h6 _ (div_mem hu (lev_one.1 (c3 1 _ (lev_one.2 hu))))
 
 private theorem frob_val {L Ω B : Type} [Field L] [NumberField L] [Field Ω] [Algebra L Ω] [CommGroup B] [TopologicalSpace B]

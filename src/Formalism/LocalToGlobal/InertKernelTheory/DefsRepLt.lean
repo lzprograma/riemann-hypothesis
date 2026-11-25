@@ -47,38 +47,6 @@ def locSpan (R : Type*) {K : Type*} [CommRing R] [Field K] [Algebra R K] (ρ : D
 
 end Defs
 
-section Ties
-
-variable {p : ℕ} [Fact p.Prime] (X : Sys p) (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7)
-  (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
-  (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
-  (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-
-end Ties
-
-section Glob
-
-variable (D : D7) {p : ℕ} {N N' : ℕ}
-
-end Glob
-
-section Loc
-
-variable (D : D7) {p : ℕ} {N N' : ℕ}
-
-variable {R K : Type*} [CommRing R] [Field K] [Algebra R K]
-
-end Loc
-
-section Main
-
-variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7)
-  (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
-  (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
-  (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-
-end Main
-
 end Formalism.L2.KerInert.RepTwLat
 
 set_option pp.fullNames true
@@ -249,8 +217,6 @@ section Data
 
 open Formalism.MainNotions Formalism.MainNotions.G Formalism.L2.G.Pend IsDedekindDomain
 open scoped TensorProduct
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {p : ℕ} [Fact p.Prime] {D : D7}
 

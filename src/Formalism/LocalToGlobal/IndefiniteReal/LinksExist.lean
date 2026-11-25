@@ -13,8 +13,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace Formalism.IndefR.Links
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 section Stages2L
@@ -78,19 +76,6 @@ theorem exists_cond {X : Sort*} (x₀ : X) {c : Prop} {p : X → Prop} (h : c �
   · obtain ⟨x, hx⟩ := h hc; exact ⟨x, fun _ => hx⟩
   · exact ⟨x₀, fun h' => absurd h' hc⟩
 
-theorem HMod.factor {X Z : Type} [AddCommGroup X] [Module ℂ X] [AddCommGroup Z] [Module ℂ Z] (M : HMod Z) {V : Submodule ℂ Z}
-    {ip : Z → Z → ℂ} (hM : M.Is V ip) (f : X →ₗ[ℂ] Z) (hf : ∀ x, f x ∈ V) : ∃ g : X →ₗ[ℂ] M.H, ∀ x, M.e (g x) = f x :=
-  exists_factor M.e hM.1 f fun x => hM.2.1 ▸ hf x
-
-theorem thDn_mem (R : RealDat D A Ks) (t : T) (x : (R.HX t).H) : R.thDn t x ∈ R.CC t 0 :=
-  (Lift.thetaDn (R.CC t) (R.ioY t) (D.R.m - 1) (R.ioX t ((R.cX.toMap R.prX ∘ₗ (R.HX t).e).rangeRestrict x))).2
-
-theorem th_exists (hG : GoodLands D A Ks F) (R : RealDat D A Ks) (h : R.Pre1 F) (t : T) :
-    ∃ g : (R.HX t).H →ₗ[ℂ] R.HE.H, ∀ x, R.HE.e (g x) = postOn (R.MY 0) R.e0 (PiTensorProduct.lift.symm (R.thDn t x)) :=
-  R.HE.factor h.2.HE (postOn (R.MY 0) R.e0 ∘ₗ
-    (PiTensorProduct.lift.symm : (SmT (R.MY 0) →ₗ[ℂ] (GA D (Yc D 0) → ℂ)) ≃ₗ[ℂ] MMap (R.MY 0)).toLinearMap ∘ₗ R.thDn t)
-    fun x => (hG R h).1 t _ (thDn_mem R t x)
-
 theorem kerY_args (hW : WeilExistsFull D) (hV : VacExistsO D) (hS : StepVecExists D) (hPt : PtStable D) (hC : CartanOK D)
     (hD : SelfDualOK D) (hT : Formalism.IndefR.Fin.VecThetaSD D) (hF : SeedFacts D A Ks F) (R : RealDat D A Ks) (h : R.Pre1 F) :
     ∃ ωY ωX vac vacX vY vX, (R.upd3 ωY ωX vac vacX vY vX R.ItY R.ItX R.ioY R.ioX R.Th).KerY := by
@@ -124,25 +109,6 @@ theorem kerY_args (hW : WeilExistsFull D) (hV : VacExistsO D) (hS : StepVecExist
       (sd k (by omega)).2 (sd (k + 1) hk).2 (hvY t k hk)),
     fun t P => hPt R.ψ R.θ h.1.std h.1.inf _ _ _ _ _ _ _ P (hT.1 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (sd _ hm).1 sdX.1 (sd _ hm).2 sdX.2
       (hvX t))⟩
-
-
-
-theorem chain_exists (hI : ItExists D A Ks F) (hO : IoChainExists D A Ks F) (hG : GoodLands D A Ks F) (R : RealDat D A Ks)
-    (h : R.Pre1 F) (hK : R.KerY) : ∃ R' : RealDat D A Ks, R'.Pre1 F ∧ R'.IsChain ∧ R'.FullY := by
-  obtain ⟨h1, ItX, hX⟩ := hI R h hK
-  choose ItY hY using fun k => exists_cond (R.ItY k) (h1 k)
-  let R1 := R.upd3 R.ωY R.ωX R.vac R.vacX R.vY R.vX ItY ItX R.ioY R.ioX R.Th
-  have p1 : R1.Pre1 F := RealDat.preliminary_of_vacuum_update h _ _ _ _ _ _ _ _ _ _ _
-  have k1 : R1.KerY := hK
-  have o1 := hO R1 p1 k1 (fun t k hk => hY k hk t) hX
-  choose ioY hioY using fun t k => exists_cond (R1.ioY t k) ((o1 t).1 k)
-  choose ioX hioX using fun t => (o1 t).2
-  let R2 := R.upd3 R.ωY R.ωX R.vac R.vacX R.vY R.vX ItY ItX ioY ioX R.Th
-  have p2 : R2.Pre1 F := RealDat.preliminary_of_vacuum_update h _ _ _ _ _ _ _ _ _ _ _
-  choose Th hTh using th_exists hG R2 p2
-  refine ⟨R.upd3 R.ωY R.ωX R.vac R.vacX R.vY R.vX ItY ItX ioY ioX Th, RealDat.preliminary_of_vacuum_update h _ _ _ _ _ _ _ _ _ _ _,
-    ⟨fun t k hk => (hK.1.1 t k hk).datum, fun t => (hK.1.2 t).datum, hK.2.1, hK.2.2.1, hK.2.2.2.1, hK.2.2.2.2,
-      fun t k hk => hY k hk t, hX, fun t k hk => hioY t k (by omega), hioX, hTh⟩, hK.1⟩
 
 theorem exists_localWeil_vacuum_kernel (hW : WeilExistsFull D) (hV : VacExistsO D) (hS : ThPVecExists D) (hPt : PtStable D) (hC : CartanOK D)
     (hD : SelfDualOK D) (hT : Formalism.IndefR.Fin.VecThetaSD D) (hF : SeedFacts D A Ks F) (R : RealDat D A Ks) (h : R.Pre1 F) :
@@ -242,16 +208,16 @@ theorem scal_exists (R : RealDat D A Ks) : ∃ kap lam, (R.upd6 kap lam).IsScal 
     exact mul_right_cancel₀ hne h2) 1
   refine ⟨kap, lam, fun i t p l hp hl => ?_, fun κ h h' => hk κ ⟨h, h'⟩, fun b i p v l hv hp hb he => ?_, fun i t p hp => ?_,
     fun i p v hv hp => ?_, fun i t p v hv => ?_⟩
-  · exact (if_pos rfl).trans (h0 i t p l ⟨hp, hl⟩)
-  · exact (if_neg hv).trans (h1 i p v l ⟨b, (RealDat.part_at_of_scalar_update _ _ _ _ _ _).1 hp,
+  · exact (ite_eq_left rfl).trans (h0 i t p l ⟨hp, hl⟩)
+  · exact (ite_eq_right hv).trans (h1 i p v l ⟨b, (RealDat.part_at_of_scalar_update _ _ _ _ _ _).1 hp,
       hb.imp id fun hn hh => hn ((RealDat.part_at_of_scalar_update _ _ _ _ _ _).2 hh), (RealDat.similarity_of_scalar_update _ _ _ _ _ _ _).1 he⟩)
   · rw [RealDat.subspaces_of_scalar_update]
-    exact (if_pos rfl).trans (h0' i t p fun l hl => hl.1 hp)
+    exact (ite_eq_left rfl).trans (h0' i t p fun l hl => hl.1 hp)
   · rw [RealDat.subspaces_of_scalar_update]
-    exact (if_neg hv).trans (h1' i p v fun l hl => by
+    exact (ite_eq_right hv).trans (h1' i p v fun l hl => by
       obtain ⟨b, hb, -⟩ := hl
       exact hp b ((RealDat.part_at_of_scalar_update _ _ _ _ _ _).2 hb))
-  · exact (if_neg hv).trans (if_neg hv).symm
+  · exact (ite_eq_right hv).trans (ite_eq_right hv).symm
 
 
 

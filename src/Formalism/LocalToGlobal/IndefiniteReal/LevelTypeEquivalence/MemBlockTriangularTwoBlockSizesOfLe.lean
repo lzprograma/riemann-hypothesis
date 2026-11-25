@@ -14,8 +14,6 @@ namespace Formalism.IndefR.Eqv.Act
 
 open Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Links.RealDat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {D : D7} {V : HSp D} {β : GL (Fin V.rank) (EAf D)}
@@ -69,24 +67,6 @@ theorem levFn_datY_noQ (hn : V.rank ≤ r) (hr : r ≤ V.rank) (t j : ℕ) (Pg Q
   rfl
 
 end Gen
-
-section Idem
-
-variable {K : Type} [Field K] {G : Type} [Group G] [Fintype G]
-
-end Idem
-
-section GA
-
-variable {D : D7} {V : HSp D} {β : GL (Fin V.rank) (EAf D)} {L : Formalism.L2.DIV.LevDat D.host.E ℂ V.rank}
-
-end GA
-
-section MultLev
-
-variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
-
-end MultLev
 
 section Real
 

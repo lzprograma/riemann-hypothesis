@@ -76,7 +76,7 @@ theorem evC_cechD (n : ℕ) (w : CechC S ι (MRingOver S ι ⧸ mIdealOver S y) 
   by_cases hI : CellMeets y I.1
   · set_option synthInstance.maxHeartbeats 100000 in
       rw [cechD_apply', map_sum]
-    simp only [cellD, LinearMap.pi_apply, hI, if_true, LinearMap.sum_apply]
+    simp only [cellD, LinearMap.pi_apply, hI, ite_true, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun k _ => ?_
 
     rw [map_sum]
@@ -86,7 +86,7 @@ theorem evC_cechD (n : ℕ) (w : CechC S ι (MRingOver S ι ⧸ mIdealOver S y) 
       exact congrArg _ (evMap_cellRes (face_subset I.1 k i) hI _)
     · simp
   · rw [evMap_of_not y hI]
-    simp only [cellD, LinearMap.pi_apply, hI, if_false, LinearMap.zero_apply]
+    simp only [cellD, LinearMap.pi_apply, hI, ite_false, LinearMap.zero_apply]
 
 variable (γ : K → ℤ)
 
@@ -110,7 +110,7 @@ theorem evC_lift (n : ℕ) {w' : Cell K ι n → Ω} (hw' : w' ∈ cellC S y γ 
     · rw [← map_evMap_locPart y hI γ] at hI'
       exact Submodule.mem_map.mp hI'
     · unfold cellSec at hI'
-      rw [if_neg hI, Submodule.mem_bot] at hI'
+      rw [ite_eq_right hI, Submodule.mem_bot] at hI'
       exact ⟨0, Submodule.zero_mem _, by rw [map_zero, hI']⟩
   choose w hw hφw using h
   exact ⟨w, Submodule.mem_pi.mpr fun I _ => hw I, funext hφw⟩

@@ -1,44 +1,6 @@
 module
 
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -50,33 +12,10 @@ namespace GlobalTheory.CompanionTheory.NewtonSlope
 theorem exists_dvd_all {S ι : Type} [CommRing S] (T : Finset ι) (hT : T.Nonempty) (r : ι → S)
     (hc : ∀ i ∈ T, ∀ j ∈ T, r i ∣ r j ∨ r j ∣ r i) :
     ∃ i₀ ∈ T, ∀ j ∈ T, r j ∣ r i₀ := by
-  classical
-  revert hT hc
-  refine Finset.induction_on T ?_ ?_
-  · intro hT
-    exact absurd hT Finset.not_nonempty_empty
-  · intro a s ha ih hT hc
-    rcases s.eq_empty_or_nonempty with hs | hs
-    · subst hs
-      refine ⟨a, Finset.mem_insert_self a ∅, ?_⟩
-      intro j hj
-      rw [Finset.mem_insert] at hj
-      rcases hj with rfl | hj
-      · exact dvd_refl _
-      · exact absurd hj (Finset.notMem_empty j)
-    · obtain ⟨i₀, hi₀, hmax⟩ := ih hs (fun i hi j hj =>
-        hc i (Finset.mem_insert_of_mem hi) j (Finset.mem_insert_of_mem hj))
-      rcases hc a (Finset.mem_insert_self a s) i₀ (Finset.mem_insert_of_mem hi₀) with h | h
-      · refine ⟨i₀, Finset.mem_insert_of_mem hi₀, ?_⟩
-        intro j hj
-        rcases Finset.mem_insert.mp hj with rfl | hj
-        · exact h
-        · exact hmax j hj
-      · refine ⟨a, Finset.mem_insert_self a s, ?_⟩
-        intro j hj
-        rcases Finset.mem_insert.mp hj with rfl | hj
-        · exact dvd_refl _
-        · exact (hmax j hj).trans h
+  obtain ⟨i₀, hi₀, hmin⟩ := Finset.exists_minimalFor (fun i => Ideal.span {r i}) T hT
+  refine ⟨i₀, hi₀, fun j hj => (hc i₀ hi₀ j hj).elim (fun h => ?_) id⟩
+  exact Ideal.span_singleton_le_span_singleton.1
+    (hmin hj (Ideal.span_singleton_le_span_singleton.2 h))
 
 theorem dich_of_dvd {S : Type} [CommRing S] {ϖ : S} (hD : Dich ϖ) {a b : S} {M : ℕ}
     (h : a ∣ ϖ ^ M) : b ∣ a ∨ a ∣ b := by

@@ -195,7 +195,7 @@ theorem algebraicIndependent_sumElim (P : Ideal (MRing ι)) (hP : P.IsPrime) (hH
       (hHd (mem_support_iff.mp hn0)).symm) s
   ext n
   have := congrArg (AddMonoidAlgebra.coeff · n) (key (Finsupp.weight (sWt k0 r) n))
-  rw [coeff_weightedHomogeneousComponent, if_pos rfl] at this
+  rw [coeff_weightedHomogeneousComponent, ite_eq_left rfl] at this
   simpa using this
 
 theorem forms_not_algebraicIndependent (P : Ideal (MRing ι)) (e : ℕ) (hP : IsArithVar P (e + 1))

@@ -1,55 +1,10 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterOrthogonalityDual
 public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
 public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -234,7 +189,7 @@ theorem first_theta_equality_of_kernel_facts (hPer : SingleBlockPeriodic) (hGram
     apply isPSD_zero
     intro h hh h' hh'
     by_cases hx : x ∈ R
-    · rw [if_pos hx]
+    · rw [ite_eq_left hx]
       have P := (hPars K R ψ hL h h' (hFF h hh h' hh') cr hcr).2
       rw [finsum_eq_single _ (0 : K ⧸ R.toAddSubgroup) (fun y hy => by
         by_contra h0; exact hy (hglr h h' (hGL h hh) y h0)),
@@ -243,7 +198,7 @@ theorem first_theta_equality_of_kernel_facts (hPer : SingleBlockPeriodic) (hGram
       simp only [Θ]
       rw [hx0, P]
       simp
-    · rw [if_neg hx, zero_sub, neg_eq_zero]
+    · rw [ite_eq_right hx, zero_sub, neg_eq_zero]
       by_contra h0
       exact hx ((QuotientAddGroup.eq_zero_iff _).mp (hglr h h' (hGL h hh) _ h0))
 
@@ -266,12 +221,7 @@ section KRfacts
 variable {K : Type} [CommRing K] (R : Subring K)
 
 theorem mem_rangeR (a : K) : a ∈ LinearMap.range (Algebra.linearMap R K) ↔ a ∈ R := by
-  constructor
-  · intro h
-    obtain ⟨r, rfl⟩ := LinearMap.mem_range.mp h
-    exact r.2
-  · intro ha
-    exact LinearMap.mem_range.mpr ⟨⟨a, ha⟩, rfl⟩
+  apply _root_.Formalism.FourierDecayAlt.P.A5x3.mem_rng <;> assumption
 
 theorem psiKR_mk (ψ : AddChar K ℂ) (hψ : ∀ r ∈ R, ψ r = 1) (a : K) :
     psiKR R ψ (Submodule.Quotient.mk a : KR R) = ψ a := by
@@ -360,9 +310,9 @@ theorem finsum_fiber {X Y T : Type} [AddGroup Y] [Fintype T] (κ : X → Y)
     intro τ _
     obtain ⟨x0, hx0⟩ := hκ.2 (-g τ)
     rw [finsum_eq_single _ x0]
-    · rw [if_pos (by rw [hx0, neg_neg])]
+    · rw [ite_eq_left (by rw [hx0, neg_neg])]
     · intro x hx
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hx
       apply hκ.1
@@ -429,11 +379,11 @@ theorem first_kernel_inner_sum {K : Type} [CommRing K] (R : Subring K) (ψ : Add
     rw [← Finset.sum_mul_sum, ← finsum_eq_sum_of_fintype, ← finsum_eq_sum_of_fintype]
     by_cases h1 : eZ R Z - θ.symm (eZ R Z') = 0
     · by_cases h2 : muZ R Z hZ - (muZ R Z' hZ').comp θ.toLinearMap = 0
-      · rw [hOD1 _ h1, hO1 _ h2, if_pos ((mem_isoZZ_iff R Z Z' hZ hZ' θ).mpr ⟨h1, h2⟩),
+      · rw [hOD1 _ h1, hO1 _ h2, ite_eq_left ((mem_isoZZ_iff R Z Z' hZ hZ' θ).mpr ⟨h1, h2⟩),
           ← Nat.card_congr θ.toEquiv]
-      · rw [hO2 _ h2, mul_zero, if_neg]
+      · rw [hO2 _ h2, mul_zero, ite_eq_right]
         intro h; exact h2 ((mem_isoZZ_iff R Z Z' hZ hZ' θ).mp h).2
-    · rw [hOD2 _ h1, zero_mul, if_neg]
+    · rw [hOD2 _ h1, zero_mul, ite_eq_right]
       intro h; exact h1 ((mem_isoZZ_iff R Z Z' hZ hZ' θ).mp h).1
   rw [Finset.sum_congr rfl (fun θ _ => hθ θ), Finset.sum_ite, Finset.sum_const_zero, add_zero,
     Finset.sum_const, nsmul_eq_mul,
@@ -489,14 +439,14 @@ theorem first_kernel_parseval_of_formula (hF : SingleBlockFormula) (hI : IntFini
       obtain ⟨hD, hOD⟩ := hCD K R ψ hL _ _ hq.1 hZ
       have hO := hCO K R ψ hL _ _ hq.1 hZ
       have key := first_kernel_inner_sum R ψ hψ _ _ hZ hZ' hC hC' hD
-        (fun x hx => by rw [hOD x, if_pos hx]) (fun x hx => by rw [hOD x, if_neg hx]; simp)
-        (fun μ hμ => by rw [hO μ, if_pos hμ]) (fun μ hμ => by rw [hO μ, if_neg hμ]; simp)
+        (fun x hx => by rw [hOD x, ite_eq_left hx]) (fun x hx => by rw [hOD x, ite_eq_right hx]; simp)
+        (fun μ hμ => by rw [hO μ, ite_eq_left hμ]) (fun μ hμ => by rw [hO μ, ite_eq_right hμ]; simp)
         (fun x : K ⧸ R.toAddSubgroup => ((cr x : Kˣ) : K)) hκ
       have hc : (Nat.card (coker R (orbZ h (rep R q.1))) : ℂ) = ((cSize R h : ℝ) : ℂ) := by
         rw [cSize, ← orbZ_det h (rep R q.1), ← hcard]; simp
       have hc' : (Nat.card (coker R (orbZ h' (rep R q.2))) : ℂ) = ((cSize R h' : ℝ) : ℂ) := by
         rw [cSize, ← orbZ_det h' (rep R q.2), ← hcard']; simp
-      simp only [G, if_pos hq, mul_assoc]
+      simp only [G, ite_eq_left hq, mul_assoc]
       constructor
       · refine key.1.subset ?_
         intro x hx
@@ -504,10 +454,10 @@ theorem first_kernel_parseval_of_formula (hF : SingleBlockFormula) (hI : IntFini
         intro h0; apply hx; rw [h0, zero_mul]
       · rw [← finsum_mul, key.2, hc, hc']
         unfold pairTerm
-        rw [if_pos hq]
+        rw [ite_eq_left hq]
         push_cast
         ring
-    · simp only [G, if_neg hq, pairTerm]
+    · simp only [G, ite_eq_right hq, pairTerm]
       simp
   have hS := (hI K R ψ hL h).prod (hI K R ψ hL h')
   have hNs : ∀ x, Ns R ψ 1 h h' (cr x) (cr x) = ∑ q ∈ hS.toFinset, G x q := by
@@ -519,7 +469,7 @@ theorem first_kernel_parseval_of_formula (hF : SingleBlockFormula) (hI : IntFini
     rw [Set.Finite.coe_toFinset]
     by_contra hcon
     apply hq
-    rw [if_neg (fun hI' => hcon ⟨hI'.1, hI'.2⟩)]
+    rw [ite_eq_right (fun hI' => hcon ⟨hI'.1, hI'.2⟩)]
     simp
   have hKp : N0 R ψ h h' = ∑ q ∈ hS.toFinset, pairTerm R ψ h h' q := by
     unfold N0 Kp
@@ -529,7 +479,7 @@ theorem first_kernel_parseval_of_formula (hF : SingleBlockFormula) (hI : IntFini
     rw [Set.Finite.coe_toFinset]
     by_contra hcon
     apply hq
-    rw [if_neg (fun hI' => hcon ⟨hI'.1, hI'.2⟩)]
+    rw [ite_eq_right (fun hI' => hcon ⟨hI'.1, hI'.2⟩)]
     simp
   simp only [hNs]
   constructor

@@ -221,7 +221,7 @@ theorem diag_case [Nonempty n] (Θ : Matrix n n K[X]) (D : n → K)
         · simp [diagonal_apply_ne _ hij]
       have hX := X_mul_divX_add (Θ i j)
       rw [hc, C_0, add_zero] at hX
-      simp only [hi, if_true]
+      simp only [hi, ite_true]
       exact hX.symm
     · simp [hi]
   have hadj : ∀ b c, Θ.adjugate b c = T.adjugate b c * ∏ j ∈ Finset.univ.erase c, s j := by
@@ -269,16 +269,16 @@ theorem diag_case [Nonempty n] (Θ : Matrix n n K[X]) (D : n → K)
       by_cases hi : D i = 0
       · simp [hi]
       · have := hvi i
-        simp only [hi, if_false] at this
+        simp only [hi, ite_false] at this
         simpa using this
     · rw [hD]
       funext i
       rw [Pi.add_apply, mulVec_diagonal]
       by_cases hi : D i = 0
       · have := hvi i
-        simp only [hi, if_true] at this
+        simp only [hi, ite_true] at this
         simp [hi, this]
-      · simp only [hi, if_false]
+      · simp only [hi, ite_false]
         rw [Pi.zero_apply, ← mul_div_assoc, mul_div_cancel_left₀ _ hi, add_neg_cancel]
   obtain ⟨b, c, hbc⟩ := exists_coeff_adjugate_ne_zero T hker
   refine ⟨b, c, fun hdvd => hbc ?_⟩
@@ -444,8 +444,7 @@ theorem finrank_le_of_first_order_kernel (k V U : Type) [Field k] [AddCommGroup 
     (LinearMap.range t).mkQ ∘ₗ u ∘ₗ (LinearMap.ker t).subtype
 
   have hq : Module.finrank k (LinearMap.ker q) ≤ e := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     obtain ⟨f, hf⟩ := exists_linearIndependent_of_le_finrank (R := k) (M := LinearMap.ker q)
       (n := e + 1) hlt
     have hmem : ∀ j, u ((f j : LinearMap.ker t) : V) ∈ LinearMap.range t := by
@@ -688,7 +687,7 @@ def tau : H1 (repOn ρ κ K) →ₛₗ[(φ : Λ →+* K)] H1 (repOn ρ (1 : Γ �
   slH1 _ _ (idVec φ hs r) continuous_of_discreteTopology (idVec_repOn φ hs ρ κ hκ)
 
 theorem tau_injective : Function.Injective (tau φ hs ρ κ hκ) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   induction x using Submodule.Quotient.induction_on with
   | H z =>

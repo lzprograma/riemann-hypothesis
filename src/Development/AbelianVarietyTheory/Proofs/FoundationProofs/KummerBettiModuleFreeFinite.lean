@@ -102,20 +102,8 @@ theorem mem_gamma_of_dvd {M N : ℕ} (h : M ∣ N) {δ : SL(2, ℤ)} (hδ : δ �
 theorem exp_val_add (l n : ℕ) [Fact l.Prime] (x y : ZMod (l ^ n)) :
     Complex.exp (2 * Real.pi * Complex.I * (((x + y).val : ℕ) : ℂ) / ((l : ℂ) ^ n)) =
       Complex.exp (2 * Real.pi * Complex.I * ((x.val : ℕ) : ℂ) / ((l : ℂ) ^ n)) *
-        Complex.exp (2 * Real.pi * Complex.I * ((y.val : ℕ) : ℂ) / ((l : ℂ) ^ n)) := by
-  have hl : l ≠ 0 := (Fact.out : l.Prime).ne_zero
-  haveI : NeZero (l ^ n) := ⟨pow_ne_zero n hl⟩
-  have hm : (l : ℂ) ^ n ≠ 0 := pow_ne_zero n (Nat.cast_ne_zero.2 hl)
-  have hs := Nat.mod_add_div (x.val + y.val) (l ^ n)
-  rw [ZMod.val_add, ← Complex.exp_add]
-  generalize (x.val + y.val) % l ^ n = r at hs ⊢
-  generalize (x.val + y.val) / l ^ n = q at hs
-  have hc : (r : ℂ) + (l : ℂ) ^ n * (q : ℂ) = (x.val : ℂ) + (y.val : ℂ) := by exact_mod_cast hs
-  have key : 2 * Real.pi * Complex.I * (x.val : ℂ) / (l : ℂ) ^ n + 2 * Real.pi * Complex.I * (y.val : ℂ) / (l : ℂ) ^ n =
-      2 * Real.pi * Complex.I * (r : ℂ) / (l : ℂ) ^ n + (q : ℂ) * (2 * Real.pi * Complex.I) := by
-    rw [← add_div, ← mul_add, ← hc]
-    field_simp
-  rw [key, Complex.exp_add, Complex.exp_nat_mul_two_pi_mul_I, mul_one]
+        Complex.exp (2 * Real.pi * Complex.I * ((y.val : ℕ) : ℂ) / ((l : ℂ) ^ n)) :=
+  _root_.GlobalTheory.KZ.H3.KumAdd.exp_val_add_pow l n x y
 
 theorem eventually_ne_zero {b : ℂ → ℂ} (hb : DifferentiableOn ℂ b Hs) (h : (b : Mero) ≠ 0) :
     ∀ᶠ z in Filter.codiscreteWithin Hs, b z ≠ 0 := by
@@ -128,12 +116,8 @@ theorem eventually_ne_zero {b : ℂ → ℂ} (hb : DifferentiableOn ℂ b Hs) (h
   · exact h0
 
 theorem germ_mul_ne_zero {b b' : ℂ → ℂ} (hb : DifferentiableOn ℂ b Hs) (hb' : DifferentiableOn ℂ b' Hs)
-    (h : (b : Mero) ≠ 0) (h' : (b' : Mero) ≠ 0) : ((b * b' : ℂ → ℂ) : Mero) ≠ 0 := by
-  haveI := hs_codiscrete_neBot
-  intro H
-  rw [← Filter.Germ.coe_zero, Filter.Germ.coe_eq] at H
-  obtain ⟨z, h1, h2, h3⟩ := ((eventually_ne_zero hb h).and ((eventually_ne_zero hb' h').and H)).exists
-  exact mul_ne_zero h1 h2 h3
+    (h : (b : Mero) ≠ 0) (h' : (b' : Mero) ≠ 0) : ((b * b' : ℂ → ℂ) : Mero) ≠ 0 :=
+  _root_.GlobalTheory.KZ.H3.KumAdd.germ_mul_ne_zero hb hb' h h'
 
 variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ}
 

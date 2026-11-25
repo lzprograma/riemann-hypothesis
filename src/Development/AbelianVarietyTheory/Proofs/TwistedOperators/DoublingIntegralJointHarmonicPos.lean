@@ -28,51 +28,11 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EmbedsOfL
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockModelDualPairCasimirApply
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypesJointHarmonicShape
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairKEquivariantOfLieAlgebraCompat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.TypeStar
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommute
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.FiniteDimKStableSubspaceKFiniteLie
@@ -81,6 +41,8 @@ import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.HaveILetI
+import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.LogNormEstimates
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectorOfIntegrableDiscreteSeriesCoefficient
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.TwistedOperators.DoublingCoefficientsVanishOfOneVanishes, Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroOfPositiveCoeffOrthogonalEmbeddings, Development.AbelianVarietyTheory.Proofs.TwistedOperators.InnerCoeffEqOfIsometricAnalyticModules, Development.AbelianVarietyTheory.Proofs.TwistedOperators.InnerEqOfIrreducible, Development.AbelianVarietyTheory.Proofs.TwistedOperators.DoublingIntegralJointHarmonicPos
@@ -151,13 +113,9 @@ theorem inner_map (σ : URep T) (k : T.G) (a b : σ.H) : inner ℂ (σ.π k a) (
   let L : σ.H →ₗᵢ[ℂ] σ.H := { toLinearMap := (σ.π k).toLinearMap, norm_map' := σ.isom k }
   exact L.inner_map_map a b
 
-theorem pi_mul (σ : URep T) (g h : T.G) (a : σ.H) : σ.π (g * h) a = σ.π g (σ.π h a) := by
-  rw [map_mul]
-  rfl
-
 theorem inner_left (σ : URep T) (k g : T.G) (a b : σ.H) :
     inner ℂ (σ.π k a) (σ.π g b) = inner ℂ a (σ.π (k⁻¹ * g) b) := by
-  rw [← inner_map σ k a (σ.π (k⁻¹ * g) b), ← pi_mul, mul_inv_cancel_left]
+  rw [← inner_map σ k a (σ.π (k⁻¹ * g) b), ← GlobalTheory.CoefProjector.pi_mul, mul_inv_cancel_left]
 
 theorem integrable_mul (σ : URep T) (a b : σ.H) {f : T.G → ℂ} (hf : Integrable f T.haar) :
     Integrable (fun g => inner ℂ a (σ.π g b) * star (f g)) T.haar := by
@@ -179,10 +137,10 @@ theorem vanish : ∀ (p q : ℕ) (T : GrpData p q) (π₁ π₂ : URep T) (E : T
   have hj2a : ∀ k ∈ T.Kset, ∀ w, j₂ (act k w) = π₂.π k (j₂ w) := fun k hk w => ((hact k hk w).2).symm
   have hback : ∀ (σ : URep T) (g : T.G) (x : σ.H), σ.π g (σ.π g⁻¹ x) = x := by
     intro σ g x
-    rw [← pi_mul, mul_inv_cancel, map_one, ContinuousLinearMap.one_apply]
+    rw [← GlobalTheory.CoefProjector.pi_mul, mul_inv_cancel, map_one, ContinuousLinearMap.one_apply]
   have hback2 : ∀ (σ : URep T) (g : T.G) (x : σ.H), σ.π g⁻¹ (σ.π g x) = x := by
     intro σ g x
-    rw [← pi_mul, inv_mul_cancel, map_one, ContinuousLinearMap.one_apply]
+    rw [← GlobalTheory.CoefProjector.pi_mul, inv_mul_cancel, map_one, ContinuousLinearMap.one_apply]
 
   have htop : ∀ U : Submodule ℂ E, (∀ k ∈ T.Kset, ∀ w ∈ U, act k w ∈ U) →
       ∀ x : E, x ≠ 0 → x ∈ U → ∀ w, w ∈ U := by
@@ -239,7 +197,7 @@ theorem vanish : ∀ (p q : ℕ) (T : GrpData p q) (π₁ π₂ : URep T) (E : T
       have hx' : ∀ u', Integrable (fun g => inner ℂ (j₂ u') (π₂.π g (j₂ x))) T.haar := hx
       show ∀ u', Integrable (fun g => inner ℂ (j₂ u') (π₂.π g (j₂ (act k x)))) T.haar
       intro u'
-      simp only [hj2a k hk, ← pi_mul]
+      simp only [hj2a k hk, ← GlobalTheory.CoefProjector.pi_mul]
       exact (hx' u').comp_mul_right k
     exact (hw : ∀ u', Integrable (fun g => inner ℂ (j₂ u') (π₂.π g (j₂ w))) T.haar) u
   have prodI : ∀ (a b : π₁.H) (u w : E),
@@ -257,7 +215,7 @@ theorem vanish : ∀ (p q : ℕ) (T : GrpData p q) (π₁ π₂ : URep T) (E : T
       ∫ g, inner ℂ a (π₁.π g (j₁ (act k y))) * star (inner ℂ c (π₂.π g (j₂ (act k w)))) ∂T.haar =
       ∫ g, inner ℂ a (π₁.π g (j₁ y)) * star (inner ℂ c (π₂.π g (j₂ w))) ∂T.haar := by
     intro k hk a c y w
-    simp only [hj1a k hk, hj2a k hk, ← pi_mul]
+    simp only [hj1a k hk, hj2a k hk, ← GlobalTheory.CoefProjector.pi_mul]
     exact integral_mul_right_eq_self
       (fun g => inner ℂ a (π₁.π g (j₁ y)) * star (inner ℂ c (π₂.π g (j₂ w)))) k
 
@@ -448,9 +406,6 @@ theorem sum_eq_adj {ι : Type} [Fintype ι] (e : OrthonormalBasis ι ℂ E) (J�
 
 end Abstract
 
-theorem inner_pi {p q : ℕ} {T : GrpData p q} (π : URep T) (g : T.G) (a b : π.H) :
-    inner ℂ (π.π g a) (π.π g b) = inner ℂ a b := (LinearMap.norm_map_iff_inner_map_map (π.π g)).1 (π.6 g) a b
-
 theorem isometric_case (p q : ℕ) (T : GrpData p q)
     (hG : ∀ g : T.G, ∃ k ∈ T.Kset, ∃ Y ∈ pR p q, g = k * T.expt Y) (π₁ π₂ : URep T)
     (E : Type) [NormedAddCommGroup E] [InnerProductSpace ℂ E] [FiniteDimensional ℂ E]
@@ -509,7 +464,7 @@ theorem isometric_case (p q : ℕ) (T : GrpData p q)
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [← hsum ob, ← hsum f]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [← (hf i).1, ← (hf i).2, hmul₁, hmul₂, inner_pi, inner_pi]
+    rw [← (hf i).1, ← (hf i).2, hmul₁, hmul₂, GlobalTheory.FockTensor.inner_pi_pi, GlobalTheory.FockTensor.inner_pi_pi]
   have hpos : ∀ Y ∈ pR p q, 0 ≤ Φ (T.expt Y) := by
     intro Y hY
     rw [hΦ]
@@ -806,42 +761,13 @@ theorem inner_eq_of_common_kernel_line {V H₁ H₂ ι : Type*} [AddCommGroup V]
   exact sub_eq_zero.mp hy'.symm
 
 theorem adjZ_Eab {p q : ℕ} {a b : Ix p q} (h : sameBlock a b) : adjZ (Eab a b) = Eab b a := by
-  unfold adjZ Eab Jm Formalism.UG.Jpq
-
-  have hJ : (Matrix.fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) 0 0 (-1) : Mat p q) =
-      Matrix.diagonal (Sum.elim (fun _ => (1 : ℂ)) (fun _ => -1)) := by
-    ext i j
-    rcases i with i | i <;> rcases j with j | j <;>
-      simp [Matrix.diagonal_apply, Matrix.one_apply, apply_ite]
-  rw [hJ]
-  rcases a with a | a <;> rcases b with b | b
-  all_goals try exact (h : False).elim
-  all_goals
-    ext i j
-    simp only [Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.conjTranspose_apply, Matrix.single_apply]
-    split_ifs with h1 h2 <;> (try obtain ⟨rfl, rfl⟩ := h1) <;> simp_all
-
-theorem isKC_Eab {p q : ℕ} {a b : Ix p q} (h : sameBlock a b) : IsKC (Eab a b) := by
-  unfold IsKC Eab
-  intro c d hcd
-  rw [Matrix.single_apply, if_neg]
-  rintro ⟨rfl, rfl⟩
-  exact hcd h
+  apply _root_.CompanionTheory.D.gk.HC.adjZ_singleD <;> assumption
 
 theorem sameBlock_of_posC {p q : ℕ} {a b : Ix p q} (h : posC a b) : sameBlock a b ∧ sameBlock b a := by
   rcases a with i | i <;> rcases b with j | j
   all_goals first
     | exact ⟨True.intro, True.intro⟩
     | exact (h : False).elim
-
-theorem sameBlock_refl {p q : ℕ} (a : Ix p q) : sameBlock a a := by
-  cases a <;> exact True.intro
-
-private theorem mem_hwSub_iff' {p q : ℕ} {V0 : Type} [AddCommGroup V0] [Module ℂ V0]
-    (f : Mat p q →ₗ[ℂ] Module.End ℂ V0) (μ : Ix p q → ℚ) (z : V0) :
-    z ∈ hwSub f μ ↔ (∀ a, f (Eab a a) z = (μ a : ℂ) • z) ∧ ∀ a b, posC a b → f (Eab a b) z = 0 := by
-  simp only [hwSub, wtSub, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
-    LinearMap.smul_apply, LinearMap.id_apply, sub_eq_zero]
 
 theorem inner_eq_of_irreducible (p q : ℕ) (M : GKMod p q) (H₁ : Type) [NormedAddCommGroup H₁]
     [InnerProductSpace ℂ H₁] (H₂ : Type) [NormedAddCommGroup H₂] [InnerProductSpace ℂ H₂]
@@ -876,7 +802,7 @@ theorem inner_eq_of_irreducible (p q : ℕ) (M : GKMod p q) (H₁ : Type) [Norme
     intro w
     rw [h₁, h₂, hz]
   obtain ⟨hv0, hvmem⟩ : v ≠ 0 ∧ v ∈ hwSub M.act μ := hv
-  have hmem := (mem_hwSub_iff' M.act μ v).mp hvmem
+  have hmem := (GlobalTheory.LowGen.mem_hwSub M.act μ v).mp hvmem
 
   let A : ({ab : Ix p q × Ix p q // posC ab.1 ab.2} ⊕ Ix p q) → Module.End ℂ M.V :=
     Sum.elim (fun ab => M.act (Eab ab.1.1 ab.1.2)) (fun c => M.act (Eab c c) - (μ c : ℂ) • LinearMap.id)
@@ -891,7 +817,7 @@ theorem inner_eq_of_irreducible (p q : ℕ) (M : GKMod p q) (H₁ : Type) [Norme
       rw [hj, adjZ_Eab (sameBlock_of_posC hab).1]
     · simp only [A, A', Sum.elim_inr, LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_apply,
         map_sub, map_smul, inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right]
-      rw [hj, adjZ_Eab (sameBlock_refl c)]
+      rw [hj, adjZ_Eab (GlobalTheory.FockTensor.sameBlock_self c)]
       all_goals simp
   have hAv : ∀ i, A i v = 0 := by
     rintro (⟨⟨a, b⟩, hab⟩ | c)
@@ -901,7 +827,7 @@ theorem inner_eq_of_irreducible (p q : ℕ) (M : GKMod p q) (H₁ : Type) [Norme
   have hline : ∀ z, (∀ i, A i z = 0) → ∃ c : ℂ, c • v = z := by
     intro z hz0
     have hzmem : z ∈ hwSub M.act μ := by
-      rw [mem_hwSub_iff']
+      rw [GlobalTheory.LowGen.mem_hwSub]
       refine ⟨fun c => ?_, fun a b hab => hz0 (Sum.inl ⟨(a, b), hab⟩)⟩
       have hc0 := hz0 (Sum.inr c)
       simp only [A, Sum.elim_inr, LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_apply,
@@ -920,14 +846,14 @@ theorem inner_eq_of_irreducible (p q : ℕ) (M : GKMod p q) (H₁ : Type) [Norme
     have hWst' : ∀ Z, IsKC Z → ∀ u ∈ W, M.act Z u ∈ W := hWst
     have hAW : ∀ i, ∀ u ∈ W, A i u ∈ W := by
       rintro (⟨⟨a, b⟩, hab⟩ | c) u hu
-      · exact hWst' _ (isKC_Eab (sameBlock_of_posC hab).1) u hu
+      · exact hWst' _ (GlobalTheory.FockTensor.isKC_Eab (sameBlock_of_posC hab).1) u hu
       · simp only [A, Sum.elim_inr, LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_apply]
-        exact W.sub_mem (hWst' _ (isKC_Eab (sameBlock_refl c)) u hu) (W.smul_mem _ hu)
+        exact W.sub_mem (hWst' _ (GlobalTheory.FockTensor.isKC_Eab (GlobalTheory.FockTensor.sameBlock_self c)) u hu) (W.smul_mem _ hu)
     have hA'W : ∀ i, ∀ u ∈ W, A' i u ∈ W := by
       rintro (⟨⟨a, b⟩, hab⟩ | c) u hu
-      · exact hWst' _ (isKC_Eab (sameBlock_of_posC hab).2) u hu
+      · exact hWst' _ (GlobalTheory.FockTensor.isKC_Eab (sameBlock_of_posC hab).2) u hu
       · simp only [A', Sum.elim_inr, LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_apply]
-        exact W.sub_mem (hWst' _ (isKC_Eab (sameBlock_refl c)) u hu) (W.smul_mem _ hu)
+        exact W.sub_mem (hWst' _ (GlobalTheory.FockTensor.isKC_Eab (GlobalTheory.FockTensor.sameBlock_self c)) u hu) (W.smul_mem _ hu)
     exact inner_eq_of_common_kernel_line j₁ j₂ A A' W hAW hA'W (hh H₁ j₁ h₁) (hh H₂ j₂ h₂) hinj v hAv
       hline hn w hwW
 
@@ -959,14 +885,7 @@ variable {p q r s : ℕ}
 theorem inner_opE (T : GrpData p q) (πU : URep T) {e : T.G → ℂ} (hi : Integrable e T.haar)
     (hc : Continuous e) (z x : πU.H) :
     inner ℂ z (opE T πU.π e x) = ∫ g, e g * inner ℂ z (πU.π g x) ∂T.haar := by
-  haveI := _root_.GlobalTheory.DSProj.secondCountable_grp T
-  have h : Integrable (fun g => e g • πU.π g x) T.haar := by
-    refine Integrable.mono' (hi.norm.mul_const ‖x‖) (hc.smul (πU.cont x)).aestronglyMeasurable
-      (Filter.Eventually.of_forall fun g => ?_)
-    rw [norm_smul, πU.isom]
-  unfold opE
-  rw [← integral_inner h]
-  simp only [inner_smul_right]
+  apply _root_.GlobalTheory.CoefProjector.inner_opE <;> assumption
 
 theorem continuous_mcoef {T : GrpData p q} (D : DSRep T) (v : D.HK.V) : Continuous (mcoef D v) :=
   continuous_const.inner (D.U.cont _)
@@ -1110,7 +1029,7 @@ theorem exists_coeff_ne_zero (hn : 1 ≤ p + q) (T : GrpData p q) (π₁ π₂ :
     if h : IsKC Z then (prodAct M₁ M₂ Z).restrict (hK Z h) else 0
   have ha : ∀ Z, IsKC Z → ∀ w : E, (a Z w : M₁.V × M₂.V) = prodAct M₁ M₂ Z w := by
     intro Z hZ w
-    simp only [a, dif_pos hZ, LinearMap.restrict_coe_apply]
+    simp only [a, dite_eq_left hZ, LinearMap.restrict_coe_apply]
   have heq := _root_.GlobalTheory.RealPar.pair_kEquivariant_of_lie p q T (_root_.GlobalTheory.CoverKGen.kset_gen p q hn T) π₁ π₂ E a i₁ i₂ (by
     intro Y hY hYK w
     simp only [i₁, i₂, LinearMap.comp_apply, Submodule.subtype_apply, ha Y hYK]
@@ -1190,17 +1109,8 @@ theorem sg_lineEquiv (l : Ln p q r s) : sg (lineEquiv p q r s l) = sg l.1 * sg l
 theorem kron_mem {Y : Mat p q} (hY : Y ∈ upq p q) :
     Matrix.reindex (lineEquiv p q r s) (lineEquiv p q r s) (Matrix.kroneckerMap (· * ·) Y (1 : Mat r s)) ∈
       upq (p * r + q * s) (p * s + q * r) := by
-  rw [mem_upq_iff] at hY ⊢
-  intro a b
-  obtain ⟨⟨a, c⟩, rfl⟩ := (lineEquiv p q r s).surjective a
-  obtain ⟨⟨b, d⟩, rfl⟩ := (lineEquiv p q r s).surjective b
-  simp only [sg_lineEquiv, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply,
-    Matrix.kroneckerMap_apply, Matrix.one_apply]
-  by_cases h : c = d
-  · subst h
-    simp only [if_true, mul_one]
-    linear_combination sg c * hY a b
-  · simp [h, Ne.symm h]
+  intros
+  apply _root_.GlobalTheory.FockEmbExp.left_mem <;> assumption
 
 theorem fock_analytic (F : FockData T0 T1 T2) {Y : Mat p q} (hY : Y ∈ upq p q) (P : Pol p q r s) :
     AnalyticOnNhd ℝ (fun t : ℝ => (fockRep F).π (T1.expt (t • Y)) (F.ι P)) Set.univ := by
@@ -1263,7 +1173,7 @@ theorem casimir_compact (h : r = 0 ∨ s = 0) {V W : Type} [AddCommGroup V] [Mod
     {c : ℂ} (hc : casimir b w = c • w) : casimir a v = c • v := by
   have h1 := (_root_.GlobalTheory.CasimirHighest.casimir_central_and_highest r s V a ha).2 μ v hv
   have h2 := (_root_.GlobalTheory.CasimirHighest.casimir_central_and_highest r s W b hb).2 μ w hw
-  simp only [sameBlock_of_compact h, if_true] at h1 h2
+  simp only [sameBlock_of_compact h, ite_true] at h1 h2
   simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply] at hc ⊢
   rw [h1]
   rw [h2] at hc

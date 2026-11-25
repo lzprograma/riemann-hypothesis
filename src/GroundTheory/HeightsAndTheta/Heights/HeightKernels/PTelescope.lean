@@ -28,7 +28,7 @@ theorem comp_swap {α : Type*} (D k : ℕ) (hk : k < D + 1) (X Y : α) (m : ℕ)
       rw [hj, Equiv.swap_apply_left]
       have := j'.isLt
       simp only [Fin.val_last]
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     · have h1 : Fin.castSucc j' ≠ ⟨k, hk⟩ := fun e => h (by simpa using congrArg Fin.val e)
       have h2 : Fin.castSucc j' ≠ Fin.last D := Fin.castSucc_ne_last j'
       rw [Equiv.swap_apply_of_ne_of_ne h1 h2]
@@ -36,8 +36,8 @@ theorem comp_swap {α : Type*} (D k : ℕ) (hk : k < D + 1) (X Y : α) (m : ℕ)
       rcases hm with rfl | rfl
       · rfl
       · by_cases h3 : (j' : ℕ) < k
-        · rw [if_pos h3, if_pos (by omega)]
-        · rw [if_neg h3, if_neg (by omega)]
+        · rw [ite_eq_left h3, ite_eq_left (by omega)]
+        · rw [ite_eq_right h3, ite_eq_right (by omega)]
 
 end TelescopingSum
 
@@ -65,11 +65,11 @@ theorem Telescope.proof : TelescopeStatement := by
     have e1 : T (k + 1) = I P (D + 1)
         (Fin.snoc (fun j : Fin D => if (j : ℕ) < k then A.tensor W else A) (A.tensor W)) := by
       rw [hT, ← hI.1 P (D + 1) _ (Equiv.swap ⟨k, hk'⟩ (Fin.last D)) hP (hsm (k + 1)),
-        TelescopingSum.comp_swap D k hk' _ _ (k + 1) (Or.inr rfl), if_pos (Nat.lt_succ_self k)]
+        TelescopingSum.comp_swap D k hk' _ _ (k + 1) (Or.inr rfl), ite_eq_left (Nat.lt_succ_self k)]
     have e0 : T k = I P (D + 1)
         (Fin.snoc (fun j : Fin D => if (j : ℕ) < k then A.tensor W else A) A) := by
       rw [hT, ← hI.1 P (D + 1) _ (Equiv.swap ⟨k, hk'⟩ (Fin.last D)) hP (hsm k),
-        TelescopingSum.comp_swap D k hk' _ _ k (Or.inl rfl), if_neg (lt_irrefl k)]
+        TelescopingSum.comp_swap D k hk' _ _ k (Or.inl rfl), ite_eq_right (lt_irrefl k)]
     have hmc := metricChange K ι I hI P D (fun j : Fin D => if (j : ℕ) < k then A.tensor W else A)
       A u hu hP hL hA hus
     rw [e1, e0, hmc]
@@ -81,7 +81,7 @@ theorem Telescope.proof : TelescopeStatement := by
     rw [hT]
     congr 1
     funext j
-    rw [if_pos j.isLt]
+    rw [ite_eq_left j.isLt]
   rw [← h0, ← hD, ← Finset.sum_range_sub, ← Finset.sum_neg_distrib]
   exact Finset.sum_congr rfl hstep
 

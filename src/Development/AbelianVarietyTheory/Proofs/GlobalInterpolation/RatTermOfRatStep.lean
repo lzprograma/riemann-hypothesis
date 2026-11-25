@@ -169,7 +169,7 @@ theorem ratTerm_of_ratStep : ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (W : W
     · have hx2 := mt (mem_divLat_equiv_iff _ _ _ (homConjEquiv_mem_homAt (Sall sel mu u) γ.1 γ'.1 d.1.N d'.1.N)
         (cAof sel mu cst * cBof sel mu cst u) x).1 hx
       unfold stepT thDistC
-      rw [if_neg fun h => hx2 h.2, if_neg fun h => hx h.2, LinearMap.zero_comp, LinearMap.comp_zero]
+      rw [ite_eq_right fun h => hx2 h.2, ite_eq_right fun h => hx h.2, LinearMap.zero_comp, LinearMap.comp_zero]
   · rintro x _ ⟨y₀, hy₀, rfl⟩
     refine congrArg₂ (· * ·) ?_ ?_
     · refine GlobalTheory.TopInv.phiT_add _ _ d'.2 x y₀ _ (fun P => ?_) fun P v hv => hy₀ P.1 (Finset.mem_union_left _ P.2) v hv

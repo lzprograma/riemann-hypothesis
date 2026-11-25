@@ -157,7 +157,7 @@ theorem roots_cases (t n : ℤ) {p : ℕ} (hp : p.Prime) :
       ((kroneckerAt (t ^ 2 - 4 * n) p = 0 ∧ β = β') ∨
         (kroneckerAt (t ^ 2 - 4 * n) p = 1 ∧ β ≠ β')) := by
   rcases eq_or_ne p 2 with rfl | h2
-  · simp only [kroneckerAt, if_true]
+  · simp only [kroneckerAt, ite_true]
     have key : ∀ t n : ZMod 8,
         (ZMod.χ₈ (t ^ 2 - 4 * n) = -1 ∧ ∀ β : ZMod 2, β ^ 2 ≠ t.cast * β - n.cast) ∨
         ∃ β β' : ZMod 2, β + β' = t.cast ∧ β * β' = n.cast ∧
@@ -169,7 +169,7 @@ theorem roots_cases (t n : ℤ) {p : ℕ} (hp : p.Prime) :
     exact this
   · haveI := Fact.mk hp
     have h2' : (2 : ZMod p) ≠ 0 := Ring.two_ne_zero (by rwa [ZMod.ringChar_zmod_n])
-    simp only [kroneckerAt, if_neg h2, ← jacobiSym.legendreSym.to_jacobiSym]
+    simp only [kroneckerAt, ite_eq_right h2, ← jacobiSym.legendreSym.to_jacobiSym]
     by_cases hs : IsSquare ((t ^ 2 - 4 * n : ℤ) : ZMod p)
     · obtain ⟨r, hr⟩ := hs
       refine Or.inr ⟨(t + r) / 2, (t - r) / 2, by field_simp; ring, ?_, ?_⟩
@@ -307,7 +307,7 @@ theorem idealCount_prime_mul (h2 : finrank ℚ K = 2) {p : ℕ} (hp : p.Prime) (
   have hone : ∀ J : Ideal (𝓞 K), Ideal.absNorm J = p →
       {I : Ideal (𝓞 K) | Ideal.absNorm I = p * m ∧ J ∣ I}.ncard = idealCount K m := fun J hJ => by
     rw [ncard_dvd (by rw [Ne, ← Ideal.absNorm_eq_zero_iff, hJ]; simp [hp.ne_zero]), hJ,
-      Nat.mul_div_cancel_left _ hp.pos, if_pos (dvd_mul_right _ _)]
+      Nat.mul_div_cancel_left _ hp.pos, ite_eq_left (dvd_mul_right _ _)]
   rw [hD]
   rcases roots_cases t n hp with ⟨hκ, h⟩ | ⟨β, β', hs, hm, h⟩
   · have hN : Ideal.absNorm (Ideal.span {(p : 𝓞 K)}) = p * p := by
@@ -450,7 +450,7 @@ include hχ
 theorem apply_two (h4 : d % 4 ≠ 1) : χ 2 = (ZMod.χ₈ ((-(d : ℤ) : ℤ) : ZMod 8) : ℤ) := by
   rcases Nat.even_or_odd d with h | h
   · rw [MulChar.map_nonunit, (ZMod.χ₈_int_eq_if_mod_eight _),
-      if_pos (by obtain ⟨k, rfl⟩ := h; omega)]
+      ite_eq_left (by obtain ⟨k, rfl⟩ := h; omega)]
     · simp
     · rw [show (2 : ZMod d) = ((2 : ℕ) : ZMod d) by simp, ZMod.isUnit_iff_coprime,
         Nat.coprime_two_left, Nat.not_odd_iff_even]

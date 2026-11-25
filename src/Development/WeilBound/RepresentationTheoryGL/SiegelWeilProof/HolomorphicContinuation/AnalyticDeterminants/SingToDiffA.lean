@@ -56,7 +56,7 @@ open scoped ContDiff
 
 namespace PositivityTheory.Rg.Sw.LVs
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 open PositivityTheory.Rg.Sw
 
@@ -102,7 +102,7 @@ theorem herm_v (r c : Fin n) : herm (v1 r c) + Complex.I • herm (v2 r c) = Mat
     rw [Matrix.single_apply]
     by_cases h : i = r ∧ j = c
     · obtain ⟨rfl, rfl⟩ := h; simp
-    · rw [if_neg h, if_neg (fun h' => h ⟨h'.1.symm, h'.2.symm⟩)]; simp
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h ⟨h'.1.symm, h'.2.symm⟩)]; simp
   rw [e3]
   simp only [herm, v1, v2, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, e1, e2]
   generalize (if i = r ∧ j = c then (1:ℝ) else 0) = a

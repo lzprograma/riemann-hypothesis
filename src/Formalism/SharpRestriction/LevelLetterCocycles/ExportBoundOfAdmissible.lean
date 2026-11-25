@@ -1,45 +1,10 @@
 module
 
+import Formalism.SharpRestriction.AdmissibleParameterJoins
 public import Formalism.SharpRestriction.LevelLetterCocycles.NEqRZeroMulXPow
 public import Formalism.SharpRestriction.LevelLetterCocycles.StatementFamilies.ExportFamilies
 public import Development.AutomorphicArithmetic.CyclotomicBounds.SmallSum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -72,8 +37,7 @@ theorem sum_small (T : Finset ℕ) (hT : ∀ l ∈ T, l.Prime ∧ l ≠ 2 ∧ l 
   have hd := sum_rowd L hC P hPar hL (T.filter (cD L)) (fun l hl => by
     obtain ⟨hlT, hcd⟩ := Finset.mem_filter.1 hl
     refine ⟨by have := h5 l hlT; omega, (hT l hlT).1.odd_of_ne_two (hT l hlT).2.1, ?_⟩
-    by_contra ho
-    push_neg at ho
+    by_contra! ho
     exact hcd.2.1 ⟨hcd.2.2, ho⟩)
   have hfl := sum_flat L hC P hPar hL T hT2
   have hpt : ∀ l ∈ T, Real.log l * (bbB L C + lenB L C l) ≤ Real.log l * bbB L C +
@@ -92,7 +56,6 @@ theorem sum_small (T : Finset ℕ) (hT : ∀ l ∈ T, l.Prime ∧ l ≠ 2 ∧ l 
   have hm := m_ge_one D
   have hb1 := one_le_b L
   have hL1 := L_ge_one L
-  have hf : (0 : ℝ) ≤ D.R.f := by positivity
   set X := (D.R.f : ℝ) * D.R.m * L.sc.b * large₂ L ^ 2 with hX
   have hX0 : 0 ≤ X := by positivity
   have hLL : large₂ L ≤ large₂ L ^ 2 := by nlinarith only [hL1]
@@ -107,18 +70,12 @@ theorem sum_small (T : Finset ℕ) (hT : ∀ l ∈ T, l.Prime ∧ l ≠ 2 ∧ l 
         = ((3 + 2 * C) * D.R.f * D.R.m * C) * ∑ l ∈ T, (Real.log l + hB L * (Real.log l / l) + Real.log (hB L)) := by ring
       _ ≤ ((3 + 2 * C) * D.R.f * D.R.m * C) * (11 * L.sc.b * large₂ L ^ 2) := mul_le_mul_of_nonneg_left hep this
       _ = _ := by ring
-  have hXb : 80 * C * D.R.f * D.R.m * L.sc.b * large₂ L ^ 2 = 80 * C * X := by rw [hX]; ring
-  have hXc : 64 * C * D.R.f * D.R.m * L.sc.b * large₂ L ^ 2 = 64 * C * X := by rw [hX]; ring
-  have hXd : 32 * C * D.R.f * D.R.m * L.sc.b * large₂ L ^ 2 = 32 * C * X := by rw [hX]; ring
-  have hXf : 4 * C * (102 + 4 * (2 * C + 1) ^ 2) * D.R.f * D.R.m * L.sc.b * large₂ L ^ 2 =
-      4 * C * (102 + 4 * (2 * C + 1) ^ 2) * X := by rw [hX]; ring
   have hK : C + 11 * C * (3 + 2 * C) + 80 * C + 64 * C + 32 * C + 4 * C * (102 + 4 * (2 * C + 1) ^ 2) ≤
       1000 * (C + 1) ^ 3 := by nlinarith only [hC]
   have hfin : 1000 * (C + 1) ^ 3 * D.R.f * D.R.m * L.sc.b * large₂ L ^ 2 = 1000 * (C + 1) ^ 3 * X := by rw [hX]; ring
   rw [hfin]
   have : (C + 11 * C * (3 + 2 * C) + 80 * C + 64 * C + 32 * C + 4 * C * (102 + 4 * (2 * C + 1) ^ 2)) * X ≤
       1000 * (C + 1) ^ 3 * X := mul_le_mul_of_nonneg_right hK hX0
-  have e1' : ∑ l ∈ T, Real.log l * bbB L C ≤ C * X := hbb.trans e1
   linarith
 
 end Sums
@@ -184,7 +141,7 @@ theorem S_le_U : L.Sc ≤ 4 * Ub L C := by
   have hSp := L.Sc_pos
   have hk : (0 : ℝ) < D.R.k := by linarith [k_ge_five D]
   have hDel : 0 < (D.s.Del : ℝ) := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     have : L.Sc ≤ 0 := by rw [hS]; nlinarith only [h, hk]
     linarith
   have h := P.logDel
@@ -223,8 +180,6 @@ theorem ranks_le_U : (D.R.n : ℝ) ≤ Ub L C ∧ (D.R.k : ℝ) ≤ Ub L C ∧ (
     exact_mod_cast (show D.R.N D.R.m = D.R.k + D.R.m * (D.R.t + 1) from rfl)
   have hnV : (D.R.nV : ℝ) = D.R.r + D.R.t := by
     exact_mod_cast (show D.R.nV = D.R.r + D.R.t from rfl)
-  have hm0 : (0:ℝ) ≤ D.R.m := by positivity
-  have ht0 : (0:ℝ) ≤ D.R.t := by positivity
   have hU0 : (0:ℝ) ≤ Ub L C := by linarith
   have hmt : (D.R.m : ℝ) * (D.R.t + 1) ≤ Ub L C * (Ub L C + 1) :=
     mul_le_mul hmU (by linarith) (by linarith) hU0
@@ -248,9 +203,6 @@ theorem Den_le_U : Den L ≤ 10 * Ub L C ^ 7 := by
     show 0 ≤ L.sc.x ^ L.sc.eps
     exact Real.rpow_nonneg (by linarith) _
   have hS0 : 0 ≤ L.Sc := L.Sc_pos.le
-  have hU0 : (0:ℝ) ≤ Ub L C := by linarith
-  have ht0 : (0:ℝ) ≤ D.R.t := by positivity
-  have hB0 : 0 ≤ L.Sc + D.R.t + large₂ L := by linarith
   have hA : (D.R.n : ℝ) * (D.R.t : ℝ) ^ 2 * ((D.R.N D.R.m : ℝ) + D.R.t) * large₂ L ^ 2 ≤
       Ub L C * Ub L C ^ 2 * (4 * Ub L C ^ 2) * Ub L C ^ 2 := by
     gcongr
@@ -369,7 +321,6 @@ theorem lA_lt_lStar : lA L < lStar L := by
       have : 1 ≤ D.R.k := by omega
       exact_mod_cast this
     have hS0 := L.Sc_pos
-    have ht0 : (0:ℝ) ≤ D.R.t := by positivity
     have hLg0 : 0 ≤ large₂ L := by show 0 ≤ L.sc.x ^ L.sc.eps; exact hxe0'
     have hA0 : 0 ≤ (D.R.n : ℝ) * (D.R.t : ℝ) ^ 2 * ((D.R.N D.R.m : ℝ) + D.R.t) * large₂ L ^ 2 := by
       positivity
@@ -449,13 +400,12 @@ theorem exc_pt {l : ℕ} (hl : lStar L < l) :
         = C * ((D.R.f : ℝ) * D.R.n * (D.R.t : ℝ) ^ 2 * D.R.nV * large₂ L ^ 2) := by ring
       _ ≤ C * (8 * U ^ 9) := mul_le_mul_of_nonneg_left (h1.trans h2) hC.le
       _ = 8 * C * U ^ 9 := by ring
-  have hf0 : (0 : ℝ) ≤ D.R.f := by positivity
   have hm0 : (0 : ℝ) ≤ D.R.m := by positivity
   have hr0 : (0 : ℝ) ≤ D.R.r := by positivity
   have hlen : lenB L C l ≤ (754 * C + 92 * C ^ 2) * U ^ 9 := by
     unfold lenB
     by_cases hs : SplitK D l
-    · rw [if_pos hs]
+    · rw [ite_eq_left hs]
       have : (2 * (D.R.f : ℝ) * D.R.m + D.R.f) ≤ 6 * U ^ 2 := by
         have : (D.R.f : ℝ) * D.R.m ≤ (2 * U) * U := mul_le_mul hf hm hm0 (by linarith)
         nlinarith only [this, hf, hU1]
@@ -467,10 +417,10 @@ theorem exc_pt {l : ℕ} (hl : lStar L < l) :
             have h9 : 0 ≤ U ^ 9 := by positivity
             have : 138 * C ≤ 754 * C + 92 * C ^ 2 := by nlinarith only [hC]
             exact mul_le_mul_of_nonneg_right this h9
-    · rw [if_neg hs]
+    · rw [ite_eq_right hs]
       have hnb : ¬ ((l : ℝ) < lA L ∧ 4 * D.host.Lw < ordH D l) := by
         intro h; have := lA_lt_lStar L hC P hPar hL; linarith [h.1]
-      rw [if_neg hnb]
+      rw [ite_eq_right hnb]
       have hq : hB L / (l : ℝ) ^ 2 ≤ 20 * U ^ 7 := by
         have : hB L / (l : ℝ) ^ 2 ≤ hB L / l := by
           apply div_le_div_of_nonneg_left (by linarith only [hh1]) hl0
@@ -483,7 +433,6 @@ theorem exc_pt {l : ℕ} (hl : lStar L < l) :
         have h1 : (wP L + eta₃ L) / l ≤ 9 := by
           rw [div_le_iff₀ hl0]; linarith
         have hI : bandI L C l ≤ 1 := by unfold bandI; split_ifs <;> norm_num
-        have hI0 := bandI_nonneg L C l
         have he4 := etaP_le L P
         have heU := eta_le_U L hC P hPar hL
         have hSU := S_le_U L hC P hPar hL
@@ -528,10 +477,6 @@ end Formalism.MainNotions.TwistedPlaces
 
 end
 
-namespace Formalism.MainNotions.TwistedPlaces
-
-end Formalism.MainNotions.TwistedPlaces
-
 noncomputable section
 
 namespace Formalism.MainNotions.TwistedPlaces
@@ -541,9 +486,6 @@ open Formalism.BasicNotions Formalism.MainNotions NumberField IsDedekindDomain
 variable {D : D7} (L : SizeData₂ D)
 
 theorem lenB_nonneg {C : ℝ} (hC : 0 < C) {l : ℕ} (hl : 2 ≤ l) : 0 ≤ lenB L C l := by
-  have hf0 : (0 : ℝ) ≤ D.R.f := by positivity
-  have hm0 : (0 : ℝ) ≤ D.R.m := by positivity
-  have hr0 : (0 : ℝ) ≤ D.R.r := by positivity
   have he := eP_nonneg L hC.le l
   have := rowBr_nonneg L hl
   have := flatB_nonneg L C l
@@ -583,7 +525,6 @@ theorem card_exc_le (tb : Tab L) (hE : LargePrimeLengthVanishing L tb) : (tb.exc
   have h7 : U ≤ U ^ 7 := by
     calc U = U ^ 1 := (pow_one U).symm
       _ ≤ U ^ 7 := pow_le_pow_right₀ hU1 (by norm_num)
-  have h71 : (1 : ℝ) ≤ U ^ 7 := one_le_pow₀ hU1
   have hA : (D.host.TT.card : ℝ) + 2 ≤ 4 * U := by linarith
   have hB : L.Sc + 3 * L.etaSz + D.R.t + 8 * L.sc.b / lStar L + 9 ≤ 97 * U ^ 7 := by linarith
   have hB0 : 0 ≤ L.Sc + 3 * L.etaSz + D.R.t + 8 * L.sc.b / lStar L + 9 := by
@@ -639,7 +580,6 @@ theorem sum_g (T : Finset ℕ) (hT : ∀ l ∈ T, l ∈ gset D) :
     ∑ l ∈ T, Real.log l * (C * L.sc.x ^ C * L.etaSz) ≤ 2 * (C + 1) ^ 2 * Ub L C ^ 18 := by
   have hU1 := one_le_U L hC P hPar hL
   set U := Ub L C with hUdef
-  have hLg := (log_le_x L hC P hPar hL).trans (x_le_U L hC P hPar hL)
   obtain ⟨Y, hY1, -, hY3, hY4⟩ := P.g_Y
   have hY0 : 0 < Y := by
     have : 0 < ((D.R.k : ℝ) * L.sc.b) ^ 8 := by
@@ -828,7 +768,6 @@ theorem glob_le :
   have hxC := xC_le_U L hC P hPar hL
   have hLg := (log_le_x L hC P hPar hL).trans (x_le_U L hC P hPar hL)
   set U := Ub L C
-  have hxC0 : 0 ≤ L.sc.x ^ C := Real.rpow_nonneg (x_pos L).le C
   have e1 : C * L.sc.x ^ C ≤ C * U := mul_le_mul_of_nonneg_left hxC hC.le
   have e2 : C * L.sc.x ^ C * large₂ L ≤ C * U * U := by
     have := Lg_nonneg L
@@ -911,31 +850,31 @@ theorem point_bound (tb : Tab L) (hA : AdmT L tb C P) (S : Finset ℕ) (hS : ∀
       split_ifs; exact mul_nonneg (hlog0 l) (by linarith); exact le_rfl
     unfold lamG
     by_cases hg : l ∈ gset D
-    · rw [if_pos hg, if_pos hg]; linarith
-    rw [if_neg hg]
+    · rw [ite_eq_left hg, ite_eq_left hg]; linarith
+    rw [ite_eq_right hg]
     unfold lamB
     by_cases h23 : l ∈ D.host.small ∨ l = 3
-    · rw [if_pos h23, if_pos h23]; linarith
-    rw [if_neg h23]
+    · rw [ite_eq_left h23, ite_eq_left h23]; linarith
+    rw [ite_eq_right h23]
     by_cases hqd : l = D.host.q ∨ l = D.host.d
-    · rw [if_pos hqd, if_pos hqd]
+    · rw [ite_eq_left hqd, ite_eq_left hqd]
       have : Real.log l * (2 * C * D.R.f * D.R.m * L.sc.b) = Real.log l * (2 * C * ↑D.R.f * ↑D.R.m * L.sc.b) := rfl
       linarith
-    rw [if_neg hqd]
+    rw [ite_eq_right hqd]
     by_cases he : lStar L < l ∧ l ∉ tb.exc
-    · rw [if_pos he, mul_zero]; linarith
-    rw [if_neg he]
+    · rw [ite_eq_left he, mul_zero]; linarith
+    rw [ite_eq_right he]
     have h2 : l ≠ 2 := fun h => h23 (Or.inl (by rw [h]; exact two_mem_small D))
     have h3 : l ≠ 3 := fun h => h23 (Or.inr h)
     by_cases hs : (l : ℝ) ≤ lStar L
     · have e : (if l ≠ 2 ∧ l ≠ 3 ∧ (l : ℝ) ≤ lStar L then Real.log l * (bbB L C + lenB L C l) else 0) =
-          Real.log l * (bbB L C + lenB L C l) := if_pos ⟨h2, h3, hs⟩
+          Real.log l * (bbB L C + lenB L C l) := ite_eq_left ⟨h2, h3, hs⟩
       linarith
-    · push_neg at hs
+    · push Not at hs
       have hx : l ∈ tb.exc := by
         by_contra hx; exact he ⟨hs, hx⟩
       have e : (if l ∈ tb.exc ∧ lStar L < l then Real.log l * (bbB L C + lenB L C l) else 0) =
-          Real.log l * (bbB L C + lenB L C l) := if_pos ⟨hx, hs⟩
+          Real.log l * (bbB L C + lenB L C l) := ite_eq_left ⟨hx, hs⟩
       linarith
   have hsumle := Finset.sum_le_sum hpt
   simp only [Finset.sum_add_distrib] at hsumle
@@ -960,7 +899,6 @@ theorem point_bound (tb : Tab L) (hA : AdmT L tb C P) (S : Finset ℕ) (hS : ∀
       have h2 : (1 : ℝ) ≤ D.R.f * D.R.m := by nlinarith only [hm, hf1]
       nlinarith only [h1, h2]
     rw [hX]; nlinarith only [this, hb]
-  have hU0 : 0 ≤ Ub L C ^ 18 := by have := one_le_U L hC P hPar hL; positivity
   have e2 : 8 * C * D.R.f * D.R.m * L.sc.b * large₂ L ^ 2 = 8 * C * X := by rw [hX]; ring
   have e3 : 4 * C * D.R.f * D.R.m * L.sc.b * large₂ L ^ 2 = 4 * C * X := by rw [hX]; ring
   have e4 : 1000 * (C + 1) ^ 3 * D.R.f * D.R.m * L.sc.b * large₂ L ^ 2 = 1000 * (C + 1) ^ 3 * X := by rw [hX]; ring
@@ -985,27 +923,8 @@ theorem point_bound (tb : Tab L) (hA : AdmT L tb C P) (S : Finset ℕ) (hS : ∀
 end Point
 
 theorem Nc_nonneg : 0 ≤ L.Nc := by
-  have hx0 : (0:ℝ) < L.sc.x := lt_trans one_pos L.sc.one_lt_alt
-  show 0 ≤ (D.host.T2.card : ℝ) * D.R.k * Real.exp (L.sc.x ^ L.sc.eps) * L.sc.x ^ L.sc.eps /
-    ((D.R.n : ℝ) * ((D.R.n : ℝ) * L.sc.x ^ (-L.sc.eps)))
-  apply div_nonneg
-  · exact mul_nonneg (mul_nonneg (by positivity) (Real.exp_pos _).le) (Real.rpow_nonneg hx0.le _)
-  · exact mul_nonneg (by positivity) (mul_nonneg (by positivity) (Real.rpow_nonneg hx0.le _))
+  apply _root_.Formalism.MainNotions.Nc_nonneg <;> assumption
 
-theorem gset_ne_two (P : ParameterChoice' D L) : ∀ l ∈ gset D, l ≠ 2 := by
-  obtain ⟨Y, hY1, -, -, hY4⟩ := P.g_Y
-  have hk := k_ge_five D
-  have hb := one_le_b L
-  have h8 : (2 : ℝ) < ((D.R.k : ℝ) * L.sc.b) ^ 8 := by
-    have : (5 : ℝ) ≤ (D.R.k : ℝ) * L.sc.b := by nlinarith only [hk, hb]
-    have : (5 : ℝ) ^ 8 ≤ ((D.R.k : ℝ) * L.sc.b) ^ 8 := by gcongr
-    linarith
-  intro l hl h2
-  unfold gset at hl
-  have hg : ∀ i, (2 : ℝ) < D.host.g i := fun i => by linarith [(hY4 i).1]
-  rcases Finset.mem_insert.1 hl with h | h
-  · have := hg 0; rw [← h, h2] at this; norm_num at this
-  · have := hg 1; rw [← Finset.mem_singleton.1 h, h2] at this; norm_num at this
 
 theorem export_bound_of_admissible (P : ParameterChoice' D L) {C : ℝ} (hL : Large L.sc.x L.sc.eps C) (hAdm : admitted L P C) :
     aux₃ L (2000 * (|C| + 1) ^ 3) := by
@@ -1016,14 +935,13 @@ theorem export_bound_of_admissible (P : ParameterChoice' D L) {C : ℝ} (hL : La
   have hPar : ParametersPolynomiallyBounded L C P := hA.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   have habs : |C| = C := abs_of_pos hC
   rw [habs]
-  have h1 := etaSum_le L tb C P hA (gset_ne_two L P) hsumm hj
+  have h1 := etaSum_le L tb C P hA hsumm hj
   set S := (L.supp.filter (fun w => D.what₂.muAt w ≠ D.what₂.mu0)).image (fun w => D.what₂.places.resChar w) with hSdef
   have hSp : ∀ l ∈ S, l.Prime := by
     intro l hl
     obtain ⟨w, _, rfl⟩ := Finset.mem_image.1 hl
     exact D.what₂.places.resChar_prime w
   have h2 := point_bound L hC P hPar hL tb hA S hSp
-  have hd0 : (0 : ℝ) ≤ L.dZ0 j := by positivity
   have hNc := Nc_nonneg L
   have hlx : 0 ≤ Real.log L.sc.x ^ 2 * L.Nc := by positivity
   have hK0 : 0 ≤ 2000 * (C + 1) ^ 3 := by positivity

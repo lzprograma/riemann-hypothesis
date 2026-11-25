@@ -5,47 +5,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoor
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceComposition
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.StrictPullbackCriterion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -65,26 +25,12 @@ theorem nonzeroOnComponents_of_support_ne_univ {X : Scheme.{u}} [IrreducibleSpac
   have hle : (Set.univ : Set ↥X) ⊆ T := hT.2 huniv (Set.subset_univ T)
   exact h (Set.univ_subset_iff.mp (hle.trans hsub))
 
-private theorem base_injective_of_isClosedImmersion {X Y : Scheme.{u}} (f : X ⟶ Y)
-    [IsClosedImmersion f] : Function.Injective ⇑f.base :=
-  (Scheme.Hom.isClosedEmbedding f).injective
-
-private theorem isClosed_range_of_isClosedImmersion {X Y : Scheme.{u}} (f : X ⟶ Y)
-    [IsClosedImmersion f] : IsClosed (Set.range ⇑f.base) :=
-  (Scheme.Hom.isClosedEmbedding f).isClosed_range
-
-private theorem support_ker_eq_range_of_isClosedImmersion {X Y : Scheme.{u}} (f : X ⟶ Y)
-    [IsClosedImmersion f] :
-    ((Scheme.Hom.ker f).support : Set ↥Y) = Set.range ⇑f.base := by
-  have hcl := (isClosed_range_of_isClosedImmersion f).closure_eq
-  simp [Scheme.Hom.support_ker, hcl]
-
 theorem nonzeroOnComponents_ker_comp {Y A A' : Scheme.{u}} (j : Y ⟶ A) (i : A ⟶ A')
     [IsClosedImmersion j] [IsClosedImmersion i] [IrreducibleSpace ↥A']
     (h : NonzeroOnComponents (Scheme.Hom.ker j)) :
     NonzeroOnComponents (Scheme.Hom.ker (j ≫ i)) := by
   refine nonzeroOnComponents_of_support_ne_univ _ ?_
-  rw [support_ker_eq_range_of_isClosedImmersion (j ≫ i)]
+  rw [Scheme.Hom.support_ker, (Scheme.Hom.isClosedEmbedding _).isClosed_range.closure_eq]
   intro hrange
   have hsurj : ∀ z : ↥A', ∃ y : ↥Y, (j ≫ i).base y = z := by
     intro z
@@ -97,23 +43,13 @@ theorem nonzeroOnComponents_ker_comp {Y A A' : Scheme.{u}} (j : Y ⟶ A) (i : A 
   have hjsurj : ∀ b : ↥A, ∃ y' : ↥Y, j.base y' = b := by
     intro b
     obtain ⟨y', hy'⟩ := hsurj (i.base b)
-    refine ⟨y', base_injective_of_isClosedImmersion i ?_⟩
+    refine ⟨y', (Scheme.Hom.isClosedEmbedding i).injective ?_⟩
     simpa using hy'
   refine h (irreducibleComponent (j.base y))
     (irreducibleComponent_mem_irreducibleComponents _) ?_
-  rw [support_ker_eq_range_of_isClosedImmersion j]
+  rw [Scheme.Hom.support_ker, (Scheme.Hom.isClosedEmbedding _).isClosed_range.closure_eq]
   intro b _
   exact Set.mem_range.mpr (hjsurj b)
-
-private theorem appTop_comp_apply_eq {X Y Z : Scheme.{u}} (a : X ⟶ Y) (b : Y ⟶ Z)
-    (x : ↑(Z.presheaf.obj (Opposite.op ⊤))) :
-    (ConcreteCategory.hom (Scheme.Hom.appTop (a ≫ b))) x
-      = (ConcreteCategory.hom (Scheme.Hom.appTop a))
-          ((ConcreteCategory.hom (Scheme.Hom.appTop b)) x) := by
-  have h : Scheme.Hom.appTop (a ≫ b) = Scheme.Hom.appTop b ≫ Scheme.Hom.appTop a := by
-    simp
-  rw [h]
-  rfl
 
 theorem isClosedImmersion_of_coord_surjective {R : CommRingCat.{u}} {N M : Type u}
     (f : AffineSpace N (Spec R) ⟶ AffineSpace M (Spec R))
@@ -133,17 +69,14 @@ theorem isClosedImmersion_of_coord_surjective {R : CommRingCat.{u}} {N M : Type 
     apply AffineSpace.hom_ext
     · simp [hover]
     · intro i
-      rw [appTop_comp_apply_eq, hgcoord i, hs i]
+      rw [Scheme.Hom.comp_appTop, CommRingCat.comp_apply, hgcoord i, hs i]
       simp
   have hsurj : Function.Surjective (ConcreteCategory.hom (Scheme.Hom.appTop f)) := by
     intro x
     refine ⟨(ConcreteCategory.hom (Scheme.Hom.appTop
       (AffineSpace.homOfVector (AffineSpace M (Spec R) ↘ Spec R) s))) x, ?_⟩
-    have h : (ConcreteCategory.hom (Scheme.Hom.appTop
-          (f ≫ AffineSpace.homOfVector (AffineSpace M (Spec R) ↘ Spec R) s))) x
-        = (ConcreteCategory.hom (Scheme.Hom.appTop (𝟙 (AffineSpace N (Spec R))))) x := by
-      rw [key]
-    rw [appTop_comp_apply_eq] at h
+    have h := congrArg (fun φ => (Scheme.Hom.appTop φ) x) key
+    rw [Scheme.Hom.comp_appTop, CommRingCat.comp_apply] at h
     simpa using h
   exact IsClosedImmersion.of_surjective_of_isAffine f hsurj
 
@@ -169,11 +102,6 @@ theorem affineSpaceInrEmbedding_comp_affineSpaceIndexedByToSpec (k : Type u) [Fi
       affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin m)) := by
   simp [affineSpaceInrEmbedding]
 
-private theorem pullbackCoord_id {k : Type u} [Field k] {N : Type u} (j : N) :
-    pullbackCoord (𝟙 (affineSpaceIndexedBy k N)) j
-      = AffineSpace.coord (Spec (CommRingCat.of k)) j := by
-  simp
-
 theorem pullbackCoord_affineSpaceInl (k : Type u) [Field k] (n m : ℕ)
     (i : ULift.{u, 0} (Fin n ⊕ Fin m)) :
     pullbackCoord (affineSpaceInl k n m) i =
@@ -187,9 +115,8 @@ theorem pullbackCoord_affineSpaceInl (k : Type u) [Field k] (n m : ℕ)
   obtain ⟨j⟩ := i
   cases j with
   | inl a =>
-      show pullbackCoord (𝟙 (affineSpaceIndexedBy k (ULift.{u, 0} (Fin n)))) (ULift.up.{u, 0} a)
-          = AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up.{u, 0} a)
-      exact pullbackCoord_id _
+      change pullbackCoord (𝟙 (affineSpaceIndexedBy k (ULift.{u, 0} (Fin n)))) (ULift.up a) = _
+      simp
   | inr _ => rfl
 
 theorem pullbackCoord_affineSpaceInl_inl (k : Type u) [Field k] (n m : ℕ) (a : Fin n) :
@@ -215,9 +142,8 @@ theorem pullbackCoord_affineSpaceInrEmbedding (k : Type u) [Field k] (n m : ℕ)
   cases j with
   | inl _ => rfl
   | inr b =>
-      show pullbackCoord (𝟙 (affineSpaceIndexedBy k (ULift.{u, 0} (Fin m)))) (ULift.up.{u, 0} b)
-          = AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up.{u, 0} b)
-      exact pullbackCoord_id _
+      change pullbackCoord (𝟙 (affineSpaceIndexedBy k (ULift.{u, 0} (Fin m)))) (ULift.up b) = _
+      simp
 
 theorem pullbackCoord_affineSpaceInrEmbedding_inl (k : Type u) [Field k] (n m : ℕ) (a : Fin n) :
     pullbackCoord (affineSpaceInrEmbedding k n m) (ULift.up.{u, 0} (Sum.inl a)) = 0 :=
@@ -233,11 +159,8 @@ theorem isClosedImmersion_affineSpaceInl (k : Type u) [Field k] (n m : ℕ) :
   refine isClosedImmersion_of_coord_surjective (affineSpaceInl k n m)
     (affineSpaceInl_comp_affineSpaceIndexedByToSpec k n m) ?_
   rintro ⟨a⟩
-  refine ⟨AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up.{u, 0} (Sum.inl a)), ?_⟩
-  have h : pullbackCoord (affineSpaceInl k n m) (ULift.up.{u, 0} (Sum.inl a))
-      = AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up.{u, 0} a) :=
-    pullbackCoord_affineSpaceInl_inl k n m a
-  exact h
+  exact ⟨AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up.{u, 0} (Sum.inl a)),
+    pullbackCoord_affineSpaceInl_inl k n m a⟩
 
 theorem isClosedImmersion_affineSpaceInrEmbedding (k : Type u) [Field k] (n m : ℕ) :
     IsClosedImmersion (affineSpaceInrEmbedding k n m) := by
@@ -264,8 +187,8 @@ theorem comp_affineSpaceInl {k : Type u} [Field k] {Y : Scheme.{u}} (n m : ℕ)
   · simp [hf]
   · intro i
     obtain ⟨j⟩ := i
-    rw [appTop_comp_apply_eq, AffineSpace.homOfVector_appTop_coord, ← pullbackCoord_def,
-      pullbackCoord_affineSpaceInl]
+    rw [Scheme.Hom.comp_appTop, CommRingCat.comp_apply, AffineSpace.homOfVector_appTop_coord,
+      ← pullbackCoord_def, pullbackCoord_affineSpaceInl]
     cases j with
     | inl _ => rfl
     | inr _ => exact map_zero _
@@ -277,7 +200,7 @@ theorem comp_affineSpaceInrEmbedding {k : Type u} [Field k] {Y : Scheme.{u}} (n 
   apply AffineSpace.hom_ext
   · simp [hf]
   · rintro ⟨j⟩
-    rw [appTop_comp_apply_eq, AffineSpace.homOfVector_appTop_coord]
+    rw [Scheme.Hom.comp_appTop, CommRingCat.comp_apply, AffineSpace.homOfVector_appTop_coord]
     cases j with
     | inl a =>
         have h := pullbackCoord_affineSpaceInrEmbedding_inl k n m a
@@ -297,7 +220,6 @@ theorem IsStrictPullbackBlowupSeq.id {X : Scheme.{u}} (s : SequenceOfBlowups X) 
 theorem isomorphic_of_isPullbackSequenceOfBlowups_id {X : Scheme.{u}} (s t : SequenceOfBlowups X)
     (h : IsPullbackBlowupSequence (𝟙 X) s t) (hc : ∀ i : ℕ, i < t.length → t.center i ≠ ⊤) :
     s.Isomorphic t := by
-  have : AlgebraicGeometry.Surjective (𝟙 X) := inferInstance
   exact IsStrictPullbackBlowupSeq.isomorphic (h.isStrictPullback_of_surjective hc)
     (IsStrictPullbackBlowupSeq.id t)
 

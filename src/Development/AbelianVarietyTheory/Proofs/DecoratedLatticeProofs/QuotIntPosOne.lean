@@ -70,7 +70,7 @@ theorem app_smul (l : SB X →ₗ[ℂ] V) (z : ℂ) (f : X → ℂ) : app l (z �
     rw [zero_smul, zero_smul, this]
   · by_cases hf : f ∈ SB X
     · have hzf : z • f ∈ SB X := (SB X).smul_mem z hf
-      simp only [app, hf, hzf, dif_pos]
+      simp only [app, hf, hzf, dite_eq_left]
       rw [← map_smul]
       rfl
     · have hzf : z • f ∉ SB X := fun h => hf (((SB X).smul_mem_iff hz).1 h)
@@ -128,7 +128,7 @@ theorem quotInt_posOne : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalS
       hB.1 Ψ u hu, smul_eq_mul]
     have key : (ψ (-simpleSum u) : ℂ) * (ψ (simpleSum u) : ℂ) = 1 := by
       rw [← Circle.coe_mul, ← AddChar.map_add_eq_mul, neg_add_cancel, AddChar.map_zero_eq_one, Circle.coe_one]
-    have hp := GlobalTheory.RootEx.OpELevi.nabs_pos (Matrix.GeneralLinearGroup.det x)
+    have hp := GlobalTheory.SplitWeil.nabs_pos' (Matrix.GeneralLinearGroup.det x)
     have rp : ((nabs k (Matrix.GeneralLinearGroup.det x) ^ (((c : ℝ) + 1) / 2 - ((1 : ℕ) : ℝ)) : ℝ) : ℂ) *
         ((nabs k (Matrix.GeneralLinearGroup.det x) ^ (((c : ℝ) + 1) / 2 - ((1 : ℕ) : ℝ)) : ℝ) : ℂ) =
         ((nabs k (Matrix.GeneralLinearGroup.det x) ^ ((c : ℝ) + 1 - 2 * ((1 : ℕ) : ℝ)) : ℝ) : ℂ) := by

@@ -21,8 +21,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.BasicNotions.TH 
 
 namespace Formalism.IndefR.Eqv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem upq_mat_mul {p q : ℕ} (a b : UpqT p q) : UpqT.mat (a * b) = UpqT.mat a * UpqT.mat b := rfl
 
 theorem upq_mat_one {p q : ℕ} : UpqT.mat (1 : UpqT p q) = 1 := rfl

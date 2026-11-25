@@ -4,43 +4,7 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 import GroundTheory.AutomorphicForms.ReductionMeasure
 import GroundTheory.GlobalFields.Adele.Topology
 import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Separation.Connected
 
 @[expose] public section
 
@@ -149,7 +113,6 @@ theorem finH_mul' {E : Type} [Field E] [NumberField E] [IsCMField E] {a b : ℕ}
 attribute [local instance] borelG borelF borelH
 
 theorem convMul_holds : Tail.ConvMul := by
-  set_option synthInstance.maxHeartbeats 400000 in
   intro E _ _ _ B A ψ ψ' U F hψ hψ' hU hF
   have := B.hν
   have : BorelSpace (Hf E B.a B.b) := ⟨rfl⟩
@@ -211,7 +174,7 @@ theorem fmOneOf_holds : FmOneOf := by
       exact hw₀P (this ▸ hwP)
     have hQ : Quiet S P B e L (Sum.inl ⟨w₀, hw₀⟩) F := by
       refine ⟨fun w hwP hw x y hxy' => ?_, fun j hj p x y hxe => ?_⟩
-      · rw [hD w hwP, if_neg hxy']
+      · rw [hD w hwP, ite_eq_right hxy']
       · have hx : x = y := hxy x y fun w => hxe w fun h => hne w.1 w.2 h
         subst hx
         rcases j with ⟨w, hwS⟩ | ⟨w, hwS, hwsp⟩
@@ -229,7 +192,7 @@ theorem fmOneOf_holds : FmOneOf := by
       cases heq
     have hQ : Quiet S P B e L (Sum.inr ⟨w₀, hw₀, hsp⟩) F := by
       refine ⟨fun w hwP hw x y hxy' => ?_, fun j hj p x y hxe => ?_⟩
-      · rw [hD w hwP, if_neg hxy']
+      · rw [hD w hwP, ite_eq_right hxy']
       · have hx : x = y := hxy x y fun w => hxe w fun h => hne w.1 w.2 h
         subst hx
         rcases j with ⟨w, hwS⟩ | ⟨w, hwS, hwsp⟩

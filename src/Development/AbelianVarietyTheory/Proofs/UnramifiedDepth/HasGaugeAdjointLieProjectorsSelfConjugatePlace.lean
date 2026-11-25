@@ -76,6 +76,7 @@ import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.CharacterGerms.ConstMemTypeSetOfNonneg
+import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugeBiadditiveSymmAdjointIntegralEnd
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 
@@ -851,14 +852,14 @@ theorem hAt_zero_left (hh : ∀ e : Fin 2 × κ →₀ ℕ, (∀ s ∈ e.support
   refine eq_zero_of_van (Van.subst {s : Fin 2 × κ | s.1 = 0} (cc_pair (fun _ => map_zero _) hb) ?_ hh)
   intro s hs ν _
   have h0 : s.1 = 0 := hs
-  rw [if_pos h0, map_zero]
+  rw [ite_eq_left h0, map_zero]
 
 theorem hAt_zero_right (hh : ∀ e : Fin 2 × κ →₀ ℕ, (∀ s ∈ e.support, s.1 ≠ 1) → coeff e X.h = 0) {τ : Type}
     {a : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i) = 0) : hAt X a (fun _ => 0) = 0 := by
   refine eq_zero_of_van (Van.subst {s : Fin 2 × κ | s.1 = 1} (cc_pair ha (fun _ => map_zero _)) ?_ hh)
   intro s hs ν _
   have h1 : s.1 = 1 := hs
-  rw [if_neg (by rw [h1]; decide), map_zero]
+  rw [ite_eq_right (by rw [h1]; decide), map_zero]
 
 theorem cc_hAt (hh : ∀ e : Fin 2 × κ →₀ ℕ, (∀ s ∈ e.support, s.1 ≠ 0) → coeff e X.h = 0) {τ : Type}
     {a b : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i) = 0) (hb : ∀ i, constantCoeff (b i) = 0) :
@@ -905,7 +906,7 @@ theorem matrixEnd_block (hlg : ∀ x, Z.lg x = inCol x.1 (X.lg x.2)) (hex : ∀ 
     · intro t _ ht
       simp [ht]
     · simp
-  · simp only [Matrix.of_apply, hc, false_and, if_false, zero_smul, Finset.sum_const_zero]
+  · simp only [Matrix.of_apply, hc, false_and, ite_false, zero_smul, Finset.sum_const_zero]
     exact subst_zero' (hex0 i)
 
 theorem hAt_square (hh : Z.h = ∑ col, hCol col X.h) {τ : Type} {a b : Fin 2 × Fin dd → MvPowerSeries τ C}
@@ -958,18 +959,18 @@ theorem isEnd_block_raw [CharZero C] (V : VF C) (hlg : ∀ x, Z.lg x = inCol x.1
     subst_sub hB, subst_hAt X (cc_endP X hlg0 hex0 M (hg _ 0)) (hg _ 1) hb,
     subst_hAt X (hg _ 0) (cc_endP X hlg0 hex0 M' (hg _ 1)) hb] at h1
   simp only [subst_endP X hlg0 _ (hg _ _) hb] at h1
-  simp only [gp, subst_X hB, if_true, one_ne_zero, if_false] at h1
+  simp only [gp, subst_X hB, ite_true, one_ne_zero, ite_false] at h1
   rw [hAt_square X Z hh (cc_endP Z hZ hZ' _ (hg _ 0)) (hg _ 1),
     hAt_square X Z hh (hg _ 0) (cc_endP Z hZ hZ' _ (hg _ 1)),
     Finset.sum_eq_single r, Finset.sum_eq_single s]
-  · simp only [matrixEnd_block X Z hlg hex hlg0 hex0 _ _ _ (hg _ _), if_true]
+  · simp only [matrixEnd_block X Z hlg hex hlg0 hex0 _ _ _ (hg _ _), ite_true]
     exact h1
   · intro t _ ht
-    simp only [matrixEnd_block X Z hlg hex hlg0 hex0 _ _ _ (hg _ _), if_neg ht]
+    simp only [matrixEnd_block X Z hlg hex hlg0 hex0 _ _ _ (hg _ _), ite_eq_right ht]
     exact hAt_zero_right X (hax 1) (fun _ => hg _ _ _)
   · simp
   · intro t _ ht
-    simp only [matrixEnd_block X Z hlg hex hlg0 hex0 _ _ _ (hg _ _), if_neg ht]
+    simp only [matrixEnd_block X Z hlg hex hlg0 hex0 _ _ _ (hg _ _), ite_eq_right ht]
     exact hAt_zero_left X (hax 0) (fun _ => hg _ _ _)
   · simp
 
@@ -1049,124 +1050,65 @@ theorem sum_cc (h : RLaw X V) {τ : Type} {a b : κ → MvPowerSeries τ C}
 
 theorem lin_cc (h : RLaw X V) (M : Matrix κ κ C) {τ : Type} {a : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (x : κ) :
-    constantCoeff (∑ y, M x y • subst a (X.lg y)) = 0 := by
-
-  rw [map_sum]
-  refine Finset.sum_eq_zero fun y _ => ?_
-  rw [smul_eq_C_mul, map_mul, cc_subst ha, lg_cc h, mul_zero]
+    constantCoeff (∑ y, M x y • subst a (X.lg y)) = 0 :=
+  _root_.GlobalTheory.RowVal.EndCalc.lin_cc h ha M x
 
 theorem formalAdd_constantCoeff (h : RLaw X V) {τ : Type} {a b : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (hb : ∀ s, constantCoeff (b s) = 0) (x : κ) :
-    constantCoeff (addP X a b x) = 0 := by
-  unfold addP
-  rw [cc_subst (sum_cc h ha hb), h.exc]
+    constantCoeff (addP X a b x) = 0 :=
+  _root_.GlobalTheory.RowVal.EndCalc.formalAdd_constantCoeff h ha hb x
 
 theorem constantCoeff_expMulLog (h : RLaw X V) (M : Matrix κ κ C) {τ : Type} {a : κ → MvPowerSeries τ C}
-    (ha : ∀ s, constantCoeff (a s) = 0) (x : κ) : constantCoeff (endP X M a x) = 0 := by
-  unfold endP
-  rw [cc_subst (lin_cc h M ha), h.exc]
+    (ha : ∀ s, constantCoeff (a s) = 0) (x : κ) : constantCoeff (endP X M a x) = 0 :=
+  _root_.GlobalTheory.RowVal.EndCalc.constantCoeff_expMulLog h ha M x
 
 theorem hAt_cc (h : RLaw X V) {τ : Type} {a b : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (hb : ∀ s, constantCoeff (b s) = 0) :
-    constantCoeff (hAt X a b) = 0 := by
-  unfold hAt
-  rw [cc_subst (pair_cc ha hb), h_cc h]
+    constantCoeff (hAt X a b) = 0 :=
+  _root_.GlobalTheory.RowVal.EndCalc.hAt_cc h ha hb
 
 theorem subst_addP (h : RLaw X V) {τ ρ : Type} [Finite τ] {a b : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (hb : ∀ s, constantCoeff (b s) = 0)
     {c : τ → MvPowerSeries ρ C} (hc : ∀ s, constantCoeff (c s) = 0) (x : κ) :
-    subst c (addP X a b x) = addP X (fun y => subst c (a y)) (fun y => subst c (b y)) x := by
-  have hS := hasSubst_of_constantCoeff_zero hc
-  unfold addP
-  rw [subst_comp_subst_apply (hasSubst_of_constantCoeff_zero (sum_cc h ha hb)) hS]
-  congr 1
-  funext y
-  rw [subst_add hS, subst_comp_subst_apply (hasSubst_of_constantCoeff_zero ha) hS,
-    subst_comp_subst_apply (hasSubst_of_constantCoeff_zero hb) hS]
+    subst c (addP X a b x) = addP X (fun y => subst c (a y)) (fun y => subst c (b y)) x :=
+  _root_.GlobalTheory.RowVal.EndCalc.subst_addP h ha hb hc x
 
 theorem subst_hAt {τ ρ : Type} [Finite τ] {a b : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (hb : ∀ s, constantCoeff (b s) = 0)
     {c : τ → MvPowerSeries ρ C} (hc : ∀ s, constantCoeff (c s) = 0) :
-    subst c (hAt X a b) = hAt X (fun y => subst c (a y)) (fun y => subst c (b y)) := by
-  have hS := hasSubst_of_constantCoeff_zero hc
-  unfold hAt
-  rw [subst_comp_subst_apply (hasSubst_of_constantCoeff_zero (pair_cc ha hb)) hS]
-  congr 1
-  funext p
-  split_ifs <;> rfl
+    subst c (hAt X a b) = hAt X (fun y => subst c (a y)) (fun y => subst c (b y)) :=
+  _root_.GlobalTheory.RowVal.EndCalc.subst_hAt ha hb hc
 
 theorem subst_endP_X (h : RLaw X V) (M : Matrix κ κ C) {ρ : Type}
     {c : κ → MvPowerSeries ρ C} (hc : ∀ s, constantCoeff (c s) = 0) (x : κ) :
     subst c (endP X M (MvPowerSeries.X : κ → MvPowerSeries κ C) x) = endP X M c x := by
-  have hS := hasSubst_of_constantCoeff_zero hc
-  unfold endP
-  rw [subst_comp_subst_apply
-    (hasSubst_of_constantCoeff_zero (lin_cc h M (fun s => constantCoeff_X s))) hS]
-  congr 1
-  funext y
-
-  rw [← coe_substAlgHom hS, map_sum]
-  refine Finset.sum_congr rfl fun z _ => ?_
-  rw [coe_substAlgHom hS, subst_smul hS, subst_self]
-  rfl
+  rw [_root_.GlobalTheory.RowVal.EndCalc.subst_endP h (fun s => constantCoeff_X s) hc M x]
+  simp only [subst_X (hasSubst_of_constantCoeff_zero hc)]
 
 theorem lg_endP (h : RLaw X V) (M : Matrix κ κ C) {τ : Type} {a : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (i : κ) :
-    subst (endP X M a) (X.lg i) = ∑ y, M i y • subst a (X.lg y) := by
-  have hS := hasSubst_of_constantCoeff_zero (lin_cc h M ha)
-  have := subst_comp_subst_apply (hasSubst_of_constantCoeff_zero h.exc) hS (X.lg i)
-  rw [h.lgex, subst_X hS] at this
-  exact this.symm
+    subst (endP X M a) (X.lg i) = ∑ y, M i y • subst a (X.lg y) :=
+  _root_.GlobalTheory.RowVal.EndCalc.lg_endP h ha M i
 
 theorem matrixEnd_add (h : RLaw X V) (M N : Matrix κ κ C) {τ : Type} {a : κ → MvPowerSeries τ C}
-    (ha : ∀ s, constantCoeff (a s) = 0) : endP X (M + N) a = addP X (endP X M a) (endP X N a) := by
-  funext i
-  unfold addP
-  simp only [lg_endP h _ ha]
-  unfold endP
-  simp only [Matrix.add_apply, add_smul, Finset.sum_add_distrib]
+    (ha : ∀ s, constantCoeff (a s) = 0) : endP X (M + N) a = addP X (endP X M a) (endP X N a) :=
+  (_root_.GlobalTheory.RowVal.EndCalc.formalAdd_endP h ha M N).symm
 
 theorem formalAdd_integral (h : RLaw X V) {τ : Type} {a b : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (hb : ∀ s, constantCoeff (b s) = 0)
-    (hai : ∀ s, IntS V (a s)) (hbi : ∀ s, IntS V (b s)) (x : κ) : IntS V (addP X a b x) := by
-  have hc := pair_cc ha hb
-  have hS := hasSubst_of_constantCoeff_zero hc
-  have h1 := intS_subst hc (fun p => by split_ifs; exacts [hai _, hbi _]) (h.addInt x)
-  rw [subst_addP h (gp_cc 0) (gp_cc 1) hc] at h1
-  simpa [gp, subst_X hS] using h1
+    (hai : ∀ s, IntS V (a s)) (hbi : ∀ s, IntS V (b s)) (x : κ) : IntS V (addP X a b x) :=
+  _root_.GlobalTheory.RowVal.EndCalc.formalAdd_integral h (P := ![a, b])
+    (fun j => by fin_cases j <;> assumption) (fun j => by fin_cases j <;> assumption) x
 
 theorem defects [CharZero C] (h : RLaw X V) {τ : Type} {a b c : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (hb : ∀ s, constantCoeff (b s) = 0) (hc : ∀ s, constantCoeff (c s) = 0)
     (hai : ∀ s, IntS V (a s)) (hbi : ∀ s, IntS V (b s)) (hci : ∀ s, IntS V (c s)) :
     hAt X a c + hAt X b c - hAt X (addP X a b) c ∈ logInt V τ ∧
-      hAt X a b + hAt X a c - hAt X a (addP X b c) ∈ logInt V τ := by
-  let e : Fin 3 × κ → MvPowerSeries τ C := fun p => (![a, b, c] : Fin 3 → κ → MvPowerSeries τ C) p.1 p.2
-  have he : ∀ p, constantCoeff (e p) = 0 := by
-    rintro ⟨j, x⟩
-    fin_cases j
-    exacts [ha x, hb x, hc x]
-  have hei : ∀ p, IntS V (e p) := by
-    rintro ⟨j, x⟩
-    fin_cases j
-    exacts [hai x, hbi x, hci x]
-  have hS := hasSubst_of_constantCoeff_zero he
-  have s0 : (fun x => subst e (gp C κ (0 : Fin 3) x)) = a := funext fun x => subst_X hS _
-  have s1 : (fun x => subst e (gp C κ (1 : Fin 3) x)) = b := funext fun x => subst_X hS _
-  have s2 : (fun x => subst e (gp C κ (2 : Fin 3) x)) = c := funext fun x => subst_X hS _
-  have g := fun j : Fin 3 => gp_cc (C := C) (κ := κ) j
-  constructor
-  · have h1 := logInt_subst he hei (mem_logInt.2 ⟨by
-      rw [map_sub, map_add (f := _), hAt_cc h (g 0) (g 2), hAt_cc h (g 1) (g 2), hAt_cc h (formalAdd_constantCoeff h (g 0) (g 1)) (g 2)]
-      simp, h.ph1⟩)
-    rw [subst_sub hS, subst_add hS, subst_hAt (g 0) (g 2) he, subst_hAt (g 1) (g 2) he,
-      subst_hAt (formalAdd_constantCoeff h (g 0) (g 1)) (g 2) he, funext (subst_addP h (g 0) (g 1) he), s0, s1, s2] at h1
-    exact h1
-  · have h1 := logInt_subst he hei (mem_logInt.2 ⟨by
-      rw [map_sub, map_add (f := _), hAt_cc h (g 0) (g 1), hAt_cc h (g 0) (g 2), hAt_cc h (g 0) (formalAdd_constantCoeff h (g 1) (g 2))]
-      simp, h.ph2⟩)
-    rw [subst_sub hS, subst_add hS, subst_hAt (g 0) (g 1) he, subst_hAt (g 0) (g 2) he,
-      subst_hAt (g 0) (formalAdd_constantCoeff h (g 1) (g 2)) he, funext (subst_addP h (g 1) (g 2) he), s0, s1, s2] at h1
-    exact h1
+      hAt X a b + hAt X a c - hAt X a (addP X b c) ∈ logInt V τ :=
+  ⟨_root_.GlobalTheory.RowVal.EndCalc.add_left_log h (P := ![a, b, c])
+      (fun j => by fin_cases j <;> assumption) (fun j => by fin_cases j <;> assumption),
+   _root_.GlobalTheory.RowVal.EndCalc.add_right_log h (P := ![a, b, c])
+      (fun j => by fin_cases j <;> assumption) (fun j => by fin_cases j <;> assumption)⟩
 
 theorem isEnd_add : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) (I : Fin 2 → Type) (κ : Type) [Fintype κ]
     (X : RawChart C d I κ), RLaw X V → ∀ M M' N N' : Matrix κ κ C,
@@ -1402,7 +1344,7 @@ theorem blk_mulVec (r s : Fin 2) (M : Matrix κ κ C) (v : Fin 2 × κ → C) (x
     (blk r s M).mulVec v x = if x.1 = r then M.mulVec (fun j => v (s, j)) x.2 else 0 := by
   simp only [Matrix.mulVec, dotProduct, blk, Matrix.of_apply, Fintype.sum_prod_type]
   by_cases h : x.1 = r
-  · simp only [h, true_and, if_true]
+  · simp only [h, true_and, ite_true]
     rw [Finset.sum_eq_single s]
     · simp
     · intro b _ hb
@@ -1574,10 +1516,10 @@ theorem hasProj_self : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (O : Typ
   have i2 : IsEnd (Y.rawSelf p) V (blks fun s r => M' r s) (blks M) :=
     isEnd_blks Y p (fun s r => M' r s) M fun r s => e2 s r
   refine hasProj_of _ _ _ i1 i2 (fun c => ?_) (fun c => ?_) (fun c => ?_) (fun c => ?_) ?_ ?_
-  · rw [k0, if_neg (by decide), one_smul]
-  · rw [k1, if_neg (by decide), one_smul]
-  · rw [k0, if_pos rfl, zero_smul]
-  · rw [k1, if_pos rfl, zero_smul]
+  · rw [k0, ite_eq_right (by decide), one_smul]
+  · rw [k1, ite_eq_right (by decide), one_smul]
+  · rw [k0, ite_eq_left rfl, zero_smul]
+  · rw [k1, ite_eq_left rfl, zero_smul]
   · intro v
     refine ⟨fun c => ∑ s, b (fun j => v (s, j)) c * p.gm (p.ty0 c + p.hd) s 1, ?_⟩
     funext x

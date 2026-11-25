@@ -21,12 +21,12 @@ lemma det_col_comb {R : Type*} [CommRing R] {n : ℕ} (A : Matrix (Fin n) (Fin n
   have e : (fun k => c₀ * A k i₀ - ∑ i ∈ Finset.univ.erase i₀, β i * A k i) =
       fun k => ∑ i, (if i = i₀ then c₀ else -β i) • A k i := by
     funext k
-    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i₀), if_pos rfl, smul_eq_mul, sub_eq_add_neg,
+    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i₀), ite_eq_left rfl, smul_eq_mul, sub_eq_add_neg,
       ← Finset.sum_neg_distrib]
     congr 1
     refine Finset.sum_congr rfl fun i hi => ?_
-    rw [if_neg (Finset.ne_of_mem_erase hi), smul_eq_mul, neg_mul]
-  rw [e, Matrix.det_updateCol_sum, if_pos rfl, smul_eq_mul]
+    rw [ite_eq_right (Finset.ne_of_mem_erase hi), smul_eq_mul, neg_mul]
+  rw [e, Matrix.det_updateCol_sum, ite_eq_left rfl, smul_eq_mul]
 
 theorem det_mem_span_prod {R : Type*} [CommRing R] [IsLocalRing R] :
     ∀ (m : ℕ) (c : Fin m → R) (n : ℕ) (q : Fin n → ((j : Fin m) → R ⧸ Ideal.span {c j})),
@@ -105,11 +105,11 @@ theorem det_mem_span_prod {R : Type*} [CommRing R] [IsLocalRing R] :
           rw [Finset.sum_smul, ← Finset.sum_sub_distrib]
           refine Finset.sum_congr rfl fun i hi => ?_
           have hne : i ≠ i₀ := Finset.ne_of_mem_erase hi
-          simp only [q'', if_neg hne, smul_sub, smul_smul]
+          simp only [q'', ite_eq_right hne, smul_sub, smul_smul]
         have hw' : c 0 * w = r i₀ + ∑ i ∈ Finset.univ.erase i₀, r i * β i := by
           rw [hw, ← Finset.add_sum_erase _ _ (Finset.mem_univ i₀), hβ0, mul_one]
         rw [hrest]
-        simp only [q'', if_pos rfl, smul_smul, ↓reduceIte]
+        simp only [q'', ite_eq_left rfl, smul_smul, ↓reduceIte]
         rw [mul_comm w, hw', add_smul]
         abel
 
@@ -161,10 +161,10 @@ theorem det_mem_span_prod {R : Type*} [CommRing R] [IsLocalRing R] :
           have : ∑ x ∈ Finset.univ.erase i, β x * (if x = i then t k else T k x) =
               ∑ x ∈ Finset.univ.erase i, T k x * β x :=
             Finset.sum_congr rfl fun x hx => by
-              rw [if_neg (Finset.ne_of_mem_erase hx), mul_comm]
+              rw [ite_eq_right (Finset.ne_of_mem_erase hx), mul_comm]
           rw [this]; ring
         · rw [updateCol_ne hi]
-          simp only [T'', Matrix.of_apply, if_neg hi]
+          simp only [T'', Matrix.of_apply, ite_eq_right hi]
       rw [hTeq, det_col_comb]
       obtain ⟨z, hz⟩ := Ideal.mem_span_singleton'.1 hdet''
       rw [hprod, ← hz]
@@ -206,7 +206,7 @@ theorem prod_le_of_gen {C : Type} [Field C] {v : Valuation C NNReal} {R : Type} 
     have h := congrArg e (ha k)
 
     simp only [map_smul, map_sum, ite_smul, zero_smul] at h
-    simp only [hT, hqdef, sub_smul, Finset.sum_sub_distrib, ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hT, hqdef, sub_smul, Finset.sum_sub_distrib, ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [h, sub_eq_zero]
     refine Finset.sum_congr rfl fun j _ => ?_
     split_ifs <;> simp

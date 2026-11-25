@@ -36,11 +36,4 @@ theorem valO_self (ν : ℝ) (hν : (ν : EReal) ≤ Y.nuPlE Ls n) (hs : SelfSep
 
 end Gen
 
-section Two
-
-variable (Y : FBChart C V O dd) (p : ∀ o, SelfData Y 2 (I0 o)) (H : ∀ o, (Y.rawSelf (p o)).Hyps V)
-  (Ls : LetSys C dd) (n : ℕ)
-
-end Two
-
 end Formalism.L2.FormalSeriesBounds.RF

@@ -149,7 +149,7 @@ theorem volume_pos_simplex_le (ι : Type) [Fintype ι] [Nonempty ι] (L : ℝ) (
   have hf : ∀ e i, MeasurePreserving (f e i) volume volume := by
     intro e i
     by_cases h : e i
-    · simp only [f, h, if_true]
+    · simp only [f, h, ite_true]
       exact MeasurePreserving.id (volume : Measure ℝ)
     · simpa [f, h] using Measure.measurePreserving_neg (volume : Measure ℝ)
   let R : (ι → Bool) → (ι → ℝ) → (ι → ℝ) := fun e x i => f e i (x i)
@@ -326,7 +326,7 @@ theorem regulator_le_sum_class : ∀ (K : Type) [Field K] [NumberField K], IsTot
     intro t
     let b : InfinitePlace K → ℝ := fun w =>
       if h : w = w₀ then Real.log ((Ideal.absNorm J : ℝ) * Y) - ∑ i, t i else t ⟨w, h⟩
-    have hb : ∀ i : {w : InfinitePlace K // w ≠ w₀}, b i.1 = t i := fun i => dif_neg i.2
+    have hb : ∀ i : {w : InfinitePlace K // w ≠ w₀}, b i.1 = t i := fun i => dite_eq_right i.2
     have hbsum : ∑ w, b w = Real.log ((Ideal.absNorm J : ℝ) * Y) := by
       rw [Fintype.sum_eq_add_sum_subtype_ne _ w₀]
       simp only [hb]

@@ -70,20 +70,20 @@ theorem mem_unipRadical_twoBlocks_iff {d a : ℕ} (had : a ≤ d) (x : Gn g d) :
     · funext i j
       have := h ⟨i, by omega⟩ ⟨j, by omega⟩ (by simp [twoBlocks, i.2, j.2])
       rw [Matrix.sub_apply, sub_eq_zero] at this
-      simp only [tl, Formalism.MainNotions.ArithmeticCylinders.entN, dif_pos (show (i : ℕ) < d ∧ (j : ℕ) < d by omega)]
+      simp only [tl, Formalism.MainNotions.ArithmeticCylinders.entN, dite_eq_left (show (i : ℕ) < d ∧ (j : ℕ) < d by omega)]
       rw [this]
       simp [Matrix.one_apply, Fin.ext_iff]
     · funext i j
       have := h ⟨a + i, by omega⟩ ⟨a + j, by omega⟩ (by simp [twoBlocks])
       rw [Matrix.sub_apply, sub_eq_zero] at this
-      simp only [br, Formalism.MainNotions.ArithmeticCylinders.entN, dif_pos (show a + (i : ℕ) < d ∧ a + (j : ℕ) < d by omega)]
+      simp only [br, Formalism.MainNotions.ArithmeticCylinders.entN, dite_eq_left (show a + (i : ℕ) < d ∧ a + (j : ℕ) < d by omega)]
       rw [this]
       simp [Matrix.one_apply, Fin.ext_iff]
   · rintro ⟨hP, htl, hbr⟩ i j hij
     rw [Matrix.sub_apply, sub_eq_zero]
     by_cases hi : (i : ℕ) < a <;> by_cases hj : (j : ℕ) < a
     · have := congrFun (congrFun htl ⟨i, hi⟩) ⟨j, hj⟩
-      simp only [tl, Formalism.MainNotions.ArithmeticCylinders.entN, dif_pos (show (i : ℕ) < d ∧ (j : ℕ) < d from ⟨i.2, j.2⟩)] at this
+      simp only [tl, Formalism.MainNotions.ArithmeticCylinders.entN, dite_eq_left (show (i : ℕ) < d ∧ (j : ℕ) < d from ⟨i.2, j.2⟩)] at this
       rw [this]
       simp [Matrix.one_apply, Fin.ext_iff]
     · exfalso
@@ -92,7 +92,7 @@ theorem mem_unipRadical_twoBlocks_iff {d a : ℕ} (had : a ≤ d) (x : Gn g d) :
       rw [hP i j hj (not_lt.1 hi), Matrix.one_apply_ne hne]
     · have := congrFun (congrFun hbr ⟨i - a, by omega⟩) ⟨j - a, by omega⟩
       simp only [br, Formalism.MainNotions.ArithmeticCylinders.entN] at this
-      rw [dif_pos (show a + ((i : ℕ) - a) < d ∧ a + ((j : ℕ) - a) < d by omega)] at this
+      rw [dite_eq_left (show a + ((i : ℕ) - a) < d ∧ a + ((j : ℕ) - a) < d by omega)] at this
       have ei : (⟨a + ((i : ℕ) - a), by omega⟩ : Fin d) = i := Fin.ext (by simp; omega)
       have ej : (⟨a + ((j : ℕ) - a), by omega⟩ : Fin d) = j := Fin.ext (by simp; omega)
       rw [ei, ej] at this
@@ -153,7 +153,7 @@ theorem mem_unipRadical_of_mem_unip {d a : ℕ} {u : Gn g d} (hu : u ∈ unip (Z
       have e' : twoBlocks d a i ≠ twoBlocks d a j := fun h => e (Fin.ext (by rw [val_cb, val_cb, h]))
       omega
     have hne : i ≠ j := fun h => e (by rw [h])
-    rw [hA i j hlt, if_neg hne, sub_zero]
+    rw [hA i j hlt, ite_eq_right hne, sub_zero]
 
 theorem glEquiv_mem_unip {d a s : ℕ} (b : Fin d → Fin s) (z : Fin s) (hz : ∀ i, z ≤ b i) (σ : Fin d ≃ Fin d)
     (hσ : ∀ k : Fin d, (k : ℕ) < a ↔ b (σ k) = z) {u : Gn g d} (hu : u ∈ unipRadical (ZMod g) (twoBlocks d a)) :
@@ -185,9 +185,9 @@ theorem glEquiv_mem_unip {d a s : ℕ} (b : Fin d → Fin s) (z : Fin s) (hz : �
   have hne : ∀ i j : Fin d, b j < b i → i ≠ j := fun i j h e => by rw [e] at h; exact lt_irrefl _ h
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · intro i j h
-    rw [hent u hu i j (Or.inr (hlt i j h)), if_neg (hne i j h)]
+    rw [hent u hu i j (Or.inr (hlt i j h)), ite_eq_right (hne i j h)]
   · intro i j h
-    rw [← map_inv, hent u⁻¹ (inv_mem hu) i j (Or.inr (hlt i j h)), if_neg (hne i j h)]
+    rw [← map_inv, hent u⁻¹ (inv_mem hu) i j (Or.inr (hlt i j h)), ite_eq_right (hne i j h)]
   · intro i j h
     rw [hent u hu i j (by by_cases e : b i = z <;> simp_all)]
 
@@ -196,12 +196,7 @@ theorem exists_perm_first {d s : ℕ} (b : Fin d → Fin s) (z : Fin s) :
   classical
   set a := Fintype.card {i // b i = z} with ha
   have had : a ≤ d := (Fintype.card_subtype_le _).trans (by simp)
-  have hca : Fintype.card {k : Fin d // (k : ℕ) < a} = a := by
-    rw [Fintype.card_congr (show {k : Fin d // (k : ℕ) < a} ≃ Fin a from
-      { toFun := fun k => ⟨k.1, k.2⟩
-        invFun := fun i => ⟨⟨i, lt_of_lt_of_le i.2 had⟩, i.2⟩
-        left_inv := fun k => rfl
-        right_inv := fun i => rfl }), Fintype.card_fin]
+  have hca : Fintype.card {k : Fin d // (k : ℕ) < a} = a := Fintype.card_fin_lt_of_le had
   let e1 : {k : Fin d // (k : ℕ) < a} ≃ {i // b i = z} := Fintype.equivOfCardEq (by rw [hca])
   let e2 : {k : Fin d // ¬ (k : ℕ) < a} ≃ {i // ¬ b i = z} := Fintype.equivOfCardEq (by
     rw [Fintype.card_subtype_compl, Fintype.card_subtype_compl, hca])

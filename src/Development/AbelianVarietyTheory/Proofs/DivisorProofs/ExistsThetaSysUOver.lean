@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalisationModelFiniteExtension
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRatPointOfFiniteType
 public import Development.AbelianVarietyTheory.Statements.PrincipalLattices.LogHermFormOfUnitDiscriminant
 import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
@@ -66,22 +67,11 @@ open Classical
 
 noncomputable section
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.UPoinc.GSetup
 
 theorem finite_stalkMap_field {K Ω : Type} [Field K] [Field Ω] (f : K →+* Ω) (hf : f.Finite) (x : Sp Ω) :
     ((spMap f).stalkMap x).hom.Finite := by
-  haveI := x.isPrime
-  refine (RingHom.finite_respectsIso.arrow_mk_iso_iff
-    (Scheme.arrowStalkMapSpecIso (CommRingCat.ofHom f) x)).2 ?_
-  refine RingHom.Finite.of_comp_finite (f := algebraMap K _) ?_
-  have e : (Localization.localRingHom (PrimeSpectrum.comap f x).asIdeal x.asIdeal f rfl).comp (algebraMap K _) =
-      (algebraMap Ω (Localization.AtPrime x.asIdeal)).comp f :=
-    RingHom.ext fun a => Localization.localRingHom_to_map _ _ _ rfl a
-  refine e ▸ RingHom.Finite.comp (RingHom.Finite.of_surjective _ ?_) hf
-  exact (IsLocalization.atUnits Ω x.asIdeal.primeCompl (S := Localization.AtPrime x.asIdeal) fun a ha =>
-    (IsUnit.mk0 a fun h => ha (h ▸ zero_mem _) : IsUnit a)).surjective
+  apply _root_.GlobalTheory.Poinc.stalkMap_spMap_finite <;> assumption
 
 theorem exists_base_root (o F Ω : Type) [CommRing o] [IsDedekindDomain o] [Field F] [CharZero F] [Algebra o F]
     [IsFractionRing o F] [Field Ω] (β : F →+* Ω) (ζ : Ωˣ) (m : ℕ) (hm : 1 ≤ m) (hζ : ζ ^ m = 1) :

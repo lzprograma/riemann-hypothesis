@@ -250,9 +250,9 @@ theorem multilinear_step_le {d : ℕ} (f : MultilinearMap ℤ (fun _ : Fin (d + 
         ∏ i, (if i ∈ s then S else 1) := by
       refine Finset.prod_congr rfl (fun i _ => ?_)
       by_cases hi : i ∈ s
-      · rw [Finset.piecewise_eq_of_mem _ _ _ hi, if_pos hi]
+      · rw [Finset.piecewise_eq_of_mem _ _ _ hi, ite_eq_left hi]
         exact Finset.sum_congr rfl (fun k _ => abs_of_nonneg (Nat.cast_nonneg _))
-      · rw [Finset.piecewise_eq_of_notMem _ _ _ hi, if_neg hi]
+      · rw [Finset.piecewise_eq_of_notMem _ _ _ hi, ite_eq_right hi]
         simp [unitDeg, Pi.single_apply, apply_ite]
     rw [hprod, Finset.prod_ite_mem, Finset.univ_inter, Finset.prod_const]
     calc S ^ s.card ≤ (S + 1) ^ s.card := pow_le_pow_left₀ hS (by linarith) _

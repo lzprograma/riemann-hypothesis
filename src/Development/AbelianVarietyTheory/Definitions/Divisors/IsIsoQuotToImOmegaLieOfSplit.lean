@@ -3,47 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEquivariantToBidual
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Definitions.Divisors.ToBidualDualMapEigenImageInclusion, Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoQuotToImOmegaLieOfSplit
@@ -52,8 +12,6 @@ import Mathlib.Tactic.Basify
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Definitions.Divisors.ToBidualDualMapEigenImageInclusion", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsEquivariantToBidual\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -79,47 +37,14 @@ instance mono_toBidual_dual : Mono (cartierDualToBidual (dual F)) := by
 theorem mono_toBidual_of_mono (i : G ⟶ F) [Mono i] [Mono (cartierDualToBidual F)] : Mono (cartierDualToBidual G) :=
   mono_of_mono_fac (toBidual_naturality_dualSheafTranspose i).symm
 
-theorem mono_toBidual_of_isVectorBundle {r : ℕ} (h : IsVB F r) : Mono (cartierDualToBidual F) :=
-  have := h.isIso_toBidual_of_local_frames
-  inferInstance
-
 def IsRegularFn (D : Γ(X, ⊤)) : Prop :=
   ∀ (V : X.Opens) (a : Γ(X, V)), resG X (le_top : V ≤ ⊤) D * a = 0 → a = 0
-
-theorem isRegularFn_of_ne_zero [IsIntegral X] {D : Γ(X, ⊤)} (h : D ≠ 0) : IsRegularFn D := by
-  intro V a e
-  rcases eq_or_ne V ⊥ with rfl | hV
-  · exact Subsingleton.elim _ _
-  · obtain ⟨x, hx⟩ := (Opens.ne_bot_iff_nonempty _).1 hV
-    have : Nonempty V := ⟨⟨x, hx⟩⟩
-    refine (mul_eq_zero.1 e).resolve_left fun h0 => h ?_
-    exact map_injective_of_isIntegral X (homOfLE le_top) (h0.trans (map_zero _).symm)
-
-theorem IsRegularFn.eq_zero_of_smul {D : Γ(X, ⊤)} (h : IsRegularFn D) [Mono (cartierDualToBidual F)]
-    {V : X.Opens} {s : Γ(F, V)} (e : resG X (le_top : V ≤ ⊤) D • s = 0) : s = 0 := by
-  refine QCoh.injective_app_of_mono (cartierDualToBidual F) V (Eq.trans ?_ (map_zero _).symm)
-  refine dual_ext fun W hW l => h W _ ?_
-  have := congrArg (fun t => dualApp l le_rfl (resM F hW t)) e
-  simp only [resM_smul, map_smul, resG_resG, map_zero] at this
-  exact this
-
-theorem IsRegularFn.hom_eq_zero {D : Γ(X, ⊤)} (h : IsRegularFn D) [Mono (cartierDualToBidual F)]
-    {φ : G ⟶ F} (e : D • φ = 0) : φ = 0 := by
-  ext V s : 3
-  exact h.eq_zero_of_smul congr(($e).app V s)
 
 section Im
 
 variable (ρ : O →+* End F) (σ : O →+* Γ(X, ⊤))
 
 def eigenEval : F ⟶ dual (eigen (dualAct ρ) σ) := cartierDualToBidual F ≫ dualMap (eigenι (dualAct ρ) σ)
-
-theorem eigenEval_eq : eigenEval ρ σ =
-    eigenπ ρ σ ≫ cartierDualToBidual _ ≫ dualMap (dualQuotIso ρ σ).inv := by
-  have hι : (dualQuotIso ρ σ).hom ≫ eigenι _ _ = dualMap (eigenπ ρ σ) := by
-    simp only [dualQuotIso, asIso_hom, dualQuotHom, eigenLift_ι]
-  rw [toBidual_naturality_dualSheafTranspose_assoc, ← dualMap_comp, ← hι, Iso.inv_hom_id_assoc,
-    eigenEval]
 
 def eigenIm : X.Modules := image (eigenEval ρ σ)
 
@@ -134,13 +59,6 @@ instance mono_eigenImι : Mono (eigenImι ρ σ) :=
 
 instance mono_toBidual_eigenImage : Mono (cartierDualToBidual (eigenIm ρ σ)) :=
   mono_toBidual_of_mono (eigenImι ρ σ)
-
-theorem act_eigenImπ (a : O) : act ρ a ≫ eigenImπ ρ σ = σ a • eigenImπ ρ σ := by
-  have h : eigenImπ ρ σ ≫ eigenImι ρ σ = eigenEval ρ σ := image.fac _
-  rw [← cancel_mono (eigenImι ρ σ), Category.assoc, Linear.smul_comp, h, eigenEval_eq,
-    ← Category.assoc, act_eigenπ, Linear.smul_comp]
-
-def quotToIm : eigenQuot ρ σ ⟶ eigenIm ρ σ := eigenDesc (eigenImπ ρ σ) (act_eigenImπ ρ σ)
 
 variable {ρ σ}
 
@@ -167,21 +85,6 @@ variable (ρ)
 
 variable {ρ σ}
 
-theorem isIso_eigenπ_of_actsThrough (h : ActsThrough ρ σ) : IsIso (eigenπ ρ σ) :=
-  ⟨eigenDesc (𝟙 F) fun a => by rw [Category.comp_id, h a, smulHom_eq_smul_id],
-    eigenπ_desc _ _ _ _, by rw [← cancel_epi (eigenπ ρ σ)]; simp⟩
-
-theorem isIso_eigenImπ_of_actsThrough [Mono (cartierDualToBidual F)] (h : ActsThrough ρ σ) :
-    IsIso (eigenImπ ρ σ) :=
-  ⟨eigenImDesc (𝟙 F) fun a => by rw [Category.comp_id, h a, smulHom_eq_smul_id],
-    eigenImπ_desc _ _, by rw [← cancel_epi (eigenImπ ρ σ)]; simp⟩
-
-theorem isZero_eigenIm_of_actsThrough {τ : O →+* Γ(X, ⊤)} (h : ActsThrough ρ τ) {a : O}
-    (ha : IsRegularFn (τ a - σ a)) : IsZero (eigenIm ρ σ) := by
-  refine IsZero.of_epi_eq_zero (eigenImπ ρ σ) (ha.hom_eq_zero ?_)
-  rw [sub_smul, ← act_eigenImπ, h a, smulHom_comp]
-  exact sub_self _
-
 end Im
 
 section Proj
@@ -201,10 +104,6 @@ namespace IsEigenProj
 
 variable {ε : F ⟶ F} {D : Γ(X, ⊤)} (h : IsEigenProj ρ σ ε D)
 include h
-
-theorem comp_eq_smul {φ : F ⟶ G} (hφ : ∀ a, act ρ a ≫ φ = σ a • φ) : ε ≫ φ = D • φ := by
-  obtain ⟨n, c, b, rfl, rfl⟩ := h.exists_sum
-  simp only [Preadditive.sum_comp, Linear.smul_comp, hφ, Finset.sum_smul, mul_smul]
 
 theorem isEquivariant : IsEquivariant ρ ρ ε := fun a => by
   obtain ⟨n, c, b, rfl, -⟩ := h.exists_sum
@@ -246,11 +145,6 @@ theorem of_iso {ρ' : O →+* End G} {φ : F ≅ G} (hφ : IsEquivariant ρ ρ' 
     simp only [Preadditive.comp_sum, Preadditive.sum_comp, Linear.comp_smul, Linear.smul_comp,
       hφ _, Iso.inv_hom_id_assoc]
 
-theorem comp_eigenImπ_eq_zero (hD : IsRegularFn D) {k : G ⟶ F} (hk : k ≫ ε = 0) :
-    k ≫ eigenImπ ρ σ = 0 :=
-  hD.hom_eq_zero (by
-    rw [← Linear.comp_smul, ← h.comp_eq_smul (act_eigenImπ ρ σ), reassoc_of% hk, zero_comp])
-
 variable [Mono (cartierDualToBidual F)]
 
 variable (hD : IsRegularFn D)
@@ -272,70 +166,8 @@ open Polynomial
 
 variable (F G)
 
-def twoAct : ℤ[X] →+* End (F ⊞ G) :=
-  eval₂RingHom' (Int.castRingHom _) (End.of (2 • (biprod.snd ≫ biprod.inr)))
-    fun n => Int.cast_commute n _
 
 
-variable (X) in
-def zeroChar : ℤ[X] →+* Γ(X, ⊤) := (Int.castRingHom _).comp constantCoeff
-
-theorem act_twoAct_X : act (twoAct F G) Polynomial.X = 2 • (biprod.snd ≫ biprod.inr) :=
-  congrArg End.asHom (eval₂_X (S := End (F ⊞ G)) _ _)
-
-
-variable {F G} in
-theorem act_comp_of_X {ρ : ℤ[X] →+* End F} {φ : F ⟶ G} (h : act ρ Polynomial.X ≫ φ = 0)
-    (a : ℤ[X]) : act ρ a ≫ φ = zeroChar X a • φ := by
-  have e : act ρ a = act ρ a.divX ≫ act ρ Polynomial.X + smulHom F (zeroChar X a) := by
-    change (ρ a).asHom = _
-    conv_lhs => rw [← X_mul_divX_add a, map_add (f := ρ), map_mul]
-    change act ρ a.divX ≫ act ρ Polynomial.X + act ρ (C (a.coeff 0)) = _
-    exact congrArg (fun e : End F => act ρ a.divX ≫ act ρ Polynomial.X + e.asHom)
-      congr($(RingHom.ext_int (ρ.comp C) (scalarAct F (Int.castRingHom _))) (a.coeff 0))
-  rw [e, Preadditive.add_comp, Category.assoc, h, Limits.comp_zero, zero_add, smulHom_comp]
-  rfl
-
-theorem isEigenProj_twoAct :
-    IsEigenProj (twoAct F G) (zeroChar X) (2 • (biprod.fst ≫ biprod.inl)) 2 := by
-  constructor
-  · exact act_comp_of_X (by simp [act_twoAct_X])
-  · refine ⟨2, ![2, -1], ![1, Polynomial.X], ?_, by simp [zeroChar]⟩
-    have e : act (twoAct F G) 1 = 𝟙 _ := congrArg End.asHom (map_one (twoAct F G))
-    simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, act_twoAct_X, e,
-      two_smul, neg_smul, one_smul, ← biprod.total]
-    abel
-
-def eigenImTwoIso [Mono (cartierDualToBidual F)] (h : IsRegularFn (2 : Γ(X, ⊤))) :
-    eigenIm (twoAct F G) (zeroChar X) ≅ F where
-  hom := eigenImDesc biprod.fst (act_comp_of_X (by simp [act_twoAct_X]))
-  inv := biprod.inl ≫ eigenImπ _ _
-  hom_inv_id := by
-    have := (isEigenProj_twoAct F G).comp_eigenImπ_eq_zero h (k := biprod.inr) (by simp)
-    rw [← cancel_epi (eigenImπ _ _), eigenImπ_desc_assoc, Category.comp_id]
-    refine biprod.hom_ext' _ _ ?_ ?_ <;> simp [this]
-  inv_hom_id := by simp
-
-theorem actsThrough_pull_twoAct (f : Y ⟶ X) (hY : (2 : Γ(Y, ⊤)) = 0) :
-    ActsThrough (pullAct (twoAct F G) f) (f.appTop.hom.comp (zeroChar X)) := fun a => by
-  have := act_comp_of_X (ρ := pullAct (twoAct F G) f) (φ := 𝟙 _) (by
-    rw [act_pullAct, act_twoAct_X, Functor.map_nsmul, Category.comp_id,
-      ← Nat.cast_smul_eq_nsmul Γ(Y, ⊤), Nat.cast_ofNat, hY, zero_smul]) a
-  rw [Category.comp_id] at this
-  rw [this, smulHom_eq_smul_id]
-  simp [zeroChar]
-
-
-variable {F G} in
-theorem not_isIso_quotToIm_twoAct {r s : ℕ} (hF : IsVB F r) (hG : IsVB G (s + 1))
-    (h : IsRegularFn (2 : Γ(X, ⊤))) (f : Y ⟶ X) [Nonempty Y] (hY : (2 : Γ(Y, ⊤)) = 0) :
-    ¬IsIso (quotToIm (twoAct F G) (zeroChar X)) := fun _ => by
-  have := mono_toBidual_of_isVectorBundle hF
-  have := isIso_eigenπ_of_actsThrough (actsThrough_pull_twoAct F G f hY)
-  have h₁ := ((hF.of_iso (asIso (quotToIm _ _) ≪≫ eigenImTwoIso F G h).symm).pullback f).of_iso
-    (asIso (eigenπ _ _) ≪≫ pullbackQuotIso _ _ f).symm
-  have := h₁.rank_unique ((hF.biprod hG).pullback f)
-  omega
 
 end Examples₂
 
@@ -349,8 +181,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoQuotToImOmegaLieOfSplit", "h": "module\n\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt\npublic import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ToBidualDualMapEigenImageInclusion\nimport Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.TotallySplit\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -534,19 +364,12 @@ def omegaMap (φ : G ⟶ H) [IsMonHom φ] : omega H ⟶ omega G := cotMap φ (Is
 
 def lieMap (φ : G ⟶ H) [IsMonHom φ] : Lie G ⟶ Lie H := dualMap (omegaMap φ)
 
-theorem omegaMap_dUnit (φ : G ⟶ H) [IsMonHom φ] {V : S.Opens} {W : H.left.Opens}
-    {W' : G.left.Opens} (h : V ≤ unitSec H ⁻¹ᵁ W) (h' : V ≤ unitSec G ⁻¹ᵁ W')
-    (k : W' ≤ φ.left ⁻¹ᵁ W) (f : Γ(H.left, W)) :
-    (omegaMap φ).app V (dUnit H h f) = dUnit G h' (φ.left.appLE W W' k f) := cotMap_d _ _ _ _ _ _
-
 theorem omegaMap_congr {φ ψ : G ⟶ H} [IsMonHom φ] [IsMonHom ψ] (h : φ = ψ) :
     omegaMap φ = omegaMap ψ := by
   subst h; rfl
 
 theorem omegaMap_comp (φ : G ⟶ H) (ψ : H ⟶ K) [IsMonHom φ] [IsMonHom ψ] :
     omegaMap (φ ≫ ψ) = omegaMap ψ ≫ omegaMap φ := (cotMap_comp _ _ rfl _).symm
-
-theorem omegaMap_one [IsMonHom (1 : G ⟶ H)] : omegaMap (1 : G ⟶ H) = 0 := cotMap_eq_zero rfl _
 
 theorem omegaMap_mul [QuasiSeparated H.hom] (φ ψ : G ⟶ H) [IsMonHom φ] [IsMonHom ψ]
     [IsMonHom (φ * ψ)] : omegaMap (φ * ψ) = omegaMap φ + omegaMap ψ := cotMap_mul _ _ _
@@ -581,26 +404,6 @@ instance isIso_omegaBase [QuasiSeparated G.hom] (h : IsGrpPullback G' G f φ) :
   have : QuasiSeparated G'.hom := MorphismProperty.of_isPullback h.1 ‹_›
   isIso_baseMap (sec_hom η[G]) (sec_hom η[G']) h.1 _
 
-theorem omegaBase_naturality (h : IsGrpPullback G' G f φ) (h' : IsGrpPullback H' H f ψ)
-    (a : G ⟶ H) (a' : G' ⟶ H') [IsMonHom a] [IsMonHom a'] (w : a'.left ≫ ψ = φ ≫ a.left) :
-    (Scheme.Modules.pullback f).map (omegaMap a) ≫ omegaBase h = omegaBase h' ≫ omegaMap a' :=
-  pullback_hom_ext (sec_hom η[H]) fun W b => by
-    have e₁ : unitSec G ≫ a.left = unitSec H := congrArg (·.left) (IsMonHom.one_hom a)
-    have e₂ : unitSec G' ≫ a'.left = unitSec H' := congrArg (·.left) (IsMonHom.one_hom a')
-    have k₁ := (le_preimage_of_comp e₁).2 (le_refl (unitSec H ⁻¹ᵁ W))
-    have k₂ := le_of_sq (unitSec_comp h) k₁ le_rfl
-    have k₃ := le_of_sq (unitSec_comp h') (le_refl (unitSec H ⁻¹ᵁ W)) le_rfl
-    have k₄ : φ ⁻¹ᵁ a.left ⁻¹ᵁ W ≤ (φ ≫ a.left) ⁻¹ᵁ W := le_rfl
-    have k₅ := (le_preimage_of_comp w).2 k₄
-    calc _ = (omegaBase h).app _ (pullbackSections f _ le_rfl
-          ((omegaMap a).app _ (dUnit H le_rfl b))) :=
-          congrArg _ (QCoh.pullback_map_app_pullbackSections f _ _ _)
-      _ = dUnit G' k₂ ((φ ≫ a.left).appLE W _ k₄ b) := by
-          rw [omegaMap_dUnit a _ k₁ le_rfl, omegaBase_dUnit h k₁ _ k₂ le_rfl, appLE_appLE rfl]
-      _ = (omegaMap a').app _ ((omegaBase h').app _ (pullbackSections f _ le_rfl
-          (dUnit H le_rfl b))) := by
-          rw [omegaBase_dUnit h' _ _ k₃ le_rfl, omegaMap_dUnit a' k₃ k₂ k₅, appLE_appLE w]
-
 variable [QuasiSeparated G.hom] [QuasiSeparated H.hom]
 
 def lieBase (h : IsGrpPullback G' G f φ) : (Scheme.Modules.pullback f).obj (Lie G) ⟶ Lie G' :=
@@ -615,12 +418,6 @@ theorem isVB_omega_of_isGrpPullback (h : IsGrpPullback G' G f φ) {g : ℕ} (hg 
     IsVB (omega G') g := (hg.pullback f).of_iso (asIso (omegaBase h))
 
 end Base
-
-section DualIm
-
-variable {O : Type} [CommRing O] {F : S.Modules} (ρ : O →+* End F) (σ : O →+* Γ(S, ⊤)) {g r : ℕ}
-
-end DualIm
 
 section Act
 
@@ -648,16 +445,6 @@ def omegaAct : O →+* End (omega G) := by
     exact (@omegaMap_congr _ _ _ _ _ _ _ (i.hom _) _ (i.add a b)).trans (omegaMap_mul _ _)
 
 def lieAct : O →+* End (Lie G) := dualAct (omegaAct i)
-
-def omegaConjAct (c : O →+* O) : O →+* End (omega G) := (omegaAct i).comp c
-
-abbrev lieSub : S.Modules := eigen (lieAct i) σ
-
-abbrev omegaQuot : S.Modules := eigenQuot (omegaAct i) σ
-
-abbrev lieIm : S.Modules := eigenIm (lieAct i) σ
-
-abbrev omegaIm : S.Modules := eigenIm (omegaAct i) σ
 
 variable {i}
 
@@ -805,97 +592,10 @@ open AddMonoidAlgebra (single)
 
 variable (S) (X Y : Type) [AddCommGroup X] [AddCommGroup Y]
 
-def dlogChar : X →+ Γ(omega (splitTorus S X), ⊤) :=
-  AddMonoidHom.mk' (fun a => dUnit _ (le_preimage_top _ _) (Rosenlicht.chi X a)) fun a b => by
-    have h (c : X) : (unitSec (splitTorus S X)).appLE ⊤ ⊤ (le_preimage_top _ _) (Rosenlicht.chi X c) = 1 :=
-      (appLE_top _ _).trans ((SplitTorus.val_eq η c).symm.trans
-        (MonObj.one_eq_one (splitTorus S X) ▸ SplitTorus.val_one c))
-    rw [← SplitTorus.val_id, SplitTorus.val_add, SplitTorus.val_id, SplitTorus.val_id, dUnit_mul,
-      h, h, one_smul, one_smul, add_comm]
-
-
-variable {X Y} in
-theorem omegaMap_dlogChar (u : Y →+ X) (b : Y) :
-    (omegaMap (SplitTorus.torusMap S u)).app ⊤ (dlogChar S Y b) = dlogChar S X (u b) :=
-  (omegaMap_dUnit _ (le_preimage_top _ _) (le_preimage_top _ _) (le_preimage_top _ _) _).trans
-    (congrArg _ ((appLE_top _ _).trans (SplitTorus.torusMap_appTop_chi u b)))
 
 variable {X} {κ : Type} [Fintype κ] (b : Module.Basis κ ℤ X)
 
-theorem exists_basis_augCot (R : Type) [CommRing R] :
-    ∃ c : Module.Basis κ R (AugCot (Bialgebra.counitAlgHom R (AddMonoidAlgebra R X))),
-      ∀ i, c i = AugCot.d _ (single (b i) 1) := by
-  classical
-  let ε := Bialgebra.counitAlgHom R (AddMonoidAlgebra R X)
-  have hε (x : X) : ε (single x 1) = 1 := by simp [ε]
-  let δ : X →+ AugCot ε := AddMonoidHom.mk' (fun x => AugCot.d ε (single x 1)) fun x y => by
-    rw [← _root_.mul_one (1 : R), ← AddMonoidAlgebra.single_mul_single, AugCot.d_mul, hε, hε]
-    simp [add_comm]
-  let D (i : κ) : AddMonoidAlgebra R X →ₗ[R] R :=
-    (AddMonoidAlgebra.basis X R).constr R fun x => (b.repr x i : R)
-  have hD (i : κ) (x : X) : D i (single x 1) = b.repr x i := Module.Basis.constr_basis _ _ _ x
-  have hmul (i : κ) (x y : AddMonoidAlgebra R X) : D i (x * y) = ε x • D i y + ε y • D i x := by
-    have : (LinearMap.mul R _).compr₂ (D i) = (LinearMap.lsmul R R).compl₁₂ ε.toLinearMap (D i) +
-        ((LinearMap.lsmul R R).compl₁₂ ε.toLinearMap (D i)).flip :=
-      (AddMonoidAlgebra.basis X R).ext fun x => (AddMonoidAlgebra.basis X R).ext fun y => by
-        simp [AddMonoidAlgebra.single_mul_single, hD, hε, add_comm]
-    exact congr($this x y)
-  refine ⟨.mk (v := fun i => δ (b i)) (LinearIndependent.of_pairwise_dual_eq_zero_one _
-    (fun i => AugCot.lift ε (D i) (hmul i)) (fun i j h => ?_) fun i => ?_) fun w _ => ?_,
-    fun i => Module.Basis.mk_apply _ _ i⟩
-  · simp [δ, hD, h.symm]
-  · simp [δ, hD]
-  · obtain ⟨a, rfl⟩ := AugCot.d_surjective ε w
-    rw [← (AddMonoidAlgebra.basis X R).linearCombination_repr a, Finsupp.linearCombination_apply,
-      map_finsuppSum]
-    refine Submodule.sum_mem _ fun x _ => ?_
-    beta_reduce
-    rw [map_smul]
-    refine Submodule.smul_mem _ _ ?_
-    change δ x ∈ _
-
-    rw [← b.sum_repr x, map_sum]
-    exact Submodule.sum_mem _ fun i _ => by
-      rw [map_zsmul]
-      exact zsmul_mem (Submodule.subset_span (Set.mem_range_self i)) _
-
-theorem isFrame_dlogChar : IsFrame fun i => dlogChar S X (b i) := by
-  obtain ⟨c, hc⟩ := exists_basis_augCot b ZU
-  have : IsAffineHom (splitTorusAff ZU X).hom := inferInstanceAs (IsAffineHom (Spec.map _))
-  have h₁ : unitSec (splitTorusAff ZU X) = Spec.map (CommRingCat.ofHom
-      (Bialgebra.counitAlgHom ZU (torusRing ZU X)).toRingHom) :=
-    one_spec_asOver_spec_left (R := ZU) (A := torusRing ZU X)
-  have h₀ := isFrame_d_Spec (R := ZU) (A := torusRing ZU X) _ (sec_hom η[splitTorusAff ZU X]) rfl
-    h₁ c _ hc
-  have h : IsGrpPullback (splitTorus S X) _ _ _ := isGrpPullback_pullback (splitTorusAff ZU X) (toZ S)
-  have e (i : κ) := (omegaBase_dUnit h (le_preimage_top _ ⊤) (le_refl _) (le_preimage_top _ _)
-    (le_preimage_top _ _) ((Scheme.ΓSpecIso (torusRing ZU X)).inv (single (b i) 1))).trans
-    (congrArg (dUnit _ _) ((appLE_top _ _).trans (SplitTorus.chi_eq X (b i)).symm))
-  have := isIso_omegaBase h
-  have := (IsFrame.pullback (F := omega (splitTorusAff ZU X)) h₀ (toZ S)).map_iso (omegaBase h)
-  exact (funext e) ▸ this
-
-theorem isFrame_Gm : IsFrame fun _ : Fin 1 => dlogChar S (ULift ℤ) (ULift.up 1) := by
-  convert isFrame_dlogChar S ((Module.Basis.singleton (Fin 1) ℤ).map ULift.moduleEquiv.symm)
-    using 3 with i
-  simp
-
-theorem isVB_Gm : IsSemiAbelian (Gm S) ∧ IsVB (omega (Gm S)) 1 ∧ IsVB (Lie (Gm S)) 1 :=
-  ⟨inferInstance, (isFrame_Gm S).isVB, (isFrame_Gm S).isVB.dual⟩
-
 end Torus
-
-section Examples
-
-variable {G : Over S} [GrpObj G] [QuasiSeparated G.hom]
-
-theorem actsThrough_omegaAct_int (i : OAct ℤ G) : ActsThrough (omegaAct i) (Int.castRingHom _) :=
-  fun a => congr(($(RingHom.ext_int (omegaAct i) (scalarAct _ (Int.castRingHom _))) a).asHom)
-
-theorem actsThrough_lieAct_int (i : OAct ℤ G) : ActsThrough (lieAct i) (Int.castRingHom _) :=
-  (actsThrough_omegaAct_int i).dual
-
-end Examples
 
 end GlobalTheory.LieVB
 end -- clump:auto

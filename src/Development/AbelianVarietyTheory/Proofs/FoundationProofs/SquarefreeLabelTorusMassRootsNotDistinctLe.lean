@@ -729,7 +729,7 @@ private theorem pair_ratio_le_of_not_bb {g : ℕ} [Fact g.Prime] (hg : 2 ^ 12 �
         (((g ^ d - 1 : ℕ) : ℝ) * ((g ^ e - 1 : ℕ) : ℝ)) ≤
       (4096 / 4095) ^ 2 * (1 / (g : ℝ) ^ ((1 : ℝ) / 4)) ^ (d + e) := by
   rw [_root_.GlobalTheory.BadShare.bb_iff] at hexc
-  push_neg at hexc
+  push Not at hexc
   obtain ⟨-, hexc⟩ := hexc
   have hPd : (l ^ padicValNat l (g ^ d - 1)) ^ 4 ≤ g ^ d := by
     rw [← pow_mul, mul_comm]
@@ -842,7 +842,7 @@ theorem _root_.GlobalTheory.BadShare.mass_not_rootsApart_le : ∀ (g : ℕ) [Fac
       obtain ⟨hmon, hdeg, -, hc⟩ := hf
       have hf0 : f ≠ 0 := hmon.ne_zero
       unfold _root_.GlobalTheory.BadShare.RootsApart at hnot
-      push_neg at hnot
+      push Not at hnot
       obtain ⟨l, hl, hexc, x, hx, y, hy, hsame, hxy⟩ := hnot
       have hix : IsIntegral (ZMod g) x := Algebra.IsIntegral.isIntegral x
       have hiy : IsIntegral (ZMod g) y := Algebra.IsIntegral.isIntegral y

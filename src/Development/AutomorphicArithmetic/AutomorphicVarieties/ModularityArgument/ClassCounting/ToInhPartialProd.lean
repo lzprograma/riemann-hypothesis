@@ -236,11 +236,11 @@ theorem prism_toInh (k : G) (n : ℕ) (y : Ch A G (n + 1)) :
   funext j
   have h1 : ∀ (q : Fin (n + 2)) (r : Fin (n + 1)), (q : ℕ) ≤ i → (r : ℕ) = q → pv (· * k) i x q = x r := by
     intro q r h hr
-    rw [pv, if_pos h, Fin.predAbove_of_le_castSucc _ _ h]
+    rw [pv, ite_eq_left h, Fin.predAbove_of_le_castSucc _ _ h]
     exact congrArg x (Fin.ext hr.symm)
   have h2 : ∀ (q : Fin (n + 2)) (r : Fin (n + 1)), (i : ℕ) < q → (r : ℕ) + 1 = q → pv (· * k) i x q = x r * k := by
     intro q r h hr
-    rw [pv, if_neg (not_le.mpr h), Fin.predAbove_of_castSucc_lt _ _ h]
+    rw [pv, ite_eq_right (not_le.mpr h), Fin.predAbove_of_castSucc_lt _ _ h]
     exact congrArg (fun t => x t * k) (Fin.ext (by simp; omega))
   refine Fin.succAboveCases i ?_ (fun j => ?_) j
   · rw [Fin.insertNth_apply_same, h1 _ i (by simp) (by simp), h2 _ i (by simp) (by simp)]

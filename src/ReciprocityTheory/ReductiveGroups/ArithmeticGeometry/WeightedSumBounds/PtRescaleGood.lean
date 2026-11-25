@@ -41,8 +41,7 @@ private theorem pc_lemma_9 {σ τ : Type*} {a : σ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) {m : σ →₀ ℕ} (hm : m ≠ 0) :
     constantCoeff (m.prod fun s n => a s ^ n) = 0 := by
   obtain ⟨s, hs⟩ : ∃ s, m s ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hm (Finsupp.ext hc)
   unfold Finsupp.prod
   rw [map_prod]
@@ -132,8 +131,8 @@ theorem ptAdd_lin (G : LogFGL v d) {τ : Type*} {x y : Fin d → MvPowerSeries �
   show coeff (Finsupp.single t 1) (subst (Sum.elim x y) (G.F a)) = _
   rw [pt_coeff_single_subst hs h0 (G.F_const a) t, Fintype.sum_sum_type]
   simp only [pt_F_lin, Sum.elim_inl, Sum.elim_inr, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq,
-    if_false, add_zero, zero_add, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    ite_false, add_zero, zero_add, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
+    Finset.mem_univ, ite_true]
 
 theorem ptSumL_const (G : LogFGL v d) {τ : Type*} :
     ∀ l : List (Fin d → MvPowerSeries τ C), (∀ x ∈ l, ∀ a, constantCoeff (x a) = 0) →
@@ -160,19 +159,6 @@ theorem ptSumL_lg (G : LogFGL v d) {τ : Type*} :
     intro h b
     have hl : ∀ x' ∈ l, ∀ a, constantCoeff (x' a) = 0 := fun x' hx' => h x' (by simp [hx'])
     rw [ptSumL, ptAdd_lg G (h x (by simp)) (ptSumL_const G l hl), ih hl b,
-      List.map_cons, List.sum_cons]
-
-theorem ptSumL_lin (G : LogFGL v d) {τ : Type*} :
-    ∀ l : List (Fin d → MvPowerSeries τ C), (∀ x ∈ l, ∀ a, constantCoeff (x a) = 0) →
-      ∀ a t, coeff (Finsupp.single t 1) (ptSumL G l a) =
-        (l.map fun x => coeff (Finsupp.single t 1) (x a)).sum := by
-  intro l
-  induction l with
-  | nil => simp [ptSumL]
-  | cons x l ih =>
-    intro h a t
-    have hl : ∀ x' ∈ l, ∀ a, constantCoeff (x' a) = 0 := fun x' hx' => h x' (by simp [hx'])
-    rw [ptSumL, ptAdd_lin G (h x (by simp)) (ptSumL_const G l hl), ih hl a t,
       List.map_cons, List.sum_cons]
 
 private theorem mu_lemma_16 {τ : Type*} {f f' g g' : MvPowerSeries τ C} (n : ℕ)
@@ -243,8 +229,7 @@ private theorem ag_lemma_15 {σ τ : Type*} [Finite σ] {x y : σ → MvPowerSer
   by_cases h0 : m = 0
   · rw [h0, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hr0, zero_smul, zero_smul]
   · obtain ⟨s, hs⟩ : ∃ s, m s ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact h0 (Finsupp.ext hc)
     have hle : Finsupp.single s 1 ≤ m :=
       Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr hs)

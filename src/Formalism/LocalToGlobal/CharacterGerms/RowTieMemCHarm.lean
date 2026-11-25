@@ -92,7 +92,7 @@ theorem isotropic_to_std_subst_degree : IsotropicToStdSubstLineDegree := by
       have hD : a (tau o0 t0) c0 = ∑ o, (if o = o0 then ∑ i : Fin (L o).length,
           ((∑ k ∈ Finset.Icc ((c0 : ℕ) + 1) ((X o).rkF 0 t0), (blkAt L o i).wt (X o) 0 t0 k) +
             ∑ k ∈ Finset.Icc ((c0 : ℕ) + 1) ((X o).rkF 1 (t0 + 1)), (blkAt L o i).wt (X o) 1 (t0 + 1) k) else 0) := by
-        rw [Finset.sum_ite_eq', if_pos (Finset.mem_univ _), hR0, hR1, H.tie.1 o0 t0 c0 c0.2]
+        rw [Finset.sum_ite_eq', ite_eq_left (Finset.mem_univ _), hR0, hR1, H.tie.1 o0 t0 c0 c0.2]
         simp only [← Finset.sum_add_distrib]
         rw [Finset.sum_comm]
         refine Finset.sum_congr rfl fun k _ => ?_
@@ -103,7 +103,7 @@ theorem isotropic_to_std_subst_degree : IsotropicToStdSubstLineDegree := by
       refine IsWeightedHomogeneous.prod _ _ _ fun o _ => ?_
       by_cases ho : o = o0
       · subst ho
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         unfold toAll
         apply isWH_rename
         unfold prodAll
@@ -115,20 +115,20 @@ theorem isotropic_to_std_subst_degree : IsotropicToStdSubstLineDegree := by
         rintro ⟨ρ, gg, tt, cc'⟩
         simp only [Function.comp_apply, keyEq, wRowG, true_and, H.hty]
         fin_cases gg <;> simp
-      · rw [if_neg ho]
+      · rw [ite_eq_right ho]
         unfold toAll
         apply isWH_rename
         refine isWH_of_zero (fun x => ?_) _
         obtain ⟨ρ, gg, tt, cc'⟩ := x
         simp only [Function.comp_apply, keyEq]
-        rw [if_neg]
+        rw [ite_eq_right]
         exact fun hh => ho hh.1
     · push Not at hσ
       rw [H.tie.2 σ hσ c0 c0.2]
       refine isWH_of_zero (fun x => ?_) _
       obtain ⟨ρ, o, g, t, c⟩ := x
       show (if (⟨tau o t, c⟩ : Σ σ, Fin (r σ)) = ⟨σ, c0⟩ then 1 else 0) = 0
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun hh => hσ o t (congrArg Sigma.fst hh)
 
 end Formalism.L2.FormalSeriesBounds.RF
@@ -211,7 +211,7 @@ theorem lap_plane (inj : Function.Injective fun x : Orb × ZMod 2 => tau x.1 x.2
   by_cases hg : g1 = g2
   · have hK : ∑ col, gm o t col g1 * gm o (t + 1) col g2 = 0 := by
       have h := gm_hyp o t g2 g1
-      rw [if_pos hg.symm] at h
+      rw [ite_eq_left hg.symm] at h
       rw [← h]
       exact Finset.sum_congr rfl fun q _ => mul_comm _ _
     rw [hK, map_zero, zero_mul]

@@ -23,7 +23,7 @@ theorem coeff_X_pow_mul_linear_pow {R : Type*} [CommRing R] (e c : R) (a b D : �
     Polynomial.natDegree_linear_le
   split_ifs with hD
   · subst hD
-    rw [Polynomial.coeff_X_pow_mul', if_pos (by omega), show a + b - a = b * 1 by omega,
+    rw [Polynomial.coeff_X_pow_mul', ite_eq_left (by omega), show a + b - a = b * 1 by omega,
       Polynomial.coeff_pow_of_natDegree_le hlin]
     simp
   · apply Polynomial.coeff_eq_zero_of_natDegree_lt
@@ -86,11 +86,11 @@ theorem algebraicIndependent_pair_linear {R A : Type*} [CommRing R] [CommRing A]
     have hc := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q (μ 1)) h0
     simp only [g, Polynomial.finsetSum_coeff, Polynomial.coeff_zero] at hc
     rw [Finset.sum_eq_single μ] at hc
-    · rw [if_pos hμD', Polynomial.coeff_C_mul_X_pow, if_pos rfl] at hc
+    · rw [ite_eq_left hμD', Polynomial.coeff_C_mul_X_pow, ite_eq_left rfl] at hc
       exact (MvPolynomial.mem_support_iff.mp hμ) hc
     · intro ν _ hνμ
       split_ifs with hν
-      · rw [Polynomial.coeff_C_mul_X_pow, if_neg]
+      · rw [Polynomial.coeff_C_mul_X_pow, ite_eq_right]
         intro h1
         apply hνμ
         ext i
@@ -161,8 +161,8 @@ theorem algebraicIndependent_rows (F E : Type) [Field F] [Field E] [Algebra F E]
         · have hl : (l : ℕ) ≠ i := fun h => ht (by rw [show l = il from Fin.ext h])
           simp only [g, Sum.elim_inr]
           rcases Nat.lt_or_ge l i with h | h
-          · rw [if_pos h, if_pos (by omega)]
-          · rw [if_neg (by omega), if_neg (by omega)]
+          · rw [ite_eq_left h, ite_eq_left (by omega)]
+          · rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       rw [AlgebraicIndependent.iff_transcendental_adjoin_image (Sum.inr il)]
       refine ⟨?_, ?_⟩
       · have h1 := ((AlgebraicIndependent.iff_transcendental_adjoin_image (Sum.inr il)).mp IH).1

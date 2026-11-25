@@ -473,8 +473,7 @@ variable {l : ℕ} [hl : Fact l.Prime]
 theorem dvd_pow_of_ne_zero {π b : OCb l} (hπ : IsHausdorff (Ideal.span {π}) (OCb l)) (hb : b ≠ 0) :
     ∃ n : ℕ, b ∣ π ^ n := by
   haveI := GlobalTheory.FrobInt.valuationRing_tilt l
-  by_contra h
-  push_neg at h
+  by_contra! h
   apply hb
   refine hπ.haus b fun n => ?_
   obtain ⟨c, hc⟩ : π ^ n ∣ b := by

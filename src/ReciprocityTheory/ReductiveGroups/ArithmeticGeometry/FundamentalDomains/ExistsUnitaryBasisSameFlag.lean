@@ -127,7 +127,7 @@ theorem expand {x : Frame X.Ψ r} (hx : x ∈ X.dom) (ho : X.IsOrtho x) (τ : X.
     intro a
     conv_lhs => rw [hc]
     rw [hermC_sum_smul_left']
-    simp only [ortho_h X ho τ, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [ortho_h X ho τ, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   conv_lhs => rw [hc]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [hcoef, ← mul_assoc, mul_comm _ (c a), mul_assoc, sgn_mul_self, mul_one]
@@ -178,7 +178,7 @@ private theorem sum_castLE_lemma {M : Type*} [AddCommMonoid M] (n p : ℕ) (hp :
       = 0 := Finset.sum_eq_zero fun j _ => by simp
   rw [h2, add_zero]
   refine Finset.sum_congr rfl fun i _ => ?_
-  simp only [Fin.coe_castAdd, i.isLt, if_true]
+  simp only [Fin.coe_castAdd, i.isLt, ite_true]
   rfl
 
 private theorem sum_fin_offset_eq {M : Type*} [AddCommMonoid M] (n p m : ℕ) (h : p + m = n)
@@ -191,7 +191,7 @@ private theorem sum_fin_offset_eq {M : Type*} [AddCommMonoid M] (n p m : ℕ) (h
       = 0 := Finset.sum_eq_zero fun i _ => by simp [i.isLt]
   rw [h1, zero_add]
   refine Finset.sum_congr rfl fun j _ => ?_
-  simp only [Fin.coe_natAdd, Nat.le_add_right, if_true]
+  simp only [Fin.coe_natAdd, Nat.le_add_right, ite_true]
   rfl
 
 private theorem sgn_eigen_perp_span_spec (n p : ℕ) (hp : p ≤ n) (d : Fin n → ℂ) (hd : d ≠ 0)
@@ -275,31 +275,31 @@ private theorem sgn_eigen_perp_span_spec (n p : ℕ) (hp : p ≤ n) (d : Fin n �
     rw [Fin.sum_univ_add]
     simp only [FL, FR]
     by_cases hk : (k : ℕ) < p - 1 <;> by_cases hl : (l : ℕ) < p - 1
-    · simp only [dif_pos hk, dif_pos hl, map_zero, mul_zero, Finset.sum_const_zero, add_zero]
+    · simp only [dite_eq_left hk, dite_eq_left hl, map_zero, mul_zero, Finset.sum_const_zero, add_zero]
       rw [gpO]
       by_cases hkl : k = l
       · subst hkl
         simp
-      · rw [if_neg hkl, if_neg]
+      · rw [ite_eq_right hkl, ite_eq_right]
         intro h
         have h' := congrArg Fin.val h
         exact hkl (Fin.ext h')
-    · simp only [dif_pos hk, dif_neg hl, map_zero, mul_zero, zero_mul, Finset.sum_const_zero,
+    · simp only [dite_eq_left hk, dite_eq_right hl, map_zero, mul_zero, zero_mul, Finset.sum_const_zero,
         add_zero]
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro rfl
       exact hl hk
-    · simp only [dif_neg hk, dif_pos hl, map_zero, mul_zero, zero_mul, Finset.sum_const_zero,
+    · simp only [dite_eq_right hk, dite_eq_left hl, map_zero, mul_zero, zero_mul, Finset.sum_const_zero,
         add_zero]
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro rfl
       exact hk hl
-    · simp only [dif_neg hk, dif_neg hl, map_zero, zero_mul, Finset.sum_const_zero, zero_add]
+    · simp only [dite_eq_right hk, dite_eq_right hl, map_zero, zero_mul, Finset.sum_const_zero, zero_add]
       rw [gqO]
       by_cases hkl : k = l
       · subst hkl
         simp
-      · rw [if_neg hkl, if_neg]
+      · rw [ite_eq_right hkl, ite_eq_right]
         intro h
         apply hkl
         apply Fin.ext
@@ -318,9 +318,9 @@ private theorem sgn_eigen_perp_span_spec (n p : ℕ) (hp : p ≤ n) (d : Fin n �
     rw [Fin.sum_univ_add]
     simp only [FL, FR]
     by_cases hk : (k : ℕ) < p - 1
-    · simp only [dif_pos hk, zero_mul, Finset.sum_const_zero, add_zero]
+    · simp only [dite_eq_left hk, zero_mul, Finset.sum_const_zero, add_zero]
       exact gpA ⟨k, hk⟩
-    · simp only [dif_neg hk, zero_mul, Finset.sum_const_zero, zero_add]
+    · simp only [dite_eq_right hk, zero_mul, Finset.sum_const_zero, zero_add]
       exact gqA _
   · intro c h1 h2
     rw [Fin.sum_univ_add] at h1 h2
@@ -338,7 +338,7 @@ private theorem sgn_eigen_perp_span_spec (n p : ℕ) (hp : p ≤ n) (d : Fin n �
         (∀ (k : Fin (p + q - 2)) (hk : ¬ (k : ℕ) < p - 1), μ k = μ2 ⟨k - (p - 1), by have := k.isLt; omega⟩) :=
       ⟨fun k => if hk : (k : ℕ) < p - 1 then μ1 ⟨k, hk⟩
           else μ2 ⟨k - (p - 1), by have := k.isLt; omega⟩,
-        fun k hk => dif_pos hk, fun k hk => dif_neg hk⟩
+        fun k hk => dite_eq_left hk, fun k hk => dite_eq_right hk⟩
     refine (Submodule.mem_span_range_iff_exists_fun ℂ).mpr ⟨μ, ?_⟩
     funext a
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
@@ -351,14 +351,14 @@ private theorem sgn_eigen_perp_span_spec (n p : ℕ) (hp : p ≤ n) (d : Fin n �
           = ∑ k : Fin (p + q - 2), if (k : ℕ) < p - 1 then μ k * F k (Fin.castAdd q i) else 0 := by
             refine Finset.sum_congr rfl fun k _ => ?_
             by_cases hk : (k : ℕ) < p - 1
-            · rw [if_pos hk]
-            · rw [if_neg hk, FL, dif_neg hk, mul_zero]
+            · rw [ite_eq_left hk]
+            · rw [ite_eq_right hk, FL, dite_eq_right hk, mul_zero]
         _ = ∑ k' : Fin (p - 1), μ (Fin.castLE hle k') * F (Fin.castLE hle k') (Fin.castAdd q i) :=
             (sum_castLE_lemma (p + q - 2) (p - 1) hle (fun k => μ k * F k (Fin.castAdd q i))).symm
         _ = ∑ k' : Fin (p - 1), μ1 k' * gp k' i := by
             refine Finset.sum_congr rfl fun k' _ => ?_
             have hk : ((Fin.castLE hle k' : Fin (p + q - 2)) : ℕ) < p - 1 := k'.isLt
-            rw [hμL _ hk, FL, dif_pos hk]
+            rw [hμL _ hk, FL, dite_eq_left hk]
             rfl
         _ = c (Fin.castAdd q i) := e1
     | right j =>
@@ -369,8 +369,8 @@ private theorem sgn_eigen_perp_span_spec (n p : ℕ) (hp : p ≤ n) (d : Fin n �
           = ∑ k : Fin (p + q - 2), if p - 1 ≤ (k : ℕ) then μ k * F k (Fin.natAdd p j) else 0 := by
             refine Finset.sum_congr rfl fun k _ => ?_
             by_cases hk : (k : ℕ) < p - 1
-            · rw [if_neg (by omega), FR, dif_pos hk, mul_zero]
-            · rw [if_pos (by omega)]
+            · rw [ite_eq_right (by omega), FR, dite_eq_left hk, mul_zero]
+            · rw [ite_eq_left (by omega)]
         _ = ∑ j' : Fin (q - 1), μ ⟨p - 1 + (j' : ℕ), by have := j'.isLt; omega⟩ *
               F ⟨p - 1 + (j' : ℕ), by have := j'.isLt; omega⟩ (Fin.natAdd p j) :=
             (sum_fin_offset_eq (p + q - 2) (p - 1) (q - 1) hpm
@@ -379,7 +379,7 @@ private theorem sgn_eigen_perp_span_spec (n p : ℕ) (hp : p ≤ n) (d : Fin n �
             refine Finset.sum_congr rfl fun j' _ => ?_
             have hk : ¬ (((⟨p - 1 + (j' : ℕ), by have := j'.isLt; omega⟩ : Fin (p + q - 2)) : ℕ)
                 < p - 1) := by simp
-            rw [hμR _ hk, FR, dif_neg hk]
+            rw [hμR _ hk, FR, dite_eq_right hk]
             simp
         _ = c (Fin.natAdd p j) := e2
 
@@ -477,7 +477,7 @@ theorem ubasis_at (ξ : Fin r → E) (z0 x0 : Frame X.Ψ r) (hξ0 : ξ ≠ 0) (h
           ring
       _ = ∑ k, c k * conj (c k) := by
           simp only [hO, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-            Finset.mem_univ, if_true]
+            Finset.mem_univ, ite_true]
       _ = ((∑ k, ‖c k‖ ^ 2 : ℝ) : ℂ) := by
           push_cast
           refine Finset.sum_congr rfl fun k _ => ?_
@@ -513,9 +513,9 @@ theorem ubasis_at (ξ : Fin r → E) (z0 x0 : Frame X.Ψ r) (hξ0 : ξ ≠ 0) (h
     congr 1
     have hSk := hS k a
     by_cases hk : (k : ℕ) < X.p0 - 1
-    · rw [if_pos hk] at hSk ⊢
+    · rw [ite_eq_left hk] at hSk ⊢
       linear_combination I * hSk
-    · rw [if_neg hk] at hSk ⊢
+    · rw [ite_eq_right hk] at hSk ⊢
       linear_combination I * hSk
   · intro k l
     rw [comb_comb X ho τ]

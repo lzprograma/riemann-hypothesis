@@ -11,8 +11,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Forms
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure Forms0 (D : D7) (u : D.what₂.Word) where
   atT : AtTTied u
 
@@ -66,8 +64,8 @@ def FormsTied.to0 {D : D7} {u : D.what₂.Word} (T : FormsTied D u) : Forms0 D u
   glev0 := by
     have h := T.glev 0 (Nat.zero_le _)
     have hm := D.R.two_le_m
-    have e1 : aOf D.R 0 = D.R.k := by unfold aOf; rw [if_pos (by omega)]; rfl
-    have e2 : skipOf D.R 0 = D.R.k := by unfold skipOf; rw [if_pos (by omega)]
+    have e1 : aOf D.R 0 = D.R.k := by unfold aOf; rw [ite_eq_left (by omega)]; rfl
+    have e2 : skipOf D.R 0 = D.R.k := by unfold skipOf; rw [ite_eq_left (by omega)]
     have e3 : fcOf D.R 0 = D.R.N 0 := fcOf_lt (by omega)
     have e4 : decide (0 = D.R.m) = false := decide_eq_false (by omega)
     rw [e1, e2, e3, e4] at h

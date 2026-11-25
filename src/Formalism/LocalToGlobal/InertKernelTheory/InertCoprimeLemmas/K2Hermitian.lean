@@ -159,7 +159,7 @@ theorem blockDiag_VOf [Algebra (Formalism.L2.G.Pend.K0 p) Kc] {D : D7} (fd : For
   intro x y h
   unfold VOf at h
   by_contra hne
-  exact h (if_neg fun hh => hne hh.1)
+  exact h (ite_eq_right fun hh => hne hh.1)
 
 theorem chain_core [Algebra (Formalism.L2.G.Pend.K0 p) Kc] (V : X.ZA j → X.ZA j → Kc) (hV : BlockDiag X Kc j V)
     (A : ∀ v : Fin (X.Pj j).nV, GL (Fin ((X.Pj j).m + 1)) ((X.Pj j).Qq v))
@@ -205,7 +205,7 @@ theorem subBG_diag {p : ℕ} [Fact p.Prime] {X : Sys p} {D : D7} (E : Formalism.
         Formalism.L2.PairingIndexBounds.F.twG X E w.1 w.2 (fd.frM (j + 1) La' w.1 b1 b2) *
           Formalism.L2.PairingIndexBounds.F.twG X E w.1 w.2 ((fd.frM j La w.1)⁻¹ a2 a1) := by
   unfold Formalism.L2.PairingIndexBounds.F.subBG
-  rw [if_pos rfl]
+  rw [ite_eq_left rfl]
   dsimp only
   generalize hw' : pos.symm (pos w) = w'
   obtain rfl : w' = w := by rw [← hw']; exact pos.symm_apply_apply w
@@ -225,9 +225,9 @@ theorem substitution_split : SubBSplit := by
           Formalism.L2.G.Pend.cf X ℂ_[p] j (BOf fd j La) v s a a' := by
         unfold Formalism.L2.G.Pend.LkB
         rw [Finset.sum_eq_single a']
-        · rw [if_pos rfl]
+        · rw [ite_eq_left rfl]
         · intro a'' _ hne
-          rw [if_neg]
+          rw [ite_eq_right]
           intro hh
           exact hne (congrArg (fun z : X.ZA j => z.2.2.1) hh).symm
         · intro hh
@@ -259,14 +259,14 @@ theorem substitution_split : SubBSplit := by
         by_contra hc
         apply hV
         unfold VOf
-        exact if_neg hc
+        exact ite_eq_right hc
       obtain ⟨h1, h2⟩ := hcond
       unfold Formalism.L2.G.Pend.LkB at hLk
       obtain ⟨a'', _, ha''⟩ := Finset.exists_ne_zero_of_sum_ne_zero hLk
       have hy : (⟨v, (s, a', b')⟩ : X.ZA j) = ⟨vz, (sz, a'', bz)⟩ := by
         by_contra hc
         apply ha''
-        exact if_neg hc
+        exact ite_eq_right hc
       cases h1
       have hb : b' = bz := congrArg (fun z : X.ZA j => z.2.2.2) hy
       subst hb
@@ -277,7 +277,7 @@ theorem substitution_split : SubBSplit := by
       intro hh
       exact h (pos.injective hh).symm
     unfold Formalism.L2.PairingIndexBounds.F.subBG
-    rw [if_neg hne, mul_zero]
+    rw [ite_eq_right hne, mul_zero]
     symm
     refine Finset.sum_eq_zero fun z _ => ?_
     by_contra hz

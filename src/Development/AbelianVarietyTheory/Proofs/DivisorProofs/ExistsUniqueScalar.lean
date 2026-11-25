@@ -53,8 +53,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.TorRef
 open scoped CategoryTheory.Obj
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 noncomputable section
 
 namespace GlobalTheory.Poinc.ThetaOne
@@ -110,8 +108,7 @@ theorem exists_theta [IsLocalRing V₁] (hV : IsCN V₁) (D : DegPre V₁) :
 
 theorem exists_ne_zero (D : DegPre V₁) {K : Type} [Field K] (f : V₁ →+* K) θ' (h : OneBasisAt D f θ') :
     ∃ j, θ'.f j ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   obtain ⟨r, -, hu⟩ := h θ'
   have h1 := hu (fun _ => 1) (fun j => by rw [Fin.sum_univ_one, map_one, map_one, _root_.one_mul])
   have h0 := hu (fun _ => 0) (fun j => by rw [Fin.sum_univ_one, map_zero, map_zero, MulZeroClass.zero_mul, hc j])

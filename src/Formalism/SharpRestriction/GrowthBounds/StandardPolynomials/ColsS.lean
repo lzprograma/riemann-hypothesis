@@ -7,45 +7,6 @@ public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.KGShif
 public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColDef
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftedColumnMultidegree
 public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MultidegAdd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
 
@@ -122,7 +83,7 @@ theorem PH.ka_le (h : PH vecc B ka nu) : ∀ (i : Fin (N + 1)) (b : Fin K), ka i
     · have h1 : ka j.succ b ≤ nu (j.val + 1) := h.C j hv b
       have h2 : nu (j.val + 1) ≤ nu (j.val + 1 + 1) := h.numono _
       exact h1.trans h2
-    · rw [if_neg hv] at hs
+    · rw [ite_eq_right hv] at hs
       have h1 : ka j.succ b ≤ ka j.castSucc b := hs.1 b
       have h2 : ka j.castSucc b ≤ nu (j.val + 1) := ih b
       have h3 : nu (j.val + 1) ≤ nu (j.val + 1 + 1) := h.numono _
@@ -139,50 +100,13 @@ theorem PH.pos_le (h : PH vecc B ka nu) (i : Fin (N + 1)) {c : ℤ} (hc : 1 ≤ 
 
 private theorem colH_le_le_add_one_of_HStrip {n : ℕ} {a b : Fin n → ℤ} {m : ℕ} (hs : HStrip a b m) (c : ℤ) :
     colH a c ≤ colH b c ∧ colH b c ≤ colH a c + 1 := by
-  obtain ⟨h1, h2, -⟩ := hs
-  unfold colH
-  constructor
-  · exact Finset.card_le_card fun x hx => by
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-      exact hx.trans (h1 x)
-  · have hsplit : (Finset.univ.filter fun x : Fin n => c ≤ b x) ⊆
-        (Finset.univ.filter fun x : Fin n => x.val = 0) ∪
-          (Finset.univ.filter fun x : Fin n => 0 < x.val ∧ c ≤ b x) := by
-      intro x hx
-      simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-      by_cases hx0 : x.val = 0
-      · exact Or.inl hx0
-      · exact Or.inr ⟨Nat.pos_of_ne_zero hx0, hx⟩
-    have hz : (Finset.univ.filter fun x : Fin n => x.val = 0).card ≤ 1 := by
-      rw [Finset.card_le_one]
-      intro x hx y hy
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx hy
-      exact Fin.ext (hx.trans hy.symm)
-    have hinj : (Finset.univ.filter fun x : Fin n => 0 < x.val ∧ c ≤ b x).card ≤
-        (Finset.univ.filter fun x : Fin n => c ≤ a x).card := by
-      refine Finset.card_le_card_of_injOn
-        (fun x => ⟨x.val - 1, lt_of_le_of_lt (Nat.sub_le _ _) x.isLt⟩) ?_ ?_
-      · intro x hx
-        simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-        have hlt : x.val - 1 + 1 < n := by have := x.isLt; omega
-        have hb := h2 ⟨x.val - 1, lt_of_le_of_lt (Nat.sub_le _ _) x.isLt⟩ hlt
-        have e : (⟨x.val - 1 + 1, hlt⟩ : Fin n) = x := Fin.ext (by simp only; omega)
-        rw [e] at hb
-        exact hx.2.trans hb
-      · intro x hx y hy hxy
-        simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hx hy
-        have := congrArg Fin.val hxy
-        simp only at this
-        exact Fin.ext (by omega)
-    calc _ ≤ _ := Finset.card_le_card hsplit
-      _ ≤ _ := Finset.card_union_le _ _
-      _ ≤ _ := by omega
+  apply _root_.Formalism.MainNotions.LemmaBAlt.colH_strip <;> assumption
 
 theorem PH.stepV (h : PH vecc B ka nu) (i : Fin N) (hv : vecc i = true) (c : ℤ) :
     colH (ka i.castSucc) c ≤ colH (ka i.succ) c ∧ colH (ka i.succ) c ≤ colH (ka i.castSucc) c + 1 ∧
       (colH (ka i.castSucc) c < colH (ka i.succ) c → c ≤ nu (i.val + 1)) := by
   have hs := h.kastep i
-  rw [if_pos hv] at hs
+  rw [ite_eq_left hv] at hs
   obtain ⟨s1, s2⟩ := colH_le_le_add_one_of_HStrip hs c
   refine ⟨s1, s2, fun hlt => ?_⟩
   obtain ⟨b, hb⟩ := pos_of_colH (c := c) (mu := ka i.succ) (by omega)
@@ -191,13 +115,13 @@ theorem PH.stepV (h : PH vecc B ka nu) (i : Fin N) (hv : vecc i = true) (c : ℤ
 theorem PH.stepC (h : PH vecc B ka nu) (i : Fin N) (hv : vecc i = false) (c : ℤ) :
     colH (ka i.succ) c ≤ colH (ka i.castSucc) c ∧ colH (ka i.castSucc) c ≤ colH (ka i.succ) c + 1 := by
   have hs := h.kastep i
-  rw [if_neg (by simp [hv])] at hs
+  rw [ite_eq_right (by simp [hv])] at hs
   exact colH_le_le_add_one_of_HStrip hs c
 
 theorem PH.dualLow (h : PH vecc B ka nu) {c : ℤ} (hc : c ≤ 0) : ∀ i : Fin (N + 1), K ≤ colH (ka i) c + i.val := by
   intro i
   induction i using Fin.induction with
-  | zero => rw [h.ka0, colH_zero, if_pos hc]; simp
+  | zero => rw [h.ka0, colH_zero, ite_eq_left hc]; simp
   | succ i ih =>
     simp only [Fin.val_succ, Fin.val_castSucc] at ih ⊢
     by_cases hv : vecc i = true
@@ -206,7 +130,6 @@ theorem PH.dualLow (h : PH vecc B ka nu) {c : ℤ} (hc : c ≤ 0) : ∀ i : Fin 
 
 theorem PH.dual1 (h : PH vecc B ka nu) {c : ℤ} (hc : c ≤ 0) (i : Fin (N + 1)) : 1 ≤ colH (ka i) c := by
   have h1 := h.dualLow hc i
-  have h2 := i.isLt
   have h3 := h.hK
   omega
 
@@ -259,13 +182,6 @@ theorem PH.costly_succ (h : PH vecc B ka nu) (i : Fin N) (c : ℤ) :
       · have := p1 hx
         split_ifs <;> omega
       · split_ifs <;> omega
-
-theorem PH.oc_eq (h : PH vecc B ka nu) (om : Fin (N + 1) → ℕ) (c : ℤ) :
-    oc om (muP nu ka) c = ∑ i : Fin N, if colH (ka i.castSucc) c < colH (ka i.succ) c then om i.succ else 0 := by
-  classical
-  unfold oc
-  rw [Fin.sum_univ_succ, if_neg (h.not_costly_zero c), zero_add]
-  exact Finset.sum_congr rfl fun i _ => if_congr (h.costly_succ i c) rfl rfl
 
 theorem PH.dom (h : PH vecc B ka nu) (t : Fin (N + 1 + 1)) : Dominant (muP nu ka t) := by
   have hv : Antitone (kaS ka t) := by
@@ -327,7 +243,6 @@ private theorem colH_muP_succ_ne_castSucc_iff_vec (h : PH vecc B ka nu) (LL : Li
   | succ k =>
     obtain ⟨e1, e2⟩ := PH.heights (ka := ka) (nu := nu) k c
     have hm : nu (k.val + 1) ≤ nu (k.val + 2) := h.numono _
-    have p1 : 1 ≤ colH (ka k.castSucc) c → c ≤ nu (k.val + 1) := fun hc => h.pos_le k.castSucc hc
     rw [e1, e2, hvs]
     cases hv : vecc k
     · have hc := h.nucov k hv

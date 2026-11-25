@@ -18,57 +18,8 @@ public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteLengthOfProducts
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalAlgebraHolds
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitDictionaryHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.Topology.Order.Hom.Esakia
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
 import GroundTheory.LocalFields.PadicLogSeries
 
@@ -329,11 +280,10 @@ theorem isHk_cosetFn {K L : Subgroup (GL ι F)} [Fintype (K ⧸ L.subgroupOf K)]
     refine HasCompactSupport.of_support_subset_isCompact hC fun x hx => ?_
     obtain ⟨q, hq⟩ : ∃ q : K ⧸ L.subgroupOf K,
         (QuotientGroup.mk x : GL ι F ⧸ K) = QuotientGroup.mk (((q.out : K) : GL ι F) * g) := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       refine (Function.mem_support.1 hx) ?_
       unfold cosetFn
-      exact Finset.sum_eq_zero fun q _ => if_neg (h q)
+      exact Finset.sum_eq_zero fun q _ => ite_eq_right (h q)
     refine Set.mem_iUnion.2 ⟨q, _, QuotientGroup.eq.1 hq.symm, ?_⟩
     group
   · rw [cosetFn_right K L g _ h₂, cosetFn_left K L g hL _ h₁]
@@ -361,12 +311,12 @@ theorem hk_cosetFn {K L : Subgroup (GL ι F)} [Fintype (K ⧸ L.subgroupOf K)] (
     rw [finsum_eq_single _ (QuotientGroup.mk (((q.out : K) : GL ι F) * g))]
     · simp [map_mul]
     · intro p hp
-      exact if_neg hp
+      exact ite_eq_right hp
   · intro q _
     refine (Set.finite_singleton (QuotientGroup.mk (((q.out : K) : GL ι F) * g) : GL ι F ⧸ K)).subset ?_
     intro p hp
     by_contra h
-    exact (Function.mem_support.1 hp) (if_neg h)
+    exact (Function.mem_support.1 hp) (ite_eq_right h)
 
 theorem exists_open_sub {K : Subgroup (GL ι F)} (hKo : IsOpen (K : Set (GL ι F))) (s : Finset (GL ι F)) :
     ∃ L : Subgroup (GL ι F), IsOpen (L : Set (GL ι F)) ∧ L ≤ K ∧ ∀ g ∈ s, ∀ l ∈ L, g⁻¹ * l * g ∈ K := by
@@ -580,8 +530,8 @@ theorem isHk_unitFn {K : Subgroup (GL ι F)} (hKo : IsOpen (K : Set (GL ι F)))
       rw [Subgroup.mul_mem_cancel_right K hk₂, Subgroup.mul_mem_cancel_left K hk₁]
     unfold unitFn
     by_cases h : g ∈ K
-    · rw [if_pos h, if_pos (this.2 h)]
-    · rw [if_neg h, if_neg fun h' => h (this.1 h')]
+    · rw [ite_eq_left h, ite_eq_left (this.2 h)]
+    · rw [ite_eq_right h, ite_eq_right fun h' => h (this.1 h')]
 
 theorem hk_unitFn {K : Subgroup (GL ι F)} {V : Type} [AddCommGroup V] [Module ℂ V]
     (ρ : Representation ℂ (GL ι F) V) {v : V} (hv : v ∈ fixed ρ K) : hk ρ K (unitFn K) v = v := by
@@ -620,16 +570,16 @@ theorem unitFn_mul_right {K : Subgroup (GL ι F)} (y : GL ι F) {k : GL ι F} (h
   have : y * k ∈ K ↔ y ∈ K := Subgroup.mul_mem_cancel_right K hk'
   unfold unitFn
   by_cases h : y ∈ K
-  · rw [if_pos h, if_pos (this.2 h)]
-  · rw [if_neg h, if_neg fun h' => h (this.1 h')]
+  · rw [ite_eq_left h, ite_eq_left (this.2 h)]
+  · rw [ite_eq_right h, ite_eq_right fun h' => h (this.1 h')]
 
 theorem unitFn_mul_left {K : Subgroup (GL ι F)} (y : GL ι F) {k : GL ι F} (hk' : k ∈ K) :
     unitFn K (k * y) = unitFn K y := by
   have : k * y ∈ K ↔ y ∈ K := Subgroup.mul_mem_cancel_left K hk'
   unfold unitFn
   by_cases h : y ∈ K
-  · rw [if_pos h, if_pos (this.2 h)]
-  · rw [if_neg h, if_neg fun h' => h (this.1 h')]
+  · rw [ite_eq_left h, ite_eq_left (this.2 h)]
+  · rw [ite_eq_right h, ite_eq_right fun h' => h (this.1 h')]
 
 theorem exists_hk_avg {K : Subgroup (GL ι F)} (hKo : IsOpen (K : Set (GL ι F)))
     (hKc : IsCompact (K : Set (GL ι F))) (L : Subgroup K) [Fintype (K ⧸ L)] (g : GL ι F)
@@ -708,7 +658,7 @@ theorem exists_hk_avg {K : Subgroup (GL ι F)} (hKo : IsOpen (K : Set (GL ι F))
   · intro p _ hp
     have h1 : unitFn K ((a q)⁻¹ * p.out) = 0 := by
       unfold unitFn
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       refine hp ?_
       rw [← QuotientGroup.out_eq' p]
@@ -936,7 +886,7 @@ theorem isolateAt : ∀ (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace 
   obtain ⟨l, hl⟩ : ∃ l : V →ₗ[ℂ] ℂ, l v₀ = 1 := by
     have h : ¬ ∀ f : Module.Dual ℂ V, f v₀ = 0 := fun h =>
       hv₀0 ((Module.forall_dual_apply_eq_zero_iff ℂ v₀).1 h)
-    push_neg at h
+    push Not at h
     obtain ⟨f, hf⟩ := h
     exact ⟨(f v₀)⁻¹ • f, by simp [hf]⟩
   let P : Module.End ℂ (fixed π K) :=
@@ -1005,8 +955,6 @@ open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions 
 open PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcB.F.RS PositivityTheory.Rg.BcN.F2 PositivityTheory.Rg.BcB.F.Tail
 open scoped Classical TensorProduct
 
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F.Choice
 
@@ -1085,8 +1033,6 @@ open scoped Classical
 
 
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private theorem hk_const_mul {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
     {ι : Type} [Fintype ι] [DecidableEq ι] {V : Type} [AddCommGroup V] [Module ℂ V]
     (ρ : Representation ℂ (GL ι F) V) (K : Subgroup (GL ι F)) (c : ℂ) (e : GL ι F → ℂ) (v : V) :
@@ -1098,7 +1044,7 @@ private theorem hk_const_mul {F : Type} [Field F] [ValuativeRel F] [TopologicalS
 theorem UpperTheory.HeckeLevelFrameExistence.locE :
     UpperTheory.HeckeLevelFrameExistence.LocE := by
   intro E _ _ _ n w hw K' hKo hKle hlev σ hσ k D
-  have hUL : UL n w = ⊤ := by unfold UL; rw [if_pos hw]
+  have hUL : UL n w = ⊤ := by unfold UL; rw [ite_eq_left hw]
   have hmap : (K'.subgroupOf (UL n w)).map (UL n w).subtype = K' := by
     rw [Subgroup.subgroupOf_map_subtype, hUL, inf_top_eq]
   have hKc : IsCompact (K' : Set (GLw n w)) :=

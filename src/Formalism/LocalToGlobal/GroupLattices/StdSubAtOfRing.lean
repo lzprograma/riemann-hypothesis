@@ -103,7 +103,7 @@ def ExtOf.map (X : ExtOf Os Ks O Kf) (eO : O ≃+* O') (eK : Kf ≃+* Kf')
   frac := hfrac
   complete := hcomp
 
-attribute [local instance] Formalism.BasicNotions.factResChar Formalism.BasicNotions.Host.cmStar
+attribute [local instance] Formalism.BasicNotions.factResChar
 
 def RingCompatibleAt (D : D7) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) (v : Fin (D.gat u w hg).P.nV) : Prop :=

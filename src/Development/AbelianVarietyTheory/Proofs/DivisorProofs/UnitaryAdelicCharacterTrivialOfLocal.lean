@@ -51,7 +51,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.WeilParts
 open scoped TensorProduct Kronecker ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocalGlobalChar
 
@@ -66,8 +65,8 @@ open Classical in
 def ind (S : Finset (HeightOneSpectrum (𝓞 F))) : Af F :=
   ⟨fun u => if u ∈ S then 1 else 0, Eventually.of_forall fun u => by
     by_cases h : u ∈ S
-    · simp only [h, if_true]; exact one_mem _
-    · simp only [h, if_false]; exact zero_mem _⟩
+    · simp only [h, ite_true]; exact one_mem _
+    · simp only [h, ite_false]; exact zero_mem _⟩
 
 open Classical in
 theorem ev_ind (S : Finset (HeightOneSpectrum (𝓞 F))) (u : HeightOneSpectrum (𝓞 F)) :
@@ -85,8 +84,8 @@ theorem tendsto_ind_mul (α : Af F) :
       (fun u => (u.adicCompletionIntegers F : Set (u.adicCompletion F))) (𝓟 T) :=
     fun S => ⟨fun u => if u ∈ S then α u else 0, fun u hu => by
       by_cases h : u ∈ S
-      · simp only [Set.mem_setOf_eq, h, if_true]; exact hu
-      · simp only [Set.mem_setOf_eq, h, if_false]; exact zero_mem _⟩
+      · simp only [Set.mem_setOf_eq, h, ite_true]; exact hu
+      · simp only [Set.mem_setOf_eq, h, ite_false]; exact zero_mem _⟩
   let a : RestrictedProduct
       (fun u : HeightOneSpectrum (𝓞 F) => u.adicCompletion F)
       (fun u => (u.adicCompletionIntegers F : Set (u.adicCompletion F))) (𝓟 T) := ⟨fun u => α u, fun u hu => hu⟩
@@ -95,7 +94,7 @@ theorem tendsto_ind_mul (α : Af F) :
     intro u
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [eventually_ge_atTop ({u} : Finset _)] with S hS
-    exact (if_pos (hS (Finset.mem_singleton_self u))).symm
+    exact (ite_eq_left (hS (Finset.mem_singleton_self u))).symm
   have h2 := ((RestrictedProduct.continuous_inclusion hT).tendsto a).comp hf
   refine Tendsto.congr (fun S => fin_ext fun u => ?_) h2
   rw [map_mul, ev_ind]
@@ -137,8 +136,8 @@ theorem eps_cons (S : Finset (HeightOneSpectrum (𝓞 F))) (v : HeightOneSpectru
     · subst h; simp [hv]
     · have hm : u ∈ S.cons v hv ↔ u ∈ S := by rw [Finset.mem_cons]; exact or_iff_right h
       by_cases h' : u ∈ S
-      · rw [if_pos (hm.2 h'), if_pos h', if_neg (by simpa using h)]; simp
-      · rw [if_neg (fun x => h' (hm.1 x)), if_neg h', zero_mul]
+      · rw [ite_eq_left (hm.2 h'), ite_eq_left h', ite_eq_right (by simpa using h)]; simp
+      · rw [ite_eq_right (fun x => h' (hm.1 x)), ite_eq_right h', zero_mul]
 
 variable {E : Type} [Field E] [Algebra F E]
 
@@ -186,7 +185,7 @@ theorem mem_GinfC (V : HSp D) {g : GA D V} (hg : SuppPl (eps ∅) V g) : g ∈ G
   refine Units.ext (Matrix.ext fun i j => ?_)
   have hf : finPart D (algebraMap (AF D.host.F) (Formalism.L2.Theta.AE D) (eps ∅)) = 0 := by
     have h0 : ind (∅ : Finset (HeightOneSpectrum (𝓞 D.host.F))) = 0 := fin_ext fun u => by
-      rw [ev_ind, map_zero, if_neg (Finset.notMem_empty u)]
+      rw [ev_ind, map_zero, ite_eq_right (Finset.notMem_empty u)]
     change ind ∅ ⊗ₜ[D.host.F] (1 : D.host.E) = 0
     rw [h0, TensorProduct.zero_tmul]
   have h := congrArg (finPart D) (hg i j)
@@ -198,8 +197,8 @@ theorem mem_GinfC (V : HSp D) {g : GA D V} (hg : SuppPl (eps ∅) V g) : g ∈ G
   · exact map_zero _
 
 theorem isPlaceIdem (v : HeightOneSpectrum (𝓞 D.host.F)) : IsPlaceIdem D v (pairA D.host.F 0 (ind {v})) :=
-  ⟨ind {v}, rfl, by rw [ev_ind, if_pos (Finset.mem_singleton_self v)],
-    fun w hw => by rw [ev_ind, if_neg (by simpa using hw)]⟩
+  ⟨ind {v}, rfl, by rw [ev_ind, ite_eq_left (Finset.mem_singleton_self v)],
+    fun w hw => by rw [ev_ind, ite_eq_right (by simpa using hw)]⟩
 
 theorem alg_idem {a : AF D.host.F} (h : a * a = a) :
     algebraMap (AF D.host.F) (Formalism.L2.Theta.AE D) a * algebraMap (AF D.host.F) (Formalism.L2.Theta.AE D) a =

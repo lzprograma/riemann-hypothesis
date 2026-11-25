@@ -94,7 +94,6 @@ private theorem posFd {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measu
   rw [integral_pos_iff_support_of_nonneg h0 (intg _ hc hb), pos_iff_ne_zero]
   intro h
   rw [Measure.restrict_apply hc.isOpen_support.measurableSet] at h
-  set_option synthInstance.maxHeartbeats 200000 in
   have := (isFundamentalDomain_fundamentalDomain (Gam K n) μ).measure_zero_of_invariant _ (by
     intro γ
     ext z
@@ -134,7 +133,6 @@ private theorem core {K : Type} [Field K] [NumberField K] (μ₂ : Measure (G1 K
     ∃ C : ℝ, ∀ x y, ‖∫ m₁, ∫ m₂, conj (f (a (m₁, m₂) * x)) * f' (b (m₁, m₂) * y) ∂fd μ₂ ∂fd μ₂‖ ≤ C := by
   haveI := finFd μ₂
   obtain ⟨C, hC⟩ := bdd2 hf hf'
-  set_option synthInstance.maxHeartbeats 200000 in
   exact core0 (fd μ₂) hf.cont hf'.cont hC ha hb
 
 private theorem lin0 {M : Type} [MeasurableSpace M] (ν : Measure M) [IsFiniteMeasure ν] (a : ℂ) {u v w : M × M → ℂ}
@@ -165,7 +163,6 @@ private theorem pos2 {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measur
   have hb2 : ∀ m, ‖‖F m‖ ^ 2‖ ≤ C ^ 2 := fun m => by
     rw [norm_pow, norm_norm]
     exact pow_le_pow_left₀ (norm_nonneg _) (hC _) 2
-  set_option synthInstance.maxHeartbeats 200000 in
   have hin := contInt (fd μ) hc2 hb2
   refine posFd μ hin.1 hin.2 (fun z => integral_nonneg fun _ => sq_nonneg _) (fun γ z => ?_) (z₀ := m₁) (ne_of_gt ?_)
   · refine integral_congr_ae (ae_of_all _ fun b => ?_)

@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.TransvectionMulApply
 public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.WeylComplementInDetCoeffSpan
 public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Mathlib.RingTheory.PiTensorProduct
@@ -381,7 +382,7 @@ theorem count_odd {n c : ℕ} (μ : Fin n → ℕ) (hμ : Antitone μ) (hc : ∀
       omega
     rw [e, card_Ico_fin c _ _ (hc s')]
     unfold nuNext
-    rw [dif_pos hl, dif_pos (show s'.val + 1 < n by simp only [hs']; omega)]
+    rw [dite_eq_left hl, dite_eq_left (show s'.val + 1 < n by simp only [hs']; omega)]
     have r1 : (⟨s.val + 1, hl⟩ : Fin n).rev = s' := Fin.ext (by simp only [Fin.val_rev, hs']; omega)
     have r2 : s.rev = ⟨s'.val + 1, by simp only [hs']; omega⟩ := Fin.ext (by simp only [Fin.val_rev, hs']; omega)
     simp only [r1, r2]
@@ -409,7 +410,7 @@ theorem count_odd {n c : ℕ} (μ : Fin n → ℕ) (hμ : Antitone μ) (hc : ∀
         omega
     rw [e, card_Ico_fin c _ _ le_rfl]
     unfold nuNext
-    rw [dif_neg hl]
+    rw [dite_eq_right hl]
     have r2 : s.rev = ⟨0, by omega⟩ := Fin.ext (by simp only [Fin.val_rev]; omega)
     simp only [r2]
     omega
@@ -425,7 +426,7 @@ def lpF (R : Type) [CommRing R] (n s : ℕ) : MvPolynomial (Fin n × Fin n) R :=
 
 theorem lpF_zero : lpF R n 0 = 1 := by
   unfold lpF lpMinor
-  rw [dif_pos (Nat.zero_le n), Matrix.det_isEmpty]
+  rw [dite_eq_left (Nat.zero_le n), Matrix.det_isEmpty]
 
 theorem prod_lpF_eq_hw (ν : Fin n → ℕ) (c : ℕ) (g : Fin c → ℕ) (hg : ∀ k, g k ≤ n)
     (hcount : ∀ s : Fin n, (Finset.univ.filter fun k : Fin c => g k = s.val + 1).card = ν s - nuNext ν s) :
@@ -433,7 +434,7 @@ theorem prod_lpF_eq_hw (ν : Fin n → ℕ) (c : ℕ) (g : Fin c → ℕ) (hg : 
   rw [prod_fin_count g hg (lpF R n) lpF_zero]
   unfold hw
   refine Finset.prod_congr rfl fun s _ => ?_
-  rw [hcount s, lpF, dif_pos (show s.val + 1 ≤ n from s.isLt)]
+  rw [hcount s, lpF, dite_eq_left (show s.val + 1 ≤ n from s.isLt)]
 
 def ptE (R : Type) [CommRing R] (n : ℕ) : ℕ × Fin n → R := fun v => if v.1 = v.2.val then 1 else 0
 
@@ -447,7 +448,7 @@ theorem eval_detX (e : ℕ) :
     simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, gX, eval_X, ptE, Matrix.one_apply]
     by_cases h : a = i
     · subst h; simp
-    · rw [if_neg h, if_neg (fun h' => h (Fin.ext h'.symm)), map_zero]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (Fin.ext h'.symm)), map_zero]
   rw [this, Matrix.det_one, one_pow]
 
 theorem eval_hvE (c : ℕ) (h : Fin c → ℕ) (hh : ∀ k, h k ≤ n) :
@@ -456,7 +457,7 @@ theorem eval_hvE (c : ℕ) (h : Fin c → ℕ) (hh : ∀ k, h k ≤ n) :
   unfold hvE
   rw [map_prod]
   refine Finset.prod_congr rfl fun k _ => ?_
-  rw [RingHom.map_det, lpF, dif_pos (hh k)]
+  rw [RingHom.map_det, lpF, dite_eq_left (hh k)]
   unfold lpMinor
   congr 1
   ext i t
@@ -465,7 +466,7 @@ theorem eval_hvE (c : ℕ) (h : Fin c → ℕ) (hh : ∀ k, h k ≤ n) :
   rw [Finset.sum_eq_single (Fin.castLE (hh k) i)]
   · simp
   · intro b _ hb
-    rw [if_neg (fun h' => hb (Fin.ext (by simp [h']))), map_zero, zero_mul]
+    rw [ite_eq_right (fun h' => hb (Fin.ext (by simp [h']))), map_zero, zero_mul]
   · simp
 
 def psiE (R : Type) [CommRing R] (a b : Fin n) : ℕ × Fin n → MvPolynomial (ℕ × Fin n) (Polynomial R) :=
@@ -502,7 +503,7 @@ theorem entry_even (a b : Fin n) (i : ℕ) (t : Fin n) :
     · subst h; rw [map_mul, map_C, map_X, Polynomial.coe_mapRingHom, Polynomial.map_X, add_mul]
     · rw [map_zero, add_zero, add_zero]
   rw [Finset.sum_congr rfl fun a' _ => hL a', Finset.sum_congr rfl fun a' _ => hR a', Finset.sum_add_distrib,
-    Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq', if_pos (Finset.mem_univ _), if_pos (Finset.mem_univ _),
+    Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq', ite_eq_left (Finset.mem_univ _), ite_eq_left (Finset.mem_univ _),
     C_mul]
   ring
 
@@ -525,9 +526,9 @@ theorem detX_even (a b : Fin n) (hab : a ≠ b) :
     simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, gX, eval₂Hom_X', psiE, map_add (f := _), map_X, hXm]
     by_cases h : a' = a
     · subst h
-      rw [Matrix.updateRow_self, if_pos rfl, map_mul, map_C, map_X, Polynomial.coe_mapRingHom, Polynomial.map_X]
+      rw [Matrix.updateRow_self, ite_eq_left rfl, map_mul, map_C, map_X, Polynomial.coe_mapRingHom, Polynomial.map_X]
       simp only [Pi.add_apply, Pi.smul_apply, Matrix.of_apply, smul_eq_mul]
-    · rw [Matrix.updateRow_ne h, if_neg h, map_zero, add_zero]
+    · rw [Matrix.updateRow_ne h, ite_eq_right h, map_zero, add_zero]
       rfl
   rw [h1, h2, Matrix.det_updateRow_add_smul_self _ hab]
 
@@ -572,31 +573,21 @@ variable {S : Type*} [CommRing S] {n : ℕ}
 
 theorem tv_mul_apply (i j : Fin n) (c : S) (M : Matrix (Fin n) (Fin n) S) (a t : Fin n) :
     (Matrix.transvection i j c * M) a t = M a t + if a = i then c * M j t else 0 := by
-  rw [Matrix.transvection, Matrix.add_mul, Matrix.one_mul, Matrix.add_apply, Matrix.mul_apply]
-  congr 1
-  by_cases h : a = i
-  · subst h
-    rw [if_pos rfl, Finset.sum_eq_single j]
-    · simp
-    · intro b _ hb; simp [Ne.symm hb]
-    · simp
-  · rw [if_neg h]
-    refine Finset.sum_eq_zero fun b _ => ?_
-    simp [Ne.symm h]
+  apply _root_.PI.OddDualWeyl.Intw.transvection_mul_apply <;> assumption
 
 theorem mulC_tv_apply (i j : Fin n) (c : S) (x : Fin n → ℕ → S) (a : Fin n) (k : ℕ) :
     mulC (Matrix.transvection i j c) x a k = x a k + if a = i then c * x j k else 0 := by
   unfold mulC
   simp only [Matrix.transvection, Matrix.add_apply, add_mul, Finset.sum_add_distrib, Matrix.one_apply, ite_mul, one_mul,
-    zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   congr 1
   by_cases h : a = i
   · subst h
-    rw [if_pos rfl, Finset.sum_eq_single j]
+    rw [ite_eq_left rfl, Finset.sum_eq_single j]
     · simp
     · intro b _ hb; simp [Ne.symm hb]
     · simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun b _ => ?_
     simp [Ne.symm h]
 
@@ -617,22 +608,22 @@ def revTail (n h : ℕ) (hh : h ≤ n) : Equiv.Perm (Fin n) :=
     (by
       intro t
       by_cases ht : t.val < n - h
-      · simp only [dif_pos ht]
+      · simp only [dite_eq_left ht]
       · have := t.isLt
         have h2 : ¬ (2 * n - h - 1 - t.val < n - h) := by omega
-        simp only [dif_neg ht, dif_neg h2]
+        simp only [dite_eq_right ht, dite_eq_right h2]
         exact Fin.ext (by simp only []; omega))
 
 theorem revTail_apply_lt (n h : ℕ) (hh : h ≤ n) (t : Fin n) (ht : t.val < n - h) : revTail n h hh t = t := by
   change (fun t : Fin n => if ht : t.val < n - h then t else
     (⟨2 * n - h - 1 - t.val, by have := t.isLt; omega⟩ : Fin n)) t = t
-  simp only [dif_pos ht]
+  simp only [dite_eq_left ht]
 
 theorem revTail_apply_ge (n h : ℕ) (hh : h ≤ n) (t : Fin n) (ht : ¬ t.val < n - h) :
     (revTail n h hh t).val = 2 * n - h - 1 - t.val := by
   change ((fun t : Fin n => if ht : t.val < n - h then t else
     (⟨2 * n - h - 1 - t.val, by have := t.isLt; omega⟩ : Fin n)) t).val = _
-  simp only [dif_neg ht]
+  simp only [dite_eq_right ht]
 
 theorem det_catM_rev (h : ℕ) (hh : h ≤ n) (y : Matrix (Fin n) (Fin n) S) (x : Fin n → ℕ → S)
     (hx : ∀ a i, x a i = if i + a.val + 1 = n then 1 else 0) :
@@ -642,17 +633,17 @@ theorem det_catM_rev (h : ℕ) (hh : h ≤ n) (y : Matrix (Fin n) (Fin n) S) (x 
   · congr 1
     refine Matrix.ext fun p q => ?_
     have hq : (Fin.castLE (Nat.sub_le n h) q).val < n - h := by simp
-    simp only [Matrix.of_apply, Matrix.submatrix_apply, id, revTail_apply_lt n h hh _ hq, catM, hq, if_true]
+    simp only [Matrix.of_apply, Matrix.submatrix_apply, id, revTail_apply_lt n h hh _ hq, catM, hq, ite_true]
   · intro a t ht
     have hnt : ¬ t.val < n - h := by omega
     have hv := revTail_apply_ge n h hh t hnt
     have := t.isLt
     have h3 : ¬ (revTail n h hh t).val < n - h := by omega
-    simp only [Matrix.submatrix_apply, id, catM, h3, if_false, hx]
+    simp only [Matrix.submatrix_apply, id, catM, h3, ite_false, hx]
     rw [hv]
     by_cases hat : a = t
-    · subst hat; rw [if_pos (by omega), if_pos rfl]
-    · rw [if_neg (fun h' => hat (Fin.ext (by omega))), if_neg hat]
+    · subst hat; rw [ite_eq_left (by omega), ite_eq_left rfl]
+    · rw [ite_eq_right (fun h' => hat (Fin.ext (by omega))), ite_eq_right hat]
 
 end MatO
 
@@ -669,7 +660,7 @@ theorem eval_hvO (c : ℕ) (h : Fin c → ℕ) (hh : ∀ k, h k ≤ n) :
   unfold hvO
   rw [map_prod, ← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun k _ => ?_
-  rw [RingHom.map_det, RingHom.mapMatrix_apply, map_catM, det_catM_rev (h k) (hh k), lpF, dif_pos (Nat.sub_le _ _)]
+  rw [RingHom.map_det, RingHom.mapMatrix_apply, map_catM, det_catM_rev (h k) (hh k), lpF, dite_eq_left (Nat.sub_le _ _)]
   · unfold lpMinor
     congr 1
     refine Matrix.ext fun p q => ?_
@@ -696,8 +687,8 @@ theorem catM_odd (a b : Fin n) (hab : a ≠ b) (l : ℕ) :
     rw [tv_mul_apply]
     simp only [Matrix.map_apply, gY, map_C, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, rowGen_X, hY']
     by_cases h : a' = b
-    · subst h; rw [if_pos rfl, if_pos rfl, C_add, C_mul]
-    · rw [if_neg h, if_neg h, add_zero, add_zero]
+    · subst h; rw [ite_eq_left rfl, ite_eq_left rfl, C_add, C_mul]
+    · rw [ite_eq_right h, ite_eq_right h, add_zero, add_zero]
   have e2 : (fun a₁ i => map (rowGen R (n := n) a b).toRingHom (gX R n a₁ i)) = X' := by
     funext a' i
     simp only [gX, map_X, hX']
@@ -713,8 +704,8 @@ theorem catM_odd (a b : Fin n) (hab : a ≠ b) (l : ℕ) :
     rw [mulC_tv_apply]
     simp only [gX, eval₂Hom_X', psiO, map_add (f := _), map_X, hX']
     by_cases h : a' = b
-    · subst h; rw [if_pos rfl, if_pos rfl, map_mul, map_neg, map_C, map_X, Polynomial.coe_mapRingHom, Polynomial.map_X]
-    · rw [if_neg h, if_neg h, map_zero]
+    · subst h; rw [ite_eq_left rfl, ite_eq_left rfl, map_mul, map_neg, map_C, map_X, Polynomial.coe_mapRingHom, Polynomial.map_X]
+    · rw [ite_eq_right h, ite_eq_right h, map_zero]
   rw [e1, e2, e3, e4, det_catM_tv l b a (Ne.symm hab)]
 
 theorem twist_odd (a b : Fin n) (hab : a ≠ b) (c : ℕ) (h : Fin c → ℕ) :

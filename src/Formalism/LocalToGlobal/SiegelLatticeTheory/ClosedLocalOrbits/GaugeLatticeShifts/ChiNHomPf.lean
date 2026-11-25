@@ -16,8 +16,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf.ChiNHomPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 alias gB_ne_zero := _root_.Formalism.L2.SG.Pf.modulus_g_ne_zero
@@ -26,7 +24,7 @@ theorem hfe : ∀ a b : Fin D.R.rS, a ≠ b → ZMod' X.B.I X.B.g (hA X.B.I (X.f
   intro a b hab
   rw [hA_symm]
   exact Z_sig X.B.I X.B.g (by
-    simpa only [if_neg (Ne.symm hab), sub_zero] using (X.gramIntegral b a).2.2)
+    simpa only [ite_eq_right (Ne.symm hab), sub_zero] using (X.gramIntegral b a).2.2)
 
 theorem hfz : ∀ a, ZMod' X.B.I X.B.g (hA X.B.I (X.f0 a) X.z0) := fun a => ((X.formsAtZero).2 a).2
 
@@ -82,15 +80,9 @@ theorem level_subgroup_norm_congruence {x : X.B.I.Gf} (hk : x ∈ X.K2) : x ∈ 
 
 end Formalism.L2.SG.Pf.ChiNHomPf
 
-namespace Formalism.L2.SG.Pf
-
-end Formalism.L2.SG.Pf
-
 namespace Formalism.L2.SG.NormCut
 
 section CarK
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
@@ -144,8 +136,6 @@ theorem adm_norm_of_carrier (hTF : FrameTie X u u' F0 F0') (hM : Formalism.L2.SG
 end CarK
 
 section ChiTriv
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 open Formalism.L2.SG.TermOp.Vanish in

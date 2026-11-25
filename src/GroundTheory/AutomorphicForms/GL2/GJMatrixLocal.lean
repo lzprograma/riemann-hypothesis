@@ -58,7 +58,7 @@ theorem cosetInd_valBall_mem (N : ℤ) (a : F) : cosetInd (valBall F N) a ∈ sc
       AddSubgroup.add_mem_cancel_right _ hh]
   · refine HasCompactSupport.intro ((isCompact_valBall N).image (continuous_const_add a))
       fun x hx ↦ ?_
-    rw [cosetInd_apply, if_neg]
+    rw [cosetInd_apply, ite_eq_right]
     intro hxa
     exact hx ⟨x - a, hxa, add_sub_cancel a x⟩
 

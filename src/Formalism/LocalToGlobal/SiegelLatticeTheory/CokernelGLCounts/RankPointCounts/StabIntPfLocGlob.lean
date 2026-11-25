@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocGlobInt
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfSk
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfLocalAgreement
 import Mathlib.Algebra.AffineMonoid.Basic
@@ -15,26 +16,12 @@ open NumberField ValuativeRel IsDedekindDomain Formalism.BasicNotions Formalism.
 
 namespace Formalism.L2.SG.Pf.StabIntSh
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem lg_int_of_locF (t : D.host.F)
     (h : ∀ p : PlF D, (D.s.atP p).ιE (algebraMap D.host.F D.host.E t) ∈ (D.s.atP p).O) :
     t ∈ (algebraMap (𝓞 D.host.F) D.host.F).range := by
-  refine HeightOneSpectrum.mem_integers_of_valuation_le_one D.host.F t fun p => ?_
-  have h1 := h p
-  rw [(D.s.atP p).O_def, (D.s.atP p).compat] at h1
-  have : Nontrivial (D.s.atP p).Ep := by
-    have := (D.s.atP p).free
-    exact Module.nontrivial_of_finrank_pos (R := (D.s.atP p).Fp) (by rw [(D.s.atP p).rank]; norm_num)
-  have h2 : IsIntegral 𝒪[(D.s.atP p).Fp] ((D.s.atP p).ιF t) :=
-    (isIntegral_algebraMap_iff ).1 h1
-  have h3 := (Valuation.integer.integers _).mem_of_integral h2
-  have h4 : (D.s.atP p).ιF t ≤ᵥ (D.s.atP p).ιF 1 := by
-    rw [map_one]
-    exact (valuation (D.s.atP p).Fp).vle_one_iff.2 h3
-  simpa using ((D.s.atP p).val t 1).1 h4
+  apply _root_.Formalism.L2.SG.Pf.Cnt.DualityBasisChange.mem_OF_of_loc <;> assumption
 
 theorem lg_cj_mem (p : PlF D) {y : (D.s.atP p).Ep} (hy : y ∈ (D.s.atP p).O) :
     (D.s.atP p).cj y ∈ (D.s.atP p).O := by

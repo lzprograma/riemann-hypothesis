@@ -94,7 +94,7 @@ def blkR {r : ℕ} (hr : r ≤ n) : blockTri (κ := κ) (n := n) (blk2 r) →* G
         have : (y.1 : Matrix (Fin n) (Fin n) κ) l (Fin.castLE hr j) = 0 := by
           refine y.2 ?_
           have hj : (Fin.castLE hr j).val < r := j.2
-          simp only [blk2, hj, hl', if_true, if_false]
+          simp only [blk2, hj, hl', ite_true, ite_false]
           exact Nat.zero_lt_one
         rw [this, mul_zero] }
 
@@ -459,15 +459,6 @@ theorem redFn_frGL (β : GL (Fin n) (E ⊗[F] Af F)) (PP : Pl E) (y : GL (Fin n)
   show bc (resS F PP) (pullFr β ⟨frGL β y, ⟨y, rfl⟩⟩) = _
   rw [pullFr_frGL]
 
-theorem redFn_int (PP : Pl E) (g : GL (Fin n) (𝓞 E)) :
-    redFn (1 : GL (Fin n) (E ⊗[F] Af F)) PP (intGL F E n (bc (oToS F E) g)) = bc (Ideal.Quotient.mk PP.asIdeal) g := by
-  have h : intGL F E n (bc (oToS F E) g) = frGL 1 (bc (oToS F E) g) := by
-    simp [frGL]
-  rw [h, redFn_frGL]
-  apply Units.ext
-  ext i j
-  exact resS_oToS PP _
-
 def IsFrame (β : GL (Fin n) (E ⊗[F] Af F)) (Λ : Submodule (𝓞 E) (Fin n → E)) : Prop :=
   ∀ x : Fin n → E ⊗[F] Af F, x ∈ hatL (F := F) Λ ↔
     ∀ i, ((β⁻¹ : GL (Fin n) (E ⊗[F] Af F)) : Matrix (Fin n) (Fin n) (E ⊗[F] Af F)).mulVec x i ∈ intAf F E
@@ -771,18 +762,6 @@ theorem Kg_le_lev {T : Finset (Pl E)} (hg : D.Pg ⊆ T) (hq : D.Q ⊆ T) : Kg hc
     show rTup β D x ∈ D.P.H
     rw [this]; exact Subgroup.one_mem _
 
-def datX (r t m : ℕ) (Pg Q : Finset (Pl E)) (P : LevelP Pg r LL) (χ : ℕ → ∀ PP : Pl E, (kP PP)ˣ →* LLˣ)
-    (ξ : ∀ PP : Pl E, (kP PP)ˣ →* LLˣ) : LevDat E LL (r + m * t) where
-  r := r
-  hr := Nat.le_add_right _ _
-  t := t
-  s := m
-  Pg := Pg
-  Q := Q
-  P := P
-  cg := χ
-  xq := fun PP => (ξ PP)⁻¹
-
 def datV (r t j : ℕ) (Pg Q : Finset (Pl E)) (P : LevelP Pg r LL) (χ : ℕ → ∀ PP : Pl E, (kP PP)ˣ →* LLˣ)
     (ξ : ∀ PP : Pl E, (kP PP)ˣ →* LLˣ) : LevDat E LL (r + t) where
   r := r
@@ -794,18 +773,6 @@ def datV (r t j : ℕ) (Pg Q : Finset (Pl E)) (P : LevelP Pg r LL) (χ : ℕ →
   P := P.conj
   cg := fun _ PP => (χ j PP)⁻¹
   xq := ξ
-
-abbrev levX (hc : CMData F E) (r t m : ℕ) (J : Matrix (Fin (r + m * t)) (Fin (r + m * t)) E)
-    (β : GL (Fin (r + m * t)) (E ⊗[F] Af F)) (Pg Q : Finset (Pl E)) (P : LevelP Pg r LL)
-    (χ : ℕ → ∀ PP : Pl E, (kP PP)ˣ →* LLˣ) (ξ : ∀ PP : Pl E, (kP PP)ˣ →* LLˣ) :
-    Subgroup (GL (Fin (r + m * t)) (E ⊗[F] Af F)) :=
-  lev hc J β (datX r t m Pg Q P χ ξ)
-
-abbrev levV (hc : CMData F E) (r t j : ℕ) (J : Matrix (Fin (r + t)) (Fin (r + t)) E)
-    (β : GL (Fin (r + t)) (E ⊗[F] Af F)) (Pg Q : Finset (Pl E)) (P : LevelP Pg r LL)
-    (χ : ℕ → ∀ PP : Pl E, (kP PP)ˣ →* LLˣ) (ξ : ∀ PP : Pl E, (kP PP)ˣ →* LLˣ) :
-    Subgroup (GL (Fin (r + t)) (E ⊗[F] Af F)) :=
-  lev hc J β (datV r t j Pg Q P χ ξ)
 
 end Lev
 

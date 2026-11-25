@@ -160,11 +160,11 @@ theorem exists_form_avoid (S : Set (Ideal (MRingOver F ι))) (hS : S.Finite)
     with hm
   have hmH : ∀ W ∈ T, IsMultiHomog (m W) (d - δ W) := by
     intro W hW
-    simp only [hm, dif_pos (hrel W hW)]
+    simp only [hm, dite_eq_left (hrel W hW)]
     exact isMultiHomog_coordProd _ _
   have hmNot : ∀ W ∈ T, m W ∉ W := by
     intro W hW
-    simp only [hm, dif_pos (hrel W hW)]
+    simp only [hm, dite_eq_left (hrel W hW)]
     exact coordProd_not_mem (hS' W (hTS W hW)).1 _ (fun k => ((hrel W hW) k).choose_spec) _
   refine ⟨∑ W ∈ T, a W * m W, ?_, ?_⟩
   · apply isMultiHomog_sum

@@ -12,8 +12,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSecti
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField UniqueFactorizationMonoid Formalism.L2.Pj
@@ -131,7 +129,7 @@ theorem primeOf_isPrime (ψ : E →+* k) (hψ : Function.Injective ψ) : (primeO
     unfold vV; rw [map_one, WithZero.log_one]; simp
   refine Ideal.isPrime_iff.2 ⟨(Ideal.ne_top_iff_one _).2 ?_, ?_⟩
   · rw [mem_primeOf]
-    push_neg
+    push Not
     refine ⟨?_, one_ne_zero⟩
     simp [hv1]
   · intro x y hxy
@@ -144,8 +142,7 @@ theorem primeOf_isPrime (ψ : E →+* k) (hψ : Function.Injective ψ) : (primeO
     have hxy' := hxy.resolve_right (mul_ne_zero hx0 hy0)
     have hc : ((x * y : 𝓞 E) : E) = (x : E) * (y : E) := by simp
     rw [hc, map_mul, hmul _ _ (psi_ne_zero ψ hψ hx0) (psi_ne_zero ψ hψ hy0)] at hxy'
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     have := hno.1.1
     have := hno.2.1
     linarith
@@ -153,7 +150,7 @@ theorem primeOf_isPrime (ψ : E →+* k) (hψ : Function.Injective ψ) : (primeO
 theorem w_zero_of_not_mem (ψ : E →+* k) (hψ : Function.Injective ψ) {x : 𝓞 E}
     (hx : x ∉ primeOf (V := V) ψ hψ) : vV V (ψ (x : E)) = 0 := by
   rw [mem_primeOf] at hx
-  push_neg at hx
+  push Not at hx
   exact le_antisymm hx.1 (w_nonneg ψ x)
 
 theorem mem_factors_of_mem {P : Ideal (𝓞 E)} (hP : P.IsPrime) (hP0 : P ≠ ⊥) {x : 𝓞 E} (hx0 : x ≠ 0) (hx : x ∈ P) :

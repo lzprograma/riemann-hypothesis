@@ -7,54 +7,9 @@ public import Mathlib.RingTheory.PicardGroup
 public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.SimpleRing.Principal
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.FibreNormCharpolyFalse
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Charpoly.BaseChange
 public import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -113,7 +68,7 @@ theorem dehom_homog {D : ℕ} (k : Fin (D + 1)) {N : ℕ} (G : MvPolynomial (Fin
   simp only [PullFormsGeneric.dehom, homog, map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   first
-    | rw [map_mul, map_pow, bind₁_X_right, dif_pos rfl, one_pow, one_mul]
+    | rw [map_mul, map_pow, bind₁_X_right, dite_eq_left rfl, one_pow, one_mul]
 
 theorem ne_zero_of_generic {Ω : Type} [Field Ω] [CharZero Ω] {D : ℕ} {l : Fin (D + 1) → Ω}
     (hgen : ∀ (d : ℕ) (F : MvPolynomial (Fin (D + 1)) ℚ), F.IsHomogeneous d → aeval l F = 0 → F = 0)
@@ -124,7 +79,7 @@ theorem injective_chart {Ω : Type} [Field Ω] [CharZero Ω] {D : ℕ} {l : Fin 
     (hgen : ∀ (d : ℕ) (F : MvPolynomial (Fin (D + 1)) ℚ), F.IsHomogeneous d → aeval l F = 0 → F = 0)
     (k : Fin (D + 1)) :
     Function.Injective (aeval (R := ℚ) (fun i : {i // i ≠ k} => l i / l k)) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro G hG
   set G' : MvPolynomial (Fin (D + 1)) ℚ := rename Subtype.val G with hG'
   have h1 : aeval (fun i => l i / l k) G' = 0 := by rw [hG', aeval_rename]; exact hG
@@ -136,7 +91,7 @@ theorem injective_chart {Ω : Type} [Field Ω] [CharZero Ω] {D : ℕ} {l : Fin 
         else X ⟨i, h⟩)).comp (rename (R := ℚ) (Subtype.val : {i // i ≠ k} → Fin (D + 1))) = AlgHom.id ℚ _ := by
       apply MvPolynomial.algHom_ext
       intro i
-      simp only [AlgHom.comp_apply, rename_X, bind₁_X_right, dif_neg i.2, AlgHom.id_apply, Subtype.coe_eta]
+      simp only [AlgHom.comp_apply, rename_X, bind₁_X_right, dite_eq_right i.2, AlgHom.id_apply, Subtype.coe_eta]
     exact congrArg (fun φ => φ G) this
   rw [← h3, ← dehom_homog k G' le_rfl, h2]
   simp [PullFormsGeneric.dehom]
@@ -389,7 +344,7 @@ theorem DehomCharpolyForms.proof : DehomCharpolyForms.Statement := by
     have h0 : ((f.coeff 0 : P) : Ω) = 0 := by
       have hcn' : c n = 0 := by simpa [hn0] using hcn
       have := heval n le_rfl
-      rw [if_neg hn0, hcn', map_zero, Nat.sub_self] at this
+      rw [ite_eq_right hn0, hcn', map_zero, Nat.sub_self] at this
       exact this.symm
     have hdet := LinearMap.det_eq_sign_charpoly_coeff (Algebra.lmul P Ω u)
     rw [← Algebra.norm_apply, ← hf] at hdet

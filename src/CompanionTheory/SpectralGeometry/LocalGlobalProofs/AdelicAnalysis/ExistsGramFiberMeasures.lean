@@ -11,59 +11,7 @@ public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianOrbitLocalSectionSubgroup
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.DisintegrationDensityExists
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitsOpenEmbeddingLocalTensor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.MeasureEqHaarProdOfLeftInvariant, CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.DisintegrationDensityFormula, CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasureDisintegrationFormula, CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.RestrFamily, CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsGramFiberMeasures
@@ -345,11 +293,11 @@ theorem fibFam_orbit {g : V → X} {b₀ : X} (w : Q → ℝ≥0) (m : Measure (
     fibFam g b₀ w m (q • b₀) = (w q : ℝ≥0∞) • m.map (fun z : (g ⁻¹' {b₀}) => q • (z : V)) := by
   have h : Function.invFun (fun q : Q => q • b₀) (q • b₀) = q :=
     Function.leftInverse_invFun ho q
-  rw [fibFam, if_pos ⟨q, rfl⟩, h]
+  rw [fibFam, ite_eq_left ⟨q, rfl⟩, h]
 
 theorem fibFam_off {g : V → X} {b₀ : X} (w : Q → ℝ≥0) (m : Measure (g ⁻¹' {b₀})) {b : X}
     (hb : b ∉ Set.range (fun q : Q => q • b₀)) : fibFam g b₀ w m b = 0 := by
-  rw [fibFam, if_neg hb]
+  rw [fibFam, ite_eq_right hb]
 
 theorem continuous_smul_fib (g : V → X) (b₀ : X) (q : Q) :
     Continuous (fun z : (g ⁻¹' {b₀}) => q • (z : V)) :=
@@ -817,7 +765,7 @@ lemma restr_family (hι : Function.Injective ι) (hg : Continuous g) (hf : ∀ v
   refine ⟨?_, ?_, ?_⟩
   · intro b
     by_cases hb : b ∈ B₂
-    · simp only [restr, if_pos hb]
+    · simp only [restr, ite_eq_left hb]
       refine measure_mono_null ?_ (h.1 b)
       intro v hv hv2
       apply hv
@@ -838,10 +786,10 @@ lemma restr_family (hι : Function.Injective ι) (hg : Continuous g) (hf : ∀ v
   · intro φ hφ hφc hφs
     have H := h.2.2 φ hφ hφc (hφs.trans (Set.preimage_mono hsub))
     refine ⟨fun b hb => ?_, ?_⟩
-    · simp only [restr, if_pos hb]
+    · simp only [restr, ite_eq_left hb]
       exact H.1 b (hsub hb)
     · refine (H.2.mono hsub).congr fun b hb => ?_
-      simp only [restr, if_pos hb]
+      simp only [restr, ite_eq_left hb]
 
 end Local
 
@@ -850,7 +798,7 @@ theorem glue : ∀ (V X Y : Type) [TopologicalSpace V] [LocallyCompactSpace V] [
   classical
   choose! C hCo hbC hCB F hF using hloc
   let fib : X → Measure V := fun b => if b ∈ B then F b b else 0
-  have hfibB : ∀ c ∈ B, fib c = F c c := fun c hc => by simp only [fib, if_pos hc]
+  have hfibB : ∀ c ∈ B, fib c = F c c := fun c hc => by simp only [fib, ite_eq_left hc]
   have hagree : ∀ a ∈ B, ∀ c ∈ C a, fib c = F a c := by
     intro a ha c hc
     have hcB : c ∈ B := hCB a ha hc
@@ -859,7 +807,7 @@ theorem glue : ∀ (V X Y : Type) [TopologicalSpace V] [LocallyCompactSpace V] [
     have u := _root_.GlobalTheory.CompanionTheory.SW.FibreUniq.fibreFamily_eq V X Y μ ν f g ι hι hg hf (C c) (C c ∩ C a) (hCo c hcB) hI
       Set.inter_subset_left (F c) (restr (C c ∩ C a) (F a)) (hF c hcB) r1 c ⟨hbC c hcB, hc⟩
     have hm : c ∈ C c ∩ C a := ⟨hbC c hcB, hc⟩
-    simp only [restr, if_pos hm] at u
+    simp only [restr, ite_eq_left hm] at u
     rw [hfibB c hcB, u]
   refine ⟨fib, ?_, ?_, ?_⟩
   · intro b

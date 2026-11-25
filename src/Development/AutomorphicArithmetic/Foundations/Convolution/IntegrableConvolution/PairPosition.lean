@@ -14,48 +14,8 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Integrab
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactCv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.MeasureTheory.Integral.Pi
 import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PositionOf
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchInf, Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CvPowers, Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactGen, Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactTens, Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.WordTens, Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PairPosition
@@ -277,8 +237,8 @@ private theorem compR_along (D : InfD σ m) {τ : E →+* ℂ} {k : Fin (m + 1)}
   rw [e]
   by_cases hik : i = k
   · subst hik
-    rw [Pi.single_eq_same, RingEquiv.apply_symm_apply, if_pos rfl]
-  · rw [Pi.single_eq_of_ne hik, map_zero, if_neg hik]
+    rw [Pi.single_eq_same, RingEquiv.apply_symm_apply, ite_eq_left rfl]
+  · rw [Pi.single_eq_of_ne hik, map_zero, ite_eq_right hik]
 
 private def xL {K : Type} [Field K] [NumberField K] (n : ℕ) (τ : K →+* ℂ) (p q : Fin n) (z : ℂ) : archLie K n :=
   ⟨(Matrix.single p q (along τ z) : Matrix (Fin n) (Fin n) (mixedEmbedding.mixedSpace K)), Submodule.mem_top⟩
@@ -289,19 +249,19 @@ private theorem compM_xL (D : InfD σ m) (n : ℕ) {τ : E →+* ℂ} {k : Fin (
       if i = k then (xL n (τ.comp (algebraMap F E)) p q z : ArchMatrix F n) else 0 := by
   change (Matrix.single p q (along τ z) : Matrix (Fin n) (Fin n) (mixedEmbedding.mixedSpace E)).map (compR D i) = _
   by_cases hik : i = k
-  · rw [if_pos hik]
+  · rw [ite_eq_left hik]
     ext1 a b
     change _ = (Matrix.single p q (along (τ.comp (algebraMap F E)) z) : Matrix (Fin n) (Fin n) (mixedEmbedding.mixedSpace F)) a b
     simp only [Matrix.map_apply, Matrix.single_apply]
     split_ifs
-    · rw [compR_along D h, if_pos hik]
+    · rw [compR_along D h, ite_eq_left hik]
     · simp
-  · rw [if_neg hik]
+  · rw [ite_eq_right hik]
     ext1 a b
     change _ = (0 : Matrix (Fin n) (Fin n) (mixedEmbedding.mixedSpace F)) a b
     simp only [Matrix.map_apply, Matrix.single_apply, Matrix.zero_apply]
     split_ifs
-    · rw [compR_along D h, if_neg hik]
+    · rw [compR_along D h, ite_eq_right hik]
     · simp
 
 private theorem compA_exp_self (D : InfD σ m) (n : ℕ) {τ : E →+* ℂ} {k : Fin (m + 1)} (h : InSlot D τ k)
@@ -310,14 +270,14 @@ private theorem compA_exp_self (D : InfD σ m) (n : ℕ) {τ : E →+* ℂ} {k :
       (isExpLieAlgebra F n).expG (t • xL n (τ.comp (algebraMap F E)) p q z) := by
   apply compA_expG
   change compM D n k (t • (xL n τ p q z : ArchMatrix E n)) = t • (xL n (τ.comp (algebraMap F E)) p q z : ArchMatrix F n)
-  rw [map_real_smul (compM D n k) (continuous_compM D n k), compM_xL D n h, if_pos rfl]
+  rw [map_real_smul (compM D n k) (continuous_compM D n k), compM_xL D n h, ite_eq_left rfl]
 
 private theorem compA_exp_ne (D : InfD σ m) (n : ℕ) {τ : E →+* ℂ} {k i : Fin (m + 1)} (h : InSlot D τ k)
     (hi : i ≠ k) (p q : Fin n) (z : ℂ) (t : ℝ) :
     compA D n i ((isExpLieAlgebra E n).expG (t • xL n τ p q z)) = 1 := by
   rw [compA_expG D n i _ 0, IsExpLieAlgebra.expG_zero]
   change compM D n i (t • (xL n τ p q z : ArchMatrix E n)) = 0
-  rw [map_real_smul (compM D n i) (continuous_compM D n i), compM_xL D n h, if_neg hi, smul_zero]
+  rw [map_real_smul (compM D n i) (continuous_compM D n i), compM_xL D n h, ite_eq_right hi, smul_zero]
 
 private theorem lact_elem {K : Type} [Field K] [NumberField K] {n : ℕ} (β : TI K n) (hβ : SmoothT β)
     (τ : K →+* ℂ) (p q : Fin n) (z : ℂ) (x : archGroup K n) :
@@ -380,8 +340,6 @@ open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.L1 UpperTheory.ConvolutionTheory.C PositivityTheory.Rg.Tf.Geo PositivityTheory.Rg.Fx
 open scoped TensorProduct
-
-attribute [local instance 100] LieRing.ofAssociativeRing
 
 namespace UpperTheory.ConvolutionTheory.L1
 
@@ -791,7 +749,6 @@ theorem UpperTheory.ConvolutionTheory.L1.pairPosition :
     congr 1
     funext g
     simp [UpperTheory.ConvolutionTheory.L1.glueA]
-  set_option synthInstance.maxHeartbeats 200000 in
   have hc1 : c = 1 := by
     refine UpperTheory.ConvolutionTheory.L1.pairPosition_one (νE.map (archEquiv E n).symm) c ?_
     have h := hμ

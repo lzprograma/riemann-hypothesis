@@ -17,13 +17,6 @@ namespace Formalism.L2.KerInert.SecondKernelMoveDegree
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.KerInert.K2 Formalism.L2.KerInert.SecondKernelInstances Formalism.L2.KerInert.SecondKernelDifference Formalism.L2.KerInert.SecondKernelSeries
   Formalism.L2.KerInert.QuadraticBaseChangeGL3 Formalism.L2.KerInert.SecondKernelHermitian
 
-section Move
-
-variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G.LatInst D} {Kc0 : G.Consts} {Dx : DivX D}
-  {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc0 Dx cX}
-
-end Move
-
 def PolDYDeg : Prop :=
   ∀ (D : D7) (N N' : ℕ) (s : D.what₂.Tau → ℂ) (ν : D.what₂.Tau → Fin N → ℕ) (Q : MvPolynomial (GL3Theta.FrV D N) ℂ),
     Q ∈ WtPol ℂ ν → ∀ α ∈ (polDY D s Q (N' := N')).support, ∀ τ : D.what₂.Tau,

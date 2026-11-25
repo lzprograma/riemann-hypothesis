@@ -213,7 +213,7 @@ theorem ncard_ideal_absNorm_eq_le {n : ℕ} (hn : n ≠ 0) :
           rw [Multiset.count_cons_self, hN, hp.factorization_pow, Finsupp.single_eq_same]
           ring
         · rw [Multiset.count_cons_of_ne (Ne.symm hQP), H, hq.factorization_pow,
-            Finsupp.single_apply, if_neg, zero_add]
+            Finsupp.single_apply, ite_eq_right, zero_add]
           rintro rfl
           exact hQP (hc q hq Q P hQ hP hqQ hpP hcol)
       · rw [Multiset.filter_cons_of_neg (p := fun Q => c Q = c P) s hcol]

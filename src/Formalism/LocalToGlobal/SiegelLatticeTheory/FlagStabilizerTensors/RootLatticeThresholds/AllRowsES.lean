@@ -84,7 +84,7 @@ theorem ES_idem (S : Set (Tup2 D)) : ES S * ES S = ES S := by
   rw [ES_eq, Finset.sum_mul_sum]
   refine Finset.sum_congr rfl fun a ha => ?_
   simp only [Ea_mul]
-  rw [Finset.sum_eq_single a (fun b _ hb => if_neg (Ne.symm hb)) (fun h => absurd ha h), if_pos rfl]
+  rw [Finset.sum_eq_single a (fun b _ hb => ite_eq_right (Ne.symm hb)) (fun h => absurd ha h), ite_eq_left rfl]
 
 theorem ES_central (S : Set (Tup2 D)) (y : MonoidAlgebra ℂ (G0g D.nd)) : ES S * y = y * ES S :=
   central_of_class _ (ES_conj S) y

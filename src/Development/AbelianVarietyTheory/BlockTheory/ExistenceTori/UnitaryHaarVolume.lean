@@ -47,8 +47,6 @@ public import Mathlib.Topology.Algebra.Group.Units
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHaarVolume

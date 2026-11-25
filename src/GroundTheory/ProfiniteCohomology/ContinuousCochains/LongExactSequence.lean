@@ -94,11 +94,4 @@ theorem cohomology_exact₃ (i j : ℕ) (hij : i + 1 = j) :
 
 end
 
-section Naturality
-
-variable {S₁ S₂ : ShortComplex (Rep.{u} k G)} [IsDiscreteRep S₁.X₁] [IsDiscreteRep S₁.X₂]
-  [IsDiscreteRep S₁.X₃] [IsDiscreteRep S₂.X₁] [IsDiscreteRep S₂.X₂] [IsDiscreteRep S₂.X₃]
-
-end Naturality
-
 end GroundTheory.ProfCoh

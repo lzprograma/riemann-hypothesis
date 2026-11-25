@@ -220,8 +220,8 @@ theorem riemann_eq_majorant : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
   obtain ⟨hbij, hrt, -, -⟩ := GlobalTheory.Relab.relab_good E H l c σ hG
   obtain ⟨hp0, hty⟩ := hU.2.1 k
   obtain ⟨f, hf⟩ := FrameUnif.exists_letter_equiv (U.X k).Ψ (U.X k).cmType Dw.p Dw.q r hU.1 (relab c σ) hbij Dw.mult
-    (fun τ h => by unfold Datum.mult; rw [if_pos ((hrt τ).1 ((hty _).1 h))])
-    (fun τ h => by unfold Datum.mult; rw [if_neg (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_left ((hrt τ).1 ((hty _).1 h))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_right (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
   rw [← hp0] at hf
   have hper : ∀ v s, perFr (U.X k) x.1 v (relab c σ s.1) s.2 = pc (U.X k) x.1 v (f s) := by
     intro v s
@@ -231,10 +231,10 @@ theorem riemann_eq_majorant : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
     dsimp only at h ⊢
     unfold pc
     rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
-    · rw [if_neg (by simp)]
+    · rw [ite_eq_right (by simp)]
       unfold perFr
       rw [dite_eq_left a, dite_eq_left hn]
-    · rw [if_pos (by dsimp only; omega)]
+    · rw [ite_eq_left (by dsimp only; omega)]
       unfold perFr
       rw [dite_eq_right a, dite_eq_left (show conjEmb (relab c σ s.1) ∈ (U.X k).Ψ from hτ), dite_eq_left hn]
       rfl
@@ -267,12 +267,12 @@ theorem riemann_eq_majorant : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
       (if ((f s).2 : ℕ) < (U.X k).p0 then ρ⁻¹ else ρ) ^ ((a' (s.1, (s.2 : ℕ)) : ℝ) / 2) := by
     unfold laU
     rcases hf s with ⟨a, b, c'⟩ | ⟨a, b, c', d⟩
-    · rw [if_pos (by omega), if_neg (by omega), b, hinv, show ((f s).2 : ℕ) - (U.X k).p0 = s.2 by omega,
+    · rw [ite_eq_left (by omega), ite_eq_right (by omega), b, hinv, show ((f s).2 : ℕ) - (U.X k).p0 = s.2 by omega,
         neg_div, Real.rpow_neg hρ0, inv_inv]
       simp
     · have t : conjEmb (f s).1.1 = relab c σ s.1 := by
         rw [b]; exact ComplexEmbedding.involutive_conjugate E _
-      rw [if_neg (by omega), if_pos (by omega), t, hinv,
+      rw [ite_eq_right (by omega), ite_eq_left (by omega), t, hinv,
         show (U.X k).p0 - 1 - ((f s).2 : ℕ) = s.2 by omega, Real.inv_rpow hρ0]
       simp
   have hρ1 : 0 ≤ (if ((f s).2 : ℕ) < (U.X k).p0 then ρ⁻¹ else ρ) := by split_ifs <;> positivity

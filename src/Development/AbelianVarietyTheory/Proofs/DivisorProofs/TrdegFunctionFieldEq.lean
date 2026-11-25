@@ -53,7 +53,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 open AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.FunctionFieldTrdeg
 

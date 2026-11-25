@@ -52,8 +52,6 @@ open NumberField Matrix GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheo
 
 namespace UpperTheory.V.Fb
 
-attribute [local instance 100] LieRing.ofAssociativeRing
-
 variable (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (a : ℕ)
 
 def ofCusp : cuspForms E a →ₗ[ℂ] TR.Sm E a := Submodule.inclusion cuspForms_le_Sm

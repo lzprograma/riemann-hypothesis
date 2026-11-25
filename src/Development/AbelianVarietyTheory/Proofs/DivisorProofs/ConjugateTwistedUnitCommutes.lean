@@ -63,14 +63,12 @@ theorem unit_conj_form_props {p : ℕ} [Fact p.Prime] (G : HTGroup p) (β Y c : 
   set S : G.C := algebraMap ℚ G.C s with hS
   have hA : ∀ r : G.C, u * ((c : G.C) * r) = r := fun r => by rw [← mul_assoc, hu, Units.inv_mul, one_mul]
   have hB : sh G (c : G.C) * sh G u = 1 := by rw [← shm, hu, Units.inv_mul, sh1]
-  have hB' : ∀ r : G.C, sh G (c : G.C) * (sh G u * r) = r := fun r => by rw [← mul_assoc, hB, one_mul]
   have hC : ∀ r : G.C, (β : G.C) * (bi * r) = r := fun r => by rw [← mul_assoc, hbi_def, Units.mul_inv, one_mul]
   have hC' : ∀ r : G.C, bi * ((β : G.C) * r) = r := fun r => by rw [← mul_assoc, hbi_def, Units.inv_mul, one_mul]
   have hD : (β : G.C) * bi = 1 := by rw [hbi_def, Units.mul_inv]
   set shYi : G.C := sh G ((Y⁻¹ : G.Cˣ) : G.C) with hshYi
   have hE : ∀ r : G.C, sh G (Y : G.C) * (shYi * r) = r := fun r => by
     rw [← mul_assoc, hshYi, ← shm, Units.inv_mul, sh1, one_mul]
-  have hE1 : sh G (Y : G.C) * shYi = 1 := by rw [hshYi, ← shm, Units.inv_mul, sh1]
   refine ⟨?_, ?_, ?_⟩
   · have hshu : IsUnit (sh G u) := ⟨⟨sh G u, sh G (c : G.C), by rw [← shm, hu, Units.mul_inv, sh1], hB⟩, rfl⟩
     exact (((Units.isUnit _).mul (Units.isUnit β)).mul hshu).mul (Units.isUnit _)

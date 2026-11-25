@@ -15,8 +15,6 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
@@ -37,22 +35,6 @@ theorem valAt'_zero' {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (U : Y.Opens) : valAt' 
   split_ifs with h
   · simp [valAt]
   · rfl
-
-private theorem valAt'_top_mul_lemma_2 {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (f g : Γ(Y, ⊤)) :
-    valAt' x ⊤ (f * g) = valAt' x ⊤ f * valAt' x ⊤ g := by
-  have h : ⊤ ≤ x ⁻¹ᵁ (⊤ : Y.Opens) := by
-    first
-      | exact le_top
-  first
-    | simp only [valAt', dif_pos h, valAt, map_mul]
-
-private theorem valAt'_top_add_lemma_3 {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (f g : Γ(Y, ⊤)) :
-    valAt' x ⊤ (f + g) = valAt' x ⊤ f + valAt' x ⊤ g := by
-  have h : ⊤ ≤ x ⁻¹ᵁ (⊤ : Y.Opens) := by
-    first
-      | exact le_top
-  first
-    | simp only [valAt', dif_pos h, valAt, map_add (f := _)]
 
 theorem isHolTo_pullbackSpec {R S T : Type} [CommRing R] [CommRing S] [CommRing T] [Algebra R S] [Algebra R T]
     {B : Set V} (hB : IsOpen B)
@@ -101,10 +83,10 @@ theorem isHolTo_pullbackSpec {R S T : Type} [CommRing R] [CommRing S] [CommRing 
     | tmul s t =>
       have hst : (s ⊗ₜ[R] t : S ⊗[R] T) = (s ⊗ₜ[R] (1 : T)) * ((1 : S) ⊗ₜ[R] t) := by
         rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-      simp only [hst, map_mul, valAt'_top_mul_lemma_2]
+      simp only [hst, map_mul, valAt'_mul]
       exact (hS s).mul (hT t)
     | add x y hx hy =>
-      simp only [map_add (f := _), valAt'_top_add_lemma_3]
+      simp only [map_add (f := _), valAt'_add]
       exact hx.add hy
 
   have hr : ∀ b, valAt' (w b) ⊤ r = valAt' (w b ≫ (pullbackSpecIso R S T).hom) ⊤
@@ -133,8 +115,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
@@ -151,18 +131,6 @@ theorem valAt'_fromSpec {Y : Scheme.{0}} {Vo : Y.Opens} (hV : IsAffineOpen Vo) (
   rw [← valAt'_comp, IsAffineOpen.fromSpec_app_self, CommRingCat.comp_apply]
   exact valAt'_eqToHom_lemma l hV.fromSpec_preimage_self _
 
-private theorem pt_lemma_2 (a b : PrimeSpectrum ℂ) : a = b := by
-  have h : ∀ c : PrimeSpectrum ℂ, c.asIdeal = ⊥ := fun c =>
-    (Ideal.eq_bot_or_top c.asIdeal).resolve_right c.2.ne_top
-  exact PrimeSpectrum.ext (by rw [h a, h b])
-
-private theorem top_le_lemma_3 {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (W : Y.Opens) (q : Sp ℂ)
-    (h : x q ∈ W) : ⊤ ≤ x ⁻¹ᵁ W := by
-  intro q' _
-  have hq : q' = q := pt_lemma_2 q' q
-  rw [hq]
-  exact h
-
 theorem holPair (X Y₁ Y₂ : Scheme.{0}) (p₁ : Y₁ ⟶ X) (p₂ : Y₂ ⟶ X) (n : ℕ) (B : Set (Fin n → ℂ))
     (e₁ : (Fin n → ℂ) → (Sp ℂ ⟶ Y₁)) (e₂ : (Fin n → ℂ) → (Sp ℂ ⟶ Y₂)) (he : ∀ b, e₁ b ≫ p₁ = e₂ b ≫ p₂) :
     IsOpen B → IsHolTo B e₁ → IsHolTo B e₂ → IsHolTo B (fun b => pullback.lift (e₁ b) (e₂ b) (he b)) := by
@@ -170,7 +138,7 @@ theorem holPair (X Y₁ Y₂ : Scheme.{0}) (p₁ : Y₁ ⟶ X) (p₂ : Y₂ ⟶ 
   intro _ h₁ h₂
   apply isHolTo_of_local
   intro U f b₀ hb₀ hU
-  let q : Sp ℂ := IsLocalRing.closedPoint ℂ
+  let q : Sp ℂ := cpt
 
   obtain ⟨W, hW, hxW, -⟩ := (TopologicalSpace.Opens.isBasis_iff_nbhd.mp (Scheme.isBasis_affineOpens X))
     (show (e₁ b₀ ≫ p₁) q ∈ (⊤ : X.Opens) from trivial)
@@ -185,7 +153,7 @@ theorem holPair (X Y₁ Y₂ : Scheme.{0}) (p₁ : Y₁ ⟶ X) (p₂ : Y₂ ⟶ 
   have hW₂' : IsAffineOpen W₂ := hW₂
   let N : Set (Fin n → ℂ) := {b ∈ B | ⊤ ≤ e₁ b ⁻¹ᵁ W₁} ∩ {b ∈ B | ⊤ ≤ e₂ b ⁻¹ᵁ W₂}
   have hN : IsOpen N := (h₁ W₁ 0).1.inter (h₂ W₂ 0).1
-  have hb₀N : b₀ ∈ N := ⟨⟨hb₀, top_le_lemma_3 _ _ q hx₁⟩, ⟨hb₀, top_le_lemma_3 _ _ q hx₂⟩⟩
+  have hb₀N : b₀ ∈ N := ⟨⟨hb₀, top_le_of_mem hx₁⟩, ⟨hb₀, top_le_of_mem hx₂⟩⟩
 
   have hr₁ : ∀ b ∈ N, Set.range (e₁ b) ⊆ Set.range hW₁'.fromSpec := by
     intro b hb
@@ -216,7 +184,7 @@ theorem holPair (X Y₁ Y₂ : Scheme.{0}) (p₁ : Y₁ ⟶ X) (p₂ : Y₂ ⟶ 
       (Spec.map (CommRingCat.ofHom (algebraMap Γ(X, W) Γ(Y₂, W₂)))) :=
     fun b hb => pullback.lift (l₁ b hb) (l₂ b hb) (hc b hb)
   let w := fun b => if hb : b ∈ N then wN b hb else wN b₀ hb₀N
-  have hw : ∀ b (hb : b ∈ N), w b = wN b hb := fun b hb => dif_pos hb
+  have hw : ∀ b (hb : b ∈ N), w b = wN b hb := fun b hb => dite_eq_left hb
   have hwφ : ∀ b ∈ N, w b ≫ φ = pullback.lift (e₁ b) (e₂ b) (he b) := by
     intro b hb
     rw [hw b hb]

@@ -122,7 +122,7 @@ theorem lf_repr_cm_eq (x : Fin n × Fin n) (S T : Finset (Fin (n * n))) :
   · rw [lf_cp_basis_of_mem hT, map_zero, Finsupp.zero_apply]
     by_cases hS : finProdFinEquiv x ∈ S
     · obtain ⟨σ, -, h1, -⟩ := lf_cm_basis_of_mem hS
-      rw [h1, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, if_neg, smul_zero]
+      rw [h1, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, ite_eq_right, smul_zero]
       intro h
       rw [← h] at hT
       exact Finset.notMem_erase _ _ hT
@@ -131,11 +131,11 @@ theorem lf_repr_cm_eq (x : Fin n × Fin n) (S T : Finset (Fin (n * n))) :
     rw [h1, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply]
     by_cases hST : insert (finProdFinEquiv x) T = S
     · subst hST
-      rw [if_pos rfl, h2, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, if_pos rfl]
-    · rw [if_neg hST, smul_zero]
+      rw [ite_eq_left rfl, h2, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, ite_eq_left rfl]
+    · rw [ite_eq_right hST, smul_zero]
       by_cases hS : finProdFinEquiv x ∈ S
       · obtain ⟨σ, -, h3, -⟩ := lf_cm_basis_of_mem hS
-        rw [h3, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, if_neg, smul_zero]
+        rw [h3, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, ite_eq_right, smul_zero]
         intro h
         apply hST
         rw [← h, Finset.insert_erase hS]

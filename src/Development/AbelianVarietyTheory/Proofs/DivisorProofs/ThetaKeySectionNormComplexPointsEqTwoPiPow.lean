@@ -86,7 +86,6 @@ theorem norm_rule_of_coord {κ : GlobalTheory.KeyCl.Rule} (hκ : GlobalTheory.Ke
   have key := hκ x u Hm W χ θ Fd 1 _ hA hR hF hD hFd hN.symm rfl
   rw [hd] at hv
   rw [hW, eq_inv_of_mul_eq_one_left hv] at key
-  have hπ := Real.pi_pos
   simp only [mul_one, one_pow] at key
   rw [← key]
   simp only [mul_pow, pow_mul']
@@ -179,7 +178,7 @@ theorem homN_key_const : ∀ (κ : GlobalTheory.KeyCl.Rule), GlobalTheory.KeyCl.
   obtain ⟨Φ, hΦ⟩ : ∃ Φ : FibKey Xo ℂ (U.un k ⟨z, hz⟩).x, Tied (S := ℂ) e (U.un k ⟨z, hz⟩).s (U.un k ⟨z, hz⟩).u Φ :=
     @GlobalTheory.KeyFourth.exists_tied E _ _ _ H Dw l Xo c g e ℂ _ _ σ.toAlgebra (U.un k ⟨z, hz⟩) hpq
   have hv : rdU U (K : Rul Xo c) k z = (κ ℂ Φ.key : ℂ) := by
-    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hz, dif_pos]
+    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hz, dite_eq_left]
     exact @hval ℂ _ _ σ.toAlgebra (U.un k ⟨z, hz⟩) Φ hΦ
   have hn : (U.X k).pnorm (modelWt U (wtOf Dw 0 (-4)) k) (rdU U (K : Rul Xo c) k) z = ‖(κ ℂ Φ.key : ℂ)‖ := by
     simp [Data.pnorm, ReciprocityTheory.ChartRestriction.G.PullbackSections.PfSupAtUnit.dmin_ortho _ ho, hv]

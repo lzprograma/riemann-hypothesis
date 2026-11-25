@@ -31,94 +31,10 @@ import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: GroundTheory.AutomorphicForms.HermitianDisc, GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.MirabolicInduction.MemRangeIffIsIntegral, GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.MirabolicInduction.LinearFormEqZeroOfIntegers, GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PLineIdealDual, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineIndex
-
--- ===== clump member: GroundTheory.AutomorphicForms.HermitianDisc =====
--- clump-header: {"m": "GroundTheory.AutomorphicForms.HermitianDisc", "h": "module\n\npublic import GroundTheory.AutomorphicForms.HermitianSpaces\npublic import Mathlib.FieldTheory.Separable\npublic import GroundTheory.AutomorphicForms.HermitianOrthogonal\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport GroundTheory.LocalFields.Interface\n\n"}
-section -- clump:auto
-@[expose] public section
-
-noncomputable section
-
-namespace GroundTheory.Automorphic
-
-open Module Matrix GroundTheory.LocalField
-
-variable {F E : Type*} [Field F] [Field E] [Algebra F E] [Algebra.IsQuadraticExtension F E]
-variable {V V' : Type*} [AddCommGroup V] [Module E V] [AddCommGroup V'] [Module E V']
-
-namespace HermitianForm
-
-variable [Algebra.IsSeparable F E]
-
-def detUnit (h : HermitianForm F E V) {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (b : Basis ι E V) : Fˣ := by
-  have hdet : (gram h.toSesq b).det ∈ Set.range (algebraMap F E) := by
-    apply conj_eq_self_iff.1
-    rw [← conjHom_apply, RingHom.map_det, RingHom.mapMatrix_apply, ← det_transpose,
-      isHermitianFor_gram h b]
-  exact Units.mk0 hdet.choose (by
-    intro h0
-    have heq := hdet.choose_spec
-    rw [h0, map_zero] at heq
-    exact (isUnit_det_gram h b).ne_zero heq.symm)
-
-end HermitianForm
-
-def diagForm {ι : Type*} [Fintype ι] [DecidableEq ι] (a : ι → Fˣ) :
-    HermitianForm F E (ι → E) where
-  toSesq := LinearMap.mk₂'ₛₗ (conjHom F E) (RingHom.id E)
-    (fun x y => ∑ i, conj F E (x i) * algebraMap F E (a i) * y i)
-    (fun x x' y => by simp only [Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib])
-    (fun c x y => by
-      simp only [Pi.smul_apply, smul_eq_mul, map_mul, conjHom_apply, Finset.mul_sum]
-      exact Finset.sum_congr rfl fun i _ => by ring)
-    (fun x y y' => by simp only [Pi.add_apply, mul_add, Finset.sum_add_distrib])
-    (fun c x y => by
-      simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply, Finset.mul_sum]
-      exact Finset.sum_congr rfl fun i _ => by ring)
-  isSymm := ⟨fun x y => by
-
-    simp only [LinearMap.mk₂'ₛₗ_apply, conjHom_apply, map_sum, map_mul, conj_conj,
-    conj_algebraMap]
-    exact Finset.sum_congr rfl fun i _ => by ring⟩
-  nonsingular := by
-    have ha : ∀ i, algebraMap F E (a i) ≠ 0 := fun i => by simp
-    have key : ∀ (x : ι → E) (j : ι),
-        (∑ i, conj F E (x i) * algebraMap F E (a i) * (Pi.single j 1 : ι → E) i) =
-          conj F E (x j) * algebraMap F E (a j) := by
-      intro x j
-      rw [Finset.sum_eq_single j]
-      · simp
-      · intro i _ hij; simp [hij]
-      · simp
-    constructor
-    · intro x y hxy
-      funext j
-      have h1 := LinearMap.congr_fun hxy (Pi.single j 1)
-      simp only [LinearMap.mk₂'ₛₗ_apply, key] at h1
-      have h2 := mul_right_cancel₀ (ha j) h1
-      rw [← conj_conj (F := F) (x j), h2, conj_conj]
-    · intro f
-      refine ⟨fun j => conj F E (f (Pi.single j 1) * (algebraMap F E (a j))⁻¹),
-        LinearMap.ext fun y => ?_⟩
-      simp only [LinearMap.mk₂'ₛₗ_apply, conj_conj]
-      conv_rhs => rw [LinearMap.pi_apply_eq_sum_univ f y]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      have : (fun j => if i = j then (1 : E) else 0) = Pi.single i 1 := by
-        funext j; simp [Pi.single_apply, eq_comm]
-      rw [this, smul_eq_mul]
-      field_simp [ha i]
-
-end GroundTheory.Automorphic
-
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: GroundTheory.AutomorphicForms.HermitianDisc =====
+-- Members: GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.MirabolicInduction.MemRangeIffIsIntegral, GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.MirabolicInduction.LinearFormEqZeroOfIntegers, GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PLineIdealDual, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineIndex
 
 -- ===== clump member: GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.MirabolicInduction.MemRangeIffIsIntegral =====
--- clump-header: {"m": "GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.MirabolicInduction.MemRangeIffIsIntegral", "h": "module\n\npublic import GroundTheory.HeightsAndTheta.Heights.HermitianLattice\npublic import GroundTheory.AutomorphicForms.HermitianDisc\npublic import Mathlib.Analysis.CStarAlgebra.Module.Constructions\npublic import Mathlib.Analysis.InnerProductSpace.Dual\npublic import Mathlib.LinearAlgebra.Dual.BaseChange\npublic import Mathlib.NumberTheory.NumberField.Discriminant.Defs\npublic import Mathlib.NumberTheory.NumberField.InfinitePlace.TotallyRealComplex\npublic import GroundTheory.HeightsAndTheta.Theta.CMDatum\nimport Mathlib.Algebra.Module.StablyFree.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.LinearAlgebra.Matrix.FiniteDimensional\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Mathlib.RingTheory.Flat.Basic\n\n"}
+-- clump-header: {"m": "GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.MirabolicInduction.MemRangeIffIsIntegral", "h": "module\n\npublic import GroundTheory.HeightsAndTheta.Heights.HermitianLattice\npublic import Mathlib.Analysis.CStarAlgebra.Module.Constructions\npublic import Mathlib.Analysis.InnerProductSpace.Dual\npublic import Mathlib.LinearAlgebra.Dual.BaseChange\npublic import Mathlib.NumberTheory.NumberField.Discriminant.Defs\npublic import Mathlib.NumberTheory.NumberField.InfinitePlace.TotallyRealComplex\npublic import GroundTheory.HeightsAndTheta.Theta.CMDatum\nimport Mathlib.Algebra.Module.StablyFree.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.LinearAlgebra.Matrix.FiniteDimensional\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Mathlib.RingTheory.Flat.Basic\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -236,12 +152,6 @@ def fPl : ℕ := Fintype.card (InfinitePlace E)
 
 variable (E) in
 def rd : ℝ := |(discr E : ℝ)| ^ ((1 : ℝ) / (2 * fPl E))
-
-namespace MetSpace
-
-variable (S : MetSpace E)
-
-end MetSpace
 
 namespace MetSpace
 
@@ -397,16 +307,6 @@ namespace MetSpace
 
 variable (S : MetSpace E)
 
-def fibMap (T : MetSpace E) (φ : S.V →ₗ[E] T.V) (τ : InfinitePlace E) :
-    S.FibSp τ →ₗ[ℂ] T.FibSp τ :=
-  ((φ.baseChange (CAt τ.embedding)).restrictScalars ℂ : Fib τ.embedding S.V →ₗ[ℂ] Fib τ.embedding T.V)
-
-end MetSpace
-
-namespace MetSpace
-
-variable (S : MetSpace E)
-
 end MetSpace
 
 structure SelfDualFrame (F E : Type) [Field F] [Field E] [NumberField E] [Algebra F E]
@@ -425,12 +325,6 @@ structure SelfDualFrame (F E : Type) [Field F] [Field E] [NumberField E] [Algebr
   θ_isometry : ∀ τ u v, inner ℂ (θ τ u) (θ τ v) = inner ℂ u v
   majorant : ∀ τ (y y' : S.V), inner ℂ (θ τ (S.pt τ y)) (S.pt τ y') = τ.embedding (B.toSesq y y')
 
-namespace SelfDualFrame
-
-variable {F : Type} [Field F] [Algebra F E] [Algebra.IsQuadraticExtension F E]
-
-end SelfDualFrame
-
 section Standard
 
 variable (E) (n : ℕ)
@@ -441,9 +335,6 @@ def stdCoord (σ : E →+* ℂ) : Fib σ (Fin n → E) ≃ₗ[ℂ] EuclideanSpac
       (WithLp.linearEquiv 2 ℂ (Fin n → ℂ)).symm)
 
 variable {E n}
-
-theorem stdCoord_tmul (σ : E →+* ℂ) (z : CAt σ) (v : Fin n → E) (i : Fin n) :
-    stdCoord E n σ (z ⊗ₜ v) i = σ (v i) * (ofComplex σ).symm z := rfl
 
 variable (E n)
 
@@ -457,25 +348,6 @@ def stdLat : Submodule (𝓞 E) (Fin n → E) :=
 
 variable {E n}
 
-theorem stdLat_fg : (stdLat E n).FG := Submodule.fg_span (Set.finite_range _)
-
-theorem mem_range_iff_isIntegral (x : E) :
-    x ∈ Set.range (algebraMap (𝓞 E) E) ↔ IsIntegral ℤ x :=
-  ⟨fun ⟨c, hc⟩ => hc ▸ RingOfIntegers.isIntegral_coe c, fun h => ⟨⟨x, h⟩, rfl⟩⟩
-
-theorem mem_stdLat_iff (y : Fin n → E) :
-    y ∈ stdLat E n ↔ ∀ i, y i ∈ Set.range (algebraMap (𝓞 E) E) := by
-  rw [stdLat, Submodule.mem_span_range_iff_exists_fun]
-  constructor
-  · rintro ⟨c, rfl⟩ i
-    refine ⟨c i, ?_⟩
-    simp [Finset.sum_apply, Pi.single_apply, Algebra.smul_def]
-  · intro h
-    refine ⟨fun i => (h i).choose, funext fun j => ?_⟩
-    simp only [Finset.sum_apply, Pi.smul_apply, Pi.single_apply, Algebra.smul_def, mul_ite, mul_one,
-      mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
-    exact (h j).choose_spec
-
 end Standard
 
 section Frame
@@ -483,20 +355,7 @@ section Frame
 variable (F : Type) [Field F] [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
   [Algebra F E] [Algebra.IsQuadraticExtension F E]
 
-def signs : Fin 2 → Fˣ := ![1, -1]
-
-def flipMap : (Fin 2 → E) →ₗ[E] (Fin 2 → E) :=
-  LinearMap.pi fun i => (algebraMap F E (signs F i) : E) • LinearMap.proj i
-
 variable {F}
-
-theorem signs_sq (i : Fin 2) : algebraMap F E (signs F i) * algebraMap F E (signs F i) = 1 := by
-  fin_cases i <;> simp [signs]
-
-theorem flipMap_flipMap (y : Fin 2 → E) : flipMap F (flipMap F y) = y := by
-  funext i
-  simp only [flipMap, LinearMap.pi_apply, LinearMap.smul_apply, LinearMap.proj_apply, smul_eq_mul]
-  rw [← mul_assoc, signs_sq, one_mul]
 
 end Frame
 
@@ -505,101 +364,12 @@ section Frame
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
   [Algebra F E] [Algebra.IsQuadraticExtension F E]
 
-theorem isIntegral_conj {x : E} (hx : IsIntegral ℤ x) : IsIntegral ℤ (conj F E x) :=
-  hx.map (conjHom F E).toIntAlgHom
-
-def hypForm : HermitianForm F E (Fin 2 → E) := diagForm (signs F)
-
-theorem hypForm_apply (y y' : Fin 2 → E) :
-    (hypForm (F := F) (E := E)).toSesq y y' =
-      ∑ i, conj F E (y i) * algebraMap F E (signs F i) * y' i := rfl
-
-theorem stdLat_isSelfDual : IsSelfDual (hypForm (F := F) (E := E)) (stdLat E 2) := by
-  intro y
-  simp only [mem_range_iff_isIntegral, mem_stdLat_iff, hypForm_apply]
-  constructor
-  · intro hy l hl
-    refine IsIntegral.sum _ fun i _ => ?_
-    refine ((isIntegral_conj (hy i)).mul ?_).mul (hl i)
-    fin_cases i <;> simp [signs, isIntegral_one, IsIntegral.neg]
-  · intro h i
-    have key := h (Pi.single i 1) (by
-      intro j
-      by_cases hij : j = i
-      · subst hij; simp [isIntegral_one]
-      · simp [Pi.single_apply, hij, isIntegral_zero])
-    rw [Finset.sum_eq_single i (fun j _ hj => by simp [Pi.single_apply, hj]) (by simp)] at key
-    simp only [Pi.single_eq_same, mul_one] at key
-    have hc : IsIntegral ℤ (conj F E (y i)) := by
-      fin_cases i
-      · simpa [signs] using key
-      · simpa [signs] using key.neg
-    simpa [conj_conj] using isIntegral_conj (F := F) hc
-
 end Frame
 
 section Frame2
 
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
   [Algebra F E] [Algebra.IsQuadraticExtension F E]
-
-theorem stdCoord_flip (τ : InfinitePlace E) (u : Fib τ.embedding (Fin 2 → E)) (i : Fin 2) :
-    stdCoord E 2 τ.embedding ((flipMap F).baseChange (CAt τ.embedding) u) i =
-      τ.embedding (algebraMap F E (signs F i)) * stdCoord E 2 τ.embedding u i := by
-  induction u using TensorProduct.induction_on with
-  | zero => simp
-  | tmul z v =>
-    rw [LinearMap.baseChange_tmul, stdCoord_tmul, stdCoord_tmul]
-    simp only [flipMap, LinearMap.pi_apply, LinearMap.smul_apply, LinearMap.proj_apply, smul_eq_mul,
-      map_mul]
-    ring
-  | add u v hu hv => rw [map_add (f := _), map_add (f := _), PiLp.add_apply, hu, hv, map_add (f := _), PiLp.add_apply, mul_add]
-
-theorem signs_conj_mul (τ : InfinitePlace E) (i : Fin 2) :
-    starRingEnd ℂ (τ.embedding (algebraMap F E (signs F i))) *
-      τ.embedding (algebraMap F E (signs F i)) = 1 := by
-  fin_cases i <;> simp [signs]
-
-theorem flip_flip_fib (τ : InfinitePlace E) (u : Fib τ.embedding (Fin 2 → E)) :
-    (flipMap F).baseChange (CAt τ.embedding) ((flipMap F).baseChange (CAt τ.embedding) u) = u := by
-  rw [← LinearMap.comp_apply, ← LinearMap.baseChange_comp]
-  have h : flipMap F ∘ₗ flipMap F = (LinearMap.id : (Fin 2 → E) →ₗ[E] (Fin 2 → E)) :=
-    LinearMap.ext flipMap_flipMap
-  rw [h, LinearMap.baseChange_id, LinearMap.id_apply]
-
-theorem flip_isometry (τ : InfinitePlace E) (u v : Fib τ.embedding (Fin 2 → E)) :
-    inner ℂ (stdCoord E 2 τ.embedding ((flipMap F).baseChange (CAt τ.embedding) u))
-        (stdCoord E 2 τ.embedding ((flipMap F).baseChange (CAt τ.embedding) v)) =
-      inner ℂ (stdCoord E 2 τ.embedding u) (stdCoord E 2 τ.embedding v) := by
-  simp only [PiLp.inner_apply, RCLike.inner_apply, stdCoord_flip]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_mul]
-  linear_combination (stdCoord E 2 τ.embedding v i *
-    starRingEnd ℂ (stdCoord E 2 τ.embedding u i)) * signs_conj_mul (F := F) τ i
-
-theorem flip_majorant (τ : InfinitePlace E) (y y' : Fin 2 → E) :
-    inner ℂ (stdCoord E 2 τ.embedding
-        ((flipMap F).baseChange (CAt τ.embedding) ((1 : CAt τ.embedding) ⊗ₜ y)))
-        (stdCoord E 2 τ.embedding ((1 : CAt τ.embedding) ⊗ₜ y')) =
-      τ.embedding ((hypForm (F := F) (E := E)).toSesq y y') := by
-
-  rw [LinearMap.baseChange_tmul, hypForm_apply, map_sum]
-  simp only [PiLp.inner_apply, RCLike.inner_apply, stdCoord_tmul]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  have h1 : (ofComplex τ.embedding).symm 1 = 1 := rfl
-  simp only [h1, mul_one, map_one, map_mul, embedding_conj]
-  fin_cases i <;> simp [flipMap, signs, embedding_conj] <;> ring
-
-def hypFrame : SelfDualFrame F E where
-  S := MetSpace.standard E 2
-  B := hypForm
-  L := stdLat E 2
-  fg := stdLat_fg
-  selfDual := stdLat_isSelfDual
-  θ τ := (MetSpace.standard E 2).fibMap (MetSpace.standard E 2) (flipMap F) τ
-  θ_θ τ u := flip_flip_fib τ u
-  θ_isometry τ u v := flip_isometry τ u v
-  majorant τ y y' := flip_majorant τ y y'
 
 end Frame2
 
@@ -631,20 +401,6 @@ namespace DualHomPf
 
 open NumberField Module FunctionalEquationAlt FunctionalEquationAlt.MetSpace NumberField.InfinitePlace
 open scoped InnerProductSpace nonZeroDivisors ComplexConjugate
-
-section NumberFieldFacts
-
-variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
-
-open Classical
-
-end NumberFieldFacts
-
-section DualLattice
-
-variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
-
-end DualLattice
 
 section DualBasis
 
@@ -777,35 +533,6 @@ theorem exists_dualBasis (A : Submodule (𝓞 E) V) (hA : A.FG) :
 
 end DualBasis2
 
-section Fibres
-
-variable {E : Type} [Field E] [NumberField E]
-
-variable (S : MetSpace E) (τ : InfinitePlace E)
-
-end Fibres
-
-section Adjoints
-
-variable {H₁ H₂ : Type} [NormedAddCommGroup H₁] [InnerProductSpace ℂ H₁] [FiniteDimensional ℂ H₁]
-  [NormedAddCommGroup H₂] [InnerProductSpace ℂ H₂] [FiniteDimensional ℂ H₂]
-
-end Adjoints
-
-section IdealMaps
-
-variable {E : Type} [Field E] [NumberField E]
-variable {V V' : Type} [AddCommGroup V] [Module E V] [Module (𝓞 E) V] [IsScalarTower (𝓞 E) E V]
-  [AddCommGroup V'] [Module E V'] [Module (𝓞 E) V'] [IsScalarTower (𝓞 E) E V']
-
-end IdealMaps
-
-section FibMaps
-
-variable {E : Type} [Field E] [NumberField E]
-
-end FibMaps
-
 end DualHomPf
 
 open NumberField Module FunctionalEquationAlt FunctionalEquationAlt.MetSpace DualHomPf
@@ -916,7 +643,7 @@ theorem proof : LineIdealDual.Statement := by
         rw [← hKid j k, map_sum, Finset.mul_sum]
         exact Finset.sum_congr rfl fun i _ ↦ by rw [map_mul]; ring
       simp only [e, apply_ite (algebraMap K K'), map_one, map_zero, mul_ite, mul_one, mul_zero,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     choose y hy using h
     rw [hid' (a • v)]
     refine Submodule.sum_mem _ fun i _ ↦ ?_
@@ -1048,7 +775,7 @@ theorem dualPointCoord_ne_zero {K : Type} [Field K] [NumberField K] {i : ℕ} (F
   simp only [Λ, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.zero_apply,
     zsmul_eq_mul, Pi.mul_apply, Pi.intCast_apply, Pi.single_apply, mul_ite, mul_one, mul_zero,
     apply_ite (algebraMap K K'), map_intCast, map_zero, ite_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true] at this
+    Finset.mem_univ, ite_true] at this
   rcases mul_eq_zero.mp this with h | h
   · apply hD
     have h' : algebraMap K K' (D : K) = 0 := by rw [map_intCast]; exact h

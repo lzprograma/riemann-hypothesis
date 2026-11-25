@@ -28,9 +28,6 @@ def actL (g : G) : Rules pts →ₗ[K] Rules pts where
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-theorem actL_apply (g : G) (f : Rules pts) (p : TRing K) (y : pts p.R) :
-    actL pts actR g f p y = f p (mvPt pts actR g y) := rfl
-
 def ActTotal : Prop :=
   ∀ (g : G) (S : Type) [CommRing S] [Algebra K S] (y : pts S), ∃ y', actR g y y'
 

@@ -44,38 +44,4 @@ instance (x : X) : IsScalarTower k (X.presheaf.stalk x) X.functionField := by
 
 end Scalars
 
-section DimensionOne
-
-variable {X : Scheme.{u}}
-
-lemma coheight_le_topologicalKrullDim (x : X) :
-    (coheight x : WithBot ℕ∞) ≤ topologicalKrullDim X := by
-  let := specializationOrder X
-  have h := coheight_le_krullDim
-    (irreducibleSetEquivPoints.symm x : TopologicalSpace.IrreducibleCloseds X)
-  rw [coheight_orderIso] at h
-  exact h
-
-lemma coheight_le_one (hX : topologicalKrullDim X ≤ 1) (x : X) : coheight x ≤ 1 := by
-  have := (coheight_le_topologicalKrullDim x).trans hX
-  exact_mod_cast this
-
-variable [IsIntegral X]
-
-lemma coheight_eq_one (hX : topologicalKrullDim X ≤ 1) {x : X} (hx : x ≠ genericPoint X) :
-    coheight x = 1 := by
-  refine le_antisymm (coheight_le_one hX x) ?_
-  rw [Order.one_le_iff_ne_zero, Ne, coheight_eq_zero]
-  intro hmax
-  have h1 : x ≤ genericPoint X := genericPoint_specializes x
-  have h2 : genericPoint X ≤ x := hmax h1
-  exact hx (Specializes.antisymm (h2 : x ⤳ genericPoint X) (h1 : genericPoint X ⤳ x)).eq
-
-lemma ringKrullDim_stalk_eq_one (hX : topologicalKrullDim X ≤ 1) {x : X}
-    (hx : x ≠ genericPoint X) : ringKrullDim (X.presheaf.stalk x) = 1 := by
-  rw [ringKrullDim_stalk_eq_coheight, coheight_eq_one hX hx]
-  rfl
-
-end DimensionOne
-
 end GroundTheory.Arith.SchemeCoh

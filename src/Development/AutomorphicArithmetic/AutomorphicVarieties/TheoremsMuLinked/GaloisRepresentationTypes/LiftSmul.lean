@@ -1,5 +1,7 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.OneLevel
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.GKillsTr
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.RepRSingle
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
 public import Mathlib.LinearAlgebra.Matrix.Adjugate
@@ -181,19 +183,7 @@ open Matrix IsLocalRing UpperTheory.V UpperTheory.V.W UpperTheory.V.Alg UpperThe
 private theorem flagC_up_mul {X : Type} [CommRing X] {n : ℕ} {A B : Matrix (Fin n) (Fin n) X}
     (hA : ∀ i j, j < i → A i j = 0) (hB : ∀ i j, j < i → B i j = 0) :
     (∀ i j, j < i → (A * B) i j = 0) ∧ ∀ i, (A * B) i i = A i i * B i i := by
-  constructor
-  · intro i j hij
-    rw [Matrix.mul_apply]
-    refine Finset.sum_eq_zero fun k _ => ?_
-    rcases lt_or_ge k i with h | h
-    · rw [hA i k h, zero_mul]
-    · rw [hB k j (lt_of_lt_of_le hij h), mul_zero]
-  · intro i
-    rw [Matrix.mul_apply]
-    refine Finset.sum_eq_single i (fun k _ hk => ?_) (by simp)
-    rcases lt_or_gt_of_ne hk with h | h
-    · rw [hA i k h, zero_mul]
-    · rw [hB k i h, mul_zero]
+  apply _root_.up_mul <;> assumption
 
 private theorem flagC_core {X : Type} [CommRing X] {n : ℕ} (A B S T S₁ T₁ r D : Matrix (Fin n) (Fin n) X) (d : X)
     (g a : Fin n → X) (hAS : A * S = d • (1 : Matrix (Fin n) (Fin n) X)) (hTB : T * B = d • (1 : Matrix (Fin n) (Fin n) X))
@@ -516,12 +506,6 @@ section -- clump:auto
 
 open Matrix IsLocalRing UpperTheory.V UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.Pa UpperTheory.V.Th UpperTheory.V.Th.Coc
 
-section SlopeTestRemainingChoices
-
-variable {X : Type} [CommRing X] {n : ℕ}
-
-end SlopeTestRemainingChoices
-
 private theorem dualM_mul_dualM {X : Type} [CommRing X] {n : ℕ} (A B A' B' : Matrix (Fin n) (Fin n) X) :
     dualM A B * dualM A' B' = dualM (A * A') (A * B' + B * A') := by
   ext i j
@@ -705,8 +689,7 @@ theorem UpperTheory.V.Th.Coc.idemDiag :
     split_ifs <;> simp
   have hc : ∀ i, ∃ c, IsUnit (e i c c) := by
     intro i
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have hmem : (e i).trace ∈ IsLocalRing.maximalIdeal O :=
       Ideal.sum_mem _ (fun c _ => (IsLocalRing.mem_maximalIdeal _).mpr (hne c))
     rw [htr i] at hmem
@@ -826,22 +809,7 @@ open Matrix IsLocalRing UpperTheory.V UpperTheory.V.W UpperTheory.V.Alg UpperThe
 private theorem lift_surj {B E E' P : Type} [CommRing B] [Ring E] [Ring E'] [Ring P] [Algebra B E] [Algebra B E']
     [Algebra B P] (q : E →ₐ[B] E') (hq : Function.Surjective q) (ρ : E →ₐ[B] P) (h : ∀ x, q x = 0 → ρ x = 0) :
     ∃ π : E' →ₐ[B] P, ∀ x, π (q x) = ρ x := by
-  have key : ∀ x y, q x = q y → ρ x = ρ y := fun x y hxy =>
-    sub_eq_zero.1 (by rw [← map_sub]; exact h _ (by rw [map_sub, hxy, sub_self]))
-  choose s hs using hq
-  have hq' : ∀ x, ρ (s (q x)) = ρ x := fun x => key _ _ (hs _)
-  refine ⟨⟨⟨⟨⟨fun y => ρ (s y), ?_⟩, fun a b => ?_⟩, ?_, fun a b => ?_⟩, fun r => ?_⟩, hq'⟩
-  · rw [← map_one q, hq', map_one]
-  · change ρ (s (a * b)) = ρ (s a) * ρ (s b)
-    rw [← map_mul]
-    exact key _ _ (by rw [map_mul, hs, hs, hs])
-  · change ρ (s 0) = 0
-    rw [← map_zero q, hq', map_zero]
-  · change ρ (s (a + b)) = ρ (s a) + ρ (s b)
-    rw [← map_add (f := _)]
-    exact key _ _ (by rw [map_add (f := _), hs, hs, hs])
-  · change ρ (s (algebraMap B E' r)) = _
-    rw [← q.commutes, hq', ρ.commutes]
+  apply _root_.lift_surj <;> assumption
 
 theorem UpperTheory.V.Th.Coc.gma :
     ∀ {n : ℕ} {O R G : Type} [CommRing O] [IsLocalRing O] [CommRing R] [Algebra O R] [IsCO O R] [Group G] (D : GDet n R G) (χ : Fin n → G →* (ResidueField O)ˣ), 1 ≤ n → Function.Injective χ → D.map (res O R : R →+* ResidueField O) = GDet.ofRep (diagRep χ) → ∃ (E : Type) (_ : Ring E) (_ : Algebra R E) (π : MonoidAlgebra R G →ₐ[R] E) (τ : E →ₗ[R] R) (e : Fin n → E), Function.Surjective π ∧ (∀ y, τ (π y) = D.tr y) ∧ IsTrGMA τ e := by

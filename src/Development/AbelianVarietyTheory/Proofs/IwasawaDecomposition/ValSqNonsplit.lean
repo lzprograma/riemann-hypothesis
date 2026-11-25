@@ -70,7 +70,7 @@ theorem val_mem_of_ae {L : Type} [Field L] [NumberField L] (χ : HChar L) (Λ : 
   obtain ⟨a, ha⟩ := IsDedekindDomain.exists_forall_sub_mem_ideal (s := S) (fun v => v.asIdeal) (fun _ => 2)
     (fun v _ => v.prime) (fun v _ w _ h h' => h (HeightOneSpectrum.ext h')) (fun v => if v.1 = P then b else 1)
   have h1 := ha P hP
-  rw [if_pos rfl] at h1
+  rw [ite_eq_left rfl] at h1
   have ha2 : a ∉ P.asIdeal ^ 2 := fun h => hb2 (by simpa using (P.asIdeal ^ 2).sub_mem h h1)
   have ha1 : a ∈ P.asIdeal := by
     have := P.asIdeal.add_mem (Ideal.pow_le_self two_ne_zero h1) hb1
@@ -85,7 +85,7 @@ theorem val_mem_of_ae {L : Type} [Field L] [NumberField L] (χ : HChar L) (Λ : 
   have h := TypeValues.productRule χ S hu (Units.mk0 _ ha0)
   rw [hi, one_mul, Finset.prod_eq_single_of_mem P hP (fun v hvS hvP => TypeValues.locK_eq_one (ht v) _ a rfl (by
     have h1 := ha v hvS
-    rw [if_neg hvP] at h1
+    rw [ite_eq_right hvP] at h1
     exact Ideal.pow_le_self two_ne_zero h1)), hval] at h
   rw [eq_inv_of_mul_eq_one_left h]
   refine Λ.inv_mem (finprod_induction (· ∈ Λ) Λ.one_mem (fun _ _ => Λ.mul_mem) fun v => ?_)
@@ -99,7 +99,6 @@ theorem of_at {E : Type} [Field E] [NumberField E] (χ : HChar E) (h : NC.HC E) 
   have hu : χ.UnrAt v := k.2.2 ha.1
   exact ⟨hu, (k.1 hu).unique ha⟩
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem val_sq_nonsplit (D : D7) {χ : HChar D.host.E} (ht : χ.TrivOn D.host.F) {v : PlE D.host} (hu : χ.UnrAt v)
     (hv : ¬ IsSplitPl D.host v) : χ.val v ^ 2 = 1 := by
   refine TypeValues.val_sq_eq_one D.sp.cm ht hu ?_
@@ -226,29 +225,6 @@ theorem psi_is {D : D7} {cf : CharFrame D} {C : NChoice D} (tp : TupTied D cf C)
     IsPsi (D.nd.l a) (D.nd.Q a) (tp.psi (D.nd.w a)) := by
   rw [nct.Q_eq a, ← D.nd.w_l a]
   exact tp.psi_is _ (D.nd.w_tw a)
-
-theorem etaT_link {D : D7} {cf : CharFrame D} {C : NChoice D} {tp : TupTied D cf C} (T : NCharTied D cf C tp)
-    (η : NC.HC D.host.E) (h : ∀ x, η.χ x = cf.eta.1 x) (w : PlE D.host) (α : ℂ) (ha : η.At w α) :
-    D.naut.frobEig (D.naut.locG D.naut.etaT w) = {α⁻¹} := by
-  obtain ⟨hu, hv⟩ := of_at _ _ h ha
-  rw [T.frob _ w (by rw [T.etaT]; exact hu), T.etaT, Units.val_inv_eq_inv_val, hv]
-
-theorem muC_link {D : D7} {cf : CharFrame D} {C : NChoice D} {tp : TupTied D cf C} (T : NCharTied D cf C tp)
-    (K : NC.NChiData D) (h1 : ∀ (j : Fin D.R.m) x, (K.mu0 (j.1 + 1)).χ x = (cf.mu0 j).1 x)
-    (h2 : ∀ s x, (K.del s).χ x = (cf.delAt (D.ntw.l s)).1 x) (h3 : ∀ a x, (K.psi a).χ x = (tp.psi (D.nd.w a)).1 x)
-    (i : D.nd.Loc) (w : PlE D.host) (α : ℂ) (ha : (K.mu0 (D.nd.j i) * K.del (D.ntw.twOf i) * K.psi i).At w α) :
-    D.naut.frobEig (D.naut.locG (D.naut.muC i) w) = {α⁻¹} := by
-  let j : Fin D.R.m := ⟨D.nd.j i - 1, by have := D.nd.j_range i; omega⟩
-  have hj : j.1 + 1 = D.nd.j i := by have := D.nd.j_range i; show D.nd.j i - 1 + 1 = _; omega
-  have e := T.muC i j hj
-  have htup : tp.tup (D.nd.mu i) j = cf.mu0 j * cf.delAt (D.nd.l i) * tp.psi (D.nd.w i) := by
-    rw [TupTied.tup, D.nd.mu_w, tp.xi_tw, D.nd.w_l, ← mul_assoc]
-  obtain ⟨hu, hv⟩ := of_at (tp.tup (D.nd.mu i) j) _ (fun x => by
-    rw [htup]
-    change ((K.mu0 (D.nd.j i)).χ x * (K.del (D.ntw.twOf i)).χ x) * (K.psi i).χ x = _
-    rw [← hj, h1, h2, h3, D.ntw.twOf_l]
-    rfl) ha
-  rw [T.frob _ w (by rw [e]; exact hu), e, Units.val_inv_eq_inv_val, hv]
 
 theorem psiL_gal' {D : D7} {cf : CharFrame D} {C : NChoice D} {tp : TupTied D cf C} (T : NCharTied D cf C tp)
     (nct : NChTie D C) (hψ : PsiChoiceCompatible D cf C tp) (K : NC.NChiData D) (h0 : ∀ x, K.etaT.χ x = cf.eta.1 x)

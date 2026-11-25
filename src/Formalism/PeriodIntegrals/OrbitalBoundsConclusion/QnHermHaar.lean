@@ -25,55 +25,8 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovariantLinearP
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabGl
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabPres
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnRdSkew
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.NestedMinorExpansionOneZero
 
@@ -97,10 +50,6 @@ open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 section Linfty
 attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
 
-lemma tst_exp_hasSum_linfty {n : ℕ} (X : Matrix (Fin n) (Fin n) ℂ) :
-    HasSum (fun j : ℕ => ((j.factorial : ℂ)⁻¹) • X ^ j) (NormedSpace.exp X) :=
-  NormedSpace.exp_series_hasSum_exp' (𝕂 := ℂ) X
-
 end Linfty
 
 private theorem exp_entry_lemma_2 {n : ℕ} (X : Matrix (Fin n) (Fin n) ℂ) (j l : Fin n) :
@@ -120,61 +69,15 @@ private theorem smul_mulVec_lemma {n : ℕ} (c : ℂ) (M : Matrix (Fin n) (Fin n
   ext x
   simp [Matrix.mulVec, dotProduct, Finset.mul_sum, mul_assoc]
 
-lemma tst_exp_mulVec {n : ℕ} (X : Matrix (Fin n) (Fin n) ℂ) (v : Fin n → ℂ) (hv : X *ᵥ v = 0) :
-    NormedSpace.exp X *ᵥ v = v := by
-  have hc : Continuous fun M : Matrix (Fin n) (Fin n) ℂ => M *ᵥ v :=
-    Continuous.matrix_mulVec continuous_id continuous_const
-  have h1 := (_root_.PI.QnHermHaar.tst_exp_hasSum_linfty X).map (AddMonoidHom.mk' (fun M : Matrix (Fin n) (Fin n) ℂ => M *ᵥ v)
-    (fun A B => Matrix.add_mulVec A B v)) hc
-  have h2 : HasSum (fun j : ℕ => ((j.factorial : ℂ)⁻¹ • X ^ j) *ᵥ v) v := by
-    have h := hasSum_single (f := fun j : ℕ => ((j.factorial : ℂ)⁻¹ • X ^ j) *ᵥ v) 0 (by
-      intro j hj
-      obtain ⟨m, rfl⟩ : ∃ m, j = m + 1 := ⟨j - 1, by omega⟩
-      show ((((m + 1).factorial : ℕ) : ℂ)⁻¹ • X ^ (m + 1)) *ᵥ v = 0
-      rw [smul_mulVec_lemma, pow_succ, ← Matrix.mulVec_mulVec, hv, Matrix.mulVec_zero, smul_zero])
-    simpa using h
-  exact h1.unique h2
-
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 lemma tst_mul_mem {k r : ℕ} {i : Fin (r + 1)} {g h : Mx k r} (hg : g ∈ Glev k r i) (hh : h ∈ Glev k r i) :
-    g * h ∈ Glev k r i := by
-  refine ⟨?_, fun a ha => ⟨?_, ?_⟩⟩
-  · have h1 : gᴴ * Hpk k r * g = Hpk k r := hg.1
-    have h2 : hᴴ * Hpk k r * h = Hpk k r := hh.1
-    show (g * h)ᴴ * Hpk k r * (g * h) = Hpk k r
-    rw [Matrix.conjTranspose_mul,
-      show hᴴ * gᴴ * Hpk k r * (g * h) = hᴴ * (gᴴ * Hpk k r * g) * h by simp only [Matrix.mul_assoc],
-      h1, h2]
-  · rw [← Matrix.mulVec_mulVec, (hh.2 a ha).1, (hg.2 a ha).1]
-  · rw [← Matrix.mulVec_mulVec, (hh.2 a ha).2, (hg.2 a ha).2]
+    g * h ∈ Glev k r i :=
+  _root_.QnRdSkewW.glev_mul hg hh
 
 lemma tst_exp_mem {k r : ℕ} {i : Fin (r + 1)} {X : Mx k r} (hX : inLieLev k r i X) (t : ℝ) :
-    NormedSpace.exp ((t : ℂ) • X) ∈ Glev k r i := by
-  obtain ⟨hLie, hfix⟩ := hX
-  have hI := Formalism.QuantumDeterminants.GBasic.Hpk_sq k r
-  have hunitH : IsUnit (Hpk k r) :=
-    (Matrix.isUnit_iff_isUnit_det _).mpr (Matrix.isUnit_det_of_left_inverse hI)
-  have hinv : (Hpk k r)⁻¹ = Hpk k r := Matrix.inv_eq_left_inv hI
-  have hst : star ((t : ℂ)) = (t : ℂ) := Complex.conj_ofReal t
-  refine ⟨?_, fun a ha => ⟨?_, ?_⟩⟩
-  · have hXc : Xᴴ = Hpk k r * (-X) * Hpk k r := by
-      have h1 : Xᴴ * Hpk k r = -(Hpk k r * X) := eq_neg_of_add_eq_zero_left hLie
-      calc Xᴴ = Xᴴ * Hpk k r * Hpk k r := by rw [Matrix.mul_assoc, hI, Matrix.mul_one]
-        _ = Hpk k r * (-X) * Hpk k r := by rw [h1, Matrix.mul_neg]
-    have hYc : ((t : ℂ) • X)ᴴ = Hpk k r * (-((t : ℂ) • X)) * (Hpk k r)⁻¹ := by
-      rw [hinv, Matrix.conjTranspose_smul, hst, hXc, ← smul_neg, Matrix.mul_smul, Matrix.smul_mul]
-    have hE : (NormedSpace.exp ((t : ℂ) • X))ᴴ =
-        Hpk k r * NormedSpace.exp (-((t : ℂ) • X)) * (Hpk k r)⁻¹ := by
-      rw [← Matrix.exp_conjTranspose, hYc, Matrix.exp_conj _ _ hunitH]
-    have hEE : NormedSpace.exp (-((t : ℂ) • X)) * NormedSpace.exp ((t : ℂ) • X) = 1 := by
-      rw [Matrix.exp_neg]
-      exact Matrix.nonsing_inv_mul _ ((Matrix.isUnit_iff_isUnit_det _).mp (Matrix.isUnit_exp _))
-    show (NormedSpace.exp ((t : ℂ) • X))ᴴ * Hpk k r * NormedSpace.exp ((t : ℂ) • X) = Hpk k r
-    rw [hE, hinv, Matrix.mul_assoc (Hpk k r * NormedSpace.exp (-((t : ℂ) • X))) (Hpk k r) (Hpk k r), hI,
-      Matrix.mul_one, Matrix.mul_assoc, hEE, Matrix.mul_one]
-  · exact tst_exp_mulVec _ _ (by rw [smul_mulVec_lemma, (hfix a ha).1, smul_zero])
-  · exact tst_exp_mulVec _ _ (by rw [smul_mulVec_lemma, (hfix a ha).2, smul_zero])
+    NormedSpace.exp ((t : ℂ) • X) ∈ Glev k r i :=
+  _root_.QnRdSkewW.exp_mem_glev hX t
 
 lemma tst_H_zero {k r : ℕ} (i : Fin (r + 1)) (q : Fin (mdim k r i)) (a : Fin r) (ha : a.val < i.val) :
     Hpk k r (posL k r i q) (eI k r a) = 0 ∧ Hpk k r (posL k r i q) (esI k r a) = 0 := by
@@ -362,25 +265,8 @@ theorem multiplication_preserves_test : MulTest := by
     tst_mul_test (fun g => star (bExt k r z i c g)) (fun g => star (ybv k r z i g c))
       (tst_cd_star (tst_bExt_cd k r z i c)) (fun g _ => congrArg star (tst_ybv_eq z i c g)) f hf⟩
 
-lemma tst_glev_closed (k r : ℕ) (i : Fin (r + 1)) : IsClosed (Glev k r i) := by
-  have h1 : IsClosed {g : Mx k r | gᴴ * Hpk k r * g = Hpk k r} :=
-    isClosed_eq ((continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul continuous_id)
-      continuous_const
-  have h2 : ∀ a : Fin r, IsClosed {g : Mx k r | a.val < i.val →
-      g *ᵥ bvec (eI k r a) = bvec (eI k r a) ∧ g *ᵥ bvec (esI k r a) = bvec (esI k r a)} := by
-    intro a
-    by_cases ha : a.val < i.val
-    · simp only [ha, true_implies, Set.setOf_and]
-      exact (isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const).inter
-        (isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const)
-    · simp only [ha, false_implies, Set.setOf_true]
-      exact isClosed_univ
-  have e : Glev k r i = {g : Mx k r | gᴴ * Hpk k r * g = Hpk k r} ∩ ⋂ a : Fin r, {g : Mx k r | a.val < i.val →
-      g *ᵥ bvec (eI k r a) = bvec (eI k r a) ∧ g *ᵥ bvec (esI k r a) = bvec (esI k r a)} := by
-    ext g
-    simp [Glev, UH]
-  rw [e]
-  exact h1.inter (isClosed_iInter h2)
+lemma tst_glev_closed (k r : ℕ) (i : Fin (r + 1)) : IsClosed (Glev k r i) :=
+  _root_.QnRdSkewW.glev_closed k r i
 
 lemma tst_contOn {k r : ℕ} {i : Fin (r + 1)} (f : Mx k r → ℂ) (hf : SmoothLev k r i Set.univ f) :
     ContinuousOn f (Glev k r i) := by
@@ -477,8 +363,7 @@ theorem rel_sum_posL (k r : ℕ) (i : Fin (r + 1)) (F : Fin (2 * r + k + 1) → 
   refine (Finset.sum_subset (Finset.subset_univ _) ?_).symm
   intro a _ ha
   apply hF
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply ha
   have hi := i.isLt
   refine Finset.mem_image.2 ⟨⟨a.val - i.val, ?_⟩, Finset.mem_univ _, ?_⟩
@@ -562,7 +447,7 @@ theorem restricted_gram_hermitian_involution : HmFacts := by
     by_cases h : a = b
     · subst h
       simp
-    · rw [if_neg h, if_neg (fun e => h (rel_posL_injective k r i e))]
+    · rw [ite_eq_right h, ite_eq_right (fun e => h (rel_posL_injective k r i e))]
 
 end PI.QnHermHaar
 end -- clump:auto
@@ -642,7 +527,7 @@ theorem hermitian_algebra_generation : HermAlgFrom := by
       rcases mul_self_eq_one_iff.mp (hdd b) with h | h
       · simp [hd, h]
       · have hne : hH.eigenvalues b ≠ 1 := by rw [h]; norm_num
-        rw [if_neg hne]
+        rw [ite_eq_right hne]
         simp [hd, h]
     refine ⟨P, star P, fun b => if hH.eigenvalues b = 1 then 1 else -1, hQP, hPQ,
       fun i j => by rw [Matrix.star_apply], fun i j => by rw [Matrix.star_apply, star_star], fun k b => ?_,

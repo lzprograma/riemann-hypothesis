@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SvalOfIsTwistPull
+import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsGenRosati
 import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPowerSectionOfChartFunctions
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
@@ -211,15 +213,8 @@ theorem twist_val {T : Over S} {ψ : T ⊗ A ⟶ T ⊗ A} {m : T ⊗ A ⟶ A} {h
     {s' : LB.Sec (LPow A M a T)} (h : IsTwistPull A M ψ m hm a b α s s') {Z : Scheme.{0}} (r : Z ⟶ (T ⊗ A).left) (z : Z) {J}
     (hJ : Good M z J) : sval (L := M) (φ := fun _ : Fin 1 => (snd T A).left) (ε := fun _ => a) s' r z J =
       (val α r z J).val * sval (L := M) (φ := fun _ : Fin 1 => (snd T A).left) (ε := fun _ => b) s (r ≫ ψ.left) z J := by
-  let j : Fin 2 → M.ι := fun k => J (r ≫ (![(snd T A).left, m.left] : Fin 2 → _) k)
-  have hz : r z ∈ LB.wchart M ![(snd T A).left, m.left] j := hJ.mem _ r
-  have e := congrArg (gs r z (LB.wchart M ![(snd T A).left, m.left] j)) (h j)
-  have a₁ := gs_res r z (chart_le_zero A M m j) hz (s'.f fun _ => j 0)
-  have a₂ := (gs_res r z (chart_le_pull A M ψ m hm j) hz ((ψ.left.app _).hom (s.f fun _ => j 1))).trans
-    (gs_pull r ψ.left z (LB.wchart M (fun _ : Fin 1 => (snd T A).left) fun _ => j 1) (chart_le_pull A M ψ m hm j hz) _)
-  have a₃ := sval_of (L := M) (φ := fun _ : Fin 1 => (snd T A).left) (ε := fun _ => b) s (r ≫ ψ.left) z J (fun _ => j 1)
-    (fun _ => congrArg J (by rw [Category.assoc, ← Over.comp_left, hm]; rfl))
-  exact a₁.symm.trans (e.trans ((gs_mul r z _ hz _ _).trans (congrArg₂ (· * ·) (gs_unit r z _ hz _) (a₂.trans a₃.symm))))
+  intros
+  apply _root_.GlobalTheory.ThetaLin.sval_of_isTwistPull <;> assumption
 
 theorem sym_val {T : Over S} {k : ℤ} {n : ℕ} {x : T ⟶ A} {M : LB A.left} {U : ThetaGrp A M k T} (h : SymLift A M k n x U) :
     ∃ ν : LB.Gen (negLB A M k T), ν.IsGen ∧ ∀ {T' : Over S} (σ : T' ⟶ T) {z : T'.left} {J}, Good M z J →
@@ -446,22 +441,7 @@ theorem vtOver_unique (hG : GlobalFnsSt) (hA : IsAbelianScheme A) (hsym : L.IsSy
 theorem gen_of_lbIso {X Y : Scheme.{0}} {M : LB X} {K K' : Type} [Fintype K] [Fintype K'] {φ : K → (Y ⟶ X)} {ε : K → ℤ}
     {φ' : K' → (Y ⟶ X)} {ε' : K' → ℤ} (h : LBIso (LB.LinComb M φ ε) (LB.LinComb M φ' ε')) :
     ∃ t : LB.Gen (LB.LinComb M (Sum.elim φ' φ) (Sum.elim ε' fun k => -ε k)), t.IsGen := by
-  obtain ⟨w, hw⟩ := h
-  have le : ∀ j : K' ⊕ K → M.ι, LB.wchart M (Sum.elim φ' φ) j ≤
-      LB.wchart M φ' (j ∘ Sum.inl) ⊓ LB.wchart M φ (j ∘ Sum.inr) := fun j y hy =>
-    ⟨Set.mem_iInter.2 fun k => Set.mem_iInter.1 hy (Sum.inl k), Set.mem_iInter.2 fun k => Set.mem_iInter.1 hy (Sum.inr k)⟩
-  refine ⟨⟨fun j => res (le j) (w.s (j ∘ Sum.inl, j ∘ Sum.inr))⟩, isGen_of_gm _ fun y j j' hj hj' => ?_⟩
-  have hm : (𝟙 Y : Y ⟶ Y) y ∈ (LB.wchart M φ' (j ∘ Sum.inl) ⊓ LB.wchart M φ (j ∘ Sum.inr)) ⊓
-      (LB.wchart M φ' (j' ∘ Sum.inl) ⊓ LB.wchart M φ (j' ∘ Sum.inr)) := ⟨le j hj, le j' hj'⟩
-  have e₀ := congrArg (gm (𝟙 Y) y _) (hw (j ∘ Sum.inl, j ∘ Sum.inr) (j' ∘ Sum.inl, j' ∘ Sum.inr))
-  have e₁ := (gm_div (LB.LinComb M φ ε) (LB.LinComb M φ' ε') (𝟙 Y) y (j ∘ Sum.inl, j ∘ Sum.inr) (j' ∘ Sum.inl, j' ∘ Sum.inr)
-    hm).trans (congrArg₂ (fun a b => a * b⁻¹) (gm_linComb M φ' ε' (𝟙 Y) y _ _ hm.1.1 hm.2.1)
-      (gm_linComb M φ ε (𝟙 Y) y _ _ hm.1.2 hm.2.2))
-  refine (gm_res (𝟙 Y) y (le j) hj _).trans (((gm_res (𝟙 Y) y inf_le_left hm _).symm.trans (e₀.trans ((map_mul _ _ _).trans
-    (congrArg₂ (· * ·) e₁ (gm_res (𝟙 Y) y inf_le_right hm _))))).trans
-    (congrArg₂ (· * ·) ?_ (gm_res (𝟙 Y) y (le j') hj' _).symm))
-  rw [trF, Fintype.prod_sum_type]
-  exact congrArg₂ (· * ·) rfl (prod_neg _ ε rfl).symm
+  apply GlobalTheory.NormRos.exists_gen_of_lbIso <;> assumption
 
 theorem prod_cube₂ {T : Over S} (x y : T ⟶ A) {U : Type} [CommGroup U] (h : (T.left ⟶ A.left) → U) :
     ∏ I : ULift.{0} (Finset (Fin 2)), h (psum A ![x, y] I.down).left ^ ((-1 : ℤ) ^ (2 - I.down.card)) =

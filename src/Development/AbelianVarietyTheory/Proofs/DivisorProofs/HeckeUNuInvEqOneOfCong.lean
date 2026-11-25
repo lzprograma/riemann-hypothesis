@@ -4,42 +4,7 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimes
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
 import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
 
 @[expose] public section
@@ -106,7 +71,7 @@ theorem GlobalTheory.FunObj.SqNum.heckeU_nuInv_eq_one_of_cong : ∀ {D : D7} {T 
     refine Formalism.L2.Host.HChar.LevelLe.mul ?_ (Formalism.L2.Host.HChar.LevelLe.inv ?_)
     · by_cases h : v.under (𝓞 D.host.F) ∈ G.pl.S0
       · refine levelLe_mono (hμ.tame v) ?_
-        rw [hn v, if_pos h, condExp]
+        rw [hn v, ite_eq_left h, condExp]
         split_ifs <;> omega
       · refine Formalism.L2.Host.HChar.UnrAt.levelLe (hμ.unr v fun k hk => h ?_) _
         rw [G.pl.mem_S0_of_sum_eq]
@@ -121,17 +86,17 @@ theorem GlobalTheory.FunObj.SqNum.heckeU_nuInv_eq_one_of_cong : ∀ {D : D7} {T 
         · exact Or.inr (Or.inl hk')
     · by_cases h : v.under (𝓞 D.host.F) ∈ G.pl.S0
       · by_cases h0 : v.under (𝓞 D.host.F) = G.pl.v0
-        · rw [hn v, if_pos h, condExp, if_pos h0]
+        · rw [hn v, ite_eq_left h, condExp, ite_eq_left h0]
           exact (G.ch.lev0 _ k1 k2 v h0).1
         · have h1 := (G.pl.mem_S0_of_sum_eq.1 h).resolve_left h0
-          rw [hn v, if_pos h, condExp, if_neg h0]
+          rw [hn v, ite_eq_left h, condExp, ite_eq_right h0]
           exact (G.ch.lev1 _ k1 k2 v h1).1
-      · rw [hn v, if_neg h]
+      · rw [hn v, ite_eq_right h]
         exact Formalism.L2.Host.HChar.UnrAt.levelLe (G.ch.unr _ k1 k2 v h) 0
   have hval : ∀ v, vl D v ((u : AE D) - 1) ≤ WithZero.exp (-(n v : ℤ)) := by
     intro v
     by_cases h : v.under (𝓞 D.host.F) ∈ G.pl.S0
-    · rw [hn v, if_pos h]
+    · rw [hn v, ite_eq_left h]
       refine vl_le_of_mem_hatId (fun b hb => ?_) hm
       have hw : (G.pl.w (v.under (𝓞 D.host.F))).under (𝓞 D.host.F) = v.under (𝓞 D.host.F) := G.pl.w_over _ h
       rcases (GlobalTheory.Mem.Chr.under_eq_iff_conjPl c hcm.rank hcm.ne (G.pl.w (v.under (𝓞 D.host.F))) v).1 hw.symm with e | e
@@ -151,7 +116,7 @@ theorem GlobalTheory.FunObj.SqNum.heckeU_nuInv_eq_one_of_cong : ∀ {D : D7} {T 
         rw [e3] at e2
         rw [e2]
         exact hb2
-    · rw [hn v, if_neg h, Nat.cast_zero, neg_zero, WithZero.exp_zero]
+    · rw [hn v, ite_eq_right h, Nat.cast_zero, neg_zero, WithZero.exp_zero]
       exact vl_le (sub_mem hu.1 (one_mem _)) v
   have hU := finIdl_unit hu
   refine GlobalTheory.Mem.LocTriv.eq_one_of_local D.host.E _ (nuH G μ₀ i j)⁻¹.2.1 (finIdl D u) hU

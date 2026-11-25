@@ -25,55 +25,11 @@ public import GroundTheory.FunctionField.ValuationAevalSubCoeffZeroLe
 public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CurveFunctionField
 public import Development.EtaleCohomology.EtaleSheaves.LeafCurveVCut
 public import Development.AutomorphicArithmetic.CommutativeAlgebra.IsFunctionFieldAndChartsOfIsCurveOfIsUnit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.HaveILetI
@@ -589,13 +545,6 @@ section -- clump:auto
 open GroundTheory.FunctionField UpperTheory.Et.Sel
 open scoped TensorProduct
 
-section Spz
-
-variable {k L A : Type} [Field k] [Field L] [Algebra k L] [CommRing A] [Algebra k A]
-  {R : Subalgebra k L} {φ : R →ₐ[k] k}
-
-end Spz
-
 private theorem locPow_of_mul_inc_eq_of_dvd_exponent_sub {k K L : Type} [Field k] [Field K] [Algebra k K] [Field L]
     [Algebra k L] (q : ℕ) (hq0 : 0 < q) (B : Subalgebra k K) [IsDomain (L ⊗[k] B)]
     (m : Ideal (L ⊗[k] B)) (hm : m.IsPrime) (F : L ⊗[k] K) (a b π s t s' t' : L ⊗[k] B)
@@ -757,7 +706,7 @@ theorem UpperTheory.finite_kummerSelmer_on_prime_stratum :
     rw [div_pow]
     field_simp
     linear_combination heq
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨i, m, hm, hnot⟩ := hall
     obtain ⟨hft, hded, hnf, hfr, hLB⟩ := hB i
     obtain ⟨hdedL, hnfL⟩ := hLB L
@@ -946,7 +895,7 @@ theorem UpperTheory.finite_kernel_powClasses_of_primitive_root :
   have hbb : ∀ a ∈ S, algebraMap K K' (a : K) = bb a ^ q := by
     intro a ha
     have ha' : ∃ b : K', algebraMap K K' (a : K) = b ^ q := ha
-    simp only [bb, dif_pos ha']
+    simp only [bb, dite_eq_left ha']
     exact ha'.choose_spec
   have hbb0 : ∀ a ∈ S, bb a ≠ 0 := by
     intro a ha h0
@@ -972,7 +921,7 @@ theorem UpperTheory.finite_kernel_powClasses_of_primitive_root :
   intro a ha
   have hex : ∃ a' ∈ S, sig a' = sig a := ⟨a, ha, rfl⟩
   have htS : rep (sig a) ∈ S ∧ sig (rep (sig a)) = sig a := by
-    simp only [rep, dif_pos hex]
+    simp only [rep, dite_eq_left hex]
     exact hex.choose_spec
   refine ⟨rep (sig a), Finset.mem_image.mpr ⟨sig a, hfin.mem_toFinset.mpr ⟨a, ha, rfl⟩, rfl⟩, ?_⟩
   set t := rep (sig a) with ht
@@ -1058,7 +1007,7 @@ theorem UpperTheory.finite_kummerSelmer_of_finite_extension :
   intro f hf
   obtain ⟨t', ht', u, hu⟩ := hT' (φ f) (himg f hf)
   have hex : ∃ f ∈ SelAll k K q, ∃ u : K'ˣ, φ f = t' * u ^ q := ⟨f, hf, u, hu⟩
-  have hg : g t' = hex.choose := dif_pos hex
+  have hg : g t' = hex.choose := dite_eq_left hex
   obtain ⟨_, u0, hu0⟩ := hex.choose_spec
   set f0 := hex.choose
   have hmem : f * f0⁻¹ ∈ {a : Kˣ | ∃ b : K', algebraMap K K' (a : K) = b ^ q} := by

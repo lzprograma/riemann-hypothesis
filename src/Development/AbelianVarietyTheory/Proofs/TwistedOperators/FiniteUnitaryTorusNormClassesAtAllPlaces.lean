@@ -104,7 +104,7 @@ theorem finite_units_quot_sq_field {k : Type} [NontriviallyNormedField k] [Compl
     simp_all
   let y : V → Kˣ := fun b => if h : e.symm b ≠ 0 then Units.mk0 _ h else 1
   have hy : ∀ b ∈ C, e (y b) = b := fun b hb => by
-    simp only [y, dif_pos (hCne b hb), Units.val_mk0, LinearEquiv.apply_symm_apply]
+    simp only [y, dite_eq_left (hCne b hb), Units.val_mk0, LinearEquiv.apply_symm_apply]
   let U : V → Set V := fun b => {a | ∀ g : Kˣ, e g = a → (y b)⁻¹ * g ∈ S}
   have hU : ∀ b ∈ C, U b ∈ 𝓝 b := fun b hb => by
     have := key (y b)

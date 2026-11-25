@@ -44,8 +44,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace TensorProduct
@@ -55,13 +53,6 @@ open GlobalTheory.QCoh GlobalTheory.Twist GlobalTheory.CechPic
 universe v
 
 namespace GlobalTheory
-
-section BaseChange
-
-variable {R : Type*} (K : Type*) {G N : Type*} [CommRing R] [CommRing K] [Algebra R K]
-  [AddCommGroup G] [Module R G] [AddCommGroup N] [Module R N] [Module K N] [IsScalarTower R K N]
-
-end BaseChange
 
 section Diff
 
@@ -192,10 +183,6 @@ theorem interNum_eq_zero {n : ℕ} (h : DiffVanish n (chiPic k F)) (hn : n ≤ F
 variable (h : DiffVanish (d + 1) (chiPic k F))
 include h
 
-theorem chiPic_twist (hM : M.IsLB) : DiffVanish (d + 1) (chiPic k (twist F M)) := by
-  rw [funext (GlobalTheory.chiPic_twist k F hM)]
-  exact h.translate _
-
 theorem form_cls {P : Fin d → LB X} (hP : ∀ i, (P i).IsLB) :
     h.form (fun i ↦ cls (P i) (hP i)) = interNum k F P := by
   rw [interNum_eq_multiDiff k F hP, h.form_apply _ 0]
@@ -297,12 +284,6 @@ theorem exists_polynomial_chi_twistZ (hM : M.IsLB) :
   exact ⟨p, h1, fun n ↦ h2 n _ (isLB_lbZPow hM n) (by rw [cls_lbZPow hM, cls_triv, zero_add]), h3⟩
 
 end Poly
-
-section Ext
-
-variable [CommRing K]
-
-end Ext
 
 end DiffVanish
 

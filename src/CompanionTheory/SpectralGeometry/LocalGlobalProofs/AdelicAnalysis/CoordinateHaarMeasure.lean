@@ -43,8 +43,7 @@ theorem conj_facts [NumberField F] [NumberField E] {σ : E →ₐ[F] E} (h : IsC
     v.embedding.injective (by rw [hτ, hτ, star_star])
   refine ⟨hinv, ?_⟩
   have hne : ∃ x, σ x ≠ x := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     have hc : ¬ ComplexEmbedding.IsReal v.embedding :=
       InfinitePlace.isComplex_iff.mp (htc.isComplex v)
     apply hc
@@ -151,12 +150,12 @@ theorem hermMat_mem {σ : E →ₐ[F] E} (hinv : ∀ x, σ (σ x) = x) (n : ℕ)
     hermMat R σ n x ∈ HermR R σ n := by
   intro a b
   rcases lt_trichotomy a b with h | h | h
-  · simp only [hermMat, dif_pos h, dif_neg (not_lt_of_gt h)]
+  · simp only [hermMat, dite_eq_left h, dite_eq_right (not_lt_of_gt h)]
     exact sigR_sigR R hinv _
   · subst h
     simp only [hermMat, lt_irrefl, dite_false]
     rw [sigR_tmul, map_one]
-  · simp only [hermMat, dif_pos h, dif_neg (not_lt_of_gt h)]
+  · simp only [hermMat, dite_eq_left h, dite_eq_right (not_lt_of_gt h)]
 
 variable [TopologicalSpace R]
 
@@ -196,13 +195,13 @@ theorem hermCoord_isHomeomorph [IsTopologicalRing R] [CharZero F] {σ : E →ₐ
         apply Subtype.ext
         funext a b
         rcases lt_trichotomy a b with hab | hab | hab
-        · simp [hermMat, dif_pos hab, hermCoord]
+        · simp [hermMat, dite_eq_left hab, hermCoord]
         · subst hab
           obtain ⟨r, hr⟩ := fixed_eq_tmul R hinv h2 hδ hσδ
             ((S : Matrix (Fin n) (Fin n) (R ⊗[F] E)) a a) (S.2 a a)
           simp only [hermMat, lt_irrefl, dite_false, hermCoord]
           rw [hr, half_trace_tmul R h2]
-        · simp only [hermMat, dif_pos hab, dif_neg (not_lt_of_gt hab), hermCoord]
+        · simp only [hermMat, dite_eq_left hab, dite_eq_right (not_lt_of_gt hab), hermCoord]
           exact S.2 a b
       right_inv := by
         intro x
@@ -213,7 +212,7 @@ theorem hermCoord_isHomeomorph [IsTopologicalRing R] [CharZero F] {σ : E →ₐ
         · funext p
           obtain ⟨⟨a, b⟩, hp⟩ := p
           simp only [hermCoord, hermMat]
-          exact dif_pos hp
+          exact dite_eq_left hp
       continuous_toFun := by
         refine Continuous.prodMk (continuous_pi fun i => ?_) (continuous_pi fun p => ?_)
         · exact continuous_const.mul (htr.comp
@@ -222,12 +221,12 @@ theorem hermCoord_isHomeomorph [IsTopologicalRing R] [CharZero F] {σ : E →ₐ
       continuous_invFun := by
         refine Continuous.subtype_mk (continuous_matrix fun a b => ?_) _
         by_cases hab : a < b
-        · simp only [hermMat, dif_pos hab]
+        · simp only [hermMat, dite_eq_left hab]
           exact (continuous_apply _).comp continuous_snd
         · by_cases hba : b < a
-          · simp only [hermMat, dif_neg hab, dif_pos hba]
+          · simp only [hermMat, dite_eq_right hab, dite_eq_left hba]
             exact hsig.comp ((continuous_apply _).comp continuous_snd)
-          · simp only [hermMat, dif_neg hab, dif_neg hba]
+          · simp only [hermMat, dite_eq_right hab, dite_eq_right hba]
             exact hincl.comp ((continuous_apply _).comp continuous_fst) }
   exact h.isHomeomorph
 

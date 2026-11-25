@@ -179,14 +179,23 @@ section Places
 
 
 
-variable (v) in
-theorem exists_idelesLocalRes_idelesResField_eq_zero_of_placeOfEmbedding (v : HeightOneSpectrum (𝓞 K.1))
-    (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1)) (y : cohomology (limitRep K) 2)
-    (hy : Module.finrank (v.adicCompletion K.1) ((placeOfEmbedding ι E).1.adicCompletion E.1) •
-      brauerInvZOfIsSepClosure (v.adicCompletion K.1) (AlgebraicClosure (v.adicCompletion K.1))
-        ((idelesLocalRes ι 2).hom y) = 0) :
-    ∃ ιE : ℚ̄ →ₐ[E.1] AlgebraicClosure ((placeOfEmbedding ι E).1.adicCompletion E.1),
-      (idelesLocalRes ιE 2).hom ((idelesResField K E 2).hom y) = 0 := by
+theorem exists_placeOfEmbedding_transfer (v : HeightOneSpectrum (𝓞 K.1))
+    (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1)) (y : cohomology (limitRep K) 2) :
+    let c := completionEmbedding ι E
+    let L := c.fieldRange
+    ∃ (θ : AlgebraicClosure ((placeOfEmbedding ι E).1.adicCompletion E.1) ≃+*
+        AlgebraicClosure (v.adicCompletion K.1))
+      (ιE0 : ℚ̄ →ₐ[E.1] AlgebraicClosure ((placeOfEmbedding ι E).1.adicCompletion E.1))
+      (hL : ∀ l ∈ L, ∃ t : (placeOfEmbedding ι E).1.adicCompletion E.1,
+        θ (algebraMap _ (AlgebraicClosure ((placeOfEmbedding ι E).1.adicCompletion E.1)) t) = l),
+      (∀ t : (placeOfEmbedding ι E).1.adicCompletion E.1,
+        θ (algebraMap _ (AlgebraicClosure ((placeOfEmbedding ι E).1.adicCompletion E.1)) t) = c t) ∧
+      (idelesLocalRes ιE0 2).hom ((idelesResField K E 2).hom y) =
+        (cohomologyMapAlong (fieldConjHom (v.adicCompletion K.1) L θ hL)
+          (continuous_fieldConjHom (v.adicCompletion K.1) L θ hL)
+          (fieldConjUnitsMor (v.adicCompletion K.1) L θ hL) 2).hom
+          ((unitsScalarsRes (v.adicCompletion K.1) (AlgebraicClosure (v.adicCompletion K.1)) L 2).hom
+            ((idelesLocalRes ι 2).hom y)) := by
   have := finiteDimensional_adicCompletion_placesOver (E := E) (placeOfEmbedding ι E)
   let c := completionEmbedding ι E
   let L := c.fieldRange
@@ -216,12 +225,6 @@ theorem exists_idelesLocalRes_idelesResField_eq_zero_of_placeOfEmbedding (v : He
     intro l hl
     obtain ⟨t, rfl⟩ := (AlgHom.mem_fieldRange).1 hl
     exact ⟨t, θ.commutes t⟩
-  have : FiniteDimensional (v.adicCompletion K.1) L := LinearEquiv.finiteDimensional c.equivFieldRange.toLinearEquiv
-  have : Algebra.IsIntegral L (AlgebraicClosure (v.adicCompletion K.1)) :=
-    Algebra.IsIntegral.tower_top (v.adicCompletion K.1)
-  have hfin : Module.finrank (v.adicCompletion K.1) L =
-      Module.finrank (v.adicCompletion K.1) ((placeOfEmbedding ι E).1.adicCompletion E.1) :=
-    c.equivFieldRange.toLinearEquiv.finrank_eq.symm
   have hproj : ∀ z : IdeleLimit, θ.toRingEquiv (idelesProj ιE z : AlgebraicClosure _) =
       (idelesProj ι z : AlgebraicClosure (v.adicCompletion K.1)) :=
     idelesProj_eq_of_algebraMap (placeOfEmbedding ι E) ι ιE θ.toRingEquiv hι fun a => by
@@ -229,27 +232,52 @@ theorem exists_idelesLocalRes_idelesResField_eq_zero_of_placeOfEmbedding (v : He
         (algebraMap (v.adicCompletion K.1) _ a)) = _
       rw [θ.commutes]
       exact c.commutes a
+  exact ⟨θ.toRingEquiv, ιE, hL, fun t => θ.commutes t,
+    cohomologyMapAlong_globalDecomp_idelesResField (v.adicCompletion K.1)
+      ((placeOfEmbedding ι E).1.adicCompletion E.1) L θ.toRingEquiv hL ι ιE hι (idelesLocalMor ι)
+      (idelesLocalMor ιE) hproj 2 y⟩
+
+variable (v) in
+theorem exists_idelesLocalRes_idelesResField_eq_zero_of_placeOfEmbedding (v : HeightOneSpectrum (𝓞 K.1))
+    (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1)) (y : cohomology (limitRep K) 2)
+    (hy : Module.finrank (v.adicCompletion K.1) ((placeOfEmbedding ι E).1.adicCompletion E.1) •
+      brauerInvZOfIsSepClosure (v.adicCompletion K.1) (AlgebraicClosure (v.adicCompletion K.1))
+        ((idelesLocalRes ι 2).hom y) = 0) :
+    ∃ ιE : ℚ̄ →ₐ[E.1] AlgebraicClosure ((placeOfEmbedding ι E).1.adicCompletion E.1),
+      (idelesLocalRes ιE 2).hom ((idelesResField K E 2).hom y) = 0 := by
+  have := finiteDimensional_adicCompletion_placesOver (E := E) (placeOfEmbedding ι E)
+  let c := completionEmbedding ι E
+  let L := c.fieldRange
+  have : FiniteDimensional (v.adicCompletion K.1) L := LinearEquiv.finiteDimensional c.equivFieldRange.toLinearEquiv
+  have : Algebra.IsIntegral L (AlgebraicClosure (v.adicCompletion K.1)) :=
+    Algebra.IsIntegral.tower_top (v.adicCompletion K.1)
+  have hfin : Module.finrank (v.adicCompletion K.1) L =
+      Module.finrank (v.adicCompletion K.1) ((placeOfEmbedding ι E).1.adicCompletion E.1) :=
+    c.equivFieldRange.toLinearEquiv.finrank_eq.symm
   have h0 : (unitsScalarsRes (v.adicCompletion K.1) (AlgebraicClosure (v.adicCompletion K.1)) L 2).hom
       ((idelesLocalRes ι 2).hom y) = 0 :=
     brauerResZ_eq_zero_of_finrank_smul (v.adicCompletion K.1) (AlgebraicClosure (v.adicCompletion K.1)) L _
       (by rw [hfin]; exact hy)
-  refine ⟨ιE, ?_⟩
-  have key := cohomologyMapAlong_globalDecomp_idelesResField (v.adicCompletion K.1)
-    ((placeOfEmbedding ι E).1.adicCompletion E.1) L θ.toRingEquiv hL ι ιE hι (idelesLocalMor ι) (idelesLocalMor ιE)
-    hproj 2 y
-  rw [idelesLocalRes, key]
-  change (cohomologyMapAlong _ _ _ 2).hom
-    ((unitsScalarsRes (v.adicCompletion K.1) (AlgebraicClosure (v.adicCompletion K.1)) L 2).hom
-      ((idelesLocalRes ι 2).hom y)) = 0
-  rw [h0, map_zero]
+  obtain ⟨θ, ιE, hL, -, key⟩ := exists_placeOfEmbedding_transfer (E := E) v ι y
+  exact ⟨ιE, by rw [key, h0, map_zero]⟩
 
-
-
-theorem exists_infIdelesLocalRes_idelesResField_eq_zero_of_infPlaceOfEmbedding {v : InfinitePlace K.1}
-    (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion) (y : cohomology (limitRep K) 2)
-    (hy : (infIdelesLocalRes ι 2).hom y = 0) :
-    ∃ ιE : ℚ̄ →ₐ[E.1] AlgebraicClosure (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion,
-      (infIdelesLocalRes ιE 2).hom ((idelesResField K E 2).hom y) = 0 := by
+theorem exists_infPlaceOfEmbedding_transfer {v : InfinitePlace K.1}
+    (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion) (y : cohomology (limitRep K) 2) :
+    let c := infCompletionEmbedding ι E
+    let L := c.fieldRange
+    ∃ (θ : AlgebraicClosure (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion ≃+*
+        AlgebraicClosure v.Completion)
+      (ιE0 : ℚ̄ →ₐ[E.1] AlgebraicClosure (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion)
+      (hL : ∀ l ∈ L, ∃ t : (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion,
+        θ (algebraMap _ (AlgebraicClosure (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion) t) = l),
+      (∀ t : (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion,
+        θ (algebraMap _ (AlgebraicClosure (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion) t) = c t) ∧
+      (infIdelesLocalRes ιE0 2).hom ((idelesResField K E 2).hom y) =
+        (cohomologyMapAlong (fieldConjHom v.Completion L θ hL)
+          (continuous_fieldConjHom v.Completion L θ hL)
+          (fieldConjUnitsMor v.Completion L θ hL) 2).hom
+          ((unitsScalarsRes v.Completion (AlgebraicClosure v.Completion) L 2).hom
+            ((infIdelesLocalRes ι 2).hom y)) := by
   have : (infPlaceOfEmbedding ι E : InfinitePlace E.1).LiesOver v := (infPlaceOfEmbedding ι E).2
   let c := infCompletionEmbedding ι E
   let L := c.fieldRange
@@ -279,7 +307,6 @@ theorem exists_infIdelesLocalRes_idelesResField_eq_zero_of_infPlaceOfEmbedding {
     intro l hl
     obtain ⟨t, rfl⟩ := (AlgHom.mem_fieldRange).1 hl
     exact ⟨t, θ.commutes t⟩
-  have : Algebra.IsIntegral L (AlgebraicClosure v.Completion) := Algebra.IsIntegral.tower_top v.Completion
   have hproj : ∀ z : IdeleLimit, θ.toRingEquiv (infIdelesProj ιE z : AlgebraicClosure _) =
       (infIdelesProj ι z : AlgebraicClosure v.Completion) :=
     infIdelesProj_eq_of_algebraMap (infPlaceOfEmbedding ι E) ι ιE θ.toRingEquiv hι fun a => by
@@ -287,14 +314,18 @@ theorem exists_infIdelesLocalRes_idelesResField_eq_zero_of_infPlaceOfEmbedding {
         (algebraMap v.Completion _ a)) = _
       rw [θ.commutes]
       exact c.commutes a
-  refine ⟨ιE, ?_⟩
-  have key := cohomologyMapAlong_globalDecomp_idelesResField v.Completion
-    (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion L θ.toRingEquiv hL ι ιE hι (infIdelesLocalMor ι)
-    (infIdelesLocalMor ιE) hproj 2 y
-  rw [infIdelesLocalRes, key]
-  change (cohomologyMapAlong _ _ _ 2).hom
-    ((unitsScalarsRes v.Completion (AlgebraicClosure v.Completion) L 2).hom ((infIdelesLocalRes ι 2).hom y)) = 0
-  rw [hy, map_zero, map_zero]
+  exact ⟨θ.toRingEquiv, ιE, hL, fun t => θ.commutes t,
+    cohomologyMapAlong_globalDecomp_idelesResField v.Completion
+      (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion L θ.toRingEquiv hL ι ιE hι (infIdelesLocalMor ι)
+      (infIdelesLocalMor ιE) hproj 2 y⟩
+
+theorem exists_infIdelesLocalRes_idelesResField_eq_zero_of_infPlaceOfEmbedding {v : InfinitePlace K.1}
+    (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion) (y : cohomology (limitRep K) 2)
+    (hy : (infIdelesLocalRes ι 2).hom y = 0) :
+    ∃ ιE : ℚ̄ →ₐ[E.1] AlgebraicClosure (infPlaceOfEmbedding ι E : InfinitePlace E.1).Completion,
+      (infIdelesLocalRes ιE 2).hom ((idelesResField K E 2).hom y) = 0 := by
+  obtain ⟨_, ιE, _, -, key⟩ := exists_infPlaceOfEmbedding_transfer (E := E) ι y
+  exact ⟨ιE, by rw [key, hy, map_zero, map_zero]⟩
 
 end Places
 

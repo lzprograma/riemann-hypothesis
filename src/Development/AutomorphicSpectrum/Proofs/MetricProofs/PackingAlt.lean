@@ -36,57 +36,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSegreArith
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallPacking
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallSectionsSeparated
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Charpoly.BaseChange
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Polynomial.IsIntegral
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.Valuation.AlgebraInstances
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreRepresentatives
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeDegree
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeNull
@@ -96,7 +46,7 @@ import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullSectionIntegral
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormFormGaussBoundHolds, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PullbackConeNullModPHolds, Development.WeilBound.CoreStatements.RationalSupMetrics.PullRatiosAlgebraic, Development.AutomorphicSpectrum.Proofs.MetricProofs.PackingAlt
+-- Members: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormFormGaussBoundHolds, Development.WeilBound.CoreStatements.RationalSupMetrics.PullRatiosAlgebraic, Development.AutomorphicSpectrum.Proofs.MetricProofs.PackingAlt
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormFormGaussBoundHolds =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormFormGaussBoundHolds", "h": "module\n\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNormFormGaussBound\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomCharpolyForms\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomNormPIntegral\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Algebra.Ring.IsFormallyReal\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.LinearAlgebra.Charpoly.BaseChange\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Polynomial.IsIntegral\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.Valuation.AlgebraInstances\nimport Mathlib.RingTheory.Valuation.LocalSubring\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
@@ -178,7 +128,7 @@ theorem normFormGaussBound : NormFormGaussBound.Statement := by
     · simp
     · intro b hb hbn
       have : b < n := lt_of_le_of_ne (Nat.lt_succ_iff.mp (Finset.mem_range.mp hb)) hbn
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     · intro h
       simp at h
 
@@ -347,23 +297,8 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormFormGaussBoundHolds =====
 
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PullbackConeNullModPHolds =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PullbackConeNullModPHolds", "h": "module\n\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullConeNullModP\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeNullModP\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-namespace GlobalTheory.CompanionTheory.Ar.Giv
-
-theorem pullConeNullModP : GroundTheory.Heights₂.Heights.HilbertSamuel.PullConeNullModP.Statement :=
-  GroundTheory.Heights₂.Heights.HilbertSamuel.PullConeNullModP.proof
-
-end GlobalTheory.CompanionTheory.Ar.Giv
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PullbackConeNullModPHolds =====
-
 -- ===== clump member: Development.WeilBound.CoreStatements.RationalSupMetrics.PullRatiosAlgebraic =====
--- clump-header: {"m": "Development.WeilBound.CoreStatements.RationalSupMetrics.PullRatiosAlgebraic", "h": "module\n\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormPullback\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGridSeparation\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFormsGeneric\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullRatiosAlgebraic\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNormFormGaussBound\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormFormGaussBoundHolds\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullConeNullModP\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PullbackConeNullModPHolds\npublic import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PFibreNormPullbackX\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PAvoidFormFinite\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartPrimePowerInverse\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PConductor\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormBadPrimesFinite\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormBound\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormDehomCharpoly\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormDehomIntegral\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormDehomRoots\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormGoodPrimeIntegral\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormMax\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormPrimeBound\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGridSeparation\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMetricMaxComparison\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNmSectionsFinite\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNmSectionsRankBound\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNormalLocusRep\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PProjAvoidingForm\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeDegreeInt\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullSectionIntegralInt\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRootGridLower\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSecEq\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSecMRankBound\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSegreArith\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallPacking\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallSectionsSeparated\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomCharpolyForms\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomNormPIntegral\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreRepresentatives\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeDegree\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeNull\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullGradedAlgebraic\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullRatiosAlgebraic\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullSectionIntegral\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier\n\n"}
+-- clump-header: {"m": "Development.WeilBound.CoreStatements.RationalSupMetrics.PullRatiosAlgebraic", "h": "module\n\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormPullback\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGridSeparation\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFormsGeneric\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullRatiosAlgebraic\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNormFormGaussBound\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormFormGaussBoundHolds\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullConeNullModP\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeNullModP\npublic import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PFibreNormPullbackX\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PAvoidFormFinite\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartPrimePowerInverse\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PConductor\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormBadPrimesFinite\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormBound\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormDehomCharpoly\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormDehomIntegral\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormDehomRoots\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormGoodPrimeIntegral\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormMax\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormPrimeBound\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGridSeparation\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMetricMaxComparison\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNmSectionsFinite\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNmSectionsRankBound\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNormalLocusRep\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PProjAvoidingForm\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeDegreeInt\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullSectionIntegralInt\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRootGridLower\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSecEq\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSecMRankBound\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSegreArith\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallPacking\npublic import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallSectionsSeparated\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomCharpolyForms\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomNormPIntegral\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreRepresentatives\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeDegree\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeNull\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullGradedAlgebraic\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullRatiosAlgebraic\nimport GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullSectionIntegral\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -381,7 +316,7 @@ theorem fibre_pull_integral : FibreNormPullback.Statement :=
     (FibreNormDehomCharpoly.proof pull_forms_generic pull_ratios_algebraic PullSectionIntegral.proof
       DehomCharpolyForms.proof)
     (FibreNormDehomIntegral.proof FibreNormBadPrimesFinite.proof
-      (FibreNormGoodPrimeIntegral.proof _root_.GlobalTheory.CompanionTheory.Ar.Giv.pullConeNullModP PullConeDegreeInt.proof PullSectionIntegralInt.proof
+      (FibreNormGoodPrimeIntegral.proof _root_.GroundTheory.Heights₂.Heights.HilbertSamuel.PullConeNullModP.proof PullConeDegreeInt.proof PullSectionIntegralInt.proof
         DehomNormPIntegral.proof)
       (FibreNormPrimeBound.proof pull_forms_generic _root_.GlobalTheory.CompanionTheory.Ar.Giv.normFormGaussBound ChartPrimePowerInverse.proof))
     FibreNormDehomRoots.full
@@ -410,12 +345,6 @@ section -- clump:auto
 @[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.CompanionTheory.Ar.Small Filter Topology
-
-namespace GlobalTheory.CompanionTheory.Ar.Small
-
-theorem packing : PackingStatement := MultiProjectiveCoordinates.packing_statement
-
-end GlobalTheory.CompanionTheory.Ar.Small
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.PackingAlt =====

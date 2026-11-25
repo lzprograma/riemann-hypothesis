@@ -589,7 +589,7 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
         rwa [map_sub, map_smul, map_smul, Finsupp.sub_apply, Finsupp.smul_apply, Finsupp.smul_apply,
           e.repr_self, Finsupp.single_apply, smul_eq_mul, smul_eq_mul] at this
       have h1 := hco i
-      rw [if_pos rfl, mul_one] at h1
+      rw [ite_eq_left rfl, mul_one] at h1
       have h2 : 1 < v (h (e i) (e i))⁻¹ := by
         rw [map_inv₀, one_lt_inv₀ (zero_lt_iff.2 (hv0 i))]
         exact lt_of_le_of_ne (hd1 i) hi
@@ -613,7 +613,7 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
       refine ⟨by rw [hn3, WithZero.exp_inj]; omega, by rw [hn2, ← WithZero.exp_zero, WithZero.exp_inj]; omega,
         fun l hl hl1 => ?_⟩
       have h5 := hco l
-      rw [if_neg hl.symm, mul_zero, zero_sub, Valuation.map_neg, map_mul, map_mul, map_inv₀, hxx, hl1, mul_one,
+      rw [ite_eq_right hl.symm, mul_zero, zero_sub, Valuation.map_neg, map_mul, map_mul, map_inv₀, hxx, hl1, mul_one,
         hn1, ← WithZero.exp_neg, ← WithZero.exp_add, ← WithZero.exp_zero, WithZero.exp_le_exp] at h5
       omega
     obtain ⟨i, hi⟩ := not_forall.1 (mt hU.2 hb.2)

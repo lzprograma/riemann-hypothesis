@@ -1,46 +1,10 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicFlagLeviMaxCompactClosedSubgroups
+import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WFLStepsLocHNProps
 
 @[expose] public section
 
@@ -78,19 +42,8 @@ theorem mem_spanLt_of_inS {e : Fin r → Fin n → ℂ} {z : Fin n → ℂ} {g :
 
 theorem inv_preserves {W : Submodule ℂ (Fin n → ℂ)} {g g' : Matrix (Fin n) (Fin n) ℂ} (h1 : g' * g = 1)
     (hW : ∀ x ∈ W, g *ᵥ x ∈ W) : ∀ x ∈ W, g' *ᵥ x ∈ W := by
-  let f : W →ₗ[ℂ] W := (Matrix.mulVecLin g).restrict (fun x hx => hW x hx)
-  have hf : Function.Injective f := by
-    intro a b hab
-    have h2 : g *ᵥ (a : Fin n → ℂ) = g *ᵥ (b : Fin n → ℂ) := congrArg Subtype.val hab
-    have h3 := congrArg (fun y => g' *ᵥ y) h2
-    simp only [Matrix.mulVec_mulVec, h1, Matrix.one_mulVec] at h3
-    exact Subtype.ext h3
-  have hs : Function.Surjective f := LinearMap.injective_iff_surjective.mp hf
-  intro x hx
-  obtain ⟨y, hy⟩ := hs ⟨x, hx⟩
-  have hy' : g *ᵥ (y : Fin n → ℂ) = x := congrArg Subtype.val hy
-  rw [← hy', Matrix.mulVec_mulVec, h1, Matrix.one_mulVec]
-  exact y.2
+  intros
+  apply _root_.GlobalTheory.FlagLeviGroup.inv_keeps <;> assumption
 
 theorem mul_sub_one_mulVec (g g' : Matrix (Fin n) (Fin n) ℂ) (x : Fin n → ℂ) :
     (g * g' - 1) *ᵥ x = g *ᵥ ((g' - 1) *ᵥ x) + (g - 1) *ᵥ x := by
@@ -181,24 +134,7 @@ theorem conj_sub_one {h x h' : Matrix (Fin n) (Fin n) ℂ} (hh : h * h' = 1) :
 theorem inN_conj {ε : Fin n → Bool} {e : Fin r → Fin n → ℂ} {z : Fin n → ℂ}
     {h h' x : Matrix (Fin n) (Fin n) ℂ} (hU : Formalism.REAL.inUJ ε h) (hh : h * h' = 1) (hh' : h' * h = 1)
     (he : ∀ a, h *ᵥ e a = e a) (hz : h *ᵥ z = z) (hx : InN ε e z x) : InN ε e z (h * x * h') := by
-  have hfix : ∀ (a : ℕ), ∀ v ∈ spanLt e a, h *ᵥ v = v := fun a =>
-    fix_span (fun v hv => by obtain ⟨b, _, rfl⟩ := hv; exact he b)
-  have h'e : ∀ v, h *ᵥ v = v → h' *ᵥ v = v := fun v hv => by
-    conv_lhs => rw [← hv]
-    rw [Matrix.mulVec_mulVec, hh', Matrix.one_mulVec]
-  have key : ∀ v, (h * x * h' - 1) *ᵥ v = h *ᵥ ((x - 1) *ᵥ (h' *ᵥ v)) := fun v => by
-    rw [conj_sub_one hh]
-    simp only [Matrix.mulVec_mulVec, mul_assoc]
-  refine ⟨⟨fun a => ?_, ?_⟩, fun y hy => ?_⟩
-  · rw [key, h'e _ (he a), hfix a.1 _ (hx.1.1 a)]
-    exact hx.1.1 a
-  · rw [key, h'e _ hz, hfix r _ hx.1.2]
-    exact hx.1.2
-  · have hy' : ∀ a, hJ ε (e a) (h' *ᵥ y) = 0 := fun a => by
-      rw [← hJ_mulVec hU, he a, Matrix.mulVec_mulVec, hh, Matrix.one_mulVec]
-      exact hy a
-    rw [key, hfix r _ (hx.2 _ hy')]
-    exact hx.2 _ hy'
+  apply _root_.Formalism.L2.SG.Pf.WFL.HNL.inN_conj <;> assumption
 
 end Lin
 

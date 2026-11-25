@@ -49,8 +49,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.DefTransfer
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def KP [IsCMField D.host.E] (n : ℕ) (P : HeightOneSpectrum (𝓞 D.host.E)) : Set (UA D.host.E n) :=

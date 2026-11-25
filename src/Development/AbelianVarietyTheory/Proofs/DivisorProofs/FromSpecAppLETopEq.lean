@@ -49,13 +49,13 @@ namespace GlobalTheory.CechKSSmul
 
 theorem valR_sub_of_le {A : Type} [CommRing A] {Z : Scheme.{0}} (x : Sp A ⟶ Z) (O : Z.Opens)
     (h : ⊤ ≤ x ⁻¹ᵁ O) (a b : Γ(Z, O)) : valR x O (a - b) = valR x O a - valR x O b := by
-  simp only [valR, dif_pos h, map_sub]
+  simp only [valR, dite_eq_left h, map_sub]
 
 theorem valR_appLE_comp {A : Type} [CommRing A] {Y Z : Scheme.{0}} (x : Sp A ⟶ Y) (g : Y ⟶ Z) (U : Z.Opens)
     (W : Y.Opens) (e : W ≤ g ⁻¹ᵁ U) (h : ⊤ ≤ x ⁻¹ᵁ W) (a : Γ(Z, U)) :
     valR x W ((g.appLE U W e).hom a) = valR (x ≫ g) U a := by
   have h' : ⊤ ≤ (x ≫ g) ⁻¹ᵁ U := fun y hy => e (h hy)
-  simp only [valR, dif_pos h, dif_pos h']
+  simp only [valR, dite_eq_left h, dite_eq_left h']
   exact congrArg (fun q => (Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom (q.hom a))
     (Scheme.Hom.appLE_comp_appLE x g U W ⊤ e h)
 
@@ -74,7 +74,7 @@ theorem valR_spMap_chart {X : Scheme.{0}} (U : X.affineOpens) {S : Type} [CommRi
   have e : (chart U).appLE U.1 ⊤ h1 = (Scheme.ΓSpecIso Γ(X, U.1)).inv := by
     exact fromSpec_appLE_top_eq U.2 h1
   rw [e]
-  simp only [valR, dif_pos (show ⊤ ≤ spMap φ ⁻¹ᵁ ⊤ from fun _ _ => trivial)]
+  simp only [valR, dite_eq_left (show ⊤ ≤ spMap φ ⁻¹ᵁ ⊤ from fun _ _ => trivial)]
   have e2 : (spMap φ).appLE ⊤ ⊤ (fun _ _ => trivial) = (spMap φ).appTop :=
     Scheme.Hom.appLE_eq_app (f := spMap φ) (U := ⊤)
   rw [e2]

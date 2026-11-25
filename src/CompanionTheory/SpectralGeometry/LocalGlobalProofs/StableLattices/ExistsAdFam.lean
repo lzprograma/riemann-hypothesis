@@ -73,7 +73,7 @@ theorem exists_adFam (a : FreeAlgebra ℂ (Fin n × Fin n)) :
       simp only []
       rw [this, e1, e2]
       simp only [Matrix.of_apply, add_smul, Finset.sum_add_distrib, Fintype.sum_prod_type, ite_smul, zero_smul,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true, map_mul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc,
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true, map_mul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc,
         mul_smul_comm]
       congr 1
       rw [Finset.sum_comm]
